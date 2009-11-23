@@ -42,11 +42,12 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h"
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 class tst_QContactDetails : public QObject
 {
 Q_OBJECT
@@ -70,6 +71,7 @@ private slots:
     void birthday();
     void displayLabel();
     void emailAddress();
+    void family();
     void gender();
     void geolocation();
     void guid();
@@ -79,7 +81,6 @@ private slots:
     void onlineAccount();
     void organization();
     void phoneNumber();
-    void presence();
     void syncTarget();
     void timestamp();
     void type();
@@ -302,35 +303,15 @@ void tst_QContactDetails::birthday()
 
 void tst_QContactDetails::displayLabel()
 {
-    QSKIP("This test needs to be updated after we remove the deprecated API!", SkipSingle);
-#if 0
-    QContact c;
-    QContactDisplayLabel d1, d2;
+    QContactDisplayLabel d1;
 
-    // test property set
-    d1.setLabel("label one");
-    QCOMPARE(d1.label(), QString("label one"));
-    QCOMPARE(d1.value(QContactDisplayLabel::FieldLabel), QString("label one"));
+    QVERIFY(d1.label().isEmpty());
+    QVERIFY(d1.value(QContactDisplayLabel::FieldLabel).isEmpty());
+    d1.setValue(QContactDisplayLabel::FieldLabel, "Test");
+    QVERIFY(d1.value(QContactDisplayLabel::FieldLabel) == QString("Test"));
+    QVERIFY(d1.label() == QString("Test"));
 
-    // test property add
-    QVERIFY(c.saveDetail(&d1));
-    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
-    QCOMPARE(QContactDisplayLabel(c.details(QContactDisplayLabel::DefinitionName).value(0)).label(), d1.label());
-
-    // test property update
-    d1.setLabel("label two");
-    QVERIFY(c.saveDetail(&d1));
-    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).value(0).value(QContactDisplayLabel::FieldLabel), QString("label two"));
-
-    // test property remove
-    QVERIFY(c.removeDetail(&d1)); // should successfully _clear_ (but not remove) the label
-    QCOMPARE(c.displayLabel().label(), QString());
-    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1); // cannot remove display label
-    d2.setLabel("second label");
-    QVERIFY(c.saveDetail(&d2));    // should successfully _replace_ the label
-    QCOMPARE(c.displayLabel().label(), QString("second label"));
-    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
-#endif
+    /* XXX TODO: test property add, update and remove.  Special semantics for display label. */
 }
 
 void tst_QContactDetails::emailAddress()
@@ -364,6 +345,42 @@ void tst_QContactDetails::emailAddress()
     QCOMPARE(c.details(QContactEmailAddress::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&e2) == false);
     QCOMPARE(c.details(QContactEmailAddress::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::family()
+{
+    QContact c;
+    QContactFamily f1, f2;
+
+    // test property set
+    f1.setSpouse("1234");
+    QCOMPARE(f1.spouse(), QString("1234"));
+    QCOMPARE(f1.value(QContactFamily::FieldSpouse), QString("1234"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&f1));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 1);
+    QCOMPARE(QContactFamily(c.details(QContactFamily::DefinitionName).value(0)).spouse(), f1.spouse());
+
+    // test property update
+    f1.setValue("label","label1");
+    f1.setSpouse("12345");
+    f1.setChildren(QStringList("54321"));
+    QVERIFY(c.saveDetail(&f1));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).value(0).value(QContactFamily::FieldSpouse), QString("12345"));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).value(0).value<QStringList>(QContactFamily::FieldChildren), QStringList("54321"));
+
+    // test property remove
+    f2.setSpouse("1111");
+    QVERIFY(c.removeDetail(&f1));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&f2));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&f2));
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&f2) == false);
+    QCOMPARE(c.details(QContactFamily::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::gender()
@@ -574,6 +591,15 @@ void tst_QContactDetails::onlineAccount()
     o1.setAccountUri("test@nokia.com");
     QCOMPARE(o1.accountUri(), QString("test@nokia.com"));
     QCOMPARE(o1.value(QContactOnlineAccount::FieldAccountUri), QString("test@nokia.com"));
+    o1.setNickname("test");
+    QCOMPARE(o1.nickname(), QString("test"));
+    QCOMPARE(o1.value(QContactOnlineAccount::FieldNickname), QString("test"));
+    o1.setStatusMessage("Gone Fishing");
+    QCOMPARE(o1.statusMessage(), QString("Gone Fishing"));
+    QCOMPARE(o1.value(QContactOnlineAccount::FieldStatusMessage), QString("Gone Fishing"));
+    o1.setPresence("Extended Away");
+    QCOMPARE(o1.presence(), QString("Extended Away"));
+    QCOMPARE(o1.value(QContactOnlineAccount::FieldPresence), QString("Extended Away"));
 
     // Sub types
     o1.setSubTypes(QContactOnlineAccount::SubTypeSip);
@@ -584,9 +610,16 @@ void tst_QContactDetails::onlineAccount()
     o1.setSubTypes(sl);
     QCOMPARE(o1.subTypes(), sl);
 
+    o1 = QContactOnlineAccount();
+    o1.setAccountUri("test@nokia.com");
+
     // test property add
     QVERIFY(c.saveDetail(&o1));
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).count(), 1);
+    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
+    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).presence(), o1.presence());
+    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).nickname(), o1.nickname());
+    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).statusMessage(), o1.statusMessage());
     QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
 
     // test property update
@@ -718,51 +751,6 @@ void tst_QContactDetails::phoneNumber()
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&p2) == false);
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
-}
-
-void tst_QContactDetails::presence()
-{
-    QContact c;
-    QContactPresence p1, p2;
-
-    // test property set
-    p1.setAccountUri("test@nokia.com");
-    QCOMPARE(p1.accountUri(), QString("test@nokia.com"));
-    QCOMPARE(p1.value(QContactPresence::FieldAccountUri), QString("test@nokia.com"));
-    p1.setNickname("test");
-    QCOMPARE(p1.nickname(), QString("test"));
-    QCOMPARE(p1.value(QContactPresence::FieldNickname), QString("test"));
-    p1.setStatusMessage("Gone Fishing");
-    QCOMPARE(p1.statusMessage(), QString("Gone Fishing"));
-    QCOMPARE(p1.value(QContactPresence::FieldStatusMessage), QString("Gone Fishing"));
-    p1.setPresence("Extended Away");
-    QCOMPARE(p1.presence(), QString("Extended Away"));
-    QCOMPARE(p1.value(QContactPresence::FieldPresence), QString("Extended Away"));
-
-    // test property add
-    QVERIFY(c.saveDetail(&p1));
-    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 1);
-    QCOMPARE(QContactPresence(c.details(QContactPresence::DefinitionName).value(0)).presence(), p1.presence());
-    QCOMPARE(QContactPresence(c.details(QContactPresence::DefinitionName).value(0)).nickname(), p1.nickname());
-    QCOMPARE(QContactPresence(c.details(QContactPresence::DefinitionName).value(0)).statusMessage(), p1.statusMessage());
-    QCOMPARE(QContactPresence(c.details(QContactPresence::DefinitionName).value(0)).accountUri(), p1.accountUri());
-
-    // test property update
-    p1.setValue("label","label1");
-    p1.setPresence("Available");
-    QVERIFY(c.saveDetail(&p1));
-    QCOMPARE(c.details(QContactPresence::DefinitionName).value(0).value("label"), QString("label1"));
-    QCOMPARE(c.details(QContactPresence::DefinitionName).value(0).value(QContactPresence::FieldPresence), QString("Available"));
-
-    // test property remove
-    QVERIFY(c.removeDetail(&p1));
-    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
-    QVERIFY(c.saveDetail(&p2));
-    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&p2));
-    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
-    QVERIFY(c.removeDetail(&p2) == false);
-    QCOMPARE(c.details(QContactPresence::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::syncTarget()

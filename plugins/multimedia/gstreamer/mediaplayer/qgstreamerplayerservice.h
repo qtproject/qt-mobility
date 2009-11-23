@@ -49,22 +49,23 @@
 
 #include "qgstreamervideooutputcontrol.h"
 
+QTM_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
+class QMediaPlaylistNavigator;
+QTM_END_NAMESPACE
 
 class QGstreamerMetaData;
 class QGstreamerPlayerControl;
 class QGstreamerPlayerSession;
 class QGstreamerMetaDataProvider;
 class QGstreamerStreamsControl;
-#ifndef QT_NO_MULTIMEDIA
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
-#endif
 class QGstreamerVideoWidgetControl;
 
-class QMediaPlaylistNavigator;
+QTM_USE_NAMESPACE
 
 class QGstreamerPlayerService : public QMediaService
 {
@@ -87,10 +88,8 @@ private:
     QGstreamerVideoOutputControl *m_videoOutput;
     QGstreamerStreamsControl *m_streamsControl;
 
-#ifndef QT_NO_MULTIMEDIA
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerVideoOverlay *m_videoWindow;
-#endif
     QGstreamerVideoWidgetControl *m_videoWidget;
 };
 

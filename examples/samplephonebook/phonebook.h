@@ -91,6 +91,7 @@ private slots:
 
 private:
     QContact buildContact() const;
+    QContactName buildName(const QString &name) const;
     void displayContact();
     void updateButtons();
     bool eventFilter(QObject* watched, QEvent* event);

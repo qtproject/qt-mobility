@@ -55,7 +55,7 @@
 
 #include "qvaluespace_p.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class Q_AUTOTEST_EXPORT QValueSpaceManager
 {
@@ -81,6 +81,6 @@ private:
     QList<QValueSpace::LayerCreateFunc> funcs;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QVALUESPACEMANAGER_P_H

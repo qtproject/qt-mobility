@@ -53,6 +53,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 static const double qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
 inline static double qgeocoordinate_degToRad(double deg) { return deg * M_PI / 180; }
@@ -564,3 +566,5 @@ QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
     return stream;
 }
 #endif
+
+QTM_END_NAMESPACE

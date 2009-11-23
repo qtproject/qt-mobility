@@ -44,6 +44,8 @@
 
 #include <QtCore/qurl.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaPlaylistProvider
     \preliminary
@@ -73,6 +75,7 @@ QMediaPlaylistProvider::QMediaPlaylistProvider(QMediaPlaylistProviderPrivate &dd
 */
 QMediaPlaylistProvider::~QMediaPlaylistProvider()
 {
+    delete d_ptr;
 }
 
 /*!
@@ -296,3 +299,7 @@ void QMediaPlaylistProvider::shuffle()
 
     Signals that a load failed() due to an \a error.  The \a errorMessage provides more information.
 */
+
+#include "moc_qmediaplaylistprovider.cpp"
+QTM_END_NAMESPACE
+

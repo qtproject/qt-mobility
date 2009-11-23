@@ -7,5 +7,6 @@ SUBDIRS += performance \
            ut_transformcontactdata \
            ut_cntsymbianengine \
            ut_cntfiltering \
-           ut_cntrelationship
+           ut_cntrelationship \
+           ut_cntsymbiandatabase
            

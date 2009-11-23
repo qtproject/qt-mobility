@@ -39,7 +39,8 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
-#include "qmessagecontentcontainerid_p.h"
+
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageContentContainerId
@@ -135,3 +136,5 @@ bool QMessageContentContainerId::operator!=(const QMessageContentContainerId &ot
 
     Qt-style synonym for QList<QMessageContentContainerId>
 */
+
+QTM_END_NAMESPACE

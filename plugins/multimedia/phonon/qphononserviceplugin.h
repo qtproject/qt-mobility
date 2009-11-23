@@ -45,6 +45,8 @@
 
 #include <qmediaserviceproviderplugin.h>
 
+QTM_USE_NAMESPACE
+
 class QPhononServicePlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT

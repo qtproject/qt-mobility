@@ -50,6 +50,9 @@
 #include "qmessageserviceaction_symbian_p.h"
 #include "qmtmengine_symbian_p.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
  : q_ptr(0),
  _state(QMessageServiceAction::Pending)
@@ -239,3 +242,6 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 {
     return QMessageStore::NoError;
 }
+
+#include "moc_qmessageserviceaction_symbian_p.cpp"
+QTM_END_NAMESPACE

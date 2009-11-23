@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qvideoencodercontrol.cpp -->
 <head>
-  <title>QVideoEncoderControl Class Reference</title>
+  <title>Qt Mobility 1.0: QVideoEncoderControl Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -25,15 +25,15 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#dtor.QVideoEncoderControl">~QVideoEncoderControl</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#encodingOption">encodingOption</a></b> ( const QString &amp; <i>codec</i>, const QString &amp; <i>option</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#maximumFrameRate">maximumFrameRate</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#maximumResolution">maximumResolution</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#minimumFrameRate">minimumFrameRate</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#minimumResolution">minimumResolution</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#maximumFrameRate">maximumFrameRate</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#maximumResolution">maximumResolution</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#minimumFrameRate">minimumFrameRate</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#minimumResolution">minimumResolution</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#setEncodingOption">setEncodingOption</a></b> ( const QString &amp; <i>codec</i>, const QString &amp; <i>option</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#setVideoSettings">setVideoSettings</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#supportedEncodingOptions">supportedEncodingOptions</a></b> ( const QString &amp; <i>codec</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#supportedFrameRates">supportedFrameRates</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QSize&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#supportedResolutions">supportedResolutions</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#supportedFrameRates">supportedFrameRates</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QSize&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#supportedResolutions">supportedResolutions</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#supportedVideoCodecs">supportedVideoCodecs</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#videoCodecDescription">videoCodecDescription</a></b> ( const QString &amp; <i>codec</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QVideoEncoderSettings </td><td class="memItemRight" valign="bottom"><b><a href="qvideoencodercontrol.html#videoSettings">videoSettings</a></b> () const = 0</td></tr>
@@ -72,7 +72,7 @@
 <p>If a <a href="qmediaservice.html">QMediaService</a> supports encoding video data it will implement QVideoEncoderControl. This control provides information about the limits of restricted video encoder options and allows the selection of a set of video encoder settings as specificed in a <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> object.</p>
 <p>The functionality provided by this control is exposed to application code through the <a href="qmediarecorder.html">QMediaRecorder</a> class.</p>
 <p>The interface name of QVideoEncoderControl is <tt>com.nokia.Qt.QVideoEncoderControl/1.0</tt> as defined in <a href="qvideoencodercontrol.html#QVideoEncoderControl_iid">QVideoEncoderControl_iid</a>.</p>
-<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
+<p>See also <a href="qmediarecorder.html">QMediaRecorder</a>, <a href="qvideoencodersettings.html">QVideoEncoderSettings</a>, and <a href="qmediaservice.html#control">QMediaService::control</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QVideoEncoderControl"></a>QVideoEncoderControl::QVideoEncoderControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -82,17 +82,21 @@
 <h3 class="fn"><a name="encodingOption"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QVideoEncoderControl::encodingOption ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>option</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the value of a video <i>codec</i> <i>option</i>.</p>
 <p>See also <a href="qvideoencodercontrol.html#setEncodingOption">setEncodingOption</a>().</p>
-<h3 class="fn"><a name="maximumFrameRate"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QVideoEncoderControl::maximumFrameRate () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="maximumFrameRate"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QVideoEncoderControl::maximumFrameRate ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the maximum frame rate a video encoder supports.</p>
+<p>If non null video <i>settings</i> parameter is passed, returns the maximum supported frame rate with partial settings like <a href="qvideoencodersettings.html#setResolution">video resolution</a> applied.</p>
 <p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>().</p>
-<h3 class="fn"><a name="maximumResolution"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QVideoEncoderControl::maximumResolution () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="maximumResolution"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QVideoEncoderControl::maximumResolution ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the maximum resolution a video encoder supports.</p>
+<p>If non null video <i>settings</i> parameter is passed, returns the maximum supported resolution with partial settings applied.</p>
 <p>See also <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>().</p>
-<h3 class="fn"><a name="minimumFrameRate"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QVideoEncoderControl::minimumFrameRate () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="minimumFrameRate"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QVideoEncoderControl::minimumFrameRate ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the minimum frame rate a video encoder supports.</p>
+<p>If non null video <i>settings</i> parameter is passed, returns the minimum supported frame rate with partial settings like <a href="qvideoencodersettings.html#setResolution">video resolution</a> applied.</p>
 <p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>().</p>
-<h3 class="fn"><a name="minimumResolution"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QVideoEncoderControl::minimumResolution () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="minimumResolution"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QVideoEncoderControl::minimumResolution ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the minium resolution a video encoder supports.</p>
+<p>If non null video <i>settings</i> parameter is passed, returns the minimum supported resolution with partial settings applied.</p>
 <p>See also <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>().</p>
 <h3 class="fn"><a name="setEncodingOption"></a>void QVideoEncoderControl::setEncodingOption ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>option</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>value</i> of a <i>codec</i> specific <i>option</i>.</p>
@@ -103,11 +107,13 @@
 <h3 class="fn"><a name="supportedEncodingOptions"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QVideoEncoderControl::supportedEncodingOptions ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported encoding options for a video <i>codec</i>.</p>
 <p>The names and types of the options in the list is system dependent.</p>
-<h3 class="fn"><a name="supportedFrameRates"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>&gt; QVideoEncoderControl::supportedFrameRates () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="supportedFrameRates"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>&gt; QVideoEncoderControl::supportedFrameRates ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported frame rates. An empty list is returned if the encoder supports arbitrary frame rates within the minimum and maximum range.</p>
+<p>If non null video <i>settings</i> parameter is passed, the returned list is reduced to frame rates supported with partial settings like <a href="qvideoencodersettings.html#setCodec">video codec</a> or <a href="qvideoencodersettings.html#setResolution">video resolution</a> applied.</p>
 <p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>(), <a href="qvideoencodercontrol.html#minimumFrameRate">minimumFrameRate</a>(), and <a href="qvideoencodercontrol.html#maximumFrameRate">maximumFrameRate</a>().</p>
-<h3 class="fn"><a name="supportedResolutions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>&gt; QVideoEncoderControl::supportedResolutions () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="supportedResolutions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>&gt; QVideoEncoderControl::supportedResolutions ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported resolutions. An empty list is returned if the video encoder supports arbitrary resolutions within the minimum and maximum range.</p>
+<p>If non null video <i>settings</i> parameter is passed, the returned list is reduced to resolution supported with partial settings like <a href="qvideoencodersettings.html#setCodec">video codec</a> or <a href="qvideoencodersettings.html#setFrameRate">frame rate</a> applied.</p>
 <p>See also <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>(), <a href="qvideoencodercontrol.html#minimumResolution">minimumResolution</a>(), and <a href="qvideoencodercontrol.html#maximumResolution">maximumResolution</a>().</p>
 <h3 class="fn"><a name="supportedVideoCodecs"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QVideoEncoderControl::supportedVideoCodecs () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the list of supported video codecs.</p>
@@ -124,6 +130,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

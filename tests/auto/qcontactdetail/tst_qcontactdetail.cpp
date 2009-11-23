@@ -42,11 +42,12 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h"
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 class tst_QContactDetail : public QObject
 {
 Q_OBJECT

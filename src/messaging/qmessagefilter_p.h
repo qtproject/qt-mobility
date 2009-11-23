@@ -51,6 +51,8 @@
 #include <qset.h>
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 #if 0
 #define QSTRING_FOLDER_ID
 #endif
@@ -220,4 +222,6 @@ private:
     MapiRestriction *_right;
 };
 #endif
+
+QTM_END_NAMESPACE
 #endif

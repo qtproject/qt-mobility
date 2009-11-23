@@ -51,6 +51,8 @@ class QListWidget;
 class QTextEdit;
 class QPushButton;
 
+QTM_USE_NAMESPACE
+
 class MessageSender : public QWidget
 {
     Q_OBJECT

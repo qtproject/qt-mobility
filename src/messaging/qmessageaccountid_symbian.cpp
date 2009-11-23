@@ -41,6 +41,8 @@
 #include "qmessageaccountid.h"
 #include "qmessageaccountid_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageAccountId::QMessageAccountId()
  : d_ptr(0)
 {
@@ -115,4 +117,4 @@ uint qHash(const QMessageAccountId &id)
 {
     return qHash(id.toString());
 }
-
+QTM_END_NAMESPACE

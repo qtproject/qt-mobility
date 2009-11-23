@@ -49,7 +49,11 @@
 #include <qradiotunercontrol.h>
 
 #include <linux/types.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
 #include <linux/videodev2.h>
+
+QTM_USE_NAMESPACE
 
 class V4LRadioService;
 

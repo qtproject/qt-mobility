@@ -47,6 +47,7 @@
 #include "qsystemreadwritelock_p.h"
 #include "common.h"
 
+QTM_USE_NAMESPACE
 class tst_QSystemReadWriteLock_oop : public QObject{
     Q_OBJECT
 private slots:

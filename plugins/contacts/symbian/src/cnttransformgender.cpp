@@ -43,19 +43,16 @@
 
 QList<CContactItemField *> CntTransformGender::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactGender::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to gender
 	const QContactGender &gender(static_cast<const QContactGender&>(detail));
 
-	//create new field
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(gender.gender().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGender);
- 	newField->TextStorage()->SetTextL(fieldText);
-	newField->SetMapping(KUidContactFieldVCardMapUnknown);
-
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
+    //create new field without contexts
+    transformToTextFieldL(gender, fieldList, gender.gender(), KUidContactFieldGender, KUidContactFieldVCardMapUnknown, false);
 
 	return fieldList;
 }

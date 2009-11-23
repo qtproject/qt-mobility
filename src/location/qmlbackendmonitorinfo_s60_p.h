@@ -44,6 +44,7 @@
 
 #include "qmlbackendmonitorao_s60_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 //linked list information structure
 struct CMonitorTriggerInfo {
@@ -90,5 +91,7 @@ private :
 
     static CBackendMonitorInfo* iBackendMonitorInfo;
 };
+
+QTM_END_NAMESPACE
 
 #endif /* QMLBACKENDMONITORINFO_H_ */

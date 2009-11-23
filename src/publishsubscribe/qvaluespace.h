@@ -42,14 +42,14 @@
 #ifndef QVALUESPACE_H
 #define QVALUESPACE_H
 
-#include "qpublishsubscribeglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QList>
 #include <QUuid>
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 namespace QValueSpace {
     enum LayerOption {
@@ -81,7 +81,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QValueSpace::LayerOptions);
 #define QVALUESPACE_CONTEXTKIT_LAYER QUuid(0x2c769b9e, 0xd949, 0x4cd1, 0x84, 0x8f, \
                                            0xd3, 0x22, 0x41, 0xfe, 0x07, 0xff)
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

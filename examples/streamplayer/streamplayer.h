@@ -42,12 +42,17 @@
 #ifndef STREAMPLAYER_H
 #define STREAMPLAYER_H
 
+#include <qmobilityglobal.h>
 #include <QtCore/qfile.h>
 #include <QtGui/qwidget.h>
 
-class QMediaPlayer;
 class QProgressBar;
 
+QTM_BEGIN_NAMESPACE
+class QMediaPlayer;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 class StreamPlayer : public QWidget
 {
     Q_OBJECT

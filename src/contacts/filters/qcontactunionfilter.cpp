@@ -44,6 +44,8 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
    \class QContactUnionFilter
    \brief The QContactUnionFilter class provides a filter which unions the
@@ -128,3 +130,5 @@ QList<QContactFilter> QContactUnionFilter::filters() const
     Q_D(const QContactUnionFilter);
     return d->m_filters;
 }
+
+QTM_END_NAMESPACE

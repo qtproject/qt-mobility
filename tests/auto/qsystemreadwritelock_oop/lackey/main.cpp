@@ -49,6 +49,8 @@
 #include <QLocalSocket>
 #include <QtTest/QtTest>
 
+QTM_USE_NAMESPACE
+
 void write(QIODevice * device, const char * str)
 {
     device->write(str);

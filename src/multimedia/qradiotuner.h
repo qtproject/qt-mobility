@@ -49,6 +49,8 @@
 
 #include <QPair>
 
+QTM_BEGIN_NAMESPACE
+
 class QRadioTunerPrivate;
 class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
 {
@@ -130,9 +132,11 @@ private:
     Q_DECLARE_PRIVATE(QRadioTuner)
 };
 
-Q_DECLARE_METATYPE(QRadioTuner::State);
-Q_DECLARE_METATYPE(QRadioTuner::Band);
-Q_DECLARE_METATYPE(QRadioTuner::Error);
-Q_DECLARE_METATYPE(QRadioTuner::StereoMode);
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::State);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::Band);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::Error);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::StereoMode);
 
 #endif  // QRADIOPLAYER_H

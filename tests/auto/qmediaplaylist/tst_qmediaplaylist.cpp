@@ -49,6 +49,7 @@
 
 #include "qm3uhandler.h"
 
+QTM_USE_NAMESPACE
 class MockReadOnlyPlaylistProvider : public QMediaPlaylistProvider
 {
     Q_OBJECT

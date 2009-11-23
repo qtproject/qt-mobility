@@ -49,6 +49,7 @@
 #include <iapconf.h>
 #endif
 
+QTM_USE_NAMESPACE
 class tst_QNetworkConfigurationManager : public QObject
 {
     Q_OBJECT

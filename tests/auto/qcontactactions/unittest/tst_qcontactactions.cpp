@@ -44,14 +44,12 @@
 #include <QApplication>
 
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h"
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 #include "qcontactaction.h"
 #include "qcontactactionfactory.h"
 #include "qcontactactiondescriptor.h"
 
-
-//TESTED_CLASS=
-//TESTED_FILES=
+QTM_USE_NAMESPACE 
 
 class tst_QContactActions : public QObject
 {
@@ -75,7 +73,7 @@ private slots:
 class DummyStaticActionFactory : public QContactActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactActionFactory)
+    Q_INTERFACES(QtMobility::QContactActionFactory)
 
 public:
     DummyStaticActionFactory() {}

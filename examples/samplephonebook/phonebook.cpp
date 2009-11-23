@@ -62,7 +62,7 @@ PhoneBook::PhoneBook(QWidget *parent)
 		smallScreenSize = false;
         mainDialogForm640By480 = new MainDialogForm640By480(this);
         mainForm = mainDialogForm640By480;
-        detailsForm = mainForm;		
+        detailsForm = mainForm;
         layout->addWidget(mainForm);
         setLayout(layout);
     }else{
@@ -270,7 +270,7 @@ void PhoneBook::populateList(const QContact& currentContact)
     // and repopulate the list widget.
     contactsList->clear();
     foreach (const QContact& contact, contacts) {
-        new QListWidgetItem(contact.displayLabel().label(), contactsList);
+        new QListWidgetItem(contact.displayLabel(), contactsList);
     }
 
     // now find out what our new current index is
@@ -290,8 +290,7 @@ QContact PhoneBook::buildContact() const
 {
     // builds the contact from the current index / current UI.
     QContact c;
-    QContactName contactName;
-    contactName.setCustomLabel(nameLine->text());
+    QContactName contactName = buildName(nameLine->text());
     c.saveDetail(&contactName);
 
     QContactEmailAddress emailAddress;
@@ -325,6 +324,25 @@ QContact PhoneBook::buildContact() const
     return c;
 }
 
+/*!
+ * Build QContactName with one of the following set:
+ * 1. custom label, 2. first name, 3. last name
+ * If none is supported the returned QContactName is left empty.
+ */
+QContactName PhoneBook::buildName(const QString &name) const
+{
+    QContactName contactName;
+    QContactDetailDefinition nameDef = cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
+    if(nameDef.fields().contains(QContactName::FieldCustomLabel)) {
+        contactName.setCustomLabel(name);
+    } else if(nameDef.fields().contains(QContactName::FieldFirst)) {
+        contactName.setFirst(name);
+    } else if(nameDef.fields().contains(QContactName::FieldLast)) {
+        contactName.setLast(name);
+    }
+    return contactName;
+}
+
 void PhoneBook::displayContact()
 {
     QContact c = contacts.value(currentIndex);
@@ -341,7 +359,7 @@ void PhoneBook::displayContact()
     contactGroups = currentGroups;
 
     // display the name
-    nameLine->setText(c.displayLabel().label());
+    nameLine->setText(c.displayLabel());
 
     // display the email address
     emailLine->setText(c.detail(QContactEmailAddress::DefinitionName).value(QContactEmailAddress::FieldEmailAddress));
@@ -440,7 +458,7 @@ void PhoneBook::addContact()
 	// Groups will be modified in QContactManager by dialog
 	GroupEditDialog grpDialog(this, cm);
 	if (smallScreenSize)
-	     grpDialog.showMaximized();		    
+	     grpDialog.showMaximized();
 	(void)grpDialog.exec();
     }
 }
@@ -558,7 +576,7 @@ void PhoneBook::previous()
 
 void PhoneBook::findContact()
 {
-    
+
     dialog = new FindDialog(this);
 
     if (smallScreenSize)
@@ -593,7 +611,7 @@ void PhoneBook::findContact()
                 for (int index = 0; index < matchedContacts.count(); index++){
                     matchedContact = cm->contact(matchedContacts[index]);
                     if (!matchedContact.isEmpty())
-                        matchedContactNames.append("\"" + matchedContact.displayLabel().label() + "\"");
+                        matchedContactNames.append("\"" + matchedContact.displayLabel() + "\"");
                 }
                 QMessageBox::information(this, tr("Contact(s) Found"), tr("Matched contact(s): %1").arg(matchedContactNames.join(",")));
             }else{
@@ -617,7 +635,7 @@ void PhoneBook::openContact()
 	    saveContact();
     }else{
 	detailsForm->show();
-    } 
+    }
 }
 
 void PhoneBook::cancelContact()

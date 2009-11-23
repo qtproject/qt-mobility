@@ -60,14 +60,14 @@
 #include <servicemetadata_p.h>
 #include "dberror_p.h"
 #include <e32base.h>
-class QServiceFilter;
 
-typedef TPckgBuf<TInt> TError; 
 
 QT_BEGIN_HEADER
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class CDatabaseManagerServerThread;
+class QServiceFilter;
+typedef TPckgBuf<TInt> TError; 
 
 class QServiceInterfaceDescriptor;
 
@@ -156,8 +156,10 @@ class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 };
 
 #ifdef __WINS__
+QTM_END_NAMESPACE
     #include "databasemanagerserver_global.h"
     #include <QThread>
+QTM_BEGIN_NAMESPACE
     class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServerThread : public QThread
         {
         public:
@@ -185,7 +187,7 @@ class DatabaseManagerSignalMonitor : public CActive
         RDatabaseManagerSession& iDatabaseManagerSession;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 QT_END_HEADER
 
 #endif

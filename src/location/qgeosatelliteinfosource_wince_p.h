@@ -46,6 +46,8 @@
 
 #include "qgeoinfothread_wince_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGeoSatelliteInfoValidator : public QGeoInfoValidator
 {
 public:
@@ -79,5 +81,7 @@ private slots:
 private:
     QGeoInfoThreadWinCE *infoThread;
 };
+
+QTM_END_NAMESPACE
 
 #endif //#ifndef QGEOSATELLITEINFOSOURCE_WINCE_P_H

@@ -50,6 +50,8 @@
 #include <qmessagefolderfilter.h>
 #include <qmessage.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFilterPrivate;
 
 class Q_MESSAGING_EXPORT QMessageFilter
@@ -121,4 +123,6 @@ public:
 private:
     QMessageFilterPrivate *d_ptr;
 };
+
+QTM_END_NAMESPACE
 #endif

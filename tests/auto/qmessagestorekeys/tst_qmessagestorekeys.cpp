@@ -55,6 +55,8 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
+
 /*
     Unit test for classes implementing query keys for the QMessageStore class.
 */
@@ -102,8 +104,6 @@ private:
     QMessageIdList messageIds;
 
     QList<int> messageSizes;
-
-    uint unsupportedCount;
 };
 
 Q_DECLARE_METATYPE(QMessageAccountIdList)
@@ -173,7 +173,6 @@ public:
 
 void tst_QMessageStoreKeys::init()
 {
-    unsupportedCount = 0;
 }
 
 void tst_QMessageStoreKeys::initTestCase()
@@ -315,9 +314,6 @@ void tst_QMessageStoreKeys::initTestCase()
 
 void tst_QMessageStoreKeys::cleanup()
 {
-    if (unsupportedCount != 0) {
-        qWarning() << QString("%1 unsupported tests bypassed").arg(unsupportedCount);
-    }
 }
 
 void tst_QMessageStoreKeys::cleanupTestCase()
@@ -581,6 +577,27 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << orEquals
         << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
+
+    // Test options
+    QMessageAccountFilter caseInsensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
+    QTest::newRow("options:caseInsensitive 1")
+        << caseInsensitive1
+        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
+
+    QMessageAccountFilter caseSensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
+    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 1")
+        << caseSensitive1
+        << QMessageAccountIdList()
+        << accountIds;
+
+    QMessageAccountFilter caseSensitive2(QMessageAccountFilter::byName("Work", QMessageDataComparator::Equal));
+    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 2")
+        << caseSensitive2
+        << ( QMessageAccountIdList() << accountIds[0] )
+        << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 }
 
 void tst_QMessageStoreKeys::testAccountFilter()
@@ -597,7 +614,7 @@ void tst_QMessageStoreKeys::testAccountFilter()
         QCOMPARE(QMessageStore::instance()->queryAccounts(filter).toSet().subtract(existingAccountIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryAccounts(~filter).toSet().subtract(existingAccountIds), negatedIds.toSet());
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -636,7 +653,7 @@ void tst_QMessageStoreKeys::testAccountOrdering()
 
         QCOMPARE(sortedIds, ids);
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -1237,6 +1254,27 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << orEquals
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[3] );
+
+    // Test options
+    QMessageFolderFilter caseInsensitive1(QMessageFolderFilter::byDisplayName("x-a", QMessageDataComparator::Includes));
+    QTest::newRow("options:caseInsensitive 1")
+        << caseInsensitive1
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
+    
+    QMessageFolderFilter caseSensitive1(QMessageFolderFilter::byDisplayName("x-a", QMessageDataComparator::Includes));
+    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 1")
+        << caseSensitive1
+        << QMessageFolderIdList()
+        << folderIds;
+
+    QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byDisplayName("X-A", QMessageDataComparator::Includes));
+    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 2")
+        << caseSensitive2
+        << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
+        << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
 }
 
 void tst_QMessageStoreKeys::testFolderFilter()
@@ -1253,7 +1291,7 @@ void tst_QMessageStoreKeys::testFolderFilter()
         QCOMPARE(QMessageStore::instance()->queryFolders(filter).toSet().subtract(existingFolderIds), ids.toSet());
         QCOMPARE(QMessageStore::instance()->queryFolders(~filter).toSet().subtract(existingFolderIds), negatedIds.toSet());
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -1277,6 +1315,16 @@ void tst_QMessageStoreKeys::testFolderOrdering_data()
     QTest::newRow("displayName descending")
         << QMessageFolderOrdering::byDisplayName(Qt::DescendingOrder)
         << ( QMessageFolderIdList() << folderIds[3] << folderIds[2] << folderIds[0] << folderIds[1] );
+    
+    QTest::newRow("path ascending + displayName ascending")
+        << ( QMessageFolderOrdering::byPath(Qt::AscendingOrder) + QMessageFolderOrdering::byDisplayName(Qt::AscendingOrder) )
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] << folderIds[0] );
+
+    QMessageFolderOrdering plusEquals(QMessageFolderOrdering::byPath(Qt::AscendingOrder));
+    plusEquals += QMessageFolderOrdering::byDisplayName(Qt::AscendingOrder);
+    QTest::newRow("path ascending += displayName ascending")
+        << plusEquals
+        << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] << folderIds[0] );
 }
 
 void tst_QMessageStoreKeys::testFolderOrdering()
@@ -1300,7 +1348,7 @@ void tst_QMessageStoreKeys::testFolderOrdering()
 
         QCOMPARE(sortedIds, ids);
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -2582,6 +2630,30 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
+
+    // Test options
+    QMessageFilter caseInsensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
+    QTest::newRow("options:caseInsensitive 1")
+        << caseInsensitive1
+        << ( QMessageIdList() << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
+        << "";
+
+    QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
+    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 1")
+        << caseSensitive1
+        << QMessageIdList()
+        << messageIds
+        << "";
+
+    QMessageFilter caseSensitive2(QMessageFilter::bySubject("Free beer", QMessageDataComparator::Equal));
+    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
+    QTest::newRow("options:caseSensitive 2")
+        << caseSensitive2
+        << ( QMessageIdList() << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
+        << "";
 }
 
 void tst_QMessageStoreKeys::testMessageFilter()
@@ -2604,7 +2676,7 @@ void tst_QMessageStoreKeys::testMessageFilter()
             QCOMPARE(QMessageStore::instance()->queryMessages(~filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), negatedIds.toSet());
         }
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 
@@ -2759,38 +2831,91 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] ) );
 
+    // On Windows, the following tests do not vary by type (which is always Email)
     QTest::newRow("type ascending, priority ascending, size ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] ) );
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] ) );
+#endif
 
     QTest::newRow("type ascending, priority ascending, size descending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::DescendingOrder)
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] ) );
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] ) );
+#endif
 
     QTest::newRow("type ascending, priority descending, size ascending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::DescendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] ) );
+#endif
 
     QTest::newRow("type ascending, priority descending, size descending")
         << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::DescendingOrder) + QMessageOrdering::bySize(Qt::DescendingOrder)
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+#else
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] ) );
+#endif
 
+    QMessageOrdering plusEquals(QMessageOrdering::byType(Qt::AscendingOrder));
+    plusEquals += QMessageOrdering::byPriority(Qt::DescendingOrder);
+    plusEquals += QMessageOrdering::bySize(Qt::DescendingOrder);
+    QTest::newRow("type ascending += priority descending += size descending")
+        << plusEquals
+#if defined(Q_OS_WIN)
+        << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+#else
+        << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[2] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[3] )
+                               << ( QMessageIdList() << messageIds[4] ) );
+#endif
+
+#if !defined(Q_OS_WIN)
     QTest::newRow("type descending, priority ascending, size ascending")
         << QMessageOrdering::byType(Qt::DescendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
@@ -2822,6 +2947,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] ) );
+#endif
 }
 
 void tst_QMessageStoreKeys::testMessageOrdering()
@@ -2869,7 +2995,7 @@ void tst_QMessageStoreKeys::testMessageOrdering()
         QVERIFY(match);
         QVERIFY(iit == ids.end());
     } else {
-        ++unsupportedCount;
+        QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
 

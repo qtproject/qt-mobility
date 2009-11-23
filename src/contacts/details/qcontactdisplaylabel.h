@@ -43,11 +43,12 @@
 #ifndef QCONTACTDISPLAYLABEL_H
 #define QCONTACTDISPLAYLABEL_H
 
-#include <QtDebug>
 #include <QString>
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
+
+QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
@@ -56,22 +57,14 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldLabel;
-    const char* FieldSynthesized;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactDisplayLabel, "DisplayLabel")
     Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
-    Q_DECLARE_LATIN1_LITERAL(FieldSynthesized, "Synthesized");
 #endif
 
-    void Q_DECL_DEPRECATED setLabel(const QString& label)
-    {
-        qWarning("setLabel(): This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");
-        setValue(FieldLabel, label);
-        setValue(FieldSynthesized, label.isEmpty() ? true : false);
-    }
     QString label() const {return value(FieldLabel);}
-    void Q_DECL_DEPRECATED setSynthesized(bool synthesized) {qWarning("setSynthesized(): This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");setValue(FieldSynthesized, synthesized);}
-    bool Q_DECL_DEPRECATED isSynthesized() const {qWarning("synthesized(): This function has been deprecated!  Display label is supposed to be READ-ONLY.  Support for mutable display labels will be removed in week 47!");return value<bool>(FieldSynthesized);}
 };
+
+QTM_END_NAMESPACE
 
 #endif

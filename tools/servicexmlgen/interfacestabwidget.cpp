@@ -55,7 +55,7 @@ InterfacesTabWidget::InterfacesTabWidget(QWidget *parent)
     connect(tabBar(), SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
 }
 
-void InterfacesTabWidget::load(const QList<QServiceInterfaceDescriptor> &descriptors)
+void InterfacesTabWidget::load(const QList<QTM_PREPEND_NAMESPACE(QServiceInterfaceDescriptor)> &descriptors)
 {
     QWidget *widg;
     while (count() > 0) {
@@ -120,7 +120,7 @@ void InterfacesTabWidget::writeXml(QXmlStreamWriter *writer) const
     }
 }
 
-InterfaceWidget *InterfacesTabWidget::addInterface(const QServiceInterfaceDescriptor &descriptor)
+InterfaceWidget *InterfacesTabWidget::addInterface(const QTM_PREPEND_NAMESPACE(QServiceInterfaceDescriptor) &descriptor)
 {
     InterfaceWidget *w = new InterfaceWidget;
     connect(w, SIGNAL(titleChanged(QString)), SLOT(interfaceTitleChanged(QString)));

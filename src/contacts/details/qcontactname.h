@@ -49,6 +49,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 class Q_CONTACTS_EXPORT QContactName : public QContactDetail
 {
 public:
@@ -84,5 +86,7 @@ public:
     void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
     void setCustomLabel(const QString& customLabel) {setValue(FieldCustomLabel, customLabel);}
 };
+
+QTM_END_NAMESPACE
 
 #endif

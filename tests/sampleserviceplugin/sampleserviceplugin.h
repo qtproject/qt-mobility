@@ -45,10 +45,12 @@
 #include <qserviceplugininterface.h>
 #include <qserviceinterfacedescriptor.h>
 
+QTM_USE_NAMESPACE
+
 class SampleServicePlugin : public QObject, public QServicePluginInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QServicePluginInterface)
+    Q_INTERFACES(QtMobility::QServicePluginInterface)
 
 public:
     ~SampleServicePlugin();

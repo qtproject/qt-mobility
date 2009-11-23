@@ -55,6 +55,7 @@
 #include <utf.h>       	// CnvUtfConverter
 #include <apmrec.h>		// TDataRecognitionResult
 
+QTM_BEGIN_NAMESPACE
 class QMessageContentContainerPrivate
 {
     Q_DECLARE_PUBLIC(QMessageContentContainer)
@@ -124,5 +125,7 @@ public:
     static QMessageContentContainerId bodyContentId();
 
 };
+
+QTM_END_NAMESPACE
 
 #endif

@@ -44,6 +44,9 @@
 
 #include <QRegExp>
 
+
+QTM_BEGIN_NAMESPACE
+
 namespace {
 
 quint64 messageStatusMask(const QString &field)
@@ -572,3 +575,5 @@ bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::L
     return (lhs.toString(true) == rhs.toString(true));
 }
 
+
+QTM_END_NAMESPACE

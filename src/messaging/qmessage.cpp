@@ -48,6 +48,8 @@
 #include <QTextCodec>
 #include <QDebug>
 
+QTM_BEGIN_NAMESPACE
+
 namespace {
 
 QList<QByteArray> charsets;
@@ -582,4 +584,4 @@ QByteArray QMessage::preferredCharsetFor(const QString &text)
     return QByteArray();
 }
 
-
+QTM_END_NAMESPACE

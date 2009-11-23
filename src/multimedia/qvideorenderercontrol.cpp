@@ -43,6 +43,8 @@
 
 #include <qmediacontrol_p.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoRendererControl
     \preliminary
@@ -109,3 +111,7 @@ QVideoRendererControl::~QVideoRendererControl()
 
     Sets the \a surface a video producer renders to.
 */
+
+#include "moc_qvideorenderercontrol.cpp"
+QTM_END_NAMESPACE
+

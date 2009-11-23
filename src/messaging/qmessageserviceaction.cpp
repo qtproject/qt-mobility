@@ -43,6 +43,9 @@
 #include "qmessageserviceaction_symbian_p.h"
 #endif
 
+
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageServiceAction
 
@@ -204,7 +207,8 @@
   
     Returns true if the action can be initiated; otherwise returns false.
     
-    Not implemented on QMF platform.
+    On the QMF platform implementation of this function is left as a task for system 
+    integrators.
     
     \sa QMessage::type()
 */
@@ -257,7 +261,8 @@
 
     Returns true if the action can be initiated; otherwise returns false.
     
-    Not implemented on QMF platform.
+    On the QMF platform implementation of this function is left as a task for system 
+    integrators.
     
     \sa QMessageId, QMessage::type()
 */
@@ -337,3 +342,5 @@
     Returns a value indicating the last error condition encountered by the action.
 */
 
+#include "moc_qmessageserviceaction.cpp"
+QTM_END_NAMESPACE

@@ -44,6 +44,8 @@
 
 #include <qmediacontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QVideoOutputControl : public QMediaControl
 {
     Q_OBJECT
@@ -75,5 +77,7 @@ protected:
 
 #define QVideoOutputControl_iid "com.nokia.Qt.QVideoOutputControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoOutputControl, QVideoOutputControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif

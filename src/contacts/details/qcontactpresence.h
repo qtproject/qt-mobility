@@ -50,6 +50,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactPresence : public QContactDetail
 {
@@ -91,6 +93,8 @@ public:
     void Q_DECL_DEPRECATED setStatusMessage(const QString& statusMessage) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldStatusMessage, statusMessage);}
     QString Q_DECL_DEPRECATED statusMessage() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldStatusMessage);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

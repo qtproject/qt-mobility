@@ -43,6 +43,8 @@
 #include <QDataStream>
 #include <MAPIUtil.h>
 
+QTM_BEGIN_NAMESPACE
+
 #ifdef _WIN32_WCE
 
 QMessageAccountId QMessageAccountIdPrivate::from(const MapiEntryId &storeKey)
@@ -145,3 +147,4 @@ uint qHash(const QMessageAccountId &id)
     return qHash(id.d_ptr->_storeRecordKey);
 }
 
+QTM_END_NAMESPACE

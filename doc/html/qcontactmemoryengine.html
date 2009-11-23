@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactmemorybackend.cpp -->
 <head>
-  <title>QContactMemoryEngine Class Reference</title>
+  <title>Qt Mobility 1.0: QContactMemoryEngine Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -29,6 +29,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMap&lt;QString, QContactDetailDefinition&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#detailDefinitions">detailDefinitions</a></b> ( const QString &amp; <i>contactType</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#filterSupported">filterSupported</a></b> ( const QContactFilter &amp; <i>filter</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#hasFeature">hasFeature</a></b> ( QContactManager::ManagerFeature <i>feature</i>, const QString &amp; <i>contactType</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#implementationVersion">implementationVersion</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#managerName">managerName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#managerParameters">managerParameters</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactRelationship&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#relationships">relationships</a></b> ( const QString &amp; <i>relationshipType</i>, const QContactId &amp; <i>participantId</i>, QContactRelationshipFilter::Role <i>role</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
@@ -51,7 +52,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#waitForRequestProgress">waitForRequestProgress</a></b> ( QContactAbstractRequest * <i>req</i>, int <i>msecs</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>38 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
+<li><div bar="2" class="fn"></div>37 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -76,7 +77,7 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>38 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
+<li><div class="fn"></div>37 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
 <li><div class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>7 signals inherited from <a href="qcontactmanagerengine.html#signals">QContactManagerEngine</a></li>
@@ -114,6 +115,8 @@
 <p>Reimplemented from <a href="qcontactmanagerengine.html#filterSupported">QContactManagerEngine::filterSupported</a>().</p>
 <h3 class="fn"><a name="hasFeature"></a>bool QContactMemoryEngine::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#hasFeature">QContactManagerEngine::hasFeature</a>().</p>
+<h3 class="fn"><a name="implementationVersion"></a>int QContactMemoryEngine::implementationVersion () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qcontactmanagerengine.html#implementationVersion">QContactManagerEngine::implementationVersion</a>().</p>
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactMemoryEngine::managerName () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#managerName">QContactManagerEngine::managerName</a>().</p>
 <h3 class="fn"><a name="managerParameters"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; QContactMemoryEngine::managerParameters () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -159,6 +162,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

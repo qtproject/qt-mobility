@@ -43,8 +43,11 @@
 #ifndef NOTIFICATIONMONITORCALLBACK_H_
 #define NOTIFICATIONMONITORCALLBACK_H_
 
+#include <qmobilityglobal.h>
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
+
+QTM_BEGIN_NAMESPACE
 
 class INotificationMonitorCallback
 {
@@ -53,5 +56,7 @@ public:
     virtual void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus) =0;
 
 };
+
+QTM_END_NAMESPACE
 
 #endif /* NOTIFICATIONMONITORCALLBACK_H_ */

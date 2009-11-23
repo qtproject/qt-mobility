@@ -47,6 +47,8 @@
 
 #include <qmediaserviceproviderplugin.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 typedef QMap<QString,QObjectList> ObjectListMap;
 Q_GLOBAL_STATIC(ObjectListMap, staticMediaPlugins);
@@ -126,3 +128,5 @@ void QMediaPluginLoader::load()
         }
     }
 }
+QTM_END_NAMESPACE
+

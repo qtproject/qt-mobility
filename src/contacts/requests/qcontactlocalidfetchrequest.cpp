@@ -42,6 +42,8 @@
 #include "qcontactlocalidfetchrequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactIdFetchRequest
   \brief The QContactIdFetchRequest class allows a client to asynchronously
@@ -103,3 +105,7 @@ QList<QContactLocalId> QContactLocalIdFetchRequest::ids() const
     Q_D(const QContactLocalIdFetchRequest);
     return d->m_ids;
 }
+
+#include "moc_qcontactlocalidfetchrequest.cpp"
+
+QTM_END_NAMESPACE

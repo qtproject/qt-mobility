@@ -41,6 +41,8 @@
 #include "qmessagefolderid.h"
 #include "qmessagefolderid_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageFolderId::QMessageFolderId()
  : d_ptr(0)
 {
@@ -115,3 +117,5 @@ uint qHash(const QMessageFolderId &id)
 {
     return qHash(id.toString());
 }
+
+QTM_END_NAMESPACE

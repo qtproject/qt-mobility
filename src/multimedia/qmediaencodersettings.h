@@ -48,6 +48,8 @@
 #include <qmobilityglobal.h>
 #include <qtmedianamespace.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 class QAudioEncoderSettingsPrivate;
 class Q_MEDIA_EXPORT QAudioEncoderSettings
@@ -152,5 +154,7 @@ public:
 private:
     QSharedDataPointer<QImageEncoderSettingsPrivate> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif

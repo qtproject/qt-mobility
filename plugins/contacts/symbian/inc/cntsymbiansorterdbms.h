@@ -49,6 +49,7 @@ class CContactDatabase;
 class CContactIdArray;
 class CntTransformContact;
 
+QTM_USE_NAMESPACE
 class CntSymbianSorterDbms : public CntAbstractContactSorter
 {
 public:

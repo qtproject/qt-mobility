@@ -45,6 +45,8 @@
 #include <MAPIUtil.h>
 #include <QDebug>
 
+QTM_BEGIN_NAMESPACE
+
 #ifdef _WIN32_WCE
 
 QMessageFolderId QMessageFolderIdPrivate::from(const MapiRecordKey &folderKey, const MapiEntryId &storeKey, const MapiEntryId &entryId)
@@ -211,11 +213,14 @@ bool QMessageFolderId::isValid() const
 #endif
 }
 
-uint qHash(const QMessageFolderId &id)
+uint QtMobility::qHash(const QTM_PREPEND_NAMESPACE(QMessageFolderId) &id)
 {
 #ifdef _WIN32_WCE
-    return (qHash(id.d_ptr->_valid) ^ qHash(id.d_ptr->_entryId) ^ qHash(id.d_ptr->_storeRecordKey));
+    return (QT_PREPEND_NAMESPACE(qHash)(id.d_ptr->_valid) ^ qHash(id.d_ptr->_entryId) ^ qHash(id.d_ptr->_storeRecordKey));
 #else
-    return (qHash(id.d_ptr->_valid) ^ qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
+    return (QT_PREPEND_NAMESPACE(qHash)(id.d_ptr->_valid) ^ qHash(id.d_ptr->_folderRecordKey) ^ qHash(id.d_ptr->_storeRecordKey));
 #endif
 }
+QTM_END_NAMESPACE
+
+

@@ -40,8 +40,13 @@
 ****************************************************************************/
 #ifndef QMESSAGEADDRESSHELPERPRIVATE_H
 #define QMESSAGEADDRESSHELPERPRIVATE_H
+#include <qmobilityglobal.h>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 void qParseMailbox(QString& input, QString& name, QString& address, QString& suffix, bool& delimeterFound, bool& endDelimeterFound);
+
+QTM_END_NAMESPACE
 
 #endif

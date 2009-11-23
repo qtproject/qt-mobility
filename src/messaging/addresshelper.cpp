@@ -42,101 +42,7 @@
 #include "addresshelper_p.h"
 #include <qpair.h>
 
-struct CharacterProcessor
-{
-    virtual ~CharacterProcessor();
-
-    void processCharacters(const QString& input);
-    virtual void process(QChar, bool, bool, int) = 0;
-
-    virtual void finished();
-};
-
-CharacterProcessor::~CharacterProcessor()
-{
-}
-
-void CharacterProcessor::processCharacters(const QString& input)
-{
-    int commentDepth = 0;
-    bool quoted = false;
-    bool escaped = false;
-
-    const QChar* it = input.constData();
-    const QChar* const end = it + input.length();
-    for ( ; it != end; ++it ) {
-        if ( !escaped && ( *it == '\\' ) ) {
-            escaped = true;
-            continue;
-        }
-
-        bool quoteProcessed = false;
-        if ( *it == '(' && !escaped && !quoted ) {
-            commentDepth += 1;
-        }
-        else if ( !quoted && *it == '"' && !escaped ) {
-            quoted = true;
-            quoteProcessed = true;
-        }
-
-        process((*it), quoted, escaped, commentDepth);
-
-        if ( *it == ')' && !escaped && !quoted && ( commentDepth > 0 ) ) {
-            commentDepth -= 1;
-        }
-        else if ( quoted && *it == '"' && !quoteProcessed && !escaped ) {
-            quoted = false;
-        }
-
-        escaped = false;
-    }
-
-    finished();
-}
-
-void CharacterProcessor::finished()
-{
-}
-
-struct GroupDetector : public CharacterProcessor
-{
-    GroupDetector();
-
-    virtual void process(QChar, bool, bool, int);
-
-    bool result() const;
-
-private:
-    bool _nameDelimiter;
-    bool _listTerminator;
-};
-
-GroupDetector::GroupDetector()
-    : _nameDelimiter(false),
-      _listTerminator(false)
-{
-}
-
-void GroupDetector::process(QChar character, bool quoted, bool escaped, int commentDepth)
-{
-    if ( character == ':' && !_nameDelimiter && !quoted && !escaped && commentDepth == 0 )
-        _nameDelimiter = true;
-    else if ( character == ';' && !_listTerminator && _nameDelimiter && !quoted && !escaped && commentDepth == 0 )
-        _listTerminator = true;
-}
-
-bool GroupDetector::result() const
-{
-    return _listTerminator;
-}
-
-bool qContainsGroupSpecifier(const QString& input)
-{
-    GroupDetector detector;
-    detector.processCharacters(input);
-    return detector.result();
-}
-
+QTM_BEGIN_NAMESPACE
 static QPair<int, int> findDelimiters(const QString& text)
 {
     int first = -1;
@@ -211,6 +117,7 @@ void qParseMailbox(QString& input, QString& name, QString& address, QString& suf
             else
                 address = input.mid(delimiters.first + 1, (delimiters.second - delimiters.first - 1)).trimmed();
         }
+        name = name.trimmed();
     }
 
     if (delimiters.first == -1)
@@ -223,3 +130,5 @@ void qParseMailbox(QString& input, QString& name, QString& address, QString& suf
     else
         endDelimeterFound = true;
 }
+
+QTM_END_NAMESPACE

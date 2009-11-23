@@ -57,6 +57,8 @@
 #include "qcontactrelationship.h"
 #include "qcontactsortorder.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactFilter;
 class QContactAction;
 
@@ -109,7 +111,6 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
-    QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve contacts of the given type
 
     QContact contact(const QContactLocalId& contactId) const;  // retrieve a contact
 
@@ -179,5 +180,7 @@ private:
     // private data pointer
     QContactManagerData* d;
 };
+
+QTM_END_NAMESPACE
 
 #endif

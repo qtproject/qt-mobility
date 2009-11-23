@@ -48,6 +48,8 @@
 
 #include <QList>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactSaveRequestPrivate;
 class Q_CONTACTS_EXPORT QContactSaveRequest : public QContactAbstractRequest
 {
@@ -71,5 +73,7 @@ private:
     friend class QContactManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QContactSaveRequest)
 };
+
+QTM_END_NAMESPACE
 
 #endif

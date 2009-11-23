@@ -42,6 +42,7 @@
 #include <QtCore>
 #include <qservicecontext.h>
 
+QTM_USE_NAMESPACE
 class MyServiceContext : public QServiceContext
 {
     Q_OBJECT

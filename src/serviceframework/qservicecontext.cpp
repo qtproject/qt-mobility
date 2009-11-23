@@ -41,7 +41,7 @@
 
 #include "qservicecontext.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QServiceContext
@@ -132,4 +132,6 @@ void QServiceContext::setClientName(const QString& name)
     m_displayName = name;
 }
 
-QT_END_NAMESPACE
+#include "moc_qservicecontext.cpp"
+
+QTM_END_NAMESPACE

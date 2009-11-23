@@ -38,21 +38,29 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CNTSRVCONNECTION_H
-#define CNTSRVCONNECTION_H
+#ifndef CNTSYMBIANDATABASE_H
+#define CNTSYMBIANDATABASE_H
 
 // System includes
 #include <QList>
+#include <QObject>
 #include <e32std.h>
+#ifdef CNTSYMBIANDATABASE_UNIT_TEST
+#include "mock_cntdb.h"
+#else
 #include <cntdb.h>
 #include <cntdbobs.h>
+#endif
 
 // User includes
 #include "qcontactmanager.h"
 
 // Forward declarations
+QTM_BEGIN_NAMESPACE
 class QContactManagerEngine;
+QTM_END_NAMESPACE
 
+QTM_USE_NAMESPACE
 // External data types
 
 // Constants
@@ -74,9 +82,6 @@ public:
     // From MContactDbObserver
     void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
 
-signals:
-    void ownCardChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
-
 private:
     CContactDatabase* m_contactDatabase;
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
@@ -84,11 +89,10 @@ private:
 #endif
     QContactManagerEngine *m_engine;
     QList<QContactLocalId> m_contactsEmitted;
-    QContactLocalId m_ownCardId;
+    QContactLocalId m_currentOwnCardId;
+#ifdef CNTSYMBIANDATABASE_UNIT_TEST
+    friend class TestCntSymbianDatabase;
+#endif  //CNTSYMBIANDATABASE_UNIT_TEST
 };
 
-
-
-
-
-#endif CNTSRVCONNECTION_H
+#endif // CNTSYMBIANDATABASE_H

@@ -42,6 +42,8 @@
 #include "qmessageaddress_p.h"
 #include "addresshelper_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageAddress
 
@@ -219,4 +221,4 @@ void QMessageAddress::parseEmailAddress(const QString &emailAddress, QString *na
     Qt-style synonym for QList<QMessageAddress>
 */
 
-
+QTM_END_NAMESPACE

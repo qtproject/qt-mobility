@@ -41,6 +41,9 @@
 #include "qmessageordering.h"
 #include "qmessageordering_p.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageOrdering
 
@@ -225,3 +228,5 @@ bool QMessageOrdering::operator!=(const QMessageOrdering& other) const
     
     \sa QMessage::size()
 */
+
+QTM_END_NAMESPACE

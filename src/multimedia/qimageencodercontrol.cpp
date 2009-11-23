@@ -42,6 +42,8 @@
 #include <qimageencodercontrol.h>
 #include <QtCore/qstringlist.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QImageEncoderControl
     \preliminary
@@ -146,3 +148,7 @@ QImageEncoderControl::~QImageEncoderControl()
 
     Sets the selected image encoder \a settings.
 */
+
+#include "moc_qimageencodercontrol.cpp"
+QTM_END_NAMESPACE
+

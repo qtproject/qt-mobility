@@ -42,6 +42,8 @@
 #include "qcontactid.h"
 #include "qcontactid_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactId
  * \brief A QContactId uniquely identifies a contact in a particular manager.
@@ -125,3 +127,5 @@ void QContactId::setLocalId(const QContactLocalId& id)
 {
     d->m_localId = id;
 }
+
+QTM_END_NAMESPACE

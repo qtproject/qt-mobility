@@ -45,6 +45,7 @@
 
 #include <QDebug>
 
+QTM_USE_NAMESPACE
 class tst_QMallocPool : public QObject
 {
     Q_OBJECT

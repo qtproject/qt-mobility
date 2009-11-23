@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef QCONTACTTRACKERBACKEND_P_H
 #define QCONTACTTRACKERBACKEND_P_H
 
@@ -60,11 +59,7 @@
 #include <QtTracker/QLive>
 
 using namespace SopranoLive;
-#include "qcontact.h"
-#include "qcontactname.h"
-#include "qcontactphonenumber.h"
-#include "qcontactmanager.h"
-#include "qcontactmanagerenginefactory.h"
+#include "qtcontacts.h"
 #include "qtrackercontactasyncrequest.h"
 
 class QContactAbstractRequest;
@@ -74,14 +69,18 @@ class QContactTrackerEngineData : public QSharedData
 {
 public:
     QContactTrackerEngineData()
-        : QSharedData(), m_refCount(QAtomicInt(1))
+        : QSharedData(), m_refCount(QAtomicInt(1)),
+        m_engineName(QString("tracker")),
+        m_engineVersion(0)
     {
     }
 
     QContactTrackerEngineData(const QContactTrackerEngineData& other)
         : QSharedData(other), m_refCount(QAtomicInt(1)),
         m_lastUsedId(other.m_lastUsedId),
-        m_definitions(other.m_definitions)
+        m_definitions(other.m_definitions),
+        m_engineName(other.m_engineName),
+        m_engineVersion(other.m_engineVersion)
     {
     }
 
@@ -93,13 +92,16 @@ public:
     mutable QContactLocalId m_lastUsedId;
     mutable QMap<QString, QContactDetailDefinition> m_definitions;
     mutable QMap<QContactAbstractRequest*, QTrackerContactAsyncRequest*> m_requests;
+    QString m_engineName;
+    int m_engineVersion;
 };
 
-class QTCONTACTS_EXPORT QContactTrackerEngine : public QContactManagerEngine
+class QContactTrackerEngine : public QContactManagerEngine
 {
 Q_OBJECT
 
 public:
+    QContactTrackerEngine(const QString& managerName, int managerVersion, const QMap<QString, QString>& parameters);
     QContactTrackerEngine(const QMap<QString, QString>& parameters);
     QContactTrackerEngine(const QContactTrackerEngine& other);
     ~QContactTrackerEngine();
@@ -122,10 +124,7 @@ public:
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(QContactManager::Error& error) const;
-    QContactDetailDefinition detailDefinition(const QString& definitionId, QContactManager::Error& error) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
-    bool removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
@@ -133,9 +132,16 @@ public:
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManagerInfo::ManagerFeature feature) const;
+    bool hasFeature(QContactManager::ManagerFeature feature) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
+
+    /* Version Reporting */
+    QString managerName() const;
+    int implementationVersion() const;
+
+    /* Synthesise the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 
 private:

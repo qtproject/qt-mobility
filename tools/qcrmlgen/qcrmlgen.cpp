@@ -60,6 +60,8 @@
 #include <QDebug>
 #include <QCloseEvent>
 
+QTM_USE_NAMESPACE
+
 bool checkID(const QString &id)
 {
     if (id.length() > 8 || id.length() < 0)
@@ -146,9 +148,6 @@ QWidget *PathDelegate::createEditor(QWidget *parent,
     if (!item->text().isEmpty()) {
         editor->setText(item->text());
     }
-
-    QRegExpValidator *validator = new QRegExpValidator(QRegExp("^/.*"), editor);
-    editor->setValidator(validator);
 
     return editor;
 }
@@ -242,9 +241,11 @@ void EditorWidget::addRow()
 
     QTableWidgetItem *item;
     item = new QTableWidgetItem;
+    item->setToolTip("Must be a hexidecimal number no longer than 8 digits");
     m_tableWidget->setItem(row, EditorWidget::KeyId, item);
 
     item = new QTableWidgetItem("/");
+    item->setToolTip("Must not be empty and must start with a /");
     m_tableWidget->setItem(row, EditorWidget::Path, item);
 
 #ifdef INCL_TYPE
@@ -436,7 +437,7 @@ bool EditorWidget::verifyContents()
         path = m_tableWidget->item(i, EditorWidget::Path)->text();
         if (path.isEmpty() || !path.startsWith("/")) {
             QMessageBox::warning(this, tr("Invalid Path"),
-                            tr("The Path field is invalid, it must not be empty and start with a /"));
+                            tr("The Key Path field is invalid, it must not be empty and start with a /"));
             m_tableWidget->setCurrentCell(i, EditorWidget::Path);
             m_tableWidget->setFocus();
             return false;

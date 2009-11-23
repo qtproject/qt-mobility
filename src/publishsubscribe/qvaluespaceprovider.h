@@ -42,7 +42,7 @@
 #ifndef QVALUESPACEPROVIDER_H
 #define QVALUESPACEPROVIDER_H
 
-#include "qpublishsubscribeglobal.h"
+#include "qmobilityglobal.h"
 #include "qvaluespace.h"
 
 #include <QObject>
@@ -50,7 +50,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QValueSpaceProviderPrivate;
 class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceProvider : public QObject
@@ -99,7 +99,7 @@ private:
     QValueSpaceProviderPrivate *d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

@@ -47,6 +47,8 @@
 
 #include <qmediaresource.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 class Q_MEDIA_EXPORT QMetaDataControl : public QMediaControl
 {
@@ -79,5 +81,7 @@ protected:
 
 #define QMetaDataControl_iid "com.nokia.Qt.QMetaDataControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMetaDataControl, QMetaDataControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif  // QMETADATAPROVIDER_H

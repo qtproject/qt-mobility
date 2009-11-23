@@ -58,6 +58,8 @@
 
 #include <QList>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactIntersectionFilterPrivate : public QContactFilterPrivate
 {
 public:
@@ -86,5 +88,7 @@ public:
 
     QList<QContactFilter> m_filters;
 };
+
+QTM_END_NAMESPACE
 
 #endif

@@ -50,6 +50,8 @@
 #include "qtcontactsglobal.h"
 #include "qcontactdetails.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactFilter;
 
 class QContactManagerData;
@@ -87,5 +89,7 @@ private:
     friend class QContactManager;
     QContactManagerData * d;
 };
+
+QTM_END_NAMESPACE
 
 #endif

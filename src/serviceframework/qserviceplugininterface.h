@@ -47,7 +47,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptor;
 class QServiceContext;
@@ -66,10 +66,11 @@ public:
     virtual void installService();
     virtual void uninstallService();
 };
+QTM_END_NAMESPACE
 
-Q_DECLARE_INTERFACE(QServicePluginInterface, "com.nokia.qt.QServicePluginInterface/1.0")
-
-QT_END_NAMESPACE
+//moc doesn't understand QTM_PREPEND_NAMESPACE() macro. we have to be explicit
+//Q_DECLARE_INTERFACE(QTM_PREPEND_NAMESPACE(QServicePluginInterface), "com.nokia.qt.QServicePluginInterface/1.0")
+Q_DECLARE_INTERFACE(QtMobility::QServicePluginInterface, "com.nokia.qt.QServicePluginInterface/1.0")
 
 QT_END_HEADER
 #endif

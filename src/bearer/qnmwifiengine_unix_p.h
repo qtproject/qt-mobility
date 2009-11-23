@@ -67,7 +67,7 @@
 
 
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
 
@@ -157,7 +157,7 @@ private slots:
     void slotActivationFinished(QDBusPendingCallWatcher*);
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif
 

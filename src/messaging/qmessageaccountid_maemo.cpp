@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessageaccountid.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageAccountId::QMessageAccountId()
 {
 }
@@ -90,4 +92,4 @@ uint qHash(const QMessageAccountId &id)
     Q_UNUSED(id)
     return 0; // stub
 }
-
+QTM_END_NAMESPACE

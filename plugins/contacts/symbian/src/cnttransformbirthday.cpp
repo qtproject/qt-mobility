@@ -42,7 +42,10 @@
 
 QList<CContactItemField *> CntTransformBirthday::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactBirthday::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to birthday
 	const QContactBirthday &birthday(static_cast<const QContactUrl&>(detail));
