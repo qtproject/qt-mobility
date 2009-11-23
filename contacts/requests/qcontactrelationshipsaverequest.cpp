@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactRelationshipSaveRequest
- * \brief Allows a client to asynchronously request that certain relationships be saved in a contacts store
+ * \brief The QContactRelationshipSaveRequest class allows a client to asynchronously request that certain relationships be saved in a contacts store
  */
 
 /*!

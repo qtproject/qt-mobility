@@ -39,48 +39,31 @@
 **
 ****************************************************************************/
 
-#include "qcontactactionfactory.h"
+#ifndef QTRACKERRELATIONSHIPFETCHREQUEST_H_
+#define QTRACKERRELATIONSHIPFETCHREQUEST_H_
 
-/*!
- * \class QContactActionFactory
- * \brief The QContactActionFactory class provides an interface for clients to retrieve instances of action implementations
- */
+#include <QObject>
+#include <qtrackercontactasyncrequest.h>
+#include <QPair>
+#include <QList>
+#include <QtTracker/QLive>
+#include <QtTracker/ontologies/nco.h>
+#include <qtcontacts.h>
 
-QContactActionFactory::~QContactActionFactory()
+class QContactAbstractRequest;
+
+class QTrackerRelationshipFetchRequest: public QObject, public QTrackerContactAsyncRequest
 {
-}
+    Q_OBJECT
+public:
+    QTrackerRelationshipFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
+    virtual ~QTrackerRelationshipFetchRequest();
 
-uint qHash(const QContactActionDescriptor& ad)
-{
-    return qHash(ad.actionName()) + qHash(ad.vendorName()) + ad.implementationVersion();
-}
+private slots:
+    void modelUpdated();
 
-/*!
- * \fn QContactActionFactory::~QContactActionFactory()
- * Clears any memory in use by this factory
- */
+private:
+    SopranoLive::LiveNodes query;
+};
 
-/*!
- * \fn QContactActionFactory::name() const
- * Returns the name of this factory.  The name is used to identify the factory
- * when it is retrieved using the Qt Plugin framework.
- */
-
-/*!
- * \fn QContactActionFactory::actionDescriptors() const
- * Returns a list of descriptors of the actions of which instances of their implementations are able to be retrieved
- * from this factory.
- */
-
-/*!
- * \fn QContactActionFactory::instance(const QContactActionDescriptor& descriptor) const
- * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor.
- * The caller takes ownership of the action instance returned from this function, and must delete it when
- * they are finished using it in order to avoid a memory leak.
- */
-
-/*!
- * \fn QContactActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
- * Returns the metadata associated with the action identified by the given \a descriptor
- */
-
+#endif /* QTRACKERRELATIONSHIPFETCHREQUEST_H_ */

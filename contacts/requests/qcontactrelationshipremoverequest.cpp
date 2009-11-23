@@ -44,7 +44,7 @@
 
 /*!
  * \class QContactRelationshipRemoveRequest
- * \brief Allows a client to asynchronously request that certain relationships be removed from a contacts store
+ * \brief The QContactRelationshipRemoveRequest class allows a client to asynchronously request that certain relationships be removed from a contacts store
  */
 
 /*!

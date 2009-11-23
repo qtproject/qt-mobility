@@ -58,7 +58,7 @@
 /*!
  * \class QContactManagerEngine
  * \preliminary
- * \brief This class is the interface for all implementations of
+ * \brief The QContactManagerEngine class is the interface for all implementations of
  * the contact manager backend functionality.
  *
  * Instances of this class are usually provided by a
