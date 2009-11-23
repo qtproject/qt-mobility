@@ -44,6 +44,8 @@
 
 #include <qmediastreamscontrol.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerPlayerSession;
 
 class QGstreamerStreamsControl : public QMediaStreamsControl

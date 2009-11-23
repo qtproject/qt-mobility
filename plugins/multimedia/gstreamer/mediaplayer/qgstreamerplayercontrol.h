@@ -49,6 +49,8 @@
 
 #include <limits.h>
 
+QTM_USE_NAMESPACE
+
 class QMediaPlaylist;
 
 class QGstreamerPlayerSession;

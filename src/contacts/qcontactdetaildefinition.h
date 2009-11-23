@@ -51,6 +51,8 @@
 #include "qtcontactsglobal.h"
 #include "qcontactdetaildefinitionfield.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactDetailDefinitionData;
 class Q_CONTACTS_EXPORT QContactDetailDefinition
 {
@@ -99,5 +101,7 @@ public:
 private:
     QSharedDataPointer<QContactDetailDefinitionData> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif

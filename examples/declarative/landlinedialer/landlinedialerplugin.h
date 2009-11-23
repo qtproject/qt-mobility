@@ -46,11 +46,13 @@
 
 #include <qserviceplugininterface.h>
 
+QTM_USE_NAMESPACE
+
 class LandlineDialerPlugin : public QObject,
                                 public QServicePluginInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QServicePluginInterface)
+    Q_INTERFACES(QtMobility::QServicePluginInterface)
 public:
     QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
                             QServiceContext* context,

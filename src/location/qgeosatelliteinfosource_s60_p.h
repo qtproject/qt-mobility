@@ -51,6 +51,8 @@
 
 #define MAX_SIZE 5
 
+QTM_BEGIN_NAMESPACE
+
 // CLASS DECLARATION
 //forward declaration
 class CQMLBackendAO;
@@ -251,5 +253,7 @@ private:
      */
     TUint8  mModuleFlags;
 };
+
+QTM_END_NAMESPACE
 
 #endif /* QGEOSATELLITEINFOSOURCE60_H_ */

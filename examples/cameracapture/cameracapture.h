@@ -52,9 +52,7 @@ namespace Ui {
 #include <QMainWindow>
 #include <QDir>
 
-class QMediaRecorder;
-class QCamera;
-class QMediaService;
+QTM_USE_NAMESPACE
 
 class CameraCapture : public QMainWindow
 {

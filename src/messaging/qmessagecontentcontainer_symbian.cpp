@@ -42,6 +42,8 @@
 #include <QStringList>
 #include "qmessagecontentcontainer_symbian_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageContentContainerPrivate& QMessageContentContainerPrivate::operator=(const QMessageContentContainerPrivate &other)
 {
 	q_ptr = other.q_ptr;
@@ -367,3 +369,5 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
 {
 	d_ptr->setDerivedMessage(derived);
 }
+
+QTM_END_NAMESPACE

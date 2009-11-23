@@ -43,6 +43,8 @@
 
 #include "cnttransformcontactdata.h"
 
+QTM_USE_NAMESPACE
+
 class CntTransformOrganisation : public CntTransformContactData
 {
 protected:

@@ -43,6 +43,8 @@
 
 #include <qmailid.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderIdPrivate
 {
 public:
@@ -127,3 +129,5 @@ uint qHash(const QMessageFolderId &id)
 {
     return qHash(QmfHelpers::convert(id));
 }
+
+QTM_END_NAMESPACE

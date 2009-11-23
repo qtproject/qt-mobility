@@ -67,6 +67,7 @@
 
 Q_DECLARE_METATYPE(QList<int>)
 
+QTM_USE_NAMESPACE
 class tst_QPacketProtocol : public QObject
 {
     Q_OBJECT

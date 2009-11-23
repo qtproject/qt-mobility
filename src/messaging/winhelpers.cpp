@@ -114,7 +114,9 @@ extern "C++"
     }
 }
 #define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)
-#endif //IID_PPV_ARGS
+#endif //IID_PPV_ARGSA
+
+QTM_BEGIN_NAMESPACE
 
 namespace WinHelpers
 {
@@ -4886,3 +4888,5 @@ void MapiSession::flushNotifyQueue()
 
 
 #include "winhelpers.moc"
+#include "moc_winhelpers_p.cpp"
+QTM_END_NAMESPACE

@@ -53,6 +53,8 @@
 // We mean it.
 //
 
+#include <qmobilityglobal.h>
+
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
@@ -79,7 +81,9 @@
 #define HAL_DEVICES_LAPTOPPANEL_INTERFACE "org.freedesktop.Hal.Device.LaptopPanel"
 #define HAL_DEVICE_KILLSWITCH_INTERFACE "org.freedesktop.Hal.Device.KillSwitch"
 
- typedef struct halProp {
+QTM_BEGIN_NAMESPACE
+
+typedef struct halProp {
     QString propertyName;
     bool added;
     bool removed;
@@ -87,7 +91,11 @@
 
 typedef QList<HalProperty> QHalPropertyList;
 
-Q_DECLARE_METATYPE(QHalPropertyList)
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QHalPropertyList))
+
+QTM_BEGIN_NAMESPACE
 
 class QHalInterfacePrivate;
 class QHalInterface : public QObject
@@ -170,4 +178,7 @@ public:
 private:
         QHalDeviceKillSwitchInterfacePrivate *d;
 };
+
+QTM_END_NAMESPACE
+
 #endif //

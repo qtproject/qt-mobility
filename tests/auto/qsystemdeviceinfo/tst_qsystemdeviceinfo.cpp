@@ -42,6 +42,7 @@
 #include "qsysteminfo.h"
 #include "../qsysteminfotestcommon.h"
 
+QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemDeviceInfo::BatteryStatus);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::PowerState);
 Q_DECLARE_METATYPE(QSystemDeviceInfo::InputMethodFlags);

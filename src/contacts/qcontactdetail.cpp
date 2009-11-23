@@ -43,6 +43,8 @@
 #include "qcontactdetail_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Definitions of predefined string constants */
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextOther, "Other");
@@ -331,3 +333,4 @@ QVariantMap QContactDetail::values() const
  * \sa value()
  */
 
+QTM_END_NAMESPACE

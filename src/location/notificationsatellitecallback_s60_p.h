@@ -43,10 +43,13 @@
 #ifndef NOTIFICATIONSATELLITECALLBACK_H_
 #define NOTIFICATIONSATELLITECALLBACK_H_
 
+#include "qmobilityglobal.h"
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>
 #include <lbssatellite.h>
+
+QTM_BEGIN_NAMESPACE
 
 class INotificationSatelliteCallback
 {
@@ -56,5 +59,7 @@ public:
 
     virtual void updatePosition(TPositionSatelliteInfo  aSatInfo, int error, bool isStartUpdate) = 0 ;
 };
+
+QTM_END_NAMESPACE
 
 #endif /* NOTIFICATIONSATELLITECALLBACK_H_ */

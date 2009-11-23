@@ -45,6 +45,8 @@
 
 #include <qmediacontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QMediaFormatControl : public QMediaControl
 {
     Q_OBJECT
@@ -64,5 +66,7 @@ protected:
 
 #define QMediaFormatControl_iid "com.nokia.Qt.QMediaFormatControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaFormatControl, QMediaFormatControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif // QMEDIAFORMATCONTROL_H

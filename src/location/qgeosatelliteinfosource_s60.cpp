@@ -47,6 +47,9 @@
 #include "qgeosatelliteinfosource.h"
 
 #include <QList>
+
+QTM_BEGIN_NAMESPACE
+
 // constructor
 CQGeoSatelliteInfoSourceS60::CQGeoSatelliteInfoSourceS60(QObject* aParent) : QGeoSatelliteInfoSource(aParent),
         mCurrentModuleId(TUid::Null()),
@@ -613,5 +616,5 @@ void CQGeoSatelliteInfoSourceS60::disconnectNotify(const char *aSignal)
 
 }
 
-
+QTM_END_NAMESPACE
 

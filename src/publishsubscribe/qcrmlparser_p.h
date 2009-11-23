@@ -53,9 +53,12 @@
 // We mean it.
 //
 
+#include <qmobilityglobal.h>
 #include <QList>
 #include <QString>
 #include <QXmlStreamReader>
+
+QTM_BEGIN_NAMESPACE
 
 class KeyData{
 public:
@@ -100,6 +103,8 @@ private:
     QString m_errorString;
     KeyData::Target m_target;
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -44,6 +44,7 @@
 
 #include <qvideooutputcontrol.h>
 
+QTM_USE_NAMESPACE
 class QWmpVideoOutputControl : public QVideoOutputControl
 {
     Q_OBJECT

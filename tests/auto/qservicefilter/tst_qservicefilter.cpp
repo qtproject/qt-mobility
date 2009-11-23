@@ -42,6 +42,7 @@
 #include <QtCore>
 #include <qservicefilter.h>
 
+QTM_USE_NAMESPACE
 class tst_QServiceFilter: public QObject
 {
     Q_OBJECT

@@ -50,6 +50,8 @@
 # define TESTDATA_DIR "."
 #endif
 
+QTM_USE_NAMESPACE
+
 class tst_DatabaseManager: public QObject
 {
     Q_OBJECT

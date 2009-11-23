@@ -2,9 +2,9 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- undocumented.qdoc -->
+<!-- audiorecorder.qdoc -->
 <head>
-  <title>Audio Recorder Example</title>
+  <title>Qt Mobility 1.0: Audio Recorder Example</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -21,9 +21,42 @@
 <li><a href="audiorecorder-main-cpp.html">audiorecorder/main.cpp</a></li>
 <li><a href="audiorecorder-audiorecorder-pro.html">audiorecorder/audiorecorder.pro</a></li>
 </ul>
+<p>This example shows how to create a simple audio recorder using the Qt Mobility Multimedia API.</p>
+<p>We can easily setup the capture when we create the objects using a <a href="qmediarecorder.html">QMediaRecorder</a> initialized with a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object.</p>
+<pre>        audiosource = new QAudioCaptureSource;
+        capture = new QMediaRecorder(audiosource);</pre>
+<p>Then we set up the display of a list of available sources to use</p>
+<pre>        for(int i = 0; i &lt; audiosource-&gt;deviceCount(); i++)
+            deviceBox-&gt;addItem(audiosource-&gt;name(i));</pre>
+<p>And available codecs</p>
+<pre>        QStringList codecs = capture-&gt;supportedAudioCodecs();
+        for(int i = 0; i &lt; codecs.count(); i++)
+            codecsBox-&gt;addItem(codecs.at(i));</pre>
+<p>We display a dialog for the user to select the appropriate codec and the input device to capture. Once selected we can use user interface objects like buttons to start and stop the recording and display elapsed time.</p>
+<pre>        for(int i = 0; i &lt; audiosource-&gt;deviceCount(); i++) {
+            if(deviceBox-&gt;itemText(idx).compare(audiosource-&gt;name(i)) == 0)
+                audiosource-&gt;setSelectedDevice(i);
+        }</pre>
+<p>Then use signals to indicate a change to the output filename, the codec and the audio source.</p>
+<p>When the button to record is pushed the toggleRecord() slot will start or stop the recording process using the <a href="qmediarecorder.html#record">QMediaRecorder::record</a>() and <a href="qmediarecorder.html#stop">QMediaRecorder::stop</a>() functions of the <a href="qmediarecorder.html">QMediaRecorder</a> object.</p>
+<pre>    void AudioRecorder::toggleRecord()
+    {
+        if(!active) {
+            recTime-&gt;setText(&quot;0 sec&quot;);
+            currentTime = 0;
+            capture-&gt;record();
+
+            button-&gt;setText(tr(&quot;Stop&quot;));
+            active = true;
+        } else {
+            capture-&gt;stop();
+            button-&gt;setText(tr(&quot;Record&quot;));
+            active = false;
+        }
+    }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -44,6 +44,8 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactDetailFilter
  * \brief The QContactDetailFilter class provides a filter based around a detail value criterion
@@ -137,3 +139,5 @@ QVariant QContactDetailFilter::value() const
     Q_D(const QContactDetailFilter);
     return d->m_exactValue;
 }
+
+QTM_END_NAMESPACE

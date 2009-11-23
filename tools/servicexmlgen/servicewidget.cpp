@@ -52,6 +52,8 @@
 #include <QPushButton>
 #include <QDebug>
 
+//QTM_USE_NAMESPACE
+
 ServiceWidget::ServiceWidget(QWidget *parent)
     : QWidget(parent),
       m_ifacesTabs(new InterfacesTabWidget),
@@ -97,7 +99,7 @@ ServiceWidget::ServiceWidget(QWidget *parent)
     setLayout(main);
 }
 
-void ServiceWidget::load(const ServiceMetaDataResults &data)
+void ServiceWidget::load(const QTM_PREPEND_NAMESPACE(ServiceMetaDataResults) &data)
 {
     m_name->setText(data.name);
     m_path->setText(data.location);

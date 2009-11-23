@@ -57,7 +57,7 @@
 
 #include <QMap>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
 class QNlaThread;
@@ -99,6 +99,6 @@ private:
     QMap<uint, QString> configurationInterface;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif

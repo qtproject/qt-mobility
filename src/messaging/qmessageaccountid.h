@@ -44,6 +44,8 @@
 #include <QList>
 #include <qmessageglobal.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountIdPrivate;
 
 class Q_MESSAGING_EXPORT QMessageAccountId 
@@ -76,4 +78,5 @@ typedef QList<QMessageAccountId> QMessageAccountIdList;
 
 Q_MESSAGING_EXPORT uint qHash(const QMessageAccountId &id);
 
+QTM_END_NAMESPACE
 #endif

@@ -49,6 +49,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactEmailAddress : public QContactDetail
 {
@@ -64,6 +66,8 @@ public:
     void setEmailAddress(const QString& emailAddress) {setValue(FieldEmailAddress, emailAddress);}
     QString emailAddress() const {return value(FieldEmailAddress);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -55,7 +55,7 @@
 // External data types
 
 // Constants
-
+QTM_USE_NAMESPACE
 class CntSymbianFilterSqlHelper
 {
 public: 

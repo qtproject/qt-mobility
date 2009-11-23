@@ -44,6 +44,8 @@
 #include <QList>
 #include <qmessageglobal.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageContentContainerIdPrivate;
 
 class Q_MESSAGING_EXPORT QMessageContentContainerId
@@ -69,4 +71,6 @@ private:
 };
 
 typedef QList<QMessageContentContainerId> QMessageContentContainerIdList;
+
+QTM_END_NAMESPACE
 #endif

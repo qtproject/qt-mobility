@@ -70,6 +70,7 @@
     }                                           \
     QVERIFY(a)
 
+QTM_USE_NAMESPACE
 class ChangeListener : public QObject
 {
     Q_OBJECT

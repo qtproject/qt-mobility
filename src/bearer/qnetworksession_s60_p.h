@@ -67,7 +67,7 @@
 
 typedef int(*TOpenCSetdefaultifFunction)(const struct ifreq*);
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class ConnectionProgressNotifier;
 
@@ -207,7 +207,7 @@ private: // Data
     
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //QNETWORKSESSIONPRIVATE_H
 

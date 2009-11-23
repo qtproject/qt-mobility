@@ -58,6 +58,8 @@
 
 #include "qtcontactsglobal.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactIdPrivate : public QSharedData
 {
 public:
@@ -81,5 +83,7 @@ public:
     QString m_managerUri;
     QContactLocalId m_localId;
 };
+
+QTM_END_NAMESPACE
 
 #endif

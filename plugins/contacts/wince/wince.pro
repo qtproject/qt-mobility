@@ -5,11 +5,14 @@ PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
 
-HEADERS += qcontactwincebackend_p.h
+HEADERS += \
+        qcontactwincebackend_p.h \
+        qcontactrequestworker_p.h \
+        qcontactrequestworker.h
 SOURCES += \
         qcontactwincebackend.cpp \
-        contactconversions.cpp
-
+        contactconversions.cpp \
+        qcontactrequestworker.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/contacts $$SOURCE_DIR/src/contacts/details $$SOURCE_DIR/src/contacts/filters $$SOURCE_DIR/src/contacts/requests
 

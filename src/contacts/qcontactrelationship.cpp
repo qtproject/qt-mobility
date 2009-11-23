@@ -48,6 +48,8 @@
 #include <QPair>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactRelationship
  * \brief Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.
@@ -207,3 +209,5 @@ void QContactRelationship::setRelationshipType(const QString& relationshipType)
 {
     d->m_relationshipType = relationshipType;
 }
+
+QTM_END_NAMESPACE

@@ -43,6 +43,8 @@
 #include <Qt>
 #include <qmessageglobal.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderOrderingPrivate;
 
 class Q_MESSAGING_EXPORT QMessageFolderOrdering
@@ -71,4 +73,6 @@ public:
 private:
     QMessageFolderOrderingPrivate *d_ptr;
 };
+
+QTM_END_NAMESPACE
 #endif

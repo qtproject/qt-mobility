@@ -47,6 +47,7 @@ class V4LCameraSession;
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
+QTM_USE_NAMESPACE
 
 class V4LVideoEncode : public QVideoEncoderControl
 {

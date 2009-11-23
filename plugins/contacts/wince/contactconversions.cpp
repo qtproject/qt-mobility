@@ -44,6 +44,8 @@
 #include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
 
+QTM_USE_NAMESPACE
+
 /*!
  * Convert from the supplied CEPROPVAL \a val into a QVariant.
  */
@@ -395,13 +397,13 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
 
         // Work address
         PoomContactElement workAddress;
-        workAddress.poom << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_BUSINESS_ADDRESS_COUNTRY;
+        workAddress.poom << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_BUSINESS_ADDRESS_STATE << PIMPR_BUSINESS_ADDRESS_COUNTRY;
         workAddress.func = processWorkAddress;
         list.append(workAddress);
 
         // Other address
         PoomContactElement otherAddress;
-        otherAddress.poom << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_OTHER_ADDRESS_COUNTRY;
+        otherAddress.poom << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_OTHER_ADDRESS_STATE << PIMPR_OTHER_ADDRESS_COUNTRY;
         otherAddress.func = processOtherAddress;
         list.append(otherAddress);
 

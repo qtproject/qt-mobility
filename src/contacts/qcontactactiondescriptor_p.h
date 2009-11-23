@@ -56,6 +56,8 @@
 #include <QSharedData>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactActionDescriptorPrivate : public QSharedData
 {
 public:
@@ -94,5 +96,7 @@ public:
     QString m_vendorName;
     int m_implementationVersion;
 };
+
+QTM_END_NAMESPACE
 
 #endif

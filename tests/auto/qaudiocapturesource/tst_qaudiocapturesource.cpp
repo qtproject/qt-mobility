@@ -42,17 +42,14 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
 
 #include <qaudiocapturesource.h>
 #include <qaudioencodercontrol.h>
 #include <qmediarecordercontrol.h>
 #include <qaudiodevicecontrol.h>
 
+QTM_USE_NAMESPACE
 class MockAudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT

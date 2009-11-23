@@ -46,6 +46,8 @@
 #include <qmessageaccount.h>
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountOrderingPrivate
 {
 public:
@@ -60,4 +62,6 @@ public:
     static bool lessThan(const QMessageAccountOrdering &ordering, const QMessageAccount &account1, const QMessageAccount &account2);
 #endif    
 };
+
+QTM_END_NAMESPACE
 #endif

@@ -52,7 +52,7 @@
 #include "qnetworksession_p.h"
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QNetworkSession
@@ -686,4 +686,4 @@ void QNetworkSession::disconnectNotify(const char *signal)
 
 #include "moc_qnetworksession.cpp"
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

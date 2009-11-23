@@ -42,6 +42,8 @@
 #include <experimental/qimageprocessingcontrol.h>
 #include  "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QImageProcessingControl
     \ingroup multimedia
@@ -165,4 +167,6 @@ QImageProcessingControl::~QImageProcessingControl()
     Returns the sharpening level.
 */
 
+#include "moc_qimageprocessingcontrol.cpp"
+QTM_END_NAMESPACE
 

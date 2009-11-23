@@ -59,6 +59,8 @@
 #include <QList>
 #include <QPointer>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactAbstractRequestPrivate
 {
 public:
@@ -83,5 +85,7 @@ public:
     QPointer<QContactManager> m_manager;
     QList<QContactManager::Error> m_errors;
 };
+
+QTM_END_NAMESPACE
 
 #endif

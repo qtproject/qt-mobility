@@ -60,6 +60,8 @@
 #include <QDebug>
 #include <QCloseEvent>
 
+QTM_USE_NAMESPACE
+
 bool checkID(const QString &id)
 {
     if (id.length() > 8 || id.length() < 0)

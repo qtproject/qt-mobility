@@ -50,6 +50,8 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerVideoEncode : public QVideoEncoderControl
 {
     Q_OBJECT

@@ -374,7 +374,7 @@ QContactFilter::MatchFlags TestFiltering::flag(int f)
         case 3:
             return QContactFilter::MatchCaseSensitive;
         default:
-            return -1;
+             return QContactFilter::MatchFixedString;
     }
 }
 

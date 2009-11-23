@@ -57,6 +57,7 @@
 #include <QtGui/qgraphicsscene.h>
 #include <QtGui/qgraphicsview.h>
 
+QTM_USE_NAMESPACE
 class tst_QGraphicsVideoItem : public QObject
 {
     Q_OBJECT

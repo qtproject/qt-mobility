@@ -51,17 +51,19 @@
 
 #include "qphononvideowidget.h"
 
-
+QTM_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
+class QMediaPlaylistNavigator;
+QTM_END_NAMESPACE
 
 class QPhononMetaData;
 class QPhononPlayerControl;
 class QPhononPlayerSession;
 class QPhononMetaDataProvider;
 
-class QMediaPlaylistNavigator;
+QTM_USE_NAMESPACE
 
 class QPhononPlayerService : public QMediaService
 {

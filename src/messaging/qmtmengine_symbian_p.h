@@ -55,6 +55,9 @@
 #include "qmessagefolderfilter.h"
 #include "QMessageServiceAction.h"
 
+
+
+
 class CRichText;
 class CCharFormatLayer;
 class CParaFormatLayer;
@@ -66,9 +69,12 @@ class CSmtpClientMtm;
 class CImap4ClientMtm;
 class CPop3ClientMtm;
 class CMsvFindOperation;
+
+
+QTM_BEGIN_NAMESPACE
+class CMessagesFindOperation;
 class QMessageId;
 class QMessageAccount;
-class CMessagesFindOperation;
 
 struct MessageEvent
 {
@@ -289,4 +295,6 @@ private: // Data
     mutable RTimer iTimer;
 };
 
+
+QTM_END_NAMESPACE
 #endif // QMTMENGINE_SYMBIAN_H

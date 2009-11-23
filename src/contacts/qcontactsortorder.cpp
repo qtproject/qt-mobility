@@ -42,6 +42,8 @@
 #include "qcontactsortorder.h"
 #include "qcontactsortorder_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactSortOrder
   \brief The QContactSortOrder class defines how a list of contacts should be ordered according to some criteria
@@ -215,3 +217,5 @@ void QContactSortOrder::setCaseSensitivity(Qt::CaseSensitivity sensitivity)
 {
     d->m_sensitivity = sensitivity;
 }
+
+QTM_END_NAMESPACE

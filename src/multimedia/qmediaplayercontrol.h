@@ -47,6 +47,8 @@
 
 #include <QtCore/qpair.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaPlaylist;
 
 class Q_MEDIA_EXPORT QMediaPlayerControl : public QMediaControl
@@ -110,6 +112,8 @@ protected:
 
 #define QMediaPlayerControl_iid "com.nokia.Qt.QMediaPlayerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaPlayerControl, QMediaPlayerControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif  // QMEDIAPLAYERCONTROL_H
 

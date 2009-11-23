@@ -44,6 +44,8 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactIntersectionFilter
   \brief The QContactIntersectionFilter class provides a filter which intersects the results of other filters.
@@ -127,3 +129,5 @@ QList<QContactFilter> QContactIntersectionFilter::filters() const
     Q_D(const QContactIntersectionFilter);
     return d->m_filters;
 }
+
+QTM_END_NAMESPACE

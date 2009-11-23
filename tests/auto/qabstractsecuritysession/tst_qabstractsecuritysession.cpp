@@ -45,6 +45,7 @@
 #include <qservicemanager.h>
 #include <qabstractsecuritysession.h>
 
+QTM_USE_NAMESPACE
 class TestSession : public QAbstractSecuritySession
 {
 public:

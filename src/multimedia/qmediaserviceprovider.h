@@ -47,6 +47,8 @@
 #include <qmobilityglobal.h>
 #include <qtmedianamespace.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaService;
 
 class QMediaServiceProviderHintPrivate;
@@ -153,5 +155,7 @@ public:
 */
 #define Q_MEDIASERVICE_RADIO "com.nokia.qt.radio"
 
+
+QTM_END_NAMESPACE
 
 #endif  // QMEDIASERVICEPROVIDER_H

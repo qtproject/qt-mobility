@@ -42,6 +42,8 @@
 #include "qcontactgroup.h"
 #include "qcontactgroup_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*! \class QContactGroup
     \brief The QContactGroup class acts as a container for a list of contacts.
     \ingroup contacts-main
@@ -209,3 +211,5 @@ void QContactGroup::setMembers(const QList<QUniqueId>& members)
 //    d->m_error = QContactGroup::NoError;
 //    return true;
 //}
+
+QTM_END_NAMESPACE

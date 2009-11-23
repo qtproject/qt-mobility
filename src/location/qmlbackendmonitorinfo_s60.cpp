@@ -42,6 +42,8 @@
 
 #include "qmlbackendmonitorinfo_s60_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 //singleton class object
 CBackendMonitorInfo* CBackendMonitorInfo::iBackendMonitorInfo = NULL;
 
@@ -154,4 +156,4 @@ CBackendMonitorInfo::~CBackendMonitorInfo()
     iBackendMonitorInfo = NULL;
 }
 
-
+QTM_END_NAMESPACE

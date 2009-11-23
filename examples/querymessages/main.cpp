@@ -44,6 +44,8 @@
 #include <qmessagestore.h>
 #include <qdebug.h>
 
+QTM_USE_NAMESPACE
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

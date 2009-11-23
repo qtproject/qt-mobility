@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmessagestore.cpp -->
 <head>
-  <title>QMessageStore Class Reference</title>
+  <title>Qt Mobility 1.0: QMessageStore Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, ..., WorkingMemoryOverflow }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#ErrorCode-enum">ErrorCode</a></b> { NoError, InvalidId, ConstraintFailure, ContentInaccessible, ..., Busy }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">typedef </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#NotificationFilterId-typedef">NotificationFilterId</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">typedef </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#NotificationFilterIdSet-typedef">NotificationFilterIdSet</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a></b> { RemoveLocalCopyOnly, RemoveOnOriginatingServer }</td></tr>
@@ -88,7 +88,7 @@
 <p>The QMessageStore class is accessed through a singleton interface and provides functions for adding, updating and deleting messages in the messaging store.</p>
 <p>QMessageStore provides the <a href="qmessagestore.html#countFolders">countFolders</a>() and <a href="qmessagestore.html#queryFolders">queryFolders</a>() functions for counting and listing the folders contained by the messaging store, and the <a href="qmessagestore.html#countAccounts">countAccounts</a>() and <a href="qmessagestore.html#queryAccounts">queryAccounts</a>() functions for counting and listing the accounts contained by the store. These functions use the <a href="qmessagefolderfilter.html">QMessageFolderFilter</a> and <a href="qmessagefolderordering.html">QMessageFolderOrdering</a> classes, and the <a href="qmessageaccountfilter.html">QMessageAccountFilter</a> and <a href="qmessageaccountordering.html">QMessageAccountOrdering</a> classes to constrain their searches.</p>
 <p>QMessageStore also implements functionality allowing the messages contained by the store to be counted or listed, using various filtering and ordering constraints. Clients can access this functionality via the <a href="qmessageserviceaction.html#countMessages">countMessages</a> and <a href="qmessageserviceaction.html#queryMessages">queryMessages</a> functions of the <a href="qmessageserviceaction.html">QMessageServiceAction</a> class.</p>
-<p>With the exception of MAPI based platforms, QMessageStore functions should not initiate network activity. Instead they are restricted to operating on data already on the device. See <a href="qmessageserviceaction.html">QMessageServiceAction</a> for functions related to initiating network activity.</p>
+<p>With the exception of Windows mobile and desktop platforms, QMessageStore functions should not initiate network activity. Instead functions are restricted to operating on data already on the device. See <a href="qmessageserviceaction.html">QMessageServiceAction</a> for functions related to initiating network activity.</p>
 <p>If a QMessageStore operation fails, the <a href="qmessagestore.html#lastError">lastError</a>() function will return an error code value indicating the failure mode encountered. A successful operation will set the <a href="qmessagestore.html#lastError">lastError</a>() result to <a href="qmessagestore.html#ErrorCode-enum">QMessageStore::NoError</a>.</p>
 <p>Messages in the messaging store are identified by <a href="qmessageid.html">QMessageId</a> objects. The data associated with a message is retrieved in the form of a <a href="qmessage.html">QMessage</a> object using <a href="qmessagestore.html#message">message</a>(). Likewise a folder is retrieved in the form of a <a href="qmessagefolder.html">QMessageFolder</a> object using <a href="qmessagestore.html#folder">folder</a>(), and an account is retrieved in the form of a <a href="qmessageaccount.html">QMessageAccount</a> object using <a href="qmessagestore.html#account">account</a>().</p>
 <p>Messages can be inserted into the store using the <a href="qmessagestore.html#addMessage">addMessage</a>() function, messages in the store can be manipulated via the <a href="qmessagestore.html#updateMessage">updateMessage</a>() function ,and removed by the <a href="qmessagestore.html#removeMessage">removeMessage</a>() functions.</p>
@@ -107,6 +107,7 @@
 <tr><td valign="top"><tt>QMessageStore::NotYetImplemented</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The operation failed because the messaging store does not yet implement the operation.</td></tr>
 <tr><td valign="top"><tt>QMessageStore::FrameworkFault</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The operation failed because the messaging store encountered an error in performing the operation.</td></tr>
 <tr><td valign="top"><tt>QMessageStore::WorkingMemoryOverflow</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The operation failed because the messaging store exhausted all memory available for evaluating queries.</td></tr>
+<tr><td valign="top"><tt>QMessageStore::Busy</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The operation failed because the messaging store is being used by another thread.</td></tr>
 </table></p>
 <h3 class="fn"><a name="NotificationFilterId-typedef"></a>typedef QMessageStore::NotificationFilterId</h3>
 <p>This type contains a value identifying a registered message filter.</p>
@@ -176,11 +177,13 @@
 <p>Removes the message with <a href="qmessageid.html">QMessageId</a> <i>id</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then when synchronization is performed the message should be removed from both the local message store and the originating server if any.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
 <p>To ensure the change is propagated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p><i>option</i> is ignored on Windows mobile and desktop platforms.</p>
 <p>See also <a href="qmessagestore.html#removeMessages">removeMessages</a>(), <a href="qmessagestore.html#addMessage">addMessage</a>(), <a href="qmessagestore.html#updateMessage">updateMessage</a>(), and <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>().</p>
 <h3 class="fn"><a name="removeMessages"></a>bool QMessageStore::removeMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i>, <a href="qmessagestore.html#RemovalOption-enum">RemovalOption</a> <i>option</i> = RemoveOnOriginatingServer )</h3>
 <p>Removes all messages identified by the filter <i>filter</i> from the messaging store. If <i>option</i> is <a href="qmessagestore.html#RemovalOption-enum">QMessageStore::RemoveOnOriginatingServer</a> then when synchronization is performed the messages should be removed from both the local message store and the originating server if any.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
 <p>To ensure the change is propagated to any affected external server <a href="qmessageserviceaction.html#exportUpdates">QMessageServiceAction::exportUpdates</a>() should be subsequently called.</p>
+<p><i>option</i> is ignored on Windows mobile and desktop platforms.</p>
 <p>For example:</p>
 <p>To implement a function to remove a list messages identified by QMessageIds from the messaging store.</p>
 <pre>    bool removeMessages(const QMessageIdList&amp; ids)
@@ -199,6 +202,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

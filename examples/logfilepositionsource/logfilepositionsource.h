@@ -43,6 +43,8 @@
 
 #include <qgeopositioninfosource.h>
 
+QTM_USE_NAMESPACE
+
 class QFile;
 class QTimer;
 

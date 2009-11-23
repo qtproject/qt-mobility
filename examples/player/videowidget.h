@@ -43,6 +43,8 @@
 
 #include <qvideowidget.h>
 
+QTM_USE_NAMESPACE
+
 class VideoWidget : public QVideoWidget
 {
     Q_OBJECT

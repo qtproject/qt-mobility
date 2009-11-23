@@ -48,6 +48,8 @@
 
 class QPhononPlayerSession;
 
+QTM_USE_NAMESPACE
+
 class QPhononMetaDataProvider : public QMetaDataControl
 {
     Q_OBJECT

@@ -42,6 +42,8 @@
 #include "qcontactdetaildefinitionfield.h"
 #include "qcontactdetaildefinitionfield_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactDetailDefinitionField
  * \brief A field in a QContactDetail.
@@ -163,3 +165,5 @@ bool QContactDetailDefinitionField::operator!=(const QContactDetailDefinitionFie
 {
     return !(*this == other);
 }
+
+QTM_END_NAMESPACE

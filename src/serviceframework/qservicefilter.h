@@ -46,11 +46,12 @@
 
 #include "qmobilityglobal.h"
 
+class QDataStream;
+
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class QDataStream;
 class QServiceFilterPrivate;
 class Q_SFW_EXPORT QServiceFilter
 {
@@ -110,7 +111,7 @@ Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
 Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
 #endif
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 #endif //QSERVICEFILTER_H

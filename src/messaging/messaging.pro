@@ -219,7 +219,8 @@ INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 
 PRIVATE_HEADERS += \
-           qmfhelpers_p.h
+           qmfhelpers_p.h \
+           qmessagestore_qmf_p.h
 
 SOURCES += qmessageid_qmf.cpp \
            qmessagecontentcontainerid_qmf.cpp \

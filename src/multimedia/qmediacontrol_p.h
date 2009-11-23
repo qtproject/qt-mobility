@@ -53,6 +53,10 @@
 // We mean it.
 //
 
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
+
 class QMediaControl;
 
 class QMediaControlPrivate
@@ -62,5 +66,7 @@ public:
 
     QMediaControl *q_ptr;
 };
+
+QTM_END_NAMESPACE
 
 #endif

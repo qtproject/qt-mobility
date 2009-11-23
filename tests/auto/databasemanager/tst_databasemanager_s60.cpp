@@ -48,6 +48,7 @@
 #include "servicemetadata_p.h"
 #include "databasemanager_s60_p.h"
 
+QTM_USE_NAMESPACE
 class tst_DatabaseManager: public QObject
 {
     Q_OBJECT

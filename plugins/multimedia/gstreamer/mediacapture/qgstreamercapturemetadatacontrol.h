@@ -44,6 +44,8 @@
 
 #include <qmetadatacontrol.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerCaptureMetaDataControl : public QMetaDataControl
 {
     Q_OBJECT

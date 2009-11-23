@@ -50,6 +50,8 @@
 #include <QList>
 #include <QStringList>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactLocalIdFetchRequestPrivate;
 class Q_CONTACTS_EXPORT QContactLocalIdFetchRequest : public QContactAbstractRequest
 {
@@ -76,5 +78,7 @@ private:
     friend class QContactManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QContactLocalIdFetchRequest)
 };
+
+QTM_END_NAMESPACE
 
 #endif

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmessageserviceaction.cpp -->
 <head>
-  <title>QMessageServiceAction Class Reference</title>
+  <title>Qt Mobility 1.0: QMessageServiceAction Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -37,7 +37,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QMessageStore::ErrorCode </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#lastError">lastError</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#queryMessages">queryMessages</a></b> ( const QMessageFilter &amp; <i>filter</i> = QMessageFilter(), const QMessageOrdering &amp; <i>ordering</i> = QMessageOrdering(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#queryMessages-2">queryMessages</a></b> ( const QMessageFilter &amp; <i>filter</i>, const QString &amp; <i>body</i>, QMessageDataComparator::Options <i>options</i> = 0, const QMessageOrdering &amp; <i>ordering</i> = QMessageOrdering(), uint <i>limit</i> = 0, uint <i>offset</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageContentContainerId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieve">retrieve</a></b> ( const QMessageId &amp; <i>messageId</i>, const QMessageContentContainerId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieveBody">retrieveBody</a></b> ( const QMessageId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#retrieveHeader">retrieveHeader</a></b> ( const QMessageId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageserviceaction.html#send">send</a></b> ( QMessage &amp; <i>message</i> )</td></tr>
@@ -87,7 +87,7 @@
 <p>A client may attempt to cancel an operation after it has been initiated. The <a href="qmessageserviceaction.html#cancelOperation">cancelOperation</a>() slot is provided for this purpose.</p>
 <p>A QMessageServiceAction instance supports only a single request at any time. Attempting to initiate an operation on a QMessageServiceAction while another operation is already in progress will result in the later initiating function returning false. A client may, however, use multiple QMessageServiceAction instances to create a queue of requests that will be performed sequentially.</p>
 <p>Each QMessageServiceAction instance will report only the changes pertaining to the request that instance delivers.</p>
-<p>Except where noted QMessageServiceActions may initiate network activity. Other functions in the mobility messaging API will not initiate network activity, with the exception of MAPI based platforms which may initiate network activity during the evaluation of any function call.</p>
+<p>Except where noted QMessageServiceActions may initiate network activity. Other functions in the mobility messaging API will not initiate network activity, with the exception of Windows mobile and desktop platforms which may initiate network activity during the evaluation of any function call.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <h3 class="fn"><a name="State-enum"></a>enum QMessageServiceAction::State</h3>
@@ -112,6 +112,7 @@
 <p>Open a composer application using <i>message</i> as a prototype.</p>
 <p>The default application for handling the type of <i>message</i> should be used.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
+<p>On the QMF platform implementation of this function is left as a task for system integrators.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="countMessages"></a>bool QMessageServiceAction::countMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> = QMessageFilter() )</h3>
 <p>Emits via a <a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a>() signal the number messages in the messaging store matching <i>filter</i>.</p>
@@ -120,8 +121,8 @@
 <p>Note: This function should not initiate network activity, instead only message data already stored on the device will be used during evaluation of the function.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessageserviceaction.html#messagesCounted">messagesCounted</a>(), <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>(), and <a href="qmessageserviceaction.html#queryMessages">queryMessages</a>().</p>
 <h3 class="fn"><a name="exportUpdates"></a>bool QMessageServiceAction::exportUpdates ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i> )</h3>
-<p>Iniate synchronization with external servers of local changes that have been queued by message store operations.</p>
-<p>On MAPI platforms this function performs no operation, as when a connection is available, local changes are opportunistically synchronized with external servers.</p>
+<p>Iniate synchronization with external servers of local changes that have been queued by message store operations, for messages with parent account <i>id</i>.</p>
+<p>On Windows mobile and desktop platforms this function performs no operation, as when a connection is available, local changes are opportunistically synchronized with external servers.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessagestore.html#addMessage">QMessageStore::addMessage</a>(), <a href="qmessagestore.html#updateMessage">QMessageStore::updateMessage</a>(), <a href="qmessagestore.html#removeMessage">QMessageStore::removeMessage</a>(), and <a href="qmessagestore.html#removeMessages">QMessageStore::removeMessages</a>().</p>
 <h3 class="fn"><a name="lastError"></a><a href="qmessagestore.html#ErrorCode-enum">QMessageStore::ErrorCode</a> QMessageServiceAction::lastError () const</h3>
@@ -150,8 +151,8 @@
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>Note: This function should not initiate network activity, instead only message data already stored on the device will be used during evaluation of the function.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessageordering.html">QMessageOrdering</a>, <a href="qmessageserviceaction.html#messagesFound">messagesFound</a>(), <a href="qmessageserviceaction.html#progressChanged">progressChanged</a>(), and <a href="qmessageserviceaction.html#countMessages">countMessages</a>().</p>
-<h3 class="fn"><a name="retrieve"></a>bool QMessageServiceAction::retrieve ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
-<p>Retrieve the container identified by <i>id</i>, the contents of the container should also be retrieved.</p>
+<h3 class="fn"><a name="retrieve"></a>bool QMessageServiceAction::retrieve ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>messageId</i>, const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> )</h3>
+<p>Retrieve the container identified by <i>messageId</i> and <i>id</i>, the contents of the container should also be retrieved.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
 <h3 class="fn"><a name="retrieveBody"></a>bool QMessageServiceAction::retrieveBody ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
@@ -174,6 +175,7 @@
 <p>Show the message identified by <i>id</i>.</p>
 <p>The default application for handling the type of message that <i>id</i> identifies should be used.</p>
 <p>Returns true if the action can be initiated; otherwise returns false.</p>
+<p>On the QMF platform implementation of this function is left as a task for system integrators.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
 <h3 class="fn"><a name="state"></a><a href="qmessageserviceaction.html#State-enum">State</a> QMessageServiceAction::state () const</h3>
 <p>Returns the current state of the action.</p>
@@ -184,6 +186,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

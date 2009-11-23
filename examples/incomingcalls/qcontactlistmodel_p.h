@@ -63,6 +63,8 @@
 #include <QSharedData>
 #include <QMap>
 
+QTM_USE_NAMESPACE
+
 class QContactListModelPrivate : public QSharedData
 {
 public:

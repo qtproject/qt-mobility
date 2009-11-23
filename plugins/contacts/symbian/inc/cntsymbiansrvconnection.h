@@ -54,6 +54,7 @@
 
 // Constants
 
+QTM_USE_NAMESPACE
 class CntSymbianSrvConnection : public RSessionBase
 {
 public:

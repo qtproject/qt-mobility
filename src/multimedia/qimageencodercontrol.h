@@ -51,6 +51,8 @@
 class QByteArray;
 class QStringList;
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QImageEncoderControl : public QMediaControl
 {
     Q_OBJECT
@@ -74,5 +76,7 @@ protected:
 
 #define QImageEncoderControl_iid "com.nokia.Qt.QImageEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QImageEncoderControl, QImageEncoderControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif

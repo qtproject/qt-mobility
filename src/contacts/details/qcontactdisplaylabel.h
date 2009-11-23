@@ -48,6 +48,8 @@
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
 {
@@ -62,5 +64,7 @@ public:
 
     QString label() const {return value(FieldLabel);}
 };
+
+QTM_END_NAMESPACE
 
 #endif

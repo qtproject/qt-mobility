@@ -41,6 +41,7 @@
 #include "qmessagefolderordering.h"
 #include "qmessagefolderordering_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 QMessageFolderOrdering::QMessageFolderOrdering()
 {
@@ -100,3 +101,5 @@ QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
     Q_UNUSED(order)
     return QMessageFolderOrdering(); // stub
 }
+
+QTM_END_NAMESPACE

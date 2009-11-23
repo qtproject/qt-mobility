@@ -59,6 +59,8 @@
 #include <QString>
 #include <QVariant>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactActionFilterPrivate : public QContactFilterPrivate
 {
 public:
@@ -98,5 +100,7 @@ public:
     QString m_vendorName;
     int m_implementationVersion;
 };
+
+QTM_END_NAMESPACE
 
 #endif

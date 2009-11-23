@@ -47,7 +47,7 @@
 #include <contextproperty.h>
 #include <contextregistryinfo.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 using namespace QValueSpace;
 
@@ -346,6 +346,6 @@ QSet<QString> ContextKitLayer::children (Handle handle)
     return h->children ();
 }
 
-QT_END_NAMESPACE
-
 #include "contextkitlayer.moc"
+QTM_END_NAMESPACE
+
