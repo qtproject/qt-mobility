@@ -4068,9 +4068,18 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
                 }
 
                 mapiRelease(recipientsTable);
-
             } else {
-                *lastError = QMessageStore::ContentInaccessible;
+                if (rv == MAPI_E_NO_RECIPIENTS) {
+                    updateMessageProperties(lastError, msg);
+                    if (*lastError == QMessageStore::NoError) {
+                        if (msg->d_ptr->_contentFormat == EDITOR_FORMAT_MIME) {
+                            // The recipient info can be extracted from the MIME body
+                            updateMessageBody(lastError, msg);
+                        }
+                    }
+                } else {
+                    *lastError = QMessageStore::ContentInaccessible;
+                }
             }
 
             mapiRelease(message);
@@ -4172,22 +4181,49 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                     if (HR_SUCCEEDED(rv)) {
                         messageBody = readStream(lastError, is);
 
-                        QMailMessage msg(QMailMessage::fromRfc2822(messageBody));
-                        if (msg.multipartType() == QMailMessage::MultipartNone) {
-                            if (msg.contentType().type().toLower() == "text") {
-                                QByteArray subType(msg.contentType().subType().toLower());
+                        QMailMessage mimeMsg(QMailMessage::fromRfc2822(messageBody));
+
+                        // Extract the recipient info from the message headers
+                        QMessageAddressList addresses;
+                        foreach (const QMailAddress &addr, mimeMsg.to()) {
+                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                        }
+                        if (!addresses.isEmpty()) {
+                            msg->setTo(addresses);
+                        }
+
+                        addresses.clear();
+                        foreach (const QMailAddress &addr, mimeMsg.cc()) {
+                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                        }
+                        if (!addresses.isEmpty()) {
+                            msg->setCc(addresses);
+                        }
+
+                        addresses.clear();
+                        foreach (const QMailAddress &addr, mimeMsg.bcc()) {
+                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                        }
+                        if (!addresses.isEmpty()) {
+                            msg->setBcc(addresses);
+                        }
+
+                        // Extract the text of the message body
+                        if (mimeMsg.multipartType() == QMailMessage::MultipartNone) {
+                            if (mimeMsg.contentType().type().toLower() == "text") {
+                                QByteArray subType(mimeMsg.contentType().subType().toLower());
                                 if ((subType == "plain") || (subType == "html") || (subType == "rtf")) {
-                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(msg.body().data());
+                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(mimeMsg.body().data());
                                     bodySubType = subType;
                                 }
                             }
-                        } else if ((msg.multipartType() == QMailMessage::MultipartAlternative) ||
-                                   (msg.multipartType() == QMailMessage::MultipartMixed) ||
-                                   (msg.multipartType() == QMailMessage::MultipartRelated)) {
+                        } else if ((mimeMsg.multipartType() == QMailMessage::MultipartAlternative) ||
+                                   (mimeMsg.multipartType() == QMailMessage::MultipartMixed) ||
+                                   (mimeMsg.multipartType() == QMailMessage::MultipartRelated)) {
                             // For multipart/related, just try the first part
-                            int maxParts(msg.multipartType() == QMailMessage::MultipartRelated ? 1 : msg.partCount());
+                            int maxParts(mimeMsg.multipartType() == QMailMessage::MultipartRelated ? 1 : mimeMsg.partCount());
                             for (int i = 0; i < maxParts; ++i) {
-                                const QMailMessagePart &part(msg.partAt(i));
+                                const QMailMessagePart &part(mimeMsg.partAt(i));
 
                                 if (part.contentType().type().toLower() == "text") {
                                     QByteArray subType(part.contentType().subType().toLower());
