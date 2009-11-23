@@ -62,10 +62,11 @@
     #include <cmmanager.h>
 #endif
 
-QT_BEGIN_NAMESPACE
-
 class CCommsDatabase;
 class QTimer;
+
+QTM_BEGIN_NAMESPACE
+
 class QNetworkSessionPrivate;
 class AccessPointsAvailabilityScanner;
 
@@ -176,6 +177,6 @@ private: // Data
     TConnMonIapInfoBuf iIapBuf;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //QNETWORKCONFIGURATIONMANAGERPRIVATE_H

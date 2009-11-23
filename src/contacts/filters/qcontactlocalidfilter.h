@@ -44,6 +44,8 @@
 
 #include "qcontactfilter.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactLocalIdFilterPrivate;
 class Q_CONTACTS_EXPORT QContactLocalIdFilter : public QContactFilter
 {
@@ -60,5 +62,7 @@ public:
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactLocalIdFilter)
 };
+
+QTM_END_NAMESPACE
 
 #endif

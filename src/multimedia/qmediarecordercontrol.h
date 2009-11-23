@@ -47,6 +47,8 @@
 
 class QUrl;
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QMediaRecorderControl : public QMediaControl
 {
     Q_OBJECT
@@ -79,5 +81,7 @@ protected:
 
 #define QMediaRecorderControl_iid "com.nokia.Qt.QMediaRecorderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaRecorderControl, QMediaRecorderControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif

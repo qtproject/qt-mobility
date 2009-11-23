@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaplaylist.cpp -->
 <head>
-  <title>QMediaPlaylist Class Reference</title>
+  <title>Qt Mobility 1.0: QMediaPlaylist Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -44,12 +44,14 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QMediaObject * <i>mediaObject</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#dtor.QMediaPlaylist">~QMediaPlaylist</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#appendItem">appendItem</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#appendItems">appendItems</a></b> ( const QList&lt;QMediaContent&gt; &amp; <i>items</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#clear">clear</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentMedia-prop">currentMedia</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentPosition-prop">currentPosition</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insertItem">insertItem</a></b> ( int <i>pos</i>, const QMediaContent &amp; <i>content</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insertItems">insertItems</a></b> ( int <i>pos</i>, const QList&lt;QMediaContent&gt; &amp; <i>items</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#isReadOnly">isReadOnly</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#load">load</a></b> ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )</td></tr>
@@ -186,7 +188,10 @@
 <h3 class="fn"><a name="dtor.QMediaPlaylist"></a>QMediaPlaylist::~QMediaPlaylist ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the playlist.</p>
 <h3 class="fn"><a name="appendItem"></a>bool QMediaPlaylist::appendItem ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>
-<p>Append the list of media <i>content</i> to the playlist.</p>
+<p>Append the media <i>content</i> to the playlist.</p>
+<p>Returns true if the operation is successfull, other wise return false.</p>
+<h3 class="fn"><a name="appendItems"></a>bool QMediaPlaylist::appendItems ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3>
+<p>Append multiple media content <i>items</i> to the playlist.</p>
 <p>Returns true if the operation is successfull, other wise return false.</p>
 <h3 class="fn"><a name="clear"></a>bool QMediaPlaylist::clear ()</h3>
 <p>Remove all the items from the playlist.</p>
@@ -199,6 +204,9 @@
 <p>Returns the string describing the last error condition.</p>
 <h3 class="fn"><a name="insertItem"></a>bool QMediaPlaylist::insertItem ( int <i>pos</i>, const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>
 <p>Insert the media <i>content</i> to the playlist at position <i>pos</i>.</p>
+<p>Returns true if the operation is successful, otherwise false.</p>
+<h3 class="fn"><a name="insertItems"></a>bool QMediaPlaylist::insertItems ( int <i>pos</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3>
+<p>Insert multiple media content <i>items</i> to the playlist at position <i>pos</i>.</p>
 <p>Returns true if the operation is successful, otherwise false.</p>
 <h3 class="fn"><a name="isEmpty"></a>bool QMediaPlaylist::isEmpty () const</h3>
 <p>Returns true if the playlist contains no items; otherwise returns false.</p>
@@ -265,6 +273,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

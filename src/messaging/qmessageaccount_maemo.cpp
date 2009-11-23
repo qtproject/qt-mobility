@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessageaccount.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageAccount::QMessageAccount()
 {
 }
@@ -84,3 +86,5 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
     Q_UNUSED(type)
     return QMessageAccountId(); // stub
 }
+
+QTM_END_NAMESPACE

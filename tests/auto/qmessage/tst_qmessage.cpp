@@ -55,6 +55,7 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 #ifdef Q_OS_WIN
 const QByteArray defaultCharset("UTF-16");
 #else
@@ -419,7 +420,6 @@ void tst_QMessage::testMessageAddress_data()
         << "\"First <Middle> Last\" <first.last@example.com>"
         << "\"First <Middle> Last\""
         << "first.last@example.com";
-
 }
 
 void tst_QMessage::testMessageAddress()
@@ -431,7 +431,7 @@ void tst_QMessage::testMessageAddress()
     QString name;
     QString address;
     QMessageAddress::parseEmailAddress(from, &name, &address);
-    QCOMPARE(targetName, name.trimmed());
+    QCOMPARE(targetName, name);
     QCOMPARE(targetAddress, address);
 }
 

@@ -42,9 +42,10 @@
 #include <experimental/qcamerafocuscontrol.h>
 #include  "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCameraFocusControl
-    \ingroup multimedia
 
     \preliminary
     \brief The QCameraFocusControl class supplies control for
@@ -197,3 +198,7 @@ QCameraFocusControl::~QCameraFocusControl()
 
     Signal emitted when \a zoom value changed.
 */
+
+#include "moc_qcamerafocuscontrol.cpp"
+QTM_END_NAMESPACE
+

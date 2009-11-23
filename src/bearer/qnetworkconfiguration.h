@@ -50,9 +50,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
-
-QT_MODULE(Network)
+QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
 class Q_BEARER_EXPORT QNetworkConfiguration
@@ -108,7 +106,7 @@ private:
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

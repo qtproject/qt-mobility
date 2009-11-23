@@ -45,6 +45,9 @@
 #include "winhelpers_p.h"
 #endif
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageIdPrivate
 {
     Q_DECLARE_PUBLIC(QMessageId)
@@ -79,4 +82,6 @@ public:
     static MapiRecordKey messageRecordKey(const QMessageId &id);
 #endif
 };
+
+QTM_END_NAMESPACE
 #endif

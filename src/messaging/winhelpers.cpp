@@ -97,6 +97,7 @@
 #include <mapitags.h>
 
 #ifdef _WIN32_WCE
+#include "win32wce/qmailmessage.h"
 #include <cemapi.h>
 #endif
 
@@ -113,7 +114,9 @@ extern "C++"
     }
 }
 #define IID_PPV_ARGS(ppType) __uuidof(**(ppType)), IID_PPV_ARGS_Helper(ppType)
-#endif //IID_PPV_ARGS
+#endif //IID_PPV_ARGSA
+
+QTM_BEGIN_NAMESPACE
 
 namespace WinHelpers
 {
@@ -3875,8 +3878,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                             msg->d_ptr->_contentFormat = EDITOR_FORMAT_HTML;
 #endif
                         } else if (prop.Value.l & MSGSTATUS_HAS_PR_CE_MIME_TEXT) {
-                            // TODO...
                             // This is how MS providers store HTML, as per http://msdn.microsoft.com/en-us/library/bb446140.aspx
+                            msg->d_ptr->_contentFormat = EDITOR_FORMAT_MIME;
                         }
 #endif
                         break;
@@ -4067,9 +4070,18 @@ bool MapiSession::updateMessageRecipients(QMessageStore::ErrorCode *lastError, Q
                 }
 
                 mapiRelease(recipientsTable);
-
             } else {
-                *lastError = QMessageStore::ContentInaccessible;
+                if (rv == MAPI_E_NO_RECIPIENTS) {
+                    updateMessageProperties(lastError, msg);
+                    if (*lastError == QMessageStore::NoError) {
+                        if (msg->d_ptr->_contentFormat == EDITOR_FORMAT_MIME) {
+                            // The recipient info can be extracted from the MIME body
+                            updateMessageBody(lastError, msg);
+                        }
+                    }
+                } else {
+                    *lastError = QMessageStore::ContentInaccessible;
+                }
             }
 
             mapiRelease(message);
@@ -4112,12 +4124,8 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                 LONG contentFormat(msg->d_ptr->_contentFormat);
 
                 if (contentFormat == EDITOR_FORMAT_DONTKNOW) {
-#ifdef _WIN32_WCE
-                    // TODO: Attempt to read MIME text first
-#else
                     // Attempt to read HTML first
                     contentFormat = EDITOR_FORMAT_HTML;
-#endif
                 }
                 if (contentFormat == EDITOR_FORMAT_PLAINTEXT) {
 #ifdef _WIN32_WCE
@@ -4168,9 +4176,74 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         contentFormat = EDITOR_FORMAT_DONTKNOW;
 #endif
                     }
+#ifdef _WIN32_WCE
+                } else if (contentFormat == EDITOR_FORMAT_MIME) {
+                    // MIME format is only used on mobile
+                    HRESULT rv = message->OpenProperty(PR_CE_MIME_TEXT, &IID_IStream, STGM_READ, 0, (IUnknown**)&is);
+                    if (HR_SUCCEEDED(rv)) {
+                        messageBody = readStream(lastError, is);
+
+                        QMailMessage mimeMsg(QMailMessage::fromRfc2822(messageBody));
+
+                        // Extract the recipient info from the message headers
+                        QMessageAddressList addresses;
+                        foreach (const QMailAddress &addr, mimeMsg.to()) {
+                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                        }
+                        if (!addresses.isEmpty()) {
+                            msg->setTo(addresses);
+                        }
+
+                        addresses.clear();
+                        foreach (const QMailAddress &addr, mimeMsg.cc()) {
+                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                        }
+                        if (!addresses.isEmpty()) {
+                            msg->setCc(addresses);
+                        }
+
+                        addresses.clear();
+                        foreach (const QMailAddress &addr, mimeMsg.bcc()) {
+                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                        }
+                        if (!addresses.isEmpty()) {
+                            msg->setBcc(addresses);
+                        }
+
+                        // Extract the text of the message body
+                        if (mimeMsg.multipartType() == QMailMessage::MultipartNone) {
+                            if (mimeMsg.contentType().type().toLower() == "text") {
+                                QByteArray subType(mimeMsg.contentType().subType().toLower());
+                                if ((subType == "plain") || (subType == "html") || (subType == "rtf")) {
+                                    messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(mimeMsg.body().data());
+                                    bodySubType = subType;
+                                }
+                            }
+                        } else if ((mimeMsg.multipartType() == QMailMessage::MultipartAlternative) ||
+                                   (mimeMsg.multipartType() == QMailMessage::MultipartMixed) ||
+                                   (mimeMsg.multipartType() == QMailMessage::MultipartRelated)) {
+                            // For multipart/related, just try the first part
+                            int maxParts(mimeMsg.multipartType() == QMailMessage::MultipartRelated ? 1 : mimeMsg.partCount());
+                            for (int i = 0; i < maxParts; ++i) {
+                                const QMailMessagePart &part(mimeMsg.partAt(i));
+
+                                if (part.contentType().type().toLower() == "text") {
+                                    QByteArray subType(part.contentType().subType().toLower());
+                                    if ((subType == "plain") || (subType == "html") || (subType == "rtf")) {
+                                        messageBody = QTextCodec::codecForName("utf-16")->fromUnicode(part.body().data());
+                                        bodySubType = subType;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        qWarning() << "Unable to open PR_CE_MIME_TEXT!";
+                    }
+#endif
                 }
 
-#ifndef _WIN32_WCE // RTF not supported
+#ifndef _WIN32_WCE // RTF not supported on mobile
                 if (bodySubType.isEmpty()) {
                     if (!msg->d_ptr->_rtfInSync) {
                         // See if we need to sync the RTF
@@ -4250,11 +4323,12 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                             qWarning() << "Unable to decompress RTF";
                             bodySubType = "plain";
                         }
-                    } else {
-                        bodySubType = "unknown";
                     }
                 }
 #endif
+                if (bodySubType.isEmpty()) {
+                    qWarning() << "Unable to locate body for message.";
+                }
 
                 mapiRelease(is);
 
@@ -4282,7 +4356,6 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                     messageContainer->setContent(messageBody, QByteArray("text"), bodySubType, QByteArray("utf-16"));
                     msg->d_ptr->_bodyId = messageContainer->bodyContentId();
                     messageContainer->_available = bodyDownloaded;
-
                 } else {
                     // Add the message body data as the first part
                     QMessageContentContainer bodyPart;
@@ -4645,36 +4718,34 @@ bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
             MAPIFreeBuffer(pProp);
         }
 
-        propertyCount = 0;
+
+        char szMessageClass[256];
         p[1] = PR_MESSAGE_CLASS;
+
         if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
         {
 #ifdef UNICODE
-            char szMessageClass[256];
             WideCharToMultiByte(CP_ACP, 0, pProp->Value.LPSZ,-1, szMessageClass,255, NULL, NULL);
 #else
             char* szMessageClass=pProp->Value.LPSZ;
 #endif
-            HRESULT hr=_mapiSession->ShowForm(NULL, store, folder, NULL,messageToken, NULL, 0,messageStatus, messageFlags & MAPI_NEW_MESSAGE, messageAccess, szMessageClass);
-            MAPIFreeBuffer(pProp);
-            if(hr==MAPI_E_USER_CANCEL)
-            {
-                qWarning() << "Show form cancelled";
-                return true;
-            }
-            else
-            {
-                if(hr != S_OK)
-                    qWarning() << "Show form failed";
-                return hr == S_OK;
-            }
         }
-        else
+
+        HRESULT hr=_mapiSession->ShowForm(NULL, store, folder, NULL,messageToken, NULL, 0,messageStatus, messageFlags & MAPI_NEW_MESSAGE, messageAccess, szMessageClass);
+        MAPIFreeBuffer(pProp);
+
+        if(hr != MAPI_E_USER_CANCEL && hr != S_OK)
         {
-            qWarning() << "Failed to show form";
+            qWarning() << "ShowForm failed";
             return false;
         }
     }
+    else
+    {
+        qWarning() << "PrepareForm failed";
+        return false;
+    }
+
     return true;
 }
 
@@ -4817,3 +4888,5 @@ void MapiSession::flushNotifyQueue()
 
 
 #include "winhelpers.moc"
+#include "moc_winhelpers_p.cpp"
+QTM_END_NAMESPACE

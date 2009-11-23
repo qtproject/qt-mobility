@@ -41,6 +41,7 @@
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 QMessageAccountFilter::QMessageAccountFilter()
 {
@@ -150,3 +151,5 @@ QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessa
     Q_UNUSED(cmp)
     return QMessageAccountFilter(); // stub
 }
+
+QTM_END_NAMESPACE

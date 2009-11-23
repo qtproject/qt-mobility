@@ -46,9 +46,13 @@
 #include <qnmeapositioninfosource.h>
 
 class QTcpServer;
-class QNmeaPositionInfoSource;
 class QIODevice;
 
+QTM_BEGIN_NAMESPACE
+class QNmeaPositionInfoSource;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 class QNmeaPositionInfoSourceProxy : public QObject
 {
     Q_OBJECT

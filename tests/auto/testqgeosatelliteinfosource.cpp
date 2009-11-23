@@ -216,6 +216,9 @@ void TestQGeoSatelliteInfoSource::startUpdates()
     m_source->startUpdates();
 
     for (int i = 0; i < 3; i++) {
+
+        EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
         QTRY_VERIFY_WITH_TIMEOUT((spyView.count() > 0) && (spyUse.count() > 0), 12000);
         spyView.clear();
         spyUse.clear();
@@ -237,6 +240,8 @@ void TestQGeoSatelliteInfoSource::startUpdates_moreThanOnce()
 
     m_source->startUpdates(); // check there is no crash
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() > 0) && (spyUse.count() > 0), MAX_WAITING_TIME);
 
     m_source->startUpdates(); // check there is no crash
@@ -257,6 +262,9 @@ void TestQGeoSatelliteInfoSource::stopUpdates()
     m_source->startUpdates();
 
     for (int i = 0; i < 2; i++) {
+
+        EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
         QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 12000);
         spyView.clear();
         spyUse.clear();
@@ -300,6 +308,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
 
     m_source->requestUpdate(60000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 60000);
 }
 
@@ -314,6 +325,8 @@ void TestQGeoSatelliteInfoSource::requestUpdate_defaultTimeout()
 
     m_source->requestUpdate(0);
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), MAX_WAITING_TIME);
 }
 
@@ -327,11 +340,17 @@ void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
 
     m_source->requestUpdate(12000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 12000);
     spyView.clear();
     spyUse.clear();
 
     m_source->requestUpdate(12000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 12000);
 }
 
@@ -346,6 +365,8 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
 
     m_source->requestUpdate(10000);
     m_source->requestUpdate(10000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 20000);
 }
@@ -364,6 +385,8 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
     m_source->requestUpdate(0);
     m_source->requestUpdate(1);
 	
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
 	QTRY_COMPARE_WITH_TIMEOUT(spyTimeout.count(), 0, 1000);
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1) || (spyTimeout.count() == 1), 20000);
@@ -381,16 +404,23 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
 
     m_source->startUpdates();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), MAX_WAITING_TIME);
     spyView.clear();
     spyUse.clear();
 
     m_source->requestUpdate(5000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1)
                              && (spyTimeout.count() == 0), 7000);
 
     spyView.clear();
     spyUse.clear();
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 12000);
 
@@ -411,11 +441,15 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
 
     m_source->startUpdates();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() > 0) && (spyUse.count() > 0)
                              && (spyTimeout.count() == 0), 7000);
 
     spyView.clear();
     spyUse.clear();
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 10000);
 
@@ -433,8 +467,8 @@ void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 	i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
 	QVERIFY(i==true);
 	
-	m_source->requestUpdate(60000);
-    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
+	m_source->requestUpdate(-1);
+    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 1000);
 }
 
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
@@ -449,10 +483,13 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 	QVERIFY(i==true);
 	
 	m_source->requestUpdate(60000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
 }
 
-void TestQGeoSatelliteInfoSource::removeSlotForsatellitesInViewUpdated()
+void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
 {
 	CHECK_SOURCE_VALID;
 	
@@ -464,6 +501,9 @@ void TestQGeoSatelliteInfoSource::removeSlotForsatellitesInViewUpdated()
 	QVERIFY(i==true);
 	
 	m_source->requestUpdate(60000);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
 }
 

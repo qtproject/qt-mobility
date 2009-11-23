@@ -45,6 +45,8 @@
 
 #include <qservicemanager.h>
 
+QTM_USE_NAMESPACE
+
 class CommandProcessor : public QObject
 {
     Q_OBJECT

@@ -55,9 +55,11 @@
 #include "qmobilityglobal.h"
 
 class QTime;
-class QGeoPositionInfo;
 class QByteArray;
 
+QTM_BEGIN_NAMESPACE
+
+class QGeoPositionInfo;
 class QLocationUtils
 {
 public:
@@ -92,5 +94,7 @@ public:
     Q_AUTOTEST_EXPORT static bool getNmeaLatLong(const QByteArray &latString, char latDirection, const QByteArray &lngString, char lngDirection, double *lat, double *lon);
 
 };
+
+QTM_END_NAMESPACE
 
 #endif

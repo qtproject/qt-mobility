@@ -42,6 +42,8 @@
 #include <qaudioencodercontrol.h>
 #include <QtCore/qstringlist.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QAudioEncoderControl
@@ -144,3 +146,7 @@ QAudioEncoderControl::~QAudioEncoderControl()
 
     Sets the selected audio \a settings.
 */
+
+#include "moc_qaudioencodercontrol.cpp"
+QTM_END_NAMESPACE
+

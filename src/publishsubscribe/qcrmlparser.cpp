@@ -44,6 +44,8 @@
 #include <QFile>
 #include <QXmlStreamAttributes>
 
+QTM_BEGIN_NAMESPACE
+
 KeyData::KeyData(const QString &path, quint64 uid, Target target, quint32 bitIndex)
 {
     m_path = path;
@@ -533,3 +535,5 @@ quint32 QCrmlParser::uidStringToUInt32(const QString &uidString, bool *ok)
         *ok = true;
     return uid;
 }
+
+QTM_END_NAMESPACE

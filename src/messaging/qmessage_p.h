@@ -50,6 +50,9 @@
 #endif
 
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessagePrivate
 {
 #ifdef USE_QMF_IMPLEMENTATION
@@ -150,4 +153,6 @@ public:
     static void setStandardFolder(QMessage& message, QMessage::StandardFolder sf);
 };
 
+
+QTM_END_NAMESPACE
 #endif

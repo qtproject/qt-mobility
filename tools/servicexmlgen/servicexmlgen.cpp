@@ -57,6 +57,7 @@
 #include <QBuffer>
 #include <QMenuBar>
 
+QTM_USE_NAMESPACE
 
 static const QString serviceMetaDataErrorString(int error)
 {

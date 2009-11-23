@@ -169,6 +169,39 @@ SOURCES += winhelpers.cpp \
            qmessageserviceaction_win.cpp 
 
 wince* {
+    # Include the source files from QMF needed for MIME parsing
+    # These files are copied directly from the QMF repo with no changes:
+
+    PRIVATE_HEADERS += win32wce/qmailaddress.h \
+                       win32wce/qmailcodec.h \
+                       win32wce/qmailfolderfwd.h \
+                       win32wce/qmailglobal.h \
+                       win32wce/qmailid.h \
+                       win32wce/qmailipc.h \
+                       win32wce/qmaillog.h \
+                       win32wce/qmailmessage.h \
+                       win32wce/qmailmessagefwd.h \
+                       win32wce/qmailmessage_p.h \
+                       win32wce/qmailnamespace.h \
+                       win32wce/qmailtimestamp.h \
+                       win32wce/longstring_p.h \
+                       win32wce/qprivateimplementation.h \
+                       win32wce/qprivateimplementationdef.h
+
+    SOURCES += win32wce/qmailaddress.cpp \
+               win32wce/qmailcodec.cpp \
+               win32wce/qmailid.cpp \
+               win32wce/qmailinstantiations.cpp \
+               win32wce/qmaillog.cpp \
+               win32wce/qmailmessage.cpp \
+               win32wce/qmailmessagefwd.cpp \
+               win32wce/qmailnamespace.cpp \
+               win32wce/qmailtimestamp.cpp \
+               win32wce/longstring.cpp \
+               win32wce/qprivateimplementation.cpp
+
+    DEFINES += QTOPIAMAIL_PARSING_ONLY QTOPIAMAIL_OMIT_QCOP SINGLE_MODULE_QTOPIAMAIL
+    
     LIBS += cemapi.lib strmiids.lib uuid.lib
 }
 else {
@@ -186,7 +219,8 @@ INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 
 PRIVATE_HEADERS += \
-           qmfhelpers_p.h
+           qmfhelpers_p.h \
+           qmessagestore_qmf_p.h
 
 SOURCES += qmessageid_qmf.cpp \
            qmessagecontentcontainerid_qmf.cpp \

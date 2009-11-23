@@ -4,19 +4,6 @@ QT = core
 
 include(../../common.pri)
 
-#S60 area monitoring must be switched on explicitly, it requires
-#LBT headers and binaries
-#DEFINES += QT_LOCATION_S60_MONITORING
-
-defineTest(enable_s60_lbt) {
-    defines = $$DEFINES
-    contains(defines, QT_LOCATION_S60_MONITORING) {
-        return(true)
-    }
-    return(false)
-}
-
-
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
 INCLUDEPATH += .
@@ -42,7 +29,7 @@ symbian {
                        notificationcallback_s60_p.h \
                        notificationsatellitecallback_s60_p.h
 
-    enable_s60_lbt() {
+    contains(lbt_enabled, yes) {
         PRIVATE_HEADERS += \
                        qgeoareamonitor_s60_p.h \
                        qmlbackendmonitorao_s60_p.h \
@@ -56,7 +43,7 @@ symbian {
                qgeosatelliteinfosource_s60.cpp \
                qmlbackendao_s60.cpp
 
-    enable_s60_lbt() {
+    contains(lbt_enabled, yes) {
         SOURCES += \
                qgeoareamonitor_s60.cpp \
                qmlbackendmonitorao_s60.cpp \
@@ -93,7 +80,7 @@ symbian {
     INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions \
                    $$EPOCROOT\epoc32\include\LBTHeaders
     LIBS += -llbs
-    enable_s60_lbt() {
+    contains(lbt_enabled, yes) {
         LIBS += -llbt
     }
 

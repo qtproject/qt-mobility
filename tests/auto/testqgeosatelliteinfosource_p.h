@@ -42,10 +42,15 @@
 #ifndef TESTQGEOSATELLITEINFOSOURCE_H
 #define TESTQGEOSATELLITEINFOSOURCE_H
 
+#include <qmobilityglobal.h>
 #include <QTest>
 #include <QObject>
 
+QTM_BEGIN_NAMESPACE
 class QGeoSatelliteInfoSource;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class TestQGeoSatelliteInfoSource : public QObject
 {
@@ -100,7 +105,7 @@ private slots:
     
     void removeSlotForRequestTimeout();
     void removeSlotForSatellitesInUseUpdated();
-    void removeSlotForsatellitesInViewUpdated();
+    void removeSlotForSatellitesInViewUpdated();
 
 private:
     QGeoSatelliteInfoSource *m_source;

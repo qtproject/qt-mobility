@@ -48,6 +48,8 @@
 
 class AudioCaptureSession;
 
+QTM_USE_NAMESPACE
+
 class AudioDeviceControl : public QAudioDeviceControl
 {
 Q_OBJECT

@@ -46,6 +46,9 @@
 #include <QTimer>
 #include <qmessage_p.h>
 
+
+QTM_BEGIN_NAMESPACE
+
 namespace {
 
 struct TextPartSearcher
@@ -575,3 +578,5 @@ QMessageStore::ErrorCode QMessageServiceAction::lastError() const
 
 #include "qmessageserviceaction_qmf.moc"
 
+
+QTM_END_NAMESPACE

@@ -44,7 +44,7 @@
 
 #include "cntabstractrelationship.h"
 #include <qtcontacts.h>
-
+QTM_USE_NAMESPACE
 class CntRelationshipGroup: public CntAbstractRelationship
 {
 public: 

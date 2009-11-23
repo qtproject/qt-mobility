@@ -53,8 +53,6 @@
 // We mean it.
 //
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <qmobilityglobal.h>
 #include <QtCore/qsize.h>
 #include <QtGui/qimage.h>
@@ -63,10 +61,11 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
-
 class QGLContext;
-class QVideoSurfacePainter;
 
+QTM_BEGIN_NAMESPACE
+
+class QVideoSurfacePainter;
 class Q_AUTOTEST_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
@@ -149,6 +148,6 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
 #endif
 
-#endif
+QTM_END_NAMESPACE
 
 #endif

@@ -41,6 +41,8 @@
 
 #include "qcontactdetails.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactAddress
  * \brief An address of a contact
@@ -1478,3 +1480,4 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  * Returns the name of the default assistant of contacts belonging to this organization
  */
 
+QTM_END_NAMESPACE

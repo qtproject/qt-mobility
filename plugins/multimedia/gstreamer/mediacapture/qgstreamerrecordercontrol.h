@@ -45,6 +45,7 @@
 
 #include <qmediarecordercontrol.h>
 #include "qgstreamercapturesession.h"
+QTM_USE_NAMESPACE
 
 class QGstreamerRecorderControl : public QMediaRecorderControl
 {

@@ -55,6 +55,8 @@
 
 #include <qmediaplaylist.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaPlaylistProviderPrivate
 {
 public:
@@ -63,6 +65,8 @@ public:
     virtual ~QMediaPlaylistProviderPrivate()
     {}
 };
+
+QTM_END_NAMESPACE
 
 
 #endif // QMEDIAPLAYLISTSOURCE_P_H

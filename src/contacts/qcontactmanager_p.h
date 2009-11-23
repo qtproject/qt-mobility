@@ -65,6 +65,8 @@
 #include "qcontactactiondescriptor.h"
 #include "qcontactactionfactory.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactManagerEngineFactory;
 
 /* Data and stuff that is shared amongst all backends */
@@ -110,5 +112,7 @@ private:
     Q_DISABLE_COPY(QContactManagerData)
 };
 
+
+QTM_END_NAMESPACE
 
 #endif

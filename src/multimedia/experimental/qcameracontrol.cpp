@@ -42,9 +42,10 @@
 #include <experimental/qcameracontrol.h>
 #include  "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCameraControl
-    \ingroup multimedia
 
     \preliminary
     \brief The abstract class for controling still or video cameras, this is provided
@@ -115,3 +116,5 @@ QCameraControl::~QCameraControl()
     a description of the error \a errorString.
 */
 
+#include "moc_qcameracontrol.cpp"
+QTM_END_NAMESPACE

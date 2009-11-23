@@ -47,6 +47,8 @@
 
 #include <experimental/qcamera.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QImageProcessingControl : public QMediaControl
 {
     Q_OBJECT
@@ -80,6 +82,8 @@ protected:
 
 #define QImageProcessingControl_iid "com.nokia.Qt.QImageProcessingControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QImageProcessingControl, QImageProcessingControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif
 

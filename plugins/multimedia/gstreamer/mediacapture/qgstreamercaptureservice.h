@@ -47,11 +47,13 @@
 #include "qgstreamervideooutputcontrol.h"
 
 #include <gst/gst.h>
+QTM_BEGIN_NAMESPACE
+class QAudioDeviceControl;
+class QVideoDeviceControl;
+QTM_END_NAMESPACE
 
 class QGstreamerCaptureSession;
 class QGstreamerCameraControl;
-class QAudioDeviceControl;
-class QVideoDeviceControl;
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerVideoRenderer;
@@ -85,12 +87,10 @@ private:
     QVideoDeviceControl *m_videoInputDevice;
 
     QGstreamerVideoOutputControl *m_videoOutput;
-#ifndef QT_NO_MULTIMEDIA
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerElementFactory *m_videoRendererFactory;
     QGstreamerVideoOverlay *m_videoWindow;
     QGstreamerElementFactory *m_videoWindowFactory;
-#endif
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
     QGstreamerElementFactory *m_videoWidgetFactory;
     QGstreamerImageCaptureControl *m_imageCaptureControl;

@@ -45,6 +45,7 @@
 
 #include <experimental/qimagecapturecontrol.h>
 #include "v4lcamerasession.h"
+QTM_USE_NAMESPACE
 
 class V4LImageCaptureControl : public QImageCaptureControl
 {

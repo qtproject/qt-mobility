@@ -48,6 +48,8 @@
 #include <qmobilityglobal.h>
 #include <qtmedianamespace.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaService;
 
 class QMediaObjectPrivate;
@@ -101,5 +103,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_notify())
 };
 
+
+QTM_END_NAMESPACE
 
 #endif  // QABSTRACTMEDIAOBJECT_H

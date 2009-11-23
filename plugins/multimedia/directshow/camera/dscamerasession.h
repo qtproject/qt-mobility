@@ -72,6 +72,8 @@
 class DSVideoRenderer;
 class SampleGrabberCallbackPrivate;
 
+QTM_USE_NAMESPACE
+
 struct video_buffer {
     unsigned char* buffer;
     int            length;

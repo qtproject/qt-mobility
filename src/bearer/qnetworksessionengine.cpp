@@ -41,7 +41,7 @@
 
 #include "qnetworksessionengine_p.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 QNetworkSessionEngine::QNetworkSessionEngine(QObject *parent)
 :   QObject(parent)
@@ -52,5 +52,6 @@ QNetworkSessionEngine::~QNetworkSessionEngine()
 {
 }
 
-QT_END_NAMESPACE
+#include "moc_qnetworksessionengine_p.cpp"
+QTM_END_NAMESPACE
 

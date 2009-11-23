@@ -55,6 +55,8 @@
 
 //Q_DECLARE_METATYPE(QList<uint>)
 
+QTM_BEGIN_NAMESPACE
+
 static QDBusConnection dbusConnection = QDBusConnection::systemBus();
 //static QDBusInterface iface(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, dbusConnection);
 void QNmDBusHelper::deviceStateChanged(quint32 state)
@@ -1047,4 +1049,6 @@ QStringList QNetworkManagerIp4Config::domains() const
     return d->connectionInterface->property("Domains").toStringList();
 }
 
+#include "moc_qnetworkmanagerservice_linux_p.cpp"
 
+QTM_END_NAMESPACE

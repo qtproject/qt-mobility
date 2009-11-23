@@ -43,6 +43,9 @@
 #include "qmessageserviceaction_symbian_p.h"
 #endif
 
+
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageServiceAction
 
@@ -339,3 +342,5 @@
     Returns a value indicating the last error condition encountered by the action.
 */
 
+#include "moc_qmessageserviceaction.cpp"
+QTM_END_NAMESPACE

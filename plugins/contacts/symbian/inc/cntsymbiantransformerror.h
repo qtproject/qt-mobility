@@ -48,6 +48,7 @@
 // contact details
 const TInt KErrInvalidContactDetail(-32768);
 
+QTM_USE_NAMESPACE
 class CntSymbianTransformError
 {
 public:

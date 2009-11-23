@@ -61,6 +61,8 @@
 #include "qtcontactsglobal.h"
 #include "qcontactid.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactRelationshipPrivate : public QSharedData
 {
 public:
@@ -85,5 +87,7 @@ public:
     QContactId m_second;
     QString m_relationshipType;
 };
+
+QTM_END_NAMESPACE
 
 #endif

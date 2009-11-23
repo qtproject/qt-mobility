@@ -53,6 +53,8 @@ QT_END_NAMESPACE
 
 class FilterDialog;
 
+QTM_USE_NAMESPACE
+
 class FindDialog : public QDialog
 {
     Q_OBJECT

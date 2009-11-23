@@ -53,15 +53,16 @@
 // We mean it.
 //
 
+#include <qmobilityglobal.h>
 #include <qvideowidget.h>
 
 #ifndef QT_NO_OPENGL
 #include <QGLWidget>
 #endif
 
-#ifndef QT_NO_MULTIMEDIA
 #include <qpaintervideosurface_p.h>
-#endif
+
+QTM_BEGIN_NAMESPACE
 
 class QVideoWidgetControlInterface
 {
@@ -114,7 +115,6 @@ private:
     QVideoWidgetControl *m_widgetControl;
 };
 
-#ifndef QT_NO_MULTIMEDIA
 
 class QVideoRendererControl;
 
@@ -162,7 +162,6 @@ private:
     QSize m_aspectRatio;
     bool m_updatePaintDevice;
 };
-#endif
 
 class QVideoWindowControl;
 
@@ -199,7 +198,6 @@ private:
 };
 
 class QMediaService;
-class QStackedLayout;
 class QVideoOutputControl;
 
 class QVideoWidgetPrivate
@@ -212,9 +210,7 @@ public:
         , outputControl(0)
         , widgetBackend(0)
         , windowBackend(0)
-#ifndef QT_NO_MULTIMEDIA
         , rendererBackend(0)
-#endif
         , currentControl(0)
         , currentBackend(0)
         , brightness(0)
@@ -232,9 +228,7 @@ public:
     QVideoOutputControl *outputControl;
     QVideoWidgetControlBackend *widgetBackend;
     QWindowVideoWidgetBackend *windowBackend;
-#ifndef QT_NO_MULTIMEDIA
     QRendererVideoWidgetBackend *rendererBackend;
-#endif
     QVideoWidgetControlInterface *currentControl;
     QVideoWidgetBackend *currentBackend;
     int brightness;
@@ -255,5 +249,7 @@ public:
     void _q_fullScreenChanged(bool fullScreen);
     void _q_dimensionsChanged();
 };
+
+QTM_END_NAMESPACE
 
 #endif

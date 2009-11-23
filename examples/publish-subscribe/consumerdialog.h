@@ -42,9 +42,14 @@
 #ifndef CONSUMERDIALOG_H
 #define CONSUMERDIALOG_H
 
+#include <qmobilityglobal.h>
 #include <QDialog>
 
+QTM_BEGIN_NAMESPACE
 class QValueSpaceSubscriber;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 namespace Ui {
     class ConsumerDialog;

@@ -6,7 +6,7 @@ TARGET = QtMedia
 include (../../common.pri)
 INCLUDEPATH+= .
 
-QT += network
+QT += network multimedia
 
 contains(QT_CONFIG, opengl): QT += opengl
 

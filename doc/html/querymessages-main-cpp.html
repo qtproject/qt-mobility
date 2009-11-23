@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>main.cpp Example File (querymessages/main.cpp)</title>
+  <title>Qt Mobility 1.0: main.cpp Example File (querymessages/main.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -59,6 +59,8 @@
     #include &lt;qmessagestore.h&gt;
     #include &lt;qdebug.h&gt;
 
+    QTM_USE_NAMESPACE
+
     int main(int argc, char *argv[])
     {
         QApplication app(argc, argv);
@@ -67,9 +69,13 @@
         foreach (QMessageId id, ids) {
             QMessage message(QMessageStore::instance()-&gt;message(id));
             if (QMessageStore::instance()-&gt;lastError() == QMessageStore::NoError) {
+                            QStringList to;
+                            foreach (const QMessageAddress &amp;addr, message.to()) {
+                                    to.append(addr.recipient());
+                            }
                 qDebug() &lt;&lt; QString(message.subject().leftJustified(32, ' ' , true)
                                     + &quot;  &quot;
-                                    + message.from().recipient().leftJustified(21, ' ', true)
+                                    + to.join(&quot; &quot;)
                                     + &quot;  &quot;
                                     + QString::number(message.size()).left(19));
             }
@@ -80,6 +86,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

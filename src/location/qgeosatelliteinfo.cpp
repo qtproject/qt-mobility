@@ -43,6 +43,7 @@
 #include <QHash>
 #include <QDebug>
 
+QTM_BEGIN_NAMESPACE
 
 class QGeoSatelliteInfoPrivate
 {
@@ -227,3 +228,5 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
     return dbg;
 }
 #endif
+
+QTM_END_NAMESPACE

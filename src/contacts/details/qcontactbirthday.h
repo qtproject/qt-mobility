@@ -48,6 +48,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactBirthday : public QContactDetail
 {
@@ -63,6 +65,8 @@ public:
     void setDate(const QDate& date) {setValue(FieldBirthday, date);}
     QDate date() const {return value<QDate>(FieldBirthday);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

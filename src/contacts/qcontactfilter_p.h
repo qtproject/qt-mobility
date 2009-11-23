@@ -56,6 +56,7 @@
 #include "qcontactfilter.h"
 #include <QSharedData>
 
+
 /* Boiler plate code */
 #define Q_IMPLEMENT_CONTACTFILTER_PRIVATE(Class) \
     Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
@@ -73,6 +74,7 @@
             d_ptr = new Class##Private; \
     }
 
+QTM_BEGIN_NAMESPACE
 class QContactFilterPrivate : public QSharedData
 {
 public:
@@ -91,17 +93,19 @@ public:
     /* Helper functions for C++ protection rules */
     static const QSharedDataPointer<QContactFilterPrivate>& extract_d(const QContactFilter& other) {return other.d_ptr;}
 };
+QTM_END_NAMESPACE
 
 #if defined(Q_CC_MWERKS)
 // This results in multiple symbol definition errors on all other compilers
 // but not having a definition here results in an attempt to use the unspecialized
 // clone (which fails because of the pure virtuals above)
-template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone()
+template<> QTM_PREPEND_NAMESPACE(QContactFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QContactFilterPrivate)>::clone()
 {
     return d->clone();
 }
 #else
-template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone();
+template<> QTM_PREPEND_NAMESPACE(QContactFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QContactFilterPrivate)>::clone();
 #endif
+
 
 #endif

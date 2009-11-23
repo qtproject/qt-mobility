@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- battery-charge.qdoc -->
 <head>
-  <title>Accessing Publish and Subscribe from QML</title>
+  <title>Qt Mobility 1.0: Accessing Publish and Subscribe from QML</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -34,7 +34,7 @@
 <h2>Battery Consumer</h2>
 <p>The first step is to make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML so that our QML code can access the keys published by the battery-provider. This is achieved by using the QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros. The following code makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML as ValueSpaceSubscriber.</p>
 <pre>    QML_DECLARE_TYPE(QValueSpaceSubscriber);
-    QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&amp;0x00ff00)&gt;&gt;8, ValueSpaceSubscriber, QValueSpaceSubscriber);</pre>
+    QML_DEFINE_TYPE(Qt, 4, 6, ValueSpaceSubscriber, QValueSpaceSubscriber);</pre>
 <a name="qml"></a>
 <h3>QML</h3>
 <p>Two ValueSpaceSubscriber instances are created, one for each of the battery values. We give each object a unique id so that we can reference it from elsewhere in the QML. We set the <i>path</i> properties to the Value Space path of the keys. Finally we set the <i>notify</i> properties to true to enable the emission of change notification signals.</p>
@@ -76,6 +76,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

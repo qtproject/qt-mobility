@@ -45,18 +45,25 @@
 #include <QLineEdit>
 #include <QXmlStreamWriter>
 
+#include <qmobilityglobal.h>
+
+
 class QLabel;
+QTM_BEGIN_NAMESPACE
 class ServiceMetaDataResults;
+QTM_END_NAMESPACE
 class InterfacesTabWidget;
 class MandatoryLineEdit;
 class ErrorCollector;
+
+
 
 class ServiceWidget : public QWidget
 {
     Q_OBJECT
 public:
     ServiceWidget(QWidget *parent = 0);
-    void load(const ServiceMetaDataResults &data);
+    void load(const QTM_PREPEND_NAMESPACE(ServiceMetaDataResults) &data);
 
     void validate(ErrorCollector *errors);
     void writeXml(QXmlStreamWriter *writer) const;

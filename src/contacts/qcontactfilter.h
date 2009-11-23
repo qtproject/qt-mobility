@@ -49,6 +49,8 @@
 
 #include "qtcontactsglobal.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Manual Q_DECLARE_CONTACTFILTER_PRIVATE macro */
 
 #define Q_DECLARE_CONTACTFILTER_PRIVATE(Class) \
@@ -105,5 +107,7 @@ protected:
 
 const Q_CONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
 const Q_CONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);
+
+QTM_END_NAMESPACE
 
 #endif

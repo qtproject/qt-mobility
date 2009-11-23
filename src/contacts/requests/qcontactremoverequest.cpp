@@ -42,6 +42,8 @@
 #include "qcontactremoverequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactRemoveRequest
   \brief The QContactRemoveRequest class allows a client to asynchronously
@@ -80,3 +82,7 @@ QContactFilter QContactRemoveRequest::filter() const
     Q_D(const QContactRemoveRequest);
     return d->m_filter;
 }
+
+#include "moc_qcontactremoverequest.cpp"
+
+QTM_END_NAMESPACE

@@ -49,7 +49,12 @@ class QPushButton;
 class QListWidget;
 class QListWidgetItem;
 class QLineEdit;
+
+QTM_BEGIN_NAMESPACE
 class QContactManager;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class GroupDetailsDialog : public QDialog
 {

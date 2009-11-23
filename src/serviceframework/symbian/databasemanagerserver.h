@@ -41,9 +41,13 @@
 #ifndef CDATABASEMANAGERSERVER_H_
 #define CDATABASEMANAGERSERVER_H_
 
+#include <qmobilityglobal.h>
 #include <e32base.h>
 #include "databasemanagerserver.pan"
 #include "databasemanagerserver_global.h"
+
+//QTM_BEGIN_NAMESPACE
+namespace QtMobility {
 
 // needed for creating server thread.
 const TUint KDefaultHeapSize = 0x10000;
@@ -57,6 +61,9 @@ class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServer : public CServer2
     public:
         static void PanicServer(TDatabaseManagerSerververPanic aPanic);
     };
+
+//QTM_END_NAMESPACE
+}
 
 #endif
 

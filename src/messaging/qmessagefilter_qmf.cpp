@@ -45,7 +45,9 @@
 #include <qmailfolderkey.h>
 #include <qmailmessagekey.h>
 
-using namespace QmfHelpers;
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
+
+QTM_BEGIN_NAMESPACE
 
 class QMessageFilterPrivate
 {
@@ -436,3 +438,4 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderFilter &f
     return result;
 }
 
+QTM_END_NAMESPACE

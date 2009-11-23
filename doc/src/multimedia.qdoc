@@ -60,7 +60,15 @@ collection of media content.
 \ingroup mobility
 
 Multimedia provides a set of APIs that allow the developer to play, record
-and manage a collection of media content.
+and manage a collection of media content. It is dependent on the
+QtMultimedia API that is part of the Qt 4.6 release.
+
+The advantages of the Qt Mobility API are
+\list
+    \o The ease of implementing functionality.
+    \o The flexibility with the source / generated multimedia. Source files
+    need not be local, it could be streamed data.
+\endlist
 
 \tableofcontents
 
@@ -68,10 +76,60 @@ and manage a collection of media content.
 \section1 Overview
 
 
+This library will require Qt 4.6.
 
-This library will require Qt 4.6. 
+This API delivers an easy to use interface to multimedia functions whether
+the developer wants to show an image, a video, record sound or play a
+multimedia stream.
 
-To build the library, run \tt qmake and \tt make.
+
+\section2 Audio
+
+Looking at the Audio Recorder example we see that by creating a QMediaRecorder
+object that is initialized with a newly created QAudioCaptureSource object
+we can now perform all the core actions necessary to record a sound source.
+
+To initialize the objects we 
+
+\snippet snippets/multimedia-snippets/audiorecorder.cpp create-objs-1
+ 
+the API now allows us to discover available devices and codecs as shown in
+the example. To actually do the recording we merely have to invoke the
+\{QMediaRecorder::record()}{record()} slot, and to stop signal the
+\{QMediaRecorder::stop()}{stop()} slot. Saving to a file is done simply by
+calling QMediaRecorder::setOutputLocation() before starting to record.
+
+With a handful of functions and two classes we can implement a sound
+recording application, ignoring the user interface of course.
+
+
+
+\section2 Video
+
+
+
+\section2 Radio
+
+
+\section1 Examples
+
+\section2 Record a Sound Source
+
+\l{audiorecorder}{AudioRecorder} is a demonstration of the discovery of
+the supported devices and codecs and the use of recording functions in the
+QMediaRecorder class.
+
+\section2 Play a Media File
+
+The \l{player}{Player} example is a simple multimedia player. Select a
+video file to play, stop, pause, show in fullscreen or manipulate various
+image attributes using the Color Options button.
+
+\section2 Slide Show
+
+The \l{slideshow}{Slide Show} shows the use of the QMediaImageViewer and
+QVideoWidget classes.
+
 
 
 \section1 Reference documentation

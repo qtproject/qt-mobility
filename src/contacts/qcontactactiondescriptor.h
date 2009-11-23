@@ -47,6 +47,8 @@
 #include <QString>
 #include <QSharedDataPointer>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactActionDescriptorPrivate;
 class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
@@ -71,5 +73,7 @@ public:
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif

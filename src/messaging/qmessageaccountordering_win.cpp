@@ -41,6 +41,8 @@
 #include "qmessageaccountordering.h"
 #include "qmessageaccountordering_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageAccountOrderingPrivate::QMessageAccountOrderingPrivate(QMessageAccountOrdering *ordering)
     :q_ptr(ordering),
     _empty(true),
@@ -98,3 +100,5 @@ QMessageAccountOrdering QMessageAccountOrdering::byName(Qt::SortOrder order)
     result.d_ptr->_order = order;
     return result;
 }
+
+QTM_END_NAMESPACE

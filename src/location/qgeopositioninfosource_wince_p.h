@@ -46,6 +46,8 @@
 
 #include "qgeoinfothread_wince_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGeoPositionInfoValidator : public QGeoInfoValidator
 {
 public:
@@ -86,5 +88,7 @@ private:
     QGeoPositionInfo lastPosition;
     QGeoInfoThreadWinCE *infoThread;
 };
+
+QTM_END_NAMESPACE
 
 #endif //#ifndef QGEOPOSITIONINFOSOURCE_WINCE_P_H

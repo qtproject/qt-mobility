@@ -45,6 +45,9 @@
 #include <QMetaType>
 #include <qmessageglobal.h>
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageIdPrivate;
 
 class Q_MESSAGING_EXPORT QMessageId 
@@ -73,10 +76,12 @@ private:
     QMessageIdPrivate *d_ptr;
 };
 
-Q_DECLARE_METATYPE(QMessageId)
 
 typedef QList<QMessageId> QMessageIdList;
 
 Q_MESSAGING_EXPORT uint qHash(const QMessageId &id);
+
+QTM_END_NAMESPACE
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMessageId))
 
 #endif

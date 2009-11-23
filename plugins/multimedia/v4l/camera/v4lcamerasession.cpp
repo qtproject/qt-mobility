@@ -750,11 +750,22 @@ void V4LCameraSession::captureFrame()
             ret = ioctl(sfd, VIDIOC_QBUF, &buf);
 
         } else {
-            V4LVideoBuffer* packet = new V4LVideoBuffer((unsigned char*)buffers.at(buf.index).start, sfd, buf);
-            packet->setBytesPerLine(m_windowSize.width()*4);
-            QVideoFrame frame(packet,m_windowSize,pixelF);
-            frame.setStartTime(buf.timestamp.tv_sec);
-            m_surface->present(frame);
+            QVideoSurfaceFormat sfmt = m_surface->surfaceFormat();
+            if(sfmt.pixelFormat() == QVideoFrame::Format_RGB565) {
+                QImage image;
+                image = QImage((unsigned char*)buffers.at(buf.index).start,
+                        m_windowSize.width(), m_windowSize.height(), QImage::Format_RGB16);
+                QVideoFrame frame(image);
+                m_surface->present(frame);
+                ret = ioctl(sfd, VIDIOC_QBUF, &buf);
+
+            } else {
+                V4LVideoBuffer* packet = new V4LVideoBuffer((unsigned char*)buffers.at(buf.index).start, sfd, buf);
+                packet->setBytesPerLine(m_windowSize.width()*4);
+                QVideoFrame frame(packet,m_windowSize,pixelF);
+                frame.setStartTime(buf.timestamp.tv_sec);
+                m_surface->present(frame);
+            }
         }
 
     } else

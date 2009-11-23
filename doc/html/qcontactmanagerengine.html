@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactmanagerengine.cpp -->
 <head>
-  <title>QContactManagerEngine Class Reference</title>
+  <title>Qt Mobility 1.0: QContactManagerEngine Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -29,7 +29,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#contact">contact</a></b> ( const QContactLocalId &amp; <i>contactId</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#contacts">contacts</a></b> ( const QContactFilter &amp; <i>filter</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#contacts-2">contacts</a></b> ( const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#contacts-3">contacts</a></b> ( const QString &amp; <i>contactType</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i>, QContactManager::Error &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#deref">deref</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QContactDetailDefinition </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#detailDefinition">detailDefinition</a></b> ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>contactType</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMap&lt;QString, QContactDetailDefinition&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#detailDefinitions">detailDefinitions</a></b> ( const QString &amp; <i>contactType</i>, QContactManager::Error &amp; <i>error</i> ) const</td></tr>
@@ -145,9 +144,6 @@
 <h3 class="fn"><a name="contacts-2"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; QContactManagerEngine::contacts ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Return the list of contact ids present in this engine, sorted according to the given <i>sortOrders</i>.</p>
 <p>Any errors encountered should be stored to <i>error</i>.</p>
-<h3 class="fn"><a name="contacts-3"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; QContactManagerEngine::contacts ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>This function is deprecated.</p>
-<p>Returns a list of ids of contacts of the given <i>contactType</i>, sorted according to the given list of <i>sortOrders</i>. Any error which occurs is saved in <i>error</i>.</p>
 <h3 class="fn"><a name="contactsAdded"></a>void QContactManagerEngine::contactsAdded ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted some time after a set of contacts has been added to this engine where the <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>() signal was not emitted for those changes. As it is possible that other processes (or other devices) may have added the contacts, the timing cannot be determined.</p>
 <p>The list of ids of contacts added is given by <i>contactIds</i>. There may be one or more ids in the list.</p>
@@ -315,6 +311,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

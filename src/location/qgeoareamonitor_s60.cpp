@@ -44,6 +44,7 @@
 #include "qmlbackendmonitorinfo_s60_p.h"
 #include "qmlbackendmonitorcreatetriggerao_s60_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 QGeoAreaMonitorS60* QGeoAreaMonitorS60::NewL(QObject *aParent)
 {
@@ -260,4 +261,5 @@ void QGeoAreaMonitorS60::disconnectNotify(const char* signal)
     }
 }
 
+QTM_END_NAMESPACE
 

@@ -38,12 +38,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include <qmobilityglobal.h>
 #include <QCoreApplication>
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
 #include "databasemanagerserver.h"
 #include "clientservercommon.h"
+
+QTM_USE_NAMESPACE
 
 int main(int argc, char **argv)
 {

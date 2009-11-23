@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qradiotunercontrol.cpp -->
 <head>
-  <title>QRadioTunerControl Class Reference</title>
+  <title>Qt Mobility 1.0: QRadioTunerControl Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -44,6 +44,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#setVolume">setVolume</a></b> ( int <i>volume</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#signalStrength">signalStrength</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#start">start</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QRadioTuner::State </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#state">state</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QRadioTuner::StereoMode </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#stereoMode">stereoMode</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#stop">stop</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#volume">volume</a></b> () const = 0</td></tr>
@@ -61,6 +62,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#searchingStatusChanged">searchingStatusChanged</a></b> ( bool <i>searching</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#stateChanged">stateChanged</a></b> ( QRadioTuner::State <i>state</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
@@ -168,6 +170,10 @@
 <p>Signals that the percentage <i>strength</i> of the signal received by a radio tuner has changed.</p>
 <h3 class="fn"><a name="start"></a>void QRadioTunerControl::start ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Activate the radio device.</p>
+<h3 class="fn"><a name="state"></a><a href="qradiotuner.html#State-enum">QRadioTuner::State</a> QRadioTunerControl::state () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the current radio tuner state.</p>
+<h3 class="fn"><a name="stateChanged"></a>void QRadioTunerControl::stateChanged ( <a href="qradiotuner.html#State-enum">QRadioTuner::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <i>state</i> of a radio tuner has changed.</p>
 <h3 class="fn"><a name="stereoMode"></a><a href="qradiotuner.html#StereoMode-enum">QRadioTuner::StereoMode</a> QRadioTunerControl::stereoMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a radio tuner's stereo mode.</p>
 <p>See also <a href="qradiotunercontrol.html#setStereoMode">setStereoMode</a>() and <a href="qradiotuner.html#StereoMode-enum">QRadioTuner::StereoMode</a>.</p>
@@ -188,6 +194,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

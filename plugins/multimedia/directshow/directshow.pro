@@ -1,5 +1,7 @@
 TEMPLATE = lib
+QT+=multimedia
 CONFIG += plugin
+QT+=multimedia
 TARGET = $$qtLibraryTarget(dsengine)
 
 PLUGIN_TYPE = mediaservice

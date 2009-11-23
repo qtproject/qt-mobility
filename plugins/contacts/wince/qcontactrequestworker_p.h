@@ -61,7 +61,11 @@
 
 #include "qcontactrequestworker.h"
 
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 struct QContactRequestElement
 {

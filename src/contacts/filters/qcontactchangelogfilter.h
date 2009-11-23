@@ -46,6 +46,8 @@
 
 #include <QDateTime>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactChangeLogFilterPrivate;
 class Q_CONTACTS_EXPORT QContactChangeLogFilter: public QContactFilter
 {
@@ -68,5 +70,7 @@ public:
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactChangeLogFilter)
 };
+
+QTM_END_NAMESPACE
 
 #endif

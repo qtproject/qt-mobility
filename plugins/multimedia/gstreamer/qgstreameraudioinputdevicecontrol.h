@@ -45,6 +45,8 @@
 #include <qaudiodevicecontrol.h>
 #include <QtCore/qstringlist.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerAudioInputDeviceControl : public QAudioDeviceControl
 {
 Q_OBJECT
@@ -68,6 +70,7 @@ private:
     void update();
     void updateAlsaDevices();
     void updateOssDevices();
+    void updatePulseDevices();
 
     int m_selectedDevice;
     QStringList m_names;

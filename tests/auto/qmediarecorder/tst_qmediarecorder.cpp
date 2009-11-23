@@ -51,12 +51,9 @@
 #include <qmediaformatcontrol.h>
 #include <qvideoencodercontrol.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
 
+QTM_USE_NAMESPACE
 class MockMediaFormatControl : public QMediaFormatControl
 {
     Q_OBJECT

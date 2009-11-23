@@ -49,6 +49,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 //! [0]
 class Q_CONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
@@ -96,6 +98,8 @@ public:
     QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
 };
 //! [0]
+
+QTM_END_NAMESPACE
 
 #endif
 

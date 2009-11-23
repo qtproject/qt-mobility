@@ -63,6 +63,7 @@
 #include "qcontactmemorybackend_p.h"
 #include "qcontactinvalidbackend_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 /* Shared QContactManager stuff here, default engine stuff below */
 QList<QContactActionFactory*> QContactManagerData::m_actionfactories; // list of all factories
@@ -367,5 +368,5 @@ QContactManagerEngine* QContactManagerData::engine(const QContactManager* manage
     return 0;
 }
 
-
+QTM_END_NAMESPACE
 

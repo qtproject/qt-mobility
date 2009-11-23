@@ -52,7 +52,6 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
-#ifndef QT_NO_MULTIMEDIA
 
 V4LVideoBuffer::V4LVideoBuffer(unsigned char *buffer, int fd, v4l2_buffer buf)
     : QAbstractVideoBuffer(NoHandle)
@@ -101,4 +100,3 @@ void V4LVideoBuffer::unmap()
     m_mode = NotMapped;
 }
 
-#endif

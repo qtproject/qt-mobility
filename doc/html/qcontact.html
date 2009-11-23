@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontact.cpp -->
 <head>
-  <title>QContact Class Reference</title>
+  <title>Qt Mobility 1.0: QContact Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -24,7 +24,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#QContact">QContact</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#QContact-2">QContact</a></b> ( const QContact &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#dtor.QContact">~QContact</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactActionDescriptor&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#availableActions">availableActions</a></b> ( const QString &amp; <i>vendorName</i>, int <i>implementationVersion</i> = -1 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactActionDescriptor&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#availableActions">availableActions</a></b> ( const QString &amp; <i>vendorName</i> = QString(), int <i>implementationVersion</i> = -1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#clearDetails">clearDetails</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactDetail </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detail">detail</a></b> ( const QString &amp; <i>definitionName</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detail-2">detail</a></b> () const</td></tr>
@@ -34,7 +34,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;T&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#details-3">details</a></b> ( const QString &amp; <i>fieldName</i>, const QString &amp; <i>value</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactDetail&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#details-4">details</a></b> ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i>, const QString &amp; <i>value</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactDetail&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#detailsWithAction">detailsWithAction</a></b> ( const QString &amp; <i>actionName</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContactDisplayLabel </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#displayLabel">displayLabel</a></b> () const&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#displayLabel">displayLabel</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactId </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#id">id</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#isPreferredDetail">isPreferredDetail</a></b> ( const QString &amp; <i>actionName</i>, const QContactDetail &amp; <i>detail</i> ) const</td></tr>
@@ -45,8 +45,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactRelationship&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#relationships">relationships</a></b> ( const QString &amp; <i>relationshipType</i> = QString() ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#removeDetail">removeDetail</a></b> ( QContactDetail * <i>detail</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#saveDetail">saveDetail</a></b> ( QContactDetail * <i>detail</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setDisplayLabel">setDisplayLabel</a></b> ( const QContactDisplayLabel &amp; <i>label</i> )&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setDisplayLabel-2">setDisplayLabel</a></b> ( const QString &amp; <i>label</i> )&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setId">setId</a></b> ( const QContactId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setPreferredDetail">setPreferredDetail</a></b> ( const QString &amp; <i>actionName</i>, const QContactDetail &amp; <i>preferredDetail</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontact.html#setRelationshipOrder">setRelationshipOrder</a></b> ( const QList&lt;QContactRelationship&gt; &amp; <i>reordered</i> )</td></tr>
@@ -72,9 +70,8 @@
 <p>Initializes this <a href="qcontact.html">QContact</a> from <i>other</i></p>
 <h3 class="fn"><a name="dtor.QContact"></a>QContact::~QContact ()</h3>
 <p>Frees the memory used by this <a href="qcontact.html">QContact</a></p>
-<h3 class="fn"><a name="availableActions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; QContact::availableActions ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>vendorName</i>, int <i>implementationVersion</i> = -1 ) const</h3>
+<h3 class="fn"><a name="availableActions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; QContact::availableActions ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>vendorName</i> = QString(), int <i>implementationVersion</i> = -1 ) const</h3>
 <p>Return a list of actions available to be performed on this contact which are offered by the vendor whose name is the given <i>vendorName</i>, where the action instance has the implementation version given by <i>implementationVersion</i>. If <i>vendorName</i> is empty, actions from any vendor are supplied; if <i>implementationVersion</i> is <tt>-1</tt>, action implementations of any version will be returned.</p>
-<p>NOTE: during week 47 when the above deprecated function is removed, vendorName will have a default argument and thus will not need to be supplied.</p>
 <h3 class="fn"><a name="clearDetails"></a>void QContact::clearDetails ()</h3>
 <p>Removes all details of the contact. This function does not modify the id or type of the contact. Calling <a href="qcontact.html#isEmpty">isEmpty</a>() after calling this function will return true.</p>
 <h3 class="fn"><a name="detail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::detail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i> ) const</h3>
@@ -93,11 +90,8 @@
 <p>Returns a list of details of the given <i>definitionName</i>, <i>fieldName</i> and field <i>value</i></p>
 <h3 class="fn"><a name="detailsWithAction"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::detailsWithAction ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i> ) const</h3>
 <p>Retrieve any details for which the given <i>actionName</i> is available</p>
-<h3 class="fn"><a name="displayLabel"></a><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> QContact::displayLabel () const</h3>
-<p>This function is deprecated.</p>
-<p>DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a</p>
-<p>Returns the display label of the contact. Every contact has exactly one display label which is either set manually (by saving a modified copy of the <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> in the contact, or by calling <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>()) or synthesized by the manager from which the contact is retrieved.</p>
-<p>See also <a href="qcontact.html#setDisplayLabel">setDisplayLabel</a>().</p>
+<h3 class="fn"><a name="displayLabel"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContact::displayLabel () const</h3>
+<p>Returns the read-only display label of this contact. A contact which has been retrieved from a manager will have a display label synthesized for it.</p>
 <h3 class="fn"><a name="id"></a><a href="qcontactid.html">QContactId</a> QContact::id () const</h3>
 <p>Returns the <a href="qcontactid.html">QContactId</a> that identifies this contact</p>
 <p>See also <a href="qcontact.html#setId">setId</a>().</p>
@@ -121,23 +115,14 @@
 <h3 class="fn"><a name="removeDetail"></a>bool QContact::removeDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
 <p>Removes the <i>detail</i> from the contact.</p>
 <p>Any preference for the given field is also removed. The Id of the <i>detail</i> is removed, to signify that it is no longer part of the contact.</p>
-<p>If the detail is the display label for this contact, the display label will be reset to an empty state, and the function will return success.</p>
+<p>If the detail is the contact type for this contact, the type will be reset to <tt>QContactType::TypeContact</tt>, and the function will return success.</p>
+<p>If the detail is a display label, the operation will fail and return false.</p>
 <p>Returns true if the detail was removed successfully, false if an error occurred</p>
 <h3 class="fn"><a name="saveDetail"></a>bool QContact::saveDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
 <p>Saves the given <i>detail</i> in the list of stored details, and sets its Id. If another detail of the same type and Id has been previously saved in this contact, that detail is overwritten. Otherwise, a new Id is generated and set in the detail, and the detail is added to the list.</p>
-<p>If <i>detail</i> is a contact display label, the existing display label will be overwritten with <i>detail</i>. There is never more than one display label in a contact.</p>
+<p>If <i>detail</i> is a contact type, the existing contact type will be overwritten with <i>detail</i>. There is never more than one contact type in a contact.</p>
+<p>If <i>detail</i> is a display label, the operation will fail. The display label can never be updated manually and must be synthesized by the backend.</p>
 <p>Returns true if the detail was saved successfully, otherwise returns false</p>
-<h3 class="fn"><a name="setDisplayLabel"></a>void QContact::setDisplayLabel ( const <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> &amp; <i>label</i> )</h3>
-<p>This function is deprecated.</p>
-<p>DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a</p>
-<p>Set the display label of the contact to <i>label</i>.</p>
-<p>The corresponding &quot;synthesized&quot; flag in this contact will be cleared.</p>
-<p>See also <a href="qcontact.html#displayLabel">displayLabel</a>().</p>
-<h3 class="fn"><a name="setDisplayLabel-2"></a>void QContact::setDisplayLabel ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>label</i> )</h3>
-<p>This function is deprecated.</p>
-<p>DEPRECATED, see Commit SHA1: e49024c7fb5255b465002c82c10a299bf125951a</p>
-<p>Set the display label of the contact to <i>label</i>.</p>
-<p>The corresponding &quot;synthesized&quot; flag in this contact will be cleared.</p>
 <h3 class="fn"><a name="setId"></a>void QContact::setId ( const <a href="qcontactid.html">QContactId</a> &amp; <i>id</i> )</h3>
 <p>Sets the id of this contact to <i>id</i>. Note that this only affects this structure, not any corresponding structures stored by a <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>If you change the id of a contact and save the contact in a manager, the previously existing contact will still exist. You can do this to create copies (possibly modified) of an existing contact.</p>
@@ -167,6 +152,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

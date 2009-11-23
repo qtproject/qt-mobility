@@ -69,6 +69,8 @@
 #include <QThread>
 #endif
 
+QTM_USE_NAMESPACE
+
 static bool terminateRequested = false;
 
 class VSExplorer : public QObject

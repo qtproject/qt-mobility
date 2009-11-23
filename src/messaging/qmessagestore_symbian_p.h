@@ -43,6 +43,9 @@
 
 #include "qmessagestore.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 class CMTMEngine;
 
 class QMessageStorePrivate
@@ -92,4 +95,6 @@ private:
     friend class QMessageStore;
 };
 
+
+QTM_END_NAMESPACE
 #endif // QMESSAGESTOREPRIVATE_SYMBIAN_H

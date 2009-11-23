@@ -47,6 +47,8 @@
 
 #include <Phonon/VideoWidget>
 
+QTM_USE_NAMESPACE
+
 class QPhononVideoWidget : public QVideoWidgetControl
 {
     Q_OBJECT

@@ -44,6 +44,8 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactLocalIdFilter
  * \brief The QContactLocalIdFilter class provides a filter based around a list of contact ids
@@ -85,3 +87,5 @@ QList<QContactLocalId> QContactLocalIdFilter::ids() const
     Q_D(const QContactLocalIdFilter);
     return d->m_ids;
 }
+
+QTM_END_NAMESPACE
