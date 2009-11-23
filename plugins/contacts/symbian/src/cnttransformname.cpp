@@ -206,8 +206,12 @@ void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition>
             fields.remove(QContactName::FieldMiddle);
             fields.remove(QContactName::FieldLast);
             fields.remove(QContactName::FieldSuffix);
-        // contacts do not support custom label
         } else {
+            // Note: Custom labels cannot be enabled for a contact in pre-10.1
+            // platforms because setting custom label for a contact causes
+            // issues for S60 Phonebook editor. If custom label support is
+            // needed in 10.1 or later, it needs to be variated away from
+            // pre-10.1 platforms.
             fields.remove(QContactName::FieldCustomLabel);
         }
 
