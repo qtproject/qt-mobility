@@ -529,6 +529,7 @@
                     <section ref="player.html" title="Player Example"/>
                     <section ref="publish-subscribe.html" title="Publish and Subscribe Example"/>
                     <section ref="querymessages.html" title="Query Messages Example"/>
+                    <section ref="quickstart.html" title="Quickstart Example"/>
                     <section ref="radio.html" title="Radio Example"/>
                     <section ref="recorder.html" title="Recorder Example"/>
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
@@ -548,6 +549,7 @@
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
+                    <section ref="installation.html" title="Installation Guide"/>
                     <section ref="location-overview.html" title="Location"/>
                     <section ref="location-releasenotes.html" title="Location Library Release Notes"/>
                     <section ref="messaging.html" title="Messaging API"/>
@@ -584,6 +586,7 @@
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
             <keyword name="Incoming Calls Example" id="Incoming Calls Example" ref="incomingcalls.html"/>
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
+            <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location Library Release Notes" id="Location Library Release Notes" ref="location-releasenotes.html"/>
@@ -3534,6 +3537,7 @@
             <keyword name="QtMedia::ProbablySupported" id="QtMedia::ProbablySupported" ref="qtmedia.html#SupportEstimate-enum"/>
             <keyword name="QtMedia::PreferedService" id="QtMedia::PreferedService" ref="qtmedia.html#SupportEstimate-enum"/>
             <keyword name="Query Messages Example" id="Query Messages Example" ref="querymessages.html"/>
+            <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
@@ -3706,6 +3710,7 @@
             <file>streamplayer-streamplayer-pro.html</file>
             <file>incomingcalls-testmodelui-h.html</file>
             <file>qvideoencodersettings.html</file>
+            <file>quickstart-quickstart-pro.html</file>
             <file>querymessages-main-cpp.html</file>
             <file>qvaluespaceprovider-members.html</file>
             <file>bearercloud-bearercloud-pro.html</file>
@@ -3824,6 +3829,7 @@
             <file>images/bearercloud-example.png</file>
             <file>qcontactname-members.html</file>
             <file>systeminfo.html</file>
+            <file>quickstart-main-cpp.html</file>
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
@@ -3917,8 +3923,8 @@
             <file>radio-main-cpp.html</file>
             <file>slideshow.html</file>
             <file>qcontactnickname.html</file>
-            <file>qmessagefolderordering-members.html</file>
             <file>qcontactrelationship.html</file>
+            <file>qmessagefolderordering-members.html</file>
             <file>qcontactsortorder.html</file>
             <file>serviceactions-attachmentlistwidget-h.html</file>
             <file>qcontactdetaildefinitionfield-members.html</file>
@@ -3979,12 +3985,14 @@
             <file>qcontacturl-members.html</file>
             <file>qcontactmanager-members.html</file>
             <file>sysinfo-main-cpp.html</file>
+            <file>installation.html</file>
             <file>qmessageserviceaction-members.html</file>
             <file>qmailfolderid.html</file>
             <file>qimageencodercontrol.html</file>
             <file>qaudioformat.html</file>
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
+            <file>quickstart.html</file>
             <file>battery-charge-battery-consumer-battery-consumer-pro.html</file>
             <file>samplephonebook-phonebook-cpp.html</file>
             <file>qgraphicsvideoitem-members.html</file>

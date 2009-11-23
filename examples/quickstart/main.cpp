@@ -39,61 +39,18 @@
 **
 ****************************************************************************/
 
-#include <qvaluespacesubscriber.h>
-
 #include <QApplication>
-#include <QObject>
-#include <QmlView>
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QUrl>
-#include <qml.h>
+#include <QLabel>
 
-QTM_USE_NAMESPACE
-
-//! [0]
-QML_DECLARE_TYPE(QValueSpaceSubscriber);
-QML_DEFINE_TYPE(Qt, 4, 6, ValueSpaceSubscriber, QValueSpaceSubscriber);
-//! [0]
-
-class MainWidget : public QWidget
-{
-    Q_OBJECT
-
-public:
-    MainWidget();
-
-private:
-    QmlView *view;
-};
-
-MainWidget::MainWidget()
-{
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setMargin(0);
-    setLayout(vbox);
-
-    view = new QmlView(this);
-    view->setFixedSize(100, 230);
-    vbox->addWidget(view);
-
-    view->setUrl(QUrl("qrc:/battery-meter.qml"));
-    view->execute();
-
-    QPushButton *quitButton = new QPushButton("Quit");
-    vbox->addWidget(quitButton);
-    connect(quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
-}
+#include <QSystemInfo> //(1)
+using namespace QtMobility; //(2)
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
-    MainWidget mainWidget;
-    mainWidget.show();
-
+    QSystemInfo s;
+    QLabel *label = new QLabel(QObject::tr("hello ").append(s.currentCountryCode()));
+    label->show();
+    label->resize(100,30);
     return app.exec();
 }
-
-#include "main.moc"
