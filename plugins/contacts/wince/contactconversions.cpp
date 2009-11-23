@@ -93,7 +93,7 @@ public:
     ~WcsdupHelper() {
         clear();
     }
-    LPWSTR wcsdup(const ushort* str) {
+    LPWSTR dup(const ushort* str) {
         LPWSTR newStr = wcsdup(str);
         m_list.push_back(newStr);
         return newStr;
@@ -122,7 +122,11 @@ static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QString& value)
     val.propid = id;
     val.wFlags = 0;
     val.wLenData = 0;
-    val.val.lpwstr = wcsdupHelper.wcsdup(value.utf16());
+    if (!value.isEmpty()) {
+        val.val.lpwstr = wcsdupHelper.dup(value.utf16());
+    } else {
+        val.val.lpwstr = 0;
+    }
 
     return val;
 }
@@ -178,7 +182,7 @@ static void setIfNotEmpty(QContactDetail& detail, const QString& field, const QS
         detail.setValue(field, value);
 }
 
-static void processName(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processName(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
 {
     QContactName name;
     setIfNotEmpty(name, QContactName::FieldPrefix, values[0].toString());
@@ -186,14 +190,10 @@ static void processName(const QContactWinCEEngine*, const QVariantList& values, 
     setIfNotEmpty(name, QContactName::FieldMiddle, values[2].toString());
     setIfNotEmpty(name, QContactName::FieldLast, values[3].toString());
     setIfNotEmpty(name, QContactName::FieldSuffix, values[4].toString());
+    setIfNotEmpty(name, QContactName::FieldCustomLabel, values[5].toString());
+    //ret = engine->setContactDisplayLabel(values[5].toString(), ret);
     if (!name.isEmpty())
         ret.saveDetail(&name);
-}
-
-static void processFileAs(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
-{
-    ret = engine->setContactDisplayLabel(values[0].toString(), ret);
-    // isSynthesized gets fixed up after the whole contact is retrieved
 }
 
 static void processAddress(const QContactWinCEEngine*, const QString& context, const QVariantList& values, QContact& ret)
@@ -412,15 +412,9 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         id.func = processId;
         list.append(id);
 
-        // Display label
-        PoomContactElement fileas;
-        fileas.poom << PIMPR_FILEAS;
-        fileas.func = processFileAs;
-        list.append(fileas);
-
         // Names
         PoomContactElement name;
-        name.poom << PIMPR_TITLE << PIMPR_FIRST_NAME << PIMPR_MIDDLE_NAME << PIMPR_LAST_NAME << PIMPR_SUFFIX;
+        name.poom << PIMPR_TITLE << PIMPR_FIRST_NAME << PIMPR_MIDDLE_NAME << PIMPR_LAST_NAME << PIMPR_SUFFIX << PIMPR_FILEAS;
         name.func = processName;
         list.append(name);
 
@@ -494,13 +488,13 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         //  PIMPR_CUSTOMERID
         //  PIMPR_GOVERNMENTID
         //
+        //  PIMPR_DISPLAY_NAME
         //
         //  PIMPR_MANAGER
         //  PIMPR_ASSISTANT_TELEPHONE_NUMBER
         //  PIMPR_COMPANY_TELEPHONE_NUMBER
         //  PIMPR_YOMI_COMPANY
         //
-        //  PIMPR_DISPLAY_NAME (vs. PIMPR_FILEAS)
         //
         //  PIMPR_IM[123]_ADDRESS
         //
@@ -536,6 +530,7 @@ static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props
     addIfNotEmpty(PIMPR_MIDDLE_NAME, detail.value(QContactName::FieldMiddle), props);
     addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLast), props);
     addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
+    addIfNotEmpty(PIMPR_FILEAS, detail.value(QContactName::FieldCustomLabel), props);
     return true;
 }
 
@@ -543,12 +538,6 @@ static bool processQFamily(const QContactDetail& detail, QVector<CEPROPVAL>& pro
 {
     addIfNotEmpty(PIMPR_SPOUSE, detail.value(QContactFamily::FieldSpouse), props);
     addIfNotEmpty(PIMPR_CHILDREN, detail.value(QContactFamily::FieldChildren), props);
-    return true;
-}
-
-static bool processQLabel(const QContactDetail& detail, QVector<CEPROPVAL>& props)
-{
-    props.append(convertToCEPropVal(PIMPR_FILEAS, detail.value(QContactDisplayLabel::FieldLabel)));
     return true;
 }
 
@@ -590,7 +579,8 @@ static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
     QContactOrganization org(detail);
 
     addIfNotEmpty(PIMPR_COMPANY_NAME, org.name(), props);
-    addIfNotEmpty(PIMPR_DEPARTMENT, org.department().at(0), props);
+    if (!org.department().isEmpty())
+        addIfNotEmpty(PIMPR_DEPARTMENT, org.department().at(0), props);
     addIfNotEmpty(PIMPR_OFFICE_LOCATION, org.location(), props);
     addIfNotEmpty(PIMPR_JOB_TITLE, org.title(), props);
     addIfNotEmpty(PIMPR_ASSISTANT_NAME, org.assistantName(), props);
@@ -805,7 +795,6 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
     static QHash<QString, processContactPoomElement> hash;
     if (hash.count() == 0) {
         hash.insert(QContactName::DefinitionName, processQName);
-        hash.insert(QContactDisplayLabel::DefinitionName, processQLabel);
         hash.insert(QContactAnniversary::DefinitionName, processQAnniversary);
         hash.insert(QContactBirthday::DefinitionName, processQBirthday);
         hash.insert(QContactNickname::DefinitionName, processQNickname);
