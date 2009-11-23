@@ -102,6 +102,7 @@ public:
         foreach (LPWSTR str, m_list) {
             free(str);
         }
+        m_list.clear();
     }
 private:
     QList<LPWSTR> m_list; 
