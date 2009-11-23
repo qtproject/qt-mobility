@@ -1792,14 +1792,7 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return !screenSettings.value("SCRNSAVE.EXE").toString().isEmpty();
 }
 
-bool QSystemScreenSaverPrivate::isScreenLockOn()
-{
-    QSettings screenSettings(settingsPath, QSettings::NativeFormat);
-    if(screenSettings.value("ScreenSaverIsSecure").toString() == "1") {
-        return true;
-    }
-    return false;
-}
+
 #include "moc_qsysteminfo_win_p.cpp"
 
 QTM_END_NAMESPACE
