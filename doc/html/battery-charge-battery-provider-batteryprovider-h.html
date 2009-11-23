@@ -57,13 +57,18 @@
     #ifndef BATTERYPROVIDER_H
     #define BATTERYPROVIDER_H
 
+    #include &lt;qmobilityglobal.h&gt;
     #include &lt;QDialog&gt;
 
     namespace Ui {
         class BatteryProvider;
     }
 
+    QTM_BEGIN_NAMESPACE
     class QValueSpaceProvider;
+    QTM_END_NAMESPACE
+
+    QTM_USE_NAMESPACE
 
     class BatteryProvider : public QDialog
     {
