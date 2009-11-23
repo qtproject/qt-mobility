@@ -4,7 +4,7 @@ QT = core sql
 
 include(../../common.pri)
 
-DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL QT_BUILD_INTERNAL
+DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += \
             qservicemanager.h \
