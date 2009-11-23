@@ -241,7 +241,7 @@ if "%QT_PATH%" == "" (
     else echo >&2 "Cannot find 'qmake' in %QT_PATH%."
 )
 echo >&2 "Aborting." 
-goto exitTag
+exit 1
 
 :qmakeFound
 %QT_PATH%qmake -query QT_VERSION
@@ -300,8 +300,7 @@ if not "%MAKE%" == "" goto compileTests
 
 echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
 echo >&2 "Aborting."
-
-goto exitTag
+exit 1
 
 :compileTest
 setlocal
@@ -377,5 +376,6 @@ goto exitTag
 :qmakeRecError
 echo.
 echo configure failed.
+exit 1
 
 :exitTag
