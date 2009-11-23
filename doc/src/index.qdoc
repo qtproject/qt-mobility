@@ -103,6 +103,13 @@
     build a variety of applications and services that are mobile capable,
     irrespective of whether the platform is mobile or not.
 
+    \section2 Getting Started
+    To get started with Qt Mobility see the
+    \list
+        \o \l {Installation Guide}
+        \o \l {Quickstart Example}
+    \endlist
+
     \section1 Bearer Management
 
     Although not a network manager, this component manages the connectivity
