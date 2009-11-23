@@ -53,7 +53,7 @@
 #include <iapconf.h>
 #include <iapmonitor.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #define IAP "/system/osso/connectivity/IAP"
 static int iap_prefix_len;
@@ -755,5 +755,6 @@ void QNetworkConfigurationManagerPrivate::configChanged(QNetworkConfigurationPri
 
 
 #include "qnetworkconfigmanager_maemo.moc"
+#include "moc_qnetworkconfigmanager_maemo_p.cpp"
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

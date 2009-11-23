@@ -45,6 +45,8 @@
 #include "qmessagecontentcontainer_p.h"
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageContentContainer
     \preliminary
@@ -253,3 +255,4 @@
     \sa headerFieldValue(), headerFieldValues()
 */
 
+QTM_END_NAMESPACE

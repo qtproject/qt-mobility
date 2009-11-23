@@ -44,7 +44,10 @@
 
 #include <qmailmessagesortkey.h>
 
-using namespace QmfHelpers;
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
+
+
+QTM_BEGIN_NAMESPACE
 
 class QMessageOrderingPrivate
 {
@@ -210,3 +213,5 @@ QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
     return key;
 }
 
+
+QTM_END_NAMESPACE

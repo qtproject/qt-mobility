@@ -42,6 +42,8 @@
 #define QMESSAGEDATACOMPARATOR_H
 #include <Qt>
 
+QTM_BEGIN_NAMESPACE
+
 namespace QMessageDataComparator {
 
     enum EqualityComparator
@@ -73,5 +75,7 @@ namespace QMessageDataComparator {
 
 }
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessageDataComparator::Options)
+
+QTM_END_NAMESPACE
 
 #endif

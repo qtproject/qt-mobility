@@ -56,6 +56,12 @@
 #include <qevent.h>
 #include <qdialog.h>
 #include <qstackedlayout.h>
+#include <QFlags>
+#include <Qt>
+
+using namespace Qt;
+
+QTM_BEGIN_NAMESPACE
 
 QVideoWidgetControlBackend::QVideoWidgetControlBackend(
         QVideoWidgetControl *control, QWidget *widget)
@@ -110,7 +116,6 @@ void QVideoWidgetControlBackend::setAspectRatioMode(QVideoWidget::AspectRatioMod
 {
     m_widgetControl->setAspectRatioMode(mode);
 }
-
 
 QRendererVideoWidgetBackend::QRendererVideoWidgetBackend(
         QVideoRendererControl *control, QWidget *widget)
@@ -259,7 +264,6 @@ QRect QRendererVideoWidgetBackend::displayRect() const
 
     return displayRect;
 }
-
 
 QWindowVideoWidgetBackend::QWindowVideoWidgetBackend(QVideoWindowControl *control, QWidget *widget)
     : m_windowControl(control)
@@ -821,3 +825,6 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 }
 
 #include "moc_qvideowidget.cpp"
+#include "moc_qvideowidget_p.cpp"
+QTM_END_NAMESPACE
+

@@ -48,7 +48,7 @@
 
 //Forward declarations
 class CContactDatabase;
-
+QTM_USE_NAMESPACE
 class CntRelationship
 {
 public:

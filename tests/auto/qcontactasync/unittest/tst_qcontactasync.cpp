@@ -45,8 +45,7 @@
 #include "qtcontacts.h"
 #include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
-//TESTED_CLASS=
-//TESTED_FILES=
+QTM_USE_NAMESPACE
 
 class tst_QContactAsync : public QObject
 {

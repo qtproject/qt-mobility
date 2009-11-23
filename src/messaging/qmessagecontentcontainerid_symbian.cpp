@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageContentContainerIdPrivate
 {
 public:
@@ -100,3 +102,5 @@ bool QMessageContentContainerId::isValid() const
 {
 	return (d_ptr->_number != QMessageContentContainerIdPrivate::Invalid);
 }
+
+QTM_END_NAMESPACE

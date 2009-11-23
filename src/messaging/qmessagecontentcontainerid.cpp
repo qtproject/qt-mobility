@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageContentContainerId
     \ingroup messaging
@@ -134,3 +136,5 @@ bool QMessageContentContainerId::operator!=(const QMessageContentContainerId &ot
 
     Qt-style synonym for QList<QMessageContentContainerId>
 */
+
+QTM_END_NAMESPACE

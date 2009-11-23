@@ -44,6 +44,8 @@
 #include "qcontactmanager_p.h"
 #include "qcontactfilter.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \deprecated
  * \class QContactManagerInfo
@@ -139,3 +141,5 @@ QStringList QContactManagerInfo::supportedRelationshipTypes(const QString& conta
     qWarning("This class is deprecated!  Please use QContactManager for reporting instead!  See commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510");
     return d->m_engine->supportedRelationshipTypes(contactType);
 }
+
+QTM_END_NAMESPACE

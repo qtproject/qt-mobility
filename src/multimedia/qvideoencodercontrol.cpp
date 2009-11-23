@@ -43,6 +43,8 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qvariant.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoEncoderControl
     \preliminary
@@ -210,3 +212,7 @@ QVideoEncoderControl::~QVideoEncoderControl()
 
     Sets the selected video encoder \a settings.
 */
+
+#include "moc_qvideoencodercontrol.cpp"
+QTM_END_NAMESPACE
+

@@ -52,6 +52,8 @@
 #include <experimental/qimagecapturecontrol.h>
 #include <qvideodevicecontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCamera
 
@@ -1043,3 +1045,5 @@ void QCamera::capture(const QString &file)
 
 
 #include "moc_qcamera.cpp"
+QTM_END_NAMESPACE
+

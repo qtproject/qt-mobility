@@ -67,22 +67,23 @@
 
 #define PRINT_ERR(a) qPrintable(QString("error = %1").arg(a.error()))
 
-typedef QList<QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
-Q_DECLARE_METATYPE(QServiceFilter)
-Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
+typedef QList<QtMobility::QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
+Q_DECLARE_METATYPE(QtMobility::QServiceFilter)
+Q_DECLARE_METATYPE(QtMobility::QServiceInterfaceDescriptor)
 Q_DECLARE_METATYPE(ServiceInterfaceDescriptorList)
 
 Q_DECLARE_METATYPE(QSet<QString>)
 Q_DECLARE_METATYPE(QList<QByteArray>)
-Q_DECLARE_METATYPE(QServiceManager::Scope)
+Q_DECLARE_METATYPE(QtMobility::QServiceManager::Scope)
 
-typedef QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant> DescriptorProperties;
+typedef QHash<QtMobility::QServiceInterfaceDescriptor::PropertyKey, QVariant> DescriptorProperties;
 
-uint qHash(const QServiceInterfaceDescriptor &desc)
+inline uint qHash(const QtMobility::QServiceInterfaceDescriptor &desc)
 {
     return qHash(desc.serviceName()) + qHash(desc.interfaceName()) + desc.majorVersion() * 7 + desc.minorVersion() * 7;
 }
 
+QTM_USE_NAMESPACE
 static DescriptorProperties defaultDescriptorProperties()
 {
     DescriptorProperties props;

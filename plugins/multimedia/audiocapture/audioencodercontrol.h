@@ -51,6 +51,8 @@
 
 class AudioCaptureSession;
 
+QTM_USE_NAMESPACE
+
 class AudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT

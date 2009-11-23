@@ -49,6 +49,8 @@
 
 class QString;
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaPlaylistProviderPrivate;
 class Q_MEDIA_EXPORT QMediaPlaylistProvider : public QObject
 {
@@ -97,5 +99,7 @@ protected:
 private:
     Q_DECLARE_PRIVATE(QMediaPlaylistProvider)
 };
+
+QTM_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTPROVIDER_H

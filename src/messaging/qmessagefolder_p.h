@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessagefolder.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolder)
@@ -65,3 +67,5 @@ public:
     static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);
 #endif
 };
+
+QTM_END_NAMESPACE

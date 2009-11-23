@@ -48,6 +48,8 @@
 #include <lbttriggerconditionarea.h>
 #include <lbttriggerentry.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 //static member of the QMLBackendMonitorAO object holding the address of the object
 QMLBackendMonitorAO* QMLBackendMonitorAO::iBackendMonitorAO = NULL;
@@ -150,9 +152,5 @@ QMLBackendMonitorAO::QMLBackendMonitorAO()
     CActiveScheduler::Add(this);
 }
 
-
-
-
-
-
+QTM_END_NAMESPACE
 

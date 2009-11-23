@@ -44,6 +44,8 @@
 #include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
 
+QTM_USE_NAMESPACE
+
 /*!
  * Convert from the supplied CEPROPVAL \a val into a QVariant.
  */

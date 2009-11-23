@@ -41,10 +41,15 @@
 #ifndef CLIENTAPPLICATION_H
 #define CLIENTAPPLICATION_H
 
+#include <qmobilityglobal.h>
 #include <QObject>
 
-class QGeoPositionInfo;
 
+QTM_BEGIN_NAMESPACE
+class QGeoPositionInfo;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 class ClientApplication : public QObject
 {
     Q_OBJECT

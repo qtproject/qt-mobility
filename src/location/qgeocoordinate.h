@@ -47,12 +47,12 @@
 
 class QDebug;
 class QDataStream;
-class QGeoCoordinatePrivate;
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinatePrivate;
 class Q_LOCATION_EXPORT QGeoCoordinate
 {
 public:
@@ -112,7 +112,7 @@ Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoCoordin
 Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate);
 #endif
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

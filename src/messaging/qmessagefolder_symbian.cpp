@@ -42,6 +42,9 @@
 #include "qmessagefolder_p.h"
 #include "qmessagestore.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessageFolder QMessageFolderPrivate::from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path)
 {
     QMessageFolder result;
@@ -108,3 +111,5 @@ QString QMessageFolder::path() const
 {
     return d_ptr->_path;
 }
+
+QTM_END_NAMESPACE

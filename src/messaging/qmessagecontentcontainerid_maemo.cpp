@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageContentContainerId::QMessageContentContainerId()
 {
 }
@@ -79,3 +81,5 @@ bool QMessageContentContainerId::isValid() const
 {
     return false; // stub
 }
+
+QTM_END_NAMESPACE

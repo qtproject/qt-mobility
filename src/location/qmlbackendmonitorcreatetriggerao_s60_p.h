@@ -52,6 +52,8 @@
 #include <lbttriggerconditionarea.h>
 #include <lbttriggerentry.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGeoAreaMonitorS60;
 
 class QMLBackendMonitorCreateTriggerAO : public CActive
@@ -96,5 +98,6 @@ private:
 
 };
 
+QTM_END_NAMESPACE
 
 #endif /* QMLBACKENDMONITORCREATETRIGGER_H_ */

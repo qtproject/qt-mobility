@@ -44,6 +44,9 @@
 #include "qmessage.h"
 #include "qmessageaddress.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessagePrivate
 {
     Q_DECLARE_PUBLIC(QMessage)
@@ -78,4 +81,6 @@ private:
     QMessageContentContainerId _bodyId;
 };
 
+
+QTM_END_NAMESPACE
 #endif

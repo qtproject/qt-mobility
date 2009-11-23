@@ -47,6 +47,7 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 /*
  * This test is mostly just for testing sorting and filtering -
  * having it in tst_QContactManager makes maintenance more
@@ -3194,7 +3195,7 @@ public:
 class FilterActionFactory : public QContactActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactActionFactory)
+    Q_INTERFACES(QtMobility::QContactActionFactory)
 
 public:
     FilterActionFactory() {}

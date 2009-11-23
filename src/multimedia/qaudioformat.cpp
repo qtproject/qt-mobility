@@ -41,6 +41,8 @@
 
 #include <qaudioformat.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 class QAudioFormatPrivate : public QSharedData
 {
@@ -327,4 +329,6 @@ QAudioFormat::SampleType QAudioFormat::sampleType() const
     \value BigEndian     samples are big endian byte order
     \value LittleEndian  samples are little endian byte order
 */
+
+QTM_END_NAMESPACE
 

@@ -44,6 +44,8 @@
 
 #include "qcontactfilter.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QContactDetailRangeFilterPrivate;
 class Q_CONTACTS_EXPORT QContactDetailRangeFilter : public QContactFilter
 {
@@ -79,5 +81,7 @@ private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactDetailRangeFilter)
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetailRangeFilter::RangeFlags)
+
+QTM_END_NAMESPACE
 
 #endif

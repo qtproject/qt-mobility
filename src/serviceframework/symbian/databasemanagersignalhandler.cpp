@@ -41,6 +41,8 @@
 #include "databasemanagersignalhandler.h"
 #include "clientservercommon.h"
 
+QTM_BEGIN_NAMESPACE
+
 DatabaseManagerSignalHandler::DatabaseManagerSignalHandler(CDatabaseManagerServerSession& databaseManagerServerSession) 
     : iDatabaseManagerServerSession(databaseManagerServerSession)
 {
@@ -60,3 +62,5 @@ void DatabaseManagerSignalHandler::ServiceRemoved(const QString& aServiceName)
     iDatabaseManagerServerSession.ServiceRemoved(aServiceName);
 }
 
+#include "moc_databasemanagersignalhandler.cpp"
+QTM_END_NAMESPACE

@@ -58,7 +58,7 @@
 #define INTERFACE_CAPABILITY "capabilities"
 #define INTERFACE_CUSTOM_PROPERTY "customproperty"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 static const char  PATH_SEPARATOR[] = "\\";
 
@@ -537,4 +537,4 @@ void ServiceMetaData::clearMetadata()
     m_latestIndex.clear();
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

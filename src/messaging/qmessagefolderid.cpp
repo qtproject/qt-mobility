@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessagefolderid.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageFolderId
     \ingroup messaging
@@ -128,3 +130,5 @@ bool QMessageFolderId::operator!=(const QMessageFolderId &other) const
 
     Qt-style synonym for QList<QMessageFolderId>
 */
+
+QTM_END_NAMESPACE

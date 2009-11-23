@@ -52,6 +52,7 @@
 #endif
 
 #include <QtDebug>
+QTM_BEGIN_NAMESPACE
 
 class QVideoSurfacePainter
 {
@@ -1416,4 +1417,8 @@ void QPainterVideoSurface::createPainter()
     m_painter = new QVideoSurfaceRasterPainter;
 #endif
 }
+
+#include "moc_qpaintervideosurface_p.cpp"
+QTM_END_NAMESPACE
+
 

@@ -44,6 +44,8 @@
 
 #include <qmetadatacontrol.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerPlayerSession;
 
 class QGstreamerMetaDataProvider : public QMetaDataControl

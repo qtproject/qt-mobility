@@ -48,6 +48,7 @@
 #include <QCoreApplication>
 #include <QTest>
 #include <QFile>
+QTM_USE_NAMESPACE
 
 class ShutdownControl : public QObject
 {

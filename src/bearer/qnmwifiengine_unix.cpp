@@ -52,12 +52,15 @@
 #include <QNetworkInterface>
 
 
+
+QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QNmWifiEngine, nmWifiEngine)
-
-QT_BEGIN_NAMESPACE
-
 typedef  QList<QList<uint> > QNmSettingsAddressMap;
-Q_DECLARE_METATYPE(QNmSettingsAddressMap)
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QNmSettingsAddressMap))
+
+QTM_BEGIN_NAMESPACE
 
 QNmWifiEngine::QNmWifiEngine(QObject *parent)
 :   QNetworkSessionEngine(parent)
@@ -1124,7 +1127,7 @@ QStringList QNmWifiEngine::getConnectionPathForId(const QString &uuid)
     return QStringList();
 }
 
+#include "moc_qnmwifiengine_unix_p.cpp"
 
-
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 

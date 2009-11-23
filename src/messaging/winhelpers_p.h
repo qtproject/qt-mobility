@@ -78,6 +78,9 @@
 
 #define mapiRelease(a) if(a){a->Release();a=0;}
 
+
+QTM_BEGIN_NAMESPACE
+
 class MapiEntryId : public QByteArray
 {
 public:
@@ -465,4 +468,6 @@ private:
     mutable QHash<MapiEntryId, MapiStorePtr> _storeMap;
 };
 
+
+QTM_END_NAMESPACE
 #endif

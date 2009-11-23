@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessageaddress.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAccount)
@@ -69,3 +71,5 @@ public:
     static QMessageAccount from(const QMessageAccountId &id, const QString &name, long int service1EntryId, long int service2EntryId, const QMessage::TypeFlags &types);
 #endif
 };
+
+QTM_END_NAMESPACE

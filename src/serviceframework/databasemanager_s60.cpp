@@ -49,7 +49,7 @@
 #include <s32mem.h>
 
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*
     \class DatabaseManager
@@ -506,14 +506,16 @@ void RDatabaseManagerSession::CancelNotifyServiceSignal() const
 
 
 #ifdef __WINS__
+QTM_END_NAMESPACE
     #include "databasemanagerserver.h"
+QTM_BEGIN_NAMESPACE
 
     CDatabaseManagerServerThread::CDatabaseManagerServerThread()
-        {
-        }
+    {
+    }
 
     void CDatabaseManagerServerThread::run()
-        {
+    {
         CDatabaseManagerServer *dbManagerServer = new CDatabaseManagerServer();
         __ASSERT_ALWAYS(dbManagerServer != NULL, CDatabaseManagerServer::PanicServer(ESrvCreateServer));
 
@@ -526,7 +528,9 @@ void RDatabaseManagerSession::CancelNotifyServiceSignal() const
 
         exec();
         delete dbManagerServer;
-        }
+    }
 #endif
 
-QT_END_NAMESPACE
+#include "moc_databasemanager_s60_p.cpp"
+
+QTM_END_NAMESPACE

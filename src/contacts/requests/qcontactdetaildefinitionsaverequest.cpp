@@ -42,6 +42,8 @@
 #include "qcontactdetaildefinitionsaverequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactDetailDefinitionSaveRequest
  * \brief Allows a client to asynchronously request that certain detail definitions be saved in a contacts store
@@ -93,3 +95,7 @@ QString QContactDetailDefinitionSaveRequest::contactType() const
     Q_D(const QContactDetailDefinitionSaveRequest);
     return d->m_contactType;
 }
+
+#include "moc_qcontactdetaildefinitionsaverequest.cpp"
+
+QTM_END_NAMESPACE

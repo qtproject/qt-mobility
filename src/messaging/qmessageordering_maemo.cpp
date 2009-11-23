@@ -41,6 +41,9 @@
 #include "qmessageordering.h"
 #include "qmessageordering_p.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessageOrdering::QMessageOrdering()
 {
 }
@@ -142,3 +145,5 @@ QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
     Q_UNUSED(order)
     return QMessageOrdering(); // stub
 }
+
+QTM_END_NAMESPACE

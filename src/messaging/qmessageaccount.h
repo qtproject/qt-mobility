@@ -45,6 +45,8 @@
 #include <qmessageglobal.h>
 #include <qmessage.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountPrivate;
 
 class Q_MESSAGING_EXPORT QMessageAccount
@@ -72,4 +74,6 @@ private:
     friend class CMessagesFindOperation;
 #endif
 };
+
+QTM_END_NAMESPACE
 #endif

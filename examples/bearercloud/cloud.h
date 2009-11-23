@@ -43,6 +43,7 @@
 #include <qnetworksession.h>
 
 #include <QGraphicsItem>
+QTM_USE_NAMESPACE
 
 class QGraphicsTextItem;
 class QGraphicsSvgItem;

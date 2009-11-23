@@ -45,6 +45,8 @@
 #include <qmediacontrol.h>
 #include <qradiotuner.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QRadioTunerControl : public QMediaControl
 {
     Q_OBJECT
@@ -104,5 +106,7 @@ protected:
 
 #define QRadioTunerControl_iid "com.nokia.Qt.QRadioTunerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QRadioTunerControl, QRadioTunerControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif  // QRADIOTUNERCONTROL_H

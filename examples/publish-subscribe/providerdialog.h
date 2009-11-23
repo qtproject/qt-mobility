@@ -42,9 +42,14 @@
 #ifndef PROVIDERDIALOG_H
 #define PROVIDERDIALOG_H
 
+#include <qmobilityglobal.h>
 #include <QDialog>
 
+QTM_BEGIN_NAMESPACE
 class QValueSpaceProvider;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 namespace Ui {
     class ProviderDialog;

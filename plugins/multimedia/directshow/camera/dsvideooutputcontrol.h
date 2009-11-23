@@ -45,6 +45,8 @@
 
 #include <qvideooutputcontrol.h>
 
+QTM_USE_NAMESPACE
+
 class DSVideoOutputControl : public QVideoOutputControl
 {
     Q_OBJECT

@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include <qmobilityglobal.h>
 #include <qvideowidget.h>
 
 #ifndef QT_NO_OPENGL
@@ -60,6 +61,8 @@
 #endif
 
 #include <qpaintervideosurface_p.h>
+
+QTM_BEGIN_NAMESPACE
 
 class QVideoWidgetControlInterface
 {
@@ -195,7 +198,6 @@ private:
 };
 
 class QMediaService;
-class QStackedLayout;
 class QVideoOutputControl;
 
 class QVideoWidgetPrivate
@@ -247,5 +249,7 @@ public:
     void _q_fullScreenChanged(bool fullScreen);
     void _q_dimensionsChanged();
 };
+
+QTM_END_NAMESPACE
 
 #endif

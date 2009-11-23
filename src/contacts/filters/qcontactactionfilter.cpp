@@ -44,6 +44,8 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactActionFilter
  * \brief The QContactActionFilter class provides a filter based around an action availability criterion
@@ -142,3 +144,5 @@ int QContactActionFilter::implementationVersion() const
     Q_D(const QContactActionFilter);
     return d->m_implementationVersion;
 }
+
+QTM_END_NAMESPACE

@@ -48,6 +48,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactType : public QContactDetail
 {
@@ -67,6 +69,8 @@ public:
     void setType(const QString& type) {setValue(FieldType, type);}
     QString type() const {return value(FieldType);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

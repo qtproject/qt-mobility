@@ -46,6 +46,8 @@
 #   include "qgeosatelliteinfosource_wince_p.h"
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QGeoSatelliteInfoSource
     \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
@@ -151,3 +153,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     Emitted if requestUpdate() was called and the current satellite
     information could not be retrieved within the specified timeout.
 */
+
+#include "moc_qgeosatelliteinfosource.cpp"
+
+QTM_END_NAMESPACE

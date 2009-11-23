@@ -51,6 +51,8 @@
 #include <QList>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactRelationshipFilterPrivate;
 class Q_CONTACTS_EXPORT QContactRelationshipFilter : public QContactFilter
 {
@@ -75,5 +77,7 @@ public:
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
 };
+
+QTM_END_NAMESPACE
 
 #endif

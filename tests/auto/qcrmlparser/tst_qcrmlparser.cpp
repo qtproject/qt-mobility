@@ -41,6 +41,7 @@
 
 #include "../../../src/publishsubscribe/qcrmlparser_p.h"
 
+#include <qmobilityglobal.h>
 #include <QtTest/QTest>
 #include <QDebug>
 #include <QDir>
@@ -48,6 +49,8 @@
 #if defined(Q_OS_SYMBIAN)
 # define TESTDATA_DIR "."
 #endif
+
+QTM_USE_NAMESPACE
 
 class tst_QCrmlParser : public QObject
 {

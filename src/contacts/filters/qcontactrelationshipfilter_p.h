@@ -63,6 +63,8 @@
 #include <QStringList>
 #include <QList>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactRelationshipFilterPrivate : public QContactFilterPrivate
 {
 public:
@@ -98,5 +100,7 @@ public:
     QContactId m_otherParticipantId;
     QString m_relationshipType;
 };
+
+QTM_END_NAMESPACE
 
 #endif

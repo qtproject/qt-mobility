@@ -73,7 +73,7 @@
 #define INTERFACE_DESCRIPTION_KEY "DESCRIPTION"
 #define INTERFACE_CAPABILITY_KEY "CAPABILITIES"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 enum TBindIndexes
     {
@@ -2119,4 +2119,6 @@ bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *int
     return true;
 }
 
-QT_END_NAMESPACE
+#include "moc_servicedatabase_p.cpp"
+
+QTM_END_NAMESPACE

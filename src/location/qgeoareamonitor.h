@@ -46,13 +46,13 @@
 
 #include <QObject>
 
-class QGeoPositionInfo;
-class QGeoAreaMonitorPrivate;
-
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+//QTM_BEGIN_NAMESPACE
+namespace QtMobility {
 
+class QGeoPositionInfo;
+class QGeoAreaMonitorPrivate;
 class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
 {
     Q_OBJECT
@@ -80,7 +80,8 @@ private:
     QGeoAreaMonitorPrivate *d;
 }; 
 
-QT_END_NAMESPACE
+//QTM_END_NAMESPACE
+}
 
 QT_END_HEADER
 

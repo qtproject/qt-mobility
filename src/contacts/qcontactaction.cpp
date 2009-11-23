@@ -46,6 +46,8 @@
 #include <QSet>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 QContactAction::~QContactAction()
 {
 }
@@ -203,3 +205,7 @@ QContactAction* QContactAction::action(const QContactActionDescriptor& descripto
     QContactManagerData::loadFactories();
     return QContactManagerData::action(descriptor);
 }
+
+#include "moc_qcontactaction.cpp"
+
+QTM_END_NAMESPACE

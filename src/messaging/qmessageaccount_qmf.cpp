@@ -44,7 +44,9 @@
 #include <qmailaccount.h>
 #include <qmailstore.h>
 
-using namespace QmfHelpers;
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
+
+QTM_BEGIN_NAMESPACE
 
 class QMessageAccountPrivate
 {
@@ -152,3 +154,5 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 
     return QMessageAccountId();
 }
+
+QTM_END_NAMESPACE

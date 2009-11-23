@@ -49,11 +49,15 @@
 
 class CContactDatabase;
 class CContactIdArray;
-class QContactDetailFilter;
 class CntAbstractContactSorter;
 class CntTransformContact;
 class CContactItemFieldDef;
 
+QTM_BEGIN_NAMESPACE
+class QContactDetailFilter;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 class CntSymbianFilterDbms : public CntAbstractContactFilter
 {
 public:

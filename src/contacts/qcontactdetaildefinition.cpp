@@ -42,6 +42,8 @@
 #include "qcontactdetaildefinition.h"
 #include "qcontactdetaildefinition_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactDetailDefinition
  *
@@ -180,3 +182,4 @@ void QContactDetailDefinition::setAccessConstraint(const QContactDetailDefinitio
     d->m_constraint = constraint;
 }
 
+QTM_END_NAMESPACE

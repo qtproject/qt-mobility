@@ -43,7 +43,9 @@
 #include <QTextCodec>
 #include <QDebug>
 
-using namespace QmfHelpers;
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
+
+QTM_BEGIN_NAMESPACE
 
 namespace {
 
@@ -273,3 +275,4 @@ void QMessageContentContainer::setDerivedMessage(QMessage *derived)
     d_ptr->setDerivedMessage(derived);
 }
 
+QTM_END_NAMESPACE

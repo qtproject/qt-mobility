@@ -43,6 +43,8 @@
 #include "qcontactrelationshipfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactRelationshipFilter
  * \brief The QContactRelationshipFilter class provides a filter based around relationship criteria
@@ -127,3 +129,5 @@ QContactId QContactRelationshipFilter::otherParticipantId() const
     Q_D(const QContactRelationshipFilter);
     return d->m_otherParticipantId;
 }
+
+QTM_END_NAMESPACE

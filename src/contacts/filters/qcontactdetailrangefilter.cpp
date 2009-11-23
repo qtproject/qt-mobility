@@ -44,6 +44,8 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactDetailRangeFilter
  * \brief The QContactDetailRageFilter class provides a filter based around a detail value range criterion
@@ -168,3 +170,5 @@ QContactDetailRangeFilter::RangeFlags QContactDetailRangeFilter::rangeFlags() co
     Q_D(const QContactDetailRangeFilter);
     return d->m_rangeflags;
 }
+
+QTM_END_NAMESPACE

@@ -49,6 +49,8 @@
 #include <cntdef.h>
 #include <cntitem.h>
 
+QTM_USE_NAMESPACE
+
 class CntTransformContactData : public QObject
 {
 	 Q_OBJECT

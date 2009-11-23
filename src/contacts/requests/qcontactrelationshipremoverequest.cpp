@@ -42,6 +42,8 @@
 #include "qcontactrelationshipremoverequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactRelationshipRemoveRequest
  * \brief Allows a client to asynchronously request that certain relationships be removed from a contacts store
@@ -112,3 +114,7 @@ QContactId QContactRelationshipRemoveRequest::second() const
     Q_D(const QContactRelationshipRemoveRequest);
     return d->m_second;
 }
+
+#include "moc_qcontactrelationshipremoverequest.cpp"
+
+QTM_END_NAMESPACE

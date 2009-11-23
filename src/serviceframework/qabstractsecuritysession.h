@@ -47,7 +47,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class Q_SFW_EXPORT QAbstractSecuritySession : public QObject
 {
@@ -59,7 +59,7 @@ public:
     virtual bool isAllowed(const QStringList& capabilityList) = 0;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

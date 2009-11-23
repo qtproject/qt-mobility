@@ -46,6 +46,7 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactrequestworker_p.h"
 
+
 /*!
  * \class QContactRequestWorker
  *
@@ -658,3 +659,6 @@ void QContactRequestWorkerData::cleanUpFinishedRequests(bool waitForAll)
         }
     }
 }
+
+#include "moc_qcontactrequestworker.cpp"
+

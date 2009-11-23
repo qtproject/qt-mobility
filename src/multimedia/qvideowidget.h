@@ -46,6 +46,8 @@
 
 #include <qmobilityglobal.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaObject;
 
 class QVideoWidgetPrivate;
@@ -115,5 +117,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_fullScreenChanged(bool))
     Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
 };
+
+QTM_END_NAMESPACE
 
 #endif

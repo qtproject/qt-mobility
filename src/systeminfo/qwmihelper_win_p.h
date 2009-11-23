@@ -54,12 +54,15 @@
 //
 
 #ifndef Q_CC_MINGW
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QVariant>
 #include <QString>
 #include <Wbemidl.h>
 
 #include <QStringList>
+
+QTM_BEGIN_NAMESPACE
 
 class WMIHelper : public QObject
 {
@@ -90,5 +93,7 @@ private:
   // QHash <QString, bool> initializedNamespaces;
 
 };
+
+QTM_END_NAMESPACE
 #endif
 #endif // WMIHELPER_H

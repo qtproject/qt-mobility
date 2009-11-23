@@ -53,6 +53,8 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
             && d1.minorVersion() < d2.minorVersion());
 }
 
+QTM_BEGIN_NAMESPACE
+
 CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL()
     {
     CDatabaseManagerServerSession* self = CDatabaseManagerServerSession::NewLC();
@@ -547,5 +549,6 @@ bool CDatabaseManagerServerSession::openDb()
 }
 
 
+QTM_END_NAMESPACE
 
 // End of File

@@ -44,6 +44,8 @@
 #include "qcontactchangeset_p.h"
 #include "qcontactmanagerengine.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QContactChangeSet
  *
@@ -202,3 +204,5 @@ void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
             emit engine->selfContactIdChanged(d->m_oldAndNewSelfContactId.first, d->m_oldAndNewSelfContactId.second);
     }
 }
+
+QTM_END_NAMESPACE

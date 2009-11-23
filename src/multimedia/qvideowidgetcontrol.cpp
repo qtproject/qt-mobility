@@ -42,6 +42,8 @@
 #include <qvideowidgetcontrol.h>
 #include <qmediacontrol_p.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoWidgetControl
     \preliminary
@@ -221,3 +223,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
 
     Returns the QWidget.
 */
+
+#include "moc_qvideowidgetcontrol.cpp"
+QTM_END_NAMESPACE
+

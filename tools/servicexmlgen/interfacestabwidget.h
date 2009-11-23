@@ -47,16 +47,20 @@
 #include <QByteArray>
 #include <QXmlStreamWriter>
 
+
 class InterfaceWidget;
 class ErrorCollector;
+
+QTM_BEGIN_NAMESPACE
 class QServiceInterfaceDescriptor;
+QTM_END_NAMESPACE
 
 class InterfacesTabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
     InterfacesTabWidget(QWidget *parent = 0);
-    void load(const QList<QServiceInterfaceDescriptor> &descriptors);
+    void load(const QList<QTM_PREPEND_NAMESPACE(QServiceInterfaceDescriptor)> &descriptors);
 
     void validate(ErrorCollector *errors);
     void writeXml(QXmlStreamWriter *device) const;
@@ -65,7 +69,7 @@ signals:
     void dataChanged();
 
 public slots:
-    InterfaceWidget *addInterface(const QServiceInterfaceDescriptor &descriptor = QServiceInterfaceDescriptor());
+    InterfaceWidget *addInterface(const QtMobility::QServiceInterfaceDescriptor &descriptor = QTM_PREPEND_NAMESPACE(QServiceInterfaceDescriptor)());
 
 protected:
     virtual void tabInserted(int index);
