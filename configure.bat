@@ -120,7 +120,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     options: symbian, wince, memory, maemo
 
 
-if exist "%PROJECT_CONFIF%" del %PROJECT_CONFIG%
+if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
 goto exitTag
 
 :qtTag
