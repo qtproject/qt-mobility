@@ -379,6 +379,10 @@ static void processOrganisation(const QContactWinCEEngine*, const QVariantList& 
 {
     QContactOrganization org;
     setIfNotEmpty(org, QContactOrganization::FieldName, values[0].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldDepartment, values[1].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldLocation, values[2].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldTitle, values[3].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldAssistantName, values[4].toString());
 
     if (!org.isEmpty())
         ret.saveDetail(&org);
@@ -475,7 +479,7 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
 
         // Organisation
         PoomContactElement org;
-        org.poom << PIMPR_COMPANY_NAME;
+        org.poom << PIMPR_COMPANY_NAME << PIMPR_DEPARTMENT << PIMPR_OFFICE_LOCATION << PIMPR_JOB_TITLE << PIMPR_ASSISTANT_NAME;
         org.func = processOrganisation;
         list.append(org);
 
@@ -492,11 +496,7 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         //
         //
         //  PIMPR_MANAGER
-        //  PIMPR_ASSISTANT_NAME
         //  PIMPR_ASSISTANT_TELEPHONE_NUMBER
-        //  PIMPR_JOB_TITLE
-        //  PIMPR_DEPARTMENT
-        //  PIMPR_OFFICE_LOCATION
         //  PIMPR_COMPANY_TELEPHONE_NUMBER
         //  PIMPR_YOMI_COMPANY
         //
@@ -590,6 +590,10 @@ static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
     QContactOrganization org(detail);
 
     addIfNotEmpty(PIMPR_COMPANY_NAME, org.name(), props);
+    addIfNotEmpty(PIMPR_DEPARTMENT, org.department().at(0), props);
+    addIfNotEmpty(PIMPR_OFFICE_LOCATION, org.location(), props);
+    addIfNotEmpty(PIMPR_JOB_TITLE, org.title(), props);
+    addIfNotEmpty(PIMPR_ASSISTANT_NAME, org.assistantName(), props);
     return true;
 }
 
