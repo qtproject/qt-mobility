@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += plugin
 INCLUDEPATH += ../../../src/serviceframework
 TARGET = serviceframework_landlinedialerservice
-include(../../../common.pri)
+include(../../examples.pri)
 
 QT += gui
 

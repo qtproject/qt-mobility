@@ -44,6 +44,8 @@
 #include <qservicemanager.h>
 #include <qml.h>
 
+QTM_USE_NAMESPACE
+
 
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
@@ -93,7 +95,7 @@ public:
     ~ServiceRegister();
     
     Q_PROPERTY(QList<ServiceWrapper *> *services READ services CONSTANT);
-    QList<ServiceWrapper *> *services() { return &m_services; }
+    QList<ServiceWrapper *> *services() {return &m_services; }
 
     void registerExampleServices();
 
