@@ -41,10 +41,10 @@
 
 Following configurations should be made to run the testdriver application.
 
-Test folder 					: <home>\testvcards
-Test files 						: Should be located under testfolder and should have extension .vcf     
-Note 								  : <home> : Windows : Check for HOME environmental variable
-                                 Symbian : c:\data       
+Test folder                     : <home>\testvcards
+Test files                      : Should be located under testfolder and should have extension .vcf
+Note                            : <home> : Windows : Check for HOME environmental variable
+                                           Symbian : c:\data
                      
 Excluding some fields : File excludefields.txt should be located under testfolder
                         If you want to exclude vCard field "X-MYFIELD" from the comparsion, add line X-MYFIELD to the excludefields.txt.
