@@ -162,131 +162,104 @@ QMessageId addMessage(const Parameters &params)
     if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
         // Find the named account
-        QMailAccountIdList accountIds(QMailStore::instance()->queryAccounts(QMailAccountKey::name(parentAccountName)));
+        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
         if (accountIds.count() == 1) {
             // Find the specified folder
-            QMailFolderKey key(QMailFolderKey::path(parentFolderPath) & QMailFolderKey::parentAccountId(accountIds.first()));
-            QMailFolderIdList folderIds(QMailStore::instance()->queryFolders(key));
+            QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath, QMessageDataComparator::Equal) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
+            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
             if (folderIds.count() == 1) {
-                QMailMessage message;
-
-                message.setStatus(QMailMessage::LocalOnly, true);
-                message.setStatus(QMailMessage::Incoming, true);
+                QMessage message;
 
                 message.setParentAccountId(accountIds.first());
-                message.setParentFolderId(folderIds.first());
 
-                if (!to.isEmpty()) {
-                    message.setTo(QMailAddress::fromStringList(to));
+                QMessage::StatusFlags flags(0);
+                if (read.toLower() == "true") {
+                    flags |= QMessage::Read;
                 }
-                if (!from.isEmpty()) {
-                    message.setFrom(QMailAddress(from));
+                if (hasAttachments.toLower() == "true") {
+                    flags |= QMessage::HasAttachments;
                 }
-                if (!cc.isEmpty()) {
-                    message.setCc(QMailAddress::fromStringList(cc));
+                message.setStatus(flags);
+
+                {
+                    QMailMessage *msg(QmfHelpers::convert(&message));
+                    msg->setParentFolderId(QmfHelpers::convert(folderIds.first()));
+                    msg->setStatus(QMailMessage::Incoming, true);
                 }
 
+                QList<QMessageAddress> toList;
+                foreach (const QString &addr, to.split(",", QString::SkipEmptyParts)) {
+                    toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                }
+                message.setTo(toList);
+
+                QList<QMessageAddress> ccList;
+                foreach (const QString &addr, cc.split(",", QString::SkipEmptyParts)) {
+                    ccList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                }
+                if (!ccList.isEmpty()) {
+                    message.setCc(ccList);
+                }
+
+                message.setFrom(QMessageAddress(from, QMessageAddress::Email));
                 message.setSubject(subject);
 
                 QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
                 dt.setTimeSpec(Qt::UTC);
-                message.setDate(QMailTimeStamp(dt));
+                message.setDate(dt);
 
                 if (type.isEmpty()) {
-                    message.setMessageType(QMailMessage::Email);
+                    message.setType(QMessage::Email);
                 } else {
                     if (type.toLower() == "mms") {
-                        message.setMessageType(QMailMessage::Mms);
+                        message.setType(QMessage::Mms);
                     } else if (type.toLower() == "sms") {
-                        message.setMessageType(QMailMessage::Sms);
+                        message.setType(QMessage::Sms);
                     } else if (type.toLower() == "xmpp") {
-                        message.setMessageType(QMailMessage::Instant);
+                        message.setType(QMessage::Xmpp);
                     } else {
-                        message.setMessageType(QMailMessage::Email);
+                        message.setType(QMessage::Email);
                     }
                 }
 
                 if (!receivedDate.isEmpty()) {
                     QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
                     dt.setTimeSpec(Qt::UTC);
-                    message.setReceivedDate(QMailTimeStamp(dt));
+                    message.setReceivedDate(dt);
                 }
 
                 if (!priority.isEmpty()) {
                     if (priority.toLower() == "high") {
-                        message.setStatus(QmfHelpers::highPriorityMask(), true);
+                        message.setPriority(QMessage::HighPriority);
                     } else if (priority.toLower() == "low") {
-                        message.setStatus(QmfHelpers::lowPriorityMask(), true);
+                        message.setPriority(QMessage::LowPriority);
                     }
                 }
 
                 if (!text.isEmpty()) {
-                    QMailMessageContentType ct(mimeType.toAscii());
-
-                    QByteArray charset(QMessage::preferredCharsetFor(text));
-                    if (charset.isEmpty()) {
-                        charset = "UTF-8";
-                    }
-                    ct.setCharset(charset);
-
-                    if (!attachments.isEmpty()) {
-                        // Add the body as the first of multiple parts
-                        message.setMultipartType(QMailMessage::MultipartMixed);
-
-                        QMailMessageContentDisposition cd(QMailMessageContentDisposition::Inline);
-                        cd.setSize(text.length());
-
-                        QMailMessagePart textPart(QMailMessagePart::fromData(text, cd, ct, QMailMessageBody::Base64));
-                        message.appendPart(textPart);
-                    } else {
-                        message.setBody(QMailMessageBody::fromData(text, ct, QMailMessageBody::Base64));
-                        message.setStatus(QMailMessage::ContentAvailable, true);
-                    }
-                }
-
-                if (read.toLower() == "true") {
-                    message.setStatus(QMailMessage::Read, true);
-                }
-
-                if (hasAttachments.toLower() == "true") {
-                    message.setStatus(QMailMessage::HasAttachments, true);
+                    message.setBody(text, mimeType.toAscii());
                 }
 
                 if (!attachments.isEmpty()) {
-                    foreach (const QString &fileName, attachments.split("\n")) {
-                        QString mimeType(QMail::mimeTypeFromFileName(fileName));
-                        if (!mimeType.isEmpty()) {
-                            QFileInfo fi(fileName);
+                    message.appendAttachments(attachments.split("\n"));
+                }
 
-                            QMailMessageContentDisposition cd(QMailMessageContentDisposition::Attachment);
-                            cd.setFilename(fi.fileName().toAscii());
-                            cd.setSize(fi.size());
+                {
+                    // We need to add a size value for QMF
+                    QMailMessage *msg(QmfHelpers::convert(&message));
 
-                            QMailMessageContentType ct(mimeType.toAscii());
-                            QMailMessagePart part(QMailMessagePart::fromFile(fileName, cd, ct, QMailMessageBody::Base64, QMailMessageBody::RequiresEncoding));
-                            message.appendPart(part);
-                        }
+                    if (!size.isEmpty()) {
+                        msg->setSize(size.toUInt());
+                    } else {
+                        // Estimate the message size
+                        msg->setSize(msg->indicativeSize() * 1024);
                     }
                 }
 
-                Parameters::const_iterator it = params.begin(), end = params.end();
-                for ( ; it != end; ++it) {
-                    if (it.key().startsWith("custom-")) {
-                        message.setCustomField(it.key().mid(7), it.value());
-                    }
-                }
-
-                if (!size.isEmpty()) {
-                    message.setSize(size.toUInt());
-                } else {
-                    // Estimate the message size
-                    message.setSize(message.indicativeSize() * 1024);
-                }
-
-                if (!QMailStore::instance()->addMessage(&message)) {
+                if (!QMessageStore::instance()->addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;
                 } else {
-                    return QmfHelpers::convert(message.id());
+                    return message.id();
                 }
             } else {
                 qWarning() << "Unable to locate parent folder:" << parentFolderPath;
