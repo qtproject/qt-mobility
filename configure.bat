@@ -331,7 +331,7 @@ setlocal
     if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% SBS^="@sbs --check"') do set FAILED=1
     ) else if %MOBILITY_BUILDSYSTEM% == symbian-abld (
-        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% ABLD^="@ABLD.BAT -c"') do if not %%i == bldfiles set FAILED=1
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
     ) else if errorlevel 1 (
         set FAILED=1
     )
