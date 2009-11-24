@@ -17,7 +17,9 @@ qtAddLibrary(QtVersit)
 
 # Input
 HEADERS += versittest.h \
-    testconfiguration.h
+    testconfiguration.h \
+    vcardcomparator.h \
+    testresultxmlparser.h
 SOURCES += main.cpp \
     versittest.cpp \
     vcardcomparator.cpp \
