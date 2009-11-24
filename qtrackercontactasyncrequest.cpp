@@ -105,9 +105,9 @@ void applyFilterToRDFVariable(RDFVariable &variable,
                 rdfEmailAddress = variable.property<nco::hasEmailAddress>();
                 rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
             } else if (QContactOnlineAccount::DefinitionName == filt.detailDefinitionName()
-                       && "Account" == filt.detailFieldName()) {
+                       && filt.detailFieldName() == "Account") {
                 RDFVariable imaccount = variable.property<nco::hasIMAccount>();
-                imaccount.property<nco::imID>() = LiteralValue(filt.value().toString());
+                imaccount.property<nco::imID>().isMemberOf(QStringList()<<filt.value().toString());
             } else {
                 qWarning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
@@ -391,7 +391,6 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
                 << "is not yet supported";
         }
     }
-
     query = ::tracker()->modelQuery(quer);
 
     // need to store LiveNodes in order to receive notification from model
@@ -450,6 +449,7 @@ void QTrackerContactFetchRequest::contactsReady()
         QContactLocalId contactid = query->index(i, 0).data().toUInt(&ok);
         if (!ok) {
             // Got an invalid contact id, skip the whole result
+            qWarning()<< Q_FUNC_INFO <<"Invalid contact ID: "<< query->index(i, 0).data().toString();
             continue;
         }
         QHash<quint32, int>::const_iterator it = resultLookup.find(contactid);
@@ -668,7 +668,7 @@ void QTrackerContactFetchRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
                  == queryPhoneNumbers->index(i-1, 1).data().toString())) {
             // this is for ignoring duplicates. bad approach, asked iridian about
             // how to eliminate super types in query results
-            continue; 
+            continue;
         }
 
         QString subtype = rdfPhoneType2QContactSubtype(queryPhoneNumbers->index(i, 2).data().toString());
@@ -709,9 +709,9 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
                  == queryEmailAddresses->index(i-1, 0).data().toString())
              && (queryEmailAddresses->index(i, 1).data().toString()
                  == queryEmailAddresses->index(i-1, 1).data().toString())) {
-            // this is for ignoring duplicates. bad approach, asked iridian 
+            // this is for ignoring duplicates. bad approach, asked iridian
             // about how to eliminate super types in query results
-            continue; 
+            continue;
         }
 
         //QString subtype = rdfPhoneType2QContactSubtype(queryEmailAddresses->index(i, 2).data().toString());
