@@ -93,7 +93,7 @@ void CSymbianMessagingSession::HandleSessionEventL(TMsvSessionEvent /*aEvent*/, 
 {
 }
 
-class MapiSession
+class MapiSessionHiJacker
 {
 public:
     static QMessageId addMessage(const Support::Parameters &params);
@@ -101,7 +101,7 @@ public:
 
 // The class 'MapiSession' is a friend of QMessageContentContainer - hijack it here
 // => This is needed to make it possible to set parentFolderId
-QMessageId MapiSession::addMessage(const Support::Parameters &params)
+QMessageId MapiSessionHiJacker::addMessage(const Support::Parameters &params)
 {
     QString parentAccountName(params["parentAccountName"]);
     QString parentFolderPath(params["parentFolderPath"]);
@@ -131,7 +131,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                 QMessage message;
     
                 message.setParentAccountId(accountIds.first());
-#if 0
+#if NOTCOMPILING
                 // Error:  #265-D: member "QtMobility::QMessage::d_ptr" is inaccessible
                 message.d_ptr->_parentFolderId = folderIds.first();                    
 #endif
@@ -526,7 +526,7 @@ QMessageFolderId addFolder(const Parameters &params)
 
 QMessageId addMessage(const Parameters &params)
 {
-    return MapiSession::addMessage(params);
+    return MapiSessionHiJacker::addMessage(params);
 }
 
 }
