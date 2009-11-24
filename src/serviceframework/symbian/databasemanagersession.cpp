@@ -45,6 +45,7 @@
 #include "databasemanagersignalhandler.h"
 #include "servicedatabase_p.h"
 
+QTM_BEGIN_NAMESPACE
 bool lessThan(const QServiceInterfaceDescriptor &d1,
                                         const QServiceInterfaceDescriptor &d2)
 {
@@ -53,7 +54,6 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
             && d1.minorVersion() < d2.minorVersion());
 }
 
-QTM_BEGIN_NAMESPACE
 
 CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL()
     {
