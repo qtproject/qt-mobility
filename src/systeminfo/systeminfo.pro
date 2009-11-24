@@ -43,7 +43,7 @@ win32 {
 
 unix: {
     QT += gui
-    linux-*: {
+    !maemo:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
         contains(networkmanager_enabled, yes):contains(QT_CONFIG,dbus): {
@@ -52,6 +52,15 @@ unix: {
             HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
 
         }
+    }
+    maemo: {
+            SOURCES += qsysteminfo_maemo.cpp
+            HEADERS += qsysteminfo_maemo_p.h
+        contains(QT_CONFIG,dbus): {
+                QT += dbus
+                SOURCES += qhalservice_linux.cpp
+                HEADERS += qhalservice_linux_p.h
+       }
     }
 
     mac: {
