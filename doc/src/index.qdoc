@@ -105,6 +105,7 @@
     \list
         \o \l {Installation Guide}
         \o \l {Quickstart Example}
+        \o \l {Qt Mobility Examples}{List of all examples.}
     \endlist
 
     \section1 The Mobility APIs
@@ -151,12 +152,13 @@
 
     \section2 Publish and Subscribe
 
-    Enables context sensitive access to information. Data is organized as a tree, with
-    data being able to 'shadow' other data with the 'same key', a string
-    specifying the leaf or node. The context is an example of a context ontology,
-    a defined set of relationships. As the context changes the values of the
-    objects change but the relationships remain the same. It is intended to
-    be an enabling technology, the basis of a range future applications.
+    Will enable context sensitive access to information in future releases.
+    Data is organized as a tree, with data being able to 'shadow' other
+    data with the 'same key', a string specifying the leaf or node. The
+    context is an example of a context ontology, a defined set of
+    relationships. As the context changes the values of the objects change
+    but the relationships remain the same. It is intended to be an enabling
+    technology, the basis of a range future applications.
 
     At this stage the API is intended to act as a common communications
     method between Qt Mobility applications, whether local or remote.
@@ -171,11 +173,12 @@
 
     \section2 Messaging
 
-    A common interface for handling SMS, MMS, XMPP, Email and partial MIME.
-    Sending, notification and retrieval of messages as well as the ability to
-    use a native app to create, edit, reply-to, send and display messages.
-    Supports the sending of messages with attachments, and in situations of
-    low battery to leave attachments on the server unless opened.
+    A common interface for handling SMS, MMS, XMPP (Instant Messaging),
+    Email and partial MIME. Sending, notification and retrieval of messages
+    as well as the ability to use a native app to create, edit, reply-to,
+    send and display messages. Supports the sending of messages with
+    attachments, and in situations of low battery to leave attachments on
+    the server unless opened.
 
     For more details see the \l {Messaging API} {messaging API overview}.
 
@@ -200,9 +203,10 @@
     and managing of an FM radio. This includes the typical functionality you
     would find on a music and video player, combined with an FM radio.
 
-    \section4 Multimedia Dependencies and Requirements
+    Support for a camera is not included in this release but will be included
+    in a future update.
 
-    Multimedia is dependent on the QtMultimedia module of Qt. 
+    Multimedia is dependent on the QtMultimedia module of Qt.
 
     \section2 Service Framework
 
