@@ -152,6 +152,9 @@ tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 
     /* Known one that will not pass */
     managerNames.removeAll("invalid");
+    managerNames.removeAll("testdummy");
+    managerNames.removeAll("teststaticdummy");
+    managerNames.removeAll("maliciousplugin");
 
     foreach(QString mgr, managerNames) {
         QMap<QString, QString> params;

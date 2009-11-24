@@ -236,9 +236,10 @@ goto qmakeFound
 :qmakeNotFound
 echo ... Not found  >> %PROJECT_LOG% 2>&1
 if "%QT_PATH%" == "" (
-    echo >&2 "Cannot find 'qmake' in your PATH."
+    echo >&2Cannot find 'qmake' in your PATH.
+    echo >&2Your PATH is: %PATH%
 ) else (
-    else echo >&2 "Cannot find 'qmake' in %QT_PATH%."
+    echo >&2Cannot find 'qmake' in %QT_PATH%.
 )
 echo >&2 "Aborting." 
 exit 1

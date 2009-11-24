@@ -46,7 +46,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
  * \class QContactDetailDefinitionField
- * \brief A field in a QContactDetail.
+ * \brief The QContactDetailDefinitionField class represents a field in a QContactDetail.
  *
  * Encapsulates information about a particular datum which may be part of a QContactDetail, including the type,
  * allowable values and access constraints.

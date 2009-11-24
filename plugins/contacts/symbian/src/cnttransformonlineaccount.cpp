@@ -202,9 +202,9 @@ quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
     else if (QContactOnlineAccount::SubTypeImpp == fieldName)
         return KUidContactFieldIMPP.iUid;
     else if (QContactOnlineAccount::SubTypeSipVoip == fieldName)
-        return 0;
+        return KUidContactFieldVCardMapVOIP.iUid;
     else if (QContactOnlineAccount::SubTypeVideoShare == fieldName)
-        return 0;
+        return KUidContactFieldVCardMapSWIS.iUid;
     else
         return 0;
 }
