@@ -38,11 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef TESTRESULTXMLPARSER_H
 #define TESTRESULTXMLPARSER_H
 
 #include <QXmlDefaultHandler>
-
 
 class TestResultXmlParser : public QXmlDefaultHandler
 {

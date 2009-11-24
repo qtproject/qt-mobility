@@ -46,7 +46,6 @@
 #include <QIODevice>
 #include <QStringList>
 
-
 class VCardComparator : public QObject
 {
 public: // Constructors and destructor
