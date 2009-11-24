@@ -47,10 +47,12 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QContactDetailRangeFilter
- * \brief The QContactDetailRageFilter class provides a filter based around a detail value range criterion
- *
- * It may be used to select contacts which contain a detail of a particular definition with a particular value
+  \class QContactDetailRangeFilter
+  \brief The QContactDetailRangeFilter class provides a filter based around
+  a detail value range criterion.
+  \ingroup contacts-filters
+ 
+  It may be used to select contacts which contain a detail of a particular definition with a particular value
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailRangeFilter);

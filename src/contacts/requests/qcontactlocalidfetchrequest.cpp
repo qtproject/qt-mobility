@@ -45,8 +45,8 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QContactIdFetchRequest
-  \brief The QContactIdFetchRequest class allows a client to asynchronously
+  \class QContactLocalIdFetchRequest
+  \brief The QContactLocalIdFetchRequest class allows a client to asynchronously
     request a list of contact ids from a contacts store manager.
    \ingroup contacts-requests
  */

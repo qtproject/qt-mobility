@@ -58,22 +58,22 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QContactManagerEngine
- * \preliminary
- * \brief The QContactManagerEngine class is the interface for all implementations of
- * the contact manager backend functionality.
- *
- * Instances of this class are usually provided by a
- * \l QContactManagerEngineFactory, which is loaded from a plugin.
- *
- * The default implementation of this interface provides a basic
- * level of functionality for some functions so that specific engines
- * can simply implement the functionality that is supported by
- * the specific contacts engine that is being adapted.
- *
- * More information on writing a contacts engine plugin is TODO.
- *
- * \sa QContactManager, QContactManagerEngineFactory
+  \class QContactManagerEngine
+  \preliminary
+  \brief The QContactManagerEngine class provides the interface for all
+  implementations of the contact manager backend functionality.
+ 
+  Instances of this class are usually provided by a
+  \l QContactManagerEngineFactory, which is loaded from a plugin.
+ 
+  The default implementation of this interface provides a basic
+  level of functionality for some functions so that specific engines
+  can simply implement the functionality that is supported by
+  the specific contacts engine that is being adapted.
+ 
+  More information on writing a contacts engine plugin is TODO.
+ 
+  \sa QContactManager, QContactManagerEngineFactory
  */
 
 /*!

@@ -160,7 +160,50 @@
 <p>Macro for simplifying declaring custom (leaf) detail classes.</p>
 <p>If you are creating a convenience class for a type of <a href="qcontactdetail.html">QContactDetail</a>, you should use this macro when declaring your class to ensure that it interoperates with other contact functionality.</p>
 <p>Here is an example of a class (<a href="qcontactphonenumber.html">QContactPhoneNumber</a>) using this macro. Note that the class provides some predefined constants and some convenience methods that return values associated with schema fields.</p>
-<pre></pre>
+<pre>    class Q_CONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
+    {
+    public:
+    #ifdef Q_QDOC
+        const char* DefinitionName;
+        const char* FieldNumber;
+        const char* FieldSubType;
+        const char* SubTypeLandline;
+        const char* SubTypeMobile;
+        const char* SubTypeFacsimile;
+        const char* SubTypePager;
+        const char* SubTypeVoice;
+        const char* SubTypeModem;
+        const char* SubTypeVideo;
+        const char* SubTypeCar;
+        const char* SubTypeBulletinBoardSystem;
+        const char* SubTypeMessagingCapable;
+        const char* SubTypeAssistant;
+        const char* SubTypeDtmfMenu;
+    #else
+        Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
+        Q_DECLARE_LATIN1_LITERAL(FieldNumber, &quot;PhoneNumber&quot;);
+        Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, &quot;SubTypes&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeLandline, &quot;Landline&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeMobile, &quot;Mobile&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, &quot;Facsimile&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypePager, &quot;Pager&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeVoice, &quot;Voice&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeModem, &quot;Modem&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, &quot;Video&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeCar, &quot;Car&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeBulletinBoardSystem, &quot;BulletinBoardSystem&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeMessagingCapable, &quot;MessagingCapable&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeAssistant, &quot;Assistant&quot;);
+        Q_DECLARE_LATIN1_LITERAL(SubTypeDtmfMenu, &quot;DtmfMenu&quot;);
+    #endif
+
+        void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
+        QString number() const {return value(FieldNumber);}
+
+        void setSubTypes(const QStringList&amp; subTypes) {setValue(FieldSubTypes, subTypes);}
+        void setSubTypes(const QString&amp; subType) {setValue(FieldSubTypes, QStringList(subType));}
+        QStringList subTypes() const {return value&lt;QStringList&gt;(FieldSubTypes);}
+    };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

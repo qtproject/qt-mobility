@@ -51,19 +51,23 @@ QTM_BEGIN_NAMESPACE
     \class QMediaResource
     \preliminary
     \brief The QMediaResource class provides a description of a media resource.
+    \ingroup multimedia
 
-    A media resource is composed of a \l {uri()}{URI} containing the location of the resource and a
-    set of properties that describe the format of the resource.  The properties provide a means to
-    assess a resource without first attempting to load it, and in situations where media be
-    represented by multiple alternative representations provide a means to select the appropriate
-    resource.
+    A media resource is composed of a \l {uri()}{URI} containing the
+    location of the resource and a set of properties that describe the
+    format of the resource.  The properties provide a means to assess a
+    resource without first attempting to load it, and in situations where
+    media be represented by multiple alternative representations provide a
+    means to select the appropriate resource.
 
-    Media made available by a remote services can often be available in multiple encodings or
-    quality levels, this allows a client to select an appropriate resource based on considerations
-    such as codecs supported, network bandwidth, and display constraints.  QMediaResource includes
-    information such as the \l {mimeType()}{MIME type}, \l {audioCodec()}{audio} and
-    \l {videoCodec()}{video} codecs, \l {audioBitRate()}{audio} and \l {videoBitRate()}{video} bit
-    rates, and \l {resolution()}{resolution} so these constraints and others can be evaluated.
+    Media made available by a remote services can often be available in
+    multiple encodings or quality levels, this allows a client to select
+    an appropriate resource based on considerations such as codecs supported,
+    network bandwidth, and display constraints.  QMediaResource includes
+    information such as the \l {mimeType()}{MIME type}, \l {audioCodec()}{audio}
+    and \l {videoCodec()}{video} codecs, \l {audioBitRate()}{audio} and
+    \l {videoBitRate()}{video} bit rates, and \l {resolution()}{resolution}
+    so these constraints and others can be evaluated.
 
     The only mandatory property of a QMediaResource is the uri().
 
