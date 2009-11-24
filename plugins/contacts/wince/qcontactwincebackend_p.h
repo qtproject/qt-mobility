@@ -146,6 +146,7 @@ private:
     HRESULT mHr;
 };
 
+class ContactWinceFactory;
 class QContactWinCEEngineData : public QSharedData
 {
 public:
@@ -153,7 +154,8 @@ public:
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
         m_phonemeta(PIMPR_INVALID_ID),
-        m_emailmeta(PIMPR_INVALID_ID)
+        m_emailmeta(PIMPR_INVALID_ID),
+        m_factory(0)
     {
     }
 
@@ -161,7 +163,8 @@ public:
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
         m_phonemeta(PIMPR_INVALID_ID),
-        m_emailmeta(PIMPR_INVALID_ID)
+        m_emailmeta(PIMPR_INVALID_ID),
+        m_factory(0)
     {
     }
 
@@ -185,6 +188,7 @@ public:
     QList<QContactLocalId> m_ids;
     QContactRequestWorker m_requestWorker;
     QString m_engineName;
+    ContactWinceFactory* m_factory;
 };
 
 class QContactWinCEEngine : public QContactManagerEngine
@@ -192,7 +196,7 @@ class QContactWinCEEngine : public QContactManagerEngine
     Q_OBJECT
 
 public:
-    QContactWinCEEngine(const QString& engineName, const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    QContactWinCEEngine(ContactWinceFactory* factory, const QString& engineName, const QMap<QString, QString>& parameters, QContactManager::Error& error);
     QContactWinCEEngine(const QContactWinCEEngine& other);
     ~QContactWinCEEngine();
     QContactWinCEEngine& operator=(const QContactWinCEEngine& other);
@@ -254,6 +258,7 @@ public:
     ContactWinceFactory();
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;
+        void resetEngine();
 private:
     QMutex m_mutex;
     QContactWinCEEngine* m_engine;
