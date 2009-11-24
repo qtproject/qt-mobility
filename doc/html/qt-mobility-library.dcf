@@ -140,6 +140,7 @@
         <keyword ref="qcamera.html#Error-enum">QCamera::NoError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::CameraError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::ServiceMissingError</keyword>
+        <keyword ref="qcamera.html#Error-enum">QCamera::NotSupportedFeatureError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::InvalidRequestError</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureMode</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureModes</keyword>
