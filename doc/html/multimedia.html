@@ -42,7 +42,7 @@
 <p>To initialize the objects we create a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object. This will have a list of available devices to choose from so that we can identify the origin of the audio data. We then use the capture source object to initialize a <a href="qmediarecorder.html">QMediaRecorder</a> object</p>
 <pre>        audiosource = new QAudioCaptureSource;
         capture = new QMediaRecorder(audiosource);</pre>
-<p>The API now allows us to discover available devices and codecs as shown in the example. To actually do the recording we merely have to emit invoke the <a href="qmediarecorder.html#record">record()</a> slot, and to stop signal the <a href="qmediarecorder.html#stop">stop()</a> slot. Saving to a file is done simply by calling <a href="qmediarecorder.html#outputLocation-prop">QMediaRecorder::setOutputLocation</a>() before starting to record.</p>
+<p>The API now allows us to discover available devices and codecs as shown in the example. To actually do the recording we merely have to call the <a href="qmediarecorder.html#record">record()</a> function, and to stop call the <a href="qmediarecorder.html#stop">stop()</a> function. Saving to a file is done simply by calling <a href="qmediarecorder.html#outputLocation-prop">QMediaRecorder::setOutputLocation</a>() before starting to record.</p>
 <p>With a handful of functions and two classes we can implement a sound recording application, excluding the supporting user interface code.</p>
 <a name="video"></a>
 <h4>Video</h4>
