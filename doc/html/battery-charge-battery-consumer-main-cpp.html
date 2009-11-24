@@ -65,8 +65,10 @@
     #include &lt;QUrl&gt;
     #include &lt;qml.h&gt;
 
+    QTM_USE_NAMESPACE
+
     QML_DECLARE_TYPE(QValueSpaceSubscriber);
-    QML_DEFINE_TYPE(Qt, 4, 6, (QT_VERSION&amp;0x00ff00)&gt;&gt;8, ValueSpaceSubscriber, QValueSpaceSubscriber);
+    QML_DEFINE_TYPE(Qt, 4, 6, ValueSpaceSubscriber, QValueSpaceSubscriber);
 
     class MainWidget : public QWidget
     {

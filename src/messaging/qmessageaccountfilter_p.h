@@ -71,8 +71,11 @@ public:
 #ifdef Q_OS_SYMBIAN
     typedef QList<QMessageAccountFilter> SortedMessageAccountFilterList;
     
-    bool filter(QMessageAccount &messageAccount);
+    bool filter(const QMessageAccount &messageAccount) const;
+    static bool filter(const QMessageAccount &messageAccount, const QMessageAccountFilterPrivate &filter);
 
+    static void changeComparatorValuesToOpposite(QMessageAccountFilter& filter);
+    static void changeANDsAndORsToOpposite(QMessageAccountFilter& filter);
     static void applyNot(QMessageAccountFilter& filter);
     static bool lessThan(const QMessageAccountFilter filter1, const QMessageAccountFilter filter2);
     static QMessageAccountFilterPrivate* implementation(const QMessageAccountFilter &filter);
@@ -83,6 +86,7 @@ public:
     enum Comparator {Equality = 0, Inclusion};
     
     bool _valid;
+    bool _notFilter;
     
     QMessageAccountIdList _ids;
     QVariant _value;

@@ -16,4 +16,12 @@ LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 
 SOURCES += \
     main.cpp
+    
+symbian:TARGET.CAPABILITY = NetworkServices \
+    LocalServices \
+    ReadUserData \
+    WriteUserData \
+    UserEnvironment \
+    ReadDeviceData \
+    WriteDeviceData
 
