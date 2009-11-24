@@ -68,18 +68,15 @@
 
     \tableofcontents
 
-    
-    \raw HTML
-    <a href="classlists.html">Quick Reference to the Mobility Classes and Functions</a>
-    \endraw
 
-    
-
-    \section1 Mobility Component APIs
-
-    \annotatedlist  mobility
 
     \section1 Overview
+
+    \section2 Introducing the Mobility APIs
+
+    This mobility release contains the following APIs:
+
+    \annotatedlist  mobility
     
     These APIs give the developer a wide range of desirable functions for a
     mobile platform, but these now become possible on platforms not
@@ -108,9 +105,11 @@
     \list
         \o \l {Installation Guide}
         \o \l {Quickstart Example}
+        \o \l {Qt Mobility Examples}{List of all examples.}
     \endlist
 
-    \section1 Bearer Management
+    \section1 The Mobility APIs
+    \section2 Bearer Management
 
     Although not a network manager, this component manages the connectivity
     state to the network. So it does not manage network configurations, which
@@ -145,25 +144,26 @@
     the user to connect or disconnect
         \endlist
 
-    \section1 Contacts
+    \section2 Contacts
 
     The structure and retrieval of contact data from local or remote backends.
     It includes the ability to create, edit, list, delete and lookup contact
     information whether it is stored locally or remotely.
 
-    \section1 Publish and Subscribe
+    \section2 Publish and Subscribe
 
-    Enables context sensitive access to information. Data is organized as a tree, with
-    data being able to 'shadow' other data with the 'same key', a string
-    specifying the leaf or node. The context is an example of a context ontology,
-    a defined set of relationships. As the context changes the values of the
-    objects change but the relationships remain the same. It is intended to
-    be an enabling technology, the basis of a range future applications.
+    Will enable context sensitive access to information in future releases.
+    Data is organized as a tree, with data being able to 'shadow' other
+    data with the 'same key', a string specifying the leaf or node. The
+    context is an example of a context ontology, a defined set of
+    relationships. As the context changes the values of the objects change
+    but the relationships remain the same. It is intended to be an enabling
+    technology, the basis of a range future applications.
 
     At this stage the API is intended to act as a common communications
     method between Qt Mobility applications, whether local or remote.
 
-    \section1 Location
+    \section2 Location
 
     The C++ API is one layer of this feature. This API provides an easy to
     use interface that encapsulates basic geographical information obtained
@@ -171,17 +171,18 @@
     longitude, bearing, speed and altitude. It will enable a range of
     geographical applications, for example, maps.
 
-    \section1 Messaging
+    \section2 Messaging
 
-    A common interface for handling SMS, MMS, XMPP, Email and partial MIME.
-    Sending, notification and retrieval of messages as well as the ability to
-    use a native app to create, edit, reply-to, send and display messages.
-    Supports the sending of messages with attachments, and in situations of
-    low battery to leave attachments on the server unless opened.
+    A common interface for handling SMS, MMS, XMPP (Instant Messaging),
+    Email and partial MIME. Sending, notification and retrieval of messages
+    as well as the ability to use a native app to create, edit, reply-to,
+    send and display messages. Supports the sending of messages with
+    attachments, and in situations of low battery to leave attachments on
+    the server unless opened.
 
     For more details see the \l {Messaging API} {messaging API overview}.
 
-    \section2 Messaging dependencies and requirements
+    \section3 Messaging dependencies and requirements
 
     The Linux backend depends on QMF, for information on QMF see the 
     \l {http://labs.trolltech.com/blogs/category/qtmessaging/} 
@@ -196,17 +197,18 @@
     provides SMS/MMS facilites. Email functionality requires that an email 
     account is available on the platform.
 
-    \section1 Multimedia
+    \section2 Multimedia
 
     An API to play audio and video of various formats. Record audio. The playing
     and managing of an FM radio. This includes the typical functionality you
     would find on a music and video player, combined with an FM radio.
 
-    \section2 Multimedia Dependencies and Requirements
+    Support for a camera is not included in this release but will be included
+    in a future update.
 
-    Multimedia is dependent on the QtMultimedia module of Qt. 
+    Multimedia is dependent on the QtMultimedia module of Qt.
 
-    \section1 Service Framework
+    \section2 Service Framework
 
     A platform independent method of finding Services. A 'service' is an
     independent component that allows a client to perform a well-defined 
@@ -221,12 +223,12 @@
     concerned with the underlying protocol, where the servers are, the
     hardware peculiarities with networking and other low level details.
 
-    \section2 Service Framework Dependencies and Requirements
+    \section3 Service Framework Dependencies and Requirements
 
     The Service Framework is dependent on SQLite version 3 and that
     Qt has been built with the \l {QSQLITE} {QSQLITE driver}.
 
-    \section1 System Information
+    \section2 System Information
 
     An API to discover system related information and capabilities. Information
     available will cover software version numbers, hardware features,

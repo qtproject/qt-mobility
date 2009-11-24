@@ -47,34 +47,40 @@
 
 \section1 Pre-requisites & Dependencies
 To install Qt Mobility you must already have installed
-Qt 4.6 or higher, visit http://qt.nokia.com/downloads to obtain
+Qt 4.6 or higher, visit \l {http://qt.nokia.com/downloads} to obtain
 a copy.
 
-Qt Mobility is comprised of a number of domains.
-Some of these domains have dependencies and
-these are outlined below:
+Qt Mobility is comprised of a number of domains. Some of these domains have
+dependencies and these are outlined below:
 
-\bold {Messaging:}
-The linux backend depends on QMF.
-For more information on QMF visit
-\l {http://labs.trolltech.com/blogs/category/qtmessaging}
+\table 80%
+\header
+    \o API  \o Requirements
+\row
+    \o  Messaging
+    \o
+        The linux backend depends on QMF.
+        For more information on QMF visit
+        \l {http://labs.trolltech.com/blogs/category/qtmessaging}
 
-The Windows Mobile backend depends on ActiveSync version 4.5.
+        The Windows Mobile backend depends on ActiveSync version 4.5.
+\row
+    \o  Service Framework
+    \o 
+        The service framework depends on SQLite version 3 and that
+        Qt has been built with an sqlite driver.  Building
+        the driver by Qt is most easily achieved by
+        using one of the following configure options:
+        \c {-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite}
+\row
+    \o Multimedia
+    \o
+        The multimedia component depends on the QtMultimedia
+        module in Qt.  Qt by default is configured to make this
+        module with the \c {-multimedia} option.
+        
+\endtable
 
-\bold {Service Framework:}
-The service framework depends on SQLite version 3 and that
-Qt has been built with an sqlite driver.  Building
-the driver by Qt is most easily achieved by
-using one of the following configure options:
-\c {-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite}
-
-\bold {Multimedia:}
-The multimedia component depends on the QtMultimedia
-module in Qt.  Qt by default is configured to make this
-module with the \c {-multimedia} option.
-
-For more details about dependencies see:
-<TODO: QtMobility URL>
 
 \section1 Unpacking
 Unpack the Qt Mobility archive if you have not done so already:
@@ -107,19 +113,18 @@ the \c {-prefix} option.
 
 \code
     cd /tmp/%DISTNAME%
-    ./configure
+    ./configure -prefix $TARGET_DIR
 \endcode
-
+    Not passing a prefix installs the mobility libraries into $PWD/install.
     Type \c {./configure -help} to get a list of all available options.
-    
     To create all the libraries and tools, type:
 \code
-        make
+    make
 \endcode
 
-    To install the libraries and tools, type:
+    To install the libraries and tools to $TARGET_DIR, type:
 \code
-        make install
+    make install
 \endcode
 
     If you have specified an install directory with root ownership,
@@ -141,16 +146,17 @@ the \c {-prefix} option.
     To configure Qt Mobility for your machine type:
 \code
         cd c:\QtMobility\1.0.0
-        configure
+        configure -prefix %TARGET_DIR%
 \endcode
 
     Type \c {configure -help} to get a list of all available options.
 
-    The actual commands needed to build Qt Mobility depends on your
+    The actual commands needed to build and install Qt Mobility depends on your
     development system.  For Microsoft Visual Studio to create the
     libraries and tools type:
 \code 
-        nmake
+    nmake
+    nmake install
 \endcode
 
 \section2 Building Individual Qt Mobility Components
@@ -171,15 +177,16 @@ the \c {-prefix} option.
 
     e.g. To build bearer on Unix:
 \code
-        cd ./src/bearer
-        make
-        make install
+    cd ./src/bearer
+    make
+    make install
 \endcode
 
     or on Windows:
 \code
-        cd src\bearer
-        nmake
+    cd src\bearer
+    nmake
+    nmake install
 \endcode
 
 \section1 Environment Variables
@@ -189,19 +196,19 @@ placed in the lib directory of the install path.
 
 On Unix:
 LD_LIBRARY_PATH should be extended to include:
-\c {/tmp/%DISTNAME%/install/lib}
+\c {$TARGET_DIR/lib}
 
 In .profile (if your Unix shell is bash,ksh,zsh or sh),
 add the following lines
 \code   
-    LD_LIBRARY_PATH=/tmp/%DISTNAME%/install/lib:$LD_LIBRARY_PATH
+    LD_LIBRARY_PATH=$TARGET_DIR/lib:$LD_LIBRARY_PATH
     export LD_LIBRARY_PATH
 \endcode
 
 In .login (incase your shell is csh or tcsh), add the following
 line:
 \code
-    setenv LD_LIBRARY_PATH=/tmp/%DISTNAME%/install/lib:$LD_LIBRARY_PATH
+    setenv LD_LIBRARY_PATH=$TARGET_DIR/lib:$LD_LIBRARY_PATH
 \endcode
 
 If you use a different Unix shell, please modify your
@@ -209,7 +216,7 @@ your environment variables accordingly.
 
 On Windows:
 PATH should be extended to include:
-\c {C:\QtMobility\1.0.0\install\lib}
+\c {C:\%TARGET_DIR%\lib}
 
 For newer versions of windows, PATH can be extended
 through
@@ -220,4 +227,4 @@ and for older versions by editing \c{C:\autoexec.bat}
 Further information on Qt Mobility can be found
 at <TODO: QtMobility URL>
 
-We hope you enjoy using Qt Mobility. Good luck!
+We hope you enjoy using Qt Mobility.

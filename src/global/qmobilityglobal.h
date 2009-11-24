@@ -41,6 +41,19 @@
 #ifndef QMOBILITYGLOBAL_H
 #define QMOBILITYGLOBAL_H
 
+
+#define QTM_VERSION_STR   "1.0.0"
+/*
+   QTM_VERSION is (major << 16) + (minor << 8) + patch.
+*/
+#define QTM_VERSION 0x010000
+/*
+   can be used like #if (QTM_VERSION >= QTM_VERSION_CHECK(1, 0, 0))
+*/
+#define QTM_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
+
+
+
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
 # if !defined(QT_BUILD_INTERNAL)
@@ -135,6 +148,8 @@
 #  endif
 #endif
 
+// The namespace is hardcoded as moc has issues resolving
+// macros which would be a prerequisite for a dynmamic namespace
 #define QTM_NAMESPACE QtMobility
 
 #ifdef QTM_NAMESPACE

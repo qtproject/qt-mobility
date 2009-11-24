@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += plugin
 INCLUDEPATH += ../../../src/serviceframework
 TARGET = serviceframework_voipdialerservice
-include(../../../common.pri)
+include(../../examples.pri)
 
 QT += gui
 
