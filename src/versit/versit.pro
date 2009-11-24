@@ -1,11 +1,13 @@
 # #####################################################################
-# Versit API
+# Versit
 # #####################################################################
 TEMPLATE = lib
 TARGET = QtVersit
-DEFINES += BUILD_QTVERSIT \
-    QT_ASCII_CAST_WARNINGS
-include(../common.pri)
+include(../../common.pri)
+
+DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL
+
+qtAddLibrary(QtContacts)
 
 # Input
 PUBLIC_HEADERS += qtversitglobal.h \
@@ -45,8 +47,6 @@ HEADERS += \
     $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 
-qtAddLibrary(QtContacts)
-
 symbian { 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
@@ -59,3 +59,6 @@ symbian {
     # This is for new exporting system coming in garden
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
+
+include(../../features/deploy.pri)
+
