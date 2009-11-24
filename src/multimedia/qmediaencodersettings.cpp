@@ -589,12 +589,16 @@ private:
 /*!
     \class QImageEncoderSettings
     \preliminary
-    \brief The QImageEncoderSettings class provides a set of image encoder settings.
 
-    A image encoder settings object is used to specify the image encoder settings used by
-    QStillImageCapture.  Image encoder settings are selected by constructing a QImageEncoderSettings
-    object, setting the desired properties and then passing it to a QStillImageCapture instance using
-    the QStillImageCapture::setImageSettings() function.
+    \brief The QImageEncoderSettings class provides a set of image
+    encoder settings.
+
+    A image encoder settings object is used to specify the image
+    encoder settings used by QStillImageCapture.  Image encoder
+    settings are selected by constructing a QImageEncoderSettings
+    object, setting the desired properties and then passing it to a
+    QStillImageCapture instance using the
+    QStillImageCapture::setImageSettings() function.
 
     \code
     QImageEncoderSettings imageSettings;

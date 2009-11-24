@@ -552,6 +552,10 @@ QString QRadioTuner::errorString() const
     \value ForceMono   Provide mono mode, converting if required.
 */
 
+/*! \fn void QRadioTuner::stateChanged(QRadioTuner::State state)
+  This signal is emitted when the state changes to \a state.
+ */
+
 #include "moc_qradiotuner.cpp"
 QTM_END_NAMESPACE
 

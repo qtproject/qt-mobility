@@ -714,6 +714,10 @@ void QVideoWidget::setSaturation(int saturation)
     \sa saturation
 */
 
+/*!
+  Returns the size hint for the current back end,
+  if there is one, or else the size hint from QWidget.
+ */
 QSize QVideoWidget::sizeHint() const
 {
     Q_D(const QVideoWidget);
@@ -729,8 +733,7 @@ QSize QVideoWidget::sizeHint() const
 /*!
     \reimp
     \internal
-*/
-
+ */
 bool QVideoWidget::event(QEvent *event)
 {
     Q_D(QVideoWidget);
@@ -760,6 +763,9 @@ bool QVideoWidget::event(QEvent *event)
     return QWidget::event(event);
 }
 
+/*!
+  Handles the show \a event.
+ */
 void QVideoWidget::showEvent(QShowEvent *event)
 {
     Q_D(QVideoWidget);
@@ -787,6 +793,9 @@ void QVideoWidget::showEvent(QShowEvent *event)
     }
 }
 
+/*!
+  Handles the hide \a event.
+ */
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
@@ -800,6 +809,9 @@ void QVideoWidget::hideEvent(QHideEvent *event)
     QWidget::hideEvent(event);
 }
 
+/*!
+  Handles the resize \a event.
+ */
 void QVideoWidget::resizeEvent(QResizeEvent *event)
 {
     Q_D(QVideoWidget);
@@ -810,6 +822,9 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
         d->currentBackend->resizeEvent(event);
 }
 
+/*!
+  Handles the move \a event.
+ */
 void QVideoWidget::moveEvent(QMoveEvent *event)
 {
     Q_D(QVideoWidget);
@@ -818,6 +833,9 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
         d->currentBackend->moveEvent(event);
 }
 
+/*!
+  Handles the paint \a event.
+ */
 void QVideoWidget::paintEvent(QPaintEvent *event)
 {
     Q_D(QVideoWidget);
