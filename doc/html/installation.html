@@ -22,7 +22,6 @@
 <li><a href="#building-individual-qt-mobility-components">Building Individual Qt Mobility Components</a></li>
 </ul>
 <li><a href="#environment-variables">Environment Variables</a></li>
-<li><a href="#further-information">Further information</a></li>
 </ul>
 <a name="pre-requisites-dependencies"></a>
 <h2>Pre-requisites &amp; Dependencies</h2>
@@ -30,29 +29,31 @@
 <p>Qt Mobility is comprised of a number of domains. Some of these domains have dependencies and these are outlined below:</p>
 <p><table class="generic" width="80%" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>API</th><th>Requirements</th></tr></thead>
-<tr valign="top" class="odd"><td>Messaging</td><td>The linux backend depends on QMF. For more information on QMF visit <a href="http://labs.trolltech.com/blogs/category/qtmessaging">http://labs.trolltech.com/blogs/category/qtmessaging</a><p>The Windows Mobile backend depends on ActiveSync version 4.5&#x2e;</p>
+<tr valign="top" class="odd"><td>Messaging</td><td>The linux backend depends on QMF. For more information on QMF visit <a href="http://labs.trolltech.com/blogs/category/qtmessaging">QMF Labs article</a><p>The Windows Mobile backend depends on ActiveSync version 4.5&#x2e;</p>
+<p>Whilst not supported for this release the Windows Desktop backend requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.</p>
+<p>The messaging API SMS/MMS functionality requires that the platform provides SMS/MMS facilites. Email functionality requires that an email account is available on the platform.</p>
 </td></tr>
 <tr valign="top" class="even"><td>Service Framework</td><td>The service framework depends on SQLite version 3 and that Qt has been built with an sqlite driver. Building the driver by Qt is most easily achieved by using one of the following configure options: <tt>-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite</tt></td></tr>
 <tr valign="top" class="odd"><td>Multimedia</td><td>The multimedia component depends on the <a href="http://qt.nokia.com/doc/4.5/qtmultimedia.html">QtMultimedia</a> module in Qt. Qt by default is configured to make this module with the <tt>-multimedia</tt> option.</td></tr>
 </table></p>
 <a name="unpacking"></a>
 <h2>Unpacking</h2>
-<p>Unpack the Qt Mobility archive if you have not done so already: On Unix (X11 and Mac):</p>
+<p>Unpack the Qt Mobility archive if you have not done so already, on Unix (X11 and Mac):</p>
 <pre>    cd /tmp
     gunzip %DISTNAME%.tar.gz        #uncompress the archive
     tar xvf %DISTNAME%.tar          #unpack it</pre>
 <p>This creates the directory <tt>/tmp/%DISTNAME%</tt> containing the files from the archive. We only support the GNU version of the tar archiving utility. Note on some systems it is called gtar.</p>
-<p>On windows, uncompress the files into the directory you want Qt Mobility installed, e.g&#x2e; <tt>C:\QtMobility\1.0.0</tt></p>
+<p>On windows, uncompress the zip file into the directory you want Qt Mobility installed, extracting to <tt>C:\QtMobility</tt> will create the directory <tt>C:\QtMobility\%DISTNAME%</tt></p>
 <p>NOTE: The install path must not contain any spaces.</p>
 <a name="building"></a>
 <h2>Building</h2>
 <a name="building-on-unix"></a>
 <h3>Building On Unix</h3>
 <p>To configure the Qt Mobility libraries for your machine, run the <tt>./configure</tt> script in the package directory.</p>
-<p>By default, Qt Mobility is configured for installation into the install directory of the package directory. eg <tt>/tmp/%DISTNAME%/install</tt>, but this can be changed using the <tt>-prefix</tt> option.</p>
+<p>To specify the installation directory you may use the -prefix option. Not passing a prefix installs the mobility libraries into $PWD/install.</p>
 <pre>    cd /tmp/%DISTNAME%
     ./configure -prefix $TARGET_DIR</pre>
-<p>Not passing a prefix installs the mobility libraries into $PWD/install. Type <tt>./configure -help</tt> to get a list of all available options. To create all the libraries and tools, type:</p>
+<p>Type <tt>./configure -help</tt> to get a list of all available options. To create all the libraries and tools, type:</p>
 <pre>    make</pre>
 <p>To install the libraries and tools to $TARGET_DIR, type:</p>
 <pre>    make install</pre>
@@ -64,21 +65,22 @@
 <p>Note that on some systems the make utility is named differently, e.g&#x2e; gmake. The configure script tells you which make utility to use.</p>
 <a name="building-on-windows"></a>
 <h3>Building On Windows</h3>
-<p>To configure Qt Mobility for your machine type:</p>
-<pre>        cd c:\QtMobility\1.0.0
+<p>To configure the Qt Mobility libraries for your machine, run configure in the package directory.</p>
+<p>To specify the installation directory you may use the -prefix option. Not passing a prefix installs the mobility libraries into an install directory within current working directory.</p>
+<pre>        cd c:\QtMobility\%DISTNAME%
         configure -prefix %TARGET_DIR%</pre>
 <p>Type <tt>configure -help</tt> to get a list of all available options.</p>
-<p>The actual commands needed to build and install Qt Mobility depends on your development system. For Microsoft Visual Studio to create the libraries and tools type:</p>
+<p>The actual commands needed to build and install Qt Mobility depends on your development system. For Microsoft Visual Studio to create and install the libraries and tools type:</p>
 <pre>    nmake
     nmake install</pre>
 <a name="building-individual-qt-mobility-components"></a>
 <h3>Building Individual Qt Mobility Components</h3>
-<p>Qt Mobility is comprised of several components but all of these may not need to be built. To build a single component, perform the configure step as outlined in 4.1 and 4.2, and then perform the make step in the appropriate directory to create the desired library.</p>
+<p>Qt Mobility is comprised of several components but all of these may not need to be built. To build a single component, perform the configure step as outlined above, and then perform the make step in the appropriate directory to create the desired library.</p>
 <p>The directory structure will look something like</p>
 <pre>    ./src/bearer
     ./src/contacts
-    ./src/global
-    ... etc</pre>
+    ...
+    ./src/systeminfo</pre>
 <p>e.g&#x2e; To build bearer on Unix:</p>
 <pre>    cd ./src/bearer
     make
@@ -98,11 +100,8 @@
 <pre>    setenv LD_LIBRARY_PATH=$TARGET_DIR/lib:$LD_LIBRARY_PATH</pre>
 <p>If you use a different Unix shell, please modify your your environment variables accordingly.</p>
 <p>On Windows: PATH should be extended to include: <tt>C:\%TARGET_DIR%\lib</tt></p>
-<p>For newer versions of windows, PATH can be extended through &quot;Control Panel-&gt;System-&gt;Advanced-&gt;Environment variables&quot; and for older versions by editing <tt>C:\autoexec.bat</tt></p>
-<a name="further-information"></a>
-<h2>Further information</h2>
-<p>Further information on Qt Mobility can be found at &lt;TODO: QtMobility URL&gt;</p>
-<p>We hope you enjoy using Qt Mobility.</p>
+<p>For newer versions of windows, PATH can be extended through &quot;Start-&gt;Settings-&gt;Control Panel-&gt;System-&gt;Advanced-&gt; Environment variables&quot; and for older versions by editing <tt>C:\autoexec.bat</tt></p>
+<p>And now the installation is complete, we hope you enjoy using Qt Mobility.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

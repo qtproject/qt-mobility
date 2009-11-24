@@ -4613,9 +4613,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setPlaylist" fullname="QMediaPlaylistNavigator::setPlaylist" href="qmediaplaylistnavigator.html#setPlaylist" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPlaylist(QMediaPlaylistProvider * playlist)">
                 <parameter left="QMediaPlaylistProvider *" right="" name="playlist" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="playbackMode" fullname="QMediaPlaylistNavigator::playbackMode" href="qmediaplaylistnavigator.html#playbackMode-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="playbackMode" type="QMediaPlaylist::PlaybackMode" signature="playbackMode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentItem" fullname="QMediaPlaylistNavigator::currentItem" href="qmediaplaylistnavigator.html#currentItem-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentItem" type="QMediaContent" signature="currentItem() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="nextItem" fullname="QMediaPlaylistNavigator::nextItem" href="qmediaplaylistnavigator.html#nextItem-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="nextItem" type="QMediaContent" signature="nextItem(int steps) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="playbackMode" fullname="QMediaPlaylistNavigator::playbackMode" href="qmediaplaylistnavigator.html#playbackMode-prop" location="qmediaplaylistnavigator.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="playbackMode" type="QMediaPlaylist::PlaybackMode" signature="playbackMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentItem" fullname="QMediaPlaylistNavigator::currentItem" href="qmediaplaylistnavigator.html#currentItem-prop" location="qmediaplaylistnavigator.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentItem" type="QMediaContent" signature="currentItem() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="nextItem" fullname="QMediaPlaylistNavigator::nextItem" href="qmediaplaylistnavigator.html#nextItem-prop" location="qmediaplaylistnavigator.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="nextItem" type="QMediaContent" signature="nextItem(int steps) const">
                 <parameter left="int" right="" name="steps" default="1"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="previousItem" fullname="QMediaPlaylistNavigator::previousItem" href="qmediaplaylistnavigator.html#previousItem-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="previousItem" type="QMediaContent" signature="previousItem(int steps) const">
@@ -4624,7 +4624,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="itemAt" fullname="QMediaPlaylistNavigator::itemAt" href="qmediaplaylistnavigator.html#itemAt" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMediaContent" signature="itemAt(int position) const">
                 <parameter left="int" right="" name="position" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentPosition" fullname="QMediaPlaylistNavigator::currentPosition" href="qmediaplaylistnavigator.html#currentPosition-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentPosition" type="int" signature="currentPosition() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentPosition" fullname="QMediaPlaylistNavigator::currentPosition" href="qmediaplaylistnavigator.html#currentPosition-prop" location="qmediaplaylistnavigator.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentPosition" type="int" signature="currentPosition() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="nextPosition" fullname="QMediaPlaylistNavigator::nextPosition" href="qmediaplaylistnavigator.html#nextPosition" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="nextPosition(int steps) const">
                 <parameter left="int" right="" name="steps" default="1"/>
             </function>
@@ -7380,10 +7380,8 @@
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
             <contents name="location" title="Location" level="2"/>
             <contents name="messaging" title="Messaging" level="2"/>
-            <contents name="messaging-dependencies-and-requirements" title="Messaging dependencies and requirements" level="3"/>
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
-            <contents name="service-framework-dependencies-and-requirements" title="Service Framework Dependencies and Requirements" level="3"/>
             <contents name="system-information" title="System Information" level="2"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
         </page>
@@ -7558,7 +7556,6 @@
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
             <contents name="building-individual-qt-mobility-components" title="Building Individual Qt Mobility Components" level="2"/>
             <contents name="environment-variables" title="Environment Variables" level="1"/>
-            <contents name="further-information" title="Further information" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWidgetControl_iid" href="qvideowidgetcontrol.html#QVideoWidgetControl_iid" location="qvideowidgetcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWidgetControl" type="" signature="QVideoWidgetControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceControl_iid" href="qaudiodevicecontrol.html#QAudioDeviceControl_iid" location="qaudiodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceControl" type="" signature="QAudioDeviceControl_iid()"/>
