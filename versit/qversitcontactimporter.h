@@ -50,7 +50,7 @@ class QVersitDocument;
 class QVersitProperty;
 class QVersitContactImporterPrivate;
 
-class QTVERSIT_EXPORT QVersitContactImporter
+class Q_VERSIT_EXPORT QVersitContactImporter
 {
 public:
     QVersitContactImporter();

@@ -86,7 +86,7 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 }
 
 /*!
- * Sets the \a groups in the property.
+ * Sets the groups in the property to the given list of \a groups.
  */
 void QVersitProperty::setGroups(const QStringList& groups)
 {

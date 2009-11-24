@@ -45,9 +45,9 @@
 #include <qglobal.h>
 
 #ifdef BUILD_QTVERSIT
-#define QTVERSIT_EXPORT Q_DECL_EXPORT
+#define Q_VERSIT_EXPORT Q_DECL_EXPORT
 #else
-#define QTVERSIT_EXPORT Q_DECL_IMPORT
+#define Q_VERSIT_EXPORT Q_DECL_IMPORT
 #endif
 
 #endif // QTVERSITGLOBAL_H

@@ -75,7 +75,7 @@ protected: // To be implemented in each of the subclasses
     virtual QByteArray encodeParameters(
         const QMultiHash<QString,QString>& parameters) const = 0;
 
-protected: // Constructors
+protected: // Protected Constructors
     QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
 
 protected: // From QThread

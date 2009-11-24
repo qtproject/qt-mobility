@@ -81,6 +81,7 @@ bool QVersitReaderPrivate::read()
                 mVersitDocuments.append(document);
         }
     }
+
     return (mVersitDocuments.count() > 0);
 }
 

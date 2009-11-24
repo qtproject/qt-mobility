@@ -82,6 +82,7 @@ bool QVersitWriterPrivate::write()
         QByteArray output = encodeVersitDocument(mVersitDocument);
         ok = (mIoDevice->write(output) > 0);
     }
+
     return ok;
 }
 

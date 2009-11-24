@@ -171,6 +171,7 @@ QContact QVersitContactImporterPrivate::importContact(
             delete detail;
         }
     }
+
     return contact;
 }
 

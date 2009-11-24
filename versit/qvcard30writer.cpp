@@ -77,6 +77,7 @@ QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
     }    
     encodedProperty.append(value);
     encodedProperty.append("\r\n");
+
     return encodedProperty;
 }
 
@@ -108,6 +109,7 @@ QByteArray QVCard30Writer::encodeParameters(
             encodedParameters.append(value);
         }
     }
+
     return encodedParameters;
 }
 

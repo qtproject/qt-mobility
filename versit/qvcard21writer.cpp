@@ -132,5 +132,6 @@ bool QVCard21Writer::quotedPrintableEncode(
     if (!property.parameters().contains(QString::fromAscii("ENCODING"))) {
         encoded = VersitUtils::quotedPrintableEncode(value);
     }
+
     return encoded;
 }

@@ -135,6 +135,7 @@ QVersitDocument QVersitContactExporter::exportContact(
     QVersitDocument versitDocument;
     versitDocument.setVersitType(versitType);
     d->exportContact(versitDocument,contact);
+
     return versitDocument;
 }
 

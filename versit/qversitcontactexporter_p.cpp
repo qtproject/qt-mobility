@@ -304,6 +304,7 @@ bool QVersitContactExporterPrivate::encodeRev(
         }
     }
     property.setValue(value.toAscii());
+
     return encoded;
 }
 

@@ -100,7 +100,7 @@ protected: // From QThread
 public: // Data
     QIODevice* mIoDevice;
     QList<QVersitDocument> mVersitDocuments;
-    int mDocumentNestingLevel; // Depth in parsing nested versit documents
+    int mDocumentNestingLevel; // Depth in parsing nested Versit documents
 };
 
 #endif // QVERSITREADER_P_H

@@ -161,6 +161,7 @@ bool QVersitWriter::startWriting()
         d->start();
         started = true;
     }
+
     return started;
 }
 

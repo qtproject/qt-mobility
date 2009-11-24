@@ -122,7 +122,8 @@ QList<QVersitProperty> QVersitDocument::properties() const
 void QVersitDocument::removeProperties(const QString& name)
 {
     for (int i=d->mProperties.count()-1; i >=0; i--) {
-        if (d->mProperties[i].name() == name)
+        if (d->mProperties[i].name() == name) {
             d->mProperties.removeAt(i);
+        }
     }
 }

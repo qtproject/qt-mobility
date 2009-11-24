@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QVERSITDOCUMENT_P_H
 #define QVERSITDOCUMENT_P_H
 

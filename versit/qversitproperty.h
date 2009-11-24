@@ -52,7 +52,7 @@
 
 class QVersitPropertyPrivate;
 
-class QTVERSIT_EXPORT QVersitProperty
+class Q_VERSIT_EXPORT QVersitProperty
 {
 public:
     QVersitProperty();

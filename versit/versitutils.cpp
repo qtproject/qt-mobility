@@ -72,6 +72,7 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
              }
          }
     }
+
     return text;
 }
 
@@ -92,12 +93,12 @@ QByteArray VersitUtils::unfold(QByteArray& text)
             previous = 0;
             previousOfTheprevious = 0;
             i--;
-        }
-        else {
+        } else {
             previousOfTheprevious = previous;
             previous = current;
         }
     }
+
     return text;
 }
 
@@ -116,11 +117,11 @@ int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
             current == '\r' ||
             current == '\n') {
             whiteSpaceCount++;
-        }
-        else {
+        } else {
             nonWhiteSpaceFound = true;
         }
     }
+
     return whiteSpaceCount;
 }
 
@@ -249,6 +250,7 @@ int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
     while (crlfIndex > 0 && encoded.at(crlfIndex-1) == '=') {
         crlfIndex = encoded.indexOf("\r\n",crlfIndex+2);
     }
+
     return crlfIndex;
 }
 
@@ -281,6 +283,7 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
             groupsAndName.second = trimmedGroupsAndName;
         }
     }
+
     return groupsAndName;
 }
 
@@ -312,6 +315,7 @@ QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(
         QString value = QString::fromAscii(paramValue(param));
         result.insert(name,value);
     }
+
     return result;
 }
 
@@ -336,6 +340,7 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(
             result.insert(QString::fromAscii(name),QString::fromAscii(value));
         }
     }
+
     return result;
 }
 
@@ -352,6 +357,7 @@ QList<QByteArray> VersitUtils::extractParams(const QByteArray& property)
         if (!params.isEmpty())
             params.removeFirst(); // Remove property name
     }
+
     return params;
 }
 
@@ -377,6 +383,7 @@ QList<QByteArray> VersitUtils::extractParts(
         }
         previous = current;
     }
+
     // Add the last or only part
     QByteArray part = extractPart(text,partStartIndex);
     if (part.length() > 0)
@@ -410,6 +417,7 @@ QByteArray VersitUtils::paramName(const QByteArray& parameter)
      if (equalsIndex > 0) {
          return parameter.left(equalsIndex).trimmed();
      }
+
      return QByteArray("TYPE");
 }
 
@@ -423,12 +431,12 @@ QByteArray VersitUtils::paramValue(const QByteArray& parameter)
     if (equalsIndex > 0) {
         if (equalsIndex == parameter.length()-1) {
             value = QByteArray();
-        }
-        else {
+        } else {
             int valueLength = parameter.length() - (equalsIndex + 1);
             value = parameter.right(valueLength).trimmed();
         }    
     }
+
     return value;
 }
 

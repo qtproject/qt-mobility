@@ -139,8 +139,7 @@ QString QVersitContactImporter::audioClipPath() const
 /*!
  * Creates a QContact from \a versitDocument.
  */
-QContact QVersitContactImporter::importContact(
-    const QVersitDocument& versitDocument)
+QContact QVersitContactImporter::importContact(const QVersitDocument& versitDocument)
 {
     return d->importContact(versitDocument);
 }

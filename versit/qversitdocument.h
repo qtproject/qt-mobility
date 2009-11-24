@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QVERSITDOCUMENT_H
 #define QVERSITDOCUMENT_H
 
@@ -48,7 +49,7 @@
 class QVersitDocumentPrivate;
 class QVersitProperty;
 
-class QTVERSIT_EXPORT QVersitDocument
+class Q_VERSIT_EXPORT QVersitDocument
 {
 public:
     QVersitDocument();

@@ -26,6 +26,7 @@ PRIVATE_HEADERS += qversitdocument_p.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h
 
+# Implementation
 SOURCES += qversitdocument.cpp \
     qversitproperty.cpp \
     qversitreader.cpp \

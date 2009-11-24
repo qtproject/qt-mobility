@@ -97,7 +97,7 @@ QVersitReader::~QVersitReader()
 }
 
 /*!
- * Sets the device used for reading the input to \a device.
+ * Sets the device used for reading the input to be the given device \a device.
  */
 void QVersitReader::setDevice(QIODevice* device)
 {

@@ -50,7 +50,7 @@
 
 class QVersitContactExporterPrivate;
 
-class QTVERSIT_EXPORT QVersitContactExporter : public QObject
+class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
 {
     Q_OBJECT
 

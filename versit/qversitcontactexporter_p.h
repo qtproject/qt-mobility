@@ -98,7 +98,7 @@ private:
 public: // Data
     QList<QContactDetail> mUnknownContactDetails;
 
-private: // data
+private: // Data
     QHash<QString,QString> mPropertyMappings;
     QHash<QString,QString> mParameterMappings;
     QVersitDocument::VersitType mVersitType;

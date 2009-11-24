@@ -49,7 +49,6 @@
 #include <QMultiHash>
 #include <QByteArray>
 
-
 class QVersitPropertyPrivate : public QSharedData
 {
 public:

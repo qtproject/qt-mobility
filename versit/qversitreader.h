@@ -50,7 +50,7 @@ class QIODevice;
 class QVersitReaderPrivate;
 
 // reads a QVersitDocument from i/o device
-class QTVERSIT_EXPORT QVersitReader : public QObject
+class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
     Q_OBJECT  
     

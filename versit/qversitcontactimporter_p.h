@@ -117,7 +117,9 @@ private:
     QContactDetail* createFamily(
         const QVersitProperty& property,
         const QContact& contact)const;
+
     QContactDetail* createNameValueDetail(const QVersitProperty& property) const;
+
     QContactDetail* createLabel(
             const QVersitProperty& property,
             const QContact& contact) const;
