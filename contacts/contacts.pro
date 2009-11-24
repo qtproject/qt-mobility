@@ -90,5 +90,6 @@ symbian {
     }
 }
 
+qtAddLibrary(QtNetwork)
 include(../features/deploy.pri)
 

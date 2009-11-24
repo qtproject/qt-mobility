@@ -39,7 +39,10 @@
 **
 ****************************************************************************/
 #include <QDebug>
-
+#include <QUrl>
+#include <QFile>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QByteArray>
 #include "qcontactmanager.h"
 #include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
@@ -192,9 +195,169 @@ static void processName(const QContactWinCEEngine* engine, const QVariantList& v
     setIfNotEmpty(name, QContactName::FieldLast, values[3].toString());
     setIfNotEmpty(name, QContactName::FieldSuffix, values[4].toString());
     setIfNotEmpty(name, QContactName::FieldCustomLabel, values[5].toString());
-    //ret = engine->setContactDisplayLabel(values[5].toString(), ret);
     if (!name.isEmpty())
         ret.saveDetail(&name);
+}
+
+static bool GetStreamSize(IStream* pStream, ULONG* pulSize)
+{
+    HRESULT hr;
+    LARGE_INTEGER  li = {0};
+    ULARGE_INTEGER uliZero = {0};
+    ULARGE_INTEGER uli;
+
+    if (pStream != NULL && pulSize != NULL) {
+        hr = pStream->Seek(li, STREAM_SEEK_END, &uli);
+        if (SUCCEEDED(hr)) {
+            *pulSize = uli.LowPart;
+            hr = pStream->Seek(li, STREAM_SEEK_SET, &uliZero);
+            return SUCCEEDED(hr);
+        }
+    }
+    return false;
+}
+
+static bool CEGetPropertyVal(IItem* item, CEPROPID propId, QVariant* val)
+{
+    unsigned long cbSize = 0;
+
+    CEPROPVAL *propval = 0;
+    
+    if (!item || !val)
+        return false;
+
+    HRESULT hr = item->GetProps(&propId, CEDB_ALLOWREALLOC, 1, &propval, &cbSize, GetProcessHeap());
+
+    if (SUCCEEDED(hr) && propval) {
+        *val = CEPropValToQVariant(*propval);
+        HeapFree(GetProcessHeap(), 0, propval);
+        return !val->isNull();
+    }
+    return false;
+}
+
+static bool CESetPropertyVal(IItem* item, CEPROPID propId, const QString& val)
+{
+    if (item) {
+        HRESULT hr = item->SetProps(0, 1, &convertToCEPropVal(propId, val));
+        return SUCCEEDED(hr);
+    }
+    return false;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::loadBlob(const QContactLocalId& contactId, const QString& blobId, QByteArray* data, QString* format) const
+{
+    if (data && format && contactId != 0) {
+        HRESULT   hr;
+        SimpleComPointer<IItem>    pItem = NULL;
+
+        hr = d->m_app->GetItemFromOidEx(contactId, 0, &pItem);
+        if (FAILED(hr))
+            return false;
+        if (blobId.toLower() == "avatar") {
+            SimpleComPointer<IStream>  pStream = NULL;
+            ULONG     ulSize;
+            // Extract the picture from the contact
+            hr = pItem->OpenProperty(PIMPR_PICTURE, GENERIC_READ, &pStream);
+            if (FAILED(hr))
+                return false;
+
+            hr = GetStreamSize(pStream, &ulSize);
+            if (FAILED(hr))
+                return false;
+
+            // In some cases, the property may exist even if there is no picture.
+            // Make sure we can access the stream and don't have a 0 byte stream
+            if (ulSize > 0 && pStream != NULL) {
+
+                ULONG     ulSize, readSize;
+                if (!GetStreamSize(pStream, &ulSize))
+                    return false;
+
+                // Prepares the data buffer
+                data->resize(ulSize);
+                
+                // Read all into the data buffer until reach the end of stream
+                readSize = 0;
+                char* p = data->data();
+                while(ulSize && SUCCEEDED(hr)) {
+                    p += readSize;
+                    hr = pStream->Read(p, ulSize, &readSize);
+                    ulSize -= readSize;
+                }
+                if (FAILED(hr))
+                    return false;
+                
+                QVariant v;
+                if (CEGetPropertyVal(pItem, d->m_avatarmeta, &v)) {
+                    *format = v.toString();
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::saveBlob(const QContactLocalId& contactId, const QString&  blobId, const QByteArray& data, const QString& format)
+{
+    if (contactId != 0) {
+        HRESULT   hr;
+        SimpleComPointer<IItem>    pItem = NULL;
+
+        hr = d->m_app->GetItemFromOidEx(contactId, 0, &pItem);
+        if (FAILED(hr))
+            return false;
+        if (blobId.toLower() == "avatar") {
+            SimpleComPointer<IStream>  pStream = NULL;
+
+            hr = pItem->OpenProperty(PIMPR_PICTURE, GENERIC_WRITE, &pStream);
+            if (FAILED(hr))
+                return false;
+
+            ULONG     ulWrittenSize;
+            pStream->Write(data.data(), data.size(), &ulWrittenSize);
+
+            if (FAILED(hr))
+                return false;
+
+            hr = pStream->Commit(0);
+
+            if (FAILED(hr))
+                return false;
+
+            hr = pItem->Save();
+
+            if (FAILED(hr))
+                return false;
+            
+            if (CESetPropertyVal(pItem, d->m_avatarmeta, format))
+                return true;
+        }
+    }
+    return false;
+}
+
+
+static void processAvatar(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
+{
+    QContactAvatar avatar;
+    
+    setIfNotEmpty(avatar, QContactAvatar::FieldSubType, values[1].toString());
+
+    //1. load blob
+    QByteArray data;
+    
+    QUrl url(QUrl::fromEncoded(data.toPercentEncoding()));
+    
+    url.setScheme("data");
+
+    setIfNotEmpty(avatar, QContactAvatar::FieldAvatar, values[0].toString());
+    
+    if (!avatar.isEmpty())
+        ret.saveDetail(&avatar);
 }
 
 static void processAddress(const QContactWinCEEngine*, const QString& context, const QVariantList& values, QContact& ret)
@@ -399,7 +562,7 @@ static void processFamily(const QContactWinCEEngine*, const QVariantList& values
         ret.saveDetail(&family);
 }
 
-static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
+static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, CEPROPID avatarMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
 {
     static QHash<CEPROPID, PoomContactElement> hash;
     static QVector<CEPROPID> ids;
@@ -483,6 +646,7 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         family.func = processFamily;
         list.append(family);
 
+
         // XXX Unhandled:
         //
         //  PIMPR_ACCOUNT_NAME
@@ -499,7 +663,6 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         //
         //  PIMPR_IM[123]_ADDRESS
         //
-        //  PIMPR_PICTURE
         //  PIMPR_RINGTONE
 
         //  PIMPR_YOMI_FILEAS
@@ -533,6 +696,28 @@ static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props
     addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
     addIfNotEmpty(PIMPR_FILEAS, detail.value(QContactName::FieldCustomLabel), props);
     return true;
+}
+
+static bool processQAvatar(const QContactWinCEEngine* engine, IItem* item, const QList<QContactAvatar>& avatars, CEPROPID metaId)
+{
+    if (!avatars.isEmpty()) {
+        //only process the first avatar detail
+        QString avatarFile = avatars.at(0).value(QContactAvatar::FieldAvatar);
+        
+        if (avatarFile.isEmpty())
+            return false;
+        
+        QFile f(avatarFile);
+        f.open(QIODevice::ReadOnly);
+        
+        if (f.error() != QFile::NoError)
+            return false;
+
+        QByteArray data = f.readAll();
+        //engine->saveBlob(
+        return true;
+    }
+    return false;
 }
 
 static bool processQFamily(const QContactDetail& detail, QVector<CEPROPVAL>& props)
@@ -825,7 +1010,7 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
     QVector<CEPROPID> props;
 
     // Get our mapping tables
-    contactP2QTransforms(d->m_phonemeta, d->m_emailmeta, hash, props);
+    contactP2QTransforms(d->m_phonemeta, d->m_emailmeta, d->m_avatarmeta, hash, props);
 
     CEPROPVAL *propvals = 0;
     HRESULT hr = contact->GetProps(props.constData(), CEDB_ALLOWREALLOC, props.count(), &propvals, &cbSize, GetProcessHeap());
@@ -861,7 +1046,8 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
                 valueHash.take(id);
             }
         }
-
+        //XXX process avatar here
+        //processAvatar(this, ret);
         HeapFree(GetProcessHeap(), 0, propvals);
     }
 
@@ -900,13 +1086,17 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     processQPhones(contact.details<QContactPhoneNumber>(), d->m_phonemeta, props);
     processQEmails(contact.details<QContactEmailAddress>(), d->m_emailmeta, props);
     processQAddresses(contact.details<QContactAddress>(), props);
-
+    
     // Now set it
     HRESULT hr = item->SetProps(0, props.count(), props.data());
     if (SUCCEEDED(hr)) {
-        return true;
+        //Special case for avatar stuff 
+        if (processQAvatar(this, item, contact.details<QContactAvatar>(), d->m_avatarmeta))
+            return true;
+        else
+            error = QContactManager::InvalidDetailError;
     } else {
-        qDebug() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
+        qWarning() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
         error = QContactManager::UnspecifiedError;
     }
     
@@ -1488,3 +1678,4 @@ QList<QContactLocalId> QContactWinCEEngine::contacts(const QList<QContactSortOrd
     }
     return ids;
 }
+

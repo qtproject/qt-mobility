@@ -40,7 +40,11 @@
 ****************************************************************************/
 
 #include "qcontactdetails.h"
-
+#include <QImage>
+#include <QUrl>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
 /*!
  * \class QContactAddress
  * \brief The QContactAddress class provides a container for an address of a contact
@@ -979,6 +983,44 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  * Returns the subtype that this detail implements, if defined
  */
 
+/*!
+ * Returns the avatar's image if the avatar's subtype is SubTypeImage.
+ */
+QImage QContactAvatar::avatarImage() const
+{
+    QImage img;
+    QUrl url(avatar());
+    
+    if (!url.isValid())
+        url =  QUrl::fromLocalFile(avatar());
+
+    if (url.isValid()) {
+        QNetworkAccessManager* manager = new QNetworkAccessManager();
+        QNetworkRequest req;
+
+        req.setUrl(url);
+        QNetworkReply* reply = manager->get(req);
+        
+        reply->waitForReadyRead(-1);
+        //XXX the QImage can detect the image format automatically?
+        img = QImage::fromData(reply->readAll());
+        reply->deleteLater();
+        delete manager;
+    }
+    return img;
+    
+}
+
+/*!
+ * Returns the avatar's thumbnail image.
+ */
+QImage QContactAvatar::thumbnail() const
+{
+    //XXX todo how to report the default thumbnail size?
+    // or perhaps let the user call scaled() function directly?
+    QImage result = avatarImage().scaled(200, 150);
+    return result;
+}
 /*!
  * \fn QContactAddress::postOfficeBox() const
  * Returns the post office box segment of the address stored in this detail

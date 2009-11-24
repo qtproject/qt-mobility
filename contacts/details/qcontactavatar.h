@@ -48,6 +48,7 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+class QImage;
 /* Leaf class */
 class QTCONTACTS_EXPORT QContactAvatar : public QContactDetail
 {
@@ -74,7 +75,8 @@ public:
 
     void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}
     QString avatar() const {return value(FieldAvatar);}
-
+    QImage avatarImage() const;
+    QImage thumbnail() const;
     void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
     QString subType() const {return value(FieldSubType);}
 };
