@@ -4,7 +4,14 @@ QT += testlib xml
 CONFIG += qtestlib
 DEFINES += BUILD_QTVERSIT QT_ASCII_CAST_WARNINGS
 DEPENDPATH += .
-INCLUDEPATH += . ../../ ../../../src/versit ../../../src/contacts
+INCLUDEPATH += \
+    . \
+    ../../ \
+    ../../../src/versit \
+    ../../../src/contacts \
+    ../../../src/contacts/details \
+    ../../../src/contacts/requests \
+    ../../../src/contacts/filters
 
 include(../../../common.pri)
 
