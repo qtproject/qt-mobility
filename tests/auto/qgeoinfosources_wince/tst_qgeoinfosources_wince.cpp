@@ -128,6 +128,8 @@ void tst_QGeoInfoSourcesWinCE::simultaneousUpdates()
     posSource->startUpdates();
     satSource->startUpdates();
 
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
     QTRY_VERIFY_WITH_TIMEOUT((spyPos.count() > 0) && (spySatView.count() > 0)
                              && (spySatUse.count() > 0), 20000);
 
@@ -136,6 +138,8 @@ void tst_QGeoInfoSourcesWinCE::simultaneousUpdates()
     spySatUse.clear();
 
     for (int i = 0; i < 2; i++) {
+        EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
         QTRY_VERIFY_WITH_TIMEOUT((spyPos.count() > 0) && (spySatView.count() > 0)
                                  && (spySatUse.count() > 0), 10000);
         spyPos.clear();

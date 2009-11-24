@@ -18,9 +18,12 @@
 <h1 class="title">Qt Mobility Overview<br /><span class="subtitle"></span>
 </h1>
 <p>Qt Mobility is a set of APIs that supplies features that are well known from the mobile device world, in particular phones. However, these APIs allow the developer to use the features with ease from one framework and apply them to phones, netbooks and non-mobile personal computers. The framework not only improves many aspects of a mobile experience, because it improves the use of these technologies, but has applicability beyond the mobile device arena.</p>
-<ul><li><a href="#mobility-component-apis">Mobility Component APIs</a></li>
-<li><a href="#overview">Overview</a></li>
-<li><a href="#bearer-management">Bearer Management</a></li>
+<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#introducing-the-mobility-apis">Introducing the Mobility APIs</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+</ul>
+<li><a href="#the-mobility-apis">The Mobility APIs</a></li>
+<ul><li><a href="#bearer-management">Bearer Management</a></li>
 <li><a href="#contacts">Contacts</a></li>
 <li><a href="#publish-and-subscribe">Publish and Subscribe</a></li>
 <li><a href="#location">Location</a></li>
@@ -28,17 +31,18 @@
 <ul><li><a href="#messaging-dependencies-and-requirements">Messaging dependencies and requirements</a></li>
 </ul>
 <li><a href="#multimedia">Multimedia</a></li>
-<ul><li><a href="#multimedia-dependencies-and-requirements">Multimedia Dependencies and Requirements</a></li>
-</ul>
 <li><a href="#service-framework">Service Framework</a></li>
 <ul><li><a href="#service-framework-dependencies-and-requirements">Service Framework Dependencies and Requirements</a></li>
 </ul>
 <li><a href="#system-information">System Information</a></li>
+</ul>
 <li><a href="#platform-compatability">Platform Compatability</a></li>
 </ul>
-    <a href="classlists.html">Quick Reference to the Mobility Classes and Functions</a>
-    <a name="mobility-component-apis"></a>
-<h3>Mobility Component APIs</h3>
+<a name="overview"></a>
+<h3>Overview</h3>
+<a name="introducing-the-mobility-apis"></a>
+<h4>Introducing the Mobility APIs</h4>
+<p>This mobility release contains the following APIs:</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="bearer-management.html">Bearer Management</a></th><td>An API to control the system's connectivity state.</td></tr>
 <tr valign="top" class="even"><th><a href="contacts.html">Contacts</a></th><td>An API enabling clients to request contact data from local or remote backends.</td></tr>
@@ -49,8 +53,6 @@
 <tr valign="top" class="odd"><th><a href="service-frameworks.html">Qt Service Framework</a></th><td>A set of APIs to that allows clients to discover and instantiate arbitrary services.</td></tr>
 <tr valign="top" class="even"><th><a href="systeminfo.html">System Information</a></th><td>A set of APIs to discover system related information and capabilities.</td></tr>
 </table></p>
-<a name="overview"></a>
-<h3>Overview</h3>
 <p>These APIs give the developer a wide range of desirable functions for a mobile platform, but these now become possible on platforms not traditionally associated with some of the features. A mobile device using the Qt Mobility API would be able to</p>
 <ul>
 <li>Locate services on-board or remotely. Find an optimal connection to the network for the particular service.</li>
@@ -60,8 +62,17 @@
 <li>Publish-Subscribe enables communication between separate objects whether local or remote to the device.</li>
 </ul>
 <p>Qt Mobility is an enabling package. It will be used by developers to build a variety of applications and services that are mobile capable, irrespective of whether the platform is mobile or not.</p>
+<a name="getting-started"></a>
+<h4>Getting Started</h4>
+<p>To get started with Qt Mobility see the</p>
+<ul>
+<li><a href="installation.html">Installation Guide</a></li>
+<li><a href="quickstart.html">Quickstart Example</a></li>
+</ul>
+<a name="the-mobility-apis"></a>
+<h3>The Mobility APIs</h3>
 <a name="bearer-management"></a>
-<h3>Bearer Management</h3>
+<h4>Bearer Management</h4>
 <p>Although not a network manager, this component manages the connectivity state to the network. So it does not manage network configurations, which are the role of the platform provider, but it does allow the user to start or stop network interfaces. Some higher level management of the connection session may also be possible as well depending on the platform.</p>
 <p>Some platforms can have a set of grouped access points perhaps based on a common purpose. Bearer Management allows comparison and prioritization of the access and use of these points.</p>
 <p>The aim of Bearer Management is to reduce the need for the developer to be concerned about trying to locate the best connection from a list of possible IP bearers and 3G connections. The user can select the best or it can be selected transparently so that WLAN roaming can occur seemlessly.</p>
@@ -73,41 +84,40 @@
 <li>A connection manager application can be implemented with Qt. This application enumerates available connections, shows counters, and allows the user to connect or disconnect</li>
 </ul>
 <a name="contacts"></a>
-<h3>Contacts</h3>
+<h4>Contacts</h4>
 <p>The structure and retrieval of contact data from local or remote backends. It includes the ability to create, edit, list, delete and lookup contact information whether it is stored locally or remotely.</p>
 <a name="publish-and-subscribe"></a>
-<h3>Publish and Subscribe</h3>
+<h4>Publish and Subscribe</h4>
 <p>Enables context sensitive access to information. Data is organized as a tree, with data being able to 'shadow' other data with the 'same key', a string specifying the leaf or node. The context is an example of a context ontology, a defined set of relationships. As the context changes the values of the objects change but the relationships remain the same. It is intended to be an enabling technology, the basis of a range future applications.</p>
 <p>At this stage the API is intended to act as a common communications method between Qt Mobility applications, whether local or remote.</p>
 <a name="location"></a>
-<h3>Location</h3>
+<h4>Location</h4>
 <p>The C++ API is one layer of this feature. This API provides an easy to use interface that encapsulates basic geographical information obtained from satellite or other sources about the user, including latitude and longitude, bearing, speed and altitude. It will enable a range of geographical applications, for example, maps.</p>
 <a name="messaging"></a>
-<h3>Messaging</h3>
+<h4>Messaging</h4>
 <p>A common interface for handling SMS, MMS, XMPP, Email and partial MIME. Sending, notification and retrieval of messages as well as the ability to use a native app to create, edit, reply-to, send and display messages. Supports the sending of messages with attachments, and in situations of low battery to leave attachments on the server unless opened.</p>
 <p>For more details see the <a href="messaging.html">messaging API overview</a>.</p>
 <a name="messaging-dependencies-and-requirements"></a>
-<h4>Messaging dependencies and requirements</h4>
+<h5>Messaging dependencies and requirements</h5>
 <p>The Linux backend depends on QMF, for information on QMF see the <a href="http://labs.trolltech.com/blogs/category/qtmessaging/">QMF Labs article</a></p>
 <p>The Windows Mobile backend depends on ActiveSync version 4.5&#x2e;</p>
 <p>Whilst not supported for this release the Windows Desktop backend requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.</p>
 <p>The messaging API SMS/MMS functionality requires that the platform provides SMS/MMS facilites. Email functionality requires that an email account is available on the platform.</p>
 <a name="multimedia"></a>
-<h3>Multimedia</h3>
+<h4>Multimedia</h4>
 <p>An API to play audio and video of various formats. Record audio. The playing and managing of an FM radio. This includes the typical functionality you would find on a music and video player, combined with an FM radio.</p>
-<a name="multimedia-dependencies-and-requirements"></a>
-<h4>Multimedia Dependencies and Requirements</h4>
+<p>Multimedia Dependencies and Requirements</p>
 <p>Multimedia is dependent on the <a href="http://qt.nokia.com/doc/4.5/qtmultimedia.html">QtMultimedia</a> module of Qt.</p>
 <a name="service-framework"></a>
-<h3>Service Framework</h3>
+<h4>Service Framework</h4>
 <p>A platform independent method of finding Services. A 'service' is an independent component that allows a client to perform a well-defined operation.</p>
 <p>The services are implemented as plugins installed on the device and can look for supporting external services running on a central server. E.g&#x2e; weather, local tourist attractions etc. Default applications can use the layer to locate servers.</p>
 <p>Since this is an abstraction layer then the app does not need to be concerned with the underlying protocol, where the servers are, the hardware peculiarities with networking and other low level details.</p>
 <a name="service-framework-dependencies-and-requirements"></a>
-<h4>Service Framework Dependencies and Requirements</h4>
+<h5>Service Framework Dependencies and Requirements</h5>
 <p>The Service Framework is dependent on SQLite version 3 and that Qt has been built with the <a href="http://qt.nokia.com/doc/4.5/sql-driver.html">QSQLITE driver</a>.</p>
 <a name="system-information"></a>
-<h3>System Information</h3>
+<h4>System Information</h4>
 <p>An API to discover system related information and capabilities. Information available will cover software version numbers, hardware features, network connection types and status, display, data storage devices, device information and the screensaver.</p>
 <a name="platform-compatability"></a>
 <h3>Platform Compatability</h3>

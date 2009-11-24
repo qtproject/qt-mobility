@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- quickstart.qdoc -->
+<head>
+  <title>Qt Mobility 1.0: Quickstart Example</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Quickstart Example<br /><span class="subtitle"></span>
+</h1>
+<p>Files:</p>
+<ul>
+<li><a href="quickstart-main-cpp.html">quickstart/main.cpp</a></li>
+<li><a href="quickstart-quickstart-pro.html">quickstart/quickstart.pro</a></li>
+</ul>
+<p>The following steps outline how to make a simple &quot;hello world&quot; like application that uses Qt Mobility. It is assumed that Qt Mobility has been successfully built and environment variables have been set as per <a href="installation.html">Installation Guide</a>.</p>
+<p>One can start using Qt Mobility with 3 simple steps.</p>
+<ol type="1">
+<li>Include the appropriate headers</li>
+<li>Use the <tt>QtMobility</tt> namespace</li>
+<li>Declare the usage of Qt Mobility and appropriate domain(s) in the project(.pro) file</li>
+</ol>
+<p>Steps 1 and 2 are shown in the example below:</p>
+<pre>    #include &lt;QApplication&gt;
+    #include &lt;QLabel&gt;
+
+    #include &lt;QSystemInfo&gt; <span class="comment">//(1)</span>
+    using namespace QtMobility; <span class="comment">//(2)</span>
+
+    int main(int argc, char *argv[])
+    {
+        QApplication app(argc, argv);
+        QSystemInfo s;
+        QLabel *label = new QLabel(QObject::tr(&quot;hello &quot;).append(s.currentCountryCode()));
+        label-&gt;show();
+        label-&gt;resize(100,30);
+        return app.exec();
+    }</pre>
+<p>Here we are using the <a href="qsysteminfo.html">QSystemInfo</a> headers to print out the system's current country code. All the domain APIs are wrapped within the <tt>QtMobility</tt> namespace and thus developers either need to declare <tt>using namespace QtMobility</tt> or qualify their symbols e.g&#x2e; <tt>QtMobility::QSystemInfo s</tt>.</p>
+<p>In step 3, to specify that our project is using System Information we declare in the project file:</p>
+<pre>    CONFIG += Mobility
+    MOBILITY += systeminfo</pre>
+<p>Here we've declared that the application uses Qt Mobility and that we are using the System Information domain. (Internally this results in qmake setting up include and library search paths. See mobility.prf for details to see what those paths are, it is copied into the mkspecs/features directory of Qt's install path)</p>
+<p>The following table lists the domains and the corresponding values that can be assigned to <tt>MOBILITY</tt>.</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Domain</th><th>Value</th></tr></thead>
+<tr valign="top" class="odd"><td>Bearer Mangement</td><td>bearer</td></tr>
+<tr valign="top" class="even"><td>Contacts</td><td>contacts</td></tr>
+<tr valign="top" class="odd"><td>Location</td><td>location</td></tr>
+<tr valign="top" class="even"><td>Multimedia</td><td>multimedia</td></tr>
+<tr valign="top" class="odd"><td>Messaging</td><td>messaging</td></tr>
+<tr valign="top" class="even"><td>Publish And Subscribe</td><td>publish subscribe</td></tr>
+<tr valign="top" class="odd"><td>Service Framework</td><td>serviceframework</td></tr>
+<tr valign="top" class="even"><td>System Information</td><td>systeminfo</td></tr>
+</table></p>
+<p>And we're done. If you are using the command line simply enter:</p>
+<pre>    qmake
+    make</pre>
+<p>to generate the executable which can then be run.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+</tr></table></div></address></body>
+</html>

@@ -45,7 +45,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactActionFactory
-  \brief The QContactActionfactory class provides an interface for clients
+  \brief The QContactActionFactory class provides an interface for clients
   to retrieve instances of action implementations
  */
 
