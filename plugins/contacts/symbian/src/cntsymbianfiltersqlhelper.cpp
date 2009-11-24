@@ -513,19 +513,9 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupport
             case QContactFilter::UnionFilter:
             default:
                     filterSupported = CntAbstractContactFilter::NotSupported;
+                    break;
                          
         }
-        case QContactFilter::InvalidFilter :
-        case QContactFilter::ContactDetailRangeFilter:
-        case QContactFilter::ChangeLogFilter:
-        case QContactFilter::DefaultFilter:                           
-        case QContactFilter::ActionFilter:
-        case QContactFilter::IntersectionFilter:
-        case QContactFilter::UnionFilter:
-        default:
-            filterSupported = CntAbstractContactFilter::NotSupported;
-            break;
-    }
     return filterSupported;
 }
 CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::checkIfDetailFilterSupported
