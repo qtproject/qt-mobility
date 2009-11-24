@@ -38,28 +38,25 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TRANSFORMAVATAR_H
-#define TRANSFORMAVATAR_H
 
-#include "cnttransformcontactdata.h"
+Following configurations should be made to run the testdriver application.
 
-QTM_USE_NAMESPACE
-
-// S60 specific contact field type containing image call object data
-#define KUidContactFieldCodImageValue 0x101F8841
-const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
-
-class CntTransformAvatar : public CntTransformContactData
-{
-protected:
-	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
-	bool supportsField(TUint32 fieldType) const;
-	bool supportsDetail(QString detailName) const;
-	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
-    bool supportsSubType(const QString& subType) const;
-    quint32 getIdForField(const QString& fieldName) const;
-    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
-};
-
-#endif
+Test folder                     : <home>\testvcards
+Test files                      : Should be located under testfolder and should have extension .vcf
+Note                            : <home> : Windows : Check for HOME environmental variable
+                                           Symbian : c:\data
+                     
+Excluding some fields : File excludefields.txt should be located under testfolder
+                        If you want to exclude vCard field "X-MYFIELD" from the comparsion, add line X-MYFIELD to the excludefields.txt.
+                        Each field name should be located in a separate line.
+                        
+Configuration file    : versittestconfig.xml  ( Detailed explanation can be found as description element inside the file )
+Note                  : Configuration file settings can be overridden by commandline arguments temporarily
+                        CommandLine Arguments :
+                        sc -> save to contact
+                        nsc -> no save to contact 
+                        p -> performance benchmarking
+                        np -> no performance benchmarking , so normal test.
+                        xml -> output to QVersitTestResults.xml in xml format
+                        v1 -> verbose output level 1
+                        v2 -> verbose output level 2
