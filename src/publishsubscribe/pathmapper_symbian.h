@@ -38,45 +38,47 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef PATHMAPPER_H
+#define PATHMAPPER_H
 
-#ifndef PROVIDERDIALOG_H
-#define PROVIDERDIALOG_H
+#include <QStringList>
+#include <QHash>
 
-#include <QDialog>
+#include "qcrmlparser_p.h"
 
-class QValueSpaceProvider;
+QT_BEGIN_NAMESPACE
 
-namespace Ui {
-    class ProviderDialog;
-}
-
-class ProviderDialog : public QDialog
+class PathMapper : public QObject
 {
     Q_OBJECT
 
 public:
-    ProviderDialog(QWidget *parent = 0);
-    ~ProviderDialog();
+    PathMapper();
+    /*virtual*/ ~PathMapper();
 
-#ifdef Q_OS_SYMBIAN
-signals:
-    void switchRequested();
-#endif
+    enum Target {TargetCRepository, TargetRPropery};
 
-protected:
-    void changeEvent(QEvent *e);
-
-//! [0]
-private slots:
-    void createNewObject();
-    void intValueChanged(int value);
-    void setStringValue();
-    void setByteArrayValue();
-//! [0]
+    bool getChildren(QString path, QSet<QString> &children) const;
+    bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
 
 private:
-    Ui::ProviderDialog *ui;
-    QValueSpaceProvider *provider;
+    class PathData
+    {
+    public:
+        PathData() : m_target(TargetRPropery), m_category(0), m_key(0) {}
+        PathData(Target target, quint32 category, quint32 key) :
+            m_target(target), m_category(category), m_key(key) {}
+    public:
+        Target m_target;
+        quint32 m_category;
+        quint32 m_key;
+    };
+
+private:
+    QHash<QString, PathData> m_paths;
+    QCrmlParser m_crmlParser;
 };
 
-#endif // PROVIDERDIALOG_H
+QT_END_NAMESPACE
+
+#endif //PATHMAPPER_H

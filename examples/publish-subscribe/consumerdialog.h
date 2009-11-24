@@ -58,6 +58,11 @@ public:
     ConsumerDialog(QWidget *parent = 0);
     ~ConsumerDialog();
 
+#ifdef Q_OS_SYMBIAN
+signals:
+    void switchRequested();
+#endif
+
 protected:
     void changeEvent(QEvent *e);
 

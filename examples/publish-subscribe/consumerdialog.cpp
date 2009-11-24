@@ -44,6 +44,11 @@
 
 #include <qvaluespacesubscriber.h>
 
+#ifdef Q_OS_SYMBIAN
+#include <QPushButton>
+#include <QSizePolicy>
+#endif
+
 #include <QDebug>
 
 ConsumerDialog::ConsumerDialog(QWidget *parent) :
@@ -52,6 +57,14 @@ ConsumerDialog::ConsumerDialog(QWidget *parent) :
         subscriber(0)
 {
     ui->setupUi(this);
+
+#ifdef Q_OS_SYMBIAN
+    QPushButton *switchButton = new QPushButton("Switch", this);
+    switchButton->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    ui->verticalLayout->addWidget(switchButton);
+    switchButton->show();
+    connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));
+#endif
 
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
     changeSubscriberPath();
