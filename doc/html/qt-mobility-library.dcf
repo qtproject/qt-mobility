@@ -836,6 +836,16 @@
         <keyword ref="qcontactinvalidfilter.html">QContactInvalidFilter</keyword>
         <section ref="qcontactinvalidfilter-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactlocalidfetchrequest.html" title="QContactLocalIdFetchRequest Class Reference">
+        <keyword ref="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#filter">filter</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#ids">ids</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#progress">progress</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#setSorting">setSorting</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#sorting">sorting</keyword>
+        <section ref="qcontactlocalidfetchrequest-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactlocalidfilter.html" title="QContactLocalIdFilter Class Reference">
         <keyword ref="qcontactlocalidfilter.html">QContactLocalIdFilter</keyword>
         <keyword ref="qcontactlocalidfilter.html#ids">ids</keyword>

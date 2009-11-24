@@ -47,22 +47,22 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \deprecated
- * \class QContactManagerInfo
- *
- * \brief The QContactManagerInfo class provides information about a particular QContactManager.
- *
- * This class allows managers to report information about their supported functionality to clients.
- * The supported functionality of a manager includes which data types the backend supports,
- * which definitions are natively filterable in the backend (and thus are high performance),
- * and what capabilities the manager supports.
- *
- * If the manager that provided an information object is subsequently destroyed, the
- * returned QContactManagerInfo object will be invalid.
- *
- * THIS CLASS IS DEPRECATED AND WILL BE REMOVED IN WEEK 47 - see commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510
- *
- * \sa QContactManager
+  \deprecated
+  \class QContactManagerInfo
+ 
+  \brief The QContactManagerInfo class provides information about a particular QContactManager.
+ 
+  This class allows managers to report information about their supported functionality to clients.
+  The supported functionality of a manager includes which data types the backend supports,
+  which definitions are natively filterable in the backend (and thus are high performance),
+  and what capabilities the manager supports.
+ 
+  If the manager that provided an information object is subsequently destroyed, the
+  returned QContactManagerInfo object will be invalid.
+ 
+  THIS CLASS IS DEPRECATED AND WILL BE REMOVED IN WEEK 47 - see commit SHA1: 948704fe9b83ef164f0c816897f67ef34654e510
+ 
+  \sa QContactManager
  */
 
 /*!

@@ -420,13 +420,14 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
     \class QVideoWidget
     \preliminary
 
-    \brief The QVideoWidget class provides a widget which presents video produced by a media
-    object.
+    \brief The QVideoWidget class provides a widget which presents video
+    produced by a media object.
     \ingroup multimedia
 
-    Attaching a QVideoWidget to a QMediaObject allows it to display the video or image output
-    of that media object.  A QVideoWidget is attached to media object by passing a pointer to
-    the QMediaObject in its constructor, and detached by destroying the QVideoWidget.
+    Attaching a QVideoWidget to a QMediaObject allows it to display the
+    video or image output of that media object.  A QVideoWidget is attached
+    to media object by passing a pointer to the QMediaObject in its
+    constructor, and detached by destroying the QVideoWidget.
 
     \code
         player = new QMediaPlayer;
@@ -438,7 +439,8 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
         player->play();
     \endcode
 
-    \bold {Note}: Only a single display output can be attached to a media object at one time.
+    \bold {Note}: Only a single display output can be attached to a media
+    object at one time.
 
     \sa QMediaObject, QMediaPlayer, QGraphicsVideoItem
 */

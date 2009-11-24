@@ -44,7 +44,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*! \class QContactGroup
+/* \class QContactGroup
     \brief The QContactGroup class acts as a container for a list of contacts.
     \ingroup contacts-main
  

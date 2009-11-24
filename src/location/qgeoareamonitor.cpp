@@ -46,7 +46,8 @@
 
 /*!
     \class QGeoAreaMonitor
-    \brief The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
+    \brief The QGeoAreaMonitor class enables the detection of proximity
+    changes for a specified set of coordinates.
     \ingroup location
 
     A QGeoAreaMonitor emits signals when the current position is in
@@ -113,14 +114,14 @@ QGeoAreaMonitor::~QGeoAreaMonitor()
 
 
 /*!
-    \property QGeoAreaMonitor::center
-    \brief This property holds the center of the area to be monitored.
+    \fn QGeoAreaMonitor::setCenter
+    \brief This sets the center of the area to be monitored.
 
-    When this property is set, if the radius has already been set and
+    When the center is set, if the radius has already been set and
     the current position is within the monitored area, areaEntered()
     is emitted immediately.
 
-    By default, this property contains an invalid coordinate.
+    By default, contains an invalid coordinate.
 
     Note: Subclass implementations must call the base implementation of
     setCenter() so that center() returns the correct value.

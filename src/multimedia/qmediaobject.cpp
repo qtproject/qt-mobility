@@ -68,15 +68,17 @@ void QMediaObjectPrivate::_q_notify()
     \preliminary
     \brief The QMediaObject class provides a common base for multimedia objects.
 
-    QMediaObject derived classes provide access to the functionality of a QMediaService.  Each
-    media object hosts a QMediaService and uses the QMediaControl interfaces implemented by the
-    service to implement its API.  Most media objects when constructed will request a new
-    QMediaService instance from a QMediaServiceProvider, but some like QMediaRecorder will share
-    a service with another object.
+    \ingroup multimedia
 
-    QMediaObject itself provides an API for accessing a media service's \l {metaData()}{meta-data}
-    and a means of connecting other media objects, and peripheral classes like QVideoWidget and
-    QMediaPlaylist.
+    QMediaObject derived classes provide access to the functionality of a
+    QMediaService.  Each media object hosts a QMediaService and uses the
+    QMediaControl interfaces implemented by the service to implement its
+    API.  Most media objects when constructed will request a new
+    QMediaService instance from a QMediaServiceProvider, but some like
+    QMediaRecorder will share a service with another object.
+
+    QMediaObject itself provides an API for accessing a media service's \l {metaData()}{meta-data} and a means of connecting other media objects,
+    and peripheral classes like QVideoWidget and QMediaPlaylist.
 
     \sa QMediaService, QMediaControl
 */

@@ -139,6 +139,9 @@
                     <section ref="qcontactinvalidfilter.html" title="QContactInvalidFilter Class Reference">
                         <section ref="qcontactinvalidfilter-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qcontactlocalidfetchrequest.html" title="QContactLocalIdFetchRequest Class Reference">
+                        <section ref="qcontactlocalidfetchrequest-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qcontactlocalidfilter.html" title="QContactLocalIdFilter Class Reference">
                         <section ref="qcontactlocalidfilter-members.html" title="List of all members"/>
                     </section>
@@ -1264,6 +1267,14 @@
             <keyword name="managerName" id="QContactInvalidEngine::managerName" ref="qcontactinvalidengine.html#managerName"/>
             <keyword name="synthesizeDisplayLabel" id="QContactInvalidEngine::synthesizeDisplayLabel" ref="qcontactinvalidengine.html#synthesizeDisplayLabel"/>
             <keyword name="QContactInvalidFilter" id="QContactInvalidFilter" ref="qcontactinvalidfilter.html"/>
+            <keyword name="QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html"/>
+            <keyword name="filter" id="QContactLocalIdFetchRequest::filter" ref="qcontactlocalidfetchrequest.html#filter"/>
+            <keyword name="ids" id="QContactLocalIdFetchRequest::ids" ref="qcontactlocalidfetchrequest.html#ids"/>
+            <keyword name="progress" id="QContactLocalIdFetchRequest::progress" ref="qcontactlocalidfetchrequest.html#progress"/>
+            <keyword name="setFilter" id="QContactLocalIdFetchRequest::setFilter" ref="qcontactlocalidfetchrequest.html#setFilter"/>
+            <keyword name="setSorting" id="QContactLocalIdFetchRequest::setSorting" ref="qcontactlocalidfetchrequest.html#setSorting"/>
+            <keyword name="sorting" id="QContactLocalIdFetchRequest::sorting" ref="qcontactlocalidfetchrequest.html#sorting"/>
+            <keyword name="~QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html#dtor.QContactLocalIdFetchRequest"/>
             <keyword name="QContactLocalIdFilter" id="QContactLocalIdFilter" ref="qcontactlocalidfilter.html"/>
             <keyword name="ids" id="QContactLocalIdFilter::ids" ref="qcontactlocalidfilter.html#ids"/>
             <keyword name="setIds" id="QContactLocalIdFilter::setIds" ref="qcontactlocalidfilter.html#setIds"/>
@@ -3799,6 +3810,7 @@
             <file>sendmessage-sendmessage-pro.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qmessageordering-members.html</file>
+            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
             <file>qimageencodersettings-members.html</file>
@@ -4021,6 +4033,7 @@
             <file>qcontactid-members.html</file>
             <file>qvaluespacesubscriber.html</file>
             <file>qmailmessagecontentdisposition.html</file>
+            <file>qcontactlocalidfetchrequest.html</file>
             <file>qcontactinvalidengine-members.html</file>
             <file>cameracapture-settings-h.html</file>
             <file>qcontactactiondescriptor.html</file>
