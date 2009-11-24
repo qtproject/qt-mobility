@@ -92,20 +92,6 @@ contains(QT_CONFIG, multimedia) {
             qpaintervideosurface
 
 }
-symbian { 
-#remove these fow now (compile problems)
-SUBDIRS -= \
-        qaudiocapturesource \
-        qmediaplaylistnavigator \
-        qmediaimageviewer \
-        qmediapluginloader \
-        qmediaserviceprovider \
-        qpaintervideosurface \
-        qvideowidget \
-        qmediaplayer \
-        qgraphicsvideoitem \
-        qmediaplaylist
-}
 
 #Messaging
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {

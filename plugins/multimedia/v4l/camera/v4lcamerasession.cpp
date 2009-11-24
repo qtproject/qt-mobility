@@ -327,6 +327,25 @@ void V4LCameraSession::setDevice(const QString &device)
 
     if (sfd != -1) {
         available = true;
+
+        // get formats available
+        v4l2_fmtdesc fmt;
+        memset(&fmt, 0, sizeof(v4l2_fmtdesc));
+        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        int sanity = 0;
+        for (fmt.index = 0;; fmt.index++) {
+            if (sanity++ > 8)
+                break;
+            if(  ::ioctl(sfd, VIDIOC_ENUM_FMT, &fmt) == -1) {
+                if(errno == EINVAL)
+                    break;
+            }
+            formats.append(fmt.pixelformat);
+        }
+
+        // get sizes available
+        resolutions << QSize(176, 144) << QSize(320, 240) << QSize(640, 480);
+
         ::close(sfd);
         sfd = -1;
     }
@@ -412,6 +431,39 @@ void V4LCameraSession::captureToFile(bool value)
     toFile = value;
 }
 
+bool V4LCameraSession::isFormatSupported(QVideoFrame::PixelFormat pFormat)
+{
+    if(sfd == -1)
+        return false;
+
+    int ret;
+    struct v4l2_format fmt;
+
+    memset(&fmt, 0, sizeof(fmt));
+    fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    fmt.fmt.pix.width       = m_windowSize.width();
+    fmt.fmt.pix.height      = m_windowSize.height();
+
+    if(pFormat == QVideoFrame::Format_YUYV)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    if(pFormat == QVideoFrame::Format_RGB24)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+    if(pFormat == QVideoFrame::Format_RGB32)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
+    if(pFormat == QVideoFrame::Format_RGB565)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
+    if(pFormat == QVideoFrame::Format_UYVY)
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
+
+    fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+    ret = ::ioctl(sfd, VIDIOC_S_FMT, &fmt);
+
+    if(ret == -1)
+        return false;
+
+    return true;
+}
+
 void V4LCameraSession::record()
 {
     pixelF = savedPixelF;
@@ -432,92 +484,71 @@ void V4LCameraSession::record()
         return;
     }
 
-    int ret;
-    struct v4l2_format fmt;
+    bool match = false;
+    QList<QVideoFrame::PixelFormat> fmts = supportedPixelFormats();
 
-    memset(&fmt, 0, sizeof(fmt));
-    fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.width       = m_windowSize.width();
-    fmt.fmt.pix.height      = m_windowSize.height();
+    // first try and use what we have
+    if ((fmts.contains(pixelF)) && isFormatSupported(pixelF) &&
+        m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,pixelF)))
+        match = true;
 
-    if(pixelF == QVideoFrame::Format_YUYV)
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-    if(pixelF == QVideoFrame::Format_RGB24)
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
-    if(pixelF == QVideoFrame::Format_RGB32)
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
-    if(pixelF == QVideoFrame::Format_RGB565)
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
-    if(pixelF == QVideoFrame::Format_UYVY)
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
-
-    fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
-    ret = ::ioctl(sfd, VIDIOC_S_FMT, &fmt);
-
-    if(ret == -1) {
-        // Current format is not supported, try and find something that works!
-        int match = false;
-        QList<QVideoFrame::PixelFormat> fmts = supportedPixelFormats();
+    // try and find a match between camera and surface that doesn't require a converter
+    if(!match) {
         foreach(QVideoFrame::PixelFormat format, fmts) {
             if (m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,format))) {
-                // found a match, use it!
-                match = true;
-                pixelF = format;
-                break;
+                // found a match, try to use it!
+                if(isFormatSupported(format)) {
+                    qWarning()<<"found a match "<<format;
+                    match = true;
+                    pixelF = format;
+                    break;
+                }
             }
         }
-        if(!match) {
-            // no direct match up found, see if we can use the converter
-            if(m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,QVideoFrame::Format_RGB32))) {
-                // converter can convert YUYV->RGB565, UYVY->RGB565 and YUV420P->RGB565
-                if (pixelF == QVideoFrame::Format_YUYV || pixelF == QVideoFrame::Format_UYVY ||
+    }
+
+    // try to see if we can use the converter
+    if(!match) {
+        // no direct match up found, see if we can use the converter
+        if(m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,QVideoFrame::Format_RGB32)) ||
+                m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,QVideoFrame::Format_RGB24)) ||
+                m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,QVideoFrame::Format_RGB565))) {
+            // converter can convert YUYV->RGB565, UYVY->RGB565 and YUV420P->RGB565
+            if (pixelF == QVideoFrame::Format_YUYV || pixelF == QVideoFrame::Format_UYVY ||
                     pixelF == QVideoFrame::Format_YUV420P) {
+                if(isFormatSupported(pixelF)) {
                     match = true;
                     converter = CameraFormatConverter::createFormatConverter(pixelF,m_windowSize.width(),
-                                                                             m_windowSize.height());
-                    //qWarning()<<"found a converter match from: "<<pixelF<<" to RGB565";
+                            m_windowSize.height());
+                    qWarning()<<"found a converter match from: "<<pixelF<<" to RGB565";
                 }
-                if (!match) {
-                    // fallback, cant convert your format so set to one that I can get working!
-                    foreach(QVideoFrame::PixelFormat format, fmts) {
-                        if(format == QVideoFrame::Format_YUYV || format == QVideoFrame::Format_UYVY ||
-                                format == QVideoFrame::Format_YUV420P) {
+            }
+            if (!match) {
+                // fallback, cant convert your format so set to one that I can get working!
+                foreach(QVideoFrame::PixelFormat format, fmts) {
+                    if(format == QVideoFrame::Format_YUYV || format == QVideoFrame::Format_UYVY ||
+                            format == QVideoFrame::Format_YUV420P) {
+                        if(isFormatSupported(format)) {
                             pixelF = format;
                             match = true;
                             converter = CameraFormatConverter::createFormatConverter(pixelF,m_windowSize.width(),
                                     m_windowSize.height());
-                            //qWarning()<<"fallback, convert from: "<<pixelF<<" to RGB565";
+                            qWarning()<<"fallback, convert from: "<<pixelF<<" to RGB565";
                             break;
                         }
                     }
                 }
             }
         }
-        if(match) {
-            // Make sure our match up really works!
-            if(pixelF == QVideoFrame::Format_YUYV)
-                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-            if(pixelF == QVideoFrame::Format_RGB24)
-                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
-            if(pixelF == QVideoFrame::Format_RGB32)
-                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
-            if(pixelF == QVideoFrame::Format_RGB565)
-                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565;
-            if(pixelF == QVideoFrame::Format_UYVY)
-                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;
-            ret = ::ioctl(sfd, VIDIOC_S_FMT, &fmt);
-            if(ret == -1)
-                match = false;
-        }
-        if(!match) {
-            int err = errno;
-            qWarning() << "error setting camera format:" << strerror(err);
-            m_state = QMediaRecorder::StoppedState;
-            emit cameraStateChanged(QCamera::StoppedState);
-            return;
-        }
+    }
+    if(!match) {
+        qWarning() << "error setting camera format, no supported formats available";
+        m_state = QMediaRecorder::StoppedState;
+        emit cameraStateChanged(QCamera::StoppedState);
+        return;
     }
 
+    int ret;
     struct v4l2_requestbuffers req;
     memset(&req, 0, sizeof(req));
     req.count               = 4;

@@ -351,11 +351,9 @@ void tst_QVideoWidget::nullObject()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 
     widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
     QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
@@ -436,11 +434,9 @@ void tst_QVideoWidget::nullService()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 
     widget.setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
     QCOMPARE(widget.aspectRatioMode(), QVideoWidget::IgnoreAspectRatio);
@@ -467,11 +463,9 @@ void tst_QVideoWidget::nullOutputControl()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QTest::qWaitForWindowShown(&widget);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
@@ -495,10 +489,8 @@ void tst_QVideoWidget::noOutputs()
 
     QVERIFY(widget.sizeHint().isEmpty());
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 
     widget.setBrightness(100);
     QCOMPARE(widget.brightness(), 100);
@@ -538,10 +530,8 @@ void tst_QVideoWidget::serviceDestroyed()
     QCOMPARE(widget.hue(), 100);
     QCOMPARE(widget.saturation(), 100);
 
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     widget.setFullScreen(true);
     QCOMPARE(widget.isFullScreen(), true);
-#endif
 }
 
 void tst_QVideoWidget::showWindowControl()
@@ -802,7 +792,6 @@ void tst_QVideoWidget::sizeHintRendererControl()
 
 void tst_QVideoWidget::fullScreenWindowControl()
 {
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     QVideoWidget widget(&object);
     widget.show();
@@ -879,12 +868,10 @@ void tst_QVideoWidget::fullScreenWindowControl()
     object.testService->windowControl->setFullScreen(false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 6);
-#endif
 }
 
 void tst_QVideoWidget::fullScreenWidgetControl()
 {
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     QVideoWidget widget(&object);
     widget.show();
@@ -961,13 +948,11 @@ void tst_QVideoWidget::fullScreenWidgetControl()
     object.testService->widgetControl->setFullScreen(false);
     QCOMPARE(widget.isFullScreen(), false);
     QCOMPARE(spy.count(), 6);
-#endif
 }
 
 
 void tst_QVideoWidget::fullScreenRendererControl()
 {
-#ifdef QVIDEOWIDGET_TEST_FULLSCREEN
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
     QVideoWidget widget(&object);
     widget.show();
@@ -1024,7 +1009,6 @@ void tst_QVideoWidget::fullScreenRendererControl()
     widget.showFullScreen();
     QCOMPARE(widget.isFullScreen(), true);
     QCOMPARE(spy.count(), 5);
-#endif
 }
 
 

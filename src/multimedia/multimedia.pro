@@ -126,6 +126,7 @@ symbian {
     TARGET.UID3=0x2002AC77
     MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
 }
 
 include(../../features/deploy.pri)
