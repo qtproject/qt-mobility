@@ -31,7 +31,11 @@ unix:!mac:!symbian {
         contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture v4l
     }
 
-} else {
+}
+
+mac {
     contains(QT_CONFIG, phonon): SUBDIRS += phonon
     contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
 }
+
+symbian:SUBDIRS += symbian

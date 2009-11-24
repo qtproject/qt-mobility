@@ -122,7 +122,7 @@ Rectangle {
         }
 
         Connection {
-        sender: screen.currentDialer
+            sender: screen.currentDialer
             signal: "stateChanged()"
             script: {
                 dialState = screen.currentDialer.state;

@@ -119,10 +119,14 @@ include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
-    QtMediaDeployment.sources = QtMedia.dll
+    load(data_caging_paths)
+    QtMediaDeployment.sources = $${TARGET}.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
+    TARGET.UID3=0x2002AC77
+    MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.EPOCALLOWDLLDATA = 1
 }
 
 include(../../features/deploy.pri)

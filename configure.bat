@@ -120,7 +120,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     options: symbian, wince, memory, maemo
 
 
-if exist "%PROJECT_CONFIF%" del %PROJECT_CONFIG%
+if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
 goto exitTag
 
 :qtTag
@@ -191,6 +191,9 @@ goto cmdline_parsing
 
 :startProcessing
 
+copy %PROJECT_CONFIG% %BUILD_PATH%\config.pri
+del %PROJECT_CONFIG%
+
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
 echo CONTACTS_BACKENDS = %CONTACTS_PLUGIN% >> %PROJECT_CONFIG%
 
@@ -226,9 +229,6 @@ echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PRO
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 
-copy %PROJECT_CONFIG% %BUILD_PATH%\config.pri
-del %PROJECT_CONFIG%
-
 echo Checking available Qt
 %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
 if errorlevel 1 goto qmakeNotFound
@@ -241,7 +241,7 @@ if "%QT_PATH%" == "" (
     else echo >&2 "Cannot find 'qmake' in %QT_PATH%."
 )
 echo >&2 "Aborting." 
-goto exitTag
+exit 1
 
 :qmakeFound
 %QT_PATH%qmake -query QT_VERSION
@@ -282,11 +282,13 @@ setlocal
             set MAKE=nmake
         )
     ) else if %MAKETYPE% == win32-mingw (
-        make -v >> %PROJECT_LOG% 2>&1
+        mingw32-make -v >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... mingw32-make found.
-            set MAKE=make
+            set MAKE=mingw32-make
         )
+    ) else (
+        echo ... Unknown target environment %MAKETYPE%.
     )
     cd %CURRENT_PWD%
 endlocal&set %1=%MAKE%&set %2=%MAKETYPE%&goto :EOF
@@ -298,8 +300,7 @@ if not "%MAKE%" == "" goto compileTests
 
 echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
 echo >&2 "Aborting."
-
-goto exitTag
+exit 1
 
 :compileTest
 setlocal
@@ -375,5 +376,6 @@ goto exitTag
 :qmakeRecError
 echo.
 echo configure failed.
+exit 1
 
 :exitTag

@@ -41,7 +41,7 @@
 
 #include "sfwexample.h"
 
-QML_DEFINE_TYPE(0,0,0,0,Service,ServiceWrapper)
+QML_DEFINE_TYPE(QtSFW,1,0,Service,ServiceWrapper)
 
 ServiceWrapper::ServiceWrapper() : serviceInstance(0)
 {
