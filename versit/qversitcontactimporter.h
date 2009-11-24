@@ -38,45 +38,36 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QVERSITCONTACTIMPORTER_H
+#define QVERSITCONTACTIMPORTER_H
 
-class TestSymbianEngine : public QObject
+#include <qtversitglobal.h>
+#include <qcontact.h>
+#include <QList>
+
+class QVersitDocument;
+class QVersitProperty;
+class QVersitContactImporterPrivate;
+
+class Q_VERSIT_EXPORT QVersitContactImporter
 {
-    Q_OBJECT
+public:
+    QVersitContactImporter();
+    ~QVersitContactImporter();
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
+    void setImagePath(const QString& path);
+    QString imagePath() const;
     
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
+    void setAudioClipPath(const QString& path);
+    QString audioClipPath() const;
+
+    QContact importContact(const QVersitDocument& versitDocument);
+    QList<QVersitProperty> unknownVersitProperties();
     
 private:
-    void removeAllContacts();
-
-private:
-    CntSymbianEngine   *m_engine;
+    QVersitContactImporterPrivate* d;
 };
+
+#endif // QVERSITCONTACTIMPORTER_H
+

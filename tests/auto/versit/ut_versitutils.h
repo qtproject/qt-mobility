@@ -38,45 +38,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef UT_VERSITUTILS_H
+#define UT_VERSITUTILS_H
+
 #include <QObject>
 
-class CntSymbianEngine;
 
-class TestSymbianEngine : public QObject
+class UT_VersitUtils : public QObject                 
 {
-    Q_OBJECT
-
+     Q_OBJECT
+    
 private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
 
-private:
-    CntSymbianEngine   *m_engine;
+    void testCountLeadingWhiteSpaces();
+    void testFindHardLineBreakInQuotedPrintable();
+    void testParamName();
+    void testParamValue();
+    void testExtractPart();
+    void testExtractParts();
+    void testFold();
+    void testUnfold();
+    void testQuotedPrintableEncode();
+    void testDecodeQuotedPrintable();
+    void testBackSlashEscape();
+    void testRemoveBackSlashEscaping();
+    void testExtractPropertyGroupsAndName();
+    void testExtractPropertyValue();
+    void testExtractVCard21PropertyParams();
+    void testExtractVCard30PropertyParams();
 };
+
+#endif // UT_VERSITUTILS_H

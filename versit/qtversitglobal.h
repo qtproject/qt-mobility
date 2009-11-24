@@ -38,45 +38,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QTVERSITGLOBAL_H
+#define QTVERSITGLOBAL_H
 
-class TestSymbianEngine : public QObject
-{
-    Q_OBJECT
+#include <qglobal.h>
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+#ifdef BUILD_QTVERSIT
+#define Q_VERSIT_EXPORT Q_DECL_EXPORT
+#else
+#define Q_VERSIT_EXPORT Q_DECL_IMPORT
+#endif
 
-private:
-    CntSymbianEngine   *m_engine;
-};
+#endif // QTVERSITGLOBAL_H

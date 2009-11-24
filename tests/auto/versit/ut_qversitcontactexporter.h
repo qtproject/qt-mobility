@@ -38,45 +38,64 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef UT_QVERSITCONTACTEXPORTER_H
+#define UT_QVERSITCONTACTEXPORTER_H
+
+#include <qcontactdetail.h>
 #include <QObject>
 
-class CntSymbianEngine;
+class QVersitContactExporter;
+class QVersitContactExporterPrivate;
 
-class TestSymbianEngine : public QObject
+class UT_QVersitContactExporter : public QObject
 {
     Q_OBJECT
+    
+public slots:
+    void scale(const QString& imageFileName, QByteArray& imageData);
 
 private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
     void init();
     void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
     
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+    void testConvertContact();
+    void testUnknownContactDetails();
+    void testEncodeName();
+    void testEncodePhoneNumber();
+    void testEncodeEmailAddress();
+    void testEncodeStreetAddress();
+    void testEncodeUrl();
+    void testEncodeParameters();
+    void testEncodeUid();
+    void testEncodeRev();
+    void testEncodeBirthDay();
+    void testEncodeNote();
+    void testEncodeGeoLocation();
+    void testEncodeOrganization();
+    void testEncodeEmbeddedContent();
+    void testIsValidRemoteUrl();
+    void testEncodeGender();
+    void testEncodeNickName();
+    void testEncodeAnniversary();
+    void testEncodeOnlineAccount();
+    void testEncodeFamily();
+    void testEncodeAvatar();
+    void testEncodeDisplayLabel();
 
-private:
-    CntSymbianEngine   *m_engine;
+    // Test Utility Function
+    QContactDetail searchDetail(QList<QContactDetail> details, QString search);
+
+    
+private: // Data
+    QVersitContactExporter* mExporter;
+    QVersitContactExporterPrivate* mExporterPrivate;
+    QString mTestPhotoFile;
+    QString mTestAudioFile;
+    bool mScaleSignalEmitted;
+    QByteArray mSimulatedImageData;
 };
+
+#endif // UT_QVERSITCONTACTEXPORTER_H

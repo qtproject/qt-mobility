@@ -38,45 +38,70 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef UT_QVERSITCONTACTIMPORTER_H
+#define UT_QVERSITCONTACTIMPORTER_H
+
 #include <QObject>
+#include <qversitdocument.h>
 
-class CntSymbianEngine;
+class QVersitContactImporter;
+class QVersitContactImporterPrivate;
 
-class TestSymbianEngine : public QObject
+class UT_QVersitContactImporter : public QObject
 {
     Q_OBJECT
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
+private slots: // Tests
     
+    void initTestCase();
+    void cleanupTestCase();
     void init();
     void cleanup();
     
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
+    void testName();
+    void testAddress();
+    void testTel();    
+    void testEmail();
+    void testUrl();
+    void testUid();
+    void testOrganizationName();
+    void testOrganizationTitle();
+    void testOrganizationLogo();
+    void testOrganizationAssistant();
+    void testOrganizationRole();
+    void testTimeStamp();
+    void testAnniversary();
+    void testBirthday();
+    void testGender();
+    void testNickname();
+    void testAvatarJpegStored();
+    void testAvatarGifStored();
+    void testAvatarJpegTwoContactsWithSameName();
+    void testAvatarJpegNonexistentPath();
+    void testAvatarUrl();
+    void testAvatarEncoding();
+    void testGeo();
+    void testNote();
+    void testOnlineAccount();
+    void testFamily();
+    void testSound();
+    void testLabel();
+    void testUnknownVersitProperties();
+
+private: // Utilities
     
-private:
-    void removeAllContacts();
+    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
+
+    QVersitDocument createDocumentWithNameAndPhoto(
+        const QByteArray& name,
+        QByteArray image,
+        const QString& photoType,
+        const QString& encoding);
 
 private:
-    CntSymbianEngine   *m_engine;
+    QVersitContactImporter* mImporter;
+    QVersitContactImporterPrivate* mImporterPrivate;
 };
+
+#endif // UT_QVERSITCONTACTIMPORTER_H

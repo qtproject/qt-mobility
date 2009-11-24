@@ -38,45 +38,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef UT_QVERSITREADER_H
+#define UT_QVERSITREADER_H
+
 #include <QObject>
+#include <QBuffer>
 
-class CntSymbianEngine;
+class QVersitReader;
+class QVersitReaderPrivate;
 
-class TestSymbianEngine : public QObject
+
+class UT_QVersitReader : public QObject                 
 {
-    Q_OBJECT
+     Q_OBJECT
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
+public slots:
+    void readingDone();
+
+private slots: // Tests
+
     void init();
     void cleanup();
     
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+    void testDevice();
+    void testReading();
+    void testResult();
+    void testSetVersionFromProperty();
+    void testParseNextVersitPropertyVCard21();
+    void testParseNextVersitPropertyVCard30();
+    void testParseVersitDocument();     
 
-private:
-    CntSymbianEngine   *m_engine;
+private: // Data
+
+    QVersitReader* mReader;
+    QVersitReaderPrivate* mReaderPrivate;
+    QBuffer* mInputDevice;
+    int mExpectedDocumentCount;
+    bool mReadingDoneCalled;
 };
+
+#endif // UT_VERSITREADER_H

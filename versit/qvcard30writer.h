@@ -38,45 +38,36 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QVCARD30WRITER_H
+#define QVCARD30WRITER_H
 
-class TestSymbianEngine : public QObject
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qversitwriter_p.h"
+
+class QVCard30Writer : public QVersitWriterPrivate
 {
-    Q_OBJECT
+public:
+    QVCard30Writer();
+    ~QVCard30Writer();
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+protected: // From QVersitWriterPrivate
+    QByteArray encodeVersitProperty(const QVersitProperty& property);
+    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
 
-private:
-    CntSymbianEngine   *m_engine;
+private: // Data
+    QHash<QString,QString> mPropertyNameMappings;
+    friend class UT_QVCard30Writer;
 };
+
+#endif // QVCARD30WRITER_H

@@ -38,45 +38,55 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef TESTRESULTXMLPARSER_H
+#define TESTRESULTXMLPARSER_H
 
-class TestSymbianEngine : public QObject
+#include <QXmlDefaultHandler>
+
+
+class TestResultXmlParser : public QXmlDefaultHandler
 {
-    Q_OBJECT
-
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
+public: // Constructors and destructor
+    TestResultXmlParser();
+    ~TestResultXmlParser();    
     
-    void init();
-    void cleanup();
+public: // From QXmlContentHandler 
+    bool startElement(
+        const QString& namespaceURI,
+        const QString& localName,
+        const QString& qName,
+        const QXmlAttributes& atts);
     
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
+    bool endElement(
+        const QString& namespaceURI,
+        const QString& localName,
+        const QString& qName);
     
-private:
-    void removeAllContacts();
-
-private:
-    CntSymbianEngine   *m_engine;
+    bool characters(const QString& ch);
+       
+public: // New functions
+    
+    int parse(const QString& fileName);
+    
+    int parseAndPrintResults(
+        const QString& fileName,
+        bool printDetails=false);
+    
+    int testCount();
+    
+    QStringList errors();
+    
+private: // Data
+    int mTestCount;
+    QStringList* mErrors;
+    bool mParsingIncidentElement;
+    bool mParsingDescriptionElement;
+    bool mCurrentTestFailed;
+    QString mCurrentTestName;
+    QString mCurrentTestFile;
+    int mCurrentTestFailureLine;
 };
+
+
+#endif // TESTRESULTXMLPARSER_H

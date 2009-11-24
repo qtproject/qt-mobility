@@ -38,45 +38,40 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef QVERSITREADER_H
+#define QVERSITREADER_H
+
 #include <QObject>
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
 
-class CntSymbianEngine;
+class QIODevice;
+class QVersitReaderPrivate;
 
-class TestSymbianEngine : public QObject
+// reads a QVersitDocument from i/o device
+class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
-    Q_OBJECT
+    Q_OBJECT  
+    
+public:
+    QVersitReader();
+    ~QVersitReader();
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+    // input:
+    void setDevice(QIODevice* device);
+    QIODevice* device() const;
+    // reading:
+    bool startReading();
+    bool readAll();
+    // output:
+    QList<QVersitDocument> result() const;
 
-private:
-    CntSymbianEngine   *m_engine;
+signals:
+    void readingDone();
+    
+private: // data
+    QVersitReaderPrivate* d;   
 };
+
+#endif // QVERSITREADER_H

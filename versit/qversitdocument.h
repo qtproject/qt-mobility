@@ -38,45 +38,43 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QVERSITDOCUMENT_H
+#define QVERSITDOCUMENT_H
 
-class TestSymbianEngine : public QObject
+#include <qtversitglobal.h>
+#include <QList>
+#include <QSharedDataPointer>
+
+class QVersitDocumentPrivate;
+class QVersitProperty;
+
+class Q_VERSIT_EXPORT QVersitDocument
 {
-    Q_OBJECT
+public:
+    QVersitDocument();
+    QVersitDocument(const QVersitDocument& other);
+    ~QVersitDocument();
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
+    QVersitDocument& operator=(const QVersitDocument& other);
     
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+    /*! Versit document type */
+    enum VersitType {
+        VCard21,   // vCard version 2.1
+        VCard30    // vCard version 3.0 (RFC 2426)
+    };
+
+    // metadata about the versit document itself.
+    void setVersitType(VersitType type);
+    VersitType versitType() const;
+
+    void addProperty(const QVersitProperty& property);
+    QList<QVersitProperty> properties() const;
+    void removeProperties(const QString& name);
 
 private:
-    CntSymbianEngine   *m_engine;
+    
+    QSharedDataPointer<QVersitDocumentPrivate> d;
 };
+
+#endif // QVERSITDOCUMENT_H

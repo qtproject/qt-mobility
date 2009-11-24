@@ -38,45 +38,37 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef QVERSITCONTACTEXPORTER_H
+#define QVERSITCONTACTEXPORTER_H
+
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
+#include <qcontact.h>
 #include <QObject>
+#include <QImage>
 
-class CntSymbianEngine;
+class QVersitContactExporterPrivate;
 
-class TestSymbianEngine : public QObject
+class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
 {
     Q_OBJECT
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+public:
+    QVersitContactExporter();
+    ~QVersitContactExporter();
+
+    QVersitDocument exportContact(
+        const QContact& contact,
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
+		
+    QList<QContactDetail> unknownContactDetails();
+
+signals:
+    void scale(const QString& imageFileName, QByteArray& imageData);
 
 private:
-    CntSymbianEngine   *m_engine;
+    QVersitContactExporterPrivate* d;    
 };
+
+#endif // QVERSITCONTACTEXPORTER_H

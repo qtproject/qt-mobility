@@ -38,45 +38,61 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QVERSITWRITER_P_H
+#define QVERSITWRITER_P_H
 
-class TestSymbianEngine : public QObject
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <qversitdocument.h>
+#include <qversitproperty.h>
+#include <QThread>
+#include <QByteArray>
+#include <QIODevice>
+
+class QVersitWriterPrivate : public QThread
 {
-    Q_OBJECT
+public:
+    virtual ~QVersitWriterPrivate();
+    bool isReady() const;
+    bool write();
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+public: // Data
+    QIODevice* mIoDevice;
+    QVersitDocument mVersitDocument;
 
-private:
-    CntSymbianEngine   *m_engine;
+protected: // To be implemented in each of the subclasses
+    virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
+    virtual QByteArray encodeParameters(
+        const QMultiHash<QString,QString>& parameters) const = 0;
+
+protected: // Protected Constructors
+    QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
+
+protected: // From QThread
+     void run();
+
+protected: // New functions
+    QByteArray encodeVersitDocument(const QVersitDocument& document);
+    QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
+
+private: // Constructors
+    QVersitWriterPrivate();
+
+private: // Data
+    QByteArray mDocumentType;
+    QByteArray mVersion;
+
+    friend class UT_QVersitWriter;
 };
+
+#endif // QVERSITWRITER_P_H

@@ -38,45 +38,34 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef UT_QVERSITPROPERTY_H
+#define UT_QVERSITPROPERTY_H
+
 #include <QObject>
 
-class CntSymbianEngine;
+class QVersitProperty;
 
-class TestSymbianEngine : public QObject
+class UT_QVersitProperty : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void initTestCase();    
-    void cleanupTestCase();
     
     void init();
     void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+
+private slots: //test methods
+
+    void testGroup();
+    void testName();
+    void testParameters();
+    void testValue();
+    void testEmbeddedDocument();
 
 private:
-    CntSymbianEngine   *m_engine;
+    QVersitProperty* mVersitProperty;
+
 };
+
+#endif //UT_QVERSITPROPERTY_H

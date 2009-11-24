@@ -38,45 +38,29 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef UT_QVCARD30WRITER_H
+#define UT_QVCARD30WRITER_H
+
 #include <QObject>
 
-class CntSymbianEngine;
+class QVCard30Writer;
 
-class TestSymbianEngine : public QObject
+
+class UT_QVCard30Writer : public QObject
 {
-    Q_OBJECT
-
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
+     Q_OBJECT
     
+private slots: // Tests
+
     void init();
     void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
 
-private:
-    CntSymbianEngine   *m_engine;
+    void testEncodeVersitProperty();
+    void testEncodeParameters();
+
+private: // Data
+    QVCard30Writer* mWriter;
 };
+
+#endif // UT_QVCARD30WRITER_H

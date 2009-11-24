@@ -38,45 +38,40 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef QVERSITWRITER_H
+#define QVERSITWRITER_H
+
 #include <QObject>
+#include <QIODevice>
+#include <qversitdocument.h>
 
-class CntSymbianEngine;
+class QVersitWriterPrivate;
 
-class TestSymbianEngine : public QObject
+// writes a QVersitDocument to i/o device
+class Q_VERSIT_EXPORT QVersitWriter : public QObject
 {
     Q_OBJECT
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+public:
+    QVersitWriter();
+    ~QVersitWriter();
 
-private:
-    CntSymbianEngine   *m_engine;
+    // input:
+    void setVersitDocument(const QVersitDocument& versitDocument);
+    QVersitDocument versitDocument() const;
+    // output:
+    void setDevice(QIODevice* device);
+    QIODevice* device() const;
+    // writing:
+    bool startWriting();
+    bool writeAll();
+
+signals:
+    void writingDone();
+
+private: // data
+    QVersitWriterPrivate* d;
 };
+
+#endif // QVERSITWRITER_H

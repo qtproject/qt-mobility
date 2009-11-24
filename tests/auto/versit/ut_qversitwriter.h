@@ -38,45 +38,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifndef UT_QVERSITWRITER_H
+#define UT_QVERSITWRITER_H
+
 #include <QObject>
+#include <QBuffer>
 
-class CntSymbianEngine;
+class QVersitWriter;
+class QVersitWriterPrivate;
 
-class TestSymbianEngine : public QObject
+
+class UT_QVersitWriter : public QObject                 
 {
-    Q_OBJECT
-
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
+     Q_OBJECT
     
+public slots:
+    void writingDone();
+
+private slots: // Tests
+
     void init();
     void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
 
-private:
-    CntSymbianEngine   *m_engine;
+    void testDevice();    
+    void testWriting();
+    void testEncodeGroupsAndName();
+
+private: // Data
+    QVersitWriter* mWriter;
+    QVersitWriterPrivate* mWriterPrivate;
+    QBuffer* mOutputDevice;
+    bool mWritingDoneCalled;
 };
+
+#endif // UT_QVERSITWRITER_H

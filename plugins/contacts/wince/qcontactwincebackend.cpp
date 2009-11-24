@@ -315,10 +315,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
     defns[contactType].remove(QContactGuid::DefinitionName);
     defns[contactType].remove(QContactGender::DefinitionName); // ? Surprising
 
-
-    // Remove the fields we don't support
-    defns[contactType][QContactName::DefinitionName].fields().remove(QContactName::FieldCustomLabel);
-
     // Simple anniversarys
     defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
     defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldEvent);
@@ -409,7 +405,10 @@ QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QCo
 
     // XXX For greatest accuracy we might be better off converting this contact to
     // a real item (but don't save it), and then retrieve it...
-    if (!name.last().isEmpty()) {
+    if (!name.customLabel().isEmpty()) {
+        return name.customLabel();
+    }
+    else if (!name.last().isEmpty()) {
         if (!name.first().isEmpty()) {
             return QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
         } else {

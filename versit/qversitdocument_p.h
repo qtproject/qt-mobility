@@ -38,45 +38,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QVERSITDOCUMENT_P_H
+#define QVERSITDOCUMENT_P_H
 
-class TestSymbianEngine : public QObject
+#include <QSharedData>
+#include <QList>
+#include "qversitdocument.h"
+#include "qversitproperty.h"
+
+
+class QVersitDocumentPrivate : public QSharedData
 {
-    Q_OBJECT
+public:
+    QVersitDocumentPrivate() 
+        : QSharedData(),
+        mVersitType(QVersitDocument::VCard21)
+    {
+    }
+    
+    QVersitDocumentPrivate(const QVersitDocumentPrivate& other) 
+        : QSharedData(other),
+        mVersitType(other.mVersitType),
+        mProperties(other.mProperties)
+    {
+    }    
+    
+    ~QVersitDocumentPrivate()
+    {
+    }
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
-    
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
-
-private:
-    CntSymbianEngine   *m_engine;
+    QVersitDocument::VersitType mVersitType;
+    QList<QVersitProperty> mProperties;
 };
+
+#endif // QVERSITDOCUMENT_P_H

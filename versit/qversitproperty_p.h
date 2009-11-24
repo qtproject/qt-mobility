@@ -38,45 +38,41 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QVERSITPROPERTY_P_H
+#define QVERSITPROPERTY_P_H
 
-class TestSymbianEngine : public QObject
+#include "qversitdocument.h"
+#include <QSharedData>
+#include <QString>
+#include <QStringList>
+#include <QMultiHash>
+#include <QByteArray>
+
+class QVersitPropertyPrivate : public QSharedData
 {
-    Q_OBJECT
-
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
+public:
+    QVersitPropertyPrivate() : QSharedData() 
+    {
+    }   
     
-    void init();
-    void cleanup();
+    QVersitPropertyPrivate(const QVersitPropertyPrivate& other) 
+        : QSharedData(other),
+        mGroups(other.mGroups),
+        mName(other.mName),
+        mParameters(other.mParameters),
+        mValue(other.mValue),
+        mDocument(other.mDocument)
+    {
+    }     
     
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
+    ~QVersitPropertyPrivate() {}
     
-private:
-    void removeAllContacts();
-
-private:
-    CntSymbianEngine   *m_engine;
+    QStringList mGroups;
+    QString mName;
+    QMultiHash<QString,QString> mParameters;
+    QByteArray mValue;
+    QVersitDocument mDocument;
 };
+
+#endif // QVERSITPROPERTY_P_H

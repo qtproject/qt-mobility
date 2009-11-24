@@ -38,45 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-class CntSymbianEngine;
+#ifndef QVERSITPROPERTY_H
+#define QVERSITPROPERTY_H
 
-class TestSymbianEngine : public QObject
+#include <qtversitglobal.h>
+#include <qversitdocument.h>
+#include <QString>
+#include <QStringList>
+#include <QMultiHash>
+#include <QByteArray>
+#include <QSharedDataPointer>
+
+class QVersitPropertyPrivate;
+
+class Q_VERSIT_EXPORT QVersitProperty
 {
-    Q_OBJECT
+public:
+    QVersitProperty();
+    QVersitProperty(const QVersitProperty& other);
+    ~QVersitProperty();
+    
+    QVersitProperty& operator=(const QVersitProperty& other);
 
-private slots:
-    void initTestCase();    
-    void cleanupTestCase();
+    void setGroups(const QStringList& groups);
+    QStringList groups() const;
+
+    void setName(const QString& name);
+    QString name() const;
+
+    void addParameter(const QString& name, const QString& value);
+    void removeParameter(const QString& name, const QString& value);
+    void setParameters(const QMultiHash<QString,QString>& parameters);
+    QMultiHash<QString,QString> parameters() const;
     
-    void init();
-    void cleanup();
-    
-    void ctors();
-    void saveContact();
-    void saveContactWithPreferredDetails();
-    void saveContacts();
-    void retrieveContact();
-    void retrieveContacts();
-    void updateContact();
-    void removeContact();
-    void removeContacts();
-    void addOwnCard();
-    void retrieveOwnCard();
-    void filterSupport();
-    void featureSupport();
-    void addGroup();
-    void retrieveGroup();
-    void singleRelationship();
-    void batchRelationships();
-    void dataTypeSupport();
-    void synthesizeDisplaylable();
-    void definitionDetails();
-    
-private:
-    void removeAllContacts();
+    void setValue(const QByteArray& value);
+    QByteArray value() const;
+
+    void setEmbeddedDocument(const QVersitDocument& document);
+    QVersitDocument embeddedDocument() const;
 
 private:
-    CntSymbianEngine   *m_engine;
+    
+    QSharedDataPointer<QVersitPropertyPrivate> d;
 };
+
+#endif // QVERSITPROPERTY_H
