@@ -172,7 +172,8 @@ QVideoEncoderControl::~QVideoEncoderControl()
 */
 
 /*!
-    \fn QVideoEncoderControl::supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const
+    \fn QVideoEncoderControl::supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                                   bool *continuous = 0) const
 
     Returns a list of supported resolutions.  An empty list is returned if the video encoder
     supports arbitrary resolutions within the minimum and maximum range.
@@ -188,7 +189,8 @@ QVideoEncoderControl::~QVideoEncoderControl()
 */
 
 /*!
-    \fn QVideoEncoderControl::supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const
+    \fn QVideoEncoderControl::supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                                  bool *continuous = 0) const
 
     Returns a list of supported frame rates. An empty list is returned if the encoder supports
     arbitrary frame rates within the minimum and maximum range.

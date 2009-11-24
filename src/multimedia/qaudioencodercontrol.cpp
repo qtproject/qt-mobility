@@ -107,7 +107,8 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
-  \fn QAudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const
+  \fn QAudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings(),
+                                                 bool *continuous) const
 
   Returns the list of supported audio sample rates, if known.
 
