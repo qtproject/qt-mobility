@@ -154,7 +154,6 @@
                     <section ref="qcontactmanagerenginefactory.html" title="QContactManagerEngineFactory Class Reference">
                         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference"/>
                     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
                         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
                     </section>
@@ -211,6 +210,9 @@
                     </section>
                     <section ref="qcontacturl.html" title="QContactUrl Class Reference">
                         <section ref="qcontacturl-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
+                        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
                         <section ref="qgeocoordinate-members.html" title="List of all members"/>
@@ -1406,16 +1408,6 @@
             <keyword name="supportedImplementationVersions" id="QContactManagerEngineFactory::supportedImplementationVersions" ref="qcontactmanagerenginefactory.html#supportedImplementationVersions"/>
             <keyword name="version" id="QContactManagerEngineFactory::version" ref="qcontactmanagerenginefactory.html#version"/>
             <keyword name="~QContactManagerEngineFactory" id="QContactManagerEngineFactory::~QContactManagerEngineFactory" ref="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory"/>
-            <keyword name="QContactManagerInfo" id="QContactManagerInfo" ref="qcontactmanagerinfo.html"/>
-            <keyword name="QContactManagerInfo::ManagerFeature" id="QContactManagerInfo::ManagerFeature" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Groups" id="QContactManagerInfo::Groups" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ActionPreferences" id="QContactManagerInfo::ActionPreferences" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::MutableDefinitions" id="QContactManagerInfo::MutableDefinitions" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Relationships" id="QContactManagerInfo::Relationships" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ArbitraryRelationshipTypes" id="QContactManagerInfo::ArbitraryRelationshipTypes" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::SelfContact" id="QContactManagerInfo::SelfContact" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Anonymous" id="QContactManagerInfo::Anonymous" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ChangeLogs" id="QContactManagerInfo::ChangeLogs" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
             <keyword name="QContactMemoryEngine" id="QContactMemoryEngine" ref="qcontactmemoryengine.html"/>
             <keyword name="cancelRequest" id="QContactMemoryEngine::cancelRequest" ref="qcontactmemoryengine.html#cancelRequest"/>
             <keyword name="contact" id="QContactMemoryEngine::contact" ref="qcontactmemoryengine.html#contact"/>
@@ -1592,6 +1584,15 @@
             <keyword name="setUrl" id="QContactUrl::setUrl" ref="qcontacturl.html#setUrl"/>
             <keyword name="subType" id="QContactUrl::subType" ref="qcontacturl.html#subType"/>
             <keyword name="url" id="QContactUrl::url" ref="qcontacturl.html#url"/>
+            <keyword name="QGeoAreaMonitor" id="QGeoAreaMonitor" ref="qgeoareamonitor.html"/>
+            <keyword name="areaEntered" id="QGeoAreaMonitor::areaEntered" ref="qgeoareamonitor.html#areaEntered"/>
+            <keyword name="areaExited" id="QGeoAreaMonitor::areaExited" ref="qgeoareamonitor.html#areaExited"/>
+            <keyword name="center" id="QGeoAreaMonitor::center" ref="qgeoareamonitor.html#center-prop"/>
+            <keyword name="createDefaultMonitor" id="QGeoAreaMonitor::createDefaultMonitor" ref="qgeoareamonitor.html#createDefaultMonitor"/>
+            <keyword name="radius" id="QGeoAreaMonitor::radius" ref="qgeoareamonitor.html#radius-prop"/>
+            <keyword name="setCenter" id="QGeoAreaMonitor::setCenter" ref="qgeoareamonitor.html#center-prop"/>
+            <keyword name="setRadius" id="QGeoAreaMonitor::setRadius" ref="qgeoareamonitor.html#radius-prop"/>
+            <keyword name="~QGeoAreaMonitor" id="QGeoAreaMonitor::~QGeoAreaMonitor" ref="qgeoareamonitor.html#dtor.QGeoAreaMonitor"/>
             <keyword name="QGeoCoordinate" id="QGeoCoordinate" ref="qgeocoordinate.html"/>
             <keyword name="QGeoCoordinate::CoordinateFormat" id="QGeoCoordinate::CoordinateFormat" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DecimalDegrees" id="QGeoCoordinate::DecimalDegrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
@@ -3601,7 +3602,6 @@
             <file>qcontactdisplaylabel-members.html</file>
             <file>qcontactdetailfilter.html</file>
             <file>qcontactdetaildefinitionfetchrequest-members.html</file>
-            <file>qcontactmanagerinfo.html</file>
             <file>qabstractvaluespacelayer.html</file>
             <file>qmediaserviceprovider-members.html</file>
             <file>fetchgooglemaps-mapwindow-h.html</file>
@@ -3845,6 +3845,7 @@
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
+            <file>qgeoareamonitor-members.html</file>
             <file>qcontactunionfilter-members.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
@@ -3964,6 +3965,7 @@
             <file>cameracapture-cameracapture-cpp.html</file>
             <file>samplephonebook-finddialog-h.html</file>
             <file>qcontactphonenumber-members.html</file>
+            <file>qgeoareamonitor.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
             <file>slideshow-main-cpp.html</file>
