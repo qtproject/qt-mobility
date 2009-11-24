@@ -192,7 +192,18 @@ static void processName(const QContactWinCEEngine* engine, const QVariantList& v
     setIfNotEmpty(name, QContactName::FieldLast, values[3].toString());
     setIfNotEmpty(name, QContactName::FieldSuffix, values[4].toString());
     setIfNotEmpty(name, QContactName::FieldCustomLabel, values[5].toString());
-    //ret = engine->setContactDisplayLabel(values[5].toString(), ret);
+    if (!name.isEmpty())
+        ret.saveDetail(&name);
+}
+
+static void processAvatar(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
+{
+    QContactAvatar avatar;
+    
+    setIfNotEmpty(avatar, QContactAvatar::FieldAvatar, values[0].toString());
+    setIfNotEmpty(avatar, QContactAvatar::FieldSubType, values[1].toString());
+    // XXX avatar
+
     if (!name.isEmpty())
         ret.saveDetail(&name);
 }
@@ -532,6 +543,14 @@ static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props
     addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLast), props);
     addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
     addIfNotEmpty(PIMPR_FILEAS, detail.value(QContactName::FieldCustomLabel), props);
+    return true;
+}
+
+static bool processQAvatar(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    QString avatarFile = detail.value(QContactAvatar::FieldAvatar);
+    
+    // XXX avatar
     return true;
 }
 
