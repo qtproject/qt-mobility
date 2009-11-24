@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef VERSITTEST_H
 #define VERSITTEST_H
 

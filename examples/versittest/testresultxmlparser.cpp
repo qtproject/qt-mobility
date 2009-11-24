@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "testresultxmlparser.h" 
 #include <stdio.h>
 

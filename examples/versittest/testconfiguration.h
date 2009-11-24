@@ -38,11 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef TESTCONFIGURATION_H
 #define TESTCONFIGURATION_H
 
 #include <QXmlDefaultHandler>
-
 
 class TestConfiguration : public QXmlDefaultHandler
 {
@@ -74,8 +74,3 @@ private: // Data
 
 
 #endif // TESTCONFIGURATION_H
-
-
-
-
-

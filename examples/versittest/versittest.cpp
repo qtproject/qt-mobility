@@ -171,7 +171,8 @@ void VersitTest::test_data()
 }
 
 void VersitTest::executeTest(QFile& in, QIODevice& out)
-{       
+{
+    // Reset devices
     in.seek(0);
     mReader->setDevice(&in);
     out.reset();

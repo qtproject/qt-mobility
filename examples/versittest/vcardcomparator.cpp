@@ -77,6 +77,7 @@ QString VCardComparator::nonMatchingLines() const
             nonMatchingLines.append(mInputLines->at(i));
         }
     }
+
     return nonMatchingLines;
 }
 
@@ -101,6 +102,7 @@ QStringList* VCardComparator::readLines(
             lines->append(line);
         }
     }
+
     return lines;
 }
 

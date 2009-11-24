@@ -89,6 +89,7 @@ bool TestConfiguration::startElement(
     } else {
         // NOP
     }
+
     return true;
 }
 

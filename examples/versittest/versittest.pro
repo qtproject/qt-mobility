@@ -6,7 +6,14 @@ CONFIG += qtestlib
 include(../../common.pri)
 DEPENDPATH += .
 INCLUDEPATH += . \
-    ../../versit
+               ../../versit \
+               ../../contacts \
+               ../../contacts/requests \
+               ../../contacts/details \
+               ../../contacts/filters
+
+qtAddLibrary(QtContacts)
+qtAddLibrary(QtVersit)
 
 # Input
 HEADERS += versittest.h \
@@ -16,8 +23,7 @@ SOURCES += main.cpp \
     vcardcomparator.cpp \
     testresultxmlparser.cpp \
     testconfiguration.cpp
-qtAddLibrary(QtContacts)
-qtAddLibrary(QtVersit)
+
 symbian: { 
     TARGET.CAPABILITY = ALL \
         -TCB

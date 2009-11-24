@@ -88,18 +88,18 @@ int main(int argc, char** argv)
     QStringList args(QString::fromAscii("versittest"));
     args << "-iterations" << QString::number(iterations);
     args << QString::fromAscii("-") + outputFormat;
-    if( outputFormat == QString::fromAscii("xml")){
+    if (outputFormat == QString::fromAscii("xml")) {
         // if xml set filename
         QString resultFileName = homeDir + QString::fromAscii("QVersitTestResults.xml");
         args << QString::fromAscii("-o") << resultFileName;
         QTest::qExec(&versitTest, args);
         TestResultXmlParser parser;
         parser.parseAndPrintResults(resultFileName,true);
-    }
-    else{
+    } else {
         // if verbose no file name needed
         QTest::qExec(&versitTest, args);
-    }    
+    }
+
     printf("Press any key...\n");
     getchar();
     return 0;   
