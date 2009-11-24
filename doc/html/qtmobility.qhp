@@ -187,6 +187,9 @@
                     <section ref="qcontactrelationshipremoverequest.html" title="QContactRelationshipRemoveRequest Class Reference">
                         <section ref="qcontactrelationshipremoverequest-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qcontactrelationshipsaverequest.html" title="QContactRelationshipSaveRequest Class Reference">
+                        <section ref="qcontactrelationshipsaverequest-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qcontactremoverequest.html" title="QContactRemoveRequest Class Reference">
                         <section ref="qcontactremoverequest-members.html" title="List of all members"/>
                     </section>
@@ -1532,6 +1535,11 @@
             <keyword name="setRelationshipType" id="QContactRelationshipRemoveRequest::setRelationshipType" ref="qcontactrelationshipremoverequest.html#setRelationshipType"/>
             <keyword name="setSecond" id="QContactRelationshipRemoveRequest::setSecond" ref="qcontactrelationshipremoverequest.html#setSecond"/>
             <keyword name="~QContactRelationshipRemoveRequest" id="QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest" ref="qcontactrelationshipremoverequest.html#dtor.QContactRelationshipRemoveRequest"/>
+            <keyword name="QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html"/>
+            <keyword name="progress" id="QContactRelationshipSaveRequest::progress" ref="qcontactrelationshipsaverequest.html#progress"/>
+            <keyword name="relationships" id="QContactRelationshipSaveRequest::relationships" ref="qcontactrelationshipsaverequest.html#relationships"/>
+            <keyword name="setRelationships" id="QContactRelationshipSaveRequest::setRelationships" ref="qcontactrelationshipsaverequest.html#setRelationships"/>
+            <keyword name="~QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html#dtor.QContactRelationshipSaveRequest"/>
             <keyword name="QContactRemoveRequest" id="QContactRemoveRequest" ref="qcontactremoverequest.html"/>
             <keyword name="filter" id="QContactRemoveRequest::filter" ref="qcontactremoverequest.html#filter"/>
             <keyword name="progress" id="QContactRemoveRequest::progress" ref="qcontactremoverequest.html#progress"/>
@@ -3739,6 +3747,7 @@
             <file>qcontactgeolocation.html</file>
             <file>annotated.html</file>
             <file>qnetworksession-members.html</file>
+            <file>qcontactrelationshipsaverequest.html</file>
             <file>qvideowindowcontrol.html</file>
             <file>cameracapture-cameracapture-pro.html</file>
             <file>qcontactid.html</file>
@@ -4039,6 +4048,7 @@
             <file>qcontactinvalidengine-members.html</file>
             <file>cameracapture-settings-h.html</file>
             <file>qcontactactiondescriptor.html</file>
+            <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
             <file>qmessagecontentcontainer-members.html</file>
             <file>declarative-main-cpp.html</file>

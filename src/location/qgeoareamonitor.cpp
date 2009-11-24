@@ -114,8 +114,8 @@ QGeoAreaMonitor::~QGeoAreaMonitor()
 
 
 /*!
-    \fn QGeoAreaMonitor::setCenter
-    \brief This sets the center of the area to be monitored.
+    \fn void QGeoAreaMonitor::setCenter(const QGeoCoordinate &coordinate)
+    \brief This function sets the center of the area to be monitored to \a coordinate.
 
     When the center is set, if the radius has already been set and
     the current position is within the monitored area, areaEntered()

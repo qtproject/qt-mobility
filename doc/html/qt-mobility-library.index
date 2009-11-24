@@ -6891,6 +6891,17 @@
                 <parameter left="const QContactDetailDefinitionField &amp;" right="" name="other" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipSaveRequest" href="qcontactrelationshipsaverequest.html" location="qcontactrelationshipsaverequest.h" bases="QContactAbstractRequest" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipSaveRequest" fullname="QContactRelationshipSaveRequest::QContactRelationshipSaveRequest" href="qcontactrelationshipsaverequest.html#QContactRelationshipSaveRequest" location="qcontactrelationshipsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipSaveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactRelationshipSaveRequest" fullname="QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest" href="qcontactrelationshipsaverequest.html#dtor.QContactRelationshipSaveRequest" location="qcontactrelationshipsaverequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactRelationshipSaveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRelationships" fullname="QContactRelationshipSaveRequest::setRelationships" href="qcontactrelationshipsaverequest.html#setRelationships" location="qcontactrelationshipsaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRelationships(const QList&lt;QContactRelationship&gt; &amp; contactRelationships)">
+                <parameter left="const QList&lt;QContactRelationship&gt; &amp;" right="" name="contactRelationships" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="relationships" fullname="QContactRelationshipSaveRequest::relationships" href="qcontactrelationshipsaverequest.html#relationships" location="qcontactrelationshipsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactRelationship&gt;" signature="relationships() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="progress" fullname="QContactRelationshipSaveRequest::progress" href="qcontactrelationshipsaverequest.html#progress" location="qcontactrelationshipsaverequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactRelationshipSaveRequest * self)">
+                <parameter left="QContactRelationshipSaveRequest *" right="" name="self" default=""/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPositionInfoSource" href="qgeopositioninfosource.html" location="qgeopositioninfosource.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="updateInterval" fullname="QGeoPositionInfoSource::updateInterval" href="qgeopositioninfosource.html#updateInterval-prop" location="qgeopositioninfosource.h" type="int">
                 <getter name="updateInterval"/>

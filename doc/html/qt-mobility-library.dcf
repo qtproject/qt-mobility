@@ -1199,6 +1199,13 @@
         <keyword ref="qcontactrelationshipremoverequest.html#setSecond">setSecond</keyword>
         <section ref="qcontactrelationshipremoverequest-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactrelationshipsaverequest.html" title="QContactRelationshipSaveRequest Class Reference">
+        <keyword ref="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#relationships">relationships</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</keyword>
+        <section ref="qcontactrelationshipsaverequest-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactremoverequest.html" title="QContactRemoveRequest Class Reference">
         <keyword ref="qcontactremoverequest.html">QContactRemoveRequest</keyword>
         <keyword ref="qcontactremoverequest.html#filter">filter</keyword>
