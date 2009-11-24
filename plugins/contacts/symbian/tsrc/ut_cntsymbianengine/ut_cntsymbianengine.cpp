@@ -47,6 +47,7 @@
 #include <qcontactmanager.h>
 #include <qcontactdetailfilter.h>
 #include <qcontactorganization.h>
+#include <qcontactemailaddress.h>
 
 #include <QtTest/QtTest>
 
@@ -206,6 +207,66 @@ void TestSymbianEngine::saveContact()
     QVERIFY(g.id() != empty);
     QVERIFY(g.localId() != 0);
     QVERIFY(g.id().managerUri().contains(uri, Qt::CaseInsensitive));
+}
+
+void TestSymbianEngine::saveContactWithPreferredDetails()
+{
+    QContactManager::Error err;
+    
+    //save a contact with preferred details
+    QContact c;
+    c.setType(QContactType::TypeContact);
+    
+    QContactPhoneNumber number1;
+    number1.setNumber("123");
+    number1.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    c.saveDetail(&number1);
+    c.setPreferredDetail("call", number1);
+    
+    QContactPhoneNumber number2;
+    number2.setNumber("456");
+    number2.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    c.saveDetail(&number2);
+    c.setPreferredDetail("videocall", number2);
+    
+    QContactPhoneNumber number3;
+    number3.setNumber("789");
+    number3.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    c.saveDetail(&number3);
+    c.setPreferredDetail("message", number3);
+    
+    QContactEmailAddress email;
+    email.setEmailAddress("dummyemail");
+    c.saveDetail(&email);
+    c.setPreferredDetail("email", email);
+    
+    QVERIFY(m_engine->saveContact(&c, err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    //fetch the saved contact and check preferred details
+    QContact fetched = m_engine->contact(c.localId(), err);
+    QVERIFY(err == QContactManager::NoError);
+    
+    QContactDetail callDetail1 = fetched.preferredDetail("call");
+    QString name = callDetail1.definitionName();
+    QVERIFY(callDetail1.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber1 = static_cast<QContactPhoneNumber>(callDetail1);
+    QVERIFY(fetchedNumber1.number() == "123");
+    
+    QContactDetail callDetail2 = fetched.preferredDetail("videocall");
+    QVERIFY(callDetail2.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber2 = static_cast<QContactPhoneNumber>(callDetail2);
+    QVERIFY(fetchedNumber2.number() == "456");
+
+    QContactDetail callDetail3 = fetched.preferredDetail("message");
+    QVERIFY(callDetail3.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber3 = static_cast<QContactPhoneNumber>(callDetail3);
+    QVERIFY(fetchedNumber3.number() == "789");
+
+    QContactDetail emailDetail = fetched.preferredDetail("email");
+    QVERIFY(emailDetail.definitionName() == QContactEmailAddress::DefinitionName);
+    QContactEmailAddress fetchedEmail = static_cast<QContactEmailAddress>(emailDetail);
+    QVERIFY(fetchedEmail.emailAddress() == "dummyemail");
 }
 
 void TestSymbianEngine::saveContacts()
