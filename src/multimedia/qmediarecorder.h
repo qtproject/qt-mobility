@@ -103,18 +103,17 @@ public:
     QStringList supportedAudioCodecs() const;
     QString audioCodecDescription(const QString &codecName) const;
 
-    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
+    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings(),
+                                         bool *continuous = 0) const;
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
 
-    QSize minimumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QSize maximumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                      bool *continuous = 0) const;
 
-    qreal minimumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings());
-    qreal maximumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings());
-    QList<qreal> supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList<qreal> supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                     bool *continuous = 0) const;
 
     QAudioEncoderSettings audioSettings() const;
     QVideoEncoderSettings videoSettings() const;
@@ -144,7 +143,7 @@ private:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder)::State);
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder)::Error);
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::State));
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::Error));
 
 #endif  // QMEDIARECORDER_H
