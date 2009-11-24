@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,33 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef CNTRELATIONSHIP_H
-#define CNTRELATIONSHIP_H
+#ifndef QTRACKERRELATIONSHIPFETCHREQUEST_H_
+#define QTRACKERRELATIONSHIPFETCHREQUEST_H_
 
+#include <QObject>
+#include <qtrackercontactasyncrequest.h>
+#include <QPair>
+#include <QList>
+#include <QtTracker/QLive>
+#include <QtTracker/ontologies/nco.h>
 #include <qtcontacts.h>
-#include "cntrelationshipgroup.h"
 
+class QContactAbstractRequest;
 
-//Forward declarations
-class CContactDatabase;
-QTM_USE_NAMESPACE
-class CntRelationship
+class QTrackerRelationshipFetchRequest: public QObject, public QTrackerContactAsyncRequest
 {
+    Q_OBJECT
 public:
-    CntRelationship(CContactDatabase* contactDatabase);
-    virtual ~CntRelationship();
+    QTrackerRelationshipFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
+    virtual ~QTrackerRelationshipFetchRequest();
 
-public:
-    /* Relationships between contacts */
-    QStringList supportedRelationshipTypes(const QString& contactType) const;
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
-    bool saveRelationship(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> saveRelationships(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error);
-    bool removeRelationship(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error);
+private slots:
+    void modelUpdated();
 
 private:
-    QMap<QString, CntAbstractRelationship *> m_relationshipMap;
+    SopranoLive::LiveNodes query;
 };
 
-#endif
+#endif /* QTRACKERRELATIONSHIPFETCHREQUEST_H_ */

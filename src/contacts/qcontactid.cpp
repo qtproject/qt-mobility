@@ -46,7 +46,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactId
-  \brief The QContactId class uniquely identifies a contact in a particular manager.
+  \brief The QContactId class provides information that uniquely identifies
+  a contact in a particular manager.
  
   It consists of a manager URI which identifies the manager which contains the contact,
   and the local id of the contact in that manager.

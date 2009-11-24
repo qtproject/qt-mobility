@@ -87,6 +87,30 @@ static QVariant CEPropValToQVariant(const CEPROPVAL& val)
     return QVariant();
 }
 
+
+
+class WcsdupHelper {
+public:
+    WcsdupHelper() {}
+    ~WcsdupHelper() {
+        clear();
+    }
+    LPWSTR wcsdup(const ushort* str) {
+        LPWSTR newStr = wcsdup(str);
+        m_list.push_back(newStr);
+        return newStr;
+    }
+    void clear() {
+        foreach (LPWSTR str, m_list) {
+            free(str);
+        }
+    }
+private:
+    QList<LPWSTR> m_list; 
+};
+
+static WcsdupHelper wcsdupHelper;
+
 /*!
  * Convert the supplied QString \a value into a CEPROPVAL with the supplied \a id.
  *
@@ -100,7 +124,7 @@ static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QString& value)
     val.propid = id;
     val.wFlags = 0;
     val.wLenData = 0;
-    val.val.lpwstr = wcsdup(value.utf16()); // XXX leaks
+    val.val.lpwstr = wcsdupHelper.wcsdup(value.utf16());
 
     return val;
 }
@@ -357,11 +381,24 @@ static void processOrganisation(const QContactWinCEEngine*, const QVariantList& 
 {
     QContactOrganization org;
     setIfNotEmpty(org, QContactOrganization::FieldName, values[0].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldDepartment, values[1].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldLocation, values[2].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldTitle, values[3].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldAssistantName, values[4].toString());
 
     if (!org.isEmpty())
         ret.saveDetail(&org);
 }
 
+static void processFamily(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+{
+    QContactFamily family;
+    setIfNotEmpty(family, QContactFamily::FieldSpouse, values[0].toString());
+    setIfNotEmpty(family, QContactFamily::FieldChildren, values[1].toString());
+
+    if (!family.isEmpty())
+        ret.saveDetail(&family);
+}
 
 static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
 {
@@ -444,9 +481,14 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
 
         // Organisation
         PoomContactElement org;
-        org.poom << PIMPR_COMPANY_NAME;
+        org.poom << PIMPR_COMPANY_NAME << PIMPR_DEPARTMENT << PIMPR_OFFICE_LOCATION << PIMPR_JOB_TITLE << PIMPR_ASSISTANT_NAME;
         org.func = processOrganisation;
         list.append(org);
+
+        PoomContactElement family;
+        family.poom << PIMPR_SPOUSE <<  PIMPR_CHILDREN;
+        family.func = processFamily;
+        list.append(family);
 
         // XXX Unhandled:
         //
@@ -454,15 +496,9 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         //  PIMPR_CUSTOMERID
         //  PIMPR_GOVERNMENTID
         //
-        //  PIMPR_SPOUSE
-        //  PIMPR_CHILDREN
         //
         //  PIMPR_MANAGER
-        //  PIMPR_ASSISTANT_NAME
         //  PIMPR_ASSISTANT_TELEPHONE_NUMBER
-        //  PIMPR_JOB_TITLE
-        //  PIMPR_DEPARTMENT
-        //  PIMPR_OFFICE_LOCATION
         //  PIMPR_COMPANY_TELEPHONE_NUMBER
         //  PIMPR_YOMI_COMPANY
         //
@@ -502,6 +538,13 @@ static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props
     addIfNotEmpty(PIMPR_MIDDLE_NAME, detail.value(QContactName::FieldMiddle), props);
     addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLast), props);
     addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
+    return true;
+}
+
+static bool processQFamily(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    addIfNotEmpty(PIMPR_SPOUSE, detail.value(QContactFamily::FieldSpouse), props);
+    addIfNotEmpty(PIMPR_CHILDREN, detail.value(QContactFamily::FieldChildren), props);
     return true;
 }
 
@@ -549,6 +592,10 @@ static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
     QContactOrganization org(detail);
 
     addIfNotEmpty(PIMPR_COMPANY_NAME, org.name(), props);
+    addIfNotEmpty(PIMPR_DEPARTMENT, org.department().at(0), props);
+    addIfNotEmpty(PIMPR_OFFICE_LOCATION, org.location(), props);
+    addIfNotEmpty(PIMPR_JOB_TITLE, org.title(), props);
+    addIfNotEmpty(PIMPR_ASSISTANT_NAME, org.assistantName(), props);
     return true;
 }
 
@@ -766,6 +813,7 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
         hash.insert(QContactNickname::DefinitionName, processQNickname);
         hash.insert(QContactOrganization::DefinitionName, processQOrganisation);
         hash.insert(QContactUrl::DefinitionName, processQWebpage);
+        hash.insert(QContactFamily::DefinitionName, processQFamily);
     }
     ret = hash;
 }
@@ -873,6 +921,8 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
         qDebug() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
         error = QContactManager::UnspecifiedError;
     }
+    
+    wcsdupHelper.clear();
 
     return false;
 }

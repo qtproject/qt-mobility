@@ -45,12 +45,17 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+<<<<<<< HEAD:src/contacts/requests/qcontactrelationshipremoverequest.cpp
   \class QContactRelationshipRemoveRequest
   \brief The QContactRelationshipRemoveRequest class allows a client to
  asynchronously request that certain relationships be removed from a
  contacts store.
   
   \ingroup contacts-requests
+=======
+ * \class QContactRelationshipRemoveRequest
+ * \brief The QContactRelationshipRemoveRequest class allows a client to asynchronously request that certain relationships be removed from a contacts store
+>>>>>>> 1b639d508a550569a5623c10f7774f5bfa503d4a:src/contacts/requests/qcontactrelationshipremoverequest.cpp
  */
 
 /*!

@@ -47,11 +47,16 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+<<<<<<< HEAD:src/contacts/requests/qcontactrelationshipfetchrequest.cpp
   \class QContactRelationshipFetchRequest
   \brief The QContactRelationshipFetchRequest class allows a client to
   asynchronously request relationships from a contacts store manager.
   
   \ingroup contacts-requests
+=======
+ * \class QContactRelationshipFetchRequest
+ * \brief The QContactRelationshipFetchRequest class allows a client to asynchronously request relationships from a contacts store manager
+>>>>>>> 1b639d508a550569a5623c10f7774f5bfa503d4a:src/contacts/requests/qcontactrelationshipfetchrequest.cpp
  */
 
 /*!
