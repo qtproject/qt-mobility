@@ -52,7 +52,8 @@
 S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent)
     : QMediaPlayerControl(parent),
       m_mediaPlayerResolver(mediaPlayerResolver),
-      m_session(NULL)
+      m_session(NULL),
+      m_stream(NULL)
 {
     m_controlSettings.m_vol = -1;
     m_controlSettings.m_muted = false;
