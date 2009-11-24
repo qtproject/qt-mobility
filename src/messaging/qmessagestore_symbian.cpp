@@ -338,5 +338,5 @@ void QMessageStore::unregisterNotificationFilter(QMessageStore::NotificationFilt
     messageStorePrivate()->unregisterNotificationFilter(notificationFilterId);
 }
 
-
+#include "moc_qmessagestore_symbian_p.cpp"
 QTM_END_NAMESPACE
