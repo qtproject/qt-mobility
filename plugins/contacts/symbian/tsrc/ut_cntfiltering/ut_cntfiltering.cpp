@@ -214,7 +214,8 @@ void TestFiltering::createContacts()
     QList<QContactLocalId> cnt_ids = mCntMng->contacts();
     cnt_ids = mCntMng->contacts();
     int j = cnt_ids.count();
-    int x(0);
+    // 5 contacts created in code, so check if all 5 were created
+    QVERIFY(5 == j);
     
 }
 
@@ -411,13 +412,14 @@ void TestFiltering::testContactDetailFilter()
         QString value = cdf.value().toString();
         QString field = cdf.detailFieldName();
         QString defname = cdf.detailDefinitionName();
-        for(int j=0; j<cnt_ids.count(); j++) {
-            QContact c = mCntMng->contact(cnt_ids[j]);
-            QContactDetail d = c.detail(defname);
-            //QVERIFY(d.definitionName() == defname);
+        for(int j=0; j<seachedcontactcount; j++) {
+            QContact sc = mCntMng->contact(cnt_ids[j]);
+            QContactDetail scDetail = sc.detail(defname);
+            QString scDetailValue = scDetail.value(field);
+            QVERIFY(scDetail.definitionName() == defname);
             // Not testing equal to due to MatchFlags definitions
             // in the filter.
-           // QVERIFY(d.value(field).contains(value));
+            QVERIFY(scDetailValue.contains(value));
         }
     }
 }

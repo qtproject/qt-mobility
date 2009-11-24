@@ -50,16 +50,17 @@ QTM_BEGIN_NAMESPACE
     \ingroup multimedia-serv
 
     \preliminary
-    \brief The QMediaRecorderControl provides access to the recording functionality of a
-    QMediaService.
+    \brief The QMediaRecorderControl class provides access to the recording
+    functionality of a QMediaService.
 
-    If a QMediaService can record media it will implement QMediaRecorderControl.  This control
-    provides a means to set the \l {outputLocation()}{output location}, and \l {record()}{start},
-    \l {pause()}{pause} and \l {stop()}{stop} recording.  It also provides feedback on the
-    \l {duration()}{duration} of the recording.
+    If a QMediaService can record media it will implement QMediaRecorderControl.
+    This control provides a means to set the \l {outputLocation()}{output location},
+    and \l {record()}{start}, \l {pause()}{pause} and \l {stop()}{stop}
+    recording.  It also provides feedback on the \l {duration()}{duration}
+    of the recording.
 
-    The functionality provided by this control is exposed to application code through the
-    QMediaRecorder class.
+    The functionality provided by this control is exposed to application
+    code through the QMediaRecorder class.
 
     The interface name of QMediaRecorderControl is \c com.nokia.Qt.QMediaRecorderControl/1.0 as
     defined in QMediaRecorderControl_iid.

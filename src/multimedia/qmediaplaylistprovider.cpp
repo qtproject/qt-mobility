@@ -197,9 +197,9 @@ bool QMediaPlaylistProvider::insertItem(int position, const QMediaContent &media
 }
 
 /*!
-    Inserts multiple media items into a playlist at \a position.
+    Inserts multiple media \a items into a playlist at \a position.
 
-    Returns true if the media items were inserted; and false otherwise.
+    Returns true if the media \a items were inserted; and false otherwise.
 */
 bool QMediaPlaylistProvider::insertItems(int position, const QList<QMediaContent> &items)
 {

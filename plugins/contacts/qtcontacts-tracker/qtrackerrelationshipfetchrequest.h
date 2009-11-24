@@ -38,49 +38,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOAREAMONITOR_H
-#define QGEOAREAMONITOR_H
 
-#include "qmobilityglobal.h"
-#include "qgeocoordinate.h"
+#ifndef QTRACKERRELATIONSHIPFETCHREQUEST_H_
+#define QTRACKERRELATIONSHIPFETCHREQUEST_H_
 
 #include <QObject>
+#include <qtrackercontactasyncrequest.h>
+#include <QPair>
+#include <QList>
+#include <QtTracker/QLive>
+#include <QtTracker/ontologies/nco.h>
+#include <qtcontacts.h>
 
-QT_BEGIN_HEADER
+class QContactAbstractRequest;
 
-QTM_BEGIN_NAMESPACE
-
-class QGeoPositionInfo;
-class QGeoAreaMonitorPrivate;
-class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
+class QTrackerRelationshipFetchRequest: public QObject, public QTrackerContactAsyncRequest
 {
     Q_OBJECT
-    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius)
-
 public:
-    explicit QGeoAreaMonitor(QObject *parent);
-    virtual ~QGeoAreaMonitor() = 0;
+    QTrackerRelationshipFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
+    virtual ~QTrackerRelationshipFetchRequest();
 
-    virtual void setCenter(const QGeoCoordinate &coordinate);
-    QGeoCoordinate center() const;
-
-    virtual void setRadius(qreal radius);
-    qreal radius() const;
-
-    static QGeoAreaMonitor *createDefaultMonitor(QObject *parent);
-
-Q_SIGNALS:
-    void areaEntered(const QGeoPositionInfo &update);
-    void areaExited(const QGeoPositionInfo &update);
+private slots:
+    void modelUpdated();
 
 private:
-    Q_DISABLE_COPY(QGeoAreaMonitor)
-    QGeoAreaMonitorPrivate *d;
-}; 
+    SopranoLive::LiveNodes query;
+};
 
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif
+#endif /* QTRACKERRELATIONSHIPFETCHREQUEST_H_ */

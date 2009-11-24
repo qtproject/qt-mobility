@@ -74,6 +74,18 @@ CntRelationship::~CntRelationship()
     }
 }
 
+/*!
+ * \return The supported relationship types.
+ */
+QStringList CntRelationship::supportedRelationshipTypes(const QString& contactType) const
+{
+    QStringList supportedTypes;
+
+    foreach(QString type, m_relationshipMap.keys()) {
+        supportedTypes.append(type);
+    }
+    return supportedTypes;
+}
 
 /* !
  * Retrive the contacts relationships

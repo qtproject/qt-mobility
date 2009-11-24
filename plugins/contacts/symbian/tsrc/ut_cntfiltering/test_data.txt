@@ -35,19 +35,32 @@
          //Name - MatchEndsWith
 [ContactDetailFilter7: Name, First, nn, 3, 3, 0]
 [ContactDetailFilter8: Name, Last, ack, 3, 1, 0]
-
+         //Name - No results search
+[ContactDetailFilter7: Name, First, King, 3, 0, 0]
+[ContactDetailFilter8: Name, Last, Queen, 3, 0, 0]
 //-----------------------------------------------------------------------
 //Email - Match exactly
 [ContactDetailFilter9: EmailAddress, EmailAddress, ste.Fed@nokia.com, 0, 1, 0]
 //Email - MatchContains
-[ContactDetailFilter11: EmailAddress, EmailAddress, nokia, 1, 5, 0]
+[ContactDetailFilter10: EmailAddress, EmailAddress, nokia, 1, 5, 0]
 //Email - MatchStartsWith
-[ContactDetailFilter13: EmailAddress, EmailAddress, Joronn, 2, 1, 0]
+[ContactDetailFilter11: EmailAddress, EmailAddress, Joronn, 2, 1, 0]
 //Email - MatchEndsWith
-[ContactDetailFilter7: EmailAddress, EmailAddress, com, 3, 5, 0]
+[ContactDetailFilter12: EmailAddress, EmailAddress, com, 3, 5, 0]
+//Email - No results search
+[ContactDetailFilter13: EmailAddress, EmailAddress, andrewf, 3, 0, 0]
 //-----------------------------------------------------------------------
-
-
+//Phonenumber - Match exactly
+[ContactDetailFilter14: PhoneNumber, PhoneNumber, +026434234423, 0, 1, 0]
+//Phonenumber - MatchContains
+[ContactDetailFilter15: PhoneNumber, PhoneNumber, 225214, 1, 0, 0]
+//Phonenumber - MatchStartsWith
+[ContactDetailFilter16: PhoneNumber, PhoneNumber, +358, 2, 0, 0]
+//Phonenumber - MatchEndsWith
+[ContactDetailFilter17: PhoneNumber, PhoneNumber, 035022423, 3, 2, 0]
+//Phonenumber - No results search
+[ContactDetailFilter18: PhoneNumber, PhoneNumber, 52252361425342322, 3, 0, 0]
+//-----------------------------------------------------------------------
 // [ActionFilter: ActionName, Value, Vendor, 20]
 
 // [ContactDetailRangeFilter: ActionName, Value, Vendor, 20]
