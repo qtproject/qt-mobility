@@ -324,15 +324,14 @@ setlocal
     )
 
     %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
-    %MOBILITY_MAKE% clean >> %PROJECT_LOG%
-    set > compile-test.env 2>&1
+    %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
     %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
 
     set FAILED=0
     if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% SBS^="@sbs --check"') do set FAILED=1
     ) else if %MOBILITY_BUILDSYSTEM% == symbian-abld (
-        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% ABLD^="@ABLD.BAT -c"') do set FAILED=1
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% ABLD^="@ABLD.BAT -c"') do if not %%i == bldfiles set FAILED=1
     ) else if errorlevel 1 (
         set FAILED=1
     )
