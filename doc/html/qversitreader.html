@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qversitreader.cpp -->
+<head>
+  <title>Qt Mobility 1.0: QVersitReader Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitReader Class Reference</h1>
+<p>QVersitReader provides an interface for reading versit documents such as vCards from a stream. <a href="#details">More...</a></p>
+<pre>    #include &lt;QVersitReader&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qversitreader-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#QVersitReader">QVersitReader</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#dtor.QVersitReader">~QVersitReader</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#device">device</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#readAll">readAll</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVersitDocument&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#result">result</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#startReading">startReading</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#readingDone">readingDone</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>QVersitReader provides an interface for reading versit documents such as vCards from a stream.</p>
+<p>QVersitReader reads 0..n versit documents such as vCards from a text stream into 0..n <a href="qversitdocument.html">QVersitDocument</a> instances. QVersitReader supports reading from an abstract I/O device which can be for example a file or a memory buffer. The reading can be done synchronously or asynchronously.</p>
+<pre><span class="comment">    // An example of reading a simple vCard from a memory buffer:</span>
+    QBuffer vCardBuffer;
+    vCardBuffer.open(QBuffer::ReadWrite);
+    QByteArray vCard =
+        &quot;BEGIN:VCARD\r\nVERSION:2.1\r\nN:Simpson;Homer;J;;\r\nEND:VCARD\r\n&quot;;
+    vCardBuffer.write(vCard);
+    vCardBuffer.seek(0);
+    QVersitReader reader;
+    reader.setDevice(&amp;vCardBuffer);
+    if (reader.readAll()) {
+        QList&lt;QVersitDocument&gt; versitDocuments = reader.result();
+        <span class="comment">// Use the resulting document(s)...</span>
+    }</pre>
+<p>See also <a href="qversitdocument.html">QVersitDocument</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QVersitReader"></a>QVersitReader::QVersitReader ()</h3>
+<p>Constructs a new reader.</p>
+<h3 class="fn"><a name="dtor.QVersitReader"></a>QVersitReader::~QVersitReader ()</h3>
+<p>Frees the memory used by the reader. Waits until a pending asynchronous reading has been completed.</p>
+<h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * QVersitReader::device () const</h3>
+<p>Returns the device used for reading input.</p>
+<p>See also <a href="qversitreader.html#setDevice">setDevice</a>().</p>
+<h3 class="fn"><a name="readAll"></a>bool QVersitReader::readAll ()</h3>
+<p>Reads the input synchronously. Returns false if the input device has not been set or opened or if there is an asynchronous read operation pending. Using this function may block the user thread for an undefined period. In most cases asynchronous <a href="qversitreader.html#startReading">startReading</a>() should be used instead.</p>
+<h3 class="fn"><a name="readingDone"></a>void QVersitReader::readingDone ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>The signal is emitted by the reader when the asynchronous reading has been completed.</p>
+<h3 class="fn"><a name="result"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; QVersitReader::result () const</h3>
+<p>Returns the reading result or an empty list if the reading was not completed successfully.</p>
+<h3 class="fn"><a name="setDevice"></a>void QVersitReader::setDevice ( <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
+<p>Sets the device used for reading the input to be the given device <i>device</i>.</p>
+<p>See also <a href="qversitreader.html#device">device</a>().</p>
+<h3 class="fn"><a name="startReading"></a>bool QVersitReader::startReading ()</h3>
+<p>Starts reading the input asynchronously. Returns false if the input device has not been set or opened or if there is another asynchronous read operation already pending. Signal <a href="qversitreader.html#readingDone">readingDone</a>() is emitted when the reading has finished.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+</tr></table></div></address></body>
+</html>

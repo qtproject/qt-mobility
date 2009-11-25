@@ -13,7 +13,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageContentContainer Class Reference</h1>
-<p>The QMessageContentContainer class provides an interface for internet media (MIME) type content that is possibly only partially retrieved. <a href="#details">More...</a></p>
+<p>The QMessageContentContainer class provides an interface for internet media (MIME) and Transport Neutral Encapsulation Format (TNEF) content that is possibly only partially retrieved. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMessageContentContainer&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherited by <a href="qmessage.html">QMessage</a>.</p>
 <ul>
@@ -46,7 +46,7 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QMessageContentContainer class provides an interface for internet media (MIME) type content that is possibly only partially retrieved.</p>
+<p>The QMessageContentContainer class provides an interface for internet media (MIME) and Transport Neutral Encapsulation Format (TNEF) content that is possibly only partially retrieved.</p>
 <p>A QMessageContentContainer object can either directly contain media such as text, image, audio, video, application or message data, or contain multiple parts of content, but can not contain both media and multiple parts directly.</p>
 <p>Container objects can be obtained via their <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> identifier, using the <a href="qmessagecontentcontainer.html#find">find</a>() function of the containing <a href="qmessage.html">QMessage</a> object.</p>
 <p>For textual content using a recognized charset encoding <a href="qmessagecontentcontainer.html#textContent">textContent</a>() will return the content as a unicode string.</p>

@@ -4,15 +4,24 @@ TARGET = publish-subscribe
 INCLUDEPATH += ../../src/publishsubscribe
 DEPENDPATH += ../../src/publishsubscribe
 
-HEADERS = providerdialog.h \
-          consumerdialog.h
+symbian {
+    crmlFiles.sources = example.qcrml
+    crmlFiles.path = c:/resource/qt/crml
+    DEPLOYMENT += crmlFiles
+
+    TARGET.UID3 = 0x2002AC79
+}
+
+
+HEADERS = publisherdialog.h \
+          subscriberdialog.h
 
 SOURCES = main.cpp \
-          providerdialog.cpp \
-          consumerdialog.cpp
+          publisherdialog.cpp \
+          subscriberdialog.cpp
 
-FORMS = providerdialog.ui \
-        consumerdialog.ui
+FORMS = publisherdialog.ui \
+        subscriberdialog.ui
 
 include(../examples.pri)
 

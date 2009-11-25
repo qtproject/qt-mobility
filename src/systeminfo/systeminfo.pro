@@ -118,6 +118,14 @@ unix: {
         TARGET.UID3 = 0x2002ac7d
         MMP_RULES += EXPORTUNFROZEN
         
+        deploy.path = $${EPOCROOT}
+        exportheaders.sources = $$PUBLIC_HEADERS
+        exportheaders.path = epoc32/include
+    
+        for(header, exportheaders.sources) {
+            BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+        }
+
 
         QtSystemInfoDeployment.sources = QtSystemInfo_beta.dll
         QtSystemInfoDeployment.path = /sys/bin

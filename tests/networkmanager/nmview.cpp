@@ -189,7 +189,7 @@ void NMView::getActiveConnections()
 void NMView::update()
 {
 //    if(sess)
-//    qWarning() << __FUNCTION__<< sess->sentData() << sess->bearerName();
+//    qWarning() << __FUNCTION__<< sess->bytesWritten() << sess->bearerName();
 //    QNetworkManagerInterface *dbIface;
 //    dbIface = new QNetworkManagerInterface;
 //    QList <QDBusObjectPath> connections = dbIface->activeConnections();

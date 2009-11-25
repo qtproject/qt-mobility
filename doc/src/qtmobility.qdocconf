@@ -11,6 +11,7 @@ headerdirs = ../../src/bearer \
              ../../src/contacts \
              ../../src/multimedia \
              ../../src/messaging \
+             ../../src/versit \
              .
 
 sourcedirs = ../../src/bearer \
@@ -21,6 +22,7 @@ sourcedirs = ../../src/bearer \
              ../../src/contacts \
              ../../src/multimedia \
              ../../src/messaging \
+             ../../src/versit \
              .
 
 excludedirs = ../../src/messaging/win32wce
@@ -28,6 +30,8 @@ excludedirs = ../../src/messaging/win32wce
 exampledirs = ../../examples \
               ../.. \
               .
+
+excludedirs = ../../src/publishsubscribe/symbian
 
 indexes                 = qt.index
 

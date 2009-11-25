@@ -131,20 +131,20 @@ public:
     QNetworkInterface interfaceForMode(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
 
 
-   void emitNetworkStatusChanged(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode), QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkStatus));
-   void emitNetworkSignalStrengthChanged(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode),int);
+   void emitNetworkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+   void emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
 
    static QSystemNetworkInfoPrivate *instance();
 protected:
    void timerEvent(QTimerEvent *event);
 
 Q_SIGNALS:
-   void networkStatusChanged(QtMobility::QSystemNetworkInfo::NetworkMode, QtMobility::QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QtMobility::QSystemNetworkInfo::NetworkMode,int);
+   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
    void currentMobileCountryCodeChanged(const QString &);
    void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QtMobility::QSystemNetworkInfo::NetworkMode, const QString &);
-   void networkModeChanged(QtMobility::QSystemNetworkInfo::NetworkMode);
+   void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
+   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 private Q_SLOTS:
    void networkStrengthTimeout();
    void networkStatusTimeout();
@@ -227,10 +227,10 @@ public:
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
-    void batteryStatusChanged(QtMobility::QSystemDeviceInfo::BatteryStatus );
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
 
-    void powerStateChanged(QtMobility::QSystemDeviceInfo::PowerState);
-    void currentProfileChanged(QtMobility::QSystemDeviceInfo::Profile);
+    void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
 private:

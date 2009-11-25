@@ -34,11 +34,8 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber">QValueSpaceSubscriber</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber-2">QValueSpaceSubscriber</a></b> ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber-3">QValueSpaceSubscriber</a></b> ( const QString &amp; <i>path</i>, QValueSpace::LayerOptions <i>filter</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber-4">QValueSpaceSubscriber</a></b> ( const QString &amp; <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber-5">QValueSpaceSubscriber</a></b> ( const char * <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber-6">QValueSpaceSubscriber</a></b> ( const char * <i>path</i>, QValueSpace::LayerOptions <i>filter</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber-7">QValueSpaceSubscriber</a></b> ( const char * <i>path</i>, const QUuid &amp; <i>uuid</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber-3">QValueSpaceSubscriber</a></b> ( QValueSpace::LayerOptions <i>filter</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber-4">QValueSpaceSubscriber</a></b> ( const QUuid &amp; <i>uuid</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#dtor.QValueSpaceSubscriber">~QValueSpaceSubscriber</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#cd">cd</a></b> ( const QString &amp; <i>path</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#cdUp">cdUp</a></b> ()</td></tr>
@@ -48,7 +45,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#path-prop">setPath</a></b> ( QValueSpaceSubscriber * <i>subscriber</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#subPaths">subPaths</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#value">value</a></b> ( const QString &amp; <i>subPath</i> = QString(), const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#value-2">value</a></b> ( const char * <i>subPath</i>, const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
@@ -113,27 +109,12 @@
 <h3 class="fn"><a name="QValueSpaceSubscriber-2"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>.</p>
 <p>The constructed Value Space subscriber will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
-<h3 class="fn"><a name="QValueSpaceSubscriber-3"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOptions</a> <i>filter</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceSubscriber-3"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOptions</a> <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will access.</p>
 <p>If a layer matching <i>filter</i> is not found, the constructed <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will be unconnected.</p>
 <p>See also <a href="qvaluespacesubscriber.html#isConnected">isConnected</a>().</p>
-<h3 class="fn"><a name="QValueSpaceSubscriber-4"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, const <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> &amp; <i>uuid</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpaceSubscriber-4"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> &amp; <i>uuid</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>. This <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will only use the layer identified by <i>uuid</i>.</p>
-<p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a QAbstractValueSpaceLayer::LayerOptions parameter instead.</p>
-<p>If a layer with a matching <i>uuid</i> is not found, the constructed <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will be unconnected.</p>
-<p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespacesubscriber.html#isConnected">isConnected</a>().</p>
-<h3 class="fn"><a name="QValueSpaceSubscriber-5"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const char * <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>. This constructor is equivalent to calling <tt>QValueSpaceSubscriber(QString::fromLatin1(path), parent)</tt>.</p>
-<p>The constructed Value Space subscriber will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
-<h3 class="fn"><a name="QValueSpaceSubscriber-6"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const char * <i>path</i>, <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOptions</a> <i>filter</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will access. This constructor is equivalent to calling <tt>QValueSpaceSubscriber(QString::fromLatin1(path), filter, parent)</tt>.</p>
-<p>If a layer matching <i>filter</i> is not found, the constructed <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will be unconnected.</p>
-<p>See also <a href="qvaluespacesubscriber.html#isConnected">isConnected</a>().</p>
-<h3 class="fn"><a name="QValueSpaceSubscriber-7"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const char * <i>path</i>, const <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> &amp; <i>uuid</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>This is an overloaded function.</p>
-<p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>. This <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will only use the layer identified by <i>uuid</i>. This constructor is equivalent to calling <tt>QValueSpaceSubscriber(QString::fromLatin1(path), uuid, parent)</tt>.</p>
 <p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a QAbstractValueSpaceLayer::LayerOptions parameter instead.</p>
 <p>If a layer with a matching <i>uuid</i> is not found, the constructed <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will be unconnected.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespacesubscriber.html#isConnected">isConnected</a>().</p>
@@ -163,9 +144,6 @@
 
 <span class="comment">    // Is true</span>
     equiv.value() == base.value(&quot;Nokia/General/Mapping&quot;);</pre>
-<h3 class="fn"><a name="value-2"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QValueSpaceSubscriber::value ( const char * <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>def</i> = QVariant() ) const</h3>
-<p>This is an overloaded function.</p>
-<p>This is a convenience overload and is equivalent to <tt>value(QString::fromLatin1(subPath), def)</tt>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

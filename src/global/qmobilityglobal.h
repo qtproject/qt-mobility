@@ -88,6 +88,11 @@
 #      else
 #        define Q_CONTACTS_EXPORT Q_DECL_IMPORT
 #      endif
+#      if defined(QT_BUILD_VERSIT_LIB)
+#        define Q_VERSIT_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_VERSIT_EXPORT Q_DECL_IMPORT
+#      endif
 #      if defined(QT_BUILD_LOCATION_LIB)
 #        define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #      else
@@ -117,6 +122,7 @@
 #      define Q_BEARER_EXPORT Q_DECL_IMPORT
 #      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #      define Q_CONTACTS_EXPORT Q_DECL_IMPORT
+#      define Q_VERSIT_EXPORT Q_DECL_IMPORT
 #      define Q_LOCATION_EXPORT Q_DECL_IMPORT
 #      define Q_MEDIA_EXPORT Q_DECL_IMPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
@@ -130,6 +136,7 @@
 #      define Q_BEARER_EXPORT Q_DECL_EXPORT
 #      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #      define Q_CONTACTS_EXPORT Q_DECL_EXPORT
+#      define Q_VERSIT_EXPORT Q_DECL_EXPORT
 #      define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #      define Q_MEDIA_EXPORT Q_DECL_EXPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
@@ -139,6 +146,7 @@
 #      define Q_BEARER_EXPORT
 #      define Q_PUBLISHSUBSCRIBE_EXPORT
 #      define Q_CONTACTS_EXPORT
+#      define Q_VERSIT_EXPORT
 #      define Q_LOCATION_EXPORT
 #      define Q_MEDIA_EXPORT
 #      define Q_MESSAGING_EXPORT

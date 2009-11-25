@@ -32,7 +32,7 @@ wince* {
 }
 
 SUBDIRS += qvaluespace \                           #Publish and Subscribe
-           qvaluespaceprovider \
+           qvaluespacepublisher \
            qvaluespacesubscriber \
 	   qcrmlparser
 
@@ -67,6 +67,18 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactmanagerplugins \
             qcontactmanagerfiltering \
             qcontactrelationship
+
+# Versit module
+SUBDIRS += \
+            qvcard21writer \
+            qvcard30writer \
+            qversitcontactexporter \
+            qversitcontactimporter \
+            qversitdocument \
+            qversitproperty \
+            qversitreader \
+            qversitutils \
+            qversitwriter
 
 
 SUBDIRS += \             #Multimedia

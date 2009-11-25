@@ -86,8 +86,8 @@ class Q_AUTOTEST_EXPORT ServiceDatabase : public QObject
         void setDatabasePath(const QString &databasePath);
         QString databasePath() const;
 
-        bool registerService(const ServiceMetaDataResults &service);
-        bool unregisterService(const QString &serviceName);
+        bool registerService(const ServiceMetaDataResults &service, const QString &securityToken = QString());
+        bool unregisterService(const QString &serviceName, const QString &securityToken = QString());
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter);
         QServiceInterfaceDescriptor getInterface(const QString &interfaceID);

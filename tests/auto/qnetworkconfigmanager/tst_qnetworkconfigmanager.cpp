@@ -186,7 +186,7 @@ void tst_QNetworkConfigurationManager::cleanup()
 void printConfigurationDetails(const QNetworkConfiguration& p)
 {
     qDebug() << p.name() <<":  isvalid->" <<p.isValid() << " type->"<< p.type() << 
-                " roaming->" << p.roamingAvailable() << "identifier->" << p.identifier() <<
+                " roaming->" << p.isRoamingAvailable() << "identifier->" << p.identifier() <<
                 " purpose->" << p.purpose() << " state->" << p.state();
 }
 
@@ -253,6 +253,11 @@ void tst_QNetworkConfigurationManager::allConfigurations()
     //getactive configurations only
     configs = manager.allConfigurations(QNetworkConfiguration::Active);
     int active = configs.count();
+    if (active)
+        QVERIFY(manager.isOnline());
+    else
+        QVERIFY(!manager.isOnline());
+
     //QVERIFY(active);
     qDebug() << "Active configurations:" << active;
     foreach(const QNetworkConfiguration p, configs) {
@@ -291,7 +296,7 @@ void tst_QNetworkConfigurationManager::defaultConfiguration()
         QVERIFY(defaultConfig.isValid());
         QCOMPARE(defaultConfig.name(), QString("UserChoice"));
         QCOMPARE(defaultConfig.children().count(), 0);
-        QVERIFY(!defaultConfig.roamingAvailable());
+        QVERIFY(!defaultConfig.isRoamingAvailable());
         QCOMPARE(defaultConfig.state(), QNetworkConfiguration::Discovered);
         QNetworkConfiguration copy = manager.configurationFromIdentifier(defaultConfig.identifier());
         QVERIFY(copy == defaultConfig);

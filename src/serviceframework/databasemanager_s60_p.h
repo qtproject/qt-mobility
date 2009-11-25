@@ -82,26 +82,25 @@ class RDatabaseManagerSession : public RSessionBase
         void Close();
         TVersion Version() const;
 
-        bool RegisterService(ServiceMetaDataResults& aService, TInt aScope);
-        bool UnregisterService(const QString& aServiceName, TInt aScope);
+        bool RegisterService(ServiceMetaDataResults& aService);
+        bool UnregisterService(const QString& aServiceName);
 
-        QList<QServiceInterfaceDescriptor> Interfaces(const QServiceFilter& aFilter, TInt aScope);
-        QStringList ServiceNames(const QString& aInterfaceName, TInt aScope);
+        QList<QServiceInterfaceDescriptor> Interfaces(const QServiceFilter& aFilter);
+        QStringList ServiceNames(const QString& aInterfaceName);
 
-        QServiceInterfaceDescriptor InterfaceDefault(const QString& aInterfaceName, TInt aScope);
-        bool SetInterfaceDefault(const QString& aServiceName, const QString& aInterfaceName, TInt aScope);
-        bool SetInterfaceDefault(const QServiceInterfaceDescriptor& aInterface, TInt aScope);
+        QServiceInterfaceDescriptor InterfaceDefault(const QString& aInterfaceName);
+        bool SetInterfaceDefault(const QString& aServiceName, const QString& aInterfaceName);
+        bool SetInterfaceDefault(const QServiceInterfaceDescriptor& aInterface);
 
         DBError LastError();
 
-        void SetChangeNotificationsEnabled(TInt aScope, bool aEnabled);
+        void SetChangeNotificationsEnabled(bool aEnabled);
         
         void NotifyServiceSignal(TRequestStatus& aStatus);
         void CancelNotifyServiceSignal() const;
         
     public:
         TBuf<255> iServiceName;
-        TPckgBuf<TInt> iScope;
         TPckgBuf<TInt> iState;
 
     private:

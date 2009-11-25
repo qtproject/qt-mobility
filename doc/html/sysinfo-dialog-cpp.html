@@ -61,6 +61,7 @@
     #include &quot;ui_dialog.h&quot;
     #endif
     #include &lt;QMessageBox&gt;
+    #include &lt;QTimer&gt;
 
     Dialog::Dialog(QWidget *parent) :
         QDialog(parent),
@@ -73,7 +74,9 @@
         connect(ui-&gt;tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
         connect(ui-&gt;versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
         connect(ui-&gt;featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
-
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
+        timer-&gt;start(1000);
     }
 
     Dialog::~Dialog()
@@ -183,9 +186,6 @@
         connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
                 this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
-        connect(di, SIGNAL(bluetoothStateChanged(bool)),
-            ui-&gt;bluetoothOnCheckBox, SLOT(setChecked(bool)));
-
         ui-&gt;ImeiLabel-&gt;setText(di-&gt;imei());
         ui-&gt;imsiLabel-&gt;setText(di-&gt;imsi());
         ui-&gt;manufacturerLabel-&gt;setText(di-&gt;manufacturer());
@@ -230,6 +230,12 @@
         }
 
         ui-&gt;inputMethodLabel-&gt;setText(inputs.join(&quot; &quot;));
+    }
+
+    void Dialog::updateDeviceLockedState()
+    {
+        if (di)
+            ui-&gt;deviceLockCheckBox-&gt;setChecked(di-&gt;isDeviceLocked());
     }
 
     void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
@@ -426,8 +432,6 @@
     {
         if (!saver) {
             saver = new QSystemScreenSaver(this);
-            ui-&gt;screenLockCheckBox-&gt;setChecked(saver-&gt;isScreenLockOn());
-            ui-&gt;screenLockCheckBox-&gt;show();
         }
 
         bool saverEnabled = saver-&gt;screenSaverInhibited();
@@ -443,15 +447,12 @@
         if (b) {
             if (!saver) {
                 saver = new QSystemScreenSaver(this);
-                ui-&gt;screenLockCheckBox-&gt;setChecked(saver-&gt;isScreenLockOn());
-                ui-&gt;screenLockCheckBox-&gt;show();
             }
            if(saver-&gt;setScreenSaverInhibit()) {
             }
         } else {
             delete saver;
             saver = NULL;
-            ui-&gt;screenLockCheckBox-&gt;hide();
         }
     }
 

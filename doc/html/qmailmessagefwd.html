@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qmailmessagefwd.cpp -->
+<head>
+  <title>Qt Mobility 1.0: QMailMessageFwd Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMailMessageFwd Class Reference</h1>
+<p>The QMailMessageFwd class declares enumerations used by <a href="qmailmessage.html">QMailMessage</a> <a href="#details">More...</a></p>
+<pre>    #include &lt;QMailMessageFwd&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherited by <a href="qmailmessage.html">QMailMessage</a>.</p>
+<ul>
+<li><a href="qmailmessagefwd-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagefwd.html#AttachmentsAction-enum">AttachmentsAction</a></b> { LinkToAttachments, CopyAttachments, CopyAndDeleteAttachments }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagefwd.html#ChunkType-enum">ChunkType</a></b> { Text, Reference }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagefwd.html#EncodingFormat-enum">EncodingFormat</a></b> { HeaderOnlyFormat, StorageFormat, TransmissionFormat, IdentityFormat }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">typedef </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagefwd.html#MessageChunk-typedef">MessageChunk</a></b></td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QMailMessageFwd class declares enumerations used by <a href="qmailmessage.html">QMailMessage</a></p>
+<p>QMailMessageFwd allows <a href="qmailmessagefwd.html#AttachmentsAction-enum">QMailMessage::AttachmentsAction</a> and <a href="qmailmessagefwd.html#EncodingFormat-enum">QMailMessage::EncodingFormat</a> to be used without including all of <tt>qmailmessage.h</tt>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="AttachmentsAction-enum"></a>enum QMailMessageFwd::AttachmentsAction</h3>
+<p>This enum type is used to describe the action that should be performed on each message attachment.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::LinkToAttachments</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Add a part to the message containing a link to the supplied attachment. If the document is removed, the message will no longer have access to the data.</td></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::CopyAttachments</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Add a part to the message containing a copy of the data in the supplied attachment. If the document is removed, the message will still contain the data.</td></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::CopyAndDeleteAttachments</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Add a part to the message containing a copy of the data in the supplied attachment, then delete the document from which the data was copied.</td></tr>
+</table></p>
+<h3 class="fn"><a name="ChunkType-enum"></a>enum QMailMessageFwd::ChunkType</h3>
+<p>This enum type is used to denote the content of a single chunk in a partitioned output sequence.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::Text</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The chunk contains verbatim output text.</td></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::Reference</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The chunk contains a reference to an external datum.</td></tr>
+</table></p>
+<h3 class="fn"><a name="EncodingFormat-enum"></a>enum QMailMessageFwd::EncodingFormat</h3>
+<p>This enum type is used to describe the format in which a message should be serialized.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::HeaderOnlyFormat</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Only the header portion of the message is serialized, to RFC 2822 form.</td></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::StorageFormat</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The message is serialized to RFC 2822 form, without attachments.</td></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::TransmissionFormat</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The entire message is serialized to RFC 2822 form, with additional header fields added if necessary, and 'bcc' header field omitted.</td></tr>
+<tr><td valign="top"><tt>QMailMessageFwd::IdentityFormat</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The entire message is serialized to RFC 2822 form, with only Content-Type and Content-Transfer-Encoding headers added where required.</td></tr>
+</table></p>
+<h3 class="fn"><a name="MessageChunk-typedef"></a>typedef QMailMessageFwd::MessageChunk</h3>
+<p>This type defines a single chunk in a sequence of partitioned ouput data.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+</tr></table></div></address></body>
+</html>

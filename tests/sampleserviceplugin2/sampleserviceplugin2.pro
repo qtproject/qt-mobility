@@ -13,9 +13,12 @@ MOBILITY = serviceframework
 symbian {
     load(data_caging_paths)
     pluginDep.sources = tst_sfw_sampleserviceplugin2.dll
-    pluginDep.path = $$QT_PLUGINS_BASE_DIR    
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR/plugins   
     
-    DEPLOYMENT += pluginDep
+    pluginDep2.sources = qmakepluginstubs/tst_sfw_sampleserviceplugin2.qtplugin
+    pluginDep2.path = $$QT_PLUGINS_BASE_DIR
+	
+    DEPLOYMENT += pluginDep \ pluginDep2
 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB

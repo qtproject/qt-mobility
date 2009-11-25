@@ -342,16 +342,16 @@
         }
 
         switch (conf.purpose()) {
-        case QNetworkConfiguration::Unknown:
+        case QNetworkConfiguration::UnknownPurpose:
             configurationPurpose-&gt;setText(tr(&quot;Unknown&quot;));
             break;
-        case QNetworkConfiguration::Public:
+        case QNetworkConfiguration::PublicPurpose:
             configurationPurpose-&gt;setText(tr(&quot;Public&quot;));
             break;
-        case QNetworkConfiguration::Private:
+        case QNetworkConfiguration::PrivatePurpose:
             configurationPurpose-&gt;setText(tr(&quot;Private&quot;));
             break;
-        case QNetworkConfiguration::ServiceSpecific:
+        case QNetworkConfiguration::ServiceSpecificPurpose:
             configurationPurpose-&gt;setText(tr(&quot;Service Specific&quot;));
             break;
         default:
@@ -360,7 +360,7 @@
 
         configurationIdentifier-&gt;setText(conf.identifier());
 
-        configurationRoaming-&gt;setText(conf.roamingAvailable() ? tr(&quot;Available&quot;) : tr(&quot;Not available&quot;));
+        configurationRoaming-&gt;setText(conf.isRoamingAvailable() ? tr(&quot;Available&quot;) : tr(&quot;Not available&quot;));
 
         configurationChildren-&gt;setText(QString::number(conf.children().count()));
 

@@ -31,8 +31,7 @@ symbian: {
     bearerex.path = /sys/bin
     DEPLOYMENT += bearerex
 
-    CONFIG += mobility
-    MOBILITY = bearer
-
     TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 }
+CONFIG += mobility
+MOBILITY = bearer
