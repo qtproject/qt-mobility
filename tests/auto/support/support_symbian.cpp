@@ -93,7 +93,8 @@ void CSymbianMessagingSession::HandleSessionEventL(TMsvSessionEvent /*aEvent*/, 
 {
 }
 
-class MapiSessionHiJacker
+QTM_BEGIN_NAMESPACE
+class MapiSession
 {
 public:
     static QMessageId addMessage(const Support::Parameters &params);
@@ -101,7 +102,7 @@ public:
 
 // The class 'MapiSession' is a friend of QMessageContentContainer - hijack it here
 // => This is needed to make it possible to set parentFolderId
-QMessageId MapiSessionHiJacker::addMessage(const Support::Parameters &params)
+QMessageId MapiSession::addMessage(const Support::Parameters &params)
 {
     QString parentAccountName(params["parentAccountName"]);
     QString parentFolderPath(params["parentFolderPath"]);
@@ -214,6 +215,7 @@ QMessageId MapiSessionHiJacker::addMessage(const Support::Parameters &params)
     
     return QMessageId();
 }
+QTM_END_NAMESPACE
 
 namespace Support {
 
@@ -526,7 +528,7 @@ QMessageFolderId addFolder(const Parameters &params)
 
 QMessageId addMessage(const Parameters &params)
 {
-    return MapiSessionHiJacker::addMessage(params);
+    return MapiSession::addMessage(params);
 }
 
 }
