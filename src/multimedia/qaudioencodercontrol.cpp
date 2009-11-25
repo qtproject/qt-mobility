@@ -47,7 +47,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QAudioEncoderControl
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \preliminary

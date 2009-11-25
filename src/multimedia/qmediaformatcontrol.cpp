@@ -47,7 +47,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMediaFormatControl
     \preliminary
-    \brief The QMediaFormat class provides access to the output format of a QMediaService
+    \ingroup multimedia-serv
+    \brief The QMediaFormatControl class provides an access to the output format of a QMediaService
 
     If a QMediaService supports writing encoded data it will implement QMediaFormatControl.  This
     control provides information about the output formats supported by a media service and allows

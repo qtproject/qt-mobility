@@ -712,6 +712,13 @@ void QVideoWidget::setSaturation(int saturation)
     \sa saturation
 */
 
+
+/*!
+    \reimp
+
+    Returns the recommended size for the video widget.
+*/
+
 QSize QVideoWidget::sizeHint() const
 {
     Q_D(const QVideoWidget);
@@ -758,6 +765,9 @@ bool QVideoWidget::event(QEvent *event)
     return QWidget::event(event);
 }
 
+/*!
+    \reimp
+*/
 void QVideoWidget::showEvent(QShowEvent *event)
 {
     Q_D(QVideoWidget);
@@ -785,6 +795,9 @@ void QVideoWidget::showEvent(QShowEvent *event)
     }
 }
 
+/*!
+    \reimp
+*/
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
@@ -798,6 +811,9 @@ void QVideoWidget::hideEvent(QHideEvent *event)
     QWidget::hideEvent(event);
 }
 
+/*!
+    \reimp
+*/
 void QVideoWidget::resizeEvent(QResizeEvent *event)
 {
     Q_D(QVideoWidget);
@@ -808,6 +824,9 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
         d->currentBackend->resizeEvent(event);
 }
 
+/*!
+    \reimp
+*/
 void QVideoWidget::moveEvent(QMoveEvent *event)
 {
     Q_D(QVideoWidget);
@@ -816,6 +835,9 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
         d->currentBackend->moveEvent(event);
 }
 
+/*!
+    \reimp
+*/
 void QVideoWidget::paintEvent(QPaintEvent *event)
 {
     Q_D(QVideoWidget);
