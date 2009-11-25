@@ -124,7 +124,7 @@ Q_GLOBAL_STATIC(QNetworkConfigurationManagerPrivate, connManager);
 */
 
 /*!
-    \enum QNetworkConfigurationManager::CapabilityFlag
+    \enum QNetworkConfigurationManager::Capability
 
     Specifies the system capabilities of the bearer API. The possible values are:
 
@@ -278,7 +278,7 @@ QNetworkConfiguration QNetworkConfigurationManager::configurationFromIdentifier(
 /*!
     Returns the capabilities supported by the current platform.
 */
-QNetworkConfigurationManager::CapabilityFlags QNetworkConfigurationManager::capabilities() const
+QNetworkConfigurationManager::Capabilities QNetworkConfigurationManager::capabilities() const
 {
     return connManager()->capFlags;
 }

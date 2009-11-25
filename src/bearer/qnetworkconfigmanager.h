@@ -59,7 +59,7 @@ class Q_BEARER_EXPORT QNetworkConfigurationManager : public QObject
 
 public:
     
-    enum CapabilityFlag {
+    enum Capability {
          BearerManagement  = 0x00000001,
          DirectConnectionRouting = 0x00000002,
          SystemSessionSupport = 0x00000004,
@@ -68,13 +68,13 @@ public:
          DataStatistics = 0x00000020
     };
 
-    Q_DECLARE_FLAGS(CapabilityFlags, CapabilityFlag)
+    Q_DECLARE_FLAGS(Capabilities, Capability)
 
     QNetworkConfigurationManager( QObject* parent = 0 );
     virtual ~QNetworkConfigurationManager();
 
     
-    QNetworkConfigurationManager::CapabilityFlags capabilities() const;
+    QNetworkConfigurationManager::Capabilities capabilities() const;
 
     QNetworkConfiguration defaultConfiguration() const; 
     QList<QNetworkConfiguration> allConfigurations(QNetworkConfiguration::StateFlags flags = 0) const;
@@ -90,7 +90,7 @@ Q_SIGNALS:
 
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QNetworkConfigurationManager::CapabilityFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QNetworkConfigurationManager::Capabilities)
 
 QTM_END_NAMESPACE
 //}
