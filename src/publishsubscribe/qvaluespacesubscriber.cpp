@@ -170,7 +170,7 @@ static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filt
 
     // Invalid filter combination.
     if ((filter & QValueSpace::PermanentLayer &&
-         filter & QValueSpace::NonPermanentLayer) ||
+         filter & QValueSpace::TransientLayer) ||
         (filter & QValueSpace::WritableLayer &&
          filter & QValueSpace::NonWritableLayer)) {
         return list;

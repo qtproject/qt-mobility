@@ -320,9 +320,9 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider 
                                 destroyed.  Whether the value persists in the layer after the
                                 server or device is restarted is system dependent.
                                 \br
-                                This option and the NonPermanentLayer option are mutually
+                                This option and the TransientLayer option are mutually
                                 exclusive.
-    \value NonPermanentLayer    Indicates that the layer does not use a permanent backing store.
+    \value TransientLayer       Indicates that the layer does not use a permanent backing store.
                                 When used as a filter only layers that do not use permanent backing
                                 stores will be used.
                                 \br

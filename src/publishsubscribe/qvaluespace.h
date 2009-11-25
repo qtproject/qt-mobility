@@ -55,7 +55,7 @@ namespace QValueSpace {
     enum LayerOption {
         UnspecifiedLayer = 0x0000,
         PermanentLayer = 0x0001,
-        NonPermanentLayer = 0x0002,
+        TransientLayer = 0x0002,
         // UnspecifiedLayerPermanence = 0x0000,
         // InvalidLayerPermanence = 0x0003,
         WritableLayer = 0x0004,

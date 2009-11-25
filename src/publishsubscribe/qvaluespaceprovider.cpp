@@ -136,7 +136,7 @@ QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path,
     path = qCanonicalPath(_path);
 
     if ((filter & QValueSpace::PermanentLayer &&
-         filter & QValueSpace::NonPermanentLayer) ||
+         filter & QValueSpace::TransientLayer) ||
         (filter & QValueSpace::WritableLayer &&
          filter & QValueSpace::NonWritableLayer)) {
         return;
@@ -288,7 +288,7 @@ QValueSpaceProvider::QValueSpaceProvider(const char *path, const QUuid &uuid, QO
 
 /*!
     Destroys the QValueSpaceProvider.  This will remove all values published by this provider in
-    \l {QValueSpace::NonPermanentLayer}{non-permanent} layers.
+    \l {QValueSpace::TransientLayer}{non-permanent} layers.
 */
 QValueSpaceProvider::~QValueSpaceProvider()
 {

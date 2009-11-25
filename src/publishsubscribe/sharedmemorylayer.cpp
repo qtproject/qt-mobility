@@ -2512,7 +2512,7 @@ QSet<QString> SharedMemoryLayer::children(Handle handle)
 
 QValueSpace::LayerOptions SharedMemoryLayer::layerOptions() const
 {
-    return QValueSpace::NonPermanentLayer | QValueSpace::WritableLayer;
+    return QValueSpace::TransientLayer | QValueSpace::WritableLayer;
 }
 
 SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent, const QString &key)

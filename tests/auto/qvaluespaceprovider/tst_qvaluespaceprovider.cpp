@@ -293,7 +293,7 @@ void tst_QValueSpaceProvider::testFilterConstructor_data()
         ADD(layer->layerOptions(), true);
     }
 
-    ADD(QValueSpace::PermanentLayer | QValueSpace::NonPermanentLayer,
+    ADD(QValueSpace::PermanentLayer | QValueSpace::TransientLayer,
         false);
     ADD(QValueSpace::WritableLayer | QValueSpace::NonWritableLayer,
         false);

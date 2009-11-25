@@ -179,7 +179,7 @@ QSet<QString> FakeLayer::children(Handle handle)
 
 QValueSpace::LayerOptions FakeLayer::layerOptions() const
 {
-    return QValueSpace::NonPermanentLayer;
+    return QValueSpace::TransientLayer;
 }
 
 bool FakeLayer::supportsInterestNotification() const

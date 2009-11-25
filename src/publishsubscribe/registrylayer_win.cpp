@@ -340,7 +340,7 @@ unsigned int VolatileRegistryLayer::order()
 
 QValueSpace::LayerOptions VolatileRegistryLayer::layerOptions() const
 {
-    return QValueSpace::NonPermanentLayer | QValueSpace::WritableLayer;
+    return QValueSpace::TransientLayer | QValueSpace::WritableLayer;
 }
 
 VolatileRegistryLayer *VolatileRegistryLayer::instance()
@@ -1384,7 +1384,7 @@ bool RegistryLayer::removeValue(QValueSpaceProvider *creator,
     }
 
     // permanent layer always removes items even if our records show that creator does not own it.
-    if (!creators[creator].contains(fullPath) && (layerOptions() & QValueSpace::NonPermanentLayer))
+    if (!creators[creator].contains(fullPath) && (layerOptions() & QValueSpace::TransientLayer))
         return false;
 
     removeRegistryValue(0, fullPath);
