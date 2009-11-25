@@ -43,6 +43,8 @@
 #include <QCoreApplication>
 #include <QFile>
 
+QTM_USE_NAMESPACE
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
