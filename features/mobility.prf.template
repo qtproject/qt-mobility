@@ -35,5 +35,5 @@ contains(MOBILITY, messaging) {
 }
 
 contains(MOBILITY, versit) {
-    qtAddLibrary(QtVersit)
+    qtAddLibrary(QtVersit_beta)
 }
