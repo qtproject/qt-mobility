@@ -1,6 +1,6 @@
 QT += testlib
 TEMPLATE=app
-TARGET=tst_qcontact
+TARGET=tst_versitutils
 CONFIG+=testcase
 
 include(../../../common.pri)
@@ -17,8 +17,6 @@ INCLUDEPATH += \
     ../../../src/contacts/filters
 
 HEADERS += ut_versitutils.h
-# The original source code is included directly to avoid some
-# C++ protection problems..
 SOURCES += ut_versitutils.cpp
 
 qtAddLibrary(QtContacts)

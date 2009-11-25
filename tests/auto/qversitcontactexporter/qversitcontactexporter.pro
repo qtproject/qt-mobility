@@ -1,6 +1,6 @@
 QT += testlib
 TEMPLATE=app
-TARGET=tst_qcontact
+TARGET=tst_qversitcontactexporter
 CONFIG+=testcase
 
 include(../../../common.pri)
