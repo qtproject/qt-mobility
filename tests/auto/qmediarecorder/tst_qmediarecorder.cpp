@@ -574,8 +574,11 @@ void tst_QMediaRecorder::testError()
     QCOMPARE(capture->errorString(), errorString);
     QCOMPARE(spy.count(), 1);
 
+#ifdef QTM_NAMESPACE
     //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QCOMPARE(qvariant_cast<QMediaRecorder::Error>(spy.last().value(0)), QMediaRecorder::FormatError);
+    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
+#endif
+    QCOMPARE(spy.last()[0].value<QMediaRecorder::Error>(), QMediaRecorder::FormatError);
 }
 
 void tst_QMediaRecorder::testSink()
