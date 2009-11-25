@@ -187,19 +187,6 @@ QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
 }
 
 /*!
-    \overload
-
-    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
-    \a path.  This constructor is equivalent to calling
-    \c {QValueSpaceSubscriber(QString::fromLatin1(path), parent)}.
-*/
-QValueSpacePublisher::QValueSpacePublisher(const char *path, QObject *parent)
-:   QObject(parent), d(new QValueSpacePublisherPrivate(QString::fromLatin1(path)))
-{
-    QValueSpaceManager::instance()->init();
-}
-
-/*!
     Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
     \a path.  The \a filter parameter is used to limit which layer this QValueSpacePublisher will
     access.
@@ -222,31 +209,6 @@ QValueSpacePublisher::QValueSpacePublisher(const QString &path,
 }
 
 /*!
-    \overload
-
-    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layer this QValueSpacePublisher will
-    access.  This constructor is equivalent to calling
-    \c {QValueSpacePublisher(QString::fromLatin1(path), filter, parent)}.
-
-    The constructed Value Space publisher will access the \l {QAbstractValueSpaceLayer}{layer} with
-    the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
-    \a path is a valid path.
-
-    If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed
-    QValueSpacePublisher will be unconnected.
-
-    \sa isConnected()
-*/
-QValueSpacePublisher::QValueSpacePublisher(const char *path,
-                                         QValueSpace::LayerOptions filter,
-                                         QObject *parent)
-:   QObject(parent), d(new QValueSpacePublisherPrivate(QString::fromLatin1(path), filter))
-{
-    QValueSpaceManager::instance()->init();
-}
-
-/*!
     Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
     \a path.  Only the layer identified by \a uuid will be accessed by this publisher.
 
@@ -261,28 +223,6 @@ QValueSpacePublisher::QValueSpacePublisher(const char *path,
 
 QValueSpacePublisher::QValueSpacePublisher(const QString &path, const QUuid &uuid, QObject *parent)
 :   QObject(parent), d(new QValueSpacePublisherPrivate(path, uuid))
-{
-    QValueSpaceManager::instance()->init();
-}
-
-/*!
-    \overload
-
-    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
-    \a path.  Only the layer identified by \a uuid will be accessed by this publisher.  This
-    constructor is equivalent to calling
-    \c {QValueSpacePublisher(QString::fromLatin1(path), uuid, parent)}.
-
-    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
-    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
-
-    If a layer with a matching \a uuid is not found, the constructed QValueSpacePublisher will be
-    unconnected.
-
-    \sa isConnected()
-*/
-QValueSpacePublisher::QValueSpacePublisher(const char *path, const QUuid &uuid, QObject *parent)
-:   QObject(parent), d(new QValueSpacePublisherPrivate(QString::fromLatin1(path), uuid))
 {
     QValueSpaceManager::instance()->init();
 }
