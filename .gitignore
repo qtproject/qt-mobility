@@ -39,13 +39,15 @@ config.tests/qmf/qmf
 #Symbian specific
 *.mmp
 *.pkg
-bld.inf
+bld.inf*
 ABLD.BAT
 *.mk
 *.rss
 *.sis
 *.loc
 *.sisx
+.make.cache
+qmakepluginstubs
 
 #Carbide project files
 *.project
