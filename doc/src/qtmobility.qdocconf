@@ -23,6 +23,8 @@ sourcedirs = ../../src/bearer \
              ../../src/messaging \
              .
 
+excludedirs = ../../src/messaging/win32wce
+
 exampledirs = ../../examples \
               ../.. \
               .

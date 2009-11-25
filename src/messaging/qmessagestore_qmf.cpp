@@ -245,10 +245,10 @@ bool QMessageStore::addMessage(QMessage *m)
     // Ensure that the size estimate is updated if necessary
     (void)m->size();
 
-    QMailMessage msg(convert(*m));
+    QMailMessage *msg(convert(m));
 
     d_ptr->_error = QMessageStore::NoError;
-    return d_ptr->_store->addMessage(&msg);
+    return d_ptr->_store->addMessage(msg);
 }
 
 bool QMessageStore::updateMessage(QMessage *m)

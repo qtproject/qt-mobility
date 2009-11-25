@@ -4192,7 +4192,9 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
                         // Extract the recipient info from the message headers
                         QMessageAddressList addresses;
                         foreach (const QMailAddress &addr, mimeMsg.to()) {
-                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                            QString addressString(addr.address());
+                            if(!addressString.isEmpty())
+                                addresses.append(QMessageAddress(addressString, QMessageAddress::Email));
                         }
                         if (!addresses.isEmpty()) {
                             msg->setTo(addresses);
@@ -4200,7 +4202,9 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                         addresses.clear();
                         foreach (const QMailAddress &addr, mimeMsg.cc()) {
-                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                            QString addressString(addr.address());
+                            if(!addressString.isEmpty())
+                                addresses.append(QMessageAddress(addressString, QMessageAddress::Email));
                         }
                         if (!addresses.isEmpty()) {
                             msg->setCc(addresses);
@@ -4208,7 +4212,8 @@ bool MapiSession::updateMessageBody(QMessageStore::ErrorCode *lastError, QMessag
 
                         addresses.clear();
                         foreach (const QMailAddress &addr, mimeMsg.bcc()) {
-                            addresses.append(QMessageAddress(addr.address(), QMessageAddress::Email));
+                            QString addressString(addr.address());
+                            addresses.append(QMessageAddress(addressString, QMessageAddress::Email));
                         }
                         if (!addresses.isEmpty()) {
                             msg->setBcc(addresses);
