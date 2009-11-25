@@ -60,8 +60,8 @@ class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceSubscriber : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString path READ path WRITE setPath);
-    Q_PROPERTY(QVariant value READ valuex NOTIFY contentsChanged);
+    Q_PROPERTY(QString path READ path WRITE setPath)
+    Q_PROPERTY(QVariant value READ valuex NOTIFY contentsChanged)
 
 public:
     explicit QValueSpaceSubscriber(QObject *parent = 0);
