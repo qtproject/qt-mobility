@@ -200,9 +200,9 @@ QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
 
     \sa isConnected()
 */
-QValueSpacePublisher::QValueSpacePublisher(const QString &path,
-                                         QValueSpace::LayerOptions filter,
-                                         QObject *parent)
+QValueSpacePublisher::QValueSpacePublisher(QValueSpace::LayerOptions filter,
+                                           const QString &path,
+                                           QObject *parent)
 :   QObject(parent), d(new QValueSpacePublisherPrivate(path, filter))
 {
     QValueSpaceManager::instance()->init();
@@ -221,7 +221,7 @@ QValueSpacePublisher::QValueSpacePublisher(const QString &path,
     \sa isConnected()
 */
 
-QValueSpacePublisher::QValueSpacePublisher(const QString &path, const QUuid &uuid, QObject *parent)
+QValueSpacePublisher::QValueSpacePublisher(const QUuid &uuid, const QString &path, QObject *parent)
 :   QObject(parent), d(new QValueSpacePublisherPrivate(path, uuid))
 {
     QValueSpaceManager::instance()->init();

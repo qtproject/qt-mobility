@@ -62,10 +62,10 @@ class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpacePublisher : public QObject
 public:
     explicit QValueSpacePublisher(const QString &path, QObject *parent = 0);
 
-    QValueSpacePublisher(const QString &path, QValueSpace::LayerOptions filter,
+    QValueSpacePublisher(QValueSpace::LayerOptions filter, const QString &path,
                         QObject *parent = 0);
 
-    QValueSpacePublisher(const QString &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpacePublisher(const QUuid &uuid, const QString &path, QObject *parent = 0);
 
     virtual ~QValueSpacePublisher();
 

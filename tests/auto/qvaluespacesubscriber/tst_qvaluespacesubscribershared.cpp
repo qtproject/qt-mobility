@@ -90,13 +90,11 @@ Q_DECLARE_METATYPE(QValueSpaceSubscriber*)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer*)
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QValueSpace::LayerOptions)
-Q_DECLARE_METATYPE(tst_QValueSpaceSubscriber::Type)
 Q_DECLARE_METATYPE(QUuid)
 
 void tst_QValueSpaceSubscriber::initTestCase()
 {
     qRegisterMetaType<QVariant>("QVariant");
-    qRegisterMetaType<tst_QValueSpaceSubscriber::Type>("tst_QValueSpaceSubscriber::Type");
     qRegisterMetaType<QValueSpace::LayerOptions>("QValueSpace::LayerOptions");
 
 #ifdef Q_OS_WIN
@@ -451,16 +449,13 @@ void tst_QValueSpaceSubscriber::testConstructor()
 }
 
 #define ADD(opt, invalid) do {\
-    QTest::newRow(QString::number(opt).append(" const char *").toLocal8Bit().constData()) \
-        << (QValueSpace::UnspecifiedLayer | opt) << CharStar << invalid; \
     QTest::newRow(QString::number(opt).append(" const QString &").toLocal8Bit().constData()) \
-        << (QValueSpace::UnspecifiedLayer | opt) << String << invalid; \
+        << (QValueSpace::UnspecifiedLayer | opt) << invalid; \
 } while (false)
 
 void tst_QValueSpaceSubscriber::testFilterConstructor_data()
 {
     QTest::addColumn<QValueSpace::LayerOptions>("options");
-    QTest::addColumn<Type>("type");
     QTest::addColumn<bool>("connected");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
@@ -483,22 +478,11 @@ void tst_QValueSpaceSubscriber::testFilterConstructor_data()
 void tst_QValueSpaceSubscriber::testFilterConstructor()
 {
     QFETCH(QValueSpace::LayerOptions, options);
-    QFETCH(Type, type);
     QFETCH(bool, connected);
 
     QValueSpaceSubscriber *subscriber;
 
-    switch (type) {
-    case CharStar:
-        subscriber = new QValueSpaceSubscriber("/layer", options);
-        break;
-    case String:
-        subscriber = new QValueSpaceSubscriber(QString("/layer"), options);
-        break;
-    default:
-        QFAIL("Unexpected type");
-        return;
-    };
+    subscriber = new QValueSpaceSubscriber(QString("/layer"), options);
 
     if (!connected)
         QVERIFY(!subscriber->isConnected());
@@ -894,7 +878,6 @@ void tst_QValueSpaceSubscriber::interestNotification_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
-    QTest::addColumn<Type>("type");
     QTest::addColumn<QString>("publisherPath");
     QTest::addColumn<QString>("attribute");
 
@@ -909,10 +892,8 @@ void tst_QValueSpaceSubscriber::interestNotification_data()
 
         foundSupported = true;
 
-        QTest::newRow("QValueSpaceSubscriber(char *)")
-            << layer << CharStar << "/interestNotification" << "/value";
         QTest::newRow("QValueSpaceSubscriber(QString)")
-            << layer << String << "/interestNotification" << "/value";
+            << layer << "/interestNotification" << "/value";
     }
 
     if (!foundSupported)
@@ -923,7 +904,6 @@ void tst_QValueSpaceSubscriber::interestNotification()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QFETCH(Type, type);
     QFETCH(QString, publisherPath);
     QFETCH(QString, attribute);
 
@@ -939,18 +919,7 @@ void tst_QValueSpaceSubscriber::interestNotification()
 
     const QString subscriberPath = publisherPath + attribute;
 
-    QValueSpaceSubscriber *subscriber;
-    switch (type) {
-    case CharStar:
-        subscriber = new QValueSpaceSubscriber(subscriberPath.toUtf8().constData(), layer->id());
-        break;
-    case String:
-        subscriber = new QValueSpaceSubscriber(subscriberPath, layer->id());
-        break;
-    default:
-        subscriber = 0;
-        QFAIL("Invalid type");
-    }
+    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(subscriberPath, layer->id());
 
     QTRY_COMPARE(notificationSpy.count(), 1);
 

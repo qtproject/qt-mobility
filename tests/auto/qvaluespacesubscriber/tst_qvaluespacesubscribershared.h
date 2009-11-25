@@ -54,9 +54,6 @@ class tst_QValueSpaceSubscriber : public QObject
 {
     Q_OBJECT
 
-public:
-    enum Type { CharStar, String };
-
 private slots:
     void initTestCase();
     void cleanupTestCase();

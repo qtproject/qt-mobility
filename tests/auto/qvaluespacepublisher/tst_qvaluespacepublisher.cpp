@@ -82,9 +82,6 @@ class tst_QValueSpacePublisher: public QObject
 {
     Q_OBJECT
 
-public:
-    enum Type { CharStar, String };
-
 private slots:
     void initTestCase();
     void cleanupTestCase();
@@ -108,7 +105,6 @@ private:
     int variantMetaTypeId;
 };
 
-Q_DECLARE_METATYPE(tst_QValueSpacePublisher::Type)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer *)
 Q_DECLARE_METATYPE(QUuid)
 Q_DECLARE_METATYPE(QVariant)
@@ -144,10 +140,8 @@ void tst_QValueSpacePublisher::cleanupTestCase()
 
 #define ADD(layer, id, path, canonical, valid) do {\
     const QString layerName(layer ? layer->name() : 0); \
-    QTest::newRow((layerName + ' ' + path + " const char *").toLocal8Bit().constData()) \
-        << layer << id << CharStar << path << canonical << valid; \
     QTest::newRow((layerName + ' ' + path + " const QString &").toLocal8Bit().constData()) \
-        << layer << id << String << path << canonical << valid; \
+        << layer << id << path << canonical << valid; \
 } while (false)
 
 void tst_QValueSpacePublisher::testConstructor_data()
@@ -155,7 +149,6 @@ void tst_QValueSpacePublisher::testConstructor_data()
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
     QTest::addColumn<QUuid>("uuid");
 
-    QTest::addColumn<Type>("type");
     QTest::addColumn<QString>("path");
     QTest::addColumn<QString>("canonical");
     QTest::addColumn<bool>("connected");
@@ -188,23 +181,11 @@ void tst_QValueSpacePublisher::testConstructor()
     QFETCH(QAbstractValueSpaceLayer *, layer);
     QFETCH(QUuid, uuid);
 
-    QFETCH(Type, type);
     QFETCH(QString, path);
     QFETCH(QString, canonical);
     QFETCH(bool, connected);
 
-    QValueSpacePublisher *publisher;
-
-    switch (type) {
-    case CharStar:
-        publisher = new QValueSpacePublisher(path.toUtf8().constData(), uuid);
-        break;
-    case String:
-        publisher = new QValueSpacePublisher(path, uuid);
-        break;
-    default:
-        QFAIL("Invalid type.");
-    };
+    QValueSpacePublisher *publisher = new QValueSpacePublisher(path, uuid);
 
     QCOMPARE(publisher->path(), canonical);
     QCOMPARE(publisher->isConnected(), connected);
@@ -219,14 +200,7 @@ void tst_QValueSpacePublisher::testConstructor()
         layer->removeHandle(handle);
     }
 
-    switch (type) {
-    case CharStar:
-        publisher->setAttribute("value", 100);
-        break;
-    case String:
-        publisher->setAttribute(QString("value"), 100);
-        break;
-    };
+    publisher->setAttribute(QString("value"), 100);
     publisher->sync();
 
     if (layer) {
@@ -240,14 +214,7 @@ void tst_QValueSpacePublisher::testConstructor()
         layer->removeHandle(handle);
     }
 
-    switch (type) {
-    case CharStar:
-        publisher->removeAttribute("value");
-        break;
-    case String:
-        publisher->removeAttribute(QString("value"));
-        break;
-    };
+    publisher->removeAttribute(QString("value"));
     QValueSpacePublisher::syncAll();
 
     if (layer) {
@@ -273,16 +240,13 @@ void tst_QValueSpacePublisher::testConstructor()
 }
 
 #define ADD(opt, valid) do {\
-    QTest::newRow(QString::number(opt).append(" const char *").toLocal8Bit().constData()) \
-        << (QValueSpace::UnspecifiedLayer | opt) << CharStar << valid; \
     QTest::newRow(QString::number(opt).append(" const QString &").toLocal8Bit().constData()) \
-        << (QValueSpace::UnspecifiedLayer | opt) << String << valid; \
+        << (QValueSpace::UnspecifiedLayer | opt) << valid; \
 } while (false)
 
 void tst_QValueSpacePublisher::testFilterConstructor_data()
 {
     QTest::addColumn<QValueSpace::LayerOptions>("options");
-    QTest::addColumn<Type>("type");
     QTest::addColumn<bool>("connected");
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
@@ -302,22 +266,9 @@ void tst_QValueSpacePublisher::testFilterConstructor_data()
 void tst_QValueSpacePublisher::testFilterConstructor()
 {
     QFETCH(QValueSpace::LayerOptions, options);
-    QFETCH(Type, type);
     QFETCH(bool, connected);
 
-    QValueSpacePublisher *publisher;
-
-    switch (type) {
-    case CharStar:
-        publisher = new QValueSpacePublisher("/", options);
-        break;
-    case String:
-        publisher = new QValueSpacePublisher(QString("/"), options);
-        break;
-    default:
-        QFAIL("Invalid type");
-        return;
-    };
+    QValueSpacePublisher *publisher = new QValueSpacePublisher(options, QString("/"));
 
     QCOMPARE(publisher->isConnected(), connected);
 }
