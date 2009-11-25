@@ -49,7 +49,7 @@
 
 \section1 Overview 
 Versit API provides a set of methods to parse/read (\l{QVersitReader}) and
-encode/write \l{QVersitWriter} versit* documents such as vCards
+encode/write (\l{QVersitWriter}) versit* documents such as vCards
 (\l http://www.imc.org/pdi/).
 Currently \l{QVersitReader} and \l{QVersitWriter} support
 reading and writing vCard 2.1 and 3.0 formats.
@@ -66,7 +66,7 @@ QContacts to versit documents.
 QBuffer input;
 input.open(QBuffer::ReadWrite);
 QByteArray inputVCard =
-    "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:Homer Simpson\r\nN:Simpson;Homer;J;;\r\nEND:VCARD\r\n";
+    "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John Citizen\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n";
 input.write(inputVCard);
 input.seek(0);
 
