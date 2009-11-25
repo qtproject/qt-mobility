@@ -55,6 +55,8 @@
 
 #include "qversitwriter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QVCard30Writer : public QVersitWriterPrivate
 {
 public:
@@ -69,5 +71,7 @@ private: // Data
     QHash<QString,QString> mPropertyNameMappings;
     friend class UT_QVCard30Writer;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVCARD30WRITER_H

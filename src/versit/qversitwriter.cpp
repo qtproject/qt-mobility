@@ -46,6 +46,8 @@
 
 #include <QStringList>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QVersitWriter
  *
@@ -179,3 +181,5 @@ bool QVersitWriter::writeAll()
         ok = d->write();
     return ok;
 }
+
+QTM_END_NAMESPACE

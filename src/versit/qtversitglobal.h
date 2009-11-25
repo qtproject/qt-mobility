@@ -43,11 +43,16 @@
 #define QTVERSITGLOBAL_H
 
 #include <qglobal.h>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
 
 #ifdef BUILD_QTVERSIT
 #define Q_VERSIT_EXPORT Q_DECL_EXPORT
 #else
 #define Q_VERSIT_EXPORT Q_DECL_IMPORT
 #endif
+
+QTM_END_NAMESPACE
 
 #endif // QTVERSITGLOBAL_H

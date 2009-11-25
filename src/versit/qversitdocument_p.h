@@ -47,6 +47,7 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 
+QTM_BEGIN_NAMESPACE
 
 class QVersitDocumentPrivate : public QSharedData
 {
@@ -71,5 +72,7 @@ public:
     QVersitDocument::VersitType mVersitType;
     QList<QVersitProperty> mProperties;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITDOCUMENT_P_H

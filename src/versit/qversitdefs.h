@@ -47,7 +47,7 @@
 #include <qcontactname.h>
 #include <qcontactemailaddress.h>
 #include <qcontactphonenumber.h>
-#include <qcontactaddress.h>
+#include "qcontactaddress.h"
 #include <qcontacturl.h>
 #include <qcontactguid.h>
 #include <qcontactorganization.h>
@@ -62,6 +62,8 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
+
+QTM_BEGIN_NAMESPACE
 
 // Mapping between a string in versit specifications and Qt contact details
 struct versitContactDetailMapping {
@@ -176,5 +178,7 @@ const versitMapping versitFileExtensionMappings[] = {
     {"GIF", "GIF"}
 };
 //! [File extension mappings]
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITDEFS_H

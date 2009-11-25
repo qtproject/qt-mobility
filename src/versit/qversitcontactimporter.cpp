@@ -44,6 +44,8 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QVersitContactImporter
  *
@@ -152,3 +154,5 @@ QList<QVersitProperty> QVersitContactImporter::unknownVersitProperties()
 {
     return d->mUnknownVersitProperties;
 }
+
+QTM_END_NAMESPACE

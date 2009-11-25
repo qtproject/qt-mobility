@@ -49,7 +49,11 @@
 #include <QStringList>
 #include <QMultiHash>
 
-class VersitUtils                
+#include "qtversitglobal.h"
+
+QTM_BEGIN_NAMESPACE
+
+class VersitUtils
 {
 public:
     static QByteArray fold(QByteArray& text, int maxChars);
@@ -84,5 +88,7 @@ private:
     
     friend class UT_VersitUtils;
 };
+
+QTM_END_NAMESPACE
 
 #endif // VERSITUTILS_H

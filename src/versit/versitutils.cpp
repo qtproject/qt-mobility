@@ -43,6 +43,8 @@
 #include <QMap>
 #include <QRegExp>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * Folds \a text by making all lines \a maxChars long.
  */
@@ -451,3 +453,5 @@ bool VersitUtils::shouldBeQuotedPrintableEncoded(char chr)
             chr == ']' || chr == '^' || chr == '`' ||
             chr > 122 ); 
 }
+
+QTM_END_NAMESPACE

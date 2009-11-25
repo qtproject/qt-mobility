@@ -43,6 +43,9 @@
 #include "qversitreader.h"
 #include "qversitreader_p.h"
 #include "versitutils.h"
+#include "qtversitglobal.h"
+
+QTM_BEGIN_NAMESPACE
 
 /*!
  * \class QVersitReader
@@ -151,3 +154,5 @@ QList<QVersitDocument> QVersitReader::result() const
 {
     return d->mVersitDocuments;
 }
+
+QTM_END_NAMESPACE

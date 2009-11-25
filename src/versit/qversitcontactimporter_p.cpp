@@ -66,6 +66,8 @@
 #include <QHash>
 #include <QFile>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * Constructor.
  */
@@ -625,3 +627,5 @@ QString QVersitContactImporterPrivate::getFirstAndLastName(
     }
     return name;
 }
+
+QTM_END_NAMESPACE

@@ -67,6 +67,8 @@
 #include <QBuffer>
 #include <QImageWriter>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
  * Constructor.
  */
@@ -361,7 +363,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
         setEscapedValue(property,organization.title());
         document.addProperty(property);
     }
-    if (organization.name().length() > 0 || organization.department().length() > 0) {
+    if (organization.name().length() > 0 || organization.department().size() > 0) {
         QVersitProperty property;
         property.setName(QString::fromAscii("ORG"));
         QByteArray value = escape(organization.name().toAscii());
@@ -588,7 +590,7 @@ void QVersitContactExporterPrivate::encodeParameters(
     const QStringList& subTypes)
 {
     QStringList parameterList(contexts); // Contexts should be encoded first
-    parameterList.append(subTypes);
+    parameterList << subTypes;
     while (!parameterList.isEmpty()) {
         QString value = parameterList.takeLast();
         QString mappedValue = mParameterMappings.value(value);
@@ -670,3 +672,5 @@ QByteArray QVersitContactExporterPrivate::escape(const QByteArray& value)
     }
     return escaped;
 }
+
+QTM_END_NAMESPACE

@@ -43,10 +43,13 @@
 #define QVERSITREADER_H
 
 #include <QObject>
-#include <qtversitglobal.h>
 #include <qversitdocument.h>
+#include "qtversitglobal.h"
 
 class QIODevice;
+
+QTM_BEGIN_NAMESPACE
+
 class QVersitReaderPrivate;
 
 // reads a QVersitDocument from i/o device
@@ -61,9 +64,11 @@ public:
     // input:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
+
     // reading:
     bool startReading();
     bool readAll();
+
     // output:
     QList<QVersitDocument> result() const;
 
@@ -73,5 +78,7 @@ signals:
 private: // data
     QVersitReaderPrivate* d;   
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITREADER_H

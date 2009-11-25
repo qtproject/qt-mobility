@@ -39,13 +39,21 @@
 **
 ****************************************************************************/
 
+
+#include "qversitcontactexporter.h"
+#include "qversitcontactexporter_p.h"
+#include <qcontact.h>
+#include <qcontactdetail.h>
+
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QVersitContactExporter
  *
  * \brief QVersitContactExporter exports QContact(s) into QVersitDocument(s)
  *
  * If the exported QContact has some detail with an image as its value,
- * signal \l QVersitContactExporter::scale() is emitted and 
+ * signal \l QVersitContactExporter::scale() is emitted and
  * the client can scale the image's data to the size it wishes.
  * The client may retrieve the list contact details
  * which were not exported using QVersitContactExporter::unknownContactDetails().
@@ -78,11 +86,11 @@
  *
  *  QList<QContactDetail> unknownDetails = contactExporter.unknownContactDetails();
  *
- *  // The returned unknownDetails can be processed by the client and 
+ *  // The returned unknownDetails can be processed by the client and
  *  // the client can append details directly into QVersitDocument if needed.
  *  // (In this example QContactAvatar::SubTypeTexturedMesh.
- *  //  Currently for QContactAvatar details, 
- *  //  only exporting subtypes QContactAvatar::SubTypeImage and 
+ *  //  Currently for QContactAvatar details,
+ *  //  only exporting subtypes QContactAvatar::SubTypeImage and
  *  //  QContactAvatar::SubTypeAudioRingtone is supported.)
  *
  * \endcode
@@ -100,12 +108,6 @@
  * it should write the result to \a imageData.
  * Image scaling can be done for example by using class QImage.
  */
-
-#include "qversitcontactexporter.h"
-#include "qversitcontactexporter_p.h"
-#include <qcontact.h>
-#include <qcontactdetail.h>
-
 
 /*!
  * Constructs a new contact exporter
@@ -147,3 +149,5 @@ QList<QContactDetail> QVersitContactExporter::unknownContactDetails()
 {
     return d->mUnknownContactDetails;
 }
+
+QTM_END_NAMESPACE

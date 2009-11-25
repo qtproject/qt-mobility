@@ -42,6 +42,8 @@
 #include "qvcard21writer.h"
 #include "versitutils.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*! Constructs a writer. */
 QVCard21Writer::QVCard21Writer()
     : QVersitWriterPrivate(QByteArray("VCARD"),QByteArray("2.1"))
@@ -135,3 +137,5 @@ bool QVCard21Writer::quotedPrintableEncode(
 
     return encoded;
 }
+
+QTM_END_NAMESPACE

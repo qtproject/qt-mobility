@@ -42,6 +42,8 @@
 #include "qversitreader_p.h"
 #include "versitutils.h"
 
+QTM_BEGIN_NAMESPACE
+
 // Some big enough value for nested versit documents to prevent infite recursion
 #define MAX_VERSIT_DOCUMENT_NESTING_DEPTH 20
 
@@ -253,3 +255,5 @@ bool QVersitReaderPrivate::setVersionFromProperty(
     } 
     return valid;
 }
+
+QTM_END_NAMESPACE

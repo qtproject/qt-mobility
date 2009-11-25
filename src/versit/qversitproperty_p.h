@@ -49,6 +49,8 @@
 #include <QMultiHash>
 #include <QByteArray>
 
+QTM_BEGIN_NAMESPACE
+
 class QVersitPropertyPrivate : public QSharedData
 {
 public:
@@ -74,5 +76,7 @@ public:
     QByteArray mValue;
     QVersitDocument mDocument;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITPROPERTY_P_H

@@ -46,6 +46,8 @@
 #include <QList>
 #include <QSharedDataPointer>
 
+QTM_BEGIN_NAMESPACE
+
 class QVersitDocumentPrivate;
 class QVersitProperty;
 
@@ -76,5 +78,7 @@ private:
     
     QSharedDataPointer<QVersitDocumentPrivate> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITDOCUMENT_H

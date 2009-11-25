@@ -47,9 +47,12 @@
 #include <QHash>
 #include <QObject>
 
+QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
+QTM_END_NAMESPACE
 
+QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate : public QObject
 {
@@ -105,5 +108,7 @@ private: // Data
 
     friend class UT_QVersitContactExporter;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITCONTACTEXPORTER_P_H

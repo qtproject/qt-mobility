@@ -55,6 +55,8 @@
 
 #include "qversitwriter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QVCard21Writer : public QVersitWriterPrivate
 {
 public:
@@ -70,5 +72,7 @@ private: // New functions
 
     friend class UT_QVCard21Writer;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVCARD21WRITER_H

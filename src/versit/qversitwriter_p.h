@@ -59,6 +59,8 @@
 #include <QByteArray>
 #include <QIODevice>
 
+QTM_BEGIN_NAMESPACE
+
 class QVersitWriterPrivate : public QThread
 {
 public:
@@ -94,5 +96,7 @@ private: // Data
 
     friend class UT_QVersitWriter;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITWRITER_P_H

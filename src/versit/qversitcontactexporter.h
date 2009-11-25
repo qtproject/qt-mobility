@@ -48,6 +48,8 @@
 #include <QObject>
 #include <QImage>
 
+QTM_BEGIN_NAMESPACE
+
 class QVersitContactExporterPrivate;
 
 class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
@@ -70,5 +72,7 @@ signals:
 private:
     QVersitContactExporterPrivate* d;    
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITCONTACTEXPORTER_H

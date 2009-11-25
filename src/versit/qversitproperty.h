@@ -50,6 +50,8 @@
 #include <QByteArray>
 #include <QSharedDataPointer>
 
+QTM_BEGIN_NAMESPACE
+
 class QVersitPropertyPrivate;
 
 class Q_VERSIT_EXPORT QVersitProperty
@@ -82,5 +84,7 @@ private:
     
     QSharedDataPointer<QVersitPropertyPrivate> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITPROPERTY_H

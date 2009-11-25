@@ -62,6 +62,8 @@
 #include <QList>
 #include <QTimer>
 
+QTM_BEGIN_NAMESPACE
+
 class QVersitReaderPrivate : public QThread
 {
 public: // Constructors and destructor
@@ -102,5 +104,7 @@ public: // Data
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITREADER_P_H

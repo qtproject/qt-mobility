@@ -46,6 +46,8 @@
 #include <QIODevice>
 #include <qversitdocument.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QVersitWriterPrivate;
 
 // writes a QVersitDocument to i/o device
@@ -73,5 +75,7 @@ signals:
 private: // data
     QVersitWriterPrivate* d;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITWRITER_H

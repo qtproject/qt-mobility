@@ -43,6 +43,8 @@
 #include "versitutils.h"
 #include "qversitdefs.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*! Constructs a writer. */
 QVCard30Writer::QVCard30Writer()
     : QVersitWriterPrivate(QByteArray("VCARD"),QByteArray("3.0"))
@@ -96,7 +98,7 @@ QByteArray QVCard30Writer::encodeParameters(
         encodedParameters.append(name);
         encodedParameters.append("=");
         QStringList values = parameters.values(nameString);
-        for (int i=0; i<values.length(); i++) {
+        for (int i=0; i<values.size(); i++) {
             if (i > 0)
                 encodedParameters.append(",");
             QByteArray value = values.at(i).toAscii();
@@ -113,3 +115,4 @@ QByteArray QVCard30Writer::encodeParameters(
     return encodedParameters;
 }
 
+QTM_END_NAMESPACE

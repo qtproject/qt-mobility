@@ -39,6 +39,11 @@
 **
 ****************************************************************************/
 
+#include "qversitdocument.h"
+#include "qversitdocument_p.h"
+
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QVersitDocument
  *
@@ -54,10 +59,6 @@
  *
  * \sa QVersitProperty
  */
-
-#include "qversitdocument.h"
-#include "qversitdocument_p.h"
-
 
 /*! Constructs a new empty document */
 QVersitDocument::QVersitDocument() : d(new QVersitDocumentPrivate())
@@ -127,3 +128,5 @@ void QVersitDocument::removeProperties(const QString& name)
         }
     }
 }
+
+QTM_END_NAMESPACE

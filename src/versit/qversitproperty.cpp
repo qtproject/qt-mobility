@@ -39,6 +39,12 @@
 **
 ****************************************************************************/
 
+#include "qversitproperty.h"
+#include "qversitproperty_p.h"
+#include <QStringList>
+
+QTM_BEGIN_NAMESPACE
+
 /*!
  * \class QVersitProperty
  *
@@ -58,9 +64,6 @@
  * \sa QVersitDocument
  */
 
-#include "qversitproperty.h"
-#include "qversitproperty_p.h"
-#include <QStringList>
 
 /*! Constructs a new empty property */
 QVersitProperty::QVersitProperty() : d(new QVersitPropertyPrivate())
@@ -199,3 +202,5 @@ QVersitDocument QVersitProperty::embeddedDocument() const
 {
     return d->mDocument;
 }
+
+QTM_END_NAMESPACE

@@ -59,9 +59,14 @@
 #include <QHash>
 #include <QPair>
 
+QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
 class QContactOrganization;
+QTM_END_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+
 class QVersitProperty;
 class QVersitDocument;
 
@@ -149,5 +154,7 @@ private: // Data
     QHash<QString,QString> mSubTypeMappings;
     QHash<QString,QString> mFileExtensionMappings;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITCONTACTIMPORTER_P_H

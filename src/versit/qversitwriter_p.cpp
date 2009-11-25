@@ -43,6 +43,8 @@
 #include "versitutils.h"
 #include <QStringList>
 
+QTM_BEGIN_NAMESPACE
+
 #define MAX_CHARS_FOR_LINE 76
 
 /*! Constructs a writer. */
@@ -129,3 +131,5 @@ QByteArray QVersitWriterPrivate::encodeGroupsAndName(
     encodedGroupAndName.append(property.name().toAscii());
     return encodedGroupAndName;
 }
+
+QTM_END_NAMESPACE

@@ -46,6 +46,8 @@
 #include <qcontact.h>
 #include <QList>
 
+QTM_BEGIN_NAMESPACE
+
 class QVersitDocument;
 class QVersitProperty;
 class QVersitContactImporterPrivate;
@@ -68,6 +70,8 @@ public:
 private:
     QVersitContactImporterPrivate* d;
 };
+
+QTM_END_NAMESPACE
 
 #endif // QVERSITCONTACTIMPORTER_H
 
