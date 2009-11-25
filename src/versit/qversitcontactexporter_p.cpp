@@ -41,7 +41,7 @@
 
 #include "qversitcontactexporter_p.h"
 #include "qversitdefs.h"
-#include "versitutils.h"
+#include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
 #include <qcontact.h>

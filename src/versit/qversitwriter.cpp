@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 #include "qversitwriter.h"
-#include "qvcard21writer.h"
-#include "qvcard30writer.h"
-#include "versitutils.h"
+#include "qvcard21writer_p.h"
+#include "qvcard30writer_p.h"
+#include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
 #include <QStringList>

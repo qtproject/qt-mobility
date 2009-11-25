@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "versitutils.h"
+#include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
 #include <QMap>

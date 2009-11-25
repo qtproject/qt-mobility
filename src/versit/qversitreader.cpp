@@ -42,7 +42,7 @@
 
 #include "qversitreader.h"
 #include "qversitreader_p.h"
-#include "versitutils.h"
+#include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE

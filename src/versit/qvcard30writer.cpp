@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qvcard30writer.h"
-#include "versitutils.h"
+#include "qvcard30writer_p.h"
+#include "versitutils_p.h"
 #include "qversitdefs.h"
 #include "qmobilityglobal.h"
 

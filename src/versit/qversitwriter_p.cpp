@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qversitwriter_p.h"
-#include "versitutils.h"
+#include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
 #include <QStringList>

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qvcard21writer.h"
-#include "versitutils.h"
+#include "qvcard21writer_p.h"
+#include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE

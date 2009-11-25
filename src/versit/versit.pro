@@ -30,12 +30,12 @@ PRIVATE_HEADERS += qversitdocument_p.h \
     qversitproperty_p.h \
     qversitreader_p.h \
     qversitwriter_p.h \
-    qvcard21writer.h \
-    qvcard30writer.h \
+    qvcard21writer_p.h \
+    qvcard30writer_p.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h \
     qversitdefs.h \
-    versitutils.h
+    versitutils_p.h
 
 # Implementation
 SOURCES += qversitdocument.cpp \
