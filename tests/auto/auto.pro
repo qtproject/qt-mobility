@@ -68,6 +68,18 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactmanagerfiltering \
             qcontactrelationship
 
+# Versit module
+SUBDIRS += \
+            qvcard21writer \
+            qvcard30writer \
+            qversitcontactexporter \
+            qversitcontactimporter \
+            qversitdocument \
+            qversitproperty \
+            qversitreader \
+            qversitutils \
+            qversitwriter
+
 
 SUBDIRS += \             #Multimedia
         qaudiocapturesource \
