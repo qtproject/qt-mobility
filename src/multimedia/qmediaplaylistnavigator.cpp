@@ -224,7 +224,11 @@ QMediaPlaylistNavigator::~QMediaPlaylistNavigator()
 }
 
 /*!
-    Returns the playback mode.
+  \property QMediaPlaylistNavigator::playbackMode
+
+  This property defines the order, items in playlist are played.
+
+  \sa QMediaPlaylist::PlaybackMode
 */
 
 QMediaPlaylist::PlaybackMode QMediaPlaylistNavigator::playbackMode() const
@@ -232,9 +236,6 @@ QMediaPlaylist::PlaybackMode QMediaPlaylistNavigator::playbackMode() const
     return d_func()->playbackMode;
 }
 
-/*!
-    Sets the playback \a mode.
-*/
 
 void QMediaPlaylistNavigator::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
 {
@@ -305,9 +306,9 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylistProvider *playlist)
 }
 
 /*!
-    Returns the media at the current position in the playlist.
+    \property QMediaPlaylistNavigator::currentItem
 
-    \sa currentPosition()
+    The media at the current position in the playlist.
 */
 
 QMediaContent QMediaPlaylistNavigator::currentItem() const
@@ -347,11 +348,10 @@ QMediaContent QMediaPlaylistNavigator::itemAt(int position) const
 }
 
 /*!
-    Returns the position of the current media.
+  \property QMediaPlaylistNavigator::currentPosition
 
-    If no media is current this will return -1.
-
-    \sa nextPosition(), previousPosition(), seek()
+    The current position in the playlist.
+    If no media is current, the property value is -1.
 */
 
 int QMediaPlaylistNavigator::currentPosition() const
@@ -419,10 +419,6 @@ void QMediaPlaylistNavigator::previous()
 
     jump(prevPos);
 }
-
-/*!
-    Jumps to a new \a position in the playlist.
-*/
 
 void QMediaPlaylistNavigator::jump(int position)
 {

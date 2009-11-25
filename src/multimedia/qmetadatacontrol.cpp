@@ -47,7 +47,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMetaDataControl
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \preliminary

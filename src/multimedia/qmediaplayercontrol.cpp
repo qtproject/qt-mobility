@@ -48,11 +48,10 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlayerControl
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \preliminary
-    \brief The QMediaPlayerControl provides access to the media playing functionality of a
+    \brief The QMediaPlayerControl class provides access to the media playback functionality of a
     QMediaService.
 
     If a QMediaService can play media is will implement QMediaPlayerControl.  This control provides

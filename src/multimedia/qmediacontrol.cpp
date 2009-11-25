@@ -51,7 +51,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMediaControl
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \preliminary

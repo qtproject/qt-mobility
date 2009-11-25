@@ -46,6 +46,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QVideoWindowControl
     \preliminary
+    \ingroup multimedia-serv
     \brief The QVideoWindowControl class provides a media control for rendering video to a window.
 
     The winId() property QVideoWindowControl allows a platform specific window ID to be set as the
