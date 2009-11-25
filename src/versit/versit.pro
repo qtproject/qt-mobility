@@ -9,6 +9,13 @@ DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL
 
 qtAddLibrary(QtContacts)
 
+# Contacts Includepath
+INCLUDEPATH += . \
+               ../contacts \
+               ../contacts/requests \
+               ../contacts/filters \
+               ../contacts/details
+
 # Input
 PUBLIC_HEADERS += qtversitglobal.h \
     qversitdocument.h \
@@ -26,7 +33,8 @@ PRIVATE_HEADERS += qversitdocument_p.h \
     qvcard21writer.h \
     qvcard30writer.h \
     qversitcontactexporter_p.h \
-    qversitcontactimporter_p.h
+    qversitcontactimporter_p.h\
+    versitutils.h
 
 # Implementation
 SOURCES += qversitdocument.cpp \
