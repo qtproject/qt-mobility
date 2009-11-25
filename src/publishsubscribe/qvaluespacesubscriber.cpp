@@ -326,9 +326,9 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *paren
 
     \sa isConnected()
 */
-QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
-                                 QValueSpace::LayerOptions filter,
-                                 QObject *parent)
+QValueSpaceSubscriber::QValueSpaceSubscriber(QValueSpace::LayerOptions filter,
+                                             const QString &path,
+                                             QObject *parent)
 :   QObject(parent)
 {
     d = new QValueSpaceSubscriberPrivate(path, filter);
@@ -346,8 +346,8 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
 
     \sa QAbstractValueSpaceLayer::id(), QValueSpace, isConnected()
 */
-QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
-                                             const QUuid &uuid,
+QValueSpaceSubscriber::QValueSpaceSubscriber(const QUuid &uuid,
+                                             const QString &path,
                                              QObject *parent)
 :   QObject(parent)
 {

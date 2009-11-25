@@ -482,7 +482,7 @@ void tst_QValueSpaceSubscriber::testFilterConstructor()
 
     QValueSpaceSubscriber *subscriber;
 
-    subscriber = new QValueSpaceSubscriber(QString("/layer"), options);
+    subscriber = new QValueSpaceSubscriber(options, QString("/layer"));
 
     if (!connected)
         QVERIFY(!subscriber->isConnected());

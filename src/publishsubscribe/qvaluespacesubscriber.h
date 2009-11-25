@@ -67,10 +67,9 @@ public:
     explicit QValueSpaceSubscriber(QObject *parent = 0);
     explicit QValueSpaceSubscriber(const QString &path, QObject *parent = 0);
 
-    QValueSpaceSubscriber(const QString &path, QValueSpace::LayerOptions filter,
+    QValueSpaceSubscriber(QValueSpace::LayerOptions filter, const QString &path,
                           QObject *parent = 0);
-
-    QValueSpaceSubscriber(const QString &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceSubscriber(const QUuid &uuid, const QString &path, QObject *parent = 0);
 
     virtual ~QValueSpaceSubscriber();
 
