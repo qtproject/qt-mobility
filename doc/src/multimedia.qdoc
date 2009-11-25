@@ -102,9 +102,9 @@ initialize a QMediaRecorder object
 \snippet snippets/multimedia-snippets/audiorecorder.cpp create-objs-1
 
 The API now allows us to discover available devices and codecs as shown in
-the example. To actually do the recording we merely have to emit invoke the
-\l{QMediaRecorder::record()}{record()} slot, and to stop signal the
-\l{QMediaRecorder::stop()}{stop()} slot. Saving to a file is done simply by
+the example. To actually do the recording we merely have to call the
+\l{QMediaRecorder::record()}{record()} function, and to stop call the
+\l{QMediaRecorder::stop()}{stop()} function. Saving to a file is done simply by
 calling QMediaRecorder::setOutputLocation() before starting to record.
 
 With a handful of functions and two classes we can implement a sound

@@ -47,8 +47,8 @@
 <a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-lt-lt-84">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceInterfaceDescriptor &amp; <i>dc</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-gt-gt-78">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceInterfaceDescriptor &amp; <i>dc</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-lt-lt-86">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceInterfaceDescriptor &amp; <i>dc</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-gt-gt-80">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceInterfaceDescriptor &amp; <i>dc</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -84,6 +84,7 @@
 <h3 class="fn"><a name="customProperty"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QServiceInterfaceDescriptor::customProperty ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the value for the custom property <i>key</i>; otherwise returns a null string.</p>
 <h3 class="fn"><a name="customPropertyKeys"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QServiceInterfaceDescriptor::customPropertyKeys () const</h3>
+<p>Returns a list of names of the custom properties.</p>
 <h3 class="fn"><a name="inSystemScope"></a>bool QServiceInterfaceDescriptor::inSystemScope () const</h3>
 <p>Returns true if this implementation is provided for all users on the system.</p>
 <p>See also <a href="qservicemanager.html#Scope-enum">QServiceManager::Scope</a>.</p>
@@ -108,9 +109,9 @@
 <p>Compares a <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> to <i>other</i>. Returns true if they are equal and false otherwise.</p>
 <hr />
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-lt-lt-84"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const QServiceInterfaceDescriptor &amp; <i>dc</i> )</h3>
+<h3 class="fn"><a name="operator-lt-lt-86"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const QServiceInterfaceDescriptor &amp; <i>dc</i> )</h3>
 <p>Writes service interface descriptor <i>dc</i> to the stream <i>out</i> and returns a reference to the stream.</p>
-<h3 class="fn"><a name="operator-gt-gt-78"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>in</i>, QServiceInterfaceDescriptor &amp; <i>dc</i> )</h3>
+<h3 class="fn"><a name="operator-gt-gt-80"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>in</i>, QServiceInterfaceDescriptor &amp; <i>dc</i> )</h3>
 <p>Reads a service interface descriptor into <i>dc</i> from the stream <i>in</i> and returns a reference to the stream.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

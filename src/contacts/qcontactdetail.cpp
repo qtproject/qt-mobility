@@ -128,7 +128,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
  * and some convenience methods that return values associated with schema
  * fields.
  *
- * \snippet contacts/details/qcontactphonenumber.h 0
+ * \snippet ../../src/contacts/details/qcontactphonenumber.h 0
  *
  */
 

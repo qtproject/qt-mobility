@@ -52,10 +52,10 @@
 
 QTM_BEGIN_NAMESPACE
 /*!
- * \class QContactManager
- *
- * This class provides adding, updating and removal of contacts.
- * It also provides definitions for fields that can be found in contacts.
+  \class QContactManager
+ 
+  This class provides adding, updating and removal of contacts.
+  It also provides definitions for fields that can be found in contacts.
  */
 
 /*!

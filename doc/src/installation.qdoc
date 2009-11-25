@@ -62,8 +62,17 @@ dependencies and these are outlined below:
         The linux backend depends on QMF.
         For more information on QMF visit
         \l {http://labs.trolltech.com/blogs/category/qtmessaging}
+        {QMF Labs article}
 
         The Windows Mobile backend depends on ActiveSync version 4.5.
+
+        Whilst not supported for this release the Windows Desktop backend 
+        requires Microsoft Outlook 2003 or later, and Microsoft Windows XP 
+        to be installed.
+
+        The messaging API SMS/MMS functionality requires that the platform 
+        provides SMS/MMS facilites. Email functionality requires that an email 
+        account is available on the platform.
 \row
     \o  Service Framework
     \o 
@@ -78,13 +87,12 @@ dependencies and these are outlined below:
         The multimedia component depends on the QtMultimedia
         module in Qt.  Qt by default is configured to make this
         module with the \c {-multimedia} option.
-        
 \endtable
 
 
 \section1 Unpacking
-Unpack the Qt Mobility archive if you have not done so already:
-On Unix (X11 and Mac):
+Unpack the Qt Mobility archive if you have not done so already,
+on Unix (X11 and Mac):
 \code
         cd /tmp
         gunzip %DISTNAME%.tar.gz        #uncompress the archive
@@ -95,8 +103,9 @@ This creates the directory \c {/tmp/%DISTNAME%} containing the files
 from the archive.  We only support the GNU version of the tar
 archiving utility.  Note on some systems it is called gtar.
 
-On windows, uncompress the files into the directory you want
-Qt Mobility installed, e.g. \c {C:\QtMobility\1.0.0}
+On windows, uncompress the zip file into the directory you want
+Qt Mobility installed, extracting to \c {C:\QtMobility}
+will create the directory \c {C:\QtMobility\%DISTNAME%}
 
 NOTE: The install path must not contain any spaces.
 
@@ -106,16 +115,15 @@ NOTE: The install path must not contain any spaces.
 To configure the Qt Mobility libraries for your machine, run the
 \c./configure script in the package directory.
 
-By default, Qt Mobility is configured for installation into the
-install directory of the package directory. eg
-\c {/tmp/%DISTNAME%/install}, but this can be changed using
-the \c {-prefix} option.
+To specify the installation directory you may use the -prefix
+option.  Not passing a prefix installs the
+mobility libraries into $PWD/install.
 
 \code
     cd /tmp/%DISTNAME%
     ./configure -prefix $TARGET_DIR
 \endcode
-    Not passing a prefix installs the mobility libraries into $PWD/install.
+    
     Type \c {./configure -help} to get a list of all available options.
     To create all the libraries and tools, type:
 \code
@@ -142,17 +150,23 @@ the \c {-prefix} option.
     use.
 
 \section2 Building On Windows
+    To configure the Qt Mobility libraries for your machine, run
+    configure in the package directory.
 
-    To configure Qt Mobility for your machine type:
-\code
-        cd c:\QtMobility\1.0.0
+    To specify the installation directory you may use the -prefix
+    option.  Not passing a prefix installs the mobility
+    libraries into an install directory within current working
+    directory.
+
+    \code
+        cd c:\QtMobility\%DISTNAME%
         configure -prefix %TARGET_DIR%
-\endcode
+    \endcode
 
     Type \c {configure -help} to get a list of all available options.
 
     The actual commands needed to build and install Qt Mobility depends on your
-    development system.  For Microsoft Visual Studio to create the
+    development system.  For Microsoft Visual Studio to create and install the 
     libraries and tools type:
 \code 
     nmake
@@ -163,7 +177,7 @@ the \c {-prefix} option.
 
     Qt Mobility is comprised of several components but all of
     these may not need to be built.  To build a single component,
-    perform the configure step as outlined in 4.1 and 4.2,
+    perform the configure step as outlined above,
     and then perform the make step in the appropriate directory
     to create the desired library.
 
@@ -171,8 +185,8 @@ the \c {-prefix} option.
 \code
     ./src/bearer
     ./src/contacts
-    ./src/global
-    ... etc
+    ...
+    ./src/systeminfo
 \endcode
 
     e.g. To build bearer on Unix:
@@ -219,12 +233,10 @@ PATH should be extended to include:
 \c {C:\%TARGET_DIR%\lib}
 
 For newer versions of windows, PATH can be extended
-through
-"Control Panel->System->Advanced->Environment variables"
-and for older versions by editing \c{C:\autoexec.bat}
+through "Start->Settings->Control Panel->System->Advanced->
+Environment variables" and for older versions by 
+editing \c{C:\autoexec.bat}
 
-\section1 Further information
-Further information on Qt Mobility can be found
-at <TODO: QtMobility URL>
-
-We hope you enjoy using Qt Mobility.
+And now the installation is complete, we hope you enjoy 
+using Qt Mobility.
+*/

@@ -76,7 +76,32 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QSystemInfo class provides access to various general information from the system.
 
-  */
+\note In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
+
+\table
+\header
+    \o Class
+\row
+    \o QSystemInfo::currentLanguage
+\row
+    \o QSystemInfo::availableLanguages
+\row
+    \o QSystemInfo::currentCountryCode
+\row
+    \o QSystemDisplayInfo::displayBrightness
+\row
+    \o QSystemDisplayInfo::colorDepth
+\row
+    \o QSystemScreenSaver::screenSaverInhibited
+\row
+    \o QSystemScreenSaver::setScreenSaverInhibit
+\endtable
+
+\note Platform notes
+    Some functionality may or may not be supported on various platforms. Depending on if there
+is a reliable way to gather such information.
+*/
+
 /*!
     \enum QSystemInfo::Version
     This enum describes the version component.
@@ -550,7 +575,7 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 
 // display
  /*!
-   \fn QSystemDisplayInfo::QSystemDisplayInfo()
+   \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
    Constructs a QSystemDisplayInfo object.
  */
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
@@ -873,17 +898,6 @@ bool QSystemScreenSaver::screenSaverInhibited()
     return d->screenSaverInhibited();
 }
 
-/*!
-  \property QSystemScreenSaver::isScreenLockOn
-  \brief screen lock on.
-
-    Returns whether the systems screen lock is turned on.
-*/
-bool QSystemScreenSaver::isScreenLockOn()
-{
-    QSystemScreenSaverPrivate dp;
-    return dp.isScreenLockOn();
-}
 
 #include "moc_qsysteminfo.cpp"
 

@@ -32,8 +32,7 @@ symbian {
 }
 
 macx: {
-    #LIBS += -framework QtBearer
+    contains(QT_CONFIG,qt_framework):LIBS += -framework QtBearer
     contains(CONFIG, debug) {
-        CONFIG -= app_bundle
      }
 }

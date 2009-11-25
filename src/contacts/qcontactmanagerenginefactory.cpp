@@ -43,19 +43,19 @@
 #include "qcontactmanagerenginefactory.h"
 
 /*!
- * \class QContactManagerEngineFactory
- * \preliminary
- * \brief This class is the interface for plugins that implement
- * QContactManagerEngine functionality.
- *
- * This class provides a simple interface for the creation of
- * manager engine instances.  Each factory has a specific id
- * associated with it, which forms the \c managerName parameter
- * when creating \l QContactManager objects.
- *
- * More information on writing a contacts engine plugin is TODO.
- *
- * \sa QContactManager, QContactManagerEngine
+  \class QContactManagerEngineFactory
+  \preliminary
+  \brief The QContactManagerEngineFactory class provides the interface for
+ plugins that implement QContactManagerEngine functionality.
+ 
+  This class provides a simple interface for the creation of
+  manager engine instances.  Each factory has a specific id
+  associated with it, which forms the \c managerName parameter
+  when creating \l QContactManager objects.
+ 
+  More information on writing a contacts engine plugin is TODO.
+ 
+  \sa QContactManager, QContactManagerEngine
  */
 
 /*!

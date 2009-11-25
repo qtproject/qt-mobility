@@ -420,13 +420,14 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
     \class QVideoWidget
     \preliminary
 
-    \brief The QVideoWidget class provides a widget which presents video produced by a media
-    object.
+    \brief The QVideoWidget class provides a widget which presents video
+    produced by a media object.
     \ingroup multimedia
 
-    Attaching a QVideoWidget to a QMediaObject allows it to display the video or image output
-    of that media object.  A QVideoWidget is attached to media object by passing a pointer to
-    the QMediaObject in its constructor, and detached by destroying the QVideoWidget.
+    Attaching a QVideoWidget to a QMediaObject allows it to display the
+    video or image output of that media object.  A QVideoWidget is attached
+    to media object by passing a pointer to the QMediaObject in its
+    constructor, and detached by destroying the QVideoWidget.
 
     \code
         player = new QMediaPlayer;
@@ -438,7 +439,8 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
         player->play();
     \endcode
 
-    \bold {Note}: Only a single display output can be attached to a media object at one time.
+    \bold {Note}: Only a single display output can be attached to a media
+    object at one time.
 
     \sa QMediaObject, QMediaPlayer, QGraphicsVideoItem
 */
@@ -712,6 +714,10 @@ void QVideoWidget::setSaturation(int saturation)
     \sa saturation
 */
 
+/*!
+  Returns the size hint for the current back end,
+  if there is one, or else the size hint from QWidget.
+ */
 QSize QVideoWidget::sizeHint() const
 {
     Q_D(const QVideoWidget);
@@ -727,8 +733,7 @@ QSize QVideoWidget::sizeHint() const
 /*!
     \reimp
     \internal
-*/
-
+ */
 bool QVideoWidget::event(QEvent *event)
 {
     Q_D(QVideoWidget);
@@ -758,6 +763,9 @@ bool QVideoWidget::event(QEvent *event)
     return QWidget::event(event);
 }
 
+/*!
+  Handles the show \a event.
+ */
 void QVideoWidget::showEvent(QShowEvent *event)
 {
     Q_D(QVideoWidget);
@@ -785,6 +793,9 @@ void QVideoWidget::showEvent(QShowEvent *event)
     }
 }
 
+/*!
+  Handles the hide \a event.
+ */
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
@@ -798,6 +809,9 @@ void QVideoWidget::hideEvent(QHideEvent *event)
     QWidget::hideEvent(event);
 }
 
+/*!
+  Handles the resize \a event.
+ */
 void QVideoWidget::resizeEvent(QResizeEvent *event)
 {
     Q_D(QVideoWidget);
@@ -808,6 +822,9 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
         d->currentBackend->resizeEvent(event);
 }
 
+/*!
+  Handles the move \a event.
+ */
 void QVideoWidget::moveEvent(QMoveEvent *event)
 {
     Q_D(QVideoWidget);
@@ -816,6 +833,9 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
         d->currentBackend->moveEvent(event);
 }
 
+/*!
+  Handles the paint \a event.
+ */
 void QVideoWidget::paintEvent(QPaintEvent *event)
 {
     Q_D(QVideoWidget);
