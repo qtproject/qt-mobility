@@ -150,6 +150,8 @@
     It includes the ability to create, edit, list, delete and lookup contact
     information whether it is stored locally or remotely.
 
+    For more details, see the \l {Contacts} {contacts API overview}.
+
     \section2 Publish and Subscribe
 
     Will enable context sensitive access to information in future releases.
