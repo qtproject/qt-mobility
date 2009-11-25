@@ -75,8 +75,6 @@ public:
 
     void sync();
 
-    static void syncAll();
-
 signals:
     void attributeInterestChanged(const QString &attribute, bool interested);
 

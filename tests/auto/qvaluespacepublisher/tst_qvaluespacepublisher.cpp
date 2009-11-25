@@ -215,7 +215,7 @@ void tst_QValueSpacePublisher::testConstructor()
     }
 
     publisher->removeAttribute(QString("value"));
-    QValueSpacePublisher::syncAll();
+    publisher->sync();
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =

@@ -283,19 +283,6 @@ void QValueSpacePublisher::sync()
 }
 
 /*!
-    Forcibly sync all Value Space publisher.
-
-    This function is equivalent to calling sync() for all Value Space layers.
-
-    Generally, calling this function is unnecessary.
-*/
-void QValueSpacePublisher::syncAll()
-{
-    foreach (QAbstractValueSpaceLayer *layer, QValueSpaceManager::instance()->getLayers())
-        layer->sync();
-}
-
-/*!
     Set \a attribute on the publisher to \a data.  If attribute is empty, this call will set the
     value of this publisher's path.
 
