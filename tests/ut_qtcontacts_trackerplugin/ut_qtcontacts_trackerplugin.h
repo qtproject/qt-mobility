@@ -86,7 +86,7 @@ private slots:
 //    void testSaveDetailDefinition();
 //    void testRemoveDetailDefinition();
     void testContactsAddedSince();
-//    void testContactsModifiedSince();
+    void testContactsModifiedSince();
     void testContactsRemovedSince();
 //    void testGroupsAddedSince();
 //    void testGroupsModifiedSince();

@@ -121,8 +121,7 @@ void QTrackerContactSaveRequest::saveContact(QContact &contact)
         ncoContact->setContentCreated(QDateTime::currentDateTime());
     }  else {
         ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
-        //  disabled because of 141727 - it breaks the transaction
-        //  ncoContact->setContentLastModified(QDateTime::currentDateTime());
+        ncoContact->setContentLastModified(QDateTime::currentDateTime());
     }
 
     // if there are work related details, need to be saved to Affiliation.

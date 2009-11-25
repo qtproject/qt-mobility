@@ -780,7 +780,7 @@ void ut_qtcontacts_trackerplugin::testContactsAddedSince()
     }
 
 }
-/*
+
 void ut_qtcontacts_trackerplugin::testContactsModifiedSince()
 {
     QDateTime start;
@@ -802,7 +802,7 @@ void ut_qtcontacts_trackerplugin::testContactsModifiedSince()
         addedIds.append(c.localId());
     }
 
-    QTest::qWait(1000);
+    QTest::qWait(2000);
     start = QDateTime::currentDateTime();
 
    // Modify and save rest of the contacts
@@ -815,13 +815,18 @@ void ut_qtcontacts_trackerplugin::testContactsModifiedSince()
         QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
         modified.append(c.localId());
     }
-    // Remove one contact
-    trackerEngine->removeContact(addedIds[addedIds.count()-1], error);
     // Set filter
     QContactChangeLogFilter filter(QContactChangeLogFilter::EventChanged);
     filter.setSince(start);
-    QList<QContactSortOrder> sorts;
-    QList<QContactLocalId> actuallyModified = trackerEngine->contacts(filter, sorts, error);
+
+    QContactLocalIdFetchRequest req;
+    req.setFilter(filter);
+    trackerEngine->startRequest(&req);
+    trackerEngine->waitForRequestFinished(&req, 10000);
+    QVERIFY2(req.isFinished(), "Fetch request did not finish on time");
+    QVERIFY2(req.error() == QContactManager::NoError, "Fetch request finished with errors");
+    QList<QContactLocalId> actuallyModified = req.ids();
+
     // Num of actually modified should be same as supposedly modified
     QCOMPARE(actuallyModified.count(), modified.count());
     // All the ids of the modified contacts should be found in the result list
@@ -829,7 +834,6 @@ void ut_qtcontacts_trackerplugin::testContactsModifiedSince()
         QVERIFY2(actuallyModified.contains(id), "One the modified contacts was not reported as modified");
     }
 }
-*/
 
 void ut_qtcontacts_trackerplugin::testContactsRemovedSince()
 {
