@@ -25,6 +25,7 @@ PRIVATE_HEADERS += qversitdocument_p.h \
     qvcard30writer.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h \
+    qversitdefs.h \
     versitutils.h
 
 # Implementation
