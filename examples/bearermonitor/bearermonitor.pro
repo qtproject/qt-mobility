@@ -17,7 +17,9 @@ INCLUDEPATH += ../../src/bearer
 
 include(../examples.pri)
 
-qtAddLibrary(QtBearer)
+CONFIG += mobility
+MOBILITY = bearer
+
 win32:!wince*:LIBS += -lWs2_32
 wince*:LIBS += -lWs2
 

@@ -17,7 +17,8 @@ INCLUDEPATH += ../testmodel
 VPATH += ../testmodel
 
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 # Input
 SOURCES =  contactdetailsform.cpp \
@@ -53,4 +54,3 @@ symbian: {
                         SwEvent
 }
 include(../examples.pri)
-qtAddLibrary(QtContacts)

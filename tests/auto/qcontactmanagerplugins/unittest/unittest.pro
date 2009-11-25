@@ -12,10 +12,9 @@ INCLUDEPATH += ../../../../src/contacts \
 
 INCLUDEPATH += ../../
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 SOURCES  += tst_qcontactmanagerplugins.cpp
-
-qtAddLibrary(QtContacts)
 
 TESTDLLS = \
     $$mobilityDeployFilename(contacts_testdummy) \

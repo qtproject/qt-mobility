@@ -15,7 +15,8 @@ INCLUDEPATH += ../../src/bearer
 
 include(../examples.pri)
 
-qtAddLibrary(QtBearer)
+CONFIG += mobility
+MOBILITY = bearer
 
 CONFIG += console
 

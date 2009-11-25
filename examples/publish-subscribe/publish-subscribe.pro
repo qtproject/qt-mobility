@@ -15,4 +15,6 @@ FORMS = providerdialog.ui \
         consumerdialog.ui
 
 include(../examples.pri)
-qtAddLibrary(QtPublishSubscribe)
+
+CONFIG += mobility
+MOBILITY = publishsubscribe

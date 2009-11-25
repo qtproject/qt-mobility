@@ -31,6 +31,8 @@ symbian: {
     bearerex.path = /sys/bin
     DEPLOYMENT += bearerex
 
-    qtAddLibrary(QtBearer)
+    CONFIG += mobility
+    MOBILITY = bearer
+
     TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 }

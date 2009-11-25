@@ -11,4 +11,5 @@ SOURCES = main.cpp \
 FORMS = batteryprovider.ui
 
 include(../../examples.pri)
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe

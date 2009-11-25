@@ -7,7 +7,8 @@ include (../../../common.pri)
 SOURCES += tst_qmediaimageviewer.cpp
 
 QT += network multimedia
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 !contains(QT_CONFIG, no-jpeg):DEFINES += QTEST_HAVE_JPEG
 

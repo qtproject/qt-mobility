@@ -23,7 +23,8 @@ include(../../../common.pri)
 # Input 
 SOURCES += tst_servicedatabase.cpp
             
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     libBlock = \
