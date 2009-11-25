@@ -413,7 +413,7 @@ void QNetworkSessionPrivate::close(bool allowSignals)
         if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
             newState(QNetworkSession::Disconnected);
         }
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -427,7 +427,7 @@ void QNetworkSessionPrivate::stop()
     iConnection.Stop(RConnection::EStopAuthoritative);
     isActive = true;
     close(false);
-    emit q->sessionClosed();
+    emit q->closed();
 }
 
 void QNetworkSessionPrivate::migrate()
@@ -526,7 +526,7 @@ void QNetworkSessionPrivate::Error(TInt /*aError*/)
         // => Following call makes sure that Session state
         //    changes immediately to Disconnected.
         newState(QNetworkSession::Disconnected);
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 #endif
@@ -941,7 +941,7 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
     }
     
     if (emitSessionClosed) {
-        emit q->sessionClosed();
+        emit q->closed();
     }
 
     return retVal;

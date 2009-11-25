@@ -113,8 +113,8 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void stateChanged(QNetworkSession::State);
-    void sessionOpened();
-    void sessionClosed();
+    void opened();
+    void closed();
     void error(QNetworkSession::SessionError);
     void preferredConfigurationChanged(const QNetworkConfiguration& config, bool isSeamless);
     void newConfigurationActivated();

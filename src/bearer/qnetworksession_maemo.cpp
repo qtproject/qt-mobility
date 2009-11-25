@@ -691,7 +691,7 @@ void QNetworkSessionPrivate::updateStateFromActiveConfig()
         emit quitPendingWaitsForOpened();
 
     if (oldActive && !isActive)
-        emit q->sessionClosed();
+        emit q->closed();
 
     if (oldState != state) {
         emit q->stateChanged(state);
@@ -1035,7 +1035,7 @@ void QNetworkSessionPrivate::close()
     } else if (isActive) {
         opened = false;
         isActive = false;
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -1072,7 +1072,7 @@ void QNetworkSessionPrivate::stop()
         } else {
 	    opened = false;
 	    isActive = false;
-	    emit q->sessionClosed();
+	    emit q->closed();
 	}
     }
 }

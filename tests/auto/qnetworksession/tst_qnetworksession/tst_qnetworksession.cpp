@@ -311,8 +311,8 @@ void tst_QNetworkSession::userChoiceSession()
     if (session.state() == QNetworkSession::NotAvailable)
         QSKIP("Network is not available.", SkipSingle);
 
-    QSignalSpy sessionOpenedSpy(&session, SIGNAL(sessionOpened()));
-    QSignalSpy sessionClosedSpy(&session, SIGNAL(sessionClosed()));
+    QSignalSpy sessionOpenedSpy(&session, SIGNAL(opened()));
+    QSignalSpy sessionClosedSpy(&session, SIGNAL(closed()));
     QSignalSpy stateChangedSpy(&session, SIGNAL(stateChanged(QNetworkSession::State)));
     QSignalSpy errorSpy(&session, SIGNAL(error(QNetworkSession::SessionError)));
 
@@ -439,8 +439,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
     if (session.state() == QNetworkSession::NotAvailable)
         QSKIP("Network is not available.", SkipSingle);
 
-    QSignalSpy sessionOpenedSpy(&session, SIGNAL(sessionOpened()));
-    QSignalSpy sessionClosedSpy(&session, SIGNAL(sessionClosed()));
+    QSignalSpy sessionOpenedSpy(&session, SIGNAL(opened()));
+    QSignalSpy sessionClosedSpy(&session, SIGNAL(closed()));
     QSignalSpy stateChangedSpy(&session, SIGNAL(stateChanged(QNetworkSession::State)));
     QSignalSpy errorSpy(&session, SIGNAL(error(QNetworkSession::SessionError)));
 
@@ -509,8 +509,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
     QNetworkSession session2(configuration);
 
-    QSignalSpy sessionOpenedSpy2(&session2, SIGNAL(sessionOpened()));
-    QSignalSpy sessionClosedSpy2(&session2, SIGNAL(sessionClosed()));
+    QSignalSpy sessionOpenedSpy2(&session2, SIGNAL(opened()));
+    QSignalSpy sessionClosedSpy2(&session2, SIGNAL(closed()));
     QSignalSpy stateChangedSpy2(&session2, SIGNAL(stateChanged(QNetworkSession::State)));
     QSignalSpy errorSpy2(&session2, SIGNAL(error(QNetworkSession::SessionError)));
 
@@ -636,7 +636,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                         QNetworkConfiguration config = manager.configurationFromIdentifier(configId); 
                         QNetworkSession session3(config);
                         QSignalSpy errorSpy3(&session3, SIGNAL(error(QNetworkSession::SessionError)));
-                        QSignalSpy sessionOpenedSpy3(&session3, SIGNAL(sessionOpened()));
+                        QSignalSpy sessionOpenedSpy3(&session3, SIGNAL(opened()));
                         
                         session3.open();
                         session3.waitForOpened();

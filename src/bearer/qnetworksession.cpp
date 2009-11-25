@@ -200,7 +200,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QNetworkSession::sessionOpened()
+    \fn void QNetworkSession::opened()
 
     This signal is emitted when the network session has been opened. 
     
@@ -209,7 +209,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QNetworkSession::sessionClosed()
+    \fn void QNetworkSession::closed()
 
     This signal is emitted when the network session has been closed.
 */
@@ -227,7 +227,7 @@ QNetworkSession::QNetworkSession(const QNetworkConfiguration& connectionConfig, 
     d->publicConfig = connectionConfig;
     d->syncStateWithInterface();
     QObject::connect(d, SIGNAL(quitPendingWaitsForOpened()), 
-                this, SIGNAL(sessionOpened()));
+                this, SIGNAL(opened()));
 }
 
 /*!
@@ -249,7 +249,7 @@ QNetworkSession::~QNetworkSession()
     detected via QNetworkConfigurationManager::capabilities().
 
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
-    by connecting to the stateChanged(), sessionOpened() or error() signals.
+    by connecting to the stateChanged(), opened() or error() signals.
 
     It is not a requirement to open a session in order to monitor the underlying network interface.
 
@@ -310,7 +310,7 @@ bool QNetworkSession::waitForOpened(int msecs)
     The platform capabilities can be detected via QNetworkConfigurationManager::capabilities().
 
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
-    by connecting to the stateChanged(), sessionOpened() or error() signals.
+    by connecting to the stateChanged(), opened() or error() signals.
 
     \sa open(), stop(), isActive()
 */

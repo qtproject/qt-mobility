@@ -220,7 +220,7 @@ void QNetworkSessionPrivate::close()
     } else if (isActive) {
         opened = false;
         isActive = false;
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -241,7 +241,7 @@ void QNetworkSessionPrivate::stop()
 
         opened = false;
         isActive = false;
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -431,7 +431,7 @@ void QNetworkSessionPrivate::updateStateFromActiveConfig()
     if (!oldActive && isActive)
         emit quitPendingWaitsForOpened();
     if (oldActive && !isActive)
-        emit q->sessionClosed();
+        emit q->closed();
 
     if (oldState != state)
         emit q->stateChanged(state);
@@ -462,7 +462,7 @@ void QNetworkSessionPrivate::forcedSessionClose(const QNetworkConfiguration &con
         opened = false;
         isActive = false;
 
-        emit q->sessionClosed();
+        emit q->closed();
 
         lastError = QNetworkSession::SessionAbortedError;
         emit q->error(lastError);
