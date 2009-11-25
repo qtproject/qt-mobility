@@ -78,6 +78,12 @@ dependencies and these are outlined below:
         The multimedia component depends on the QtMultimedia
         module in Qt.  Qt by default is configured to make this
         module with the \c {-multimedia} option.
+
+        The Symbian backend requires a Media Player SDK Plug-in
+        http://wiki.forum.nokia.com/index.php/SDK_API_Plugin.  For
+        version 3.1 the Media Player Engine API is required and for
+        versions 3.2 and 5.0 the Media Player Utility API is
+        required.
         
 \endtable
 
