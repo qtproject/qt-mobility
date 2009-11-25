@@ -151,20 +151,20 @@ void GroupEditDialog::addButtonClicked()
 
 void GroupEditDialog::saveButtonClicked()
 {
-    if (listWidget->currentItem()){
+    if (listWidget->currentItem()) {
         QContactLocalId grpID = listWidget->currentItem()->data(Qt::UserRole + 1).toUInt();
         QContact grp = cm->contact(grpID);
         bool result = false;
-        if (!grp.isEmpty()){
-            QContactName groupName;
+        if (!grp.isEmpty()) {
+            QContactName groupName = grp.detail<QContactName>();
             groupName.setCustomLabel(groupNameEdit->text());
             grp.saveDetail(&groupName);
             result = cm->saveContact(&grp);
         }
-        if (!result){
+        if (!result) {
             QMessageBox::information(this, tr("Save Group"),
                     tr("Failed to save Group '%1'.").arg(listWidget->currentItem()->text()));
-        }else{
+        }else {
             repopulateGroupList();
             // select the group name again
             for (int index = 0; index < listWidget->count();index++){

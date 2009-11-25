@@ -319,7 +319,6 @@ QContact PhoneBook::buildContact() const
     // note that we abuse the "street" field in this example.
     QContactAddress address;
     address.setStreet(addressText->toPlainText());
-    address.setSubTypes(QStringList() << QContactAddress::SubTypeDomestic << QContactAddress::SubTypeParcel << QContactAddress::SubTypePostal);
     if (!address.street().isEmpty())
         c.saveDetail(&address);
 
@@ -468,13 +467,13 @@ void PhoneBook::addContact()
 void PhoneBook::saveContact()
 {
     if (smallScreenSize && !(addingContact || editingContact))
-	return;
+        return;
 
     addingContact = false;
     editingContact = false;
-    if (smallScreenSize){
-	contactDetailsForm->accept();
-	showMaximized();
+    if (smallScreenSize) {
+        contactDetailsForm->accept();
+        showMaximized();
     }
 
     QContact c = buildContact();
