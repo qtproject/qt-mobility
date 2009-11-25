@@ -172,7 +172,7 @@ static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filt
     if ((filter & QValueSpace::PermanentLayer &&
          filter & QValueSpace::TransientLayer) ||
         (filter & QValueSpace::WritableLayer &&
-         filter & QValueSpace::NonWritableLayer)) {
+         filter & QValueSpace::ReadOnlyLayer)) {
         return list;
     }
 

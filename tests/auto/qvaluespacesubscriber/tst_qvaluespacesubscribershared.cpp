@@ -476,8 +476,8 @@ void tst_QValueSpaceSubscriber::testFilterConstructor_data()
     ADD(QValueSpace::TransientLayer, true);
     ADD(QValueSpace::PermanentLayer | QValueSpace::TransientLayer, false);
     ADD(QValueSpace::WritableLayer, true);
-    ADD(QValueSpace::NonWritableLayer, true);
-    ADD(QValueSpace::WritableLayer | QValueSpace::NonWritableLayer, false);
+    ADD(QValueSpace::ReadOnlyLayer, true);
+    ADD(QValueSpace::WritableLayer | QValueSpace::ReadOnlyLayer, false);
 }
 
 void tst_QValueSpaceSubscriber::testFilterConstructor()

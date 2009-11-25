@@ -336,9 +336,8 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider 
                                 Applications can use QValueSpaceProvider to publish values to
                                 layers that have this option.
                                 \br
-                                This option and the NonWritableLayer option are mutually
-                                exclusive.
-    \value NonWritableLayer     Indicates that the layer cannot update its contents.  When used as
+                                This option and the ReadOnlyLayer option are mutually exclusive.
+    \value ReadOnlyLayer        Indicates that the layer cannot update its contents.  When used as
                                 a filter only layers that are read-only will be used.
                                 \br
                                 Applications can not publish values to layers with this option.

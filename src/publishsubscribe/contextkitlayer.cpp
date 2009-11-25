@@ -282,7 +282,7 @@ unsigned int ContextKitLayer::order()
 
 LayerOptions ContextKitLayer::layerOptions () const
 {
-    return TransientLayer | NonWritableLayer;
+    return TransientLayer | ReadOnlyLayer;
 }
 
 QAbstractValueSpaceLayer::Handle ContextKitLayer::item (Handle parent, const QString &subPath)
