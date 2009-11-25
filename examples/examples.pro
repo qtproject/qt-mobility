@@ -32,7 +32,7 @@ SUBDIRS += samplephonebook \
 }
 
 #System Information
-SUBDIRS += sysinfo
+!maemo:SUBDIRS += sysinfo
 
 #Multimedia
 SUBDIRS += player \

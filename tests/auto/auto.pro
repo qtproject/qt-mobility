@@ -49,7 +49,7 @@ unix:!symbian:!maemo: {
            qpacketprotocol
 }
 
-SUBDIRS += qsysteminfo \                    #SystemInformation
+!maemo:SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemstorageinfo \
