@@ -186,7 +186,7 @@ QTM_BEGIN_NAMESPACE
     connection remains the session remains registered as a roaming stakeholder; otherwise roaming will 
     be enforced by the platform.
 
-    \sa migrate(), ignore(), QNetworkConfiguration::roamingAvailable()
+    \sa migrate(), ignore(), QNetworkConfiguration::isRoamingAvailable()
 */
 
 /*!
@@ -200,7 +200,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QNetworkSession::sessionOpened()
+    \fn void QNetworkSession::opened()
 
     This signal is emitted when the network session has been opened. 
     
@@ -209,7 +209,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QNetworkSession::sessionClosed()
+    \fn void QNetworkSession::closed()
 
     This signal is emitted when the network session has been closed.
 */
@@ -227,7 +227,7 @@ QNetworkSession::QNetworkSession(const QNetworkConfiguration& connectionConfig, 
     d->publicConfig = connectionConfig;
     d->syncStateWithInterface();
     QObject::connect(d, SIGNAL(quitPendingWaitsForOpened()), 
-                this, SIGNAL(sessionOpened()));
+                this, SIGNAL(opened()));
 }
 
 /*!
@@ -249,7 +249,7 @@ QNetworkSession::~QNetworkSession()
     detected via QNetworkConfigurationManager::capabilities().
 
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
-    by connecting to the stateChanged(), sessionOpened() or error() signals.
+    by connecting to the stateChanged(), opened() or error() signals.
 
     It is not a requirement to open a session in order to monitor the underlying network interface.
 
@@ -310,7 +310,7 @@ bool QNetworkSession::waitForOpened(int msecs)
     The platform capabilities can be detected via QNetworkConfigurationManager::capabilities().
 
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
-    by connecting to the stateChanged(), sessionOpened() or error() signals.
+    by connecting to the stateChanged(), opened() or error() signals.
 
     \sa open(), stop(), isActive()
 */
@@ -476,7 +476,7 @@ QString QNetworkSession::errorString() const
                     QNetworkSession* session = new QNetworkSession(ap);
                     ... //code activates session
 
-                    QString ident = session->property("ActiveConfigurationIdentifier").toString();
+                    QString ident = session->sessionProperty("ActiveConfigurationIdentifier").toString();
                     if ( ap.type() == QNetworkConfiguration::ServiceNetwork ) {
                         Q_ASSERT( ap.identifier() != ident );
                         Q_ASSERT( ap.children().contains( mgr.configurationFromIdentifier(ident) ) );
@@ -504,7 +504,7 @@ QString QNetworkSession::errorString() const
             a suitable connection. This property is not set by default and support for it depends on the platform.
     \endtable
 */
-QVariant QNetworkSession::property(const QString& key) const
+QVariant QNetworkSession::sessionProperty(const QString& key) const
 {
     if (!d->publicConfig.isValid())
         return QVariant();
@@ -526,7 +526,7 @@ QVariant QNetworkSession::property(const QString& key) const
             return d->activeConfig.identifier();
     }
 
-    return d->property(key);
+    return d->sessionProperty(key);
 }
 
 /*!
@@ -537,13 +537,13 @@ QVariant QNetworkSession::property(const QString& key) const
     Note that the \i UserChoiceConfigurationIdentifier and \i ActiveConfigurationIdentifier
     properties are read only and cannot be changed using this method.
 */
-void QNetworkSession::setProperty(const QString& key, const QVariant& value)
+void QNetworkSession::setSessionProperty(const QString& key, const QVariant& value)
 {
     if (key == "ActiveConfigurationIdentifier" 
             || key == "UserChoiceConfigurationIdentifier") 
         return;
 
-    d->setProperty(key, value);
+    d->setSessionProperty(key, value);
 }
 
 /*!
@@ -611,9 +611,9 @@ void QNetworkSession::reject()
     This function may not always be supported on all platforms and returns
     0. The platform capability can be detected via QNetworkConfigurationManager::DataStatistics.
 */
-quint64 QNetworkSession::sentData() const
+quint64 QNetworkSession::bytesWritten() const
 {
-    return d->sentData();
+    return d->bytesWritten();
 }
 
 /*!
@@ -628,9 +628,9 @@ quint64 QNetworkSession::sentData() const
     This function may not always be supported on all platforms and returns
     0. The platform capability can be detected via QNetworkConfigurationManager::DataStatistics.
 */
-quint64 QNetworkSession::receivedData() const
+quint64 QNetworkSession::bytesReceived() const
 {
-    return d->receivedData();
+    return d->bytesReceived();
 }
 
 /*!

@@ -297,8 +297,8 @@ void Cloud::stateChanged(QNetworkSession::State state)
     tooltip += s;
 
     tooltip += tr("<br><br>Active time: %1 seconds").arg(session->activeTime());
-    tooltip += tr("<br>Received data: %1 bytes").arg(session->receivedData());
-    tooltip += tr("<br>Sent data: %1 bytes").arg(session->sentData());
+    tooltip += tr("<br>Received data: %1 bytes").arg(session->bytesReceived());
+    tooltip += tr("<br>Sent data: %1 bytes").arg(session->bytesWritten());
 
     setToolTip(tooltip);
 }
