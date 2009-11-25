@@ -117,25 +117,25 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactOnlineAccount
-   \brief The QContactOnlineAccount class contains the online account,
+   \brief The QContactOnlineAccount class provides the online account,
    which the contact uses to communicate with friends and family.
  */
 
 /*!
    \class QContactOrganization
-   \brief The QContactOrganization class contains details about an
+   \brief The QContactOrganization class provides details about an
    organization that the contact is either a part of, or stands for.
  */
 
 /*!
    \class QContactPhoneNumber
-   \brief The QContactPhoneNumber class contains a phone number
+   \brief The QContactPhoneNumber class provides a phone number
    of a contact.
  */
 
 /*!
    \class QContactSyncTarget
-   \brief The QContactSyncTarget class contains a sync target
+   \brief The QContactSyncTarget class provides a sync target
    for a contact.
  */
 

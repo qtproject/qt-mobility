@@ -79,6 +79,7 @@ private slots:
     void getVersion(int index);
     void getFeature(int index);
     void setSaverEnabled(bool b);
+    void updateDeviceLockedState();
 
     void netStatusComboActivated(int);
     void updateBatteryStatus(int);

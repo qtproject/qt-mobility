@@ -45,8 +45,12 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QContactDetailDefinitionSaveRequest
- * \brief The QContactDetailDefinitionSaveRequest class allows a client to asynchronously request that certain detail definitions be saved in a contacts store
+  \class QContactDetailDefinitionSaveRequest
+  \brief The QContactDetailDefinitionSaveRequest class allows a client to
+  asynchronously request that certain detail definitions be saved in a
+  contacts store.
+  
+  \ingroup contacts-requests
  */
 
 /*!

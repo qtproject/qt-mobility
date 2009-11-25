@@ -52,7 +52,7 @@ MessagingEx::MessagingEx(QWidget* parent)
     connect(m_store, SIGNAL(messageAdded(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageReceived(const QMessageId&)));
     connect(m_store, SIGNAL(messageRemoved(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageRemoved(const QMessageId&)));
     connect(m_store, SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageUpdated(const QMessageId&)));
-    m_store->registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::DraftsFolder/*InboxFolder*/));    
+    m_store->registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));    
     connect(&m_serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     m_accountList = m_store->queryAccounts(QMessageAccountFilter(), QMessageAccountOrdering(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
@@ -256,6 +256,7 @@ void MessagingEx::addMessage()
 	
 	if (!m_attachments.isEmpty() && types == QMessage::Sms){
 		QMessageBox msgBox;
+	    msgBox.setStandardButtons(QMessageBox::Close);
 		msgBox.setText(tr("Cannot send attachments via Sms!"));
 		msgBox.exec();
 		m_attachments.clear();
@@ -286,6 +287,7 @@ void MessagingEx::on_sendSmsButton_clicked()
         if (!m_serviceaction.send(message))
         {
             QMessageBox msgBox;
+            msgBox.setStandardButtons(QMessageBox::Close);
             msgBox.setText(tr("SMS was successfully sent"));
             msgBox.exec();
         }
@@ -295,6 +297,7 @@ void MessagingEx::on_sendSmsButton_clicked()
     else
     {
         QMessageBox msgBox;
+        msgBox.setStandardButtons(QMessageBox::Close);
         msgBox.setText(tr("Set Phone number!"));
         msgBox.exec();
     }
@@ -316,6 +319,7 @@ void MessagingEx::on_sendMmsButton_clicked()
         if (!m_serviceaction.send(message))
         {
             QMessageBox msgBox;
+            msgBox.setStandardButtons(QMessageBox::Close);
             msgBox.setText(tr("MMS was successfully sent"));
             msgBox.exec();
         }
@@ -331,6 +335,7 @@ void MessagingEx::on_sendMmsButton_clicked()
     else
     {
         QMessageBox msgBox;
+        msgBox.setStandardButtons(QMessageBox::Close);
         msgBox.setText(tr("Set Phone number!"));
         msgBox.exec();
     }
@@ -338,6 +343,10 @@ void MessagingEx::on_sendMmsButton_clicked()
 
 void MessagingEx::messageReceived(const QMessageId& aId)
 {
+    QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Close);
+    msgBox.setText(tr("Message added : ")+aId.toString());
+    msgBox.exec();
 	//QMessage message = m_store->message(aId);
 	m_serviceaction.show(aId);
 }
@@ -346,12 +355,17 @@ void MessagingEx::messageRemoved(const QMessageId& aId)
 {
 	Q_UNUSED(aId);
 	QMessageBox msgBox;
-	msgBox.setText(tr("Message removed."));
+	msgBox.setStandardButtons(QMessageBox::Close);
+	msgBox.setText(tr("Message removed : ")+aId.toString());
 	msgBox.exec();
 }
 
 void MessagingEx::messageUpdated(const QMessageId& aId)
 {
+    QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Close);
+    msgBox.setText(tr("Message updated : ")+aId.toString());
+    msgBox.exec();
 	Q_UNUSED(aId);
 }
 
@@ -383,6 +397,7 @@ void MessagingEx::on_sendEmailButton_clicked()
 	
 	if (!m_attachments.isEmpty() && types == QMessage::Sms){
 		QMessageBox msgBox;
+	    msgBox.setStandardButtons(QMessageBox::Close);
 		msgBox.setText(tr("Cannot send attachments via Sms!"));
 		msgBox.exec();
 		m_attachments.clear();
@@ -390,6 +405,7 @@ void MessagingEx::on_sendEmailButton_clicked()
 		attachmentLabel->clear();
 	} else if (QString(emailAddressEdit->text()).isEmpty()){	
     	QMessageBox msgBox;
+        msgBox.setStandardButtons(QMessageBox::Close);
 		msgBox.setText(tr("Set address!"));
 		msgBox.exec();
     } else {

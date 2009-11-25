@@ -52,7 +52,8 @@ QTM_BEGIN_NAMESPACE
     \preliminary
 
     \brief The QMessageContentContainer class provides an interface for internet media (MIME) 
-    type content that is possibly only partially retrieved.
+    and Transport Neutral Encapsulation Format (TNEF) content that is possibly only 
+    partially retrieved.
 
     \ingroup messaging
 

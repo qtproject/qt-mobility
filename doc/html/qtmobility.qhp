@@ -139,6 +139,9 @@
                     <section ref="qcontactinvalidfilter.html" title="QContactInvalidFilter Class Reference">
                         <section ref="qcontactinvalidfilter-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qcontactlocalidfetchrequest.html" title="QContactLocalIdFetchRequest Class Reference">
+                        <section ref="qcontactlocalidfetchrequest-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qcontactlocalidfilter.html" title="QContactLocalIdFilter Class Reference">
                         <section ref="qcontactlocalidfilter-members.html" title="List of all members"/>
                     </section>
@@ -151,7 +154,6 @@
                     <section ref="qcontactmanagerenginefactory.html" title="QContactManagerEngineFactory Class Reference">
                         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference"/>
                     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
                         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
                     </section>
@@ -184,6 +186,9 @@
                     </section>
                     <section ref="qcontactrelationshipremoverequest.html" title="QContactRelationshipRemoveRequest Class Reference">
                         <section ref="qcontactrelationshipremoverequest-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcontactrelationshipsaverequest.html" title="QContactRelationshipSaveRequest Class Reference">
+                        <section ref="qcontactrelationshipsaverequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qcontactremoverequest.html" title="QContactRemoveRequest Class Reference">
                         <section ref="qcontactremoverequest-members.html" title="List of all members"/>
@@ -1264,6 +1269,14 @@
             <keyword name="managerName" id="QContactInvalidEngine::managerName" ref="qcontactinvalidengine.html#managerName"/>
             <keyword name="synthesizeDisplayLabel" id="QContactInvalidEngine::synthesizeDisplayLabel" ref="qcontactinvalidengine.html#synthesizeDisplayLabel"/>
             <keyword name="QContactInvalidFilter" id="QContactInvalidFilter" ref="qcontactinvalidfilter.html"/>
+            <keyword name="QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html"/>
+            <keyword name="filter" id="QContactLocalIdFetchRequest::filter" ref="qcontactlocalidfetchrequest.html#filter"/>
+            <keyword name="ids" id="QContactLocalIdFetchRequest::ids" ref="qcontactlocalidfetchrequest.html#ids"/>
+            <keyword name="progress" id="QContactLocalIdFetchRequest::progress" ref="qcontactlocalidfetchrequest.html#progress"/>
+            <keyword name="setFilter" id="QContactLocalIdFetchRequest::setFilter" ref="qcontactlocalidfetchrequest.html#setFilter"/>
+            <keyword name="setSorting" id="QContactLocalIdFetchRequest::setSorting" ref="qcontactlocalidfetchrequest.html#setSorting"/>
+            <keyword name="sorting" id="QContactLocalIdFetchRequest::sorting" ref="qcontactlocalidfetchrequest.html#sorting"/>
+            <keyword name="~QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html#dtor.QContactLocalIdFetchRequest"/>
             <keyword name="QContactLocalIdFilter" id="QContactLocalIdFilter" ref="qcontactlocalidfilter.html"/>
             <keyword name="ids" id="QContactLocalIdFilter::ids" ref="qcontactlocalidfilter.html#ids"/>
             <keyword name="setIds" id="QContactLocalIdFilter::setIds" ref="qcontactlocalidfilter.html#setIds"/>
@@ -1395,16 +1408,6 @@
             <keyword name="supportedImplementationVersions" id="QContactManagerEngineFactory::supportedImplementationVersions" ref="qcontactmanagerenginefactory.html#supportedImplementationVersions"/>
             <keyword name="version" id="QContactManagerEngineFactory::version" ref="qcontactmanagerenginefactory.html#version"/>
             <keyword name="~QContactManagerEngineFactory" id="QContactManagerEngineFactory::~QContactManagerEngineFactory" ref="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory"/>
-            <keyword name="QContactManagerInfo" id="QContactManagerInfo" ref="qcontactmanagerinfo.html"/>
-            <keyword name="QContactManagerInfo::ManagerFeature" id="QContactManagerInfo::ManagerFeature" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Groups" id="QContactManagerInfo::Groups" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ActionPreferences" id="QContactManagerInfo::ActionPreferences" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::MutableDefinitions" id="QContactManagerInfo::MutableDefinitions" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Relationships" id="QContactManagerInfo::Relationships" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ArbitraryRelationshipTypes" id="QContactManagerInfo::ArbitraryRelationshipTypes" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::SelfContact" id="QContactManagerInfo::SelfContact" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Anonymous" id="QContactManagerInfo::Anonymous" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ChangeLogs" id="QContactManagerInfo::ChangeLogs" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
             <keyword name="QContactMemoryEngine" id="QContactMemoryEngine" ref="qcontactmemoryengine.html"/>
             <keyword name="cancelRequest" id="QContactMemoryEngine::cancelRequest" ref="qcontactmemoryengine.html#cancelRequest"/>
             <keyword name="contact" id="QContactMemoryEngine::contact" ref="qcontactmemoryengine.html#contact"/>
@@ -1529,6 +1532,11 @@
             <keyword name="setRelationshipType" id="QContactRelationshipRemoveRequest::setRelationshipType" ref="qcontactrelationshipremoverequest.html#setRelationshipType"/>
             <keyword name="setSecond" id="QContactRelationshipRemoveRequest::setSecond" ref="qcontactrelationshipremoverequest.html#setSecond"/>
             <keyword name="~QContactRelationshipRemoveRequest" id="QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest" ref="qcontactrelationshipremoverequest.html#dtor.QContactRelationshipRemoveRequest"/>
+            <keyword name="QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html"/>
+            <keyword name="progress" id="QContactRelationshipSaveRequest::progress" ref="qcontactrelationshipsaverequest.html#progress"/>
+            <keyword name="relationships" id="QContactRelationshipSaveRequest::relationships" ref="qcontactrelationshipsaverequest.html#relationships"/>
+            <keyword name="setRelationships" id="QContactRelationshipSaveRequest::setRelationships" ref="qcontactrelationshipsaverequest.html#setRelationships"/>
+            <keyword name="~QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html#dtor.QContactRelationshipSaveRequest"/>
             <keyword name="QContactRemoveRequest" id="QContactRemoveRequest" ref="qcontactremoverequest.html"/>
             <keyword name="filter" id="QContactRemoveRequest::filter" ref="qcontactremoverequest.html#filter"/>
             <keyword name="progress" id="QContactRemoveRequest::progress" ref="qcontactremoverequest.html#progress"/>
@@ -3590,7 +3598,6 @@
             <file>qcontactdisplaylabel-members.html</file>
             <file>qcontactdetailfilter.html</file>
             <file>qcontactdetaildefinitionfetchrequest-members.html</file>
-            <file>qcontactmanagerinfo.html</file>
             <file>qabstractvaluespacelayer.html</file>
             <file>qmediaserviceprovider-members.html</file>
             <file>fetchgooglemaps-mapwindow-h.html</file>
@@ -3728,6 +3735,7 @@
             <file>qcontactgeolocation.html</file>
             <file>annotated.html</file>
             <file>qnetworksession-members.html</file>
+            <file>qcontactrelationshipsaverequest.html</file>
             <file>qvideowindowcontrol.html</file>
             <file>cameracapture-cameracapture-pro.html</file>
             <file>qcontactid.html</file>
@@ -3799,6 +3807,7 @@
             <file>sendmessage-sendmessage-pro.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qmessageordering-members.html</file>
+            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
             <file>qimageencodersettings-members.html</file>
@@ -4021,9 +4030,11 @@
             <file>qcontactid-members.html</file>
             <file>qvaluespacesubscriber.html</file>
             <file>qmailmessagecontentdisposition.html</file>
+            <file>qcontactlocalidfetchrequest.html</file>
             <file>qcontactinvalidengine-members.html</file>
             <file>cameracapture-settings-h.html</file>
             <file>qcontactactiondescriptor.html</file>
+            <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
             <file>qmessagecontentcontainer-members.html</file>
             <file>declarative-main-cpp.html</file>

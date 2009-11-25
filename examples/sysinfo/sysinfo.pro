@@ -32,5 +32,6 @@ unix: {
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002ac7e
     FORMS    += dialog_s60.ui
 }

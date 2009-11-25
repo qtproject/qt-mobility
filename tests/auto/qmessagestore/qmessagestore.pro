@@ -31,3 +31,17 @@ wince* {
 SOURCES += \
     tst_qmessagestore.cpp
 
+symbian {
+    LIBS += -limcm \
+            -lcommsdat \
+            -lmsgs
+
+    TARGET.CAPABILITY = NetworkServices \
+                        LocalServices \
+                        ReadUserData \
+                        WriteUserData \
+                        UserEnvironment \
+                        ReadDeviceData \
+                        WriteDeviceData
+}
+
