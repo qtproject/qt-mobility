@@ -2,7 +2,7 @@
 # Versit
 # #####################################################################
 TEMPLATE = lib
-TARGET = QtVersit
+TARGET = QtVersit_beta
 include(../../common.pri)
 
 DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
