@@ -46,7 +46,7 @@
 
 #include "qcrmlparser_p.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class PathMapper : public QObject
 {
@@ -79,6 +79,6 @@ private:
     QCrmlParser m_crmlParser;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //PATHMAPPER_H

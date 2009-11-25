@@ -43,7 +43,7 @@
 
 #include <QDebug>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 PathMapper::PathMapper()
 {
@@ -98,4 +98,6 @@ bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, qu
     return false;
 }
 
-QT_END_NAMESPACE
+#include "moc_pathmapper_symbian.cpp"
+
+QTM_END_NAMESPACE

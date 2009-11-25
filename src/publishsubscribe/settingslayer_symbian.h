@@ -51,7 +51,7 @@
 #include "pathmapper_symbian.h"
 #include "xqsettingsmanager.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class SymbianSettingsLayer : public QAbstractValueSpaceLayer
 {
@@ -130,6 +130,6 @@ private:    //data
     QHash<QByteArray, SymbianSettingsHandle *> m_monitoringHandles;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //SYMBIANSETTINGSLAYER_H

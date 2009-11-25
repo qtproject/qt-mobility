@@ -45,7 +45,7 @@
 
 #include <QDebug>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(SymbianSettingsLayer, symbianSettingsLayer);
 QVALUESPACE_AUTO_INSTALL_LAYER(SymbianSettingsLayer);
@@ -384,5 +384,6 @@ void SymbianSettingsLayer::valueChanged(const XQSettingsKey& key, const QVariant
     }
 }
 
+#include "moc_settingslayer_symbian.cpp"
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
