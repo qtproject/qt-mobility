@@ -56,6 +56,7 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 #if defined(Q_OS_WIN)
 const QByteArray defaultCharset("UTF-16");
 const QByteArray alternateCharset("UTF-8");

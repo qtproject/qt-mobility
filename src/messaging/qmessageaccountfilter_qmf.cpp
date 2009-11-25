@@ -43,7 +43,9 @@
 
 #include <qmailaccountkey.h>
 
-using namespace QmfHelpers;
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
+
+QTM_BEGIN_NAMESPACE
 
 class QMessageAccountFilterPrivate
 {
@@ -212,3 +214,4 @@ QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessa
     return result;
 }
 
+QTM_END_NAMESPACE

@@ -48,6 +48,8 @@
 
 #include <qmobilityglobal.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QAudioFormatPrivate;
 class Q_MEDIA_EXPORT QAudioFormat
 {
@@ -86,5 +88,7 @@ public:
 private:
     QSharedDataPointer<QAudioFormatPrivate> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif  // QAUDIOFORMAT_H

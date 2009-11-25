@@ -43,6 +43,8 @@
 #include <qmediacontrol_p.h>
 #include <qmediaplayer.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QMediaPlayerControl
@@ -50,17 +52,19 @@
     \ingroup multimedia-serv
 
     \preliminary
-    \brief The QMediaPlayerControl provides access to the media playing functionality of a
-    QMediaService.
+    \brief The QMediaPlayerControl class provides access to the media playing
+    functionality of a QMediaService.
 
-    If a QMediaService can play media is will implement QMediaPlayerControl.  This control provides
-    a means to set the \l {setMedia()}{media} to play, \l {play()}{start}, \l {pause()} {pause} and
-    \l {stop()}{stop} playback, \l {setPosition()}{seek}, and control the \l {setVolume()}{volume}.
-    It also provides feedback on the \l {duration()}{duration} of the media, the current
-    \l {position()}{position}, and \l {bufferStatus()}{buffering} progress.
+    If a QMediaService can play media is will implement QMediaPlayerControl.
+    This control provides a means to set the \l {setMedia()}{media} to play,
+    \l {play()}{start}, \l {pause()} {pause} and \l {stop()}{stop} playback,
+    \l {setPosition()}{seek}, and control the \l {setVolume()}{volume}.
+    It also provides feedback on the \l {duration()}{duration} of the media,
+    the current \l {position()}{position}, and \l {bufferStatus()}{buffering}
+    progress.
 
-    The functionality provided by this control is exposed to application code through the
-    QMediaPlayer class.
+    The functionality provided by this control is exposed to application
+    code through the QMediaPlayer class.
 
     The interface name of QMediaPlayerControl is \c com.nokia.Qt.QMediaPlayerControl/1.0 as
     defined in QMediaPlayerControl_iid.
@@ -347,4 +351,6 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Signal emitted when playback rate changes to \a rate.
 */
 
+#include "moc_qmediaplayercontrol.cpp"
+QTM_END_NAMESPACE
 

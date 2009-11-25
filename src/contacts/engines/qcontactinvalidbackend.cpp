@@ -44,10 +44,14 @@
 #include <QSharedData>
 
 /*!
- * \class QContactInvalidEngine
- * \brief This class provides an implementation of QContactManagerEngine whose functions always return an error.
- * The invalid engine may be used as a reference or test engine, but does nothing.
+  \class QContactInvalidEngine
+  \brief The QContactInvalidEngine class provides an implementation of
+  QContactManagerEngine whose functions always return an error.
+  
+  The invalid engine may be used as a reference or test engine, but does nothing.
  */
+
+QTM_BEGIN_NAMESPACE
 
 /*! Constructs a new invalid contacts backend. */
 QContactInvalidEngine::QContactInvalidEngine()
@@ -73,3 +77,5 @@ QString QContactInvalidEngine::synthesizeDisplayLabel(const QContact& contact, Q
     error = QContactManager::NotSupportedError;
     return QString();
 }
+
+QTM_END_NAMESPACE

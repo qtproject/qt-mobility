@@ -20,7 +20,7 @@ Item {
        border.color: "black"
        Text {
            id: InnerText
-           text: DialButton.text
+           //text: DialButton.text
            font.pointSize: 20
            anchors.centerIn: parent
        }

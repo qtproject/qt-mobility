@@ -47,6 +47,8 @@
 
 #include <experimental/qcamera.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QCameraFocusControl : public QMediaControl
 {
     Q_OBJECT
@@ -85,6 +87,8 @@ protected:
 
 #define QCameraFocusControl_iid "com.nokia.Qt.QCameraFocusingControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QCameraFocusControl, QCameraFocusControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif  // QCAMERAFOCUSCONTROL_H
 

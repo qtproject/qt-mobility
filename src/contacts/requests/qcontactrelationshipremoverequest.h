@@ -47,6 +47,8 @@
 
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactRelationshipRemoveRequestPrivate;
 class Q_CONTACTS_EXPORT QContactRelationshipRemoveRequest : public QContactAbstractRequest
 {
@@ -74,5 +76,7 @@ private:
     friend class QContactManagerEngine;
     Q_DECLARE_PRIVATE_D(d_ptr, QContactRelationshipRemoveRequest)
 };
+
+QTM_END_NAMESPACE
 
 #endif

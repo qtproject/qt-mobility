@@ -53,6 +53,7 @@
 
 #include <QtMultimedia/qaudioformat.h>
 
+QTM_USE_NAMESPACE
 class MockMediaFormatControl : public QMediaFormatControl
 {
     Q_OBJECT

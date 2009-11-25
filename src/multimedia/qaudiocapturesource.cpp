@@ -44,6 +44,8 @@
 #include <qaudiocapturesource.h>
 #include <qaudiodevicecontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QAudioCaptureSource
     \brief The QAudioCaptureSource class provides an interface to query and select an audio input device.
@@ -233,6 +235,6 @@ void QAudioCaptureSource::setSelectedDevice(int index)
 
     Signal is emitted when the available audio input devices has changed.
 */
-
-
+#include "moc_qaudiocapturesource.cpp"
+QTM_END_NAMESPACE
 

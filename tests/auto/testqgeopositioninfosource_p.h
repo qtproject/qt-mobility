@@ -42,11 +42,15 @@
 #ifndef TESTQGEOPOSITIONINFOSOURCE_P_H
 #define TESTQGEOPOSITIONINFOSOURCE_P_H
 
+#include <qmobilityglobal.h>
 #include <QTest>
 #include <QObject>
 
+QTM_BEGIN_NAMESPACE
 class QGeoPositionInfoSource;
+QTM_END_NAMESPACE
 
+QTM_USE_NAMESPACE
 class TestQGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
@@ -56,6 +60,10 @@ public:
 
     static TestQGeoPositionInfoSource *createDefaultSourceTest();
 
+public slots:
+    void test_slot1();
+    void test_slot2();
+
 protected:
     virtual QGeoPositionInfoSource *createTestSource() = 0;
 
@@ -64,10 +72,6 @@ protected:
     void base_init();
     void base_cleanup();
     void base_cleanupTestCase();
-
-private:
-    QGeoPositionInfoSource *m_source;
-    bool m_testingDefaultSource;
 
 private slots:
     void initTestCase();
@@ -117,6 +121,14 @@ private slots:
     void requestUpdateAfterStartUpdates_SmallInterval();
     void requestUpdateBeforeStartUpdates_ZeroInterval();
     void requestUpdateBeforeStartUpdates_SmallInterval();
+
+    void removeSlotForRequestTimeout();
+    void removeSlotForPositionUpdated();
+
+private:
+    QGeoPositionInfoSource *m_source;
+    bool m_testingDefaultSource;
+    bool m_testSlot2Called;
 };
 
 

@@ -48,6 +48,8 @@
 #include <QCryptographicHash>
 #include <QDir>
 
+QTM_BEGIN_NAMESPACE
+
 class QSystemReadWriteLockPrivate
 {
 public:
@@ -539,3 +541,6 @@ QString QSystemReadWriteLock::errorString() const
 {
     return d->errorString;
 }
+
+QTM_END_NAMESPACE
+

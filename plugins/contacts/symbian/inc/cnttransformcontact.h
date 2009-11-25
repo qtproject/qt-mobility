@@ -50,10 +50,14 @@
 #include <cntitem.h>
 
 class CntTransformContactData;
+
+QTM_BEGIN_NAMESPACE
 class QContactDetailDefinition;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class CntTransformContact
-
 {
 public:
 	CntTransformContact();

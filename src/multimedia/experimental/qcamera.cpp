@@ -52,6 +52,8 @@
 #include <experimental/qimagecapturecontrol.h>
 #include <qvideodevicecontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCamera
 
@@ -1033,6 +1035,7 @@ void QCamera::capture(const QString &file)
     \value  NotReadyToCaptureError System resource not available.
     \value  InvalidRequestError System resource doesn't support functionality.
     \value  ServiceMissingError No service available.
+    \value  NotSupportedFeatureError The feature is not supported.
 */
 
 /*!
@@ -1043,3 +1046,5 @@ void QCamera::capture(const QString &file)
 
 
 #include "moc_qcamera.cpp"
+QTM_END_NAMESPACE
+

@@ -60,6 +60,8 @@
 #include <QObject>
 #include <QString>
 
+QTM_USE_NAMESPACE
+
 class MaliciousAsyncManagerEngine : public QContactManagerEngine
 {
     Q_OBJECT
@@ -77,7 +79,7 @@ public:
 class  Q_DECL_EXPORT MaliciousEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
 
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);

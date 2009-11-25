@@ -45,12 +45,16 @@
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 
+
+QTM_BEGIN_NAMESPACE
 /*!
   \class QContactAbstractRequest
-  \brief The QContactAbstractRequest allows a client to asynchronously
-  request some functionality of a particular QContactManager.
- 
-  This class provides a mechanism for asynchronous requests to be made of a manager if it supports them.
+
+  \brief The QContactAbstractRequest class provides a mechanism for
+  asynchronous requests to be made of a manager if it supports them.
+
+  It allows a client to asynchronously request some functionality of a
+  particular QContactManager.
  */
 
 /*!
@@ -216,3 +220,7 @@ bool QContactAbstractRequest::waitForProgress(int msecs)
 
     return false; // unable to wait for operation; not in progress or no engine.
 }
+
+#include "moc_qcontactabstractrequest.cpp"
+
+QTM_END_NAMESPACE

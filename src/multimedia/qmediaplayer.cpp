@@ -54,6 +54,8 @@
 #include <qmediaplaylist.h>
 #include <qmediaplaylistcontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaPlayer
     \brief The QMediaPlayer class allows the playing of a media source.
@@ -821,3 +823,5 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 */
 
 #include "moc_qmediaplayer.cpp"
+QTM_END_NAMESPACE
+

@@ -41,7 +41,7 @@
 
 #include "qnetworkconfiguration_s60_p.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 QNetworkConfigurationPrivate::QNetworkConfigurationPrivate()
     : isValid(false), type(QNetworkConfiguration::Invalid),
@@ -57,4 +57,4 @@ QNetworkConfigurationPrivate::~QNetworkConfigurationPrivate()
     serviceNetworkMembers.clear(); 
 }
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

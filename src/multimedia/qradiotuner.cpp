@@ -47,9 +47,13 @@
 #include <QPair>
 
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QRadioTuner
     \brief The QRadioTuner class provides an interface to the systems analog radio device.
+
+    \ingroup multimedia
 
     You can control the systems analog radio device using this interface, for example:
 
@@ -548,4 +552,10 @@ QString QRadioTuner::errorString() const
     \value ForceMono   Provide mono mode, converting if required.
 */
 
+/*! \fn void QRadioTuner::stateChanged(QRadioTuner::State state)
+  This signal is emitted when the state changes to \a state.
+ */
+
+#include "moc_qradiotuner.cpp"
+QTM_END_NAMESPACE
 

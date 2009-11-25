@@ -56,6 +56,8 @@
 #include <QStringListModel>
 #include <QDebug>
 
+QTM_USE_NAMESPACE
+
 class EditableListWidgetGroup : public QWidget
 {
     Q_OBJECT

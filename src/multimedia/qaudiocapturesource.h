@@ -55,6 +55,8 @@
 
 #include <qmediaserviceprovider.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QAudioCaptureSourcePrivate;
 
 class Q_MEDIA_EXPORT QAudioCaptureSource : public QMediaObject
@@ -85,5 +87,7 @@ Q_SIGNALS:
 private:
     Q_DECLARE_PRIVATE(QAudioCaptureSource)
 };
+
+QTM_END_NAMESPACE
 
 #endif  // QAUDIOCAPTURESOURCE_H

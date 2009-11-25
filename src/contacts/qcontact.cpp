@@ -47,19 +47,21 @@
 #include "qcontactmanager_p.h"
 #include "qcontactaction.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContact
- *
- * \brief The QContact class provides an addressbook contact.
- *
- * A QContact consists of zero or more details.
- *
- * An instance of the QContact class represents an in-memory contact,
- * and may not reflect the state of that contact found in persistent
- * storage until the appropriate synchronisation method is called
- * on the QContactManager (i.e., saveContact, removeContact).
- *
- * \sa QContactManager, QContactDetail
+  \class QContact
+ 
+  \brief The QContact class provides an addressbook contact.
+ 
+  A QContact consists of zero or more details.
+ 
+  An instance of the QContact class represents an in-memory contact,
+  and may not reflect the state of that contact found in persistent
+  storage until the appropriate synchronisation method is called
+  on the QContactManager (i.e., saveContact, removeContact).
+ 
+  \sa QContactManager, QContactDetail
  */
 
 /*!
@@ -600,3 +602,5 @@ QContactDetail QContact::preferredDetail(const QString& actionName) const
 
     return retn;
 }
+
+QTM_END_NAMESPACE

@@ -41,6 +41,9 @@
 #include "qmessagestore.h"
 #include "qmessagestore_p.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageStorePrivatePlatform
 {
 public:
@@ -204,3 +207,5 @@ void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificati
     Q_UNUSED(notificationFilterId)
 }
 
+
+QTM_END_NAMESPACE

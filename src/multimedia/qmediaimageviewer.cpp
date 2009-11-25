@@ -52,6 +52,8 @@
 #include <QtCore/qtextstream.h>
 #include <QtCore/qdatetime.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_NON_CONST_PUBLIC(QMediaImageViewer)
@@ -129,14 +131,15 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     \ingroup multimedia
     \preliminary
 
-    The primary use of QMediaImageViewer is to display image media.  If asked to display a non-image
-    media type QMediaImageViewer will instead display the media's
-    \l {QMediaContent::coverArtUriLarge()}{cover art} or \l {QMediaContent::posterUri()}{poster} if
-    a URI is available for either.
+    The primary use of QMediaImageViewer is to display image media.  If
+    asked to display a non-image media type QMediaImageViewer will instead
+    display the media's \l {QMediaContent::coverArtUriLarge()}{cover art}
+    or \l {QMediaContent::posterUri()}{poster} if a URI is available for either.
 
-    In order to actually display an image the QMediaImageViewer class must be coupled with a
-    display output such as QVideoWidget.  A display output is attached to the image viewer by
-    passing a pointer the QMediaImageViewer instance in the constructor of the display output,
+    In order to actually display an image the QMediaImageViewer class must
+    be coupled with a display output such as QVideoWidget.  A display
+    output is attached to the image viewer by passing a pointer the
+    QMediaImageViewer instance in the constructor of the display output,
     and can be removed by deleting the display output.
 
     \code
@@ -146,13 +149,16 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     display->show();
     \endcode
 
-    QMediaImageViewer can be paired with a QMediaPlaylist to create a slide show of images.
-    Constructing a QMediaPlaylist with a pointer to an instance of QMediaImageViewer will attach
-    it to the image viewer; changing the playlist's selection will then change the media displayed
-    by the image viewer.  With a playlist attached QMediaImageViewer's play(), pause(), and stop()
-    slots can be control the progression of the playlist.  The \l timeout property determines how
-    long an image is displayed for before progressing to the next in the playlist, and the
-    \l elapsedTime property holds how the duration the current image has been displayed for.
+    QMediaImageViewer can be paired with a QMediaPlaylist to create a slide
+    show of images. Constructing a QMediaPlaylist with a pointer to an
+    instance of QMediaImageViewer will attach it to the image viewer;
+    changing the playlist's selection will then change the media displayed
+    by the image viewer.  With a playlist attached QMediaImageViewer's
+    play(), pause(), and stop() slots can be control the progression of the
+    playlist.  The \l timeout property determines how long an image is
+    displayed for before progressing to the next in the playlist, and the
+    \l elapsedTime property holds how the duration the current image has
+    been displayed for.
 
     \code
     playlist = new QMediaPlaylist(viewer, this);
@@ -169,9 +175,9 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
 /*!
     \enum QMediaImageViewer::State
 
-    Enumerates the possible control states an image viewer may be in.  The control state of an
-    image viewer determines whether the image viewer is automatically progressing through images
-    in an attached playlist.
+    Enumerates the possible control states an image viewer may be in.  The
+    control state of an image viewer determines whether the image viewer is
+    automatically progressing through images in an attached playlist.
 
     \value StoppedState The image viewer is stopped, and will not automatically move to the next
     image.  The \l elapsedTime is fixed at 0.
@@ -339,12 +345,12 @@ int QMediaImageViewer::elapsedTime() const
 /*!
     \fn QMediaImageViewer::elapsedTimeChanged(int time)
 
-    Signals that the amount of \a time in milliseconds since the current image was loaded has
-    changed.
+    Signals that the amount of \a time in milliseconds since the current
+    image was loaded has changed.
 
-    This signal is emitted at a regular interval when the image viewer is in the PlayingState and
-    an image is loaded.  The notification interval is controlled by the QMediaObject::notifyInterval
-    property.
+    This signal is emitted at a regular interval when the image viewer is
+    in the PlayingState and an image is loaded.  The notification interval
+    is controlled by the QMediaObject::notifyInterval property.
 
     \sa timeout, QMediaObject::notifyInterval
 */
@@ -480,3 +486,5 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
 }
 
 #include "moc_qmediaimageviewer.cpp"
+QTM_END_NAMESPACE
+

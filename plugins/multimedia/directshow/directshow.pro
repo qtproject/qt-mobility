@@ -1,4 +1,5 @@
 TEMPLATE = lib
+QT+=multimedia
 CONFIG += plugin
 QT+=multimedia
 TARGET = $$qtLibraryTarget(dsengine)

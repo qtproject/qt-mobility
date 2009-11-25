@@ -42,17 +42,23 @@
 
 #include <qmediaformatcontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaFormatControl
     \preliminary
-    \brief The QMediaFormat class provides access to the output format of a QMediaService
+    \brief The QMediaFormatControl class provides access to the output format of a QMediaService
 
-    If a QMediaService supports writing encoded data it will implement QMediaFormatControl.  This
-    control provides information about the output formats supported by a media service and allows
-    one to be selected as the current output format..
+    \ingroup multimedia
+    \ingroup multimedia-serv
 
-    The functionality provided by this control is exposed to application code through the
-    QMediaRecorder class.
+    If a QMediaService supports writing encoded data it will implement
+    QMediaFormatControl.  This control provides information about the
+    output formats supported by a media service and allows one to be
+    selected as the current output format..
+
+    The functionality provided by this control is exposed to application
+    code through the QMediaRecorder class.
 
     The interface name of QMediaFormatControl is \c com.nokia.Qt.QMediaFormatControl/1.0 as
     defined in QMediaFormatControl_iid.
@@ -109,3 +115,7 @@ QMediaFormatControl::~QMediaFormatControl()
 
     Returns a description of the format identified by the given \a mimeType.
 */
+
+#include "moc_qmediaformatcontrol.cpp"
+QTM_END_NAMESPACE
+

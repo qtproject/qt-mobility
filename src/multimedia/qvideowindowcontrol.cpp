@@ -41,15 +41,19 @@
 
 #include <qvideowindowcontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoWindowControl
     \preliminary
     \brief The QVideoWindowControl class provides a media control for rendering video to a window.
 
-    The winId() property QVideoWindowControl allows a platform specific window ID to be set as the
-    video render target of a QMediaService.  The displayRect() property is used to set the region of
-    the window the video should be rendered to, and the aspectRatioMode() property indicates how
-    the video should be scaled to fit the displayRect().
+
+    The winId() property QVideoWindowControl allows a platform specific
+    window ID to be set as the video render target of a QMediaService.  The
+    displayRect() property is used to set the region of the window the
+    video should be rendered to, and the aspectRatioMode() property
+    indicates how the video should be scaled to fit the displayRect().
 
     \code
     QVideoWindowControl *windowControl = mediaService->control<QVideoWindowControl *>();
@@ -58,11 +62,11 @@
     windowControl->setAspectRatioMode(QVideoWidget::KeepAspectRatio);
     \endcode
 
-    QVideoWindowControl is one of number of possible video output controls, in order to receive
-    video it must be made the active video output control by setting the output property
-    of QVideoOutputControl to \l {QVideoOutputControl::WindowOutput}{WindowOutput}.
-    Consequently any QMediaService that implements QVideoWindowControl must also implement
-    QVideoOutputControl.
+    QVideoWindowControl is one of number of possible video output controls,
+    in order to receive video it must be made the active video output
+    control by setting the output property of QVideoOutputControl to \l {QVideoOutputControl::WindowOutput}{WindowOutput}.
+    Consequently any QMediaService that implements QVideoWindowControl must
+    also implement QVideoOutputControl.
 
     \code
     QVideoOutputControl *outputControl = mediaService->control<QVideoOutputControl *>();
@@ -261,3 +265,7 @@ QVideoWindowControl::~QVideoWindowControl()
 
     Signals that a video overlay's \a saturation adjustment has changed.
 */
+
+#include "moc_qvideowindowcontrol.cpp"
+QTM_END_NAMESPACE
+

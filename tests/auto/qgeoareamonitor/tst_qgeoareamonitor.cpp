@@ -51,6 +51,7 @@
 #include "qgeopositioninfosource.h"
 
 
+QTM_USE_NAMESPACE
 #define MINIMUM_TIMEOUT 5000
 
 Q_DECLARE_METATYPE(QGeoCoordinate)

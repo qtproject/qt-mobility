@@ -49,6 +49,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactGuid : public QContactDetail
 {
@@ -64,6 +66,8 @@ public:
     void setGuid(const QString& guid) {setValue(FieldGuid, guid);}
     QString guid() const {return value(FieldGuid);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -44,19 +44,26 @@
 #include "qcontactchangeset_p.h"
 #include "qcontactmanagerengine.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContactChangeSet
- *
- * \brief Provides a simple API to simplify the emission of state-change signals from QContactManagerEngine implementations.
- *
- * This class can be utilised by backend implementations to ensure correct emission of the \l QContactManagerEngine::dataChanged(),
- * \l QContactManagerEngine::contactsAdded(), \l QContactManagerEngine::contactsChanged() and \l QContactManagerEngine::contactsRemoved().
- *
- * \sa QContactManagerEngine
+   \class QContactChangeSet
+  
+   \brief The QContactChangeSet class provides a simple API to
+   simplify the emission of state-change signals from
+   QContactManagerEngine implementations.
+  
+   This class can be utilised by backend implementations to ensure
+   correct emission of the \l QContactManagerEngine::dataChanged(), \l
+   QContactManagerEngine::contactsAdded(), \l
+   QContactManagerEngine::contactsChanged() and \l
+   QContactManagerEngine::contactsRemoved().
+  
+   \sa QContactManagerEngine
  */
 
 /*!
- * Constructs a new change set
+   Constructs a new change set
  */
 QContactChangeSet::QContactChangeSet()
     : d(new QContactChangeSetData)
@@ -64,7 +71,7 @@ QContactChangeSet::QContactChangeSet()
 }
 
 /*!
- * Constructs a copy of the \a other change set
+   Constructs a copy of the \a other change set
  */
 QContactChangeSet::QContactChangeSet(const QContactChangeSet& other)
     : d(other.d)
@@ -72,14 +79,14 @@ QContactChangeSet::QContactChangeSet(const QContactChangeSet& other)
 }
 
 /*!
- * Frees the memory used by this change set
+   Frees the memory used by this change set
  */
 QContactChangeSet::~QContactChangeSet()
 {
 }
 
 /*!
- * Assigns this change set to be equal to \a other
+   Assigns this change set to be equal to \a other
  */
 QContactChangeSet& QContactChangeSet::operator=(const QContactChangeSet& other)
 {
@@ -88,9 +95,9 @@ QContactChangeSet& QContactChangeSet::operator=(const QContactChangeSet& other)
 }
 
 /*!
- * Sets the data changed flag to \a dataChanged.  If this is set to true prior to calling \l emitSignals(),
- * only the \l QContactManagerEngine::dataChanged() signal will be emitted; otherwise, the appropriate
- * finer-grained signals will be emitted.
+   Sets the data changed flag to \a dataChanged.  If this is set to true prior to calling \l emitSignals(),
+   only the \l QContactManagerEngine::dataChanged() signal will be emitted; otherwise, the appropriate
+   finer-grained signals will be emitted.
  */
 void QContactChangeSet::setDataChanged(bool dataChanged)
 {
@@ -98,7 +105,7 @@ void QContactChangeSet::setDataChanged(bool dataChanged)
 }
 
 /*!
- * Returns the value of the data changed flag
+   Returns the value of the data changed flag
  */
 bool QContactChangeSet::dataChanged()
 {
@@ -106,8 +113,8 @@ bool QContactChangeSet::dataChanged()
 }
 
 /*!
- * Returns a reference to the set of ids of contacts which have been added to
- * the database.
+   Returns a reference to the set of ids of contacts which have been added to
+   the database.
  */
 QSet<QContactLocalId>& QContactChangeSet::addedContacts()
 {
@@ -115,8 +122,8 @@ QSet<QContactLocalId>& QContactChangeSet::addedContacts()
 }
 
 /*!
- * Returns a reference to the set of ids of contacts which have been changed in
- * the database.
+   Returns a reference to the set of ids of contacts which have been changed in
+   the database.
  */
 QSet<QContactLocalId>& QContactChangeSet::changedContacts()
 {
@@ -124,8 +131,8 @@ QSet<QContactLocalId>& QContactChangeSet::changedContacts()
 }
 
 /*!
- * Returns a reference to the set of ids of contacts which have been removed from
- * the database.
+   Returns a reference to the set of ids of contacts which have been removed from
+   the database.
  */
 QSet<QContactLocalId>& QContactChangeSet::removedContacts()
 {
@@ -133,8 +140,8 @@ QSet<QContactLocalId>& QContactChangeSet::removedContacts()
 }
 
 /*!
- * Returns a reference to the set of ids of contacts which have been affected
- * by the addition of relationships to the database.
+   Returns a reference to the set of ids of contacts which have been affected
+   by the addition of relationships to the database.
  */
 QSet<QContactLocalId>& QContactChangeSet::addedRelationshipsContacts()
 {
@@ -142,8 +149,8 @@ QSet<QContactLocalId>& QContactChangeSet::addedRelationshipsContacts()
 }
 
 /*!
- * Returns a reference to the set of ids of contacts which have been affected
- * by the removal of relationships from the database.
+   Returns a reference to the set of ids of contacts which have been affected
+   by the removal of relationships from the database.
  */
 QSet<QContactLocalId>& QContactChangeSet::removedRelationshipsContacts()
 {
@@ -151,12 +158,12 @@ QSet<QContactLocalId>& QContactChangeSet::removedRelationshipsContacts()
 }
 
 /*!
- * Returns a reference to the pair of ids which represents the
- * old and new self contact ids.  The first id in the pair is the
- * old self contact id, while the second id in the pair is the
- * new self contact id.  If the new id is different to the old id
- * at the point in time when emitSignals() is called,
- * the QContactManagerEngine::selfContactIdChanged() signal will be emitted.
+   Returns a reference to the pair of ids which represents the
+   old and new self contact ids.  The first id in the pair is the
+   old self contact id, while the second id in the pair is the
+   new self contact id.  If the new id is different to the old id
+   at the point in time when emitSignals() is called,
+   the QContactManagerEngine::selfContactIdChanged() signal will be emitted.
  */
 QPair<QContactLocalId, QContactLocalId>& QContactChangeSet::oldAndNewSelfContactId()
 {
@@ -164,7 +171,7 @@ QPair<QContactLocalId, QContactLocalId>& QContactChangeSet::oldAndNewSelfContact
 }
 
 /*!
- * Clears all flags and sets of ids in this change set
+   Clears all flags and sets of ids in this change set
  */
 void QContactChangeSet::clear()
 {
@@ -178,7 +185,7 @@ void QContactChangeSet::clear()
 }
 
 /*!
- * Emits the appropriate signals from the given \a engine given the state of the change set
+   Emits the appropriate signals from the given \a engine given the state of the change set
  */
 void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
 {
@@ -202,3 +209,5 @@ void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
             emit engine->selfContactIdChanged(d->m_oldAndNewSelfContactId.first, d->m_oldAndNewSelfContactId.second);
     }
 }
+
+QTM_END_NAMESPACE

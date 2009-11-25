@@ -53,6 +53,8 @@
 // We mean it.
 //
 
+QTM_BEGIN_NAMESPACE
+
 class QAudioDeviceControl;
 
 class QMediaServicePrivate
@@ -62,6 +64,8 @@ public:
 
     QMediaService *q_ptr;
 };
+
+QTM_END_NAMESPACE
 
 
 #endif

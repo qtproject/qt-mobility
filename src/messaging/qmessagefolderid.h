@@ -44,6 +44,8 @@
 #include <QList>
 #include <qmessageglobal.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderIdPrivate;
 
 class Q_MESSAGING_EXPORT QMessageFolderId 
@@ -75,5 +77,7 @@ private:
 typedef QList<QMessageFolderId> QMessageFolderIdList;
 
 Q_MESSAGING_EXPORT uint qHash(const QMessageFolderId &id);
+
+QTM_END_NAMESPACE
 
 #endif

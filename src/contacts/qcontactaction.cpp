@@ -46,14 +46,17 @@
 #include <QSet>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 QContactAction::~QContactAction()
 {
 }
 
 /*!
   \class QContactAction
-  \brief The QContactAction class provides an interface for performing an action on a QContact or QContactDetail.
-   \ingroup contacts-main
+  \brief The QContactAction class provides an interface for performing an
+  action on a QContact or QContactDetail.
+  \ingroup contacts-main
 
   An action is anything that can be performed on a contact, or a detail of a contact.  An example
   of an action might be "Send Email" or "Dial" or "Plot Navigation Route".  One action may be
@@ -203,3 +206,7 @@ QContactAction* QContactAction::action(const QContactActionDescriptor& descripto
     QContactManagerData::loadFactories();
     return QContactManagerData::action(descriptor);
 }
+
+#include "moc_qcontactaction.cpp"
+
+QTM_END_NAMESPACE

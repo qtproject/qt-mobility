@@ -42,6 +42,8 @@
 #include "qcontactfetchrequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactFetchRequest
   \brief The QContactFetchRequest class allows a client to asynchronously
@@ -118,3 +120,7 @@ QList<QContact> QContactFetchRequest::contacts() const
     Q_D(const QContactFetchRequest);
     return d->m_contacts;
 }
+
+#include "moc_qcontactfetchrequest.cpp"
+
+QTM_END_NAMESPACE

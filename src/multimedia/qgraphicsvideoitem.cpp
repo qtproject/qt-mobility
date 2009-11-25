@@ -49,6 +49,8 @@
 
 #include <QtMultimedia/qvideosurfaceformat.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGraphicsVideoItemPrivate
 {
 public:
@@ -96,12 +98,14 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 /*!
     \class QGraphicsVideoItem
 
-    \brief The QGraphicsVideoItem class provides a graphics item which display video produced by a
-    QMediaObject.
+    \brief The QGraphicsVideoItem class provides a graphics item which display video produced by a QMediaObject.
 
-    Attaching a QGraphicsVideoItem to a QMediaObject allows it to display the video or image output
-    of that media object.  A QGraphicsVideoItem is attached to media object by passing a pointer to
-    the QMediaObject in its constructor, and detached by destroying the QGraphicsVideoItem.
+    \ingroup multimedia
+
+    Attaching a QGraphicsVideoItem to a QMediaObject allows it to display
+    the video or image output of that media object.  A QGraphicsVideoItem
+    is attached to media object by passing a pointer to the QMediaObject
+    in its constructor, and detached by destroying the QGraphicsVideoItem.
 
     \code
     player = new QMediaPlayer(this);
@@ -215,3 +219,4 @@ QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVarian
 }
 
 #include "moc_qgraphicsvideoitem.cpp"
+QTM_END_NAMESPACE

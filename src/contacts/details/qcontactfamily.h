@@ -49,6 +49,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactFamily : public QContactDetail
 {
@@ -68,6 +70,8 @@ public:
     void setChildren(const QStringList& childrenNames) {setValue(FieldChildren, childrenNames);}
     QStringList children() const {return value<QStringList>(FieldChildren);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -47,6 +47,7 @@
 
 #include "qgstreamervideorendererinterface.h"
 
+QTM_USE_NAMESPACE
 
 class QGstreamerVideoRenderer : public QVideoRendererControl, public QGstreamerVideoRendererInterface
 {

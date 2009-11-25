@@ -45,6 +45,7 @@
 #include <QtCore/qobject.h>
 
 #include <qmediaservice.h>
+QTM_USE_NAMESPACE
 
 class V4LCameraControl;
 class V4LCameraSession;

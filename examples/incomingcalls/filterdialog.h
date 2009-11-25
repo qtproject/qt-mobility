@@ -66,6 +66,8 @@ class QFormLayout;
 class QVBoxLayout;
 class QHBoxLayout;
 
+QTM_USE_NAMESPACE
+
 class FilterDialog : public QWidget
 {
     Q_OBJECT

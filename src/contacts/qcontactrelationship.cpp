@@ -48,19 +48,25 @@
 #include <QPair>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContactRelationship
- * \brief Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.
- *
- * Each relationship is uniquely identified by the combination of the first contact id, second contact id, and the relationship type.
- *
- * A relationship should not contain a second contact which is the same as the first contact.
- * Any local contacts which are referenced in the relationship (that is, any source contact, or any second contact whose manager
- * URI is left empty or whose manager URI references the manager that stores the source contact, and in which the relationship
- * will be saved) should exist.
- *
- * If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship
- * in a QContactManager.
+  \class QContactRelationship
+  \brief The QContactRelationship class describes a one-to-one relationship
+  between a locally-stored contact and another (possibly remote) contact.
+ 
+  Each relationship is uniquely identified by the combination of the first
+  contact id, second contact id, and the relationship type.
+ 
+  A relationship should not contain a second contact which is the same as
+  the first contact.
+  Any local contacts which are referenced in the relationship (that is, any
+  source contact, or any second contact whose manager URI is left empty or
+  whose manager URI references the manager that stores the source contact,
+  and in which the relationship will be saved) should exist.
+ 
+  If any of these requirements are not met, validation of the relationship
+  may fail when attempting to save the relationship in a QContactManager.
  */
 
 /*!
@@ -207,3 +213,5 @@ void QContactRelationship::setRelationshipType(const QString& relationshipType)
 {
     d->m_relationshipType = relationshipType;
 }
+
+QTM_END_NAMESPACE

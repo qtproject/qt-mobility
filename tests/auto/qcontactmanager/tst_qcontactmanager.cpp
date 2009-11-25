@@ -45,6 +45,7 @@
 #include "qcontactchangeset.h"
 #include "qcontactmanagerdataholder.h"
 
+QTM_USE_NAMESPACE
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
 #ifndef QTRY_COMPARE
@@ -1860,7 +1861,7 @@ void tst_QContactManager::detailDefinitions()
     newDef.setFields(fields);
 
     /* Updated version of an existing definition */
-    QContactDetailDefinition updatedDef = defs.begin().value();
+    QContactDetailDefinition updatedDef = defs.begin().value(); // XXX TODO Fixme
     fields = updatedDef.fields();
     fields.insert("New Value", field);
     updatedDef.setFields(fields);

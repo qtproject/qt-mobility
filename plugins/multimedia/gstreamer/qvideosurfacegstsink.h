@@ -51,7 +51,6 @@
 #include <QtMultimedia/qvideosurfaceformat.h>
 #include <QtMultimedia/qvideoframe.h>
 
-QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 
 class QVideoSurfaceGstDelegate : public QObject

@@ -49,6 +49,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactSyncTarget : public QContactDetail
 {
@@ -64,6 +66,8 @@ public:
     void setSyncTarget(const QString& syncTarget) {setValue(FieldSyncTarget, syncTarget);}
     QString syncTarget() const {return value(FieldSyncTarget);}
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

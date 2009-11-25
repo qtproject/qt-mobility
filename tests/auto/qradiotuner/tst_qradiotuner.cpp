@@ -49,6 +49,7 @@
 #include <qradiotunercontrol.h>
 #include <qradiotuner.h>
 
+QTM_USE_NAMESPACE
 class MockControl : public QRadioTunerControl
 {
     Q_OBJECT

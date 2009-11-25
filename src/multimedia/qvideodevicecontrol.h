@@ -44,6 +44,8 @@
 
 #include <qmediacontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QVideoDeviceControl : public QMediaControl
 {
     Q_OBJECT
@@ -75,5 +77,7 @@ protected:
 #define QVideoDeviceControl_iid "com.nokia.Qt.QVideoDeviceControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoDeviceControl, QVideoDeviceControl_iid)
 
+
+QTM_END_NAMESPACE
 
 #endif // QVIDEODEVICECONTROL_H

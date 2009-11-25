@@ -42,6 +42,8 @@
 
 #include <qmailfoldersortkey.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderOrderingPrivate
 {
 public:
@@ -148,3 +150,5 @@ QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
     ordering.d_ptr->_key = QMailFolderSortKey::path(order);
     return ordering;
 }
+
+QTM_END_NAMESPACE

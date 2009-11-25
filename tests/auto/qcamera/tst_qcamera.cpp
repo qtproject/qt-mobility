@@ -51,6 +51,7 @@
 #include <qmediaservice.h>
 #include <experimental/qcamera.h>
 
+QTM_USE_NAMESPACE
 class MockCaptureControl;
 
 class MockCameraControl : public QCameraControl

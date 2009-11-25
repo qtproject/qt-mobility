@@ -49,6 +49,8 @@
 
 #include <QDebug>
 
+QTM_USE_NAMESPACE
+
 #define TIMEOUT 700
 
 #define ERROR_SETVALUE_NOT_SUPPORTED 1

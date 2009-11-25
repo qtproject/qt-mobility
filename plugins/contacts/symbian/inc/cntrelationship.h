@@ -48,15 +48,16 @@
 
 //Forward declarations
 class CContactDatabase;
-
+QTM_USE_NAMESPACE
 class CntRelationship
 {
 public:
-    CntRelationship(CContactDatabase* contactDatabase); 
+    CntRelationship(CContactDatabase* contactDatabase);
     virtual ~CntRelationship();
 
 public:
     /* Relationships between contacts */
+    QStringList supportedRelationshipTypes(const QString& contactType) const;
     QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
     bool saveRelationship(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error);
     QList<QContactManager::Error> saveRelationships(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error);

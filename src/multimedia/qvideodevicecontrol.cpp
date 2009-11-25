@@ -41,14 +41,17 @@
 
 #include <qvideodevicecontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoDeviceControl
     \preliminary
     \brief The QVideoDeviceControl class provides an video device selector media control.
     \ingroup multimedia-serv
 
-    The QVideoDeviceControl class provides descriptions of the video devices available on a system
-    and allows one to be selected as the  endpoint of a media service.
+    The QVideoDeviceControl class provides descriptions of the video devices
+    available on a system and allows one to be selected as the  endpoint of
+    a media service.
 
     The interface name of QVideoDeviceControl is \c com.nokia.Qt.VideoDeviceControl as
     defined in QVideoDeviceControl_iid.
@@ -138,3 +141,7 @@ QVideoDeviceControl::~QVideoDeviceControl()
 
     Signals that the selected video device \a name has changed.
 */
+
+#include "moc_qvideodevicecontrol.cpp"
+QTM_END_NAMESPACE
+

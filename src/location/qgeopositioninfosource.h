@@ -46,13 +46,11 @@
 
 #include <QObject>
 
-class QGeoPositionInfoSourcePrivate;
-
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-
+class QGeoPositionInfoSourcePrivate;
 class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
@@ -100,7 +98,7 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoPositionInfoSource::PositioningMethods)
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

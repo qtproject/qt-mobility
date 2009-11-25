@@ -48,6 +48,8 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactTimestamp : public QContactDetail
 {
@@ -67,5 +69,7 @@ public:
     void setCreated(const QDateTime& timestamp) {setValue(FieldCreationTimestamp, timestamp);}
     QDateTime created() const {return value<QDateTime>(FieldCreationTimestamp);}
 };
+
+QTM_END_NAMESPACE
 
 #endif

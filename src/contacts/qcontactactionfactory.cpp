@@ -41,9 +41,11 @@
 
 #include "qcontactactionfactory.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactActionFactory
-  \brief The QContactActionfactory class provides an interface for clients
+  \brief The QContactActionFactory class provides an interface for clients
   to retrieve instances of action implementations
  */
 
@@ -85,3 +87,6 @@ uint qHash(const QContactActionDescriptor& ad)
  * Returns the metadata associated with the action identified by the given \a descriptor
  */
 
+#include "moc_qcontactactionfactory.cpp"
+
+QTM_END_NAMESPACE

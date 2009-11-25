@@ -48,7 +48,7 @@
 
 #include "qservicefilter.h"
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QServiceFilterPrivate
 {
@@ -365,7 +365,7 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 }
 
 /*!
-    \fn  QList<QString> QServiceFilter::customKeys() const
+    \fn  QList<QString> QServiceFilter::customPropertyKeys() const
     
     Returns the list of custom keys which have been added to the filter.
 */
@@ -498,5 +498,5 @@ QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
 #endif //QT_NO_DATASTREAM
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 

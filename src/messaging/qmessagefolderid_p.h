@@ -45,6 +45,8 @@
 #include "winhelpers_p.h"
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderIdPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderId)
@@ -80,5 +82,7 @@ public:
     QString _id;
 #endif    
 };
+
+QTM_END_NAMESPACE
 
 #endif

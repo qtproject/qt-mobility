@@ -43,23 +43,29 @@
 
 #include <qmediacontrol_p.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoRendererControl
     \preliminary
-    \brief The QVideoRendererControl class provides a control for rendering to a video surface.
+    \brief The QVideoRendererControl class provides a control for rendering
+    to a video surface.
 
-    Using the surface() property of QVideoRendererControl a QAbstractVideoSurface may be set as the
-    video render target of a QMediaService.
+    \ingroup multimedia
+
+    Using the surface() property of QVideoRendererControl a QAbstractVideoSurface
+    may be set as the video render target of a QMediaService.
 
     \code
     QVideoRendererControl *rendererControl = mediaService->control<QVideoRendererControl *>();
     rendererControl->setSurface(myVideoSurface);
     \endcode
 
-    QVideoRendererControl is one of number of possible video output controls, in order to receive
-    video it must be made the active video output control by setting the output property
-    of QVideoOutputControl to \l {QVideoOutputControl::RendererOutput}{RendererOutput}.
-    Consequently any QMediaService that implements QVideoRendererControl must also implement
+    QVideoRendererControl is one of number of possible video output controls,
+    in order to receive video it must be made the active video output
+    control by setting the output property of QVideoOutputControl to
+    \l {QVideoOutputControl::RendererOutput}{RendererOutput}. Consequently any
+    QMediaService that implements QVideoRendererControl must also implement
     QVideoOutputControl.
 
     \code
@@ -109,3 +115,7 @@ QVideoRendererControl::~QVideoRendererControl()
 
     Sets the \a surface a video producer renders to.
 */
+
+#include "moc_qvideorenderercontrol.cpp"
+QTM_END_NAMESPACE
+

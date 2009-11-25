@@ -42,7 +42,7 @@
 #include "qpacketprotocol_p.h"
 #include <QBuffer>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #define MAX_PACKET_SIZE 0x7FFFFFFF
 
@@ -481,6 +481,7 @@ QPacketAutoSend::~QPacketAutoSend()
         p->send(*this);
 }
 
-QT_END_NAMESPACE
-
+#include "moc_qpacketprotocol_p.cpp"
 #include "qpacketprotocol.moc"
+QTM_END_NAMESPACE
+

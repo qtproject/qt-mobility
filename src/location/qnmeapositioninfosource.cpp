@@ -47,6 +47,7 @@
 #include <QDebug>
 #include <QTimer>
 
+QTM_BEGIN_NAMESPACE
 
 QNmeaRealTimeReader::QNmeaRealTimeReader(QNmeaPositionInfoSourcePrivate *sourcePrivate)
     : QNmeaReader(sourcePrivate)
@@ -562,3 +563,7 @@ int QNmeaPositionInfoSource::minimumUpdateInterval() const
     return 100;
 }
 
+#include "moc_qnmeapositioninfosource.cpp"
+#include "moc_qnmeapositioninfosource_p.cpp"
+
+QTM_END_NAMESPACE

@@ -52,6 +52,8 @@ class QGstreamerCaptureSession;
 
 #include <QtMultimedia/qaudioformat.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerAudioEncode : public QAudioEncoderControl
 {
     Q_OBJECT

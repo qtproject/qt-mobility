@@ -44,6 +44,8 @@
 #include "qmessagefolder.h"
 #include "qpair.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderOrderingPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderOrdering)
@@ -66,4 +68,6 @@ public:
     static bool lessThan(const QMessageFolderOrdering &ordering, const QMessageFolder &folder1, const QMessageFolder &folder2);
 #endif    
 };
+
+QTM_END_NAMESPACE
 #endif

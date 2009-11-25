@@ -44,6 +44,8 @@
 
 #include <qmediacontent.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 class QMediaContentPrivate : public QSharedData
 {
@@ -88,6 +90,8 @@ private:
     \class QMediaContent
     \preliminary
     \brief The QMediaContent class provides access to the resources relating to a media content.
+
+    \ingroup multimedia
 
     QMediaContent is used within the multimedia framework as the logical handle
     to media content.  Media content can have multiple forms or other meta-data
@@ -328,3 +332,5 @@ void QMediaContent::setThumbnailUriLarge(const QUrl &uri)
     if (d.constData() != 0)
         d->thumbnailUriLarge = uri;
 }
+QTM_END_NAMESPACE
+

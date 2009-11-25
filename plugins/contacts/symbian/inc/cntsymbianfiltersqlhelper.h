@@ -55,7 +55,7 @@
 // External data types
 
 // Constants
-
+QTM_USE_NAMESPACE
 class CntSymbianFilterSqlHelper
 {
 public: 
@@ -107,7 +107,7 @@ private:
     void updateFieldForDeatilFilterMatchFlag( const QContactDetailFilter& filter,
                                               QString& fieldToUpdate ,
                                               QContactManager::Error& error) const;
-    void CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(const QContactDetailFilter detailFilter);
+    QList<QContactLocalId> CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(const QContactDetailFilter detailFilter);
     void getMatchLengthL(TInt& matchLength);
     TInt CntSymbianFilterSqlHelper::searchPhoneNumbers(
             CContactIdArray*& idArray,
@@ -118,7 +118,7 @@ private:
 private:
     CntSymbianSrvConnection* m_srvConnection;
     CContactDatabase &m_contactDatabase;
-    bool isSearchingDone;
+    bool isPhoneNumberSearchforDetailFilter;
     QHash<int,QString> contactsTableIdColumNameMapping;
     QHash<int,int> commAddrTableIdColumNameMapping;
 };

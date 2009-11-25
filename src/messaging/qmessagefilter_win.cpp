@@ -53,6 +53,8 @@
 #define PR_SMTP_ADDRESS 0x39FE001E
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 void QDateTimeToFileTime(const QDateTime &dt, FILETIME *ft)
 {
     SYSTEMTIME st;
@@ -2138,3 +2140,5 @@ void QMessageFilterPrivate::debug(const QMessageFilter &filter, const QString &i
         QMessageFilterPrivate::debug(*filter.d_ptr->_right, indent + " ");
     }
 }
+
+QTM_END_NAMESPACE

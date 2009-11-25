@@ -39,53 +39,32 @@
 **
 ****************************************************************************/
 
+#ifndef QTRACKERRELATIONSHIPSAVEREQUEST_H_
+#define QTRACKERRELATIONSHIPSAVEREQUEST_H_
 
-#ifndef QCONTACTMANAGERINFO_H
-#define QCONTACTMANAGERINFO_H
+#include <QObject>
+#include <qtrackercontactasyncrequest.h>
+#include <qtcontacts.h>
+#include <QtTracker/QLive>
 
-#include <QVariant>
-#include <QStringList>
-#include <QSharedDataPointer>
+class QContactAbstractRequest;
+class QContactManagerEngine;
 
-#include "qtcontactsglobal.h"
-#include "qcontactdetails.h"
-
-class QContactFilter;
-
-class QContactManagerData;
-class Q_CONTACTS_EXPORT QContactManagerInfo
+class QTrackerRelationshipSaveRequest: public QObject, public QTrackerContactAsyncRequest
 {
+    Q_OBJECT
 public:
-    enum ManagerFeature {
-        Groups = 0,
-        ActionPreferences,
-        MutableDefinitions,
-        Relationships,
-        ArbitraryRelationshipTypes,
-        SelfContact,
-        Anonymous,
-        ChangeLogs
-    };
+    QTrackerRelationshipSaveRequest (QContactAbstractRequest* req, QContactManagerEngine* parent);
+private:
+    void saveRelationship (const QContactRelationship &relationship,SopranoLive::RDFServicePtr service);
 
-    bool Q_DECL_DEPRECATED hasFeature(QContactManagerInfo::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
-    bool Q_DECL_DEPRECATED filterSupported(const QContactFilter& filter) const;
-    QList<QVariant::Type> Q_DECL_DEPRECATED supportedDataTypes() const;
-    QStringList Q_DECL_DEPRECATED supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
+private slots:
+    void commitFinished();
+    void commitError(QString message);
+    void nodesDataReady();
 
 private:
-    /* Can't instantiate apart from through manager */
-    QContactManagerInfo();
-    Q_DISABLE_COPY(QContactManagerInfo)
-
-    /* Can't delete except via the manager either */
-    ~QContactManagerInfo();
-
-    /* can't compare either */
-    bool operator==(const QContactManagerInfo& other) const;
-    bool operator!=(const QContactManagerInfo& other) const;
-
-    friend class QContactManager;
-    QContactManagerData * d;
+    SopranoLive::LiveNodes nodes;
 };
 
-#endif
+#endif /* QTRACKERCONTACTSAVEREQUEST_H_ */

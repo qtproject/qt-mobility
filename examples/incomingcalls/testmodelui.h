@@ -65,8 +65,12 @@ class QTextEdit;
 class QLabel;
 class QPushButton;
 
+QTM_BEGIN_NAMESPACE
 class QContactFetchRequest;
 class QContactManager;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 class TestModelView : public QListView
 {
     Q_OBJECT

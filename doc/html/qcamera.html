@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#Error-enum">Error</a></b> { NoError, CameraError, NotReadyToCaptureError, InvalidRequestError, ServiceMissingError }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#Error-enum">Error</a></b> { NoError, CameraError, NotReadyToCaptureError, InvalidRequestError, ServiceMissingError, NotSupportedFeatureError }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureMode-enum">ExposureMode</a></b> { ExposureManual, ExposureAuto, ExposureNight, ExposureBacklight, ..., ExposurePortrait }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureMode-enum">ExposureModes</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureStatus-enum">ExposureStatus</a></b> { CorrectExposure, UnderExposure, OverExposure }</td></tr>
@@ -197,6 +197,7 @@
 <tr><td valign="top"><tt>QCamera::NotReadyToCaptureError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">System resource not available.</td></tr>
 <tr><td valign="top"><tt>QCamera::InvalidRequestError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">System resource doesn't support functionality.</td></tr>
 <tr><td valign="top"><tt>QCamera::ServiceMissingError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">No service available.</td></tr>
+<tr><td valign="top"><tt>QCamera::NotSupportedFeatureError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The feature is not supported.</td></tr>
 </table></p>
 <h3 class="flags"><a name="ExposureMode-enum"></a>enum QCamera::ExposureMode<br />flags QCamera::ExposureModes</h3>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">

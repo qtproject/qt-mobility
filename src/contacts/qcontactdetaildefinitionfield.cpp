@@ -42,12 +42,14 @@
 #include "qcontactdetaildefinitionfield.h"
 #include "qcontactdetaildefinitionfield_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContactDetailDefinitionField
- * \brief A field in a QContactDetail.
- *
- * Encapsulates information about a particular datum which may be part of a QContactDetail, including the type,
- * allowable values and access constraints.
+  \class QContactDetailDefinitionField
+  \brief The QContactDetailDefinitionField class provides a field in a QContactDetail.
+ 
+  Encapsulates information about a particular datum which may be part of a
+  QContactDetail, including the type, allowable values and access constraints.
  */
 
 /*!
@@ -163,3 +165,5 @@ bool QContactDetailDefinitionField::operator!=(const QContactDetailDefinitionFie
 {
     return !(*this == other);
 }
+
+QTM_END_NAMESPACE

@@ -47,6 +47,7 @@
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 /*
  * This test is mostly just for testing sorting and filtering -
  * having it in tst_QContactManager makes maintenance more
@@ -151,6 +152,9 @@ tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 
     /* Known one that will not pass */
     managerNames.removeAll("invalid");
+    managerNames.removeAll("testdummy");
+    managerNames.removeAll("teststaticdummy");
+    managerNames.removeAll("maliciousplugin");
 
     foreach(QString mgr, managerNames) {
         QMap<QString, QString> params;
@@ -3194,7 +3198,7 @@ public:
 class FilterActionFactory : public QContactActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactActionFactory)
+    Q_INTERFACES(QtMobility::QContactActionFactory)
 
 public:
     FilterActionFactory() {}

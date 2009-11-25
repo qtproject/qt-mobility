@@ -61,6 +61,7 @@
 // We mean it.
 //
 
+QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactManagerDataHolder
 {
@@ -105,6 +106,8 @@ public:
 private:
     QMap<QString, QList<QContact> > savedContacts;
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

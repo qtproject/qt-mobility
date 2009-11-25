@@ -44,12 +44,18 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContactActionFilter
- * \brief The QContactActionFilter class provides a filter based around an action availability criterion
- *
- * It may be used to select contacts for which a particular action is available, or contacts which contain
- * a detail of a particular value for which the action is available.
+  \class QContactActionFilter
+  \brief The QContactActionFilter class provides a filter based around an
+  action availability criterion.
+ 
+  \ingroup contacts-filters
+    
+  It may be used to select contacts for which a particular action is
+  available, or contacts which contain a detail of a particular value for
+  which the action is available.
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactActionFilter);
@@ -142,3 +148,5 @@ int QContactActionFilter::implementationVersion() const
     Q_D(const QContactActionFilter);
     return d->m_implementationVersion;
 }
+
+QTM_END_NAMESPACE

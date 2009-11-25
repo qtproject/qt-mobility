@@ -45,6 +45,8 @@
 #include "databasemanager_p.h"
 #include "databasemanagersession.h"
 
+QTM_BEGIN_NAMESPACE
+
 class DatabaseManagerSignalHandler : public QObject
     {
     Q_OBJECT
@@ -60,6 +62,8 @@ class DatabaseManagerSignalHandler : public QObject
     public:
         CDatabaseManagerServerSession& iDatabaseManagerServerSession;
     };
+
+QTM_END_NAMESPACE
 
 #endif
 

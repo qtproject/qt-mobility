@@ -50,11 +50,12 @@
 #include <QPair>
 #include <QSet>
 
+QTM_BEGIN_NAMESPACE
 /*!
- * \class QContactManager
- *
- * This class provides adding, updating and removal of contacts.
- * It also provides definitions for fields that can be found in contacts.
+  \class QContactManager
+ 
+  This class provides adding, updating and removal of contacts.
+  It also provides definitions for fields that can be found in contacts.
  */
 
 /*!
@@ -668,3 +669,7 @@ QString QContactManager::managerUri() const
 {
     return d->m_engine->managerUri();
 }
+
+#include "moc_qcontactmanager.cpp"
+
+QTM_END_NAMESPACE

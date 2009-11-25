@@ -46,6 +46,8 @@
 
 class DSCameraSession;
 
+QTM_USE_NAMESPACE
+
 class DSVideoDeviceControl : public QVideoDeviceControl
 {
     Q_OBJECT

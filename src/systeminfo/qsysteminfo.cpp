@@ -67,7 +67,7 @@
 
 #include <locale.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
   /*!
     \class QSystemInfo
@@ -550,7 +550,7 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 
 // display
  /*!
-   \fn QSystemDisplayInfo::QSystemDisplayInfo()
+   \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
    Constructs a QSystemDisplayInfo object.
  */
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
@@ -885,4 +885,6 @@ bool QSystemScreenSaver::isScreenLockOn()
     return dp.isScreenLockOn();
 }
 
-QT_END_NAMESPACE
+#include "moc_qsysteminfo.cpp"
+
+QTM_END_NAMESPACE

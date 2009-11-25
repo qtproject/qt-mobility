@@ -43,11 +43,17 @@
 #include "qcontactrelationshipfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContactRelationshipFilter
- * \brief The QContactRelationshipFilter class provides a filter based around relationship criteria
- *
- * It may be used to select contacts which are involved in relationships which are of a certain type, or which involve certain contacts.
+  \class QContactRelationshipFilter
+  \brief The QContactRelationshipFilter class provides a filter based
+  around relationship criteria.
+  
+  \ingroup contacts-filters
+ 
+  It may be used to select contacts which are involved in relationships
+  which are of a certain type, or which involve certain contacts.
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
@@ -127,3 +133,5 @@ QContactId QContactRelationshipFilter::otherParticipantId() const
     Q_D(const QContactRelationshipFilter);
     return d->m_otherParticipantId;
 }
+
+QTM_END_NAMESPACE

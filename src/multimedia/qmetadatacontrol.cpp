@@ -42,6 +42,8 @@
 #include <qmediacontrol_p.h>
 #include <qmetadatacontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QMetaDataControl
@@ -49,17 +51,20 @@
     \ingroup multimedia-serv
 
     \preliminary
-    \brief The QMetaDataControl class provides access to the meta-data of a QMediaService's media.
+    \brief The QMetaDataControl class provides access to the meta-data of a
+    QMediaService's media.
 
-    If a QMediaService can provide read or write access to the meta-data of its current media it
-    will implement QMetaDataControl.  This control provides functions for both retrieving and
-    setting meta-data values.  Meta-data may be addressed by the well defined keys in the
-    QtMedia::MetaData enumeration using the metaData() functions, or by string keys using the
-    extendedMetaData() functions.
+    If a QMediaService can provide read or write access to the meta-data of
+    its current media it will implement QMetaDataControl.  This control
+    provides functions for both retrieving and setting meta-data values.
+    Meta-data may be addressed by the well defined keys in the
+    QtMedia::MetaData enumeration using the metaData() functions, or by
+    string keys using the extendedMetaData() functions.
 
-    The functionality provided by this control is exposed to application code by the meta-data
-    members of QMediaObject, and so meta-data access is potentially available in any of the media
-    object classes.  Any media service may implement QMetaDataControl.
+    The functionality provided by this control is exposed to application
+    code by the meta-data members of QMediaObject, and so meta-data access
+    is potentially available in any of the media object classes.  Any media
+    service may implement QMetaDataControl.
 
     The interface name of QMetaDataControl is \c com.nokia.Qt.QMetaDataControl/1.0 as
     defined in QMetaDataControl_iid.
@@ -173,3 +178,7 @@ QMetaDataControl::~QMetaDataControl()
     Signal a change in the writable status of meta-data, \a writable will be
     true if meta-data elements can be added or adjusted.
 */
+
+#include "moc_qmetadatacontrol.cpp"
+QTM_END_NAMESPACE
+

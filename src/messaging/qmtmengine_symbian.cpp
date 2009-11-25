@@ -85,6 +85,9 @@
 
 #include <QMessageBox.h>
 
+
+QTM_BEGIN_NAMESPACE
+
 const TInt KWaitAfterReceivedMessage = 100000; // = 0.1 seconds
 
 Q_GLOBAL_STATIC(CMTMEngine,mtmEngine);
@@ -3218,3 +3221,5 @@ void CMessagesFindOperation::getMTMSpecificMessagesFromFolderL(TUid mtmUid, cons
     }
 }
 
+
+QTM_END_NAMESPACE

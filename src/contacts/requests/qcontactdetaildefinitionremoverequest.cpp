@@ -42,9 +42,15 @@
 #include "qcontactdetaildefinitionremoverequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContactDetailDefinitionRemoveRequest
- * \brief Allows a client to asynchronously request that certain detail definitions be removed from a contacts store
+  \class QContactDetailDefinitionRemoveRequest
+  \brief The QContactDetailDefinitionRemoveRequest class allows a client to
+  asynchronously request that certain detail definitions be removed from
+  a contacts store.
+  
+  \ingroup contacts-requests
  */
 
 /*!
@@ -92,3 +98,7 @@ QString QContactDetailDefinitionRemoveRequest::contactType() const
     Q_D(const QContactDetailDefinitionRemoveRequest);
     return d->m_contactType;
 }
+
+#include "moc_qcontactdetaildefinitionremoverequest.cpp"
+
+QTM_END_NAMESPACE

@@ -49,6 +49,8 @@
 #include <QPair>
 #include <QSharedDataPointer>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactManagerEngine;
 class QContactChangeSetData;
 class Q_CONTACTS_EXPORT QContactChangeSet
@@ -77,5 +79,7 @@ public:
 private:
     QSharedDataPointer<QContactChangeSetData> d;
 };
+
+QTM_END_NAMESPACE
 
 #endif

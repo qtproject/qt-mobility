@@ -51,6 +51,8 @@
 
 #include "qgstreamerbushelper.h"
 
+QTM_USE_NAMESPACE
+
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
