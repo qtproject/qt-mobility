@@ -271,8 +271,6 @@ bool QValueSpacePublisher::isConnected() const
     processes in the system will be able to see the attribute changes.
 
     Generally, calling this function is unnecessary.
-
-    \sa syncAll()
 */
 void QValueSpacePublisher::sync()
 {
