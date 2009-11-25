@@ -1,9 +1,7 @@
 TEMPLATE = app
-TARGET = 
-QT += testlib \
-    xml
+TARGET = versittest 
+QT += xml testlib
 CONFIG += qtestlib
-include(../../common.pri)
 DEPENDPATH += .
 INCLUDEPATH += . \
                ../../src/versit \
@@ -32,3 +30,5 @@ symbian: {
     LIBS += -lws32 \
         -lbafl
 }
+
+include(../examples.pri)

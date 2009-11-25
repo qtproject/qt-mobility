@@ -45,14 +45,20 @@
 #include <QObject>
 #include <QStringList>
 
+#include "qtversitglobal.h"
+
 class QFile;
 class QIODevice;
+
+QTM_BEGIN_NAMESPACE
 class QContactManager;
 class QVersitReader;
 class QVersitWriter;
 class QVersitContactImporter;
 class QVersitContactExporter;
+QTM_END_NAMESPACE
 
+QTM_USE_NAMESPACE
 
 class VersitTest : public QObject
 {
