@@ -569,6 +569,12 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.contentType().toLower(), messageType.toLower());
     QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
 
+    if (message.contentType().toLower() == "multipart") {
+        QVERIFY(!message.contentIds().isEmpty());
+    } else {
+        QVERIFY(message.contentIds().isEmpty());
+    }
+
     QCOMPARE(message.parentAccountId(), testAccountId);
     QCOMPARE(message.parentFolderId(), testFolderId);
 #ifndef Q_OS_SYMBIAN // Created Messages are not stored in Standard Folders in Symbian    
@@ -610,6 +616,9 @@ void tst_QMessageStore::testMessage()
         QMessageContentContainer attachment(message.find(attachmentId));
         int index = attachments.indexOf(attachment.suggestedFileName());
         QVERIFY(index != -1);
+
+        // We cannot create nested multipart messages
+        QVERIFY(attachment.contentIds().isEmpty());
 
 #ifndef Q_OS_SYMBIAN        
         QCOMPARE(attachment.contentType().toLower(), attachmentType[index].toLower());
