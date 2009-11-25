@@ -48,7 +48,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QRadioTunerControl
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \preliminary

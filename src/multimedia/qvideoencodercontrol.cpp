@@ -48,7 +48,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QVideoEncoderControl
     \preliminary
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \brief The QVideoEncoderControl class provides access to the settings

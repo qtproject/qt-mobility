@@ -47,7 +47,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QImageEncoderControl
     \preliminary
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \brief The QImageEncoderControl class provides access to the settings of a media service that

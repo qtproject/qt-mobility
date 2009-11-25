@@ -46,7 +46,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QImageProcessingControl
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \preliminary
