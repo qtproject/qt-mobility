@@ -436,20 +436,12 @@ public:
     {
     }
 
-    QSize minimumResolution(const QImageEncoderSettings & = QImageEncoderSettings()) const
+    QList<QSize> supportedResolutions(const QImageEncoderSettings & = QImageEncoderSettings(),
+                                      bool *continuous = 0) const
     {
-        return m_minimumResolution;
-    }
-    void setMinimumResolution(const QSize &resolution) { m_minimumResolution = resolution; }
+        if (continuous)
+            *continuous = true;
 
-    QSize maximumResolution(const QImageEncoderSettings & = QImageEncoderSettings()) const
-    {
-        return m_maximumResolution;
-    }
-    void setMaximumResolution(const QSize &resolution) { m_maximumResolution = resolution; }
-
-    QList<QSize> supportedResolutions(const QImageEncoderSettings & = QImageEncoderSettings()) const
-    {
         return m_supportedResolutions;
     }
 
@@ -470,8 +462,6 @@ public:
 private:
     QImageEncoderSettings m_settings;
 
-    QSize m_minimumResolution;
-    QSize m_maximumResolution;
     QList<QSize> m_supportedResolutions;
     QStringList m_supportedCodecs;
     QMap<QString, QString> m_codecDescriptions;

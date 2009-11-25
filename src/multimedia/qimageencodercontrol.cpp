@@ -90,39 +90,17 @@ QImageEncoderControl::~QImageEncoderControl()
 }
 
 /*!
-    \fn QImageEncoderControl::supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings()) const
+    \fn QImageEncoderControl::supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings(),
+                                                   bool *continuous = 0) const
 
-    Returns a list of supported resolutions.  This will return an empty list if the encoder supports
-    arbitrary resolutions within the minimum and maximum range.
+    Returns a list of supported resolutions.
 
     If non null image \a settings parameter is passed,
     the returned list is reduced to resolutions supported with partial settings applied.
     It can be used to query the list of resolutions, supported by specific image codec.
 
-    \sa minimumResolution(), maximumResolution()
-
-*/
-
-/*!
-    \fn QImageEncoderControl::minimumResolution(const QImageEncoderSettings &settings = QImageEncoderSettings()) const
-
-    Returns the minimum supported resolution.
-
-    If non null image \a settings parameter is passed,
-    the minimum supported resolution with partial settings applied is returned.
-
-    \sa supportedResolutions()
-*/
-
-/*!
-    \fn QImageEncoderControl::maximumResolution(const QImageEncoderSettings &settings = QImageEncoderSettings()) const
-
-    Returns the maximum supported resolution.
-
-    If non null image \a settings parameter is passed,
-    the maximum supported resolution with partial settings applied is returned.
-
-    \sa supportedResolutions()
+    If the encoder supports arbitrary resolutions within the supported resolutions range,
+    *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
 
 /*!
