@@ -137,7 +137,7 @@ LIBS += -lsendas2 \
 	-lapgrfx \
 	-lapmime
 
-messaging.sources = QtMessaging.dll
+messaging.sources = QtMessaging_beta.dll
 messaging.path = /sys/bin
 DEPLOYMENT += license messaging
 symbian:TARGET.CAPABILITY = All -TCB -AllFiles -DRM

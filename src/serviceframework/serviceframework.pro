@@ -46,7 +46,7 @@ symbian {
 
     MMP_RULES += libBlock
 
-    QtServiceFrameworkDeployment.sources = QtServiceFramework.dll SFWDatabaseManagerServer.exe
+    QtServiceFrameworkDeployment.sources = QtServiceFramework_beta.dll SFWDatabaseManagerServer.exe
     QtServiceFrameworkDeployment.path = /sys/bin
 
     DEPLOYMENT += QtServiceFrameworkDeployment

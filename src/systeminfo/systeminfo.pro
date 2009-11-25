@@ -119,7 +119,7 @@ unix: {
         MMP_RULES += EXPORTUNFROZEN
         
 
-        QtSystemInfoDeployment.sources = QtSystemInfo.dll
+        QtSystemInfoDeployment.sources = QtSystemInfo_beta.dll
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }

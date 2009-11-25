@@ -89,7 +89,7 @@ symbian {
     exportheaders.path = epoc32/include
     DEPLOYMENT += exportheaders
 
-    QtLocationDeployment.sources = QtLocation.dll
+    QtLocationDeployment.sources = QtLocation_beta.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
 }

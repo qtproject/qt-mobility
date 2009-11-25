@@ -28,7 +28,7 @@ CONFIG += console
 include(../examples.pri)
 
 symbian {
-    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer.dll
+    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer_beta.dll
     BEARERLIB.path = .
     DEPLOYMENT += BEARERLIB
 }

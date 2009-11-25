@@ -81,7 +81,7 @@ symbian {
 
     ### Contacts
     # Main library
-    CONTACTS_DEPLOYMENT.sources = QtContacts.dll
+    CONTACTS_DEPLOYMENT.sources = QtContacts_beta.dll
     CONTACTS_DEPLOYMENT.path = \sys\bin
 
     deploy.path = $$EPOCROOT

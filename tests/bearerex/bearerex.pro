@@ -27,7 +27,7 @@ SOURCES += bearerex.cpp \
            xqlistwidget.cpp
 
 symbian: {
-    bearerex.sources = Qtbearer.dll
+    bearerex.sources = Qtbearer_beta.dll
     bearerex.path = /sys/bin
     DEPLOYMENT += bearerex
 
