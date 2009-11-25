@@ -1117,7 +1117,8 @@ void CntSymbianEngine::performAsynchronousOperation()
             updateRequest(currentRequest, requestedDefinitions, operationError, operationErrors, QContactAbstractRequest::Finished);
         }
         break;
-        // Not implemented yet
+
+        // Not implemented yet:
 #if 0
         case QContactAbstractRequest::DetailDefinitionSaveRequest:
         {
@@ -1165,6 +1166,7 @@ void CntSymbianEngine::performAsynchronousOperation()
         }
         break;
 #endif // not supported detail definition operations
+
         case QContactAbstractRequest::RelationshipFetchRequest:
         {
             QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(currentRequest);
