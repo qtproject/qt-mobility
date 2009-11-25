@@ -9,7 +9,7 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += \
            qvaluespace.h \
-           qvaluespaceprovider.h \
+           qvaluespacepublisher.h \
            qvaluespacesubscriber.h
 
 PRIVATE_HEADERS += \
@@ -21,19 +21,30 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES += \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
-           qvaluespaceprovider.cpp \
+           qvaluespacepublisher.cpp \
            qvaluespacesubscriber.cpp
 
 symbian {
-    HEADERS += qcrmlparser_p.h
-    SOURCES += qcrmlparser.cpp
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders
+    DEPENDPATH += symbian
+    INCLUDEPATH += symbian
+    DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
+    include(symbian/settingsmanager.pri)
 
+    DEFINES += QT_BUILD_INTERNAL
+    HEADERS += settingslayer_symbian.h \
+        pathmapper_symbian.h \
+        qcrmlparser_p.h
+    SOURCES += settingslayer_symbian.cpp \
+        pathmapper_symbian.cpp \
+        qcrmlparser.cpp
     MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC78
+
+    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll
+    QtPublishSubscribeDeployment.path = /sys/bin
+
+    DEPLOYMENT += QtPublishSubscribeDeployment
 }
 
 unix:!symbian {

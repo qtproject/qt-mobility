@@ -31,6 +31,8 @@ exampledirs = ../../examples \
               ../.. \
               .
 
+excludedirs = ../../src/publishsubscribe/symbian
+
 indexes                 = qt.index
 
 sources.fileextensions  = "*.qdoc *.cpp"

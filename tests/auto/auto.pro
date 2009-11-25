@@ -32,7 +32,7 @@ wince* {
 }
 
 SUBDIRS += qvaluespace \                           #Publish and Subscribe
-           qvaluespaceprovider \
+           qvaluespacepublisher \
            qvaluespacesubscriber \
 	   qcrmlparser
 
