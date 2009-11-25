@@ -66,14 +66,11 @@ class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceSubscriber : public QObject
 public:
     explicit QValueSpaceSubscriber(QObject *parent = 0);
     explicit QValueSpaceSubscriber(const QString &path, QObject *parent = 0);
-    explicit QValueSpaceSubscriber(const char *path, QObject *parent = 0);
 
     QValueSpaceSubscriber(const QString &path, QValueSpace::LayerOptions filter,
                           QObject *parent = 0);
-    QValueSpaceSubscriber(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
 
     QValueSpaceSubscriber(const QString &path, const QUuid &uuid, QObject *parent = 0);
-    QValueSpaceSubscriber(const char *path, const QUuid &uuid, QObject *parent = 0);
 
     virtual ~QValueSpaceSubscriber();
 
@@ -89,7 +86,6 @@ public:
     QStringList subPaths() const;
 
     QVariant value(const QString &subPath = QString(), const QVariant &def = QVariant()) const;
-    QVariant value(const char *subPath, const QVariant &def = QVariant()) const;
 
 
 signals:
