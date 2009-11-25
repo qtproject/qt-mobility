@@ -115,6 +115,7 @@ private slots:
     void testPreferredCharsets();
     void testMessageAddress_data();
     void testMessageAddress();
+    void testHeaderFields();
 
 private:
     QMessageAccountId testAccountId;
@@ -442,5 +443,20 @@ void tst_QMessage::testMessageAddress()
     QMessageAddress::parseEmailAddress(from, &name, &address);
     QCOMPARE(targetName, name);
     QCOMPARE(targetAddress, address);
+}
+
+void tst_QMessage::testHeaderFields()
+{
+    QMessage msg;
+    
+    QCOMPARE(msg.headerFields().isEmpty(), true);
+    QCOMPARE(msg.headerFieldValues("Subject").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValues("From").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValues("To").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValues("X-None").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValue("Subject").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValue("From").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValue("To").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValue("X-None").isEmpty(), true);
 }
 
