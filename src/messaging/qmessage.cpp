@@ -76,44 +76,17 @@ QList<QByteArray> charsets;
 
     A list of attachments identifiers will be returned by attachmentIds() and an identifier for the 
     message body will be returned by bodyId(). Attachments can be appended to the content of the 
-    message using appendAttachments(), the body of the message can be set with setBody() or
-    setBodyFromFile().
+    message using appendAttachments(), the body of the message can be set with setBody().
     
     The folder and account a message is associated with are returned by parentFolderId() and
     parentAccountId() respectively.
 
     Message data that is less commonly accessed or relatively large should be lazily retrieved 
     on demand by the associated getter function.
-    
-    The following transmission formats are used both when constructing and encapsulating messages:
-    \list
-    
-    \o QMessage::Sms
-    \l{http://www.3gpp.org/ftp/Specs/html-info/23040.htm} 
-    {3GPP TS 23.040} (Technical realization of the Short Message Service).
-    
-    \o QMessage::Mms \l{http://www.openmobilealliance.org/technical/release_program/docs/MMS/V1_3-20050927-C/OMA-TS-MMS-ENC-V1_3-20050927-C.pdf} 
-    {OMA TS MMS ENC} (Multimedia Messaging Service Encapsulation Protocol).
-    
-    \o QMessage::Email 
-    \l{http://www.ietf.org/rfc/rfc2822.txt} {RFC 2822} (Internet Message Format), and 
-    \l{http://www.ietf.org/rfc/rfc2045.txt} {RFC 2045} (Format of Internet Message Bodies) through 
-    \l{http://www.ietf.org/rfc/rfc2049.txt} {RFC 2049} (Conformance Criteria and Examples).
-
-    \o QMessage::Xmpp 
-    \l{http://www.ietf.org/rfc/rfc3921.txt} {RFC 3921} (Extensible Messaging and Presence Protocol).
-
-    \endlist
-    
+        
     Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
     or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.
-    
-    In addition to and separate from the message content information related to a message may be
-    stored in name value pairs known as custom fields, both names and values are unicode strings. 
-    A custom field may be set or updated with setCustomField(), the value of existing custom field 
-    can be retrieved with customField(), and a list of existing custom fields is returned by
-    customFields().
     
     \sa QMessageContentContainer, QMessageStore, QMessageId
 */

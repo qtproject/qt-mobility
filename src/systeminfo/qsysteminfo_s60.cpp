@@ -61,6 +61,7 @@
 #include <bt_subscribe.h>
 #include <bttypes.h>
 #include <Etel3rdParty.h>
+#include <aknkeylock.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -82,7 +83,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
-    TRAPD(err,
+    TRAP_IGNORE(
         CPtiEngine *ptiEngine = CPtiEngine::NewL();
         CleanupStack::PushL(ptiEngine);
         RArray<TInt> languageCodes;
@@ -96,6 +97,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
         }
         CleanupStack::PopAndDestroy(2, ptiEngine);
     )
+    languages.removeDuplicates();
     return languages;
 }
 
@@ -159,10 +161,10 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
         case ELangCroatian: return "hr";
         case ELangEstonian: return "et";
         case ELangFarsi: return "fa";
-        case ELangScotsGaelic: "gd";
+        case ELangScotsGaelic: return "gd";
         case ELangGeorgian: return "ka";
         case ELangGreek:
-        case ELangCyprusGreek: "el";
+        case ELangCyprusGreek: return "el";
         case ELangGujarati: return "gu";
         case ELangHebrew: return "he";
         case ELangHindi: return "hi";
@@ -209,7 +211,7 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
     return "";
 }
 
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString & /*parameter*/)
 {
     switch (type) {
         case QSystemInfo::Os:
@@ -382,7 +384,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         default:
             break;
     };
-    return -1;  //TODO
+    return -1;
 }
 
 int QSystemNetworkInfoPrivate::cellId()
@@ -395,13 +397,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 	return DeviceInfo::instance()->cellNetworkInfo()->locationAreaCode();
 }
 
-// Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
 	return DeviceInfo::instance()->cellNetworkInfo()->countryCode();
 }
 
-// Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
 	return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
@@ -418,7 +418,7 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
-    return QString();   //TODO
+    return QString();
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
@@ -464,7 +464,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
             const TUint KPSWlanMacAddressLength = 6;
             TBuf8<KPSWlanMacAddressLength> wlanMacAddr;
             if (RProperty::Get(KPSUidWlan, KPSWlanMacAddress, wlanMacAddr) == KErrNone) {
-                for (TInt i = 0; i < KPSWlanMacAddressLength - 1; ++i) {
+                for (TUint i = 0; i < KPSWlanMacAddressLength - 1; ++i) {
                     address += QString(QByteArray((const char*)wlanMacAddr.Mid(i, 1).Ptr(), 1).toHex());
                     address += ":";
                 }
@@ -494,7 +494,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
     return address;
 }
 
-QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
+QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode /*mode*/)
 {
     return QNetworkInterface();
 }
@@ -581,7 +581,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
-int QSystemDisplayInfoPrivate::displayBrightness(int screen)
+int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 {
     const TUid KCRUidLightSettings = {0x10200C8C};
     const TUint32 KLightSensorSensitivity = 0x00000002;
@@ -886,8 +886,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         {
             if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) { //TODO: Use real indicator, EPSHWRMChargingStatus::EChargingStatusNotCharging?
                 return QSystemDeviceInfo::WallPowerChargingBattery;
-            } else {
-                return QSystemDeviceInfo::WallPower;
             }
             return QSystemDeviceInfo::WallPower;
         }
@@ -938,7 +936,6 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 {
-    //TODO: To be moved in QSystemDeviceInfo?
     int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
     if(batteryLevel < 4) {
         return QSystemDeviceInfo::BatteryCritical;
@@ -960,7 +957,16 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    return false;   //TODO
+    bool isLocked = false;
+
+    RAknKeylock2 keyLock;
+    TInt err = keyLock.Connect();
+    if (err == KErrNone) {
+        isLocked = keyLock.IsKeyLockEnabled();
+        keyLock.Close();
+    }
+
+    return isLocked;
 }
 
 void QSystemDeviceInfoPrivate::batteryLevelChanged()

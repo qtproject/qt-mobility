@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMINFO_WIN_P_H
-#define QSYSTEMINFO_WIN_P_H
+#ifndef QSYSTEMINFO_LINUX_P_H
+#define QSYSTEMINFO_LINUX_P_H
 
 
 //
@@ -57,21 +57,17 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
-#include <QThread>
-#include <QMutex>
 
 #include "qsysteminfo.h"
-#include "qmobilityglobal.h"
+#include <qmobilityglobal.h>
+#if !defined(QT_NO_DBUS)
+#include <qhalservice_linux_p.h>
+#endif
 
-#include <winsock2.h>
-#include <mswsock.h>
-
-#include <QBasicTimer>
+QT_BEGIN_HEADER
 
 class QStringList;
 class QTimer;
-
-QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
@@ -88,22 +84,34 @@ public:
     QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
 
-    QString version(QTM_PREPEND_NAMESPACE(QSystemInfo::Version),  const QString &parameter = QString());
+    QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
     QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
-    bool hasFeatureSupported(QTM_PREPEND_NAMESPACE(QSystemInfo::Feature) feature);
+    bool hasFeatureSupported(QSystemInfo::Feature feature);
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
-
+#if !defined(QT_NO_DBUS)
+    bool hasHalDeviceFeature(const QString &param);
+    bool hasHalUsbFeature(qint32 usbClass);
+    QHalInterface halIface;
+#endif
     bool hasSysFeature(const QString &featureStr);
-    QString currentLanguageStr;
+    QTimer *langTimer;
+    QString langCached;
+
 private Q_SLOTS:
-     void currentLanguageTimeout();
+    void startLangaugePolling();
+
 
 };
+
+class QNetworkManagerInterface;
+class QNetworkManagerInterfaceDeviceWired;
+class QNetworkManagerInterfaceDeviceWireless;
+class QNetworkManagerInterfaceAccessPoint;
 
 class QSystemNetworkInfoPrivate : public QObject
 {
@@ -114,8 +122,8 @@ public:
     QSystemNetworkInfoPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkStatus) networkStatus(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
-    qint32 networkSignalStrength(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
     int locationAreaCode();
 
@@ -125,39 +133,27 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
-    QString networkName(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
-    QString macAddress(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
+    QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
-    QNetworkInterface interfaceForMode(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
-
-
-   void emitNetworkStatusChanged(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode), QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkStatus));
-   void emitNetworkSignalStrengthChanged(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode),int);
-
-   static QSystemNetworkInfoPrivate *instance();
-protected:
-   void timerEvent(QTimerEvent *event);
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 Q_SIGNALS:
-   void networkStatusChanged(QtMobility::QSystemNetworkInfo::NetworkMode, QtMobility::QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QtMobility::QSystemNetworkInfo::NetworkMode,int);
+   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
    void currentMobileCountryCodeChanged(const QString &);
    void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QtMobility::QSystemNetworkInfo::NetworkMode, const QString &);
-   void networkModeChanged(QtMobility::QSystemNetworkInfo::NetworkMode);
-private Q_SLOTS:
-   void networkStrengthTimeout();
-   void networkStatusTimeout();
-private:
-    quint32 wifiStrength;
-    quint32 ethStrength;
-    HANDLE hWlan;
-    int timerMs;
-   QBasicTimer netStrengthTimer;
-   bool isDefaultMode(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
-   void startWifiCallback();
-   bool wlanCallbackInitialized;
+   void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
+   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+private:
+#if !defined(QT_NO_DBUS)
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
+    int getBluetoothRssi();
+    QString getBluetoothInfo(const QString &file);
+    bool isDefaultInterface(const QString &device);
+
+#endif
 };
 
 class QSystemDisplayInfoPrivate : public QObject
@@ -188,10 +184,10 @@ public:
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
-    QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume); //returns enum
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
 private:
-    QHash<QString, QString> mountEntriesHash;
+    QMap<QString, QString> mountEntriesMap;
     void mountEntries();
 
 };
@@ -203,41 +199,45 @@ class QSystemDeviceInfoPrivate : public QObject
 public:
 
     QSystemDeviceInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemDeviceInfoPrivate();
+    ~QSystemDeviceInfoPrivate();
 
 // device
 
-    QString imei();
-    QString imsi();
-    QString manufacturer();
-    QString model();
-    QString productName();
+    static QString imei();
+    static QString imsi();
+    static QString manufacturer();
+    static QString model();
+    static QString productName();
 
-    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::InputMethodFlags) inputMethodType();
+    QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
-    int  batteryLevel();
+    int  batteryLevel() const;
 
-    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::SimStatus) simStatus();
+    QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
-    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::Profile) currentProfile();
+    QSystemDeviceInfo::Profile currentProfile();
 
-    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerState();
+    QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
-    static QSystemDeviceInfoPrivate *instance() {return self;}
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
-    void batteryStatusChanged(QtMobility::QSystemDeviceInfo::BatteryStatus );
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
 
-    void powerStateChanged(QtMobility::QSystemDeviceInfo::PowerState);
-    void currentProfileChanged(QtMobility::QSystemDeviceInfo::Profile);
+    void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
 private:
-    int batteryLevelCache;
-    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerStateCache;
-    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::BatteryStatus) batteryStatusCache;
-    static QSystemDeviceInfoPrivate *self;
+#if !defined(QT_NO_DBUS)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+    void setupBluetooth();
+
+private Q_SLOTS:
+    void halChanged(int,QVariantList);
+    void bluezPropertyChanged(const QString&, QDBusVariant);
+#endif
 };
 
 
@@ -247,14 +247,19 @@ class QSystemScreenSaverPrivate : public QObject
 
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
+    ~QSystemScreenSaverPrivate();
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool screenSaverSecureEnabled();
+    bool isScreenLockEnabled();
+    bool isScreenSaverActive();
+
 private:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;
+
+    uint currentPid;
 
 };
 
@@ -262,7 +267,7 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif /*QSYSTEMSINFO_WIN_P_H*/
+#endif /*QSYSTEMSINFO_LINUX_P_H*/
 
 // End of file
 

@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include "qmessagecontentcontainer.h"
 #include <QStringList>
+#include <QTextCodec>
 #include "qmessagecontentcontainer_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -83,7 +84,7 @@ void QMessageContentContainerPrivate::clearContents()
 	_name = QByteArray();
 	_content = QByteArray();
 	_textContent = QString();
-	_filename = QString();
+	_filename = QByteArray();
 	_messageId = QMessageId();
 	_id = QMessageContentContainerId();
 	_available = false;
@@ -106,6 +107,7 @@ void QMessageContentContainerPrivate::setContent(const QString &content, const Q
 	setContentType(type, subType, charset);
 
 	_textContent = content;
+	_size = content.size();
 	_available = true;
 }
 
@@ -172,22 +174,27 @@ bool QMessageContentContainerPrivate::createAttachment(const QString& attachment
 
 	_content = attachmentFile.readAll();
 	_available = true;
-
+		
+	_size = attachmentFile.size();	
+	
 	attachmentFile.close();
 	QFileInfo fi(attachmentPath);
 	_name = fi.fileName().toLatin1();
-
+	
 	//set the mime-type
 	QByteArray mimeType;
 	QString type;
 	TBuf8<255> fileBuffer;
 	RApaLsSession session;	
-	QString fileString = QString(_name);
+	QString fileString = fi.fileName();
 	TPtrC16 filePtr(reinterpret_cast<const TUint16*>(fileString.utf16()));
 	TBuf8<20> fileType;
+	TPtrC8 ptr8((TUint8 *)(_content.constData()));
+	HBufC8* des = HBufC8::New(_size);
+	des = ptr8.Alloc();
 	if(session.Connect() == KErrNone){						
 		TDataRecognitionResult fileDataType; 					
-		session.RecognizeData(filePtr, fileBuffer, *&fileDataType); 										
+		session.RecognizeData(filePtr, *des, *&fileDataType); 										
 		fileType.Copy(fileDataType.iDataType.Des8());
 		mimeType = QByteArray((const char*)fileType.Ptr(), fileType.Length());
 		session.Close();				
@@ -200,8 +207,8 @@ bool QMessageContentContainerPrivate::createAttachment(const QString& attachment
 		_subType = mimeType.mid(index + 1).trimmed();
 	}
 	
-	// set the hole filepath to _name
-	_name = fi.filePath().toLatin1();
+	// set the whole filepath to _filename
+	_filename = fi.filePath().toLatin1();
 	
 	return true;
 }
@@ -222,9 +229,16 @@ QMessageContentContainerId QMessageContentContainerPrivate::prependContent(QMess
 	return _attachments[0].d_ptr->_id;
 }
 
+
+
 QMessageContentContainerId QMessageContentContainerPrivate::bodyContentId()
 {
 	return QMessageContentContainerId(QString::number(0));
+}
+
+QByteArray QMessageContentContainerPrivate::attachmentFilename(const QMessageContentContainer& container)
+{
+    return container.d_ptr->_filename;
 }
 
 QMessageContentContainer::QMessageContentContainer()
@@ -306,7 +320,6 @@ void QMessageContentContainer::writeContentTo(QDataStream& out) const
 QMessageContentContainerIdList QMessageContentContainer::contentIds() const
 {
     QMessageContentContainerIdList ids;
-    int c = d_ptr->_attachments.count();
 
     if (d_ptr->isMessage()) {
         foreach (const QMessageContentContainer &container, d_ptr->_attachments) {

@@ -158,7 +158,7 @@ bool CIndicatorInfo::isBatteryCharging() const
 */
 
 CBatteryInfo::CBatteryInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_batteryInfoV1Pckg(m_batteryInfoV1), m_initializing(true)
+    m_initializing(true), m_batteryInfoV1Pckg(m_batteryInfoV1)
 {
     m_telephony.GetBatteryInfo(iStatus, m_batteryInfoV1Pckg);
     makeRequest();
@@ -222,7 +222,7 @@ void CBatteryInfo::startMonitoring()
 }
 
 CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_networkInfoV1Pckg(m_networkInfoV1), m_initializing(true)
+    m_initializing(true), m_networkInfoV1Pckg(m_networkInfoV1)
 {
     m_telephony.GetCurrentNetworkInfo(iStatus, m_networkInfoV1Pckg);
     makeRequest();    
@@ -339,7 +339,7 @@ void CCellNetworkInfo::startMonitoring()
 }
 
 CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_networkRegistrationV1Pckg(m_networkRegistrationV1), m_initializing(true)
+    m_initializing(true), m_networkRegistrationV1Pckg(m_networkRegistrationV1)
 {
     m_telephony.GetNetworkRegistrationStatus(iStatus, m_networkRegistrationV1Pckg);
     makeRequest();
@@ -390,7 +390,7 @@ void CCellNetworkRegistrationInfo::startMonitoring()
 }
 
 CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_signalStrengthV1Pckg(m_signalStrengthV1), m_initializing(true)
+    m_initializing(true), m_signalStrengthV1Pckg(m_signalStrengthV1)
 {
     m_telephony.GetSignalStrength(iStatus, m_signalStrengthV1Pckg);
     makeRequest();

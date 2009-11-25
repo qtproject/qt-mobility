@@ -134,13 +134,22 @@ symbian: {
         SOURCES+= qcorewlanengine_mac.mm
         LIBS += -framework Foundation -framework SystemConfiguration
 
-        contains(corewlan_enabled, yes) {
-                QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.6.sdk
-                LIBS += -framework CoreWLAN
-                DEFINES += MAC_SDK_10_6
-        } else {
-                QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5.sdk
-        }
+            contains(corewlan_enabled, yes) {
+                     isEmpty(QMAKE_MAC_SDK) {
+                         SDK6="yes"
+                     } else {
+                         contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
+                             SDK6="yes"
+                     }     
+                 }
+            
+                !isEmpty(SDK6) {
+                        LIBS += -framework CoreWLAN
+                        DEFINES += MAC_SDK_10_6
+                }
+           }
+
+
     }
 }
 

@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include "qmessageordering.h"
 #include "qmessageordering_p.h"
+#include "qmessage_p.h"
 
 #define COMPARE(x,y) \
 if ((x) < (y)) { \
@@ -97,7 +98,7 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering,
         switch (field)
         {
         case Type: COMPARE(left->type(), right->type())
-        //TODO: case Sender: 
+        case Sender: COMPARE(QMessagePrivate::senderName(*left), QMessagePrivate::senderName(*right)); 
         case Recipients: {
             QString leftStr;
             QString rightStr;
@@ -116,7 +117,7 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering,
         case HasAttachments: COMPARE(left->status() & QMessage::HasAttachments, right->status() & QMessage::HasAttachments)
         case Incoming: COMPARE(left->status() & QMessage::Incoming, right->status() & QMessage::Incoming)
         case Removed: COMPARE(left->status() & QMessage::Removed, right->status() & QMessage::Removed)
-        case Priority: COMPARE(left->priority(), right->priority())
+        case Priority: COMPARE(right->priority(), left->priority())
         case Size: COMPARE(left->size(), right->size())
         }
     }
@@ -223,12 +224,16 @@ QMessageOrdering QMessageOrdering::byStatus(QMessage::Status flag, Qt::SortOrder
 	switch (flag) {
 	case QMessage::Read:
 		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Read, order);
+		break;
 	case QMessage::HasAttachments:
 		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::HasAttachments, order);
+		break;
 	case QMessage::Incoming:
 		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Incoming, order);
+		break;
 	case QMessage::Removed:
 		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Removed, order);
+		break;
 	}
 	return result;
 }

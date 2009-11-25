@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include <qsysteminfo.h>
-#include <qsysteminfo_linux_p.h>
+#include <qsysteminfo_maemo_p.h>
 
 #include <QStringList>
 #include <QSize>
@@ -55,9 +55,8 @@
 #include <QTimer>
 #include <QMapIterator>
 
-#if !defined(QT_NO_DBUS)
+s#if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
-#include <qnetworkmanagerservice_linux_p.h>
 #include <QtDBus>
 #include <QDBusConnection>
 #include <QDBusError>
@@ -75,6 +74,7 @@
 #include <sys/vfs.h>
 #include <mntent.h>
 #include <sys/stat.h>
+
 
 #ifdef Q_WS_X11
 #include <QX11Info>
@@ -110,32 +110,6 @@
 
 
 QTM_BEGIN_NAMESPACE
-
-static bool halAvailable()
-{
-#if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    if (dbusConnection.isConnected()) {
-        QDBusConnectionInterface *dbiface = dbusConnection.interface();
-        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Hal");
-        if (reply.isValid() && reply.value()) {
-            return reply.value();
-        }
-    }
-#endif
-  //  qDebug() << "Hal is not running";
-    return false;
-}
-
-bool halIsAvailable;
-//////// QSystemInfo
-QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
- : QObject(parent)
-{
-    halIsAvailable = halAvailable();
-    langCached = currentLanguage();
-    startLangaugePolling();
-}
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
@@ -204,16 +178,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     switch(type) {
     case QSystemInfo::Os :
         {
-#if !defined(QT_NO_DBUS)
-            QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-            QString str;
-            if (iface.isValid()) {
-                str = iface.getPropertyString("system.kernel.version");
-                if(!str.isEmpty()) {
-                    return str;
-                }
-            }
-#endif
             QString versionPath = "/proc/version";
             QFile versionFile(versionPath);
             if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -232,25 +196,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
        break;
    case QSystemInfo::Firmware :
        {
-#if !defined(QT_NO_DBUS)
-           QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-           QString str;
-           if (iface.isValid()) {
-               if(useDate) {
-                   str = iface.getPropertyString("system.firmware.release_date");
-                   if(!str.isEmpty()) {
-                       return str;
-                   }
-               } else {
-                   str = iface.getPropertyString("system.firmware.version");
-                   if(str.isEmpty()) {
-                       if(!str.isEmpty()) {
-                           return str;
-                       }
-                   }
-               }
-           }
-#endif
        }
        break;
     };
@@ -468,177 +413,12 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-#if !defined(QT_NO_DBUS)
-void QSystemNetworkInfoPrivate::setupNmConnections()
-{
-    iface = new QNetworkManagerInterface();
-    QList<QDBusObjectPath> list = iface->getDevices();
-    foreach(QDBusObjectPath path, list) {
-        QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path.path());
-
-//        devIface->setConnections();
-//        connect(devIface,SIGNAL(stateChanged(const QString &, quint32)),
-//                this, SLOT(updateDeviceInterfaceState(const QString&, quint32)));
-
-        switch(devIface->deviceType()) {
-        case DEVICE_TYPE_802_3_ETHERNET:
-            {
-                devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path());
-                devWiredIface->setConnections();
-                connect(devWiredIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
-                        this,SLOT(nmPropertiesChanged( const QString &, QMap<QString,QVariant>)));
-            }
-            break;
-        case DEVICE_TYPE_802_11_WIRELESS:
-            {
-                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
-                devWirelessIface->setConnections();
-
-                connect(devWirelessIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
-                        this,SLOT(nmPropertiesChanged( const QString &, QMap<QString,QVariant>)));
-
-                if(devWirelessIface->activeAccessPoint().path().length() > 2) {
-                    accessPointIface = new QNetworkManagerInterfaceAccessPoint(devWirelessIface->activeAccessPoint().path());
-                    accessPointIface->setConnections();
-                    connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
-                            this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)));
-                }
-            }
-            break;
-        default:
-            break;
-        };
-    } //end getDevices
-
-}
-
 void QSystemNetworkInfoPrivate::updateDeviceInterfaceState(const QString &/*path*/, quint32 /*nmState*/)
 {
  //   qWarning() << __FUNCTION__ << path << nmState;
 }
 
-void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<QString,QVariant> map)
-{
-    QMapIterator<QString, QVariant> i(map);
-    while (i.hasNext()) {
-        i.next();
-    //    qWarning() << Q_FUNC_INFO << path <<  i.key() << i.value().toUInt();
-        if( i.key() == "State") {
-            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
-            quint32 nmState = i.value().toUInt();
-            switch(devIface->deviceType()) {
-            case DEVICE_TYPE_802_3_ETHERNET:
-                {
-                    if(nmState == NM_DEVICE_STATE_ACTIVATED) {
-                        QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
-                        QDBusObjectPath ip4Path = devIface->ip4config();
 
-                        QNetworkManagerIp4Config *ip4ConfigInterface;
-                        ip4ConfigInterface = new QNetworkManagerIp4Config(path,this);
-                        QStringList domains = ip4ConfigInterface->domains();
-                        if(!domains.isEmpty()) {
-                            emit networkNameChanged(QSystemNetworkInfo::EthernetMode, domains.at(0));
-                        } else {
-                            QNetworkManagerInterfaceDeviceWired *wiredInterface;
-                            wiredInterface = new QNetworkManagerInterfaceDeviceWired(path);
-                            emit networkNameChanged(QSystemNetworkInfo::EthernetMode, wiredInterface->hwAddress());
-                        }
-
-                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Connected);
-                    }
-                    if(nmState == NM_DEVICE_STATE_DISCONNECTED) {
-                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "");
-                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::NoNetworkAvailable);
-                    }
-                    if(nmState == NM_DEVICE_STATE_PREPARE
-                       || nmState == NM_DEVICE_STATE_CONFIG
-                       || nmState == NM_DEVICE_STATE_NEED_AUTH
-                      /* || nmState == NM_DEVICE_IP_CONFIG*/) {
-                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "");
-                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Searching);
-                    }
-
-                }
-                break;
-            case DEVICE_TYPE_802_11_WIRELESS:
-                {
-                    if(nmState == NM_DEVICE_STATE_ACTIVATED) {
-                        QNetworkManagerInterfaceDeviceWireless *devWirelessIfaceL;
-                        devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(path);
-                        if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
-                            QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
-                            accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path());
-                            QString ssid =  accessPointIfaceL->ssid();
-
-                            if(ssid.isEmpty()) {
-                                ssid = "Hidden Network";
-                            }
-                            emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, accessPointIfaceL->strength());
-                            emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Connected);
-                            emit networkNameChanged(QSystemNetworkInfo::WlanMode,ssid);
-                        }
-                    }
-                    if(nmState == NM_DEVICE_STATE_DISCONNECTED
-                       || nmState == NM_DEVICE_STATE_UNAVAILABLE
-                       || nmState == NM_DEVICE_STATE_FAILED) {
-                        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
-                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "");
-                    }
-                    if(nmState == NM_DEVICE_STATE_PREPARE
-                       || nmState == NM_DEVICE_STATE_CONFIG
-                       || nmState == NM_DEVICE_STATE_NEED_AUTH
-                       /*|| nmState == NM_DEVICE_IP_CONFIG*/) {
-                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "");
-                        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Searching);
-                    }
-                }
-                break;
-            default:
-                break;
-            };
-
-        }
-        if( i.key() == "ActiveAccessPoint") {
-            accessPointIface = new QNetworkManagerInterfaceAccessPoint(path);
-            accessPointIface->setConnections();
-            if(!connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
-                        this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)))) {
-                qWarning() << "connect is false";
-            }
-
-            QString ssid = accessPointIface->ssid();
-            emit networkNameChanged(QSystemNetworkInfo::WlanMode, ssid);
-
-        }
-        if( i.key() == "Carrier") {
-            int strength = 0;
-            switch(i.value().toUInt()) {
-            case 0:
-                break;
-            case 1:
-                strength = 100;
-                break;
-            };
-            emit networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode, strength);
-        }
-    }
-}
-
-void QSystemNetworkInfoPrivate::nmAPPropertiesChanged( const QString & /*path*/, QMap<QString,QVariant> map)
-{
-   QMapIterator<QString, QVariant> i(map);
-   while (i.hasNext()) {
-       i.next();
-//       qWarning() << Q_FUNC_INFO << path <<  i.key() << i.value().toUInt();
-//       if( i.key() == "State") { //only applies to device interfaces
-       //       }
-       if( i.key() == "Strength") {
-           emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode,  i.value().toUInt());
-       }
-   }
-}
-
-#endif
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -1914,159 +1694,23 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
  bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
-     if(kdeIsRunning || gnomeIsRunning) {
-#if !defined(QT_NO_DBUS)
-         pid_t pid = getppid();
-         QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-
-         QStringList ifaceList;
-         ifaceList <<  "org.freedesktop.ScreenSaver"; //kde
-         ifaceList << "org.gnome.ScreenSaver"; //gnome, xfce4
-         QDBusInterface *connectionInterface;
-         foreach(QString iface, ifaceList) {
-             connectionInterface = new QDBusInterface(iface.toLatin1(),
-                                                      "/ScreenSaver",
-                                                      iface.toLatin1(),
-                                                      dbusConnection);
-             QDBusReply<uint> reply =  connectionInterface->call("Inhibit",
-                                                                 QString::number((int)pid),
-                                                                 "QSystemScreenSaver");
-             if(reply.isValid()) {
-                 currentPid = reply.value();
-                 qWarning() << "Inhibit" << currentPid;
-                 return reply.isValid();
-             } else {
-                 qWarning() << reply.error();
-             }
-         }
-#endif
-     } else {
-#ifdef Q_WS_X11
-         int timeout;
-         int interval;
-         int preferBlank;
-         int allowExp;
-         XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-//         if(state) {
-             timeout = -1;
-//        } else {
-//             timeout = 0;
-//         }
-
-         XSetScreenSaver(QX11Info::display(), timeout, interval, preferBlank, allowExp);
-#endif
-     }
     return false;
 }
 
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
-        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
-        }
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup("ScreenSaver");
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            if(kdeScreenSaveConfig.value("Enabled").toBool() == false) {
-            } else {
-                return true;
-            }
-        }
-    } else if(gnomeIsRunning) {
-
-    }
-
-#ifdef Q_WS_X11
-    int timeout;
-    int interval;
-    int preferBlank;
-    int allowExp;
-    XGetScreenSaver(QX11Info::display(), &timeout, &interval, &preferBlank, &allowExp);
-    if(timeout != 0) {
-        return true;
-    }
-
-#endif
 
     return false;
 }
 
-void QSystemScreenSaverPrivate::whichWMRunning()
-{
-#if !defined(QT_NO_DBUS)
-    QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-    QDBusInterface *connectionInterface;
-    connectionInterface = new QDBusInterface("org.kde.kwin",
-                                             "/KWin",
-                                             "org.kde.KWin",
-                                             dbusConnection);
-    if(connectionInterface->isValid()) {
-        kdeIsRunning = true;
-        return;
-    }
-    connectionInterface = new QDBusInterface("org.gnome.SessionManager",
-                                             "/org/gnome/SessionManager",
-                                             "org.gnome.SessionManager",
-                                             dbusConnection);
-    if(connectionInterface->isValid()) {
-       gnomeIsRunning = true;
-       return;
-    }
-#endif
-}
-
 bool QSystemScreenSaverPrivate::isScreenLockEnabled()
 {
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+"/.kde4/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde4/share/config/kscreensaverrc";
-        } else if(QDir(QDir::homePath()+"/.kde/").exists()) {
-            kdeSSConfig = QDir::homePath()+"/.kde/share/config/kscreensaverrc";
-        }
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup("ScreenSaver");
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            return kdeScreenSaveConfig.value("Lock").toBool();
-        }
-    } else if(gnomeIsRunning) {
-
-    }
-
    return false;
 }
 
 bool QSystemScreenSaverPrivate::isScreenSaverActive()
 {
-    if(kdeIsRunning || gnomeIsRunning) {
-#if !defined(QT_NO_DBUS)
-        pid_t pid = getppid();
-        QDBusConnection dbusConnection = QDBusConnection::sessionBus();
-
-        QStringList ifaceList;
-        ifaceList <<  "org.freedesktop.ScreenSaver"; //kde
-        ifaceList << "org.gnome.ScreenSaver"; //gnome, xfce4
-        QDBusInterface *connectionInterface;
-        foreach(QString iface, ifaceList) {
-            connectionInterface = new QDBusInterface(iface.toLatin1(),
-                                                     "/ScreenSaver",
-                                                     iface.toLatin1(),
-                                                     dbusConnection);
-
-            QDBusReply<bool> reply =  connectionInterface->call("GetActive",
-                                                                QString::number((int)pid),
-                                                                "QSystemScreenSaver");
-            if(reply.isValid()) {
-                return reply.value();
-            }
-        }
-    }
-#endif
     return false;
 }
 
