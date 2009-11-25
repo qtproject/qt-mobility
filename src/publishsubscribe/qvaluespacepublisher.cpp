@@ -336,6 +336,8 @@ void QValueSpacePublisher::resetValue(const QString &name)
 }
 
 /*!
+    \reimp
+
     Registers this QValueSpacePublisher for notifications when QValueSpaceSubscribers are
     interested in values under path().
 
