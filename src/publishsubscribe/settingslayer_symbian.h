@@ -42,7 +42,7 @@
 #define SYMBIANSETTINGSLAYER_H
 
 #include "qvaluespace_p.h"
-#include "qvaluespaceprovider.h"
+#include "qvaluespacepublisher.h"
 
 #include <QHash>
 #include <QByteArray>
@@ -83,14 +83,14 @@ protected:
     /*virtual*/ bool supportsInterestNotification() const;
     /*virtual*/ bool notifyInterest(Handle handle, bool interested);
 
-    /* QValueSpaceProvider functions */
-    /*virtual*/ bool setValue(QValueSpaceProvider *creator, Handle handle,
+    /* QValueSpacePublisher functions */
+    /*virtual*/ bool setValue(QValueSpacePublisher *creator, Handle handle,
                               const QString &subPath, const QVariant &value);
-    /*virtual*/ bool removeValue(QValueSpaceProvider *creator, Handle handle,
+    /*virtual*/ bool removeValue(QValueSpacePublisher *creator, Handle handle,
                                  const QString &subPath);
-    /*virtual*/ bool removeSubTree(QValueSpaceProvider *creator, Handle handle);
-    /*virtual*/ void addWatch(QValueSpaceProvider *creator, Handle handle);
-    /*virtual*/ void removeWatches(QValueSpaceProvider *creator, Handle parent);
+    /*virtual*/ bool removeSubTree(QValueSpacePublisher *creator, Handle handle);
+    /*virtual*/ void addWatch(QValueSpacePublisher *creator, Handle handle);
+    /*virtual*/ void removeWatches(QValueSpacePublisher *creator, Handle parent);
     /*virtual*/ void sync();
 
 public:

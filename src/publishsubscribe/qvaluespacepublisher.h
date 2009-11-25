@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVALUESPACEPROVIDER_H
-#define QVALUESPACEPROVIDER_H
+#ifndef QVALUESPACEPUBLISHER_H
+#define QVALUESPACEPUBLISHER_H
 
 #include "qmobilityglobal.h"
 #include "qvaluespace.h"
@@ -52,25 +52,25 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QValueSpaceProviderPrivate;
-class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceProvider : public QObject
+class QValueSpacePublisherPrivate;
+class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpacePublisher : public QObject
 {
     friend class QAbstractValueSpaceLayer;
 
     Q_OBJECT
 
 public:
-    explicit QValueSpaceProvider(const QString &path, QObject *parent = 0);
-    explicit QValueSpaceProvider(const char *path, QObject *parent = 0);
+    explicit QValueSpacePublisher(const QString &path, QObject *parent = 0);
+    explicit QValueSpacePublisher(const char *path, QObject *parent = 0);
 
-    QValueSpaceProvider(const QString &path, QValueSpace::LayerOptions filter,
+    QValueSpacePublisher(const QString &path, QValueSpace::LayerOptions filter,
                         QObject *parent = 0);
-    QValueSpaceProvider(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
+    QValueSpacePublisher(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
 
-    QValueSpaceProvider(const QString &path, const QUuid &uuid, QObject *parent = 0);
-    QValueSpaceProvider(const char *path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpacePublisher(const QString &path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpacePublisher(const char *path, const QUuid &uuid, QObject *parent = 0);
 
-    virtual ~QValueSpaceProvider();
+    virtual ~QValueSpacePublisher();
 
     QString path() const;
 
@@ -94,13 +94,13 @@ protected:
     virtual void connectNotify(const char *);
 
 private:
-    Q_DISABLE_COPY(QValueSpaceProvider)
+    Q_DISABLE_COPY(QValueSpacePublisher)
 
-    QValueSpaceProviderPrivate *d;
+    QValueSpacePublisherPrivate *d;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QVALUESPACEPROVIDER_H
+#endif // QVALUESPACEPUBLISHER_H

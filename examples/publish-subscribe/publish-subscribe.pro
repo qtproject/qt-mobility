@@ -13,15 +13,15 @@ symbian {
 }
 
 
-HEADERS = providerdialog.h \
-          consumerdialog.h
+HEADERS = publisherdialog.h \
+          subscriberdialog.h
 
 SOURCES = main.cpp \
-          providerdialog.cpp \
-          consumerdialog.cpp
+          publisherdialog.cpp \
+          subscriberdialog.cpp
 
-FORMS = providerdialog.ui \
-        consumerdialog.ui
+FORMS = publisherdialog.ui \
+        subscriberdialog.ui
 
 include(../examples.pri)
 qtAddLibrary(QtPublishSubscribe)

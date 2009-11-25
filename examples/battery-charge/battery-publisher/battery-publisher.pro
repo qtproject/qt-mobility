@@ -1,14 +1,14 @@
 TEMPLATE = app
-TARGET = battery-provider
+TARGET = battery-publisher
 INCLUDEPATH += ../../../src/publishsubscribe
 DEPENDPATH += ../../../src/publishsubscribe
 
-HEADERS = batteryprovider.h
+HEADERS = batterypublisher.h
 
 SOURCES = main.cpp \
-          batteryprovider.cpp
+          batterypublisher.cpp
 
-FORMS = batteryprovider.ui
+FORMS = batterypublisher.ui
 
 include(../../examples.pri)
 qtAddLibrary(QtPublishSubscribe)

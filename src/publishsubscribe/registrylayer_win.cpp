@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qvaluespace_p.h"
-#include "qvaluespaceprovider.h"
+#include "qvaluespacepublisher.h"
 
 #include <QSet>
 #include <QStringList>
@@ -165,14 +165,14 @@ public:
     bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 
-    /* QValueSpaceProvider functions */
-    bool setValue(QValueSpaceProvider *creator, Handle handle, const QVariant &data);
-    bool setValue(QValueSpaceProvider *creator, Handle handle, const QString &path,
+    /* QValueSpacePublisher functions */
+    bool setValue(QValueSpacePublisher *creator, Handle handle, const QVariant &data);
+    bool setValue(QValueSpacePublisher *creator, Handle handle, const QString &path,
                   const QVariant &data);
-    bool removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath);
-    bool removeSubTree(QValueSpaceProvider *creator, Handle parent);
-    void addWatch(QValueSpaceProvider *creator, Handle handle);
-    void removeWatches(QValueSpaceProvider *creator, Handle parent);
+    bool removeValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath);
+    bool removeSubTree(QValueSpacePublisher *creator, Handle parent);
+    void addWatch(QValueSpacePublisher *creator, Handle handle);
+    void removeWatches(QValueSpacePublisher *creator, Handle parent);
     void sync();
 
 public slots:
@@ -228,7 +228,7 @@ private:
     QWindowsCENotify *notifyThread;
 #endif
 
-    QMap<QValueSpaceProvider *, QList<QString> > creators;
+    QMap<QValueSpacePublisher *, QList<QString> > creators;
 };
 
 class VolatileRegistryLayer : public RegistryLayer
@@ -909,12 +909,12 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QString &s
     return result == ERROR_SUCCESS;
 }
 
-bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QVariant &data)
+bool RegistryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const QVariant &data)
 {
     return setValue(creator, handle, QString(), data);
 }
 
-bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath,
+bool RegistryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath,
                              const QVariant &data)
 {
     QMutexLocker locker(&localLock);
@@ -1274,7 +1274,7 @@ bool RegistryLayer::createRegistryKey(RegistryHandle *handle)
     return disposition == REG_CREATED_NEW_KEY;
 }
 
-bool RegistryLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
+bool RegistryLayer::removeSubTree(QValueSpacePublisher *creator, Handle handle)
 {
     QMutexLocker locker(&localLock);
 
@@ -1356,7 +1356,7 @@ void RegistryLayer::pruneEmptyKeys(RegistryHandle *handle)
     }
 }
 
-bool RegistryLayer::removeValue(QValueSpaceProvider *creator,
+bool RegistryLayer::removeValue(QValueSpacePublisher *creator,
                                 Handle handle,
                                 const QString &subPath)
 {
@@ -1391,11 +1391,11 @@ bool RegistryLayer::removeValue(QValueSpaceProvider *creator,
     return true;
 }
 
-void RegistryLayer::addWatch(QValueSpaceProvider *, Handle)
+void RegistryLayer::addWatch(QValueSpacePublisher *, Handle)
 {
 }
 
-void RegistryLayer::removeWatches(QValueSpaceProvider *, Handle)
+void RegistryLayer::removeWatches(QValueSpacePublisher *, Handle)
 {
 }
 

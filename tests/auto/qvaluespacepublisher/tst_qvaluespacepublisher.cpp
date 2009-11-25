@@ -41,7 +41,7 @@
 
 #include <qvaluespacesubscriber.h>
 #include <qvaluespacemanager_p.h>
-#include <qvaluespaceprovider.h>
+#include <qvaluespacepublisher.h>
 
 #include <QThread>
 #include <QVector>
@@ -78,7 +78,7 @@ Q_SIGNALS:
     void attributeInterestChanged(const QString&, bool);
 };
 
-class tst_QValueSpaceProvider: public QObject
+class tst_QValueSpacePublisher: public QObject
 {
     Q_OBJECT
 
@@ -108,13 +108,13 @@ private:
     int variantMetaTypeId;
 };
 
-Q_DECLARE_METATYPE(tst_QValueSpaceProvider::Type)
+Q_DECLARE_METATYPE(tst_QValueSpacePublisher::Type)
 Q_DECLARE_METATYPE(QAbstractValueSpaceLayer *)
 Q_DECLARE_METATYPE(QUuid)
 Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QValueSpace::LayerOptions)
 
-void tst_QValueSpaceProvider::initTestCase()
+void tst_QValueSpacePublisher::initTestCase()
 {
     variantMetaTypeId = qRegisterMetaType<QVariant>("QVariant");
 
@@ -138,7 +138,7 @@ void tst_QValueSpaceProvider::initTestCase()
     QValueSpace::initValueSpaceServer();
 }
 
-void tst_QValueSpaceProvider::cleanupTestCase()
+void tst_QValueSpacePublisher::cleanupTestCase()
 {
 }
 
@@ -150,7 +150,7 @@ void tst_QValueSpaceProvider::cleanupTestCase()
         << layer << id << String << path << canonical << valid; \
 } while (false)
 
-void tst_QValueSpaceProvider::testConstructor_data()
+void tst_QValueSpacePublisher::testConstructor_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
     QTest::addColumn<QUuid>("uuid");
@@ -183,7 +183,7 @@ void tst_QValueSpaceProvider::testConstructor_data()
 
 #undef ADD
 
-void tst_QValueSpaceProvider::testConstructor()
+void tst_QValueSpacePublisher::testConstructor()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
     QFETCH(QUuid, uuid);
@@ -193,21 +193,21 @@ void tst_QValueSpaceProvider::testConstructor()
     QFETCH(QString, canonical);
     QFETCH(bool, connected);
 
-    QValueSpaceProvider *provider;
+    QValueSpacePublisher *publisher;
 
     switch (type) {
     case CharStar:
-        provider = new QValueSpaceProvider(path.toUtf8().constData(), uuid);
+        publisher = new QValueSpacePublisher(path.toUtf8().constData(), uuid);
         break;
     case String:
-        provider = new QValueSpaceProvider(path, uuid);
+        publisher = new QValueSpacePublisher(path, uuid);
         break;
     default:
         QFAIL("Invalid type.");
     };
 
-    QCOMPARE(provider->path(), canonical);
-    QCOMPARE(provider->isConnected(), connected);
+    QCOMPARE(publisher->path(), canonical);
+    QCOMPARE(publisher->isConnected(), connected);
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -221,13 +221,13 @@ void tst_QValueSpaceProvider::testConstructor()
 
     switch (type) {
     case CharStar:
-        provider->setAttribute("value", 100);
+        publisher->setAttribute("value", 100);
         break;
     case String:
-        provider->setAttribute(QString("value"), 100);
+        publisher->setAttribute(QString("value"), 100);
         break;
     };
-    provider->sync();
+    publisher->sync();
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -242,13 +242,13 @@ void tst_QValueSpaceProvider::testConstructor()
 
     switch (type) {
     case CharStar:
-        provider->removeAttribute("value");
+        publisher->removeAttribute("value");
         break;
     case String:
-        provider->removeAttribute(QString("value"));
+        publisher->removeAttribute(QString("value"));
         break;
     };
-    QValueSpaceProvider::syncAll();
+    QValueSpacePublisher::syncAll();
 
     if (layer) {
         QAbstractValueSpaceLayer::Handle handle =
@@ -260,10 +260,10 @@ void tst_QValueSpaceProvider::testConstructor()
         layer->removeHandle(handle);
     }
 
-    delete provider;
+    delete publisher;
 
     if (layer && layer->layerOptions() & QValueSpace::PermanentLayer) {
-        QValueSpaceProvider root("/", uuid);
+        QValueSpacePublisher root("/", uuid);
         while (!canonical.isEmpty()) {
             root.removeAttribute(canonical.mid(1));
             canonical.truncate(canonical.lastIndexOf('/'));
@@ -279,7 +279,7 @@ void tst_QValueSpaceProvider::testConstructor()
         << (QValueSpace::UnspecifiedLayer | opt) << String << valid; \
 } while (false)
 
-void tst_QValueSpaceProvider::testFilterConstructor_data()
+void tst_QValueSpacePublisher::testFilterConstructor_data()
 {
     QTest::addColumn<QValueSpace::LayerOptions>("options");
     QTest::addColumn<Type>("type");
@@ -299,47 +299,47 @@ void tst_QValueSpaceProvider::testFilterConstructor_data()
         false);
 }
 
-void tst_QValueSpaceProvider::testFilterConstructor()
+void tst_QValueSpacePublisher::testFilterConstructor()
 {
     QFETCH(QValueSpace::LayerOptions, options);
     QFETCH(Type, type);
     QFETCH(bool, connected);
 
-    QValueSpaceProvider *provider;
+    QValueSpacePublisher *publisher;
 
     switch (type) {
     case CharStar:
-        provider = new QValueSpaceProvider("/", options);
+        publisher = new QValueSpacePublisher("/", options);
         break;
     case String:
-        provider = new QValueSpaceProvider(QString("/"), options);
+        publisher = new QValueSpacePublisher(QString("/"), options);
         break;
     default:
         QFAIL("Invalid type");
         return;
     };
 
-    QCOMPARE(provider->isConnected(), connected);
+    QCOMPARE(publisher->isConnected(), connected);
 }
 
-void tst_QValueSpaceProvider::testBaseConstructor()
+void tst_QValueSpacePublisher::testBaseConstructor()
 {
     {
-        QValueSpaceProvider provider("/");
-        QVERIFY(provider.isConnected());
+        QValueSpacePublisher publisher("/");
+        QVERIFY(publisher.isConnected());
     }
 
     {
-        QValueSpaceProvider provider(QString("/"));
-        QVERIFY(provider.isConnected());
+        QValueSpacePublisher publisher(QString("/"));
+        QVERIFY(publisher.isConnected());
     }
 }
 
-void tst_QValueSpaceProvider::testSignals_data()
+void tst_QValueSpacePublisher::testSignals_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
-    QTest::addColumn<QString>("providerPath");
+    QTest::addColumn<QString>("publisherPath");
     QTest::addColumn<QString>("subscriberPath");
     QTest::addColumn<QString>("attribute");
 
@@ -378,18 +378,18 @@ void tst_QValueSpaceProvider::testSignals_data()
         QSKIP("No layer supporting interest notifications found.", SkipAll);
 }
 
-void tst_QValueSpaceProvider::testSignals()
+void tst_QValueSpacePublisher::testSignals()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QFETCH(QString, providerPath);
+    QFETCH(QString, publisherPath);
     QFETCH(QString, subscriberPath);
     QFETCH(QString, attribute);
 
-    QValueSpaceProvider *provider = new QValueSpaceProvider(providerPath, layer->id());
+    QValueSpacePublisher *publisher = new QValueSpacePublisher(publisherPath, layer->id());
 
     ChangeListener listener;
-    connect(provider, SIGNAL(attributeInterestChanged(QString,bool)),
+    connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
             &listener, SIGNAL(attributeInterestChanged(QString,bool)));
 
     QSignalSpy interestChangedSpy(&listener, SIGNAL(attributeInterestChanged(QString,bool)));
@@ -416,10 +416,10 @@ void tst_QValueSpaceProvider::testSignals()
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QVERIFY(!arguments.at(1).toBool());
 
-    delete provider;
+    delete publisher;
 }
 
-void tst_QValueSpaceProvider::valuePermanence_data()
+void tst_QValueSpacePublisher::valuePermanence_data()
 {
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
@@ -433,34 +433,34 @@ void tst_QValueSpaceProvider::valuePermanence_data()
     }
 }
 
-void tst_QValueSpaceProvider::valuePermanence()
+void tst_QValueSpacePublisher::valuePermanence()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QValueSpaceProvider *provider = new QValueSpaceProvider("/valuePermanence", layer->id());
+    QValueSpacePublisher *publisher = new QValueSpacePublisher("/valuePermanence", layer->id());
 
-    provider->setAttribute("value", 10);
+    publisher->setAttribute("value", 10);
 
     QValueSpaceSubscriber subscriber("/valuePermanence");
     QCOMPARE(subscriber.value("value", 0).toInt(), 10);
 
-    delete provider;
+    delete publisher;
 
     if (layer->layerOptions() & QValueSpace::PermanentLayer) {
-        // Permanent layer, check that value is still available after provider is deleted.
+        // Permanent layer, check that value is still available after publisher is deleted.
         QCOMPARE(subscriber.value("value", 0).toInt(), 10);
 
-        provider = new QValueSpaceProvider("/valuePermanence", layer->id());
+        publisher = new QValueSpacePublisher("/valuePermanence", layer->id());
 
-        provider->removeAttribute("value");
+        publisher->removeAttribute("value");
 
         QCOMPARE(subscriber.value("value", 0).toInt(), 0);
 
-        provider->removeAttribute(QString());
+        publisher->removeAttribute(QString());
 
-        delete provider;
+        delete publisher;
     } else {
-        // Non-permanent layer, check that value is not available after provider is deleted.
+        // Non-permanent layer, check that value is not available after publisher is deleted.
         QCOMPARE(subscriber.value("value", 0).toInt(), 0);
     }
 }
@@ -480,13 +480,13 @@ protected:
 private:
     QString path;
     unsigned int count;
-    QValueSpaceProvider *provider;
+    QValueSpacePublisher *publisher;
 };
 
 WriteThread::WriteThread(const QString &path, const QUuid &uuid, unsigned int count)
 :   path(path), count(count)
 {
-    provider = new QValueSpaceProvider(path, uuid, this);
+    publisher = new QValueSpacePublisher(path, uuid, this);
 }
 
 void WriteThread::run()
@@ -495,12 +495,12 @@ void WriteThread::run()
     const QString value("value%1");
 
     for (unsigned int i = 0; i < count; ++i)
-        provider->setAttribute(key.arg(i), value.arg(i));
+        publisher->setAttribute(key.arg(i), value.arg(i));
 
-    provider->sync();
+    publisher->sync();
 }
 
-void tst_QValueSpaceProvider::threads_data()
+void tst_QValueSpacePublisher::threads_data()
 {
     QTest::addColumn<QUuid>("uuid");
 
@@ -605,7 +605,7 @@ void tst_QValueSpaceProvider::threads_data()
     }
 }
 
-void tst_QValueSpaceProvider::threads()
+void tst_QValueSpacePublisher::threads()
 {
     QFETCH(QUuid, uuid);
     QFETCH(unsigned int, threads);
@@ -681,5 +681,5 @@ void tst_QValueSpaceProvider::threads()
         delete writeThreads[i];
 }
 
-QTEST_MAIN(tst_QValueSpaceProvider)
-#include "tst_qvaluespaceprovider.moc"
+QTEST_MAIN(tst_QValueSpacePublisher)
+#include "tst_qvaluespacepublisher.moc"

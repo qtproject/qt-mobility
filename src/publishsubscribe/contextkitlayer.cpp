@@ -224,16 +224,16 @@ public:
     bool value(Handle, const QString &, QVariant *);
     QSet<QString> children(Handle);
 
-    /* ValueSpaceLayer interface - QValueSpaceItem functions */
+    /* ValueSpaceLayer interface - QValueSpaceSubscriber functions */
     bool supportsInterestNotification() const { return true; }
     bool notifyInterest(Handle handle, bool interested);
 
-    /* ValueSpaceLayer interface - QValueSpaceProvider functions */
-    bool setValue(QValueSpaceProvider *, Handle, const QString &, const QVariant &) { return false; }
-    bool removeValue(QValueSpaceProvider *, Handle, const QString &) { return false; }
-    bool removeSubTree(QValueSpaceProvider *, Handle) { return false; }
-    void addWatch(QValueSpaceProvider *, Handle) { return; }
-    void removeWatches(QValueSpaceProvider *, Handle) { return; }
+    /* ValueSpaceLayer interface - QValueSpacePublisher functions */
+    bool setValue(QValueSpacePublisher *, Handle, const QString &, const QVariant &) { return false; }
+    bool removeValue(QValueSpacePublisher *, Handle, const QString &) { return false; }
+    bool removeSubTree(QValueSpacePublisher *, Handle) { return false; }
+    void addWatch(QValueSpacePublisher *, Handle) { return; }
+    void removeWatches(QValueSpacePublisher *, Handle) { return; }
     void sync() { return; }
 
     static ContextKitLayer *instance();

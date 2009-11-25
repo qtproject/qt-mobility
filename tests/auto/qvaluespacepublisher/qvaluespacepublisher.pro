@@ -1,4 +1,4 @@
-TARGET = tst_qvaluespaceprovider
+TARGET = tst_qvaluespacepublisher
 INCLUDEPATH += ../../../src/publishsubscribe
 DEPENDPATH += ../../../src/publishsubscribe
 
@@ -9,7 +9,7 @@ QT = core
 include(../../../common.pri)
 
 # Input 
-SOURCES += tst_qvaluespaceprovider.cpp
+SOURCES += tst_qvaluespacepublisher.cpp
 
 qtAddLibrary(QtPublishSubscribe)
 

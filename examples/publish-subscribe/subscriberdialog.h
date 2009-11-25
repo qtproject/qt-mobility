@@ -39,20 +39,47 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
+#ifndef SUBSCRIBERDIALOG_H
+#define SUBSCRIBERDIALOG_H
 
-#include <qvaluespace.h>
+#include <qmobilityglobal.h>
+#include <QDialog>
 
-#include "batteryprovider.h"
+QTM_BEGIN_NAMESPACE
+class QValueSpaceSubscriber;
+QTM_END_NAMESPACE
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+QTM_USE_NAMESPACE
 
-    QValueSpace::initValueSpaceServer();
-
-    BatteryProvider batteryProvider;
-    batteryProvider.show();
-
-    return app.exec();
+namespace Ui {
+    class SubscriberDialog;
 }
+
+class SubscriberDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    SubscriberDialog(QWidget *parent = 0);
+    ~SubscriberDialog();
+
+#ifdef Q_OS_SYMBIAN
+signals:
+    void switchRequested();
+#endif
+
+protected:
+    void changeEvent(QEvent *e);
+
+//! [0]
+private slots:
+    void changeSubscriberPath();
+    void subscriberChanged();
+//! [0]
+
+private:
+    Ui::SubscriberDialog *ui;
+    QValueSpaceSubscriber *subscriber;
+};
+
+#endif // SUBSCRIBERDIALOG_H

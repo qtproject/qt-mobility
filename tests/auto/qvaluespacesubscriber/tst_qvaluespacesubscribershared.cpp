@@ -42,7 +42,7 @@
 #include "tst_qvaluespacesubscribershared.h"
 
 #include <qvaluespacesubscriber.h>
-#include <qvaluespaceprovider.h>
+#include <qvaluespacepublisher.h>
 #include <qvaluespacemanager_p.h>
 
 #include <QTest>
@@ -122,7 +122,7 @@ void tst_QValueSpaceSubscriber::initTestCase()
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
     for (int i = 0; i < layers.count(); ++i) {
-        QValueSpaceProvider *root = new QValueSpaceProvider("/", layers.at(i)->id());
+        QValueSpacePublisher *root = new QValueSpacePublisher("/", layers.at(i)->id());
         root->setAttribute("/home/user/bool", true);
         root->setAttribute("/home/user/int", 3);
         root->setAttribute("/home/user/QString", QString("testString"));
@@ -147,7 +147,7 @@ void tst_QValueSpaceSubscriber::initTestCase()
 
         roots.insert(layers.at(i), root);
 
-        QValueSpaceProvider *busy = new QValueSpaceProvider("/usr", layers.at(i)->id());
+        QValueSpacePublisher *busy = new QValueSpacePublisher("/usr", layers.at(i)->id());
         busy->setAttribute("alex/busy", true);
         busy->setAttribute("lorn/busy", false);
         busy->sync();
@@ -159,7 +159,7 @@ void tst_QValueSpaceSubscriber::initTestCase()
 void tst_QValueSpaceSubscriber::cleanupTestCase()
 {
     foreach (QAbstractValueSpaceLayer *layer, roots.keys()) {
-        QValueSpaceProvider *root = roots.take(layer);
+        QValueSpacePublisher *root = roots.take(layer);
 
         if (layer->layerOptions() & QValueSpace::PermanentLayer) {
             root->removeAttribute("/home/user/bool");
@@ -184,7 +184,7 @@ void tst_QValueSpaceSubscriber::cleanupTestCase()
     }
 
     foreach (QAbstractValueSpaceLayer *layer, busys.keys()) {
-        QValueSpaceProvider *busy = busys.take(layer);
+        QValueSpacePublisher *busy = busys.take(layer);
 
         if (layer->layerOptions() & QValueSpace::PermanentLayer) {
             busy->removeAttribute("alex/busy");
@@ -251,9 +251,9 @@ void tst_QValueSpaceSubscriber::dataVersatility()
 
     QCOMPARE(data.type(), (QVariant::Type)typeIdent);
 
-    QValueSpaceProvider provider("/usr/data", layer->id());
-    provider.setAttribute(typeString, data);
-    provider.sync();
+    QValueSpacePublisher publisher("/usr/data", layer->id());
+    publisher.setAttribute(typeString, data);
+    publisher.sync();
     QValueSpaceSubscriber subscriber("/usr/data", layer->id());
     QVariant v = subscriber.value(typeString);
 
@@ -261,7 +261,7 @@ void tst_QValueSpaceSubscriber::dataVersatility()
     QCOMPARE(v, data);
 
     if (layer->layerOptions() & QValueSpace::PermanentLayer)
-        provider.removeAttribute(typeString);
+        publisher.removeAttribute(typeString);
 }
 
 void tst_QValueSpaceSubscriber::testConstructor_data()
@@ -681,7 +681,7 @@ void tst_QValueSpaceSubscriber::contentsChanged()
     QFETCH(bool, old_value);
     QFETCH(bool, new_value);
 
-    QValueSpaceProvider *busy = busys.value(layer);
+    QValueSpacePublisher *busy = busys.value(layer);
 
     busy->setAttribute("alex/busy", old_value);
     busy->sync();
@@ -895,7 +895,7 @@ void tst_QValueSpaceSubscriber::interestNotification_data()
     QTest::addColumn<QAbstractValueSpaceLayer *>("layer");
 
     QTest::addColumn<Type>("type");
-    QTest::addColumn<QString>("providerPath");
+    QTest::addColumn<QString>("publisherPath");
     QTest::addColumn<QString>("attribute");
 
     bool foundSupported = false;
@@ -924,20 +924,20 @@ void tst_QValueSpaceSubscriber::interestNotification()
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
     QFETCH(Type, type);
-    QFETCH(QString, providerPath);
+    QFETCH(QString, publisherPath);
     QFETCH(QString, attribute);
 
-    QValueSpaceProvider *provider;
-    provider = new QValueSpaceProvider(providerPath, layer->id());
+    QValueSpacePublisher *publisher;
+    publisher = new QValueSpacePublisher(publisherPath, layer->id());
 
     ChangeListener notificationListener;
-    connect(provider, SIGNAL(attributeInterestChanged(QString,bool)),
+    connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
             &notificationListener, SIGNAL(attributeInterestChanged(QString,bool)));
 
     QSignalSpy notificationSpy(&notificationListener,
                                SIGNAL(attributeInterestChanged(QString,bool)));
 
-    const QString subscriberPath = providerPath + attribute;
+    const QString subscriberPath = publisherPath + attribute;
 
     QValueSpaceSubscriber *subscriber;
     switch (type) {
@@ -962,8 +962,8 @@ void tst_QValueSpaceSubscriber::interestNotification()
 
     QCOMPARE(subscriber->value(QString(), 10).toInt(), 10);
 
-    provider->setAttribute(attribute, 5);
-    provider->sync();
+    publisher->setAttribute(attribute, 5);
+    publisher->sync();
 
     QCOMPARE(subscriber->value(QString(), 10).toInt(), 5);
 
@@ -979,7 +979,7 @@ void tst_QValueSpaceSubscriber::interestNotification()
     QCOMPARE(arguments.at(1).type(), QVariant::Bool);
     QCOMPARE(arguments.at(1).toBool(), false);
 
-    delete provider;
+    delete publisher;
 }
 
 void tst_QValueSpaceSubscriber::ipcInterestNotification_data()
@@ -1015,7 +1015,7 @@ void tst_QValueSpaceSubscriber::ipcInterestNotification()
 #else
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    // Test QValueSpaceSubscriber construction before QValueSpaceProvider.
+    // Test QValueSpaceSubscriber construction before QValueSpacePublisher.
 
     QValueSpaceSubscriber *subscriber =
         new QValueSpaceSubscriber("/ipcInterestNotification/value", layer->id());
@@ -1043,7 +1043,7 @@ void tst_QValueSpaceSubscriber::ipcInterestNotification()
     delete subscriber;
     QTest::qWait(1000);
 
-    // Test QValueSpaceSubscriber construction after QValueSpaceProvider
+    // Test QValueSpaceSubscriber construction after QValueSpacePublisher
 
     subscriber = new QValueSpaceSubscriber("/ipcInterestNotification/value", layer->id());
     QObject::connect(subscriber, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
@@ -1076,12 +1076,12 @@ protected:
     void run();
 
 private:
-    QValueSpaceProvider *provider;
+    QValueSpacePublisher *publisher;
     bool done;
 };
 
 WriteThread::WriteThread()
-:   provider(0), done(false)
+:   publisher(0), done(false)
 {
 }
 
@@ -1094,12 +1094,12 @@ void WriteThread::run()
 {
     QTest::qWait(100);  // give some ReadThreads some time to start.
 
-    QValueSpaceProvider provider("/threads");
+    QValueSpacePublisher publisher("/threads");
 
     uint value = 0;
     while (!done) {
-        provider.setAttribute("value", value);
-        provider.sync();
+        publisher.setAttribute("value", value);
+        publisher.sync();
         QTest::qWait(100);
         value += 100;
     }

@@ -46,11 +46,11 @@
     The Publish and Subscribe example shows how to use the Qt Publish and Subscribe API to
     publish and retrieve values from the platforms Publish and Subscribe system.
 
-    This example program can act either a provider of Value Space content, a consumer of a Value
+    This example program can act either a publisher of Value Space content, a subscriber of a Value
     Space content or both.  It can also optionally act as the Value Space Manager.  The behavior
     is selected by passing a combination of three optional command line parameters when starting
-    the program.  If no parameters are supplied the program defaults to acting as both a provider
-    and consumer.
+    the program.  If no parameters are supplied the program defaults to acting as both a publisher
+    and subscriber.
 
     \table
         \header
@@ -63,67 +63,67 @@
                has a client-server architecture and a server needs to be started.
 
         \row
-            \o -provider
+            \o -publisher
             \o Publish values in the Value Space and create a dialog to control those values
                directly.
         \row
-            \o -consumer
+            \o -subscriber
             \o Create a dialog to view Value Space items.
     \endtable
 
-    \section2 Provider
+    \section2 Publisher
 
-    When acting as a provider of Value Space content the program creates a ProviderDialog.  This
-    dialog contains a widget for setting the base path of the QValueSpaceProvider and
+    When acting as a publisher of Value Space content the program creates a PublisherDialog.  This
+    dialog contains a widget for setting the base path of the QValueSpacePublisher and
     widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.
 
-    \image publish-subscribe-provider.png
+    \image publish-subscribe-publisher.png
 
     We declare three slots which we will use to respond to user input in the dialog.
 
-    \snippet publish-subscribe/providerdialog.h 0
+    \snippet publish-subscribe/publisherdialog.h 0
 
     And connect them to signals from the widgets in the constructor.
 
-    \snippet publish-subscribe/providerdialog.cpp 1
+    \snippet publish-subscribe/publisherdialog.cpp 1
 
-    To publish values in the Value Space we first need to create a QValueSpaceProvider.  We do this
-    in the \c {createNewObject()} slot, which is also used to handle changes in the base path.
+    To publish values in the Value Space we first need to create a QValueSpacePublisher.  We do
+    this in the \c {createNewObject()} slot, which is also used to handle changes in the base path.
     After the object is constructed we publish the initial values by explicitly calling the other
     two slots.
 
-    \snippet publish-subscribe/providerdialog.cpp 2
+    \snippet publish-subscribe/publisherdialog.cpp 2
 
-    We use QValueSpaceProvider::setAttribute() to set the values in response to dialog input.
+    We use QValueSpacePublisher::setAttribute() to set the values in response to dialog input.
 
-    \snippet publish-subscribe/providerdialog.cpp 0
+    \snippet publish-subscribe/publisherdialog.cpp 0
 
     As a final step in the constructor we explicitly call the \c {createNewObject()} slot to create
-    an initial QValueSpaceProvider.
+    an initial QValueSpacePublisher.
 
-    \snippet publish-subscribe/providerdialog.cpp 3
+    \snippet publish-subscribe/publisherdialog.cpp 3
 
-    \section2 Consumer
+    \section2 Subscriber
 
-    When acting as a consumer of Value Space content the program creates a ConsumerDialog.  This
-    dialog contains a widget for setting the base path of the QValueSpaceSubscriber and a table for
-    displaying all of the values directly under base path in the Value Space.
+    When acting as a subscriber of Value Space content the program creates a SubscriberDialog.
+    This dialog contains a widget for setting the base path of the QValueSpaceSubscriber and a
+    table for displaying all of the values directly under base path in the Value Space.
 
-    \image publish-subscribe-consumer.png
+    \image publish-subscribe-subscriber.png
 
     We declare two slots to propagate values from the Value Space to the dialog in response to
     change notifications from QValueSpaceSubscriber.
 
-    \snippet publish-subscribe/consumerdialog.h 0
+    \snippet publish-subscribe/subscriberdialog.h 0
 
     To read values from the Value Space we first create a QValueSpaceSubscriber and connect to the
     \c {contentsChanged()} signal.
 
     We explicitly call our \c {itemChanged()} slot to populate the table with the initial values.
 
-    \snippet publish-subscribe/consumerdialog.cpp 0
+    \snippet publish-subscribe/subscriberdialog.cpp 0
 
     In response to the \c {contentsChanged()} signal we update all the values in the table.
 
-    \snippet publish-subscribe/consumerdialog.cpp 1
+    \snippet publish-subscribe/subscriberdialog.cpp 1
 */

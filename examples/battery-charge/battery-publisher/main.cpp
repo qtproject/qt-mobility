@@ -39,47 +39,20 @@
 **
 ****************************************************************************/
 
-#ifndef CONSUMERDIALOG_H
-#define CONSUMERDIALOG_H
+#include <QApplication>
 
-#include <qmobilityglobal.h>
-#include <QDialog>
+#include <qvaluespace.h>
 
-QTM_BEGIN_NAMESPACE
-class QValueSpaceSubscriber;
-QTM_END_NAMESPACE
+#include "batterypublisher.h"
 
-QTM_USE_NAMESPACE
-
-namespace Ui {
-    class ConsumerDialog;
-}
-
-class ConsumerDialog : public QDialog
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    QApplication app(argc, argv);
 
-public:
-    ConsumerDialog(QWidget *parent = 0);
-    ~ConsumerDialog();
+    QValueSpace::initValueSpaceServer();
 
-#ifdef Q_OS_SYMBIAN
-signals:
-    void switchRequested();
-#endif
+    BatteryPublisher batteryPublisher;
+    batteryPublisher.show();
 
-protected:
-    void changeEvent(QEvent *e);
-
-//! [0]
-private slots:
-    void changeSubscriberPath();
-    void subscriberChanged();
-//! [0]
-
-private:
-    Ui::ConsumerDialog *ui;
-    QValueSpaceSubscriber *subscriber;
-};
-
-#endif // CONSUMERDIALOG_H
+    return app.exec();
+}

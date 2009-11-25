@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "consumerdialog.h"
-#include "ui_consumerdialog.h"
+#include "subscriberdialog.h"
+#include "ui_subscriberdialog.h"
 
 #include <qvaluespacesubscriber.h>
 
@@ -51,9 +51,9 @@
 
 #include <QDebug>
 
-ConsumerDialog::ConsumerDialog(QWidget *parent) :
+SubscriberDialog::SubscriberDialog(QWidget *parent) :
         QDialog(parent),
-        ui(new Ui::ConsumerDialog),
+        ui(new Ui::SubscriberDialog),
         subscriber(0)
 {
     ui->setupUi(this);
@@ -70,12 +70,12 @@ ConsumerDialog::ConsumerDialog(QWidget *parent) :
     changeSubscriberPath();
 }
 
-ConsumerDialog::~ConsumerDialog()
+SubscriberDialog::~SubscriberDialog()
 {
     delete ui;
 }
 
-void ConsumerDialog::changeEvent(QEvent *e)
+void SubscriberDialog::changeEvent(QEvent *e)
 {
     QDialog::changeEvent(e);
     switch (e->type()) {
@@ -88,7 +88,7 @@ void ConsumerDialog::changeEvent(QEvent *e)
 }
 
 //! [0]
-void ConsumerDialog::changeSubscriberPath()
+void SubscriberDialog::changeSubscriberPath()
 {
     ui->values->clearContents();
 
@@ -104,7 +104,7 @@ void ConsumerDialog::changeSubscriberPath()
 //! [0]
 
 //! [1]
-void ConsumerDialog::subscriberChanged()
+void SubscriberDialog::subscriberChanged()
 {
     ui->values->clearContents();
 

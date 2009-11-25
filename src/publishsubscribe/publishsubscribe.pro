@@ -9,7 +9,7 @@ DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += \
            qvaluespace.h \
-           qvaluespaceprovider.h \
+           qvaluespacepublisher.h \
            qvaluespacesubscriber.h
 
 PRIVATE_HEADERS += \
@@ -21,7 +21,7 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES += \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
-           qvaluespaceprovider.cpp \
+           qvaluespacepublisher.cpp \
            qvaluespacesubscriber.cpp
 
 symbian {

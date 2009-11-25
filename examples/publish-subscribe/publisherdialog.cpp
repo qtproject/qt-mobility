@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include "providerdialog.h"
-#include "ui_providerdialog.h"
+#include "publisherdialog.h"
+#include "ui_publisherdialog.h"
 
-#include <qvaluespaceprovider.h>
+#include <qvaluespacepublisher.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <QPushButton>
@@ -50,10 +50,8 @@
 
 #include <QDebug>
 
-ProviderDialog::ProviderDialog(QWidget *parent) :
-        QDialog(parent),
-        ui(new Ui::ProviderDialog),
-        provider(0)
+PublisherDialog::PublisherDialog(QWidget *parent)
+:   QDialog(parent), ui(new Ui::PublisherDialog), publisher(0)
 {
     ui->setupUi(this);
 
@@ -77,13 +75,13 @@ ProviderDialog::ProviderDialog(QWidget *parent) :
     //! [3]
 }
 
-ProviderDialog::~ProviderDialog()
+PublisherDialog::~PublisherDialog()
 {
     delete ui;
-    delete provider;
+    delete publisher;
 }
 
-void ProviderDialog::changeEvent(QEvent *e)
+void PublisherDialog::changeEvent(QEvent *e)
 {
     QDialog::changeEvent(e);
     switch (e->type()) {
@@ -96,30 +94,30 @@ void ProviderDialog::changeEvent(QEvent *e)
 }
 
 //! [0]
-void ProviderDialog::intValueChanged(int value)
+void PublisherDialog::intValueChanged(int value)
 {
-    provider->setAttribute("intValue", value);
+    publisher->setAttribute("intValue", value);
 }
 
-void ProviderDialog::setStringValue()
+void PublisherDialog::setStringValue()
 {
-    provider->setAttribute("stringValue", ui->stringValue->text());
+    publisher->setAttribute("stringValue", ui->stringValue->text());
 }
 
-void ProviderDialog::setByteArrayValue()
+void PublisherDialog::setByteArrayValue()
 {
-    provider->setAttribute("byteArrayValue", ui->byteArrayValue->text().toAscii());
+    publisher->setAttribute("byteArrayValue", ui->byteArrayValue->text().toAscii());
 }
 
 //! [0]
 
 //! [2]
-void ProviderDialog::createNewObject()
+void PublisherDialog::createNewObject()
 {
-    if (provider)
-        delete provider;
+    if (publisher)
+        delete publisher;
 
-    provider = new QValueSpaceProvider(ui->basePath->text());
+    publisher = new QValueSpacePublisher(ui->basePath->text());
     intValueChanged(ui->intValue->value());
     setStringValue();
     setByteArrayValue();

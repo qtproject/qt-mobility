@@ -52,7 +52,7 @@
 
 #include <qvaluespace.h>
 #include <qvaluespacesubscriber.h>
-#include <qvaluespaceprovider.h>
+#include <qvaluespacepublisher.h>
 
 #ifdef USE_READLINE
 #include <stdio.h>
@@ -113,9 +113,9 @@ private:
 
     bool isSuppress;
     QValueSpaceSubscriber pwd;
-    QValueSpaceProvider prov;
+    QValueSpacePublisher prov;
     QSet<QValueSpaceSubscriber *> subs;
-    QSet<QValueSpaceProvider *> watchers;
+    QSet<QValueSpacePublisher *> watchers;
 };
 static VSExplorer * vse = 0;
 
@@ -168,7 +168,7 @@ void VSExplorer::interestChanged(const QString &attribute, bool interested)
     Q_ASSERT(sender());
 
     if (!isSuppress) {
-        QValueSpaceProvider *obj = static_cast<QValueSpaceProvider *>(sender());
+        QValueSpacePublisher *obj = static_cast<QValueSpacePublisher *>(sender());
         fprintf(stdout, "\nInterest Changed: %s ... %s %d\n",
                 qPrintable(obj->path()), qPrintable(attribute), interested);
     }
@@ -275,7 +275,7 @@ void VSExplorer::listwatchers()
         fprintf(stdout, "No watchers.\n");
     } else {
         fprintf(stdout, "Current watchers:\n");
-        foreach(QValueSpaceProvider *obj, watchers)
+        foreach (QValueSpacePublisher *obj, watchers)
             fprintf(stdout, "\t%s\n", obj->path().toAscii().constData());
     }
 
@@ -333,12 +333,12 @@ void VSExplorer::quit()
 
 void VSExplorer::watch(const QString &path)
 {
-    foreach (QValueSpaceProvider *obj, watchers) {
+    foreach (QValueSpacePublisher *obj, watchers) {
         if (obj->path() == path)
             return;
     }
 
-    QValueSpaceProvider * newObject = new QValueSpaceProvider(path);
+    QValueSpacePublisher * newObject = new QValueSpacePublisher(path);
     watchers.insert(newObject);
     QObject::connect(newObject, SIGNAL(attributeInterestChanged(QString,bool)),
                      this, SLOT(interestChanged(QString,bool)));
@@ -346,7 +346,7 @@ void VSExplorer::watch(const QString &path)
 
 void VSExplorer::unwatch(const QString &path)
 {
-    foreach (QValueSpaceProvider *obj, watchers) {
+    foreach (QValueSpacePublisher *obj, watchers) {
         if (obj->path() == path) {
             watchers.remove(obj);
             delete obj;

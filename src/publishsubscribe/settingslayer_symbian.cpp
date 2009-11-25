@@ -264,8 +264,10 @@ void SymbianSettingsLayer::removeHandle(Handle handle)
     delete sh;
 }
 
-bool SymbianSettingsLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath,
-    const QVariant &data)
+bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
+                                    Handle handle,
+                                    const QString &subPath,
+                                    const QVariant &data)
 {
     SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
     if (!sh)
@@ -333,27 +335,27 @@ void SymbianSettingsLayer::sync()
     //Not needed
 }
 
-bool SymbianSettingsLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
+bool SymbianSettingsLayer::removeSubTree(QValueSpacePublisher *creator, Handle handle)
 {
     //Not needed
     return false;
 }
 
-bool SymbianSettingsLayer::removeValue(QValueSpaceProvider *creator,
+bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator,
     Handle handle,
     const QString &subPath)
 {
-    qDebug("bool SymbianSettingsLayer::removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath)");
+    qDebug("bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath)");
     //TODO: Is this needed in Symbian?
     return false;
 }
 
-void SymbianSettingsLayer::addWatch(QValueSpaceProvider *, Handle)
+void SymbianSettingsLayer::addWatch(QValueSpacePublisher *, Handle)
 {
     //Not needed
 }
 
-void SymbianSettingsLayer::removeWatches(QValueSpaceProvider *, Handle)
+void SymbianSettingsLayer::removeWatches(QValueSpacePublisher *, Handle)
 {
     //Not needed
 }

@@ -44,7 +44,7 @@
 #include <QMap>
 
 QTM_BEGIN_NAMESPACE
-class QValueSpaceProvider;
+class QValueSpacePublisher;
 class QAbstractValueSpaceLayer;
 QTM_END_NAMESPACE
 
@@ -93,6 +93,6 @@ private slots:
     void threads();
 
 private:
-    QMap<QAbstractValueSpaceLayer *, QValueSpaceProvider *> roots;
-    QMap<QAbstractValueSpaceLayer*, QValueSpaceProvider *> busys;
+    QMap<QAbstractValueSpaceLayer *, QValueSpacePublisher *> roots;
+    QMap<QAbstractValueSpaceLayer*, QValueSpacePublisher *> busys;
 };

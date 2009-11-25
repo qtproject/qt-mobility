@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qvaluespaceprovider.h"
+#include "qvaluespacepublisher.h"
 #include "qvaluespace.h"
 #include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
@@ -51,15 +51,16 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QValueSpaceProvider
+    \class QValueSpacePublisher
 
-    \brief The QValueSpaceProvider class allows applications to publish values in the Value Space.
+    \brief The QValueSpacePublisher class allows applications to publish values in the Value Space.
 
     \ingroup publishsubscribe
 
-    When multiple Value Space layers are available QValueSpaceProvider only publishes values to the
-    layer with the highest order.  The layers that QValueSpaceProvider can access can be limited by
-    specifying either a \l {QValueSpace::LayerOption}{filter} or a QUuid at construction time.
+    When multiple Value Space layers are available QValueSpacePublisher only publishes values to
+    the layer with the highest order.  The layers that QValueSpacePublisher can access can be
+    limited by specifying either a \l {QValueSpace::LayerOption}{filter} or a QUuid at construction
+    time.
 
     The lifetime of values published in the Value Space is specified by the particular Value Space
     layer that the value is published in.  For details on the different behaviors see
@@ -91,14 +92,14 @@ QTM_BEGIN_NAMESPACE
     it can be thought of as describing two Value Space objects,
     \c { { /Device/Network/Interfaces/eth0, /Device/Network/Interfaces/ppp0 } },
     each with the six attributes \c { {Name, Type, Status, BytesSent,
-    BytesReceived, Time} }.  The QValueSpaceProvider class encapsulates this
+    BytesReceived, Time} }.  The QValueSpacePublisher class encapsulates this
     abstraction.
 
     For performance reasons the setting of and removing of attributes is buffered
-    internally by the QValueSpaceProvider and applied as a batch sometime later.
+    internally by the QValueSpacePublisher and applied as a batch sometime later.
     Normally this occurs the next time the application enters the Qt event loop,
     but this behavior should not be relied upon.  If an application must
-    synchronize with others, the QValueSpaceProvider::sync() and QValueSpaceProvider::syncAll()
+    synchronize with others, the QValueSpacePublisher::sync() and QValueSpacePublisher::syncAll()
     functions can be used to force the application of changes.  This call is generally unnecessary,
     and should be used sparingly to prevent unnecessary load on the system.
 
@@ -106,19 +107,19 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QValueSpaceProvider::attributeInterestChanged(const QString &attribute,
-                                                           bool interested)
+    \fn void QValueSpacePublisher::attributeInterestChanged(const QString &attribute,
+                                                            bool interested)
 
     Signal that is emitted when interest in \a attribute changes.  If \a interested is true at
     least on QValueSpaceSubscriber is interested in the value of \a attribute.
 */
 
-class QValueSpaceProviderPrivate
+class QValueSpacePublisherPrivate
 {
 public:
-    QValueSpaceProviderPrivate(const QString &_path,
+    QValueSpacePublisherPrivate(const QString &_path,
                                QValueSpace::LayerOptions filter = QValueSpace::UnspecifiedLayer);
-    QValueSpaceProviderPrivate(const QString &_path, const QUuid &uuid);
+    QValueSpacePublisherPrivate(const QString &_path, const QUuid &uuid);
 
     QString path;
 
@@ -129,7 +130,7 @@ public:
     bool hasWatch;
 };
 
-QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path,
+QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
                                                        QValueSpace::LayerOptions filter)
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
@@ -159,7 +160,7 @@ QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path,
     }
 }
 
-QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path, const QUuid &uuid)
+QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path, const QUuid &uuid)
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(_path);
@@ -176,11 +177,11 @@ QValueSpaceProviderPrivate::QValueSpaceProviderPrivate(const QString &_path, con
 }
 
 /*!
-    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
+    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
     \a path.
 */
-QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
-:   QObject(parent), d(new QValueSpaceProviderPrivate(path))
+QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
+:   QObject(parent), d(new QValueSpacePublisherPrivate(path))
 {
     QValueSpaceManager::instance()->init();
 }
@@ -188,34 +189,34 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path, QObject *parent)
 /*!
     \overload
 
-    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
+    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
     \a path.  This constructor is equivalent to calling
     \c {QValueSpaceSubscriber(QString::fromLatin1(path), parent)}.
 */
-QValueSpaceProvider::QValueSpaceProvider(const char *path, QObject *parent)
-:   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path)))
+QValueSpacePublisher::QValueSpacePublisher(const char *path, QObject *parent)
+:   QObject(parent), d(new QValueSpacePublisherPrivate(QString::fromLatin1(path)))
 {
     QValueSpaceManager::instance()->init();
 }
 
 /*!
-    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceProvider will
+    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
+    \a path.  The \a filter parameter is used to limit which layer this QValueSpacePublisher will
     access.
 
-    The constructed Value Space provider will access the \l {QAbstractValueSpaceLayer}{layer} with
+    The constructed Value Space publisher will access the \l {QAbstractValueSpaceLayer}{layer} with
     the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
     \a path is a valid path.
 
     If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed
-    QValueSpaceProvider will be unconnected.
+    QValueSpacePublisher will be unconnected.
 
     \sa isConnected()
 */
-QValueSpaceProvider::QValueSpaceProvider(const QString &path,
+QValueSpacePublisher::QValueSpacePublisher(const QString &path,
                                          QValueSpace::LayerOptions filter,
                                          QObject *parent)
-:   QObject(parent), d(new QValueSpaceProviderPrivate(path, filter))
+:   QObject(parent), d(new QValueSpacePublisherPrivate(path, filter))
 {
     QValueSpaceManager::instance()->init();
 }
@@ -223,43 +224,43 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path,
 /*!
     \overload
 
-    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
-    \a path.  The \a filter parameter is used to limit which layer this QValueSpaceProvider will
+    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
+    \a path.  The \a filter parameter is used to limit which layer this QValueSpacePublisher will
     access.  This constructor is equivalent to calling
-    \c {QValueSpaceProvider(QString::fromLatin1(path), filter, parent)}.
+    \c {QValueSpacePublisher(QString::fromLatin1(path), filter, parent)}.
 
-    The constructed Value Space provider will access the \l {QAbstractValueSpaceLayer}{layer} with
+    The constructed Value Space publisher will access the \l {QAbstractValueSpaceLayer}{layer} with
     the highest \l {QAbstractValueSpaceLayer::order()}{order} that matches \a filter and for which
     \a path is a valid path.
 
     If no suitable \l {QAbstractValueSpaceLayer}{layer} is found, the constructed
-    QValueSpaceProvider will be unconnected.
+    QValueSpacePublisher will be unconnected.
 
     \sa isConnected()
 */
-QValueSpaceProvider::QValueSpaceProvider(const char *path,
+QValueSpacePublisher::QValueSpacePublisher(const char *path,
                                          QValueSpace::LayerOptions filter,
                                          QObject *parent)
-:   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path), filter))
+:   QObject(parent), d(new QValueSpacePublisherPrivate(QString::fromLatin1(path), filter))
 {
     QValueSpaceManager::instance()->init();
 }
 
 /*!
-    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
-    \a path.  Only the layer identified by \a uuid will be accessed by this provider.
+    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
+    \a path.  Only the layer identified by \a uuid will be accessed by this publisher.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found, the constructed QValueSpaceProvider will be
+    If a layer with a matching \a uuid is not found, the constructed QValueSpacePublisher will be
     unconnected.
 
     \sa isConnected()
 */
 
-QValueSpaceProvider::QValueSpaceProvider(const QString &path, const QUuid &uuid, QObject *parent)
-:   QObject(parent), d(new QValueSpaceProviderPrivate(path, uuid))
+QValueSpacePublisher::QValueSpacePublisher(const QString &path, const QUuid &uuid, QObject *parent)
+:   QObject(parent), d(new QValueSpacePublisherPrivate(path, uuid))
 {
     QValueSpaceManager::instance()->init();
 }
@@ -267,30 +268,30 @@ QValueSpaceProvider::QValueSpaceProvider(const QString &path, const QUuid &uuid,
 /*!
     \overload
 
-    Constructs a QValueSpaceProvider with the specified \a parent that publishes values under
-    \a path.  Only the layer identified by \a uuid will be accessed by this provider.  This
+    Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
+    \a path.  Only the layer identified by \a uuid will be accessed by this publisher.  This
     constructor is equivalent to calling
-    \c {QValueSpaceProvider(QString::fromLatin1(path), uuid, parent)}.
+    \c {QValueSpacePublisher(QString::fromLatin1(path), uuid, parent)}.
 
     Use of this constructor is not platform agnostic.  If possible use one of the constructors that
     take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
 
-    If a layer with a matching \a uuid is not found, the constructed QValueSpaceProvider will be
+    If a layer with a matching \a uuid is not found, the constructed QValueSpacePublisher will be
     unconnected.
 
     \sa isConnected()
 */
-QValueSpaceProvider::QValueSpaceProvider(const char *path, const QUuid &uuid, QObject *parent)
-:   QObject(parent), d(new QValueSpaceProviderPrivate(QString::fromLatin1(path), uuid))
+QValueSpacePublisher::QValueSpacePublisher(const char *path, const QUuid &uuid, QObject *parent)
+:   QObject(parent), d(new QValueSpacePublisherPrivate(QString::fromLatin1(path), uuid))
 {
     QValueSpaceManager::instance()->init();
 }
 
 /*!
-    Destroys the QValueSpaceProvider.  This will remove all values published by this provider in
+    Destroys the QValueSpacePublisher.  This will remove all values published by this publisher in
     \l {QValueSpace::TransientLayer}{non-permanent} layers.
 */
-QValueSpaceProvider::~QValueSpaceProvider()
+QValueSpacePublisher::~QValueSpacePublisher()
 {
     if (!d->layer)
         return;
@@ -305,26 +306,26 @@ QValueSpaceProvider::~QValueSpaceProvider()
 }
 
 /*!
-    Returns the path that this QValueSpaceProvider refers to.
+    Returns the path that this QValueSpacePublisher refers to.
 */
-QString QValueSpaceProvider::path() const
+QString QValueSpacePublisher::path() const
 {
     return d->path;
 }
 
 /*!
-    Returns true if this QValueSpaceProvider is connected to an available layer; otherwise returns
+    Returns true if this QValueSpacePublisher is connected to an available layer; otherwise returns
     false.
 */
-bool QValueSpaceProvider::isConnected() const
+bool QValueSpacePublisher::isConnected() const
 {
     return (d->layer && d->handle != QAbstractValueSpaceLayer::InvalidHandle);
 }
 
 /*!
-    Forcibly sync all Value Space providers using the same layer as this provider.
+    Forcibly sync all Value Space publisher using the same layer as this publisher.
 
-    For performance reasons attribute changes are batched internally by QValueSpaceProvider
+    For performance reasons attribute changes are batched internally by QValueSpacePublisher
     instances.  In cases where the visibility of changes must be synchronized with other processes,
     calling this function will flush these batches.  By the time this function returns, all other
     processes in the system will be able to see the attribute changes.
@@ -333,7 +334,7 @@ bool QValueSpaceProvider::isConnected() const
 
     \sa syncAll()
 */
-void QValueSpaceProvider::sync()
+void QValueSpacePublisher::sync()
 {
     if (!d || !d->layer)
         return;
@@ -342,36 +343,36 @@ void QValueSpaceProvider::sync()
 }
 
 /*!
-    Forcibly sync all Value Space providers.
+    Forcibly sync all Value Space publisher.
 
     This function is equivalent to calling sync() for all Value Space layers.
 
     Generally, calling this function is unnecessary.
 */
-void QValueSpaceProvider::syncAll()
+void QValueSpacePublisher::syncAll()
 {
     foreach (QAbstractValueSpaceLayer *layer, QValueSpaceManager::instance()->getLayers())
         layer->sync();
 }
 
 /*!
-    Set \a attribute on the provider to \a data.  If attribute is empty, this call will set the
-    value of this providers path.
+    Set \a attribute on the publisher to \a data.  If attribute is empty, this call will set the
+    value of this publisher's path.
 
     For example:
 
     \code
-        QValueSpaceProvider provider("/Device");
-        provider.setAttribute("State", "Starting");
-        provider.sync();
+        QValueSpacePublisher publisher("/Device");
+        publisher.setAttribute("State", "Starting");
+        publisher.sync();
 
         // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
     \endcode
 */
-void QValueSpaceProvider::setAttribute(const QString &attribute, const QVariant &data)
+void QValueSpacePublisher::setAttribute(const QString &attribute, const QVariant &data)
 {
     if (!isConnected()) {
-        qWarning("setAttribute called on unconnected QValueSpaceProvider.");
+        qWarning("setAttribute called on unconnected QValueSpacePublisher.");
         return;
     }
 
@@ -385,33 +386,33 @@ void QValueSpaceProvider::setAttribute(const QString &attribute, const QVariant 
     This is a convenience overload and is equivalent to
     \c {setAttribute(QString::fromLatin1(attribute), data)}.
 */
-void QValueSpaceProvider::setAttribute(const char *attribute, const QVariant &data)
+void QValueSpacePublisher::setAttribute(const char *attribute, const QVariant &data)
 {
     setAttribute(QString::fromLatin1(attribute), data);
 }
 
 /*!
-    Removes the provider \a attribute and all sub-attributes from the system.
+    Removes the publisher \a attribute and all sub-attributes from the system.
 
     For example:
     \code
-        QValueSpaceProvider provider("/Device");
-        provider.setAttribute("State", "Starting");
-        provider.setAttribute("State/Memory", "1000");
-        provider.sync();
+        QValueSpacePublisher publisher("/Device");
+        publisher.setAttribute("State", "Starting");
+        publisher.setAttribute("State/Memory", "1000");
+        publisher.sync();
         // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
         // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant("1000")
 
-        provider.removeAttribute("State");
-        provider.sync();
+        publisher.removeAttribute("State");
+        publisher.sync();
         // QValueSpaceSubscriber("/Device/State").value() == QVariant();
         // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant();
     \endcode
 */
-void QValueSpaceProvider::removeAttribute(const QString &attribute)
+void QValueSpacePublisher::removeAttribute(const QString &attribute)
 {
     if (!isConnected()) {
-        qWarning("removeAttribute called on unconnected QValueSpaceProvider.");
+        qWarning("removeAttribute called on unconnected QValueSpacePublisher.");
         return;
     }
 
@@ -424,14 +425,14 @@ void QValueSpaceProvider::removeAttribute(const QString &attribute)
     This is a convenience overload and is equivalent to
     \c {removeAttribute(QString::fromLatin1(attribute))}.
 */
-void QValueSpaceProvider::removeAttribute(const char *attribute)
+void QValueSpacePublisher::removeAttribute(const char *attribute)
 {
     removeAttribute(QString::fromLatin1(attribute));
 }
 
 /*!
-    Registers this QValueSpaceProvider for notifications when QValueSpaceSubscribers are interested
-    in values under path().
+    Registers this QValueSpacePublisher for notifications when QValueSpaceSubscribers are
+    interested in values under path().
 
     Generally you do not need to call this function as it is automatically called when
     connections are made to this classes signals.  \a member is the signal that has been connected.
@@ -441,7 +442,7 @@ void QValueSpaceProvider::removeAttribute(const char *attribute)
 
     \sa attributeInterestChanged()
 */
-void QValueSpaceProvider::connectNotify(const char *member)
+void QValueSpacePublisher::connectNotify(const char *member)
 {
     if (!d->hasWatch && d->layer && (*member - '0') == QSIGNAL_CODE) {
         d->layer->addWatch(this, d->handle);
@@ -451,5 +452,5 @@ void QValueSpaceProvider::connectNotify(const char *member)
     QObject::connectNotify(member);
 }
 
-#include "moc_qvaluespaceprovider.cpp"
+#include "moc_qvaluespacepublisher.cpp"
 QTM_END_NAMESPACE

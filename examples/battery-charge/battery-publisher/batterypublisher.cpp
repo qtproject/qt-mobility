@@ -39,49 +39,67 @@
 **
 ****************************************************************************/
 
-#ifndef PROVIDERDIALOG_H
-#define PROVIDERDIALOG_H
+#include "batterypublisher.h"
+#include "ui_batterypublisher.h"
 
-#include <qmobilityglobal.h>
-#include <QDialog>
+#include <qvaluespacepublisher.h>
 
-QTM_BEGIN_NAMESPACE
-class QValueSpaceProvider;
-QTM_END_NAMESPACE
+#include <QTimer>
 
-QTM_USE_NAMESPACE
+BatteryPublisher::BatteryPublisher(QWidget *parent)
+:   QDialog(parent), ui(new Ui::BatteryPublisher), chargeTimer(0)
+{
+    ui->setupUi(this);
 
-namespace Ui {
-    class ProviderDialog;
+    publisher = new QValueSpacePublisher("/power/battery");
+
+    connect(ui->batteryCharge, SIGNAL(valueChanged(int)),
+            this, SLOT(chargeChanged(int)));
+    connect(ui->charging, SIGNAL(toggled(bool)),
+            this, SLOT(chargingToggled(bool)));
+
+    chargeChanged(ui->batteryCharge->value());
 }
 
-class ProviderDialog : public QDialog
+BatteryPublisher::~BatteryPublisher()
 {
-    Q_OBJECT
+    delete ui;
+    delete publisher;
+}
 
-public:
-    ProviderDialog(QWidget *parent = 0);
-    ~ProviderDialog();
+void BatteryPublisher::changeEvent(QEvent *e)
+{
+    QDialog::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
+    }
+}
 
-#ifdef Q_OS_SYMBIAN
-signals:
-    void switchRequested();
-#endif
+void BatteryPublisher::timerEvent(QTimerEvent *)
+{
+    int newCharge = ui->batteryCharge->value() + 1;
+    ui->batteryCharge->setValue(newCharge);
 
-protected:
-    void changeEvent(QEvent *e);
+    if (newCharge >= 100)
+        ui->charging->setChecked(false);
+}
 
-//! [0]
-private slots:
-    void createNewObject();
-    void intValueChanged(int value);
-    void setStringValue();
-    void setByteArrayValue();
-//! [0]
+void BatteryPublisher::chargeChanged(int newCharge)
+{
+    publisher->setAttribute("charge", newCharge);
+}
 
-private:
-    Ui::ProviderDialog *ui;
-    QValueSpaceProvider *provider;
-};
+void BatteryPublisher::chargingToggled(bool charging)
+{
+    ui->batteryCharge->setEnabled(!charging);
+    publisher->setAttribute("charging", charging);
 
-#endif // PROVIDERDIALOG_H
+    if (charging)
+        chargeTimer = startTimer(2000);
+    else
+        killTimer(chargeTimer);
+}

@@ -39,42 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef BATTERYPROVIDER_H
-#define BATTERYPROVIDER_H
+#ifndef PUBLISHERDIALOG_H
+#define PUBLISHERDIALOG_H
 
 #include <qmobilityglobal.h>
 #include <QDialog>
 
-namespace Ui {
-    class BatteryProvider;
-}
-
 QTM_BEGIN_NAMESPACE
-class QValueSpaceProvider;
+class QValueSpacePublisher;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class BatteryProvider : public QDialog
+namespace Ui {
+    class PublisherDialog;
+}
+
+class PublisherDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    BatteryProvider(QWidget *parent = 0);
-    ~BatteryProvider();
+    PublisherDialog(QWidget *parent = 0);
+    ~PublisherDialog();
+
+#ifdef Q_OS_SYMBIAN
+signals:
+    void switchRequested();
+#endif
 
 protected:
     void changeEvent(QEvent *e);
-    void timerEvent(QTimerEvent *e);
 
+//! [0]
 private slots:
-    void chargeChanged(int newCharge);
-    void chargingToggled(bool charging);
+    void createNewObject();
+    void intValueChanged(int value);
+    void setStringValue();
+    void setByteArrayValue();
+//! [0]
 
 private:
-    Ui::BatteryProvider *ui;
-    QValueSpaceProvider *provider;
-    int chargeTimer;
+    Ui::PublisherDialog *ui;
+    QValueSpacePublisher *publisher;
 };
 
-#endif // BATTERYPROVIDER_H
+#endif // PUBLISHERDIALOG_H
