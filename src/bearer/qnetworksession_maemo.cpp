@@ -1114,7 +1114,7 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 }
 
 
-void QNetworkSessionPrivate::setProperty(const QString& key, const QVariant& value)
+void QNetworkSessionPrivate::setSessionProperty(const QString& key, const QVariant& value)
 {
     if (value.isValid()) {
 	properties.insert(key, value);
@@ -1136,7 +1136,7 @@ void QNetworkSessionPrivate::setProperty(const QString& key, const QVariant& val
 }
 
 
-QVariant QNetworkSessionPrivate::property(const QString& key) const
+QVariant QNetworkSessionPrivate::sessionProperty(const QString& key) const
 {
     return properties.value(key);
 }

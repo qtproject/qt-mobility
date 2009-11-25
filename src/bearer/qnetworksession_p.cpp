@@ -277,12 +277,12 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return QNetworkInterface::interfaceFromName(interface);
 }
 
-QVariant QNetworkSessionPrivate::property(const QString& /*key*/) const
+QVariant QNetworkSessionPrivate::sessionProperty(const QString& /*key*/) const
 {
     return QVariant();
 }
 
-void QNetworkSessionPrivate::setProperty(const QString& /*key*/, const QVariant& /*value*/)
+void QNetworkSessionPrivate::setSessionProperty(const QString& /*key*/, const QVariant& /*value*/)
 {
 }
 

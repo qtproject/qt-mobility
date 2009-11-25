@@ -2496,6 +2496,7 @@
             <keyword name="bytesReceived" id="QNetworkSession::bytesReceived" ref="qnetworksession.html#bytesReceived"/>
             <keyword name="bytesWritten" id="QNetworkSession::bytesWritten" ref="qnetworksession.html#bytesWritten"/>
             <keyword name="close" id="QNetworkSession::close" ref="qnetworksession.html#close"/>
+            <keyword name="closed" id="QNetworkSession::closed" ref="qnetworksession.html#closed"/>
             <keyword name="configuration" id="QNetworkSession::configuration" ref="qnetworksession.html#configuration"/>
             <keyword name="error" id="QNetworkSession::error" ref="qnetworksession.html#error"/>
             <keyword name="errorString" id="QNetworkSession::errorString" ref="qnetworksession.html#errorString"/>
@@ -2505,12 +2506,11 @@
             <keyword name="migrate" id="QNetworkSession::migrate" ref="qnetworksession.html#migrate"/>
             <keyword name="newConfigurationActivated" id="QNetworkSession::newConfigurationActivated" ref="qnetworksession.html#newConfigurationActivated"/>
             <keyword name="open" id="QNetworkSession::open" ref="qnetworksession.html#open"/>
+            <keyword name="opened" id="QNetworkSession::opened" ref="qnetworksession.html#opened"/>
             <keyword name="preferredConfigurationChanged" id="QNetworkSession::preferredConfigurationChanged" ref="qnetworksession.html#preferredConfigurationChanged"/>
-            <keyword name="property" id="QNetworkSession::property" ref="qnetworksession.html#property"/>
             <keyword name="reject" id="QNetworkSession::reject" ref="qnetworksession.html#reject"/>
-            <keyword name="sessionClosed" id="QNetworkSession::sessionClosed" ref="qnetworksession.html#sessionClosed"/>
-            <keyword name="sessionOpened" id="QNetworkSession::sessionOpened" ref="qnetworksession.html#sessionOpened"/>
-            <keyword name="setProperty" id="QNetworkSession::setProperty" ref="qnetworksession.html#setProperty"/>
+            <keyword name="sessionProperty" id="QNetworkSession::sessionProperty" ref="qnetworksession.html#sessionProperty"/>
+            <keyword name="setSessionProperty" id="QNetworkSession::setSessionProperty" ref="qnetworksession.html#setSessionProperty"/>
             <keyword name="state" id="QNetworkSession::state" ref="qnetworksession.html#state"/>
             <keyword name="stateChanged" id="QNetworkSession::stateChanged" ref="qnetworksession.html#stateChanged"/>
             <keyword name="stop" id="QNetworkSession::stop" ref="qnetworksession.html#stop"/>

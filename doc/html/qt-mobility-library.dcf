@@ -2368,6 +2368,7 @@
         <keyword ref="qnetworksession.html#bytesReceived">bytesReceived</keyword>
         <keyword ref="qnetworksession.html#bytesWritten">bytesWritten</keyword>
         <keyword ref="qnetworksession.html#close">close</keyword>
+        <keyword ref="qnetworksession.html#closed">closed</keyword>
         <keyword ref="qnetworksession.html#configuration">configuration</keyword>
         <keyword ref="qnetworksession.html#error">error</keyword>
         <keyword ref="qnetworksession.html#errorString">errorString</keyword>
@@ -2377,12 +2378,11 @@
         <keyword ref="qnetworksession.html#migrate">migrate</keyword>
         <keyword ref="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</keyword>
         <keyword ref="qnetworksession.html#open">open</keyword>
+        <keyword ref="qnetworksession.html#opened">opened</keyword>
         <keyword ref="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</keyword>
-        <keyword ref="qnetworksession.html#property">property</keyword>
         <keyword ref="qnetworksession.html#reject">reject</keyword>
-        <keyword ref="qnetworksession.html#sessionClosed">sessionClosed</keyword>
-        <keyword ref="qnetworksession.html#sessionOpened">sessionOpened</keyword>
-        <keyword ref="qnetworksession.html#setProperty">setProperty</keyword>
+        <keyword ref="qnetworksession.html#sessionProperty">sessionProperty</keyword>
+        <keyword ref="qnetworksession.html#setSessionProperty">setSessionProperty</keyword>
         <keyword ref="qnetworksession.html#state">state</keyword>
         <keyword ref="qnetworksession.html#stateChanged">stateChanged</keyword>
         <keyword ref="qnetworksession.html#stop">stop</keyword>

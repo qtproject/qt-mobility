@@ -86,8 +86,8 @@ public:
     void syncStateWithInterface();
 
     QNetworkInterface currentInterface() const;
-    QVariant property(const QString& key) const;
-    void setProperty(const QString& key, const QVariant& value);
+    QVariant sessionProperty(const QString& key) const;
+    void setSessionProperty(const QString& key, const QVariant& value);
     QString bearerName() const;
 
     void open();

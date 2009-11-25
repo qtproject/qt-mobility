@@ -476,7 +476,7 @@ QString QNetworkSession::errorString() const
                     QNetworkSession* session = new QNetworkSession(ap);
                     ... //code activates session
 
-                    QString ident = session->property("ActiveConfigurationIdentifier").toString();
+                    QString ident = session->sessionProperty("ActiveConfigurationIdentifier").toString();
                     if ( ap.type() == QNetworkConfiguration::ServiceNetwork ) {
                         Q_ASSERT( ap.identifier() != ident );
                         Q_ASSERT( ap.children().contains( mgr.configurationFromIdentifier(ident) ) );
@@ -504,7 +504,7 @@ QString QNetworkSession::errorString() const
             a suitable connection. This property is not set by default and support for it depends on the platform.
     \endtable
 */
-QVariant QNetworkSession::property(const QString& key) const
+QVariant QNetworkSession::sessionProperty(const QString& key) const
 {
     if (!d->publicConfig.isValid())
         return QVariant();
@@ -526,7 +526,7 @@ QVariant QNetworkSession::property(const QString& key) const
             return d->activeConfig.identifier();
     }
 
-    return d->property(key);
+    return d->sessionProperty(key);
 }
 
 /*!
@@ -537,13 +537,13 @@ QVariant QNetworkSession::property(const QString& key) const
     Note that the \i UserChoiceConfigurationIdentifier and \i ActiveConfigurationIdentifier
     properties are read only and cannot be changed using this method.
 */
-void QNetworkSession::setProperty(const QString& key, const QVariant& value)
+void QNetworkSession::setSessionProperty(const QString& key, const QVariant& value)
 {
     if (key == "ActiveConfigurationIdentifier" 
             || key == "UserChoiceConfigurationIdentifier") 
         return;
 
-    d->setProperty(key, value);
+    d->setSessionProperty(key, value);
 }
 
 /*!
