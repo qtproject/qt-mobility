@@ -352,6 +352,8 @@ echo Start of compile tests
 REM compile tests go here.
 call :compileTest LBT lbt
 echo End of compile tests
+echo.
+echo.
 
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
 echo "Generating Mobility Headers..."

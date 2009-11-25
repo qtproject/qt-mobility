@@ -524,6 +524,7 @@
                     <section ref="location.html" title="Qt Mobility Location API"/>
                     <section ref="index.html" title="Qt Mobility Overview"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
+                    <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
                     <section ref="versit.html" title="Versit API"/>
@@ -3099,6 +3100,7 @@
             <keyword name="Qt Mobility Location API" id="Qt Mobility Location API" ref="location.html"/>
             <keyword name="Qt Mobility Overview" id="Qt Mobility Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
+            <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
             <keyword name="QtMedia" id="QtMedia" ref="qtmedia.html"/>
             <keyword name="QtMedia::EncodingMode" id="QtMedia::EncodingMode" ref="qtmedia.html#EncodingMode-enum"/>
             <keyword name="QtMedia::ConstantQualityEncoding" id="QtMedia::ConstantQualityEncoding" ref="qtmedia.html#EncodingMode-enum"/>
@@ -3367,6 +3369,7 @@
             <file>declarative-voipdialer-voipdialer-h.html</file>
             <file>serviceactions.html</file>
             <file>querymessages.html</file>
+            <file>service-framework-on-symbian.html</file>
             <file>qcontactchangelogfilter-members.html</file>
             <file>qmediacontrol-members.html</file>
             <file>qmediacontent.html</file>

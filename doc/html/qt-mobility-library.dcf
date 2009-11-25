@@ -3165,6 +3165,9 @@
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>
     </section>
+    <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian">
+        <keyword ref="service-framework-on-symbian.html">Qt Service Framework on Symbian</keyword>
+    </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
     </section>

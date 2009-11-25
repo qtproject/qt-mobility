@@ -30,6 +30,14 @@ symbian {
     DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
     include(symbian/settingsmanager.pri)
 
+    deploy.path = $$EPOCROOT
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
+
+    for(header, exportheaders.sources) {
+        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+    }
+
     DEFINES += QT_BUILD_INTERNAL
     HEADERS += settingslayer_symbian.h \
         pathmapper_symbian.h \
