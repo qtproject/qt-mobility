@@ -140,6 +140,7 @@
         <keyword ref="qcamera.html#Error-enum">QCamera::NoError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::CameraError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::ServiceMissingError</keyword>
+        <keyword ref="qcamera.html#Error-enum">QCamera::NotSupportedFeatureError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::InvalidRequestError</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureMode</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureModes</keyword>
@@ -1292,17 +1293,6 @@
         <keyword ref="qcontacturl.html#SubTypeFavourite-var">SubTypeFavourite</keyword>
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
-        <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
-        <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
-        <keyword ref="qgeoareamonitor.html#center-prop">setCenter</keyword>
-        <keyword ref="qgeoareamonitor.html#radius-prop">radius</keyword>
-        <keyword ref="qgeoareamonitor.html#radius-prop">setRadius</keyword>
-        <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
-        <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
-        <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
-        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
     </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
         <keyword ref="qgeocoordinate.html">QGeoCoordinate</keyword>

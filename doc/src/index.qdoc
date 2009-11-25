@@ -244,12 +244,12 @@
 
     <tr>
     <td></td>
-    <td>Symbian 3.1</td>
-    <td>Symbian 3.2</td>
-    <td>Symbian 5.0</td>
+    <td>S60 3rd Edition, Feature Pack 1</td>
+    <td>S60 3rd Edition, Feature Pack 2</td>
+    <td>S60 5th Edition</td>
     <td>Maemo 5</td>
     <td>Maemo 6</td>
-    <td>Windows CE</td>
+    <td>Windows CE/Mobile</td>
     <td>Windows XP/Vista</td>
     <td>Linux</td>
     <td>Mac OS X</td>
@@ -261,7 +261,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -275,12 +275,12 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
     <td bgcolor="lightgreen"></td>
-    <td bgcolor="green">Using MAPI and Pocket Outlook</td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green">Using MAPI and Pocket Outlook Object Model</td>
     <td bgcolor="lightgreen">Using MAPI and Outlook</td>
     <td bgcolor="green">Using QMF</td>
-    <td></td>
+    <td bgcolor="lightgray"></td>
     <td></td>
     </tr>
 
@@ -289,7 +289,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -303,8 +303,8 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="green">Only Subscription</td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -317,7 +317,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="lightgray"></td>
@@ -331,7 +331,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="lightgray"></td>
@@ -345,11 +345,11 @@
     <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgray"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
-    <td bgcolor="green">GStreamer</td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green">Using GStreamer</td>
     <td bgcolor="lightgreen"></td>
     <td></td>
     </tr>
@@ -359,7 +359,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -369,7 +369,7 @@
     </tr>
 
     </table>
-    
+
     \endraw
     
 */

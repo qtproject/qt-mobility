@@ -77,7 +77,6 @@ qhp.Mobility.subprojects.examples.indexTitle = Qt Mobility Examples
 qhp.Mobility.subprojects.examples.selectors = fake:example
 qhp.Mobility.subprojects.examples.sortPages = true
 
-
 Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           QM_EXPORT_CANVAS \
                           QM_EXPORT_DNS \
@@ -115,6 +114,7 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           Q_INLINE_TEMPLATE \
                           Q_INVOKABLE \
 			  Q_LOCATION_EXPORT \
+			  Q_MEDIA_EXPORT \
                           Q_NETWORK_EXPORT \
                           Q_OPENGL_EXPORT \
                           Q_OUTOFLINE_TEMPLATE \

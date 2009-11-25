@@ -2574,37 +2574,6 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" href="qgeoareamonitor.html" location="qgeoareamonitor.h" bases="QObject" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.h" type="QGeoCoordinate">
-                <getter name="center"/>
-                <setter name="setCenter"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.h" type="qreal">
-                <getter name="radius"/>
-                <setter name="setRadius"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" fullname="QGeoAreaMonitor::QGeoAreaMonitor" href="qgeoareamonitor.html#QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoAreaMonitor(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoAreaMonitor" fullname="QGeoAreaMonitor::~QGeoAreaMonitor" href="qgeoareamonitor.html#dtor.QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoAreaMonitor()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QGeoAreaMonitor::setCenter" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="center" type="void" signature="setCenter(const QGeoCoordinate &amp; coordinate)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="center" type="QGeoCoordinate" signature="center() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QGeoAreaMonitor::setRadius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="radius" type="void" signature="setRadius(qreal radius)">
-                <parameter left="qreal" right="" name="radius" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="radius" type="qreal" signature="radius() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createDefaultMonitor" fullname="QGeoAreaMonitor::createDefaultMonitor" href="qgeoareamonitor.html#createDefaultMonitor" location="qgeoareamonitor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoAreaMonitor *" signature="createDefaultMonitor(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="areaEntered" fullname="QGeoAreaMonitor::areaEntered" href="qgeoareamonitor.html#areaEntered" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaEntered(const QGeoPositionInfo &amp; update)">
-                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="areaExited" fullname="QGeoAreaMonitor::areaExited" href="qgeoareamonitor.html#areaExited" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaExited(const QGeoPositionInfo &amp; update)">
-                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
-            </function>
-        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaServiceProviderHint" href="qmediaserviceproviderhint.html" location="qmediaserviceprovider.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QMediaServiceProviderHint::Type" href="qmediaserviceproviderhint.html#Type-enum" location="qmediaserviceprovider.h">
                 <value name="Null" value="0"/>
@@ -4613,9 +4582,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setPlaylist" fullname="QMediaPlaylistNavigator::setPlaylist" href="qmediaplaylistnavigator.html#setPlaylist" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPlaylist(QMediaPlaylistProvider * playlist)">
                 <parameter left="QMediaPlaylistProvider *" right="" name="playlist" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="playbackMode" fullname="QMediaPlaylistNavigator::playbackMode" href="qmediaplaylistnavigator.html#playbackMode-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="playbackMode" type="QMediaPlaylist::PlaybackMode" signature="playbackMode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentItem" fullname="QMediaPlaylistNavigator::currentItem" href="qmediaplaylistnavigator.html#currentItem-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentItem" type="QMediaContent" signature="currentItem() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="nextItem" fullname="QMediaPlaylistNavigator::nextItem" href="qmediaplaylistnavigator.html#nextItem-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="nextItem" type="QMediaContent" signature="nextItem(int steps) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="playbackMode" fullname="QMediaPlaylistNavigator::playbackMode" href="qmediaplaylistnavigator.html#playbackMode-prop" location="qmediaplaylistnavigator.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="playbackMode" type="QMediaPlaylist::PlaybackMode" signature="playbackMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentItem" fullname="QMediaPlaylistNavigator::currentItem" href="qmediaplaylistnavigator.html#currentItem-prop" location="qmediaplaylistnavigator.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentItem" type="QMediaContent" signature="currentItem() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="nextItem" fullname="QMediaPlaylistNavigator::nextItem" href="qmediaplaylistnavigator.html#nextItem-prop" location="qmediaplaylistnavigator.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="nextItem" type="QMediaContent" signature="nextItem(int steps) const">
                 <parameter left="int" right="" name="steps" default="1"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="previousItem" fullname="QMediaPlaylistNavigator::previousItem" href="qmediaplaylistnavigator.html#previousItem-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="previousItem" type="QMediaContent" signature="previousItem(int steps) const">
@@ -4624,7 +4593,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="itemAt" fullname="QMediaPlaylistNavigator::itemAt" href="qmediaplaylistnavigator.html#itemAt" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMediaContent" signature="itemAt(int position) const">
                 <parameter left="int" right="" name="position" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentPosition" fullname="QMediaPlaylistNavigator::currentPosition" href="qmediaplaylistnavigator.html#currentPosition-prop" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentPosition" type="int" signature="currentPosition() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentPosition" fullname="QMediaPlaylistNavigator::currentPosition" href="qmediaplaylistnavigator.html#currentPosition-prop" location="qmediaplaylistnavigator.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="currentPosition" type="int" signature="currentPosition() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="nextPosition" fullname="QMediaPlaylistNavigator::nextPosition" href="qmediaplaylistnavigator.html#nextPosition" location="qmediaplaylistnavigator.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="nextPosition(int steps) const">
                 <parameter left="int" right="" name="steps" default="1"/>
             </function>
@@ -6200,7 +6169,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="contrast" fullname="QVideoWidget::contrast" href="qvideowidget.html#contrast-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="contrast" type="int" signature="contrast() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="hue" fullname="QVideoWidget::hue" href="qvideowidget.html#hue-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="hue" type="int" signature="hue() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="saturation" fullname="QVideoWidget::saturation" href="qvideowidget.html#saturation-prop" location="qvideowidget.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="saturation" type="int" signature="saturation() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sizeHint" fullname="QVideoWidget::sizeHint" href="qvideowidget.html#sizeHint" location="qvideowidget.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QSize" signature="sizeHint() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sizeHint" fullname="QVideoWidget::sizeHint" href="qvideowidget.html#sizeHint" location="qvideowidget.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QSize" signature="sizeHint() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFullScreen" fullname="QVideoWidget::setFullScreen" href="qvideowidget.html#fullScreen-prop" location="qvideowidget.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="fullScreen" type="void" signature="setFullScreen(bool fullScreen)">
                 <parameter left="bool" right="" name="fullScreen" default=""/>
             </function>
@@ -6234,19 +6203,19 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="saturationChanged" fullname="QVideoWidget::saturationChanged" href="qvideowidget.html#saturationChanged" location="qvideowidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="saturationChanged(int saturation)">
                 <parameter left="int" right="" name="saturation" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="showEvent" fullname="QVideoWidget::showEvent" href="qvideowidget.html#showEvent" location="qvideowidget.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="showEvent(QShowEvent * event)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="showEvent" fullname="QVideoWidget::showEvent" href="qvideowidget.html#showEvent" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="showEvent(QShowEvent * event)">
                 <parameter left="QShowEvent *" right="" name="event" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="hideEvent" fullname="QVideoWidget::hideEvent" href="qvideowidget.html#hideEvent" location="qvideowidget.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="hideEvent(QHideEvent * event)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="hideEvent" fullname="QVideoWidget::hideEvent" href="qvideowidget.html#hideEvent" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="hideEvent(QHideEvent * event)">
                 <parameter left="QHideEvent *" right="" name="event" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="resizeEvent" fullname="QVideoWidget::resizeEvent" href="qvideowidget.html#resizeEvent" location="qvideowidget.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="resizeEvent(QResizeEvent * event)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="resizeEvent" fullname="QVideoWidget::resizeEvent" href="qvideowidget.html#resizeEvent" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="resizeEvent(QResizeEvent * event)">
                 <parameter left="QResizeEvent *" right="" name="event" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="moveEvent" fullname="QVideoWidget::moveEvent" href="qvideowidget.html#moveEvent" location="qvideowidget.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="moveEvent(QMoveEvent * event)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="moveEvent" fullname="QVideoWidget::moveEvent" href="qvideowidget.html#moveEvent" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="moveEvent(QMoveEvent * event)">
                 <parameter left="QMoveEvent *" right="" name="event" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="paintEvent" fullname="QVideoWidget::paintEvent" href="qvideowidget.html#paintEvent" location="qvideowidget.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paintEvent(QPaintEvent * event)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="paintEvent" fullname="QVideoWidget::paintEvent" href="qvideowidget.html#paintEvent" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paintEvent(QPaintEvent * event)">
                 <parameter left="QPaintEvent *" right="" name="event" default=""/>
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QVideoWidget::d_ptr" href="qvideowidget.html#d_ptr-var" location="qvideowidget.h" type="QVideoWidgetPrivate *" static="false"/>
@@ -7081,7 +7050,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="customProperty" fullname="QServiceInterfaceDescriptor::customProperty" href="qserviceinterfacedescriptor.html#customProperty" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="customProperty(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="customPropertyKeys" fullname="QServiceInterfaceDescriptor::customPropertyKeys" href="qserviceinterfacedescriptor.html#customPropertyKeys" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customPropertyKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customPropertyKeys" fullname="QServiceInterfaceDescriptor::customPropertyKeys" href="qserviceinterfacedescriptor.html#customPropertyKeys" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customPropertyKeys() const"/>
         </class>
         <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-86" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="86" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
@@ -7380,10 +7349,8 @@
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
             <contents name="location" title="Location" level="2"/>
             <contents name="messaging" title="Messaging" level="2"/>
-            <contents name="messaging-dependencies-and-requirements" title="Messaging dependencies and requirements" level="3"/>
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
-            <contents name="service-framework-dependencies-and-requirements" title="Service Framework Dependencies and Requirements" level="3"/>
             <contents name="system-information" title="System Information" level="2"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
         </page>
@@ -7558,7 +7525,6 @@
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
             <contents name="building-individual-qt-mobility-components" title="Building Individual Qt Mobility Components" level="2"/>
             <contents name="environment-variables" title="Environment Variables" level="1"/>
-            <contents name="further-information" title="Further information" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWidgetControl_iid" href="qvideowidgetcontrol.html#QVideoWidgetControl_iid" location="qvideowidgetcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWidgetControl" type="" signature="QVideoWidgetControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceControl_iid" href="qaudiodevicecontrol.html#QAudioDeviceControl_iid" location="qaudiodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceControl" type="" signature="QAudioDeviceControl_iid()"/>
