@@ -385,9 +385,9 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
     m_source->requestUpdate(0);
     m_source->requestUpdate(1);
 	
-    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+    QTRY_COMPARE_WITH_TIMEOUT(spyTimeout.count(), 0, 1000);
 
-	QTRY_COMPARE_WITH_TIMEOUT(spyTimeout.count(), 0, 1000);
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
     QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1) || (spyTimeout.count() == 1), 20000);
 }
