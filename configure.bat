@@ -192,9 +192,6 @@ goto cmdline_parsing
 
 :startProcessing
 
-copy %PROJECT_CONFIG% %BUILD_PATH%\config.pri
-del %PROJECT_CONFIG%
-
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
 set RELEASEMODE=
 
