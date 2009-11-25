@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVCARD21WRITER_H
-#define QVCARD21WRITER_H
+#ifndef QVCARD21WRITER_P_H
+#define QVCARD21WRITER_P_H
 
 //
 //  W A R N I N G
@@ -58,7 +58,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QVCard21Writer : public QVersitWriterPrivate
+class Q_AUTOTEST_EXPORT QVCard21Writer : public QVersitWriterPrivate
 {
 public:
     QVCard21Writer();
@@ -67,13 +67,9 @@ public:
 protected: // From QVersitWriterPrivate
     QByteArray encodeVersitProperty(const QVersitProperty& property);
     QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
-
-private: // New functions
     bool quotedPrintableEncode(const QVersitProperty& property, QByteArray& value) const;
-
-    friend class UT_QVCard21Writer;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QVCARD21WRITER_H
+#endif // QVCARD21WRITER_P_H

@@ -56,19 +56,19 @@ QTM_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitContactExporterPrivate : public QObject
+class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate : public QObject
 {
     Q_OBJECT
-public:    
+public:
     QVersitContactExporterPrivate();
     ~QVersitContactExporterPrivate();
 
     void exportContact(QVersitDocument& versitDocument, const QContact& contact);
-    
+
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);
 
-private:
+protected:
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
     void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
     void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
@@ -103,12 +103,10 @@ private:
 public: // Data
     QList<QContactDetail> mUnknownContactDetails;
 
-private: // Data
+protected: // Data
     QHash<QString,QString> mPropertyMappings;
     QHash<QString,QString> mParameterMappings;
     QVersitDocument::VersitType mVersitType;
-
-    friend class UT_QVersitContactExporter;
 };
 
 QTM_END_NAMESPACE

@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef VERSITUTILS_H
-#define VERSITUTILS_H
+#ifndef VERSITUTILS_P_H
+#define VERSITUTILS_P_H
 
 #include "qmobilityglobal.h"
 
@@ -53,7 +53,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class VersitUtils
+class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
     static QByteArray fold(QByteArray& text, int maxChars);
@@ -72,8 +72,7 @@ public:
     static QMultiHash<QString,QString> extractVCard30PropertyParams(
         const QByteArray& property);
 
-private:
-    
+    // "Private" functions
     static QList<QByteArray> extractParams(const QByteArray& property);
     static QList<QByteArray> extractParts(const QByteArray& text, char separator);
     static QByteArray extractPart(
@@ -83,12 +82,8 @@ private:
     static QByteArray paramName(const QByteArray& parameter);
     static QByteArray paramValue(const QByteArray& parameter);
     static bool shouldBeQuotedPrintableEncoded(char chr);
-    
-private:
-    
-    friend class UT_VersitUtils;
 };
 
 QTM_END_NAMESPACE
 
-#endif // VERSITUTILS_H
+#endif // VERSITUTILS_P_H

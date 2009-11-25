@@ -63,7 +63,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitWriterPrivate : public QThread
+class Q_AUTOTEST_EXPORT QVersitWriterPrivate : public QThread
 {
     Q_OBJECT
 
@@ -97,8 +97,6 @@ private: // Constructors
 private: // Data
     QByteArray mDocumentType;
     QByteArray mVersion;
-
-    friend class UT_QVersitWriter;
 };
 
 QTM_END_NAMESPACE

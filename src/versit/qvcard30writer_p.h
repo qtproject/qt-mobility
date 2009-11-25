@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVCARD30WRITER_H
-#define QVCARD30WRITER_H
+#ifndef QVCARD30WRITER_P_H
+#define QVCARD30WRITER_P_H
 
 //
 //  W A R N I N G
@@ -58,7 +58,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QVCard30Writer : public QVersitWriterPrivate
+class Q_AUTOTEST_EXPORT QVCard30Writer : public QVersitWriterPrivate
 {
 public:
     QVCard30Writer();
@@ -67,12 +67,9 @@ public:
 protected: // From QVersitWriterPrivate
     QByteArray encodeVersitProperty(const QVersitProperty& property);
     QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
-
-private: // Data
     QHash<QString,QString> mPropertyNameMappings;
-    friend class UT_QVCard30Writer;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QVCARD30WRITER_H
+#endif // QVCARD30WRITER_P_H
