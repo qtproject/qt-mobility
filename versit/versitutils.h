@@ -49,7 +49,6 @@
 #include <QStringList>
 #include <QMultiHash>
 
-
 class VersitUtils                
 {
 public:
