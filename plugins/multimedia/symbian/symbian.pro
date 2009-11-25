@@ -1,4 +1,5 @@
 TEMPLATE = lib
+QT += multimedia
 CONFIG += plugin
 TARGET = QtMobilityMultimediaEngine
 PLUGIN_SUBDIR = mediaservice
@@ -6,7 +7,6 @@ include (../../../common.pri)
 LIBS += -lQtMedia
 
 # camera is on hold -lcamerawrapper -lfbscli
-
 
 DEPENDPATH += .
 INCLUDEPATH += . \
