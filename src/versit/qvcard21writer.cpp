@@ -41,6 +41,7 @@
 
 #include "qvcard21writer.h"
 #include "versitutils.h"
+#include "qtversitglobal.h"
 
 QTM_BEGIN_NAMESPACE
 

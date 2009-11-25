@@ -42,9 +42,10 @@
 #ifndef QVERSITREADER_H
 #define QVERSITREADER_H
 
-#include <QObject>
-#include <qversitdocument.h>
+#include "qversitdocument.h"
 #include "qtversitglobal.h"
+
+#include <QObject>
 
 class QIODevice;
 

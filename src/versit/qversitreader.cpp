@@ -155,4 +155,6 @@ QList<QVersitDocument> QVersitReader::result() const
     return d->mVersitDocuments;
 }
 
+#include "moc_qversitreader.cpp"
+
 QTM_END_NAMESPACE

@@ -54,6 +54,8 @@
 //
 
 #include "qversitdefs.h"
+#include "qtversitglobal.h"
+
 #include <QList>
 #include <QDateTime>
 #include <QHash>

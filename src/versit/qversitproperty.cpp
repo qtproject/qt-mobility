@@ -41,6 +41,8 @@
 
 #include "qversitproperty.h"
 #include "qversitproperty_p.h"
+#include "qtversitglobal.h"
+
 #include <QStringList>
 
 QTM_BEGIN_NAMESPACE

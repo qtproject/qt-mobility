@@ -43,6 +43,7 @@
 #include "qversitcontactimporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
+#include "qtversitglobal.h"
 
 QTM_BEGIN_NAMESPACE
 

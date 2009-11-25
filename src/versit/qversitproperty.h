@@ -42,8 +42,9 @@
 #ifndef QVERSITPROPERTY_H
 #define QVERSITPROPERTY_H
 
-#include <qtversitglobal.h>
-#include <qversitdocument.h>
+#include "qtversitglobal.h"
+#include "qversitdocument.h"
+
 #include <QString>
 #include <QStringList>
 #include <QMultiHash>

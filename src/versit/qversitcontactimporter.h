@@ -42,8 +42,10 @@
 #ifndef QVERSITCONTACTIMPORTER_H
 #define QVERSITCONTACTIMPORTER_H
 
-#include <qtversitglobal.h>
+#include "qtversitglobal.h"
+
 #include <qcontact.h>
+
 #include <QList>
 
 QTM_BEGIN_NAMESPACE

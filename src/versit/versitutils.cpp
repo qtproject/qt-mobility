@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include "versitutils.h"
+#include "qtversitglobal.h"
+
 #include <QMap>
 #include <QRegExp>
 

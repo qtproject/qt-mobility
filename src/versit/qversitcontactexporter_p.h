@@ -44,6 +44,8 @@
 
 #include "qversitdocument.h"
 #include "qversitproperty.h"
+#include "qtversitglobal.h"
+
 #include <QHash>
 #include <QObject>
 

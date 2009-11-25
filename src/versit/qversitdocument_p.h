@@ -42,10 +42,12 @@
 #ifndef QVERSITDOCUMENT_P_H
 #define QVERSITDOCUMENT_P_H
 
-#include <QSharedData>
-#include <QList>
 #include "qversitdocument.h"
 #include "qversitproperty.h"
+#include "qtversitglobal.h"
+
+#include <QSharedData>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 

@@ -41,6 +41,8 @@
 
 #include "qversitwriter_p.h"
 #include "versitutils.h"
+#include "qtversitglobal.h"
+
 #include <QStringList>
 
 QTM_BEGIN_NAMESPACE
@@ -131,5 +133,7 @@ QByteArray QVersitWriterPrivate::encodeGroupsAndName(
     encodedGroupAndName.append(property.name().toAscii());
     return encodedGroupAndName;
 }
+
+#include "moc_qversitwriter_p.cpp"
 
 QTM_END_NAMESPACE

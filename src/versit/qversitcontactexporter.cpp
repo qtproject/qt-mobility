@@ -42,6 +42,8 @@
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
+#include "qtversitglobal.h"
+
 #include <qcontact.h>
 #include <qcontactdetail.h>
 
@@ -149,5 +151,8 @@ QList<QContactDetail> QVersitContactExporter::unknownContactDetails()
 {
     return d->mUnknownContactDetails;
 }
+
+
+#include "moc_qversitcontactexporter.cpp"
 
 QTM_END_NAMESPACE

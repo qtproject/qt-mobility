@@ -43,6 +43,8 @@
 #ifndef QVERSITDEFS_H
 #define QVERSITDEFS_H
 
+#include "qtversitglobal.h"
+
 #include <qcontactdetail.h>
 #include <qcontactname.h>
 #include <qcontactemailaddress.h>

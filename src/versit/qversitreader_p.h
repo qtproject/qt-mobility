@@ -56,6 +56,9 @@
 
 #include "qversitdocument.h"
 #include "qversitproperty.h"
+#include "qtversitglobal.h"
+
+#include <QObject>
 #include <QThread>
 #include <QByteArray>
 #include <QIODevice>
@@ -66,6 +69,8 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitReaderPrivate : public QThread
 {
+    Q_OBJECT
+
 public: // Constructors and destructor
     QVersitReaderPrivate(); 
     ~QVersitReaderPrivate();

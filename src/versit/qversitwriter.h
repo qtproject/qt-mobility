@@ -42,9 +42,11 @@
 #ifndef QVERSITWRITER_H
 #define QVERSITWRITER_H
 
+#include "qversitdocument.h"
+#include "qtversitglobal.h"
+
 #include <QObject>
 #include <QIODevice>
-#include <qversitdocument.h>
 
 QTM_BEGIN_NAMESPACE
 

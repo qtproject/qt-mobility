@@ -42,7 +42,8 @@
 #ifndef QVERSITDOCUMENT_H
 #define QVERSITDOCUMENT_H
 
-#include <qtversitglobal.h>
+#include "qtversitglobal.h"
+
 #include <QList>
 #include <QSharedDataPointer>
 

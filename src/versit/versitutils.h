@@ -43,13 +43,13 @@
 #ifndef VERSITUTILS_H
 #define VERSITUTILS_H
 
+#include "qtversitglobal.h"
+
 #include <QByteArray>
 #include <QPair>
 #include <QString>
 #include <QStringList>
 #include <QMultiHash>
-
-#include "qtversitglobal.h"
 
 QTM_BEGIN_NAMESPACE
 

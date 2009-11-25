@@ -41,8 +41,10 @@
 
 #include "qversitdefs.h"
 #include "qversitcontactimporter_p.h"
-#include <qversitdocument.h>
-#include <qversitproperty.h>
+#include "qversitdocument.h"
+#include "qversitproperty.h"
+#include "qtversitglobal.h"
+
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
@@ -63,6 +65,7 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
+
 #include <QHash>
 #include <QFile>
 

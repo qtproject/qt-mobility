@@ -41,6 +41,7 @@
 
 #include "qversitreader_p.h"
 #include "versitutils.h"
+#include "qtversitglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -48,8 +49,8 @@ QTM_BEGIN_NAMESPACE
 #define MAX_VERSIT_DOCUMENT_NESTING_DEPTH 20
 
 /*! Construct a reader. */
-QVersitReaderPrivate::QVersitReaderPrivate() : 
-    mIoDevice(0), 
+QVersitReaderPrivate::QVersitReaderPrivate()
+    : mIoDevice(0),
     mDocumentNestingLevel(0)
 {
 }
@@ -255,5 +256,8 @@ bool QVersitReaderPrivate::setVersionFromProperty(
     } 
     return valid;
 }
+
+
+#include "moc_qversitreader_p.cpp"
 
 QTM_END_NAMESPACE

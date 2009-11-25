@@ -42,6 +42,8 @@
 #include "qversitcontactexporter_p.h"
 #include "qversitdefs.h"
 #include "versitutils.h"
+#include "qtversitglobal.h"
+
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
@@ -62,6 +64,7 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
+
 #include <QFile>
 #include <QUrl>
 #include <QBuffer>
@@ -672,5 +675,7 @@ QByteArray QVersitContactExporterPrivate::escape(const QByteArray& value)
     }
     return escaped;
 }
+
+#include "moc_qversitcontactexporter_p.cpp"
 
 QTM_END_NAMESPACE

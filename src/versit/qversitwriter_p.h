@@ -53,8 +53,10 @@
 // We mean it.
 //
 
-#include <qversitdocument.h>
-#include <qversitproperty.h>
+#include "qversitdocument.h"
+#include "qversitproperty.h"
+#include "qtversitglobal.h"
+
 #include <QThread>
 #include <QByteArray>
 #include <QIODevice>
@@ -63,6 +65,8 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitWriterPrivate : public QThread
 {
+    Q_OBJECT
+
 public:
     virtual ~QVersitWriterPrivate();
     bool isReady() const;

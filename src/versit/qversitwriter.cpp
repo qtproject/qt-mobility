@@ -43,6 +43,7 @@
 #include "qvcard21writer.h"
 #include "qvcard30writer.h"
 #include "versitutils.h"
+#include "qtversitglobal.h"
 
 #include <QStringList>
 
@@ -181,5 +182,7 @@ bool QVersitWriter::writeAll()
         ok = d->write();
     return ok;
 }
+
+#include "moc_qversitwriter.cpp"
 
 QTM_END_NAMESPACE

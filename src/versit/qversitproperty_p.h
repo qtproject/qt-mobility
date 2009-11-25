@@ -43,6 +43,8 @@
 #define QVERSITPROPERTY_P_H
 
 #include "qversitdocument.h"
+#include "qtversitglobal.h"
+
 #include <QSharedData>
 #include <QString>
 #include <QStringList>

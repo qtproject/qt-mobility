@@ -54,6 +54,7 @@
 //
 
 #include "qversitwriter_p.h"
+#include "qtversitglobal.h"
 
 QTM_BEGIN_NAMESPACE
 

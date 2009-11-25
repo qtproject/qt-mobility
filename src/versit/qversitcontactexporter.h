@@ -42,9 +42,11 @@
 #ifndef QVERSITCONTACTEXPORTER_H
 #define QVERSITCONTACTEXPORTER_H
 
-#include <qtversitglobal.h>
-#include <qversitdocument.h>
+#include "qtversitglobal.h"
+#include "qversitdocument.h"
+
 #include <qcontact.h>
+
 #include <QObject>
 #include <QImage>
 
