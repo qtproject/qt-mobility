@@ -30,7 +30,15 @@
     }
 
     SOURCES += \
-        main.cpp</pre>
+        main.cpp
+
+    symbian:TARGET.CAPABILITY = NetworkServices \
+        LocalServices \
+        ReadUserData \
+        WriteUserData \
+        UserEnvironment \
+        ReadDeviceData \
+        WriteDeviceData</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
