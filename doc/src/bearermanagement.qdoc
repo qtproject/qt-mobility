@@ -216,7 +216,7 @@ If the system does not support global session calling
 \section3 Platform capabilities
 
 Some API features are not available on all platforms. The
-\l QNetworkConfigurationManager::CapabilityFlag should be used to detect
+\l QNetworkConfigurationManager::Capability should be used to detect
 platform features at runtime. The following table lists the various
 platform API's being used by this API. This may assist in the process of
 determining the feature support:

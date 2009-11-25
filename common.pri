@@ -139,7 +139,8 @@ symbian {
 # Add the output dirs to the link path too
 mac:contains(QT_CONFIG,qt_framework) {
     #add framework option
-    contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
+    ##contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
+    LIBS+=-F$$OUTPUT_DIR/lib
 }
 LIBS += -L$$OUTPUT_DIR/lib
 

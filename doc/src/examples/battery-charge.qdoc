@@ -44,7 +44,7 @@
     \title Accessing Publish and Subscribe from QML
 
     This examples shows how to access published context values from within QML.  The example
-    consists of two programs.  The first, battery-provider, is a standard Qt GUI application that
+    consists of two programs.  The first, battery-publisher, is a standard Qt GUI application that
     is used to emulate a battery for the sole purpose of demonstrating the second program.  It
     publishes the keys
 
@@ -55,26 +55,26 @@
 
     and provides controls for modifying their values.
 
-    \image battery-provider.png
+    \image battery-publisher.png
 
-    The second program, battery-consumer, is implemented in QML with some C++ code to display the
+    The second program, battery-subscriber, is implemented in QML with some C++ code to display the
     QML and make QValueSpaceSubscriber available from within QML.
 
-    The user interface of the battery consumer program is described in QML.  It has the following
+    The user interface of the battery subscriber program is described in QML.  It has the following
     features: A rectangular area representing the percent charge of the battery.  It indicates a
     low battery state by changing the color to red, it is green otherwise.  An animation is shown
     to indicate that the battery is being recharged.
 
-    \image battery-consumer.png
+    \image battery-subscriber.png
 
-    \section2 Battery Consumer
+    \section2 Battery Subscriber
 
     The first step is to make QValueSpaceSubscriber available from within QML so that our QML code
-    can access the keys published by the battery-provider.  This is achieved by using the
+    can access the keys published by the battery-publisher.  This is achieved by using the
     QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros.  The following code makes
     QValueSpaceSubscriber available from within QML as ValueSpaceSubscriber.
 
-    \snippet battery-charge/battery-consumer/main.cpp 0
+    \snippet battery-charge/battery-subscriber/main.cpp 0
 
     \section3 QML
 
@@ -83,12 +83,12 @@
     \i path properties to the Value Space path of the keys.  Finally we set the \i notify
     properties to true to enable the emission of change notification signals.
 
-    \snippet battery-charge/battery-consumer/battery-meter.qml 0
+    \snippet battery-charge/battery-subscriber/battery-meter.qml 0
 
     The default state of the rectangle used to visualize the battery charge uses the \i charge
     property of our BatteryCharge class in the expression for its height.
 
-    \snippet battery-charge/battery-consumer/battery-meter.qml 1
+    \snippet battery-charge/battery-subscriber/battery-meter.qml 1
 
     When the battery charge changes the height of the rectangle will automatically change.
 
@@ -96,10 +96,10 @@
     drops below 25% and the battery is not being recharged.  When in this state the color is set to
     red.
 
-    \snippet battery-charge/battery-consumer/battery-meter.qml 2
+    \snippet battery-charge/battery-subscriber/battery-meter.qml 2
 
     The \i charging state is entered when the battery is being recharged.  When in this state a
     particle effect animation is enabled.
 
-    \snippet battery-charge/battery-consumer/battery-meter.qml 3
+    \snippet battery-charge/battery-subscriber/battery-meter.qml 3
 */

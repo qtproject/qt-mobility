@@ -305,8 +305,8 @@
         tooltip += s;
 
         tooltip += tr(&quot;&lt;br&gt;&lt;br&gt;Active time: %1 seconds&quot;).arg(session-&gt;activeTime());
-        tooltip += tr(&quot;&lt;br&gt;Received data: %1 bytes&quot;).arg(session-&gt;receivedData());
-        tooltip += tr(&quot;&lt;br&gt;Sent data: %1 bytes&quot;).arg(session-&gt;sentData());
+        tooltip += tr(&quot;&lt;br&gt;Received data: %1 bytes&quot;).arg(session-&gt;bytesReceived());
+        tooltip += tr(&quot;&lt;br&gt;Sent data: %1 bytes&quot;).arg(session-&gt;bytesWritten());
 
         setToolTip(tooltip);
     }

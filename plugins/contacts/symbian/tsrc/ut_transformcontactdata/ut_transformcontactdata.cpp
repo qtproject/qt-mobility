@@ -1028,8 +1028,8 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::FieldAccountUri,0);
     validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeSip,KUidContactFieldSIPID.iUid);
     validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeImpp, KUidContactFieldIMPP.iUid);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeSipVoip,0);
-    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeVideoShare,0);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeSipVoip,KUidContactFieldVCardMapVOIP.iUid);
+    validateGetIdForField(*transformOnlineAccount, QContactOnlineAccount::SubTypeVideoShare,KUidContactFieldVCardMapSWIS.iUid);
     validateGetIdForField(*transformOnlineAccount, "WrongValue", 0);
     QVERIFY( !(transformOnlineAccount->supportsSubType("WrongValue")));
 
@@ -1278,7 +1278,7 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
 {
     CntTransformContactData* transformAvatar = new CntTransformAvatar();
     QVERIFY(transformAvatar != 0);
-    QVERIFY(transformAvatar->supportsField(KUidContactFieldPicture.iUid));
+    QVERIFY(transformAvatar->supportsField(KUidContactFieldCodImage.iUid));
     QVERIFY(transformAvatar->supportsField(KUidContactFieldRingTone.iUid));
     QVERIFY(transformAvatar->supportsField(KUidContactFieldVideoRingTone.iUid));
     QVERIFY(!(transformAvatar->supportsField(0))); //Test for Wrong value
@@ -1310,7 +1310,7 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
     } else {
         QVERIFY(fields.count() == 1);
         QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
-        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPicture));
+        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldCodImage));
         QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     }
 
@@ -1340,7 +1340,7 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QSt
         QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     }
 
-    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPicture);
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCodImage);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformAvatar->transformItemField(*newField, contact);

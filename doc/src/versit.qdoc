@@ -1,0 +1,122 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+
+\page versit.html
+
+\title Versit API
+
+\tableofcontents
+
+\section1 Overview 
+Versit API provides a set of methods to parse/read (\l{QVersitReader}) and
+encode/write (\l{QVersitWriter}) versit* documents such as vCards
+(\l http://www.imc.org/pdi/).
+Currently \l{QVersitReader} and \l{QVersitWriter} support
+reading and writing vCard 2.1 and 3.0 formats.
+
+Versit API also provides utilities to import (\l{QVersitContactImporter})
+QContacts from versit documents and export (\l{QVersitContactExporter})
+QContacts to versit documents.
+
+[*] Versit is a trademark of the Internet Mail Consortium.
+
+\section1 Usage
+\code
+// Create the input vCard
+QBuffer input;
+input.open(QBuffer::ReadWrite);
+QByteArray inputVCard =
+    "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John Citizen\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n";
+input.write(inputVCard);
+input.seek(0);
+
+// Parse the input into QVersitDocument(s)
+QVersitReader reader;
+reader.setDevice(&input);
+reader.readAll(); // Remember to check the return value
+
+// Import the QVersitDocument to a QContact
+QVersitDocument inputDocument = reader.result().takeFirst();
+QVersitContactImporter importer;
+QContact contact = importer.importContact(inputDocument);
+// Note that the QContact is not saved yet.
+// Use QContactManager::saveContact() for saving if necessary
+
+// Export the QContact back to a QVersitDocument
+QVersitContactExporter exporter;
+QVersitDocument outputDocument = exporter.exportContact(contact);
+
+// Encode the QVersitDocument back to a vCard
+QBuffer output;
+output.open(QBuffer::ReadWrite);
+QVersitWriter writer;
+writer.setDevice(&output);
+writer.setVersitDocument(outputDocument);
+writer.writeAll(); // Remember to check the return value
+
+// Read the vCard back to a QByteArray
+output.seek(0);
+QByteArray outputVCard(output.readAll());
+\endcode
+
+\section1 Classes
+\list
+    \o \l{QVersitProperty}
+    \o \l{QVersitDocument}    
+    \o \l{QVersitReader}
+    \o \l{QVersitWriter}    
+    \o \l{QVersitContactImporter}
+    \o \l{QVersitContactExporter}
+\endlist
+
+\section1 Mapping the vCard constants
+
+vCard properties are mapped to QContactDetails as follows:
+\snippet ../../src/versit/qversitdefs.h Property name mappings
+
+vCard type parameters are mapped to subtypes in QContactDetails as follows:
+\snippet ../../src/versit/qversitdefs.h Property type parameter mappings
+
+File extensions in vCards are mapped to the file system file extensions as follows:
+\snippet ../../src/versit/qversitdefs.h File extension mappings
+*/
