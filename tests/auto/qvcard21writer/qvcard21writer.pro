@@ -19,8 +19,8 @@ INCLUDEPATH += \
 HEADERS += ut_qvcard21writer.h
 SOURCES += ut_qvcard21writer.cpp
 
-qtAddLibrary(QtContacts_beta)
-qtAddLibrary(QtVersit_beta)
+CONFIG += mobility
+MOBILITY = contacts versit
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

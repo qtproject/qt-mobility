@@ -10,8 +10,8 @@ INCLUDEPATH += . \
                ../../src/contacts/details \
                ../../src/contacts/filters
 
-qtAddLibrary(QtContacts)
-qtAddLibrary(QtVersit)
+CONFIG += mobility
+MOBILITY = contacts versit
 
 # Input
 HEADERS += versittest.h \

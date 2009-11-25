@@ -19,8 +19,8 @@ INCLUDEPATH += \
 HEADERS += ut_qversitdocument.h
 SOURCES += ut_qversitdocument.cpp
 
-qtAddLibrary(QtContacts_beta)
-qtAddLibrary(QtVersit_beta)
+CONFIG += mobility
+MOBILITY = contacts versit
 
 symbian: { 
     TARGET.CAPABILITY = ALL \
