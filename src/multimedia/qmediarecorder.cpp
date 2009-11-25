@@ -331,8 +331,7 @@ QList<int> QMediaRecorder::supportedAudioSampleRates(const QAudioEncoderSettings
 }
 
 /*!
-    Returns a list of resolutions video can be encoded at.  An empty list is returned if the video
-    encoder supports arbitrary resolutions within the minimum and maximum range.
+    Returns a list of resolutions video can be encoded at.
 
     If non null video \a settings parameter is passed,
     the returned list is reduced to resolution supported with partial settings like video codec or framerate applied.
