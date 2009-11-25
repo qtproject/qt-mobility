@@ -249,7 +249,7 @@ void IapMonitor::iapDeleted(const char *key, GConfEntry * /*entry*/)
 
 void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
-    capFlags |= QNetworkConfigurationManager::BearerManagement;
+    capFlags |= QNetworkConfigurationManager::CanStartAndStopInterfaces;
     capFlags |= QNetworkConfigurationManager::DataStatistics;
     capFlags |= QNetworkConfigurationManager::ForcedRoaming;
 }
@@ -468,7 +468,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	cpPriv->isValid = true;
 	cpPriv->id = OSSO_IAP_ANY;
 	cpPriv->type = QNetworkConfiguration::UserChoice;
-	cpPriv->purpose = QNetworkConfiguration::Unknown;
+	cpPriv->purpose = QNetworkConfiguration::UnknownPurpose;
 	cpPriv->roamingSupported = false;
 	cpPriv->manager = this;
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);

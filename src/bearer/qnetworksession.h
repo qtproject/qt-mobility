@@ -93,8 +93,8 @@ public:
     QVariant property(const QString& key) const;
     void setProperty(const QString& key, const QVariant& value);
 
-    quint64 sentData() const;
-    quint64 receivedData() const;
+    quint64 bytesWritten() const;
+    quint64 bytesReceived() const;
     quint64 activeTime() const;
     
     bool waitForOpened(int msecs = 30000);

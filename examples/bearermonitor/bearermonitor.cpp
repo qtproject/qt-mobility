@@ -327,16 +327,16 @@ void BearerMonitor::showConfigurationFor(QTreeWidgetItem *item)
     }
 
     switch (conf.purpose()) {
-    case QNetworkConfiguration::Unknown:
+    case QNetworkConfiguration::UnknownPurpose:
         configurationPurpose->setText(tr("Unknown"));
         break;
-    case QNetworkConfiguration::Public:
+    case QNetworkConfiguration::PublicPurpose:
         configurationPurpose->setText(tr("Public"));
         break;
-    case QNetworkConfiguration::Private:
+    case QNetworkConfiguration::PrivatePurpose:
         configurationPurpose->setText(tr("Private"));
         break;
-    case QNetworkConfiguration::ServiceSpecific:
+    case QNetworkConfiguration::ServiceSpecificPurpose:
         configurationPurpose->setText(tr("Service Specific"));
         break;
     default:
@@ -345,7 +345,7 @@ void BearerMonitor::showConfigurationFor(QTreeWidgetItem *item)
 
     configurationIdentifier->setText(conf.identifier());
 
-    configurationRoaming->setText(conf.roamingAvailable() ? tr("Available") : tr("Not available"));
+    configurationRoaming->setText(conf.isRoamingAvailable() ? tr("Available") : tr("Not available"));
 
     configurationChildren->setText(QString::number(conf.children().count()));
 

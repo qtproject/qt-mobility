@@ -291,9 +291,9 @@ SessionTab::SessionTab(QNetworkConfiguration* apNetworkConfiguration,
         snapLineEdit->setText(apNetworkConfiguration->name()+" ("+apNetworkConfiguration->identifier()+")");
     }
     bearerLineEdit->setText(m_NetworkSession->bearerName());
-    sentRecDataLineEdit->setText(QString::number(m_NetworkSession->sentData())+
+    sentRecDataLineEdit->setText(QString::number(m_NetworkSession->bytesWritten())+
                                  QString(" / ")+
-                                 QString::number(m_NetworkSession->receivedData()));
+                                 QString::number(m_NetworkSession->bytesReceived()));
     snapLineEdit->setFocusPolicy(Qt::NoFocus);
     iapLineEdit->setFocusPolicy(Qt::NoFocus);
     bearerLineEdit->setFocusPolicy(Qt::NoFocus);
@@ -556,9 +556,9 @@ void SessionTab::done(bool error)
     }
     msgBox.exec();
     
-    sentRecDataLineEdit->setText(QString::number(m_NetworkSession->sentData())+
+    sentRecDataLineEdit->setText(QString::number(m_NetworkSession->bytesWritten())+
                                  QString(" / ")+
-                                 QString::number(m_NetworkSession->receivedData()));
+                                 QString::number(m_NetworkSession->bytesReceived()));
 }
 
 // End of file

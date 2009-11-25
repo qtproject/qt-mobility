@@ -35,14 +35,14 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#dtor.QNetworkSession">~QNetworkSession</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#activeTime">activeTime</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#bearerName">bearerName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#bytesReceived">bytesReceived</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#bytesWritten">bytesWritten</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QNetworkConfiguration </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#configuration">configuration</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">SessionError </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QNetworkInterface </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#interface">interface</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#isActive">isActive</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#property">property</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#receivedData">receivedData</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#sentData">sentData</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#setProperty">setProperty</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#state">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#waitForOpened">waitForOpened</a></b> ( int <i>msecs</i> = 30000 )</td></tr>
@@ -151,6 +151,16 @@
 </table></p>
 <p>If the session is based on a network configuration of type <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a> the type of the preferred or currently active configuration is returned. Therefore the bearer type may change over time.</p>
 <p>This function returns an empty string if this session is based on an invalid configuration.</p>
+<h3 class="fn"><a name="bytesReceived"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::bytesReceived () const</h3>
+<p>Returns the amount of data received in bytes; otherwise 0.</p>
+<p>This field value includes the usage across all active network sessions which use the same network interface.</p>
+<p>If the session is based on a service network configuration the number of sent bytes across all active member configurations are returned.</p>
+<p>This function may not always be supported on all platforms and returns 0. The platform capability can be detected via <a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::DataStatistics</a>.</p>
+<h3 class="fn"><a name="bytesWritten"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::bytesWritten () const</h3>
+<p>Returns the amount of data sent in bytes; otherwise 0.</p>
+<p>This field value includes the usage across all active network sessions which use the same network interface.</p>
+<p>If the session is based on a service network configuration the number of sent bytes across all active member configurations are returned.</p>
+<p>This function may not always be supported on all platforms and returns 0. The platform capability can be detected via <a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::DataStatistics</a>.</p>
 <h3 class="fn"><a name="close"></a>void QNetworkSession::close ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Decreases the session counter on the associated network configuration. If the session counter reaches zero the active network interface is shut down. This also means that <a href="qnetworksession.html#state">state</a>() will only change from <a href="qnetworksession.html#State-enum">Connected</a> to <a href="qnetworksession.html#State-enum">Disconnected</a> if this was the last active session.</p>
 <p>If the platform does not support out-of-process sessions calling this function does not stop the interface. In this case <a href="qnetworksession.html#stop">stop</a>() has to be used to force a shut down. The platform capabilities can be detected via <a href="qnetworkconfigurationmanager.html#capabilities">QNetworkConfigurationManager::capabilities</a>().</p>
@@ -196,7 +206,7 @@
 <p>As a consequence to this signal the application may start the roaming process by calling <a href="qnetworksession.html#migrate">migrate</a>() or may chose to <a href="qnetworksession.html#ignore">ignore</a>() the new access point. If the application doesn't call either of the two functions the session ignores the migration opportunity.</p>
 <p>If the roaming process is non-seamless the IP address will change which means that a socket becomes invalid. However seamless mobility can ensure that the local IP address does not change. This is achieved by using a virtual IP address which is bound to the actual link address. During the roaming process the virtual address is attached to the new link address.</p>
 <p>Some platforms may support the concept of Forced Roaming and Application Level Roaming (ALR). Forced roaming implies that the platform may simply roam to a new configuration without consulting applications. It is up to the application to detect the link layer loss and reestablish its sockets. In contrast ALR provides the opportunity to prevent the system from roaming. If this session is based on a configuration that supports roaming the application can choose whether it wants to be consulted (ALR use case) by connecting to this signal. For as long as this signal connection remains the session remains registered as a roaming stakeholder; otherwise roaming will be enforced by the platform.</p>
-<p>See also <a href="qnetworksession.html#migrate">migrate</a>(), <a href="qnetworksession.html#ignore">ignore</a>(), and <a href="qnetworkconfiguration.html#roamingAvailable">QNetworkConfiguration::roamingAvailable</a>().</p>
+<p>See also <a href="qnetworksession.html#migrate">migrate</a>(), <a href="qnetworksession.html#ignore">ignore</a>(), and <a href="qnetworkconfiguration.html#isRoamingAvailable">QNetworkConfiguration::isRoamingAvailable</a>().</p>
 <h3 class="fn"><a name="property"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QNetworkSession::property ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the value for property <i>key</i>.</p>
 <p>A network session can have properties attached which may describe the session in more details. This function can be used to gain access to those properties.</p>
@@ -222,24 +232,14 @@
 <tr valign="top" class="odd"><td>ConnectInBackground</td><td>Setting this property to <i>true</i> before calling <a href="qnetworksession.html#open">open</a>() implies that the connection attempt is made but if no connection can be established, the user is not connsulted and asked to select a suitable connection. This property is not set by default and support for it depends on the platform.</td></tr>
 </table></p>
 <p>See also <a href="qnetworksession.html#setProperty">setProperty</a>().</p>
-<h3 class="fn"><a name="receivedData"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::receivedData () const</h3>
-<p>Returns the amount of data received in bytes; otherwise 0.</p>
-<p>This field value includes the usage across all active network sessions which use the same network interface.</p>
-<p>If the session is based on a service network configuration the number of sent bytes across all active member configurations are returned.</p>
-<p>This function may not always be supported on all platforms and returns 0. The platform capability can be detected via <a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::DataStatistics</a>.</p>
 <h3 class="fn"><a name="reject"></a>void QNetworkSession::reject ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>The new access point is not suitable for the application. By calling this function the session returns to the previous access point/configuration. This action may invalidate any socket that has been created via the not desired access point.</p>
 <p>See also <a href="qnetworksession.html#accept">accept</a>().</p>
-<h3 class="fn"><a name="sentData"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::sentData () const</h3>
-<p>Returns the amount of data sent in bytes; otherwise 0.</p>
-<p>This field value includes the usage across all active network sessions which use the same network interface.</p>
-<p>If the session is based on a service network configuration the number of sent bytes across all active member configurations are returned.</p>
-<p>This function may not always be supported on all platforms and returns 0. The platform capability can be detected via <a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::DataStatistics</a>.</p>
 <h3 class="fn"><a name="sessionClosed"></a>void QNetworkSession::sessionClosed ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the network session has been closed.</p>
 <h3 class="fn"><a name="sessionOpened"></a>void QNetworkSession::sessionOpened ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the network session has been opened.</p>
-<p>The underlying network interface will not be shut down as long as the session remains open. Note that this feature is dependent on <a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">system wide session support</a>.</p>
+<p>The underlying network interface will not be shut down as long as the session remains open. Note that this feature is dependent on <a href="qnetworkconfigurationmanager.html#Capability-enum">system wide session support</a>.</p>
 <h3 class="fn"><a name="setProperty"></a>void QNetworkSession::setProperty ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets the property <i>value</i> on the session. The property is identified using <i>key</i>. Removing an already set property can be achieved by passing an invalid <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a>.</p>
 <p>Note that the <i>UserChoiceConfigurationIdentifier</i> and <i>ActiveConfigurationIdentifier</i> properties are read only and cannot be changed using this method.</p>

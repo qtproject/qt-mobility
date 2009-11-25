@@ -378,12 +378,12 @@ quint64 QNetworkSessionPrivate::getStatistics(bool sent) const
 }
 
 
-quint64 QNetworkSessionPrivate::sentData() const
+quint64 QNetworkSessionPrivate::bytesWritten() const
 {
     return getStatistics(true);
 }
 
-quint64 QNetworkSessionPrivate::receivedData() const
+quint64 QNetworkSessionPrivate::bytesReceived() const
 {
     return getStatistics(false);
 }
@@ -969,7 +969,7 @@ void QNetworkSessionPrivate::do_open()
 	    qDebug() << "All configurations:" << all;
 	    foreach(QNetworkConfiguration p, configs) {
 		qDebug() << p.name() <<":  isvalid->" <<p.isValid() << " type->"<< p.type() << 
-		    " roaming->" << p.roamingAvailable() << "identifier->" << p.identifier() <<
+		    " roaming->" << p.isRoamingAvailable() << "identifier->" << p.identifier() <<
 		    " purpose->" << p.purpose() << " state->" << p.state();
 	    }
 #endif

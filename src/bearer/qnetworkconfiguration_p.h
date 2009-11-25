@@ -64,7 +64,7 @@ class QNetworkConfigurationPrivate : public QSharedData
 public:
     QNetworkConfigurationPrivate ()
         : isValid(false), type(QNetworkConfiguration::Invalid), 
-          roamingSupported(false), purpose(QNetworkConfiguration::Unknown)
+          roamingSupported(false), purpose(QNetworkConfiguration::UnknownPurpose)
     {
 #ifdef BEARER_ENGINE
         internet = false;

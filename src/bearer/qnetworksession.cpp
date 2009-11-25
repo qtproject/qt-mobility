@@ -186,7 +186,7 @@ QTM_BEGIN_NAMESPACE
     connection remains the session remains registered as a roaming stakeholder; otherwise roaming will 
     be enforced by the platform.
 
-    \sa migrate(), ignore(), QNetworkConfiguration::roamingAvailable()
+    \sa migrate(), ignore(), QNetworkConfiguration::isRoamingAvailable()
 */
 
 /*!
@@ -611,9 +611,9 @@ void QNetworkSession::reject()
     This function may not always be supported on all platforms and returns
     0. The platform capability can be detected via QNetworkConfigurationManager::DataStatistics.
 */
-quint64 QNetworkSession::sentData() const
+quint64 QNetworkSession::bytesWritten() const
 {
-    return d->sentData();
+    return d->bytesWritten();
 }
 
 /*!
@@ -628,9 +628,9 @@ quint64 QNetworkSession::sentData() const
     This function may not always be supported on all platforms and returns
     0. The platform capability can be detected via QNetworkConfigurationManager::DataStatistics.
 */
-quint64 QNetworkSession::receivedData() const
+quint64 QNetworkSession::bytesReceived() const
 {
-    return d->receivedData();
+    return d->bytesReceived();
 }
 
 /*!

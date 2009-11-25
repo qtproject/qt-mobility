@@ -592,12 +592,12 @@ QString QNetworkSessionPrivate::bearerName() const
     }
 }
 
-quint64 QNetworkSessionPrivate::sentData() const
+quint64 QNetworkSessionPrivate::bytesWritten() const
 {
     return transferredData(KUplinkData);
 }
 
-quint64 QNetworkSessionPrivate::receivedData() const
+quint64 QNetworkSessionPrivate::bytesReceived() const
 {
     return transferredData(KDownlinkData);
 }

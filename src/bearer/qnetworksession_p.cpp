@@ -318,7 +318,7 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
     return lastError;
 }
 
-quint64 QNetworkSessionPrivate::sentData() const
+quint64 QNetworkSessionPrivate::bytesWritten() const
 {
 #if defined(BACKEND_NM)
     if( state == QNetworkSession::Connected ) {
@@ -336,7 +336,7 @@ quint64 QNetworkSessionPrivate::sentData() const
     return tx_data;
 }
 
-quint64 QNetworkSessionPrivate::receivedData() const
+quint64 QNetworkSessionPrivate::bytesReceived() const
 {
 #if defined(BACKEND_NM)
     if( state == QNetworkSession::Connected ) {

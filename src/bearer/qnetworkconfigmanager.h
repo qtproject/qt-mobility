@@ -50,7 +50,6 @@
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
-//namespace QtMobility {
 
 class QNetworkConfigurationManagerPrivate;
 class Q_BEARER_EXPORT QNetworkConfigurationManager : public QObject
@@ -60,7 +59,7 @@ class Q_BEARER_EXPORT QNetworkConfigurationManager : public QObject
 public:
     
     enum Capability {
-         BearerManagement  = 0x00000001,
+         CanStartAndStopInterfaces  = 0x00000001,
          DirectConnectionRouting = 0x00000002,
          SystemSessionSupport = 0x00000004,
          ApplicationLevelRoaming = 0x00000008,
@@ -81,6 +80,8 @@ public:
     QNetworkConfiguration configurationFromIdentifier(const QString& identifier) const;
     void updateConfigurations();
 
+    bool isOnline() const;
+
 Q_SIGNALS:
     void configurationAdded(const QNetworkConfiguration& config);
     void configurationRemoved(const QNetworkConfiguration& config);
@@ -93,7 +94,6 @@ Q_SIGNALS:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QNetworkConfigurationManager::Capabilities)
 
 QTM_END_NAMESPACE
-//}
 
 QT_END_HEADER
 

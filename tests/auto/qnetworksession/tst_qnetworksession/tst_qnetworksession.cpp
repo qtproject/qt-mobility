@@ -180,7 +180,7 @@ void tst_QNetworkSession::initTestCase()
 void tst_QNetworkSession::cleanupTestCase()
 {
     if (!(manager.capabilities() & QNetworkConfigurationManager::SystemSessionSupport) &&
-        (manager.capabilities() & QNetworkConfigurationManager::BearerManagement) &&
+        (manager.capabilities() & QNetworkConfigurationManager::CanStartAndStopInterfaces) &&
         inProcessSessionManagementCount == 0) {
         QFAIL("No usable configurations found to complete all possible "
               "tests in inProcessSessionManagement()");

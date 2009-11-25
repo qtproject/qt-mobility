@@ -106,8 +106,8 @@ public:
 
     QString errorString() const; //must return translated string
     QNetworkSession::SessionError error() const;
-    quint64 sentData() const;
-    quint64 receivedData() const;
+    quint64 bytesWritten() const;
+    quint64 bytesReceived() const;
     quint64 activeTime() const;
     
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
