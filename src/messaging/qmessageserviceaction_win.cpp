@@ -66,70 +66,6 @@ QTM_BEGIN_NAMESPACE
 
 static const unsigned long SmsCharLimit = 160;
 
-#ifndef _WIN32_WCE
-
-namespace {
-
-class ShowFormThread : public QThread
-{
-public:
-    ShowFormThread(IMessage* mapiMessage,
-                   MapiFolderPtr mapiFolder,
-                   MapiStorePtr mapiStore,
-                   QObject* parent = 0);
-    ~ShowFormThread();
-
-    void run();
-
-    bool ok() const;
-
-private:
-    bool m_ok;
-    IMessage* m_mapiMessage;
-    MapiFolderPtr m_mapiFolder;
-    MapiStorePtr m_mapiStore;
-};
-
-ShowFormThread::ShowFormThread(IMessage* mapiMessage,
-                               MapiFolderPtr mapiFolder,
-                               MapiStorePtr mapiStore,
-                               QObject* parent)
-:
-QThread(parent),
-m_ok(true),
-m_mapiMessage(mapiMessage),
-m_mapiFolder(mapiFolder),
-m_mapiStore(mapiStore)
-{
-    // Ensure that the main thread has instantiated the store before we access it from another thread
-    (void)QMessageStore::instance();
-}
-
-ShowFormThread::~ShowFormThread()
-{
-    mapiRelease(m_mapiMessage);
-}
-
-void ShowFormThread::run()
-{
-    // Ensure that this thread has initialized MAPI
-    WinHelpers::MapiInitializationToken token(WinHelpers::initializeMapi());
-
-    QMessageStore::ErrorCode le = QMessageStore::NoError;
-    MapiSessionPtr session = MapiSession::createSession(&le);
-    if(m_ok = (le == QMessageStore::NoError))
-        m_ok = session->showForm(m_mapiMessage,m_mapiFolder->folder(),m_mapiStore->store());
-}
-
-bool ShowFormThread::ok() const
-{
-    return m_ok;
-}
-
-}
-
-#endif
-
 class QMessageServiceActionPrivate : public QObject
 {
     Q_OBJECT
@@ -158,8 +94,6 @@ public slots:
 
 #ifdef _WIN32_WCE
     void messageUpdated(const QMessageId& id);
-#else
-    void showFormThreadFinished();
 #endif
 
 signals:
@@ -179,9 +113,6 @@ public:
     QMessageStore::NotificationFilterId m_bodyDownloadFilterId;
     bool m_registeredUpdates;
     QThread *m_queryThread;
-#ifndef _WIN32_WCE
-    ShowFormThread* m_showFormThread;
-#endif
     QList<QThread*> m_obsoleteThreads;
 };
 
@@ -272,14 +203,6 @@ void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
     }
 }
 
-#else
-
-void QMessageServiceActionPrivate::showFormThreadFinished()
-{
-    _lastError = m_showFormThread->ok() ? QMessageStore::NoError : QMessageStore::FrameworkFault;
-    completed();
-}
-
 #endif
 
 QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
@@ -288,9 +211,6 @@ QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction
      _state(QMessageServiceAction::Pending),
      m_registeredUpdates(false),
      m_queryThread(0)
-#ifndef _WIN32_WCE
-     ,m_showFormThread(0)
-#endif
 {
 }
 
@@ -298,14 +218,6 @@ QMessageServiceActionPrivate::~QMessageServiceActionPrivate()
 {
     qDeleteAll(m_obsoleteThreads);
     delete m_queryThread;
-#ifndef _WIN32_WCE
-    if(m_showFormThread)
-    {
-        if(m_showFormThread->isRunning())
-            m_showFormThread->terminate();
-        m_showFormThread->deleteLater();
-    }
-#endif
     QMessageStore::instance()->unregisterNotificationFilter(m_bodyDownloadFilterId);
 }
 
@@ -505,13 +417,16 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
 #ifndef _WIN32_WCE
     if(showComposer)
     {
-        ShowFormThread* sft = new ShowFormThread(mapiMessage,mapiFolder,mapiStore);
-        connect(sft, SIGNAL(finished()), this, SLOT(showFormThreadFinished()), Qt::QueuedConnection);
-        sft->start();
+        MapiForm* mapiForm = new MapiForm(mapiStore->store(),mapiSession->session(),mapiFolder->folder(),mapiMessage);
+        bool result = mapiForm->show();
+        mapiRelease(mapiForm);
 
-        if (m_showFormThread)
-            m_showFormThread->deleteLater();
-        m_showFormThread = sft;
+        if(!result)
+        {
+            qWarning() << "MapiForm::Show failed";
+            _lastError = QMessageStore::FrameworkFault;
+            return false;
+        }
     }
     else
 #endif
@@ -561,10 +476,6 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
         return false;
     }
 
-    //messageId -> IMapiStore
-    //messageId -> IMapiFolder
-    //messageId -> IMessage
-
     MapiEntryId entryId = QMessageIdPrivate::entryId(messageId);
     MapiRecordKey folderRecordKey = QMessageIdPrivate::folderRecordKey(messageId);
     MapiRecordKey storeRecordKey = QMessageIdPrivate::storeRecordKey(messageId);
@@ -593,15 +504,21 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
         return false;
     }
 
-    ShowFormThread* sft = new ShowFormThread(mapiMessage,mapiFolder,mapiStore);
-    connect(sft, SIGNAL(finished()), this, SLOT(showFormThreadFinished()), Qt::QueuedConnection);
-    sft->start();
+    MapiForm* mapiForm = new MapiForm(mapiStore->store(),mapiSession->session(),mapiFolder->folder(),mapiMessage);
+    bool result = mapiForm->show();
+    mapiRelease(mapiForm);
 
-    if (m_showFormThread)
-        m_showFormThread->deleteLater();
-    m_showFormThread = sft;
+    if(!result)
+    {
+        qWarning() << "MapiForm::show failed.";
+        _lastError = QMessageStore::FrameworkFault;
+        return false;
+    }
 
-    return true;
+    mapiRelease(mapiMessage);
+
+    return result;
+
 #endif
 }
 
@@ -905,17 +822,10 @@ bool QMessageServiceAction::compose(const QMessage &message)
     emit stateChanged(d_ptr->_state);
 
     bool result = d_ptr->send(message,true);
-#ifndef _WIN32_WCE
-    if(!result) {
-#endif
     d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
     d_ptr->_active = false;
     emit stateChanged(d_ptr->_state);
     return result;
-#ifndef _WIN32_WCE
-    }
-    return true;
-#endif
 }
 
 bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
@@ -1067,17 +977,10 @@ bool QMessageServiceAction::show(const QMessageId& id)
     emit stateChanged(d_ptr->_state);
 
     bool result = d_ptr->show(id);
-#ifndef _WIN32_WCE
-    if(!result) {
-#endif
     d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
     d_ptr->_active = false;
     emit stateChanged(d_ptr->_state);
     return result;
-#ifndef _WIN32_WCE
-    }
-    return true;
-#endif
 }
 
 bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)

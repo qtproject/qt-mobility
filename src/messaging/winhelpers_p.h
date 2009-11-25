@@ -53,6 +53,19 @@
 #include <QQueue>
 #include <QEvent>
 
+#ifndef _WIN32_WCE
+
+#define USES_IID_IMAPIForm
+#define USES_IID_IMAPIMessageSite
+#define USES_IID_IPersistMessage
+
+#include <initguid.h>
+#include <mapiguid.h>
+#include <mapiform.h>
+
+#endif
+
+
 // As per http://support.microsoft.com/kb/816477
 #ifndef PR_MSG_EDITOR_FORMAT
 #define PR_MSG_EDITOR_FORMAT PROP_TAG( PT_LONG, 0x5909 )
@@ -415,8 +428,6 @@ public:
 
     void removeMessages(QMessageStore::ErrorCode *lastError, const QMessageIdList &ids);
 
-    bool showForm(IMessage* message, IMAPIFolder* folder, IMsgStore* store);
-
     IMAPISession* session() const { return _mapiSession; }
 
     QMessageStore::NotificationFilterId registerNotificationFilter(QMessageStore::ErrorCode *lastError, const QMessageFilter &filter);
@@ -468,6 +479,63 @@ private:
     mutable QHash<MapiEntryId, MapiStorePtr> _storeMap;
 };
 
+#ifndef _WIN32_WCE
+
+class MapiForm : public IMAPIMessageSite
+{
+public:
+    MapiForm(IMsgStore* mapiStore,
+             IMAPISession* mapiSession,
+             IMAPIFolder* mapiFolder,
+             IMessage* mapiMessage);
+
+    virtual ~MapiForm();
+
+    // IUnknown interface
+    STDMETHODIMP QueryInterface (REFIID riid, void** ppvObj);
+    STDMETHODIMP_(ULONG) AddRef();
+    STDMETHODIMP_(ULONG) Release();
+    STDMETHODIMP GetLastError(HRESULT hResult, ulong flags, LPMAPIERROR FAR * lppMAPIError);
+
+    // IMAPIMessageSite interface
+    STDMETHODIMP GetSession(IMAPISession* FAR * mapiSession);
+    STDMETHODIMP GetStore(IMsgStore* FAR * mapiStore);
+    STDMETHODIMP GetFolder(IMAPIFolder* FAR * mapiFolder);
+    STDMETHODIMP GetMessage(IMessage* FAR * mapiMessage);
+    STDMETHODIMP GetFormManager(IMAPIFormMgr* FAR * ppFormMgr);
+    STDMETHODIMP NewMessage(ULONG fComposeInFolder,
+                            IMAPIFolder* mapiFolder,
+                            IPersistMessage* pPersistMessage,
+                            IMessage* FAR * mapiMessage,
+                            IMAPIMessageSite* FAR * ppMessageSite,
+                            LPMAPIVIEWCONTEXT FAR * ppViewContext);
+    STDMETHODIMP CopyMessage(IMAPIFolder* pFolderDestination);
+    STDMETHODIMP MoveMessage(IMAPIFolder* pFolderDestination,
+                             LPMAPIVIEWCONTEXT pViewContext,
+                             LPCRECT prcPosRect);
+    STDMETHODIMP DeleteMessage(LPMAPIVIEWCONTEXT pViewContext, LPCRECT prcPosRect);
+    STDMETHODIMP SaveMessage();
+    STDMETHODIMP SubmitMessage(ulong flags);
+    STDMETHODIMP GetSiteStatus(ulong* status);
+
+    bool show();
+
+private:
+    HRESULT setPersistMessage(LPMAPIFORM lpForm, IPersistMessage* mapiPersistMessage);
+    void releasePersistMessage();
+    void releaseAll();
+
+private:
+    long m_referenceCount;
+    IMAPIFolder* m_mapiFolder;
+    IMessage* m_mapiMessage;
+    IMsgStore* m_mapiStore;
+    IMAPISession* m_mapiSession;
+    IPersistMessage* m_mapiPersistMessage;
+};
+
+#endif
 
 QTM_END_NAMESPACE
+
 #endif

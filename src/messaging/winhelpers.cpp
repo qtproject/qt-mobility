@@ -91,10 +91,10 @@
 #include <QTimer>
 #include <QMutexLocker>
 
+
 #include <shlwapi.h>
 #include <shlguid.h>
 #include <tchar.h>
-#include <mapitags.h>
 
 #ifdef _WIN32_WCE
 #include "win32wce/qmailmessage.h"
@@ -1209,6 +1209,7 @@ namespace {
 
     void replaceMessageBody(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, const MapiStorePtr &store)
     {
+        Q_UNUSED(store);
         // Remove any preexisting body elements
 #ifndef _WIN32_WCE
         SizedSPropTagArray(2, props) = {2, {PR_BODY, PR_RTF_COMPRESSED}};
@@ -1271,8 +1272,8 @@ namespace {
 
                         QByteArray format("{\\rtf1\\ansi\\ansicpg" + 
                                           QString::fromUtf16(reinterpret_cast<const quint16*>(codePage)).toLatin1() +
-					  "\\fromhtml1 {\\*\\htmltag1 ");
-					  body = format + body + "}}";
+                      "\\fromhtml1 {\\*\\htmltag1 ");
+                      body = format + body + "}}";
                         textFormat = EDITOR_FORMAT_HTML;
                     }
 
@@ -1340,6 +1341,8 @@ namespace {
 
     void addMessageAttachments(QMessageStore::ErrorCode *lastError, const QMessage &source, IMessage *message, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges )
     {
+        Q_UNUSED(saveOption);
+
         QList<LONG> attachmentNumbers;
 
         if (MapiSession::messageImpl(source)->_hasAttachments) {
@@ -3833,7 +3836,7 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                                                      PR_TRANSPORT_MESSAGE_HEADERS,
                                                      PR_HASATTACH,
                                                      PR_SUBJECT,
-													 PR_PRIORITY,
+                                                     PR_PRIORITY,
 #ifndef _WIN32_WCE
                                                      PR_MSG_EDITOR_FORMAT,
                                                      PR_RTF_IN_SYNC,
@@ -4694,70 +4697,6 @@ void MapiSession::removeMessages(QMessageStore::ErrorCode *lastError, const QMes
     }
 }
 
-bool MapiSession::showForm(IMessage* message, IMAPIFolder* folder, LPMDB store)
-{
-    ULONG messageToken;
-
-    if(_mapiSession->PrepareForm(NULL,message, &messageToken )== S_OK)
-    {
-        ULONG messageStatus = 0;
-        LPSPropValue pProp = 0;
-        ULONG propertyCount = 0;
-        ULONG p[2]={ 1,PR_MSG_STATUS};
-
-        if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
-        {
-            messageStatus = pProp->Value.l;
-            MAPIFreeBuffer(pProp);
-        }
-
-        ULONG messageFlags = 0;
-        p[1] = PR_MESSAGE_FLAGS;
-        if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
-        {
-            messageFlags = pProp->Value.l;
-            MAPIFreeBuffer(pProp);
-        }
-
-        ULONG messageAccess = 0;
-        p[1] = PR_ACCESS;
-        if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
-        {
-            messageAccess = pProp->Value.l;
-            MAPIFreeBuffer(pProp);
-        }
-
-
-        char szMessageClass[256];
-        p[1] = PR_MESSAGE_CLASS;
-
-        if(message->GetProps((LPSPropTagArray)p, MAPI_UNICODE, &propertyCount, &pProp) == S_OK)
-        {
-#ifdef UNICODE
-            WideCharToMultiByte(CP_ACP, 0, pProp->Value.LPSZ,-1, szMessageClass,255, NULL, NULL);
-#else
-            char* szMessageClass=pProp->Value.LPSZ;
-#endif
-        }
-
-        HRESULT hr=_mapiSession->ShowForm(NULL, store, folder, NULL,messageToken, NULL, 0,messageStatus, messageFlags & MAPI_NEW_MESSAGE, messageAccess, szMessageClass);
-        MAPIFreeBuffer(pProp);
-
-        if(hr != MAPI_E_USER_CANCEL && hr != S_OK)
-        {
-            qWarning() << "ShowForm failed";
-            return false;
-        }
-    }
-    else
-    {
-        qWarning() << "PrepareForm failed";
-        return false;
-    }
-
-    return true;
-}
-
 bool MapiSession::event(QEvent *e)
 {
     if (e->type() == NotifyEvent::eventType()) {
@@ -4894,8 +4833,347 @@ void MapiSession::flushNotifyQueue()
     QTimer::singleShot(0, this, SLOT(processNotifyQueue()));
 }
 
+#ifndef _WIN32_WCE
 
+MapiForm::MapiForm(IMsgStore* mapiStore,
+                   IMAPISession* mapiSession,
+                   IMAPIFolder* mapiFolder,
+                   IMessage* mapiMessage)
+:
+m_mapiStore(mapiStore),
+m_mapiSession(mapiSession),
+m_mapiFolder(mapiFolder),
+m_mapiMessage(mapiMessage),
+m_mapiPersistMessage(0),
+m_referenceCount(1)
+{
+    if (m_mapiStore) m_mapiStore->AddRef();
+    if (m_mapiSession) m_mapiSession->AddRef();
+    if (m_mapiFolder) m_mapiFolder->AddRef();
+    if (m_mapiMessage) m_mapiMessage->AddRef();
+}
+
+MapiForm::~MapiForm()
+{
+    releaseAll();
+}
+
+void MapiForm::releaseAll()
+{
+    releasePersistMessage();
+    mapiRelease(m_mapiMessage);
+    mapiRelease(m_mapiFolder);
+    mapiRelease(m_mapiStore);
+    mapiRelease(m_mapiSession);
+}
+
+STDMETHODIMP MapiForm::QueryInterface(REFIID riid, void** iface)
+{
+    *iface = 0;
+
+    if (riid == IID_IMAPIMessageSite)
+    {
+        *iface = (IMAPIMessageSite*)this;
+        AddRef();
+        return S_OK;
+    }
+
+    if (riid == IID_IUnknown)
+    {
+        *iface = (LPUNKNOWN)((IMAPIMessageSite*)this);
+        AddRef();
+        return S_OK;
+    }
+
+    return E_NOINTERFACE;
+}
+
+STDMETHODIMP_(ULONG) MapiForm::AddRef()
+{
+    long refCount = InterlockedIncrement(&m_referenceCount);
+
+    return refCount;
+}
+
+STDMETHODIMP_(ULONG) MapiForm::Release()
+{
+    long refCount = InterlockedDecrement(&m_referenceCount);
+
+    if (!refCount)
+          delete this;
+
+    return refCount;
+}
+
+STDMETHODIMP MapiForm::GetSession (IMAPISession* FAR * mapiSession)
+{
+    HRESULT hResult = S_FALSE;
+
+    if (mapiSession)
+    {
+        *mapiSession = m_mapiSession;
+        if (m_mapiSession)
+        {
+            m_mapiSession->AddRef();
+            hResult = S_OK;
+        }
+    }
+    return hResult;
+}
+
+STDMETHODIMP MapiForm::GetStore(IMsgStore* FAR * mapiStore)
+{
+    HRESULT hResult = S_FALSE;
+
+    if (mapiStore)
+    {
+        *mapiStore = m_mapiStore;
+        if (m_mapiStore)
+        {
+            m_mapiStore->AddRef();
+            hResult = S_OK;
+        }
+    }
+    return hResult;
+}
+
+STDMETHODIMP MapiForm::GetFolder(IMAPIFolder* FAR * mapiFolder)
+{
+    HRESULT hResult = S_FALSE;
+
+    if (mapiFolder)
+    {
+        *mapiFolder = m_mapiFolder;
+        if (m_mapiFolder)
+        {
+            m_mapiFolder->AddRef();
+            hResult = S_OK;
+        }
+    }
+    return hResult;
+}
+
+STDMETHODIMP MapiForm::GetMessage(IMessage* FAR * mapiMessage)
+{
+    HRESULT hResult = S_FALSE;
+
+    if (mapiMessage)
+    {
+        *mapiMessage = m_mapiMessage;
+        if(m_mapiMessage)
+        {
+            m_mapiMessage->AddRef();
+            hResult = S_OK;
+        }
+    }
+    return hResult;
+}
+
+STDMETHODIMP MapiForm::GetFormManager(IMAPIFormMgr* FAR * mapiFormManager)
+{
+    HRESULT hRes = S_OK;
+    hRes = MAPIOpenFormMgr(m_mapiSession,mapiFormManager);
+    if(FAILED(hRes))
+        qWarning() << "MAPIOpenFormMgr failed";
+    return hRes;
+}
+
+STDMETHODIMP MapiForm::NewMessage(ULONG isComposeInFolder,
+                                        IMAPIFolder* mapiFolder,
+                                        IPersistMessage* mapiPersistMessage,
+                                        IMessage* FAR * mapiMessage,
+                                        IMAPIMessageSite* FAR * mapiMessageSite,
+                                        LPMAPIVIEWCONTEXT FAR * mapiViewContext)
+{
+
+    *mapiMessage = 0;
+    *mapiMessageSite = 0;
+
+    HRESULT hRes = S_OK;
+
+    if (mapiViewContext) *mapiViewContext = 0;
+
+    if ((isComposeInFolder == false) || !mapiFolder)
+        mapiFolder = m_mapiFolder;
+
+    if (mapiFolder)
+    {
+        hRes = mapiFolder->CreateMessage(0, 0, mapiMessage);
+
+        if (*mapiMessage)
+        {
+            MapiForm *mapiForm = 0;
+            mapiForm = new MapiForm(m_mapiStore, m_mapiSession, mapiFolder, *mapiMessage);
+            if (mapiForm)
+            {
+                hRes = mapiForm->setPersistMessage(NULL,mapiPersistMessage);
+                *mapiMessageSite = (IMAPIMessageSite*)mapiForm;
+            }
+        }
+    }
+
+    return hRes;
+}
+
+STDMETHODIMP MapiForm::CopyMessage(IMAPIFolder*)
+{
+    return MAPI_E_NO_SUPPORT;
+}
+
+STDMETHODIMP MapiForm::MoveMessage(IMAPIFolder*, LPMAPIVIEWCONTEXT, LPCRECT)
+{
+    return MAPI_E_NO_SUPPORT;
+}
+
+STDMETHODIMP MapiForm::DeleteMessage(LPMAPIVIEWCONTEXT, LPCRECT)
+{
+    return MAPI_E_NO_SUPPORT;
+}
+
+STDMETHODIMP MapiForm::SaveMessage()
+{
+    HRESULT hRes = S_OK;
+
+    if (!m_mapiPersistMessage || !m_mapiMessage)
+        return MAPI_E_INVALID_PARAMETER;
+
+    hRes = m_mapiPersistMessage->Save(0, true);
+
+    if (FAILED(hRes))
+    {
+        qWarning() << "IMessage::Save failed";
+        return hRes;
+    }
+    else
+    {
+        hRes = (m_mapiMessage->SaveChanges(KEEP_OPEN_READWRITE));
+        hRes = (m_mapiPersistMessage->SaveCompleted(NULL));
+    }
+
+    return hRes;
+}
+
+STDMETHODIMP MapiForm::SubmitMessage(ulong flags)
+{
+    Q_UNUSED(flags);
+
+    HRESULT hRes = S_OK;
+    if (!m_mapiPersistMessage || !m_mapiMessage) return MAPI_E_INVALID_PARAMETER;
+
+    hRes = (m_mapiPersistMessage->Save(m_mapiMessage,true));
+
+    if (FAILED(hRes))
+    {
+        qWarning() << "IPersistMessage::Save failed";
+        return hRes;
+    }
+    else
+    {
+        hRes = (m_mapiPersistMessage->HandsOffMessage());
+        hRes = (m_mapiMessage->SubmitMessage(NULL));
+    }
+
+    mapiRelease(m_mapiMessage);
+
+    return hRes;
+}
+
+STDMETHODIMP MapiForm::GetSiteStatus(ULONG* status)
+{
+    *status = VCSTATUS_NEW_MESSAGE;
+
+    if (m_mapiPersistMessage)
+        *status |= VCSTATUS_SAVE | VCSTATUS_SUBMIT | NULL;
+
+    return S_OK;
+}
+
+bool MapiForm::show()
+{
+    IMAPIFormMgr* mapiFormManager = 0;
+
+    if(GetFormManager(&mapiFormManager) != S_OK)
+        return false;
+
+    IMAPIForm* MAPIForm = 0;
+
+    if(mapiFormManager->LoadForm((ULONG_PTR) 0, 0, 0, 0, 0, m_mapiFolder,
+                                 this,
+                                 m_mapiMessage,
+                                 0,
+                                 IID_IMAPIForm,
+                                 (LPVOID *) &MAPIForm) != S_OK)
+    {
+        qWarning() << "IMAPIFormMgr::LoadForm failed";
+        mapiFormManager->Release();
+        return false;
+    }
+
+    mapiFormManager->Release();
+
+    RECT rect;
+    bool result = true;
+
+    if (MAPIForm)
+    {
+            setPersistMessage(MAPIForm,NULL);
+
+            HRESULT hRes = S_OK;
+
+            hRes = MAPIForm->DoVerb(0,0,0,&rect);
+            if (S_OK != hRes)
+            {
+                rect.left = 0;
+                rect.right = 500;
+                rect.top = 0;
+                rect.bottom = 400;
+                hRes = MAPIForm->DoVerb(0, 0, 0, &rect);
+            }
+
+            if(S_OK != hRes)
+            {
+                qWarning() << "IMapiForm::DoVerb Failed";
+                result = false;
+            }
+
+            MAPIForm->Release();
+    }
+
+    return  result;
+}
+
+STDMETHODIMP MapiForm::GetLastError(HRESULT, ULONG, LPMAPIERROR FAR*)
+{
+    return MAPI_E_NO_SUPPORT;
+}
+
+void MapiForm::releasePersistMessage()
+{
+    if (m_mapiPersistMessage)
+    {
+        m_mapiPersistMessage->HandsOffMessage();
+        mapiRelease(m_mapiPersistMessage);
+    }
+}
+
+HRESULT MapiForm::setPersistMessage(LPMAPIFORM lpForm, IPersistMessage* mapiPersistMessage)
+{
+    HRESULT hRes = S_OK;
+    releasePersistMessage();
+
+    if (mapiPersistMessage)
+    {
+        m_mapiPersistMessage = mapiPersistMessage;
+        m_mapiPersistMessage->AddRef();
+    }
+    else if (lpForm) hRes = (lpForm->QueryInterface(IID_IPersistMessage ,(LPVOID *)&m_mapiPersistMessage));
+
+    return hRes;
+}
+
+#endif
 
 #include "winhelpers.moc"
 #include "moc_winhelpers_p.cpp"
+
 QTM_END_NAMESPACE
