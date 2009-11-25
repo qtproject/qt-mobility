@@ -67,6 +67,49 @@
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
 
+QTM_BEGIN_NAMESPACE
+class MyQVersitContactExporterPrivate : public QVersitContactExporterPrivate {
+public:
+    void encodeName(QVersitProperty& property, const QContactDetail& detail);
+    void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
+    void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
+    void encodeAddress(QVersitProperty& property, const QContactDetail& detail);
+    void encodeUrl(QVersitProperty& property, const QContactDetail& detail);
+    void encodeUid(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeRev(QVersitProperty& property, const QContactDetail& detail);
+    void encodeBirthDay(QVersitProperty& property, const QContactDetail& detail);
+    void encodeNote(QVersitProperty& property, const QContactDetail& detail);
+    void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
+    void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
+    void encodeGender(QVersitProperty& property, const QContactDetail& detail);
+    void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
+    void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
+    bool encodeAvatar(QVersitProperty& property,
+            const QContactDetail& detail);
+    bool encodeDisplayLabel(QVersitProperty& property,
+            const QContactDetail& detail,
+            const QContact& contact) {return QVersitContactExporterPrivate::encodeDisplayLabel(property, detail, contact);}
+    bool isValidRemoteUrl(const QString& resourceIdentifier) {return QVersitContactExporterPrivate::isValidRemoteUrl(resourceIdentifier);}
+    void encodeParameters(QVersitProperty& property,
+            const QStringList& contexts,
+            const QStringList& subTypes=QStringList()) {return QVersitContactExporterPrivate::encodeParameters(property, contexts, subTypes);}
+    bool encodeEmbeddedContent(const QString& resourcePath,
+            QVersitProperty& property,
+            bool performScaling) {return QVersitContactExporterPrivate::encodeEmbeddedContent(resourcePath, property, performScaling);}
+    void setEscapedValue(QVersitProperty& property,const QString& value) {QVersitContactExporterPrivate::setEscapedValue(property, value);}
+    QByteArray escape(const QByteArray& value) {return QVersitContactExporterPrivate::escape(value);}
+
+
+    // private data
+    QHash<QString, QString>& PropertyMappings() {return mPropertyMappings;}
+    QHash<QString, QString>& ParameterMappings() {return mParameterMappings;}
+
+};
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 void UT_QVersitContactExporter::scale(
     const QString& imageFileName,
@@ -83,9 +126,9 @@ void UT_QVersitContactExporter::init()
     QObject::connect(
         mExporter, SIGNAL(scale(const QString&,QByteArray&)),
         this, SLOT(scale(const QString&,QByteArray&)));
-    mExporterPrivate = new QVersitContactExporterPrivate();
-    QVERIFY(!mExporterPrivate->mParameterMappings.empty());
-    QVERIFY(!mExporterPrivate->mPropertyMappings.empty());
+    mExporterPrivate = new MyQVersitContactExporterPrivate();
+    QVERIFY(!mExporterPrivate->ParameterMappings().empty());
+    QVERIFY(!mExporterPrivate->PropertyMappings().empty());
     mScaleSignalEmitted = false;
 }
 
@@ -1070,3 +1113,6 @@ QContactDetail UT_QVersitContactExporter::searchDetail(
     }
     return detail;
 }
+
+QTEST_MAIN(UT_QVersitContactExporter)
+

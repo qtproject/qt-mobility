@@ -43,12 +43,12 @@
 #define UT_VERSITUTILS_H
 
 #include <QObject>
+#include <qmobilityglobal.h>
 
-
-class UT_VersitUtils : public QObject                 
+class UT_VersitUtils : public QObject
 {
      Q_OBJECT
-    
+
 private slots:
 
     void testCountLeadingWhiteSpaces();

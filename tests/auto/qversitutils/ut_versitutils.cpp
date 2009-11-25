@@ -40,9 +40,12 @@
 ****************************************************************************/
 
 #include "ut_versitutils.h"
-#include "versitutils.h"
 #include <QByteArray>
 #include <QtTest/QtTest>
+
+#include "versitutils_p.h"
+
+QTM_USE_NAMESPACE
 
 void UT_VersitUtils::testCountLeadingWhiteSpaces()
 {
@@ -737,3 +740,6 @@ void UT_VersitUtils::testExtractVCard30PropertyParams()
     QCOMPARE(encodingParams.count(), 1);
     QCOMPARE(encodingParams[0],QString::fromAscii("X-VALUE"));
 }
+
+QTEST_MAIN(UT_VersitUtils)
+

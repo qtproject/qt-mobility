@@ -16,12 +16,11 @@ INCLUDEPATH += \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
 
-HEADERS +=    ut_qversitwriter.h
-
-SOURCES +=     ../../../src/versit/qversitwriter.cpp \
-    ut_qversitwriter.cpp
+HEADERS += ut_qversitwriter.h
+SOURCES += ut_qversitwriter.cpp
 
 qtAddLibrary(QtContacts)
+qtAddLibrary(QtVersit)
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

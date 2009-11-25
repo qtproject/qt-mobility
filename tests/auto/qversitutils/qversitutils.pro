@@ -16,12 +16,13 @@ INCLUDEPATH += \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
 
-HEADERS +=    ut_versitutils.h
-
-SOURCES +=     ../../../src/versit/versitutils.cpp \
-    ut_versitutils.cpp
+HEADERS += ut_versitutils.h
+# The original source code is included directly to avoid some
+# C++ protection problems..
+SOURCES += ut_versitutils.cpp
 
 qtAddLibrary(QtContacts)
+qtAddLibrary(QtVersit)
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

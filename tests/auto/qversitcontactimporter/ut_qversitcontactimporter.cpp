@@ -68,6 +68,7 @@
 #include <QDir>
 
 
+QTM_USE_NAMESPACE
 
 
 QString imageAndAudioClipPath(QString::fromAscii("random98354_dir76583_ut_versit_photo"));
@@ -102,12 +103,10 @@ void UT_QVersitContactImporter::cleanupTestCase()
 void UT_QVersitContactImporter::init()
 {    
     mImporter = new QVersitContactImporter();
-    mImporterPrivate = new QVersitContactImporterPrivate();
 }
 
 void UT_QVersitContactImporter::cleanup()
 {
-    delete mImporterPrivate;
     delete mImporter;
 }
 
@@ -1364,3 +1363,6 @@ QVersitDocument UT_QVersitContactImporter::createDocumentWithNameAndPhoto(
 
     return document;
 }
+
+QTEST_MAIN(UT_QVersitContactImporter)
+

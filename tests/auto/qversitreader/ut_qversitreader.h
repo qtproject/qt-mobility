@@ -44,10 +44,15 @@
 
 #include <QObject>
 #include <QBuffer>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
 
 class QVersitReader;
 class QVersitReaderPrivate;
 
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
 
 class UT_QVersitReader : public QObject                 
 {

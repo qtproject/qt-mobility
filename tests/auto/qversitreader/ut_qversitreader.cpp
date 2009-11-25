@@ -44,6 +44,7 @@
 #include "qversitreader_p.h"
 #include <QtTest/QtTest>
 
+QTM_USE_NAMESPACE
 
 void UT_QVersitReader::init()
 {
@@ -401,3 +402,6 @@ END:VCARD";
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel, 0);
     QCOMPARE(mReaderPrivate->mVersitDocuments.count(), 0);
 }
+
+QTEST_MAIN(UT_QVersitReader)
+

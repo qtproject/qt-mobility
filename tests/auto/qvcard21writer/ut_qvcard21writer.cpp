@@ -40,14 +40,27 @@
 ****************************************************************************/
 
 #include "ut_qvcard21writer.h"
-#include "qvcard21writer.h"
+#include "qvcard21writer_p.h"
 #include "qversitproperty.h"
 #include <QtTest/QtTest>
 #include <QByteArray>
 
+QTM_USE_NAMESPACE
+
+
+class MyQVCard21Writer : public QVCard21Writer
+{
+public:
+    // expose some protected functions as public
+    QByteArray encodeVersitProperty(const QVersitProperty& property) {return QVCard21Writer::encodeVersitProperty(property);}
+    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const {return QVCard21Writer::encodeParameters(parameters);}
+    bool quotedPrintableEncode(const QVersitProperty& property, QByteArray& value) const {return QVCard21Writer::quotedPrintableEncode(property, value);}
+    QByteArray encodeGroupsAndName(const QVersitProperty& property) const {return QVCard21Writer::encodeGroupsAndName(property);}
+};
+
 void UT_QVCard21Writer::init()
 {
-    mWriter = new QVCard21Writer;
+    mWriter = new MyQVCard21Writer;
 }
 
 void UT_QVCard21Writer::cleanup()
@@ -63,7 +76,7 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     property.setName(QString::fromAscii("FN"));
     property.setValue(QByteArray("Homer Simpson"));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
-    
+
     // With parameter(s). No special characters in the value.
     // -> No need to Quoted-Printable encode the value.
     expectedResult = "TEL;HOME:123\r\n";
@@ -178,3 +191,29 @@ void UT_QVCard21Writer::testQuotedPrintableEncode()
     QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
     QVERIFY(encodedValue == property.value());
 }
+
+void UT_QVCard21Writer::testEncodeGroupsAndName()
+{
+    QVersitProperty property;
+
+    // No groups
+    property.setName(QString::fromAscii("name"));
+    QByteArray result("NAME");
+    QCOMPARE(mWriter->encodeGroupsAndName(property),result);
+
+    // One group
+    property.setGroups(QStringList(QString::fromAscii("group")));
+    result = "group.NAME";
+    QCOMPARE(mWriter->encodeGroupsAndName(property),result);
+
+    // Two groups
+    QStringList groups(QString::fromAscii("group1"));
+    groups.append(QString::fromAscii("group2"));
+    property.setGroups(groups);
+    result = "group1.group2.NAME";
+    QCOMPARE(mWriter->encodeGroupsAndName(property),result);
+}
+
+
+QTEST_MAIN(UT_QVCard21Writer)
+

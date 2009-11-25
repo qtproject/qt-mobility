@@ -43,14 +43,20 @@
 #define UT_QVCARD21WRITER_H
 
 #include <QObject>
+#include <qmobilityglobal.h>
 
-class QVCard21Writer;
 
+QTM_BEGIN_NAMESPACE
+QTM_END_NAMESPACE
+
+class MyQVCard21Writer;
+
+QTM_USE_NAMESPACE
 
 class UT_QVCard21Writer : public QObject
 {
      Q_OBJECT
-    
+
 private slots: // Tests
 
     void init();
@@ -59,9 +65,10 @@ private slots: // Tests
     void testEncodeVersitProperty();
     void testEncodeParameters();
     void testQuotedPrintableEncode();
+    void testEncodeGroupsAndName();
 
 private: // Data
-    QVCard21Writer* mWriter;
+    MyQVCard21Writer* mWriter;
 };
 
 #endif // UT_QVCARD21WRITER_H

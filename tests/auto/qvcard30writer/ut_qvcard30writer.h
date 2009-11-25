@@ -43,9 +43,14 @@
 #define UT_QVCARD30WRITER_H
 
 #include <QObject>
+#include <qmobilityglobal.h>
 
-class QVCard30Writer;
+QTM_BEGIN_NAMESPACE
 
+class MyQVCard30Writer;
+
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
 
 class UT_QVCard30Writer : public QObject
 {
@@ -60,7 +65,7 @@ private slots: // Tests
     void testEncodeParameters();
 
 private: // Data
-    QVCard30Writer* mWriter;
+    MyQVCard30Writer* mWriter;
 };
 
 #endif // UT_QVCARD30WRITER_H

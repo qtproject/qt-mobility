@@ -45,6 +45,7 @@
 #include <QString>
 #include <QtTest/QtTest>
 
+QTM_USE_NAMESPACE
 
 void UT_QVersitDocument::init()
 {
@@ -116,3 +117,6 @@ void UT_QVersitDocument::testRemoveProperties()
     mVersitDocument->removeProperties(name);
     QCOMPARE(1, mVersitDocument->properties().count());
 }
+
+QTEST_MAIN(UT_QVersitDocument)
+

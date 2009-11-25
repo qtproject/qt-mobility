@@ -44,15 +44,21 @@
 
 #include <QObject>
 #include <QBuffer>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
 
 class QVersitWriter;
 class QVersitWriterPrivate;
 
+QTM_END_NAMESPACE
 
-class UT_QVersitWriter : public QObject                 
+QTM_USE_NAMESPACE
+
+class UT_QVersitWriter : public QObject
 {
      Q_OBJECT
-    
+
 public slots:
     void writingDone();
 
@@ -61,13 +67,11 @@ private slots: // Tests
     void init();
     void cleanup();
 
-    void testDevice();    
+    void testDevice();
     void testWriting();
-    void testEncodeGroupsAndName();
 
 private: // Data
     QVersitWriter* mWriter;
-    QVersitWriterPrivate* mWriterPrivate;
     QBuffer* mOutputDevice;
     bool mWritingDoneCalled;
 };

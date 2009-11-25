@@ -44,9 +44,15 @@
 
 #include <QObject>
 #include <qversitdocument.h>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
 
 class QVersitContactImporter;
 class QVersitContactImporterPrivate;
+
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
 
 class UT_QVersitContactImporter : public QObject
 {

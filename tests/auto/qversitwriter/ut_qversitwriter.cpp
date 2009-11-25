@@ -41,11 +41,12 @@
 
 #include "ut_qversitwriter.h"
 #include "qversitwriter.h"
-#include ".h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include <QtTest/QtTest>
 #include <QByteArray>
+
+QTM_USE_NAMESPACE
 
 void UT_QVersitWriter::init()
 {
@@ -53,12 +54,10 @@ void UT_QVersitWriter::init()
     mOutputDevice = new QBuffer;
     mWriter = new QVersitWriter;
     connect(mWriter,SIGNAL(writingDone()),this,SLOT(writingDone()),Qt::DirectConnection);
-    mWriterPrivate = new QVCard21Writer;
 }
 
 void UT_QVersitWriter::cleanup()
 {
-    delete mWriterPrivate;
     delete mWriter;
     delete mOutputDevice;
 }
@@ -71,8 +70,8 @@ void UT_QVersitWriter::writingDone()
 void UT_QVersitWriter::testDevice()
 {
     // No device
-    QVERIFY(mWriter->device() == NULL);    
-    
+    QVERIFY(mWriter->device() == NULL);
+
     // Device has been set
     mWriter->setDevice(mOutputDevice);
     QVERIFY(mWriter->device() == mOutputDevice);
@@ -130,25 +129,5 @@ END:VCARD\r\n";
 
 }
 
-void UT_QVersitWriter::testEncodeGroupsAndName()
-{
-    QVersitProperty property;
-
-    // No groups
-    property.setName(QString::fromAscii("name"));
-    QByteArray result("NAME");
-    QCOMPARE(mWriterPrivate->encodeGroupsAndName(property),result);
-
-    // One group
-    property.setGroups(QStringList(QString::fromAscii("group")));
-    result = "group.NAME";
-    QCOMPARE(mWriterPrivate->encodeGroupsAndName(property),result);
-
-    // Two groups
-    QStringList groups(QString::fromAscii("group1"));
-    groups.append(QString::fromAscii("group2"));
-    property.setGroups(groups);
-    result = "group1.group2.NAME";
-    QCOMPARE(mWriterPrivate->encodeGroupsAndName(property),result);
-}
+QTEST_MAIN(UT_QVersitWriter)
 

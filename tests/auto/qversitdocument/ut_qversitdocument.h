@@ -43,8 +43,14 @@
 #define UT_QVERSITDOCUMENT_H
 
 #include <QObject>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
 
 class QVersitDocument;
+
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
 
 class UT_QVersitDocument : public QObject                 
 {

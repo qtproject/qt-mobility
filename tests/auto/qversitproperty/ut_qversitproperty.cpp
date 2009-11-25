@@ -45,6 +45,8 @@
 #include "qversitdocument.h"
 #include <QtTest/QtTest>
 
+QTM_USE_NAMESPACE
+
 void UT_QVersitProperty::init()
 {
     mVersitProperty = new QVersitProperty();
@@ -129,3 +131,6 @@ void UT_QVersitProperty::testEmbeddedDocument()
     QCOMPARE(embeddedDocumentProperties.count(),1);
     QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-TENSION"));
 }
+
+QTEST_MAIN(UT_QVersitProperty)
+

@@ -40,14 +40,26 @@
 ****************************************************************************/
 
 #include "ut_qvcard30writer.h"
-#include "qvcard30writer.h"
+#include "qvcard30writer_p.h"
 #include "qversitproperty.h"
 #include <QtTest/QtTest>
 #include <QByteArray>
 
+QTM_BEGIN_NAMESPACE
+
+class MyQVCard30Writer : public QVCard30Writer {
+public:
+    QByteArray encodeVersitProperty(const QVersitProperty& property) {return QVCard30Writer::encodeVersitProperty(property);}
+    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const {return QVCard30Writer::encodeParameters(parameters);}
+};
+
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
+
 void UT_QVCard30Writer::init()
 {
-    mWriter = new QVCard30Writer;
+    mWriter = new MyQVCard30Writer;
 }
 
 void UT_QVCard30Writer::cleanup()
@@ -148,4 +160,6 @@ void UT_QVCard30Writer::testEncodeParameters()
     QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
              QString::fromAscii(";ENCODING=B"));
 }
+
+QTEST_MAIN(UT_QVCard30Writer)
 

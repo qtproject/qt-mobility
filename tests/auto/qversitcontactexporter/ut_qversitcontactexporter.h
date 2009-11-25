@@ -44,14 +44,20 @@
 
 #include <qcontactdetail.h>
 #include <QObject>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporter;
-class QVersitContactExporterPrivate;
+class MyQVersitContactExporterPrivate;
+
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
 
 class UT_QVersitContactExporter : public QObject
 {
     Q_OBJECT
-    
+
 public slots:
     void scale(const QString& imageFileName, QByteArray& imageData);
 
@@ -60,7 +66,7 @@ private slots:
     void cleanup();
     void initTestCase();
     void cleanupTestCase();
-    
+
     void testConvertContact();
     void testUnknownContactDetails();
     void testEncodeName();
@@ -88,10 +94,9 @@ private slots:
     // Test Utility Function
     QContactDetail searchDetail(QList<QContactDetail> details, QString search);
 
-    
 private: // Data
     QVersitContactExporter* mExporter;
-    QVersitContactExporterPrivate* mExporterPrivate;
+    MyQVersitContactExporterPrivate* mExporterPrivate;
     QString mTestPhotoFile;
     QString mTestAudioFile;
     bool mScaleSignalEmitted;
