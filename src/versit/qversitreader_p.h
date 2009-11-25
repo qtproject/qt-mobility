@@ -67,7 +67,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitReaderPrivate : public QThread
+class Q_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
 {
     Q_OBJECT
 
