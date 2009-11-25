@@ -43,7 +43,7 @@
 #ifndef VERSITUTILS_H
 #define VERSITUTILS_H
 
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QByteArray>
 #include <QPair>

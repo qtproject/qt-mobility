@@ -42,7 +42,7 @@
 #ifndef QVERSITPROPERTY_H
 #define QVERSITPROPERTY_H
 
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 #include "qversitdocument.h"
 
 #include <QString>

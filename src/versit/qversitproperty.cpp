@@ -41,7 +41,7 @@
 
 #include "qversitproperty.h"
 #include "qversitproperty_p.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QStringList>
 

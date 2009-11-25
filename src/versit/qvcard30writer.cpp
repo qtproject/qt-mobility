@@ -42,7 +42,7 @@
 #include "qvcard30writer.h"
 #include "versitutils.h"
 #include "qversitdefs.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 

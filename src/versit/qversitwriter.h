@@ -43,7 +43,7 @@
 #define QVERSITWRITER_H
 
 #include "qversitdocument.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QObject>
 #include <QIODevice>

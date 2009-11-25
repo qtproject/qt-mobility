@@ -55,7 +55,7 @@
 
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QThread>
 #include <QByteArray>

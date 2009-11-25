@@ -43,7 +43,7 @@
 #include "qvcard21writer.h"
 #include "qvcard30writer.h"
 #include "versitutils.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QStringList>
 

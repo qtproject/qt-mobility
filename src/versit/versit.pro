@@ -17,7 +17,7 @@ INCLUDEPATH += . \
                ../contacts/details
 
 # Input
-PUBLIC_HEADERS += qtversitglobal.h \
+PUBLIC_HEADERS +=  \
     qversitdocument.h \
     qversitproperty.h \
     qversitreader.h \
@@ -47,9 +47,9 @@ SOURCES += qversitdocument.cpp \
     qvcard21writer.cpp \
     qvcard30writer.cpp \
     qversitcontactexporter.cpp \
-    qversitcontactexporter_p.cpp \    
+    qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
-    qversitcontactimporter_p.cpp \    
+    qversitcontactimporter_p.cpp \
     versitutils.cpp
 
 HEADERS += \

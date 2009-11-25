@@ -54,7 +54,7 @@
 //
 
 #include "qversitwriter_p.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 

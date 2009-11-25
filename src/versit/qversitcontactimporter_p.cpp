@@ -43,7 +43,7 @@
 #include "qversitcontactimporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <qcontact.h>
 #include <qcontactdetail.h>

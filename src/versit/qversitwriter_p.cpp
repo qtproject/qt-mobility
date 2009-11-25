@@ -41,7 +41,7 @@
 
 #include "qversitwriter_p.h"
 #include "versitutils.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QStringList>
 

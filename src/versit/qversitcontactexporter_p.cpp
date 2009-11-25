@@ -42,7 +42,7 @@
 #include "qversitcontactexporter_p.h"
 #include "qversitdefs.h"
 #include "versitutils.h"
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <qcontact.h>
 #include <qcontactdetail.h>

@@ -43,7 +43,7 @@
 #ifndef QVERSITDEFS_H
 #define QVERSITDEFS_H
 
-#include "qtversitglobal.h"
+#include "qmobilityglobal.h"
 
 #include <qcontactdetail.h>
 #include <qcontactname.h>
