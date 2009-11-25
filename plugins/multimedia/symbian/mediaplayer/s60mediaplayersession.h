@@ -47,6 +47,9 @@
 #include <QSize>
 #include <QMediaPlayer>
 #include <QPair>
+
+QTM_USE_NAMESPACE
+
 class QTimer;
 
 class S60MediaPlayerSession : public QObject

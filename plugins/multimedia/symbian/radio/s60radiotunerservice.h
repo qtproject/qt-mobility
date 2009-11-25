@@ -46,6 +46,8 @@
 
 #include <QMediaService>
 
+QTM_USE_NAMESPACE
+
 class S60RadioTunerControl;
 
 class S60RadioTunerService : public QMediaService

@@ -47,6 +47,8 @@
 
 class S60VideoWidget;
 
+QTM_USE_NAMESPACE
+
 class S60VideoWidgetControl
         : public QVideoWidgetControl
 {

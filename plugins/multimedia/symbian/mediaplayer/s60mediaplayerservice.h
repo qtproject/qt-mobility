@@ -50,9 +50,13 @@
 #include "s60videooutputcontrol.h"
 #include "ms60mediaplayerresolver.h"
 
+QTM_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class S60VideoOutputControl;
 class S60VideoPlayerSession;

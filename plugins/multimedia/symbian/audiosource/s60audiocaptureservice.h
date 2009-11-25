@@ -46,10 +46,13 @@
 
 #include <QMediaService>
 
+QTM_USE_NAMESPACE
+
 class S60AudioCaptureSession;
 class S60AudioEncoderControl;
 class S60AudioMediaRecorderControl;
 class S60AudioDeviceControl;
+
 
 class S60AudioCaptureService : public QMediaService
 {

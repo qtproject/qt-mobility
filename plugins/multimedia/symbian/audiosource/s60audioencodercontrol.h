@@ -49,6 +49,8 @@
 
 #include <QAudioFormat>
 
+QTM_USE_NAMESPACE
+
 class S60AudioCaptureSession;
 
 class S60AudioEncoderControl : public QAudioEncoderControl

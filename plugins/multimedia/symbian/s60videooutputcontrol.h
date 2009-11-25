@@ -45,6 +45,8 @@
 #include <QVideoOutputControl>
 #include <QObject>
 
+QTM_USE_NAMESPACE
+
 class S60VideoOutputControl : public QVideoOutputControl
 {
     Q_OBJECT
