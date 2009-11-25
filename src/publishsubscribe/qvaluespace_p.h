@@ -114,7 +114,7 @@ namespace QValueSpace {
     struct AutoInstall {
         AutoInstall(LayerCreateFunc func) { installLayer(func); }
     };
-};
+}
 
 #define QVALUESPACE_AUTO_INSTALL_LAYER(name) \
 QAbstractValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \

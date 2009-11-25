@@ -68,7 +68,7 @@ namespace QValueSpace {
     Q_PUBLISHSUBSCRIBE_EXPORT void initValueSpaceServer();
 
     Q_PUBLISHSUBSCRIBE_EXPORT QList<QUuid> availableLayers();
-};
+}
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QValueSpace::LayerOptions);
 
