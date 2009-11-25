@@ -819,19 +819,27 @@ void ut_qtcontacts_trackerplugin::testContactsModifiedSince()
     QContactChangeLogFilter filter(QContactChangeLogFilter::EventChanged);
     filter.setSince(start);
 
-    QContactLocalIdFetchRequest req;
-    req.setFilter(filter);
-    trackerEngine->startRequest(&req);
-    trackerEngine->waitForRequestFinished(&req, 10000);
-    QVERIFY2(req.isFinished(), "Fetch request did not finish on time");
-    QVERIFY2(req.error() == QContactManager::NoError, "Fetch request finished with errors");
-    QList<QContactLocalId> actuallyModified = req.ids();
+    QContactLocalIdFetchRequest idfetch;
+    QContactFetchRequest fetch;
+    idfetch.setFilter(filter);
+    fetch.setFilter(filter);
+    trackerEngine->startRequest(&idfetch);
+    trackerEngine->waitForRequestFinished(&idfetch, 10000);
+    QVERIFY2(idfetch.isFinished(), "Id fetch request did not finish on time");
+    QVERIFY2(idfetch.error() == QContactManager::NoError, "Id fetch request finished with errors");
+    QList<QContactLocalId> actuallyModifiedIds = idfetch.ids();
+    trackerEngine->startRequest(&fetch);
+    trackerEngine->waitForRequestFinished(&fetch, 10000);
+    QVERIFY2(fetch.isFinished(), "Fetch request did not finish on time");
+    QVERIFY2(fetch.error() == QContactManager::NoError, "Fetch request finished with errors");
+    QList<QContact> actuallyModified = fetch.contacts();
 
     // Num of actually modified should be same as supposedly modified
+    QCOMPARE(actuallyModifiedIds.count(), modified.count());
     QCOMPARE(actuallyModified.count(), modified.count());
     // All the ids of the modified contacts should be found in the result list
     foreach (QContactLocalId id, modified) {
-        QVERIFY2(actuallyModified.contains(id), "One the modified contacts was not reported as modified");
+        QVERIFY2(actuallyModifiedIds.contains(id), "One the modified contacts was not reported as modified");
     }
 }
 
