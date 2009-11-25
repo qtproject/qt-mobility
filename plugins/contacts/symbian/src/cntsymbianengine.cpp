@@ -42,6 +42,7 @@
 #include <QFile>
 #include <QSettings>
 #include <QUuid>
+#include <QTimer>
 
 #include <QDebug>
 
@@ -1116,7 +1117,8 @@ void CntSymbianEngine::performAsynchronousOperation()
             updateRequest(currentRequest, requestedDefinitions, operationError, operationErrors, QContactAbstractRequest::Finished);
         }
         break;
-
+        // Not implemented yet
+#if 0
         case QContactAbstractRequest::DetailDefinitionSaveRequest:
         {
             QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(currentRequest);
@@ -1162,7 +1164,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             updateRequestStatus(currentRequest, operationError, operationErrors, QContactAbstractRequest::Finished);
         }
         break;
-
+#endif // not supported detail definition operations
         case QContactAbstractRequest::RelationshipFetchRequest:
         {
             QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(currentRequest);
