@@ -457,6 +457,20 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 */
 
 /*!
+    \macro QVALUESPACE_SYMBIAN_SETTINGS_LAYER
+    \relates QValueSpace
+
+    The UUID of the Symbian Settings layer as a QUuid.  The actual UUID value is
+    {40d7b059-66ac-442f-b222-9c8ab98b9c2d}.
+
+    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    force the constructed object to only access the Symbian Settings layer.
+
+    You can test if the Symbian Settings layer is available by checking if the list returned by
+    QValueSpace::availableLayers() contains this value.
+*/
+
+/*!
     Returns a list of QUuids of all of the available layers.
 */
 QList<QUuid> QValueSpace::availableLayers()

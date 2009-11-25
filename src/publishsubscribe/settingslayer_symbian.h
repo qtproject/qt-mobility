@@ -53,9 +53,6 @@
 
 QT_BEGIN_NAMESPACE
 
-#define QVALUESPACE_SYMBIAN_SETTINGS_LAYER QUuid(0x40d7b059, 0x66ac, 0x442f, 0xb2, 0x22, \
-                                         0x9c, 0x8a, 0xb9, 0x8b, 0x9c, 0x2d)
-
 class SymbianSettingsLayer : public QAbstractValueSpaceLayer
 {
     Q_OBJECT

@@ -2360,8 +2360,7 @@ void SharedMemoryLayer::doClientEmit()
 
 QUuid SharedMemoryLayer::id()
 {
-    return QUuid(0xd81199c1, 0x6f60, 0x4432, 0x93, 0x4e,
-                 0x0c, 0xe4, 0xd3, 0x7e, 0xf2, 0x52);
+    return QVALUESPACE_SHAREDMEMORY_LAYER;
 }
 
 unsigned int SharedMemoryLayer::order()

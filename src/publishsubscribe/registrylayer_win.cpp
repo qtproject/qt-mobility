@@ -329,8 +329,7 @@ QString VolatileRegistryLayer::name()
 
 QUuid VolatileRegistryLayer::id()
 {
-    return QUuid(0x8ceb5811, 0x4968, 0x470f, 0x8f, 0xc2,
-                 0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9);
+    return QVALUESPACE_VOLATILEREGISTRY_LAYER;
 }
 
 unsigned int VolatileRegistryLayer::order()
@@ -365,8 +364,7 @@ QString NonVolatileRegistryLayer::name()
 
 QUuid NonVolatileRegistryLayer::id()
 {
-    return QUuid(0x8e29561c, 0xa0f0, 0x4e89, 0xba, 0x56,
-                 0x08, 0x06, 0x64, 0xab, 0xc0, 0x17);
+    return QVALUESPACE_NONVOLATILEREGISTRY_LAYER;
 }
 
 unsigned int NonVolatileRegistryLayer::order()

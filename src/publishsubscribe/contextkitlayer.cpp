@@ -270,9 +270,7 @@ bool ContextKitLayer::startup(Type)
 
 QUuid ContextKitLayer::id()
 {
-    // 2c769b9e-d949-4cd1-848f-d32241fe07ff
-    return QUuid(0x2c769b9e, 0xd949, 0x4cd1, 0x84, 0x8f,
-                 0xd3, 0x22, 0x41, 0xfe, 0x07, 0xff);
+    return QVALUESPACE_CONTEXTKIT_LAYER;
 }
 
 unsigned int ContextKitLayer::order()
