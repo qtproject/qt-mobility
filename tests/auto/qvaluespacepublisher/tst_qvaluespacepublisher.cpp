@@ -200,7 +200,7 @@ void tst_QValueSpacePublisher::testConstructor()
         layer->removeHandle(handle);
     }
 
-    publisher->setAttribute(QString("value"), 100);
+    publisher->setValue(QString("value"), 100);
     publisher->sync();
 
     if (layer) {
@@ -214,7 +214,7 @@ void tst_QValueSpacePublisher::testConstructor()
         layer->removeHandle(handle);
     }
 
-    publisher->removeAttribute(QString("value"));
+    publisher->resetValue(QString("value"));
     publisher->sync();
 
     if (layer) {
@@ -232,7 +232,7 @@ void tst_QValueSpacePublisher::testConstructor()
     if (layer && layer->layerOptions() & QValueSpace::PermanentLayer) {
         QValueSpacePublisher root("/", uuid);
         while (!canonical.isEmpty()) {
-            root.removeAttribute(canonical.mid(1));
+            root.resetValue(canonical.mid(1));
             canonical.truncate(canonical.lastIndexOf('/'));
         }
         root.sync();
@@ -390,7 +390,7 @@ void tst_QValueSpacePublisher::valuePermanence()
 
     QValueSpacePublisher *publisher = new QValueSpacePublisher("/valuePermanence", layer->id());
 
-    publisher->setAttribute("value", 10);
+    publisher->setValue("value", 10);
 
     QValueSpaceSubscriber subscriber("/valuePermanence");
     QCOMPARE(subscriber.value("value", 0).toInt(), 10);
@@ -403,11 +403,11 @@ void tst_QValueSpacePublisher::valuePermanence()
 
         publisher = new QValueSpacePublisher("/valuePermanence", layer->id());
 
-        publisher->removeAttribute("value");
+        publisher->resetValue("value");
 
         QCOMPARE(subscriber.value("value", 0).toInt(), 0);
 
-        publisher->removeAttribute(QString());
+        publisher->resetValue(QString());
 
         delete publisher;
     } else {
@@ -446,7 +446,7 @@ void WriteThread::run()
     const QString value("value%1");
 
     for (unsigned int i = 0; i < count; ++i)
-        publisher->setAttribute(key.arg(i), value.arg(i));
+        publisher->setValue(key.arg(i), value.arg(i));
 
     publisher->sync();
 }

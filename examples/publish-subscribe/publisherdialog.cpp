@@ -96,17 +96,17 @@ void PublisherDialog::changeEvent(QEvent *e)
 //! [0]
 void PublisherDialog::intValueChanged(int value)
 {
-    publisher->setAttribute("intValue", value);
+    publisher->setValue("intValue", value);
 }
 
 void PublisherDialog::setStringValue()
 {
-    publisher->setAttribute("stringValue", ui->stringValue->text());
+    publisher->setValue("stringValue", ui->stringValue->text());
 }
 
 void PublisherDialog::setByteArrayValue()
 {
-    publisher->setAttribute("byteArrayValue", ui->byteArrayValue->text().toAscii());
+    publisher->setValue("byteArrayValue", ui->byteArrayValue->text().toAscii());
 }
 
 //! [0]

@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include <QApplication>
 #include <QObject>
 #include <QTextStream>
@@ -370,21 +371,21 @@ void VSExplorer::suppress()
 void VSExplorer::set(const QString &name, const QString &value)
 {
     if('/' == *name.constData())
-        prov.setAttribute(name, value);
+        prov.setValue(name, value);
     else if(pwd.path().endsWith("/"))
-        prov.setAttribute(pwd.path() + name, value);
+        prov.setValue(pwd.path() + name, value);
     else
-        prov.setAttribute(pwd.path() + "/" + name, value);
+        prov.setValue(pwd.path() + "/" + name, value);
 }
 
 void VSExplorer::clear(const QString &name)
 {
     if('/' == *name.constData())
-        prov.removeAttribute(name);
+        prov.resetValue(name);
     else if(pwd.path().endsWith("/"))
-        prov.removeAttribute(pwd.path() + name);
+        prov.resetValue(pwd.path() + name);
     else
-        prov.removeAttribute(pwd.path() + "/" + name);
+        prov.resetValue(pwd.path() + "/" + name);
 }
 
 void VSExplorer::processLine(const QString &line)

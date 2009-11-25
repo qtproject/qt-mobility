@@ -90,13 +90,13 @@ void BatteryPublisher::timerEvent(QTimerEvent *)
 
 void BatteryPublisher::chargeChanged(int newCharge)
 {
-    publisher->setAttribute("charge", newCharge);
+    publisher->setValue("charge", newCharge);
 }
 
 void BatteryPublisher::chargingToggled(bool charging)
 {
     ui->batteryCharge->setEnabled(!charging);
-    publisher->setAttribute("charging", charging);
+    publisher->setValue("charging", charging);
 
     if (charging)
         chargeTimer = startTimer(2000);

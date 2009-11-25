@@ -230,7 +230,7 @@ QTM_BEGIN_NAMESPACE
     \fn bool QAbstractValueSpaceLayer::setValue(QValueSpacePublisher *creator, Handle handle,
                                                 const QString &subPath, const QVariant &value)
 
-    Process calls to QValueSpacePublisher::setAttribute() by setting the value specified by the
+    Process calls to QValueSpacePublisher::setValue() by setting the value specified by the
     \a subPath under \a handle to \a value.  Ownership of the Value Space item is assigned to
     \a creator.
 
@@ -241,7 +241,7 @@ QTM_BEGIN_NAMESPACE
     \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpacePublisher *creator, Handle handle,
                                                    const QString &subPath)
 
-    Process calls to QValueSpacePublisher::removeAttribute() by removing the Value Space item
+    Process calls to QValueSpacePublisher::resetValue() by removing the Value Space item
     identified by \a handle and \a subPath and created by \a creator.
 
     Returns true on success; otherwise returns false.

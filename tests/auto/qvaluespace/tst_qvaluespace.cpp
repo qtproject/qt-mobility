@@ -404,8 +404,8 @@ void tst_QValueSpace::layerInterface()
 
     QVERIFY(publisher->isConnected());
 
-    CHECK_ERRORS(publisher->setAttribute(attribute, 10));
-    CHECK_ERRORS(publisher->removeAttribute(attribute));
+    CHECK_ERRORS(publisher->setValue(attribute, 10));
+    CHECK_ERRORS(publisher->resetValue(attribute));
 
     SignalSink sink;
     CHECK_ERRORS(connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),

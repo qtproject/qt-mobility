@@ -283,20 +283,20 @@ void QValueSpacePublisher::sync()
 }
 
 /*!
-    Set \a attribute on the publisher to \a data.  If attribute is empty, this call will set the
+    Sets the value \a name on the publisher to \a data.  If name is empty, this call will set the
     value of this publisher's path.
 
     For example:
 
     \code
         QValueSpacePublisher publisher("/Device");
-        publisher.setAttribute("State", "Starting");
+        publisher.setValue("State", "Starting");
         publisher.sync();
 
         // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
     \endcode
 */
-void QValueSpacePublisher::setAttribute(const QString &attribute, const QVariant &data)
+void QValueSpacePublisher::setValue(const QString &name, const QVariant &data)
 {
     if (!isConnected()) {
         qWarning("setAttribute called on unconnected QValueSpacePublisher.");
@@ -304,57 +304,35 @@ void QValueSpacePublisher::setAttribute(const QString &attribute, const QVariant
     }
 
     d->hasSet = true;
-    d->layer->setValue(this, d->handle, qCanonicalPath(attribute), data);
+    d->layer->setValue(this, d->handle, qCanonicalPath(name), data);
 }
 
 /*!
-    \overload
-
-    This is a convenience overload and is equivalent to
-    \c {setAttribute(QString::fromLatin1(attribute), data)}.
-*/
-void QValueSpacePublisher::setAttribute(const char *attribute, const QVariant &data)
-{
-    setAttribute(QString::fromLatin1(attribute), data);
-}
-
-/*!
-    Removes the publisher \a attribute and all sub-attributes from the system.
+    Removes the value \a name and all sub-attributes from the system.
 
     For example:
     \code
         QValueSpacePublisher publisher("/Device");
-        publisher.setAttribute("State", "Starting");
-        publisher.setAttribute("State/Memory", "1000");
+        publisher.setValue("State", "Starting");
+        publisher.setValue("State/Memory", "1000");
         publisher.sync();
         // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
         // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant("1000")
 
-        publisher.removeAttribute("State");
+        publisher.resetValue("State");
         publisher.sync();
         // QValueSpaceSubscriber("/Device/State").value() == QVariant();
         // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant();
     \endcode
 */
-void QValueSpacePublisher::removeAttribute(const QString &attribute)
+void QValueSpacePublisher::resetValue(const QString &name)
 {
     if (!isConnected()) {
         qWarning("removeAttribute called on unconnected QValueSpacePublisher.");
         return;
     }
 
-    d->layer->removeValue(this, d->handle, qCanonicalPath(attribute));
-}
-
-/*!
-    \overload
-
-    This is a convenience overload and is equivalent to
-    \c {removeAttribute(QString::fromLatin1(attribute))}.
-*/
-void QValueSpacePublisher::removeAttribute(const char *attribute)
-{
-    removeAttribute(QString::fromLatin1(attribute));
+    d->layer->removeValue(this, d->handle, qCanonicalPath(name));
 }
 
 /*!

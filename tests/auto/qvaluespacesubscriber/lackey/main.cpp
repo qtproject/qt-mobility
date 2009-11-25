@@ -72,7 +72,7 @@ public:
         case IpcTests:
             publisher = new QValueSpacePublisher("/usr/lackey/subdir", uuid, this);
             publisher->setObjectName("original_lackey");
-            publisher->setAttribute("value", 100);
+            publisher->setValue("value", 100);
             publisher->sync();
             subscriber = new QValueSpaceSubscriber("/usr/lackey/subdir", uuid, this);
             connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(changes()));
@@ -86,7 +86,7 @@ public:
             break;
         case IpcRemoveKey:
             publisher = new QValueSpacePublisher("/ipcRemoveKey", uuid, this);
-            publisher->setAttribute("value", 100);
+            publisher->setValue("value", 100);
             publisher->sync();
             QTimer::singleShot(TIMEOUT, this, SLOT(removeKey()));
             break;
@@ -98,19 +98,19 @@ private slots:
         switch (index) {
         case 0:
             //qDebug() << "Setting 101";
-            publisher->setAttribute("value", 101);
+            publisher->setValue("value", 101);
             break;
         case 1:
             //qDebug() << "Removing";
-            publisher->removeAttribute("value");
+            publisher->resetValue("value");
             break;
         case 2:
             //qDebug() << "Setting 102";
-            publisher->setAttribute("value", 102);
+            publisher->setValue("value", 102);
             break;
         case 3:
             qDebug() << "Removing";
-            publisher->removeAttribute("value");
+            publisher->resetValue("value");
             break;
         }
         publisher->sync();
@@ -136,9 +136,9 @@ private slots:
         //qDebug() << Q_FUNC_INFO << path << interested;
         if (interested) {
             if (attribute == "/value")
-                publisher->setAttribute(attribute, 5);
+                publisher->setValue(attribute, 5);
         } else {
-            publisher->removeAttribute(attribute);
+            publisher->resetValue(attribute);
         }
     }
 

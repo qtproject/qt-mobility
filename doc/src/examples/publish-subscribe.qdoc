@@ -94,7 +94,7 @@
 
     \snippet publish-subscribe/publisherdialog.cpp 2
 
-    We use QValueSpacePublisher::setAttribute() to set the values in response to dialog input.
+    We use QValueSpacePublisher::setValue() to set the values in response to dialog input.
 
     \snippet publish-subscribe/publisherdialog.cpp 0
 
