@@ -140,6 +140,7 @@
         <keyword ref="qcamera.html#Error-enum">QCamera::NoError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::CameraError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::ServiceMissingError</keyword>
+        <keyword ref="qcamera.html#Error-enum">QCamera::NotSupportedFeatureError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::InvalidRequestError</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureMode</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureModes</keyword>
@@ -836,6 +837,16 @@
         <keyword ref="qcontactinvalidfilter.html">QContactInvalidFilter</keyword>
         <section ref="qcontactinvalidfilter-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactlocalidfetchrequest.html" title="QContactLocalIdFetchRequest Class Reference">
+        <keyword ref="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#filter">filter</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#ids">ids</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#progress">progress</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#setSorting">setSorting</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#sorting">sorting</keyword>
+        <section ref="qcontactlocalidfetchrequest-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactlocalidfilter.html" title="QContactLocalIdFilter Class Reference">
         <keyword ref="qcontactlocalidfilter.html">QContactLocalIdFilter</keyword>
         <keyword ref="qcontactlocalidfilter.html#ids">ids</keyword>
@@ -976,19 +987,6 @@
         <keyword ref="qcontactmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</keyword>
         <keyword ref="qcontactmanagerenginefactory.html#version">version</keyword>
         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
-    </section>
-    <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference">
-        <keyword ref="qcontactmanagerinfo.html">QContactManagerInfo</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Groups</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ActionPreferences</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ArbitraryRelationshipTypes</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::SelfContact</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Relationships</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Anonymous</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ChangeLogs</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::MutableDefinitions</keyword>
-        <section ref="qcontactmanagerinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
         <keyword ref="qcontactmemoryengine.html">QContactMemoryEngine</keyword>
@@ -1201,6 +1199,13 @@
         <keyword ref="qcontactrelationshipremoverequest.html#setRelationshipType">setRelationshipType</keyword>
         <keyword ref="qcontactrelationshipremoverequest.html#setSecond">setSecond</keyword>
         <section ref="qcontactrelationshipremoverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactrelationshipsaverequest.html" title="QContactRelationshipSaveRequest Class Reference">
+        <keyword ref="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#relationships">relationships</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</keyword>
+        <section ref="qcontactrelationshipsaverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactremoverequest.html" title="QContactRemoveRequest Class Reference">
         <keyword ref="qcontactremoverequest.html">QContactRemoveRequest</keyword>
