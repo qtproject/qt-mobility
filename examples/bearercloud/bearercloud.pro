@@ -27,10 +27,3 @@ symbian {
     BEARERLIB.path = .
     DEPLOYMENT += BEARERLIB
 }
-
-macx: {
-    contains(QT_CONFIG,qt_framework):LIBS += -framework QtBearer
-    INCLUDEPATH += ../../
-    contains(CONFIG, debug) {
-    }
-}
