@@ -251,7 +251,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     if(!message.parentAccountId().isValid())
     {
         qWarning() << "Invalid account for sending/composition";
-        _lastError = QMessageStore::ConstraintFailure;
+        _lastError = QMessageStore::InvalidId;
         return false;
     }
 
@@ -866,7 +866,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
     if(!id.isValid())
     {
         qWarning() << "Invalid QMessageId";
-        d_ptr->_lastError = QMessageStore::ConstraintFailure;
+        d_ptr->_lastError = QMessageStore::InvalidId;
     }
 
     QMessage message;
@@ -922,7 +922,7 @@ bool QMessageServiceAction::retrieve(const QMessageId& messageId, const QMessage
     if(!messageId.isValid())
     {
         qWarning() << "Invalid QMessageId";
-        d_ptr->_lastError = QMessageStore::ConstraintFailure;
+        d_ptr->_lastError = QMessageStore::InvalidId;
     }
 
     QMessage message;
