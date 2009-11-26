@@ -8,7 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="//apple_ref/cpp/cl//QVersitReader" />
+<a name="//apple_ref/cpp/cl//QVersitReader"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -61,7 +61,7 @@
     QBuffer vCardBuffer;
     vCardBuffer.open(QBuffer::ReadWrite);
     QByteArray vCard =
-        &quot;BEGIN:VCARD\r\nVERSION:2.1\r\nN:Simpson;Homer;J;;\r\nEND:VCARD\r\n&quot;;
+        &quot;BEGIN:VCARD\r\nVERSION:2.1\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n&quot;;
     vCardBuffer.write(vCard);
     vCardBuffer.seek(0);
     QVersitReader reader;
@@ -73,30 +73,30 @@
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QVersitReader/QVersitReader" />
+<a name="//apple_ref/cpp/instm/QVersitReader/QVersitReader"></a>
 <h3 class="fn"><a name="QVersitReader"></a>QVersitReader::QVersitReader ()</h3>
 <p>Constructs a new reader.</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/~QVersitReader" />
+<a name="//apple_ref/cpp/instm/QVersitReader/~QVersitReader"></a>
 <h3 class="fn"><a name="dtor.QVersitReader"></a>QVersitReader::~QVersitReader ()</h3>
 <p>Frees the memory used by the reader. Waits until a pending asynchronous reading has been completed.</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/device" />
+<a name="//apple_ref/cpp/instm/QVersitReader/device"></a>
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * QVersitReader::device () const</h3>
 <p>Returns the device used for reading input.</p>
 <p>See also <a href="qversitreader.html#setDevice">setDevice</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/readAll" />
+<a name="//apple_ref/cpp/instm/QVersitReader/readAll"></a>
 <h3 class="fn"><a name="readAll"></a>bool QVersitReader::readAll ()</h3>
 <p>Reads the input synchronously. Returns false if the input device has not been set or opened or if there is an asynchronous read operation pending. Using this function may block the user thread for an undefined period. In most cases asynchronous <a href="qversitreader.html#startReading">startReading</a>() should be used instead.</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/readingDone" />
+<a name="//apple_ref/cpp/instm/QVersitReader/readingDone"></a>
 <h3 class="fn"><a name="readingDone"></a>void QVersitReader::readingDone ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>The signal is emitted by the reader when the asynchronous reading has been completed.</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/result" />
+<a name="//apple_ref/cpp/instm/QVersitReader/result"></a>
 <h3 class="fn"><a name="result"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; QVersitReader::result () const</h3>
 <p>Returns the reading result or an empty list if the reading was not completed successfully.</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/setDevice" />
+<a name="//apple_ref/cpp/instm/QVersitReader/setDevice"></a>
 <h3 class="fn"><a name="setDevice"></a>void QVersitReader::setDevice ( <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
 <p>Sets the device used for reading the input to be the given device <i>device</i>.</p>
 <p>See also <a href="qversitreader.html#device">device</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/startReading" />
+<a name="//apple_ref/cpp/instm/QVersitReader/startReading"></a>
 <h3 class="fn"><a name="startReading"></a>bool QVersitReader::startReading ()</h3>
 <p>Starts reading the input asynchronously. Returns false if the input device has not been set or opened or if there is another asynchronous read operation already pending. Signal <a href="qversitreader.html#readingDone">readingDone</a>() is emitted when the reading has finished.</p>
 <p /><address><hr /><div align="center">
