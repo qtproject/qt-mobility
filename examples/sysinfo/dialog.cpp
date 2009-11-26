@@ -48,8 +48,8 @@
 #include <QMessageBox>
 #include <QTimer>
 
-Dialog::Dialog(QWidget *parent) :
-    QDialog(parent),
+Dialog::Dialog() :
+    QMainWindow(),
     ui(new Ui::Dialog),
     saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
 {
