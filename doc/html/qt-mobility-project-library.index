@@ -7470,6 +7470,7 @@
             <contents name="system-information" title="System Information" level="2"/>
             <contents name="technology-preview" title="Technology Preview" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
+            <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaFormatControl_iid" href="qmediaformatcontrol.html#QMediaFormatControl_iid" location="qmediaformatcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaFormatControl" type="" signature="QMediaFormatControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioEncoderControl_iid" href="qaudioencodercontrol.html#QAudioEncoderControl_iid" location="qaudioencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioEncoderControl" type="" signature="QAudioEncoderControl_iid()"/>

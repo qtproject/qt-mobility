@@ -64,7 +64,7 @@
     #include &lt;QTimer&gt;
 
     Dialog::Dialog() :
-        QMainWindow(),
+        QDialog(),
         ui(new Ui::Dialog),
         saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
     {
@@ -89,7 +89,7 @@
 
     void Dialog::changeEvent(QEvent *e)
     {
-        QDialog::changeEvent(e);
+        QWidget::changeEvent(e);
         switch (e-&gt;type()) {
         case QEvent::LanguageChange:
             ui-&gt;retranslateUi(this);
