@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
   \class QVersitContactImporter
  
   \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
+
+  \ingroup versit
  
   The versit properties (\l QVersitProperty) that were not imported by
   \l QVersitContactImporter::importContact() can be fetched after importing

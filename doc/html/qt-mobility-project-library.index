@@ -7390,6 +7390,12 @@
             <contents name="classes-for-service-implementers" title="Classes for service implementers." level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorderControl_iid" href="qmediarecordercontrol.html#QMediaRecorderControl_iid" location="qmediarecordercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaRecorderControl" type="" signature="QMediaRecorderControl_iid()"/>
+        <page access="public" status="commendable" name="preview.html" href="preview.html" subtype="page" title="Technology Preview" fulltitle="Technology Preview" subtitle="" location="preview.qdoc">
+            <target name="management-of-versit-documents"/>
+            <target name="camera-support"/>
+            <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
+            <contents name="camera-support" title="Camera Support" level="1"/>
+        </page>
         <page access="public" status="commendable" name="gpl.html" href="gpl.html" subtype="page" title="GNU General Public License (GPL)" fulltitle="GNU General Public License (GPL)" subtitle="" location="gpl.qdoc">
             <contents name="the-gnu-general-public-license-version-3" title="The GNU General Public License (Version 3)" level="1"/>
         </page>
@@ -7450,7 +7456,6 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (BETA)" fulltitle="Qt Mobility Project APIs (BETA)" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (BETA) Overview" fulltitle="Qt Mobility Project APIs (BETA) Overview" subtitle="" location="index.qdoc">
-            <target name="platform-compatability"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
@@ -7463,6 +7468,7 @@
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
+            <contents name="technology-preview" title="Technology Preview" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaFormatControl_iid" href="qmediaformatcontrol.html#QMediaFormatControl_iid" location="qmediaformatcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaFormatControl" type="" signature="QMediaFormatControl_iid()"/>

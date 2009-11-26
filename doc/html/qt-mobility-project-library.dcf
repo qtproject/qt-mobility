@@ -3671,6 +3671,9 @@
     <section ref="systeminfo.html" title="System Information">
         <keyword ref="systeminfo.html">System Information</keyword>
     </section>
+    <section ref="preview.html" title="Technology Preview">
+        <keyword ref="preview.html">Technology Preview</keyword>
+    </section>
     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt">
         <keyword ref="3rdparty.html">Third-Party Licenses Used in Qt</keyword>
     </section>

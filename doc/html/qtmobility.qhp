@@ -599,6 +599,7 @@
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
+                    <section ref="preview.html" title="Technology Preview"/>
                     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
                     <section ref="trademarks.html" title="Trademarks"/>
                     <section ref="versit.html" title="Versit API"/>
@@ -3656,6 +3657,7 @@
             <keyword name="Stream Player Example" id="Stream Player Example" ref="streamplayer.html"/>
             <keyword name="System Information" id="System Information" ref="systeminfo.html"/>
             <keyword name="System Information Example" id="System Information Example" ref="sysinfo.html"/>
+            <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
             <keyword name="Versit API" id="Versit API" ref="versit.html"/>
@@ -3860,6 +3862,7 @@
             <file>qmetadatacontrol.html</file>
             <file>qgraphicsvideoitem.html</file>
             <file>qimagecapturecontrol.html</file>
+            <file>preview.html</file>
             <file>samplephonebook-groupdetailsdialog-cpp.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qvideowidget-members.html</file>

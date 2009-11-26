@@ -57,7 +57,7 @@
     #ifndef DIALOG_H
     #define DIALOG_H
 
-    #include &lt;QDialog&gt;
+    #include &lt;QtGui&gt;
     #include &lt;qsysteminfo.h&gt;
 
     QTM_USE_NAMESPACE
@@ -66,10 +66,10 @@
         class Dialog;
     }
 
-    class Dialog : public QDialog {
+    class Dialog : public QMainWindow {
         Q_OBJECT
     public:
-        Dialog(QWidget *parent = 0);
+        Dialog();
         ~Dialog();
 
     protected:

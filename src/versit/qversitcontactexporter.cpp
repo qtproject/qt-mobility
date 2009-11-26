@@ -53,6 +53,8 @@ QTM_BEGIN_NAMESPACE
   \class QVersitContactExporter
  
   \brief The QVersitContactExporter class exports QContact(s) into QVersitDocument(s).
+
+  \ingroup versit
  
   If the exported QContact has some detail with an image as its value,
   signal \l QVersitContactExporter::scale() is emitted and
