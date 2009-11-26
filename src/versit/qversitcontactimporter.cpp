@@ -48,43 +48,43 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QVersitContactImporter
- *
- * \brief QVersitContactImporter creates QContacts from QVersitDocuments.
- *
- * The versit properties (\l QVersitProperty) that were not imported by
- * \l QVersitContactImporter::importContact() can be fetched after importing
- * by calling \l QVersitContactImporter::unknownVersitProperties().
- * For the returned properties,
- * the client can perform the conversions from versit properties 
- * to contact details and add the converted details to the QContact.
- *
- * \code
- *
- * QVersitDocument document;
- * QVersitProperty property;
- *
- * property.setName(QString::fromAscii("N"));
- * property.setValue("Citizen;John;Q;;");
- * document.addProperty(property);
- *
- * property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
- * property.setValue("some value");
- * document.addProperty(property);
- *
- * QVersitContactImporter importer;
- * importer.setImagePath(QString::fromAscii("/my/image/path"));
- * importer.setAudioClipPath(QString::fromAscii("my/audio_clip/path"));
- *
- * QContact contact = importer.importContact(document);
- * // contact now contains the "N" property as a QContactName
- * QList<QVersitProperty> unknownProperties = importer.unknownVersitProperties();
- * // unknownProperties contains "X-UNKNOWN-PROPERTY"
- * // that can be handled by the client itself
- *
- * \endcode
- *
- * \sa QVersitDocument, QVersitReader
+  \class QVersitContactImporter
+ 
+  \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
+ 
+  The versit properties (\l QVersitProperty) that were not imported by
+  \l QVersitContactImporter::importContact() can be fetched after importing
+  by calling \l QVersitContactImporter::unknownVersitProperties().
+  For the returned properties,
+  the client can perform the conversions from versit properties
+  to contact details and add the converted details to the QContact.
+ 
+  \code
+ 
+  QVersitDocument document;
+  QVersitProperty property;
+ 
+  property.setName(QString::fromAscii("N"));
+  property.setValue("Citizen;John;Q;;");
+  document.addProperty(property);
+ 
+  property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
+  property.setValue("some value");
+  document.addProperty(property);
+ 
+  QVersitContactImporter importer;
+  importer.setImagePath(QString::fromAscii("/my/image/path"));
+  importer.setAudioClipPath(QString::fromAscii("my/audio_clip/path"));
+ 
+  QContact contact = importer.importContact(document);
+  // contact now contains the "N" property as a QContactName
+  QList<QVersitProperty> unknownProperties = importer.unknownVersitProperties();
+  // unknownProperties contains "X-UNKNOWN-PROPERTY"
+  // that can be handled by the client itself
+ 
+  \endcode
+ 
+  \sa QVersitDocument, QVersitReader
  */
 
 /*! Constructs a new importer */

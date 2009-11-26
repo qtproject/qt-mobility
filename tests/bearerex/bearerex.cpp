@@ -278,8 +278,8 @@ SessionTab::SessionTab(QNetworkConfiguration* apNetworkConfiguration,
     connect(m_NetworkSession, SIGNAL(newConfigurationActivated()), this, SLOT(newConfigurationActivated()));
     connect(m_NetworkSession, SIGNAL(stateChanged(QNetworkSession::State)),
             this, SLOT(stateChanged(QNetworkSession::State)));
-    connect(m_NetworkSession, SIGNAL(sessionOpened()), this, SLOT(sessionOpened()));
-    connect(m_NetworkSession, SIGNAL(sessionClosed()), this, SLOT(sessionClosed()));
+    connect(m_NetworkSession, SIGNAL(opened()), this, SLOT(opened()));
+    connect(m_NetworkSession, SIGNAL(closed()), this, SLOT(closed()));
     connect(m_NetworkSession, SIGNAL(error(QNetworkSession::SessionError)), this, SLOT(error(QNetworkSession::SessionError)));
     
     if (apNetworkConfiguration->type() == QNetworkConfiguration::InternetAccessPoint) {
@@ -291,9 +291,9 @@ SessionTab::SessionTab(QNetworkConfiguration* apNetworkConfiguration,
         snapLineEdit->setText(apNetworkConfiguration->name()+" ("+apNetworkConfiguration->identifier()+")");
     }
     bearerLineEdit->setText(m_NetworkSession->bearerName());
-    sentRecDataLineEdit->setText(QString::number(m_NetworkSession->sentData())+
+    sentRecDataLineEdit->setText(QString::number(m_NetworkSession->bytesWritten())+
                                  QString(" / ")+
-                                 QString::number(m_NetworkSession->receivedData()));
+                                 QString::number(m_NetworkSession->bytesReceived()));
     snapLineEdit->setFocusPolicy(Qt::NoFocus);
     iapLineEdit->setFocusPolicy(Qt::NoFocus);
     bearerLineEdit->setFocusPolicy(Qt::NoFocus);
@@ -409,7 +409,7 @@ void SessionTab::preferredConfigurationChanged(const QNetworkConfiguration& conf
     }
 }
 
-void SessionTab::sessionOpened()
+void SessionTab::opened()
 {
     QListWidgetItem* listItem = new QListWidgetItem();
     QFont font = listItem->font();
@@ -439,7 +439,7 @@ void SessionTab::sessionOpened()
     }
 }
 
-void SessionTab::sessionClosed()
+void SessionTab::closed()
 {
     QListWidgetItem* listItem = new QListWidgetItem();
     QFont font = listItem->font();
@@ -556,9 +556,9 @@ void SessionTab::done(bool error)
     }
     msgBox.exec();
     
-    sentRecDataLineEdit->setText(QString::number(m_NetworkSession->sentData())+
+    sentRecDataLineEdit->setText(QString::number(m_NetworkSession->bytesWritten())+
                                  QString(" / ")+
-                                 QString::number(m_NetworkSession->receivedData()));
+                                 QString::number(m_NetworkSession->bytesReceived()));
 }
 
 // End of file

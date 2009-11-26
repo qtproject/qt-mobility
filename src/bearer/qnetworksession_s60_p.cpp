@@ -199,12 +199,12 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return activeInterface;
 }
 
-QVariant QNetworkSessionPrivate::property(const QString& /*key*/) const
+QVariant QNetworkSessionPrivate::sessionProperty(const QString& /*key*/) const
 {
     return QVariant();
 }
 
-void QNetworkSessionPrivate::setProperty(const QString& /*key*/, const QVariant& /*value*/)
+void QNetworkSessionPrivate::setSessionProperty(const QString& /*key*/, const QVariant& /*value*/)
 {
 }
 
@@ -413,7 +413,7 @@ void QNetworkSessionPrivate::close(bool allowSignals)
         if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
             newState(QNetworkSession::Disconnected);
         }
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -427,7 +427,7 @@ void QNetworkSessionPrivate::stop()
     iConnection.Stop(RConnection::EStopAuthoritative);
     isActive = true;
     close(false);
-    emit q->sessionClosed();
+    emit q->closed();
 }
 
 void QNetworkSessionPrivate::migrate()
@@ -526,7 +526,7 @@ void QNetworkSessionPrivate::Error(TInt /*aError*/)
         // => Following call makes sure that Session state
         //    changes immediately to Disconnected.
         newState(QNetworkSession::Disconnected);
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 #endif
@@ -592,12 +592,12 @@ QString QNetworkSessionPrivate::bearerName() const
     }
 }
 
-quint64 QNetworkSessionPrivate::sentData() const
+quint64 QNetworkSessionPrivate::bytesWritten() const
 {
     return transferredData(KUplinkData);
 }
 
-quint64 QNetworkSessionPrivate::receivedData() const
+quint64 QNetworkSessionPrivate::bytesReceived() const
 {
     return transferredData(KDownlinkData);
 }
@@ -941,7 +941,7 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
     }
     
     if (emitSessionClosed) {
-        emit q->sessionClosed();
+        emit q->closed();
     }
 
     return retVal;

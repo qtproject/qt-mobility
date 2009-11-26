@@ -180,9 +180,6 @@ goto cmdline_parsing
 
 :startProcessing
 
-copy %PROJECT_CONFIG% %BUILD_PATH%\config.pri
-del %PROJECT_CONFIG%
-
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
 set RELEASEMODE=
 
@@ -341,6 +338,8 @@ echo Start of compile tests
 REM compile tests go here.
 call :compileTest LBT lbt
 echo End of compile tests
+echo.
+echo.
 
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
 echo "Generating Mobility Headers..."

@@ -703,6 +703,10 @@ void tst_QMessageStore::testMessage()
     QVERIFY(forward.bodyId().isValid());
 #endif    
 
+    // Verify that the attachments can be removed
+    updated.clearAttachments();
+    QVERIFY(updated.attachmentIds().isEmpty());
+
     // Test message removal
     if (removeMessage == "byId") {
         QMessageStore::instance()->removeMessage(message.id());

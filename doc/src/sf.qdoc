@@ -54,7 +54,7 @@ arbitrary services.
 
 \title Qt Service Framework
 
-\brief A set of APIs to that allows clients to discover and instantiate
+\brief A set of Qt APIs to that allows clients to discover and instantiate
 arbitrary services.
 
 \ingroup mobility
@@ -362,6 +362,9 @@ description provided above.
 
 New services can be added and removed at any time via QServiceManager::addService()
 and QServiceManager::removeService().
+
+On Symbian devices a service can be installed using the Symbian package installer. More
+details about this process can be found in the \l {Qt Service Framework on Symbian} documentation.
 
 
 \section1 Identifying Services

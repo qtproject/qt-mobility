@@ -48,22 +48,22 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QVersitProperty
- *
- * \brief QVersitProperty stores the name, value and parameters of a versit property.
- *
- * For example a vCard can be presented as a QVersitDocument that
- * consists of 0..n properties such as a name (N),
- * a telephone number (TEL) and an email address (EMAIL) to name a few.
- * Each of these properties is stored as
- * an instance of a QVersitProperty in a QVersitDocument.
- *
- * QVersitProperty supports implicit sharing.
- * The property name and parameters of a QVersitProperty are converted
- * to upper-case when they are stored to a QVersitProperty.
- * The value of a QVersitProperty is raw data and it is case-sensitive.
- *
- * \sa QVersitDocument
+  \class QVersitProperty
+ 
+  \brief The QVersitProperty class stores the name, value and parameters of a versit property.
+ 
+  For example a vCard can be presented as a QVersitDocument that
+  consists of 0..n properties such as a name (N),
+  a telephone number (TEL) and an email address (EMAIL) to name a few.
+  Each of these properties is stored as
+  an instance of a QVersitProperty in a QVersitDocument.
+ 
+  QVersitProperty supports implicit sharing.
+  The property name and parameters of a QVersitProperty are converted
+  to upper-case when they are stored to a QVersitProperty.
+  The value of a QVersitProperty is raw data and it is case-sensitive.
+ 
+  \sa QVersitDocument
  */
 
 

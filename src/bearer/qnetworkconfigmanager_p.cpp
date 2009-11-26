@@ -266,7 +266,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
                 connect(nativeWifi, SIGNAL(configurationsChanged()),
                         this, SLOT(updateConfigurations()));
 
-                capFlags |= QNetworkConfigurationManager::BearerManagement;
+                capFlags |= QNetworkConfigurationManager::CanStartAndStopInterfaces;
             }
 #endif
     }

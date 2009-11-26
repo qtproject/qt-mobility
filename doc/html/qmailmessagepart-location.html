@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qmailmessage.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: Location Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl/QMailMessagePart/Location" />
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Location Class Reference<br /><span class="small-subtitle">(QMailMessagePart::Location)<br /></span>
+</h1>
+<p>The Location class contains a specification of the location of a message part with the message that contains it. <a href="#details">More...</a></p>
+<pre>    #include &lt;<a href="qmailmessagepart.html">QMailMessagePart</a>&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<ul>
+<li><a href="qmailmessagepart-location-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagepart-location.html#Locationx">Location</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagepart-location.html#Location-2">Location</a></b> ( const QString &amp; <i>description</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagepart-location.html#Location-3">Location</a></b> ( const Location &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMailMessageId </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagepart-location.html#containingMessageId">containingMessageId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagepart-location.html#isValid">isValid</a></b> ( bool <i>extended</i> = true ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagepart-location.html#setContainingMessageId">setContainingMessageId</a></b> ( const QMailMessageId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmailmessagepart-location.html#toString">toString</a></b> ( bool <i>extended</i> ) const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The Location class contains a specification of the location of a message part with the message that contains it.</p>
+<p>A Location object is used to refer to a single part within a multi-part message. The location can be used to reference a part within a <a href="qmailmessage.html">QMailMessage</a> object, via the <a href="qmailmessage.html#partAt">partAt</a> function.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMailMessagePart::Location/Location" />
+<h3 class="fn"><a name="Locationx"></a>Location::Location ()</h3>
+<p>Creates an empty part location object.</p>
+<h3 class="fn"><a name="Location-2"></a>Location::Location ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>description</i> )</h3>
+<p>Creates a part location object referring to the location given by <i>description</i>.</p>
+<p>See also <a href="qmailmessagepart-location.html#toString">toString</a>().</p>
+<h3 class="fn"><a name="Location-3"></a>Location::Location ( const Location &amp; <i>other</i> )</h3>
+<p>Creates a part location object containing a copy of <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart::Location/containingMessageId" />
+<h3 class="fn"><a name="containingMessageId"></a><a href="qmailmessageid.html">QMailMessageId</a> Location::containingMessageId () const</h3>
+<p>Returns the identifier of the message that contains the part with this location.</p>
+<p>See also <a href="qmailmessagepart-location.html#setContainingMessageId">setContainingMessageId</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart::Location/isValid" />
+<h3 class="fn"><a name="isValid"></a>bool Location::isValid ( bool <i>extended</i> = true ) const</h3>
+<p>Returns true if the location object contains the location of a valid message part. If <i>extended</i> is true, the location must also contain a valid message identifier.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart::Location/setContainingMessageId" />
+<h3 class="fn"><a name="setContainingMessageId"></a>void Location::setContainingMessageId ( const <a href="qmailmessageid.html">QMailMessageId</a> &amp; <i>id</i> )</h3>
+<p>Sets the identifier of the message that contains the part with this location to <i>id</i>.</p>
+<p>See also <a href="qmailmessagepart-location.html#containingMessageId">containingMessageId</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart::Location/toString" />
+<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> Location::toString ( bool <i>extended</i> ) const</h3>
+<p>Returns a textual representation of the part location. If <i>extended</i> is true, the representation contains the identifier of the containing message.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
+</tr></table></div></address></body>
+</html>

@@ -101,7 +101,7 @@ public:
 
     QNetworkConfiguration defaultConfiguration();
 
-    QNetworkConfigurationManager::CapabilityFlags capFlags;
+    QNetworkConfigurationManager::Capabilities capFlags;
     void registerPlatformCapabilities();
 
     void performAsyncConfigurationUpdate();

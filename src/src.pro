@@ -9,7 +9,8 @@ symbian {
     CONFIG += ordered
 }
 
-SUBDIRS += bearer location contacts multimedia publishsubscribe systeminfo versit
+SUBDIRS += bearer location contacts multimedia publishsubscribe versit
+!maemo:SUBDIRS+=systeminfo
 
 # Versit depends on Contacts
 versit.subdir=versit
