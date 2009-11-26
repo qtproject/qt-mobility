@@ -70,7 +70,7 @@ these domains have dependencies and these are outlined below:
 
         The Windows Mobile backend depends on ActiveSync version 4.5.
 
-        Whilst not supported for this release the Windows Desktop backend 
+        While not supported for this release the Windows Desktop backend 
         requires Microsoft Outlook 2003 or later, and Microsoft Windows XP 
         to be installed.
 
@@ -91,6 +91,14 @@ these domains have dependencies and these are outlined below:
         The multimedia component depends on the QtMultimedia
         module in Qt.  Qt by default is configured to make this
         module with the \c {-multimedia} option.
+\row
+    \o Systeminfo
+    \o
+       The Linux backend depands on QDBus, HAL and NetworkManager, although Systeminfo will compile 
+       without them, there will be reduced functionality.
+       
+       On Mac OS X, Systeminfo depends on the 10.6 SDK (XCode 3.2.1), although it will compile
+       with older SDK's there will be reduced functionality.
 \endtable
 
 \section1 Unpacking
