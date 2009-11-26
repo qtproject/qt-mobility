@@ -70,10 +70,10 @@ void UT_QVCard30Writer::cleanup()
 void UT_QVCard30Writer::testEncodeVersitProperty()
 {
     // No parameters
-    QString expectedResult = QString::fromAscii("FN:Homer Simpson\r\n");
+    QString expectedResult = QString::fromAscii("FN:John Citizen\r\n");
     QVersitProperty property;
     property.setName(QString::fromAscii("FN"));
-    property.setValue(QByteArray("Homer Simpson"));
+    property.setValue(QByteArray("John Citizen"));
     QByteArray encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
     
@@ -86,10 +86,10 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
     
     // Convert X-NICKNAME to NICKNAME
-    expectedResult = QString::fromAscii("NICKNAME:Homie\r\n");
+    expectedResult = QString::fromAscii("NICKNAME:Jack\r\n");
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("X-NICKNAME"));
-    property.setValue(QByteArray("Homie"));
+    property.setValue(QByteArray("Jack"));
     encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
 

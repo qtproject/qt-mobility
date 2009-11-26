@@ -48,15 +48,6 @@ symbian: load(data_caging_paths)
 # For symbian, we are not attempting to freeze APIs yet.
 symbian:MMP_RULES += "EXPORTUNFROZEN"
 
-# Which contacts backend we're building
-isEmpty(CONTACTS_BACKENDS) {
-    #no selection implies default selection for current target
-    ## memory / symbian / wince / kabc etc.
-    CONTACTS_BACKENDS += memory 
-    wince*:CONTACTS_BACKENDS += wince
-    symbian:CONTACTS_BACKENDS += symbian
-}
-
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$QT_MOBILITY_BUILD_TREE
 SOURCE_DIR = $$PWD

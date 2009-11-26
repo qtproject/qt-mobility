@@ -107,8 +107,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QValueSpacePublisher::attributeInterestChanged(const QString &attribute,
-                                                            bool interested)
+    \fn void QValueSpacePublisher::interestChanged(const QString &attribute,
+                                                   bool interested)
 
     Signal that is emitted when interest in \a attribute changes.  If \a interested is true at
     least on QValueSpaceSubscriber is interested in the value of \a attribute.
@@ -345,7 +345,7 @@ void QValueSpacePublisher::resetValue(const QString &name)
     If you reimplement this virtual function it is important that you call this implementation from
     your implementation.
 
-    \sa attributeInterestChanged()
+    \sa interestChanged()
 */
 void QValueSpacePublisher::connectNotify(const char *member)
 {

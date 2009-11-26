@@ -70,22 +70,22 @@ public:
             QTimer::singleShot(0, this, SLOT(quit()));
             break;
         case IpcTests:
-            publisher = new QValueSpacePublisher("/usr/lackey/subdir", uuid, this);
+            publisher = new QValueSpacePublisher(uuid, "/usr/lackey/subdir", this);
             publisher->setObjectName("original_lackey");
             publisher->setValue("value", 100);
             publisher->sync();
-            subscriber = new QValueSpaceSubscriber("/usr/lackey/subdir", uuid, this);
+            subscriber = new QValueSpaceSubscriber(uuid, "/usr/lackey/subdir", this);
             connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(changes()));
 
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
             break;
         case IpcInterestNotification:
-            publisher = new QValueSpacePublisher("/ipcInterestNotification", uuid, this);
-            connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
-                    this, SLOT(attributeInterestChanged(QString,bool)));
+            publisher = new QValueSpacePublisher(uuid, "/ipcInterestNotification", this);
+            connect(publisher, SIGNAL(interestChanged(QString,bool)),
+                    this, SLOT(interestChanged(QString,bool)));
             break;
         case IpcRemoveKey:
-            publisher = new QValueSpacePublisher("/ipcRemoveKey", uuid, this);
+            publisher = new QValueSpacePublisher(uuid, "/ipcRemoveKey", this);
             publisher->setValue("value", 100);
             publisher->sync();
             QTimer::singleShot(TIMEOUT, this, SLOT(removeKey()));
@@ -131,7 +131,7 @@ private slots:
         //qDebug() << "changes:" << subscriber->value("mine", 6).toInt();
     }
 
-    void attributeInterestChanged(const QString &attribute, bool interested)
+    void interestChanged(const QString &attribute, bool interested)
     {
         //qDebug() << Q_FUNC_INFO << path << interested;
         if (interested) {

@@ -50,6 +50,8 @@ QTM_BEGIN_NAMESPACE
     \brief The QImageCaptureControl class provides a control interface
     for image capture services.
 
+    \ingroup camera
+
     \preliminary
 
     The interface name of QImageCaptureControl is \c com.nokia.Qt.QImageCaptureControl/1.0 as

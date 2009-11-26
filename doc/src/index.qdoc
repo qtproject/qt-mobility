@@ -198,8 +198,8 @@
     and managing of an FM radio. This includes the typical functionality you
     would find on a music and video player, combined with an FM radio.
 
-    Support for a camera is not included in this release but will be included
-    in a future update.
+    Support for a camera is available in this release as a technology
+    preview which we are glad to present to the community.
 
     \section2 Service Framework
 
@@ -223,8 +223,27 @@
     network connection types and status, display, data storage devices,
     device information and the screensaver.
 
+    \section1 Technology Preview
 
-    \target {Platform Compatability}
+    Two additional APIs are included as a Technology Preview only. These
+    are pre-release versions and the API will likely change before they are
+    officially released. You may use these APIs in accordance with the terms and
+    conditions contained in the Technology Preview License Agreement
+    accompanying this package.
+
+    We are making these available so that developers can see that future
+    updates will not only refine the API but add important features. We
+    are proud of the work we have done on this project and want to show
+    not only what we are delivering now but what is around the corner.
+
+    \l{preview.html#Management-of-Versit-Documents}{Versit} is an API for
+    managing Versit documents, such as vCards.
+
+    \l{preview.html#Camera-Support}{Camera} will be a part of the Multimedia API.
+
+
+
+
     \section1 Platform Compatability
     
     \raw HTML

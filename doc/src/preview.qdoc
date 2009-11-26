@@ -39,38 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef TESTCONFIGURATION_H
-#define TESTCONFIGURATION_H
+/*!
+\page preview.html
 
-#include <QXmlDefaultHandler>
+\title Technology Preview
 
-class TestConfiguration : public QXmlDefaultHandler
-{
-public: // Constructors and destructor
-    TestConfiguration();
-    ~TestConfiguration();
-
-public:
-    int parse(const QString& fileName);
-
-    bool saveContact() {return mSaveContact;}
-    QString outputFormat() {return mOutputFormat;}
-    QString testName() {return mTestName;}
-    int iterations() {return mIterationCount;}
-
-protected: // From QXmlContentHandler
-    bool startElement(
-        const QString& namespaceURI,
-        const QString& localName,
-        const QString& qName,
-        const QXmlAttributes& atts);
-
-private: // Data
-    QString mTestName;
-    bool mSaveContact;
-    QString mOutputFormat;
-    int mIterationCount;
-};
+\brief The Technology Preview of interesting APIs not for official release.
 
 
-#endif // TESTCONFIGURATION_H
+\target {Management of Versit Documents}
+\section1 Management of Versit Documents
+
+\l{Versit API}{Versit API Documentation}
+
+Versit Classes.
+\annotatedlist versit
+
+
+\target {Camera Support
+\section1 Camera Support
+
+\annotatedlist camera
+
+
+
+*/
+
+

@@ -53,6 +53,8 @@ QTM_BEGIN_NAMESPACE
   \class QVersitContactExporter
  
   \brief The QVersitContactExporter class exports QContact(s) into QVersitDocument(s).
+
+  \ingroup versit
  
   If the exported QContact has some detail with an image as its value,
   signal \l QVersitContactExporter::scale() is emitted and
@@ -68,7 +70,7 @@ QTM_BEGIN_NAMESPACE
  
    // Create a name
    QContactName name;
-   name.setFirst(QString::fromAscii("Simpson"));
+   name.setFirst(QString::fromAscii("John"));
    contact.saveDetail(&name);
  
    // Create an avatar type which is not supported by the exporter
