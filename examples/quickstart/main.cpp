@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+//! [0]
 #include <QApplication>
 #include <QLabel>
 
@@ -54,3 +55,4 @@ int main(int argc, char *argv[])
     label->resize(100,30);
     return app.exec();
 }
+//! [0]
