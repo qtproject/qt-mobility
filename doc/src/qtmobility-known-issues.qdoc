@@ -139,8 +139,10 @@ Support is present for the following System Info API classes
 
 \section2 Issues Affecting All Platforms
 \list
+    \o  For this release all QtMobility library names have a \bold _tp suffix
     \o  Messaging filtering and Sorting functions are not fully optimized.
     \o  Versit support for Contacts API is ALPHA, see \c {src/versit/README}
+    \o  Not all example applications will display(fit) well on small screens.
 \endlist
 
 
@@ -229,6 +231,15 @@ Several failing autotests.
 \endlist
 
 \section2 Windows Mobile Specific Issues
+
+\section3 Contacts API
+The samplephonebook application has the following limitations
+\list
+    \o Adding a Contact Group fails.
+    \o Adding an Avatar to a contact fails.
+    \o Not all contact details can be are be viewed/added/edited.
+\endlist
+    
 
 \section3 Messaging API
 For the QMessageServiceAction class the following limitations apply to this release:
