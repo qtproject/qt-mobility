@@ -3177,11 +3177,11 @@
     <section ref="examples.html" title="Qt Mobility Examples">
         <keyword ref="examples.html">Qt Mobility Examples</keyword>
     </section>
-    <section ref="mobility.html" title="Qt Mobility Project APIs (BETA)">
-        <keyword ref="mobility.html">Qt Mobility Project APIs (BETA)</keyword>
+    <section ref="mobility.html" title="Qt Mobility Project APIs (Technical Preview)">
+        <keyword ref="mobility.html">Qt Mobility Project APIs (Technical Preview)</keyword>
     </section>
-    <section ref="index.html" title="Qt Mobility Project APIs (BETA) Overview">
-        <keyword ref="index.html">Qt Mobility Project APIs (BETA) Overview</keyword>
+    <section ref="index.html" title="Qt Mobility Project APIs (Technical Preview) Overview">
+        <keyword ref="index.html">Qt Mobility Project APIs (Technical Preview) Overview</keyword>
     </section>
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>

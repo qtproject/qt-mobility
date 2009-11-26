@@ -531,8 +531,8 @@
                     <section ref="full-framework-edition-classes.html" title="Qt Full Framework Edition"/>
                     <section ref="gui-framework-edition-classes.html" title="Qt GUI Framework Edition"/>
                     <section ref="examples.html" title="Qt Mobility Examples"/>
-                    <section ref="mobility.html" title="Qt Mobility Project APIs (BETA)"/>
-                    <section ref="index.html" title="Qt Mobility Project APIs (BETA) Overview"/>
+                    <section ref="mobility.html" title="Qt Mobility Project APIs (Technical Preview)"/>
+                    <section ref="index.html" title="Qt Mobility Project APIs (Technical Preview) Overview"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
@@ -3113,8 +3113,8 @@
             <keyword name="Qt Full Framework Edition" id="Qt Full Framework Edition" ref="full-framework-edition-classes.html"/>
             <keyword name="Qt GUI Framework Edition" id="Qt GUI Framework Edition" ref="gui-framework-edition-classes.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="examples.html"/>
-            <keyword name="Qt Mobility Project APIs (BETA)" id="Qt Mobility Project APIs (BETA)" ref="mobility.html"/>
-            <keyword name="Qt Mobility Project APIs (BETA) Overview" id="Qt Mobility Project APIs (BETA) Overview" ref="index.html"/>
+            <keyword name="Qt Mobility Project APIs (Technical Preview)" id="Qt Mobility Project APIs (Technical Preview)" ref="mobility.html"/>
+            <keyword name="Qt Mobility Project APIs (Technical Preview) Overview" id="Qt Mobility Project APIs (Technical Preview) Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
             <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
             <keyword name="QtMedia" id="QtMedia" ref="qtmedia.html"/>

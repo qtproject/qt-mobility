@@ -41,7 +41,7 @@
 
 /*!
     \group mobility
-    \title Qt Mobility Project APIs (BETA)
+    \title Qt Mobility Project APIs (Technical Preview)
 
     Qt Mobility Project supplies a set of new APIs for Qt enabling a range of
     mobile-centric technologies and features on mobile and non-mobile platforms.
@@ -54,7 +54,7 @@
     \page index.html
     \startpage index.html  Qt Reference Documentation
 
-    \title Qt Mobility Project APIs (BETA) Overview
+    \title Qt Mobility Project APIs (Technical Preview) Overview
 
     \brief An overview of the Qt Mobility Project APIs.
 
