@@ -42,7 +42,7 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include <QtGui>
+#include <QDialog>
 #include <qsysteminfo.h>
 
 QTM_USE_NAMESPACE
@@ -51,7 +51,7 @@ namespace Ui {
     class Dialog;
 }
 
-class Dialog : public QMainWindow {
+class Dialog : public QDialog {
     Q_OBJECT
 public:
     Dialog();
