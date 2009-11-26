@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
  * QVersitProperty property;
  *
  * property.setName(QString::fromAscii("N"));
- * property.setValue("Simpson;Homer;J;;");
+ * property.setValue("Citizen;John;Q;;");
  * document.addProperty(property);
  *
  * property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));

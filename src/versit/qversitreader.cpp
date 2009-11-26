@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
  * QBuffer vCardBuffer;
  * vCardBuffer.open(QBuffer::ReadWrite);
  * QByteArray vCard =
- *     "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Simpson;Homer;J;;\r\nEND:VCARD\r\n";
+ *     "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n";
  * vCardBuffer.write(vCard);
  * vCardBuffer.seek(0);
  * QVersitReader reader;
