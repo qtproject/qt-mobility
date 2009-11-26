@@ -235,6 +235,9 @@ void AccountsWidget::setupUi()
 
     m_busyLabel = new QLabel("Loading...");
     m_stackedLayout->addWidget(m_busyLabel);
+
+    setSizePolicy(m_accountsCombo->sizePolicy());
+
 }
 
 void AccountsWidget::setIds(const QMessageAccountIdList& ids)
@@ -571,6 +574,17 @@ m_sendAsHTMLAction(0)
     setupUi();
 }
 
+static void notifyResult(bool result, const QString& description)
+{
+#ifndef _WIN32_WCE
+    if(result) QMessageBox::information(0,description,"Succeeded!");
+    else QMessageBox::critical(0,description,"Failed.");
+#else
+    Q_UNUSED(result);
+    Q_UNUSED(description);
+#endif
+}
+
 void ComposeSendWidget::composeButtonClicked()
 {
     QMessage message(constructQMessage());
@@ -581,7 +595,7 @@ void ComposeSendWidget::sendButtonClicked()
 {
     bool asHtml = (sender() == m_sendAsHTMLAction);
     QMessage message(constructQMessage(asHtml));
-    m_service->send(message);
+    notifyResult(m_service->send(message),"Send message");
 }
 
 void ComposeSendWidget::addAttachmentButtonClicked()
@@ -592,8 +606,9 @@ void ComposeSendWidget::addAttachmentButtonClicked()
 
 void ComposeSendWidget::accountChanged()
 {
-#ifdef _WIN32_WCE
-    bool isSmsAccount = m_accountsWidget->currentAccountName() == "SMS";
+    QMessageAccount currentAccount(m_accountsWidget->currentAccount());
+
+    bool isSmsAccount = (currentAccount.messageTypes() & QMessage::Sms) > 0;
 
     foreach(QWidget* emailSpecificWidget , QList<QWidget*>() << m_bccEdit << m_bccLabel <<
                                                                 m_ccEdit <<  m_ccLabel <<
@@ -603,7 +618,6 @@ void ComposeSendWidget::accountChanged()
 
     m_attachmentsAction->setEnabled(!isSmsAccount);
     m_sendAsHTMLAction->setEnabled(!isSmsAccount);
-#endif
 }
 
 void ComposeSendWidget::setupUi()
@@ -680,12 +694,9 @@ QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
     }
 
     QMessageAccountId selectedAccountId = m_accountsWidget->currentAccount();
-#ifdef _WIN32_WCE
     QMessageAccount selectedAccount(selectedAccountId);
-    bool composingSms = selectedAccount.name() == "SMS";
-#else
-    bool composingSms = false;
-#endif
+
+    bool composingSms = (selectedAccount.messageTypes() & QMessage::Sms) > 0;
 
     QMessageAddressList toList;
     QMessageAddressList ccList;
@@ -1103,7 +1114,7 @@ void ShowWidget::showButtonClicked()
     QMessageId id = m_recentMessagesWidget->currentMessage();
 
     if(id.isValid())
-        m_service->show(id);
+        m_service->show(id),"Show";
 }
 
 void ShowWidget::setupUi()
