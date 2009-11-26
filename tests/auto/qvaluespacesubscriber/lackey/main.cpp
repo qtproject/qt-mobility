@@ -81,8 +81,8 @@ public:
             break;
         case IpcInterestNotification:
             publisher = new QValueSpacePublisher(uuid, "/ipcInterestNotification", this);
-            connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
-                    this, SLOT(attributeInterestChanged(QString,bool)));
+            connect(publisher, SIGNAL(interestChanged(QString,bool)),
+                    this, SLOT(interestChanged(QString,bool)));
             break;
         case IpcRemoveKey:
             publisher = new QValueSpacePublisher(uuid, "/ipcRemoveKey", this);
@@ -131,7 +131,7 @@ private slots:
         //qDebug() << "changes:" << subscriber->value("mine", 6).toInt();
     }
 
-    void attributeInterestChanged(const QString &attribute, bool interested)
+    void interestChanged(const QString &attribute, bool interested)
     {
         //qDebug() << Q_FUNC_INFO << path << interested;
         if (interested) {

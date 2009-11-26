@@ -75,7 +75,7 @@ class ChangeListener : public QObject
 {
     Q_OBJECT
 Q_SIGNALS:
-    void attributeInterestChanged(const QString&, bool);
+    void interestChanged(const QString&, bool);
 };
 
 class tst_QValueSpacePublisher: public QObject
@@ -340,10 +340,10 @@ void tst_QValueSpacePublisher::testSignals()
     QValueSpacePublisher *publisher = new QValueSpacePublisher(layer->id(), publisherPath);
 
     ChangeListener listener;
-    connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
-            &listener, SIGNAL(attributeInterestChanged(QString,bool)));
+    connect(publisher, SIGNAL(interestChanged(QString,bool)),
+            &listener, SIGNAL(interestChanged(QString,bool)));
 
-    QSignalSpy interestChangedSpy(&listener, SIGNAL(attributeInterestChanged(QString,bool)));
+    QSignalSpy interestChangedSpy(&listener, SIGNAL(interestChanged(QString,bool)));
 
     QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(layer->id(), subscriberPath);
 
