@@ -167,7 +167,8 @@ void QueryThread::run()
 void QMessageServiceActionPrivate::completed()
 {
     _active = false;
-    emit stateChanged(_lastError == QMessageStore::NoError ? QMessageServiceAction::Successful : QMessageServiceAction::Failed);
+    _state = (_lastError == QMessageStore::NoError) ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    emit stateChanged(_state);
 }
 
 void QMessageServiceActionPrivate::reportMatchingIds()
@@ -731,6 +732,8 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
         qWarning() << "Action is currently busy";
         return false;
     }
+
+
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageStore::NoError;
     d_ptr->_state = QMessageServiceAction::InProgress;
