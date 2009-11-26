@@ -400,7 +400,7 @@ void tst_QValueSpace::layerInterface()
 
     QValueSpacePublisher *publisher;
 
-    CHECK_ERRORS(publisher = new QValueSpacePublisher(path, fakeLayer->id()));
+    CHECK_ERRORS(publisher = new QValueSpacePublisher(fakeLayer->id(), path));
 
     QVERIFY(publisher->isConnected());
 
