@@ -179,6 +179,9 @@ mobility libraries into $PWD/install.
 \endcode
     
     Type \c {./configure -help} to get a list of all available options.
+    If you are building for maemo you need to use the -maemo option 
+    with configure.
+
     To create all the libraries and tools, type:
 \code
     make
