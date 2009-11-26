@@ -99,8 +99,8 @@ public:
 
 protected:
     /* QValueSpacePublisher functions */
-    void emitAttributeInterestChanged(QValueSpacePublisher *publisher, const QString &attribute,
-                                      bool interested);
+    void emitInterestChanged(QValueSpacePublisher *publisher, const QString &attribute,
+                             bool interested);
 
 signals:
     void handleChanged(quintptr);

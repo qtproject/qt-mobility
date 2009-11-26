@@ -83,7 +83,7 @@ class ChangeListener : public QObject
 
 Q_SIGNALS:
     void baseChanged();
-    void attributeInterestChanged(const QString&, bool);
+    void interestChanged(const QString&, bool);
 };
 
 Q_DECLARE_METATYPE(QValueSpaceSubscriber*)
@@ -911,11 +911,11 @@ void tst_QValueSpaceSubscriber::interestNotification()
     publisher = new QValueSpacePublisher(layer->id(), publisherPath);
 
     ChangeListener notificationListener;
-    connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
-            &notificationListener, SIGNAL(attributeInterestChanged(QString,bool)));
+    connect(publisher, SIGNAL(interestChanged(QString,bool)),
+            &notificationListener, SIGNAL(interestChanged(QString,bool)));
 
     QSignalSpy notificationSpy(&notificationListener,
-                               SIGNAL(attributeInterestChanged(QString,bool)));
+                               SIGNAL(interestChanged(QString,bool)));
 
     const QString subscriberPath = publisherPath + attribute;
 
@@ -1002,13 +1002,13 @@ void tst_QValueSpaceSubscriber::ipcInterestNotification()
         << "-ipcInterestNotification" << layer->id().toString());
     QVERIFY(process.waitForStarted());
 
-    // Lackey will receive attributeInterestChanged from server and set the attribute.
+    // Lackey will receive interestChanged from server and set the attribute.
     QTRY_COMPARE(changeSpy.count(), 1);
     changeSpy.clear();
 
     QCOMPARE(subscriber->value(QString(), 10).toInt(), 5);
 
-    // Lackey will receive attributeInterestChanged and remove attribute.
+    // Lackey will receive interestChanged and remove attribute.
     delete subscriber;
     QTest::qWait(1000);
 

@@ -279,14 +279,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Emits the QValueSpacePublisher::attributeInterestChanged() signal on \a publisher with \a path
+    Emits the QValueSpacePublisher::interestChanged() signal on \a publisher with \a path
     and \a interested.
 */
-void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpacePublisher *publisher,
-                                                            const QString &path,
-                                                            bool interested)
+void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publisher,
+                                                   const QString &path,
+                                                   bool interested)
 {
-    emit publisher->attributeInterestChanged(path, interested);
+    emit publisher->interestChanged(path, interested);
 }
 
 /*!
