@@ -45,6 +45,10 @@
 
 \title Versit API
 
+\brief An API to manage Versit documents.
+
+\ingroup mobility
+
 \tableofcontents
 
 \section1 Overview 

@@ -78,6 +78,14 @@ these domains have dependencies and these are outlined below:
         provides SMS/MMS facilites. Email functionality requires that an email 
         account is available on the platform.
 \row
+    \o  Contacts
+    \o  The Maemo 6 backend depends on libqttracker.
+        For more information on libqttracker visit
+        \l {http://maemo.gitorious.org/maemo-af/libqttracker}
+        {libqttracker public repository}
+        Other components offered by the Maemo 6 platform may be required
+        in order to support the full functionality of the Maemo 6 backend.
+\row
     \o  Service Framework
     \o 
         The service framework depends on SQLite version 3 and that

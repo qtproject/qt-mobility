@@ -1,4 +1,3 @@
-<<<<<<< HEAD:bin/rununittests.bat
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 :: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).

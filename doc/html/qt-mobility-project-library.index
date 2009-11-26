@@ -7298,6 +7298,22 @@
             <page access="public" status="commendable" name="quickstart/main.cpp" href="quickstart-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="quickstart/main.cpp" location=""/>
             <page access="public" status="commendable" name="quickstart/quickstart.pro" href="quickstart-quickstart-pro.html" subtype="file" title="" fulltitle="quickstart.pro Example File" subtitle="quickstart/quickstart.pro" location=""/>
         </page>
+        <page access="public" status="commendable" name="3rdparty.html" href="3rdparty.html" subtype="page" title="Third-Party Licenses Used in Qt" fulltitle="Third-Party Licenses Used in Qt" subtitle="" location="3rdparty.qdoc">
+            <contents name="des" title="DES ()" level="1"/>
+            <contents name="freetype-2-version-2-3-6" title="FreeType 2 () version 2.3.6" level="1"/>
+            <contents name="harfbuzz" title="HarfBuzz ()" level="1"/>
+            <contents name="the-independent-jpeg-group-s-jpeg-software-version-6b" title="The Independent JPEG Group's JPEG Software () version 6b" level="1"/>
+            <contents name="md4-and" title="MD4 ( and )" level="1"/>
+            <contents name="md5-and" title="MD5 ( and )" level="1"/>
+            <contents name="mng-library-version-1-0-10" title="MNG Library () version 1.0.10" level="1"/>
+            <contents name="png-reference-library-version-1-2-29" title="PNG Reference Library () version 1.2.29" level="1"/>
+            <contents name="the-ptmalloc-memory-allocator-version-1-8" title="The ptmalloc memory allocator () version 1.8" level="1"/>
+            <contents name="sha-1" title="SHA-1 ()" level="1"/>
+            <contents name="sqlite-version-3-5-9" title="SQLite () version 3.5.9" level="1"/>
+            <contents name="tiff-software-distribution-version-3-8-2" title="TIFF Software Distribution () version 3.8.2" level="1"/>
+            <contents name="wintab-api" title="Wintab API ()" level="1"/>
+            <contents name="data-compression-library-version-1-2-3" title="Data Compression Library () version 1.2.3" level="1"/>
+        </page>
         <page access="public" status="commendable" name="slideshow" href="slideshow.html" subtype="example" title="SlideShow Example" fulltitle="SlideShow Example" subtitle="" location="slideshow.qdoc">
             <page access="public" status="commendable" name="slideshow/slideshow.cpp" href="slideshow-slideshow-cpp.html" subtype="file" title="" fulltitle="slideshow.cpp Example File" subtitle="slideshow/slideshow.cpp" location=""/>
             <page access="public" status="commendable" name="slideshow/slideshow.h" href="slideshow-slideshow-h.html" subtype="file" title="" fulltitle="slideshow.h Example File" subtitle="slideshow/slideshow.h" location=""/>
@@ -7322,6 +7338,7 @@
         <page access="public" status="commendable" name="annotated.html" href="annotated.html" subtype="page" title="Annotated Class List" fulltitle="Annotated Class List" subtitle="" location="classes.qdoc"/>
         <page access="public" status="commendable" name="hierarchy.html" href="hierarchy.html" subtype="page" title="Inheritance Hierarchy" fulltitle="Inheritance Hierarchy" subtitle="" location="classes.qdoc"/>
         <page access="public" status="commendable" name="functions.html" href="functions.html" subtype="page" title="All Functions" fulltitle="All Functions" subtitle="" location="classes.qdoc"/>
+        <page access="public" status="commendable" name="trademarks.html" href="trademarks.html" subtype="page" title="Trademarks" fulltitle="Trademarks" subtitle="" location="trademarks.qdoc"/>
         <page access="public" status="commendable" name="contacts.html" href="contacts.html" subtype="page" title="Contacts" fulltitle="Contacts" subtitle="" location="contacts.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
@@ -7373,6 +7390,13 @@
             <contents name="classes-for-service-implementers" title="Classes for service implementers." level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorderControl_iid" href="qmediarecordercontrol.html#QMediaRecorderControl_iid" location="qmediarecordercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaRecorderControl" type="" signature="QMediaRecorderControl_iid()"/>
+        <page access="public" status="commendable" name="gpl.html" href="gpl.html" subtype="page" title="GNU General Public License (GPL)" fulltitle="GNU General Public License (GPL)" subtitle="" location="gpl.qdoc">
+            <contents name="the-gnu-general-public-license-version-3" title="The GNU General Public License (Version 3)" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="lgpl.html" href="lgpl.html" subtype="page" title="GNU Lesser General Public License (LGPL)" fulltitle="GNU Lesser General Public License (LGPL)" subtitle="" location="gpl.qdoc">
+            <contents name="the-gnu-lesser-general-public-license-version-2-1" title="The GNU Lesser General Public License (Version 2.1)" level="1"/>
+            <contents name="nokia-qt-lgpl-exception-version-1-0" title="Nokia Qt LGPL Exception version 1.0" level="1"/>
+        </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QCameraExposureControl_iid" href="qcameraexposurecontrol.html#QCameraExposureControl_iid" location="qcameraexposurecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QCameraExposureControl" type="" signature="QCameraExposureControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWindowControl_iid" href="qvideowindowcontrol.html#QVideoWindowControl_iid" location="qvideowindowcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWindowControl" type="" signature="QVideoWindowControl_iid()"/>
         <page access="public" status="commendable" name="location" href="location.html" subtype="group" title="Location API" fulltitle="Location API" subtitle="" location="location.qdoc"/>
@@ -7417,14 +7441,20 @@
             <contents name="bearer-monitor-example" title="Bearer Monitor Example" level="2"/>
             <contents name="classes" title="Classes" level="1"/>
         </page>
+        <page access="public" status="commendable" name="commercialeditions.html" href="commercialeditions.html" subtype="page" title="Qt Commercial Editions" fulltitle="Qt Commercial Editions" subtitle="" location="commercialeditions.qdoc">
+            <keyword name="qt-full-framework-edition"/>
+            <keyword name="qt-gui-framework-edition"/>
+        </page>
+        <page access="public" status="commendable" name="full-framework-edition-classes.html" href="full-framework-edition-classes.html" subtype="page" title="Qt Full Framework Edition" fulltitle="Qt Full Framework Edition" subtitle="" location="commercialeditions.qdoc"/>
+        <page access="public" status="commendable" name="gui-framework-edition-classes.html" href="gui-framework-edition-classes.html" subtype="page" title="Qt GUI Framework Edition" fulltitle="Qt GUI Framework Edition" subtitle="" location="commercialeditions.qdoc"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (BETA)" fulltitle="Qt Mobility Project APIs (BETA)" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (BETA) Overview" fulltitle="Qt Mobility Project APIs (BETA) Overview" subtitle="" location="index.qdoc">
             <target name="platform-compatability"/>
             <contents name="overview" title="Overview" level="1"/>
-            <contents name="introducing-the-new-mobility-project-apis-beta" title="Introducing the New Mobility Project APIs (BETA)" level="2"/>
+            <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
-            <contents name="the-mobility-project-apis" title="The Mobility Project APIs" level="1"/>
+            <contents name="the-new-qt-apis" title="The New Qt APIs" level="1"/>
             <contents name="bearer-management" title="Bearer Management" level="2"/>
             <contents name="contacts" title="Contacts" level="2"/>
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
@@ -7462,6 +7492,7 @@
             <contents name="system-information" title="System Information" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QCameraControl_iid" href="qcameracontrol.html#QCameraControl_iid" location="qcameracontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QCameraControl" type="" signature="QCameraControl_iid()"/>
+        <page access="public" status="commendable" name="editions.html" href="editions.html" subtype="page" title="Qt Editions" fulltitle="Qt Editions" subtitle="" location="editions.qdoc"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlayerControl_iid" href="qmediaplayercontrol.html#QMediaPlayerControl_iid" location="qmediaplayercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlayerControl" type="" signature="QMediaPlayerControl_iid()"/>
         <page access="public" status="commendable" name="contactsschema.html" href="contactsschema.html" subtype="page" title="Qt Contacts Schema" fulltitle="Qt Contacts Schema" subtitle="" location="contactsschema.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
@@ -7496,6 +7527,22 @@
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="examples" title="Examples" level="2"/>
+        </page>
+        <page access="public" status="commendable" name="licensing" href="licensing.html" subtype="group" title="Licensing Information" fulltitle="Licensing Information" subtitle="" location="licenses.qdoc"/>
+        <page access="public" status="commendable" name="licenses.html" href="licenses.html" subtype="page" title="Other Licenses Used in Qt" fulltitle="Other Licenses Used in Qt" subtitle="" location="licenses.qdoc"/>
+        <page access="public" status="commendable" name="licenses-fonts.html" href="licenses-fonts.html" subtype="page" title="Licenses for Fonts Used in Qt for Embedded Linux" fulltitle="Licenses for Fonts Used in Qt for Embedded Linux" subtitle="" location="licenses.qdoc">
+            <contents name="adobe-helvetica" title="Adobe Helvetica" level="1"/>
+            <contents name="adobe-utopia" title="Adobe Utopia" level="1"/>
+            <contents name="babelfish" title="Babelfish" level="1"/>
+            <contents name="bigelow-holmes-luxi" title="Bigelow &amp; Holmes Luxi" level="1"/>
+            <contents name="bitstream-charter-and-courier" title="Bitstream Charter and Courier" level="1"/>
+            <contents name="bitstream-vera" title="Bitstream Vera" level="1"/>
+            <contents name="cursor" title="Cursor" level="1"/>
+            <contents name="dejavu-fonts" title="DejaVu Fonts" level="1"/>
+            <contents name="fixed-fonts" title="Fixed Fonts" level="1"/>
+            <contents name="ibm-courier" title="IBM Courier" level="1"/>
+            <contents name="micro" title="Micro" level="1"/>
+            <contents name="unifont" title="Unifont" level="1"/>
         </page>
         <page access="public" status="commendable" name="audiorecorder" href="audiorecorder.html" subtype="example" title="Audio Recorder Example" fulltitle="Audio Recorder Example" subtitle="" location="audiorecorder.qdoc">
             <page access="public" status="commendable" name="audiorecorder/audiorecorder.cpp" href="audiorecorder-audiorecorder-cpp.html" subtype="file" title="" fulltitle="audiorecorder.cpp Example File" subtitle="audiorecorder/audiorecorder.cpp" location=""/>
@@ -7611,6 +7658,7 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceControl_iid" href="qaudiodevicecontrol.html#QAudioDeviceControl_iid" location="qaudiodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceControl" type="" signature="QAudioDeviceControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlaylistControl_iid" href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid" location="qmediaplaylistcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlaylistControl" type="" signature="QMediaPlaylistControl_iid()"/>
+        <page access="public" status="commendable" name="opensourceedition.html" href="opensourceedition.html" subtype="page" title="Open Source Versions of Qt" fulltitle="Open Source Versions of Qt" subtitle="" location="opensourceedition.qdoc"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QCameraFocusControl_iid" href="qcamerafocuscontrol.html#QCameraFocusControl_iid" location="qcamerafocuscontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QCameraFocusControl" type="" signature="QCameraFocusControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMetaDataControl_iid" href="qmetadatacontrol.html#QMetaDataControl_iid" location="qmetadatacontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMetaDataControl" type="" signature="QMetaDataControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoRendererControl_iid" href="qvideorenderercontrol.html#QVideoRendererControl_iid" location="qvideorenderercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoRendererControl" type="" signature="QVideoRendererControl_iid()"/>

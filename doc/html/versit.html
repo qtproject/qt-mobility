@@ -20,12 +20,12 @@
 <li><a href="#mapping-the-vcard-constants">Mapping the vCard constants</a></li>
 </ul>
 <a name="overview"></a>
-<h2>Overview</h2>
+<h3>Overview</h3>
 <p>Versit API provides a set of methods to parse/read (<a href="qversitreader.html">QVersitReader</a>) and encode/write (<a href="qversitwriter.html">QVersitWriter</a>) versit* documents such as vCards (<a href="http://www.imc.org/pdi/">http://www.imc.org/pdi/</a>). Currently <a href="qversitreader.html">QVersitReader</a> and <a href="qversitwriter.html">QVersitWriter</a> support reading and writing vCard 2.1 and 3.0 formats.</p>
 <p>Versit API also provides utilities to import (<a href="qversitcontactimporter.html">QVersitContactImporter</a>) QContacts from versit documents and export (<a href="qversitcontactexporter.html">QVersitContactExporter</a>) QContacts to versit documents.</p>
 <p>[*] Versit is a trademark of the Internet Mail Consortium.</p>
 <a name="usage"></a>
-<h2>Usage</h2>
+<h3>Usage</h3>
 <pre><span class="comment">    // Create the input vCard</span>
     QBuffer input;
     input.open(QBuffer::ReadWrite);
@@ -62,7 +62,7 @@
     output.seek(0);
     QByteArray outputVCard(output.readAll());</pre>
 <a name="classes"></a>
-<h2>Classes</h2>
+<h3>Classes</h3>
 <ul>
 <li><a href="qversitproperty.html">QVersitProperty</a></li>
 <li><a href="qversitdocument.html">QVersitDocument</a></li>
@@ -72,7 +72,7 @@
 <li><a href="qversitcontactexporter.html">QVersitContactExporter</a></li>
 </ul>
 <a name="mapping-the-vcard-constants"></a>
-<h2>Mapping the vCard constants</h2>
+<h3>Mapping the vCard constants</h3>
 <p>vCard properties are mapped to QContactDetails as follows:</p>
 <pre><span class="comment">    // Mappings from versit property names to Qt contact details</span>
     const versitContactDetailMapping versitContactDetailMappings[] = {
@@ -165,6 +165,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>

@@ -8,6 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QMailMessage" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -93,100 +94,133 @@
 <p>See also <a href="qmailmessagemetadata.html">QMailMessageMetaData</a>, <a href="qmailmessagepart.html">QMailMessagePart</a>, <a href="qmailmessagebody.html">QMailMessageBody</a>, QMailStore, and <a href="qmailmessageid.html">QMailMessageId</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMailMessage/QMailMessage" />
 <h3 class="fn"><a name="QMailMessage"></a>QMailMessage::QMailMessage ()</h3>
 <p>Constructs an empty message object.</p>
 <h3 class="fn"><a name="QMailMessage-2"></a>QMailMessage::QMailMessage ( const <a href="qmailmessageid.html">QMailMessageId</a> &amp; <i>id</i> )</h3>
 <p>Constructs a message object from data stored in the message store with <a href="qmailmessageid.html">QMailMessageId</a> <i>id</i>.</p>
 <h3 class="fn"><a name="QMailMessage-3"></a>QMailMessage::QMailMessage ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>uid</i>, const <a href="qmailaccountid.html">QMailAccountId</a> &amp; <i>accountId</i> )</h3>
 <p>Constructs a message object from data stored in the message store with the unique identifier <i>uid</i> from the account with id <i>accountId</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/appendHeaderField" />
 <h3 class="fn"><a name="appendHeaderField"></a>void QMailMessage::appendHeaderField ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagepartcontainer.html#appendHeaderField">QMailMessagePartContainer::appendHeaderField</a>().</p>
 <h3 class="fn"><a name="appendHeaderField-2"></a>void QMailMessage::appendHeaderField ( const <a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a> &amp; <i>field</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagepartcontainer.html#appendHeaderField-2">QMailMessagePartContainer::appendHeaderField</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/bcc" />
 <h3 class="fn"><a name="bcc"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailaddress.html">QMailAddress</a>&gt; QMailMessage::bcc () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of all the bcc (blind carbon copy) recipients specified for the message.</p>
 <p>See also <a href="qmailmessage.html#setBcc">setBcc</a>(), <a href="qmailmessagemetadata.html#to">to</a>(), <a href="qmailmessage.html#cc">cc</a>(), and <a href="qmailaddress.html">QMailAddress</a>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/cc" />
 <h3 class="fn"><a name="cc"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailaddress.html">QMailAddress</a>&gt; QMailMessage::cc () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of all the cc (carbon copy) recipients specified for the message.</p>
 <p>See also <a href="qmailmessage.html#setCc">setCc</a>(), <a href="qmailmessagemetadata.html#to">to</a>(), <a href="qmailmessage.html#bcc">bcc</a>(), and <a href="qmailaddress.html">QMailAddress</a>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/contains" />
 <h3 class="fn"><a name="contains"></a>bool QMailMessage::contains ( const <a href="qmailmessagepart-location.html">QMailMessagePart::Location</a> &amp; <i>location</i> ) const</h3>
 <p>Returns true if the message contains a part with the location <i>location</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/contentAvailable" />
 <h3 class="fn"><a name="contentAvailable"></a>bool QMailMessage::contentAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#contentAvailable">QMailMessageMetaData::contentAvailable</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/contentSize" />
 <h3 class="fn"><a name="contentSize"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> QMailMessage::contentSize () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the size of the message content excluding any meta data, in bytes.</p>
 <p>See also <a href="qmailmessage.html#setContentSize">setContentSize</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/externalLocationReference" />
 <h3 class="fn"><a name="externalLocationReference"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessage::externalLocationReference () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a value by which the external location of the message can be referenced, if available.</p>
 <p>See also <a href="qmailmessage.html#setExternalLocationReference">setExternalLocationReference</a>().</p>
+<a name="//apple_ref/cpp/clm/QMailMessage/fromRfc2822" />
 <h3 class="fn"><a name="fromRfc2822"></a>QMailMessage QMailMessage::fromRfc2822 ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>byteArray</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Constructs a mail message from the RFC 2822 data contained in <i>byteArray</i>.</p>
+<a name="//apple_ref/cpp/clm/QMailMessage/fromRfc2822File" />
 <h3 class="fn"><a name="fromRfc2822File"></a>QMailMessage QMailMessage::fromRfc2822File ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Constructs a mail message from the RFC 2822 data contained in the file <i>fileName</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/hasRecipients" />
 <h3 class="fn"><a name="hasRecipients"></a>bool QMailMessage::hasRecipients () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if there are any recipients (either To, CC or BCC addresses) defined for this message; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/inReplyTo" />
 <h3 class="fn"><a name="inReplyTo"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessage::inReplyTo () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the message ID specified by the RFC 2822 'In-Reply-To' field for the message, if present.</p>
 <p>See also <a href="qmailmessage.html#setInReplyTo">setInReplyTo</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/indicativeSize" />
 <h3 class="fn"><a name="indicativeSize"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> QMailMessage::indicativeSize () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#indicativeSize">QMailMessageMetaData::indicativeSize</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/partAt" />
 <h3 class="fn"><a name="partAt"></a>const <a href="qmailmessagepart.html">QMailMessagePart</a> &amp; QMailMessage::partAt ( const <a href="qmailmessagepart-location.html">QMailMessagePart::Location</a> &amp; <i>location</i> ) const</h3>
 <p>Returns a const reference to the part at the location <i>location</i> within the message.</p>
 <h3 class="fn"><a name="partAt-2"></a><a href="qmailmessagepart.html">QMailMessagePart</a> &amp; QMailMessage::partAt ( const <a href="qmailmessagepart-location.html">QMailMessagePart::Location</a> &amp; <i>location</i> )</h3>
 <p>Returns a non-const reference to the part at the location <i>location</i> within the message.</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/partialContentAvailable" />
 <h3 class="fn"><a name="partialContentAvailable"></a>bool QMailMessage::partialContentAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#partialContentAvailable">QMailMessageMetaData::partialContentAvailable</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/recipients" />
 <h3 class="fn"><a name="recipients"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailaddress.html">QMailAddress</a>&gt; QMailMessage::recipients () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of all the recipients specified for the message, either as To, CC, or BCC addresses.</p>
 <p>See also <a href="qmailmessagemetadata.html#to">to</a>(), <a href="qmailmessage.html#cc">cc</a>(), <a href="qmailmessage.html#bcc">bcc</a>(), and <a href="qmailmessage.html#hasRecipients">hasRecipients</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/removeHeaderField" />
 <h3 class="fn"><a name="removeHeaderField"></a>void QMailMessage::removeHeaderField ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagepartcontainer.html#removeHeaderField">QMailMessagePartContainer::removeHeaderField</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/replyTo" />
 <h3 class="fn"><a name="replyTo"></a><a href="qmailaddress.html">QMailAddress</a> QMailMessage::replyTo () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the address specified by the RFC 2822 'Reply-To' field for the message, if present.</p>
 <p>See also <a href="qmailmessage.html#setReplyTo">setReplyTo</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setBcc" />
 <h3 class="fn"><a name="setBcc"></a>void QMailMessage::setBcc ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailaddress.html">QMailAddress</a>&gt; &amp; <i>bccList</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Set the list of bcc (blind carbon copy) recipients for the message to <i>bccList</i>.</p>
 <p>See also <a href="qmailmessage.html#bcc">bcc</a>(), <a href="qmailmessage.html#setTo">setTo</a>(), and <a href="qmailmessage.html#setCc">setCc</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setCc" />
 <h3 class="fn"><a name="setCc"></a>void QMailMessage::setCc ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailaddress.html">QMailAddress</a>&gt; &amp; <i>ccList</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Set the list of cc (carbon copy) recipients for the message to <i>ccList</i>.</p>
 <p>See also <a href="qmailmessage.html#setTo">setTo</a>() and <a href="qmailmessage.html#setBcc">setBcc</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setContentSize" />
 <h3 class="fn"><a name="setContentSize"></a>void QMailMessage::setContentSize ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>size</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the size of the message content excluding any meta data to <i>size</i>, in bytes.</p>
 <p>See also <a href="qmailmessage.html#contentSize">contentSize</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setDate" />
 <h3 class="fn"><a name="setDate"></a>void QMailMessage::setDate ( const <a href="qmailtimestamp.html">QMailTimeStamp</a> &amp; <i>timeStamp</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#setDate">QMailMessageMetaData::setDate</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setExternalLocationReference" />
 <h3 class="fn"><a name="setExternalLocationReference"></a>void QMailMessage::setExternalLocationReference ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>location</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the value by which the external location of the message can be referenced to <i>location</i>.</p>
 <p>See also <a href="qmailmessage.html#externalLocationReference">externalLocationReference</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setFrom" />
 <h3 class="fn"><a name="setFrom"></a>void QMailMessage::setFrom ( const <a href="qmailaddress.html">QMailAddress</a> &amp; <i>from</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#setFrom">QMailMessageMetaData::setFrom</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setHeaderField" />
 <h3 class="fn"><a name="setHeaderField"></a>void QMailMessage::setHeaderField ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagepartcontainer.html#setHeaderField">QMailMessagePartContainer::setHeaderField</a>().</p>
 <h3 class="fn"><a name="setHeaderField-2"></a>void QMailMessage::setHeaderField ( const <a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a> &amp; <i>field</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagepartcontainer.html#setHeaderField-2">QMailMessagePartContainer::setHeaderField</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setId" />
 <h3 class="fn"><a name="setId"></a>void QMailMessage::setId ( const <a href="qmailmessageid.html">QMailMessageId</a> &amp; <i>id</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#setId">QMailMessageMetaData::setId</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setInReplyTo" />
 <h3 class="fn"><a name="setInReplyTo"></a>void QMailMessage::setInReplyTo ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>messageId</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the RFC 2822 'In-Reply-To' field for the message to <i>messageId</i>.</p>
 <p>See also <a href="qmailmessage.html#inReplyTo">inReplyTo</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setReplyTo" />
 <h3 class="fn"><a name="setReplyTo"></a>void QMailMessage::setReplyTo ( const <a href="qmailaddress.html">QMailAddress</a> &amp; <i>address</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the RFC 2822 'Reply-To' address of the message to <i>address</i>.</p>
 <p>See also <a href="qmailmessage.html#replyTo">replyTo</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setSubject" />
 <h3 class="fn"><a name="setSubject"></a>void QMailMessage::setSubject ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subject</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#setSubject">QMailMessageMetaData::setSubject</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/setTo" />
 <h3 class="fn"><a name="setTo"></a>void QMailMessage::setTo ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailaddress.html">QMailAddress</a>&gt; &amp; <i>toList</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#setTo">QMailMessageMetaData::setTo</a>().</p>
 <h3 class="fn"><a name="setTo-2"></a>void QMailMessage::setTo ( const <a href="qmailaddress.html">QMailAddress</a> &amp; <i>address</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagemetadata.html#setTo-2">QMailMessageMetaData::setTo</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/toRfc2822" />
 <h3 class="fn"><a name="toRfc2822"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMailMessage::toRfc2822 ( <a href="qmailmessagefwd.html#EncodingFormat-enum">EncodingFormat</a> <i>format</i> = TransmissionFormat ) const</h3>
 <p>Returns the message in RFC 2822 format. The encoded content will vary depending on the value of <i>format</i>.</p>
 <h3 class="fn"><a name="toRfc2822-2"></a>void QMailMessage::toRfc2822 ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, <a href="qmailmessagefwd.html#EncodingFormat-enum">EncodingFormat</a> <i>format</i> = TransmissionFormat ) const</h3>
 <p>Writes the message to the output stream <i>out</i>, in RFC 2822 format. The encoded content will vary depending on the value of <i>format</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessage/toRfc2822Chunks" />
 <h3 class="fn"><a name="toRfc2822Chunks"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailmessagefwd.html#MessageChunk-typedef">QMailMessage::MessageChunk</a>&gt; QMailMessage::toRfc2822Chunks ( <a href="qmailmessagefwd.html#EncodingFormat-enum">EncodingFormat</a> <i>format</i> = TransmissionFormat ) const</h3>
 <p>Returns the message in RFC 2822 format, separated into chunks that can be individually transferred by a mechanism such as that defined by RFC 3030. The encoded content will vary depending on the value of <i>format</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>

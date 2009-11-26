@@ -50,34 +50,34 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QVersitWriter
- *
- * \brief QVersitWriter provides an interface
- * for writing a versit document such as a vCard to a text stream.
- *
- * QVersitWriter converts a QVersitDocument into its textual representation.
- * QVersitWriter supports writing to an abstract I/O device
- * which can be for example a file or a memory buffer.
- * The writing can be done synchronously or asynchronously.
- *
- * \code
- * // An example of writing a simple vCard to a memory buffer:
- * QBuffer vCardBuffer;
- * vCardBuffer.open(QBuffer::ReadWrite);
- * QVersitWriter writer;
- * writer.setDevice(&vCardBuffer);
- * QVersitDocument document;
- * QVersitProperty property;
- * property.setName("N");
- * property.setValue("Simpson;Homer;J;;");
- * document.addProperty(property);
- * writer.setVersitDocument(document);
- * if (writer.writeAll()) {
- *     // Use the vCardBuffer...
- * }
- * \endcode
- *
- * \sa QVersitDocument, QVersitProperty
+  \class QVersitWriter
+ 
+  \brief The QVersitWriter class provides an interface
+  for writing a versit document such as a vCard to a text stream.
+ 
+  QVersitWriter converts a QVersitDocument into its textual representation.
+  QVersitWriter supports writing to an abstract I/O device
+  which can be for example a file or a memory buffer.
+  The writing can be done synchronously or asynchronously.
+ 
+  \code
+  // An example of writing a simple vCard to a memory buffer:
+  QBuffer vCardBuffer;
+  vCardBuffer.open(QBuffer::ReadWrite);
+  QVersitWriter writer;
+  writer.setDevice(&vCardBuffer);
+  QVersitDocument document;
+  QVersitProperty property;
+  property.setName("N");
+  property.setValue("Simpson;Homer;J;;");
+  document.addProperty(property);
+  writer.setVersitDocument(document);
+  if (writer.writeAll()) {
+      // Use the vCardBuffer...
+  }
+  \endcode
+ 
+  \sa QVersitDocument, QVersitProperty
  */
 
 /*!

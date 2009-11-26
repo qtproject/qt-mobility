@@ -8,6 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QNetworkConfiguration" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -64,6 +65,11 @@
 <p>See also <a href="qnetworksession.html">QNetworkSession</a> and <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QNetworkConfiguration/Purpose" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/UnknownPurpose" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/PublicPurpose" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/PrivatePurpose" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/ServiceSpecificPurpose" />
 <h3 class="fn"><a name="Purpose-enum"></a>enum QNetworkConfiguration::Purpose</h3>
 <p>Specifies the purpose of the configuration.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -73,6 +79,12 @@
 <tr><td valign="top"><tt>QNetworkConfiguration::PrivatePurpose</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The configuration is suitable to access a private network such as an office Intranet.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::ServiceSpecificPurpose</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The configuration can be used for operator specific services (e.g&#x2e; receiving MMS messages or content streaming).</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tag/QNetworkConfiguration/StateFlag" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/Undefined" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/Defined" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/Discovered" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/Active" />
+<a name="//apple_ref/cpp/tdef/QNetworkConfiguration/StateFlags" />
 <h3 class="flags"><a name="StateFlag-enum"></a>enum QNetworkConfiguration::StateFlag<br />flags QNetworkConfiguration::StateFlags</h3>
 <p>Specifies the configuration states.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -83,6 +95,11 @@
 <tr><td valign="top"><tt>QNetworkConfiguration::Active</tt></td><td align="center" valign="top"><tt>0x000000e</tt></td><td valign="top">The configuration is currently used by an open/active network session (see <a href="qnetworksession.html#isActive">QNetworkSession::isActive</a>()). However this does not mean that the current process is the entity that created the active session. It merely indicates that if a new <a href="qnetworksession.html">QNetworkSession</a> were to be constructed based on this configuration <a href="qnetworksession.html#state">QNetworkSession::state</a>() would return <a href="qnetworksession.html#State-enum">QNetworkSession::Connected</a>. This state implies the QNetworkConfiguration::Discovered state.</td></tr>
 </table></p>
 <p>The StateFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;StateFlag&gt;. It stores an OR combination of StateFlag values.</p>
+<a name="//apple_ref/cpp/tag/QNetworkConfiguration/Type" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/InternetAccessPoint" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/ServiceNetwork" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/UserChoice" />
+<a name="//apple_ref/cpp/econst/QNetworkConfiguration/Invalid" />
 <h3 class="fn"><a name="Type-enum"></a>enum QNetworkConfiguration::Type</h3>
 <p>This enum describes the type of configuration.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -94,43 +111,57 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/QNetworkConfiguration" />
 <h3 class="fn"><a name="QNetworkConfiguration"></a>QNetworkConfiguration::QNetworkConfiguration ()</h3>
 <p>Constructs an invalid configuration object.</p>
 <p>See also <a href="qnetworkconfiguration.html#isValid">isValid</a>().</p>
 <h3 class="fn"><a name="QNetworkConfiguration-2"></a>QNetworkConfiguration::QNetworkConfiguration ( const QNetworkConfiguration &amp; <i>other</i> )</h3>
 <p>Creates a copy of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object contained in <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/~QNetworkConfiguration" />
 <h3 class="fn"><a name="dtor.QNetworkConfiguration"></a>QNetworkConfiguration::~QNetworkConfiguration ()</h3>
 <p>Frees the resources associated with the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/children" />
 <h3 class="fn"><a name="children"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QNetworkConfiguration&gt; QNetworkConfiguration::children () const</h3>
 <p>Returns all sub configurations of this network configuration. Only network configurations of type <a href="qnetworkconfiguration.html#Type-enum">ServiceNetwork</a> can have children. Otherwise this function returns an empty list.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/identifier" />
 <h3 class="fn"><a name="identifier"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QNetworkConfiguration::identifier () const</h3>
 <p>Returns the unique and platform specific identifier for this network configuration; otherwise an empty string.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/isRoamingAvailable" />
 <h3 class="fn"><a name="isRoamingAvailable"></a>bool QNetworkConfiguration::isRoamingAvailable () const</h3>
 <p>Returns true if this configuration supports roaming; otherwise false.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/isValid" />
 <h3 class="fn"><a name="isValid"></a>bool QNetworkConfiguration::isValid () const</h3>
 <p>Returns true if this <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object is valid. A configuration may become invalid if the user deletes the configuration or the configuration was default-constructed.</p>
 <p>The addition and removal of configurations can be monitored via the <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
 <p>See also <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/name" />
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QNetworkConfiguration::name () const</h3>
 <p>Returns the user visible name of this configuration.</p>
 <p>The name may either be the name of the underlying access point or the name for service network that this configuration represents.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/purpose" />
 <h3 class="fn"><a name="purpose"></a><a href="qnetworkconfiguration.html#Purpose-enum">Purpose</a> QNetworkConfiguration::purpose () const</h3>
 <p>Returns the purpose of this configuration.</p>
 <p>The purpose field may be used to programmatically determine the purpose of a configuration. Such information is usually part of the access point or service network meta data.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/state" />
 <h3 class="fn"><a name="state"></a><a href="qnetworkconfiguration.html#StateFlag-enum">StateFlags</a> QNetworkConfiguration::state () const</h3>
 <p>Returns the current state of the configuration.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/type" />
 <h3 class="fn"><a name="type"></a><a href="qnetworkconfiguration.html#Type-enum">Type</a> QNetworkConfiguration::type () const</h3>
 <p>Returns the type of the configuration.</p>
 <p>A configuration can represent a single access point configuration or a set of access point configurations. Such a set is called service network. A configuration that is based on a service network can potentially support roaming of network sessions.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/operator!=" />
 <h3 class="fn"><a name="operator-not-eq"></a>bool QNetworkConfiguration::operator!= ( const QNetworkConfiguration &amp; <i>other</i> ) const</h3>
 <p>Returns true if this configuration is not the same as the <i>other</i> configuration given; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/operator=" />
 <h3 class="fn"><a name="operator-eq"></a>QNetworkConfiguration &amp; QNetworkConfiguration::operator= ( const QNetworkConfiguration &amp; <i>other</i> )</h3>
 <p>Copies the content of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object contained in <i>other</i> into this one.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/operator==" />
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QNetworkConfiguration::operator== ( const QNetworkConfiguration &amp; <i>other</i> ) const</h3>
 <p>Returns true, if this configuration is the same as the <i>other</i> configuration given; otherwise returns false.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>
