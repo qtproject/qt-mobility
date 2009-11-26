@@ -23,17 +23,11 @@
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
-<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td width="45%" valign="top"><ul>
+<ul>
 <li><div class="fn"><b><a href="qmediaplaylistnavigator.html#currentItem-prop">currentItem</a></b> : const QMediaContent</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistnavigator.html#nextItem-prop">nextItem</a></b> : const QMediaContent</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a></b> : QMediaPlaylist::PlaybackMode</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistnavigator.html#previousItem-prop">previousItem</a></b> : const QMediaContent</div></li>
 </ul>
-</td></tr>
-</table></p>
 <ul>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
 </ul>
@@ -46,11 +40,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentItem-prop">currentItem</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#itemAt">itemAt</a></b> ( int <i>position</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#nextItem-prop">nextItem</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#nextItem">nextItem</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#nextPosition">nextPosition</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylist::PlaybackMode </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylistProvider * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#playlist">playlist</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#previousItem-prop">previousItem</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#previousItem">previousItem</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#previousPosition">previousPosition</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#setPlaylist">setPlaylist</a></b> ( QMediaPlaylistProvider * <i>playlist</i> )</td></tr>
 </table>
@@ -119,13 +113,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentPositionChanged">currentPositionChanged</a></b> ( int <i>position</i> )</td></tr>
 </table>
 <p>See also <a href="qmediaplaylistnavigator.html#nextPosition">nextPosition</a>() and <a href="qmediaplaylistnavigator.html#previousPosition">previousPosition</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/nextItem"></a>
-<h3 class="fn"><a name="nextItem-prop"></a>nextItem : const <a href="qmediacontent.html">QMediaContent</a></h3>
-<p>Contains the media that is next in the playlist.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b>nextItem</b> ( int <i>steps</i> = 1 ) const</td></tr>
-</table>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/playbackMode"></a>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/setPlaybackMode"></a>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/playbackModeChanged"></a>
@@ -139,13 +126,6 @@
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
-</table>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/previousItem"></a>
-<h3 class="fn"><a name="previousItem-prop"></a>previousItem : const <a href="qmediacontent.html">QMediaContent</a></h3>
-<p>Contains the media at the previous position in the playlist.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b>previousItem</b> ( int <i>steps</i> = 1 ) const</td></tr>
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -169,6 +149,10 @@
 <h3 class="fn"><a name="next"></a>void QMediaPlaylistNavigator::next ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Advances to the next item in the playlist.</p>
 <p>See also <a href="qmediaplaylistnavigator.html#previous">previous</a>(), <a href="qmediaplaylistnavigator.html#currentPosition-prop">jump</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/nextItem"></a>
+<h3 class="fn"><a name="nextItem"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylistNavigator::nextItem ( int <i>steps</i> = 1 ) const</h3>
+<p>Returns the media that is <i>steps</i> positions ahead of the current position in the playlist.</p>
+<p>See also <a href="qmediaplaylistnavigator.html#nextPosition">nextPosition</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/nextPosition"></a>
 <h3 class="fn"><a name="nextPosition"></a>int QMediaPlaylistNavigator::nextPosition ( int <i>steps</i> = 1 ) const</h3>
 <p>Returns a position <i>steps</i> ahead of the current position accounting for the <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
@@ -185,6 +169,10 @@
 <h3 class="fn"><a name="previous"></a>void QMediaPlaylistNavigator::previous ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Returns to the previous item in the playlist,</p>
 <p>See also <a href="qmediaplaylistnavigator.html#next">next</a>(), <a href="qmediaplaylistnavigator.html#currentPosition-prop">jump</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/previousItem"></a>
+<h3 class="fn"><a name="previousItem"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylistNavigator::previousItem ( int <i>steps</i> = 1 ) const</h3>
+<p>Returns the media that is <i>steps</i> positions behind the current position in the playlist.</p>
+<p>See also <a href="qmediaplaylistnavigator.html#previousPosition">previousPosition</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/previousPosition"></a>
 <h3 class="fn"><a name="previousPosition"></a>int QMediaPlaylistNavigator::previousPosition ( int <i>steps</i> = 1 ) const</h3>
 <p>Returns a position <i>steps</i> behind the current position accounting for the <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>

@@ -1409,8 +1409,6 @@
         <keyword ref="qimageencodercontrol.html">QImageEncoderControl</keyword>
         <keyword ref="qimageencodercontrol.html#imageCodecDescription">imageCodecDescription</keyword>
         <keyword ref="qimageencodercontrol.html#imageSettings">imageSettings</keyword>
-        <keyword ref="qimageencodercontrol.html#maximumResolution">maximumResolution</keyword>
-        <keyword ref="qimageencodercontrol.html#minimumResolution">minimumResolution</keyword>
         <keyword ref="qimageencodercontrol.html#setImageSettings">setImageSettings</keyword>
         <keyword ref="qimageencodercontrol.html#supportedImageCodecs">supportedImageCodecs</keyword>
         <keyword ref="qimageencodercontrol.html#supportedResolutions">supportedResolutions</keyword>
@@ -1725,18 +1723,18 @@
         <keyword ref="qmediaplaylistnavigator.html#currentItem-prop">currentItem</keyword>
         <keyword ref="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</keyword>
         <keyword ref="qmediaplaylistnavigator.html#currentPosition-prop">jump</keyword>
-        <keyword ref="qmediaplaylistnavigator.html#nextItem-prop">nextItem</keyword>
         <keyword ref="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</keyword>
         <keyword ref="qmediaplaylistnavigator.html#playbackMode-prop">setPlaybackMode</keyword>
-        <keyword ref="qmediaplaylistnavigator.html#previousItem-prop">previousItem</keyword>
         <keyword ref="qmediaplaylistnavigator.html#activated">activated</keyword>
         <keyword ref="qmediaplaylistnavigator.html#currentPositionChanged">currentPositionChanged</keyword>
         <keyword ref="qmediaplaylistnavigator.html#itemAt">itemAt</keyword>
         <keyword ref="qmediaplaylistnavigator.html#next">next</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#nextItem">nextItem</keyword>
         <keyword ref="qmediaplaylistnavigator.html#nextPosition">nextPosition</keyword>
         <keyword ref="qmediaplaylistnavigator.html#playbackModeChanged">playbackModeChanged</keyword>
         <keyword ref="qmediaplaylistnavigator.html#playlist">playlist</keyword>
         <keyword ref="qmediaplaylistnavigator.html#previous">previous</keyword>
+        <keyword ref="qmediaplaylistnavigator.html#previousItem">previousItem</keyword>
         <keyword ref="qmediaplaylistnavigator.html#previousPosition">previousPosition</keyword>
         <keyword ref="qmediaplaylistnavigator.html#setPlaylist">setPlaylist</keyword>
         <keyword ref="qmediaplaylistnavigator.html#surroundingItemsChanged">surroundingItemsChanged</keyword>
@@ -1799,10 +1797,6 @@
         <keyword ref="qmediarecorder.html#errorString">errorString</keyword>
         <keyword ref="qmediarecorder.html#format">format</keyword>
         <keyword ref="qmediarecorder.html#formatDescription">formatDescription</keyword>
-        <keyword ref="qmediarecorder.html#maximumFrameRate">maximumFrameRate</keyword>
-        <keyword ref="qmediarecorder.html#maximumResolution">maximumResolution</keyword>
-        <keyword ref="qmediarecorder.html#minimumFrameRate">minimumFrameRate</keyword>
-        <keyword ref="qmediarecorder.html#minimumResolution">minimumResolution</keyword>
         <keyword ref="qmediarecorder.html#pause">pause</keyword>
         <keyword ref="qmediarecorder.html#record">record</keyword>
         <keyword ref="qmediarecorder.html#setEncodingSettings">setEncodingSettings</keyword>
@@ -2960,10 +2954,6 @@
     <section ref="qvideoencodercontrol.html" title="QVideoEncoderControl Class Reference">
         <keyword ref="qvideoencodercontrol.html">QVideoEncoderControl</keyword>
         <keyword ref="qvideoencodercontrol.html#encodingOption">encodingOption</keyword>
-        <keyword ref="qvideoencodercontrol.html#maximumFrameRate">maximumFrameRate</keyword>
-        <keyword ref="qvideoencodercontrol.html#maximumResolution">maximumResolution</keyword>
-        <keyword ref="qvideoencodercontrol.html#minimumFrameRate">minimumFrameRate</keyword>
-        <keyword ref="qvideoencodercontrol.html#minimumResolution">minimumResolution</keyword>
         <keyword ref="qvideoencodercontrol.html#setEncodingOption">setEncodingOption</keyword>
         <keyword ref="qvideoencodercontrol.html#setVideoSettings">setVideoSettings</keyword>
         <keyword ref="qvideoencodercontrol.html#supportedEncodingOptions">supportedEncodingOptions</keyword>

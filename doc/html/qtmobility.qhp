@@ -1674,8 +1674,6 @@
             <keyword name="QImageEncoderControl" id="QImageEncoderControl" ref="qimageencodercontrol.html"/>
             <keyword name="imageCodecDescription" id="QImageEncoderControl::imageCodecDescription" ref="qimageencodercontrol.html#imageCodecDescription"/>
             <keyword name="imageSettings" id="QImageEncoderControl::imageSettings" ref="qimageencodercontrol.html#imageSettings"/>
-            <keyword name="maximumResolution" id="QImageEncoderControl::maximumResolution" ref="qimageencodercontrol.html#maximumResolution"/>
-            <keyword name="minimumResolution" id="QImageEncoderControl::minimumResolution" ref="qimageencodercontrol.html#minimumResolution"/>
             <keyword name="setImageSettings" id="QImageEncoderControl::setImageSettings" ref="qimageencodercontrol.html#setImageSettings"/>
             <keyword name="supportedImageCodecs" id="QImageEncoderControl::supportedImageCodecs" ref="qimageencodercontrol.html#supportedImageCodecs"/>
             <keyword name="supportedResolutions" id="QImageEncoderControl::supportedResolutions" ref="qimageencodercontrol.html#supportedResolutions"/>
@@ -1966,13 +1964,13 @@
             <keyword name="itemAt" id="QMediaPlaylistNavigator::itemAt" ref="qmediaplaylistnavigator.html#itemAt"/>
             <keyword name="jump" id="QMediaPlaylistNavigator::jump" ref="qmediaplaylistnavigator.html#currentPosition-prop"/>
             <keyword name="next" id="QMediaPlaylistNavigator::next" ref="qmediaplaylistnavigator.html#next"/>
-            <keyword name="nextItem" id="QMediaPlaylistNavigator::nextItem" ref="qmediaplaylistnavigator.html#nextItem-prop"/>
+            <keyword name="nextItem" id="QMediaPlaylistNavigator::nextItem" ref="qmediaplaylistnavigator.html#nextItem"/>
             <keyword name="nextPosition" id="QMediaPlaylistNavigator::nextPosition" ref="qmediaplaylistnavigator.html#nextPosition"/>
             <keyword name="playbackMode" id="QMediaPlaylistNavigator::playbackMode" ref="qmediaplaylistnavigator.html#playbackMode-prop"/>
             <keyword name="playbackModeChanged" id="QMediaPlaylistNavigator::playbackModeChanged" ref="qmediaplaylistnavigator.html#playbackModeChanged"/>
             <keyword name="playlist" id="QMediaPlaylistNavigator::playlist" ref="qmediaplaylistnavigator.html#playlist"/>
             <keyword name="previous" id="QMediaPlaylistNavigator::previous" ref="qmediaplaylistnavigator.html#previous"/>
-            <keyword name="previousItem" id="QMediaPlaylistNavigator::previousItem" ref="qmediaplaylistnavigator.html#previousItem-prop"/>
+            <keyword name="previousItem" id="QMediaPlaylistNavigator::previousItem" ref="qmediaplaylistnavigator.html#previousItem"/>
             <keyword name="previousPosition" id="QMediaPlaylistNavigator::previousPosition" ref="qmediaplaylistnavigator.html#previousPosition"/>
             <keyword name="setPlaybackMode" id="QMediaPlaylistNavigator::setPlaybackMode" ref="qmediaplaylistnavigator.html#playbackMode-prop"/>
             <keyword name="setPlaylist" id="QMediaPlaylistNavigator::setPlaylist" ref="qmediaplaylistnavigator.html#setPlaylist"/>
@@ -2026,10 +2024,6 @@
             <keyword name="errorString" id="QMediaRecorder::errorString" ref="qmediarecorder.html#errorString"/>
             <keyword name="format" id="QMediaRecorder::format" ref="qmediarecorder.html#format"/>
             <keyword name="formatDescription" id="QMediaRecorder::formatDescription" ref="qmediarecorder.html#formatDescription"/>
-            <keyword name="maximumFrameRate" id="QMediaRecorder::maximumFrameRate" ref="qmediarecorder.html#maximumFrameRate"/>
-            <keyword name="maximumResolution" id="QMediaRecorder::maximumResolution" ref="qmediarecorder.html#maximumResolution"/>
-            <keyword name="minimumFrameRate" id="QMediaRecorder::minimumFrameRate" ref="qmediarecorder.html#minimumFrameRate"/>
-            <keyword name="minimumResolution" id="QMediaRecorder::minimumResolution" ref="qmediarecorder.html#minimumResolution"/>
             <keyword name="outputLocation" id="QMediaRecorder::outputLocation" ref="qmediarecorder.html#outputLocation-prop"/>
             <keyword name="pause" id="QMediaRecorder::pause" ref="qmediarecorder.html#pause"/>
             <keyword name="record" id="QMediaRecorder::record" ref="qmediarecorder.html#record"/>
@@ -2984,10 +2978,6 @@
             <keyword name="QVideoDeviceControl_iid" id="QVideoDeviceControl_iid" ref="qvideodevicecontrol.html#QVideoDeviceControl_iid"/>
             <keyword name="QVideoEncoderControl" id="QVideoEncoderControl" ref="qvideoencodercontrol.html"/>
             <keyword name="encodingOption" id="QVideoEncoderControl::encodingOption" ref="qvideoencodercontrol.html#encodingOption"/>
-            <keyword name="maximumFrameRate" id="QVideoEncoderControl::maximumFrameRate" ref="qvideoencodercontrol.html#maximumFrameRate"/>
-            <keyword name="maximumResolution" id="QVideoEncoderControl::maximumResolution" ref="qvideoencodercontrol.html#maximumResolution"/>
-            <keyword name="minimumFrameRate" id="QVideoEncoderControl::minimumFrameRate" ref="qvideoencodercontrol.html#minimumFrameRate"/>
-            <keyword name="minimumResolution" id="QVideoEncoderControl::minimumResolution" ref="qvideoencodercontrol.html#minimumResolution"/>
             <keyword name="setEncodingOption" id="QVideoEncoderControl::setEncodingOption" ref="qvideoencodercontrol.html#setEncodingOption"/>
             <keyword name="setVideoSettings" id="QVideoEncoderControl::setVideoSettings" ref="qvideoencodercontrol.html#setVideoSettings"/>
             <keyword name="supportedEncodingOptions" id="QVideoEncoderControl::supportedEncodingOptions" ref="qvideoencodercontrol.html#supportedEncodingOptions"/>

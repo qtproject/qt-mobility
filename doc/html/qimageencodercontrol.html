@@ -27,11 +27,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#dtor.QImageEncoderControl">~QImageEncoderControl</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#imageCodecDescription">imageCodecDescription</a></b> ( const QString &amp; <i>codec</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QImageEncoderSettings </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#imageSettings">imageSettings</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#maximumResolution">maximumResolution</a></b> ( const QImageEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#minimumResolution">minimumResolution</a></b> ( const QImageEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#setImageSettings">setImageSettings</a></b> ( const QImageEncoderSettings &amp; <i>settings</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#supportedImageCodecs">supportedImageCodecs</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QSize&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#supportedResolutions">supportedResolutions</a></b> ( const QImageEncoderSettings &amp; <i>settings</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QSize&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodercontrol.html#supportedResolutions">supportedResolutions</a></b> ( const QImageEncoderSettings &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const = 0</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
@@ -82,16 +80,6 @@
 <h3 class="fn"><a name="imageSettings"></a><a href="qimageencodersettings.html">QImageEncoderSettings</a> QImageEncoderControl::imageSettings () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the currently used image encoder settings.</p>
 <p>See also <a href="qimageencodercontrol.html#setImageSettings">setImageSettings</a>().</p>
-<a name="//apple_ref/cpp/instm/QImageEncoderControl/maximumResolution"></a>
-<h3 class="fn"><a name="maximumResolution"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QImageEncoderControl::maximumResolution ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the maximum supported resolution.</p>
-<p>If non null image <i>settings</i> parameter is passed, the maximum supported resolution with partial settings applied is returned.</p>
-<p>See also <a href="qimageencodercontrol.html#supportedResolutions">supportedResolutions</a>().</p>
-<a name="//apple_ref/cpp/instm/QImageEncoderControl/minimumResolution"></a>
-<h3 class="fn"><a name="minimumResolution"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QImageEncoderControl::minimumResolution ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the minimum supported resolution.</p>
-<p>If non null image <i>settings</i> parameter is passed, the minimum supported resolution with partial settings applied is returned.</p>
-<p>See also <a href="qimageencodercontrol.html#supportedResolutions">supportedResolutions</a>().</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderControl/setImageSettings"></a>
 <h3 class="fn"><a name="setImageSettings"></a>void QImageEncoderControl::setImageSettings ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the selected image encoder <i>settings</i>.</p>
@@ -100,10 +88,10 @@
 <h3 class="fn"><a name="supportedImageCodecs"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QImageEncoderControl::supportedImageCodecs () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported image codecs.</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderControl/supportedResolutions"></a>
-<h3 class="fn"><a name="supportedResolutions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>&gt; QImageEncoderControl::supportedResolutions ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns a list of supported resolutions. This will return an empty list if the encoder supports arbitrary resolutions within the minimum and maximum range.</p>
+<h3 class="fn"><a name="supportedResolutions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>&gt; QImageEncoderControl::supportedResolutions ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns a list of supported resolutions.</p>
 <p>If non null image <i>settings</i> parameter is passed, the returned list is reduced to resolutions supported with partial settings applied. It can be used to query the list of resolutions, supported by specific image codec.</p>
-<p>See also <a href="qimageencodercontrol.html#minimumResolution">minimumResolution</a>() and <a href="qimageencodercontrol.html#maximumResolution">maximumResolution</a>().</p>
+<p>If the encoder supports arbitrary resolutions within the supported resolutions range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
 <hr />
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//QImageEncoderControl_iid"></a>
