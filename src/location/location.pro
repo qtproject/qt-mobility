@@ -93,7 +93,7 @@ symbian {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 
-    QtLocationDeployment.sources = QtLocation_beta.dll
+    QtLocationDeployment.sources = QtLocation_tp.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
 }

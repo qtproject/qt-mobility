@@ -3,37 +3,37 @@ mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
-    qtAddLibrary(QtBearer_beta)
+    qtAddLibrary(QtBearer_tp)
 }
 
 contains(MOBILITY, publishsubscribe) {
-    qtAddLibrary(QtPublishSubscribe_beta)
+    qtAddLibrary(QtPublishSubscribe_tp)
 }
 
 contains(MOBILITY, location) {
-    qtAddLibrary(QtLocation_beta)
+    qtAddLibrary(QtLocation_tp)
 }
 
 contains(MOBILITY, serviceframework) {
-    qtAddLibrary(QtServiceFramework_beta)
+    qtAddLibrary(QtServiceFramework_tp)
 }
 
 contains(MOBILITY, systeminfo) {
-    qtAddLibrary(QtSystemInfo_beta)
+    qtAddLibrary(QtSystemInfo_tp)
 }
 
 contains(MOBILITY, multimedia) {
-    qtAddLibrary(QtMedia_beta)
+    qtAddLibrary(QtMedia_tp)
 }
 
 contains(MOBILITY, contacts) {
-    qtAddLibrary(QtContacts_beta)
+    qtAddLibrary(QtContacts_tp)
 }
 
 contains(MOBILITY, messaging) {
-    qtAddLibrary(QtMessaging_beta)
+    qtAddLibrary(QtMessaging_tp)
 }
 
 contains(MOBILITY, versit) {
-    qtAddLibrary(QtVersit_beta)
+    qtAddLibrary(QtVersit_tp)
 }
