@@ -70,7 +70,7 @@ QTM_BEGIN_NAMESPACE
  
    // Create a name
    QContactName name;
-   name.setFirst(QString::fromAscii("Simpson"));
+   name.setFirst(QString::fromAscii("John"));
    contact.saveDetail(&name);
  
    // Create an avatar type which is not supported by the exporter

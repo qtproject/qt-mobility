@@ -71,10 +71,10 @@ void UT_QVCard21Writer::cleanup()
 void UT_QVCard21Writer::testEncodeVersitProperty()
 {
     // No parameters
-    QByteArray expectedResult = "FN:Homer Simpson\r\n";
+    QByteArray expectedResult = "FN:John Citizen\r\n";
     QVersitProperty property;
     property.setName(QString::fromAscii("FN"));
-    property.setValue(QByteArray("Homer Simpson"));
+    property.setValue(QByteArray("John Citizen"));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
 
     // With parameter(s). No special characters in the value.
@@ -90,9 +90,9 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     
     // With parameter(s). Special characters in the value.
     // -> The value needs to be Quoted-Printable encoded.
-    expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:homer=40simpsons.com\r\n";
+    expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:john.citizen=40example.com\r\n";
     property.setName(QString::fromAscii("EMAIL"));
-    property.setValue(QByteArray("homer@simpsons.com"));
+    property.setValue(QByteArray("john.citizen@example.com"));
     QCOMPARE(QString::fromAscii(mWriter->encodeVersitProperty(property)),
              QString::fromAscii(expectedResult));
     
@@ -172,16 +172,16 @@ void UT_QVCard21Writer::testQuotedPrintableEncode()
     // no special characters in the encodedValue -> no need to use Quoted-Printable encode
     QVersitProperty property;
     property.setName(QString::fromAscii("N"));
-    property.setValue(QByteArray("Simpson;Homer"));
+    property.setValue(QByteArray("Citizen;John"));
     QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
     QVERIFY(encodedValue == property.value());
     
     // The property doesn't contain ENCODING parameter,
     // special characters in the encodedValue -> needs to be Quoted-Printable encoded
     property.setName(QString::fromAscii("EMAIL"));
-    property.setValue(QByteArray("homer@simpsons.com"));
+    property.setValue(QByteArray("john.citizen@example.com"));
     QVERIFY(mWriter->quotedPrintableEncode(property,encodedValue));
-    QCOMPARE(QString::fromAscii(encodedValue), QString::fromAscii("homer=40simpsons.com"));
+    QCOMPARE(QString::fromAscii(encodedValue), QString::fromAscii("john.citizen=40example.com"));
     
     // The property contains ENCODING parameter
     // -> Value should not be Quoted-Printable encoded

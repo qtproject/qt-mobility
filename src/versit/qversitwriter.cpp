@@ -71,7 +71,7 @@ QTM_BEGIN_NAMESPACE
   QVersitDocument document;
   QVersitProperty property;
   property.setName("N");
-  property.setValue("Simpson;Homer;J;;");
+  property.setValue("Citizen;John;Q;;");
   document.addProperty(property);
   writer.setVersitDocument(document);
   if (writer.writeAll()) {
