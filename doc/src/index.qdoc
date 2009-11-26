@@ -43,7 +43,7 @@
     \group mobility
     \title Qt Mobility Project APIs (BETA)
 
-    Qt Mobility Project supplies a set of new APIs enabling a range of
+    Qt Mobility Project supplies a set of new APIs for Qt enabling a range of
     mobile-centric technologies and features on mobile and non-mobile platforms.
 
 */
@@ -72,9 +72,9 @@
 
     \section1 Overview
 
-    \section2 Introducing the New Mobility Project APIs (BETA)
+    \section2 Introducing the New Qt APIs
 
-    This mobility release contains the following APIs:
+    This release contains the following APIs:
 
     \annotatedlist  mobility
     
@@ -85,7 +85,7 @@
         \list
         \o Locate services on-board or remotely. Find an optimal
     connection to the network for the particular service.
-        \o Services built on top of Mobility Project APIs would include Internet
+        \o Services built on top of these APIs would include Internet
         applications such as email and web browsing.
         \o Multimedia features enable image and video capture with audio ,
     audio recording, and the playing of music or video clips. However,
@@ -96,7 +96,7 @@
         whether local or remote to the device.
         \endlist
 
-    The Qt Mobility Project delivers to developers an enabling package. It
+    The New Qt APIs deliver to developers an enabling package. It
     will be used by developers to build a variety of applications and
     services that are mobile capable or familiar to mobile users,
     irrespective of whether the platform is mobile or not. This means that
@@ -116,7 +116,7 @@
     \l{http://library.forum.nokia.com/topic/Qt_for_Symbian_Developers_Library/GUID-7E53D0F7-72CB-41C4-8807-FE7A772B0DB4.html}{Qt For Symbian Developer's Library}
     
 
-    \section1 The Mobility Project APIs
+    \section1 The New Qt APIs
     \section2 Bearer Management
 
     Although not a network manager, this component manages the connectivity
