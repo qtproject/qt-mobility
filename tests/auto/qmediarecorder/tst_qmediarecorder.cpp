@@ -600,7 +600,7 @@ void tst_QMediaRecorder::testRecord()
     //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
     QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
 #endif
-    QCOMPARE(spy.last()[0].value<QMediaRecorder::State>(), QMediaRecorder::RecordingState);
+    QCOMPARE(stateSignal.last()[0].value<QMediaRecorder::State>(), QMediaRecorder::RecordingState);
     QVERIFY(progressSignal.count() > 0);
     capture->pause();
     QCOMPARE(capture->state(), QMediaRecorder::PausedState);
