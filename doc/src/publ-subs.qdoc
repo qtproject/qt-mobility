@@ -137,6 +137,11 @@ The Shared Memory layer has an order of 0x10000000.
            ContextKit.  Publishing values to this layer via QValueSpacePublisher is currently not
            supported.
            The ContextKit layer has an order of 0.
+    \row
+        \o \l{Symbian Settings Layer}
+        \o The Symbian Settings layer provides a permanent Value Space backing store using the
+           Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository).
+           The Symbian Settings layer has an order of 0.
 \endtable
 
 The Value Space has support for both client/server and peer-to-peer layer architectures.  If a
@@ -169,6 +174,72 @@ and server, doing so frequently may significantly degrade performance.
 Change notifications are transmitted to clients in the form of "something has changed" messages.
 Nodes within the shared memory region are versioned, which allows clients to quickly determine
 exactly what has changed without the need for a bulkier change notification protocol.
+
+\section2 Symbian Settings Layer
+
+Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as
+Central Repository files (CRepository).  The underlying system limits the features and available
+data types but at least reading, writing and monitoring Symbian aware data types work in both
+RProperty and CRepository.
+
+\section3 Declaring Value Space Paths
+
+Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need
+to somehow specify how particular paths are turned into RPropery or CRepository key definitions.
+Here the QCRML files come for help.
+
+QCRML files are XML files that can be used to declare available Value Space paths that are visible
+to the clients.  Each path defines whether the actual value is stored in CRepository or RPropery as
+well as needed Category/Repository/Key UIDs.
+
+The following QCRML file defines Value Space paths for power state properties stored in Symbian OS
+Properties:
+\code
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="RProperty" version="" uidName="KPSUidHWRMPowerState" uidValue="0x10205041">
+    <key ref="/resources/battery/level" int="0x00000001"/>
+    <key ref="/resources/battery/status" int="0x00000002"/>
+    <key ref="/resources/charging/status" int="0x00000003"/>
+</repository>
+\endcode
+
+The following QCRML file defines a Value Space path for the "current profile id" stored in Central
+Repository:
+\code
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="CRepository" version="" uidName="KCRUidProfileEngine" uidValue="0x101f8798">
+    <key ref="/profile/id" int="0x7e000001"/>
+</repository>
+\endcode
+
+The \c qcrmlgen tool located in the \c tools directory can be used to create QCRML files.
+
+\section3 Location of QCRML Files
+
+All the QCRML files need to be located in \c {c:\resource\qt\crml} directory in Symbian file
+system.
+
+In \c {.pro} files this means that the files need to be deployed with the SIS package.
+
+Example \c {.pro} file section:
+
+\code
+symbian {
+    crml.sources = resources.qcrml profile.qcrml
+    crml.path = c:/resource/qt/crml
+    DEPLOYMENT += crml
+}
+\endcode
+
+\section3 Limitations
+
+Symbian OS Properties are limited to data of type \c int and \c QByteArray.  QString is also
+possible to be passed via Value Space but it is recognized as QByteArray in the receiving end.  Use
+QVariant::toString() to explicitly convert it back into a QString in cases where you know that the
+data was originally a QString.  The maximum size for QByteArray is 65535 bytes.
+
+In addition to the types supported by Symbian OS Properties, Central Repository also supports
+qreal.
 
 \section1 Examples
 
