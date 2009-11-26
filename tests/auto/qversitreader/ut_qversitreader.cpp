@@ -197,7 +197,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     vCard.append("VERSION:2.1\r\n");
     vCard.append("FN:John\r\n");
     vCard.append("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
-    vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\ple.com\r\n");
+    vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n");
     vCard.append("AGENT:\r\nBEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n");
     vCard.append("End:VCARD\r\n");
 
@@ -323,7 +323,7 @@ void UT_QVersitReader::testParseVersitDocument()
 VERSION:2.1\r\n\
 FN:John\r\n\
 AGENT:BEGIN:VCARD\r\nN:Jenny\r\nEND:VCARD\r\n\r\n\
-EMAIL;ENCODING=QUOTED-PRINTABLE:john.citizen=40exam=\r\ple.com\r\n\
+EMAIL;ENCODING=QUOTED-PRINTABLE:john.citizen=40exam=\r\nple.com\r\n\
 END:VCARD\r\n";
     QByteArray vCard(validCard21);
     QVersitDocument document;
