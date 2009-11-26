@@ -137,32 +137,81 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
         const QList<QContactSortOrder>& sortOrders,
         QContactManager::Error& error) const
 {
-    QList<QContactLocalId> result;
-    error = QContactManager::NoError;
-    // Check if the filter is supported by the underlying filter implementation
-    CntAbstractContactFilter::FilterSupport filterSupport = m_contactFilter->filterSupported(filter);
+    bool doSlowFilter(false);
+    QList<QContactLocalId> result = filterContacts(filter, sortOrders, doSlowFilter, error);
 
-    if (filterSupport == CntAbstractContactFilter::Supported) {
-        // Filter supported, use as the result directly
-        result = m_contactFilter->contacts(filter, sortOrders, error);
-        // If sorting is not supported, we need to fallback to slow sorting
-        if(!m_contactSorter->sortOrderSupported(sortOrders))
-            result = slowSort(result, sortOrders, error);
-    } else if (filterSupport == CntAbstractContactFilter::SupportedPreFilterOnly) {
-        // Filter only does pre-filtering and may include false positives
-        QList<QContactLocalId> contacts = m_contactFilter->contacts(filter, sortOrders, error);
-        if(error == QContactManager::NoError)
-            result = slowFilter(filter, contacts, error);
-        // If sorting is not supported, we need to fallback to slow sorting
-        if(!m_contactSorter->sortOrderSupported(sortOrders))
-            result = slowSort(result, sortOrders, error);
-    } else {
+    if(error == QContactManager::NoError && doSlowFilter) {
         // Filter not supported; fetch all contacts and remove false positives
         // one-by-one. Note: this is reeeeaally slow. Both sorting and
         // filtering are done the slow way.
         QList<QContactLocalId> sortedIds = contacts(sortOrders,error);
         if(error == QContactManager::NoError)
             result = slowFilter(filter, sortedIds, error);
+    }
+    return result;
+}
+
+/*!
+ * Private implementation for CntSymbianEngine::contacts.
+ *
+ * Uses the Symbian backend native filtering if supported. If native filtering
+ * is not supported \a doSlowFilter is set and the caller needs to do slow
+ * filtering.
+ */
+QList<QContactLocalId> CntSymbianEngine::filterContacts(
+        const QContactFilter &filter,
+        const QList<QContactSortOrder> &sortOrders,
+        bool &doSlowFilter,
+        QContactManager::Error &error) const
+{
+    QList<QContactLocalId> result;
+    error = QContactManager::NoError;
+
+    if (filter.type() == QContactFilter::IntersectionFilter) {
+        // Intersection filter is handled by calling filterContacts recursively
+        // for each contained filter (unless at least one requires slow filtering)
+        QList<QContactFilter> filters = ((QContactIntersectionFilter) filter).filters();
+        for(int i(0); !doSlowFilter && i < filters.count(); i++) {
+            if(result.isEmpty())
+                result = filterContacts(filters[i], sortOrders, doSlowFilter, error);
+            else
+                result = filterContacts(filters[i], sortOrders, doSlowFilter, error).toSet().intersect(result.toSet()).toList();
+        }
+    } else if (filter.type() == QContactFilter::UnionFilter) {
+        // Union filter is handled by calling filterContacts recursively for
+        // each contained filter (unless at least one requires slow filtering)
+        QList<QContactFilter> filters = ((QContactUnionFilter) filter).filters();
+        for(int i(0); !doSlowFilter && i < filters.count(); i++) {
+            if(result.isEmpty())
+                result = filterContacts(filters[i], sortOrders, doSlowFilter, error);
+            else
+                result = (filterContacts(filters[i], sortOrders, doSlowFilter, error).toSet() + result.toSet()).toList();
+        }
+    } else {
+        // All the other filters are handled either by the CntAbstractContactFilter
+        // implementation or by the caller (doSlowFilter is set if the filter
+        // is not supported and the caller needs to do slow filtering)
+        CntAbstractContactFilter::FilterSupport filterSupport = m_contactFilter->filterSupported(filter);
+
+        if (filterSupport == CntAbstractContactFilter::Supported) {
+            // Filter supported, use as the result directly
+            result = m_contactFilter->contacts(filter, sortOrders, error);
+            // If sorting is not supported, we need to fallback to slow sorting
+            if(!m_contactSorter->sortOrderSupported(sortOrders))
+                result = slowSort(result, sortOrders, error);
+        } else if (filterSupport == CntAbstractContactFilter::SupportedPreFilterOnly) {
+            // Filter only does pre-filtering, remove possible false positives
+            // after filtering
+            QList<QContactLocalId> contacts = m_contactFilter->contacts(filter, sortOrders, error);
+            if(error == QContactManager::NoError)
+                result = slowFilter(filter, contacts, error);
+            // If sorting is not supported, we need to fallback to slow sorting
+            if(!m_contactSorter->sortOrderSupported(sortOrders))
+                result = slowSort(result, sortOrders, error);
+        } else {
+            // Don't do filtering here, tell the caller to do slow filtering
+            doSlowFilter = true;
+        }
     }
     return result;
 }
@@ -234,10 +283,13 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, co
  */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
-    QContact contact = fetchContact(contactId, error);
+    // See QT_TRYCATCH_LEAVING note at the begginning of this file
+    QContact* contact = new QContact();
+    TRAPD(err, QT_TRYCATCH_LEAVING(*contact = fetchContactL(contactId)));
+    CntSymbianTransformError::transformError(err, error);
     if(error == QContactManager::NoError)
-        updateDisplayLabel(contact);
-    return contact;
+        updateDisplayLabel(*contact);
+    return *QScopedPointer<QContact>(contact);
 }
 
 bool CntSymbianEngine::saveContact(QContact* contact, QContactManager::Error& error)
@@ -281,6 +333,11 @@ QList<QContactManager::Error> CntSymbianEngine::saveContacts(QList<QContact>* co
     return ret;
 }
 
+/*!
+ * Uses the generic filtering implementation of QContactManagerEngine to filter
+ * contacts one-by-one. Really slow when filtering a lot of contacts because
+ * every contact needs to be loaded from the database before filtering.
+ */
 QList<QContactLocalId> CntSymbianEngine::slowFilter(
         const QContactFilter& filter,
         const QList<QContactLocalId>& contacts,
@@ -292,7 +349,7 @@ QList<QContactLocalId> CntSymbianEngine::slowFilter(
         QContactLocalId id = contacts.at(i);
 
         // Check if this is a false positive. If not, add to the result set.
-        if(QContactManagerEngine::testFilter(filter, fetchContact(id, error)))
+        if(QContactManagerEngine::testFilter(filter, contact(id, error)))
             result << id;
     }
     return result;
@@ -360,26 +417,6 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
         updateDisplayLabel(*contact);
 
     return ret;
-}
-
-/*!
- * Read a contact from the contact database.
- *
- * Internal implementation to read a conact, called by
- * QContactManager::contact().
- *
- * \param contactId The Id of the contact to be retrieved.
- * \param qtError Qt error code.
- * \return A QContact for the requested QUniquId value or 0 if the read
- *  operation was unsuccessful (e.g. contact not found).
- */
-QContact CntSymbianEngine::fetchContact(const QContactLocalId& contactId, QContactManager::Error& qtError) const
-{
-    // See QT_TRYCATCH_LEAVING note at the begginning of this file
-    QContact* contact = new QContact();
-    TRAPD(err, QT_TRYCATCH_LEAVING(*contact = fetchContactL(contactId)));
-    CntSymbianTransformError::transformError(err, qtError);
-    return *QScopedPointer<QContact>(contact);
 }
 
 /*!
@@ -530,6 +567,8 @@ void CntSymbianEngine::updateContactL(QContact &contact)
 
     // retrieve the contact in case of empty fields that have been removed, this could also be handled in transformcontact.
     contact = fetchContactL(contact.localId());
+
+    updateDisplayLabel(contact);
 
     // Update group memberships to contact database
     //updateMemberOfGroupsL(contact);

@@ -121,12 +121,15 @@ public:
     QString managerName() const;
 
 private:
+    QList<QContactLocalId> filterContacts(
+            const QContactFilter &filter,
+            const QList<QContactSortOrder> &sortOrders,
+            bool &doSlowFilter,
+            QContactManager::Error &error) const;
     QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
 
-    /* Fetch contact */
-    QContact fetchContact(const QContactLocalId& contactId, QContactManager::Error& qtError) const;
     QContact fetchContactL(const QContactLocalId &localId) const;
 
     /* Add contact */
