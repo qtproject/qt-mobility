@@ -25,13 +25,13 @@ sourcedirs = ../../src/bearer \
              ../../src/versit \
              .
 
-excludedirs = ../../src/messaging/win32wce
+excludedirs = ../../src/messaging/win32wce \
+              ../../src/publishsubscribe/symbian
 
 exampledirs = ../../examples \
               ../.. \
               .
 
-excludedirs = ../../src/publishsubscribe/symbian
 
 indexes                 = qt.index
 
