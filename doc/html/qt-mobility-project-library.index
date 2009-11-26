@@ -7646,6 +7646,7 @@
             <contents name="main-classes" title="Main Classes" level="1"/>
         </page>
         <page access="public" status="commendable" name="installation.html" href="installation.html" subtype="page" title="Installation Guide" fulltitle="Installation Guide" subtitle="" location="installation.qdoc">
+            <contents name="get-the-qt-mobility-api-package" title="Get the Qt Mobility API Package" level="1"/>
             <contents name="pre-requisites-dependencies" title="Pre-requisites &amp; Dependencies" level="1"/>
             <contents name="unpacking" title="Unpacking" level="1"/>
             <contents name="building" title="Building" level="1"/>

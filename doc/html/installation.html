@@ -14,7 +14,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Installation Guide<br /><span class="subtitle"></span>
 </h1>
-<ul><li><a href="#pre-requisites-dependencies">Pre-requisites &amp; Dependencies</a></li>
+<ul><li><a href="#get-the-qt-mobility-api-package">Get the Qt Mobility API Package</a></li>
+<li><a href="#pre-requisites-dependencies">Pre-requisites &amp; Dependencies</a></li>
 <li><a href="#unpacking">Unpacking</a></li>
 <li><a href="#building">Building</a></li>
 <ul><li><a href="#building-on-unix">Building On Unix</a></li>
@@ -23,18 +24,24 @@
 </ul>
 <li><a href="#environment-variables">Environment Variables</a></li>
 </ul>
+<a name="get-the-qt-mobility-api-package"></a>
+<h2>Get the Qt Mobility API Package</h2>
+<p>To begin, obtain the most recent distrubution package from <a href="http://get.qt.nokia.com">http://get.qt.nokia.com</a></p>
 <a name="pre-requisites-dependencies"></a>
 <h2>Pre-requisites &amp; Dependencies</h2>
-<p>To install Qt Mobility Project APIs you must already have installed Qt 4.6 or higher, visit <a href="http://qt.nokia.com/downloads">http://qt.nokia.com/downloads</a> to obtain a copy.</p>
+<p>To install Qt Mobility you must already have installed Qt 4.6 or higher, visit <a href="http://get.qt.nokia.com">http://get.qt.nokia.com</a> to obtain a copy.</p>
 <p>Qt Mobility Project APIs are comprised of a number of domains. Some of these domains have dependencies and these are outlined below:</p>
 <p><table class="generic" width="80%" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>API</th><th>Requirements</th></tr></thead>
+<thead><tr valign="top" class="qt-style"><th>API</th><th>Dependency</th></tr></thead>
 <tr valign="top" class="odd"><td>Messaging</td><td>The linux backend depends on QMF. For more information on QMF visit <a href="http://labs.trolltech.com/blogs/category/qtmessaging">QMF Labs article</a><p>The Windows Mobile backend depends on ActiveSync version 4.5&#x2e;</p>
-<p>Whilst not supported for this release the Windows Desktop backend requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.</p>
+<p>While not supported for this release the Windows Desktop backend requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.</p>
 <p>The messaging API SMS/MMS functionality requires that the platform provides SMS/MMS facilites. Email functionality requires that an email account is available on the platform.</p>
 </td></tr>
-<tr valign="top" class="even"><td>Service Framework</td><td>The service framework depends on SQLite version 3 and that Qt has been built with an sqlite driver. Building the driver by Qt is most easily achieved by using one of the following configure options: <tt>-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite</tt></td></tr>
-<tr valign="top" class="odd"><td>Multimedia</td><td>The multimedia component depends on the <a href="http://qt.nokia.com/doc/4.5/qtmultimedia.html">QtMultimedia</a> module in Qt. Qt by default is configured to make this module with the <tt>-multimedia</tt> option.</td></tr>
+<tr valign="top" class="even"><td>Contacts</td><td>The Maemo 6 backend depends on libqttracker. For more information on libqttracker visit <a href="http://maemo.gitorious.org/maemo-af/libqttracker">libqttracker public repository</a> Other components offered by the Maemo 6 platform may be required in order to support the full functionality of the Maemo 6 backend.</td></tr>
+<tr valign="top" class="odd"><td>Service Framework</td><td>The service framework depends on SQLite version 3 and that Qt has been built with an sqlite driver. Building the driver by Qt is most easily achieved by using one of the following configure options: <tt>-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite</tt></td></tr>
+<tr valign="top" class="even"><td>Multimedia</td><td>The multimedia component depends on the <a href="http://qt.nokia.com/doc/4.5/qtmultimedia.html">QtMultimedia</a> module in Qt. Qt by default is configured to make this module with the <tt>-multimedia</tt> option.</td></tr>
+<tr valign="top" class="odd"><td>Systeminfo</td><td>The Linux backend depands on <a href="http://qt.nokia.com/doc/4.5/qdbus.html">QDBus</a>, HAL and NetworkManager, although Systeminfo will compile without them, there will be reduced functionality.<p>On Mac OS X, Systeminfo depends on the 10.6 SDK (<a href="http://qt.nokia.com/doc/4.5/deployment-mac.html">XCode</a> 3.2&#x2e;1), although it will compile with older SDK's there will be reduced functionality.</p>
+</td></tr>
 </table></p>
 <a name="unpacking"></a>
 <h2>Unpacking</h2>
@@ -66,7 +73,7 @@
 <a name="building-on-windows"></a>
 <h3>Building On Windows</h3>
 <p>To configure the Qt Mobility libraries for your machine, run configure in the package directory.</p>
-<p>To specify the installation directory you may use the -prefix option. Not passing a prefix installs the mobility libraries into an install directory within current working directory.</p>
+<p>To specify the installation directory you may use the -prefix option. Not passing a prefix installs the mobility libraries into an install directory within the current working directory.</p>
 <pre>        cd c:\QtMobility\%DISTNAME%
         configure -prefix %TARGET_DIR%</pre>
 <p>Type <tt>configure -help</tt> to get a list of all available options.</p>
