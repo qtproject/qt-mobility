@@ -341,7 +341,7 @@ void VSExplorer::watch(const QString &path)
 
     QValueSpacePublisher * newObject = new QValueSpacePublisher(path);
     watchers.insert(newObject);
-    QObject::connect(newObject, SIGNAL(attributeInterestChanged(QString,bool)),
+    QObject::connect(newObject, SIGNAL(interestChanged(QString,bool)),
                      this, SLOT(interestChanged(QString,bool)));
 }
 

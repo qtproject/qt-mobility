@@ -1,6 +1,0 @@
-This is the Qt Mobility Contacts API proposal package.
-
-This package provides a cross platform API for accessing and
-manipulating contacts, and for invoking certain native services
-relating to contacts.
-

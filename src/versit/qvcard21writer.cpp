@@ -140,3 +140,4 @@ bool QVCard21Writer::quotedPrintableEncode(
 }
 
 QTM_END_NAMESPACE
+ 

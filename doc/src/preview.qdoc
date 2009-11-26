@@ -39,73 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef VERSITTEST_H
-#define VERSITTEST_H
+/*!
+\page preview.html
 
-#include <QObject>
-#include <QStringList>
+\title Technology Preview
 
-#include "qtversitglobal.h"
+\brief The Technology Preview of interesting APIs not for official release.
 
-class QFile;
-class QIODevice;
 
-QTM_BEGIN_NAMESPACE
-class QContactManager;
-class QVersitReader;
-class QVersitWriter;
-class QVersitContactImporter;
-class QVersitContactExporter;
-QTM_END_NAMESPACE
+\target {Management of Versit Documents}
+\section1 Management of Versit Documents
 
-QTM_USE_NAMESPACE
+\l{Versit API}{Versit API Documentation}
 
-class VersitTest : public QObject
-{
-     Q_OBJECT
+Versit Classes.
+\annotatedlist versit
 
-public:
 
-    VersitTest();
-    VersitTest(bool saveContacts,
-               int scaledImageHeight,
-               int scaledImageWidth);
-     
-public slots:
-    void scale(const QString& imageFileName, QByteArray& imageData);
+\target {Camera Support
+\section1 Camera Support
 
-private slots:
+\annotatedlist camera
 
-    void initTestCase();    
-    void init();
-    void cleanup();
-    void cleanupTestCase(); 
 
-private slots:
-    void test();
-    void test_data();
-    void exampleCode();
 
-private:
-    
-    void executeTest(QFile& in, QIODevice& out);  
+*/
 
-private:
- 
-    bool mSaveContacts;
-    int mScaledImageHeight;
-    int mScaledImageWidth;
-    QContactManager* mContactManager;
-    QStringList* mExcludedFields;    
-    QStringList mFiles;
-    QVersitReader* mReader;
-    QVersitWriter* mWriter;
-    QString mInputDirPath;
-    QString mExcludeFieldsFileName;
-    QString mOutputDirPath;
-    QString mImageAndAudioClipPath;
-    QVersitContactImporter* mImporter;
-    QVersitContactExporter* mExporter;
-};
 
-#endif // VERSITTEST_H

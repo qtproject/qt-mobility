@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,38 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef TESTCONFIGURATION_H
-#define TESTCONFIGURATION_H
+/*!
+    \page editions.html
+    \title Qt Editions
+    \ingroup licensing
+    \brief Information about the different editions of Qt.
 
-#include <QXmlDefaultHandler>
+    Qt can be used to create both commercial and non-commercial
+    software for a wide range of different deployment environments,
+    and is supplied in a number of different forms to suit the needs
+    of different kinds of developers.
 
-class TestConfiguration : public QXmlDefaultHandler
-{
-public: // Constructors and destructor
-    TestConfiguration();
-    ~TestConfiguration();
+    In terms of license conditions, there are two main forms of Qt:
 
-public:
-    int parse(const QString& fileName);
+    \list
+    \o The \l{Qt Commercial Editions} are the commercial
+       versions of \l{About Qt}{Qt}.
+    \o The \l{Open Source Versions of Qt} are freely available for download.
+    \endlist
 
-    bool saveContact() {return mSaveContact;}
-    QString outputFormat() {return mOutputFormat;}
-    QString testName() {return mTestName;}
-    int iterations() {return mIterationCount;}
-
-protected: // From QXmlContentHandler
-    bool startElement(
-        const QString& namespaceURI,
-        const QString& localName,
-        const QString& qName,
-        const QXmlAttributes& atts);
-
-private: // Data
-    QString mTestName;
-    bool mSaveContact;
-    QString mOutputFormat;
-    int mIterationCount;
-};
-
-
-#endif // TESTCONFIGURATION_H
+    On the Qt web site, you can find a
+    \l{Qt Licensing Overview} and information on \l{Qt License Pricing}
+    for commercial editions of Qt and other Qt-related products.
+*/

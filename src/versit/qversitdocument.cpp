@@ -46,19 +46,21 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QVersitDocument
- *
- * \brief QVersitDocument is a container for 0..n versit properties.
- *
- * For example a vCard can be presented as a QVersitDocument that
- * consists of 0..n properties such as a name (N),
- * a telephone number (TEL) and an email address (EMAIL) to name a few.
- * Each of these properties is stored as
- * an instance of a QVersitProperty in a QVersitDocument.
- *
- * QVersitDocument supports implicit sharing.
- *
- * \sa QVersitProperty
+  \class QVersitDocument
+ 
+  \brief The QVersitDocument class is a container for 0..n versit properties.
+
+  \ingroup versit
+ 
+  For example a vCard can be presented as a QVersitDocument that
+  consists of 0..n properties such as a name (N),
+  a telephone number (TEL) and an email address (EMAIL) to name a few.
+  Each of these properties is stored as
+  an instance of a QVersitProperty in a QVersitDocument.
+ 
+  QVersitDocument supports implicit sharing.
+ 
+  \sa QVersitProperty
  */
 
 /*! Constructs a new empty document */

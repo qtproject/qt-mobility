@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactfilter.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QContactFilter Class Reference</title>
+  <title>Qt Mobility Project 1.0: QContactFilter Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QContactFilter" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -51,6 +52,17 @@
 <p>This class is used as a parameter to various functions offered by <a href="qcontactmanager.html">QContactManager</a>, to allow selection of contacts which have certain details or properties.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QContactFilter/FilterType" />
+<a name="//apple_ref/cpp/econst/QContactFilter/InvalidFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/ContactDetailFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/ContactDetailRangeFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/ChangeLogFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/ActionFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/RelationshipFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/IntersectionFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/UnionFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/LocalIdFilter" />
+<a name="//apple_ref/cpp/econst/QContactFilter/DefaultFilter" />
 <h3 class="fn"><a name="FilterType-enum"></a>enum QContactFilter::FilterType</h3>
 <p>Describes the type of the filter</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -66,6 +78,15 @@
 <tr><td valign="top"><tt>QContactFilter::LocalIdFilter</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">A filter which matches any contact whose local id is contained in a particular list of contact local ids</td></tr>
 <tr><td valign="top"><tt>QContactFilter::DefaultFilter</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A filter which matches everything</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tag/QContactFilter/MatchFlag" />
+<a name="//apple_ref/cpp/econst/QContactFilter/MatchExactly" />
+<a name="//apple_ref/cpp/econst/QContactFilter/MatchContains" />
+<a name="//apple_ref/cpp/econst/QContactFilter/MatchStartsWith" />
+<a name="//apple_ref/cpp/econst/QContactFilter/MatchEndsWith" />
+<a name="//apple_ref/cpp/econst/QContactFilter/MatchFixedString" />
+<a name="//apple_ref/cpp/econst/QContactFilter/MatchCaseSensitive" />
+<a name="//apple_ref/cpp/econst/QContactFilter/MatchPhoneNumber" />
+<a name="//apple_ref/cpp/tdef/QContactFilter/MatchFlags" />
 <h3 class="flags"><a name="MatchFlag-enum"></a>enum QContactFilter::MatchFlag<br />flags QContactFilter::MatchFlags</h3>
 <p>Describes the semantics of matching followed by the filter</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -81,26 +102,33 @@
 <p>The MatchFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;MatchFlag&gt;. It stores an OR combination of MatchFlag values.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QContactFilter/QContactFilter" />
 <h3 class="fn"><a name="QContactFilter"></a>QContactFilter::QContactFilter ()</h3>
 <p>Constructs an empty filter</p>
 <h3 class="fn"><a name="QContactFilter-2"></a>QContactFilter::QContactFilter ( const QContactFilter &amp; <i>other</i> )</h3>
 <p>Constructs a new copy of <i>other</i></p>
 <h3 class="fn"><a name="QContactFilter-3"></a>QContactFilter::QContactFilter ( QContactFilterPrivate * <i>d</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Constructs a new filter from the given data pointer <i>d</i></p>
+<a name="//apple_ref/cpp/instm/QContactFilter/~QContactFilter" />
 <h3 class="fn"><a name="dtor.QContactFilter"></a>QContactFilter::~QContactFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Cleans up the memory used by this filter</p>
+<a name="//apple_ref/cpp/instm/QContactFilter/type" />
 <h3 class="fn"><a name="type"></a><a href="qcontactfilter.html#FilterType-enum">FilterType</a> QContactFilter::type () const</h3>
 <p>Returns the type of the filter</p>
+<a name="//apple_ref/cpp/instm/QContactFilter/operator!=" />
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactFilter::operator!= ( const QContactFilter &amp; <i>other</i> ) const</h3>
 <p>Returns true if this filter is not identical to the <i>other</i> filter.</p>
 <p>See also <a href="qcontactfilter.html#operator-eq-eq">operator==</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactFilter/operator=" />
 <h3 class="fn"><a name="operator-eq"></a>QContactFilter &amp; QContactFilter::operator= ( const QContactFilter &amp; <i>other</i> )</h3>
 <p>Assigns this filter to be <i>other</i></p>
+<a name="//apple_ref/cpp/instm/QContactFilter/operator==" />
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactFilter::operator== ( const QContactFilter &amp; <i>other</i> ) const</h3>
 <p>Returns true if the filter has the same type and criteria as <i>other</i></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>

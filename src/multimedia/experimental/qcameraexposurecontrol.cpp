@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
     \brief The QCameraExposureControl class supplies control for exposure
     related camera parameters.
 
+    \ingroup camera
+
     The interface name of QCameraExposureControl is \c com.nokia.Qt.QCameraExposureControl/1.0 as
     defined in QCameraExposureControl_iid.
 

@@ -8,8 +8,8 @@
     <filterSection>
         <filterAttribute>qtmobility</filterAttribute>
         <toc>
-            <section ref="index.html" title="Qt Mobility Reference Documentation">
-                <section ref="classes.html" title="Classes">
+            <section ref="index.html" title="Qt Mobility Project Reference Documentation">
+                <section ref="" title="Classes">
                     <section ref="qabstractsecuritysession.html" title="QAbstractSecuritySession Class Reference">
                         <section ref="qabstractsecuritysession-members.html" title="List of all members"/>
                     </section>
@@ -535,7 +535,7 @@
                         <section ref="qvideowindowcontrol-members.html" title="List of all members"/>
                     </section>
                 </section>
-                <section ref="examples.html" title="Examples">
+                <section ref="" title="Examples">
                     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML"/>
                     <section ref="audiorecorder.html" title="Audio Recorder Example"/>
                     <section ref="bearercloud.html" title="Bearer Cloud Example"/>
@@ -564,31 +564,44 @@
                     <section ref="streamplayer.html" title="Stream Player Example"/>
                     <section ref="sysinfo.html" title="System Information Example"/>
                 </section>
-                <section ref="index.html" title="Overviews">
+                <section ref="" title="Overviews">
                     <section ref="functions.html" title="All Functions"/>
                     <section ref="classes.html" title="All Qt Mobility Classes"/>
                     <section ref="annotated.html" title="Annotated Class List"/>
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
+                    <section ref="gpl.html" title="GNU General Public License (GPL)"/>
+                    <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
                     <section ref="installation.html" title="Installation Guide"/>
+                    <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux"/>
+                    <section ref="licensing.html" title="Licensing Information"/>
                     <section ref="location-overview.html" title="Location"/>
+                    <section ref="location.html" title="Location API"/>
                     <section ref="location-releasenotes.html" title="Location Library Release Notes"/>
                     <section ref="messaging.html" title="Messaging API"/>
                     <section ref="multimedia.html" title="Mobility Multimedia"/>
                     <section ref="multimedia.html" title="Multimedia"/>
+                    <section ref="opensourceedition.html" title="Open Source Versions of Qt"/>
+                    <section ref="licenses.html" title="Other Licenses Used in Qt"/>
                     <section ref="publ-subs.html" title="Publish and Subscribe"/>
                     <section ref="bearer.html" title="Qt Bearer Management API"/>
+                    <section ref="commercialeditions.html" title="Qt Commercial Editions"/>
                     <section ref="contactsschema.html" title="Qt Contacts Schema"/>
-                    <section ref="mobility.html" title="Qt Mobility APIs"/>
+                    <section ref="editions.html" title="Qt Editions"/>
+                    <section ref="full-framework-edition-classes.html" title="Qt Full Framework Edition"/>
+                    <section ref="gui-framework-edition-classes.html" title="Qt GUI Framework Edition"/>
                     <section ref="examples.html" title="Qt Mobility Examples"/>
-                    <section ref="location.html" title="Qt Mobility Location API"/>
-                    <section ref="index.html" title="Qt Mobility Overview"/>
+                    <section ref="mobility.html" title="Qt Mobility Project APIs (BETA)"/>
+                    <section ref="index.html" title="Qt Mobility Project APIs (BETA) Overview"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
+                    <section ref="preview.html" title="Technology Preview"/>
+                    <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
+                    <section ref="trademarks.html" title="Trademarks"/>
                     <section ref="versit.html" title="Versit API"/>
                 </section>
             </section>
@@ -609,17 +622,24 @@
             <keyword name="Declarative Example" id="Declarative Example" ref="declarative.html"/>
             <keyword name="Fetch Google Maps Example" id="Fetch Google Maps Example" ref="fetchgooglemaps.html"/>
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
+            <keyword name="GNU General Public License (GPL)" id="GNU General Public License (GPL)" ref="gpl.html"/>
+            <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
             <keyword name="Incoming Calls Example" id="Incoming Calls Example" ref="incomingcalls.html"/>
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
+            <keyword name="Licenses for Fonts Used in Qt for Embedded Linux" id="Licenses for Fonts Used in Qt for Embedded Linux" ref="licenses-fonts.html"/>
+            <keyword name="Licensing Information" id="Licensing Information" ref="licensing.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
+            <keyword name="Location API" id="Location API" ref="location.html"/>
             <keyword name="Location Library Release Notes" id="Location Library Release Notes" ref="location-releasenotes.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
             <keyword name="Media Player Example" id="Media Player Example" ref="player.html"/>
             <keyword name="Messaging API" id="Messaging API" ref="messaging.html"/>
             <keyword name="Mobility Multimedia" id="Mobility Multimedia" ref="multimedia.html"/>
             <keyword name="Multimedia" id="Multimedia" ref="multimedia.html"/>
+            <keyword name="Open Source Versions of Qt" id="Open Source Versions of Qt" ref="opensourceedition.html"/>
+            <keyword name="Other Licenses Used in Qt" id="Other Licenses Used in Qt" ref="licenses.html"/>
             <keyword name="Player Example" id="Player Example" ref="player.html"/>
             <keyword name="Publish and Subscribe" id="Publish and Subscribe" ref="publ-subs.html"/>
             <keyword name="Publish and Subscribe Example" id="Publish and Subscribe Example" ref="publish-subscribe.html"/>
@@ -3520,11 +3540,16 @@
             <keyword name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" id="Q_DECLARE_CUSTOM_CONTACT_DETAIL" ref="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
+            <keyword name="Qt Full Framework Edition" id="Qt Full Framework Edition" ref="commercialeditions.html#qt-full-framework-edition"/>
+            <keyword name="Qt GUI Framework Edition" id="Qt GUI Framework Edition" ref="commercialeditions.html#qt-gui-framework-edition"/>
+            <keyword name="Qt Commercial Editions" id="Qt Commercial Editions" ref="commercialeditions.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
-            <keyword name="Qt Mobility APIs" id="Qt Mobility APIs" ref="mobility.html"/>
+            <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
+            <keyword name="Qt Full Framework Edition" id="Qt Full Framework Edition" ref="full-framework-edition-classes.html"/>
+            <keyword name="Qt GUI Framework Edition" id="Qt GUI Framework Edition" ref="gui-framework-edition-classes.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="examples.html"/>
-            <keyword name="Qt Mobility Location API" id="Qt Mobility Location API" ref="location.html"/>
-            <keyword name="Qt Mobility Overview" id="Qt Mobility Overview" ref="index.html"/>
+            <keyword name="Qt Mobility Project APIs (BETA)" id="Qt Mobility Project APIs (BETA)" ref="mobility.html"/>
+            <keyword name="Qt Mobility Project APIs (BETA) Overview" id="Qt Mobility Project APIs (BETA) Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
             <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
             <keyword name="QtMedia" id="QtMedia" ref="qtmedia.html"/>
@@ -3632,6 +3657,9 @@
             <keyword name="Stream Player Example" id="Stream Player Example" ref="streamplayer.html"/>
             <keyword name="System Information" id="System Information" ref="systeminfo.html"/>
             <keyword name="System Information Example" id="System Information Example" ref="sysinfo.html"/>
+            <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
+            <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
+            <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
             <keyword name="Versit API" id="Versit API" ref="versit.html"/>
         </keywords>
         <files>
@@ -3679,6 +3707,7 @@
             <file>fetchgooglemaps-mapwindow-h.html</file>
             <file>declarative-landlinedialer-landlinedialerplugin-h.html</file>
             <file>qradiotuner.html</file>
+            <file>3rdparty.html</file>
             <file>qcontactphonenumber.html</file>
             <file>qmediaplayer-members.html</file>
             <file>samplephonebook-phonebook-h.html</file>
@@ -3700,6 +3729,7 @@
             <file>incomingcalls-incomingcalls-pro.html</file>
             <file>keepintouch-addressfinder-h.html</file>
             <file>qcameracontrol-members.html</file>
+            <file>full-framework-edition-classes.html</file>
             <file>qmediaobject-members.html</file>
             <file>qsystemdisplayinfo-members.html</file>
             <file>qcontactdetail.html</file>
@@ -3780,10 +3810,12 @@
             <file>samplephonebook.html</file>
             <file>qmediaplaylistcontrol.html</file>
             <file>qmaillineendingcodec-members.html</file>
+            <file>lgpl.html</file>
             <file>qcontactdetaildefinitionfetchrequest.html</file>
             <file>cameracapture-cameracapture-h.html</file>
             <file>logfilepositionsource-main-cpp.html</file>
             <file>recorder-recorder-cpp.html</file>
+            <file>trademarks.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-h.html</file>
             <file>qcontactdetaildefinitionfield.html</file>
             <file>declarative-landlinedialer-landlinedialer-pro.html</file>
@@ -3830,6 +3862,7 @@
             <file>qmetadatacontrol.html</file>
             <file>qgraphicsvideoitem.html</file>
             <file>qimagecapturecontrol.html</file>
+            <file>preview.html</file>
             <file>samplephonebook-groupdetailsdialog-cpp.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qvideowidget-members.html</file>
@@ -3841,6 +3874,7 @@
             <file>qcontactaction.html</file>
             <file>sysinfo.html</file>
             <file>qserviceplugininterface-members.html</file>
+            <file>opensourceedition.html</file>
             <file>declarative-voipdialer-voipdialer-pro.html</file>
             <file>fetchgooglemaps.html</file>
             <file>qgeosatelliteinfosource-members.html</file>
@@ -3971,8 +4005,8 @@
             <file>qsysteminfo-members.html</file>
             <file>qcontactdetaildefinitionsaverequest.html</file>
             <file>servicebrowser-main-cpp.html</file>
-            <file>qmediaservice-members.html</file>
             <file>publish-subscribe-publish-subscribe-pro.html</file>
+            <file>qmediaservice-members.html</file>
             <file>examples.html</file>
             <file>cameracapture.html</file>
             <file>qmailmessagebody.html</file>
@@ -3983,6 +4017,7 @@
             <file>qcontacttype.html</file>
             <file>declarative-sfwexample-h.html</file>
             <file>bluetoothtransferplugin.html</file>
+            <file>licenses-fonts.html</file>
             <file>qsysteminfo.html</file>
             <file>qmailmessagefwd.html</file>
             <file>audiorecorder-audiorecorder-cpp.html</file>
@@ -4009,6 +4044,7 @@
             <file>qcontactchangeset-members.html</file>
             <file>qmediaformatcontrol.html</file>
             <file>radio-main-cpp.html</file>
+            <file>commercialeditions.html</file>
             <file>slideshow.html</file>
             <file>qcontactnickname.html</file>
             <file>qcontactrelationship.html</file>
@@ -4031,11 +4067,13 @@
             <file>battery-charge-battery-subscriber-battery-subscriber-qrc.html</file>
             <file>qmediaplaylistnavigator.html</file>
             <file>qmediaresource-members.html</file>
+            <file>gui-framework-edition-classes.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
             <file>qgeosatelliteinfosource.html</file>
-            <file>qmediaserviceproviderplugin-members.html</file>
             <file>samplephonebook-groupeditdialog-h.html</file>
             <file>qcontactanniversary-members.html</file>
+            <file>qmediaserviceproviderplugin-members.html</file>
+            <file>licenses.html</file>
             <file>qmediaserviceproviderplugin.html</file>
             <file>qcontactinvalidengine.html</file>
             <file>qmediaplayer.html</file>
@@ -4082,6 +4120,7 @@
             <file>installation.html</file>
             <file>qmessageserviceaction-members.html</file>
             <file>qmailfolderid.html</file>
+            <file>licensing.html</file>
             <file>qimageencodercontrol.html</file>
             <file>qaudioformat.html</file>
             <file>qsystemscreensaver-members.html</file>
@@ -4131,7 +4170,9 @@
             <file>qnetworksession.html</file>
             <file>qcontactmanagerengine.html</file>
             <file>qcontact.html</file>
+            <file>gpl.html</file>
             <file>qmailmessagemetadata-members.html</file>
+            <file>editions.html</file>
             <file>declarative-landlinedialer-landlinedialerplugin-cpp.html</file>
             <file>qaudioencodercontrol-members.html</file>
             <file>samplephonebook-finddialog-cpp.html</file>
@@ -4158,8 +4199,8 @@
             <file>samplephonebook-maindialogform-640-480-cpp.html</file>
             <file>publish-subscribe-subscriberdialog-cpp.html</file>
             <file>bearercloud-lan-svg.html</file>
-            <file>qmediaservicefeaturesinterface-members.html</file>
             <file>qmediaresource.html</file>
+            <file>qmediaservicefeaturesinterface-members.html</file>
             <file>slideshow-slideshow-h.html</file>
             <file>sysinfo-sysinfo-pro.html</file>
             <file>qcontacttype-members.html</file>

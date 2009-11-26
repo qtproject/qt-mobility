@@ -48,34 +48,36 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QVersitReader
- *
- * \brief QVersitReader provides an interface
- * for reading versit documents such as vCards from a stream.
- *
- * QVersitReader reads 0..n versit documents such as vCards
- * from a text stream into 0..n QVersitDocument instances.
- * QVersitReader supports reading from an abstract I/O device
- * which can be for example a file or a memory buffer.
- * The reading can be done synchronously or asynchronously.
- *
- * \code
- * // An example of reading a simple vCard from a memory buffer:
- * QBuffer vCardBuffer;
- * vCardBuffer.open(QBuffer::ReadWrite);
- * QByteArray vCard =
- *     "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Simpson;Homer;J;;\r\nEND:VCARD\r\n";
- * vCardBuffer.write(vCard);
- * vCardBuffer.seek(0);
- * QVersitReader reader;
- * reader.setDevice(&vCardBuffer);
- * if (reader.readAll()) {
- *     QList<QVersitDocument> versitDocuments = reader.result();
- *     // Use the resulting document(s)...
- * }
- * \endcode
- *
- * \sa QVersitDocument
+  \class QVersitReader
+ 
+  \brief The QVersitReader class provides an interface
+  for reading versit documents such as vCards from a stream.
+
+  \ingroup versit
+ 
+  QVersitReader reads 0..n versit documents such as vCards
+  from a text stream into 0..n QVersitDocument instances.
+  QVersitReader supports reading from an abstract I/O device
+  which can be for example a file or a memory buffer.
+  The reading can be done synchronously or asynchronously.
+ 
+  \code
+  // An example of reading a simple vCard from a memory buffer:
+  QBuffer vCardBuffer;
+  vCardBuffer.open(QBuffer::ReadWrite);
+  QByteArray vCard =
+      "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n";
+  vCardBuffer.write(vCard);
+  vCardBuffer.seek(0);
+  QVersitReader reader;
+  reader.setDevice(&vCardBuffer);
+  if (reader.readAll()) {
+      QList<QVersitDocument> versitDocuments = reader.result();
+      // Use the resulting document(s)...
+  }
+  \endcode
+ 
+  \sa QVersitDocument
  */
 
 /*!

@@ -1,5 +1,5 @@
 <!DOCTYPE DCF>
-<DCF ref="index.html" icon="qt-mobility-library.png" imagedir="../../gif" title="Qt Mobility Library Reference Documentation">
+<DCF ref="index.html" icon="qt-mobility-project-library.png" imagedir="../../gif" title="Qt Mobility Project Library Reference Documentation">
 <section ref="classes.html" title="Classes">
     <section ref="qmailmessagepart-location.html" title="Location Class Reference">
         <keyword ref="qmailmessagepart-location.html">Location</keyword>
@@ -3584,14 +3584,29 @@
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
     </section>
+    <section ref="gpl.html" title="GNU General Public License (GPL)">
+        <keyword ref="gpl.html">GNU General Public License (GPL)</keyword>
+    </section>
+    <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)">
+        <keyword ref="lgpl.html">GNU Lesser General Public License (LGPL)</keyword>
+    </section>
     <section ref="hierarchy.html" title="Inheritance Hierarchy">
         <keyword ref="hierarchy.html">Inheritance Hierarchy</keyword>
     </section>
     <section ref="installation.html" title="Installation Guide">
         <keyword ref="installation.html">Installation Guide</keyword>
     </section>
+    <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux">
+        <keyword ref="licenses-fonts.html">Licenses for Fonts Used in Qt for Embedded Linux</keyword>
+    </section>
+    <section ref="licensing.html" title="Licensing Information">
+        <keyword ref="licensing.html">Licensing Information</keyword>
+    </section>
     <section ref="location-overview.html" title="Location">
         <keyword ref="location-overview.html">Location</keyword>
+    </section>
+    <section ref="location.html" title="Location API">
+        <keyword ref="location.html">Location API</keyword>
     </section>
     <section ref="location-releasenotes.html" title="Location Library Release Notes">
         <keyword ref="location-releasenotes.html">Location Library Release Notes</keyword>
@@ -3605,26 +3620,41 @@
     <section ref="multimedia.html" title="Multimedia">
         <keyword ref="multimedia.html">Multimedia</keyword>
     </section>
+    <section ref="opensourceedition.html" title="Open Source Versions of Qt">
+        <keyword ref="opensourceedition.html">Open Source Versions of Qt</keyword>
+    </section>
+    <section ref="licenses.html" title="Other Licenses Used in Qt">
+        <keyword ref="licenses.html">Other Licenses Used in Qt</keyword>
+    </section>
     <section ref="publ-subs.html" title="Publish and Subscribe">
         <keyword ref="publ-subs.html">Publish and Subscribe</keyword>
     </section>
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
     </section>
+    <section ref="commercialeditions.html" title="Qt Commercial Editions">
+        <keyword ref="commercialeditions.html">Qt Commercial Editions</keyword>
+    </section>
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>
     </section>
-    <section ref="mobility.html" title="Qt Mobility APIs">
-        <keyword ref="mobility.html">Qt Mobility APIs</keyword>
+    <section ref="editions.html" title="Qt Editions">
+        <keyword ref="editions.html">Qt Editions</keyword>
+    </section>
+    <section ref="full-framework-edition-classes.html" title="Qt Full Framework Edition">
+        <keyword ref="full-framework-edition-classes.html">Qt Full Framework Edition</keyword>
+    </section>
+    <section ref="gui-framework-edition-classes.html" title="Qt GUI Framework Edition">
+        <keyword ref="gui-framework-edition-classes.html">Qt GUI Framework Edition</keyword>
     </section>
     <section ref="examples.html" title="Qt Mobility Examples">
         <keyword ref="examples.html">Qt Mobility Examples</keyword>
     </section>
-    <section ref="location.html" title="Qt Mobility Location API">
-        <keyword ref="location.html">Qt Mobility Location API</keyword>
+    <section ref="mobility.html" title="Qt Mobility Project APIs (BETA)">
+        <keyword ref="mobility.html">Qt Mobility Project APIs (BETA)</keyword>
     </section>
-    <section ref="index.html" title="Qt Mobility Overview">
-        <keyword ref="index.html">Qt Mobility Overview</keyword>
+    <section ref="index.html" title="Qt Mobility Project APIs (BETA) Overview">
+        <keyword ref="index.html">Qt Mobility Project APIs (BETA) Overview</keyword>
     </section>
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>
@@ -3640,6 +3670,15 @@
     </section>
     <section ref="systeminfo.html" title="System Information">
         <keyword ref="systeminfo.html">System Information</keyword>
+    </section>
+    <section ref="preview.html" title="Technology Preview">
+        <keyword ref="preview.html">Technology Preview</keyword>
+    </section>
+    <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt">
+        <keyword ref="3rdparty.html">Third-Party Licenses Used in Qt</keyword>
+    </section>
+    <section ref="trademarks.html" title="Trademarks">
+        <keyword ref="trademarks.html">Trademarks</keyword>
     </section>
     <section ref="versit.html" title="Versit API">
         <keyword ref="versit.html">Versit API</keyword>

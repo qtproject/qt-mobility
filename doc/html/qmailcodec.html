@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmailcodec.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QMailCodec Class Reference</title>
+  <title>Qt Mobility Project 1.0: QMailCodec Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QMailCodec" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -59,12 +60,15 @@
 <p>See also <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a>, <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a>, and <a href="http://qt.nokia.com/doc/4.5/qtextcodec.html">QTextCodec</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMailCodec/~QMailCodec" />
 <h3 class="fn"><a name="dtor.QMailCodec"></a>QMailCodec::~QMailCodec ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys a <a href="qmailcodec.html">QMailCodec</a> instance.</p>
+<a name="//apple_ref/cpp/clm/QMailCodec/copy" />
 <h3 class="fn"><a name="copy"></a>void QMailCodec::copy ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>in</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Writes the data read from the stream <i>in</i> to the stream <i>out</i>, without conversion.</p>
 <h3 class="fn"><a name="copy-2"></a>void QMailCodec::copy ( <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> &amp; <i>out</i>, <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> &amp; <i>in</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Writes the data read from the stream <i>in</i> to the stream <i>out</i>, without conversion.</p>
+<a name="//apple_ref/cpp/instm/QMailCodec/decode" />
 <h3 class="fn"><a name="decode"></a>void QMailCodec::decode ( <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> &amp; <i>out</i>, <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>in</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>charset</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Writes the data read from the stream <i>in</i> to the stream <i>out</i>, converting from a sequence of 7-bit ASCII characters. The characters read from <i>in</i> are decoded from the text encoding <i>charset</i> to unicode.</p>
 <p>See also <a href="http://qt.nokia.com/doc/4.5/qtextcodec.html#codecForName">QTextCodec::codecForName</a>().</p>
@@ -75,8 +79,10 @@
 <p>See also <a href="http://qt.nokia.com/doc/4.5/qtextcodec.html#codecForName">QTextCodec::codecForName</a>().</p>
 <h3 class="fn"><a name="decode-4"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMailCodec::decode ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>input</i> )</h3>
 <p>Returns a <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> containing the octets decoded from the sequence of 7-bit ASCII characters in <i>input</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailCodec/decodeChunk" />
 <h3 class="fn"><a name="decodeChunk"></a>void QMailCodec::decodeChunk ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const char * <i>input</i>, int <i>length</i>, bool <i>finalChunk</i> )&nbsp;&nbsp;<tt> [pure virtual protected]</tt></h3>
 <p>Overridden by derived classes to perform a decoding operation. The implementation function must decode <i>length</i> ASCII characters at the location <i>input</i>, writing the resulting octets to the stream <i>out</i>. If <i>finalChunk</i> is false, further calls will be made to decodeChunk() with continued input data. Otherwise, the decoding operation is complete.</p>
+<a name="//apple_ref/cpp/instm/QMailCodec/encode" />
 <h3 class="fn"><a name="encode"></a>void QMailCodec::encode ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> &amp; <i>in</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>charset</i> = &quot;UTF-8&quot; )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Writes the data read from the stream <i>in</i> to the stream <i>out</i>, as a sequence of 7-bit ASCII characters. The unicode characters read from <i>in</i> are first encoded to the text encoding <i>charset</i>.</p>
 <p>See also <a href="http://qt.nokia.com/doc/4.5/qtextcodec.html#codecForName">QTextCodec::codecForName</a>().</p>
@@ -87,13 +93,16 @@
 <p>See also <a href="http://qt.nokia.com/doc/4.5/qtextcodec.html#codecForName">QTextCodec::codecForName</a>().</p>
 <h3 class="fn"><a name="encode-4"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMailCodec::encode ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>input</i> )</h3>
 <p>Returns a <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> containing the octets from <i>input</i>, encoded to a sequence of 7-bit ASCII characters.</p>
+<a name="//apple_ref/cpp/instm/QMailCodec/encodeChunk" />
 <h3 class="fn"><a name="encodeChunk"></a>void QMailCodec::encodeChunk ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const unsigned char * <i>input</i>, int <i>length</i>, bool <i>finalChunk</i> )&nbsp;&nbsp;<tt> [pure virtual protected]</tt></h3>
 <p>Overridden by derived classes to perform an encoding operation. The implementation function must encode <i>length</i> 8-bit octets at the location <i>input</i>, writing the resulting ASCII characters to the stream <i>out</i>. If <i>finalChunk</i> is false, further calls will be made to encodeChunk() with continued input data. Otherwise, the encoding operation is complete.</p>
+<a name="//apple_ref/cpp/instm/QMailCodec/name" />
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailCodec::name () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a string that identifies the subclass of <a href="qmailcodec.html">QMailCodec</a> that this instance belongs to.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>

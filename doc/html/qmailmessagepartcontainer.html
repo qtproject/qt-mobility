@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmailmessage.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QMailMessagePartContainer Class Reference</title>
+  <title>Qt Mobility Project 1.0: QMailMessagePartContainer Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QMailMessagePartContainer" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -79,93 +80,122 @@
 <p>See also <a href="qmailmessagepart.html">QMailMessagePart</a>, <a href="qmailmessage.html">QMailMessage</a>, and <a href="qmailmessagebody.html">QMailMessageBody</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/QMailMessagePartContainer" />
 <h3 class="fn"><a name="QMailMessagePartContainer"></a>QMailMessagePartContainer::QMailMessagePartContainer ( Subclass * <i>p</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Constructs an empty part container object, in the space allocated within the subclass instance at <i>p</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/appendHeaderField" />
 <h3 class="fn"><a name="appendHeaderField"></a>void QMailMessagePartContainer::appendHeaderField ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Appends a new header field with id <i>id</i> and value <i>value</i> to the existing list of header fields. Any existing header fields with the same id are not modified. If <i>value</i> is of the form &quot;&lt;id&gt;:&lt;content&gt;&quot;, then only the part after the semi-colon is processed.</p>
 <p>RFC 2822 encoding requires header fields to be transmitted in ASCII characters. If <i>value</i> contains non-ASCII characters, it will be encoded to ASCII via the <a href="qmailmessageheaderfield.html#encodeContent">QMailMessageHeaderField::encodeContent</a>() function; depending on the specific header field this may result in illegal content. Where possible, clients should encode non-ASCII data prior to calling appendHeaderField.</p>
 <p>See also <a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a>.</p>
 <h3 class="fn"><a name="appendHeaderField-2"></a>void QMailMessagePartContainer::appendHeaderField ( const <a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a> &amp; <i>field</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Appends a new header field with the properties of <i>field</i>. Any existing header fields with the same id are not modified.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/appendPart" />
 <h3 class="fn"><a name="appendPart"></a>void QMailMessagePartContainer::appendPart ( const <a href="qmailmessagepart.html">QMailMessagePart</a> &amp; <i>part</i> )</h3>
 <p>Append <i>part</i> to the list of attachments for the message.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/body" />
 <h3 class="fn"><a name="body"></a><a href="qmailmessagebody.html">QMailMessageBody</a> QMailMessagePartContainer::body () const</h3>
 <p>Returns the body element contained by the part.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#setBody">setBody</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/boundary" />
 <h3 class="fn"><a name="boundary"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMailMessagePartContainer::boundary () const</h3>
 <p>Returns the boundary text used to delimit the container's parts when encoded in RFC 2822 form.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#setBoundary">setBoundary</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/clearParts" />
 <h3 class="fn"><a name="clearParts"></a>void QMailMessagePartContainer::clearParts ()</h3>
 <p>Clears the list of attachments associated with the message.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/contentAvailable" />
 <h3 class="fn"><a name="contentAvailable"></a>bool QMailMessagePartContainer::contentAvailable () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns true if the entire content of this element is available; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/contentType" />
 <h3 class="fn"><a name="contentType"></a><a href="qmailmessagecontenttype.html">QMailMessageContentType</a> QMailMessagePartContainer::contentType () const</h3>
 <p>Returns the content type of this part. Where <a href="qmailmessagepartcontainer.html#hasBody">hasBody</a>() is true, the type of the contained body element is returned; otherwise a content type matching the <a href="qmailmessagepartcontainer.html#multipartType">multipartType</a>() for this part is returned.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#hasBody">hasBody</a>(), <a href="qmailmessagebody.html#contentType">QMailMessageBody::contentType</a>(), and <a href="qmailmessagepartcontainer.html#multipartType">multipartType</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/foreachPart" />
 <h3 class="fn"><a name="foreachPart"></a>bool QMailMessagePartContainer::foreachPart ( F <i>func</i> )</h3>
 <p>Applies the function or functor <i>func</i> to each part contained within the container. <i>func</i> must implement the signature 'bool operator()(<a href="qmailmessagepart.html">QMailMessagePart</a> &amp;)', and must return true to indicate success, or false to end the traversal operation.</p>
 <p>Returns true if all parts of the message were traversed, and <i>func</i> returned true for every invocation; else returns false.</p>
 <h3 class="fn"><a name="foreachPart-2"></a>bool QMailMessagePartContainer::foreachPart ( F <i>func</i> ) const</h3>
 <p>Applies the function or functor <i>func</i> to each part contained within the container. <i>func</i> must implement the signature 'bool operator()(const <a href="qmailmessagepart.html">QMailMessagePart</a> &amp;)', and must return true to indicate success, or false to end the traversal operation.</p>
 <p>Returns true if all parts of the message were traversed, and <i>func</i> returned true for every invocation; else returns false.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/hasBody" />
 <h3 class="fn"><a name="hasBody"></a>bool QMailMessagePartContainer::hasBody () const</h3>
 <p>Returns true if the part contains a body element; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/headerField" />
 <h3 class="fn"><a name="headerField"></a><a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a> QMailMessagePartContainer::headerField ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i>, <a href="qmailmessageheaderfieldfwd.html#FieldType-enum">QMailMessageHeaderField::FieldType</a> <i>fieldType</i> = QMailMessageHeaderField::StructuredField ) const</h3>
 <p>Returns an object containing the value of the first header field with the given <i>id</i>. If <i>fieldType</i> is <a href="qmailmessageheaderfieldfwd.html#FieldType-enum">QMailMessageHeaderField::StructuredField</a>, then the field content will be parsed assuming a format equivalent to that used for the RFC 2045 'Content-Type' and RFC 2183 'Content-Disposition' header fields.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#setHeaderField">setHeaderField</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/headerFieldText" />
 <h3 class="fn"><a name="headerFieldText"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePartContainer::headerFieldText ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i> ) const</h3>
 <p>Returns the text of the first header field with the given <i>id</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/headerFields" />
 <h3 class="fn"><a name="headerFields"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a>&gt; QMailMessagePartContainer::headerFields ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i>, <a href="qmailmessageheaderfieldfwd.html#FieldType-enum">QMailMessageHeaderField::FieldType</a> <i>fieldType</i> = QMailMessageHeaderField::StructuredField ) const</h3>
 <p>Returns a list of objects containing the value of each header field with the given <i>id</i>. If <i>fieldType</i> is <a href="qmailmessageheaderfieldfwd.html#FieldType-enum">QMailMessageHeaderField::StructuredField</a>, then the field content will be parsed assuming a format equivalent to that used for the RFC 2045 'Content-Type' and RFC 2183 'Content-Disposition' header fields.</p>
 <h3 class="fn"><a name="headerFields-2"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a>&gt; QMailMessagePartContainer::headerFields () const</h3>
 <p>Returns a list of objects containing the value of each header field contained by the part. Header field objects returned by this function are not 'structured'.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/headerFieldsText" />
 <h3 class="fn"><a name="headerFieldsText"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QMailMessagePartContainer::headerFieldsText ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i> ) const</h3>
 <p>Returns a list containing the text of each header field with the given <i>id</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/multipartType" />
 <h3 class="fn"><a name="multipartType"></a><a href="qmailmessagepartcontainerfwd.html#MultipartType-enum">MultipartType</a> QMailMessagePartContainer::multipartType () const</h3>
 <p>Returns the type of multipart relationship shared by the parts contained within this container, or <a href="qmailmessagepartcontainerfwd.html#MultipartType-enum">MultipartNone</a> if the content is not a multipart message.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#setMultipartType">setMultipartType</a>().</p>
+<a name="//apple_ref/cpp/clm/QMailMessagePartContainer/multipartTypeForName" />
 <h3 class="fn"><a name="multipartTypeForName"></a><a href="qmailmessagepartcontainerfwd.html#MultipartType-enum">MultipartType</a> QMailMessagePartContainer::multipartTypeForName ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>name</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the multipart type that corresponds to the type name <i>name</i>.</p>
+<a name="//apple_ref/cpp/clm/QMailMessagePartContainer/nameForMultipartType" />
 <h3 class="fn"><a name="nameForMultipartType"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMailMessagePartContainer::nameForMultipartType ( <a href="qmailmessagepartcontainerfwd.html#MultipartType-enum">MultipartType</a> <i>type</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the standard textual representation for the multipart type <i>type</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/partAt" />
 <h3 class="fn"><a name="partAt"></a>const <a href="qmailmessagepart.html">QMailMessagePart</a> &amp; QMailMessagePartContainer::partAt ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>pos</i> ) const</h3>
 <p>Returns a const reference to the item at position <i>pos</i> in the list of attachments for the message.</p>
 <p><i>pos</i> must be a valid index position in the list (i.e&#x2e;, 0 &lt;= i &lt; <a href="qmailmessagepartcontainer.html#partCount">partCount</a>()).</p>
 <h3 class="fn"><a name="partAt-2"></a><a href="qmailmessagepart.html">QMailMessagePart</a> &amp; QMailMessagePartContainer::partAt ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>pos</i> )</h3>
 <p>Returns a non-const reference to the item at position <i>pos</i> in the list of attachments for the message.</p>
 <p><i>pos</i> must be a valid index position in the list (i.e&#x2e;, 0 &lt;= i &lt; <a href="qmailmessagepartcontainer.html#partCount">partCount</a>()).</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/partCount" />
 <h3 class="fn"><a name="partCount"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> QMailMessagePartContainer::partCount () const</h3>
 <p>Returns the number of attachments the message has.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/partialContentAvailable" />
 <h3 class="fn"><a name="partialContentAvailable"></a>bool QMailMessagePartContainer::partialContentAvailable () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns true if some portion of the content of this element is available; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/prependPart" />
 <h3 class="fn"><a name="prependPart"></a>void QMailMessagePartContainer::prependPart ( const <a href="qmailmessagepart.html">QMailMessagePart</a> &amp; <i>part</i> )</h3>
 <p>Prepend <i>part</i> to the list of attachments for the message.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/removeHeaderField" />
 <h3 class="fn"><a name="removeHeaderField"></a>void QMailMessagePartContainer::removeHeaderField ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Removes all existing header fields with id equal to <i>id</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/removePartAt" />
 <h3 class="fn"><a name="removePartAt"></a>void QMailMessagePartContainer::removePartAt ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> <i>pos</i> )</h3>
 <p>Removes the part at the index <i>pos</i>.</p>
 <p><i>pos</i> must be a valid index position in the list (i.e&#x2e;, 0 &lt;= i &lt; <a href="qmailmessagepartcontainer.html#partCount">partCount</a>()).</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/setBody" />
 <h3 class="fn"><a name="setBody"></a>void QMailMessagePartContainer::setBody ( const <a href="qmailmessagebody.html">QMailMessageBody</a> &amp; <i>body</i> )</h3>
 <p>Sets the part to contain the body element <i>body</i>.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#body">body</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/setBoundary" />
 <h3 class="fn"><a name="setBoundary"></a>void QMailMessagePartContainer::setBoundary ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>text</i> )</h3>
 <p>Sets the boundary text used to delimit the container's parts when encoded in RFC 2822 form to <i>text</i>.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#boundary">boundary</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/setHeaderField" />
 <h3 class="fn"><a name="setHeaderField"></a>void QMailMessagePartContainer::setHeaderField ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the value of the first header field with identity <i>id</i> to <i>value</i> if it already exists; otherwise adds the header with the supplied id and value. If <i>value</i> is of the form &quot;&lt;id&gt;:&lt;content&gt;&quot;, then only the part after the semi-colon is processed.</p>
 <p>RFC 2822 encoding requires header fields to be transmitted in ASCII characters. If <i>value</i> contains non-ASCII characters, it will be encoded to ASCII via the <a href="qmailmessageheaderfield.html#encodeContent">QMailMessageHeaderField::encodeContent</a>() function; depending on the specific header field this may result in illegal content. Where possible, clients should encode non-ASCII data prior to calling setHeaderField.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#headerField">headerField</a>() and <a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a>.</p>
 <h3 class="fn"><a name="setHeaderField-2"></a>void QMailMessagePartContainer::setHeaderField ( const <a href="qmailmessageheaderfield.html">QMailMessageHeaderField</a> &amp; <i>field</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the first header field with identity matching <i>field</i> to have the content of <i>field</i>.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/setMultipartType" />
 <h3 class="fn"><a name="setMultipartType"></a>void QMailMessagePartContainer::setMultipartType ( <a href="qmailmessagepartcontainerfwd.html#MultipartType-enum">MultipartType</a> <i>type</i> )</h3>
 <p>Sets the multipart state of the message to <i>type</i>.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#multipartType">multipartType</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePartContainer/transferEncoding" />
 <h3 class="fn"><a name="transferEncoding"></a><a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> QMailMessagePartContainer::transferEncoding () const</h3>
 <p>Returns the transfer encoding type of this part. Where <a href="qmailmessagepartcontainer.html#hasBody">hasBody</a>() is true, the transfer encoding type of the contained body element is returned; otherwise, the transfer encoding type specified by the 'Content-Transfer-Encoding' field of the header for this part is returned.</p>
 <p>See also <a href="qmailmessagepartcontainer.html#hasBody">hasBody</a>() and <a href="qmailmessagebody.html#transferEncoding">QMailMessageBody::transferEncoding</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>

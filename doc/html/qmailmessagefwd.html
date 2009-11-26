@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmailmessagefwd.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QMailMessageFwd Class Reference</title>
+  <title>Qt Mobility Project 1.0: QMailMessageFwd Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QMailMessageFwd" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -35,6 +36,10 @@
 <p>QMailMessageFwd allows <a href="qmailmessagefwd.html#AttachmentsAction-enum">QMailMessage::AttachmentsAction</a> and <a href="qmailmessagefwd.html#EncodingFormat-enum">QMailMessage::EncodingFormat</a> to be used without including all of <tt>qmailmessage.h</tt>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QMailMessageFwd/AttachmentsAction" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/LinkToAttachments" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/CopyAttachments" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/CopyAndDeleteAttachments" />
 <h3 class="fn"><a name="AttachmentsAction-enum"></a>enum QMailMessageFwd::AttachmentsAction</h3>
 <p>This enum type is used to describe the action that should be performed on each message attachment.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -43,6 +48,9 @@
 <tr><td valign="top"><tt>QMailMessageFwd::CopyAttachments</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Add a part to the message containing a copy of the data in the supplied attachment. If the document is removed, the message will still contain the data.</td></tr>
 <tr><td valign="top"><tt>QMailMessageFwd::CopyAndDeleteAttachments</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Add a part to the message containing a copy of the data in the supplied attachment, then delete the document from which the data was copied.</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tag/QMailMessageFwd/ChunkType" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/Text" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/Reference" />
 <h3 class="fn"><a name="ChunkType-enum"></a>enum QMailMessageFwd::ChunkType</h3>
 <p>This enum type is used to denote the content of a single chunk in a partitioned output sequence.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -50,6 +58,11 @@
 <tr><td valign="top"><tt>QMailMessageFwd::Text</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The chunk contains verbatim output text.</td></tr>
 <tr><td valign="top"><tt>QMailMessageFwd::Reference</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The chunk contains a reference to an external datum.</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tag/QMailMessageFwd/EncodingFormat" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/HeaderOnlyFormat" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/StorageFormat" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/TransmissionFormat" />
+<a name="//apple_ref/cpp/econst/QMailMessageFwd/IdentityFormat" />
 <h3 class="fn"><a name="EncodingFormat-enum"></a>enum QMailMessageFwd::EncodingFormat</h3>
 <p>This enum type is used to describe the format in which a message should be serialized.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -59,11 +72,13 @@
 <tr><td valign="top"><tt>QMailMessageFwd::TransmissionFormat</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The entire message is serialized to RFC 2822 form, with additional header fields added if necessary, and 'bcc' header field omitted.</td></tr>
 <tr><td valign="top"><tt>QMailMessageFwd::IdentityFormat</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The entire message is serialized to RFC 2822 form, with only Content-Type and Content-Transfer-Encoding headers added where required.</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tdef/QMailMessageFwd/MessageChunk" />
 <h3 class="fn"><a name="MessageChunk-typedef"></a>typedef QMailMessageFwd::MessageChunk</h3>
 <p>This type defines a single chunk in a sequence of partitioned ouput data.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>

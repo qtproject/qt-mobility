@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- publ-subs.qdoc -->
 <head>
-  <title>Qt Mobility 1.0: Publish and Subscribe</title>
+  <title>Qt Mobility Project 1.0: Publish and Subscribe</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -37,7 +37,7 @@
     /Device/Buttons/3/Usable = true</pre>
 <p>Existing values within the Value Space are accessed through the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class. This class provides a means to read values, receive change notifications for a given path and navigate through the Value Space.</p>
 <p>New values are added to the Value Space via the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> class. This class allows applications to publish values and receive interest notifications when applications connect to a path. Interest notifications can be used to refrain from updating values in the Value Space when there are no interested parties.</p>
-<p>Nodes in the Value Space can be thought of as representing schema objects. Obviously this is a conceptual differentiation and not a physical one, as internally the Value Space is treated as one large tree. By applying structured schema to the space &quot;explore-ability&quot; is increased. For example, the <tt>/Device/Buttons</tt> schema can be defined as containing a value representing the number of mappable buttons on a device, and a sub-item for each adhering to the <tt>MappableButton</tt> schema. The <tt>MappableButton</tt> schema itself may be defined as containing two attributes <tt>Name</tt> and <tt>Usable</tt>. Change notification is modeled in this fashion also. Were the <tt>/Device/Buttons/1/Name</tt> item to change, the <tt>/Device/Buttons/1</tt> item would also be marked as changed, and so on up the tree. This allows, for example, subscription to just <tt>/Device/Buttons</tt> to be notified when anything &quot;button&quot; related changes.</p>
+<p>Nodes in the Value Space can be thought of as representing schema objects. Obviously this is a conceptual differentiation and not a physical one, as internally the Value Space is treated as one large tree. By applying structured schema to the space &quot;explore-ability&quot; is increased. For example, the <tt>/Device/Buttons</tt> schema can be defined as containing a value representing the number of mappable buttons on a device, and a sub-item for each adhering to the <tt>MappableButton</tt> schema. The <tt>MappableButton</tt> schema itself may be defined as containing two attributes <tt>Name</tt> and <tt>Usable</tt>. Change notification is modeled in this fashion also. Were the <tt>/Device/Buttons/1/Name</tt> item to change, the <tt>/Device/Buttons/1</tt> item would also be marked as changed, and so on up the tree. This allows, for example, subscribers to <tt>/Device/Buttons</tt> to be notified when anything &quot;button&quot; related changes.</p>
 <p>Internally, the Value Space consists of an arbitrary number of data source trees, or layers, which are stacked on top of each other to form the final unified view. If a &quot;higher&quot; layer contains an item, it shadows the value of items in the layers below it. Consider the Value Space item <tt>/Device/Buttons</tt>. If two layers contained this item, the value in the layer with the higher layer order would shadow that with the lower layer order. However, if only the layer with the lower order contained this item, it would be visible through the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class, even if the higher order layer contained sub-items such as <tt>/Device/Buttons/1</tt>. That is, layer shadowing occurs by value not by path.</p>
 <p>Layer order is fixed and is defined in the layer implementation.</p>
 <p>The following Value Space layers are available:</p>
@@ -78,6 +78,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>

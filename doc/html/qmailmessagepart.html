@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmailmessage.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QMailMessagePart Class Reference</title>
+  <title>Qt Mobility Project 1.0: QMailMessagePart Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QMailMessagePart" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -89,93 +90,121 @@
 <p>See also <a href="qmailmessagepartcontainer.html">QMailMessagePartContainer</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/QMailMessagePart" />
 <h3 class="fn"><a name="QMailMessagePart"></a>QMailMessagePart::QMailMessagePart ()</h3>
 <p>Constructs an empty message part object.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/contentAvailable" />
 <h3 class="fn"><a name="contentAvailable"></a>bool QMailMessagePart::contentAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagepartcontainer.html#contentAvailable">QMailMessagePartContainer::contentAvailable</a>().</p>
 <p>Returns true if the entire content of this part is available; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/contentDescription" />
 <h3 class="fn"><a name="contentDescription"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePart::contentDescription () const</h3>
 <p>Returns the Content-Description header field for the part, if present; otherwise returns an empty string.</p>
 <p>See also <a href="qmailmessagepart.html#setContentDescription">setContentDescription</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/contentDisposition" />
 <h3 class="fn"><a name="contentDisposition"></a><a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> QMailMessagePart::contentDisposition () const</h3>
 <p>Returns the Content-Disposition header field for the part.</p>
 <p>See also <a href="qmailmessagepart.html#setContentDisposition">setContentDisposition</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/contentID" />
 <h3 class="fn"><a name="contentID"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePart::contentID () const</h3>
 <p>Returns the Content-Id header field for the part, if present; otherwise returns an empty string.</p>
 <p>If the header field content is surrounded by angle brackets, these are removed.</p>
 <p>See also <a href="qmailmessagepart.html#setContentID">setContentID</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/contentLanguage" />
 <h3 class="fn"><a name="contentLanguage"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePart::contentLanguage () const</h3>
 <p>Returns the Content-Language header field for the part, if present; otherwise returns an empty string.</p>
 <p>See also <a href="qmailmessagepart.html#setContentLanguage">setContentLanguage</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/contentLocation" />
 <h3 class="fn"><a name="contentLocation"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePart::contentLocation () const</h3>
 <p>Returns the Content-Location header field for the part, if present; otherwise returns an empty string.</p>
 <p>See also <a href="qmailmessagepart.html#setContentLocation">setContentLocation</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/displayName" />
 <h3 class="fn"><a name="displayName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePart::displayName () const</h3>
 <p>Returns a non-empty string to identify the part, appropriate for display. If the part 'Content-Type' header field contains a 'name' parameter, that value is used. Otherwise, if the part has a 'Content-Disposition' header field containing a 'filename' parameter, that value is used. Otherwise, if the part has a 'Content-ID' header field, that value is used. Finally, a usable name will be created by combining the content type of the part with the part's number.</p>
 <p>See also <a href="qmailmessagepart.html#identifier">identifier</a>().</p>
+<a name="//apple_ref/cpp/clm/QMailMessagePart/fromData" />
 <h3 class="fn"><a name="fromData"></a>QMailMessagePart QMailMessagePart::fromData ( const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>input</i>, const <a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> &amp; <i>disposition</i>, const <a href="qmailmessagecontenttype.html">QMailMessageContentType</a> &amp; <i>type</i>, <a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> <i>encoding</i>, <a href="qmailmessagebodyfwd.html#EncodingStatus-enum">QMailMessageBody::EncodingStatus</a> <i>status</i> = QMailMessageBody::RequiresEncoding )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates a <a href="qmailmessagepart.html">QMailMessagePart</a> containing an attachment of type <i>disposition</i>, from the data contained in <i>input</i>, of content type <i>type</i> and using the transfer encoding <i>encoding</i>. The current status of the data is specified as <i>status</i>.</p>
 <p>See also <a href="qmailmessagebody.html#fromData">QMailMessageBody::fromData</a>().</p>
 <h3 class="fn"><a name="fromData-2"></a>QMailMessagePart QMailMessagePart::fromData ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>input</i>, const <a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> &amp; <i>disposition</i>, const <a href="qmailmessagecontenttype.html">QMailMessageContentType</a> &amp; <i>type</i>, <a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> <i>encoding</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates a <a href="qmailmessagepart.html">QMailMessagePart</a> containing an attachment of type <i>disposition</i>, from the data contained in <i>input</i>, of content type <i>type</i> and using the transfer encoding <i>encoding</i>.</p>
 <p>See also <a href="qmailmessagebody.html#fromData">QMailMessageBody::fromData</a>().</p>
+<a name="//apple_ref/cpp/clm/QMailMessagePart/fromFile" />
 <h3 class="fn"><a name="fromFile"></a>QMailMessagePart QMailMessagePart::fromFile ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>filename</i>, const <a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> &amp; <i>disposition</i>, const <a href="qmailmessagecontenttype.html">QMailMessageContentType</a> &amp; <i>type</i>, <a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> <i>encoding</i>, <a href="qmailmessagebodyfwd.html#EncodingStatus-enum">QMailMessageBody::EncodingStatus</a> <i>status</i> = QMailMessageBody::RequiresEncoding )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates a <a href="qmailmessagepart.html">QMailMessagePart</a> containing an attachment of type <i>disposition</i>, from the data contained in <i>filename</i>, of content type <i>type</i> and using the transfer encoding <i>encoding</i>. The current status of the data is specified as <i>status</i>.</p>
 <p>See also <a href="qmailmessagebody.html#fromFile">QMailMessageBody::fromFile</a>().</p>
+<a name="//apple_ref/cpp/clm/QMailMessagePart/fromMessageReference" />
 <h3 class="fn"><a name="fromMessageReference"></a>QMailMessagePart QMailMessagePart::fromMessageReference ( const <a href="qmailmessageid.html">QMailMessageId</a> &amp; <i>messageId</i>, const <a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> &amp; <i>disposition</i>, const <a href="qmailmessagecontenttype.html">QMailMessageContentType</a> &amp; <i>type</i>, <a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> <i>encoding</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates a <a href="qmailmessagepart.html">QMailMessagePart</a> containing an attachment of type <i>disposition</i>, whose content is a reference to the message identified by <i>messageId</i>. The resulting part has content type <i>type</i> and uses the transfer encoding <i>encoding</i>.</p>
 <p>The message reference can only be resolved by transmitting the message to an external server, where both the originating server of the referenced message and the receiving server of the new message support resolution of the content reference.</p>
+<a name="//apple_ref/cpp/clm/QMailMessagePart/fromPartReference" />
 <h3 class="fn"><a name="fromPartReference"></a>QMailMessagePart QMailMessagePart::fromPartReference ( const <a href="qmailmessagepart-location.html">QMailMessagePart::Location</a> &amp; <i>partLocation</i>, const <a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> &amp; <i>disposition</i>, const <a href="qmailmessagecontenttype.html">QMailMessageContentType</a> &amp; <i>type</i>, <a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> <i>encoding</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates a <a href="qmailmessagepart.html">QMailMessagePart</a> containing an attachment of type <i>disposition</i>, whose content is a reference to the message part identified by <i>partLocation</i>. The resulting part has content type <i>type</i> and uses the transfer encoding <i>encoding</i>.</p>
 <p>The part reference can only be resolved by transmitting the message to an external server, where both the originating server of the referenced part's message and the receiving server of the new message support resolution of the content reference.</p>
+<a name="//apple_ref/cpp/clm/QMailMessagePart/fromStream" />
 <h3 class="fn"><a name="fromStream"></a>QMailMessagePart QMailMessagePart::fromStream ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>in</i>, const <a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> &amp; <i>disposition</i>, const <a href="qmailmessagecontenttype.html">QMailMessageContentType</a> &amp; <i>type</i>, <a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> <i>encoding</i>, <a href="qmailmessagebodyfwd.html#EncodingStatus-enum">QMailMessageBody::EncodingStatus</a> <i>status</i> = QMailMessageBody::RequiresEncoding )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates a <a href="qmailmessagepart.html">QMailMessagePart</a> containing an attachment of type <i>disposition</i>, from the data read from <i>in</i>, of content type <i>type</i> and using the transfer encoding <i>encoding</i>. The current status of the data is specified as <i>status</i>.</p>
 <p>See also <a href="qmailmessagebody.html#fromStream">QMailMessageBody::fromStream</a>().</p>
 <h3 class="fn"><a name="fromStream-2"></a>QMailMessagePart QMailMessagePart::fromStream ( <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> &amp; <i>in</i>, const <a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> &amp; <i>disposition</i>, const <a href="qmailmessagecontenttype.html">QMailMessageContentType</a> &amp; <i>type</i>, <a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> <i>encoding</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates a <a href="qmailmessagepart.html">QMailMessagePart</a> containing an attachment of type <i>disposition</i>, from the data read from <i>in</i>, of content type <i>type</i> and using the transfer encoding <i>encoding</i>.</p>
 <p>See also <a href="qmailmessagebody.html#fromStream">QMailMessageBody::fromStream</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/identifier" />
 <h3 class="fn"><a name="identifier"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePart::identifier () const</h3>
 <p>Returns a non-empty string to identify the part, appropriate for storage. If the part has a 'Content-ID' header field, that value is used. Otherwise, if the part has a 'Content-Disposition' header field containing a 'filename' parameter, that value is used. Otherwise, if the part 'Content-Type' header field contains a 'name' parameter, that value is used. Finally, the part's number will be returned.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/indicativeSize" />
 <h3 class="fn"><a name="indicativeSize"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> QMailMessagePart::indicativeSize () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns an indication of the size of the part. This measure should be used only in comparing the relative size of parts with respect to transmission.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/location" />
 <h3 class="fn"><a name="location"></a><a href="qmailmessagepart-location.html">Location</a> QMailMessagePart::location () const</h3>
 <p>Returns the location of the part within the message.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/messageReference" />
 <h3 class="fn"><a name="messageReference"></a><a href="qmailmessageid.html">QMailMessageId</a> QMailMessagePart::messageReference () const</h3>
 <p>Returns the identifier of the message that this part references.</p>
 <p>The result will be meaningful only when <a href="qmailmessagepart.html#referenceType">referenceType</a>() yields <a href="qmailmessagepartfwd.html#ReferenceType-enum">QMailMessagePart::MessageReference</a>.</p>
 <p>See also <a href="qmailmessagepart.html#referenceType">referenceType</a>(), <a href="qmailmessagepart.html#partReference">partReference</a>(), and <a href="qmailmessagepart.html#referenceResolution">referenceResolution</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/partNumber" />
 <h3 class="fn"><a name="partNumber"></a>int QMailMessagePart::partNumber () const</h3>
 <p>Returns the number of the part, if it has been set; otherwise returns -1.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/partReference" />
 <h3 class="fn"><a name="partReference"></a><a href="qmailmessagepart-location.html">QMailMessagePart::Location</a> QMailMessagePart::partReference () const</h3>
 <p>Returns the location of the message part that this part references.</p>
 <p>The result will be meaningful only when <a href="qmailmessagepart.html#referenceType">referenceType</a>() yields <a href="qmailmessagepartfwd.html#ReferenceType-enum">QMailMessagePart::PartReference</a>.</p>
 <p>See also <a href="qmailmessagepart.html#referenceType">referenceType</a>(), <a href="qmailmessagepart.html#messageReference">messageReference</a>(), and <a href="qmailmessagepart.html#referenceResolution">referenceResolution</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/partialContentAvailable" />
 <h3 class="fn"><a name="partialContentAvailable"></a>bool QMailMessagePart::partialContentAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmailmessagepartcontainer.html#partialContentAvailable">QMailMessagePartContainer::partialContentAvailable</a>().</p>
 <p>Returns true if some portion of the content of this part is available; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/referenceResolution" />
 <h3 class="fn"><a name="referenceResolution"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePart::referenceResolution () const</h3>
 <p>Returns the URI that resolves the reference encoded into this message part.</p>
 <p>The result will be meaningful only when <a href="qmailmessagepart.html#referenceType">referenceType</a>() yields other than <a href="qmailmessagepartfwd.html#ReferenceType-enum">QMailMessagePart::None</a>.</p>
 <p>See also <a href="qmailmessagepart.html#setReferenceResolution">setReferenceResolution</a>() and <a href="qmailmessagepart.html#referenceType">referenceType</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/referenceType" />
 <h3 class="fn"><a name="referenceType"></a><a href="qmailmessagepartfwd.html#ReferenceType-enum">ReferenceType</a> QMailMessagePart::referenceType () const</h3>
 <p>Returns the type of reference that this message part constitutes.</p>
 <p>See also <a href="qmailmessagepart.html#setReference">setReference</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/setContentDescription" />
 <h3 class="fn"><a name="setContentDescription"></a>void QMailMessagePart::setContentDescription ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>description</i> )</h3>
 <p>Sets the Content-Description header field for the part to contain <i>description</i>.</p>
 <p>See also <a href="qmailmessagepart.html#contentDescription">contentDescription</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/setContentDisposition" />
 <h3 class="fn"><a name="setContentDisposition"></a>void QMailMessagePart::setContentDisposition ( const <a href="qmailmessagecontentdisposition.html">QMailMessageContentDisposition</a> &amp; <i>disposition</i> )</h3>
 <p>Sets the Content-Disposition header field for the part to contain <i>disposition</i>.</p>
 <p>See also <a href="qmailmessagepart.html#contentDisposition">contentDisposition</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/setContentID" />
 <h3 class="fn"><a name="setContentID"></a>void QMailMessagePart::setContentID ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i> )</h3>
 <p>Sets the Content-Id header field for the part to contain <i>id</i>.</p>
 <p>If <i>id</i> is not surrounded by angle brackets, these are added.</p>
 <p>See also <a href="qmailmessagepart.html#contentID">contentID</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/setContentLanguage" />
 <h3 class="fn"><a name="setContentLanguage"></a>void QMailMessagePart::setContentLanguage ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>language</i> )</h3>
 <p>Sets the Content-Language header field for the part to contain <i>language</i>.</p>
 <p>See also <a href="qmailmessagepart.html#contentLanguage">contentLanguage</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/setContentLocation" />
 <h3 class="fn"><a name="setContentLocation"></a>void QMailMessagePart::setContentLocation ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>location</i> )</h3>
 <p>Sets the Content-Location header field for the part to contain <i>location</i>.</p>
 <p>See also <a href="qmailmessagepart.html#contentLocation">contentLocation</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/setReference" />
 <h3 class="fn"><a name="setReference"></a>void QMailMessagePart::setReference ( const <a href="qmailmessageid.html">QMailMessageId</a> &amp; <i>id</i>, const <a href="qmailmessagecontenttype.html">QMailMessageContentType</a> &amp; <i>type</i>, <a href="qmailmessagebodyfwd.html#TransferEncoding-enum">QMailMessageBody::TransferEncoding</a> <i>encoding</i> )</h3>
 <p>Sets the part content to contain a reference to the message identified by <i>id</i>, having content type <i>type</i> and using the transfer encoding <i>encoding</i>.</p>
 <p>The message reference can only be resolved by transmitting the message to an external server, where both the originating server of the referenced message and the receiving server of the new message support resolution of the content reference.</p>
@@ -184,16 +213,19 @@
 <p>Sets the part content to contain a reference to the message part identified by <i>location</i>, having content type <i>type</i> and using the transfer encoding <i>encoding</i>.</p>
 <p>The part reference can only be resolved by transmitting the message to an external server, where both the originating server of the referenced part's message and the receiving server of the new message support resolution of the content reference.</p>
 <p>See also <a href="qmailmessagepart.html#referenceType">referenceType</a>() and <a href="qmailmessagepart.html#setReferenceResolution">setReferenceResolution</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/setReferenceResolution" />
 <h3 class="fn"><a name="setReferenceResolution"></a>void QMailMessagePart::setReferenceResolution ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>uri</i> )</h3>
 <p>Sets the URI that resolves the reference encoded into this message part to <i>uri</i>.</p>
 <p>The reference URI is meaningful only when <a href="qmailmessagepart.html#referenceType">referenceType</a>() yields other than <a href="qmailmessagepartfwd.html#ReferenceType-enum">QMailMessagePart::None</a>.</p>
 <p>See also <a href="qmailmessagepart.html#referenceResolution">referenceResolution</a>() and <a href="qmailmessagepart.html#referenceType">referenceType</a>().</p>
+<a name="//apple_ref/cpp/instm/QMailMessagePart/writeBodyTo" />
 <h3 class="fn"><a name="writeBodyTo"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMailMessagePart::writeBodyTo ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i> ) const</h3>
 <p>Writes the decoded body of the part to a file under the directory specified by <i>path</i>. The name of the resulting file is taken from the part. If that file name already exists in the path a new unique name of the format &lt;random chars&gt;.&lt;filename&gt; is saved.</p>
 <p>Returns the path of the file written on success, or an empty string otherwise.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>
