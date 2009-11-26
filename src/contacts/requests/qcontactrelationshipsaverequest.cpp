@@ -45,8 +45,8 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QContactGroupSaveRequest
-  \brief The QContactGroupSaveRequest class allows a client to asynchronously
+  \class QContactRelationshipSaveRequest
+  \brief The QContactRelationshipSaveRequest class allows a client to asynchronously
     request that certain groups be saved to a contacts store.
    \ingroup contacts-requests
  */

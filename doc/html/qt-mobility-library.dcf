@@ -140,6 +140,7 @@
         <keyword ref="qcamera.html#Error-enum">QCamera::NoError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::CameraError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::ServiceMissingError</keyword>
+        <keyword ref="qcamera.html#Error-enum">QCamera::NotSupportedFeatureError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::InvalidRequestError</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureMode</keyword>
         <keyword ref="qcamera.html#ExposureMode-enum">ExposureModes</keyword>
@@ -836,6 +837,16 @@
         <keyword ref="qcontactinvalidfilter.html">QContactInvalidFilter</keyword>
         <section ref="qcontactinvalidfilter-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontactlocalidfetchrequest.html" title="QContactLocalIdFetchRequest Class Reference">
+        <keyword ref="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#filter">filter</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#ids">ids</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#progress">progress</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#setSorting">setSorting</keyword>
+        <keyword ref="qcontactlocalidfetchrequest.html#sorting">sorting</keyword>
+        <section ref="qcontactlocalidfetchrequest-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontactlocalidfilter.html" title="QContactLocalIdFilter Class Reference">
         <keyword ref="qcontactlocalidfilter.html">QContactLocalIdFilter</keyword>
         <keyword ref="qcontactlocalidfilter.html#ids">ids</keyword>
@@ -976,19 +987,6 @@
         <keyword ref="qcontactmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</keyword>
         <keyword ref="qcontactmanagerenginefactory.html#version">version</keyword>
         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
-    </section>
-    <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference">
-        <keyword ref="qcontactmanagerinfo.html">QContactManagerInfo</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">ManagerFeature</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Groups</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ActionPreferences</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ArbitraryRelationshipTypes</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::SelfContact</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Relationships</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::Anonymous</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::ChangeLogs</keyword>
-        <keyword ref="qcontactmanagerinfo.html#ManagerFeature-enum">QContactManagerInfo::MutableDefinitions</keyword>
-        <section ref="qcontactmanagerinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
         <keyword ref="qcontactmemoryengine.html">QContactMemoryEngine</keyword>
@@ -1201,6 +1199,13 @@
         <keyword ref="qcontactrelationshipremoverequest.html#setRelationshipType">setRelationshipType</keyword>
         <keyword ref="qcontactrelationshipremoverequest.html#setSecond">setSecond</keyword>
         <section ref="qcontactrelationshipremoverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactrelationshipsaverequest.html" title="QContactRelationshipSaveRequest Class Reference">
+        <keyword ref="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#progress">progress</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#relationships">relationships</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</keyword>
+        <section ref="qcontactrelationshipsaverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactremoverequest.html" title="QContactRemoveRequest Class Reference">
         <keyword ref="qcontactremoverequest.html">QContactRemoveRequest</keyword>
@@ -2753,10 +2758,10 @@
     <section ref="qnetworkconfiguration.html" title="QNetworkConfiguration Class Reference">
         <keyword ref="qnetworkconfiguration.html">QNetworkConfiguration</keyword>
         <keyword ref="qnetworkconfiguration.html#Purpose-enum">Purpose</keyword>
-        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::Unknown</keyword>
-        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::Public</keyword>
-        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::ServiceSpecific</keyword>
-        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::Private</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::PublicPurpose</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::UnknownPurpose</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::PrivatePurpose</keyword>
+        <keyword ref="qnetworkconfiguration.html#Purpose-enum">QNetworkConfiguration::ServiceSpecificPurpose</keyword>
         <keyword ref="qnetworkconfiguration.html#StateFlag-enum">StateFlag</keyword>
         <keyword ref="qnetworkconfiguration.html#StateFlag-enum">StateFlags</keyword>
         <keyword ref="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Undefined</keyword>
@@ -2770,10 +2775,10 @@
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</keyword>
         <keyword ref="qnetworkconfiguration.html#children">children</keyword>
         <keyword ref="qnetworkconfiguration.html#identifier">identifier</keyword>
+        <keyword ref="qnetworkconfiguration.html#isRoamingAvailable">isRoamingAvailable</keyword>
         <keyword ref="qnetworkconfiguration.html#isValid">isValid</keyword>
         <keyword ref="qnetworkconfiguration.html#name">name</keyword>
         <keyword ref="qnetworkconfiguration.html#purpose">purpose</keyword>
-        <keyword ref="qnetworkconfiguration.html#roamingAvailable">roamingAvailable</keyword>
         <keyword ref="qnetworkconfiguration.html#state">state</keyword>
         <keyword ref="qnetworkconfiguration.html#type">type</keyword>
         <keyword ref="qnetworkconfiguration.html#operator-not-eq">operator!=</keyword>
@@ -2783,14 +2788,14 @@
     </section>
     <section ref="qnetworkconfigurationmanager.html" title="QNetworkConfigurationManager Class Reference">
         <keyword ref="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</keyword>
-        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">CapabilityFlag</keyword>
-        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">CapabilityFlags</keyword>
-        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::ForcedRoaming</keyword>
-        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::DirectConnectionRouting</keyword>
-        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::BearerManagement</keyword>
-        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::ApplicationLevelRoaming</keyword>
-        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::DataStatistics</keyword>
-        <keyword ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::SystemSessionSupport</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#Capability-enum">Capability</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#Capability-enum">Capabilities</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::ForcedRoaming</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::DirectConnectionRouting</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::ApplicationLevelRoaming</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::CanStartAndStopInterfaces</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::DataStatistics</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::SystemSessionSupport</keyword>
         <keyword ref="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</keyword>
         <keyword ref="qnetworkconfigurationmanager.html#capabilities">capabilities</keyword>
         <keyword ref="qnetworkconfigurationmanager.html#configurationAdded">configurationAdded</keyword>
@@ -2798,6 +2803,7 @@
         <keyword ref="qnetworkconfigurationmanager.html#configurationFromIdentifier">configurationFromIdentifier</keyword>
         <keyword ref="qnetworkconfigurationmanager.html#configurationRemoved">configurationRemoved</keyword>
         <keyword ref="qnetworkconfigurationmanager.html#defaultConfiguration">defaultConfiguration</keyword>
+        <keyword ref="qnetworkconfigurationmanager.html#isOnline">isOnline</keyword>
         <keyword ref="qnetworkconfigurationmanager.html#onlineStateChanged">onlineStateChanged</keyword>
         <keyword ref="qnetworkconfigurationmanager.html#updateCompleted">updateCompleted</keyword>
         <keyword ref="qnetworkconfigurationmanager.html#updateConfigurations">updateConfigurations</keyword>
@@ -2822,7 +2828,10 @@
         <keyword ref="qnetworksession.html#accept">accept</keyword>
         <keyword ref="qnetworksession.html#activeTime">activeTime</keyword>
         <keyword ref="qnetworksession.html#bearerName">bearerName</keyword>
+        <keyword ref="qnetworksession.html#bytesReceived">bytesReceived</keyword>
+        <keyword ref="qnetworksession.html#bytesWritten">bytesWritten</keyword>
         <keyword ref="qnetworksession.html#close">close</keyword>
+        <keyword ref="qnetworksession.html#closed">closed</keyword>
         <keyword ref="qnetworksession.html#configuration">configuration</keyword>
         <keyword ref="qnetworksession.html#error">error</keyword>
         <keyword ref="qnetworksession.html#errorString">errorString</keyword>
@@ -2832,14 +2841,11 @@
         <keyword ref="qnetworksession.html#migrate">migrate</keyword>
         <keyword ref="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</keyword>
         <keyword ref="qnetworksession.html#open">open</keyword>
+        <keyword ref="qnetworksession.html#opened">opened</keyword>
         <keyword ref="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</keyword>
-        <keyword ref="qnetworksession.html#property">property</keyword>
-        <keyword ref="qnetworksession.html#receivedData">receivedData</keyword>
         <keyword ref="qnetworksession.html#reject">reject</keyword>
-        <keyword ref="qnetworksession.html#sentData">sentData</keyword>
-        <keyword ref="qnetworksession.html#sessionClosed">sessionClosed</keyword>
-        <keyword ref="qnetworksession.html#sessionOpened">sessionOpened</keyword>
-        <keyword ref="qnetworksession.html#setProperty">setProperty</keyword>
+        <keyword ref="qnetworksession.html#sessionProperty">sessionProperty</keyword>
+        <keyword ref="qnetworksession.html#setSessionProperty">setSessionProperty</keyword>
         <keyword ref="qnetworksession.html#state">state</keyword>
         <keyword ref="qnetworksession.html#stateChanged">stateChanged</keyword>
         <keyword ref="qnetworksession.html#stop">stop</keyword>
@@ -3185,7 +3191,6 @@
     </section>
     <section ref="qsystemscreensaver.html" title="QSystemScreenSaver Class Reference">
         <keyword ref="qsystemscreensaver.html">QSystemScreenSaver</keyword>
-        <keyword ref="qsystemscreensaver.html#isScreenLockOn-prop">isScreenLockOn</keyword>
         <keyword ref="qsystemscreensaver.html#screenSaverInhibited-prop">screenSaverInhibited</keyword>
         <keyword ref="qsystemscreensaver.html#setScreenSaverInhibit">setScreenSaverInhibit</keyword>
         <section ref="qsystemscreensaver-members.html" title="List of all members"/>
@@ -3302,26 +3307,26 @@
         <keyword ref="qvaluespace.html#LayerOption-enum">LayerOption</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">LayerOptions</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::UnspecifiedLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::TransientLayer</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::PermanentLayer</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::WritableLayer</keyword>
-        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonWritableLayer</keyword>
-        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::NonPermanentLayer</keyword>
+        <keyword ref="qvaluespace.html#LayerOption-enum">QValueSpace::ReadOnlyLayer</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER">QVALUESPACE_CONTEXTKIT_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</keyword>
+        <keyword ref="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER">QVALUESPACE_SYMBIAN_SETTINGS_LAYER</keyword>
         <keyword ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</keyword>
     </section>
-    <section ref="qvaluespaceprovider.html" title="QValueSpaceProvider Class Reference">
-        <keyword ref="qvaluespaceprovider.html">QValueSpaceProvider</keyword>
-        <keyword ref="qvaluespaceprovider.html#attributeInterestChanged">attributeInterestChanged</keyword>
-        <keyword ref="qvaluespaceprovider.html#connectNotify">connectNotify</keyword>
-        <keyword ref="qvaluespaceprovider.html#isConnected">isConnected</keyword>
-        <keyword ref="qvaluespaceprovider.html#path">path</keyword>
-        <keyword ref="qvaluespaceprovider.html#removeAttribute">removeAttribute</keyword>
-        <keyword ref="qvaluespaceprovider.html#setAttribute">setAttribute</keyword>
-        <keyword ref="qvaluespaceprovider.html#sync">sync</keyword>
-        <keyword ref="qvaluespaceprovider.html#syncAll">syncAll</keyword>
-        <section ref="qvaluespaceprovider-members.html" title="List of all members"/>
+    <section ref="qvaluespacepublisher.html" title="QValueSpacePublisher Class Reference">
+        <keyword ref="qvaluespacepublisher.html">QValueSpacePublisher</keyword>
+        <keyword ref="qvaluespacepublisher.html#attributeInterestChanged">attributeInterestChanged</keyword>
+        <keyword ref="qvaluespacepublisher.html#connectNotify">connectNotify</keyword>
+        <keyword ref="qvaluespacepublisher.html#isConnected">isConnected</keyword>
+        <keyword ref="qvaluespacepublisher.html#path">path</keyword>
+        <keyword ref="qvaluespacepublisher.html#resetValue">resetValue</keyword>
+        <keyword ref="qvaluespacepublisher.html#setValue">setValue</keyword>
+        <keyword ref="qvaluespacepublisher.html#sync">sync</keyword>
+        <section ref="qvaluespacepublisher-members.html" title="List of all members"/>
     </section>
     <section ref="qvaluespacesubscriber.html" title="QValueSpaceSubscriber Class Reference">
         <keyword ref="qvaluespacesubscriber.html">QValueSpaceSubscriber</keyword>
@@ -3335,6 +3340,71 @@
         <keyword ref="qvaluespacesubscriber.html#subPaths">subPaths</keyword>
         <keyword ref="qvaluespacesubscriber.html#value">value</keyword>
         <section ref="qvaluespacesubscriber-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitcontactexporter.html" title="QVersitContactExporter Class Reference">
+        <keyword ref="qversitcontactexporter.html">QVersitContactExporter</keyword>
+        <keyword ref="qversitcontactexporter.html#exportContact">exportContact</keyword>
+        <keyword ref="qversitcontactexporter.html#scale">scale</keyword>
+        <keyword ref="qversitcontactexporter.html#unknownContactDetails">unknownContactDetails</keyword>
+        <section ref="qversitcontactexporter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitcontactimporter.html" title="QVersitContactImporter Class Reference">
+        <keyword ref="qversitcontactimporter.html">QVersitContactImporter</keyword>
+        <keyword ref="qversitcontactimporter.html#audioClipPath">audioClipPath</keyword>
+        <keyword ref="qversitcontactimporter.html#imagePath">imagePath</keyword>
+        <keyword ref="qversitcontactimporter.html#importContact">importContact</keyword>
+        <keyword ref="qversitcontactimporter.html#setAudioClipPath">setAudioClipPath</keyword>
+        <keyword ref="qversitcontactimporter.html#setImagePath">setImagePath</keyword>
+        <keyword ref="qversitcontactimporter.html#unknownVersitProperties">unknownVersitProperties</keyword>
+        <section ref="qversitcontactimporter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitdocument.html" title="QVersitDocument Class Reference">
+        <keyword ref="qversitdocument.html">QVersitDocument</keyword>
+        <keyword ref="qversitdocument.html#addProperty">addProperty</keyword>
+        <keyword ref="qversitdocument.html#properties">properties</keyword>
+        <keyword ref="qversitdocument.html#removeProperties">removeProperties</keyword>
+        <keyword ref="qversitdocument.html#setVersitType">setVersitType</keyword>
+        <keyword ref="qversitdocument.html#versitType">versitType</keyword>
+        <keyword ref="qversitdocument.html#operator-eq">operator=</keyword>
+        <section ref="qversitdocument-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitproperty.html" title="QVersitProperty Class Reference">
+        <keyword ref="qversitproperty.html">QVersitProperty</keyword>
+        <keyword ref="qversitproperty.html#addParameter">addParameter</keyword>
+        <keyword ref="qversitproperty.html#embeddedDocument">embeddedDocument</keyword>
+        <keyword ref="qversitproperty.html#groups">groups</keyword>
+        <keyword ref="qversitproperty.html#name">name</keyword>
+        <keyword ref="qversitproperty.html#parameters">parameters</keyword>
+        <keyword ref="qversitproperty.html#removeParameter">removeParameter</keyword>
+        <keyword ref="qversitproperty.html#setEmbeddedDocument">setEmbeddedDocument</keyword>
+        <keyword ref="qversitproperty.html#setGroups">setGroups</keyword>
+        <keyword ref="qversitproperty.html#setName">setName</keyword>
+        <keyword ref="qversitproperty.html#setParameters">setParameters</keyword>
+        <keyword ref="qversitproperty.html#setValue">setValue</keyword>
+        <keyword ref="qversitproperty.html#value">value</keyword>
+        <keyword ref="qversitproperty.html#operator-eq">operator=</keyword>
+        <section ref="qversitproperty-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitreader.html" title="QVersitReader Class Reference">
+        <keyword ref="qversitreader.html">QVersitReader</keyword>
+        <keyword ref="qversitreader.html#device">device</keyword>
+        <keyword ref="qversitreader.html#readAll">readAll</keyword>
+        <keyword ref="qversitreader.html#readingDone">readingDone</keyword>
+        <keyword ref="qversitreader.html#result">result</keyword>
+        <keyword ref="qversitreader.html#setDevice">setDevice</keyword>
+        <keyword ref="qversitreader.html#startReading">startReading</keyword>
+        <section ref="qversitreader-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitwriter.html" title="QVersitWriter Class Reference">
+        <keyword ref="qversitwriter.html">QVersitWriter</keyword>
+        <keyword ref="qversitwriter.html#device">device</keyword>
+        <keyword ref="qversitwriter.html#setDevice">setDevice</keyword>
+        <keyword ref="qversitwriter.html#setVersitDocument">setVersitDocument</keyword>
+        <keyword ref="qversitwriter.html#startWriting">startWriting</keyword>
+        <keyword ref="qversitwriter.html#versitDocument">versitDocument</keyword>
+        <keyword ref="qversitwriter.html#writeAll">writeAll</keyword>
+        <keyword ref="qversitwriter.html#writingDone">writingDone</keyword>
+        <section ref="qversitwriter-members.html" title="List of all members"/>
     </section>
     <section ref="qvideodevicecontrol.html" title="QVideoDeviceControl Class Reference">
         <keyword ref="qvideodevicecontrol.html">QVideoDeviceControl</keyword>
@@ -3559,6 +3629,9 @@
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>
     </section>
+    <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian">
+        <keyword ref="service-framework-on-symbian.html">Qt Service Framework on Symbian</keyword>
+    </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
     </section>
@@ -3567,6 +3640,9 @@
     </section>
     <section ref="systeminfo.html" title="System Information">
         <keyword ref="systeminfo.html">System Information</keyword>
+    </section>
+    <section ref="versit.html" title="Versit API">
+        <keyword ref="versit.html">Versit API</keyword>
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">

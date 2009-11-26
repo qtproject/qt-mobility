@@ -68,13 +68,14 @@
  */
 
 
-QContactWinCEEngine::QContactWinCEEngine(const QString& engineName, const QMap<QString, QString>& , QContactManager::Error& error)
+QContactWinCEEngine::QContactWinCEEngine(ContactWinceFactory* factory, const QString& engineName, const QMap<QString, QString>& , QContactManager::Error& error)
     : d(new QContactWinCEEngineData)
 {
     error = QContactManager::NoError;
     
     buildHashForContactDetailToPoomPropId();
     d->m_engineName = engineName;
+    d->m_factory = factory;
     if (SUCCEEDED(d->m_cominit.hr())) {
         if (SUCCEEDED(CoCreateInstance(CLSID_Application, NULL,
                                        CLSCTX_INPROC_SERVER, IID_IPOutlookApp2,
@@ -131,6 +132,7 @@ QContactWinCEEngine::~QContactWinCEEngine()
     if (d->m_app) {
         d->m_app->Logoff();
     }
+    d->m_factory->resetEngine();
 }
 
 void QContactWinCEEngine::deref()
@@ -315,10 +317,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
     defns[contactType].remove(QContactGuid::DefinitionName);
     defns[contactType].remove(QContactGender::DefinitionName); // ? Surprising
 
-
-    // Remove the fields we don't support
-    defns[contactType][QContactName::DefinitionName].fields().remove(QContactName::FieldCustomLabel);
-
     // Simple anniversarys
     defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
     defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldEvent);
@@ -409,7 +407,10 @@ QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QCo
 
     // XXX For greatest accuracy we might be better off converting this contact to
     // a real item (but don't save it), and then retrieve it...
-    if (!name.last().isEmpty()) {
+    if (!name.customLabel().isEmpty()) {
+        return name.customLabel();
+    }
+    else if (!name.last().isEmpty()) {
         if (!name.first().isEmpty()) {
             return QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
         } else {
@@ -467,11 +468,9 @@ ContactWinceFactory::ContactWinceFactory()
 /* Factory lives here in the basement */
 QContactManagerEngine* ContactWinceFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
+    QMutexLocker locker(&m_mutex);
     if (!m_engine) {
-        QMutexLocker locker(&m_mutex);
-        if (!m_engine) {
-            m_engine = new QContactWinCEEngine(managerName(), parameters, error);
-        }
+        m_engine = new QContactWinCEEngine(this, managerName(), parameters, error);
     }
     return m_engine;
 }
@@ -480,4 +479,10 @@ QString ContactWinceFactory::managerName() const
 {
     return QString("wince");
 }
+
+ void ContactWinceFactory::resetEngine()
+ {
+     QMutexLocker locker(&m_mutex);
+     m_engine = 0;
+ }
 Q_EXPORT_PLUGIN2(contacts_wince, ContactWinceFactory);

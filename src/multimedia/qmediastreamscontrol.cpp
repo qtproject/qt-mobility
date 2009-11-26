@@ -50,6 +50,8 @@ QTM_BEGIN_NAMESPACE
     \ingroup multimedia-serv
     \brief The QMediaStreamsControl class provides a media stream selection control.
 
+    \ingroup multimedia
+
     The QMediaStreamsControl class provides descriptions of the available media streams
     and allows individual streams to be activated and deactivated.
 

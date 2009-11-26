@@ -1041,6 +1041,7 @@ void QCamera::capture(const QString &file)
     \value  NotReadyToCaptureError System resource not available.
     \value  InvalidRequestError System resource doesn't support functionality.
     \value  ServiceMissingError No service available.
+    \value  NotSupportedFeatureError The feature is not supported.
 */
 
 /*!

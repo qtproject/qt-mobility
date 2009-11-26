@@ -58,16 +58,19 @@ public:
 	bool sendEmail(QMessage &message);
 	bool show(const QMessageId& id);
 	bool compose(const QMessage &message);
-	bool retrieve(const QMessageContentContainerId &id);
+	bool retrieve(const QMessageId &messageId, const QMessageContentContainerId &id);
 	bool retrieveBody(const QMessageId& id);
 	bool retrieveHeader(const QMessageId& id);
 	
     bool queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
     bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
+    
+    bool countMessages(const QMessageFilter &filter);
 	
 signals:
 	void stateChanged(QMessageServiceAction::State);
 	void messagesFound(const QMessageIdList&);
+    void messagesCounted(int count);
 	void progressChanged(uint, uint);
 
 private:	
@@ -75,6 +78,7 @@ private:
     QMessageServiceAction::State _state;
     QMessageStore::ErrorCode _lastError;
     int _actionId;
+    bool _active;
     
     friend class CMTMEngine;
 };

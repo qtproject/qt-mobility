@@ -264,7 +264,6 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    static bool isScreenLockOn() {return false;}
 
 private Q_SLOTS:
     void resetInactivityTime();

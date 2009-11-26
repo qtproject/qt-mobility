@@ -139,6 +139,9 @@
                     <section ref="qcontactinvalidfilter.html" title="QContactInvalidFilter Class Reference">
                         <section ref="qcontactinvalidfilter-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qcontactlocalidfetchrequest.html" title="QContactLocalIdFetchRequest Class Reference">
+                        <section ref="qcontactlocalidfetchrequest-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qcontactlocalidfilter.html" title="QContactLocalIdFilter Class Reference">
                         <section ref="qcontactlocalidfilter-members.html" title="List of all members"/>
                     </section>
@@ -151,7 +154,6 @@
                     <section ref="qcontactmanagerenginefactory.html" title="QContactManagerEngineFactory Class Reference">
                         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qcontactmanagerinfo.html" title="QContactManagerInfo Class Reference"/>
                     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
                         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
                     </section>
@@ -184,6 +186,9 @@
                     </section>
                     <section ref="qcontactrelationshipremoverequest.html" title="QContactRelationshipRemoveRequest Class Reference">
                         <section ref="qcontactrelationshipremoverequest-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcontactrelationshipsaverequest.html" title="QContactRelationshipSaveRequest Class Reference">
+                        <section ref="qcontactrelationshipsaverequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qcontactremoverequest.html" title="QContactRemoveRequest Class Reference">
                         <section ref="qcontactremoverequest-members.html" title="List of all members"/>
@@ -481,11 +486,29 @@
                     <section ref="qsystemstorageinfo.html" title="QSystemStorageInfo Class Reference">
                         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qvaluespaceprovider.html" title="QValueSpaceProvider Class Reference">
-                        <section ref="qvaluespaceprovider-members.html" title="List of all members"/>
+                    <section ref="qvaluespacepublisher.html" title="QValueSpacePublisher Class Reference">
+                        <section ref="qvaluespacepublisher-members.html" title="List of all members"/>
                     </section>
                     <section ref="qvaluespacesubscriber.html" title="QValueSpaceSubscriber Class Reference">
                         <section ref="qvaluespacesubscriber-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qversitcontactexporter.html" title="QVersitContactExporter Class Reference">
+                        <section ref="qversitcontactexporter-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qversitcontactimporter.html" title="QVersitContactImporter Class Reference">
+                        <section ref="qversitcontactimporter-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qversitdocument.html" title="QVersitDocument Class Reference">
+                        <section ref="qversitdocument-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qversitproperty.html" title="QVersitProperty Class Reference">
+                        <section ref="qversitproperty-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qversitreader.html" title="QVersitReader Class Reference">
+                        <section ref="qversitreader-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qversitwriter.html" title="QVersitWriter Class Reference">
+                        <section ref="qversitwriter-members.html" title="List of all members"/>
                     </section>
                     <section ref="qvideodevicecontrol.html" title="QVideoDeviceControl Class Reference">
                         <section ref="qvideodevicecontrol-members.html" title="List of all members"/>
@@ -563,8 +586,10 @@
                     <section ref="location.html" title="Qt Mobility Location API"/>
                     <section ref="index.html" title="Qt Mobility Overview"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
+                    <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
+                    <section ref="versit.html" title="Versit API"/>
                 </section>
             </section>
         </toc>
@@ -1264,6 +1289,14 @@
             <keyword name="managerName" id="QContactInvalidEngine::managerName" ref="qcontactinvalidengine.html#managerName"/>
             <keyword name="synthesizeDisplayLabel" id="QContactInvalidEngine::synthesizeDisplayLabel" ref="qcontactinvalidengine.html#synthesizeDisplayLabel"/>
             <keyword name="QContactInvalidFilter" id="QContactInvalidFilter" ref="qcontactinvalidfilter.html"/>
+            <keyword name="QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html"/>
+            <keyword name="filter" id="QContactLocalIdFetchRequest::filter" ref="qcontactlocalidfetchrequest.html#filter"/>
+            <keyword name="ids" id="QContactLocalIdFetchRequest::ids" ref="qcontactlocalidfetchrequest.html#ids"/>
+            <keyword name="progress" id="QContactLocalIdFetchRequest::progress" ref="qcontactlocalidfetchrequest.html#progress"/>
+            <keyword name="setFilter" id="QContactLocalIdFetchRequest::setFilter" ref="qcontactlocalidfetchrequest.html#setFilter"/>
+            <keyword name="setSorting" id="QContactLocalIdFetchRequest::setSorting" ref="qcontactlocalidfetchrequest.html#setSorting"/>
+            <keyword name="sorting" id="QContactLocalIdFetchRequest::sorting" ref="qcontactlocalidfetchrequest.html#sorting"/>
+            <keyword name="~QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html#dtor.QContactLocalIdFetchRequest"/>
             <keyword name="QContactLocalIdFilter" id="QContactLocalIdFilter" ref="qcontactlocalidfilter.html"/>
             <keyword name="ids" id="QContactLocalIdFilter::ids" ref="qcontactlocalidfilter.html#ids"/>
             <keyword name="setIds" id="QContactLocalIdFilter::setIds" ref="qcontactlocalidfilter.html#setIds"/>
@@ -1395,16 +1428,6 @@
             <keyword name="supportedImplementationVersions" id="QContactManagerEngineFactory::supportedImplementationVersions" ref="qcontactmanagerenginefactory.html#supportedImplementationVersions"/>
             <keyword name="version" id="QContactManagerEngineFactory::version" ref="qcontactmanagerenginefactory.html#version"/>
             <keyword name="~QContactManagerEngineFactory" id="QContactManagerEngineFactory::~QContactManagerEngineFactory" ref="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory"/>
-            <keyword name="QContactManagerInfo" id="QContactManagerInfo" ref="qcontactmanagerinfo.html"/>
-            <keyword name="QContactManagerInfo::ManagerFeature" id="QContactManagerInfo::ManagerFeature" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Groups" id="QContactManagerInfo::Groups" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ActionPreferences" id="QContactManagerInfo::ActionPreferences" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::MutableDefinitions" id="QContactManagerInfo::MutableDefinitions" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Relationships" id="QContactManagerInfo::Relationships" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ArbitraryRelationshipTypes" id="QContactManagerInfo::ArbitraryRelationshipTypes" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::SelfContact" id="QContactManagerInfo::SelfContact" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::Anonymous" id="QContactManagerInfo::Anonymous" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
-            <keyword name="QContactManagerInfo::ChangeLogs" id="QContactManagerInfo::ChangeLogs" ref="qcontactmanagerinfo.html#ManagerFeature-enum"/>
             <keyword name="QContactMemoryEngine" id="QContactMemoryEngine" ref="qcontactmemoryengine.html"/>
             <keyword name="cancelRequest" id="QContactMemoryEngine::cancelRequest" ref="qcontactmemoryengine.html#cancelRequest"/>
             <keyword name="contact" id="QContactMemoryEngine::contact" ref="qcontactmemoryengine.html#contact"/>
@@ -1529,6 +1552,11 @@
             <keyword name="setRelationshipType" id="QContactRelationshipRemoveRequest::setRelationshipType" ref="qcontactrelationshipremoverequest.html#setRelationshipType"/>
             <keyword name="setSecond" id="QContactRelationshipRemoveRequest::setSecond" ref="qcontactrelationshipremoverequest.html#setSecond"/>
             <keyword name="~QContactRelationshipRemoveRequest" id="QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest" ref="qcontactrelationshipremoverequest.html#dtor.QContactRelationshipRemoveRequest"/>
+            <keyword name="QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html"/>
+            <keyword name="progress" id="QContactRelationshipSaveRequest::progress" ref="qcontactrelationshipsaverequest.html#progress"/>
+            <keyword name="relationships" id="QContactRelationshipSaveRequest::relationships" ref="qcontactrelationshipsaverequest.html#relationships"/>
+            <keyword name="setRelationships" id="QContactRelationshipSaveRequest::setRelationships" ref="qcontactrelationshipsaverequest.html#setRelationships"/>
+            <keyword name="~QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html#dtor.QContactRelationshipSaveRequest"/>
             <keyword name="QContactRemoveRequest" id="QContactRemoveRequest" ref="qcontactremoverequest.html"/>
             <keyword name="filter" id="QContactRemoveRequest::filter" ref="qcontactremoverequest.html#filter"/>
             <keyword name="progress" id="QContactRemoveRequest::progress" ref="qcontactremoverequest.html#progress"/>
@@ -2844,10 +2872,10 @@
             <keyword name="QMetaDataControl_iid" id="QMetaDataControl_iid" ref="qmetadatacontrol.html#QMetaDataControl_iid"/>
             <keyword name="QNetworkConfiguration" id="QNetworkConfiguration" ref="qnetworkconfiguration.html"/>
             <keyword name="QNetworkConfiguration::Purpose" id="QNetworkConfiguration::Purpose" ref="qnetworkconfiguration.html#Purpose-enum"/>
-            <keyword name="QNetworkConfiguration::Unknown" id="QNetworkConfiguration::Unknown" ref="qnetworkconfiguration.html#Purpose-enum"/>
-            <keyword name="QNetworkConfiguration::Public" id="QNetworkConfiguration::Public" ref="qnetworkconfiguration.html#Purpose-enum"/>
-            <keyword name="QNetworkConfiguration::Private" id="QNetworkConfiguration::Private" ref="qnetworkconfiguration.html#Purpose-enum"/>
-            <keyword name="QNetworkConfiguration::ServiceSpecific" id="QNetworkConfiguration::ServiceSpecific" ref="qnetworkconfiguration.html#Purpose-enum"/>
+            <keyword name="QNetworkConfiguration::UnknownPurpose" id="QNetworkConfiguration::UnknownPurpose" ref="qnetworkconfiguration.html#Purpose-enum"/>
+            <keyword name="QNetworkConfiguration::PublicPurpose" id="QNetworkConfiguration::PublicPurpose" ref="qnetworkconfiguration.html#Purpose-enum"/>
+            <keyword name="QNetworkConfiguration::PrivatePurpose" id="QNetworkConfiguration::PrivatePurpose" ref="qnetworkconfiguration.html#Purpose-enum"/>
+            <keyword name="QNetworkConfiguration::ServiceSpecificPurpose" id="QNetworkConfiguration::ServiceSpecificPurpose" ref="qnetworkconfiguration.html#Purpose-enum"/>
             <keyword name="QNetworkConfiguration::StateFlag" id="QNetworkConfiguration::StateFlag" ref="qnetworkconfiguration.html#StateFlag-enum"/>
             <keyword name="QNetworkConfiguration::Undefined" id="QNetworkConfiguration::Undefined" ref="qnetworkconfiguration.html#StateFlag-enum"/>
             <keyword name="QNetworkConfiguration::Defined" id="QNetworkConfiguration::Defined" ref="qnetworkconfiguration.html#StateFlag-enum"/>
@@ -2861,25 +2889,25 @@
             <keyword name="QNetworkConfiguration::Invalid" id="QNetworkConfiguration::Invalid" ref="qnetworkconfiguration.html#Type-enum"/>
             <keyword name="children" id="QNetworkConfiguration::children" ref="qnetworkconfiguration.html#children"/>
             <keyword name="identifier" id="QNetworkConfiguration::identifier" ref="qnetworkconfiguration.html#identifier"/>
+            <keyword name="isRoamingAvailable" id="QNetworkConfiguration::isRoamingAvailable" ref="qnetworkconfiguration.html#isRoamingAvailable"/>
             <keyword name="isValid" id="QNetworkConfiguration::isValid" ref="qnetworkconfiguration.html#isValid"/>
             <keyword name="name" id="QNetworkConfiguration::name" ref="qnetworkconfiguration.html#name"/>
             <keyword name="operator!=" id="QNetworkConfiguration::operator!=" ref="qnetworkconfiguration.html#operator-not-eq"/>
             <keyword name="operator=" id="QNetworkConfiguration::operator=" ref="qnetworkconfiguration.html#operator-eq"/>
             <keyword name="operator==" id="QNetworkConfiguration::operator==" ref="qnetworkconfiguration.html#operator-eq-eq"/>
             <keyword name="purpose" id="QNetworkConfiguration::purpose" ref="qnetworkconfiguration.html#purpose"/>
-            <keyword name="roamingAvailable" id="QNetworkConfiguration::roamingAvailable" ref="qnetworkconfiguration.html#roamingAvailable"/>
             <keyword name="state" id="QNetworkConfiguration::state" ref="qnetworkconfiguration.html#state"/>
             <keyword name="type" id="QNetworkConfiguration::type" ref="qnetworkconfiguration.html#type"/>
             <keyword name="~QNetworkConfiguration" id="QNetworkConfiguration::~QNetworkConfiguration" ref="qnetworkconfiguration.html#dtor.QNetworkConfiguration"/>
             <keyword name="QNetworkConfigurationManager" id="QNetworkConfigurationManager" ref="qnetworkconfigurationmanager.html"/>
-            <keyword name="QNetworkConfigurationManager::CapabilityFlag" id="QNetworkConfigurationManager::CapabilityFlag" ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum"/>
-            <keyword name="QNetworkConfigurationManager::BearerManagement" id="QNetworkConfigurationManager::BearerManagement" ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum"/>
-            <keyword name="QNetworkConfigurationManager::DirectConnectionRouting" id="QNetworkConfigurationManager::DirectConnectionRouting" ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum"/>
-            <keyword name="QNetworkConfigurationManager::SystemSessionSupport" id="QNetworkConfigurationManager::SystemSessionSupport" ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum"/>
-            <keyword name="QNetworkConfigurationManager::ApplicationLevelRoaming" id="QNetworkConfigurationManager::ApplicationLevelRoaming" ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum"/>
-            <keyword name="QNetworkConfigurationManager::ForcedRoaming" id="QNetworkConfigurationManager::ForcedRoaming" ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum"/>
-            <keyword name="QNetworkConfigurationManager::DataStatistics" id="QNetworkConfigurationManager::DataStatistics" ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum"/>
-            <keyword name="QNetworkConfigurationManager::CapabilityFlags" id="QNetworkConfigurationManager::CapabilityFlags" ref="qnetworkconfigurationmanager.html#CapabilityFlag-enum"/>
+            <keyword name="QNetworkConfigurationManager::Capabilities" id="QNetworkConfigurationManager::Capabilities" ref="qnetworkconfigurationmanager.html#Capability-enum"/>
+            <keyword name="QNetworkConfigurationManager::Capability" id="QNetworkConfigurationManager::Capability" ref="qnetworkconfigurationmanager.html#Capability-enum"/>
+            <keyword name="QNetworkConfigurationManager::CanStartAndStopInterfaces" id="QNetworkConfigurationManager::CanStartAndStopInterfaces" ref="qnetworkconfigurationmanager.html#Capability-enum"/>
+            <keyword name="QNetworkConfigurationManager::DirectConnectionRouting" id="QNetworkConfigurationManager::DirectConnectionRouting" ref="qnetworkconfigurationmanager.html#Capability-enum"/>
+            <keyword name="QNetworkConfigurationManager::SystemSessionSupport" id="QNetworkConfigurationManager::SystemSessionSupport" ref="qnetworkconfigurationmanager.html#Capability-enum"/>
+            <keyword name="QNetworkConfigurationManager::ApplicationLevelRoaming" id="QNetworkConfigurationManager::ApplicationLevelRoaming" ref="qnetworkconfigurationmanager.html#Capability-enum"/>
+            <keyword name="QNetworkConfigurationManager::ForcedRoaming" id="QNetworkConfigurationManager::ForcedRoaming" ref="qnetworkconfigurationmanager.html#Capability-enum"/>
+            <keyword name="QNetworkConfigurationManager::DataStatistics" id="QNetworkConfigurationManager::DataStatistics" ref="qnetworkconfigurationmanager.html#Capability-enum"/>
             <keyword name="allConfigurations" id="QNetworkConfigurationManager::allConfigurations" ref="qnetworkconfigurationmanager.html#allConfigurations"/>
             <keyword name="capabilities" id="QNetworkConfigurationManager::capabilities" ref="qnetworkconfigurationmanager.html#capabilities"/>
             <keyword name="configurationAdded" id="QNetworkConfigurationManager::configurationAdded" ref="qnetworkconfigurationmanager.html#configurationAdded"/>
@@ -2887,6 +2915,7 @@
             <keyword name="configurationFromIdentifier" id="QNetworkConfigurationManager::configurationFromIdentifier" ref="qnetworkconfigurationmanager.html#configurationFromIdentifier"/>
             <keyword name="configurationRemoved" id="QNetworkConfigurationManager::configurationRemoved" ref="qnetworkconfigurationmanager.html#configurationRemoved"/>
             <keyword name="defaultConfiguration" id="QNetworkConfigurationManager::defaultConfiguration" ref="qnetworkconfigurationmanager.html#defaultConfiguration"/>
+            <keyword name="isOnline" id="QNetworkConfigurationManager::isOnline" ref="qnetworkconfigurationmanager.html#isOnline"/>
             <keyword name="onlineStateChanged" id="QNetworkConfigurationManager::onlineStateChanged" ref="qnetworkconfigurationmanager.html#onlineStateChanged"/>
             <keyword name="updateCompleted" id="QNetworkConfigurationManager::updateCompleted" ref="qnetworkconfigurationmanager.html#updateCompleted"/>
             <keyword name="updateConfigurations" id="QNetworkConfigurationManager::updateConfigurations" ref="qnetworkconfigurationmanager.html#updateConfigurations"/>
@@ -2909,7 +2938,10 @@
             <keyword name="accept" id="QNetworkSession::accept" ref="qnetworksession.html#accept"/>
             <keyword name="activeTime" id="QNetworkSession::activeTime" ref="qnetworksession.html#activeTime"/>
             <keyword name="bearerName" id="QNetworkSession::bearerName" ref="qnetworksession.html#bearerName"/>
+            <keyword name="bytesReceived" id="QNetworkSession::bytesReceived" ref="qnetworksession.html#bytesReceived"/>
+            <keyword name="bytesWritten" id="QNetworkSession::bytesWritten" ref="qnetworksession.html#bytesWritten"/>
             <keyword name="close" id="QNetworkSession::close" ref="qnetworksession.html#close"/>
+            <keyword name="closed" id="QNetworkSession::closed" ref="qnetworksession.html#closed"/>
             <keyword name="configuration" id="QNetworkSession::configuration" ref="qnetworksession.html#configuration"/>
             <keyword name="error" id="QNetworkSession::error" ref="qnetworksession.html#error"/>
             <keyword name="errorString" id="QNetworkSession::errorString" ref="qnetworksession.html#errorString"/>
@@ -2919,14 +2951,11 @@
             <keyword name="migrate" id="QNetworkSession::migrate" ref="qnetworksession.html#migrate"/>
             <keyword name="newConfigurationActivated" id="QNetworkSession::newConfigurationActivated" ref="qnetworksession.html#newConfigurationActivated"/>
             <keyword name="open" id="QNetworkSession::open" ref="qnetworksession.html#open"/>
+            <keyword name="opened" id="QNetworkSession::opened" ref="qnetworksession.html#opened"/>
             <keyword name="preferredConfigurationChanged" id="QNetworkSession::preferredConfigurationChanged" ref="qnetworksession.html#preferredConfigurationChanged"/>
-            <keyword name="property" id="QNetworkSession::property" ref="qnetworksession.html#property"/>
-            <keyword name="receivedData" id="QNetworkSession::receivedData" ref="qnetworksession.html#receivedData"/>
             <keyword name="reject" id="QNetworkSession::reject" ref="qnetworksession.html#reject"/>
-            <keyword name="sentData" id="QNetworkSession::sentData" ref="qnetworksession.html#sentData"/>
-            <keyword name="sessionClosed" id="QNetworkSession::sessionClosed" ref="qnetworksession.html#sessionClosed"/>
-            <keyword name="sessionOpened" id="QNetworkSession::sessionOpened" ref="qnetworksession.html#sessionOpened"/>
-            <keyword name="setProperty" id="QNetworkSession::setProperty" ref="qnetworksession.html#setProperty"/>
+            <keyword name="sessionProperty" id="QNetworkSession::sessionProperty" ref="qnetworksession.html#sessionProperty"/>
+            <keyword name="setSessionProperty" id="QNetworkSession::setSessionProperty" ref="qnetworksession.html#setSessionProperty"/>
             <keyword name="state" id="QNetworkSession::state" ref="qnetworksession.html#state"/>
             <keyword name="stateChanged" id="QNetworkSession::stateChanged" ref="qnetworksession.html#stateChanged"/>
             <keyword name="stop" id="QNetworkSession::stop" ref="qnetworksession.html#stop"/>
@@ -3245,7 +3274,6 @@
             <keyword name="networkStatusChanged" id="QSystemNetworkInfo::networkStatusChanged" ref="qsystemnetworkinfo.html#networkStatusChanged"/>
             <keyword name="~QSystemNetworkInfo" id="QSystemNetworkInfo::~QSystemNetworkInfo" ref="qsystemnetworkinfo.html#dtor.QSystemNetworkInfo"/>
             <keyword name="QSystemScreenSaver" id="QSystemScreenSaver" ref="qsystemscreensaver.html"/>
-            <keyword name="isScreenLockOn" id="QSystemScreenSaver::isScreenLockOn" ref="qsystemscreensaver.html#isScreenLockOn-prop"/>
             <keyword name="screenSaverInhibited" id="QSystemScreenSaver::screenSaverInhibited" ref="qsystemscreensaver.html#screenSaverInhibited-prop"/>
             <keyword name="setScreenSaverInhibit" id="QSystemScreenSaver::setScreenSaverInhibit" ref="qsystemscreensaver.html#setScreenSaverInhibit"/>
             <keyword name="~QSystemScreenSaver" id="QSystemScreenSaver::~QSystemScreenSaver" ref="qsystemscreensaver.html#dtor.QSystemScreenSaver"/>
@@ -3265,25 +3293,25 @@
             <keyword name="QVALUESPACE_CONTEXTKIT_LAYER" id="QVALUESPACE_CONTEXTKIT_LAYER" ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER"/>
             <keyword name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" id="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER"/>
             <keyword name="QVALUESPACE_SHAREDMEMORY_LAYER" id="QVALUESPACE_SHAREDMEMORY_LAYER" ref="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER"/>
+            <keyword name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER" id="QVALUESPACE_SYMBIAN_SETTINGS_LAYER" ref="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER"/>
             <keyword name="QVALUESPACE_VOLATILEREGISTRY_LAYER" id="QVALUESPACE_VOLATILEREGISTRY_LAYER" ref="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER"/>
             <keyword name="QValueSpace" id="QValueSpace" ref="qvaluespace.html"/>
             <keyword name="QValueSpace::LayerOption" id="QValueSpace::LayerOption" ref="qvaluespace.html#LayerOption-enum"/>
             <keyword name="QValueSpace::UnspecifiedLayer" id="QValueSpace::UnspecifiedLayer" ref="qvaluespace.html#LayerOption-enum"/>
             <keyword name="QValueSpace::PermanentLayer" id="QValueSpace::PermanentLayer" ref="qvaluespace.html#LayerOption-enum"/>
-            <keyword name="QValueSpace::NonPermanentLayer" id="QValueSpace::NonPermanentLayer" ref="qvaluespace.html#LayerOption-enum"/>
+            <keyword name="QValueSpace::TransientLayer" id="QValueSpace::TransientLayer" ref="qvaluespace.html#LayerOption-enum"/>
             <keyword name="QValueSpace::WritableLayer" id="QValueSpace::WritableLayer" ref="qvaluespace.html#LayerOption-enum"/>
-            <keyword name="QValueSpace::NonWritableLayer" id="QValueSpace::NonWritableLayer" ref="qvaluespace.html#LayerOption-enum"/>
+            <keyword name="QValueSpace::ReadOnlyLayer" id="QValueSpace::ReadOnlyLayer" ref="qvaluespace.html#LayerOption-enum"/>
             <keyword name="QValueSpace::LayerOptions" id="QValueSpace::LayerOptions" ref="qvaluespace.html#LayerOption-enum"/>
-            <keyword name="QValueSpaceProvider" id="QValueSpaceProvider" ref="qvaluespaceprovider.html"/>
-            <keyword name="attributeInterestChanged" id="QValueSpaceProvider::attributeInterestChanged" ref="qvaluespaceprovider.html#attributeInterestChanged"/>
-            <keyword name="connectNotify" id="QValueSpaceProvider::connectNotify" ref="qvaluespaceprovider.html#connectNotify"/>
-            <keyword name="isConnected" id="QValueSpaceProvider::isConnected" ref="qvaluespaceprovider.html#isConnected"/>
-            <keyword name="path" id="QValueSpaceProvider::path" ref="qvaluespaceprovider.html#path"/>
-            <keyword name="removeAttribute" id="QValueSpaceProvider::removeAttribute" ref="qvaluespaceprovider.html#removeAttribute"/>
-            <keyword name="setAttribute" id="QValueSpaceProvider::setAttribute" ref="qvaluespaceprovider.html#setAttribute"/>
-            <keyword name="sync" id="QValueSpaceProvider::sync" ref="qvaluespaceprovider.html#sync"/>
-            <keyword name="syncAll" id="QValueSpaceProvider::syncAll" ref="qvaluespaceprovider.html#syncAll"/>
-            <keyword name="~QValueSpaceProvider" id="QValueSpaceProvider::~QValueSpaceProvider" ref="qvaluespaceprovider.html#dtor.QValueSpaceProvider"/>
+            <keyword name="QValueSpacePublisher" id="QValueSpacePublisher" ref="qvaluespacepublisher.html"/>
+            <keyword name="attributeInterestChanged" id="QValueSpacePublisher::attributeInterestChanged" ref="qvaluespacepublisher.html#attributeInterestChanged"/>
+            <keyword name="connectNotify" id="QValueSpacePublisher::connectNotify" ref="qvaluespacepublisher.html#connectNotify"/>
+            <keyword name="isConnected" id="QValueSpacePublisher::isConnected" ref="qvaluespacepublisher.html#isConnected"/>
+            <keyword name="path" id="QValueSpacePublisher::path" ref="qvaluespacepublisher.html#path"/>
+            <keyword name="resetValue" id="QValueSpacePublisher::resetValue" ref="qvaluespacepublisher.html#resetValue"/>
+            <keyword name="setValue" id="QValueSpacePublisher::setValue" ref="qvaluespacepublisher.html#setValue"/>
+            <keyword name="sync" id="QValueSpacePublisher::sync" ref="qvaluespacepublisher.html#sync"/>
+            <keyword name="~QValueSpacePublisher" id="QValueSpacePublisher::~QValueSpacePublisher" ref="qvaluespacepublisher.html#dtor.QValueSpacePublisher"/>
             <keyword name="QValueSpaceSubscriber" id="QValueSpaceSubscriber" ref="qvaluespacesubscriber.html"/>
             <keyword name="cd" id="QValueSpaceSubscriber::cd" ref="qvaluespacesubscriber.html#cd"/>
             <keyword name="cdUp" id="QValueSpaceSubscriber::cdUp" ref="qvaluespacesubscriber.html#cdUp"/>
@@ -3294,6 +3322,59 @@
             <keyword name="subPaths" id="QValueSpaceSubscriber::subPaths" ref="qvaluespacesubscriber.html#subPaths"/>
             <keyword name="value" id="QValueSpaceSubscriber::value" ref="qvaluespacesubscriber.html#value"/>
             <keyword name="~QValueSpaceSubscriber" id="QValueSpaceSubscriber::~QValueSpaceSubscriber" ref="qvaluespacesubscriber.html#dtor.QValueSpaceSubscriber"/>
+            <keyword name="QVersitContactExporter" id="QVersitContactExporter" ref="qversitcontactexporter.html"/>
+            <keyword name="exportContact" id="QVersitContactExporter::exportContact" ref="qversitcontactexporter.html#exportContact"/>
+            <keyword name="scale" id="QVersitContactExporter::scale" ref="qversitcontactexporter.html#scale"/>
+            <keyword name="unknownContactDetails" id="QVersitContactExporter::unknownContactDetails" ref="qversitcontactexporter.html#unknownContactDetails"/>
+            <keyword name="~QVersitContactExporter" id="QVersitContactExporter::~QVersitContactExporter" ref="qversitcontactexporter.html#dtor.QVersitContactExporter"/>
+            <keyword name="QVersitContactImporter" id="QVersitContactImporter" ref="qversitcontactimporter.html"/>
+            <keyword name="audioClipPath" id="QVersitContactImporter::audioClipPath" ref="qversitcontactimporter.html#audioClipPath"/>
+            <keyword name="imagePath" id="QVersitContactImporter::imagePath" ref="qversitcontactimporter.html#imagePath"/>
+            <keyword name="importContact" id="QVersitContactImporter::importContact" ref="qversitcontactimporter.html#importContact"/>
+            <keyword name="setAudioClipPath" id="QVersitContactImporter::setAudioClipPath" ref="qversitcontactimporter.html#setAudioClipPath"/>
+            <keyword name="setImagePath" id="QVersitContactImporter::setImagePath" ref="qversitcontactimporter.html#setImagePath"/>
+            <keyword name="unknownVersitProperties" id="QVersitContactImporter::unknownVersitProperties" ref="qversitcontactimporter.html#unknownVersitProperties"/>
+            <keyword name="~QVersitContactImporter" id="QVersitContactImporter::~QVersitContactImporter" ref="qversitcontactimporter.html#dtor.QVersitContactImporter"/>
+            <keyword name="QVersitDocument" id="QVersitDocument" ref="qversitdocument.html"/>
+            <keyword name="addProperty" id="QVersitDocument::addProperty" ref="qversitdocument.html#addProperty"/>
+            <keyword name="operator=" id="QVersitDocument::operator=" ref="qversitdocument.html#operator-eq"/>
+            <keyword name="properties" id="QVersitDocument::properties" ref="qversitdocument.html#properties"/>
+            <keyword name="removeProperties" id="QVersitDocument::removeProperties" ref="qversitdocument.html#removeProperties"/>
+            <keyword name="setVersitType" id="QVersitDocument::setVersitType" ref="qversitdocument.html#setVersitType"/>
+            <keyword name="versitType" id="QVersitDocument::versitType" ref="qversitdocument.html#versitType"/>
+            <keyword name="~QVersitDocument" id="QVersitDocument::~QVersitDocument" ref="qversitdocument.html#dtor.QVersitDocument"/>
+            <keyword name="QVersitProperty" id="QVersitProperty" ref="qversitproperty.html"/>
+            <keyword name="addParameter" id="QVersitProperty::addParameter" ref="qversitproperty.html#addParameter"/>
+            <keyword name="embeddedDocument" id="QVersitProperty::embeddedDocument" ref="qversitproperty.html#embeddedDocument"/>
+            <keyword name="groups" id="QVersitProperty::groups" ref="qversitproperty.html#groups"/>
+            <keyword name="name" id="QVersitProperty::name" ref="qversitproperty.html#name"/>
+            <keyword name="operator=" id="QVersitProperty::operator=" ref="qversitproperty.html#operator-eq"/>
+            <keyword name="parameters" id="QVersitProperty::parameters" ref="qversitproperty.html#parameters"/>
+            <keyword name="removeParameter" id="QVersitProperty::removeParameter" ref="qversitproperty.html#removeParameter"/>
+            <keyword name="setEmbeddedDocument" id="QVersitProperty::setEmbeddedDocument" ref="qversitproperty.html#setEmbeddedDocument"/>
+            <keyword name="setGroups" id="QVersitProperty::setGroups" ref="qversitproperty.html#setGroups"/>
+            <keyword name="setName" id="QVersitProperty::setName" ref="qversitproperty.html#setName"/>
+            <keyword name="setParameters" id="QVersitProperty::setParameters" ref="qversitproperty.html#setParameters"/>
+            <keyword name="setValue" id="QVersitProperty::setValue" ref="qversitproperty.html#setValue"/>
+            <keyword name="value" id="QVersitProperty::value" ref="qversitproperty.html#value"/>
+            <keyword name="~QVersitProperty" id="QVersitProperty::~QVersitProperty" ref="qversitproperty.html#dtor.QVersitProperty"/>
+            <keyword name="QVersitReader" id="QVersitReader" ref="qversitreader.html"/>
+            <keyword name="device" id="QVersitReader::device" ref="qversitreader.html#device"/>
+            <keyword name="readAll" id="QVersitReader::readAll" ref="qversitreader.html#readAll"/>
+            <keyword name="readingDone" id="QVersitReader::readingDone" ref="qversitreader.html#readingDone"/>
+            <keyword name="result" id="QVersitReader::result" ref="qversitreader.html#result"/>
+            <keyword name="setDevice" id="QVersitReader::setDevice" ref="qversitreader.html#setDevice"/>
+            <keyword name="startReading" id="QVersitReader::startReading" ref="qversitreader.html#startReading"/>
+            <keyword name="~QVersitReader" id="QVersitReader::~QVersitReader" ref="qversitreader.html#dtor.QVersitReader"/>
+            <keyword name="QVersitWriter" id="QVersitWriter" ref="qversitwriter.html"/>
+            <keyword name="device" id="QVersitWriter::device" ref="qversitwriter.html#device"/>
+            <keyword name="setDevice" id="QVersitWriter::setDevice" ref="qversitwriter.html#setDevice"/>
+            <keyword name="setVersitDocument" id="QVersitWriter::setVersitDocument" ref="qversitwriter.html#setVersitDocument"/>
+            <keyword name="startWriting" id="QVersitWriter::startWriting" ref="qversitwriter.html#startWriting"/>
+            <keyword name="versitDocument" id="QVersitWriter::versitDocument" ref="qversitwriter.html#versitDocument"/>
+            <keyword name="writeAll" id="QVersitWriter::writeAll" ref="qversitwriter.html#writeAll"/>
+            <keyword name="writingDone" id="QVersitWriter::writingDone" ref="qversitwriter.html#writingDone"/>
+            <keyword name="~QVersitWriter" id="QVersitWriter::~QVersitWriter" ref="qversitwriter.html#dtor.QVersitWriter"/>
             <keyword name="QVideoDeviceControl" id="QVideoDeviceControl" ref="qvideodevicecontrol.html"/>
             <keyword name="defaultDevice" id="QVideoDeviceControl::defaultDevice" ref="qvideodevicecontrol.html#defaultDevice"/>
             <keyword name="description" id="QVideoDeviceControl::description" ref="qvideodevicecontrol.html#description"/>
@@ -3445,6 +3526,7 @@
             <keyword name="Qt Mobility Location API" id="Qt Mobility Location API" ref="location.html"/>
             <keyword name="Qt Mobility Overview" id="Qt Mobility Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
+            <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
             <keyword name="QtMedia" id="QtMedia" ref="qtmedia.html"/>
             <keyword name="QtMedia::EncodingMode" id="QtMedia::EncodingMode" ref="qtmedia.html#EncodingMode-enum"/>
             <keyword name="QtMedia::ConstantQualityEncoding" id="QtMedia::ConstantQualityEncoding" ref="qtmedia.html#EncodingMode-enum"/>
@@ -3550,11 +3632,11 @@
             <keyword name="Stream Player Example" id="Stream Player Example" ref="streamplayer.html"/>
             <keyword name="System Information" id="System Information" ref="systeminfo.html"/>
             <keyword name="System Information Example" id="System Information Example" ref="sysinfo.html"/>
+            <keyword name="Versit API" id="Versit API" ref="versit.html"/>
         </keywords>
         <files>
             <file>images/bearermonitor-example.png</file>
             <file>incomingcalls-testmodelui-cpp.html</file>
-            <file>qvaluespaceprovider.html</file>
             <file>qmailmessageheaderfield.html</file>
             <file>qmessageaddress-members.html</file>
             <file>qmailtimestamp-members.html</file>
@@ -3580,6 +3662,7 @@
             <file>messaging.html</file>
             <file>sendmessage.html</file>
             <file>qcontactabstractrequest-members.html</file>
+            <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
             <file>qsystemnetworkinfo-members.html</file>
             <file>qsystemdisplayinfo.html</file>
@@ -3590,8 +3673,8 @@
             <file>qcontactdisplaylabel-members.html</file>
             <file>qcontactdetailfilter.html</file>
             <file>qcontactdetaildefinitionfetchrequest-members.html</file>
-            <file>qcontactmanagerinfo.html</file>
             <file>qabstractvaluespacelayer.html</file>
+            <file>qversitproperty-members.html</file>
             <file>qmediaserviceprovider-members.html</file>
             <file>fetchgooglemaps-mapwindow-h.html</file>
             <file>declarative-landlinedialer-landlinedialerplugin-h.html</file>
@@ -3602,8 +3685,8 @@
             <file>qmailaccountid.html</file>
             <file>qmediaservicefeaturesinterface.html</file>
             <file>qmediaserviceproviderhint-members.html</file>
-            <file>images/battery-consumer.png</file>
             <file>slideshow-slideshow-cpp.html</file>
+            <file>qversitdocument.html</file>
             <file>player-videowidget-h.html</file>
             <file>qnetworkconfiguration.html</file>
             <file>qcontactactionfilter-members.html</file>
@@ -3622,13 +3705,14 @@
             <file>qcontactdetail.html</file>
             <file>qmediastreamscontrol.html</file>
             <file>qmailmessage.html</file>
+            <file>qversitcontactimporter-members.html</file>
             <file>qvideodevicecontrol-members.html</file>
+            <file>qversitcontactexporter.html</file>
             <file>serviceactions-serviceactions-pro.html</file>
             <file>declarative-landlinedialer-landlinedialer-cpp.html</file>
             <file>qservicemanager.html</file>
             <file>qcontacttimestamp.html</file>
             <file>images/servicebrowser-attributes.png</file>
-            <file>battery-charge-battery-provider-batteryprovider-cpp.html</file>
             <file>qmessagefolderfilter-members.html</file>
             <file>samplephonebook-contactdetailsform-h.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
@@ -3636,6 +3720,8 @@
             <file>incomingcalls.html</file>
             <file>images/servicexmlgen.png</file>
             <file>qmailmessageheaderfieldfwd.html</file>
+            <file>qversitreader.html</file>
+            <file>publish-subscribe-publisherdialog-cpp.html</file>
             <file>qsystemnetworkinfo.html</file>
             <file>filemanagerplugin-filemanagerstorage-h.html</file>
             <file>qmessageaccountid-members.html</file>
@@ -3647,6 +3733,7 @@
             <file>qmediaimageviewer-members.html</file>
             <file>qmessage.html</file>
             <file>radio-radio-h.html</file>
+            <file>qversitcontactimporter.html</file>
             <file>bearercloud-cloud-h.html</file>
             <file>qimageprocessingcontrol-members.html</file>
             <file>cameracapture-settings-cpp.html</file>
@@ -3655,7 +3742,6 @@
             <file>declarative-sfwexample-cpp.html</file>
             <file>battery-charge.html</file>
             <file>qmediaplaylistreader-members.html</file>
-            <file>battery-charge-battery-consumer-main-cpp.html</file>
             <file>qmailfolderid-members.html</file>
             <file>qmediaplaylistprovider-members.html</file>
             <file>qcontactmemoryengine-members.html</file>
@@ -3667,6 +3753,7 @@
             <file>qcontactgeolocation-members.html</file>
             <file>qcontactremoverequest-members.html</file>
             <file>publish-subscribe.html</file>
+            <file>battery-charge-battery-publisher-batterypublisher-cpp.html</file>
             <file>qcontactmanagerenginefactory.html</file>
             <file>qcontactsortorder-members.html</file>
             <file>qservicemanager-members.html</file>
@@ -3705,6 +3792,7 @@
             <file>qtmedia.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
             <file>qmessageaccountordering.html</file>
+            <file>images/publish-subscribe-publisher.png</file>
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
             <file>images/slideshow-img1.png</file>
             <file>streamplayer-streamplayer-pro.html</file>
@@ -3712,14 +3800,13 @@
             <file>qvideoencodersettings.html</file>
             <file>quickstart-quickstart-pro.html</file>
             <file>querymessages-main-cpp.html</file>
-            <file>qvaluespaceprovider-members.html</file>
             <file>bearercloud-bearercloud-pro.html</file>
             <file>qmailtimestamp.html</file>
-            <file>publish-subscribe-consumerdialog-h.html</file>
             <file>declarative-voipdialer-voipdialer-h.html</file>
             <file>qmailmessagecontentdisposition-members.html</file>
             <file>serviceactions.html</file>
             <file>querymessages.html</file>
+            <file>service-framework-on-symbian.html</file>
             <file>qcontactchangelogfilter-members.html</file>
             <file>qmediacontrol-members.html</file>
             <file>qmediacontent.html</file>
@@ -3728,6 +3815,7 @@
             <file>qcontactgeolocation.html</file>
             <file>annotated.html</file>
             <file>qnetworksession-members.html</file>
+            <file>qcontactrelationshipsaverequest.html</file>
             <file>qvideowindowcontrol.html</file>
             <file>cameracapture-cameracapture-pro.html</file>
             <file>qcontactid.html</file>
@@ -3743,7 +3831,6 @@
             <file>qgraphicsvideoitem.html</file>
             <file>qimagecapturecontrol.html</file>
             <file>samplephonebook-groupdetailsdialog-cpp.html</file>
-            <file>publish-subscribe-providerdialog-cpp.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qvideowidget-members.html</file>
             <file>qmessageaccountordering-members.html</file>
@@ -3756,7 +3843,6 @@
             <file>qserviceplugininterface-members.html</file>
             <file>declarative-voipdialer-voipdialer-pro.html</file>
             <file>fetchgooglemaps.html</file>
-            <file>images/battery-provider.png</file>
             <file>qgeosatelliteinfosource-members.html</file>
             <file>qcontactnickname-members.html</file>
             <file>qabstractsecuritysession.html</file>
@@ -3775,6 +3861,7 @@
             <file>qcontactsaverequest-members.html</file>
             <file>qmailmessagebodyfwd.html</file>
             <file>keepintouch-keepintouch-pro.html</file>
+            <file>qvaluespacepublisher-members.html</file>
             <file>player-playercontrols-h.html</file>
             <file>qmessagefolderid.html</file>
             <file>bearermonitor-main-cpp.html</file>
@@ -3799,6 +3886,7 @@
             <file>sendmessage-sendmessage-pro.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qmessageordering-members.html</file>
+            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
             <file>qimageencodersettings-members.html</file>
@@ -3853,8 +3941,8 @@
             <file>qcontactfilter.html</file>
             <file>qgeopositioninfo.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
+            <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
             <file>qmessagefolderordering.html</file>
-            <file>publish-subscribe-providerdialog-h.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
             <file>sendmessage-messagesender-h.html</file>
@@ -3863,15 +3951,14 @@
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
             <file>qnetworkconfigurationmanager-members.html</file>
-            <file>battery-charge-battery-provider-batteryprovider-h.html</file>
             <file>qimageencodersettings.html</file>
             <file>qmediastreamscontrol-members.html</file>
             <file>qmessagefolder.html</file>
             <file>qmailmessagepart-location-members.html</file>
             <file>qgeosatelliteinfo.html</file>
             <file>qcontactfetchrequest.html</file>
-            <file>battery-charge-battery-consumer-battery-consumer-qrc.html</file>
             <file>qradiotuner-members.html</file>
+            <file>qversitreader-members.html</file>
             <file>fetchgooglemaps-fetchgooglemaps-pro.html</file>
             <file>qcontactintersectionfilter.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-cpp.html</file>
@@ -3891,6 +3978,7 @@
             <file>qmailmessagebody.html</file>
             <file>samplephonebook-contactdetailsform-cpp.html</file>
             <file>qcontactaction-members.html</file>
+            <file>battery-charge-battery-publisher-batterypublisher-h.html</file>
             <file>samplephonebook-maindialogform-240-320-cpp.html</file>
             <file>qcontacttype.html</file>
             <file>declarative-sfwexample-h.html</file>
@@ -3898,7 +3986,6 @@
             <file>qsysteminfo.html</file>
             <file>qmailmessagefwd.html</file>
             <file>audiorecorder-audiorecorder-cpp.html</file>
-            <file>battery-charge-battery-provider-battery-provider-pro.html</file>
             <file>functions.html</file>
             <file>qmailmessagemetadata.html</file>
             <file>mobility.html</file>
@@ -3906,17 +3993,18 @@
             <file>qcontactdetaildefinitionremoverequest.html</file>
             <file>qaudiodevicecontrol-members.html</file>
             <file>qmediarecorder.html</file>
-            <file>images/publish-subscribe-provider.png</file>
             <file>bearercloud-bearercloud-cpp.html</file>
             <file>sysinfo-dialog-cpp.html</file>
             <file>sendmessage-main-cpp.html</file>
             <file>qcontactunionfilter.html</file>
+            <file>images/publish-subscribe-subscriber.png</file>
             <file>qvideowidgetcontrol-members.html</file>
             <file>qcontactmanagerengine-members.html</file>
             <file>bearermonitor-bearermonitor-pro.html</file>
             <file>qvideorenderercontrol.html</file>
             <file>bearer.html</file>
             <file>qcontactonlineaccount.html</file>
+            <file>battery-charge-battery-publisher-main-cpp.html</file>
             <file>qvideowidgetcontrol.html</file>
             <file>qcontactchangeset-members.html</file>
             <file>qmediaformatcontrol.html</file>
@@ -3927,17 +4015,20 @@
             <file>qmessagefolderordering-members.html</file>
             <file>qcontactsortorder.html</file>
             <file>serviceactions-attachmentlistwidget-h.html</file>
+            <file>publish-subscribe-subscriberdialog-h.html</file>
             <file>qcontactdetaildefinitionfield-members.html</file>
             <file>qmediaformatcontrol-members.html</file>
             <file>qcontactchangelogfilter.html</file>
             <file>bearermonitor-bearermonitor-h.html</file>
             <file>qvideooutputcontrol-members.html</file>
             <file>qservicefilter.html</file>
+            <file>versit.html</file>
             <file>qvaluespace.html</file>
             <file>bearermonitor-sessionwidget-cpp.html</file>
             <file>qmessagedatacomparator.html</file>
             <file>qcontactremoverequest.html</file>
             <file>logfilepositionsource-logfilepositionsource-h.html</file>
+            <file>battery-charge-battery-subscriber-battery-subscriber-qrc.html</file>
             <file>qmediaplaylistnavigator.html</file>
             <file>qmediaresource-members.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
@@ -3962,6 +4053,7 @@
             <file>qvaluespacesubscriber-members.html</file>
             <file>qmailbase64codec.html</file>
             <file>player.html</file>
+            <file>qversitproperty.html</file>
             <file>qmailmessagecontenttype-members.html</file>
             <file>qcontactmemoryengine.html</file>
             <file>incomingcalls-qcontactlistmodel-p-h.html</file>
@@ -3973,6 +4065,7 @@
             <file>qserviceplugininterface.html</file>
             <file>streamplayer-streamplayer-cpp.html</file>
             <file>qvideowidget.html</file>
+            <file>publish-subscribe-publisherdialog-h.html</file>
             <file>bearercloud-cloud-cpp.html</file>
             <file>qmailaddress-members.html</file>
             <file>audiorecorder-audiorecorder-h.html</file>
@@ -3984,6 +4077,7 @@
             <file>samplephonebook-samplephonebook-pro.html</file>
             <file>qcontacturl-members.html</file>
             <file>qcontactmanager-members.html</file>
+            <file>qversitwriter.html</file>
             <file>sysinfo-main-cpp.html</file>
             <file>installation.html</file>
             <file>qmessageserviceaction-members.html</file>
@@ -3993,7 +4087,6 @@
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
             <file>quickstart.html</file>
-            <file>battery-charge-battery-consumer-battery-consumer-pro.html</file>
             <file>samplephonebook-phonebook-cpp.html</file>
             <file>qgraphicsvideoitem-members.html</file>
             <file>player-player-h.html</file>
@@ -4021,17 +4114,19 @@
             <file>qcontactid-members.html</file>
             <file>qvaluespacesubscriber.html</file>
             <file>qmailmessagecontentdisposition.html</file>
+            <file>qcontactlocalidfetchrequest.html</file>
             <file>qcontactinvalidengine-members.html</file>
             <file>cameracapture-settings-h.html</file>
             <file>qcontactactiondescriptor.html</file>
+            <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
-            <file>qmessagecontentcontainer-members.html</file>
             <file>declarative-main-cpp.html</file>
+            <file>qmessagecontentcontainer-members.html</file>
+            <file>qversitwriter-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransfer-h.html</file>
             <file>qmessagecontentcontainerid.html</file>
             <file>filemanagerplugin-filemanagerplugin-cpp.html</file>
             <file>qmessagefilter.html</file>
-            <file>images/publish-subscribe-consumer.png</file>
             <file>bearercloud-wlan-svg.html</file>
             <file>qnetworksession.html</file>
             <file>qcontactmanagerengine.html</file>
@@ -4041,6 +4136,7 @@
             <file>qaudioencodercontrol-members.html</file>
             <file>samplephonebook-finddialog-cpp.html</file>
             <file>qmediaplaylistwriter.html</file>
+            <file>qversitdocument-members.html</file>
             <file>qmailmessagepart-members.html</file>
             <file>sendmessage-messagesender-cpp.html</file>
             <file>images/spb-screen.png</file>
@@ -4060,6 +4156,7 @@
             <file>qcontactabstractrequest.html</file>
             <file>qgeopositioninfosource.html</file>
             <file>samplephonebook-maindialogform-640-480-cpp.html</file>
+            <file>publish-subscribe-subscriberdialog-cpp.html</file>
             <file>bearercloud-lan-svg.html</file>
             <file>qmediaservicefeaturesinterface-members.html</file>
             <file>qmediaresource.html</file>
@@ -4077,6 +4174,7 @@
             <file>qsystemstorageinfo-members.html</file>
             <file>declarative-voipdialer-voipdialer-cpp.html</file>
             <file>qgeopositioninfo-members.html</file>
+            <file>images/battery-subscriber.png</file>
             <file>qcontactfetchrequest-members.html</file>
             <file>qcamerafocuscontrol-members.html</file>
             <file>qmailmessagemetadatafwd.html</file>
@@ -4091,16 +4189,18 @@
             <file>qmailmessagepart.html</file>
             <file>qmediaplaylist.html</file>
             <file>service-frameworks.html</file>
+            <file>qvaluespacepublisher.html</file>
+            <file>images/battery-publisher.png</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
             <file>incomingcalls-main-cpp.html</file>
             <file>qmessagefolderid-members.html</file>
             <file>qabstractvaluespacelayer-members.html</file>
+            <file>qversitcontactexporter-members.html</file>
             <file>qcamera-members.html</file>
             <file>qcamera.html</file>
             <file>declarative-declarative-pro.html</file>
             <file>radio.html</file>
             <file>qmailbase64codec-members.html</file>
-            <file>publish-subscribe-consumerdialog-cpp.html</file>
             <file>qcontactguid-members.html</file>
             <file>qcontactfamily.html</file>
             <file>qcontactlocalidfilter-members.html</file>
@@ -4110,16 +4210,16 @@
             <file>images/qserviceinterfacedescriptor.png</file>
             <file>images/bearercloud-example.png</file>
             <file>images/servicexmlgen.png</file>
+            <file>images/battery-publisher.png</file>
             <file>classic.css</file>
             <file>images/servicebrowser.png</file>
-            <file>images/publish-subscribe-consumer.png</file>
+            <file>images/publish-subscribe-subscriber.png</file>
             <file>images/servicebrowser-attributes.png</file>
-            <file>images/publish-subscribe-provider.png</file>
+            <file>images/publish-subscribe-publisher.png</file>
             <file>images/qtlogo.png</file>
             <file>images/spb-screen.png</file>
             <file>images/slideshow-img1.png</file>
-            <file>images/battery-provider.png</file>
-            <file>images/battery-consumer.png</file>
+            <file>images/battery-subscriber.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

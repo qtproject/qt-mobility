@@ -120,13 +120,20 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
     load(data_caging_paths)
-    QtMediaDeployment.sources = $${TARGET}.dll
+    QtMediaDeployment.sources = QtMedia.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2002AC77
     MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.EPOCALLOWDLLDATA = 1
+
+    deploy.path = $${EPOCROOT}
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
+    
+    for(header, exportheaders.sources) {
+        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+    }
 }
 
 include(../../features/deploy.pri)

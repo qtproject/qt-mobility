@@ -47,10 +47,12 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QContactLocalIdFilter
- * \brief The QContactLocalIdFilter class provides a filter based around a list of contact ids
- *
- * It may be used to select contacts whose ids are contained in the given list of ids
+  \class QContactLocalIdFilter
+  \brief The QContactLocalIdFilter class provides a filter based around a list of contact ids
+ 
+  \ingroup contacts-filters
+  
+  It may be used to select contacts whose ids are contained in the given list of ids.
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactLocalIdFilter);

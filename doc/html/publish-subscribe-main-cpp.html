@@ -54,8 +54,8 @@
     **
     ****************************************************************************/</span>
 
-    #include &quot;providerdialog.h&quot;
-    #include &quot;consumerdialog.h&quot;
+    #include &quot;publisherdialog.h&quot;
+    #include &quot;subscriberdialog.h&quot;
 
     #include &lt;QApplication&gt;
 
@@ -66,41 +66,56 @@
         QApplication app(argc, argv);
 
         bool createDefault = true;
-        bool createProvider = false;
-        bool createConsumer = false;
+        bool createPublisher = false;
+        bool createSubscriber = false;
 
         for (int i = 1; i &lt; argc; ++i) {
             if (argv[i] == QLatin1String(&quot;-server&quot;)) {
                 QValueSpace::initValueSpaceServer();
-            } else if (argv[i] == QLatin1String(&quot;-provider&quot;)) {
-                createProvider = true;
+            } else if (argv[i] == QLatin1String(&quot;-publisher&quot;)) {
+                createPublisher = true;
                 createDefault = false;
-            } else if (argv[i] == QLatin1String(&quot;-consumer&quot;)) {
-                createConsumer = true;
+            } else if (argv[i] == QLatin1String(&quot;-subscriber&quot;)) {
+                createSubscriber = true;
                 createDefault = false;
             }
         }
 
-        ProviderDialog *provider = 0;
-        if (createDefault || createProvider) {
-            provider = new ProviderDialog;
-            QObject::connect(provider, SIGNAL(rejected()), &amp;app, SLOT(quit()));
-            provider-&gt;show();
+        PublisherDialog *publisher = 0;
+        if (createDefault || createPublisher) {
+            publisher = new PublisherDialog;
+            QObject::connect(publisher, SIGNAL(rejected()), &amp;app, SLOT(quit()));
+    #ifndef Q_OS_SYMBIAN
+            publisher-&gt;show();
+    #else
+            publisher-&gt;showFullScreen();
+    #endif
         }
 
-        ConsumerDialog *consumer = 0;
-        if (createDefault || createConsumer) {
-            consumer = new ConsumerDialog;
-            QObject::connect(consumer, SIGNAL(rejected()), &amp;app, SLOT(quit()));
-            consumer-&gt;show();
+        SubscriberDialog *subscriber = 0;
+        if (createDefault || createSubscriber) {
+            subscriber = new SubscriberDialog;
+            QObject::connect(subscriber, SIGNAL(rejected()), &amp;app, SLOT(quit()));
+    #ifndef Q_OS_SYMBIAN
+            subscriber-&gt;show();
+    #else
+            subscriber-&gt;showFullScreen();
+    #endif
         }
+
+    #ifdef Q_OS_SYMBIAN
+        QObject::connect(subscriber, SIGNAL(switchRequested()), subscriber, SLOT(hide()));
+        QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(showFullScreen()));
+        QObject::connect(publisher, SIGNAL(switchRequested()), publisher, SLOT(hide()));
+        QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(showFullScreen()));
+    #endif
 
         int result = app.exec();
 
-        if (provider)
-            delete provider;
-        if (consumer)
-            delete consumer;
+        if (publisher)
+            delete publisher;
+        if (subscriber)
+            delete subscriber;
 
         return result;
     }</pre>

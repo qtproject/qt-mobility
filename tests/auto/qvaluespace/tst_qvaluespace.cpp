@@ -41,7 +41,7 @@
 
 #include <qvaluespace_p.h>
 #include <qvaluespacesubscriber.h>
-#include <qvaluespaceprovider.h>
+#include <qvaluespacepublisher.h>
 
 #include <QtTest/QTest>
 #include <QSet>
@@ -78,13 +78,13 @@ public:
     bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 
-    /* QValueSpaceProvider functions */
-    bool setValue(QValueSpaceProvider *creator, Handle handle,
+    /* QValueSpacePublisher functions */
+    bool setValue(QValueSpacePublisher *creator, Handle handle,
                   const QString &subPath, const QVariant &value);
-    bool removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath);
-    bool removeSubTree(QValueSpaceProvider *creator, Handle handle);
-    void addWatch(QValueSpaceProvider *creator, Handle handle);
-    void removeWatches(QValueSpaceProvider *creator, Handle parent);
+    bool removeValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath);
+    bool removeSubTree(QValueSpacePublisher *creator, Handle handle);
+    void addWatch(QValueSpacePublisher *creator, Handle handle);
+    void removeWatches(QValueSpacePublisher *creator, Handle parent);
     void sync() { }
 
     QStringList testErrors();
@@ -179,7 +179,7 @@ QSet<QString> FakeLayer::children(Handle handle)
 
 QValueSpace::LayerOptions FakeLayer::layerOptions() const
 {
-    return QValueSpace::NonPermanentLayer;
+    return QValueSpace::TransientLayer;
 }
 
 bool FakeLayer::supportsInterestNotification() const
@@ -207,7 +207,7 @@ bool FakeLayer::notifyInterest(Handle handle, bool interested)
     return true;
 }
 
-bool FakeLayer::setValue(QValueSpaceProvider *creator, Handle handle,
+bool FakeLayer::setValue(QValueSpacePublisher *creator, Handle handle,
                          const QString &subPath, const QVariant &)
 {
     if (!creator)
@@ -221,7 +221,7 @@ bool FakeLayer::setValue(QValueSpaceProvider *creator, Handle handle,
     return true;
 }
 
-bool FakeLayer::removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath)
+bool FakeLayer::removeValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -234,7 +234,7 @@ bool FakeLayer::removeValue(QValueSpaceProvider *creator, Handle handle, const Q
     return true;
 }
 
-bool FakeLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
+bool FakeLayer::removeSubTree(QValueSpacePublisher *creator, Handle handle)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -245,7 +245,7 @@ bool FakeLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
     return true;
 }
 
-void FakeLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
+void FakeLayer::addWatch(QValueSpacePublisher *creator, Handle handle)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -254,7 +254,7 @@ void FakeLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
         m_testErrors << QLatin1String("Unknown handle");
 }
 
-void FakeLayer::removeWatches(QValueSpaceProvider *creator, Handle parent)
+void FakeLayer::removeWatches(QValueSpacePublisher *creator, Handle parent)
 {
     if (!creator)
         m_testErrors << QLatin1String("creator is null");
@@ -398,20 +398,20 @@ void tst_QValueSpace::layerInterface()
     CHECK_ERRORS(delete subscriber);
 
 
-    QValueSpaceProvider *provider;
+    QValueSpacePublisher *publisher;
 
-    CHECK_ERRORS(provider = new QValueSpaceProvider(path, fakeLayer->id()));
+    CHECK_ERRORS(publisher = new QValueSpacePublisher(path, fakeLayer->id()));
 
-    QVERIFY(provider->isConnected());
+    QVERIFY(publisher->isConnected());
 
-    CHECK_ERRORS(provider->setAttribute(attribute, 10));
-    CHECK_ERRORS(provider->removeAttribute(attribute));
+    CHECK_ERRORS(publisher->setValue(attribute, 10));
+    CHECK_ERRORS(publisher->resetValue(attribute));
 
     SignalSink sink;
-    CHECK_ERRORS(connect(provider, SIGNAL(attributeInterestChanged(QString,bool)),
+    CHECK_ERRORS(connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
                          &sink, SLOT(slot())));
 
-    CHECK_ERRORS(delete provider);
+    CHECK_ERRORS(delete publisher);
 }
 
 QTEST_MAIN(tst_QValueSpace)

@@ -180,7 +180,7 @@ void tst_QNetworkSession::initTestCase()
 void tst_QNetworkSession::cleanupTestCase()
 {
     if (!(manager.capabilities() & QNetworkConfigurationManager::SystemSessionSupport) &&
-        (manager.capabilities() & QNetworkConfigurationManager::BearerManagement) &&
+        (manager.capabilities() & QNetworkConfigurationManager::CanStartAndStopInterfaces) &&
         inProcessSessionManagementCount == 0) {
         QFAIL("No usable configurations found to complete all possible "
               "tests in inProcessSessionManagement()");
@@ -304,15 +304,15 @@ void tst_QNetworkSession::userChoiceSession()
 
     QVERIFY(!session.isActive());
 
-    QVERIFY(session.property("ActiveConfigurationIdentifier").toString().isEmpty());
+    QVERIFY(session.sessionProperty("ActiveConfigurationIdentifier").toString().isEmpty());
 
 
     // The remaining tests require the session to be not NotAvailable.
     if (session.state() == QNetworkSession::NotAvailable)
         QSKIP("Network is not available.", SkipSingle);
 
-    QSignalSpy sessionOpenedSpy(&session, SIGNAL(sessionOpened()));
-    QSignalSpy sessionClosedSpy(&session, SIGNAL(sessionClosed()));
+    QSignalSpy sessionOpenedSpy(&session, SIGNAL(opened()));
+    QSignalSpy sessionClosedSpy(&session, SIGNAL(closed()));
     QSignalSpy stateChangedSpy(&session, SIGNAL(stateChanged(QNetworkSession::State)));
     QSignalSpy errorSpy(&session, SIGNAL(error(QNetworkSession::SessionError)));
 
@@ -359,7 +359,7 @@ void tst_QNetworkSession::userChoiceSession()
             QVERIFY(session.interface().isValid());
 
             const QString userChoiceIdentifier =
-                session.property("UserChoiceConfigurationIdentifier").toString();
+                session.sessionProperty("UserChoiceConfigurationIdentifier").toString();
 
             QVERIFY(!userChoiceIdentifier.isEmpty());
             QVERIFY(userChoiceIdentifier != configuration.identifier());
@@ -372,11 +372,11 @@ void tst_QNetworkSession::userChoiceSession()
 
             const QString testIdentifier("abc");
             //resetting UserChoiceConfigurationIdentifier is ignored (read only property)
-            session.setProperty("UserChoiceConfigurationIdentifier", testIdentifier);
-            QVERIFY(session.property("UserChoiceConfigurationIdentifier").toString() != testIdentifier);
+            session.setSessionProperty("UserChoiceConfigurationIdentifier", testIdentifier);
+            QVERIFY(session.sessionProperty("UserChoiceConfigurationIdentifier").toString() != testIdentifier);
 
             const QString activeIdentifier =
-                session.property("ActiveConfigurationIdentifier").toString();
+                session.sessionProperty("ActiveConfigurationIdentifier").toString();
 
             QVERIFY(!activeIdentifier.isEmpty());
             QVERIFY(activeIdentifier != configuration.identifier());
@@ -388,8 +388,8 @@ void tst_QNetworkSession::userChoiceSession()
             QVERIFY(activeConfiguration.type() == QNetworkConfiguration::InternetAccessPoint);
             
             //resetting ActiveConfigurationIdentifier is ignored (read only property)
-            session.setProperty("ActiveConfigurationIdentifier", testIdentifier);
-            QVERIFY(session.property("ActiveConfigurationIdentifier").toString() != testIdentifier);
+            session.setSessionProperty("ActiveConfigurationIdentifier", testIdentifier);
+            QVERIFY(session.sessionProperty("ActiveConfigurationIdentifier").toString() != testIdentifier);
 
             if (userChoiceConfiguration.type() == QNetworkConfiguration::InternetAccessPoint) {
                 QVERIFY(userChoiceConfiguration == activeConfiguration);
@@ -439,8 +439,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
     if (session.state() == QNetworkSession::NotAvailable)
         QSKIP("Network is not available.", SkipSingle);
 
-    QSignalSpy sessionOpenedSpy(&session, SIGNAL(sessionOpened()));
-    QSignalSpy sessionClosedSpy(&session, SIGNAL(sessionClosed()));
+    QSignalSpy sessionOpenedSpy(&session, SIGNAL(opened()));
+    QSignalSpy sessionClosedSpy(&session, SIGNAL(closed()));
     QSignalSpy stateChangedSpy(&session, SIGNAL(stateChanged(QNetworkSession::State)));
     QSignalSpy errorSpy(&session, SIGNAL(error(QNetworkSession::SessionError)));
 
@@ -509,8 +509,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
     QNetworkSession session2(configuration);
 
-    QSignalSpy sessionOpenedSpy2(&session2, SIGNAL(sessionOpened()));
-    QSignalSpy sessionClosedSpy2(&session2, SIGNAL(sessionClosed()));
+    QSignalSpy sessionOpenedSpy2(&session2, SIGNAL(opened()));
+    QSignalSpy sessionClosedSpy2(&session2, SIGNAL(closed()));
     QSignalSpy stateChangedSpy2(&session2, SIGNAL(stateChanged(QNetworkSession::State)));
     QSignalSpy errorSpy2(&session2, SIGNAL(error(QNetworkSession::SessionError)));
 
@@ -632,11 +632,11 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                         }
                     }
                     if (roamedSuccessfully) {
-                        QString configId = session.property("ActiveConfigurationIdentifier").toString();
+                        QString configId = session.sessionProperty("ActiveConfigurationIdentifier").toString();
                         QNetworkConfiguration config = manager.configurationFromIdentifier(configId); 
                         QNetworkSession session3(config);
                         QSignalSpy errorSpy3(&session3, SIGNAL(error(QNetworkSession::SessionError)));
-                        QSignalSpy sessionOpenedSpy3(&session3, SIGNAL(sessionOpened()));
+                        QSignalSpy sessionOpenedSpy3(&session3, SIGNAL(opened()));
                         
                         session3.open();
                         session3.waitForOpened();

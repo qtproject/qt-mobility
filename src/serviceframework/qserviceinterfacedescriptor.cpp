@@ -270,6 +270,9 @@ QString QServiceInterfaceDescriptor::customProperty(const QString& key) const
     return QString();
 }
 
+/*!
+  Returns a list of names of the custom properties.
+ */
 QStringList QServiceInterfaceDescriptor::customPropertyKeys() const
 {
     if (d)

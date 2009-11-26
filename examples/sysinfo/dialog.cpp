@@ -46,6 +46,7 @@
 #include "ui_dialog.h"
 #endif
 #include <QMessageBox>
+#include <QTimer>
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -58,7 +59,9 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
     connect(ui->versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
     connect(ui->featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
-
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
+    timer->start(1000);
 }
 
 Dialog::~Dialog()
@@ -168,9 +171,6 @@ void Dialog::setupDevice()
     connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
 
-    connect(di, SIGNAL(bluetoothStateChanged(bool)),
-        ui->bluetoothOnCheckBox, SLOT(setChecked(bool)));
-
     ui->ImeiLabel->setText(di->imei());
     ui->imsiLabel->setText(di->imsi());
     ui->manufacturerLabel->setText(di->manufacturer());
@@ -215,6 +215,12 @@ void Dialog::setupDevice()
     }
 
     ui->inputMethodLabel->setText(inputs.join(" "));
+}
+
+void Dialog::updateDeviceLockedState()
+{
+    if (di)
+        ui->deviceLockCheckBox->setChecked(di->isDeviceLocked());
 }
 
 void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
@@ -411,8 +417,6 @@ void Dialog::setupSaver()
 {
     if (!saver) {
         saver = new QSystemScreenSaver(this);
-        ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
-        ui->screenLockCheckBox->show();
     }
 
     bool saverEnabled = saver->screenSaverInhibited();
@@ -430,15 +434,12 @@ void Dialog::setSaverEnabled(bool b)
     if (b) {
         if (!saver) {
             saver = new QSystemScreenSaver(this);
-            ui->screenLockCheckBox->setChecked(saver->isScreenLockOn());
-            ui->screenLockCheckBox->show();
         }
        if(saver->setScreenSaverInhibit()) {
         }
     } else {
         delete saver;
         saver = NULL;
-        ui->screenLockCheckBox->hide();
     }
 }
 

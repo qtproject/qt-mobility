@@ -11,6 +11,7 @@ headerdirs = ../../src/bearer \
              ../../src/contacts \
              ../../src/multimedia \
              ../../src/messaging \
+             ../../src/versit \
              .
 
 sourcedirs = ../../src/bearer \
@@ -21,11 +22,16 @@ sourcedirs = ../../src/bearer \
              ../../src/contacts \
              ../../src/multimedia \
              ../../src/messaging \
+             ../../src/versit \
              .
+
+excludedirs = ../../src/messaging/win32wce
 
 exampledirs = ../../examples \
               ../.. \
               .
+
+excludedirs = ../../src/publishsubscribe/symbian
 
 indexes                 = qt.index
 
@@ -75,7 +81,6 @@ qhp.Mobility.subprojects.examples.indexTitle = Qt Mobility Examples
 qhp.Mobility.subprojects.examples.selectors = fake:example
 qhp.Mobility.subprojects.examples.sortPages = true
 
-
 Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           QM_EXPORT_CANVAS \
                           QM_EXPORT_DNS \
@@ -112,6 +117,8 @@ Cpp.ignoretokens        = QAXFACTORY_EXPORT \
                           Q_GUI_EXPORT_STYLE_WINDOWSXP \
                           Q_INLINE_TEMPLATE \
                           Q_INVOKABLE \
+			  Q_LOCATION_EXPORT \
+			  Q_MEDIA_EXPORT \
                           Q_NETWORK_EXPORT \
                           Q_OPENGL_EXPORT \
                           Q_OUTOFLINE_TEMPLATE \

@@ -315,12 +315,14 @@
         homePhone.setNumber(homePhoneLine-&gt;text());
         homePhone.setContexts(QStringList(QContactDetail::ContextHome));
         homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
+        homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeVoice));
         c.saveDetail(&amp;homePhone);
 
         QContactPhoneNumber workPhone;
         workPhone.setNumber(workPhoneLine-&gt;text());
         workPhone.setContexts(QStringList(QContactDetail::ContextWork));
         workPhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
+        workPhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeVoice));
         c.saveDetail(&amp;workPhone);
 
         QContactPhoneNumber mobilePhone;
