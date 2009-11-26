@@ -87,7 +87,6 @@ tst_qsystemnetworkinfo.exe
 tst_qsystemscreensaver.exe
 tst_qsystemstorageinfo.exe
 
-
 ::QMedia
 tst_qaudiocapturesource.exe
 tst_qcamera.exe
