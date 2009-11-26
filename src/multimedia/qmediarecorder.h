@@ -143,7 +143,7 @@ private:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::State));
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::Error));
+Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::State));
+Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::Error));
 
 #endif  // QMEDIARECORDER_H
