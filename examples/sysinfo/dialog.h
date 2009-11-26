@@ -54,7 +54,7 @@ namespace Ui {
 class Dialog : public QMainWindow {
     Q_OBJECT
 public:
-    Dialog(QWidget *parent = 0);
+    Dialog();
     ~Dialog();
 
 protected:

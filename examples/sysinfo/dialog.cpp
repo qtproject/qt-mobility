@@ -49,7 +49,7 @@
 #include <QTimer>
 
 Dialog::Dialog() :
-    QMainWindow(parent),
+    QMainWindow(),
     ui(new Ui::Dialog),
     saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
 {
