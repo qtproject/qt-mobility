@@ -77,7 +77,7 @@ CntRelationship::~CntRelationship()
 /*!
  * \return The supported relationship types.
  */
-QStringList CntRelationship::supportedRelationshipTypes(const QString& contactType) const
+QStringList CntRelationship::supportedRelationshipTypes(const QString& /*contactType*/) const
 {
     QStringList supportedTypes;
 
