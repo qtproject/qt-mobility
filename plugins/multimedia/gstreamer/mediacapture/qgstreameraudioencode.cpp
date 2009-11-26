@@ -110,7 +110,7 @@ void QGstreamerAudioEncode::setEncodingOption(
     m_options[codec][name] = value;
 }
 
-QList<int> QGstreamerAudioEncode::supportedSampleRates(const QAudioEncoderSettings &) const
+QList<int> QGstreamerAudioEncode::supportedSampleRates(const QAudioEncoderSettings &, bool *) const
 {
     //TODO check element caps to find actual values
 

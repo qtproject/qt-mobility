@@ -795,7 +795,7 @@ void QVideoWidget::showEvent(QShowEvent *event)
 
 /*!
   Handles the hide \a event.
- */
+*/
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
