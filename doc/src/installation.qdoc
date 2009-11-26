@@ -45,9 +45,13 @@
 \title Installation Guide
 \tableofcontents
 
+\section1 Get the Qt Mobility API Package
+To begin, obtain the most recent distrubution package from 
+\l {http://get.qt.nokia.com}
+
 \section1 Pre-requisites & Dependencies
 To install Qt Mobility you must already have installed
-Qt 4.6 or higher, visit \l {http://qt.nokia.com/downloads} to obtain
+Qt 4.6 or higher, visit \l {http://get.qt.nokia.com} to obtain
 a copy.
 
 Qt Mobility is comprised of a number of domains. Some of these domains have
@@ -55,7 +59,7 @@ dependencies and these are outlined below:
 
 \table 80%
 \header
-    \o API  \o Requirements
+    \o API  \o Dependency
 \row
     \o  Messaging
     \o
@@ -82,13 +86,12 @@ dependencies and these are outlined below:
         using one of the following configure options:
         \c {-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite}
 \row
-    \o Multimedia
+    \o  Multimedia
     \o
         The multimedia component depends on the QtMultimedia
         module in Qt.  Qt by default is configured to make this
         module with the \c {-multimedia} option.
 \endtable
-
 
 \section1 Unpacking
 Unpack the Qt Mobility archive if you have not done so already,
@@ -155,7 +158,7 @@ mobility libraries into $PWD/install.
 
     To specify the installation directory you may use the -prefix
     option.  Not passing a prefix installs the mobility
-    libraries into an install directory within current working
+    libraries into an install directory within the current working
     directory.
 
     \code
