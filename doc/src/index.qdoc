@@ -108,6 +108,12 @@
         \o \l {Qt Mobility Examples}{List of all examples.}
     \endlist
 
+    \section2 Known Issues
+    For a list of known issues and an additional details on feature supported see \l {Known Issues in QtMobility 1.0.0 (Technology Preview)}.
+
+    For a overview of Platform Compatability see \l {Platform Compatability}.
+    
+
     \section1 The Mobility APIs
     \section2 Bearer Management
 
