@@ -397,6 +397,10 @@
     </table>
 
     \endraw
-    
+
+    \section1 Feedback and bug reports
+    Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com
+
+    And please report any bugs you may find to \l {http://bugreports.qt.nokia.com}
 */
 
