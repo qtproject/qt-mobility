@@ -41,10 +41,10 @@
 
 /*!
     \group mobility
-    \title Qt Mobility APIs
+    \title Qt Mobility Project APIs (BETA)
 
-    Qt Mobility is a set of APIs that enables a range of mobile-centric
-    technologies and features on mobile and non-mobile platforms.
+    Qt Mobility Project supplies a set of new APIs enabling a range of
+    mobile-centric technologies and features on mobile and non-mobile platforms.
 
 */
 
@@ -54,13 +54,13 @@
     \page index.html
     \startpage index.html  Qt Reference Documentation
 
-    \title Qt Mobility Overview
+    \title Qt Mobility Project APIs (BETA) Overview
 
-    \brief An overview of the Qt Mobility APIs.
+    \brief An overview of the Qt Mobility Project APIs.
 
-    Qt Mobility is a set of APIs that supplies features
+    Qt Mobility Project delivers a set of new APIs to Qt with features
     that are well known from the mobile device world, in particular phones.
-    However, these APIs allow the developer to use the features with ease
+    However, these APIs allow the developer to use these features with ease
     from one framework and apply them to phones, netbooks and non-mobile
     personal computers. The framework not only improves many aspects of a
     mobile experience, because it improves the use of these technologies,
@@ -72,7 +72,7 @@
 
     \section1 Overview
 
-    \section2 Introducing the Mobility APIs
+    \section2 Introducing the New Mobility Project APIs (BETA)
 
     This mobility release contains the following APIs:
 
@@ -81,11 +81,11 @@
     These APIs give the developer a wide range of desirable functions for a
     mobile platform, but these now become possible on platforms not
     traditionally associated with some of the features. A mobile device
-    using the Qt Mobility API would be able to
+    using the Qt Mobility Project API would be able to
         \list
         \o Locate services on-board or remotely. Find an optimal
     connection to the network for the particular service.
-        \o Services built on top of Qt Mobility would include Internet
+        \o Services built on top of Mobility Project APIs would include Internet
         applications such as email and web browsing.
         \o Multimedia features enable image and video capture with audio ,
     audio recording, and the playing of music or video clips. However,
@@ -96,9 +96,12 @@
         whether local or remote to the device.
         \endlist
 
-    Qt Mobility is an enabling package. It will be used by developers to
-    build a variety of applications and services that are mobile capable,
-    irrespective of whether the platform is mobile or not.
+    The Qt Mobility Project delivers to developers an enabling package. It
+    will be used by developers to build a variety of applications and
+    services that are mobile capable or familiar to mobile users,
+    irrespective of whether the platform is mobile or not. This means that
+    there is the possibility of easy transfer of user experience from PC to
+    phone or vice versa.
 
     \section2 Getting Started
     To get started with Qt Mobility see the
@@ -108,7 +111,12 @@
         \o \l {Qt Mobility Examples}{List of all examples.}
     \endlist
 
-    \section1 The Mobility APIs
+    For users on the supported Symbian platforms, shown at the bottom of this
+    page, see the instructions at the
+    \l{http://library.forum.nokia.com/topic/Qt_for_Symbian_Developers_Library/GUID-7E53D0F7-72CB-41C4-8807-FE7A772B0DB4.html}{Qt For Symbian Developer's Library}
+    
+
+    \section1 The Mobility Project APIs
     \section2 Bearer Management
 
     Although not a network manager, this component manages the connectivity
@@ -163,7 +171,7 @@
     technology, the basis of a range future applications.
 
     At this stage the API is intended to act as a common communications
-    method between Qt Mobility applications, whether local or remote.
+    method between applications, whether local or remote.
 
     \section2 Location
 
@@ -216,6 +224,7 @@
     device information and the screensaver.
 
 
+    \target {Platform Compatability}
     \section1 Platform Compatability
     
     \raw HTML

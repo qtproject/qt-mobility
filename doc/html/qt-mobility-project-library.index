@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QDOCINDEX>
-<INDEX url="" title="Qt Mobility Library Reference Documentation" version="Mobility 1.0">
+<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationship" href="qcontactrelationship.html" location="qcontactrelationship.h" bases="" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="HasMember" fullname="QContactRelationship::HasMember" href="qcontactrelationship.html#HasMember-var" location="qcontactrelationship.h" type="const char *" static="false"/>
@@ -7375,7 +7375,7 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorderControl_iid" href="qmediarecordercontrol.html#QMediaRecorderControl_iid" location="qmediarecordercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaRecorderControl" type="" signature="QMediaRecorderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QCameraExposureControl_iid" href="qcameraexposurecontrol.html#QCameraExposureControl_iid" location="qcameraexposurecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QCameraExposureControl" type="" signature="QCameraExposureControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWindowControl_iid" href="qvideowindowcontrol.html#QVideoWindowControl_iid" location="qvideowindowcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWindowControl" type="" signature="QVideoWindowControl_iid()"/>
-        <page access="public" status="commendable" name="location" href="location.html" subtype="group" title="Qt Mobility Location API" fulltitle="Qt Mobility Location API" subtitle="" location="location.qdoc"/>
+        <page access="public" status="commendable" name="location" href="location.html" subtype="group" title="Location API" fulltitle="Location API" subtitle="" location="location.qdoc"/>
         <page access="public" status="commendable" name="location-overview.html" href="location-overview.html" subtype="page" title="Location" fulltitle="Location" subtitle="" location="location.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="2"/>
@@ -7418,12 +7418,13 @@
             <contents name="classes" title="Classes" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
-        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility APIs" fulltitle="Qt Mobility APIs" subtitle="" location="index.qdoc"/>
-        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Overview" fulltitle="Qt Mobility Overview" subtitle="" location="index.qdoc">
+        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (BETA)" fulltitle="Qt Mobility Project APIs (BETA)" subtitle="" location="index.qdoc"/>
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (BETA) Overview" fulltitle="Qt Mobility Project APIs (BETA) Overview" subtitle="" location="index.qdoc">
+            <target name="platform-compatability"/>
             <contents name="overview" title="Overview" level="1"/>
-            <contents name="introducing-the-mobility-apis" title="Introducing the Mobility APIs" level="2"/>
+            <contents name="introducing-the-new-mobility-project-apis-beta" title="Introducing the New Mobility Project APIs (BETA)" level="2"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
-            <contents name="the-mobility-apis" title="The Mobility APIs" level="1"/>
+            <contents name="the-mobility-project-apis" title="The Mobility Project APIs" level="1"/>
             <contents name="bearer-management" title="Bearer Management" level="2"/>
             <contents name="contacts" title="Contacts" level="2"/>
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
