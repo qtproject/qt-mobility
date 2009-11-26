@@ -43,11 +43,11 @@
 \page messaging.html
 \ingroup mobility
 
-\title Messaging
+\title Messaging API
 
-\brief The Qt Messaging API enables access to messaging services.
+\brief The Messaging API enables access to messaging services.
 
-The Messaging API enables access to messaging services to 
+The Qt Messaging API enables access to messaging services to 
 search and sort messages, send messages, retrieve message 
 data, and launch the preferred messaging client on the system 
 to either display an existing message, compose a new message, 
