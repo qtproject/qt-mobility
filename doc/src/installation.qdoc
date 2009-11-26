@@ -54,8 +54,8 @@ To install Qt Mobility you must already have installed
 Qt 4.6 or higher, visit \l {http://get.qt.nokia.com} to obtain
 a copy.
 
-Qt Mobility is comprised of a number of domains. Some of these domains have
-dependencies and these are outlined below:
+Qt Mobility Project APIs are comprised of a number of domains. Some of
+these domains have dependencies and these are outlined below:
 
 \table 80%
 \header
@@ -107,7 +107,7 @@ from the archive.  We only support the GNU version of the tar
 archiving utility.  Note on some systems it is called gtar.
 
 On windows, uncompress the zip file into the directory you want
-Qt Mobility installed, extracting to \c {C:\QtMobility}
+Qt Mobility Project installed, extracting to \c {C:\QtMobility}
 will create the directory \c {C:\QtMobility\%DISTNAME%}
 
 NOTE: The install path must not contain any spaces.

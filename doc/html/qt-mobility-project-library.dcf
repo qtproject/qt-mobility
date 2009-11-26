@@ -1,5 +1,5 @@
 <!DOCTYPE DCF>
-<DCF ref="index.html" icon="qt-mobility-library.png" imagedir="../../gif" title="Qt Mobility Library Reference Documentation">
+<DCF ref="index.html" icon="qt-mobility-project-library.png" imagedir="../../gif" title="Qt Mobility Project Library Reference Documentation">
 <section ref="classes.html" title="Classes">
     <section ref="qmailmessagepart-location.html" title="Location Class Reference">
         <keyword ref="qmailmessagepart-location.html">Location</keyword>
@@ -3593,6 +3593,9 @@
     <section ref="location-overview.html" title="Location">
         <keyword ref="location-overview.html">Location</keyword>
     </section>
+    <section ref="location.html" title="Location API">
+        <keyword ref="location.html">Location API</keyword>
+    </section>
     <section ref="location-releasenotes.html" title="Location Library Release Notes">
         <keyword ref="location-releasenotes.html">Location Library Release Notes</keyword>
     </section>
@@ -3614,17 +3617,14 @@
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>
     </section>
-    <section ref="mobility.html" title="Qt Mobility APIs">
-        <keyword ref="mobility.html">Qt Mobility APIs</keyword>
-    </section>
     <section ref="examples.html" title="Qt Mobility Examples">
         <keyword ref="examples.html">Qt Mobility Examples</keyword>
     </section>
-    <section ref="location.html" title="Qt Mobility Location API">
-        <keyword ref="location.html">Qt Mobility Location API</keyword>
+    <section ref="mobility.html" title="Qt Mobility Project APIs (BETA)">
+        <keyword ref="mobility.html">Qt Mobility Project APIs (BETA)</keyword>
     </section>
-    <section ref="index.html" title="Qt Mobility Overview">
-        <keyword ref="index.html">Qt Mobility Overview</keyword>
+    <section ref="index.html" title="Qt Mobility Project APIs (BETA) Overview">
+        <keyword ref="index.html">Qt Mobility Project APIs (BETA) Overview</keyword>
     </section>
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>
