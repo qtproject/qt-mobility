@@ -19,10 +19,10 @@
 </h1>
 <p>Qt Mobility Project delivers a set of new APIs to Qt with features that are well known from the mobile device world, in particular phones. However, these APIs allow the developer to use these features with ease from one framework and apply them to phones, netbooks and non-mobile personal computers. The framework not only improves many aspects of a mobile experience, because it improves the use of these technologies, but has applicability beyond the mobile device arena.</p>
 <ul><li><a href="#overview">Overview</a></li>
-<ul><li><a href="#introducing-the-new-mobility-project-apis-beta">Introducing the New Mobility Project APIs (BETA)</a></li>
+<ul><li><a href="#introducing-the-new-qt-apis">Introducing the New Qt APIs</a></li>
 <li><a href="#getting-started">Getting Started</a></li>
 </ul>
-<li><a href="#the-mobility-project-apis">The Mobility Project APIs</a></li>
+<li><a href="#the-new-qt-apis">The New Qt APIs</a></li>
 <ul><li><a href="#bearer-management">Bearer Management</a></li>
 <li><a href="#contacts">Contacts</a></li>
 <li><a href="#publish-and-subscribe">Publish and Subscribe</a></li>
@@ -36,9 +36,9 @@
 </ul>
 <a name="overview"></a>
 <h3>Overview</h3>
-<a name="introducing-the-new-mobility-project-apis-beta"></a>
-<h4>Introducing the New Mobility Project APIs (BETA)</h4>
-<p>This mobility release contains the following APIs:</p>
+<a name="introducing-the-new-qt-apis"></a>
+<h4>Introducing the New Qt APIs</h4>
+<p>This release contains the following APIs:</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="bearer-management.html">Bearer Management</a></th><td>An API to control the system's connectivity state.</td></tr>
 <tr valign="top" class="even"><th><a href="contacts.html">Contacts</a></th><td>An API enabling clients to request contact data from local or remote backends.</td></tr>
@@ -46,18 +46,19 @@
 <tr valign="top" class="even"><th><a href="messaging.html">Messaging API</a></th><td>The Messaging API enables access to messaging services.</td></tr>
 <tr valign="top" class="odd"><th><a href="multimedia.html">Multimedia</a></th><td>Provides a set of APIs to play and record media, and manage a collection of media content.</td></tr>
 <tr valign="top" class="even"><th><a href="publ-subs.html">Publish and Subscribe</a></th><td>The Publish and Subscribe API, containing Value Space, enables applications to read item values, navigate through and subscribe to change notifications.</td></tr>
-<tr valign="top" class="odd"><th><a href="service-frameworks.html">Qt Service Framework</a></th><td>A set of APIs to that allows clients to discover and instantiate arbitrary services.</td></tr>
+<tr valign="top" class="odd"><th><a href="service-frameworks.html">Qt Service Framework</a></th><td>A set of Qt APIs to that allows clients to discover and instantiate arbitrary services.</td></tr>
 <tr valign="top" class="even"><th><a href="systeminfo.html">System Information</a></th><td>A set of APIs to discover system related information and capabilities.</td></tr>
+<tr valign="top" class="odd"><th><a href="versit.html">Versit API</a></th><td>An API to manage Versit documents.</td></tr>
 </table></p>
 <p>These APIs give the developer a wide range of desirable functions for a mobile platform, but these now become possible on platforms not traditionally associated with some of the features. A mobile device using the Qt Mobility Project API would be able to</p>
 <ul>
 <li>Locate services on-board or remotely. Find an optimal connection to the network for the particular service.</li>
-<li>Services built on top of Mobility Project APIs would include Internet applications such as email and web browsing.</li>
+<li>Services built on top of these APIs would include Internet applications such as email and web browsing.</li>
 <li>Multimedia features enable image and video capture with audio , audio recording, and the playing of music or video clips. However, camera ability is not part of this release.</li>
 <li>Location will make the device aware of its geographical location to support GIS applications.</li>
 <li>Publish-Subscribe enables communication between separate objects whether local or remote to the device.</li>
 </ul>
-<p>The Qt Mobility Project delivers to developers an enabling package. It will be used by developers to build a variety of applications and services that are mobile capable or familiar to mobile users, irrespective of whether the platform is mobile or not. This means that there is the possibility of easy transfer of user experience from PC to phone or vice versa.</p>
+<p>The New Qt APIs deliver to developers an enabling package. It will be used by developers to build a variety of applications and services that are mobile capable or familiar to mobile users, irrespective of whether the platform is mobile or not. This means that there is the possibility of easy transfer of user experience from PC to phone or vice versa.</p>
 <a name="getting-started"></a>
 <h4>Getting Started</h4>
 <p>To get started with Qt Mobility see the</p>
@@ -67,8 +68,8 @@
 <li><a href="examples.html">List of all examples.</a></li>
 </ul>
 <p>For users on the supported Symbian platforms, shown at the bottom of this page, see the instructions at the <a href="http://library.forum.nokia.com/topic/Qt_for_Symbian_Developers_Library/GUID-7E53D0F7-72CB-41C4-8807-FE7A772B0DB4.html">Qt For Symbian Developer's Library</a></p>
-<a name="the-mobility-project-apis"></a>
-<h3>The Mobility Project APIs</h3>
+<a name="the-new-qt-apis"></a>
+<h3>The New Qt APIs</h3>
 <a name="bearer-management"></a>
 <h4>Bearer Management</h4>
 <p>Although not a network manager, this component manages the connectivity state to the network. So it does not manage network configurations, which are the role of the platform provider, but it does allow the user to start or stop network interfaces. Some higher level management of the connection session may also be possible as well depending on the platform.</p>
@@ -281,6 +282,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
 </tr></table></div></address></body>
 </html>
