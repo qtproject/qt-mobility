@@ -495,18 +495,11 @@ void ut_qtcontacts_trackerplugin::testRemoveContact()
     name.setFirst("Super");
     name.setLast("Man");
     c.saveDetail(&name);
-    QContact c2(c);
 
-    // First with tracker plugin, then with manager
     QVERIFY2(trackerEngine->saveContact(&c, error) && error == QContactManager::NoError, "Saving a contact failed");
-    QVERIFY2(trackerEngine->saveContact(&c2, error) && error == QContactManager::NoError, "Saving a contact failed");
     QVERIFY2(trackerEngine->removeContact(c.localId(), error), "Removing a contact failed");
     QCOMPARE(error, QContactManager::NoError);
-    QVERIFY2(ContactManager::instance()->removeContact(c2.localId()), "Removing a contact failed");
-    QCOMPARE(error, QContactManager::NoError);
-    QVERIFY(QContact() == QContact());
     QVERIFY2(trackerEngine->contact_impl(c.localId(), error) == QContact(), "Found a contact, which should have been removed");
-    QVERIFY2(trackerEngine->contact_impl(c2.localId(), error) == QContact(), "Found a contact, which should have been removed");
 }
 
 void ut_qtcontacts_trackerplugin::testSaveContacts()
