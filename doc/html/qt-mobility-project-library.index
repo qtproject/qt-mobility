@@ -6438,12 +6438,6 @@
             <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="1"/>
             <contents name="classes" title="Classes" level="1"/>
         </page>
-        <page access="public" status="commendable" name="location-releasenotes.html" href="location-releasenotes.html" subtype="page" title="Location Library Release Notes" fulltitle="Location Library Release Notes" subtitle="" location="location.qdoc">
-            <contents name="windows-ce-windows-mobile" title="Windows CE / Windows Mobile" level="1"/>
-            <contents name="accuracy-in-metres-information-is-unavailable" title="Accuracy-in-metres information is unavailable" level="2"/>
-            <contents name="there-is-no-reliable-method-to-detect-if-a-device-has-gps-capabilities" title="There is no reliable method to detect if a device has GPS capabilities" level="2"/>
-            <contents name="other-applications-may-power-down-the-gps-hardware-when-they-are-done" title="Other applications may power down the GPS hardware when they are done" level="2"/>
-        </page>
         <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API" fulltitle="Versit API" subtitle="" location="versit.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
@@ -6483,6 +6477,7 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
+            <contents name="known-issues" title="Known Issues" level="2"/>
             <contents name="the-new-qt-apis" title="The New Qt APIs" level="1"/>
             <contents name="bearer-management" title="Bearer Management" level="2"/>
             <contents name="contacts" title="Contacts" level="2"/>
@@ -6492,7 +6487,7 @@
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
-            <contents name="technology-preview" title="Technology Preview" level="1"/>
+            <contents name="future-additions" title="Future Additions" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
         </page>
@@ -6688,6 +6683,31 @@
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWidgetControl_iid" href="qvideowidgetcontrol.html#QVideoWidgetControl_iid" location="qvideowidgetcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWidgetControl" type="" signature="QVideoWidgetControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceControl_iid" href="qaudiodevicecontrol.html#QAudioDeviceControl_iid" location="qaudiodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceControl" type="" signature="QAudioDeviceControl_iid()"/>
+        <page access="public" status="commendable" name="http://bugreports.qt.nokia.com" href="http-bugreports-qt-nokia-com.html" subtype="externalpage" title="QtMobility Bug Tracker" fulltitle="QtMobility Bug Tracker" subtitle="" location="qtmobility-known-issues.qdoc"/>
+        <page access="public" status="commendable" name="qtmobility-known-issues.html" href="qtmobility-known-issues.html" subtype="page" title="Known Issues in QtMobility 1.0.0 (Technology Preview)" fulltitle="Known Issues in QtMobility 1.0.0 (Technology Preview)" subtitle="" location="qtmobility-known-issues.qdoc">
+            <contents name="detailed-feature-support-symbian-s60" title="Detailed Feature support - Symbian/S60" level="2"/>
+            <contents name="bearer-management-api" title="Bearer Management API" level="3"/>
+            <contents name="contacts-api" title="Contacts API" level="3"/>
+            <contents name="messaging-api" title="Messaging API" level="3"/>
+            <contents name="multimedia-api" title="Multimedia API" level="3"/>
+            <contents name="service-framework-api" title="Service Framework API" level="3"/>
+            <contents name="system-info-api" title="System Info API" level="3"/>
+            <contents name="issues-affecting-all-platforms" title="Issues Affecting All Platforms" level="2"/>
+            <contents name="symbian-s60-support-specific-issues" title="Symbian/S60 Support Specific Issues" level="2"/>
+            <contents name="bearer-management" title="Bearer Management" level="3"/>
+            <contents name="contacts-api" title="Contacts API" level="3"/>
+            <contents name="location-api-issues" title="Location API Issues" level="3"/>
+            <contents name="messaging-api-issues" title="Messaging API Issues" level="3"/>
+            <contents name="multimedia-api-issues" title="Multimedia API Issues" level="3"/>
+            <contents name="publish-and-subscribe-api-issues" title="Publish and Subscribe API Issues" level="3"/>
+            <contents name="service-framework-api-issues" title="Service Framework API Issues" level="3"/>
+            <contents name="system-info-api-issues" title="System Info API Issues" level="3"/>
+            <contents name="maemo-specific-issues" title="Maemo Specific Issues" level="2"/>
+            <contents name="windows-mobile-specific-issues" title="Windows Mobile Specific Issues" level="2"/>
+            <contents name="contacts-api" title="Contacts API" level="3"/>
+            <contents name="messaging-api" title="Messaging API" level="3"/>
+            <contents name="windows-specific-issues" title="Windows Specific Issues" level="2"/>
+        </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlaylistControl_iid" href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid" location="qmediaplaylistcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlaylistControl" type="" signature="QMediaPlaylistControl_iid()"/>
         <page access="public" status="commendable" name="opensourceedition.html" href="opensourceedition.html" subtype="page" title="Open Source Versions of Qt" fulltitle="Open Source Versions of Qt" subtitle="" location="opensourceedition.qdoc"/>
@@ -6698,6 +6718,12 @@
             <contents name="how-to-register-and-unregister-service-plugins-in-s60" title="How to register and unregister service plugins in S60?" level="1"/>
             <contents name="what-s-special-from-the-security-perspective" title="What's special from the security perspective?" level="1"/>
             <contents name="directory-structure" title="Directory structure" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="future.html" href="future.html" subtype="page" title="Future Additional APIs" fulltitle="Future Additional APIs" subtitle="" location="future.qdoc">
+            <target name="management-of-versit-documents"/>
+            <target name="camera-support"/>
+            <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
+            <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
         </page>
         <page access="public" status="commendable" name="player" href="player.html" subtype="example" title="Media Player Example" fulltitle="Media Player Example" subtitle="" location="player.qdoc">
             <page access="public" status="commendable" name="player/player.cpp" href="player-player-cpp.html" subtype="file" title="" fulltitle="player.cpp Example File" subtitle="player/player.cpp" location=""/>

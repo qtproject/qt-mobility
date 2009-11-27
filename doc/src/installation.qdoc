@@ -85,7 +85,7 @@ these domains have dependencies and these are outlined below:
     \o  The Maemo 6 backend depends on libqttracker.
         For more information on libqttracker visit
         \l {http://maemo.gitorious.org/maemo-af/libqttracker}
-        {libqttracker public repository}
+        {libqttracker public repository}.
         Other components offered by the Maemo 6 platform may be required
         in order to support the full functionality of the Maemo 6 backend.
     \o  Y
@@ -104,12 +104,25 @@ these domains have dependencies and these are outlined below:
     \o  The multimedia component depends on the QtMultimedia
         module in Qt.  Qt by default is configured to make this
         module with the \c {-multimedia} option.
-
+        
         The linux X11 backend requires that gstreamer be installed, including
         libgstreamer, gstreamer-devel, plugins-base and plugins-good packages.
         The linux backend was tested with gstreamer 0.10.19 and newer versions.
     \o  Y 
     \o  N
+\row
+    \o  Location
+    \o
+        The Symbian backend uses the LBT (Location Based Triggering) library for area notifications.
+        Area notifications will be disabled at compile time if the LBT library is not found.  
+
+        The LBT library is not publicly available at the time of writing.
+        The developer documentation for \l {http://carbidehelp.nokia.com/help/index.jsp?topic=/S60_5th_Edition_Cpp_Developers_Library/GUID-759FBC7F-5384-4487-8457-A8D4B76F6AA6/html/Location_ServicesIndexPage.html} 
+        {S60 Location Services} is probably the best source for LBT availability updates, as it 
+        will be updated when the library is relased.
+    \o  N(Y)
+    \o  N
+
 \row
     \o  System Information
     \o  The Linux backend depands on QtDBus, HAL and NetworkManager, although System Information will 
