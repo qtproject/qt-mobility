@@ -1286,6 +1286,17 @@
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
+    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
+        <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
+        <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
+        <keyword ref="qgeoareamonitor.html#center-prop">setCenter</keyword>
+        <keyword ref="qgeoareamonitor.html#radius-prop">radius</keyword>
+        <keyword ref="qgeoareamonitor.html#radius-prop">setRadius</keyword>
+        <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
+        <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
+        <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
+        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
+    </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
         <keyword ref="qgeocoordinate.html">QGeoCoordinate</keyword>
         <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</keyword>
@@ -3111,6 +3122,9 @@
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
     </section>
+    <section ref="future.html" title="Future Additional APIs">
+        <keyword ref="future.html">Future Additional APIs</keyword>
+    </section>
     <section ref="gpl.html" title="GNU General Public License (GPL)">
         <keyword ref="gpl.html">GNU General Public License (GPL)</keyword>
     </section>
@@ -3135,11 +3149,8 @@
     <section ref="location.html" title="Location API">
         <keyword ref="location.html">Location API</keyword>
     </section>
-    <section ref="location-releasenotes.html" title="Location Library Release Notes">
-        <keyword ref="location-releasenotes.html">Location Library Release Notes</keyword>
-    </section>
-    <section ref="messaging.html" title="Messaging API">
-        <keyword ref="messaging.html">Messaging API</keyword>
+    <section ref="messaging.html" title="Messaging">
+        <keyword ref="messaging.html">Messaging</keyword>
     </section>
     <section ref="multimedia.html" title="Mobility Multimedia">
         <keyword ref="multimedia.html">Mobility Multimedia</keyword>
@@ -3159,29 +3170,20 @@
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
     </section>
-    <section ref="commercialeditions.html" title="Qt Commercial Editions">
-        <keyword ref="commercialeditions.html">Qt Commercial Editions</keyword>
-    </section>
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>
     </section>
     <section ref="editions.html" title="Qt Editions">
         <keyword ref="editions.html">Qt Editions</keyword>
     </section>
-    <section ref="full-framework-edition-classes.html" title="Qt Full Framework Edition">
-        <keyword ref="full-framework-edition-classes.html">Qt Full Framework Edition</keyword>
-    </section>
-    <section ref="gui-framework-edition-classes.html" title="Qt GUI Framework Edition">
-        <keyword ref="gui-framework-edition-classes.html">Qt GUI Framework Edition</keyword>
-    </section>
     <section ref="examples.html" title="Qt Mobility Examples">
         <keyword ref="examples.html">Qt Mobility Examples</keyword>
     </section>
-    <section ref="mobility.html" title="Qt Mobility Project APIs (BETA)">
-        <keyword ref="mobility.html">Qt Mobility Project APIs (BETA)</keyword>
+    <section ref="mobility.html" title="Qt Mobility Project APIs (Technical Preview)">
+        <keyword ref="mobility.html">Qt Mobility Project APIs (Technical Preview)</keyword>
     </section>
-    <section ref="index.html" title="Qt Mobility Project APIs (BETA) Overview">
-        <keyword ref="index.html">Qt Mobility Project APIs (BETA) Overview</keyword>
+    <section ref="index.html" title="Qt Mobility Project APIs (Technical Preview) Overview">
+        <keyword ref="index.html">Qt Mobility Project APIs (Technical Preview) Overview</keyword>
     </section>
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>
@@ -3189,14 +3191,17 @@
     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian">
         <keyword ref="service-framework-on-symbian.html">Qt Service Framework on Symbian</keyword>
     </section>
+    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project (Technology Preview)">
+        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project (Technology Preview)</keyword>
+    </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
     </section>
     <section ref="systeminfo.html" title="System Information">
         <keyword ref="systeminfo.html">System Information</keyword>
     </section>
-    <section ref="systeminfo.html" title="System Information">
-        <keyword ref="systeminfo.html">System Information</keyword>
+    <section ref="systeminfo.html" title="System Information Classes">
+        <keyword ref="systeminfo.html">System Information Classes</keyword>
     </section>
     <section ref="preview.html" title="Technology Preview">
         <keyword ref="preview.html">Technology Preview</keyword>
