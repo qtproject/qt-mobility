@@ -100,6 +100,9 @@ these domains have dependencies and these are outlined below:
         not include libraries for the emulator, so for that version
         the Symbian backend can only be compiled for a device.
 
+        The linux X11 backend requires that gstreamer be installed, including
+        libgstreamer, gstreamer-devel, plugins-base and plugins-good packages. 
+        The linux backend was tested with gstreamer 0.10.19 and newer versions.
 \row
     \o Systeminfo
     \o
