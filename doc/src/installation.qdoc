@@ -105,14 +105,6 @@ these domains have dependencies and these are outlined below:
         module in Qt.  Qt by default is configured to make this
         module with the \c {-multimedia} option.
 
-        The Symbian backend requires a Media Player SDK Plug-in
-        http://wiki.forum.nokia.com/index.php/SDK_API_Plugin.  For
-        version 3.1 the Media Player Engine API is required and for
-        versions 3.2 and 5.0 the Media Player Utility API is
-        required.  The Media Player Engine API for version 3.1 does
-        not include libraries for the emulator, so for that version
-        the Symbian backend can only be compiled for a device.
-
         The linux X11 backend requires that gstreamer be installed, including
         libgstreamer, gstreamer-devel, plugins-base and plugins-good packages.
         The linux backend was tested with gstreamer 0.10.19 and newer versions.

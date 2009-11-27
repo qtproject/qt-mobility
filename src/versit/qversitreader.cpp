@@ -52,6 +52,8 @@ QTM_BEGIN_NAMESPACE
  
   \brief The QVersitReader class provides an interface
   for reading versit documents such as vCards from a stream.
+
+  \ingroup versit
  
   QVersitReader reads 0..n versit documents such as vCards
   from a text stream into 0..n QVersitDocument instances.

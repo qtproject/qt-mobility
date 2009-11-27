@@ -55,8 +55,6 @@ class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
     Q_PROPERTY(QMediaContent currentItem READ currentItem NOTIFY currentItemChanged)
-    Q_PROPERTY(QMediaContent nextItem READ nextItem)
-    Q_PROPERTY(QMediaContent previousItem READ previousItem)
 
 public:
     QMediaPlaylistNavigator(QMediaPlaylistProvider *playlist, QObject *parent = 0);

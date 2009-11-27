@@ -86,33 +86,19 @@ QGstreamerVideoEncode::~QGstreamerVideoEncode()
 {
 }
 
-QSize QGstreamerVideoEncode::minimumResolution(const QVideoEncoderSettings &) const
+QList<QSize> QGstreamerVideoEncode::supportedResolutions(const QVideoEncoderSettings &, bool *continuous) const
 {
-    return QSize(16,16);
-}
+    if (continuous)
+        *continuous = m_session->videoInput() != 0;
 
-QSize QGstreamerVideoEncode::maximumResolution(const QVideoEncoderSettings &) const
-{
-    return QSize(4096,4096);
-}
-
-QList<QSize> QGstreamerVideoEncode::supportedResolutions(const QVideoEncoderSettings &) const
-{
     return m_session->videoInput() ? m_session->videoInput()->supportedResolutions() : QList<QSize>();
 }
 
-qreal QGstreamerVideoEncode::minimumFrameRate(const QVideoEncoderSettings &) const
+QList< qreal > QGstreamerVideoEncode::supportedFrameRates(const QVideoEncoderSettings &, bool *continuous) const
 {
-    return 1.0;
-}
+    if (continuous)
+        *continuous = false;
 
-qreal QGstreamerVideoEncode::maximumFrameRate(const QVideoEncoderSettings &) const
-{
-    return 30.0;
-}
-
-QList< qreal > QGstreamerVideoEncode::supportedFrameRates(const QVideoEncoderSettings &) const
-{
     return m_session->videoInput() ? m_session->videoInput()->supportedFrameRates() : QList<qreal>();
 }
 

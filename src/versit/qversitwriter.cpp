@@ -54,6 +54,8 @@ QTM_BEGIN_NAMESPACE
  
   \brief The QVersitWriter class provides an interface
   for writing a versit document such as a vCard to a text stream.
+
+  \ingroup versit
  
   QVersitWriter converts a QVersitDocument into its textual representation.
   QVersitWriter supports writing to an abstract I/O device

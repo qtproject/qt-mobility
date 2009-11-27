@@ -41,7 +41,7 @@
 
 /*!
     \group mobility
-    \title Qt Mobility Project APIs (BETA)
+    \title Qt Mobility Project APIs (Technical Preview)
 
     Qt Mobility Project supplies a set of new APIs for Qt enabling a range of
     mobile-centric technologies and features on mobile and non-mobile platforms.
@@ -54,7 +54,7 @@
     \page index.html
     \startpage index.html  Qt Reference Documentation
 
-    \title Qt Mobility Project APIs (BETA) Overview
+    \title Qt Mobility Project APIs (Technical Preview) Overview
 
     \brief An overview of the Qt Mobility Project APIs.
 
@@ -198,8 +198,8 @@
     and managing of an FM radio. This includes the typical functionality you
     would find on a music and video player, combined with an FM radio.
 
-    Support for a camera is not included in this release but will be included
-    in a future update.
+    Support for a camera is available in this release as a technology
+    preview which we are glad to present to the community.
 
     \section2 Service Framework
 
@@ -223,8 +223,27 @@
     network connection types and status, display, data storage devices,
     device information and the screensaver.
 
+    \section1 Technology Preview
 
-    \target {Platform Compatability}
+    Two additional APIs are included as a Technology Preview only. These
+    are pre-release versions and the API will likely change before they are
+    officially released. You may use these APIs in accordance with the terms and
+    conditions contained in the Technology Preview License Agreement
+    accompanying this package.
+
+    We are making these available so that developers can see that future
+    updates will not only refine the API but add important features. We
+    are proud of the work we have done on this project and want to show
+    not only what we are delivering now but what is around the corner.
+
+    \l{preview.html#Management-of-Versit-Documents}{Versit} is an API for
+    managing Versit documents, such as vCards.
+
+    \l{preview.html#Camera-Support}{Camera} will be a part of the Multimedia API.
+
+
+
+
     \section1 Platform Compatability
     
     \raw HTML
@@ -237,10 +256,18 @@
 
     </tr>
     <tr>
-    <td bgcolor="lightgray"></td>
-    <td>API compiles on the platform. Support for the API on the platform is not being worked on by Nokia. It is
+    <td bgcolor="gray"></td>
+    <td>Support for the API on the platform is not being worked on by Nokia. It is
     possible for others to implement and integrate support.</td>
     </tr>
+
+    </tr>
+    <tr>
+    <td bgcolor="lightgray"></td>
+    <td>Support for the API on the platform is being worked on by Nokia.
+    At this point it is far from functionally complete or there is no code at all included in the current release.</td>
+    </tr>
+
     <tr>
     <td bgcolor="lightgreen"></td>
     <td>Support for the API on the platform is being worked on by Nokia however it is not functionally complete.</td>
@@ -289,15 +316,15 @@
     <tr>
     <td>Messaging</td>
 
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
     <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green">Using MAPI and Pocket Outlook</td>
     <td bgcolor="lightgreen">Using MAPI and Outlook</td>
     <td bgcolor="green">Using QMF</td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="gray"></td>
 
     <td></td>
     <td></td>
@@ -309,7 +336,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
 
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -323,7 +350,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
 
@@ -338,12 +365,12 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
     <td></td>
 
     </tr>
@@ -353,29 +380,29 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
 
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="green">NMEA data provider support</td>
     </tr>
 
     <tr>
     <td>Multimedia</td>
 
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
     <td bgcolor="green">GStreamer</td>
 
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
     <td></td>
     </tr>
 
@@ -385,8 +412,8 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
 
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>

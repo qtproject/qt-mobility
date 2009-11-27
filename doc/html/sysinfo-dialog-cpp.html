@@ -63,8 +63,8 @@
     #include &lt;QMessageBox&gt;
     #include &lt;QTimer&gt;
 
-    Dialog::Dialog(QWidget *parent) :
-        QDialog(parent),
+    Dialog::Dialog() :
+        QDialog(),
         ui(new Ui::Dialog),
         saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
     {
@@ -89,7 +89,7 @@
 
     void Dialog::changeEvent(QEvent *e)
     {
-        QDialog::changeEvent(e);
+        QWidget::changeEvent(e);
         switch (e-&gt;type()) {
         case QEvent::LanguageChange:
             ui-&gt;retranslateUi(this);
@@ -657,6 +657,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

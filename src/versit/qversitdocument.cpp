@@ -49,6 +49,8 @@ QTM_BEGIN_NAMESPACE
   \class QVersitDocument
  
   \brief The QVersitDocument class is a container for 0..n versit properties.
+
+  \ingroup versit
  
   For example a vCard can be presented as a QVersitDocument that
   consists of 0..n properties such as a name (N),
