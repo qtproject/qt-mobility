@@ -300,15 +300,13 @@ QContact PhoneBook::buildContact() const
     QContactPhoneNumber homePhone;
     homePhone.setNumber(homePhoneLine->text());
     homePhone.setContexts(QStringList(QContactDetail::ContextHome));
-    homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
-    homePhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeVoice));
+    homePhone.setSubTypes(QStringList() << QContactPhoneNumber::SubTypeLandline << QContactPhoneNumber::SubTypeVoice);
     c.saveDetail(&homePhone);
 
     QContactPhoneNumber workPhone;
     workPhone.setNumber(workPhoneLine->text());
     workPhone.setContexts(QStringList(QContactDetail::ContextWork));
-    workPhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeLandline));
-    workPhone.setSubTypes(QStringList(QContactPhoneNumber::SubTypeVoice));
+    workPhone.setSubTypes(QStringList() << QContactPhoneNumber::SubTypeLandline << QContactPhoneNumber::SubTypeVoice);
     c.saveDetail(&workPhone);
 
     QContactPhoneNumber mobilePhone;
