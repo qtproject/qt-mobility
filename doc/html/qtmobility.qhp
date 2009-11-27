@@ -514,11 +514,11 @@
                     <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
                     <section ref="installation.html" title="Installation Guide"/>
+                    <section ref="qtmobility-known-issues.html" title="Known Issues in QtMobility 1.0.0 (Technology Preview)"/>
                     <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux"/>
                     <section ref="licensing.html" title="Licensing Information"/>
                     <section ref="location-overview.html" title="Location"/>
                     <section ref="location.html" title="Location API"/>
-                    <section ref="location-releasenotes.html" title="Location Library Release Notes"/>
                     <section ref="messaging.html" title="Messaging API"/>
                     <section ref="multimedia.html" title="Mobility Multimedia"/>
                     <section ref="multimedia.html" title="Multimedia"/>
@@ -568,11 +568,11 @@
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
+            <keyword name="Known Issues in QtMobility 1.0.0 (Technology Preview)" id="Known Issues in QtMobility 1.0.0 (Technology Preview)" ref="qtmobility-known-issues.html"/>
             <keyword name="Licenses for Fonts Used in Qt for Embedded Linux" id="Licenses for Fonts Used in Qt for Embedded Linux" ref="licenses-fonts.html"/>
             <keyword name="Licensing Information" id="Licensing Information" ref="licensing.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location API" id="Location API" ref="location.html"/>
-            <keyword name="Location Library Release Notes" id="Location Library Release Notes" ref="location-releasenotes.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
             <keyword name="Media Player Example" id="Media Player Example" ref="player.html"/>
             <keyword name="Messaging API" id="Messaging API" ref="messaging.html"/>
@@ -3483,7 +3483,6 @@
             <file>cameracapture-main-cpp.html</file>
             <file>audiorecorder.html</file>
             <file>qcontactrelationshipfilter.html</file>
-            <file>location-releasenotes.html</file>
             <file>bearercloud-icons-qrc.html</file>
             <file>filemanagerplugin-filemanagerstorage-cpp.html</file>
             <file>serviceactions-mainwindow-h.html</file>
@@ -3707,6 +3706,7 @@
             <file>samplephonebook-finddialog-cpp.html</file>
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
+            <file>qtmobility-known-issues.html</file>
             <file>sendmessage-messagesender-cpp.html</file>
             <file>images/spb-screen.png</file>
             <file>incomingcalls-filterdialog-cpp.html</file>

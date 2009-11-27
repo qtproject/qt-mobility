@@ -3126,6 +3126,9 @@
     <section ref="installation.html" title="Installation Guide">
         <keyword ref="installation.html">Installation Guide</keyword>
     </section>
+    <section ref="qtmobility-known-issues.html" title="Known Issues in QtMobility 1.0&#x2e;0 (Technology Preview)">
+        <keyword ref="qtmobility-known-issues.html">Known Issues in QtMobility 1.0&#x2e;0 (Technology Preview)</keyword>
+    </section>
     <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux">
         <keyword ref="licenses-fonts.html">Licenses for Fonts Used in Qt for Embedded Linux</keyword>
     </section>
@@ -3137,9 +3140,6 @@
     </section>
     <section ref="location.html" title="Location API">
         <keyword ref="location.html">Location API</keyword>
-    </section>
-    <section ref="location-releasenotes.html" title="Location Library Release Notes">
-        <keyword ref="location-releasenotes.html">Location Library Release Notes</keyword>
     </section>
     <section ref="messaging.html" title="Messaging API">
         <keyword ref="messaging.html">Messaging API</keyword>
