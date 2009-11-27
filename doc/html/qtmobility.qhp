@@ -509,6 +509,7 @@
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
+                    <section ref="future.html" title="Future Additional APIs"/>
                     <section ref="gpl.html" title="GNU General Public License (GPL)"/>
                     <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
@@ -560,6 +561,7 @@
             <keyword name="Declarative Example" id="Declarative Example" ref="declarative.html"/>
             <keyword name="Fetch Google Maps Example" id="Fetch Google Maps Example" ref="fetchgooglemaps.html"/>
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
+            <keyword name="Future Additional APIs" id="Future Additional APIs" ref="future.html"/>
             <keyword name="GNU General Public License (GPL)" id="GNU General Public License (GPL)" ref="gpl.html"/>
             <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
             <keyword name="Incoming Calls Example" id="Incoming Calls Example" ref="incomingcalls.html"/>
@@ -3332,6 +3334,7 @@
             <file>qmediaplaylistprovider-members.html</file>
             <file>qcontactmemoryengine-members.html</file>
             <file>keepintouch-addressfinder-cpp.html</file>
+            <file>future.html</file>
             <file>qcontactorganization-members.html</file>
             <file>qaudioencodersettings.html</file>
             <file>qcontactactionfilter.html</file>
