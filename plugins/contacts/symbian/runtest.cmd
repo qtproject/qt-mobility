@@ -14,6 +14,7 @@ call \epoc32\release\winscw\udeb\ut_transformcontactdata.exe -xml -o c:\testresu
 call \epoc32\release\winscw\udeb\ut_cntfiltering.exe -xml -o c:\testresults_cntfiltering.xml
 call \epoc32\release\winscw\udeb\ut_cntsymbiandatabase.exe -xml -o c:\testresults_symbiandatabase.xml
 call \epoc32\release\winscw\udeb\ut_cntrelationship.exe -xml -o c:\testresults_relationship.xml
+rem call \epoc32\release\winscw\udeb\tst_details.exe -xml -o c:\testresults_details.xml
 
 call ctcpost MON.sym MON.dat -p profile.txt
 call ctc2html -i profile.txt -nsb
