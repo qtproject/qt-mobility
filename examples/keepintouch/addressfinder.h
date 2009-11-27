@@ -54,6 +54,11 @@ class QListWidget;
 class QPushButton;
 class QTabWidget;
 
+#if !defined(Q_OS_WIN) || !defined(_WIN32_WCE)
+// Don't use a 'Search' Button in CE
+#define USE_SEARCH_BUTTON
+#endif
+
 QTM_USE_NAMESPACE
 
 class AddressFinder : public QMainWindow
@@ -71,7 +76,7 @@ private slots:
     void stateChanged(QMessageServiceAction::State a);
     void messagesFound(const QMessageIdList &ids);
     void continueSearch();
-#ifdef _WIN32_WCE
+#ifndef USE_SEARCH_BUTTON
     void tabChanged(int index);
 #endif
 
@@ -80,16 +85,17 @@ private:
     void setSearchActionEnabled(bool val);
 
 private:
-    QTabWidget* tabWidget;
+    QTabWidget *tabWidget;
     QComboBox *includePeriod;
     QComboBox *excludePeriod;
-    QAction* searchAction;
+
+    QAction *searchAction;
     QPushButton *searchButton;
 
-    QListWidget*  addressList;
+    QListWidget *addressList;
     QComboBox *messageCombo;
 
-    QMessageServiceAction service;
+    QMessageServiceAction serviceAction;
 
     QMessageFilter inclusionFilter;
 
@@ -97,9 +103,7 @@ private:
     QMessageIdList exclusionMessages;
 
     QSet<QString> excludedAddresses;
-    QSet<QString> includedAddresses;
     QMap<QString, QStringList> addressMessages;
-    QMap<QString, QStringList> addressLongForm;
 };
 
 #endif
