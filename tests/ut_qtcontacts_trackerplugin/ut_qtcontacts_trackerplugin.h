@@ -77,6 +77,7 @@ private slots:
     void testSaveContacts();
     void testRemoveContacts();
     void testUrl();
+
 //    void testGroups();
 //    void testGroup();
 //    void testSaveGroup();
@@ -97,6 +98,13 @@ private slots:
     void testFilterContactsEndsWith();
     void testTrackerUriToUniqueId();
     void testQRelationshipAndMetacontacts();
+    void testIMContactsAndMetacontactMasterPresence();
+
+private:
+    void insertContact( QContactLocalId uid, QString imId, QString imStatus );
+    void updateIMContactStatus(QContactLocalId uId, QString imStatus);
+    QContact contact(QContactLocalId uid, QStringList detailsToLoad = QStringList());
+    QList<QContact> contacts(QList<QContactLocalId> uids, QStringList detailsToLoad = QStringList());
 
 private:
     QContactTrackerEngine *trackerEngine;

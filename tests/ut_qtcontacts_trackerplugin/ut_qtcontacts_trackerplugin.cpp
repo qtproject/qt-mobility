@@ -55,6 +55,9 @@
 
 #include "contactmanager.h"
 
+// update this when creating debian package
+const QString PATH_TO_SPARQL_TESTS("./ut_qtcontacts_trackerplugin_data");
+
 ut_qtcontacts_trackerplugin::ut_qtcontacts_trackerplugin()
 {
 
@@ -1254,6 +1257,127 @@ void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
     {
         QVERIFY(secondIds.removeOne(r.second().localId()));
     }
+}
+
+void ut_qtcontacts_trackerplugin::insertContact( QContactLocalId uid, QString imId, QString imStatus )
+{
+    QProcess inserter;
+    QStringList args;
+    args << QString::number(uid) << QString::number(uid) << imId << "SomeGuy" << imStatus << "In Helsinki" << "jabber" << "Some" << "Guy";
+    inserter.start( PATH_TO_SPARQL_TESTS+"/insertTpContact.sparql", args );
+    inserter.waitForFinished();
+}
+
+void ut_qtcontacts_trackerplugin::updateIMContactStatus(QContactLocalId uid, QString imStatus)
+{
+    QProcess inserter;
+    QStringList args;
+    args << QString::number(uid) << imStatus;
+    inserter.start( PATH_TO_SPARQL_TESTS+"/updateTpStatus.sparql", args );
+    inserter.waitForFinished();
+}
+
+QContact ut_qtcontacts_trackerplugin::contact(QContactLocalId id, QStringList details)
+{
+    QList<QContact> conts = contacts(QList<QContactLocalId>()<<id, details);
+    return conts.size()?conts[0]:QContact();
+}
+
+QList<QContact> ut_qtcontacts_trackerplugin::contacts(QList<QContactLocalId> ids, QStringList details)
+{
+    QContactFetchRequest request;
+    QContactLocalIdFilter filter;
+    filter.setIds(ids);
+    request.setFilter(filter);
+
+    request.setDefinitionRestrictions(details);
+
+    trackerEngine->startRequest(&request);
+    trackerEngine->waitForRequestFinished(&request, 1000);
+
+    return request.contacts();
+}
+
+void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
+{
+    if( !QFileInfo(PATH_TO_SPARQL_TESTS).exists() )
+    {
+        qWarning()<<Q_FUNC_INFO<<"is disabled - test scripts are not installed";
+        return;
+    }
+    insertContact(999999, "i999999@ovi.com", "online");
+    QContact c = contact(999999, QStringList()<<QContactOnlineAccount::DefinitionName);
+    QVERIFY(c.id().localId() == 999999);
+
+    QContact firstContact;
+    QContactName name;
+    name.setFirst("FirstMetaWithIM");
+    firstContact.saveDetail(&name);
+    QVERIFY(trackerEngine->saveContact(&firstContact, error));
+
+    // save metarelationship
+    QContactRelationship rel;
+    rel.setRelationshipType(QContactRelationship::Is);
+    rel.setFirst(firstContact.id());
+    rel.setSecond(c.id());
+    QContactRelationshipSaveRequest req;
+    req.setRelationships(QList<QContactRelationship>()<<rel);
+    QVERIFY(trackerEngine->startRequest(&req));
+    trackerEngine->waitForRequestFinished(&req, 1000);
+    QVERIFY(req.isFinished());
+    QVERIFY(QContactManager::NoError == req.error());
+
+    // expected behavior - for now - is that master contact contains details from
+    // IMContacts - that way we don't have to use QContactRelationships to fetch
+    // all contacts in master contact in order to calculate master presence
+    {
+        QList<QContact> cons = contacts(QList<QContactLocalId> ()
+                << firstContact.id().localId() << 999999, QStringList()
+                << QContactOnlineAccount::DefinitionName);
+        QVERIFY(cons.size() == 1);
+        QVERIFY(cons[0].id().localId() == firstContact.localId());
+
+        bool containDetail = false;
+        foreach(QContactOnlineAccount det, cons[0].details<QContactOnlineAccount>())
+            {
+                if (det.value("Account") == "i999999@ovi.com" // deprecated, going to account URI
+                        || det.accountUri() == "i999999@ovi.com")
+                {
+                    QVERIFY(det.presence() == QContactOnlineAccount::PresenceAvailable);
+                    // keeping the reference to tp contact
+                    QVERIFY(det.value("QContactLocalId") == "999999");
+                    containDetail = true;
+                }
+            }
+        QVERIFY(containDetail);
+    }
+    //now update presence to IM contact and check it in metacontact (TODO and if signal is emitted)
+    updateIMContactStatus(999999, "offline");
+    {
+        QList<QContact> cons = contacts(QList<QContactLocalId> ()
+                << firstContact.id().localId() << 999999, QStringList()
+                << QContactOnlineAccount::DefinitionName);
+        QVERIFY(cons.size() == 1);
+        QVERIFY(cons[0].id().localId() == firstContact.localId());
+
+        bool containDetail = false;
+        foreach(QContactOnlineAccount det, cons[0].details<QContactOnlineAccount>())
+            {
+                if (det.value("Account") == "i999999@ovi.com" // deprecated, going to account URI
+                        || det.accountUri() == "i999999@ovi.com")
+                {
+                    QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
+                    // keeping the reference to tp contact
+                    QVERIFY(det.value("QContactLocalId") == "999999");
+                    containDetail = true;
+                }
+            }
+        QVERIFY(containDetail);
+    }
+
+    // remove them
+    QVERIFY2(trackerEngine->removeContact(c.localId(), error), "Removing a contact failed");
+    QVERIFY2(trackerEngine->removeContact(999999, error), "Removing IM contact failed");
 }
 
 void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
