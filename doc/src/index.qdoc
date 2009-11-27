@@ -156,6 +156,8 @@
     application enumerates available connections, shows counters, and allows
     the user to connect or disconnect
         \endlist
+    
+    For more details, see the \l {Bearer management} {Bearer Management API overview}.
 
     \section2 Contacts
 
@@ -163,7 +165,7 @@
     It includes the ability to create, edit, list, delete and lookup contact
     information whether it is stored locally or remotely.
 
-    For more details, see the \l {Contacts} {contacts API overview}.
+    For more details, see the \l {Contacts} {Contacts API overview}.
 
     \section2 Publish and Subscribe
 
@@ -177,6 +179,8 @@
 
     At this stage the API is intended to act as a common communications
     method between applications, whether local or remote.
+    
+    For more details, see the \l {Publish and Subscribe} {Publish and Subscribe API overview}.
 
     \section2 Location
 
@@ -185,6 +189,8 @@
     from satellite or other sources about the user, including latitude and
     longitude, bearing, speed and altitude. It will enable a range of
     geographical applications, for example, maps.
+    
+    For more details, see the \l {Location} {Location API overview}.
 
     \section2 Messaging
 
@@ -195,7 +201,7 @@
     preferred messaging client to either display an existing message, 
     or compose a message.
 
-    For more details see the \l {Messaging API} {messaging API overview}.
+    For more details see the \l {Messaging} {Messaging API overview}.
 
     \section2 Multimedia
 
@@ -205,6 +211,8 @@
 
     Support for a camera is available in this release as a technology
     preview which we are glad to present to the community.
+    
+    For more details see the \l {Multimedia} {Multimedia API overview}.
 
     \section2 Service Framework
 
@@ -220,6 +228,8 @@
     Since this is an abstraction layer then the app does not need to be
     concerned with the underlying protocol, where the servers are, the
     hardware peculiarities with networking and other low level details.
+    
+    For more details see the \l {Qt Service Framework} {Service Framework API overview}.
 
     \section2 System Information
 
@@ -227,6 +237,8 @@
     available will cover software version numbers, hardware features,
     network connection types and status, display, data storage devices,
     device information and the screensaver.
+    
+    For more details see the \l {System Information} {System Information API overview}.
 
     \section1 Future Additions
 
