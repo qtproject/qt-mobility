@@ -248,16 +248,22 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
 
     //check account
 
-    if(!message.parentAccountId().isValid())
+    QMessageAccountId accountId = message.parentAccountId();
+
+    if(!accountId.isValid())
     {
-        qWarning() << "Invalid account for sending/composition";
-        _lastError = QMessageStore::InvalidId;
-        return false;
+        accountId = QMessageAccount::defaultAccount(message.type());
+        if(!accountId.isValid())
+        {
+            qWarning() << "Invalid account for sending/composition";
+            _lastError = QMessageStore::InvalidId;
+            return false;
+        }
     }
 
     //check account/message type compatibility
 
-    QMessageAccount account(message.parentAccountId());
+    QMessageAccount account(accountId);
     if(!(account.messageTypes() & message.type()))
     {
         qWarning() << "Message type unsupported by account";
@@ -271,7 +277,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
         MAILCOMPOSEFIELDS mcf;
         memset(&mcf,0,sizeof(mcf));
 
-        Lptstr accountName = LptstrFromQString(QMessageAccount(message.parentAccountId()).name());
+        Lptstr accountName = LptstrFromQString(QMessageAccount(accountId).name());
         Lptstr to;
         Lptstr cc;
         Lptstr bcc;
@@ -382,8 +388,13 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     }
 
     QMessage outgoing(message);
-    //ensure the message is marked read otherwise showForm displays the message as incomming
+
+    //ensure the message is marked read otherwise MapiForm displays the message as incomming
     outgoing.setStatus(QMessage::Read,true);
+
+    //set default account if unset
+    if(!outgoing.parentAccountId().isValid())
+        outgoing.setParentAccountId(accountId);
 
     MapiStorePtr mapiStore = mapiSession->findStore(&_lastError, outgoing.parentAccountId(),false);
 
