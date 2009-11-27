@@ -48,7 +48,7 @@
 
 QT_BEGIN_HEADER
 
-namespace QtMobility {
+QTM_BEGIN_NAMESPACE
 
 class QGeoPositionInfo;
 class QGeoAreaMonitorPrivate;
@@ -80,6 +80,8 @@ private:
 }; 
 
 }
+
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 
