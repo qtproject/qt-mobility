@@ -4,7 +4,10 @@ DEPENDPATH += .
 INCLUDEPATH += .
 QT += network
 
-CONFIG += Mobility
+#! [0]
+CONFIG += mobility
 MOBILITY += systeminfo
+#! [0]
+
 # Input
 SOURCES += main.cpp
