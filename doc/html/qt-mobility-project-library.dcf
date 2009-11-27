@@ -3111,6 +3111,9 @@
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
     </section>
+    <section ref="future.html" title="Future Additional APIs">
+        <keyword ref="future.html">Future Additional APIs</keyword>
+    </section>
     <section ref="gpl.html" title="GNU General Public License (GPL)">
         <keyword ref="gpl.html">GNU General Public License (GPL)</keyword>
     </section>

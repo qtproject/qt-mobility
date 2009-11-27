@@ -77,7 +77,7 @@
     This release contains the following APIs:
 
     \annotatedlist  mobility
-    
+
     These APIs give the developer a wide range of desirable functions for a
     mobile platform, but these now become possible on platforms not
     traditionally associated with some of the features. A mobile device
@@ -223,9 +223,9 @@
     network connection types and status, display, data storage devices,
     device information and the screensaver.
 
-    \section1 Technology Preview
+    \section1 Future Additions
 
-    Two additional APIs are included as a Technology Preview only. These
+    Two additional APIs are included which show future additional APIs. These
     are pre-release versions and the API will likely change before they are
     officially released. You may use these APIs in accordance with the terms and
     conditions contained in the Technology Preview License Agreement
@@ -236,10 +236,10 @@
     are proud of the work we have done on this project and want to show
     not only what we are delivering now but what is around the corner.
 
-    \l{preview.html#Management-of-Versit-Documents}{Versit} is an API for
+    \l{future.html#Management-of-Versit-Documents}{Versit} is an API for
     managing Versit documents, such as vCards.
 
-    \l{preview.html#Camera-Support}{Camera} will be a part of the Multimedia API.
+    \l{future.html#Camera-Support}{Camera} will be a part of the Multimedia API.
 
 
 
@@ -429,5 +429,6 @@
     Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com
 
     And please report any bugs you may find to \l {http://bugreports.qt.nokia.com}
+
 */
 

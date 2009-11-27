@@ -6492,7 +6492,7 @@
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
-            <contents name="technology-preview" title="Technology Preview" level="1"/>
+            <contents name="future-additions" title="Future Additions" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
         </page>
@@ -6698,6 +6698,12 @@
             <contents name="how-to-register-and-unregister-service-plugins-in-s60" title="How to register and unregister service plugins in S60?" level="1"/>
             <contents name="what-s-special-from-the-security-perspective" title="What's special from the security perspective?" level="1"/>
             <contents name="directory-structure" title="Directory structure" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="future.html" href="future.html" subtype="page" title="Future Additional APIs" fulltitle="Future Additional APIs" subtitle="" location="future.qdoc">
+            <target name="management-of-versit-documents"/>
+            <target name="camera-support"/>
+            <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
+            <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
         </page>
         <page access="public" status="commendable" name="player" href="player.html" subtype="example" title="Media Player Example" fulltitle="Media Player Example" subtitle="" location="player.qdoc">
             <page access="public" status="commendable" name="player/player.cpp" href="player-player-cpp.html" subtype="file" title="" fulltitle="player.cpp Example File" subtitle="player/player.cpp" location=""/>
