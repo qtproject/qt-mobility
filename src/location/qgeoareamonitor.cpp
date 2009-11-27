@@ -46,7 +46,8 @@
 
 /*!
     \class QGeoAreaMonitor
-    \brief The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
+    \brief The QGeoAreaMonitor class enables the detection of proximity
+    changes for a specified set of coordinates.
     \ingroup location
 
     A QGeoAreaMonitor emits signals when the current position is in
@@ -71,7 +72,7 @@
                 monitor->setRadius(100);
             }
 
-        public slots:
+        public Q_SLOTS:
             void areaEntered(const QGeoPositionInfo &update)
             {
                 qDebug() << "Now within 100 meters, current position is" << update.coordinate();
