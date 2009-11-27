@@ -228,6 +228,8 @@ Several failing autotests.
 \section2 Maemo Specific Issues
 \list
     \o Messaging backend for Maemo is not yet implemented.
+    \o The Publish and Subscribe API only supports subscription but not publification.
+    \o Location backend for Maemo is not yet implemented.
 \endlist
 
 \section2 Windows Mobile Specific Issues

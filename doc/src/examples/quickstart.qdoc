@@ -59,9 +59,7 @@ One can start using Qt Mobility with 3 simple steps.
 \endlist
 
 Steps 1 and 2 are shown in the example below:
-\quotefromfile quickstart/main.cpp
-\skipto QApplication
-\printuntil }
+\snippet quickstart/main.cpp 0
 
 Here we are using the QSystemInfo headers to print out the 
 system's current country code.  All the domain APIs are wrapped
@@ -72,9 +70,7 @@ qualify their symbols e.g. \c {QtMobility::QSystemInfo s}.
 In step 3, to specify that our project is using
 System Information we declare in the project file:
 
-\quotefromfile quickstart/quickstart.pro
-\skipto CONFIG
-\printuntil MOBILITY
+\snippet quickstart/quickstart.pro 0
 
 Here we've declared that the application uses
 Qt Mobility and that we are using the 

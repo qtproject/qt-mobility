@@ -8,7 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="//apple_ref/cpp/cl//QMessageOrdering" />
+<a name="//apple_ref/cpp/cl//QMessageOrdering"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -56,7 +56,7 @@
 <p>See also <a href="qmessagestore.html">QMessageStore</a> and <a href="qmessagefilter.html">QMessageFilter</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMessageOrdering/QMessageOrdering" />
+<a name="//apple_ref/cpp/instm/QMessageOrdering/QMessageOrdering"></a>
 <h3 class="fn"><a name="QMessageOrdering"></a>QMessageOrdering::QMessageOrdering ()</h3>
 <p>Create a <a href="qmessageordering.html">QMessageOrdering</a> with specifying matching parameters.</p>
 <p>A default-constructed ordering (one for which <a href="qmessageordering.html#isEmpty">isEmpty</a>() returns true) sorts no messages.</p>
@@ -65,61 +65,61 @@
 <p>Windows mobile and desktop platforms do not support ordering <a href="qmessageordering.html#bySender">bySender</a>() and <a href="qmessageordering.html#byRecipients">byRecipients</a>(), additionally the Windows mobile platform does not support ordering <a href="qmessageordering.html#byTimeStamp">byTimeStamp</a>() and <a href="qmessageordering.html#bySize">bySize</a>().</p>
 <h3 class="fn"><a name="QMessageOrdering-2"></a>QMessageOrdering::QMessageOrdering ( const QMessageOrdering &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QMessageOrdering/~QMessageOrdering" />
+<a name="//apple_ref/cpp/instm/QMessageOrdering/~QMessageOrdering"></a>
 <h3 class="fn"><a name="dtor.QMessageOrdering"></a>QMessageOrdering::~QMessageOrdering ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the ordering.</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/byPriority" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/byPriority"></a>
 <h3 class="fn"><a name="byPriority"></a>QMessageOrdering QMessageOrdering::byPriority ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by their priority, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#priority">QMessage::priority</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/byReceptionTimeStamp" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/byReceptionTimeStamp"></a>
 <h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageOrdering QMessageOrdering::byReceptionTimeStamp ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by their reception timestamp, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">QMessage::receivedDate</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/byRecipients" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/byRecipients"></a>
 <h3 class="fn"><a name="byRecipients"></a>QMessageOrdering QMessageOrdering::byRecipients ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by the addresses to which they were sent, according to <i>order</i>.</p>
 <p>Not supported on the Windows mobile and desktop platforms.</p>
 <p>See also <a href="qmessage.html#to">QMessage::to</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/bySender" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/bySender"></a>
 <h3 class="fn"><a name="bySender"></a>QMessageOrdering QMessageOrdering::bySender ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by the address from which they were sent, according to <i>order</i>.</p>
 <p>Not supported on the Windows mobile and desktop platforms.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/bySize" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/bySize"></a>
 <h3 class="fn"><a name="bySize"></a>QMessageOrdering QMessageOrdering::bySize ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by their size, according to <i>order</i>.</p>
 <p>Not supported on the Windows mobile platform.</p>
 <p>See also <a href="qmessage.html#size">QMessage::size</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/byStatus" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/byStatus"></a>
 <h3 class="fn"><a name="byStatus"></a>QMessageOrdering QMessageOrdering::byStatus ( <a href="qmessage.html#Status-enum">QMessage::Status</a> <i>flag</i>, <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by their status value <i>flag</i>, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/bySubject" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/bySubject"></a>
 <h3 class="fn"><a name="bySubject"></a>QMessageOrdering QMessageOrdering::bySubject ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by their subject, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#subject">QMessage::subject</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/byTimeStamp" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/byTimeStamp"></a>
 <h3 class="fn"><a name="byTimeStamp"></a>QMessageOrdering QMessageOrdering::byTimeStamp ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by their origination timestamp, according to <i>order</i>.</p>
 <p>Not supported on the Windows mobile platform.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>() and <a href="qmessageordering.html#byReceptionTimeStamp">byReceptionTimeStamp</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageOrdering/byType" />
+<a name="//apple_ref/cpp/clm/QMessageOrdering/byType"></a>
 <h3 class="fn"><a name="byType"></a>QMessageOrdering QMessageOrdering::byType ( <a href="http://qt.nokia.com/doc/4.5/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>order</i> = Qt::AscendingOrder )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns an ordering that sorts messages by their message type, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageOrdering/isEmpty" />
+<a name="//apple_ref/cpp/instm/QMessageOrdering/isEmpty"></a>
 <h3 class="fn"><a name="isEmpty"></a>bool QMessageOrdering::isEmpty () const</h3>
 <p>Returns true if the ordering remains empty after default construction; otherwise returns false.</p>
-<a name="//apple_ref/cpp/instm/QMessageOrdering/isSupported" />
+<a name="//apple_ref/cpp/instm/QMessageOrdering/isSupported"></a>
 <h3 class="fn"><a name="isSupported"></a>bool QMessageOrdering::isSupported () const</h3>
 <p>Returns true if the ordering is supported on the current platform; otherwise returns false.</p>
-<a name="//apple_ref/cpp/instm/QMessageOrdering/operator+" />
+<a name="//apple_ref/cpp/instm/QMessageOrdering/operator+"></a>
 <h3 class="fn"><a name="operator-2b"></a>QMessageOrdering QMessageOrdering::operator+ ( const QMessageOrdering &amp; <i>other</i> ) const</h3>
 <p>Returns an ordering that which is the result of concatenating the vaue of this ordering and the value of ordering <i>other</i>.</p>
 <p>This function determines sorting precedence.</p>
 <p>On the Windows Mobile platform <a href="qmessageordering.html#bySubject">bySubject</a>() and <a href="qmessageordering.html#byReceptionTimeStamp">byReceptionTimeStamp</a>() orderings can not be combined with each other.</p>
-<a name="//apple_ref/cpp/instm/QMessageOrdering/operator+=" />
+<a name="//apple_ref/cpp/instm/QMessageOrdering/operator+="></a>
 <h3 class="fn"><a name="operator-2b-eq"></a>QMessageOrdering &amp; QMessageOrdering::operator+= ( const QMessageOrdering &amp; <i>other</i> )</h3>
 <p>Appends the value of the ordering <i>other</i> with the value of this ordering and assigns the result to this ordering.</p>
 <p>This function determines sorting precedence.</p>

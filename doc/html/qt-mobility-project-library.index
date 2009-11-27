@@ -6533,12 +6533,16 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="detailed-layer-descriptions" title="Detailed Layer Descriptions" level="1"/>
             <contents name="shared-memory-layer" title="Shared Memory Layer" level="2"/>
+            <contents name="symbian-settings-layer" title="Symbian Settings Layer" level="2"/>
+            <contents name="declaring-value-space-paths" title="Declaring Value Space Paths" level="3"/>
+            <contents name="location-of-qcrml-files" title="Location of QCRML Files" level="3"/>
+            <contents name="limitations" title="Limitations" level="3"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
             <contents name="battery-charging-accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
             <contents name="namespaces-and-classes" title="Namespaces and Classes" level="1"/>
         </page>
-        <page access="public" status="commendable" name="systeminfo" href="systeminfo.html" subtype="group" title="System Information" fulltitle="System Information" subtitle="" location="si.qdoc"/>
+        <page access="public" status="commendable" name="systeminfo" href="systeminfo.html" subtype="group" title="System Information Classes" fulltitle="System Information Classes" subtitle="" location="si.qdoc"/>
         <page access="public" status="commendable" name="systeminfo.html" href="systeminfo.html" subtype="page" title="System Information" fulltitle="System Information" subtitle="" location="si.qdoc">
             <contents name="system-information" title="System Information" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
@@ -6603,7 +6607,7 @@
             <page access="public" status="commendable" name="samplephonebook/main.cpp" href="samplephonebook-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="samplephonebook/main.cpp" location=""/>
             <page access="public" status="commendable" name="samplephonebook/samplephonebook.pro" href="samplephonebook-samplephonebook-pro.html" subtype="file" title="" fulltitle="samplephonebook.pro Example File" subtitle="samplephonebook/samplephonebook.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="messaging.html" href="messaging.html" subtype="page" title="Messaging API" fulltitle="Messaging API" subtitle="" location="messaging.qdoc">
+        <page access="public" status="commendable" name="messaging.html" href="messaging.html" subtype="page" title="Messaging" fulltitle="Messaging" subtitle="" location="messaging.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
