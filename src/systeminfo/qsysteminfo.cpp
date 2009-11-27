@@ -576,7 +576,7 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 // display
  /*!
    \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
-   Constructs a QSystemDisplayInfo object.
+   Constructs a QSystemDisplayInfo object with the given \a parent.
  */
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 

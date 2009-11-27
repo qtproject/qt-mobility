@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QDOCINDEX>
-<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0">
+<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0.0">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationship" href="qcontactrelationship.html" location="qcontactrelationship.h" bases="" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="HasMember" fullname="QContactRelationship::HasMember" href="qcontactrelationship.html#HasMember-var" location="qcontactrelationship.h" type="const char *" static="false"/>
@@ -2454,6 +2454,37 @@
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QCameraControl" fullname="QCameraControl::QCameraControl" href="qcameracontrol.html#QCameraControl" location="qcameracontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCameraControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" href="qgeoareamonitor.html" location="qgeoareamonitor.h" bases="QObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.h" type="QGeoCoordinate">
+                <getter name="center"/>
+                <setter name="setCenter"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.h" type="qreal">
+                <getter name="radius"/>
+                <setter name="setRadius"/>
+            </property>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" fullname="QGeoAreaMonitor::QGeoAreaMonitor" href="qgeoareamonitor.html#QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoAreaMonitor(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoAreaMonitor" fullname="QGeoAreaMonitor::~QGeoAreaMonitor" href="qgeoareamonitor.html#dtor.QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoAreaMonitor()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QGeoAreaMonitor::setCenter" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="center" type="void" signature="setCenter(const QGeoCoordinate &amp; coordinate)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="center" type="QGeoCoordinate" signature="center() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QGeoAreaMonitor::setRadius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="radius" type="void" signature="setRadius(qreal radius)">
+                <parameter left="qreal" right="" name="radius" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="radius" type="qreal" signature="radius() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="createDefaultMonitor" fullname="QGeoAreaMonitor::createDefaultMonitor" href="qgeoareamonitor.html#createDefaultMonitor" location="qgeoareamonitor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoAreaMonitor *" signature="createDefaultMonitor(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="areaEntered" fullname="QGeoAreaMonitor::areaEntered" href="qgeoareamonitor.html#areaEntered" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaEntered(const QGeoPositionInfo &amp; update)">
+                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="areaExited" fullname="QGeoAreaMonitor::areaExited" href="qgeoareamonitor.html#areaExited" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaExited(const QGeoPositionInfo &amp; update)">
+                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaServiceProviderHint" href="qmediaserviceproviderhint.html" location="qmediaserviceprovider.h" bases="" module="">
@@ -6465,12 +6496,6 @@
             <contents name="bearer-monitor-example" title="Bearer Monitor Example" level="2"/>
             <contents name="classes" title="Classes" level="1"/>
         </page>
-        <page access="public" status="commendable" name="commercialeditions.html" href="commercialeditions.html" subtype="page" title="Qt Commercial Editions" fulltitle="Qt Commercial Editions" subtitle="" location="commercialeditions.qdoc">
-            <keyword name="qt-full-framework-edition"/>
-            <keyword name="qt-gui-framework-edition"/>
-        </page>
-        <page access="public" status="commendable" name="full-framework-edition-classes.html" href="full-framework-edition-classes.html" subtype="page" title="Qt Full Framework Edition" fulltitle="Qt Full Framework Edition" subtitle="" location="commercialeditions.qdoc"/>
-        <page access="public" status="commendable" name="gui-framework-edition-classes.html" href="gui-framework-edition-classes.html" subtype="page" title="Qt GUI Framework Edition" fulltitle="Qt GUI Framework Edition" subtitle="" location="commercialeditions.qdoc"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (Technical Preview)" fulltitle="Qt Mobility Project APIs (Technical Preview)" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (Technical Preview) Overview" fulltitle="Qt Mobility Project APIs (Technical Preview) Overview" subtitle="" location="index.qdoc">
@@ -6487,7 +6512,7 @@
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
-            <contents name="technology-preview" title="Technology Preview" level="1"/>
+            <contents name="future-additions" title="Future Additions" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
         </page>
@@ -6533,12 +6558,16 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="detailed-layer-descriptions" title="Detailed Layer Descriptions" level="1"/>
             <contents name="shared-memory-layer" title="Shared Memory Layer" level="2"/>
+            <contents name="symbian-settings-layer" title="Symbian Settings Layer" level="2"/>
+            <contents name="declaring-value-space-paths" title="Declaring Value Space Paths" level="3"/>
+            <contents name="location-of-qcrml-files" title="Location of QCRML Files" level="3"/>
+            <contents name="limitations" title="Limitations" level="3"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
             <contents name="battery-charging-accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
             <contents name="namespaces-and-classes" title="Namespaces and Classes" level="1"/>
         </page>
-        <page access="public" status="commendable" name="systeminfo" href="systeminfo.html" subtype="group" title="System Information" fulltitle="System Information" subtitle="" location="si.qdoc"/>
+        <page access="public" status="commendable" name="systeminfo" href="systeminfo.html" subtype="group" title="System Information Classes" fulltitle="System Information Classes" subtitle="" location="si.qdoc"/>
         <page access="public" status="commendable" name="systeminfo.html" href="systeminfo.html" subtype="page" title="System Information" fulltitle="System Information" subtitle="" location="si.qdoc">
             <contents name="system-information" title="System Information" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
@@ -6603,7 +6632,7 @@
             <page access="public" status="commendable" name="samplephonebook/main.cpp" href="samplephonebook-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="samplephonebook/main.cpp" location=""/>
             <page access="public" status="commendable" name="samplephonebook/samplephonebook.pro" href="samplephonebook-samplephonebook-pro.html" subtype="file" title="" fulltitle="samplephonebook.pro Example File" subtitle="samplephonebook/samplephonebook.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="messaging.html" href="messaging.html" subtype="page" title="Messaging API" fulltitle="Messaging API" subtitle="" location="messaging.qdoc">
+        <page access="public" status="commendable" name="messaging.html" href="messaging.html" subtype="page" title="Messaging" fulltitle="Messaging" subtitle="" location="messaging.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
@@ -6718,6 +6747,12 @@
             <contents name="how-to-register-and-unregister-service-plugins-in-s60" title="How to register and unregister service plugins in S60?" level="1"/>
             <contents name="what-s-special-from-the-security-perspective" title="What's special from the security perspective?" level="1"/>
             <contents name="directory-structure" title="Directory structure" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="future.html" href="future.html" subtype="page" title="Future Additional APIs" fulltitle="Future Additional APIs" subtitle="" location="future.qdoc">
+            <target name="management-of-versit-documents"/>
+            <target name="camera-support"/>
+            <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
+            <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
         </page>
         <page access="public" status="commendable" name="player" href="player.html" subtype="example" title="Media Player Example" fulltitle="Media Player Example" subtitle="" location="player.qdoc">
             <page access="public" status="commendable" name="player/player.cpp" href="player-player-cpp.html" subtype="file" title="" fulltitle="player.cpp Example File" subtitle="player/player.cpp" location=""/>

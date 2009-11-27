@@ -35,9 +35,7 @@ Rectangle {
             width: parent.width
             anchors.bottom: parent.bottom
             source: "bubble.png"
-            emitting: false
-            streamIn: true
-            count: batteryCharge.value / 5
+            count: 0
             velocity: 30
             velocityDeviation: 10
             angle: -90
@@ -52,7 +50,8 @@ Rectangle {
             when: batteryCharging.value
             PropertyChanges {
                 target: Bubbles
-                emitting: true
+                count: batteryCharge.value / 5
+                emissionRate: 5
             }
         },
         //! [3]

@@ -85,14 +85,14 @@ these domains have dependencies and these are outlined below:
     \o  The Maemo 6 backend depends on libqttracker.
         For more information on libqttracker visit
         \l {http://maemo.gitorious.org/maemo-af/libqttracker}
-        {libqttracker public repository}
+        {libqttracker public repository}.
         Other components offered by the Maemo 6 platform may be required
         in order to support the full functionality of the Maemo 6 backend.
     \o  Y
     \o  N
 \row
     \o  Service Framework
-    \o  The service framework depends on SQLite version 3 and that
+    \o  The Service Framework depends on SQLite version 3 and that
         Qt has been built with an sqlite driver.  Building
         the driver by Qt is most easily achieved by
         using one of the following configure options:
@@ -101,7 +101,7 @@ these domains have dependencies and these are outlined below:
     \o  Y
 \row
     \o  Multimedia
-    \o  The multimedia component depends on the QtMultimedia
+    \o  The Multimedia component depends on the QtMultimedia
         module in Qt.  Qt by default is configured to make this
         module with the \c {-multimedia} option.
         
@@ -125,10 +125,10 @@ these domains have dependencies and these are outlined below:
 
 \row
     \o  System Information
-    \o  The Linux backend depands on QtDBus, HAL and NetworkManager, although System Information will 
-        compile without them, there will be reduced functionality.
+    \o  The Linux backend depands on QtDBus, HAL and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager}, 
+        although System Information will compile without them, there will be reduced functionality.
        
-        On Mac OS X, Systeminfo depends on the 10.6 SDK (XCode 3.2.1), although it will compile
+        On Mac OS X, System Information depends on the 10.6 SDK (XCode 3.2.1), although it will compile
         with older SDK's there will be reduced functionality.
     \o  N(Y)
     \o  N
@@ -140,8 +140,8 @@ these domains have dependencies and these are outlined below:
     \o  N
 \row
     \o  Bearer Management
-    \o  The Linux backend depends on QtDBus and NetworkManager, although Bearer Management will
-        compile without them there will be reduced functionality.
+    \o  The Linux backend depends on QtDBus and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager}, 
+        although Bearer Management will compile without them there will be reduced functionality.
     \o  N(Y)
     \o  N
 \endtable
@@ -235,10 +235,10 @@ mobility libraries into $PWD/install.
     nmake install
 \endcode
 
-\section2 Building Individual Qt Mobility Components
+\section2 Building Individual Qt Mobility Domains
 
-    Qt Mobility is comprised of several components but all of
-    these may not need to be built.  To build a single component,
+    Qt Mobility is comprised of several domains but all of
+    these may not need to be built.  To build a single domain,
     perform the configure step as outlined above,
     and then perform the make step in the appropriate directory
     to create the desired library.

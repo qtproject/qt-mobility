@@ -37,16 +37,16 @@
 <p>While not supported for this release the Windows Desktop backend requires Microsoft Outlook 2003 or later, and Microsoft Windows XP to be installed.</p>
 <p>The messaging API SMS/MMS functionality requires that the platform provides SMS/MMS facilites. Email functionality requires that an email account is available on the platform.</p>
 </td><td>N</td><td>Y</td></tr>
-<tr valign="top" class="even"><td>Contacts</td><td>The Maemo 6 backend depends on libqttracker. For more information on libqttracker visit <a href="http://maemo.gitorious.org/maemo-af/libqttracker">libqttracker public repository</a> Other components offered by the Maemo 6 platform may be required in order to support the full functionality of the Maemo 6 backend.</td><td>Y</td><td>N</td></tr>
+<tr valign="top" class="even"><td>Contacts</td><td>The Maemo 6 backend depends on libqttracker. For more information on libqttracker visit <a href="http://maemo.gitorious.org/maemo-af/libqttracker">libqttracker public repository</a>. Other components offered by the Maemo 6 platform may be required in order to support the full functionality of the Maemo 6 backend.</td><td>Y</td><td>N</td></tr>
 <tr valign="top" class="odd"><td>Service Framework</td><td>The service framework depends on SQLite version 3 and that Qt has been built with an sqlite driver. Building the driver by Qt is most easily achieved by using one of the following configure options: <tt>-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite</tt></td><td>N</td><td>Y</td></tr>
 <tr valign="top" class="even"><td>Multimedia</td><td>The multimedia component depends on the <a href="http://qt.nokia.com/doc/4.5/qtmultimedia.html">QtMultimedia</a> module in Qt. Qt by default is configured to make this module with the <tt>-multimedia</tt> option.<p>The linux X11 backend requires that gstreamer be installed, including libgstreamer, gstreamer-devel, plugins-base and plugins-good packages. The linux backend was tested with gstreamer 0.10.19 and newer versions.</p>
 </td><td>Y</td><td>N</td></tr>
 <tr valign="top" class="odd"><td>Location</td><td>The Symbian backend uses the LBT (Location Based Triggering) library for area notifications. Area notifications will be disabled at compile time if the LBT library is not found.<p>The LBT library is not publicly available at the time of writing. The developer documentation for <a href="http://carbidehelp.nokia.com/help/index.jsp?topic=/S60_5th_Edition_Cpp_Developers_Library/GUID-759FBC7F-5384-4487-8457-A8D4B76F6AA6/html/Location_ServicesIndexPage.html">S60 Location Services</a> is probably the best source for LBT availability updates, as it will be updated when the library is relased.</p>
 </td><td>N(Y)</td><td>N</td></tr>
-<tr valign="top" class="even"><td>System Information</td><td>The Linux backend depands on <a href="http://qt.nokia.com/doc/4.5/qtdbus.html">QtDBus</a>, HAL and NetworkManager, although System Information will compile without them, there will be reduced functionality.<p>On Mac OS X, Systeminfo depends on the 10.6 SDK (<a href="http://qt.nokia.com/doc/4.5/deployment-mac.html">XCode</a> 3.2&#x2e;1), although it will compile with older SDK's there will be reduced functionality.</p>
+<tr valign="top" class="even"><td>System Information</td><td>The Linux backend depands on <a href="http://qt.nokia.com/doc/4.5/qtdbus.html">QtDBus</a>, HAL and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although System Information will compile without them, there will be reduced functionality.<p>On Mac OS X, Systeminfo depends on the 10.6 SDK (<a href="http://qt.nokia.com/doc/4.5/deployment-mac.html">XCode</a> 3.2&#x2e;1), although it will compile with older SDK's there will be reduced functionality.</p>
 </td><td>N(Y)</td><td>N</td></tr>
 <tr valign="top" class="odd"><td>Publish &amp; Subscribe</td><td>The Maemo 6 backend depends on <a href="http://maemo.gitorious.org/maemo-af/contextkit">Context Kit</a></td><td>Y</td><td>N</td></tr>
-<tr valign="top" class="even"><td>Bearer Management</td><td>The Linux backend depends on <a href="http://qt.nokia.com/doc/4.5/qtdbus.html">QtDBus</a> and NetworkManager, although Bearer Management will compile without them there will be reduced functionality.</td><td>N(Y)</td><td>N</td></tr>
+<tr valign="top" class="even"><td>Bearer Management</td><td>The Linux backend depends on <a href="http://qt.nokia.com/doc/4.5/qtdbus.html">QtDBus</a> and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although Bearer Management will compile without them there will be reduced functionality.</td><td>N(Y)</td><td>N</td></tr>
 </table></p>
 <a name="unpacking"></a>
 <h2>Unpacking</h2>
@@ -120,6 +120,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>
