@@ -39,16 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QMAILFOLDERFWD_H
-#define QMAILFOLDERFWD_H
+/*!
+\page future.html
 
-#include "qmailglobal.h"
+\title Future Additional APIs
 
-class QTOPIAMAIL_EXPORT QMailFolderFwd
-{
-public:
-    enum PredefinedFolderId { LocalStorageFolderId = 1 };
-};
+\brief Additional APIs under development.
 
-#endif
+
+\target {Management of Versit Documents}
+\section1 Management of Versit Documents
+
+\l{Versit API}{Versit API Documentation}
+
+Versit Classes.
+\annotatedlist versit
+
+
+\target {Camera Support}
+\section1 Camera Support (Multimedia)
+
+\annotatedlist camera
+
+
+
+*/
+
 
