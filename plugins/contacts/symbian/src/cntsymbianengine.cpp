@@ -236,44 +236,6 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QList<QContactSortOrder>
 }
 
 /*!
- * Complete list of sorted contact IDs of a certain contact
- * type from the database based on a list of sort orders.
- *
- * \param contactType Contact type
- * \param sortOrders Sort order
- * \param error Qt error code.
- * \return List of all IDs for contact entries in the database,
- *  or an empty list if there was a problem or the database is
- *  empty.
- */
-QList<QContactLocalId> CntSymbianEngine::contacts(const QString& contactType, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-    QList<QContactLocalId> contactIds;
-
-    //retrieve contacts
-    if(contactType == QContactType::TypeContact) {
-        return contacts(sortOrders, error);
-    } else if(contactType == QContactType::TypeGroup) {
-        //retrieve groups
-        contactIds = groups(error);
-
-        // Check if sorting is supported by backend
-        if(m_contactSorter->sortOrderSupported(sortOrders)) {
-            return m_contactSorter->sort(contactIds, sortOrders, error);
-            //return contactIds;
-        } else {
-            // Backend does not support this sorting.
-            // Fall back to slow QContact-level sorting method.
-            return slowSort(contactIds, sortOrders, error);
-        }
-    }
-
-    // Should never happen
-    error = QContactManager::BadArgumentError;
-    return contactIds; // empty
-}
-
-/*!
  * Read a contact from the contact database.
  *
  * \param contactId The Id of the contact to be retrieved.

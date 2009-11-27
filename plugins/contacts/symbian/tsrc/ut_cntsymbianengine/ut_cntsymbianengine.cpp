@@ -754,7 +754,11 @@ void TestSymbianEngine::retrieveGroup()
     QList<QContactSortOrder> s;
 
     // retrieve group contacts
-    QList<QContactLocalId> grp_ids = m_engine->contacts(QContactType::TypeGroup, s, err);
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
+    filter.setValue(QString(QLatin1String(QContactType::TypeGroup)));
+    
+    QList<QContactLocalId> grp_ids = m_engine->contacts(filter, s, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(err == QContactManager::NoError);
 
@@ -763,7 +767,7 @@ void TestSymbianEngine::retrieveGroup()
     QVERIFY(m_engine->saveContact(&g, err));
     QVERIFY(err == QContactManager::NoError);
 
-    QList<QContactLocalId> grp_ids1 = m_engine->contacts(QContactType::TypeGroup, s, err);
+    QList<QContactLocalId> grp_ids1 = m_engine->contacts(filter, s, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(grp_ids.count() + 1 == grp_ids1.count());
 
@@ -802,6 +806,10 @@ void TestSymbianEngine::singleRelationship()
     else
         isValid = false;
     QVERIFY(isValid);
+    
+    QStringList supportedRelationships =
+        m_engine->supportedRelationshipTypes(QContactType::TypeGroup);
+    QVERIFY(supportedRelationships.contains(QContactRelationship::HasMember));
 }
 
 void TestSymbianEngine::batchRelationships()
