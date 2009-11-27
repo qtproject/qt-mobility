@@ -3137,9 +3137,6 @@
     <section ref="installation.html" title="Installation Guide">
         <keyword ref="installation.html">Installation Guide</keyword>
     </section>
-    <section ref="qtmobility-known-issues.html" title="Known Issues in QtMobility 1.0&#x2e;0 (Technology Preview)">
-        <keyword ref="qtmobility-known-issues.html">Known Issues in QtMobility 1.0&#x2e;0 (Technology Preview)</keyword>
-    </section>
     <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux">
         <keyword ref="licenses-fonts.html">Licenses for Fonts Used in Qt for Embedded Linux</keyword>
     </section>
@@ -3193,6 +3190,9 @@
     </section>
     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian">
         <keyword ref="service-framework-on-symbian.html">Qt Service Framework on Symbian</keyword>
+    </section>
+    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project (Technology Preview)">
+        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project (Technology Preview)</keyword>
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>

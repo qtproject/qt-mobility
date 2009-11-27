@@ -6707,13 +6707,14 @@
             <contents name="building" title="Building" level="1"/>
             <contents name="building-on-unix" title="Building On Unix" level="2"/>
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
-            <contents name="building-individual-qt-mobility-components" title="Building Individual Qt Mobility Components" level="2"/>
+            <contents name="building-individual-qt-mobility-domains" title="Building Individual Qt Mobility Domains" level="2"/>
             <contents name="environment-variables" title="Environment Variables" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWidgetControl_iid" href="qvideowidgetcontrol.html#QVideoWidgetControl_iid" location="qvideowidgetcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWidgetControl" type="" signature="QVideoWidgetControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceControl_iid" href="qaudiodevicecontrol.html#QAudioDeviceControl_iid" location="qaudiodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceControl" type="" signature="QAudioDeviceControl_iid()"/>
-        <page access="public" status="commendable" name="http://bugreports.qt.nokia.com" href="http-bugreports-qt-nokia-com.html" subtype="externalpage" title="QtMobility Bug Tracker" fulltitle="QtMobility Bug Tracker" subtitle="" location="qtmobility-known-issues.qdoc"/>
-        <page access="public" status="commendable" name="qtmobility-known-issues.html" href="qtmobility-known-issues.html" subtype="page" title="Known Issues in QtMobility 1.0.0 (Technology Preview)" fulltitle="Known Issues in QtMobility 1.0.0 (Technology Preview)" subtitle="" location="qtmobility-known-issues.qdoc">
+        <page access="public" status="commendable" name="http://bugreports.qt.nokia.com" href="http-bugreports-qt-nokia-com.html" subtype="externalpage" title="QtMobility Project Bug Tracker" fulltitle="QtMobility Project Bug Tracker" subtitle="" location="qtmobility-known-issues.qdoc"/>
+        <page access="public" status="commendable" name="qtmobility-known-issues.html" href="qtmobility-known-issues.html" subtype="page" title="Release Notes of the QtMobility Project (Technology Preview)" fulltitle="Release Notes of the QtMobility Project (Technology Preview)" subtitle="" location="qtmobility-known-issues.qdoc">
+            <contents name="new-features" title="New Features" level="1"/>
             <contents name="detailed-feature-support-symbian-s60" title="Detailed Feature support - Symbian/S60" level="2"/>
             <contents name="bearer-management-api" title="Bearer Management API" level="3"/>
             <contents name="contacts-api" title="Contacts API" level="3"/>
@@ -6721,21 +6722,22 @@
             <contents name="multimedia-api" title="Multimedia API" level="3"/>
             <contents name="service-framework-api" title="Service Framework API" level="3"/>
             <contents name="system-info-api" title="System Info API" level="3"/>
+            <contents name="known-issues" title="Known Issues" level="1"/>
             <contents name="issues-affecting-all-platforms" title="Issues Affecting All Platforms" level="2"/>
-            <contents name="symbian-s60-support-specific-issues" title="Symbian/S60 Support Specific Issues" level="2"/>
+            <contents name="symbian-s60-specific" title="Symbian/S60 Specific" level="2"/>
             <contents name="bearer-management" title="Bearer Management" level="3"/>
             <contents name="contacts-api" title="Contacts API" level="3"/>
-            <contents name="location-api-issues" title="Location API Issues" level="3"/>
-            <contents name="messaging-api-issues" title="Messaging API Issues" level="3"/>
-            <contents name="multimedia-api-issues" title="Multimedia API Issues" level="3"/>
-            <contents name="publish-and-subscribe-api-issues" title="Publish and Subscribe API Issues" level="3"/>
-            <contents name="service-framework-api-issues" title="Service Framework API Issues" level="3"/>
-            <contents name="system-info-api-issues" title="System Info API Issues" level="3"/>
-            <contents name="maemo-specific-issues" title="Maemo Specific Issues" level="2"/>
-            <contents name="windows-mobile-specific-issues" title="Windows Mobile Specific Issues" level="2"/>
+            <contents name="location-api" title="Location API" level="3"/>
+            <contents name="messaging-api" title="Messaging API" level="3"/>
+            <contents name="multimedia-api" title="Multimedia API" level="3"/>
+            <contents name="publish-and-subscribe-api" title="Publish and Subscribe API" level="3"/>
+            <contents name="service-framework-api" title="Service Framework API" level="3"/>
+            <contents name="system-info-api" title="System Info API" level="3"/>
+            <contents name="maemo-specific" title="Maemo Specific" level="2"/>
+            <contents name="windows-mobile-specific" title="Windows Mobile Specific" level="2"/>
             <contents name="contacts-api" title="Contacts API" level="3"/>
             <contents name="messaging-api" title="Messaging API" level="3"/>
-            <contents name="windows-specific-issues" title="Windows Specific Issues" level="2"/>
+            <contents name="windows-specific" title="Windows Specific" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlaylistControl_iid" href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid" location="qmediaplaylistcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlaylistControl" type="" signature="QMediaPlaylistControl_iid()"/>

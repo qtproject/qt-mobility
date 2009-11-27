@@ -517,7 +517,6 @@
                     <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
                     <section ref="installation.html" title="Installation Guide"/>
-                    <section ref="qtmobility-known-issues.html" title="Known Issues in QtMobility 1.0.0 (Technology Preview)"/>
                     <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux"/>
                     <section ref="licensing.html" title="Licensing Information"/>
                     <section ref="location-overview.html" title="Location"/>
@@ -536,6 +535,7 @@
                     <section ref="index.html" title="Qt Mobility Project APIs (Technical Preview) Overview"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
+                    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project (Technology Preview)"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
                     <section ref="systeminfo.html" title="System Information Classes"/>
@@ -569,7 +569,6 @@
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
-            <keyword name="Known Issues in QtMobility 1.0.0 (Technology Preview)" id="Known Issues in QtMobility 1.0.0 (Technology Preview)" ref="qtmobility-known-issues.html"/>
             <keyword name="Licenses for Fonts Used in Qt for Embedded Linux" id="Licenses for Fonts Used in Qt for Embedded Linux" ref="licenses-fonts.html"/>
             <keyword name="Licensing Information" id="Licensing Information" ref="licensing.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
@@ -3219,6 +3218,7 @@
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
+            <keyword name="Release Notes of the QtMobility Project (Technology Preview)" id="Release Notes of the QtMobility Project (Technology Preview)" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Send Message Example" id="Send Message Example" ref="sendmessage.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
