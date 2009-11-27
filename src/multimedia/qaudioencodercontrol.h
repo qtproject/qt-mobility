@@ -63,7 +63,8 @@ public:
     virtual QStringList supportedAudioCodecs() const = 0;
     virtual QString codecDescription(const QString &codecName) const = 0;
 
-    virtual QList<int> supportedSampleRates(const QAudioEncoderSettings &settings) const = 0;
+    virtual QList<int> supportedSampleRates(const QAudioEncoderSettings &settings,
+                                            bool *continuous = 0) const = 0;
 
     virtual QAudioEncoderSettings audioSettings() const = 0;
     virtual void setAudioSettings(const QAudioEncoderSettings&) = 0;

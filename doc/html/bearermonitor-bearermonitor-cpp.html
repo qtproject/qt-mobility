@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility 1.0: bearermonitor.cpp Example File (bearermonitor/bearermonitor.cpp)</title>
+  <title>Qt Mobility Project 1.0: bearermonitor.cpp Example File (bearermonitor/bearermonitor.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -342,16 +342,16 @@
         }
 
         switch (conf.purpose()) {
-        case QNetworkConfiguration::Unknown:
+        case QNetworkConfiguration::UnknownPurpose:
             configurationPurpose-&gt;setText(tr(&quot;Unknown&quot;));
             break;
-        case QNetworkConfiguration::Public:
+        case QNetworkConfiguration::PublicPurpose:
             configurationPurpose-&gt;setText(tr(&quot;Public&quot;));
             break;
-        case QNetworkConfiguration::Private:
+        case QNetworkConfiguration::PrivatePurpose:
             configurationPurpose-&gt;setText(tr(&quot;Private&quot;));
             break;
-        case QNetworkConfiguration::ServiceSpecific:
+        case QNetworkConfiguration::ServiceSpecificPurpose:
             configurationPurpose-&gt;setText(tr(&quot;Service Specific&quot;));
             break;
         default:
@@ -360,7 +360,7 @@
 
         configurationIdentifier-&gt;setText(conf.identifier());
 
-        configurationRoaming-&gt;setText(conf.roamingAvailable() ? tr(&quot;Available&quot;) : tr(&quot;Not available&quot;));
+        configurationRoaming-&gt;setText(conf.isRoamingAvailable() ? tr(&quot;Available&quot;) : tr(&quot;Not available&quot;));
 
         configurationChildren-&gt;setText(QString::number(conf.children().count()));
 
@@ -411,6 +411,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

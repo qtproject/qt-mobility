@@ -48,7 +48,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlayerControl
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \preliminary

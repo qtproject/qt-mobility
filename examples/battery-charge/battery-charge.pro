@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = battery-consumer battery-provider
+SUBDIRS = battery-subscriber battery-publisher

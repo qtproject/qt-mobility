@@ -48,15 +48,6 @@ symbian: load(data_caging_paths)
 # For symbian, we are not attempting to freeze APIs yet.
 symbian:MMP_RULES += "EXPORTUNFROZEN"
 
-# Which contacts backend we're building
-isEmpty(CONTACTS_BACKENDS) {
-    #no selection implies default selection for current target
-    ## memory / symbian / wince / kabc etc.
-    CONTACTS_BACKENDS += memory 
-    wince*:CONTACTS_BACKENDS += wince
-    symbian:CONTACTS_BACKENDS += symbian
-}
-
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$QT_MOBILITY_BUILD_TREE
 SOURCE_DIR = $$PWD
@@ -139,7 +130,8 @@ symbian {
 # Add the output dirs to the link path too
 mac:contains(QT_CONFIG,qt_framework) {
     #add framework option
-    contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
+    ##contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
+    LIBS+=-F$$OUTPUT_DIR/lib
 }
 LIBS += -L$$OUTPUT_DIR/lib
 

@@ -135,7 +135,7 @@ public: // Data
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
     QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
-    QNetworkConfigurationManager::CapabilityFlags capFlags;
+    QNetworkConfigurationManager::Capabilities capFlags;
     
 private: // Data
     bool               iFirstUpdate; 

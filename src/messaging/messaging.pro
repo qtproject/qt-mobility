@@ -90,19 +90,19 @@ SOURCES += qmessageid_maemo.cpp \
            qmessageserviceaction_maemo.cpp 
 }
 symbian {
-INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
-HEADERS -= qmessagestore_p.h \
+    HEADERS -= qmessagestore_p.h \
            qmessagecontentcontainer_p.h \
            qmessage_p.h
 
-HEADERS += qmtmengine_symbian_p.h \
+    HEADERS += qmtmengine_symbian_p.h \
            qmessagestore_symbian_p.h \
            qmessageserviceaction_symbian_p.h \
            qmessagecontentcontainer_symbian_p.h \
            qmessage_symbian_p.h
 
-SOURCES += qmtmengine_symbian.cpp \
+    SOURCES += qmtmengine_symbian.cpp \
            qmessageid_symbian.cpp \
            qmessagecontentcontainerid_symbian.cpp \
            qmessagefolderid_symbian.cpp \
@@ -120,7 +120,7 @@ SOURCES += qmtmengine_symbian.cpp \
            qmessagestore_symbian.cpp \
            qmessageserviceaction_symbian.cpp
            
-LIBS += -lsendas2 \
+    LIBS += -lsendas2 \
         -lmsgs \
         -letext \
         -lefsrv \
@@ -137,13 +137,20 @@ LIBS += -lsendas2 \
 	-lapgrfx \
 	-lapmime
 
-messaging.sources = QtMessaging.dll
-messaging.path = /sys/bin
-DEPLOYMENT += license messaging
-symbian:TARGET.CAPABILITY = All -TCB -AllFiles -DRM
-symbian:MMP_RULES += EXPORTUNFROZEN
+    messaging.sources = QtMessaging.dll
+    messaging.path = /sys/bin
+    DEPLOYMENT += messaging
 
-MMP_RULES += "EXPORTUNFROZEN"
+    deploy.path = $${EPOCROOT}
+    exportheaders.sources = $$PUBLIC_HEADERS
+    exportheaders.path = epoc32/include
+    
+    for(header, exportheaders.sources) {
+        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+    }
+
+    TARGET.CAPABILITY = All -TCB -AllFiles -DRM
+    MMP_RULES += EXPORTUNFROZEN
 }
 
 win32 {

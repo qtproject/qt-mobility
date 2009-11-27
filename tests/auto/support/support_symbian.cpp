@@ -132,10 +132,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                 QMessage message;
     
                 message.setParentAccountId(accountIds.first());
-#if NOTCOMPILING
-                // Error:  #265-D: member "QtMobility::QMessage::d_ptr" is inaccessible
                 message.d_ptr->_parentFolderId = folderIds.first();                    
-#endif
     
                 QList<QMessageAddress> toList;
                 foreach (const QString &addr, to.split(",")) {

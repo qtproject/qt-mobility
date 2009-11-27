@@ -220,7 +220,7 @@ void QNetworkSessionPrivate::close()
     } else if (isActive) {
         opened = false;
         isActive = false;
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -241,7 +241,7 @@ void QNetworkSessionPrivate::stop()
 
         opened = false;
         isActive = false;
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -277,12 +277,12 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return QNetworkInterface::interfaceFromName(interface);
 }
 
-QVariant QNetworkSessionPrivate::property(const QString& /*key*/) const
+QVariant QNetworkSessionPrivate::sessionProperty(const QString& /*key*/) const
 {
     return QVariant();
 }
 
-void QNetworkSessionPrivate::setProperty(const QString& /*key*/, const QVariant& /*value*/)
+void QNetworkSessionPrivate::setSessionProperty(const QString& /*key*/, const QVariant& /*value*/)
 {
 }
 
@@ -318,7 +318,7 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
     return lastError;
 }
 
-quint64 QNetworkSessionPrivate::sentData() const
+quint64 QNetworkSessionPrivate::bytesWritten() const
 {
 #if defined(BACKEND_NM)
     if( state == QNetworkSession::Connected ) {
@@ -336,7 +336,7 @@ quint64 QNetworkSessionPrivate::sentData() const
     return tx_data;
 }
 
-quint64 QNetworkSessionPrivate::receivedData() const
+quint64 QNetworkSessionPrivate::bytesReceived() const
 {
 #if defined(BACKEND_NM)
     if( state == QNetworkSession::Connected ) {
@@ -431,7 +431,7 @@ void QNetworkSessionPrivate::updateStateFromActiveConfig()
     if (!oldActive && isActive)
         emit quitPendingWaitsForOpened();
     if (oldActive && !isActive)
-        emit q->sessionClosed();
+        emit q->closed();
 
     if (oldState != state)
         emit q->stateChanged(state);
@@ -462,7 +462,7 @@ void QNetworkSessionPrivate::forcedSessionClose(const QNetworkConfiguration &con
         opened = false;
         isActive = false;
 
-        emit q->sessionClosed();
+        emit q->closed();
 
         lastError = QNetworkSession::SessionAbortedError;
         emit q->error(lastError);

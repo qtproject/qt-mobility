@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactrelationshipsaverequest.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QContactRelationshipSaveRequest Class Reference</title>
+  <title>Qt Mobility Project 1.0: QContactRelationshipSaveRequest Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QContactRelationshipSaveRequest"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -56,21 +57,27 @@
 <p>The QContactRelationshipSaveRequest class allows a client to asynchronously request that certain groups be saved to a contacts store.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/QContactRelationshipSaveRequest"></a>
 <h3 class="fn"><a name="QContactRelationshipSaveRequest"></a>QContactRelationshipSaveRequest::QContactRelationshipSaveRequest ()</h3>
 <p>Constructs a new relationship save request</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/~QContactRelationshipSaveRequest"></a>
 <h3 class="fn"><a name="dtor.QContactRelationshipSaveRequest"></a>QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest ()</h3>
 <p>Cleans up the memory in use by this relationship save request</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/progress"></a>
 <h3 class="fn"><a name="progress"></a>void QContactRelationshipSaveRequest::progress ( QContactRelationshipSaveRequest * <i>self</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when some progress has been made on the request, causing either a change of status or an update of results, or both. It identifies which request the signal originated from by including a pointer to <i>self</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/relationships"></a>
 <h3 class="fn"><a name="relationships"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactRelationshipSaveRequest::relationships () const</h3>
 <p>Returns the list of relationships that will be saved if called prior to calling <tt>start()</tt>, otherwise returns the list of relationships as they were saved in the contacts store</p>
 <p>See also <a href="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/setRelationships"></a>
 <h3 class="fn"><a name="setRelationships"></a>void QContactRelationshipSaveRequest::setRelationships ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>contactRelationships</i> )</h3>
 <p>Sets the relationships to save to be <i>contactRelationships</i></p>
 <p>See also <a href="qcontactrelationshipsaverequest.html#relationships">relationships</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

@@ -83,13 +83,13 @@ symbian {
     # Main library
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
     CONTACTS_DEPLOYMENT.path = \sys\bin
+    DEPLOYMENT += CONTACTS_DEPLOYMENT
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders CONTACTS_DEPLOYMENT
 
-    # This is for new exporting system coming in garden
+    #export headers into EPOCROOT
     for(header, exportheaders.sources) {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }

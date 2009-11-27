@@ -1,0 +1,115 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+
+\page service-framework-on-symbian.html
+
+\title Qt Service Framework on Symbian
+
+\section1 How to register and unregister service plugins in S60?
+
+Registration phase is a little different compared to other platforms because of the
+authenticity of the provider is done during (un)registering phase based on the verification 
+of VID/SID (vendor ID or secure ID). A tiny installer application must be implemented 
+by the service provider. Installer application handles registering (and unregistering) 
+of the service. Minimalistic example code for the installer is shown below. The full example 
+of the installer can be found under \c {examples/serviceinstaller_sfw_symbian}.
+
+\code
+int main(int argc, char *argv[])
+{
+    QCoreApplication app(argc, argv);
+
+    QServiceManager s;
+    s.addService("c:\\private\\E00b7e42\\xmldata\\filemanagerservice.xml"); 
+    s.addService("c:\\private\\E00b7e42\\xmldata\\bluetoothtransferservice.xml");
+	
+    return app.exec();
+}
+\endcode
+
+The package file must be updated a little to run the installer on installation. Add FR and RB keywords to 
+the end of the line which deploys installer.exe to device as follow:
+
+\code
+"/S60/devices/S60_5th_Edition_SDK_v1.0/epoc32/release/$(PLATFORM)/$(TARGET)/exampleinstaller.exe"    - "!:\sys\bin\exampleinstaller.exe",FR,RB
+\endcode
+
+Those keywords defines that the installer application is run and the service is registered during the installation.
+
+See more about the package file options: \l {http://wiki.forum.nokia.com/index.php/Advanced_Package_File_Options}
+
+If the installer defines the VID (non-zero value) then the VID is stored to the database, otherwise SID is used.
+When unregistering the plugin the VID/SID verification is done to ensure that only the application which actually
+registered the service is only allowed to remove it. VID/SID is left to the database even the service has been
+unregistered. This prevents the exactly same way named services to be installed afterwards because the VID/SID
+information is locked to the service name.
+
+More info about VID and SID can be found from:
+\list
+    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#VendorID}{VendorID}
+    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID}{SecureID}
+\endlist
+
+
+\section1 What's special from the security perspective?
+
+There is only one database in S60 because both databases (user and system) are combined to the same database.
+The database is located behind the server's private folder, (\c{c:\private\2002AC7F}). This ensures the database can't
+be thumbered (e.g. remove, move or replace) without Allfiles capability which isn't user-grantable (More about the
+capabilities: \l http://wiki.forum.nokia.com/index.php/Capabilities). That makes it impossible for example to replace the
+whole database with the new one which might contain malicious services.
+
+Note! It doesn't matter which one scope is used in Symbian because both are mapped to the same database anyway.
+
+
+\section1 Directory structure
+
+There are different implementations for the both emulator and device because emulator doesn't support multiple
+applications to be loaded at the same time, (Known issue: \l {http://bugreports.qt.nokia.com/browse/QTBUG-2950}{QTBUG-2950}).
+The dll approach must be used in the emulator environment and the exe approach instead of dll in the real device.
+
+Note! The greatest part of the S60 specific code is located under the symbian folder in a directory hierarchy of
+Service FW. ServiceDatabase class contains also S60 specific code and the DatabaseManager class has been replaced
+totally with the corresponding class.
+
+*/
