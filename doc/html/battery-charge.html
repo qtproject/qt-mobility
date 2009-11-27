@@ -70,7 +70,8 @@
                 when: batteryCharging.value
                 PropertyChanges {
                     target: Bubbles
-                    emitting: true
+                    count: batteryCharge.value / 5
+                    emissionRate: 5
                 }
             },</pre>
 <p /><address><hr /><div align="center">

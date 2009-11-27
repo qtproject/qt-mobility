@@ -6533,6 +6533,10 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="detailed-layer-descriptions" title="Detailed Layer Descriptions" level="1"/>
             <contents name="shared-memory-layer" title="Shared Memory Layer" level="2"/>
+            <contents name="symbian-settings-layer" title="Symbian Settings Layer" level="2"/>
+            <contents name="declaring-value-space-paths" title="Declaring Value Space Paths" level="3"/>
+            <contents name="location-of-qcrml-files" title="Location of QCRML Files" level="3"/>
+            <contents name="limitations" title="Limitations" level="3"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
             <contents name="battery-charging-accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
