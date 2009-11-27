@@ -48,7 +48,7 @@
 /*!
     \page qtmobility-known-issues.html
     \group mobility
-    \title Known Issues in the QtMobility Project 1.0.0 (Technology Preview)
+    \title Known Issues in QtMobility 1.0.0 (Technology Preview)
 
 An up-to-date list of known issues with the QtMobility 1.0.0 can be found via the \l {QtMobility Bug Tracker} on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility.
 

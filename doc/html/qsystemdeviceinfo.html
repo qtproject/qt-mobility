@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qsysteminfo.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QSystemDeviceInfo Class Reference</title>
+  <title>Qt Mobility Project 1.0: QSystemDeviceInfo Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QSystemDeviceInfo"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -109,6 +110,12 @@
 <p>The QSystemDeviceInfo class provides access to device information from the system.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QSystemDeviceInfo/BatteryStatus"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/NoBatteryLevel"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/BatteryCritical"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/BatteryVeryLow"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/BatteryLow"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/BatteryNormal"></a>
 <h3 class="fn"><a name="BatteryStatus-enum"></a>enum QSystemDeviceInfo::BatteryStatus</h3>
 <p>This enum describes the status of the main battery.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -119,6 +126,14 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryLow</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Battery level is low 40% or less.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::BatteryNormal</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Battery level is above 40%.</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tag/QSystemDeviceInfo/InputMethod"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/Keys"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/Keypad"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/Keyboard"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/SingleTouch"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/MultiTouch"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/Mouse"></a>
+<a name="//apple_ref/cpp/tdef/QSystemDeviceInfo/InputMethodFlags"></a>
 <h3 class="flags"><a name="InputMethod-enum"></a>enum QSystemDeviceInfo::InputMethod<br />flags QSystemDeviceInfo::InputMethodFlags</h3>
 <p>This enum describes the device method of user input.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -131,6 +146,11 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::Mouse</tt></td><td align="center" valign="top"><tt>0x0000020</tt></td><td valign="top">Device has a mouse.</td></tr>
 </table></p>
 <p>The InputMethodFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;InputMethod&gt;. It stores an OR combination of InputMethod values.</p>
+<a name="//apple_ref/cpp/tag/QSystemDeviceInfo/PowerState"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/UnknownPower"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/BatteryPower"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/WallPower"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/WallPowerChargingBattery"></a>
 <h3 class="fn"><a name="PowerState-enum"></a>enum QSystemDeviceInfo::PowerState</h3>
 <p>This enum describes the power state:</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -140,6 +160,15 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::WallPower</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">On wall power.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::WallPowerChargingBattery</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">On wall power and charging main battery.</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tag/QSystemDeviceInfo/Profile"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/UnknownProfile"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/SilentProfile"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/NormalProfile"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/LoudProfile"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/VibProfile"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/OfflineProfile"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/PowersaveProfile"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/CustomProfile"></a>
 <h3 class="fn"><a name="Profile-enum"></a>enum QSystemDeviceInfo::Profile</h3>
 <p>This enum describes the current operating profile of the device or computer.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -153,6 +182,11 @@
 <tr><td valign="top"><tt>QSystemDeviceInfo::PowersaveProfile</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Powersave profile.</td></tr>
 <tr><td valign="top"><tt>QSystemDeviceInfo::CustomProfile</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">Custom profile.</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tag/QSystemDeviceInfo/SimStatus"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/SimNotAvailable"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/SingleSimAvailable"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/DualSimAvailable"></a>
+<a name="//apple_ref/cpp/econst/QSystemDeviceInfo/SimLocked"></a>
 <h3 class="fn"><a name="SimStatus-enum"></a>enum QSystemDeviceInfo::SimStatus</h3>
 <p>This enum describes the status is the sim card or cards.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -164,6 +198,7 @@
 </table></p>
 <hr />
 <h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/batteryLevel"></a>
 <h3 class="fn"><a name="batteryLevel-prop"></a>batteryLevel : const int</h3>
 <p>This property holds the battery level.</p>
 <p>Returns the battery charge level as percentage 1 - 100 scale.</p>
@@ -171,6 +206,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>batteryLevel</b> () const</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/batteryStatus"></a>
 <h3 class="fn"><a name="batteryStatus-prop"></a>batteryStatus : const <a href="qsystemdeviceinfo.html#BatteryStatus-enum">BatteryStatus</a></h3>
 <p>This property holds the battery status.</p>
 <p>Returns the battery charge status.</p>
@@ -178,6 +214,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::BatteryStatus </td><td class="memItemRight" valign="bottom"><b>batteryStatus</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/currentPowerState"></a>
 <h3 class="fn"><a name="currentPowerState-prop"></a>currentPowerState : const <a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></h3>
 <p>This property holds the power state.</p>
 <p>Gets the current QSystemDeviceInfo::currentPowerState state.</p>
@@ -185,12 +222,14 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b>currentPowerState</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/currentProfile"></a>
 <h3 class="fn"><a name="currentProfile-prop"></a>currentProfile : const <a href="qsystemdeviceinfo.html#Profile-enum">Profile</a></h3>
 <p>This property holds the device profile Gets the current QSystemDeviceInfo::currentProfile device profile.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b>currentProfile</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/imei"></a>
 <h3 class="fn"><a name="imei-prop"></a>imei : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
 <p>This property holds the IMEI.</p>
 <p>Returns the International Mobile Equipment Identity (IMEI), or a null <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> in the case of none.</p>
@@ -198,6 +237,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>imei</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/imsi"></a>
 <h3 class="fn"><a name="imsi-prop"></a>imsi : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
 <p>This property holds the IMSI.</p>
 <p>Returns the International Mobile Subscriber Identity (IMSI), or a null <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> in the case of none.</p>
@@ -205,6 +245,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>imsi</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/inputMethodType"></a>
 <h3 class="fn"><a name="inputMethodType-prop"></a>inputMethodType : const <a href="qsystemdeviceinfo.html#InputMethod-enum">InputMethodFlags</a></h3>
 <p>This property holds the supported inputmethods.</p>
 <p>Returns the <a href="qsystemdeviceinfo.html#InputMethod-enum">QSystemDeviceInfo::InputMethodFlags</a> InputMethodType that the system uses.</p>
@@ -212,6 +253,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethodFlags </td><td class="memItemRight" valign="bottom"><b>inputMethodType</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/isDeviceLocked"></a>
 <h3 class="fn"><a name="isDeviceLocked-prop"></a>isDeviceLocked : const bool</h3>
 <p>This property holds device lock.</p>
 <p>Returns true if the device is locked, otherwise false.</p>
@@ -219,6 +261,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isDeviceLocked</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/manufacturer"></a>
 <h3 class="fn"><a name="manufacturer-prop"></a>manufacturer : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
 <p>This property holds the manufacture's name.</p>
 <p>Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor of the motherboard.</p>
@@ -226,6 +269,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>manufacturer</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/model"></a>
 <h3 class="fn"><a name="model-prop"></a>model : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
 <p>This property holds the model name.</p>
 <p>Returns the model information of the device. In the case of desktops where no model information is present, the CPU architect, such as i686, and machine type, such as Server, Desktop or Laptop.</p>
@@ -233,6 +277,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>model</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/productName"></a>
 <h3 class="fn"><a name="productName-prop"></a>productName : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
 <p>This property holds the product name.</p>
 <p>Returns the product name of the device. In the case where no product information is available,</p>
@@ -240,6 +285,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>productName</b> ()</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/simStatus"></a>
 <h3 class="fn"><a name="simStatus-prop"></a>simStatus : const <a href="qsystemdeviceinfo.html#SimStatus-enum">SimStatus</a></h3>
 <p>This property holds the status of the sim card. Returns the QSystemDeviceInfo::simStatus status of SIM card.</p>
 <p><b>Access functions:</b></p>
@@ -248,23 +294,31 @@
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/QSystemDeviceInfo"></a>
 <h3 class="fn"><a name="QSystemDeviceInfo"></a>QSystemDeviceInfo::QSystemDeviceInfo ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a> with the given <i>parent</i>.</p>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/~QSystemDeviceInfo"></a>
 <h3 class="fn"><a name="dtor.QSystemDeviceInfo"></a>QSystemDeviceInfo::~QSystemDeviceInfo ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a> object.</p>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/batteryLevelChanged"></a>
 <h3 class="fn"><a name="batteryLevelChanged"></a>void QSystemDeviceInfo::batteryLevelChanged ( int <i>level</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when battery level has changed. <i>level</i> is the new level.</p>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/batteryStatusChanged"></a>
 <h3 class="fn"><a name="batteryStatusChanged"></a>void QSystemDeviceInfo::batteryStatusChanged ( <a href="qsystemdeviceinfo.html#BatteryStatus-enum">QSystemDeviceInfo::BatteryStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when battery status has changed. <i>status</i> is the new status.</p>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/bluetoothStateChanged"></a>
 <h3 class="fn"><a name="bluetoothStateChanged"></a>void QSystemDeviceInfo::bluetoothStateChanged ( bool <i>on</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted whenever bluetooth state changes, specified by <i>on</i>.</p>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/currentProfileChanged"></a>
 <h3 class="fn"><a name="currentProfileChanged"></a>void QSystemDeviceInfo::currentProfileChanged ( <a href="qsystemdeviceinfo.html#Profile-enum">QSystemDeviceInfo::Profile</a> <i>profile</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted whenever the network profile changes, specified by <i>profile</i>.</p>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/powerStateChanged"></a>
 <h3 class="fn"><a name="powerStateChanged"></a>void QSystemDeviceInfo::powerStateChanged ( <a href="qsystemdeviceinfo.html#PowerState-enum">QSystemDeviceInfo::PowerState</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall. <i>state</i> is the new power state.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

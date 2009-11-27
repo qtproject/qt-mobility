@@ -360,9 +360,9 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 cpPriv->state = QNetworkConfiguration::Undefined;
             }
             if([[apNetwork securityMode ] intValue]== kCWSecurityModeOpen)
-                cpPriv->purpose = QNetworkConfiguration::Public;
+                cpPriv->purpose = QNetworkConfiguration::PublicPurpose;
             else
-                cpPriv->purpose = QNetworkConfiguration::Private;
+                cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
             foundConfigs.append(cpPriv);
         }
     } else {

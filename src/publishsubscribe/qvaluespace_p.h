@@ -50,7 +50,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QValueSpaceProvider;
+class QValueSpacePublisher;
 
 QString qCanonicalPath(const QString &path);
 
@@ -87,20 +87,20 @@ public:
     virtual bool supportsInterestNotification() const = 0;
     virtual bool notifyInterest(Handle handle, bool interested) = 0;
 
-    /* QValueSpaceProvider functions */
-    virtual bool setValue(QValueSpaceProvider *creator, Handle handle,
+    /* QValueSpacePublisher functions */
+    virtual bool setValue(QValueSpacePublisher *creator, Handle handle,
                           const QString &subPath, const QVariant &value) = 0;
-    virtual bool removeValue(QValueSpaceProvider *creator, Handle handle,
+    virtual bool removeValue(QValueSpacePublisher *creator, Handle handle,
                              const QString &subPath) = 0;
-    virtual bool removeSubTree(QValueSpaceProvider *creator, Handle handle) = 0;
-    virtual void addWatch(QValueSpaceProvider *creator, Handle handle) = 0;
-    virtual void removeWatches(QValueSpaceProvider *creator, Handle parent) = 0;
+    virtual bool removeSubTree(QValueSpacePublisher *creator, Handle handle) = 0;
+    virtual void addWatch(QValueSpacePublisher *creator, Handle handle) = 0;
+    virtual void removeWatches(QValueSpacePublisher *creator, Handle parent) = 0;
     virtual void sync() = 0;
 
 protected:
-    /* QValueSpaceProvider functions */
-    void emitAttributeInterestChanged(QValueSpaceProvider *provider, const QString &attribute,
-                                      bool interested);
+    /* QValueSpacePublisher functions */
+    void emitInterestChanged(QValueSpacePublisher *publisher, const QString &attribute,
+                             bool interested);
 
 signals:
     void handleChanged(quintptr);
@@ -114,7 +114,7 @@ namespace QValueSpace {
     struct AutoInstall {
         AutoInstall(LayerCreateFunc func) { installLayer(func); }
     };
-};
+}
 
 #define QVALUESPACE_AUTO_INSTALL_LAYER(name) \
 QAbstractValueSpaceLayer * _qvaluespaceauto_layercreate_ ## name() \

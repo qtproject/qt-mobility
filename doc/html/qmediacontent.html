@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediacontent.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QMediaContent Class Reference</title>
+  <title>Qt Mobility Project 1.0: QMediaContent Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QMediaContent"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -54,6 +55,7 @@
 <p>A non-null QMediaContent will always have a primary or canonical reference to the content available through the <a href="qmediacontent.html#canonicalUri">canonicalUri</a>() or <a href="qmediacontent.html#canonicalResource">canonicalResource</a>() methods, any additional resources are optional.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMediaContent/QMediaContent"></a>
 <h3 class="fn"><a name="QMediaContent"></a>QMediaContent::QMediaContent ()</h3>
 <p>Constructs a null <a href="qmediacontent.html">QMediaContent</a>.</p>
 <h3 class="fn"><a name="QMediaContent-2"></a>QMediaContent::QMediaContent ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>uri</i> )</h3>
@@ -64,55 +66,74 @@
 <p>Constructs a media source with <i>resources</i> providing a reference to the content.</p>
 <h3 class="fn"><a name="QMediaContent-5"></a>QMediaContent::QMediaContent ( const QMediaContent &amp; <i>other</i> )</h3>
 <p>Constructs a copy of media source <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/~QMediaContent"></a>
 <h3 class="fn"><a name="dtor.QMediaContent"></a>QMediaContent::~QMediaContent ()</h3>
 <p>Destroys the media content object.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/canonicalResource"></a>
 <h3 class="fn"><a name="canonicalResource"></a><a href="qmediaresource.html">QMediaResource</a> QMediaContent::canonicalResource () const</h3>
 <p>Returns a <a href="qmediaresource.html">QMediaResource</a> that represents that canonical resource for this media content.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/canonicalUri"></a>
 <h3 class="fn"><a name="canonicalUri"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaContent::canonicalUri () const</h3>
 <p>Returns a <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> that represents that canonical resource for this media content.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/coverArtUriLarge"></a>
 <h3 class="fn"><a name="coverArtUriLarge"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaContent::coverArtUriLarge () const</h3>
 <p>Returns the URI of a large cover art image for this media content.</p>
 <p>See also <a href="qmediacontent.html#setCoverArtUriLarge">setCoverArtUriLarge</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/coverArtUriSmall"></a>
 <h3 class="fn"><a name="coverArtUriSmall"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaContent::coverArtUriSmall () const</h3>
 <p>Returns the URI of a small cover art image for this media content.</p>
 <p>See also <a href="qmediacontent.html#setCoverArtUriSmall">setCoverArtUriSmall</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/isNull"></a>
 <h3 class="fn"><a name="isNull"></a>bool QMediaContent::isNull () const</h3>
 <p>Returns true if this media content is null (uninitialized); false otherwise.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/posterUri"></a>
 <h3 class="fn"><a name="posterUri"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaContent::posterUri () const</h3>
 <p>Returns the URI of a poster image for this media content.</p>
 <p>See also <a href="qmediacontent.html#setPosterUri">setPosterUri</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/resources"></a>
 <h3 class="fn"><a name="resources"></a>QMediaResourceList QMediaContent::resources () const</h3>
 <p>Returns a list of alternative resources for this media content. The first item in this list is always the canonical resource.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/setCoverArtUriLarge"></a>
 <h3 class="fn"><a name="setCoverArtUriLarge"></a>void QMediaContent::setCoverArtUriLarge ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>uri</i> )</h3>
 <p>Sets the <i>uri</i> of a large cover art image for this media content.</p>
 <p>See also <a href="qmediacontent.html#coverArtUriLarge">coverArtUriLarge</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/setCoverArtUriSmall"></a>
 <h3 class="fn"><a name="setCoverArtUriSmall"></a>void QMediaContent::setCoverArtUriSmall ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>uri</i> )</h3>
 <p>Sets the <i>uri</i> of a small cover art image for this media content.</p>
 <p>See also <a href="qmediacontent.html#coverArtUriSmall">coverArtUriSmall</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/setPosterUri"></a>
 <h3 class="fn"><a name="setPosterUri"></a>void QMediaContent::setPosterUri ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>uri</i> )</h3>
 <p>Sets the <i>uri</i> of a poster image for this media content.</p>
 <p>See also <a href="qmediacontent.html#posterUri">posterUri</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/setThumbnailUriLarge"></a>
 <h3 class="fn"><a name="setThumbnailUriLarge"></a>void QMediaContent::setThumbnailUriLarge ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>uri</i> )</h3>
 <p>Sets the <i>uri</i> of a large thumbnail image for this media content.</p>
 <p>See also <a href="qmediacontent.html#thumbnailUriLarge">thumbnailUriLarge</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/setThumbnailUriSmall"></a>
 <h3 class="fn"><a name="setThumbnailUriSmall"></a>void QMediaContent::setThumbnailUriSmall ( const <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> &amp; <i>uri</i> )</h3>
 <p>Sets the <i>uri</i> of a small thumbanil image for this media content.</p>
 <p>See also <a href="qmediacontent.html#thumbnailUriSmall">thumbnailUriSmall</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/thumbnailUriLarge"></a>
 <h3 class="fn"><a name="thumbnailUriLarge"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaContent::thumbnailUriLarge () const</h3>
 <p>Returns the URI of a large thumbnail image for this media content.</p>
 <p>See also <a href="qmediacontent.html#setThumbnailUriLarge">setThumbnailUriLarge</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/thumbnailUriSmall"></a>
 <h3 class="fn"><a name="thumbnailUriSmall"></a><a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a> QMediaContent::thumbnailUriSmall () const</h3>
 <p>Returns the URI of a small thumbnail image for this media content.</p>
 <p>See also <a href="qmediacontent.html#setThumbnailUriSmall">setThumbnailUriSmall</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QMediaContent::operator!= ( const QMediaContent &amp; <i>other</i> ) const</h3>
 <p>Returns true if <i>other</i> is not equivalent to this media content; false otherwise.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QMediaContent &amp; QMediaContent::operator= ( const QMediaContent &amp; <i>other</i> )</h3>
 <p>Assigns the value of <i>other</i> to this media content.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QMediaContent::operator== ( const QMediaContent &amp; <i>other</i> ) const</h3>
 <p>Returns true if <i>other</i> is equivalent to this media content; false otherwise.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

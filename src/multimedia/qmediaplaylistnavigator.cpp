@@ -301,7 +301,6 @@ void QMediaPlaylistNavigator::setPlaylist(QMediaPlaylistProvider *playlist)
     }
 }
 
-
 /*! \property QMediaPlaylistNavigator::currentItem
 
   Contains the media at the current position in the playlist.

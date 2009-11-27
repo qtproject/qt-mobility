@@ -76,7 +76,7 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QSystemInfo class provides access to various general information from the system.
 
-\note In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
+    In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
 
 \table
 \header
@@ -97,7 +97,7 @@ QTM_BEGIN_NAMESPACE
     \o QSystemScreenSaver::setScreenSaverInhibit
 \endtable
 
-\note Platform notes
+    Platform notes
     Some functionality may or may not be supported on various platforms. Depending on if there
 is a reliable way to gather such information.
 */

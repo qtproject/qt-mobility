@@ -41,7 +41,7 @@
 
 /*!
     \group location
-    \title Qt Mobility Location API
+    \title Location API
 
     The Location API provides a library for distributing and receiving
     location data using arbitrary data sources.

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qvaluespace.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QValueSpace Namespace Reference</title>
+  <title>Qt Mobility Project 1.0: QValueSpace Namespace Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -20,7 +20,7 @@
 <a name="types"></a>
 <h2>Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#LayerOption-enum">LayerOption</a></b> { UnspecifiedLayer, PermanentLayer, NonPermanentLayer, WritableLayer, NonWritableLayer }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#LayerOption-enum">LayerOption</a></b> { UnspecifiedLayer, PermanentLayer, TransientLayer, WritableLayer, ReadOnlyLayer }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#LayerOption-enum">LayerOptions</a></b></td></tr>
 </table>
 <hr />
@@ -30,6 +30,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER">QVALUESPACE_CONTEXTKIT_LAYER</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER">QVALUESPACE_NONVOLATILEREGISTRY_LAYER</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_SHAREDMEMORY_LAYER">QVALUESPACE_SHAREDMEMORY_LAYER</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER">QVALUESPACE_SYMBIAN_SETTINGS_LAYER</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</a></b></td></tr>
 </table>
 <a name="details"></a>
@@ -38,38 +39,55 @@
 <p>The QValueSpace namespace contains miscellaneous identifiers used throughtout the Publish and Subscribe API.</p>
 <hr />
 <h2>Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QValueSpace/LayerOption"></a>
+<a name="//apple_ref/cpp/econst/QValueSpace/UnspecifiedLayer"></a>
+<a name="//apple_ref/cpp/econst/QValueSpace/PermanentLayer"></a>
+<a name="//apple_ref/cpp/econst/QValueSpace/TransientLayer"></a>
+<a name="//apple_ref/cpp/econst/QValueSpace/WritableLayer"></a>
+<a name="//apple_ref/cpp/econst/QValueSpace/ReadOnlyLayer"></a>
+<a name="//apple_ref/cpp/tdef/QValueSpace/LayerOptions"></a>
 <h3 class="flags"><a name="LayerOption-enum"></a>enum QValueSpace::LayerOption<br />flags QValueSpace::LayerOptions</h3>
-<p>This enum describes the behaviour of the Value Space layer. In addition this enum is used as a filter when constructing a <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a>.</p>
+<p>This enum describes the behaviour of the Value Space layer. In addition this enum is used as a filter when constructing a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a>.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QValueSpace::UnspecifiedLayer</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">Used as a filter to specify that any layer should be used.</td></tr>
-<tr><td valign="top"><tt>QValueSpace::PermanentLayer</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Indicates that the layer uses a permanent backing store. When used as a filter only layers that use a permanent backing store will be used. <br/> Values stored in a layer with this option will persist with in the layer after the <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> that published them is destroyed. Whether the value persists in the layer after the server or device is restarted is system dependent. <br/> This option and the NonPermanentLayer option are mutually exclusive.</td></tr>
-<tr><td valign="top"><tt>QValueSpace::NonPermanentLayer</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Indicates that the layer does not use a permanent backing store. When used as a filter only layers that do not use permanent backing stores will be used. <br/> Values stored in a layer with this option will be removed when the <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> that published them is destroyed. <br/> This option and the PermanentLayer option are mutually exclusive.</td></tr>
-<tr><td valign="top"><tt>QValueSpace::WritableLayer</tt></td><td align="center" valign="top"><tt>0x0004</tt></td><td valign="top">Indicates that the layer can update its contents. When used as a filter only layers that are writable will be used. <br/> Applications can use <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> to publish values to layers that have this option. <br/> This option and the NonWritableLayer option are mutually exclusive.</td></tr>
-<tr><td valign="top"><tt>QValueSpace::NonWritableLayer</tt></td><td align="center" valign="top"><tt>0x0008</tt></td><td valign="top">Indicates that the layer cannot update its contents. When used as a filter only layers that are read-only will be used. <br/> Applications can not publish values to layers with this option. <br/> This option and the WritableLayer option are mutually exclusive.</td></tr>
+<tr><td valign="top"><tt>QValueSpace::PermanentLayer</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Indicates that the layer uses a permanent backing store. When used as a filter only layers that use a permanent backing store will be used. <br/> Values stored in a layer with this option will persist with in the layer after the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> that published them is destroyed. Whether the value persists in the layer after the server or device is restarted is system dependent. <br/> This option and the TransientLayer option are mutually exclusive.</td></tr>
+<tr><td valign="top"><tt>QValueSpace::TransientLayer</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Indicates that the layer does not use a permanent backing store. When used as a filter only layers that do not use permanent backing stores will be used. <br/> Values stored in a layer with this option will be removed when the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> that published them is destroyed. <br/> This option and the PermanentLayer option are mutually exclusive.</td></tr>
+<tr><td valign="top"><tt>QValueSpace::WritableLayer</tt></td><td align="center" valign="top"><tt>0x0004</tt></td><td valign="top">Indicates that the layer can update its contents. When used as a filter only layers that are writable will be used. <br/> Applications can use <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> to publish values to layers that have this option. <br/> This option and the ReadOnlyLayer option are mutually exclusive.</td></tr>
+<tr><td valign="top"><tt>QValueSpace::ReadOnlyLayer</tt></td><td align="center" valign="top"><tt>0x0008</tt></td><td valign="top">Indicates that the layer cannot update its contents. When used as a filter only layers that are read-only will be used. <br/> Applications can not publish values to layers with this option. <br/> This option and the WritableLayer option are mutually exclusive.</td></tr>
 </table></p>
 <p>The LayerOptions type is a typedef for <a href="qflags.html">QFlags</a>&lt;LayerOption&gt;. It stores an OR combination of LayerOption values.</p>
 <hr />
 <h2>Macro Documentation</h2>
+<a name="//apple_ref/cpp/macro//QVALUESPACE_CONTEXTKIT_LAYER"></a>
 <h3 class="fn"><a name="QVALUESPACE_CONTEXTKIT_LAYER"></a>QVALUESPACE_CONTEXTKIT_LAYER</h3>
 <p>The UUID of the ContextKit layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID values is {2c769b9e-d949-4cd1-848f-d32241fe07ff}.</p>
-<p>This value can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the ContextKit layer.</p>
+<p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the ContextKit layer.</p>
 <p>You can test if the ContextKit layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value.</p>
+<a name="//apple_ref/cpp/macro//QVALUESPACE_NONVOLATILEREGISTRY_LAYER"></a>
 <h3 class="fn"><a name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER"></a>QVALUESPACE_NONVOLATILEREGISTRY_LAYER</h3>
 <p>The UUID of the Non-Volatile Registry layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {8e29561c-a0f0-4e89-ba56-080664abc017}.</p>
-<p>This value can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Non-Volatile Registry layer.</p>
+<p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Non-Volatile Registry layer.</p>
 <p>You can test if the Non-Volatile Registry layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value. The Non-Volatile Registry layer is only available on Windows platforms.</p>
+<a name="//apple_ref/cpp/macro//QVALUESPACE_SHAREDMEMORY_LAYER"></a>
 <h3 class="fn"><a name="QVALUESPACE_SHAREDMEMORY_LAYER"></a>QVALUESPACE_SHAREDMEMORY_LAYER</h3>
 <p>The UUID of the Shared Memory layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {d81199c1-6f60-4432-934e-0ce4d37ef252}.</p>
-<p>This value can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Shared Memory layer.</p>
+<p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Shared Memory layer.</p>
 <p>You can test if the Shared Memory layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value.</p>
+<a name="//apple_ref/cpp/macro//QVALUESPACE_SYMBIAN_SETTINGS_LAYER"></a>
+<h3 class="fn"><a name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER"></a>QVALUESPACE_SYMBIAN_SETTINGS_LAYER</h3>
+<p>The UUID of the Symbian Settings layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {40d7b059-66ac-442f-b222-9c8ab98b9c2d}.</p>
+<p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Symbian Settings layer.</p>
+<p>You can test if the Symbian Settings layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value.</p>
+<a name="//apple_ref/cpp/macro//QVALUESPACE_VOLATILEREGISTRY_LAYER"></a>
 <h3 class="fn"><a name="QVALUESPACE_VOLATILEREGISTRY_LAYER"></a>QVALUESPACE_VOLATILEREGISTRY_LAYER</h3>
 <p>The UUID of the Volatile Registry layer as a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a>. The actual UUID value is {8ceb5811-4968-470f-8fc2-264767e0bbd9}.</p>
-<p>This value can be passed to the constructor of <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Volatile Registry layer.</p>
+<p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Volatile Registry layer.</p>
 <p>You can test if the Volatile Registry layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value. The Volatile Registry layer is only available on Windows platforms.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

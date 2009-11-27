@@ -43,7 +43,7 @@
 #include "qvaluespace_p.h"
 #include "qvaluespacemanager_p.h"
 #include "qmallocpool_p.h"
-#include "qvaluespaceprovider.h"
+#include "qvaluespacepublisher.h"
 
 #include <QObject>
 #include <QMap>
@@ -227,10 +227,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpaceProvider *creator, Handle handle,
+    \fn bool QAbstractValueSpaceLayer::setValue(QValueSpacePublisher *creator, Handle handle,
                                                 const QString &subPath, const QVariant &value)
 
-    Process calls to QValueSpaceProvider::setAttribute() by setting the value specified by the
+    Process calls to QValueSpacePublisher::setValue() by setting the value specified by the
     \a subPath under \a handle to \a value.  Ownership of the Value Space item is assigned to
     \a creator.
 
@@ -238,26 +238,26 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpaceProvider *creator, Handle handle,
+    \fn bool QAbstractValueSpaceLayer::removeValue(QValueSpacePublisher *creator, Handle handle,
                                                    const QString &subPath)
 
-    Process calls to QValueSpaceProvider::removeAttribute() by removing the Value Space item
+    Process calls to QValueSpacePublisher::resetValue() by removing the Value Space item
     identified by \a handle and \a subPath and created by \a creator.
 
     Returns true on success; otherwise returns false.
 */
 
 /*!
-    \fn bool QAbstractValueSpaceLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
+    \fn bool QAbstractValueSpaceLayer::removeSubTree(QValueSpacePublisher *creator, Handle handle)
 
-    Process calls to QValueSpaceProvider::~QValueSpaceProvider() by removing the entire sub tree
+    Process calls to QValueSpacePublisher::~QValueSpacePublisher() by removing the entire sub tree
     created by \a creator under \a handle.
 
     Returns true on success; otherwise returns false.
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
+    \fn void QAbstractValueSpaceLayer::addWatch(QValueSpacePublisher *creator, Handle handle)
 
     Registers \a creator for change notifications to values under \a handle.
 
@@ -265,7 +265,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QAbstractValueSpaceLayer::removeWatches(QValueSpaceProvider *creator, Handle parent)
+    \fn void QAbstractValueSpaceLayer::removeWatches(QValueSpacePublisher *creator, Handle parent)
 
     Removes all registered change notifications for \a creator under \a parent.
 
@@ -279,15 +279,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Emits the QValueSpaceProvider::attributeInterestChanged() signal on \a provider with \a path
+    Emits the QValueSpacePublisher::interestChanged() signal on \a publisher with \a path
     and \a interested.
 */
-
-void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider *provider,
-                                                            const QString &path,
-                                                            bool interested)
+void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publisher,
+                                                   const QString &path,
+                                                   bool interested)
 {
-    emit provider->attributeInterestChanged(path, interested);
+    emit publisher->interestChanged(path, interested);
 }
 
 /*!
@@ -308,7 +307,7 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider 
     \enum QValueSpace::LayerOption
 
     This enum describes the behaviour of the Value Space layer.  In addition this enum is used as
-    a filter when constructing a QValueSpaceProvider or QValueSpaceSubscriber.
+    a filter when constructing a QValueSpacePublisher or QValueSpaceSubscriber.
 
     \value UnspecifiedLayer     Used as a filter to specify that any layer should be used.
     \value PermanentLayer       Indicates that the layer uses a permanent backing store.  When used
@@ -316,29 +315,28 @@ void QAbstractValueSpaceLayer::emitAttributeInterestChanged(QValueSpaceProvider 
                                 used.
                                 \br
                                 Values stored in a layer with this option will persist with in the
-                                layer after the QValueSpaceProvider that published them is
+                                layer after the QValueSpacePublisher that published them is
                                 destroyed.  Whether the value persists in the layer after the
                                 server or device is restarted is system dependent.
                                 \br
-                                This option and the NonPermanentLayer option are mutually
+                                This option and the TransientLayer option are mutually
                                 exclusive.
-    \value NonPermanentLayer    Indicates that the layer does not use a permanent backing store.
+    \value TransientLayer       Indicates that the layer does not use a permanent backing store.
                                 When used as a filter only layers that do not use permanent backing
                                 stores will be used.
                                 \br
                                 Values stored in a layer with this option will be removed when the
-                                QValueSpaceProvider that published them is destroyed.
+                                QValueSpacePublisher that published them is destroyed.
                                 \br
                                 This option and the PermanentLayer option are mutually exclusive.
     \value WritableLayer        Indicates that the layer can update its contents.  When used as a
                                 filter only layers that are writable will be used.
                                 \br
-                                Applications can use QValueSpaceProvider to publish values to
+                                Applications can use QValueSpacePublisher to publish values to
                                 layers that have this option.
                                 \br
-                                This option and the NonWritableLayer option are mutually
-                                exclusive.
-    \value NonWritableLayer     Indicates that the layer cannot update its contents.  When used as
+                                This option and the ReadOnlyLayer option are mutually exclusive.
+    \value ReadOnlyLayer        Indicates that the layer cannot update its contents.  When used as
                                 a filter only layers that are read-only will be used.
                                 \br
                                 Applications can not publish values to layers with this option.
@@ -406,7 +404,7 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Shared Memory layer as a QUuid.  The actual UUID value is
     {d81199c1-6f60-4432-934e-0ce4d37ef252}.
 
-    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    This value can be passed to the constructor of QValueSpacePublisher or QValueSpaceSubscriber to
     force the constructed object to only access the Shared Memory layer.
 
     You can test if the Shared Memory layer is available by checking if the list returned by
@@ -420,7 +418,7 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Volatile Registry layer as a QUuid.  The actual UUID value is
     {8ceb5811-4968-470f-8fc2-264767e0bbd9}.
 
-    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    This value can be passed to the constructor of QValueSpacePublisher or QValueSpaceSubscriber to
     force the constructed object to only access the Volatile Registry layer.
 
     You can test if the Volatile Registry layer is available by checking if the list returned by
@@ -435,7 +433,7 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the Non-Volatile Registry layer as a QUuid.  The actual UUID value is
     {8e29561c-a0f0-4e89-ba56-080664abc017}.
 
-    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    This value can be passed to the constructor of QValueSpacePublisher or QValueSpaceSubscriber to
     force the constructed object to only access the Non-Volatile Registry layer.
 
     You can test if the Non-Volatile Registry layer is available by checking if the list returned
@@ -450,10 +448,24 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     The UUID of the ContextKit layer as a QUuid.  The actual UUID values is
     {2c769b9e-d949-4cd1-848f-d32241fe07ff}.
 
-    This value can be passed to the constructor of QValueSpaceProvider or QValueSpaceSubscriber to
+    This value can be passed to the constructor of QValueSpacePublisher or QValueSpaceSubscriber to
     force the constructed object to only access the ContextKit layer.
 
     You can test if the ContextKit layer is available by checking if the list returned by
+    QValueSpace::availableLayers() contains this value.
+*/
+
+/*!
+    \macro QVALUESPACE_SYMBIAN_SETTINGS_LAYER
+    \relates QValueSpace
+
+    The UUID of the Symbian Settings layer as a QUuid.  The actual UUID value is
+    {40d7b059-66ac-442f-b222-9c8ab98b9c2d}.
+
+    This value can be passed to the constructor of QValueSpacePublisher or QValueSpaceSubscriber to
+    force the constructed object to only access the Symbian Settings layer.
+
+    You can test if the Symbian Settings layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
 */
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- publish-subscribe.qdoc -->
 <head>
-  <title>Qt Mobility 1.0: Publish and Subscribe Example</title>
+  <title>Qt Mobility Project 1.0: Publish and Subscribe Example</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -16,65 +16,73 @@
 </h1>
 <p>Files:</p>
 <ul>
-<li><a href="publish-subscribe-consumerdialog-cpp.html">publish-subscribe/consumerdialog.cpp</a></li>
-<li><a href="publish-subscribe-consumerdialog-h.html">publish-subscribe/consumerdialog.h</a></li>
-<li><a href="publish-subscribe-providerdialog-cpp.html">publish-subscribe/providerdialog.cpp</a></li>
-<li><a href="publish-subscribe-providerdialog-h.html">publish-subscribe/providerdialog.h</a></li>
+<li><a href="publish-subscribe-publisherdialog-cpp.html">publish-subscribe/publisherdialog.cpp</a></li>
+<li><a href="publish-subscribe-publisherdialog-h.html">publish-subscribe/publisherdialog.h</a></li>
+<li><a href="publish-subscribe-subscriberdialog-cpp.html">publish-subscribe/subscriberdialog.cpp</a></li>
+<li><a href="publish-subscribe-subscriberdialog-h.html">publish-subscribe/subscriberdialog.h</a></li>
 <li><a href="publish-subscribe-main-cpp.html">publish-subscribe/main.cpp</a></li>
 <li><a href="publish-subscribe-publish-subscribe-pro.html">publish-subscribe/publish-subscribe.pro</a></li>
 </ul>
 <p>The Publish and Subscribe example shows how to use the Qt Publish and Subscribe API to publish and retrieve values from the platforms Publish and Subscribe system.</p>
-<p>This example program can act either a provider of Value Space content, a consumer of a Value Space content or both. It can also optionally act as the Value Space Manager. The behavior is selected by passing a combination of three optional command line parameters when starting the program. If no parameters are supplied the program defaults to acting as both a provider and consumer.</p>
+<p>This example program can act either a publisher of Value Space content, a subscriber of a Value Space content or both. It can also optionally act as the Value Space Manager. The behavior is selected by passing a combination of three optional command line parameters when starting the program. If no parameters are supplied the program defaults to acting as both a publisher and subscriber.</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Parameter</th><th>Description</th></tr></thead>
 <tr valign="top" class="odd"><td>-server</td><td>Starts the Value Space Server. Only one instance should be started with the this parameter. This parameter is only needed if the Value Space will use a layer that has a client-server architecture and a server needs to be started.</td></tr>
-<tr valign="top" class="even"><td>-provider</td><td>Publish values in the Value Space and create a dialog to control those values directly.</td></tr>
-<tr valign="top" class="odd"><td>-consumer</td><td>Create a dialog to view Value Space items.</td></tr>
+<tr valign="top" class="even"><td>-publisher</td><td>Publish values in the Value Space and create a dialog to control those values directly.</td></tr>
+<tr valign="top" class="odd"><td>-subscriber</td><td>Create a dialog to view Value Space items.</td></tr>
 </table></p>
-<a name="provider"></a>
-<h2>Provider</h2>
-<p>When acting as a provider of Value Space content the program creates a ProviderDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> and widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.</p>
-<p align="center"><img src="images/publish-subscribe-provider.png" /></p><p>We declare three slots which we will use to respond to user input in the dialog.</p>
+<a name="publisher"></a>
+<h2>Publisher</h2>
+<p>When acting as a publisher of Value Space content the program creates a PublisherDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> and widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.</p>
+<p align="center"><img src="images/publish-subscribe-publisher.png" /></p><p>We declare three slots which we will use to respond to user input in the dialog.</p>
 <pre>    private slots:
         void createNewObject();
         void intValueChanged(int value);
-        void setStringValue();</pre>
+        void setStringValue();
+        void setByteArrayValue();</pre>
 <p>And connect them to signals from the widgets in the constructor.</p>
 <pre>        connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
         connect(ui-&gt;intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
-        connect(ui-&gt;setButton, SIGNAL(clicked()), this, SLOT(setStringValue()));</pre>
-<p>To publish values in the Value Space we first need to create a <a href="qvaluespaceprovider.html">QValueSpaceProvider</a>. We do this in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other two slots.</p>
-<pre>    void ProviderDialog::createNewObject()
+        connect(ui-&gt;setStringButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
+        connect(ui-&gt;setByteArrayButton, SIGNAL(clicked()), this, SLOT(setByteArrayValue()));</pre>
+<p>To publish values in the Value Space we first need to create a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a>. We do this in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other two slots.</p>
+<pre>    void PublisherDialog::createNewObject()
     {
-        if (provider)
-            delete provider;
+        if (publisher)
+            delete publisher;
 
-        provider = new QValueSpaceProvider(ui-&gt;basePath-&gt;text());
+        publisher = new QValueSpacePublisher(ui-&gt;basePath-&gt;text());
         intValueChanged(ui-&gt;intValue-&gt;value());
         setStringValue();
+        setByteArrayValue();
     }</pre>
-<p>We use <a href="qvaluespaceprovider.html#setAttribute">QValueSpaceProvider::setAttribute</a>() to set the values in response to dialog input.</p>
-<pre>    void ProviderDialog::intValueChanged(int value)
+<p>We use <a href="qvaluespacepublisher.html#setValue">QValueSpacePublisher::setValue</a>() to set the values in response to dialog input.</p>
+<pre>    void PublisherDialog::intValueChanged(int value)
     {
-        provider-&gt;setAttribute(&quot;intValue&quot;, value);
+        publisher-&gt;setValue(&quot;intValue&quot;, value);
     }
 
-    void ProviderDialog::setStringValue()
+    void PublisherDialog::setStringValue()
     {
-        provider-&gt;setAttribute(&quot;stringValue&quot;, ui-&gt;stringValue-&gt;text());
+        publisher-&gt;setValue(&quot;stringValue&quot;, ui-&gt;stringValue-&gt;text());
+    }
+
+    void PublisherDialog::setByteArrayValue()
+    {
+        publisher-&gt;setValue(&quot;byteArrayValue&quot;, ui-&gt;byteArrayValue-&gt;text().toAscii());
     }</pre>
-<p>As a final step in the constructor we explicitly call the <tt>createNewObject()</tt> slot to create an initial <a href="qvaluespaceprovider.html">QValueSpaceProvider</a>.</p>
+<p>As a final step in the constructor we explicitly call the <tt>createNewObject()</tt> slot to create an initial <a href="qvaluespacepublisher.html">QValueSpacePublisher</a>.</p>
 <pre>        createNewObject();</pre>
-<a name="consumer"></a>
-<h2>Consumer</h2>
-<p>When acting as a consumer of Value Space content the program creates a ConsumerDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> and a table for displaying all of the values directly under base path in the Value Space.</p>
-<p align="center"><img src="images/publish-subscribe-consumer.png" /></p><p>We declare two slots to propagate values from the Value Space to the dialog in response to change notifications from <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a>.</p>
+<a name="subscriber"></a>
+<h2>Subscriber</h2>
+<p>When acting as a subscriber of Value Space content the program creates a SubscriberDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> and a table for displaying all of the values directly under base path in the Value Space.</p>
+<p align="center"><img src="images/publish-subscribe-subscriber.png" /></p><p>We declare two slots to propagate values from the Value Space to the dialog in response to change notifications from <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a>.</p>
 <pre>    private slots:
         void changeSubscriberPath();
         void subscriberChanged();</pre>
 <p>To read values from the Value Space we first create a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> and connect to the <tt>contentsChanged()</tt> signal.</p>
 <p>We explicitly call our <tt>itemChanged()</tt> slot to populate the table with the initial values.</p>
-<pre>    void ConsumerDialog::changeSubscriberPath()
+<pre>    void SubscriberDialog::changeSubscriberPath()
     {
         ui-&gt;values-&gt;clearContents();
 
@@ -88,7 +96,7 @@
         subscriberChanged();
     }</pre>
 <p>In response to the <tt>contentsChanged()</tt> signal we update all the values in the table.</p>
-<pre>    void ConsumerDialog::subscriberChanged()
+<pre>    void SubscriberDialog::subscriberChanged()
     {
         ui-&gt;values-&gt;clearContents();
 
@@ -109,6 +117,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

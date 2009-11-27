@@ -45,7 +45,7 @@ QTM_BEGIN_NAMESPACE
 
 QNetworkConfigurationPrivate::QNetworkConfigurationPrivate()
     : isValid(false), type(QNetworkConfiguration::Invalid),
-      roamingSupported(false), purpose(QNetworkConfiguration::Unknown), 
+      roamingSupported(false), purpose(QNetworkConfiguration::UnknownPurpose), 
       bearer(QNetworkConfigurationPrivate::BearerUnknown), numericId(0),
       connectionId(0), manager(0)
 {
