@@ -85,7 +85,7 @@ these domains have dependencies and these are outlined below:
     \o  The Maemo 6 backend depends on libqttracker.
         For more information on libqttracker visit
         \l {http://maemo.gitorious.org/maemo-af/libqttracker}
-        {libqttracker public repository}
+        {libqttracker public repository}.
         Other components offered by the Maemo 6 platform may be required
         in order to support the full functionality of the Maemo 6 backend.
     \o  Y
