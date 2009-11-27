@@ -50,33 +50,36 @@
 Registration phase is a little different compared to other platforms because of the
 authenticity of the provider is done during (un)registering phase based on the verification 
 of VID/SID (vendor ID or secure ID). A tiny installer application must be implemented 
-by the service provider. Installer application handles registering (and unregistering) 
-of the service. Minimalistic example code for the installer is shown below. The full example 
-of the installer can be found under \c {examples/serviceinstaller_sfw_symbian}.
+by the service provider. Installer application is responsible for the registering (and the unregistering) 
+of the service. The example code for the installer is shown below. The whole installer project can be found under 
+\c {examples/serviceinstaller_sfw_symbian}.
 
 \code
+const QString filemanagerxml = "c:\\resource\\apps\\xmldata\\filemanagerservice.xml";
+const QString bluetoothxml = "c:\\resource\\apps\\xmldata\\bluetoothtransferservice.xml";
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
     QServiceManager s;
-    s.addService("c:\\private\\E00b7e42\\xmldata\\filemanagerservice.xml"); 
-    s.addService("c:\\private\\E00b7e42\\xmldata\\bluetoothtransferservice.xml");
+
+	if (QFile::exists(filemanagerxml)) {
+		s.addService(filemanagerxml);
+	} else {
+		s.removeService("FileManagerService");
+	}
 	
-    return app.exec();
+	if (QFile::exists(bluetoothxml)) {
+		s.addService(bluetoothxml);
+	} else {
+		s.removeService("BluetoothTransferService");
+	}
 }
 \endcode
 
-The package file must be updated a little to run the installer on installation. Add FR and RB keywords to 
-the end of the line which deploys installer.exe to device as follow:
-
-\code
-"/S60/devices/S60_5th_Edition_SDK_v1.0/epoc32/release/$(PLATFORM)/$(TARGET)/exampleinstaller.exe"    - "!:\sys\bin\exampleinstaller.exe",FR,RB
-\endcode
-
-Those keywords defines that the installer application is run and the service is registered during the installation.
-
-See more about the package file options: \l {http://wiki.forum.nokia.com/index.php/Advanced_Package_File_Options}
+If you want to create your own installer take a copy from the installer project (\c {examples/serviceinstaller_sfw_symbian}). 
+and modify only necessary parts of it e.g a target for your installer and define plugins which are deployed etc.
 
 If the installer defines the VID (non-zero value) then the VID is stored to the database, otherwise SID is used.
 When unregistering the plugin the VID/SID verification is done to ensure that only the application which actually
@@ -99,7 +102,7 @@ be thumbered (e.g. remove, move or replace) without Allfiles capability which is
 capabilities: \l http://wiki.forum.nokia.com/index.php/Capabilities). That makes it impossible for example to replace the
 whole database with the new one which might contain malicious services.
 
-Note! It doesn't matter which one scope is used in Symbian because both are mapped to the same database anyway.
+Note! It doesn't matter which one scope is used in Symbian because both are mapped to the same database.
 
 
 \section1 Directory structure
