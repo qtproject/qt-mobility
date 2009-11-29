@@ -48,6 +48,9 @@ symbian: {
             -lefsrv \
             -lnetmeta
 
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC81
+            
     deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include

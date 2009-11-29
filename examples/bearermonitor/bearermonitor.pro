@@ -25,4 +25,4 @@ wince*:LIBS += -lWs2
 
 CONFIG += console
 
-include(../examples.pri)
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
