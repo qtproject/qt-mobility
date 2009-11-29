@@ -21,11 +21,7 @@ CONFIG += console
 
 include(../examples.pri)
 
-symbian {
-    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer.dll
-    BEARERLIB.path = .
-    DEPLOYMENT += BEARERLIB
-}
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 
 macx: {
     contains(QT_CONFIG,qt_framework):LIBS += -framework QtBearer
