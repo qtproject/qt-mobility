@@ -40,11 +40,13 @@
 ****************************************************************************/
 
 
+
+
+#include <QTimer>
+#include <qtcontacts.h>
 #include <QtTracker/ontologies/nie.h>
 #include <QtTracker/ontologies/nco.h>
-
-#include "qtcontacts.h"
-#include "qtrackercontactasyncrequest.h"
+#include <qtrackercontactasyncrequest.h>
 
 using namespace SopranoLive;
 
@@ -80,7 +82,12 @@ void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
     variable.isMemberOf(RDFVariableList()<<homeContact);// TODO report bug doesnt work in tracker <<officeContact);
 }
 
-void applyFilterToRDFVariable(RDFVariable &variable,
+/*
+ * RDFVariable describes all contacts in tracker before filter is applied.
+ * This method translates QContactFilter to tracker rdf filter. When query is made
+ * after this method, it would return only contacts that fit the filter.
+ */
+void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
         const QContactFilter &filter)
 {
     if (filter.type() == QContactFilter::LocalIdFilter) {
@@ -208,35 +215,6 @@ QTrackerContactAsyncRequest::~QTrackerContactAsyncRequest()
 
 }
 
-QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractRequest* request,
-                                                             QContactManagerEngine* parent) :
-    QObject(parent),QTrackerContactAsyncRequest(request)
-{
-    Q_ASSERT(req);
-    Q_ASSERT(parent);
-    QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(request, QContactManager::NoError, dummy,
-                                QContactAbstractRequest::Active);
-
-    Q_ASSERT( req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest );
-    QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*> (req);
-    QContactFilter filter = r->filter();
-    QList<QContactSortOrder> sorting = r->sorting();
-    Q_UNUSED(filter)
-    Q_UNUSED(sorting)
-
-    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    applyFilterToRDFVariable(RDFContact, r->filter());
-
-    RDFSelect quer;
-    quer.addColumn("contact_uri", RDFContact);
-    quer.addColumn("contactId", RDFContact.property<nco::contactUID> ());
-    query = ::tracker()->modelQuery(quer);
-    // need to store LiveNodes in order to receive notification from model
-    QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(modelUpdated()));
-
-}
-
 /*!
  * The method was initially created to add default fields in case client did not supply
  * fields constraint - in that case the constraint is that default contact fields (ones
@@ -246,8 +224,8 @@ void QTrackerContactFetchRequest::validateRequest()
 {
     Q_ASSERT(req);
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactFetchRequest);
-    QContactFetchRequest* r = static_cast<QContactFetchRequest*> (req);
-    if (r->definitionRestrictions().isEmpty()) {
+    QContactFetchRequest* r = qobject_cast<QContactFetchRequest*> (req);
+    if (r && r->definitionRestrictions().isEmpty()) {
         QStringList fields;
         fields << QContactAvatar::DefinitionName
             << QContactBirthday::DefinitionName
@@ -271,22 +249,28 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
     queryEmailAddressNodesReady(false)
 {
     Q_ASSERT(parent);
+    Q_ASSERT(request);
     QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(request, QContactManager::NoError, dummy,
+    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
                                 QContactAbstractRequest::Active);
 
+    QTimer::singleShot(0, this, SLOT(run()));
+}
+
+void QTrackerContactFetchRequest::run()
+{
     validateRequest();
-    QContactFetchRequest* r = static_cast<QContactFetchRequest*> (req);
+    QContactFetchRequest* r = qobject_cast<QContactFetchRequest*> (req);
 
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    applyFilterToRDFVariable(RDFContact, r->filter());
+    applyFilterToContact(RDFContact, r->filter());
     if (r->definitionRestrictions().contains(QContactPhoneNumber::DefinitionName)) {
         queryPhoneNumbersNodes.clear();
         queryPhoneNumbersNodesReady = 0;
         for(int forAffiliations = 0; forAffiliations <= 1; forAffiliations++) {
             // prepare query to get all phone numbers
             RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
-            applyFilterToRDFVariable(rdfcontact1, r->filter());
+            applyFilterToContact(rdfcontact1, r->filter());
             // criteria - only those with phone numbers
             RDFSelect queryidsnumbers = preparePhoneNumbersQuery(rdfcontact1, forAffiliations);
             queryPhoneNumbersNodes << ::tracker()->modelQuery(queryidsnumbers);
@@ -302,7 +286,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
         for(int forAffiliations = 0; forAffiliations <= 1; forAffiliations++) {
             // prepare query to get all email addresses
             RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
-            applyFilterToRDFVariable(rdfcontact1, r->filter());
+            applyFilterToContact(rdfcontact1, r->filter());
             // criteria - only those with email addresses
             RDFSelect queryidsnumbers = prepareEmailAddressesQuery(rdfcontact1,forAffiliations);
             queryEmailAddressNodes << ::tracker()->modelQuery(queryidsnumbers);
@@ -318,7 +302,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
         for(int forAffiliations = 0; forAffiliations <= 1; forAffiliations++) {
             // prepare query to get all im accounts
             RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
-            applyFilterToRDFVariable(rdfcontact1, r->filter());
+            applyFilterToContact(rdfcontact1, r->filter());
             // criteria - only those with im accounts
             RDFSelect queryidsimacccounts = prepareIMAccountsQuery(rdfcontact1,forAffiliations);
             queryIMAccountNodes << ::tracker()->modelQuery(queryidsimacccounts);
@@ -329,7 +313,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 
     QList<QContactLocalId> ids;
     RDFVariable RDFContact1 = RDFVariable::fromType<nco::PersonContact>();
-    applyFilterToRDFVariable(RDFContact1, r->filter());
+    applyFilterToContact(RDFContact1, r->filter());
     RDFSelect quer;
     RDFVariable prefix = RDFContact1.optional().property<nco::nameHonorificPrefix> ();
     RDFVariable lastname = RDFContact1.optional().property<nco::nameFamily> ();
@@ -392,30 +376,8 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
         }
     }
     query = ::tracker()->modelQuery(quer);
-
     // need to store LiveNodes in order to receive notification from model
     QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(contactsReady()));
-}
-
-void QTrackerContactIdFetchRequest::modelUpdated()
-{
-    QList<QContactLocalId> result;
-    // for now this only serves get all contacts
-    for(int i = 0; i < query->rowCount(); i++) {
-        bool ok;
-        QContactLocalId id = query->index(i, 1).data().toUInt(&ok);
-        if (ok) {
-            // Append only, if we have a valid contact id
-            // and it's not already added
-            if (!result.contains(id))
-                result.append(id);
-        }
-    }
-
-    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
-                              QList<QContactManager::Error> (),
-                              QContactAbstractRequest::Finished,
-                              false);
 }
 
 bool detailExisting(const QString &definitionName, const QContact &contact, const QContactDetail &adetail)
@@ -431,11 +393,15 @@ bool detailExisting(const QString &definitionName, const QContact &contact, cons
 
 void QTrackerContactFetchRequest::contactsReady()
 {
-    QContactFetchRequest* request =
-        (req->type() == QContactAbstractRequest::ContactFetchRequest)
-        ? static_cast<QContactFetchRequest*> (req) : 0;
+    QContactFetchRequest* request = qobject_cast<QContactFetchRequest*> (req);
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
+    if (!request) {
+        QList<QContactManager::Error> dummy;
+        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy,
+                                    QContactAbstractRequest::Finished);
+        return;
+    }
     QList<QContact> result;
     // access existing contacts in result list, contactid to array index (result) lookup
     QHash<quint32, int> resultLookup;
@@ -601,6 +567,7 @@ void QTrackerContactFetchRequest::contactsReady()
             result[i] = engine->setContactDisplayLabel(engine->synthesizeDisplayLabel(cont, synthError), cont);
         }
     }
+
     QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished, true);

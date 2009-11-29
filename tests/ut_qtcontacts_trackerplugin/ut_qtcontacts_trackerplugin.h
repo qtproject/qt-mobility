@@ -47,9 +47,10 @@
 #include <QString>
 #include <qcontactrequests.h>
 
-#include "qcontacttrackerbackend_p.h"
-#include "qtrackercontactasyncrequest.h"
 
+
+class QContactLocalIdFetchRequest;
+class QContactFetchRequest;
 class QContactTrackerEngine;
 /**
  * QtContacts Tracker plugin unittests

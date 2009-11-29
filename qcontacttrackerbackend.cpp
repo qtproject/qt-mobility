@@ -56,6 +56,7 @@
 #include "qtrackercontactsaverequest.h"
 #include <qtrackerrelationshipfetchrequest.h>
 #include <qtrackerrelationshipsaverequest.h>
+#include <qtrackercontactidfetchrequest.h>
 
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)

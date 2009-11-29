@@ -52,6 +52,9 @@
 #include <trackerchangelistener.h>
 #include <qcontactrelationshipsaverequest.h>
 #include <qcontactrelationshipfetchrequest.h>
+#include <qtrackercontactidfetchrequest.h>
+#include <qcontacttrackerbackend_p.h>
+#include <qtrackercontactasyncrequest.h>
 
 #include "contactmanager.h"
 
