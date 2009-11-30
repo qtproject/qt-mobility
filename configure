@@ -57,9 +57,11 @@ BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 RELEASEMODE=
 BUILD_SILENT=
-CONTACTS_PLUGIN=
 LINUX_TARGET=
 QMAKE_CACHE="$shadowpath/.qmake.cache"
+LIB_PATH="lib"
+BIN_PATH="bin"
+MAC_SDK=
 
 usage() 
 {
@@ -85,12 +87,11 @@ usage()
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
     echo
-    echo "-contact-src <backend> ..."
-    echo "                    Compile the specified contacts API backend. Not selecting any backend"
-    echo "                    will result in default selection for build platform"
-    echo "                    options: symbian, wince, memory, maemo"
     echo "-maemo ............ Build Qt Mobility for Maemo."
     echo "                    (default: Desktop Linux)"
+    echo "-sdk <sdk>..........Build using Apple provided SDK <path/to/sdk>."
+    echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
+    echo
     
     rm -f "$CONFIG_IN"
     exit 1
@@ -136,12 +137,12 @@ while [ "$#" -gt 0 ]; do
         -silent)
             BUILD_SILENT=yes
             ;;
-        -contact-src)
-            CONTACTS_PLUGIN="$CONTACTS_PLUGIN $2"
-            shift
-            ;;
         -maemo)
             LINUX_TARGET=maemo 
+            ;;
+        -sdk)
+            MAC_SDK="$2"
+            shift
             ;;
         *)
             echo "Unknown option: $1"
@@ -151,6 +152,23 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
+
+findframeworks()
+{
+# figure out if Qt was built with frameworks
+# if so, install in the correct place.
+# and fix rpath
+    echo "contains(QT_CONFIG,qt_framework):message(1)" > 1.pro
+    SOMETHING=`qmake 1.pro 2>&1`
+        if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
+            LIB_PATH="Library/Frameworks"
+            BIN_PATH="Applications"
+        fi
+    rm 1.pro
+}
+
+findframeworks
+
 if [ -n "$BUILD_SILENT" ]; then
     echo "CONFIG += silent"  > "$CONFIG_IN"
 fi
@@ -159,7 +177,6 @@ if [ -z "$RELEASEMODE" ]; then
     RELEASEMODE="debug"
 fi
 echo "CONFIG += $RELEASEMODE" >> "$CONFIG_IN"
-echo "CONTACTS_BACKENDS = $CONTACTS_PLUGIN" >> "$CONFIG_IN"
 
 #do we build for Maemo?
 if [ -n "$LINUX_TARGET" ]; then
@@ -193,7 +210,7 @@ echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 
 #process library path
 if [ -z "$QT_MOBILITY_LIB" ]; then
-    QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/lib"
+    QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/$LIB_PATH"
 elif [ -d "$QT_MOBILITY_LIB" ]; then
     QT_MOBILITY_LIB=`(cd "$QT_MOBILITY_LIB"; /bin/pwd)`
 else
@@ -206,7 +223,7 @@ echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 
 #process binary path
 if [ -z "$QT_MOBILITY_BIN" ]; then
-    QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/bin"
+    QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/$BIN_PATH"
 elif [ -d "$QT_MOBILITY_BIN" ]; then
     QT_MOBILITY_BIN=`(cd "$QT_MOBILITY_BIN"; /bin/pwd)`
 else
@@ -220,6 +237,11 @@ echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
 echo "QT_MOBILITY_SOURCE_TREE = $relpath" >> "$QMAKE_CACHE"
 echo "QT_MOBILITY_BUILD_TREE = $shadowpath" >> "$QMAKE_CACHE"
 
+if [ -n "$MAC_SDK" ]; then
+    QMAKE_MAC_SDK="$MAC_SDK"
+   echo "QMAKE_MAC_SDK = $QMAKE_MAC_SDK" >> "$CONFIG_IN"
+fi
+
 if [ -z "$BUILD_UNITTESTS" ]; then
     echo "build_unit_tests = no" >> "$CONFIG_IN"
 else
@@ -231,6 +253,7 @@ if [ -z "$BUILD_EXAMPLES" ]; then
 else
     echo "build_examples = yes" >> "$CONFIG_IN"
 fi
+
 
 echo "Configuring Qt Mobility"
 echo 

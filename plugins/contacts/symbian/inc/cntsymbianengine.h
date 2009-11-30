@@ -55,6 +55,7 @@
 
 #include <QSharedData>
 #include <QObject>
+#include <QQueue>
 
 #include "qtcontactsglobal.h"
 #include "qcontact.h"
@@ -66,6 +67,7 @@
 
 QTM_BEGIN_NAMESPACE
 class QContactChangeSet;
+class QContactAbstractRequest;
 QTM_END_NAMESPACE
 class CntSymbianDatabase;
 class CntTransformContact;
@@ -151,6 +153,16 @@ private:
 
     void updateDisplayLabel(QContact& contact) const;
 
+    /* Asynchronous Request Support - synchronous versions until thread worker is stable */
+    void requestDestroyed(QContactAbstractRequest* req);
+    bool startRequest(QContactAbstractRequest* req);
+    bool cancelRequest(QContactAbstractRequest* req);
+    bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
+    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
+
+private slots:
+    void performAsynchronousOperation();
+
 private:
     CntSymbianDatabase *m_dataBase;
     QString m_managerUri;
@@ -158,6 +170,8 @@ private:
     CntAbstractContactFilter *m_contactFilter;
     CntAbstractContactSorter *m_contactSorter;
     CntRelationship *m_relationship;
+
+    QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 #ifdef PBK_UNIT_TEST
     friend class TestSymbianEngine;
 #endif  //PBK_UNIT_TEST

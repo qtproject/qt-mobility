@@ -54,7 +54,7 @@ namespace Ui {
 class Dialog : public QDialog {
     Q_OBJECT
 public:
-    Dialog(QWidget *parent = 0);
+    Dialog();
     ~Dialog();
 
 protected:
@@ -79,6 +79,7 @@ private slots:
     void getVersion(int index);
     void getFeature(int index);
     void setSaverEnabled(bool b);
+    void updateDeviceLockedState();
 
     void netStatusComboActivated(int);
     void updateBatteryStatus(int);

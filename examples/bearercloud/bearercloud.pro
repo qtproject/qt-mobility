@@ -21,16 +21,10 @@ CONFIG += console
 
 include(../examples.pri)
 
-symbian {
-    BEARERLIB.sources = $$OUTPUT_DIR/build/$$SUBDIRPART/bin/QtBearer.dll
-    BEARERLIB.path = .
-    DEPLOYMENT += BEARERLIB
-}
 
 macx: {
-    #LIBS += -framework QtBearer
+    contains(QT_CONFIG,qt_framework):LIBS += -framework QtBearer
     INCLUDEPATH += ../../
     contains(CONFIG, debug) {
-        CONFIG -= app_bundle
     }
 }

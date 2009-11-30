@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontact.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QContact Class Reference</title>
+  <title>Qt Mobility Project 1.0: QContact Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QContact"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -64,22 +65,29 @@
 <p>See also <a href="qcontactmanager.html">QContactManager</a> and <a href="qcontactdetail.html">QContactDetail</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QContact/QContact"></a>
 <h3 class="fn"><a name="QContact"></a>QContact::QContact ()</h3>
 <p>Construct an empty contact.</p>
 <h3 class="fn"><a name="QContact-2"></a>QContact::QContact ( const QContact &amp; <i>other</i> )</h3>
 <p>Initializes this <a href="qcontact.html">QContact</a> from <i>other</i></p>
+<a name="//apple_ref/cpp/instm/QContact/~QContact"></a>
 <h3 class="fn"><a name="dtor.QContact"></a>QContact::~QContact ()</h3>
 <p>Frees the memory used by this <a href="qcontact.html">QContact</a></p>
+<a name="//apple_ref/cpp/instm/QContact/availableActions"></a>
 <h3 class="fn"><a name="availableActions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; QContact::availableActions ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>vendorName</i> = QString(), int <i>implementationVersion</i> = -1 ) const</h3>
 <p>Return a list of actions available to be performed on this contact which are offered by the vendor whose name is the given <i>vendorName</i>, where the action instance has the implementation version given by <i>implementationVersion</i>. If <i>vendorName</i> is empty, actions from any vendor are supplied; if <i>implementationVersion</i> is <tt>-1</tt>, action implementations of any version will be returned.</p>
+<a name="//apple_ref/cpp/instm/QContact/clearDetails"></a>
 <h3 class="fn"><a name="clearDetails"></a>void QContact::clearDetails ()</h3>
 <p>Removes all details of the contact. This function does not modify the id or type of the contact. Calling <a href="qcontact.html#isEmpty">isEmpty</a>() after calling this function will return true.</p>
+<a name="//apple_ref/cpp/instm/QContact/detail"></a>
 <h3 class="fn"><a name="detail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::detail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i> ) const</h3>
 <p>Returns the first detail stored in the contact which is of the given <i>definitionName</i></p>
 <h3 class="fn"><a name="detail-2"></a>T QContact::detail () const</h3>
 <p>Returns the first detail of the template type</p>
+<a name="//apple_ref/cpp/instm/QContact/detailWithAction"></a>
 <h3 class="fn"><a name="detailWithAction"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::detailWithAction ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i> ) const</h3>
 <p>Retrieve the first detail for which the given <i>actionName</i> is available</p>
+<a name="//apple_ref/cpp/instm/QContact/details"></a>
 <h3 class="fn"><a name="details"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::details ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i> = QString() ) const</h3>
 <p>Returns a list of details of the given <i>definitionName</i></p>
 <h3 class="fn"><a name="details-2"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;T&gt; QContact::details () const</h3>
@@ -88,70 +96,91 @@
 <p>Returns a list of details of the template type which match the <i>fieldName</i> and <i>value</i> criteria</p>
 <h3 class="fn"><a name="details-4"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::details ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>fieldName</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i> ) const</h3>
 <p>Returns a list of details of the given <i>definitionName</i>, <i>fieldName</i> and field <i>value</i></p>
+<a name="//apple_ref/cpp/instm/QContact/detailsWithAction"></a>
 <h3 class="fn"><a name="detailsWithAction"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContact::detailsWithAction ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i> ) const</h3>
 <p>Retrieve any details for which the given <i>actionName</i> is available</p>
+<a name="//apple_ref/cpp/instm/QContact/displayLabel"></a>
 <h3 class="fn"><a name="displayLabel"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContact::displayLabel () const</h3>
 <p>Returns the read-only display label of this contact. A contact which has been retrieved from a manager will have a display label synthesized for it.</p>
+<a name="//apple_ref/cpp/instm/QContact/id"></a>
 <h3 class="fn"><a name="id"></a><a href="qcontactid.html">QContactId</a> QContact::id () const</h3>
 <p>Returns the <a href="qcontactid.html">QContactId</a> that identifies this contact</p>
 <p>See also <a href="qcontact.html#setId">setId</a>().</p>
+<a name="//apple_ref/cpp/instm/QContact/isEmpty"></a>
 <h3 class="fn"><a name="isEmpty"></a>bool QContact::isEmpty () const</h3>
 <p>Returns true if this <a href="qcontact.html">QContact</a> is empty, false if not.</p>
 <p>An empty <a href="qcontact.html">QContact</a> has an empty label and no extra details. The type of the contact is irrelevant.</p>
+<a name="//apple_ref/cpp/instm/QContact/isPreferredDetail"></a>
 <h3 class="fn"><a name="isPreferredDetail"></a>bool QContact::isPreferredDetail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i> ) const</h3>
 <p>Returns true if the given <i>detail</i> is a preferred detail for the given <i>actionName</i>, or for any action if the <i>actionName</i> is empty</p>
+<a name="//apple_ref/cpp/instm/QContact/localId"></a>
 <h3 class="fn"><a name="localId"></a>QContactLocalId QContact::localId () const</h3>
 <p>Returns the QContactLocalId that identifies this contact within its manager</p>
+<a name="//apple_ref/cpp/instm/QContact/preferredDetail"></a>
 <h3 class="fn"><a name="preferredDetail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::preferredDetail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i> ) const</h3>
 <p>Returns the preferred detail for a given <i>actionName</i></p>
 <p>See also <a href="qcontact.html#setPreferredDetail">setPreferredDetail</a>().</p>
+<a name="//apple_ref/cpp/instm/QContact/relatedContacts"></a>
 <h3 class="fn"><a name="relatedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactid.html">QContactId</a>&gt; QContact::relatedContacts ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>relationshipType</i> = QString(), <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> <i>role</i> = QContactRelationshipFilter::Either ) const</h3>
 <p>Returns a list of ids of contacts which are related to this contact in a relationship of the given <i>relationshipType</i>, where those other contacts participate in the relationship in the given <i>role</i></p>
+<a name="//apple_ref/cpp/instm/QContact/relationshipOrder"></a>
 <h3 class="fn"><a name="relationshipOrder"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContact::relationshipOrder () const</h3>
 <p>Returns the ordered list of relationships in which the contact is involved. By default, this list is equal to the cached list of relationships which is available by calling <a href="qcontact.html#relationships">relationships</a>().</p>
 <p>See also <a href="qcontact.html#setRelationshipOrder">setRelationshipOrder</a>().</p>
+<a name="//apple_ref/cpp/instm/QContact/relationships"></a>
 <h3 class="fn"><a name="relationships"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContact::relationships ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>relationshipType</i> = QString() ) const</h3>
 <p>Returns a list of relationships of the given <i>relationshipType</i> in which the contact was a participant at the time that it was retrieved from the manager</p>
+<a name="//apple_ref/cpp/instm/QContact/removeDetail"></a>
 <h3 class="fn"><a name="removeDetail"></a>bool QContact::removeDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
 <p>Removes the <i>detail</i> from the contact.</p>
 <p>Any preference for the given field is also removed. The Id of the <i>detail</i> is removed, to signify that it is no longer part of the contact.</p>
 <p>If the detail is the contact type for this contact, the type will be reset to <tt>QContactType::TypeContact</tt>, and the function will return success.</p>
 <p>If the detail is a display label, the operation will fail and return false.</p>
 <p>Returns true if the detail was removed successfully, false if an error occurred</p>
+<a name="//apple_ref/cpp/instm/QContact/saveDetail"></a>
 <h3 class="fn"><a name="saveDetail"></a>bool QContact::saveDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
 <p>Saves the given <i>detail</i> in the list of stored details, and sets its Id. If another detail of the same type and Id has been previously saved in this contact, that detail is overwritten. Otherwise, a new Id is generated and set in the detail, and the detail is added to the list.</p>
 <p>If <i>detail</i> is a contact type, the existing contact type will be overwritten with <i>detail</i>. There is never more than one contact type in a contact.</p>
 <p>If <i>detail</i> is a display label, the operation will fail. The display label can never be updated manually and must be synthesized by the backend.</p>
 <p>Returns true if the detail was saved successfully, otherwise returns false</p>
+<a name="//apple_ref/cpp/instm/QContact/setId"></a>
 <h3 class="fn"><a name="setId"></a>void QContact::setId ( const <a href="qcontactid.html">QContactId</a> &amp; <i>id</i> )</h3>
 <p>Sets the id of this contact to <i>id</i>. Note that this only affects this structure, not any corresponding structures stored by a <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>If you change the id of a contact and save the contact in a manager, the previously existing contact will still exist. You can do this to create copies (possibly modified) of an existing contact.</p>
 <p>Returns true if the <i>id</i> was set successfully, otherwise returns false.</p>
 <p>See also <a href="qcontact.html#id">id</a>().</p>
+<a name="//apple_ref/cpp/instm/QContact/setPreferredDetail"></a>
 <h3 class="fn"><a name="setPreferredDetail"></a>bool QContact::setPreferredDetail ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>actionName</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>preferredDetail</i> )</h3>
 <p>Set a particular detail as the <i>preferredDetail</i> for a given <i>actionName</i>. Returns true if the detail was successfully set as the preferred detail for the action identified by <i>actionName</i>, otherwise returns false</p>
 <p>See also <a href="qcontact.html#preferredDetail">preferredDetail</a>().</p>
+<a name="//apple_ref/cpp/instm/QContact/setRelationshipOrder"></a>
 <h3 class="fn"><a name="setRelationshipOrder"></a>void QContact::setRelationshipOrder ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>reordered</i> )</h3>
 <p>Sets the order of importance of the relationships for this contact by saving a <i>reordered</i> list of relationships which involve the contact. The list must include all of the relationships in which the contact is involved, and must not include any relationships which do not involve the contact. In order for the ordering preference to be persisted, the contact must be saved in its manager.</p>
 <p>It is possible that relationships will have been added or removed from the contact stored in the manager, thus rendering the relationship cache of the contact in memory stale. If this happens, attempting to save the contact after reordering its relationships will result in an error occurring. The updated relationships list must be retrieved from the manager, reordered and set in the contact before the contact can be saved successfully.</p>
 <p>See also <a href="qcontact.html#relationships">relationships</a>() and <a href="qcontact.html#relationshipOrder">relationshipOrder</a>().</p>
+<a name="//apple_ref/cpp/instm/QContact/setType"></a>
 <h3 class="fn"><a name="setType"></a>void QContact::setType ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>type</i> )</h3>
 <p>Sets the type of the contact to the given <i>type</i>.</p>
 <p>See also <a href="qcontact.html#type">type</a>().</p>
 <h3 class="fn"><a name="setType-2"></a>void QContact::setType ( const <a href="qcontacttype.html">QContactType</a> &amp; <i>type</i> )</h3>
 <p>Sets the type of the contact to the given <i>type</i>.</p>
+<a name="//apple_ref/cpp/instm/QContact/type"></a>
 <h3 class="fn"><a name="type"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContact::type () const</h3>
 <p>Returns the type of the contact. Every contact has exactly one type which is either set manually (by saving a modified copy of the QCotnactType in the contact, or by calling <a href="qcontact.html#setType">setType</a>()) or synthesized automatically.</p>
 <p>See also <a href="qcontact.html#setType">setType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContact/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContact::operator!= ( const QContact &amp; <i>other</i> ) const</h3>
 <p>Returns true if this contacts Id or details are different to those of the <i>other</i> contact</p>
+<a name="//apple_ref/cpp/instm/QContact/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContact &amp; QContact::operator= ( const QContact &amp; <i>other</i> )</h3>
 <p>Replace the contents of this <a href="qcontact.html">QContact</a> with <i>other</i></p>
+<a name="//apple_ref/cpp/instm/QContact/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContact::operator== ( const QContact &amp; <i>other</i> ) const</h3>
 <p>Returns true if this contact is equal to the <i>other</i> contact, false if either the id or stored details are not the same</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

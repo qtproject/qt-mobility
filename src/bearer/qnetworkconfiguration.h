@@ -73,10 +73,10 @@ public:
     };
 
     enum Purpose {
-        Unknown = 0,
-        Public,
-        Private,
-        ServiceSpecific
+        UnknownPurpose = 0,
+        PublicPurpose,
+        PrivatePurpose,
+        ServiceSpecificPurpose
     };
 
     enum StateFlag {
@@ -92,7 +92,7 @@ public:
     Type type() const;
     Purpose purpose() const;
     QString identifier() const;
-    bool roamingAvailable() const;
+    bool isRoamingAvailable() const;
     QList<QNetworkConfiguration> children() const;
 
     QString name() const;

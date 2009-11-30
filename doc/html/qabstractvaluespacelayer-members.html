@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qvaluespace.cpp -->
 <head>
-  <title>Qt Mobility 1.0: List of All Members for QAbstractValueSpaceLayer</title>
+  <title>Qt Mobility Project 1.0: List of All Members for QAbstractValueSpaceLayer</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -19,7 +19,7 @@
 <li><div class="fn">typedef <b><a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a></b></div></li>
 <li><div class="fn">enum <b><a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a></b></div></li>
 <li><div class="fn">enum <b><a href="qabstractvaluespacelayer.html#Type-enum">Type</a></b></div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#addWatch">addWatch</a></b> ( QValueSpaceProvider *, Handle )</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#addWatch">addWatch</a></b> ( QValueSpacePublisher *, Handle )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#children">children</a></b> ( Handle ) : QSet&lt;QString&gt;</div></li>
@@ -37,7 +37,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#dumpObjectInfo">dumpObjectInfo</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#dumpObjectTree">dumpObjectTree</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#dynamicPropertyNames">dynamicPropertyNames</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#emitAttributeInterestChanged">emitAttributeInterestChanged</a></b> ( QValueSpaceProvider *, const QString &amp;, bool )</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#emitInterestChanged">emitInterestChanged</a></b> ( QValueSpacePublisher *, const QString &amp;, bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
@@ -63,14 +63,14 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeHandle">removeHandle</a></b> ( Handle )</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</a></b> ( QValueSpaceProvider *, Handle ) : bool</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeValue">removeValue</a></b> ( QValueSpaceProvider *, Handle, const QString &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a></b> ( QValueSpaceProvider *, Handle )</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</a></b> ( QValueSpacePublisher *, Handle ) : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeValue">removeValue</a></b> ( QValueSpacePublisher *, Handle, const QString &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a></b> ( QValueSpacePublisher *, Handle )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#sender">sender</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#setProperty">setProperty</a></b> ( Handle, Properties )</div></li>
-<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpaceProvider *, Handle, const QString &amp;, const QVariant &amp; ) : bool</div></li>
+<li><div class="fn"><b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpacePublisher *, Handle, const QString &amp;, const QVariant &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#signalsBlocked">signalsBlocked</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.5/qobject.html#startTimer">startTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qabstractvaluespacelayer.html#startup">startup</a></b> ( Type ) : bool</div></li>
@@ -90,6 +90,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

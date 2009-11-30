@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactrelationshipfilter.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QContactRelationshipFilter Class Reference</title>
+  <title>Qt Mobility Project 1.0: QContactRelationshipFilter Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QContactRelationshipFilter"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -47,6 +48,10 @@
 <p>It may be used to select contacts which are involved in relationships which are of a certain type, or which involve certain contacts.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QContactRelationshipFilter/Role"></a>
+<a name="//apple_ref/cpp/econst/QContactRelationshipFilter/First"></a>
+<a name="//apple_ref/cpp/econst/QContactRelationshipFilter/Second"></a>
+<a name="//apple_ref/cpp/econst/QContactRelationshipFilter/Either"></a>
 <h3 class="fn"><a name="Role-enum"></a>enum QContactRelationshipFilter::Role</h3>
 <p>Describes the roles that a contact may take in a relationship</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -57,31 +62,39 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QContactRelationshipFilter/QContactRelationshipFilter"></a>
 <h3 class="fn"><a name="QContactRelationshipFilter"></a>QContactRelationshipFilter::QContactRelationshipFilter ()</h3>
 <p>Constructs a new relationship filter</p>
 <h3 class="fn"><a name="QContactRelationshipFilter-2"></a>QContactRelationshipFilter::QContactRelationshipFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, else constructs a new <a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a>.</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipFilter/otherParticipantId"></a>
 <h3 class="fn"><a name="otherParticipantId"></a><a href="qcontactid.html">QContactId</a> QContactRelationshipFilter::otherParticipantId () const</h3>
 <p>Returns the id of another contact with whom a contact must have a relationship in order to match the filter</p>
 <p>See also <a href="qcontactrelationshipfilter.html#setOtherParticipantId">setOtherParticipantId</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipFilter/relationshipType"></a>
 <h3 class="fn"><a name="relationshipType"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactRelationshipFilter::relationshipType () const</h3>
 <p>Returns the type of relationship that a contact must have in order to match the filter</p>
 <p>See also <a href="qcontactrelationshipfilter.html#setRelationshipType">setRelationshipType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipFilter/role"></a>
 <h3 class="fn"><a name="role"></a><a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> QContactRelationshipFilter::role () const</h3>
 <p>Returns the role that a contact must have in a relationship in order to match the filter</p>
 <p>See also <a href="qcontactrelationshipfilter.html#setRole">setRole</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipFilter/setOtherParticipantId"></a>
 <h3 class="fn"><a name="setOtherParticipantId"></a>void QContactRelationshipFilter::setOtherParticipantId ( const <a href="qcontactid.html">QContactId</a> &amp; <i>id</i> )</h3>
 <p>Sets the contact id of the other participant which must be present in the relationship with the contact in order for the contact to match the filter to be <i>id</i></p>
 <p>See also <a href="qcontactrelationshipfilter.html#otherParticipantId">otherParticipantId</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipFilter/setRelationshipType"></a>
 <h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationshipFilter::setRelationshipType ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>relationshipType</i> )</h3>
 <p>Sets the type of relationship which a contact must have in order to match this filter to <i>relationshipType</i></p>
 <p>See also <a href="qcontactrelationshipfilter.html#relationshipType">relationshipType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipFilter/setRole"></a>
 <h3 class="fn"><a name="setRole"></a>void QContactRelationshipFilter::setRole ( <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> <i>roleInRelationship</i> )</h3>
 <p>Sets the role in the relationship that a contact must be in order to match this filter to <i>roleInRelationship</i></p>
 <p>See also <a href="qcontactrelationshipfilter.html#role">role</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

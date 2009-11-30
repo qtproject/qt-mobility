@@ -43,8 +43,17 @@
 #include "databasemanagersession.h"
 #include "databasemanagerserver.pan"
 #include "databasemanagersignalhandler.h"
+#include "servicedatabase_p.h"
 
 QTM_BEGIN_NAMESPACE
+bool lessThan(const QServiceInterfaceDescriptor &d1,
+                                        const QServiceInterfaceDescriptor &d2)
+{
+    return (d1.majorVersion() < d2.majorVersion())
+            || ( d1.majorVersion() == d2.majorVersion()
+            && d1.minorVersion() < d2.minorVersion());
+}
+
 
 CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL()
     {
@@ -63,23 +72,20 @@ CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC()
 
 void CDatabaseManagerServerSession::ConstructL()
     {
-    iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
-    iDatabaseManager = new DatabaseManager();
-    QObject::connect(iDatabaseManager, SIGNAL(serviceAdded(const QString&, DatabaseManager::DbScope)), 
-            iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&, DatabaseManager::DbScope)));
-    
-    QObject::connect(iDatabaseManager, SIGNAL(serviceRemoved(const QString&, DatabaseManager::DbScope)), 
-            iDatabaseManagerSignalHandler, SLOT(ServiceRemoved(const QString&, DatabaseManager::DbScope)));
+    iDatabaseManagerSignalHandler = NULL;
+    iDb = NULL;
+    iDb = new ServiceDatabase();
+    initDbPath();
     }
 
-CDatabaseManagerServerSession::CDatabaseManagerServerSession()
+CDatabaseManagerServerSession::CDatabaseManagerServerSession() 
     {
     }
 
 CDatabaseManagerServerSession::~CDatabaseManagerServerSession()
     {
     delete iDatabaseManagerSignalHandler;
-    delete iDatabaseManager;    
+    delete iDb;
     delete iByteArray;
     }
 
@@ -152,19 +158,22 @@ TInt CDatabaseManagerServerSession::InterfaceDefaultSize(const RMessage2& aMessa
     TPtr ptrToBuf(defaultInterfaceBuf->Des());
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     
-    QString interfaceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
-    QServiceInterfaceDescriptor interfaceDescriptor = iDatabaseManager->interfaceDefault(interfaceName, static_cast<DatabaseManager::DbScope>(aMessage.Int1()));
+    
+    QString interfaceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());   
+    QServiceInterfaceDescriptor descriptor;
+    QString interfaceID;
+    descriptor = iDb->interfaceDefault(interfaceName, &interfaceID);
     
     iByteArray = new QByteArray();
     
     QDataStream in(iByteArray, QIODevice::WriteOnly);
-    in.setVersion(QDataStream::Qt_4_5);
-    in << interfaceDescriptor;
-    
+    in.setVersion(QDataStream::Qt_4_6);
+    in << descriptor;
+
     TPckgBuf<TInt> size(iByteArray->size());
     
-    aMessage.Write(2, size);
-    aMessage.Write(3, LastErrorCode());
+    aMessage.Write(1, size);
+    aMessage.Write(2, LastErrorCode());
     delete defaultInterfaceBuf;
     
     return ret;
@@ -198,7 +207,19 @@ TInt CDatabaseManagerServerSession::CancelNotifyServiceSignal(const RMessage2& /
     }
 
 TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
+    {    
+    QString securityToken;
+    
+    TVendorId vendorId = aMessage.VendorId();
+    if (vendorId != 0)
     {
+        securityToken = QString::number(vendorId);
+    }
+    else
+    {
+        securityToken = QString::number(aMessage.SecureId().iId);
+    }
+
     TInt ret;
     HBufC8* serviceMetaDataBuf8 = HBufC8::New(aMessage.GetDesLength(0));
     if (!serviceMetaDataBuf8)
@@ -208,8 +229,8 @@ TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     if (ret != KErrNone)
         {
-        iDatabaseManager->lastError().setError(DBError::UnknownError);
-        aMessage.Write(2, LastErrorCode());
+        iDb->lastError().setError(DBError::UnknownError);
+        aMessage.Write(1, LastErrorCode());
         delete serviceMetaDataBuf8;
         return ret;
         }
@@ -219,8 +240,10 @@ TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
     ServiceMetaDataResults results;
     out >> results;
     
-    iDatabaseManager->registerService(results, static_cast<DatabaseManager::DbScope>(aMessage.Int1()));
-    aMessage.Write(2, LastErrorCode());
+    iDb->registerService(results, securityToken);
+ 
+    aMessage.Write(1, LastErrorCode());
+
     delete serviceMetaDataBuf8;
     
     return ret;
@@ -228,6 +251,18 @@ TInt CDatabaseManagerServerSession::RegisterServiceL(const RMessage2& aMessage)
 
 TInt CDatabaseManagerServerSession::UnregisterServiceL(const RMessage2& aMessage)
     {
+    QString securityToken;
+    
+    TVendorId vendorId = aMessage.VendorId();
+    if (vendorId != 0)
+    {
+        securityToken = QString::number(vendorId);
+    }
+    else
+    {
+        securityToken = QString::number(aMessage.SecureId().iId);
+    }
+    
     TInt ret;
     HBufC* serviceNameBuf = HBufC::New(aMessage.GetDesLength(0));
     if (!serviceNameBuf)
@@ -237,16 +272,16 @@ TInt CDatabaseManagerServerSession::UnregisterServiceL(const RMessage2& aMessage
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     if (ret != KErrNone)
         {
-        iDatabaseManager->lastError().setError(DBError::UnknownError);
-        aMessage.Write(2, LastErrorCode());
+        iDb->lastError().setError(DBError::UnknownError);
+        aMessage.Write(1, LastErrorCode());
         delete serviceNameBuf;
         return ret;
         }
 
     QString serviceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
-    iDatabaseManager->unregisterService(serviceName, static_cast<DatabaseManager::DbScope>(aMessage.Int1()));
+    iDb->unregisterService(serviceName, securityToken);
     
-    aMessage.Write(2, LastErrorCode());
+    aMessage.Write(1, LastErrorCode());
     delete serviceNameBuf;
     
     return ret;
@@ -263,8 +298,8 @@ TInt CDatabaseManagerServerSession::InterfacesSizeL(const RMessage2& aMessage)
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     if (ret != KErrNone)
         {
-        iDatabaseManager->lastError().setError(DBError::UnknownError);
-        aMessage.Write(3, LastErrorCode());
+        iDb->lastError().setError(DBError::UnknownError);
+        aMessage.Write(2, LastErrorCode());
         delete buf;
         return ret;
         }
@@ -274,17 +309,16 @@ TInt CDatabaseManagerServerSession::InterfacesSizeL(const RMessage2& aMessage)
     QServiceFilter filter;
     out >> filter;
     
-    QList<QServiceInterfaceDescriptor> interfaces = iDatabaseManager->getInterfaces(filter, static_cast<DatabaseManager::DbScope>(aMessage.Int1()));
-    
+    QList<QServiceInterfaceDescriptor> interfaces = iDb->getInterfaces(filter);    
     iByteArray = new QByteArray();
     
     QDataStream in(iByteArray, QIODevice::WriteOnly);
-    in.setVersion(QDataStream::Qt_4_5);
+    in.setVersion(QDataStream::Qt_4_6);
     in << interfaces;
 
     TPckgBuf<TInt> size(iByteArray->size());
-    aMessage.Write(2, size);
-    aMessage.Write(3, LastErrorCode());
+    aMessage.Write(1, size);
+    aMessage.Write(2, LastErrorCode());
     
     delete buf;
     return ret;
@@ -311,23 +345,23 @@ TInt CDatabaseManagerServerSession::ServiceNamesSizeL(const RMessage2& aMessage)
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     if (ret != KErrNone)
         {
-        iDatabaseManager->lastError().setError(DBError::UnknownError);
-        aMessage.Write(3, LastErrorCode());
+        iDb->lastError().setError(DBError::UnknownError);
+        aMessage.Write(2, LastErrorCode());
         delete serviceNamesBuf;
         return ret;
         }
 
     QString interfaceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
-    QStringList serviceNames = iDatabaseManager->getServiceNames(interfaceName, static_cast<DatabaseManager::DbScope>(aMessage.Int1()));
+    QStringList serviceNames = iDb->getServiceNames(interfaceName);
     iByteArray = new QByteArray();
 
     QDataStream in(iByteArray, QIODevice::WriteOnly);
-    in.setVersion(QDataStream::Qt_4_5);
+    in.setVersion(QDataStream::Qt_4_6);
     in << serviceNames;
-    
+
     TPckgBuf<TInt> size(iByteArray->size());
-    aMessage.Write(2, size);
-    aMessage.Write(3, LastErrorCode());
+    aMessage.Write(1, size);
+    aMessage.Write(2, LastErrorCode());
     delete serviceNamesBuf;
     
     return ret;
@@ -358,8 +392,8 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefaultL(const RMessage2& aMessa
     TRAPD(ret2, aMessage.ReadL(1, ptrToBuf2));
     if (ret != KErrNone || ret2 != KErrNone)
         {
-        iDatabaseManager->lastError().setError(DBError::UnknownError);
-        aMessage.Write(3, LastErrorCode());
+        iDb->lastError().setError(DBError::UnknownError);
+        aMessage.Write(2, LastErrorCode());
         delete serviceNameBuf;
         delete interfaceNameBuf;
         return (ret == KErrNone) ? ret2 : ret;
@@ -367,9 +401,24 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefaultL(const RMessage2& aMessa
 
     QString serviceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
     QString interfaceName = QString::fromUtf16(ptrToBuf2.Ptr(), ptrToBuf2.Length());
-    iDatabaseManager->setInterfaceDefault(serviceName, interfaceName, static_cast<DatabaseManager::DbScope>(aMessage.Int2()));
     
-    aMessage.Write(3, LastErrorCode());
+    QList<QServiceInterfaceDescriptor> descriptors;
+    QServiceFilter filter;
+    filter.setServiceName(serviceName);
+    filter.setInterface(interfaceName);
+
+    descriptors = iDb->getInterfaces(filter);
+
+    //find the descriptor with the latest version
+    int latestIndex = 0;
+        for (int i = 1; i < descriptors.count(); ++i) {
+            if (lessThan(descriptors[latestIndex], descriptors[i]))
+                latestIndex = i;
+    }
+
+    iDb->setInterfaceDefault(descriptors[latestIndex]);
+
+    aMessage.Write(2, LastErrorCode());
     delete serviceNameBuf;
     delete interfaceNameBuf;
     
@@ -387,7 +436,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
     TRAP(ret, aMessage.ReadL(0, ptrToBuf));
     if (ret != KErrNone)
         {
-        iDatabaseManager->lastError().setError(DBError::UnknownError);
+        iDb->lastError().setError(DBError::UnknownError);
         aMessage.Write(2, LastErrorCode());
         delete interfaceBuf;
         return ret;
@@ -398,7 +447,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
     QServiceInterfaceDescriptor interfaceDescriptor;
     out >> interfaceDescriptor;
     
-    iDatabaseManager->setInterfaceDefault(interfaceDescriptor, static_cast<DatabaseManager::DbScope>(aMessage.Int1()));
+    iDb->setInterfaceDefault(interfaceDescriptor);
     aMessage.Write(2, LastErrorCode());
     delete interfaceBuf;
     
@@ -407,46 +456,98 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
 
 void CDatabaseManagerServerSession::SetChangeNotificationsEnabled(const RMessage2& aMessage)
 {
-    iDatabaseManager->setChangeNotificationsEnabled(static_cast<DatabaseManager::DbScope>(aMessage.Int0()), aMessage.Int1());
+    if (aMessage.Int1() == true)
+    {
+        if (!iDatabaseManagerSignalHandler)
+        {
+            iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
+        }
+        QObject::connect(iDb, SIGNAL(serviceAdded(const QString&)), 
+                iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
+        
+        QObject::connect(iDb, SIGNAL(serviceRemoved(const QString&)), 
+                iDatabaseManagerSignalHandler, SLOT(ServiceRemoved(const QString&)));
+    }
+    else
+    {   
+	    if (!iDatabaseManagerSignalHandler)
+        {
+            iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
+        }
+        QObject::disconnect(iDb, SIGNAL(serviceAdded(const QString&)), 
+                iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
+        
+        QObject::disconnect(iDb, SIGNAL(serviceRemoved(const QString&)), 
+                iDatabaseManagerSignalHandler, SLOT(ServiceRemoved(const QString&)));
+        delete iDatabaseManagerSignalHandler;
+        iDatabaseManagerSignalHandler = NULL;
+    }
     aMessage.Write(2, LastErrorCode());
 }
 
 TError CDatabaseManagerServerSession::LastErrorCode()
     {
-    return TError(iDatabaseManager->lastError().code());
+    return TError(iDb->lastError().code());
     }
 
-void CDatabaseManagerServerSession::ServiceAdded(const QString& aServiceName, DatabaseManager::DbScope aScope)
+void CDatabaseManagerServerSession::ServiceAdded(const QString& aServiceName)
     {    
         if (iWaitingAsyncRequest)
         {
-        TPckgBuf<TInt> scope(aScope);
         TPckgBuf<TInt> state(0);
         TPtrC str(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
         iMsg.Write(0, str);
-        iMsg.Write(1, scope);
-        iMsg.Write(2, state);
-        iMsg.Write(3, LastErrorCode());
+        iMsg.Write(1, state);
+        iMsg.Write(2, LastErrorCode());
         iMsg.Complete(ENotifySignalComplete); 
         iWaitingAsyncRequest = EFalse;
         }    
     }
 
-void CDatabaseManagerServerSession::ServiceRemoved(const QString& aServiceName, DatabaseManager::DbScope aScope)
+void CDatabaseManagerServerSession::ServiceRemoved(const QString& aServiceName)
 {
     if (iWaitingAsyncRequest)
         {
-        TPckgBuf<TInt> scope(aScope);
         TPckgBuf<TInt> state(1);
         TPtrC str(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
         iMsg.Write(0, str);
-        iMsg.Write(1, scope);
-        iMsg.Write(2, state);
-        iMsg.Write(3, LastErrorCode());
+        iMsg.Write(1, state);
+        iMsg.Write(2, LastErrorCode());
         iMsg.Complete(ENotifySignalComplete);
         iWaitingAsyncRequest = EFalse;
         }
 }
+
+void CDatabaseManagerServerSession::initDbPath()
+{
+    QSettings::Scope settingsScope = QSettings::SystemScope;;
+    QString dbIdentifier = "_system";
+    ServiceDatabase *db = iDb;
+    QSettings settings(QSettings::IniFormat, settingsScope,
+            QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
+    QFileInfo fi(settings.fileName());
+    QDir dir = fi.dir();
+    QString qtVersion(qVersion());
+    qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
+    QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
+    db->setDatabasePath(dir.path() + QDir::separator() + dbName);
+    
+    openDb();
+}
+
+bool CDatabaseManagerServerSession::openDb()
+{
+    if (iDb) {
+        if (iDb->isOpen()) {
+            return true;
+        } else {
+            return iDb->open();
+        }
+    }
+    
+    return false;
+}
+
 
 QTM_END_NAMESPACE
 

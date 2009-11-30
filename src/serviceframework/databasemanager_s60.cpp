@@ -117,7 +117,8 @@ DatabaseManager::~DatabaseManager()
 */
 bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope scope)
 {
-    return iSession.RegisterService(service, static_cast<RDatabaseManagerSession::DbScope>(scope));
+    Q_UNUSED(scope);
+    return iSession.RegisterService(service);
 }
 
 /*
@@ -131,7 +132,8 @@ bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope s
 */
 bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scope)
 {
-    return iSession.UnregisterService(serviceName, scope);
+    Q_UNUSED(scope);
+    return iSession.UnregisterService(serviceName);
 }
 
 /*
@@ -144,7 +146,8 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
 */
 QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServiceFilter &filter, DbScope scope)
 {
-    return iSession.Interfaces(filter, static_cast<RDatabaseManagerSession::DbScope>(scope));
+    Q_UNUSED(scope);
+    return iSession.Interfaces(filter);
 }
 
 
@@ -158,7 +161,8 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 */
 QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DbScope scope)
 {
-    return iSession.ServiceNames(interfaceName, static_cast<RDatabaseManagerSession::DbScope>(scope));
+    Q_UNUSED(scope);
+    return iSession.ServiceNames(interfaceName);
 }
 
 /*
@@ -171,7 +175,8 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DbSco
 */
 QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &interfaceName, DbScope scope)
 {
-    return iSession.InterfaceDefault(interfaceName, static_cast<RDatabaseManagerSession::DbScope>(scope));
+    Q_UNUSED(scope);
+    return iSession.InterfaceDefault(interfaceName);
 }
 
 /*
@@ -188,7 +193,8 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
 */
 bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
         QString &interfaceName, DbScope scope) {
-        return iSession.SetInterfaceDefault(serviceName, interfaceName, static_cast<RDatabaseManagerSession::DbScope>(scope));
+        Q_UNUSED(scope);
+        return iSession.SetInterfaceDefault(serviceName, interfaceName);
 }
 
 /*
@@ -202,7 +208,8 @@ bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
 */
 bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
 {
-    return iSession.SetInterfaceDefault(descriptor, static_cast<RDatabaseManagerSession::DbScope>(scope));
+    Q_UNUSED(scope);
+    return iSession.SetInterfaceDefault(descriptor);
 }
 
 /*
@@ -213,7 +220,8 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
 */
 void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
 {
-    iSession.SetChangeNotificationsEnabled(scope, enabled);
+    Q_UNUSED(scope);
+    iSession.SetChangeNotificationsEnabled(enabled);
 }
 
 DatabaseManagerSignalMonitor::DatabaseManagerSignalMonitor(
@@ -253,15 +261,14 @@ void DatabaseManagerSignalMonitor::RunL()
         case ENotifySignalComplete:
         {
             QString serviceName = QString::fromUtf16(iDatabaseManagerSession.iServiceName.Ptr(), iDatabaseManagerSession.iServiceName.Length());
-            DatabaseManager::DbScope scope = (DatabaseManager::DbScope)iDatabaseManagerSession.iScope();
             
             if ((DatabaseManager::State)iDatabaseManagerSession.iState() == DatabaseManager::EAdded)
             {
-                emit iDatabaseManager.serviceAdded(serviceName, scope);
+                emit iDatabaseManager.serviceAdded(serviceName, DatabaseManager::SystemScope);
             }
             else if ((DatabaseManager::State)iDatabaseManagerSession.iState() == DatabaseManager::ERemoved) 
-            {
-                emit iDatabaseManager.serviceRemoved(serviceName, scope);
+            {    
+                emit iDatabaseManager.serviceRemoved(serviceName, DatabaseManager::SystemScope);
             }
             issueNotifyServiceSignal();
             break;
@@ -349,37 +356,37 @@ void RDatabaseManagerSession::Close()
     RSessionBase::Close();
     }
 
-bool RDatabaseManagerSession::RegisterService(ServiceMetaDataResults& aService, TInt aScope)
+bool RDatabaseManagerSession::RegisterService(ServiceMetaDataResults& aService)
     {
     QByteArray serviceByteArray;
     QDataStream in(&serviceByteArray, QIODevice::WriteOnly);
-    in.setVersion(QDataStream::Qt_4_5);
+    in.setVersion(QDataStream::Qt_4_6);
     in << aService;
     TPtrC8 ptr8((TUint8*)(serviceByteArray.constData()), serviceByteArray.size());
-    TIpcArgs args(&ptr8, aScope, &iError);
+    TIpcArgs args(&ptr8, &iError);
     SendReceive(ERegisterServiceRequest, args);
 
     return (iError() == DBError::NoError);
     }
 
-bool RDatabaseManagerSession::UnregisterService(const QString& aServiceName, TInt aScope)
+bool RDatabaseManagerSession::UnregisterService(const QString& aServiceName)
     {  
     TPtrC serviceNamePtr(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
-    TIpcArgs args(&serviceNamePtr, aScope, &iError);
+    TIpcArgs args(&serviceNamePtr, &iError);
     SendReceive(EUnregisterServiceRequest, args);
     
     return (iError() == DBError::NoError);
     }
 
-QList<QServiceInterfaceDescriptor> RDatabaseManagerSession::Interfaces(const QServiceFilter& aFilter, TInt aScope)
+QList<QServiceInterfaceDescriptor> RDatabaseManagerSession::Interfaces(const QServiceFilter& aFilter)
     {
     QByteArray filterByteArray;
     QDataStream in(&filterByteArray, QIODevice::WriteOnly);
-    in.setVersion(QDataStream::Qt_4_5);
+    in.setVersion(QDataStream::Qt_4_6);
     in << aFilter;   
     TPtrC8 ptr8((TUint8*)(filterByteArray.constData()), filterByteArray.size());
     TPckgBuf<TInt> lengthPckg(0);
-    TIpcArgs args(&ptr8, aScope, &lengthPckg, &iError);
+    TIpcArgs args(&ptr8, &lengthPckg, &iError);
     SendReceive(EGetInterfacesSizeRequest, args);
 
     HBufC8* descriptorListBuf = HBufC8::New(lengthPckg());
@@ -397,13 +404,13 @@ QList<QServiceInterfaceDescriptor> RDatabaseManagerSession::Interfaces(const QSe
     return descriptorList;
     }
 
-QStringList RDatabaseManagerSession::ServiceNames(const QString& aInterfaceName, TInt aScope)
+QStringList RDatabaseManagerSession::ServiceNames(const QString& aInterfaceName)
     {
     TPtrC interfaceNamePtr(reinterpret_cast<const TUint16*>(aInterfaceName.utf16()));
     HBufC* interfaceNamebuf = HBufC::New(interfaceNamePtr.Length());
     interfaceNamebuf->Des().Copy(interfaceNamePtr);
     TPckgBuf<TInt> lengthPckg(0);
-    TIpcArgs args(interfaceNamebuf, aScope, &lengthPckg, &iError);
+    TIpcArgs args(interfaceNamebuf, &lengthPckg, &iError);
     SendReceive(EGetServiceNamesSizeRequest, args);
     
     HBufC8* serviceNamesBuf = HBufC8::New(lengthPckg());
@@ -422,13 +429,13 @@ QStringList RDatabaseManagerSession::ServiceNames(const QString& aInterfaceName,
     return nameList;
     }
 
-QServiceInterfaceDescriptor RDatabaseManagerSession::InterfaceDefault(const QString& aInterfaceName, TInt aScope)
+QServiceInterfaceDescriptor RDatabaseManagerSession::InterfaceDefault(const QString& aInterfaceName)
     {
     TPtrC interfaceNamePtr(reinterpret_cast<const TUint16*>(aInterfaceName.utf16()));
     HBufC* interfaceNameBuf = HBufC::New(interfaceNamePtr.Length());
     interfaceNameBuf->Des().Copy(interfaceNamePtr);
     TPckgBuf<TInt> lengthPckg(0);
-    TIpcArgs args(interfaceNameBuf, aScope, &lengthPckg, &iError);
+    TIpcArgs args(interfaceNameBuf, &lengthPckg, &iError);
     SendReceive(EInterfaceDefaultSizeRequest, args);
     
     HBufC8* interfaceDescriptorBuf = HBufC8::New(lengthPckg());
@@ -447,24 +454,24 @@ QServiceInterfaceDescriptor RDatabaseManagerSession::InterfaceDefault(const QStr
     return interfaceDescriptor;
     }
 
-bool RDatabaseManagerSession::SetInterfaceDefault(const QString &aServiceName, const QString &aInterfaceName, TInt aScope)
+bool RDatabaseManagerSession::SetInterfaceDefault(const QString &aServiceName, const QString &aInterfaceName)
     {
     TPtrC serviceNamePtr(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
     TPtrC interfaceNamePtr(reinterpret_cast<const TUint16*>(aInterfaceName.utf16()));    
-    TIpcArgs args(&serviceNamePtr, &interfaceNamePtr, aScope, &iError);
+    TIpcArgs args(&serviceNamePtr, &interfaceNamePtr, &iError);
     SendReceive(ESetInterfaceDefault, args);
     
     return (iError() == DBError::NoError);
     }
 
-bool RDatabaseManagerSession::SetInterfaceDefault(const QServiceInterfaceDescriptor &aInterface, TInt aScope)
+bool RDatabaseManagerSession::SetInterfaceDefault(const QServiceInterfaceDescriptor &aInterface)
     {
     QByteArray interfaceByteArray;
     QDataStream in(&interfaceByteArray, QIODevice::WriteOnly);
-    in.setVersion(QDataStream::Qt_4_5);
+    in.setVersion(QDataStream::Qt_4_6);
     in << aInterface;
     TPtrC8 ptr8((TUint8 *)(interfaceByteArray.constData()), interfaceByteArray.size());
-    TIpcArgs args(&ptr8, aScope, &iError);
+    TIpcArgs args(&ptr8, &iError);
     SendReceive(ESetInterfaceDefault2, args);
 
     return (iError() == DBError::NoError);
@@ -477,18 +484,17 @@ DBError RDatabaseManagerSession::LastError()
     return error;
     }
 
-void RDatabaseManagerSession::SetChangeNotificationsEnabled(TInt aScope, bool aEnabled)
+void RDatabaseManagerSession::SetChangeNotificationsEnabled(bool aEnabled)
     {
-    TIpcArgs args(aScope, (aEnabled ? 1 : 0), &iError);
+    TIpcArgs args((aEnabled ? 1 : 0), &iError);
     SendReceive(ESetChangeNotificationsEnabledRequest, args);
     }
 
 void RDatabaseManagerSession::NotifyServiceSignal(TRequestStatus& aStatus)
     {
     iArgs.Set(0, &iServiceName);
-    iArgs.Set(1, &iScope);
-    iArgs.Set(2, &iState);
-    iArgs.Set(3, &iError);
+    iArgs.Set(1, &iState);
+    iArgs.Set(2, &iError);
     SendReceive(ENotifyServiceSignalRequest, iArgs, aStatus);
     }
 
