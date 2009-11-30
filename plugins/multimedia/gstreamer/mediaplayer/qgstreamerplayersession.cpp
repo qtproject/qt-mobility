@@ -49,7 +49,7 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
-#define USE_PLAYBIN2
+//#define USE_PLAYBIN2
 
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     :QObject(parent),
@@ -298,7 +298,10 @@ void QGstreamerPlayerSession::setVolume(int volume)
 void QGstreamerPlayerSession::setMuted(bool muted)
 {
     m_muted = muted;
+
     g_object_set(G_OBJECT(m_playbin), "volume", (m_muted ? 0 : m_volume/100.0), NULL);
+
+    emit mutedStateChanged(m_muted);
 }
 
 static void addTagToMap(const GstTagList *list,

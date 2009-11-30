@@ -81,9 +81,30 @@ QTM_BEGIN_NAMESPACE
 class QAudioCaptureSourcePrivate : public QMediaObjectPrivate
 {
 public:
+    Q_DECLARE_PUBLIC(QAudioCaptureSource)
+
+    void initControls()
+    {
+        Q_Q(QAudioCaptureSource);
+
+        if (service != 0)
+            audioDeviceControl = qobject_cast<QAudioDeviceControl*>(service->control(QAudioDeviceControl_iid));
+
+        if (audioDeviceControl) {
+            q->connect(audioDeviceControl, SIGNAL(selectedDeviceChanged(int)),
+                       SIGNAL(selectedDeviceChanged(int)));
+            q->connect(audioDeviceControl, SIGNAL(selectedDeviceChanged(QString)),
+                       SIGNAL(selectedDeviceChanged(QString)));
+            q->connect(audioDeviceControl, SIGNAL(devicesChanged()),
+                       SIGNAL(devicesChanged()));
+        }
+    }
+
     QAudioCaptureSourcePrivate():provider(0), audioDeviceControl(0) {}
     QMediaServiceProvider *provider;
     QAudioDeviceControl   *audioDeviceControl;
+
+
 };
 
 /*!
@@ -96,15 +117,16 @@ QAudioCaptureSource::QAudioCaptureSource(QObject *parent, QMediaServiceProvider 
     Q_D(QAudioCaptureSource);
 
     d->provider = provider;
+    d->initControls();
+}
 
-    if (d->service != 0)
-        d->audioDeviceControl = qobject_cast<QAudioDeviceControl*>(d->service->control(QAudioDeviceControl_iid));
+QAudioCaptureSource::QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent)
+    :QMediaObject(*new QAudioCaptureSourcePrivate, parent, mediaObject->service())
+{
+    Q_D(QAudioCaptureSource);
 
-    if (d->audioDeviceControl) {
-        connect(d->audioDeviceControl, SIGNAL(selectedDeviceChanged(int)), SIGNAL(selectedDeviceChanged(int)));
-        connect(d->audioDeviceControl, SIGNAL(selectedDeviceChanged(QString)), SIGNAL(selectedDeviceChanged(QString)));
-        connect(d->audioDeviceControl, SIGNAL(devicesChanged()), SIGNAL(devicesChanged()));
-    }
+    d->provider = 0;
+    d->initControls();
 }
 
 /*!
@@ -115,8 +137,18 @@ QAudioCaptureSource::~QAudioCaptureSource()
 {
     Q_D(QAudioCaptureSource);
 
-    d->provider->releaseService(d->service);
+    if (d->provider)
+        d->provider->releaseService(d->service);
 }
+
+/*!
+    Returns true if the audio capture service is available, otherwise returns false.
+*/
+bool QAudioCaptureSource::isAvailable() const
+{
+    return d_func()->service != NULL;
+}
+
 
 /*!
     Returns the number of audio input devices available.

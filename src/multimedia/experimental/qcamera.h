@@ -159,6 +159,8 @@ public:
     static QList<QByteArray> availableDevices();
     static QString deviceDescription(const QByteArray &device);
 
+    bool isAvailable() const;
+
     void start();
     void stop();
 
