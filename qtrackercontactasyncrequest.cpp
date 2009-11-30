@@ -50,6 +50,9 @@
 
 using namespace SopranoLive;
 
+const QString FieldQContactLocalId("QContactLocalId");
+const QString FieldAccountPath("AccountPath");
+
 void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
 {
     // This here is the first implementation of filtering that takes into account also affiliations.
@@ -321,6 +324,7 @@ void QTrackerContactFetchRequest::run()
     RDFVariable firstname = RDFContact1.optional().property<nco::nameGiven> ();
     RDFVariable nickname = RDFContact1.optional().property<nco::nickname> ();
     quer.addColumn("contactId", RDFContact1.property<nco::contactUID> ());
+    quer.addColumn("metacontact",RDFContact.optional().property<nco::metacontact> ());
     quer.addColumn("prefix", prefix);
     quer.addColumn("firstname", firstname);
     quer.addColumn("middlename", middlename);
@@ -354,6 +358,7 @@ void QTrackerContactFetchRequest::run()
         quer.addColumn("org", rdforg.optional().property<nco::fullname> ());
         quer.addColumn("logo", rdforg.optional().property<nco::logo> ());
     }
+
 
     // QContactAnniversary - no such thing in tracker
     // QContactGeolocation - nco:hasLocation is not having class defined in nco yet. no properties. maybe rdfs:Resource:label
@@ -405,12 +410,11 @@ void QTrackerContactFetchRequest::contactsReady()
     QList<QContact> result;
     // access existing contacts in result list, contactid to array index (result) lookup
     QHash<quint32, int> resultLookup;
+    QHash<QString, int> metacontactLookup;  // linking happens here - only 1 contact returned when multiple have the same metacontact
+
     for(int i = 0; i < query->rowCount(); i++) {
         QContact contact; // one we will be filling with this row
-        int column = 0;
 
-        QContactId id; id.setLocalId(query->index(i, column++).data().toUInt());
-        contact.setId(id);
         bool ok;
         QContactLocalId contactid = query->index(i, 0).data().toUInt(&ok);
         if (!ok) {
@@ -418,8 +422,18 @@ void QTrackerContactFetchRequest::contactsReady()
             qWarning()<< Q_FUNC_INFO <<"Invalid contact ID: "<< query->index(i, 0).data().toString();
             continue;
         }
+        QContactId id; id.setLocalId(contactid);
+        contact.setId(id);
+        QString metacontact = query->index(i, 1).data().toString();
+
+
+        // using redundancy to get less queries to tracker - it is possible
+        // that rows are repeating: information for one contact is in several rows
+        // that's why we update existing contact and append details to it if they
+        // are not already in QContact
         QHash<quint32, int>::const_iterator it = resultLookup.find(contactid);
-        int index = -1;
+        //
+        int index = result.size(); // where to place new contact
         if (resultLookup.end() != it) {
             if (it.value() < result.size() && it.value() >= 0) {
                 index = it.value();
@@ -428,114 +442,31 @@ void QTrackerContactFetchRequest::contactsReady()
             Q_ASSERT(query->index(i, 0).data().toUInt() == contact.localId());
         }
 
+        readFromQueryRowToContact(contact ,i);
 
-        // using redundancy to get less queries to tracker - it is possible
-        // that rows are repeating: information for one contact is in several rows
-        // that's why we update existing contact and append details to it if they
-        // are not already in QContact
-        QContactName name = contact.detail(QContactName::DefinitionName);
-        name.setPrefix(query->index(i, column++).data().toString());
-        name.setFirst(query->index(i, column++).data().toString());
-        name.setMiddle(query->index(i, column++).data().toString());
-        name.setLast(query->index(i, column++).data().toString());
-        contact.saveDetail(&name);
+        // linking contacts if the same metacontact - important is that result needs to contain only one
+        if( !metacontact.isEmpty() ) {
+            if( metacontactLookup.contains(metacontact) )
+            {
+               // we'll link them and update contact on existing position
+               index = metacontactLookup[metacontact];
+               contact = linkContactsWithSameMetaContact(result[index], contact);
+            }
+        }
 
-        QContactAvatar avatar = contact.detail(QContactAvatar::DefinitionName);
-        avatar.setAvatar(query->index(i, column++).data().toString());
-        if (!avatar.avatar().isEmpty()) {
-            contact.saveDetail(&avatar);
-        }
-        QContactNickname nick = contact.detail(QContactNickname::DefinitionName);
-        nick.setNickname(query->index(i, column++).data().toString());
-        contact.saveDetail(&nick);
 
-        // TODO extract generic from bellow ... mapping field names
-        if (request->definitionRestrictions().contains(QContactAddress::DefinitionName)) {
-            QString street = query->index(i, column++).data().toString();
-            QString loc = query->index(i, column++).data().toString();
-            QString country = query->index(i, column++).data().toString();
-            QString pcode = query->index(i, column++).data().toString();
-            QString region = query->index(i, column++).data().toString();
-            if (!(country.isEmpty() && pcode.isEmpty() && region.isEmpty()
-                  && street.isEmpty() && loc.isEmpty())) {
-                // for multivalue fields is a bit tricky - try to find existing an
-                QContactAddress a;
-                a.setStreet(street);
-                a.setLocality(loc);
-                a.setCountry(country);
-                a.setPostcode(pcode);
-                a.setRegion(region);
-                if (!detailExisting(QContactAddress::DefinitionName, contact, a)) {
-                    contact.saveDetail(&a);
-                }
-            }
-        }
-        if (request->definitionRestrictions().contains(QContactUrl::DefinitionName)) {
-            // check query preparation (at the moment in constructor TODO refactor)
-            // home website
-            // if it is websiteUrl then interpret as homepage, if it is nco:url then fovourite url
-            QContactUrl url;
-            url.setSubType(QContactUrl::SubTypeHomePage);
-            url.setContexts(QContactUrl::ContextHome);
-            url.setUrl(query->index(i, column++).data().toString());
-            if (url.url().isEmpty()) {
-                // website url is at the same time url, so we handle duplication here
-                // if only url then set it as favourite
-                url.setUrl(query->index(i, column++).data().toString());
-                url.setSubType(QContactUrl::SubTypeFavourite);
-            }
-
-            if (!url.url().isEmpty() && !detailExisting(QContactUrl::DefinitionName, contact, url)) {
-                contact.saveDetail(&url);
-            }
-            // office website
-            QContactUrl workurl;
-            workurl.setContexts(QContactUrl::ContextWork);
-            workurl.setSubType(QContactUrl::SubTypeHomePage);
-            workurl.setUrl(query->index(i, column++).data().toString());
-            if (workurl.url().isEmpty()) {
-                workurl.setUrl(query->index(i, column++).data().toString());
-                workurl.setSubType(QContactUrl::SubTypeFavourite);
-            }
-            if (!workurl.url().isEmpty() && !detailExisting(QContactUrl::DefinitionName, contact, workurl)) {
-                contact.saveDetail(&workurl);
-            }
-        }
-        if (request->definitionRestrictions().contains(QContactBirthday::DefinitionName)) {
-            QVariant var = query->index(i, column++).data();
-            if (!var.toString().isEmpty() /* enable reading wrong && var.toDate().isValid()*/) {
-                QContactBirthday birth = contact.detail(QContactBirthday::DefinitionName);
-                birth.setDate(var.toDate());
-                contact.saveDetail(&birth);
-            }
-        }
-        if (request->definitionRestrictions().contains(QContactGender::DefinitionName)) {
-            QString var = query->index(i, column++).data().toString();
-            if (!var.isEmpty()) {
-                QContactGender g = contact.detail(QContactGender::DefinitionName);
-                g.setGender(var);
-                contact.saveDetail(&g);
-            }
-        }
-        if (request->definitionRestrictions().contains(QContactOrganization::DefinitionName)) {
-            QString org = query->index(i, column++).data().toString();
-            QString logo = query->index(i, column++).data().toString();
-            if (!( org.isEmpty() && logo.isEmpty())) {
-                QContactOrganization o;
-                o.setName(org);
-                o.setLogo(logo);
-                if (!detailExisting(QContactOrganization::DefinitionName, contact, o)) {
-                    contact.saveDetail(&o);
-                }
-            }
-        }
-        if (index < result.size() && index >= 0) {
-            result[index] = contact;
-        } else {
-            resultLookup[contact.localId()] = result.size();
+        if (index >= result.size()) {
             result.append(contact);
+            resultLookup[contact.localId()] = result.size()-1;
+            if( !metacontact.isEmpty())
+            {
+                metacontactLookup[metacontact] = result.size()-1;
+            }
+        } else {
+            result[index] = contact;
         }
     }
+
     if (request->definitionRestrictions().contains(QContactPhoneNumber::DefinitionName)) {
         Q_ASSERT(queryPhoneNumbersNodes.size() == 2);
         for( int cnt = 0; cnt < queryPhoneNumbersNodes.size(); cnt++) {
@@ -555,6 +486,7 @@ void QTrackerContactFetchRequest::contactsReady()
             processQueryIMAccounts(queryIMAccountNodes[cnt], result, cnt);
         }
     }
+
     // update display labels
     QContactManagerEngine *engine = dynamic_cast<QContactManagerEngine*>(parent());
     Q_ASSERT(engine);
@@ -572,6 +504,169 @@ void QTrackerContactFetchRequest::contactsReady()
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished, true);
 }
+
+/*!
+ * brief Processes one query record-row during read from tracker to QContact.
+ * Order or columns in query is fixed to order defined in \sa run()
+ */
+void QTrackerContactFetchRequest::readFromQueryRowToContact(QContact &contact, int i)
+{
+    int column = 2; // 0 - for QContactLocalId, 1 for metacontact
+    QContactName name = contact.detail(QContactName::DefinitionName);
+    name.setPrefix(query->index(i, column++).data().toString());
+    name.setFirst(query->index(i, column++).data().toString());
+    name.setMiddle(query->index(i, column++).data().toString());
+    name.setLast(query->index(i, column++).data().toString());
+    contact.saveDetail(&name);
+
+    QContactAvatar avatar = contact.detail(QContactAvatar::DefinitionName);
+    avatar.setAvatar(query->index(i, column++).data().toString());
+    if (!avatar.avatar().isEmpty()) {
+        contact.saveDetail(&avatar);
+    }
+    QContactNickname nick = contact.detail(QContactNickname::DefinitionName);
+    nick.setNickname(query->index(i, column++).data().toString());
+    contact.saveDetail(&nick);
+
+    QContactFetchRequest* request = qobject_cast<QContactFetchRequest*> (req);
+    Q_ASSERT( request ); // this is handled already in caller
+    if( !request )
+        return;
+    // TODO extract generic from bellow ... mapping field names
+    if (request->definitionRestrictions().contains(QContactAddress::DefinitionName)) {
+        QString street = query->index(i, column++).data().toString();
+        QString loc = query->index(i, column++).data().toString();
+        QString country = query->index(i, column++).data().toString();
+        QString pcode = query->index(i, column++).data().toString();
+        QString region = query->index(i, column++).data().toString();
+        if (!(country.isEmpty() && pcode.isEmpty() && region.isEmpty()
+              && street.isEmpty() && loc.isEmpty())) {
+            // for multivalue fields is a bit tricky - try to find existing an
+            QContactAddress a;
+            a.setStreet(street);
+            a.setLocality(loc);
+            a.setCountry(country);
+            a.setPostcode(pcode);
+            a.setRegion(region);
+            if (!detailExisting(QContactAddress::DefinitionName, contact, a)) {
+                contact.saveDetail(&a);
+            }
+        }
+    }
+    if (request->definitionRestrictions().contains(QContactUrl::DefinitionName)) {
+        // check query preparation (at the moment in constructor TODO refactor)
+        // home website
+        // if it is websiteUrl then interpret as homepage, if it is nco:url then fovourite url
+        QContactUrl url;
+        url.setSubType(QContactUrl::SubTypeHomePage);
+        url.setContexts(QContactUrl::ContextHome);
+        url.setUrl(query->index(i, column++).data().toString());
+        if (url.url().isEmpty()) {
+            // website url is at the same time url, so we handle duplication here
+            // if only url then set it as favourite
+            url.setUrl(query->index(i, column++).data().toString());
+            url.setSubType(QContactUrl::SubTypeFavourite);
+        }
+
+        if (!url.url().isEmpty() && !detailExisting(QContactUrl::DefinitionName, contact, url)) {
+            contact.saveDetail(&url);
+        }
+        // office website
+        QContactUrl workurl;
+        workurl.setContexts(QContactUrl::ContextWork);
+        workurl.setSubType(QContactUrl::SubTypeHomePage);
+        workurl.setUrl(query->index(i, column++).data().toString());
+        if (workurl.url().isEmpty()) {
+            workurl.setUrl(query->index(i, column++).data().toString());
+            workurl.setSubType(QContactUrl::SubTypeFavourite);
+        }
+        if (!workurl.url().isEmpty() && !detailExisting(QContactUrl::DefinitionName, contact, workurl)) {
+            contact.saveDetail(&workurl);
+        }
+    }
+    if (request->definitionRestrictions().contains(QContactBirthday::DefinitionName)) {
+        QVariant var = query->index(i, column++).data();
+        if (!var.toString().isEmpty() /* enable reading wrong && var.toDate().isValid()*/) {
+            QContactBirthday birth = contact.detail(QContactBirthday::DefinitionName);
+            birth.setDate(var.toDate());
+            contact.saveDetail(&birth);
+        }
+    }
+    if (request->definitionRestrictions().contains(QContactGender::DefinitionName)) {
+        QString var = query->index(i, column++).data().toString();
+        if (!var.isEmpty()) {
+            QContactGender g = contact.detail(QContactGender::DefinitionName);
+            g.setGender(var);
+            contact.saveDetail(&g);
+        }
+    }
+    if (request->definitionRestrictions().contains(QContactOrganization::DefinitionName)) {
+        QString org = query->index(i, column++).data().toString();
+        QString logo = query->index(i, column++).data().toString();
+        if (!( org.isEmpty() && logo.isEmpty())) {
+            QContactOrganization o;
+            o.setName(org);
+            o.setLogo(logo);
+            if (!detailExisting(QContactOrganization::DefinitionName, contact, o)) {
+                contact.saveDetail(&o);
+            }
+        }
+    }
+
+}
+
+/*!
+ * When 2 contacts have the same metacontact, decide which of these 2 contacts needs
+ * to be returned as addressbook contact - the other one is void from returned set
+ * Info about linking stored in returned contact
+ */
+QContact QTrackerContactFetchRequest::linkContactsWithSameMetaContact(QContact &first, QContact &second)
+{
+    bool returnFirst = true;
+    // 1) resolve which one to return as metacontact(mastercontact) contact
+    // 2) insert link the one not returned
+    // now we only merge IMContacts to addressbook contacts - if that change, changing this too
+    // check if there is existence of previous merging information or online account info
+    QList<QContactDetail> details = first.details(QContactOnlineAccount::DefinitionName);
+
+    // 1) resolve which one is to be returned and which one linked from it
+    bool allreadyContainsLinkingInfo(false);
+    foreach (QContactDetail detail, details)
+    {
+        if( !detail.value(FieldQContactLocalId).isEmpty())
+        {
+            allreadyContainsLinkingInfo = true;
+            break;
+        }
+        else if( !detail.value(FieldAccountPath).isEmpty() )
+        {
+            returnFirst = false;
+            break;
+        }
+    }
+    QContact returned, *linked;
+    if( returnFirst )
+    {
+        returned = first;
+        linked = &second;
+    }
+    else
+    {
+        returned = second;
+        linked = &first;
+    }
+
+    // 2) now insert linking information to returned contact
+    details = linked->details(QContactOnlineAccount::DefinitionName);
+
+    foreach (QContactDetail detail, details)
+    {
+        detail.setValue(FieldQContactLocalId, linked->id().localId());
+        returned.saveDetail(&detail);
+    }
+    return returned;
+}
+
 
 void QTrackerContactFetchRequest::phoneNumbersReady()
 {
@@ -723,7 +818,7 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                     account.setContexts(QContactOnlineAccount::ContextWork);
                 account.setValue("Account", queryIMAccounts->index(i, 1).data().toString()); // IMId
                 if (!queryIMAccounts->index(i, 5).data().toString().isEmpty())
-                    account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
+                    account.setValue(FieldAccountPath, queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
                 account.setValue("Capabilities", queryIMAccounts->index(i, 6).data().toString()); // getImAccountType?
                 account.setNickname(queryIMAccounts->index(i, 4).data().toString()); // nick
                 account.setPresence(queryIMAccounts->index(i, 2).data().toString()); // imStatus

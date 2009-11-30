@@ -90,6 +90,8 @@ private:
     void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, QList<QContact>& contacts, bool affiliationEmails);
     void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts, bool affiliationAccounts);
     void validateRequest();
+    void readFromQueryRowToContact(QContact &contact, int queryRow);
+    QContact linkContactsWithSameMetaContact(QContact &first, QContact &second);
 
 protected:
     SopranoLive::LiveNodes query;
