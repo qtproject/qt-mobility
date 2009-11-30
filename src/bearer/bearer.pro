@@ -48,6 +48,9 @@ symbian: {
             -lefsrv \
             -lnetmeta
 
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC81
+            
     deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
@@ -60,7 +63,6 @@ symbian: {
     bearer_deployment.path = /sys/bin
     DEPLOYMENT += bearer_deployment
 
-    TARGET.CAPABILITY = All -TCB
 } else {
     maemo {
         QT += dbus

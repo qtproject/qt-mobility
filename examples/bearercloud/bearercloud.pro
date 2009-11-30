@@ -21,6 +21,7 @@ CONFIG += console
 
 include(../examples.pri)
 
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 
 macx: {
     contains(QT_CONFIG,qt_framework):LIBS += -framework QtBearer
