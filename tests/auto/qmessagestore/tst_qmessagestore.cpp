@@ -46,18 +46,11 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if (defined(Q_OS_WIN) && defined(_WIN32_WCE))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
 # if defined(TESTDATA_DIR)
 #  undef TESTDATA_DIR
 # endif
 # define TESTDATA_DIR "."
-#endif
-
-#if defined(Q_OS_SYMBIAN)
-# if defined(TESTDATA_DIR)
-#  undef TESTDATA_DIR
-# endif
-# define TESTDATA_DIR ""
 #endif
 
 //TESTED_CLASS=

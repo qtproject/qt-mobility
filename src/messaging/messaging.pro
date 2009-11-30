@@ -93,64 +93,63 @@ symbian {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
     HEADERS -= qmessagestore_p.h \
-           qmessagecontentcontainer_p.h \
-           qmessage_p.h
+               qmessagecontentcontainer_p.h \
+               qmessage_p.h
 
     HEADERS += qmtmengine_symbian_p.h \
-           qmessagestore_symbian_p.h \
-           qmessageserviceaction_symbian_p.h \
-           qmessagecontentcontainer_symbian_p.h \
-           qmessage_symbian_p.h
+               qmessagestore_symbian_p.h \
+               qmessageserviceaction_symbian_p.h \
+               qmessagecontentcontainer_symbian_p.h \
+               qmessage_symbian_p.h
 
     SOURCES += qmtmengine_symbian.cpp \
-           qmessageid_symbian.cpp \
-           qmessagecontentcontainerid_symbian.cpp \
-           qmessagefolderid_symbian.cpp \
-           qmessageaccountid_symbian.cpp \
-           qmessagecontentcontainer_symbian.cpp \
-           qmessage_symbian.cpp \
-           qmessagefolder_symbian.cpp \
-           qmessageaccount_symbian.cpp \
-           qmessageaccountfilter_symbian.cpp \
-           qmessageaccountordering_symbian.cpp \
-           qmessagefolderfilter_symbian.cpp \
-           qmessagefolderordering_symbian.cpp \
-           qmessagefilter_symbian.cpp \
-           qmessageordering_symbian.cpp \
-           qmessagestore_symbian.cpp \
-           qmessageserviceaction_symbian.cpp
+               qmessageid_symbian.cpp \
+               qmessagecontentcontainerid_symbian.cpp \
+               qmessagefolderid_symbian.cpp \
+               qmessageaccountid_symbian.cpp \
+               qmessagecontentcontainer_symbian.cpp \
+               qmessage_symbian.cpp \
+               qmessagefolder_symbian.cpp \
+               qmessageaccount_symbian.cpp \
+               qmessageaccountfilter_symbian.cpp \
+               qmessageaccountordering_symbian.cpp \
+               qmessagefolderfilter_symbian.cpp \
+               qmessagefolderordering_symbian.cpp \
+               qmessagefilter_symbian.cpp \
+               qmessageordering_symbian.cpp \
+               qmessagestore_symbian.cpp \
+               qmessageserviceaction_symbian.cpp
            
     LIBS += -lsendas2 \
-        -lmsgs \
-        -letext \
-        -lefsrv \
-        -lcharconv \
-        -lgsmu \
-        -limcm \
-        -lbafl \
-        -lmtur \
-	-lsendui \
-	-lsmcm \
-	-limcm \
-	-leikcore \
-	-lcone \
-	-lapgrfx \
-	-lapmime
+            -lmsgs \
+            -letext \
+            -lefsrv \
+            -lcharconv \
+            -lgsmu \
+            -limcm \
+            -lbafl \
+            -lmtur \
+            -lsendui \
+    	    -lsmcm \
+            -limcm \
+            -leikcore \
+            -lcone \
+            -lapgrfx \
+            -lapmime
 
-    messaging.sources = QtMessaging_tp.dll
-    messaging.path = /sys/bin
-    DEPLOYMENT += messaging
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC82
 
     deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
-    
     for(header, exportheaders.sources) {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
-
-    TARGET.CAPABILITY = All -TCB -AllFiles -DRM
-    MMP_RULES += EXPORTUNFROZEN
+            
+    QtMessaging.sources = QtMessaging_tp.dll
+    QtMessaging.path = /sys/bin
+    DEPLOYMENT += QtMessaging
 }
 
 win32 {
