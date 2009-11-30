@@ -1086,20 +1086,8 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
             QMessage::Status status(static_cast<QMessage::Status>(d_ptr->_value.toUInt()));
             switch (status) {
             case QMessage::Incoming:
-                /* TODO: this (wrong) code is not being called at all?
-                _restriction.rt = RES_OR;
-                _restriction.res.resAnd.cRes = 2;
-                _restriction.res.resAnd.lpRes = &_subRestriction[0];
-                _subRestriction[0].rt = RES_EXIST;
-                _subRestriction[0].res.resExist.ulReserved1 = 0;
-                _subRestriction[0].res.resExist.ulPropTag = PR_RECEIVED_BY_ENTRYID;
-                _subRestriction[0].res.resExist.ulReserved2 = 0;
-                _subRestriction[1].rt = RES_EXIST;
-                _subRestriction[1].res.resExist.ulReserved1 = 0;
-                _subRestriction[1].res.resExist.ulPropTag = PR_END_DATE;
-                _subRestriction[1].res.resExist.ulReserved2 = 0;
-                _valid = true;
-                */
+                // Restriction is not possible in this case
+                _valid = false;
                 return;
             case QMessage::Read:
                 _restriction.res.resBitMask.relBMR = BMR_NEZ;
@@ -1989,16 +1977,25 @@ QMessageFilter QMessageFilter::byStatus(QMessage::StatusFlags mask, QMessageData
 {
     QMessageFilter result;
     QMessageDataComparator::EqualityComparator comparator(QMessageDataComparator::NotEqual);
-    if (cmp == QMessageDataComparator::Includes)
+    if (cmp == QMessageDataComparator::Includes) {
         comparator = QMessageDataComparator::Equal;
-    if (mask & QMessage::Incoming)
+    }
+    if (mask & QMessage::Incoming) {
         result &= QMessageFilter::byStatus(QMessage::Incoming, comparator);
-    if (mask & QMessage::Read)
+
+        // We can't use a restriction to enforce this filter
+        result.d_ptr->_restrictionPermitted = false;
+        result.d_ptr->_matchesRequired = true;
+    }
+    if (mask & QMessage::Read) {
         result &= QMessageFilter::byStatus(QMessage::Read, comparator);
-    if (mask & QMessage::Removed)
+    }
+    if (mask & QMessage::Removed) {
         result &= QMessageFilter::byStatus(QMessage::Removed, comparator);
-    if (mask & QMessage::HasAttachments)
+    }
+    if (mask & QMessage::HasAttachments) {
         result &= QMessageFilter::byStatus(QMessage::HasAttachments, comparator);
+    }
     if (result.isEmpty()) // Be consistent with QMF, but seems wrong. TODO verify correctness
         return ~result;
     return result;
