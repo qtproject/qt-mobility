@@ -3,6 +3,7 @@ include(../../examples.pri)
 
 QT = core
 CONFIG += no_icon
+INCLUDEPATH += ../../../src/serviceframework
 
 qtAddLibrary(QtServiceFramework)
 
