@@ -45,6 +45,7 @@
 
 QTM_USE_NAMESPACE
 
+//! [0]
 const QString filemanagerxml = "c:\\resource\\apps\\xmldata\\filemanagerservice.xml";
 const QString bluetoothxml = "c:\\resource\\apps\\xmldata\\bluetoothtransferservice.xml";
 
@@ -66,3 +67,4 @@ int main(int argc, char *argv[])
 		s.removeService("BluetoothTransferService");
 	}
 }
+//! [0]
