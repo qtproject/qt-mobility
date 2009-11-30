@@ -1286,6 +1286,17 @@
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
+    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
+        <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
+        <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
+        <keyword ref="qgeoareamonitor.html#center-prop">setCenter</keyword>
+        <keyword ref="qgeoareamonitor.html#radius-prop">radius</keyword>
+        <keyword ref="qgeoareamonitor.html#radius-prop">setRadius</keyword>
+        <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
+        <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
+        <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
+        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
+    </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
         <keyword ref="qgeocoordinate.html">QGeoCoordinate</keyword>
         <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</keyword>
@@ -3126,9 +3137,6 @@
     <section ref="installation.html" title="Installation Guide">
         <keyword ref="installation.html">Installation Guide</keyword>
     </section>
-    <section ref="qtmobility-known-issues.html" title="Known Issues in QtMobility 1.0&#x2e;0 (Technology Preview)">
-        <keyword ref="qtmobility-known-issues.html">Known Issues in QtMobility 1.0&#x2e;0 (Technology Preview)</keyword>
-    </section>
     <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux">
         <keyword ref="licenses-fonts.html">Licenses for Fonts Used in Qt for Embedded Linux</keyword>
     </section>
@@ -3162,20 +3170,11 @@
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
     </section>
-    <section ref="commercialeditions.html" title="Qt Commercial Editions">
-        <keyword ref="commercialeditions.html">Qt Commercial Editions</keyword>
-    </section>
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>
     </section>
     <section ref="editions.html" title="Qt Editions">
         <keyword ref="editions.html">Qt Editions</keyword>
-    </section>
-    <section ref="full-framework-edition-classes.html" title="Qt Full Framework Edition">
-        <keyword ref="full-framework-edition-classes.html">Qt Full Framework Edition</keyword>
-    </section>
-    <section ref="gui-framework-edition-classes.html" title="Qt GUI Framework Edition">
-        <keyword ref="gui-framework-edition-classes.html">Qt GUI Framework Edition</keyword>
     </section>
     <section ref="examples.html" title="Qt Mobility Examples">
         <keyword ref="examples.html">Qt Mobility Examples</keyword>
@@ -3191,6 +3190,9 @@
     </section>
     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian">
         <keyword ref="service-framework-on-symbian.html">Qt Service Framework on Symbian</keyword>
+    </section>
+    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project (Technology Preview)">
+        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project (Technology Preview)</keyword>
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>

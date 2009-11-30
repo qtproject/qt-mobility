@@ -41,74 +41,76 @@
 
 /*!
     \externalpage http://bugreports.qt.nokia.com
-    \title QtMobility Bug Tracker
+    \title QtMobility Project Bug Tracker
 */
 
 
 /*!
     \page qtmobility-known-issues.html
     \group mobility
-    \title Known Issues in QtMobility 1.0.0 (Technology Preview)
+    \title Release Notes of the QtMobility Project (Technology Preview)
 
-An up-to-date list of known issues with the QtMobility 1.0.0 can be found via the \l {QtMobility Bug Tracker} on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility.
+An up-to-date list of known issues with the release can be found via the \l {QtMobility Project Bug Tracker} on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility Project.
 
-The QtMobility's APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {Platform Compatability}.
+The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {Platform Compatability}.
 
 \tableofcontents
+
+\section1 New Features
 
 \section2 Detailed Feature support - Symbian/S60
 
 \section3 Bearer Management API
 Of all supported Symbian platforms S60 3.2+ platforms enjoy the most comprehensive feature set.
 \list
-    \o Capabilities: BearerManagement, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming , ForcedRoaming
-    \o List Configurations (IAP/SNAP)
-    \o Default Configuration (IAP/SNAP)
-    \o Configuration Added/Changed/Removed notifications (IAP/SNAP)
-    \o Configuration State Changed notifications (IAP/SNAP)
-    \o Online State Changed notifications
-    \o Configuration specific ReceivedData & SentData monitoring (IAP/SNAP) using NetworkSession
-    \o Open/Close/Stop NetworkSession (IAP/SNAP)
-    \o NetworkSession state notifications
-    \o NetworkSession roaming control & notifications (SNAP)
+    \o Capabilities: BearerManagement, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming , ForcedRoaming.
+    \o List Configurations (IAP/SNAP).
+    \o Default Configuration (IAP/SNAP).
+    \o Configuration Added/Changed/Removed notifications (IAP/SNAP).
+    \o Configuration State Changed notifications (IAP/SNAP).
+    \o Online State Changed notifications.
+    \o Configuration specific ReceivedData & SentData monitoring (IAP/SNAP) using NetworkSession.
+    \o Open/Close/Stop NetworkSession (IAP/SNAP).
+    \o NetworkSession state notifications.
+    \o NetworkSession roaming control & notifications (SNAP).
 \endlist
 
 
 \section3 Contacts API
 \list
-    \o Contact sorting
-    \o Contact filtering
-    \o Retrieving the contents of a contact
-    \o Retrieving a list/iterator for all contacts (Unfiltered)
-    \o Retrieving a list of contacts (Simple filtering)
-    \o Add/Update/Remove Contacts
-    \o Add/Update/Remove Groups
-    \o Matching a contact (Matching incoming phone/email, and by name)
+    \o Contact sorting.
+    \o Contact filtering.
+    \o Retrieving the contents of a contact.
+    \o Retrieving a list/iterator for all contacts (Unfiltered).
+    \o Retrieving a list of contacts (Simple filtering).
+    \o Add/Update/Remove Contacts.
+    \o Add/Update/Remove Groups.
+    \o Matching a contact (Matching incoming phone/email, and by name).
 \endlist
 
 
 \section3 Messaging API
 \list
-    \o Account queries (POP3, IMAP, SMTP, SMS & MMS MTM)
-    \o Account sorting
-    \o Account filtering
-    \o Folder queries (POP3, IMAP, SMTP, SMS & MMS MTM)
-    \o Folder sorting
-    \o Folder filtering
-    \o Message queries (POP3, IMAP, SMTP, SMS & MMS MTM)
-    \o Message sorting
-    \o Message filtering
-    \o Add/Update/Remove Message (POP3, IMAP, SMTP, SMS & MMS MTM)
-    \o Message added/removed/updated notifications (POP3, IMAP, SMTP, SMS and MMS MTM)
-    \o Email content retrieval (POP3, IMAP MTM)
-    \o Send/compose/show Message (POP3, IMAP, SMTP, SMS, MMS MTM) 
+    \o Account queries (POP3, IMAP, SMTP, SMS & MMS MTM).
+    \o Account sorting.
+    \o Account filtering.
+    \o Folder queries (POP3, IMAP, SMTP, SMS & MMS MTM).
+    \o Folder sorting.
+    \o Folder filtering.
+    \o Message queries (POP3, IMAP, SMTP, SMS & MMS MTM).
+    \o Message sorting.
+    \o Message filtering.
+    \o Add/Update/Remove Message (POP3, IMAP, SMTP, SMS & MMS MTM).
+    \o Message added/removed/updated notifications (POP3, IMAP, SMTP, SMS and MMS MTM).
+    \o Email content retrieval (POP3, IMAP MTM).
+    \o Send/compose/show Message (POP3, IMAP, SMTP, SMS, MMS MTM) .
 \endlist
 
 
 \section3 Multimedia API
 \list
-    \o Play music from local file
-    \o Play video from local file
+    \o Play music from local file.
+    \o Play video from local file.
     \o Retrieve meta data information from currently playing media. Following tags supported: title, artist, comment, genre, year, copyright, album, composer, albumtrack, audiobitrate, videobitrate, duration, content type.
     \o Media recording: audio capture to specified file from phone microphone or phone call (call needs to be started before media recording). 
 \endlist
@@ -135,7 +137,7 @@ Support is present for the following System Info API classes
 \endlist
 
 
-
+\section1 Known Issues
 
 \section2 Issues Affecting All Platforms
 \list
@@ -148,7 +150,7 @@ Support is present for the following System Info API classes
 
 
 
-\section2 Symbian/S60 Support Specific Issues
+\section2 Symbian/S60 Specific
 
 \section3 Bearer Management
 No specific issues to highlight.
@@ -164,11 +166,11 @@ No specific issues to highlight.
 \endlist
 
 
-\section3 Location API Issues
+\section3 Location API
 No specific issues to highlight.
 
 
-\section3 Messaging API Issues
+\section3 Messaging API
 \list
     \o Exporting IMAP or POP3 Message Updates from client to server is not supported
     \o Only one level of folders is supported <=> Symbian/S60 applications do not use nested folders
@@ -183,7 +185,7 @@ No specific issues to highlight.
 \endlist
 
 
-\section3 Multimedia API Issues
+\section3 Multimedia API
 \list
     \o Playback of streaming or DRM protected media not supported
     \o S60 specific play list not supported
@@ -203,7 +205,7 @@ No specific issues to highlight.
 \endlist
 
 
-\section3 Publish and Subscribe API Issues
+\section3 Publish and Subscribe API
 \list
     \o Remove value from RProperty/CRepository not supported
     \o Mapper service running in its separate process (Symbian OS server) not supported
@@ -212,11 +214,11 @@ No specific issues to highlight.
 \endlist
 
 
-\section3 Service Framework API Issues
+\section3 Service Framework API
 Several failing autotests.
 
 
-\section3 System Info API Issues
+\section3 System Info API
 \list
     \o Battery status incorrect on test applications startup
     \o Phone is still charging but power state shows 100% and "wall power"
@@ -225,14 +227,14 @@ Several failing autotests.
 
 
 
-\section2 Maemo Specific Issues
+\section2 Maemo Specific
 \list
     \o Messaging backend for Maemo is not yet implemented.
     \o The Publish and Subscribe API only supports subscription but not publification.
     \o Location backend for Maemo is not yet implemented.
 \endlist
 
-\section2 Windows Mobile Specific Issues
+\section2 Windows Mobile Specific
 
 \section3 Contacts API
 The samplephonebook application has the following limitations
@@ -256,7 +258,7 @@ For the QMessageServiceAction class the following limitations apply to this rele
 \endlist
 
 
-\section2 Windows Specific Issues
+\section2 Windows Specific
 \list
     \o Windows Mobile backend only tested with Windows Mobile 6.0 Standard and Professional Edition with MSVC 2008.
     \o Windows Desktop backend only tested with Windows XP win32-msvc2008, and is not officially supported.
