@@ -177,6 +177,8 @@ QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::paint(
         m_frame.unmap();
     } else if (m_frame.isValid()) {
         return QAbstractVideoSurface::IncorrectFormatError;
+    } else {
+        painter->fillRect(target, Qt::black);
     }
     return QAbstractVideoSurface::NoError;
 }
