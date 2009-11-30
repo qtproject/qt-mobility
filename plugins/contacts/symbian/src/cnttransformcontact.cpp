@@ -432,13 +432,13 @@ void CntTransformContact::transformPreferredDetailL(const QContact& contact,
     if (contact.isPreferredDetail("call", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForCall));
     }
-    else if (contact.isPreferredDetail("email", detail)) {
+    if (contact.isPreferredDetail("email", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForEmail));
     }
-    else if (contact.isPreferredDetail("videocall", detail)) {
+    if (contact.isPreferredDetail("videocall", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForVideoCall));
     }
-    else if (contact.isPreferredDetail("message", detail)) {
+    if (contact.isPreferredDetail("message", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForMessage));
     }
 }
@@ -449,13 +449,13 @@ void CntTransformContact::transformPreferredDetail(const CContactItemField& fiel
     if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForCall))) {
         contact.setPreferredDetail("call", detail);
     }
-    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForEmail))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForEmail))) {
         contact.setPreferredDetail("email", detail);
     }
-    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForVideoCall))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForVideoCall))) {
         contact.setPreferredDetail("videocall", detail);
     }
-    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
         contact.setPreferredDetail("message", detail);
     }
 }
