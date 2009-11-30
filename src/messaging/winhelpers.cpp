@@ -3821,9 +3821,9 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
         IMessage *message = openMapiMessage(lastError, msg->id(), &store);
         if (*lastError == QMessageStore::NoError) {
 #ifndef _WIN32_WCE
-            const int np = 15;
+            const int np = 14;
 #else
-            const int np = 13;
+            const int np = 12;
 #endif
             SizedSPropTagArray(np, msgCols) = {np, { PR_PARENT_ENTRYID,
                                                      PR_MESSAGE_FLAGS,
@@ -3833,9 +3833,8 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                                                      PR_SENDER_EMAIL_ADDRESS,
                                                      PR_CLIENT_SUBMIT_TIME,
                                                      PR_MESSAGE_DELIVERY_TIME,
-                                                     PR_TRANSPORT_MESSAGE_HEADERS,
-                                                     PR_HASATTACH,
                                                      PR_SUBJECT,
+                                                     PR_HASATTACH,
                                                      PR_PRIORITY,
 #ifndef _WIN32_WCE
                                                      PR_MSG_EDITOR_FORMAT,
@@ -3901,11 +3900,6 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
                     case PR_MESSAGE_DELIVERY_TIME:
                         msg->setReceivedDate(fromFileTime(prop.Value.ft));
                         break;
-                    case PR_RECEIVED_BY_ENTRYID: // fall through
-                    case PR_END_DATE:
-                        // This message must have come from an external source
-                        flags |= QMessage::Incoming;
-                        break;
                     case PR_SUBJECT:
                         msg->setSubject(QStringFromLpctstr(prop.Value.LPSZ));
                         break;
@@ -3950,6 +3944,10 @@ bool MapiSession::updateMessageProperties(QMessageStore::ErrorCode *lastError, Q
 
                 if (!parentEntryId.isEmpty()) {
                     QMessagePrivate::setStandardFolder(*msg, store->standardFolder(parentEntryId));
+
+                    // MAPI does not support the notion of incoming/outgoing messages.  Instead, we
+                    // will treat Outgoing as meaning 'in the Sent folder'
+                    msg->setStatus(QMessage::Incoming, (msg->standardFolder() != QMessage::SentFolder));
 
                     MapiFolderPtr parentFolder(store->openFolder(lastError, parentEntryId));
                     if (parentFolder) {
