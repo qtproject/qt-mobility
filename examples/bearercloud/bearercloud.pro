@@ -19,9 +19,6 @@ qtAddLibrary(QtBearer)
 
 CONFIG += console
 
-include(../examples.pri)
-
-
 macx: {
     contains(QT_CONFIG,qt_framework):LIBS += -framework QtBearer
     INCLUDEPATH += ../../
