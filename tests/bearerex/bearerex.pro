@@ -24,11 +24,6 @@ SOURCES += bearerex.cpp \
            main.cpp \
            xqlistwidget.cpp
 
-symbian: {
-    bearerex.sources = Qtbearer.dll
-    bearerex.path = /sys/bin
-    DEPLOYMENT += bearerex
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 
-    TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
-}
 qtAddLibrary(QtBearer)
