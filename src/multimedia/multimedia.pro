@@ -115,6 +115,16 @@ contains(QT_CONFIG, multimedia) {
     SOURCES += qaudioformat.cpp
 }
 
+contains(QT_CONFIG, declarative) {
+    QT += declarative
+
+    PRIVATE_HEADERS += \
+        qmlgraphicsvideo_p.h
+
+    SOURCES += \
+        qmlgraphicsvideo.cpp
+}
+
 include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
