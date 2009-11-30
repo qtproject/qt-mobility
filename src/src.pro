@@ -9,7 +9,7 @@ symbian {
     CONFIG += ordered
 }
 
-SUBDIRS += bearer location contacts multimedia publishsubscribe versit
+SUBDIRS += bearer location contacts multimedia publishsubscribe versit sensors
 !maemo:SUBDIRS+=systeminfo
 
 # Versit depends on Contacts
@@ -20,3 +20,4 @@ versit.depends=contacts
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
     !win32-g++:SUBDIRS += messaging
 }
+
