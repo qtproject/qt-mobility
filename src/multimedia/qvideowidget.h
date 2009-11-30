@@ -66,7 +66,7 @@ public:
     enum AspectRatioMode { IgnoreAspectRatio, KeepAspectRatio };
 
     QVideoWidget(QMediaObject *object, QWidget *parent = 0);
-    ~QVideoWidget();
+    ~QVideoWidget();   
 
 #ifdef Q_QDOC
     bool isFullScreen() const;

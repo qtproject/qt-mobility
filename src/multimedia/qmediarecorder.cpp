@@ -207,6 +207,15 @@ QMediaRecorder::~QMediaRecorder()
     or the service doesn't support media recording.
 */
 
+/*!
+    Returns true if the media object the recorder is associated with
+    supports media recording.
+*/
+bool QMediaRecorder::isAvailable() const
+{
+    return d_func()->control != NULL;
+}
+
 QUrl QMediaRecorder::outputLocation() const
 {
     return d_func()->control ? d_func()->control->outputLocation() : QUrl();
@@ -219,7 +228,7 @@ bool QMediaRecorder::setOutputLocation(const QUrl &location)
 }
 
 /*!
-    Return the current media recorder state.
+    Returns the current media recorder state.
 
     \sa QMediaRecorder::State
 */

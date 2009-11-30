@@ -78,6 +78,8 @@ public:
     QRadioTuner(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QRadioTuner();
 
+    bool isAvailable() const;
+
     State state() const;
 
     Band band() const;
