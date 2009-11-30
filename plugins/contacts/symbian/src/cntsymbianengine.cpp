@@ -100,19 +100,6 @@ CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
 {
 }
 
-CntSymbianEngine& CntSymbianEngine::operator=(const CntSymbianEngine& other)
-{
-    // assign
-    m_dataBase = other.m_dataBase;
-    m_managerUri = other.m_managerUri;
-    m_transformContact = other.m_transformContact;
-    m_contactFilter = other.m_contactFilter;
-    m_contactSorter = other.m_contactSorter;
-    m_relationship = other.m_relationship;
-
-    return *this;
-}
-
 CntSymbianEngine::~CntSymbianEngine()
 {
     delete m_contactFilter; // needs to be deleted before database
@@ -639,40 +626,6 @@ QList<QContactManager::Error> CntSymbianEngine::removeContacts(QList<QContactLoc
     }
     changeSet.emitSignals(this);
     return ret;
-}
-
-/* Groups */
-
-/*!
- * Return a list of group UIDs.
- *
- * \param qtError Qt error code.
- * \return List of group IDs.
- */
-QList<QContactLocalId> CntSymbianEngine::groups(QContactManager::Error& qtError) const
-{
-    // See QT_TRYCATCH_LEAVING note at the begginning of this file
-    QContactLocalIdList *list = new QContactLocalIdList();
-    TRAPD(err, QT_TRYCATCH_LEAVING(*list = groupsL()));
-    CntSymbianTransformError::transformError(err, qtError);
-    return *QScopedPointer<QContactLocalIdList>(list);
-}
-
-/*!
- * Private leaving implementation for groups
- */
-QList<QContactLocalId> CntSymbianEngine::groupsL() const
-{
-    QList<QContactLocalId> list;
-    CContactIdArray* cIdList = m_dataBase->contactDatabase()->GetGroupIdListL();
-    CleanupStack::PushL(cIdList);
-    const int count = cIdList->Count();
-    for (int i = 0; i < count; ++i)
-    {
-        list.append(QContactLocalId((*cIdList)[i]));
-    }
-    CleanupStack::PopAndDestroy(cIdList);
-    return list;
 }
 
 /* relationships */

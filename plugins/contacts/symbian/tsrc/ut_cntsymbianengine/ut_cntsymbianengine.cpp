@@ -114,22 +114,13 @@ void TestSymbianEngine::ctors()
         QSKIP("Error creating CntSymbianEngine in ctor", SkipSingle);
     }
     // copy ctor
-    CntSymbianEngine *ce1(ce);
+    CntSymbianEngine* ce1 = new CntSymbianEngine(*ce);
     QVERIFY(ce->managerName() == ce1->managerName());
     QVERIFY(ce->m_contactFilter == ce1->m_contactFilter);
     QVERIFY(ce->m_contactSorter == ce1->m_contactSorter);
     QVERIFY(ce->m_dataBase == ce1->m_dataBase);
     QVERIFY(ce->m_relationship == ce1->m_relationship);
     QVERIFY(ce->m_transformContact == ce1->m_transformContact);
-
-    // assignment
-    CntSymbianEngine *ce2 = ce;
-    QVERIFY(ce->managerName() == ce2->managerName());
-    QVERIFY(ce->m_contactFilter == ce2->m_contactFilter);
-    QVERIFY(ce->m_contactSorter == ce2->m_contactSorter);
-    QVERIFY(ce->m_dataBase == ce2->m_dataBase);
-    QVERIFY(ce->m_relationship == ce2->m_relationship);
-    QVERIFY(ce->m_transformContact == ce2->m_transformContact);
 
     // dref
     ce->deref();

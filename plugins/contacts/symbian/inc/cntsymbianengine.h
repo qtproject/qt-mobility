@@ -81,7 +81,6 @@ public:
     CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
     CntSymbianEngine(const CntSymbianEngine& other);
     ~CntSymbianEngine();
-    CntSymbianEngine& operator=(const CntSymbianEngine& other);
     void deref();
 
     /* Contacts - Accessors and Mutators */
@@ -142,10 +141,6 @@ private:
     /* Remove contact */
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
     int removeContactL(QContactLocalId id);
-
-    /* Groups */
-    QList<QContactLocalId> groups(QContactManager::Error& qtError) const;
-    QList<QContactLocalId> groupsL() const;
 
     void updateDisplayLabel(QContact& contact) const;
 
