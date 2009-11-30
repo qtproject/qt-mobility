@@ -1086,6 +1086,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
             QMessage::Status status(static_cast<QMessage::Status>(d_ptr->_value.toUInt()));
             switch (status) {
             case QMessage::Incoming:
+                /* TODO: this (wrong) code is not being called at all?
                 _restriction.rt = RES_OR;
                 _restriction.res.resAnd.cRes = 2;
                 _restriction.res.resAnd.lpRes = &_subRestriction[0];
@@ -1098,6 +1099,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
                 _subRestriction[1].res.resExist.ulPropTag = PR_END_DATE;
                 _subRestriction[1].res.resExist.ulReserved2 = 0;
                 _valid = true;
+                */
                 return;
             case QMessage::Read:
                 _restriction.res.resBitMask.relBMR = BMR_NEZ;
