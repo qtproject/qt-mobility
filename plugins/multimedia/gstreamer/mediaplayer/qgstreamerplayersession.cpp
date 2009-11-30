@@ -49,6 +49,8 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
+#define USE_PLAYBIN2
+
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     :QObject(parent),
      m_state(QMediaPlayer::StoppedState),
@@ -71,8 +73,12 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         gst_init(NULL, NULL);
     }
 
-
+#ifdef USE_PLAYBIN2
+    m_playbin = gst_element_factory_make("playbin2", NULL);
+#else
     m_playbin = gst_element_factory_make("playbin", NULL);
+#endif
+
     if (m_playbin != 0) {
         // Sort out messages
         m_bus = gst_element_get_bus(m_playbin);
@@ -170,11 +176,19 @@ int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType strea
         }
     }
 
+#ifdef USE_PLAYBIN2
+    streamNumber += m_playbin2StreamOffset.value(streamType,0);
+#endif
+
     return streamNumber;
 }
 
 void QGstreamerPlayerSession::setActiveStream(QMediaStreamsControl::StreamType streamType, int streamNumber)
 {
+#ifdef USE_PLAYBIN2
+    streamNumber -= m_playbin2StreamOffset.value(streamType,0);
+#endif
+
     if (m_playbin) {
         switch (streamType) {
         case QMediaStreamsControl::AudioStream:
@@ -544,6 +558,38 @@ void QGstreamerPlayerSession::getStreamsInfo()
     }
 
     //check if video is available:
+    bool haveVideo = false;
+    m_streamProperties.clear();
+    m_streamTypes.clear();
+
+#ifdef USE_PLAYBIN2
+    gint audioStreamsCount = 0;
+    gint videoStreamsCount = 0;
+    gint textStreamsCount = 0;
+
+    g_object_get(G_OBJECT(m_playbin), "n-audio", &audioStreamsCount, NULL);
+    g_object_get(G_OBJECT(m_playbin), "n-video", &videoStreamsCount, NULL);
+    g_object_get(G_OBJECT(m_playbin), "n-text", &textStreamsCount, NULL);
+
+    m_playbin2StreamOffset[QMediaStreamsControl::AudioStream] = 0;
+    m_playbin2StreamOffset[QMediaStreamsControl::VideoStream] = audioStreamsCount;
+    m_playbin2StreamOffset[QMediaStreamsControl::SubPictureStream] = audioStreamsCount+videoStreamsCount;
+
+    for (int i=0; i<audioStreamsCount; i++) {
+        QMap<QtMedia::MetaData, QVariant> streamProperties;
+
+        m_streamTypes.append(QMediaStreamsControl::AudioStream);
+        m_streamProperties.append(streamProperties);
+    }
+
+    for (int i=0; i<audioStreamsCount; i++) {
+        QMap<QtMedia::MetaData, QVariant> streamProperties;
+
+        m_streamTypes.append(QMediaStreamsControl::VideoStream);
+        m_streamProperties.append(streamProperties);
+    }
+
+#else
     enum {
         GST_STREAM_TYPE_UNKNOWN,
         GST_STREAM_TYPE_AUDIO,
@@ -555,10 +601,6 @@ void QGstreamerPlayerSession::getStreamsInfo()
 
     GList*      streamInfo;
     g_object_get(G_OBJECT(m_playbin), "stream-info", &streamInfo, NULL);
-
-    bool haveVideo = false;
-    m_streamProperties.clear();
-    m_streamTypes.clear();
 
     for (; streamInfo != 0; streamInfo = g_list_next(streamInfo)) {
         gint        type;
@@ -595,6 +637,7 @@ void QGstreamerPlayerSession::getStreamsInfo()
         m_streamProperties.append(streamProperties);
         m_streamTypes.append(streamType);
     }
+#endif
 
     if (haveVideo != m_videoAvailable) {
         m_videoAvailable = haveVideo;

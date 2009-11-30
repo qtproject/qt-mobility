@@ -145,6 +145,7 @@ private:
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QtMedia::MetaData,QVariant> > m_streamProperties;
     QList<QMediaStreamsControl::StreamType> m_streamTypes;
+    QMap<QMediaStreamsControl::StreamType, int> m_playbin2StreamOffset;
 
 
     int m_volume;
