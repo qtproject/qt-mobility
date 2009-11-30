@@ -54,7 +54,6 @@ symbian: {
     deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
-    
     for(header, exportheaders.sources) {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
@@ -62,8 +61,6 @@ symbian: {
     bearer_deployment.sources = QtBearer_tp.dll
     bearer_deployment.path = /sys/bin
     DEPLOYMENT += bearer_deployment
-
-    TARGET.CAPABILITY = All -TCB
 } else {
     maemo {
         QT += dbus
