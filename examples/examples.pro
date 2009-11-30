@@ -41,6 +41,10 @@ SUBDIRS += player \
         streamplayer \
         audiorecorder
 
+contains (QT_CONFIG, declarative) {
+    SUBDIRS += declarativevideo
+}
+
 #Messaging examples
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
     !win32-g++:SUBDIRS += \
