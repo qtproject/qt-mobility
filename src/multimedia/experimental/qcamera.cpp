@@ -218,6 +218,16 @@ QCamera::~QCamera()
 {
 }
 
+
+/*!
+    Returns true if the camera is supported, otherwise returns false.
+*/
+bool QCamera::isAvailable() const
+{
+    return d_func()->control != NULL;
+}
+
+
 /*!
     Returns the error state of the object.
 */
