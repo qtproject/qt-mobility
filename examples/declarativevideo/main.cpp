@@ -50,9 +50,15 @@
 #include <qml.h>
 #include <qmlcontext.h>
 
+#include <qmediaserviceprovider.h>
+
+QTM_USE_NAMESPACE
+
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+
+    QMediaServiceProvider::defaultServiceProvider();
 
     QString videoFile = QFileDialog::getOpenFileName(0, QObject::tr("Open Video"));
 

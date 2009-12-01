@@ -39,32 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWVIDEORENDERERCONTROL_H
+#define DIRECTSHOWVIDEORENDERERCONTROL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qvideorenderercontrol.h>
+
+#include <dshow.h>
+
+class VideoSurfaceFilter;
 
 QTM_USE_NAMESPACE
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class DirectShowVideoRendererControl : public QVideoRendererControl
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowVideoRendererControl(QObject *parent = 0);
+    ~DirectShowVideoRendererControl();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
+
+    IBaseFilter *filter();
+
+Q_SIGNALS:
+    void filterChanged();
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    QAbstractVideoSurface *m_surface;
+    VideoSurfaceFilter *m_filter;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

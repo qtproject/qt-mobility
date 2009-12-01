@@ -39,32 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWPLAYERCONTROL_H
+#define DIRECTSHOWPLAYERCONTROL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qmediacontent.h>
+#include <qmediaplayercontrol.h>
+
+class DirectShowPlayerService;
 
 QTM_USE_NAMESPACE
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class DirectShowPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowPlayerControl(DirectShowPlayerService *service, QObject *parent = 0);
+    ~DirectShowPlayerControl();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    QMediaPlayer::State state() const;
+
+    QMediaPlayer::MediaStatus mediaStatus() const;
+
+    qint64 duration() const;
+
+    qint64 position() const;
+    void setPosition(qint64 position);
+
+    int volume() const;
+    void setVolume(int volume);
+
+    bool isMuted() const;
+    void setMuted(bool muted);
+
+    int bufferStatus() const;
+
+    bool isVideoAvailable() const;
+
+    bool isSeekable() const;
+    QPair<qint64, qint64> seekRange() const;
+
+    qreal playbackRate() const;
+    void setPlaybackRate(qreal rate);
+
+    QMediaContent media() const;
+    const QIODevice *mediaStream() const;
+    void setMedia(const QMediaContent &media, QIODevice *stream);
+
+    void play();
+    void pause();
+    void stop();
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    DirectShowPlayerService *m_service;
+    QMediaPlayer::State m_state;
+    QMediaPlayer::MediaStatus m_status;
+    int m_muteVolume;
+    QMediaContent m_media;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

@@ -39,32 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#include "mediasamplevideobuffer.h"
 
-#include <qmediaserviceproviderplugin.h>
-
-QTM_USE_NAMESPACE
-
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+MediaSampleVideoBuffer::MediaSampleVideoBuffer(IMediaSample *sample, int bytesPerLine)
+    : QAbstractVideoBuffer(NoHandle)
+    , m_sample(sample)
+    , m_bytesPerLine(m_bytesPerLine)
+    , m_mapMode(NotMapped)
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    m_sample->AddRef();
+}
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+MediaSampleVideoBuffer::~MediaSampleVideoBuffer()
+{
+    m_sample->Release();
+}
 
-private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+uchar *MediaSampleVideoBuffer::map(MapMode mode, int *numBytes, int *bytesPerLine)
+{
+    if (m_mapMode == NotMapped && mode != NotMapped) {
+        if (numBytes)
+            *numBytes = m_sample->GetActualDataLength();
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
-};
+        if (bytesPerLine)
+            *bytesPerLine = m_bytesPerLine;
 
-#endif // DSSERVICEPLUGIN_H
+        BYTE *bytes = 0;
+
+        if (m_sample->GetPointer(&bytes) == S_OK) {
+            m_mapMode = mode;
+
+            return reinterpret_cast<uchar *>(bytes);
+        }
+    }
+    return 0;
+}
+
+void MediaSampleVideoBuffer::unmap()
+{
+    m_mapMode = NotMapped;
+}
+
+QAbstractVideoBuffer::MapMode MediaSampleVideoBuffer::mapMode() const
+{
+    return m_mapMode;
+}

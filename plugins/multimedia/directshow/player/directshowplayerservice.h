@@ -39,32 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWPLAYERSERVICE_H
+#define DIRECTSHOWPLAYERSERVICE_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qmediaservice.h>
+
+#include "directshowglobal.h"
+
+class DirectShowPlayerControl;
+class DirectShowVideoOutputControl;
+class DirectShowVideoRendererControl;
+
+QTM_BEGIN_NAMESPACE
+class QMediaContent;
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+
+class DirectShowPlayerService : public QMediaService
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowPlayerService(QObject *parent = 0);
+    ~DirectShowPlayerService();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    QMediaControl* control(const char *name) const;
+
+    IGraphBuilder *graph() { return m_graph; }
+
+    void load(const QMediaContent &media);
+
+private Q_SLOTS:
+    void videoOutputChanged();
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    DirectShowPlayerControl *m_playerControl;
+    DirectShowVideoOutputControl *m_videoOutputControl;
+    DirectShowVideoRendererControl *m_videoRendererControl;
+    IGraphBuilder *m_graph;
+    ICaptureGraphBuilder2 *m_builder;
+    IBaseFilter *m_source;
+    IBaseFilter *m_videoOutput;
 };
 
-#endif // DSSERVICEPLUGIN_H
+
+#endif

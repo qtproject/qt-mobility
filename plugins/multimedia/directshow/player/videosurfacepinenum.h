@@ -39,32 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef VIDEOSURFACEPINENUM_H
+#define VIDEOSURFACEPINENUM_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <QtCore/qlist.h>
 
-QTM_USE_NAMESPACE
+#include <dshow.h>
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class VideoSurfacePinEnum : public IEnumPins
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    VideoSurfacePinEnum(const QList<IPin *> &pins);
+    ~VideoSurfacePinEnum();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    // IUnknown
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
+    ULONG STDMETHODCALLTYPE AddRef();
+    ULONG STDMETHODCALLTYPE Release();
+
+    // IEnumPins
+    HRESULT STDMETHODCALLTYPE Next(ULONG cPins, IPin **ppPins, ULONG *pcFetched);
+    HRESULT STDMETHODCALLTYPE Skip(ULONG cPins);
+    HRESULT STDMETHODCALLTYPE Reset();
+    HRESULT STDMETHODCALLTYPE Clone(IEnumPins **ppEnum);
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    LONG m_ref;
+    QList<IPin *> m_pins;
+    int m_index;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

@@ -39,32 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef VIDEOSURFACEMEDIATYPEENUM_H
+#define VIDEOSURFACEMEDIATYPEENUM_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <QtCore/qvector.h>
+#include <QtMultimedia/qvideoframe.h>
 
-QTM_USE_NAMESPACE
+#include <dshow.h>
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class VideoSurfaceMediaTypeEnum : public IEnumMediaTypes
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    VideoSurfaceMediaTypeEnum(const QVector<AM_MEDIA_TYPE> &types);
+    VideoSurfaceMediaTypeEnum(const QList<QVideoFrame::PixelFormat> &formats);
+    ~VideoSurfaceMediaTypeEnum();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    // IUnknown
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
+    ULONG STDMETHODCALLTYPE AddRef();
+    ULONG STDMETHODCALLTYPE Release();
+
+    // IEnumMediaTypes
+    HRESULT STDMETHODCALLTYPE Next(
+            ULONG cMediaTypes, AM_MEDIA_TYPE **ppMediaTypes, ULONG *pcFetched);
+    HRESULT STDMETHODCALLTYPE Skip(ULONG cMediaTypes);
+    HRESULT STDMETHODCALLTYPE Reset();
+
+    HRESULT STDMETHODCALLTYPE Clone(IEnumMediaTypes **ppEnum);
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    LONG m_ref;
+    QVector<AM_MEDIA_TYPE> m_mediaTypes;
+    int m_index;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

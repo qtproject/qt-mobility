@@ -39,32 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#include "directshowvideooutputcontrol.h"
 
-#include <qmediaserviceproviderplugin.h>
-
-QTM_USE_NAMESPACE
-
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+DirectShowVideoOutputControl::DirectShowVideoOutputControl(QObject *parent)
+    : QVideoOutputControl(parent)
+    , m_output(NoOutput)
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+}
 
-private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+DirectShowVideoOutputControl::~DirectShowVideoOutputControl()
+{
+}
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
-};
+QList<QVideoOutputControl::Output> DirectShowVideoOutputControl::availableOutputs() const
+{
+    return QList<Output>()
+            << RendererOutput;
+}
 
-#endif // DSSERVICEPLUGIN_H
+
+QVideoOutputControl::Output DirectShowVideoOutputControl::output() const
+{
+    return m_output;
+}
+
+void DirectShowVideoOutputControl::setOutput(Output output)
+{
+    if (output != m_output) {
+        switch (output) {
+        case NoOutput:
+        case RendererOutput:
+            m_output = output;
+            emit outputChanged();
+            break;
+        default:
+            break;
+        }
+    }
+}

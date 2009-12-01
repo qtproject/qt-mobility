@@ -39,32 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef VIDEOSURFACEMEDIATYPE_H
+#define VIDEOSURFACEMEDIATYPE_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
-QTM_USE_NAMESPACE
+#include <dshow.h>
+#include <dvdmedia.h>
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class VideoSurfaceMediaType : public AM_MEDIA_TYPE
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    VideoSurfaceMediaType() { memset(this, 0, sizeof(VideoSurfaceMediaType)); }
+    VideoSurfaceMediaType(const AM_MEDIA_TYPE &type) { copy(this, type); }
+    VideoSurfaceMediaType(const VideoSurfaceMediaType &other) { copy(this, other); }
+    VideoSurfaceMediaType &operator =(const AM_MEDIA_TYPE &type) {
+        free(this); copy(this, type); return *this; }
+    VideoSurfaceMediaType &operator =(const VideoSurfaceMediaType &other) {
+        free(this); copy(this, other); return *this; }
+    ~VideoSurfaceMediaType() { free(this); }
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    void clear() { free(this); memset(this, 0, sizeof(VideoSurfaceMediaType)); }
 
-private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+    static void copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &source);
+    static void free(AM_MEDIA_TYPE *type);
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    static GUID convertPixelFormat(QVideoFrame::PixelFormat format);
+    static QVideoSurfaceFormat formatFromType(const AM_MEDIA_TYPE &type);
+
+    static int bytesPerLine(const QVideoSurfaceFormat &format);
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif
