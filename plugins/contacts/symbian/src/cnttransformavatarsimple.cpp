@@ -51,13 +51,25 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 
     QList<CContactItemField *> fieldList;
 
-	//cast to avatar
-	const QContactAvatar &avatar(static_cast<const QContactAvatar&>(detail));
+    //cast to avatar
+    const QContactAvatar &avatar(static_cast<const QContactAvatar&>(detail));
 
-	//create new field
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
+    //create new field
+    TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
 
-	if(fieldText.Length()) {
+    //copy filename and replace slash with a backslash
+    TFileName filename;
+    for(TInt i(0); i < fieldText.Length(); i++) {
+        if(i >= filename.MaxLength())
+            User::Leave(KErrTooBig);
+        if(fieldText[i] == '/') {
+            filename.Append('\\');
+        } else {
+            filename.Append(fieldText[i]);
+        }
+    }
+
+	if(filename.Length()) {
         const QString& subTypeImage(QContactAvatar::SubTypeImage);
         const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
 
@@ -75,7 +87,7 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
 
 	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
-	    newField->TextStorage()->SetTextL(fieldText);
+	    newField->TextStorage()->SetTextL(filename);
 
 	    fieldList.append(newField);
 	    CleanupStack::Pop(newField);

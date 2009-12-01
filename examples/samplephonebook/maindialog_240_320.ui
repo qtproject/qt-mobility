@@ -86,6 +86,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet" >
+      <string notr="true" >color: rgb(0, 0, 0);</string>
+     </property>
     </widget>
    </item>
    <item>

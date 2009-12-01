@@ -108,11 +108,12 @@ QList<QContactLocalId> CntSymbianFilterDbms::contacts(
     if (filter.type() == QContactFilter::ContactDetailFilter)
     {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
+        CntAbstractContactFilter::FilterSupport supported = filterSupported(filter);
 
         // Phone numbers
         if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName
-                && (filterSupported(filter) == Supported
-                || filterSupported(filter) == SupportedPreFilterOnly))
+                && (supported == Supported
+                || supported == SupportedPreFilterOnly))
         {
             QString number((detailFilter.value()).toString());
             TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
@@ -127,10 +128,10 @@ QList<QContactLocalId> CntSymbianFilterDbms::contacts(
                 CntSymbianTransformError::transformError(err, error);
             }
         }
-        // Names
-        else if (filterSupported(filter) == Supported
+        // Names, e-mail, display label
+        else if (supported == Supported
                 // The pre-filters are implemented as "MatchContains"
-                || filterSupported(filter) == SupportedPreFilterOnly) {
+                || supported == SupportedPreFilterOnly) {
             QString name((detailFilter.value()).toString());
             // TODO: this looks ugly
             TPtrC namePtr(reinterpret_cast<const TUint16*>(name.utf16()));
@@ -200,21 +201,22 @@ QList<QContactLocalId> CntSymbianFilterDbms::contacts(
 CntAbstractContactFilter::FilterSupport CntSymbianFilterDbms::filterSupported(const QContactFilter& filter)
 {
     FilterSupport filterSupported(NotSupported);
+
     if (filter.type() == QContactFilter::ContactDetailFilter) {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
         QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
 
+        QString defName = detailFilter.detailDefinitionName();
         // Phone numbers
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
+        if (defName == QContactPhoneNumber::DefinitionName) {
             if (matchFlags == QContactFilter::MatchEndsWith)
                 filterSupported = Supported;
             else if (matchFlags == QContactFilter::MatchExactly)
                 filterSupported = SupportedPreFilterOnly;
-        }
         // Names
-        else if (detailFilter.detailDefinitionName() == QContactName::DefinitionName
-                || detailFilter.detailDefinitionName() == QContactNickname::DefinitionName
-                || detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName) {
+        } else if (defName == QContactName::DefinitionName
+                || defName == QContactNickname::DefinitionName
+                || defName == QContactEmailAddress::DefinitionName) {
             QContactFilter::MatchFlags supportedPreFilterFlags =
                 QContactFilter::MatchExactly
                 & QContactFilter::MatchStartsWith
@@ -224,6 +226,17 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterDbms::filterSupported(co
                 filterSupported = Supported;
             }
             else if (matchFlags | supportedPreFilterFlags ==
+                supportedPreFilterFlags ) {
+                filterSupported = SupportedPreFilterOnly;
+            }
+        // display label, TODO: "unnamed" display label is not supported
+        } else if (defName == QContactDisplayLabel::DefinitionName) {
+            QContactFilter::MatchFlags supportedPreFilterFlags =
+                QContactFilter::MatchExactly
+                & QContactFilter::MatchStartsWith
+                & QContactFilter::MatchEndsWith
+                & QContactFilter::MatchCaseSensitive;
+            if (matchFlags | supportedPreFilterFlags ==
                 supportedPreFilterFlags ) {
                 filterSupported = SupportedPreFilterOnly;
             }
@@ -273,6 +286,16 @@ void CntSymbianFilterDbms::transformDetailFilterL(
     // Email
     else if(detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName) {
         tempFieldDef->AppendL(KUidContactFieldEMail);
+    }
+    // Display label
+    else if(detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName) {
+        // in S60 display label is constructed with "nick name", "first name",
+        // "last name" and/or "company name"
+        tempFieldDef->SetReserveL(nameFieldsCount);
+        tempFieldDef->AppendL(KUidContactFieldSecondName);
+        tempFieldDef->AppendL(KUidContactFieldGivenName);
+        tempFieldDef->AppendL(KUidContactFieldFamilyName);
+        tempFieldDef->AppendL(KUidContactFieldCompanyName);
     }
 
     CleanupStack::Pop(tempFieldDef);
