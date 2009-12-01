@@ -996,8 +996,6 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
                 valueHash.take(id);
             }
         }
-        //XXX process avatar here
-        //processAvatar(this, contact, ret);
         HeapFree(GetProcessHeap(), 0, propvals);
     }
 
