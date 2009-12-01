@@ -469,16 +469,21 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 			message.setSubject(subj);
 		}
 		
+		QString body = textContent();
+		if (!body.isEmpty()) {
+			message.setBody(body);
+		}
+		
 	} else if (type == ReplyToAll) {
 		QList<QMessageAddress> addressList;
-		QMessageAddressList toList = to();
-		foreach(QMessageAddress address, toList) {
-			addressList.append(address);
-		}
 		addressList.append(d_ptr->_from);
 		message.setTo(addressList);
 		
 		QList<QMessageAddress> ccAddressList;
+		QMessageAddressList toList = to();
+		foreach(QMessageAddress address, toList) {
+			ccAddressList.append(address);
+		}	
 		QMessageAddressList ccList = cc();
 		foreach(QMessageAddress ccAddress, ccList) {
 			ccAddressList.append(ccAddress);
@@ -496,6 +501,11 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 		if (!subj.isEmpty()) {
 			subj.insert(0, "Re:");
 			message.setSubject(subj);
+		}
+		
+		QString body = textContent();
+		if (!body.isEmpty()) {
+			message.setBody(body);
 		}
 
 	} else if (type == Forward) {

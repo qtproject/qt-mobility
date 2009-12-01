@@ -684,17 +684,17 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(reply.subject(), updated.subject().prepend("Re:"));
     QCOMPARE(reply.to(), QList<QMessageAddress>() << updated.from());
     QCOMPARE(reply.cc(), QList<QMessageAddress>());
-#ifndef Q_OS_SYMBIAN    
+#ifndef Q_OS_SYMBIAN
     QVERIFY(reply.bodyId().isValid());
-#endif    
+#endif  
 
     QMessage replyToAll(updated.createResponseMessage(QMessage::ReplyToAll));
-    QCOMPARE(replyToAll.subject(), updated.subject().prepend("Re:"));
-#ifndef Q_OS_SYMBIAN    
+    QCOMPARE(replyToAll.subject(), updated.subject().prepend("Re:"));  
     QCOMPARE(replyToAll.to(), QList<QMessageAddress>() << updated.from());
     QCOMPARE(replyToAll.cc(), QList<QMessageAddress>() << updated.to() << updated.cc());
-    QVERIFY(replyToAll.bodyId().isValid());
-#endif    
+#ifndef Q_OS_SYMBIAN
+    QVERIFY(replyToAll.bodyId().isValid());   
+#endif
 
     QMessage forward(updated.createResponseMessage(QMessage::Forward));
     QCOMPARE(forward.subject(), updated.subject().prepend("Fwd:"));
