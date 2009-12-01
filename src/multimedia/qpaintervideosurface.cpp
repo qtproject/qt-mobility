@@ -349,7 +349,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         }
         m_frame.unmap();
-    } else {
+    } else if (m_frame.isValid()) {
         return QAbstractVideoSurface::IncorrectFormatError;
     }
 
@@ -1184,7 +1184,8 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
     if (!m_ready) {
         if (!isActive())
             setError(StoppedError);
-    } else if (frame.pixelFormat() != m_pixelFormat || frame.size() != m_frameSize) {
+    } else if (frame.isValid() 
+            && (frame.pixelFormat() != m_pixelFormat || frame.size() != m_frameSize)) {
         setError(IncorrectFormatError);
 
         stop();
