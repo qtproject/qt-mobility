@@ -93,6 +93,7 @@ QMessage::QMessage()
  : d_ptr(new QMessagePrivate(this))
 {
 	setDerivedMessage(this);
+	d_ptr->_size = 0;
 	d_ptr->_modified = false;
 }
 
@@ -297,10 +298,10 @@ uint QMessage::size() const
     } else {
     	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
 		if (container->_size != 0) {
-			size += ((container->_size / 1024) + 1) * 1024;
+			size += container->_size;
 		}
 		foreach (const QMessageContentContainer &attachment, container->_attachments) {
-			size += ((attachment.size() / 1024) + 1) * 1024;
+			size += attachment.size();
 		}
 		size += 1024;
     

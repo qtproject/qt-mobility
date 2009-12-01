@@ -572,10 +572,8 @@ void tst_QMessageStore::testMessage()
 #ifndef Q_OS_SYMBIAN // Created Messages are not stored in Standard Folders in Symbian    
     QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
 #endif    
-
-#ifndef Q_OS_SYMBIAN    
+  
     QAPPROXIMATECOMPARE(message.size(), messageSize, (messageSize / 2));
-#endif    
 
     QMessageContentContainerId bodyId(message.bodyId());
     QCOMPARE(bodyId.isValid(), true);
