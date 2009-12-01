@@ -105,9 +105,17 @@
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp continue-search
 
-    We display the resulting list of addresses in our Addresses pane.  If the
-    user selects one of these addresses, we fill the Messages combo box with 
-    the list of messages that were previously sent to that address:
+    We will display the resulting list of contacts in our Contacts pane.  If the
+    system contains a contact definition that matches the address information
+    we extracted, we will display the label for that contact - this matching
+    process can be accomplished using the Qt Mobility Contacts API.  If we can't
+    find a matching contact, we fall back to using the raw address information 
+    for display:
+    
+    \snippet    ../../examples/keepintouch/addressfinder.cpp contact-lookup
+
+    If the user selects one of these contact addresses, we fill the Messages 
+    combo box with the list of messages that were previously sent to that contact:
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp address-selected
 

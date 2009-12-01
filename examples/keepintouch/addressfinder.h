@@ -96,7 +96,7 @@ private:
     QAction *searchAction;
     QPushButton *searchButton;
 
-    QListWidget *addressList;
+    QListWidget *contactList;
     QComboBox *messageCombo;
     QPushButton *showButton;
     QPushButton *forwardButton;
@@ -109,6 +109,8 @@ private:
     QMessageIdList exclusionMessages;
 
     QSet<QString> excludedAddresses;
+    
+    QStringList addressList;
     QMap<QString, QList<QPair<QString, QMessageId> > > addressMessages;
 };
 
