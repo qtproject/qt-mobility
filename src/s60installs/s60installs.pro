@@ -1,5 +1,4 @@
 TEMPLATE = subdirs
-;CONFIG += plugin
 
 symbian: {
     load(data_caging_paths)
@@ -17,6 +16,7 @@ symbian: {
         $$[EPOCROOT50]epoc32/release/armv5/urel/QtSystemInfo.dll \
         $$[EPOCROOT50]epoc32/release/armv5/urel/QtPublishSubscribe.dll \
         $$[EPOCROOT50]epoc32/release/armv5/urel/QtContacts.dll
+        $$[EPOCROOT50]epoc32/release/armv5/urel/QtVersit.dll
 
 
     bearer = \
@@ -42,7 +42,7 @@ symbian: {
         "ENDIF"
 
     pluginstubs = \
-        "\"../../plugins/contacts/symbian/qmakepluginstubs/mobapicontactspluginsymbian.qtplugin\" - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbian.qtplugin\""
+        "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/mobapicontactspluginsymbian.qtplugin\" - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbian.qtplugin\""
 
     qtmobilitydeployment.pkg_postrules += bearer
     qtmobilitydeployment.pkg_postrules += contacts
