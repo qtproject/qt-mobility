@@ -55,6 +55,7 @@
 #include <utf.h>       	// CnvUtfConverter
 #include <apmrec.h>		// TDataRecognitionResult
 
+QTM_BEGIN_NAMESPACE
 class QMessageContentContainerPrivate
 {
     Q_DECLARE_PUBLIC(QMessageContentContainer)
@@ -65,33 +66,33 @@ public:
     QMessageContentContainer *q_ptr;
     QMessage *_message;
 
+    bool _available;
+    uint _size;
     QByteArray _type;
     QByteArray _subType;
     QByteArray _charset;
     QByteArray _name;
     QByteArray _content;
     QString _textContent;
-    QString _filename;
+    QByteArray _filename;
     QMessageId _messageId;
     QMessageContentContainerId _id;
-    bool _available;
-    uint _size;
     QList<QMessageContentContainer> _attachments;
     QMultiMap<QByteArray, QString>  _header;
     
-    QMessageContentContainerPrivate::QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
+    QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
             :
             q_ptr(contentContainer), _message(0), _available(false), _size(0)
     {
     }
 
     QMessageContentContainerPrivate(const QMessageContentContainerPrivate& other)
-    	:
-    	q_ptr(other.q_ptr), _message(other._message), _attachments(other._attachments),
-    	_available(other._available), _size(other._size), _type(other._type),
-    	_subType(other._subType), _charset(other._charset), _name(other._name),
-    	_content(other._content), _textContent(other._textContent), _filename(other._filename),
-    	_messageId(other._messageId), _id(other._id), _header(other._header)
+    	: 
+    	q_ptr(other.q_ptr), _message(other._message), _available(other._available),
+    	_size(other._size), _type(other._type), _subType(other._subType),
+    	_charset(other._charset), _name(other._name), _content(other._content),
+    	_textContent(other._textContent), _filename(other._filename), _messageId(other._messageId),
+    	_id(other._id),  _attachments(other._attachments),_header(other._header)
     {
     }
 
@@ -122,7 +123,11 @@ public:
     QMessageContentContainerId prependContent(QMessageContentContainer& container);
 
     static QMessageContentContainerId bodyContentId();
+    
+    static QByteArray attachmentFilename(const QMessageContentContainer& container);
 
 };
+
+QTM_END_NAMESPACE
 
 #endif

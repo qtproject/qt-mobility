@@ -67,7 +67,7 @@
 #include <CoreFoundation/CFArray.h>
 #include <CoreFoundation/CFArray.h>
 #include <CoreFoundation/CFNumber.h>
-
+#include <CoreFoundation/CFNotificationCenter.h>
 #include <IOKit/graphics/IOGraphicsLib.h>
 
 #include <IOKit/usb/IOUSBLib.h>
@@ -105,6 +105,8 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
+
+QTM_BEGIN_NAMESPACE
 //
 ////////
 static QString stringFromCFString(CFStringRef value) {
@@ -136,6 +138,7 @@ inline NSString *qstringToNSString(const QString &qstr)
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
+    qWarning() << __FUNCTION__;
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
@@ -180,6 +183,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
        break;
    case QSystemInfo::Firmware:
        {
+           return QSystemDeviceInfoPrivate::model();
        }
        break;
     };
@@ -280,15 +284,25 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return featureSupported;
 }
 
-//////// QSystemNetworkInfo
+
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent)
+        : QObject(parent), signalStrengthCache(0)
 {
+    rssiTimer = new QTimer();
+    connect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
+    rssiTimer->start(1000);
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
+
+void QSystemNetworkInfoPrivate::rssiTimeout()
+{
+    networkStatus(QSystemNetworkInfo::WlanMode);
+    networkSignalStrength(QSystemNetworkInfo::WlanMode);
+}
+
 
 bool QSystemNetworkInfoPrivate::isInterfaceActive(const char* netInterface)
 {
@@ -319,7 +333,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 #ifdef MAC_SDK_10_6
             NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
             CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceForMode(mode).name())];
-            [wifiInterface disassociate];
             switch([[wifiInterface interfaceState]intValue]) {
             case  kCWInterfaceStateInactive:
                 break;
@@ -373,18 +386,32 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-            int percent = 0;
+            int signalQuality = 0;
 #ifdef MAC_SDK_10_6
+            NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
             QString name = interfaceForMode(mode).name();
             CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
             int rssiSignal = [[wifiInterface rssi] intValue];
 
-            int maxSignal = -60;
-            int disSignal = -80;
-            percent = 95 - 80*(maxSignal - rssiSignal)/(maxSignal - disSignal);
-#endif
+            if(rssiSignal !=0 ) {
+                int maxRssi = -40;
+                int minRssi = [[wifiInterface noise] intValue];
+                signalQuality = ( 100 * (maxRssi - minRssi) * (maxRssi - minRssi) - (maxRssi - rssiSignal) *
+                                  (15 * (maxRssi - minRssi) + 62 * (maxRssi - rssiSignal)) ) /
+                                ((maxRssi - minRssi) * (maxRssi - minRssi));
 
-            return percent;
+            } else {
+                signalQuality = 0;
+            }
+
+            if(signalStrengthCache != signalQuality) {
+                qWarning() <<__FUNCTION__ << rssiSignal << signalQuality;
+                signalStrengthCache = signalQuality;
+                emit networkSignalStrengthChanged(mode, signalQuality);
+            }
+            [autoreleasepool release];
+#endif
+            return signalQuality;
         }
         break;
     case QSystemNetworkInfo::EthernetMode:
@@ -526,6 +553,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    qWarning() << __FUNCTION__;
 }
 
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
@@ -571,6 +599,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    qWarning() << __FUNCTION__;
 }
 
 
@@ -717,6 +746,7 @@ void powerInfoChanged(void* runLoopInfo)
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+    qWarning() << __FUNCTION__;
     batteryLevelCache = 0;
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
     batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
@@ -915,15 +945,11 @@ bool QSystemScreenSaverPrivate::screenSaverInhibited()
     return isInhibited;
 }
 
-bool QSystemScreenSaverPrivate::isScreenLockOn()
-{
-    return false;
-}
-
 void QSystemScreenSaverPrivate::activityTimeout()
 {
     UpdateSystemActivity(OverallAct);
 }
 
+#include "moc_qsysteminfo_mac_p.cpp"
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

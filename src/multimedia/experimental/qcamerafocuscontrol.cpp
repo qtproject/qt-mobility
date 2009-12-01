@@ -42,9 +42,10 @@
 #include <experimental/qcamerafocuscontrol.h>
 #include  "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCameraFocusControl
-    \ingroup multimedia
 
     \preliminary
     \brief The QCameraFocusControl class supplies control for
@@ -52,6 +53,12 @@
 
     The interface name of QCameraFocusControl is \c com.nokia.Qt.QCameraFocusControl/1.0 as
     defined in QCameraFocusControl_iid.
+
+The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
+the same level of review and testing as the rest of the APIs.
+
+The API exposed by the classes in this component are not stable, and will
+undergo modification or removal prior to the final release of Qt Mobility.
 
     \sa QMediaService::control(), QCamera
 */
@@ -197,3 +204,7 @@ QCameraFocusControl::~QCameraFocusControl()
 
     Signal emitted when \a zoom value changed.
 */
+
+#include "moc_qcamerafocuscontrol.cpp"
+QTM_END_NAMESPACE
+

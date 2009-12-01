@@ -49,7 +49,7 @@
 #include <QSharedData>
 #include <QMutex>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QValueSpaceSubscriber
@@ -170,9 +170,9 @@ static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filt
 
     // Invalid filter combination.
     if ((filter & QValueSpace::PermanentLayer &&
-         filter & QValueSpace::NonPermanentLayer) ||
+         filter & QValueSpace::TransientLayer) ||
         (filter & QValueSpace::WritableLayer &&
-         filter & QValueSpace::NonWritableLayer)) {
+         filter & QValueSpace::ReadOnlyLayer)) {
         return list;
     }
 
@@ -318,22 +318,6 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *paren
 }
 
 /*!
-    \overload
-
-    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
-    constructor is equivalent to calling
-    \c {QValueSpaceSubscriber(QString::fromLatin1(path), parent)}.
-
-    The constructed Value Space subscriber will access all available
-    \l {QAbstractValueSpaceLayer}{layers}.
-*/
-QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, QObject *parent)
-:   QObject(parent)
-{
-    d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path));
-}
-
-/*!
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  The
     \a filter parameter is used to limit which layers this QValueSpaceSubscriber will access.
 
@@ -342,33 +326,12 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, QObject *parent)
 
     \sa isConnected()
 */
-QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
-                                 QValueSpace::LayerOptions filter,
-                                 QObject *parent)
+QValueSpaceSubscriber::QValueSpaceSubscriber(QValueSpace::LayerOptions filter,
+                                             const QString &path,
+                                             QObject *parent)
 :   QObject(parent)
 {
     d = new QValueSpaceSubscriberPrivate(path, filter);
-}
-
-/*!
-    \overload
-
-    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  The
-    \a filter parameter is used to limit which layers this QValueSpaceSubscriber will access.  This
-    constructor is equivalent to calling
-    \c {QValueSpaceSubscriber(QString::fromLatin1(path), filter, parent)}.
-
-    If a layer matching \a filter is not found, the constructed QValueSpaceSubscriber will be
-    unconnected.
-
-    \sa isConnected()
-*/
-QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path,
-                                 QValueSpace::LayerOptions filter,
-                                 QObject *parent)
-:   QObject(parent)
-{
-    d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path), filter);
 }
 
 /*!
@@ -383,33 +346,12 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path,
 
     \sa QAbstractValueSpaceLayer::id(), QValueSpace, isConnected()
 */
-QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path,
-                                             const QUuid &uuid,
+QValueSpaceSubscriber::QValueSpaceSubscriber(const QUuid &uuid,
+                                             const QString &path,
                                              QObject *parent)
 :   QObject(parent)
 {
     d = new QValueSpaceSubscriberPrivate(path, uuid);
-}
-
-/*!
-    \overload
-
-    Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.  This
-    QValueSpaceSubscriber will only use the layer identified by \a uuid.  This constructor is
-    equivalent to calling \c {QValueSpaceSubscriber(QString::fromLatin1(path), uuid, parent)}.
-
-    Use of this constructor is not platform agnostic.  If possible use one of the constructors that
-    take a QAbstractValueSpaceLayer::LayerOptions parameter instead.
-
-    If a layer with a matching \a uuid is not found, the constructed QValueSpaceSubscriber will be
-    unconnected.
-
-    \sa QAbstractValueSpaceLayer::id(), QValueSpace, isConnected()
-*/
-QValueSpaceSubscriber::QValueSpaceSubscriber(const char *path, const QUuid &uuid, QObject *parent)
-:   QObject(parent)
-{
-    d = new QValueSpaceSubscriberPrivate(QString::fromLatin1(path), uuid);
 }
 
 /*!
@@ -533,17 +475,6 @@ QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &d
     return def;
 }
 
-/*!
-    \overload
-
-    This is a convenience overload and is equivalent to
-    \c {value(QString::fromLatin1(subPath), def)}.
-*/
-QVariant QValueSpaceSubscriber::value(const char *subPath, const QVariant &def) const
-{
-    return value(QString::fromLatin1(subPath), def);
-}
-
 QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 {
     QMutexLocker locker(&d->lock);
@@ -611,6 +542,7 @@ QStringList QValueSpaceSubscriber::subPaths() const
     return rvs;
 }
 
-QT_END_NAMESPACE
-
+#include "moc_qvaluespacesubscriber.cpp"
 #include "qvaluespacesubscriber.moc"
+QTM_END_NAMESPACE
+

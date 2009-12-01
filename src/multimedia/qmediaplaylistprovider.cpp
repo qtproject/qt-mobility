@@ -44,6 +44,8 @@
 
 #include <QtCore/qurl.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaPlaylistProvider
     \preliminary
@@ -195,9 +197,9 @@ bool QMediaPlaylistProvider::insertItem(int position, const QMediaContent &media
 }
 
 /*!
-    Inserts multiple media items into a playlist at \a position.
+    Inserts multiple media \a items into a playlist at \a position.
 
-    Returns true if the media items were inserted; and false otherwise.
+    Returns true if the media \a items were inserted; and false otherwise.
 */
 bool QMediaPlaylistProvider::insertItems(int position, const QList<QMediaContent> &items)
 {
@@ -297,3 +299,7 @@ void QMediaPlaylistProvider::shuffle()
 
     Signals that a load failed() due to an \a error.  The \a errorMessage provides more information.
 */
+
+#include "moc_qmediaplaylistprovider.cpp"
+QTM_END_NAMESPACE
+

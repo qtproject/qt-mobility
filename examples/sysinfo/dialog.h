@@ -43,9 +43,9 @@
 #define DIALOG_H
 
 #include <QDialog>
-class QSystemScreenSaver;
-class QSystemInfo;
 #include <qsysteminfo.h>
+
+QTM_USE_NAMESPACE
 
 namespace Ui {
     class Dialog;
@@ -79,6 +79,7 @@ private slots:
     void getVersion(int index);
     void getFeature(int index);
     void setSaverEnabled(bool b);
+    void updateDeviceLockedState();
 
     void netStatusComboActivated(int);
     void updateBatteryStatus(int);

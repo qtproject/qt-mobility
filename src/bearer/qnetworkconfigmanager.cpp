@@ -47,7 +47,7 @@
 #include "qnetworkconfigmanager_p.h"
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QNetworkConfigurationManagerPrivate, connManager);
 
@@ -124,42 +124,42 @@ Q_GLOBAL_STATIC(QNetworkConfigurationManagerPrivate, connManager);
 */
 
 /*!
-    \enum QNetworkConfigurationManager::CapabilityFlag
+    \enum QNetworkConfigurationManager::Capability
 
     Specifies the system capabilities of the bearer API. The possible values are:
 
-    \value BearerManagement         Network sessions and their underlying access points can be
-                                    started and stopped. If this flag is not set QNetworkSession
-                                    can only monitor but not influence the state of access points.
-                                    On some platforms this feature may require elevated user
-                                    permissions. This option is platform specific and may not
-                                    always be available.
-    \value DirectConnectionRouting  Network sessions and their sockets can be bound to a
-                                    particular network interface. Any packet that passes through
-                                    the socket goes to the specified network interface and thus
-                                    disregards standard routing table entries. This may be useful
-                                    when two interfaces can reach overlapping IP ranges or an
-                                    application has specific needs in regards to target networks.
-                                    This option is platform specific and may not always be
-                                    available.
-    \value SystemSessionSupport     If this flag is set the underlying platform ensures that a
-                                    network interface is not shut down until the last network
-                                    session has been \l{QNetworkSession::close()}{closed()}. This
-                                    works across multiple processes. If the platform session
-                                    support is missing this API can only ensure the above behavior
-                                    for network sessions within the same process.
-                                    In general mobile platforms (such as Symbian/S60) have such
-                                    support whereas most desktop platform lack this capability.
-    \value ApplicationLevelRoaming  The system gives applications control over the systems roaming
-                                    behavior. Applications can initiate roaming (in case the
-                                    current link is not suitable) and are consulted if the system
-                                    has identified a more suitable access point.
-    \value ForcedRoaming            The system disconnects an existing access point and reconnects
-                                    via a more suitable one. The application does not have any
-                                    control over this process and has to reconnect its active
-                                    sockets.
-    \value DataStatistics           If this flag is set QNetworkSession can provide statistics
-                                    about transmitted and received data.
+    \value CanStartAndStopInterfaces Network sessions and their underlying access points can be
+                                     started and stopped. If this flag is not set QNetworkSession
+                                     can only monitor but not influence the state of access points.
+                                     On some platforms this feature may require elevated user
+                                     permissions. This option is platform specific and may not
+                                     always be available.
+    \value DirectConnectionRouting   Network sessions and their sockets can be bound to a
+                                     particular network interface. Any packet that passes through
+                                     the socket goes to the specified network interface and thus
+                                     disregards standard routing table entries. This may be useful
+                                     when two interfaces can reach overlapping IP ranges or an
+                                     application has specific needs in regards to target networks.
+                                     This option is platform specific and may not always be
+                                     available.
+    \value SystemSessionSupport      If this flag is set the underlying platform ensures that a
+                                     network interface is not shut down until the last network
+                                     session has been \l{QNetworkSession::close()}{closed()}. This
+                                     works across multiple processes. If the platform session
+                                     support is missing this API can only ensure the above behavior
+                                     for network sessions within the same process.
+                                     In general mobile platforms (such as Symbian/S60) have such
+                                     support whereas most desktop platform lack this capability.
+    \value ApplicationLevelRoaming   The system gives applications control over the systems roaming
+                                     behavior. Applications can initiate roaming (in case the
+                                     current link is not suitable) and are consulted if the system
+                                     has identified a more suitable access point.
+    \value ForcedRoaming             The system disconnects an existing access point and reconnects
+                                     via a more suitable one. The application does not have any
+                                     control over this process and has to reconnect its active
+                                     sockets.
+    \value DataStatistics            If this flag is set QNetworkSession can provide statistics
+                                     about transmitted and received data.
 */
 
 /*!
@@ -276,9 +276,34 @@ QNetworkConfiguration QNetworkConfigurationManager::configurationFromIdentifier(
 }
 
 /*!
+    Returns true if the system is considered to be connected to another device via an active
+    network interface; otherwise returns false.
+
+    This is equivalent to the following code snippet:
+
+    \code
+        QNetworkConfigurationManager mgr;
+        QList<QNetworkConfiguration> activeConfigs = mgr.allConfigurations(QNetworkConfiguration::Active)
+        if (activeConfigs.count() > 0)
+            Q_ASSERT(mgr.isOnline())
+        else
+            Q_ASSERT(!mgr.isOnline())
+    \endcode
+
+    \sa onlineStateChanged()
+*/
+bool QNetworkConfigurationManager::isOnline() const
+{
+    QNetworkConfigurationManagerPrivate* conPriv = connManager();
+    Q_UNUSED(conPriv);
+    QList<QNetworkConfiguration> activeConfigs = allConfigurations(QNetworkConfiguration::Active);
+    return activeConfigs.count() > 0;
+}
+
+/*!
     Returns the capabilities supported by the current platform.
 */
-QNetworkConfigurationManager::CapabilityFlags QNetworkConfigurationManager::capabilities() const
+QNetworkConfigurationManager::Capabilities QNetworkConfigurationManager::capabilities() const
 {
     return connManager()->capFlags;
 }
@@ -302,5 +327,7 @@ void QNetworkConfigurationManager::updateConfigurations()
     connManager()->performAsyncConfigurationUpdate();
 }
 
-QT_END_NAMESPACE
+#include "moc_qnetworkconfigmanager.cpp"
+
+QTM_END_NAMESPACE
 

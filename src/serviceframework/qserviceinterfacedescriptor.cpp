@@ -47,7 +47,7 @@
 #include <QDebug>
 #include <QStringList>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QServiceInterfaceDescriptor
@@ -270,6 +270,9 @@ QString QServiceInterfaceDescriptor::customProperty(const QString& key) const
     return QString();
 }
 
+/*!
+  Returns a list of names of the custom properties.
+ */
 QStringList QServiceInterfaceDescriptor::customPropertyKeys() const
 {
     if (d)
@@ -389,5 +392,5 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor &dc)
 
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 

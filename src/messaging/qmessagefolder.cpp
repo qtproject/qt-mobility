@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "qmessagefolder.h"
-#include "qmessagefolder_p.h"
 
 /*!
     \class QMessageFolder

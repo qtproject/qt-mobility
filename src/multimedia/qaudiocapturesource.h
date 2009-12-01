@@ -46,11 +46,7 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
 
 #include <qmediarecorder.h>
 #include <qmediacontrol.h>
@@ -58,6 +54,8 @@
 #include <qmediaservice.h>
 
 #include <qmediaserviceprovider.h>
+
+QTM_BEGIN_NAMESPACE
 
 class QAudioCaptureSourcePrivate;
 
@@ -67,7 +65,11 @@ class Q_MEDIA_EXPORT QAudioCaptureSource : public QMediaObject
 
 public:
     QAudioCaptureSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
+    QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent = 0);
+
     ~QAudioCaptureSource();
+
+    bool isAvailable() const;
 
     int deviceCount() const;
 
@@ -89,5 +91,7 @@ Q_SIGNALS:
 private:
     Q_DECLARE_PRIVATE(QAudioCaptureSource)
 };
+
+QTM_END_NAMESPACE
 
 #endif  // QAUDIOCAPTURESOURCE_H

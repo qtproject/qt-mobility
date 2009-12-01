@@ -44,6 +44,8 @@
 #include "winhelpers_p.h"
 #include <QDebug>
 
+QTM_BEGIN_NAMESPACE
+
 QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types)
 {
     QMessageAccount result;
@@ -112,3 +114,5 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 
     return result;
 }
+
+QTM_END_NAMESPACE

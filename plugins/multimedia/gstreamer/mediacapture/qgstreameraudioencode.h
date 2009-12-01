@@ -50,11 +50,9 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
+
+QTM_USE_NAMESPACE
 
 class QGstreamerAudioEncode : public QAudioEncoderControl
 {
@@ -70,7 +68,8 @@ public:
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
 
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings(),
+                                    bool *isContinuous = 0) const;
     QList<int> supportedChannelCounts(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
     QList<int> supportedSampleSizes(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
 

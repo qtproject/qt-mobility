@@ -42,8 +42,6 @@
 #ifndef VIDEOSURFACEGSTSINK_H
 #define VIDEOSURFACEGSTSINK_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <gst/video/gstvideosink.h>
 
 #include <QtCore/qlist.h>
@@ -53,7 +51,6 @@
 #include <QtMultimedia/qvideosurfaceformat.h>
 #include <QtMultimedia/qvideoframe.h>
 
-QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 
 class QVideoSurfaceGstDelegate : public QObject
@@ -134,7 +131,5 @@ public:
 
 
 QT_END_NAMESPACE
-
-#endif
 
 #endif

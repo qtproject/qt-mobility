@@ -46,6 +46,8 @@
 #include <qmediaplaylist.h>
 #include <QtCore/qobject.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaPlaylistNavigatorPrivate;
 class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
 {
@@ -53,8 +55,6 @@ class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
     Q_PROPERTY(QMediaContent currentItem READ currentItem NOTIFY currentItemChanged)
-    Q_PROPERTY(QMediaContent nextItem READ nextItem)
-    Q_PROPERTY(QMediaContent previousItem READ previousItem)
 
 public:
     QMediaPlaylistNavigator(QMediaPlaylistProvider *playlist, QObject *parent = 0);
@@ -101,5 +101,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved(int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged(int start, int end))
 };
+
+QTM_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTNAVIGATOR_H

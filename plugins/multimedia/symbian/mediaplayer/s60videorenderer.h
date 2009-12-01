@@ -47,6 +47,8 @@
 #include <QObject>
 #include <QVideoRendererControl>
 
+QTM_USE_NAMESPACE
+
 class S60VideoRenderer : public QVideoRendererControl
 {
     Q_OBJECT

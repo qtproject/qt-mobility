@@ -63,6 +63,7 @@
 #include "qcontactmemorybackend_p.h"
 #include "qcontactinvalidbackend_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 /* Shared QContactManager stuff here, default engine stuff below */
 QList<QContactActionFactory*> QContactManagerData::m_actionfactories; // list of all factories
@@ -233,7 +234,7 @@ void QContactManagerData::loadFactories()
                  pluginsDir.cdUp();
              }
 #endif
-            if (pluginsDir.cd(QLatin1String("plugins/contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) {
+            if (pluginsDir.cd(QLatin1String("plugins/contacts")) || pluginsDir.cd(QLatin1String("contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) {
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
                 qDebug() << "Looking for plugins in" << pluginsDir.path() << files;
                 for (int j=0; j < files.count(); j++) {
@@ -367,5 +368,5 @@ QContactManagerEngine* QContactManagerData::engine(const QContactManager* manage
     return 0;
 }
 
-
+QTM_END_NAMESPACE
 

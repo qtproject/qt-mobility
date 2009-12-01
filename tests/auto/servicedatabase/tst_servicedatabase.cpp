@@ -52,6 +52,7 @@
 # define TESTDATA_DIR "."
 #endif
 
+QTM_USE_NAMESPACE
 class ServiceDatabaseUnitTest: public QObject
 {
     Q_OBJECT

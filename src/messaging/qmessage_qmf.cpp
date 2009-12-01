@@ -49,7 +49,21 @@
 #include <QFileInfo>
 #include <QRegExp>
 
-using namespace QmfHelpers;
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
+
+// This class has friend access to QMailMessage
+// and hsould not be within QTM_NAMESPACE
+struct QMailStorePrivate
+{
+    static inline void setUnmodified(QMailMessage *msg)
+    {
+        msg->setUnmodified();
+    }
+};
+
+
+
+QTM_BEGIN_NAMESPACE
 
 Q_SCOPED_STATIC_DEFINE(QMessagePrivate::StandardFolderMap,QMessagePrivate,standardFolderMap);
 
@@ -208,15 +222,6 @@ QByteArray charsetFor(const QString &input)
 
 }
 
-// This class has friend access to QMailMessage
-struct QMailStorePrivate
-{
-    static inline void setUnmodified(QMailMessage *msg)
-    {
-        msg->setUnmodified();
-    }
-};
-
 QMessage::QMessage()
     : d_ptr(new QMessagePrivate)
 {
@@ -255,40 +260,6 @@ QMessage& QMessage::operator=(const QMessage& other)
 QMessage::~QMessage()
 {
     delete d_ptr;
-}
-
-QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-{
-    QMessage result;
-
-    QMailMessage msg = QMailMessage::fromRfc2822(ba);
-    msg.setMessageType(convert(t));
-    msg.setStatus(QMailMessage::LocalOnly, true);
-
-    result.d_ptr->_message = msg;
-    return result;
-}
-
-QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-{
-    QMessage result;
-
-    QMailMessage msg = QMailMessage::fromRfc2822File(fileName);
-    msg.setMessageType(convert(t));
-    msg.setStatus(QMailMessage::LocalOnly, true);
-
-    result.d_ptr->_message = msg;
-    return result;
-}
-
-QByteArray QMessage::toTransmissionFormat() const
-{
-    return d_ptr->_message.toRfc2822(QMailMessage::TransmissionFormat);
-}
-
-void QMessage::toTransmissionFormat(QDataStream& out) const
-{
-    d_ptr->_message.toRfc2822(out, QMailMessage::TransmissionFormat);
 }
 
 QMessageId QMessage::id() const
@@ -651,7 +622,8 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
                 {
                     // Include the entirety of this message as a nested part
                     QMailMessageContentType ct("message/rfc822");
-                    QMailMessagePart part(QMailMessagePart::fromData(toTransmissionFormat(), cd, ct, QMailMessageBody::Base64));
+                    QByteArray responseData(d_ptr->_message.toRfc2822(QMailMessage::TransmissionFormat));
+                    QMailMessagePart part(QMailMessagePart::fromData(responseData, cd, ct, QMailMessageBody::Base64));
                     msg->appendPart(part);
                 }
             }
@@ -711,7 +683,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             if (!existingText.isEmpty()) {
                 existingText = existingText.replace("\n", "\n> ");
 
-                QString prefix(qApp->translate("QMessage", "On %1 you wrote:\n"));
+                QString prefix(qApp->translate("QMessage", "On %1 you wrote:\n> "));
                 prefix = prefix.arg(d_ptr->_message.date().toLocalTime().toString());
                 response.setBody(prefix + existingText);
             }
@@ -726,3 +698,5 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
     return response;
 }
 
+
+QTM_END_NAMESPACE

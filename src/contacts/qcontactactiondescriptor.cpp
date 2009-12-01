@@ -42,9 +42,11 @@
 #include "qcontactactiondescriptor.h"
 #include "qcontactactiondescriptor_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactActionDescriptor
-  \brief The QContactActionDescriptor class contains information that
+  \brief The QContactActionDescriptor class provides information that
   uniquely identifies a specific implementation of an action
 */
 
@@ -163,3 +165,5 @@ bool QContactActionDescriptor::operator!=(const QContactActionDescriptor& other)
 {
     return !(*this == other);
 }
+
+QTM_END_NAMESPACE

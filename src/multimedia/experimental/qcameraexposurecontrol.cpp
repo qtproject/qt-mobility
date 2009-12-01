@@ -42,9 +42,10 @@
 #include <experimental/qcameraexposurecontrol.h>
 #include  "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCameraExposureControl
-    \ingroup multimedia
 
     \preliminary
     \brief The QCameraExposureControl class supplies control for exposure
@@ -52,6 +53,12 @@
 
     The interface name of QCameraExposureControl is \c com.nokia.Qt.QCameraExposureControl/1.0 as
     defined in QCameraExposureControl_iid.
+
+The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
+the same level of review and testing as the rest of the APIs.
+
+The API exposed by the classes in this component are not stable, and will
+undergo modification or removal prior to the final release of Qt Mobility.
 
     \sa QMediaService::control(), QCamera
 */
@@ -187,21 +194,12 @@ Set the metering mode to \a mode.
 */
 
 /*!
-  \fn int QCameraExposureControl::minimumIsoSensitivity() const
+  \fn QList<int> QCameraExposureControl::supportedIsoSensitivities(bool *continuous) const
 
-  Returns the minimum iso sensitivity.
-*/
+  Returns the list of ISO senitivities camera supports.
 
-/*!
-  \fn int QCameraExposureControl::maximumIsoSensitivity() const
-
-  Returns the maximum iso sensitivity.
-*/
-
-/*!
-  \fn QList<int> QCameraExposureControl::supportedIsoSensitivities() const
-
-  Returns the available sensitivities.
+  If the camera supports arbitrary ISO sensitivities within the supported range,
+  *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
 
 
@@ -225,22 +223,16 @@ Set the metering mode to \a mode.
   Returns the aperture
 */
 
-/*!
-  \fn qreal QCameraExposureControl::minimumAperture() const
-
-  Returns the minimum aperture available.
-*/
 
 /*!
-  \fn qreal QCameraExposureControl::maximumAperture() const
+  \fn QList<qreal> QCameraExposureControl::supportedApertures(bool *continuous) const
 
-  Returns the maximum aperture available.
-*/
+    Returns the list of aperture values camera supports.
+    The apertures list can change depending on the focal length,
+    in such a case the apertureRangeChanged() signal is emited.
 
-/*!
-  \fn QList<qreal> QCameraExposureControl::supportedApertures() const
-
-  Returns the supported apertures.
+    If the camera supports arbitrary aperture values within the supported range,
+    *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
 
 
@@ -266,21 +258,12 @@ Set the metering mode to \a mode.
 */
 
 /*!
-    \fn qreal QCameraExposureControl::minimumShutterSpeed() const
+  \fn QList<qreal> QCameraExposureControl::supportedShutterSpeeds(bool *continuous) const
 
-    Returns the maximum shutter speed.
-*/
+    Returns the list of shutter speed values in seconds camera supports.
 
-/*!
-  \fn qreal QCameraExposureControl::maximumShutterSpeed() const
-
-  Returns the maximum shutter speed.
-*/
-
-/*!
-  \fn QList<qreal> QCameraExposureControl::supportedShutterSpeeds() const
-
-  Returns the available shutter speeds.
+    If the camera supports arbitrary shutter speed values within the supported range,
+    *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
 
 
@@ -340,4 +323,7 @@ Set the metering mode to \a mode.
 
     Signal emitted when sensitity value changes to \a value.
 */
+
+#include "moc_qcameraexposurecontrol.cpp"
+QTM_END_NAMESPACE
 

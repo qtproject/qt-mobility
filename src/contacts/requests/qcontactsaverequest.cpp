@@ -42,6 +42,8 @@
 #include "qcontactsaverequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactSaveRequest
   \brief The QContactSaveRequest class allows a client to asynchronously
@@ -81,3 +83,7 @@ QList<QContact> QContactSaveRequest::contacts() const
     Q_D(const QContactSaveRequest);
     return d->m_contacts;
 }
+
+#include "moc_qcontactsaverequest.cpp"
+
+QTM_END_NAMESPACE

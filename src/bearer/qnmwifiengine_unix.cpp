@@ -52,12 +52,15 @@
 #include <QNetworkInterface>
 
 
+
+QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QNmWifiEngine, nmWifiEngine)
-
-QT_BEGIN_NAMESPACE
-
 typedef  QList<QList<uint> > QNmSettingsAddressMap;
-Q_DECLARE_METATYPE(QNmSettingsAddressMap)
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QNmSettingsAddressMap))
+
+QTM_BEGIN_NAMESPACE
 
 QNmWifiEngine::QNmWifiEngine(QObject *parent)
 :   QNetworkSessionEngine(parent)
@@ -189,7 +192,7 @@ void QNmWifiEngine::findConnections()
                     cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
                     break;
                 };
-                cpPriv->purpose = QNetworkConfiguration::Public;
+                cpPriv->purpose = QNetworkConfiguration::PublicPurpose;
                 foundConfigurations.append(cpPriv);
                 configurationInterface[cpPriv->id] = cpPriv->serviceInterface.name();
             }
@@ -224,7 +227,7 @@ void QNmWifiEngine::findConnections()
 //                        cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
 //                        cpPriv->state = ( cpPriv->state | QNetworkConfiguration::Discovered
 //                                          | QNetworkConfiguration::Defined);
-//                        cpPriv->purpose = QNetworkConfiguration::Private;
+//                        cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
 //
 //                        QNetworkManagerSettingsConnection *sysIface;
 //                        sysIface = new QNetworkManagerSettingsConnection(service, path.path());
@@ -325,7 +328,7 @@ void QNmWifiEngine::knownConnections()
 //qWarning() << cpPriv->name;
             cpPriv->state = getStateForId(cpPriv->id);
 
-            cpPriv->purpose = QNetworkConfiguration::Private;
+            cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
 
             if(sysIface->getType() == DEVICE_TYPE_802_3_ETHERNET) {
                 QString mac = sysIface->getMacAddress();
@@ -614,9 +617,9 @@ QNetworkConfigurationPrivate * QNmWifiEngine::addAccessPoint( const QString &iPa
             cpPriv->state = ( cpPriv->state | QNetworkConfiguration::Active);
         }
         if(accessPointIface->flags() == NM_802_11_AP_FLAGS_PRIVACY)
-            cpPriv->purpose = QNetworkConfiguration::Private;
+            cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
         else
-            cpPriv->purpose = QNetworkConfiguration::Public;
+            cpPriv->purpose = QNetworkConfiguration::PublicPurpose;
         return cpPriv;
     } else {
         cpPriv->isValid = false;
@@ -1124,7 +1127,7 @@ QStringList QNmWifiEngine::getConnectionPathForId(const QString &uuid)
     return QStringList();
 }
 
+#include "moc_qnmwifiengine_unix_p.cpp"
 
-
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 

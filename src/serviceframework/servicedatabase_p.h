@@ -62,7 +62,7 @@
 
 
 QT_BEGIN_HEADER
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptor;
 
@@ -86,8 +86,8 @@ class Q_AUTOTEST_EXPORT ServiceDatabase : public QObject
         void setDatabasePath(const QString &databasePath);
         QString databasePath() const;
 
-        bool registerService(const ServiceMetaDataResults &service);
-        bool unregisterService(const QString &serviceName);
+        bool registerService(const ServiceMetaDataResults &service, const QString &securityToken = QString());
+        bool unregisterService(const QString &serviceName, const QString &securityToken = QString());
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter);
         QServiceInterfaceDescriptor getInterface(const QString &interfaceID);
@@ -138,7 +138,7 @@ Q_SIGNALS:
         DBError m_lastError;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 QT_END_HEADER
 
 #endif /*QSERVICEDATABASE_H_*/

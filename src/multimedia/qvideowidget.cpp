@@ -47,17 +47,21 @@
 #include <qvideowindowcontrol.h>
 #include <qvideowidgetcontrol.h>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <qpaintervideosurface_p.h>
 #include <qvideorenderercontrol.h>
-#include "qvideosurfaceformat.h"
+#include <QtMultimedia/qvideosurfaceformat.h>
 #include <qpainter.h>
-#endif
 
 #include <qapplication.h>
 #include <qevent.h>
 #include <qdialog.h>
 #include <qstackedlayout.h>
+#include <QFlags>
+#include <Qt>
+
+using namespace Qt;
+
+QTM_BEGIN_NAMESPACE
 
 QVideoWidgetControlBackend::QVideoWidgetControlBackend(
         QVideoWidgetControl *control, QWidget *widget)
@@ -112,8 +116,6 @@ void QVideoWidgetControlBackend::setAspectRatioMode(QVideoWidget::AspectRatioMod
 {
     m_widgetControl->setAspectRatioMode(mode);
 }
-
-#ifndef QT_NO_MULTIMEDIA
 
 QRendererVideoWidgetBackend::QRendererVideoWidgetBackend(
         QVideoRendererControl *control, QWidget *widget)
@@ -263,8 +265,6 @@ QRect QRendererVideoWidgetBackend::displayRect() const
     return displayRect;
 }
 
-#endif
-
 QWindowVideoWidgetBackend::QWindowVideoWidgetBackend(QVideoWindowControl *control, QWidget *widget)
     : m_windowControl(control)
     , m_widget(widget)
@@ -371,10 +371,8 @@ void QVideoWidgetPrivate::_q_serviceDestroyed()
     delete windowBackend;
     windowBackend = 0;
 
-#ifndef QT_NO_MULTIMEDIA
     delete rendererBackend;
     rendererBackend = 0;
-#endif
 
     currentControl = 0;
     currentBackend = 0;
@@ -422,13 +420,14 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
     \class QVideoWidget
     \preliminary
 
-    \brief The QVideoWidget class provides a widget which presents video produced by a media
-    object.
+    \brief The QVideoWidget class provides a widget which presents video
+    produced by a media object.
     \ingroup multimedia
 
-    Attaching a QVideoWidget to a QMediaObject allows it to display the video or image output
-    of that media object.  A QVideoWidget is attached to media object by passing a pointer to
-    the QMediaObject in its constructor, and detached by destroying the QVideoWidget.
+    Attaching a QVideoWidget to a QMediaObject allows it to display the
+    video or image output of that media object.  A QVideoWidget is attached
+    to media object by passing a pointer to the QMediaObject in its
+    constructor, and detached by destroying the QVideoWidget.
 
     \code
         player = new QMediaPlayer;
@@ -440,7 +439,8 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
         player->play();
     \endcode
 
-    \bold {Note}: Only a single display output can be attached to a media object at one time.
+    \bold {Note}: Only a single display output can be attached to a media
+    object at one time.
 
     \sa QMediaObject, QMediaPlayer, QGraphicsVideoItem
 */
@@ -495,13 +495,11 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
         if (windowControl != 0)
             d->windowBackend = new QWindowVideoWidgetBackend(windowControl, this);
 
-#ifndef QT_NO_MULTIMEDIA
         QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
                 d->service->control(QVideoRendererControl_iid));
 
         if (rendererControl != 0)
             d->rendererBackend = new QRendererVideoWidgetBackend(rendererControl, this);
-#endif
     }
 }
 
@@ -524,13 +522,11 @@ QVideoWidget::~QVideoWidget()
             delete d_ptr->widgetBackend;
         }
         delete d_ptr->windowBackend;
-#ifndef QT_NO_MULTIMEDIA
         if (d_ptr->rendererBackend) {
             d_ptr->rendererBackend->clearSurface();
 
             delete d_ptr->rendererBackend;
         }
-#endif
     }
     delete d_ptr;
 }
@@ -718,6 +714,10 @@ void QVideoWidget::setSaturation(int saturation)
     \sa saturation
 */
 
+/*!
+  Returns the size hint for the current back end,
+  if there is one, or else the size hint from QWidget.
+ */
 QSize QVideoWidget::sizeHint() const
 {
     Q_D(const QVideoWidget);
@@ -733,8 +733,7 @@ QSize QVideoWidget::sizeHint() const
 /*!
     \reimp
     \internal
-*/
-
+ */
 bool QVideoWidget::event(QEvent *event)
 {
     Q_D(QVideoWidget);
@@ -764,6 +763,9 @@ bool QVideoWidget::event(QEvent *event)
     return QWidget::event(event);
 }
 
+/*!
+  Handles the show \a event.
+ */
 void QVideoWidget::showEvent(QShowEvent *event)
 {
     Q_D(QVideoWidget);
@@ -780,19 +782,21 @@ void QVideoWidget::showEvent(QShowEvent *event)
             d->currentBackend = d->windowBackend;
             d->setCurrentControl(d->windowBackend);
             d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
-#ifndef QT_NO_MULTIMEDIA
         } else if (d->rendererBackend != 0) {
             d->rendererBackend->showEvent(event);
             d->currentBackend = d->rendererBackend;
             d->setCurrentControl(d->rendererBackend);
             d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
-#endif
         } else {
             d->outputControl->setOutput(QVideoOutputControl::NoOutput);
         }
     }
 }
 
+/*!
+
+  Handles the hide \a event.
+ */
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
     Q_D(QVideoWidget);
@@ -806,6 +810,9 @@ void QVideoWidget::hideEvent(QHideEvent *event)
     QWidget::hideEvent(event);
 }
 
+/*!
+  Handles the resize \a event.
+ */
 void QVideoWidget::resizeEvent(QResizeEvent *event)
 {
     Q_D(QVideoWidget);
@@ -816,6 +823,9 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
         d->currentBackend->resizeEvent(event);
 }
 
+/*!
+  Handles the move \a event.
+ */
 void QVideoWidget::moveEvent(QMoveEvent *event)
 {
     Q_D(QVideoWidget);
@@ -824,6 +834,9 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
         d->currentBackend->moveEvent(event);
 }
 
+/*!
+  Handles the paint \a event.
+ */
 void QVideoWidget::paintEvent(QPaintEvent *event)
 {
     Q_D(QVideoWidget);
@@ -833,3 +846,6 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 }
 
 #include "moc_qvideowidget.cpp"
+#include "moc_qvideowidget_p.cpp"
+QTM_END_NAMESPACE
+

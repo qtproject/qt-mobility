@@ -50,6 +50,9 @@
 #include <QStringList>
 #include <QTextStream>
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessagePrivate;
 
 class Q_MESSAGING_EXPORT QMessage : public QMessageContentContainer
@@ -107,12 +110,6 @@ public:
     virtual ~QMessage();
 
     QMessage& operator=(const QMessage &other);
-
-    static QMessage fromTransmissionFormat(Type t, const QByteArray &ba);
-    static QMessage fromTransmissionFormatFile(Type t, const QString &fileName);
-
-    QByteArray toTransmissionFormat() const;
-    void toTransmissionFormat(QDataStream &out) const;
 
     QMessageId id() const;
 
@@ -187,4 +184,6 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::TypeFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMessage::StatusFlags)
+
+QTM_END_NAMESPACE
 #endif

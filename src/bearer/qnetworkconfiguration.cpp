@@ -47,7 +47,7 @@
 #include "qnetworkconfiguration_p.h"
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QNetworkConfiguration
@@ -178,11 +178,11 @@ QT_BEGIN_NAMESPACE
 
     Specifies the purpose of the configuration.
 
-    \value Unknown          The configuration doesn't specify any purpose. This is the default value.
-    \value Public           The configuration can be used for general purpose internet access.
-    \value Private          The configuration is suitable to access a private network such as an office Intranet.
-    \value ServiceSpecific  The configuration can be used for operator specific services (e.g.
-                            receiving MMS messages or content streaming).
+    \value UnknownPurpose           The configuration doesn't specify any purpose. This is the default value.
+    \value PublicPurpose            The configuration can be used for general purpose internet access.
+    \value PrivatePurpose           The configuration is suitable to access a private network such as an office Intranet.
+    \value ServiceSpecificPurpose   The configuration can be used for operator specific services (e.g.
+                                    receiving MMS messages or content streaming).
 */
 
 /*!
@@ -306,13 +306,13 @@ QNetworkConfiguration::StateFlags QNetworkConfiguration::state() const
 */
 QNetworkConfiguration::Purpose QNetworkConfiguration::purpose() const
 {
-    return d ? d->purpose : QNetworkConfiguration::Unknown;
+    return d ? d->purpose : QNetworkConfiguration::UnknownPurpose;
 }
 
 /*!
     Returns true if this configuration supports roaming; otherwise false.
 */
-bool QNetworkConfiguration::roamingAvailable() const
+bool QNetworkConfiguration::isRoamingAvailable() const
 {
     return d ? d->roamingSupported : false;
 }
@@ -345,5 +345,5 @@ QList<QNetworkConfiguration> QNetworkConfiguration::children() const
 }
 
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 

@@ -43,6 +43,8 @@
 #include "qmessagestore.h"
 #include "qmtmengine_symbian_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, long int service1EntryId, long int service2EntryId, const QMessage::TypeFlags &types)
 {
     QMessageAccount result;
@@ -105,3 +107,5 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
 	return CMTMEngine::instance()->defaultAccount(type);
 }
+
+QTM_END_NAMESPACE

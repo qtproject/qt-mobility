@@ -46,6 +46,8 @@
 #include <qmediarecorder.h>
 #include <experimental/qcameracontrol.h>
 
+QTM_USE_NAMESPACE
+
 class V4LCameraService;
 class V4LCameraSession;
 

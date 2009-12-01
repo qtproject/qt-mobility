@@ -48,11 +48,10 @@
 #include <QString>
 #include <QStringList>
 #include <QNetworkInterface>
+
+
 QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-class QStringList;
+QTM_BEGIN_NAMESPACE
 
 class QSystemInfoPrivate;
 class QSystemNetworkInfoPrivate;
@@ -352,7 +351,6 @@ class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
     Q_OBJECT
     Q_ENUMS(ScreenSaverState)
     Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited)
-    Q_PROPERTY(bool isScreenLockOn READ isScreenLockOn)
 
 public:
 
@@ -364,15 +362,13 @@ public:
 
      //TODO: to Qt QDesktopWidget
     bool setScreenSaverInhibit();
-     //TODO: to Qt QDesktopWidget
-    static bool isScreenLockOn();
 
 private:
     bool screenSaverIsInhibited;
     QSystemScreenSaverPrivate *d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

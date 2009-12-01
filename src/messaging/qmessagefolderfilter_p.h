@@ -52,6 +52,8 @@
 #endif
 #include <QSet>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageFolderFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderFilter)
@@ -93,8 +95,11 @@ public:
 #ifdef Q_OS_SYMBIAN
     typedef QList<QMessageFolderFilter> SortedMessageFolderFilterList;
     
-    bool filter(QMessageFolder& folder);
+    bool filter(const QMessageFolder &messageFolder) const;
+    static bool filter(const QMessageFolder &messageFolder, const QMessageFolderFilterPrivate &filter);
 
+    static void changeComparatorValuesToOpposite(QMessageFolderFilter& filter);
+    static void changeANDsAndORsToOpposite(QMessageFolderFilter& filter);
     static void applyNot(QMessageFolderFilter& filter);
     static bool lessThan(const QMessageFolderFilter filter1, const QMessageFolderFilter filter2); 
     static QMessageFolderFilterPrivate* implementation(const QMessageFolderFilter &filter);
@@ -105,6 +110,7 @@ public:
     enum Comparator {Equality = 0, Inclusion};
 
     bool _valid;
+    bool _notFilter;
     
     QMessageFolderIdList _ids;
     QVariant _value;
@@ -139,4 +145,6 @@ public:
     static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif
 };
+
+QTM_END_NAMESPACE
 #endif

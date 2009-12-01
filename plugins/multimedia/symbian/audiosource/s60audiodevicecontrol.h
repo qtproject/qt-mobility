@@ -46,6 +46,8 @@
 
 #include <QAudioDeviceControl>
 
+QTM_USE_NAMESPACE
+
 class S60AudioCaptureSession;
 
 class S60AudioDeviceControl : public QAudioDeviceControl

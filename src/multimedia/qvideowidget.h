@@ -46,6 +46,8 @@
 
 #include <qmobilityglobal.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaObject;
 
 class QVideoWidgetPrivate;
@@ -64,7 +66,7 @@ public:
     enum AspectRatioMode { IgnoreAspectRatio, KeepAspectRatio };
 
     QVideoWidget(QMediaObject *object, QWidget *parent = 0);
-    ~QVideoWidget();
+    ~QVideoWidget();   
 
 #ifdef Q_QDOC
     bool isFullScreen() const;
@@ -115,5 +117,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_fullScreenChanged(bool))
     Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
 };
+
+QTM_END_NAMESPACE
 
 #endif

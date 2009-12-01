@@ -46,6 +46,8 @@
 
 #include <QMediaService>
 
+QTM_USE_NAMESPACE
+
 class S60RadioTunerControl;
 
 class S60RadioTunerService : public QMediaService
@@ -56,18 +58,6 @@ public:
     ~S60RadioTunerService();
 
     QMediaControl *control(const char* name) const;
-
-    bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
-
-    void setInputStream(QIODevice* stream);
-    QIODevice* inputStream() const;
-
-    void setOutputStream(QIODevice* stream);
-    QIODevice* outputStream() const;
-
-    QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
-    bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QStringList supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 
 private:
     S60RadioTunerControl *m_control;

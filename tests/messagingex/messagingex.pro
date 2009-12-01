@@ -20,6 +20,12 @@ FORMS += mmsreceiveddialog.ui \
     messagingex.ui \
     smsreceiveddialog.ui \
     accountdialog.ui
-    
 
-symbian:TARGET.CAPABILITY = All -TCB -AllFiles -DRM
+symbian:TARGET.CAPABILITY = NetworkServices \
+    LocalServices \
+    ReadUserData \
+    WriteUserData \
+    UserEnvironment \
+    ReadDeviceData \
+    WriteDeviceData
+    

@@ -47,6 +47,8 @@
 #include <QObject>
 #include <QVideoWindowControl>
 
+QTM_USE_NAMESPACE
+
 class QAbstractVideoSurface;
 class S60VideoSurface;
 
@@ -69,9 +71,9 @@ public:
 
     QSize nativeSize() const;
 
-	QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
     void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
-	
+
     QSize customAspectRatio() const;
     void setCustomAspectRatio(const QSize &customRatio);
 

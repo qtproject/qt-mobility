@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qvaluespace_p.h"
-#include "qvaluespaceprovider.h"
+#include "qvaluespacepublisher.h"
 
 #include <QSet>
 #include <QStringList>
@@ -66,7 +66,7 @@
 #define RegistryCallback WAITORTIMERCALLBACK
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #ifdef Q_OS_WINCE
 class QWindowsCENotify : public QThread
@@ -165,14 +165,14 @@ public:
     bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 
-    /* QValueSpaceProvider functions */
-    bool setValue(QValueSpaceProvider *creator, Handle handle, const QVariant &data);
-    bool setValue(QValueSpaceProvider *creator, Handle handle, const QString &path,
+    /* QValueSpacePublisher functions */
+    bool setValue(QValueSpacePublisher *creator, Handle handle, const QVariant &data);
+    bool setValue(QValueSpacePublisher *creator, Handle handle, const QString &path,
                   const QVariant &data);
-    bool removeValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath);
-    bool removeSubTree(QValueSpaceProvider *creator, Handle parent);
-    void addWatch(QValueSpaceProvider *creator, Handle handle);
-    void removeWatches(QValueSpaceProvider *creator, Handle parent);
+    bool removeValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath);
+    bool removeSubTree(QValueSpacePublisher *creator, Handle parent);
+    void addWatch(QValueSpacePublisher *creator, Handle handle);
+    void removeWatches(QValueSpacePublisher *creator, Handle parent);
     void sync();
 
 public slots:
@@ -228,7 +228,7 @@ private:
     QWindowsCENotify *notifyThread;
 #endif
 
-    QMap<QValueSpaceProvider *, QList<QString> > creators;
+    QMap<QValueSpacePublisher *, QList<QString> > creators;
 };
 
 class VolatileRegistryLayer : public RegistryLayer
@@ -329,8 +329,7 @@ QString VolatileRegistryLayer::name()
 
 QUuid VolatileRegistryLayer::id()
 {
-    return QUuid(0x8ceb5811, 0x4968, 0x470f, 0x8f, 0xc2,
-                 0x26, 0x47, 0x67, 0xe0, 0xbb, 0xd9);
+    return QVALUESPACE_VOLATILEREGISTRY_LAYER;
 }
 
 unsigned int VolatileRegistryLayer::order()
@@ -340,7 +339,7 @@ unsigned int VolatileRegistryLayer::order()
 
 QValueSpace::LayerOptions VolatileRegistryLayer::layerOptions() const
 {
-    return QValueSpace::NonPermanentLayer | QValueSpace::WritableLayer;
+    return QValueSpace::TransientLayer | QValueSpace::WritableLayer;
 }
 
 VolatileRegistryLayer *VolatileRegistryLayer::instance()
@@ -365,8 +364,7 @@ QString NonVolatileRegistryLayer::name()
 
 QUuid NonVolatileRegistryLayer::id()
 {
-    return QUuid(0x8e29561c, 0xa0f0, 0x4e89, 0xba, 0x56,
-                 0x08, 0x06, 0x64, 0xab, 0xc0, 0x17);
+    return QVALUESPACE_NONVOLATILEREGISTRY_LAYER;
 }
 
 unsigned int NonVolatileRegistryLayer::order()
@@ -911,12 +909,12 @@ bool RegistryLayer::removeRegistryValue(RegistryHandle *handle, const QString &s
     return result == ERROR_SUCCESS;
 }
 
-bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QVariant &data)
+bool RegistryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const QVariant &data)
 {
     return setValue(creator, handle, QString(), data);
 }
 
-bool RegistryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &subPath,
+bool RegistryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath,
                              const QVariant &data)
 {
     QMutexLocker locker(&localLock);
@@ -1276,7 +1274,7 @@ bool RegistryLayer::createRegistryKey(RegistryHandle *handle)
     return disposition == REG_CREATED_NEW_KEY;
 }
 
-bool RegistryLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
+bool RegistryLayer::removeSubTree(QValueSpacePublisher *creator, Handle handle)
 {
     QMutexLocker locker(&localLock);
 
@@ -1358,7 +1356,7 @@ void RegistryLayer::pruneEmptyKeys(RegistryHandle *handle)
     }
 }
 
-bool RegistryLayer::removeValue(QValueSpaceProvider *creator,
+bool RegistryLayer::removeValue(QValueSpacePublisher *creator,
                                 Handle handle,
                                 const QString &subPath)
 {
@@ -1384,7 +1382,7 @@ bool RegistryLayer::removeValue(QValueSpaceProvider *creator,
     }
 
     // permanent layer always removes items even if our records show that creator does not own it.
-    if (!creators[creator].contains(fullPath) && (layerOptions() & QValueSpace::NonPermanentLayer))
+    if (!creators[creator].contains(fullPath) && (layerOptions() & QValueSpace::TransientLayer))
         return false;
 
     removeRegistryValue(0, fullPath);
@@ -1393,11 +1391,11 @@ bool RegistryLayer::removeValue(QValueSpaceProvider *creator,
     return true;
 }
 
-void RegistryLayer::addWatch(QValueSpaceProvider *, Handle)
+void RegistryLayer::addWatch(QValueSpacePublisher *, Handle)
 {
 }
 
-void RegistryLayer::removeWatches(QValueSpaceProvider *, Handle)
+void RegistryLayer::removeWatches(QValueSpacePublisher *, Handle)
 {
 }
 
@@ -1410,8 +1408,8 @@ bool RegistryLayer::notifyInterest(Handle, bool)
 {
     return false;
 }
-
-QT_END_NAMESPACE
-
 #include <registrylayer_win.moc>
+QTM_END_NAMESPACE
+
+
 

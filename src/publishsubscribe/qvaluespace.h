@@ -42,24 +42,24 @@
 #ifndef QVALUESPACE_H
 #define QVALUESPACE_H
 
-#include "qpublishsubscribeglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QList>
 #include <QUuid>
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 namespace QValueSpace {
     enum LayerOption {
         UnspecifiedLayer = 0x0000,
         PermanentLayer = 0x0001,
-        NonPermanentLayer = 0x0002,
+        TransientLayer = 0x0002,
         // UnspecifiedLayerPermanence = 0x0000,
         // InvalidLayerPermanence = 0x0003,
         WritableLayer = 0x0004,
-        NonWritableLayer = 0x0008,
+        ReadOnlyLayer = 0x0008,
         // UnspecifiedLayerWriteability = 0x0000,
         // InvalidLayerWriteability = 0x000C,
     };
@@ -68,7 +68,7 @@ namespace QValueSpace {
     Q_PUBLISHSUBSCRIBE_EXPORT void initValueSpaceServer();
 
     Q_PUBLISHSUBSCRIBE_EXPORT QList<QUuid> availableLayers();
-};
+}
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QValueSpace::LayerOptions);
 
@@ -80,8 +80,10 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QValueSpace::LayerOptions);
                                                     0x08, 0x06, 0x64, 0xab, 0xc0, 0x17)
 #define QVALUESPACE_CONTEXTKIT_LAYER QUuid(0x2c769b9e, 0xd949, 0x4cd1, 0x84, 0x8f, \
                                            0xd3, 0x22, 0x41, 0xfe, 0x07, 0xff)
+#define QVALUESPACE_SYMBIAN_SETTINGS_LAYER QUuid(0x40d7b059, 0x66ac, 0x442f, 0xb2, 0x22, \
+                                                 0x9c, 0x8a, 0xb9, 0x8b, 0x9c, 0x2d)
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

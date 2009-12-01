@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qnetworkconfiguration.cpp -->
 <head>
-  <title>QNetworkConfiguration Class Reference</title>
+  <title>Qt Mobility 1.0: QNetworkConfiguration Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#Purpose-enum">Purpose</a></b> { Unknown, Public, Private, ServiceSpecific }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#Purpose-enum">Purpose</a></b> { UnknownPurpose, PublicPurpose, PrivatePurpose, ServiceSpecificPurpose }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#StateFlag-enum">StateFlag</a></b> { Undefined, Defined, Discovered, Active }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#StateFlag-enum">StateFlags</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#Type-enum">Type</a></b> { InternetAccessPoint, ServiceNetwork, UserChoice, Invalid }</td></tr>
@@ -37,10 +37,10 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#dtor.QNetworkConfiguration">~QNetworkConfiguration</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QNetworkConfiguration&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#children">children</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#identifier">identifier</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#isRoamingAvailable">isRoamingAvailable</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#isValid">isValid</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#name">name</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Purpose </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#purpose">purpose</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#roamingAvailable">roamingAvailable</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">StateFlags </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#state">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Type </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#type">type</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#operator-not-eq">operator!=</a></b> ( const QNetworkConfiguration &amp; <i>other</i> ) const</td></tr>
@@ -68,10 +68,10 @@
 <p>Specifies the purpose of the configuration.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QNetworkConfiguration::Unknown</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The configuration doesn't specify any purpose. This is the default value.</td></tr>
-<tr><td valign="top"><tt>QNetworkConfiguration::Public</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The configuration can be used for general purpose internet access.</td></tr>
-<tr><td valign="top"><tt>QNetworkConfiguration::Private</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The configuration is suitable to access a private network such as an office Intranet.</td></tr>
-<tr><td valign="top"><tt>QNetworkConfiguration::ServiceSpecific</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The configuration can be used for operator specific services (e.g&#x2e; receiving MMS messages or content streaming).</td></tr>
+<tr><td valign="top"><tt>QNetworkConfiguration::UnknownPurpose</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The configuration doesn't specify any purpose. This is the default value.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfiguration::PublicPurpose</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The configuration can be used for general purpose internet access.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfiguration::PrivatePurpose</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The configuration is suitable to access a private network such as an office Intranet.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfiguration::ServiceSpecificPurpose</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The configuration can be used for operator specific services (e.g&#x2e; receiving MMS messages or content streaming).</td></tr>
 </table></p>
 <h3 class="flags"><a name="StateFlag-enum"></a>enum QNetworkConfiguration::StateFlag<br />flags QNetworkConfiguration::StateFlags</h3>
 <p>Specifies the configuration states.</p>
@@ -105,6 +105,8 @@
 <p>Returns all sub configurations of this network configuration. Only network configurations of type <a href="qnetworkconfiguration.html#Type-enum">ServiceNetwork</a> can have children. Otherwise this function returns an empty list.</p>
 <h3 class="fn"><a name="identifier"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QNetworkConfiguration::identifier () const</h3>
 <p>Returns the unique and platform specific identifier for this network configuration; otherwise an empty string.</p>
+<h3 class="fn"><a name="isRoamingAvailable"></a>bool QNetworkConfiguration::isRoamingAvailable () const</h3>
+<p>Returns true if this configuration supports roaming; otherwise false.</p>
 <h3 class="fn"><a name="isValid"></a>bool QNetworkConfiguration::isValid () const</h3>
 <p>Returns true if this <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object is valid. A configuration may become invalid if the user deletes the configuration or the configuration was default-constructed.</p>
 <p>The addition and removal of configurations can be monitored via the <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
@@ -115,8 +117,6 @@
 <h3 class="fn"><a name="purpose"></a><a href="qnetworkconfiguration.html#Purpose-enum">Purpose</a> QNetworkConfiguration::purpose () const</h3>
 <p>Returns the purpose of this configuration.</p>
 <p>The purpose field may be used to programmatically determine the purpose of a configuration. Such information is usually part of the access point or service network meta data.</p>
-<h3 class="fn"><a name="roamingAvailable"></a>bool QNetworkConfiguration::roamingAvailable () const</h3>
-<p>Returns true if this configuration supports roaming; otherwise false.</p>
 <h3 class="fn"><a name="state"></a><a href="qnetworkconfiguration.html#StateFlag-enum">StateFlags</a> QNetworkConfiguration::state () const</h3>
 <p>Returns the current state of the configuration.</p>
 <h3 class="fn"><a name="type"></a><a href="qnetworkconfiguration.html#Type-enum">Type</a> QNetworkConfiguration::type () const</h3>
@@ -131,6 +131,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

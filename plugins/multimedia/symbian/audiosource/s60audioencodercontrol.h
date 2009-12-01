@@ -49,6 +49,8 @@
 
 #include <QAudioFormat>
 
+QTM_USE_NAMESPACE
+
 class S60AudioCaptureSession;
 
 class S60AudioEncoderControl : public QAudioEncoderControl
@@ -76,7 +78,7 @@ public:
 
     int sampleRate() const;
     void setSampleRate(int sampleRate);
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings) const;
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
     
     int channels() const;
     void setChannels(int channels);

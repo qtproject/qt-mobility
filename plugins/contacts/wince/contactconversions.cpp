@@ -44,6 +44,8 @@
 #include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
 
+QTM_USE_NAMESPACE
+
 /*!
  * Convert from the supplied CEPROPVAL \a val into a QVariant.
  */
@@ -85,6 +87,31 @@ static QVariant CEPropValToQVariant(const CEPROPVAL& val)
     return QVariant();
 }
 
+
+
+class WcsdupHelper {
+public:
+    WcsdupHelper() {}
+    ~WcsdupHelper() {
+        clear();
+    }
+    LPWSTR dup(const ushort* str) {
+        LPWSTR newStr = wcsdup(str);
+        m_list.push_back(newStr);
+        return newStr;
+    }
+    void clear() {
+        foreach (LPWSTR str, m_list) {
+            free(str);
+        }
+        m_list.clear();
+    }
+private:
+    QList<LPWSTR> m_list; 
+};
+
+static WcsdupHelper wcsdupHelper;
+
 /*!
  * Convert the supplied QString \a value into a CEPROPVAL with the supplied \a id.
  *
@@ -98,7 +125,11 @@ static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QString& value)
     val.propid = id;
     val.wFlags = 0;
     val.wLenData = 0;
-    val.val.lpwstr = wcsdup(value.utf16()); // XXX leaks
+    if (!value.isEmpty()) {
+        val.val.lpwstr = wcsdupHelper.dup(value.utf16());
+    } else {
+        val.val.lpwstr = 0;
+    }
 
     return val;
 }
@@ -154,7 +185,7 @@ static void setIfNotEmpty(QContactDetail& detail, const QString& field, const QS
         detail.setValue(field, value);
 }
 
-static void processName(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processName(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
 {
     QContactName name;
     setIfNotEmpty(name, QContactName::FieldPrefix, values[0].toString());
@@ -162,14 +193,10 @@ static void processName(const QContactWinCEEngine*, const QVariantList& values, 
     setIfNotEmpty(name, QContactName::FieldMiddle, values[2].toString());
     setIfNotEmpty(name, QContactName::FieldLast, values[3].toString());
     setIfNotEmpty(name, QContactName::FieldSuffix, values[4].toString());
+    setIfNotEmpty(name, QContactName::FieldCustomLabel, values[5].toString());
+    //ret = engine->setContactDisplayLabel(values[5].toString(), ret);
     if (!name.isEmpty())
         ret.saveDetail(&name);
-}
-
-static void processFileAs(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
-{
-    ret.setDisplayLabel(values[0].toString());
-    // isSynthesized gets fixed up after the whole contact is retrieved
 }
 
 static void processAddress(const QContactWinCEEngine*, const QString& context, const QVariantList& values, QContact& ret)
@@ -355,11 +382,24 @@ static void processOrganisation(const QContactWinCEEngine*, const QVariantList& 
 {
     QContactOrganization org;
     setIfNotEmpty(org, QContactOrganization::FieldName, values[0].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldDepartment, values[1].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldLocation, values[2].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldTitle, values[3].toString());
+    setIfNotEmpty(org, QContactOrganization::FieldAssistantName, values[4].toString());
 
     if (!org.isEmpty())
         ret.saveDetail(&org);
 }
 
+static void processFamily(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+{
+    QContactFamily family;
+    setIfNotEmpty(family, QContactFamily::FieldSpouse, values[0].toString());
+    setIfNotEmpty(family, QContactFamily::FieldChildren, values[1].toString());
+
+    if (!family.isEmpty())
+        ret.saveDetail(&family);
+}
 
 static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
 {
@@ -375,15 +415,9 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         id.func = processId;
         list.append(id);
 
-        // Display label
-        PoomContactElement fileas;
-        fileas.poom << PIMPR_FILEAS;
-        fileas.func = processFileAs;
-        list.append(fileas);
-
         // Names
         PoomContactElement name;
-        name.poom << PIMPR_TITLE << PIMPR_FIRST_NAME << PIMPR_MIDDLE_NAME << PIMPR_LAST_NAME << PIMPR_SUFFIX;
+        name.poom << PIMPR_TITLE << PIMPR_FIRST_NAME << PIMPR_MIDDLE_NAME << PIMPR_LAST_NAME << PIMPR_SUFFIX << PIMPR_FILEAS;
         name.func = processName;
         list.append(name);
 
@@ -395,13 +429,13 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
 
         // Work address
         PoomContactElement workAddress;
-        workAddress.poom << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_BUSINESS_ADDRESS_COUNTRY;
+        workAddress.poom << PIMPR_BUSINESS_ADDRESS_STREET << PIMPR_BUSINESS_ADDRESS_POSTAL_CODE << PIMPR_BUSINESS_ADDRESS_CITY << PIMPR_BUSINESS_ADDRESS_STATE << PIMPR_BUSINESS_ADDRESS_COUNTRY;
         workAddress.func = processWorkAddress;
         list.append(workAddress);
 
         // Other address
         PoomContactElement otherAddress;
-        otherAddress.poom << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_HOME_ADDRESS_STATE << PIMPR_OTHER_ADDRESS_COUNTRY;
+        otherAddress.poom << PIMPR_OTHER_ADDRESS_STREET << PIMPR_OTHER_ADDRESS_POSTAL_CODE << PIMPR_OTHER_ADDRESS_CITY << PIMPR_OTHER_ADDRESS_STATE << PIMPR_OTHER_ADDRESS_COUNTRY;
         otherAddress.func = processOtherAddress;
         list.append(otherAddress);
 
@@ -442,9 +476,14 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
 
         // Organisation
         PoomContactElement org;
-        org.poom << PIMPR_COMPANY_NAME;
+        org.poom << PIMPR_COMPANY_NAME << PIMPR_DEPARTMENT << PIMPR_OFFICE_LOCATION << PIMPR_JOB_TITLE << PIMPR_ASSISTANT_NAME;
         org.func = processOrganisation;
         list.append(org);
+
+        PoomContactElement family;
+        family.poom << PIMPR_SPOUSE <<  PIMPR_CHILDREN;
+        family.func = processFamily;
+        list.append(family);
 
         // XXX Unhandled:
         //
@@ -452,19 +491,13 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         //  PIMPR_CUSTOMERID
         //  PIMPR_GOVERNMENTID
         //
-        //  PIMPR_SPOUSE
-        //  PIMPR_CHILDREN
+        //  PIMPR_DISPLAY_NAME
         //
         //  PIMPR_MANAGER
-        //  PIMPR_ASSISTANT_NAME
         //  PIMPR_ASSISTANT_TELEPHONE_NUMBER
-        //  PIMPR_JOB_TITLE
-        //  PIMPR_DEPARTMENT
-        //  PIMPR_OFFICE_LOCATION
         //  PIMPR_COMPANY_TELEPHONE_NUMBER
         //  PIMPR_YOMI_COMPANY
         //
-        //  PIMPR_DISPLAY_NAME (vs. PIMPR_FILEAS)
         //
         //  PIMPR_IM[123]_ADDRESS
         //
@@ -500,12 +533,14 @@ static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props
     addIfNotEmpty(PIMPR_MIDDLE_NAME, detail.value(QContactName::FieldMiddle), props);
     addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLast), props);
     addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
+    addIfNotEmpty(PIMPR_FILEAS, detail.value(QContactName::FieldCustomLabel), props);
     return true;
 }
 
-static bool processQLabel(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQFamily(const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
-    props.append(convertToCEPropVal(PIMPR_FILEAS, detail.value(QContactDisplayLabel::FieldLabel)));
+    addIfNotEmpty(PIMPR_SPOUSE, detail.value(QContactFamily::FieldSpouse), props);
+    addIfNotEmpty(PIMPR_CHILDREN, detail.value(QContactFamily::FieldChildren), props);
     return true;
 }
 
@@ -547,6 +582,11 @@ static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
     QContactOrganization org(detail);
 
     addIfNotEmpty(PIMPR_COMPANY_NAME, org.name(), props);
+    if (!org.department().isEmpty())
+        addIfNotEmpty(PIMPR_DEPARTMENT, org.department().at(0), props);
+    addIfNotEmpty(PIMPR_OFFICE_LOCATION, org.location(), props);
+    addIfNotEmpty(PIMPR_JOB_TITLE, org.title(), props);
+    addIfNotEmpty(PIMPR_ASSISTANT_NAME, org.assistantName(), props);
     return true;
 }
 
@@ -758,12 +798,12 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
     static QHash<QString, processContactPoomElement> hash;
     if (hash.count() == 0) {
         hash.insert(QContactName::DefinitionName, processQName);
-        hash.insert(QContactDisplayLabel::DefinitionName, processQLabel);
         hash.insert(QContactAnniversary::DefinitionName, processQAnniversary);
         hash.insert(QContactBirthday::DefinitionName, processQBirthday);
         hash.insert(QContactNickname::DefinitionName, processQNickname);
         hash.insert(QContactOrganization::DefinitionName, processQOrganisation);
         hash.insert(QContactUrl::DefinitionName, processQWebpage);
+        hash.insert(QContactFamily::DefinitionName, processQFamily);
     }
     ret = hash;
 }
@@ -827,15 +867,10 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
         HeapFree(GetProcessHeap(), 0, propvals);
     }
 
-    // Now, we need to check whether we got a display label
-    QContactDisplayLabel label = ret.displayLabel();
+    // Synthesize the display label.
     QContactManager::Error error;
     QString synth = synthesizeDisplayLabel(ret, error);
-    if (label.label().isEmpty() || label.label() == synth) {
-        label.setLabel(synth);
-        label.setSynthesized(true);
-        ret.saveDetail(&label);
-    }
+    ret = setContactDisplayLabel(synth, ret);
 
     return ret;
 }
@@ -876,6 +911,8 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
         qDebug() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
         error = QContactManager::UnspecifiedError;
     }
+    
+    wcsdupHelper.clear();
 
     return false;
 }

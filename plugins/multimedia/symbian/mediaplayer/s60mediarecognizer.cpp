@@ -92,7 +92,7 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl& 
 // TODO: Must be considered when streams will be implemented
        case CMPMediaRecognizer::ELocalRamFile:
        case CMPMediaRecognizer::ELocalSdpFile:
-       case CMPMediaRecognizer::EProgressiveDownload:
+//     case CMPMediaRecognizer::EProgressiveDownload:
        case CMPMediaRecognizer::EUnidentified:
        default:
            break;

@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <qvaluespacesubscriber.h>
-#include <qvaluespaceprovider.h>
+#include <qvaluespacepublisher.h>
 
 #include <QCoreApplication>
 #include <QStringList>
@@ -48,6 +48,8 @@
 #include <QUuid>
 
 #include <QDebug>
+
+QTM_USE_NAMESPACE
 
 #define TIMEOUT 700
 
@@ -68,24 +70,24 @@ public:
             QTimer::singleShot(0, this, SLOT(quit()));
             break;
         case IpcTests:
-            provider = new QValueSpaceProvider("/usr/lackey/subdir", uuid, this);
-            provider->setObjectName("original_lackey");
-            provider->setAttribute("value", 100);
-            provider->sync();
+            publisher = new QValueSpacePublisher("/usr/lackey/subdir", uuid, this);
+            publisher->setObjectName("original_lackey");
+            publisher->setValue("value", 100);
+            publisher->sync();
             subscriber = new QValueSpaceSubscriber("/usr/lackey/subdir", uuid, this);
             connect(subscriber, SIGNAL(contentsChanged()), this, SLOT(changes()));
 
             QTimer::singleShot(TIMEOUT, this, SLOT(proceed()));
             break;
         case IpcInterestNotification:
-            provider = new QValueSpaceProvider("/ipcInterestNotification", uuid, this);
-            connect(provider, SIGNAL(attributeInterestChanged(QString,bool)),
+            publisher = new QValueSpacePublisher("/ipcInterestNotification", uuid, this);
+            connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
                     this, SLOT(attributeInterestChanged(QString,bool)));
             break;
         case IpcRemoveKey:
-            provider = new QValueSpaceProvider("/ipcRemoveKey", uuid, this);
-            provider->setAttribute("value", 100);
-            provider->sync();
+            publisher = new QValueSpacePublisher("/ipcRemoveKey", uuid, this);
+            publisher->setValue("value", 100);
+            publisher->sync();
             QTimer::singleShot(TIMEOUT, this, SLOT(removeKey()));
             break;
         }
@@ -96,22 +98,22 @@ private slots:
         switch (index) {
         case 0:
             //qDebug() << "Setting 101";
-            provider->setAttribute("value", 101);
+            publisher->setValue("value", 101);
             break;
         case 1:
             //qDebug() << "Removing";
-            provider->removeAttribute("value");
+            publisher->resetValue("value");
             break;
         case 2:
             //qDebug() << "Setting 102";
-            provider->setAttribute("value", 102);
+            publisher->setValue("value", 102);
             break;
         case 3:
             qDebug() << "Removing";
-            provider->removeAttribute("value");
+            publisher->resetValue("value");
             break;
         }
-        provider->sync();
+        publisher->sync();
 
         index++;
         if (index == 4)
@@ -134,24 +136,24 @@ private slots:
         //qDebug() << Q_FUNC_INFO << path << interested;
         if (interested) {
             if (attribute == "/value")
-                provider->setAttribute(attribute, 5);
+                publisher->setValue(attribute, 5);
         } else {
-            provider->removeAttribute(attribute);
+            publisher->resetValue(attribute);
         }
     }
 
     void removeKey()
     {
-        if (provider) {
-            delete provider;
-            provider = 0;
+        if (publisher) {
+            delete publisher;
+            publisher = 0;
         }
 
         QTimer::singleShot(TIMEOUT, qApp, SLOT(quit()));
     }
 
 private:
-    QValueSpaceProvider *provider;
+    QValueSpacePublisher *publisher;
     QValueSpaceSubscriber *subscriber;
     int index;
     int abortCode;

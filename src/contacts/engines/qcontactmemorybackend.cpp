@@ -54,21 +54,24 @@
 #include <QUuid>
 #include <QSharedData>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContactMemoryEngine
- * \brief This class provides an in-memory implementation of a contacts backend.
- *
- * It may be used as a reference implementation, or when persistent storage is not required.
- *
- * During construction, it will load the in-memory data associated with the memory store
- * identified by the "id" parameter from the given parameters if it exists, or a new,
- * anonymous store if it does not.
- *
- * Data stored in this engine is only available in the current process.
- *
- * This engine supports sharing, so an internal reference count is increased
- * whenever a manager uses this backend, and is decreased when the manager
- * no longer requires this engine.
+  \class QContactMemoryEngine
+  \brief The QContactMemoryEngine class provides an in-memory implementation
+  of a contacts backend.
+ 
+  It may be used as a reference implementation, or when persistent storage is not required.
+ 
+  During construction, it will load the in-memory data associated with the memory store
+  identified by the "id" parameter from the given parameters if it exists, or a new,
+  anonymous store if it does not.
+ 
+  Data stored in this engine is only available in the current process.
+ 
+  This engine supports sharing, so an internal reference count is increased
+  whenever a manager uses this backend, and is decreased when the manager
+  no longer requires this engine.
  */
 
 /* static data for manager class */
@@ -99,6 +102,7 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
     } else {
         QContactMemoryEngine *engine = new QContactMemoryEngine(parameters);
         engine->d->m_engineName = QString(QLatin1String("memory"));
+        engine->d->m_engineVersion = 1;
         engine->d->m_id = idValue;
         engine->d->m_anonymous = anonymous;
         engines.insert(idValue, engine);
@@ -132,6 +136,12 @@ void QContactMemoryEngine::deref()
 QString QContactMemoryEngine::managerName() const
 {
     return d->m_engineName;
+}
+
+/*! \reimp */
+int QContactMemoryEngine::implementationVersion() const
+{
+    return d->m_engineVersion;
 }
 
 /*! \reimp */
@@ -197,7 +207,6 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContac
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
             retn = setContactDisplayLabel(synthesizeDisplayLabel(retn, synthError), retn);
-            // XXX TODO: ensure this is correct after removing the deprecated API
         }
 
         // also, retrieve the current relationships the contact is involved with.
@@ -1120,4 +1129,8 @@ bool QContactMemoryEngine::filterSupported(const QContactFilter& filter) const
     // Until we add hashes for common stuff, fall back to slow code
     return false;
 }
+
+#include "moc_qcontactmemorybackend_p.cpp"
+
+QTM_END_NAMESPACE
 

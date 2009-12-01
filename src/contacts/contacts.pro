@@ -31,12 +31,10 @@ PUBLIC_HEADERS += \
     qcontactmanager.h \
     qcontactmanagerengine.h \
     qcontactmanagerenginefactory.h \
-    qcontactmanagerinfo.h \
     qcontactrelationship.h \
     qcontactsortorder.h \
     qtcontactsglobal.h \
-    qtcontacts.h \
-    qcontactrequestworker.h
+    qtcontacts.h
 
 # Private Headers
 PRIVATE_HEADERS += \
@@ -51,7 +49,6 @@ PRIVATE_HEADERS += \
     qcontactid_p.h \
     qcontactmanager_p.h \
     qcontactrelationship_p.h \
-    qcontactrequestworker_p.h \
     qcontactsortorder_p.h
 
 SOURCES += \
@@ -70,9 +67,7 @@ SOURCES += \
     qcontactmanager.cpp \
     qcontactmanagerengine.cpp \
     qcontactmanagerenginefactory.cpp \
-    qcontactmanagerinfo.cpp \
     qcontactrelationship.cpp \
-    qcontactrequestworker.cpp \
     qcontactsortorder.cpp
 
 HEADERS += \
@@ -82,20 +77,22 @@ HEADERS += \
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC7A
 
     ### Contacts
     # Main library
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
     CONTACTS_DEPLOYMENT.path = \sys\bin
+    DEPLOYMENT += CONTACTS_DEPLOYMENT
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders CONTACTS_DEPLOYMENT
 
-    # This is for new exporting system coming in garden
+    #export headers into EPOCROOT
     for(header, exportheaders.sources) {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 }
 include(../../features/deploy.pri)
+

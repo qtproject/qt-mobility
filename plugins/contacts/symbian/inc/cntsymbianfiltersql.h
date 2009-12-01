@@ -47,7 +47,7 @@
 #include "cntabstractcontactfilter.h"
 
 class CContactDatabase;
-
+QTM_USE_NAMESPACE
 class QContactSymbianFilter : public CntAbstractContactFilter
 {
 public:

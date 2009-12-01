@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #include "qcontacttrackerbackend_p.h"
 
 #include <QtTracker/Tracker>
@@ -51,18 +50,18 @@
 #include <QFile>
 #include <QSet>
 
-#include "qcontactmanager.h"
-#include "debuglevel.h"
+#include "qtcontacts.h"
 
 #include "trackerchangelistener.h"
 #include "qtrackercontactsaverequest.h"
+#include <qtrackerrelationshipfetchrequest.h>
+#include <qtrackerrelationshipsaverequest.h>
 
-using namespace hcontacts;
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
     Q_UNUSED(error);
-    return new QContactTrackerEngine(parameters);
+    return new QContactTrackerEngine(managerName(), 1, parameters);
 }
 
 QString ContactTrackerFactory::managerName() const
@@ -70,6 +69,17 @@ QString ContactTrackerFactory::managerName() const
     return QString("tracker");
 }
 Q_EXPORT_PLUGIN2(qtcontacts_tracker, ContactTrackerFactory);
+
+QContactTrackerEngine::QContactTrackerEngine(const QString& engineName, int engineVersion, const QMap<QString, QString>& parameters)
+    : d(new QContactTrackerEngineData),
+    contactArchiveFile("removed"),
+    contactArchiveDir(QDir::homePath()+"/.contacts")
+{
+    Q_UNUSED(parameters);
+    d->m_engineName = engineName;
+    d->m_engineVersion = engineVersion;
+    connectToSignals();
+}
 
 QContactTrackerEngine::QContactTrackerEngine(const QMap<QString, QString>& parameters)
     : d(new QContactTrackerEngineData),
@@ -179,7 +189,7 @@ QList<QContactLocalId> QContactTrackerEngine::contacts(const QList<QContactSortO
 
 QContact QContactTrackerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error ) const
 {
-    warning() << "QContactManager::contact()" << "api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
+    qWarning() << "QContactManager::contact()" << "api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
     return contact_impl(contactId, error);
 }
 // used in tests, removed warning while decided if to provide sync api. Until then customers are advised to use async
@@ -203,7 +213,7 @@ QContact QContactTrackerEngine::contact_impl(const QContactLocalId& contactId, Q
             << QContactOnlineAccount::DefinitionName
             << QContactOrganization::DefinitionName
             << QContactPhoneNumber::DefinitionName
-            << QContactPresence::DefinitionName
+            << QContactOnlineAccount::DefinitionName
             << QContactUrl::DefinitionName;
     request.setDefinitionRestrictions(fields);
     request.setFilter(idlist);
@@ -241,7 +251,7 @@ bool QContactTrackerEngine::waitForRequestFinished(QContactAbstractRequest* req,
         if(req->isFinished())
             return true;
     }
-    debug() << Q_FUNC_INFO << "not finished";
+    qDebug() << Q_FUNC_INFO << "not finished";
     return req->isFinished();
 
 }
@@ -346,18 +356,24 @@ QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QConta
     return errors;
 }
 
-QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions(QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions(const QString& contactType,
+                                                                                 QContactManager::Error& error) const
 {
+    if (contactType != QContactType::TypeContact) {
+        error = QContactManager::InvalidContactTypeError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
     // lazy initialisation of schema definitions.
     if (d->m_definitions.isEmpty()) {
         // none in the list?  get the schema definitions, and modify them to match our capabilities.
-        d->m_definitions = QContactManagerEngine::schemaDefinitions();
+        d->m_definitions = QContactManagerEngine::schemaDefinitions().value(QContactType::TypeContact);
         {
-            debug() << "the definitions";
+            qDebug() << "the definitions";
             QList<QString> defs = d->m_definitions.keys();
             foreach(QString def,  defs)
             {
-                debug() << def;
+                qDebug() << def;
             }
         }
         // modification: name is unique
@@ -372,15 +388,15 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
 
         // modification: url is unique.
         QContactDetailDefinition urlDef = d->m_definitions.value(QContactUrl::DefinitionName);
-        QMap<QString, QContactDetailDefinition::Field> &fields(urlDef.fields());
-        QContactDetailDefinition::Field f;
+        QMap<QString, QContactDetailDefinitionField> &fields(urlDef.fields());
+        QContactDetailDefinitionField f;
 
-        f.dataType = QVariant::String;
+        f.setDataType( QVariant::String );
         QVariantList subTypes;
         // removing social networking url
         subTypes << QString(QLatin1String(QContactUrl::SubTypeFavourite));
         subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
-        f.allowableValues = subTypes;
+        f.setAllowableValues( subTypes );
         fields.insert(QContactUrl::FieldSubType, f);
         urlDef.setFields(fields);
         urlDef.setUnique(true);
@@ -391,46 +407,21 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
     return d->m_definitions;
 }
 
-QContactDetailDefinition QContactTrackerEngine::detailDefinition(const QString& definitionId, QContactManager::Error& error) const
-{
-    detailDefinitions(error); // just to populate the definitions if we haven't already.
-    error = QContactManager::DoesNotExistError;
-    if (d->m_definitions.contains(definitionId))
-        error = QContactManager::NoError;
-    return d->m_definitions.value(definitionId);
-}
-
-bool QContactTrackerEngine::saveDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
-{
-    Q_UNUSED(def)
-    error = QContactManager::UnspecifiedError; // Not implemented yet;
-
-    return false;
-}
-
-bool QContactTrackerEngine::removeDetailDefinition(const QContactDetailDefinition& def, QContactManager::Error& error)
-{
-    Q_UNUSED(def)
-    error = QContactManager::UnspecifiedError; // Not implemented yet;
-
-    return false;
-}
-
 /*!
  * \reimp
  */
-bool QContactTrackerEngine::hasFeature(QContactManagerInfo::ManagerFeature feature) const
+bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature) const
 {
     switch (feature) {
-        case QContactManagerInfo::Groups:
-        case QContactManagerInfo::ActionPreferences:
-        case QContactManagerInfo::Relationships:
+        case QContactManager::Groups:
+        case QContactManager::ActionPreferences:
+        case QContactManager::Relationships:
             return true;
-        case QContactManagerInfo::ArbitraryRelationshipTypes:
+        case QContactManager::ArbitraryRelationshipTypes:
             return true;
-        case QContactManagerInfo::MutableDefinitions:
+        case QContactManager::MutableDefinitions:
             return true;
-        case QContactManagerInfo::ChangeLogs:
+        case QContactManager::ChangeLogs:
             return true;
         default:
             return false;
@@ -479,6 +470,22 @@ QList<QVariant::Type> QContactTrackerEngine::supportedDataTypes() const
     return st;
 }
 
+/*!
+ * Returns the name of the Tracker engine
+ */
+QString QContactTrackerEngine::managerName() const
+{
+    return d->m_engineName;
+}
+
+/*!
+ * Returns the implementation version of this engine
+ */
+int QContactTrackerEngine::implementationVersion() const
+{
+    return d->m_engineVersion;
+}
+
 RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName,
                                                       const QString& fieldName) const
 {
@@ -505,29 +512,6 @@ RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfConta
     return RDFVariable();
 }
 
-#if 0
-// Might not be needed but leaving here just in case.
-QString QContactTrackerEngine::escaped(const QString& input) const
-{
-    QString retn = "";
-    for (int i = 0; i < input.length(); i++) {
-        QChar currChar = input.at(i);
-        if (currChar == '\\' ||
-                currChar == '=' ||
-                currChar == ',' ||
-                currChar == ';') {
-            // we need to escape this character.
-            retn += '\\'; // escape with a single backslash.
-        }
-        retn += currChar;
-    }
-
-    return retn;
-}
-#endif
-
-
-
 /*! \reimp */
 void QContactTrackerEngine::requestDestroyed(QContactAbstractRequest* req)
 {
@@ -553,9 +537,24 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
         case QContactAbstractRequest::ContactSaveRequest:
             request = new QTrackerContactSaveRequest(req, this);
             break;
+        case QContactAbstractRequest::RelationshipFetchRequest:
+            request = new QTrackerRelationshipFetchRequest(req, this);
+            break;
+        case QContactAbstractRequest::RelationshipSaveRequest:
+            request = new QTrackerRelationshipSaveRequest(req, this);
+            break;
         default:
             return false;
     }
     d->m_requests[req] = request;
     return true;
+}
+
+/*! \reimp */
+QString QContactTrackerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+{
+    QString label = QContactManagerEngine::synthesizeDisplayLabel(contact, error);
+    if (label.isEmpty())
+        return contact.detail<QContactNickname>().nickname();
+    return label;
 }

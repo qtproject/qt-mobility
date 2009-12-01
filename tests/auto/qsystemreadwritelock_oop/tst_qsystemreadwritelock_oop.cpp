@@ -47,6 +47,7 @@
 #include "qsystemreadwritelock_p.h"
 #include "common.h"
 
+QTM_USE_NAMESPACE
 class tst_QSystemReadWriteLock_oop : public QObject{
     Q_OBJECT
 private slots:
@@ -91,7 +92,7 @@ void tst_QSystemReadWriteLock_oop::readLockBlockRelease()
     reader.start("./lackey", args);
     QVERIFY(reader.waitForStarted());
 
-    QVERIFY(server.waitForNewConnection(-1));
+    QVERIFY(server.waitForNewConnection(5000));
     QLocalSocket *oopSocket = server.nextPendingConnection();
 
     QVERIFY(waitForLine(oopSocket, Lackey::BeforeLockForRead,print));
@@ -132,7 +133,7 @@ void tst_QSystemReadWriteLock_oop::writeLockBlockRelease()
     writer.start("./lackey", args);
     QVERIFY(writer.waitForStarted());
 
-    QVERIFY(server.waitForNewConnection(-1));
+    QVERIFY(server.waitForNewConnection(5000));
     QLocalSocket *oopSocket = server.nextPendingConnection();
 
     QVERIFY(waitForLine(oopSocket, Lackey::BeforeLockForWrite,print));
@@ -177,7 +178,7 @@ void tst_QSystemReadWriteLock_oop::multipleReadersBlockRelease()
         readers[i].start("./lackey", args);
         QVERIFY(readers[i].waitForStarted());
 
-        QVERIFY(readerServers[i].waitForNewConnection(-1));
+        QVERIFY(readerServers[i].waitForNewConnection(5000));
         readerSockets[i] = readerServers[i].nextPendingConnection();
 
         QVERIFY(waitForLine(readerSockets[i], Lackey::BeforeLockForRead, print));
@@ -198,7 +199,7 @@ void tst_QSystemReadWriteLock_oop::multipleReadersBlockRelease()
     writer.start("./lackey", args);
     QVERIFY(writer.waitForStarted());
 
-    QVERIFY(server.waitForNewConnection(-1));
+    QVERIFY(server.waitForNewConnection(5000));
     QLocalSocket *writerSocket = server.nextPendingConnection();
 
     QVERIFY(waitForLine(writerSocket, Lackey::BeforeLockForWrite, print));
@@ -385,8 +386,9 @@ void tst_QSystemReadWriteLock_oop::writerPrecedence()
 
         readers[i].setReadChannel(QProcess::StandardError);
         readers[i].start("./lackey", args);
+        QVERIFY(readers[i].waitForStarted());
 
-        QVERIFY(readerServers[i].waitForNewConnection(-1));
+        QVERIFY(readerServers[i].waitForNewConnection(5000));
         readerSockets[i] = readerServers[i].nextPendingConnection();
 
         QVERIFY(waitForLine(readerSockets[i], Lackey::BeforeLockForRead, print));
@@ -406,7 +408,7 @@ void tst_QSystemReadWriteLock_oop::writerPrecedence()
     args << "WriteLockReleaseable";
     writer.start("./lackey", args);
 
-    QVERIFY(server.waitForNewConnection(-1));
+    QVERIFY(server.waitForNewConnection(5000));
     QLocalSocket *writerSocket = server.nextPendingConnection();
 
     QVERIFY(waitForLine(writerSocket, Lackey::BeforeLockForWrite, print));

@@ -44,11 +44,15 @@
 #include "qcontactfilter_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
- * \class QContactDetailFilter
- * \brief The QContactDetailFilter class provides a filter based around a detail value criterion
- *
- * It may be used to select contacts which contain a detail of a particular definition with a particular value
+  \class QContactDetailFilter
+  \brief The QContactDetailFilter class provides a filter based around a detail value criterion
+ 
+  \ingroup contacts-filters
+  
+  It may be used to select contacts which contain a detail of a particular definition with a particular value
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailFilter);
@@ -137,3 +141,5 @@ QVariant QContactDetailFilter::value() const
     Q_D(const QContactDetailFilter);
     return d->m_exactValue;
 }
+
+QTM_END_NAMESPACE

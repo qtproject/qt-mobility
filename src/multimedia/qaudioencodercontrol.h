@@ -48,9 +48,10 @@
 #include <QtCore/qpair.h>
 
 
-class QAudioFormat;
 class QStringList;
+class QAudioFormat;
 
+QTM_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QAudioEncoderControl : public QMediaControl
 {
@@ -62,7 +63,8 @@ public:
     virtual QStringList supportedAudioCodecs() const = 0;
     virtual QString codecDescription(const QString &codecName) const = 0;
 
-    virtual QList<int> supportedSampleRates(const QAudioEncoderSettings &settings) const = 0;
+    virtual QList<int> supportedSampleRates(const QAudioEncoderSettings &settings,
+                                            bool *continuous = 0) const = 0;
 
     virtual QAudioEncoderSettings audioSettings() const = 0;
     virtual void setAudioSettings(const QAudioEncoderSettings&) = 0;
@@ -78,5 +80,7 @@ protected:
 
 #define QAudioEncoderControl_iid "com.nokia.Qt.QAudioEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioEncoderControl, QAudioEncoderControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

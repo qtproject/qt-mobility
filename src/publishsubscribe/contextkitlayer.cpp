@@ -47,7 +47,7 @@
 #include <contextproperty.h>
 #include <contextregistryinfo.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 using namespace QValueSpace;
 
@@ -224,16 +224,16 @@ public:
     bool value(Handle, const QString &, QVariant *);
     QSet<QString> children(Handle);
 
-    /* ValueSpaceLayer interface - QValueSpaceItem functions */
+    /* ValueSpaceLayer interface - QValueSpaceSubscriber functions */
     bool supportsInterestNotification() const { return true; }
     bool notifyInterest(Handle handle, bool interested);
 
-    /* ValueSpaceLayer interface - QValueSpaceProvider functions */
-    bool setValue(QValueSpaceProvider *, Handle, const QString &, const QVariant &) { return false; }
-    bool removeValue(QValueSpaceProvider *, Handle, const QString &) { return false; }
-    bool removeSubTree(QValueSpaceProvider *, Handle) { return false; }
-    void addWatch(QValueSpaceProvider *, Handle) { return; }
-    void removeWatches(QValueSpaceProvider *, Handle) { return; }
+    /* ValueSpaceLayer interface - QValueSpacePublisher functions */
+    bool setValue(QValueSpacePublisher *, Handle, const QString &, const QVariant &) { return false; }
+    bool removeValue(QValueSpacePublisher *, Handle, const QString &) { return false; }
+    bool removeSubTree(QValueSpacePublisher *, Handle) { return false; }
+    void addWatch(QValueSpacePublisher *, Handle) { return; }
+    void removeWatches(QValueSpacePublisher *, Handle) { return; }
     void sync() { return; }
 
     static ContextKitLayer *instance();
@@ -270,9 +270,7 @@ bool ContextKitLayer::startup(Type)
 
 QUuid ContextKitLayer::id()
 {
-    // 2c769b9e-d949-4cd1-848f-d32241fe07ff
-    return QUuid(0x2c769b9e, 0xd949, 0x4cd1, 0x84, 0x8f,
-                 0xd3, 0x22, 0x41, 0xfe, 0x07, 0xff);
+    return QVALUESPACE_CONTEXTKIT_LAYER;
 }
 
 unsigned int ContextKitLayer::order()
@@ -282,7 +280,7 @@ unsigned int ContextKitLayer::order()
 
 LayerOptions ContextKitLayer::layerOptions () const
 {
-    return NonPermanentLayer | NonWritableLayer;
+    return TransientLayer | ReadOnlyLayer;
 }
 
 QAbstractValueSpaceLayer::Handle ContextKitLayer::item (Handle parent, const QString &subPath)
@@ -346,6 +344,6 @@ QSet<QString> ContextKitLayer::children (Handle handle)
     return h->children ();
 }
 
-QT_END_NAMESPACE
-
 #include "contextkitlayer.moc"
+QTM_END_NAMESPACE
+

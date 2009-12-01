@@ -50,26 +50,37 @@
 #include <QCoreApplication>
 #include <QMutex>
 #include <qdebug.h>
+#include <QThread>
+
+QTM_BEGIN_NAMESPACE
 
 namespace {
 
 class MutexTryLocker
 {
     QMutex *_mutex;
+    QString _location;
 
 public:
-    MutexTryLocker(QMutex *mutex) 
+    MutexTryLocker(QMutex *mutex)
         : _mutex(0)
     {
         if (mutex->tryLock()) {
             _mutex = mutex;
         }
     }
-    
+
     ~MutexTryLocker()
     {
         if (_mutex) {
+
             _mutex->unlock();
+
+            QMessageStore::ErrorCode le = QMessageStore::NoError;
+            MapiSessionPtr p = MapiSession::createSession(&le);
+            if(le == QMessageStore::NoError)
+                p->flushNotifyQueue();
+
         }
     }
 
@@ -144,6 +155,13 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
     p_ptr = new QMessageStorePrivatePlatform(this, store);
 }
 
+#ifdef Q_OS_WIN
+QMutex* QMessageStorePrivate::mutex(QMessageStore* store)
+{
+    return &(store->d_ptr->p_ptr->mutex);
+}
+#endif
+
 Q_GLOBAL_STATIC(QMessageStorePrivate,data);
 
 QMessageStore::QMessageStore(QObject *parent)
@@ -179,6 +197,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     QMessageIdList result;
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
+
     if (!locker) {
         d_ptr->p_ptr->lastError = QMessageStore::Busy;
         return result;
@@ -585,3 +604,5 @@ void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificati
 }
 
 #include "qmessagestore_win.moc"
+
+QTM_END_NAMESPACE

@@ -1284,8 +1284,10 @@ QMessageFolderId addFolder(const Parameters &params)
 
 }
 
+QTM_BEGIN_NAMESPACE
+
 // The class 'MapiSession' is a friend of QMessageContentContainer - hijack it here
-class MapiSession
+class QTM_PREPEND_NAMESPACE(MapiSession)
 {
 public:
     static QMessageId addMessage(const Support::Parameters &params)
@@ -1293,6 +1295,7 @@ public:
         QString parentAccountName(params["parentAccountName"]);
         QString parentFolderPath(params["parentFolderPath"]);
         QString to(params["to"]);
+        QString cc(params["cc"]);
         QString from(params["from"]);
         QString date(params["date"]);
         QString receivedDate(params["receivedDate"]);
@@ -1321,10 +1324,19 @@ public:
                     message.d_ptr->_parentFolderId = folderIds.first();
 
                     QList<QMessageAddress> toList;
-                    foreach (const QString &addr, to.split(",")) {
+                    foreach (const QString &addr, to.split(",", QString::SkipEmptyParts)) {
                         toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
                     }
                     message.setTo(toList);
+
+                    QList<QMessageAddress> ccList;
+                    foreach (const QString &addr, cc.split(",", QString::SkipEmptyParts)) {
+                        ccList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                    }
+                    if (!ccList.isEmpty()) {
+                        message.setCc(ccList);
+                    }
+
                     message.setFrom(QMessageAddress(from, QMessageAddress::Email));
                     message.setSubject(subject);
 
@@ -1399,6 +1411,8 @@ public:
         return QMessageId();
     }
 };
+
+QTM_END_NAMESPACE
 
 namespace Support {
 

@@ -60,6 +60,8 @@
 #include <QMap>
 #include <QString>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactInvalidEngine : public QContactManagerEngine
 {
 public:
@@ -68,6 +70,8 @@ public:
     QString managerName() const;
     QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 };
+
+QTM_END_NAMESPACE
 
 #endif
 

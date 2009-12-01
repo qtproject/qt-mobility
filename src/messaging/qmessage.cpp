@@ -48,6 +48,8 @@
 #include <QTextCodec>
 #include <QDebug>
 
+QTM_BEGIN_NAMESPACE
+
 namespace {
 
 QList<QByteArray> charsets;
@@ -70,52 +72,21 @@ QList<QByteArray> charsets;
     QMessage can also be constructed piece by piece using functions such as 
     setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments(). 
     
-    Alternatively a message can be initialized from raw data using fromTransmissionFormat().
-    A message may be serialized to a QDataStream, or returned as a QByteArray using 
-    toTransmissionFormat().
-    
     If a message has been modified since it was last constructed isModified() returns true.
 
     A list of attachments identifiers will be returned by attachmentIds() and an identifier for the 
     message body will be returned by bodyId(). Attachments can be appended to the content of the 
-    message using appendAttachments(), the body of the message can be set with setBody() or
-    setBodyFromFile().
+    message using appendAttachments(), the body of the message can be set with setBody().
     
     The folder and account a message is associated with are returned by parentFolderId() and
     parentAccountId() respectively.
 
     Message data that is less commonly accessed or relatively large should be lazily retrieved 
     on demand by the associated getter function.
-    
-    The following transmission formats are used both when constructing and encapsulating messages:
-    \list
-    
-    \o QMessage::Sms
-    \l{http://www.3gpp.org/ftp/Specs/html-info/23040.htm} 
-    {3GPP TS 23.040} (Technical realization of the Short Message Service).
-    
-    \o QMessage::Mms \l{http://www.openmobilealliance.org/technical/release_program/docs/MMS/V1_3-20050927-C/OMA-TS-MMS-ENC-V1_3-20050927-C.pdf} 
-    {OMA TS MMS ENC} (Multimedia Messaging Service Encapsulation Protocol).
-    
-    \o QMessage::Email 
-    \l{http://www.ietf.org/rfc/rfc2822.txt} {RFC 2822} (Internet Message Format), and 
-    \l{http://www.ietf.org/rfc/rfc2045.txt} {RFC 2045} (Format of Internet Message Bodies) through 
-    \l{http://www.ietf.org/rfc/rfc2049.txt} {RFC 2049} (Conformance Criteria and Examples).
-
-    \o QMessage::Xmpp 
-    \l{http://www.ietf.org/rfc/rfc3921.txt} {RFC 3921} (Extensible Messaging and Presence Protocol).
-
-    \endlist
-    
+        
     Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
     or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.
-    
-    In addition to and separate from the message content information related to a message may be
-    stored in name value pairs known as custom fields, both names and values are unicode strings. 
-    A custom field may be set or updated with setCustomField(), the value of existing custom field 
-    can be retrieved with customField(), and a list of existing custom fields is returned by
-    customFields().
     
     \sa QMessageContentContainer, QMessageStore, QMessageId
 */
@@ -209,48 +180,6 @@ QList<QByteArray> charsets;
     \fn QMessage::~QMessage()
     
     Destroys the message.
-*/
-
-/*!
-    \fn QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-    
-    Constructs a message of type \a t from the data contained in \a ba.
-    
-    See the class description for a list of supported message encapsulations.
-    
-    \sa toTransmissionFormat()
-*/
-    
-/*!
-    \fn QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-    
-    Constructs a message of type \a t from the data contained in \a fileName.
-
-    See the class description for a list of supported message encapsulations.
-    
-    \sa toTransmissionFormat()
-*/
-
-/*!
-    \fn QMessage::toTransmissionFormat() const
-    
-    Returns the message in a format suitable for transmission.
-    
-    See the class description for the encapsulations used for each
-    message type.
-    
-    \sa fromTransmissionFormat()
-*/
-
-/*!
-    \fn QMessage::toTransmissionFormat(QDataStream& out) const
-  
-    Writes the message to the output stream \a out.
-    
-    See the class description for the encapsulations used for each
-    message type.
-
-    \sa fromTransmissionFormat()
 */
 
 /*!
@@ -566,7 +495,7 @@ QList<QByteArray> charsets;
     Sets the ordered-by-preference list of names of charsets to use when encoding 
     unicode QString data to a serialized form to \a charsetNames.
 
-    \sa preferredCharsets(), preferredCharsetFor(), toTransmissionFormat(), setBody()
+    \sa preferredCharsets(), preferredCharsetFor(), setBody()
 */
 void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
 {
@@ -579,7 +508,7 @@ void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
     Returns an ordered-by-preference list of charset names to use when encoding 
     unicode QString data to a serialized form.
 
-    \sa setPreferredCharsets(), preferredCharsetFor(), toTransmissionFormat(), setBody()
+    \sa setPreferredCharsets(), preferredCharsetFor(), setBody()
 */
 QList<QByteArray> QMessage::preferredCharsets()
 {
@@ -590,7 +519,7 @@ QList<QByteArray> QMessage::preferredCharsets()
     Returns the first charset from the preferred list that is capable of encoding
     the content of \a text.
 
-    \sa preferredCharsets(), toTransmissionFormat(), setBody()
+    \sa preferredCharsets(), setBody()
 */
 QByteArray QMessage::preferredCharsetFor(const QString &text)
 {
@@ -628,4 +557,4 @@ QByteArray QMessage::preferredCharsetFor(const QString &text)
     return QByteArray();
 }
 
-
+QTM_END_NAMESPACE

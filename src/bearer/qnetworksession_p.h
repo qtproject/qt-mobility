@@ -63,7 +63,7 @@
 #include <QNetworkInterface>
 #include <QDateTime>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 #ifdef BEARER_ENGINE
 class QNetworkSessionEngine;
 #endif
@@ -88,8 +88,8 @@ public:
     void syncStateWithInterface();
 
     QNetworkInterface currentInterface() const;
-    QVariant property(const QString& key) const;
-    void setProperty(const QString& key, const QVariant& value);
+    QVariant sessionProperty(const QString& key) const;
+    void setSessionProperty(const QString& key, const QVariant& value);
     QString bearerName() const;
 
     void open();
@@ -103,8 +103,8 @@ public:
     QString errorString() const; //must return translated string
     QNetworkSession::SessionError error() const;
 
-    quint64 sentData() const;
-    quint64 receivedData() const;
+    quint64 bytesWritten() const;
+    quint64 bytesReceived() const;
     quint64 activeTime() const;
 
 private:
@@ -161,7 +161,7 @@ private:
 #endif
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //QNETWORKSESSIONPRIVATE_H
 

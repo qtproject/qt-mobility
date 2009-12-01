@@ -47,6 +47,8 @@
 
 #include <experimental/qcamera.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QCameraExposureControl : public QMediaControl
 {
     Q_OBJECT
@@ -71,23 +73,17 @@ public:
     virtual QCamera::MeteringModes supportedMeteringModes() const = 0;
 
     virtual int isoSensitivity() const = 0;
-    virtual int minimumIsoSensitivity() const = 0;
-    virtual int maximumIsoSensitivity() const = 0;
-    virtual QList<int> supportedIsoSensitivities() const = 0;
+    virtual QList<int> supportedIsoSensitivities(bool *continuous = 0) const = 0;
     virtual void setManualIsoSensitivity(int iso) = 0;
     virtual void setAutoIsoSensitivity() = 0;
 
     virtual qreal aperture() const = 0;
-    virtual qreal minimumAperture() const = 0;
-    virtual qreal maximumAperture() const = 0;
-    virtual QList<qreal> supportedApertures() const = 0;
+    virtual QList<qreal> supportedApertures(bool *continuous = 0) const = 0;
     virtual void setManualAperture(qreal aperture) = 0;
     virtual void setAutoAperture() = 0;
 
     virtual qreal shutterSpeed() const = 0;
-    virtual qreal minimumShutterSpeed() const = 0;
-    virtual qreal maximumShutterSpeed() const = 0;
-    virtual QList<qreal> supportedShutterSpeeds() const = 0;
+    virtual QList<qreal> supportedShutterSpeeds(bool *continuous = 0) const = 0;
     virtual void setManualShutterSpeed(qreal seconds) = 0;
     virtual void setAutoShutterSpeed() = 0;
 
@@ -112,6 +108,8 @@ protected:
 
 #define QCameraExposureControl_iid "com.nokia.Qt.QCameraExposureControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QCameraExposureControl, QCameraExposureControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif  // QCAMERACONTROL_H
 

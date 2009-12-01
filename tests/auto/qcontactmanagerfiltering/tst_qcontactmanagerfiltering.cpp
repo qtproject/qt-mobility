@@ -43,10 +43,11 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanager_p.h" //QContactManagerDataHolder
+#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 /*
  * This test is mostly just for testing sorting and filtering -
  * having it in tst_QContactManager makes maintenance more
@@ -151,6 +152,9 @@ tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 
     /* Known one that will not pass */
     managerNames.removeAll("invalid");
+    managerNames.removeAll("testdummy");
+    managerNames.removeAll("teststaticdummy");
+    managerNames.removeAll("maliciousplugin");
 
     foreach(QString mgr, managerNames) {
         QMap<QString, QString> params;
@@ -2741,11 +2745,8 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
     QCOMPARE(n1.suffix(), n2.suffix());
     QCOMPARE(n1.customLabel(), n2.customLabel());
 
-#if 0 // XXX TODO: update this after removing deprecated API
     // Check the display label
-    QCOMPARE(a.displayLabel().label(), b.displayLabel().label());
-    QCOMPARE(a.displayLabel().isSynthesized(), b.displayLabel().isSynthesized());
-#endif
+    QCOMPARE(a.displayLabel(), b.displayLabel());
 
     // Now look at the rest
     QList<QContactDetail> aDetails = a.details();
@@ -3197,7 +3198,7 @@ public:
 class FilterActionFactory : public QContactActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactActionFactory)
+    Q_INTERFACES(QtMobility::QContactActionFactory)
 
 public:
     FilterActionFactory() {}

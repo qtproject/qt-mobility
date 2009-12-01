@@ -43,6 +43,8 @@
 #include "qcontactdetail_p.h"
 #include "qcontactmanager.h"
 
+QTM_BEGIN_NAMESPACE
+
 /* Definitions of predefined string constants */
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextOther, "Other");
@@ -126,7 +128,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
  * and some convenience methods that return values associated with schema
  * fields.
  *
- * \snippet contacts/details/qcontactphonenumber.h 0
+ * \snippet ../../src/contacts/details/qcontactphonenumber.h 0
  *
  */
 
@@ -331,3 +333,4 @@ QVariantMap QContactDetail::values() const
  * \sa value()
  */
 
+QTM_END_NAMESPACE

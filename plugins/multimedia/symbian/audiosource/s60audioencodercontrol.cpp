@@ -180,8 +180,11 @@ void S60AudioEncoderControl::setSampleRate(int sampleRate)
     m_session->setFormat(fmt);
 }
 
-QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings) const
+QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous) const
 {
+    if (continuous)
+        *continuous = false;
+
     //TODO: return supported sample rates
     return QList<int>(); //m_session->deviceInfo()->supportedFrequencies();
 }

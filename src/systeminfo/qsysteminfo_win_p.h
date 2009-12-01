@@ -68,15 +68,14 @@
 
 #include <QBasicTimer>
 
+class QStringList;
+class QTimer;
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class QStringList;
 class QSystemNetworkInfo;
-class QTimer;
-
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -89,11 +88,11 @@ public:
     QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
 
-    QString version(QSystemInfo::Version,  const QString &parameter = QString());
+    QString version(QTM_PREPEND_NAMESPACE(QSystemInfo::Version),  const QString &parameter = QString());
 
     QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
-    bool hasFeatureSupported(QSystemInfo::Feature feature);
+    bool hasFeatureSupported(QTM_PREPEND_NAMESPACE(QSystemInfo::Feature) feature);
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
@@ -115,8 +114,8 @@ public:
     QSystemNetworkInfoPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkStatus) networkStatus(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
+    qint32 networkSignalStrength(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
     int cellId();
     int locationAreaCode();
 
@@ -126,10 +125,10 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
-    QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+    QString networkName(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
+    QString macAddress(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
 
-    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QNetworkInterface interfaceForMode(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
 
 
    void emitNetworkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -155,7 +154,7 @@ private:
     HANDLE hWlan;
     int timerMs;
    QBasicTimer netStrengthTimer;
-   bool isDefaultMode(QSystemNetworkInfo::NetworkMode mode);
+   bool isDefaultMode(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo::NetworkMode) mode);
    void startWifiCallback();
    bool wlanCallbackInitialized;
 
@@ -189,7 +188,7 @@ public:
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
+    QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume); //returns enum
 
 private:
     QHash<QString, QString> mountEntriesHash;
@@ -214,15 +213,15 @@ public:
     QString model();
     QString productName();
 
-    QSystemDeviceInfo::InputMethodFlags inputMethodType();
+    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::InputMethodFlags) inputMethodType();
 
     int  batteryLevel();
 
-    QSystemDeviceInfo::SimStatus simStatus();
+    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::SimStatus) simStatus();
     bool isDeviceLocked();
-    QSystemDeviceInfo::Profile currentProfile();
+    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::Profile) currentProfile();
 
-    QSystemDeviceInfo::PowerState currentPowerState();
+    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerState();
     void setConnection();
     static QSystemDeviceInfoPrivate *instance() {return self;}
 
@@ -236,8 +235,8 @@ Q_SIGNALS:
 
 private:
     int batteryLevelCache;
-    QSystemDeviceInfo::PowerState currentPowerStateCache;
-    QSystemDeviceInfo::BatteryStatus batteryStatusCache;
+    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerStateCache;
+    QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::BatteryStatus) batteryStatusCache;
     static QSystemDeviceInfoPrivate *self;
 };
 
@@ -251,8 +250,7 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool isScreenLockOn();
-
+    bool screenSaverSecureEnabled();
 private:
     QString screenPath;
     QString settingsPath;
@@ -260,9 +258,7 @@ private:
 
 };
 
-
-
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

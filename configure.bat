@@ -57,6 +57,7 @@ set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set CONTACTS_PLUGIN=
 set VC_TEMPLATE_OPTION=
+set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 
 if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
@@ -65,6 +66,7 @@ if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
 
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
+set QMAKE_CACHE=
 
 :cmdline_parsing
 
@@ -79,6 +81,7 @@ if "%1" == "-headerdir"     goto headerTag
 if "%1" == "-tests"         goto testTag
 if "%1" == "-examples"      goto exampleTag
 if "%1" == "-contact-src"   goto contactsTag
+if "%1" == "-qt"            goto qtTag
 if "%1" == "-vc"            goto vcTag
 if "%1" == "/?"             goto usage
 if "%1" == "-h"             goto usage
@@ -118,8 +121,14 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     options: symbian, wince, memory, maemo
 
 
-if exist "%PROJECT_CONFIF%" del %PROJECT_CONFIG%
+if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
 goto exitTag
+
+:qtTag
+shift
+set QT_PATH=%1\
+shift
+goto cmdline_parsing
 
 :contactsTag
 shift
@@ -184,6 +193,8 @@ goto cmdline_parsing
 :startProcessing
 
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
+set RELEASEMODE=
+
 echo CONTACTS_BACKENDS = %CONTACTS_PLUGIN% >> %PROJECT_CONFIG%
 
 set CURRENTDIR=%CD%
@@ -210,7 +221,11 @@ cd /D %CURRENTDIR%
 echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX% >> %PROJECT_CONFIG%
 
 echo build_unit_tests = %BUILD_UNITTESTS% >> %PROJECT_CONFIG%
+set BUILD_UNITTESTS=
+
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
+set BUILD_EXAMPLES=
+
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
 echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
@@ -218,55 +233,127 @@ echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PRO
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 
-copy %PROJECT_CONFIG% %BUILD_PATH%\config.pri
-del %PROJECT_CONFIG%
-
 echo Checking available Qt
-qmake -v >> %PROJECT_LOG% 2>&1
+%QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
 if errorlevel 1 goto qmakeNotFound
 goto qmakeFound
 :qmakeNotFound
 echo ... Not found  >> %PROJECT_LOG% 2>&1
-echo >&2 "Cannot find 'qmake' in your PATH."
+if "%QT_PATH%" == "" (
+    echo >&2Cannot find 'qmake' in your PATH.
+    echo >&2Your PATH is: %PATH%
+) else (
+    echo >&2Cannot find 'qmake' in %QT_PATH%.
+)
 echo >&2 "Aborting." 
-goto exitTag
+goto errorTag
 
 :qmakeFound
-qmake -query QT_VERSION
+%QT_PATH%qmake -query QT_VERSION
 
-echo Checking for nmake...
-nmake /? >> %PROJECT_LOG% 2>&1
-if errorlevel 1 goto mingw
-echo       Using nmake
-set MAKE=nmake
-goto testingMake
+goto checkMake
 
-:mingw
-echo Checking for mingw32-make...
-mingw32-make -v >> %PROJECT_LOG% 2>&1
-if errorlevel 1 goto gnumake
-echo       Using mingw32-make
-set MAKE=mingw32-make
-goto testingMake
+:makeTest
+setlocal
+    set CURRENT_PWD=%CD%
 
-:gnumake
-echo Checking for GNU make...
-make -v >> %PROJECT_LOG% 2>&1
-if errorlevel 1 goto noMake
-echo       Using GNU make
-set MAKE=make
-goto testingMake
+    if %BUILD_PATH% == %SOURCE_PATH% (
+        cd %SOURCE_PATH%\config.tests\make
+        if exist make del make
+    ) else (
+        rmdir /S /Q config.tests\make
+        mkdir config.tests\make
+        cd config.tests\make
+    )
 
-:noMake
+    for /f "tokens=3" %%i in ('%QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
+
+    if %BUILDSYSTEM% == symbian-abld (
+        make -h >> %PROJECT_LOG% 2>&1
+        if not errorlevel 1 (
+            echo ... Symbian abld make found.
+            set MAKE=make
+        )
+    ) else if %BUILDSYSTEM% == symbian-sbsv2 (
+        make -h >> %PROJECT_LOG% 2>&1
+        if not errorlevel 1 (
+            echo ... Symbian sbsv2 make found.
+            set MAKE=make
+        )
+    ) else if %BUILDSYSTEM% == win32-nmake (
+        nmake /? >> %PROJECT_LOG% 2>&1
+        if not errorlevel 1 (
+            echo ... nmake found.
+            set MAKE=nmake
+        )
+    ) else if %BUILDSYSTEM% == win32-mingw (
+        mingw32-make -v >> %PROJECT_LOG% 2>&1
+        if not errorlevel 1 (
+            echo ... mingw32-make found.
+            set MAKE=mingw32-make
+        )
+    ) else (
+        echo ... Unknown target environment %BUILDSYSTEM%.
+    )
+    cd %CURRENT_PWD%
+endlocal&set %1=%MAKE%&set %2=%BUILDSYSTEM%&goto :EOF
+
+:checkMake
+echo Checking make
+call :makeTest MOBILITY_MAKE MOBILITY_BUILDSYSTEM
+if not "%MOBILITY_MAKE%" == "" goto compileTests
+
 echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
 echo >&2 "Aborting."
+goto errorTag
 
-goto exitTag
+:compileTest
+setlocal
+    echo Checking %1
+    set CURRENT_PWD=%CD%
 
-:testingMake
+    if %BUILD_PATH% == %SOURCE_PATH% (
+        cd %SOURCE_PATH%\config.tests\%2
+        if exist %2 del %2
+    ) else (
+        rmdir /S /Q config.tests\%2
+        mkdir config.tests\%2
+        cd config.tests\%2
+    )
+
+    %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
+    %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
+    %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
+
+    set FAILED=0
+    if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% SBS^="@sbs --check"') do set FAILED=1
+    ) else if %MOBILITY_BUILDSYSTEM% == symbian-abld (
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
+    ) else if errorlevel 1 (
+        set FAILED=1
+    )
+
+    if %FAILED% == 0 (
+        echo ... OK
+        echo %2_enabled = yes >> %PROJECT_CONFIG%
+    ) else (
+        echo ... Not Found
+        echo %2_enabled = no >> %PROJECT_CONFIG%
+    )
+
+    cd %CURRENT_PWD%
+endlocal&goto :EOF
+
+:compileTests
 
 echo.
-REM compile tests go here. We don't have anything to test for at this stage.
+echo Start of compile tests
+REM compile tests go here.
+call :compileTest LBT lbt
+echo End of compile tests
+echo.
+echo.
 
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
 echo "Generating Mobility Headers..."
@@ -274,7 +361,7 @@ rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\global
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\context
+perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\publishsubscribe
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\serviceframework
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\systeminfo
@@ -282,16 +369,42 @@ perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\con
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
 
+if exist config.pri del config.pri
+ren %PROJECT_CONFIG% config.pri
+
 echo.
 echo Running qmake...
-qmake -recursive %VC_TEMPLATE_OPTION% %SOURCE_PATH%\qtmobility.pro
+%QT_PATH%qmake -recursive %VC_TEMPLATE_OPTION% %SOURCE_PATH%\qtmobility.pro
 if errorlevel 1 goto qmakeRecError
 echo.
-echo configure has finished. You may run %MAKE% to build the project now.
+echo configure has finished. You may run %MOBILITY_MAKE% to build the project now.
 goto exitTag
 
 :qmakeRecError
 echo.
 echo configure failed.
+goto exitTag
+
+:errorTag
+set BUILD_PATH=
+set CURRENTDIR=
+set MOBILITY_MAKE=
+set MOBILITY_BUILDSYSTEM=
+set PROJECT_CONFIG=
+set PROJECT_LOG=
+set QT_MOBILITY_PREFIX=
+set QT_PATH=
+set SOURCE_PATH=
+exit /b 1
 
 :exitTag
+set BUILD_PATH=
+set CURRENTDIR=
+set MOBILITY_MAKE=
+set MOBILITY_BUILDSYSTEM=
+set PROJECT_CONFIG=
+set PROJECT_LOG=
+set QT_MOBILITY_PREFIX=
+set QT_PATH=
+set SOURCE_PATH=
+

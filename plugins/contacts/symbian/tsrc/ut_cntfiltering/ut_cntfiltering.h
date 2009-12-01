@@ -64,8 +64,12 @@ private:
     void parseFilters();
     void addFilter(QVector<QString> param);
     void createContacts();
-    Qt::MatchFlags flag(int f);
-
+    QContactFilter::MatchFlags flag(int f);
+    void createContact_1();
+    void createContact_2();
+    void createContact_3();
+    void createContact_4();
+    void createContact_5();
 private slots:  // Test cases
     void testInvalidFilter();
     void testContactDetailFilter();

@@ -53,6 +53,8 @@
 #define PR_SMTP_ADDRESS 0x39FE001E
 #endif
 
+QTM_BEGIN_NAMESPACE
+
 void QDateTimeToFileTime(const QDateTime &dt, FILETIME *ft)
 {
     SYSTEMTIME st;
@@ -340,7 +342,7 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
             result = ~result;  // match all for include, match none for exclude
         } else {
             QMessageIdList ids(session->queryMessages(lastError, *filter->d_ptr->_messageFilter));
-            result = QMessageFilter::byId(ids, incl);
+            result = QMessageFilter::byId(ids, inclusion ? QMessageDataComparator::Includes : QMessageDataComparator::Excludes);
         }
     } else if (filter->d_ptr->_field == AccountFilter) {
         if (filter->d_ptr->_accountFilter->isEmpty()) {
@@ -1110,9 +1112,16 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
                 _valid = true;
                 return;
             case QMessage::HasAttachments:
+#ifdef _WIN32_WCE
+                _restriction.rt = RES_EXIST;
+                _restriction.res.resExist.ulReserved1 = 0;
+                _restriction.res.resExist.ulPropTag = PR_HASATTACH;
+                _restriction.res.resExist.ulReserved2 = 0;
+#else
                 _restriction.res.resBitMask.relBMR = BMR_NEZ;
                 _restriction.res.resBitMask.ulPropTag = PR_MESSAGE_FLAGS;
-                _restriction.res.resBitMask.ulMask = MSGFLAG_HASATTACH; // Found in PR_HASATTACH msdn doc, but not covered in PR_MESSAGE_FLAGS doc
+                _restriction.res.resBitMask.ulMask = MSGFLAG_HASATTACH;
+#endif
                 _valid = true;
                 return;
             default:
@@ -2131,3 +2140,5 @@ void QMessageFilterPrivate::debug(const QMessageFilter &filter, const QString &i
         QMessageFilterPrivate::debug(*filter.d_ptr->_right, indent + " ");
     }
 }
+
+QTM_END_NAMESPACE

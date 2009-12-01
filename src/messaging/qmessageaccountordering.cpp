@@ -39,7 +39,8 @@
 **
 ****************************************************************************/
 #include "qmessageaccountordering.h"
-#include "qmessageaccountordering_p.h"
+
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageAccountOrdering
@@ -118,3 +119,5 @@ bool QMessageAccountOrdering::operator!=(const QMessageAccountOrdering& other) c
 
     \sa QMessageAccount::name()
 */
+
+QTM_END_NAMESPACE

@@ -45,6 +45,8 @@
 #include "qcontactmanager.h"
 #include <QObject>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactManagerEngine;
 class QContactAbstractRequestPrivate;
 class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
@@ -106,5 +108,7 @@ private:
     Q_DISABLE_COPY(QContactAbstractRequest)
     friend class QContactManagerEngine;
 };
+
+QTM_END_NAMESPACE
 
 #endif

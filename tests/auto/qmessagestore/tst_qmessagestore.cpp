@@ -46,16 +46,24 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
+#if (defined(Q_OS_WIN) && defined(_WIN32_WCE))
 # if defined(TESTDATA_DIR)
 #  undef TESTDATA_DIR
 # endif
 # define TESTDATA_DIR "."
 #endif
 
+#if defined(Q_OS_SYMBIAN)
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
+# define TESTDATA_DIR ""
+#endif
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
+QTM_USE_NAMESPACE
 #if defined(Q_OS_WIN)
 const QByteArray defaultCharset("UTF-16");
 const QByteArray alternateCharset("UTF-8");
@@ -205,8 +213,14 @@ void tst_QMessageStore::testAccount()
     QCOMPARE(account.name(), name);
     QCOMPARE(account.messageTypes(), QMessage::Email);
 
+    QCOMPARE(QMessageAccount(account).id(), accountId);
+    QVERIFY(!(accountId < accountId));
+    QVERIFY((QMessageAccountId() < accountId) || (accountId < QMessageAccountId()));
+
     QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
+
+    QVERIFY(QMessageAccount::defaultAccount(QMessage::Email).isValid());
 }
 
 void tst_QMessageStore::testFolder_data()
@@ -218,9 +232,12 @@ void tst_QMessageStore::testFolder_data()
 
 	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
     QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
+#ifndef Q_OS_SYMBIAN
+    // Symbian does not currently support paths
     QTest::newRow("Drafts") << "Crafts" << "" << "" << "Crafts";
     QTest::newRow("Archived") << "Unbox/Archived" << "Archived" << "Unbox" << "Archived";
     QTest::newRow("Backup") << "Unbox/Archived/Backup" << "Backup" << "Unbox/Archived" << "Backup";
+#endif    
 }
 
 void tst_QMessageStore::testFolder()
@@ -250,18 +267,30 @@ void tst_QMessageStore::testFolder()
     p.insert("parentAccountName", testAccountName);
     p.insert("parentFolderPath", parentFolderPath);
 
+#if defined(Q_OS_SYMBIAN)
+    int originalCount = QMessageStore::instance()->countFolders(QMessageFolderFilter::byParentAccountId(testAccountId));
+#else
     int originalCount = QMessageStore::instance()->countFolders();
+#endif    
 
     QMessageFolderId folderId(Support::addFolder(p));
     QVERIFY(folderId.isValid());
     QVERIFY(folderId != QMessageFolderId());
+#if defined(Q_OS_SYMBIAN)
+    QCOMPARE(QMessageStore::instance()->countFolders(QMessageFolderFilter::byParentAccountId(testAccountId)), originalCount + 1);
+#else
     QCOMPARE(QMessageStore::instance()->countFolders(), originalCount + 1);
+#endif    
     
     QMessageFolder folder(folderId);
     QCOMPARE(folder.id(), folderId);
     QCOMPARE(folder.path(), path);
     QCOMPARE(folder.displayName(), displayNameResult);
     QCOMPARE(folder.parentAccountId(), testAccountId);
+
+    QCOMPARE(QMessageFolder(folder).id(), folderId);
+    QVERIFY(!(folderId < folderId));
+    QVERIFY((QMessageFolderId() < folderId) || (folderId < QMessageFolderId()));
 
     if (!parentFolderPath.isEmpty()) {
         QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(testAccountId));
@@ -284,6 +313,7 @@ void tst_QMessageStore::testMessage_data()
 {
     QTest::addColumn<QString>("to");
     QTest::addColumn<QString>("from");
+    QTest::addColumn<QString>("cc");
     QTest::addColumn<QString>("date");
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QByteArray>("messageType");
@@ -298,6 +328,7 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QList<QByteArray> >("attachmentSubType");
     QTest::addColumn<QList<unsigned> >("attachmentSize");
     QTest::addColumn<CustomFieldMap>("custom");
+    QTest::addColumn<QString>("removeMessage");
 
     CustomFieldMap customData;
     customData.insert("cake", "chocolate");
@@ -306,11 +337,16 @@ void tst_QMessageStore::testMessage_data()
     QTest::newRow("1")
         << "alice@example.com"
         << "bob@example.com"
+        << ""
         << "1999-12-31T23:59:59Z"
         << "Last message..."
         << QByteArray("text")
         << QByteArray("plain")
-        << 1536u
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << 32u
+#else
+        << 1400u
+#endif
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -319,16 +355,22 @@ void tst_QMessageStore::testMessage_data()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
-        << customData;
+        << customData
+        << "byId";
 
     QTest::newRow("2")
         << "alice@example.com"
         << "bob@example.com"
+        << "charlie@example.com, donald@example.com"
         << "1999-12-31T23:59:59Z"
         << "Last HTML message..."
         << QByteArray("text")
         << QByteArray("html")
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << 64u
+#else
         << 1536u
+#endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
@@ -337,16 +379,22 @@ void tst_QMessageStore::testMessage_data()
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<unsigned>()
-        << customData;
+        << customData
+        << "byFilter";
 
     QTest::newRow("3")
         << "alice@example.com"
         << "bob@example.com"
+        << ""
         << "1999-12-31T23:59:59Z"
         << "Last message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_WIN) && defined(_WIN32_WCE)
+        << 512u
+#else
         << 1536u
+#endif
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -355,11 +403,13 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<QByteArray>() << "text" )
         << ( QList<QByteArray>() << "plain" )
         << ( QList<unsigned>() << 512u )
-        << customData;
+        << customData
+        << "byId";
 
     QTest::newRow("4")
         << "alice@example.com"
         << "bob@example.com"
+        << ""
         << "1999-12-31T23:59:59Z"
         << "Last HTML message..."
         << QByteArray("multipart")
@@ -377,7 +427,8 @@ void tst_QMessageStore::testMessage_data()
         << ( QList<QByteArray>() << "text" << "image" )
         << ( QList<QByteArray>() << "plain" << "png" )
         << ( QList<unsigned>() << 512u << 4096u )
-        << customData;
+        << customData
+        << "byFilter";
 }
 
 void tst_QMessageStore::testMessage()
@@ -426,6 +477,7 @@ void tst_QMessageStore::testMessage()
 
     QFETCH(QString, to);
     QFETCH(QString, from);
+    QFETCH(QString, cc);
     QFETCH(QString, date);
     QFETCH(QString, subject);
     QFETCH(QByteArray, messageType);
@@ -440,10 +492,12 @@ void tst_QMessageStore::testMessage()
     QFETCH(QList<QByteArray>, attachmentSubType);
     QFETCH(QList<unsigned>, attachmentSize);
     QFETCH(CustomFieldMap, custom);
+    QFETCH(QString, removeMessage);
 
     Support::Parameters p;
     p.insert("to", to);
     p.insert("from", from);
+    p.insert("cc", cc);
     p.insert("date", date);
     p.insert("subject", subject);
     p.insert("mimeType", bodyType + '/' + bodySubType);
@@ -462,6 +516,7 @@ void tst_QMessageStore::testMessage()
 
     int originalCount = QMessageStore::instance()->countMessages();
 
+    // Test message addition
     QMessageId messageId(Support::addMessage(p));
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
@@ -479,6 +534,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(catcher.added.first().second.count(), 2);
     QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
 
+    // Test message retrieval
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
     QCOMPARE(message.isModified(), false);
@@ -486,6 +542,7 @@ void tst_QMessageStore::testMessage()
     QMessageAddress toAddress;
     toAddress.setRecipient(to);
     toAddress.setType(QMessageAddress::Email);
+    QVERIFY(!message.to().isEmpty());
     QCOMPARE(message.to().first(), toAddress);
     QCOMPARE(message.to().first().recipient(), to);
 
@@ -495,23 +552,45 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.from(), fromAddress);
     QCOMPARE(message.from().recipient(), from);
 
+    QList<QMessageAddress> ccAddresses;
+    foreach (const QString &element, cc.split(",", QString::SkipEmptyParts)) {
+        QMessageAddress addr;
+        addr.setRecipient(element.trimmed());
+        addr.setType(QMessageAddress::Email);
+        ccAddresses.append(addr);
+    }
+#ifndef Q_OS_SYMBIAN    
+    QCOMPARE(message.cc(), ccAddresses);
+#endif    
+
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
     QCOMPARE(message.subject(), subject);
 
     QCOMPARE(message.contentType().toLower(), messageType.toLower());
     QCOMPARE(message.contentSubType().toLower(), messageSubType.toLower());
 
+    QCOMPARE(message.parentAccountId(), testAccountId);
+    QCOMPARE(message.parentFolderId(), testFolderId);
+#ifndef Q_OS_SYMBIAN // Created Messages are not stored in Standard Folders in Symbian    
+    QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
+#endif    
+
+#ifndef Q_OS_SYMBIAN    
     QAPPROXIMATECOMPARE(message.size(), messageSize, (messageSize / 2));
+#endif    
 
     QMessageContentContainerId bodyId(message.bodyId());
     QCOMPARE(bodyId.isValid(), true);
     QCOMPARE(bodyId != QMessageContentContainerId(), true);
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
+    QVERIFY(message.contains(bodyId));
 
     QMessageContentContainer body(message.find(bodyId));
 
+#ifndef Q_OS_SYMBIAN    
     QCOMPARE(body.contentType().toLower(), bodyType.toLower());
     QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
+#endif    
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
@@ -525,14 +604,17 @@ void tst_QMessageStore::testMessage()
         QCOMPARE(attachmentId.isValid(), true);
         QCOMPARE(attachmentId != QMessageContentContainerId(), true);
         QCOMPARE(QMessageContentContainerId(attachmentId.toString()), attachmentId);
+        QVERIFY(message.contains(attachmentId));
 
         // With MAPI, attachment order is not preserved
         QMessageContentContainer attachment(message.find(attachmentId));
         int index = attachments.indexOf(attachment.suggestedFileName());
         QVERIFY(index != -1);
 
+#ifndef Q_OS_SYMBIAN        
         QCOMPARE(attachment.contentType().toLower(), attachmentType[index].toLower());
         QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[index].toLower());
+#endif
         QCOMPARE(attachment.suggestedFileName(), attachments[index]);
         QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[index], (attachmentSize[index] / 2));
     }
@@ -546,12 +628,14 @@ void tst_QMessageStore::testMessage()
     message.setBody(replacementText, "text/html; charset=" + alternateCharset);
     body = message.find(bodyId);
 
+#ifndef Q_OS_SYMBIAN    
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
+#endif    
 
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
@@ -573,23 +657,62 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(updated.id(), message.id());
     QCOMPARE(updated.isModified(), false);
 
+    QCOMPARE(QMessage(message).id(), message.id());
+    QVERIFY(!(message.id() < message.id()));
+    QVERIFY((QMessageId() < message.id()) || (message.id() < QMessageId()));
+
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);
     QCOMPARE(bodyId != QMessageContentContainerId(), true);
     QCOMPARE(QMessageContentContainerId(bodyId.toString()), bodyId);
+    QVERIFY(updated.contains(bodyId));
 
     body = updated.find(bodyId);
+#ifndef Q_OS_SYMBIAN    
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
 #if !defined(Q_OS_WIN)
     // Original charset is not preserved on windows
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
 #endif
+#endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
 
-    QMessageStore::instance()->removeMessage(message.id());
+    // Test response message properties
+    QMessage reply(updated.createResponseMessage(QMessage::ReplyToSender));
+    QCOMPARE(reply.subject(), updated.subject().prepend("Re:"));
+    QCOMPARE(reply.to(), QList<QMessageAddress>() << updated.from());
+    QCOMPARE(reply.cc(), QList<QMessageAddress>());
+#ifndef Q_OS_SYMBIAN    
+    QVERIFY(reply.bodyId().isValid());
+#endif    
+
+    QMessage replyToAll(updated.createResponseMessage(QMessage::ReplyToAll));
+    QCOMPARE(replyToAll.subject(), updated.subject().prepend("Re:"));
+#ifndef Q_OS_SYMBIAN    
+    QCOMPARE(replyToAll.to(), QList<QMessageAddress>() << updated.from());
+    QCOMPARE(replyToAll.cc(), QList<QMessageAddress>() << updated.to() << updated.cc());
+    QVERIFY(replyToAll.bodyId().isValid());
+#endif    
+
+    QMessage forward(updated.createResponseMessage(QMessage::Forward));
+    QCOMPARE(forward.subject(), updated.subject().prepend("Fwd:"));
+#ifndef Q_OS_SYMBIAN
+    QVERIFY(forward.bodyId().isValid());
+#endif    
+
+    // Verify that the attachments can be removed
+    updated.clearAttachments();
+    QVERIFY(updated.attachmentIds().isEmpty());
+
+    // Test message removal
+    if (removeMessage == "byId") {
+        QMessageStore::instance()->removeMessage(message.id());
+    } else { // byFilter
+        QMessageStore::instance()->removeMessages(QMessageFilter::byId(message.id()));
+    }
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
     QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
 
@@ -599,9 +722,11 @@ void tst_QMessageStore::testMessage()
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
+#ifndef Q_OS_SYMBIAN
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3->id);
+#endif    
 }
 

@@ -45,6 +45,7 @@
 #include <QtCore/qobject.h>
 
 #include <qmediaservice.h>
+QTM_USE_NAMESPACE
 
 class V4LRadioControl;
 
@@ -57,13 +58,6 @@ public:
     ~V4LRadioService();
 
     QMediaControl *control(const char* name) const;
-
-    bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
-
-    QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
-    bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    QStringList supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
-    QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
 
 private:
     V4LRadioControl *m_control;

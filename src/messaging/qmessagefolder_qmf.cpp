@@ -43,7 +43,10 @@
 
 #include <qmailfolder.h>
 
-using namespace QmfHelpers;
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
+
+
+QTM_BEGIN_NAMESPACE
 
 class QMessageFolderPrivate
 {
@@ -139,3 +142,5 @@ QString QMessageFolder::path() const
 {
     return d_ptr->_folder.path();
 }
+
+QTM_END_NAMESPACE

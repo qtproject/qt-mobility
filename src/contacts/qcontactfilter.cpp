@@ -47,12 +47,15 @@
 
 #include "qcontactmanager.h"
 
+
+
 /*!
- * \class QContactFilter
- * \brief The QContactFilter class is used to select contacts made available through a QContactManager
- *
- * This class is used as a parameter to various functions offered by QContactManager, to allow
- * selection of contacts which have certain details or properties.
+  \class QContactFilter
+  \brief The QContactFilter class is used to select contacts made available
+  through a QContactManager.
+ 
+  This class is used as a parameter to various functions offered by QContactManager, to allow
+  selection of contacts which have certain details or properties.
  */
 
 /*!
@@ -89,11 +92,13 @@
  */
 
 #if !defined(Q_CC_MWERKS)
-template<> QContactFilterPrivate *QSharedDataPointer<QContactFilterPrivate>::clone()
+template<> QTM_PREPEND_NAMESPACE(QContactFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QContactFilterPrivate)>::clone()
 {
     return d->clone();
 }
 #endif
+
+QTM_BEGIN_NAMESPACE
 
 /*! Constructs an empty filter */
 QContactFilter::QContactFilter()
@@ -197,4 +202,4 @@ const QContactFilter operator|(const QContactFilter& left, const QContactFilter&
     nif << left << right;
     return nif;
 }
-
+QTM_END_NAMESPACE

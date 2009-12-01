@@ -48,8 +48,11 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
+
 class QByteArray;
 class QStringList;
+
+QTM_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QVideoEncoderControl : public QMediaControl
 {
@@ -58,13 +61,11 @@ class Q_MEDIA_EXPORT QVideoEncoderControl : public QMediaControl
 public:
     virtual ~QVideoEncoderControl();
 
-    virtual QSize minimumResolution(const QVideoEncoderSettings &settings) const = 0;
-    virtual QSize maximumResolution(const QVideoEncoderSettings &settings) const = 0;
-    virtual QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings) const = 0;
+    virtual QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings,
+                                              bool *continuous = 0) const = 0;
 
-    virtual qreal minimumFrameRate(const QVideoEncoderSettings &settings) const = 0;
-    virtual qreal maximumFrameRate(const QVideoEncoderSettings &settings) const = 0;
-    virtual QList<qreal> supportedFrameRates(const QVideoEncoderSettings &settings) const = 0;
+    virtual QList<qreal> supportedFrameRates(const QVideoEncoderSettings &settings,
+                                             bool *continuous = 0) const = 0;
 
     virtual QStringList supportedVideoCodecs() const = 0;
     virtual QString videoCodecDescription(const QString &codecName) const = 0;
@@ -82,5 +83,7 @@ protected:
 
 #define QVideoEncoderControl_iid "com.nokia.Qt.QVideoEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoEncoderControl, QVideoEncoderControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif

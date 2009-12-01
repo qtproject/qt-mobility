@@ -43,6 +43,12 @@
 
 #include "cnttransformcontactdata.h"
 
+QTM_USE_NAMESPACE
+
+// S60 specific contact field type containing image call object data
+#define KUidContactFieldCodImageValue 0x101F8841
+const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
+
 class CntTransformAvatar : public CntTransformContactData
 {
 protected:

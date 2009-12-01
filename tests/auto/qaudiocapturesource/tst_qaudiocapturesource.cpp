@@ -42,17 +42,14 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 
-#ifndef QT_NO_MULTIMEDIA
 #include <QtMultimedia/qaudioformat.h>
-#else
-#include <qaudioformat.h>
-#endif
 
 #include <qaudiocapturesource.h>
 #include <qaudioencodercontrol.h>
 #include <qmediarecordercontrol.h>
 #include <qaudiodevicecontrol.h>
 
+QTM_USE_NAMESPACE
 class MockAudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT
@@ -76,7 +73,13 @@ public:
     QVariant encodingOption(const QString &, const QString &) const { return m_optionValue; }
     void setEncodingOption(const QString &, const QString &, const QVariant &value) { m_optionValue = value; }
 
-    QList<int> supportedSampleRates(const QAudioEncoderSettings & = QAudioEncoderSettings()) const { return m_freqs; }
+    QList<int> supportedSampleRates(const QAudioEncoderSettings & = QAudioEncoderSettings(),
+                                    bool *continuous = 0) const
+    {
+        if (continuous)
+            *continuous = false;
+        return m_freqs;
+    }
     QList<int> supportedChannelCounts(const QAudioEncoderSettings & = QAudioEncoderSettings()) const { QList<int> list; list << 1 << 2; return list; }
 
     QAudioEncoderSettings audioSettings() const { return m_audioSettings; }

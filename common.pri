@@ -134,22 +134,16 @@ wince* {
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
-    TARGET.CAPABILITY = ALL -TCB
-    TARGET.EPOCALLOWDLLDATA = 1
 }
 
 # Add the output dirs to the link path too
 mac:contains(QT_CONFIG,qt_framework) {
     #add framework option
-    contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
+    ##contains(TEMPLATE, app)|contains(CONFIG,plugin):LIBS+=-F$$OUTPUT_DIR/lib
+    LIBS+=-F$$OUTPUT_DIR/lib
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
-contains(QT_CONFIG, multimedia) {
-    QT += multimedia
-} else {
-    DEFINES *= QT_NO_MULTIMEDIA
-}

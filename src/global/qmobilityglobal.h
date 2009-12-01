@@ -41,6 +41,19 @@
 #ifndef QMOBILITYGLOBAL_H
 #define QMOBILITYGLOBAL_H
 
+
+#define QTM_VERSION_STR   "1.0.0"
+/*
+   QTM_VERSION is (major << 16) + (minor << 8) + patch.
+*/
+#define QTM_VERSION 0x010000
+/*
+   can be used like #if (QTM_VERSION >= QTM_VERSION_CHECK(1, 0, 0))
+*/
+#define QTM_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
+
+
+
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
 # if !defined(QT_BUILD_INTERNAL)
@@ -66,14 +79,19 @@
 #        define Q_BEARER_EXPORT Q_DECL_IMPORT
 #      endif
 #      if defined(QT_BUILD_CFW_LIB)
-#        define Q_CFW_EXPORT Q_DECL_EXPORT
+#        define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #      else
-#        define Q_CFW_EXPORT Q_DECL_IMPORT
+#        define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #      endif
 #      if defined(QT_BUILD_CONTACTS_LIB)
 #        define Q_CONTACTS_EXPORT Q_DECL_EXPORT
 #      else
 #        define Q_CONTACTS_EXPORT Q_DECL_IMPORT
+#      endif
+#      if defined(QT_BUILD_VERSIT_LIB)
+#        define Q_VERSIT_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_VERSIT_EXPORT Q_DECL_IMPORT
 #      endif
 #      if defined(QT_BUILD_LOCATION_LIB)
 #        define Q_LOCATION_EXPORT Q_DECL_EXPORT
@@ -102,8 +120,9 @@
 #      endif
 #    elif defined(QT_DLL) /* use a Qt DLL library */
 #      define Q_BEARER_EXPORT Q_DECL_IMPORT
-#      define Q_CFW_EXPORT Q_DECL_IMPORT
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
 #      define Q_CONTACTS_EXPORT Q_DECL_IMPORT
+#      define Q_VERSIT_EXPORT Q_DECL_IMPORT
 #      define Q_LOCATION_EXPORT Q_DECL_IMPORT
 #      define Q_MEDIA_EXPORT Q_DECL_IMPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
@@ -115,8 +134,9 @@
 #  if !defined(Q_SFW_EXPORT)
 #    if defined(QT_SHARED)
 #      define Q_BEARER_EXPORT Q_DECL_EXPORT
-#      define Q_CFW_EXPORT Q_DECL_EXPORT
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
 #      define Q_CONTACTS_EXPORT Q_DECL_EXPORT
+#      define Q_VERSIT_EXPORT Q_DECL_EXPORT
 #      define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #      define Q_MEDIA_EXPORT Q_DECL_EXPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
@@ -124,8 +144,9 @@
 #      define Q_SYSINFO_EXPORT Q_DECL_EXPORT
 #    else
 #      define Q_BEARER_EXPORT
-#      define Q_CFW_EXPORT
+#      define Q_PUBLISHSUBSCRIBE_EXPORT
 #      define Q_CONTACTS_EXPORT
+#      define Q_VERSIT_EXPORT
 #      define Q_LOCATION_EXPORT
 #      define Q_MEDIA_EXPORT
 #      define Q_MESSAGING_EXPORT
@@ -134,4 +155,21 @@
 #    endif
 #  endif
 #endif
+
+// The namespace is hardcoded as moc has issues resolving
+// macros which would be a prerequisite for a dynmamic namespace
+#define QTM_NAMESPACE QtMobility
+
+#ifdef QTM_NAMESPACE
+# define QTM_PREPEND_NAMESPACE(name) ::QTM_NAMESPACE::name
+# define QTM_BEGIN_NAMESPACE namespace QTM_NAMESPACE {
+# define QTM_END_NAMESPACE }
+# define QTM_USE_NAMESPACE using namespace QTM_NAMESPACE;
+#else
+# define QTM_PREPEND_NAMESPACE(name) ::name
+# define QTM_BEGIN_NAMESPACE
+# define QTM_END_NAMESPACE
+# define QTM_USE_NAMESPACE
+#endif
+
 #endif // QMOBILITYGLOBAL_H

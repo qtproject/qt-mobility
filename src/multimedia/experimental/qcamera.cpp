@@ -52,9 +52,10 @@
 #include <experimental/qimagecapturecontrol.h>
 #include <qvideodevicecontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QCamera
-    \ingroup multimedia
 
     \preliminary
     \brief The QCamera class provides interface for system
@@ -72,6 +73,12 @@
 
         camera->start();
     \endcode
+
+The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
+the same level of review and testing as the rest of the APIs.
+
+The API exposed by the classes in this component are not stable, and will
+undergo modification or removal prior to the final release of Qt Mobility.
 */
 
 
@@ -210,6 +217,16 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
 QCamera::~QCamera()
 {
 }
+
+
+/*!
+    Returns true if the camera is supported, otherwise returns false.
+*/
+bool QCamera::isAvailable() const
+{
+    return d_func()->control != NULL;
+}
+
 
 /*!
     Returns the error state of the object.
@@ -588,28 +605,17 @@ int QCamera::isoSensitivity() const
 }
 
 /*!
-    Returns the smallest supported ISO sensitivity.
-*/
-int QCamera::minimumIsoSensitivity() const
-{
-    return d_func()->exposureControl ? d_func()->exposureControl->minimumIsoSensitivity() : -1;
-}
+    Returns the list of ISO senitivities camera supports.
 
-/*!
-    Returns the largest supported ISO sensitivity.
+    If the camera supports arbitrary ISO sensitivities within the supported range,
+    *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
-int QCamera::maximumIsoSensitivity() const
+QList<int> QCamera::supportedIsoSensitivities(bool *continuous) const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->maximumIsoSensitivity() : -1;
-}
+    if (continuous)
+        *continuous = 0;
 
-/*!
-    Returns the list of ISO senitivities if camera supports
-    only fixed set of ISO sensitivity values, otherwise returns an empty list.
-*/
-QList<int> QCamera::supportedIsoSensitivities() const
-{
-    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivities()
+    return d_func()->exposureControl ? d_func()->exposureControl->supportedIsoSensitivities(continuous)
                                      : QList<int>();
 }
 
@@ -651,7 +657,7 @@ void QCamera::setAutoIsoSensitivity()
 
 /*!
     \property QCamera::aperture
-    \brief Lens aperture is specified as an f-number, the ratio of the focal length to effective aperture diameter.
+    \brief Lens aperture is specified as an F number, the ratio of the focal length to effective aperture diameter.
 */
 
 qreal QCamera::aperture() const
@@ -660,36 +666,20 @@ qreal QCamera::aperture() const
 }
 
 /*!
-    Returns the smallest supported aperture as an F number,
-    corresponding to wide open lens.
-    For example if the camera lenses supports aperture range from
-    F/1.4 to F/32, the minumum aperture value will be 1.4,
-    the maximum - 32
-*/
-qreal QCamera::minimumAperture() const
-{
-    return d_func()->exposureControl ? d_func()->exposureControl->minimumAperture() : -1.0;
-}
+    Returns the list of aperture values camera supports.
+    The apertures list can change depending on the focal length,
+    in such a case the apertureRangeChanged() signal is emited.
 
-/*!
-    Returns the largest supported aperture.
-
-    \sa minimumAperture()
-    \sa aperture()
+    If the camera supports arbitrary aperture values within the supported range,
+    *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
-qreal QCamera::maximumAperture() const
+QList<qreal> QCamera::supportedApertures(bool * continuous) const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->maximumAperture() : -1.0;
-}
+    if (continuous)
+        *continuous = 0;
 
-/*!
-    Returns the list of apertures if camera supports
-    only fixed set of aperture values, otherwise returns an empty list.
-*/
-QList<qreal> QCamera::supportedApertures() const
-{
     return d_func()->exposureControl ? \
-           d_func()->exposureControl->supportedApertures() : QList<qreal>();
+           d_func()->exposureControl->supportedApertures(continuous) : QList<qreal>();
 }
 
 /*!
@@ -721,33 +711,19 @@ qreal QCamera::shutterSpeed() const
     return d_func()->exposureControl ? d_func()->exposureControl->shutterSpeed() : -1;
 }
 
-
 /*!
-    Returns the smallest supported shutter speed.
-*/
-qreal QCamera::minimumShutterSpeed() const
-{
-    return d_func()->exposureControl ? d_func()->exposureControl->minimumShutterSpeed() : -1.0;
-}
+    Returns the list of shutter speed values in seconds camera supports.
 
-/*!
-    Returns the largest supported shutter speed.
-
-    \sa shutterSpeed()
+    If the camera supports arbitrary shutter speed values within the supported range,
+    *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
-qreal QCamera::maximumShutterSpeed() const
+QList<qreal> QCamera::supportedShutterSpeeds(bool *continuous) const
 {
-    return d_func()->exposureControl ? d_func()->exposureControl->maximumShutterSpeed() : -1.0;
-}
+    if (continuous)
+        *continuous = false;
 
-/*!
-    Returns the list of shutter speed values if camera supports
-    only fixed set of shutter speed values, otherwise returns an empty list.
-*/
-QList<qreal> QCamera::supportedShutterSpeeds() const
-{
     return d_func()->exposureControl ?
-            d_func()->exposureControl->supportedShutterSpeeds() : QList<qreal>();
+            d_func()->exposureControl->supportedShutterSpeeds(continuous) : QList<qreal>();
 }
 
 /*!
@@ -1034,6 +1010,7 @@ void QCamera::capture(const QString &file)
     \value  NotReadyToCaptureError System resource not available.
     \value  InvalidRequestError System resource doesn't support functionality.
     \value  ServiceMissingError No service available.
+    \value  NotSupportedFeatureError The feature is not supported.
 */
 
 /*!
@@ -1044,3 +1021,5 @@ void QCamera::capture(const QString &file)
 
 
 #include "moc_qcamera.cpp"
+QTM_END_NAMESPACE
+

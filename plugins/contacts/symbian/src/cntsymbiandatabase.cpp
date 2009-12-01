@@ -48,11 +48,12 @@
 #include "qcontactchangeset.h"
 #include "qcontactmanagerengine.h"
 
-// Constants
+// Constant
+typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
 
 CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error) :
     m_contactDatabase(0),
-    m_ownCardId(0)
+    m_currentOwnCardId(0)
 {
     TRAPD(err, m_contactDatabase = CContactDatabase::OpenL())
 
@@ -79,7 +80,7 @@ CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactMa
         // Read current own card id (self contact id)
         TContactItemId myCard = m_contactDatabase->OwnCardId();
         if (myCard > 0)
-            m_ownCardId = QContactLocalId(myCard);
+            m_currentOwnCardId = QContactLocalId(myCard);
     }
     CntSymbianTransformError::transformError(err, error);
 }
@@ -164,9 +165,12 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             changeSet.changedContacts().insert(id); //group is a contact
         break;
     case EContactDbObserverEventOwnCardChanged:
-        emit ownCardChanged(m_ownCardId, QContactLocalId(id));
-        m_ownCardId = QContactLocalId(id);
-        break;
+        {
+            QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(id));
+            changeSet.oldAndNewSelfContactId() = ownCard;
+            m_currentOwnCardId = QContactLocalId(id);
+            break;
+        }
     default:
         break; // ignore other events
     }

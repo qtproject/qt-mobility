@@ -48,6 +48,7 @@
 #include "qcontactsortorder.h"
 #include "qcontactfilter.h"
 
+QTM_USE_NAMESPACE
 class CntAbstractContactFilter
 {
 public:

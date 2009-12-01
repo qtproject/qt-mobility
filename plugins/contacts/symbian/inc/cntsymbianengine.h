@@ -64,12 +64,16 @@
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 
+QTM_BEGIN_NAMESPACE
 class QContactChangeSet;
+QTM_END_NAMESPACE
 class CntSymbianDatabase;
 class CntTransformContact;
 class CntAbstractContactFilter;
 class CntAbstractContactSorter;
 class CntRelationship;
+
+QTM_USE_NAMESPACE
 
 #define CNT_SYMBIAN_MANAGER_NAME "symbian"
 
@@ -96,6 +100,7 @@ public:
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
     /* Relationships between contacts */
+    QStringList supportedRelationshipTypes(const QString& contactType) const;
     QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
@@ -161,7 +166,7 @@ private:
 class Q_DECL_EXPORT CntSymbianFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;

@@ -41,6 +41,7 @@
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 
+QTM_USE_NAMESPACE
 class tst_QSystemScreenSaver : public QObject
 {
     Q_OBJECT
@@ -49,7 +50,6 @@ private slots:
         void initTestCase();
     void tst_screenSaverInhibited();
     void tst_setScreenSaverInhibit();
-    void tst_isScreenLockOn();
 
 };
 
@@ -70,14 +70,6 @@ void tst_QSystemScreenSaver::tst_setScreenSaverInhibit()
     QSystemScreenSaver si;
     bool enabled = si.setScreenSaverInhibit();
     QVERIFY( enabled || !enabled);
-}
-
-void tst_QSystemScreenSaver::tst_isScreenLockOn()
-{
-    QSystemScreenSaver si;
-    bool enabled = si.isScreenLockOn();
-    QVERIFY( enabled || !enabled);
-
 }
 
 QTEST_MAIN(tst_QSystemScreenSaver)

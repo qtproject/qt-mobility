@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include <QApplication>
 #include <QObject>
 #include <QTextStream>
@@ -52,7 +53,7 @@
 
 #include <qvaluespace.h>
 #include <qvaluespacesubscriber.h>
-#include <qvaluespaceprovider.h>
+#include <qvaluespacepublisher.h>
 
 #ifdef USE_READLINE
 #include <stdio.h>
@@ -68,6 +69,8 @@
 #ifdef Q_OS_WIN
 #include <QThread>
 #endif
+
+QTM_USE_NAMESPACE
 
 static bool terminateRequested = false;
 
@@ -111,9 +114,9 @@ private:
 
     bool isSuppress;
     QValueSpaceSubscriber pwd;
-    QValueSpaceProvider prov;
+    QValueSpacePublisher prov;
     QSet<QValueSpaceSubscriber *> subs;
-    QSet<QValueSpaceProvider *> watchers;
+    QSet<QValueSpacePublisher *> watchers;
 };
 static VSExplorer * vse = 0;
 
@@ -166,7 +169,7 @@ void VSExplorer::interestChanged(const QString &attribute, bool interested)
     Q_ASSERT(sender());
 
     if (!isSuppress) {
-        QValueSpaceProvider *obj = static_cast<QValueSpaceProvider *>(sender());
+        QValueSpacePublisher *obj = static_cast<QValueSpacePublisher *>(sender());
         fprintf(stdout, "\nInterest Changed: %s ... %s %d\n",
                 qPrintable(obj->path()), qPrintable(attribute), interested);
     }
@@ -273,7 +276,7 @@ void VSExplorer::listwatchers()
         fprintf(stdout, "No watchers.\n");
     } else {
         fprintf(stdout, "Current watchers:\n");
-        foreach(QValueSpaceProvider *obj, watchers)
+        foreach (QValueSpacePublisher *obj, watchers)
             fprintf(stdout, "\t%s\n", obj->path().toAscii().constData());
     }
 
@@ -331,12 +334,12 @@ void VSExplorer::quit()
 
 void VSExplorer::watch(const QString &path)
 {
-    foreach (QValueSpaceProvider *obj, watchers) {
+    foreach (QValueSpacePublisher *obj, watchers) {
         if (obj->path() == path)
             return;
     }
 
-    QValueSpaceProvider * newObject = new QValueSpaceProvider(path);
+    QValueSpacePublisher * newObject = new QValueSpacePublisher(path);
     watchers.insert(newObject);
     QObject::connect(newObject, SIGNAL(attributeInterestChanged(QString,bool)),
                      this, SLOT(interestChanged(QString,bool)));
@@ -344,7 +347,7 @@ void VSExplorer::watch(const QString &path)
 
 void VSExplorer::unwatch(const QString &path)
 {
-    foreach (QValueSpaceProvider *obj, watchers) {
+    foreach (QValueSpacePublisher *obj, watchers) {
         if (obj->path() == path) {
             watchers.remove(obj);
             delete obj;
@@ -368,21 +371,21 @@ void VSExplorer::suppress()
 void VSExplorer::set(const QString &name, const QString &value)
 {
     if('/' == *name.constData())
-        prov.setAttribute(name, value);
+        prov.setValue(name, value);
     else if(pwd.path().endsWith("/"))
-        prov.setAttribute(pwd.path() + name, value);
+        prov.setValue(pwd.path() + name, value);
     else
-        prov.setAttribute(pwd.path() + "/" + name, value);
+        prov.setValue(pwd.path() + "/" + name, value);
 }
 
 void VSExplorer::clear(const QString &name)
 {
     if('/' == *name.constData())
-        prov.removeAttribute(name);
+        prov.resetValue(name);
     else if(pwd.path().endsWith("/"))
-        prov.removeAttribute(pwd.path() + name);
+        prov.resetValue(pwd.path() + name);
     else
-        prov.removeAttribute(pwd.path() + "/" + name);
+        prov.resetValue(pwd.path() + "/" + name);
 }
 
 void VSExplorer::processLine(const QString &line)

@@ -43,6 +43,7 @@
 
 #include "qmediasource.h"
 
+QTM_USE_NAMESPACE
 class tst_QMediaSource : public QObject
 {
     Q_OBJECT

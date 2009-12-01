@@ -52,6 +52,8 @@
 
 #include <qmediaserviceprovider.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QCameraControl;
 
 
@@ -157,6 +159,8 @@ public:
     static QList<QByteArray> availableDevices();
     static QString deviceDescription(const QByteArray &device);
 
+    bool isAvailable() const;
+
     void start();
     void stop();
 
@@ -194,23 +198,17 @@ public:
     void setManualWhiteBalance(int colorTemperature);
 
     int isoSensitivity() const;
-    int minimumIsoSensitivity() const;
-    int maximumIsoSensitivity() const;
-    QList<int> supportedIsoSensitivities() const;
+    QList<int> supportedIsoSensitivities(bool *continuous = 0) const;
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
 
     qreal aperture() const;
-    qreal minimumAperture() const;
-    qreal maximumAperture() const;
-    QList<qreal> supportedApertures() const;
+    QList<qreal> supportedApertures(bool *continuous = 0) const;
     void setManualAperture(qreal aperture);
     void setAutoAperture();
 
     qreal shutterSpeed() const;
-    qreal minimumShutterSpeed() const;
-    qreal maximumShutterSpeed() const;
-    QList<qreal> supportedShutterSpeeds() const;
+    QList<qreal> supportedShutterSpeeds(bool *continuous = 0) const;
     void setManualShutterSpeed(qreal seconds);
     void setAutoShutterSpeed();
 
@@ -268,8 +266,11 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::WhiteBalanceModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::MeteringModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::ExposureModes)
 
-Q_DECLARE_METATYPE(QCamera::State)
-Q_DECLARE_METATYPE(QCamera::Error)
-Q_DECLARE_METATYPE(QCamera::FocusStatus)
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QCamera)::State)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QCamera)::Error)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QCamera)::FocusStatus)
+
 
 #endif  // QCAMERA_H

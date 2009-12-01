@@ -42,13 +42,24 @@
 #include <experimental/qimagecapturecontrol.h>
 #include <QtCore/qstringlist.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QImageCaptureControl
-    \brief The QImageCaptureControl provides a control interface for image capture services.
+    
+    \brief The QImageCaptureControl class provides a control interface
+    for image capture services.
+
     \preliminary
 
     The interface name of QImageCaptureControl is \c com.nokia.Qt.QImageCaptureControl/1.0 as
     defined in QImageCaptureControl_iid.
+
+The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
+the same level of review and testing as the rest of the APIs.
+
+The API exposed by the classes in this component are not stable, and will
+undergo modification or removal prior to the final release of Qt Mobility.
 
     \sa QMediaService::control()
 */
@@ -111,3 +122,7 @@ QImageCaptureControl::~QImageCaptureControl()
 
     Signals that an captured image has been saved to \a fileName.
 */
+
+#include "moc_qimagecapturecontrol.cpp"
+QTM_END_NAMESPACE
+

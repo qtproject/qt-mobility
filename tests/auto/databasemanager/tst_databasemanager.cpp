@@ -50,7 +50,9 @@
 # define TESTDATA_DIR "."
 #endif
 
-class DatabaseManagerUnitTest: public QObject
+QTM_USE_NAMESPACE
+
+class tst_DatabaseManager: public QObject
 {
     Q_OBJECT
 private slots:
@@ -93,14 +95,15 @@ private:
         QDir m_testdir;
 };
 
-void DatabaseManagerUnitTest::initTestCase()
+void tst_DatabaseManager::initTestCase()
 {
     QSfwTestUtil::setupTempUserDb();
     QSfwTestUtil::setupTempSystemDb();
+    QSfwTestUtil::removeDirectory(QSfwTestUtil::tempSettingsPath());
     m_dbm = new DatabaseManager;
 }
 
-void DatabaseManagerUnitTest::registerService()
+void tst_DatabaseManager::registerService()
 {
     m_testdir = QDir(TESTDATA_DIR "/testdata");
     ServiceMetaData parser("");
@@ -133,7 +136,7 @@ void DatabaseManagerUnitTest::registerService()
     }
 }
 
-void DatabaseManagerUnitTest::getInterfaces()
+void tst_DatabaseManager::getInterfaces()
 {
     QString iface("com.omni.device.accelerometer");
     QServiceFilter filter(iface);
@@ -203,7 +206,7 @@ void DatabaseManagerUnitTest::getInterfaces()
     QCOMPARE(m_dbm->lastError().code(), DBError::NoError);
 }
 
-void DatabaseManagerUnitTest::getServiceNames()
+void tst_DatabaseManager::getServiceNames()
 {
     //try getting a lost of service names only in user database
     QStringList serviceNames;
@@ -241,7 +244,7 @@ void DatabaseManagerUnitTest::getServiceNames()
         QVERIFY(serviceNames.contains(expectedName, Qt::CaseInsensitive));
 }
 
-void DatabaseManagerUnitTest::defaultService()
+void tst_DatabaseManager::defaultService()
 {
     QServiceInterfaceDescriptor descriptor;
 
@@ -367,7 +370,7 @@ void DatabaseManagerUnitTest::defaultService()
     QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 }
 
-void DatabaseManagerUnitTest::unregisterService()
+void tst_DatabaseManager::unregisterService()
 {
     //try remove a service that only exists in the user database
     QServiceFilter filter;
@@ -418,7 +421,7 @@ void DatabaseManagerUnitTest::unregisterService()
     clean();
 }
 
-bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
+bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interface,
         QString interfaceName, QString serviceName, int majorVersion, int minorVersion)
 {
     if (interface.d == NULL )
@@ -429,7 +432,7 @@ bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
             QStringList());
 }
 
-bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
+bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interface,
     QString interfaceName, QString serviceName, int majorVersion, int minorVersion,
     QStringList capabilities, QString filePath, QString serviceDescription,
     QString interfaceDescription)
@@ -505,7 +508,7 @@ bool DatabaseManagerUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
     return true;
 }
 #ifdef Q_OS_UNIX
-void DatabaseManagerUnitTest::permissions()
+void tst_DatabaseManager::permissions()
 {
     ServiceMetaDataResults results;
     //try create a user scope database with no permissions
@@ -619,7 +622,7 @@ void DatabaseManagerUnitTest::permissions()
     clean();
 }
 
-void DatabaseManagerUnitTest::onlyUserDbAvailable()
+void tst_DatabaseManager::onlyUserDbAvailable()
 {
     QString userNokiaDir =  QSfwTestUtil::userDirectory() + "/Nokia/";
     QString systemNokiaDir = QSfwTestUtil::systemDirectory() + "/Nokia/";
@@ -747,7 +750,7 @@ void DatabaseManagerUnitTest::onlyUserDbAvailable()
     clean();
 }
 
-void DatabaseManagerUnitTest::defaultServiceCornerCases()
+void tst_DatabaseManager::defaultServiceCornerCases()
 {
     m_dbm = new DatabaseManager;
     ServiceMetaData parser("");
@@ -998,7 +1001,7 @@ void DatabaseManagerUnitTest::defaultServiceCornerCases()
 }
 #endif
 
-void DatabaseManagerUnitTest::nonWritableSystemDb()
+void tst_DatabaseManager::nonWritableSystemDb()
 {
     m_dbm = new DatabaseManager;
     ServiceMetaData parser("");
@@ -1201,7 +1204,7 @@ void DatabaseManagerUnitTest::nonWritableSystemDb()
     clean();
 }
 
-void DatabaseManagerUnitTest::CWRTXmlCompatability()
+void tst_DatabaseManager::CWRTXmlCompatability()
 {
     m_dbm = new DatabaseManager;
     ServiceMetaData parser("");
@@ -1247,7 +1250,7 @@ void DatabaseManagerUnitTest::CWRTXmlCompatability()
     QVERIFY(compareDescriptor(descriptors[2], "com.nokia.ILocation", "TestService2", 1,2));
 }
 
-void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
+void tst_DatabaseManager::modifyPermissionSet(QFile::Permissions &permsSet,
                                                     int perm)
 {
     switch(perm) {
@@ -1292,7 +1295,7 @@ void DatabaseManagerUnitTest::modifyPermissionSet(QFile::Permissions &permsSet,
     }
 }
 
-void DatabaseManagerUnitTest::clean()
+void tst_DatabaseManager::clean()
 {
     if (m_dbm != 0 ) {
         delete m_dbm;
@@ -1302,12 +1305,12 @@ void DatabaseManagerUnitTest::clean()
     QSfwTestUtil::removeDirectory(QSfwTestUtil::tempSettingsPath());
 }
 
-void DatabaseManagerUnitTest::cleanupTestCase()
+void tst_DatabaseManager::cleanupTestCase()
 {
     clean();
 }
 
-QTEST_MAIN(DatabaseManagerUnitTest)
+QTEST_MAIN(tst_DatabaseManager)
 
 #include "tst_databasemanager.moc"
 

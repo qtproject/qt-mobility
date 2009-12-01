@@ -55,7 +55,7 @@
 // External data types
 
 // Constants
-
+QTM_USE_NAMESPACE
 class CntSymbianFilterSqlHelper
 {
 public: 
@@ -91,8 +91,7 @@ private:
                           QString& sqlQuery,
                           QContactManager::Error& error);
     /* Return true if this filter is leaf filter*/ 
-    bool isSingleFilter(const QContactFilter& filter, 
-                             QContactManager::Error& error) const;
+    bool isSingleFilter(const QContactFilter& filter) const;
     /*Local helper functions used for creating the sql query */
     void updateSqlQueryForSingleFilter(const QContactFilter& filter,
                                        QString& sqlQuery,
@@ -108,16 +107,18 @@ private:
     void updateFieldForDeatilFilterMatchFlag( const QContactDetailFilter& filter,
                                               QString& fieldToUpdate ,
                                               QContactManager::Error& error) const;
-    void CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(const QContactDetailFilter detailFilter);
+    QList<QContactLocalId> CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(const QContactDetailFilter detailFilter);
     void getMatchLengthL(TInt& matchLength);
     TInt CntSymbianFilterSqlHelper::searchPhoneNumbers(
             CContactIdArray*& idArray,
             const TDesC& phoneNumber,
             const TInt matchLength);
+    CntAbstractContactFilter::FilterSupport checkIfDetailFilterSupported(const QContactDetailFilter& detailFilter) const;
+    
 private:
     CntSymbianSrvConnection* m_srvConnection;
     CContactDatabase &m_contactDatabase;
-    bool isSearchingDone;
+    bool isPhoneNumberSearchforDetailFilter;
     QHash<int,QString> contactsTableIdColumNameMapping;
     QHash<int,int> commAddrTableIdColumNameMapping;
 };

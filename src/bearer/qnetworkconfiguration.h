@@ -50,9 +50,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
-
-QT_MODULE(Network)
+QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
 class Q_BEARER_EXPORT QNetworkConfiguration
@@ -75,10 +73,10 @@ public:
     };
 
     enum Purpose {
-        Unknown = 0,
-        Public,
-        Private,
-        ServiceSpecific
+        UnknownPurpose = 0,
+        PublicPurpose,
+        PrivatePurpose,
+        ServiceSpecificPurpose
     };
 
     enum StateFlag {
@@ -94,7 +92,7 @@ public:
     Type type() const;
     Purpose purpose() const;
     QString identifier() const;
-    bool roamingAvailable() const;
+    bool isRoamingAvailable() const;
     QList<QNetworkConfiguration> children() const;
 
     QString name() const;
@@ -108,7 +106,7 @@ private:
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

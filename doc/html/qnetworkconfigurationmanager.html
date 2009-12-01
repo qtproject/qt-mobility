@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qnetworkconfigmanager.cpp -->
 <head>
-  <title>QNetworkConfigurationManager Class Reference</title>
+  <title>Qt Mobility 1.0: QNetworkConfigurationManager Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -24,8 +24,8 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">CapabilityFlag</a></b> { BearerManagement, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming, ForcedRoaming, DataStatistics }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">CapabilityFlags</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#Capability-enum">Capabilities</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#Capability-enum">Capability</a></b> { CanStartAndStopInterfaces, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming, ForcedRoaming, DataStatistics }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -34,9 +34,10 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#QNetworkConfigurationManager">QNetworkConfigurationManager</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#dtor.QNetworkConfigurationManager">~QNetworkConfigurationManager</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QNetworkConfiguration&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</a></b> ( QNetworkConfiguration::StateFlags <i>filter</i> = 0 ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QNetworkConfigurationManager::CapabilityFlags </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#capabilities">capabilities</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QNetworkConfigurationManager::Capabilities </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#capabilities">capabilities</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QNetworkConfiguration </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#configurationFromIdentifier">configurationFromIdentifier</a></b> ( const QString &amp; <i>identifier</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QNetworkConfiguration </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#defaultConfiguration">defaultConfiguration</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#isOnline">isOnline</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#updateConfigurations">updateConfigurations</a></b> ()</td></tr>
 </table>
 <ul>
@@ -75,18 +76,18 @@
 <p>See also <a href="qnetworkconfiguration.html">QNetworkConfiguration</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
-<h3 class="flags"><a name="CapabilityFlag-enum"></a>enum QNetworkConfigurationManager::CapabilityFlag<br />flags QNetworkConfigurationManager::CapabilityFlags</h3>
+<h3 class="flags"><a name="Capability-enum"></a>enum QNetworkConfigurationManager::Capability<br />flags QNetworkConfigurationManager::Capabilities</h3>
 <p>Specifies the system capabilities of the bearer API. The possible values are:</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QNetworkConfigurationManager::BearerManagement</tt></td><td align="center" valign="top"><tt>0x00000001</tt></td><td valign="top">Network sessions and their underlying access points can be started and stopped. If this flag is not set <a href="qnetworksession.html">QNetworkSession</a> can only monitor but not influence the state of access points. On some platforms this feature may require elevated user permissions. This option is platform specific and may not always be available.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfigurationManager::CanStartAndStopInterfaces</tt></td><td align="center" valign="top"><tt>0x00000001</tt></td><td valign="top">Network sessions and their underlying access points can be started and stopped. If this flag is not set <a href="qnetworksession.html">QNetworkSession</a> can only monitor but not influence the state of access points. On some platforms this feature may require elevated user permissions. This option is platform specific and may not always be available.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::DirectConnectionRouting</tt></td><td align="center" valign="top"><tt>0x00000002</tt></td><td valign="top">Network sessions and their sockets can be bound to a particular network interface. Any packet that passes through the socket goes to the specified network interface and thus disregards standard routing table entries. This may be useful when two interfaces can reach overlapping IP ranges or an application has specific needs in regards to target networks. This option is platform specific and may not always be available.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::SystemSessionSupport</tt></td><td align="center" valign="top"><tt>0x00000004</tt></td><td valign="top">If this flag is set the underlying platform ensures that a network interface is not shut down until the last network session has been <a href="qnetworksession.html#close">closed()</a>. This works across multiple processes. If the platform session support is missing this API can only ensure the above behavior for network sessions within the same process. In general mobile platforms (such as Symbian/S60) have such support whereas most desktop platform lack this capability.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::ApplicationLevelRoaming</tt></td><td align="center" valign="top"><tt>0x00000008</tt></td><td valign="top">The system gives applications control over the systems roaming behavior. Applications can initiate roaming (in case the current link is not suitable) and are consulted if the system has identified a more suitable access point.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::ForcedRoaming</tt></td><td align="center" valign="top"><tt>0x00000010</tt></td><td valign="top">The system disconnects an existing access point and reconnects via a more suitable one. The application does not have any control over this process and has to reconnect its active sockets.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::DataStatistics</tt></td><td align="center" valign="top"><tt>0x00000020</tt></td><td valign="top">If this flag is set <a href="qnetworksession.html">QNetworkSession</a> can provide statistics about transmitted and received data.</td></tr>
 </table></p>
-<p>The CapabilityFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;CapabilityFlag&gt;. It stores an OR combination of CapabilityFlag values.</p>
+<p>The Capabilities type is a typedef for <a href="qflags.html">QFlags</a>&lt;Capability&gt;. It stores an OR combination of Capability values.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <h3 class="fn"><a name="QNetworkConfigurationManager"></a>QNetworkConfigurationManager::QNetworkConfigurationManager ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -99,7 +100,7 @@
 <p>A wireless network with a particular SSID may only be accessible in a certain area despite the fact that the system has a valid configuration for it. Therefore the filter flag may be used to limit the list to discovered and possibly connected configurations only.</p>
 <p>If <i>filter</i> is set to zero this function returns all possible configurations.</p>
 <p>Note that this function returns the states for all configurations as they are known at the time of this function call. If for instance a configuration of type WLAN is defined the system may have to perform a WLAN scan in order to determine whether it is actually available. To obtain the most accurate state <a href="qnetworkconfigurationmanager.html#updateConfigurations">updateConfigurations</a>() should be used to update each configuration's state. Note that such an update may require some time. It's completion is signalled by <a href="qnetworkconfigurationmanager.html#updateCompleted">updateCompleted</a>(). In the absence of a configuration update this function returns the best estimate at the time of the call.</p>
-<h3 class="fn"><a name="capabilities"></a><a href="qnetworkconfigurationmanager.html#CapabilityFlag-enum">QNetworkConfigurationManager::CapabilityFlags</a> QNetworkConfigurationManager::capabilities () const</h3>
+<h3 class="fn"><a name="capabilities"></a><a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::Capabilities</a> QNetworkConfigurationManager::capabilities () const</h3>
 <p>Returns the capabilities supported by the current platform.</p>
 <h3 class="fn"><a name="configurationAdded"></a>void QNetworkConfigurationManager::configurationAdded ( const <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> &amp; <i>config</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted whenever a new network configuration is added to the system. The new configuration is specified by <i>config</i>.</p>
@@ -114,6 +115,16 @@
 <p>Returns the default configuration to be used. This function always returns a discovered configuration; otherwise an invalid configuration.</p>
 <p>In some cases it may be required to call <a href="qnetworkconfigurationmanager.html#updateConfigurations">updateConfigurations</a>() and wait for the <a href="qnetworkconfigurationmanager.html#updateCompleted">updateCompleted</a>() signal before calling this function.</p>
 <p>See also <a href="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</a>().</p>
+<h3 class="fn"><a name="isOnline"></a>bool QNetworkConfigurationManager::isOnline () const</h3>
+<p>Returns true if the system is considered to be connected to another device via an active network interface; otherwise returns false.</p>
+<p>This is equivalent to the following code snippet:</p>
+<pre>    QNetworkConfigurationManager mgr;
+    QList&lt;QNetworkConfiguration&gt; activeConfigs = mgr.allConfigurations(QNetworkConfiguration::Active)
+    if (activeConfigs.count() &gt; 0)
+        Q_ASSERT(mgr.isOnline())
+    else
+        Q_ASSERT(!mgr.isOnline())</pre>
+<p>See also <a href="qnetworkconfigurationmanager.html#onlineStateChanged">onlineStateChanged</a>().</p>
 <h3 class="fn"><a name="onlineStateChanged"></a>void QNetworkConfigurationManager::onlineStateChanged ( bool <i>isOnline</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the device changes from online to offline mode or vice versa. <i>isOnline</i> represents the new state of the device.</p>
 <p>The state is considered to be online for as long as <a href="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</a>(<a href="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Active</a>) returns a list with at least one entry.</p>
@@ -127,6 +138,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

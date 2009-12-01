@@ -58,7 +58,7 @@
     #include <aputils.h> 
 #endif
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 static const int KValueThatWillBeAddedToSNAPId = 1000;
 static const int KUserChoiceIAPId = 0;
@@ -95,7 +95,7 @@ QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
     cpPriv->numericId = KUserChoiceIAPId;
     cpPriv->connectionId = 0;
     cpPriv->type = QNetworkConfiguration::UserChoice;
-    cpPriv->purpose = QNetworkConfiguration::Unknown;
+    cpPriv->purpose = QNetworkConfiguration::UnknownPurpose;
     cpPriv->roamingSupported = false;
     cpPriv->manager = this;
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
@@ -148,7 +148,7 @@ QNetworkConfigurationManagerPrivate::~QNetworkConfigurationManagerPrivate()
 
 void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
-    capFlags |= QNetworkConfigurationManager::BearerManagement;
+    capFlags |= QNetworkConfigurationManager::CanStartAndStopInterfaces;
     capFlags |= QNetworkConfigurationManager::DirectConnectionRouting;
     capFlags |= QNetworkConfigurationManager::SystemSessionSupport;
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
@@ -242,7 +242,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             cpPriv->connectionId = 0;
             cpPriv->state = QNetworkConfiguration::Defined;
             cpPriv->type = QNetworkConfiguration::ServiceNetwork;
-            cpPriv->purpose = QNetworkConfiguration::Unknown;
+            cpPriv->purpose = QNetworkConfiguration::UnknownPurpose;
             cpPriv->roamingSupported = false;
             cpPriv->manager = this;
 
@@ -452,7 +452,7 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
     cpPriv->numericId = iapId;
     cpPriv->connectionId = 0;
     cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-    cpPriv->purpose = QNetworkConfiguration::Unknown;
+    cpPriv->purpose = QNetworkConfiguration::UnknownPurpose;
     cpPriv->roamingSupported = false;
     cpPriv->manager = this;
     
@@ -496,7 +496,7 @@ void QNetworkConfigurationManagerPrivate::readNetworkConfigurationValuesFromComm
     apNetworkConfiguration->connectionId = 0;
     apNetworkConfiguration->state = (QNetworkConfiguration::Defined);
     apNetworkConfiguration->type = QNetworkConfiguration::InternetAccessPoint;
-    apNetworkConfiguration->purpose = QNetworkConfiguration::Unknown;
+    apNetworkConfiguration->purpose = QNetworkConfiguration::UnknownPurpose;
     apNetworkConfiguration->roamingSupported = false;
     switch (pAPItem->BearerTypeL()) {
     case EApBearerTypeCSD:      
@@ -970,5 +970,5 @@ void AccessPointsAvailabilityScanner::RunL()
         iOwner.accessPointScanningReady(true,iIapBuf());
     }
 }
-
-QT_END_NAMESPACE
+#include "moc_qnetworkconfigmanager_s60_p.cpp"
+QTM_END_NAMESPACE

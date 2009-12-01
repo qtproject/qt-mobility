@@ -71,6 +71,12 @@
 
 #include <QDebug>
 
+//UIDs for preferred (default) fields
+const int KDefaultFieldForCall = 0x10003E70;
+const int KDefaultFieldForVideoCall = 0x101F85A6;
+const int KDefaultFieldForEmail = 0x101F85A7;
+const int KDefaultFieldForMessage = 0x101f4cf1;
+
 CntTransformContact::CntTransformContact()
 {
 	initializeCntTransformContactData();
@@ -164,6 +170,7 @@ QContact CntTransformContact::transformContactL(CContactItem &contact) const
         if(detail)
         {
             newQtContact.saveDetail(detail);
+            transformPreferredDetail(fields[i], *detail, newQtContact);
             delete detail;
             detail = 0;
         }
@@ -246,16 +253,9 @@ void CntTransformContact::transformContactL(
             QList<CContactItemField *> fieldList = transformDetailL(*detail);
             int fieldCount = fieldList.count();
 
-            // check if the contact has any unsupported details
-            if(fieldCount == 0) {
-                if (detail->definitionName() != QContactDisplayLabel::DefinitionName
-                    && detail->definitionName() != QContactType::DefinitionName
-                    && detail->definitionName() != QContactGuid::DefinitionName
-                    && detail->definitionName() != QContactTimestamp::DefinitionName) {
-                User::Leave(KErrInvalidContactDetail);
-                }
-            }
-
+            // save preferred detail
+            transformPreferredDetailL(contact, detailList.at(i), fieldList);
+            
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
@@ -420,4 +420,42 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
     CleanupStack::PopAndDestroy(guidBuf);
 #endif
     return timestampDetail;
+}
+
+void CntTransformContact::transformPreferredDetailL(const QContact& contact, 
+        const QContactDetail& detail, QList<CContactItemField*> &fieldList) const
+{
+    if (fieldList.count() == 0) {
+        return;
+    }
+
+    if (contact.isPreferredDetail("call", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForCall));
+    }
+    else if (contact.isPreferredDetail("email", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForEmail));
+    }
+    else if (contact.isPreferredDetail("videocall", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForVideoCall));
+    }
+    else if (contact.isPreferredDetail("message", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForMessage));
+    }
+}
+
+void CntTransformContact::transformPreferredDetail(const CContactItemField& field,
+        const QContactDetail& detail, QContact& contact) const
+{
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForCall))) {
+        contact.setPreferredDetail("call", detail);
+    }
+    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForEmail))) {
+        contact.setPreferredDetail("email", detail);
+    }
+    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForVideoCall))) {
+        contact.setPreferredDetail("videocall", detail);
+    }
+    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
+        contact.setPreferredDetail("message", detail);
+    }
 }

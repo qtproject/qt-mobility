@@ -41,6 +41,8 @@
 
 #include <qaudioformat.h>
 
+QTM_BEGIN_NAMESPACE
+
 
 class QAudioFormatPrivate : public QSharedData
 {
@@ -68,7 +70,6 @@ public:
     \brief The QAudioFormat class stores audio parameter information.
 
     \inmodule QtMultimedia
-    \ingroup  multimedia
     \since 4.6
 
     An audio format specifies how data in an audio stream is arranged,
@@ -327,4 +328,6 @@ QAudioFormat::SampleType QAudioFormat::sampleType() const
     \value BigEndian     samples are big endian byte order
     \value LittleEndian  samples are little endian byte order
 */
+
+QTM_END_NAMESPACE
 

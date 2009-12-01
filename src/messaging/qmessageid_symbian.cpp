@@ -39,6 +39,10 @@
 **
 ****************************************************************************/
 #include "qmessageid.h"
+#include <qhash>
+
+
+QTM_BEGIN_NAMESPACE
 
 class QMessageIdPrivate
 {
@@ -96,7 +100,16 @@ bool QMessageId::operator==(const QMessageId& other) const
 
 bool QMessageId::operator<(const QMessageId& other) const
 {
-    return false; // stub
+    long left = 0;
+    long right = 0;
+    if (d_ptr) {
+        left = d_ptr->_id.toLong();
+    }
+    if (other.d_ptr) {
+        right = other.d_ptr->_id.toLong();
+    }
+    
+    return (left < right);
 }
 
 QString QMessageId::toString() const
@@ -114,3 +127,5 @@ uint qHash(const QMessageId &id)
     return qHash(id.toString());
 }
 
+
+QTM_END_NAMESPACE

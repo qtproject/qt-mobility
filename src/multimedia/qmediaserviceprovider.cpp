@@ -48,6 +48,8 @@
 #include <qmediapluginloader_p.h>
 #include <qmediaplayer.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMediaServiceProviderHintPrivate : public QSharedData
 {
 public:
@@ -81,6 +83,8 @@ public:
     \class QMediaServiceProviderHint
     \preliminary
     \brief The QMediaServiceProviderHint class describes what is required of a QMediaService.
+    
+    \ingroup multimedia-serv
 
     The QMediaServiceProvider class uses hints to select an appropriate media service.
 */
@@ -524,7 +528,7 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 /*!
     \class QMediaServiceProviderPlugin
     \preliminary
-    \brief The QMediaServiceProviderPlugin interface provides an interface for QMediaService
+    \brief The QMediaServiceProviderPlugin class interface provides an interface for QMediaService
     plug-ins.
 
     A media service provider plug-in may implement one or more of
@@ -555,8 +559,8 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
 /*!
     \class QMediaServiceSupportedFormatsInterface
-    \brief The QMediaServiceSupportedFormatsInterface interface identifies if a media service
-    plug-in supports a media format.
+    \brief The QMediaServiceSupportedFormatsInterface class interface
+    identifies if a media service plug-in supports a media format.
 
     A QMediaServiceProviderPlugin may implement this interface.
 */
@@ -575,8 +579,8 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
 /*!
     \class QMediaServiceSupportedDevicesInterface
-    \brief The QMediaServiceSupportedDevicesInterface interface identifies the devices supported
-    by a media service plug-in.
+    \brief The QMediaServiceSupportedDevicesInterface class interface
+    identifies the devices supported by a media service plug-in.
 
     A QMediaServiceProviderPlugin may implement this interface.
 */
@@ -601,8 +605,8 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
 /*!
     \class QMediaServiceFeaturesInterface
-    \brief The QMediaServiceFeaturesInterface interface identifies features supported by a media
-    service plug-in.
+    \brief The QMediaServiceFeaturesInterface class interface identifies
+    features supported by a media service plug-in.
 
     A QMediaServiceProviderPlugin may implement this interface.
 */
@@ -617,3 +621,8 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
     Returns a set of features supported by a plug-in \a service.
 */
+
+#include "moc_qmediaserviceprovider.cpp"
+#include "moc_qmediaserviceproviderplugin.cpp"
+QTM_END_NAMESPACE
+

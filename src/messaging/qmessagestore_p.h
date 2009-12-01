@@ -41,6 +41,11 @@
 #ifndef QMESSAGESTOREPRIVATE_H
 #define QMESSAGESTOREPRIVATE_H
 #include "qmessagestore.h"
+#ifdef Q_OS_WIN
+class QMutex;
+#endif
+
+QTM_BEGIN_NAMESPACE
 
 class QMessageStorePrivatePlatform;
 
@@ -56,5 +61,12 @@ public:
 
     QMessageStore *q_ptr;
     QMessageStorePrivatePlatform *p_ptr;
+
+#ifdef Q_OS_WIN
+    static QMutex* mutex(QMessageStore*);
+#endif
+
 };
+
+QTM_END_NAMESPACE
 #endif

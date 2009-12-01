@@ -54,9 +54,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
-
-QT_MODULE(Network)
+QTM_BEGIN_NAMESPACE
 
 class QNetworkSessionPrivate;
 class Q_BEARER_EXPORT QNetworkSession : public QObject
@@ -92,11 +90,11 @@ public:
     State state() const;
     SessionError error() const;
     QString errorString() const;
-    QVariant property(const QString& key) const;
-    void setProperty(const QString& key, const QVariant& value);
+    QVariant sessionProperty(const QString& key) const;
+    void setSessionProperty(const QString& key, const QVariant& value);
 
-    quint64 sentData() const;
-    quint64 receivedData() const;
+    quint64 bytesWritten() const;
+    quint64 bytesReceived() const;
     quint64 activeTime() const;
     
     bool waitForOpened(int msecs = 30000);
@@ -115,8 +113,8 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void stateChanged(QNetworkSession::State);
-    void sessionOpened();
-    void sessionClosed();
+    void opened();
+    void closed();
     void error(QNetworkSession::SessionError);
     void preferredConfigurationChanged(const QNetworkConfiguration& config, bool isSeamless);
     void newConfigurationActivated();
@@ -130,7 +128,7 @@ private:
     friend class QNetworkSessionPrivate;
     };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

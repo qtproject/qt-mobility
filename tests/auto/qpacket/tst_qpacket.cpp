@@ -43,6 +43,7 @@
 
 #include <QtTest/QTest>
 
+QTM_USE_NAMESPACE
 class tst_QPacket : public QObject
 {
     Q_OBJECT

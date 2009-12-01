@@ -57,14 +57,14 @@
 #include <QtCore/qshareddata.h>
 #include <QNetworkInterface>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate : public QSharedData
 {
 public:
     QNetworkConfigurationPrivate ()
         : isValid(false), type(QNetworkConfiguration::Invalid), 
-          roamingSupported(false), purpose(QNetworkConfiguration::Unknown)
+          roamingSupported(false), purpose(QNetworkConfiguration::UnknownPurpose)
     {
 #ifdef BEARER_ENGINE
         internet = false;
@@ -99,6 +99,6 @@ private:
     QNetworkConfigurationPrivate(const QNetworkConfigurationPrivate &other);
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //QNETWORKCONFIGURATIONPRIVATE_H

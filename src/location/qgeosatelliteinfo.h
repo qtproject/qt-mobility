@@ -44,12 +44,12 @@
 #include "qmobilityglobal.h"
 
 class QDebug;
-class QGeoSatelliteInfoPrivate;
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
+class QGeoSatelliteInfoPrivate;
 class Q_LOCATION_EXPORT QGeoSatelliteInfo
 {
 public:
@@ -90,7 +90,7 @@ private:
 Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
 #endif
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

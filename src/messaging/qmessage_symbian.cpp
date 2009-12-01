@@ -41,12 +41,16 @@
 #include "qmessage.h"
 #include "qmessage_symbian_p.h"
 #include "qmessagecontentcontainer_symbian_p.h"
+#include "qmessagestore.h"
+
+
+QTM_BEGIN_NAMESPACE
 
 QMessagePrivate::QMessagePrivate(QMessage *message)
  : q_ptr(message),
+   _type(QMessage::NoType),
    _size(0),
    _standardFolder(QMessage::DraftsFolder),
-   _type(QMessage::NoType),
    _status(0),
    _priority(QMessage::NormalPriority),
    _modified(false)
@@ -57,12 +61,33 @@ QMessagePrivate::~QMessagePrivate()
 {
 }
 
+QString QMessagePrivate::senderName(const QMessage &message)
+{
+    return message.d_ptr->_senderName;
+}
+
+
+void QMessagePrivate::setSenderName(const QMessage &message, const QString &senderName)
+{
+    message.d_ptr->_senderName = senderName;
+}
+
+void QMessagePrivate::setSize(const QMessage &message, uint size)
+{
+    message.d_ptr->_size = size;
+}
+
 void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFolder sf)
 {
     message.d_ptr->_standardFolder = sf;
     message.d_ptr->_modified = true;
 }
 
+QMessagePrivate* QMessagePrivate::implementation(const QMessage &message)
+
+{
+    return message.d_ptr;
+}
 
 QMessage::QMessage()
  : d_ptr(new QMessagePrivate(this))
@@ -74,7 +99,8 @@ QMessage::QMessage()
 QMessage::QMessage(const QMessageId& id)
  : d_ptr(new QMessagePrivate(this))
 {
-	d_ptr->_id = id;
+	*this = QMessageStore::instance()->message(id);
+	setDerivedMessage(this);	
 }
 
 QMessage::QMessage(const QMessage &other)
@@ -100,30 +126,6 @@ QMessage::~QMessage()
 	delete d_ptr;	
 }
 
-QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(ba)
-    return QMessage(); // stub
-}
-
-QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(fileName)
-    return QMessage(); // stub
-}
-
-QByteArray QMessage::toTransmissionFormat() const
-{
-    return QByteArray(); // stub
-}
-
-void QMessage::toTransmissionFormat(QDataStream& out) const
-{
-    Q_UNUSED(out)
-}
-
 QMessageId QMessage::id() const
 {
 	return d_ptr->_id;
@@ -137,6 +139,7 @@ QMessage::Type QMessage::type() const
 void QMessage::setType(Type t)
 {
 	d_ptr->_type = t;
+	d_ptr->_modified = true;
 }
 
 QMessageAccountId QMessage::parentAccountId() const
@@ -147,11 +150,12 @@ QMessageAccountId QMessage::parentAccountId() const
 void QMessage::setParentAccountId(const QMessageAccountId &accountId)
 {
     d_ptr->_parentAccountId = accountId;
+    d_ptr->_modified = true;
 }
 
 QMessageFolderId QMessage::parentFolderId() const
 {
-    return QMessageFolderId(); // stub
+    return d_ptr->_parentFolderId;
 }
 
 QMessage::StandardFolder QMessage::standardFolder() const
@@ -168,6 +172,7 @@ void QMessage::setFrom(const QMessageAddress &address)
 {
 	d_ptr->_modified = true;
 	d_ptr->_from = address;
+    d_ptr->_modified = true;
 }
 
 QString QMessage::subject() const
@@ -177,8 +182,9 @@ QString QMessage::subject() const
 
 void QMessage::setSubject(const QString &s)
 {
-	d_ptr->_modified = true;
-    d_ptr->_subject = s;
+	d_ptr->_modified = true;   
+	d_ptr->_subject = s;
+    d_ptr->_modified = true;
 }
 
 QDateTime QMessage::date() const
@@ -190,6 +196,7 @@ void QMessage::setDate(const QDateTime &d)
 {
 	d_ptr->_modified = true;
 	d_ptr->_date = d;
+    d_ptr->_modified = true;
 }
 
 QDateTime QMessage::receivedDate() const
@@ -201,6 +208,7 @@ void QMessage::setReceivedDate(const QDateTime &d)
 {
 	d_ptr->_modified = true;
     d_ptr->_receivedDate = d;
+    d_ptr->_modified = true;
 }
 
 QMessageAddressList QMessage::to() const
@@ -212,12 +220,14 @@ void QMessage::setTo(const QMessageAddressList& toList)
 {
 	d_ptr->_modified = true;
     d_ptr->_toList = toList;
+    d_ptr->_modified = true;
 }
 
 void QMessage::setTo(const QMessageAddress& address)
 {
 	d_ptr->_modified = true;
     d_ptr->_toList << address;
+    d_ptr->_modified = true;
 }
 
 QMessageAddressList QMessage::cc() const
@@ -229,6 +239,7 @@ void QMessage::setCc(const QMessageAddressList& ccList)
 {
 	d_ptr->_modified = true;
 	d_ptr->_ccList = ccList;
+    d_ptr->_modified = true;
 }
 
 QMessageAddressList QMessage::bcc() const
@@ -240,6 +251,7 @@ void QMessage::setBcc(const QMessageAddressList& bccList)
 {
 	d_ptr->_modified = true;
 	d_ptr->_bccList = bccList;
+    d_ptr->_modified = true;
 }
 
 QMessage::StatusFlags QMessage::status() const
@@ -251,12 +263,18 @@ void QMessage::setStatus(QMessage::StatusFlags newStatus)
 {
 	d_ptr->_modified = true;
     d_ptr->_status = newStatus;
+    d_ptr->_modified = true;
 }
 
 void QMessage::setStatus(QMessage::Status flag, bool set)
 {
-    Q_UNUSED(flag)
-    Q_UNUSED(set)
+	d_ptr->_modified = true;
+	if (set) {
+		d_ptr->_status |= flag;
+	} else {
+		d_ptr->_status &= ~flag;
+	}
+    d_ptr->_modified = true;
 }
 
 QMessage::Priority QMessage::priority() const
@@ -268,11 +286,26 @@ void QMessage::setPriority(Priority newPriority)
 {
 	d_ptr->_modified = true;
     d_ptr->_priority = newPriority;
+    d_ptr->_modified = true;
 }
 
 uint QMessage::size() const
 {
-    return 0; // stub
+	uint size = 0;
+    if (d_ptr->_size != 0) {
+        size = d_ptr->_size;
+    } else {
+    	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+		if (container->_size != 0) {
+			size += ((container->_size / 1024) + 1) * 1024;
+		}
+		foreach (const QMessageContentContainer &attachment, container->_attachments) {
+			size += ((attachment.size() / 1024) + 1) * 1024;
+		}
+		size += 1024;
+    
+    }
+	return size;
 }
 
 QMessageContentContainerId QMessage::bodyId() const
@@ -287,43 +320,124 @@ QMessageContentContainerId QMessage::bodyId() const
 void QMessage::setBody(const QString &body, const QByteArray &mimeType)
 {
     QByteArray mainType("text");
-    QByteArray subType("plain");
-    QByteArray charset("UTF-8");
+    QByteArray subType("plain");   
+    QByteArray charset;
     
-    int index = mimeType.indexOf("/");
-    if (index != -1) {
-        mainType = mimeType.left(index).trimmed();
-        subType = mimeType.mid(index + 1).trimmed();
-    }
+    QByteArray charset1("UTF-8");
+    QList<QByteArray> charsetNames;
+    charsetNames.append(charset1);
+    QMessage::setPreferredCharsets(charsetNames);
+    
+    QString mime = QString(mimeType);
+
+	int index = mimeType.indexOf("/");
+	if (index != -1) {
+		mainType = mimeType.left(index).trimmed();
+
+		subType = mimeType.mid(index + 1).trimmed();
+		index = subType.indexOf(";");
+		if (index != -1) {
+			 QString remainder = subType.mid(index + 1);
+			subType = subType.left(index).trimmed();
+
+			QRegExp charsetPattern("charset=(\\S+)");
+			index = charsetPattern.indexIn(remainder);
+			if (index != -1) {
+				charset = charsetPattern.cap(1).toLatin1();
+			}
+	   }
+	}
+
+	if (charset.isEmpty()) {
+		charset = QMessage::preferredCharsetFor(body);
+	    if (charset.isEmpty()) {
+	    charset = "UTF-16";
+	    }
+	}
     
     QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
-    container->setContent(body, mainType, subType, charset);
-    d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+
+    QMessageContentContainerId existingBodyId(bodyId());
+    if (existingBodyId.isValid()) {
+        if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+            // The body content is in the message itself
+            container->setContent(body, mainType, subType, charset);
+        } else {
+            // The body content is in the first attachment
+            QMessageContentContainerPrivate *attachmentContainer(container->attachment(existingBodyId)->d_ptr);
+            attachmentContainer->setContent(body, mainType, subType, charset);
+        }
+    } else {
+        if (container->_attachments.isEmpty()) {
+            // Put the content directly into the message
+            container->setContent(body, mainType, subType, charset);
+            d_ptr->_bodyId = QMessageContentContainerPrivate::bodyContentId();
+        } else {
+            // Add the body as the first attachment
+            QMessageContentContainer newBody;
+            newBody.d_ptr->setContent(body, mainType, subType, charset);
+            d_ptr->_bodyId = container->prependContent(newBody);
+        }
+    }
+
     d_ptr->_modified = true;
 }
 
 void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 {
     setBody(in.readAll(), mimeType);
+    d_ptr->_modified = true;
 }
 
 QMessageContentContainerIdList QMessage::attachmentIds() const
 {
-	return contentIds();
+	QMessageContentContainerIdList list = contentIds();
+	QMessageContentContainerIdList ids;
+
+	foreach (QMessageContentContainerId id, list) {
+		QMessageContentContainer container = find(id);
+		if (container.textContent().isEmpty()) // conteiner is attachment
+			ids.append(container.d_ptr->_id);
+	}
+	    
+	return ids;
 }
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
 	if (!fileNames.isEmpty()) {
-		d_ptr->_modified = true;
+        d_ptr->_modified = true;
+
         QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+
+        if (container->_attachments.isEmpty()) {
+            QMessageContentContainerId existingBodyId(bodyId());
+            if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+                // The body content is in the message itself - move it to become the first attachment
+                QMessageContentContainer newBody(*this);
+                newBody.setDerivedMessage(0);
+
+                container->setContentType("multipart", "mixed", "");
+                d_ptr->_bodyId = container->prependContent(newBody);
+            } else {
+                // This message is now multipart
+                container->setContentType("multipart", "mixed", "");
+            }
+
+            container->_available = true;
+        }
+
         foreach (const QString &filename, fileNames) {
             QMessageContentContainer attachment;
             if (attachment.d_ptr->createAttachment(filename)) {
                 container->appendContent(attachment);
             }
         }
+
+        bool haveAttachments = !container->_attachments.isEmpty();
+        setStatus(QMessage::HasAttachments,haveAttachments);
     }
+    d_ptr->_modified = true;
 }
 
 void QMessage::clearAttachments()
@@ -340,6 +454,71 @@ bool QMessage::isModified() const
 
 QMessage QMessage::createResponseMessage(ResponseType type) const
 {
-    return QMessage(); // stub
+	QMessage message;
+	message.setType(d_ptr->_type);
+	message.setParentAccountId(d_ptr->_parentAccountId);
+	message.setDate(QDateTime::currentDateTime());
+	
+	if (type == ReplyToSender) {
+		message.setTo(d_ptr->_from);
+		
+		QString subj = subject();
+		if (!subj.isEmpty()) {
+			subj.insert(0, "Re:");
+			message.setSubject(subj);
+		}
+		
+	} else if (type == ReplyToAll) {
+		QList<QMessageAddress> addressList;
+		QMessageAddressList toList = to();
+		foreach(QMessageAddress address, toList) {
+			addressList.append(address);
+		}
+		addressList.append(d_ptr->_from);
+		message.setTo(addressList);
+		
+		QList<QMessageAddress> ccAddressList;
+		QMessageAddressList ccList = cc();
+		foreach(QMessageAddress ccAddress, ccList) {
+			ccAddressList.append(ccAddress);
+		}
+		message.setCc(ccAddressList);
+		
+		QList<QMessageAddress> bccAddressList;
+		QMessageAddressList bccList = bcc();
+		foreach(QMessageAddress bccAddress, bccList) {
+			bccAddressList.append(bccAddress);
+		}
+		message.setBcc(bccAddressList);
+		
+		QString subj = subject();
+		if (!subj.isEmpty()) {
+			subj.insert(0, "Re:");
+			message.setSubject(subj);
+		}
+
+	} else if (type == Forward) {
+		QString subj = subject();
+		if (!subj.isEmpty()) {
+			subj.insert(0, "Fwd:");
+			message.setSubject(subj);
+		}
+		QString body = textContent();
+		if (!body.isEmpty()) {
+			message.setBody(body);
+		}
+		QMessageContentContainerIdList ids = attachmentIds();
+		QStringList containerList;
+		foreach (QMessageContentContainerId id, ids){
+			QMessageContentContainer container = find(id);
+			QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);			
+			containerList.append(QString(filePath));
+		}
+		message.appendAttachments(containerList);
+		
+	}	
+    return message;
 }
 
+
+QTM_END_NAMESPACE

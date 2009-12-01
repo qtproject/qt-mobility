@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessage.h"
 
+
+QTM_BEGIN_NAMESPACE
+
 QMessage::QMessage()
 {
 }
@@ -63,30 +66,6 @@ QMessage& QMessage::operator=(const QMessage& other)
 
 QMessage::~QMessage()
 {
-}
-
-QMessage QMessage::fromTransmissionFormat(Type t, const QByteArray &ba)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(ba)
-    return QMessage(); // stub
-}
-
-QMessage QMessage::fromTransmissionFormatFile(Type t, const QString& fileName)
-{
-    Q_UNUSED(t)
-    Q_UNUSED(fileName)
-    return QMessage(); // stub
-}
-
-QByteArray QMessage::toTransmissionFormat() const
-{
-    return QByteArray(); // stub
-}
-
-void QMessage::toTransmissionFormat(QDataStream& out) const
-{
-    Q_UNUSED(out)
 }
 
 QMessageId QMessage::id() const
@@ -282,3 +261,5 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
     return QMessage(); // stub
 }
 
+
+QTM_END_NAMESPACE

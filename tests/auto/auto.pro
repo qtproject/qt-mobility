@@ -3,13 +3,16 @@ TEMPLATE = subdirs
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 SUBDIRS += databasemanager \                #service framework
-           servicedatabase \ 
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
-           qservicemanager \
+#           qservicemanager \  #remove until qhash namespace issue resolved
            qabstractsecuritysession \
            qservicecontext
+
+# servicedatabase is not compiled into the serviceframework library on symbian,
+# special handling is needed
+!symbian:SUBDIRS+=servicedatabase
 
 SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
@@ -29,7 +32,7 @@ wince* {
 }
 
 SUBDIRS += qvaluespace \                           #Publish and Subscribe
-           qvaluespaceprovider \
+           qvaluespacepublisher \
            qvaluespacesubscriber \
 	   qcrmlparser
 
@@ -46,7 +49,7 @@ unix:!symbian:!maemo: {
            qpacketprotocol
 }
 
-SUBDIRS += qsysteminfo \                    #SystemInformation
+!maemo:SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemstorageinfo \
@@ -62,7 +65,20 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactfilter \
             qcontactmanager \
             qcontactmanagerplugins \
-            qcontactmanagerfiltering
+            qcontactmanagerfiltering \
+            qcontactrelationship
+
+# Versit module
+SUBDIRS += \
+            qvcard21writer \
+            qvcard30writer \
+            qversitcontactexporter \
+            qversitcontactimporter \
+            qversitdocument \
+            qversitproperty \
+            qversitreader \
+            qversitutils \
+            qversitwriter
 
 
 SUBDIRS += \             #Multimedia
@@ -88,26 +104,11 @@ contains(QT_CONFIG, multimedia) {
             qpaintervideosurface
 
 }
-symbian { 
-#remove these fow now (compile problems)
-SUBDIRS -= \
-        qaudiocapturesource \
-        qmediaplaylistnavigator \
-        qmediaimageviewer \
-        qmediapluginloader \
-        qmediaserviceprovider \
-        qpaintervideosurface \
-        qvideowidget \
-        qmediaplayer \
-        qgraphicsvideoitem \
-        qmediaplaylist
-}
 
 #Messaging
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
-    SUBDIRS += \
+    !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
         qmessage
-
 }

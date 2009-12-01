@@ -39,7 +39,8 @@
 **
 ****************************************************************************/
 #include "qmessagefolderordering.h"
-#include "qmessagefolderordering_p.h"
+
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageFolderOrdering
@@ -144,3 +145,5 @@ bool QMessageFolderOrdering::operator!=(const QMessageFolderOrdering& other) con
 
     \sa QMessageFolder::path()
 */
+
+QTM_END_NAMESPACE

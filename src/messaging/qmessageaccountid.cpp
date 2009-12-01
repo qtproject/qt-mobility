@@ -38,7 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageaccountid_p.h"
+#include "qmessageaccountid.h"
+
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageAccountId
@@ -131,3 +133,4 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
     Qt-style synonym for QList<QMessageAccountId>
 */
 
+QTM_END_NAMESPACE

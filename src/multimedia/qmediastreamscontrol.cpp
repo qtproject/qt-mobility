@@ -42,10 +42,15 @@
 #include "qmediastreamscontrol.h"
 #include "qmediacontrol_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMediaStreamsControl
     \preliminary
+    \ingroup multimedia-serv
     \brief The QMediaStreamsControl class provides a media stream selection control.
+
+    \ingroup multimedia
 
     The QMediaStreamsControl class provides descriptions of the available media streams
     and allows individual streams to be activated and deactivated.
@@ -140,3 +145,7 @@ QMediaStreamsControl::~QMediaStreamsControl()
 
     The signal is emited when the active streams list is changed.
 */
+
+#include "moc_qmediastreamscontrol.cpp"
+QTM_END_NAMESPACE
+

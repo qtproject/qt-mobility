@@ -41,12 +41,15 @@
 #ifndef CDATABASEMANAGERSESSION_H_
 #define CDATABASEMANAGERSESSION_H_
 
+#include <qmobilityglobal.h>
 #include <e32base.h>
 #include <QObject>
-#include "databasemanager_p.h"
+
+QTM_BEGIN_NAMESPACE
 
 class CDatabaseManagerServer;
 class DatabaseManagerSignalHandler;
+class ServiceDatabase;
 
 typedef TPckgBuf<TInt> TError;
 
@@ -74,13 +77,15 @@ class CDatabaseManagerServerSession : public CSession2
         TInt InterfacesSizeL(const RMessage2& aMessage);
         TInt ServiceNamesSizeL(const RMessage2& aMessage);
         
-        void ServiceRemoved(const QString& aServiceName, DatabaseManager::DbScope aScope);
-        void ServiceAdded(const QString& aServiceName, DatabaseManager::DbScope aScope);
+        void ServiceRemoved(const QString& aServiceName);
+        void ServiceAdded(const QString& aServiceName);
         
     private:
         CDatabaseManagerServerSession();
         void ConstructL();
         TError LastErrorCode();
+        void initDbPath();
+        bool openDb();
             
     protected:
         void PanicClient(const RMessage2& aMessage, TInt aPanic) const;
@@ -89,11 +94,12 @@ class CDatabaseManagerServerSession : public CSession2
         QByteArray* iByteArray;
         TBool iWaitingAsyncRequest;
         RMessage2 iMsg;
-        DatabaseManager* iDatabaseManager;
         DatabaseManagerSignalHandler* iDatabaseManagerSignalHandler;
+        ServiceDatabase *iDb;
     };
 
-#endif
+QTM_END_NAMESPACE
 
+#endif
 
 // End of File

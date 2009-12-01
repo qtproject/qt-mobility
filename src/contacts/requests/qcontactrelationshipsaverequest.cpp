@@ -42,9 +42,11 @@
 #include "qcontactrelationshipsaverequest.h"
 #include "qcontactrequests_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
-  \class QContactGroupSaveRequest
-  \brief The QContactGroupSaveRequest class allows a client to asynchronously
+  \class QContactRelationshipSaveRequest
+  \brief The QContactRelationshipSaveRequest class allows a client to asynchronously
     request that certain groups be saved to a contacts store.
    \ingroup contacts-requests
  */
@@ -81,3 +83,7 @@ QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() con
     Q_D(const QContactRelationshipSaveRequest);
     return d->m_relationships;
 }
+
+#include "moc_qcontactrelationshipsaverequest.cpp"
+
+QTM_END_NAMESPACE

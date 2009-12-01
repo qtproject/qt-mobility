@@ -46,6 +46,8 @@
 #include <qmediaformatcontrol.h>
 #include <QtCore/qstringlist.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerMediaFormatControl : public QMediaFormatControl
 {
 Q_OBJECT

@@ -41,6 +41,8 @@
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QMessageFolderFilter
 
@@ -127,7 +129,8 @@
 /*!
     \fn QMessageFolderFilter::operator~() const
   
-    Returns a filter that is the logical NOT of the value of this filter.
+    Returns a filter that is the logical NOT of the value of this filter (ignoring any
+    options() set on the filter).
 
     If this filter is empty, the result will be a non-matching filter; if this filter is 
     non-matching, the result will be an empty filter.
@@ -277,3 +280,5 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 
     \sa QMessageFolder::id()
 */
+
+QTM_END_NAMESPACE

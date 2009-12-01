@@ -67,7 +67,7 @@
 
 typedef int(*TOpenCSetdefaultifFunction)(const struct ifreq*);
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class ConnectionProgressNotifier;
 
@@ -90,8 +90,8 @@ public:
     void syncStateWithInterface();
 
     QNetworkInterface currentInterface() const;
-    QVariant property(const QString& key) const;
-    void setProperty(const QString& key, const QVariant& value);
+    QVariant sessionProperty(const QString& key) const;
+    void setSessionProperty(const QString& key, const QVariant& value);
     QString bearerName() const;
     
     void setALREnabled(bool enabled);
@@ -106,8 +106,8 @@ public:
 
     QString errorString() const; //must return translated string
     QNetworkSession::SessionError error() const;
-    quint64 sentData() const;
-    quint64 receivedData() const;
+    quint64 bytesWritten() const;
+    quint64 bytesReceived() const;
     quint64 activeTime() const;
     
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
@@ -207,7 +207,7 @@ private: // Data
     
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //QNETWORKSESSIONPRIVATE_H
 

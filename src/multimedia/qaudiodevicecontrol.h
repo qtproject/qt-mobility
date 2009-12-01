@@ -44,6 +44,8 @@
 
 #include <qmediacontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QAudioDeviceControl : public QMediaControl
 {
     Q_OBJECT
@@ -74,5 +76,7 @@ protected:
 
 #define QAudioDeviceControl_iid "com.nokia.Qt.QAudioDeviceControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioDeviceControl, QAudioDeviceControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif // QAUDIODEVICECONTROL_H

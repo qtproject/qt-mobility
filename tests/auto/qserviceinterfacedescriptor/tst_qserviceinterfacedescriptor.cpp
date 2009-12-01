@@ -46,6 +46,7 @@
 #include <qserviceinterfacedescriptor.h>
 #include <qserviceinterfacedescriptor_p.h>
 
+QTM_USE_NAMESPACE
 class tst_QServiceInterfaceDescriptor: public QObject
 {
     Q_OBJECT

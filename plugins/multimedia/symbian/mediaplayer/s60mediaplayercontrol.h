@@ -49,10 +49,16 @@
 
 #include "ms60mediaplayerresolver.h"
 
+QTM_BEGIN_NAMESPACE
 class QMediaPlaylist;
+class QMediaPlaylistNavigator;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
+
 class S60MediaPlayerSession;
 class S60MediaPlayerService;
-class QMediaPlaylistNavigator;
+
 
 class S60MediaControlSettings
 {

@@ -48,6 +48,8 @@
 class DSCameraService;
 class DSCameraSession;
 
+QTM_USE_NAMESPACE
+
 class DSCameraControl : public QCameraControl
 {
     Q_OBJECT

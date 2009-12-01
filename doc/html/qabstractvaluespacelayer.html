@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qvaluespace.cpp -->
 <head>
-  <title>QAbstractValueSpaceLayer Class Reference</title>
+  <title>Qt Mobility 1.0: QAbstractValueSpaceLayer Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -30,7 +30,7 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#addWatch">addWatch</a></b> ( QValueSpaceProvider * <i>creator</i>, Handle <i>handle</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#addWatch">addWatch</a></b> ( QValueSpacePublisher * <i>creator</i>, Handle <i>handle</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QSet&lt;QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#children">children</a></b> ( Handle <i>handle</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QUuid </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#id">id</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual Handle </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#item">item</a></b> ( Handle <i>parent</i>, const QString &amp; <i>subPath</i> ) = 0</td></tr>
@@ -39,11 +39,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#notifyInterest">notifyInterest</a></b> ( Handle <i>handle</i>, bool <i>interested</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual unsigned int </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#order">order</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#removeHandle">removeHandle</a></b> ( Handle <i>handle</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</a></b> ( QValueSpaceProvider * <i>creator</i>, Handle <i>handle</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#removeValue">removeValue</a></b> ( QValueSpaceProvider * <i>creator</i>, Handle <i>handle</i>, const QString &amp; <i>subPath</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a></b> ( QValueSpaceProvider * <i>creator</i>, Handle <i>parent</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#removeSubTree">removeSubTree</a></b> ( QValueSpacePublisher * <i>creator</i>, Handle <i>handle</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#removeValue">removeValue</a></b> ( QValueSpacePublisher * <i>creator</i>, Handle <i>handle</i>, const QString &amp; <i>subPath</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a></b> ( QValueSpacePublisher * <i>creator</i>, Handle <i>parent</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#setProperty">setProperty</a></b> ( Handle <i>handle</i>, Properties <i>property</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpaceProvider * <i>creator</i>, Handle <i>handle</i>, const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#setValue">setValue</a></b> ( QValueSpacePublisher * <i>creator</i>, Handle <i>handle</i>, const QString &amp; <i>subPath</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#startup">startup</a></b> ( Type <i>type</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#supportsInterestNotification">supportsInterestNotification</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#sync">sync</a></b> () = 0</td></tr>
@@ -66,7 +66,7 @@
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#emitAttributeInterestChanged">emitAttributeInterestChanged</a></b> ( QValueSpaceProvider * <i>provider</i>, const QString &amp; <i>path</i>, bool <i>interested</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qabstractvaluespacelayer.html#emitAttributeInterestChanged">emitAttributeInterestChanged</a></b> ( QValueSpacePublisher * <i>publisher</i>, const QString &amp; <i>path</i>, bool <i>interested</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
@@ -109,7 +109,7 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="addWatch"></a>void QAbstractValueSpaceLayer::addWatch ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="addWatch"></a>void QAbstractValueSpaceLayer::addWatch ( <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Registers <i>creator</i> for change notifications to values under <i>handle</i>.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#removeWatches">removeWatches</a>().</p>
 <h3 class="fn"><a name="children"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; QAbstractValueSpaceLayer::children ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -118,8 +118,8 @@
     /Device/Configuration/Buttons/PrimaryInput
     /Device/Configuration/Name</pre>
 <p>a request for children of &quot;/Device/Configuration&quot; will return { &quot;Applications&quot;, &quot;Buttons&quot;, &quot;Name&quot; }.</p>
-<h3 class="fn"><a name="emitAttributeInterestChanged"></a>void QAbstractValueSpaceLayer::emitAttributeInterestChanged ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>provider</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Emits the <a href="qvaluespaceprovider.html#attributeInterestChanged">QValueSpaceProvider::attributeInterestChanged</a>() signal on <i>provider</i> with <i>path</i> and <i>interested</i>.</p>
+<h3 class="fn"><a name="emitAttributeInterestChanged"></a>void QAbstractValueSpaceLayer::emitAttributeInterestChanged ( <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> * <i>publisher</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Emits the <a href="qvaluespacepublisher.html#attributeInterestChanged">QValueSpacePublisher::attributeInterestChanged</a>() signal on <i>publisher</i> with <i>path</i> and <i>interested</i>.</p>
 <h3 class="fn"><a name="handleChanged"></a>void QAbstractValueSpaceLayer::handleChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#quintptr-typedef">quintptr</a> <i>handle</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Emitted whenever the <i>handle</i>'s value, or any sub value, changes.</p>
 <h3 class="fn"><a name="id"></a><a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> QAbstractValueSpaceLayer::id ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -140,19 +140,19 @@
 <p>Return the position in the Value Space layer stack that this layer should reside. Higher numbers mean the layer has a higher precedence and its values will &quot;shadow&quot; those below it. If two layers specify the same ordering, the <a href="qabstractvaluespacelayer.html#id">id</a>() value is used to break the tie.</p>
 <h3 class="fn"><a name="removeHandle"></a>void QAbstractValueSpaceLayer::removeHandle ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Releases a <i>handle</i> previously returned from <a href="qabstractvaluespacelayer.html#item">QAbstractValueSpaceLayer::item</a>().</p>
-<h3 class="fn"><a name="removeSubTree"></a>bool QAbstractValueSpaceLayer::removeSubTree ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process calls to QValueSpaceProvider::~QValueSpaceProvider() by removing the entire sub tree created by <i>creator</i> under <i>handle</i>.</p>
+<h3 class="fn"><a name="removeSubTree"></a>bool QAbstractValueSpaceLayer::removeSubTree ( <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process calls to QValueSpacePublisher::~QValueSpacePublisher() by removing the entire sub tree created by <i>creator</i> under <i>handle</i>.</p>
 <p>Returns true on success; otherwise returns false.</p>
-<h3 class="fn"><a name="removeValue"></a>bool QAbstractValueSpaceLayer::removeValue ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process calls to <a href="qvaluespaceprovider.html#removeAttribute">QValueSpaceProvider::removeAttribute</a>() by removing the Value Space item identified by <i>handle</i> and <i>subPath</i> and created by <i>creator</i>.</p>
+<h3 class="fn"><a name="removeValue"></a>bool QAbstractValueSpaceLayer::removeValue ( <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process calls to <a href="qvaluespacepublisher.html#resetValue">QValueSpacePublisher::resetValue</a>() by removing the Value Space item identified by <i>handle</i> and <i>subPath</i> and created by <i>creator</i>.</p>
 <p>Returns true on success; otherwise returns false.</p>
-<h3 class="fn"><a name="removeWatches"></a>void QAbstractValueSpaceLayer::removeWatches ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>parent</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="removeWatches"></a>void QAbstractValueSpaceLayer::removeWatches ( <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>parent</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Removes all registered change notifications for <i>creator</i> under <i>parent</i>.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#addWatch">addWatch</a>().</p>
 <h3 class="fn"><a name="setProperty"></a>void QAbstractValueSpaceLayer::setProperty ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, <a href="qabstractvaluespacelayer.html#Properties-enum">Properties</a> <i>property</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Apply the specified <i>property</i> mask to <i>handle</i>.</p>
-<h3 class="fn"><a name="setValue"></a>bool QAbstractValueSpaceLayer::setValue ( <a href="qvaluespaceprovider.html">QValueSpaceProvider</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process calls to <a href="qvaluespaceprovider.html#setAttribute">QValueSpaceProvider::setAttribute</a>() by setting the value specified by the <i>subPath</i> under <i>handle</i> to <i>value</i>. Ownership of the Value Space item is assigned to <i>creator</i>.</p>
+<h3 class="fn"><a name="setValue"></a>bool QAbstractValueSpaceLayer::setValue ( <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>subPath</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process calls to <a href="qvaluespacepublisher.html#setValue">QValueSpacePublisher::setValue</a>() by setting the value specified by the <i>subPath</i> under <i>handle</i> to <i>value</i>. Ownership of the Value Space item is assigned to <i>creator</i>.</p>
 <p>Returns true on success; otherwise returns false.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#value">value</a>().</p>
 <h3 class="fn"><a name="startup"></a>bool QAbstractValueSpaceLayer::startup ( <a href="qabstractvaluespacelayer.html#Type-enum">Type</a> <i>type</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -176,6 +176,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

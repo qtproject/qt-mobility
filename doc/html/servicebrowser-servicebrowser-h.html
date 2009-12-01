@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>servicebrowser.h Example File (servicebrowser/servicebrowser.h)</title>
+  <title>Qt Mobility 1.0: servicebrowser.h Example File (servicebrowser/servicebrowser.h)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -60,6 +60,8 @@
     #include &lt;QWidget&gt;
     #include &lt;QObject&gt;
 
+    #include &lt;qmobilityglobal.h&gt;
+
     class QAbstractButton;
     class QGroupBox;
     class QListWidget;
@@ -67,7 +69,11 @@
     class QPushButton;
     class QRadioButton;
 
+    QTM_BEGIN_NAMESPACE
     class QServiceManager;
+    QTM_END_NAMESPACE
+
+    QTM_USE_NAMESPACE
 
     class ServiceBrowser : public QWidget
     {
@@ -109,6 +115,6 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

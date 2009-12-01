@@ -48,6 +48,7 @@
 
 #include <qmediacontrol.h>
 
+QTM_BEGIN_NAMESPACE
 
 class QMediaServicePrivate;
 class Q_MEDIA_EXPORT QMediaService : public QObject
@@ -55,16 +56,7 @@ class Q_MEDIA_EXPORT QMediaService : public QObject
     Q_OBJECT
 
 public:
-    enum MediaEndpoint { AudioDevice };
-
     ~QMediaService();
-
-    bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);
-
-    virtual QString activeEndpoint(QMediaService::MediaEndpoint endpointType);
-    virtual bool setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    virtual QString endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint);
-    virtual QStringList supportedEndpoints(QMediaService::MediaEndpoint endpointType) const;
 
     virtual QMediaControl* control(const char *name) const = 0;
 
@@ -77,10 +69,6 @@ public:
     }
 #endif
 
-Q_SIGNALS:
-    void supportedEndpointsChanged();
-    void activeEndpointChanged(QMediaService::MediaEndpoint endpointType, const QString &endpoint);
-
 protected:
     QMediaService(QObject* parent);
     QMediaService(QMediaServicePrivate &dd, QObject *parent);
@@ -90,6 +78,8 @@ protected:
 private:
     Q_DECLARE_PRIVATE(QMediaService)
 };
+
+QTM_END_NAMESPACE
 
 #endif  // QABSTRACTMEDIASERVICE_H
 

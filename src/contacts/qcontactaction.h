@@ -51,6 +51,8 @@
 
 #include <QObject>
 
+QTM_BEGIN_NAMESPACE
+
 class QContactActionDescriptor;
 class QContactActionData;
 class Q_CONTACTS_EXPORT QContactAction : public QObject
@@ -95,5 +97,7 @@ public:
 signals:
     void progress(QContactAction::Status status, const QVariantMap& result);
 };
+
+QTM_END_NAMESPACE
 
 #endif

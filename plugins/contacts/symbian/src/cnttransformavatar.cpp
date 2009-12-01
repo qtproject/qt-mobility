@@ -41,42 +41,47 @@
 #include "cnttransformavatar.h"
 #include "cntmodelextuids.h"
 
-// S60 specific contact field type containing image call object data
-#define KUidContactFieldCodImageValue 0x101F8841
-const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
-
 QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactAvatar::DefinitionName)
+        User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to avatar
 	const QContactAvatar &avatar(static_cast<const QContactAvatar&>(detail));
 
-	//supported subTypes
-	const QString& subTypeImage(QContactAvatar::SubTypeImage);
-	const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
-	const QString& subTypeVideoRingtone(QContactAvatar::SubTypeVideoRingtone);
 
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
 
-	TUid uid(KNullUid);
-	if (avatar.subType().compare(subTypeImage) == 0) {
-	    uid = KUidContactFieldCodImage;
-	} else if (avatar.subType().compare(subTypeAudioRingtone) == 0) {
-        uid = KUidContactFieldRingTone;
-	} else if (avatar.subType().compare(subTypeVideoRingtone) == 0) {
-        uid = KUidContactFieldVideoRingTone;
-    } else {
-        User::LeaveIfError(KErrNotSupported);
-    }
-    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
+	if(fieldText.Length()) {
+	    //supported subTypes
+	    const QString& subTypeImage(QContactAvatar::SubTypeImage);
+	    const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
+	    const QString& subTypeVideoRingtone(QContactAvatar::SubTypeVideoRingtone);
 
-    newField->SetMapping(KUidContactFieldVCardMapUnknown);
-    newField->TextStorage()->SetTextL(fieldText);
+	    QString subType = avatar.subType();
+	    TUid uid(KNullUid);
+	    if(subType.isEmpty()) {
+            uid = KUidContactFieldCodImage;
+	    } else if (subType.compare(subTypeImage) == 0) {
+	        uid = KUidContactFieldCodImage;
+	    } else if (subType.compare(subTypeAudioRingtone) == 0) {
+	        uid = KUidContactFieldRingTone;
+	    } else if (subType.compare(subTypeVideoRingtone) == 0) {
+	        uid = KUidContactFieldVideoRingTone;
+	    } else {
+	        User::LeaveIfError(KErrNotSupported);
+	    }
+	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
 
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
+	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
+	    newField->TextStorage()->SetTextL(fieldText);
+
+	    fieldList.append(newField);
+	    CleanupStack::Pop(newField);
+	}
 
 	return fieldList;
 }

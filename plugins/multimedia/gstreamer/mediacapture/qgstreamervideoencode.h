@@ -50,6 +50,8 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
+QTM_USE_NAMESPACE
+
 class QGstreamerVideoEncode : public QVideoEncoderControl
 {
     Q_OBJECT
@@ -57,13 +59,11 @@ public:
     QGstreamerVideoEncode(QGstreamerCaptureSession *session);
     virtual ~QGstreamerVideoEncode();
 
-    QSize minimumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QSize maximumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                      bool *continuous = 0) const;
 
-    qreal minimumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    qreal maximumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QList< qreal > supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList< qreal > supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                       bool *continuous = 0) const;
 
     QPair<int,int> rateAsRational() const;
 

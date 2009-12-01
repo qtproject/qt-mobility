@@ -43,6 +43,8 @@
 #include <qmediaplaylistprovider_p.h>
 #include <qmediacontent.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QLocalMediaPlaylistProviderPrivate: public QMediaPlaylistProviderPrivate
 {
 public:
@@ -186,3 +188,7 @@ void QLocalMediaPlaylistProvider::shuffle()
     }
 
 }
+
+#include "moc_qlocalmediaplaylistprovider.cpp"
+QTM_END_NAMESPACE
+

@@ -67,22 +67,23 @@
 
 #define PRINT_ERR(a) qPrintable(QString("error = %1").arg(a.error()))
 
-typedef QList<QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
-Q_DECLARE_METATYPE(QServiceFilter)
-Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
+typedef QList<QtMobility::QServiceInterfaceDescriptor> ServiceInterfaceDescriptorList;
+Q_DECLARE_METATYPE(QtMobility::QServiceFilter)
+Q_DECLARE_METATYPE(QtMobility::QServiceInterfaceDescriptor)
 Q_DECLARE_METATYPE(ServiceInterfaceDescriptorList)
 
 Q_DECLARE_METATYPE(QSet<QString>)
 Q_DECLARE_METATYPE(QList<QByteArray>)
-Q_DECLARE_METATYPE(QServiceManager::Scope)
+Q_DECLARE_METATYPE(QtMobility::QServiceManager::Scope)
 
-typedef QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant> DescriptorProperties;
+typedef QHash<QtMobility::QServiceInterfaceDescriptor::PropertyKey, QVariant> DescriptorProperties;
 
-uint qHash(const QServiceInterfaceDescriptor &desc)
+inline uint qHash(const QtMobility::QServiceInterfaceDescriptor &desc)
 {
     return qHash(desc.serviceName()) + qHash(desc.interfaceName()) + desc.majorVersion() * 7 + desc.minorVersion() * 7;
 }
 
+QTM_USE_NAMESPACE
 static DescriptorProperties defaultDescriptorProperties()
 {
     DescriptorProperties props;
@@ -335,9 +336,6 @@ void tst_QServiceManager::constructor_scope_data()
 
 void tst_QServiceManager::findServices()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QFETCH(QList<QByteArray>, xmlBlocks);
     QFETCH(QStringList, interfaceNames);
     QFETCH(QSet<QString>, searchByInterfaceResult);
@@ -407,8 +405,8 @@ void tst_QServiceManager::findServices_data()
 
 void tst_QServiceManager::findServices_scope()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
+#if defined(Q_OS_SYMBIAN)
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
 #endif
     QFETCH(QServiceManager::Scope, scope_add);
     QFETCH(QServiceManager::Scope, scope_find);
@@ -448,9 +446,6 @@ void tst_QServiceManager::findServices_scope_data()
 
 void tst_QServiceManager::findInterfaces_filter()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QFETCH(QByteArray, xml);
     QFETCH(QServiceFilter, filter);
     QFETCH(QList<QServiceInterfaceDescriptor>, expectedInterfaces);
@@ -678,8 +673,8 @@ void tst_QServiceManager::findInterfaces_filter_data()
 
 void tst_QServiceManager::findInterfaces_scope()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
+#if defined(Q_OS_SYMBIAN)
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
 #endif
     QFETCH(QServiceManager::Scope, scope_add);
     QFETCH(QServiceManager::Scope, scope_find);
@@ -720,9 +715,6 @@ void tst_QServiceManager::findInterfaces_scope_data()
 
 void tst_QServiceManager::loadInterface_string()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     // The sampleservice.xml and sampleservice2.xml services in
     // tests/sampleserviceplugin and tests/sampleserviceplugin2 implement a
     // common interface, "com.nokia.qt.TestInterfaceA". If both are
@@ -769,9 +761,6 @@ void tst_QServiceManager::loadInterface_string()
 
 void tst_QServiceManager::loadInterface_descriptor()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QFETCH(QServiceInterfaceDescriptor, descriptor);
     QFETCH(QString, className);
 
@@ -814,6 +803,7 @@ void tst_QServiceManager::loadInterface_descriptor_data()
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
     priv->properties[QServiceInterfaceDescriptor::Location] = lib.fileName();
+    qDebug() << lib.fileName();
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw2_sampleserviceplugin")
             << descriptor
@@ -822,9 +812,6 @@ void tst_QServiceManager::loadInterface_descriptor_data()
 
 void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
@@ -889,9 +876,6 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
 
 void tst_QServiceManager::getInterface()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     //ensure the plugin exists 
     QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_sampleserviceplugin");
     QCOMPARE(lib.load(), true);
@@ -988,9 +972,6 @@ void tst_QServiceManager::getInterface()
 
 void tst_QServiceManager::addService()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QFETCH(QString, paramType);
 
     QServiceManager mgr;
@@ -1041,9 +1022,6 @@ void tst_QServiceManager::addService_data()
 
 void tst_QServiceManager::addService_testInvalidServiceXml()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QBuffer buffer;
     QServiceManager mgr;
 
@@ -1062,9 +1040,6 @@ void tst_QServiceManager::addService_testInvalidServiceXml()
 
 void tst_QServiceManager::addService_testPluginLoading()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QFETCH(QString, pluginPath);
     QFETCH(bool, isAdded);
 
@@ -1090,9 +1065,6 @@ void tst_QServiceManager::addService_testPluginLoading_data()
 
 void tst_QServiceManager::addService_testInstallService()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
     QCOMPARE(settings.value("installed").toBool(), false);
 
@@ -1106,9 +1078,6 @@ void tst_QServiceManager::addService_testInstallService()
 
 void tst_QServiceManager::removeService()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QServiceManager mgr;
 
     QVERIFY(!mgr.removeService("NonExistentService"));
@@ -1133,9 +1102,6 @@ void tst_QServiceManager::removeService()
 
 void tst_QServiceManager::setInterfaceDefault_strings()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QServiceManager mgr;
     QString interfaceName = "com.nokia.qt.serviceframework.tests.AnInterface";
     DescriptorProperties properties;
@@ -1177,9 +1143,6 @@ void tst_QServiceManager::setInterfaceDefault_strings()
 
 void tst_QServiceManager::setInterfaceDefault_strings_multipleInterfaces()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QServiceManager mgr;
     QString interfaceName = "com.nokia.qt.serviceframework.tests.AnInterface";
     DescriptorProperties properties;
@@ -1202,9 +1165,6 @@ void tst_QServiceManager::setInterfaceDefault_strings_multipleInterfaces()
 
 void tst_QServiceManager::setInterfaceDefault_descriptor()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QFETCH(QServiceManager::Scope, scope_add);
     QFETCH(QServiceManager::Scope, scope_find);
     QFETCH(bool, expectFound);
@@ -1256,18 +1216,12 @@ void tst_QServiceManager::setInterfaceDefault_descriptor_data()
 
 void tst_QServiceManager::interfaceDefault()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QServiceManager mgr;
     QVERIFY(!mgr.interfaceDefault("").isValid());
 }
 
 void tst_QServiceManager::serviceAdded()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
     QFETCH(QServiceManager::Scope, scope_modify);
@@ -1368,9 +1322,6 @@ void tst_QServiceManager::serviceAdded_data()
 
 void tst_QServiceManager::serviceRemoved()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
     QFETCH(QServiceManager::Scope, scope_modify);

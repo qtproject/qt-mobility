@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- index.qdoc -->
 <head>
-  <title>Qt Mobility Overview</title>
+  <title>Qt Mobility 1.0: Qt Mobility Overview</title>
   <link rel="start" href="index.html" />
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
@@ -17,10 +17,13 @@
 </p>
 <h1 class="title">Qt Mobility Overview<br /><span class="subtitle"></span>
 </h1>
-<p>The Qt Mobility is a set of APIs which have the goal of supplying features for various mobile devices.</p>
-<ul><li><a href="#mobility-component-apis">Mobility Component APIs</a></li>
-<li><a href="#overview">Overview</a></li>
-<li><a href="#bearer-management">Bearer Management</a></li>
+<p>Qt Mobility is a set of APIs that supplies features that are well known from the mobile device world, in particular phones. However, these APIs allow the developer to use the features with ease from one framework and apply them to phones, netbooks and non-mobile personal computers. The framework not only improves many aspects of a mobile experience, because it improves the use of these technologies, but has applicability beyond the mobile device arena.</p>
+<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#introducing-the-mobility-apis">Introducing the Mobility APIs</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+</ul>
+<li><a href="#the-mobility-apis">The Mobility APIs</a></li>
+<ul><li><a href="#bearer-management">Bearer Management</a></li>
 <li><a href="#contacts">Contacts</a></li>
 <li><a href="#publish-and-subscribe">Publish and Subscribe</a></li>
 <li><a href="#location">Location</a></li>
@@ -29,31 +32,44 @@
 <li><a href="#service-framework">Service Framework</a></li>
 <li><a href="#system-information">System Information</a></li>
 </ul>
-    <a href="classlists.html">List of Mobility Classes and Functions</a>
-    <a name="mobility-component-apis"></a>
-<h3>Mobility Component APIs</h3>
+<li><a href="#platform-compatability">Platform Compatability</a></li>
+</ul>
+<a name="overview"></a>
+<h3>Overview</h3>
+<a name="introducing-the-mobility-apis"></a>
+<h4>Introducing the Mobility APIs</h4>
+<p>This mobility release contains the following APIs:</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="bearer-management.html">Bearer Management</a></th><td>An API to control the system's connectivity state.</td></tr>
 <tr valign="top" class="even"><th><a href="contacts.html">Contacts</a></th><td>An API enabling clients to request contact data from local or remote backends.</td></tr>
 <tr valign="top" class="odd"><th><a href="location-overview.html">Location</a></th><td>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</td></tr>
-<tr valign="top" class="even"><th><a href="messaging.html">Messaging</a></th><td>The Messaging API enables access to messaging services.</td></tr>
+<tr valign="top" class="even"><th><a href="messaging.html">Messaging API</a></th><td>The Messaging API enables access to messaging services.</td></tr>
 <tr valign="top" class="odd"><th><a href="multimedia.html">Multimedia</a></th><td>Provides a set of APIs to play and record media, and manage a collection of media content.</td></tr>
 <tr valign="top" class="even"><th><a href="publ-subs.html">Publish and Subscribe</a></th><td>The Publish and Subscribe API, containing Value Space, enables applications to read item values, navigate through and subscribe to change notifications.</td></tr>
 <tr valign="top" class="odd"><th><a href="service-frameworks.html">Qt Service Framework</a></th><td>A set of APIs to that allows clients to discover and instantiate arbitrary services.</td></tr>
 <tr valign="top" class="even"><th><a href="systeminfo.html">System Information</a></th><td>A set of APIs to discover system related information and capabilities.</td></tr>
 </table></p>
-<a name="overview"></a>
-<h3>Overview</h3>
-<p>These APIs give the developer a wide range of desirable functions for a mobile platform. A mobile device using the Qt Mobility API should be able to</p>
+<p>These APIs give the developer a wide range of desirable functions for a mobile platform, but these now become possible on platforms not traditionally associated with some of the features. A mobile device using the Qt Mobility API would be able to</p>
 <ul>
 <li>Locate services on-board or remotely. Find an optimal connection to the network for the particular service.</li>
-<li>Services built on top of this would include Internet applications such as email and web browsing.</li>
-<li>Multimedia features enable image and video capture with audio , audio recording, and the playing of music or video clips.</li>
+<li>Services built on top of Qt Mobility would include Internet applications such as email and web browsing.</li>
+<li>Multimedia features enable image and video capture with audio , audio recording, and the playing of music or video clips. However, camera ability is not part of this release.</li>
 <li>Location will make the device aware of its geographical location to support GIS applications.</li>
-<li>Publish-Subscribe enables a flexible behavior for changed circumstances.</li>
+<li>Publish-Subscribe enables communication between separate objects whether local or remote to the device.</li>
 </ul>
+<p>Qt Mobility is an enabling package. It will be used by developers to build a variety of applications and services that are mobile capable, irrespective of whether the platform is mobile or not.</p>
+<a name="getting-started"></a>
+<h4>Getting Started</h4>
+<p>To get started with Qt Mobility see the</p>
+<ul>
+<li><a href="installation.html">Installation Guide</a></li>
+<li><a href="quickstart.html">Quickstart Example</a></li>
+<li><a href="examples.html">List of all examples.</a></li>
+</ul>
+<a name="the-mobility-apis"></a>
+<h3>The Mobility APIs</h3>
 <a name="bearer-management"></a>
-<h3>Bearer Management</h3>
+<h4>Bearer Management</h4>
 <p>Although not a network manager, this component manages the connectivity state to the network. So it does not manage network configurations, which are the role of the platform provider, but it does allow the user to start or stop network interfaces. Some higher level management of the connection session may also be possible as well depending on the platform.</p>
 <p>Some platforms can have a set of grouped access points perhaps based on a common purpose. Bearer Management allows comparison and prioritization of the access and use of these points.</p>
 <p>The aim of Bearer Management is to reduce the need for the developer to be concerned about trying to locate the best connection from a list of possible IP bearers and 3G connections. The user can select the best or it can be selected transparently so that WLAN roaming can occur seemlessly.</p>
@@ -65,33 +81,205 @@
 <li>A connection manager application can be implemented with Qt. This application enumerates available connections, shows counters, and allows the user to connect or disconnect</li>
 </ul>
 <a name="contacts"></a>
-<h3>Contacts</h3>
+<h4>Contacts</h4>
 <p>The structure and retrieval of contact data from local or remote backends. It includes the ability to create, edit, list, delete and lookup contact information whether it is stored locally or remotely.</p>
+<p>For more details, see the <a href="contacts.html">contacts API overview</a>.</p>
 <a name="publish-and-subscribe"></a>
-<h3>Publish and Subscribe</h3>
-<p>Enables context sensitive access to information. Data is organized as a tree, with data being able to 'shadow' other data with the 'same key', a string specifying the leaf or node. The context is an example of a context ontology, a defined set of relationships. As the context changes the values of the objects change but the relationships remain the same. It is intended to be an enabling technology, the basis of a range future applications.</p>
-<p>For example, this will make personalization easier as different people would represent a different context. Or behavior of the device that changes depending on physical location or device status.</p>
+<h4>Publish and Subscribe</h4>
+<p>Will enable context sensitive access to information in future releases. Data is organized as a tree, with data being able to 'shadow' other data with the 'same key', a string specifying the leaf or node. The context is an example of a context ontology, a defined set of relationships. As the context changes the values of the objects change but the relationships remain the same. It is intended to be an enabling technology, the basis of a range future applications.</p>
+<p>At this stage the API is intended to act as a common communications method between Qt Mobility applications, whether local or remote.</p>
 <a name="location"></a>
-<h3>Location</h3>
-<p>The C++ API is one layer of this feature. This API encapsulates basic geographical information obtained from satellite or other sources about the user, including latitude and longitude, bearing, speed and altitude. It will enable a range of geographical applications, for example, maps.</p>
+<h4>Location</h4>
+<p>The C++ API is one layer of this feature. This API provides an easy to use interface that encapsulates basic geographical information obtained from satellite or other sources about the user, including latitude and longitude, bearing, speed and altitude. It will enable a range of geographical applications, for example, maps.</p>
 <a name="messaging"></a>
-<h3>Messaging</h3>
-<p>A common interface for handling SMS, MMS, XMPP, Email and partial MIME. Sending, notification and retrieval of messages as well as the ability to use a native app to create, edit, reply-to, send and display messages. Supports the sending of messages with attachments, and in situations of low battery to leave attachments on the server unless opened.</p>
+<h4>Messaging</h4>
+<p>A common interface for handling SMS, MMS, MIME Email and TNEF Email messages. Enables access to messaging services to search and sort messages, notify of changes to messages stored, send messages with or without attachments, retrieve message data, and launch the preferred messaging client to either display an existing message, or compose a message.</p>
+<p>For more details see the <a href="messaging.html">messaging API overview</a>.</p>
 <a name="multimedia"></a>
-<h3>Multimedia</h3>
-<p>An API to record and play audio and video of various formats. The playing and managing of a FM radio. This includes the typical functionality you would find on a music player, combined with FM radio, and camera for still and video recording.</p>
+<h4>Multimedia</h4>
+<p>An API to play audio and video of various formats. Record audio. The playing and managing of an FM radio. This includes the typical functionality you would find on a music and video player, combined with an FM radio.</p>
+<p>Support for a camera is not included in this release but will be included in a future update.</p>
 <a name="service-framework"></a>
-<h3>Service Framework</h3>
+<h4>Service Framework</h4>
 <p>A platform independent method of finding Services. A 'service' is an independent component that allows a client to perform a well-defined operation.</p>
-<p>The services are implemented as plugins installed on the device and can look for supporting external services running on a central server. E.g&#x2e; weather, local tourist attractions etc. Also default applications can use the layer to locate servers. Since this is a level of abstraction then the app does not need to be concerned with the underlying protocol, where the servers are, the hardware peculiarities with networking and other low level details.</p>
+<p>The services are implemented as plugins installed on the device and can look for supporting external services running on a central server. E.g&#x2e; weather, local tourist attractions etc. Default applications can use the layer to locate servers.</p>
+<p>Since this is an abstraction layer then the app does not need to be concerned with the underlying protocol, where the servers are, the hardware peculiarities with networking and other low level details.</p>
 <a name="system-information"></a>
-<h3>System Information</h3>
+<h4>System Information</h4>
 <p>An API to discover system related information and capabilities. Information available will cover software version numbers, hardware features, network connection types and status, display, data storage devices, device information and the screensaver.</p>
-<p>
+<a name="platform-compatability"></a>
+<h3>Platform Compatability</h3>
+    <table border="1">
+    <tr>
+    <td>Color</td>
+    <td>Explanation</td>
+
+    </tr>
+    <tr>
+    <td bgcolor="lightgray"></td>
+    <td>API compiles on the platform. Support for the API on the platform is not being worked on by Nokia. It is
+    possible for others to implement and integrate support.</td>
+    </tr>
+    <tr>
+    <td bgcolor="lightgreen"></td>
+    <td>Support for the API on the platform is being worked on by Nokia however it is not functionally complete.</td>
+
+    </tr>
+    <tr>
+    <td bgcolor="green"></td>
+    <td>Support for the API on the platform is included and is functionally complete.</td>
+    </tr>
+    </table>
+
+    <br>
+
+    <table border="1">
+
+    <tr>
+    <td></td>
+    <td>S60 3rd Edition, Feature Pack 1</td>
+    <td>S60 3rd Edition, Feature Pack 2</td>
+    <td>S60 5th Edition</td>
+    <td>Maemo 5</td>
+    <td>Maemo 6</td>
+    <td>Windows CE Mobile</td>
+    <td>Windows XP/Vista</td>
+    <td>Linux</td>
+    <td>Mac OS X</td>
+    <td>Other</td>
+
+    </tr>
+
+    <tr>
+    <td>Service Framework (in-process)</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
+
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Messaging</td>
+
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green">Using MAPI and Pocket Outlook</td>
+    <td bgcolor="lightgreen">Using MAPI and Outlook</td>
+    <td bgcolor="green">Using QMF</td>
+    <td bgcolor="lightgray"></td>
+
+    <td></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Bearer Management</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Publish and Subscribe</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
+
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>Contacts</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td></td>
+
+    </tr>
+
+    <tr>
+    <td>Location</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="green">NMEA data provider support</td>
+    </tr>
+
+    <tr>
+    <td>Multimedia</td>
+
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green">GStreamer</td>
+
+    <td bgcolor="lightgreen"></td>
+    <td></td>
+    </tr>
+
+    <tr>
+    <td>System Information</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgreen"></td>
+    <td></td>
+    </tr>
+
+    </table>
+
+    <p>
 </p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility API</div></td>
+<td align="right"><div align="right">Qt Mobility 1.0</div></td>
 </tr></table></div></address></body>
 </html>

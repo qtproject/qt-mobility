@@ -42,11 +42,18 @@
 #define QMESSAGESTOREPRIVATE_SYMBIAN_H
 
 #include "qmessagestore.h"
+#include "qmessageserviceaction.h"
+#include <QEventLoop>
+
+
+QTM_BEGIN_NAMESPACE
 
 class CMTMEngine;
 
-class QMessageStorePrivate
+class QMessageStorePrivate : public QObject
 {
+    Q_OBJECT
+
 public:
     enum NotificationType
     {
@@ -60,6 +67,9 @@ public:
     
     void initialize(QMessageStore *store);
     
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
+    int countMessages(const QMessageFilter& filter) const;
     QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountOrdering &ordering = QMessageAccountOrdering(), uint limit = 0, uint offset = 0) const;
     int countAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter()) const;
     QMessageAccount account(const QMessageAccountId &id) const;
@@ -79,7 +89,13 @@ public:
     void unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId);
 
     void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
-                             const QMessageStore::NotificationFilterIdSet &matchingFilters);    
+                             const QMessageStore::NotificationFilterIdSet &matchingFilters);
+
+public Q_SLOTS:   
+    void stateChanged(QMessageServiceAction::State a);
+    void messagesFound(const QMessageIdList &ids);
+    void messagesCounted(int count);
+
 private:    
     QMessageStore* q_ptr;
 
@@ -87,9 +103,13 @@ private:
     QMessageStore::ErrorCode _error;
     
     NotificationType _notificationType;
-    QMessageIdList _ids;
+    mutable QEventLoop loop;
+    mutable QMessageIdList _ids;
+    mutable int _count;
     
     friend class QMessageStore;
 };
 
+
+QTM_END_NAMESPACE
 #endif // QMESSAGESTOREPRIVATE_SYMBIAN_H

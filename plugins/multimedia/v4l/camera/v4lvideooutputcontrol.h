@@ -43,6 +43,7 @@
 #define V4LVIDEOOUTPUTCONTROL_H
 
 #include <qvideooutputcontrol.h>
+QTM_USE_NAMESPACE
 
 class V4LVideoOutputControl : public QVideoOutputControl
 {

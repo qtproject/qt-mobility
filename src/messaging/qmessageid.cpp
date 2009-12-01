@@ -38,7 +38,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageid_p.h"
+#include "qmessageid.h"
+
+
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageId
@@ -131,3 +134,5 @@ bool QMessageId::operator!=(const QMessageId &other) const
 */
 
 static const int registrationId = qRegisterMetaType<QMessageId>();
+
+QTM_END_NAMESPACE

@@ -53,7 +53,7 @@
 #include <iapconf.h>
 #include <iapmonitor.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #define IAP "/system/osso/connectivity/IAP"
 static int iap_prefix_len;
@@ -249,7 +249,7 @@ void IapMonitor::iapDeleted(const char *key, GConfEntry * /*entry*/)
 
 void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
 {
-    capFlags |= QNetworkConfigurationManager::BearerManagement;
+    capFlags |= QNetworkConfigurationManager::CanStartAndStopInterfaces;
     capFlags |= QNetworkConfigurationManager::DataStatistics;
     capFlags |= QNetworkConfigurationManager::ForcedRoaming;
 }
@@ -468,7 +468,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	cpPriv->isValid = true;
 	cpPriv->id = OSSO_IAP_ANY;
 	cpPriv->type = QNetworkConfiguration::UserChoice;
-	cpPriv->purpose = QNetworkConfiguration::Unknown;
+	cpPriv->purpose = QNetworkConfiguration::UnknownPurpose;
 	cpPriv->roamingSupported = false;
 	cpPriv->manager = this;
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
@@ -755,5 +755,6 @@ void QNetworkConfigurationManagerPrivate::configChanged(QNetworkConfigurationPri
 
 
 #include "qnetworkconfigmanager_maemo.moc"
+#include "moc_qnetworkconfigmanager_maemo_p.cpp"
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

@@ -44,6 +44,8 @@
 #include <qmessageglobal.h>
 #include <qstring.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAccountOrderingPrivate;
 
 class Q_MESSAGING_EXPORT QMessageAccountOrdering
@@ -68,4 +70,6 @@ public:
 private:
     QMessageAccountOrderingPrivate *d_ptr;
 };
+
+QTM_END_NAMESPACE
 #endif

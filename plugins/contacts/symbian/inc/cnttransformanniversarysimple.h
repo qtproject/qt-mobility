@@ -42,7 +42,7 @@
 #define TRANSFORMANNIVERSARYSIMPLE_H
 
 #include "cnttransformcontactdata.h"
-
+QTM_USE_NAMESPACE
 class CntTransformAnniversarySimple : public CntTransformContactData
 {
 protected:

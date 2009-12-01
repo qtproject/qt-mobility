@@ -51,19 +51,20 @@
 class QByteArray;
 class QStringList;
 
+QTM_BEGIN_NAMESPACE
+
 class Q_MEDIA_EXPORT QImageEncoderControl : public QMediaControl
 {
     Q_OBJECT
 
 public:
-    virtual ~QImageEncoderControl();
-
-    virtual QSize minimumResolution(const QImageEncoderSettings &settings) const = 0;
-    virtual QSize maximumResolution(const QImageEncoderSettings &settings) const = 0;
-    virtual QList<QSize> supportedResolutions(const QImageEncoderSettings &settings) const = 0;
+    virtual ~QImageEncoderControl();    
 
     virtual QStringList supportedImageCodecs() const = 0;
     virtual QString imageCodecDescription(const QString &codecName) const = 0;
+
+    virtual QList<QSize> supportedResolutions(const QImageEncoderSettings &settings,
+                                              bool *continuous = 0) const = 0;
 
     virtual QImageEncoderSettings imageSettings() const = 0;
     virtual void setImageSettings(const QImageEncoderSettings &settings) = 0;
@@ -74,5 +75,7 @@ protected:
 
 #define QImageEncoderControl_iid "com.nokia.Qt.QImageEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QImageEncoderControl, QImageEncoderControl_iid)
+
+QTM_END_NAMESPACE
 
 #endif

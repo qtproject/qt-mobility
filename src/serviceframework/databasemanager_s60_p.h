@@ -60,14 +60,14 @@
 #include <servicemetadata_p.h>
 #include "dberror_p.h"
 #include <e32base.h>
-class QServiceFilter;
 
-typedef TPckgBuf<TInt> TError; 
 
 QT_BEGIN_HEADER
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class CDatabaseManagerServerThread;
+class QServiceFilter;
+typedef TPckgBuf<TInt> TError; 
 
 class QServiceInterfaceDescriptor;
 
@@ -82,26 +82,25 @@ class RDatabaseManagerSession : public RSessionBase
         void Close();
         TVersion Version() const;
 
-        bool RegisterService(ServiceMetaDataResults& aService, TInt aScope);
-        bool UnregisterService(const QString& aServiceName, TInt aScope);
+        bool RegisterService(ServiceMetaDataResults& aService);
+        bool UnregisterService(const QString& aServiceName);
 
-        QList<QServiceInterfaceDescriptor> Interfaces(const QServiceFilter& aFilter, TInt aScope);
-        QStringList ServiceNames(const QString& aInterfaceName, TInt aScope);
+        QList<QServiceInterfaceDescriptor> Interfaces(const QServiceFilter& aFilter);
+        QStringList ServiceNames(const QString& aInterfaceName);
 
-        QServiceInterfaceDescriptor InterfaceDefault(const QString& aInterfaceName, TInt aScope);
-        bool SetInterfaceDefault(const QString& aServiceName, const QString& aInterfaceName, TInt aScope);
-        bool SetInterfaceDefault(const QServiceInterfaceDescriptor& aInterface, TInt aScope);
+        QServiceInterfaceDescriptor InterfaceDefault(const QString& aInterfaceName);
+        bool SetInterfaceDefault(const QString& aServiceName, const QString& aInterfaceName);
+        bool SetInterfaceDefault(const QServiceInterfaceDescriptor& aInterface);
 
         DBError LastError();
 
-        void SetChangeNotificationsEnabled(TInt aScope, bool aEnabled);
+        void SetChangeNotificationsEnabled(bool aEnabled);
         
         void NotifyServiceSignal(TRequestStatus& aStatus);
         void CancelNotifyServiceSignal() const;
         
     public:
         TBuf<255> iServiceName;
-        TPckgBuf<TInt> iScope;
         TPckgBuf<TInt> iState;
 
     private:
@@ -156,8 +155,10 @@ class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 };
 
 #ifdef __WINS__
+QTM_END_NAMESPACE
     #include "databasemanagerserver_global.h"
     #include <QThread>
+QTM_BEGIN_NAMESPACE
     class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServerThread : public QThread
         {
         public:
@@ -185,7 +186,7 @@ class DatabaseManagerSignalMonitor : public CActive
         RDatabaseManagerSession& iDatabaseManagerSession;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 QT_END_HEADER
 
 #endif

@@ -63,7 +63,7 @@
 #include <SystemConfiguration/SCNetworkConfiguration.h>
 QMap <QString, QString> networkInterfaces;
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QCoreWlanEngine, coreWlanEngine)
 
@@ -360,9 +360,9 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 cpPriv->state = QNetworkConfiguration::Undefined;
             }
             if([[apNetwork securityMode ] intValue]== kCWSecurityModeOpen)
-                cpPriv->purpose = QNetworkConfiguration::Public;
+                cpPriv->purpose = QNetworkConfiguration::PublicPurpose;
             else
-                cpPriv->purpose = QNetworkConfiguration::Private;
+                cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
             foundConfigs.append(cpPriv);
         }
     } else {
@@ -455,6 +455,7 @@ bool QCoreWlanEngine::getAllScInterfaces()
     return true;
 }
 
+#include "moc_qcorewlanengine_mac_p.cpp"
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 

@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessagefolderid.h"
 #include "qmessagefolderid_p.h"
+#include <qhash>
+
+QTM_BEGIN_NAMESPACE
 
 QMessageFolderId::QMessageFolderId()
  : d_ptr(0)
@@ -94,7 +97,16 @@ bool QMessageFolderId::operator==(const QMessageFolderId& other) const
 
 bool QMessageFolderId::operator<(const QMessageFolderId& other) const
 {
-    return (d_ptr->_id.toLong() < other.d_ptr->_id.toLong());
+    QString left("");
+    QString right("");
+    if (d_ptr) {
+        left = d_ptr->_id;
+    }
+    if (other.d_ptr) {
+        right = other.d_ptr->_id;
+    }
+    
+    return (left < right);
 }
 
 QString QMessageFolderId::toString() const
@@ -115,3 +127,5 @@ uint qHash(const QMessageFolderId &id)
 {
     return qHash(id.toString());
 }
+
+QTM_END_NAMESPACE

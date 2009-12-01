@@ -41,6 +41,8 @@
 #include "qmessagefilter.h"
 #include "qmessagefilter_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QMessageFilter::QMessageFilter()
 {
 }
@@ -296,3 +298,5 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderFilter &f
     Q_UNUSED(cmp)
     return QMessageFilter(); // stub
 }
+
+QTM_END_NAMESPACE

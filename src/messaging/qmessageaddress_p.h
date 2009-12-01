@@ -42,6 +42,8 @@
 #define QMESSAGEADDRESSPRIVATE_H
 #include "qmessageaddress.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QMessageAddressPrivate
 {
     Q_DECLARE_PUBLIC(QMessageAddress)
@@ -57,4 +59,6 @@ public:
     QMessageAddress::Type type;
     QString recipient;
 };
+
+QTM_END_NAMESPACE
 #endif

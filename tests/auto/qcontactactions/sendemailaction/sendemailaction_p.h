@@ -60,6 +60,8 @@
 #include <QString>
 #include <QVariantMap>
 
+QTM_USE_NAMESPACE
+
 class QContactSendEmailAction : public QContactAction
 {
     Q_OBJECT
@@ -83,7 +85,7 @@ private slots:
 class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactActionFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactActionFactory)
+    Q_INTERFACES(QtMobility::QContactActionFactory)
 
 public:
     QContactSendEmailActionFactory();

@@ -51,6 +51,8 @@
 
 class AudioCaptureSession;
 
+QTM_USE_NAMESPACE
+
 class AudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT
@@ -76,7 +78,7 @@ public:
 
     int sampleRate() const;
     void setSampleRate(int sampleRate);
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &) const;
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &, bool *continuous = 0) const;
 
     int channels() const;
     void setChannels(int channels);

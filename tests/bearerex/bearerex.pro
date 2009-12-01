@@ -8,9 +8,11 @@ QT += core \
 FORMS += sessiondialog.ui \
          bearerex.ui \
          detailedinfodialog.ui
-         
+include(../../common.pri)
 #not really a test case but deployment happens same way
 CONFIG += testcase
+
+include(../../common.pri)
 
 DEPENDPATH += .
 INCLUDEPATH += . \
@@ -29,6 +31,6 @@ symbian: {
     bearerex.path = /sys/bin
     DEPLOYMENT += bearerex
 
-    qtAddLibrary(QtBearer)
     TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 }
+qtAddLibrary(QtBearer)

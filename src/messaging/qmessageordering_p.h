@@ -51,6 +51,9 @@
 #include <qpair.h>
 #endif
 
+
+QTM_BEGIN_NAMESPACE
+
 class QMessageOrderingPrivate
 {
     Q_DECLARE_PUBLIC(QMessageOrdering)
@@ -79,4 +82,5 @@ public:
     static bool lessThan(const QMessageOrdering &ordering, const QMessage &message1, const QMessage &message2);
 #endif
 };
+QTM_END_NAMESPACE
 #endif

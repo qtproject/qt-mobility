@@ -1,15 +1,15 @@
 TEMPLATE = lib
 TARGET = QtPublishSubscribe
-QT = core network xml
+QT = core network
 
 include(../../common.pri)
 
 DEFINES += QT_BUILD_CFW_LIB QT_MAKEDLL
 
 
-PUBLIC_HEADERS += qpublishsubscribeglobal.h \
+PUBLIC_HEADERS += \
            qvaluespace.h \
-           qvaluespaceprovider.h \
+           qvaluespacepublisher.h \
            qvaluespacesubscriber.h
 
 PRIVATE_HEADERS += \
@@ -21,19 +21,38 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES += \
            qvaluespace.cpp \
            qvaluespacemanager.cpp \
-           qvaluespaceprovider.cpp \
+           qvaluespacepublisher.cpp \
            qvaluespacesubscriber.cpp
 
 symbian {
-    HEADERS += qcrmlparser_p.h
-    SOURCES += qcrmlparser.cpp
+    DEPENDPATH += symbian
+    INCLUDEPATH += symbian
+    DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
+    include(symbian/settingsmanager.pri)
+
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders
 
+    for(header, exportheaders.sources) {
+        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+    }
+
+    DEFINES += QT_BUILD_INTERNAL
+    HEADERS += settingslayer_symbian.h \
+        pathmapper_symbian.h \
+        qcrmlparser_p.h
+    SOURCES += settingslayer_symbian.cpp \
+        pathmapper_symbian.cpp \
+        qcrmlparser.cpp
     MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC78
+
+    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll
+    QtPublishSubscribeDeployment.path = /sys/bin
+
+    DEPLOYMENT += QtPublishSubscribeDeployment
 }
 
 unix:!symbian {
@@ -48,7 +67,7 @@ unix:!symbian {
 		   qpacketprotocol_p.h
         SOURCES += sharedmemorylayer.cpp \
            	   qmallocpool.cpp \
-                   qsystemreadwritelock.cpp \
+                   qsystemreadwritelock_unix.cpp \
 		   qpacketprotocol.cpp
     }
 }
@@ -56,7 +75,7 @@ unix:!symbian {
 win32 {
     HEADERS += qsystemreadwritelock_p.h
     SOURCES += \
-               qsystemreadwritelock.cpp \
+               qsystemreadwritelock_win.cpp \
                registrylayer_win.cpp
 
     !wince*:LIBS += -ladvapi32

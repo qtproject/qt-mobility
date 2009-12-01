@@ -46,75 +46,12 @@
 #include <QCoreApplication>
 #include <QEvent>
 
-using namespace QmfHelpers;
+#include "qmessagestore_qmf_p.h"
 
-class QMessageStorePrivate : public QObject
-{
-    Q_OBJECT
+using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
 
-public:
-    QMessageStorePrivate() 
-        : QObject(), 
-          _store(QMailStore::instance()), 
-          _error(QMessageStore::NoError), 
-          _notify(true),
-          _filterId(0)
-    {
-    }
 
-    QMailStore *_store;
-    QMessageStore::ErrorCode _error;
-    bool _notify;
-    QMessageStore::NotificationFilterId _filterId;
-    QMap<QMessageStore::NotificationFilterId, QMailMessageKey> _filters;
-
-    static QMailStore *convert(QMessageStore *store);
-
-    Q_SCOPED_STATIC_DECLARE(QMessageStore,storeInstance);
-
-    static void registerMessageStatus(QMailStore *store, const QString &field);
-    static void createNonexistentFolder(QMailStore *store, const QString &path, quint64 status);
-    
-public slots:
-    void messagesAdded(const QMailMessageIdList &ids);
-    void messagesRemoved(const QMailMessageIdList &ids);
-    void messagesUpdated(const QMailMessageIdList &ids);
-
-signals:
-    void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
-    void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
-    void messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
-
-private:
-    void processFilters(const QMailMessageIdList &ids, void (QMessageStorePrivate::*signal)(const QMessageId &, const QMessageStore::NotificationFilterIdSet &))
-    {
-        QMap<QMailMessageId, QMessageStore::NotificationFilterIdSet> matches;
-
-        // Copy the filter map to protect against modification during traversal
-        QMap<QMessageStore::NotificationFilterId, QMailMessageKey> filters(_filters);
-        QMap<QMessageStore::NotificationFilterId, QMailMessageKey>::const_iterator it = filters.begin(), end = filters.end();
-        for ( ; it != end; ++it) {
-            const QMailMessageKey &key(it.value());
-
-            QSet<QMailMessageId> filteredIds;
-            if (!key.isEmpty()) {
-                // Empty key matches all messages; otherwise get the filtered set
-                filteredIds = QMailStore::instance()->queryMessages(key).toSet();
-            }
-
-            foreach (const QMailMessageId &id, ids) {
-                if (key.isEmpty() || filteredIds.contains(id)) {
-                    matches[id].insert(it.key());
-                }
-            }
-        }
-
-        QMap<QMailMessageId, QMessageStore::NotificationFilterIdSet>::const_iterator mit = matches.begin(), mend = matches.end();
-        for ( ; mit != mend; ++mit) {
-            emit (this->*signal)(QmfHelpers::convert(mit.key()), mit.value());
-        }
-    }
-};
+QTM_BEGIN_NAMESPACE
 
 Q_SCOPED_STATIC_DEFINE(QMessageStore,QMessageStorePrivate,storeInstance);
 
@@ -308,10 +245,10 @@ bool QMessageStore::addMessage(QMessage *m)
     // Ensure that the size estimate is updated if necessary
     (void)m->size();
 
-    QMailMessage msg(convert(*m));
+    QMailMessage *msg(convert(m));
 
     d_ptr->_error = QMessageStore::NoError;
-    return d_ptr->_store->addMessage(&msg);
+    return d_ptr->_store->addMessage(msg);
 }
 
 bool QMessageStore::updateMessage(QMessage *m)
@@ -389,6 +326,7 @@ QMessageStore* QMessageStore::instance()
 
     return store;
 }
-    
-#include "qmessagestore_qmf.moc"
 
+#include "moc_qmessagestore_qmf_p.cpp"
+    
+QTM_END_NAMESPACE

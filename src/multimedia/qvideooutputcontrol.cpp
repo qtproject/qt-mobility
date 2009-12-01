@@ -41,24 +41,29 @@
 
 #include <qvideooutputcontrol.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QVideoOutputControl
     \preliminary
-    \brief The QVideoOutputControl class provides a means of selecting the active video output
-    control.
 
-    There are multiple controls which a QMediaService may use to output video ony one of which
-    may be active at one time, QVideoOutputControl is the means by which this active control is
-    selected.
+    \brief The QVideoOutputControl class provides a means of selecting the
+    active video output control.
 
-    The possible output controls are QVideoRendererControl, QVideoWindowControl, and
-    QVideoWidgetControl.
+    \ingroup multimedia-serv
+
+    There are multiple controls which a QMediaService may use to output
+    video ony one of which may be active at one time, QVideoOutputControl
+    is the means by which this active control is selected.
+
+    The possible output controls are QVideoRendererControl,
+    QVideoWindowControl, and QVideoWidgetControl.
 
     The interface name of QVideoOutputControl is \c com.nokia.Qt.QVideoOutputControl/1.0 as
     defined in QVideoOutputControl_iid.
 
-    \sa QMediaService::control(), QVideoWidget, QVideoRendererControl, QVideoWindowControl,
-    QVideoWidgetControl
+    \sa QMediaService::control(), QVideoWidget, QVideoRendererControl,
+    QVideoWindowControl, QVideoWidgetControl
 */
 
 /*!
@@ -122,3 +127,7 @@ QVideoOutputControl::~QVideoOutputControl()
 
     Signals that available set of video \a outputs has changed.
 */
+
+#include "moc_qvideooutputcontrol.cpp"
+QTM_END_NAMESPACE
+

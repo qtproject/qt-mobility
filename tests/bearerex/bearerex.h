@@ -54,6 +54,8 @@
 class QHttp;
 class SessionTab;
 
+QTM_USE_NAMESPACE
+
 class BearerEx : public QMainWindow, public Ui::BearerExMainWindow
 {
      Q_OBJECT
@@ -115,8 +117,8 @@ private Q_SLOTS:
     void preferredConfigurationChanged(const QNetworkConfiguration& config, bool isSeamless);
     void stateChanged(QNetworkSession::State state);
     void newState(QNetworkSession::State state);
-    void sessionOpened();
-    void sessionClosed();
+    void opened();
+    void closed();
     void error(QNetworkSession::SessionError error);
 
 private: //data

@@ -42,7 +42,7 @@
 #ifndef QVALUESPACESUBSCRIBER_H
 #define QVALUESPACESUBSCRIBER_H
 
-#include "qpublishsubscribeglobal.h"
+#include "qmobilityglobal.h"
 #include "qvaluespace.h"
 
 #include <QObject>
@@ -52,7 +52,7 @@
 
 QT_BEGIN_HEADER
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QValueSpaceSubscriberPrivate;
 
@@ -60,20 +60,16 @@ class Q_PUBLISHSUBSCRIBE_EXPORT QValueSpaceSubscriber : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString path READ path WRITE setPath);
-    Q_PROPERTY(QVariant value READ valuex NOTIFY contentsChanged);
+    Q_PROPERTY(QString path READ path WRITE setPath)
+    Q_PROPERTY(QVariant value READ valuex NOTIFY contentsChanged)
 
 public:
     explicit QValueSpaceSubscriber(QObject *parent = 0);
     explicit QValueSpaceSubscriber(const QString &path, QObject *parent = 0);
-    explicit QValueSpaceSubscriber(const char *path, QObject *parent = 0);
 
-    QValueSpaceSubscriber(const QString &path, QValueSpace::LayerOptions filter,
+    QValueSpaceSubscriber(QValueSpace::LayerOptions filter, const QString &path,
                           QObject *parent = 0);
-    QValueSpaceSubscriber(const char *path, QValueSpace::LayerOptions filter, QObject *parent = 0);
-
-    QValueSpaceSubscriber(const QString &path, const QUuid &uuid, QObject *parent = 0);
-    QValueSpaceSubscriber(const char *path, const QUuid &uuid, QObject *parent = 0);
+    QValueSpaceSubscriber(const QUuid &uuid, const QString &path, QObject *parent = 0);
 
     virtual ~QValueSpaceSubscriber();
 
@@ -89,7 +85,6 @@ public:
     QStringList subPaths() const;
 
     QVariant value(const QString &subPath = QString(), const QVariant &def = QVariant()) const;
-    QVariant value(const char *subPath, const QVariant &def = QVariant()) const;
 
 
 signals:
@@ -108,7 +103,7 @@ private:
     QExplicitlySharedDataPointer<QValueSpaceSubscriberPrivate> d;
 };
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

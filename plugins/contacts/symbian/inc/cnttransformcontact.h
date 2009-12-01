@@ -50,10 +50,14 @@
 #include <cntitem.h>
 
 class CntTransformContactData;
+
+QTM_BEGIN_NAMESPACE
 class QContactDetailDefinition;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class CntTransformContact
-
 {
 public:
 	CntTransformContact();
@@ -99,7 +103,9 @@ private:
 	void initializeCntTransformContactData();
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
-
+	void transformPreferredDetailL(const QContact& contact, const QContactDetail& detail, QList<CContactItemField*> &fieldList) const;
+	void transformPreferredDetail(const CContactItemField& field, const QContactDetail& detail, QContact& contact) const;
+	
 private:
 	QMap<ContactData, CntTransformContactData*> m_transformContactData;
 };

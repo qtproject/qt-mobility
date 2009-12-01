@@ -47,6 +47,8 @@
 #include <QMediaRecorder>
 #include <QMediaRecorderControl>
 
+QTM_USE_NAMESPACE
+
 class S60AudioCaptureSession;
 
 class S60AudioMediaRecorderControl : public QMediaRecorderControl

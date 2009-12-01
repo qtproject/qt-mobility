@@ -54,7 +54,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 static QHash<QString, QVariant> properties;
 
@@ -378,12 +378,12 @@ quint64 QNetworkSessionPrivate::getStatistics(bool sent) const
 }
 
 
-quint64 QNetworkSessionPrivate::sentData() const
+quint64 QNetworkSessionPrivate::bytesWritten() const
 {
     return getStatistics(true);
 }
 
-quint64 QNetworkSessionPrivate::receivedData() const
+quint64 QNetworkSessionPrivate::bytesReceived() const
 {
     return getStatistics(false);
 }
@@ -691,7 +691,7 @@ void QNetworkSessionPrivate::updateStateFromActiveConfig()
         emit quitPendingWaitsForOpened();
 
     if (oldActive && !isActive)
-        emit q->sessionClosed();
+        emit q->closed();
 
     if (oldState != state) {
         emit q->stateChanged(state);
@@ -969,7 +969,7 @@ void QNetworkSessionPrivate::do_open()
 	    qDebug() << "All configurations:" << all;
 	    foreach(QNetworkConfiguration p, configs) {
 		qDebug() << p.name() <<":  isvalid->" <<p.isValid() << " type->"<< p.type() << 
-		    " roaming->" << p.roamingAvailable() << "identifier->" << p.identifier() <<
+		    " roaming->" << p.isRoamingAvailable() << "identifier->" << p.identifier() <<
 		    " purpose->" << p.purpose() << " state->" << p.state();
 	    }
 #endif
@@ -1035,7 +1035,7 @@ void QNetworkSessionPrivate::close()
     } else if (isActive) {
         opened = false;
         isActive = false;
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -1072,7 +1072,7 @@ void QNetworkSessionPrivate::stop()
         } else {
 	    opened = false;
 	    isActive = false;
-	    emit q->sessionClosed();
+	    emit q->closed();
 	}
     }
 }
@@ -1114,7 +1114,7 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 }
 
 
-void QNetworkSessionPrivate::setProperty(const QString& key, const QVariant& value)
+void QNetworkSessionPrivate::setSessionProperty(const QString& key, const QVariant& value)
 {
     if (value.isValid()) {
 	properties.insert(key, value);
@@ -1136,7 +1136,7 @@ void QNetworkSessionPrivate::setProperty(const QString& key, const QVariant& val
 }
 
 
-QVariant QNetworkSessionPrivate::property(const QString& key) const
+QVariant QNetworkSessionPrivate::sessionProperty(const QString& key) const
 {
     return properties.value(key);
 }
@@ -1176,5 +1176,6 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
 }
 
 #include "qnetworksession_maemo.moc"
+#include "moc_qnetworksession_maemo_p.cpp"
 
-QT_END_NAMESPACE
+QTM_END_NAMESPACE

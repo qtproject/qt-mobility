@@ -50,8 +50,12 @@
 
 
 class QUrl;
-class QAudioFormat;
 class QSize;
+
+class QAudioFormat;
+
+QTM_BEGIN_NAMESPACE
+
 class QMediaRecorderService;
 class QAudioEncoderSettings;
 class QVideoEncoderSettings;
@@ -83,6 +87,8 @@ public:
     QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
     ~QMediaRecorder();
 
+    bool isAvailable() const;
+
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);
 
@@ -99,18 +105,17 @@ public:
     QStringList supportedAudioCodecs() const;
     QString audioCodecDescription(const QString &codecName) const;
 
-    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
+    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings(),
+                                         bool *continuous = 0) const;
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
 
-    QSize minimumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QSize maximumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                      bool *continuous = 0) const;
 
-    qreal minimumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings());
-    qreal maximumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings());
-    QList<qreal> supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList<qreal> supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                     bool *continuous = 0) const;
 
     QAudioEncoderSettings audioSettings() const;
     QVideoEncoderSettings videoSettings() const;
@@ -138,7 +143,9 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
-Q_DECLARE_METATYPE(QMediaRecorder::State);
-Q_DECLARE_METATYPE(QMediaRecorder::Error);
+QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::State);
+Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::Error);
 
 #endif  // QMEDIARECORDER_H

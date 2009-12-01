@@ -43,19 +43,16 @@
 
 QList<CContactItemField *> CntTransformSyncTarget::transformDetailL(const QContactDetail &detail)
 {
-	QList<CContactItemField *> fieldList;
+    if(detail.definitionName() != QContactSyncTarget::DefinitionName)
+       User::Leave(KErrArgument);
+
+    QList<CContactItemField *> fieldList;
 
 	//cast to sync target
 	const QContactSyncTarget &syncTarget(static_cast<const QContactSyncTarget&>(detail));
 
-	//create new field
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(syncTarget.syncTarget().utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldClass);
- 	newField->TextStorage()->SetTextL(fieldText);
-	newField->SetMapping(KUidContactFieldVCardMapClass);
-
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
+    //create new fields without contexts
+    transformToTextFieldL(syncTarget, fieldList, syncTarget.syncTarget(), KUidContactFieldClass, KUidContactFieldVCardMapClass, false);
 
 	return fieldList;
 }

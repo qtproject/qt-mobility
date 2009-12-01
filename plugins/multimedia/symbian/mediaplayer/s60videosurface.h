@@ -74,8 +74,8 @@ public:
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
-			
-	bool isFormatSupported(const QVideoSurfaceFormat &format) const;
+
+    bool isFormatSupported(const QVideoSurfaceFormat &format) const;
 
     bool start(const QVideoSurfaceFormat &format);
     void stop();

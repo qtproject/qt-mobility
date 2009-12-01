@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <qmobilityglobal.h>
 #include "qnetworksession_s60_p.h"
 #include "qnetworkconfiguration_s60_p.h"
 #include "qnetworkconfigmanager_s60_p.h"
@@ -47,6 +48,8 @@
 #include <in_sock.h>
 #include <stdapis/sys/socket.h>
 #include <stdapis/net/if.h>
+
+QTM_BEGIN_NAMESPACE
 
 QNetworkSessionPrivate::QNetworkSessionPrivate()
     : CActive(CActive::EPriorityStandard), state(QNetworkSession::Invalid),
@@ -196,12 +199,12 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return activeInterface;
 }
 
-QVariant QNetworkSessionPrivate::property(const QString& /*key*/) const
+QVariant QNetworkSessionPrivate::sessionProperty(const QString& /*key*/) const
 {
     return QVariant();
 }
 
-void QNetworkSessionPrivate::setProperty(const QString& /*key*/, const QVariant& /*value*/)
+void QNetworkSessionPrivate::setSessionProperty(const QString& /*key*/, const QVariant& /*value*/)
 {
 }
 
@@ -410,7 +413,7 @@ void QNetworkSessionPrivate::close(bool allowSignals)
         if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
             newState(QNetworkSession::Disconnected);
         }
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 
@@ -424,7 +427,7 @@ void QNetworkSessionPrivate::stop()
     iConnection.Stop(RConnection::EStopAuthoritative);
     isActive = true;
     close(false);
-    emit q->sessionClosed();
+    emit q->closed();
 }
 
 void QNetworkSessionPrivate::migrate()
@@ -523,7 +526,7 @@ void QNetworkSessionPrivate::Error(TInt /*aError*/)
         // => Following call makes sure that Session state
         //    changes immediately to Disconnected.
         newState(QNetworkSession::Disconnected);
-        emit q->sessionClosed();
+        emit q->closed();
     }
 }
 #endif
@@ -589,12 +592,12 @@ QString QNetworkSessionPrivate::bearerName() const
     }
 }
 
-quint64 QNetworkSessionPrivate::sentData() const
+quint64 QNetworkSessionPrivate::bytesWritten() const
 {
     return transferredData(KUplinkData);
 }
 
-quint64 QNetworkSessionPrivate::receivedData() const
+quint64 QNetworkSessionPrivate::bytesReceived() const
 {
     return transferredData(KDownlinkData);
 }
@@ -938,7 +941,7 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
     }
     
     if (emitSessionClosed) {
-        emit q->sessionClosed();
+        emit q->closed();
     }
 
     return retVal;
@@ -1160,3 +1163,6 @@ void ConnectionProgressNotifier::RunL()
     }
 }
 
+#include "moc_qnetworksession_s60_p.cpp"
+
+QTM_END_NAMESPACE

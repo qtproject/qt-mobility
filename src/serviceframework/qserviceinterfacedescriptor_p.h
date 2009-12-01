@@ -58,7 +58,7 @@
 #include <QString>
 #include <QHash>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptorPrivate
 {
@@ -119,6 +119,6 @@ public:
     int minor;
     bool systemScope;
 };
-QT_END_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif //QSERVICEINTERFACEDESCRIPTOR_P_H

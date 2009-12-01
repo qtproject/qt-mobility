@@ -49,6 +49,7 @@
 #include <iapconf.h>
 #endif
 
+QTM_USE_NAMESPACE
 class tst_QNetworkConfiguration : public QObject
 {
     Q_OBJECT
@@ -61,7 +62,7 @@ private slots:
     void invalidPoint();
     void comparison();
     void children();
-    void roamingAvailable();
+    void isRoamingAvailable();
 
 private:
 #ifdef MAEMO
@@ -183,7 +184,7 @@ void tst_QNetworkConfiguration::invalidPoint()
     QVERIFY(!(pt.state() & QNetworkConfiguration::Defined));
     QVERIFY(!(pt.state() & QNetworkConfiguration::Discovered));
     QVERIFY(!(pt.state() & QNetworkConfiguration::Active));
-    QVERIFY(!pt.roamingAvailable());
+    QVERIFY(!pt.isRoamingAvailable());
 
     QNetworkConfiguration pt2(pt);
     QVERIFY(pt2.name().isEmpty());
@@ -192,7 +193,7 @@ void tst_QNetworkConfiguration::invalidPoint()
     QVERIFY(!(pt2.state() & QNetworkConfiguration::Defined));
     QVERIFY(!(pt2.state() & QNetworkConfiguration::Discovered));
     QVERIFY(!(pt2.state() & QNetworkConfiguration::Active));
-    QVERIFY(!pt2.roamingAvailable());
+    QVERIFY(!pt2.isRoamingAvailable());
 
 }
 
@@ -269,7 +270,7 @@ void tst_QNetworkConfiguration::children()
     }
 }
 
-void tst_QNetworkConfiguration::roamingAvailable()
+void tst_QNetworkConfiguration::isRoamingAvailable()
 {
     QNetworkConfigurationManager manager;
     QList<QNetworkConfiguration> configs = manager.allConfigurations();
@@ -287,13 +288,13 @@ void tst_QNetworkConfiguration::roamingAvailable()
             //cannot test flag as some SNAPs may not support roaming anyway
             //QVERIFY(c.roamingavailable())
             if ( c.children().count() <= 1 )
-                QVERIFY(!c.roamingAvailable());
+                QVERIFY(!c.isRoamingAvailable());
             foreach(QNetworkConfiguration child, c.children()) {
                 QVERIFY(QNetworkConfiguration::InternetAccessPoint == child.type());
                 QCOMPARE(child.children().count(), 0);
             }
         } else {
-            QVERIFY(!c.roamingAvailable());
+            QVERIFY(!c.isRoamingAvailable());
         }
     }
 }

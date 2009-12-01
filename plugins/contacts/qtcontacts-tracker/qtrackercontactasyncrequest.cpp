@@ -40,30 +40,44 @@
 ****************************************************************************/
 
 
-#include "qcontactabstractrequest.h"
-#include "qcontactmanagerengine.h"
-
 #include <QtTracker/ontologies/nie.h>
 #include <QtTracker/ontologies/nco.h>
 
-#include "qcontactdetails.h"
-#include "qcontactfilters.h"
-#include "qcontactrequests.h"
+#include "qtcontacts.h"
 #include "qtrackercontactasyncrequest.h"
-#include "debuglevel.h"
 
 using namespace SopranoLive;
-using namespace hcontacts;
 
-void matchPhoneNumberFromEnd(RDFVariable &variable, QContactDetailFilter &filter)
+void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
 {
+    // This here is the first implementation of filtering that takes into account also affiliations.
+    // needs to be applied for other filters too - TODO
+    RDFVariable officeContact;
+    RDFVariable homeContact;
+
     RDFVariable rdfPhoneNumber;
-    rdfPhoneNumber = variable.property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
-    int matchDigitCount = settings.value("phoneNumberMatchDigitCount", "7").toInt();
-    debug() << "match with:" << matchDigitCount;
-    QString filterValue = filter.value().toString().right(matchDigitCount);
-    rdfPhoneNumber.hasSuffix(filterValue);
+    rdfPhoneNumber = homeContact.property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
+
+    RDFVariable rdfOfficePhoneNumber;
+    rdfOfficePhoneNumber = officeContact.property<nco::hasAffiliation>().property<nco::hasPhoneNumber>().property<nco::phoneNumber>();
+
+    QString filterValue = filter.value().toString();
+    if (filter.matchFlags() == Qt::MatchEndsWith)
+    {
+        QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Nokia","Trackerplugin");
+        int matchDigitCount = settings.value("phoneNumberMatchDigitCount", "7").toInt();
+        filterValue = filterValue.right(matchDigitCount);
+        qDebug() << "match with:" << matchDigitCount << ":" << filterValue;
+        rdfPhoneNumber.hasSuffix(filterValue);
+        rdfOfficePhoneNumber.hasSuffix(filterValue);
+    }
+    else
+    {   // default to exact match
+        rdfOfficePhoneNumber.matchesRegexp(filterValue);
+        rdfPhoneNumber.matchesRegexp(filterValue);
+    }
+    // This is the key part, including both contacts and affiliations
+    variable.isMemberOf(RDFVariableList()<<homeContact);// TODO report bug doesnt work in tracker <<officeContact);
 }
 
 void applyFilterToRDFVariable(RDFVariable &variable,
@@ -74,17 +88,18 @@ void applyFilterToRDFVariable(RDFVariable &variable,
         if (!filt.ids().isEmpty()) {
             variable.property<nco::contactUID>().isMemberOf(filt.ids());
         } else {
-            warning() << Q_FUNC_INFO << "QContactLocalIdFilter idlist is empty";
+            qWarning() << Q_FUNC_INFO << "QContactLocalIdFilter idlist is empty";
         }
     } else if (filter.type() == QContactFilter::ContactDetailFilter) {
+        // this one is tricky as we need to match in contacts or in affiliations
+
         QContactDetailFilter filt = filter;
-        if (filt.matchFlags() == Qt::MatchExactly) {
-            if ( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
-                 && QContactPhoneNumber::FieldNumber == filt.detailFieldName()) {
-                RDFVariable rdfPhoneNumber;
-                rdfPhoneNumber = variable.property<nco::hasPhoneNumber>();
-                rdfPhoneNumber.property<nco::phoneNumber>() = LiteralValue(filt.value().toString());
-            } else if (QContactEmailAddress::DefinitionName == filt.detailDefinitionName()
+        if ( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
+             && QContactPhoneNumber::FieldNumber == filt.detailFieldName()) {
+            matchPhoneNumber(variable, filt);
+        }
+        else if (filt.matchFlags() == Qt::MatchExactly) {
+            if (QContactEmailAddress::DefinitionName == filt.detailDefinitionName()
                        && QContactEmailAddress::FieldEmailAddress == filt.detailFieldName()) {
                 RDFVariable rdfEmailAddress;
                 rdfEmailAddress = variable.property<nco::hasEmailAddress>();
@@ -94,15 +109,8 @@ void applyFilterToRDFVariable(RDFVariable &variable,
                 RDFVariable imaccount = variable.property<nco::hasIMAccount>();
                 imaccount.property<nco::imID>() = LiteralValue(filt.value().toString());
             } else {
-                warning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
+                qWarning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
-            }
-        }
-        // TODO: change match flag as soon as qtmobility provides one
-        if (filt.matchFlags() == Qt::MatchEndsWith) {
-            if ( filt.detailDefinitionName() == QContactPhoneNumber::DefinitionName 
-                 && filt.detailFieldName() == QContactPhoneNumber::FieldNumber) {
-                matchPhoneNumberFromEnd(variable, filt);
             }
         }
     } else if (filter.type() == QContactFilter::ChangeLogFilter) {
@@ -114,7 +122,7 @@ void applyFilterToRDFVariable(RDFVariable &variable,
         if (clFilter.eventType() == QContactChangeLogFilter::EventRemoved) { // Removed since
             // did not find how to set errror to async request
             // error = QContactManager::NotSupportedError;
-            warning() << "QContactTrackerEngine: Unsupported QContactChangeLogFilter::Removed (contacts removed since)";
+            qWarning() << "QContactTrackerEngine: Unsupported QContactChangeLogFilter::Removed (contacts removed since)";
         } else if (clFilter.eventType() == QContactChangeLogFilter::EventAdded) { // Added since
             variable.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         } else if (clFilter.eventType() == QContactChangeLogFilter::EventChanged) { // Changed since
@@ -207,7 +215,7 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractReq
     Q_ASSERT(req);
     Q_ASSERT(parent);
     QList<QContactManager::Error> dummy;
-    parent->updateRequestStatus(request, QContactManager::NoError, dummy,
+    QContactManagerEngine::updateRequestStatus(request, QContactManager::NoError, dummy,
                                 QContactAbstractRequest::Active);
 
     Q_ASSERT( req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest );
@@ -264,9 +272,8 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 {
     Q_ASSERT(parent);
     QList<QContactManager::Error> dummy;
-    parent->updateRequestStatus(request, QContactManager::NoError, dummy,
+    QContactManagerEngine::updateRequestStatus(request, QContactManager::NoError, dummy,
                                 QContactAbstractRequest::Active);
-
 
     validateRequest();
     QContactFetchRequest* r = static_cast<QContactFetchRequest*> (req);
@@ -305,8 +312,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
         }
     }
 
-    if ( r->definitionRestrictions().contains(QContactPresence::DefinitionName)
-         || r->definitionRestrictions().contains( QContactOnlineAccount::DefinitionName)) {
+    if ( r->definitionRestrictions().contains( QContactOnlineAccount::DefinitionName) ) {
         queryIMAccountNodes.clear();
         queryIMAccountNodesReady = 0;
         for(int forAffiliations = 0; forAffiliations <= 1; forAffiliations++) {
@@ -376,24 +382,24 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
             else if (sort.detailFieldName() == QContactName::FieldLast)
                 quer.orderBy(lastname);
             else
-                warning() << "QTrackerContactFetchRequest" << "sorting by"
+                qWarning() << "QTrackerContactFetchRequest" << "sorting by"
                     << sort.detailDefinitionName()
                     << sort.detailFieldName() << "is not yet supported";
         } else {
-            warning() << "QTrackerContactFetchRequest" << "sorting by"
+            qWarning() << "QTrackerContactFetchRequest" << "sorting by"
                 << sort.detailDefinitionName()
                 << "is not yet supported";
         }
     }
+
     query = ::tracker()->modelQuery(quer);
+
     // need to store LiveNodes in order to receive notification from model
     QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(contactsReady()));
 }
 
 void QTrackerContactIdFetchRequest::modelUpdated()
 {
-    // fastest way to get this working. refactor
-    QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
     QList<QContactLocalId> result;
     // for now this only serves get all contacts
     for(int i = 0; i < query->rowCount(); i++) {
@@ -407,8 +413,7 @@ void QTrackerContactIdFetchRequest::modelUpdated()
         }
     }
 
-    if (engine)
-        engine->updateRequest(req, result, QContactManager::NoError,
+    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished,
                               false);
@@ -432,7 +437,6 @@ void QTrackerContactFetchRequest::contactsReady()
         ? static_cast<QContactFetchRequest*> (req) : 0;
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
-    QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (parent());
     QList<QContact> result;
     // access existing contacts in result list, contactid to array index (result) lookup
     QHash<quint32, int> resultLookup;
@@ -573,25 +577,33 @@ void QTrackerContactFetchRequest::contactsReady()
         }
     }
     if (request->definitionRestrictions().contains(QContactEmailAddress::DefinitionName)) {
-        debug() << "processQueryEmailAddresses";
+        qDebug() << "processQueryEmailAddresses";
         Q_ASSERT(queryEmailAddressNodes.size() == 2);
         for (int cnt = 0; cnt < queryEmailAddressNodes.size(); cnt++) {
             processQueryEmailAddresses(queryEmailAddressNodes[cnt], result, cnt);
         }
     }
-    if ( request->definitionRestrictions().contains(QContactPresence::DefinitionName)
-         || request->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName)) {
+    if ( request->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName)) {
         Q_ASSERT(queryIMAccountNodes.size() == 2);
         for (int cnt = 0; cnt < queryIMAccountNodes.size(); cnt++) {
             processQueryIMAccounts(queryIMAccountNodes[cnt], result, cnt);
         }
     }
-
-    if (engine) {
-        engine->updateRequest(req, result, QContactManager::NoError,
+    // update display labels
+    QContactManagerEngine *engine = dynamic_cast<QContactManagerEngine*>(parent());
+    Q_ASSERT(engine);
+    for(int i = 0; i < result.count(); i++)
+    {
+        QContact &cont(result[i]);
+        QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
+        if (dl.label().isEmpty()) {
+            QContactManager::Error synthError;
+            result[i] = engine->setContactDisplayLabel(engine->synthesizeDisplayLabel(cont, synthError), cont);
+        }
+    }
+    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished, true);
-    }
 }
 
 void QTrackerContactFetchRequest::phoneNumbersReady()
@@ -633,7 +645,7 @@ const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
     else if ( rdfPhoneType.endsWith("MessagingNumber") )
         return QContactPhoneNumber::SubTypeMessagingCapable;
     else
-        warning() << Q_FUNC_INFO << "Not handled phone number type:" << rdfPhoneType;
+        qWarning() << Q_FUNC_INFO << "Not handled phone number type:" << rdfPhoneType;
     return "";
 }
 
@@ -643,7 +655,7 @@ void QTrackerContactFetchRequest::processQueryPhoneNumbers(SopranoLive::LiveNode
 {
     Q_ASSERT_X( queryPhoneNumbersNodesReady==2, Q_FUNC_INFO, "Phonenumbers query was supposed to be ready and it is not." );
     for (int i = 0; i < queryPhoneNumbers->rowCount(); i++) {
-        debug() << Q_FUNC_INFO << i << queryPhoneNumbers->rowCount() << queryPhoneNumbers->columnCount()
+        qDebug() << Q_FUNC_INFO << i << queryPhoneNumbers->rowCount() << queryPhoneNumbers->columnCount()
             << queryPhoneNumbers->index(i, 0).data().toString()
             << queryPhoneNumbers->index(i, 1).data().toString()
             << queryPhoneNumbers->index(i, 2).data().toString();
@@ -684,7 +696,7 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
 {
     Q_ASSERT_X(queryEmailAddressNodesReady == 2, Q_FUNC_INFO, "Email query was supposed to be ready and it is not." );
     for (int i = 0; i < queryEmailAddresses->rowCount(); i++) {
-        debug() << Q_FUNC_INFO << i
+        qDebug() << Q_FUNC_INFO << i
             << queryEmailAddresses->rowCount()
             << queryEmailAddresses->columnCount()
             << queryEmailAddresses->index(i, 0).data().toString()
@@ -728,7 +740,7 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
     Q_ASSERT_X(queryIMAccountNodesReady == 2, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
     for (int i = 0; i < queryIMAccounts->rowCount(); i++) {
         //contactid, imid, status, message, nick, type
-        debug() << Q_FUNC_INFO
+        qDebug() << Q_FUNC_INFO
             << queryIMAccounts->index(i, 0).data().toString()
             << queryIMAccounts->index(i, 1).data().toString()
             << queryIMAccounts->index(i, 2).data().toString()
@@ -743,18 +755,15 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
                 if (affiliationAccounts)
                     account.setContexts(QContactOnlineAccount::ContextWork);
                 account.setValue("Account", queryIMAccounts->index(i, 1).data().toString()); // IMId
-                account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
+                if (!queryIMAccounts->index(i, 5).data().toString().isEmpty())
+                    account.setValue("AccountPath", queryIMAccounts->index(i, 5).data().toString()); // getImAccountType?
                 account.setValue("Capabilities", queryIMAccounts->index(i, 6).data().toString()); // getImAccountType?
+                account.setNickname(queryIMAccounts->index(i, 4).data().toString()); // nick
+                account.setPresence(queryIMAccounts->index(i, 2).data().toString()); // imStatus
+                qDebug() << "the status from **tracker**" << account.presence();
+                account.setStatusMessage(queryIMAccounts->index(i, 3).data().toString()); // imStatusMessage
                 contacts[j].saveDetail(&account);
                 contacts[j].saveDetail(&account);
-                QContactPresence presence;
-                if (affiliationAccounts)
-                    presence.setContexts(QContactPresence::ContextWork);
-                presence.setValue(QContactPresence::FieldNickname, queryIMAccounts->index(i, 4).data().toString()); // nick
-                presence.setValue(QContactPresence::FieldPresence, queryIMAccounts->index(i, 2).data().toString()); // imStatus
-                debug() << "the status from **tracker**" << presence.value(QContactPresence::FieldPresence);
-                presence.setValue(QContactPresence::FieldStatusMessage, queryIMAccounts->index(i, 3).data().toString()); // imStatusMessage
-                contacts[j].saveDetail(&presence);
                 break;
             }
         }

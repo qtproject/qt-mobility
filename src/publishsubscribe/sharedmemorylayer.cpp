@@ -41,7 +41,7 @@
 
 #include "qvaluespace_p.h"
 #include "qmallocpool_p.h"
-#include "qvaluespaceprovider.h"
+#include "qvaluespacepublisher.h"
 #include "qsystemreadwritelock_p.h"
 #include "qpacketprotocol_p.h"
 
@@ -57,7 +57,7 @@
 #include <QTime>
 #include <QThread>
 
-QT_BEGIN_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #define VERSION_TABLE_ENTRIES 8191
 #define ROOT_VERSION_ENTRY 0
@@ -1701,12 +1701,12 @@ public:
     bool supportsInterestNotification() const;
     bool notifyInterest(Handle handle, bool interested);
 
-    /* QValueSpaceProvider functions */
-    bool setValue(QValueSpaceProvider *creator, Handle handle, const QString &, const QVariant &);
-    bool removeValue(QValueSpaceProvider *creator, Handle handle, const QString &);
-    bool removeSubTree(QValueSpaceProvider *creator, Handle handle);
-    void addWatch(QValueSpaceProvider *creator, Handle handle);
-    void removeWatches(QValueSpaceProvider *creator, Handle parent);
+    /* QValueSpacePublisher functions */
+    bool setValue(QValueSpacePublisher *creator, Handle handle, const QString &, const QVariant &);
+    bool removeValue(QValueSpacePublisher *creator, Handle handle, const QString &);
+    bool removeSubTree(QValueSpacePublisher *creator, Handle handle);
+    void addWatch(QValueSpacePublisher *creator, Handle handle);
+    void removeWatches(QValueSpacePublisher *creator, Handle parent);
     void sync();
 
     void nodeChanged(unsigned short);
@@ -1744,7 +1744,7 @@ private:
     bool remWatch(NodeWatch watch, const QByteArray &path);
     bool doRemWatch(NodeWatch watch, const QByteArray &path);
     void doNotify(const QByteArray &path, const QPacketProtocol *protocol, bool interested);
-    void doClientNotify(QValueSpaceProvider *provider, const QByteArray &path, bool interested);
+    void doClientNotify(QValueSpacePublisher *publisher, const QByteArray &path, bool interested);
     void doNotifyObject(unsigned long own, unsigned long protocol);
 
     QString socket() const;
@@ -1926,7 +1926,7 @@ bool SharedMemoryLayer::startup(Type type)
             //qDebug() << "Reattaching to existing memory";
             shm->attach();
         }
-        lock = new QSystemReadWriteLock(socket(), QSystemReadWriteLock::Create);
+        lock = new QSystemReadWriteLock(socket() + "_lock", QSystemReadWriteLock::Create);
     } else {
         shm = new QSharedMemory(socket(), this);
         shm->attach(QSharedMemory::ReadOnly);
@@ -1937,7 +1937,7 @@ bool SharedMemoryLayer::startup(Type type)
                        << subShm->errorString() << subShm->key();
         }
 
-        lock = new QSystemReadWriteLock(socket(), QSystemReadWriteLock::Open);
+        lock = new QSystemReadWriteLock(socket() + "_lock", QSystemReadWriteLock::Open);
     }
 
     if (shm->error() != QSharedMemory::NoError ||
@@ -2106,7 +2106,7 @@ void SharedMemoryLayer::disconnected()
             QList<NodeWatch> owners = watchers(interestPath);
 
             QSet<unsigned long> written;
-            QSet<QValueSpaceProvider *> notified;
+            QSet<QValueSpacePublisher *> notified;
 
             for (int ii = 0; ii < owners.count(); ++ii) {
                 const NodeWatch &watch = owners.at(ii);
@@ -2115,11 +2115,11 @@ void SharedMemoryLayer::disconnected()
                     continue;
 
                 if (watch.data1 == 0) {
-                    QValueSpaceProvider *provider =
-                        reinterpret_cast<QValueSpaceProvider *>(watch.data2);
-                    if (!notified.contains(provider)) {
-                        doClientNotify(provider, interestPath, false);
-                        notified.insert(provider);
+                    QValueSpacePublisher *publisher =
+                        reinterpret_cast<QValueSpacePublisher *>(watch.data2);
+                    if (!notified.contains(publisher)) {
+                        doClientNotify(publisher, interestPath, false);
+                        notified.insert(publisher);
                     }
                 } else {
                     if (!written.contains(watch.data1)) {
@@ -2178,7 +2178,7 @@ void SharedMemoryLayer::readyRead()
             QByteArray path;
             bool interested;
             pack >> owner >> path >> interested;
-            doClientNotify(reinterpret_cast<QValueSpaceProvider *>(owner), path, interested);
+            doClientNotify(reinterpret_cast<QValueSpacePublisher *>(owner), path, interested);
             break;
         }
         default:
@@ -2360,8 +2360,7 @@ void SharedMemoryLayer::doClientEmit()
 
 QUuid SharedMemoryLayer::id()
 {
-    return QUuid(0xd81199c1, 0x6f60, 0x4432, 0x93, 0x4e,
-                 0x0c, 0xe4, 0xd3, 0x7e, 0xf2, 0x52);
+    return QVALUESPACE_SHAREDMEMORY_LAYER;
 }
 
 unsigned int SharedMemoryLayer::order()
@@ -2512,7 +2511,7 @@ QSet<QString> SharedMemoryLayer::children(Handle handle)
 
 QValueSpace::LayerOptions SharedMemoryLayer::layerOptions() const
 {
-    return QValueSpace::NonPermanentLayer | QValueSpace::WritableLayer;
+    return QValueSpace::TransientLayer | QValueSpace::WritableLayer;
 }
 
 SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent, const QString &key)
@@ -2793,16 +2792,17 @@ void SharedMemoryLayer::doNotify(const QByteArray &path, const QPacketProtocol *
     QList<NodeWatch> owners = watchers(path);
 
     QSet<unsigned long> written;
-    QSet<QValueSpaceProvider *> notified;
+    QSet<QValueSpacePublisher *> notified;
 
     for (int ii = 0; ii < owners.count(); ++ii) {
         const NodeWatch &watch = owners.at(ii);
 
         if (watch.data1 == 0) {
-            QValueSpaceProvider *provider = reinterpret_cast<QValueSpaceProvider *>(watch.data2);
-            if (!notified.contains(provider)) {
-                doClientNotify(provider, path, interested);
-                notified.insert(provider);
+            QValueSpacePublisher *publisher =
+                reinterpret_cast<QValueSpacePublisher *>(watch.data2);
+            if (!notified.contains(publisher)) {
+                doClientNotify(publisher, path, interested);
+                notified.insert(publisher);
             }
         } else {
             if (!written.contains(watch.data1)) {
@@ -2826,7 +2826,7 @@ void SharedMemoryLayer::doNotifyObject(unsigned long own, unsigned long protocol
         QList<NodeWatch> owners = watchers(interestPath);
 
         QSet<unsigned long> written;
-        QSet<QValueSpaceProvider *> notified;
+        QSet<QValueSpacePublisher *> notified;
 
         for (int ii = 0; ii < owners.count(); ++ii) {
             const NodeWatch &watch = owners.at(ii);
@@ -2835,11 +2835,11 @@ void SharedMemoryLayer::doNotifyObject(unsigned long own, unsigned long protocol
                 continue;
 
             if (watch.data1 == 0) {
-                QValueSpaceProvider *provider =
-                    reinterpret_cast<QValueSpaceProvider *>(watch.data2);
-                if (!notified.contains(provider)) {
-                    doClientNotify(provider, interestPath, true);
-                    notified.insert(provider);
+                QValueSpacePublisher *publisher =
+                    reinterpret_cast<QValueSpacePublisher *>(watch.data2);
+                if (!notified.contains(publisher)) {
+                    doClientNotify(publisher, interestPath, true);
+                    notified.insert(publisher);
                 }
             } else {
                 if (!written.contains(watch.data1)) {
@@ -3230,32 +3230,32 @@ SharedMemoryLayer * SharedMemoryLayer::instance()
     return sharedMemoryLayer();
 }
 
-typedef QSet<QValueSpaceProvider *> WatchObjects;
+typedef QSet<QValueSpacePublisher *> WatchObjects;
 Q_GLOBAL_STATIC(WatchObjects, watchObjects);
 
-void SharedMemoryLayer::doClientNotify(QValueSpaceProvider *provider, const QByteArray &path,
+void SharedMemoryLayer::doClientNotify(QValueSpacePublisher *publisher, const QByteArray &path,
                                        bool interested)
 {
     QMutexLocker locker(&localLock);
 
-    // Invalid provider.
-    if (!watchObjects()->contains(provider))
+    // Invalid publisher.
+    if (!watchObjects()->contains(publisher))
         return;
 
     QByteArray emitPath;
 
-    const QByteArray providerPath = provider->path().toUtf8();
-    if (path.startsWith(providerPath)) {
-        // path is under providerPath
-        emitPath = path.mid(providerPath.length());
-    } else if (providerPath.startsWith(path)) {
-        // path is a parent of providerPath
+    const QByteArray publisherPath = publisher->path().toUtf8();
+    if (path.startsWith(publisherPath)) {
+        // path is under publisherPath
+        emitPath = path.mid(publisherPath.length());
+    } else if (publisherPath.startsWith(path)) {
+        // path is a parent of publisherPath
     } else {
-        // path is not for this provider.
+        // path is not for this publisher.
         return;
     }
 
-    emitAttributeInterestChanged(provider, QString::fromUtf8(emitPath.constData()), interested);
+    emitAttributeInterestChanged(publisher, QString::fromUtf8(emitPath.constData()), interested);
  }
 
 bool SharedMemoryLayer::supportsInterestNotification() const
@@ -3286,7 +3286,7 @@ bool SharedMemoryLayer::notifyInterest(Handle handle, bool interested)
     return true;
 }
 
-bool SharedMemoryLayer::setValue(QValueSpaceProvider *creator, Handle handle, const QString &path,
+bool SharedMemoryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const QString &path,
                                  const QVariant &data)
 {
     QMutexLocker locker(&localLock);
@@ -3309,7 +3309,7 @@ bool SharedMemoryLayer::setValue(QValueSpaceProvider *creator, Handle handle, co
     return setItem(owner, fullPath, data);
 }
 
-bool SharedMemoryLayer::removeValue(QValueSpaceProvider *creator,
+bool SharedMemoryLayer::removeValue(QValueSpacePublisher *creator,
                                     Handle handle,
                                     const QString &path)
 {
@@ -3337,7 +3337,7 @@ bool SharedMemoryLayer::removeValue(QValueSpaceProvider *creator,
     return remItems(owner, fullPath);
 }
 
-bool SharedMemoryLayer::removeSubTree(QValueSpaceProvider *creator, Handle handle)
+bool SharedMemoryLayer::removeSubTree(QValueSpacePublisher *creator, Handle handle)
 {
     QMutexLocker locker(&localLock);
 
@@ -3353,7 +3353,7 @@ bool SharedMemoryLayer::removeSubTree(QValueSpaceProvider *creator, Handle handl
     return remItems(owner, readHandle->path);
 }
 
-void SharedMemoryLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
+void SharedMemoryLayer::addWatch(QValueSpacePublisher *creator, Handle handle)
 {
     QMutexLocker locker(&localLock);
 
@@ -3371,7 +3371,7 @@ void SharedMemoryLayer::addWatch(QValueSpaceProvider *creator, Handle handle)
     setWatch(owner, readHandle->path);
 }
 
-void SharedMemoryLayer::removeWatches(QValueSpaceProvider *creator, Handle parent)
+void SharedMemoryLayer::removeWatches(QValueSpacePublisher *creator, Handle parent)
 {
     QMutexLocker locker(&localLock);
 
@@ -3389,6 +3389,6 @@ void SharedMemoryLayer::removeWatches(QValueSpaceProvider *creator, Handle paren
     remWatch(owner, readHandle->path);
 }
 
-QT_END_NAMESPACE
-
 #include "sharedmemorylayer.moc"
+QTM_END_NAMESPACE
+

@@ -49,42 +49,40 @@
 
 
 
+QTM_BEGIN_NAMESPACE
+
 
 /*!
     \class QMediaService
-    \brief The QMediaService class provides a common base class for media service
-    implementations.
+    \brief The QMediaService class provides a common base class for media
+    service implementations.
+    \ingroup multimedia-serv
     \preliminary
 
-    Media services provide implementations of the functionality promised by media objects, and allow
-    multiple providers to implement a QMediaObject.
+    Media services provide implementations of the functionality promised
+    by media objects, and allow multiple providers to implement a QMediaObject.
 
-    To provide the functionality of a QMediaObject media services implement QMediaControl
-    interfaces.  Services typically implement one core media control which provides the core
-    feature of a media object, and some number of additional controls which provide either optional
-    features of the media object, or features of a secondary media object or peripheral object.
+    To provide the functionality of a QMediaObject media services implement
+    QMediaControl interfaces.  Services typically implement one core media
+    control which provides the core feature of a media object, and some
+    number of additional controls which provide either optional features of
+    the media object, or features of a secondary media object or peripheral
+    object.
 
-    A pointer to media service's QMediaControl implementation can be obtained by passing the
-    control's interface name to the control() function.
+    A pointer to media service's QMediaControl implementation can be
+    obtained by passing the control's interface name to the control() function.
 
     \code
     QMediaPlayerControl *control = qobject_cast<QMediaPlayerControl *>(
             service->control("com.nokia.Qt.QMediaPlayerControl/1.0"));
     \endcode
 
-    Media objects can use services loaded dynamically from plug-ins or implemented statically within
-    an applications.  Plug-in based services should also implement the QMediaServiceProviderPlugin
-    interface.  Static services should implement the QMediaServiceProvider interface.
+    Media objects can use services loaded dynamically from plug-ins or
+    implemented statically within an applications.  Plug-in based services
+    should also implement the QMediaServiceProviderPlugin interface.  Static
+    services should implement the QMediaServiceProvider interface.
 
     \sa QMediaObject, QMediaControl, QMediaServiceProvider, QMediaServiceProviderPlugin
-*/
-
-/*!
-    \enum QMediaService::MediaEndpoint
-
-    Enumerates the possible end points a media service may have.
-
-    \value AudioDevice An audio device for either input or output.
 */
 
 /*!
@@ -119,106 +117,6 @@ QMediaService::~QMediaService()
 }
 
 /*!
-    Return true if \a endpointType is available.
-*/
-
-bool QMediaService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
-{
-    Q_UNUSED(endpointType);
-
-    return control(QAudioDeviceControl_iid) != 0;
-}
-
-/*!
-    Returns the active endpoint for \a endpointType.
-*/
-
-QString QMediaService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
-{
-    Q_UNUSED(endpointType);
-
-    QAudioDeviceControl *audioDeviceControl =
-                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
-
-    if (audioDeviceControl == 0)
-        return QString();
-
-    return audioDeviceControl->name(audioDeviceControl->selectedDevice());
-}
-
-/*!
-    Returns true if set of the active endpoint for \a endpointType to \a endpoint succeeds.
-*/
-
-bool QMediaService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    Q_UNUSED(endpointType);
-
-    QAudioDeviceControl *audioDeviceControl =
-                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
-
-    if (audioDeviceControl == 0) {
-        return false;
-    } else if (endpoint.isEmpty()) {
-        audioDeviceControl->setSelectedDevice(-1);
-
-        return true;
-    } else {
-        for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
-            if (endpoint == audioDeviceControl->name(i)) {
-                audioDeviceControl->setSelectedDevice(i);
-
-                return true;
-            }
-        }
-        return false;
-    }
-}
-
-/*!
-    Returns the description of the \a endpoint for the \a endpointType.
-*/
-
-QString QMediaService::endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    Q_UNUSED(endpointType);
-
-    QAudioDeviceControl *audioDeviceControl =
-                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
-
-    if (audioDeviceControl == 0)
-        return QString();
-
-    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
-        if (endpoint == audioDeviceControl->name(i))
-            return audioDeviceControl->description(i);
-    }
-
-    return QString();
-}
-
-/*!
-    Returns a list of endpoints available for the \a endpointType.
-*/
-
-QStringList QMediaService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
-{
-    Q_UNUSED(endpointType);
-
-    QAudioDeviceControl *audioDeviceControl =
-                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
-
-    QStringList endpoints;
-
-    if (audioDeviceControl != 0) {
-        for (int i = 0 ; i<audioDeviceControl->deviceCount(); ++i)
-            endpoints << audioDeviceControl->name(i);
-    }
-
-    return endpoints;
-}
-
-/*!
     \fn QMediaService::control(const char *interface) const
 
     Returns a pointer to the media control implementing \a interface.
@@ -234,16 +132,7 @@ QStringList QMediaService::supportedEndpoints(QMediaService::MediaEndpoint endpo
     If the service does not implment the control a null pointer is returned instead.
 */
 
+#include "moc_qmediaservice.cpp"
 
-/*!
-    \fn void QMediaService::supportedEndpointsChanged()
-
-    This signal is emitted when there is a change in the availability of devices.
-*/
-
-/*!
-    \fn void QMediaService::activeEndpointChanged(QMediaService::MediaEndpoint endpointType, const QString &endpoint)
-
-    This signal emitted when the active endpoint of type \a endpointType has been changed to \a endpoint.
-*/
+QTM_END_NAMESPACE
 

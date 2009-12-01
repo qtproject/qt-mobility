@@ -47,6 +47,7 @@ class V4LCameraSession;
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
+QTM_USE_NAMESPACE
 
 class V4LVideoEncode : public QVideoEncoderControl
 {
@@ -55,13 +56,11 @@ public:
     V4LVideoEncode(QObject *parent);
     virtual ~V4LVideoEncode();
 
-    QSize minimumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QSize maximumResolution(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                      bool *continuous = 0) const;
 
-    qreal minimumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    qreal maximumFrameRate(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
-    QList< qreal > supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings()) const;
+    QList< qreal > supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                       bool *continuous = 0) const;
 
     QPair<int,int> rateAsRational() const;
 
