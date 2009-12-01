@@ -552,9 +552,8 @@ void tst_QMessageStore::testMessage()
         addr.setType(QMessageAddress::Email);
         ccAddresses.append(addr);
     }
-#ifndef Q_OS_SYMBIAN    
-    QCOMPARE(message.cc(), ccAddresses);
-#endif    
+   
+    QCOMPARE(message.cc(), ccAddresses);    
 
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
     QCOMPARE(message.subject(), subject);
