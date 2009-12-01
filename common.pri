@@ -35,9 +35,6 @@ defineReplace(mobilityDeployFilename) {
 # Make sure this goes everywhere we need it
 symbian: load(data_caging_paths)
 
-# For symbian, we are not attempting to freeze APIs yet.
-symbian:MMP_RULES += "EXPORTUNFROZEN"
-
 # All frameworks (debug and release) go in the same directory
 mac:contains(TEMPLATE,.*lib):contains(QT_CONFIG,qt_framework):contains(TARGET,Qt.*) {
     SUBDIRPART = Release
