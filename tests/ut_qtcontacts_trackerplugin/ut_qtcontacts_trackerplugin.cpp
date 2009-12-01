@@ -1379,13 +1379,12 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     }
 
     // remove them
-    QVERIFY2(trackerEngine->removeContact(c.localId(), error), "Removing a contact failed");
-    QVERIFY2(trackerEngine->removeContact(999999, error), "Removing IM contact failed");
+    QVERIFY2(trackerEngine->removeContact(firstContact.localId(), error), "Removing a contact failed");
+    QVERIFY2(trackerEngine->removeContact(c.localId(), error), "Removing IM contact failed");
 }
 
 void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
 {
-    qDebug() << Q_FUNC_INFO << requestStatusToString(self->status()) << "AppendOnly:" << appendOnly;
     if( self->status() == QContactAbstractRequest::Finished )
     {
         ids << self->ids();
@@ -1395,7 +1394,6 @@ void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
 
 void Slots::progress(QContactFetchRequest* self, bool appendOnly)
 {
-    qDebug() << Q_FUNC_INFO << requestStatusToString(self->status()) << "AppendOnly:" << appendOnly;
     contacts = self->contacts();
     QList<QContactLocalId> idsFromAllContactReq;
     foreach( QContact contact, contacts)
