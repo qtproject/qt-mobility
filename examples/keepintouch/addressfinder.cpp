@@ -117,9 +117,10 @@ void AddressFinder::addressSelected(const QString &address)
 
     QString addressOnly(simpleEmailAddress(address));
 
-    // Add each message to this address to the message pane
-    foreach (const QString &message, addressMessages[addressOnly]) {
-        messageCombo->addItem(message);
+    // Add the subject of each message to this address to the message pane
+    typedef QPair<QString, QMessageId> MessageDetails;
+    foreach (const MessageDetails &message, addressMessages[addressOnly]) {
+        messageCombo->addItem(message.first);
     }
 }
 //! [address-selected]
@@ -257,8 +258,8 @@ void AddressFinder::continueSearch()
             // Ignore recipients whose addresses we have added to the exclusion set
             if (!excludedAddresses.contains(addressOnly)) {
                 // Link this message to this address
-                QStringList &messages = addressMessages[addressOnly];
-                if (messages.isEmpty()) {
+                QList<QPair<QString, QMessageId> > &messageList(addressMessages[addressOnly]);
+                if (messageList.isEmpty()) {
                     // Add the recipient to our visible list of addresses to keep in touch with
                     addressList->addItem(address.recipient());
                 }
@@ -267,7 +268,7 @@ void AddressFinder::continueSearch()
                     // Determine the properties of the message
                     details = QString("[%1] %2").arg(message.date().toString("MMM d")).arg(message.subject());
                 }
-                messages.append(details);
+                messageList.append(qMakePair(details, id));
             }
         }
     }
@@ -298,6 +299,8 @@ void AddressFinder::tabChanged(int index)
     if(currentTab && !currentTab->actions().isEmpty())
         action = currentTab->actions().first();
     menuBar()->setDefaultAction(action);
+
+    Q_UNUSED(index)
 }
 #endif
 
@@ -374,11 +377,30 @@ void AddressFinder::setupUi()
 
     QGroupBox *messageGroup = new QGroupBox(tr("Messages"));
     messageGroup->setAlignment(Qt::AlignLeft);
-    messageGroup->setLayout(new QHBoxLayout);
-    resultsLayout->addWidget(messageGroup);
+
+    QVBoxLayout *groupLayout = new QVBoxLayout;
 
     messageCombo = new QComboBox;
-    messageGroup->layout()->addWidget(messageCombo);
+    connect(messageCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(messageIndexChanged(int)));
+
+    groupLayout->addWidget(messageCombo);
+
+    showButton = new QPushButton(tr("Show..."));
+    showButton->setEnabled(false);
+    connect(showButton, SIGNAL(clicked()), this, SLOT(showMessage()));
+
+    forwardButton = new QPushButton(tr("Forward..."));
+    forwardButton->setEnabled(false);
+    connect(forwardButton, SIGNAL(clicked()), this, SLOT(forwardMessage()));
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout->addWidget(showButton);
+    buttonLayout->addWidget(forwardButton);
+
+    groupLayout->addLayout(buttonLayout);
+
+    messageGroup->setLayout(groupLayout);
+    resultsLayout->addWidget(messageGroup);
 
     searchAction = new QAction("Search",this);
     inputGroup->addAction(searchAction);
@@ -398,4 +420,42 @@ void AddressFinder::setSearchActionEnabled(bool val)
 #ifdef USE_SEARCH_BUTTON
     searchButton->setEnabled(val);
 #endif
+}
+
+void AddressFinder::messageIndexChanged(int index)
+{
+    bool messageSelected(index != -1);
+    showButton->setEnabled(messageSelected);
+    forwardButton->setEnabled(messageSelected);
+}
+
+void AddressFinder::showMessage()
+{
+    int index = messageCombo->currentIndex();
+    if (index != -1) {
+        // Find the address currently selected
+        QString selectedAddress(simpleEmailAddress(addressList->currentItem()->text()));
+
+        // Show the message selected
+        QMessageId &messageId((addressMessages[selectedAddress])[index].second);
+        serviceAction.show(messageId);
+    }
+}
+
+void AddressFinder::forwardMessage()
+{
+    int index = messageCombo->currentIndex();
+    if (index != -1) {
+        // Find the address currently selected
+        QString selectedAddress(simpleEmailAddress(addressList->currentItem()->text()));
+
+        // Create a message which forwards the selected message to the same recipient
+        QMessageId &messageId((addressMessages[selectedAddress])[index].second);
+        
+        QMessage original(messageId);
+        QMessage fwd(original.createResponseMessage(QMessage::Forward));
+        fwd.setTo(original.to());
+
+        serviceAction.compose(fwd);
+    }
 }

@@ -45,6 +45,7 @@
 
 #include <QMap>
 #include <QObject>
+#include <QPair>
 #include <QSet>
 #include <QWidget>
 #include <QMainWindow>
@@ -79,6 +80,9 @@ private slots:
 #ifndef USE_SEARCH_BUTTON
     void tabChanged(int index);
 #endif
+    void messageIndexChanged(int index);
+    void showMessage();
+    void forwardMessage();
 
 private:
     void setupUi();
@@ -94,6 +98,8 @@ private:
 
     QListWidget *addressList;
     QComboBox *messageCombo;
+    QPushButton *showButton;
+    QPushButton *forwardButton;
 
     QMessageServiceAction serviceAction;
 
@@ -103,7 +109,7 @@ private:
     QMessageIdList exclusionMessages;
 
     QSet<QString> excludedAddresses;
-    QMap<QString, QStringList> addressMessages;
+    QMap<QString, QList<QPair<QString, QMessageId> > > addressMessages;
 };
 
 #endif
