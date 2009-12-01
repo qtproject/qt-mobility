@@ -1317,7 +1317,8 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 {
-#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW)
+#if !defined( Q_OS_WINCE)
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/wmi");
@@ -1327,7 +1328,30 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
     QVariant v = wHelper->getWMIData();
 
     return v.toUInt();
+#else
+    // This could would detect the state of the backlight, which is as close as we're going to get 
+    // for WinCE.  Unfortunately, some devices don't honour the Microsoft power management API.
+    // This means that the following code is not portable across WinCE devices and so shouldn't 
+    // be included.
+
+    //CEDEVICE_POWER_STATE powerState;
+    //
+    //if (ERROR_SUCCESS != GetDevicePower(L"BKL1:", POWER_NAME, &powerState))
+    //    return -1;
+    //
+    //// Backlight is on
+    //if (powerState == D0)
+    //    return 100;
+    //
+    //// Screen is on, backlight is off
+    //if (powerState == D1)
+    //    return 50;
+    //
+    //// Screen is off
+    //return 0;
 #endif
+#endif
+
     return -1;
 }
 
