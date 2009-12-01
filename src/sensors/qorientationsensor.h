@@ -39,54 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSOR_H
-#define QSENSOR_H
+#ifndef QORIENTATIONSENSOR_H
+#define QORIENTATIONSENSOR_H
 
-#include <qmobilityglobal.h>
-#include <QObject>
+#include <qsensor.h>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QSensor : public QObject
+typedef bool(*QOrientationSensorFilter)(int &orientation);
+
+class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
+    Q_OBJECT
 public:
-    // Types of sensors that the API supports
-    enum Type {
-        Orientation,
-        Rotation,
-        AngularAcceleration,
-        Acceleration,
-        DoubleTap,
-        Proximity,
-        MagneticNorth,
-        Magnetometer,
-        AmbientLight,
-
-        // Non-standard sensor types
-        UserSensor = 128
+    // TODO flags
+    enum Orientation {
+        Unknown   = 0x00,
+        Portrait  = 0x01,
+        Landscape = 0x02,
+        Inverted  = 0x04
     };
 
-    enum Sensitivity {
-        // These use pre-determined timing intervals, as set by the sensor
-        OccasionalUpdates, // When the system feels like it
-        InfrequentUpdates, // Every now and then
-        FrequentUpdates,   // Often (eg. for gaming controls)
+    void readOrientation(Orientation *orientation);
 
-        // For more control
-        TimedUpdates,      // Every x milliseconds (may not be supported by all sensors)
-        RealtimeUpdates    // As often as polled (may not be supported by all sensors)
-    };
+    // Add a filter to remove or modify the orientation
+    void addFilter(QOrientationSensorFilter filter);
 
-    // Try to 'grab' the sensor (some sensors have ownership issues)
-    virtual bool open() = 0;
+signals:
+    // This only comes in occasionally so we deliver it via a signal.
+    void orientationChanged(Orientation orientation);
 
-    // Release the sensor
-    virtual void close() = 0;
-
-    // Set the desired sensitivity (default is defined by the sensor)
-    // Use documentation to determine the sensitivities that the sensor
-    // supports.
-    void setSensitivity(Sensitivity sensitivity, int interval = 0);
+private:
+    bool open();
+    void close();
 };
 
 QTM_END_NAMESPACE

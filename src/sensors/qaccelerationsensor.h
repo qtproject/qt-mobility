@@ -39,54 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSOR_H
-#define QSENSOR_H
+#ifndef QACCELERATIONSENSOR_H
+#define QACCELERATIONSENSOR_H
 
-#include <qmobilityglobal.h>
-#include <QObject>
+#include <qsensor.h>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QSensor : public QObject
+typedef bool (*QAccelerationSensorFilter)(int&, int&, int&);
+typedef void (*QAccelerationSensorListener)(int, int, int);
+
+class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 {
 public:
-    // Types of sensors that the API supports
-    enum Type {
-        Orientation,
-        Rotation,
-        AngularAcceleration,
-        Acceleration,
-        DoubleTap,
-        Proximity,
-        MagneticNorth,
-        Magnetometer,
-        AmbientLight,
+    // Values are in milli-Gs. Note that they may not be particularly
+    // accurate depending on the hardware. For example, Apple notebooks
+    // can only measure 255 levels between 0 and 1G.
+    void readAcceleration(int *x, int *y, int *z);
 
-        // Non-standard sensor types
-        UserSensor = 128
-    };
+    // Add a filter to remove or modify the accleration values
+    void addFilter(QAccelerationSensorFilter filter);
 
-    enum Sensitivity {
-        // These use pre-determined timing intervals, as set by the sensor
-        OccasionalUpdates, // When the system feels like it
-        InfrequentUpdates, // Every now and then
-        FrequentUpdates,   // Often (eg. for gaming controls)
+    // Add a listener for non-polling notifications
+    void addListener(QAccelerationSensorListener listener);
 
-        // For more control
-        TimedUpdates,      // Every x milliseconds (may not be supported by all sensors)
-        RealtimeUpdates    // As often as polled (may not be supported by all sensors)
-    };
-
-    // Try to 'grab' the sensor (some sensors have ownership issues)
-    virtual bool open() = 0;
-
-    // Release the sensor
-    virtual void close() = 0;
-
-    // Set the desired sensitivity (default is defined by the sensor)
-    // Use documentation to determine the sensitivities that the sensor
-    // supports.
-    void setSensitivity(Sensitivity sensitivity, int interval = 0);
+private:
+    bool open();
+    void close();
 };
 
 QTM_END_NAMESPACE

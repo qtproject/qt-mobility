@@ -39,54 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSOR_H
-#define QSENSOR_H
+#ifndef QSENSORMANAGER_H
+#define QSENSORMANAGER_H
 
-#include <qmobilityglobal.h>
-#include <QObject>
+#include <qsensor.h>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QSensor : public QObject
+class Q_SENSORS_EXPORT QSensorManager
 {
+    // TODO getter (singleton?)
 public:
-    // Types of sensors that the API supports
-    enum Type {
-        Orientation,
-        Rotation,
-        AngularAcceleration,
-        Acceleration,
-        DoubleTap,
-        Proximity,
-        MagneticNorth,
-        Magnetometer,
-        AmbientLight,
-
-        // Non-standard sensor types
-        UserSensor = 128
-    };
-
-    enum Sensitivity {
-        // These use pre-determined timing intervals, as set by the sensor
-        OccasionalUpdates, // When the system feels like it
-        InfrequentUpdates, // Every now and then
-        FrequentUpdates,   // Often (eg. for gaming controls)
-
-        // For more control
-        TimedUpdates,      // Every x milliseconds (may not be supported by all sensors)
-        RealtimeUpdates    // As often as polled (may not be supported by all sensors)
-    };
-
-    // Try to 'grab' the sensor (some sensors have ownership issues)
-    virtual bool open() = 0;
-
-    // Release the sensor
-    virtual void close() = 0;
-
-    // Set the desired sensitivity (default is defined by the sensor)
-    // Use documentation to determine the sensitivities that the sensor
-    // supports.
-    void setSensitivity(Sensitivity sensitivity, int interval = 0);
+    // Get a sensor
+    QSensor *defaultSensorForType(QSensor::Type type) const;
+    // If there are multiple sensors for a type...
+    QList<QSensor*> allSensorsForType(QSensor::Type type) const;
 };
 
 QTM_END_NAMESPACE

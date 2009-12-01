@@ -39,57 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSOR_H
-#define QSENSOR_H
+#include <qaccelerationsensor.h>
 
-#include <qmobilityglobal.h>
-#include <QObject>
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+/*!
+    \class QAccelerationSensor
+    \ingroup sensors
 
-class Q_SENSORS_EXPORT QSensor : public QObject
+    \preliminary
+    \brief The QAccelerationSensor class reports on linear acceleration
+           along the X, Y and Z axes.
+
+    Foo bar baz.
+*/
+
+/*!
+    Read the \a x, \a y and \a z acceleration values from the sensor.
+*/
+void QAccelerationSensor::readAcceleration(int *x, int *y, int *z)
 {
-public:
-    // Types of sensors that the API supports
-    enum Type {
-        Orientation,
-        Rotation,
-        AngularAcceleration,
-        Acceleration,
-        DoubleTap,
-        Proximity,
-        MagneticNorth,
-        Magnetometer,
-        AmbientLight,
+    Q_UNUSED(x)
+    Q_UNUSED(y)
+    Q_UNUSED(z)
+}
 
-        // Non-standard sensor types
-        UserSensor = 128
-    };
+/*!
+    Add a \a filter to the sensor.
+*/
+void QAccelerationSensor::addFilter(QAccelerationSensorFilter filter)
+{
+    Q_UNUSED(filter)
+}
 
-    enum Sensitivity {
-        // These use pre-determined timing intervals, as set by the sensor
-        OccasionalUpdates, // When the system feels like it
-        InfrequentUpdates, // Every now and then
-        FrequentUpdates,   // Often (eg. for gaming controls)
-
-        // For more control
-        TimedUpdates,      // Every x milliseconds (may not be supported by all sensors)
-        RealtimeUpdates    // As often as polled (may not be supported by all sensors)
-    };
-
-    // Try to 'grab' the sensor (some sensors have ownership issues)
-    virtual bool open() = 0;
-
-    // Release the sensor
-    virtual void close() = 0;
-
-    // Set the desired sensitivity (default is defined by the sensor)
-    // Use documentation to determine the sensitivities that the sensor
-    // supports.
-    void setSensitivity(Sensitivity sensitivity, int interval = 0);
-};
-
-QTM_END_NAMESPACE
-
-#endif
+/*!
+    Add a \a listener to the sensor.
+    The listener will be invoked every time the acceleration values
+    change.
+*/
+void QAccelerationSensor::addListener(QAccelerationSensorListener listener)
+{
+    Q_UNUSED(listener)
+}
 

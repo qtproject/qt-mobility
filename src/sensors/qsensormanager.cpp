@@ -39,57 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSOR_H
-#define QSENSOR_H
+#include <qsensormanager.h>
 
-#include <qmobilityglobal.h>
-#include <QObject>
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+/*!
+    \class QSensorManager
+    \ingroup sensors
 
-class Q_SENSORS_EXPORT QSensor : public QObject
+    \preliminary
+    \brief The QSensorManager class returns the sensors on a device.
+
+    Foo bar baz.
+*/
+
+/*!
+    Returns the default sensor for \a type.
+    If there is no sensor of that type available, returns null.
+*/
+QSensor *QSensorManager::defaultSensorForType(QSensor::Type type) const
 {
-public:
-    // Types of sensors that the API supports
-    enum Type {
-        Orientation,
-        Rotation,
-        AngularAcceleration,
-        Acceleration,
-        DoubleTap,
-        Proximity,
-        MagneticNorth,
-        Magnetometer,
-        AmbientLight,
+    Q_UNUSED(type)
+    return 0;
+}
 
-        // Non-standard sensor types
-        UserSensor = 128
-    };
-
-    enum Sensitivity {
-        // These use pre-determined timing intervals, as set by the sensor
-        OccasionalUpdates, // When the system feels like it
-        InfrequentUpdates, // Every now and then
-        FrequentUpdates,   // Often (eg. for gaming controls)
-
-        // For more control
-        TimedUpdates,      // Every x milliseconds (may not be supported by all sensors)
-        RealtimeUpdates    // As often as polled (may not be supported by all sensors)
-    };
-
-    // Try to 'grab' the sensor (some sensors have ownership issues)
-    virtual bool open() = 0;
-
-    // Release the sensor
-    virtual void close() = 0;
-
-    // Set the desired sensitivity (default is defined by the sensor)
-    // Use documentation to determine the sensitivities that the sensor
-    // supports.
-    void setSensitivity(Sensitivity sensitivity, int interval = 0);
-};
-
-QTM_END_NAMESPACE
-
-#endif
+/*!
+    Returns a list of all the sensors for \a type.
+    If there are no sensors of that type available the list will be empty.
+*/
+QList<QSensor*> QSensorManager::allSensorsForType(QSensor::Type type) const
+{
+    Q_UNUSED(type)
+    return QList<QSensor*>();
+}
 

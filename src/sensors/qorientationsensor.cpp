@@ -39,57 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSOR_H
-#define QSENSOR_H
+#include <qorientationsensor.h>
 
-#include <qmobilityglobal.h>
-#include <QObject>
+QTM_USE_NAMESPACE
+
+/*!
+    \class QOrientationSensor
+    \ingroup sensors
+
+    \preliminary
+    \brief The QOrientationSensor class reports on the orientation of the screen.
+
+    Foo bar baz.
+*/
+
+/*!
+    \enum QOrientationSensor::Orientation
+
+    This enum represents the orientation of the device.
+
+    \value Unknown    The orientation is unknown. For example, the
+                      device may be lying face down.
+    \value Portrait   The device is in the portrait orientation.
+    \value Landscape  The device is in the landscape orientation.
+    \value Inverted   Combined with Portrait or Landscape to indicate
+                      the device is upside down.
+*/
+
+/*!
+    \fn QOrientationSensor::orientationChanged(Orientation orientation)
+
+    This signal is emitted when the \a orientation changes.
+*/
+
+/*!
+    Read the \a orientation from the sensor.
+*/
+void QOrientationSensor::readOrientation(Orientation *orientation)
+{
+    Q_UNUSED(orientation)
+}
+
+/*!
+    Add a \a filter to the sensor.
+*/
+void QOrientationSensor::addFilter(QOrientationSensorFilter filter)
+{
+    Q_UNUSED(filter)
+}
 
 QTM_BEGIN_NAMESPACE
-
-class Q_SENSORS_EXPORT QSensor : public QObject
-{
-public:
-    // Types of sensors that the API supports
-    enum Type {
-        Orientation,
-        Rotation,
-        AngularAcceleration,
-        Acceleration,
-        DoubleTap,
-        Proximity,
-        MagneticNorth,
-        Magnetometer,
-        AmbientLight,
-
-        // Non-standard sensor types
-        UserSensor = 128
-    };
-
-    enum Sensitivity {
-        // These use pre-determined timing intervals, as set by the sensor
-        OccasionalUpdates, // When the system feels like it
-        InfrequentUpdates, // Every now and then
-        FrequentUpdates,   // Often (eg. for gaming controls)
-
-        // For more control
-        TimedUpdates,      // Every x milliseconds (may not be supported by all sensors)
-        RealtimeUpdates    // As often as polled (may not be supported by all sensors)
-    };
-
-    // Try to 'grab' the sensor (some sensors have ownership issues)
-    virtual bool open() = 0;
-
-    // Release the sensor
-    virtual void close() = 0;
-
-    // Set the desired sensitivity (default is defined by the sensor)
-    // Use documentation to determine the sensitivities that the sensor
-    // supports.
-    void setSensitivity(Sensitivity sensitivity, int interval = 0);
-};
-
+#include "moc_qorientationsensor.cpp"
 QTM_END_NAMESPACE
-
-#endif
 
