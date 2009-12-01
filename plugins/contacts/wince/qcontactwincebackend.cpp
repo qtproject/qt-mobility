@@ -428,6 +428,23 @@ QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QCo
     }
 }
 
+
+
+PROPID QContactWinCEEngine::metaAvatar() const
+{
+    return d->m_avatarmeta;
+}
+
+PROPID QContactWinCEEngine::metaEmail() const
+{
+    return d->m_emailmeta;
+}
+
+PROPID QContactWinCEEngine::metaPhone() const
+{
+    return d->m_phonemeta;
+}
+
 /*! \reimp */
 bool QContactWinCEEngine::filterSupported(const QContactFilter& filter) const
 {

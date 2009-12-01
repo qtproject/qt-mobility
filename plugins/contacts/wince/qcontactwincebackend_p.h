@@ -237,7 +237,11 @@ public:
 
     /* Synthesize the display label of a contact */
     virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
-
+    
+    /*helper functions*/
+    PROPID metaAvatar() const;
+    PROPID metaEmail() const;
+    PROPID metaPhone() const;
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;
 

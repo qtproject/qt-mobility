@@ -165,7 +165,7 @@ static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QDateTime& value)
 
 // Our fields to POOM
 // QMap<definition, {QMap<field, poomid>, datatype, maxnumber}>
-typedef bool (*processContactPoomElement)(const QContactDetail& detail, QVector<CEPROPVAL>& props);
+typedef bool (*processContactPoomElement)(const QContactWinCEEngine* e, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props);
 
 // POOM to us
 // something like
@@ -592,7 +592,7 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, CEPROPI
 
         // Avatar
         PoomContactElement avatar;
-        avatar.poom << avatarMeta;
+        avatar.poom << avatarMeta; //PIMPR_PICTURE need to be handled inside the processAvatar() function seperately.
         avatar.func = processAvatar;
         list.append(avatar);
 
@@ -637,7 +637,7 @@ static void addIfNotEmpty(const CEPROPID& id, const QString& value, QVector<CEPR
         props.append(convertToCEPropVal(id, value));
 }
 
-static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQName(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_TITLE, detail.value(QContactName::FieldPrefix), props);
     addIfNotEmpty(PIMPR_FIRST_NAME, detail.value(QContactName::FieldFirst), props);
@@ -648,29 +648,28 @@ static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props
     return true;
 }
 
-static bool processQAvatar(const QContactWinCEEngine* engine, IItem* item, const QList<QContactAvatar>& avatars, CEPROPID metaId)
+static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
-    if (!avatars.isEmpty()) {
-        //only process the first avatar detail
-        QString avatarFile = avatars.at(0).value(QContactAvatar::FieldAvatar);
-        
-        if (avatarFile.isEmpty())
-            return false;
-        
-        QFile f(avatarFile);
-        f.open(QIODevice::ReadOnly);
-        
-        if (f.error() != QFile::NoError)
-            return false;
+    QString avatarFile = detail.value(QContactAvatar::FieldAvatar);
+    
+    if (avatarFile.isEmpty())
+        return false;
+    
+    QFile f(avatarFile);
+    f.open(QIODevice::ReadOnly);
+    
+    if (f.error() != QFile::NoError)
+        return false;
 
-        QByteArray data = f.readAll();
-        //engine->saveBlob(
+    QByteArray data = f.readAll();
+    if (saveAvatarData(contact, data)) {
+        addIfNotEmpty(engine->metaAvatar(), detail.value(QContactAvatar::FieldSubType), props);
         return true;
     }
     return false;
 }
 
-static bool processQFamily(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQFamily(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_SPOUSE, detail.value(QContactFamily::FieldSpouse), props);
     addIfNotEmpty(PIMPR_CHILDREN, detail.value(QContactFamily::FieldChildren), props);
@@ -684,7 +683,7 @@ static bool validateDate(const QVariant& val)
     return date.year() >= 1900 && date.year() <= 2999;
 }
 
-static bool processQBirthday(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQBirthday(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     if (detail.variantValue(QContactBirthday::FieldBirthday).isValid()) {
         if (!validateDate(detail.variantValue(QContactBirthday::FieldBirthday)))
@@ -694,7 +693,7 @@ static bool processQBirthday(const QContactDetail& detail, QVector<CEPROPVAL>& p
     return true;
 }
 
-static bool processQAnniversary(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQAnniversary(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     if (detail.variantValue(QContactAnniversary::FieldOriginalDate).isValid()) {
         if (!validateDate(detail.variantValue(QContactAnniversary::FieldOriginalDate)))
@@ -704,13 +703,13 @@ static bool processQAnniversary(const QContactDetail& detail, QVector<CEPROPVAL>
     return true;
 }
 
-static bool processQNickname(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQNickname(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_NICKNAME, detail.value(QContactNickname::FieldNickname), props);
     return true;
 }
 
-static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQOrganisation(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QContactOrganization org(detail);
 
@@ -723,7 +722,7 @@ static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
     return true;
 }
 
-static bool processQWebpage(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQWebpage(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QContactUrl url(detail);
 
@@ -937,6 +936,7 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
         hash.insert(QContactOrganization::DefinitionName, processQOrganisation);
         hash.insert(QContactUrl::DefinitionName, processQWebpage);
         hash.insert(QContactFamily::DefinitionName, processQFamily);
+        hash.insert(QContactAvatar::DefinitionName, processQAvatar);
     }
     ret = hash;
 }
@@ -1023,7 +1023,7 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     foreach (const QContactDetail& detail, details) {
         func = transforms.value(detail.definitionName());
         if (func) {
-            if (!func(detail, props)) {
+            if (!func(this, item, detail, props)) {
                 error = QContactManager::InvalidDetailError;
                 return false;
             }
@@ -1037,13 +1037,7 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     
     // Now set it
     HRESULT hr = item->SetProps(0, props.count(), props.data());
-    if (SUCCEEDED(hr)) {
-        //Special case for avatar stuff 
-        if (processQAvatar(this, item, contact.details<QContactAvatar>(), d->m_avatarmeta))
-            return true;
-        else
-            error = QContactManager::InvalidDetailError;
-    } else {
+    if (FAILED(hr)) {
         qWarning() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
         error = QContactManager::UnspecifiedError;
     }
