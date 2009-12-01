@@ -194,21 +194,12 @@ Set the metering mode to \a mode.
 */
 
 /*!
-  \fn int QCameraExposureControl::minimumIsoSensitivity() const
+  \fn QList<int> QCameraExposureControl::supportedIsoSensitivities(bool *continuous) const
 
-  Returns the minimum iso sensitivity.
-*/
+  Returns the list of ISO senitivities camera supports.
 
-/*!
-  \fn int QCameraExposureControl::maximumIsoSensitivity() const
-
-  Returns the maximum iso sensitivity.
-*/
-
-/*!
-  \fn QList<int> QCameraExposureControl::supportedIsoSensitivities() const
-
-  Returns the available sensitivities.
+  If the camera supports arbitrary ISO sensitivities within the supported range,
+  *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
 
 
@@ -232,22 +223,16 @@ Set the metering mode to \a mode.
   Returns the aperture
 */
 
-/*!
-  \fn qreal QCameraExposureControl::minimumAperture() const
-
-  Returns the minimum aperture available.
-*/
 
 /*!
-  \fn qreal QCameraExposureControl::maximumAperture() const
+  \fn QList<qreal> QCameraExposureControl::supportedApertures(bool *continuous) const
 
-  Returns the maximum aperture available.
-*/
+    Returns the list of aperture values camera supports.
+    The apertures list can change depending on the focal length,
+    in such a case the apertureRangeChanged() signal is emited.
 
-/*!
-  \fn QList<qreal> QCameraExposureControl::supportedApertures() const
-
-  Returns the supported apertures.
+    If the camera supports arbitrary aperture values within the supported range,
+    *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
 
 
@@ -273,21 +258,12 @@ Set the metering mode to \a mode.
 */
 
 /*!
-    \fn qreal QCameraExposureControl::minimumShutterSpeed() const
+  \fn QList<qreal> QCameraExposureControl::supportedShutterSpeeds(bool *continuous) const
 
-    Returns the maximum shutter speed.
-*/
+    Returns the list of shutter speed values in seconds camera supports.
 
-/*!
-  \fn qreal QCameraExposureControl::maximumShutterSpeed() const
-
-  Returns the maximum shutter speed.
-*/
-
-/*!
-  \fn QList<qreal> QCameraExposureControl::supportedShutterSpeeds() const
-
-  Returns the available shutter speeds.
+    If the camera supports arbitrary shutter speed values within the supported range,
+    *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
 
 
