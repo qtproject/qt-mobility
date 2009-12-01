@@ -238,9 +238,6 @@ public:
     /* Synthesize the display label of a contact */
     virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
-    bool loadBlob(const QContactLocalId& contactId, const QString& blobId, QByteArray* data, QString* format) const;
-    bool saveBlob(const QContactLocalId& contactId, const QString&  blobId, const QByteArray& data, const QString& format);
-
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;
 
