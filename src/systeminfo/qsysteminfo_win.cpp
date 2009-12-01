@@ -1594,6 +1594,21 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
         }
     }
 # endif
+#else 
+    // detect the presence of a mouse
+    RECT rect;
+    if (GetClipCursor(&rect)) {
+        if ((methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
+            methods |= QSystemDeviceInfo::Mouse;
+        }
+    }
+    // We could also try to detect the presence of a stylus / single touch input.
+    // A team from Microsoft was unable to do this in a way which scaled across multiple devices.    
+    // For more details see:
+    // http://blogs.msdn.com/netcfteam/archive/2006/10/02/Platform-detection-III_3A00_-How-to-detect-a-touch-screen-on-Windows-CE-in-.NET-CF.aspx
+    // Since all non-Qt apps on non-compliant devices will be able to use the touch screen
+    // (by virtue of being written for one particular device) shipping a library which will cause 
+    // just the Qt apps to fail may not be the best move.
 #endif
     int keyboardType = GetKeyboardType(0);
     switch(keyboardType) {
