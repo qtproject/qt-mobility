@@ -989,23 +989,25 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 QImage QContactAvatar::avatarImage() const
 {
     QImage img;
-    QUrl url(avatar());
-    
-    if (!url.isValid())
-        url =  QUrl::fromLocalFile(avatar());
-
-    if (url.isValid()) {
-        QNetworkAccessManager* manager = new QNetworkAccessManager();
-        QNetworkRequest req;
-
-        req.setUrl(url);
-        QNetworkReply* reply = manager->get(req);
+    if (subType() == QContactAvatar::SubTypeImage) {
+        QUrl url(avatar());
         
-        reply->waitForReadyRead(-1);
-        //XXX the QImage can detect the image format automatically?
-        img = QImage::fromData(reply->readAll());
-        reply->deleteLater();
-        delete manager;
+        if (!url.isValid())
+            url =  QUrl::fromLocalFile(avatar());
+
+        if (url.isValid()) {
+            QNetworkAccessManager* manager = new QNetworkAccessManager();
+            QNetworkRequest req;
+
+            req.setUrl(url);
+            QNetworkReply* reply = manager->get(req);
+            
+            reply->waitForReadyRead(-1);
+            //XXX the QImage can detect the image format automatically?
+            img = QImage::fromData(reply->readAll());
+            reply->deleteLater();
+            delete manager;
+        }
     }
     return img;
     
