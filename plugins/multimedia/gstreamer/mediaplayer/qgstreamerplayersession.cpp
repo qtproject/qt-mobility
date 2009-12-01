@@ -578,17 +578,45 @@ void QGstreamerPlayerSession::getStreamsInfo()
     m_playbin2StreamOffset[QMediaStreamsControl::VideoStream] = audioStreamsCount;
     m_playbin2StreamOffset[QMediaStreamsControl::SubPictureStream] = audioStreamsCount+videoStreamsCount;
 
-    for (int i=0; i<audioStreamsCount; i++) {
-        QMap<QtMedia::MetaData, QVariant> streamProperties;
-
+    for (int i=0; i<audioStreamsCount; i++)
         m_streamTypes.append(QMediaStreamsControl::AudioStream);
-        m_streamProperties.append(streamProperties);
-    }
 
-    for (int i=0; i<audioStreamsCount; i++) {
+    for (int i=0; i<videoStreamsCount; i++)
+        m_streamTypes.append(QMediaStreamsControl::VideoStream);
+
+    for (int i=0; i<textStreamsCount; i++)
+        m_streamTypes.append(QMediaStreamsControl::SubPictureStream);
+
+    for (int i=0; i<m_streamTypes.count(); i++) {
+        QMediaStreamsControl::StreamType streamType = m_streamTypes[i];
         QMap<QtMedia::MetaData, QVariant> streamProperties;
 
-        m_streamTypes.append(QMediaStreamsControl::VideoStream);
+        int streamIndex = i - m_playbin2StreamOffset[streamType];
+
+        GstTagList *tags = 0;
+        switch (streamType) {
+        case QMediaStreamsControl::AudioStream:
+            g_signal_emit_by_name(G_OBJECT(m_playbin), "get-audio-tags", streamIndex, &tags);
+            break;
+        case QMediaStreamsControl::VideoStream:
+            g_signal_emit_by_name(G_OBJECT(m_playbin), "get-video-tags", streamIndex, &tags);
+            break;
+        case QMediaStreamsControl::SubPictureStream:
+            g_signal_emit_by_name(G_OBJECT(m_playbin), "get-text-tags", streamIndex, &tags);
+            break;
+        default:
+            break;
+        }
+
+        if (tags && gst_is_tag_list(tags)) {
+            gchar *languageCode = 0;
+            if (gst_tag_list_get_string(tags, GST_TAG_LANGUAGE_CODE, &languageCode))
+                streamProperties[QtMedia::Language] = QString::fromUtf8(languageCode);
+
+            //qDebug() << "language for setream" << i << QString::fromUtf8(languageCode);
+            g_free (languageCode);
+        }
+
         m_streamProperties.append(streamProperties);
     }
 
