@@ -39,10 +39,11 @@
 **
 ****************************************************************************/
 #include <QDebug>
-#include <QUrl>
-#include <QFile>
-#include <QtNetwork/QNetworkAccessManager>
 #include <QByteArray>
+#include <QUrl>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
 #include "qcontactmanager.h"
 #include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
@@ -650,21 +651,30 @@ static bool processQName(const QContactWinCEEngine*, IItem* /*contact*/, const Q
 
 static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
-    QString avatarFile = detail.value(QContactAvatar::FieldAvatar);
+    QString avatarData = detail.value(QContactAvatar::FieldAvatar);
     
-    if (avatarFile.isEmpty())
-        return false;
-    
-    QFile f(avatarFile);
-    f.open(QIODevice::ReadOnly);
-    
-    if (f.error() != QFile::NoError)
+    if (avatarData.isEmpty())
         return false;
 
-    QByteArray data = f.readAll();
-    if (saveAvatarData(contact, data)) {
-        addIfNotEmpty(engine->metaAvatar(), detail.value(QContactAvatar::FieldSubType), props);
-        return true;
+    QUrl url(avatarData);
+    if (!url.isValid())
+        url = QUrl::fromLocalFile(avatarData);
+
+    if (url.isValid()) {
+        QNetworkAccessManager* manager = new QNetworkAccessManager();
+        QNetworkRequest req;
+
+        req.setUrl(url);
+        QNetworkReply* reply = manager->get(req);
+        
+        reply->waitForReadyRead(-1);
+        
+        if (saveAvatarData(contact, reply->readAll())) {
+            addIfNotEmpty(engine->metaAvatar(), detail.value(QContactAvatar::FieldSubType), props);
+            reply->deleteLater();
+            delete manager;
+            return true;
+        }
     }
     return false;
 }
