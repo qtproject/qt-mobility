@@ -87,6 +87,8 @@ public:
     QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
     ~QMediaRecorder();
 
+    bool isAvailable() const;
+
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);
 
