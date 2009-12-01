@@ -429,6 +429,7 @@ void AddressFinder::messageIndexChanged(int index)
     forwardButton->setEnabled(messageSelected);
 }
 
+//! [show-message]
 void AddressFinder::showMessage()
 {
     int index = messageCombo->currentIndex();
@@ -441,7 +442,9 @@ void AddressFinder::showMessage()
         serviceAction.show(messageId);
     }
 }
+//! [show-message]
 
+//! [compose-message]
 void AddressFinder::forwardMessage()
 {
     int index = messageCombo->currentIndex();
@@ -449,13 +452,15 @@ void AddressFinder::forwardMessage()
         // Find the address currently selected
         QString selectedAddress(simpleEmailAddress(addressList->currentItem()->text()));
 
-        // Create a message which forwards the selected message to the same recipient
+        // Find the selected message
         QMessageId &messageId((addressMessages[selectedAddress])[index].second);
-        
         QMessage original(messageId);
+
+        // Create a message which forwards the selected message to the same recipient
         QMessage fwd(original.createResponseMessage(QMessage::Forward));
         fwd.setTo(original.to());
-
         serviceAction.compose(fwd);
     }
 }
+//! [compose-message]
+
