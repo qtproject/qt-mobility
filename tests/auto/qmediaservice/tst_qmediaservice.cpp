@@ -60,11 +60,9 @@ private slots:
 
     void control_iid();
     void control();
-    void nullAudioDeviceControl();
-    void audioEndpoints();
+    void nullAudioDeviceControl();    
 };
 
-Q_DECLARE_METATYPE(QMediaService::MediaEndpoint);
 
 class QtTestMediaControlA : public QMediaControl
 {
@@ -230,8 +228,7 @@ public:
 };
 
 void tst_QMediaService::initTestCase()
-{
-    qRegisterMetaType<QMediaService::MediaEndpoint>();
+{    
 }
 
 void tst_QMediaService::control_iid()
@@ -260,74 +257,6 @@ void tst_QMediaService::nullAudioDeviceControl()
     const QString deviceName(QLatin1String("test"));
 
     QtTestMediaService service;
-
-    QSignalSpy spy(&service, SIGNAL(activeEndpointChanged(QMediaService::MediaEndpoint, QString)));
-
-    QCOMPARE(service.isEndpointSupported(QMediaService::AudioDevice), false);
-    QCOMPARE(service.supportedEndpoints(QMediaService::AudioDevice), QStringList());
-    QCOMPARE(service.endpointDescription(QMediaService::AudioDevice, deviceName), QString());
-    QCOMPARE(service.activeEndpoint(QMediaService::AudioDevice), QString());
-
-    QCOMPARE(service.setActiveEndpoint(QMediaService::AudioDevice, deviceName), false);
-    QCOMPARE(service.activeEndpoint(QMediaService::AudioDevice), QString());
-}
-
-void tst_QMediaService::audioEndpoints()
-{
-    const QtTestDevice device1(
-            QLatin1String("mic"),
-            QLatin1String("Microphone"),
-            QApplication::style()->standardIcon(QStyle::SP_ArrowLeft));
-    const QtTestDevice device2(
-            QLatin1String("headset"),
-            QLatin1String("Head-set"),
-            QApplication::style()->standardIcon(QStyle::SP_ArrowDown));
-    const QtTestDevice device3(
-            QLatin1String("handset"),
-            QLatin1String("Hand-set"),
-            QApplication::style()->standardIcon(QStyle::SP_ArrowUp));
-    const QtTestDevice device4(
-            QLatin1String("lineout"),
-            QLatin1String("Speakers"),
-            QApplication::style()->standardIcon(QStyle::SP_ArrowRight));
-
-    const QStringList deviceNames = QStringList()
-            << device1.name
-            << device2.name
-            << device3.name;
-
-    QtTestMediaService service;
-    service.hasDeviceControls = true;
-
-    QCOMPARE(service.isEndpointSupported(QMediaService::AudioDevice), true);
-    QCOMPARE(service.supportedEndpoints(QMediaService::AudioDevice), QStringList());
-    QCOMPARE(service.endpointDescription(QMediaService::AudioDevice, device1.name), QString());
-    QCOMPARE(service.endpointDescription(QMediaService::AudioDevice, device2.name), QString());
-    QCOMPARE(service.endpointDescription(QMediaService::AudioDevice, device4.name), QString());
-
-    QCOMPARE(service.activeEndpoint(QMediaService::AudioDevice), QString());
-    QCOMPARE(service.setActiveEndpoint(QMediaService::AudioDevice, device1.name), false);
-    QCOMPARE(service.activeEndpoint(QMediaService::AudioDevice), QString());
-
-    service.audioDeviceControl.devices.append(device1);
-    service.audioDeviceControl.devices.append(device2);
-    service.audioDeviceControl.devices.append(device3);
-
-    QCOMPARE(service.supportedEndpoints(QMediaService::AudioDevice), deviceNames);
-    QCOMPARE(service.endpointDescription(QMediaService::AudioDevice, device1.name),
-             device1.description);
-    QCOMPARE(service.endpointDescription(QMediaService::AudioDevice, device2.name),
-             device2.description);
-    QCOMPARE(service.endpointDescription(QMediaService::AudioDevice, device4.name), QString());
-    QCOMPARE(service.activeEndpoint(QMediaService::AudioDevice), QString());
-
-    QCOMPARE(service.setActiveEndpoint(QMediaService::AudioDevice, device1.name), true);
-    QCOMPARE(service.activeEndpoint(QMediaService::AudioDevice), device1.name);
-
-    QCOMPARE(service.setActiveEndpoint(QMediaService::AudioDevice, device1.name), true);
-    QCOMPARE(service.activeEndpoint(QMediaService::AudioDevice), device1.name);
-    QCOMPARE(service.setActiveEndpoint(QMediaService::AudioDevice, QString()), true);
-    QCOMPARE(service.activeEndpoint(QMediaService::AudioDevice), QString());
 }
 
 QTEST_MAIN(tst_QMediaService)
