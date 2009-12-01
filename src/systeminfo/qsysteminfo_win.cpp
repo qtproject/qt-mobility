@@ -524,7 +524,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
         {
 #if !defined(Q_OS_WINCE)
             OSVERSIONINFOEX versionInfo;
-            versionInfo .dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+            versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
             GetVersionEx((OSVERSIONINFO *) &versionInfo);
             return QString::number(versionInfo.dwMajorVersion) +"."
@@ -532,6 +532,14 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
                     +QString::number(versionInfo.dwBuildNumber)+"."
                     +QString::number(versionInfo.wServicePackMajor)+"."
                     +QString::number(versionInfo.wServicePackMinor);
+#else
+            OSVERSIONINFO versionInfo;
+            versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+
+            GetVersionEx((OSVERSIONINFO *) &versionInfo);
+            return QString::number(versionInfo.dwMajorVersion) +"."
+                    +QString::number(versionInfo.dwMinorVersion)+"."
+                    +QString::number(versionInfo.dwBuildNumber);
 #endif
         }
         break;
