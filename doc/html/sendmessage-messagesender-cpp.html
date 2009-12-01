@@ -92,6 +92,7 @@
         subjectLabel-&gt;setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
         QGridLayout *metaDataLayout = new QGridLayout;
+        metaDataLayout-&gt;setContentsMargins(0, 0, 0, 0);
         metaDataLayout-&gt;addWidget(toLabel, 0, 0);
         metaDataLayout-&gt;setAlignment(toLabel, Qt::AlignRight);
         metaDataLayout-&gt;addWidget(subjectLabel, 1, 0);
@@ -108,17 +109,18 @@
 
         connect(addButton, SIGNAL(clicked()), this, SLOT(addAttachment()));
 
-        QVBoxLayout *buttonLayout = new QVBoxLayout;
-        buttonLayout-&gt;addStretch();
-        buttonLayout-&gt;addWidget(removeButton);
+        QHBoxLayout *buttonLayout = new QHBoxLayout;
+        buttonLayout-&gt;setContentsMargins(0, 0, 0, 0);
         buttonLayout-&gt;addWidget(addButton);
+        buttonLayout-&gt;addWidget(removeButton);
 
         attachmentsList = new QListWidget;
         attachmentsList-&gt;setSelectionMode(QAbstractItemView::SingleSelection);
 
         connect(attachmentsList, SIGNAL(currentRowChanged(int)), this, SLOT(attachmentSelected(int)));
 
-        QHBoxLayout *attachmentsLayout = new QHBoxLayout;
+        QVBoxLayout *attachmentsLayout = new QVBoxLayout;
+        attachmentsLayout-&gt;setContentsMargins(0, 0, 0, 0);
         attachmentsLayout-&gt;addWidget(attachmentsList);
         attachmentsLayout-&gt;addLayout(buttonLayout);
 
@@ -132,6 +134,7 @@
         connect(sendButton, SIGNAL(clicked()), this, SLOT(send()), Qt::QueuedConnection);
 
         QVBoxLayout *mainLayout = new QVBoxLayout(this);
+        mainLayout-&gt;setContentsMargins(0, 0, 0, 0);
         mainLayout-&gt;addLayout(metaDataLayout, 0);
         mainLayout-&gt;addWidget(textEdit, 2);
         mainLayout-&gt;addWidget(attachmentsGroup, 1);
@@ -161,9 +164,9 @@
         }
     }
 
-    void MessageSender::attachmentSelected(int)
+    void MessageSender::attachmentSelected(int index)
     {
-        removeButton-&gt;setEnabled(true);
+        removeButton-&gt;setEnabled(index != -1);
     }
 
     void MessageSender::send()

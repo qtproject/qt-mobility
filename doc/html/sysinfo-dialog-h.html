@@ -57,17 +57,16 @@
     #ifndef DIALOG_H
     #define DIALOG_H
 
-    #include &lt;QWidget&gt;
+    #include &lt;QDialog&gt;
     #include &lt;qsysteminfo.h&gt;
-    #ifdef Q_OS_SYMBIAN
-    #include &quot;ui_dialog_s60.h&quot;
-    #else
-    #include &quot;ui_dialog.h&quot;
-    #endif
+
     QTM_USE_NAMESPACE
 
-    class Dialog : public QWidget, public Ui_Dialog
-    {
+    namespace Ui {
+        class Dialog;
+    }
+
+    class Dialog : public QDialog {
         Q_OBJECT
     public:
         Dialog();
@@ -77,6 +76,7 @@
         void changeEvent(QEvent *e);
 
     private:
+        Ui::Dialog *ui;
         void setupGeneral();
         void setupDevice();
         void setupDisplay();

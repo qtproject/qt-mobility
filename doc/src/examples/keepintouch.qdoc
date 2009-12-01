@@ -119,10 +119,20 @@
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp address-selected
 
-    Some simple enhancements to this application could involve resolving
-    the qualifying addresses to contact information, using the Qt Mobility
-    Contacts API, and adding the ability to compose a new message to 
-    each address from the visible list.
+    When the user has selected a message, two further actions become possible.
+    We can use the QMessageServiceAction facility to either view the message
+    or to compose a new message to the recipient of the earlier message. To
+    view the message we only need to invoke the
+    \l {QMessageServiceAction::show()}{show} function for the relevant QMessageId:
+
+    \snippet    ../../examples/keepintouch/addressfinder.cpp show-message
+
+    To compose a response, we will create a new message that forwards the
+    existing message content to the same recipient, and requests that the
+    system display a message composer prepared with the message content we
+    have prepared:
+
+    \snippet    ../../examples/keepintouch/addressfinder.cpp compose-message
 
 */
 

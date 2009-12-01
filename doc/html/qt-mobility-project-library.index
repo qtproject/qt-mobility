@@ -2456,6 +2456,37 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" href="qgeoareamonitor.html" location="qgeoareamonitor.h" bases="QObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.h" type="QGeoCoordinate">
+                <getter name="center"/>
+                <setter name="setCenter"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.h" type="qreal">
+                <getter name="radius"/>
+                <setter name="setRadius"/>
+            </property>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" fullname="QGeoAreaMonitor::QGeoAreaMonitor" href="qgeoareamonitor.html#QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoAreaMonitor(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoAreaMonitor" fullname="QGeoAreaMonitor::~QGeoAreaMonitor" href="qgeoareamonitor.html#dtor.QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoAreaMonitor()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QGeoAreaMonitor::setCenter" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="center" type="void" signature="setCenter(const QGeoCoordinate &amp; coordinate)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="center" type="QGeoCoordinate" signature="center() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QGeoAreaMonitor::setRadius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="radius" type="void" signature="setRadius(qreal radius)">
+                <parameter left="qreal" right="" name="radius" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="radius" type="qreal" signature="radius() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="createDefaultMonitor" fullname="QGeoAreaMonitor::createDefaultMonitor" href="qgeoareamonitor.html#createDefaultMonitor" location="qgeoareamonitor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoAreaMonitor *" signature="createDefaultMonitor(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="areaEntered" fullname="QGeoAreaMonitor::areaEntered" href="qgeoareamonitor.html#areaEntered" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaEntered(const QGeoPositionInfo &amp; update)">
+                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="areaExited" fullname="QGeoAreaMonitor::areaExited" href="qgeoareamonitor.html#areaExited" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaExited(const QGeoPositionInfo &amp; update)">
+                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaServiceProviderHint" href="qmediaserviceproviderhint.html" location="qmediaserviceprovider.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QMediaServiceProviderHint::Type" href="qmediaserviceproviderhint.html#Type-enum" location="qmediaserviceprovider.h">
                 <value name="Null" value="0"/>
@@ -6429,6 +6460,12 @@
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QCameraExposureControl_iid" href="qcameraexposurecontrol.html#QCameraExposureControl_iid" location="qcameraexposurecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QCameraExposureControl" type="" signature="QCameraExposureControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWindowControl_iid" href="qvideowindowcontrol.html#QVideoWindowControl_iid" location="qvideowindowcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWindowControl" type="" signature="QVideoWindowControl_iid()"/>
+        <page access="public" status="commendable" name="keepintouch" href="keepintouch.html" subtype="example" title="'Keep in Touch' Example" fulltitle="'Keep in Touch' Example" subtitle="" location="keepintouch.qdoc">
+            <page access="public" status="commendable" name="keepintouch/addressfinder.cpp" href="keepintouch-addressfinder-cpp.html" subtype="file" title="" fulltitle="addressfinder.cpp Example File" subtitle="keepintouch/addressfinder.cpp" location=""/>
+            <page access="public" status="commendable" name="keepintouch/addressfinder.h" href="keepintouch-addressfinder-h.html" subtype="file" title="" fulltitle="addressfinder.h Example File" subtitle="keepintouch/addressfinder.h" location=""/>
+            <page access="public" status="commendable" name="keepintouch/main.cpp" href="keepintouch-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="keepintouch/main.cpp" location=""/>
+            <page access="public" status="commendable" name="keepintouch/keepintouch.pro" href="keepintouch-keepintouch-pro.html" subtype="file" title="" fulltitle="keepintouch.pro Example File" subtitle="keepintouch/keepintouch.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="location" href="location.html" subtype="group" title="Location API" fulltitle="Location API" subtitle="" location="location.qdoc"/>
         <page access="public" status="commendable" name="location-overview.html" href="location-overview.html" subtype="page" title="Location" fulltitle="Location" subtitle="" location="location.qdoc">
             <contents name="overview" title="Overview" level="1"/>
@@ -6725,6 +6762,18 @@
             <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
             <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
         </page>
+        <page access="public" status="commendable" name="serviceactions" href="serviceactions.html" subtype="example" title="Service Actions Example" fulltitle="Service Actions Example" subtitle="" location="serviceactions.qdoc">
+            <contents name="send-and-compose" title="Send and Compose" level="1"/>
+            <contents name="show" title="Show" level="1"/>
+            <contents name="query-and-retrieve" title="Query and Retrieve" level="1"/>
+            <contents name="store-signals" title="Store Signals" level="1"/>
+            <page access="public" status="commendable" name="serviceactions/attachmentlistwidget.cpp" href="serviceactions-attachmentlistwidget-cpp.html" subtype="file" title="" fulltitle="attachmentlistwidget.cpp Example File" subtitle="serviceactions/attachmentlistwidget.cpp" location=""/>
+            <page access="public" status="commendable" name="serviceactions/attachmentlistwidget.h" href="serviceactions-attachmentlistwidget-h.html" subtype="file" title="" fulltitle="attachmentlistwidget.h Example File" subtitle="serviceactions/attachmentlistwidget.h" location=""/>
+            <page access="public" status="commendable" name="serviceactions/mainwindow.cpp" href="serviceactions-mainwindow-cpp.html" subtype="file" title="" fulltitle="mainwindow.cpp Example File" subtitle="serviceactions/mainwindow.cpp" location=""/>
+            <page access="public" status="commendable" name="serviceactions/mainwindow.h" href="serviceactions-mainwindow-h.html" subtype="file" title="" fulltitle="mainwindow.h Example File" subtitle="serviceactions/mainwindow.h" location=""/>
+            <page access="public" status="commendable" name="serviceactions/main.cpp" href="serviceactions-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="serviceactions/main.cpp" location=""/>
+            <page access="public" status="commendable" name="serviceactions/serviceactions.pro" href="serviceactions-serviceactions-pro.html" subtype="file" title="" fulltitle="serviceactions.pro Example File" subtitle="serviceactions/serviceactions.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="player" href="player.html" subtype="example" title="Media Player Example" fulltitle="Media Player Example" subtitle="" location="player.qdoc">
             <page access="public" status="commendable" name="player/player.cpp" href="player-player-cpp.html" subtype="file" title="" fulltitle="player.cpp Example File" subtitle="player/player.cpp" location=""/>
             <page access="public" status="commendable" name="player/player.h" href="player-player-h.html" subtype="file" title="" fulltitle="player.h Example File" subtitle="player/player.h" location=""/>
@@ -6736,6 +6785,10 @@
             <page access="public" status="commendable" name="player/videowidget.h" href="player-videowidget-h.html" subtype="file" title="" fulltitle="videowidget.h Example File" subtitle="player/videowidget.h" location=""/>
             <page access="public" status="commendable" name="player/main.cpp" href="player-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="player/main.cpp" location=""/>
             <page access="public" status="commendable" name="player/player.pro" href="player-player-pro.html" subtype="file" title="" fulltitle="player.pro Example File" subtitle="player/player.pro" location=""/>
+        </page>
+        <page access="public" status="commendable" name="querymessages" href="querymessages.html" subtype="example" title="Query Messages Example" fulltitle="Query Messages Example" subtitle="" location="querymessages.qdoc">
+            <page access="public" status="commendable" name="querymessages/main.cpp" href="querymessages-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="querymessages/main.cpp" location=""/>
+            <page access="public" status="commendable" name="querymessages/querymessages.pro" href="querymessages-querymessages-pro.html" subtype="file" title="" fulltitle="querymessages.pro Example File" subtitle="querymessages/querymessages.pro" location=""/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QRadioTunerControl_iid" href="qradiotunercontrol.html#QRadioTunerControl_iid" location="qradiotunercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QRadioTunerControl" type="" signature="QRadioTunerControl_iid()"/>
     </namespace>

@@ -8,7 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="//apple_ref/cpp/cl//QContactFetchRequest" />
+<a name="//apple_ref/cpp/cl//QContactFetchRequest"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -62,39 +62,39 @@
 <p>The QContactFetchRequest class allows a client to asynchronously request contacts from a contacts store manager.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/QContactFetchRequest" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/QContactFetchRequest"></a>
 <h3 class="fn"><a name="QContactFetchRequest"></a>QContactFetchRequest::QContactFetchRequest ()</h3>
 <p>Constructs a new contact fetch request</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/~QContactFetchRequest" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/~QContactFetchRequest"></a>
 <h3 class="fn"><a name="dtor.QContactFetchRequest"></a>QContactFetchRequest::~QContactFetchRequest ()</h3>
 <p>Cleans up the memory in use by this contact fetch request</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/contacts" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/contacts"></a>
 <h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; QContactFetchRequest::contacts () const</h3>
 <p>Returns the list of contacts retrieved by this request</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/definitionRestrictions" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/definitionRestrictions"></a>
 <h3 class="fn"><a name="definitionRestrictions"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContactFetchRequest::definitionRestrictions () const</h3>
 <p>Returns the list of definition names which define which details contacts in the result list will be limited to</p>
 <p>See also <a href="qcontactfetchrequest.html#setDefinitionRestrictions">setDefinitionRestrictions</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/filter" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/filter"></a>
 <h3 class="fn"><a name="filter"></a><a href="qcontactfilter.html">QContactFilter</a> QContactFetchRequest::filter () const</h3>
 <p>Returns the filter that will be used to select contacts to be returned</p>
 <p>See also <a href="qcontactfetchrequest.html#setFilter">setFilter</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/progress" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/progress"></a>
 <h3 class="fn"><a name="progress"></a>void QContactFetchRequest::progress ( QContactFetchRequest * <i>self</i>, bool <i>appendOnly</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when some progress has been made on the request, causing either a change of status or an update of results, or both. It identifies which request the signal originated from by including a pointer to <i>self</i>, and contains an <i>appendOnly</i> flag which signifies whether or not the total ordering of the results have been maintained since the last progress signal was emitted.</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/setDefinitionRestrictions" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/setDefinitionRestrictions"></a>
 <h3 class="fn"><a name="setDefinitionRestrictions"></a>void QContactFetchRequest::setDefinitionRestrictions ( const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>definitionNames</i> )</h3>
 <p>Sets the list of allowable detail definition names to <i>definitionNames</i>. Any contacts retrieved by the request will have any details whose definition name is not on the restricted list removed prior to being returned.</p>
 <p>See also <a href="qcontactfetchrequest.html#definitionRestrictions">definitionRestrictions</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/setFilter" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/setFilter"></a>
 <h3 class="fn"><a name="setFilter"></a>void QContactFetchRequest::setFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )</h3>
 <p>Sets the contact filter used to determine which contacts will be retrieved to <i>filter</i></p>
 <p>See also <a href="qcontactfetchrequest.html#filter">filter</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/setSorting" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/setSorting"></a>
 <h3 class="fn"><a name="setSorting"></a>void QContactFetchRequest::setSorting ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
 <p>Sets the sort order of the result to <i>sorting</i>. Only has an effect if called prior to calling <tt>start()</tt></p>
 <p>See also <a href="qcontactfetchrequest.html#sorting">sorting</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/sorting" />
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/sorting"></a>
 <h3 class="fn"><a name="sorting"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; QContactFetchRequest::sorting () const</h3>
 <p>Returns the sort ordering that will be used sort the results of this request</p>
 <p>See also <a href="qcontactfetchrequest.html#setSorting">setSorting</a>().</p>
