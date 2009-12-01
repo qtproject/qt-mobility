@@ -47,6 +47,8 @@
 #include <QtTracker/Tracker>
 #include <QtTracker/QLive>
 #include <qcontact.h>
+#include <qcontactonlineaccount.h>
+
 class QContactAbstractRequest;
 class QContactManagerEngine;
 
@@ -86,22 +88,34 @@ protected slots:
 
 private:
     // fills received phone number from tracker to list of contacts to QContactPhoneMumber details
-    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts, bool affiliationNumbers);
-    void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, QList<QContact>& contacts, bool affiliationEmails);
-    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts, bool affiliationAccounts);
+    // all the following methods update \sa result
+    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, bool affiliationNumbers);
+    void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, bool affiliationEmails);
+    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, bool affiliationAccounts);
     void validateRequest();
     void readFromQueryRowToContact(QContact &contact, int queryRow);
-    QContact linkContactsWithSameMetaContact(QContact &first, QContact &second);
+    QContact &linkContactsWithSameMetaContact(QContact &first, QContact &second);
+    void addContactToResultSet(QContact &contact, const QString &metacontact);
+    QContactOnlineAccount getOnlineAccountFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow);
 
 protected:
     SopranoLive::LiveNodes query;
 
     QList<SopranoLive::LiveNodes> queryPhoneNumbersNodes; // 2 - one for affiliations and another one for PersonContact
-    int queryPhoneNumbersNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
+    int queryPhoneNumbersNodesPending;
     QList<SopranoLive::LiveNodes> queryEmailAddressNodes; // 2 - one for affiliations and another one for PersonContact
-    int queryEmailAddressNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
-    QList<SopranoLive::LiveNodes> queryIMAccountNodes; // 2 - one for affiliations and another one for PersonContact
-    int queryIMAccountNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
+    int queryEmailAddressNodesPending;
+    QList<SopranoLive::LiveNodes> queryIMAccountNodes;
+    int queryIMAccountNodesPending;
+
+private:
+    // result of the request - multiple queries updating it
+    QList<QContact> result;
+    // access existing contacts in result list, contactid to index in \sa result lookup
+    QHash<quint32, int> id2ContactLookup;
+    // metacontact to index in \sa result lookup - index of metacontact contact: only 1 contact returned when multiple have the same metacontact
+    QHash<QString, int> metacontactLookup;
+
 };
 
 #endif /* QTRACKERCONTACTASYNCREQUEST_H_ */
