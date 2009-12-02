@@ -50,7 +50,9 @@ QTM_USE_NAMESPACE
     \preliminary
     \brief The QSensorManager class returns the sensors on a device.
 
-    Foo bar baz.
+    A given device will have a variety of sensors. The sensors are
+    categorized by type. The QSensor::Type enum defined the types that
+    the API supports.
 */
 
 /*!

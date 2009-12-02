@@ -50,7 +50,8 @@ QTM_USE_NAMESPACE
     \preliminary
     \brief The QOrientationSensor class reports on the orientation of the screen.
 
-    Foo bar baz.
+    The orientation sensor provides discrete orientation information. See the
+    QOrientationSensor::Orientation enum for
 */
 
 /*!
@@ -64,12 +65,11 @@ QTM_USE_NAMESPACE
     \value Landscape  The device is in the landscape orientation.
     \value Inverted   Combined with Portrait or Landscape to indicate
                       the device is upside down.
-*/
+    \value Default    Combined with Portrait or Landscape to indicate
+                      the device is in the default orientation.
 
-/*!
-    \fn QOrientationSensor::orientationChanged(Orientation orientation)
-
-    This signal is emitted when the \a orientation changes.
+    Note that Portrait and Landscape may be combined with Inverted to
+    indicate that the device is upside down.
 */
 
 /*!
@@ -83,12 +83,37 @@ void QOrientationSensor::readOrientation(Orientation *orientation)
 /*!
     Add a \a filter to the sensor.
 */
-void QOrientationSensor::addFilter(QOrientationSensorFilter filter)
+void QOrientationSensor::addFilter(QOrientationSensorFilter *filter)
 {
     Q_UNUSED(filter)
 }
 
-QTM_BEGIN_NAMESPACE
-#include "moc_qorientationsensor.cpp"
-QTM_END_NAMESPACE
+/*!
+    \class QOrientationSensorFilter
+    \ingroup sensors
+
+    \preliminary
+    \brief The QOrientationSensorFilter class represents a filter.
+
+    Foo bar baz.
+    \sa Filters
+*/
+
+/*!
+    \fn bool QOrientationSensorFilter::filterOrientation(QOrientationSensor::Orientation &orientation)
+
+    Filter the orientation value \a orientation. The filter
+    may modify the value as it chooses. If the filter returns false
+    the value will be ignored by the sensor.
+*/
+
+/*!
+    \class QOrientationSensorEvent
+    \ingroup sensors
+
+    \preliminary
+    \brief The QOrientationSensorEvent class represents an orientation event.
+
+    Foo bar baz.
+*/
 

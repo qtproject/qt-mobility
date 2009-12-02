@@ -55,10 +55,20 @@ real-time sensors such as accelerometer data.
 
 \section1 Overview
 
-Client subscribes.
-Events are pushed out.
-High-level events can be delivered via x, y, z.
-Low-level events can only be delivered via x. Cannot block when using low-level events due to blocking the thread.
+The QSensorManager class is used to get a handle to particular sensors.
+
+The API supports sensors that poll for their data and sensors that push
+data to the app as it arrives. Attempting to poll a sensor that operates
+using push will read a cached value. Attempting to use push notification
+on a sensor that only supports polling will result in a timer event being
+used to poll the sensor and deliver the result to the app.
+
+As each sensor works slightly different there are a variety of classes
+provided to interact with each sensor.
+
+\section1 Filters
+
+Foo bar baz.
 
 \section1 Main Classes
 */

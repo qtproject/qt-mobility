@@ -43,29 +43,40 @@
 #define QACCELERATIONSENSOR_H
 
 #include <qsensor.h>
+#include <QtGlobal>
 
 QTM_BEGIN_NAMESPACE
 
-typedef bool (*QAccelerationSensorFilter)(int&, int&, int&);
-typedef void (*QAccelerationSensorListener)(int, int, int);
+class QAccelerationSensorFilter;
 
 class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 {
 public:
-    // Values are in milli-Gs. Note that they may not be particularly
+    // Values are in Earth gravities. Note that they may not be particularly
     // accurate depending on the hardware. For example, Apple notebooks
     // can only measure 255 levels between 0 and 1G.
-    void readAcceleration(int *x, int *y, int *z);
+    void readAcceleration(qreal *x, qreal *y, qreal *z);
 
     // Add a filter to remove or modify the accleration values
-    void addFilter(QAccelerationSensorFilter filter);
-
-    // Add a listener for non-polling notifications
-    void addListener(QAccelerationSensorListener listener);
+    void addFilter(QAccelerationSensorFilter *filter);
 
 private:
     bool open();
     void close();
+};
+
+class QAccelerationSensorFilter
+{
+public:
+    virtual bool filterAcceleration(qreal &x, qreal &y, qreal &z) = 0;
+};
+
+class Q_SENSORS_EXPORT QAccelerationSensorEvent : public QSensorEvent
+{
+public:
+    qreal x;
+    qreal y;
+    qreal z;
 };
 
 QTM_END_NAMESPACE

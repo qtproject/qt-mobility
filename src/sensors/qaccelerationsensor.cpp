@@ -57,7 +57,7 @@ QTM_USE_NAMESPACE
 /*!
     Read the \a x, \a y and \a z acceleration values from the sensor.
 */
-void QAccelerationSensor::readAcceleration(int *x, int *y, int *z)
+void QAccelerationSensor::readAcceleration(qreal *x, qreal *y, qreal *z)
 {
     Q_UNUSED(x)
     Q_UNUSED(y)
@@ -67,18 +67,37 @@ void QAccelerationSensor::readAcceleration(int *x, int *y, int *z)
 /*!
     Add a \a filter to the sensor.
 */
-void QAccelerationSensor::addFilter(QAccelerationSensorFilter filter)
+void QAccelerationSensor::addFilter(QAccelerationSensorFilter *filter)
 {
     Q_UNUSED(filter)
 }
 
 /*!
-    Add a \a listener to the sensor.
-    The listener will be invoked every time the acceleration values
-    change.
+    \class QAccelerationSensorFilter
+    \ingroup sensors
+
+    \preliminary
+    \brief The QAccelerationSensorFilter class represents a filter.
+
+    Foo bar baz.
+    \sa Filters
 */
-void QAccelerationSensor::addListener(QAccelerationSensorListener listener)
-{
-    Q_UNUSED(listener)
-}
+
+/*!
+    \fn bool QAccelerationSensorFilter::filterAcceleration(qreal &x, qreal &y, qreal &z)
+
+    Filter the acceleration values \a x, \a y and \a z. The filter
+    may modify the values as it chooses. If the filter returns false
+    the values will be ignored by the sensor.
+*/
+
+/*!
+    \class QAccelerationSensorEvent
+    \ingroup sensors
+
+    \preliminary
+    \brief The QAccelerationSensorEvent class represents an acceleration event.
+
+    Foo bar baz.
+*/
 

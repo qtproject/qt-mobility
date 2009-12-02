@@ -47,6 +47,9 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QSensorListener;
+class QSensorEvent;
+
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
 public:
@@ -87,6 +90,22 @@ public:
     // Use documentation to determine the sensitivities that the sensor
     // supports.
     void setSensitivity(Sensitivity sensitivity, int interval = 0);
+
+    // Register a listener (that will receive sensor events as they come in)
+    void addListener(QSensorListener *listener);
+
+};
+
+class QSensorListener
+{
+public:
+    virtual void sensorEvent(QSensorEvent *event) = 0;
+};
+
+class Q_SENSORS_EXPORT QSensorEvent
+{
+public:
+    quint64 timestamp;
 };
 
 QTM_END_NAMESPACE

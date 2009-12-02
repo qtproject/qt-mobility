@@ -50,7 +50,17 @@ QTM_USE_NAMESPACE
     \preliminary
     \brief The QSensor class represents a single hardware sensor.
 
-    Foo bar baz.
+    The life cycle of a sensor is typically:
+
+    \list
+    \o Retrieved by calling QSensorManager::defaultSensorForType().
+    \o Setup as required by the application.
+    \o Opened.
+    \o Sensor data is used by the application.
+    \o Closed.
+    \endlist
+
+    Please see the individual sensor classes for details on their use.
 */
 
 /*!
@@ -112,4 +122,41 @@ void QSensor::setSensitivity(Sensitivity sensitivity, int interval)
     Q_UNUSED(sensitivity)
     Q_UNUSED(interval)
 }
+
+/*!
+    Add a \a listener to the sensor.
+    The listener will be invoked every time the acceleration values
+    change.
+*/
+void QSensor::addListener(QSensorListener *listener)
+{
+    Q_UNUSED(listener)
+}
+
+/*!
+    \class QSensorListener
+    \ingroup sensors
+
+    \preliminary
+    \brief The QSensorListener class represents an object that wishes to
+           receive notifications about sensor changes.
+
+    Foo bar baz.
+*/
+
+/*!
+    \fn void QSensorListener::sensorEvent(QSensorEvent *event)
+
+    A sensor \a event has occurred.
+*/
+
+/*!
+    \class QSensorEvent
+    \ingroup sensors
+
+    \preliminary
+    \brief The QSensorEvent class represents a sensor event.
+
+    Foo bar baz.
+*/
 

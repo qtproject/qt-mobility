@@ -46,32 +46,40 @@
 
 QTM_BEGIN_NAMESPACE
 
-typedef bool(*QOrientationSensorFilter)(int &orientation);
+class QOrientationSensorFilter;
 
 class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
-    Q_OBJECT
 public:
     // TODO flags
     enum Orientation {
         Unknown   = 0x00,
         Portrait  = 0x01,
         Landscape = 0x02,
-        Inverted  = 0x04
+        Inverted  = 0x04,
+        Default   = 0x08
     };
 
     void readOrientation(Orientation *orientation);
 
     // Add a filter to remove or modify the orientation
-    void addFilter(QOrientationSensorFilter filter);
-
-signals:
-    // This only comes in occasionally so we deliver it via a signal.
-    void orientationChanged(Orientation orientation);
+    void addFilter(QOrientationSensorFilter *filter);
 
 private:
     bool open();
     void close();
+};
+
+class QOrientationSensorFilter
+{
+public:
+    virtual bool filterOrientation(QOrientationSensor::Orientation &orientation) = 0;
+};
+
+class Q_SENSORS_EXPORT QOrientationSensorEvent : public QSensorEvent
+{
+public:
+    QOrientationSensor::Orientation orientation;
 };
 
 QTM_END_NAMESPACE
