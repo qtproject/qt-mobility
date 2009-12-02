@@ -196,7 +196,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::mutingChanged(bool mute)
+    \fn QMediaPlayerControl::mutedChanged(bool mute)
 
     Signals a change in the \a mute status of a player control.
 

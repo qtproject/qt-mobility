@@ -71,7 +71,7 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
     connect(m_session, SIGNAL(durationChanged(qint64)),
             this, SIGNAL(durationChanged(qint64)));
     connect(m_session, SIGNAL(mutedStateChanged(bool)),
-            this, SIGNAL(mutingChanged(bool)));
+            this, SIGNAL(mutedChanged(bool)));
     connect(m_session, SIGNAL(volumeChanged(int)),
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),

@@ -93,7 +93,7 @@ public:
     void setVolume(int volume) { emit volumeChanged(_volume = volume); }
 
     bool isMuted() const { return _muted; }
-    void setMuted(bool muted) { if (muted != _muted) emit mutingChanged(_muted = muted); }
+    void setMuted(bool muted) { if (muted != _muted) emit mutedChanged(_muted = muted); }
 
     int bufferStatus() const { return _bufferStatus; }
 
@@ -417,7 +417,7 @@ void tst_QMediaPlayer::testNullService()
         QFETCH_GLOBAL(bool, muted);
 
         QSignalSpy volumeSpy(&player, SIGNAL(volumeChanged(int)));
-        QSignalSpy mutingSpy(&player, SIGNAL(mutingChanged(bool)));
+        QSignalSpy mutingSpy(&player, SIGNAL(mutedChanged(bool)));
 
         player.setVolume(volume);
         QCOMPARE(player.volume(), 0);
@@ -592,7 +592,7 @@ void tst_QMediaPlayer::testMuted()
         mockService->setVolume(volume);
         QVERIFY(player->isMuted() == muted);
 
-        QSignalSpy spy(player, SIGNAL(mutingChanged(bool)));
+        QSignalSpy spy(player, SIGNAL(mutedChanged(bool)));
         player->setMuted(!muted);
         QCOMPARE(player->isMuted(), !muted);
         QCOMPARE(player->volume(), volume);

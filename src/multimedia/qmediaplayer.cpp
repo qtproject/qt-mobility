@@ -255,7 +255,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
             connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
             connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
             connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-            connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+            connect(d->control, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged(bool)));
             connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
             connect(d->control, SIGNAL(playbackRateChanged(qreal)), SIGNAL(playbackRateChanged(qreal)));
 
@@ -796,7 +796,7 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 */
 
 /*!
-    \fn void QMediaPlayer::mutingChanged(bool muted)
+    \fn void QMediaPlayer::mutedChanged(bool muted)
 
     Signal the mute state has changed to \a muted.
 */

@@ -105,7 +105,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
             controls, SLOT(setState(QMediaPlayer::State)));
     connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
-    connect(player, SIGNAL(mutingChanged(bool)), controls, SLOT(setMuted(bool)));
+    connect(player, SIGNAL(mutedChanged(bool)), controls, SLOT(setMuted(bool)));
 
     QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"));
     fullScreenButton->setCheckable(true);
