@@ -68,7 +68,8 @@ Player::Player(QWidget *parent)
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-    videoWidget = new VideoWidget(player);
+    videoWidget = new VideoWidget;
+    videoWidget->setMediaObject(player);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);

@@ -133,14 +133,14 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
 
     QMediaImageViewer is used together with a media display object such as
     QVideoWidget to present an image.  A display object is attached to the
-    image viewer by passing a pointer the QMediaImageViewer instance in the
-    constructor of the display object, and can be removed by deleting the
-    display object.
+    image viewer by passing a pointer to the QMediaImageViewer instance to the
+    setMediaObject() function of the display object.
 
     \code
     viewer = new QMediaImageViewer(this);
 
-    display = new QVideoWidget(viewer);
+    display = new QVideoWidget;
+    display->setMediaObject(viewer);
     display->show();
     \endcode
 

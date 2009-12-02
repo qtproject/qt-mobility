@@ -87,7 +87,8 @@ QTM_BEGIN_NAMESPACE
         playlist->append(QUrl("http://example.com/movie1.mp4"));
         playlist->append(QUrl("http://example.com/movie2.mp4"));
 
-        widget = new QVideoWidget(player);
+        widget = new QVideoWidget;
+        widget->setMediaObject(player);
         widget->show();
 
         player->play();

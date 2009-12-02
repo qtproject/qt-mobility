@@ -120,7 +120,8 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     camera->setMetaData(QtMedia::Title, QVariant(QLatin1String("Test Title")));
 
-    videoWidget = new QVideoWidget(mediaRecorder);
+    videoWidget = new QVideoWidget;
+    videoWidget->setMediaObject(camera);
     ui->stackedWidget->addWidget(videoWidget);
 
     updateCameraState(camera->state());
