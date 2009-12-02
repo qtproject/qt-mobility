@@ -54,7 +54,7 @@
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
 {    
-    TRAPD(err, m_player = CMdaAudioPlayerUtility::NewL(*this));
+    TRAPD(err, m_player = CMdaAudioPlayerUtility::NewL(*this, 0, EMdaPriorityPreferenceNone));
     //TODO: Error handlind if creating audio player fails
 }
 
@@ -68,8 +68,8 @@ void S60AudioPlayerSession::load(const QUrl &url)
 {
     // we should not load if the player is already loading media
     // this is the case if we have already loaded same media and we set media again
-    if (m_mediaStatus != QMediaPlayer::LoadingMedia) {
-        m_mediaStatus = QMediaPlayer::LoadingMedia;
+    if (currentMediaStatus() != QMediaPlayer::LoadingMedia) {
+        setMediaStatus(QMediaPlayer::LoadingMedia);
         m_url = url.toLocalFile();
         QString fileName = QDir::toNativeSeparators(m_url.toString());
         TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
@@ -77,10 +77,8 @@ void S60AudioPlayerSession::load(const QUrl &url)
         emit positionChanged(position());
         emit durationChanged(duration());
         if (err) {
-            m_mediaStatus = QMediaPlayer::NoMedia;
+            setMediaStatus(QMediaPlayer::NoMedia);
         }
-        emit mediaStatusChanged(m_mediaStatus);
-
     }
 }
 
@@ -109,111 +107,112 @@ bool S60AudioPlayerSession::isVideoAvailable() const
 
 void S60AudioPlayerSession::play()
 {
-    if (m_state != QMediaPlayer::PlayingState && m_mediaStatus != QMediaPlayer::LoadingMedia ) {
+    if (currentState() != QMediaPlayer::PlayingState && currentMediaStatus() != QMediaPlayer::LoadingMedia ) {
         startTimer();
         m_player->Play();
-        m_state = QMediaPlayer::PlayingState;
-        emit stateChanged(m_state);
+        setState(QMediaPlayer::PlayingState);
     }
 }
 
 void S60AudioPlayerSession::pause()
 {
     m_player->Pause();
-    m_state = QMediaPlayer::PausedState;
     stopTimer();
-    emit stateChanged(m_state);
+    setState(QMediaPlayer::PausedState);
 }
 
 void S60AudioPlayerSession::stop()
 {
     m_player->Stop();
     stopTimer();
-    m_state = QMediaPlayer::StoppedState;
-    emit stateChanged(m_state);
+    setState(QMediaPlayer::StoppedState);
+    emit positionChanged(position());
 }
 
 void S60AudioPlayerSession::setVolume(int volume)
 {
-    if (m_volume != volume)
-        emit volumeChanged(m_volume);
-    m_volume = volume;
-    m_player->SetVolume(m_volume);
-
+    S60MediaPlayerSession::setVolume(volume);
+    if (this->volume() != KUseDefaultVolume) {
+        m_player->SetVolume(percentagesToAbsVol(this->volume()));
+    }
 }
+
 void S60AudioPlayerSession::setPosition(qint64 ms)
 {   
-    m_player->Pause();
-    m_player->SetPosition(ms*1000);
+    if (currentState() == QMediaPlayer::PlayingState)
+        m_player->Pause();
+
+    m_player->SetPosition(milliSecondsToMicroSeconds(ms));
     emit positionChanged(position());
-    m_player->Play();
+    
+    if (currentState() == QMediaPlayer::PlayingState)
+        m_player->Play();
 }
 
 void S60AudioPlayerSession::setMuted(bool muted)
-{
+{        
     if (muted == true) {
-        m_player->SetVolume(0);
-        m_muted = true;
+        m_player->SetVolume(0); 
     } else {
-        m_player->SetVolume(m_volume);
-        m_muted = false;
+        if (volume() != KUseDefaultVolume) {
+            m_player->SetVolume(percentagesToAbsVol(volume()));
+        }
     }
     
-    emit mutedStateChaned(muted);
-}
-
-void S60AudioPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
-{
-    /*if (m_mediaStatus != status) {
-        m_mediaStatus = status;
-        emit mediaStatusChanged(status);
-    }*/
+    S60MediaPlayerSession::setMuted(muted);
 }
 
 void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
 {
-    int numberOfMetaDataEntries;
     Q_UNUSED(aDuration);
-    if (!aError) {
-        m_mediaStatus = QMediaPlayer::LoadedMedia;
-
-        m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries);
-        // we need to check volume here
-        if (m_volume == -1) {
-            // get default volume from s60 player
-            m_player->GetVolume(m_volume);
-            emit volumeChanged(m_volume);
-        }
-        else {
-            setVolume(m_volume);
-        }
-        
+    
+    if (aError == KErrNone) {
+        setMediaStatus(QMediaPlayer::LoadedMedia);
+        updateMetaDataEntries();
+        volumeCheck();
+        emit durationChanged(duration());
+    } else {
+        setMediaStatus(QMediaPlayer::NoMedia);
     }
-    else
-        m_mediaStatus = QMediaPlayer::NoMedia;
+}
 
-    for (int i=0; i < numberOfMetaDataEntries; i++) {
+void S60AudioPlayerSession::updateMetaDataEntries()
+{
+    m_metaDataMap.clear();
+    int numberOfMetaDataEntries = 0;
+    
+    m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries);
+    
+    for (int i = 0; i < numberOfMetaDataEntries; i++) {
         CMMFMetaDataEntry *entry = NULL;
         TRAPD(err, entry = m_player->GetMetaDataEntryL(i));
-
+    
         if (err == KErrNone) {
             m_metaDataMap.insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
         }
         delete entry;
     }
-    emit mediaStatusChanged(m_mediaStatus);    
-    emit durationChanged(duration());
     emit metaDataChanged();
+}
+
+void S60AudioPlayerSession::volumeCheck() 
+{
+    if (volume() == KUseDefaultVolume) {
+        int defaultVolume;
+        m_player->GetVolume(defaultVolume);
+        S60MediaPlayerSession::setVolume(absVolToPercentages(defaultVolume));
+    } else {
+        setVolume(volume());
+    }
 }
 
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 {
-    Q_UNUSED(aError) // TODO: Error handling...
+    Q_UNUSED(aError)
     stopTimer();
-    m_state = QMediaPlayer::StoppedState;
-    m_mediaStatus = QMediaPlayer::EndOfMedia;
-    emit stateChanged(m_state);
+    setState(QMediaPlayer::StoppedState);
+    setMediaStatus(QMediaPlayer::EndOfMedia);
+    m_player->Close();
     emit positionChanged(position());
-    emit mediaStatusChanged(m_mediaStatus);
 }
 

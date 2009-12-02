@@ -45,10 +45,10 @@
 #include <e32cmn.h>
 #include <QUrl>
 #include <QDir>
+#include <QDebug>
 
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
-    m_recognizer = NULL;
     TRAP(m_error, m_recognizer = CMPMediaRecognizer::NewL());
 }
 
@@ -78,6 +78,8 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl& 
    TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
    MediaType mediaType = NotSupported;
    TRAP(m_error, type = m_recognizer->IdentifyMediaTypeL(urlPtr, EFalse));
+   
+   m_recognizer->FreeFilehandle();
    
    if (!m_error) {
        switch (type) {

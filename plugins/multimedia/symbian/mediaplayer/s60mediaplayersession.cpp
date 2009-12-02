@@ -53,11 +53,10 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent),
       m_state(QMediaPlayer::StoppedState),
       m_mediaStatus(QMediaPlayer::NoMedia),
-      m_volume(-1),
+      m_volume(KUseDefaultVolume),
       m_playbackRate(1.0),
       m_muted(false),
       m_videoAvailable(false),
-      m_lastPosition(0),
       m_duration(-1),
       m_timer(new QTimer(this))
 {    
@@ -70,14 +69,11 @@ S60MediaPlayerSession::~S60MediaPlayerSession()
 
 int S60MediaPlayerSession::volume() const
 {
-    return m_volume;
+    if (m_volume != KUseDefaultVolume)
+        return m_volume;
+    return KUseDefaultVolume;
 }
-void S60MediaPlayerSession::setVolume(int volume)
-{
-    if (m_volume != volume)
-        emit volumeChanged(m_volume);
-    m_volume = volume;
-}
+
 bool S60MediaPlayerSession::isMuted() const
 {
     return m_muted;
@@ -93,27 +89,19 @@ bool S60MediaPlayerSession::isSeekable() const
     return m_metaDataMap.value("seekable").toBool();
 }
 
-void S60MediaPlayerSession::play()
-{
-}
-
-void S60MediaPlayerSession::pause()
-{
-    m_state = QMediaPlayer::PausedState;
-    emit stateChanged(QMediaPlayer::PausedState);
-}
-
-void S60MediaPlayerSession::stop()
-{
-    m_state = QMediaPlayer::StoppedState;
-    emit stateChanged(QMediaPlayer::StoppedState);
-}
-
 void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
 {
     if (m_mediaStatus != status) {
         m_mediaStatus = status;
         emit mediaStatusChanged(status);
+    }
+}
+
+void S60MediaPlayerSession::setState(QMediaPlayer::State state)
+{
+    if (m_state != state) {
+        m_state = state;
+        emit stateChanged(state);
     }
 }
 
@@ -132,7 +120,7 @@ bool S60MediaPlayerSession::isMetadataAvailable() const
     return (!m_metaDataMap.isEmpty());
 }
 
-QVariant S60MediaPlayerSession::metaData(const QString& key) const
+QVariant S60MediaPlayerSession::metaData(const QString &key) const
 {
     return m_metaDataMap.value(key);
 }
@@ -164,3 +152,48 @@ qreal S60MediaPlayerSession::playbackRate() const
     return m_playbackRate;
 }
 
+void S60MediaPlayerSession::setMuted(bool muted)
+{
+    if (m_muted != muted) {   
+        m_muted = muted;
+        emit mutedStateChaned(m_muted);
+    }
+}
+
+void S60MediaPlayerSession::setVolume(int volume)
+{
+    if (m_volume != volume) {
+        m_volume = volume;
+        emit volumeChanged(m_volume);
+    }
+}
+
+QMediaPlayer::State S60MediaPlayerSession::currentState() const
+{
+    return m_state;
+}
+
+QMediaPlayer::MediaStatus S60MediaPlayerSession::currentMediaStatus() const
+{
+    return m_mediaStatus;
+}
+
+int S60MediaPlayerSession::absVolToPercentages(int absoluteVolume) const
+{
+    return absoluteVolume / 100;
+}
+
+int S60MediaPlayerSession::percentagesToAbsVol(int percentages) const
+{
+    return percentages * 100;
+}
+
+int S60MediaPlayerSession::milliSecondsToMicroSeconds(int milliSeconds) const
+{
+    return milliSeconds * 1000;
+}
+
+int S60MediaPlayerSession::microSecondsToMilliSeconds(int microSeconds) const
+{
+    return microSeconds / 1000;
+}

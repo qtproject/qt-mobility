@@ -52,6 +52,8 @@ QTM_USE_NAMESPACE
 
 class QTimer;
 
+const int KUseDefaultVolume = -1;
+
 class S60MediaPlayerSession : public QObject
 {
     Q_OBJECT
@@ -80,7 +82,7 @@ public:
     virtual void setPlaybackRate(qreal rate) = 0 ;
    
     bool isMetadataAvailable() const; 
-    QVariant metaData(const QString& key) const;
+    QVariant metaData(const QString &key) const;
         
     virtual void load(const QUrl &url) = 0;
 
@@ -89,8 +91,7 @@ public:
     virtual void stop() = 0;
 
     virtual void setPosition(qint64 pos) = 0;
-
-    virtual void setVolume(int volume);
+    virtual void setVolume(int volume) = 0;
     virtual void setMuted(bool muted) = 0;
 
 signals:
@@ -115,23 +116,31 @@ protected slots:
 
 protected:
     void setMediaStatus(QMediaPlayer::MediaStatus);
+    void setState(QMediaPlayer::State state);
+    
+    QMediaPlayer::MediaStatus currentMediaStatus() const;
+    QMediaPlayer::State currentState() const;
+   
+protected: // Helper functions
+    int absVolToPercentages(int absoluteVolume) const;
+    int percentagesToAbsVol(int percentages) const;
+    int milliSecondsToMicroSeconds(int milliSeconds) const;
+    int microSecondsToMilliSeconds(int microSeconds) const;
 
+protected:
     qint64 m_totalTime;
     QUrl m_url;
+    qreal m_playbackRate;
+    bool m_videoAvailable;
+    qint64 m_duration;
+    QMap<QString, QVariant> m_metaDataMap;
+    QTimer *m_timer;
+    
+private:
+    bool m_muted;
+    int m_volume;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
-
-    qreal m_playbackRate;
-    bool m_muted;
-    bool m_videoAvailable;
-
-    qint64 m_lastPosition;
-    qint64 m_duration;
-
-    QMap<QString, QVariant> m_metaDataMap;
-    QTimer* m_timer;
-    int m_volume;
-    bool m_playCalled;
 };
 
 #endif

@@ -55,10 +55,6 @@ S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlaye
       m_session(NULL),
       m_stream(NULL)
 {
-    m_controlSettings.m_vol = -1;
-    m_controlSettings.m_muted = false;
-    m_controlSettings.m_playbackRate = -1;
-    m_controlSettings.m_position = -1;
 }
 
 S60MediaPlayerControl::~S60MediaPlayerControl()
@@ -70,7 +66,7 @@ qint64 S60MediaPlayerControl::position() const
     if (m_session)
         return m_session->position();
     
-    return m_controlSettings.m_position;
+    return m_mediaSettings.position();
 }
 
 qint64 S60MediaPlayerControl::duration() const
@@ -105,7 +101,7 @@ int S60MediaPlayerControl::volume() const
     if (m_session)
         return m_session->volume();
     
-    return m_controlSettings.m_vol;
+    return m_mediaSettings.volume();
 }
 
 bool S60MediaPlayerControl::isMuted() const
@@ -113,7 +109,7 @@ bool S60MediaPlayerControl::isMuted() const
    if (m_session)
        return  m_session->isMuted();
    
-   return m_controlSettings.m_muted;
+   return m_mediaSettings.isMuted();
 }
 
 bool S60MediaPlayerControl::isSeekable() const
@@ -121,7 +117,7 @@ bool S60MediaPlayerControl::isSeekable() const
     if (m_session)
        return  m_session->isSeekable();
     
-    return m_controlSettings.m_position;
+    return false;
 }
 
 QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
@@ -138,30 +134,27 @@ qreal S60MediaPlayerControl::playbackRate() const
 {
     if (m_session)
         return  m_session->playbackRate();
-    return -1;
+    return m_mediaSettings.playbackRate();
 }
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
-    m_controlSettings.m_playbackRate = rate;
-    
     if (m_session)
         m_session->setPlaybackRate(rate);
+    m_mediaSettings.setPlaybackRate(rate);
 }
 
 void S60MediaPlayerControl::setPosition(qint64 pos)
 {
-    m_controlSettings.m_position = pos;
     if (m_session)
         m_session->setPosition(pos);
+    m_mediaSettings.setPosition(pos);
 }
 
 void S60MediaPlayerControl::play()
 {
     if (m_session)
         m_session->play();
-    else // to ensure that api know we can't play this
-        emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
 }
 
 void S60MediaPlayerControl::pause()
@@ -178,16 +171,18 @@ void S60MediaPlayerControl::stop()
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
-    m_controlSettings.m_vol = volume;
+    m_mediaSettings.setVolume(volume);
     if (m_session)
         m_session->setVolume(volume);
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
 {
-    m_controlSettings.m_muted = muted;
     if (m_session)
         m_session->setMuted(muted);
+    else if (m_mediaSettings.isMuted() != muted) 
+        emit mutingChanged(muted);
+    m_mediaSettings.setMuted(muted);
 }
 
 QMediaContent S60MediaPlayerControl::media() const
@@ -246,7 +241,8 @@ S60MediaPlayerSession* S60MediaPlayerControl::currentPlayerSession()
 {
     return m_mediaPlayerResolver.PlayerSession();   
 }
-const S60MediaControlSettings& S60MediaPlayerControl::mediaControlSettings() const
+
+const S60MediaSettings& S60MediaPlayerControl::mediaControlSettings() const
 {
-    return m_controlSettings;
+    return m_mediaSettings;
 }

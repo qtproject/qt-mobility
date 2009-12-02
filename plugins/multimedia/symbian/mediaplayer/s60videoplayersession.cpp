@@ -84,14 +84,15 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
 }
 void S60VideoPlayerSession::setVolume(int volume)
 {
-    m_volume = volume;
-    TRAP_IGNORE(m_player->SetVolumeL(volume);)
+    if (this->volume() != KUseDefaultVolume) {
+        S60MediaPlayerSession::setVolume(volume);
+        TRAP_IGNORE(m_player->SetVolumeL(percentagesToAbsVol(this->volume()));)
+    }
 }
 
 void S60VideoPlayerSession::load(const QUrl &url)
 {
-    m_mediaStatus = QMediaPlayer::LoadingMedia;
-    emit mediaStatusChanged(m_mediaStatus);
+    setMediaStatus(QMediaPlayer::LoadingMedia);
     m_url = url.toLocalFile();
     QString fileName = QDir::toNativeSeparators(m_url.toString());
     TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
@@ -162,8 +163,6 @@ bool S60VideoPlayerSession::isVideoAvailable() const
 void S60VideoPlayerSession::play()
 {   
     TRAP_IGNORE(
-    
-    m_player->SetScaleFactorL(50, 50, ETrue);
     m_player->SetDisplayWindowL(*m_wsSession, 
                                   *m_screenDevice, 
                                   *m_window, 
@@ -172,21 +171,17 @@ void S60VideoPlayerSession::play()
     control->ActivateL();
     );
     control->DrawNow();
-    if (m_state != QMediaPlayer::PlayingState && m_mediaStatus != QMediaPlayer::LoadingMedia ) {
+    if (currentState() != QMediaPlayer::PlayingState && currentMediaStatus() != QMediaPlayer::LoadingMedia ) {
         startTimer();
         m_player->Play();
-        m_state = QMediaPlayer::PlayingState;
-        emit stateChanged(m_state); 
+        setState(QMediaPlayer::PlayingState);
     }
 }
 
 void S60VideoPlayerSession::pause()
 {
-    TRAP_IGNORE(
-    m_player->PauseL();
-    m_state = QMediaPlayer::PausedState;
-    emit stateChanged(m_state);
-    )
+    TRAP_IGNORE(m_player->PauseL();)
+    setState(QMediaPlayer::PausedState);
 }
 
 void S60VideoPlayerSession::stop()
@@ -194,78 +189,58 @@ void S60VideoPlayerSession::stop()
     m_player->Stop();
     stopTimer();
     control->DrawDeferred();
-    m_state = QMediaPlayer::StoppedState;
-    emit stateChanged(m_state);
+    setState(QMediaPlayer::StoppedState);
+    emit positionChanged(position());
 }
 
 void S60VideoPlayerSession::setPosition(qint64 ms)
 {
     TRAP_IGNORE(
-    stopTimer();
-    m_player->PauseL();
-    m_player->SetPositionL(ms*1000);
-    m_player->Play();
-    startTimer();
-    emit positionChanged(position());
-    )
+        m_player->SetPositionL(milliSecondsToMicroSeconds(ms));
+        emit positionChanged(position());
+    )  
 }
 
 void S60VideoPlayerSession::setMuted(bool muted)
 {
     if (muted == true) {
-        TRAP_IGNORE(m_player->SetVolumeL(0);) // TODO: Error handling...
-        m_muted = true;
+        TRAP_IGNORE(m_player->SetVolumeL(0);)
     } else {
-        TRAP_IGNORE(m_player->SetVolumeL(m_volume);) // TODO: Error handling...
-        m_muted = false;
+        if (volume() != KUseDefaultVolume)
+            TRAP_IGNORE(m_player->SetVolumeL(percentagesToAbsVol(volume()));)
     }
     
-    emit mutedStateChaned(muted);
-    emit volumeChanged(m_volume);
-}
-
-void S60VideoPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
-{
-    if (m_mediaStatus != status) {
-        m_mediaStatus = status;
-        emit mediaStatusChanged(status);
-    }
+    S60MediaPlayerSession::setMuted(muted);
 }
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
-    Q_UNUSED(aError) // TODO: Error handling...
-    m_player->Prepare();
-    setMediaStatus(QMediaPlayer::LoadedMedia);
+    if (aError == KErrNone) {
+        m_player->Prepare();
+        setMediaStatus(QMediaPlayer::LoadedMedia);
+    } else {
+        setMediaStatus(QMediaPlayer::NoMedia);
+    }
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {    
-    Q_UNUSED(aError); //TODO: Error handling...
-    m_metaDataMap.clear();
-    int numberOfMetaDataEntries = 0;
-    TRAP_IGNORE(numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();)
-    // we need to check volume here
-    if (m_volume == -1) {
-        // get default volume from s60 player
-        m_volume = m_player->Volume();
+    if (aError == KErrNone) {
+        updateMetaDataEntries();
+        volumeCheck();
+        emit durationChanged(duration());
+    } else {
+        setMediaStatus(QMediaPlayer::NoMedia);
     }
-    else {
-        setVolume(m_volume);
-    }
+}
 
-    for (int i=0; i < numberOfMetaDataEntries; i++) {
-        CMMFMetaDataEntry *entry = NULL;
-        TRAPD(err, entry = m_player->MetaDataEntryL(i));
-
-        if (err == KErrNone) {
-            m_metaDataMap.insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
-        }
-        delete entry;
-    }
-    
-    emit durationChanged(duration());
-    emit metaDataChanged();
+void S60VideoPlayerSession::volumeCheck() 
+{
+    if (volume() == KUseDefaultVolume) {
+        S60MediaPlayerSession::setVolume(absVolToPercentages(m_player->Volume()));
+    } else {
+        setVolume(volume());
+    }  
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
@@ -276,16 +251,37 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
+    Q_UNUSED(aError)
     control->DrawDeferred();
-    Q_UNUSED(aError) // TODO: Error handling...
     stopTimer();
-    m_state = QMediaPlayer::StoppedState;
-    emit stateChanged(m_state);
+    
     emit positionChanged(position());
-    setMediaStatus(QMediaPlayer::EndOfMedia); // this will emit also
+    
+    setState(QMediaPlayer::StoppedState);
+    setMediaStatus(QMediaPlayer::EndOfMedia);
 }
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 {
     Q_UNUSED(aEvent);
+}
+
+void S60VideoPlayerSession::updateMetaDataEntries()
+{
+    m_metaDataMap.clear();
+    int numberOfMetaDataEntries = 0;
+    
+    TRAP_IGNORE(numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();)
+    
+    for (int i = 0; i < numberOfMetaDataEntries; i++) {
+        CMMFMetaDataEntry *entry = NULL;
+        TRAPD(err, entry = m_player->MetaDataEntryL(i));
+        
+        if (err == KErrNone) {
+           m_metaDataMap.insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
+        }
+        delete entry;
+    }
+    
+    emit metaDataChanged();
 }

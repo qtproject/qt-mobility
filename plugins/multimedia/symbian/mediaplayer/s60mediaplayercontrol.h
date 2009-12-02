@@ -48,7 +48,7 @@
 #include <QMediaPlayer>
 
 #include "ms60mediaplayerresolver.h"
-
+#include <QDebug>
 QTM_BEGIN_NAMESPACE
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
@@ -60,10 +60,30 @@ class S60MediaPlayerSession;
 class S60MediaPlayerService;
 
 
-class S60MediaControlSettings
+class S60MediaSettings
 {
+
 public:
-    int m_vol;
+    S60MediaSettings() 
+        : m_volume(-1),
+          m_muted(false),
+          m_playbackRate(-1),
+          m_position(-1) 
+    {
+    }
+    
+    void setVolume(int volume) { m_volume = volume; }
+    void setMuted(bool muted) { m_muted = muted; }
+    void setPlaybackRate(int rate) { m_playbackRate = rate; }
+    void setPosition(int position) { m_position = position; }
+    
+    int volume() const { return m_volume; }
+    bool isMuted() const { return m_muted; }
+    qreal playbackRate() const { return m_playbackRate; }
+    int position() const { return m_position; }
+    
+private:
+    int m_volume;
     bool m_muted;
     qreal m_playbackRate;
     int m_position;
@@ -101,7 +121,7 @@ public:
     const QIODevice *mediaStream() const;
     void setMedia(const QMediaContent&, QIODevice *);
 
-    const S60MediaControlSettings& mediaControlSettings() const;
+    const S60MediaSettings& mediaControlSettings() const;
     
 public Q_SLOTS:
     void setPosition(qint64 pos);
@@ -121,7 +141,7 @@ private:
     S60MediaPlayerSession *m_session;
     QMediaContent m_currentResource; 
     QIODevice *m_stream;
-    S60MediaControlSettings m_controlSettings;
+    S60MediaSettings m_mediaSettings;
 };
 
 #endif

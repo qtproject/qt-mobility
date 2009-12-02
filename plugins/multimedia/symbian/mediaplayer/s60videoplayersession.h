@@ -62,7 +62,6 @@ public:
     qint64 duration() const;
     qint64 position() const;
 
-    int volume() const;
     bool isMuted() const;
 
     void setVideoRenderer(QObject *renderer);
@@ -83,6 +82,8 @@ public:
 
 private: 
     void nativeHandles();
+    void updateMetaDataEntries();
+    void volumeCheck(); 
     
 private: // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
@@ -90,9 +91,6 @@ private: // From MVideoPlayerUtilityObserver
     void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
     void MvpuoPlayComplete(TInt aError);
     void MvpuoEvent(const TMMFEvent &aEvent);
-
-private:
-    void setMediaStatus(QMediaPlayer::MediaStatus);
 
     CVideoPlayerUtility* m_player;
     S60VideoWidgetControl* m_videoWidgetControl;

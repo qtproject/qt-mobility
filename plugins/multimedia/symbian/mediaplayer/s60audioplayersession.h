@@ -78,10 +78,8 @@ private: // From MMdaAudioPlayerCallback
     void MapcPlayComplete(TInt aError);
 
 private: 
-    void getNativeHandles();
-
-private:
-    void setMediaStatus(QMediaPlayer::MediaStatus);
+    void updateMetaDataEntries();
+    void volumeCheck();
     
 private:
     CMdaAudioPlayerUtility *m_player;

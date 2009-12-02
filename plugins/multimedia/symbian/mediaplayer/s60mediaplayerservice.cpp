@@ -160,6 +160,11 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
     QUrl url = m_control->media().canonicalUri();
+  
+    if (url.isEmpty() == true) {
+        return NULL;
+    }
+    
     S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaType(url);
     
     if (mediaType == S60MediaRecognizer::Video) {
@@ -175,11 +180,6 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
 {
     if (!m_videoPlayerSession) {
         m_videoPlayerSession = new S60VideoPlayerSession(this);
-
-        m_videoPlayerSession->setVolume(m_control->mediaControlSettings().m_vol);
-        m_videoPlayerSession->setPlaybackRate(m_control->mediaControlSettings().m_playbackRate);
-        m_videoPlayerSession->setPosition(m_control->mediaControlSettings().m_position);
-        m_videoPlayerSession->setMuted(m_control->mediaControlSettings().m_muted);
         
         connect(m_videoPlayerSession, SIGNAL(positionChanged(qint64)),
                 m_control, SIGNAL(positionChanged(qint64)));
@@ -202,6 +202,12 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
         connect(m_videoPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
     }
+    
+    m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
+    m_videoPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
+    m_videoPlayerSession->setPosition(0); // TODO: Check is this really needed???
+    m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    
     return m_videoPlayerSession;
 }
 
@@ -209,11 +215,6 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
 {
     if (!m_audioPlayerSession) {
         m_audioPlayerSession = new S60AudioPlayerSession(this);
-        
-        m_audioPlayerSession->setVolume(m_control->mediaControlSettings().m_vol);
-        m_audioPlayerSession->setPlaybackRate(m_control->mediaControlSettings().m_playbackRate);
-        m_audioPlayerSession->setPosition(m_control->mediaControlSettings().m_position);
-        m_audioPlayerSession->setMuted(m_control->mediaControlSettings().m_muted);
         
         connect(m_audioPlayerSession, SIGNAL(positionChanged(qint64)),
                 m_control, SIGNAL(positionChanged(qint64)));
@@ -236,6 +237,12 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
         connect(m_audioPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
     }
+    
+    m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
+    m_audioPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
+    m_audioPlayerSession->setPosition(0); // TODO: Check is this really needed???
+    m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    
     return m_audioPlayerSession;
 }
 
