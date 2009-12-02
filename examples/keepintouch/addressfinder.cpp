@@ -378,8 +378,7 @@ void AddressFinder::setupUi()
     filterLayout->setAlignment(excludeLabel, Qt::AlignRight);
 
     includePeriod = new QComboBox;
-    filterLayout->addWidget(includePeriod, 0, 1);
-    includePeriod ->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    includePeriod->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     includePeriod->addItem(tr("Year"));
     includePeriod->addItem(tr("9 Months"));
     includePeriod->addItem(tr("6 Months"));
@@ -387,16 +386,17 @@ void AddressFinder::setupUi()
     includePeriod->addItem(tr("Month"));
     includePeriod->addItem(tr("Week"));
     connect(includePeriod, SIGNAL(currentIndexChanged(int)), this, SLOT(includePeriodChanged(int)));
+    filterLayout->addWidget(includePeriod, 0, 1);
 
     excludePeriod = new QComboBox;
-    excludePeriod ->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    excludePeriod->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     filterLayout->addWidget(excludePeriod, 1, 1);
 
 #ifdef USE_SEARCH_BUTTON
     searchButton = new QPushButton(tr("Search"));
     searchButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    filterLayout->addWidget(searchButton,0,2,2,1,Qt::AlignVCenter | Qt::AlignHCenter);
     connect(searchButton, SIGNAL(clicked()), this, SLOT(searchMessages()), Qt::QueuedConnection);
+    filterLayout->addWidget(searchButton, 2, 1);
 #endif
 
     contactList = new QListWidget(this);
