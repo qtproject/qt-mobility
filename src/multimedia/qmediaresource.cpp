@@ -240,42 +240,20 @@ void QMediaResource::setVideoCodec(const QString &codec)
 
     This may be zero if the size is unknown.
 */
-qint64 QMediaResource::size() const
+qint64 QMediaResource::dataSize() const
 {
-    return qvariant_cast<qint64>(values.value(Size));
+    return qvariant_cast<qint64>(values.value(DataSize));
 }
 
 /*!
     Sets the \a size in bytes of a media resource.
 */
-void QMediaResource::setSize(const qint64 size)
+void QMediaResource::setDataSize(const qint64 size)
 {
     if (size != 0)
-        values.insert(Size, size);
+        values.insert(DataSize, size);
     else
-        values.remove(Size);
-}
-
-/*!
-    Returns the duration in milliseconds of a media resource.
-
-    This may be zero if the duration is unknown, or the resource has no explicit duration (i.e. the
-    resource is an image, or a live stream).
-*/
-qint64 QMediaResource::duration() const
-{
-    return qvariant_cast<qint64>(values.value(Duration));
-}
-
-/*!
-    Sets the \a duration in milliseconds of a media resource.
-*/
-void QMediaResource::setDuration(qint64 duration)
-{
-    if (duration != 0)
-        values.insert(Duration, duration);
-    else
-        values.remove(Duration);
+        values.remove(DataSize);
 }
 
 /*!
@@ -297,27 +275,6 @@ void QMediaResource::setAudioBitRate(int rate)
         values.insert(AudioBitRate, rate);
     else
         values.remove(AudioBitRate);
-}
-
-/*!
-    Returns the audio sample size in bits per sample of a media resource.
-
-    This may return zero if the sample size is unknown, or the resource contains no audio stream.
-*/
-int QMediaResource::sampleSize() const
-{
-    return qvariant_cast<int>(values.value(SampleSize));
-}
-
-/*!
-    Sets the audio sample \a size of a media resource.
-*/
-void QMediaResource::setSampleSize(int size)
-{
-    if (size != 0)
-        values.insert(SampleSize, size);
-    else
-        values.remove(SampleSize);
 }
 
 /*!
@@ -346,20 +303,20 @@ void QMediaResource::setFrequency(int frequency)
 
     This may be zero if the sample size is unknown, or the resource contains no audio stream.
 */
-int QMediaResource::channels() const
+int QMediaResource::channelCount() const
 {
-    return qvariant_cast<int>(values.value(Channels));
+    return qvariant_cast<int>(values.value(ChannelCount));
 }
 
 /*!
     Sets the number of audio \a channels in a media resource.
 */
-void QMediaResource::setChannels(int channels)
+void QMediaResource::setChannelCount(int channels)
 {
     if (channels != 0)
-        values.insert(Channels, channels);
+        values.insert(ChannelCount, channels);
     else
-        values.remove(Channels);
+        values.remove(ChannelCount);
 }
 
 /*!

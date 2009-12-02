@@ -75,23 +75,17 @@ public:
     QString videoCodec() const;
     void setVideoCodec(const QString &codec);
 
-    qint64 size() const;
-    void setSize(const qint64 size);
-
-    qint64 duration() const;
-    void setDuration(qint64 duration);
+    qint64 dataSize() const;
+    void setDataSize(const qint64 size);
 
     int audioBitRate() const;
     void setAudioBitRate(int rate);
 
-    int sampleSize() const;
-    void setSampleSize(int size);
-
     int frequency() const;
     void setFrequency(int frequency);
 
-    int channels() const;
-    void setChannels(int channels);
+    int channelCount() const;
+    void setChannelCount(int channels);
 
     int videoBitRate() const;
     void setVideoBitRate(int rate);
@@ -109,13 +103,11 @@ private:
         Language,
         AudioCodec,
         VideoCodec,
-        Size,
-        Duration,
+        DataSize,
         AudioBitRate,
         VideoBitRate,
-        SampleSize,
         Frequency,
-        Channels,
+        ChannelCount,
         Resolution,
     };
     QMap<int, QVariant> values;
