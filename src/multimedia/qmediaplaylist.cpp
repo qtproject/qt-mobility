@@ -155,8 +155,8 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
 
     connect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
             this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
-    connect(d->control, SIGNAL(playlistPositionChanged(int)),
-            this, SIGNAL(playlistPositionChanged(int)));
+    connect(d->control, SIGNAL(currentPositionChanged(int)),
+            this, SIGNAL(currentPositionChanged(int)));
     connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
             this, SIGNAL(currentMediaChanged(QMediaContent)));
 }
@@ -583,7 +583,7 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
  */
 
 /*!
-    \fn void QMediaPlaylist::playlistPositionChanged(int position)
+    \fn void QMediaPlaylist::currentPositionChanged(int position)
 
     Signal emitted when playlist position changed to \a position.
 */

@@ -74,7 +74,7 @@ public:
 
 Q_SIGNALS:
     void playlistProviderChanged();
-    void playlistPositionChanged(int position);
+    void currentPositionChanged(int position);
     void currentMediaChanged(const QMediaContent&);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
 

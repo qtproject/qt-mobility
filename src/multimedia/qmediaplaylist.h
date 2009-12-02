@@ -58,7 +58,7 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
     Q_OBJECT
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(QMediaContent currentMedia READ currentMedia NOTIFY currentMediaChanged)
-    Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
+    Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY currentPositionChanged)
     Q_ENUMS(PlaybackMode Error)
 
 public:
@@ -109,7 +109,7 @@ public Q_SLOTS:
     void setCurrentPosition(int position);
 
 Q_SIGNALS:
-    void playlistPositionChanged(int position);
+    void currentPositionChanged(int position);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
     void currentMediaChanged(const QMediaContent&);
 

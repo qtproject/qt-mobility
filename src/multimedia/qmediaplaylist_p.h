@@ -118,7 +118,7 @@ public:
         m_navigator = new QMediaPlaylistNavigator(playlist,this);
         m_navigator->setPlaybackMode(QMediaPlaylist::Linear);
 
-        connect(m_navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
+        connect(m_navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(currentPositionChanged(int)));
         connect(m_navigator, SIGNAL(activated(QMediaContent)), SIGNAL(currentMediaChanged(QMediaContent)));
     }
 

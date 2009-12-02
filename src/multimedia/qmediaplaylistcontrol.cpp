@@ -180,7 +180,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 */
 
 /*!
-  \fn QMediaPlaylistControl::playlistPositionChanged(int position)
+  \fn QMediaPlaylistControl::currentPositionChanged(int position)
 
   Signal emited when the playlist \a position is changed.
 */

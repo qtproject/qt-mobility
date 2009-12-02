@@ -147,7 +147,7 @@ void QWmpPlaylistControl::currentItemChangeEvent(IDispatch *dispatch)
             __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
         int index = QWmpMetaData::value(media, QAutoBStr(L"PlaylistIndex")).toInt();
 
-        emit playlistPositionChanged(index);
+        emit currentPositionChanged(index);
         emit currentMediaChanged(m_playlist->media(index));
     }
 }
