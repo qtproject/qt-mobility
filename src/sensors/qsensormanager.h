@@ -55,6 +55,10 @@ public:
     QSensor *defaultSensorForType(QSensor::Type type) const;
     // If there are multiple sensors for a type...
     QList<QSensor*> allSensorsForType(QSensor::Type type) const;
+    // Get all sensors on the device. Not sure why you'd want to
+    // do this unless you were telling the user what sensors are
+    // available.
+    QList<QSensor*> allSensors() const;
 };
 
 QTM_END_NAMESPACE

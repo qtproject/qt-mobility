@@ -46,35 +46,26 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QOrientationSensorFilter;
-
 class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
 public:
-    // TODO flags
-    enum Orientation {
+    enum OrientationFlag {
         Unknown   = 0x00,
         Portrait  = 0x01,
         Landscape = 0x02,
         Inverted  = 0x04,
         Default   = 0x08
     };
+    Q_DECLARE_FLAGS(Orientation, OrientationFlag)
 
-    void readOrientation(Orientation *orientation);
-
-    // Add a filter to remove or modify the orientation
-    void addFilter(QOrientationSensorFilter *filter);
+    Orientation currentOrientation() const;
 
 private:
     bool open();
     void close();
 };
 
-class QOrientationSensorFilter
-{
-public:
-    virtual bool filterOrientation(QOrientationSensor::Orientation &orientation) = 0;
-};
+Q_DECLARE_OPERATORS_FOR_FLAGS(QOrientationSensor::Orientation)
 
 class Q_SENSORS_EXPORT QOrientationSensorEvent : public QSensorEvent
 {

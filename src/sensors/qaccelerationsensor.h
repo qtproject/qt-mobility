@@ -55,28 +55,27 @@ public:
     // Values are in Earth gravities. Note that they may not be particularly
     // accurate depending on the hardware. For example, Apple notebooks
     // can only measure 255 levels between 0 and 1G.
-    void readAcceleration(qreal *x, qreal *y, qreal *z);
-
-    // Add a filter to remove or modify the accleration values
-    void addFilter(QAccelerationSensorFilter *filter);
+    struct Acceleration
+    {
+        Acceleration(qreal _x, qreal _y, qreal _z) : x(_x), y(_y), z(_z) {}
+        qreal x;
+        qreal y;
+        qreal z;
+    };
+    Acceleration currentAcceleration() const;
+    qreal currentXAcceleration() const;
+    qreal currentYAcceleration() const;
+    qreal currentZAcceleration() const;
 
 private:
     bool open();
     void close();
 };
 
-class QAccelerationSensorFilter
-{
-public:
-    virtual bool filterAcceleration(qreal &x, qreal &y, qreal &z) = 0;
-};
-
 class Q_SENSORS_EXPORT QAccelerationSensorEvent : public QSensorEvent
 {
 public:
-    qreal x;
-    qreal y;
-    qreal z;
+    QAccelerationSensor::Acceleration acceleration;
 };
 
 QTM_END_NAMESPACE

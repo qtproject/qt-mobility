@@ -55,9 +55,9 @@ QTM_USE_NAMESPACE
     \list
     \o Retrieved by calling QSensorManager::defaultSensorForType().
     \o Setup as required by the application.
-    \o Opened.
+    \o Started.
     \o Sensor data is used by the application.
-    \o Closed.
+    \o Stopped.
     \endlist
 
     Please see the individual sensor classes for details on their use.
@@ -81,21 +81,24 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \enum QSensor::Sensitivity
+    \enum QSensor::UpdatePolicy
 
     This enum is used to indicate to the sensor how often data will be collected.
-    Note that most sensors will only support one sensitivity. Refer to the documentation
-    on the sensor you are using to see if it supports multiple sensitivities.
+    Note that most sensors will only support one sensitivity. Setting an update
+    policy that the sensor does not support will result in undefined behaviour.
+    You can determine the policies the sensor supports with the
+    QSensor::supportedPolicies() method.
 
+    \value Unknown            The sensor has no specific update policy.
     \value OccasionalUpdates  Updates are delivered only occasionally.
     \value InfrequentUpdates  Updates are delivered every now and then.
     \value FrequentUpdates    Updates are delivered frequently.
     \value TimedUpdates       Updates are delivered at the specified time interval.
-    \value RealtimeUpdates    Updates are retrieved when the device is polled.
+    \value PolledUpdates      Updates are retrieved when the device is polled.
 */
 
 /*!
-    \fn QSensor::open()
+    \fn QSensor::start()
 
     Open the sensor. Data will be made available as soon as possible.
     Note that some sensors require exclusive access so this function
@@ -103,7 +106,7 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \fn QSensor::close()
+    \fn QSensor::stop()
 
     Close the sensor. For sensors that require exclusive access, this
     will release the sensor. The state of the sensor will be retained
@@ -111,17 +114,39 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Change the \a sensitivity of the sensor. If using TimedUpdates
+    Change the update \a policy of the sensor. If using TimedUpdates
     you must also supply the \a interval. Note that not all sensors
-    support changing the sensitivity. If you set a sensitivity that
-    the sensor does not support the sensor will ignore the action
-    and continue to use the sensitivity it was previously using.
+    support changing the update policy. If you set a policy that
+    the sensor does not support the behaviour is undefined.
+    \sa supportedPolicies()
 */
-void QSensor::setSensitivity(Sensitivity sensitivity, int interval)
+void QSensor::setUpdatePolicy(UpdatePolicy policy, int interval)
 {
-    Q_UNUSED(sensitivity)
+    Q_UNUSED(policy)
     Q_UNUSED(interval)
 }
+
+/*!
+    Returns the update policy the sensor is using.
+*/
+QSensor::UpdatePolicy QSensor::updatePolicy() const
+{
+    return QSensor::Unknown;
+}
+
+/*!
+    Returns the update interval the sensor is using (only applicable when
+    using the TimedUpdates policy).
+*/
+int QSensor::updateInterval() const
+{
+    return 0;
+}
+
+/*!
+    \fn QSensor::UpdatePolicies QSensor::supportedPolicies() const
+    Returns the update policies that the sensor supports.
+*/
 
 /*!
     Add a \a listener to the sensor.
@@ -131,6 +156,32 @@ void QSensor::setSensitivity(Sensitivity sensitivity, int interval)
 void QSensor::addListener(QSensorListener *listener)
 {
     Q_UNUSED(listener)
+}
+
+/*!
+    Remove a \a listener from the sensor.
+    If \a listener is 0, all listeners will be removed from the sensor.
+*/
+void QSensor::removeListener(QSensorListener *listener)
+{
+    Q_UNUSED(listener)
+}
+
+/*!
+    Add a \a filter to the sensor.
+*/
+void QSensor::addFilter(QSensorFilter *filter)
+{
+    Q_UNUSED(filter)
+}
+
+/*!
+    Remove a \a filter from the sensor.
+    If \a filter is 0, all filters will be removed from the sensor.
+*/
+void QSensor::removeFilter(QSensorFilter *filter)
+{
+    Q_UNUSED(filter)
 }
 
 /*!
@@ -158,5 +209,31 @@ void QSensor::addListener(QSensorListener *listener)
     \brief The QSensorEvent class represents a sensor event.
 
     Foo bar baz.
+*/
+
+/*!
+    Returns the type of sensor that generated this event.
+*/
+QSensor::Type QSensorEvent::type() const
+{
+    return QSensor::Orientation;
+}
+
+/*!
+    \class QSensorFilter
+    \ingroup sensors
+
+    \preliminary
+    \brief The QSensorFilter class represents a filter.
+
+    Foo bar baz.
+*/
+
+/*!
+    \fn bool QSensorFilter::filter(QSensorEvent *event)
+
+    Filter the \a event. The filter may modify any values
+    in the event. If the filter returns false the event
+    will be ignored.
 */
 

@@ -48,6 +48,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QSensorListener;
+class QSensorFilter;
 class QSensorEvent;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
@@ -69,32 +70,50 @@ public:
         UserSensor = 128
     };
 
-    enum Sensitivity {
+    enum UpdatePolicy {
+        Unknown           = 0x00, // If the sensor has no specific policy
+
         // These use pre-determined timing intervals, as set by the sensor
-        OccasionalUpdates, // When the system feels like it
-        InfrequentUpdates, // Every now and then
-        FrequentUpdates,   // Often (eg. for gaming controls)
+        OccasionalUpdates = 0x01, // When the system feels like it
+        InfrequentUpdates = 0x02, // Every now and then
+        FrequentUpdates   = 0x04, // Often (eg. for gaming controls)
 
         // For more control
-        TimedUpdates,      // Every x milliseconds (may not be supported by all sensors)
-        RealtimeUpdates    // As often as polled (may not be supported by all sensors)
+        TimedUpdates      = 0x08, // Every x milliseconds (may not be supported by all sensors)
+        PolledUpdates     = 0x10  // As often as polled (may not be supported by all sensors)
     };
+    Q_DECLARE_FLAGS(UpdatePolicies, UpdatePolicy)
 
     // Try to 'grab' the sensor (some sensors have ownership issues)
-    virtual bool open() = 0;
+    virtual bool start() = 0;
 
     // Release the sensor
-    virtual void close() = 0;
+    virtual void stop() = 0;
 
-    // Set the desired sensitivity (default is defined by the sensor)
-    // Use documentation to determine the sensitivities that the sensor
+    // Set the desired update policy (default is defined by the sensor)
+    // Use documentation to determine the policies that the sensor
     // supports.
-    void setSensitivity(Sensitivity sensitivity, int interval = 0);
+    void setUpdatePolicy(UpdatePolicy policy, int interval = 0);
+
+    // Retrieve the policy
+    UpdatePolicy updatePolicy() const;
+    int updateInterval() const;
+
+    // What policies does the sensor support
+    virtual UpdatePolicies supportedPolicies() const = 0;
 
     // Register a listener (that will receive sensor events as they come in)
     void addListener(QSensorListener *listener);
+    void removeListener(QSensorListener *listener);
+
+    // Add a filter to remove or modify the accleration values
+    void addFilter(QSensorFilter *filter);
+    void removeFilter(QSensorFilter *filter);
+
 
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);
 
 class QSensorListener
 {
@@ -105,7 +124,14 @@ public:
 class Q_SENSORS_EXPORT QSensorEvent
 {
 public:
+    QSensor::Type type() const;
     quint64 timestamp;
+};
+
+class Q_SENSORS_EXPORT QSensorFilter
+{
+public:
+    virtual bool filter(QSensorEvent *event) = 0;
 };
 
 QTM_END_NAMESPACE

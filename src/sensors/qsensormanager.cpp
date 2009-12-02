@@ -75,3 +75,11 @@ QList<QSensor*> QSensorManager::allSensorsForType(QSensor::Type type) const
     return QList<QSensor*>();
 }
 
+/*!
+    Returns a list of all the sensors on the device.
+*/
+QList<QSensor*> QSensorManager::allSensors() const
+{
+    return QList<QSensor*>();
+}
+

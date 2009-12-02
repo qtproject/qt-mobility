@@ -55,41 +55,51 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Read the \a x, \a y and \a z acceleration values from the sensor.
-*/
-void QAccelerationSensor::readAcceleration(qreal *x, qreal *y, qreal *z)
-{
-    Q_UNUSED(x)
-    Q_UNUSED(y)
-    Q_UNUSED(z)
-}
-
-/*!
-    Add a \a filter to the sensor.
-*/
-void QAccelerationSensor::addFilter(QAccelerationSensorFilter *filter)
-{
-    Q_UNUSED(filter)
-}
-
-/*!
-    \class QAccelerationSensorFilter
-    \ingroup sensors
+    \class QAccelerationSensor::Acceleration
 
     \preliminary
-    \brief The QAccelerationSensorFilter class represents a filter.
+    \brief The Acceleration class holds acceleration values from
+           QAccelerationSensor.
 
     Foo bar baz.
-    \sa Filters
 */
 
 /*!
-    \fn bool QAccelerationSensorFilter::filterAcceleration(qreal &x, qreal &y, qreal &z)
-
-    Filter the acceleration values \a x, \a y and \a z. The filter
-    may modify the values as it chooses. If the filter returns false
-    the values will be ignored by the sensor.
+    \fn QAccelerationSensor::Acceleration::Acceleration(qreal,qreal,qreal)
+    \internal
 */
+
+/*!
+    Returns the current acceleration values from the sensor.
+*/
+QAccelerationSensor::Acceleration QAccelerationSensor::currentAcceleration() const
+{
+    return QAccelerationSensor::Acceleration(0.0, 0.0, 0.0);
+}
+
+/*!
+    Returns the current x acceleration value from the sensor.
+*/
+qreal QAccelerationSensor::currentXAcceleration() const
+{
+    return 0.0;
+}
+
+/*!
+    Returns the current y acceleration value from the sensor.
+*/
+qreal QAccelerationSensor::currentYAcceleration() const
+{
+    return 0.0;
+}
+
+/*!
+    Returns the current z acceleration value from the sensor.
+*/
+qreal QAccelerationSensor::currentZAcceleration() const
+{
+    return 0.0;
+}
 
 /*!
     \class QAccelerationSensorEvent

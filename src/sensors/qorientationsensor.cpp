@@ -55,7 +55,7 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \enum QOrientationSensor::Orientation
+    \enum QOrientationSensor::OrientationFlag
 
     This enum represents the orientation of the device.
 
@@ -73,39 +73,12 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Read the \a orientation from the sensor.
+    Returns the current orientation of the device.
 */
-void QOrientationSensor::readOrientation(Orientation *orientation)
+QOrientationSensor::Orientation QOrientationSensor::currentOrientation() const
 {
-    Q_UNUSED(orientation)
+    return QOrientationSensor::Unknown;
 }
-
-/*!
-    Add a \a filter to the sensor.
-*/
-void QOrientationSensor::addFilter(QOrientationSensorFilter *filter)
-{
-    Q_UNUSED(filter)
-}
-
-/*!
-    \class QOrientationSensorFilter
-    \ingroup sensors
-
-    \preliminary
-    \brief The QOrientationSensorFilter class represents a filter.
-
-    Foo bar baz.
-    \sa Filters
-*/
-
-/*!
-    \fn bool QOrientationSensorFilter::filterOrientation(QOrientationSensor::Orientation &orientation)
-
-    Filter the orientation value \a orientation. The filter
-    may modify the value as it chooses. If the filter returns false
-    the value will be ignored by the sensor.
-*/
 
 /*!
     \class QOrientationSensorEvent
