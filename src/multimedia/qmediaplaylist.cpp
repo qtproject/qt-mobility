@@ -82,7 +82,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     playlist->append(QUrl("http://example.com/movie2.mp4"));
     playlist->append(QUrl("http://example.com/movie3.mp4"));
 
-    playlist->setCurrentPosition(1);
+    playlist->setCurrentIndex(1);
 
     player->play();
 \endcode
@@ -145,18 +145,18 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
     connect(playlist, SIGNAL(loadFailed(QMediaPlaylist::Error,QString)),
             this, SLOT(_q_loadFailed(QMediaPlaylist::Error,QString)));
 
-    connect(playlist, SIGNAL(itemsChanged(int,int)), this, SIGNAL(itemsChanged(int,int)));
-    connect(playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SIGNAL(itemsAboutToBeInserted(int,int)));
-    connect(playlist, SIGNAL(itemsInserted(int,int)), this, SIGNAL(itemsInserted(int,int)));
-    connect(playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SIGNAL(itemsAboutToBeRemoved(int,int)));
-    connect(playlist, SIGNAL(itemsRemoved(int,int)), this, SIGNAL(itemsRemoved(int,int)));
+    connect(playlist, SIGNAL(mediaChanged(int,int)), this, SIGNAL(mediaChanged(int,int)));
+    connect(playlist, SIGNAL(mediaAboutToBeInserted(int,int)), this, SIGNAL(mediaAboutToBeInserted(int,int)));
+    connect(playlist, SIGNAL(mediaInserted(int,int)), this, SIGNAL(mediaInserted(int,int)));
+    connect(playlist, SIGNAL(mediaAboutToBeRemoved(int,int)), this, SIGNAL(mediaAboutToBeRemoved(int,int)));
+    connect(playlist, SIGNAL(mediaRemoved(int,int)), this, SIGNAL(mediaRemoved(int,int)));
 
     connect(playlist, SIGNAL(loaded()), this, SIGNAL(loaded()));
 
     connect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
             this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
-    connect(d->control, SIGNAL(currentPositionChanged(int)),
-            this, SIGNAL(currentPositionChanged(int)));
+    connect(d->control, SIGNAL(currentIndexChanged(int)),
+            this, SIGNAL(currentIndexChanged(int)));
     connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
             this, SIGNAL(currentMediaChanged(QMediaContent)));
 }
@@ -192,9 +192,9 @@ void QMediaPlaylist::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
 /*!
   Returns position of the current media source in the playlist.
 */
-int QMediaPlaylist::currentPosition() const
+int QMediaPlaylist::currentIndex() const
 {
-    return d_func()->control->currentPosition();
+    return d_func()->control->currentIndex();
 }
 
 /*!
@@ -203,11 +203,11 @@ int QMediaPlaylist::currentPosition() const
 
 QMediaContent QMediaPlaylist::currentMedia() const
 {
-    return d_func()->playlist()->media(currentPosition());
+    return d_func()->playlist()->media(currentIndex());
 }
 
 /*!
-  Returns the position of item, which were current after calling next()
+  Returns the index of item, which were current after calling next()
   \a steps times.
 
   Returned value depends on the size of playlist, current position
@@ -215,21 +215,21 @@ QMediaContent QMediaPlaylist::currentMedia() const
 
   \sa QMediaPlaylist::playbackMode
 */
-int QMediaPlaylist::nextPosition(int steps) const
+int QMediaPlaylist::nextIndex(int steps) const
 {
-    return d_func()->control->nextPosition(steps);
+    return d_func()->control->nextIndex(steps);
 }
 
 /*!
-  Returns the position of item, which were current after calling previous()
+  Returns the index of item, which were current after calling previous()
   \a steps times.
 
   \sa QMediaPlaylist::playbackMode
 */
 
-int QMediaPlaylist::previousPosition(int steps) const
+int QMediaPlaylist::previousIndex(int steps) const
 {
-    return d_func()->control->previousPosition(steps);
+    return d_func()->control->previousIndex(steps);
 }
 
 
@@ -238,9 +238,9 @@ int QMediaPlaylist::previousPosition(int steps) const
 
   \sa isEmpty()
   */
-int QMediaPlaylist::size() const
+int QMediaPlaylist::mediaCount() const
 {
-    return d_func()->playlist()->size();
+    return d_func()->playlist()->mediaCount();
 }
 
 /*!
@@ -249,7 +249,7 @@ int QMediaPlaylist::size() const
   */
 bool QMediaPlaylist::isEmpty() const
 {
-    return size() == 0;
+    return mediaCount() == 0;
 }
 
 /*!
@@ -262,12 +262,12 @@ bool QMediaPlaylist::isReadOnly() const
 }
 
 /*!
-  Returns the media content at index \a position in the playlist.
+  Returns the media content at \a index in the playlist.
 */
 
-QMediaContent QMediaPlaylist::media(int position) const
+QMediaContent QMediaPlaylist::media(int index) const
 {
-    return d_func()->playlist()->media(position);
+    return d_func()->playlist()->media(index);
 }
 
 /*!
@@ -275,9 +275,9 @@ QMediaContent QMediaPlaylist::media(int position) const
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::appendItem(const QMediaContent &content)
+bool QMediaPlaylist::addMedia(const QMediaContent &content)
 {
-    return d_func()->control->playlistProvider()->appendItem(content);
+    return d_func()->control->playlistProvider()->addMedia(content);
 }
 
 /*!
@@ -285,9 +285,9 @@ bool QMediaPlaylist::appendItem(const QMediaContent &content)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::appendItems(const QList<QMediaContent> &items)
+bool QMediaPlaylist::addMedia(const QList<QMediaContent> &items)
 {
-    return d_func()->control->playlistProvider()->appendItems(items);
+    return d_func()->control->playlistProvider()->addMedia(items);
 }
 
 /*!
@@ -296,9 +296,9 @@ bool QMediaPlaylist::appendItems(const QList<QMediaContent> &items)
   Returns true if the operation is successful, otherwise false.
 */
 
-bool QMediaPlaylist::insertItem(int pos, const QMediaContent &content)
+bool QMediaPlaylist::insertMedia(int pos, const QMediaContent &content)
 {
-    return d_func()->playlist()->insertItem(pos, content);
+    return d_func()->playlist()->insertMedia(pos, content);
 }
 
 /*!
@@ -307,9 +307,9 @@ bool QMediaPlaylist::insertItem(int pos, const QMediaContent &content)
   Returns true if the operation is successful, otherwise false.
 */
 
-bool QMediaPlaylist::insertItems(int pos, const QList<QMediaContent> &items)
+bool QMediaPlaylist::insertMedia(int pos, const QList<QMediaContent> &items)
 {
-    return d_func()->playlist()->insertItems(pos, items);
+    return d_func()->playlist()->insertMedia(pos, items);
 }
 
 /*!
@@ -317,10 +317,10 @@ bool QMediaPlaylist::insertItems(int pos, const QList<QMediaContent> &items)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::removeItem(int pos)
+bool QMediaPlaylist::removeMedia(int pos)
 {
     Q_D(QMediaPlaylist);
-    return d->playlist()->removeItem(pos);
+    return d->playlist()->removeMedia(pos);
 }
 
 /*!
@@ -328,10 +328,10 @@ bool QMediaPlaylist::removeItem(int pos)
 
   Returns true if the operation is successfull, other wise return false.
   */
-bool QMediaPlaylist::removeItems(int start, int end)
+bool QMediaPlaylist::removeMedia(int start, int end)
 {
     Q_D(QMediaPlaylist);
-    return d->playlist()->removeItems(start, end);
+    return d->playlist()->removeMedia(start, end);
 }
 
 /*!
@@ -348,14 +348,14 @@ bool QMediaPlaylist::clear()
 bool QMediaPlaylistPrivate::readItems(QMediaPlaylistReader *reader)
 {
     while (!reader->atEnd())
-        playlist()->appendItem(reader->readItem());
+        playlist()->addMedia(reader->readItem());
 
     return true;
 }
 
 bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWriter *writer)
 {
-    for (int i=0; i<playlist()->size(); i++) {
+    for (int i=0; i<playlist()->mediaCount(); i++) {
         if (!writer->writeItem(playlist()->media(i)))
             return false;
     }
@@ -560,34 +560,34 @@ void QMediaPlaylist::previous()
     Activate media content from playlist at position \a playlistPosition.
 */
 
-void QMediaPlaylist::setCurrentPosition(int playlistPosition)
+void QMediaPlaylist::setCurrentIndex(int playlistPosition)
 {
-    d_func()->control->setCurrentPosition(playlistPosition);
+    d_func()->control->setCurrentIndex(playlistPosition);
 }
 
 /*!
-    \fn void QMediaPlaylist::itemsInserted(int start, int end)
+    \fn void QMediaPlaylist::mediaInserted(int start, int end)
 
     This signal is emitted after media has been inserted into the playlist.
     The new items are those between \a start and \a end inclusive.
  */
 
 /*!
-    \fn void QMediaPlaylist::itemsRemoved(int start, int end)
+    \fn void QMediaPlaylist::mediaRemoved(int start, int end)
 
     This signal is emitted after media has been removed from the playlist.
     The removed items are those between \a start and \a end inclusive.
  */
 
 /*!
-    \fn void QMediaPlaylist::itemsChanged(int start, int end)
+    \fn void QMediaPlaylist::mediaChanged(int start, int end)
 
     This signal is emitted after media has been changed in the playlist
     between \a start and \a end positions inclusive.
  */
 
 /*!
-    \fn void QMediaPlaylist::currentPositionChanged(int position)
+    \fn void QMediaPlaylist::currentIndexChanged(int position)
 
     Signal emitted when playlist position changed to \a position.
 */
@@ -599,13 +599,13 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 */
 
 /*!
-    \fn void QMediaPlaylist::itemsAboutToBeInserted(int start, int end)
+    \fn void QMediaPlaylist::mediaAboutToBeInserted(int start, int end)
 
     Signal emitted when item to be inserted at \a start and ending at \a end.
 */
 
 /*!
-    \fn void QMediaPlaylist::itemsAboutToBeRemoved(int start, int end)
+    \fn void QMediaPlaylist::mediaAboutToBeRemoved(int start, int end)
 
     Signal emitted when item to de deleted ar \a start and ending at \a end.
 */
@@ -617,7 +617,7 @@ void QMediaPlaylist::setCurrentPosition(int playlistPosition)
 */
 
 /*!
-    \property QMediaPlaylist::currentPosition
+    \property QMediaPlaylist::currentIndex
     \brief Current position.
 */
 

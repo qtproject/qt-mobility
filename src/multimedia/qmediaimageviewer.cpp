@@ -99,7 +99,7 @@ void QMediaImageViewerPrivate::_q_mediaStatusChanged(QMediaImageViewer::MediaSta
 
         if (state == QMediaImageViewer::PlayingState) {
             playlist->next();
-            if (playlist->currentPosition() < 0)
+            if (playlist->currentIndex() < 0)
                 emit q_func()->stateChanged(state = QMediaImageViewer::StoppedState);
         }
         break;
@@ -158,9 +158,9 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     \code
     playlist = new QMediaPlaylist(viewer, this);
     playlist->setPlaybackMode(QMediaPlaylist::Loop);
-    playlist->appendItem(image1);
-    playlist->appendItem(image2);
-    playlist->appendItem(image3);
+    playlist->addMedia(image1);
+    playlist->addMedia(image2);
+    playlist->addMedia(image3);
 
     viewer->setTimeout(5000);
     viewer->play();
@@ -377,14 +377,14 @@ void QMediaImageViewer::play()
 {
     Q_D(QMediaImageViewer);
 
-    if (d->playlist && d->playlist->size() > 0 && d->state != PlayingState) {
+    if (d->playlist && d->playlist->mediaCount() > 0 && d->state != PlayingState) {
         d->state = PlayingState;
 
         switch (d->viewerControl->mediaStatus()) {
         case NoMedia:
         case InvalidMedia:
             d->playlist->next();
-            if (d->playlist->currentPosition() < 0)
+            if (d->playlist->currentIndex() < 0)
                 d->state = StoppedState;
             break;
         case LoadingMedia:
@@ -465,7 +465,7 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
 
         d->playlist->next();
 
-        if (d->playlist->currentPosition() < 0) {
+        if (d->playlist->currentIndex() < 0) {
             d->pauseTime = 0;
             emit stateChanged(d->state = StoppedState);
             emit elapsedTimeChanged(0);

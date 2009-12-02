@@ -138,9 +138,9 @@ void SlideShow::openDirectory()
         foreach (const QString &fileName, dir.entryList(QDir::Files)) {
             QString absolutePath = dir.absoluteFilePath(fileName);
 #ifndef Q_OS_WIN
-            playlist->appendItem(QUrl(QLatin1String("file://") + absolutePath));
+            playlist->addMedia(QUrl(QLatin1String("file://") + absolutePath));
 #else
-            playlist->appendItem(QUrl(QLatin1String("file:///") + absolutePath));
+            playlist->addMedia(QUrl(QLatin1String("file:///") + absolutePath));
 #endif
         }
     }

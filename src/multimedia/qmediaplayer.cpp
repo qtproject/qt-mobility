@@ -433,8 +433,8 @@ void QMediaPlayer::play()
         return;
     }
 
-    if (d->playlist && d->playlist->currentPosition() == -1 && !d->playlist->isEmpty())
-        d->playlist->setCurrentPosition(0);
+    if (d->playlist && d->playlist->currentIndex() == -1 && !d->playlist->isEmpty())
+        d->playlist->setCurrentIndex(0);
 
     // Reset error conditions
     d->error = NoError;

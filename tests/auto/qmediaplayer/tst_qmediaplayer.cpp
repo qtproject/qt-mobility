@@ -448,17 +448,17 @@ void tst_QMediaPlayer::testNullService()
         QSignalSpy mediaSpy(&player, SIGNAL(mediaChanged(QMediaContent)));
         QSignalSpy statusSpy(&player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
 
-        playlist.appendItem(QUrl("http://example.com/stream"));
-        playlist.appendItem(QUrl("file:///some.mp3"));
+        playlist.addMedia(QUrl("http://example.com/stream"));
+        playlist.addMedia(QUrl("file:///some.mp3"));
 
-        playlist.setCurrentPosition(0);
-        QCOMPARE(playlist.currentPosition(), 0);
+        playlist.setCurrentIndex(0);
+        QCOMPARE(playlist.currentIndex(), 0);
         QCOMPARE(player.media(), QMediaContent());
         QCOMPARE(mediaSpy.count(), 0);
         QCOMPARE(statusSpy.count(), 0);
 
         playlist.next();
-        QCOMPARE(playlist.currentPosition(), 1);
+        QCOMPARE(playlist.currentIndex(), 1);
         QCOMPARE(player.media(), QMediaContent());
         QCOMPARE(mediaSpy.count(), 0);
         QCOMPARE(statusSpy.count(), 0);
@@ -875,13 +875,13 @@ void tst_QMediaPlayer::testPlaylist()
     QCOMPARE(stateSpy.count(), 0);
     QCOMPARE(mediaSpy.count(), 0);
 
-    playlist->appendItem(content0);
-    playlist->appendItem(content1);
-    playlist->appendItem(content2);
-    playlist->appendItem(content3);
+    playlist->addMedia(content0);
+    playlist->addMedia(content1);
+    playlist->addMedia(content2);
+    playlist->addMedia(content3);
 
     // Test changing the playlist position, changes the current media, but not the playing state.
-    playlist->setCurrentPosition(1);
+    playlist->setCurrentIndex(1);
     QCOMPARE(player->media(), content1);
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
     QCOMPARE(stateSpy.count(), 0);

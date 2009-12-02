@@ -63,7 +63,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
     connect(player, SIGNAL(metaDataChanged()), SLOT(metaDataChanged()));
-    connect(playlist, SIGNAL(currentPositionChanged(int)), SLOT(playlistPositionChanged(int)));
+    connect(playlist, SIGNAL(currentIndexChanged(int)), SLOT(playlistPositionChanged(int)));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
@@ -75,7 +75,7 @@ Player::Player(QWidget *parent)
 
     playlistView = new QListView;
     playlistView->setModel(playlistModel);
-    playlistView->setCurrentIndex(playlistModel->index(playlist->currentPosition(), 0));
+    playlistView->setCurrentIndex(playlistModel->index(playlist->currentIndex(), 0));
 
     connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
@@ -160,7 +160,7 @@ void Player::open()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
     foreach (QString const &fileName, fileNames)
-        playlist->appendItem(QUrl::fromLocalFile(fileName));
+        playlist->addMedia(QUrl::fromLocalFile(fileName));
 }
 
 void Player::durationChanged(qint64 duration)
@@ -194,7 +194,7 @@ void Player::metaDataChanged()
 void Player::jump(const QModelIndex &index)
 {
     if (index.isValid()) {
-        playlist->setCurrentPosition(index.row());
+        playlist->setCurrentIndex(index.row());
     }
 }
 
