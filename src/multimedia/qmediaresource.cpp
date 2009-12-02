@@ -240,7 +240,7 @@ void QMediaResource::setVideoCodec(const QString &codec)
 
     This may be zero if the size is unknown.
 */
-qint64 QMediaResource::dataDataSize() const
+qint64 QMediaResource::dataSize() const
 {
     return qvariant_cast<qint64>(values.value(DataSize));
 }
@@ -248,7 +248,7 @@ qint64 QMediaResource::dataDataSize() const
 /*!
     Sets the \a size in bytes of a media resource.
 */
-void QMediaResource::setDataDataSize(const qint64 size)
+void QMediaResource::setDataSize(const qint64 size)
 {
     if (size != 0)
         values.insert(DataSize, size);
@@ -346,15 +346,15 @@ void QMediaResource::setVideoBitRate(int rate)
     This may be null is the resolution is unknown, or the resource contains no pixel data (i.e. the
     resource is an audio stream.
 */
-QDataSize QMediaResource::resolution() const
+QSize QMediaResource::resolution() const
 {
-    return qvariant_cast<QDataSize>(values.value(Resolution));
+    return qvariant_cast<QSize>(values.value(Resolution));
 }
 
 /*!
     Sets the \a resolution in pixels of a media resource.
 */
-void QMediaResource::setResolution(const QDataSize &resolution)
+void QMediaResource::setResolution(const QSize &resolution)
 {
     if (resolution.width() != -1 || resolution.height() != -1)
         values.insert(Resolution, resolution);
@@ -368,7 +368,7 @@ void QMediaResource::setResolution(const QDataSize &resolution)
 void QMediaResource::setResolution(int width, int height)
 {
     if (width != -1 || height != -1)
-        values.insert(Resolution, QDataSize(width, height));
+        values.insert(Resolution, QSize(width, height));
     else
         values.remove(Resolution);
 }
