@@ -333,6 +333,7 @@ $relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
+$relpath/bin/syncheaders $shadowpath/include $relpath/src/sensors
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"
