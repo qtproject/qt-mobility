@@ -106,10 +106,12 @@ private:
     QVideoFrame m_frame;
     QSize m_imageSize;
     QImage::Format m_imageFormat;
+    QVideoSurfaceFormat::Direction m_scanLineDirection;
 };
 
 QVideoSurfaceRasterPainter::QVideoSurfaceRasterPainter()
     : m_imageFormat(QImage::Format_Invalid)
+    , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
 {
     m_imagePixelFormats
         << QVideoFrame::Format_RGB32
@@ -141,6 +143,7 @@ QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::start(const QVideoSurfa
     m_frame = QVideoFrame();
     m_imageFormat = QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
     m_imageSize = format.frameSize();
+    m_scanLineDirection = format.scanLineDirection();
 
     return format.handleType() == QAbstractVideoBuffer::NoHandle
             && m_imageFormat != QImage::Format_Invalid
@@ -172,7 +175,17 @@ QAbstractVideoSurface::Error QVideoSurfaceRasterPainter::paint(
                 m_frame.bytesPerLine(),
                 m_imageFormat);
 
-        painter->drawImage(target, image, source);
+        if (m_scanLineDirection == QVideoSurfaceFormat::BottomToTop) {
+            const QTransform oldTransform = painter->transform();
+
+            painter->scale(1, -1);
+            painter->translate(0, -target.bottom());
+            painter->drawImage(
+                QRect(target.x(), 0, target.width(), target.height()), image, source);
+            painter->setTransform(oldTransform);
+        } else {
+            painter->drawImage(target, image, source);
+        }
 
         m_frame.unmap();
     } else if (m_frame.isValid()) {
@@ -248,6 +261,7 @@ protected:
 
     QGLContext *m_context;
     QAbstractVideoBuffer::HandleType m_handleType;
+    QVideoSurfaceFormat::Direction m_scanLineDirection;
     GLenum m_textureFormat;
     GLuint m_textureInternalFormat;
     GLenum m_textureType;
@@ -262,6 +276,7 @@ protected:
 QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
     : m_context(context)
     , m_handleType(QAbstractVideoBuffer::NoHandle)
+    , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
     , m_textureFormat(0)
     , m_textureInternalFormat(0)
     , m_textureType(0)
@@ -334,7 +349,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         }
         m_frame.unmap();
-    } else {
+    } else if (m_frame.isValid()) {
         return QAbstractVideoSurface::IncorrectFormatError;
     }
 
@@ -657,6 +672,7 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
                 error = QAbstractVideoSurface::ResourceError;
             } else {
                 m_handleType = format.handleType();
+                m_scanLineDirection = format.scanLineDirection();
                 m_frameSize = format.frameSize();
 
                 if (m_handleType == QAbstractVideoBuffer::NoHandle)
@@ -687,10 +703,15 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
     if (m_frame.isValid()) {
         painter->beginNativePainting();
 
-        float txLeft = float(source.left()) / float(m_frameSize.width());
-        float txRight = float(source.right()) / float(m_frameSize.width());
-        float txTop = float(source.top()) / float(m_frameSize.height());
-        float txBottom = float(source.bottom()) / float(m_frameSize.height());
+        const float txLeft = float(source.left()) / float(m_frameSize.width());
+        const float txRight = float(source.right()) / float(m_frameSize.width());
+        const float txTop = m_scanLineDirection == QVideoSurfaceFormat::TopToBottom
+                ? float(source.top()) / float(m_frameSize.height())
+                : float(source.bottom()) / float(m_frameSize.height());
+        const float txBottom = m_scanLineDirection == QVideoSurfaceFormat::TopToBottom
+                ? float(source.bottom()) / float(m_frameSize.height())
+                : float(source.top()) / float(m_frameSize.height());
+
 
         const float tx_array[] =
         {
@@ -929,6 +950,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
         error = QAbstractVideoSurface::ResourceError;
     } else {
         m_handleType = format.handleType();
+        m_scanLineDirection = format.scanLineDirection();
         m_frameSize = format.frameSize();
 
         if (m_handleType == QAbstractVideoBuffer::NoHandle)
@@ -999,8 +1021,12 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 
         const GLfloat txLeft = float(source.left()) / float(m_frameSize.width());
         const GLfloat txRight = float(source.right()) / float(m_frameSize.width());
-        const GLfloat txTop = float(source.top()) / float(m_frameSize.height());
-        const GLfloat txBottom = float(source.bottom()) / float(m_frameSize.height());
+        const GLfloat txTop = m_scanLineDirection == QVideoSurfaceFormat::TopToBottom
+                ? float(source.top()) / float(m_frameSize.height())
+                : float(source.bottom()) / float(m_frameSize.height());
+        const GLfloat txBottom = m_scanLineDirection == QVideoSurfaceFormat::TopToBottom
+                ? float(source.bottom()) / float(m_frameSize.height())
+                : float(source.top()) / float(m_frameSize.height());
 
         const GLfloat textureCoordArray[] =
         {
@@ -1158,7 +1184,8 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
     if (!m_ready) {
         if (!isActive())
             setError(StoppedError);
-    } else if (frame.pixelFormat() != m_pixelFormat || frame.size() != m_frameSize) {
+    } else if (frame.isValid() 
+            && (frame.pixelFormat() != m_pixelFormat || frame.size() != m_frameSize)) {
         setError(IncorrectFormatError);
 
         stop();

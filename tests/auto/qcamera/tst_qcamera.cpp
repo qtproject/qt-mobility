@@ -190,14 +190,17 @@ public:
         return m_isoSensitivity;
     }
 
-    int minimumIsoSensitivity() const {return 50;}
-    int maximumIsoSensitivity() const {return 3200;}
-    QList<int> supportedIsoSensitivities() const {return QList<int>();}
+    QList<int> supportedIsoSensitivities(bool * continuous) const
+    {
+        if (continuous)
+            *continuous = false;
+        return QList<int>() << 100 << 200 << 400 << 800;
+    }
 
 
     void setManualIsoSensitivity(int iso)
     {
-        m_isoSensitivity = qBound(50, iso, 3200);
+        m_isoSensitivity = 100*qRound(qBound(100, iso, 800)/100.0);
     }
 
     void setAutoIsoSensitivity()
@@ -210,9 +213,12 @@ public:
         return m_aperture;
     }
 
-    qreal minimumAperture() const {return 2.8;}
-    qreal maximumAperture() const {return 16.0;}
-    QList<qreal> supportedApertures() const {return QList<qreal>();}
+    QList<qreal> supportedApertures(bool *continuous) const
+    {
+        if (continuous)
+            *continuous = true;
+        return QList<qreal>() << 2.8 << 4 << 5.6 << 8 << 11 << 16;
+    }
 
     void setManualAperture(qreal aperture)
     {
@@ -229,13 +235,17 @@ public:
         return m_shutterSpeed;
     }
 
-    qreal minimumShutterSpeed() const {return 0.001;}
-    qreal maximumShutterSpeed() const {return 30.0;}
-    QList<qreal> supportedShutterSpeeds() const {return QList<qreal>();}
+    QList<qreal> supportedShutterSpeeds(bool *continuous) const
+    {
+        if (continuous)
+            *continuous = false;
+
+        return QList<qreal>() << 0.001 << 0.01 << 0.1 << 1.0;
+    }
 
     void setManualShutterSpeed(qreal shutterSpeed)
     {
-        m_shutterSpeed = qBound<qreal>(0.001, shutterSpeed, 30.0);
+        m_shutterSpeed = qBound<qreal>(0.001, shutterSpeed, 1.0);
     }
 
     void setAutoShutterSpeed()
@@ -590,7 +600,7 @@ void tst_QCamera::initTestCase()
     mockSimpleCameraService = new MockSimpleCameraService;
     provider->service = mockSimpleCameraService;
 
-    qRegisterMetaType<QCamera::Error>();
+    qRegisterMetaType<QCamera::Error>("QCamera::Error");
 }
 
 void tst_QCamera::cleanupTestCase()
@@ -685,9 +695,7 @@ void tst_QCamera::testSimpleCameraExposure()
     camera.setExposureCompensation(2.0);
     QCOMPARE(camera.exposureCompensation(), 0.0);
 
-    QCOMPARE(camera.isoSensitivity(), -1);
-    QCOMPARE(camera.minimumIsoSensitivity(), -1);
-    QCOMPARE(camera.maximumIsoSensitivity(), -1);
+    QCOMPARE(camera.isoSensitivity(), -1);    
     QVERIFY(camera.supportedIsoSensitivities().isEmpty());
     camera.setManualIsoSensitivity(100);
     QCOMPARE(camera.isoSensitivity(), -1);
@@ -695,8 +703,6 @@ void tst_QCamera::testSimpleCameraExposure()
     QCOMPARE(camera.isoSensitivity(), -1);
 
     QVERIFY(camera.aperture() < 0);
-    QVERIFY(camera.minimumAperture() < 0);
-    QVERIFY(camera.maximumAperture() < 0);
     QVERIFY(camera.supportedApertures().isEmpty());
     camera.setAutoAperture();
     QVERIFY(camera.aperture() < 0);
@@ -704,8 +710,6 @@ void tst_QCamera::testSimpleCameraExposure()
     QVERIFY(camera.aperture() < 0);
 
     QVERIFY(camera.shutterSpeed() < 0);
-    QVERIFY(camera.minimumShutterSpeed() < 0);
-    QVERIFY(camera.maximumShutterSpeed() < 0);
     QVERIFY(camera.supportedShutterSpeeds().isEmpty());
     camera.setAutoShutterSpeed();
     QVERIFY(camera.shutterSpeed() < 0);
@@ -845,13 +849,13 @@ void tst_QCamera::testCameraExposure()
     camera.setExposureCompensation(2.0);
     QCOMPARE(camera.exposureCompensation(), 2.0);
 
-    int minIso = camera.minimumIsoSensitivity();
-    int maxIso = camera.maximumIsoSensitivity();
+    int minIso = camera.supportedIsoSensitivities().first();
+    int maxIso = camera.supportedIsoSensitivities().last();
     QVERIFY(camera.isoSensitivity() > 0);
     QVERIFY(minIso > 0);
     QVERIFY(maxIso > 0);
-    camera.setManualIsoSensitivity(100);
-    QCOMPARE(camera.isoSensitivity(), 100);
+    camera.setManualIsoSensitivity(minIso);
+    QCOMPARE(camera.isoSensitivity(), minIso);
     camera.setManualIsoSensitivity(maxIso*10);
     QCOMPARE(camera.isoSensitivity(), maxIso);
     camera.setManualIsoSensitivity(-10);
@@ -859,8 +863,8 @@ void tst_QCamera::testCameraExposure()
     camera.setAutoIsoSensitivity();
     QCOMPARE(camera.isoSensitivity(), 100);
 
-    qreal minAperture = camera.minimumAperture();
-    qreal maxAperture = camera.maximumAperture();
+    qreal minAperture = camera.supportedApertures().first();
+    qreal maxAperture = camera.supportedApertures().last();
     QVERIFY(minAperture > 0);
     QVERIFY(maxAperture > 0);
     QVERIFY(camera.aperture() >= minAperture);
@@ -877,8 +881,8 @@ void tst_QCamera::testCameraExposure()
     QCOMPARE(camera.aperture(), maxAperture);
 
 
-    qreal minShutterSpeed = camera.minimumShutterSpeed();
-    qreal maxShutterSpeed = camera.maximumShutterSpeed();
+    qreal minShutterSpeed = camera.supportedShutterSpeeds().first();
+    qreal maxShutterSpeed = camera.supportedShutterSpeeds().last();
     QVERIFY(minShutterSpeed > 0);
     QVERIFY(maxShutterSpeed > 0);
     QVERIFY(camera.shutterSpeed() >= minShutterSpeed);
