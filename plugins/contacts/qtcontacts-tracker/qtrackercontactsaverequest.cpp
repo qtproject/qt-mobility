@@ -54,7 +54,13 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
     Q_ASSERT(parent);
 
-    QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+    QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
+    if (!r) {
+        QList<QContactManager::Error> dummy;
+        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Finished);
+        return;
+    }
+
     QList<QContact> contacts = r->contacts();
 
     if(contacts.isEmpty()) {
@@ -74,7 +80,13 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 void QTrackerContactSaveRequest::computeProgress()
 {
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
-    QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+    QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
+    if (!r) {
+        QList<QContactManager::Error> dummy;
+        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Finished);
+        return;
+    }
+
     if( r->contacts().size() == contactsFinished.size() )
     {
         // compute master error - part of qtcontacts api
@@ -121,8 +133,7 @@ void QTrackerContactSaveRequest::saveContact(QContact &contact)
         ncoContact->setContentCreated(QDateTime::currentDateTime());
     }  else {
         ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
-        //  disabled because of 141727 - it breaks the transaction
-        //  ncoContact->setContentLastModified(QDateTime::currentDateTime());
+        ncoContact->setContentLastModified(QDateTime::currentDateTime());
     }
 
     // if there are work related details, need to be saved to Affiliation.

@@ -56,6 +56,7 @@
 #include "qtrackercontactsaverequest.h"
 #include <qtrackerrelationshipfetchrequest.h>
 #include <qtrackerrelationshipsaverequest.h>
+#include <qtrackercontactidfetchrequest.h>
 
 
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
@@ -387,20 +388,41 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
         d->m_definitions.insert(QContactAvatar::DefinitionName, avatarDef);
 
         // modification: url is unique.
-        QContactDetailDefinition urlDef = d->m_definitions.value(QContactUrl::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> &fields(urlDef.fields());
-        QContactDetailDefinitionField f;
+        {
+            QContactDetailDefinition urlDef = d->m_definitions.value(
+                    QContactUrl::DefinitionName);
 
-        f.setDataType( QVariant::String );
-        QVariantList subTypes;
-        // removing social networking url
-        subTypes << QString(QLatin1String(QContactUrl::SubTypeFavourite));
-        subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
-        f.setAllowableValues( subTypes );
-        fields.insert(QContactUrl::FieldSubType, f);
-        urlDef.setFields(fields);
-        urlDef.setUnique(true);
-        d->m_definitions.insert(QContactUrl::DefinitionName, urlDef);
+            QMap<QString, QContactDetailDefinitionField> &fields(
+                    urlDef.fields());
+            QContactDetailDefinitionField f;
+
+            f.setDataType(QVariant::String);
+            QVariantList subTypes;
+            // removing social networking url
+            subTypes << QString(QLatin1String(QContactUrl::SubTypeFavourite));
+            subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
+            f.setAllowableValues(subTypes);
+            fields.insert(QContactUrl::FieldSubType, f);
+            urlDef.setFields(fields);
+            urlDef.setUnique(true);
+            d->m_definitions.insert(QContactUrl::DefinitionName, urlDef);
+        }
+
+        // QContactOnlineAccount custom fields
+        {
+            QContactDetailDefinition accDef = d->m_definitions.value(QContactOnlineAccount::DefinitionName);
+
+            QMap<QString, QContactDetailDefinitionField> &fields(accDef.fields());
+            QContactDetailDefinitionField f;
+
+            f.setDataType(QVariant::String);
+            fields.insert("Account", f);
+            fields.insert("AccountPath", f);
+            accDef.setFields(fields);
+            d->m_definitions.insert(QContactOnlineAccount::DefinitionName, accDef);
+        }
+
+
     }
 
     error = QContactManager::NoError;
