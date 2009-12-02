@@ -131,16 +131,11 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     \ingroup multimedia
     \preliminary
 
-    The primary use of QMediaImageViewer is to display image media.  If
-    asked to display a non-image media type QMediaImageViewer will instead
-    display the media's \l {QMediaContent::coverArtUriLarge()}{cover art}
-    or \l {QMediaContent::posterUri()}{poster} if a URI is available for either.
-
-    In order to actually display an image the QMediaImageViewer class must
-    be coupled with a display output such as QVideoWidget.  A display
-    output is attached to the image viewer by passing a pointer the
-    QMediaImageViewer instance in the constructor of the display output,
-    and can be removed by deleting the display output.
+    QMediaImageViewer is used together with a media display object such as
+    QVideoWidget to present an image.  A display object is attached to the
+    image viewer by passing a pointer the QMediaImageViewer instance in the
+    constructor of the display object, and can be removed by deleting the
+    display object.
 
     \code
     viewer = new QMediaImageViewer(this);
@@ -258,11 +253,6 @@ QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
 /*!
     \property QMediaImageViewer::media
     \brief the media an image viewer is presenting.
-
-    If the media is on a non image type the image viewer will instead display the media's
-    \l {QMediaContent::coverArtUriLarge()}{cover art} or \l {QMediaContent::posterUri()}{poster} if
-    a URI is available for either.
-
 */
 
 QMediaContent QMediaImageViewer::media() const

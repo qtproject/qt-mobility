@@ -328,45 +328,6 @@ void tst_QMediaImageViewer::setMedia_data()
 
         QTest::newRow("network: png image, no mime type")
                 << media;
-    } {
-        QMediaContent media(imageUri("song.mp3"));
-        media.setCoverArtUriLarge(imageUri("coverart.png"));
-
-        QTest::newRow("file: png cover art")
-                << media;
-    } {
-        QMediaContent media(QUrl(QLatin1String("test://music/songs/mp3?id=1")));
-        media.setCoverArtUriLarge(QUrl(QLatin1String("test://music/covers/large?id=1")));
-
-        QTest::newRow("network: png cover art")
-                << media;
-    } {
-        QMediaContent media(QMediaResource(
-                QUrl(QLatin1String("test://music/songs/mp3?id=1")), QLatin1String("audio/mpeg")));
-        media.setCoverArtUriSmall(QUrl(QLatin1String("test://music/covers/small?id=1")));
-        media.setCoverArtUriLarge(QUrl(QLatin1String("test://music/covers/large?id=1")));
-
-        QTest::newRow("network: png cover art, explicit mime type")
-                << media;
-    } {
-        QMediaContent media(imageUri("movie.mp4"));
-        media.setPosterUri(imageUri("poster.png"));
-
-        QTest::newRow("file: png poster")
-                << media;
-    } {
-        QMediaContent media(QUrl(QLatin1String("test/movies/mp4?id=1")));
-        media.setPosterUri(QUrl(QLatin1String("test://video/posters/png?id=1")));
-
-        QTest::newRow("network: png poster")
-                << media;
-    } {
-        QMediaContent media(imageUri("image.png"));
-        media.setCoverArtUriLarge(imageUri("coverart.png"));
-        media.setPosterUri(imageUri("poster.png"));
-
-        QTest::newRow("file: png image with cover art and poster")
-                << media;
 #ifdef QTEST_HAVE_JPEG
     } {
         QMediaContent media(imageUri("image.jpg"));
