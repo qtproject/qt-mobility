@@ -51,7 +51,7 @@ class Q_SENSORS_EXPORT QSensorManager
 {
 public:
     // Get the singleton instance
-    QSensorManager *instance() const;
+    static QSensorManager *instance();
 
     // Get a sensor
     QString defaultSensorForType(QSensor::Type type) const;

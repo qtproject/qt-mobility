@@ -52,6 +52,8 @@ class QAccelerationSensorFilter;
 class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 {
 public:
+    explicit QAccelerationSensor(const QString &id, QObject *parent = 0);
+
     // Values are in Earth gravities. Note that they may not be particularly
     // accurate depending on the hardware. For example, Apple notebooks
     // can only measure 255 levels between 0 and 1G.

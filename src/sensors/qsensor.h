@@ -63,7 +63,7 @@ public:
     bool isValid() const;
 
     QString id() const;
-    virtual QString name() const = 0;
+    QString name() const;
 
     // Types of sensors that the API supports
     enum Type {
@@ -106,7 +106,7 @@ public:
     int updateInterval() const;
 
     // What policies does the sensor support
-    virtual UpdatePolicies supportedPolicies() const = 0;
+    UpdatePolicies supportedPolicies() const;
 
     // Register a listener (that will receive sensor events as they come in)
     void addListener(QSensorListener *listener);

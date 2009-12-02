@@ -98,10 +98,12 @@ QString QSensor::id() const
 }
 
 /*!
-    \fn QString QSensor::name() const
-
-    Returns the sensor name. Must be suitable for display to the user.
+    Returns the sensor name, suitable for displaying to the user.
 */
+QString QSensor::name() const
+{
+    return QString();
+}
 
 /*!
     \enum QSensor::Type
@@ -176,9 +178,12 @@ int QSensor::updateInterval() const
 }
 
 /*!
-    \fn QSensor::UpdatePolicies QSensor::supportedPolicies() const
     Returns the update policies that the sensor supports.
 */
+QSensor::UpdatePolicies QSensor::supportedPolicies() const
+{
+    return QSensor::Unknown;
+}
 
 /*!
     Add a \a listener to the sensor.

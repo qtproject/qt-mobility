@@ -58,7 +58,7 @@ QTM_USE_NAMESPACE
 /*!
     Returns the sensor manager.
 */
-QSensorManager *QSensorManager::instance() const
+QSensorManager *QSensorManager::instance()
 {
     return 0;
 }

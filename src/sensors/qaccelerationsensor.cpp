@@ -55,6 +55,14 @@ QTM_USE_NAMESPACE
 */
 
 /*!
+    \reimp
+*/
+QAccelerationSensor::QAccelerationSensor(const QString &id, QObject *parent)
+    : QSensor(id, parent)
+{
+}
+
+/*!
     \class QAccelerationSensor::Acceleration
 
     \preliminary
