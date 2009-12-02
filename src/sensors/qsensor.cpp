@@ -64,6 +64,46 @@ QTM_USE_NAMESPACE
 */
 
 /*!
+    Construct a sensor instance and attach to the sensor indicated by \a id.
+    The sensor will be deleted when \a parent is deleted.
+*/
+QSensor::QSensor(const QString &id, QObject *parent)
+    : QObject(parent)
+{
+    Q_UNUSED(id)
+}
+
+/*!
+    Stop the sensor.
+*/
+QSensor::~QSensor()
+{
+    stop();
+}
+
+/*!
+    Returns false if an invalid id was given to the constructor.
+*/
+bool QSensor::isValid() const
+{
+    return false;
+}
+
+/*!
+    Returns the id for the sensor.
+*/
+QString QSensor::id() const
+{
+    return QString();
+}
+
+/*!
+    \fn QString QSensor::name() const
+
+    Returns the sensor name. Must be suitable for display to the user.
+*/
+
+/*!
     \enum QSensor::Type
 
     This enum is used when requesting a sensor and denotes the type of the sensor.
@@ -81,6 +121,14 @@ QTM_USE_NAMESPACE
 */
 
 /*!
+    Returns the type of the sensor.
+*/
+QSensor::Type QSensor::type() const
+{
+    return QSensor::Orientation;
+}
+
+/*!
     \enum QSensor::UpdatePolicy
 
     This enum is used to indicate to the sensor how often data will be collected.
@@ -95,22 +143,6 @@ QTM_USE_NAMESPACE
     \value FrequentUpdates    Updates are delivered frequently.
     \value TimedUpdates       Updates are delivered at the specified time interval.
     \value PolledUpdates      Updates are retrieved when the device is polled.
-*/
-
-/*!
-    \fn QSensor::start()
-
-    Open the sensor. Data will be made available as soon as possible.
-    Note that some sensors require exclusive access so this function
-    may fail and return false.
-*/
-
-/*!
-    \fn QSensor::stop()
-
-    Close the sensor. For sensors that require exclusive access, this
-    will release the sensor. The state of the sensor will be retained
-    so sensitivity, filters, listeners etc. will be preserved.
 */
 
 /*!
@@ -185,6 +217,27 @@ void QSensor::removeFilter(QSensorFilter *filter)
 }
 
 /*!
+    Start retrieving values from the sensor.
+
+    Note that some sensors require exclusive access so this function
+    may fail and return false.
+
+    Also note that some sensors may not honour settings set after
+    this method is called.
+*/
+bool QSensor::start()
+{
+    return false;
+}
+
+/*!
+    Stop retrieving values from the sensor.
+*/
+void QSensor::stop()
+{
+}
+
+/*!
     \class QSensorListener
     \ingroup sensors
 
@@ -212,11 +265,19 @@ void QSensor::removeFilter(QSensorFilter *filter)
 */
 
 /*!
-    Returns the type of sensor that generated this event.
+    Constuct a sensor event for a \a sensor.
 */
-QSensor::Type QSensorEvent::type() const
+QSensorEvent::QSensorEvent(QSensor *sensor)
 {
-    return QSensor::Orientation;
+    Q_UNUSED(sensor)
+}
+
+/*!
+    Returns the sensor that generated this event.
+*/
+QSensor *QSensorEvent::sensor() const
+{
+    return 0;
 }
 
 /*!

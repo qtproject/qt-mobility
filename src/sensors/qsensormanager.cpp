@@ -56,30 +56,57 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Returns the default sensor for \a type.
-    If there is no sensor of that type available, returns null.
+    Returns the sensor manager.
 */
-QSensor *QSensorManager::defaultSensorForType(QSensor::Type type) const
+QSensorManager *QSensorManager::instance() const
 {
-    Q_UNUSED(type)
     return 0;
 }
 
 /*!
-    Returns a list of all the sensors for \a type.
-    If there are no sensors of that type available the list will be empty.
+    Returns the id of the default sensor for \a type.
+    If there is no sensor of that type available, returns a null string.
 */
-QList<QSensor*> QSensorManager::allSensorsForType(QSensor::Type type) const
+QString QSensorManager::defaultSensorForType(QSensor::Type type) const
 {
     Q_UNUSED(type)
-    return QList<QSensor*>();
+    return QString();
 }
 
 /*!
-    Returns a list of all the sensors on the device.
+    Create an instance of the default sensor for \a type.
+    If there is no sensor of that type available, returns null.
 */
-QList<QSensor*> QSensorManager::allSensors() const
+QSensor *QSensorManager::createDefaultSensorForType(QSensor::Type type) const
 {
-    return QList<QSensor*>();
+    return createSensor(defaultSensorForType(type));
+}
+
+/*!
+    Returns a list of ids for each of the sensors for \a type.
+    If there are no sensors of that type available the list will be empty.
+*/
+QStringList QSensorManager::allSensorsForType(QSensor::Type type) const
+{
+    Q_UNUSED(type)
+    return QStringList();
+}
+
+/*!
+    Returns a list of ids for each of the sensors.
+*/
+QStringList QSensorManager::allSensors() const
+{
+    return QStringList();
+}
+
+/*!
+    Create an instance of a sensor for \a id.
+    If there is no sensor with the selected \a id, returns null.
+*/
+QSensor *QSensorManager::createSensor(const QString &id) const
+{
+    Q_UNUSED(id)
+    return 0;
 }
 

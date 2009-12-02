@@ -59,10 +59,6 @@ public:
     Q_DECLARE_FLAGS(Orientation, OrientationFlag)
 
     Orientation currentOrientation() const;
-
-private:
-    bool open();
-    void close();
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QOrientationSensor::Orientation)

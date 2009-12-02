@@ -66,10 +66,6 @@ public:
     qreal currentXAcceleration() const;
     qreal currentYAcceleration() const;
     qreal currentZAcceleration() const;
-
-private:
-    bool open();
-    void close();
 };
 
 class Q_SENSORS_EXPORT QAccelerationSensorEvent : public QSensorEvent

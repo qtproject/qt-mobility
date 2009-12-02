@@ -44,6 +44,7 @@
 
 #include <qmobilityglobal.h>
 #include <QObject>
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,6 +55,16 @@ class QSensorEvent;
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
 public:
+    // Construct a sensor
+    explicit QSensor(const QString &id, QObject *parent = 0);
+    virtual ~QSensor();
+
+    // Was a valid ID used to construct the sensor?
+    bool isValid() const;
+
+    QString id() const;
+    virtual QString name() const = 0;
+
     // Types of sensors that the API supports
     enum Type {
         Orientation,
@@ -69,6 +80,7 @@ public:
         // Non-standard sensor types
         UserSensor = 128
     };
+    Type type() const;
 
     enum UpdatePolicy {
         Unknown           = 0x00, // If the sensor has no specific policy
@@ -83,12 +95,6 @@ public:
         PolledUpdates     = 0x10  // As often as polled (may not be supported by all sensors)
     };
     Q_DECLARE_FLAGS(UpdatePolicies, UpdatePolicy)
-
-    // Try to 'grab' the sensor (some sensors have ownership issues)
-    virtual bool start() = 0;
-
-    // Release the sensor
-    virtual void stop() = 0;
 
     // Set the desired update policy (default is defined by the sensor)
     // Use documentation to determine the policies that the sensor
@@ -110,7 +116,11 @@ public:
     void addFilter(QSensorFilter *filter);
     void removeFilter(QSensorFilter *filter);
 
+    // Start receiving values from the sensor
+    bool start();
 
+    // Stop receiving values from the sensor
+    void stop();
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);
@@ -121,17 +131,45 @@ public:
     virtual void sensorEvent(QSensorEvent *event) = 0;
 };
 
+// As above but uses a specific event type
+template <typename T>
+class QSpecificSensorListener : public QSensorListener
+{
+public:
+    virtual void sensorEvent(T *event) = 0;
+    void sensorEvent(QSensorEvent *event)
+    {
+        sensorEvent(static_cast<T*>(event));
+    }
+};
+
+typedef quint64 QSensorTimestamp;
+
 class Q_SENSORS_EXPORT QSensorEvent
 {
 public:
-    QSensor::Type type() const;
-    quint64 timestamp;
+    explicit QSensorEvent(QSensor *sensor);
+
+    QSensor *sensor() const;
+    QSensorTimestamp timestamp;
 };
 
-class Q_SENSORS_EXPORT QSensorFilter
+class QSensorFilter
 {
 public:
     virtual bool filter(QSensorEvent *event) = 0;
+};
+
+// As above but uses a specific event type
+template <typename T>
+class QSpecificSensorFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(T *event) = 0;
+    bool filter(QSensorEvent *event)
+    {
+        return filter(static_cast<T*>(event));
+    }
 };
 
 QTM_END_NAMESPACE
