@@ -49,3 +49,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
         sendmessage\
         serviceactions
 }
+
+# Sensors API examples
+SUBDIRS += sensors/accel
+
