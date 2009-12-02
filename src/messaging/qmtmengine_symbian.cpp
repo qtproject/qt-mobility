@@ -812,7 +812,6 @@ bool CMTMEngine::composeMMSL(const QMessage &message)
     QMessageContentContainerIdList contentIds = message.contentIds();
     foreach (QMessageContentContainerId id, contentIds){
         QMessageContentContainer container = message.find(id);
-        //QByteArray filePath = container.suggestedFileName();
         QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
         QString fileName = QString(filePath);
         QString body = container.textContent();
@@ -900,7 +899,6 @@ bool CMTMEngine::composeEmailL(const QMessage &message)
     QMessageContentContainerIdList contentIds = message.contentIds();
     foreach (QMessageContentContainerId id, contentIds){
         QMessageContentContainer container = message.find(id);
-        //QByteArray filePath = container.suggestedFileName();
         QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
         QString body = container.textContent();
         QString fileName = QString(filePath);
@@ -2303,7 +2301,6 @@ void CMTMEngine::storeMMSL(QMessage &message, TMsvId dest)
     QMessageContentContainerIdList contentIds = message.contentIds();
     foreach (QMessageContentContainerId id, contentIds){
         QMessageContentContainer container = message.find(id);
-        //filePath = container.suggestedFileName();
         filePath = QMessageContentContainerPrivate::attachmentFilename(container);
         QString body = container.textContent();
         if (!filePath.isEmpty()) { // content is attachment
@@ -2553,7 +2550,6 @@ void CMTMEngine::updateMMSL(QMessage &message)
     QMessageContentContainerIdList contentIds = message.contentIds();
     foreach (QMessageContentContainerId id, contentIds){
         QMessageContentContainer container = message.find(id);
-        //filePath = container.suggestedFileName();
         filePath = QMessageContentContainerPrivate::attachmentFilename(container);
         QString body = container.textContent();
         if (!filePath.isEmpty()) { // content is attachment
@@ -2713,7 +2709,6 @@ void CMTMEngine::updateEmailL(QMessage &message)
     QMessageContentContainerIdList contentIds = message.contentIds();
     foreach (QMessageContentContainerId id, contentIds){
         QMessageContentContainer container = message.find(id);
-        //filePath = container.suggestedFileName();
         filePath = QMessageContentContainerPrivate::attachmentFilename(container);
         QString body = container.textContent();
         if (!filePath.isEmpty()) { // content is attachment
@@ -2729,7 +2724,6 @@ void CMTMEngine::updateEmailL(QMessage &message)
             CleanupClosePushL(attachment);   
             
             CMsvAttachment* attachmentInfo = CMsvAttachment::NewL(CMsvAttachment::EMsvFile);
-            //QByteArray filePath = container.suggestedFileName();
             QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
             int last = filePath.lastIndexOf("/");
             int count = filePath.count();
@@ -2983,7 +2977,6 @@ void CMTMEngine::storeEmailL(QMessage &message, TMsvId dest)
     QMessageContentContainerIdList contentIds = message.contentIds();
     foreach (QMessageContentContainerId id, contentIds){
         QMessageContentContainer container = message.find(id);
-        //filePath = container.suggestedFileName();
         filePath = QMessageContentContainerPrivate::attachmentFilename(container);
         QString body = container.textContent();
         if (!filePath.isEmpty()) { // content is attachment
@@ -3003,7 +2996,6 @@ void CMTMEngine::storeEmailL(QMessage &message, TMsvId dest)
             CleanupClosePushL(attachment);   
             
             CMsvAttachment* attachmentInfo = CMsvAttachment::NewL(CMsvAttachment::EMsvFile);
-            //QByteArray filePath = container.suggestedFileName();
             QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
             int last = filePath.lastIndexOf("/");
             int count = filePath.count();
@@ -3255,7 +3247,7 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
         if (!ipRichText) {
             ipCharFormatLayer = CCharFormatLayer::NewL();
             ipParaFormatLayer = CParaFormatLayer::NewL();
-            ipRichText=CRichText::NewL(ipParaFormatLayer,ipCharFormatLayer);
+            ipRichText=CRichText::NewL(ipParaFormatLayer, ipCharFormatLayer);
         }
         ipRichText->Reset();
         pStore->RestoreBodyTextL(*ipRichText);
@@ -3263,7 +3255,12 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
         TPtr ptr2(pMessage->Des());
         ipRichText->Extract(ptr2);
         if (pMessage->Length() > 0) {
-            message.setBody(QString::fromUtf16(pMessage->Ptr(),pMessage->Length()));
+            message.setBody(QString::fromUtf16(pMessage->Ptr(), pMessage->Length()));
+            if (pMessage->Length() <= 40) {
+				message.setSubject(QString::fromUtf16(pMessage->Ptr(), pMessage->Length()));
+            } else {
+				message.setSubject(QString::fromUtf16(pMessage->Ptr(), 40));
+            }     
         }
         CleanupStack::PopAndDestroy(pMessage);
     }
