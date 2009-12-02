@@ -369,7 +369,8 @@ bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWriter *writer)
 
   New items are appended to playlist.
 
-  Returns true if playlist was loaded succesfully, otherwise returns false.
+  QMediaPlaylist::loaded() signal is emited if playlist was loaded succesfully,
+  otherwise the playlist emits loadFailed().
 */
 void QMediaPlaylist::load(const QUrl &location, const char *format)
 {
@@ -394,6 +395,7 @@ void QMediaPlaylist::load(const QUrl &location, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(location,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
+                emit loaded();
                 return;
             }
             delete reader;
@@ -413,7 +415,8 @@ void QMediaPlaylist::load(const QUrl &location, const char *format)
 
   New items are appended to playlist.
 
-  Returns true if playlist was loaded succesfully, otherwise returns false.
+  QMediaPlaylist::loaded() signal is emited if playlist was loaded succesfully,
+  otherwise the playlist emits loadFailed().
 */
 void QMediaPlaylist::load(QIODevice * device, const char *format)
 {
@@ -438,6 +441,7 @@ void QMediaPlaylist::load(QIODevice * device, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(device,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
+                emit loaded();
                 return;
             }
             delete reader;
