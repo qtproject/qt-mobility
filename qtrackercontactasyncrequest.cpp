@@ -205,8 +205,7 @@ RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
     queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::imAccountType> ());
     queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
 
-    queryidsimacccounts.addColumn("metacontact", rdfcontact1.property<nco::metacontact> ());
-
+    queryidsimacccounts.addColumn("metacontact", rdfcontact1.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
 }
 
