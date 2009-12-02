@@ -19,8 +19,6 @@ qtAddLibrary(QtBearer)
 
 CONFIG += console
 
-include(../examples.pri)
-
 symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 
 macx: {
