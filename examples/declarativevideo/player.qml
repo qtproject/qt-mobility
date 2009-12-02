@@ -9,6 +9,12 @@ Video {
     fillMode: Video.PreserveAspectFit
     source: videoUrl
 
+    Text {
+        text: video.title
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+    }
+
     Item {
         x: 0
         y: 470

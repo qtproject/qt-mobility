@@ -48,6 +48,8 @@
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
 #include <qmediaserviceprovider.h>
+#include <qmetadatacontrol.h>
+#include <qmetadatacontrolmetaobject_p.h>
 #include <qpaintervideosurface_p.h>
 #include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
@@ -161,6 +163,11 @@ void QmlGraphicsVideo::_q_error(QMediaPlayer::Error error, const QString &errorS
     emit errorStringChanged(m_errorString);
 }
 
+void QmlGraphicsVideo::_q_metaDataChanged()
+{
+    m_metaObject->metaDataChanged();
+}
+
 void QmlGraphicsVideo::_q_videoSurfaceFormatChanged(const QVideoSurfaceFormat &format)
 {
     const QSize implicitSize = format.sizeHint();
@@ -198,9 +205,11 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
     , m_mediaProvider(0)
     , m_mediaService(0)
     , m_playerControl(0)
+    , m_metaDataControl(0)
     , m_videoOutputControl(0)
     , m_videoRendererControl(0)
     , m_videoSurface(0)
+    , m_metaObject(0)
     , m_state(QmlGraphicsVideo::Stopped)
     , m_status(QmlGraphicsVideo::NoMedia)
     , m_error(QmlGraphicsVideo::NoError)
@@ -211,6 +220,8 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
         if ((m_mediaService = m_mediaProvider->requestService(Q_MEDIASERVICE_MEDIAPLAYER))) {
             m_playerControl = qobject_cast<QMediaPlayerControl *>(
                     m_mediaService->control(QMediaPlayerControl_iid));
+            m_metaDataControl = qobject_cast<QMetaDataControl *>(
+                    m_mediaService->control(QMetaDataControl_iid));
             m_videoOutputControl = qobject_cast<QVideoOutputControl *>(
                     m_mediaService->control(QVideoOutputControl_iid));
             m_videoRendererControl = qobject_cast<QVideoRendererControl *>(
@@ -219,6 +230,12 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
     }
 
     if (m_playerControl) {
+        if (m_metaDataControl) {
+            m_metaObject = new QMetaDataControlMetaObject(m_metaDataControl, this);
+
+            connect(m_metaDataControl, SIGNAL(metaDataChanged()),
+                    this, SLOT(_q_metaDataChanged()));
+        }
         if (m_videoOutputControl && m_videoRendererControl) {
             m_videoSurface = new QPainterVideoSurface;
             m_videoRendererControl->setSurface(m_videoSurface);

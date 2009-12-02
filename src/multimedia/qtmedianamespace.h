@@ -45,6 +45,8 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qmetatype.h>
 
+#include <qmobilityglobal.h>
+
 QTM_BEGIN_NAMESPACE
 
 namespace QtMedia

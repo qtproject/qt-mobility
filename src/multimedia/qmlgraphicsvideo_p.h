@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
 class QMediaPlayerControl;
 class QMediaService;
 class QMediaServiceProvider;
+class QMetaDataControl;
+class QMetaDataControlMetaObject;
 class QPainterVideoSurface;
 class QVideoOutputControl;
 class QVideoRendererControl;
@@ -193,6 +195,8 @@ private Q_SLOTS:
     void _q_volumeChanged(int volume);
     void _q_error(QMediaPlayer::Error error, const QString &errorString);
 
+    void _q_metaDataChanged();
+
     void _q_videoSurfaceFormatChanged(const QVideoSurfaceFormat &format);
     void _q_frameChanged();
 
@@ -204,9 +208,11 @@ private:
     QMediaServiceProvider *m_mediaProvider;
     QMediaService *m_mediaService;
     QMediaPlayerControl *m_playerControl;
+    QMetaDataControl *m_metaDataControl;
     QVideoOutputControl *m_videoOutputControl;
     QVideoRendererControl *m_videoRendererControl;
     QPainterVideoSurface *m_videoSurface;
+    QMetaDataControlMetaObject *m_metaObject;
     QBasicTimer m_notifyTimer;
 
     State m_state;
