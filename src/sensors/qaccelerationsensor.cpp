@@ -55,7 +55,8 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \reimp
+    Construct a sensor instance and attach to the sensor indicated by \a id.
+    The sensor will be deleted when \a parent is deleted.
 */
 QAccelerationSensor::QAccelerationSensor(const QString &id, QObject *parent)
     : QSensor(id, parent)
