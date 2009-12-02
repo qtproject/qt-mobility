@@ -87,8 +87,7 @@
 #include <imapset.h>
 #include <MIUTMSG.H>
 #include <charconv.h>
-#include <QMessageBox.h>
-
+#include <imcvtext.h> // KImcvMultipart declaration
 
 QTM_BEGIN_NAMESPACE
 
@@ -3200,6 +3199,7 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     
     const TMsvEntry& entry = receivedEntry.Entry();
     message.setDate(symbianTTimetoQDateTime(entry.iDate));
+    message.setReceivedDate(symbianTTimetoQDateTime(entry.iDate));
 
     QMessageAccount account = accountsByType(QMessage::Sms)[0];
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
@@ -3280,6 +3280,7 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
 
     const TMsvEntry& entry = receivedEntry.Entry();
     message.setDate(symbianTTimetoQDateTime(entry.iDate));
+    message.setReceivedDate(symbianTTimetoQDateTime(entry.iDate));
 
     QMessageAccount account = accountsByType(QMessage::Mms)[0];
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
@@ -3404,6 +3405,7 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
 
     const TMsvEntry& entry = receivedEntry.Entry();
     message.setDate(symbianTTimetoQDateTime(entry.iDate));
+    message.setReceivedDate(symbianTTimetoQDateTime(entry.iDate));
     
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_parentFolderId = createQMessageFolderId(entry.iServiceId, entry.Parent());
@@ -3427,13 +3429,14 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     
     CImHeader* emailEntry = CImHeader::NewLC();
     CImEmailMessage* emailMessage = CImEmailMessage::NewLC(receivedEntry);
-    CImMimeHeader* mime = CImMimeHeader::NewLC();
+    CImMimeHeader* pImMimeHeader = CImMimeHeader::NewLC();
 
+    TInt mimeHeaderReadError = KErrNone;
     if (receivedEntry.HasStoreL()) {
         CMsvStore* msvStore = receivedEntry.ReadStoreL();
         CleanupStack::PushL(msvStore);
         TRAP_IGNORE(emailEntry->RestoreL(*msvStore));
-        TRAP_IGNORE(mime->RestoreL(*msvStore));
+        TRAP(mimeHeaderReadError, pImMimeHeader->RestoreL(*msvStore));
         CleanupStack::PopAndDestroy(); // store
         }
     
@@ -3443,46 +3446,56 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
         ipRichText = CRichText::NewL(ipParaFormatLayer, ipCharFormatLayer);
     }
     ipRichText->Reset();
-    emailMessage->GetBodyTextL(
-                messageId,
-                CImEmailMessage::EThisMessageOnly,
-                *ipRichText,
-                *ipParaFormatLayer,
-                *ipCharFormatLayer);
+    emailMessage->GetBodyTextL(messageId,
+                               CImEmailMessage::EThisMessageOnly,
+                               *ipRichText,
+                               *ipParaFormatLayer,
+                               *ipCharFormatLayer);
+	
+    // From GetBodyTextL() documentation:
+    // A list containing the entry Ids for each body text part within
+    // the specified message is created during this call. The list can
+    // be retrieved after this call has completed by calling Selection().
+    if (emailMessage->Selection().Count() > 0) {
+        if (pImMimeHeader->ContentType() == KImcvMultipart) {
+            TInt count = emailMessage->Selection().Count();
+            TMsvId selId = emailMessage->Selection()[0];
+            // Get body content type (CImMimeHeader) from first body part
+            CMsvEntry* pEntry = retrieveCMsvEntry(emailMessage->Selection()[0]);
+            if (pEntry->HasStoreL()) { 
+                CMsvStore* pMsvStore = pEntry->ReadStoreL();
+                CleanupStack::PushL(pMsvStore);
+                TRAP(mimeHeaderReadError, pImMimeHeader->RestoreL(*pMsvStore));
+                CleanupStack::PopAndDestroy(pMsvStore);
+            }
+            releaseCMsvEntry(pEntry);
+        }
+    }
     
-
-    
-/*    if (ipRichText->DocumentLength() < 1){
-        retrieveBodyL(QMessageId(QString::number(messageId)));
-        emailMessage->GetBodyTextL(
-                    messageId,
-                    CImEmailMessage::EThisMessageOnly,
-                    *ipRichText,
-                    *ipParaFormatLayer,
-                    *ipCharFormatLayer);
-    }*/
     QByteArray mimeType;
-    TPtrC8 type = mime->ContentType();
+    if (mimeHeaderReadError == KErrNone) {
+        TPtrC8 type = pImMimeHeader->ContentType();
         if (type.Length() > 0) {
-        QByteArray contentType = QByteArray((const char *)type.Ptr(),type.Length());
-        mimeType.append(contentType);
-        mimeType.append("/");
-        
-        TPtrC8 subType = mime->ContentSubType();
-        if (subType.Length() > 0) {
-            QByteArray contentSubType = QByteArray((const char *)subType.Ptr(),subType.Length());
-            mimeType.append(contentSubType);
-        }    
-        TUint charset = mime->MimeCharset();
-        if (charset)
-            mimeType.append(";charset=");
-            if (charset == KCharacterSetIdentifierUcs2)
-                mimeType.append("UTF-16");
-            else if (charset == KCharacterSetIdentifierUtf8)
-                mimeType.append("UTF-8");
-    }    
-       
-    CleanupStack::PopAndDestroy(mime);
+            QByteArray contentType = QByteArray((const char *)type.Ptr(),type.Length());
+            mimeType.append(contentType);
+            mimeType.append("/");
+            
+            TPtrC8 subType = pImMimeHeader->ContentSubType();
+            if (subType.Length() > 0) {
+                QByteArray contentSubType = QByteArray((const char *)subType.Ptr(),subType.Length());
+                mimeType.append(contentSubType);
+            }    
+            TUint charset = pImMimeHeader->MimeCharset();
+            if (charset) {
+                mimeType.append(";charset=");
+                if (charset == KCharacterSetIdentifierUcs2)
+                    mimeType.append("UTF-16");
+                else if (charset == KCharacterSetIdentifierUtf8)
+                    mimeType.append("UTF-8");
+            }
+        }
+    }
+    CleanupStack::PopAndDestroy(pImMimeHeader);
     
     HBufC* pMessage = HBufC::NewLC(ipRichText->DocumentLength());
     TPtr ptr2(pMessage->Des());
@@ -3552,9 +3565,17 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
      
     //from
     TPtrC from = emailEntry->From();
-    message.setFrom(QMessageAddress(QString::fromUtf16(from.Ptr(), from.Length()), QMessageAddress::Email));
-    QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
-    
+    if (from.Length() > 0) {
+        message.setFrom(QMessageAddress(QString::fromUtf16(from.Ptr(), from.Length()), QMessageAddress::Email));
+        QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
+    } else {
+        if (entry.iDetails.Length() > 0)  {
+            QString fromString = QString::fromUtf16(receivedEntry.Entry().iDetails.Ptr(), receivedEntry.Entry().iDetails.Length());
+            message.setFrom(QMessageAddress(fromString, QMessageAddress::Email));
+            QMessagePrivate::setSenderName(message, fromString);
+        }
+    }
+   
     //to
     CDesCArray& toArray = emailEntry->ToRecipients();
     QList<QMessageAddress> toList;
@@ -3589,13 +3610,17 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     TPtrC subject = emailEntry->Subject();
     if (subject.Length() > 0) {
         message.setSubject(QString::fromUtf16(subject.Ptr(), subject.Length()));
+    } else {
+        if (entry.iDescription.Length() > 0)  {
+            message.setSubject(QString::fromUtf16(receivedEntry.Entry().iDescription.Ptr(),
+                                                  receivedEntry.Entry().iDescription.Length()));
+        }    
     }
     
     CleanupStack::PopAndDestroy(emailMessage);
     CleanupStack::PopAndDestroy(emailEntry);
-
-    return message;
     
+    return message;
 }
 
 QMessage CMTMEngine::pop3MessageL(CMsvEntry& /*receivedEntry*/, long int /*messageId*/) const

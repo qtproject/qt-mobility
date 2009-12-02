@@ -583,10 +583,8 @@ void tst_QMessageStore::testMessage()
 
     QMessageContentContainer body(message.find(bodyId));
 
-#ifndef Q_OS_SYMBIAN    
     QCOMPARE(body.contentType().toLower(), bodyType.toLower());
     QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
-#endif    
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
@@ -610,10 +608,8 @@ void tst_QMessageStore::testMessage()
         // We cannot create nested multipart messages
         QVERIFY(attachment.contentIds().isEmpty());
 
-#ifndef Q_OS_SYMBIAN        
         QCOMPARE(attachment.contentType().toLower(), attachmentType[index].toLower());
         QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[index].toLower());
-#endif
         QCOMPARE(attachment.suggestedFileName(), attachments[index]);
         QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[index], (attachmentSize[index] / 2));
     }
