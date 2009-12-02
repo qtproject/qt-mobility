@@ -40,6 +40,7 @@ symbian: {
         inc/cnttransformorganisation.h \
         inc/cnttransformavatar.h \
         inc/cnttransformavatarsimple.h \
+        inc/cntthumbnailcreator.h \
         inc/cnttransformsynctarget.h \
         inc/cnttransformgender.h \
         inc/cnttransformanniversary.h \
@@ -76,6 +77,7 @@ symbian: {
         src/cnttransformorganisation.cpp \
         src/cnttransformavatar.cpp \
         src/cnttransformavatarsimple.cpp \
+        src/cntthumbnailcreator.cpp\
         src/cnttransformsynctarget.cpp \
         src/cnttransformgender.cpp \
         src/cnttransformanniversary.cpp \
@@ -101,7 +103,12 @@ symbian: {
             -lcntmodel \
             -lcentralrepository \
             -lestor \
-            -lflogger
+            -lflogger \
+            -lefsrv \
+            -lfbscli \
+            -limageconversion \
+            -lbitmaptransforms \
+            -lbafl
 
     target.path = /sys/bin
     INSTALLS += target

@@ -19,6 +19,7 @@ SYMBIAN_HEADERS += \
         ../../inc/cnttransformorganisation.h \
         ../../inc/cnttransformavatar.h \
         ../../inc/cnttransformavatarsimple.h \
+        ../../inc/cntthumbnailcreator.h \        
         ../../inc/cnttransformsynctarget.h \
         ../../inc/cnttransformgender.h \
         ../../inc/cnttransformanniversary.h \
@@ -55,6 +56,7 @@ SYMBIAN_SOURCES += \
         ../../src/cnttransformorganisation.cpp \
         ../../src/cnttransformavatar.cpp \
         ../../src/cnttransformavatarsimple.cpp \
+        ../../src/cntthumbnailcreator.cpp \
         ../../src/cnttransformsynctarget.cpp \
         ../../src/cnttransformgender.cpp \
         ../../src/cnttransformanniversarysimple.cpp \
@@ -78,4 +80,10 @@ SYMBIAN_LIBS += \
         -lcntmodel \
         -lQtContacts \
         -lcentralrepository \
-        -lestor
+        -lestor \
+        -lefsrv \
+        -lfbscli \
+        -limageconversion \
+        -lbitmaptransforms \ 
+        -lbafl
+        
