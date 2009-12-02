@@ -14,7 +14,8 @@ INCLUDEPATH += ../
 
 SOURCES  += tst_qcontactrelationship.cpp
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 # App local deployment
 symbian:QCONTACTACTION_PLUGINS_DEPLOY.sources = contacts_sendemailactionfactory.dll

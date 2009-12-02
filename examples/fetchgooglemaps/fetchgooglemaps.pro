@@ -8,7 +8,8 @@ SOURCES = mapwindow.cpp \
           main.cpp
 
 include(../examples.pri)
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 
 logfile.path = $$DESTDIR
 logfile.files = nmealog.txt

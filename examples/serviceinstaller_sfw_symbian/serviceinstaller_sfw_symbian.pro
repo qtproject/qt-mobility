@@ -8,7 +8,8 @@ QT = core
 
 SOURCES += exampleinstaller.cpp
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 CONFIG += no_icon
 

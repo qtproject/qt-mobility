@@ -56,7 +56,7 @@ symbian: {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 
-    bearer_deployment.sources = QtBearer.dll
+    bearer_deployment.sources = QtBearer_tp.dll
     bearer_deployment.path = /sys/bin
     DEPLOYMENT += bearer_deployment
 

@@ -13,7 +13,8 @@ INCLUDEPATH += . ../../src/contacts \
                ../../src/contacts/filters
 
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 # Input
 SOURCES += main.cpp \
@@ -26,5 +27,4 @@ HEADERS += testmodelui.h \
            qcontactlistmodel.h \
            qcontactlistmodel_p.h
 
-qtAddLibrary(QtContacts)
 include(../examples.pri)

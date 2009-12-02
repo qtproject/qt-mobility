@@ -97,13 +97,13 @@ maemo {
 
 wince* {
     ### Bearer Management
-    BEARERLIB.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtBearer).dll
+    BEARERLIB.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtBearer_tp).dll
     BEARERLIB.path = .
     DEPLOYMENT += BEARERLIB
 
     ### Contacts
     # Main library
-    CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtContacts).dll
+    CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtContacts_tp).dll
     CONTACTS_DEPLOYMENT.path = /Windows
 
     # Plugins
@@ -112,12 +112,12 @@ wince* {
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
 
     ### Service Framework    
-    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtServiceFramework).dll
+    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtServiceFramework_tp).dll
     SFW_DEPLOYMENT.path = .
     DEPLOYMENT += SFW_DEPLOYMENT
     
     ### Location
-    LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation).dll
+    LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation_tp).dll
     LOCATION.path = .
     DEPLOYMENT += LOCATION
 }

@@ -7,7 +7,8 @@ TARGET        = tst_sfw_sampleserviceplugin
 DESTDIR = .
 
 include(../../common.pri)
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     load(data_caging_paths)

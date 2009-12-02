@@ -127,7 +127,7 @@ unix: {
         }
 
 
-        QtSystemInfoDeployment.sources = QtSystemInfo.dll
+        QtSystemInfoDeployment.sources = QtSystemInfo_tp.dll
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }

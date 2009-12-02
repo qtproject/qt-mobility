@@ -24,4 +24,6 @@ FORMS = publisherdialog.ui \
         subscriberdialog.ui
 
 include(../examples.pri)
-qtAddLibrary(QtPublishSubscribe)
+
+CONFIG += mobility
+MOBILITY = publishsubscribe

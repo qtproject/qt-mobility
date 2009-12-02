@@ -1,39 +1,39 @@
-INCLUDEPATH += $${MOBILITY_INCLUDE}
+!symbian:INCLUDEPATH += $${MOBILITY_INCLUDE}
 mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
-    qtAddLibrary(QtBearer)
+    qtAddLibrary(QtBearer_tp)
 }
 
 contains(MOBILITY, publishsubscribe) {
-    qtAddLibrary(QtPublishSubscribe)
+    qtAddLibrary(QtPublishSubscribe_tp)
 }
 
 contains(MOBILITY, location) {
-    qtAddLibrary(QtLocation)
+    qtAddLibrary(QtLocation_tp)
 }
 
 contains(MOBILITY, serviceframework) {
-    qtAddLibrary(QtServiceFramework)
+    qtAddLibrary(QtServiceFramework_tp)
 }
 
 contains(MOBILITY, systeminfo) {
-    qtAddLibrary(QtSystemInfo)
+    qtAddLibrary(QtSystemInfo_tp)
 }
 
 contains(MOBILITY, multimedia) {
-    qtAddLibrary(QtMedia)
+    qtAddLibrary(QtMedia_tp)
 }
 
 contains(MOBILITY, contacts) {
-    qtAddLibrary(QtContacts)
+    qtAddLibrary(QtContacts_tp)
 }
 
 contains(MOBILITY, messaging) {
-    qtAddLibrary(QtMessaging)
+    qtAddLibrary(QtMessaging_tp)
 }
 
 contains(MOBILITY, versit) {
-    qtAddLibrary(QtVersit)
+    qtAddLibrary(QtVersit_tp)
 }

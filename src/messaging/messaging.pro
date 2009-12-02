@@ -137,7 +137,7 @@ symbian {
 	-lapgrfx \
 	-lapmime
 
-    messaging.sources = QtMessaging.dll
+    messaging.sources = QtMessaging_tp.dll
     messaging.path = /sys/bin
     DEPLOYMENT += messaging
 

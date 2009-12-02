@@ -119,7 +119,7 @@ include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
-    QtMediaDeployment.sources = QtMedia.dll
+    QtMediaDeployment.sources = QtMedia_tp.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
     TARGET.CAPABILITY = ALL -TCB
