@@ -6,9 +6,9 @@ include($$QT_MOBILITY_BUILD_TREE/config.pri)
 TEMPLATE = subdirs
 
 #ServiceFramework examples
-SUBDIRS += ../filemanagerplugin \
-    ../bluetoothtransferplugin \
-    ../servicebrowser
+SUBDIRS += ../bluetoothtransferplugin \
+    ../filemanagerplugin #\
+#    ../servicebrowser
 
 #BearerManagement examples
 SUBDIRS += ../bearermonitor \
@@ -27,44 +27,46 @@ SUBDIRS += ../sysinfo
 SUBDIRS += ../querymessages\
     ../sendmessage\
     ../serviceactions \
-    ../../tests/bearerex
+    ../../tests/messagesex
     
 symbian {
 
     load(data_caging_paths)
 
     executables.sources = \
-    bearermonitor.exe \
-    BearerEx.exe \
-    serviceframework_bluetoothtransferplugin.dll \
-    serviceframework_filemanagerplugin.dll \
-    servicebrowser.exe \
-    publish_subscribe.exe \
-    querymessages.exe \
-    sendmessage.exe \
-    serviceactions.exe \
-    samplephonebook.exe \
-    sysinfo.exe
+        bearermonitor.exe \
+        BearerEx.exe \
+        serviceframework_bluetoothtransferplugin.dll \
+        serviceframework_filemanagerplugin.dll \
+#        servicebrowser.exe \
+        publish_subscribe.exe \
+        querymessages.exe \
+        sendmessage.exe \
+        serviceactions.exe \
+        messagingex.exe \
+        samplephonebook.exe \
+        sysinfo.exe
+    executables.path = /sys/bin
     
-    xml.path = $$DESTDIR/xmldata
-    xml.files = bluetoothtransferservice.xml \
-        filemanagerservice.xml
-    xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
-    INSTALLS += xml
-
+    pluginstubs.sources = ../bluetoothtransferplugin/qmakepluginstubs/serviceframework_bluetoothtransferplugin.qtplugin \
+        ../filemanagerplugin/qmakepluginstubs/serviceframework_filemanagerplugin.qtplugin
+    pluginstubs.path = $${QT_PLUGINS_BASE_DIR} #/resource/qt/plugins
+        
     executables.path = /sys/bin
     DEPLOYMENT += executables \
+        pluginstubs \
         reg_resource \
         resource
 
     reg_resource.sources = \
          $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/bearermonitor_reg.rsc \
          $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/BearerEx_reg.rsc \
-         $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/servicebrowser_reg.rsc \
+#         $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/servicebrowser_reg.rsc \
          $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/publish_subscribe_reg.rsc \
          $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/querymessages_reg.rsc \
          $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/sendmessage_reg.rsc \
          $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/serviceactions_reg.rsc \
+         $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/messagingex_reg.rsc \
          $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/samplephonebook_reg.rsc \
          $${EPOCROOT}$$HW_ZDIR$$REG_RESOURCE_IMPORT_DIR/sysinfo_reg.rsc
 
@@ -73,11 +75,12 @@ symbian {
     resource.sources = \
          $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/bearermonitor.rsc \
          $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/BearerEx.rsc \
-         $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/servicebrowser.rsc \
+#         $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/servicebrowser.rsc \
          $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/publish_subscribe.rsc \
          $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/querymessages.rsc \
          $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/sendmessage.rsc \
          $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/serviceactions.rsc \
+         $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/messagingex.rsc \
          $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/samplephonebook.rsc \
          $${EPOCROOT}$$HW_ZDIR$$APP_RESOURCE_DIR/sysinfo.rsc
 
