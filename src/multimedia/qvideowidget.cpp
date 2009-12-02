@@ -526,6 +526,9 @@ void QVideoWidget::setMediaObject(QMediaObject *object)
 {
     Q_D(QVideoWidget);
 
+    if (object == d->mediaObject)
+        return;
+
     if (d->service) {
         disconnect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
