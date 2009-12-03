@@ -19,7 +19,7 @@ tracker-sparql --update --query "INSERT {
 	<http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$2> a nco:IMAccount;
 	    nco:imID '$3';
 	    nco:imNickname '$4';
-	    nco:imPresence '$5';
+	    nco:imPresence $5;
 	    nco:imStatusMessage '$6';
 	    nco:imProtocol '$7'
 }

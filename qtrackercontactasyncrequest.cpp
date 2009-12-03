@@ -47,11 +47,32 @@
 #include <QtTracker/ontologies/nie.h>
 #include <QtTracker/ontologies/nco.h>
 #include <qtrackercontactasyncrequest.h>
+#include <QHash>
 
 using namespace SopranoLive;
 
+class ConversionLookup: public QHash<QString,QString>
+{
+public:
+    ConversionLookup& operator<<(const QPair<QString, QString> &conversion)
+    {
+        this->insert(conversion.first, conversion.second);
+        return *this;
+    }
+};
+
+
 const QString FieldQContactLocalId("QContactLocalId");
 const QString FieldAccountPath("AccountPath");
+const ConversionLookup presenceConversion(ConversionLookup()
+            <<QPair<QString, QString>("presence-status-offline", QContactOnlineAccount::PresenceOffline)
+            <<QPair<QString, QString>("presence-status-available", QContactOnlineAccount::PresenceAvailable)
+            <<QPair<QString, QString>("presence_status-away", QContactOnlineAccount::PresenceAway)
+            <<QPair<QString, QString>("presence_status-extended-away", QContactOnlineAccount::PresenceExtendedAway)
+            <<QPair<QString, QString>("presence_status-busy", QContactOnlineAccount::PresenceBusy)
+            <<QPair<QString, QString>("presence_status-unknown", QContactOnlineAccount::PresenceUnknown)
+            <<QPair<QString, QString>("presence_status-hidden", QContactOnlineAccount::PresenceHidden)
+);
 
 void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
 {
@@ -828,7 +849,11 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
         account.setValue(FieldAccountPath, imAccountQuery->index(queryRow, 5).data().toString()); // getImAccountType?
     account.setValue("Capabilities", imAccountQuery->index(queryRow, 6).data().toString()); // getImAccountType?
     account.setNickname(imAccountQuery->index(queryRow, 4).data().toString()); // nick
-    account.setPresence(imAccountQuery->index(queryRow, 2).data().toString()); // imStatus
+
+    QString presence = imAccountQuery->index(queryRow, 2).data().toString(); // imPresence iri
+    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
+    account.setPresence(presenceConversion[presence]);
+
     account.setStatusMessage(imAccountQuery->index(queryRow, 3).data().toString()); // imStatusMessage
     return account;
 }
