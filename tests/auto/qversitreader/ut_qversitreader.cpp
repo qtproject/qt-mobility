@@ -78,6 +78,15 @@ void UT_QVersitReader::testDevice()
     // Device has been set
     mReader->setDevice(mInputDevice);
     QVERIFY(mReader->device() == mInputDevice);
+
+    delete mInputDevice;
+    QVERIFY(mReader->device() == NULL);
+
+    mInputDevice = new QBuffer;
+    mInputDevice->open(QBuffer::ReadWrite);
+
+    QVERIFY(mReader->device() == NULL);
+    mReader->setDevice(mInputDevice);
 }
 
 void UT_QVersitReader::testReading()
@@ -108,6 +117,7 @@ void UT_QVersitReader::testReading()
     mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->write(twoDocuments);
     mInputDevice->seek(0);
+    mReader->setDevice(mInputDevice);
     QVERIFY(mReader->readAll());
     QCOMPARE(mReader->result().count(),2);
 
@@ -128,6 +138,7 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
     mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->write(validDocumentsAndGroupedDocument);
     mInputDevice->seek(0);
+    mReader->setDevice(mInputDevice);
     QVERIFY(mReader->readAll());
     QCOMPARE(mReader->result().count(),4);
 
@@ -139,6 +150,7 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
     mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
+    mReader->setDevice(mInputDevice);
     mExpectedDocumentCount = 1;
     QVERIFY(mReader->startReading());
     delete mReader; // waits for the thread to finish

@@ -64,6 +64,7 @@
 #include <QIODevice>
 #include <QList>
 #include <QTimer>
+#include <QPointer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -105,7 +106,7 @@ protected: // From QThread
      void run();
 
 public: // Data
-    QIODevice* mIoDevice;
+    QPointer<QIODevice> mIoDevice;
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
 };
