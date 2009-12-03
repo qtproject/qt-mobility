@@ -118,7 +118,7 @@ public:
         m_navigator = new QMediaPlaylistNavigator(playlist,this);
         m_navigator->setPlaybackMode(QMediaPlaylist::Linear);
 
-        connect(m_navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
+        connect(m_navigator, SIGNAL(currentIndexChanged(int)), SIGNAL(currentIndexChanged(int)));
         connect(m_navigator, SIGNAL(activated(QMediaContent)), SIGNAL(currentMediaChanged(QMediaContent)));
     }
 
@@ -132,10 +132,10 @@ public:
         return true;
     }
 
-    int currentPosition() const { return m_navigator->currentPosition(); }
-    void setCurrentPosition(int position) { m_navigator->jump(position); }
-    int nextPosition(int steps) const { return m_navigator->nextPosition(steps); }
-    int previousPosition(int steps) const { return m_navigator->previousPosition(steps); }
+    int currentIndex() const { return m_navigator->currentIndex(); }
+    void setCurrentIndex(int position) { m_navigator->jump(position); }
+    int nextIndex(int steps) const { return m_navigator->nextIndex(steps); }
+    int previousIndex(int steps) const { return m_navigator->previousIndex(steps); }
 
     void next() { m_navigator->next(); }
     void previous() { m_navigator->previous(); }

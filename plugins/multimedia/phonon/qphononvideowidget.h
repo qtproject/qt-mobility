@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERVIDEOWIDGET_H
-#define QGSTREAMERVIDEOWIDGET_H
+#ifndef QPHONONVIDEOWIDGET_H
+#define QPHONONVIDEOWIDGET_H
 
 #include <qvideowidgetcontrol.h>
 #include <qvideooutputcontrol.h>
@@ -100,4 +100,4 @@ public:
     void setOutput(Output) {}
 };
 
-#endif // QGSTREAMERVIDEOWIDGET_H
+#endif // QPHONONVIDEOWIDGET_H

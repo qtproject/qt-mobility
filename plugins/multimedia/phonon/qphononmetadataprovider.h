@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERMETADATAPROVIDER_H
-#define QGSTREAMERMETADATAPROVIDER_H
+#ifndef QPHONONMETADATAPROVIDER_H
+#define QPHONONMETADATAPROVIDER_H
 
 #include <qmetadatacontrol.h>
 
@@ -77,4 +77,4 @@ private:
     QMap<QString, QtMedia::MetaData> m_keysMap;
 };
 
-#endif // QGSTREAMERMETADATAPROVIDER_H
+#endif // QPHONONMETADATAPROVIDER_H

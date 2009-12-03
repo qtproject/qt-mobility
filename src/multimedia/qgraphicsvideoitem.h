@@ -55,9 +55,13 @@ class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
+    Q_PROPERTY(QMediaObject* mediaObject READ mediaObject WRITE setMediaObject)
 public:
-    QGraphicsVideoItem(QMediaObject *object, QGraphicsItem *parent = 0);
+    QGraphicsVideoItem(QGraphicsItem *parent = 0);
     ~QGraphicsVideoItem();
+
+    QMediaObject *mediaObject() const;
+    void setMediaObject(QMediaObject *object);
 
     QRectF boundingRect() const;
 
@@ -73,6 +77,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_present())
     Q_PRIVATE_SLOT(d_func(), void _q_formatChanged(const QVideoSurfaceFormat &))
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaObjectDestroyed())
 };
 
 QTM_END_NAMESPACE

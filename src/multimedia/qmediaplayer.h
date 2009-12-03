@@ -60,7 +60,7 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailabilityChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
@@ -159,7 +159,7 @@ Q_SIGNALS:
     void positionChanged(qint64 position);
 
     void volumeChanged(int volume);
-    void mutingChanged(bool muted);
+    void mutedChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
 
     void bufferStatusChanged(int percentFilled);

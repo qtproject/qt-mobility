@@ -128,6 +128,14 @@ QRadioTuner::~QRadioTuner()
 }
 
 /*!
+    Returns true if the radio tuner is supported, otherwise returns false.
+*/
+bool QRadioTuner::isAvailable() const
+{
+    return d_func()->control != NULL;
+}
+
+/*!
     \property QRadioTuner::state
     Return the current radio tuner state.
 

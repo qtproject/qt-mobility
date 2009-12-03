@@ -58,7 +58,7 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
     Q_OBJECT
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(QMediaContent currentMedia READ currentMedia NOTIFY currentMediaChanged)
-    Q_PROPERTY(int currentPosition READ currentPosition WRITE setCurrentPosition NOTIFY playlistPositionChanged)
+    Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
     Q_ENUMS(PlaybackMode Error)
 
 public:
@@ -71,24 +71,24 @@ public:
     PlaybackMode playbackMode() const;
     void setPlaybackMode(PlaybackMode mode);
 
-    int currentPosition() const;
+    int currentIndex() const;
     QMediaContent currentMedia() const;
 
-    int nextPosition(int steps = 1) const;
-    int previousPosition(int steps = 1) const;
+    int nextIndex(int steps = 1) const;
+    int previousIndex(int steps = 1) const;
 
-    QMediaContent media(int position) const;
+    QMediaContent media(int index) const;
 
-    int size() const;
+    int mediaCount() const;
     bool isEmpty() const;
     bool isReadOnly() const;
 
-    bool appendItem(const QMediaContent &content);
-    bool appendItems(const QList<QMediaContent> &items);
-    bool insertItem(int index, const QMediaContent &content);
-    bool insertItems(int index, const QList<QMediaContent> &items);
-    bool removeItem(int pos);
-    bool removeItems(int start, int end);
+    bool addMedia(const QMediaContent &content);
+    bool addMedia(const QList<QMediaContent> &items);
+    bool insertMedia(int index, const QMediaContent &content);
+    bool insertMedia(int index, const QList<QMediaContent> &items);
+    bool removeMedia(int pos);
+    bool removeMedia(int start, int end);
     bool clear();
 
     void load(const QUrl &location, const char *format = 0);
@@ -106,18 +106,18 @@ public Q_SLOTS:
     void next();
     void previous();
 
-    void setCurrentPosition(int position);
+    void setCurrentIndex(int index);
 
 Q_SIGNALS:
-    void playlistPositionChanged(int position);
+    void currentIndexChanged(int index);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
     void currentMediaChanged(const QMediaContent&);
 
-    void itemsAboutToBeInserted(int start, int end);
-    void itemsInserted(int start, int end);
-    void itemsAboutToBeRemoved(int start, int end);
-    void itemsRemoved(int start, int end);
-    void itemsChanged(int start, int end);
+    void mediaAboutToBeInserted(int start, int end);
+    void mediaInserted(int start, int end);
+    void mediaAboutToBeRemoved(int start, int end);
+    void mediaRemoved(int start, int end);
+    void mediaChanged(int start, int end);
 
     void loaded();
     void loadFailed();

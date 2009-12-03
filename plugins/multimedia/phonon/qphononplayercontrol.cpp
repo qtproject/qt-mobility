@@ -64,7 +64,7 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
             this, SIGNAL(durationChanged(qint64)));
 
     connect(m_audioOutput, SIGNAL(mutedChanged(bool)),
-            this, SIGNAL(mutingChanged(bool)));
+            this, SIGNAL(mutedChanged(bool)));
     connect(m_audioOutput, SIGNAL(volumeChanged(qreal)),
             this, SLOT(updateVolume()));
 

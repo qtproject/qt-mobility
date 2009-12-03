@@ -117,7 +117,7 @@ signals:
     void stateChanged(QMediaPlayer::State state);
     void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
     void volumeChanged(int volume);
-    void mutedStateChaned(bool muted);
+    void mutedStateChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
     void bufferingProgressChanged(int percentFilled);
@@ -145,6 +145,7 @@ private:
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QtMedia::MetaData,QVariant> > m_streamProperties;
     QList<QMediaStreamsControl::StreamType> m_streamTypes;
+    QMap<QMediaStreamsControl::StreamType, int> m_playbin2StreamOffset;
 
 
     int m_volume;

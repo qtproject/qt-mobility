@@ -65,7 +65,11 @@ class Q_MEDIA_EXPORT QAudioCaptureSource : public QMediaObject
 
 public:
     QAudioCaptureSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
+    QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent = 0);
+
     ~QAudioCaptureSource();
+
+    bool isAvailable() const;
 
     int deviceCount() const;
 
