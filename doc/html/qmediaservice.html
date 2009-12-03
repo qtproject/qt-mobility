@@ -8,6 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QMediaService"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -81,6 +82,8 @@
 <p>See also <a href="qmediaobject.html">QMediaObject</a>, <a href="qmediacontrol.html">QMediaControl</a>, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>, and <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QMediaService/MediaEndpoint"></a>
+<a name="//apple_ref/cpp/econst/QMediaService/AudioDevice"></a>
 <h3 class="fn"><a name="MediaEndpoint-enum"></a>enum QMediaService::MediaEndpoint</h3>
 <p>Enumerates the possible end points a media service may have.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -89,35 +92,46 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMediaService/QMediaService"></a>
 <h3 class="fn"><a name="QMediaService"></a>QMediaService::QMediaService ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Construct a media service with the given <i>parent</i>. This class is meant as a base class for Multimedia services so this constructor is protected.</p>
+<a name="//apple_ref/cpp/instm/QMediaService/~QMediaService"></a>
 <h3 class="fn"><a name="dtor.QMediaService"></a>QMediaService::~QMediaService ()</h3>
 <p>Destroys a media service.</p>
+<a name="//apple_ref/cpp/instm/QMediaService/activeEndpoint"></a>
 <h3 class="fn"><a name="activeEndpoint"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaService::activeEndpoint ( <a href="qmediaservice.html#MediaEndpoint-enum">QMediaService::MediaEndpoint</a> <i>endpointType</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the active endpoint for <i>endpointType</i>.</p>
 <p>See also <a href="qmediaservice.html#setActiveEndpoint">setActiveEndpoint</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaService/activeEndpointChanged"></a>
 <h3 class="fn"><a name="activeEndpointChanged"></a>void QMediaService::activeEndpointChanged ( <a href="qmediaservice.html#MediaEndpoint-enum">QMediaService::MediaEndpoint</a> <i>endpointType</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>endpoint</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal emitted when the active endpoint of type <i>endpointType</i> has been changed to <i>endpoint</i>.</p>
+<a name="//apple_ref/cpp/instm/QMediaService/control"></a>
 <h3 class="fn"><a name="control"></a><a href="qmediacontrol.html">QMediaControl</a> * QMediaService::control ( const char * <i>interface</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a pointer to the media control implementing <i>interface</i>.</p>
 <p>If the service does not implement the control a null pointer is returned instead.</p>
 <h3 class="fn"><a name="control-2"></a>T QMediaService::control () const</h3>
 <p>Returns a pointer to the media control of type T implemented by a media service.</p>
 <p>If the service does not implment the control a null pointer is returned instead.</p>
+<a name="//apple_ref/cpp/instm/QMediaService/endpointDescription"></a>
 <h3 class="fn"><a name="endpointDescription"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaService::endpointDescription ( <a href="qmediaservice.html#MediaEndpoint-enum">QMediaService::MediaEndpoint</a> <i>endpointType</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>endpoint</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the description of the <i>endpoint</i> for the <i>endpointType</i>.</p>
+<a name="//apple_ref/cpp/instm/QMediaService/isEndpointSupported"></a>
 <h3 class="fn"><a name="isEndpointSupported"></a>bool QMediaService::isEndpointSupported ( <a href="qmediaservice.html#MediaEndpoint-enum">QMediaService::MediaEndpoint</a> <i>endpointType</i> )</h3>
 <p>Return true if <i>endpointType</i> is available.</p>
+<a name="//apple_ref/cpp/instm/QMediaService/setActiveEndpoint"></a>
 <h3 class="fn"><a name="setActiveEndpoint"></a>bool QMediaService::setActiveEndpoint ( <a href="qmediaservice.html#MediaEndpoint-enum">QMediaService::MediaEndpoint</a> <i>endpointType</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>endpoint</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if set of the active endpoint for <i>endpointType</i> to <i>endpoint</i> succeeds.</p>
 <p>See also <a href="qmediaservice.html#activeEndpoint">activeEndpoint</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaService/supportedEndpoints"></a>
 <h3 class="fn"><a name="supportedEndpoints"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QMediaService::supportedEndpoints ( <a href="qmediaservice.html#MediaEndpoint-enum">QMediaService::MediaEndpoint</a> <i>endpointType</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of endpoints available for the <i>endpointType</i>.</p>
+<a name="//apple_ref/cpp/instm/QMediaService/supportedEndpointsChanged"></a>
 <h3 class="fn"><a name="supportedEndpointsChanged"></a>void QMediaService::supportedEndpointsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when there is a change in the availability of devices.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

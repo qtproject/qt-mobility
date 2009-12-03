@@ -90,13 +90,13 @@ void UT_QVersitWriter::testWriting()
     const char vCard21[] =
 "BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
-FN:Homer\r\n\
+FN:John\r\n\
 END:VCARD\r\n";
     mOutputDevice->open(QBuffer::ReadWrite);
     QVersitDocument document;
     QVersitProperty property;
     property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QByteArray("Homer"));
+    property.setValue(QByteArray("John"));
     document.addProperty(property);
     document.setVersitType(QVersitDocument::VCard21);
     mWriter->setVersitDocument(document);
@@ -109,7 +109,7 @@ END:VCARD\r\n";
     const char vCard30[] =
 "BEGIN:VCARD\r\n\
 VERSION:3.0\r\n\
-FN:Homer\r\n\
+FN:John\r\n\
 END:VCARD\r\n";
     document.setVersitType(QVersitDocument::VCard30);
     mWriter->setVersitDocument(document);

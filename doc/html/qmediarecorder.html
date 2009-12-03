@@ -8,6 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QMediaRecorder"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -50,19 +51,15 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#format">format</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#formatDescription">formatDescription</a></b> ( const QString &amp; <i>mimeType</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#maximumFrameRate">maximumFrameRate</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> = QVideoEncoderSettings() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#maximumResolution">maximumResolution</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> = QVideoEncoderSettings() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#minimumFrameRate">minimumFrameRate</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> = QVideoEncoderSettings() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#minimumResolution">minimumResolution</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> = QVideoEncoderSettings() ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#outputLocation-prop">outputLocation</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#setEncodingSettings">setEncodingSettings</a></b> ( const QAudioEncoderSettings &amp; <i>audio</i>, const QVideoEncoderSettings &amp; <i>video</i> = QVideoEncoderSettings(), const QString &amp; <i>format</i> = QString() )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#outputLocation-prop">setOutputLocation</a></b> ( const QUrl &amp; <i>location</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#state">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedAudioCodecs">supportedAudioCodecs</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedAudioSampleRates">supportedAudioSampleRates</a></b> ( const QAudioEncoderSettings &amp; <i>settings</i> = QAudioEncoderSettings() ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedAudioSampleRates">supportedAudioSampleRates</a></b> ( const QAudioEncoderSettings &amp; <i>settings</i> = QAudioEncoderSettings(), bool * <i>continuous</i> = 0 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedFormats">supportedFormats</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedFrameRates">supportedFrameRates</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> = QVideoEncoderSettings() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QSize&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedResolutions">supportedResolutions</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> = QVideoEncoderSettings() ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedFrameRates">supportedFrameRates</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> = QVideoEncoderSettings(), bool * <i>continuous</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QSize&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedResolutions">supportedResolutions</a></b> ( const QVideoEncoderSettings &amp; <i>settings</i> = QVideoEncoderSettings(), bool * <i>continuous</i> = 0 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#supportedVideoCodecs">supportedVideoCodecs</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#videoCodecDescription">videoCodecDescription</a></b> ( const QString &amp; <i>codec</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVideoEncoderSettings </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#videoSettings">videoSettings</a></b> () const</td></tr>
@@ -122,6 +119,10 @@
     recorder-&gt;record();</pre>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QMediaRecorder/Error"></a>
+<a name="//apple_ref/cpp/econst/QMediaRecorder/NoError"></a>
+<a name="//apple_ref/cpp/econst/QMediaRecorder/ResourceError"></a>
+<a name="//apple_ref/cpp/econst/QMediaRecorder/FormatError"></a>
 <h3 class="fn"><a name="Error-enum"></a>enum QMediaRecorder::Error</h3>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
@@ -129,6 +130,10 @@
 <tr><td valign="top"><tt>QMediaRecorder::ResourceError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Device is not ready or not available.</td></tr>
 <tr><td valign="top"><tt>QMediaRecorder::FormatError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Current format is not supported.</td></tr>
 </table></p>
+<a name="//apple_ref/cpp/tag/QMediaRecorder/State"></a>
+<a name="//apple_ref/cpp/econst/QMediaRecorder/StoppedState"></a>
+<a name="//apple_ref/cpp/econst/QMediaRecorder/RecordingState"></a>
+<a name="//apple_ref/cpp/econst/QMediaRecorder/PausedState"></a>
 <h3 class="fn"><a name="State-enum"></a>enum QMediaRecorder::State</h3>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
@@ -138,6 +143,8 @@
 </table></p>
 <hr />
 <h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/duration"></a>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/durationChanged"></a>
 <h3 class="fn"><a name="duration-prop"></a>duration : const <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a></h3>
 <p>This property holds the recorded media duration in milliseconds.</p>
 <p><b>Access functions:</b></p>
@@ -148,6 +155,8 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/outputLocation"></a>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/setOutputLocation"></a>
 <h3 class="fn"><a name="outputLocation-prop"></a>outputLocation : <a href="http://qt.nokia.com/doc/4.5/qurl.html">QUrl</a></h3>
 <p>This property holds the destination location of media content.</p>
 <p>Setting the location can fail for example when the service supports only local file system locations while the network url was passed, or the service doesn't support media recording.</p>
@@ -158,90 +167,101 @@
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/QMediaRecorder"></a>
 <h3 class="fn"><a name="QMediaRecorder"></a>QMediaRecorder::QMediaRecorder ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a media recorder which records the media produced by <i>mediaObject</i>.</p>
 <p>The <i>parent</i> is passed to <a href="qmediaobject.html">QMediaObject</a>.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/~QMediaRecorder"></a>
 <h3 class="fn"><a name="dtor.QMediaRecorder"></a>QMediaRecorder::~QMediaRecorder ()</h3>
 <p>Destroys a media recorder object.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/audioCodecDescription"></a>
 <h3 class="fn"><a name="audioCodecDescription"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaRecorder::audioCodecDescription ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i> ) const</h3>
 <p>Returns a description of an audio <i>codec</i>.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/audioSettings"></a>
 <h3 class="fn"><a name="audioSettings"></a><a href="qaudioencodersettings.html">QAudioEncoderSettings</a> QMediaRecorder::audioSettings () const</h3>
 <p>Returns the audio encoder settings being used.</p>
 <p>See also <a href="qmediarecorder.html#setEncodingSettings">setEncodingSettings</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/durationChanged"></a>
 <h3 class="fn"><a name="durationChanged"></a>void QMediaRecorder::durationChanged ( <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qint64-typedef">qint64</a> <i>duration</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>duration</i> of the recorded media has changed.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qmediarecorder.html#Error-enum">Error</a> QMediaRecorder::error () const</h3>
 <p>Returns the current error state.</p>
 <p>See also <a href="qmediarecorder.html#errorString">errorString</a>().</p>
 <h3 class="fn"><a name="error-2"></a>void QMediaRecorder::error ( <a href="qmediarecorder.html#Error-enum">QMediaRecorder::Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that an <i>error</i> has occurred.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/errorString"></a>
 <h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaRecorder::errorString () const</h3>
 <p>Returns a string describing the current error state.</p>
 <p>See also <a href="qmediarecorder.html#error">error</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/format"></a>
 <h3 class="fn"><a name="format"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaRecorder::format () const</h3>
 <p>Returns the MIME type of the selected container format.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/formatDescription"></a>
 <h3 class="fn"><a name="formatDescription"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaRecorder::formatDescription ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>mimeType</i> ) const</h3>
 <p>Returns a description of a container format <i>mimeType</i>.</p>
-<h3 class="fn"><a name="maximumFrameRate"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QMediaRecorder::maximumFrameRate ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> = QVideoEncoderSettings() )</h3>
-<p>Returns the maximum frame rate video can be encoded at.</p>
-<p>If non null video <i>settings</i> parameter is passed, returns the maximum supported frame rate with partial settings like <a href="qvideoencodersettings.html#setResolution">video resolution</a> applied.</p>
-<p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>() and <a href="qmediarecorder.html#minimumFrameRate">minimumFrameRate</a>().</p>
-<h3 class="fn"><a name="maximumResolution"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QMediaRecorder::maximumResolution ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> = QVideoEncoderSettings() ) const</h3>
-<p>Returns the maximum resolution video can be encoded at.</p>
-<p>If non null video <i>settings</i> parameter is passed, returns the maximum supported resolution with partial settings applied.</p>
-<p>See also <a href="qmediarecorder.html#supportedResolutions">supportedResolutions</a>(), <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>(), and <a href="qmediarecorder.html#minimumResolution">minimumResolution</a>().</p>
-<h3 class="fn"><a name="minimumFrameRate"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QMediaRecorder::minimumFrameRate ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> = QVideoEncoderSettings() )</h3>
-<p>Returns the minimum frame rate video can encoded at.</p>
-<p>If non null video <i>settings</i> parameter is passed, returns the minimum supported frame rate with partial settings like <a href="qvideoencodersettings.html#setResolution">video resolution</a> applied.</p>
-<p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>() and <a href="qmediarecorder.html#maximumFrameRate">maximumFrameRate</a>().</p>
-<h3 class="fn"><a name="minimumResolution"></a><a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a> QMediaRecorder::minimumResolution ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> = QVideoEncoderSettings() ) const</h3>
-<p>Return the minimum resolution video can be encoded at.</p>
-<p>If non null video <i>settings</i> parameter is passed, returns the minimum supported resolution with partial settings applied.</p>
-<p>See also <a href="qmediarecorder.html#supportedResolutions">supportedResolutions</a>(), <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>(), and <a href="qmediarecorder.html#maximumResolution">maximumResolution</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/pause"></a>
 <h3 class="fn"><a name="pause"></a>void QMediaRecorder::pause ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Pause recording.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/record"></a>
 <h3 class="fn"><a name="record"></a>void QMediaRecorder::record ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Start recording.</p>
 <p>This is an asynchronous call, with signal stateCahnged(<a href="qmediarecorder.html#State-enum">QMediaRecorder::RecordingState</a>) being emited when recording started, otherwise <a href="qmediarecorder.html#error">error</a>() signal is emited.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/setEncodingSettings"></a>
 <h3 class="fn"><a name="setEncodingSettings"></a>void QMediaRecorder::setEncodingSettings ( const <a href="qaudioencodersettings.html">QAudioEncoderSettings</a> &amp; <i>audio</i>, const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>video</i> = QVideoEncoderSettings(), const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>format</i> = QString() )</h3>
 <p>Sets the <i>audio</i> and <i>video</i> encoder settings and container <i>format</i> MIME type.</p>
 <p>It's only possible to change setttings when the encoder is in the QMediaEncoder::StoppedState state.</p>
 <p>If some parameters are not specified, or null settings are passed, the encoder choose the default encoding parameters, depending on media source properties. But while setEncodingSettings is optional, the backend can preload encoding pipeline to improve recording startup time.</p>
 <p>See also <a href="qmediarecorder.html#audioSettings">audioSettings</a>(), <a href="qmediarecorder.html#videoSettings">videoSettings</a>(), and <a href="qmediarecorder.html#format">format</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qmediarecorder.html#State-enum">State</a> QMediaRecorder::state () const</h3>
 <p>Return the current media recorder state.</p>
 <p>See also <a href="qmediarecorder.html#State-enum">QMediaRecorder::State</a>.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/stateChanged"></a>
 <h3 class="fn"><a name="stateChanged"></a>void QMediaRecorder::stateChanged ( <a href="qmediarecorder.html#State-enum">QMediaRecorder::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that a media recorder's <i>state</i> has changed.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/stop"></a>
 <h3 class="fn"><a name="stop"></a>void QMediaRecorder::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Stop recording.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/supportedAudioCodecs"></a>
 <h3 class="fn"><a name="supportedAudioCodecs"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QMediaRecorder::supportedAudioCodecs () const</h3>
 <p>Returns a list of supported audio codecs.</p>
-<h3 class="fn"><a name="supportedAudioSampleRates"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;int&gt; QMediaRecorder::supportedAudioSampleRates ( const <a href="qaudioencodersettings.html">QAudioEncoderSettings</a> &amp; <i>settings</i> = QAudioEncoderSettings() ) const</h3>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/supportedAudioSampleRates"></a>
+<h3 class="fn"><a name="supportedAudioSampleRates"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;int&gt; QMediaRecorder::supportedAudioSampleRates ( const <a href="qaudioencodersettings.html">QAudioEncoderSettings</a> &amp; <i>settings</i> = QAudioEncoderSettings(), bool * <i>continuous</i> = 0 ) const</h3>
 <p>Returns a list of supported audio sample rates.</p>
 <p>If non null audio <i>settings</i> parameter is passed, the returned list is reduced to sample rates supported with partial settings applied.</p>
 <p>It can be used for example to query the list of sample rates, supported by specific audio codec.</p>
+<p>If the encoder supports arbitrary sample rates within the supported rates range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/supportedFormats"></a>
 <h3 class="fn"><a name="supportedFormats"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QMediaRecorder::supportedFormats () const</h3>
 <p>Returns a list of MIME types of supported container formats.</p>
-<h3 class="fn"><a name="supportedFrameRates"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>&gt; QMediaRecorder::supportedFrameRates ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> = QVideoEncoderSettings() ) const</h3>
-<p>Returns a list of frame rates video can be encoded at. An empty list is returned if the encoder supports arbitrary frame rates within the minimum and maximum range.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/supportedFrameRates"></a>
+<h3 class="fn"><a name="supportedFrameRates"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a>&gt; QMediaRecorder::supportedFrameRates ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> = QVideoEncoderSettings(), bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns a list of frame rates video can be encoded at.</p>
 <p>If non null video <i>settings</i> parameter is passed, the returned list is reduced to frame rates supported with partial settings like video codec or resolution applied.</p>
-<p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>(), <a href="qmediarecorder.html#minimumFrameRate">minimumFrameRate</a>(), and <a href="qmediarecorder.html#maximumFrameRate">maximumFrameRate</a>().</p>
-<h3 class="fn"><a name="supportedResolutions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>&gt; QMediaRecorder::supportedResolutions ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> = QVideoEncoderSettings() ) const</h3>
-<p>Returns a list of resolutions video can be encoded at. An empty list is returned if the video encoder supports arbitrary resolutions within the minimum and maximum range.</p>
+<p>If the encoder supports arbitrary frame rates within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
+<p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/supportedResolutions"></a>
+<h3 class="fn"><a name="supportedResolutions"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qsize.html">QSize</a>&gt; QMediaRecorder::supportedResolutions ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> = QVideoEncoderSettings(), bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns a list of resolutions video can be encoded at.</p>
 <p>If non null video <i>settings</i> parameter is passed, the returned list is reduced to resolution supported with partial settings like video codec or framerate applied.</p>
-<p>See also <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>(), <a href="qmediarecorder.html#minimumResolution">minimumResolution</a>(), and <a href="qmediarecorder.html#maximumResolution">maximumResolution</a>().</p>
+<p>If the encoder supports arbitrary resolutions within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
+<p>See also <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/supportedVideoCodecs"></a>
 <h3 class="fn"><a name="supportedVideoCodecs"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QMediaRecorder::supportedVideoCodecs () const</h3>
 <p>Returns a list of supported video codecs.</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/videoCodecDescription"></a>
 <h3 class="fn"><a name="videoCodecDescription"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMediaRecorder::videoCodecDescription ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>codec</i> ) const</h3>
 <p>Returns a description of a video <i>codec</i>.</p>
 <p>See also <a href="qmediarecorder.html#setEncodingSettings">setEncodingSettings</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaRecorder/videoSettings"></a>
 <h3 class="fn"><a name="videoSettings"></a><a href="qvideoencodersettings.html">QVideoEncoderSettings</a> QMediaRecorder::videoSettings () const</h3>
 <p>Returns the video encoder settings being used.</p>
 <p>See also <a href="qmediarecorder.html#setEncodingSettings">setEncodingSettings</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

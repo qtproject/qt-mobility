@@ -58,8 +58,9 @@ QTM_BEGIN_NAMESPACE
     \class QCamera
 
     \preliminary
-    \brief The QCamera class provides interface for system
-    camera devices.
+    \brief The QCamera class provides interface for system camera devices.
+
+    \ingroup camera
 
     QCamera can be used with QVideoWidget for viewfinder display
     and QMediaRecorder for video recording.

@@ -8,6 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QContactDetailDefinitionField"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -47,6 +48,9 @@
 <p>Encapsulates information about a particular datum which may be part of a <a href="qcontactdetail.html">QContactDetail</a>, including the type, allowable values and access constraints.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QContactDetailDefinitionField/AccessConstraint"></a>
+<a name="//apple_ref/cpp/econst/QContactDetailDefinitionField/NoConstraint"></a>
+<a name="//apple_ref/cpp/econst/QContactDetailDefinitionField/ReadOnly"></a>
 <h3 class="fn"><a name="AccessConstraint-enum"></a>enum QContactDetailDefinitionField::AccessConstraint</h3>
 <p>This enum defines the access constraints which may be set on fields of a detail definition in the store for which the definition is valid. The constraint which applies to the definition takes precedence over a constraint which applies to a field of that definition. For example, if a field has the <tt>QContactDetailDefinitionField::NoConstraint</tt> constraint, but the detail definition from which the field came has either the <tt>QContactDetailDefinition::ReadOnly</tt> or <tt>QContactDetailDefinition::CreateOnly</tt> constraint, then the field will be a read-only field.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -56,39 +60,51 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/QContactDetailDefinitionField"></a>
 <h3 class="fn"><a name="QContactDetailDefinitionField"></a>QContactDetailDefinitionField::QContactDetailDefinitionField ()</h3>
 <p>Constructs a new field with no constraints and an invalid data type.</p>
 <h3 class="fn"><a name="QContactDetailDefinitionField-2"></a>QContactDetailDefinitionField::QContactDetailDefinitionField ( const QContactDetailDefinitionField &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the <i>other</i> field</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/~QContactDetailDefinitionField"></a>
 <h3 class="fn"><a name="dtor.QContactDetailDefinitionField"></a>QContactDetailDefinitionField::~QContactDetailDefinitionField ()</h3>
 <p>Cleans up the memory in use by the field</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/accessConstraint"></a>
 <h3 class="fn"><a name="accessConstraint"></a><a href="qcontactdetaildefinitionfield.html#AccessConstraint-enum">QContactDetailDefinitionField::AccessConstraint</a> QContactDetailDefinitionField::accessConstraint () const</h3>
 <p>Returns the access constraints which apply to this field</p>
 <p>See also <a href="qcontactdetaildefinitionfield.html#setAccessConstraint">setAccessConstraint</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/allowableValues"></a>
 <h3 class="fn"><a name="allowableValues"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html#QVariantList-typedef">QVariantList</a> QContactDetailDefinitionField::allowableValues () const</h3>
 <p>Returns the list of allowable values which this field may store</p>
 <p>See also <a href="qcontactdetaildefinitionfield.html#setAllowableValues">setAllowableValues</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/dataType"></a>
 <h3 class="fn"><a name="dataType"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html#Type-enum">QVariant::Type</a> QContactDetailDefinitionField::dataType () const</h3>
 <p>Returns the data type of the field</p>
 <p>See also <a href="qcontactdetaildefinitionfield.html#setDataType">setDataType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/setAccessConstraint"></a>
 <h3 class="fn"><a name="setAccessConstraint"></a>void QContactDetailDefinitionField::setAccessConstraint ( <a href="qcontactdetaildefinitionfield.html#AccessConstraint-enum">QContactDetailDefinitionField::AccessConstraint</a> <i>constraint</i> )</h3>
 <p>Sets the access constraints which apply to this field to <i>constraint</i></p>
 <p>See also <a href="qcontactdetaildefinitionfield.html#accessConstraint">accessConstraint</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/setAllowableValues"></a>
 <h3 class="fn"><a name="setAllowableValues"></a>void QContactDetailDefinitionField::setAllowableValues ( const <a href="http://qt.nokia.com/doc/4.5/qvariant.html#QVariantList-typedef">QVariantList</a> <i>values</i> )</h3>
 <p>Sets the list of allowable values which this field may store to <i>values</i></p>
 <p>See also <a href="qcontactdetaildefinitionfield.html#allowableValues">allowableValues</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/setDataType"></a>
 <h3 class="fn"><a name="setDataType"></a>void QContactDetailDefinitionField::setDataType ( <a href="http://qt.nokia.com/doc/4.5/qvariant.html#Type-enum">QVariant::Type</a> <i>type</i> )</h3>
 <p>Sets the data type of the field to <i>type</i></p>
 <p>See also <a href="qcontactdetaildefinitionfield.html#dataType">dataType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetailDefinitionField::operator!= ( const QContactDetailDefinitionField &amp; <i>other</i> ) const</h3>
 <p>Returns true if the access constraint, allowable values or data type of the <i>other</i> field differ from those of this field</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContactDetailDefinitionField &amp; QContactDetailDefinitionField::operator= ( const QContactDetailDefinitionField &amp; <i>other</i> )</h3>
 <p>Assigns the field to be equal to the <i>other</i> field</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionField/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetailDefinitionField::operator== ( const QContactDetailDefinitionField &amp; <i>other</i> ) const</h3>
 <p>Returns true if the access constraint, allowable values and data type of the <i>other</i> field are equal to those of this field</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>

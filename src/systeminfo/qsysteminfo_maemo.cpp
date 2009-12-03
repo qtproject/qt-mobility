@@ -55,7 +55,7 @@
 #include <QTimer>
 #include <QMapIterator>
 
-s#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
 #include <QtDBus>
 #include <QDBusConnection>
@@ -111,11 +111,37 @@ s#if !defined(QT_NO_DBUS)
 
 QTM_BEGIN_NAMESPACE
 
+        static bool halAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Hal");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        }
+    }
+#endif
+    //  qDebug() << "Hal is not running";
+    return false;
+}
+
+bool halIsAvailable;
+//////// QSystemInfo
+QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
+ : QObject(parent)
+{
+    halIsAvailable = halAvailable();
+    langCached = currentLanguage();
+    startLanguagePolling();
+}
+
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-void QSystemInfoPrivate::startLangaugePolling()
+void QSystemInfoPrivate::startLanguagePolling()
 {
     QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
     if(langCached.isEmpty()) {
@@ -127,7 +153,7 @@ void QSystemInfoPrivate::startLangaugePolling()
         langCached = checkLang;
     }
     langTimer = new QTimer(this);
-    QTimer::singleShot(1000, this, SLOT(startLangaugePolling()));
+    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
 }
 
 // 2 letter ISO 639-1
@@ -404,20 +430,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent)
 {
-#if !defined(QT_NO_DBUS)
-    setupNmConnections();
-#endif
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
-
-void QSystemNetworkInfoPrivate::updateDeviceInterfaceState(const QString &/*path*/, quint32 /*nmState*/)
-{
- //   qWarning() << __FUNCTION__ << path << nmState;
-}
-
 
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -1683,9 +1700,6 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
          : QObject(parent)
  {
-     kdeIsRunning = false;
-     gnomeIsRunning = false;
-     whichWMRunning();
  }
 
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
@@ -1714,6 +1728,6 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
     return false;
 }
 
-#include "moc_qsysteminfo_linux_p.cpp"
+#include "moc_qsysteminfo_maemo_p.cpp"
 
 QTM_END_NAMESPACE

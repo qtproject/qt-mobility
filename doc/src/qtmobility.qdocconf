@@ -1,4 +1,5 @@
 
+include(macros.qdocconf)
 
 project = Qt Mobility Project Library
 description = Qt Mobility Project Library Reference Documentation
@@ -27,13 +28,13 @@ sourcedirs = ../../src/bearer \
              ../../src/versit \
              .
 
-excludedirs = ../../src/messaging/win32wce
+excludedirs = ../../src/messaging/win32wce \
+              ../../src/publishsubscribe/symbian
 
 exampledirs = ../../examples \
               ../.. \
               .
 
-excludedirs = ../../src/publishsubscribe/symbian
 
 indexes                 = qt.index
 
@@ -44,8 +45,8 @@ outputdir               = ../html
 extraimages.HTML        = qtlogo \
                           codeless
 
-versionsym              = "QtMobility Project 1.0"
-version                 = Mobility Project 1.0
+versionsym              = "QtMobility Project 1.0.0"
+version                 = Mobility Project 1.0.0
 
 base                    = file:./doc/html
 
@@ -173,9 +174,12 @@ HTML.postheader         = "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0
 HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
                           "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
                           "<td align=\"left\">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>\n" \
-                          "<td align=\"right\"><div align=\"right\">Qt Mobility Project 1.0 (BETA)</div></td>\n" \
+                          "<td width=\"20%\" align=\"center\"><a href=\"trademarks.html\">Trademarks</a></td>\n" \
+                          "<td align=\"right\"><div align=\"right\">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>\n" \
                           "</tr></table></div></address>"
 
 macro.raisedaster.HTML  = "<sup>*</sup>"
 macro.br.HTML = "<br/>"
+
+HTML.generatemacrefs    = "true"
 

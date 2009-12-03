@@ -16,21 +16,29 @@
 </h1>
 <a name="how-to-register-and-unregister-service-plugins-in-s60"></a>
 <h2>How to register and unregister service plugins in S60?</h2>
-<p>Registration phase is a little different compared to other platforms because of the authenticity of the provider is done during (un)registering phase based on the verification of VID/SID (vendor ID or secure ID). A tiny installer application must be implemented by the service provider. Installer application handles registering (and unregistering) of the service. Minimalistic example code for the installer is shown below. The full example of the installer can be found under <tt>examples/serviceinstaller_sfw_symbian</tt>.</p>
-<pre>    int main(int argc, char *argv[])
+<p>Registration phase is a little different compared to other platforms because of the authenticity of the provider is done during (un)registering phase based on the verification of VID/SID (vendor ID or secure ID). A tiny installer application must be implemented by the service provider. Installer application is responsible for the registering (and the unregistering) of the service. The example code for the installer is shown below. The whole installer project can be found under <tt>examples/serviceinstaller_sfw_symbian</tt>.</p>
+<pre>    const QString filemanagerxml = &quot;c:\\resource\\apps\\xmldata\\filemanagerservice.xml&quot;;
+    const QString bluetoothxml = &quot;c:\\resource\\apps\\xmldata\\bluetoothtransferservice.xml&quot;;
+
+    int main(int argc, char *argv[])
     {
         QCoreApplication app(argc, argv);
 
         QServiceManager s;
-        s.addService(&quot;c:\\private\\E00b7e42\\xmldata\\filemanagerservice.xml&quot;);
-        s.addService(&quot;c:\\private\\E00b7e42\\xmldata\\bluetoothtransferservice.xml&quot;);
 
-        return app.exec();
+            if (QFile::exists(filemanagerxml)) {
+                    s.addService(filemanagerxml);
+            } else {
+                    s.removeService(&quot;FileManagerService&quot;);
+            }
+
+            if (QFile::exists(bluetoothxml)) {
+                    s.addService(bluetoothxml);
+            } else {
+                    s.removeService(&quot;BluetoothTransferService&quot;);
+            }
     }</pre>
-<p>The package file must be updated a little to run the installer on installation. Add FR and RB keywords to the end of the line which deploys installer.exe to device as follow:</p>
-<pre>    &quot;/S60/devices/S60_5th_Edition_SDK_v1.0/epoc32/release/$(PLATFORM)/$(TARGET)/exampleinstaller.exe&quot;    - &quot;!:\sys\bin\exampleinstaller.exe&quot;,FR,RB</pre>
-<p>Those keywords defines that the installer application is run and the service is registered during the installation.</p>
-<p>See more about the package file options: <a href="http://wiki.forum.nokia.com/index.php/Advanced_Package_File_Options">http://wiki.forum.nokia.com/index.php/Advanced_Package_File_Options</a></p>
+<p>If you want to create your own installer take a copy from the installer project (<tt>examples/serviceinstaller_sfw_symbian</tt>) and modify only the necessary parts e.g a target for your installer and define plugins which are deployed etc.</p>
 <p>If the installer defines the VID (non-zero value) then the VID is stored to the database, otherwise SID is used. When unregistering the plugin the VID/SID verification is done to ensure that only the application which actually registered the service is only allowed to remove it. VID/SID is left to the database even the service has been unregistered. This prevents the exactly same way named services to be installed afterwards because the VID/SID information is locked to the service name.</p>
 <p>More info about VID and SID can be found from:</p>
 <ul>
@@ -40,7 +48,7 @@
 <a name="what-s-special-from-the-security-perspective"></a>
 <h2>What's special from the security perspective?</h2>
 <p>There is only one database in S60 because both databases (user and system) are combined to the same database. The database is located behind the server's private folder, (<tt>c:\private\2002AC7F</tt>). This ensures the database can't be thumbered (e.g&#x2e; remove, move or replace) without Allfiles capability which isn't user-grantable (More about the capabilities: <a href="http://wiki.forum.nokia.com/index.php/Capabilities">http://wiki.forum.nokia.com/index.php/Capabilities</a>). That makes it impossible for example to replace the whole database with the new one which might contain malicious services.</p>
-<p>Note! It doesn't matter which one scope is used in Symbian because both are mapped to the same database anyway.</p>
+<p>Note! It doesn't matter which scope is used on Symbian as <a href="qservicemanager.html#Scope-enum">QServiceManager::UserScope</a> and <a href="qservicemanager.html#Scope-enum">QServiceManager::SystemScope</a> are mapped to the same database.</p>
 <a name="directory-structure"></a>
 <h2>Directory structure</h2>
 <p>There are different implementations for the both emulator and device because emulator doesn't support multiple applications to be loaded at the same time, (Known issue: <a href="http://bugreports.qt.nokia.com/browse/QTBUG-2950">QTBUG-2950</a>). The dll approach must be used in the emulator environment and the exe approach instead of dll in the real device.</p>
@@ -48,6 +56,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
 </tr></table></div></address></body>
 </html>
