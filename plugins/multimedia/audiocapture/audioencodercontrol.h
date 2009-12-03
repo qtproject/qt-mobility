@@ -80,8 +80,8 @@ public:
     void setSampleRate(int sampleRate);
     QList<int> supportedSampleRates(const QAudioEncoderSettings &, bool *continuous = 0) const;
 
-    int channels() const;
-    void setChannels(int channels);
+    int channelCount() const;
+    void setChannelCount(int channels);
     QList<int> supportedChannelCounts() const;
 
     int sampleSize() const;

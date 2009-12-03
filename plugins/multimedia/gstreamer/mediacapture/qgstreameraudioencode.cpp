@@ -154,15 +154,15 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     gst_element_add_pad(GST_ELEMENT(encoderBin), gst_ghost_pad_new("src", pad));
     gst_object_unref(GST_OBJECT(pad));
 
-    if (m_audioSettings.sampleRate() > 0 || m_audioSettings.channels() > 0) {
+    if (m_audioSettings.sampleRate() > 0 || m_audioSettings.channelCount() > 0) {
         GstCaps *caps = gst_caps_new_empty();
         GstStructure *structure = gst_structure_new("audio/x-raw-int", NULL);
 
         if (m_audioSettings.sampleRate() > 0)
             gst_structure_set(structure, "rate", G_TYPE_INT, m_audioSettings.sampleRate(), NULL );
 
-        if (m_audioSettings.channels() > 0)
-            gst_structure_set(structure, "channels", G_TYPE_INT, m_audioSettings.channels(), NULL );
+        if (m_audioSettings.channelCount() > 0)
+            gst_structure_set(structure, "channels", G_TYPE_INT, m_audioSettings.channelCount(), NULL );
 
         gst_caps_append_structure(caps,structure);
 

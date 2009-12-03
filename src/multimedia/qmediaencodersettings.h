@@ -75,8 +75,8 @@ public:
     int bitRate() const;
     void setBitRate(int bitrate);
 
-    int channels() const;
-    void setChannels(int channels);
+    int channelCount() const;
+    void setChannelCount(int channels);
 
     int sampleRate() const;
     void setSampleRate(int rate);

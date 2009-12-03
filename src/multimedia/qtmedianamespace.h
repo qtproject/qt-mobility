@@ -78,7 +78,7 @@ namespace QtMedia
         AudioBitRate,
         AudioCodec,
         AverageLevel,
-        Channels,
+        ChannelCount,
         PeakValue,
         Frequency,
 

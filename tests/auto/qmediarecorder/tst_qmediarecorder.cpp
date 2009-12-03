@@ -680,7 +680,7 @@ void tst_QMediaRecorder::testEncodingSettings()
     QCOMPARE(audioSettings.bitRate(), 128*1024);
     QCOMPARE(audioSettings.sampleRate(), -1);
     QCOMPARE(audioSettings.quality(), QtMedia::NormalQuality);
-    QCOMPARE(audioSettings.channels(), -1);
+    QCOMPARE(audioSettings.channelCount(), -1);
 
     QCOMPARE(audioSettings.encodingMode(), QtMedia::ConstantQualityEncoding);
 
@@ -748,9 +748,9 @@ void tst_QMediaRecorder::testAudioSettings()
     QVERIFY(!settings.isNull());
 
     settings = QAudioEncoderSettings();
-    QCOMPARE(settings.channels(), -1);
-    settings.setChannels(2);
-    QCOMPARE(settings.channels(), 2);
+    QCOMPARE(settings.channelCount(), -1);
+    settings.setChannelCount(2);
+    QCOMPARE(settings.channelCount(), 2);
     QVERIFY(!settings.isNull());
 
     settings = QAudioEncoderSettings();
@@ -801,11 +801,11 @@ void tst_QMediaRecorder::testAudioSettings()
     QVERIFY(settings1 != settings2);
 
     settings1 = QAudioEncoderSettings();
-    settings1.setChannels(1);
+    settings1.setChannelCount(1);
     settings2 = QAudioEncoderSettings();
-    settings2.setChannels(1);
+    settings2.setChannelCount(1);
     QVERIFY(settings1 == settings2);
-    settings2.setChannels(2);
+    settings2.setChannelCount(2);
     QVERIFY(settings1 != settings2);
 
     settings1 = QAudioEncoderSettings();

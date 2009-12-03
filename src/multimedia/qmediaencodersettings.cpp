@@ -96,7 +96,7 @@ private:
     \code
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("audio/mpeg");
-    audioSettings.setChannels(2);
+    audioSettings.setChannelCount(2);
 
     recorder->setEncodingSettings(audioSettings);
     \endcode
@@ -229,7 +229,7 @@ int QAudioEncoderSettings::bitRate() const
 /*!
     Returns the number of audio channels.
 */
-int QAudioEncoderSettings::channels() const
+int QAudioEncoderSettings::channelCount() const
 {
     return d->channels;
 }
@@ -240,7 +240,7 @@ int QAudioEncoderSettings::channels() const
     A value of -1 indicates the encoder should make an optimal choice based on what is available
     from the audio source and the limitations of the codec.
 */
-void QAudioEncoderSettings::setChannels(int channels)
+void QAudioEncoderSettings::setChannelCount(int channels)
 {
     d->isNull = false;
     d->channels = channels;

@@ -190,12 +190,12 @@ QList<int> AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings
     return m_session->deviceInfo()->supportedFrequencies();
 }
 
-int AudioEncoderControl::channels() const
+int AudioEncoderControl::channelCount() const
 {
     return m_session->format().channels();
 }
 
-void AudioEncoderControl::setChannels(int channels)
+void AudioEncoderControl::setChannelCount(int channels)
 {
     QT_PREPEND_NAMESPACE(QAudioFormat) fmt = m_session->format();
     fmt.setChannels(channels);
@@ -232,7 +232,7 @@ QAudioEncoderSettings AudioEncoderControl::audioSettings() const
     settings.setBitRate(bitRate());
     settings.setQuality(quality());
     settings.setSampleRate(sampleRate());
-    settings.setChannels(channels());
+    settings.setChannelCount(channelCount());
     return settings;
 }
 
@@ -242,5 +242,5 @@ void AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings
     setBitRate(settings.bitRate());
     setQuality(settings.quality());
     setSampleRate(settings.sampleRate());
-    setChannels(settings.channels());
+    setChannelCount(settings.channelCount());
 }

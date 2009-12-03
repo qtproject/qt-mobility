@@ -189,12 +189,12 @@ QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSetti
     return QList<int>(); //m_session->deviceInfo()->supportedFrequencies();
 }
 
-int S60AudioEncoderControl::channels() const
+int S60AudioEncoderControl::channelCount() const
 {
     return m_session->format().channels();
 }
 
-void S60AudioEncoderControl::setChannels(int channels)
+void S60AudioEncoderControl::setChannelCount(int channels)
 {
     QAudioFormat fmt = m_session->format();
     fmt.setChannels(channels);
@@ -231,7 +231,7 @@ QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
     settings.setBitRate(bitRate());
     settings.setQuality(quality());
     settings.setSampleRate(sampleRate());
-    settings.setChannels(channels());
+    settings.setChannelCount(channelCount());
     return settings;
 }
 
@@ -241,5 +241,5 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
     setBitRate(settings.bitRate());
     setQuality(settings.quality());
     setSampleRate(settings.sampleRate());
-    setChannels(settings.channels());
+    setChannelCount(settings.channelCount());
 }
