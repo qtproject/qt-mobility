@@ -35,6 +35,7 @@ symbian {
     SOURCES +=  databasemanager_s60.cpp
 
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC84
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include

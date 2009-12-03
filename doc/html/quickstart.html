@@ -44,20 +44,21 @@
     }</pre>
 <p>Here we are using the <a href="qsysteminfo.html">QSystemInfo</a> headers to print out the system's current country code. All the domain APIs are wrapped within the <tt>QtMobility</tt> namespace and thus developers either need to declare <tt>using namespace QtMobility</tt> or qualify their symbols e.g&#x2e; <tt>QtMobility::QSystemInfo s</tt>.</p>
 <p>In step 3, to specify that our project is using System Information we declare in the project file:</p>
-<pre>    CONFIG += Mobility
+<pre>    CONFIG += mobility
     MOBILITY += systeminfo</pre>
 <p>Here we've declared that the application uses Qt Mobility and that we are using the System Information domain. (Internally this results in qmake setting up include and library search paths. See mobility.prf for details to see what those paths are, it is copied into the mkspecs/features directory of Qt's install path)</p>
 <p>The following table lists the domains and the corresponding values that can be assigned to <tt>MOBILITY</tt>.</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Domain</th><th>Value</th></tr></thead>
-<tr valign="top" class="odd"><td>Bearer Mangement</td><td>bearer</td></tr>
-<tr valign="top" class="even"><td>Contacts</td><td>contacts</td></tr>
-<tr valign="top" class="odd"><td>Location</td><td>location</td></tr>
-<tr valign="top" class="even"><td>Multimedia</td><td>multimedia</td></tr>
-<tr valign="top" class="odd"><td>Messaging</td><td>messaging</td></tr>
-<tr valign="top" class="even"><td>Publish And Subscribe</td><td>publish subscribe</td></tr>
-<tr valign="top" class="odd"><td>Service Framework</td><td>serviceframework</td></tr>
-<tr valign="top" class="even"><td>System Information</td><td>systeminfo</td></tr>
+<tr valign="top" class="odd"><td><a href="bearer-management.html">Bearer Management</a></td><td>bearer</td></tr>
+<tr valign="top" class="even"><td><a href="contacts.html">Contacts</a></td><td>contacts</td></tr>
+<tr valign="top" class="odd"><td><a href="location-overview.html">Location</a></td><td>location</td></tr>
+<tr valign="top" class="even"><td><a href="multimedia.html">Multimedia</a></td><td>multimedia</td></tr>
+<tr valign="top" class="odd"><td><a href="messaging.html">Messaging</a></td><td>messaging</td></tr>
+<tr valign="top" class="even"><td><a href="publ-subs.html">Publish And Subscribe</a></td><td>publishsubscribe</td></tr>
+<tr valign="top" class="odd"><td><a href="service-frameworks.html">Service Framework</a></td><td>serviceframework</td></tr>
+<tr valign="top" class="even"><td><a href="systeminfo.html">System Information</a></td><td>systeminfo</td></tr>
+<tr valign="top" class="odd"><td><a href="future.html">Versit</a></td><td>versit</td></tr>
 </table></p>
 <p>And we're done. If you are using the command line simply enter:</p>
 <pre>    qmake
@@ -66,6 +67,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
 </tr></table></div></address></body>
 </html>

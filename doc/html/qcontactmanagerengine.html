@@ -8,6 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QContactManagerEngine"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -122,80 +123,105 @@
 <p>See also <a href="qcontactmanager.html">QContactManager</a> and <a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/QContactManagerEngine"></a>
 <h3 class="fn"><a name="QContactManagerEngine"></a>QContactManagerEngine::QContactManagerEngine ()</h3>
 <p>A default, empty constructor.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/addSorted"></a>
 <h3 class="fn"><a name="addSorted"></a>void QContactManagerEngine::addSorted ( <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; * <i>sorted</i>, const <a href="qcontact.html">QContact</a> &amp; <i>toAdd</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Performs insertion sort of the contact <i>toAdd</i> into the <i>sorted</i> list, according to the provided <i>sortOrders</i> list. The first <a href="qcontactsortorder.html">QContactSortOrder</a> in the list has the highest priority; if the contact <i>toAdd</i> is deemed equal to another in the <i>sorted</i> list, the second <a href="qcontactsortorder.html">QContactSortOrder</a> in the list is used (and so on until either the contact is inserted or there are no more sort order objects in the list).</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/cancelRequest"></a>
 <h3 class="fn"><a name="cancelRequest"></a>bool QContactManagerEngine::cancelRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Asks the manager engine to cancel the given request <i>req</i> which was previously started and is currently in a cancellable state. Returns true if cancellation of the request was started successfully, otherwise returns false.</p>
 <p>See also <a href="qcontactmanagerengine.html#startRequest">startRequest</a>() and <a href="qcontactabstractrequest.html#cancel">QContactAbstractRequest::cancel</a>().</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/compareContact"></a>
 <h3 class="fn"><a name="compareContact"></a>int QContactManagerEngine::compareContact ( const <a href="qcontact.html">QContact</a> &amp; <i>a</i>, const <a href="qcontact.html">QContact</a> &amp; <i>b</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Compares two contacts (<i>a</i> and <i>b</i>) using the given list of <i>sortOrders</i>. Returns a negative number if <i>a</i> should appear before <i>b</i> according to the sort order, a positive number if <i>a</i> should appear after <i>b</i> according to the sort order, and zero if the two are unable to be sorted.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/compareVariant"></a>
 <h3 class="fn"><a name="compareVariant"></a>int QContactManagerEngine::compareVariant ( const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>first</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>second</i>, <a href="http://qt.nokia.com/doc/4.5/qt.html#CaseSensitivity-enum">Qt::CaseSensitivity</a> <i>sensitivity</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Compares <i>first</i> against <i>second</i>. If the types are strings (<a href="http://qt.nokia.com/doc/4.5/qvariant.html#Type-enum">QVariant::String</a>), the <i>sensitivity</i> argument controls case sensitivity when comparing.</p>
 <p>Returns: &lt;0 if <i>first</i> is less than <i>second</i> 0 if <i>first</i> is equal to <i>second</i> &gt;0 if <i>first</i> is greater than <i>second</i>.</p>
 <p>The results are undefined if the variants are different types, or cannot be compared.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/contact"></a>
 <h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManagerEngine::contact ( const QContactLocalId &amp; <i>contactId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the contact in the database identified by <i>contactId</i></p>
 <p>Any errors encountered should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/contacts"></a>
 <h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; QContactManagerEngine::contacts ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of the ids of contacts that match the supplied <i>filter</i>, sorted according to the given <i>sortOrders</i>. Any error that occurs will be stored in <i>error</i>.</p>
 <p>The default implementation will retrieve all contacts and test them with testFilter.</p>
 <h3 class="fn"><a name="contacts-2"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; QContactManagerEngine::contacts ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Return the list of contact ids present in this engine, sorted according to the given <i>sortOrders</i>.</p>
 <p>Any errors encountered should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/contactsAdded"></a>
 <h3 class="fn"><a name="contactsAdded"></a>void QContactManagerEngine::contactsAdded ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted some time after a set of contacts has been added to this engine where the <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>() signal was not emitted for those changes. As it is possible that other processes (or other devices) may have added the contacts, the timing cannot be determined.</p>
 <p>The list of ids of contacts added is given by <i>contactIds</i>. There may be one or more ids in the list.</p>
 <p>See also <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/contactsChanged"></a>
 <h3 class="fn"><a name="contactsChanged"></a>void QContactManagerEngine::contactsChanged ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted some time after a set of contacts has been modified in this engine where the <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>() signal was not emitted for those changes. As it is possible that other processes (or other devices) may have modified the contacts, the timing cannot be determined.</p>
 <p>The list of ids of changed contacts is given by <i>contactIds</i>. There may be one or more ids in the list.</p>
 <p>See also <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/contactsRemoved"></a>
 <h3 class="fn"><a name="contactsRemoved"></a>void QContactManagerEngine::contactsRemoved ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted some time after a set of contacts has been removed from this engine where the <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>() signal was not emitted for those changes. As it is possible that other processes (or other devices) may have removed the contacts, the timing cannot be determined.</p>
 <p>The list of ids of removed contacts is given by <i>contactIds</i>. There may be one or more ids in the list.</p>
 <p>See also <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/dataChanged"></a>
 <h3 class="fn"><a name="dataChanged"></a>void QContactManagerEngine::dataChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted some time after changes occur to the data managed by this engine, and the engine is unable to determine which changes occurred, or if the engine considers the changes to be radical enough to require clients to reload all data.</p>
 <p>If this signal is emitted, no other signals may be emitted for the associated changes.</p>
 <p>As it is possible that other processes (or other devices) may have caused the changes, the timing can not be determined.</p>
 <p>See also <a href="qcontactmanagerengine.html#contactsAdded">contactsAdded</a>(), <a href="qcontactmanagerengine.html#contactsChanged">contactsChanged</a>(), and <a href="qcontactmanagerengine.html#contactsRemoved">contactsRemoved</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/deref"></a>
 <h3 class="fn"><a name="deref"></a>void QContactManagerEngine::deref ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Notifies the engine that it is no longer required. If this engine can not be shared between managers, it is safe for the engine to delete itself in this function.</p>
 <p>If the engine implementation can be shared, this function can use a reference count and track lifetime that way. The factory that returns an instance of this engine should increment the reference count in this case.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/detailDefinition"></a>
 <h3 class="fn"><a name="detailDefinition"></a><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> QContactManagerEngine::detailDefinition ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the definition identified by the given <i>definitionName</i> that is valid for contacts whose type is of the given <i>contactType</i> in this store, or a default-constructed <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> if no such definition exists</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/detailDefinitions"></a>
 <h3 class="fn"><a name="detailDefinitions"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactManagerEngine::detailDefinitions ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the registered detail definitions which are valid for contacts whose type is of the given <i>contactType</i> in this engine.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/filterSupported"></a>
 <h3 class="fn"><a name="filterSupported"></a>bool QContactManagerEngine::filterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a whether the supplied <i>filter</i> can be implemented natively by this engine. If not, the base class implementation will emulate the functionality.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/hasFeature"></a>
 <h3 class="fn"><a name="hasFeature"></a>bool QContactManagerEngine::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the given <i>feature</i> is supported by this engine for contacts of the given <i>contactType</i></p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/implementationVersion"></a>
 <h3 class="fn"><a name="implementationVersion"></a>int QContactManagerEngine::implementationVersion () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the engine backend implementation version number</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/managerName"></a>
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactManagerEngine::managerName () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the manager name for this <a href="qcontactmanagerengine.html">QContactManagerEngine</a></p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/managerParameters"></a>
 <h3 class="fn"><a name="managerParameters"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>&gt; QContactManagerEngine::managerParameters () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the parameters with which this engine was constructed. Note that the engine may have discarded unused or invalid parameters at the time of construction, and these will not be returned.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/managerUri"></a>
 <h3 class="fn"><a name="managerUri"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactManagerEngine::managerUri () const</h3>
 <p>Returns the unique URI of this manager, which is built from the manager name and the parameters used to construct it.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/relationships"></a>
 <h3 class="fn"><a name="relationships"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactManagerEngine::relationships ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>relationshipType</i>, const <a href="qcontactid.html">QContactId</a> &amp; <i>participantId</i>, <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> <i>role</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a list of relationships of the given <i>relationshipType</i> in which the contact identified by the given <i>participantId</i> participates in the given <i>role</i>. If <i>participantId</i> is the default-constructed id, <i>role</i> is ignored and all relationships of the given <i>relationshipType</i> are returned. If <i>relationshipType</i> is empty, relationships of any type are returned. If no relationships of the given <i>relationshipType</i> in which the contact identified by the given <i>participantId</i> is involved in the given <i>role</i> exists, <i>error</i> is set to <a href="qcontactmanager.html#Error-enum">QContactManager::DoesNotExistError</a>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/relationshipsAdded"></a>
 <h3 class="fn"><a name="relationshipsAdded"></a>void QContactManagerEngine::relationshipsAdded ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted some time after a set of contacts has been added to this engine where the <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>() signal was not emitted for those changes. As it is possible that other processes (or other devices) may have added the contacts, the timing cannot be determined.</p>
 <p>The list of ids of affected contacts is given by <i>affectedContactIds</i>. There may be one or more ids in the list.</p>
 <p>See also <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/relationshipsRemoved"></a>
 <h3 class="fn"><a name="relationshipsRemoved"></a>void QContactManagerEngine::relationshipsRemoved ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted some time after a set of relationships has been removed from this engine where the <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>() signal was not emitted for those changes. As it is possible that other processes (or other devices) may have removed the relationships, the timing cannot be determined.</p>
 <p>The list of ids of affected contacts is given by <i>affectedContactIds</i>. There may be one or more ids in the list.</p>
 <p>See also <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/removeContact"></a>
 <h3 class="fn"><a name="removeContact"></a>bool QContactManagerEngine::removeContact ( const QContactLocalId &amp; <i>contactId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Remove the contact identified by <i>contactId</i> from the database, and removes the contact from any relationships in which it was involved. Returns true if the contact was removed successfully, otherwise returns false.</p>
 <p>The backend must emit the appropriate signals to inform clients of changes to the database resulting from this operation.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/removeContacts"></a>
 <h3 class="fn"><a name="removeContacts"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactManagerEngine::removeContacts ( <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; * <i>contactIds</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Remove the list of contacts identified in <i>contactIds</i>. Returns a list of the error codes corresponding to the contact ids in the <i>contactIds</i>. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were removed successfully.</p>
 <p>For each contact that was removed succesfully, the corresponding id in the list will be retained but set to zero. The id of contacts that were not successfully removed will be left alone.</p>
@@ -203,18 +229,23 @@
 <p>The backend must emit the appropriate signals to inform clients of changes to the database resulting from this operation.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <p>See also <a href="qcontactmanager.html#removeContact">QContactManager::removeContact</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/removeDetailDefinition"></a>
 <h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactManagerEngine::removeDetailDefinition ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Removes the definition identified by the given <i>definitionName</i> from the database, where it was valid for contacts whose type was the given <i>contactType</i>.</p>
 <p>Returns true if the definition was removed successfully, otherwise returns false.</p>
 <p>The backend must emit the appropriate signals to inform clients of changes to the database resulting from this operation.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/removeRelationship"></a>
 <h3 class="fn"><a name="removeRelationship"></a>bool QContactManagerEngine::removeRelationship ( const <a href="qcontactrelationship.html">QContactRelationship</a> &amp; <i>relationship</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Removes the given <i>relationship</i> from the manager. If the relationship exists in the manager, the relationship will be removed, the <i>error</i> will be set to <tt>QContactManager::NoError</tt> and this function will return true. If no such relationship exists in the manager, the <i>error</i> will be set to <tt>QContactManager::DoesNotExistError</tt> and this function will return false.</p>
 <p>The priority of the relationship is ignored when determining existence of the relationship.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/removeRelationships"></a>
 <h3 class="fn"><a name="removeRelationships"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactManagerEngine::removeRelationships ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Removes the given <i>relationships</i> from the database and returns a list of error codes. Any error which occurs will be saved in <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/requestDestroyed"></a>
 <h3 class="fn"><a name="requestDestroyed"></a>void QContactManagerEngine::requestDestroyed ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Notifies the manager engine that the given request <i>req</i> has been destroyed</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/saveContact"></a>
 <h3 class="fn"><a name="saveContact"></a>bool QContactManagerEngine::saveContact ( <a href="qcontact.html">QContact</a> * <i>contact</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Adds the given <i>contact</i> to the database if <i>contact</i> has a default-constructed id, or an id with the manager URI set to the URI of this manager and a local id of zero.</p>
 <p>If the manager URI of the id of the <i>contact</i> is neither empty nor equal to the URI of this manager, or local id of the <i>contact</i> is non-zero but does not exist in the manager, the operation will fail and <i>error</i> will be set to <tt>QContactManager::DoesNotExistError</tt>.</p>
@@ -226,54 +257,72 @@
 <p>This function is called by the contacts framework in both the single contact save and batch contact save, if the saveContacts function is not overridden.</p>
 <p>The backend must emit the appropriate signals to inform clients of changes to the database resulting from this operation.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/saveContacts"></a>
 <h3 class="fn"><a name="saveContacts"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactManagerEngine::saveContacts ( <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contacts</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Adds the list of contacts given by <i>contacts</i> to the database. Returns a list of the error codes corresponding to the contacts in the <i>contacts</i>. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were saved successfully.</p>
 <p>For each newly saved contact that was successful, the uid of the contact in the list will be updated with the new value. If a failure occurs when saving a new contact, the id will be cleared. If a failure occurs when updating a contact that already exists, then TODO.</p>
 <p>The backend must emit the appropriate signals to inform clients of changes to the database resulting from this operation.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <p>See also <a href="qcontactmanager.html#saveContact">QContactManager::saveContact</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/saveDetailDefinition"></a>
 <h3 class="fn"><a name="saveDetailDefinition"></a>bool QContactManagerEngine::saveDetailDefinition ( const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> &amp; <i>def</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Persists the given definition <i>def</i> in the database, which is valid for contacts whose type is the given <i>contactType</i>.</p>
 <p>Returns true if the definition was saved successfully, and otherwise returns false.</p>
 <p>The backend must emit the appropriate signals to inform clients of changes to the database resulting from this operation.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/saveRelationship"></a>
 <h3 class="fn"><a name="saveRelationship"></a>bool QContactManagerEngine::saveRelationship ( <a href="qcontactrelationship.html">QContactRelationship</a> * <i>relationship</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Saves the given <i>relationship</i> in the database. If the relationship already exists in the database, this function will return <tt>false</tt> and the <i>error</i> will be set to <tt>QContactManager::AlreadyExistsError</tt>. If the relationship is saved successfully, this function will return <tt>true</tt> and <i>error</i> will be set to <tt>QContactManager::NoError</tt>. Note that relationships cannot be updated directly using this function; in order to update a relationship, you must remove the old relationship, make the required modifications, and then save it.</p>
 <p>The given relationship is invalid if it is circular (one of the destination contacts is also the source contact), or if it references a non-existent local contact (either source or destination). If the given <i>relationship</i> is invalid, the function will return <tt>false</tt> and the <i>error</i> will be set to <tt>QContactManager::InvalidRelationshipError</tt>. If the given <i>relationship</i> could not be saved in the database (due to backend limitations) the function will return <tt>false</tt> and <i>error</i> will be set to <tt>QContactManager::NotSupportedError</tt>.</p>
 <p>If any destination contact manager URI is not set in the <i>relationship</i>, these will be automatically set to the URI of this manager, before the relationship is saved.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/saveRelationships"></a>
 <h3 class="fn"><a name="saveRelationships"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactManagerEngine::saveRelationships ( <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; * <i>relationships</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Saves the given <i>relationships</i> in the database and returns a list of error codes. Any error which occurs will be saved in <i>error</i>.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/schemaDefinitions"></a>
 <h3 class="fn"><a name="schemaDefinitions"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; &gt; QContactManagerEngine::schemaDefinitions ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the base schema definitions</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/selfContactId"></a>
 <h3 class="fn"><a name="selfContactId"></a>QContactLocalId QContactManagerEngine::selfContactId ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the id of the &quot;self&quot; contact which has previously been set. If no &quot;self&quot; contact has been set, or if the self contact was removed from the manager after being set, or if the backend does not support the concept of a &quot;self&quot; contact, an invalid id will be returned and the <i>error</i> will be set to <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>See also <a href="qcontactmanagerengine.html#setSelfContactId">setSelfContactId</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/selfContactIdChanged"></a>
 <h3 class="fn"><a name="selfContactIdChanged"></a>void QContactManagerEngine::selfContactIdChanged ( const QContactLocalId &amp; <i>oldId</i>, const QContactLocalId &amp; <i>newId</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted at some point after the id of the self-contact is changed from <i>oldId</i> to <i>newId</i> in the manager. If the <i>newId</i> is the invalid, zero id, then the self contact was deleted or no self contact exists. This signal must not be emitted if the <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>() signal was previously emitted for this change. As it is possible that other processes (or other devices) may have removed or changed the self contact, the timing cannot be determined.</p>
 <p>See also <a href="qcontactmanagerengine.html#dataChanged">dataChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/setContactDisplayLabel"></a>
 <h3 class="fn"><a name="setContactDisplayLabel"></a><a href="qcontact.html">QContact</a> QContactManagerEngine::setContactDisplayLabel ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>displayLabel</i>, const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const</h3>
 <p>Returns a copy of the given contact <i>contact</i> with its display label set to <i>displayLabel</i>. This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/setContactRelationships"></a>
 <h3 class="fn"><a name="setContactRelationships"></a>void QContactManagerEngine::setContactRelationships ( <a href="qcontact.html">QContact</a> * <i>contact</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Sets the cached relationships in the given <i>contact</i> to <i>relationships</i></p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/setSelfContactId"></a>
 <h3 class="fn"><a name="setSelfContactId"></a>bool QContactManagerEngine::setSelfContactId ( const QContactLocalId &amp; <i>contactId</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the id of the &quot;self&quot; contact to the given <i>contactId</i>. Returns true if the &quot;self&quot; contact id was set successfully. If the given <i>contactId</i> does not identify a contact stored in this manager, the <i>error</i> will be set to <tt>QContactManager::DoesNotExistError</tt> and the function will return false; if the backend does not support the concept of a &quot;self&quot; contact, the <i>error</i> will be set to <tt>QContactManager::NotSupportedError</tt> and the function will return false.</p>
 <p>See also <a href="qcontactmanagerengine.html#selfContactId">selfContactId</a>().</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/sortContacts"></a>
 <h3 class="fn"><a name="sortContacts"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; QContactManagerEngine::sortContacts ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; &amp; <i>cs</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Sorts the given list of contacts <i>cs</i> according to the provided <i>sortOrders</i></p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/startRequest"></a>
 <h3 class="fn"><a name="startRequest"></a>bool QContactManagerEngine::startRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Asks the manager engine to begin the given request <i>req</i> which is currently in a (re)startable state. Returns true if the request was started successfully, else returns false.</p>
 <p>See also <a href="qcontactabstractrequest.html#start">QContactAbstractRequest::start</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/supportedContactTypes"></a>
 <h3 class="fn"><a name="supportedContactTypes"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContactManagerEngine::supportedContactTypes () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of contact types which are supported by this engine. This is a convenience function, equivalent to retrieving the allowable values for the <tt>QContactType::FieldType</tt> field of the <a href="qcontacttype.html">QContactType</a> definition which is valid in this engine.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/supportedDataTypes"></a>
 <h3 class="fn"><a name="supportedDataTypes"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qvariant.html#Type-enum">QVariant::Type</a>&gt; QContactManagerEngine::supportedDataTypes () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of data types supported by this engine.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/supportedRelationshipTypes"></a>
 <h3 class="fn"><a name="supportedRelationshipTypes"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QContactManagerEngine::supportedRelationshipTypes ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>contactType</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of relationship types supported by this engine for contacts whose type is the given <i>contactType</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/synthesizeDisplayLabel"></a>
 <h3 class="fn"><a name="synthesizeDisplayLabel"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactManagerEngine::synthesizeDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Synthesizes the display label of the given <i>contact</i> in a platform specific manner. Any error that occurs will be stored in <i>error</i>. Returns the synthesized display label.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/testFilter"></a>
 <h3 class="fn"><a name="testFilter"></a>bool QContactManagerEngine::testFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns true if the supplied <i>filter</i> matches the supplied <i>contact</i>.</p>
 <p>This function will test each condition in the filter, possibly recursing.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/updateRequest"></a>
 <h3 class="fn"><a name="updateRequest"></a>void QContactManagerEngine::updateRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QContactLocalId&gt; &amp; <i>result</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> <i>error</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; &amp; <i>errors</i>, <a href="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Status</a> <i>status</i>, bool <i>appendOnly</i> = false )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Updates the given asynchronous request <i>req</i> by setting its <i>result</i>, the overall operation <i>error</i>, any individual <i>errors</i> that occurred during the operation, and the new <i>status</i> of the request. It then causes the progress signal to be emitted by the request, with the <i>appendOnly</i> flag set (if required) to indicate result ordering stability. If the request is of a type which does not return a list of unique ids as a result, this function will return without doing anything.</p>
 <h3 class="fn"><a name="updateRequest-2"></a>void QContactManagerEngine::updateRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; &amp; <i>result</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> <i>error</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; &amp; <i>errors</i>, <a href="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Status</a> <i>status</i>, bool <i>appendOnly</i> = false )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -284,33 +333,41 @@
 <p>Updates the given asynchronous request <i>req</i> by setting its <i>result</i>, the overall operation <i>error</i>, any individual <i>errors</i> that occurred during the operation, and the new <i>status</i> of the request. It then causes the progress signal to be emitted by the request, with the <i>appendOnly</i> flag set (if required) to indicate result ordering stability. If the request is of a type which does not return a map of string to detail definition as a result, this function will return without doing anything.</p>
 <h3 class="fn"><a name="updateRequest-5"></a>void QContactManagerEngine::updateRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>result</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> <i>error</i>, const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; &amp; <i>errors</i>, <a href="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Status</a> <i>status</i>, bool <i>appendOnly</i> = false )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Updates the given asynchronous request <i>req</i> by setting its <i>result</i>, the overall operation <i>error</i>, any individual <i>errors</i> that occurred during the operation, and the new <i>status</i> of the request. It then causes the progress signal to be emitted by the request, with the <i>appendOnly</i> flag set (if required) to indicate result ordering stability. If the request is of a type which does not return a list of contact relationships as a result, this function will return without doing anything.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/updateRequestStatus"></a>
 <h3 class="fn"><a name="updateRequestStatus"></a>void QContactManagerEngine::updateRequestStatus ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> <i>error</i>, <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; &amp; <i>errors</i>, <a href="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Status</a> <i>status</i>, bool <i>appendOnly</i> = false )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Updates the given asynchronous request <i>req</i> by setting the overall operation <i>error</i>, any individual <i>errors</i> that occurred during the operation, and the new <i>status</i> of the request. It then causes the progress signal to be emitted by the request, with the <i>appendOnly</i> flag set (if required) to indicate result ordering stability.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/validateActionFilter"></a>
 <h3 class="fn"><a name="validateActionFilter"></a>bool QContactManagerEngine::validateActionFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Given a <a href="qcontactfilter.html">QContactFilter</a> <i>filter</i> retrieved from a <a href="qcontactaction.html">QContactAction</a>, check that it is valid and cannot cause infinite recursion.</p>
 <p>In particular, a filter from a <a href="qcontactaction.html">QContactAction</a> cannot contain any instances of a <a href="qcontactactionfilter.html">QContactActionFilter</a>.</p>
 <p>Returns true if <i>filter</i> seems ok, or false otherwise.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/validateContact"></a>
 <h3 class="fn"><a name="validateContact"></a>bool QContactManagerEngine::validateContact ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Checks that the given contact <i>contact</i> does not have details which don't conform to a valid definition, violate uniqueness constraints, or contain values for nonexistent fields, and that the values contained are of the correct type for each field, and are allowable values for that field.</p>
 <p>Note that this function is unable to ensure that the access constraints (such as CreateOnly and ReadOnly) are observed; backend specific code must be written if you wish to enforce these constraints.</p>
 <p>Returns true if the <i>contact</i> is valid according to the definitions for its details, otherwise returns false.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/validateDefinition"></a>
 <h3 class="fn"><a name="validateDefinition"></a>bool QContactManagerEngine::validateDefinition ( const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> &amp; <i>definition</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Checks that the given detail definition <i>definition</i> seems valid, with a correct id, defined fields, and any specified value types are supported by this engine. This function is called before trying to save a definition.</p>
 <p>Note that a ReadOnly definition will fail validation, since they are intended to be provided by an engine directly.</p>
 <p>Returns true if the <i>definition</i> seems valid, otherwise returns false.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
+<a name="//apple_ref/cpp/clm/QContactManagerEngine/version"></a>
 <h3 class="fn"><a name="version"></a>int QContactManagerEngine::version ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the version number of the QTContacts API</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/waitForRequestFinished"></a>
 <h3 class="fn"><a name="waitForRequestFinished"></a>bool QContactManagerEngine::waitForRequestFinished ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Blocks until the manager engine has completed the given request <i>req</i> which was previously started, or until <i>msecs</i> milliseconds have passed. Returns true if the request was completed, and false if the request was not in the <tt>QContactAbstractRequest::Active</tt> state or no progress could be reported.</p>
 <p>See also <a href="qcontactmanagerengine.html#startRequest">startRequest</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManagerEngine/waitForRequestProgress"></a>
 <h3 class="fn"><a name="waitForRequestProgress"></a>bool QContactManagerEngine::waitForRequestProgress ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Blocks until the manager engine has completed some part (or all) of the given request <i>req</i> which was previously started, or until <i>msecs</i> milliseconds have passed. Returns true if some progress was reported, and false if the request was not in the <tt>QContactAbstractRequest::Active</tt> state or no progress could be reported.</p>
 <p>See also <a href="qcontactmanagerengine.html#startRequest">startRequest</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (BETA)</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
 </tr></table></div></address></body>
 </html>

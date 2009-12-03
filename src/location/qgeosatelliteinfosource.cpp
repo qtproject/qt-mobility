@@ -62,6 +62,9 @@ QTM_BEGIN_NAMESPACE
     or requestUpdate() to request a single update.
     When an update is available, satellitesInViewUpdated() and/or
     satellitesInUseUpdated() will be emitted.
+
+    \warning On Windows CE it is not possible to detect if a device is GPS enabled.  
+    The default satellite source on a Windows CE device without GPS support will never provide any satellite data.
 */
 
 /*!

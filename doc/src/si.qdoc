@@ -41,7 +41,7 @@
 
 /*!
     \group systeminfo
-    \title System Information
+    \title System Information Classes
 
     A set of APIs that supplies that supplies system information.
  */

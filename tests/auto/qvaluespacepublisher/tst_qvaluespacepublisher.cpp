@@ -75,7 +75,7 @@ class ChangeListener : public QObject
 {
     Q_OBJECT
 Q_SIGNALS:
-    void attributeInterestChanged(const QString&, bool);
+    void interestChanged(const QString&, bool);
 };
 
 class tst_QValueSpacePublisher: public QObject
@@ -185,7 +185,7 @@ void tst_QValueSpacePublisher::testConstructor()
     QFETCH(QString, canonical);
     QFETCH(bool, connected);
 
-    QValueSpacePublisher *publisher = new QValueSpacePublisher(path, uuid);
+    QValueSpacePublisher *publisher = new QValueSpacePublisher(uuid, path);
 
     QCOMPARE(publisher->path(), canonical);
     QCOMPARE(publisher->isConnected(), connected);
@@ -337,15 +337,15 @@ void tst_QValueSpacePublisher::testSignals()
     QFETCH(QString, subscriberPath);
     QFETCH(QString, attribute);
 
-    QValueSpacePublisher *publisher = new QValueSpacePublisher(publisherPath, layer->id());
+    QValueSpacePublisher *publisher = new QValueSpacePublisher(layer->id(), publisherPath);
 
     ChangeListener listener;
-    connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
-            &listener, SIGNAL(attributeInterestChanged(QString,bool)));
+    connect(publisher, SIGNAL(interestChanged(QString,bool)),
+            &listener, SIGNAL(interestChanged(QString,bool)));
 
-    QSignalSpy interestChangedSpy(&listener, SIGNAL(attributeInterestChanged(QString,bool)));
+    QSignalSpy interestChangedSpy(&listener, SIGNAL(interestChanged(QString,bool)));
 
-    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(subscriberPath, layer->id());
+    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(layer->id(), subscriberPath);
 
     QTRY_COMPARE(interestChangedSpy.count(), 1);
 
@@ -388,7 +388,7 @@ void tst_QValueSpacePublisher::valuePermanence()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QValueSpacePublisher *publisher = new QValueSpacePublisher("/valuePermanence", layer->id());
+    QValueSpacePublisher *publisher = new QValueSpacePublisher(layer->id(), "/valuePermanence");
 
     publisher->setValue("value", 10);
 
@@ -401,7 +401,7 @@ void tst_QValueSpacePublisher::valuePermanence()
         // Permanent layer, check that value is still available after publisher is deleted.
         QCOMPARE(subscriber.value("value", 0).toInt(), 10);
 
-        publisher = new QValueSpacePublisher("/valuePermanence", layer->id());
+        publisher = new QValueSpacePublisher(layer->id(), "/valuePermanence");
 
         publisher->resetValue("value");
 
@@ -437,7 +437,7 @@ private:
 WriteThread::WriteThread(const QString &path, const QUuid &uuid, unsigned int count)
 :   path(path), count(count)
 {
-    publisher = new QValueSpacePublisher(path, uuid, this);
+    publisher = new QValueSpacePublisher(uuid, path, this);
 }
 
 void WriteThread::run()
@@ -571,7 +571,7 @@ void tst_QValueSpacePublisher::threads()
     for (unsigned int i = 0; i < count; ++i)
         expectedValues.insert(QString("key%1").arg(i), QString("value%1").arg(i));
 
-    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber("/threads", uuid);
+    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(uuid, "/threads");
 
     QVERIFY(subscriber->subPaths().isEmpty());
 
