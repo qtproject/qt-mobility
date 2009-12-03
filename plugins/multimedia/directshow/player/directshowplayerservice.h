@@ -44,6 +44,8 @@
 
 #include <qmediaservice.h>
 
+#include <QtCore/private/qwineventnotifier_p.h>
+
 #include "directshowglobal.h"
 
 class DirectShowMetaDataControl;
@@ -74,6 +76,7 @@ public:
 
 private Q_SLOTS:
     void videoOutputChanged();
+    void graphEvent(HANDLE handle);
 
 private:
     DirectShowPlayerControl *m_playerControl;
@@ -84,6 +87,7 @@ private:
     ICaptureGraphBuilder2 *m_builder;
     IBaseFilter *m_source;
     IBaseFilter *m_videoOutput;
+    QWinEventNotifier m_graphEventNotifier;
 };
 
 

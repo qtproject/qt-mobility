@@ -63,11 +63,15 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
 {
     connect(m_videoOutputControl, SIGNAL(outputChanged()), this, SLOT(videoOutputChanged()));
     connect(m_videoRendererControl, SIGNAL(filterChanged()), this, SLOT(videoOutputChanged()));
+
+    connect(&m_graphEventNotifier, SIGNAL(activated(HANDLE)), this, SLOT(graphEvent(HANDLE)));
 }
 
 DirectShowPlayerService::~DirectShowPlayerService()
 {
     if (m_graph) {
+        m_graphEventNotifier.setEnabled(false);
+
         if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
             control->Stop();
             control->Release();
@@ -103,6 +107,8 @@ QMediaControl *DirectShowPlayerService::control(const char *name) const
 void DirectShowPlayerService::load(const QMediaContent &media)
 {
     if (m_graph) {
+        m_graphEventNotifier.setEnabled(false);
+
         if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
             control->Stop();
             control->Release();
@@ -139,6 +145,22 @@ void DirectShowPlayerService::load(const QMediaContent &media)
                 } else {
                     m_builder->RenderStream(0, &MEDIATYPE_Video, m_source, 0, m_videoOutput);
                 }
+            }
+
+            if (IMediaEventEx *event = com_cast<IMediaEventEx>(m_graph)) {
+                HANDLE handle;
+
+                if (event->GetEventHandle(reinterpret_cast<OAEVENT *>(&handle)) == S_OK) {
+                    event->CancelDefaultHandling(EC_BUFFERING_DATA);
+                    event->CancelDefaultHandling(EC_COMPLETE);
+                    event->CancelDefaultHandling(EC_LOADSTATUS);
+                    event->CancelDefaultHandling(EC_STATE_CHANGE);
+                    event->CancelDefaultHandling(EC_LENGTH_CHANGED);
+                    m_graphEventNotifier.setHandle(handle);
+                    m_graphEventNotifier.setEnabled(true);
+                }
+
+                event->Release();
             }
 
             m_metaDataControl->metaDataChanged();
@@ -185,5 +207,39 @@ void DirectShowPlayerService::videoOutputChanged()
                 m_builder->RenderStream(0, &MEDIATYPE_Video, m_source, 0, m_videoOutput);
             }
         }
+    }
+}
+
+void DirectShowPlayerService::graphEvent(HANDLE handle)
+{
+    if (IMediaEvent *event = com_cast<IMediaEvent>(m_graph)) {
+        long eventCode;
+        LONG_PTR param1;
+        LONG_PTR param2;
+
+        while (event->GetEvent(&eventCode, &param1, &param2, 0) == S_OK) {
+            switch (eventCode) {
+            case EC_BUFFERING_DATA:
+                m_playerControl->bufferingData(param1);
+                break;
+            case EC_COMPLETE:
+                m_playerControl->complete(HRESULT(param1));
+                break;
+            case EC_LOADSTATUS:
+                m_playerControl->loadStatus(param1);
+                break;
+            case EC_STATE_CHANGE:
+                m_playerControl->stateChange(param1);
+                break;
+            case EC_LENGTH_CHANGED:
+                m_playerControl->durationChanged(m_playerControl->duration());
+                break;
+            default:
+                break;
+            }
+
+            event->FreeEventParams(eventCode, param1, param2);
+        }
+        event->Release();
     }
 }

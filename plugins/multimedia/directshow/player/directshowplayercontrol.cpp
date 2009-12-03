@@ -266,10 +266,19 @@ void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *)
 
 void DirectShowPlayerControl::play()
 {
-    if (IMediaControl *control = com_cast<IMediaControl>(m_service->graph())) {
-        if (SUCCEEDED(control->Run()))
-            emit stateChanged(m_state = QMediaPlayer::PlayingState);
-        control->Release();
+    switch (m_state) {
+    case QMediaPlayer::PlayingState:
+        break;
+    case QMediaPlayer::StoppedState:
+        setPosition(0);
+        // Fall through.
+    case QMediaPlayer::PausedState:
+        if (IMediaControl *control = com_cast<IMediaControl>(m_service->graph())) {
+            if (SUCCEEDED(control->Run()))
+                emit stateChanged(m_state = QMediaPlayer::PlayingState);
+            control->Release();
+        }
+        break;
     }
 }
 
@@ -289,4 +298,79 @@ void DirectShowPlayerControl::stop()
             emit stateChanged(m_state = QMediaPlayer::StoppedState);
         control->Release();
     }
+}
+
+void DirectShowPlayerControl::bufferingData(bool buffering)
+{
+    m_buffering = buffering;
+
+    updateStatus();
+}
+
+void DirectShowPlayerControl::complete(HRESULT)
+{
+    m_state = QMediaPlayer::StoppedState;
+    m_status = QMediaPlayer::EndOfMedia;
+    emit mediaStatusChanged(m_status);
+    emit stateChanged(m_state);
+}
+
+void DirectShowPlayerControl::loadStatus(long status)
+{
+    m_loadStatus = status;
+
+    updateStatus();
+}
+
+void DirectShowPlayerControl::stateChange(long state)
+{
+    switch (state) {
+    case State_Stopped:
+        m_state = QMediaPlayer::StoppedState;
+        break;
+    case State_Running:
+        m_state = QMediaPlayer::PlayingState;
+        break;
+    case State_Paused:
+        m_state = QMediaPlayer::PausedState;
+        break;
+    default:
+        break;
+    }
+
+    updateStatus();
+    emit stateChanged(m_state);
+}
+
+void DirectShowPlayerControl::updateStatus()
+{
+    QMediaPlayer::MediaStatus status = m_status;
+
+    switch (m_loadStatus) {
+    case AM_LOADSTATUS_CONNECTING:
+    case AM_LOADSTATUS_LOCATING:
+    case AM_LOADSTATUS_OPENING:
+        status = QMediaPlayer::LoadingMedia;
+        break;
+    case AM_LOADSTATUS_OPEN:
+        if (m_state == QMediaPlayer::StoppedState) {
+            status = QMediaPlayer::LoadedMedia;
+        } else if (m_buffering) {
+            status = QMediaPlayer::BufferingMedia;
+        } else {
+            status = QMediaPlayer::BufferedMedia;
+        }
+        break;
+    case AM_LOADSTATUS_CLOSED:
+        if (m_media.isNull())
+            status = QMediaPlayer::NoMedia;
+        else if (m_status != QMediaPlayer::EndOfMedia)
+            status = QMediaPlayer::InvalidMedia;
+        break;
+    default:
+        break;
+    }
+
+    if (status != m_status)
+        emit mediaStatusChanged(m_status = status);
 }

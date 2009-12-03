@@ -45,6 +45,8 @@
 #include <qmediacontent.h>
 #include <qmediaplayercontrol.h>
 
+#include <dshow.h>
+
 class DirectShowPlayerService;
 
 QTM_USE_NAMESPACE
@@ -89,12 +91,23 @@ public:
     void pause();
     void stop();
 
+    void bufferingData(bool buffering);
+    void complete(HRESULT hr);
+    void loadStatus(long status);
+    void stateChange(long state);
+
+    using QMediaPlayerControl::durationChanged;
+
 private:
+    void updateStatus();
+
     DirectShowPlayerService *m_service;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;
     int m_muteVolume;
     QMediaContent m_media;
+    long m_loadStatus;
+    bool m_buffering;
 };
 
 #endif

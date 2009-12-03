@@ -257,8 +257,8 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
                 this, SLOT(_q_positionChanged(qint64)));
         connect(m_playerControl, SIGNAL(volumeChanged(int)),
                 this, SLOT(_q_volumeChanged(int)));
-        connect(m_playerControl, SIGNAL(mutingChanged(bool)),
-                this, SIGNAL(mutingChanged(bool)));
+        connect(m_playerControl, SIGNAL(mutedChanged(bool)),
+                this, SIGNAL(mutedChanged(bool)));
     } else {
         m_playerControl = new QmlGraphicsVideoPlayerControl(this);
     }
@@ -267,6 +267,8 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
 
 QmlGraphicsVideo::~QmlGraphicsVideo()
 {
+    m_notifyTimer.stop();
+
     if (m_mediaProvider)
         m_mediaProvider->releaseService(m_mediaService);
 

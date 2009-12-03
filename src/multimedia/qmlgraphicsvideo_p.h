@@ -72,7 +72,7 @@ class Q_MEDIA_EXPORT QmlGraphicsVideo : public QmlGraphicsItem
     Q_PROPERTY(qreal duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qreal position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailableChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
@@ -171,7 +171,7 @@ Q_SIGNALS:
     void positionChanged(qreal position);
 
     void volumeChanged(qreal volume);
-    void mutingChanged(bool muted);
+    void mutedChanged(bool muted);
     void videoAvailableChanged(bool available);
 
     void bufferStatusChanged(int percentage);
