@@ -10,24 +10,24 @@ symbian: {
     VERSION = 0.1.0
     
     qtmobilitydeployment.sources = \
-        $$[EPOCROOT50]epoc32/release/armv5/urel/QtMessaging.dll \
-        $$[EPOCROOT50]epoc32/release/armv5/urel/QtServiceFramework.dll \
+        $$[EPOCROOT50]epoc32/release/armv5/urel/QtMessaging_tp.dll \
+        $$[EPOCROOT50]epoc32/release/armv5/urel/QtServiceFrameworktp_.dll \
         $$[EPOCROOT50]epoc32/release/armv5/urel/SFWDatabaseManagerServer.exe \
-        $$[EPOCROOT50]epoc32/release/armv5/urel/QtLocation.dll \
-        $$[EPOCROOT50]epoc32/release/armv5/urel/QtSystemInfo.dll \
-        $$[EPOCROOT50]epoc32/release/armv5/urel/QtPublishSubscribe.dll \
-        $$[EPOCROOT50]epoc32/release/armv5/urel/QtContacts.dll
+        $$[EPOCROOT50]epoc32/release/armv5/urel/QtLocation_tp.dll \
+        $$[EPOCROOT50]epoc32/release/armv5/urel/QtSystemInfo_tp.dll \
+        $$[EPOCROOT50]epoc32/release/armv5/urel/QtPublishSubscribe_tp.dll \
+        $$[EPOCROOT50]epoc32/release/armv5/urel/QtContacts_tp.dll
 
 
     bearer = \
         "IF package(0x1028315F)" \
-        "   \"$$[EPOCROOT50]epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+        "   \"$$[EPOCROOT50]epoc32/release/armv5/urel/QtBearer_tp.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
         "ELSEIF package(0x102752AE)" \
-        "   \"$$[EPOCROOT50]epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+        "   \"$$[EPOCROOT50]epoc32/release/armv5/urel/QtBearer_tp.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
         "ELSEIF package(0x102032BE)" \
-        "   \"$$[EPOCROOT31]epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+        "   \"$$[EPOCROOT31]epoc32/release/armv5/urel/QtBearer_tp.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
         "ELSE" \
-        "   \"$$[EPOCROOT50]epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+        "   \"$$[EPOCROOT50]epoc32/release/armv5/urel/QtBearer_tp.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
         "ENDIF"
 
     contacts = \
