@@ -39,11 +39,58 @@
 **
 ****************************************************************************/
 
-#include "ui_maindialog_240_320.h"
+#ifndef FILTERPAGE_H
+#define FILTERPAGE_H
 
-class MainDialogForm240By320 : public QWidget, Ui::MainDialog240By320
+#include <qmobilityglobal.h>
+#include "qtcontacts.h"
+
+#include <QWidget>
+#include <QMap>
+#include <QPlainTextEdit>
+
+QT_BEGIN_NAMESPACE
+class QScrollArea;
+class QComboBox;
+class QPushButton;
+class QLineEdit;
+class QLabel;
+QT_END_NAMESPACE;
+
+QTM_USE_NAMESPACE
+
+class FilterPage : public QWidget
 {
+    Q_OBJECT
+
 public:
-       MainDialogForm240By320(QWidget *parent);
-       ~MainDialogForm240By320();
+    FilterPage(QWidget *parent = 0);
+    ~FilterPage();
+
+signals:
+    void showListPage(const QContactFilter& filter);
+
+public slots:
+
+private slots:
+    void addClicked();
+    void clearClicked();
+    void doneClicked();
+
+private:
+    QLineEdit *m_valueCriteriaEdit;
+    QComboBox *m_fieldCriteriaCombo;
+    QComboBox *m_criteriaTypeCombo;
+    QComboBox *m_joinMethodCombo;
+
+    QLabel *m_cumulativeExpressionLabel;
+
+    QPushButton *m_add;
+    QPushButton *m_clear;
+    QPushButton *m_done;
+
+    QString m_cumulativeExpression;
+    QContactFilter m_cumulativeFilter;
 };
+
+#endif // FILTERPAGE_H
