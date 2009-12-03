@@ -189,12 +189,10 @@ QContactDetail* QVersitContactImporterPrivate::createName(
     QContactName* name = 0;
     QContactDetail detail = contact.detail(QContactName::DefinitionName);
     if (!detail.isEmpty()) {
-        name = new QContactName(static_cast<QContactName>(detail));
         // If multiple name properties exist,
         // discard all except the first occurence
-        if (!name->first().isEmpty()) {
+        if (!detail.value(QContactName::FieldFirst).isEmpty())
             return 0;
-        }
     } else {
         name = new QContactName();
     }
@@ -381,6 +379,7 @@ void QVersitContactImporterPrivate::createNicknames(
 {
     QList<QByteArray> values = property.value().split(',');
     foreach(QByteArray value,values) {
+        // XXX use correct encoding instead of fromAscii
         QContactNickname* nickName = new QContactNickname();
         nickName->setNickname(QString::fromAscii(value));
         contact.saveDetail(nickName);
