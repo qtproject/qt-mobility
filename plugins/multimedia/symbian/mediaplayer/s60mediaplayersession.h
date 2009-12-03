@@ -52,8 +52,6 @@ QTM_USE_NAMESPACE
 
 class QTimer;
 
-const int KUseDefaultVolume = -1;
-
 class S60MediaPlayerSession : public QObject
 {
     Q_OBJECT
@@ -79,7 +77,7 @@ public:
     virtual QPair<qint64, qint64> seekRange() const;
 
     qreal playbackRate() const;
-    virtual void setPlaybackRate(qreal rate) = 0 ;
+    virtual void setPlaybackRate(qreal rate) = 0;
    
     bool isMetadataAvailable() const; 
     QVariant metaData(const QString &key) const;
@@ -122,25 +120,21 @@ protected:
     QMediaPlayer::State currentState() const;
    
 protected: // Helper functions
-    int absVolToPercentages(int absoluteVolume) const;
-    int percentagesToAbsVol(int percentages) const;
     int milliSecondsToMicroSeconds(int milliSeconds) const;
     int microSecondsToMilliSeconds(int microSeconds) const;
 
 protected:
-    qint64 m_totalTime;
     QUrl m_url;
-    qreal m_playbackRate;
     bool m_videoAvailable;
-    qint64 m_duration;
     QMap<QString, QVariant> m_metaDataMap;
-    QTimer *m_timer;
     
 private:
+    qreal m_playbackRate;
     bool m_muted;
     int m_volume;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
+    QTimer *m_timer;
 };
 
 #endif

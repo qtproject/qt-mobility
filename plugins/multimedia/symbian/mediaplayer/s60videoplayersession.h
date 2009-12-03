@@ -62,8 +62,6 @@ public:
     qint64 duration() const;
     qint64 position() const;
 
-    bool isMuted() const;
-
     void setVideoRenderer(QObject *renderer);
     bool isVideoAvailable() const;
 
@@ -83,7 +81,6 @@ public:
 private: 
     void nativeHandles();
     void updateMetaDataEntries();
-    void volumeCheck(); 
     
 private: // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);

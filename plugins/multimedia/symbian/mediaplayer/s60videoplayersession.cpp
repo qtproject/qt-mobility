@@ -84,9 +84,9 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
 }
 void S60VideoPlayerSession::setVolume(int volume)
 {
-    if (this->volume() != KUseDefaultVolume) {
-        S60MediaPlayerSession::setVolume(volume);
-        TRAP_IGNORE(m_player->SetVolumeL(percentagesToAbsVol(this->volume()));)
+    S60MediaPlayerSession::setVolume(volume);
+    if (currentMediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
+        TRAP_IGNORE(m_player->SetVolumeL((this->volume()/100)* m_player->MaxVolume()));
     }
 }
 
@@ -104,21 +104,21 @@ void S60VideoPlayerSession::load(const QUrl &url)
 qint64 S60VideoPlayerSession::duration() const
 {         
     Int64 duration;
-    TRAP_IGNORE(duration = m_player->DurationL().Int64() / 1000;) // TODO: Error handling...
+    TRAP_IGNORE(duration = m_player->DurationL().Int64() / 1000;)
     return duration;   
 }
 
 qint64 S60VideoPlayerSession::position() const
 {
     Int64 position;
-    TRAP_IGNORE(position = m_player->PositionL().Int64() / 1000;) // TODO: Error handling...
+    TRAP_IGNORE(position = m_player->PositionL().Int64() / 1000;)
     return position; 
 }
 
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 {
-    //TODO: videoplayrate set but not used.
-    m_playbackRate = rate;
+    S60MediaPlayerSession::setPlaybackRate(rate);
+    // TODO: Set the playback rate for the player
 }
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
@@ -203,14 +203,12 @@ void S60VideoPlayerSession::setPosition(qint64 ms)
 
 void S60VideoPlayerSession::setMuted(bool muted)
 {
-    if (muted == true) {
+    S60MediaPlayerSession::setMuted(muted);
+    if (isMuted() == true) {
         TRAP_IGNORE(m_player->SetVolumeL(0);)
     } else {
-        if (volume() != KUseDefaultVolume)
-            TRAP_IGNORE(m_player->SetVolumeL(percentagesToAbsVol(volume()));)
+        TRAP_IGNORE(m_player->SetVolumeL(volume());)
     }
-    
-    S60MediaPlayerSession::setMuted(muted);
 }
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
@@ -227,20 +225,11 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {    
     if (aError == KErrNone) {
         updateMetaDataEntries();
-        volumeCheck();
+        setVolume(volume());
         emit durationChanged(duration());
     } else {
         setMediaStatus(QMediaPlayer::NoMedia);
     }
-}
-
-void S60VideoPlayerSession::volumeCheck() 
-{
-    if (volume() == KUseDefaultVolume) {
-        S60MediaPlayerSession::setVolume(absVolToPercentages(m_player->Volume()));
-    } else {
-        setVolume(volume());
-    }  
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)

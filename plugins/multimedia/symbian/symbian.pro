@@ -4,7 +4,8 @@ CONFIG += plugin
 TARGET = QtMobilityMultimediaEngine
 PLUGIN_SUBDIR = mediaservice
 include (../../../common.pri)
-LIBS += -lQtMedia
+
+qtAddLibrary(QtMedia)
 
 # camera is on hold -lcamerawrapper -lfbscli
 

@@ -79,7 +79,6 @@ private: // From MMdaAudioPlayerCallback
 
 private: 
     void updateMetaDataEntries();
-    void volumeCheck();
     
 private:
     CMdaAudioPlayerUtility *m_player;

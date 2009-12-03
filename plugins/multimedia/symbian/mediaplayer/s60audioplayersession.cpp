@@ -60,7 +60,6 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
 {
-    delete m_timer;
     delete m_player;
 }
 
@@ -89,15 +88,15 @@ qint64 S60AudioPlayerSession::duration() const
 
 qint64 S60AudioPlayerSession::position() const
 {
-    TTimeIntervalMicroSeconds ms;
+    TTimeIntervalMicroSeconds ms = 0;
     m_player->GetPosition(ms);
-    qDebug() << ms.Int64() / 1000 ;
-    return ms.Int64() / 1000;
+    return microSecondsToMilliSeconds(ms.Int64());
 }
+
 void S60AudioPlayerSession::setPlaybackRate(qreal rate)
 {
-    //TODO: set playbackrate 
-    m_playbackRate = rate;
+    S60MediaPlayerSession::setPlaybackRate(rate);
+    // TODO: Set the playback rate for the player
 }
 
 bool S60AudioPlayerSession::isVideoAvailable() const
@@ -130,10 +129,10 @@ void S60AudioPlayerSession::stop()
 }
 
 void S60AudioPlayerSession::setVolume(int volume)
-{
+{    
     S60MediaPlayerSession::setVolume(volume);
-    if (this->volume() != KUseDefaultVolume) {
-        m_player->SetVolume(percentagesToAbsVol(this->volume()));
+    if (currentMediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
+        m_player->SetVolume((this->volume()/100)* m_player->MaxVolume());
     }
 }
 
@@ -150,16 +149,13 @@ void S60AudioPlayerSession::setPosition(qint64 ms)
 }
 
 void S60AudioPlayerSession::setMuted(bool muted)
-{        
-    if (muted == true) {
+{    
+    S60MediaPlayerSession::setMuted(muted);
+    if (isMuted() == true) {
         m_player->SetVolume(0); 
     } else {
-        if (volume() != KUseDefaultVolume) {
-            m_player->SetVolume(percentagesToAbsVol(volume()));
-        }
+        m_player->SetVolume(volume());
     }
-    
-    S60MediaPlayerSession::setMuted(muted);
 }
 
 void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
@@ -169,7 +165,7 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
     if (aError == KErrNone) {
         setMediaStatus(QMediaPlayer::LoadedMedia);
         updateMetaDataEntries();
-        volumeCheck();
+        setVolume(volume());
         emit durationChanged(duration());
     } else {
         setMediaStatus(QMediaPlayer::NoMedia);
@@ -193,17 +189,6 @@ void S60AudioPlayerSession::updateMetaDataEntries()
         delete entry;
     }
     emit metaDataChanged();
-}
-
-void S60AudioPlayerSession::volumeCheck() 
-{
-    if (volume() == KUseDefaultVolume) {
-        int defaultVolume;
-        m_player->GetVolume(defaultVolume);
-        S60MediaPlayerSession::setVolume(absVolToPercentages(defaultVolume));
-    } else {
-        setVolume(volume());
-    }
 }
 
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)

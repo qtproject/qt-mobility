@@ -41,7 +41,6 @@
 
 #include "s60mediaplayersession.h"
 
-#include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
 #include <QWidget>
@@ -53,11 +52,10 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent),
       m_state(QMediaPlayer::StoppedState),
       m_mediaStatus(QMediaPlayer::NoMedia),
-      m_volume(KUseDefaultVolume),
+      m_volume(100),
       m_playbackRate(1.0),
       m_muted(false),
       m_videoAvailable(false),
-      m_duration(-1),
       m_timer(new QTimer(this))
 {    
     connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
@@ -69,9 +67,7 @@ S60MediaPlayerSession::~S60MediaPlayerSession()
 
 int S60MediaPlayerSession::volume() const
 {
-    if (m_volume != KUseDefaultVolume)
-        return m_volume;
-    return KUseDefaultVolume;
+    return m_volume;
 }
 
 bool S60MediaPlayerSession::isMuted() const
@@ -162,10 +158,15 @@ void S60MediaPlayerSession::setMuted(bool muted)
 
 void S60MediaPlayerSession::setVolume(int volume)
 {
-    if (m_volume != volume) {
+    if (m_volume != volume && volume >= 0 && volume <= 100) {
         m_volume = volume;
         emit volumeChanged(m_volume);
     }
+}
+
+void S60MediaPlayerSession::setPlaybackRate(qreal rate)
+{
+    m_playbackRate = rate;
 }
 
 QMediaPlayer::State S60MediaPlayerSession::currentState() const
@@ -177,7 +178,7 @@ QMediaPlayer::MediaStatus S60MediaPlayerSession::currentMediaStatus() const
 {
     return m_mediaStatus;
 }
-
+/*
 int S60MediaPlayerSession::absVolToPercentages(int absoluteVolume) const
 {
     return absoluteVolume / 100;
@@ -187,7 +188,7 @@ int S60MediaPlayerSession::percentagesToAbsVol(int percentages) const
 {
     return percentages * 100;
 }
-
+*/
 int S60MediaPlayerSession::milliSecondsToMicroSeconds(int milliSeconds) const
 {
     return milliSeconds * 1000;
