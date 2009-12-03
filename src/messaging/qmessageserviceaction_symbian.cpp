@@ -224,26 +224,57 @@ bool QMessageServiceAction::send(QMessage &message)
     d_ptr->_state = QMessageServiceAction::InProgress;
     emit stateChanged(d_ptr->_state);
     
-    if (message.parentAccountId().isValid()) {	
-		QMessageAccount account = QMessageAccount(message.parentAccountId());
-		QMessage::TypeFlags types = account.messageTypes();
-		if (types == QMessage::Email){
-			message.setType(QMessage::Email);
-		}
-		else if (types == QMessage::Mms){
-			message.setType(QMessage::Mms);
-		}
-		if (types == QMessage::Sms){
-			message.setType(QMessage::Sms);
-		}
-    } 
+    // Check message type
+    if(message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
+        d_ptr->_lastError = QMessageStore::ConstraintFailure;
+        retVal = false;
+    }
+
+    QMessageAccountId accountId = message.parentAccountId();
+    if (retVal) {
+        // Check account
+        if (!accountId.isValid()) {
+            accountId = QMessageAccount::defaultAccount(message.type());
+            if (!accountId.isValid()) {
+                d_ptr->_lastError = QMessageStore::InvalidId;
+                retVal = false;
+            }
+        }
+    }
+
+    if (retVal) {
+        // Check account/message type compatibility
+        QMessageAccount account(accountId);
+        if (!(account.messageTypes() & message.type())) {
+            d_ptr->_lastError = QMessageStore::ConstraintFailure;
+            retVal = false;
+        }
+    }
     
-    if (message.type() == QMessage::Sms) {
-        retVal = d_ptr->sendSMS(message);
-    } else if (message.type() == QMessage::Mms) {
-        retVal = d_ptr->sendMMS(message);
-    } else if (message.type() == QMessage::Email) {
-		retVal = d_ptr->sendEmail(message);
+    if (retVal) {
+        // Check recipients
+        QMessageAddressList recipients = message.to() + message.bcc() + message.cc();
+        if (recipients.isEmpty()) {
+            d_ptr->_lastError = QMessageStore::ConstraintFailure;
+            return false;
+        }
+    }
+    
+    QMessage outgoing(message);
+
+    // Set default account if unset
+    if (!outgoing.parentAccountId().isValid()) {
+        outgoing.setParentAccountId(accountId);
+    }
+    
+    if (retVal) {
+        if (message.type() == QMessage::Sms) {
+            retVal = d_ptr->sendSMS(outgoing);
+        } else if (message.type() == QMessage::Mms) {
+            retVal = d_ptr->sendMMS(outgoing);
+        } else if (message.type() == QMessage::Email) {
+            retVal = d_ptr->sendEmail(outgoing);
+        }
     }
     
     d_ptr->_state = retVal ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;

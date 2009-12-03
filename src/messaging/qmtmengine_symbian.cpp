@@ -323,9 +323,15 @@ QMessageAccountId CMTMEngine::defaultAccount(QMessage::Type type) const
     TRAPD(err, updateEmailAccountsL());
     Q_UNUSED(err)
 
-    foreach (QMessageAccount value, iAccounts) {
-        if ((value.messageTypes() & type) == (int)type) {
-            return value.id();
+    if (type == QMessage::Email) {
+        // Email
+        return idefaultEmailAccountId;
+    } else {
+        // Sms & Mms
+        foreach (QMessageAccount value, iAccounts) {
+            if ((value.messageTypes() & type) == (int)type) {
+                return value.id();
+            }
         }
     }
 
@@ -370,9 +376,12 @@ void CMTMEngine::updateEmailAccountsL() const
                                                                    defaultAccount.iSmtpService,
                                                                    QMessage::Email);
             iAccounts.insert(idAsString, account);
+            idefaultEmailAccountId = account.id();
         } else {
             keys.removeOne(idAsString);
         }
+    } else {
+        idefaultEmailAccountId = QMessageAccountId();
     }
 
     RArray<TImapAccount> imapAccounts(10);
