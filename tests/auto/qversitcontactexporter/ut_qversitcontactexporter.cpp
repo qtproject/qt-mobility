@@ -646,7 +646,7 @@ void UT_QVersitContactExporter::testEncodeOrganization()
 
     //Ensure value1 is not URL
     QString value1 = QString::fromAscii(versitDocument.properties().at(0).value().data());
-    QEXPECT_FAIL(value1.toAscii(), url.toAscii(), Continue);
+    QVERIFY(value1.toAscii() != url.toAscii());
 
     // Assistant Name Test.
     contact = QContact();
