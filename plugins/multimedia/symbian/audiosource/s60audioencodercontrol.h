@@ -66,8 +66,8 @@ public:
 
     QString codecDescription(const QString &codecName) const;
 
-    int bitrate() const;
-    void setBitrate(int);
+    int bitRate() const;
+    void setBitRate(int);
 
     QtMedia::EncodingQuality quality() const;
     void setQuality(QtMedia::EncodingQuality);

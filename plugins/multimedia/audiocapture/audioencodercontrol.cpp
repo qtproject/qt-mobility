@@ -90,12 +90,12 @@ QString AudioEncoderControl::codecDescription(const QString &codecName) const
     return QString();
 }
 
-int AudioEncoderControl::bitrate() const
+int AudioEncoderControl::bitRate() const
 {
     return (m_session->format().frequency()*m_session->format().channels()*(m_session->format().sampleSize()/8));
 }
 
-void AudioEncoderControl::setBitrate(int value)
+void AudioEncoderControl::setBitRate(int value)
 {
     QT_PREPEND_NAMESPACE(QAudioFormat) fmt = m_session->format();
 
@@ -229,7 +229,7 @@ QAudioEncoderSettings AudioEncoderControl::audioSettings() const
 {
     QAudioEncoderSettings settings;
     settings.setCodec(audioCodec());
-    settings.setBitrate(bitrate());
+    settings.setBitRate(bitRate());
     settings.setQuality(quality());
     settings.setSampleRate(sampleRate());
     settings.setChannels(channels());
@@ -239,7 +239,7 @@ QAudioEncoderSettings AudioEncoderControl::audioSettings() const
 void AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
     setAudioCodec(settings.codec());
-    setBitrate(settings.bitrate());
+    setBitRate(settings.bitRate());
     setQuality(settings.quality());
     setSampleRate(settings.sampleRate());
     setChannels(settings.channels());

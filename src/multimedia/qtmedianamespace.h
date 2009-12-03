@@ -75,7 +75,7 @@ namespace QtMedia
         Duration,
 
         // Audio
-        AudioBitrate,
+        AudioBitRate,
         AudioCodec,
         AverageLevel,
         Channels,
@@ -163,8 +163,8 @@ namespace QtMedia
     enum EncodingMode
     {
         ConstantQualityEncoding,
-        ConstantBitrateEncoding,
-        AverageBitrateEncoding,
+        ConstantBitRateEncoding,
+        AverageBitRateEncoding,
         TwoPassEncoding
     };
 

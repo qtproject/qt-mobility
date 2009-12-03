@@ -206,7 +206,7 @@ GstElement *QGstreamerAudioEncode::createEncoder()
                 g_object_set(G_OBJECT(encoderElement), "quality", qualityTable[qualityValue], NULL);
             }
         } else {
-            int bitrate = m_audioSettings.bitrate();
+            int bitrate = m_audioSettings.bitRate();
             if (bitrate > 0) {
                 g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
             }
