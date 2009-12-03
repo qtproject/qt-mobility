@@ -161,7 +161,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
                 m_cameraControl, SLOT(setDevice(QString)));
 
         if (m_videoInputDevice->deviceCount())
-            m_cameraControl->setDevice(m_videoInputDevice->name(m_videoInputDevice->selectedDevice()));
+            m_cameraControl->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
     }
 
     m_videoOutput = new QGstreamerVideoOutputControl(this);

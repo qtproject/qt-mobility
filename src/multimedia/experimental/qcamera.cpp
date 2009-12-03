@@ -201,7 +201,7 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
             QString deviceName(device);
 
             for (int i=0; i<deviceControl->deviceCount(); i++) {
-                if (deviceControl->name(i) == deviceName) {
+                if (deviceControl->deviceName(i) == deviceName) {
                     deviceControl->setSelectedDevice(i);
                     break;
                 }
