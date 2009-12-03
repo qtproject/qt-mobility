@@ -19,18 +19,18 @@ symbian: {
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtSystemInfo_tp.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtPublishSubscribe_tp.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtContacts_tp.dll \
-        $$[EPOCROOT50]epoc32/release/armv5/urel/QtVersit_tp.dll
+        $$(EPOCROOT50)epoc32/release/armv5/urel/QtVersit_tp.dll
 
 
     bearer = \
         "IF package(0x1028315F)" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
+        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer_tp.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
         "ELSEIF package(0x102752AE)" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
+        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer_tp.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
         "ELSEIF package(0x102032BE)" \
-        "   \"$$(EPOCROOT31)epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
+        "   \"$$(EPOCROOT31)epoc32/release/armv5/urel/QtBearer_tp.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
         "ELSE" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
+        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer_tp.dll\" - \"!:\\sys\\bin\\QtBearer_tp.dll\"" \
         "ENDIF"
 
     contacts = \
