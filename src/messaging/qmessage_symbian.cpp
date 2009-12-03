@@ -367,6 +367,7 @@ void QMessage::setBody(const QString &body, const QByteArray &mimeType)
             // The body content is in the first attachment
             QMessageContentContainerPrivate *attachmentContainer(container->attachment(existingBodyId)->d_ptr);
             attachmentContainer->setContent(body, mainType, subType, charset);
+            attachmentContainer->_id = existingBodyId;
         }
     } else {
         if (container->_attachments.isEmpty()) {
@@ -460,6 +461,22 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 	message.setParentAccountId(d_ptr->_parentAccountId);
 	message.setDate(QDateTime::currentDateTime());
 	
+	QString body;
+	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+	QMessageContentContainerId existingBodyId(bodyId());
+	if (existingBodyId.isValid()) {
+		if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+			// The body content is in the message itself
+			body = textContent();
+			message.setBody(body);
+		} else {
+			// The body content is in the first attachment
+			QMessageContentContainerPrivate *attachmentContainer(container->attachment(existingBodyId)->d_ptr);
+			body = attachmentContainer->_textContent;
+			message.setBody(body);
+		}
+	}
+	
 	if (type == ReplyToSender) {
 		message.setTo(d_ptr->_from);
 		
@@ -467,11 +484,6 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 		if (!subj.isEmpty()) {
 			subj.insert(0, "Re:");
 			message.setSubject(subj);
-		}
-		
-		QString body = textContent();
-		if (!body.isEmpty()) {
-			message.setBody(body);
 		}
 		
 	} else if (type == ReplyToAll) {
@@ -502,11 +514,6 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 			subj.insert(0, "Re:");
 			message.setSubject(subj);
 		}
-		
-		QString body = textContent();
-		if (!body.isEmpty()) {
-			message.setBody(body);
-		}
 
 	} else if (type == Forward) {
 		QString subj = subject();
@@ -514,10 +521,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 			subj.insert(0, "Fwd:");
 			message.setSubject(subj);
 		}
-		QString body = textContent();
-		if (!body.isEmpty()) {
-			message.setBody(body);
-		}
+
 		QMessageContentContainerIdList ids = attachmentIds();
 		QStringList containerList;
 		foreach (QMessageContentContainerId id, ids){

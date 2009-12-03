@@ -622,15 +622,13 @@ void tst_QMessageStore::testMessage()
 
     message.setBody(replacementText, "text/html; charset=" + alternateCharset);
     body = message.find(bodyId);
-
-#ifndef Q_OS_SYMBIAN    
+    
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
-    QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
-#endif    
+    QAPPROXIMATECOMPARE(body.size(), 72u, 36u);  
 
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
@@ -663,11 +661,12 @@ void tst_QMessageStore::testMessage()
     QVERIFY(updated.contains(bodyId));
 
     body = updated.find(bodyId);
-#ifndef Q_OS_SYMBIAN    
+  
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
 #if !defined(Q_OS_WIN)
     // Original charset is not preserved on windows
+#ifndef Q_OS_SYMBIAN 
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
 #endif
 #endif
@@ -680,23 +679,18 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(reply.subject(), updated.subject().prepend("Re:"));
     QCOMPARE(reply.to(), QList<QMessageAddress>() << updated.from());
     QCOMPARE(reply.cc(), QList<QMessageAddress>());
-#ifndef Q_OS_SYMBIAN
     QVERIFY(reply.bodyId().isValid());
-#endif  
+
 
     QMessage replyToAll(updated.createResponseMessage(QMessage::ReplyToAll));
     QCOMPARE(replyToAll.subject(), updated.subject().prepend("Re:"));  
     QCOMPARE(replyToAll.to(), QList<QMessageAddress>() << updated.from());
     QCOMPARE(replyToAll.cc(), QList<QMessageAddress>() << updated.to() << updated.cc());
-#ifndef Q_OS_SYMBIAN
     QVERIFY(replyToAll.bodyId().isValid());   
-#endif
 
     QMessage forward(updated.createResponseMessage(QMessage::Forward));
     QCOMPARE(forward.subject(), updated.subject().prepend("Fwd:"));
-#ifndef Q_OS_SYMBIAN
-    QVERIFY(forward.bodyId().isValid());
-#endif    
+    QVERIFY(forward.bodyId().isValid());   
 
     // Verify that the attachments can be removed
     updated.clearAttachments();
