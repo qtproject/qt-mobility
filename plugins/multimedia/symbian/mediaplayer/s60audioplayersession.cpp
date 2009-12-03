@@ -131,7 +131,7 @@ void S60AudioPlayerSession::setVolume(int volume)
 {    
     S60MediaPlayerSession::setVolume(volume);
     if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
-        m_player->SetVolume((this->volume() / 100)* m_player->MaxVolume());
+        m_player->SetVolume((this->volume() / 100) * m_player->MaxVolume());
     }
 }
 
@@ -153,7 +153,7 @@ void S60AudioPlayerSession::setMuted(bool muted)
     if (isMuted() == true) {
         m_player->SetVolume(0); 
     } else {
-        m_player->SetVolume(volume());
+        setVolume(volume());
     }
 }
 

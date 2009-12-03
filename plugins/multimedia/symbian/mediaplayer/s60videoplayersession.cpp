@@ -82,13 +82,6 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
     delete m_player;
     delete m_dummyWidget;
 }
-void S60VideoPlayerSession::setVolume(int volume)
-{
-    S60MediaPlayerSession::setVolume(volume);
-    if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
-        TRAP_IGNORE(m_player->SetVolumeL((this->volume() / 100)* m_player->MaxVolume()));
-    }
-}
 
 void S60VideoPlayerSession::load(const QUrl &url)
 {
@@ -204,13 +197,21 @@ void S60VideoPlayerSession::setPosition(qint64 ms)
         m_player->Play();
 }
 
+void S60VideoPlayerSession::setVolume(int volume)
+{
+    S60MediaPlayerSession::setVolume(volume);
+    if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
+        TRAP_IGNORE(m_player->SetVolumeL((this->volume() / 100)* m_player->MaxVolume()));
+    }
+}
+
 void S60VideoPlayerSession::setMuted(bool muted)
 {
     S60MediaPlayerSession::setMuted(muted);
     if (isMuted() == true) {
         TRAP_IGNORE(m_player->SetVolumeL(0);)
     } else {
-        TRAP_IGNORE(m_player->SetVolumeL(volume());)
+        setVolume(volume());
     }
 }
 

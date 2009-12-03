@@ -178,7 +178,7 @@ const QString& S60MediaPlayerSession::filePath() const
 
 void S60MediaPlayerSession::setFilePath(const QString &path)
 {
-    m_filePath = path;
+    m_filePath = QDir::toNativeSeparators(path);
 }
 
 QMap<QString, QVariant>& S60MediaPlayerSession::metaDataEntries()
