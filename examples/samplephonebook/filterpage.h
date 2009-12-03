@@ -39,33 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef SERIALISER_H
-#define SERIALISER_H
+#ifndef FILTERPAGE_H
+#define FILTERPAGE_H
 
 #include "qtcontacts.h"
 
-#include <QString>
-#include <QStringList>
+#include <QWidget>
+#include <QMap>
+#include <QPlainTextEdit>
 
-class Serialiser
+//QT_BEGIN_NAMESPACE
+class QScrollArea;
+class QComboBox;
+class QPushButton;
+class QLineEdit;
+class QLabel;
+//QT_END_NAMESPACE
+
+class FilterPage : public QWidget
 {
+    Q_OBJECT
+
 public:
-    static QStringList convertContact(const QContact& contact);
-    static QContact convertVcard(const QStringList& vcardLines);
+    FilterPage(QWidget *parent = 0);
+    ~FilterPage();
+
+signals:
+    void showListPage(const QContactFilter& filter);
+
+public slots:
+
+private slots:
+    void addClicked();
+    void clearClicked();
+    void doneClicked();
 
 private:
-    static QString escaped(const QString& input);
-    static QString convertDetail(const QContact& contact, const QContactDetail& detail, const QString& vcardField = QString());
-    static QStringList findActionIdsFromCustomString(const QString& customString);
-    static QString findLinkStringFromCustomString(const QString& customString);
-    static QContactDetail convertCustomString(const QString& customString);
-    static QStringList removeClutter(const QStringList& vcard);
-    static QContactDetail parsePropertyType(const QString& line);
-    static QStringList parseContext(const QString& line);
-    static QString parseValue(const QString& line);
-    static QString parseAttributes(const QString& line);
-    static bool parsePreferred(const QString& line);
-    static bool detailIsPreferredForAnything(const QContact& contact, const QContactDetail& detail);
+    QLineEdit *m_valueCriteriaEdit;
+    QComboBox *m_fieldCriteriaCombo;
+    QComboBox *m_criteriaTypeCombo;
+    QComboBox *m_joinMethodCombo;
+
+    QLabel *m_cumulativeExpressionLabel;
+
+    QPushButton *m_add;
+    QPushButton *m_clear;
+    QPushButton *m_done;
+
+    QString m_cumulativeExpression;
+    QContactFilter m_cumulativeFilter;
 };
 
-#endif
+#endif // FILTERPAGE_H

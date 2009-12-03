@@ -39,11 +39,61 @@
 **
 ****************************************************************************/
 
-#include "ui_maindialog_240_320.h"
+#ifndef CONTACTLISTPAGE_H
+#define CONTACTLISTPAGE_H
 
-class MainDialogForm240By320 : public QWidget, Ui::MainDialog240By320
+#include "qtcontacts.h"
+
+#include <QWidget>
+#include <QList>
+#include <QListWidgetItem>
+
+//QT_BEGIN_NAMESPACE
+class QListWidget;
+class QPushButton;
+class QComboBox;
+class QLabel;
+class QLineEdit;
+//QT_END_NAMESPACE
+
+class ContactListPage : public QWidget
 {
+    Q_OBJECT
+
 public:
-       MainDialogForm240By320(QWidget *parent);
-       ~MainDialogForm240By320();
+    ContactListPage(QWidget *parent = 0);
+    ~ContactListPage();
+
+    void rebuildList(const QContactFilter& filter);
+
+signals:
+    void showEditorPage(QContactLocalId contactId);
+    void showFilterPage(const QContactFilter& filter);
+    void managerChanged(QContactManager *manager);
+
+private slots:
+    void backendSelected();
+    void addContactClicked();
+    void editClicked();
+    void findClicked();
+
+private:
+    // elements of the contact list "page"
+    QLabel *m_backendsLabel;
+    QComboBox *m_backendsCombo;
+    QLabel *m_filterActiveLabel;
+
+    QListWidget *m_contactsList;
+    QPushButton *m_addContactBtn;
+    QPushButton *m_editBtn;
+    QPushButton *m_findBtn;
+
+    // data
+    QContactManager *m_manager;
+    QMap<QContactLocalId, int> m_idToListIndex;
+    QMap<QString, QContactManager*> m_initialisedManagers;
+
+    QContactFilter m_currentFilter;
 };
+
+#endif // CONTACTLISTPAGE_H
