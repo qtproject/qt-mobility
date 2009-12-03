@@ -3341,6 +3341,14 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
             CleanupStack::PopAndDestroy(&file);
             if (pMsg->Length() > 0) {
                 message.setBody(QString::fromUtf16(pMsg->Ptr(), pMsg->Length()));
+                if (receivedEntry.Entry().iDescription.Length() <= 0) { // no subject
+					if (pMsg->Length() <= 40) {
+						message.setSubject(QString::fromUtf16(pMsg->Ptr(), pMsg->Length()));
+					}
+					else {
+						message.setSubject(QString::fromUtf16(pMsg->Ptr(), 40));
+					}
+                }
             }
             delete pMsg;
         } else {
