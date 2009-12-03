@@ -205,8 +205,7 @@ RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
     queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::imAccountType> ());
     queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
 
-    queryidsimacccounts.addColumn("metacontact", rdfcontact1.property<nco::metacontact> ());
-
+    queryidsimacccounts.addColumn("metacontact", rdfcontact1.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
 }
 
@@ -328,7 +327,7 @@ void QTrackerContactFetchRequest::run()
     RDFVariable firstname = RDFContact1.optional().property<nco::nameGiven> ();
     RDFVariable nickname = RDFContact1.optional().property<nco::nickname> ();
     quer.addColumn("contactId", RDFContact1.property<nco::contactUID> ());
-    quer.addColumn("metacontact",RDFContact.optional().property<nco::metacontact> ());
+    quer.addColumn("metacontact",RDFContact1.optional().property<nco::metacontact> ());
     quer.addColumn("prefix", prefix);
     quer.addColumn("firstname", firstname);
     quer.addColumn("middlename", middlename);
