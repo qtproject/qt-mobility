@@ -201,10 +201,10 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_control, SIGNAL(seekableChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)),
                 m_control, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)));
-        connect(m_videoPlayerSession, SIGNAL(playbackRateChanged(qreal rate)),
-                m_control, SIGNAL(playbackRateChanged(qreal rate)));
-        connect(m_videoPlayerSession, SIGNAL(error(int error, const QString &errorString)),
-                m_control, SIGNAL(error(int error, const QString &errorString)));
+        connect(m_videoPlayerSession, SIGNAL(playbackRateChanged(qreal)),
+                m_control, SIGNAL(playbackRateChanged(qreal)));
+        connect(m_videoPlayerSession, SIGNAL(error(int, const QString &)),
+                m_control, SIGNAL(error(int, const QString &)));
         connect(m_videoPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
     }
@@ -242,10 +242,10 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
                 m_control, SIGNAL(seekableChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)),
                 m_control, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)));
-        connect(m_audioPlayerSession, SIGNAL(playbackRateChanged(qreal rate)),
-                m_control, SIGNAL(playbackRateChanged(qreal rate)));
-        connect(m_audioPlayerSession, SIGNAL(error(int error, const QString &errorString)),
-                m_control, SIGNAL(error(int error, const QString &errorString)));
+        connect(m_audioPlayerSession, SIGNAL(playbackRateChanged(qreal)),
+                m_control, SIGNAL(playbackRateChanged(qreal)));
+        connect(m_audioPlayerSession, SIGNAL(error(int, const QString &)),
+                m_control, SIGNAL(error(int, const QString &)));
         connect(m_audioPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
     }

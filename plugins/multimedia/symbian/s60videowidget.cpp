@@ -49,7 +49,6 @@
 #include <coemain.h>    // For CCoeEnv
 #include <coecntrl.h>
 #include <w32std.h>
-//#include <s60camerasession.h>
 
 class S60VideoWidget : public QWidget//, MVFProcessor
 {
@@ -62,14 +61,12 @@ public:
         QPalette palette;
         palette.setColor(QPalette::Background, Qt::black);
         setPalette(palette);
-        qDebug() << size();
     }
 
     virtual ~S60VideoWidget() {}
 
     QSize sizeHint() const
     {
-        qDebug() << m_nativeSize;
         return m_nativeSize;
     }
 
@@ -90,16 +87,12 @@ public:
         m_pixmapImage = QPixmap::fromImage(image);
         repaint();
     }
+    
 protected:
     void paintEvent(QPaintEvent *)
     {
         QPainter painter(this);
         painter.fillRect(rect(), palette().background());
-        
-        
-//        QPoint point(pos());
-//        painter.drawPixmap(point, m_pixmapImage.scaled(size(), Qt::KeepAspectRatio));
-
     }
 
     QSize m_nativeSize;
