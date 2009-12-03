@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-echo "usage: $0 <contact-uid> <imaccount-uid> <im-id> <nickname> <imStatus> <statusMessage> <protocol> <nameGiven> <nameFamily>"
+echo "usage: $0 <contact-uid> <imaccount-uid> <im-id> <nickname> <imPresence> <statusMessage> <protocol> <nameGiven> <nameFamily>"
 exit 1
 fi
 echo "create nco:IMAccount"
@@ -19,7 +19,7 @@ tracker-sparql --update --query "INSERT {
 	<http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$2> a nco:IMAccount;
 	    nco:imID '$3';
 	    nco:imNickname '$4';
-	    nco:imStatus '$5';
+	    nco:imPresence '$5';
 	    nco:imStatusMessage '$6';
 	    nco:imProtocol '$7'
 }

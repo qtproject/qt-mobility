@@ -199,7 +199,7 @@ RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
     queryidsimacccounts.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
 
     queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imID> ());
-    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imStatus> ());
+    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imPresence> ());
     queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imStatusMessage> ());
     queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imNickname> ());
     queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::imAccountType> ());
