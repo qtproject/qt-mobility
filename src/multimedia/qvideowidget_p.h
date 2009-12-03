@@ -243,6 +243,7 @@ public:
 
     void setCurrentControl(QVideoWidgetControlInterface *control);
     void show();
+    void clearService();
 
     void _q_serviceDestroyed();
     void _q_mediaObjectDestroyed();

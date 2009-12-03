@@ -385,6 +385,44 @@ void QVideoWidgetPrivate::show()
     }
 }
 
+void QVideoWidgetPrivate::clearService()
+{
+    if (service) {
+        QObject::disconnect(service, SIGNAL(destroyed()), q_func(), SLOT(_q_serviceDestroyed()));
+
+        if (outputControl)
+            outputControl->setOutput(QVideoOutputControl::NoOutput);
+
+        if (widgetBackend) {
+            QLayout *layout = q_func()->layout();
+
+            for (QLayoutItem *item = layout->takeAt(0); item; item = layout->takeAt(0)) {
+                item->widget()->setParent(0);
+                delete item;
+            }
+            delete layout;
+
+            delete widgetBackend;
+            widgetBackend = 0;
+        }
+
+        delete windowBackend;
+        windowBackend = 0;
+
+        if (rendererBackend) {
+            rendererBackend->clearSurface();
+
+            delete rendererBackend;
+            rendererBackend = 0;
+        }
+
+        currentBackend = 0;
+        currentControl = 0;
+        outputControl = 0;
+        service = 0;
+    }
+}
+
 void QVideoWidgetPrivate::_q_serviceDestroyed()
 {
     if (widgetBackend) {
@@ -409,7 +447,7 @@ void QVideoWidgetPrivate::_q_serviceDestroyed()
 void QVideoWidgetPrivate::_q_mediaObjectDestroyed()
 {
     mediaObject = 0;
-    q_func()->setMediaObject(0);
+    clearService();
 }
 
 void QVideoWidgetPrivate::_q_brightnessChanged(int b)
@@ -529,43 +567,10 @@ void QVideoWidget::setMediaObject(QMediaObject *object)
     if (object == d->mediaObject)
         return;
 
-    if (d->service) {
-        disconnect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
-
-        if (d->outputControl)
-            d->outputControl->setOutput(QVideoOutputControl::NoOutput);
-
-        if (d->widgetBackend) {
-            QLayout *layout = QWidget::layout();
-
-            for (QLayoutItem *item = layout->takeAt(0); item; item = layout->takeAt(0)) {
-                item->widget()->setParent(0);
-                delete item;
-            }
-            delete layout;
-
-            delete d->widgetBackend;
-            d->widgetBackend = 0;
-        }
-
-        delete d->windowBackend;
-        d->windowBackend = 0;
-
-        if (d->rendererBackend) {
-            d->rendererBackend->clearSurface();
-
-            delete d->rendererBackend;
-            d->rendererBackend = 0;
-        }
-
-        d->currentBackend = 0;
-        d->currentControl = 0;
-        d->outputControl = 0;
-        d->service = 0;
-    }
-
     if (d->mediaObject)
         disconnect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
+
+    d->clearService();
 
     d->mediaObject = object;
 
