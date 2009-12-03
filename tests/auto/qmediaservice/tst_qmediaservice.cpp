@@ -137,9 +137,9 @@ public:
 
     int deviceCount() const { return devices.count(); }
 
-    QString name(int index) const { return devices.value(index).name; }
-    QString description(int index) const { return devices.value(index).description; }
-    QIcon icon(int index) const { return devices.value(index).icon; }
+    QString deviceName(int index) const { return devices.value(index).name; }
+    QString deviceDescription(int index) const { return devices.value(index).description; }
+    QIcon deviceIcon(int index) const { return devices.value(index).icon; }
 
     int defaultDevice() const { return m_defaultDevice; }
     void setDefaultDevice(int index) { m_defaultDevice = index; }
