@@ -6497,8 +6497,8 @@
             <contents name="classes" title="Classes" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
-        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (Technical Preview)" fulltitle="Qt Mobility Project APIs (Technical Preview)" subtitle="" location="index.qdoc"/>
-        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (Technical Preview) Overview" fulltitle="Qt Mobility Project APIs (Technical Preview) Overview" subtitle="" location="index.qdoc">
+        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (Technology Preview)" fulltitle="Qt Mobility Project APIs (Technology Preview)" subtitle="" location="index.qdoc"/>
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (Technology Preview) Overview" fulltitle="Qt Mobility Project APIs (Technology Preview) Overview" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
