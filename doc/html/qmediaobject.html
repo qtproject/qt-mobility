@@ -8,7 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="//apple_ref/cpp/cl//QMediaObject"></a>
+<a name="//apple_ref/cpp/cl//QMediaObject" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -91,8 +91,8 @@
 <p>See also <a href="qmediaservice.html">QMediaService</a> and <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <hr />
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaObject/isMetaDataAvailable"></a>
-<a name="//apple_ref/cpp/instm/QMediaObject/metaDataAvailableChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/isMetaDataAvailable" />
+<a name="//apple_ref/cpp/instm/QMediaObject/metaDataAvailableChanged" />
 <h3 class="fn"><a name="metaDataAvailable-prop"></a>metaDataAvailable : const bool</h3>
 <p>This property holds whether access to a media object's meta-data is available.</p>
 <p>If this is true there is meta-data available, otherwise there is no meta-data available.</p>
@@ -104,8 +104,8 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaDataAvailableChanged">metaDataAvailableChanged</a></b> ( bool <i>available</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaObject/isMetaDataWritable"></a>
-<a name="//apple_ref/cpp/instm/QMediaObject/metaDataWritableChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/isMetaDataWritable" />
+<a name="//apple_ref/cpp/instm/QMediaObject/metaDataWritableChanged" />
 <h3 class="fn"><a name="metaDataWritable-prop"></a>metaDataWritable : const bool</h3>
 <p>This property holds whether a media object's meta-data is writable.</p>
 <p>If this is true the meta-data is writable, otherwise the meta-data is read-only.</p>
@@ -117,9 +117,9 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaDataWritableChanged">metaDataWritableChanged</a></b> ( bool <i>writable</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaObject/notifyInterval"></a>
-<a name="//apple_ref/cpp/instm/QMediaObject/setNotifyInterval"></a>
-<a name="//apple_ref/cpp/instm/QMediaObject/notifyIntervalChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/notifyInterval" />
+<a name="//apple_ref/cpp/instm/QMediaObject/setNotifyInterval" />
+<a name="//apple_ref/cpp/instm/QMediaObject/notifyIntervalChanged" />
 <h3 class="fn"><a name="notifyInterval-prop"></a>notifyInterval : int</h3>
 <p>The interval at which notifiable properties will update.</p>
 <p>The interval is expressed in milliseconds, the default value is 1000.</p>
@@ -135,58 +135,58 @@
 <p>See also <a href="qmediaobject.html#addPropertyWatch">addPropertyWatch</a>() and <a href="qmediaobject.html#removePropertyWatch">removePropertyWatch</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaObject/QMediaObject"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/QMediaObject" />
 <h3 class="fn"><a name="QMediaObject"></a>QMediaObject::QMediaObject ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i>, <a href="qmediaservice.html">QMediaService</a> * <i>service</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Constructs a media object which uses the functionality provided by a media <i>service</i>.</p>
 <p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
 <p>This class is meant as a base class for Multimedia objects so this constructor is protected.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/~QMediaObject"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/~QMediaObject" />
 <h3 class="fn"><a name="dtor.QMediaObject"></a>QMediaObject::~QMediaObject ()</h3>
 <p>Destroys a media object.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/addPropertyWatch"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/addPropertyWatch" />
 <h3 class="fn"><a name="addPropertyWatch"></a>void QMediaObject::addPropertyWatch ( <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> const &amp; <i>name</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Watch the property <i>name</i>. The property's notify signal will be emitted once every <a href="qmediaobject.html#notifyInterval-prop">notifyInterval</a> milliseconds.</p>
 <p>See also <a href="qmediaobject.html#notifyInterval-prop">notifyInterval</a>.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/availableExtendedMetaData"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/availableExtendedMetaData" />
 <h3 class="fn"><a name="availableExtendedMetaData"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QMediaObject::availableExtendedMetaData () const</h3>
 <p>Returns a list of keys there is extended meta-data available for.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/availableMetaData"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/availableMetaData" />
 <h3 class="fn"><a name="availableMetaData"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a>&gt; QMediaObject::availableMetaData () const</h3>
 <p>Returns a list of keys there is meta-data available for.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/extendedMetaData"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/extendedMetaData" />
 <h3 class="fn"><a name="extendedMetaData"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QMediaObject::extendedMetaData ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the value associated with a meta-data <i>key</i>.</p>
 <p>The naming and type of extended meta-data is not standardized, so the values and meaning of keys may vary between backends.</p>
 <p>See also <a href="qmediaobject.html#setExtendedMetaData">setExtendedMetaData</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/metaData"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/metaData" />
 <h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> QMediaObject::metaData ( <a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a> <i>key</i> ) const</h3>
 <p>Returns the value associated with a meta-data <i>key</i>.</p>
 <p>See also <a href="qmediaobject.html#setMetaData">setMetaData</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/metaDataAvailableChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/metaDataAvailableChanged" />
 <h3 class="fn"><a name="metaDataAvailableChanged"></a>void QMediaObject::metaDataAvailableChanged ( bool <i>available</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>available</i> state of a media object's meta-data has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/metaDataChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/metaDataChanged" />
 <h3 class="fn"><a name="metaDataChanged"></a>void QMediaObject::metaDataChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that a media object's meta-data has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/metaDataWritableChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/metaDataWritableChanged" />
 <h3 class="fn"><a name="metaDataWritableChanged"></a>void QMediaObject::metaDataWritableChanged ( bool <i>writable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>writable</i> state of a media object's meta-data has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/notifyIntervalChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/notifyIntervalChanged" />
 <h3 class="fn"><a name="notifyIntervalChanged"></a>void QMediaObject::notifyIntervalChanged ( int <i>milliseconds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal a change in the notify interval period to <i>milliseconds</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/removePropertyWatch"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/removePropertyWatch" />
 <h3 class="fn"><a name="removePropertyWatch"></a>void QMediaObject::removePropertyWatch ( <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> const &amp; <i>name</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Remove property <i>name</i> from the list of properties whose changes are regularly signaled.</p>
 <p>See also <a href="qmediaobject.html#notifyInterval-prop">notifyInterval</a>.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/service"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/service" />
 <h3 class="fn"><a name="service"></a><a href="qmediaservice.html">QMediaService</a> * QMediaObject::service () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the media service that provides the functionality of a multimedia object.</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/setExtendedMetaData"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/setExtendedMetaData" />
 <h3 class="fn"><a name="setExtendedMetaData"></a>void QMediaObject::setExtendedMetaData ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets a <i>value</i> for a meta-data <i>key</i>.</p>
 <p>The naming and type of extended meta-data is not standardized, so the values and meaning of keys may vary between backends.</p>
 <p>See also <a href="qmediaobject.html#extendedMetaData">extendedMetaData</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaObject/setMetaData"></a>
+<a name="//apple_ref/cpp/instm/QMediaObject/setMetaData" />
 <h3 class="fn"><a name="setMetaData"></a>void QMediaObject::setMetaData ( <a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a> <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets a <i>value</i> for a meta-data <i>key</i>.</p>
 <p>See also <a href="qmediaobject.html#metaData">metaData</a>().</p>
@@ -194,6 +194,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
 </tr></table></div></address></body>
 </html>
