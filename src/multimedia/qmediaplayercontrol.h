@@ -98,7 +98,7 @@ Q_SIGNALS:
     void stateChanged(QMediaPlayer::State newState);
     void mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void volumeChanged(int volume);
-    void mutingChanged(bool muted);
+    void mutedChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);

@@ -54,6 +54,7 @@ class QVideoWidgetPrivate;
 class Q_MEDIA_EXPORT QVideoWidget : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(QMediaObject* mediaObject READ mediaObject WRITE setMediaObject)
     Q_PROPERTY(bool fullScreen READ isFullScreen WRITE setFullScreen NOTIFY fullScreenChanged)
     Q_PROPERTY(AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode NOTIFY aspectRatioModeChanged)
     Q_PROPERTY(int brightness READ brightness WRITE setBrightness NOTIFY brightnessChanged)
@@ -65,8 +66,11 @@ class Q_MEDIA_EXPORT QVideoWidget : public QWidget
 public:
     enum AspectRatioMode { IgnoreAspectRatio, KeepAspectRatio };
 
-    QVideoWidget(QMediaObject *object, QWidget *parent = 0);
+    QVideoWidget(QWidget *parent = 0);
     ~QVideoWidget();   
+
+    QMediaObject *mediaObject() const;
+    void setMediaObject(QMediaObject *object);
 
 #ifdef Q_QDOC
     bool isFullScreen() const;
@@ -110,6 +114,7 @@ protected:
 private:
     Q_DECLARE_PRIVATE(QVideoWidget)
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaObjectDestroyed())
     Q_PRIVATE_SLOT(d_func(), void _q_brightnessChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_contrastChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_hueChanged(int))

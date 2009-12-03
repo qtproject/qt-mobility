@@ -99,7 +99,7 @@ void QMediaImageViewerPrivate::_q_mediaStatusChanged(QMediaImageViewer::MediaSta
 
         if (state == QMediaImageViewer::PlayingState) {
             playlist->next();
-            if (playlist->currentPosition() < 0)
+            if (playlist->currentIndex() < 0)
                 emit q_func()->stateChanged(state = QMediaImageViewer::StoppedState);
         }
         break;
@@ -131,21 +131,16 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     \ingroup multimedia
     \preliminary
 
-    The primary use of QMediaImageViewer is to display image media.  If
-    asked to display a non-image media type QMediaImageViewer will instead
-    display the media's \l {QMediaContent::coverArtUriLarge()}{cover art}
-    or \l {QMediaContent::posterUri()}{poster} if a URI is available for either.
-
-    In order to actually display an image the QMediaImageViewer class must
-    be coupled with a display output such as QVideoWidget.  A display
-    output is attached to the image viewer by passing a pointer the
-    QMediaImageViewer instance in the constructor of the display output,
-    and can be removed by deleting the display output.
+    QMediaImageViewer is used together with a media display object such as
+    QVideoWidget to present an image.  A display object is attached to the
+    image viewer by passing a pointer to the QMediaImageViewer instance to the
+    setMediaObject() function of the display object.
 
     \code
     viewer = new QMediaImageViewer(this);
 
-    display = new QVideoWidget(viewer);
+    display = new QVideoWidget;
+    display->setMediaObject(viewer);
     display->show();
     \endcode
 
@@ -163,9 +158,9 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     \code
     playlist = new QMediaPlaylist(viewer, this);
     playlist->setPlaybackMode(QMediaPlaylist::Loop);
-    playlist->appendItem(image1);
-    playlist->appendItem(image2);
-    playlist->appendItem(image3);
+    playlist->addMedia(image1);
+    playlist->addMedia(image2);
+    playlist->addMedia(image3);
 
     viewer->setTimeout(5000);
     viewer->play();
@@ -258,11 +253,6 @@ QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
 /*!
     \property QMediaImageViewer::media
     \brief the media an image viewer is presenting.
-
-    If the media is on a non image type the image viewer will instead display the media's
-    \l {QMediaContent::coverArtUriLarge()}{cover art} or \l {QMediaContent::posterUri()}{poster} if
-    a URI is available for either.
-
 */
 
 QMediaContent QMediaImageViewer::media() const
@@ -387,14 +377,14 @@ void QMediaImageViewer::play()
 {
     Q_D(QMediaImageViewer);
 
-    if (d->playlist && d->playlist->size() > 0 && d->state != PlayingState) {
+    if (d->playlist && d->playlist->mediaCount() > 0 && d->state != PlayingState) {
         d->state = PlayingState;
 
         switch (d->viewerControl->mediaStatus()) {
         case NoMedia:
         case InvalidMedia:
             d->playlist->next();
-            if (d->playlist->currentPosition() < 0)
+            if (d->playlist->currentIndex() < 0)
                 d->state = StoppedState;
             break;
         case LoadingMedia:
@@ -475,7 +465,7 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
 
         d->playlist->next();
 
-        if (d->playlist->currentPosition() < 0) {
+        if (d->playlist->currentIndex() < 0) {
             d->pauseTime = 0;
             emit stateChanged(d->state = StoppedState);
             emit elapsedTimeChanged(0);

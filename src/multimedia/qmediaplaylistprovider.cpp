@@ -79,7 +79,7 @@ QMediaPlaylistProvider::~QMediaPlaylistProvider()
 }
 
 /*!
-    \fn QMediaPlaylistProvider::size() const;
+    \fn QMediaPlaylistProvider::mediaCount() const;
 
     Returns the size of playlist.
 */
@@ -163,7 +163,7 @@ bool QMediaPlaylistProvider::isReadOnly() const
 
     Returns true if the media was appended; and false otherwise.
 */
-bool QMediaPlaylistProvider::appendItem(const QMediaContent &media)
+bool QMediaPlaylistProvider::addMedia(const QMediaContent &media)
 {
     Q_UNUSED(media);
     return false;
@@ -174,10 +174,10 @@ bool QMediaPlaylistProvider::appendItem(const QMediaContent &media)
 
     Returns true if the media items were appended; and false otherwise.
 */
-bool QMediaPlaylistProvider::appendItems(const QList<QMediaContent> &items)
+bool QMediaPlaylistProvider::addMedia(const QList<QMediaContent> &items)
 {
     foreach(const QMediaContent &item, items) {
-        if (!appendItem(item))
+        if (!addMedia(item))
             return false;
     }
 
@@ -189,7 +189,7 @@ bool QMediaPlaylistProvider::appendItems(const QList<QMediaContent> &items)
 
     Returns true if the media was inserted; and false otherwise.
 */
-bool QMediaPlaylistProvider::insertItem(int position, const QMediaContent &media)
+bool QMediaPlaylistProvider::insertMedia(int position, const QMediaContent &media)
 {
     Q_UNUSED(position);
     Q_UNUSED(media);
@@ -201,10 +201,10 @@ bool QMediaPlaylistProvider::insertItem(int position, const QMediaContent &media
 
     Returns true if the media \a items were inserted; and false otherwise.
 */
-bool QMediaPlaylistProvider::insertItems(int position, const QList<QMediaContent> &items)
+bool QMediaPlaylistProvider::insertMedia(int position, const QList<QMediaContent> &items)
 {
     for (int i=0; i<items.count(); i++) {
-        if (!insertItem(position+i,items.at(i)))
+        if (!insertMedia(position+i,items.at(i)))
             return false;
     }
 
@@ -217,7 +217,7 @@ bool QMediaPlaylistProvider::insertItems(int position, const QList<QMediaContent
 
     Returns true if the media was removed; and false otherwise.
 */
-bool QMediaPlaylistProvider::removeItem(int position)
+bool QMediaPlaylistProvider::removeMedia(int position)
 {
     Q_UNUSED(position);
     return false;
@@ -228,10 +228,10 @@ bool QMediaPlaylistProvider::removeItem(int position)
 
     Returns true if the media was removed; and false otherwise.
   */
-bool QMediaPlaylistProvider::removeItems(int start, int end)
+bool QMediaPlaylistProvider::removeMedia(int start, int end)
 {
     for (int pos=start; pos<=end; pos++) {
-        if (!removeItem(pos))
+        if (!removeMedia(pos))
             return false;
     }
 
@@ -245,7 +245,7 @@ bool QMediaPlaylistProvider::removeItems(int start, int end)
 */
 bool QMediaPlaylistProvider::clear()
 {
-    return removeItems(0, size()-1);
+    return removeMedia(0, mediaCount()-1);
 }
 
 /*!
@@ -256,36 +256,36 @@ void QMediaPlaylistProvider::shuffle()
 }
 
 /*!
-    \fn void QMediaPlaylistProvider::itemsAboutToBeInserted(int start, int end);
+    \fn void QMediaPlaylistProvider::mediaAboutToBeInserted(int start, int end);
 
     Signals that new media is about to be inserted into a playlist between the \a start and \a end
     positions.
 */
 
 /*!
-    \fn void QMediaPlaylistProvider::itemsInserted(int start, int end);
+    \fn void QMediaPlaylistProvider::mediaInserted(int start, int end);
 
     Signals that new media has been inserted into a playlist between the \a start and \a end
     positions.
 */
 
 /*!
-    \fn void QMediaPlaylistProvider::itemsAboutToBeRemoved(int start, int end);
+    \fn void QMediaPlaylistProvider::mediaAboutToBeRemoved(int start, int end);
 
     Signals that media is about to be removed from a playlist between the \a start and \a end
     positions.
 */
 
 /*!
-    \fn void QMediaPlaylistProvider::itemsRemoved(int start, int end);
+    \fn void QMediaPlaylistProvider::mediaRemoved(int start, int end);
 
     Signals that media has been removed from a playlist between the \a start and \a end positions.
 */
 
 /*!
-    \fn void QMediaPlaylistProvider::itemsChanged(int start, int end);
+    \fn void QMediaPlaylistProvider::mediaChanged(int start, int end);
 
-    Signals that media in playlist between the \a start and \a end positions has changed.
+    Signals that media in playlist between the \a start and \a end positions inclusive has changed.
 */
 
 /*!

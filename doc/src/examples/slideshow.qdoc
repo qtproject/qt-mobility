@@ -67,7 +67,8 @@
     We create a QVideoWidget to display the viewer and add it to the dialog.
 
     \code
-        QVideoWidget *videoWidget = new QVideoWidget(imageViewer);
+        QVideoWidget *videoWidget = new QVideoWidget;
+        videoWidget->setMediaObject(imageViewer);
     \endcode
 
 

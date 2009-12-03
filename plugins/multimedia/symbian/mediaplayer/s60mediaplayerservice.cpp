@@ -186,7 +186,7 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
         connect(m_videoPlayerSession, SIGNAL(durationChanged(qint64)),
                 m_control, SIGNAL(durationChanged(qint64)));
         connect(m_videoPlayerSession, SIGNAL(mutedStateChaned(bool)),
-                m_control, SIGNAL(mutingChanged(bool)));
+                m_control, SIGNAL(mutedChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(volumeChanged(int)),
                 m_control, SIGNAL(volumeChanged(int)));
         connect(m_videoPlayerSession, SIGNAL(stateChanged(QMediaPlayer::State)),
@@ -220,7 +220,7 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
         connect(m_audioPlayerSession, SIGNAL(durationChanged(qint64)),
                 m_control, SIGNAL(durationChanged(qint64)));
         connect(m_audioPlayerSession, SIGNAL(mutedStateChaned(bool)),
-                m_control, SIGNAL(mutingChanged(bool)));
+                m_control, SIGNAL(mutedChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(volumeChanged(int)),
                 m_control, SIGNAL(volumeChanged(int)));
         connect(m_audioPlayerSession, SIGNAL(stateChanged(QMediaPlayer::State)),

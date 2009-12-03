@@ -156,7 +156,7 @@ bool QWmpPlayerControl::isMuted() const
 void QWmpPlayerControl::setMuted(bool muted)
 {
     if (m_settings && m_settings->put_mute(muted ? TRUE : FALSE) == S_OK)
-        emit mutingChanged(muted);
+        emit mutedChanged(muted);
 
 }
 

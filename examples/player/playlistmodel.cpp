@@ -54,7 +54,7 @@ PlaylistModel::PlaylistModel(QObject *parent)
 
 int PlaylistModel::rowCount(const QModelIndex &parent) const
 {
-    return m_playlist && !parent.isValid() ? m_playlist->size() : 0;
+    return m_playlist && !parent.isValid() ? m_playlist->mediaCount() : 0;
 }
 
 int PlaylistModel::columnCount(const QModelIndex &parent) const
@@ -65,7 +65,7 @@ int PlaylistModel::columnCount(const QModelIndex &parent) const
 QModelIndex PlaylistModel::index(int row, int column, const QModelIndex &parent) const
 {
     return m_playlist && !parent.isValid()
-            && row >= 0 && row < m_playlist->size()
+            && row >= 0 && row < m_playlist->mediaCount()
             && column >= 0 && column < ColumnCount
         ? createIndex(row, column)
         : QModelIndex();
@@ -100,21 +100,21 @@ QMediaPlaylist *PlaylistModel::playlist() const
 void PlaylistModel::setPlaylist(QMediaPlaylist *playlist)
 {
     if (m_playlist) {
-        disconnect(m_playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
-        disconnect(m_playlist, SIGNAL(itemsInserted(int,int)), this, SLOT(endInsertItems()));
-        disconnect(m_playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
-        disconnect(m_playlist, SIGNAL(itemsRemoved(int,int)), this, SLOT(endRemoveItems()));
-        disconnect(m_playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
+        disconnect(m_playlist, SIGNAL(mediaAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
+        disconnect(m_playlist, SIGNAL(mediaInserted(int,int)), this, SLOT(endInsertItems()));
+        disconnect(m_playlist, SIGNAL(mediaAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
+        disconnect(m_playlist, SIGNAL(mediaRemoved(int,int)), this, SLOT(endRemoveItems()));
+        disconnect(m_playlist, SIGNAL(mediaChanged(int,int)), this, SLOT(changeItems(int,int)));
     }
 
     m_playlist = playlist;
 
     if (m_playlist) {
-        connect(m_playlist, SIGNAL(itemsAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
-        connect(m_playlist, SIGNAL(itemsInserted(int,int)), this, SLOT(endInsertItems()));
-        connect(m_playlist, SIGNAL(itemsAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
-        connect(m_playlist, SIGNAL(itemsRemoved(int,int)), this, SLOT(endRemoveItems()));
-        connect(m_playlist, SIGNAL(itemsChanged(int,int)), this, SLOT(changeItems(int,int)));
+        connect(m_playlist, SIGNAL(mediaAboutToBeInserted(int,int)), this, SLOT(beginInsertItems(int,int)));
+        connect(m_playlist, SIGNAL(mediaInserted(int,int)), this, SLOT(endInsertItems()));
+        connect(m_playlist, SIGNAL(mediaAboutToBeRemoved(int,int)), this, SLOT(beginRemoveItems(int,int)));
+        connect(m_playlist, SIGNAL(mediaRemoved(int,int)), this, SLOT(endRemoveItems()));
+        connect(m_playlist, SIGNAL(mediaChanged(int,int)), this, SLOT(changeItems(int,int)));
     }
 
 

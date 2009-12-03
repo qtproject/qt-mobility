@@ -87,7 +87,8 @@ QTM_BEGIN_NAMESPACE
         playlist->append(QUrl("http://example.com/movie1.mp4"));
         playlist->append(QUrl("http://example.com/movie2.mp4"));
 
-        widget = new QVideoWidget(player);
+        widget = new QVideoWidget;
+        widget->setMediaObject(player);
         widget->show();
 
         player->play();
@@ -255,7 +256,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
             connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
             connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
             connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-            connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+            connect(d->control, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged(bool)));
             connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
             connect(d->control, SIGNAL(playbackRateChanged(qreal)), SIGNAL(playbackRateChanged(qreal)));
 
@@ -433,8 +434,8 @@ void QMediaPlayer::play()
         return;
     }
 
-    if (d->playlist && d->playlist->currentPosition() == -1 && !d->playlist->isEmpty())
-        d->playlist->setCurrentPosition(0);
+    if (d->playlist && d->playlist->currentIndex() == -1 && !d->playlist->isEmpty())
+        d->playlist->setCurrentIndex(0);
 
     // Reset error conditions
     d->error = NoError;
@@ -796,7 +797,7 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 */
 
 /*!
-    \fn void QMediaPlayer::mutingChanged(bool muted)
+    \fn void QMediaPlayer::mutedChanged(bool muted)
 
     Signal the mute state has changed to \a muted.
 */
