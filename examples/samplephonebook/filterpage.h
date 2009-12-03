@@ -48,10 +48,13 @@
 #include <QMap>
 #include <QPlainTextEdit>
 
+QT_BEGIN_NAMESPACE
 class QScrollArea;
 class QComboBox;
 class QPushButton;
 class QLineEdit;
+class QLabel;
+QT_BEGIN_NAMESPACE
 
 QTM_USE_NAMESPACE
 

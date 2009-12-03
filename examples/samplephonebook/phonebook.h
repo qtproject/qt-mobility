@@ -48,18 +48,20 @@
 #include <QMap>
 #include <QPlainTextEdit>
 
-//QT_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QStackedWidget;
 class QListWidget;
 class QPushButton;
 class QComboBox;
 class QLabel;
 class QLineEdit;
-//QT_END_NAMESPACE
+QT_END_NAMESPACE
 
 class ContactListPage;
 class ContactEditor;
 class FilterPage;
+
+QTM_USE_NAMESPACE
 
 class PhoneBook : public QWidget
 {

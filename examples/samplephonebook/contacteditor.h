@@ -48,9 +48,13 @@
 #include <QMap>
 #include <QPlainTextEdit>
 
+QT_BEGIN_NAMESPACE
 class QScrollArea;
 class QPushButton;
 class QLineEdit;
+QT_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class ContactEditor : public QWidget
 {

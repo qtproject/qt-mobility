@@ -48,11 +48,13 @@
 #include <QList>
 #include <QListWidgetItem>
 
+QT_BEGIN_NAMESPACE
 class QListWidget;
 class QPushButton;
 class QComboBox;
 class QLabel;
 class QLineEdit;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
