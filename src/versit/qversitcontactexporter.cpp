@@ -128,6 +128,7 @@ QVersitContactExporter::QVersitContactExporter()
  */
 QVersitContactExporter::~QVersitContactExporter()
 {
+    delete d;
 }
 
 /*!
