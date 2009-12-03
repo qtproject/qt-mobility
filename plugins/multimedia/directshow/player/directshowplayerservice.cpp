@@ -41,6 +41,7 @@
 
 #include <directshowplayerservice.h>
 
+#include <directshowmetadatacontrol.h>
 #include <directshowplayercontrol.h>
 #include <directshowvideooutputcontrol.h>
 #include <directshowvideorenderercontrol.h>
@@ -52,6 +53,7 @@
 DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     : QMediaService(parent)
     , m_playerControl(new DirectShowPlayerControl(this))
+    , m_metaDataControl(new DirectShowMetaDataControl(this))
     , m_videoOutputControl(new DirectShowVideoOutputControl)
     , m_videoRendererControl(new DirectShowVideoRendererControl)
     , m_graph(0)
@@ -79,6 +81,7 @@ DirectShowPlayerService::~DirectShowPlayerService()
     }
 
     delete m_playerControl;
+    delete m_metaDataControl;
     delete m_videoOutputControl;
     delete m_videoRendererControl;
 }
@@ -87,6 +90,8 @@ QMediaControl *DirectShowPlayerService::control(const char *name) const
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_playerControl;
+    else if (qstrcmp(name, QMetaDataControl_iid) == 0)
+        return m_metaDataControl;
     else if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutputControl;
     else if (qstrcmp(name, QVideoRendererControl_iid) == 0)
@@ -135,6 +140,9 @@ void DirectShowPlayerService::load(const QMediaContent &media)
                     m_builder->RenderStream(0, &MEDIATYPE_Video, m_source, 0, m_videoOutput);
                 }
             }
+
+            m_metaDataControl->metaDataChanged();
+
             return;
         }
 

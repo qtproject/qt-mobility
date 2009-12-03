@@ -39,52 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef DIRECTSHOWPLAYERSERVICE_H
-#define DIRECTSHOWPLAYERSERVICE_H
+#ifndef DIRECTSHOWMETADATACONTROL_H
+#define DIRECTSHOWMETADATACONTROL_H
 
-#include <qmediaservice.h>
+#include <qmetadatacontrol.h>
 
-#include "directshowglobal.h"
-
-class DirectShowMetaDataControl;
-class DirectShowPlayerControl;
-class DirectShowVideoOutputControl;
-class DirectShowVideoRendererControl;
-
-QTM_BEGIN_NAMESPACE
-class QMediaContent;
-QTM_END_NAMESPACE
+class DirectShowPlayerService;
 
 QTM_USE_NAMESPACE
 
-
-class DirectShowPlayerService : public QMediaService
+class DirectShowMetaDataControl : public QMetaDataControl
 {
     Q_OBJECT
 public:
-    DirectShowPlayerService(QObject *parent = 0);
-    ~DirectShowPlayerService();
+    DirectShowMetaDataControl(DirectShowPlayerService *service, QObject *parent = 0);
+    ~DirectShowMetaDataControl();
 
-    QMediaControl* control(const char *name) const;
+    bool isWritable() const;
+    bool isMetaDataAvailable() const;
 
-    IGraphBuilder *graph() { return m_graph; }
-    IBaseFilter *source() { return m_source; }
+    QVariant metaData(QtMedia::MetaData key) const;
+    void setMetaData(QtMedia::MetaData key, const QVariant &value);
+    QList<QtMedia::MetaData> availableMetaData() const;
 
-    void load(const QMediaContent &media);
+    QVariant extendedMetaData(const QString &key) const;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
+    QStringList availableExtendedMetaData() const;
 
-private Q_SLOTS:
-    void videoOutputChanged();
+    using QMetaDataControl::metaDataChanged;
 
 private:
-    DirectShowPlayerControl *m_playerControl;
-    DirectShowMetaDataControl *m_metaDataControl;
-    DirectShowVideoOutputControl *m_videoOutputControl;
-    DirectShowVideoRendererControl *m_videoRendererControl;
-    IGraphBuilder *m_graph;
-    ICaptureGraphBuilder2 *m_builder;
-    IBaseFilter *m_source;
-    IBaseFilter *m_videoOutput;
+    DirectShowPlayerService *m_service;
 };
-
 
 #endif

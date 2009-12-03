@@ -4,6 +4,7 @@ DEFINES += QMEDIA_DIRECTSHOW_PLAYER
 
 HEADERS += \
         $$PWD\directshowglobal.h \
+        $$PWD\directshowmetadatacontrol.h \
         $$PWD\directshowplayercontrol.h \
         $$PWD\directshowplayerservice.h \
         $$PWD\directshowvideooutputcontrol.h \
@@ -16,6 +17,7 @@ HEADERS += \
         $$PWD\videosurfacepinenum.h
 
 SOURCES += \
+        $$PWD\directshowmetadatacontrol.cpp \
         $$PWD\directshowplayercontrol.cpp \
         $$PWD\directshowplayerservice.cpp \
         $$PWD\directshowvideooutputcontrol.cpp \
