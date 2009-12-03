@@ -271,6 +271,7 @@ private:
     QMap<QMessageStore::NotificationFilterId, QMessageFilter> _filters;
     
     mutable QHash<QString, QMessageAccount> iAccounts;
+    mutable QMessageAccountId idefaultEmailAccountId;
     
     int                 iDeliveryTriesCounter;
     QList<MessageEvent> iUndeliveredMessageEvents;
