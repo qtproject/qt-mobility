@@ -85,17 +85,16 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
 void S60VideoPlayerSession::setVolume(int volume)
 {
     S60MediaPlayerSession::setVolume(volume);
-    if (currentMediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
-        TRAP_IGNORE(m_player->SetVolumeL((this->volume()/100)* m_player->MaxVolume()));
+    if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
+        TRAP_IGNORE(m_player->SetVolumeL((this->volume() / 100)* m_player->MaxVolume()));
     }
 }
 
 void S60VideoPlayerSession::load(const QUrl &url)
 {
     setMediaStatus(QMediaPlayer::LoadingMedia);
-    m_url = url.toLocalFile();
-    QString fileName = QDir::toNativeSeparators(m_url.toString());
-    TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
+    setFilePath(url.toLocalFile());
+    TPtrC str(reinterpret_cast<const TUint16*>(filePath().utf16()));
     TRAP_IGNORE(m_player->OpenFileL(str);) // TODO: Error handling...
     emit positionChanged(position());
     emit durationChanged(duration());
@@ -157,7 +156,7 @@ void S60VideoPlayerSession::nativeHandles()
 
 bool S60VideoPlayerSession::isVideoAvailable() const
 {
-    return m_videoAvailable;
+    return true;
 }
 
 void S60VideoPlayerSession::play()
@@ -171,7 +170,7 @@ void S60VideoPlayerSession::play()
     control->ActivateL();
     );
     control->DrawNow();
-    if (currentState() != QMediaPlayer::PlayingState && currentMediaStatus() != QMediaPlayer::LoadingMedia ) {
+    if (state() != QMediaPlayer::PlayingState && mediaStatus() != QMediaPlayer::LoadingMedia ) {
         startTimer();
         m_player->Play();
         setState(QMediaPlayer::PlayingState);
@@ -195,10 +194,14 @@ void S60VideoPlayerSession::stop()
 
 void S60VideoPlayerSession::setPosition(qint64 ms)
 {
-    TRAP_IGNORE(
-        m_player->SetPositionL(milliSecondsToMicroSeconds(ms));
-        emit positionChanged(position());
-    )  
+    if (state() == QMediaPlayer::PlayingState)
+        TRAP_IGNORE(m_player->PauseL();)
+
+    TRAP_IGNORE(m_player->SetPositionL(milliSecondsToMicroSeconds(ms));)
+    emit positionChanged(position());
+    
+    if (state() == QMediaPlayer::PlayingState)
+        m_player->Play();
 }
 
 void S60VideoPlayerSession::setMuted(bool muted)
@@ -257,7 +260,7 @@ void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 
 void S60VideoPlayerSession::updateMetaDataEntries()
 {
-    m_metaDataMap.clear();
+    metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
     
     TRAP_IGNORE(numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();)
@@ -267,7 +270,7 @@ void S60VideoPlayerSession::updateMetaDataEntries()
         TRAPD(err, entry = m_player->MetaDataEntryL(i));
         
         if (err == KErrNone) {
-           m_metaDataMap.insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
+            metaDataEntries().insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
         }
         delete entry;
     }

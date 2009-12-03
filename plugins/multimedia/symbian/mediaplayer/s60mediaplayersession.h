@@ -60,9 +60,9 @@ public:
     S60MediaPlayerSession(QObject *parent);
     virtual ~S60MediaPlayerSession();
 
-    virtual QUrl url()const { return m_url; };
-    virtual QMediaPlayer::State state() const { return m_state; }
-    virtual QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
+
+    QMediaPlayer::State state() const { return m_state; }
+    QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
 
     virtual qint64 duration() const = 0;
     virtual qint64 position() const = 0;
@@ -98,14 +98,14 @@ signals:
     void stateChanged(QMediaPlayer::State state);
     void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
     void volumeChanged(int volume);
-    void mutedStateChaned(bool muted);
+    void mutingChanged(bool muted);
     void videoAvailabilityChanged(bool videoAvailable);
-    void bufferingChanged(bool buffering);
-    void bufferingProgressChanged(int percentFilled);
-    void playbackFinished();
-    void tagsChanged();
-    void seekableChanged(bool); 
+    void bufferStatusChanged(int percentFilled);
+    void seekableChanged(bool);
+    void seekRangeChanged(const QPair<qint64,qint64>&); 
     void metaDataChanged();
+    void playbackRateChanged(qreal rate);
+    void error(int error, const QString &errorString);
     
 protected slots:
     void tick();
@@ -116,19 +116,18 @@ protected:
     void setMediaStatus(QMediaPlayer::MediaStatus);
     void setState(QMediaPlayer::State state);
     
-    QMediaPlayer::MediaStatus currentMediaStatus() const;
-    QMediaPlayer::State currentState() const;
+    const QString& filePath() const;
+    void setFilePath(const QString &path) ;
+    
+    QMap<QString, QVariant>& metaDataEntries();
    
-protected: // Helper functions
+    // Helper functions
     int milliSecondsToMicroSeconds(int milliSeconds) const;
     int microSecondsToMilliSeconds(int microSeconds) const;
 
-protected:
-    QUrl m_url;
-    bool m_videoAvailable;
-    QMap<QString, QVariant> m_metaDataMap;
-    
 private:
+    QMap<QString, QVariant> m_metaDataMap;
+    QString m_filePath;
     qreal m_playbackRate;
     bool m_muted;
     int m_volume;

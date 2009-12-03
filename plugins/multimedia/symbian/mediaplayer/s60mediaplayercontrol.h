@@ -132,12 +132,12 @@ public Q_SLOTS:
 
     void setVolume(int volume);
     void setMuted(bool muted);
-
+    
 private: 
     S60MediaPlayerSession* currentPlayerSession();
     
 private:
-    MS60MediaPlayerResolver& m_mediaPlayerResolver;
+    MS60MediaPlayerResolver &m_mediaPlayerResolver;
     S60MediaPlayerSession *m_session;
     QMediaContent m_currentResource; 
     QIODevice *m_stream;

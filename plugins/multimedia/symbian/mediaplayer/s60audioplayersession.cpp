@@ -67,11 +67,10 @@ void S60AudioPlayerSession::load(const QUrl &url)
 {
     // we should not load if the player is already loading media
     // this is the case if we have already loaded same media and we set media again
-    if (currentMediaStatus() != QMediaPlayer::LoadingMedia) {
+    if (mediaStatus() != QMediaPlayer::LoadingMedia) {
         setMediaStatus(QMediaPlayer::LoadingMedia);
-        m_url = url.toLocalFile();
-        QString fileName = QDir::toNativeSeparators(m_url.toString());
-        TPtrC str(reinterpret_cast<const TUint16*>(fileName.utf16()));
+        setFilePath(url.toLocalFile());
+        TPtrC str(reinterpret_cast<const TUint16*>(filePath().utf16()));
         TRAPD(err, m_player->OpenFileL(str));
         emit positionChanged(position());
         emit durationChanged(duration());
@@ -106,7 +105,7 @@ bool S60AudioPlayerSession::isVideoAvailable() const
 
 void S60AudioPlayerSession::play()
 {
-    if (currentState() != QMediaPlayer::PlayingState && currentMediaStatus() != QMediaPlayer::LoadingMedia ) {
+    if (state() != QMediaPlayer::PlayingState && mediaStatus() != QMediaPlayer::LoadingMedia ) {
         startTimer();
         m_player->Play();
         setState(QMediaPlayer::PlayingState);
@@ -131,20 +130,20 @@ void S60AudioPlayerSession::stop()
 void S60AudioPlayerSession::setVolume(int volume)
 {    
     S60MediaPlayerSession::setVolume(volume);
-    if (currentMediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
-        m_player->SetVolume((this->volume()/100)* m_player->MaxVolume());
+    if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
+        m_player->SetVolume((this->volume() / 100)* m_player->MaxVolume());
     }
 }
 
 void S60AudioPlayerSession::setPosition(qint64 ms)
 {   
-    if (currentState() == QMediaPlayer::PlayingState)
+    if (state() == QMediaPlayer::PlayingState)
         m_player->Pause();
 
     m_player->SetPosition(milliSecondsToMicroSeconds(ms));
     emit positionChanged(position());
     
-    if (currentState() == QMediaPlayer::PlayingState)
+    if (state() == QMediaPlayer::PlayingState)
         m_player->Play();
 }
 
@@ -174,7 +173,7 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 
 void S60AudioPlayerSession::updateMetaDataEntries()
 {
-    m_metaDataMap.clear();
+    metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
     
     m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries);
@@ -184,7 +183,7 @@ void S60AudioPlayerSession::updateMetaDataEntries()
         TRAPD(err, entry = m_player->GetMetaDataEntryL(i));
     
         if (err == KErrNone) {
-            m_metaDataMap.insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
+            metaDataEntries().insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
         }
         delete entry;
     }

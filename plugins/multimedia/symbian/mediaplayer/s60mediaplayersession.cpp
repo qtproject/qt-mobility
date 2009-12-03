@@ -55,7 +55,6 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
       m_volume(100),
       m_playbackRate(1.0),
       m_muted(false),
-      m_videoAvailable(false),
       m_timer(new QTimer(this))
 {    
     connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
@@ -152,7 +151,7 @@ void S60MediaPlayerSession::setMuted(bool muted)
 {
     if (m_muted != muted) {   
         m_muted = muted;
-        emit mutedStateChaned(m_muted);
+        emit mutingChanged(m_muted);
     }
 }
 
@@ -166,29 +165,27 @@ void S60MediaPlayerSession::setVolume(int volume)
 
 void S60MediaPlayerSession::setPlaybackRate(qreal rate)
 {
-    m_playbackRate = rate;
+    if (m_playbackRate != rate) {
+        m_playbackRate = rate;
+        emit playbackRateChanged(m_playbackRate);
+    }
 }
 
-QMediaPlayer::State S60MediaPlayerSession::currentState() const
+const QString& S60MediaPlayerSession::filePath() const
 {
-    return m_state;
+    return m_filePath;
 }
 
-QMediaPlayer::MediaStatus S60MediaPlayerSession::currentMediaStatus() const
+void S60MediaPlayerSession::setFilePath(const QString &path)
 {
-    return m_mediaStatus;
-}
-/*
-int S60MediaPlayerSession::absVolToPercentages(int absoluteVolume) const
-{
-    return absoluteVolume / 100;
+    m_filePath = path;
 }
 
-int S60MediaPlayerSession::percentagesToAbsVol(int percentages) const
+QMap<QString, QVariant>& S60MediaPlayerSession::metaDataEntries()
 {
-    return percentages * 100;
+    return m_metaDataMap;
 }
-*/
+
 int S60MediaPlayerSession::milliSecondsToMicroSeconds(int milliSeconds) const
 {
     return milliSeconds * 1000;

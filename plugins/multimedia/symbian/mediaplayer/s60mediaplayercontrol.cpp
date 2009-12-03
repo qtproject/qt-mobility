@@ -207,7 +207,9 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     // store to variable as session is created based on the content type.
     m_currentResource = source;
     if (m_session) {
-        m_session->stop();
+        if (m_session->state() != QMediaPlayer::StoppedState) {
+            m_session->stop();
+        }
     }
     m_session = currentPlayerSession();
 

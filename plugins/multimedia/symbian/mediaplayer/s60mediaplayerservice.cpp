@@ -185,7 +185,7 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_control, SIGNAL(positionChanged(qint64)));
         connect(m_videoPlayerSession, SIGNAL(durationChanged(qint64)),
                 m_control, SIGNAL(durationChanged(qint64)));
-        connect(m_videoPlayerSession, SIGNAL(mutedStateChaned(bool)),
+        connect(m_videoPlayerSession, SIGNAL(mutingChanged(bool)),
                 m_control, SIGNAL(mutingChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(volumeChanged(int)),
                 m_control, SIGNAL(volumeChanged(int)));
@@ -193,12 +193,18 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_control, SIGNAL(stateChanged(QMediaPlayer::State)));
         connect(m_videoPlayerSession, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
                 m_control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
-        connect(m_videoPlayerSession,SIGNAL(bufferingProgressChanged(int)),
+        connect(m_videoPlayerSession,SIGNAL(bufferStatusChanged(int)),
                 m_control, SIGNAL(bufferStatusChanged(int)));
         connect(m_videoPlayerSession, SIGNAL(videoAvailabilityChanged(bool)),
                 m_control, SIGNAL(videoAvailabilityChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
+        connect(m_videoPlayerSession, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)),
+                m_control, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)));
+        connect(m_videoPlayerSession, SIGNAL(playbackRateChanged(qreal rate)),
+                m_control, SIGNAL(playbackRateChanged(qreal rate)));
+        connect(m_videoPlayerSession, SIGNAL(error(int error, const QString &errorString)),
+                m_control, SIGNAL(error(int error, const QString &errorString)));
         connect(m_videoPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
     }
@@ -220,7 +226,7 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
                 m_control, SIGNAL(positionChanged(qint64)));
         connect(m_audioPlayerSession, SIGNAL(durationChanged(qint64)),
                 m_control, SIGNAL(durationChanged(qint64)));
-        connect(m_audioPlayerSession, SIGNAL(mutedStateChaned(bool)),
+        connect(m_audioPlayerSession, SIGNAL(mutingChanged(bool)),
                 m_control, SIGNAL(mutingChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(volumeChanged(int)),
                 m_control, SIGNAL(volumeChanged(int)));
@@ -228,12 +234,18 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
                 m_control, SIGNAL(stateChanged(QMediaPlayer::State)));
         connect(m_audioPlayerSession, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
                 m_control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
-        connect(m_audioPlayerSession,SIGNAL(bufferingProgressChanged(int)),
+        connect(m_audioPlayerSession,SIGNAL(bufferStatusChanged(int)),
                 m_control, SIGNAL(bufferStatusChanged(int)));
         connect(m_audioPlayerSession, SIGNAL(videoAvailabilityChanged(bool)),
                 m_control, SIGNAL(videoAvailabilityChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
+        connect(m_audioPlayerSession, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)),
+                m_control, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)));
+        connect(m_audioPlayerSession, SIGNAL(playbackRateChanged(qreal rate)),
+                m_control, SIGNAL(playbackRateChanged(qreal rate)));
+        connect(m_audioPlayerSession, SIGNAL(error(int error, const QString &errorString)),
+                m_control, SIGNAL(error(int error, const QString &errorString)));
         connect(m_audioPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
     }
