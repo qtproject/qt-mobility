@@ -253,17 +253,17 @@ public:
         return m_names.count();
     }
 
-    QString name(int index) const
+    QString deviceName(int index) const
     {
         return m_names[index];
     }
 
-    QString description(int index) const
+    QString deviceDescription(int index) const
     {
         return m_descriptions[index];
     }
 
-    QIcon icon(int index) const
+    QIcon deviceIcon(int index) const
     {
         Q_UNUSED(index)
 
@@ -623,8 +623,8 @@ void tst_QMediaRecorder::testAudioDeviceControl()
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(audio->selectedDevice() == 1);
     QVERIFY(readSignal.count() == 1);
-    QVERIFY(audio->name(1) == QString("device2"));
-    QVERIFY(audio->description(1) == "dev2 comment");
+    QVERIFY(audio->deviceName(1) == QString("device2"));
+    QVERIFY(audio->deviceDescription(1) == "dev2 comment");
 }
 
 void tst_QMediaRecorder::testAudioEncodeControl()

@@ -64,6 +64,7 @@ public:
     V4LRadioControl(QObject *parent = 0);
     ~V4LRadioControl();
 
+    bool isAvailable() const;
     QRadioTuner::State state() const;
 
     QRadioTuner::Band band() const;

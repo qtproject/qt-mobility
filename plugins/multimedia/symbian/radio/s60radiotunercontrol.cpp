@@ -66,6 +66,12 @@ S60RadioTunerControl::~S60RadioTunerControl()
 {
     timer->stop();
 }
+
+bool S60RadioTunerControl::isAvailable() const
+{
+    return available;
+}
+
 QRadioTuner::State S60RadioTunerControl::state() const
 {
     return m_tunerState;

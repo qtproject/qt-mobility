@@ -54,6 +54,8 @@ class Q_MEDIA_EXPORT QRadioTunerControl : public QMediaControl
 public:
     ~QRadioTunerControl();
 
+    virtual bool isAvailable() const = 0;
+
     virtual QRadioTuner::State state() const = 0;
 
     virtual QRadioTuner::Band band() const = 0;
@@ -94,10 +96,10 @@ Q_SIGNALS:
     void bandChanged(QRadioTuner::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
-    void searchingStatusChanged(bool stereo);
+    void searchingChanged(bool stereo);
     void signalStrengthChanged(int signalStrength);
     void volumeChanged(int volume);
-    void mutingChanged(bool muted);
+    void mutedChanged(bool muted);
     void error(QRadioTuner::Error err);
 
 protected:

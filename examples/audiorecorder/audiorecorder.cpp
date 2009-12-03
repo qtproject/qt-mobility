@@ -80,7 +80,7 @@ AudioRecorder::AudioRecorder()
     qualityBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     for(int i = 0; i < audiosource->deviceCount(); i++)
-        deviceBox->addItem(audiosource->name(i));
+        deviceBox->addItem(audiosource->deviceName(i));
 
     QStringList codecs = capture->supportedAudioCodecs();
     for(int i = 0; i < codecs.count(); i++)
@@ -148,7 +148,7 @@ void AudioRecorder::stateChanged(QMediaRecorder::State state)
 void AudioRecorder::deviceChanged(int idx)
 {
     for(int i = 0; i < audiosource->deviceCount(); i++) {
-        if(deviceBox->itemText(idx).compare(audiosource->name(i)) == 0)
+        if(deviceBox->itemText(idx).compare(audiosource->deviceName(i)) == 0)
             audiosource->setSelectedDevice(i);
     }
 }

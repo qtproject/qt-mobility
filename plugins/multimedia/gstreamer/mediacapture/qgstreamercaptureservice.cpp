@@ -185,7 +185,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
     if (m_captureSession && m_audioInputDevice->deviceCount())
-        m_captureSession->setCaptureDevice(m_audioInputDevice->name(m_audioInputDevice->selectedDevice()));
+        m_captureSession->setCaptureDevice(m_audioInputDevice->deviceName(m_audioInputDevice->selectedDevice()));
 
     m_metaDataControl = new QGstreamerCaptureMetaDataControl(this);
     connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),

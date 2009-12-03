@@ -141,8 +141,8 @@ void CameraCapture::updateAudioDevices()
 
     if (audioSource->isAvailable()) {
         for (int i=0; i<audioSource->deviceCount(); i++) {
-            QString deviceName = audioSource->name(i);
-            QString description = audioSource->description(i);
+            QString deviceName = audioSource->deviceName(i);
+            QString description = audioSource->deviceDescription(i);
 
             QAction *audioDeviceAction = new QAction(deviceName+" "+description, audioDevicesGroup);
             audioDeviceAction->setData(QVariant(i));

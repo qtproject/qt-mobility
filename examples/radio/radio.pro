@@ -1,12 +1,10 @@
 TEMPLATE = app
-CONFIG += example
+TARGET = radio
 
 INCLUDEPATH += ../../src/multimedia
+
 include(../examples.pri)
-
 qtAddLibrary(QtMedia)
-
-QMAKE_RPATHDIR += $$DESTDIR
 
 HEADERS = \
     radio.h

@@ -69,8 +69,8 @@ QTM_BEGIN_NAMESPACE
     \endcode
 
     The radio object will emit signals for any changes in state such as:
-    bandChanged(), frequencyChanged(), stereoStatusChanged(), searchingStatusChanged(),
-    signalStrengthChanged(), volumeChanged(), mutingChanged().
+    bandChanged(), frequencyChanged(), stereoStatusChanged(), searchingChanged(),
+    signalStrengthChanged(), volumeChanged(), mutedChanged().
 
     You can change between the frequency bands using setBand() however it is recommended
     that you check to make sure the band is available first using isBandSupported().
@@ -108,10 +108,10 @@ QRadioTuner::QRadioTuner(QObject *parent, QMediaServiceProvider* provider):
             connect(d->control, SIGNAL(bandChanged(QRadioTuner::Band)), SIGNAL(bandChanged(QRadioTuner::Band)));
             connect(d->control, SIGNAL(frequencyChanged(int)), SIGNAL(frequencyChanged(int)));
             connect(d->control, SIGNAL(stereoStatusChanged(bool)), SIGNAL(stereoStatusChanged(bool)));
-            connect(d->control, SIGNAL(searchingStatusChanged(bool)), SIGNAL(searchingStatusChanged(bool)));
+            connect(d->control, SIGNAL(searchingChanged(bool)), SIGNAL(searchingChanged(bool)));
             connect(d->control, SIGNAL(signalStrengthChanged(int)), SIGNAL(signalStrengthChanged(int)));
             connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-            connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+            connect(d->control, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged(bool)));
         }
     }
 }
@@ -483,7 +483,7 @@ QString QRadioTuner::errorString() const
 */
 
 /*!
-    \fn void QRadioTuner::mutingChanged(bool muted)
+    \fn void QRadioTuner::mutedChanged(bool muted)
 
     Signals that the \a muted state of a radio tuner's audio output has changed.
 */
@@ -495,7 +495,7 @@ QString QRadioTuner::errorString() const
 */
 
 /*!
-    \fn void QRadioTuner::searchingStatusChanged(bool searching)
+    \fn void QRadioTuner::searchingChanged(bool searching)
 
     Signals that the \a searching state of a radio tuner has changed.
 */
