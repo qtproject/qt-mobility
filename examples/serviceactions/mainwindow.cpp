@@ -365,10 +365,12 @@ void RecentMessagesWidget::currentItemChanged(QListWidgetItem*, QListWidgetItem*
         emit selected(currentMessage());
 }
 
+//! [process-results]
 void RecentMessagesWidget::messagesFound(const QMessageIdList& ids)
 {
     m_ids.append(ids);
 }
+//! [process-results]
 
 void RecentMessagesWidget::stateChanged(QMessageServiceAction::State s)
 {
@@ -380,6 +382,7 @@ void RecentMessagesWidget::stateChanged(QMessageServiceAction::State s)
     updateState();
 }
 
+
 void RecentMessagesWidget::messageUpdated(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filter)
 {
     if(!filter.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || !m_indexMap.contains(id))
@@ -390,6 +393,7 @@ void RecentMessagesWidget::messageUpdated(const QMessageId& id, const QMessageSt
     QListWidgetItem* item = m_indexMap.value(id);
     if(item)
     {
+
         QMessage message(id);
         bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
         QFont itemFont = item->font();
@@ -481,6 +485,7 @@ void RecentMessagesWidget::updateState()
 
 }
 
+//! [load-message]
 void RecentMessagesWidget::load()
 {
     m_ids.clear();
@@ -490,7 +495,9 @@ void RecentMessagesWidget::load()
     else
         m_state = Loading;
 }
+//! [load-message]
 
+//! [process-results2]
 void RecentMessagesWidget::processResults()
 {
     if(!m_ids.isEmpty())
@@ -515,6 +522,7 @@ void RecentMessagesWidget::processResults()
         updateState();
     }
 }
+//! [process-results2]
 
 class ComposeSendWidget : public QWidget
 {
@@ -585,6 +593,7 @@ static void notifyResult(bool result, const QString& description)
 #endif
 }
 
+//! [send-compose-message]
 void ComposeSendWidget::composeButtonClicked()
 {
     QMessage message(constructQMessage());
@@ -597,6 +606,7 @@ void ComposeSendWidget::sendButtonClicked()
     QMessage message(constructQMessage(asHtml));
     notifyResult(m_service->send(message),"Send message");
 }
+//! [send-compose-message]
 
 void ComposeSendWidget::addAttachmentButtonClicked()
 {
@@ -629,6 +639,7 @@ void ComposeSendWidget::setupUi()
 
     m_accountsWidget = new AccountsWidget(this);
     gl->addWidget(m_accountsWidget,0,1);
+
     connect(m_accountsWidget,SIGNAL(accountChanged()),this,SLOT(accountChanged()));
 
     QLabel* toLabel = new QLabel("To:",this);
@@ -683,6 +694,8 @@ void ComposeSendWidget::setupUi()
     addAction(m_attachmentsAction);
 }
 
+
+//! [construct-message]
 QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
 {
     QMessage message;
@@ -741,6 +754,7 @@ QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
 
     return message;
 }
+//! [construct-message]
 
 class MessageViewWidget : public QWidget
 {
@@ -828,6 +842,7 @@ void MessageViewWidget::view(const QMessageId& messageId)
     updateState();
 }
 
+//! [retrieve-message-body]
 bool MessageViewWidget::retrieveBody()
 {
     if(m_state != Loading && !m_loadTimer.isActive())
@@ -841,6 +856,8 @@ bool MessageViewWidget::retrieveBody()
 
     return false;
 }
+
+//! [retrieve-message-body]
 
 void MessageViewWidget::showEvent(QShowEvent* e)
 {
@@ -962,6 +979,7 @@ void MessageViewWidget::updateState()
     }
 }
 
+//! [partial-message-check]
 void MessageViewWidget::loadMessage()
 {
     m_messageBrowser->clear();
@@ -989,20 +1007,14 @@ void MessageViewWidget::loadMessage()
 
         QString bodyText;
 
+        //for partial message display a download link instead
+
         bool bodyAvailable = bodyPart.isContentAvailable();
 
         if(bodyAvailable)
         {
             if(bodyPart.contentType() == "text")
-            {
                 bodyText = bodyPart.textContent();
-
-                //if(bodyPart.contentSubType() == "plain")
-                //    qWarning() << "Blah";
-                //else if(bodyPart.contentSubType() == "html" || bodyPart.contentSubType() == "rtf")
-                //     qWarning() << "FOO";
-                //else bodyText = "<Unknown text content>";
-            }
             else bodyText = "<Non-text content>";
         }
         else
@@ -1014,6 +1026,7 @@ void MessageViewWidget::loadMessage()
                                  .arg(bodyText));
     }
 }
+//! [partial-message-check]
 
 void MessageViewWidget::resetService()
 {
@@ -1107,15 +1120,16 @@ m_recentMessagesWidget(0)
     setupUi();
 }
 
+//! [show-message]
 void ShowWidget::showButtonClicked()
 {
-    //get the selected account
 
     QMessageId id = m_recentMessagesWidget->currentMessage();
 
     if(id.isValid())
-        m_service->show(id),"Show";
+        m_service->show(id);
 }
+//! [show-message]
 
 void ShowWidget::setupUi()
 {
@@ -1161,6 +1175,7 @@ m_activityListWidget(0)
     setupUi();
 }
 
+//! [store-signals]
 void StoreSignalsWidget::messageAdded(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filterSet)
 {
     if(!filterSet.contains(m_notificationFilterId))
@@ -1194,6 +1209,7 @@ void StoreSignalsWidget::messageRemoved(const QMessageId& id, const QMessageStor
     QString msg = QString("Removed ID: %1 ...").arg(idString);
     m_activityListWidget->addItem(msg);
 }
+//! [store-signals]
 
 void StoreSignalsWidget::setupUi()
 {
