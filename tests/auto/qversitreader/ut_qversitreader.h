@@ -59,7 +59,7 @@ class UT_QVersitReader : public QObject
      Q_OBJECT
 
 public slots:
-    void readingDone();
+    void finished();
 
 private slots: // Tests
 

@@ -74,7 +74,7 @@ public:
     QList<QVersitDocument> result() const;
 
 signals:
-    void readingDone();
+    void finished();
     
 private: // data
     QVersitReaderPrivate* d;   

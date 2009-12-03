@@ -81,14 +81,14 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QVersitReader::readingDone()
+ * \fn QVersitReader::finished()
  * The signal is emitted by the reader when the asynchronous reading has been completed.
  */
 
 /*! Constructs a new reader. */
 QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 {
-    connect(d,SIGNAL(finished()),this,SIGNAL(readingDone()),Qt::DirectConnection);
+    connect(d,SIGNAL(finished()),this,SIGNAL(finished()),Qt::DirectConnection);
 }
     
 /*! 
@@ -121,7 +121,7 @@ QIODevice* QVersitReader::device() const
  * Starts reading the input asynchronously.
  * Returns false if the input device has not been set or opened or
  * if there is another asynchronous read operation already pending.
- * Signal \l readingDone() is emitted when the reading has finished.
+ * Signal \l finished() is emitted when the reading has finished.
  */
 bool QVersitReader::startReading()
 {

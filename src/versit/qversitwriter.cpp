@@ -83,14 +83,14 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QVersitWriter::writingDone()
+ * \fn QVersitWriter::finished()
  * The signal is emitted by the writer when the asynchronous writing has been completed.
  */
 
 /*! Constructs a new writer. */
 QVersitWriter::QVersitWriter() : d(new QVCard21Writer)
 {
-    connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
+    connect(d,SIGNAL(finished()),this,SIGNAL(finished()),Qt::DirectConnection);
 }
 
 /*! 
@@ -124,7 +124,7 @@ void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
         updatedWriter->mIoDevice = d->mIoDevice;
         delete d;
         d = updatedWriter;
-        connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
+        connect(d,SIGNAL(finished()),this,SIGNAL(finished()),Qt::DirectConnection);
     }
     d->mVersitDocument = versitDocument;
 }
@@ -157,7 +157,7 @@ QIODevice* QVersitWriter::device() const
  * Starts writing the output asynchronously.
  * Returns false if the output device has not been set or opened or
  * if there is another asynchronous write operation already pending.
- * Signal \l writingDone() is emitted when the writing has finished.
+ * Signal \l finished() is emitted when the writing has finished.
  */
 bool QVersitWriter::startWriting()
 {

@@ -64,15 +64,17 @@ public:
     // input:
     void setVersitDocument(const QVersitDocument& versitDocument);
     QVersitDocument versitDocument() const;
+
     // output:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
+
     // writing:
     bool startWriting();
     bool writeAll();
 
 signals:
-    void writingDone();
+    void finished();
 
 private: // data
     QVersitWriterPrivate* d;

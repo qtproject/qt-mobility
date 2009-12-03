@@ -53,7 +53,7 @@ void UT_QVersitReader::init()
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mReader = new QVersitReader;
-    connect(mReader,SIGNAL(readingDone()),this,SLOT(readingDone()),Qt::DirectConnection);
+    connect(mReader,SIGNAL(finished()),this,SLOT(finished()),Qt::DirectConnection);
     mReaderPrivate = new QVersitReaderPrivate;
 }
 
@@ -64,7 +64,7 @@ void UT_QVersitReader::cleanup()
     delete mInputDevice;
 }
 
-void UT_QVersitReader::readingDone()
+void UT_QVersitReader::finished()
 {
     QCOMPARE(mReader->result().count(),mExpectedDocumentCount);
     mReadingDoneCalled = true;

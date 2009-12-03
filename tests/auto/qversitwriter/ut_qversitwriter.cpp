@@ -53,7 +53,7 @@ void UT_QVersitWriter::init()
     mWritingDoneCalled = false;
     mOutputDevice = new QBuffer;
     mWriter = new QVersitWriter;
-    connect(mWriter,SIGNAL(writingDone()),this,SLOT(writingDone()),Qt::DirectConnection);
+    connect(mWriter,SIGNAL(finished()),this,SLOT(writingDone()),Qt::DirectConnection);
 }
 
 void UT_QVersitWriter::cleanup()
