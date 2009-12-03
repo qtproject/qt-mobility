@@ -25,7 +25,7 @@ win32:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> 
 symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
 
 #symbian does not generate make install rule. we have to copy prf manually 
-symbian:system(copy $$QT_MOBILITY_BUILD_TREE/features/mobility.prf $${QT_INSTALL_DATA}/mkspecs/features)
+symbian:system(copy $${QT_MOBILITY_BUILD_TREE}\features\mobility.prf $$[QT_INSTALL_DATA]\mkspecs\features)
 
 # install feature file
 feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
