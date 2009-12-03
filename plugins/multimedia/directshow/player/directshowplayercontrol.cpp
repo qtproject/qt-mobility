@@ -180,7 +180,7 @@ void DirectShowPlayerControl::setMuted(bool muted)
             m_muteVolume = 0;
         }
 
-        emit mutingChanged(muted);
+        emit mutedChanged(muted);
     } else if (!muted && m_muteVolume >= 0) {
         if (IBasicAudio *audio = com_cast<IBasicAudio>(m_service->graph())) {
             audio->put_Volume(volumeToDecibels(m_muteVolume));
@@ -188,7 +188,7 @@ void DirectShowPlayerControl::setMuted(bool muted)
         }
         m_muteVolume = -1;
 
-        emit mutingChanged(muted);
+        emit mutedChanged(muted);
     }
 }
 
