@@ -39,35 +39,57 @@
 **
 ****************************************************************************/
 
-#ifndef SERIALISER_H
-#define SERIALISER_H
+#ifndef CONTACTEDITOR_H
+#define CONTACTEDITOR_H
 
 #include "qtcontacts.h"
 
-#include <QString>
-#include <QStringList>
+#include <QWidget>
+#include <QMap>
+#include <QPlainTextEdit>
 
-QTM_USE_NAMESPACE
+class QScrollArea;
+class QPushButton;
+class QLineEdit;
 
-class Serialiser
+class ContactEditor : public QWidget
 {
+    Q_OBJECT
+
 public:
-    static QStringList convertContact(const QContact& contact);
-    static QContact convertVcard(const QStringList& vcardLines);
+    ContactEditor(QWidget *parent = 0);
+    ~ContactEditor();
+
+signals:
+    void showListPage();
+
+public slots:
+    void setCurrentContact(QContactManager* manager, QContactLocalId currentId);
+
+private slots:
+    void saveClicked();
+    void deleteClicked();
+    void cancelClicked();
+    void avatarClicked();
 
 private:
-    static QString escaped(const QString& input);
-    static QString convertDetail(const QContact& contact, const QContactDetail& detail, const QString& vcardField = QString());
-    static QStringList findActionIdsFromCustomString(const QString& customString);
-    static QString findLinkStringFromCustomString(const QString& customString);
-    static QContactDetail convertCustomString(const QString& customString);
-    static QStringList removeClutter(const QStringList& vcard);
-    static QContactDetail parsePropertyType(const QString& line);
-    static QStringList parseContext(const QString& line);
-    static QString parseValue(const QString& line);
-    static QString parseAttributes(const QString& line);
-    static bool parsePreferred(const QString& line);
-    static bool detailIsPreferredForAnything(const QContact& contact, const QContactDetail& detail);
+    QString nameField();
+
+    QPushButton *m_saveBtn;
+    QPushButton *m_deleteBtn;
+    QPushButton *m_cancelBtn;
+
+    QScrollArea *m_detailsArea; // contains the below elements.
+    QLineEdit *m_nameEdit;
+    QLineEdit *m_phoneEdit;
+    QLineEdit *m_emailEdit;
+    QLineEdit *m_addrEdit;
+    QPushButton *m_avatarBtn;
+
+    // data
+    QContactManager *m_manager;
+    QContactLocalId m_contactId;
+    QString m_newAvatarPath;
 };
 
-#endif
+#endif // CONTACTEDITOR_H
