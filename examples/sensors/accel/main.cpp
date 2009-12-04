@@ -4,30 +4,18 @@
 
 QTM_USE_NAMESPACE
 
-class SAccelerationListener : public QSpecificSensorListener<QAccelerationSensorEvent>
-{
-public:
-    void sensorEvent(QAccelerationSensorEvent *event)
-    {
-        qDebug() << "acceleration: "
-                 << QString().sprintf("%3.2f %3.2f %3.2f",
-                         event->acceleration.x,
-                         event->acceleration.y,
-                         event->acceleration.z);
-    }
-};
-
 class AccelerationListener : public QSensorListener
 {
 public:
-    void sensorEvent(QSensorEvent *_event)
+    bool sensorValueUpdated(QSensorValue *_value)
     {
-        QAccelerationSensorEvent *event = static_cast<QAccelerationSensorEvent*>(_event);
+        QAccelerationSensorValue *value = static_cast<QAccelerationSensorValue*>(_value);
         qDebug() << "acceleration: "
                  << QString().sprintf("%3.2f %3.2f %3.2f",
-                         event->acceleration.x,
-                         event->acceleration.y,
-                         event->acceleration.z);
+                         value->acceleration.x,
+                         value->acceleration.y,
+                         value->acceleration.z);
+        return true;
     }
 };
 
@@ -35,12 +23,11 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
 
-    QAccelerationSensor sensor(QSensorManager::instance()->defaultSensorForType(QSensor::Acceleration));
+    QAccelerationSensor sensor(QSensorManager::instance()->defaultSensorForType(QAccelerationSensor::type));
     if (!sensor.isValid()) {
         qWarning() << "No accelerometer!";
         return 1;
     }
-    //sensor.addListener(new SAccelerationListener);
     sensor.addListener(new AccelerationListener);
 
     return app.exec();

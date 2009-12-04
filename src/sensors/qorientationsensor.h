@@ -46,7 +46,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
+class Q_SENSORS_EXPORT QOrientationSensorValue : public QSensorValue
 {
 public:
     enum OrientationFlag {
@@ -58,15 +58,25 @@ public:
     };
     Q_DECLARE_FLAGS(Orientation, OrientationFlag)
 
-    Orientation currentOrientation() const;
+    Orientation orientation;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QOrientationSensor::Orientation)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QOrientationSensorValue::Orientation)
 
-class Q_SENSORS_EXPORT QOrientationSensorEvent : public QSensorEvent
+class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
 public:
-    QOrientationSensor::Orientation orientation;
+    explicit QOrientationSensor(QSensor *sensor);
+    explicit QOrientationSensor(const QString &id, QObject *parent = 0);
+
+    QOrientationSensorValue::Orientation currentOrientation() const
+    {
+        return static_cast<QOrientationSensorValue*>(currentValue())->orientation;
+    }
+
+signals:
+    void orientationChanged(QOrientationSensorValue::Orientation orientation);
+
 };
 
 QTM_END_NAMESPACE

@@ -43,6 +43,8 @@
 
 QTM_USE_NAMESPACE
 
+const QString QAccelerationSensor::type("qt.Acceleration");
+
 /*!
     \class QAccelerationSensor
     \ingroup sensors
@@ -55,6 +57,14 @@ QTM_USE_NAMESPACE
 */
 
 /*!
+    Construct a sensor instance and attach to the indicated \a sensor.
+*/
+QAccelerationSensor::QAccelerationSensor(QSensor *sensor)
+    : QSensor(sensor->id(), sensor->parent())
+{
+}
+
+/*!
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
@@ -64,7 +74,7 @@ QAccelerationSensor::QAccelerationSensor(const QString &id, QObject *parent)
 }
 
 /*!
-    \class QAccelerationSensor::Acceleration
+    \class QAccelerationSensorValue::Acceleration
 
     \preliminary
     \brief The Acceleration class holds acceleration values from
@@ -74,48 +84,40 @@ QAccelerationSensor::QAccelerationSensor(const QString &id, QObject *parent)
 */
 
 /*!
-    \fn QAccelerationSensor::Acceleration::Acceleration(qreal,qreal,qreal)
+    \fn QAccelerationSensorValue::Acceleration::Acceleration(qreal,qreal,qreal)
     \internal
 */
 
 /*!
+    \fn QAccelerationSensor::currentAcceleration() const
+
     Returns the current acceleration values from the sensor.
 */
-QAccelerationSensor::Acceleration QAccelerationSensor::currentAcceleration() const
-{
-    return QAccelerationSensor::Acceleration(0.0, 0.0, 0.0);
-}
 
 /*!
+    \fn QAccelerationSensor::currentXAcceleration() const
+
     Returns the current x acceleration value from the sensor.
 */
-qreal QAccelerationSensor::currentXAcceleration() const
-{
-    return 0.0;
-}
 
 /*!
+    \fn QAccelerationSensor::currentYAcceleration() const
+
     Returns the current y acceleration value from the sensor.
 */
-qreal QAccelerationSensor::currentYAcceleration() const
-{
-    return 0.0;
-}
 
 /*!
+    \fn QAccelerationSensor::currentZAcceleration() const
+
     Returns the current z acceleration value from the sensor.
 */
-qreal QAccelerationSensor::currentZAcceleration() const
-{
-    return 0.0;
-}
 
 /*!
-    \class QAccelerationSensorEvent
+    \class QAccelerationSensorValue
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationSensorEvent class represents an acceleration event.
+    \brief The QAccelerationSensorValue class represents an acceleration value.
 
     Foo bar baz.
 */

@@ -44,18 +44,17 @@
 QTM_USE_NAMESPACE
 
 /*!
-    \class QOrientationSensor
+    \class QOrientationSensorValue
     \ingroup sensors
 
     \preliminary
-    \brief The QOrientationSensor class reports on the orientation of the screen.
+    \brief The QOrientationSensorValue class represents an orientation value.
 
-    The orientation sensor provides discrete orientation information. See the
-    QOrientationSensor::Orientation enum for
+    Foo bar baz.
 */
 
 /*!
-    \enum QOrientationSensor::OrientationFlag
+    \enum QOrientationSensorValue::OrientationFlag
 
     This enum represents the orientation of the device.
 
@@ -73,20 +72,46 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Returns the current orientation of the device.
-*/
-QOrientationSensor::Orientation QOrientationSensor::currentOrientation() const
-{
-    return QOrientationSensor::Unknown;
-}
-
-/*!
-    \class QOrientationSensorEvent
+    \class QOrientationSensor
     \ingroup sensors
 
     \preliminary
-    \brief The QOrientationSensorEvent class represents an orientation event.
+    \brief The QOrientationSensor class reports on the orientation of the screen.
 
-    Foo bar baz.
+    The orientation sensor provides discrete orientation information. See the
+    QOrientationSensor::Orientation enum for
 */
+
+/*!
+    Construct a sensor instance and attach to the indicated \a sensor.
+*/
+QOrientationSensor::QOrientationSensor(QSensor *sensor)
+    : QSensor(sensor->id(), sensor->parent())
+{
+}
+
+/*!
+    Construct a sensor instance and attach to the sensor indicated by \a id.
+    The sensor will be deleted when \a parent is deleted.
+*/
+QOrientationSensor::QOrientationSensor(const QString &id, QObject *parent)
+    : QSensor(id, parent)
+{
+}
+
+/*!
+    \fn QOrientationSensor::currentOrientation() const
+
+    Returns the current orientation of the device.
+*/
+
+/*!
+    \fn QOrientationSensor::orientationChanged(QOrientationSensorValue::Orientation orientation)
+
+    Emitted when the \a orientation value changes.
+*/
+
+QTM_BEGIN_NAMESPACE
+#include "moc_qorientationsensor.cpp"
+QTM_END_NAMESPACE
 

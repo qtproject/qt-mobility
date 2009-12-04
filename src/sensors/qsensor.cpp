@@ -92,9 +92,9 @@ bool QSensor::isValid() const
 /*!
     Returns the id for the sensor.
 */
-QString QSensor::id() const
+QSensorID QSensor::id() const
 {
-    return QString();
+    return QSensorID();
 }
 
 /*!
@@ -106,28 +106,11 @@ QString QSensor::name() const
 }
 
 /*!
-    \enum QSensor::Type
-
-    This enum is used when requesting a sensor and denotes the type of the sensor.
-
-    \value Orientation          Reports on portrait vs landscape mode.
-    \value Rotation             Reports on rotation around the X, Y and Z axes.
-    \value AngularAcceleration  Reports on angular acceleration around the X, Y and Z axes.
-    \value Acceleration         Reports on linear acceleration around the X, Y and Z axes.
-    \value DoubleTap            Reports on a double tap in the X, Y or Z direction.
-    \value Proximity            Reports on the distance of the user from the device.
-    \value MagneticNorth        Indicates the deviation from magnetic north.
-    \value Magnetometer         Flux density values along the X, Y and Z axes.
-    \value AmbientLight         Reports on the intensity of the ambient light.
-    \value UserSensor           Non-standard sensor types must use sensor types greater than this value.
-*/
-
-/*!
     Returns the type of the sensor.
 */
-QSensor::Type QSensor::type() const
+QString QSensor::type() const
 {
-    return QSensor::Orientation;
+    return QString();
 }
 
 /*!
@@ -205,20 +188,11 @@ void QSensor::removeListener(QSensorListener *listener)
 }
 
 /*!
-    Add a \a filter to the sensor.
+    Returns the current sensor value.
 */
-void QSensor::addFilter(QSensorFilter *filter)
+QSensorValue *QSensor::currentValue() const
 {
-    Q_UNUSED(filter)
-}
-
-/*!
-    Remove a \a filter from the sensor.
-    If \a filter is 0, all filters will be removed from the sensor.
-*/
-void QSensor::removeFilter(QSensorFilter *filter)
-{
-    Q_UNUSED(filter)
+    return 0;
 }
 
 /*!
@@ -254,52 +228,38 @@ void QSensor::stop()
 */
 
 /*!
-    \fn void QSensorListener::sensorEvent(QSensorEvent *event)
+    \fn bool QSensorListener::sensorValueUpdated(QSensorValue *value)
 
-    A sensor \a event has occurred.
+    A sensor has been updated and now has the passed \a value.
+
+    Note that other objects may be waiting to receive the updated value.
+    The function may modify the value as appropriate or return false
+    to suppress any further update notifications.
 */
 
 /*!
-    \class QSensorEvent
+    \class QSensorValue
     \ingroup sensors
 
     \preliminary
-    \brief The QSensorEvent class represents a sensor event.
+    \brief The QSensorValue class represents a sensor value.
 
     Foo bar baz.
 */
 
 /*!
-    Constuct a sensor event for a \a sensor.
+    Constuct a sensor value for a \a sensor.
 */
-QSensorEvent::QSensorEvent(QSensor *sensor)
+QSensorValue::QSensorValue(QSensor *sensor)
 {
     Q_UNUSED(sensor)
 }
 
 /*!
-    Returns the sensor that generated this event.
+    Returns the sensor that generated this value.
 */
-QSensor *QSensorEvent::sensor() const
+QSensor *QSensorValue::sensor() const
 {
     return 0;
 }
-
-/*!
-    \class QSensorFilter
-    \ingroup sensors
-
-    \preliminary
-    \brief The QSensorFilter class represents a filter.
-
-    Foo bar baz.
-*/
-
-/*!
-    \fn bool QSensorFilter::filter(QSensorEvent *event)
-
-    Filter the \a event. The filter may modify any values
-    in the event. If the filter returns false the event
-    will be ignored.
-*/
 

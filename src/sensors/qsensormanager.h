@@ -43,7 +43,7 @@
 #define QSENSORMANAGER_H
 
 #include <qsensor.h>
-#include <QStringList>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,19 +54,19 @@ public:
     static QSensorManager *instance();
 
     // Get a sensor
-    QString defaultSensorForType(QSensor::Type type) const;
-    QSensor *createDefaultSensorForType(QSensor::Type type) const;
+    QSensorID defaultSensorForType(QString type) const;
+    QSensor *createDefaultSensorForType(QString type) const;
 
     // If there are multiple sensors for a type...
-    QStringList allSensorsForType(QSensor::Type type) const;
+    QList<QSensorID> sensorsForType(QString type) const;
 
     // Get all sensors on the device. Not sure why you'd want to
     // do this unless you were telling the user what sensors are
     // available.
-    QStringList allSensors() const;
+    QList<QSensorID> sensorList() const;
 
-    // Create a sensor
-    QSensor *createSensor(const QString &id) const;
+    // Create a sensor.
+    QSensor *createSensor(const QSensorID &id) const;
 };
 
 QTM_END_NAMESPACE

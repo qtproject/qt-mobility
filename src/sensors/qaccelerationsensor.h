@@ -47,16 +47,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QAccelerationSensorFilter;
-
-class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
+class Q_SENSORS_EXPORT QAccelerationSensorValue : public QSensorValue
 {
 public:
-    explicit QAccelerationSensor(const QString &id, QObject *parent = 0);
-
-    // Values are in Earth gravities. Note that they may not be particularly
-    // accurate depending on the hardware. For example, Apple notebooks
-    // can only measure 255 levels between 0 and 1G.
     struct Acceleration
     {
         Acceleration(qreal _x, qreal _y, qreal _z) : x(_x), y(_y), z(_z) {}
@@ -64,16 +57,36 @@ public:
         qreal y;
         qreal z;
     };
-    Acceleration currentAcceleration() const;
-    qreal currentXAcceleration() const;
-    qreal currentYAcceleration() const;
-    qreal currentZAcceleration() const;
+
+    Acceleration acceleration;
 };
 
-class Q_SENSORS_EXPORT QAccelerationSensorEvent : public QSensorEvent
+
+class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 {
 public:
-    QAccelerationSensor::Acceleration acceleration;
+    explicit QAccelerationSensor(QSensor *sensor);
+    explicit QAccelerationSensor(const QString &id, QObject *parent = 0);
+
+    static const QString type;
+
+    QAccelerationSensorValue::Acceleration currentAcceleration() const
+    {
+        return static_cast<QAccelerationSensorValue*>(currentValue())->acceleration;
+    }
+
+    qreal currentXAcceleration() const
+    {
+        return currentAcceleration().x;
+    }
+    qreal currentYAcceleration() const
+    {
+        return currentAcceleration().y;
+    }
+    qreal currentZAcceleration() const
+    {
+        return currentAcceleration().z;
+    }
 };
 
 QTM_END_NAMESPACE

@@ -45,42 +45,29 @@
 #include <qmobilityglobal.h>
 #include <QObject>
 #include <QString>
+//#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
 class QSensorListener;
 class QSensorFilter;
-class QSensorEvent;
+class QSensorValue;
+
+typedef QByteArray QSensorID;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
 public:
-    // Construct a sensor
     explicit QSensor(const QString &id, QObject *parent = 0);
     virtual ~QSensor();
 
-    // Was a valid ID used to construct the sensor?
+    // May have been initialized with an invalid id
     bool isValid() const;
 
-    QString id() const;
+    QSensorID id() const;
     QString name() const;
 
-    // Types of sensors that the API supports
-    enum Type {
-        Orientation,
-        Rotation,
-        AngularAcceleration,
-        Acceleration,
-        DoubleTap,
-        Proximity,
-        MagneticNorth,
-        Magnetometer,
-        AmbientLight,
-
-        // Non-standard sensor types
-        UserSensor = 128
-    };
-    Type type() const;
+    QString type() const;
 
     enum UpdatePolicy {
         Unknown           = 0x00, // If the sensor has no specific policy
@@ -108,13 +95,12 @@ public:
     // What policies does the sensor support
     UpdatePolicies supportedPolicies() const;
 
-    // Register a listener (that will receive sensor events as they come in)
+    // Register a listener (that will receive sensor values as they come in)
     void addListener(QSensorListener *listener);
     void removeListener(QSensorListener *listener);
 
-    // Add a filter to remove or modify the accleration values
-    void addFilter(QSensorFilter *filter);
-    void removeFilter(QSensorFilter *filter);
+    // For polling/checking the current (cached) value
+    QSensorValue *currentValue() const;
 
     // Start receiving values from the sensor
     bool start();
@@ -128,48 +114,18 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);
 class QSensorListener
 {
 public:
-    virtual void sensorEvent(QSensorEvent *event) = 0;
+    virtual bool sensorValueUpdated(QSensorValue *value) = 0;
 };
 
-// As above but uses a specific event type
-template <typename T>
-class QSpecificSensorListener : public QSensorListener
+typedef quint64 qSensorTimestamp;
+
+class Q_SENSORS_EXPORT QSensorValue
 {
 public:
-    virtual void sensorEvent(T *event) = 0;
-    void sensorEvent(QSensorEvent *event)
-    {
-        sensorEvent(static_cast<T*>(event));
-    }
-};
-
-typedef quint64 QSensorTimestamp;
-
-class Q_SENSORS_EXPORT QSensorEvent
-{
-public:
-    explicit QSensorEvent(QSensor *sensor);
+    explicit QSensorValue(QSensor *sensor);
 
     QSensor *sensor() const;
-    QSensorTimestamp timestamp;
-};
-
-class QSensorFilter
-{
-public:
-    virtual bool filter(QSensorEvent *event) = 0;
-};
-
-// As above but uses a specific event type
-template <typename T>
-class QSpecificSensorFilter : public QSensorFilter
-{
-public:
-    virtual bool filter(T *event) = 0;
-    bool filter(QSensorEvent *event)
-    {
-        return filter(static_cast<T*>(event));
-    }
+    qSensorTimestamp timestamp;
 };
 
 QTM_END_NAMESPACE
