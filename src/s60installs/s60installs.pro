@@ -4,7 +4,7 @@ symbian: {
     load(data_caging_paths)
 
     SUBDIRS =
-    TARGET = "QtMobility"
+    TARGET = "QtMobility preview"
     TARGET.UID3 = 0x2002AC89
     VERSION = 0.1.0
 
