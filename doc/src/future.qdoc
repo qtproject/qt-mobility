@@ -39,19 +39,30 @@
 **
 ****************************************************************************/
 
-#include <qservicemanager.h>
-#include <QCoreApplication>
-#include <QFile>
+/*!
+\page future.html
 
-QTM_USE_NAMESPACE
+\title Future Additional APIs
 
-int main(int argc, char *argv[])
-{
-    QCoreApplication app(argc, argv);
+\brief Additional APIs under development.
 
-    QServiceManager s;
-    s.addService("c:\\private\\E00b7e42\\xmldata\\filemanagerservice.xml");
-    s.addService("c:\\private\\E00b7e42\\xmldata\\bluetoothtransferservice.xml");
-	
-    return app.exec();
-}
+
+\target {Management of Versit Documents}
+\section1 Management of Versit Documents
+
+\l{Versit API}{Versit API Documentation}
+
+Versit Classes.
+\annotatedlist versit
+
+
+\target {Camera Support}
+\section1 Camera Support (Multimedia)
+
+\annotatedlist camera
+
+
+
+*/
+
+

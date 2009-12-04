@@ -221,6 +221,9 @@ private slots:
 
 /*!
     \enum QServiceManager::Scope
+    Defines the scope to be used when accessing services. Note that Symbian
+    does not distinguish scopes and therefore UserScope and SystemScope may
+    be used interchangeably.
 
     \value UserScope When adding and removing services, uses a storage location
     specific to the current user.

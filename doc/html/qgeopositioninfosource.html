@@ -102,6 +102,7 @@
     source-&gt;setUpdateInterval(10000);</pre>
 <p>To remove an update interval that was previously set, call <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() with a value of 0.</p>
 <p>Note that the position source may have a minimum value requirement for update intervals, as returned by minimumIntervalForType().</p>
+<p><b>Warning:</b> On Windows CE it is not possible to detect if a device is GPS enabled. The default position source on a Windows CE device without GPS support will never provide any position data.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoPositionInfoSource/PositioningMethod"></a>
@@ -195,6 +196,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
 </tr></table></div></address></body>
 </html>

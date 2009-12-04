@@ -64,7 +64,7 @@
 
         AddressFinder finder;
 
-    #ifdef _WIN32_WCE
+    #if (defined(Q_OS_SYMBIAN) || defined(_WIN32_WCE))
     #ifdef QT_KEYPAD_NAVIGATION
         app.setKeypadNavigationEnabled(true);
     #endif
@@ -79,6 +79,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
 </tr></table></div></address></body>
 </html>

@@ -214,6 +214,9 @@
                     <section ref="qcontacturl.html" title="QContactUrl Class Reference">
                         <section ref="qcontacturl-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
+                        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
                         <section ref="qgeocoordinate-members.html" title="List of all members"/>
                     </section>
@@ -509,6 +512,7 @@
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
+                    <section ref="future.html" title="Future Additional APIs"/>
                     <section ref="gpl.html" title="GNU General Public License (GPL)"/>
                     <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
@@ -517,26 +521,24 @@
                     <section ref="licensing.html" title="Licensing Information"/>
                     <section ref="location-overview.html" title="Location"/>
                     <section ref="location.html" title="Location API"/>
-                    <section ref="location-releasenotes.html" title="Location Library Release Notes"/>
-                    <section ref="messaging.html" title="Messaging API"/>
+                    <section ref="messaging.html" title="Messaging"/>
                     <section ref="multimedia.html" title="Mobility Multimedia"/>
                     <section ref="multimedia.html" title="Multimedia"/>
                     <section ref="opensourceedition.html" title="Open Source Versions of Qt"/>
                     <section ref="licenses.html" title="Other Licenses Used in Qt"/>
                     <section ref="publ-subs.html" title="Publish and Subscribe"/>
                     <section ref="bearer.html" title="Qt Bearer Management API"/>
-                    <section ref="commercialeditions.html" title="Qt Commercial Editions"/>
                     <section ref="contactsschema.html" title="Qt Contacts Schema"/>
                     <section ref="editions.html" title="Qt Editions"/>
-                    <section ref="full-framework-edition-classes.html" title="Qt Full Framework Edition"/>
-                    <section ref="gui-framework-edition-classes.html" title="Qt GUI Framework Edition"/>
                     <section ref="examples.html" title="Qt Mobility Examples"/>
-                    <section ref="mobility.html" title="Qt Mobility Project APIs (Technical Preview)"/>
-                    <section ref="index.html" title="Qt Mobility Project APIs (Technical Preview) Overview"/>
+                    <section ref="mobility.html" title="Qt Mobility Project APIs (Technology Preview)"/>
+                    <section ref="index.html" title="Qt Mobility Project APIs (Technology Preview) Overview"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
+                    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project (Technology Preview)"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
+                    <section ref="systeminfo.html" title="System Information Classes"/>
                     <section ref="preview.html" title="Technology Preview"/>
                     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
                     <section ref="trademarks.html" title="Trademarks"/>
@@ -560,6 +562,7 @@
             <keyword name="Declarative Example" id="Declarative Example" ref="declarative.html"/>
             <keyword name="Fetch Google Maps Example" id="Fetch Google Maps Example" ref="fetchgooglemaps.html"/>
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
+            <keyword name="Future Additional APIs" id="Future Additional APIs" ref="future.html"/>
             <keyword name="GNU General Public License (GPL)" id="GNU General Public License (GPL)" ref="gpl.html"/>
             <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
             <keyword name="Incoming Calls Example" id="Incoming Calls Example" ref="incomingcalls.html"/>
@@ -570,10 +573,9 @@
             <keyword name="Licensing Information" id="Licensing Information" ref="licensing.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location API" id="Location API" ref="location.html"/>
-            <keyword name="Location Library Release Notes" id="Location Library Release Notes" ref="location-releasenotes.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
             <keyword name="Media Player Example" id="Media Player Example" ref="player.html"/>
-            <keyword name="Messaging API" id="Messaging API" ref="messaging.html"/>
+            <keyword name="Messaging" id="Messaging" ref="messaging.html"/>
             <keyword name="Mobility Multimedia" id="Mobility Multimedia" ref="multimedia.html"/>
             <keyword name="Multimedia" id="Multimedia" ref="multimedia.html"/>
             <keyword name="Open Source Versions of Qt" id="Open Source Versions of Qt" ref="opensourceedition.html"/>
@@ -1567,6 +1569,15 @@
             <keyword name="setUrl" id="QContactUrl::setUrl" ref="qcontacturl.html#setUrl"/>
             <keyword name="subType" id="QContactUrl::subType" ref="qcontacturl.html#subType"/>
             <keyword name="url" id="QContactUrl::url" ref="qcontacturl.html#url"/>
+            <keyword name="QGeoAreaMonitor" id="QGeoAreaMonitor" ref="qgeoareamonitor.html"/>
+            <keyword name="areaEntered" id="QGeoAreaMonitor::areaEntered" ref="qgeoareamonitor.html#areaEntered"/>
+            <keyword name="areaExited" id="QGeoAreaMonitor::areaExited" ref="qgeoareamonitor.html#areaExited"/>
+            <keyword name="center" id="QGeoAreaMonitor::center" ref="qgeoareamonitor.html#center-prop"/>
+            <keyword name="createDefaultMonitor" id="QGeoAreaMonitor::createDefaultMonitor" ref="qgeoareamonitor.html#createDefaultMonitor"/>
+            <keyword name="radius" id="QGeoAreaMonitor::radius" ref="qgeoareamonitor.html#radius-prop"/>
+            <keyword name="setCenter" id="QGeoAreaMonitor::setCenter" ref="qgeoareamonitor.html#center-prop"/>
+            <keyword name="setRadius" id="QGeoAreaMonitor::setRadius" ref="qgeoareamonitor.html#radius-prop"/>
+            <keyword name="~QGeoAreaMonitor" id="QGeoAreaMonitor::~QGeoAreaMonitor" ref="qgeoareamonitor.html#dtor.QGeoAreaMonitor"/>
             <keyword name="QGeoCoordinate" id="QGeoCoordinate" ref="qgeocoordinate.html"/>
             <keyword name="QGeoCoordinate::CoordinateFormat" id="QGeoCoordinate::CoordinateFormat" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DecimalDegrees" id="QGeoCoordinate::DecimalDegrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
@@ -3105,16 +3116,11 @@
             <keyword name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" id="Q_DECLARE_CUSTOM_CONTACT_DETAIL" ref="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
-            <keyword name="Qt Full Framework Edition" id="Qt Full Framework Edition" ref="commercialeditions.html#qt-full-framework-edition"/>
-            <keyword name="Qt GUI Framework Edition" id="Qt GUI Framework Edition" ref="commercialeditions.html#qt-gui-framework-edition"/>
-            <keyword name="Qt Commercial Editions" id="Qt Commercial Editions" ref="commercialeditions.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
-            <keyword name="Qt Full Framework Edition" id="Qt Full Framework Edition" ref="full-framework-edition-classes.html"/>
-            <keyword name="Qt GUI Framework Edition" id="Qt GUI Framework Edition" ref="gui-framework-edition-classes.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="examples.html"/>
-            <keyword name="Qt Mobility Project APIs (Technical Preview)" id="Qt Mobility Project APIs (Technical Preview)" ref="mobility.html"/>
-            <keyword name="Qt Mobility Project APIs (Technical Preview) Overview" id="Qt Mobility Project APIs (Technical Preview) Overview" ref="index.html"/>
+            <keyword name="Qt Mobility Project APIs (Technology Preview)" id="Qt Mobility Project APIs (Technology Preview)" ref="mobility.html"/>
+            <keyword name="Qt Mobility Project APIs (Technology Preview) Overview" id="Qt Mobility Project APIs (Technology Preview) Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
             <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
             <keyword name="QtMedia" id="QtMedia" ref="qtmedia.html"/>
@@ -3212,6 +3218,7 @@
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
+            <keyword name="Release Notes of the QtMobility Project (Technology Preview)" id="Release Notes of the QtMobility Project (Technology Preview)" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Send Message Example" id="Send Message Example" ref="sendmessage.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
@@ -3221,6 +3228,7 @@
             <keyword name="Slideshow Example" id="Slideshow Example" ref="slideshow.html"/>
             <keyword name="Stream Player Example" id="Stream Player Example" ref="streamplayer.html"/>
             <keyword name="System Information" id="System Information" ref="systeminfo.html"/>
+            <keyword name="System Information Classes" id="System Information Classes" ref="systeminfo.html"/>
             <keyword name="System Information Example" id="System Information Example" ref="sysinfo.html"/>
             <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
@@ -3289,7 +3297,6 @@
             <file>incomingcalls-incomingcalls-pro.html</file>
             <file>keepintouch-addressfinder-h.html</file>
             <file>qcameracontrol-members.html</file>
-            <file>full-framework-edition-classes.html</file>
             <file>qmediaobject-members.html</file>
             <file>qsystemdisplayinfo-members.html</file>
             <file>qcontactdetail.html</file>
@@ -3332,6 +3339,7 @@
             <file>qmediaplaylistprovider-members.html</file>
             <file>qcontactmemoryengine-members.html</file>
             <file>keepintouch-addressfinder-cpp.html</file>
+            <file>future.html</file>
             <file>qcontactorganization-members.html</file>
             <file>qaudioencodersettings.html</file>
             <file>qcontactactionfilter.html</file>
@@ -3480,7 +3488,6 @@
             <file>cameracapture-main-cpp.html</file>
             <file>audiorecorder.html</file>
             <file>qcontactrelationshipfilter.html</file>
-            <file>location-releasenotes.html</file>
             <file>bearercloud-icons-qrc.html</file>
             <file>filemanagerplugin-filemanagerstorage-cpp.html</file>
             <file>serviceactions-mainwindow-h.html</file>
@@ -3498,6 +3505,7 @@
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
+            <file>qgeoareamonitor-members.html</file>
             <file>qcontactunionfilter-members.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
@@ -3582,7 +3590,6 @@
             <file>qcontactchangeset-members.html</file>
             <file>qmediaformatcontrol.html</file>
             <file>radio-main-cpp.html</file>
-            <file>commercialeditions.html</file>
             <file>slideshow.html</file>
             <file>qcontactnickname.html</file>
             <file>qmessagefolderordering-members.html</file>
@@ -3605,7 +3612,6 @@
             <file>battery-charge-battery-subscriber-battery-subscriber-qrc.html</file>
             <file>qmediaplaylistnavigator.html</file>
             <file>qmediaresource-members.html</file>
-            <file>gui-framework-edition-classes.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
             <file>qgeosatelliteinfosource.html</file>
             <file>qmediaserviceproviderplugin-members.html</file>
@@ -3618,6 +3624,7 @@
             <file>cameracapture-cameracapture-cpp.html</file>
             <file>samplephonebook-finddialog-h.html</file>
             <file>qcontactphonenumber-members.html</file>
+            <file>qgeoareamonitor.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
             <file>slideshow-main-cpp.html</file>
@@ -3704,6 +3711,7 @@
             <file>samplephonebook-finddialog-cpp.html</file>
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
+            <file>qtmobility-known-issues.html</file>
             <file>sendmessage-messagesender-cpp.html</file>
             <file>images/spb-screen.png</file>
             <file>incomingcalls-filterdialog-cpp.html</file>
