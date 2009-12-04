@@ -101,7 +101,7 @@
 
             <span class="comment">// All recipient addresses are to be excluded</span>
             foreach (const QMessageAddress &amp;address, message.to() + message.cc() + message.bcc()) {
-                excludedAddresses.insert(simpleEmailAddress(address));
+                excludedAddresses.insert(simpleAddress(address));
             }
         } else if (!inclusionMessages.isEmpty()) {
             <span class="comment">// Take the first message to inspect for suitable addresses</span>
@@ -112,15 +112,17 @@
 
             <span class="comment">// For each recipient of this message</span>
             foreach (const QMessageAddress &amp;address, message.to() + message.cc() + message.bcc()) {
-                QString addressOnly(simpleEmailAddress(address));
+                QString addressOnly(simpleAddress(address));
 
                 <span class="comment">// Ignore recipients whose addresses we have added to the exclusion set</span>
                 if (!excludedAddresses.contains(addressOnly)) {
                     <span class="comment">// Link this message to this address</span>
                     QList&lt;QPair&lt;QString, QMessageId&gt; &gt; &amp;messageList(addressMessages[addressOnly]);
                     if (messageList.isEmpty()) {
-                        <span class="comment">// Add the recipient to our visible list of addresses to keep in touch with</span>
-                        addressList-&gt;addItem(address.recipient());
+                        addressList.append(addressOnly);
+
+                        <span class="comment">// Add the recipient to our visible list of contacts to keep in touch with</span>
+                        contactList-&gt;addItem(contactDisplayName(address));
                     }
 
                     if (details.isEmpty()) {
@@ -142,18 +144,47 @@
             tabChanged(1);
     #endif
 
-            if (addressList-&gt;currentItem()) {
+            if (contactList-&gt;currentItem()) {
                 <span class="comment">// Select the first address automatically</span>
-                addressSelected(addressList-&gt;currentItem()-&gt;text());
+                addressSelected(contactList-&gt;currentItem()-&gt;text());
             }
         }
     }</pre>
-<p>We display the resulting list of addresses in our Addresses pane. If the user selects one of these addresses, we fill the Messages combo box with the list of messages that were previously sent to that address:</p>
+<p>We will display the resulting list of contacts in our Contacts pane. If the system contains a contact definition that matches the address information we extracted, we will display the label for that contact - this matching process can be accomplished using the Qt Mobility Contacts API. If we can't find a matching contact, we fall back to using the raw address information for display:</p>
+<pre>    QString contactDisplayName(const QMessageAddress &amp;address)
+    {
+        QString addressOnly(simpleAddress(address));
+
+        <span class="comment">// See if we can match this address to a contact</span>
+        QContactDetailFilter filter;
+        if (address.type() == QMessageAddress::Email) {
+            <span class="comment">// Match contacts on email address data</span>
+            filter.setDetailDefinitionName(QContactEmailAddress::DefinitionName);
+            filter.setValue(addressOnly);
+            filter.setMatchFlags(QContactFilter::MatchContains);
+        } else if (address.type() == QMessageAddress::Phone) {
+            <span class="comment">// Match contacts on phone number data</span>
+            filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
+            filter.setValue(addressOnly);
+            filter.setMatchFlags(QContactFilter::MatchPhoneNumber);
+        }
+
+        QContactManager manager;
+        foreach (const QContactLocalId &amp;contactId, manager.contacts(filter)) {
+            <span class="comment">// Any match is acceptable</span>
+            const QContact &amp;contact(manager.contact(contactId));
+            return contact.displayLabel();
+        }
+
+        <span class="comment">// We couldn't match anything, so return the original address</span>
+        return address.recipient();
+    }</pre>
+<p>If the user selects one of these contact addresses, we fill the Messages combo box with the list of messages that were previously sent to that contact:</p>
 <pre>    void AddressFinder::addressSelected(const QString &amp;address)
     {
         messageCombo-&gt;clear();
 
-        QString addressOnly(simpleEmailAddress(address));
+        QString addressOnly(simpleAddress(address));
 
         <span class="comment">// Add the subject of each message to this address to the message pane</span>
         typedef QPair&lt;QString, QMessageId&gt; MessageDetails;
@@ -167,7 +198,7 @@
         int index = messageCombo-&gt;currentIndex();
         if (index != -1) {
             <span class="comment">// Find the address currently selected</span>
-            QString selectedAddress(simpleEmailAddress(addressList-&gt;currentItem()-&gt;text()));
+            const QString &amp;selectedAddress(addressList[contactList-&gt;currentRow()]);
 
             <span class="comment">// Show the message selected</span>
             QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);
@@ -180,7 +211,7 @@
         int index = messageCombo-&gt;currentIndex();
         if (index != -1) {
             <span class="comment">// Find the address currently selected</span>
-            QString selectedAddress(simpleEmailAddress(addressList-&gt;currentItem()-&gt;text()));
+            const QString &amp;selectedAddress(addressList[contactList-&gt;currentRow()]);
 
             <span class="comment">// Find the selected message</span>
             QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);

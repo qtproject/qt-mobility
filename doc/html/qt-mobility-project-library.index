@@ -6731,6 +6731,18 @@
             <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
             <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
         </page>
+        <page access="public" status="commendable" name="serviceactions" href="serviceactions.html" subtype="example" title="Service Actions Example" fulltitle="Service Actions Example" subtitle="" location="serviceactions.qdoc">
+            <contents name="send-and-compose" title="Send and Compose" level="1"/>
+            <contents name="show" title="Show" level="1"/>
+            <contents name="query-and-retrieve" title="Query and Retrieve" level="1"/>
+            <contents name="store-signals" title="Store Signals" level="1"/>
+            <page access="public" status="commendable" name="serviceactions/attachmentlistwidget.cpp" href="serviceactions-attachmentlistwidget-cpp.html" subtype="file" title="" fulltitle="attachmentlistwidget.cpp Example File" subtitle="serviceactions/attachmentlistwidget.cpp" location=""/>
+            <page access="public" status="commendable" name="serviceactions/attachmentlistwidget.h" href="serviceactions-attachmentlistwidget-h.html" subtype="file" title="" fulltitle="attachmentlistwidget.h Example File" subtitle="serviceactions/attachmentlistwidget.h" location=""/>
+            <page access="public" status="commendable" name="serviceactions/mainwindow.cpp" href="serviceactions-mainwindow-cpp.html" subtype="file" title="" fulltitle="mainwindow.cpp Example File" subtitle="serviceactions/mainwindow.cpp" location=""/>
+            <page access="public" status="commendable" name="serviceactions/mainwindow.h" href="serviceactions-mainwindow-h.html" subtype="file" title="" fulltitle="mainwindow.h Example File" subtitle="serviceactions/mainwindow.h" location=""/>
+            <page access="public" status="commendable" name="serviceactions/main.cpp" href="serviceactions-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="serviceactions/main.cpp" location=""/>
+            <page access="public" status="commendable" name="serviceactions/serviceactions.pro" href="serviceactions-serviceactions-pro.html" subtype="file" title="" fulltitle="serviceactions.pro Example File" subtitle="serviceactions/serviceactions.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="player" href="player.html" subtype="example" title="Media Player Example" fulltitle="Media Player Example" subtitle="" location="player.qdoc">
             <page access="public" status="commendable" name="player/player.cpp" href="player-player-cpp.html" subtype="file" title="" fulltitle="player.cpp Example File" subtitle="player/player.cpp" location=""/>
             <page access="public" status="commendable" name="player/player.h" href="player-player-h.html" subtype="file" title="" fulltitle="player.h Example File" subtitle="player/player.h" location=""/>

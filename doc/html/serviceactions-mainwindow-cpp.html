@@ -405,6 +405,7 @@
         QListWidgetItem* item = m_indexMap.value(id);
         if(item)
         {
+
             QMessage message(id);
             bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
             QFont itemFont = item-&gt;font();
@@ -644,6 +645,7 @@
 
         m_accountsWidget = new AccountsWidget(this);
         gl-&gt;addWidget(m_accountsWidget,0,1);
+
         connect(m_accountsWidget,SIGNAL(accountChanged()),this,SLOT(accountChanged()));
 
         QLabel* toLabel = new QLabel(&quot;To:&quot;,this);
@@ -856,6 +858,7 @@
         return false;
     }
 
+
     void MessageViewWidget::showEvent(QShowEvent* e)
     {
         updateState();
@@ -1003,20 +1006,14 @@
 
             QString bodyText;
 
+            <span class="comment">//for partial message display a download link instead</span>
+
             bool bodyAvailable = bodyPart.isContentAvailable();
 
             if(bodyAvailable)
             {
                 if(bodyPart.contentType() == &quot;text&quot;)
-                {
                     bodyText = bodyPart.textContent();
-
-                    <span class="comment">//if(bodyPart.contentSubType() == &quot;plain&quot;)</span>
-                    <span class="comment">//    qWarning() &lt;&lt; &quot;Blah&quot;;</span>
-                    <span class="comment">//else if(bodyPart.contentSubType() == &quot;html&quot; || bodyPart.contentSubType() == &quot;rtf&quot;)</span>
-                    <span class="comment">//     qWarning() &lt;&lt; &quot;FOO&quot;;</span>
-                    <span class="comment">//else bodyText = &quot;&lt;Unknown text content&gt;&quot;;</span>
-                }
                 else bodyText = &quot;&lt;Non-text content&gt;&quot;;
             }
             else
@@ -1123,12 +1120,11 @@
 
     void ShowWidget::showButtonClicked()
     {
-        <span class="comment">//get the selected account</span>
 
         QMessageId id = m_recentMessagesWidget-&gt;currentMessage();
 
         if(id.isValid())
-            m_service-&gt;show(id),&quot;Show&quot;;
+            m_service-&gt;show(id);
     }
 
     void ShowWidget::setupUi()

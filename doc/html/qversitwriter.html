@@ -8,7 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="//apple_ref/cpp/cl//QVersitWriter" />
+<a name="//apple_ref/cpp/cl//QVersitWriter"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -75,35 +75,35 @@
 <p>See also <a href="qversitdocument.html">QVersitDocument</a> and <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QVersitWriter/QVersitWriter" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/QVersitWriter"></a>
 <h3 class="fn"><a name="QVersitWriter"></a>QVersitWriter::QVersitWriter ()</h3>
 <p>Constructs a new writer.</p>
-<a name="//apple_ref/cpp/instm/QVersitWriter/~QVersitWriter" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/~QVersitWriter"></a>
 <h3 class="fn"><a name="dtor.QVersitWriter"></a>QVersitWriter::~QVersitWriter ()</h3>
 <p>Frees the memory used by the writer. Waits until a pending asynchronous writing has been completed.</p>
-<a name="//apple_ref/cpp/instm/QVersitWriter/device" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/device"></a>
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * QVersitWriter::device () const</h3>
 <p>Returns the device used for writing.</p>
 <p>See also <a href="qversitwriter.html#setDevice">setDevice</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitWriter/setDevice" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/setDevice"></a>
 <h3 class="fn"><a name="setDevice"></a>void QVersitWriter::setDevice ( <a href="http://qt.nokia.com/doc/4.5/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
 <p>Sets the device used for writing to <i>device</i>.</p>
 <p>See also <a href="qversitwriter.html#device">device</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitWriter/setVersitDocument" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/setVersitDocument"></a>
 <h3 class="fn"><a name="setVersitDocument"></a>void QVersitWriter::setVersitDocument ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>versitDocument</i> )</h3>
 <p>Set the versit document to be written to <i>versitDocument</i> and selects the actual writer implementation based on the versit document type.</p>
 <p>See also <a href="qversitwriter.html#versitDocument">versitDocument</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitWriter/startWriting" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/startWriting"></a>
 <h3 class="fn"><a name="startWriting"></a>bool QVersitWriter::startWriting ()</h3>
 <p>Starts writing the output asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal <a href="qversitwriter.html#writingDone">writingDone</a>() is emitted when the writing has finished.</p>
-<a name="//apple_ref/cpp/instm/QVersitWriter/versitDocument" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/versitDocument"></a>
 <h3 class="fn"><a name="versitDocument"></a><a href="qversitdocument.html">QVersitDocument</a> QVersitWriter::versitDocument () const</h3>
 <p>Returns the current versit document.</p>
 <p>See also <a href="qversitwriter.html#setVersitDocument">setVersitDocument</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitWriter/writeAll" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/writeAll"></a>
 <h3 class="fn"><a name="writeAll"></a>bool QVersitWriter::writeAll ()</h3>
 <p>Writes the output synchronously. Returns false if the output device has not been set or opened or if there is an asynchronous write operation pending. Using this function may block the user thread for an undefined period. In most cases asynchronous <a href="qversitwriter.html#startWriting">startWriting</a>() should be used instead.</p>
-<a name="//apple_ref/cpp/instm/QVersitWriter/writingDone" />
+<a name="//apple_ref/cpp/instm/QVersitWriter/writingDone"></a>
 <h3 class="fn"><a name="writingDone"></a>void QVersitWriter::writingDone ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>The signal is emitted by the writer when the asynchronous writing has been completed.</p>
 <p /><address><hr /><div align="center">
