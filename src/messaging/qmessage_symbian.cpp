@@ -324,11 +324,6 @@ void QMessage::setBody(const QString &body, const QByteArray &mimeType)
     QByteArray subType("plain");   
     QByteArray charset;
     
-    QByteArray charset1("UTF-8");
-    QList<QByteArray> charsetNames;
-    charsetNames.append(charset1);
-    QMessage::setPreferredCharsets(charsetNames);
-    
     QString mime = QString(mimeType);
 
 	int index = mimeType.indexOf("/");
@@ -352,7 +347,7 @@ void QMessage::setBody(const QString &body, const QByteArray &mimeType)
 	if (charset.isEmpty()) {
 		charset = QMessage::preferredCharsetFor(body);
 	    if (charset.isEmpty()) {
-	    charset = "UTF-16";
+	    charset = "UTF-8";
 	    }
 	}
     
