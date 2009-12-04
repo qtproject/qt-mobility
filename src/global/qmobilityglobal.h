@@ -54,6 +54,7 @@
 
 #define QTM_PACKAGEDATE_STR "YYYY-MM-DD"
 
+#define QTM_PACKAGE_TAG ""
 
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
