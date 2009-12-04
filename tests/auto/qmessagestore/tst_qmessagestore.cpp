@@ -712,7 +712,6 @@ void tst_QMessageStore::testMessage()
         QCoreApplication::processEvents();
 
 #ifndef Q_OS_SYMBIAN
-    QTest::qSleep(1000);
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
