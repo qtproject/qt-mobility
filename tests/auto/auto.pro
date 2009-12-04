@@ -2,8 +2,8 @@ TEMPLATE = subdirs
 
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
-SUBDIRS += databasemanager \                #service framework
-           servicemetadata \
+#SUBDIRS += databasemanager \                #service framework
+SUBDIRS += servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
 #           qservicemanager \  #remove until qhash namespace issue resolved
