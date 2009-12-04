@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = sendmessage
+TARGET = writemessage
 
 QT += gui
 
