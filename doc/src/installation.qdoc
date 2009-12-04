@@ -235,6 +235,49 @@ mobility libraries into $PWD/install.
     nmake install
 \endcode
 
+\section2 Building For Symbian On Windows
+    To configure the Qt Mobility libraries, run
+    configure in the package directory. (-prefix
+    cannot be used since the libraries are installed
+    into the SDK directory)
+
+    \code
+        cd c:\QtMobility\%DISTNAME%
+        configure
+    \endcode
+
+    Type \c {configure -help} to get a list of all available options.
+
+    To create and install all the libraries and tools, type:
+\code
+    make
+\endcode
+    (Note: no make install step is necessary)
+    The libraries will be deployed into the SDK and will
+    be ready to use for applications running within 
+    the emulator.
+
+    Rather than building the libraries it is also possible
+    to deploy a prebuilt set of libraries.
+    Under the \c {c:\QtMobility\%DISTNAME%\symbian} directory there
+    contains \c{Mobility_tech_preview_libraries.zip}.  Extract 
+    this into the SDK root directory to add the necessary 
+    libraries.  If you have multiple SDKs then repeat
+    this step for each of them.
+
+    To build an SIS package for a particular library
+    such as bearer management run the following commands
+\code
+    cd src/bearer
+    make release-gcce
+    createpackage bearer_template.pkg release-gcce
+\endcode
+
+    There is also a set of prebuilt SIS file for all
+    the libraries under 
+    \c{c:\QtMobility\%DISTNAME%\symbian\Mobility_tech_preview.sis}
+    which can be deployed on your device.
+
 \section2 Building Individual Qt Mobility Domains
 
     Qt Mobility is comprised of several domains but all of
