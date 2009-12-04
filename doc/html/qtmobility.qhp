@@ -487,7 +487,7 @@
                     <section ref="declarative.html" title="Declarative Example"/>
                     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example"/>
                     <section ref="filemanagerplugin.html" title="File Manager Plugin Example"/>
-                    <section ref="incomingcalls.html" title="Incoming Calls Example"/>
+                    <section ref="incomingcalls.html" title="Incoming Call Simulator"/>
                     <section ref="keepintouch.html" title="Keep in Touch Example"/>
                     <section ref="logfilepositionsource.html" title="Log File Position Source Example"/>
                     <section ref="player.html" title="Media Player Example"/>
@@ -567,7 +567,7 @@
             <keyword name="Future Additional APIs" id="Future Additional APIs" ref="future.html"/>
             <keyword name="GNU General Public License (GPL)" id="GNU General Public License (GPL)" ref="gpl.html"/>
             <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
-            <keyword name="Incoming Calls Example" id="Incoming Calls Example" ref="incomingcalls.html"/>
+            <keyword name="Incoming Call Simulator" id="Incoming Call Simulator" ref="incomingcalls.html"/>
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
