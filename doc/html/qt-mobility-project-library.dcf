@@ -3280,9 +3280,6 @@
     <section ref="samplephonebook.html" title="Sample Phonebook Example">
         <keyword ref="samplephonebook.html">Sample Phonebook Example</keyword>
     </section>
-    <section ref="sendmessage.html" title="Send Message Example">
-        <keyword ref="sendmessage.html">Send Message Example</keyword>
-    </section>
     <section ref="serviceactions.html" title="Service Actions Example">
         <keyword ref="serviceactions.html">Service Actions Example</keyword>
     </section>
@@ -3300,6 +3297,9 @@
     </section>
     <section ref="sysinfo.html" title="System Information Example">
         <keyword ref="sysinfo.html">System Information Example</keyword>
+    </section>
+    <section ref="writemessage.html" title="Write Message Example">
+        <keyword ref="writemessage.html">Write Message Example</keyword>
     </section>
 </section>
 </DCF>
