@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.0: contactlistpage.cpp Example File (samplephonebook/contactlistpage.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">contactlistpage.cpp Example File<br /><span class="small-subtitle">samplephonebook/contactlistpage.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:LGPL$
+    ** No Commercial Usage
+    ** This file contains pre-release code and may not be distributed.
+    ** You may use this file in accordance with the terms and conditions
+    ** contained in the Technology Preview License Agreement accompanying
+    ** this package.
+    **
+    ** GNU Lesser General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU Lesser
+    ** General Public License version 2.1 as published by the Free Software
+    ** Foundation and appearing in the file LICENSE.LGPL included in the
+    ** packaging of this file.  Please review the following information to
+    ** ensure the GNU Lesser General Public License version 2.1 requirements
+    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    **
+    ** In addition, as a special exception, Nokia gives you certain additional
+    ** rights.  These rights are described in the Nokia Qt LGPL Exception
+    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+    **
+    ** If you have questions regarding the use of this file, please contact
+    ** Nokia at qt-info@nokia.com.
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;contactlistpage.h&quot;
+
+    #include &lt;QtGui&gt;
+
+    ContactListPage::ContactListPage(QWidget *parent)
+            : QWidget(parent)
+    {
+        m_manager = 0;
+        m_currentFilter = QContactFilter();
+
+        m_backendsLabel = new QLabel(&quot;Store:&quot;, this);
+        m_backendsLabel-&gt;setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        m_backendsCombo = new QComboBox(this);
+        QStringList availableManagers = QContactManager::availableManagers();
+        m_backendsCombo-&gt;addItems(availableManagers);
+        connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
+        m_filterActiveLabel = new QLabel(&quot;Filter: Inactive&quot;);
+        m_filterActiveLabel-&gt;setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+
+        m_contactsList = new QListWidget(this);
+
+        m_addContactBtn = new QPushButton(&quot;Add&quot;, this);
+        connect(m_addContactBtn, SIGNAL(clicked()), this, SLOT(addContactClicked()));
+        m_editBtn = new QPushButton(&quot;Edit&quot;, this);
+        connect(m_editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
+        m_findBtn = new QPushButton(&quot;Find&quot;, this);
+        connect(m_findBtn, SIGNAL(clicked()), this, SLOT(findClicked()));
+
+        QHBoxLayout *backendLayout = new QHBoxLayout;
+        backendLayout-&gt;addWidget(m_backendsLabel);
+        backendLayout-&gt;addWidget(m_backendsCombo);
+        backendLayout-&gt;addWidget(m_filterActiveLabel);
+
+        QHBoxLayout *btnLayout = new QHBoxLayout;
+        btnLayout-&gt;addWidget(m_addContactBtn);
+        btnLayout-&gt;addWidget(m_editBtn);
+        btnLayout-&gt;addWidget(m_findBtn);
+
+        QVBoxLayout *bookLayout = new QVBoxLayout;
+        bookLayout-&gt;addLayout(backendLayout);
+        bookLayout-&gt;addWidget(m_contactsList);
+        bookLayout-&gt;addLayout(btnLayout);
+
+        setLayout(bookLayout);
+
+        <span class="comment">// force update to backend.</span>
+        QTimer::singleShot(0, this, SLOT(backendSelected()));
+    }
+
+    ContactListPage::~ContactListPage()
+    {
+        QList&lt;QContactManager*&gt; initialisedManagers = m_initialisedManagers.values();
+        while (!initialisedManagers.isEmpty()) {
+            QContactManager *deleteMe = initialisedManagers.takeFirst();
+            delete deleteMe;
+        }
+    }
+
+    void ContactListPage::backendSelected()
+    {
+        QString backend = m_backendsCombo-&gt;currentText();
+
+        <span class="comment">// first, check to see if they reselected the same backend.</span>
+        if (m_manager &amp;&amp; m_manager-&gt;managerName() == backend)
+            return;
+
+        <span class="comment">// the change is real.  update.</span>
+        if (m_initialisedManagers.contains(backend)) {
+            m_manager = m_initialisedManagers.value(backend);
+        } else {
+            m_manager = new QContactManager(backend);
+            m_initialisedManagers.insert(backend, m_manager);
+        }
+
+        <span class="comment">// signal that the manager has changed.</span>
+        emit managerChanged(m_manager);
+
+        <span class="comment">// and... rebuild the list.</span>
+        rebuildList(m_currentFilter);
+    }
+
+    void ContactListPage::rebuildList(const QContactFilter&amp; filter)
+    {
+        <span class="comment">// first, check to see whether the filter does anything</span>
+        if (filter == QContactFilter())
+            m_filterActiveLabel-&gt;setText(&quot;Filter: Inactive&quot;);
+        else
+            m_filterActiveLabel-&gt;setText(&quot;Filter: Active&quot;);
+
+        QContact currContact;
+        m_currentFilter = filter;
+        m_contactsList-&gt;clear();
+        m_idToListIndex.clear();
+        QList&lt;QContactLocalId&gt; contactIds = m_manager-&gt;contacts(m_currentFilter);
+        foreach (const QContactLocalId&amp; id, contactIds) {
+            QListWidgetItem *currItem = new QListWidgetItem;
+            currContact = m_manager-&gt;contact(id);
+            currItem-&gt;setData(Qt::DisplayRole, currContact.displayLabel());
+            currItem-&gt;setData(Qt::UserRole, currContact.localId()); <span class="comment">// also store the id of the contact.</span>
+            m_idToListIndex.insert(currContact.localId(), m_contactsList-&gt;count());
+            m_contactsList-&gt;addItem(currItem);
+        }
+    }
+
+    void ContactListPage::addContactClicked()
+    {
+        emit showEditorPage(QContactLocalId(0));
+    }
+
+    void ContactListPage::editClicked()
+    {
+        if (m_contactsList-&gt;currentItem())
+            emit showEditorPage(QContactLocalId(m_contactsList-&gt;currentItem()-&gt;data(Qt::UserRole).toUInt()));
+        <span class="comment">// else, nothing selected; ignore.</span>
+    }
+
+    void ContactListPage::findClicked()
+    {
+        emit showFilterPage(m_currentFilter);
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+</tr></table></div></address></body>
+</html>
