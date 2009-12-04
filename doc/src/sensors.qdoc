@@ -63,12 +63,33 @@ using push will read a cached value. Attempting to use push notification
 on a sensor that only supports polling will result in a timer event being
 used to poll the sensor and deliver the result to the app.
 
-As each sensor works slightly different there are a variety of classes
-provided to interact with each sensor.
+\section1 Client API
 
-\section1 Filters
+The client API is designed around the QSensor abstract class. This class
+is instantiated in the client application and connects to a QSensorBackend
+instance.
 
-Foo bar baz.
+\image sensors-overview.png
+
+Note that different sensors work in slightly different ways so there are
+variety of concrete classes that should be used in place of QSensor.
+
+You can see too that QSensor does not care where the backend it talks to
+is located. Backends are most commonly found in the QtSensors library
+although they may also be found in plugins or in the client app itself.
+
+\section1 Backend API
+
+QSensor instances talk to a backend object. Backends are usually supplied
+with the QtSensors library for a specific device. A backend may talk
+directly to hardware or it may talk to a system service. In some instances
+it may even be useful to have a sensor backend that talks to another backend.
+An example of this would be a rotation sensor class for devices that lack
+a rotation sensor but have a linear acceleration sensor. The rotation sensor
+backend would use the data from the linear acceleration backend to get
+approximate rotation values.
+
+\image sensors-backend.png
 
 \section1 Main Classes
 */
