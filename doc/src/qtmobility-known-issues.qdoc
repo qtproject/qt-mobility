@@ -152,6 +152,14 @@ Support is present for the following System Info API classes
 
 \section2 Symbian/S60 Specific
 
+Currently it is not possible to use Qt convenience header includes:
+
+\code
+    #include <QSystemInfo> //does not work on Symbian
+    //use
+    #include <qsysteminfo.h>
+\endcode
+
 \section3 Bearer Management
 No specific issues to highlight.
 

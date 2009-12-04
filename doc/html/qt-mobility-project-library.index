@@ -6710,6 +6710,7 @@
             <contents name="building" title="Building" level="1"/>
             <contents name="building-on-unix" title="Building On Unix" level="2"/>
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
+            <contents name="building-for-symbian-on-windows" title="Building For Symbian On Windows" level="2"/>
             <contents name="building-individual-qt-mobility-domains" title="Building Individual Qt Mobility Domains" level="2"/>
             <contents name="environment-variables" title="Environment Variables" level="1"/>
         </page>

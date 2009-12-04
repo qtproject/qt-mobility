@@ -133,6 +133,10 @@
 </ul>
 <a name="symbian-s60-specific"></a>
 <h3>Symbian/S60 Specific</h3>
+<p>Currently it is not possible to use Qt convenience header includes:</p>
+<pre>    #include &lt;QSystemInfo&gt; <span class="comment">//does not work on Symbian</span>
+<span class="comment">    //use</span>
+    #include &lt;qsysteminfo.h&gt;</pre>
 <a name="bearer-management"></a>
 <h4>Bearer Management</h4>
 <p>No specific issues to highlight.</p>
