@@ -57,7 +57,11 @@
     #include &lt;QApplication&gt;
     #include &lt;QLabel&gt;
 
+    #ifdef Q_OS_SYMBIAN
+    #include &lt;qsysteminfo.h&gt;
+    #else
     #include &lt;QSystemInfo&gt; <span class="comment">//(1)</span>
+    #endif
     using namespace QtMobility; <span class="comment">//(2)</span>
 
     int main(int argc, char *argv[])
