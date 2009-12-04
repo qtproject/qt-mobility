@@ -34,8 +34,8 @@ SUBDIRS += samplephonebook \
 #System Information
 !maemo:SUBDIRS += sysinfo
 
-#Multimedia
-SUBDIRS += player \
+#Multimedia - disabled on Symbian due to missing backend
+!symbian:SUBDIRS += player \
         cameracapture \
         slideshow \
         streamplayer \
