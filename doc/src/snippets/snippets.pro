@@ -5,4 +5,4 @@
 ######################################################################
 
 TEMPLATE = subdirs
-SUBDIRS = qtcontactsdocsample
+contains(mobility_modules,contacts): SUBDIRS += qtcontactsdocsample

@@ -5,5 +5,7 @@
 ######################################################################
 
 TEMPLATE = subdirs
-SUBDIRS += contacts multimedia
+
+contains(mobility_modules,contacts): SUBDIRS += contacts
+contains(mobility_modules,multimedia): SUBDIRS += multimedia
 

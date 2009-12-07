@@ -546,6 +546,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
 /*! \reimp */
 QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
+    error = QContactManager::NoError;
     QContactManager::Error functionError;
     QContactChangeSet changeSet;
     QList<QContactManager::Error> retn;
@@ -1084,9 +1085,8 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
         case QContactManager::Groups:
         case QContactManager::ActionPreferences:
         case QContactManager::Relationships:
-            return true;
         case QContactManager::ArbitraryRelationshipTypes:
-            return true;
+        case QContactManager::RelationshipOrdering:
         case QContactManager::MutableDefinitions:
             return true;
         case QContactManager::Anonymous:
