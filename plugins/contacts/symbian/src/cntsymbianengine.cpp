@@ -86,7 +86,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
         m_transformContact = new CntTransformContact;
         m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
-        m_relationship     = new CntRelationship(m_dataBase->contactDatabase());
+        m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
     }
 }
 
@@ -237,8 +237,11 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactMan
     QContact* contact = new QContact();
     TRAPD(err, QT_TRYCATCH_LEAVING(*contact = fetchContactL(contactId)));
     CntSymbianTransformError::transformError(err, error);
-    if(error == QContactManager::NoError)
+    if(error == QContactManager::NoError) {
         updateDisplayLabel(*contact);
+        QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, error);
+        QContactManagerEngine::setContactRelationships(contact, relationships);        
+    }
     return *QScopedPointer<QContact>(contact);
 }
 

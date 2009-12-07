@@ -546,6 +546,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
 /*! \reimp */
 QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
+    error = QContactManager::NoError;
     QContactManager::Error functionError;
     QContactChangeSet changeSet;
     QList<QContactManager::Error> retn;
