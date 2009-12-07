@@ -73,7 +73,6 @@ qint64 S60AudioPlayerSession::position() const
 {
     TTimeIntervalMicroSeconds ms = 0;
     m_player->GetPosition(ms);
-    out << (ms.Int64() / 1000) << "\n";
     return ms.Int64() / 1000;
 }
 
