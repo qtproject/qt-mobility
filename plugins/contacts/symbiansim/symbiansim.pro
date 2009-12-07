@@ -41,8 +41,8 @@ symbian: {
     target.path = /sys/bin
     INSTALLS += target
 
-    symbianplugin.sources = $${TARGET}.dll
-    symbianplugin.path = /resource/qt/plugins/contacts
+    symbiansimplugin.sources = $${TARGET}.dll
+    symbiansimplugin.path = /resource/qt/plugins/contacts
     DEPLOYMENT += symbiansimplugin
 }
 

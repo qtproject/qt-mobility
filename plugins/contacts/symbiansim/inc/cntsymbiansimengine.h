@@ -83,6 +83,8 @@ private:
     RTelServer etelServer;
     RMobilePhone etelPhone;
     RMobilePhoneBookStore etelStore;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg etelInfoPckg;
     
     QString m_managerUri;
 };

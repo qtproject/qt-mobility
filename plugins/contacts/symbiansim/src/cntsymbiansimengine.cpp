@@ -45,11 +45,11 @@
 #include <mpbutil.h>
 
 const int KOneSimContactBufferSize = 500;
-const int KMaxSimContactsNumber = 500;
 const TInt KDataClientBuf  = 128;
 const TInt KEtsiTonPosition = 0x70;
 
-CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error) :
+    etelInfoPckg( etelStoreInfo )
 {
     error = QContactManager::NoError;
 
@@ -192,12 +192,21 @@ QContact CntSymbianSimEngine::fetchContactL(const QContactLocalId &localId) cons
  */
 QList<QContact> CntSymbianSimEngine::fetchContactsL() const
 {
-    //read the contact from the Etel store
     TRequestStatus requestStatus;
+    
+    //check number of storage slots in the store
+    etelStore.GetInfo(requestStatus, (TDes8&)etelInfoPckg);
+    User::WaitForRequest(requestStatus);
+    if (requestStatus.Int() != KErrNone) {
+        User::Leave(requestStatus.Int());
+    }
+    
+    //read the contact from the Etel store
     RBuf8 buffer;
-    buffer.CreateL(KOneSimContactBufferSize*KMaxSimContactsNumber);
+    buffer.CreateL(KOneSimContactBufferSize*etelStoreInfo.iTotalEntries);
     CleanupClosePushL(buffer);
-    etelStore.Read(requestStatus, 1, KMaxSimContactsNumber, buffer);
+    //contacts are fetched starting from index 1
+    etelStore.Read(requestStatus, 1, etelStoreInfo.iTotalEntries, buffer); 
     User::WaitForRequest(requestStatus);
     if (requestStatus.Int() != KErrNone) {
         User::Leave(requestStatus.Int());
