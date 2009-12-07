@@ -84,9 +84,13 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
 }
 
 QMessagePrivate* QMessagePrivate::implementation(const QMessage &message)
-
 {
     return message.d_ptr;
+}
+
+QMessageContentContainerPrivate* QMessagePrivate::containerImplementation(const QMessage &message)
+{
+    return ((QMessageContentContainer*)&message)->d_ptr;
 }
 
 QMessage::QMessage()
@@ -303,8 +307,6 @@ uint QMessage::size() const
 		foreach (const QMessageContentContainer &attachment, container->_attachments) {
 			size += attachment.size();
 		}
-		size += 1024;
-    
     }
 	return size;
 }
@@ -362,7 +364,6 @@ void QMessage::setBody(const QString &body, const QByteArray &mimeType)
             // The body content is in the first attachment
             QMessageContentContainerPrivate *attachmentContainer(container->attachment(existingBodyId)->d_ptr);
             attachmentContainer->setContent(body, mainType, subType, charset);
-            attachmentContainer->_id = existingBodyId;
         }
     } else {
         if (container->_attachments.isEmpty()) {
@@ -388,14 +389,14 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 
 QMessageContentContainerIdList QMessage::attachmentIds() const
 {
-	QMessageContentContainerIdList list = contentIds();
 	QMessageContentContainerIdList ids;
 
-	foreach (QMessageContentContainerId id, list) {
-		QMessageContentContainer container = find(id);
-		if (container.textContent().isEmpty()) // conteiner is attachment
-			ids.append(container.d_ptr->_id);
-	}
+	QMessageContentContainerId msgBodyId(bodyId());
+    foreach (const QMessageContentContainerId &contentId, contentIds()) {
+        if (contentId != msgBodyId) {
+            ids.append(contentId);
+        }
+    }
 	    
 	return ids;
 }

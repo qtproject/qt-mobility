@@ -42,8 +42,27 @@
 #include <QStringList>
 #include <QTextCodec>
 #include "qmessagecontentcontainer_symbian_p.h"
+#include "qmtmengine_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+QMessageContentContainer QMessageContentContainerPrivate::from(long int messageId,
+                                                               unsigned int attachmentId,
+                                                               QByteArray &name,
+                                                               QByteArray &mimeType,
+                                                               QByteArray &mimeSubType,
+                                                               int size)
+{
+    QMessageContentContainer result;
+    result.d_ptr->_containingMessageId = messageId;
+    result.d_ptr->_attachmentId = attachmentId;
+    result.d_ptr->_name = name;
+    result.d_ptr->_type = mimeType;
+    result.d_ptr->_subType = mimeSubType;
+    result.d_ptr->_size = size;
+    result.d_ptr->_available = true;
+    return result;
+}
 
 QMessageContentContainerPrivate& QMessageContentContainerPrivate::operator=(const QMessageContentContainerPrivate &other)
 {
@@ -62,6 +81,8 @@ QMessageContentContainerPrivate& QMessageContentContainerPrivate::operator=(cons
 	_messageId = other._messageId;
 	_id = other._id;
 	_header = other._header;
+    _containingMessageId = other._containingMessageId;
+    _attachmentId = other._attachmentId;
 
 	return *this;
 }
@@ -85,12 +106,12 @@ void QMessageContentContainerPrivate::clearContents()
 	_content = QByteArray();
 	_textContent = QString();
 	_filename = QByteArray();
-	_messageId = QMessageId();
-	_id = QMessageContentContainerId();
 	_available = false;
 	_size = 0;
 	_header.clear();
 	_attachments.clear();
+    _containingMessageId = 0;
+    _attachmentId = 0;
 }
 
 void QMessageContentContainerPrivate::setContentType(const QByteArray &type, const QByteArray &subType, const QByteArray &charset)
@@ -239,6 +260,11 @@ QByteArray QMessageContentContainerPrivate::attachmentFilename(const QMessageCon
     return container.d_ptr->_filename;
 }
 
+QMessageContentContainerPrivate* QMessageContentContainerPrivate::implementation(const QMessageContentContainer &container)
+{
+    return container.d_ptr;
+}
+
 QMessageContentContainer::QMessageContentContainer()
 : d_ptr(new QMessageContentContainerPrivate(this))
 {
@@ -296,11 +322,31 @@ uint QMessageContentContainer::size() const
 
 QString QMessageContentContainer::textContent() const
 {
+    if (d_ptr->_textContent.isEmpty() && d_ptr->_attachmentId != 0) {
+        CMTMEngine* mtmEngine = CMTMEngine::instance();
+        const_cast<QString&>(d_ptr->_textContent) = mtmEngine->attachmentTextContent(d_ptr->_containingMessageId, d_ptr->_attachmentId, d_ptr->_charset);
+    }
+    if (!d_ptr->_textContent.isEmpty()) {
+        return d_ptr->_textContent;
+    }
+    
+    QTextCodec *codec = QTextCodec::codecForName(d_ptr->_charset.data());
+    if (codec) {
+        return codec->toUnicode(d_ptr->_content);
+    } else {
+        return QString::fromLatin1(d_ptr->_content);
+    }
+
 	return d_ptr->_textContent;
 }
 
 QByteArray QMessageContentContainer::content() const
 {
+    if (d_ptr->_content.isEmpty() && d_ptr->_attachmentId != 0) {
+        CMTMEngine* mtmEngine = CMTMEngine::instance();
+        const_cast<QByteArray&>(d_ptr->_content) = mtmEngine->attachmentContent(d_ptr->_containingMessageId, d_ptr->_attachmentId);
+    }
+
 	return d_ptr->_content;
 }
 

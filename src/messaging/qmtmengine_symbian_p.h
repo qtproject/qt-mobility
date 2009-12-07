@@ -149,6 +149,9 @@ public:
     bool retrieveBody(const QMessageId& id);
     bool retrieveHeader(const QMessageId& id);
     
+    QByteArray attachmentContent(long int messageId, unsigned int attachmentId);
+    QString attachmentTextContent(long int messageId, unsigned int attachmentId, const QByteArray &charset);
+    
     QMessageStore::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                         const QMessageFilter& filter);
     void unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId);
@@ -185,6 +188,9 @@ private:
     void orderFolders(QMessageFolderIdList& folderIds,  const QMessageFolderOrdering &ordering) const;
     static bool messageLessThan(const QMessage& message1, const QMessage& message2);
     void orderMessages(QMessageIdList& messageIds,  const QMessageOrdering &ordering) const;
+    
+    void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter) const;
+    void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
 
     void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
     void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
@@ -221,14 +227,17 @@ private:
     void retrieveL(const QMessageId &messageId, const QMessageContentContainerId& id);
     void retrieveBodyL(const QMessageId& id) const;
     void retrieveHeaderL(const QMessageId& id) const;
+    void appendAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
+    QByteArray attachmentContentL(long int messageId, unsigned int attachmentId);
     
     QString privateFolderPath();
     
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
     
-    CMsvEntry* retrieveCMsvEntry(TMsvId id = 0) const;
-    void releaseCMsvEntry(CMsvEntry* pEntry) const;
+    static void cmsvEntryCleanup(TAny* aCMsvEntry);    
+    CMsvEntry* retrieveCMsvEntryAndPushToCleanupStack(TMsvId id = 0) const;
+    void releaseCMsvEntryAndPopFromCleanupStack(CMsvEntry* pEntry) const;
 
 private: // from CActive
     void RunL();

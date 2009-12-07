@@ -106,7 +106,7 @@ public:
 
     QMessageDataComparator::Options _options;
     
-    enum Field {None = 0, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, DisplayName, Path };
+    enum Field {None = 0, ParentAccountIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, DisplayName, Path };
     enum Comparator {Equality = 0, Inclusion};
 
     bool _valid;
@@ -114,6 +114,7 @@ public:
     
     QMessageFolderIdList _ids;
     QVariant _value;
+    QMessageAccountFilter *_accountFilter;
     QMessageFolderFilterPrivate::Field _field;
 
     Comparator _comparatorType;

@@ -335,11 +335,15 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("text")
         << QByteArray("plain")
+#if defined(Q_OS_SYMBIAN)
+        << 89u
+#else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 32u
 #else
         << 1400u
 #endif
+#endif        
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -359,10 +363,14 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("text")
         << QByteArray("html")
+#if defined(Q_OS_SYMBIAN)
+        << 157u
+#else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 64u
 #else
         << 1536u
+#endif
 #endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
@@ -383,11 +391,15 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_SYMBIAN)
+        << 611u
+#else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 512u
 #else
         << 1536u
 #endif
+#endif        
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -407,10 +419,14 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_SYMBIAN)
+        << 4731u
+#else
 #if defined(Q_OS_WIN) && !defined(_WIN32_WCE)
         << 5120u
 #else
         << 4096u
+#endif
 #endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
@@ -681,7 +697,6 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(reply.cc(), QList<QMessageAddress>());
     QVERIFY(reply.bodyId().isValid());
 
-
     QMessage replyToAll(updated.createResponseMessage(QMessage::ReplyToAll));
     QCOMPARE(replyToAll.subject(), updated.subject().prepend("Re:"));  
     QCOMPARE(replyToAll.to(), QList<QMessageAddress>() << updated.from());
@@ -690,7 +705,7 @@ void tst_QMessageStore::testMessage()
 
     QMessage forward(updated.createResponseMessage(QMessage::Forward));
     QCOMPARE(forward.subject(), updated.subject().prepend("Fwd:"));
-    QVERIFY(forward.bodyId().isValid());   
+    QVERIFY(forward.bodyId().isValid());
 
     // Verify that the attachments can be removed
     updated.clearAttachments();
