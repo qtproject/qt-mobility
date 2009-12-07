@@ -55,6 +55,7 @@ QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
+BUILD_DOCS=yes
 RELEASEMODE=
 BUILD_SILENT=
 LINUX_TARGET=
@@ -62,12 +63,14 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo"
+MOBILITY_MODULES_UNPARSED=
 
 usage() 
 {
     echo "Usage: configure [-prefix <dir>] [headerdir <dir>] [libdir <dir>]"
-    echo "                 [-bindir <dir>] [-tests] [-examples]"
-    echo "                 [-debug] [-release] [-silent]"
+    echo "                 [-bindir <dir>] [-tests] [-examples] [-nodocs]"
+    echo "                 [-debug] [-release] [-silent] [-modules <list>]"
     echo
     echo "Options:"
     echo
@@ -86,6 +89,14 @@ usage()
     echo "                    Note, this adds test symbols to all libraries"
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
+    echo "-nodocs ........... Do not build documentation (default is build docs)"
+    echo
+    echo "-modules <list> ... Restrict list of modules to build (default all supported)"
+    echo "                    Choose from: bearer location publishsubscribe location"
+    echo "                    multimedia contacts versit messaging systeminfo"
+    echo "                    Modules should be separated by a space. If a"
+    echo "                    selected module depends on other modules they"
+    echo "                    will automatically be enabled."
     echo
     echo "-maemo ............ Build Qt Mobility for Maemo."
     echo "                    (default: Desktop Linux)"
@@ -128,6 +139,12 @@ while [ "$#" -gt 0 ]; do
         -examples)
             BUILD_EXAMPLES="yes"
             ;;
+        -nodocs)
+            BUILD_DOCS=
+            ;;
+        -docs)
+            BUILD_DOCS="yes"
+            ;;
         -debug)
             RELEASEMODE=debug
             ;;
@@ -142,6 +159,10 @@ while [ "$#" -gt 0 ]; do
             ;;
         -sdk)
             MAC_SDK="$2"
+            shift
+            ;;
+        -modules)
+            MOBILITY_MODULES_UNPARSED=$2
             shift
             ;;
         *)
@@ -254,6 +275,11 @@ else
     echo "build_examples = yes" >> "$CONFIG_IN"
 fi
 
+if [ -z "$BUILD_DOCS" ]; then
+    echo "build_docs = no" >> "$CONFIG_IN"
+else
+    echo "build_docs = yes" >> "$CONFIG_IN"
+fi
 
 echo "Configuring Qt Mobility"
 echo 
@@ -320,6 +346,21 @@ compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 
+
+
+# Now module selection
+# using 'expr match ....' should help a bit
+if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
+    # In theory we should do some sanity checking here.
+    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
+fi
+
+# It's a lot easier to make qmake do the dependency checking...
+echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
+echo "maemo:mobility_modules -= systeminfo" >> "$CONFIG_IN"
+echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+
+# Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
