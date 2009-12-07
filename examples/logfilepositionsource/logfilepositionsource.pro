@@ -10,7 +10,8 @@ SOURCES = logfilepositionsource.cpp \
 CONFIG += console
 
 include(../examples.pri)
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 
 symbian: {
     addFiles.sources = simplelog.txt
@@ -24,4 +25,3 @@ symbian: {
     INSTALLS += logfileexample
     build_pass:ALL_DEPS+=install_logfileexample
 }
-
