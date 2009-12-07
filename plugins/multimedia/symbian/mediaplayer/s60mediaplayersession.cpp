@@ -43,19 +43,19 @@
 
 #include <QtCore/qdebug.h>
 
-#include <QWidget>
 #include <QDir>
 #include <QVariant>
 #include <QTimer>
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent),
-      m_state(QMediaPlayer::StoppedState),
-      m_mediaStatus(QMediaPlayer::NoMedia),
-      m_volume(100),
       m_playbackRate(1.0),
       m_muted(false),
-      m_timer(new QTimer(this))
+      m_volume(100),
+      m_state(QMediaPlayer::StoppedState),
+      m_mediaStatus(QMediaPlayer::NoMedia),
+      m_timer(new QTimer(this)),
+      m_error(KErrNone)
 {    
     connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
 }
@@ -69,18 +69,27 @@ int S60MediaPlayerSession::volume() const
     return m_volume;
 }
 
+void S60MediaPlayerSession::setVolume(int volume)
+{
+    if (m_volume != volume && volume >= 0 && volume <= 100) {
+        m_volume = volume;
+        emit volumeChanged(m_volume);
+    }
+    
+    if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
+        doSetVolume(m_volume);
+    }
+}
+
 bool S60MediaPlayerSession::isMuted() const
 {
     return m_muted;
 }
 
-bool S60MediaPlayerSession::isVideoAvailable() const
-{
-    return false;
-}
-
 bool S60MediaPlayerSession::isSeekable() const
 {
+    if (m_metaDataMap.isEmpty())
+        return true;
     return m_metaDataMap.value("seekable").toBool();
 }
 
@@ -98,6 +107,49 @@ void S60MediaPlayerSession::setState(QMediaPlayer::State state)
         m_state = state;
         emit stateChanged(state);
     }
+}
+
+QMediaPlayer::State S60MediaPlayerSession::state() const 
+{ 
+    return m_state; 
+}
+
+QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const 
+{ 
+    return m_mediaStatus; 
+}
+
+void S60MediaPlayerSession::load(const QUrl &url)
+{
+    QString filePath = QDir::toNativeSeparators(url.toLocalFile());   
+    
+    if (mediaStatus() != QMediaPlayer::LoadingMedia) {
+        setMediaStatus(QMediaPlayer::LoadingMedia);
+        TPtrC str(reinterpret_cast<const TUint16*>(filePath.utf16()));
+        doLoad(str);
+    }
+}
+
+void S60MediaPlayerSession::play()
+{
+    if (state() != QMediaPlayer::PlayingState && mediaStatus() != QMediaPlayer::LoadingMedia) {
+        startTimer();
+        doPlay();
+        setState(QMediaPlayer::PlayingState);
+    }
+}
+
+void S60MediaPlayerSession::pause()
+{
+    doPause();
+    stopTimer();
+    setState(QMediaPlayer::PausedState);
+}
+
+void S60MediaPlayerSession::stop()
+{
+    doStop();
+    playComplete();
 }
 
 void S60MediaPlayerSession::setVideoRenderer(QObject *renderer)
@@ -120,11 +172,81 @@ QVariant S60MediaPlayerSession::metaData(const QString &key) const
     return m_metaDataMap.value(key);
 }
 
+qreal S60MediaPlayerSession::playbackRate() const
+{
+    return m_playbackRate;
+}
+
+void S60MediaPlayerSession::setMuted(bool muted)
+{
+    if (m_muted != muted) {   
+        m_muted = muted;
+        emit mutingChanged(m_muted);
+    }
+    
+    if (isMuted() == true) {
+        doSetVolume(0);
+    } else {
+        setVolume(volume());
+    }
+}
+
+void S60MediaPlayerSession::setPlaybackRate(qreal rate)
+{
+    if (m_playbackRate != rate) {
+        m_playbackRate = rate;
+        doSetPlaybackRate(m_playbackRate);
+        emit playbackRateChanged(m_playbackRate);
+    }
+}
+
+
+void S60MediaPlayerSession::setPosition(qint64 pos)
+{
+    if (state() == QMediaPlayer::PlayingState) 
+        doPause();
+    
+    doSetPosition(pos * 1000);
+    
+    if (state() == QMediaPlayer::PlayingState)
+        doPlay();
+    
+    emit positionChanged(position());
+}
+
+void S60MediaPlayerSession::initComplete()
+{
+    if (m_error == KErrNone) {
+        setMediaStatus(QMediaPlayer::LoadedMedia);
+        updateMetaDataEntries();
+        setVolume(volume());
+        emit durationChanged(duration());
+    } else {
+        setMediaStatus(QMediaPlayer::NoMedia);
+    }
+}
+
+void S60MediaPlayerSession::playComplete()
+{
+    setState(QMediaPlayer::StoppedState);
+    setMediaStatus(QMediaPlayer::EndOfMedia);
+    emit positionChanged(0);
+    stopTimer();
+}
+
+QMap<QString, QVariant>& S60MediaPlayerSession::metaDataEntries()
+{
+    return m_metaDataMap;
+}
+
+void S60MediaPlayerSession::setError(int error, const QString &errorString)
+{
+    m_error = error;
+}
+
 void S60MediaPlayerSession::tick()
 {
-    if (m_timer->isActive()) {
-        emit positionChanged(position());
-    }
+    emit positionChanged(position());
 }
 
 bool S60MediaPlayerSession::startTimer()
@@ -141,57 +263,4 @@ void S60MediaPlayerSession::stopTimer()
     if (m_timer->isActive()) {
         m_timer->stop();
     }
-}
-qreal S60MediaPlayerSession::playbackRate() const
-{
-    return m_playbackRate;
-}
-
-void S60MediaPlayerSession::setMuted(bool muted)
-{
-    if (m_muted != muted) {   
-        m_muted = muted;
-        emit mutingChanged(m_muted);
-    }
-}
-
-void S60MediaPlayerSession::setVolume(int volume)
-{
-    if (m_volume != volume && volume >= 0 && volume <= 100) {
-        m_volume = volume;
-        emit volumeChanged(m_volume);
-    }
-}
-
-void S60MediaPlayerSession::setPlaybackRate(qreal rate)
-{
-    if (m_playbackRate != rate) {
-        m_playbackRate = rate;
-        emit playbackRateChanged(m_playbackRate);
-    }
-}
-
-const QString& S60MediaPlayerSession::filePath() const
-{
-    return m_filePath;
-}
-
-void S60MediaPlayerSession::setFilePath(const QString &path)
-{
-    m_filePath = QDir::toNativeSeparators(path);
-}
-
-QMap<QString, QVariant>& S60MediaPlayerSession::metaDataEntries()
-{
-    return m_metaDataMap;
-}
-
-int S60MediaPlayerSession::milliSecondsToMicroSeconds(int milliSeconds) const
-{
-    return milliSeconds * 1000;
-}
-
-int S60MediaPlayerSession::microSecondsToMilliSeconds(int microSeconds) const
-{
-    return microSeconds / 1000;
 }

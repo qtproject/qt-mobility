@@ -43,12 +43,6 @@
 #include "s60mediaplayersession.h"
 #include <QDebug>
 
-struct S60VideoMetaDataKeyLookup
-{
-    QtMedia::MetaData key;
-    const char *token;
-};
-
 S60MediaMetaDataProvider::S60MediaMetaDataProvider(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent)
     : QMetaDataControl(parent),
       m_mediaPlayerResolver(mediaPlayerResolver),

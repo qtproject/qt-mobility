@@ -61,15 +61,18 @@
 
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     : QMediaService(parent),
+      m_control(NULL),
+      m_mediaRecognizer(NULL),
+      m_videoOutput(NULL),
       m_videoPlayerSession(NULL),
       m_audioPlayerSession(NULL),
-      m_videoWindow(NULL),
-      m_videoWidget(NULL),
-      m_videoRenderer(NULL),
-      m_control(NULL),
-      m_videoOutput(NULL),
-      m_metaData(NULL)
-{
+      m_metaData(NULL),
+      m_videoWidget(NULL)
+#ifndef QT_NO_MULTIMEDIA      
+      , m_videoWindow(NULL),
+      m_videoRenderer(NULL)
+#endif      
+{ 
     m_control = new S60MediaPlayerControl(*this, this);
     m_mediaRecognizer = new S60MediaRecognizer(this);  
     m_metaData = new S60MediaMetaDataProvider(*this);
@@ -211,7 +214,7 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
     
     m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
     m_videoPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
-    m_videoPlayerSession->setPosition(0); // TODO: Check is this really needed???
+    //m_videoPlayerSession->setPosition(0); // TODO: Check is this really needed???
     m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
     
     return m_videoPlayerSession;
@@ -252,7 +255,7 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
     
     m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
     m_audioPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
-    m_audioPlayerSession->setPosition(0); // TODO: Check is this really needed???
+    //m_audioPlayerSession->setPosition(0); // TODO: Check is this really needed???
     m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
     
     return m_audioPlayerSession;

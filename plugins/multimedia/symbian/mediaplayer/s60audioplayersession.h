@@ -42,14 +42,8 @@
 #ifndef S60AUDIOPLAYERSESSION_H
 #define S60AUDIOPLAYERSESSION_H
 
-#include <QObject>
-#include <QUrl>
-#include <QSize>
-#include <QMediaPlayer>
 #include "s60mediaplayersession.h"
-#include <MdaAudioSamplePlayer.h>  
-
-class QTimer;
+#include <mdaaudiosampleplayer.h>  
 
 class S60AudioPlayerSession : public S60MediaPlayerSession, public MMdaAudioPlayerCallback
 {
@@ -58,28 +52,25 @@ class S60AudioPlayerSession : public S60MediaPlayerSession, public MMdaAudioPlay
 public:
     S60AudioPlayerSession(QObject *parent);
     ~S60AudioPlayerSession();
-
+    
     qint64 duration() const;
     qint64 position() const;
-
     bool isVideoAvailable() const;
-    void setPlaybackRate(qreal rate);
-
-    void play();
-    void pause();
-    void stop();
-    void setPosition(qint64 pos);
-    void setVolume(int volume);
-    void setMuted(bool muted);
-    void load(const QUrl &url);
+    
+protected:
+    void doLoad(const TDesC &path);
+    void doPlay();
+    void doStop();
+    void doPause();
+    void doSetVolume(int volume);
+    void doSetPlaybackRate(qreal rate);
+    void doSetPosition(qint64 microSeconds);
+    void updateMetaDataEntries();
     
 private: // From MMdaAudioPlayerCallback
     void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
     void MapcPlayComplete(TInt aError);
 
-private: 
-    void updateMetaDataEntries();
-    
 private:
     CMdaAudioPlayerUtility *m_player;
 };

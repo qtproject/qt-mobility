@@ -45,7 +45,7 @@
 #include <QMediaPlaylistNavigator>
 
 #include <QtCore/qdir.h>
-#include <QtCore/qsocketnotifier.h>
+//#include <QtCore/qsocketnotifier.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
@@ -66,7 +66,7 @@ qint64 S60MediaPlayerControl::position() const
     if (m_session)
         return m_session->position();
     
-    return m_mediaSettings.position();
+    return -1;
 }
 
 qint64 S60MediaPlayerControl::duration() const
@@ -80,7 +80,6 @@ QMediaPlayer::State S60MediaPlayerControl::state() const
 {
     if (m_session)
         return m_session->state();
-    // we dont have a session -> state is stopped
     return QMediaPlayer::StoppedState;
 }
 
@@ -117,7 +116,7 @@ bool S60MediaPlayerControl::isSeekable() const
     if (m_session)
        return  m_session->isSeekable();
     
-    return false;
+    return true;
 }
 
 QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
@@ -148,7 +147,6 @@ void S60MediaPlayerControl::setPosition(qint64 pos)
 {
     if (m_session)
         m_session->setPosition(pos);
-    m_mediaSettings.setPosition(pos);
 }
 
 void S60MediaPlayerControl::play()
@@ -171,9 +169,9 @@ void S60MediaPlayerControl::stop()
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
-    m_mediaSettings.setVolume(volume);
     if (m_session)
         m_session->setVolume(volume);
+    m_mediaSettings.setVolume(volume);
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
@@ -203,13 +201,10 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
         return;
     }
 
-    
     // store to variable as session is created based on the content type.
     m_currentResource = source;
     if (m_session) {
-        if (m_session->state() != QMediaPlayer::StoppedState) {
-            m_session->stop();
-        }
+        m_session->stop();
     }
     m_session = currentPlayerSession();
 

@@ -58,7 +58,6 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class S60VideoOutputControl;
 class S60VideoPlayerSession;
 class S60AudioPlayerSession;
 class S60MediaPlayerControl;
@@ -97,12 +96,13 @@ private:
     mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
-    mutable S60MediaMetaDataProvider *m_metaData;   
-#ifndef QT_NO_MULTIMEDIA
-    mutable S60VideoRenderer *m_videoRenderer;
-    mutable S60VideoOverlay *m_videoWindow;
-#endif
+    mutable S60MediaMetaDataProvider *m_metaData;
     mutable S60VideoWidgetControl *m_videoWidget;
+    
+#ifndef QT_NO_MULTIMEDIA
+    mutable S60VideoOverlay *m_videoWindow;
+    mutable S60VideoRenderer *m_videoRenderer;
+#endif
 };
 
 #endif

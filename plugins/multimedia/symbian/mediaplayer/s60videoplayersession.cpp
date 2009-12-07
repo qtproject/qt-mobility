@@ -40,17 +40,15 @@
 ****************************************************************************/
 
 #include "s60videoplayersession.h"
+#include "s60videowidget.h"
 
 #include <QtCore/qdebug.h>
 
 #include <coemain.h>    // For CCoeEnv
-#include <coecntrl.h>
 #include <w32std.h>
+#include <mmf/common/mmfcontrollerframeworkbase.h>
 
 #include <QWidget>
-#include <QDir>
-
-#include <mmf/common/mmfcontrollerframeworkbase.h>
 
 S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent),
@@ -83,34 +81,31 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
     delete m_dummyWidget;
 }
 
-void S60VideoPlayerSession::load(const QUrl &url)
+void S60VideoPlayerSession::doLoad(const TDesC &path)
 {
-    setMediaStatus(QMediaPlayer::LoadingMedia);
-    setFilePath(url.toLocalFile());
-    TPtrC str(reinterpret_cast<const TUint16*>(filePath().utf16()));
-    TRAP_IGNORE(m_player->OpenFileL(str);) // TODO: Error handling...
-    emit positionChanged(position());
-    emit durationChanged(duration());
+    TRAPD(err, m_player->OpenFileL(path);)
+    if (err) {
+        setMediaStatus(QMediaPlayer::NoMedia);
+    }
 }
 
 qint64 S60VideoPlayerSession::duration() const
 {         
-    Int64 duration;
+    Int64 duration = 0;
     TRAP_IGNORE(duration = m_player->DurationL().Int64() / 1000;)
     return duration;   
 }
 
 qint64 S60VideoPlayerSession::position() const
 {
-    Int64 position;
+    Int64 position = 0;
     TRAP_IGNORE(position = m_player->PositionL().Int64() / 1000;)
     return position; 
 }
 
-void S60VideoPlayerSession::setPlaybackRate(qreal rate)
+void S60VideoPlayerSession::doSetPlaybackRate(qreal rate)
 {
-    S60MediaPlayerSession::setPlaybackRate(rate);
-    // TODO: Set the playback rate for the player
+    // TODO:
 }
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
@@ -129,21 +124,21 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 void S60VideoPlayerSession::nativeHandles()
 {
     if (!m_videoWidgetControl) {
-        control =  m_dummyWidget->winId(); 
+        m_coeControl =  m_dummyWidget->winId(); 
     } else {
-        control =  m_videoWidgetControl->videoWidget()->winId();
-        control->MakeVisible(ETrue);
-        control->SetPosition(TPoint(0,0));
+        m_coeControl =  m_videoWidgetControl->videoWidget()->winId();
+        m_coeControl->MakeVisible(ETrue);
+        m_coeControl->SetPosition(TPoint(0,0));
     }
     
-    CCoeEnv* const coeEnv = control->ControlEnv();
+    CCoeEnv* const coeEnv = m_coeControl->ControlEnv();
     m_wsSession = &(coeEnv->WsSession());
     m_screenDevice = coeEnv->ScreenDevice();
-    m_window = control->DrawableWindow();
+    m_window = m_coeControl->DrawableWindow();
 
     m_windowRect = TRect(
-        control->DrawableWindow()->AbsPosition(),
-        control->DrawableWindow()->Size());
+        m_coeControl->DrawableWindow()->AbsPosition(),
+        m_coeControl->DrawableWindow()->Size());
     m_clipRect = m_windowRect;
 }
 
@@ -152,88 +147,44 @@ bool S60VideoPlayerSession::isVideoAvailable() const
     return true;
 }
 
-void S60VideoPlayerSession::play()
+void S60VideoPlayerSession::doPlay()
 {   
-    TRAP_IGNORE(
-    m_player->SetDisplayWindowL(*m_wsSession, 
-                                  *m_screenDevice, 
-                                  *m_window, 
-                                  m_windowRect, 
-                                  m_clipRect);  
-    control->ActivateL();
-    );
-    control->DrawNow();
-    if (state() != QMediaPlayer::PlayingState && mediaStatus() != QMediaPlayer::LoadingMedia ) {
-        startTimer();
-        m_player->Play();
-        setState(QMediaPlayer::PlayingState);
-    }
+    updateWidget();
+    m_player->Play();
 }
 
-void S60VideoPlayerSession::pause()
+void S60VideoPlayerSession::doPause()
 {
     TRAP_IGNORE(m_player->PauseL();)
-    setState(QMediaPlayer::PausedState);
 }
 
-void S60VideoPlayerSession::stop()
+void S60VideoPlayerSession::doStop()
 {
     m_player->Stop();
-    stopTimer();
-    control->DrawDeferred();
-    setState(QMediaPlayer::StoppedState);
-    emit positionChanged(position());
+    m_player->Close();
+    m_coeControl->DrawDeferred();
 }
 
-void S60VideoPlayerSession::setPosition(qint64 ms)
+void S60VideoPlayerSession::doSetPosition(qint64 microSeconds)
 {
-    if (state() == QMediaPlayer::PlayingState)
-        TRAP_IGNORE(m_player->PauseL();)
-
-    TRAP_IGNORE(m_player->SetPositionL(milliSecondsToMicroSeconds(ms));)
-    emit positionChanged(position());
-    
-    if (state() == QMediaPlayer::PlayingState)
-        m_player->Play();
+    TRAPD(err,m_player->SetPositionL(TTimeIntervalMicroSeconds(microSeconds));)
 }
 
-void S60VideoPlayerSession::setVolume(int volume)
+void S60VideoPlayerSession::doSetVolume(int volume)
 {
-    S60MediaPlayerSession::setVolume(volume);
-    if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
-        TRAP_IGNORE(m_player->SetVolumeL((this->volume() / 100)* m_player->MaxVolume()));
-    }
-}
-
-void S60VideoPlayerSession::setMuted(bool muted)
-{
-    S60MediaPlayerSession::setMuted(muted);
-    if (isMuted() == true) {
-        TRAP_IGNORE(m_player->SetVolumeL(0);)
-    } else {
-        setVolume(volume());
-    }
+    TRAP_IGNORE(m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume()));
 }
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
-    if (aError == KErrNone) {
-        m_player->Prepare();
-        setMediaStatus(QMediaPlayer::LoadedMedia);
-    } else {
-        setMediaStatus(QMediaPlayer::NoMedia);
-    }
+    Q_UNUSED(aError)
+    m_player->Prepare();
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {    
-    if (aError == KErrNone) {
-        updateMetaDataEntries();
-        setVolume(volume());
-        emit durationChanged(duration());
-    } else {
-        setMediaStatus(QMediaPlayer::NoMedia);
-    }
+    setError(aError);
+    initComplete();
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
@@ -244,14 +195,10 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
-    Q_UNUSED(aError)
-    control->DrawDeferred();
-    stopTimer();
-    
-    emit positionChanged(position());
-    
-    setState(QMediaPlayer::StoppedState);
-    setMediaStatus(QMediaPlayer::EndOfMedia);
+    m_coeControl->DrawDeferred();
+    m_player->Close();
+    setError(aError);
+    playComplete();
 }
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
@@ -277,4 +224,19 @@ void S60VideoPlayerSession::updateMetaDataEntries()
     }
     
     emit metaDataChanged();
+}
+
+
+void S60VideoPlayerSession::updateWidget()
+{
+    TRAP_IGNORE(
+    m_player->SetDisplayWindowL(*m_wsSession, 
+                                  *m_screenDevice, 
+                                  *m_window, 
+                                  m_windowRect, 
+                                  m_clipRect);
+        m_coeControl->ActivateL();
+    );
+    
+    m_coeControl->DrawNow();
 }

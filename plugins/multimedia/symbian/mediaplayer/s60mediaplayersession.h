@@ -44,9 +44,10 @@
 
 #include <QObject>
 #include <QUrl>
-#include <QSize>
 #include <QMediaPlayer>
 #include <QPair>
+
+#include <e32cmn.h> // for TDesC
 
 QTM_USE_NAMESPACE
 
@@ -60,38 +61,57 @@ public:
     S60MediaPlayerSession(QObject *parent);
     virtual ~S60MediaPlayerSession();
 
-
-    QMediaPlayer::State state() const { return m_state; }
-    QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
-
-    virtual qint64 duration() const = 0;
-    virtual qint64 position() const = 0;
+    QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
     
     int volume() const;
     bool isMuted() const;
-
-    virtual void setVideoRenderer(QObject *renderer);
-    virtual bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-    virtual QPair<qint64, qint64> seekRange() const;
-
-    qreal playbackRate() const;
-    virtual void setPlaybackRate(qreal rate) = 0;
-   
+    
+    qreal playbackRate() const;   
+    
     bool isMetadataAvailable() const; 
     QVariant metaData(const QString &key) const;
-        
-    virtual void load(const QUrl &url) = 0;
+    
+    bool isSeekable() const;    
+    virtual QPair<qint64, qint64> seekRange() const;
 
-    virtual void play() = 0;
-    virtual void pause() = 0;
-    virtual void stop() = 0;
+    virtual qint64 duration() const = 0;
+    virtual qint64 position() const = 0;
+    virtual bool isVideoAvailable() const = 0;
+    
+    virtual void load(const QUrl &url);
+    virtual void play();
+    virtual void pause();
+    virtual void stop();
+    virtual void setVolume(int volume);
+    virtual void setPosition(qint64 pos);
+    virtual void setPlaybackRate(qreal rate);
+    virtual void setMuted(bool muted);
+    virtual void setVideoRenderer(QObject *renderer);
+    
+protected:    
+    virtual void doLoad(const TDesC &path) = 0;
+    virtual void doPlay() = 0;
+    virtual void doStop() = 0;
+    virtual void doPause() = 0;
+    virtual void doSetVolume(int volume) = 0;
+    virtual void doSetPlaybackRate(qreal rate) = 0;
+    virtual void doSetPosition(qint64 microSeconds) = 0;
+    virtual void updateMetaDataEntries() = 0;
 
-    virtual void setPosition(qint64 pos) = 0;
-    virtual void setVolume(int volume) = 0;
-    virtual void setMuted(bool muted) = 0;
-
+protected:
+    void setError(int error,  const QString &errorString = QString());
+    void initComplete();
+    void playComplete();
+    void setMediaStatus(QMediaPlayer::MediaStatus);
+    void setState(QMediaPlayer::State state);
+    QMap<QString, QVariant>& metaDataEntries();
+    
+protected slots:
+    void tick();
+    bool startTimer();
+    void stopTimer();
+    
 signals:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
@@ -106,34 +126,16 @@ signals:
     void metaDataChanged();
     void playbackRateChanged(qreal rate);
     void error(int error, const QString &errorString);
-    
-protected slots:
-    void tick();
-    bool startTimer();
-    void stopTimer();
-
-protected:
-    void setMediaStatus(QMediaPlayer::MediaStatus);
-    void setState(QMediaPlayer::State state);
-    
-    const QString& filePath() const;
-    void setFilePath(const QString &path) ;
-    
-    QMap<QString, QVariant>& metaDataEntries();
-   
-    // Helper functions
-    int milliSecondsToMicroSeconds(int milliSeconds) const;
-    int microSecondsToMilliSeconds(int microSeconds) const;
 
 private:
     QMap<QString, QVariant> m_metaDataMap;
-    QString m_filePath;
     qreal m_playbackRate;
     bool m_muted;
     int m_volume;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
     QTimer *m_timer;
+    int m_error;
 };
 
 #endif

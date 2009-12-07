@@ -42,14 +42,12 @@
 #ifndef S60VIDEOPLAYERSESSION_H
 #define S60VIDEOPLAYERSESSION_H
 
-#include <QObject>
-#include <QUrl>
-#include <QSize>
-#include <QMediaPlayer>
-#include "s60mediaplayercontrol.h"
-#include "s60videowidget.h"
-#include <VideoPlayer.h>
 #include "s60mediaplayersession.h"
+#include <videoplayer.h>
+#include <coecntrl.h>
+
+class S60VideoWidgetControl;
+class QWidget;
 
 class S60VideoPlayerSession : public S60MediaPlayerSession, public MVideoPlayerUtilityObserver
 {
@@ -58,29 +56,26 @@ class S60VideoPlayerSession : public S60MediaPlayerSession, public MVideoPlayerU
 public:
     S60VideoPlayerSession(QObject *parent);
     ~S60VideoPlayerSession();
-
+    
     qint64 duration() const;
     qint64 position() const;
-
-    void setVideoRenderer(QObject *renderer);
     bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
     
-    void load(const QUrl &url);
-    void play();
-    void pause();
-    void stop();
-    void setPosition(qint64 pos);
-    void setVolume(int volume);
-    void setMuted(bool muted);
+    void setVideoRenderer(QObject *renderer);
+    
+protected:
+    void doLoad(const TDesC &path);
+    void doPlay();
+    void doStop();
+    void doPause();
+    void doSetVolume(int volume);
+    void doSetPlaybackRate(qreal rate);
+    void doSetPosition(qint64 microSeconds);
+    void updateMetaDataEntries();
 
 private: 
     void nativeHandles();
-    void updateMetaDataEntries();
+    void updateWidget();
     
 private: // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
@@ -89,16 +84,17 @@ private: // From MVideoPlayerUtilityObserver
     void MvpuoPlayComplete(TInt aError);
     void MvpuoEvent(const TMMFEvent &aEvent);
 
+private:
     CVideoPlayerUtility* m_player;
-    S60VideoWidgetControl* m_videoWidgetControl;
-    QWidget *m_dummyWidget;
     RWsSession* m_wsSession;
     CWsScreenDevice* m_screenDevice;
     RWindowBase* m_window;
+    CCoeControl* m_coeControl;
     TRect m_windowRect;
     TRect m_clipRect;
     
-    CCoeControl* control; 
+    S60VideoWidgetControl* m_videoWidgetControl;
+    QWidget *m_dummyWidget;
 };
 
 #endif

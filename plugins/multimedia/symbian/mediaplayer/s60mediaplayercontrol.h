@@ -67,26 +67,22 @@ public:
     S60MediaSettings() 
         : m_volume(-1),
           m_muted(false),
-          m_playbackRate(-1),
-          m_position(-1) 
+          m_playbackRate(-1)
     {
     }
     
     void setVolume(int volume) { m_volume = volume; }
     void setMuted(bool muted) { m_muted = muted; }
     void setPlaybackRate(int rate) { m_playbackRate = rate; }
-    void setPosition(int position) { m_position = position; }
     
     int volume() const { return m_volume; }
     bool isMuted() const { return m_muted; }
     qreal playbackRate() const { return m_playbackRate; }
-    int position() const { return m_position; }
     
 private:
     int m_volume;
     bool m_muted;
     qreal m_playbackRate;
-    int m_position;
 };
 
 class S60MediaPlayerControl : public QMediaPlayerControl
