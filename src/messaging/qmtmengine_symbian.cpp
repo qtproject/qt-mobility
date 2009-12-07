@@ -3718,8 +3718,7 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
             int attachmentSize = pAttachment->Size();
             size += attachmentSize;
             QMessageContentContainer attachment = QMessageContentContainerPrivate::from(messageId, pAttachment->Id(), name, mimeType, mimeSubType, attachmentSize);
-            QMessageContentContainerPrivate *container((QMessageContentContainerPrivate *)privateMessage);
-            container->appendContent(attachment);
+            appendAttachmentToMessage(message, attachment);
         }
         CleanupStack::PopAndDestroy(pAttachment);
     }
