@@ -41,7 +41,7 @@
 
 /*!
     \group mobility
-    \title Qt Mobility Project APIs (Technical Preview)
+    \title Qt Mobility Project APIs (Technology Preview)
 
     Qt Mobility Project supplies a set of new APIs for Qt enabling a range of
     mobile-centric technologies and features on mobile and non-mobile platforms.
@@ -54,7 +54,7 @@
     \page index.html
     \startpage index.html  Qt Reference Documentation
 
-    \title Qt Mobility Project APIs (Technical Preview) Overview
+    \title Qt Mobility Project APIs (Technology Preview) Overview
 
     \brief An overview of the Qt Mobility Project APIs.
 
@@ -240,7 +240,7 @@
     
     For more details see the \l {System Information} {System Information API overview}.
 
-    \section1 Future Additions
+    \section1 Future Additions and Considerations
 
     Two additional APIs are included which show future additional APIs. These
     are pre-release versions and the API will likely change before they are
@@ -258,7 +258,9 @@
 
     \l{future.html#Camera-Support}{Camera} will be a part of the Multimedia API.
 
-
+    The QtMobility API's are placed into the QtMobility namespace. This is done to facilitate
+    the future migration of Mobility API's into Qt. See the \l {Quickstart Example}{Quickstart guide} for an example on how
+    the namespace impacts on application development.
 
 
     \section1 Platform Compatability

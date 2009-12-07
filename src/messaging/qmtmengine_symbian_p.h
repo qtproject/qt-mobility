@@ -222,6 +222,8 @@ private:
     void retrieveBodyL(const QMessageId& id) const;
     void retrieveHeaderL(const QMessageId& id) const;
     
+    QString privateFolderPath();
+    
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
     
@@ -307,7 +309,6 @@ protected: // From CActive
     
 private:
     void getAllMessagesL(const TMsvSelectionOrdering ordering = TMsvSelectionOrdering());
-    void getStandardFolderSpecificMessagesL(TMsvId standardFolderId, const TMsvSelectionOrdering ordering = TMsvSelectionOrdering());
     void getAccountSpecificMessagesL(QMessageAccount& messageAccount, const TMsvSelectionOrdering ordering, QMessageFilterPrivate* privateFolderFilter = NULL);
     void getServiceSpecificMessagesL(TMsvId serviceId, const TMsvSelectionOrdering ordering, QMessageFilterPrivate* privateFolderFilter = NULL);
     void getServiceSpecificMessagesFromFolderL(TMsvId serviceId, const TMsvSelectionOrdering ordering, TMsvId standardFolderId = NULL);

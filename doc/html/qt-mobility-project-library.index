@@ -6308,11 +6308,11 @@
             <page access="public" status="commendable" name="recorder/recorder.cpp" href="recorder-recorder-cpp.html" subtype="file" title="" fulltitle="recorder.cpp Example File" subtitle="recorder/recorder.cpp" location=""/>
             <page access="public" status="commendable" name="recorder/recorder.pro" href="recorder-recorder-pro.html" subtype="file" title="" fulltitle="recorder.pro Example File" subtitle="recorder/recorder.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="sendmessage" href="sendmessage.html" subtype="example" title="Send Message Example" fulltitle="Send Message Example" subtitle="" location="undocumented.qdoc">
-            <page access="public" status="commendable" name="sendmessage/messagesender.cpp" href="sendmessage-messagesender-cpp.html" subtype="file" title="" fulltitle="messagesender.cpp Example File" subtitle="sendmessage/messagesender.cpp" location=""/>
-            <page access="public" status="commendable" name="sendmessage/messagesender.h" href="sendmessage-messagesender-h.html" subtype="file" title="" fulltitle="messagesender.h Example File" subtitle="sendmessage/messagesender.h" location=""/>
-            <page access="public" status="commendable" name="sendmessage/main.cpp" href="sendmessage-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="sendmessage/main.cpp" location=""/>
-            <page access="public" status="commendable" name="sendmessage/sendmessage.pro" href="sendmessage-sendmessage-pro.html" subtype="file" title="" fulltitle="sendmessage.pro Example File" subtitle="sendmessage/sendmessage.pro" location=""/>
+        <page access="public" status="commendable" name="writemessage" href="writemessage.html" subtype="example" title="Write Message Example" fulltitle="Write Message Example" subtitle="" location="undocumented.qdoc">
+            <page access="public" status="commendable" name="writemessage/messagesender.cpp" href="writemessage-messagesender-cpp.html" subtype="file" title="" fulltitle="messagesender.cpp Example File" subtitle="writemessage/messagesender.cpp" location=""/>
+            <page access="public" status="commendable" name="writemessage/messagesender.h" href="writemessage-messagesender-h.html" subtype="file" title="" fulltitle="messagesender.h Example File" subtitle="writemessage/messagesender.h" location=""/>
+            <page access="public" status="commendable" name="writemessage/main.cpp" href="writemessage-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="writemessage/main.cpp" location=""/>
+            <page access="public" status="commendable" name="writemessage/writemessage.pro" href="writemessage-writemessage-pro.html" subtype="file" title="" fulltitle="writemessage.pro Example File" subtitle="writemessage/writemessage.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="serviceactions" href="serviceactions.html" subtype="example" title="Service Actions Example" fulltitle="Service Actions Example" subtitle="" location="undocumented.qdoc">
             <page access="public" status="commendable" name="serviceactions/attachmentlistwidget.cpp" href="serviceactions-attachmentlistwidget-cpp.html" subtype="file" title="" fulltitle="attachmentlistwidget.cpp Example File" subtitle="serviceactions/attachmentlistwidget.cpp" location=""/>
@@ -6497,8 +6497,8 @@
             <contents name="classes" title="Classes" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
-        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (Technical Preview)" fulltitle="Qt Mobility Project APIs (Technical Preview)" subtitle="" location="index.qdoc"/>
-        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (Technical Preview) Overview" fulltitle="Qt Mobility Project APIs (Technical Preview) Overview" subtitle="" location="index.qdoc">
+        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (Technology Preview)" fulltitle="Qt Mobility Project APIs (Technology Preview)" subtitle="" location="index.qdoc"/>
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (Technology Preview) Overview" fulltitle="Qt Mobility Project APIs (Technology Preview) Overview" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
@@ -6512,7 +6512,7 @@
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
-            <contents name="future-additions" title="Future Additions" level="1"/>
+            <contents name="future-additions-and-considerations" title="Future Additions and Considerations" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
         </page>
@@ -6707,6 +6707,7 @@
             <contents name="building" title="Building" level="1"/>
             <contents name="building-on-unix" title="Building On Unix" level="2"/>
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
+            <contents name="building-for-symbian-on-windows" title="Building For Symbian On Windows" level="2"/>
             <contents name="building-individual-qt-mobility-domains" title="Building Individual Qt Mobility Domains" level="2"/>
             <contents name="environment-variables" title="Environment Variables" level="1"/>
         </page>

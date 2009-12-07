@@ -44,7 +44,7 @@
     \title Qt Mobility Examples
 
     Qt Mobility comes with a variety of examples that cover the entire range of the Qt Mobility
-    APIs.
+    APIs. Note that some examples require Qt declarative which can by obtain via \l {http://qt.gitorious.org/qt}.
 
     \section2 Bearer Management
 
@@ -72,8 +72,8 @@
     \list
     \o \l{keepintouch}{Keep in Touch}
     \o \l{querymessages}{Query Messages}
-    \o \l{sendmessage}{Send Message}
     \o \l{serviceactions}{Service Actions}
+    \o \l{writemessage}{Write Message}
     \endlist
 
     \section2 Multimedia
@@ -99,7 +99,7 @@
 
     \list
     \o \l{bluetoothtransferplugin}{Bluetooth Transfer Plugin}
-    \o \l{declarative}{Declarative}
+    \o \l{declarative}{Qt Declarative based service framework example}
     \o \l{filemanagerplugin}{File Manager Plugin}
     \o \l{servicebrowser}{Service Browser}\raisedaster
     \endlist

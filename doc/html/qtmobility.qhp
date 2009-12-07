@@ -497,13 +497,13 @@
                     <section ref="radio.html" title="Radio Example"/>
                     <section ref="recorder.html" title="Recorder Example"/>
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
-                    <section ref="sendmessage.html" title="Send Message Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
                     <section ref="servicebrowser.html" title="Service Browser Example"/>
                     <section ref="slideshow.html" title="SlideShow Example"/>
                     <section ref="slideshow.html" title="Slideshow Example"/>
                     <section ref="streamplayer.html" title="Stream Player Example"/>
                     <section ref="sysinfo.html" title="System Information Example"/>
+                    <section ref="writemessage.html" title="Write Message Example"/>
                 </section>
                 <section ref="" title="Overviews">
                     <section ref="functions.html" title="All Functions"/>
@@ -531,8 +531,8 @@
                     <section ref="contactsschema.html" title="Qt Contacts Schema"/>
                     <section ref="editions.html" title="Qt Editions"/>
                     <section ref="examples.html" title="Qt Mobility Examples"/>
-                    <section ref="mobility.html" title="Qt Mobility Project APIs (Technical Preview)"/>
-                    <section ref="index.html" title="Qt Mobility Project APIs (Technical Preview) Overview"/>
+                    <section ref="mobility.html" title="Qt Mobility Project APIs (Technology Preview)"/>
+                    <section ref="index.html" title="Qt Mobility Project APIs (Technology Preview) Overview"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project (Technology Preview)"/>
@@ -3119,8 +3119,8 @@
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="examples.html"/>
-            <keyword name="Qt Mobility Project APIs (Technical Preview)" id="Qt Mobility Project APIs (Technical Preview)" ref="mobility.html"/>
-            <keyword name="Qt Mobility Project APIs (Technical Preview) Overview" id="Qt Mobility Project APIs (Technical Preview) Overview" ref="index.html"/>
+            <keyword name="Qt Mobility Project APIs (Technology Preview)" id="Qt Mobility Project APIs (Technology Preview)" ref="mobility.html"/>
+            <keyword name="Qt Mobility Project APIs (Technology Preview) Overview" id="Qt Mobility Project APIs (Technology Preview) Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
             <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
             <keyword name="QtMedia" id="QtMedia" ref="qtmedia.html"/>
@@ -3220,7 +3220,6 @@
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Release Notes of the QtMobility Project (Technology Preview)" id="Release Notes of the QtMobility Project (Technology Preview)" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
-            <keyword name="Send Message Example" id="Send Message Example" ref="sendmessage.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
             <keyword name="Service Frameworks Classes" id="Service Frameworks Classes" ref="servicefw.html"/>
@@ -3234,6 +3233,7 @@
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
             <keyword name="Versit API" id="Versit API" ref="versit.html"/>
+            <keyword name="Write Message Example" id="Write Message Example" ref="writemessage.html"/>
         </keywords>
         <files>
             <file>images/bearermonitor-example.png</file>
@@ -3258,7 +3258,6 @@
             <file>qcontactname.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
             <file>messaging.html</file>
-            <file>sendmessage.html</file>
             <file>qcontactabstractrequest-members.html</file>
             <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
@@ -3309,6 +3308,7 @@
             <file>qservicemanager.html</file>
             <file>qcontacttimestamp.html</file>
             <file>images/servicebrowser-attributes.png</file>
+            <file>writemessage-main-cpp.html</file>
             <file>qmessagefolderfilter-members.html</file>
             <file>samplephonebook-contactdetailsform-h.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
@@ -3373,6 +3373,7 @@
             <file>samplephonebook.html</file>
             <file>qmediaplaylistcontrol.html</file>
             <file>lgpl.html</file>
+            <file>writemessage.html</file>
             <file>qcontactdetaildefinitionfetchrequest.html</file>
             <file>cameracapture-cameracapture-h.html</file>
             <file>logfilepositionsource-main-cpp.html</file>
@@ -3445,12 +3446,14 @@
             <file>qmediaplaylistioplugin.html</file>
             <file>qmessagestore.html</file>
             <file>radio-radio-pro.html</file>
+            <file>writemessage-messagesender-cpp.html</file>
             <file>bearer-management.html</file>
             <file>fetchgooglemaps-main-cpp.html</file>
             <file>qcontactbirthday-members.html</file>
             <file>publ-subs.html</file>
             <file>qcontactsaverequest-members.html</file>
             <file>keepintouch-keepintouch-pro.html</file>
+            <file>writemessage-messagesender-h.html</file>
             <file>qvaluespacepublisher-members.html</file>
             <file>player-playercontrols-h.html</file>
             <file>qmessagefolderid.html</file>
@@ -3471,7 +3474,6 @@
             <file>qgeocoordinate.html</file>
             <file>qcontactnote-members.html</file>
             <file>qcontactactionfactory.html</file>
-            <file>sendmessage-sendmessage-pro.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qmessageordering-members.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
@@ -3530,7 +3532,6 @@
             <file>qmessagefolderordering.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
-            <file>sendmessage-messagesender-h.html</file>
             <file>qcontactmanager.html</file>
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
@@ -3576,7 +3577,6 @@
             <file>qmediarecorder.html</file>
             <file>bearercloud-bearercloud-cpp.html</file>
             <file>sysinfo-dialog-cpp.html</file>
-            <file>sendmessage-main-cpp.html</file>
             <file>qcontactunionfilter.html</file>
             <file>images/publish-subscribe-subscriber.png</file>
             <file>qvideowidgetcontrol-members.html</file>
@@ -3712,7 +3712,6 @@
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
-            <file>sendmessage-messagesender-cpp.html</file>
             <file>images/spb-screen.png</file>
             <file>incomingcalls-filterdialog-cpp.html</file>
             <file>qmessagecontentcontainer.html</file>
@@ -3763,6 +3762,7 @@
             <file>images/battery-publisher.png</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
             <file>incomingcalls-main-cpp.html</file>
+            <file>writemessage-writemessage-pro.html</file>
             <file>qmessagefolderid-members.html</file>
             <file>qabstractvaluespacelayer-members.html</file>
             <file>qversitcontactexporter-members.html</file>

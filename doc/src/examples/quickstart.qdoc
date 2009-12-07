@@ -66,6 +66,11 @@ system's current country code.  All the domain APIs are wrapped
 within the \c QtMobility namespace and thus developers either 
 need to declare \c {using namespace QtMobility} or
 qualify their symbols e.g. \c {QtMobility::QSystemInfo s}.
+(\bold{Note}:  If you are on the Symbian platform you will
+need to define the actual header file, in this case
+<qsysteminfo.h> rather than using the standard header form
+<QSystemInfo>, this is a known bug that is to be 
+addressed in a future release)
 
 In step 3, to specify that our project is using
 System Information we declare in the project file:
@@ -88,29 +93,32 @@ corresponding values that can be assigned to
     \o Domain
     \o Value
 \row
-    \o Bearer Mangement
+    \o \l {Bearer Management}
     \o bearer
 \row
-    \o Contacts
+    \o \l {Contacts}
     \o contacts
 \row
-    \o Location
+    \o \l {Location}
     \o location
 \row
-    \o Multimedia
+    \o \l {Multimedia}
     \o multimedia
 \row
-    \o Messaging
+    \o \l {Messaging}
     \o messaging
 \row
-    \o Publish And Subscribe
+    \o \l {Publish And Subscribe}
     \o publishsubscribe
 \row
-    \o Service Framework
+    \o \l {Qt Service Framework} {Service Framework}
     \o serviceframework
 \row
-    \o System Information
+    \o \l {System Information}
     \o systeminfo
+\row
+    \o \l {Future Additional APIs}{Versit}
+    \o versit
 \endtable
 
 And we're done.  If you are using the command line simply
@@ -122,4 +130,16 @@ enter:
 
 to generate the executable which can then be run.
 
+To build for the symbian emulator run:
+\code
+    qmake
+    make
+\endcode
+
+To build a symbian sis package:
+\code
+    qmake
+    make release-gcce
+    createpackage quickstart_template.pkg release-gcce
+\endcode
 */
