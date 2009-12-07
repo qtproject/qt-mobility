@@ -71,15 +71,38 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
 {
 }
 
+/*!
+ * \deprecated
+ * Sets the names of the detail definitions to remove from the manager to be \a names
+ */
+void Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
+{
+    Q_D(QContactDetailDefinitionRemoveRequest);
+    qWarning("This function is deprecated and will be removed in week 1!  Use setDefinitionNames() instead!");
+    d->m_names = names;
+}
+
+/*!
+ * \deprecated
+ * Returns the list of names of the detail definitions that will be removed from the manager
+ */
+QStringList Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::names() const
+{
+    Q_D(const QContactDetailDefinitionRemoveRequest);
+    qWarning("This function is deprecated and will be removed in week 1!  Use definitionNames() instead!");
+    return d->m_names;
+}
+
+
 /*! Sets the names of the detail definitions to remove from the manager to be \a names */
-void QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
+void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
     d->m_names = names;
 }
 
 /*! Returns the list of names of the detail definitions that will be removed from the manager */
-QStringList QContactDetailDefinitionRemoveRequest::names() const
+QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
     return d->m_names;

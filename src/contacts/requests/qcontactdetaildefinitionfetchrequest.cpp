@@ -70,15 +70,37 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 {
 }
 
+/*!
+ * \deprecated
+ * Sets the names of the detail definitions to retrieve to \a names
+ */
+void Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
+{
+    Q_D(QContactDetailDefinitionFetchRequest);
+    qWarning("This function has been deprecated and will be removed in week 1!  Use setDefinitionNames() instead!");
+    d->m_names = names;
+}
+
+/*!
+ * \deprecated
+ * Returns the list of names of the detail definitions that will be retrieved
+ */
+QStringList Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const
+{
+    Q_D(const QContactDetailDefinitionFetchRequest);
+    qWarning("This function has been deprecated and will be removed in week 1!  Use definitionNames() instead!");
+    return d->m_names;
+}
+
 /*! Sets the names of the detail definitions to retrieve to \a names */
-void QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
+void QContactDetailDefinitionFetchRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
     d->m_names = names;
 }
 
 /*! Returns the list of names of the detail definitions that will be retrieved */
-QStringList QContactDetailDefinitionFetchRequest::names() const
+QStringList QContactDetailDefinitionFetchRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_names;
@@ -98,8 +120,19 @@ QString QContactDetailDefinitionFetchRequest::contactType() const
     return d->m_contactType;
 }
 
+/*!
+ * \deprecated
+ * Returns the map of detail definition names to detail definitions that was the result of the request
+ */
+QMap<QString, QContactDetailDefinition> Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::definitions() const
+{
+    Q_D(const QContactDetailDefinitionFetchRequest);
+    qWarning("This function has been deprecated and will be removed in week 1!  Use definitionMap() instead!");
+    return d->m_definitions;
+}
+
 /*! Returns the map of detail definition names to detail definitions that was the result of the request */
-QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
+QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitionMap() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_definitions;

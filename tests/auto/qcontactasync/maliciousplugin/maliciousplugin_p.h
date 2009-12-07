@@ -70,7 +70,7 @@ public:
     MaliciousAsyncManagerEngine();
     void deref();
 
-    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
     QString managerName() const;
     bool startRequest(QContactAbstractRequest* req);
     bool cancelRequest(QContactAbstractRequest *req);

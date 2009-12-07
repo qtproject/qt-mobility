@@ -89,9 +89,18 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactGeolocation
+   \deprecated
    \brief The QContactGeolocation class contains the global location
    coordinate associated with a contact.
+   This class has been deprecated and is replaced by QContactGeoLocation.
+   It will be removed in week 1.  See commit SHA1:
  */
+
+/*!
+   \class QContactGeoLocation
+   \brief The QContactGeoLocation class contains the global location
+   coordinate associated with a contact.
+*/
 
 /*!
    \class QContactGuid
@@ -368,9 +377,9 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::DefinitionName, "DisplayLabel");
 Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldNumber, "PhoneNumber");
 
 /*!
-   \variable QContactPhoneNumber::FieldSubType
+   \variable QContactPhoneNumber::FieldSubTypes
 
-   The constant key for which the subtypes value is stored in details
+   The constant key for which the subtype values are stored in details
    of the QContactPhoneNumber type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldSubTypes, "SubTypes");
@@ -636,7 +645,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderUnspecified, "Unspecified");
 
 /*!
    \variable QContactGeolocation::FieldLabel
-
+   \deprecated
    The constant key for which the location label value is stored in
    details of the QContactGeolocation type.
  */
@@ -644,7 +653,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLabel, "Label");
 
 /*!
    \variable QContactGeolocation::FieldLatitude
-
+   \deprecated
    The constant key for which the latitude value is stored in details
    of the QContactGeolocation type.
  */
@@ -652,7 +661,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLatitude, "Latitude");
 
 /*!
    \variable QContactGeolocation::FieldLongitude
-
+   \deprecated
    The constant key for which the longitude value is stored in details
    of the QContactGeolocation type.
  */
@@ -660,7 +669,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLongitude, "Longitude");
 
 /*!
    \variable QContactGeolocation::FieldAccuracy
-
+   \deprecated
    The constant key for which the location accuracy value is stored in
    details of the QContactGeolocation type.
  */
@@ -668,7 +677,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAccuracy, "Accuracy");
 
 /*!
    \variable QContactGeolocation::FieldAltitude
-
+   \deprecated
    The constant key for which the altitude value is stored in details
    of the QContactGeolocation type.
  */
@@ -677,7 +686,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAltitude, "Altitude");
 
 /*!
    \variable QContactGeolocation::FieldAltitudeAccuracy
-
+   \deprecated
    The constant key for which the altitude accuracy value is stored in
    details of the QContactGeolocation type.
  */
@@ -685,7 +694,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAltitudeAccuracy, "AltitudeAcc
 
 /*!
    \variable QContactGeolocation::FieldHeading
-
+   \deprecated
    The constant key for which the heading value is stored in details
    of the QContactGeolocation type.
  */
@@ -693,7 +702,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldHeading, "Heading");
 
 /*!
    \variable QContactGeolocation::FieldSpeed
-
+   \deprecated
    The constant key for which the speed value is stored in details of
    the QContactGeolocation type.
  */
@@ -701,11 +710,94 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldSpeed, "Speed");
 
 /*!
    \variable QContactGeolocation::FieldTimestamp
-
+   \deprecated
    The constant key for which the timestamp value is stored in details
    of the QContactGeolocation type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldTimestamp, "Timestamp");
+
+
+
+
+
+
+
+
+
+
+
+/*!
+   \variable QContactGeoLocation::FieldLabel
+
+   The constant key for which the location label value is stored in
+   details of the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLabel, "Label");
+
+/*!
+   \variable QContactGeoLocation::FieldLatitude
+
+   The constant key for which the latitude value is stored in details
+   of the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLatitude, "Latitude");
+
+/*!
+   \variable QContactGeoLocation::FieldLongitude
+
+   The constant key for which the longitude value is stored in details
+   of the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLongitude, "Longitude");
+
+/*!
+   \variable QContactGeoLocation::FieldAccuracy
+
+   The constant key for which the location accuracy value is stored in
+   details of the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAccuracy, "Accuracy");
+
+/*!
+   \variable QContactGeoLocation::FieldAltitude
+
+   The constant key for which the altitude value is stored in details
+   of the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAltitude, "Altitude");
+
+
+/*!
+   \variable QContactGeoLocation::FieldAltitudeAccuracy
+
+   The constant key for which the altitude accuracy value is stored in
+   details of the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAltitudeAccuracy, "AltitudeAccuracy");
+
+/*!
+   \variable QContactGeoLocation::FieldHeading
+
+   The constant key for which the heading value is stored in details
+   of the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldHeading, "Heading");
+
+/*!
+   \variable QContactGeoLocation::FieldSpeed
+
+   The constant key for which the speed value is stored in details of
+   the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldSpeed, "Speed");
+
+/*!
+   \variable QContactGeoLocation::FieldTimestamp
+
+   The constant key for which the timestamp value is stored in details
+   of the QContactGeoLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
 /*!
    \variable QContactOnlineAccount::FieldAccountUri
@@ -1350,85 +1442,88 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactGeolocation::setLabel(const QString& label)
+   \deprecated
    Sets the label of the location stored in the detail to \a label.
  */
 
 /*!
    \fn QContactGeolocation::label() const
+   \deprecated
    Returns the label of the location stored in the detail.
  */
 
 /*!
    \fn QContactGeolocation::setLatitude(double latitude)
-
+   \deprecated
    Sets the latitude portion of the coordinate (in decimal degrees) of
    the location stored in the detail to \a latitude.
  */
 
 /*!
    \fn QContactGeolocation::latitude() const
-
+   \deprecated
    Returns the latitude portion of the coordinate (specified in
    decimal degrees) of the location stored in the detail.
  */
 
 /*!
    \fn QContactGeolocation::setLongitude(double longitude)
-
+   \deprecated
    Sets the longitude portion of the coordinate (in decimal degrees)
    of the location stored in the detail to \a longitude.
  */
 
 /*!
    \fn QContactGeolocation::longitude() const
-
+   \deprecated
    Returns the longitude portion of the coordinate (specified in
    decimal degrees) of the location stored in the detail.
  */
 
 /*!
    \fn QContactGeolocation::setAccuracy(double accuracy)
-
+   \deprecated
    Specifies that the latitude and longitude portions of the location
    stored in the detail are accurate to within \a accuracy metres.
  */
 
 /*!
    \fn QContactGeolocation::accuracy() const
-
+   \deprecated
    Returns the accuracy (in metres) of the latitude and longitude of
    the location stored in the detail.
  */
 
 /*!
    \fn QContactGeolocation::setAltitude(double altitude)
-
+   \deprecated
    Sets the altitude portion of the coordinate (in metres above the
    ellipsoid) of the location stored in the detail to \a altitude.
  */
 
 /*!
    \fn QContactGeolocation::altitude() const
+   \deprecated
    Returns the altitude (in metres) of the location stored in the detail.
  */
 
 /*!
    \fn QContactGeolocation::setAltitudeAccuracy(double altitudeAccuracy)
-
+   \deprecated
    Sets the altitude-accuracy portion of the coordinate (in metres) of
    the location stored in the detail to \a altitudeAccuracy.
  */
 
 /*!
    \fn QContactGeolocation::altitudeAccuracy() const
-
+   \deprecated
    Returns the accuracy of the altitude portion of the location stored
    in the detail.
  */
 
 /*!
    \fn QContactGeolocation::setHeading(double heading)
-
+   \deprecated
    Sets the heading portion of the coordinate (in decimal degrees
    clockwise relative to true north) of the location-aware device at
    the time of measurement to \a heading.
@@ -1436,7 +1531,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactGeolocation::heading() const
-
+   \deprecated
    Returns the heading (at the time of measurement) of the
    location-aware device that recorded (or was provided) the
    measurement.
@@ -1444,14 +1539,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactGeolocation::setSpeed(double speed)
-
+   \deprecated
    Sets the speed portion of the coordinate (in metres per second) of
    the location-aware device at the time of measurement to \a speed.
  */
 
 /*!
    \fn QContactGeolocation::speed() const
-
+   \deprecated
    Returns the speed (at the time of measurement) of the
    location-aware device that recorded (or was provided) the
    measurement.
@@ -1459,13 +1554,148 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactGeolocation::setTimestamp(const QDateTime& timestamp)
-
+   \deprecated
    Sets the creation (or first-valid) timestamp of the location
    information to \a timestamp.
  */
 
 /*!
    \fn QContactGeolocation::timestamp() const
+   \deprecated
+   Returns the timestamp associated with the location stored in the
+   detail.
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*!
+   \fn QContactGeoLocation::setLabel(const QString& label)
+   Sets the label of the location stored in the detail to \a label.
+ */
+
+/*!
+   \fn QContactGeoLocation::label() const
+   Returns the label of the location stored in the detail.
+ */
+
+/*!
+   \fn QContactGeoLocation::setLatitude(double latitude)
+
+   Sets the latitude portion of the coordinate (in decimal degrees) of
+   the location stored in the detail to \a latitude.
+ */
+
+/*!
+   \fn QContactGeoLocation::latitude() const
+
+   Returns the latitude portion of the coordinate (specified in
+   decimal degrees) of the location stored in the detail.
+ */
+
+/*!
+   \fn QContactGeoLocation::setLongitude(double longitude)
+
+   Sets the longitude portion of the coordinate (in decimal degrees)
+   of the location stored in the detail to \a longitude.
+ */
+
+/*!
+   \fn QContactGeoLocation::longitude() const
+
+   Returns the longitude portion of the coordinate (specified in
+   decimal degrees) of the location stored in the detail.
+ */
+
+/*!
+   \fn QContactGeoLocation::setAccuracy(double accuracy)
+
+   Specifies that the latitude and longitude portions of the location
+   stored in the detail are accurate to within \a accuracy metres.
+ */
+
+/*!
+   \fn QContactGeoLocation::accuracy() const
+
+   Returns the accuracy (in metres) of the latitude and longitude of
+   the location stored in the detail.
+ */
+
+/*!
+   \fn QContactGeoLocation::setAltitude(double altitude)
+
+   Sets the altitude portion of the coordinate (in metres above the
+   ellipsoid) of the location stored in the detail to \a altitude.
+ */
+
+/*!
+   \fn QContactGeoLocation::altitude() const
+   Returns the altitude (in metres) of the location stored in the detail.
+ */
+
+/*!
+   \fn QContactGeoLocation::setAltitudeAccuracy(double altitudeAccuracy)
+
+   Sets the altitude-accuracy portion of the coordinate (in metres) of
+   the location stored in the detail to \a altitudeAccuracy.
+ */
+
+/*!
+   \fn QContactGeoLocation::altitudeAccuracy() const
+
+   Returns the accuracy of the altitude portion of the location stored
+   in the detail.
+ */
+
+/*!
+   \fn QContactGeoLocation::setHeading(double heading)
+
+   Sets the heading portion of the coordinate (in decimal degrees
+   clockwise relative to true north) of the location-aware device at
+   the time of measurement to \a heading.
+ */
+
+/*!
+   \fn QContactGeoLocation::heading() const
+
+   Returns the heading (at the time of measurement) of the
+   location-aware device that recorded (or was provided) the
+   measurement.
+ */
+
+/*!
+   \fn QContactGeoLocation::setSpeed(double speed)
+
+   Sets the speed portion of the coordinate (in metres per second) of
+   the location-aware device at the time of measurement to \a speed.
+ */
+
+/*!
+   \fn QContactGeoLocation::speed() const
+
+   Returns the speed (at the time of measurement) of the
+   location-aware device that recorded (or was provided) the
+   measurement.
+ */
+
+/*!
+   \fn QContactGeoLocation::setTimestamp(const QDateTime& timestamp)
+
+   Sets the creation (or first-valid) timestamp of the location
+   information to \a timestamp.
+ */
+
+/*!
+   \fn QContactGeoLocation::timestamp() const
 
    Returns the timestamp associated with the location stored in the
    detail.

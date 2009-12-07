@@ -74,12 +74,12 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \enum QContactAbstractRequest::Status
+ * \enum QContactAbstractRequest::State
  * Enumerates the various states that a request may be in at any given time
  * \value Inactive Operation not yet started
  * \value Active Operation started, not yet finished
- * \value Cancelling Operation started then cancelled, not yet finished
- * \value Cancelled Operation is finished due to cancellation
+ * \value Canceling Operation started then cancelled, not yet finished
+ * \value Canceled Operation is finished due to cancellation
  * \value Finished Operation successfully completed
  */
 
@@ -108,25 +108,33 @@ QContactAbstractRequest::~QContactAbstractRequest()
 }
 
 /*!
- * Returns true if the request is pending, processing or cancelling; otherwise, returns false.
+ * \deprecated
  *
- * \sa status()
+ * Returns true if the request is pending, processing or cancelling; otherwise, returns false.
+ * This function is deprecated and will be removed in week 1.
+ *
+ * \sa state()
  */
 bool QContactAbstractRequest::isActive() const
 {
-    return (d_ptr->m_status == QContactAbstractRequest::Active
-            || d_ptr->m_status == QContactAbstractRequest::Cancelling);
+    qWarning("This function is deprecated and will be removed in week 1!");
+    return (d_ptr->m_state == QContactAbstractRequest::Active
+            || d_ptr->m_state == QContactAbstractRequest::Canceling);
 }
 
 /*!
- * Returns true if the request is finished or cancelled; otherwise, returns false.
+ * \deprecated
  *
- * \sa status()
+ * Returns true if the request is finished or cancelled; otherwise, returns false.
+ * This function is deprecated and will be removed in week 1.
+ *
+ * \sa state()
  */
 bool QContactAbstractRequest::isFinished() const
 {
-    return (d_ptr->m_status == QContactAbstractRequest::Finished
-            || d_ptr->m_status == QContactAbstractRequest::Cancelled);
+    qWarning("This function is deprecated and will be removed in week 1!");
+    return (d_ptr->m_state == QContactAbstractRequest::Finished
+            || d_ptr->m_state == QContactAbstractRequest::Canceled);
 }
 
 /*! Returns the overall error of the most recent asynchronous operation */
@@ -150,13 +158,11 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 }
 
 /*!
- * Returns the current status of the request.
- *
- * \sa isFinished(), isActive()
+ * Returns the current state of the request.
  */
-QContactAbstractRequest::Status QContactAbstractRequest::status() const
+QContactAbstractRequest::State QContactAbstractRequest::state() const
 {
-    return d_ptr->m_status;
+    return d_ptr->m_state;
 }
 
 /*! Returns a pointer to the manager of which this request instance requests operations */
@@ -188,7 +194,7 @@ bool QContactAbstractRequest::start()
 bool QContactAbstractRequest::cancel()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && status() == QContactAbstractRequest::Active) {
+    if (engine && state() == QContactAbstractRequest::Active) {
         return engine->cancelRequest(this);
     }
 

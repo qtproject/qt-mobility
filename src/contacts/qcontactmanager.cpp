@@ -117,8 +117,20 @@ QStringList QContactManager::availableManagers()
     return ret;
 }
 
-/*! Splits the given \a uri into the manager, store, and parameters that it describes, and places the information into the memory addressed by \a pManagerId and \a pParams respectively.  Returns true if \a uri could be split successfully, otherwise returns false */
+/*!
+ * \deprecated
+ * Splits the given \a uri into the manager, store, and parameters that it describes, and places the information into the memory addressed by \a pManagerId and \a pParams respectively.  Returns true if \a uri could be split successfully, otherwise returns false
+ */
 bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
+{
+    qWarning("This function is deprecated and will be removed in week 1!  Use parseUri() instead!");
+    return parseUri(uri, pManagerId, pParams);
+}
+
+/*!
+ * Splits the given \a uri into the manager, store, and parameters that it describes, and places the information into the memory addressed by \a pManagerId and \a pParams respectively.  Returns true if \a uri could be split successfully, otherwise returns false
+ */
+bool QContactManager::parseUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
 {
     // Format: qtcontacts:<managerid>:<key>=<value>&<key>=<value>
     // 1) parameters are currently a qstringlist.. should they be a map?
@@ -224,6 +236,16 @@ QContactManager* QContactManager::fromUri(const QString& storeUri, QObject* pare
             return new QContactManager(QLatin1String("invalid"), QMap<QString, QString>(), parent);
         }
     }
+}
+
+/*!
+ * Constructs a QContactManager whose parent QObject is \a parent.
+ * The default implementation for the platform will be created.
+ */
+QContactManager::QContactManager(QObject* parent)
+    : QObject(parent)
+{
+    createEngine(QString(), QMap<QString, QString>());
 }
 
 /*!
@@ -416,10 +438,22 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
     return d->m_engine->removeContacts(idList, d->m_error);
 }
 
-/*! Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner */
+/*!
+ * \deprecated
+ * Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner
+ */
 QString QContactManager::synthesizeDisplayLabel(const QContact& contact) const
 {
+    qWarning("This function is deprecated and will be removed in week 1!  Use synthesizedDisplayLabel() instead!");
     return d->m_engine->synthesizeDisplayLabel(contact, d->m_error);
+}
+
+/*!
+ * Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner
+ */
+QString QContactManager::synthesizedDisplayLabel(const QContact& contact) const
+{
+    return d->m_engine->synthesizedDisplayLabel(contact, d->m_error);
 }
 
 /*!
@@ -520,17 +554,33 @@ QList<QContactManager::Error> QContactManager::removeRelationships(const QList<Q
 }
 
 /*!
+ * \deprecated
  * Returns a map of identifier to detail definition for the registered detail definitions which are valid for contacts whose type is the given \a contactType
  * which are valid for the contacts in this store
  */
 QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const QString& contactType) const
 {
+    qWarning("This function has been deprecated and will be removed in week 1!  Use detailDefinitionMap() instead!");
     if (!supportedContactTypes().contains(contactType)) {
         d->m_error = QContactManager::InvalidContactTypeError;
         return QMap<QString, QContactDetailDefinition>();
     }
 
     return d->m_engine->detailDefinitions(contactType, d->m_error);
+}
+
+/*!
+ * Returns a map of identifier to detail definition for the registered detail definitions which are valid for contacts whose type is the given \a contactType
+ * which are valid for the contacts in this store
+ */
+QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitionMap(const QString& contactType) const
+{
+    if (!supportedContactTypes().contains(contactType)) {
+        d->m_error = QContactManager::InvalidContactTypeError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
+    return d->m_engine->detailDefinitionMap(contactType, d->m_error);
 }
 
 /*! Returns the definition identified by the given \a definitionName that is valid for the contacts whose type is the given \a contactType in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
@@ -596,6 +646,7 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
 }
 
 /*!
+ * \deprecated
  * Returns true if the given \a filter is supported natively by the
  * manager, and false if the filter behaviour would be emulated.
  *
@@ -604,9 +655,24 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
  * that have changed since a given time depends on having that information
  * available.  In these cases, the filter will fail.
  */
-bool QContactManager::filterSupported(const QContactFilter& filter) const
+bool Q_DECL_DEPRECATED QContactManager::filterSupported(const QContactFilter& filter) const
 {
+    qWarning("filterSupported() is deprecated and will be removed in week 1!  Use isFilterSupported() instead!");
     return d->m_engine->filterSupported(filter);
+}
+
+/*!
+ * Returns true if the given \a filter is supported natively by the
+ * manager, and false if the filter behaviour would be emulated.
+ *
+ * Note: In some cases, the behaviour of an unsupported filter
+ * cannot be emulated.  For example, a filter that requests contacts
+ * that have changed since a given time depends on having that information
+ * available.  In these cases, the filter will fail.
+ */
+bool QContactManager::isFilterSupported(const QContactFilter& filter) const
+{
+    return d->m_engine->isFilterSupported(filter);
 }
 
 /*!
@@ -634,17 +700,33 @@ QStringList QContactManager::supportedContactTypes() const
     return d->m_engine->supportedContactTypes();
 }
 
-/*! Returns the version number of the Qt Mobility Contacts API */
+/*!
+ * \deprecated
+ * Returns the version number of the Qt Mobility Contacts API
+ */
 int QContactManager::version() 
-{ 
+{
+    qWarning("This function is deprecated and will be removed in week 1!  (Unnecessary API)");
     return QTCONTACTS_VERSION; 
-} 
+}
 
-/*! Returns the engine backend implementation version number */
+/*!
+ * \deprecated
+ * Returns the engine backend implementation version number
+ */
 int QContactManager::implementationVersion() const 
-{ 
+{
+    qWarning("This function is deprecated and will be removed in week 1!  Use managerVersion() instead!");
     return d->m_engine->implementationVersion(); 
-} 
+}
+
+/*!
+ * Returns the engine backend implementation version number
+ */
+int QContactManager::managerVersion() const
+{
+    return d->m_engine->managerVersion();
+}
 
 /*! Returns the manager name for this QContactManager */
 QString QContactManager::managerName() const

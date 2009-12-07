@@ -73,6 +73,8 @@ public:
     virtual QString managerName() const;                       // e.g. "Symbian"
     virtual QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
     QString managerUri() const;
+    virtual int Q_DECL_DEPRECATED implementationVersion() const; // deprecated
+    virtual int managerVersion() const; // replaces the above
 
     /* Filtering */
     virtual QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
@@ -88,7 +90,8 @@ public:
     virtual QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
 
     /* Synthesize the display label of a contact */
-    virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    virtual QString Q_DECL_DEPRECATED synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const; // deprecated
+    virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const; // replaces the above
     QContact setContactDisplayLabel(const QString& displayLabel, const QContact& contact) const;
 
     /* "Self" contact id (MyCard) */
@@ -107,7 +110,8 @@ public:
     virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error& error) const;
 
     /* Definitions - Accessors and Mutators */
-    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    virtual QMap<QString, QContactDetailDefinition> Q_DECL_DEPRECATED detailDefinitions(const QString& contactType, QContactManager::Error& error) const; // deprecated
+    virtual QMap<QString, QContactDetailDefinition> detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const; // replaces the above
     virtual QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error) const;
     virtual bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error);
     virtual bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error);
@@ -118,23 +122,23 @@ public:
     virtual bool cancelRequest(QContactAbstractRequest* req);
     virtual bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
-    static void updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    static void updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    static void updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    static void updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
-    static void updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    static void updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
+    static void updateRequestState(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::State state, bool appendOnly = false);
+    static void updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::State state, bool appendOnly = false);
+    static void updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::State state, bool appendOnly = false);
+    static void updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::State state);
+    static void updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::State state, bool appendOnly = false);
+    static void updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::State state, bool appendOnly = false);
 
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     virtual QStringList supportedRelationshipTypes(const QString& contactType) const;
-    virtual bool filterSupported(const QContactFilter& filter) const;
+    virtual bool Q_DECL_DEPRECATED filterSupported(const QContactFilter& filter) const; // deprecated
+    virtual bool isFilterSupported(const QContactFilter& filter) const; // replaces the above
     virtual QList<QVariant::Type> supportedDataTypes() const;
     virtual QStringList supportedContactTypes() const;
  
     /* Versions */ 
-    static int version(); 
-    virtual int implementationVersion() const; 
+    static Q_DECL_DEPRECATED int version(); // deprecated, remove in wk1, no replacement.
 
     /* Reports the built-in definitions from the schema */
     static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions();

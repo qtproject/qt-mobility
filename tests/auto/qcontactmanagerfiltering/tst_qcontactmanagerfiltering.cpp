@@ -2853,6 +2853,7 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "IntegerCo", 5); }
     QVariantMap metadata() const {return QVariantMap();}
+    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -2893,6 +2894,7 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4); }
     QVariantMap metadata() const {return QVariantMap();}
+    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -2932,6 +2934,7 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Date", "DateCo", 9); }
     QVariantMap metadata() const {return QVariantMap();}
+    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -2971,6 +2974,7 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "NumberCo", 42); }
     QVariantMap metadata() const {return QVariantMap();}
+    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -3026,6 +3030,7 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Boolean", "BooleanCo", 3); }
     QVariantMap metadata() const {return QVariantMap();}
+    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -3070,6 +3075,7 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Recursive", "RecursiveCo", 3); }
     QVariantMap metadata() const {return QVariantMap();}
+    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {

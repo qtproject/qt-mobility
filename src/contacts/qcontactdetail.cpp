@@ -287,8 +287,20 @@ bool QContactDetail::removeValue(const QString& key)
     return false;
 }
 
-/*! Returns the values stored in this detail */
-QVariantMap QContactDetail::values() const
+/*!
+ * \deprecated
+ * Returns the values stored in this detail
+ */
+QVariantMap Q_DECL_DEPRECATED QContactDetail::values() const
+{
+    qWarning("This function is deprecated and will be removed in week 1!  Use variantValueMap() instead!");
+    return d.constData()->m_values;
+}
+
+/*!
+ * Returns the values stored in this detail
+ */
+QVariantMap QContactDetail::variantValueMap() const
 {
     return d.constData()->m_values;
 }

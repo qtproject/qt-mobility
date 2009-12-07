@@ -63,7 +63,7 @@ void MaliciousAsyncManagerEngine::deref()
     // does this leak?
 }
 
-QString MaliciousAsyncManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString MaliciousAsyncManagerEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(contact);
     error = QContactManager::NotSupportedError;
@@ -86,7 +86,7 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
     QList<QContactRelationship> relResult;
 
     // maliciously attempt to update the request with every result type
-    updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+    updateRequestState(req, errorResult, errorsResult, QContactAbstractRequest::Active, false);
     updateRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
     updateRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
     updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::Active);
@@ -101,7 +101,7 @@ bool MaliciousAsyncManagerEngine::cancelRequest(QContactAbstractRequest *req)
 {
     QContactManager::Error errorResult = QContactManager::NoError;
     QList<QContactManager::Error> errorsResult;
-    updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Cancelled, false);
+    updateRequestState(req, errorResult, errorsResult, QContactAbstractRequest::Canceled, false);
     QContactManagerEngine::cancelRequest(req);
     return true;
 }

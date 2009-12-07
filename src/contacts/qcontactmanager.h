@@ -75,6 +75,7 @@ public:
     QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
     QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
+    QContactManager(QObject* parent);
 
     static QContactManager* fromUri(const QString& uri, QObject* parent = 0);
     ~QContactManager();                     // dtor
@@ -82,8 +83,11 @@ public:
     QString managerName() const;                       // e.g. "Symbian"
     QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
     QString managerUri() const;                        // managerName + managerParameters
+    int Q_DECL_DEPRECATED implementationVersion() const;    // deprecated
+    int managerVersion() const;                             // replaces the above
 
-    static bool splitUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
+    static bool Q_DECL_DEPRECATED splitUri(const QString& uri, QString* managerName, QMap<QString, QString>* params); // deprecated
+    static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params); // replaces the above.
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
     /* The values of the Error enum are still to be decided! */
@@ -120,7 +124,8 @@ public:
     QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds);  // batch API - remove
 
     /* Synthesize the display label of a contact */
-    QString synthesizeDisplayLabel(const QContact& contact) const;
+    QString Q_DECL_DEPRECATED synthesizeDisplayLabel(const QContact& contact) const; // deprecated
+    QString synthesizedDisplayLabel(const QContact& contact) const; // replaces the above
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId);
@@ -135,7 +140,8 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType = QContactType::TypeContact) const;
+    QMap<QString, QContactDetailDefinition> Q_DECL_DEPRECATED detailDefinitions(const QString& contactType = QContactType::TypeContact) const; // deprecated
+    QMap<QString, QContactDetailDefinition> detailDefinitionMap(const QString& contactType = QContactType::TypeContact) const; // replaces the above
     QContactDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact) const;
     bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType = QContactType::TypeContact);
     bool removeDetailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact);
@@ -154,12 +160,12 @@ public:
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
     QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
     QList<QVariant::Type> supportedDataTypes() const;
-    bool filterSupported(const QContactFilter& filter) const;
+    bool Q_DECL_DEPRECATED filterSupported(const QContactFilter& filter) const;  // DEPRECATED
+    bool isFilterSupported(const QContactFilter& filter) const;// replaces the above.
     QStringList supportedContactTypes() const;
 
     /* Versions */ 
-    static int version(); 
-    int implementationVersion() const; 
+    static int Q_DECL_DEPRECATED version(); // deprecated, removed entirely in wk1, no replacement.
 
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();

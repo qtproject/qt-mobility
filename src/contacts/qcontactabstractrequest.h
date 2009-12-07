@@ -57,17 +57,17 @@ public:
     QContactAbstractRequest() {}
     virtual ~QContactAbstractRequest();
 
-    enum Status {
+    enum State { // replaces the status enum.
         Inactive = 0,   // operation not yet started
         Active,         // operation started, not yet finished
-        Cancelling,     // operation started then cancelled, not yet finished
-        Cancelled,      // operation is finished due to cancellation
+        Canceling,      // operation started then cancelled, not yet finished
+        Canceled,       // operation is finished due to cancellation
         Finished        // operation successfully completed
     };
 
-    Status status() const;
-    bool isActive() const;
-    bool isFinished() const;
+    State state() const; // replaces status()
+    bool Q_DECL_DEPRECATED isActive() const;   // deprecated, removed entirely week 1
+    bool Q_DECL_DEPRECATED isFinished() const; // deprecated, removed entirely week 1
     QList<QContactManager::Error> errors() const;
     QContactManager::Error error() const;
 
