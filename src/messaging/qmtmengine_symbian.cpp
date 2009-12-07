@@ -3545,6 +3545,16 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
            break;
     }
     
+    if (entry.Parent() == KMsvGlobalInBoxIndexEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
+    } else if (entry.Parent() == KMsvDraftEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::DraftsFolder);
+    } else if (entry.Parent() == KMsvSentEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
+    } else if (entry.Parent() == KMsvDeletedEntryFolderEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::TrashFolder);
+    }       
+    
     // Read message sender
     ipSmsMtm->SwitchCurrentEntryL(messageId);
     ipSmsMtm->LoadMessageL();
@@ -3628,6 +3638,16 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
            message.setPriority(QMessage::LowPriority);
            break;
     }
+
+    if (entry.Parent() == KMsvGlobalInBoxIndexEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
+    } else if (entry.Parent() == KMsvDraftEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::DraftsFolder);
+    } else if (entry.Parent() == KMsvSentEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
+    } else if (entry.Parent() == KMsvDeletedEntryFolderEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::TrashFolder);
+    }       
     
     // Read message sender
     ipMmsMtm->SwitchCurrentEntryL(messageId);
@@ -3740,6 +3760,30 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
            message.setPriority(QMessage::LowPriority);
            break;
     }
+
+    if (entry.iMtm == KUidMsgTypePOP3) {
+        // All incoming POP3 messages are in the root of the POP3 service
+        QMessageAccount messageAccount = account(message.parentAccountId());
+        if (entry.Parent() == messageAccount.d_ptr->_service1EntryId) {
+            QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
+        }
+    } else if (entry.iMtm == KUidMsgTypeIMAP4) {
+        // All incoming IMAP4 messages are in the folders which can
+        // be found from the root of the IMAP4 service
+        QMessageAccount messageAccount = account(message.parentAccountId());
+        CMsvEntry* pEntry = retrieveCMsvEntryAndPushToCleanupStack(entry.Parent());
+        if (pEntry->Entry().Parent() == messageAccount.d_ptr->_service1EntryId) {
+            QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
+        }
+        releaseCMsvEntryAndPopFromCleanupStack(pEntry);
+    }
+    if (entry.Parent() == KMsvDraftEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::DraftsFolder);
+    } else if (entry.Parent() == KMsvSentEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
+    } else if (entry.Parent() == KMsvDeletedEntryFolderEntryId) {
+        QMessagePrivate::setStandardFolder(message,QMessage::TrashFolder);
+    }       
     
     CImHeader* emailEntry = CImHeader::NewLC();
     CImEmailMessage* emailMessage = CImEmailMessage::NewLC(receivedEntry);
@@ -4150,7 +4194,8 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 } else {
                     message.setType(QMessage::NoType);
                 }
-            } else if (privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder) {
+            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder) && 
+                       (aMsgType == KUidMsgTypeSMS || aMsgType == KUidMsgTypeMultimedia)) {
                 if (aFolderId == KMsvGlobalInBoxIndexEntryId) {
                     QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
                 } else if (aFolderId == KMsvDraftEntryId) {
@@ -4160,7 +4205,6 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 } else if (aFolderId == KMsvDeletedEntryFolderEntryId) {
                     QMessagePrivate::setStandardFolder(message,QMessage::TrashFolder);
                 }       
-
             } else if (!messageRetrieved) {
                 message = this->message(QMessageId(QString::number(aMessageId)));
                 messageRetrieved = true;
