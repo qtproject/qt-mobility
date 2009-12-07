@@ -39,50 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QORIENTATIONSENSOR_H
-#define QORIENTATIONSENSOR_H
+#include <qproximitysensor.h>
 
-#include <qsensor.h>
+QTM_USE_NAMESPACE
+
+const QString QProximitySensor::type("qt.Proximity");
+
+/*!
+    \class QProximitySensorValue
+    \ingroup sensors
+
+    \preliminary
+    \brief The QProximitySensorValue class represents a proximity reading.
+
+    Foo bar baz.
+*/
+
+/*!
+    \class QProximitySensor
+    \ingroup sensors
+
+    \preliminary
+    \brief The QProximitySensor class reports on user proximity.
+
+    Foo bar baz.
+*/
+
+/*!
+    Construct a sensor instance and attach to the indicated \a sensor.
+*/
+QProximitySensor::QProximitySensor(QSensor *sensor)
+    : QSensor(sensor->id(), sensor->parent())
+{
+}
+
+/*!
+    Construct a sensor instance and attach to the sensor indicated by \a id.
+    The sensor will be deleted when \a parent is deleted.
+*/
+QProximitySensor::QProximitySensor(const QString &id, QObject *parent)
+    : QSensor(id, parent)
+{
+}
+
+/*!
+    \fn QProximitySensor::currentProximity() const
+
+    Returns the current proximity value.
+*/
+
+/*!
+    \fn QProximitySensor::proximityChanged(qreal distance)
+
+    Emitted when the \a distance value changes.
+*/
 
 QTM_BEGIN_NAMESPACE
-
-class Q_SENSORS_EXPORT QOrientationSensorValue : public QSensorValue
-{
-public:
-    enum OrientationFlag {
-        Unknown   = 0x00,
-        Portrait  = 0x01,
-        Landscape = 0x02,
-        Inverted  = 0x04,
-        Default   = 0x08
-    };
-    Q_DECLARE_FLAGS(Orientation, OrientationFlag)
-
-    Orientation orientation;
-};
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QOrientationSensorValue::Orientation)
-
-class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
-{
-    Q_OBJECT
-public:
-    explicit QOrientationSensor(QSensor *sensor);
-    explicit QOrientationSensor(const QString &id, QObject *parent = 0);
-
-    static const QString type;
-
-    QOrientationSensorValue::Orientation currentOrientation() const
-    {
-        return static_cast<QOrientationSensorValue*>(currentValue())->orientation;
-    }
-
-signals:
-    void orientationChanged(QOrientationSensorValue::Orientation orientation);
-
-};
-
+#include "moc_qproximitysensor.cpp"
 QTM_END_NAMESPACE
-
-#endif
 

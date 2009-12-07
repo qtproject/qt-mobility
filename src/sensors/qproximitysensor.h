@@ -39,47 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QORIENTATIONSENSOR_H
-#define QORIENTATIONSENSOR_H
+#ifndef QPROXIMITYSENSOR_H
+#define QPROXIMITYSENSOR_H
 
 #include <qsensor.h>
+#include <QtGlobal>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QOrientationSensorValue : public QSensorValue
+class Q_SENSORS_EXPORT QProximitySensorValue : public QSensorValue
 {
 public:
-    enum OrientationFlag {
-        Unknown   = 0x00,
-        Portrait  = 0x01,
-        Landscape = 0x02,
-        Inverted  = 0x04,
-        Default   = 0x08
-    };
-    Q_DECLARE_FLAGS(Orientation, OrientationFlag)
-
-    Orientation orientation;
+    qreal distance;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QOrientationSensorValue::Orientation)
 
-class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
+class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QOrientationSensor(QSensor *sensor);
-    explicit QOrientationSensor(const QString &id, QObject *parent = 0);
+    explicit QProximitySensor(QSensor *sensor);
+    explicit QProximitySensor(const QString &id, QObject *parent = 0);
 
     static const QString type;
 
-    QOrientationSensorValue::Orientation currentOrientation() const
+    qreal currentProximity() const
     {
-        return static_cast<QOrientationSensorValue*>(currentValue())->orientation;
+        return static_cast<QProximitySensorValue*>(currentValue())->distance;
     }
 
 signals:
-    void orientationChanged(QOrientationSensorValue::Orientation orientation);
-
+    void proximityChanged(qreal distance);
 };
 
 QTM_END_NAMESPACE

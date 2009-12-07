@@ -43,6 +43,8 @@
 
 QTM_USE_NAMESPACE
 
+const QString QOrientationSensor::type("qt.Orientation");
+
 /*!
     \class QOrientationSensorValue
     \ingroup sensors

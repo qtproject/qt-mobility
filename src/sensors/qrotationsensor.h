@@ -39,47 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QORIENTATIONSENSOR_H
-#define QORIENTATIONSENSOR_H
+#ifndef QROTATIONSENSOR_H
+#define QROTATIONSENSOR_H
 
 #include <qsensor.h>
+#include <QtGlobal>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QOrientationSensorValue : public QSensorValue
+class Q_SENSORS_EXPORT QRotationSensorValue : public QSensorValue
 {
 public:
-    enum OrientationFlag {
-        Unknown   = 0x00,
-        Portrait  = 0x01,
-        Landscape = 0x02,
-        Inverted  = 0x04,
-        Default   = 0x08
+    struct Rotation
+    {
+        Rotation(qreal _x, qreal _y, qreal _z) : x(_x), y(_y), z(_z) {}
+        qreal x;
+        qreal y;
+        qreal z;
     };
-    Q_DECLARE_FLAGS(Orientation, OrientationFlag)
 
-    Orientation orientation;
+    Rotation rotation;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QOrientationSensorValue::Orientation)
 
-class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
+class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 {
-    Q_OBJECT
 public:
-    explicit QOrientationSensor(QSensor *sensor);
-    explicit QOrientationSensor(const QString &id, QObject *parent = 0);
+    explicit QRotationSensor(QSensor *sensor);
+    explicit QRotationSensor(const QString &id, QObject *parent = 0);
 
     static const QString type;
 
-    QOrientationSensorValue::Orientation currentOrientation() const
+    QRotationSensorValue::Rotation currentRotation() const
     {
-        return static_cast<QOrientationSensorValue*>(currentValue())->orientation;
+        return static_cast<QRotationSensorValue*>(currentValue())->rotation;
     }
 
-signals:
-    void orientationChanged(QOrientationSensorValue::Orientation orientation);
-
+    qreal currentXRotation() const
+    {
+        return currentRotation().x;
+    }
+    qreal currentYRotation() const
+    {
+        return currentRotation().y;
+    }
+    qreal currentZRotation() const
+    {
+        return currentRotation().z;
+    }
 };
 
 QTM_END_NAMESPACE

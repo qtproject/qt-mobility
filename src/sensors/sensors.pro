@@ -14,6 +14,8 @@ PUBLIC_HEADERS += \
            qsensormanager.h\
            qorientationsensor.h\
            qaccelerationsensor.h\
+           qrotationsensor.h\
+           qproximitysensor.h\
 
 PRIVATE_HEADERS += \
 
@@ -23,5 +25,7 @@ SOURCES += qsensor.cpp \
            qsensormanager.cpp\
            qorientationsensor.cpp\
            qaccelerationsensor.cpp\
+           qrotationsensor.cpp\
+           qproximitysensor.cpp\
 
 include(../../features/deploy.pri)
