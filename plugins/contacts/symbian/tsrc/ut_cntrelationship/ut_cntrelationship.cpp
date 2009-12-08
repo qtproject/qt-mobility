@@ -42,8 +42,7 @@
 #include "ut_cntrelationship.h"
 #include "cntrelationship.h"
 
-//Qt Contacts
-#include <qtcontacts.h>
+
 
 //Symbian database
 #include <cntdb.h>
@@ -220,8 +219,14 @@ void TestCntRelationship::validGroupRelationship()
 
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::Either, error);
     QVERIFY2(relationshipList.count() == 1, "contact - Either");
-    QVERIFY2(error == QContactManager::NoError, "contact - Either");
-
+    QVERIFY2(error == QContactManager::NoError, "contact - Either");   
+    
+    
+    //Validate Filter
+    QList<QContactLocalId> expectedContacts;
+    expectedContacts += contact.localId();
+    QVERIFY(true == validateRelationshipFilter(QContactRelationshipFilter::First, groupContact.id(), expectedContacts));
+    
     //remove relationship
     returnValue = m_relationship->removeRelationship(&affectedContactIds, relationship, error);
     QVERIFY2(returnValue == true, "remove");
@@ -339,5 +344,22 @@ void TestCntRelationship::invalidFirstAndSecondContactGroupRelationship()
     QVERIFY(error != QContactManager::NoError);
 }
 
+bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipFilter::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts)
+    {
+    QContactRelationshipFilter filter;
+    filter.setRelationshipType(QContactRelationship::HasMember);
+    filter.setRole(role);
+    filter.setOtherParticipantId(contactId);
+    
+    QList<QContactLocalId> result = m_manager->contacts(filter);
+    
+    for(int i = 0; i < result.count(); i++)
+        qDebug() << "result: " << result.at(i);
+    
+    for(int i = 0; i < expectedContacts.count(); i++)
+            qDebug() << "expectedContacts: " << expectedContacts.at(i);
+    
+    return (result == expectedContacts);
+    }
 
 QTEST_MAIN(TestCntRelationship);
