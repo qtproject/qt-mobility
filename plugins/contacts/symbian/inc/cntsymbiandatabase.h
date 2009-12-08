@@ -81,7 +81,7 @@ public:
 
 private:
     CContactDatabase* m_contactDatabase;
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
     CContactChangeNotifier* m_contactChangeNotifier;
 #endif
     QContactManagerEngine *m_engine;

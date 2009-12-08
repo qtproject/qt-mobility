@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
 
 #include "cntsymbianfiltersql.h"
 #include "qcontactdetailfilter.h"
