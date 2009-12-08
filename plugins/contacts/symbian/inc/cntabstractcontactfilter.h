@@ -66,14 +66,13 @@ public:
          * using QContactManagerEngine::testFilter). */
         SupportedPreFilterOnly
     };
-
 public:
     virtual QList<QContactLocalId> contacts(
-            const QContactFilter& filter,
-            const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) = 0;
-
-    virtual FilterSupport filterSupported(const QContactFilter& filter) = 0;
+            const QContactFilter &filter,
+            const QList<QContactSortOrder> &sortOrders,
+            bool &filterSupported,
+            QContactManager::Error &error) = 0;
+    virtual bool filterSupported(const QContactFilter& filter) = 0;
 };
 
 #endif /* QABSTRACTCONTACTFILTER_H */

@@ -279,14 +279,95 @@ void SymbianPluginPerfomance::filterUnions()
     QContactDetailFilter filt;
     filt.setValue("alice");
     filt.setMatchFlags(QContactFilter::MatchContains);
+
     filt.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     unionFilter.append(filt);
     filt.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
     unionFilter.append(filt);
+
     measureContactsFetch(
             "Filter: first name \"alice\" or last name \"alice\"",
             unionFilter);
 }
+
+void SymbianPluginPerfomance::filterNameListStyle_data()
+{
+    // The search key; this is typed in by the user in name list style filtering
+    QTest::addColumn<QString>("searchKey");
+    // The expected count of the contacts in the result
+    QTest::addColumn<int>("expectedCount");
+    // parameters: test row name, search key, expected result count
+    QTest::newRow("A") << "A" << 195;
+    QTest::newRow("a") << "a" << 195;
+    QTest::newRow("a b") << "a b" << 11;
+    QTest::newRow("joan") << "joan" << 22;
+}
+
+void SymbianPluginPerfomance::filterNameListStyle()
+{
+    QFETCH(QString, searchKey);
+    QFETCH(int, expectedCount);
+
+    QVariant value = searchKey;
+    // If there is more than one search term, use a QStringList value
+    QStringList searchList = searchKey.split(QChar(0x20), QString::SkipEmptyParts);
+    if(searchList.count() > 1)
+        value = searchList;
+
+
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactDisplayLabel::DefinitionName, QContactDisplayLabel::FieldLabel);
+    filter.setMatchFlags(QContactFilter::MatchStartsWith);
+    filter.setValue(value);
+
+    int count = measureContactsFetch(
+            "Filter names list style",
+            filter);
+
+    // Commented out the expected result count check. Currently all the
+    // contacts created by performance test module have the same name.
+    // This means that all the filters give either 0 or 1000 contacts as a
+    // result. So there is not much point checking the result count.
+    // TODO: Maybe we should use a pre-defined set of contacts with different
+    // names and other details. This would give more usable measurements results.
+    //QCOMPARE(count, expectedCount);
+}
+
+void SymbianPluginPerfomance::filterPhoneNumberMatch_data()
+{
+    // The search key; this is typed in by the user in name list style filtering
+    QTest::addColumn<QString>("searchKey");
+    // The expected count of the contacts in the result
+    QTest::addColumn<int>("expectedCount");
+    // parameters: test row name, search key, expected result count
+    QTest::newRow("76766466") << "76766466" << 15;
+    QTest::newRow("+35876766466") << "+35876766466" << 15;
+    QTest::newRow("111222333444555") << "111222333444555" << 0;
+}
+
+void SymbianPluginPerfomance::filterPhoneNumberMatch()
+{
+    QFETCH(QString, searchKey);
+    QFETCH(int, expectedCount);
+
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    filter.setMatchFlags(QContactFilter::MatchPhoneNumber);
+    filter.setValue(searchKey);
+
+    int count = measureContactsFetch(
+            "Filter phone numbers",
+            filter);
+
+    // Commented out the expected result count check. Currently all the
+    // contacts created by performance test module have the same name.
+    // This means that all the filters give either 0 or 1000 contacts as a
+    // result. So there is not much point checking the result count.
+    // TODO: Maybe we should use a pre-defined set of contacts with different
+    // names and other details. This would give more usable measurements results.
+    //QCOMPARE(count, expectedCount);
+}
+
 
 void SymbianPluginPerfomance::removeComplexContacts()
 {
@@ -299,7 +380,7 @@ void SymbianPluginPerfomance::removeComplexContacts()
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
 }
 
-void SymbianPluginPerfomance::measureContactsFetch(
+int SymbianPluginPerfomance::measureContactsFetch(
         QString debugMessage,
         const QContactFilter &filter,
         const QList<QContactSortOrder>& sortOrders)
@@ -314,8 +395,9 @@ void SymbianPluginPerfomance::measureContactsFetch(
 
     int elapsed = mTime.elapsed();
     qDebug() << debugMessage
-            << mCntMng->contacts().count() << "contacts, gave " << cnt_ids.count() << " contacts."
-            << " Time taken:" << elapsed / 1000 << " s" << elapsed % 1000 << " ms";
+            << mCntMng->contacts().count() << "contacts, gave" << cnt_ids.count() << "contacts."
+            << "Time taken:" << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
+    return cnt_ids.count();
 }
 
 QTEST_MAIN(SymbianPluginPerfomance);

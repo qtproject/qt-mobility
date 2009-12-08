@@ -42,6 +42,7 @@
 #ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
 
 #include <qcontactdetail.h>
+#include <QSet>
 
 #include "cntsymbianfilterdbms.h"
 #include "cnttransformcontact.h"
@@ -87,9 +88,10 @@ CntSymbianFilterDbms::~CntSymbianFilterDbms()
  * The contact database version implementation for QContactManager::contacts
  * function. See filterSupported for the list of supported filters.
  * All the other filtering flags fallback to the generic filtering done
- * in QContactManagerEngine. Contacts are sorted only if the sort order is
- * supported by contacts database. See CntSymbianSorterDbms::sortOrderSupported
- * for the list of supported sort orders.
+ * in QContactManagerEngine (expected to be done by to the caller). Contacts
+ * are sorted only if the sort order is supported by contacts database. See
+ * CntSymbianSorterDbms::filterSupportLevel for the list of supported sort
+ * orders.
  *
  * \a filter The QContactFilter to be used.
  * \a sortOrders The sort orders to be used. If the sort orders are not
@@ -98,91 +100,102 @@ CntSymbianFilterDbms::~CntSymbianFilterDbms()
  * \a error On return, contains the possible error in filtering/sorting.
  */
 QList<QContactLocalId> CntSymbianFilterDbms::contacts(
-            const QContactFilter& filter,
-            const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error)
+    const QContactFilter &filter,
+    const QList<QContactSortOrder> &sortOrders,
+    bool &filterSupportedFlag,
+    QContactManager::Error &error)
 {
-    QList<QContactLocalId> matches;
-    CContactIdArray* idArray(0);
+    QList<QContactLocalId> result;
+    filterSupportedFlag = true;
 
-    if (filter.type() == QContactFilter::ContactDetailFilter)
-    {
-        const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-        CntAbstractContactFilter::FilterSupport supported = filterSupported(filter);
+    // No need to proceed if some of the filters in the chain is not supported
+    if(!filterSupportedFlag) return result;
 
-        // Phone numbers
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName
-                && (supported == Supported
-                || supported == SupportedPreFilterOnly))
-        {
-            QString number((detailFilter.value()).toString());
-            TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
-
-            TInt matchLength(KDefaultMatchLength);
-            // no need to propagate error, we can use the default match length
-            TRAP_IGNORE(getMatchLengthL(matchLength));
-
-            TInt err = matchContacts(idArray, commPtr, matchLength);
-            if(err != KErrNone)
-            {
-                CntSymbianTransformError::transformError(err, error);
-            }
+    // Intersection filter is handled by a recursive function call for each
+    // contained filter (unless at least one requires slow filtering)
+    if (filter.type() == QContactFilter::IntersectionFilter) {
+        QList<QContactFilter> filters = ((QContactIntersectionFilter) filter).filters();
+        for(int i(0); filterSupportedFlag && i < filters.count(); i++) {
+            if(result.isEmpty())
+                result = contacts(filters[i], sortOrders, filterSupportedFlag, error);
+            else
+                result = contacts(filters[i], sortOrders, filterSupportedFlag, error).toSet().intersect(result.toSet()).toList();
         }
-        // Names, e-mail, display label
-        else if (supported == Supported
-                // The pre-filters are implemented as "MatchContains"
-                || supported == SupportedPreFilterOnly) {
-            QString name((detailFilter.value()).toString());
-            // TODO: this looks ugly
-            TPtrC namePtr(reinterpret_cast<const TUint16*>(name.utf16()));
-            CContactItemFieldDef *fieldDef(0);
-            TRAPD(err, transformDetailFilterL(detailFilter, fieldDef));
-            if(err != KErrNone){
-                CntSymbianTransformError::transformError(err, error);
-            } else {
-                Q_ASSERT_X(fieldDef->Count() > 0, "CntSymbianFilterDbms", "Illegal field def");
-                TInt err = findContacts(idArray, *fieldDef, namePtr);
-                if(err != KErrNone)
-                    CntSymbianTransformError::transformError(err, error);
-            }
-            delete fieldDef;
-        } else {
-            error = QContactManager::NotSupportedError;
+    // Union filter is handled by a recursive function call for each
+    // contained filter (unless at least one requires slow filtering)
+    } else if (filter.type() == QContactFilter::UnionFilter) {
+        QList<QContactFilter> filters = ((QContactUnionFilter) filter).filters();
+        for(int i(0); filterSupportedFlag && i < filters.count(); i++) {
+            if(result.isEmpty())
+                result = contacts(filters[i], sortOrders, filterSupportedFlag, error);
+            else
+                result = (contacts(filters[i], sortOrders, filterSupportedFlag, error).toSet() + result.toSet()).toList();
         }
+    // Detail filter with a string list is split and re-constructed into
+    // an intersection filter
+    } else if (filter.type() == QContactFilter::ContactDetailFilter
+            && (static_cast<const QContactDetailFilter &>(filter)).value().type() == QVariant::StringList) {
+        QStringList values = (static_cast<const QContactDetailFilter &>(filter)).value().toStringList();
+        QContactIntersectionFilter intersectionFilter;
+        foreach(QString value, values) {
+            QContactDetailFilter detailFilter = filter;
+            detailFilter.setValue(value);
+            intersectionFilter.append(detailFilter);
+        }
+        // The resulting filter is handled with a recursive function call
+        result = contacts(intersectionFilter, sortOrders, filterSupportedFlag, error);
     } else {
-        error = QContactManager::NotSupportedError;
+        if (filterSupportLevel(filter) == Supported) {
+            filterSupportedFlag = true;
+            // Filter supported, use as the result directly
+            result = filterContacts(filter, error);
+        } else if (filterSupportLevel(filter) == SupportedPreFilterOnly) {
+            // Filter only does pre-filtering, the caller is responsible of
+            // removing possible false positives after filtering
+            filterSupportedFlag = false;
+            result = filterContacts(filter, error);
+        } else {
+            // Don't do filtering here, return all contact ids and tell the
+            // caller to do slow filtering
+            filterSupportedFlag = false;
+            result = filterContacts(QContactInvalidFilter(), error);
+        }
     }
 
-    if(idArray && (error == QContactManager::NoError)) {
-        // copy the matching contact ids
-        for(int i(0); i < idArray->Count(); i++) {
-            matches.append(QContactLocalId((*idArray)[i]));
-        }
-
-        // sort the matching contacts
-        if(!sortOrders.isEmpty()) {
-            if(m_contactSorter->sortOrderSupported(sortOrders)) {
-                matches = m_contactSorter->sort(matches, sortOrders, error);
-            }
-        }
-    }
-
-    delete idArray;
-
-    return matches;
+    return result;
 }
 
 /*!
  * The contact database version implementation for
- * QContactManager::filterSupported function. The possible return values are
- * Supported, NotSupported and SupportedPreFilterOnly. Supported means that
- * the filtering is implemented directly by the underlying database.
- * NotSupported means that CntSymbianFilterDbms::contacts will return an
- * error. And SupportedPreFilterOnly means that the filter is not supported,
- * but the CntSymbianFilterDbms::contacts will act like the filter was
- * supported. This means that the client must filter the pre-filtered set of
- * contacts to see if there are false positives included. Note that in some
- * cases the pre-filtering is not very effective.
+ * QContactManager::filterSupport function.
+*/
+bool CntSymbianFilterDbms::filterSupported(const QContactFilter& filter)
+{
+    TBool result;
+
+    // Map filter support into a boolean value
+    FilterSupport support = filterSupportLevel(filter);
+    if (support == Supported || support == SupportedPreFilterOnly) {
+        result = true;
+    } else {
+        result = false;
+    }
+    return result;
+}
+
+/*!
+ * The possible return values are Supported, NotSupported and
+ * SupportedPreFilterOnly.
+ *
+ * Supported means that the filtering is implemented directly by the underlying
+ * database. NotSupported means that CntSymbianFilterDbms::contacts will
+ * return an error. And SupportedPreFilterOnly means that the filter is not
+ * fully supported, but the CntSymbianFilterDbms::contacts will act like the
+ * filter was supported for performance reasons, returning a result that may
+ * contain false positives. This means that the client must filter the
+ * pre-filtered set of contacts to see if there are false positives included.
+ * Note that the pre-filtering does not give any performance benefits if the
+ * result contains all contacts or almost all contacts.
  *
  * \a filter The QContactFilter to be checked.
  * \a return Supported in case the filter is supported. NotSupported in case
@@ -198,46 +211,52 @@ QList<QContactLocalId> CntSymbianFilterDbms::contacts(
  * 4. matchFlags is set to QContactFilter::MatchCaseSensitive (CntSymbianFilterDbms::contacts
  * will use QContactFilter::MatchContains)
  */
-CntAbstractContactFilter::FilterSupport CntSymbianFilterDbms::filterSupported(const QContactFilter& filter)
+CntAbstractContactFilter::FilterSupport CntSymbianFilterDbms::filterSupportLevel(const QContactFilter& filter)
 {
     FilterSupport filterSupported(NotSupported);
 
     if (filter.type() == QContactFilter::ContactDetailFilter) {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-        QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
+        const QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
+        const QString defName = detailFilter.detailDefinitionName();
+        const int KMatchFlagsUnset(0);
+        QContactFilter::MatchFlags supportedFlags(KMatchFlagsUnset);
+        QContactFilter::MatchFlags preFilterFlags(KMatchFlagsUnset);
+        bool validDetailFilter(false);
 
-        QString defName = detailFilter.detailDefinitionName();
         // Phone numbers
         if (defName == QContactPhoneNumber::DefinitionName) {
-            if (matchFlags == QContactFilter::MatchEndsWith)
-                filterSupported = Supported;
-            else if (matchFlags == QContactFilter::MatchExactly)
-                filterSupported = SupportedPreFilterOnly;
+            validDetailFilter = true;
+            supportedFlags = QContactFilter::MatchFlags(QContactFilter::MatchPhoneNumber);
+            preFilterFlags = QContactFilter::MatchFlags(QContactFilter::MatchEndsWith)
+                             | QContactFilter::MatchFlags(QContactFilter::MatchExactly);
         // Names
         } else if (defName == QContactName::DefinitionName
                 || defName == QContactNickname::DefinitionName
                 || defName == QContactEmailAddress::DefinitionName) {
-            QContactFilter::MatchFlags supportedPreFilterFlags =
-                QContactFilter::MatchExactly
-                & QContactFilter::MatchStartsWith
-                & QContactFilter::MatchEndsWith
-                & QContactFilter::MatchCaseSensitive;
-            if (matchFlags == QContactFilter::MatchContains) {
-                filterSupported = Supported;
-            }
-            else if (matchFlags | supportedPreFilterFlags ==
-                supportedPreFilterFlags ) {
-                filterSupported = SupportedPreFilterOnly;
-            }
-        // display label, TODO: "unnamed" display label is not supported
+            validDetailFilter = true;
+            supportedFlags = QContactFilter::MatchFlags(QContactFilter::MatchContains);
+            preFilterFlags = QContactFilter::MatchFlags(QContactFilter::MatchExactly)
+                             | QContactFilter::MatchFlags(QContactFilter::MatchStartsWith)
+                             | QContactFilter::MatchFlags(QContactFilter::MatchEndsWith)
+                             | QContactFilter::MatchFlags(QContactFilter::MatchCaseSensitive);
+        // display label, this is a special case that contains several name
+        // fields and company name
+        //TODO: "unnamed" display label is not supported currently
         } else if (defName == QContactDisplayLabel::DefinitionName) {
-            QContactFilter::MatchFlags supportedPreFilterFlags =
-                QContactFilter::MatchExactly
-                & QContactFilter::MatchStartsWith
-                & QContactFilter::MatchEndsWith
-                & QContactFilter::MatchCaseSensitive;
-            if (matchFlags | supportedPreFilterFlags ==
-                supportedPreFilterFlags ) {
+            validDetailFilter = true;
+            supportedFlags = QContactFilter::MatchFlags(QContactFilter::MatchStartsWith)
+                             | QContactFilter::MatchFlags(QContactFilter::MatchContains);
+            preFilterFlags = QContactFilter::MatchFlags(QContactFilter::MatchExactly)
+                             | QContactFilter::MatchFlags(QContactFilter::MatchEndsWith)
+                             | QContactFilter::MatchFlags(QContactFilter::MatchCaseSensitive);
+        }
+
+        if(validDetailFilter) {
+            if (matchFlags != QContactFilter::MatchFlags(QContactFilter::MatchExactly)
+                    && (matchFlags | supportedFlags) == supportedFlags ) {
+                filterSupported = Supported;
+            } else if ((matchFlags | preFilterFlags) == preFilterFlags ) {
                 filterSupported = SupportedPreFilterOnly;
             }
         }
@@ -245,6 +264,121 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterDbms::filterSupported(co
     return filterSupported;
 }
 
+QList<QContactLocalId> CntSymbianFilterDbms::filterContacts(
+    const QContactFilter& filter,
+    QContactManager::Error& error)
+{
+    QList<QContactLocalId> matches;
+    CContactIdArray* idArray(0);
+
+    if (filter.type() == QContactFilter::InvalidFilter ){
+        TTime epoch(0);
+        idArray = m_contactDatabase.ContactsChangedSinceL(epoch); // return all contacts
+    } else if(filterSupportLevel(filter) == NotSupported) {
+        error = QContactManager::NotSupportedError;
+    } else if (filter.type() == QContactFilter::ContactDetailFilter) {
+        const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
+
+        // Phone numbers
+        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
+            QString number((detailFilter.value()).toString());
+            TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
+
+            TInt matchLength(KDefaultMatchLength);
+            // no need to propagate error, we can use the default match length
+            TRAP_IGNORE(getMatchLengthL(matchLength));
+
+            TInt err = matchContacts(idArray, commPtr, matchLength);
+            if(err != KErrNone) {
+                CntSymbianTransformError::transformError(err, error);
+            }
+        // Names, e-mail, display label (other flags)
+        } else {
+            QString name((detailFilter.value()).toString());
+            TPtrC namePtr(reinterpret_cast<const TUint16*>(name.utf16()));
+            CContactItemFieldDef *fieldDef(0);
+            TRAPD(err, transformDetailFilterL(detailFilter, fieldDef));
+            if(err != KErrNone){
+                CntSymbianTransformError::transformError(err, error);
+            } else {
+                Q_ASSERT_X(fieldDef->Count() > 0, "CntSymbianFilterDbms", "Illegal field def");
+                TInt err = findContacts(idArray, *fieldDef, namePtr);
+                if(err != KErrNone) {
+                    CntSymbianTransformError::transformError(err, error);
+                }
+
+                // Display label special case with "starts with" flag;
+                // False positives are removed here for performance reasons
+                // (this is a very common use case in a name list view)
+                //
+                // Another option might be to use CContactDatabase::FindInTextDefLC
+                // for filtering with display label
+                if (detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName
+                    && detailFilter.matchFlags() == QContactFilter::MatchStartsWith) {
+
+                    // Remove false positives
+                    for(TInt i(0); i < idArray->Count(); i++) {
+                        CContactItem* contactItem = m_contactDatabase.ReadContactLC((*idArray)[i]);
+                        const CContactItemFieldSet& fieldSet(contactItem->CardFields());
+                        if(isFalsePositive(fieldSet, KUidContactFieldGivenName, namePtr)
+                           && isFalsePositive(fieldSet, KUidContactFieldFamilyName, namePtr)
+                           && isFalsePositive(fieldSet, KUidContactFieldCompanyName, namePtr)
+                           && isFalsePositive(fieldSet, KUidContactFieldSecondName, namePtr)){
+                            idArray->Remove(i);
+                            i--;
+                        }
+                        CleanupStack::PopAndDestroy(contactItem);
+                    }
+                }
+            }
+            delete fieldDef;
+        }
+    }
+
+    if(idArray && (error == QContactManager::NoError)) {
+        // copy the matching contact ids
+        for(int i(0); i < idArray->Count(); i++) {
+            matches.append(QContactLocalId((*idArray)[i]));
+        }
+    }
+
+    delete idArray;
+
+    return matches;
+}
+
+/*!
+ * Checks if the contact's field set includes field \a fieldTypeUid and if the
+ * field contents matches the search string. The features currently:
+ * 1. only checks the first field instance
+ * 2. supports only "starts with"
+ * 3. searches every word inside the field
+ * 4. supports only "not case-sensitive" matching
+ */
+bool CntSymbianFilterDbms::isFalsePositive(const CContactItemFieldSet& fieldSet, const TUid& fieldTypeUid, const TDesC& searchString)
+{
+    bool value(true);
+    TInt index = fieldSet.Find(fieldTypeUid);
+    if(index >= 0) {
+        const CContactItemField& field(fieldSet[index]);
+        CContactTextField* storage = field.TextStorage();
+        TPtrC text = storage->Text();
+        index = text.FindC(searchString);
+        // Check if this is the first word beginning with search string
+        if(index == 0)
+            value = false;
+        // Check if this is in the beginning of a word (the preceeding
+        // character is a space)
+        else if(index > 0 && TChar(text[index-1]) == TChar(0x20))
+            value = false;
+    }
+    return value;
+}
+
+/*!
+ * Transform detail filter into a contact item field definition that can be
+ * used with CContactDatabase finds.
+ */
 void CntSymbianFilterDbms::transformDetailFilterL(
         const QContactDetailFilter &detailFilter,
         CContactItemFieldDef *&fieldDef)
@@ -357,7 +491,8 @@ TInt CntSymbianFilterDbms::matchContacts(
 }
 
 /*
- * Get the match length setting. Digits to be used in matching (counted from
+ * Get the match length setting used in MatchPhoneNumber type filtering.
+ * \a matchLength Phone number digits to be used in matching (counted from
  * right).
  */
 void CntSymbianFilterDbms::getMatchLengthL(TInt& matchLength)

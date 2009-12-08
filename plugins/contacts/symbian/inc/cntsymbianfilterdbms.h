@@ -53,6 +53,7 @@ class QContactDetailFilter;
 class CntAbstractContactSorter;
 class CntTransformContact;
 class CContactItemFieldDef;
+class CContactItemFieldSet;
 
 class CntSymbianFilterDbms : public CntAbstractContactFilter
 {
@@ -61,13 +62,16 @@ public:
     ~CntSymbianFilterDbms();
 
     /* from CntAbstractContactFilter */
-    QList<QContactLocalId> contacts(
-            const QContactFilter& filter,
-            const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error);
-    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+    QList<QContactLocalId> contacts(const QContactFilter& filter,
+                                    const QList<QContactSortOrder>& sortOrders,
+                                    bool &filterSupported,
+                                    QContactManager::Error& error);
+    bool filterSupported(const QContactFilter& filter);
 
 private:
+    FilterSupport filterSupportLevel(const QContactFilter& filter);
+    QList<QContactLocalId> filterContacts(const QContactFilter& filter,
+                                          QContactManager::Error& error);
     void transformDetailFilterL(const QContactDetailFilter& detailFilter, CContactItemFieldDef*& fieldDef);
     TInt findContacts(
             CContactIdArray*& idArray,
@@ -80,6 +84,7 @@ private:
             CContactIdArray*& idArray,
             const TDesC& phoneNumber,
             const TInt matchLength);
+    bool isFalsePositive(const CContactItemFieldSet& fieldSet, const TUid& fieldTypeUid, const TDesC& searchString);
     void getMatchLengthL(TInt& matchLength);
     CContactDatabase &m_contactDatabase;
     CntAbstractContactSorter *m_contactSorter;
