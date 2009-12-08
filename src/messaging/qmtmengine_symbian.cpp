@@ -3669,7 +3669,6 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     if (count > 0) {
         privateMessage->_status = privateMessage->_status | QMessage::HasAttachments;
     }
-    bool pathForMessageAttachmentsCreated = false;
     for (TInt i = 0; i < count; i++) {
         CMsvAttachment* pAttachment = pStore->AttachmentManagerL().GetAttachmentInfoL(i);
         CleanupStack::PushL(pAttachment);
@@ -3878,7 +3877,6 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     if (c > 0) {
         privateMessage->_status = privateMessage->_status | QMessage::HasAttachments; 
     }
-    bool pathForMessageAttachmentsCreated = false;
     for (TInt i = 0; i < c; i++) {
        CMsvAttachment* pAttachment = emailMessage->AttachmentManager().GetAttachmentInfoL(i);
        CleanupStack::PushL(pAttachment);
