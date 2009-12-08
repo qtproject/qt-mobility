@@ -270,7 +270,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
   
-    Iniate synchronization with external servers of local changes that have been queued by message store operations, 
+    Initiate synchronization with external servers of local changes that have been queued by message store operations, 
     for messages with parent account \a id.
 
     On Windows mobile and desktop platforms this function performs no operation, as when a connection is available, 
