@@ -1314,7 +1314,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     {
         unsigned int contactid = 999998+i;
         idstoremove << contactid;
-        insertContact(contactid, QString::number(contactid)+ "@ovi.com", "Available");
+        insertContact(contactid, QString::number(contactid)+ "@ovi.com", "nco:presence-status-available");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
         QVERIFY(c.id().localId() == contactid);
         QContact firstContact;
@@ -1363,7 +1363,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QVERIFY(containDetail);
     }
     //now update presence to IM contact and check it in metacontact (TODO and if signal is emitted)
-    updateIMContactStatus(999999, "Offline");
+    updateIMContactStatus(999999, "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId << 999999, QStringList()

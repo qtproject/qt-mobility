@@ -39,10 +39,13 @@
 **
 ****************************************************************************/
 #include "cnttransformavatarsimple.h"
+#include "cntthumbnailcreator.h"
 
 // S60 specific contact field type containing image call object data
 #define KUidContactFieldCodImageValue 0x101F8841
 const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
+// The max. size of the thumbnail image that is saved into contacts database
+const TSize KMaxThumbnailSize(80, 96);
 
 QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QContactDetail &detail)
 {
@@ -75,10 +78,15 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 
         QString subType = avatar.subType();
         TUid uid(KNullUid);
-        if(subType.isEmpty()) {
+        if(subType.isEmpty() || subType.compare(subTypeImage) == 0) {
             uid = KUidContactFieldCodImage;
-        } else if (subType.compare(subTypeImage) == 0) {
-	        uid = KUidContactFieldCodImage;
+
+            // Add a thumbnail also, if there is an image available
+            CntThumbnailCreator* creator = new (ELeave) CntThumbnailCreator();
+            CleanupStack::PushL(creator);
+            // Note: scaling to thumbnail may take some time if the image is big
+            creator->addThumbnailFieldL(&fieldList, filename, KMaxThumbnailSize);
+            CleanupStack::PopAndDestroy(creator);
 	    } else if (subType.compare(subTypeAudioRingtone) == 0) {
 	        uid = KUidContactFieldRingTone;
 	    } else {

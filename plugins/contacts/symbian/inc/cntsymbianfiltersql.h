@@ -45,6 +45,7 @@
 #ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
 
 #include "cntabstractcontactfilter.h"
+#include "cntsymbianfiltersqlhelper.h"
 
 class CContactDatabase;
 QTM_USE_NAMESPACE
@@ -63,6 +64,8 @@ public:
 
 private:
     CContactDatabase& m_contactDatabase;
+    CntSymbianFilterSqlHelper* m_sqlhelper;
+    
 };
 
 #endif /* __SYMBIAN_CNTMODEL_USE_SQLITE__ */
