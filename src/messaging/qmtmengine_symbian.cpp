@@ -3068,7 +3068,8 @@ void CMTMEngine::updateEmailL(QMessage &message)
             }
             // Insert the contents of a buffer into the document at specified position
             bodyText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-            mailMsg->StoreBodyTextL(messageId, *bodyText, waiter->iStatus);
+            mailMsg->StoreBodyTextWithMimeHeaderL(messageId, *bodyText, *mime, waiter->iStatus);
+            
             waiter->Start();
             CActiveScheduler::Start();
                     
@@ -3107,7 +3108,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
         
         // Insert the contents of a buffer into the document at specified position
         bodyText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
-        mailMsg->StoreBodyTextL(messageId, *bodyText, waiter->iStatus);
+        mailMsg->StoreBodyTextWithMimeHeaderL(messageId, *bodyText, *mime, waiter->iStatus);
         waiter->Start();
         CActiveScheduler::Start();
         CleanupStack::PopAndDestroy(3);
@@ -3377,7 +3378,7 @@ void CMTMEngine::storeEmailL(QMessage &message, TMsvId dest)
 
         // Insert the contents of a buffer into the document at specified position
         bodyText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
-        emailMessage->StoreBodyTextL(newMessageId, *bodyText, waiter->iStatus);
+        emailMessage->StoreBodyTextWithMimeHeaderL(newMessageId, *bodyText, *mime, waiter->iStatus);
         waiter->Start();
         CActiveScheduler::Start();
         CleanupStack::PopAndDestroy(3);
