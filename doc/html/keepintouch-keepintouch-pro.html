@@ -23,6 +23,9 @@
     qtAddLibrary(QtMessaging)
     INCLUDEPATH += ../../src/messaging
 
+    qtAddLibrary(QtContacts)
+    INCLUDEPATH += ../../src/contacts ../../src/contacts/details ../../src/contacts/filters ../../src/contacts/requests
+
     symbian|win32 {
     } else {
     # Temporarily link against local qtopiamail lib (should be part of the platform)

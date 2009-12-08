@@ -6,7 +6,10 @@ QT += gui
 include(../examples.pri)
 
 qtAddLibrary(QtMessaging)
-INCLUDEPATH += ../../src/messaging
+INCLUDEPATH += ../../src/messaging 
+
+qtAddLibrary(QtContacts)
+INCLUDEPATH += ../../src/contacts ../../src/contacts/details ../../src/contacts/filters ../../src/contacts/requests
 
 symbian|win32 {
 } else {

@@ -1286,17 +1286,6 @@
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
-    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
-        <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
-        <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
-        <keyword ref="qgeoareamonitor.html#center-prop">setCenter</keyword>
-        <keyword ref="qgeoareamonitor.html#radius-prop">radius</keyword>
-        <keyword ref="qgeoareamonitor.html#radius-prop">setRadius</keyword>
-        <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
-        <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
-        <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
-        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
-    </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
         <keyword ref="qgeocoordinate.html">QGeoCoordinate</keyword>
         <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</keyword>
@@ -3217,6 +3206,9 @@
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
+    <section ref="keepintouch.html" title="'Keep in Touch' Example">
+        <keyword ref="keepintouch.html">'Keep in Touch' Example</keyword>
+    </section>
     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML">
         <keyword ref="battery-charge.html">Accessing Publish and Subscribe from QML</keyword>
     </section>
@@ -3268,6 +3260,9 @@
     <section ref="querymessages.html" title="Query Messages Example">
         <keyword ref="querymessages.html">Query Messages Example</keyword>
     </section>
+    <section ref="querymessages.html" title="Query Messages Example">
+        <keyword ref="querymessages.html">Query Messages Example</keyword>
+    </section>
     <section ref="quickstart.html" title="Quickstart Example">
         <keyword ref="quickstart.html">Quickstart Example</keyword>
     </section>
@@ -3280,8 +3275,8 @@
     <section ref="samplephonebook.html" title="Sample Phonebook Example">
         <keyword ref="samplephonebook.html">Sample Phonebook Example</keyword>
     </section>
-    <section ref="sendmessage.html" title="Send Message Example">
-        <keyword ref="sendmessage.html">Send Message Example</keyword>
+    <section ref="serviceactions.html" title="Service Actions Example">
+        <keyword ref="serviceactions.html">Service Actions Example</keyword>
     </section>
     <section ref="serviceactions.html" title="Service Actions Example">
         <keyword ref="serviceactions.html">Service Actions Example</keyword>
@@ -3300,6 +3295,9 @@
     </section>
     <section ref="sysinfo.html" title="System Information Example">
         <keyword ref="sysinfo.html">System Information Example</keyword>
+    </section>
+    <section ref="writemessage.html" title="Write Message Example">
+        <keyword ref="writemessage.html">Write Message Example</keyword>
     </section>
 </section>
 </DCF>

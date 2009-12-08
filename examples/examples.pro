@@ -46,6 +46,6 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
     !win32-g++:SUBDIRS += \
         keepintouch\
         querymessages\
-        sendmessage\
+        writemessage\
         serviceactions
 }

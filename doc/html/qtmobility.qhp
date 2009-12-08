@@ -214,9 +214,6 @@
                     <section ref="qcontacturl.html" title="QContactUrl Class Reference">
                         <section ref="qcontacturl-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
-                        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
                         <section ref="qgeocoordinate-members.html" title="List of all members"/>
                     </section>
@@ -477,6 +474,7 @@
                     </section>
                 </section>
                 <section ref="" title="Examples">
+                    <section ref="keepintouch.html" title="'Keep in Touch' Example"/>
                     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML"/>
                     <section ref="audiorecorder.html" title="Audio Recorder Example"/>
                     <section ref="bearercloud.html" title="Bearer Cloud Example"/>
@@ -497,13 +495,13 @@
                     <section ref="radio.html" title="Radio Example"/>
                     <section ref="recorder.html" title="Recorder Example"/>
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
-                    <section ref="sendmessage.html" title="Send Message Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
                     <section ref="servicebrowser.html" title="Service Browser Example"/>
                     <section ref="slideshow.html" title="SlideShow Example"/>
                     <section ref="slideshow.html" title="Slideshow Example"/>
                     <section ref="streamplayer.html" title="Stream Player Example"/>
                     <section ref="sysinfo.html" title="System Information Example"/>
+                    <section ref="writemessage.html" title="Write Message Example"/>
                 </section>
                 <section ref="" title="Overviews">
                     <section ref="functions.html" title="All Functions"/>
@@ -547,6 +545,7 @@
             </section>
         </toc>
         <keywords>
+            <keyword name="'Keep in Touch' Example" id="'Keep in Touch' Example" ref="keepintouch.html"/>
             <keyword name="Accessing Publish and Subscribe from QML" id="Accessing Publish and Subscribe from QML" ref="battery-charge.html"/>
             <keyword name="All Functions" id="All Functions" ref="functions.html"/>
             <keyword name="All Qt Mobility Classes" id="All Qt Mobility Classes" ref="classes.html"/>
@@ -1569,15 +1568,6 @@
             <keyword name="setUrl" id="QContactUrl::setUrl" ref="qcontacturl.html#setUrl"/>
             <keyword name="subType" id="QContactUrl::subType" ref="qcontacturl.html#subType"/>
             <keyword name="url" id="QContactUrl::url" ref="qcontacturl.html#url"/>
-            <keyword name="QGeoAreaMonitor" id="QGeoAreaMonitor" ref="qgeoareamonitor.html"/>
-            <keyword name="areaEntered" id="QGeoAreaMonitor::areaEntered" ref="qgeoareamonitor.html#areaEntered"/>
-            <keyword name="areaExited" id="QGeoAreaMonitor::areaExited" ref="qgeoareamonitor.html#areaExited"/>
-            <keyword name="center" id="QGeoAreaMonitor::center" ref="qgeoareamonitor.html#center-prop"/>
-            <keyword name="createDefaultMonitor" id="QGeoAreaMonitor::createDefaultMonitor" ref="qgeoareamonitor.html#createDefaultMonitor"/>
-            <keyword name="radius" id="QGeoAreaMonitor::radius" ref="qgeoareamonitor.html#radius-prop"/>
-            <keyword name="setCenter" id="QGeoAreaMonitor::setCenter" ref="qgeoareamonitor.html#center-prop"/>
-            <keyword name="setRadius" id="QGeoAreaMonitor::setRadius" ref="qgeoareamonitor.html#radius-prop"/>
-            <keyword name="~QGeoAreaMonitor" id="QGeoAreaMonitor::~QGeoAreaMonitor" ref="qgeoareamonitor.html#dtor.QGeoAreaMonitor"/>
             <keyword name="QGeoCoordinate" id="QGeoCoordinate" ref="qgeocoordinate.html"/>
             <keyword name="QGeoCoordinate::CoordinateFormat" id="QGeoCoordinate::CoordinateFormat" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DecimalDegrees" id="QGeoCoordinate::DecimalDegrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
@@ -3220,7 +3210,6 @@
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Release Notes of the QtMobility Project (Technology Preview)" id="Release Notes of the QtMobility Project (Technology Preview)" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
-            <keyword name="Send Message Example" id="Send Message Example" ref="sendmessage.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
             <keyword name="Service Frameworks Classes" id="Service Frameworks Classes" ref="servicefw.html"/>
@@ -3234,6 +3223,7 @@
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
             <keyword name="Versit API" id="Versit API" ref="versit.html"/>
+            <keyword name="Write Message Example" id="Write Message Example" ref="writemessage.html"/>
         </keywords>
         <files>
             <file>images/bearermonitor-example.png</file>
@@ -3258,7 +3248,6 @@
             <file>qcontactname.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
             <file>messaging.html</file>
-            <file>sendmessage.html</file>
             <file>qcontactabstractrequest-members.html</file>
             <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
@@ -3309,6 +3298,7 @@
             <file>qservicemanager.html</file>
             <file>qcontacttimestamp.html</file>
             <file>images/servicebrowser-attributes.png</file>
+            <file>writemessage-main-cpp.html</file>
             <file>qmessagefolderfilter-members.html</file>
             <file>samplephonebook-contactdetailsform-h.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
@@ -3373,6 +3363,7 @@
             <file>samplephonebook.html</file>
             <file>qmediaplaylistcontrol.html</file>
             <file>lgpl.html</file>
+            <file>writemessage.html</file>
             <file>qcontactdetaildefinitionfetchrequest.html</file>
             <file>cameracapture-cameracapture-h.html</file>
             <file>logfilepositionsource-main-cpp.html</file>
@@ -3445,12 +3436,14 @@
             <file>qmediaplaylistioplugin.html</file>
             <file>qmessagestore.html</file>
             <file>radio-radio-pro.html</file>
+            <file>writemessage-messagesender-cpp.html</file>
             <file>bearer-management.html</file>
             <file>fetchgooglemaps-main-cpp.html</file>
             <file>qcontactbirthday-members.html</file>
             <file>publ-subs.html</file>
             <file>qcontactsaverequest-members.html</file>
             <file>keepintouch-keepintouch-pro.html</file>
+            <file>writemessage-messagesender-h.html</file>
             <file>qvaluespacepublisher-members.html</file>
             <file>player-playercontrols-h.html</file>
             <file>qmessagefolderid.html</file>
@@ -3471,7 +3464,6 @@
             <file>qgeocoordinate.html</file>
             <file>qcontactnote-members.html</file>
             <file>qcontactactionfactory.html</file>
-            <file>sendmessage-sendmessage-pro.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qmessageordering-members.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
@@ -3483,6 +3475,7 @@
             <file>qcontactrelationshipfetchrequest-members.html</file>
             <file>qvideowindowcontrol-members.html</file>
             <file>qcontactchangeset.html</file>
+            <file>images/keepintouch-example.png</file>
             <file>qcontactdetailfilter-members.html</file>
             <file>qmediaplaylistwriter-members.html</file>
             <file>cameracapture-main-cpp.html</file>
@@ -3505,7 +3498,6 @@
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
-            <file>qgeoareamonitor-members.html</file>
             <file>qcontactunionfilter-members.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
@@ -3530,7 +3522,6 @@
             <file>qmessagefolderordering.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
-            <file>sendmessage-messagesender-h.html</file>
             <file>qcontactmanager.html</file>
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
@@ -3576,7 +3567,6 @@
             <file>qmediarecorder.html</file>
             <file>bearercloud-bearercloud-cpp.html</file>
             <file>sysinfo-dialog-cpp.html</file>
-            <file>sendmessage-main-cpp.html</file>
             <file>qcontactunionfilter.html</file>
             <file>images/publish-subscribe-subscriber.png</file>
             <file>qvideowidgetcontrol-members.html</file>
@@ -3624,7 +3614,6 @@
             <file>cameracapture-cameracapture-cpp.html</file>
             <file>samplephonebook-finddialog-h.html</file>
             <file>qcontactphonenumber-members.html</file>
-            <file>qgeoareamonitor.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
             <file>slideshow-main-cpp.html</file>
@@ -3712,7 +3701,6 @@
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
-            <file>sendmessage-messagesender-cpp.html</file>
             <file>images/spb-screen.png</file>
             <file>incomingcalls-filterdialog-cpp.html</file>
             <file>qmessagecontentcontainer.html</file>
@@ -3763,6 +3751,7 @@
             <file>images/battery-publisher.png</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
             <file>incomingcalls-main-cpp.html</file>
+            <file>writemessage-writemessage-pro.html</file>
             <file>qmessagefolderid-members.html</file>
             <file>qabstractvaluespacelayer-members.html</file>
             <file>qversitcontactexporter-members.html</file>
@@ -3774,6 +3763,7 @@
             <file>qcontactfamily.html</file>
             <file>qcontactlocalidfilter-members.html</file>
             <file>qvideoencodersettings-members.html</file>
+            <file>images/keepintouch-example.png</file>
             <file>images/codeless.png</file>
             <file>images/bearermonitor-example.png</file>
             <file>images/qserviceinterfacedescriptor.png</file>
