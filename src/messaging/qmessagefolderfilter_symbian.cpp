@@ -305,6 +305,7 @@ bool QMessageFolderFilterPrivate::filter(const QMessageFolder &messageFolder, co
         }
         break;
         }
+    case QMessageFolderFilterPrivate::ParentAccountIdFilter:
     case QMessageFolderFilterPrivate::None:
         break;
     }

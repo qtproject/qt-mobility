@@ -1936,6 +1936,7 @@ QMessageFolderIdList CMTMEngine::filterMessageFoldersL(const QMessageFolderFilte
             }
             break;
             }
+    	case QMessageFolderFilterPrivate::ParentAccountIdFilter:
         case QMessageFolderFilterPrivate::None:
             break;        
         }
@@ -3819,8 +3820,6 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     // be retrieved after this call has completed by calling Selection().
     if (emailMessage->Selection().Count() > 0) {
         if (pImMimeHeader->ContentType() == KImcvMultipart) {
-            TInt count = emailMessage->Selection().Count();
-            TMsvId selId = emailMessage->Selection()[0];
             // Get body content type (CImMimeHeader) from first body part
             CMsvEntry* pEntry = retrieveCMsvEntryAndPushToCleanupStack(emailMessage->Selection()[0]);
             if (pEntry->HasStoreL()) { 
@@ -4774,7 +4773,8 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
         }
         break;
         }
-    case QMessageFilterPrivate::None:
+    case QMessageFilterPrivate::ParentAccountIdFilter:
+    case QMessageFilterPrivate::ParentFolderIdFilter:
     case QMessageFilterPrivate::TimeStamp:
     case QMessageFilterPrivate::ReceptionTimeStamp:
     case QMessageFilterPrivate::Sender:
@@ -4783,6 +4783,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
     case QMessageFilterPrivate::Status:
     case QMessageFilterPrivate::Priority:
     case QMessageFilterPrivate::Size:
+    case QMessageFilterPrivate::None:
         break;
     }
     
@@ -4962,13 +4963,15 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
                 }
                 break;
                 }
-            case QMessageFilterPrivate::None:
+            case QMessageFilterPrivate::ParentAccountIdFilter:
+            case QMessageFilterPrivate::ParentFolderIdFilter:
             case QMessageFilterPrivate::Id:
             case QMessageFilterPrivate::ParentFolderId:
             case QMessageFilterPrivate::AncestorFolderIds:
             case QMessageFilterPrivate::ParentAccountId:
             case QMessageFilterPrivate::Type:
             case QMessageFilterPrivate::StandardFolder:
+            case QMessageFilterPrivate::None:
                 break;
             }
         }

@@ -608,6 +608,8 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
         }
         break;
         }
+    case QMessageFilterPrivate::ParentAccountIdFilter:
+    case QMessageFilterPrivate::ParentFolderIdFilter:
     case QMessageFilterPrivate::None:
         break;
     }
