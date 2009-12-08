@@ -48,33 +48,48 @@
 #include <e32cmn.h>
 #include <cntdb.h>
 
-QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
+CntSymbianFilter::CntSymbianFilter(CContactDatabase& contactDatabase):
     m_contactDatabase(contactDatabase)
 {
     m_sqlhelper = new CntSymbianFilterSqlHelper(contactDatabase);
-    
 }
 
-QContactSymbianFilter::~QContactSymbianFilter()
+CntSymbianFilter::~CntSymbianFilter()
 {
     delete m_sqlhelper;
 }
 
-QList<QContactLocalId> QContactSymbianFilter::contacts(
+QList<QContactLocalId> CntSymbianFilter::contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
+            bool &filterSupportedFlag,
             QContactManager::Error& error)
 {
     QList<QContactLocalId> matches;
     //sort order not supported yet
     matches = m_sqlhelper->searchContacts(filter,error);
+    // Tell the caller do slow filtering if the filter is not supported
+    filterSupportedFlag = filterSupported(filter);
     return matches;
 }
 
-CntAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(const QContactFilter& filter)
+bool CntSymbianFilter::filterSupported(const QContactFilter& filter)
 {
-    
-    return m_sqlhelper->filterSupported(filter);
+    TBool result;
+
+    // Map filter support into a boolean value
+    FilterSupport support = filterSupportLevel(filter);
+    if (support == Supported || support == SupportedPreFilterOnly) {
+        result = true;
+    } else {
+        result = false;
+    }
+    return result;
+}
+
+CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(const QContactFilter& filter)
+{
+    return m_sqlhelper->filterSupportLevel(filter);
 }
 
 #endif

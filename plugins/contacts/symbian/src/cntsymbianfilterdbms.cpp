@@ -51,8 +51,6 @@
 #include <cntdb.h>
 #include <cntfield.h>
 #include <centralrepository.h>
-// TODO: the following header is not available in public SDKs
-//#include <telephonydomaincrkeys.h>
 
 #include "qcontactname.h"
 #include "qcontactdetailfilter.h"
@@ -68,7 +66,7 @@ const TUint32 KTelMatchDigits                               = 0x00000001;
 // Default match length
 const TInt KDefaultMatchLength(7);
 
-CntSymbianFilterDbms::CntSymbianFilterDbms(CContactDatabase& contactDatabase):
+CntSymbianFilter::CntSymbianFilter(CContactDatabase& contactDatabase):
     m_contactDatabase(contactDatabase),
     m_contactSorter(0),
     m_transformContact(0)
@@ -78,7 +76,7 @@ CntSymbianFilterDbms::CntSymbianFilterDbms(CContactDatabase& contactDatabase):
     m_contactSorter = new CntSymbianSorterDbms(m_contactDatabase, *m_transformContact);
 }
 
-CntSymbianFilterDbms::~CntSymbianFilterDbms()
+CntSymbianFilter::~CntSymbianFilter()
 {
     delete m_contactSorter;
     delete m_transformContact;
@@ -99,7 +97,7 @@ CntSymbianFilterDbms::~CntSymbianFilterDbms()
  * to be done by the caller.
  * \a error On return, contains the possible error in filtering/sorting.
  */
-QList<QContactLocalId> CntSymbianFilterDbms::contacts(
+QList<QContactLocalId> CntSymbianFilter::contacts(
     const QContactFilter &filter,
     const QList<QContactSortOrder> &sortOrders,
     bool &filterSupportedFlag,
@@ -169,7 +167,7 @@ QList<QContactLocalId> CntSymbianFilterDbms::contacts(
  * The contact database version implementation for
  * QContactManager::filterSupport function.
 */
-bool CntSymbianFilterDbms::filterSupported(const QContactFilter& filter)
+bool CntSymbianFilter::filterSupported(const QContactFilter& filter)
 {
     TBool result;
 
@@ -188,9 +186,9 @@ bool CntSymbianFilterDbms::filterSupported(const QContactFilter& filter)
  * SupportedPreFilterOnly.
  *
  * Supported means that the filtering is implemented directly by the underlying
- * database. NotSupported means that CntSymbianFilterDbms::contacts will
+ * database. NotSupported means that CntSymbianFilter::contacts will
  * return an error. And SupportedPreFilterOnly means that the filter is not
- * fully supported, but the CntSymbianFilterDbms::contacts will act like the
+ * fully supported, but the CntSymbianFilter::contacts will act like the
  * filter was supported for performance reasons, returning a result that may
  * contain false positives. This means that the client must filter the
  * pre-filtered set of contacts to see if there are false positives included.
@@ -202,16 +200,16 @@ bool CntSymbianFilterDbms::filterSupported(const QContactFilter& filter)
  * the filter is not supported. returns
  *
  * SupportedPreFilterOnly is returned in the following cases:
- * 1. matchFlags is set to QContactFilter::MatchExactly (CntSymbianFilterDbms::contacts
+ * 1. matchFlags is set to QContactFilter::MatchExactly (CntSymbianFilter::contacts
  * will use QContactFilter::MatchContains)
- * 2. matchFlags is set to QContactFilter::MatchStartsWith (CntSymbianFilterDbms::contacts
+ * 2. matchFlags is set to QContactFilter::MatchStartsWith (CntSymbianFilter::contacts
  * will use QContactFilter::MatchContains)
- * 3. matchFlags is set to QContactFilter::MatchEndsWith (CntSymbianFilterDbms::contacts
+ * 3. matchFlags is set to QContactFilter::MatchEndsWith (CntSymbianFilter::contacts
  * will use QContactFilter::MatchContains)
- * 4. matchFlags is set to QContactFilter::MatchCaseSensitive (CntSymbianFilterDbms::contacts
+ * 4. matchFlags is set to QContactFilter::MatchCaseSensitive (CntSymbianFilter::contacts
  * will use QContactFilter::MatchContains)
  */
-CntAbstractContactFilter::FilterSupport CntSymbianFilterDbms::filterSupportLevel(const QContactFilter& filter)
+CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(const QContactFilter& filter)
 {
     FilterSupport filterSupported(NotSupported);
 
@@ -264,7 +262,7 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterDbms::filterSupportLevel
     return filterSupported;
 }
 
-QList<QContactLocalId> CntSymbianFilterDbms::filterContacts(
+QList<QContactLocalId> CntSymbianFilter::filterContacts(
     const QContactFilter& filter,
     QContactManager::Error& error)
 {
@@ -301,7 +299,7 @@ QList<QContactLocalId> CntSymbianFilterDbms::filterContacts(
             if(err != KErrNone){
                 CntSymbianTransformError::transformError(err, error);
             } else {
-                Q_ASSERT_X(fieldDef->Count() > 0, "CntSymbianFilterDbms", "Illegal field def");
+                Q_ASSERT_X(fieldDef->Count() > 0, "CntSymbianFilter", "Illegal field def");
                 TInt err = findContacts(idArray, *fieldDef, namePtr);
                 if(err != KErrNone) {
                     CntSymbianTransformError::transformError(err, error);
@@ -355,7 +353,7 @@ QList<QContactLocalId> CntSymbianFilterDbms::filterContacts(
  * 3. searches every word inside the field
  * 4. supports only "not case-sensitive" matching
  */
-bool CntSymbianFilterDbms::isFalsePositive(const CContactItemFieldSet& fieldSet, const TUid& fieldTypeUid, const TDesC& searchString)
+bool CntSymbianFilter::isFalsePositive(const CContactItemFieldSet& fieldSet, const TUid& fieldTypeUid, const TDesC& searchString)
 {
     bool value(true);
     TInt index = fieldSet.Find(fieldTypeUid);
@@ -379,7 +377,7 @@ bool CntSymbianFilterDbms::isFalsePositive(const CContactItemFieldSet& fieldSet,
  * Transform detail filter into a contact item field definition that can be
  * used with CContactDatabase finds.
  */
-void CntSymbianFilterDbms::transformDetailFilterL(
+void CntSymbianFilter::transformDetailFilterL(
         const QContactDetailFilter &detailFilter,
         CContactItemFieldDef *&fieldDef)
 {
@@ -444,7 +442,7 @@ void CntSymbianFilterDbms::transformDetailFilterL(
  * \a text The text to be searched for.
  * \return Symbian error code.
  */
-TInt CntSymbianFilterDbms::findContacts(
+TInt CntSymbianFilter::findContacts(
         CContactIdArray*& idArray,
         const CContactItemFieldDef& fieldDef,
         const TDesC& text) const
@@ -461,7 +459,7 @@ TInt CntSymbianFilterDbms::findContacts(
 /*!
  * Leaving implementation called by findContacts.
  */
-CContactIdArray* CntSymbianFilterDbms::findContactsL(
+CContactIdArray* CntSymbianFilter::findContactsL(
         const CContactItemFieldDef& fieldDef,
         const TDesC& text) const
 {
@@ -476,7 +474,7 @@ CContactIdArray* CntSymbianFilterDbms::findContactsL(
  * \a phoneNumber The phone number to match
  * \a matchLength Match length; digits from right.
  */
-TInt CntSymbianFilterDbms::matchContacts(
+TInt CntSymbianFilter::matchContacts(
         CContactIdArray*& idArray,
         const TDesC& phoneNumber,
         const TInt matchLength)
@@ -495,7 +493,7 @@ TInt CntSymbianFilterDbms::matchContacts(
  * \a matchLength Phone number digits to be used in matching (counted from
  * right).
  */
-void CntSymbianFilterDbms::getMatchLengthL(TInt& matchLength)
+void CntSymbianFilter::getMatchLengthL(TInt& matchLength)
 {
     //Get number of digits used to match
     CRepository* repository = CRepository::NewL(KCRUidTelConfiguration);

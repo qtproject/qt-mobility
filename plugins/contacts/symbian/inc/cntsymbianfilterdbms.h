@@ -55,11 +55,11 @@ class CntTransformContact;
 class CContactItemFieldDef;
 class CContactItemFieldSet;
 
-class CntSymbianFilterDbms : public CntAbstractContactFilter
+class CntSymbianFilter : public CntAbstractContactFilter
 {
 public:
-    CntSymbianFilterDbms(CContactDatabase& contactDatabase);
-    ~CntSymbianFilterDbms();
+    CntSymbianFilter(CContactDatabase& contactDatabase);
+    ~CntSymbianFilter();
 
     /* from CntAbstractContactFilter */
     QList<QContactLocalId> contacts(const QContactFilter& filter,
@@ -93,4 +93,4 @@ private:
 
 #endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/
 
-#endif /* CntSymbianFilterDbmsDBMS_H */
+#endif /* CNTSYMBIANFILTERDBMS_H */
