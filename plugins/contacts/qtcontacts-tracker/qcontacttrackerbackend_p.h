@@ -58,12 +58,18 @@
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/QLive>
 
-using namespace SopranoLive;
+#include <qmobilityglobal.h>
 #include "qtcontacts.h"
+
+using namespace SopranoLive;
 #include "qtrackercontactasyncrequest.h"
 
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactChangeSet;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QContactTrackerEngineData : public QSharedData
 {
