@@ -262,7 +262,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
 
             connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
             connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
-            connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
+            connect(d->control, SIGNAL(videoAvailableChanged(bool)), SIGNAL(videoAvailableChanged(bool)));
             connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
             connect(d->control, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged(bool)));
             connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
@@ -580,7 +580,7 @@ void QMediaPlayer::unbind(QObject *obj)
         disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                 this, SLOT(_q_updateMedia(QMediaContent)));
         disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
-        d->playlist = 0;
+        d->playlist = 0;        
     }
 }
 
@@ -786,7 +786,7 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
     If available, the QVideoWidget class can be used to view the video. As the
     life time of QMediaPlayer can be longer than the playback of one
     QMediaContent, this property may change over time, the
-    videoAvailabilityChanged signal can be used to monitor it's status.
+    videoAvailableChanged signal can be used to monitor it's status.
 
     \sa QVideoWidget, QMediaContent
 */
@@ -841,7 +841,7 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 */
 
 /*!
-    \fn void QMediaPlayer::videoAvailabilityChanged(bool videoAvailable)
+    \fn void QMediaPlayer::videoAvailableChanged(bool videoAvailable)
 
     Signal the availability of visual content has changed to \a videoAvailable.
 */

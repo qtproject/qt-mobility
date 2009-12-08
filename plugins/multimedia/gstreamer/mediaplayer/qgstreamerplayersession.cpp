@@ -672,7 +672,7 @@ void QGstreamerPlayerSession::getStreamsInfo()
 
     if (haveVideo != m_videoAvailable) {
         m_videoAvailable = haveVideo;
-        emit videoAvailabilityChanged(m_videoAvailable);
+        emit videoAvailableChanged(m_videoAvailable);
     }
 
     emit streamsChanged();
