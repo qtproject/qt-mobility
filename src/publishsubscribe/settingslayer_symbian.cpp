@@ -345,9 +345,54 @@ bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator,
     Handle handle,
     const QString &subPath)
 {
-    qDebug("bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath)");
-    //TODO: Is this needed in Symbian?
-    return false;
+    SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+    if (!sh)
+        return false;
+
+    QString path(subPath);
+    while (path.endsWith(QLatin1Char('/')))
+        path.chop(1);
+
+    int index = path.lastIndexOf(QLatin1Char('/'), -1);
+
+    bool createdHandle = false;
+
+    QString value;
+    if (index == -1) {
+        value = path;
+    } else {
+        // want a value that is in a sub path under handle
+        value = path.mid(index + 1);
+        path.truncate(index);
+
+        if (path.isEmpty())
+            path.append(QLatin1Char('/'));
+
+        sh = symbianSettingsHandle(item(Handle(sh), path));
+        createdHandle = true;
+    }
+
+    QString fullPath(sh->path);
+    if (fullPath != QLatin1String("/"))
+        fullPath.append(QLatin1Char('/'));
+
+    fullPath.append(value);
+
+    bool success = false;
+    PathMapper::Target target;
+    quint32 category;
+    quint32 key;
+    if (pathMapper.resolvePath(fullPath, target, category, key)) {
+        if (target == PathMapper::TargetRPropery) {
+            XQPublishAndSubscribeUtils utils(m_settingsManager);
+            utils.deleteProperty(XQPublishAndSubscribeSettingsKey((long)category, (unsigned long)key));
+        }
+    }
+
+    if (createdHandle)
+        removeHandle(Handle(sh));
+
+    return success;
 }
 
 void SymbianSettingsLayer::addWatch(QValueSpacePublisher *, Handle)
