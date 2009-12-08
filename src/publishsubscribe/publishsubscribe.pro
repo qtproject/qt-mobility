@@ -28,6 +28,7 @@ symbian {
     DEPENDPATH += symbian
     INCLUDEPATH += symbian
     DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
+    DEFINES += XQSETTINGSMANAGER_NO_TRANSACTIONS
     include(symbian/settingsmanager.pri)
 
     deploy.path = $$EPOCROOT
