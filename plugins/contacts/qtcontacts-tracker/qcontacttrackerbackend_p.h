@@ -64,11 +64,6 @@
 using namespace SopranoLive;
 #include "qtrackercontactasyncrequest.h"
 
-QTM_BEGIN_NAMESPACE
-class QContactAbstractRequest;
-class QContactChangeSet;
-QTM_END_NAMESPACE
-
 QTM_USE_NAMESPACE
 
 class QContactTrackerEngineData : public QSharedData
@@ -165,7 +160,7 @@ private:
 class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error&);
         QString managerName() const;
