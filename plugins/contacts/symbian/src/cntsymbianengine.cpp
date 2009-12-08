@@ -477,6 +477,12 @@ void CntSymbianEngine::updateContactL(QContact &contact)
     CContactItem* contactItem = m_dataBase->contactDatabase()->OpenContactLX(contact.localId());
     CleanupStack::PushL(contactItem);
 
+    // Cannot update contact type. The client needs to do this itself.
+    if ((contact.type() == QContactType::TypeContact && contactItem->Type() == KUidContactGroup) || 
+        (contact.type() == QContactType::TypeGroup && contactItem->Type() == KUidContactCard)){
+        User::Leave(KErrAlreadyExists);
+    }
+    
     // Copy the data from QContact to CContactItem
     m_transformContact->transformContactL(contact, *contactItem);
 
