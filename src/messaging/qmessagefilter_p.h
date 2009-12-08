@@ -121,7 +121,7 @@ public:
     static bool lessThan(const QMessageFilter filter1, const QMessageFilter filter2); 
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
 
-    enum Field {None = 0, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, Type, StandardFolder, TimeStamp, ReceptionTimeStamp, Sender, Recipients, Subject, Status, Priority, Size};
+    enum Field {None = 0, ParentAccountIdFilter, ParentFolderIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, Type, StandardFolder, TimeStamp, ReceptionTimeStamp, Sender, Recipients, Subject, Status, Priority, Size};
     enum Comparator {Equality = 0, Relation, Inclusion};
 
     bool _valid;
@@ -130,6 +130,8 @@ public:
 
     QMessageIdList _ids;
     QVariant _value;
+    QMessageAccountFilter *_accountFilter;
+    QMessageFolderFilter *_folderFilter;
     QMessageFilterPrivate::Field _field;
 
     Comparator _comparatorType;

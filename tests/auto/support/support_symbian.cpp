@@ -107,6 +107,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     QString parentAccountName(params["parentAccountName"]);
     QString parentFolderPath(params["parentFolderPath"]);
     QString to(params["to"]);
+    QString cc(params["cc"]);
     QString from(params["from"]);
     QString date(params["date"]);
     QString receivedDate(params["receivedDate"]);
@@ -139,6 +140,15 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                     toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
                 }
                 message.setTo(toList);
+                
+                QList<QMessageAddress> ccList;
+                foreach (const QString &addr, cc.split(",")) {
+					if (!addr.isEmpty()) {
+                    ccList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+					}
+                }
+                message.setCc(ccList);
+                
                 message.setFrom(QMessageAddress(from, QMessageAddress::Email));
                 message.setSubject(subject);
     

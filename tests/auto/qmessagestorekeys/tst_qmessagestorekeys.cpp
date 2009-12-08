@@ -445,7 +445,6 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << accountIds
         << QMessageAccountIdList();
 
-#ifndef Q_OS_SYMBIAN    
     QTest::newRow("id filter inclusion 1")
         << QMessageAccountFilter::byId(QMessageAccountFilter::byName("Work", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
         << ( QMessageAccountIdList() << accountIds[0] )
@@ -495,7 +494,6 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << QMessageAccountFilter::byId(QMessageAccountFilter::byName("NoneSuch"), QMessageDataComparator::Excludes) 
         << accountIds
         << QMessageAccountIdList();
-#endif    
 
     QTest::newRow("name equality 1")
         << QMessageAccountFilter::byName("Work", QMessageDataComparator::Equal) 
@@ -784,12 +782,12 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << folderIds
         << QMessageFolderIdList();
 
-#ifndef Q_OS_SYMBIAN    
     QTest::newRow("id filter inclusion 1")
         << QMessageFolderFilter::byId(QMessageFolderFilter::byPath("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[0] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] );
 
+#ifndef Q_OS_SYMBIAN    
     QTest::newRow("id filter inclusion 2")
         << QMessageFolderFilter::byId(QMessageFolderFilter::byPath("Innbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] )
@@ -799,6 +797,7 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << QMessageFolderFilter::byId(QMessageFolderFilter::byPath("box/X-Ann", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
+#endif    
 
     QTest::newRow("id filter inclusion empty")
         << QMessageFolderFilter::byId(QMessageFolderFilter(), QMessageDataComparator::Includes) 
@@ -815,6 +814,7 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] );
 
+#ifndef Q_OS_SYMBIAN    
     QTest::newRow("id filter exclusion 2")
         << QMessageFolderFilter::byId(QMessageFolderFilter::byPath("Innbox/X-Announce", QMessageDataComparator::Equal), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] << folderIds[3] )
@@ -824,6 +824,7 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << QMessageFolderFilter::byId(QMessageFolderFilter::byPath("box/X-Ann", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] )
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
+#endif    
 
     QTest::newRow("id filter exclusion empty")
         << QMessageFolderFilter::byId(QMessageFolderFilter(), QMessageDataComparator::Excludes) 
@@ -834,7 +835,6 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << QMessageFolderFilter::byId(QMessageFolderFilter::byPath("NoneSuch"), QMessageDataComparator::Excludes) 
         << folderIds
         << QMessageFolderIdList();
-#endif    
 
     QTest::newRow("path equality 1")
         << QMessageFolderFilter::byPath("My messages", QMessageDataComparator::Equal)
@@ -1074,7 +1074,6 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << folderIds
         << QMessageFolderIdList();
 
-#ifndef Q_OS_SYMBIAN
     QTest::newRow("parentAccountId filter inclusion 1")
         << QMessageFolderFilter::byParentAccountId(QMessageAccountFilter::byName("Alter Ego", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
         << ( QMessageFolderIdList() << folderIds[0] )
@@ -1125,6 +1124,7 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << folderIds
         << QMessageFolderIdList();
 
+#ifndef Q_OS_SYMBIAN
     QTest::newRow("parentFolderId equality 1")
         << QMessageFolderFilter::byParentFolderId(folderIds[1], QMessageDataComparator::Equal) 
         << ( QMessageFolderIdList() << folderIds[2] )
@@ -1529,7 +1529,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-#ifndef Q_OS_SYMBIAN       
     QTest::newRow("id filter inclusion non matching")
         << QMessageFilter::byId(~QMessageFilter(), QMessageDataComparator::Includes) 
         << QMessageIdList()
@@ -1542,7 +1541,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
-#endif    
 
     QTest::newRow("type equality 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Equal) 
@@ -2042,17 +2040,26 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[4] )
         << "";
 
-#ifndef Q_OS_SYMBIAN
     QTest::newRow("receptionTimeStamp equality 1")
-        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("1999-04-01T10:31:00Z", Qt::ISODate), QMessageDataComparator::Equal) 
+#ifndef Q_OS_SYMBIAN
+        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("1999-04-01T10:31:00Z", Qt::ISODate), QMessageDataComparator::Equal)
+#else    
+        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("1999-04-01T10:30:00Z", Qt::ISODate), QMessageDataComparator::Equal) 
+#endif    
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
 
     QTest::newRow("receptionTimeStamp equality 2")
-        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("2000-01-01T13:05:00Z", Qt::ISODate), QMessageDataComparator::Equal) 
+#ifndef Q_OS_SYMBIAN
+        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("2000-01-01T13:05:00Z", Qt::ISODate), QMessageDataComparator::Equal)
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
+#else    
+        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("2000-01-01T13:00:00Z", Qt::ISODate), QMessageDataComparator::Equal)
+        << ( QMessageIdList() << messageIds[3] << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+#endif    
         << "";
 
     QTest::newRow("receptionTimeStamp equality non-matching")
@@ -2068,15 +2075,25 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 
     QTest::newRow("receptionTimeStamp inequality 1")
-        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("1999-04-01T10:31:00Z", Qt::ISODate), QMessageDataComparator::NotEqual) 
+#ifndef Q_OS_SYMBIAN    
+        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("1999-04-01T10:31:00Z", Qt::ISODate), QMessageDataComparator::NotEqual)
+#else    
+        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("1999-04-01T10:30:00Z", Qt::ISODate), QMessageDataComparator::NotEqual)
+#endif    
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] )
         << "";
 
     QTest::newRow("receptionTimeStamp inequality 2")
+#ifndef Q_OS_SYMBIAN    
         << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("2000-01-01T13:05:00Z", Qt::ISODate), QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[2] )
+#else    
+        << QMessageFilter::byReceptionTimeStamp(QDateTime::fromString("2000-01-01T13:00:00Z", Qt::ISODate), QMessageDataComparator::NotEqual) 
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[3] << messageIds[2] )
+#endif    
         << "";
 
     QTest::newRow("receptionTimeStamp inequality non-matching")
@@ -2099,14 +2116,24 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 
     QTest::newRow("receptionTimeStamp less than equal")
         << QMessageFilter::byReceptionTimeStamp(epoch, QMessageDataComparator::LessThanEqual) 
+#ifndef Q_OS_SYMBIAN    
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
+#else        
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+#endif
         << "";
 
     QTest::newRow("receptionTimeStamp greater than")
         << QMessageFilter::byReceptionTimeStamp(epoch, QMessageDataComparator::GreaterThan) 
+#ifndef Q_OS_SYMBIAN    
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] )
+#else        
+        << ( QMessageIdList() << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("receptionTimeStamp greater than equal")
@@ -2114,7 +2141,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] )
         << "";
-#endif
 
     QTest::newRow("status equality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) 
@@ -2297,8 +2323,8 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
         << ( QMessageIdList() << messageIds[2] << messageIds[3] )
 #elif defined(Q_OS_SYMBIAN)
-        << ( QMessageIdList() << messageIds[3] )
-        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
 #else
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
@@ -2333,8 +2359,8 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
 #elif defined(Q_OS_SYMBIAN)        
-        << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
-        << ( QMessageIdList() << messageIds[3] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
 #else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
@@ -2377,7 +2403,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-#ifndef Q_OS_SYMBIAN    
     QTest::newRow("parentAccountId filter inclusion 1")
         << QMessageFilter::byParentAccountId(QMessageAccountFilter::byName("Alter Ego", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[0] )
@@ -2437,7 +2462,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds
         << QMessageIdList()
         << "";
-#endif
 
     QTest::newRow("standardFolder equality 1")
         << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal)
@@ -2523,7 +2547,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-#ifndef Q_OS_SYMBIAN    
     QTest::newRow("parentFolderId filter inclusion 1")
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[0] )
@@ -2538,8 +2561,13 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 
     QTest::newRow("parentFolderId filter inclusion 3")
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Innbox", QMessageDataComparator::Includes), QMessageDataComparator::Includes)
+#ifndef Q_OS_SYMBIAN    
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
+#else
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+#endif
         << "";
 
     QTest::newRow("parentFolderId filter inclusion empty")
@@ -2568,8 +2596,13 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
 
     QTest::newRow("parentFolderId filter exclusion 3")
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("Innbox", QMessageDataComparator::Includes), QMessageDataComparator::Excludes)
+#ifndef Q_OS_SYMBIAN    
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
+#else
+        << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] )
+#endif
         << "";
 
     QTest::newRow("parentFolderId filter exclusion empty")
@@ -2584,8 +2617,9 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
+#ifndef Q_OS_SYMBIAN
     QTest::newRow("ancestorFolderIds inclusion 1")
-        << QMessageFilter::byAncestorFolderIds(folderIds[1], QMessageDataComparator::Includes) 
+        << QMessageFilter::byAncestorFolderIds(folderIds[1], QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] )
         << "";
@@ -2696,8 +2730,8 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
 #elif defined(Q_OS_SYMBIAN)        
-        << messageIds
-        << QMessageIdList() 
+        << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
+        << ( QMessageIdList() << messageIds[0] << messageIds[4] )
 #else
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[4] )
@@ -2906,7 +2940,9 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << QMessageOrdering::bySize(Qt::AscendingOrder)
 #if defined(Q_OS_SYMBIAN)
         << ( MessageListList() << ( QMessageIdList() << messageIds[3] )
-                               << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] )
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[1] )
 #else    
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] )
 #if defined(Q_OS_WIN)
@@ -2924,7 +2960,9 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
         << QMessageOrdering::bySize(Qt::DescendingOrder)
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
 #if defined(Q_OS_SYMBIAN)
-                               << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[1] )
+                               << ( QMessageIdList() << messageIds[4] )
+                               << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[3] ) );
 #else    
                                << ( QMessageIdList() << messageIds[1] )

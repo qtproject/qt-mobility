@@ -60,6 +60,7 @@ public:
     static void setSize(const QMessage &message, uint size);
     static void setStandardFolder(QMessage& message, QMessage::StandardFolder sf);
     static QMessagePrivate* implementation(const QMessage &message);
+    static QMessageContentContainerPrivate* containerImplementation(const QMessage &message);
 
 public: // Data
     QMessage *q_ptr;
