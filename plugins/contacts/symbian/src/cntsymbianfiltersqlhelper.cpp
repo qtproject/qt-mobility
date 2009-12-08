@@ -513,6 +513,7 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupport
             case QContactFilter::UnionFilter:
             default:
                     filterSupported = CntAbstractContactFilter::NotSupported;
+                    break;
                          
         }
     return filterSupported;

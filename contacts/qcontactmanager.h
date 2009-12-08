@@ -145,6 +145,7 @@ public:
         MutableDefinitions,
         Relationships,
         ArbitraryRelationshipTypes,
+        RelationshipOrdering,
         SelfContact,
         Anonymous,
         ChangeLogs

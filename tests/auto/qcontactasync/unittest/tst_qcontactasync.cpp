@@ -603,7 +603,7 @@ void tst_QContactAsync::contactRemove()
     // cancelling
     QContact temp;
     QContactName nameDetail;
-    nameDetail.setCustomLabel("Should not be removed");
+    nameDetail.setFirst("Should not be removed");
     temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
     crr.setFilter(dfil);
@@ -671,7 +671,7 @@ void tst_QContactAsync::contactSave()
     int originalCount = cm->contacts().size();
     QContact testContact;
     QContactName nameDetail;
-    nameDetail.setCustomLabel("Test Contact");
+    nameDetail.setFirst("Test Contact");
     testContact.saveDetail(&nameDetail);
     QList<QContact> saveList;
     saveList << testContact;
@@ -1265,7 +1265,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId aId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Aaron")) {
             aId = curr.id();
             break;
         }
@@ -1293,7 +1293,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Bob")) {
             bId = curr.id();
             break;
         }
@@ -1323,7 +1323,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Borris")) {
             cId = curr.id();
             break;
         }
@@ -1426,15 +1426,15 @@ void tst_QContactAsync::relationshipRemove()
     QContactId aId, bId, cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Aaron")) {
             aId = curr.id();
             continue;
         }
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Bob")) {
             bId = curr.id();
             continue;
         }
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Borris")) {
             cId = curr.id();
             continue;
         }
@@ -1630,11 +1630,11 @@ void tst_QContactAsync::relationshipSave()
     QContactId cId, aId, bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Borris Aaronsun")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Borris")) {
             cId = curr.id();
-        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Bob Aaronsen")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Bob")) {
             bId = curr.id();
-        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel) == QString("Aaron Aaronson")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Aaron")) {
             aId = curr.id();
         }
     }
@@ -1944,13 +1944,16 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
 
     QContact a, b, c;
     QContactName aNameDetail;
-    aNameDetail.setCustomLabel("Aaron Aaronson");
+    aNameDetail.setFirst("Aaron");
+    aNameDetail.setLast("Aaronson");
     a.saveDetail(&aNameDetail);
     QContactName bNameDetail;
-    bNameDetail.setCustomLabel("Bob Aaronsen");
+    bNameDetail.setFirst("Bob");
+    bNameDetail.setLast("Aaronsen");
     b.saveDetail(&bNameDetail);
     QContactName cNameDetail;
-    cNameDetail.setCustomLabel("Borris Aaronsun");
+    cNameDetail.setFirst("Borris");
+    cNameDetail.setLast("Aaronsun");
     c.saveDetail(&cNameDetail);
 
     QContactPhoneNumber phn;

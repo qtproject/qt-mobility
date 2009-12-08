@@ -55,20 +55,21 @@
 #include <QSharedData>
 
 /*!
- * \class QContactMemoryEngine
- * \brief The QContactMemoryEngine class provides an in-memory implementation of a contacts backend.
- *
- * It may be used as a reference implementation, or when persistent storage is not required.
- *
- * During construction, it will load the in-memory data associated with the memory store
- * identified by the "id" parameter from the given parameters if it exists, or a new,
- * anonymous store if it does not.
- *
- * Data stored in this engine is only available in the current process.
- *
- * This engine supports sharing, so an internal reference count is increased
- * whenever a manager uses this backend, and is decreased when the manager
- * no longer requires this engine.
+  \class QContactMemoryEngine
+  \brief The QContactMemoryEngine class provides an in-memory implementation
+  of a contacts backend.
+ 
+  It may be used as a reference implementation, or when persistent storage is not required.
+ 
+  During construction, it will load the in-memory data associated with the memory store
+  identified by the "id" parameter from the given parameters if it exists, or a new,
+  anonymous store if it does not.
+ 
+  Data stored in this engine is only available in the current process.
+ 
+  This engine supports sharing, so an internal reference count is increased
+  whenever a manager uses this backend, and is decreased when the manager
+  no longer requires this engine.
  */
 
 /* static data for manager class */
@@ -543,6 +544,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
 /*! \reimp */
 QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
+    error = QContactManager::NoError;
     QContactManager::Error functionError;
     QContactChangeSet changeSet;
     QList<QContactManager::Error> retn;
@@ -1081,9 +1083,8 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
         case QContactManager::Groups:
         case QContactManager::ActionPreferences:
         case QContactManager::Relationships:
-            return true;
         case QContactManager::ArbitraryRelationshipTypes:
-            return true;
+        case QContactManager::RelationshipOrdering:
         case QContactManager::MutableDefinitions:
             return true;
         case QContactManager::Anonymous:
