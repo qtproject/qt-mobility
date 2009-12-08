@@ -117,7 +117,7 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
 {
     isPhoneNumberSearchforDetailFilter = false;
     QList<QContactLocalId> idList;
-    if(filterSupported(filter)){
+    if(filterSupportLevel(filter)){
         
         // Create sql query from the filters
         QString sqlQuery;
@@ -444,8 +444,8 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(
     if(detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName){
        
     // Phone numbers need separate handling
-            if ((filterSupported(detailFilter) == CntAbstractContactFilter::Supported || 
-                 filterSupported(detailFilter) == CntAbstractContactFilter::SupportedPreFilterOnly))
+            if ((filterSupportLevel(detailFilter) == CntAbstractContactFilter::Supported
+                 || filterSupportLevel(detailFilter) == CntAbstractContactFilter::SupportedPreFilterOnly))
             {
                 QString number((detailFilter.value()).toString());
                 TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
@@ -494,7 +494,7 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(
  * the filter is not supported. returns
  *
  */
-CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupported(const QContactFilter& filter)
+CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupportLevel(const QContactFilter& filter)
 {
     CntAbstractContactFilter::FilterSupport filterSupported(CntAbstractContactFilter::NotSupported);
     switch (filter.type()) {

@@ -81,7 +81,7 @@ void TestCntRelationship::initTestCase()
     QVERIFY(error == KErrNone);
     
     // create relationship
-    m_relationship = new CntRelationship(m_database);
+    m_relationship = new CntRelationship(m_database, m_manager->managerUri());
 }
 
 
