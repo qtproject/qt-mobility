@@ -43,61 +43,40 @@
 #include <qtrackercontactidfetchrequest.h>
 
 #include <qtcontacts.h>
+#include <qcontactlocalidfetchrequest.h>
+#include <qcontactfetchrequest.h>
 
-#include <QtTracker/ontologies/nie.h>
-#include <QtTracker/ontologies/nco.h>
-using namespace SopranoLive;
-
+/*!
+ * Run QContactFetchRequest instead of QContactLocalIdFetchRequest
+ */
 QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractRequest* request,
                                                              QContactManagerEngine* parent) :
     QTrackerContactFetchRequest(request, parent)
 {
-}
 
-void QTrackerContactIdFetchRequest::run()
-{
-    Q_ASSERT( req->type() == QContactAbstractRequest::ContactLocalIdFetchRequest );
-    QContactLocalIdFetchRequest* r = qobject_cast<QContactLocalIdFetchRequest*> (req);
-    if (!r) {
-        QList<QContactManager::Error> dummy;
-        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy,
-                                    QContactAbstractRequest::Finished);
-        return;
+    idfetchrequest = qobject_cast<QContactLocalIdFetchRequest*>(request);
+    // replace req with QContactFetchRequest that will be run instead
+    req = new QContactFetchRequest();
+    req->setManager(request->manager());
+    QContactFetchRequest *fetchReq = qobject_cast<QContactFetchRequest*>(req);
+    if( fetchReq && idfetchrequest)
+    {
+        fetchReq->setFilter(idfetchrequest->filter());
+        // IMContacts needs to be fetched to use metacontact matching
+        fetchReq->setDefinitionRestrictions(QStringList()<<QContactOnlineAccount::DefinitionName);
     }
-
-    QContactFilter filter = r->filter();
-    QList<QContactSortOrder> sorting = r->sorting();
-    Q_UNUSED(filter)
-    Q_UNUSED(sorting)
-
-    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    applyFilterToContact(RDFContact, r->filter());
-
-    RDFSelect quer;
-    // only one column - id
-    quer.addColumn("contactId", RDFContact.property<nco::contactUID> ());
-    query = ::tracker()->modelQuery(quer);
-    // need to store LiveNodes in order to receive notification from model
-    QObject::connect(query.model(), SIGNAL(modelUpdated()), this, SLOT(modelUpdated()));
 }
 
-
-void QTrackerContactIdFetchRequest::modelUpdated()
+void QTrackerContactIdFetchRequest::emitFinished()
 {
-    QSet<QContactLocalId> result;
+    delete req; // delete QContactFetchRequest we used to get the result
+    req = idfetchrequest;
     // for now this only serves get all contacts
-    for(int i = 0; i < query->rowCount(); i++) {
-        bool ok;
-        // only one column - id \sa run()
-        QContactLocalId id = query->index(i, 0).data().toUInt(&ok);
-        if (ok) {
-            // Append only, if we have a valid contact id
-            // and it's not already added
-            result.insert(id);
-        }
+    QList<QContactLocalId> results;
+    foreach(const QContact &c, result) {
+        results << c.localId();
     }
-
-    QContactManagerEngine::updateRequest(req, result.toList(), QContactManager::NoError,
+    QContactManagerEngine::updateRequest(req, results, QContactManager::NoError,
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished,
                               false);

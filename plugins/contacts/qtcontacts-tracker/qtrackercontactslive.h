@@ -42,6 +42,7 @@
 #ifndef QTRACKERCONTACTSLIVE_H
 #define QTRACKERCONTACTSLIVE_H
 
+#include <qmobilityglobal.h>
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactphonenumber.h>
@@ -61,6 +62,8 @@ namespace ContactContext {
         Work
     };
 }
+
+QTM_USE_NAMESPACE
 
 /**
  * This class will abstact and hide how contact information is saved to Tracker

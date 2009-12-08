@@ -43,8 +43,15 @@
 #define QTRACKERCONTACTIDFETCHREQUEST_H_
 
 #include <qtrackercontactasyncrequest.h>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactManagerEngine;
+class QContactLocalIdFetchRequest;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 /*!
  * Running QContactLocalIdFetchRequest. Doing the async tracker query and when data is ready setting the
@@ -57,9 +64,9 @@ public:
     QTrackerContactIdFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
 protected slots:
     //!\ reimp
-    void run();
-public slots:
-    void modelUpdated();
+    void emitFinished();
+private:
+    QContactLocalIdFetchRequest *idfetchrequest;
 };
 
 

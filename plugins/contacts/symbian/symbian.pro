@@ -36,6 +36,7 @@ symbian: {
         inc/cnttransformorganisation.h \
         inc/cnttransformavatar.h \
         inc/cnttransformavatarsimple.h \
+        inc/cntthumbnailcreator.h \
         inc/cnttransformsynctarget.h \
         inc/cnttransformgender.h \
         inc/cnttransformanniversary.h \
@@ -72,6 +73,7 @@ symbian: {
         src/cnttransformorganisation.cpp \
         src/cnttransformavatar.cpp \
         src/cnttransformavatarsimple.cpp \
+        src/cntthumbnailcreator.cpp\
         src/cnttransformsynctarget.cpp \
         src/cnttransformgender.cpp \
         src/cnttransformanniversary.cpp \
@@ -97,13 +99,19 @@ symbian: {
         -lcntmodel \
         -lcentralrepository \
         -lestor \
-        -lflogger
+        -lflogger \
+        -lefsrv \
+        -lfbscli \
+        -limageconversion \
+        -lbitmaptransforms \
+        -lbafl
 
     target.path = /sys/bin
     INSTALLS += target
 
     exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
         DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
+        DEFINES += __SYMBIAN_CNTMODEL_USE_SQLITE__
         cntmodelResourceFile = \
             "START RESOURCE ../rss/cntmodel.rss" \
             "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \

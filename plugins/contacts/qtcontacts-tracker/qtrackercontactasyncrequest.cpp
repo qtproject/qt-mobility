@@ -47,11 +47,32 @@
 #include <QtTracker/ontologies/nie.h>
 #include <QtTracker/ontologies/nco.h>
 #include <qtrackercontactasyncrequest.h>
+#include <QHash>
 
 using namespace SopranoLive;
 
+class ConversionLookup: public QHash<QString,QString>
+{
+public:
+    ConversionLookup& operator<<(const QPair<QString, QString> &conversion)
+    {
+        this->insert(conversion.first, conversion.second);
+        return *this;
+    }
+};
+
+
 const QString FieldQContactLocalId("QContactLocalId");
 const QString FieldAccountPath("AccountPath");
+const ConversionLookup presenceConversion(ConversionLookup()
+            <<QPair<QString, QString>("presence-status-offline", QContactOnlineAccount::PresenceOffline)
+            <<QPair<QString, QString>("presence-status-available", QContactOnlineAccount::PresenceAvailable)
+            <<QPair<QString, QString>("presence_status-away", QContactOnlineAccount::PresenceAway)
+            <<QPair<QString, QString>("presence_status-extended-away", QContactOnlineAccount::PresenceExtendedAway)
+            <<QPair<QString, QString>("presence_status-busy", QContactOnlineAccount::PresenceBusy)
+            <<QPair<QString, QString>("presence_status-unknown", QContactOnlineAccount::PresenceUnknown)
+            <<QPair<QString, QString>("presence_status-hidden", QContactOnlineAccount::PresenceHidden)
+);
 
 void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
 {
@@ -187,19 +208,15 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
     return queryidsnumbers;
 }
 
-RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
+RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1)
 {
-    RDFVariable imaccount;
-    if (!forAffiliations)
-        imaccount = rdfcontact1.property<nco::hasIMAccount> ();
-    else
-        imaccount = rdfcontact1.property<nco::hasAffiliation> ().property<nco::hasIMAccount> ();
+    RDFVariable imaccount = rdfcontact1.property<nco::hasIMAccount> ();
     // columns
     RDFSelect queryidsimacccounts;
     queryidsimacccounts.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
 
     queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imID> ());
-    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imStatus> ());
+    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imPresence> ());
     queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imStatusMessage> ());
     queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imNickname> ());
     queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::imAccountType> ());
@@ -213,6 +230,29 @@ RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1, bool forAffiliations)
 QTrackerContactAsyncRequest::QTrackerContactAsyncRequest(QContactAbstractRequest* request)
 : req(request)
 {
+}
+
+const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
+{
+    if( rdfPhoneType.endsWith("VoicePhoneNumber") )
+        return QContactPhoneNumber::SubTypeVoice;
+    else if ( rdfPhoneType.endsWith("CarPhoneNumber") )
+        return QContactPhoneNumber::SubTypeCar;
+    else if ( rdfPhoneType.endsWith("CellPhoneNumber") )
+        return QContactPhoneNumber::SubTypeMobile;
+    else if ( rdfPhoneType.endsWith("BbsPhoneNumber") )
+        return QContactPhoneNumber::SubTypeBulletinBoardSystem;
+    else if ( rdfPhoneType.endsWith("FaxNumber") )
+        return QContactPhoneNumber::SubTypeFacsimile;
+    else if ( rdfPhoneType.endsWith("ModemNumber") )
+        return QContactPhoneNumber::SubTypeModem;
+    else if ( rdfPhoneType.endsWith("PagerNumber") )
+        return QContactPhoneNumber::SubTypePager;
+    else if ( rdfPhoneType.endsWith("MessagingNumber") )
+        return QContactPhoneNumber::SubTypeMessagingCapable;
+    else
+        qWarning() << Q_FUNC_INFO << "Not handled phone number type:" << rdfPhoneType;
+    return "";
 }
 
 QTrackerContactAsyncRequest::~QTrackerContactAsyncRequest()
@@ -302,19 +342,33 @@ void QTrackerContactFetchRequest::run()
     }
 
     if ( r->definitionRestrictions().contains( QContactOnlineAccount::DefinitionName) ) {
-        queryIMAccountNodes.clear();
         queryIMAccountNodesPending = 1;
-        // no office IM account - work in progress - to fix performances
-        for(int forAffiliations = 0; forAffiliations <= 0; forAffiliations++) {
-            // prepare query to get all im accounts
-            RDFVariable rdfcontact1 = RDFVariable::fromType<nco::PersonContact>();
+
+        RDFVariable contact4;
+        // prepare query to get all im contacts
+        RDFSelect queryidsimacccounts = prepareIMAccountsQuery(contact4);
+
+        if( r->filter().type() != QContactFilter::DefaultFilter )
+        {
+            // need to get all IMContacts with the same contact id (1) and all IMContacts
+            // that have the same metacontact (2)
+
+            // (1)rdfcontact1 represent the contacts that fits to the filter
+            RDFVariable rdfcontact1;
             applyFilterToContact(rdfcontact1, r->filter());
-            // criteria - only those with im accounts
-            RDFSelect queryidsimacccounts = prepareIMAccountsQuery(rdfcontact1,forAffiliations);
-            queryIMAccountNodes << ::tracker()->modelQuery(queryidsimacccounts);
-            QObject::connect(queryIMAccountNodes[forAffiliations].model(),
-                             SIGNAL(modelUpdated()),SLOT(iMAcountsReady()));
+
+            // (2) select all contacts that have the same metacontact as some contact corresponding to given filter
+            // and if metacontact exist.
+            RDFVariable rdfcontact3;
+            rdfcontact3.property<nco::metacontact> () = rdfcontact1.optional().property<nco::metacontact> ();
+
+            // aggregated criteria - only those with im contacts that match rdfcontact1 (same id) or rdfcontact3 (same metacontact)
+            contact4.isMemberOf(RDFVariableList()<<rdfcontact1<<rdfcontact3);
         }
+
+        queryIMAccountNodes = ::tracker()->modelQuery(queryidsimacccounts);
+        QObject::connect(queryIMAccountNodes.model(),
+                SIGNAL(modelUpdated()), SLOT(iMAcountsReady()));
     }
 
     QList<QContactLocalId> ids;
@@ -424,10 +478,7 @@ void QTrackerContactFetchRequest::contactsReady()
     * need to be constructed before linking contacts with same metacontact.
     */
     if (request->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName)) {
-        Q_ASSERT(queryIMAccountNodes.size());
-        for (int cnt = 0; cnt < queryIMAccountNodes.size(); cnt++) {
-            processQueryIMAccounts(queryIMAccountNodes[cnt], cnt);
-        }
+        processQueryIMAccounts(queryIMAccountNodes);
     }
 
     // 2) process contacts: query and during it handle metacontacts
@@ -493,7 +544,11 @@ void QTrackerContactFetchRequest::contactsReady()
             result[i] = engine->setContactDisplayLabel(engine->synthesizeDisplayLabel(cont, synthError), cont);
         }
     }
+    emitFinished();
+}
 
+void QTrackerContactFetchRequest::emitFinished()
+{
     QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
                               QList<QContactManager::Error> (),
                               QContactAbstractRequest::Finished, true);
@@ -718,29 +773,6 @@ void QTrackerContactFetchRequest::iMAcountsReady()
  * An internal helper method for converting nco:PhoneNumber subtype to
  * QContactPhoneNumber:: subtype attribute
  */
-const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
-{
-    if( rdfPhoneType.endsWith("VoicePhoneNumber") )
-        return QContactPhoneNumber::SubTypeVoice;
-    else if ( rdfPhoneType.endsWith("CarPhoneNumber") )
-        return QContactPhoneNumber::SubTypeCar;
-    else if ( rdfPhoneType.endsWith("CellPhoneNumber") )
-        return QContactPhoneNumber::SubTypeMobile;
-    else if ( rdfPhoneType.endsWith("BbsPhoneNumber") )
-        return QContactPhoneNumber::SubTypeBulletinBoardSystem;
-    else if ( rdfPhoneType.endsWith("FaxNumber") )
-        return QContactPhoneNumber::SubTypeFacsimile;
-    else if ( rdfPhoneType.endsWith("ModemNumber") )
-        return QContactPhoneNumber::SubTypeModem;
-    else if ( rdfPhoneType.endsWith("PagerNumber") )
-        return QContactPhoneNumber::SubTypePager;
-    else if ( rdfPhoneType.endsWith("MessagingNumber") )
-        return QContactPhoneNumber::SubTypeMessagingCapable;
-    else
-        qWarning() << Q_FUNC_INFO << "Not handled phone number type:" << rdfPhoneType;
-    return "";
-}
-
 void QTrackerContactFetchRequest::processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers,
                                                            bool affiliationNumbers )
 {
@@ -828,7 +860,11 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
         account.setValue(FieldAccountPath, imAccountQuery->index(queryRow, 5).data().toString()); // getImAccountType?
     account.setValue("Capabilities", imAccountQuery->index(queryRow, 6).data().toString()); // getImAccountType?
     account.setNickname(imAccountQuery->index(queryRow, 4).data().toString()); // nick
-    account.setPresence(imAccountQuery->index(queryRow, 2).data().toString()); // imStatus
+
+    QString presence = imAccountQuery->index(queryRow, 2).data().toString(); // imPresence iri
+    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
+    account.setPresence(presenceConversion[presence]);
+
     account.setStatusMessage(imAccountQuery->index(queryRow, 3).data().toString()); // imStatusMessage
     return account;
 }
@@ -839,15 +875,11 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
  * then metacontacts are processed while processing addressbook contacts - this is because QContactOnlineAccount details
  * need to be constructed before linking contacts with same metacontact.
  */
-void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts,
-                                                         bool affiliationAccounts )
+void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts)
 {
     Q_ASSERT_X(queryIMAccountNodesPending == 0, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
     for (int i = 0; i < queryIMAccounts->rowCount(); i++) {
         QContactOnlineAccount account = getOnlineAccountFromIMQuery(queryIMAccounts, i);
-        if (affiliationAccounts)
-            account.setContexts(QContactOnlineAccount::ContextWork);
-
         QContactLocalId contactid = queryIMAccounts->index(i, 0).data().toUInt();
 
         QHash<quint32, int>::const_iterator it = id2ContactLookup.find(contactid);

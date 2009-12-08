@@ -248,7 +248,6 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
 
     // verify with synchronous read too
     QContact contact = trackerEngine->contact_impl(c.localId(), error);
-    qDebug()<<Q_FUNC_INFO<<c.localId()<<error;
     QCOMPARE(error,  QContactManager::NoError);
     QList<QContactPhoneNumber> details = contact.details<QContactPhoneNumber>();
 
@@ -1254,7 +1253,6 @@ void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
     // if it takes more, then something is wrong
     QVERIFY(req1.isFinished());
     QVERIFY(QContactManager::NoError == req1.error());
-    qDebug()<<req1.relationships().size();
     QVERIFY(2 == req1.relationships().size());
     foreach(QContactRelationship r, req1.relationships())
     {
@@ -1314,9 +1312,9 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     {
         unsigned int contactid = 999998+i;
         idstoremove << contactid;
-        insertContact(contactid, QString::number(contactid)+ "@ovi.com", "Available");
+        insertContact(contactid, QString::number(contactid)+ "@ovi.com", "nco:presence-status-available");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
-        QVERIFY(c.id().localId() == contactid);
+        QVERIFY(c.localId() == contactid);
         QContact firstContact;
         QContactName name;
         name.setFirst("FirstMetaWithIM"+QString::number(contactid));
@@ -1363,7 +1361,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QVERIFY(containDetail);
     }
     //now update presence to IM contact and check it in metacontact (TODO and if signal is emitted)
-    updateIMContactStatus(999999, "Offline");
+    updateIMContactStatus(999999, "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId << 999999, QStringList()
@@ -1387,11 +1385,32 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     }
 
     // TODO load only one contact should load also content from other in the same metacontacts
+    {
+        QList<QContact> cons = contacts(QList<QContactLocalId> ()
+                << masterContactId, QStringList()
+                << QContactOnlineAccount::DefinitionName);
+        QVERIFY(cons.size() == 1);
+        QVERIFY(cons[0].id().localId() == masterContactId);
+
+        bool containDetail = false;
+        foreach(QContactOnlineAccount det, cons[0].details<QContactOnlineAccount>())
+            {
+                if (det.value("Account") == "999999@ovi.com" // deprecated, going to account URI
+                        || det.accountUri() == "999999@ovi.com")
+                {
+                    QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
+                    // keeping the reference to tp contact
+                    QVERIFY(det.value("QContactLocalId") == "999999");
+                    containDetail = true;
+                }
+            }
+        QVERIFY(containDetail);
+    }
 
     // remove them
     foreach(unsigned int id, idstoremove)
     {
-        QVERIFY2(trackerEngine->removeContact(id, error), "Removing a contact failed");
+//        QVERIFY2(trackerEngine->removeContact(id, error), "Removing a contact failed");
     }
 }
 
@@ -1401,7 +1420,6 @@ void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
     if( self->status() == QContactAbstractRequest::Finished )
     {
         ids << self->ids();
-        qDebug() << "ids:" << ids;
     }
 }
 
@@ -1414,7 +1432,6 @@ void Slots::progress(QContactFetchRequest* self, bool appendOnly)
     {
         idsFromAllContactReq << contact.localId();
     }
-    qDebug() << "ids:" << idsFromAllContactReq;
 }
 
 QString Slots::requestStatusToString(QContactAbstractRequest::Status status)

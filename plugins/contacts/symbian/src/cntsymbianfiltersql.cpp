@@ -51,10 +51,13 @@
 QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
     m_contactDatabase(contactDatabase)
 {
+    m_sqlhelper = new CntSymbianFilterSqlHelper(contactDatabase);
+    
 }
 
 QContactSymbianFilter::~QContactSymbianFilter()
 {
+    delete m_sqlhelper;
 }
 
 QList<QContactLocalId> QContactSymbianFilter::contacts(
@@ -63,42 +66,15 @@ QList<QContactLocalId> QContactSymbianFilter::contacts(
             QContactManager::Error& error)
 {
     QList<QContactLocalId> matches;
-
-    if (filter.type() == QContactFilter::ContactDetailFilter)
-    {
-        const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
-            QString number((detailFilter.value()).toString());
-            TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
-            // TODO: Leaving code in a non-leaving function!!!
-            CContactIdArray* idArray = m_contactDatabase.MatchPhoneNumberL(commPtr, 7);
-            CleanupStack::PushL(idArray);
-            for(int i(0); i < idArray->Count(); i++)
-                matches.append(QContactLocalId((*idArray)[i]));
-            CleanupStack::PopAndDestroy(idArray);
-        } else {
-            error = QContactManager::NotSupportedError;
-        }
-    }
-    else
-    {
-        error = QContactManager::NotSupportedError;
-    }
+    //sort order not supported yet
+    matches = m_sqlhelper->searchContacts(filter,error);
     return matches;
 }
 
 CntAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(const QContactFilter& filter)
 {
-    // TODO: modify depending on the supported filters
-
-    FilterSupport filterSupported(NotSupported);
-    if (filter.type() == QContactFilter::ContactDetailFilter) {
-        const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
-            filterSupported = Supported;
-    }
-    return filterSupported;
+    
+    return m_sqlhelper->filterSupported(filter);
 }
 
 #endif
