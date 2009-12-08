@@ -169,8 +169,9 @@ Q_SIGNALS:
 
     void error(QMediaPlayer::Error error);
 
-protected:
-    void bind(QObject*);
+public:
+    virtual void bind(QObject*);
+    virtual void unbind(QObject*);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)

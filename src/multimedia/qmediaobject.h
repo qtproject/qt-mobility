@@ -68,6 +68,7 @@ public:
     void setNotifyInterval(int milliSeconds);
 
     virtual void bind(QObject*);
+    virtual void unbind(QObject*);
 
     bool isMetaDataAvailable() const;
     bool isMetaDataWritable() const;

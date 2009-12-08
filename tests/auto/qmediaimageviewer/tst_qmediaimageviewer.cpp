@@ -532,7 +532,8 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(stateSpy.count(), 0);
 
-    QMediaPlaylist playlist(&viewer);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
 
     // Empty playlist so can't exit stopped state.
     viewer.play();
@@ -702,14 +703,16 @@ void tst_QMediaImageViewer::multiplePlaylists()
 
     QMediaImageViewer viewer;
 
-    QMediaPlaylist *playlist1 = new QMediaPlaylist(&viewer);
+    QMediaPlaylist *playlist1 = new QMediaPlaylist;
+    playlist1->setMediaObject(&viewer);
     playlist1->addMedia(imageMedia);
     playlist1->addMedia(posterMedia);
 
     playlist1->setCurrentIndex(0);
     QCOMPARE(viewer.media(), imageMedia);
 
-    QMediaPlaylist *playlist2 = new QMediaPlaylist(&viewer);
+    QMediaPlaylist *playlist2 = new QMediaPlaylist;
+    playlist2->setMediaObject(&viewer);
     playlist2->addMedia(coverArtMedia);
 
     QCOMPARE(viewer.media(), imageMedia);
@@ -741,7 +744,8 @@ void tst_QMediaImageViewer::invalidPlaylist()
     QSignalSpy stateSpy(&viewer, SIGNAL(stateChanged(QMediaImageViewer::State)));
     QSignalSpy statusSpy(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
 
-    QMediaPlaylist playlist(&viewer);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
     playlist.addMedia(invalidMedia);
     playlist.addMedia(imageMedia);
     playlist.addMedia(invalidMedia);
@@ -802,7 +806,8 @@ void tst_QMediaImageViewer::elapsedTime()
             &QTestEventLoop::instance(), SLOT(exitLoop()));
 
 
-    QMediaPlaylist playlist(&viewer);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
     playlist.addMedia(imageMedia);
 
     QCOMPARE(viewer.elapsedTime(), 0);

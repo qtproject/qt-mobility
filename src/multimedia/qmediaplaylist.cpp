@@ -77,7 +77,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 \code
     player = new QMediaPlayer;
 
-    playlist = new QMediaPlaylist(player);
+    playlist = new QMediaPlaylist;
+    playlist->setMediaObject(player);
     playlist->append(QUrl("http://example.com/movie1.mp4"));
     playlist->append(QUrl("http://example.com/movie2.mp4"));
     playlist->append(QUrl("http://example.com/movie3.mp4"));
@@ -114,51 +115,19 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
 
 /*!
-  Create a new playlist object for with the given \a parent.
-  If \a mediaObject is null or doesn't have an intrinsic playlist,
-  internal local memory playlist source will be created.
+  Create a new playlist object for with the given \a parent.  
 */
 
-QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
+QMediaPlaylist::QMediaPlaylist(QObject *parent)
     : QObject(parent)
     , d_ptr(new QMediaPlaylistPrivate)
 {
     Q_D(QMediaPlaylist);
 
     d->q_ptr = this;
+    d->localPlaylistControl = new QLocalMediaPlaylistControl(this);
 
-    QMediaService *service = mediaObject
-            ? mediaObject->service()
-            : 0;
-
-    if (service)
-        d->control = qobject_cast<QMediaPlaylistControl*>(service->control(QMediaPlaylistControl_iid));
-
-    if (!d->control) {
-        d->control = new QLocalMediaPlaylistControl(this);
-
-        if (mediaObject)
-            mediaObject->bind(this);
-    }
-
-    QMediaPlaylistProvider *playlist = d->control->playlistProvider();
-    connect(playlist, SIGNAL(loadFailed(QMediaPlaylist::Error,QString)),
-            this, SLOT(_q_loadFailed(QMediaPlaylist::Error,QString)));
-
-    connect(playlist, SIGNAL(mediaChanged(int,int)), this, SIGNAL(mediaChanged(int,int)));
-    connect(playlist, SIGNAL(mediaAboutToBeInserted(int,int)), this, SIGNAL(mediaAboutToBeInserted(int,int)));
-    connect(playlist, SIGNAL(mediaInserted(int,int)), this, SIGNAL(mediaInserted(int,int)));
-    connect(playlist, SIGNAL(mediaAboutToBeRemoved(int,int)), this, SIGNAL(mediaAboutToBeRemoved(int,int)));
-    connect(playlist, SIGNAL(mediaRemoved(int,int)), this, SIGNAL(mediaRemoved(int,int)));
-
-    connect(playlist, SIGNAL(loaded()), this, SIGNAL(loaded()));
-
-    connect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
-            this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
-    connect(d->control, SIGNAL(currentIndexChanged(int)),
-            this, SIGNAL(currentIndexChanged(int)));
-    connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
-            this, SIGNAL(currentMediaChanged(QMediaContent)));
+    setMediaObject(0);
 }
 
 /*!
@@ -167,7 +136,100 @@ QMediaPlaylist::QMediaPlaylist(QMediaObject *mediaObject, QObject *parent)
 
 QMediaPlaylist::~QMediaPlaylist()
 {
+    Q_D(QMediaPlaylist);
+
+    if (d->mediaObject)
+        d->mediaObject->unbind(this);
+
     delete d_ptr;
+}
+
+QMediaObject *QMediaPlaylist::mediaObject() const
+{
+    return d_func()->mediaObject;
+}
+
+/*!
+  If \a mediaObject is null or doesn't have an intrinsic playlist,
+  internal local memory playlist source will be created.
+*/
+void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
+{
+    Q_D(QMediaPlaylist);
+
+    if (mediaObject && mediaObject == d->mediaObject)
+        return;
+
+    QMediaService *service = mediaObject
+            ? mediaObject->service() : 0;
+
+    QMediaPlaylistControl *newControl = 0;
+
+    if (service)
+        newControl = qobject_cast<QMediaPlaylistControl*>(service->control(QMediaPlaylistControl_iid));
+
+    if (!newControl)
+        newControl = d->localPlaylistControl;
+
+    if (d->control != newControl) {
+        int oldSize = 0;
+        if (d->control) {
+            QMediaPlaylistProvider *playlist = d->control->playlistProvider();
+            oldSize = playlist->mediaCount();
+            disconnect(playlist, SIGNAL(loadFailed(QMediaPlaylist::Error,QString)),
+                    this, SLOT(_q_loadFailed(QMediaPlaylist::Error,QString)));
+
+            disconnect(playlist, SIGNAL(mediaChanged(int,int)), this, SIGNAL(mediaChanged(int,int)));
+            disconnect(playlist, SIGNAL(mediaAboutToBeInserted(int,int)), this, SIGNAL(mediaAboutToBeInserted(int,int)));
+            disconnect(playlist, SIGNAL(mediaInserted(int,int)), this, SIGNAL(mediaInserted(int,int)));
+            disconnect(playlist, SIGNAL(mediaAboutToBeRemoved(int,int)), this, SIGNAL(mediaAboutToBeRemoved(int,int)));
+            disconnect(playlist, SIGNAL(mediaRemoved(int,int)), this, SIGNAL(mediaRemoved(int,int)));
+
+            disconnect(playlist, SIGNAL(loaded()), this, SIGNAL(loaded()));
+
+            disconnect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
+                    this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
+            disconnect(d->control, SIGNAL(currentIndexChanged(int)),
+                    this, SIGNAL(currentIndexChanged(int)));
+            disconnect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
+                    this, SIGNAL(currentMediaChanged(QMediaContent)));
+        }
+
+        d->control = newControl;
+        QMediaPlaylistProvider *playlist = d->control->playlistProvider();
+        connect(playlist, SIGNAL(loadFailed(QMediaPlaylist::Error,QString)),
+                this, SLOT(_q_loadFailed(QMediaPlaylist::Error,QString)));
+
+        connect(playlist, SIGNAL(mediaChanged(int,int)), this, SIGNAL(mediaChanged(int,int)));
+        connect(playlist, SIGNAL(mediaAboutToBeInserted(int,int)), this, SIGNAL(mediaAboutToBeInserted(int,int)));
+        connect(playlist, SIGNAL(mediaInserted(int,int)), this, SIGNAL(mediaInserted(int,int)));
+        connect(playlist, SIGNAL(mediaAboutToBeRemoved(int,int)), this, SIGNAL(mediaAboutToBeRemoved(int,int)));
+        connect(playlist, SIGNAL(mediaRemoved(int,int)), this, SIGNAL(mediaRemoved(int,int)));
+
+        connect(playlist, SIGNAL(loaded()), this, SIGNAL(loaded()));
+
+        connect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
+                this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
+        connect(d->control, SIGNAL(currentIndexChanged(int)),
+                this, SIGNAL(currentIndexChanged(int)));
+        connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
+                this, SIGNAL(currentMediaChanged(QMediaContent)));
+
+        if (oldSize)
+            emit mediaRemoved(0, oldSize-1);
+
+        if (playlist->mediaCount()) {
+            emit mediaAboutToBeInserted(0,playlist->mediaCount()-1);
+            emit mediaInserted(0,playlist->mediaCount()-1);
+        }
+    }
+
+    if (d->mediaObject)
+        d->mediaObject->unbind(this);
+
+    d->mediaObject = mediaObject;
+    if (d->mediaObject)
+        d->mediaObject->bind(this);
 }
 
 /*!

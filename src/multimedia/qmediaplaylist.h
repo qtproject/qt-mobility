@@ -65,8 +65,11 @@ public:
     enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
     enum Error { NoError, FormatError, FormatNotSupportedError, NetworkError, AccessDeniedError };
 
-    QMediaPlaylist(QMediaObject *mediaObject = 0, QObject *parent = 0);
+    QMediaPlaylist(QObject *parent = 0);
     virtual ~QMediaPlaylist();
+
+    QMediaObject *mediaObject() const;
+    void setMediaObject(QMediaObject *object);
 
     PlaybackMode playbackMode() const;
     void setPlaybackMode(PlaybackMode mode);

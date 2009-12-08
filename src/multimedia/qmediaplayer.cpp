@@ -43,6 +43,7 @@
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
+#include <QtCore/qpointer.h>
 
 
 #include <qmediaplayer.h>
@@ -53,6 +54,7 @@
 #include <qmediaserviceprovider.h>
 #include <qmediaplaylist.h>
 #include <qmediaplaylistcontrol.h>
+#include <qvideowidget.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -83,7 +85,8 @@ QTM_BEGIN_NAMESPACE
     \code
         player = new QMediaPlayer;
 
-        playlist = new QMediaPlaylist(player);
+        playlist = new QMediaPlaylist;
+        playlist->setMediaObject(player);
         playlist->append(QUrl("http://example.com/movie1.mp4"));
         playlist->append(QUrl("http://example.com/movie2.mp4"));
 
@@ -105,20 +108,23 @@ public:
     QMediaPlayerPrivate()
         : provider(0)
         , control(0)
+        , playlistControl(0)
         , state(QMediaPlayer::StoppedState)
         , error(QMediaPlayer::NoError)
         , filterStates(false)
-        , playlist(0)
+        , playlist(0)        
     {}
 
     QMediaServiceProvider *provider;
     QMediaPlayerControl* control;
+    QMediaPlaylistControl* playlistControl;
     QMediaPlayer::State state;
     QMediaPlayer::Error error;
     QString errorString;
     bool filterStates;
 
     QMediaPlaylist *playlist;
+    QPointer<QVideoWidget> videoWidget;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -135,6 +141,7 @@ void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
         return;
 
     if (playlist
+            && !playlistControl //service should do this itself
             && ps != state && ps == QMediaPlayer::StoppedState
             && control->mediaStatus() == QMediaPlayer::EndOfMedia) {
         playlist->next();
@@ -245,6 +252,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
         d->error = ServiceMissingError;
     } else {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
+        d->playlistControl = qobject_cast<QMediaPlaylistControl*>(d->service->control(QMediaPlaylistControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(mediaChanged(QMediaContent)), SIGNAL(mediaChanged(QMediaContent)));
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
@@ -434,7 +442,8 @@ void QMediaPlayer::play()
         return;
     }
 
-    if (d->playlist && d->playlist->currentIndex() == -1 && !d->playlist->isEmpty())
+    //if playlist control is available, the service should advance itself
+    if (d->playlist && !d->playlistControl && d->playlist->currentIndex() == -1 && !d->playlist->isEmpty())
         d->playlist->setCurrentIndex(0);
 
     // Reset error conditions
@@ -538,11 +547,40 @@ void QMediaPlayer::bind(QObject *obj)
         QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);
 
         if (playlist) {
+            if (d->playlist)
+                d->playlist->setMediaObject(0);
+
             d->playlist = playlist;
             connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SLOT(_q_updateMedia(QMediaContent)));
             connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
         }
+
+        QVideoWidget *videoWidget = qobject_cast<QVideoWidget*>(obj);
+
+        if (videoWidget) {
+            if (d->videoWidget)
+                d->videoWidget->setMediaObject(0);
+            d->videoWidget = videoWidget;
+        }
+    }
+}
+
+/*!
+    \internal
+*/
+
+void QMediaPlayer::unbind(QObject *obj)
+{
+    Q_D(QMediaPlayer);
+
+    if (obj == d->videoWidget) {
+        d->videoWidget = 0;
+    } else if (obj == d->playlist) {
+        disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                this, SLOT(_q_updateMedia(QMediaContent)));
+        disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+        d->playlist = 0;
     }
 }
 

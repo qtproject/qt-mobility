@@ -156,7 +156,8 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     been displayed for.
 
     \code
-    playlist = new QMediaPlaylist(viewer, this);
+    playlist = new QMediaPlaylist(this);
+    playlist->setMediaObject(viewer);
     playlist->setPlaybackMode(QMediaPlaylist::Loop);
     playlist->addMedia(image1);
     playlist->addMedia(image2);
