@@ -60,7 +60,11 @@ QTM_USE_NAMESPACE
 */
 QSensorManager *QSensorManager::instance()
 {
-    return 0;
+    // FIXME should be using Q_GLOBAL_STATIC or something
+    static QSensorManager *instance = 0;
+    if (!instance)
+        instance = new QSensorManager;
+    return instance;
 }
 
 /*!

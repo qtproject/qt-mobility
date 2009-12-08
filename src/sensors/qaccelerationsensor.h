@@ -50,15 +50,9 @@ QTM_BEGIN_NAMESPACE
 class Q_SENSORS_EXPORT QAccelerationSensorValue : public QSensorValue
 {
 public:
-    struct Acceleration
-    {
-        Acceleration(qreal _x, qreal _y, qreal _z) : x(_x), y(_y), z(_z) {}
-        qreal x;
-        qreal y;
-        qreal z;
-    };
-
-    Acceleration acceleration;
+    qreal x;
+    qreal y;
+    qreal z;
 };
 
 
@@ -66,26 +60,21 @@ class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 {
 public:
     explicit QAccelerationSensor(QSensor *sensor);
-    explicit QAccelerationSensor(const QString &id, QObject *parent = 0);
+    explicit QAccelerationSensor(const QSensorID &id, QObject *parent = 0);
 
     static const QString type;
 
-    QAccelerationSensorValue::Acceleration currentAcceleration() const
-    {
-        return static_cast<QAccelerationSensorValue*>(currentValue())->acceleration;
-    }
-
     qreal currentXAcceleration() const
     {
-        return currentAcceleration().x;
+        return static_cast<QAccelerationSensorValue*>(currentValue())->x;
     }
     qreal currentYAcceleration() const
     {
-        return currentAcceleration().y;
+        return static_cast<QAccelerationSensorValue*>(currentValue())->y;
     }
     qreal currentZAcceleration() const
     {
-        return currentAcceleration().z;
+        return static_cast<QAccelerationSensorValue*>(currentValue())->z;
     }
 };
 

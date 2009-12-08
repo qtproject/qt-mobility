@@ -50,15 +50,9 @@ QTM_BEGIN_NAMESPACE
 class Q_SENSORS_EXPORT QRotationSensorValue : public QSensorValue
 {
 public:
-    struct Rotation
-    {
-        Rotation(qreal _x, qreal _y, qreal _z) : x(_x), y(_y), z(_z) {}
-        qreal x;
-        qreal y;
-        qreal z;
-    };
-
-    Rotation rotation;
+    qreal x;
+    qreal y;
+    qreal z;
 };
 
 
@@ -66,26 +60,21 @@ class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 {
 public:
     explicit QRotationSensor(QSensor *sensor);
-    explicit QRotationSensor(const QString &id, QObject *parent = 0);
+    explicit QRotationSensor(const QSensorID &id, QObject *parent = 0);
 
     static const QString type;
 
-    QRotationSensorValue::Rotation currentRotation() const
-    {
-        return static_cast<QRotationSensorValue*>(currentValue())->rotation;
-    }
-
     qreal currentXRotation() const
     {
-        return currentRotation().x;
+        return static_cast<QRotationSensorValue*>(currentValue())->x;
     }
     qreal currentYRotation() const
     {
-        return currentRotation().y;
+        return static_cast<QRotationSensorValue*>(currentValue())->y;
     }
     qreal currentZRotation() const
     {
-        return currentRotation().z;
+        return static_cast<QRotationSensorValue*>(currentValue())->z;
     }
 };
 

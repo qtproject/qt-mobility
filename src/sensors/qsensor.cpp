@@ -44,6 +44,14 @@
 QTM_USE_NAMESPACE
 
 /*!
+    \typedef QSensorID
+    \relates QSensor
+
+    An opaque type representing an sensor identifier.
+    These can be obtained from the QSensorManager class.
+*/
+
+/*!
     \class QSensor
     \ingroup sensors
 
@@ -67,7 +75,7 @@ QTM_USE_NAMESPACE
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QSensor::QSensor(const QString &id, QObject *parent)
+QSensor::QSensor(const QSensorID &id, QObject *parent)
     : QObject(parent)
 {
     Q_UNUSED(id)
@@ -224,7 +232,8 @@ void QSensor::stop()
     \brief The QSensorListener class represents an object that wishes to
            receive notifications about sensor changes.
 
-    Foo bar baz.
+    An instance of this class is notified by method call when
+    the sensor value changes.
 */
 
 /*!
@@ -244,7 +253,7 @@ void QSensor::stop()
     \preliminary
     \brief The QSensorValue class represents a sensor value.
 
-    Foo bar baz.
+    Actual sensor data is stored in sub-classes of QSensorValue.
 */
 
 /*!
@@ -262,4 +271,11 @@ QSensor *QSensorValue::sensor() const
 {
     return 0;
 }
+
+/*!
+    \variable QSensorValue::timestamp
+
+    Returns a timestamp (in milliseconds since app startup)
+    showing when the sensor value was generated.
+*/
 

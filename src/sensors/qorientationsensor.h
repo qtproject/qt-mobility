@@ -53,8 +53,7 @@ public:
         Unknown   = 0x00,
         Portrait  = 0x01,
         Landscape = 0x02,
-        Inverted  = 0x04,
-        Default   = 0x08
+        Inverted  = 0x04
     };
     Q_DECLARE_FLAGS(Orientation, OrientationFlag)
 
@@ -68,7 +67,7 @@ class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
     Q_OBJECT
 public:
     explicit QOrientationSensor(QSensor *sensor);
-    explicit QOrientationSensor(const QString &id, QObject *parent = 0);
+    explicit QOrientationSensor(const QSensorID &id, QObject *parent = 0);
 
     static const QString type;
 

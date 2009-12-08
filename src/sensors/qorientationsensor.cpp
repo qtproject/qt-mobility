@@ -43,8 +43,6 @@
 
 QTM_USE_NAMESPACE
 
-const QString QOrientationSensor::type("qt.Orientation");
-
 /*!
     \class QOrientationSensorValue
     \ingroup sensors
@@ -52,7 +50,8 @@ const QString QOrientationSensor::type("qt.Orientation");
     \preliminary
     \brief The QOrientationSensorValue class represents an orientation value.
 
-    Foo bar baz.
+    The orientation is expressed as either portrait or landscape with an
+    inverted flag indicating the phone is upside down.
 */
 
 /*!
@@ -60,18 +59,22 @@ const QString QOrientationSensor::type("qt.Orientation");
 
     This enum represents the orientation of the device.
 
-    \value Unknown    The orientation is unknown. For example, the
-                      device may be lying face down.
+    \value Unknown    The orientation is unknown.
     \value Portrait   The device is in the portrait orientation.
     \value Landscape  The device is in the landscape orientation.
-    \value Inverted   Combined with Portrait or Landscape to indicate
-                      the device is upside down.
-    \value Default    Combined with Portrait or Landscape to indicate
-                      the device is in the default orientation.
+    \value Inverted   The device is upside down.
 
     Note that Portrait and Landscape may be combined with Inverted to
     indicate that the device is upside down.
 */
+
+/*!
+    \variable QOrientationSensorValue::orientation
+
+    Holds the orientation flags.
+*/
+
+// =====================================================================
 
 /*!
     \class QOrientationSensor
@@ -85,6 +88,11 @@ const QString QOrientationSensor::type("qt.Orientation");
 */
 
 /*!
+    \variable QOrientationSensor::type
+*/
+const QString QOrientationSensor::type("qt.Orientation");
+
+/*!
     Construct a sensor instance and attach to the indicated \a sensor.
 */
 QOrientationSensor::QOrientationSensor(QSensor *sensor)
@@ -96,7 +104,7 @@ QOrientationSensor::QOrientationSensor(QSensor *sensor)
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QOrientationSensor::QOrientationSensor(const QString &id, QObject *parent)
+QOrientationSensor::QOrientationSensor(const QSensorID &id, QObject *parent)
     : QSensor(id, parent)
 {
 }

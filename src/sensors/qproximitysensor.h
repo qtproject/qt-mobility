@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
 class Q_SENSORS_EXPORT QProximitySensorValue : public QSensorValue
 {
 public:
-    qreal distance;
+    int distance;
 };
 
 
@@ -59,17 +59,17 @@ class Q_SENSORS_EXPORT QProximitySensor : public QSensor
     Q_OBJECT
 public:
     explicit QProximitySensor(QSensor *sensor);
-    explicit QProximitySensor(const QString &id, QObject *parent = 0);
+    explicit QProximitySensor(const QSensorID &id, QObject *parent = 0);
 
     static const QString type;
 
-    qreal currentProximity() const
+    int currentProximity() const
     {
         return static_cast<QProximitySensorValue*>(currentValue())->distance;
     }
 
 signals:
-    void proximityChanged(qreal distance);
+    void proximityChanged(int distance);
 };
 
 QTM_END_NAMESPACE

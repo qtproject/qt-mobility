@@ -45,7 +45,6 @@
 #include <qmobilityglobal.h>
 #include <QObject>
 #include <QString>
-//#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,7 +57,7 @@ typedef QByteArray QSensorID;
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
 public:
-    explicit QSensor(const QString &id, QObject *parent = 0);
+    explicit QSensor(const QSensorID &id, QObject *parent = 0);
     virtual ~QSensor();
 
     // May have been initialized with an invalid id
@@ -117,15 +116,14 @@ public:
     virtual bool sensorValueUpdated(QSensorValue *value) = 0;
 };
 
-typedef quint64 qSensorTimestamp;
-
 class Q_SENSORS_EXPORT QSensorValue
 {
 public:
     explicit QSensorValue(QSensor *sensor);
 
     QSensor *sensor() const;
-    qSensorTimestamp timestamp;
+
+    quint64 timestamp;
 };
 
 QTM_END_NAMESPACE

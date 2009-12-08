@@ -43,8 +43,6 @@
 
 QTM_USE_NAMESPACE
 
-const QString QProximitySensor::type("qt.Proximity");
-
 /*!
     \class QProximitySensorValue
     \ingroup sensors
@@ -52,8 +50,17 @@ const QString QProximitySensor::type("qt.Proximity");
     \preliminary
     \brief The QProximitySensorValue class represents a proximity reading.
 
-    Foo bar baz.
+    The proximity sensor returns the distance to the user. The distance
+    is measured in millimeters.
 */
+
+/*!
+    \variable QProximitySensorValue::distance
+
+    Holds the distance of the user from the phone.
+*/
+
+// =====================================================================
 
 /*!
     \class QProximitySensor
@@ -62,8 +69,17 @@ const QString QProximitySensor::type("qt.Proximity");
     \preliminary
     \brief The QProximitySensor class reports on user proximity.
 
-    Foo bar baz.
+    The proximity sensor returns the distance to the user. The distance
+    is measured in millimeters.
+
+    Note that some proximity sensors may only return boolean results
+    (zero and greater than zero).
 */
+
+/*!
+    \variable QProximitySensor::type
+*/
+const QString QProximitySensor::type("qt.Proximity");
 
 /*!
     Construct a sensor instance and attach to the indicated \a sensor.
@@ -77,7 +93,7 @@ QProximitySensor::QProximitySensor(QSensor *sensor)
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QProximitySensor::QProximitySensor(const QString &id, QObject *parent)
+QProximitySensor::QProximitySensor(const QSensorID &id, QObject *parent)
     : QSensor(id, parent)
 {
 }
@@ -89,7 +105,7 @@ QProximitySensor::QProximitySensor(const QString &id, QObject *parent)
 */
 
 /*!
-    \fn QProximitySensor::proximityChanged(qreal distance)
+    \fn QProximitySensor::proximityChanged(int distance)
 
     Emitted when the \a distance value changes.
 */

@@ -43,7 +43,43 @@
 
 QTM_USE_NAMESPACE
 
-const QString QAccelerationSensor::type("qt.Acceleration");
+/*!
+    \class QAccelerationSensorValue
+    \ingroup sensors
+
+    \preliminary
+    \brief The QAccelerationSensorValue class represents one value from the
+           acceleration sensor.
+
+    The values returned in QAccelerationSensorValue are normalized so that
+    they are consistent between devices. The axes are arranged as follows.
+
+    TODO picture showing axes relative to the monoblock form factor.
+
+    The scale of the values is in metres per second per second. A monoblock
+    device sitting at rest, face up on a desk will experience the force of
+    gravity as approximately -9.8 on the Z axis.
+*/
+
+/*!
+    \variable QAccelerationSensorValue::x
+
+    Holds the acceleration for the X axis.
+*/
+
+/*!
+    \variable QAccelerationSensorValue::y
+
+    Holds the acceleration for the Y axis.
+*/
+
+/*!
+    \variable QAccelerationSensorValue::z
+
+    Holds the acceleration for the Z axis.
+*/
+
+// =====================================================================
 
 /*!
     \class QAccelerationSensor
@@ -53,8 +89,22 @@ const QString QAccelerationSensor::type("qt.Acceleration");
     \brief The QAccelerationSensor class reports on linear acceleration
            along the X, Y and Z axes.
 
-    Foo bar baz.
+    The values returned by QAccelerationSensor are normalized so that
+    they are consistent between devices. The axes are arranged as follows.
+
+    TODO picture showing axes relative to the monoblock form factor.
+
+    The scale of the values is in metres per second per second. A monoblock
+    device sitting at rest, face up on a desk will experience the force of
+    gravity as approximately -9.8 on the Z axis.
+
+    \sa QAccelerationSensorValue
 */
+
+/*!
+    \variable QAccelerationSensor::type
+*/
+const QString QAccelerationSensor::type("qt.Acceleration");
 
 /*!
     Construct a sensor instance and attach to the indicated \a sensor.
@@ -68,31 +118,10 @@ QAccelerationSensor::QAccelerationSensor(QSensor *sensor)
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QAccelerationSensor::QAccelerationSensor(const QString &id, QObject *parent)
+QAccelerationSensor::QAccelerationSensor(const QSensorID &id, QObject *parent)
     : QSensor(id, parent)
 {
 }
-
-/*!
-    \class QAccelerationSensorValue::Acceleration
-
-    \preliminary
-    \brief The Acceleration class holds acceleration values from
-           QAccelerationSensor.
-
-    Foo bar baz.
-*/
-
-/*!
-    \fn QAccelerationSensorValue::Acceleration::Acceleration(qreal,qreal,qreal)
-    \internal
-*/
-
-/*!
-    \fn QAccelerationSensor::currentAcceleration() const
-
-    Returns the current acceleration values from the sensor.
-*/
 
 /*!
     \fn QAccelerationSensor::currentXAcceleration() const
@@ -110,15 +139,5 @@ QAccelerationSensor::QAccelerationSensor(const QString &id, QObject *parent)
     \fn QAccelerationSensor::currentZAcceleration() const
 
     Returns the current z acceleration value from the sensor.
-*/
-
-/*!
-    \class QAccelerationSensorValue
-    \ingroup sensors
-
-    \preliminary
-    \brief The QAccelerationSensorValue class represents an acceleration value.
-
-    Foo bar baz.
 */
 

@@ -43,7 +43,35 @@
 
 QTM_USE_NAMESPACE
 
-const QString QRotationSensor::type("qt.Rotation");
+/*!
+    \class QRotationSensorValue
+    \ingroup sensors
+
+    \preliminary
+    \brief The QRotationSensorValue class represents an rotation value.
+
+    Foo bar baz.
+*/
+
+/*!
+    \variable QRotationSensorValue::x
+
+    Holds the rotation for the X axis.
+*/
+
+/*!
+    \variable QRotationSensorValue::y
+
+    Holds the rotation for the Y axis.
+*/
+
+/*!
+    \variable QRotationSensorValue::z
+
+    Holds the rotation for the Z axis.
+*/
+
+// =====================================================================
 
 /*!
     \class QRotationSensor
@@ -57,6 +85,12 @@ const QString QRotationSensor::type("qt.Rotation");
 */
 
 /*!
+    \variable QRotationSensor::type
+*/
+const QString QRotationSensor::type("qt.Rotation");
+
+
+/*!
     Construct a sensor instance and attach to the indicated \a sensor.
 */
 QRotationSensor::QRotationSensor(QSensor *sensor)
@@ -68,31 +102,10 @@ QRotationSensor::QRotationSensor(QSensor *sensor)
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QRotationSensor::QRotationSensor(const QString &id, QObject *parent)
+QRotationSensor::QRotationSensor(const QSensorID &id, QObject *parent)
     : QSensor(id, parent)
 {
 }
-
-/*!
-    \class QRotationSensorValue::Rotation
-
-    \preliminary
-    \brief The Rotation class holds rotation values from
-           QRotationSensor.
-
-    Foo bar baz.
-*/
-
-/*!
-    \fn QRotationSensorValue::Rotation::Rotation(qreal,qreal,qreal)
-    \internal
-*/
-
-/*!
-    \fn QRotationSensor::currentRotation() const
-
-    Returns the current rotation values from the sensor.
-*/
 
 /*!
     \fn QRotationSensor::currentXRotation() const
@@ -110,15 +123,5 @@ QRotationSensor::QRotationSensor(const QString &id, QObject *parent)
     \fn QRotationSensor::currentZRotation() const
 
     Returns the current z rotation value from the sensor.
-*/
-
-/*!
-    \class QRotationSensorValue
-    \ingroup sensors
-
-    \preliminary
-    \brief The QRotationSensorValue class represents an rotation value.
-
-    Foo bar baz.
 */
 
