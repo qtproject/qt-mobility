@@ -682,9 +682,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
 #if !defined(Q_OS_WIN)
     // Original charset is not preserved on windows
-#ifndef Q_OS_SYMBIAN 
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
-#endif
 #endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
