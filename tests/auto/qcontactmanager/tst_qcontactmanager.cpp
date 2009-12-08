@@ -756,6 +756,7 @@ void tst_QContactManager::update()
 {
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
+    bool didUpdate = false;
 
     /* Save a new contact first */
     QContact alice;
@@ -787,24 +788,20 @@ void tst_QContactManager::update()
             QContact updated = cm->contact(ids.at(i));
             QContactName cn = updated.detail(QContactName::DefinitionName);
             QCOMPARE(cn.middle(), nc.middle());
-            delete cm;
-            return; // pass
+            didUpdate = true;
+            break;
         }
     }
 
-    // now test context/subtype specific cases.
-    ph.setContexts(QStringList() << "Work" << "x-nokia-mobility-contacts-test-invalidcontext");
-    ph.setSubTypes("Mobile");
-    alice.saveDetail(&ph);
-    QVERIFY(!cm->saveContact(&alice)); // validation should fail due to invalid context
-    ph.setContexts(QStringList()); // empty list
-    QVERIFY(cm->saveContact(&alice));
-    QVERIFY(cm->contact(alice.id().localId()) == alice);
+    QVERIFY(didUpdate);
+
+    // Try changing types - not allowed
+    alice.setType(QContactType::TypeGroup);
+    QVERIFY(!cm->saveContact(&alice));
+    QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
+    qDebug() << "foo!";
 
     delete cm;
-
-    // force fail.
-    QVERIFY(false);
 }
 
 void tst_QContactManager::remove()
