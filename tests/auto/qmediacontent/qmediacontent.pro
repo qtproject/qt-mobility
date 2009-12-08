@@ -4,5 +4,6 @@ CONFIG += testcase
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 SOURCES += tst_qmediacontent.cpp

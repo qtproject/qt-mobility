@@ -1,11 +1,12 @@
 TEMPLATE = app
-TARGET = sendmessage
+TARGET = writemessage
 
 QT += gui
 
 include(../examples.pri)
 
-qtAddLibrary(QtMessaging)
+CONFIG += mobility
+MOBILITY = messaging
 INCLUDEPATH += ../../src/messaging
 
 symbian|win32 {

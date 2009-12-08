@@ -77,6 +77,7 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
     subjectLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     QGridLayout *metaDataLayout = new QGridLayout;
+    metaDataLayout->setContentsMargins(0, 0, 0, 0);
     metaDataLayout->addWidget(toLabel, 0, 0);
     metaDataLayout->setAlignment(toLabel, Qt::AlignRight);
     metaDataLayout->addWidget(subjectLabel, 1, 0);
@@ -93,17 +94,18 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
 
     connect(addButton, SIGNAL(clicked()), this, SLOT(addAttachment()));
 
-    QVBoxLayout *buttonLayout = new QVBoxLayout;
-    buttonLayout->addStretch();
-    buttonLayout->addWidget(removeButton);
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout->setContentsMargins(0, 0, 0, 0);
     buttonLayout->addWidget(addButton);
+    buttonLayout->addWidget(removeButton);
 
     attachmentsList = new QListWidget;
     attachmentsList->setSelectionMode(QAbstractItemView::SingleSelection);
 
     connect(attachmentsList, SIGNAL(currentRowChanged(int)), this, SLOT(attachmentSelected(int)));
 
-    QHBoxLayout *attachmentsLayout = new QHBoxLayout;
+    QVBoxLayout *attachmentsLayout = new QVBoxLayout;
+    attachmentsLayout->setContentsMargins(0, 0, 0, 0);
     attachmentsLayout->addWidget(attachmentsList);
     attachmentsLayout->addLayout(buttonLayout);
 
@@ -117,6 +119,7 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
     connect(sendButton, SIGNAL(clicked()), this, SLOT(send()), Qt::QueuedConnection);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addLayout(metaDataLayout, 0);
     mainLayout->addWidget(textEdit, 2);
     mainLayout->addWidget(attachmentsGroup, 1);
@@ -146,9 +149,9 @@ void MessageSender::addAttachment()
     }
 }
 
-void MessageSender::attachmentSelected(int)
+void MessageSender::attachmentSelected(int index)
 {
-    removeButton->setEnabled(true);
+    removeButton->setEnabled(index != -1);
 }
 
 void MessageSender::send()

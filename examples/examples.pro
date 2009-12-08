@@ -46,7 +46,8 @@ contains(mobility_modules,systeminformation): SUBDIRS += sysinfo
 
 #Multimedia
 contains(mobility_modules,multimedia) {
-    SUBDIRS += player \
+    #disabled on Symbian due to missing backend
+    !symbian:SUBDIRS += player \
         cameracapture \
         slideshow \
         streamplayer \
@@ -59,7 +60,7 @@ contains(mobility_modules,messaging) {
     !win32-g++:SUBDIRS += \
         keepintouch\
         querymessages\
-        sendmessage\
+        writemessage\
         serviceactions
     }
 }

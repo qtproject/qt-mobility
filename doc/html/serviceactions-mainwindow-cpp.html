@@ -250,6 +250,9 @@
 
         m_busyLabel = new QLabel(&quot;Loading...&quot;);
         m_stackedLayout-&gt;addWidget(m_busyLabel);
+
+        setSizePolicy(m_accountsCombo-&gt;sizePolicy());
+
     }
 
     void AccountsWidget::setIds(const QMessageAccountIdList&amp; ids)
@@ -402,6 +405,7 @@
         QListWidgetItem* item = m_indexMap.value(id);
         if(item)
         {
+
             QMessage message(id);
             bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
             QFont itemFont = item-&gt;font();
@@ -586,6 +590,17 @@
         setupUi();
     }
 
+    static void notifyResult(bool result, const QString&amp; description)
+    {
+    #ifndef _WIN32_WCE
+        if(result) QMessageBox::information(0,description,&quot;Succeeded!&quot;);
+        else QMessageBox::critical(0,description,&quot;Failed.&quot;);
+    #else
+        Q_UNUSED(result);
+        Q_UNUSED(description);
+    #endif
+    }
+
     void ComposeSendWidget::composeButtonClicked()
     {
         QMessage message(constructQMessage());
@@ -596,7 +611,7 @@
     {
         bool asHtml = (sender() == m_sendAsHTMLAction);
         QMessage message(constructQMessage(asHtml));
-        m_service-&gt;send(message);
+        notifyResult(m_service-&gt;send(message),&quot;Send message&quot;);
     }
 
     void ComposeSendWidget::addAttachmentButtonClicked()
@@ -607,8 +622,9 @@
 
     void ComposeSendWidget::accountChanged()
     {
-    #ifdef _WIN32_WCE
-        bool isSmsAccount = m_accountsWidget-&gt;currentAccountName() == &quot;SMS&quot;;
+        QMessageAccount currentAccount(m_accountsWidget-&gt;currentAccount());
+
+        bool isSmsAccount = (currentAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
 
         foreach(QWidget* emailSpecificWidget , QList&lt;QWidget*&gt;() &lt;&lt; m_bccEdit &lt;&lt; m_bccLabel &lt;&lt;
                                                                     m_ccEdit &lt;&lt;  m_ccLabel &lt;&lt;
@@ -618,7 +634,6 @@
 
         m_attachmentsAction-&gt;setEnabled(!isSmsAccount);
         m_sendAsHTMLAction-&gt;setEnabled(!isSmsAccount);
-    #endif
     }
 
     void ComposeSendWidget::setupUi()
@@ -630,6 +645,7 @@
 
         m_accountsWidget = new AccountsWidget(this);
         gl-&gt;addWidget(m_accountsWidget,0,1);
+
         connect(m_accountsWidget,SIGNAL(accountChanged()),this,SLOT(accountChanged()));
 
         QLabel* toLabel = new QLabel(&quot;To:&quot;,this);
@@ -695,12 +711,9 @@
         }
 
         QMessageAccountId selectedAccountId = m_accountsWidget-&gt;currentAccount();
-    #ifdef _WIN32_WCE
         QMessageAccount selectedAccount(selectedAccountId);
-        bool composingSms = selectedAccount.name() == &quot;SMS&quot;;
-    #else
-        bool composingSms = false;
-    #endif
+
+        bool composingSms = (selectedAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
 
         QMessageAddressList toList;
         QMessageAddressList ccList;
@@ -844,6 +857,7 @@
 
         return false;
     }
+
 
     void MessageViewWidget::showEvent(QShowEvent* e)
     {
@@ -992,20 +1006,14 @@
 
             QString bodyText;
 
+            <span class="comment">//for partial message display a download link instead</span>
+
             bool bodyAvailable = bodyPart.isContentAvailable();
 
             if(bodyAvailable)
             {
                 if(bodyPart.contentType() == &quot;text&quot;)
-                {
                     bodyText = bodyPart.textContent();
-
-                    <span class="comment">//if(bodyPart.contentSubType() == &quot;plain&quot;)</span>
-                    <span class="comment">//    qWarning() &lt;&lt; &quot;Blah&quot;;</span>
-                    <span class="comment">//else if(bodyPart.contentSubType() == &quot;html&quot; || bodyPart.contentSubType() == &quot;rtf&quot;)</span>
-                    <span class="comment">//     qWarning() &lt;&lt; &quot;FOO&quot;;</span>
-                    <span class="comment">//else bodyText = &quot;&lt;Unknown text content&gt;&quot;;</span>
-                }
                 else bodyText = &quot;&lt;Non-text content&gt;&quot;;
             }
             else
@@ -1112,7 +1120,6 @@
 
     void ShowWidget::showButtonClicked()
     {
-        <span class="comment">//get the selected account</span>
 
         QMessageId id = m_recentMessagesWidget-&gt;currentMessage();
 
@@ -1348,6 +1355,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

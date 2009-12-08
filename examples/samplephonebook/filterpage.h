@@ -42,7 +42,6 @@
 #ifndef FILTERPAGE_H
 #define FILTERPAGE_H
 
-#include <qmobilityglobal.h>
 #include "qtcontacts.h"
 
 #include <QWidget>
@@ -55,7 +54,7 @@ class QComboBox;
 class QPushButton;
 class QLineEdit;
 class QLabel;
-QT_END_NAMESPACE;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

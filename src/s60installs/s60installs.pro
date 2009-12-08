@@ -8,6 +8,15 @@ symbian: {
     TARGET.UID3 = 0x2002AC89
     VERSION = 0.1.0
 
+    vendorinfo = \
+        "; Localised Vendor name" \
+        "%{\"Nokia, Qt\"}" \
+        " " \
+        "; Unique Vendor name" \
+        ":\"Nokia, Qt\"" \
+        " "
+    qtmobilitydeployment.pkg_prerules += vendorinfo
+
     EPOCROOT31 = $${EPOCROOT31}
     EPOCROOT50 = $${EPOCROOT50}
     
@@ -53,13 +62,5 @@ symbian: {
     
     qtmobilitydeployment.path = /sys/bin
     
-    vendorinfo = \
-        "; Localised Vendor name" \
-        "%{\"Nokia, Qt\"}" \
-        " " \
-        "; Unique Vendor name" \
-        ":\"Nokia, Qt\"" \
-        " "
-
     DEPLOYMENT += qtmobilitydeployment 
 }
