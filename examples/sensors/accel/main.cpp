@@ -12,9 +12,9 @@ public:
         QAccelerationSensorValue *value = static_cast<QAccelerationSensorValue*>(_value);
         qDebug() << "acceleration: "
                  << QString().sprintf("%3.2f %3.2f %3.2f",
-                         value->acceleration.x,
-                         value->acceleration.y,
-                         value->acceleration.z);
+                         value->x,
+                         value->y,
+                         value->z);
         return true;
     }
 };
