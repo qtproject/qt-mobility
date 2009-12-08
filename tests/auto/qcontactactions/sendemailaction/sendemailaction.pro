@@ -12,7 +12,8 @@ INCLUDEPATH += ../../../../src/contacts \
 
 INCLUDEPATH += ../../
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 DEFINES += ACTIONFACTORYPLUGINTARGET=contacts_sendemailactionfactory
 DEFINES += ACTIONFACTORYPLUGINNAME=SendEmailActionFactory

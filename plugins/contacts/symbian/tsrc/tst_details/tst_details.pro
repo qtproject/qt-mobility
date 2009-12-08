@@ -10,8 +10,10 @@ HEADERS += $$SYMBIAN_HEADERS
 SOURCES  += $$SYMBIAN_SOURCES \
             tst_details.cpp
 
-LIBS += -lQtContacts
-LIBS += $$SYMBIAN_LIBS
+CONFIG += mobility
+MOBILITY = contacts
+
+SOURCES  += tst_details.cpp
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \

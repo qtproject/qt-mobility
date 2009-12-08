@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: groupdetailsdialog.h Example File (samplephonebook/groupdetailsdialog.h)</title>
+  <title>Qt Mobility Project 1.0: filterpage.h Example File (samplephonebook/filterpage.h)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -11,7 +11,7 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">groupdetailsdialog.h Example File<br /><span class="small-subtitle">samplephonebook/groupdetailsdialog.h</span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">filterpage.h Example File<br /><span class="small-subtitle">samplephonebook/filterpage.h</span>
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
@@ -54,56 +54,61 @@
     **
     ****************************************************************************/</span>
 
-    #ifndef GROUPDETAILSDIALOG_H
-    #define GROUPDETAILSDIALOG_H
+    #ifndef FILTERPAGE_H
+    #define FILTERPAGE_H
 
-    #include &lt;QDialog&gt;
-    #include &quot;qcontact.h&quot;
+    #include &quot;qtcontacts.h&quot;
 
+    #include &lt;QWidget&gt;
+    #include &lt;QMap&gt;
+    #include &lt;QPlainTextEdit&gt;
+
+    class QScrollArea;
+    class QComboBox;
     class QPushButton;
-    class QListWidget;
-    class QListWidgetItem;
     class QLineEdit;
-
-    QTM_BEGIN_NAMESPACE
-    class QContactManager;
-    QTM_END_NAMESPACE
-
+    class QLabel;
     QTM_USE_NAMESPACE
 
-    class GroupDetailsDialog : public QDialog
+    class FilterPage : public QWidget
     {
         Q_OBJECT
 
     public:
-        GroupDetailsDialog(QWidget *parent, QContactManager *contactManager, const QContact &amp;contact);
-        QList&lt;QContactLocalId&gt; groups();
+        FilterPage(QWidget *parent = 0);
+        ~FilterPage();
 
-    private:
-        void repopulateGroupList();
+    signals:
+        void showListPage(const QContactFilter&amp; filter);
 
     public slots:
-        void show();
-        void groupItemChanged(QListWidgetItem * item);
 
     private slots:
-        void okButtonClicked();
-        void cancelButtonClicked();
+        void addClicked();
+        void clearClicked();
+        void doneClicked();
 
     private:
-        QListWidget *listWidget;
-        QLineEdit *contactNameEdit;
-        QPushButton *cancelButton;
-        QPushButton *okButton;
-        QContactManager *cm;
-        QContact localContact;
+        QLineEdit *m_valueCriteriaEdit;
+        QComboBox *m_fieldCriteriaCombo;
+        QComboBox *m_criteriaTypeCombo;
+        QComboBox *m_joinMethodCombo;
+
+        QLabel *m_cumulativeExpressionLabel;
+
+        QPushButton *m_add;
+        QPushButton *m_clear;
+        QPushButton *m_done;
+
+        QString m_cumulativeExpression;
+        QContactFilter m_cumulativeFilter;
     };
 
-    #endif <span class="comment">// GROUPDETAILSDIALOG_H</span></pre>
+    #endif <span class="comment">// FILTERPAGE_H</span></pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

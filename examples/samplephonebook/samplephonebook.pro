@@ -13,7 +13,8 @@ INCLUDEPATH += . \
                ../../src/contacts/requests \
                ../../src/contacts/details 
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 # Input
 SOURCES += main.cpp \
@@ -35,4 +36,3 @@ symbian: {
                         SwEvent
 }
 include(../examples.pri)
-qtAddLibrary(QtContacts)

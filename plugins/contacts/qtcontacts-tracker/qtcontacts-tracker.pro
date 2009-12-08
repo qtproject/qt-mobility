@@ -8,7 +8,8 @@ TARGET = $$qtLibraryTarget(qtcontacts_tracker)
 PLUGIN_TYPE=contacts
 
 LIBS += -lqttracker
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 # include version number for the plugin
 include(version.pri)
