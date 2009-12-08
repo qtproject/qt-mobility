@@ -241,8 +241,8 @@ mobility libraries into $PWD/install.
     SIS file for the device.  See the \c {symbian\install.txt}
     file on how to deploy these.
 
-    To configure the Qt Mobility libraries, run
-    configure in the package directory. (-prefix
+    If you wish to build QtMobility yourself, 
+    run configure in the package directory. (-prefix
     cannot be used since the libraries are installed
     into the SDK directory)
 
