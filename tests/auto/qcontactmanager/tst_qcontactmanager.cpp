@@ -2233,61 +2233,137 @@ void tst_QContactManager::detailOrders()
     QContactManager* cm = QContactManager::fromUri(uri);
 
     QContact a;
-    QContactName name;
-    QContactPhoneNumber number;
-    QContactEmailAddress email;
-    QContactAddress address;
+    //phone numbers
+    QContactPhoneNumber number1, number2, number3;
+    
+    number1.setNumber("11111111");
+    number1.setContexts(QContactPhoneNumber::ContextHome);
 
-    name.setFirst("Aaron");
-    name.setLast("Aaronson");
-    number.setNumber("555-1212");
-    email.setEmailAddress("aaron@example.com");
-    address.setStreet("Brandl St");
-    address.setRegion("Brisbane");
+    number2.setNumber("22222222");
+    number2.setContexts(QContactPhoneNumber::ContextWork);
 
-    a.saveDetail(&name);
-    a.saveDetail(&number);
-    a.saveDetail(&email);
-    a.saveDetail(&address);
+    number3.setNumber("33333333");
+    number3.setContexts(QContactPhoneNumber::ContextOther);
+
+    a.saveDetail(&number1);
+    a.saveDetail(&number2);
+    a.saveDetail(&number3);
 
     QVERIFY(cm->saveContact(&a));
-
     a = cm->contact(a.id().localId());
-
-    QList<QContactDetail> details = removeAllDefaultDetails(a.details());
-    QVERIFY(details.count() == 4);
-    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactEmailAddress::DefinitionName);
-    QVERIFY(details.at(3).definitionName() == QContactAddress::DefinitionName);
-
-    QVERIFY(a.removeDetail(&details[2]));
-    QVERIFY(cm->saveContact(&a));
-    a = cm->contact(a.id().localId());
-    details = removeAllDefaultDetails(a.details());
+    
+    QList<QContactDetail> details = a.details(QContactPhoneNumber::DefinitionName);
     QVERIFY(details.count() == 3);
-    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactAddress::DefinitionName);
-
-    a.saveDetail(&email);
-    QVERIFY(cm->saveContact(&a));
-    a = cm->contact(a.id().localId());
-    details = removeAllDefaultDetails(a.details());
-    QVERIFY(details.count() == 4);
-    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactAddress::DefinitionName);
-    QVERIFY(details.at(3).definitionName() == QContactEmailAddress::DefinitionName);
-
-    QVERIFY(a.removeDetail(&details[3]));
+    qDebug() << details.at(0).value(QContactPhoneNumber::FieldNumber);
+    qDebug() << details.at(1).value(QContactPhoneNumber::FieldNumber);
+    qDebug() << details.at(2).value(QContactPhoneNumber::FieldNumber);
+    QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
+    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextWork);
+    QVERIFY(details.at(2).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+    
     QVERIFY(a.removeDetail(&details[1]));
-    QVERIFY(a.removeDetail(&details[0]));
     QVERIFY(cm->saveContact(&a));
     a = cm->contact(a.id().localId());
-    details = removeAllDefaultDetails(a.details());
-    QVERIFY(details.count() == 1);
-    QVERIFY(details.at(0).definitionName() == QContactAddress::DefinitionName);
+    details = a.details(QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.count() == 2);
+    QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
+    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+
+    a.saveDetail(&number2);
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.count() == 3);
+    QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
+    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+    QVERIFY(details.at(2).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextWork);
+
+    //addresses
+    QContactAddress address1, address2, address3;
+    
+    address1.setStreet("Brandl St");
+    address1.setRegion("Brisbane");
+    address3 = address2 = address1;
+
+    address1.setContexts(QContactAddress::ContextHome);
+    address2.setContexts(QContactAddress::ContextWork);
+    address3.setContexts(QContactAddress::ContextOther);
+
+    a.saveDetail(&address1);
+    a.saveDetail(&address2);
+    a.saveDetail(&address3);
+
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactAddress::DefinitionName);
+    QVERIFY(details.count() == 3);
+    
+    QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextWork);
+    QVERIFY(details.at(2).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+
+    QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    details = a.details(QContactAddress::DefinitionName);
+    QVERIFY(details.count() == 2);
+    QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+
+    a.saveDetail(&address2);
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactAddress::DefinitionName);
+    QVERIFY(details.count() == 3);
+    QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+    QVERIFY(details.at(2).value(QContactAddress::FieldContext) == QContactAddress::ContextWork);
+
+
+    //emails
+    QContactEmailAddress email1, email2, email3;
+
+    email1.setEmailAddress("aaron@example.com");
+    email3 = email2 = email1;
+    email1.setContexts(QContactEmailAddress::ContextHome);
+    email2.setContexts(QContactEmailAddress::ContextWork);
+    email3.setContexts(QContactEmailAddress::ContextOther);
+
+    a.saveDetail(&email1);
+    a.saveDetail(&email2);
+    a.saveDetail(&email3);
+
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactEmailAddress::DefinitionName);
+    QVERIFY(details.count() == 3);
+    
+    QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextWork);
+    QVERIFY(details.at(2).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+
+    QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    details = a.details(QContactEmailAddress::DefinitionName);
+    QVERIFY(details.count() == 2);
+    QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+
+    a.saveDetail(&email2);
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactEmailAddress::DefinitionName);
+    QVERIFY(details.count() == 3);
+    QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+    QVERIFY(details.at(2).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextWork);
+
 
     QVERIFY(cm->removeContact(a.id().localId()));
     QVERIFY(cm->error() == QContactManager::NoError);
