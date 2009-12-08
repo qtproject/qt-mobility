@@ -796,10 +796,22 @@ void tst_QContactManager::update()
     QVERIFY(didUpdate);
 
     // Try changing types - not allowed
+    // from contact -> group
     alice.setType(QContactType::TypeGroup);
+    alice.removeDetail(&na);
     QVERIFY(!cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
-    qDebug() << "foo!";
+    
+    // from group -> contact
+    QContact jabberwock;
+    QContactPhoneNumber n;
+    n.setNumber("1234567890");
+    jabberwock.saveDetail(&n);
+    jabberwock.setType(QContactType::TypeGroup);
+    QVERIFY(cm->saveContact(&jabberwock));
+    jabberwock.setType(QContactType::TypeContact);
+    QVERIFY(!cm->saveContact(&jabberwock));
+    QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
 
     delete cm;
 }
