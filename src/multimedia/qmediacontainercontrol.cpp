@@ -47,14 +47,14 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMediaContainerControl
     \preliminary
-    \brief The QMediaContainerControl class provides access to the output format of a QMediaService
+    \brief The QMediaContainerControl class provides access to the output container format of a QMediaService
 
     \ingroup multimedia-serv
 
     If a QMediaService supports writing encoded data it will implement
     QMediaContainerControl.  This control provides information about the
-    output formats supported by a media service and allows one to be
-    selected as the current output format..
+    output containers supported by a media service and allows one to be
+    selected as the current output containers.
 
     The functionality provided by this control is exposed to application
     code through the QMediaRecorder class.
@@ -76,7 +76,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new media format control with the given \a parent.
+    Constructs a new media container control with the given \a parent.
 */
 QMediaContainerControl::QMediaContainerControl(QObject *parent)
     :QMediaControl(parent)
@@ -84,7 +84,7 @@ QMediaContainerControl::QMediaContainerControl(QObject *parent)
 }
 
 /*!
-    Destroys a media format control.
+    Destroys a media container control.
 */
 QMediaContainerControl::~QMediaContainerControl()
 {
@@ -92,21 +92,21 @@ QMediaContainerControl::~QMediaContainerControl()
 
 
 /*!
-    \fn QMediaContainerControl::supportedFormats() const
+    \fn QMediaContainerControl::supportedContainers() const
 
-    Returns a list of MIME types of supported formats.
+    Returns a list of MIME types of supported container formats.
 */
 
 /*!
-    \fn QMediaContainerControl::format() const
+    \fn QMediaContainerControl::containerMimeType() const
 
-    Returns the MIME type of the selected format.
+    Returns the MIME type of the selected container format.
 */
 
 /*!
-    \fn QMediaContainerControl::setFormat(const QString &mimeType)
+    \fn QMediaContainerControl::setContainerMimeType(const QString &mimeType)
 
-    Sets the current format to the format identified by the given \a mimeType.
+    Sets the current container format to the format identified by the given \a mimeType.
 */
 
 /*!

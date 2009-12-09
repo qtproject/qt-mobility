@@ -77,10 +77,10 @@
     \value Duration The duration in millseconds of the media.  qint64.
 
     Audio attributes
-    \value AudioBitrate The bit rate of the media's audio stream in bits per second.  int.
+    \value AudioBitRate The bit rate of the media's audio stream in bits per second.  int.
     \value AudioCodec The codec of the media's audio stream.  QString.
     \value AverageLevel The average volume level of the media.  int.
-    \value Channels The number of channels in the media's audio stream. int.
+    \value ChannelCount The number of channels in the media's audio stream. int.
     \value PeakValue The peak volume of the media's audio stream. int
     \value Frequency The frequency of the media's audio stream. int
 
@@ -192,7 +192,7 @@
     Enumerates encoding modes.
 
     \value ConstantQualityEncoding
-    \value ConstantBitrateEncoding
-    \value AverageBitrateEncoding
+    \value ConstantBitRateEncoding
+    \value AverageBitRateEncoding
     \value TwoPassEncoding
 */

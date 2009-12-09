@@ -366,6 +366,9 @@ void QMediaImageViewer::bind(QObject *object)
     }
 }
 
+/*!
+     \internal
+ */
 void QMediaImageViewer::unbind(QObject *object)
 {
     Q_D(QMediaImageViewer);
