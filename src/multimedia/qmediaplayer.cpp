@@ -580,7 +580,8 @@ void QMediaPlayer::unbind(QObject *obj)
         disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                 this, SLOT(_q_updateMedia(QMediaContent)));
         disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
-        d->playlist = 0;        
+        d->playlist = 0;
+        setMedia(QMediaContent());
     }
 }
 
