@@ -10,14 +10,20 @@ SOURCES = logfilepositionsource.cpp \
 CONFIG += console
 
 include(../examples.pri)
-CONFIG += mobility
-MOBILITY = location
+qtAddLibrary(QtLocation)
 
-symbian: {
-    addFiles.sources = simplelog.txt
-    DEPLOYMENT += addFiles
+symbian|wince*: {
+    symbian: {
+        addFiles.sources = simplelog.txt
+        DEPLOYMENT += addFiles
     
-    TARGET.CAPABILITY = Location    
+        TARGET.CAPABILITY = Location
+    }
+    wince*: {
+        addFiles.sources = ./simplelog.txt
+        addFiles.path = .
+        DEPLOYMENT += addFiles
+    }
 } else {
     logfileexample.path = $$DESTDIR
     logfileexample.files = simplelog.txt
@@ -25,3 +31,4 @@ symbian: {
     INSTALLS += logfileexample
     build_pass:ALL_DEPS+=install_logfileexample
 }
+
