@@ -55,6 +55,9 @@ set RELEASEMODE=release
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
+set BUILD_DOCS=yes
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo
+set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
@@ -81,6 +84,9 @@ if "%1" == "-tests"         goto testTag
 if "%1" == "-examples"      goto exampleTag
 if "%1" == "-qt"            goto qtTag
 if "%1" == "-vc"            goto vcTag
+if "%1" == "-nodocs"        goto nodocsTag
+if "%1" == "-docs"          goto docsTag
+if "%1" == "-modules"       goto modulesTag
 if "%1" == "/?"             goto usage
 if "%1" == "-h"             goto usage
 if "%1" == "-help"          goto usage
@@ -112,6 +118,14 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     Note, this adds test symbols to all libraries 
     echo                     and should not be used for release builds.
     echo -examples ......... Build example applications
+    echo -nodocs ........... Do not build documentation
+    echo -docs ............. Build documentation (default)
+    echo -modules <list> ... Build only the specified modules (default all)
+    echo                     Choose from: bearer location publishsubscribe location
+    echo                     multimedia contacts versit messaging systeminfo
+    echo                     Modules should be separated by a space. If a
+    echo                     selected module depends on other modules they
+    echo                     will automatically be enabled.
     echo -vc ............... Generate Visual Studio make files
 
 
@@ -178,6 +192,26 @@ shift
 set VC_TEMPLATE_OPTION=-tp vc
 goto cmdline_parsing
 
+:docsTag
+set BUILD_DOCS=yes
+shift
+goto cmdline_parsing
+
+:nodocsTag
+set BUILD_DOCS=no
+shift
+goto cmdline_parsing
+
+:modulesTag
+shift
+if "%1" == "" (
+    echo >&2 "The -modules option requires a list of modules."
+    goto usage
+)
+set MOBILITY_MODULES_UNPARSED=%1
+shift
+goto cmdline_parsing
+
 :startProcessing
 
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
@@ -212,12 +246,24 @@ set BUILD_UNITTESTS=
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
 set BUILD_EXAMPLES=
 
+echo build_docs = %BUILD_DOCS% >> %PROJECT_CONFIG%
+set BUILD_DOCS=
+
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
 echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
+REM now the modules
+if not "%MOBILITY_MODULES_UNPARSED%" == "" (
+    REM error checking would be nice (e.g. for %%m in (%MOBILITY_MODULES) ... , with an "if" switch like the cmdline arg parsing
+    set MOBILITY_MODULES=%MOBILITY_MODULES_UNPARSED%
+)
+
+echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
+echo maemo:mobility_modules -= systeminfo  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -341,6 +387,7 @@ echo End of compile tests
 echo.
 echo.
 
+REM we could skip generating headers if a module is not enabled
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
 echo "Generating Mobility Headers..."
 rd /s /q %BUILD_PATH%\include
@@ -381,6 +428,8 @@ set PROJECT_LOG=
 set QT_MOBILITY_PREFIX=
 set QT_PATH=
 set SOURCE_PATH=
+set MOBILITY_MODULES=
+set MOBILITY_MODULES_UNPARSED=
 exit /b 1
 
 :exitTag
@@ -393,4 +442,6 @@ set PROJECT_LOG=
 set QT_MOBILITY_PREFIX=
 set QT_PATH=
 set SOURCE_PATH=
+set MOBILITY_MODULES=
+set MOBILITY_MODULES_UNPARSED=
 

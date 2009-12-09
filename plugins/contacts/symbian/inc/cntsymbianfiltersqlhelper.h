@@ -58,7 +58,7 @@
 QTM_USE_NAMESPACE
 class CntSymbianFilterSqlHelper
 {
-public: 
+public:
     Q_DECLARE_LATIN1_LITERAL(SingleQuote,"'")  ;
     Q_DECLARE_LATIN1_LITERAL(PercentSign,"%") ;
     Q_DECLARE_LATIN1_LITERAL(Space," ") ;
@@ -82,7 +82,7 @@ public:
 
 public:
     /*Generic functions for all filters*/
-    QList<QContactLocalId> searchContacts(const QContactFilter& filter, 
+    QList<QContactLocalId> searchContacts(const QContactFilter& filter,
                                            QContactManager::Error& error);
     CntAbstractContactFilter::FilterSupport filterSupportLevel(const QContactFilter& filter);
 
@@ -90,7 +90,7 @@ private:
     void createSqlQuery(const QContactFilter& filter,
                           QString& sqlQuery,
                           QContactManager::Error& error);
-    /* Return true if this filter is leaf filter*/ 
+    /* Return true if this filter is leaf filter*/
     bool isSingleFilter(const QContactFilter& filter) const;
     /*Local helper functions used for creating the sql query */
     void updateSqlQueryForSingleFilter(const QContactFilter& filter,
@@ -114,7 +114,7 @@ private:
             const TDesC& phoneNumber,
             const TInt matchLength);
     CntAbstractContactFilter::FilterSupport checkIfDetailFilterSupported(const QContactDetailFilter& detailFilter) const;
-    
+
 private:
     CntSymbianSrvConnection* m_srvConnection;
     CContactDatabase &m_contactDatabase;

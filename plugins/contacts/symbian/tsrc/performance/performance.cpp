@@ -279,10 +279,12 @@ void SymbianPluginPerfomance::filterUnions()
     QContactDetailFilter filt;
     filt.setValue("alice");
     filt.setMatchFlags(QContactFilter::MatchContains);
+
     filt.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     unionFilter.append(filt);
     filt.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
     unionFilter.append(filt);
+
     measureContactsFetch(
             "Filter: first name \"alice\" or last name \"alice\"",
             unionFilter);

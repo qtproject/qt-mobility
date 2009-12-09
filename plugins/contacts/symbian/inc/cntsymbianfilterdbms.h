@@ -97,4 +97,4 @@ private:
 
 #endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/
 
-#endif /* CntSymbianFilterDbmsDBMS_H */
+#endif /* CNTSYMBIANFILTERDBMS_H */

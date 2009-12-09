@@ -126,6 +126,7 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
         QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
+<<<<<<< HEAD:plugins/contacts/symbian/src/cntsymbianengine.cpp
 
     bool filterSupported(true);
     QList<QContactLocalId> result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);;
@@ -143,6 +144,49 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
         }
     }
 
+=======
+    QList<QContactLocalId> result;
+    
+    //Note this is just a temporary solution, until the api has been fixed.
+    if (filter.type() == QContactFilter::RelationshipFilter){
+        
+        QContactRelationshipFilter rf = static_cast<QContactRelationshipFilter>(filter);
+        
+        if (rf.role() == QContactRelationshipFilter::First) {
+           
+            //note participant id should be changed to contact id when the api has been fixed !!
+            QList<QContactRelationship> relationshipsList = relationships(QContactRelationship::HasMember, rf.otherParticipantId(), QContactRelationshipFilter::First, error );
+            
+            if(error == QContactManager::NoError)
+            {
+                for(int i = 0; i < relationshipsList.count(); i++)
+                {
+                    result += relationshipsList.at(i).second().localId();
+                }
+            }
+        }
+    }
+    
+    else{
+        
+        bool filterSupported(true);
+        result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);;
+    
+        // Remove possible false positives
+        if(!filterSupported && error == QContactManager::NoError)
+            result = slowFilter(filter, result, error);
+    
+        // Sort the matching contacts
+        if(!sortOrders.isEmpty()&& error == QContactManager::NoError) {
+            if(m_contactSorter->sortOrderSupported(sortOrders)) {
+                result = m_contactSorter->sort(result, sortOrders, error);
+            } else {
+                result = slowSort(result, sortOrders, error);
+            }
+        }
+    }
+    
+>>>>>>> 0442b21d60e0b8f51f37e377123cab6293badf39:plugins/contacts/symbian/src/cntsymbianengine.cpp
     return result;
 }
 
@@ -182,7 +226,7 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactMan
     if(error == QContactManager::NoError) {
         updateDisplayLabel(*contact);
         QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, error);
-        QContactManagerEngine::setContactRelationships(contact, relationships);        
+        QContactManagerEngine::setContactRelationships(contact, relationships);
     }
     return *QScopedPointer<QContact>(contact);
 }
