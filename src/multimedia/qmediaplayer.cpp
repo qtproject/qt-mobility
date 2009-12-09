@@ -113,7 +113,7 @@ public:
         , state(QMediaPlayer::StoppedState)
         , error(QMediaPlayer::NoError)
         , filterStates(false)
-        , playlist(0)        
+        , playlist(0)
     {}
 
     QMediaServiceProvider *provider;
@@ -567,11 +567,15 @@ void QMediaPlayer::bind(QObject *obj)
 
         if (videoWidget || videoItem) {
             //detach the current video output
-            if (d->videoWidget)
+            if (d->videoWidget) {
                 d->videoWidget->setMediaObject(0);
+                d->videoWidget = 0;
+            }
 
-            if (d->videoItem)
+            if (d->videoItem) {
                 d->videoItem->setMediaObject(0);
+                d->videoItem = 0;
+            }
         }
 
         if (videoWidget)
