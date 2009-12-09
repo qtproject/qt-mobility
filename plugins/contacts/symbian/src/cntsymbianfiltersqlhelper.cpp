@@ -221,12 +221,26 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
 
     switch (filter.type()) {
            case QContactFilter::InvalidFilter :
-                       // Not supported yet
-                       error = QContactManager::NotSupportedError;
-                       break;
+           {
+               // Not supported yet
+               error = QContactManager::NotSupportedError;
+               break;
+           }
            case QContactFilter::ContactDetailFilter:
-                       updateSqlQueryForDetailFilter(filter,sqlQuery,error);
-                       break;
+           {
+               const QContactDetailFilter detailFilter(filter);
+               
+               if (detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName)
+               {
+                   updateSqlQueryForDisplayLabelFilter(detailFilter,sqlQuery,error);
+               }
+               else
+               {
+                   updateSqlQueryForDetailFilter(filter,sqlQuery,error);
+               }
+               
+               break;
+           }
            case QContactFilter::ContactDetailRangeFilter:
                        // Not supported yet
                        error = QContactManager::NotSupportedError;
@@ -237,9 +251,9 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                        error = QContactManager::NotSupportedError;
                        break;
            case QContactFilter::DefaultFilter:
-
                        // Not supported yet
-                       error = QContactManager::NotSupportedError;
+                       sqlQuery = "SELECT DISTINCT contact_id FROM contact WHERE ";
+                       error = QContactManager::NoError;
                        break;
            case QContactFilter::ActionFilter:
            case QContactFilter::IntersectionFilter:
@@ -285,13 +299,11 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
 
     //Check for phonenumber. Special handling needed
     if(detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName){
-
-    isPhoneNumberSearchforDetailFilter = true;
-    error = QContactManager::NoError;
-    return;
-
-
+        isPhoneNumberSearchforDetailFilter = true;
+        error = QContactManager::NoError;
+        return;
     }
+
     getSqlDbTableAndColumnNameforDetailFilter(detailFilter,isSubType,tableName,columnName);
 
     //return if tableName is empty
@@ -393,6 +405,21 @@ void CntSymbianFilterSqlHelper::updateFieldForDeatilFilterMatchFlag(
                 }
         }
 }
+
+/*!
+ * Updates the input sql query for display label filter
+ *
+ * \a filter The QContactDetailFilter to be used.
+ * \a sqlQuery The sql query that would be updated
+ * \a error On return, contains the possible error
+ */
+void CntSymbianFilterSqlHelper::updateSqlQueryForDisplayLabelFilter(const QContactDetailFilter& filter,
+                                         QString& sqlQuery,
+                                         QContactManager::Error& error)
+    {
+    
+    
+    }
 
 /*!
  * Converts filed id to column name of the database table.
@@ -498,8 +525,13 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupport
 {
     CntAbstractContactFilter::FilterSupport filterSupported(CntAbstractContactFilter::NotSupported);
     switch (filter.type()) {
+            case QContactFilter::DefaultFilter: //default filter == no filter
+                {
+                filterSupported = CntAbstractContactFilter::Supported;
+                break;
+                }
             case QContactFilter::ContactDetailFilter:
-            	  {
+            	{
                 const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
                 filterSupported = checkIfDetailFilterSupported(detailFilter);
                 break;
@@ -507,7 +539,6 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupport
             case QContactFilter::InvalidFilter :
             case QContactFilter::ContactDetailRangeFilter:
             case QContactFilter::ChangeLogFilter:
-            case QContactFilter::DefaultFilter:
             case QContactFilter::ActionFilter:
             case QContactFilter::IntersectionFilter:
             case QContactFilter::UnionFilter:
@@ -537,7 +568,8 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::checkIfDetail
         // Names , Email,Sip address
         else if ( detailFilter.detailDefinitionName() == QContactName::DefinitionName ||
                   detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName ||
-                  detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName){
+                  detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName ||
+                  detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName){
                if (  (matchFlags == QContactFilter::MatchContains)|| (matchFlags == QContactFilter::MatchStartsWith)||
                      (matchFlags == QContactFilter::MatchEndsWith)|| (matchFlags == QContactFilter::MatchExactly)){
                 filterSupported = CntAbstractContactFilter::Supported;

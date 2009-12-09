@@ -71,6 +71,7 @@ class CntTransformContact;
 class CntAbstractContactFilter;
 class CntAbstractContactSorter;
 class CntRelationship;
+class CntDisplayLabel;
 
 #define CNT_SYMBIAN_MANAGER_NAME "symbian"
 
@@ -157,6 +158,7 @@ private:
     CntAbstractContactFilter *m_contactFilter;
     CntAbstractContactSorter *m_contactSorter;
     CntRelationship *m_relationship;
+    CntDisplayLabel *m_displayLabel;
 
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 #ifdef PBK_UNIT_TEST

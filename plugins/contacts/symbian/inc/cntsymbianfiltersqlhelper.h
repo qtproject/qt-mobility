@@ -99,6 +99,11 @@ private:
     void updateSqlQueryForDetailFilter(const QContactFilter& filter,
                                        QString& sqlQuery,
                                        QContactManager::Error& error);
+    
+    void updateSqlQueryForDisplayLabelFilter(const QContactDetailFilter& filter,
+                                             QString& sqlQuery,
+                                             QContactManager::Error& error);
+    
     void getSqlDbTableAndColumnNameforDetailFilter(
                                 const QContactDetailFilter& filter ,
                                 bool& isSubType,

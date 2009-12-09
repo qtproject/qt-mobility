@@ -60,7 +60,8 @@ symbian: {
         inc/cntsymbianfiltersqlhelper.h \
         inc/cntsymbiansrvconnection.h \
         inc/cntsymbiantransformerror.h \
-        inc/cntsymbiandatabase.h
+        inc/cntsymbiandatabase.h \
+	inc/cntdisplaylabel.h 
       
     SOURCES += \
         src/cntsymbianengine.cpp \
@@ -95,7 +96,8 @@ symbian: {
         src/cntsymbianfiltersqlhelper.cpp \
         src/cntsymbiansrvconnection.cpp \
         src/cntsymbiantransformerror.cpp \
-        src/cntsymbiandatabase.cpp
+        src/cntsymbiandatabase.cpp \
+	src/cntdisplaylabel.cpp
       
     qtAddLibrary(QtContacts)
 
