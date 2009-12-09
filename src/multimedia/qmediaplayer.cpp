@@ -55,6 +55,7 @@
 #include <qmediaplaylist.h>
 #include <qmediaplaylistcontrol.h>
 #include <qvideowidget.h>
+#include <qgraphicsvideoitem.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -125,6 +126,7 @@ public:
 
     QMediaPlaylist *playlist;
     QPointer<QVideoWidget> videoWidget;
+    QPointer<QGraphicsVideoItem> videoItem;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -554,15 +556,27 @@ void QMediaPlayer::bind(QObject *obj)
             connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SLOT(_q_updateMedia(QMediaContent)));
             connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+            return;
         }
 
         QVideoWidget *videoWidget = qobject_cast<QVideoWidget*>(obj);
+        QGraphicsVideoItem *videoItem = qobject_cast<QGraphicsVideoItem*>(obj);
 
-        if (videoWidget) {
-            if (d->videoWidget)
-                d->videoWidget->setMediaObject(0);
-            d->videoWidget = videoWidget;
+        if (videoWidget || videoItem) {
+            //detach the current video output
+            if (videoWidget)
+                videoWidget->setMediaObject(0);
+
+            if (videoItem)
+                videoItem->setMediaObject(0);
         }
+
+        if (videoWidget)
+            d->videoWidget = videoWidget;
+
+        if (videoItem)
+            d->videoItem = videoItem;
     }
 }
 
@@ -576,6 +590,8 @@ void QMediaPlayer::unbind(QObject *obj)
 
     if (obj == d->videoWidget) {
         d->videoWidget = 0;
+    } else if (obj == d->videoItem) {
+        d->videoItem = 0;
     } else if (obj == d->playlist) {
         disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                 this, SLOT(_q_updateMedia(QMediaContent)));
