@@ -10,7 +10,8 @@ QT += gui
 HEADERS += voipdialer.h voipdialerplugin.h
 SOURCES += voipdialer.cpp voipdialerplugin.cpp
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

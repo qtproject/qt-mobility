@@ -6226,17 +6226,6 @@
             <page access="public" status="commendable" name="fetchgooglemaps/main.cpp" href="fetchgooglemaps-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="fetchgooglemaps/main.cpp" location=""/>
             <page access="public" status="commendable" name="fetchgooglemaps/fetchgooglemaps.pro" href="fetchgooglemaps-fetchgooglemaps-pro.html" subtype="file" title="" fulltitle="fetchgooglemaps.pro Example File" subtitle="fetchgooglemaps/fetchgooglemaps.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="incomingcalls" href="incomingcalls.html" subtype="example" title="Incoming Calls Example" fulltitle="Incoming Calls Example" subtitle="" location="undocumented.qdoc">
-            <page access="public" status="commendable" name="incomingcalls/filterdialog.cpp" href="incomingcalls-filterdialog-cpp.html" subtype="file" title="" fulltitle="filterdialog.cpp Example File" subtitle="incomingcalls/filterdialog.cpp" location=""/>
-            <page access="public" status="commendable" name="incomingcalls/filterdialog.h" href="incomingcalls-filterdialog-h.html" subtype="file" title="" fulltitle="filterdialog.h Example File" subtitle="incomingcalls/filterdialog.h" location=""/>
-            <page access="public" status="commendable" name="incomingcalls/qcontactlistmodel.cpp" href="incomingcalls-qcontactlistmodel-cpp.html" subtype="file" title="" fulltitle="qcontactlistmodel.cpp Example File" subtitle="incomingcalls/qcontactlistmodel.cpp" location=""/>
-            <page access="public" status="commendable" name="incomingcalls/qcontactlistmodel.h" href="incomingcalls-qcontactlistmodel-h.html" subtype="file" title="" fulltitle="qcontactlistmodel.h Example File" subtitle="incomingcalls/qcontactlistmodel.h" location=""/>
-            <page access="public" status="commendable" name="incomingcalls/qcontactlistmodel_p.h" href="incomingcalls-qcontactlistmodel-p-h.html" subtype="file" title="" fulltitle="qcontactlistmodel_p.h Example File" subtitle="incomingcalls/qcontactlistmodel_p.h" location=""/>
-            <page access="public" status="commendable" name="incomingcalls/testmodelui.cpp" href="incomingcalls-testmodelui-cpp.html" subtype="file" title="" fulltitle="testmodelui.cpp Example File" subtitle="incomingcalls/testmodelui.cpp" location=""/>
-            <page access="public" status="commendable" name="incomingcalls/testmodelui.h" href="incomingcalls-testmodelui-h.html" subtype="file" title="" fulltitle="testmodelui.h Example File" subtitle="incomingcalls/testmodelui.h" location=""/>
-            <page access="public" status="commendable" name="incomingcalls/main.cpp" href="incomingcalls-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="incomingcalls/main.cpp" location=""/>
-            <page access="public" status="commendable" name="incomingcalls/incomingcalls.pro" href="incomingcalls-incomingcalls-pro.html" subtype="file" title="" fulltitle="incomingcalls.pro Example File" subtitle="incomingcalls/incomingcalls.pro" location=""/>
-        </page>
         <page access="public" status="commendable" name="keepintouch" href="keepintouch.html" subtype="example" title="Keep in Touch Example" fulltitle="Keep in Touch Example" subtitle="" location="undocumented.qdoc">
             <page access="public" status="commendable" name="keepintouch/addressfinder.cpp" href="keepintouch-addressfinder-cpp.html" subtype="file" title="" fulltitle="addressfinder.cpp Example File" subtitle="keepintouch/addressfinder.cpp" location=""/>
             <page access="public" status="commendable" name="keepintouch/addressfinder.h" href="keepintouch-addressfinder-h.html" subtype="file" title="" fulltitle="addressfinder.h Example File" subtitle="keepintouch/addressfinder.h" location=""/>
@@ -6428,6 +6417,22 @@
             <contents name="nokia-qt-lgpl-exception-version-1-0" title="Nokia Qt LGPL Exception version 1.0" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QCameraExposureControl_iid" href="qcameraexposurecontrol.html#QCameraExposureControl_iid" location="qcameraexposurecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QCameraExposureControl" type="" signature="QCameraExposureControl_iid()"/>
+        <page access="public" status="commendable" name="incomingcalls" href="incomingcalls.html" subtype="example" title="Incoming Call Simulator" fulltitle="Incoming Call Simulator" subtitle="" location="incomingcalls.qdoc">
+            <contents name="incoming-calls" title="Incoming Calls" level="1"/>
+            <contents name="motivation" title="Motivation" level="2"/>
+            <contents name="use-case" title="Use Case" level="2"/>
+            <contents name="interface" title="Interface" level="2"/>
+            <contents name="known-issues" title="Known Issues" level="2"/>
+            <page access="public" status="commendable" name="incomingcalls/filterdialog.cpp" href="incomingcalls-filterdialog-cpp.html" subtype="file" title="" fulltitle="filterdialog.cpp Example File" subtitle="incomingcalls/filterdialog.cpp" location=""/>
+            <page access="public" status="commendable" name="incomingcalls/filterdialog.h" href="incomingcalls-filterdialog-h.html" subtype="file" title="" fulltitle="filterdialog.h Example File" subtitle="incomingcalls/filterdialog.h" location=""/>
+            <page access="public" status="commendable" name="incomingcalls/qcontactlistmodel.cpp" href="incomingcalls-qcontactlistmodel-cpp.html" subtype="file" title="" fulltitle="qcontactlistmodel.cpp Example File" subtitle="incomingcalls/qcontactlistmodel.cpp" location=""/>
+            <page access="public" status="commendable" name="incomingcalls/qcontactlistmodel.h" href="incomingcalls-qcontactlistmodel-h.html" subtype="file" title="" fulltitle="qcontactlistmodel.h Example File" subtitle="incomingcalls/qcontactlistmodel.h" location=""/>
+            <page access="public" status="commendable" name="incomingcalls/qcontactlistmodel_p.h" href="incomingcalls-qcontactlistmodel-p-h.html" subtype="file" title="" fulltitle="qcontactlistmodel_p.h Example File" subtitle="incomingcalls/qcontactlistmodel_p.h" location=""/>
+            <page access="public" status="commendable" name="incomingcalls/testmodelui.cpp" href="incomingcalls-testmodelui-cpp.html" subtype="file" title="" fulltitle="testmodelui.cpp Example File" subtitle="incomingcalls/testmodelui.cpp" location=""/>
+            <page access="public" status="commendable" name="incomingcalls/testmodelui.h" href="incomingcalls-testmodelui-h.html" subtype="file" title="" fulltitle="testmodelui.h Example File" subtitle="incomingcalls/testmodelui.h" location=""/>
+            <page access="public" status="commendable" name="incomingcalls/main.cpp" href="incomingcalls-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="incomingcalls/main.cpp" location=""/>
+            <page access="public" status="commendable" name="incomingcalls/incomingcalls.pro" href="incomingcalls-incomingcalls-pro.html" subtype="file" title="" fulltitle="incomingcalls.pro Example File" subtitle="incomingcalls/incomingcalls.pro" location=""/>
+        </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWindowControl_iid" href="qvideowindowcontrol.html#QVideoWindowControl_iid" location="qvideowindowcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWindowControl" type="" signature="QVideoWindowControl_iid()"/>
         <page access="public" status="commendable" name="keepintouch" href="keepintouch.html" subtype="example" title="'Keep in Touch' Example" fulltitle="'Keep in Touch' Example" subtitle="" location="keepintouch.qdoc">
             <page access="public" status="commendable" name="keepintouch/addressfinder.cpp" href="keepintouch-addressfinder-cpp.html" subtype="file" title="" fulltitle="addressfinder.cpp Example File" subtitle="keepintouch/addressfinder.cpp" location=""/>
@@ -6472,8 +6477,8 @@
             <contents name="classes" title="Classes" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
-        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs (Technical Preview)" fulltitle="Qt Mobility Project APIs (Technical Preview)" subtitle="" location="index.qdoc"/>
-        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs (Technical Preview) Overview" fulltitle="Qt Mobility Project APIs (Technical Preview) Overview" subtitle="" location="index.qdoc">
+        <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs" fulltitle="Qt Mobility Project APIs" subtitle="" location="index.qdoc"/>
+        <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs Overview" fulltitle="Qt Mobility Project APIs Overview" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
@@ -6487,7 +6492,7 @@
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
-            <contents name="future-additions" title="Future Additions" level="1"/>
+            <contents name="future-additions-and-considerations" title="Future Additions and Considerations" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
         </page>
@@ -6588,22 +6593,14 @@
             <contents name="use-case" title="Use Case" level="2"/>
             <contents name="interface" title="Interface" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
-            <page access="public" status="commendable" name="samplephonebook/contactdetailsform.cpp" href="samplephonebook-contactdetailsform-cpp.html" subtype="file" title="" fulltitle="contactdetailsform.cpp Example File" subtitle="samplephonebook/contactdetailsform.cpp" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/contactdetailsform.h" href="samplephonebook-contactdetailsform-h.html" subtype="file" title="" fulltitle="contactdetailsform.h Example File" subtitle="samplephonebook/contactdetailsform.h" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/finddialog.cpp" href="samplephonebook-finddialog-cpp.html" subtype="file" title="" fulltitle="finddialog.cpp Example File" subtitle="samplephonebook/finddialog.cpp" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/finddialog.h" href="samplephonebook-finddialog-h.html" subtype="file" title="" fulltitle="finddialog.h Example File" subtitle="samplephonebook/finddialog.h" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/groupdetailsdialog.cpp" href="samplephonebook-groupdetailsdialog-cpp.html" subtype="file" title="" fulltitle="groupdetailsdialog.cpp Example File" subtitle="samplephonebook/groupdetailsdialog.cpp" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/groupdetailsdialog.h" href="samplephonebook-groupdetailsdialog-h.html" subtype="file" title="" fulltitle="groupdetailsdialog.h Example File" subtitle="samplephonebook/groupdetailsdialog.h" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/groupeditdialog.cpp" href="samplephonebook-groupeditdialog-cpp.html" subtype="file" title="" fulltitle="groupeditdialog.cpp Example File" subtitle="samplephonebook/groupeditdialog.cpp" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/groupeditdialog.h" href="samplephonebook-groupeditdialog-h.html" subtype="file" title="" fulltitle="groupeditdialog.h Example File" subtitle="samplephonebook/groupeditdialog.h" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/maindialogform_240_320.cpp" href="samplephonebook-maindialogform-240-320-cpp.html" subtype="file" title="" fulltitle="maindialogform_240_320.cpp Example File" subtitle="samplephonebook/maindialogform_240_320.cpp" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/maindialogform_240_320.h" href="samplephonebook-maindialogform-240-320-h.html" subtype="file" title="" fulltitle="maindialogform_240_320.h Example File" subtitle="samplephonebook/maindialogform_240_320.h" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/maindialogform_640_480.cpp" href="samplephonebook-maindialogform-640-480-cpp.html" subtype="file" title="" fulltitle="maindialogform_640_480.cpp Example File" subtitle="samplephonebook/maindialogform_640_480.cpp" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/maindialogform_640_480.h" href="samplephonebook-maindialogform-640-480-h.html" subtype="file" title="" fulltitle="maindialogform_640_480.h Example File" subtitle="samplephonebook/maindialogform_640_480.h" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/contacteditor.cpp" href="samplephonebook-contacteditor-cpp.html" subtype="file" title="" fulltitle="contacteditor.cpp Example File" subtitle="samplephonebook/contacteditor.cpp" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/contacteditor.h" href="samplephonebook-contacteditor-h.html" subtype="file" title="" fulltitle="contacteditor.h Example File" subtitle="samplephonebook/contacteditor.h" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/contactlistpage.cpp" href="samplephonebook-contactlistpage-cpp.html" subtype="file" title="" fulltitle="contactlistpage.cpp Example File" subtitle="samplephonebook/contactlistpage.cpp" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/contactlistpage.h" href="samplephonebook-contactlistpage-h.html" subtype="file" title="" fulltitle="contactlistpage.h Example File" subtitle="samplephonebook/contactlistpage.h" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/filterpage.cpp" href="samplephonebook-filterpage-cpp.html" subtype="file" title="" fulltitle="filterpage.cpp Example File" subtitle="samplephonebook/filterpage.cpp" location=""/>
+            <page access="public" status="commendable" name="samplephonebook/filterpage.h" href="samplephonebook-filterpage-h.html" subtype="file" title="" fulltitle="filterpage.h Example File" subtitle="samplephonebook/filterpage.h" location=""/>
             <page access="public" status="commendable" name="samplephonebook/phonebook.cpp" href="samplephonebook-phonebook-cpp.html" subtype="file" title="" fulltitle="phonebook.cpp Example File" subtitle="samplephonebook/phonebook.cpp" location=""/>
             <page access="public" status="commendable" name="samplephonebook/phonebook.h" href="samplephonebook-phonebook-h.html" subtype="file" title="" fulltitle="phonebook.h Example File" subtitle="samplephonebook/phonebook.h" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/serialiser.cpp" href="samplephonebook-serialiser-cpp.html" subtype="file" title="" fulltitle="serialiser.cpp Example File" subtitle="samplephonebook/serialiser.cpp" location=""/>
-            <page access="public" status="commendable" name="samplephonebook/serialiser.h" href="samplephonebook-serialiser-h.html" subtype="file" title="" fulltitle="serialiser.h Example File" subtitle="samplephonebook/serialiser.h" location=""/>
             <page access="public" status="commendable" name="samplephonebook/main.cpp" href="samplephonebook-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="samplephonebook/main.cpp" location=""/>
             <page access="public" status="commendable" name="samplephonebook/samplephonebook.pro" href="samplephonebook-samplephonebook-pro.html" subtype="file" title="" fulltitle="samplephonebook.pro Example File" subtitle="samplephonebook/samplephonebook.pro" location=""/>
         </page>
@@ -6682,13 +6679,14 @@
             <contents name="building" title="Building" level="1"/>
             <contents name="building-on-unix" title="Building On Unix" level="2"/>
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
+            <contents name="building-for-symbian-on-windows" title="Building For Symbian On Windows" level="2"/>
             <contents name="building-individual-qt-mobility-domains" title="Building Individual Qt Mobility Domains" level="2"/>
             <contents name="environment-variables" title="Environment Variables" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWidgetControl_iid" href="qvideowidgetcontrol.html#QVideoWidgetControl_iid" location="qvideowidgetcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWidgetControl" type="" signature="QVideoWidgetControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceControl_iid" href="qaudiodevicecontrol.html#QAudioDeviceControl_iid" location="qaudiodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioDeviceControl" type="" signature="QAudioDeviceControl_iid()"/>
         <page access="public" status="commendable" name="http://bugreports.qt.nokia.com" href="http-bugreports-qt-nokia-com.html" subtype="externalpage" title="QtMobility Project Bug Tracker" fulltitle="QtMobility Project Bug Tracker" subtitle="" location="qtmobility-known-issues.qdoc"/>
-        <page access="public" status="commendable" name="qtmobility-known-issues.html" href="qtmobility-known-issues.html" subtype="page" title="Release Notes of the QtMobility Project (Technology Preview)" fulltitle="Release Notes of the QtMobility Project (Technology Preview)" subtitle="" location="qtmobility-known-issues.qdoc">
+        <page access="public" status="commendable" name="qtmobility-known-issues.html" href="qtmobility-known-issues.html" subtype="page" title="Release Notes of the QtMobility Project" fulltitle="Release Notes of the QtMobility Project" subtitle="" location="qtmobility-known-issues.qdoc">
             <contents name="new-features" title="New Features" level="1"/>
             <contents name="detailed-feature-support-symbian-s60" title="Detailed Feature support - Symbian/S60" level="2"/>
             <contents name="bearer-management-api" title="Bearer Management API" level="3"/>

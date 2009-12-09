@@ -48,6 +48,7 @@
 #include <qmessage.h>
 #include <qmessageserviceaction.h>
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDateTime>
 #include <QGroupBox>
@@ -116,6 +117,7 @@ AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
       tabWidget(0),
       includePeriod(0),
       excludePeriod(0),
+      excludeCheckBox(0),
       searchAction(0),
       searchButton(0),
       contactList(0),
@@ -148,6 +150,11 @@ void AddressFinder::includePeriodChanged(int selected)
     excludePeriod->setCurrentIndex(0);
 }
 
+void AddressFinder::excludePeriodEnabled(int state)
+{
+    excludePeriod->setEnabled(state == Qt::Checked);
+}
+
 //! [address-selected]
 void AddressFinder::addressSelected(const QString &address)
 {
@@ -172,9 +179,12 @@ void AddressFinder::searchMessages()
     excludedAddresses.clear();
     addressList.clear();
     addressMessages.clear();
+    inclusionMessages.clear();
+    exclusionMessages.clear();
 
 //! [create-date-range]
     QDateTime now(QDateTime::currentDateTime());
+    bool useExclusionPeriod(excludeCheckBox->isChecked());
 
     // Determine the dates that demarcate the selected range
     QDateTime minimumDate(now);
@@ -189,13 +199,16 @@ void AddressFinder::searchMessages()
     }
 
     QDateTime maximumDate(now);
-    switch (excludePeriod->currentIndex()) {
-        case 0: maximumDate = maximumDate.addDays(-7); break;
-        case 1: maximumDate = maximumDate.addMonths(-1); break;
-        case 2: maximumDate = maximumDate.addMonths(-3); break;
-        case 3: maximumDate = maximumDate.addMonths(-6); break;
-        case 4: maximumDate = maximumDate.addMonths(-9); break;
-        default: break;
+    if (useExclusionPeriod) {
+        // We have an exclusion period to apply
+        switch (excludePeriod->currentIndex()) {
+            case 0: maximumDate = maximumDate.addDays(-7); break;
+            case 1: maximumDate = maximumDate.addMonths(-1); break;
+            case 2: maximumDate = maximumDate.addMonths(-3); break;
+            case 3: maximumDate = maximumDate.addMonths(-6); break;
+            case 4: maximumDate = maximumDate.addMonths(-9); break;
+            default: break;
+        }
     }
 //! [create-date-range]
 
@@ -203,8 +216,11 @@ void AddressFinder::searchMessages()
     // We will include addresses contacted following the minimum date
     QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
 
-    // We will exclude addresses contacted following the maximum date
-    QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
+    QMessageFilter excludeFilter;
+    if (useExclusionPeriod) {
+        // We will exclude addresses contacted following the maximum date
+        excludeFilter = QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
+    }
 //! [create-simple-filters]
 
     // Not sure why reception timestamp is relevant to sent messages...
@@ -217,16 +233,26 @@ void AddressFinder::searchMessages()
     // We only want to match messages that we sent
     QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
-    // Create the filter needed to locate messages whose address we will exclude
-    exclusionFilter = (sentFilter & excludeFilter);
-
     // Create the filter needed to locate messages to search for addresses to include
     inclusionFilter = (sentFilter & includeFilter & ~excludeFilter);
+
+    if (useExclusionPeriod) {
+        // Create the filter needed to locate messages whose address we will exclude
+        exclusionFilter = (sentFilter & excludeFilter);
+    }
 //! [create-composite-filters]
 
 //! [begin-search]
-    // Start the search for messages containing addresses to exclude
-    serviceAction.queryMessages(exclusionFilter);
+    if (useExclusionPeriod) {
+        // Start the search for messages containing addresses to exclude
+        serviceAction.queryMessages(exclusionFilter);
+    } else {
+        // Only search for messages containing addresses to include
+        serviceAction.queryMessages(inclusionFilter);
+
+        // Clear the inclusion filter to indicate that we have searched for it
+        inclusionFilter = QMessageFilter();
+    }
 //! [begin-search]
 }
 
@@ -373,9 +399,11 @@ void AddressFinder::setupUi()
     filterLayout->addWidget(includeLabel, 0, 0);
     filterLayout->setAlignment(includeLabel, Qt::AlignRight);
 
-    QLabel *excludeLabel = new QLabel(tr("But not last"));
-    filterLayout->addWidget(excludeLabel, 1, 0);
-    filterLayout->setAlignment(excludeLabel, Qt::AlignRight);
+    excludeCheckBox = new QCheckBox(tr("But not last"));
+    excludeCheckBox->setCheckState(Qt::Checked);
+    connect(excludeCheckBox, SIGNAL(stateChanged(int)), this, SLOT(excludePeriodEnabled(int)));
+    filterLayout->addWidget(excludeCheckBox, 1, 0);
+    filterLayout->setAlignment(excludeCheckBox, Qt::AlignRight);
 
     includePeriod = new QComboBox;
     includePeriod->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);

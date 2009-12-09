@@ -50,6 +50,7 @@
 #include <QWidget>
 #include <QMainWindow>
 
+class QCheckBox;
 class QComboBox;
 class QListWidget;
 class QPushButton;
@@ -72,6 +73,7 @@ public:
 
 private slots:
     void includePeriodChanged(int);
+    void excludePeriodEnabled(int);
     void addressSelected(const QString&);
     void searchMessages();
     void stateChanged(QMessageServiceAction::State a);
@@ -92,6 +94,7 @@ private:
     QTabWidget *tabWidget;
     QComboBox *includePeriod;
     QComboBox *excludePeriod;
+    QCheckBox *excludeCheckBox;
 
     QAction *searchAction;
     QPushButton *searchButton;

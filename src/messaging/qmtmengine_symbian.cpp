@@ -3591,10 +3591,10 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
         if (pMessage->Length() > 0) {
             size += pMessage->Length();
             message.setBody(QString::fromUtf16(pMessage->Ptr(), pMessage->Length()));
-            if (pMessage->Length() <= 40) {
+            if (pMessage->Length() <= 100) {
 				message.setSubject(QString::fromUtf16(pMessage->Ptr(), pMessage->Length()));
             } else {
-				message.setSubject(QString::fromUtf16(pMessage->Ptr(), 40));
+				message.setSubject(QString::fromUtf16(pMessage->Ptr(), 100));
             }     
         }
         CleanupStack::PopAndDestroy(pMessage);
@@ -3690,11 +3690,11 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
             if (pMsg->Length() > 0) {
                 message.setBody(QString::fromUtf16(pMsg->Ptr(), pMsg->Length()));
                 if (receivedEntry.Entry().iDescription.Length() <= 0) { // no subject
-					if (pMsg->Length() <= 40) {
+					if (pMsg->Length() <= 100) {
 						message.setSubject(QString::fromUtf16(pMsg->Ptr(), pMsg->Length()));
 					}
 					else {
-						message.setSubject(QString::fromUtf16(pMsg->Ptr(), 40));
+						message.setSubject(QString::fromUtf16(pMsg->Ptr(), 100));
 					}
                 }
             }

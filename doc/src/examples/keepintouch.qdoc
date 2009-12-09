@@ -91,9 +91,9 @@
     \snippet    ../../examples/keepintouch/addressfinder.cpp accumulate-matches
 
     When the search is completed, the QMessageServiceAction::stateChanged()
-    signal is emitted.  We have to perform two searches, so when the first
-    finishes our handler initiates the second; when the second finishes, we
-    begin processing the results:
+    signal is emitted.  If the user specified an exclusion period then we have 
+    to perform two searches, so when the first finishes our handler initiates 
+    the second; when the second finishes, we begin processing the results:
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp handle-search-result
 

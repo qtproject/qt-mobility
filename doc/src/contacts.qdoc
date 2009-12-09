@@ -327,6 +327,7 @@ serialization of a QContact into a vCard document, and vice versa.
 
 \list
     \o \l{samplephonebook}{Sample Phonebook}
+    \o \l{incomingcalls}{Incoming Call Simulator}
 \endlist
 
 */

@@ -39,16 +39,61 @@
 **
 ****************************************************************************/
 
-#ifndef CONTACTDETAILSFORM_H
-#define CONTACTDETAILSFORM_H
+#ifndef CONTACTEDITOR_H
+#define CONTACTEDITOR_H
 
-#include "ui_contactdetails_240_320.h"
+#include "qtcontacts.h"
 
-class ContactDetailsForm : public QDialog, Ui::ContactDetails240By320
+#include <QWidget>
+#include <QMap>
+#include <QPlainTextEdit>
+
+QT_BEGIN_NAMESPACE
+class QScrollArea;
+class QPushButton;
+class QLineEdit;
+QT_END_NAMESPACE
+
+QTM_USE_NAMESPACE
+
+class ContactEditor : public QWidget
 {
-public:
-    ContactDetailsForm(QWidget *parent);
-    ~ContactDetailsForm();
-};
-#endif // CONTACTDETAILSFORM_H
+    Q_OBJECT
 
+public:
+    ContactEditor(QWidget *parent = 0);
+    ~ContactEditor();
+
+signals:
+    void showListPage();
+
+public slots:
+    void setCurrentContact(QContactManager* manager, QContactLocalId currentId);
+
+private slots:
+    void saveClicked();
+    void deleteClicked();
+    void cancelClicked();
+    void avatarClicked();
+
+private:
+    QString nameField();
+
+    QPushButton *m_saveBtn;
+    QPushButton *m_deleteBtn;
+    QPushButton *m_cancelBtn;
+
+    QScrollArea *m_detailsArea; // contains the below elements.
+    QLineEdit *m_nameEdit;
+    QLineEdit *m_phoneEdit;
+    QLineEdit *m_emailEdit;
+    QLineEdit *m_addrEdit;
+    QPushButton *m_avatarBtn;
+
+    // data
+    QContactManager *m_manager;
+    QContactLocalId m_contactId;
+    QString m_newAvatarPath;
+};
+
+#endif // CONTACTEDITOR_H

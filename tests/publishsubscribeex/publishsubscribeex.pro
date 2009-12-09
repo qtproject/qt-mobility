@@ -27,4 +27,5 @@ symbian {
     TARGET.UID3 = 0x2002ac7c
 }
 
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe

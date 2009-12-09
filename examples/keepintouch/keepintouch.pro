@@ -5,10 +5,10 @@ QT += gui
 
 include(../examples.pri)
 
-qtAddLibrary(QtMessaging)
-INCLUDEPATH += ../../src/messaging 
+CONFIG += mobility
+MOBILITY = messaging contacts
 
-qtAddLibrary(QtContacts)
+INCLUDEPATH += ../../src/messaging 
 INCLUDEPATH += ../../src/contacts ../../src/contacts/details ../../src/contacts/filters ../../src/contacts/requests
 
 symbian|win32 {
