@@ -71,7 +71,6 @@ echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
 
 :cmdline_parsing
-
 if "%1" == ""               goto startProcessing
 if "%1" == "-debug"         goto debugTag
 if "%1" == "-release"       goto releaseTag
@@ -204,13 +203,20 @@ goto cmdline_parsing
 
 :modulesTag
 shift
-if "%1" == "" (
+:: %1 can have leading/trailing quotes, so we can't use if "%1" == ""
+if xx%1xx == xxxx (
     echo. >&2
     echo >&2The -modules option requires a list of modules.
     echo. >&2
     goto usage
 )
-set MOBILITY_MODULES_UNPARSED=%1
+
+:: Remove leading/trailing quotes, if we have them
+set MOBILITY_MODULES_UNPARSED=xxx%1xxx
+set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:"xxx=%
+set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx"=%
+set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
+
 shift
 goto cmdline_parsing
 
