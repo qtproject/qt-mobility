@@ -119,7 +119,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer location publishsubscribe location
-    echo                     multimedia contacts versit messaging systeminfo
+    echo                     multimedia contacts versit messaging systeminfo serviceframework
     echo                     Modules should be separated by a space. If a
     echo                     selected module depends on other modules they
     echo                     will automatically be enabled.
@@ -210,7 +210,52 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:"xxx=%
 set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx"=%
 set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 
-shift
+REM reset default modules as we expect a modules list
+set MOBILITY_MODULES=
+
+echo Checking selected modules:
+:modulesTag2
+
+for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do ( 
+    set FIRST=%%a 
+    set REMAINING=%%b
+)
+
+: What we want is a switch as we need to check module name and only want to
+: distinguish between false and correct module names being passed
+if %FIRST% == bearer (
+    echo     Bearer Management selected
+) else if %FIRST% == contacts (
+    echo     Contacts selected
+) else if %FIRST% == location (
+    echo     Location selected
+) else if %FIRST% == messaging (
+    echo     Messaging selected
+) else if %FIRST% == multimedia (
+    echo     Multimedia selected
+) else if %FIRST% == publishsubscribe (
+    echo     PublishSubscribe selected
+) else if %FIRST% == systeminfo (
+    echo     Systeminfo selected
+) else if %FIRST% == serviceframework (
+    echo     SerficeFramework selected
+) else if %FIRST% == versit (
+    echo     Versit selected
+) else (
+    echo     Unknown module %FIRST%
+    goto errorTag
+)
+
+set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+if "%REMAINING%" == "" (
+    shift
+) else (
+    set MOBILITY_MODULES_UNPARSED=%REMAINING%
+    goto modulesTag2
+)
+
+SET REMAINING=
+SET FIRST=
 goto cmdline_parsing
 
 :startProcessing
@@ -255,12 +300,6 @@ echo qmf_enabled = no >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
-
-REM now the modules
-if not "%MOBILITY_MODULES_UNPARSED%" == "" (
-    REM error checking would be nice (e.g. for %%m in (%MOBILITY_MODULES) ... , with an "if" switch like the cmdline arg parsing
-    set MOBILITY_MODULES=%MOBILITY_MODULES_UNPARSED%
-)
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 echo maemo:mobility_modules -= systeminfo  >> %PROJECT_CONFIG%
@@ -394,16 +433,47 @@ echo Generating Mobility Headers...
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\global
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\publishsubscribe
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\serviceframework
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\systeminfo
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\experimental
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
-perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\versit
+
+set MODULES_TEMP=%MOBILITY_MODULES%
+
+:generateHeaders
+
+for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do ( 
+    set FIRST=%%a 
+    set REMAINING=%%b
+)
+
+if %FIRST% == bearer (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
+) else if %FIRST% == contacts (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
+) else if %FIRST% == location (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
+) else if %FIRST% == messaging (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
+) else if %FIRST% == multimedia (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\experimental
+) else if %FIRST% == publishsubscribe (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\publishsubscribe
+) else if %FIRST% == systeminfo (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\systeminfo
+) else if %FIRST% == serviceframework (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\serviceframework
+) else if %FIRST% == versit (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\versit
+)
+
+if "%REMAINING%" == "" (
+    shift
+) else (
+    set MODULES_TEMP=%REMAINING%
+    goto generateHeaders
+)
+
+SET REMAINING=
+SET FIRST=
+SET MODULES_TEMP=
 
 if exist config.pri del config.pri
 ren %PROJECT_CONFIG% config.pri
@@ -433,6 +503,9 @@ set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
 set MOBILITY_MODULES_UNPARSED=
+SET REMAINING=
+SET FIRST=
+SET MODULES_TEMP=
 exit /b 1
 
 :exitTag
@@ -447,4 +520,7 @@ set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
 set MOBILITY_MODULES_UNPARSED=
+SET REMAINING=
+SET FIRST=
+SET MODULES_TEMP=
 exit /b 0
