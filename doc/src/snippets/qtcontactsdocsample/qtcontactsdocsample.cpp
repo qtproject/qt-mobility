@@ -193,7 +193,7 @@ void viewDetails(QContactManager* cm)
 void addPlugin(QContactManager* cm)
 {
     /* Find the definition that we are modifying */
-    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitions();
+    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitionMap();
     QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
 
     /* Make our modifications: we add a "Label" field to email addresses */
@@ -276,7 +276,7 @@ void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnl
     }
 
     // once we've finished retrieving results, stop processing events.
-    if (request->status() == QContactAbstractRequest::Finished || request->status() == QContactAbstractRequest::Cancelled) {
+    if (request->state() == QContactAbstractRequest::Finished || request->state() == QContactAbstractRequest::Canceled) {
         QCoreApplication::exit(0);
     }
 }
@@ -304,7 +304,7 @@ void loadManagerWithParameters()
     QMap<QString, QString> parameters;
     parameters.insert("Settings", "~/.qcontactmanager-kabc-settings.ini");
     QContactManager* cm = new QContactManager("KABC", parameters);
-    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitions();
+    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitionMap();
 
     qDebug() << "This backend currently supports the following detail definitions:";
     QList<QContactDetailDefinition> allDefinitions = definitions.values();

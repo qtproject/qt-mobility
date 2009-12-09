@@ -203,13 +203,8 @@ QString QContactManager::buildUri(const QString& managerName, const QMap<QString
         escapedParams.append(key);
     }
 
-    QString versionString = QString(QLatin1String(QTCONTACTS_VERSION_NAME));
-    versionString += QString::fromAscii("=");
-    versionString += QString::number(version());
-    escapedParams.append(versionString);
-
     if (implementationVersion != -1) {
-        versionString = QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME));
+        QString versionString = QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME));
         versionString += QString::fromAscii("=");
         versionString += QString::number(implementationVersion);
         escapedParams.append(versionString);
@@ -229,7 +224,7 @@ QContactManager* QContactManager::fromUri(const QString& storeUri, QObject* pare
     } else {
         QString id;
         QMap<QString, QString> parameters;
-        if (splitUri(storeUri, &id, &parameters)) {
+        if (parseUri(storeUri, &id, &parameters)) {
             return new QContactManager(id, parameters, parent);
         } else {
             // invalid
@@ -445,7 +440,7 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
 QString QContactManager::synthesizeDisplayLabel(const QContact& contact) const
 {
     qWarning("This function is deprecated and will be removed in week 1!  Use synthesizedDisplayLabel() instead!");
-    return d->m_engine->synthesizeDisplayLabel(contact, d->m_error);
+    return d->m_engine->synthesizedDisplayLabel(contact, d->m_error);
 }
 
 /*!
@@ -566,7 +561,7 @@ QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const
         return QMap<QString, QContactDetailDefinition>();
     }
 
-    return d->m_engine->detailDefinitions(contactType, d->m_error);
+    return d->m_engine->detailDefinitionMap(contactType, d->m_error);
 }
 
 /*!
@@ -659,7 +654,7 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
 bool Q_DECL_DEPRECATED QContactManager::filterSupported(const QContactFilter& filter) const
 {
     qWarning("filterSupported() is deprecated and will be removed in week 1!  Use isFilterSupported() instead!");
-    return d->m_engine->filterSupported(filter);
+    return d->m_engine->isFilterSupported(filter);
 }
 
 /*!
@@ -718,7 +713,7 @@ int QContactManager::version()
 int QContactManager::implementationVersion() const 
 {
     qWarning("This function is deprecated and will be removed in week 1!  Use managerVersion() instead!");
-    return d->m_engine->implementationVersion(); 
+    return d->m_engine->managerVersion();
 }
 
 /*!

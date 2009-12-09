@@ -265,11 +265,23 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
 
 /*!
    \variable QContactGeolocation::DefinitionName
+   \deprecated
+
+   The constant string which identifies the definition of details
+   which describe a location associated with a contact.
+
+   Note: this class has been deprecated and will be removed in week 1.
+   Use QContactGeoLocation instead!
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "Geolocation");
+
+/*!
+   \variable QContactGeoLocation::DefinitionName
 
    The constant string which identifies the definition of details
    which describe a location associated with a contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "Geolocation");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
 
 /*!
    \variable QContactOnlineAccount::DefinitionName

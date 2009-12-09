@@ -305,7 +305,7 @@ void tst_QContactDetail::values()
 {
     QContactDetail p;
 
-    QCOMPARE(p.values(), QVariantMap());
+    QCOMPARE(p.variantValueMap(), QVariantMap());
 
     QDateTime dt = QDateTime::currentDateTime();
     QTime t = dt.time();
@@ -392,13 +392,13 @@ void tst_QContactDetail::values()
 
     /* Now set everything again */
     QVariantMap emptyValues;
-    QVariantMap values = p.values();
+    QVariantMap values = p.variantValueMap();
     QStringList keys = values.keys();
     foreach (const QString& key, keys)
         QVERIFY(p.setValue(key, QVariant()));
 
-    QCOMPARE(p.values(), emptyValues);
-    QVERIFY(p.values().count() == 0);
+    QCOMPARE(p.variantValueMap(), emptyValues);
+    QVERIFY(p.variantValueMap().count() == 0);
     QVERIFY(!p.hasValue("string"));
     QVERIFY(!p.hasValue("date"));
     QVERIFY(!p.hasValue("datetime"));
@@ -482,11 +482,11 @@ void tst_QContactDetail::values()
     QCOMPARE(p.value<QDateTime>("stringdate"), ddt);
 
     /* Reset again */
-    values = p.values();
+    values = p.variantValueMap();
     keys = values.keys();
     foreach (const QString& key, keys)
         QVERIFY(p.setValue(key, QVariant()));
-    QCOMPARE(p.values(), emptyValues);
+    QCOMPARE(p.variantValueMap(), emptyValues);
 
     /* Check that we can add a null variant */
     //QVERIFY(p.setValue("nullvariant", QVariant()));
@@ -494,38 +494,38 @@ void tst_QContactDetail::values()
     //QCOMPARE(p.value("nullvariant"), QString());
     //QCOMPARE(p.variantValue("nullvariant"), QVariant());
     //QVERIFY(p.removeValue("nullvariant"));
-    //QVERIFY(p.values().count() == 0);
+    //QVERIFY(p.variantValueMap().count() == 0);
 
     /* Check that adding a value, then setting it to null updates it */
     //QVERIFY(p.setValue("string", QString("string value")));
-    //QCOMPARE(p.values().count(), 1);
+    //QCOMPARE(p.variantValueMap().count(), 1);
     //QCOMPARE(p.value("string"), QString("string value"));
     //QVERIFY(p.setValue("string", QVariant()));
-    //QCOMPARE(p.values().count(), 1);
+    //QCOMPARE(p.variantValueMap().count(), 1);
     //QVERIFY(p.hasValue("string"));
     //QVERIFY(p.removeValue("string"));
-    //QCOMPARE(p.values().count(), 0);
+    //QCOMPARE(p.variantValueMap().count(), 0);
 
     /* See if adding a null QString triggers the same behaviour */
     //QVERIFY(p.setValue("string", QString("string value")));
-    //QCOMPARE(p.values().count(), 1);
+    //QCOMPARE(p.variantValueMap().count(), 1);
     //QCOMPARE(p.value("string"), QString("string value"));
     //QVERIFY(p.setValue("string", QString()));
-    //QCOMPARE(p.values().count(), 1);
+    //QCOMPARE(p.variantValueMap().count(), 1);
     //QVERIFY(p.hasValue("string"));
     //QVERIFY(p.removeValue("string"));
-    //QCOMPARE(p.values().count(), 0);
+    //QCOMPARE(p.variantValueMap().count(), 0);
 
     /* Check adding a null value removes the field */
     p.setValue("string", "stringvalue");
-    QVERIFY(p.values().contains("string"));
+    QVERIFY(p.variantValueMap().contains("string"));
     QVERIFY(p.value("string") == QString("stringvalue"));
     p.setValue("string", QVariant());
-    QVERIFY(!p.values().contains("string"));
+    QVERIFY(!p.variantValueMap().contains("string"));
 
     /* Check adding a field whose value is an empty string */
     p.setValue("string", "");
-    QVERIFY(p.values().contains("string"));
+    QVERIFY(p.variantValueMap().contains("string"));
     QVERIFY(p.value("string") == QString(""));
 
     /* Check accessing a missing value */

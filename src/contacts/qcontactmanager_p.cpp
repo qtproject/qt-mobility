@@ -111,14 +111,7 @@ static int parameterValue(const QMap<QString, QString>& parameters, const char* 
 
 void QContactManagerData::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
-    int apiVersion = parameterValue(parameters, QTCONTACTS_VERSION_NAME, QContactManager::version());
     m_engine = 0;
-
-    if (apiVersion != QContactManager::version()) {
-        m_error = QContactManager::VersionMismatchError;
-        m_engine = new QContactInvalidEngine(); // XXX share
-        return;
-    }
 
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory"))
@@ -133,18 +126,16 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
         
         foreach (QContactManagerEngineFactory* f, factories) {
             QList<int> versions = f->supportedImplementationVersions();
-            if (f && f->version() == apiVersion) {
-                if (implementationVersion == -1 ||//no given implementation version required
+            if (implementationVersion == -1 ||//no given implementation version required
                     versions.isEmpty() || //the manager engine factory does not report any version
                     versions.contains(implementationVersion)) {
-                    m_engine = f->engine(parameters, m_error);
-                    break;
-                }
+                m_engine = f->engine(parameters, m_error);
+                break;
             }
         }
 
         // the engine factory could lie to us, so check the real implementation version
-        if (m_engine->version() != apiVersion || (implementationVersion != -1 && m_engine->implementationVersion() != implementationVersion)) {
+        if (implementationVersion != -1 && m_engine->managerVersion() != implementationVersion) {
             m_error = QContactManager::VersionMismatchError;
             m_engine = 0;
         }
@@ -175,7 +166,7 @@ void QContactManagerData::loadFactories()
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
             QContactActionFactory *g = qobject_cast<QContactActionFactory*>(staticPlugins.at(i));
-            if (f && f->version() == QContactManager::version()) {
+            if (f) {
                 QString name = f->managerName();
                 qDebug() << "Static: found an engine plugin" << f << "with name" << name;
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
@@ -298,7 +289,7 @@ void QContactManagerData::loadFactories()
         foreach (QContactManagerEngineFactory* f, m_engines.values()) {
             QStringList versions;
             foreach (int v, f->supportedImplementationVersions()) {
-                versions << QString::fromAscii("%1.%2").arg(f->version()).arg(v);
+                versions << QString::fromAscii("%1").arg(v);
             }
             engineNames << QString::fromAscii("%1[%2]").arg(f->managerName()).arg(versions.join(QString::fromAscii(",")));
         }

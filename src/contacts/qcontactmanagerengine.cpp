@@ -1019,7 +1019,7 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
     // check that each detail conforms to its definition as supported by this manager.
     for (int i=0; i < contact.details().count(); i++) {
         const QContactDetail& d = contact.details().at(i);
-        QVariantMap values = d.values();
+        QVariantMap values = d.variantValueMap();
         QContactDetailDefinition def = detailDefinition(d.definitionName(), contact.type(), error);
 
         // check that the definition is supported
@@ -1202,7 +1202,7 @@ QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& 
 {
     Q_UNUSED(definitionName);
 
-    QMap<QString, QContactDetailDefinition> definitions = detailDefinitions(contactType, error);
+    QMap<QString, QContactDetailDefinition> definitions = detailDefinitionMap(contactType, error);
     if (definitions.contains(definitionName))  {
         error = QContactManager::NoError;
         return definitions.value(definitionName);
@@ -1452,7 +1452,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         const QContactDetail& detail = details.at(j);
 
                         /* Check that the field is present and has a non-empty value */
-                        if (detail.values().contains(cdf.detailFieldName()) && !detail.value(cdf.detailFieldName()).isEmpty())
+                        if (detail.variantValueMap().contains(cdf.detailFieldName()) && !detail.value(cdf.detailFieldName()).isEmpty())
                             return true;
                     }
                     return false;
@@ -1516,7 +1516,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 if (!cdf.minValue().isValid() && !cdf.maxValue().isValid()) {
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
-                        if (detail.values().contains(cdf.detailFieldName()))
+                        if (detail.variantValueMap().contains(cdf.detailFieldName()))
                             return true;
                     }
                     return false;

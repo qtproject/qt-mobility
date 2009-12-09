@@ -330,7 +330,7 @@ void tst_QContact::details()
     four.setNumber("");
     c.saveDetail(&four);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 2);
-    QVERIFY(!four.values().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
+    QVERIFY(!four.variantValueMap().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
 
     // ensure that clearing a contact's details works correctly
     QContactName nameDetail;
@@ -596,7 +596,7 @@ void tst_QContact::displayName()
     /*
      * The display label is not updated until you save the contact!
      */
-    QString synth = cm.synthesizeDisplayLabel(d);
+    QString synth = cm.synthesizedDisplayLabel(d);
     QVERIFY(d.displayLabel().isEmpty());
     //QVERIFY(synth == name.customLabel()); // XXX Perhaps not guaranteed, depends on backend synth rules.
 

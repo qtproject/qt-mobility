@@ -245,12 +245,12 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
-            qDebug() << "A contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "A contact had extra detail:" << d.definitionName() << d.variantValueMap();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
-            qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "B contact had extra detail:" << d.definitionName() << d.variantValueMap();
     }
 
     // now test specifically the display label and the type
@@ -307,11 +307,11 @@ bool tst_QContactManager::isSuperset(const QContact& ca, const QContact& cb)
 void tst_QContactManager::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizeDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizedDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        qDebug() << "    Vals:" << d.values();
+        qDebug() << "    Vals:" << d.variantValueMap();
     }
 }
 
@@ -443,12 +443,12 @@ void tst_QContactManager::uriParsing()
     if (good) {
         /* Good split */
         /* Test splitting */
-        QVERIFY(QContactManager::splitUri(uri, 0, 0)); // no out parms
+        QVERIFY(QContactManager::parseUri(uri, 0, 0)); // no out parms
 
         // 1 out param
-        QVERIFY(QContactManager::splitUri(uri, &outmanager, 0));
+        QVERIFY(QContactManager::parseUri(uri, &outmanager, 0));
         QCOMPARE(manager, outmanager);
-        QVERIFY(QContactManager::splitUri(uri, 0, &outparameters));
+        QVERIFY(QContactManager::parseUri(uri, 0, &outparameters));
 
         QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
 
@@ -456,7 +456,7 @@ void tst_QContactManager::uriParsing()
 
         outmanager.clear();
         outparameters.clear();
-        QVERIFY(QContactManager::splitUri(uri, &outmanager, &outparameters));
+        QVERIFY(QContactManager::parseUri(uri, &outmanager, &outparameters));
 
         QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
 
@@ -466,19 +466,19 @@ void tst_QContactManager::uriParsing()
         /* bad splitting */
         outmanager.clear();
         outparameters.clear();
-        QVERIFY(QContactManager::splitUri(uri, 0, 0) == false);
-        QVERIFY(QContactManager::splitUri(uri, &outmanager, 0) == false);
+        QVERIFY(QContactManager::parseUri(uri, 0, 0) == false);
+        QVERIFY(QContactManager::parseUri(uri, &outmanager, 0) == false);
         QVERIFY(outmanager.isEmpty());
-        QVERIFY(QContactManager::splitUri(uri, 0, &outparameters) == false);
+        QVERIFY(QContactManager::parseUri(uri, 0, &outparameters) == false);
         QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
         QVERIFY(outparameters.isEmpty());
 
         /* make sure the in parameters don't change with a bad split */
         outmanager = manager;
         outparameters = parameters;
-        QVERIFY(QContactManager::splitUri(uri, &outmanager, 0) == false);
+        QVERIFY(QContactManager::parseUri(uri, &outmanager, 0) == false);
         QCOMPARE(manager, outmanager);
-        QVERIFY(QContactManager::splitUri(uri, 0, &outparameters) == false);
+        QVERIFY(QContactManager::parseUri(uri, 0, &outparameters) == false);
         QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(outparameters);
         QCOMPARE(parameters, outparameters);
     }
@@ -648,7 +648,7 @@ void tst_QContactManager::add()
     // - read it back
     // - ensure that it's the same.
     QContact megacontact;
-    QMap<QString, QContactDetailDefinition> defmap = cm->detailDefinitions();
+    QMap<QString, QContactDetailDefinition> defmap = cm->detailDefinitionMap();
     QList<QContactDetailDefinition> defs = defmap.values();
     foreach (const QContactDetailDefinition def, defs) {
         // if the definition is read only, we cannot create details of the definition, so skip it.
@@ -1066,7 +1066,7 @@ void tst_QContactManager::invalidManager()
     nf.setLast("Lastname");
     foo.saveDetail(&nf);
 
-    QVERIFY(manager.synthesizeDisplayLabel(foo).isEmpty());
+    QVERIFY(manager.synthesizedDisplayLabel(foo).isEmpty());
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     QVERIFY(manager.saveContact(&foo) == false);
@@ -1098,8 +1098,8 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.contacts(df | df).count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
-    QVERIFY(manager.filterSupported(f) == false);
-    QVERIFY(manager.filterSupported(df) == false);
+    QVERIFY(manager.isFilterSupported(f) == false);
+    QVERIFY(manager.isFilterSupported(df) == false);
 
     QList<QContact> list;
     list << foo;
@@ -1115,7 +1115,7 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     /* Detail definitions */
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitionMap().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
 
     QContactDetailDefinition def;
@@ -1130,13 +1130,13 @@ void tst_QContactManager::invalidManager()
 
     QVERIFY(manager.saveDetailDefinition(def) == false);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitionMap().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinition("new field").name() == QString());
 
     QVERIFY(manager.removeDetailDefinition(def.name()) == false);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
-    QVERIFY(manager.detailDefinitions().count() == 0);
+    QVERIFY(manager.detailDefinitionMap().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
 
     /* Capabilities */
@@ -1478,7 +1478,7 @@ void tst_QContactManager::nameSynthesis()
         c.saveDetail(&org2);
 
     // Finally!
-    QCOMPARE(cm.synthesizeDisplayLabel(c), expected);
+    QCOMPARE(cm.synthesizedDisplayLabel(c), expected);
 }
 
 void tst_QContactManager::contactValidation()
@@ -1849,7 +1849,7 @@ void tst_QContactManager::detailDefinitions()
 {
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
-    QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
+    QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitionMap();
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;
@@ -2023,7 +2023,7 @@ void tst_QContactManager::displayName()
     QVERIFY(d.displayLabel().isEmpty());
     QVERIFY(d.saveDetail(&name));
 
-    QString synth = cm->synthesizeDisplayLabel(d);
+    QString synth = cm->synthesizedDisplayLabel(d);
 
     /*
      * The display label is not updated until you save the contact.

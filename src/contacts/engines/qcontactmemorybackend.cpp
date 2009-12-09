@@ -892,7 +892,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactManager::Error> operationErrors;
             QMap<QString, QContactDetailDefinition> requestedDefinitions;
-            QStringList names = r->names();
+            QStringList names = r->definitionNames();
             if (names.isEmpty())
                 names = detailDefinitions(r->contactType(), operationError).keys(); // all definitions.
 
@@ -938,7 +938,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         case QContactAbstractRequest::DetailDefinitionRemoveRequest:
         {
             QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(currentRequest);
-            QStringList names = r->names();
+            QStringList names = r->definitionNames();
 
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactManager::Error> operationErrors;

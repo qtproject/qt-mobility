@@ -182,7 +182,9 @@ void QContactAbstractRequest::setManager(QContactManager* manager)
 bool QContactAbstractRequest::start()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && !isActive()) {
+    if (engine && (d_ptr->m_state == QContactAbstractRequest::Canceled
+                   || d_ptr->m_state == QContactAbstractRequest::Finished
+                   || d_ptr->m_state == QContactAbstractRequest::Inactive)) {
         return engine->startRequest(this);
     }
 
@@ -207,7 +209,8 @@ bool QContactAbstractRequest::cancel()
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && isActive()) {
+    if (engine && (d_ptr->m_state == QContactAbstractRequest::Active
+                   || d_ptr->m_state == QContactAbstractRequest::Canceling)) {
         return engine->waitForRequestFinished(this, msecs);
     }
 
@@ -220,7 +223,8 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && isActive()) {
+    if (engine && (d_ptr->m_state == QContactAbstractRequest::Active
+                   || d_ptr->m_state == QContactAbstractRequest::Canceling)) {
         return engine->waitForRequestProgress(this, msecs);
     }
 
