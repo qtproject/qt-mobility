@@ -205,7 +205,9 @@ goto cmdline_parsing
 :modulesTag
 shift
 if "%1" == "" (
-    echo >&2 "The -modules option requires a list of modules."
+    echo. >&2
+    echo >&2The -modules option requires a list of modules.
+    echo. >&2
     goto usage
 )
 set MOBILITY_MODULES_UNPARSED=%1
@@ -277,7 +279,7 @@ if "%QT_PATH%" == "" (
 ) else (
     echo >&2Cannot find 'qmake' in %QT_PATH%.
 )
-echo >&2 "Aborting." 
+echo >&2Aborting.
 goto errorTag
 
 :qmakeFound
@@ -335,8 +337,8 @@ echo Checking make
 call :makeTest MOBILITY_MAKE MOBILITY_BUILDSYSTEM
 if not "%MOBILITY_MAKE%" == "" goto compileTests
 
-echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
-echo >&2 "Aborting."
+echo >&2Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH
+echo >&2Aborting.
 goto errorTag
 
 :compileTest
@@ -389,7 +391,7 @@ echo.
 
 REM we could skip generating headers if a module is not enabled
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
-echo "Generating Mobility Headers..."
+echo Generating Mobility Headers...
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\global
