@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility 1.0: addressfinder.h Example File (keepintouch/addressfinder.h)</title>
+  <title>Qt Mobility Project 1.0: addressfinder.h Example File (keepintouch/addressfinder.h)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -60,6 +60,7 @@
 
     #include &lt;QMap&gt;
     #include &lt;QObject&gt;
+    #include &lt;QPair&gt;
     #include &lt;QSet&gt;
     #include &lt;QWidget&gt;
     #include &lt;QMainWindow&gt;
@@ -68,6 +69,11 @@
     class QListWidget;
     class QPushButton;
     class QTabWidget;
+
+    #if !defined(Q_OS_WIN) || !defined(_WIN32_WCE)
+<span class="comment">    // Don't use a 'Search' Button in CE</span>
+    #define USE_SEARCH_BUTTON
+    #endif
 
     QTM_USE_NAMESPACE
 
@@ -86,25 +92,31 @@
         void stateChanged(QMessageServiceAction::State a);
         void messagesFound(const QMessageIdList &amp;ids);
         void continueSearch();
-    #ifdef _WIN32_WCE
+    #ifndef USE_SEARCH_BUTTON
         void tabChanged(int index);
     #endif
+        void messageIndexChanged(int index);
+        void showMessage();
+        void forwardMessage();
 
     private:
         void setupUi();
         void setSearchActionEnabled(bool val);
 
     private:
-        QTabWidget* tabWidget;
+        QTabWidget *tabWidget;
         QComboBox *includePeriod;
         QComboBox *excludePeriod;
-        QAction* searchAction;
+
+        QAction *searchAction;
         QPushButton *searchButton;
 
-        QListWidget*  addressList;
+        QListWidget *contactList;
         QComboBox *messageCombo;
+        QPushButton *showButton;
+        QPushButton *forwardButton;
 
-        QMessageServiceAction service;
+        QMessageServiceAction serviceAction;
 
         QMessageFilter inclusionFilter;
 
@@ -112,15 +124,16 @@
         QMessageIdList exclusionMessages;
 
         QSet&lt;QString&gt; excludedAddresses;
-        QSet&lt;QString&gt; includedAddresses;
-        QMap&lt;QString, QStringList&gt; addressMessages;
-        QMap&lt;QString, QStringList&gt; addressLongForm;
+
+        QStringList addressList;
+        QMap&lt;QString, QList&lt;QPair&lt;QString, QMessageId&gt; &gt; &gt; addressMessages;
     };
 
     #endif</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

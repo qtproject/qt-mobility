@@ -273,8 +273,8 @@ private:
 
 void tst_QRadioTuner::initTestCase()
 {
-    qRegisterMetaType<QRadioTuner::State>();
-    qRegisterMetaType<QRadioTuner::Band>();
+    qRegisterMetaType<QRadioTuner::State>("QRadioTuner::State");
+    qRegisterMetaType<QRadioTuner::Band>("QRadioTuner::Band");
 
     mock = new MockControl(this);
     service = new MockService(this, mock);
@@ -302,6 +302,10 @@ void tst_QRadioTuner::cleanupTestCase()
     radio->stop();
     QCOMPARE(radio->state(), QRadioTuner::StoppedState);
     QCOMPARE(stateSpy.count(), 1);
+
+#ifdef QTM_NAMESPACE
+    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
+#endif
     QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::StoppedState);
 
     delete radio;

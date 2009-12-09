@@ -50,7 +50,7 @@ remote backends.
 \ingroup mobility
 
 The Contacts API enables a client to request contact data from local or
-remote backends.
+remote backends. This is part of the Qt Mobility Project.
 
 \tableofcontents
 
@@ -68,38 +68,53 @@ Qt-based, cross-platform client applications.
 
 \section1 Overview 
 
-A contact is the digital representation of a person, group or entity, which is stored in a platform-specific manner.
-Information pertaining to a single contact may be located across several different datastores, and each datum
-(or detail) may or may not pertain to a particular context in which that information is valid.  A contact may
-include semantically identical pieces of information that are relevant in different contexts.  For example, a
-contact may have a phone number that is relevant to their "home" context, and another phone number that is relevant
-to their "work" context.  It can be seen that the context of information defines its validity to the user, depending
-on the context of usage; and as such, the sum of information in a given context can be considered equivalent to
-a "contextual identity".  This allows great flexibility when consolidating data from various sources into a single,
-cohesive contact.
+A contact is the digital representation of a person, group or entity,
+which is stored in a platform-specific manner. Information pertaining to a
+single contact may be located across several different datastores, and each
+datum (or detail) may or may not pertain to a particular context in which
+that information is valid.  A contact may include semantically identical
+pieces of information that are relevant in different contexts.  For
+example, a contact may have a phone number that is relevant to their "home"
+context, and another phone number that is relevant to their "work" context.
+It can be seen that the context of information defines its validity to the
+user, depending on the context of usage; and as such, the sum of
+information in a given context can be considered equivalent to a "contextual
+identity".  This allows great flexibility when consolidating data from
+various sources into a single, cohesive contact.
 
-Each datum (or detail) stored in a contact has defined semantics of usage and storage.  The Qt Contacts API allows
-per-datastore contact detail definitions, allowing a manager to provide clients with this information on demand,
-and allowing third-party developers to register detail definitions for use by clients.  A detail definition includes
-the fields (and value-types of those fields) which make up the detail, per-contact uniqueness constraints on
-details of the definition, and access constraints (such as read-only, create-only, etc).  Additionally, the fields of
-a detail definition may also be constrained to be read-only or not.
+Each datum (or detail) stored in a contact has defined semantics of usage
+and storage.  The Qt Contacts API allows per-datastore contact detail
+definitions, allowing a manager to provide clients with this information on
+demand, and allowing third-party developers to register detail definitions
+for use by clients.  A detail definition includes the fields (and value-types
+of those fields) which make up the detail, per-contact uniqueness constraints on
+details of the definition, and access constraints (such as read-only,
+create-only, etc).  Additionally, the fields of a detail definition may
+also be constrained to be read-only or not.
 
-A detail is a single, cohesive unit of information that is stored in a contact.  As explained previously, it is
-valid for a particular context or set of contexts, and conforms to a particular definition.  A detail may have
-specific metadata associated with it, such as its sub-type, context, and arbitrary, user-defined metadata.
+A detail is a single, cohesive unit of information that is stored in a
+contact.  As explained previously, it is valid for a particular context or
+set of contexts, and conforms to a particular definition.  A detail may have
+specific metadata associated with it, such as its sub-type, context, and
+arbitrary, user-defined metadata.
 
-Contacts may participate in relationships with other contacts.  The details of any such relationship is stored
-by the manager which contains the contact.  There are several standard relationship types supported by the default
-schema, and arbitrary relationship types are also allowed.  In particular, membership of a contact in a group can
-be modeled as that group contact participating in a \c HasMember relationship with the contact.
+Contacts may participate in relationships with other contacts.  The details
+of any such relationship is stored by the manager which contains the contact.
+There are several standard relationship types supported by the default
+schema, and arbitrary relationship types are also allowed.  In particular,
+membership of a contact in a group can be modeled as that group contact
+participating in a \c HasMember relationship with the contact.
 
-A manager provides access to zero or more platform-specific datastores.  Each datastore may support different
-capabilities (for example, the ability to store certain datatypes, the ability to natively filter on different
-details or details of different definitions, the provision of locking mechanisms, the provision of changelog
-information, etc) which are reported by the manager on request.  The manager therefore provides access to detail
-definitions, contacts, and relationships stored in different datastores, in a platform and datastore independent manner.
-The engine of a manager may be implemented as a plugin to allow dynamic loading of different engines at run-time.
+A manager provides access to zero or more platform-specific datastores.
+Each datastore may support different capabilities (for example, the ability
+to store certain datatypes, the ability to natively filter on different
+details or details of different definitions, the provision of locking
+mechanisms, the provision of changelog information, etc) which are reported
+by the manager on request.  The manager therefore provides access to detail
+definitions, contacts, and relationships stored in different datastores,
+in a platform and datastore independent manner. The engine of a manager may
+be implemented as a plugin to allow dynamic loading of different engines at
+run-time.
 
 \section1 Using the API
 
@@ -241,7 +256,7 @@ To build the library, run \tt qmake and \tt make.
 \section2 "Contact Details" Leaf Classes
 
 Several subclasses of \l{QContactDetail} are provided as part of the
-Qt Mobility Contacts API.  They are general in design but are intended
+Qt Mobility Project Contacts API.  They are general in design but are intended
 to fulfil specific use-cases.  Please note that certain backends may
 choose not to support one or more of these subclasses as they appear here;
 they may offer their own which provide similar functionality.
@@ -312,6 +327,7 @@ serialization of a QContact into a vCard document, and vice versa.
 
 \list
     \o \l{samplephonebook}{Sample Phonebook}
+    \o \l{incomingcalls}{Incoming Call Simulator}
 \endlist
 
 */

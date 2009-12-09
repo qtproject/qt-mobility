@@ -75,6 +75,7 @@
 #include <simmgr.h>
 #include <Winbase.h>
 #include <Winuser.h>
+#include <Pm.h>
 #endif
 
 
@@ -523,7 +524,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
         {
 #if !defined(Q_OS_WINCE)
             OSVERSIONINFOEX versionInfo;
-            versionInfo .dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+            versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
             GetVersionEx((OSVERSIONINFO *) &versionInfo);
             return QString::number(versionInfo.dwMajorVersion) +"."
@@ -531,6 +532,14 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
                     +QString::number(versionInfo.dwBuildNumber)+"."
                     +QString::number(versionInfo.wServicePackMajor)+"."
                     +QString::number(versionInfo.wServicePackMinor);
+#else
+            OSVERSIONINFO versionInfo;
+            versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+
+            GetVersionEx((OSVERSIONINFO *) &versionInfo);
+            return QString::number(versionInfo.dwMajorVersion) +"."
+                    +QString::number(versionInfo.dwMinorVersion)+"."
+                    +QString::number(versionInfo.dwBuildNumber);
 #endif
         }
         break;
@@ -1308,7 +1317,8 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 {
-#if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
+#if !defined( Q_CC_MINGW)
+#if !defined( Q_OS_WINCE)
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
     wHelper->setWmiNamespace("root/wmi");
@@ -1318,7 +1328,30 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
     QVariant v = wHelper->getWMIData();
 
     return v.toUInt();
+#else
+    // This could would detect the state of the backlight, which is as close as we're going to get 
+    // for WinCE.  Unfortunately, some devices don't honour the Microsoft power management API.
+    // This means that the following code is not portable across WinCE devices and so shouldn't 
+    // be included.
+
+    //CEDEVICE_POWER_STATE powerState;
+    //
+    //if (ERROR_SUCCESS != GetDevicePower(L"BKL1:", POWER_NAME, &powerState))
+    //    return -1;
+    //
+    //// Backlight is on
+    //if (powerState == D0)
+    //    return 100;
+    //
+    //// Screen is on, backlight is off
+    //if (powerState == D1)
+    //    return 50;
+    //
+    //// Screen is off
+    //return 0;
 #endif
+#endif
+
     return -1;
 }
 
@@ -1414,6 +1447,104 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
     return drivesList;
 }
 
+#if defined(Q_OS_WINCE)
+QPowerNotificationThread::QPowerNotificationThread(QSystemDeviceInfoPrivate *parent)
+    : parent(parent),
+    done(false)
+{
+    wakeUpEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    // handle / report error
+}
+
+QPowerNotificationThread::~QPowerNotificationThread() {
+    mutex.lock();
+
+    done = true;
+    SetEvent(wakeUpEvent);
+
+    mutex.unlock();
+
+    wait();
+
+    CloseHandle(wakeUpEvent);
+}
+
+void QPowerNotificationThread::run() {
+
+    const int MaxMessageSize = sizeof(POWER_BROADCAST) + sizeof(POWER_BROADCAST_POWER_INFO) 
+        + MAX_PATH;
+
+    MSGQUEUEOPTIONS messageQueueOptions = { 0 };
+    messageQueueOptions.dwSize = sizeof(messageQueueOptions);
+    messageQueueOptions.dwFlags = MSGQUEUE_NOPRECOMMIT;
+    messageQueueOptions.dwMaxMessages = 0;
+    messageQueueOptions.cbMaxMessage = MaxMessageSize;
+    messageQueueOptions.bReadAccess = true;
+
+    HANDLE messageQueue = CreateMsgQueue(NULL, &messageQueueOptions);
+
+    if (messageQueue == NULL)
+        return;
+
+    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION 
+            | PBT_POWERINFOCHANGE);
+
+    if (messageQueue == NULL)
+        return;
+
+    HANDLE events[2] = {messageQueue, wakeUpEvent};
+
+    while(true) {
+        DWORD dwRet = WaitForMultipleObjects(2, events, FALSE, INFINITE);
+
+        mutex.lock();
+
+        if (done) {
+            mutex.unlock();
+            break;
+        }
+
+        if (dwRet == WAIT_OBJECT_0) {
+
+            BYTE buffer[MaxMessageSize];
+            DWORD bytesRead = 0;
+            DWORD messageProperties;
+
+            if (!ReadMsgQueue(messageQueue, &buffer, MaxMessageSize, &bytesRead, 0, &messageProperties)) {
+                continue;
+            }
+
+            if (bytesRead < sizeof(POWER_BROADCAST)) {
+                continue;
+            }
+
+            POWER_BROADCAST *broadcast = (POWER_BROADCAST*) (buffer);
+
+            if (broadcast->Message == PBT_POWERINFOCHANGE) {
+                POWER_BROADCAST_POWER_INFO *info = (POWER_BROADCAST_POWER_INFO*) broadcast->SystemPowerState;                
+                parent->batteryLevel();
+            }
+
+            parent->currentPowerState();
+
+        } else if (dwRet == WAIT_OBJECT_0 + 1) {
+            // we should only be here if the wakeUpEvent was signalled
+            // which only occurs when the thread is being stopped
+            Q_ASSERT(done);
+        } else if (dwRet = WAIT_FAILED) {
+            continue;
+        }
+
+        mutex.unlock();
+    }
+
+    StopPowerNotifications(powerNotificationHandle);
+    CloseMsgQueue(messageQueue);
+    CloseHandle(messageQueue);
+}
+
+#endif
+
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;
 
 #if !defined(Q_OS_WINCE)
@@ -1445,6 +1576,9 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     batteryStatusCache = QSystemDeviceInfo::NoBatteryLevel;
 #if !defined(Q_OS_WINCE)
     QAbstractEventDispatcher::instance()->setEventFilter(qax_winEventFilter);
+#else
+    powerNotificationThread = new QPowerNotificationThread(this);
+    powerNotificationThread->start();
 #endif
     if(!self)
         self = this;
@@ -1453,6 +1587,9 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
+#if defined(Q_OS_WINCE)
+    delete powerNotificationThread;
+#endif
 }
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
@@ -1481,6 +1618,21 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
         }
     }
 # endif
+#else 
+    // detect the presence of a mouse
+    RECT rect;
+    if (GetClipCursor(&rect)) {
+        if ((methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
+            methods |= QSystemDeviceInfo::Mouse;
+        }
+    }
+    // We could also try to detect the presence of a stylus / single touch input.
+    // A team from Microsoft was unable to do this in a way which scaled across multiple devices.    
+    // For more details see:
+    // http://blogs.msdn.com/netcfteam/archive/2006/10/02/Platform-detection-III_3A00_-How-to-detect-a-touch-screen-on-Windows-CE-in-.NET-CF.aspx
+    // Since all non-Qt apps on non-compliant devices will be able to use the touch screen
+    // (by virtue of being written for one particular device) shipping a library which will cause 
+    // just the Qt apps to fail may not be the best move.
 #endif
     int keyboardType = GetKeyboardType(0);
     switch(keyboardType) {
@@ -1661,43 +1813,47 @@ QString QSystemDeviceInfoPrivate::productName()
 
 int QSystemDeviceInfoPrivate::batteryLevel()
 {
+    int bat = 0;
 #ifdef Q_OS_WINCE
     SYSTEM_POWER_STATUS_EX status;
     if(GetSystemPowerStatusEx(&status, true) ) {
-        return status.BatteryLifePercent;
+        bat = status.BatteryLifePercent;
     } else {
        qWarning() << "Battery status failed";
+       return 0;
     }
 #else
     SYSTEM_POWER_STATUS status;
     if(GetSystemPowerStatus( &status) ) {
-        int bat = status.BatteryLifePercent;
-        if(bat == 255) //battery unknown level status
-            bat = 0;
-
-        if(batteryLevelCache != bat) {
-           batteryLevelCache = bat;
-           emit batteryLevelChanged(bat);
-        }
-
-        if(batteryLevelCache < 4 && batteryStatusCache != QSystemDeviceInfo::BatteryCritical) {
-            batteryStatusCache = QSystemDeviceInfo::BatteryCritical;
-            emit batteryStatusChanged(batteryStatusCache);
-        } else if((batteryLevelCache > 3 && batteryLevelCache < 11) && batteryStatusCache != QSystemDeviceInfo::BatteryVeryLow) {
-            batteryStatusCache = QSystemDeviceInfo::BatteryVeryLow;
-            emit batteryStatusChanged(batteryStatusCache);
-        } else if((batteryLevelCache > 10 && batteryLevelCache < 41) && batteryStatusCache != QSystemDeviceInfo::BatteryLow) {
-            batteryStatusCache = QSystemDeviceInfo::BatteryLow;
-            emit batteryStatusChanged(batteryStatusCache);
-        } else if(batteryLevelCache > 40 && batteryStatusCache != QSystemDeviceInfo::BatteryNormal) {
-            batteryStatusCache = QSystemDeviceInfo::BatteryNormal;
-            emit batteryStatusChanged(batteryStatusCache);
-        }
-
-        return bat;
-}
+        bat = status.BatteryLifePercent;
+    } else {
+       qWarning() << "Battery status failed";
+       return 0;
+    }
 #endif
-    return 0;
+    if(bat == 255) //battery unknown level status
+        bat = 0;
+
+    if(batteryLevelCache != bat) {
+       batteryLevelCache = bat;
+       emit batteryLevelChanged(bat);
+    }
+
+    if(batteryLevelCache < 4 && batteryStatusCache != QSystemDeviceInfo::BatteryCritical) {
+        batteryStatusCache = QSystemDeviceInfo::BatteryCritical;
+        emit batteryStatusChanged(batteryStatusCache);
+    } else if((batteryLevelCache > 3 && batteryLevelCache < 11) && batteryStatusCache != QSystemDeviceInfo::BatteryVeryLow) {
+        batteryStatusCache = QSystemDeviceInfo::BatteryVeryLow;
+        emit batteryStatusChanged(batteryStatusCache);
+    } else if((batteryLevelCache > 10 && batteryLevelCache < 41) && batteryStatusCache != QSystemDeviceInfo::BatteryLow) {
+        batteryStatusCache = QSystemDeviceInfo::BatteryLow;
+        emit batteryStatusChanged(batteryStatusCache);
+    } else if(batteryLevelCache > 40 && batteryStatusCache != QSystemDeviceInfo::BatteryNormal) {
+        batteryStatusCache = QSystemDeviceInfo::BatteryNormal;
+        emit batteryStatusChanged(batteryStatusCache);
+    }
+
+    return bat;
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()

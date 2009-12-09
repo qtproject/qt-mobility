@@ -47,7 +47,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QAudioEncoderControl
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     \preliminary
@@ -107,7 +106,8 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 /*!
-  \fn QAudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const
+  \fn QAudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings(),
+                                                 bool *continuous) const
 
   Returns the list of supported audio sample rates, if known.
 
@@ -115,6 +115,9 @@ QAudioEncoderControl::~QAudioEncoderControl()
   the returned list is reduced to sample rates supported with partial settings applied.
 
   It can be used for example to query the list of sample rates, supported by specific audio codec.
+
+  If the encoder supports arbitrary sample rates within the supported rates range,
+  *\a continuous is set to true, otherwise *\a continuous is set to false.
 */
 
 /*!

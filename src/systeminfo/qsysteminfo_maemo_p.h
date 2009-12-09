@@ -103,7 +103,7 @@ private:
     QString langCached;
 
 private Q_SLOTS:
-    void startLangaugePolling();
+    void startLanguagePolling();
 
 
 };
