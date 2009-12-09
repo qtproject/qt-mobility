@@ -36,13 +36,14 @@ symbian: {
     LIBS += \
             -lcntmodel \
             -letel \
-            -letelmm 
+            -letelmm \
+            -lflogger
 
     target.path = /sys/bin
     INSTALLS += target
 
-    symbiansimplugin.sources = $${TARGET}.dll
-    symbiansimplugin.path = /resource/qt/plugins/contacts
-    DEPLOYMENT += symbiansimplugin
+    symbianplugin.sources = $${TARGET}.dll
+    symbianplugin.path = /resource/qt/plugins/contacts
+    DEPLOYMENT += symbianplugin
 }
 

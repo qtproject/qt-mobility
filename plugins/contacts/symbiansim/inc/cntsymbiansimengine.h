@@ -78,7 +78,7 @@ private:
     QList<QContact> CntSymbianSimEngine::fetchContactsL() const;
     void transformError(TInt symbianError, QContactManager::Error& qtError) const;
     QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const;
-
+    
 private:
     RTelServer etelServer;
     RMobilePhone etelPhone;

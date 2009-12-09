@@ -48,6 +48,21 @@ const int KOneSimContactBufferSize = 500;
 const TInt KDataClientBuf  = 128;
 const TInt KEtsiTonPosition = 0x70;
 
+#include <flogger.h>
+#include <f32file.h>
+namespace {
+    void PbkPrintToLog( TRefByValue<const TDesC> aFormat, ... )
+    {
+        _LIT( KLogDir, "Sim" );
+        _LIT( KLogName, "sim.log" );
+
+        VA_LIST args;
+        VA_START( args, aFormat );
+        RFileLogger::WriteFormat(KLogDir, KLogName, EFileLoggingModeAppend, aFormat, args);
+        VA_END( args );
+    }
+}  // namespace
+
 CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error) :
     etelInfoPckg( etelStoreInfo )
 {
@@ -66,13 +81,20 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
     }
     if (err == KErrNone) {
         // open Etel store - TODO: check from parameters what Etel store to use
-        etelStore.Open(etelPhone, KETelIccAdnPhoneBook);
+        err = etelStore.Open(etelPhone, KETelIccAdnPhoneBook);
         }
     if (err != KErrNone) {
         error = QContactManager::UnspecifiedError;
     }
     
     m_managerUri = QContactManager::buildUri(CNT_SYMBIANSIM_MANAGER_NAME, parameters);
+    
+    RFs fs;
+    fs.Connect();
+    fs.MkDir(_L("C:\\Logs\\"));
+    fs.MkDir(_L("C:\\Logs\\Sim\\"));
+    fs.Close();
+    PbkPrintToLog(_L("CntSymbianSimEngine::CntSymbianSimEngine, err = %d"), err);
 }
 
 CntSymbianSimEngine::~CntSymbianSimEngine()
@@ -98,6 +120,8 @@ QString CntSymbianSimEngine::managerName() const
  */
 QList<QContactLocalId> CntSymbianSimEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
+    PbkPrintToLog(_L("CntSymbianSimEngine::contacts"));
+
     QList<QContactLocalId> contactIds; 
     
     // Get unsorted and not filtered contacts
@@ -125,6 +149,8 @@ QList<QContactLocalId> CntSymbianSimEngine::contacts(const QContactFilter& filte
  */
 QList<QContactLocalId> CntSymbianSimEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
+    PbkPrintToLog(_L("CntSymbianSimEngine::contacts"));
+
     QList<QContactLocalId> contactIds; 
 
     // Get unsorted contacts
@@ -192,21 +218,30 @@ QContact CntSymbianSimEngine::fetchContactL(const QContactLocalId &localId) cons
  */
 QList<QContact> CntSymbianSimEngine::fetchContactsL() const
 {
+    PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - IN"));
+
     TRequestStatus requestStatus;
     
     //check number of storage slots in the store
     etelStore.GetInfo(requestStatus, (TDes8&)etelInfoPckg);
     User::WaitForRequest(requestStatus);
     if (requestStatus.Int() != KErrNone) {
+        PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - getInfo error = %d"),
+                requestStatus.Int());
         User::Leave(requestStatus.Int());
     }
     
-    //read the contact from the Etel store
+    PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - totalEntries = %d"),
+            etelStoreInfo.iTotalEntries);
+    PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - usedEntries = %d"),
+            etelStoreInfo.iUsedEntries);
+    
+    //read the contacts from the Etel store
     RBuf8 buffer;
     buffer.CreateL(KOneSimContactBufferSize*etelStoreInfo.iTotalEntries);
     CleanupClosePushL(buffer);
     //contacts are fetched starting from index 1
-    etelStore.Read(requestStatus, 1, etelStoreInfo.iTotalEntries, buffer); 
+    etelStore.Read(requestStatus, 1, etelStoreInfo.iTotalEntries, buffer);
     User::WaitForRequest(requestStatus);
     if (requestStatus.Int() != KErrNone) {
         User::Leave(requestStatus.Int());
@@ -216,6 +251,7 @@ QList<QContact> CntSymbianSimEngine::fetchContactsL() const
     QList<QContact> contacts = decodeSimContactsL(buffer);
    
     CleanupStack::PopAndDestroy(); //buffer
+    PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - OUT, count = %d"), contacts.count());
     return contacts;
 }
 
@@ -436,6 +472,7 @@ QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>
 
 QString CntSymbianSimFactory::managerName() const
 {
+    PbkPrintToLog(_L("CntSymbianSimFactory::managerName"));
     return CNT_SYMBIANSIM_MANAGER_NAME;
 }
 
