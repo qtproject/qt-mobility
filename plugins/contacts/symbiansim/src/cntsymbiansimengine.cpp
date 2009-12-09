@@ -331,7 +331,6 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
     CPhoneBookBuffer::TPhBkTagType dataType;
 
     bool isAdditionalNumber = false;
-    QContactPhoneNumber* lastPhoneNumber = 0;
 
     CPhoneBookBuffer* pbBuffer = new(ELeave) CPhoneBookBuffer();
     CleanupStack::PushL(pbBuffer);
@@ -352,30 +351,33 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
                     contactId->setManagerUri(m_managerUri);
                     currentContact.setId(*contactId);
                 }
+                isAdditionalNumber = false;
                 break;
             }
             case RMobilePhoneBookStore::ETagPBTonNpi:
             {
                 PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBTonNpi"));
-                // Check number type, we are only interested
-                // if it's international or not.
+                // Check number type, we are only interested if it's international or not.
+                // We assume here that ETagPBTonNpi always comes after ETagPBNumber, not before.
                 TUint8  tonNpi;
-                if ( pbBuffer->GetValue(tonNpi) == KErrNone) { 
-                    if (lastPhoneNumber != 0) {
-                        TUint8  intFlag = (tonNpi & KEtsiTonPosition) >> 4;
-                        if (intFlag == 1) {
-                            //international number format, append "+"
-                            QString number = lastPhoneNumber->number();
+                if (pbBuffer->GetValue(tonNpi) == KErrNone) { 
+                    TUint8  intFlag = (tonNpi & KEtsiTonPosition) >> 4;
+                    if (intFlag == 1) {
+                        //international number format, append "+" to the last 
+                        //saved number
+                        QList<QContactDetail> phoneNumbers = currentContact.details(
+                                QContactPhoneNumber::DefinitionName);
+                        if (phoneNumbers.count() > 0) {
+                            QContactPhoneNumber lastNumber = static_cast<QContactPhoneNumber>(
+                                phoneNumbers.at(phoneNumbers.count() - 1));
+                            QString number = lastNumber.number();
                             number.insert(0, "+");
-                            lastPhoneNumber->setNumber(number);
+                            lastNumber.setNumber(number);
+                            currentContact.saveDetail(&lastNumber);
                         }
-                        currentContact.saveDetail(lastPhoneNumber);
                     }
                 }
 
-                delete lastPhoneNumber;
-                lastPhoneNumber = 0;
-                 
                 // We have rearched to the end of the number, 
                 // invalidate additional number flag.
                 isAdditionalNumber = false;
@@ -414,11 +416,10 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             {
                 PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBNumber"));
                 if (pbBuffer->GetValue(bufPtr) == KErrNone) {
-                    if (lastPhoneNumber == 0) {
-                        lastPhoneNumber = new QContactPhoneNumber();
-                    }
+                    QContactPhoneNumber phoneNumber;
                     QString number = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
-                    lastPhoneNumber->setNumber(number);
+                    phoneNumber.setNumber(number);
+                    currentContact.saveDetail(&phoneNumber);
                 }
                 break;
             }
@@ -470,8 +471,6 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
     } //while
 
     CleanupStack::PopAndDestroy(pbBuffer);
-    delete lastPhoneNumber;
-    lastPhoneNumber = 0;
     PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - OUT"));
     return fetchedContacts;
 }
