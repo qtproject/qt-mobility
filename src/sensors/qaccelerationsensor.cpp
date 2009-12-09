@@ -107,14 +107,6 @@ QTM_USE_NAMESPACE
 const QString QAccelerationSensor::type("qt.Acceleration");
 
 /*!
-    Construct a sensor instance and attach to the indicated \a sensor.
-*/
-QAccelerationSensor::QAccelerationSensor(QSensor *sensor)
-    : QSensor(sensor->id(), sensor->parent())
-{
-}
-
-/*!
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */

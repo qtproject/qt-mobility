@@ -91,14 +91,6 @@ const QString QRotationSensor::type("qt.Rotation");
 
 
 /*!
-    Construct a sensor instance and attach to the indicated \a sensor.
-*/
-QRotationSensor::QRotationSensor(QSensor *sensor)
-    : QSensor(sensor->id(), sensor->parent())
-{
-}
-
-/*!
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */

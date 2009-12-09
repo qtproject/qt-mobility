@@ -66,7 +66,6 @@ class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QOrientationSensor(QSensor *sensor);
     explicit QOrientationSensor(const QSensorID &id, QObject *parent = 0);
 
     static const QString type;
