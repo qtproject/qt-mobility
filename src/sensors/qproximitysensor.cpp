@@ -41,7 +41,7 @@
 
 #include <qproximitysensor.h>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QProximitySensorValue
@@ -102,7 +102,6 @@ QProximitySensor::QProximitySensor(const QSensorID &id, QObject *parent)
     Emitted when the \a distance value changes.
 */
 
-QTM_BEGIN_NAMESPACE
 #include "moc_qproximitysensor.cpp"
 QTM_END_NAMESPACE
 

@@ -41,7 +41,7 @@
 
 #include <qrotationsensor.h>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QRotationSensorValue
@@ -116,4 +116,6 @@ QRotationSensor::QRotationSensor(const QSensorID &id, QObject *parent)
 
     Returns the current z rotation value from the sensor.
 */
+
+QTM_END_NAMESPACE
 

@@ -41,7 +41,7 @@
 
 #include <qsensormanager.h>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QSensorManager
@@ -75,4 +75,6 @@ void QSensorManager::registerSensor(const QSensorID &id, QSensorBackend *backend
     Q_UNUSED(id)
     Q_UNUSED(backend)
 }
+
+QTM_END_NAMESPACE
 

@@ -41,7 +41,7 @@
 
 #include <qsensorfactory.h>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QSensorFactory
@@ -113,4 +113,6 @@ QSensor *QSensorFactory::createSensor(const QSensorID &id) const
     Q_UNUSED(id)
     return 0;
 }
+
+QTM_END_NAMESPACE
 

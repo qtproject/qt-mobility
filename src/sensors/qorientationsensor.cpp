@@ -41,7 +41,7 @@
 
 #include <qorientationsensor.h>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QOrientationSensorValue
@@ -113,7 +113,6 @@ QOrientationSensor::QOrientationSensor(const QSensorID &id, QObject *parent)
     Emitted when the \a orientation value changes.
 */
 
-QTM_BEGIN_NAMESPACE
 #include "moc_qorientationsensor.cpp"
 QTM_END_NAMESPACE
 

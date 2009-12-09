@@ -41,7 +41,7 @@
 
 #include <qsensor.h>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \typedef QSensorID
@@ -278,4 +278,6 @@ QSensor *QSensorValue::sensor() const
     Returns a timestamp (in milliseconds since app startup)
     showing when the sensor value was generated.
 */
+
+QTM_END_NAMESPACE
 

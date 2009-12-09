@@ -41,7 +41,7 @@
 
 #include <qaccelerationsensor.h>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QAccelerationSensorValue
@@ -132,4 +132,6 @@ QAccelerationSensor::QAccelerationSensor(const QSensorID &id, QObject *parent)
 
     Returns the current z acceleration value from the sensor.
 */
+
+QTM_END_NAMESPACE
 
