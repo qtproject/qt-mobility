@@ -44,12 +44,14 @@
 
 #include "qtmessaging.h"
 
+#include <QMap>
 #include <QWidget>
 
+class QComboBox;
 class QLineEdit;
 class QListWidget;
-class QTextEdit;
 class QPushButton;
+class QTextEdit;
 
 QTM_USE_NAMESPACE
 
@@ -62,13 +64,16 @@ public:
     ~MessageSender();
 
 private slots:
+    void populateAccounts();
     void stateChanged(QMessageServiceAction::State s);
     void removeAttachment();
     void addAttachment();
+    void accountSelected(int);
     void attachmentSelected(int);
     void send();
 
 private:
+    QComboBox *accountCombo;
     QLineEdit *toEdit;
     QLineEdit *subjectEdit;
     QTextEdit *textEdit;
@@ -78,6 +83,7 @@ private:
     QListWidget *attachmentsList;
 
     QMessageId sendId;
+    QMap<QString, QPair<QMessage::Type, QMessageAccountId> > accountDetails;
 
     QMessageServiceAction service;
 };
