@@ -712,15 +712,27 @@ void tst_QMediaImageViewer::multiplePlaylists()
     QCOMPARE(viewer.media(), imageMedia);
 
     QMediaPlaylist *playlist2 = new QMediaPlaylist;
+
+    QTest::ignoreMessage(QtWarningMsg,
+                         "QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
     playlist2->setMediaObject(&viewer);
     playlist2->addMedia(coverArtMedia);
 
-    QCOMPARE(viewer.media(), imageMedia);
+    //the first playlist is detached
+    QVERIFY(playlist1->mediaObject() == 0);
+
+    QVERIFY(viewer.media().isNull());
 
     playlist2->setCurrentIndex(0);
-    QCOMPARE(viewer.media(), imageMedia);
+    QCOMPARE(viewer.media(), coverArtMedia);
 
     delete playlist2;
+    QVERIFY(viewer.media().isNull());
+    QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
+
+    playlist1->setMediaObject(&viewer);
+    playlist1->setCurrentIndex(0);
+    QCOMPARE(viewer.media(), imageMedia);
 
     viewer.play();
     QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);

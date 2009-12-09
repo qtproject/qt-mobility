@@ -355,14 +355,28 @@ void QMediaImageViewer::bind(QObject *object)
 
     if (QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist *>(object)) {
         if (d->playlist) {
-            qWarning("QMediaImageViewer::bind(): already bound to a playlist");
-        } else {
-            d->playlist = playlist;
-
-            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
-                    this, SLOT(_q_playlistMediaChanged(QMediaContent)));
-            connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+            qWarning("QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
+            d->playlist->setMediaObject(0);
         }
+        d->playlist = playlist;
+
+        connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                this, SLOT(_q_playlistMediaChanged(QMediaContent)));
+        connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+    }
+}
+
+void QMediaImageViewer::unbind(QObject *object)
+{
+    Q_D(QMediaImageViewer);
+
+    if (object == d->playlist) {
+        disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                   this, SLOT(_q_playlistMediaChanged(QMediaContent)));
+        disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+        d->playlist = 0;
+        setMedia(QMediaContent());
     }
 }
 
