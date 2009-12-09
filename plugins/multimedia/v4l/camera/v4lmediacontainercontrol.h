@@ -55,8 +55,8 @@ public:
     virtual ~V4LMediaContainerControl() {};
 
     virtual QStringList supportedContainers() const { return m_supportedContainers; }
-    virtual QString format() const { return m_format; }
-    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
+    virtual QString containerMimeType() const { return m_format; }
+    virtual void setContainerMimeType(const QString &formatMimeType) { m_format = formatMimeType; }
 
     virtual QString containerDescription(const QString &formatMimeType) const { Q_UNUSED(formatMimeType) return QString(); }
 

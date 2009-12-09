@@ -56,12 +56,12 @@ public:
     virtual ~QGstreamerMediaContainerControl() {};
 
     virtual QStringList supportedContainers() const { return m_supportedContainers; }
-    virtual QString format() const { return m_format; }
-    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
+    virtual QString containerMimeType() const { return m_format; }
+    virtual void setContainerMimeType(const QString &formatMimeType) { m_format = formatMimeType; }
 
     virtual QString containerDescription(const QString &formatMimeType) const { return m_containerDescriptions.value(formatMimeType); }
 
-    QByteArray formatElementName() const { return m_elementNames.value(format()); }
+    QByteArray formatElementName() const { return m_elementNames.value(containerMimeType()); }
 
 private:
     QString m_format;

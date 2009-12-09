@@ -46,7 +46,7 @@ V4LMediaContainerControl::V4LMediaContainerControl(QObject *parent)
 {
     m_format = "mpeg";
     m_supportedContainers.append("mpeg");
-    setFormat(m_supportedContainers[0]);
+    setContainerMimeType(m_supportedContainers[0]);
 }
 
 

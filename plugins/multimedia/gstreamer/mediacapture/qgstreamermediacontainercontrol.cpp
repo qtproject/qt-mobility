@@ -82,7 +82,7 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
     }
 
     if (!m_supportedContainers.isEmpty())
-        setFormat(m_supportedContainers[0]);
+        setContainerMimeType(m_supportedContainers[0]);
 }
 
 
