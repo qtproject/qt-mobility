@@ -84,7 +84,7 @@ public:
     /*Generic functions for all filters*/
     QList<QContactLocalId> searchContacts(const QContactFilter& filter, 
                                            QContactManager::Error& error);
-    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+    CntAbstractContactFilter::FilterSupport filterSupportLevel(const QContactFilter& filter);
 
 private:
     void createSqlQuery(const QContactFilter& filter,

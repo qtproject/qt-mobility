@@ -112,7 +112,6 @@ symbian: {
 
     exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
         DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
-        DEFINES += __SYMBIAN_CNTMODEL_USE_SQLITE__
         cntmodelResourceFile = \
             "START RESOURCE ../rss/cntmodel.rss" \
             "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \

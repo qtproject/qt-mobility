@@ -84,12 +84,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
     if(error == QContactManager::NoError) {
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
         m_transformContact = new CntTransformContact;
-#ifndef  __SYMBIAN_CNTMODEL_USE_SQLITE__
-        m_contactFilter    = new CntSymbianFilterDbms(*m_dataBase->contactDatabase());
-#else
-        m_contactFilter    = new QContactSymbianFilter(*m_dataBase->contactDatabase());
-#endif
-       
+        m_contactFilter    = new CntSymbianFilter(*m_dataBase->contactDatabase());
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
     }
@@ -130,82 +125,24 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
         const QList<QContactSortOrder>& sortOrders,
         QContactManager::Error& error) const
 {
-    bool doSlowFilter(false);
-    QList<QContactLocalId> result = filterContacts(filter, sortOrders, doSlowFilter, error);
-
-    if(error == QContactManager::NoError && doSlowFilter) {
-        // Filter not supported; fetch all contacts and remove false positives
-        // one-by-one. Note: this is reeeeaally slow. Both sorting and
-        // filtering are done the slow way.
-        QList<QContactLocalId> sortedIds = contacts(sortOrders,error);
-        if(error == QContactManager::NoError)
-            result = slowFilter(filter, sortedIds, error);
-    }
-    return result;
-}
-
-/*!
- * Private implementation for CntSymbianEngine::contacts.
- *
- * Uses the Symbian backend native filtering if supported. If native filtering
- * is not supported \a doSlowFilter is set and the caller needs to do slow
- * filtering.
- */
-QList<QContactLocalId> CntSymbianEngine::filterContacts(
-        const QContactFilter &filter,
-        const QList<QContactSortOrder> &sortOrders,
-        bool &doSlowFilter,
-        QContactManager::Error &error) const
-{
-    QList<QContactLocalId> result;
     error = QContactManager::NoError;
 
-    if (filter.type() == QContactFilter::IntersectionFilter) {
-        // Intersection filter is handled by calling filterContacts recursively
-        // for each contained filter (unless at least one requires slow filtering)
-        QList<QContactFilter> filters = ((QContactIntersectionFilter) filter).filters();
-        for(int i(0); !doSlowFilter && i < filters.count(); i++) {
-            if(result.isEmpty())
-                result = filterContacts(filters[i], sortOrders, doSlowFilter, error);
-            else
-                result = filterContacts(filters[i], sortOrders, doSlowFilter, error).toSet().intersect(result.toSet()).toList();
-        }
-    } else if (filter.type() == QContactFilter::UnionFilter) {
-        // Union filter is handled by calling filterContacts recursively for
-        // each contained filter (unless at least one requires slow filtering)
-        QList<QContactFilter> filters = ((QContactUnionFilter) filter).filters();
-        for(int i(0); !doSlowFilter && i < filters.count(); i++) {
-            if(result.isEmpty())
-                result = filterContacts(filters[i], sortOrders, doSlowFilter, error);
-            else
-                result = (filterContacts(filters[i], sortOrders, doSlowFilter, error).toSet() + result.toSet()).toList();
-        }
-    } else {
-        // All the other filters are handled either by the CntAbstractContactFilter
-        // implementation or by the caller (doSlowFilter is set if the filter
-        // is not supported and the caller needs to do slow filtering)
-        CntAbstractContactFilter::FilterSupport filterSupport = m_contactFilter->filterSupported(filter);
+    bool filterSupported(true);
+    QList<QContactLocalId> result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);;
 
-        if (filterSupport == CntAbstractContactFilter::Supported) {
-            // Filter supported, use as the result directly
-            result = m_contactFilter->contacts(filter, sortOrders, error);
-            // If sorting is not supported, we need to fallback to slow sorting
-            if(!m_contactSorter->sortOrderSupported(sortOrders))
-                result = slowSort(result, sortOrders, error);
-        } else if (filterSupport == CntAbstractContactFilter::SupportedPreFilterOnly) {
-            // Filter only does pre-filtering, remove possible false positives
-            // after filtering
-            QList<QContactLocalId> contacts = m_contactFilter->contacts(filter, sortOrders, error);
-            if(error == QContactManager::NoError)
-                result = slowFilter(filter, contacts, error);
-            // If sorting is not supported, we need to fallback to slow sorting
-            if(!m_contactSorter->sortOrderSupported(sortOrders))
-                result = slowSort(result, sortOrders, error);
+    // Remove possible false positives
+    if(!filterSupported && error == QContactManager::NoError)
+        result = slowFilter(filter, result, error);
+
+    // Sort the matching contacts
+    if(!sortOrders.isEmpty()&& error == QContactManager::NoError) {
+        if(m_contactSorter->sortOrderSupported(sortOrders)) {
+            result = m_contactSorter->sort(result, sortOrders, error);
         } else {
-            // Don't do filtering here, tell the caller to do slow filtering
-            doSlowFilter = true;
+            result = slowSort(result, sortOrders, error);
         }
     }
+
     return result;
 }
 
@@ -516,6 +453,12 @@ void CntSymbianEngine::updateContactL(QContact &contact)
     CContactItem* contactItem = m_dataBase->contactDatabase()->OpenContactLX(contact.localId());
     CleanupStack::PushL(contactItem);
 
+    // Cannot update contact type. The client needs to do this itself.
+    if ((contact.type() == QContactType::TypeContact && contactItem->Type() == KUidContactGroup) || 
+        (contact.type() == QContactType::TypeGroup && contactItem->Type() == KUidContactCard)){
+        User::Leave(KErrAlreadyExists);
+    }
+    
     // Copy the data from QContact to CContactItem
     m_transformContact->transformContactL(contact, *contactItem);
 
@@ -768,18 +711,7 @@ bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature, const
 
 bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
 {
-    TBool result;
-
-    // Map filter support into a boolean value
-    CntAbstractContactFilter::FilterSupport filterSupport = m_contactFilter->filterSupported(filter);
-    if (filterSupport == CntAbstractContactFilter::Supported
-        || filterSupport == CntAbstractContactFilter::SupportedPreFilterOnly) {
-        result = true;
-    } else {
-        result = false;
-    }
-
-    return result;
+    return m_contactFilter->filterSupported(filter);
 }
 
 /* Synthesise the display label of a contact */

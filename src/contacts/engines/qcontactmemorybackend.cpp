@@ -234,6 +234,11 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         /* We also need to check that there are no modified create only details */
         QContact oldContact = d->m_contacts.at(index);
 
+        if (oldContact.type() != theContact->type()) {
+            error = QContactManager::AlreadyExistsError;
+            return false;
+        }
+
         QSetIterator<QString> it(d->m_createOnlyIds.value(theContact->type()));
         while (it.hasNext()) {
             const QString& id = it.next();
