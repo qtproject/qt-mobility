@@ -250,7 +250,12 @@ void MessageSender::send()
         message.setParentAccountId(details.second);
     }
 
-    message.setTo(QMessageAddress(to, QMessageAddress::Email));
+    QMessageAddressList toList;
+    foreach (const QString &item, to.split(QRegExp("\\s"), QString::SkipEmptyParts)) {
+        toList.append(QMessageAddress(item, message.type() == QMessage::Email ? QMessageAddress::Email : QMessageAddress::Phone));
+    }
+    message.setTo(toList);
+
     message.setSubject(subject);
 
     message.setBody(text);
