@@ -567,11 +567,11 @@ void QMediaPlayer::bind(QObject *obj)
 
         if (videoWidget || videoItem) {
             //detach the current video output
-            if (videoWidget)
-                videoWidget->setMediaObject(0);
+            if (d->videoWidget)
+                d->videoWidget->setMediaObject(0);
 
-            if (videoItem)
-                videoItem->setMediaObject(0);
+            if (d->videoItem)
+                d->videoItem->setMediaObject(0);
         }
 
         if (videoWidget)
