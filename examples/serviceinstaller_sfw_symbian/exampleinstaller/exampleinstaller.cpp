@@ -39,11 +39,32 @@
 **
 ****************************************************************************/
 
-#include "ui_maindialog_240_320.h"
+#include <qservicemanager.h>
+#include <QCoreApplication>
+#include <QFile>
 
-class MainDialogForm240By320 : public QWidget, Ui::MainDialog240By320
+QTM_USE_NAMESPACE
+
+//! [0]
+const QString filemanagerxml = "c:\\resource\\apps\\xmldata\\filemanagerservice.xml";
+const QString bluetoothxml = "c:\\resource\\apps\\xmldata\\bluetoothtransferservice.xml";
+
+int main(int argc, char *argv[])
 {
-public:
-       MainDialogForm240By320(QWidget *parent);
-       ~MainDialogForm240By320();
-};
+    QCoreApplication app(argc, argv);
+
+    QServiceManager s;
+
+	if (QFile::exists(filemanagerxml)) {
+		s.addService(filemanagerxml);
+	} else {
+		s.removeService("FileManagerService");
+	}
+	
+	if (QFile::exists(bluetoothxml)) {
+		s.addService(bluetoothxml);
+	} else {
+		s.removeService("BluetoothTransferService");
+	}
+}
+//! [0]

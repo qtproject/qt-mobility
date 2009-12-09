@@ -3168,11 +3168,11 @@
     <section ref="examples.html" title="Qt Mobility Examples">
         <keyword ref="examples.html">Qt Mobility Examples</keyword>
     </section>
-    <section ref="mobility.html" title="Qt Mobility Project APIs (Technical Preview)">
-        <keyword ref="mobility.html">Qt Mobility Project APIs (Technical Preview)</keyword>
+    <section ref="mobility.html" title="Qt Mobility Project APIs">
+        <keyword ref="mobility.html">Qt Mobility Project APIs</keyword>
     </section>
-    <section ref="index.html" title="Qt Mobility Project APIs (Technical Preview) Overview">
-        <keyword ref="index.html">Qt Mobility Project APIs (Technical Preview) Overview</keyword>
+    <section ref="index.html" title="Qt Mobility Project APIs Overview">
+        <keyword ref="index.html">Qt Mobility Project APIs Overview</keyword>
     </section>
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>
@@ -3180,8 +3180,8 @@
     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian">
         <keyword ref="service-framework-on-symbian.html">Qt Service Framework on Symbian</keyword>
     </section>
-    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project (Technology Preview)">
-        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project (Technology Preview)</keyword>
+    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
+        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
@@ -3239,8 +3239,8 @@
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
-    <section ref="incomingcalls.html" title="Incoming Calls Example">
-        <keyword ref="incomingcalls.html">Incoming Calls Example</keyword>
+    <section ref="incomingcalls.html" title="Incoming Call Simulator">
+        <keyword ref="incomingcalls.html">Incoming Call Simulator</keyword>
     </section>
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
