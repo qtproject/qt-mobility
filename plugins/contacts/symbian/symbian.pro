@@ -91,7 +91,8 @@ symbian: {
         src/cntsymbiantransformerror.cpp \
         src/cntsymbiandatabase.cpp
       
-    qtAddLibrary(QtContacts)
+    CONFIG += mobility
+    MOBILITY = contacts
 
     LIBS += \
         -lcntmodel \

@@ -52,7 +52,9 @@
 */
 #define QTM_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
+#define QTM_PACKAGEDATE_STR "YYYY-MM-DD"
 
+#define QTM_PACKAGE_TAG ""
 
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>

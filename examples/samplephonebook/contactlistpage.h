@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -40,16 +39,63 @@
 **
 ****************************************************************************/
 
+#ifndef CONTACTLISTPAGE_H
+#define CONTACTLISTPAGE_H
 
-#include "contactdetailsform.h"
+#include "qtcontacts.h"
 
-ContactDetailsForm::ContactDetailsForm(QWidget *parent)
-    :QDialog(parent)
+#include <QWidget>
+#include <QList>
+#include <QListWidgetItem>
+
+QT_BEGIN_NAMESPACE
+class QListWidget;
+class QPushButton;
+class QComboBox;
+class QLabel;
+class QLineEdit;
+QT_END_NAMESPACE
+
+QTM_USE_NAMESPACE
+
+class ContactListPage : public QWidget
 {
-     setupUi(this);
-}
+    Q_OBJECT
 
-ContactDetailsForm::~ContactDetailsForm()
-{
-}
+public:
+    ContactListPage(QWidget *parent = 0);
+    ~ContactListPage();
 
+    void rebuildList(const QContactFilter& filter);
+
+signals:
+    void showEditorPage(QContactLocalId contactId);
+    void showFilterPage(const QContactFilter& filter);
+    void managerChanged(QContactManager *manager);
+
+private slots:
+    void backendSelected();
+    void addContactClicked();
+    void editClicked();
+    void findClicked();
+
+private:
+    // elements of the contact list "page"
+    QLabel *m_backendsLabel;
+    QComboBox *m_backendsCombo;
+    QLabel *m_filterActiveLabel;
+
+    QListWidget *m_contactsList;
+    QPushButton *m_addContactBtn;
+    QPushButton *m_editBtn;
+    QPushButton *m_findBtn;
+
+    // data
+    QContactManager *m_manager;
+    QMap<QContactLocalId, int> m_idToListIndex;
+    QMap<QString, QContactManager*> m_initialisedManagers;
+
+    QContactFilter m_currentFilter;
+};
+
+#endif // CONTACTLISTPAGE_H

@@ -5,6 +5,9 @@ QT += gui
 
 include(../examples.pri)
 
+CONFIG += mobility
+MOBILITY = messaging contacts
+
 qtAddLibrary(QtMessaging)
 INCLUDEPATH += ../../src/messaging 
 

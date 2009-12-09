@@ -6,5 +6,6 @@ include (../../../common.pri)
 
 SOURCES += tst_qmediaservice.cpp
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
