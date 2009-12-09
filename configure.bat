@@ -416,7 +416,7 @@ goto exitTag
 :qmakeRecError
 echo.
 echo configure failed.
-goto exitTag
+goto errorTag
 
 :errorTag
 set BUILD_PATH=
@@ -444,4 +444,4 @@ set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
 set MOBILITY_MODULES_UNPARSED=
-
+exit /b 0
