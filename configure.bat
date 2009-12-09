@@ -84,8 +84,7 @@ if "%1" == "-tests"         goto testTag
 if "%1" == "-examples"      goto exampleTag
 if "%1" == "-qt"            goto qtTag
 if "%1" == "-vc"            goto vcTag
-if "%1" == "-nodocs"        goto nodocsTag
-if "%1" == "-docs"          goto docsTag
+if "%1" == "-no-docs"       goto nodocsTag
 if "%1" == "-modules"       goto modulesTag
 if "%1" == "/?"             goto usage
 if "%1" == "-h"             goto usage
@@ -118,8 +117,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     Note, this adds test symbols to all libraries 
     echo                     and should not be used for release builds.
     echo -examples ......... Build example applications
-    echo -nodocs ........... Do not build documentation
-    echo -docs ............. Build documentation (default)
+    echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer location publishsubscribe location
     echo                     multimedia contacts versit messaging systeminfo
@@ -190,11 +188,6 @@ goto cmdline_parsing
 :vcTag
 shift
 set VC_TEMPLATE_OPTION=-tp vc
-goto cmdline_parsing
-
-:docsTag
-set BUILD_DOCS=yes
-shift
 goto cmdline_parsing
 
 :nodocsTag
