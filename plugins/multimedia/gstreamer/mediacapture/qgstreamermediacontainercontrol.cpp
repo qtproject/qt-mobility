@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include "qgstreamermediaformatcontrol.h"
+#include "qgstreamermediacontainercontrol.h"
 #include <gst/gst.h>
 
-QGstreamerMediaFormatControl::QGstreamerMediaFormatControl(QObject *parent)
-    :QMediaFormatControl(parent)
+QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent)
+    :QMediaContainerControl(parent)
 {
     QList<QByteArray> formatCandidates;
     formatCandidates << "matroska" << "ogg" << "quicktime" << "mp4" << "avi" << "3gpp";
@@ -73,16 +73,16 @@ QGstreamerMediaFormatControl::QGstreamerMediaFormatControl(QObject *parent)
         QByteArray elementName = m_elementNames[formatName];
         GstElementFactory *factory = gst_element_factory_find(elementName.constData());
         if (factory) {
-            m_supportedFormats.append(formatName);
+            m_supportedContainers.append(formatName);
             const gchar *descr = gst_element_factory_get_description(factory);
-            m_formatDescriptions.insert(formatName, QString::fromUtf8(descr));
+            m_containerDescriptions.insert(formatName, QString::fromUtf8(descr));
 
             gst_object_unref(GST_OBJECT(factory));
         }
     }
 
-    if (!m_supportedFormats.isEmpty())
-        setFormat(m_supportedFormats[0]);
+    if (!m_supportedContainers.isEmpty())
+        setFormat(m_supportedContainers[0]);
 }
 
 

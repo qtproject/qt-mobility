@@ -39,14 +39,30 @@
 **
 ****************************************************************************/
 
-#include "v4lmediaformatcontrol.h"
 
-V4LMediaFormatControl::V4LMediaFormatControl(QObject *parent)
-    :QMediaFormatControl(parent)
+#ifndef V4LMEDIACONTAINERCONTROL_H
+#define V4LMEDIACONTAINERCONTROL_H
+
+#include <qmediacontainercontrol.h>
+#include <QtCore/qstringlist.h>
+QTM_USE_NAMESPACE
+
+class V4LMediaContainerControl : public QMediaContainerControl
 {
-    m_format = "mpeg";
-    m_supportedFormats.append("mpeg");
-    setFormat(m_supportedFormats[0]);
-}
+Q_OBJECT
+public:
+    V4LMediaContainerControl(QObject *parent);
+    virtual ~V4LMediaContainerControl() {};
 
+    virtual QStringList supportedContainers() const { return m_supportedContainers; }
+    virtual QString format() const { return m_format; }
+    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
 
+    virtual QString containerDescription(const QString &formatMimeType) const { Q_UNUSED(formatMimeType) return QString(); }
+
+private:
+    QString m_format;
+    QStringList m_supportedContainers;
+};
+
+#endif // V4LMEDIACONTAINERCONTROL_H

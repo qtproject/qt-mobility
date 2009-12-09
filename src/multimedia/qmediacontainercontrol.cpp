@@ -40,45 +40,45 @@
 ****************************************************************************/
 
 
-#include <qmediaformatcontrol.h>
+#include <qmediacontainercontrol.h>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QMediaFormatControl
+    \class QMediaContainerControl
     \preliminary
-    \brief The QMediaFormatControl class provides access to the output format of a QMediaService
+    \brief The QMediaContainerControl class provides access to the output format of a QMediaService
 
     \ingroup multimedia-serv
 
     If a QMediaService supports writing encoded data it will implement
-    QMediaFormatControl.  This control provides information about the
+    QMediaContainerControl.  This control provides information about the
     output formats supported by a media service and allows one to be
     selected as the current output format..
 
     The functionality provided by this control is exposed to application
     code through the QMediaRecorder class.
 
-    The interface name of QMediaFormatControl is \c com.nokia.Qt.QMediaFormatControl/1.0 as
-    defined in QMediaFormatControl_iid.
+    The interface name of QMediaContainerControl is \c com.nokia.Qt.QMediaContainerControl/1.0 as
+    defined in QMediaContainerControl_iid.
 
     \sa QMediaService::control(), QMediaRecorder
 */
 
 /*!
-    \macro QMediaFormatControl_iid
+    \macro QMediaContainerControl_iid
 
-    \c com.nokia.Qt.QMediaFormatControl/1.0
+    \c com.nokia.Qt.QMediaContainerControl/1.0
 
-    Defines the interface name of the QMediaFormatControl class.
+    Defines the interface name of the QMediaContainerControl class.
 
-    \relates QMediaFormatControl
+    \relates QMediaContainerControl
 */
 
 /*!
     Constructs a new media format control with the given \a parent.
 */
-QMediaFormatControl::QMediaFormatControl(QObject *parent)
+QMediaContainerControl::QMediaContainerControl(QObject *parent)
     :QMediaControl(parent)
 {
 }
@@ -86,35 +86,35 @@ QMediaFormatControl::QMediaFormatControl(QObject *parent)
 /*!
     Destroys a media format control.
 */
-QMediaFormatControl::~QMediaFormatControl()
+QMediaContainerControl::~QMediaContainerControl()
 {
 }
 
 
 /*!
-    \fn QMediaFormatControl::supportedFormats() const
+    \fn QMediaContainerControl::supportedFormats() const
 
     Returns a list of MIME types of supported formats.
 */
 
 /*!
-    \fn QMediaFormatControl::format() const
+    \fn QMediaContainerControl::format() const
 
     Returns the MIME type of the selected format.
 */
 
 /*!
-    \fn QMediaFormatControl::setFormat(const QString &mimeType)
+    \fn QMediaContainerControl::setFormat(const QString &mimeType)
 
     Sets the current format to the format identified by the given \a mimeType.
 */
 
 /*!
-    \fn QMediaFormatControl::formatDescription(const QString &mimeType) const
+    \fn QMediaContainerControl::containerDescription(const QString &mimeType) const
 
-    Returns a description of the format identified by the given \a mimeType.
+    Returns a description of the container format identified by the given \a mimeType.
 */
 
-#include "moc_qmediaformatcontrol.cpp"
+#include "moc_qmediacontainercontrol.cpp"
 QTM_END_NAMESPACE
 

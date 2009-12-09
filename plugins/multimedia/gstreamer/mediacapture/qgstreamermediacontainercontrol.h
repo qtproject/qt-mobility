@@ -40,33 +40,34 @@
 ****************************************************************************/
 
 
-#ifndef QMEDIAFORMATCONTROL_H
-#define QMEDIAFORMATCONTROL_H
+#ifndef QGSTREAMERMEDIACONTAINERCONTROL_H
+#define QGSTREAMERMEDIACONTAINERCONTROL_H
 
-#include <qmediacontrol.h>
+#include <qmediacontainercontrol.h>
+#include <QtCore/qstringlist.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class Q_MEDIA_EXPORT QMediaFormatControl : public QMediaControl
+class QGstreamerMediaContainerControl : public QMediaContainerControl
 {
-    Q_OBJECT
-
+Q_OBJECT
 public:
-    virtual ~QMediaFormatControl();
+    QGstreamerMediaContainerControl(QObject *parent);
+    virtual ~QGstreamerMediaContainerControl() {};
 
-    virtual QStringList supportedFormats() const = 0;
-    virtual QString format() const = 0;
-    virtual void setFormat(const QString &formatMimeType) = 0;
+    virtual QStringList supportedContainers() const { return m_supportedContainers; }
+    virtual QString format() const { return m_format; }
+    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
 
-    virtual QString formatDescription(const QString &formatMimeType) const = 0;
+    virtual QString containerDescription(const QString &formatMimeType) const { return m_containerDescriptions.value(formatMimeType); }
 
-protected:
-    QMediaFormatControl(QObject *parent = 0);
+    QByteArray formatElementName() const { return m_elementNames.value(format()); }
+
+private:
+    QString m_format;
+    QStringList m_supportedContainers;
+    QMap<QString,QByteArray> m_elementNames;
+    QMap<QString, QString> m_containerDescriptions;
 };
 
-#define QMediaFormatControl_iid "com.nokia.Qt.QMediaFormatControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QMediaFormatControl, QMediaFormatControl_iid)
-
-QTM_END_NAMESPACE
-
-#endif // QMEDIAFORMATCONTROL_H
+#endif // QGSTREAMERMEDIACONTAINERCONTROL_H
