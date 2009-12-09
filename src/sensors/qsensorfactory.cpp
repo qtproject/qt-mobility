@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#include <qsensormanager.h>
+#include <qsensorfactory.h>
 
 QTM_USE_NAMESPACE
 
 /*!
-    \class QSensorManager
-    \ingroup sensors_backend
+    \class QSensorFactory
+    \ingroup sensors
 
     \preliminary
-    \brief The QSensorManager class returns the sensors on a device.
+    \brief The QSensorFactory class returns the sensors on a device.
 
     A given device will have a variety of sensors. The sensors are
     categorized by type. The QSensor::Type enum defined the types that
@@ -56,23 +56,61 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Returns the sensor manager.
+    Returns the sensor factory.
 */
-QSensorManager *QSensorManager::instance()
+QSensorFactory *QSensorFactory::instance()
 {
     // FIXME should be using Q_GLOBAL_STATIC or something
-    static QSensorManager *instance = 0;
+    static QSensorFactory *instance = 0;
     if (!instance)
-        instance = new QSensorManager;
+        instance = new QSensorFactory;
     return instance;
 }
 
 /*!
-    Register a sensor. The \a id must be unique. The \a backend Foo.
+    Returns the id of the default sensor for \a type.
+    If there is no sensor of that type available, returns a null string.
 */
-void QSensorManager::registerSensor(const QSensorID &id, QSensorBackend *backend)
+QSensorID QSensorFactory::defaultSensorForType(QString type) const
+{
+    Q_UNUSED(type)
+    return QSensorID();
+}
+
+/*!
+    Create an instance of the default sensor for \a type.
+    If there is no sensor of that type available, returns null.
+*/
+QSensor *QSensorFactory::createDefaultSensorForType(QString type) const
+{
+    return createSensor(defaultSensorForType(type));
+}
+
+/*!
+    Returns a list of ids for each of the sensors for \a type.
+    If there are no sensors of that type available the list will be empty.
+*/
+QList<QSensorID> QSensorFactory::sensorsForType(QString type) const
+{
+    Q_UNUSED(type)
+    return QList<QSensorID>();
+}
+
+/*!
+    Returns a list of ids for each of the sensors.
+*/
+QList<QSensorID> QSensorFactory::sensorList() const
+{
+    return QList<QSensorID>();
+}
+
+/*!
+    Create an instance of a sensor for \a id.
+    If there is no sensor with the selected \a id, returns null.
+*/
+QSensor *QSensorFactory::createSensor(const QSensorID &id) const
 {
     Q_UNUSED(id)
-    Q_UNUSED(backend)
+    return 0;
 }
 

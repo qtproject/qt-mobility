@@ -39,40 +39,37 @@
 **
 ****************************************************************************/
 
-#include <qsensormanager.h>
+#ifndef QSENSORFACTORY_H
+#define QSENSORFACTORY_H
 
-QTM_USE_NAMESPACE
+#include <qsensor.h>
+#include <QList>
 
-/*!
-    \class QSensorManager
-    \ingroup sensors_backend
+QTM_BEGIN_NAMESPACE
 
-    \preliminary
-    \brief The QSensorManager class returns the sensors on a device.
-
-    A given device will have a variety of sensors. The sensors are
-    categorized by type. The QSensor::Type enum defined the types that
-    the API supports.
-*/
-
-/*!
-    Returns the sensor manager.
-*/
-QSensorManager *QSensorManager::instance()
+class Q_SENSORS_EXPORT QSensorFactory
 {
-    // FIXME should be using Q_GLOBAL_STATIC or something
-    static QSensorManager *instance = 0;
-    if (!instance)
-        instance = new QSensorManager;
-    return instance;
-}
+public:
+    // Get the singleton instance
+    static QSensorFactory *instance();
 
-/*!
-    Register a sensor. The \a id must be unique. The \a backend Foo.
-*/
-void QSensorManager::registerSensor(const QSensorID &id, QSensorBackend *backend)
-{
-    Q_UNUSED(id)
-    Q_UNUSED(backend)
-}
+    // Get a sensor
+    QSensorID defaultSensorForType(QString type) const;
+    QSensor *createDefaultSensorForType(QString type) const;
+
+    // If there are multiple sensors for a type...
+    QList<QSensorID> sensorsForType(QString type) const;
+
+    // Get all sensors on the device. Not sure why you'd want to
+    // do this unless you were telling the user what sensors are
+    // available.
+    QList<QSensorID> sensorList() const;
+
+    // Create a sensor.
+    QSensor *createSensor(const QSensorID &id) const;
+};
+
+QTM_END_NAMESPACE
+
+#endif
 

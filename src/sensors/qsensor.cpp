@@ -48,7 +48,7 @@ QTM_USE_NAMESPACE
     \relates QSensor
 
     An opaque type representing an sensor identifier.
-    These can be obtained from the QSensorManager class.
+    These can be obtained from the QSensorFactory class.
 */
 
 /*!
@@ -61,7 +61,7 @@ QTM_USE_NAMESPACE
     The life cycle of a sensor is typically:
 
     \list
-    \o Retrieved by calling QSensorManager::defaultSensorForType().
+    \o Retrieved by calling QSensorFactory::defaultSensorForType().
     \o Setup as required by the application.
     \o Started.
     \o Sensor data is used by the application.

@@ -1,6 +1,6 @@
 #include <QtCore>
 #include <QAccelerationSensor>
-#include <QSensorManager>
+#include <QSensorFactory>
 
 QTM_USE_NAMESPACE
 
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
 
-    QAccelerationSensor sensor(QSensorManager::instance()->defaultSensorForType(QAccelerationSensor::type));
+    QAccelerationSensor sensor(QSensorFactory::instance()->defaultSensorForType(QAccelerationSensor::type));
     if (!sensor.isValid()) {
         qWarning() << "No accelerometer!";
         return 1;

@@ -43,9 +43,10 @@
 #define QSENSORMANAGER_H
 
 #include <qsensor.h>
-#include <QList>
 
 QTM_BEGIN_NAMESPACE
+
+class QSensorBackend;
 
 class Q_SENSORS_EXPORT QSensorManager
 {
@@ -53,20 +54,7 @@ public:
     // Get the singleton instance
     static QSensorManager *instance();
 
-    // Get a sensor
-    QSensorID defaultSensorForType(QString type) const;
-    QSensor *createDefaultSensorForType(QString type) const;
-
-    // If there are multiple sensors for a type...
-    QList<QSensorID> sensorsForType(QString type) const;
-
-    // Get all sensors on the device. Not sure why you'd want to
-    // do this unless you were telling the user what sensors are
-    // available.
-    QList<QSensorID> sensorList() const;
-
-    // Create a sensor.
-    QSensor *createSensor(const QSensorID &id) const;
+    void registerSensor(const QSensorID &id, QSensorBackend *backend);
 };
 
 QTM_END_NAMESPACE

@@ -41,6 +41,14 @@
 
 /*!
 \group sensors
+*/
+
+/*!
+\group sensors_backend
+*/
+
+/*!
+\page sensors-api.html
 \title Sensors API
 \brief The Sensors API provides access to hardware sensors.
 \ingroup mobility
@@ -92,5 +100,13 @@ approximate rotation values.
 \image sensors-backend.png
 
 \section1 Main Classes
+If you want to use the sensors on a device, these are the classes to use.
+\annotatedlist sensors
+
+\section1 Backend Classes
+If you are making sensors available through the Sensors API, these are the
+classes to use.
+\annotatedlist sensors_backend
+
 */
 
