@@ -256,12 +256,12 @@ echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PRO
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 REM now the modules
-if not %MOBILITY_MODULES_UNPARSED% == "" (
+if not "%MOBILITY_MODULES_UNPARSED%" == "" (
     REM error checking would be nice (e.g. for %%m in (%MOBILITY_MODULES) ... , with an "if" switch like the cmdline arg parsing
     set MOBILITY_MODULES=%MOBILITY_MODULES_UNPARSED%
 )
 
-echo mobility_modules = $MOBILITY_MODULES  >> %PROJECT_CONFIG%
+echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 echo maemo:mobility_modules -= systeminfo  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
 
