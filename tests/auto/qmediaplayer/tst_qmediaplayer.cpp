@@ -1003,6 +1003,41 @@ void tst_QMediaPlayer::testPlaylist()
     QCOMPARE(player->state(), QMediaPlayer::PlayingState);
     QCOMPARE(stateSpy.count(), 11);
     QCOMPARE(mediaSpy.count(), 9);
+
+    // Test the player can bind to playlist again
+    playlist = new QMediaPlaylist;
+    playlist->setMediaObject(player);
+    QCOMPARE(playlist->mediaObject(), player);
+
+    QCOMPARE(player->media(), QMediaContent());
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+
+    playlist->addMedia(content0);
+    playlist->addMedia(content1);
+    playlist->addMedia(content2);
+    playlist->addMedia(content3);
+
+    playlist->setCurrentIndex(1);
+    QCOMPARE(player->media(), content1);
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+
+    // Test attaching the new playlist,
+    // player should detach the current one
+    QMediaPlaylist *playlist2 = new QMediaPlaylist;
+    playlist2->addMedia(content1);
+    playlist2->addMedia(content2);
+    playlist2->addMedia(content3);
+    playlist2->setCurrentIndex(2);
+
+    player->play();
+    playlist2->setMediaObject(player);
+    QCOMPARE(playlist2->mediaObject(), player);
+    QVERIFY(playlist->mediaObject() == 0);
+    QCOMPARE(player->media(), playlist2->currentMedia());
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+
+    playlist2->setCurrentIndex(1);
+    QCOMPARE(player->media(), playlist2->currentMedia());
 }
 
 QTEST_MAIN(tst_QMediaPlayer)

@@ -557,6 +557,8 @@ void QMediaPlayer::bind(QObject *obj)
                     this, SLOT(_q_updateMedia(QMediaContent)));
             connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
 
+            setMedia(playlist->currentMedia());
+
             return;
         }
 
