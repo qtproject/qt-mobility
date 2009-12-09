@@ -62,7 +62,7 @@ void TestCntSymbianDatabase::ctor()
     db = new CntSymbianDatabase(engine, error);
     QVERIFY(db != 0);
     QVERIFY(db->m_engine == engine);
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
     QVERIFY(db->m_contactChangeNotifier != 0);
 #endif
     QVERIFY(db->m_contactDatabase);

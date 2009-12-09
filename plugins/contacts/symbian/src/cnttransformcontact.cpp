@@ -109,7 +109,7 @@ void CntTransformContact::initializeCntTransformContactData()
 	m_transformContactData.insert(Note, new CntTransformNote);
 	m_transformContactData.insert(Family, new CntTransformFamily);
 
-#ifdef USE_CUSTOM_CNT_MODEL_FIELDS
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
 	// variated transform classes
     m_transformContactData.insert(Avatar, new CntTransformAvatar);
     m_transformContactData.insert(Anniversary, new CntTransformAnniversary);

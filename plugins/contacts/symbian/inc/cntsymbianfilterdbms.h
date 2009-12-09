@@ -42,7 +42,7 @@
 #ifndef CNTSYMBIANFILTERDBMS_H
 #define CNTSYMBIANFILTERDBMS_H
 
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
 
 #include "cntabstractcontactfilter.h"
 #include <e32cmn.h>
