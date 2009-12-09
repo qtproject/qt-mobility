@@ -55,12 +55,12 @@ private slots:  // Init & cleanup
 	void cleanupTestCase();
 
 private slots:  // Test cases
-	void createSimpleContacts();
-	void removeSimpleContacts();
-	void createComplexContacts();
-	void sortContacts();
-	void filterContacts();
-	void filterUnions();
+    void createSimpleContacts();
+    void removeSimpleContacts();
+    void createComplexContacts();
+    void sortContacts();
+    void filterContacts();
+    void filterUnions();
     void filterNameListStyle();
     void filterPhoneNumberMatch();
 
@@ -76,7 +76,7 @@ private slots:  // Test cases
 	void asyncOperation2();
 	// feel free to add more...
 	*/
-	void removeComplexContacts();
+    void removeComplexContacts();
 
 private:
     int measureContactsFetch(

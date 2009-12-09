@@ -162,6 +162,7 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
 
     return result;
 }
+
 /*!
  * The contact database version implementation for
  * QContactManager::filterSupport function.
@@ -179,6 +180,10 @@ bool CntSymbianFilter::filterSupported(const QContactFilter& filter)
     }
     return result;
 }
+<<<<<<< HEAD:plugins/contacts/symbian/src/cntsymbianfilterdbms.cpp
+=======
+
+>>>>>>> 0442b21d60e0b8f51f37e377123cab6293badf39:plugins/contacts/symbian/src/cntsymbianfilterdbms.cpp
 /*!
  * The possible return values are Supported, NotSupported and
  * SupportedPreFilterOnly.

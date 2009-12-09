@@ -73,4 +73,4 @@ private:
 
 #endif /* __SYMBIAN_CNTMODEL_USE_SQLITE__ */
 
-#endif /* QCONTACTSYMBIANFILTER_H */
+#endif /* CNT_SYMBIAN_FILTER_SQL_H */

@@ -60,6 +60,7 @@
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
 #include "cnttransformempty.h"
+#include "cntsymbiantransformerror.h"
 
 #include <qtcontacts.h>
 #include <cntfldst.h>
@@ -254,7 +255,7 @@ void CntTransformContact::transformContactL(
 
             // save preferred detail
             transformPreferredDetailL(contact, detailList.at(i), fieldList);
-
+            
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
@@ -421,7 +422,7 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
     return timestampDetail;
 }
 
-void CntTransformContact::transformPreferredDetailL(const QContact& contact,
+void CntTransformContact::transformPreferredDetailL(const QContact& contact, 
         const QContactDetail& detail, QList<CContactItemField*> &fieldList) const
 {
     if (fieldList.count() == 0) {
