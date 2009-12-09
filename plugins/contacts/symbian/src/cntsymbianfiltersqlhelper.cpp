@@ -118,11 +118,6 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
     isPhoneNumberSearchforDetailFilter = false;
     QList<QContactLocalId> idList;
     if(filterSupportLevel(filter)){
-<<<<<<< HEAD:plugins/contacts/symbian/src/cntsymbianfiltersqlhelper.cpp
-        
-=======
-
->>>>>>> 0442b21d60e0b8f51f37e377123cab6293badf39:plugins/contacts/symbian/src/cntsymbianfiltersqlhelper.cpp
         // Create sql query from the filters
         QString sqlQuery;
         createSqlQuery(filter, sqlQuery, error);

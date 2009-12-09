@@ -120,7 +120,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -examples ......... Build example applications
     echo -nodocs ........... Do not build documentation
     echo -docs ............. Build documentation (default)
-    echo -modules <list> ... Build only the specified modules (default all)
+    echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer location publishsubscribe location
     echo                     multimedia contacts versit messaging systeminfo
     echo                     Modules should be separated by a space. If a

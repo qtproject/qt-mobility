@@ -126,25 +126,6 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
         QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
-<<<<<<< HEAD:plugins/contacts/symbian/src/cntsymbianengine.cpp
-
-    bool filterSupported(true);
-    QList<QContactLocalId> result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);;
-
-    // Remove possible false positives
-    if(!filterSupported && error == QContactManager::NoError)
-        result = slowFilter(filter, result, error);
-
-    // Sort the matching contacts
-    if(!sortOrders.isEmpty()&& error == QContactManager::NoError) {
-        if(m_contactSorter->sortOrderSupported(sortOrders)) {
-            result = m_contactSorter->sort(result, sortOrders, error);
-        } else {
-            result = slowSort(result, sortOrders, error);
-        }
-    }
-
-=======
     QList<QContactLocalId> result;
     
     //Note this is just a temporary solution, until the api has been fixed.
@@ -185,8 +166,7 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
             }
         }
     }
-    
->>>>>>> 0442b21d60e0b8f51f37e377123cab6293badf39:plugins/contacts/symbian/src/cntsymbianengine.cpp
+
     return result;
 }
 
