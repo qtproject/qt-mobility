@@ -84,15 +84,20 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
 }
 
 QMessagePrivate* QMessagePrivate::implementation(const QMessage &message)
-
 {
     return message.d_ptr;
+}
+
+QMessageContentContainerPrivate* QMessagePrivate::containerImplementation(const QMessage &message)
+{
+    return ((QMessageContentContainer*)&message)->d_ptr;
 }
 
 QMessage::QMessage()
  : d_ptr(new QMessagePrivate(this))
 {
 	setDerivedMessage(this);
+	d_ptr->_size = 0;
 	d_ptr->_modified = false;
 }
 
@@ -297,13 +302,11 @@ uint QMessage::size() const
     } else {
     	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
 		if (container->_size != 0) {
-			size += ((container->_size / 1024) + 1) * 1024;
+			size += container->_size;
 		}
 		foreach (const QMessageContentContainer &attachment, container->_attachments) {
-			size += ((attachment.size() / 1024) + 1) * 1024;
+			size += attachment.size();
 		}
-		size += 1024;
-    
     }
 	return size;
 }
@@ -322,11 +325,6 @@ void QMessage::setBody(const QString &body, const QByteArray &mimeType)
     QByteArray mainType("text");
     QByteArray subType("plain");   
     QByteArray charset;
-    
-    QByteArray charset1("UTF-8");
-    QList<QByteArray> charsetNames;
-    charsetNames.append(charset1);
-    QMessage::setPreferredCharsets(charsetNames);
     
     QString mime = QString(mimeType);
 
@@ -351,7 +349,7 @@ void QMessage::setBody(const QString &body, const QByteArray &mimeType)
 	if (charset.isEmpty()) {
 		charset = QMessage::preferredCharsetFor(body);
 	    if (charset.isEmpty()) {
-	    charset = "UTF-16";
+	    charset = "UTF-8";
 	    }
 	}
     
@@ -391,14 +389,14 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 
 QMessageContentContainerIdList QMessage::attachmentIds() const
 {
-	QMessageContentContainerIdList list = contentIds();
 	QMessageContentContainerIdList ids;
 
-	foreach (QMessageContentContainerId id, list) {
-		QMessageContentContainer container = find(id);
-		if (container.textContent().isEmpty()) // conteiner is attachment
-			ids.append(container.d_ptr->_id);
-	}
+	QMessageContentContainerId msgBodyId(bodyId());
+    foreach (const QMessageContentContainerId &contentId, contentIds()) {
+        if (contentId != msgBodyId) {
+            ids.append(contentId);
+        }
+    }
 	    
 	return ids;
 }
@@ -459,6 +457,22 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 	message.setParentAccountId(d_ptr->_parentAccountId);
 	message.setDate(QDateTime::currentDateTime());
 	
+	QString body;
+	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+	QMessageContentContainerId existingBodyId(bodyId());
+	if (existingBodyId.isValid()) {
+		if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+			// The body content is in the message itself
+			body = textContent();
+			message.setBody(body);
+		} else {
+			// The body content is in the first attachment
+			QMessageContentContainerPrivate *attachmentContainer(container->attachment(existingBodyId)->d_ptr);
+			body = attachmentContainer->_textContent;
+			message.setBody(body);
+		}
+	}
+	
 	if (type == ReplyToSender) {
 		message.setTo(d_ptr->_from);
 		
@@ -470,14 +484,14 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 		
 	} else if (type == ReplyToAll) {
 		QList<QMessageAddress> addressList;
-		QMessageAddressList toList = to();
-		foreach(QMessageAddress address, toList) {
-			addressList.append(address);
-		}
 		addressList.append(d_ptr->_from);
 		message.setTo(addressList);
 		
 		QList<QMessageAddress> ccAddressList;
+		QMessageAddressList toList = to();
+		foreach(QMessageAddress address, toList) {
+			ccAddressList.append(address);
+		}	
 		QMessageAddressList ccList = cc();
 		foreach(QMessageAddress ccAddress, ccList) {
 			ccAddressList.append(ccAddress);
@@ -503,10 +517,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
 			subj.insert(0, "Fwd:");
 			message.setSubject(subj);
 		}
-		QString body = textContent();
-		if (!body.isEmpty()) {
-			message.setBody(body);
-		}
+
 		QMessageContentContainerIdList ids = attachmentIds();
 		QStringList containerList;
 		foreach (QMessageContentContainerId id, ids){

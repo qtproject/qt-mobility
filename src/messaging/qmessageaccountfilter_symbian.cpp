@@ -489,10 +489,13 @@ QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountIdList &i
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    //TODO:
-    return QMessageAccountFilter();
+    QMessageAccountFilter result;
+    *result.d_ptr = *filter.d_ptr;
+    if (cmp == QMessageDataComparator::Excludes) {
+        // Invert the sense of comparison
+        result = ~result;
+    }
+    return result;
 }
 
 QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)

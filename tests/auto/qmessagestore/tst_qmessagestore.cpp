@@ -335,11 +335,15 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("text")
         << QByteArray("plain")
+#if defined(Q_OS_SYMBIAN)
+        << 89u
+#else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 32u
 #else
         << 1400u
 #endif
+#endif        
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -359,10 +363,14 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("text")
         << QByteArray("html")
+#if defined(Q_OS_SYMBIAN)
+        << 157u
+#else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 64u
 #else
         << 1536u
+#endif
 #endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
@@ -383,11 +391,15 @@ void tst_QMessageStore::testMessage_data()
         << "Last message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_SYMBIAN)
+        << 611u
+#else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << 512u
 #else
         << 1536u
 #endif
+#endif        
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
@@ -407,10 +419,14 @@ void tst_QMessageStore::testMessage_data()
         << "Last HTML message..."
         << QByteArray("multipart")
         << QByteArray("mixed")
+#if defined(Q_OS_SYMBIAN)
+        << 4731u
+#else
 #if defined(Q_OS_WIN) && !defined(_WIN32_WCE)
         << 5120u
 #else
         << 4096u
+#endif
 #endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
@@ -552,9 +568,8 @@ void tst_QMessageStore::testMessage()
         addr.setType(QMessageAddress::Email);
         ccAddresses.append(addr);
     }
-#ifndef Q_OS_SYMBIAN    
-    QCOMPARE(message.cc(), ccAddresses);
-#endif    
+   
+    QCOMPARE(message.cc(), ccAddresses);    
 
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
     QCOMPARE(message.subject(), subject);
@@ -573,10 +588,8 @@ void tst_QMessageStore::testMessage()
 #ifndef Q_OS_SYMBIAN // Created Messages are not stored in Standard Folders in Symbian    
     QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
 #endif    
-
-#ifndef Q_OS_SYMBIAN    
+  
     QAPPROXIMATECOMPARE(message.size(), messageSize, (messageSize / 2));
-#endif    
 
     QMessageContentContainerId bodyId(message.bodyId());
     QCOMPARE(bodyId.isValid(), true);
@@ -586,10 +599,8 @@ void tst_QMessageStore::testMessage()
 
     QMessageContentContainer body(message.find(bodyId));
 
-#ifndef Q_OS_SYMBIAN    
     QCOMPARE(body.contentType().toLower(), bodyType.toLower());
     QCOMPARE(body.contentSubType().toLower(), bodySubType.toLower());
-#endif    
     QCOMPARE(body.contentCharset().toLower(), defaultCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), text);
@@ -613,10 +624,8 @@ void tst_QMessageStore::testMessage()
         // We cannot create nested multipart messages
         QVERIFY(attachment.contentIds().isEmpty());
 
-#ifndef Q_OS_SYMBIAN        
         QCOMPARE(attachment.contentType().toLower(), attachmentType[index].toLower());
         QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[index].toLower());
-#endif
         QCOMPARE(attachment.suggestedFileName(), attachments[index]);
         QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[index], (attachmentSize[index] / 2));
     }
@@ -629,15 +638,13 @@ void tst_QMessageStore::testMessage()
 
     message.setBody(replacementText, "text/html; charset=" + alternateCharset);
     body = message.find(bodyId);
-
-#ifndef Q_OS_SYMBIAN    
+    
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
-    QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
-#endif    
+    QAPPROXIMATECOMPARE(body.size(), 72u, 36u);  
 
     QMessageStore::instance()->updateMessage(&message);
     QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
@@ -670,13 +677,12 @@ void tst_QMessageStore::testMessage()
     QVERIFY(updated.contains(bodyId));
 
     body = updated.find(bodyId);
-#ifndef Q_OS_SYMBIAN    
+  
     QCOMPARE(body.contentType().toLower(), QByteArray("text"));
     QCOMPARE(body.contentSubType().toLower(), QByteArray("html"));
 #if !defined(Q_OS_WIN)
     // Original charset is not preserved on windows
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
-#endif
 #endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
@@ -687,23 +693,17 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(reply.subject(), updated.subject().prepend("Re:"));
     QCOMPARE(reply.to(), QList<QMessageAddress>() << updated.from());
     QCOMPARE(reply.cc(), QList<QMessageAddress>());
-#ifndef Q_OS_SYMBIAN    
     QVERIFY(reply.bodyId().isValid());
-#endif    
 
     QMessage replyToAll(updated.createResponseMessage(QMessage::ReplyToAll));
-    QCOMPARE(replyToAll.subject(), updated.subject().prepend("Re:"));
-#ifndef Q_OS_SYMBIAN    
+    QCOMPARE(replyToAll.subject(), updated.subject().prepend("Re:"));  
     QCOMPARE(replyToAll.to(), QList<QMessageAddress>() << updated.from());
     QCOMPARE(replyToAll.cc(), QList<QMessageAddress>() << updated.to() << updated.cc());
-    QVERIFY(replyToAll.bodyId().isValid());
-#endif    
+    QVERIFY(replyToAll.bodyId().isValid());   
 
     QMessage forward(updated.createResponseMessage(QMessage::Forward));
     QCOMPARE(forward.subject(), updated.subject().prepend("Fwd:"));
-#ifndef Q_OS_SYMBIAN
     QVERIFY(forward.bodyId().isValid());
-#endif    
 
     // Verify that the attachments can be removed
     updated.clearAttachments();
