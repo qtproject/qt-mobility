@@ -8,10 +8,7 @@ include(../examples.pri)
 CONFIG += mobility
 MOBILITY = messaging contacts
 
-qtAddLibrary(QtMessaging)
 INCLUDEPATH += ../../src/messaging 
-
-qtAddLibrary(QtContacts)
 INCLUDEPATH += ../../src/contacts ../../src/contacts/details ../../src/contacts/filters ../../src/contacts/requests
 
 symbian|win32 {
