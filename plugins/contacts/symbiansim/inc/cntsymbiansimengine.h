@@ -75,9 +75,9 @@ public:
  
 private:
     QContact fetchContactL(const QContactLocalId &localId) const;
-    QList<QContact> CntSymbianSimEngine::fetchContactsL() const;
+    QList<QContact> fetchContactsL() const;
     void transformError(TInt symbianError, QContactManager::Error& qtError) const;
-    QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const;
+    QList<QContact> decodeSimContactsL(TDes8& rawData) const;
     
 private:
     RTelServer etelServer;

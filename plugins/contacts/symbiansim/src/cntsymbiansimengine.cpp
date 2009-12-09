@@ -320,6 +320,7 @@ void CntSymbianSimEngine::transformError(TInt symbianError, QContactManager::Err
 */
 QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
 {
+    PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - IN"));
     QList<QContact> fetchedContacts;
     QContact currentContact;
 
@@ -342,6 +343,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
         {
             case RMobilePhoneBookStore::ETagPBAdnIndex:
             {
+                PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBAdnIndex"));
                 //save contact's id (SIM card index) and manager's name
                 TUint16  index;
                 if (pbBuffer->GetValue(index) == KErrNone) { 
@@ -354,6 +356,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             }
             case RMobilePhoneBookStore::ETagPBTonNpi:
             {
+                PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBTonNpi"));
                 // Check number type, we are only interested
                 // if it's international or not.
                 TUint8  tonNpi;
@@ -380,6 +383,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             }
             case RMobilePhoneBookStore::ETagPBText:
             {
+                PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBText"));
                 if (pbBuffer->GetValue(bufPtr) == KErrNone) {
                     if (isAdditionalNumber) {
                         // For additional number bufPtr contains number alpha string,
@@ -397,6 +401,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             }
             case RMobilePhoneBookStore::ETagPBSecondName:
             {
+                PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBSecondName"));
                 if (pbBuffer->GetValue(bufPtr) == KErrNone) {         
                     QContactNickname nickName;
                     QString name = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
@@ -407,6 +412,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             }
             case RMobilePhoneBookStore::ETagPBNumber:
             {
+                PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBNumber"));
                 if (pbBuffer->GetValue(bufPtr) == KErrNone) {
                     if (lastPhoneNumber == 0) {
                         lastPhoneNumber = new QContactPhoneNumber();
@@ -418,12 +424,14 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             }
             case RMobilePhoneBookStore::ETagPBAnrStart:
             {
+                PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBAnrStart"));
                 // This tag should precede every additional number entry
                 isAdditionalNumber = true;
                 break;
             }
             case RMobilePhoneBookStore::ETagPBEmailAddress:
             {
+                PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBEmailAddress"));
                 if (pbBuffer->GetValue(bufPtr) == KErrNone) {
                     QContactEmailAddress email;
                     QString emailAddress = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
@@ -434,6 +442,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             }
             case RMobilePhoneBookStore::ETagPBNewEntry:
             {
+                PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBNewEntry"));
                 // This signals the end of the entry and is a special case
                 // which will be handled below.
                 break;
@@ -449,6 +458,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
         // save contact to the array of contact to be returned if the whole entry was extracted
         if ((tagValue == RMobilePhoneBookStore::ETagPBNewEntry && currentContact.localId() > 0) ||
             (pbBuffer->RemainingReadLength() == 0 && currentContact.localId() > 0)) {
+            PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - save a contact"));
             fetchedContacts.append(currentContact);
             //clear current contact
             currentContact.clearDetails();
@@ -462,6 +472,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
     CleanupStack::PopAndDestroy(pbBuffer);
     delete lastPhoneNumber;
     lastPhoneNumber = 0;
+    PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - OUT"));
     return fetchedContacts;
 }
 
@@ -472,7 +483,6 @@ QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>
 
 QString CntSymbianSimFactory::managerName() const
 {
-    PbkPrintToLog(_L("CntSymbianSimFactory::managerName"));
     return CNT_SYMBIANSIM_MANAGER_NAME;
 }
 
