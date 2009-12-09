@@ -42,12 +42,14 @@
 #include "qmallocpool_p.h"
 #include <qglobal.h>
 
+struct malloc_state;
+
 QTM_BEGIN_NAMESPACE
 
 static void* qmallocpool_sbrk(intptr_t increment);
 
 #define USE_DL_PREFIX
-#define MORECORE qmallocpool_sbrk
+#define MORECORE QTM_NAMESPACE::qmallocpool_sbrk
 #define HAVE_MMAP 0
 #define __STD_C 1
 #ifdef Q_OS_WINCE
@@ -56,12 +58,15 @@ static void* qmallocpool_sbrk(intptr_t increment);
 #define MALLOC_FAILURE_ACTION
 #endif
 
-struct malloc_state;
 static QMallocPoolPrivate * qmallocpool_instance = 0;
 static struct malloc_state * qmallocpool_state(QMallocPoolPrivate *);
-#define get_malloc_state() (qmallocpool_state(qmallocpool_instance))
+#define get_malloc_state() (QTM_NAMESPACE::qmallocpool_state(QTM_NAMESPACE::qmallocpool_instance))
+
+QTM_END_NAMESPACE
 
 #include "dlmalloc.c"
+
+QTM_BEGIN_NAMESPACE
 
 class QMallocPoolPrivate
 {
