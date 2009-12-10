@@ -6,11 +6,15 @@ LIBS += -lmediaclientvideo \
 	-lcone \
 	-lMPEngine \
     -lmmfcontrollerframework \
-    -ldrmaudioplayutility \
     -lefsrv 
-    
-# If DRM is wanted to support remove the following line    
-#DEFINES += S60_DRM_SUPPORTED
+
+# If support to DRM is wanted then comment out the following line 
+#CONFIG += drm_supported
+
+drm_supported {
+    LIBS + = -ldrmaudioplayutility
+    DEFINES += S60_DRM_SUPPORTED
+}    
 
 HEADERS += \
     $$PWD/s60mediaplayercontrol.h \
