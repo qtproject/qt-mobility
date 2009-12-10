@@ -141,8 +141,13 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
                 displayLabel =  contactDetail.value(iterator.value());
             }
             else{ //read the value and append it to the display label
-                displayLabel.append(", ");
-                displayLabel.append(contactDetail.value(iterator.value()));
+                QString label = contactDetail.value(iterator.value());
+                
+                if(!label.isEmpty())
+                {
+                    displayLabel.append(", ");
+                    displayLabel.append(label);
+                }
             }
         }
     }
