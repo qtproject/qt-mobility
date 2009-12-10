@@ -39,50 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QNORTHSENSOR_H
-#define QNORTHSENSOR_H
+#ifndef QMAGNETICNORTHSENSOR_H
+#define QNMAGNETICORTHSENSOR_H
 
 #include <qsensor.h>
 #include <QtGlobal>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QNorthValue : public QSensorValue
+class Q_SENSORS_EXPORT QMagneticNorthValue : public QSensorValue
 {
 public:
-    QNorthValue();
-    int offset;
-    bool calibrated;
+    QMagneticNorthValue();
+    int heading;
 };
 
 
-class Q_SENSORS_EXPORT QNorthSensor : public QSensor
+class Q_SENSORS_EXPORT QMagneticNorthSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QNorthSensor(const QSensorId &id, QObject *parent = 0);
+    explicit QMagneticNorthSensor(const QSensorId &id, QObject *parent = 0);
 
     static const QString typeId;
     QString type() const { return typeId; };
 
-    int currentOffset() const
+    int currentHeading() const
     {
-        return static_cast<QNorthValue*>(currentValue())->offset;
+        return static_cast<QMagneticNorthValue*>(currentValue())->heading;
     }
 
-    bool currentCalibration() const
-    {
-        return static_cast<QNorthValue*>(currentValue())->calibrated;
-    }
+    bool isCalibrated() const;
 
 signals:
-    void offsetChanged(int offset, bool calibrated);
+    void headingChanged(int heading);
 
 private:
     void valueUpdated()
     {
-        emit offsetChanged(currentOffset(), currentCalibration());
+        int heading = currentHeading();
+        if (heading != lastHeading) {
+            lastHeading = heading;
+            emit headingChanged(heading);
+        }
     }
+
+    int lastHeading;
 };
 
 QTM_END_NAMESPACE

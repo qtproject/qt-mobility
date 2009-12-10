@@ -39,62 +39,55 @@
 **
 ****************************************************************************/
 
-#include <qnorthsensor.h>
+#include <qmagneticnorthsensor.h>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QNorthValue
+    \class QMagneticNorthValue
     \ingroup sensors
 
     \preliminary
-    \brief The QNorthValue class represents a magnetic compass reading.
+    \brief The QMagneticNorthValue class represents a magnetic compass reading.
 
-    The north sensor returns the offset from magnetic north. There is
-    also a boolean indicator of the calibration status of the sensor.
-    If the sensor is not calibrated the offset values may not be accurate.
+    The magnetic north sensor returns the heading of the device. This is measured as
+    degrees from magnetic north.
 */
 
 /*!
     \internal
 */
-QNorthValue::QNorthValue()
-    : QSensorValue(QNorthSensor::typeId)
+QMagneticNorthValue::QMagneticNorthValue()
+    : QSensorValue(QMagneticNorthSensor::typeId)
 {
 }
 
 /*!
-    \variable QNorthValue::offset
+    \variable QMagneticNorthValue::heading
 
-    Holds the offset from magnetic north.
-*/
-
-/*!
-    \variable QNorthValue::calibrated
-
-    Holds the calibration status of the sensor.
+    Holds the heading of the device.
 */
 
 // =====================================================================
 
 /*!
-    \class QNorthSensor
+    \class QMagneticNorthSensor
     \ingroup sensors
 
     \preliminary
-    \brief The QNorthSensor class reports on the offset from magnetic north.
+    \brief The QMagneticNorthSensor class reports on the heading of the device.
 
-    The north sensor returns the offset from magnetic north. The offset
-    is measured in degrees.
+    The magnetic north sensor returns the heading of the device. This is measured as
+    degrees from magnetic north.
 */
 
 /*!
-    \variable QNorthSensor::typeId
+    \variable QMagneticNorthSensor::typeId
 */
-const QString QNorthSensor::typeId("qt.North");
+const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
 
 /*!
-    \fn QNorthSensor::type() const
+    \fn QMagneticNorthSensor::type() const
     \reimp
 */
 
@@ -102,30 +95,34 @@ const QString QNorthSensor::typeId("qt.North");
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QNorthSensor::QNorthSensor(const QSensorId &id, QObject *parent)
+QMagneticNorthSensor::QMagneticNorthSensor(const QSensorId &id, QObject *parent)
     : QSensor(parent)
 {
     connectToBackend(id);
 }
 
 /*!
-    \fn QNorthSensor::currentOffset() const
+    \fn QMagneticNorthSensor::currentHeading() const
 
-    Returns the current offset from magnetic north.
+    Returns the current heading of the device.
 */
 
 /*!
-    \fn QNorthSensor::currentCalibration() const
-
-    Returns the current calibration status.
+    Returns true if the device has been calibrated.
+    If the device has not been calibrated the heading
+    values may not be accurate.
 */
+bool QMagneticNorthSensor::isCalibrated() const
+{
+    return false;
+}
 
 /*!
-    \fn QNorthSensor::offsetChanged(int offset, bool calibrated)
+    \fn QMagneticNorthSensor::headingChanged(int heading)
 
-    Emitted when the \a offset or \a calibrated value changes.
+    Emitted when the \a heading value changes.
 */
 
-#include "moc_qnorthsensor.cpp"
+#include "moc_qmagneticnorthsensor.cpp"
 QTM_END_NAMESPACE
 
