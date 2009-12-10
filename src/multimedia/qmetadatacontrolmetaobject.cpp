@@ -78,10 +78,10 @@ namespace
         { QtMedia::Duration, "duration" },
 
         // Audio
-        { QtMedia::AudioBitrate, "audioBitRate" },
+        { QtMedia::AudioBitRate, "audioBitRate" },
         { QtMedia::AudioCodec, "audioCodec" },
         { QtMedia::AverageLevel, "averageLevel" },
-        { QtMedia::Channels, "channelCount" },
+        { QtMedia::ChannelCount, "channelCount" },
         { QtMedia::PeakValue, "peakValue" },
         { QtMedia::Frequency, "frequency" },
 
