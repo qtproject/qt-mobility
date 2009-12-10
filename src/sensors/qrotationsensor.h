@@ -76,6 +76,8 @@ public:
     {
         return static_cast<QRotationValue*>(currentValue())->z;
     }
+
+    bool fromAccelerometer() const;
 };
 
 QTM_END_NAMESPACE

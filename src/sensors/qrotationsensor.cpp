@@ -123,5 +123,15 @@ QRotationSensor::QRotationSensor(QObject *parent, const QSensorId &id)
     Returns the current z rotation value from the sensor.
 */
 
+/*!
+    Returns true if the rotation values are being synthesized from an accelerometer.
+    If this is the case then rotation will only be accurate while the device is
+    stationary and only in directions that are influenced by gravity.
+*/
+bool QRotationSensor::fromAccelerometer() const
+{
+    return false;
+}
+
 QTM_END_NAMESPACE
 
