@@ -166,7 +166,8 @@ public:
         m_refCount(QAtomicInt(1)),
         m_phonemeta(PIMPR_INVALID_ID),
         m_emailmeta(PIMPR_INVALID_ID),
-        m_factory(0)
+        m_factory(0),
+        m_avatarmeta(PIMPR_INVALID_ID)
     {
     }
 
@@ -185,6 +186,7 @@ public:
     // The ID of our sekrit extra phone number and email metadata id
     PROPID m_phonemeta;
     PROPID m_emailmeta;
+    PROPID m_avatarmeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QContactLocalId> m_ids;
@@ -237,7 +239,11 @@ public:
 
     /* Synthesize the display label of a contact */
     virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
-
+    
+    /*helper functions*/
+    PROPID metaAvatar() const;
+    PROPID metaEmail() const;
+    PROPID metaPhone() const;
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;
 

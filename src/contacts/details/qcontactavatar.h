@@ -50,6 +50,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QImage;
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactAvatar : public QContactDetail
 {
@@ -76,7 +77,8 @@ public:
 
     void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}
     QString avatar() const {return value(FieldAvatar);}
-
+    QImage QContactAvatar::avatarImage() const;
+    QImage QContactAvatar::thumbnail() const;
     void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
     QString subType() const {return value(FieldSubType);}
 };
