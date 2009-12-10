@@ -26,6 +26,8 @@ SOURCES += s60serviceplugin.cpp \
 exists($${EPOCROOT}epoc32/include/tuner/tuner.h) {
 	include(radio/radio.pri)
 	DEFINES += USE_INTERNAL_TUNERLIB
+} else {
+    warning("Radio isn't compiled in due to missing tuner libraries.")
 }
 
 # include(camera/camera_s60.pri)
