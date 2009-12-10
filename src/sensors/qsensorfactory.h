@@ -55,7 +55,6 @@ public:
 
     // Get a sensor
     QSensorId defaultSensorForType(QString type) const;
-    QSensor *createDefaultSensorForType(QString type) const;
 
     // If there are multiple sensors for a type...
     QList<QSensorId> sensorsForType(QString type) const;

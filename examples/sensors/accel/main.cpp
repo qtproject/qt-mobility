@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
 
-    QAccelerationSensor sensor(QSensorFactory::instance()->defaultSensorForType(QAccelerationSensor::type));
+    QAccelerationSensor sensor;
     if (!sensor.isValid()) {
         qWarning() << "No accelerometer!";
         return 1;

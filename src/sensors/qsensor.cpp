@@ -64,12 +64,11 @@ QTM_BEGIN_NAMESPACE
     The life cycle of a sensor is typically:
 
     \list
-    \o Retrieved by calling QSensorFactory::createDefaultSensorForType()
-       or by directly instantiating a sub-class of QSensor.
+    \o Create a sub-class of QSensor on the stack or heap.
     \o Setup as required by the application.
-    \o Started.
+    \o Start receiving values.
     \o Sensor data is used by the application.
-    \o Stopped.
+    \o Stop receiving values.
     \endlist
 
     Please see the individual sensor classes for details on their use.

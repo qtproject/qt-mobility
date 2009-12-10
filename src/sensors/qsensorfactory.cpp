@@ -78,15 +78,6 @@ QSensorId QSensorFactory::defaultSensorForType(QString type) const
 }
 
 /*!
-    Create an instance of the default sensor for \a type.
-    If there is no sensor of that type available, returns null.
-*/
-QSensor *QSensorFactory::createDefaultSensorForType(QString type) const
-{
-    return createSensor(defaultSensorForType(type));
-}
-
-/*!
     Returns a list of ids for each of the sensors for \a type.
     If there are no sensors of that type available the list will be empty.
 */
