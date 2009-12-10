@@ -95,10 +95,11 @@ const QString QProximitySensor::typeId("qt.Proximity");
 */
 
 /*!
-    Construct a sensor instance and attach to the sensor indicated by \a id.
-    The sensor will be deleted when \a parent is deleted.
+    Construct a sensor instance with specified \a parent.
+    If the \a id is passed the sensor will connect to that
+    specific sensor, otherwise the default will be used.
 */
-QProximitySensor::QProximitySensor(const QSensorId &id, QObject *parent)
+QProximitySensor::QProximitySensor(QObject *parent, const QSensorId &id)
     : QSensor(parent)
 {
     connectToBackend(id);

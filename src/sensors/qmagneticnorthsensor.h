@@ -59,7 +59,7 @@ class Q_SENSORS_EXPORT QMagneticNorthSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QMagneticNorthSensor(const QSensorId &id, QObject *parent = 0);
+    explicit QMagneticNorthSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
 
     static const QString typeId;
     QString type() const { return typeId; };
