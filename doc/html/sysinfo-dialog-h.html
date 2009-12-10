@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility 1.0: dialog.h Example File (sysinfo/dialog.h)</title>
+  <title>Qt Mobility Project 1.0: dialog.h Example File (sysinfo/dialog.h)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -57,26 +57,26 @@
     #ifndef DIALOG_H
     #define DIALOG_H
 
-    #include &lt;QDialog&gt;
+    #include &lt;QWidget&gt;
     #include &lt;qsysteminfo.h&gt;
-
+    #ifdef Q_OS_SYMBIAN
+    #include &quot;ui_dialog_s60.h&quot;
+    #else
+    #include &quot;ui_dialog.h&quot;
+    #endif
     QTM_USE_NAMESPACE
 
-    namespace Ui {
-        class Dialog;
-    }
-
-    class Dialog : public QDialog {
+    class Dialog : public QWidget, public Ui_Dialog
+    {
         Q_OBJECT
     public:
-        Dialog(QWidget *parent = 0);
+        Dialog();
         ~Dialog();
 
     protected:
         void changeEvent(QEvent *e);
 
     private:
-        Ui::Dialog *ui;
         void setupGeneral();
         void setupDevice();
         void setupDisplay();
@@ -113,6 +113,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
 </tr></table></div></address></body>
 </html>

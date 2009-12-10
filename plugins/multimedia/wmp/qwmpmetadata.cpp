@@ -86,9 +86,9 @@ static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
     { QtMedia::Duration, L"Duration" },
 
     // Audio
-    { QtMedia::AudioBitrate, L"AudioBitrate" },
+    { QtMedia::AudioBitRate, L"AudioBitrate" },
     { QtMedia::AudioCodec, L"AudioCodec" },
-    { QtMedia::Channels, L"Channels" },
+    { QtMedia::ChannelCount, L"Channels" },
     { QtMedia::Frequency, L"Frequency" },
 
     // Music
@@ -375,22 +375,6 @@ QMediaContent QWmpMetaData::resources(IWMPMedia *media)
         ::SysFreeString(string);
 
         content = QMediaContent(QUrl(uri));
-
-        if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
-            QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
-            ::SysFreeString(string);
-
-            QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
-            QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
-
-            QDir dir = QFileInfo(uri).absoluteDir();
-
-            if (dir.exists(albumArtLarge))
-                content.setCoverArtUriLarge(QUrl(dir.absoluteFilePath(albumArtLarge)));
-
-            if (dir.exists(albumArtSmall))
-                content.setCoverArtUriSmall(QUrl(dir.absoluteFilePath(albumArtSmall)));
-        }
     }
 
     return content;

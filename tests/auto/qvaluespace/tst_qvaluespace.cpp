@@ -400,7 +400,7 @@ void tst_QValueSpace::layerInterface()
 
     QValueSpacePublisher *publisher;
 
-    CHECK_ERRORS(publisher = new QValueSpacePublisher(path, fakeLayer->id()));
+    CHECK_ERRORS(publisher = new QValueSpacePublisher(fakeLayer->id(), path));
 
     QVERIFY(publisher->isConnected());
 
@@ -408,7 +408,7 @@ void tst_QValueSpace::layerInterface()
     CHECK_ERRORS(publisher->resetValue(attribute));
 
     SignalSink sink;
-    CHECK_ERRORS(connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
+    CHECK_ERRORS(connect(publisher, SIGNAL(interestChanged(QString,bool)),
                          &sink, SLOT(slot())));
 
     CHECK_ERRORS(delete publisher);

@@ -196,7 +196,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::mutingChanged(bool mute)
+    \fn QMediaPlayerControl::mutedChanged(bool mute)
 
     Signals a change in the \a mute status of a player control.
 
@@ -227,7 +227,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::videoAvailabilityChanged(bool video)
+    \fn QMediaPlayerControl::videoAvailableChanged(bool video)
 
     Signals that there has been a change in the availability of \a video output.
 

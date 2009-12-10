@@ -35,7 +35,9 @@ SUBDIRS += samplephonebook \
 !maemo:SUBDIRS += sysinfo
 
 #Multimedia
-SUBDIRS += player \
+SUBDIRS += \
+        radio \
+        player \
         cameracapture \
         slideshow \
         streamplayer \

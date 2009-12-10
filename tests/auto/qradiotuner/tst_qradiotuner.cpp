@@ -66,6 +66,10 @@ public:
     {
         return m_active ? QRadioTuner::ActiveState : QRadioTuner::StoppedState;
     }
+    bool isAvailable() const
+    {
+        return true;
+    }
 
     QRadioTuner::Band band() const
     {
@@ -161,7 +165,7 @@ public:
     void setMuted(bool muted)
     {
         m_muted = muted;
-        emit mutingChanged(m_muted);
+        emit mutedChanged(m_muted);
     }
 
     bool isSearching() const
@@ -172,19 +176,19 @@ public:
     void searchForward()
     {
         m_searching = true;
-        emit searchingStatusChanged(m_searching);
+        emit searchingChanged(m_searching);
     }
 
     void searchBackward()
     {
         m_searching = true;
-        emit searchingStatusChanged(m_searching);
+        emit searchingChanged(m_searching);
     }
 
     void cancelSearch()
     {
         m_searching = false;
-        emit searchingStatusChanged(m_searching);
+        emit searchingChanged(m_searching);
     }
 
     void start()
@@ -389,7 +393,7 @@ void tst_QRadioTuner::testNullControl()
     QCOMPARE(radio.isMuted(), false);
     {
         QSignalSpy volumeSpy(&radio, SIGNAL(volumeChanged(int)));
-        QSignalSpy muteSpy(&radio, SIGNAL(mutingChanged(bool)));
+        QSignalSpy muteSpy(&radio, SIGNAL(mutedChanged(bool)));
 
         radio.setVolume(76);
         QCOMPARE(radio.volume(), 0);
@@ -401,7 +405,7 @@ void tst_QRadioTuner::testNullControl()
     }
     QCOMPARE(radio.isSearching(), false);
     {
-        QSignalSpy spy(&radio, SIGNAL(searchingStatusChanged(bool)));
+        QSignalSpy spy(&radio, SIGNAL(searchingChanged(bool)));
 
         radio.searchBackward();
         QCOMPARE(radio.isSearching(), false);
@@ -449,7 +453,7 @@ void tst_QRadioTuner::testFrequency()
 
 void tst_QRadioTuner::testMute()
 {
-    QSignalSpy readSignal(radio, SIGNAL(mutingChanged(bool)));
+    QSignalSpy readSignal(radio, SIGNAL(mutedChanged(bool)));
     radio->setMuted(true);
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(radio->isMuted());
@@ -458,7 +462,7 @@ void tst_QRadioTuner::testMute()
 
 void tst_QRadioTuner::testSearch()
 {
-    QSignalSpy readSignal(radio, SIGNAL(searchingStatusChanged(bool)));
+    QSignalSpy readSignal(radio, SIGNAL(searchingChanged(bool)));
     QVERIFY(!radio->isSearching());
 
     radio->searchForward();

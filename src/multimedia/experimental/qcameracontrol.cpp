@@ -52,6 +52,8 @@ QTM_BEGIN_NAMESPACE
     \brief The QCameraControl class is an abstract base class for
     classes that control still cameras or video cameras.
 
+    \ingroup camera
+
     This service is provided by a QMediaService object via
     QMediaService::control().  It is used by QCamera.
 

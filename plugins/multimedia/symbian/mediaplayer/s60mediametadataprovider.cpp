@@ -122,7 +122,7 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
         case QtMedia::AlbumTitle: return "album";
         case QtMedia::Composer: return "composer";
         case QtMedia::TrackNumber: return "albumtrack";
-        case QtMedia::AudioBitrate: return "audiobitrate";
+        case QtMedia::AudioBitRate: return "audiobitrate";
         case QtMedia::VideoBitRate: return "videobitrate";
         case QtMedia::Duration: return "duration";
         case QtMedia::MediaType: return "contenttype";
@@ -139,7 +139,7 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
         case QtMedia::Size:
         case QtMedia::AudioCodec:
         case QtMedia::AverageLevel:
-        case QtMedia::Channels:
+        case QtMedia::ChannelCount:
         case QtMedia::PeakValue:
         case QtMedia::Frequency:
         case QtMedia::Author:

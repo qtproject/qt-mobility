@@ -120,7 +120,8 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     camera->setMetaData(QtMedia::Title, QVariant(QLatin1String("Test Title")));
 
-    videoWidget = new QVideoWidget(mediaRecorder);
+    videoWidget = new QVideoWidget;
+    videoWidget->setMediaObject(camera);
     ui->stackedWidget->addWidget(videoWidget);
 
     updateCameraState(camera->state());
@@ -140,8 +141,8 @@ void CameraCapture::updateAudioDevices()
 
     if (audioSource->isAvailable()) {
         for (int i=0; i<audioSource->deviceCount(); i++) {
-            QString deviceName = audioSource->name(i);
-            QString description = audioSource->description(i);
+            QString deviceName = audioSource->deviceName(i);
+            QString description = audioSource->deviceDescription(i);
 
             QAction *audioDeviceAction = new QAction(deviceName+" "+description, audioDevicesGroup);
             audioDeviceAction->setData(QVariant(i));
@@ -176,7 +177,7 @@ void CameraCapture::settings()
 
     settingsDialog.setAudioSettings(mediaRecorder->audioSettings());
     settingsDialog.setVideoSettings(mediaRecorder->videoSettings());
-    settingsDialog.setFormat(mediaRecorder->format());
+    settingsDialog.setFormat(mediaRecorder->containerMimeType());
 
     if (settingsDialog.exec()) {
         mediaRecorder->setEncodingSettings(

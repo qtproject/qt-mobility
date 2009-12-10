@@ -57,6 +57,8 @@ public:
     QGraphicsVideoItemPrivate()
         : q_ptr(0)
         , surface(0)
+        , mediaObject(0)
+        , service(0)
         , outputControl(0)
         , rendererControl(0)
     {
@@ -65,14 +67,36 @@ public:
     QGraphicsVideoItem *q_ptr;
 
     QPainterVideoSurface *surface;
+    QMediaObject *mediaObject;
+    QMediaService *service;
     QVideoOutputControl *outputControl;
     QVideoRendererControl *rendererControl;
     QRect boundingRect;
 
+    void clearService();
+
     void _q_present();
     void _q_formatChanged(const QVideoSurfaceFormat &format);
     void _q_serviceDestroyed();
+    void _q_mediaObjectDestroyed();
 };
+
+void QGraphicsVideoItemPrivate::clearService()
+{
+    if (outputControl) {
+        outputControl->setOutput(QVideoOutputControl::NoOutput);
+        outputControl = 0;
+    }
+    if (rendererControl) {
+        surface->stop();
+        rendererControl->setSurface(0);
+        rendererControl = 0;
+    }
+    if (service) {
+        QObject::disconnect(service, SIGNAL(destroyed()), q_ptr, SLOT(_q_serviceDestroyed()));
+        service = 0;
+    }
+}
 
 void QGraphicsVideoItemPrivate::_q_present()
 {
@@ -91,8 +115,16 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 {
     rendererControl = 0;
     outputControl = 0;
+    service = 0;
 
     surface->stop();
+}
+
+void QGraphicsVideoItemPrivate::_q_mediaObjectDestroyed()
+{
+    mediaObject = 0;
+
+    clearService();
 }
 
 /*!
@@ -104,13 +136,15 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 
     Attaching a QGraphicsVideoItem to a QMediaObject allows it to display
     the video or image output of that media object.  A QGraphicsVideoItem
-    is attached to media object by passing a pointer to the QMediaObject
-    in its constructor, and detached by destroying the QGraphicsVideoItem.
+    is attached to a media object by passing a pointer to the QMediaObject
+    to the setMediaObject() function.
 
     \code
     player = new QMediaPlayer(this);
 
-    graphicsView->scence()->addItem(new QGraphicsVideoItem(player));
+    QGraphicsVideoItem *item = new QGraphicsVideoItem;
+    item->setMediaObject(player);
+    graphicsView->scence()->addItem(item);
     graphicsView->show();
 
     player->setMedia(video);
@@ -123,38 +157,16 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 */
 
 /*!
-    Constructs a graphics item that displays the video produced by a media \a object.
+    Constructs a graphics item that displays video.
 
     The \a parent is passed to QGraphicsItem.
 */
-QGraphicsVideoItem::QGraphicsVideoItem(QMediaObject *object, QGraphicsItem *parent)
+QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
     : QGraphicsItem(parent)
     , d_ptr(new QGraphicsVideoItemPrivate)
 {
     d_ptr->q_ptr = this;
-
-    Q_D(QGraphicsVideoItem);
-
-    if (object) {
-        if (QMediaService *service = object->service()) {
-            d->outputControl = qobject_cast<QVideoOutputControl *>(
-                    service->control(QVideoOutputControl_iid));
-            d->rendererControl = qobject_cast<QVideoRendererControl *>(
-                    service->control(QVideoRendererControl_iid));
-
-            if (d->outputControl != 0 && d->rendererControl != 0) {
-                d->surface = new QPainterVideoSurface;
-
-                connect(d->surface, SIGNAL(frameChanged()), this, SLOT(_q_present()));
-                connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-                        this, SLOT(_q_formatChanged(QVideoSurfaceFormat)));
-                connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
-
-                d->rendererControl->setSurface(d->surface);
-                d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
-            }
-        }
-    }
+    d_ptr->surface = new QPainterVideoSurface;
 }
 
 /*!
@@ -162,11 +174,74 @@ QGraphicsVideoItem::QGraphicsVideoItem(QMediaObject *object, QGraphicsItem *pare
 */
 QGraphicsVideoItem::~QGraphicsVideoItem()
 {
+    if (d_ptr->outputControl)
+        d_ptr->outputControl->setOutput(QVideoOutputControl::NoOutput);
+
     if (d_ptr->rendererControl)
         d_ptr->rendererControl->setSurface(0);
 
     delete d_ptr->surface;
     delete d_ptr;
+}
+
+/*!
+    \property QGraphicsVideoItem::mediaObject
+    \brief the media object which provides the video displayed by a graphics item.
+*/
+
+QMediaObject *QGraphicsVideoItem::mediaObject() const
+{
+    return d_func()->mediaObject;
+}
+
+void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
+{
+    Q_D(QGraphicsVideoItem);
+
+    if (object == d->mediaObject)
+        return;
+
+    d->clearService();
+
+    if (d->mediaObject) {
+        disconnect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
+        d->mediaObject->unbind(this);
+    }
+
+    d->mediaObject = object;
+
+    if (d->mediaObject) {
+        d->mediaObject->bind(this);
+
+        connect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
+
+        d->service = d->mediaObject->service();
+
+        if (d->service) {
+            connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+
+            d->outputControl = qobject_cast<QVideoOutputControl *>(
+                    d->service->control(QVideoOutputControl_iid));
+            d->rendererControl = qobject_cast<QVideoRendererControl *>(
+                    d->service->control(QVideoRendererControl_iid));
+
+            if (d->outputControl != 0 && d->rendererControl != 0) {
+                if (!d->surface) {
+                    d->surface = new QPainterVideoSurface;
+
+                    connect(d->surface, SIGNAL(frameChanged()), this, SLOT(_q_present()));
+                    connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
+                            this, SLOT(_q_formatChanged(QVideoSurfaceFormat)));
+                    connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+                }
+
+                d->rendererControl->setSurface(d->surface);
+
+                if (isVisible())
+                    d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
+            }
+        }
+    }
 }
 
 /*!

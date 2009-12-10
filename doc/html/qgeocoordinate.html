@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qgeocoordinate.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QGeoCoordinate Class Reference</title>
+  <title>Qt Mobility Project 1.0: QGeoCoordinate Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QGeoCoordinate"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -64,6 +65,13 @@
 <p>The coordinate values should be specified using the WGS84 datum.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QGeoCoordinate/CoordinateFormat"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/DecimalDegrees"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/DecimalDegreesWithHemisphere"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/DegreesMinutes"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/DegreesMinutesWithHemisphere"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/DegreesMinutesSeconds"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/DegreesMinutesSecondsWithHemisphere"></a>
 <h3 class="fn"><a name="CoordinateFormat-enum"></a>enum QGeoCoordinate::CoordinateFormat</h3>
 <p>Defines the possible formatting options for <a href="qgeocoordinate.html#toString">toString</a>().</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -76,6 +84,10 @@
 <tr><td valign="top"><tt>QGeoCoordinate::DegreesMinutesSecondsWithHemisphere</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Returns a string representation of the coordinates in degrees-minutes-seconds format, using 'N', 'S', 'E' or 'W' to indicate the hemispheres of the coordinates.</td></tr>
 </table></p>
 <p>See also <a href="qgeocoordinate.html#toString">toString</a>().</p>
+<a name="//apple_ref/cpp/tag/QGeoCoordinate/CoordinateType"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/InvalidCoordinate"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/Coordinate2D"></a>
+<a name="//apple_ref/cpp/econst/QGeoCoordinate/Coordinate3D"></a>
 <h3 class="fn"><a name="CoordinateType-enum"></a>enum QGeoCoordinate::CoordinateType</h3>
 <p>Defines the types of a coordinate.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -86,6 +98,7 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/QGeoCoordinate"></a>
 <h3 class="fn"><a name="QGeoCoordinate"></a>QGeoCoordinate::QGeoCoordinate ()</h3>
 <p>Constructs a coordinate. The coordinate will be invalid until <a href="qgeocoordinate.html#setLatitude">setLatitude</a>() and <a href="qgeocoordinate.html#setLongitude">setLongitude</a>() have been called.</p>
 <h3 class="fn"><a name="QGeoCoordinate-2"></a>QGeoCoordinate::QGeoCoordinate ( double <i>latitude</i>, double <i>longitude</i> )</h3>
@@ -98,41 +111,52 @@
 <p>See also <a href="qgeocoordinate.html#isValid">isValid</a>().</p>
 <h3 class="fn"><a name="QGeoCoordinate-4"></a>QGeoCoordinate::QGeoCoordinate ( const QGeoCoordinate &amp; <i>other</i> )</h3>
 <p>Constructs a coordinate from the contents of <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/~QGeoCoordinate"></a>
 <h3 class="fn"><a name="dtor.QGeoCoordinate"></a>QGeoCoordinate::~QGeoCoordinate ()</h3>
 <p>Destroys the coordinate object.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/altitude"></a>
 <h3 class="fn"><a name="altitude"></a>double QGeoCoordinate::altitude () const</h3>
 <p>Returns the altitude (meters above sea level).</p>
 <p>The return value is undefined if the altitude has not been set.</p>
 <p>See also <a href="qgeocoordinate.html#setAltitude">setAltitude</a>() and <a href="qgeocoordinate.html#type">type</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/azimuthTo"></a>
 <h3 class="fn"><a name="azimuthTo"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::azimuthTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns the azimuth (or bearing) in degrees from this coordinate to the coordinate specified by <i>other</i>. Altitude is not used in the calculation.</p>
 <p>There is an assumption that the Earth is spherical for the purpose of this calculation.</p>
 <p>Returns 0 if the type of this coordinate or the type of <i>other</i> is <a href="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</a>.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/distanceTo"></a>
 <h3 class="fn"><a name="distanceTo"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::distanceTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns the distance (in meters) from this coordinate to the coordinate specified by <i>other</i>. Altitude is not used in the calculation.</p>
 <p>This calculation returns the great-circle distance between the two coordinates, with an assumption that the Earth is spherical for the purpose of this calculation.</p>
 <p>Returns 0 if the type of this coordinate or the type of <i>other</i> is <a href="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</a>.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/isValid"></a>
 <h3 class="fn"><a name="isValid"></a>bool QGeoCoordinate::isValid () const</h3>
 <p>Returns true if the <a href="qgeocoordinate.html#type">type</a>() is <a href="qgeocoordinate.html#CoordinateType-enum">Coordinate2D</a> or <a href="qgeocoordinate.html#CoordinateType-enum">Coordinate3D</a>.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/latitude"></a>
 <h3 class="fn"><a name="latitude"></a>double QGeoCoordinate::latitude () const</h3>
 <p>Returns the latitude, in decimal degrees. The return value is undefined if the latitude has not been set.</p>
 <p>A positive latitude indicates the Northern Hemisphere, and a negative latitude indicates the Southern Hemisphere.</p>
 <p>See also <a href="qgeocoordinate.html#setLatitude">setLatitude</a>() and <a href="qgeocoordinate.html#type">type</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/longitude"></a>
 <h3 class="fn"><a name="longitude"></a>double QGeoCoordinate::longitude () const</h3>
 <p>Returns the longitude, in decimal degrees. The return value is undefined if the longitude has not been set.</p>
 <p>A positive longitude indicates the Eastern Hemisphere, and a negative longitude indicates the Western Hemisphere.</p>
 <p>See also <a href="qgeocoordinate.html#setLongitude">setLongitude</a>() and <a href="qgeocoordinate.html#type">type</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/setAltitude"></a>
 <h3 class="fn"><a name="setAltitude"></a>void QGeoCoordinate::setAltitude ( double <i>altitude</i> )</h3>
 <p>Sets the altitude (meters above sea level) to <i>altitude</i>.</p>
 <p>See also <a href="qgeocoordinate.html#altitude">altitude</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/setLatitude"></a>
 <h3 class="fn"><a name="setLatitude"></a>void QGeoCoordinate::setLatitude ( double <i>latitude</i> )</h3>
 <p>Sets the latitude (in decimal degrees) to <i>latitude</i>. The value should be in the WGS84 datum.</p>
 <p>To be valid, the latitude must be between -90 to 90 inclusive.</p>
 <p>See also <a href="qgeocoordinate.html#latitude">latitude</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/setLongitude"></a>
 <h3 class="fn"><a name="setLongitude"></a>void QGeoCoordinate::setLongitude ( double <i>longitude</i> )</h3>
 <p>Sets the longitude (in decimal degrees) to <i>longitude</i>. The value should be in the WGS84 datum.</p>
 <p>To be valid, the longitude must be between -180 to 180 inclusive.</p>
 <p>See also <a href="qgeocoordinate.html#longitude">longitude</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/toString"></a>
 <h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QGeoCoordinate::toString ( <a href="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</a> <i>format</i> = DegreesMinutesSecondsWithHemisphere ) const</h3>
 <p>Returns this coordinate as a string in the specified <i>format</i>.</p>
 <p>For example, if this coordinate has a latitude of -27.46758, a longitude of 153.027892 and an altitude of 28.1, these are the strings returned depending on <i>format</i>:</p>
@@ -147,12 +171,16 @@
 </table></p>
 <p>The altitude field is omitted if no altitude is set.</p>
 <p>If the coordinate is invalid, an empty string is returned.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/type"></a>
 <h3 class="fn"><a name="type"></a><a href="qgeocoordinate.html#CoordinateType-enum">CoordinateType</a> QGeoCoordinate::type () const</h3>
 <p>Returns the type of this coordinate.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QGeoCoordinate::operator!= ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns true if the latitude, longitude or altitude of this coordinate are not the same as those of <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QGeoCoordinate &amp; QGeoCoordinate::operator= ( const QGeoCoordinate &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this coordinate and returns a reference to this coordinate.</p>
+<a name="//apple_ref/cpp/instm/QGeoCoordinate/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoCoordinate::operator== ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns true if the latitude, longitude and altitude of this coordinate are the same as those of <i>other</i>.</p>
 <hr />
@@ -166,6 +194,7 @@
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
 </tr></table></div></address></body>
 </html>

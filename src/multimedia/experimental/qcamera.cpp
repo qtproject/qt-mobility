@@ -58,8 +58,9 @@ QTM_BEGIN_NAMESPACE
     \class QCamera
 
     \preliminary
-    \brief The QCamera class provides interface for system
-    camera devices.
+    \brief The QCamera class provides interface for system camera devices.
+
+    \ingroup camera
 
     QCamera can be used with QVideoWidget for viewfinder display
     and QMediaRecorder for video recording.
@@ -201,7 +202,7 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
             QString deviceName(device);
 
             for (int i=0; i<deviceControl->deviceCount(); i++) {
-                if (deviceControl->name(i) == deviceName) {
+                if (deviceControl->deviceName(i) == deviceName) {
                     deviceControl->setSelectedDevice(i);
                     break;
                 }

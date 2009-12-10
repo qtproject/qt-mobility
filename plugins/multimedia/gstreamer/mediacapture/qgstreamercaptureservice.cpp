@@ -42,7 +42,7 @@
 #include "qgstreamercaptureservice.h"
 #include "qgstreamercapturesession.h"
 #include "qgstreamerrecordercontrol.h"
-#include "qgstreamermediaformatcontrol.h"
+#include "qgstreamermediacontainercontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
 #include "qgstreamerimageencode.h"
@@ -161,7 +161,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
                 m_cameraControl, SLOT(setDevice(QString)));
 
         if (m_videoInputDevice->deviceCount())
-            m_cameraControl->setDevice(m_videoInputDevice->name(m_videoInputDevice->selectedDevice()));
+            m_cameraControl->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
     }
 
     m_videoOutput = new QGstreamerVideoOutputControl(this);
@@ -185,7 +185,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
     if (m_captureSession && m_audioInputDevice->deviceCount())
-        m_captureSession->setCaptureDevice(m_audioInputDevice->name(m_audioInputDevice->selectedDevice()));
+        m_captureSession->setCaptureDevice(m_audioInputDevice->deviceName(m_audioInputDevice->selectedDevice()));
 
     m_metaDataControl = new QGstreamerCaptureMetaDataControl(this);
     connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),
@@ -229,8 +229,8 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
         return m_captureSession->imageEncodeControl();
 
 
-    if (qstrcmp(name,QMediaFormatControl_iid) == 0)
-        return m_captureSession->mediaFormatControl();
+    if (qstrcmp(name,QMediaContainerControl_iid) == 0)
+        return m_captureSession->mediaContainerControl();
 
     if (qstrcmp(name,QCameraControl_iid) == 0)
         return m_cameraControl;

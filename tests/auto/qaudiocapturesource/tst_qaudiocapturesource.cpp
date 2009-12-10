@@ -157,16 +157,16 @@ public:
         return m_names.count();
     }
 
-    QString name(int index) const
+    QString deviceName(int index) const
     {
         return m_names[index];
     }
 
-    QString description(int index) const
+    QString deviceDescription(int index) const
     {
         return m_descriptions[index];
     }
-    QIcon icon(int index) const
+    QIcon deviceIcon(int index) const
     {
         Q_UNUSED(index)
         return QIcon();
@@ -306,15 +306,15 @@ void tst_QAudioCaptureSource::testNullControl()
     QCOMPARE(source.defaultDevice(), 0);
     QCOMPARE(source.selectedDevice(), 0);
 
-    QCOMPARE(source.name(0), QString());
-    QCOMPARE(source.name(-3), QString());
-    QCOMPARE(source.name(93), QString());
-    QCOMPARE(source.icon(0), QIcon());
-    QCOMPARE(source.icon(-3), QIcon());
-    QCOMPARE(source.icon(93), QIcon());
-    QCOMPARE(source.description(0), QString());
-    QCOMPARE(source.description(-3), QString());
-    QCOMPARE(source.description(93), QString());
+    QCOMPARE(source.deviceName(0), QString());
+    QCOMPARE(source.deviceName(-3), QString());
+    QCOMPARE(source.deviceName(93), QString());
+    QCOMPARE(source.deviceIcon(0), QIcon());
+    QCOMPARE(source.deviceIcon(-3), QIcon());
+    QCOMPARE(source.deviceIcon(93), QIcon());
+    QCOMPARE(source.deviceDescription(0), QString());
+    QCOMPARE(source.deviceDescription(-3), QString());
+    QCOMPARE(source.deviceDescription(93), QString());
 
     QSignalSpy deviceIndexSpy(&source, SIGNAL(selectedDeviceChanged(int)));
     QSignalSpy deviceNameSpy(&source, SIGNAL(selectedDeviceChanged(QString)));
@@ -355,9 +355,9 @@ void tst_QAudioCaptureSource::testDevices()
 {
     int devices = audiosource->deviceCount();
     QVERIFY(devices > 0);
-    QVERIFY(audiosource->name(0).compare("device1") == 0);
-    QVERIFY(audiosource->description(0).compare("dev1 comment") == 0);
-    QVERIFY(audiosource->icon(0).isNull());
+    QVERIFY(audiosource->deviceName(0).compare("device1") == 0);
+    QVERIFY(audiosource->deviceDescription(0).compare("dev1 comment") == 0);
+    QVERIFY(audiosource->deviceIcon(0).isNull());
     QVERIFY(audiosource->defaultDevice() == 1);
 
     QSignalSpy checkSignal(audiosource, SIGNAL(selectedDeviceChanged(int)));

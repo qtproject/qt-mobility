@@ -136,21 +136,17 @@ CMTMEngine::CMTMEngine()
     Q_UNUSED(accountError)
     
     TRAPD(err2,
-        RFs fileServer;
-        User::LeaveIfError(fileServer.Connect());
-        CleanupClosePushL(fileServer);
         TBuf<KMaxPath> privatePath;
-        fileServer.CreatePrivatePath(EDriveC);
-        fileServer.PrivatePath(privatePath);
+        CEikonEnv::Static()->FsSession().CreatePrivatePath(EDriveC);
+        CEikonEnv::Static()->FsSession().PrivatePath(privatePath);
         iPath.Append(_L("c:"));
         iPath.Append(privatePath);
         iPath.Append(_L("tempattachments\\"));                         
-        CFileMan* pFileMan = CFileMan::NewL(fileServer);
+        CFileMan* pFileMan = CFileMan::NewL(CEikonEnv::Static()->FsSession());
         CleanupStack::PushL(pFileMan);
         pFileMan->RmDir(iPath);
-        fileServer.MkDirAll(iPath);
+        CEikonEnv::Static()->FsSession().MkDirAll(iPath);
         CleanupStack::PopAndDestroy(pFileMan);
-        CleanupStack::PopAndDestroy(&fileServer);
     );
     Q_UNUSED(err2)
 }
@@ -170,22 +166,17 @@ CMTMEngine::~CMTMEngine()
     delete ipMsvSession;
     
     TRAPD(error,
-        RFs fileServer;
-        if (fileServer.Connect() == KErrNone){
-            CleanupClosePushL(fileServer);
-            TBuf<KMaxPath> privatePath;
-            fileServer.CreatePrivatePath(EDriveC);
-            fileServer.PrivatePath(privatePath);
-            TBuf<KMaxPath> path;
-            path.Append(_L("c:"));
-            path.Append(privatePath);
-            path.Append(_L("tempattachments\\"));                         
-            CFileMan* pFileMan=CFileMan::NewL(fileServer);
-            CleanupStack::PushL(pFileMan);
-            pFileMan->RmDir(path);
-            CleanupStack::PopAndDestroy(pFileMan);
-            CleanupStack::PopAndDestroy(&fileServer);
-            }
+        TBuf<KMaxPath> privatePath;
+        CEikonEnv::Static()->FsSession().CreatePrivatePath(EDriveC);
+        CEikonEnv::Static()->FsSession().PrivatePath(privatePath);
+        TBuf<KMaxPath> path;
+        path.Append(_L("c:"));
+        path.Append(privatePath);
+        path.Append(_L("tempattachments\\"));                         
+        CFileMan* pFileMan=CFileMan::NewL(CEikonEnv::Static()->FsSession());
+        CleanupStack::PushL(pFileMan);
+        pFileMan->RmDir(path);
+        CleanupStack::PopAndDestroy(pFileMan);
         );
     Q_UNUSED(error)
 }
@@ -2890,6 +2881,24 @@ void CMTMEngine::sendMMSL()
     CleanupStack::PopAndDestroy(2); // op, wait    
 }
 
+QString CMTMEngine::privateFolderPath()
+{
+    // Take drive letter from Application full name (Note: TUidName is 10 characters long <=> TBuf<10>)
+    //TUidName applicationDrive;
+    //applicationDrive.Copy(CEikonEnv::Static()->EikAppUi()->Application()->AppFullName().Left(2));
+    
+    // Get Application private folder path from FileSession
+    TPath applicationPrivateFolderPathWithoutDriveLetter;
+    CEikonEnv::Static()->FsSession().PrivatePath(applicationPrivateFolderPathWithoutDriveLetter);
+
+    // Combine drive letter and private folder path to complete path
+    TPath driveLetterAndPath;
+    driveLetterAndPath.Copy(_L("C:"));
+    driveLetterAndPath.Append(applicationPrivateFolderPathWithoutDriveLetter);
+    
+    return QString::fromUtf16(driveLetterAndPath.Ptr(), driveLetterAndPath.Length());
+}
+
 void CMTMEngine::storeEmailL(QMessage &message, TMsvId dest)
 {
     if (!iSessionReady)
@@ -2979,6 +2988,10 @@ void CMTMEngine::storeEmailL(QMessage &message, TMsvId dest)
         QString body = container.textContent();
         if (!filePath.isEmpty()) { // content is attachment
             filePath.replace(QByteArray("/"), QByteArray("\\"));
+            if (filePath.startsWith('.')) {
+                filePath.remove(0,2); // Remove ".\"
+                filePath.insert(0,privateFolderPath().toAscii());
+            }
             QString temp_path = QString(filePath);
             TPtrC16 attachmentPath(KNullDesC);
             attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
@@ -3311,6 +3324,7 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     if (count > 0) {
         privateMessage->_status = privateMessage->_status | QMessage::HasAttachments;
     }
+    bool pathForMessageAttachmentsCreated = false;
     for (TInt i = 0; i < count; i++) {
         CMsvAttachment* pAttachment = pStore->AttachmentManagerL().GetAttachmentInfoL(i);
         CleanupStack::PushL(pAttachment);
@@ -3344,26 +3358,26 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
             CleanupStack::PushL(pFileContent);
             
             // write tempFile to private folder //TODO: Remove temp file usage
-            RFs fileServer;
-            User::LeaveIfError(fileServer.Connect());
-            CleanupClosePushL(fileServer);
-            
             TBuf<KMaxPath> privatePath;
-            fileServer.CreatePrivatePath(EDriveC);
-            fileServer.PrivatePath(privatePath);
+            CEikonEnv::Static()->FsSession().CreatePrivatePath(EDriveC);
+            CEikonEnv::Static()->FsSession().PrivatePath(privatePath);
             TBuf<KMaxPath> path;
             path.Append(_L("c:"));
             path.Append(privatePath);
-            path.Append(_L("tempattachments\\"));                         
-            CFileMan* pFileMan = CFileMan::NewL(fileServer);
-            CleanupStack::PushL(pFileMan);
-            pFileMan->RmDir(path);
-            fileServer.MkDirAll(path);
-            CleanupStack::PopAndDestroy(pFileMan);
+            path.Append(_L("tempattachments\\"));
+            path.AppendNum(messageId);
+            path.Append(_L("\\"));
+            if (!pathForMessageAttachmentsCreated) {
+                CFileMan* pFileMan = CFileMan::NewL(CEikonEnv::Static()->FsSession());
+                CleanupStack::PushL(pFileMan);
+                pFileMan->RmDir(path);
+                CEikonEnv::Static()->FsSession().MkDirAll(path);
+                CleanupStack::PopAndDestroy(pFileMan);
+            }
             
             RFile file2;
             TFileName tempFileName;
-            TInt err = file2.Temp(fileServer,path,tempFileName,EFileWrite);
+            TInt err = file2.Temp(CEikonEnv::Static()->FsSession(),path,tempFileName,EFileWrite);
             if (err == KErrNone) {
                 CleanupClosePushL(file2);
                 file2.Write(*pFileContent);
@@ -3372,7 +3386,6 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
                 fileNames.append(QString::fromUtf16(tempFileName.Ptr(),tempFileName.Length()));
                 message.appendAttachments(fileNames);
             }
-            CleanupStack::PopAndDestroy(&fileServer);
 
             //TODO:attachment.setContent(QByteArray((const char *)pFileContent->Ptr(),pFileContent->Length()));
             //TODO: message.appendContent(attachment);
@@ -3489,6 +3502,7 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     if (c > 0) {
         privateMessage->_status = privateMessage->_status | QMessage::HasAttachments; 
     }
+    bool pathForMessageAttachmentsCreated = false;
     for (TInt i = 0; i < c; i++) 
        {
        CMsvAttachment* pAttachment = emailMessage->AttachmentManager().GetAttachmentInfoL(i);
@@ -3506,27 +3520,27 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
        CleanupStack::PushL(pFileContent);
        
        // write tempFile to private folder
-       RFs fileServer;
-       User::LeaveIfError(fileServer.Connect());
-       CleanupClosePushL(fileServer);
-        
        TBuf<KMaxPath> privatePath;
-       fileServer.CreatePrivatePath(EDriveC);
-       fileServer.PrivatePath(privatePath);
+       CEikonEnv::Static()->FsSession().CreatePrivatePath(EDriveC);
+       CEikonEnv::Static()->FsSession().PrivatePath(privatePath);
        TBuf<KMaxPath> path;
        path.Append(_L("c:"));
        path.Append(privatePath);
        path.Append(_L("tempattachments\\"));                         
-       CFileMan* pFileMan = CFileMan::NewL(fileServer);
-       CleanupStack::PushL(pFileMan);
-       pFileMan->RmDir(path);
-       fileServer.MkDirAll(path);
+       path.AppendNum(messageId);
+       path.Append(_L("\\"));
+       if (!pathForMessageAttachmentsCreated) {
+           CFileMan* pFileMan = CFileMan::NewL(CEikonEnv::Static()->FsSession());
+           CleanupStack::PushL(pFileMan);
+           pFileMan->RmDir(path);
+           CEikonEnv::Static()->FsSession().MkDirAll(path);
+           CleanupStack::PopAndDestroy(pFileMan);
+       }
        path.Append(fileName);
-       CleanupStack::PopAndDestroy(pFileMan);
         
        RFile file2;
        TFileName tempFileName;
-       TInt err = file2.Create(fileServer,path,EFileWrite);
+       TInt err = file2.Create(CEikonEnv::Static()->FsSession(),path,EFileWrite);
        if (err == KErrNone) {
            CleanupClosePushL(file2);
            file2.Write(*pFileContent);
@@ -3535,7 +3549,6 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
            fileNames.append(QString::fromUtf16(path.Ptr(),path.Length()));
            message.appendAttachments(fileNames);
        }
-       CleanupStack::PopAndDestroy(&fileServer);               
        CleanupStack::PopAndDestroy(pFileContent);
        CleanupStack::PopAndDestroy(pAttachment);
     }
@@ -3888,12 +3901,22 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
     QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filters[iNumberOfHandledFilters]);
     if ((filters.count() == 1) &&
         (pf->_field == QMessageFilterPrivate::None) &&
-        (pf->_filterList.count() == 0) &&
-        (pf->_notFilter)) {
-        // There is only one filter: empty ~QMessageFilter()
-        // => return empty QMessageIdList 
+        (pf->_filterList.count() == 0)) {
+        if (pf->_notFilter) {
+            // There is only one filter: empty ~QMessageFilter()
+            // => return empty QMessageIdList 
+            iIdList = QMessageIdList();
+        } else {
+            // There is only one filter: empty QMessageFilter()
+            // => return all messages
+            ipEntrySelection = new(ELeave)CMsvEntrySelection;
+            getAllMessagesL(iOrdering);
+            iIdList = QMessageIdList();
+            for (int i=0; i < ipEntrySelection->Count(); i++) {
+                iIdList.append(QMessageId(QString::number((*ipEntrySelection)[i]))); 
+            }
+        }
         iNumberOfHandledFilters++;
-        iIdList = QMessageIdList();
         iTimer.After(iStatus, 1);
         if (!IsActive()) {
             SetActive();
@@ -4524,63 +4547,9 @@ void CMessagesFindOperation::RunL()
 
 void CMessagesFindOperation::getAllMessagesL(const TMsvSelectionOrdering ordering)
 {
-    // Get all messages from Standard Folders
-    QMessage::StandardFolder i = QMessage::InboxFolder;
-    while (i <= QMessage::TrashFolder) {
-        getStandardFolderSpecificMessagesL(iOwner.standardFolderId(i), ordering);
-        i = static_cast<QMessage::StandardFolder>(static_cast<int>(i) + 1);
-    }
-    
-    // Get all messages from user created folders
-    CMsvEntry* pEntry = iOwner.retrieveCMsvEntry(KDocumentsEntryIdValue);
-    if (pEntry) {
-        pEntry->SetSortTypeL(ordering);
-        CMsvEntrySelection* pSelection = pEntry->ChildrenWithTypeL(KUidMsvFolderEntry);
-        CleanupStack::PushL(pSelection);
-        for(TInt i = 0; i < pSelection->Count(); i++) {
-            pEntry->SetEntryL(pSelection->At(i));
-            pEntry->SetSortTypeL(ordering);
-            CMsvEntrySelection* pSelection2 = pEntry->ChildrenWithTypeL(KUidMsvMessageEntry);
-            CleanupStack::PushL(pSelection2);
-            for(TInt j = 0; j < pSelection2->Count(); j++) {
-                ipEntrySelection->AppendL(pSelection2->At(j));
-            }
-            CleanupStack::PopAndDestroy(pSelection2);
-        }
-        CleanupStack::PopAndDestroy(pSelection);
-        iOwner.releaseCMsvEntry(pEntry);
-    }
-}
-
-void CMessagesFindOperation::getStandardFolderSpecificMessagesL(TMsvId standardFolderId, const TMsvSelectionOrdering ordering)
-{
-    CMsvEntry* pStandardFolderContext = iOwner.retrieveCMsvEntry(standardFolderId);
-    if (pStandardFolderContext) {
-        pStandardFolderContext->SetSortTypeL(ordering);
-    
-        const TMsvEntry& entry = pStandardFolderContext->Entry();
-        QString name = QString::fromUtf16(entry.iDetails.Ptr(), entry.iDetails.Length());
-        
-        pStandardFolderContext->SetSortTypeL(ordering);
-        CMsvEntrySelection* pEntries = pStandardFolderContext->ChildrenL();
-        CleanupStack::PushL(pEntries);
-        for (int i = 0; i < pEntries->Count(); i++) {
-            ipEntrySelection->AppendL(pEntries->At(i));
-        }
-        CleanupStack::PopAndDestroy(pEntries);
-        iOwner.releaseCMsvEntry(pStandardFolderContext);
-    }
-    
-    if (standardFolderId == KMsvGlobalInBoxIndexEntryIdValue) {
-        // Loop through all accounts
-        foreach (QMessageAccount value, iOwner.iAccounts) {
-            if ((value.messageTypes() & QMessage::Email) == QMessage::Email) {
-                // POP3 and IMAP messages are in service specific folders
-                getServiceSpecificMessagesFromFolderL(value.d_ptr->_service1EntryId, ordering, standardFolderId);
-            }
-        }
-    } else {
-        iResultCorrectlyOrdered = true;
+    // Get all messages from every known account
+    foreach (QMessageAccount value, iOwner.iAccounts) {
+        getAccountSpecificMessagesL(value, ordering);
     }
 }
 
@@ -4677,7 +4646,7 @@ void CMessagesFindOperation::getServiceSpecificMessagesFromFolderL(TMsvId servic
         if (mtmUid == KUidMsgTypePOP3) {
             if (standardFolderId == KMsvGlobalInBoxIndexEntryIdValue) {
                 // POP3 service has (Inbox) messages in service root
-                CMsvEntrySelection* pMessageEntries = pEntry->ChildrenL();
+                CMsvEntrySelection* pMessageEntries = pEntry->ChildrenWithTypeL(KUidMsvMessageEntry);
                 CleanupStack::PushL(pMessageEntries);
                 for (int i = 0; i < pMessageEntries->Count(); i++) {
                     ipEntrySelection->AppendL(pMessageEntries->At(i));
@@ -4688,11 +4657,11 @@ void CMessagesFindOperation::getServiceSpecificMessagesFromFolderL(TMsvId servic
             if (standardFolderId == KMsvGlobalInBoxIndexEntryIdValue) {
                 // All IMAP4 folders are treated as Inbox folders
                 // IMAP4 service has folders in service root
-                CMsvEntrySelection* pFolderEntries = pEntry->ChildrenL();
+                CMsvEntrySelection* pFolderEntries = pEntry->ChildrenWithTypeL(KUidMsvFolderEntry);
                 CleanupStack::PushL(pFolderEntries);
                 for (int i = 0; i < pFolderEntries->Count(); i++) {
                     pEntry->SetEntryL(pFolderEntries->At(i));
-                    CMsvEntrySelection* pMessageEntries = pEntry->ChildrenL();
+                    CMsvEntrySelection* pMessageEntries = pEntry->ChildrenWithTypeL(KUidMsvMessageEntry);
                     CleanupStack::PushL(pMessageEntries);
                     for (int j = 0; j < pMessageEntries->Count(); j++) {
                         ipEntrySelection->AppendL(pMessageEntries->At(j));
@@ -4703,25 +4672,26 @@ void CMessagesFindOperation::getServiceSpecificMessagesFromFolderL(TMsvId servic
             }
         } else {
             // Handle SMS, MMS & SMTP Standard Folders
-            pEntry->SetEntryL(standardFolderId);
-            pEntry->SetSortTypeL(ordering);
-            CMsvEntrySelection* pEntries = NULL;
+            CMsvEntryFilter* pFilter = CMsvEntryFilter::NewLC();
             if (mtmUid == KUidMsgTypeSMTP) {
                 // There maybe multiple SMTP Services
                 // => Messages must be queried using ServiceId
-                pEntries = pEntry->ChildrenWithServiceL(serviceId);
+                pFilter->SetService(serviceId);
             } else {
                 // There is only one service per SMS and per MMS
                 // => Messages can be queried using MTM Uid
-                pEntries = pEntry->ChildrenWithMtmL(mtmUid);
+                pFilter->SetMtm(mtmUid);
             }
-            if (pEntries) {
-                CleanupStack::PushL(pEntries);
-                for (int i = 0; i < pEntries->Count(); i++) {
-                    ipEntrySelection->AppendL(pEntries->At(i));
-                }
-                CleanupStack::PopAndDestroy(pEntries);
+            pFilter->SetOrder(ordering);
+            pFilter->SetType(KUidMsvMessageEntry);
+            CMsvEntrySelection* pEntries = new(ELeave) CMsvEntrySelection;;
+            CleanupStack::PushL(pEntries);
+            ipMsvSession->GetChildIdsL(standardFolderId, *pFilter, *pEntries);
+            for (int i = 0; i < pEntries->Count(); i++) {
+                ipEntrySelection->AppendL(pEntries->At(i));
             }
+            CleanupStack::PopAndDestroy(pEntries);
+            CleanupStack::PopAndDestroy(pFilter);
         }
         iOwner.releaseCMsvEntry(pEntry);
     }

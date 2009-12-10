@@ -76,9 +76,9 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     { QtMedia::Duration, GST_TAG_DURATION },
 
     // Audio
-    { QtMedia::AudioBitrate, GST_TAG_BITRATE },
+    { QtMedia::AudioBitRate, GST_TAG_BITRATE },
     { QtMedia::AudioCodec, GST_TAG_AUDIO_CODEC },
-    //{ QtMedia::Channels, 0 },
+    //{ QtMedia::ChannelCount, 0 },
     //{ QtMedia::Frequency, 0 },
 
     // Music

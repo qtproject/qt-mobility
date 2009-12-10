@@ -71,7 +71,7 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
     connect(m_session, SIGNAL(durationChanged(qint64)),
             this, SIGNAL(durationChanged(qint64)));
     connect(m_session, SIGNAL(mutedStateChanged(bool)),
-            this, SIGNAL(mutingChanged(bool)));
+            this, SIGNAL(mutedChanged(bool)));
     connect(m_session, SIGNAL(volumeChanged(int)),
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
@@ -80,8 +80,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SIGNAL(bufferStatusChanged(int)));
-    connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
-            this, SIGNAL(videoAvailabilityChanged(bool)));
+    connect(m_session, SIGNAL(videoAvailableChanged(bool)),
+            this, SIGNAL(videoAvailableChanged(bool)));
     connect(m_session, SIGNAL(seekableChanged(bool)),
             this, SIGNAL(seekableChanged(bool)));
 }

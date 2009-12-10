@@ -12,8 +12,6 @@ include(../../common.pri)
 #not really a test case but deployment happens same way
 CONFIG += testcase
 
-include(../../common.pri)
-
 DEPENDPATH += .
 INCLUDEPATH += . \
                ../../src/bearer
@@ -26,11 +24,6 @@ SOURCES += bearerex.cpp \
            main.cpp \
            xqlistwidget.cpp
 
-symbian: {
-    bearerex.sources = Qtbearer.dll
-    bearerex.path = /sys/bin
-    DEPLOYMENT += bearerex
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 
-    TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
-}
 qtAddLibrary(QtBearer)

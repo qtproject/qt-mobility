@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qgeosatelliteinfo.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QGeoSatelliteInfo Class Reference</title>
+  <title>Qt Mobility Project 1.0: QGeoSatelliteInfo Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QGeoSatelliteInfo"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -49,6 +50,9 @@
 <p>See also <a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QGeoSatelliteInfo/Property"></a>
+<a name="//apple_ref/cpp/econst/QGeoSatelliteInfo/Elevation"></a>
+<a name="//apple_ref/cpp/econst/QGeoSatelliteInfo/Azimuth"></a>
 <h3 class="fn"><a name="Property-enum"></a>enum QGeoSatelliteInfo::Property</h3>
 <p>Defines the properties for the satellite information.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -58,45 +62,59 @@
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/QGeoSatelliteInfo"></a>
 <h3 class="fn"><a name="QGeoSatelliteInfo"></a>QGeoSatelliteInfo::QGeoSatelliteInfo ()</h3>
 <p>Creates a satellite information object.</p>
 <h3 class="fn"><a name="QGeoSatelliteInfo-2"></a>QGeoSatelliteInfo::QGeoSatelliteInfo ( const QGeoSatelliteInfo &amp; <i>other</i> )</h3>
 <p>Creates a satellite information object with the values of <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/~QGeoSatelliteInfo"></a>
 <h3 class="fn"><a name="dtor.QGeoSatelliteInfo"></a>QGeoSatelliteInfo::~QGeoSatelliteInfo ()</h3>
 <p>Destroys a satellite information object.</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/hasProperty"></a>
 <h3 class="fn"><a name="hasProperty"></a>bool QGeoSatelliteInfo::hasProperty ( <a href="qgeosatelliteinfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
 <p>Returns true if the specified <i>property</i> is present in this update.</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/prnNumber"></a>
 <h3 class="fn"><a name="prnNumber"></a>int QGeoSatelliteInfo::prnNumber () const</h3>
 <p>Returns the PRN (Pseudo-random noise) number, or -1 if the value has not been set.</p>
 <p>See also <a href="qgeosatelliteinfo.html#setPrnNumber">setPrnNumber</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/property"></a>
 <h3 class="fn"><a name="property"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoSatelliteInfo::property ( <a href="qgeosatelliteinfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
 <p>Returns the value of the specified <i>property</i> as a qreal value.</p>
 <p>Returns -1 if the value has not been set.</p>
 <p>See also <a href="qgeosatelliteinfo.html#hasProperty">hasProperty</a>() and <a href="qgeosatelliteinfo.html#setProperty">setProperty</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/removeProperty"></a>
 <h3 class="fn"><a name="removeProperty"></a>void QGeoSatelliteInfo::removeProperty ( <a href="qgeosatelliteinfo.html#Property-enum">Property</a> <i>property</i> )</h3>
 <p>Removes the specified <i>property</i> and its value.</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/setPrnNumber"></a>
 <h3 class="fn"><a name="setPrnNumber"></a>void QGeoSatelliteInfo::setPrnNumber ( int <i>prn</i> )</h3>
 <p>Sets the PRN (Pseudo-random noise) number to <i>prn</i>.</p>
 <p>The PRN number can be used to identify a satellite.</p>
 <p>See also <a href="qgeosatelliteinfo.html#prnNumber">prnNumber</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/setProperty"></a>
 <h3 class="fn"><a name="setProperty"></a>void QGeoSatelliteInfo::setProperty ( <a href="qgeosatelliteinfo.html#Property-enum">Property</a> <i>property</i>, <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )</h3>
 <p>Sets the value for <i>property</i> to <i>value</i>.</p>
 <p>See also <a href="qgeosatelliteinfo.html#property">property</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/setSignalStrength"></a>
 <h3 class="fn"><a name="setSignalStrength"></a>void QGeoSatelliteInfo::setSignalStrength ( int <i>signalStrength</i> )</h3>
 <p>Sets the signal strength to <i>signalStrength</i>, in decibels.</p>
 <p>See also <a href="qgeosatelliteinfo.html#signalStrength">signalStrength</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/signalStrength"></a>
 <h3 class="fn"><a name="signalStrength"></a>int QGeoSatelliteInfo::signalStrength () const</h3>
 <p>Returns the signal strength, or -1 if the value has not been set.</p>
 <p>See also <a href="qgeosatelliteinfo.html#setSignalStrength">setSignalStrength</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QGeoSatelliteInfo::operator!= ( const QGeoSatelliteInfo &amp; <i>other</i> ) const</h3>
 <p>Returns true if any of the information for this satellite are not the same as those of <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QGeoSatelliteInfo &amp; QGeoSatelliteInfo::operator= ( const QGeoSatelliteInfo &amp; <i>other</i> )</h3>
 <p>Assigns the values from <i>other</i> to this object.</p>
+<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoSatelliteInfo::operator== ( const QGeoSatelliteInfo &amp; <i>other</i> ) const</h3>
 <p>Returns true if all the information for this satellite are the same as those of <i>other</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
 </tr></table></div></address></body>
 </html>

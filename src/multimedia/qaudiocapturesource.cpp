@@ -168,14 +168,14 @@ int QAudioCaptureSource::deviceCount() const
     Returns the name of the audio input device at \a index.
 */
 
-QString QAudioCaptureSource::name(int index) const
+QString QAudioCaptureSource::deviceName(int index) const
 {
     Q_D(const QAudioCaptureSource);
 
     QString text;
 
     if(d->audioDeviceControl)
-        text = d->audioDeviceControl->name(index);
+        text = d->audioDeviceControl->deviceName(index);
 
     return text;
 }
@@ -184,14 +184,14 @@ QString QAudioCaptureSource::name(int index) const
     Returns the description of the audio input device at \a index.
 */
 
-QString QAudioCaptureSource::description(int index) const
+QString QAudioCaptureSource::deviceDescription(int index) const
 {
     Q_D(const QAudioCaptureSource);
 
     QString text;
 
     if(d->audioDeviceControl)
-        text = d->audioDeviceControl->description(index);
+        text = d->audioDeviceControl->deviceDescription(index);
 
     return text;
 }
@@ -200,12 +200,12 @@ QString QAudioCaptureSource::description(int index) const
     Returns the icon for the audio input device at \a index.
 */
 
-QIcon QAudioCaptureSource::icon(int index) const
+QIcon QAudioCaptureSource::deviceIcon(int index) const
 {
     Q_D(const QAudioCaptureSource);
 
     if(d->audioDeviceControl)
-        return d->audioDeviceControl->icon(index);
+        return d->audioDeviceControl->deviceIcon(index);
 
     return QIcon();
 }

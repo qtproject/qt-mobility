@@ -125,6 +125,14 @@ void QMediaObject::bind(QObject*)
 }
 
 /*!
+  \internal
+*/
+void QMediaObject::unbind(QObject*)
+{
+}
+
+
+/*!
     Constructs a media object which uses the functionality provided by a media \a service.
 
     The \a parent is passed to QObject.

@@ -53,6 +53,10 @@ namespace Ui {
 #include <QMainWindow>
 #include <QDir>
 
+QTM_BEGIN_NAMESPACE
+class QVideoWidget;
+QTM_END_NAMESPACE
+
 QTM_USE_NAMESPACE
 
 class CameraCapture : public QMainWindow
@@ -95,7 +99,7 @@ private:
     QCamera *camera;
     QMediaRecorder* mediaRecorder;
     QAudioCaptureSource *audioSource;
-    QWidget *videoWidget;
+    QVideoWidget *videoWidget;
 };
 
 #endif

@@ -20,3 +20,7 @@ versit.depends=contacts
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo {
     !win32-g++:SUBDIRS += messaging
 }
+
+symbian {
+    SUBDIRS += s60installs/s60installs.pro
+}

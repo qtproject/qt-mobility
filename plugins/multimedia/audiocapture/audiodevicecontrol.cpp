@@ -65,7 +65,7 @@ int AudioDeviceControl::deviceCount() const
     return m_names.count();
 }
 
-QString AudioDeviceControl::name(int index) const
+QString AudioDeviceControl::deviceName(int index) const
 {
     if(index < m_names.count())
         return m_names[index];
@@ -73,7 +73,7 @@ QString AudioDeviceControl::name(int index) const
     return QString();
 }
 
-QString AudioDeviceControl::description(int index) const
+QString AudioDeviceControl::deviceDescription(int index) const
 {
     if(index < m_names.count())
         return m_descriptions[index];
@@ -81,7 +81,7 @@ QString AudioDeviceControl::description(int index) const
     return QString();
 }
 
-QIcon AudioDeviceControl::icon(int index) const
+QIcon AudioDeviceControl::deviceIcon(int index) const
 {
     Q_UNUSED(index);
     return QIcon();

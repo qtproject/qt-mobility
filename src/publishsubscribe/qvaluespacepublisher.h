@@ -76,7 +76,7 @@ public:
     void sync();
 
 signals:
-    void attributeInterestChanged(const QString &attribute, bool interested);
+    void interestChanged(const QString &attribute, bool interested);
 
 public slots:
     void setValue(const QString &name, const QVariant &data);

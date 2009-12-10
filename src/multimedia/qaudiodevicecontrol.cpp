@@ -90,19 +90,19 @@ QAudioDeviceControl::~QAudioDeviceControl()
 */
 
 /*!
-    \fn QAudioDeviceControl::name(int device) const
+    \fn QAudioDeviceControl::deviceName(int device) const
 
     Returns the name of a \a device.
 */
 
 /*!
-    \fn QAudioDeviceControl::description(int device) const
+    \fn QAudioDeviceControl::deviceDescription(int device) const
 
     Returns a description of a \a device.
 */
 
 /*!
-    \fn QAudioDeviceControl::icon(int device) const
+    \fn QAudioDeviceControl::deviceIcon(int device) const
 
     Returns an icon for a \a device.
 */

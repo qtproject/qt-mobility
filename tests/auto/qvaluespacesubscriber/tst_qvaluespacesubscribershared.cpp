@@ -83,7 +83,7 @@ class ChangeListener : public QObject
 
 Q_SIGNALS:
     void baseChanged();
-    void attributeInterestChanged(const QString&, bool);
+    void interestChanged(const QString&, bool);
 };
 
 Q_DECLARE_METATYPE(QValueSpaceSubscriber*)
@@ -120,7 +120,7 @@ void tst_QValueSpaceSubscriber::initTestCase()
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
     for (int i = 0; i < layers.count(); ++i) {
-        QValueSpacePublisher *root = new QValueSpacePublisher("/", layers.at(i)->id());
+        QValueSpacePublisher *root = new QValueSpacePublisher(layers.at(i)->id(), "/");
         root->setValue("/home/user/bool", true);
         root->setValue("/home/user/int", 3);
         root->setValue("/home/user/QString", QString("testString"));
@@ -145,7 +145,7 @@ void tst_QValueSpaceSubscriber::initTestCase()
 
         roots.insert(layers.at(i), root);
 
-        QValueSpacePublisher *busy = new QValueSpacePublisher("/usr", layers.at(i)->id());
+        QValueSpacePublisher *busy = new QValueSpacePublisher(layers.at(i)->id(), "/usr");
         busy->setValue("alex/busy", true);
         busy->setValue("lorn/busy", false);
         busy->sync();
@@ -249,10 +249,10 @@ void tst_QValueSpaceSubscriber::dataVersatility()
 
     QCOMPARE(data.type(), (QVariant::Type)typeIdent);
 
-    QValueSpacePublisher publisher("/usr/data", layer->id());
+    QValueSpacePublisher publisher(layer->id(), "/usr/data");
     publisher.setValue(typeString, data);
     publisher.sync();
-    QValueSpaceSubscriber subscriber("/usr/data", layer->id());
+    QValueSpaceSubscriber subscriber(layer->id(), "/usr/data");
     QVariant v = subscriber.value(typeString);
 
     QCOMPARE(v.type(), (QVariant::Type)typeIdent);
@@ -670,7 +670,7 @@ void tst_QValueSpaceSubscriber::contentsChanged()
     busy->setValue("alex/busy", old_value);
     busy->sync();
 
-    QValueSpaceSubscriber subscriber(subscriber_path, layer->id());
+    QValueSpaceSubscriber subscriber(layer->id(), subscriber_path);
     QCOMPARE(subscriber.value(value_path,!old_value).toBool(), old_value);
 
     ChangeListener* listener = 0;
@@ -727,7 +727,7 @@ void tst_QValueSpaceSubscriber::value()
 {
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QValueSpaceSubscriber base(QString("/"), layer->id());
+    QValueSpaceSubscriber base(layer->id(), QString("/"));
     QCOMPARE(base.value("home/usercount", 5).toInt(), 1);
     QCOMPARE(base.value("home/user/QString", "default").toString(), QString("testString"));
     QCOMPARE(base.value("home/user/bool", false).toBool(), true);
@@ -737,7 +737,7 @@ void tst_QValueSpaceSubscriber::value()
     QCOMPARE(base.value("home/user/double", 4.0).toDouble(), double(4.56));
     //QCOMPARE(base.value("home/user/float", 4.0).toDouble(), (double)4.56);
 
-    QValueSpaceSubscriber base1(QString("/home"), layer->id());
+    QValueSpaceSubscriber base1(layer->id(), QString("/home"));
     QCOMPARE(base1.value(QString("usercount"), 5).toInt(), 1);
     QCOMPARE(base1.value(QString("user/QString"), "default").toString(), QString("testString"));
     QCOMPARE(base1.value("user/bool", false).toBool(), true);
@@ -747,7 +747,7 @@ void tst_QValueSpaceSubscriber::value()
     QCOMPARE(base1.value("user/double", 4.0).toDouble(), double(4.56));
     //QCOMPARE(base1.value("user/float", 4.0).toDouble(), double(4.56));
 
-    QValueSpaceSubscriber base2(QString("/home/user"), layer->id());
+    QValueSpaceSubscriber base2(layer->id(), QString("/home/user"));
     QCOMPARE(base2.value(QString("usercount"), 5).toInt(), 5);
     QCOMPARE(base2.value(QString("QString"), "default").toString(), QString("testString"));
     QCOMPARE(base2.value("bool", false).toBool(), true);
@@ -778,7 +778,7 @@ void tst_QValueSpaceSubscriber::ipcTests()
 #else
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QValueSpaceSubscriber subscriber("/usr/lackey/subdir/value", layer->id());
+    QValueSpaceSubscriber subscriber(layer->id(), "/usr/lackey/subdir/value");
     ChangeListener listener;
     QSignalSpy spy(&listener, SIGNAL(baseChanged()));
     connect(&subscriber, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
@@ -849,7 +849,7 @@ void tst_QValueSpaceSubscriber::ipcRemoveKey()
 #else
     QFETCH(QAbstractValueSpaceLayer *, layer);
 
-    QValueSpaceSubscriber subscriber("/ipcRemoveKey", layer->id());
+    QValueSpaceSubscriber subscriber(layer->id(), "/ipcRemoveKey");
 
     ChangeListener listener;
     QSignalSpy changeSpy(&listener, SIGNAL(baseChanged()));
@@ -908,18 +908,18 @@ void tst_QValueSpaceSubscriber::interestNotification()
     QFETCH(QString, attribute);
 
     QValueSpacePublisher *publisher;
-    publisher = new QValueSpacePublisher(publisherPath, layer->id());
+    publisher = new QValueSpacePublisher(layer->id(), publisherPath);
 
     ChangeListener notificationListener;
-    connect(publisher, SIGNAL(attributeInterestChanged(QString,bool)),
-            &notificationListener, SIGNAL(attributeInterestChanged(QString,bool)));
+    connect(publisher, SIGNAL(interestChanged(QString,bool)),
+            &notificationListener, SIGNAL(interestChanged(QString,bool)));
 
     QSignalSpy notificationSpy(&notificationListener,
-                               SIGNAL(attributeInterestChanged(QString,bool)));
+                               SIGNAL(interestChanged(QString,bool)));
 
     const QString subscriberPath = publisherPath + attribute;
 
-    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(subscriberPath, layer->id());
+    QValueSpaceSubscriber *subscriber = new QValueSpaceSubscriber(layer->id(), subscriberPath);
 
     QTRY_COMPARE(notificationSpy.count(), 1);
 
@@ -987,7 +987,7 @@ void tst_QValueSpaceSubscriber::ipcInterestNotification()
     // Test QValueSpaceSubscriber construction before QValueSpacePublisher.
 
     QValueSpaceSubscriber *subscriber =
-        new QValueSpaceSubscriber("/ipcInterestNotification/value", layer->id());
+        new QValueSpaceSubscriber(layer->id(), "/ipcInterestNotification/value");
 
     ChangeListener listener;
     QObject::connect(subscriber, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
@@ -1002,19 +1002,19 @@ void tst_QValueSpaceSubscriber::ipcInterestNotification()
         << "-ipcInterestNotification" << layer->id().toString());
     QVERIFY(process.waitForStarted());
 
-    // Lackey will receive attributeInterestChanged from server and set the attribute.
+    // Lackey will receive interestChanged from server and set the attribute.
     QTRY_COMPARE(changeSpy.count(), 1);
     changeSpy.clear();
 
     QCOMPARE(subscriber->value(QString(), 10).toInt(), 5);
 
-    // Lackey will receive attributeInterestChanged and remove attribute.
+    // Lackey will receive interestChanged and remove attribute.
     delete subscriber;
     QTest::qWait(1000);
 
     // Test QValueSpaceSubscriber construction after QValueSpacePublisher
 
-    subscriber = new QValueSpaceSubscriber("/ipcInterestNotification/value", layer->id());
+    subscriber = new QValueSpaceSubscriber(layer->id(), "/ipcInterestNotification/value");
     QObject::connect(subscriber, SIGNAL(contentsChanged()), &listener, SIGNAL(baseChanged()));
 
     QTRY_COMPARE(changeSpy.count(), 1);

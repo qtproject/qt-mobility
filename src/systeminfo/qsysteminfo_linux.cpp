@@ -134,14 +134,14 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
 {
     halIsAvailable = halAvailable();
     langCached = currentLanguage();
-    startLangaugePolling();
+    startLanguagePolling();
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-void QSystemInfoPrivate::startLangaugePolling()
+void QSystemInfoPrivate::startLanguagePolling()
 {
     QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
     if(langCached.isEmpty()) {
@@ -153,7 +153,7 @@ void QSystemInfoPrivate::startLangaugePolling()
         langCached = checkLang;
     }
     langTimer = new QTimer(this);
-    QTimer::singleShot(1000, this, SLOT(startLangaugePolling()));
+    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
 }
 
 // 2 letter ISO 639-1

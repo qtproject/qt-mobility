@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     MessageSender sender;
 
-#ifdef _WIN32_WCE
+#if (defined(Q_OS_SYMBIAN) || defined(_WIN32_WCE))
 #ifdef QT_KEYPAD_NAVIGATION
     app.setKeypadNavigationEnabled(true);
 #endif
