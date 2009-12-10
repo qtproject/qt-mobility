@@ -56,7 +56,8 @@ symbian: {
         inc/cntsymbianfiltersqlhelper.h \
         inc/cntsymbiansrvconnection.h \
         inc/cntsymbiantransformerror.h \
-        inc/cntsymbiandatabase.h
+        inc/cntsymbiandatabase.h \
+	inc/cntdisplaylabel.h 
       
     SOURCES += \
         src/cntsymbianengine.cpp \
@@ -91,7 +92,8 @@ symbian: {
         src/cntsymbianfiltersqlhelper.cpp \
         src/cntsymbiansrvconnection.cpp \
         src/cntsymbiantransformerror.cpp \
-        src/cntsymbiandatabase.cpp
+        src/cntsymbiandatabase.cpp \
+	src/cntdisplaylabel.cpp
       
     CONFIG += mobility
     MOBILITY = contacts
@@ -111,7 +113,7 @@ symbian: {
     INSTALLS += target
 
     exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-        DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
+        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
         cntmodelResourceFile = \
             "START RESOURCE ../rss/cntmodel.rss" \
             "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \

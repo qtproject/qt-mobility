@@ -71,7 +71,6 @@ echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
 
 :cmdline_parsing
-
 if "%1" == ""               goto startProcessing
 if "%1" == "-debug"         goto debugTag
 if "%1" == "-release"       goto releaseTag
@@ -204,11 +203,20 @@ goto cmdline_parsing
 
 :modulesTag
 shift
-if "%1" == "" (
-    echo >&2 "The -modules option requires a list of modules."
+:: %1 can have leading/trailing quotes, so we can't use if "%1" == ""
+if xx%1xx == xxxx (
+    echo. >&2
+    echo >&2The -modules option requires a list of modules.
+    echo. >&2
     goto usage
 )
-set MOBILITY_MODULES_UNPARSED=%1
+
+:: Remove leading/trailing quotes, if we have them
+set MOBILITY_MODULES_UNPARSED=xxx%1xxx
+set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:"xxx=%
+set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx"=%
+set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
+
 shift
 goto cmdline_parsing
 
@@ -277,7 +285,7 @@ if "%QT_PATH%" == "" (
 ) else (
     echo >&2Cannot find 'qmake' in %QT_PATH%.
 )
-echo >&2 "Aborting." 
+echo >&2Aborting.
 goto errorTag
 
 :qmakeFound
@@ -335,8 +343,8 @@ echo Checking make
 call :makeTest MOBILITY_MAKE MOBILITY_BUILDSYSTEM
 if not "%MOBILITY_MAKE%" == "" goto compileTests
 
-echo >&2 "Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH"
-echo >&2 "Aborting."
+echo >&2Cannot find 'nmake', 'mingw32-make' or 'make' in your PATH
+echo >&2Aborting.
 goto errorTag
 
 :compileTest
@@ -389,7 +397,7 @@ echo.
 
 REM we could skip generating headers if a module is not enabled
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
-echo "Generating Mobility Headers..."
+echo Generating Mobility Headers...
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
 perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\global
@@ -416,7 +424,7 @@ goto exitTag
 :qmakeRecError
 echo.
 echo configure failed.
-goto exitTag
+goto errorTag
 
 :errorTag
 set BUILD_PATH=
@@ -444,4 +452,4 @@ set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
 set MOBILITY_MODULES_UNPARSED=
-
+exit /b 0

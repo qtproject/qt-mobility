@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
 
 #include <qcontactdetail.h>
 #include <QSet>

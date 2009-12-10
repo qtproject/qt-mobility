@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
 
 #include "cntsymbianfiltersql.h"
 #include "qcontactdetailfilter.h"
@@ -66,10 +66,27 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
             QContactManager::Error& error)
 {
     QList<QContactLocalId> matches;
-    //sort order not supported yet
-    matches = m_sqlhelper->searchContacts(filter,error);
-    // Tell the caller do slow filtering if the filter is not supported
-    filterSupportedFlag = filterSupported(filter);
+    
+    //temp solution to retrieve all contacts
+    if(filter.type() == QContactFilter::DefaultFilter)
+    {
+        TTime epoch(0);
+        CContactIdArray* idArray = m_contactDatabase.ContactsChangedSinceL(epoch); // return all contacts
+        
+        // copy the matching contact ids
+        for(int i(0); i < idArray->Count(); i++) {
+            matches.append(QContactLocalId((*idArray)[i]));
+        }
+    }
+    
+    else
+    {
+        //sort order not supported yet
+        matches = m_sqlhelper->searchContacts(filter,error);
+        // Tell the caller do slow filtering if the filter is not supported
+        filterSupportedFlag = filterSupported(filter);
+    }
+    
     return matches;
 }
 
