@@ -47,9 +47,10 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QProximitySensorValue : public QSensorValue
+class Q_SENSORS_EXPORT QProximityValue : public QSensorValue
 {
 public:
+    QProximityValue();
     int distance;
 };
 
@@ -64,11 +65,23 @@ public:
 
     int currentProximity() const
     {
-        return static_cast<QProximitySensorValue*>(currentValue())->distance;
+        return static_cast<QProximityValue*>(currentValue())->distance;
     }
 
 signals:
     void proximityChanged(int distance);
+
+private:
+    void valueUpdated()
+    {
+        int distance = currentProximity();
+        if (distance != lastDistance) {
+            lastDistance = distance;
+            emit proximityChanged(distance);
+        }
+    }
+
+    int lastDistance;
 };
 
 QTM_END_NAMESPACE

@@ -44,14 +44,14 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QAccelerationSensorValue
+    \class QAccelerationValue
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationSensorValue class represents one value from the
+    \brief The QAccelerationValue class represents one value from the
            acceleration sensor.
 
-    The values returned in QAccelerationSensorValue are normalized so that
+    The values returned in QAccelerationValue are normalized so that
     they are consistent between devices. The axes are arranged as follows.
 
     TODO picture showing axes relative to the monoblock form factor.
@@ -62,19 +62,27 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \variable QAccelerationSensorValue::x
+    \internal
+*/
+QAccelerationValue::QAccelerationValue()
+    : QSensorValue(QAccelerationSensor::type)
+{
+}
+
+/*!
+    \variable QAccelerationValue::x
 
     Holds the acceleration for the X axis.
 */
 
 /*!
-    \variable QAccelerationSensorValue::y
+    \variable QAccelerationValue::y
 
     Holds the acceleration for the Y axis.
 */
 
 /*!
-    \variable QAccelerationSensorValue::z
+    \variable QAccelerationValue::z
 
     Holds the acceleration for the Z axis.
 */
@@ -98,7 +106,7 @@ QTM_BEGIN_NAMESPACE
     device sitting at rest, face up on a desk will experience the force of
     gravity as approximately -9.8 on the Z axis.
 
-    \sa QAccelerationSensorValue
+    \sa QAccelerationValue
 */
 
 /*!

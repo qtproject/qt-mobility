@@ -45,18 +45,23 @@
 #include <qmobilityglobal.h>
 #include <QObject>
 #include <QString>
+#include <QTime>
 
 QTM_BEGIN_NAMESPACE
 
 class QSensorListener;
 class QSensorFilter;
 class QSensorValue;
+class QSensorPrivate;
+class QSensorBackend;
 
 typedef QByteArray QSensorID;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
 public:
+    friend class QSensorBackend;
+
     explicit QSensor(const QSensorID &id, QObject *parent = 0);
     virtual ~QSensor();
 
@@ -106,6 +111,12 @@ public:
 
     // Stop receiving values from the sensor
     void stop();
+
+    // emit signals
+    virtual void valueUpdated();
+
+private:
+    QSensorPrivate *d;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);
@@ -119,11 +130,16 @@ public:
 class Q_SENSORS_EXPORT QSensorValue
 {
 public:
-    explicit QSensorValue(QSensor *sensor);
+    explicit QSensorValue(const QString &type);
+    QString type() const
+    {
+        return m_type;
+    }
 
-    QSensor *sensor() const;
+    QTime timestamp;
 
-    quint64 timestamp;
+private:
+    QString m_type;
 };
 
 QTM_END_NAMESPACE

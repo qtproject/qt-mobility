@@ -39,47 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QACCELERATIONSENSOR_H
-#define QACCELERATIONSENSOR_H
+#ifndef QSENSORBACKEND_H
+#define QSENSORBACKEND_H
 
 #include <qsensor.h>
-#include <QtGlobal>
 
 QTM_BEGIN_NAMESPACE
 
-class QAccelerationValue;
-
-class Q_SENSORS_EXPORT QAccelerationValue : public QSensorValue
+class Q_SENSORS_EXPORT QSensorBackend
 {
 public:
-    QAccelerationValue();
-    int x;
-    int y;
-    int z;
-};
+    QSensorBackend();
+    void addSensor(QSensor *sensor);
+    void removeSensor(QSensor *sensor);
+    void notify();
+    int suggestedInterval(QSensor::UpdatePolicy policy);
 
-class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
-{
-public:
-    explicit QAccelerationSensor(const QSensorID &id, QObject *parent = 0);
+    virtual QString name() const = 0;
+    virtual void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval = 0) = 0;
+    virtual QSensor::UpdatePolicies supportedPolicies() const = 0;
+    virtual QSensorValue *currentValue() = 0;
+    virtual bool start() = 0;
+    virtual void stop() = 0;
 
-    static const QString type;
-
-    int currentXAcceleration() const
-    {
-        return static_cast<QAccelerationValue*>(currentValue())->x;
-    }
-    int currentYAcceleration() const
-    {
-        return static_cast<QAccelerationValue*>(currentValue())->y;
-    }
-    int currentZAcceleration() const
-    {
-        return static_cast<QAccelerationValue*>(currentValue())->z;
-    }
+private:
+    QList<QSensor*> m_sensors;
 };
 
 QTM_END_NAMESPACE
+
+#define REGISTER_SENSOR(classname, id)
 
 #endif
 

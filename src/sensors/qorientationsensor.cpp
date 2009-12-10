@@ -44,18 +44,18 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QOrientationSensorValue
+    \class QOrientationValue
     \ingroup sensors
 
     \preliminary
-    \brief The QOrientationSensorValue class represents an orientation value.
+    \brief The QOrientationValue class represents an orientation value.
 
     The orientation is expressed as either portrait or landscape with an
     inverted flag indicating the phone is upside down.
 */
 
 /*!
-    \enum QOrientationSensorValue::OrientationFlag
+    \enum QOrientationValue::OrientationFlag
 
     This enum represents the orientation of the device.
 
@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \variable QOrientationSensorValue::orientation
+    \variable QOrientationValue::orientation
 
     Holds the orientation flags.
 */
@@ -108,7 +108,7 @@ QOrientationSensor::QOrientationSensor(const QSensorID &id, QObject *parent)
 */
 
 /*!
-    \fn QOrientationSensor::orientationChanged(QOrientationSensorValue::Orientation orientation)
+    \fn QOrientationSensor::orientationChanged(QOrientationValue::Orientation orientation)
 
     Emitted when the \a orientation value changes.
 */

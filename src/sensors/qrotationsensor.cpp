@@ -44,29 +44,29 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QRotationSensorValue
+    \class QRotationValue
     \ingroup sensors
 
     \preliminary
-    \brief The QRotationSensorValue class represents an rotation value.
+    \brief The QRotationValue class represents an rotation value.
 
     Foo bar baz.
 */
 
 /*!
-    \variable QRotationSensorValue::x
+    \variable QRotationValue::x
 
     Holds the rotation for the X axis.
 */
 
 /*!
-    \variable QRotationSensorValue::y
+    \variable QRotationValue::y
 
     Holds the rotation for the Y axis.
 */
 
 /*!
-    \variable QRotationSensorValue::z
+    \variable QRotationValue::z
 
     Holds the rotation for the Z axis.
 */

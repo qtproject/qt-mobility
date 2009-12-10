@@ -225,6 +225,14 @@ void QSensor::stop()
 }
 
 /*!
+    Subclasses should implement this method to emit signals when
+    the value has changed.
+*/
+void QSensor::valueUpdated()
+{
+}
+
+/*!
     \class QSensorListener
     \ingroup sensors
 
@@ -257,20 +265,18 @@ void QSensor::stop()
 */
 
 /*!
-    Constuct a sensor value for a \a sensor.
+    Constuct a sensor value for a \a type.
 */
-QSensorValue::QSensorValue(QSensor *sensor)
+QSensorValue::QSensorValue(const QString &type)
+    : m_type(type)
 {
-    Q_UNUSED(sensor)
 }
 
 /*!
-    Returns the sensor that generated this value.
+    \fn QSensorValue::type() const
+
+    Returns the type of value that this is.
 */
-QSensor *QSensorValue::sensor() const
-{
-    return 0;
-}
 
 /*!
     \variable QSensorValue::timestamp

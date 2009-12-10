@@ -44,18 +44,26 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QProximitySensorValue
+    \class QProximityValue
     \ingroup sensors
 
     \preliminary
-    \brief The QProximitySensorValue class represents a proximity reading.
+    \brief The QProximityValue class represents a proximity reading.
 
     The proximity sensor returns the distance to the user. The distance
     is measured in millimeters.
 */
 
 /*!
-    \variable QProximitySensorValue::distance
+    \internal
+*/
+QProximityValue::QProximityValue()
+    : QSensorValue(QProximitySensor::type)
+{
+}
+
+/*!
+    \variable QProximityValue::distance
 
     Holds the distance of the user from the phone.
 */

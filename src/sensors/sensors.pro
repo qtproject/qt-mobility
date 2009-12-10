@@ -17,6 +17,7 @@ PUBLIC_HEADERS += \
            qrotationsensor.h\
            qproximitysensor.h\
            qsensormanager.h\
+           qsensorbackend.h\
 
 PRIVATE_HEADERS += \
 
@@ -29,5 +30,15 @@ SOURCES += qsensor.cpp \
            qrotationsensor.cpp\
            qproximitysensor.cpp\
            qsensormanager.cpp\
+           qsensorbackend.cpp\
+
+CONFIG+=n900
+n900 {
+    HEADERS += n900filebasedsensor.h
+    SOURCES += n900accelerationsensor.cpp\
+               #n900lightsensor.cpp\
+               n900proximitysensor.cpp\
+
+}
 
 include(../../features/deploy.pri)

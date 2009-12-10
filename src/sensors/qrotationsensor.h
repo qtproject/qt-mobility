@@ -47,7 +47,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QRotationSensorValue : public QSensorValue
+class Q_SENSORS_EXPORT QRotationValue : public QSensorValue
 {
 public:
     qreal x;
@@ -65,15 +65,15 @@ public:
 
     qreal currentXRotation() const
     {
-        return static_cast<QRotationSensorValue*>(currentValue())->x;
+        return static_cast<QRotationValue*>(currentValue())->x;
     }
     qreal currentYRotation() const
     {
-        return static_cast<QRotationSensorValue*>(currentValue())->y;
+        return static_cast<QRotationValue*>(currentValue())->y;
     }
     qreal currentZRotation() const
     {
-        return static_cast<QRotationSensorValue*>(currentValue())->z;
+        return static_cast<QRotationValue*>(currentValue())->z;
     }
 };
 

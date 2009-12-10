@@ -39,47 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QACCELERATIONSENSOR_H
-#define QACCELERATIONSENSOR_H
-
-#include <qsensor.h>
-#include <QtGlobal>
+#include <n900filebasedsensor.h>
+#include <qlightsensor.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QAccelerationValue;
-
-class Q_SENSORS_EXPORT QAccelerationValue : public QSensorValue
+class n900lightsensor : public n900filebasedsensor<QLightValue>
 {
 public:
-    QAccelerationValue();
-    int x;
-    int y;
-    int z;
-};
-
-class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
-{
-public:
-    explicit QAccelerationSensor(const QSensorID &id, QObject *parent = 0);
-
-    static const QString type;
-
-    int currentXAcceleration() const
+    n900lightsensor()
+        : n900filebasedsensor("/sys/class/i2c-adapter/i2c-2/2-0029/lux")
     {
-        return static_cast<QAccelerationValue*>(currentValue())->x;
     }
-    int currentYAcceleration() const
+
+    QString name() const
     {
-        return static_cast<QAccelerationValue*>(currentValue())->y;
+        return tr("N900 ambient light sensor");
     }
-    int currentZAcceleration() const
+
+    void extract_value(FILE *fd)
     {
-        return static_cast<QAccelerationValue*>(currentValue())->z;
+        m_value.timestamp = QTime::currentTime();
+	int rs = fscanf(fd, "%i", m_value.lux);
+        Q_ASSERT(rs == 1);
     }
 };
 
 QTM_END_NAMESPACE
 
-#endif
+REGISTER_SENSOR(QTM_NAMESPACE::n900lightsensor, "n900.light")
 

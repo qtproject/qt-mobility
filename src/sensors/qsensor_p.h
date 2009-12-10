@@ -39,44 +39,17 @@
 **
 ****************************************************************************/
 
-#ifndef QACCELERATIONSENSOR_H
-#define QACCELERATIONSENSOR_H
+#ifndef QSENSOR_P_H
+#define QSENSOR_P_H
 
-#include <qsensor.h>
-#include <QtGlobal>
+#include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QAccelerationValue;
-
-class Q_SENSORS_EXPORT QAccelerationValue : public QSensorValue
+class QSensorPrivate
 {
 public:
-    QAccelerationValue();
-    int x;
-    int y;
-    int z;
-};
-
-class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
-{
-public:
-    explicit QAccelerationSensor(const QSensorID &id, QObject *parent = 0);
-
-    static const QString type;
-
-    int currentXAcceleration() const
-    {
-        return static_cast<QAccelerationValue*>(currentValue())->x;
-    }
-    int currentYAcceleration() const
-    {
-        return static_cast<QAccelerationValue*>(currentValue())->y;
-    }
-    int currentZAcceleration() const
-    {
-        return static_cast<QAccelerationValue*>(currentValue())->z;
-    }
+    QList <QSensorListener*> listeners;
 };
 
 QTM_END_NAMESPACE
