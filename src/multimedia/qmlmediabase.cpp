@@ -41,6 +41,7 @@
 
 #include "qmlmediabase_p.h"
 
+#include <QtCore/qabstractanimation.h>
 #include <QtCore/qcoreevent.h>
 
 #include <qmediaplayercontrol.h>
@@ -51,53 +52,88 @@
 
 QTM_BEGIN_NAMESPACE
 
-namespace
+class QmlMediaBasePlayerControl : public QMediaPlayerControl
 {
-    class QmlMediaBasePlayerControl : public QMediaPlayerControl
+public:
+    QmlMediaBasePlayerControl(QObject *parent)
+        : QMediaPlayerControl(parent)
     {
-    public:
-        QmlMediaBasePlayerControl(QObject *parent)
-            : QMediaPlayerControl(parent)
-        {
-        }
+    }
 
-        QMediaPlayer::State state() const { return QMediaPlayer::StoppedState; }
-        QMediaPlayer::MediaStatus mediaStatus() const { return QMediaPlayer::NoMedia; }
+    QMediaPlayer::State state() const { return QMediaPlayer::StoppedState; }
+    QMediaPlayer::MediaStatus mediaStatus() const { return QMediaPlayer::NoMedia; }
 
-        qint64 duration() const { return 0; }
-        qint64 position() const { return 0; }
-        void setPosition(qint64) {}
-        int volume() const { return 100; }
-        void setVolume(int) {}
-        bool isMuted() const { return false; }
-        void setMuted(bool) {}
-        int bufferStatus() const { return 0; }
-        bool isVideoAvailable() const { return false; }
-        bool isSeekable() const { return false; }
-        QPair<qint64, qint64> seekRange() const { return QPair<qint64, qint64>(); }
-        qreal playbackRate() const { return 1; }
-        void setPlaybackRate(qreal) {}
-        QMediaContent media() const { return QMediaContent(); }
-        const QIODevice *mediaStream() const { return 0; }
-        void setMedia(const QMediaContent &, QIODevice *) {}
+    qint64 duration() const { return 0; }
+    qint64 position() const { return 0; }
+    void setPosition(qint64) {}
+    int volume() const { return 100; }
+    void setVolume(int) {}
+    bool isMuted() const { return false; }
+    void setMuted(bool) {}
+    int bufferStatus() const { return 0; }
+    bool isVideoAvailable() const { return false; }
+    bool isSeekable() const { return false; }
+    QPair<qint64, qint64> seekRange() const { return QPair<qint64, qint64>(); }
+    qreal playbackRate() const { return 1; }
+    void setPlaybackRate(qreal) {}
+    QMediaContent media() const { return QMediaContent(); }
+    const QIODevice *mediaStream() const { return 0; }
+    void setMedia(const QMediaContent &, QIODevice *) {}
 
-        void play() {}
-        void pause() {}
-        void stop() {}
-    };
-}
+    void play() {}
+    void pause() {}
+    void stop() {}
+};
+
+class QmlMediaBaseAnimation : public QAbstractAnimation
+{
+public:
+    QmlMediaBaseAnimation(QmlMediaBase *media)
+        : m_media(media)
+    {
+    }
+
+    int duration() const { return -1; }
+
+protected:
+    void updateCurrentTime(int)
+    {
+        if (m_media->m_state == QmlMedia::Playing)
+            emit m_media->positionChanged(m_media->position());
+        if (m_media->m_status == QmlMedia::Buffering || QmlMedia::Stalled)
+            emit m_media->bufferStatusChanged(m_media->m_playerControl->bufferStatus());
+    }
+
+private:
+    QmlMediaBase *m_media;
+};
 
 void QmlMediaBase::_q_stateChanged(QMediaPlayer::State state)
 {
     if (QmlMedia::State(state) != m_state) {
         emit stateChanged(m_state = QmlMedia::State(state));
+
+        if (m_animation->state() != QAbstractAnimation::Running
+                && (m_state == QmlMedia::Playing
+                || m_status == QmlMedia::Buffering
+                || m_status == QmlMedia::Stalled)) {
+            m_animation->start();
+        }
     }
 }
 
 void QmlMediaBase::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
-    if (QmlMedia::Status(status) != m_status)
+    if (QmlMedia::Status(status) != m_status) {
         emit statusChanged(m_status = QmlMedia::Status(status));
+
+        if (m_animation->state() != QAbstractAnimation::Running
+                && (m_state == QmlMedia::Playing
+                || m_status == QmlMedia::Buffering
+                || m_status == QmlMedia::Stalled)) {
+            m_animation->start();
+        }
+    }
 }
 
 void QmlMediaBase::_q_mediaChanged(const QMediaContent &media)
@@ -145,6 +181,7 @@ QmlMediaBase::QmlMediaBase()
     , m_mediaProvider(0)
     , m_metaDataControl(0)
     , m_metaObject(0)
+    , m_animation(0)
     , m_state(QmlMedia::Stopped)
     , m_status(QmlMedia::NoMedia)
     , m_error(QmlMedia::NoError)
@@ -154,6 +191,7 @@ QmlMediaBase::QmlMediaBase()
 QmlMediaBase::~QmlMediaBase()
 {
     delete m_metaObject;
+    delete m_animation;
 
     if (m_mediaProvider)
         m_mediaProvider->releaseService(m_mediaService);
@@ -185,6 +223,8 @@ void QmlMediaBase::setObject(QObject *object)
                 object, SLOT(_q_volumeChanged(int)));
         QObject::connect(m_playerControl, SIGNAL(mutedChanged(bool)),
                 object, SIGNAL(mutedChanged(bool)));
+
+        m_animation = new QmlMediaBaseAnimation(this);
     } else {
         m_playerControl = new QmlMediaBasePlayerControl(object);
     }

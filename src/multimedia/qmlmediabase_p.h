@@ -53,6 +53,7 @@ class QMediaService;
 class QMediaServiceProvider;
 class QMetaDataControl;
 class QMetaDataControlMetaObject;
+class QmlMediaBaseAnimation;
 
 class QmlMediaBase
 {
@@ -121,7 +122,6 @@ protected:
     virtual void errorChanged(QmlMedia::Error error) = 0;
     virtual void errorStringChanged(const QString &error) = 0;
 
-
     QMediaService *m_mediaService;
     QMediaPlayerControl *m_playerControl;
 
@@ -129,11 +129,14 @@ private:
     QMediaServiceProvider *m_mediaProvider;
     QMetaDataControl *m_metaDataControl;
     QMetaDataControlMetaObject *m_metaObject;
+    QmlMediaBaseAnimation *m_animation;
 
     QmlMedia::State m_state;
     QmlMedia::Status m_status;
     QmlMedia::Error m_error;
     QString m_errorString;
+
+    friend class QmlMediaBaseAnimation;
 };
 
 QTM_END_NAMESPACE
