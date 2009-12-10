@@ -46,7 +46,10 @@
 
 #include <qcontactmanager.h>
 #include <qcontact.h>
-#include <qcontactdetail.h> 
+#include <qcontactdetail.h>
+
+#include <qmobilityglobal.h>
+QTM_USE_NAMESPACE
 
 class CntDisplayLabel : public QObject
     {
