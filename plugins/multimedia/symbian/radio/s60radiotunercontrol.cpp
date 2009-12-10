@@ -271,7 +271,7 @@ void S60RadioTunerControl::search()
     TFrequency myFreq( m_currentFreq );
     m_tunerUtility->Tune( myFreq, getNativeBand(m_currentBand) );
     // we are now searching
-    emit searchingStatusChanged(true);
+    emit searchingChanged(true);
 }
 
 bool S60RadioTunerControl::isValid() const
@@ -308,6 +308,11 @@ bool S60RadioTunerControl::initRadio()
 		m_radioError = QRadioTuner::NoError;
 	}
     return m_available;
+}
+
+bool S60RadioTunerControl::isAvailable() const
+{
+    
 }
 
 void S60RadioTunerControl::start()
@@ -348,7 +353,7 @@ void S60RadioTunerControl::MToTuneComplete(TInt aError)
 {
     Q_UNUSED(aError);
     // tune complete
-    emit searchingStatusChanged(false);
+    emit searchingChanged(false);
 }
 void S60RadioTunerControl::MToTunerEvent(MMMTunerObserver::TEventType aType, TInt aError, TAny* aAdditionalInfo)
 {

@@ -43,11 +43,13 @@
 #define S60RADIOTUNERCONTROL_H
 
 #include <QtCore/qobject.h>
-#include "qradiotunercontrol.h"
-#include "qradiotuner.h"
+#include <QRadioTunerControl>
+#include <QRadioTuner>
 #include <tuner/tuner.h>
 
 class S60RadioTunerService;
+
+QTM_USE_NAMESPACE
 
 class S60RadioTunerControl : public QRadioTunerControl, 
 	public MMMTunerObserver,
@@ -91,6 +93,8 @@ public:
 
     bool isValid() const;
 
+    bool isAvailable() const;
+    
     void start();
     void stop();
 
