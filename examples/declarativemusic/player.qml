@@ -146,14 +146,16 @@ Item {
                 MouseRegion {
                     anchors.fill: parent
 
-                    onClicked: audio.position = (mouse.x - 15) / 760
+                    onClicked: audio.position = (mouse.x - 15) * audio.duration / 760
+                    enabled: audio.duration > 0
                 }
             }
 
             Image {
                 source: "qrc:/images/progress-grip.png"
-                x: 760 * audio.position
+                x: 760 * audio.position / audio.duration
                 y: 0
+                visible: audio.duration > 0
 
                 MouseRegion {
                     anchors.fill: parent

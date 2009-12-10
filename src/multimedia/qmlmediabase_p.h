@@ -69,10 +69,10 @@ public:
 
     QmlMedia::Status status() const;
 
-    qreal duration() const;
+    int duration() const;
 
-    qreal position() const;
-    void setPosition(qreal position);
+    int position() const;
+    void setPosition(int position);
 
     qreal volume() const;
     void setVolume(qreal volume);
@@ -108,8 +108,8 @@ protected:
     virtual void stateChanged(QmlMedia::State state) = 0;
     virtual void statusChanged(QmlMedia::Status status) = 0;
 
-    virtual void durationChanged(qreal duration) = 0;
-    virtual void positionChanged(qreal position) = 0;
+    virtual void durationChanged(int duration) = 0;
+    virtual void positionChanged(int position) = 0;
 
     virtual void volumeChanged(qreal volume) = 0;
     virtual void mutedChanged(bool muted) = 0;

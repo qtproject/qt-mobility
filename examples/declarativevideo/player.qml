@@ -125,14 +125,16 @@ Video {
                 MouseRegion {
                     anchors.fill: parent
 
-                    onClicked: video.position = (mouse.x - 15) / 760
+                    onClicked: video.position = (mouse.x - 15) * video.duration / 760
+                    enabled: video.duration > 0
                 }
             }
 
             Image {
                 source: "qrc:/images/progress-grip.png"
-                x: 760 * video.position
+                x: 760 * video.position / video.duration
                 y: 0
+                visible: video.duration > 0
 
                 MouseRegion {
                     anchors.fill: parent

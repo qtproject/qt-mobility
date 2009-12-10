@@ -62,8 +62,8 @@ class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(QmlMedia::State state READ state WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(QmlMedia::Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(qreal duration READ duration NOTIFY durationChanged)
-    Q_PROPERTY(qreal position READ position WRITE setPosition NOTIFY positionChanged)
+    Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
+    Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailableChanged)
@@ -101,8 +101,8 @@ Q_SIGNALS:
     void stateChanged(QmlMedia::State state);
     void statusChanged(QmlMedia::Status status);
 
-    void durationChanged(qreal duration);
-    void positionChanged(qreal position);
+    void durationChanged(int duration);
+    void positionChanged(int position);
 
     void volumeChanged(qreal volume);
     void mutedChanged(bool muted);

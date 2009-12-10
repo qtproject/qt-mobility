@@ -99,7 +99,7 @@ protected:
     void updateCurrentTime(int)
     {
         if (m_media->m_state == QmlMedia::Playing)
-            emit m_media->positionChanged(m_media->position());
+            emit m_media->positionChanged(m_media->m_playerControl->position());
         if (m_media->m_status == QmlMedia::Buffering || QmlMedia::Stalled)
             emit m_media->bufferStatusChanged(m_media->m_playerControl->bufferStatus());
     }
@@ -274,27 +274,20 @@ QmlMedia::Status QmlMediaBase::status() const
     return m_status;
 }
 
-qreal QmlMediaBase::duration() const
+int QmlMediaBase::duration() const
 {
     return m_playerControl->duration();
 }
 
-qreal QmlMediaBase::position() const
+int QmlMediaBase::position() const
 {
-    qint64 duration = m_playerControl->duration();
+    return m_playerControl->position();
 
-    if (duration != 0)
-        return qreal(m_playerControl->position()) / qreal(duration);
-    else
-        return 0;
 }
 
-void QmlMediaBase::setPosition(qreal position)
+void QmlMediaBase::setPosition(int position)
 {
-    qint64 duration = m_playerControl->duration();
-
-    if (duration != 0)
-        m_playerControl->setPosition(position * duration);
+    m_playerControl->setPosition(position);
 }
 
 qreal QmlMediaBase::volume() const
