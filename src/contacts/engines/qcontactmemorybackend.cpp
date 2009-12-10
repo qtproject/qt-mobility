@@ -623,7 +623,7 @@ QList<QContactManager::Error> QContactMemoryEngine::removeRelationships(const QL
 }
 
 /*! \reimp */
-QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const
 {
     // lazy initialisation of schema definitions.
     if (d->m_definitions.isEmpty()) {
@@ -657,7 +657,7 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
         return false;
     }
 
-    detailDefinitions(contactType, error); // just to populate the definitions if we haven't already.
+    detailDefinitionMap(contactType, error); // just to populate the definitions if we haven't already.
     QMap<QString, QContactDetailDefinition> defsForThisType = d->m_definitions.value(contactType);
     defsForThisType.insert(def.name(), def);
     d->m_definitions.insert(contactType, defsForThisType);
@@ -692,7 +692,7 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, c
         return false;
     }
 
-    detailDefinitions(contactType, error); // just to populate the definitions if we haven't already.
+    detailDefinitionMap(contactType, error); // just to populate the definitions if we haven't already.
     QMap<QString, QContactDetailDefinition> defsForThisType = d->m_definitions.value(contactType);
     bool success = defsForThisType.remove(definitionId);
     d->m_definitions.insert(contactType, defsForThisType);
@@ -899,7 +899,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QMap<QString, QContactDetailDefinition> requestedDefinitions;
             QStringList names = r->definitionNames();
             if (names.isEmpty())
-                names = detailDefinitions(r->contactType(), operationError).keys(); // all definitions.
+                names = detailDefinitionMap(r->contactType(), operationError).keys(); // all definitions.
 
             QContactManager::Error tempError;
             for (int i = 0; i < names.size(); i++) {

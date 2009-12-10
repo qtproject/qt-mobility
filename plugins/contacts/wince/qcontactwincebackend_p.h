@@ -221,7 +221,7 @@ public:
     //bool removeGroup(const QContactLocalId& groupId, QContactManager::Error& error);
 
     /* Definitions */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);

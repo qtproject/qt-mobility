@@ -109,7 +109,7 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Definitions */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const;
 
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
