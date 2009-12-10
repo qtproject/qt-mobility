@@ -58,6 +58,7 @@ public:
 
     QString synthesizeDisplayLabel( const QContact& contact, QContactManager::Error& error) const;
     QString generateDisplayLabel( const QContact &contact, const QList<QMap<QString, QString> > detailList) const;
+    QString delimiter() const;
     
     QList<QMap<QString, QString> > contactDisplayLabelDetails() const;
     QList<QMap<QString, QString> > groupDisplayLabelDetails() const;
