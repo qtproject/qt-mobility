@@ -67,7 +67,7 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
       addButton(0),
       attachmentsList(0)
 {
-    setWindowTitle(tr("Send Message"));
+    setWindowTitle(tr("Write Message"));
 
     accountCombo = new QComboBox;
     connect(accountCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(accountSelected(int)));
