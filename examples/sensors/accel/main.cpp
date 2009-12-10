@@ -9,12 +9,12 @@ class AccelerationListener : public QSensorListener
 public:
     bool sensorValueUpdated(QSensorValue *_value)
     {
-        QAccelerationSensorValue *value = static_cast<QAccelerationSensorValue*>(_value);
+        QAccelerationValue *value = static_cast<QAccelerationValue*>(_value);
         qDebug() << "acceleration: "
-                 << QString().sprintf("%3.2f %3.2f %3.2f",
-                         value->x,
-                         value->y,
-                         value->z);
+                 << QString().sprintf("%i %i %i",
+                         value->acceleration.x,
+                         value->acceleration.y,
+                         value->acceleration.z);
         return true;
     }
 };
