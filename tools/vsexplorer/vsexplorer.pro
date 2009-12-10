@@ -15,6 +15,7 @@ SOURCES=\
 
 include(../../common.pri)
 
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 
 include(../../features/deploy.pri)

@@ -13,5 +13,6 @@ SOURCES += \
 
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/multimedia/m3u
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
