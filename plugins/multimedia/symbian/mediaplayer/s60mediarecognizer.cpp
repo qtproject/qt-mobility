@@ -43,9 +43,9 @@
 #include <MPMediaRecognizer.h>
 #include <e32def.h>
 #include <e32cmn.h>
-#include <QUrl>
-#include <QDir>
-#include <QDebug>
+#include <QtCore/qurl.h>
+#include <QtCore/qdir.h>
+#include <QtCore/qdebug.h>
 
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {

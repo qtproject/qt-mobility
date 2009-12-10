@@ -42,11 +42,10 @@
 #ifndef S60MEDIAPLAYERSESSION_H
 #define S60MEDIAPLAYERSESSION_H
 
-#include <QObject>
-#include <QUrl>
+#include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qpair.h>
 #include <QMediaPlayer>
-#include <QPair>
-
 #include <e32cmn.h> // for TDesC
 
 QTM_USE_NAMESPACE

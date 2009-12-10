@@ -60,17 +60,17 @@
 #include <QMediaPlaylist>
 
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
-    : QMediaService(parent),
-      m_control(NULL),
-      m_mediaRecognizer(NULL),
-      m_videoOutput(NULL),
-      m_videoPlayerSession(NULL),
-      m_audioPlayerSession(NULL),
-      m_metaData(NULL),
-      m_videoWidget(NULL)
+    : QMediaService(parent)
+    , m_control(NULL)
+    , m_mediaRecognizer(NULL)
+    , m_videoOutput(NULL)
+    , m_videoPlayerSession(NULL)
+    , m_audioPlayerSession(NULL)
+    , m_metaData(NULL)
+    , m_videoWidget(NULL)
 #ifndef QT_NO_MULTIMEDIA      
-      , m_videoWindow(NULL),
-      m_videoRenderer(NULL)
+    , m_videoWindow(NULL)
+    , m_videoRenderer(NULL)
 #endif      
 { 
     m_control = new S60MediaPlayerControl(*this, this);

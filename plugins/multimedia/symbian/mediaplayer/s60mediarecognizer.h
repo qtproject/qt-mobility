@@ -42,7 +42,7 @@
 #ifndef S60MEDIARECOGNIZER_H_
 #define S60MEDIARECOGNIZER_H_
 
-#include <QObject>
+#include <QtCore/qobject.h>
 
 class CMPMediaRecognizer;
 class QUrl;

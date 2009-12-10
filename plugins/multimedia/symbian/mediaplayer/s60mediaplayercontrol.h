@@ -48,7 +48,7 @@
 #include <QMediaPlayer>
 
 #include "ms60mediaplayerresolver.h"
-#include <QDebug>
+#include <QtCore/qdebug.h>
 QTM_BEGIN_NAMESPACE
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
@@ -65,9 +65,9 @@ class S60MediaSettings
 
 public:
     S60MediaSettings() 
-        : m_volume(-1),
-          m_muted(false),
-          m_playbackRate(-1)
+        : m_volume(-1)
+        , m_muted(false)
+        , m_playbackRate(-1)
     {
     }
     

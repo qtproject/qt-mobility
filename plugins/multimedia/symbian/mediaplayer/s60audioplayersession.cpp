@@ -41,7 +41,7 @@
 
 #include "s60audioplayersession.h"
 #include <QtCore/qdebug.h>
-#include <QVariant>
+#include <QtCore/qvariant.h>
 
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)

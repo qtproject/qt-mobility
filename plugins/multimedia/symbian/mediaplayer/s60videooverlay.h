@@ -44,7 +44,7 @@
 
 #ifndef QT_NO_MULTIMEDIA
 
-#include <QObject>
+#include <QtCore/qobject.h>
 #include <QVideoWindowControl>
 
 QTM_USE_NAMESPACE

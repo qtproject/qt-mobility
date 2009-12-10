@@ -41,12 +41,12 @@
 
 #include "s60mediametadataprovider.h"
 #include "s60mediaplayersession.h"
-#include <QDebug>
+#include <QtCore/qdebug.h>
 
 S60MediaMetaDataProvider::S60MediaMetaDataProvider(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent)
-    : QMetaDataControl(parent),
-      m_mediaPlayerResolver(mediaPlayerResolver),
-      m_session(NULL)
+    : QMetaDataControl(parent)
+    , m_mediaPlayerResolver(mediaPlayerResolver)
+    , m_session(NULL)
 {
 }
 

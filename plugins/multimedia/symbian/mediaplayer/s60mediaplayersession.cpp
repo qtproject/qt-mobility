@@ -42,20 +42,19 @@
 #include "s60mediaplayersession.h"
 
 #include <QtCore/qdebug.h>
-
-#include <QDir>
-#include <QVariant>
-#include <QTimer>
+#include <QtCore/qdir.h>
+#include <QtCore/qvariant.h>
+#include <QtCore/qtimer.h>
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
-    : QObject(parent),
-      m_playbackRate(1.0),
-      m_muted(false),
-      m_volume(100),
-      m_state(QMediaPlayer::StoppedState),
-      m_mediaStatus(QMediaPlayer::NoMedia),
-      m_timer(new QTimer(this)),
-      m_error(KErrNone)
+    : QObject(parent)
+    , m_playbackRate(1.0)
+    , m_muted(false)
+    , m_volume(100)
+    , m_state(QMediaPlayer::StoppedState)
+    , m_mediaStatus(QMediaPlayer::NoMedia)
+    , m_timer(new QTimer(this))
+    , m_error(KErrNone)
 {    
     connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
 }

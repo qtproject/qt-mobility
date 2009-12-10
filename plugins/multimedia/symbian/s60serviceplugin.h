@@ -43,7 +43,7 @@
 #ifndef S60SERVICEPLUGIN_H
 #define S60SERVICEPLUGIN_H
 
-#include <QObject>
+#include <QtCore/qobject.h>
 #include <QMediaService>
 #include <QMediaServiceProviderPlugin>
 

@@ -45,7 +45,6 @@
 #include <QMediaPlaylistNavigator>
 
 #include <QtCore/qdir.h>
-//#include <QtCore/qsocketnotifier.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 

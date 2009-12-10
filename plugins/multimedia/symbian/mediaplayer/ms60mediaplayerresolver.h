@@ -41,7 +41,7 @@
 #ifndef MS60MEDIAPLAYERRESOLVER_H
 #define MS60MEDIAPLAYERRESOLVER_H
 
-#include "s60mediaplayersession.h"
+class S60MediaPlayerSession;
 
 class MS60MediaPlayerResolver
 {

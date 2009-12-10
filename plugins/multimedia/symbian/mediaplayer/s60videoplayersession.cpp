@@ -43,19 +43,18 @@
 #include "s60videowidget.h"
 
 #include <QtCore/qdebug.h>
+#include <QtGui/qwidget.h>
 
 #include <coemain.h>    // For CCoeEnv
 #include <w32std.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
-#include <QWidget>
-
 S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
-    : S60MediaPlayerSession(parent),
-      m_wsSession(0),
-      m_screenDevice(0),
-      m_window(0),
-      m_videoWidgetControl(0)
+    : S60MediaPlayerSession(parent)
+    , m_wsSession(0)
+    , m_screenDevice(0)
+    , m_window(0)
+    , m_videoWidgetControl(0)
 {    
     m_dummyWidget = new QWidget();
     
