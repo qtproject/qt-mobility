@@ -53,9 +53,11 @@
 QTM_BEGIN_NAMESPACE
 /*!
   \class QContactManager
+  \brief The QContactManager class provides clients with access to contact information stored in a particular backend.
+  \ingroup contacts-main
  
   This class provides adding, updating and removal of contacts.
-  It also provides definitions for fields that can be found in contacts.
+  It also provides definitions for details and fields that can be found in contacts.
  */
 
 /*!
