@@ -53,9 +53,13 @@ class Q_SENSORS_EXPORT QAccelerationValue : public QSensorValue
 {
 public:
     QAccelerationValue();
-    int x;
-    int y;
-    int z;
+    struct Acceleration
+    {
+        int x;
+        int y;
+        int z;
+    };
+    Acceleration acceleration;
 };
 
 class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
@@ -63,19 +67,25 @@ class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 public:
     explicit QAccelerationSensor(const QSensorID &id, QObject *parent = 0);
 
-    static const QString type;
+    static const QString TYPE;
+    QString type() const { return TYPE; };
+
+    QAccelerationValue::Acceleration currentAcceleration() const
+    {
+        return static_cast<QAccelerationValue*>(currentValue())->acceleration;
+    }
 
     int currentXAcceleration() const
     {
-        return static_cast<QAccelerationValue*>(currentValue())->x;
+        return currentAcceleration().x;
     }
     int currentYAcceleration() const
     {
-        return static_cast<QAccelerationValue*>(currentValue())->y;
+        return currentAcceleration().y;
     }
     int currentZAcceleration() const
     {
-        return static_cast<QAccelerationValue*>(currentValue())->z;
+        return currentAcceleration().z;
     }
 };
 

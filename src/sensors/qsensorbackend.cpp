@@ -63,19 +63,23 @@ QSensorBackend::QSensorBackend()
 }
 
 /*!
+    \fn QSensorBackend::id() const
+*/
+
+/*!
     \internal
 */
-void QSensorBackend::addSensor(QSensor *sensor)
+void QSensorBackend::addListener(QSensorListener *listener)
 {
-    m_sensors.append(sensor);
+    m_listeners.append(listener);
 }
 
 /*!
     \internal
 */
-void QSensorBackend::removeSensor(QSensor *sensor)
+void QSensorBackend::removeListener(QSensorListener *listener)
 {
-    m_sensors.removeOne(sensor);
+    m_listeners.removeOne(listener);
 }
 
 /*!
@@ -85,17 +89,16 @@ void QSensorBackend::removeSensor(QSensor *sensor)
 */
 void QSensorBackend::notify()
 {
-    foreach (QSensor *sensor, m_sensors) {
-        bool blocked = false;
-        foreach (QSensorListener *listener, sensor->d->listeners) {
-            if (!listener->sensorValueUpdated(currentValue())) {
-                blocked = true;
-                break;
-            }
+    bool blocked = false;
+    QSensorValue *value = currentValue();
+    foreach (QSensorListener *listener, m_listeners) {
+        if (!listener->sensorValueUpdated(value)) {
+            blocked = true;
+            break;
         }
-        if (!blocked)
-            sensor->valueUpdated();
     }
+    if (!blocked)
+    {}//emit valueUpdated();
 }
 
 /*!

@@ -39,58 +39,62 @@
 **
 ****************************************************************************/
 
-#include <qproximitysensor.h>
+#include <qnorthsensor.h>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QProximityValue
+    \class QNorthValue
     \ingroup sensors
 
     \preliminary
-    \brief The QProximityValue class represents a proximity reading.
+    \brief The QNorthValue class represents a magnetic compass reading.
 
-    The proximity sensor returns the distance to the user. The distance
-    is measured in millimeters.
+    The north sensor returns the offset from magnetic north. There is
+    also a boolean indicator of the calibration status of the sensor.
+    If the sensor is not calibrated the offset values may not be accurate.
 */
 
 /*!
     \internal
 */
-QProximityValue::QProximityValue()
-    : QSensorValue(QProximitySensor::TYPE)
+QNorthValue::QNorthValue()
+    : QSensorValue(QNorthSensor::TYPE)
 {
 }
 
 /*!
-    \variable QProximityValue::distance
+    \variable QNorthValue::offset
 
-    Holds the distance of the user from the phone.
+    Holds the offset from magnetic north.
+*/
+
+/*!
+    \variable QNorthValue::calibrated
+
+    Holds the calibration status of the sensor.
 */
 
 // =====================================================================
 
 /*!
-    \class QProximitySensor
+    \class QNorthSensor
     \ingroup sensors
 
     \preliminary
-    \brief The QProximitySensor class reports on user proximity.
+    \brief The QNorthSensor class reports on the offset from magnetic north.
 
-    The proximity sensor returns the distance to the user. The distance
-    is measured in millimeters.
-
-    Note that some proximity sensors may only return boolean results
-    (zero and greater than zero).
+    The north sensor returns the offset from magnetic north. The offset
+    is measured in degrees.
 */
 
 /*!
-    \variable QProximitySensor::TYPE
+    \variable QNorthSensor::TYPE
 */
-const QString QProximitySensor::TYPE("qt.Proximity");
+const QString QNorthSensor::TYPE("qt.North");
 
 /*!
-    \fn QProximitySensor::type() const
+    \fn QNorthSensor::type() const
     \reimp
 */
 
@@ -98,24 +102,30 @@ const QString QProximitySensor::TYPE("qt.Proximity");
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QProximitySensor::QProximitySensor(const QSensorID &id, QObject *parent)
+QNorthSensor::QNorthSensor(const QSensorID &id, QObject *parent)
     : QSensor(parent)
 {
     connectToBackend(id);
 }
 
 /*!
-    \fn QProximitySensor::currentProximity() const
+    \fn QNorthSensor::currentOffset() const
 
-    Returns the current proximity value.
+    Returns the current offset from magnetic north.
 */
 
 /*!
-    \fn QProximitySensor::proximityChanged(int distance)
+    \fn QNorthSensor::currentCalibration() const
 
-    Emitted when the \a distance value changes.
+    Returns the current calibration status.
 */
 
-#include "moc_qproximitysensor.cpp"
+/*!
+    \fn QNorthSensor::offsetChanged(int offset, bool calibrated)
+
+    Emitted when the \a offset or \a calibrated value changes.
+*/
+
+#include "moc_qnorthsensor.cpp"
 QTM_END_NAMESPACE
 

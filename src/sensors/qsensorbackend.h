@@ -50,8 +50,9 @@ class Q_SENSORS_EXPORT QSensorBackend
 {
 public:
     QSensorBackend();
-    void addSensor(QSensor *sensor);
-    void removeSensor(QSensor *sensor);
+    QSensorID id() const;
+    void addListener(QSensorListener *listener);
+    void removeListener(QSensorListener *listener);
     void notify();
     int suggestedInterval(QSensor::UpdatePolicy policy);
 
@@ -63,7 +64,8 @@ public:
     virtual void stop() = 0;
 
 private:
-    QList<QSensor*> m_sensors;
+    QSensorID m_id;
+    QList<QSensorListener*> m_listeners;
 };
 
 QTM_END_NAMESPACE

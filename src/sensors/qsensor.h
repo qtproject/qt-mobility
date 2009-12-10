@@ -52,7 +52,6 @@ QTM_BEGIN_NAMESPACE
 class QSensorListener;
 class QSensorFilter;
 class QSensorValue;
-class QSensorPrivate;
 class QSensorBackend;
 
 typedef QByteArray QSensorID;
@@ -62,7 +61,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
 public:
     friend class QSensorBackend;
 
-    explicit QSensor(const QSensorID &id, QObject *parent = 0);
+    explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
 
     // May have been initialized with an invalid id
@@ -71,7 +70,7 @@ public:
     QSensorID id() const;
     QString name() const;
 
-    QString type() const;
+    virtual QString type() const = 0;
 
     enum UpdatePolicy {
         Unknown           = 0x00, // If the sensor has no specific policy
@@ -115,8 +114,11 @@ public:
     // emit signals
     virtual void valueUpdated();
 
+protected:
+    void connectToBackend(const QSensorID &id);
+
 private:
-    QSensorPrivate *d;
+    QSensorBackend *m_backend;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);

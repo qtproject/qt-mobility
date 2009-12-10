@@ -40,6 +40,9 @@
 ****************************************************************************/
 
 #include <qsensor.h>
+#include <qsensorbackend.h>
+#include <qsensormanager.h>
+#include <qsensorfactory.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -61,7 +64,8 @@ QTM_BEGIN_NAMESPACE
     The life cycle of a sensor is typically:
 
     \list
-    \o Retrieved by calling QSensorFactory::defaultSensorForType().
+    \o Retrieved by calling QSensorFactory::createDefaultSensorForType()
+       or by directly instantiating a sub-class of QSensor.
     \o Setup as required by the application.
     \o Started.
     \o Sensor data is used by the application.
@@ -72,17 +76,15 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Construct a sensor instance and attach to the sensor indicated by \a id.
-    The sensor will be deleted when \a parent is deleted.
+    \internal
 */
-QSensor::QSensor(const QSensorID &id, QObject *parent)
+QSensor::QSensor(QObject *parent)
     : QObject(parent)
 {
-    Q_UNUSED(id)
 }
 
 /*!
-    Stop the sensor.
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
 */
 QSensor::~QSensor()
 {
@@ -90,7 +92,7 @@ QSensor::~QSensor()
 }
 
 /*!
-    Returns false if an invalid id was given to the constructor.
+    Returns true if the sensor is connected to a backend.
 */
 bool QSensor::isValid() const
 {
@@ -102,7 +104,7 @@ bool QSensor::isValid() const
 */
 QSensorID QSensor::id() const
 {
-    return QSensorID();
+    return m_backend->id();
 }
 
 /*!
@@ -110,16 +112,14 @@ QSensorID QSensor::id() const
 */
 QString QSensor::name() const
 {
-    return QString();
+    return m_backend->name();
 }
 
 /*!
+    \fn QSensor::type() const
+
     Returns the type of the sensor.
 */
-QString QSensor::type() const
-{
-    return QString();
-}
 
 /*!
     \enum QSensor::UpdatePolicy
@@ -147,8 +147,7 @@ QString QSensor::type() const
 */
 void QSensor::setUpdatePolicy(UpdatePolicy policy, int interval)
 {
-    Q_UNUSED(policy)
-    Q_UNUSED(interval)
+    m_backend->setUpdatePolicy(policy, interval);
 }
 
 /*!
@@ -233,6 +232,18 @@ void QSensor::valueUpdated()
 }
 
 /*!
+    \internal
+*/
+void QSensor::connectToBackend(const QSensorID &_id)
+{
+    QSensorID id(_id);
+    if (id.isEmpty())
+        id = QSensorFactory::instance()->defaultSensorForType(type());
+
+    m_backend = QSensorManager::instance()->createBackend(id);
+}
+
+/*!
     \class QSensorListener
     \ingroup sensors
 
@@ -259,7 +270,7 @@ void QSensor::valueUpdated()
     \ingroup sensors
 
     \preliminary
-    \brief The QSensorValue class represents a sensor value.
+    \brief The QSensorValue class represents a sensor value update.
 
     Actual sensor data is stored in sub-classes of QSensorValue.
 */

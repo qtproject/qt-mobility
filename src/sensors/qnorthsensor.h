@@ -39,32 +39,53 @@
 **
 ****************************************************************************/
 
-#include <n900filebasedsensor.h>
-#include <qaccelerationsensor.h>
+#ifndef QNORTHSENSOR_H
+#define QNORTHSENSOR_H
+
+#include <qsensor.h>
+#include <QtGlobal>
 
 QTM_BEGIN_NAMESPACE
 
-class n900accelerationsensor : public n900filebasedsensor<QAccelerationValue>
+class Q_SENSORS_EXPORT QNorthValue : public QSensorValue
 {
 public:
-    n900accelerationsensor()
-        : n900filebasedsensor<QAccelerationValue>("/sys/class/i2c-adapter/i2c-3/3-001d/coord")
+    QNorthValue();
+    int offset;
+    bool calibrated;
+};
+
+
+class Q_SENSORS_EXPORT QNorthSensor : public QSensor
+{
+    Q_OBJECT
+public:
+    explicit QNorthSensor(const QSensorID &id, QObject *parent = 0);
+
+    static const QString TYPE;
+    QString type() const { return TYPE; };
+
+    int currentOffset() const
     {
+        return static_cast<QNorthValue*>(currentValue())->offset;
     }
 
-    QString name() const
+    bool currentCalibration() const
     {
-        return tr("N900 accelerometer");
+        return static_cast<QNorthValue*>(currentValue())->calibrated;
     }
 
-    void extract_value(FILE *fd)
+signals:
+    void offsetChanged(int offset, bool calibrated);
+
+private:
+    void valueUpdated()
     {
-	int rs = fscanf(fd, "%i %i %i", &m_value.acceleration.x, &m_value.acceleration.y, &m_value.acceleration.z);
-        Q_ASSERT(rs == 3);
+        emit offsetChanged(currentOffset(), currentCalibration());
     }
 };
 
 QTM_END_NAMESPACE
 
-REGISTER_SENSOR(QTM_NAMESPACE::n900accelerationsensor, "n900.acceleration")
+#endif
 

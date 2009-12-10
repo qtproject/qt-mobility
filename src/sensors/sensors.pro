@@ -16,6 +16,7 @@ PUBLIC_HEADERS += \
            qaccelerationsensor.h\
            qrotationsensor.h\
            qproximitysensor.h\
+           qnorthsensor.h\
            qsensormanager.h\
            qsensorbackend.h\
 
@@ -29,6 +30,7 @@ SOURCES += qsensor.cpp \
            qaccelerationsensor.cpp\
            qrotationsensor.cpp\
            qproximitysensor.cpp\
+           qnorthsensor.cpp\
            qsensormanager.cpp\
            qsensorbackend.cpp\
 

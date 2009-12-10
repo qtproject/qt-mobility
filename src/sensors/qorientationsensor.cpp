@@ -88,17 +88,23 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \variable QOrientationSensor::type
+    \variable QOrientationSensor::TYPE
 */
-const QString QOrientationSensor::type("qt.Orientation");
+const QString QOrientationSensor::TYPE("qt.Orientation");
+
+/*!
+    \fn QOrientationSensor::type() const
+    \reimp
+*/
 
 /*!
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
 QOrientationSensor::QOrientationSensor(const QSensorID &id, QObject *parent)
-    : QSensor(id, parent)
+    : QSensor(parent)
 {
+    connectToBackend(id);
 }
 
 /*!

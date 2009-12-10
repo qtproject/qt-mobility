@@ -61,7 +61,8 @@ class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 public:
     explicit QRotationSensor(const QSensorID &id, QObject *parent = 0);
 
-    static const QString type;
+    static const QString TYPE;
+    QString type() const { return TYPE; };
 
     qreal currentXRotation() const
     {

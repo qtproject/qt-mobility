@@ -85,18 +85,23 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \variable QRotationSensor::type
+    \variable QRotationSensor::TYPE
 */
-const QString QRotationSensor::type("qt.Rotation");
+const QString QRotationSensor::TYPE("qt.Rotation");
 
+/*!
+    \fn QRotationSensor::type() const
+    \reimp
+*/
 
 /*!
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
 QRotationSensor::QRotationSensor(const QSensorID &id, QObject *parent)
-    : QSensor(id, parent)
+    : QSensor(parent)
 {
+    connectToBackend(id);
 }
 
 /*!

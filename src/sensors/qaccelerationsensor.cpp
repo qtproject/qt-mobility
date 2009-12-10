@@ -56,33 +56,33 @@ QTM_BEGIN_NAMESPACE
 
     TODO picture showing axes relative to the monoblock form factor.
 
-    The scale of the values is in metres per second per second. A monoblock
-    device sitting at rest, face up on a desk will experience the force of
-    gravity as approximately -9.8 on the Z axis.
+    The scale of the values is in milli-Gs.
+    A monoblock device sitting at rest, face up on a desk will experience
+    the force of gravity as approximately -1000 on the Z axis.
 */
 
 /*!
     \internal
 */
 QAccelerationValue::QAccelerationValue()
-    : QSensorValue(QAccelerationSensor::type)
+    : QSensorValue(QAccelerationSensor::TYPE)
 {
 }
 
 /*!
-    \variable QAccelerationValue::x
+    \variable QAccelerationValue::Acceleration::x
 
-    Holds the acceleration for the X axis.
+    Holds the acceleration force acting on the X axis.
 */
 
 /*!
-    \variable QAccelerationValue::y
+    \variable QAccelerationValue::Acceleration::y
 
     Holds the acceleration for the Y axis.
 */
 
 /*!
-    \variable QAccelerationValue::z
+    \variable QAccelerationValue::Acceleration::z
 
     Holds the acceleration for the Z axis.
 */
@@ -110,18 +110,30 @@ QAccelerationValue::QAccelerationValue()
 */
 
 /*!
-    \variable QAccelerationSensor::type
+    \variable QAccelerationSensor::TYPE
 */
-const QString QAccelerationSensor::type("qt.Acceleration");
+const QString QAccelerationSensor::TYPE("qt.Acceleration");
+
+/*!
+    \fn QAccelerationSensor::type() const
+    \reimp
+*/
 
 /*!
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
 QAccelerationSensor::QAccelerationSensor(const QSensorID &id, QObject *parent)
-    : QSensor(id, parent)
+    : QSensor(parent)
 {
+    connectToBackend(id);
 }
+
+/*!
+    \fn QAccelerationSensor::currentAcceleration() const
+
+    Returns the current acceleration values from the sensor.
+*/
 
 /*!
     \fn QAccelerationSensor::currentXAcceleration() const

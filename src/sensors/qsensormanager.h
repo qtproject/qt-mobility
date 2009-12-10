@@ -54,7 +54,8 @@ public:
     // Get the singleton instance
     static QSensorManager *instance();
 
-    void registerSensor(const QSensorID &id, QSensorBackend *backend);
+    void registerBackend(const QSensorID &id, QSensorBackend *backend);
+    QSensorBackend *createBackend(const QSensorID &id);
 };
 
 QTM_END_NAMESPACE
