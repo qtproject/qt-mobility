@@ -223,24 +223,6 @@ void MessageSender::attachmentSelected(int index)
 
 void MessageSender::send()
 {
-    QString to(toEdit->text());
-    if (to.isEmpty()) {
-        QMessageBox::warning(0, "Missing information", "Please enter a recipient address");
-        return;
-    }
-
-    QString subject(subjectEdit->text());
-    if (subject.isEmpty()) {
-        QMessageBox::warning(0, "Missing information", "Please enter a subject");
-        return;
-    }
-
-    QString text(textEdit->toPlainText());
-    if (text.isEmpty()) {
-        QMessageBox::warning(0, "Missing information", "Please enter a message");
-        return;
-    }
-
     QMessage message;
 
     QString name(accountCombo->currentText());
@@ -250,14 +232,32 @@ void MessageSender::send()
         message.setParentAccountId(details.second);
     }
 
+    QString to(toEdit->text());
+    if (to.isEmpty()) {
+        QMessageBox::warning(0, tr("Missing information"), tr("Please enter a recipient address"));
+        return;
+    }
+
     QMessageAddressList toList;
     foreach (const QString &item, to.split(QRegExp("\\s"), QString::SkipEmptyParts)) {
         toList.append(QMessageAddress(item, message.type() == QMessage::Email ? QMessageAddress::Email : QMessageAddress::Phone));
     }
     message.setTo(toList);
 
-    message.setSubject(subject);
+    if (message.type() == QMessage::Email) {
+        QString subject(subjectEdit->text());
+        if (subject.isEmpty()) {
+            QMessageBox::warning(0, tr("Missing information"), tr("Please enter a subject"));
+            return;
+        }
+        message.setSubject(subject);
+    }
 
+    QString text(textEdit->toPlainText());
+    if (text.isEmpty()) {
+        QMessageBox::warning(0, tr("Missing information"), tr("Please enter a message"));
+        return;
+    }
     message.setBody(text);
 
     if (message.type() != QMessage::Sms) {
@@ -275,17 +275,17 @@ void MessageSender::send()
         sendButton->setEnabled(false);
         sendId = message.id();
     } else {
-        QMessageBox::warning(0, "Failed", "Unable to send message");
+        QMessageBox::warning(0, tr("Failed"), tr("Unable to send message"));
     }
 }
 
 void MessageSender::stateChanged(QMessageServiceAction::State s)
 {
     if (s == QMessageServiceAction::Successful) {
-        QMessageBox::information(0, "Success", "Message sent successfully");
+        QMessageBox::information(0, tr("Success"), tr("Message sent successfully"));
         sendButton->setEnabled(true);
     } else if (s == QMessageServiceAction::Failed) {
-        QMessageBox::warning(0, "Failed", "Unable to send message");
+        QMessageBox::warning(0, tr("Failed"), tr("Unable to send message"));
 
         if (!QMessageStore::instance()->removeMessage(sendId)) {
             qWarning() << "Unable to remove failed message:" << sendId.toString();
