@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QAccelerationValue class represents one value from the
            acceleration sensor.
 
-    The values returned in QAccelerationValue are normalized so that
+    The values returned in QAccelerationValue are scaled so that
     they are consistent between devices. The axes are arranged as follows.
 
     TODO picture showing axes relative to the monoblock form factor.
@@ -97,14 +97,14 @@ QAccelerationValue::QAccelerationValue()
     \brief The QAccelerationSensor class reports on linear acceleration
            along the X, Y and Z axes.
 
-    The values returned by QAccelerationSensor are normalized so that
+    The values returned by QAccelerationSensor are scaled so that
     they are consistent between devices. The axes are arranged as follows.
 
     TODO picture showing axes relative to the monoblock form factor.
 
-    The scale of the values is in metres per second per second. A monoblock
-    device sitting at rest, face up on a desk will experience the force of
-    gravity as approximately -9.8 on the Z axis.
+    The scale of the values is in milli-Gs.
+    A monoblock device sitting at rest, face up on a desk will experience
+    the force of gravity as approximately -1000 on the Z axis.
 
     \sa QAccelerationValue
 */
