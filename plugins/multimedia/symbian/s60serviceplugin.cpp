@@ -44,7 +44,9 @@
 
 
 #include "s60serviceplugin.h"
+#ifdef USE_INTERNAL_TUNERLIB
 #include "s60radiotunerservice.h"
+#endif
 //#include "s60cameraservice.h" //Camera impl is on hold
 #include "s60mediaplayerservice.h"
 #include "s60audiocaptureservice.h"
@@ -52,7 +54,9 @@
 QStringList S60ServicePlugin::keys() const
 {
     QStringList list;
+#ifdef USE_INTERNAL_TUNERLIB
     list << QLatin1String(Q_MEDIASERVICE_RADIO);
+#endif
   //  list << QLatin1String(Q_MEDIASERVICE_CAMERA); //Camera impl is on hold
     list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
     list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
@@ -61,14 +65,16 @@ QStringList S60ServicePlugin::keys() const
 
 QMediaService* S60ServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
-        return new S60RadioTunerService;
+    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
+        return new S60MediaPlayerService;
  /*   else if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new S60CameraService;*/ //Camera impl is on hold
-    else if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
-        return new S60MediaPlayerService;
     else if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
+#ifdef USE_INTERNAL_TUNERLIB
+    else if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
+        return new S60RadioTunerService;
+#endif
 
     qDebug() << "unsupported key:" << key;
     return 0;

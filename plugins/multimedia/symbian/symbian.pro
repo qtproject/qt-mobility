@@ -23,7 +23,11 @@ SOURCES += s60serviceplugin.cpp \
            s60videowidget.cpp \
            s60videooutputcontrol.cpp
 
-include(radio/radio.pri)
+exists($${EPOCROOT}epoc32/include/tuner/tuner.h) {
+	include(radio/radio.pri)
+	DEFINES += USE_INTERNAL_TUNERLIB
+}
+
 # include(camera/camera_s60.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 include(audiosource/audiosource_s60.pri)
