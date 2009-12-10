@@ -88,9 +88,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \variable QOrientationSensor::TYPE
+    \variable QOrientationSensor::typeId
 */
-const QString QOrientationSensor::TYPE("qt.Orientation");
+const QString QOrientationSensor::typeId("qt.Orientation");
 
 /*!
     \fn QOrientationSensor::type() const

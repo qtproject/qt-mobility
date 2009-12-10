@@ -61,8 +61,8 @@ class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 public:
     explicit QProximitySensor(const QSensorId &id, QObject *parent = 0);
 
-    static const QString TYPE;
-    QString type() const { return TYPE; };
+    static const QString typeId;
+    QString type() const { return typeId; };
 
     int currentProximity() const
     {

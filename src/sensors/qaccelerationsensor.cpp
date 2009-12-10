@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
     \internal
 */
 QAccelerationValue::QAccelerationValue()
-    : QSensorValue(QAccelerationSensor::TYPE)
+    : QSensorValue(QAccelerationSensor::typeId)
 {
 }
 
@@ -110,9 +110,9 @@ QAccelerationValue::QAccelerationValue()
 */
 
 /*!
-    \variable QAccelerationSensor::TYPE
+    \variable QAccelerationSensor::typeId
 */
-const QString QAccelerationSensor::TYPE("qt.Acceleration");
+const QString QAccelerationSensor::typeId("qt.Acceleration");
 
 /*!
     \fn QAccelerationSensor::type() const

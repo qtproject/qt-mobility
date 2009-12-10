@@ -85,9 +85,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \variable QRotationSensor::TYPE
+    \variable QRotationSensor::typeId
 */
-const QString QRotationSensor::TYPE("qt.Rotation");
+const QString QRotationSensor::typeId("qt.Rotation");
 
 /*!
     \fn QRotationSensor::type() const

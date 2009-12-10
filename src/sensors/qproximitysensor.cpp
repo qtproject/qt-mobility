@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
     \internal
 */
 QProximityValue::QProximityValue()
-    : QSensorValue(QProximitySensor::TYPE)
+    : QSensorValue(QProximitySensor::typeId)
 {
 }
 
@@ -85,9 +85,9 @@ QProximityValue::QProximityValue()
 */
 
 /*!
-    \variable QProximitySensor::TYPE
+    \variable QProximitySensor::typeId
 */
-const QString QProximitySensor::TYPE("qt.Proximity");
+const QString QProximitySensor::typeId("qt.Proximity");
 
 /*!
     \fn QProximitySensor::type() const

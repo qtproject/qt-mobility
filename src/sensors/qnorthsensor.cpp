@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
     \internal
 */
 QNorthValue::QNorthValue()
-    : QSensorValue(QNorthSensor::TYPE)
+    : QSensorValue(QNorthSensor::typeId)
 {
 }
 
@@ -89,9 +89,9 @@ QNorthValue::QNorthValue()
 */
 
 /*!
-    \variable QNorthSensor::TYPE
+    \variable QNorthSensor::typeId
 */
-const QString QNorthSensor::TYPE("qt.North");
+const QString QNorthSensor::typeId("qt.North");
 
 /*!
     \fn QNorthSensor::type() const

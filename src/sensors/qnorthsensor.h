@@ -62,8 +62,8 @@ class Q_SENSORS_EXPORT QNorthSensor : public QSensor
 public:
     explicit QNorthSensor(const QSensorId &id, QObject *parent = 0);
 
-    static const QString TYPE;
-    QString type() const { return TYPE; };
+    static const QString typeId;
+    QString type() const { return typeId; };
 
     int currentOffset() const
     {
