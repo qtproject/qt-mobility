@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMLGRAPHICSVIDEO_H
-#define QMLGRAPHICSVIDEO_H
+#ifndef QMLAUDIO_P_H
+#define QMLAUDIO_P_H
 
 #include <qmlmediabase_p.h>
 
@@ -48,15 +48,10 @@
 #include <QtDeclarative/qmlgraphicsitem.h>
 
 class QTimerEvent;
-class QVideoSurfaceFormat;
 
 QTM_BEGIN_NAMESPACE
 
-class QPainterVideoSurface;
-class QVideoOutputControl;
-class QVideoRendererControl;
-
-class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
+class QmlAudio : public QObject, public QmlMediaBase, public QmlParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
@@ -66,34 +61,14 @@ class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
     Q_PROPERTY(qreal position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
-    Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailableChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(QmlMedia::Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
-    Q_PROPERTY(FillMode fillMode READ fillMode WRITE setFillMode)
-    Q_ENUMS(FillMode)
 public:
-    enum FillMode
-    {
-        Stretch,
-        PreserveAspectFit,
-        PreserveAspectCrop
-    };
-
-    QmlGraphicsVideo(QmlGraphicsItem *parent = 0);
-    ~QmlGraphicsVideo();
-
-    bool isVideoAvailable() const;
-
-    FillMode fillMode() const;
-    void setFillMode(FillMode mode);
-
-    using QmlMediaBase::state;
-    using QmlMediaBase::setState;
-
-    void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
+    QmlAudio(QObject *parent = 0);
+    ~QmlAudio();
 
 Q_SIGNALS:
     void sourceChanged(const QUrl &url);
@@ -106,7 +81,6 @@ Q_SIGNALS:
 
     void volumeChanged(qreal volume);
     void mutedChanged(bool muted);
-    void videoAvailableChanged(bool available);
 
     void bufferStatusChanged(int percentage);
 
@@ -116,26 +90,8 @@ Q_SIGNALS:
     void errorChanged(QmlMedia::Error error);
     void errorStringChanged(const QString &error);
 
-protected:
-    void geometryChanged(const QRectF &geometry, const QRectF &);
-
-private Q_SLOTS:
-    void _q_videoSurfaceFormatChanged(const QVideoSurfaceFormat &);
-    void _q_frameChanged();
-
 private:
-    Q_DISABLE_COPY(QmlGraphicsVideo)
-
-    void updateVideoRect(const QRectF &geometry, const QSize &videoSize);
-
-    QVideoOutputControl *m_videoOutputControl;
-    QVideoRendererControl *m_videoRendererControl;
-    QPainterVideoSurface *m_videoSurface;
-
-    FillMode m_fillMode;
-    QRectF m_scaledRect;
-    bool m_updatePaintDevice;
-
+    Q_DISABLE_COPY(QmlAudio)
     Q_PRIVATE_SLOT(mediaBase(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(mediaBase(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
     Q_PRIVATE_SLOT(mediaBase(), void _q_mediaChanged(const QMediaContent &))
@@ -150,6 +106,6 @@ private:
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QmlGraphicsVideo))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QmlAudio))
 
 #endif

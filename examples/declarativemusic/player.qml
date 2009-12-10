@@ -1,35 +1,56 @@
 import Qt 4.6
 
-Video {
-    id: video
-    width: 800
-    height: 600
-    anchors.fill: parent
-    fillMode: Video.PreserveAspectFit
-    source: videoUrl
 
-    Text {
-        text: video.title
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
+Item {
+    width: 800
+    height: 400
+
+    Audio {
+        id: audio
+        source: audioUrl
     }
 
+    Image {
+        id: coverArt
+        source: audio.coverArtUriLarge
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: title.top
+    }
+    Text {
+        id: title
+        text: audio.title
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: albumTitle.top
+    }
+    Text {
+        id: albumTitle
+        text: audio.albumTitle
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: albumArtist.top
+    }
+    Text {
+        id: albumArtist
+        text: audio.albumArtist
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: controls.top
+    }
     Item {
-        x: 0
-        y: 470
+        id: controls
         width: 800
         height: 120
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
 
         Image {
             source: "qrc:/images/play.png"
             x: 375
             y: 25
 
-            visible: video.state != Media.Playing
+            visible: audio.state != Media.Playing
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: video.state = Media.Playing;
+                onClicked: audio.state = Media.Playing;
             }
         }
 
@@ -38,11 +59,11 @@ Video {
             x: 375
             y: 25
 
-            visible: video.state == Media.Playing
+            visible: audio.state == Media.Playing
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: video.state = Media.Paused
+                onClicked: audio.state = Media.Paused
             }
         }
 
@@ -51,11 +72,11 @@ Video {
             x: 305
             y: 35
 
-            visible: video.state != Media.Stopped
+            visible: audio.state != Media.Stopped
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: video.state = Media.Stopped
+                onClicked: audio.state = Media.Stopped
             }
         }
 
@@ -67,7 +88,7 @@ Video {
             MouseRegion {
                 anchors.fill: parent
                 onClicked: {
-                    video.muted = !video.muted;
+                    audio.muted = !audio.muted;
                 }
             }
 
@@ -75,7 +96,7 @@ Video {
                 source: "qrc:/images/muted.png"
                 anchors.fill: parent
 
-                visible: video.muted
+                visible: audio.muted
             }
         }
 
@@ -93,20 +114,20 @@ Video {
                 MouseRegion {
                     anchors.fill: parent
 
-                    onClicked: video.volume = (mouse.x - 15) / 200
+                    onClicked: audio.volume = (mouse.x - 15) / 200
                 }
             }
 
             Image {
                 source: "qrc:/images/volume-grip.png"
-                x: video.volume * 200
+                x: audio.volume * 200
                 y: 0
 
                 MouseRegion {
                     anchors.fill: parent
                     drag.target: parent; drag.axis: "XAxis"; drag.minimumX: 0; drag.maximumX: 200
 
-                    onPositionChanged: video.volume = parent.x / 200
+                    onPositionChanged: audio.volume = parent.x / 200
                 }
             }
         }
@@ -125,20 +146,20 @@ Video {
                 MouseRegion {
                     anchors.fill: parent
 
-                    onClicked: video.position = (mouse.x - 15) / 760
+                    onClicked: audio.position = (mouse.x - 15) / 760
                 }
             }
 
             Image {
                 source: "qrc:/images/progress-grip.png"
-                x: 760 * video.position
+                x: 760 * audio.position
                 y: 0
 
                 MouseRegion {
                     anchors.fill: parent
                     drag.target: parent; drag.axis: "XAxis"; drag.minimumX: 0; drag.maximumX: 760
 
-                    onReleased: video.position = parent.x / 760
+                    onReleased: audio.position = parent.x / 760
                 }
             }
         }

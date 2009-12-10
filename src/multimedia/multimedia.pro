@@ -121,10 +121,16 @@ contains(QT_CONFIG, declarative) {
     QT += declarative
 
     PRIVATE_HEADERS += \
-        qmlgraphicsvideo_p.h
+        qmlaudio_p.h \
+        qmlgraphicsvideo_p.h \
+        qmlmedia_p.h \
+        qmlmediabase_p.h
 
     SOURCES += \
-        qmlgraphicsvideo.cpp
+        qmlaudio.cpp \
+        qmlgraphicsvideo.cpp \
+        qmlmedia.cpp \
+        qmlmediabase.cpp
 }
 
 include (experimental/experimental.pri)

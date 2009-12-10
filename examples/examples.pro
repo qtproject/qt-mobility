@@ -42,7 +42,9 @@ SUBDIRS += player \
         audiorecorder
 
 contains (QT_CONFIG, declarative) {
-    SUBDIRS += declarativevideo
+    SUBDIRS += \
+        declarativemusic \
+        declarativevideo
 }
 
 #Messaging examples

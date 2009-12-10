@@ -173,6 +173,9 @@ QMetaDataControlMetaObject::QMetaDataControlMetaObject(QMetaDataControl *control
 QMetaDataControlMetaObject::~QMetaDataControlMetaObject()
 {
     qFree(m_mem);
+
+    QObjectPrivate *op = QObjectPrivate::get(m_object);
+    op->metaObject = 0;
 }
 
 int QMetaDataControlMetaObject::metaCall(QMetaObject::Call c, int id, void **a)
