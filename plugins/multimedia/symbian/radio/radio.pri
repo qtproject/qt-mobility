@@ -1,4 +1,5 @@
 INCLUDEPATH += $$PWD
+LIBS += -ltuner
 
 HEADERS += \
     $$PWD/s60radiotunercontrol.h \
