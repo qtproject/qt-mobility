@@ -5,7 +5,12 @@ LIBS += -lmediaclientvideo \
 	-lfbscli \
 	-lcone \
 	-lMPEngine \
-    -lmmfcontrollerframework
+    -lmmfcontrollerframework \
+    -ldrmaudioplayutility \
+    -lefsrv 
+    
+# If DRM is wanted to support remove the following line    
+#DEFINES += S60_DRM_SUPPORTED
 
 HEADERS += \
     $$PWD/s60mediaplayercontrol.h \

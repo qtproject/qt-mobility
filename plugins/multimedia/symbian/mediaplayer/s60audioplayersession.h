@@ -43,9 +43,21 @@
 #define S60AUDIOPLAYERSESSION_H
 
 #include "s60mediaplayersession.h"
-#include <mdaaudiosampleplayer.h>  
 
-class S60AudioPlayerSession : public S60MediaPlayerSession, public MMdaAudioPlayerCallback
+#ifdef S60_DRM_SUPPORTED
+#include <drmaudiosampleplayer.h>
+typedef CDrmPlayerUtility CAudioPlayer;
+typedef MDrmAudioPlayerCallback MAudioPlayerObserver;
+#else
+#include <mdaaudiosampleplayer.h>  
+typedef CMdaAudioPlayerUtility CAudioPlayer;
+typedef MMdaAudioPlayerCallback MAudioPlayerObserver;
+#endif
+
+class S60AudioPlayerSession : public S60MediaPlayerSession, public CBase, public MAudioPlayerObserver
+#ifdef S60_DRM_SUPPORTED
+      , public MAudioLoadingObserver
+#endif
 {
     Q_OBJECT
 
@@ -67,12 +79,25 @@ protected:
     void doSetPosition(qint64 microSeconds);
     void updateMetaDataEntries();
     
-private: // From MMdaAudioPlayerCallback
+private:
+#ifdef S60_DRM_SUPPORTED    
+    // From MMdaAudioPlayerCallback
+    void MdapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
+    void MdapcPlayComplete(TInt aError);
+#else
+    // From MDrmAudioPlayerCallback
     void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
     void MapcPlayComplete(TInt aError);
-
+#endif
+    
+#ifdef S60_DRM_SUPPORTED && __S60_50__ 
+    // From MAudioLoadingObserver
+    void MaloLoadingStarted() {};
+    void MaloLoadingComplete() {};
+#endif
+    
 private:
-    CMdaAudioPlayerUtility *m_player;
+    CAudioPlayer *m_player;
 };
 
 #endif

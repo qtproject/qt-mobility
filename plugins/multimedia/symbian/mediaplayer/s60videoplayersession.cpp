@@ -127,6 +127,8 @@ void S60VideoPlayerSession::nativeHandles()
         m_coeControl =  m_dummyWidget->winId(); 
     } else {
         m_coeControl =  m_videoWidgetControl->videoWidget()->winId();
+        connect(m_videoWidgetControl->videoWidget(), SIGNAL(videoWindowChanged()), this, SLOT(updateWidget()));
+        connect(m_videoWidgetControl, SIGNAL(fullScreenChanged(bool)), this, SLOT(updateWidget()));
         m_coeControl->MakeVisible(ETrue);
         m_coeControl->SetPosition(TPoint(0,0));
     }

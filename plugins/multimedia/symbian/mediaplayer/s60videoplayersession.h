@@ -75,7 +75,7 @@ protected:
 
 private: 
     void nativeHandles();
-    void updateWidget();
+
     
 private: // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
@@ -83,6 +83,9 @@ private: // From MVideoPlayerUtilityObserver
     void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
     void MvpuoPlayComplete(TInt aError);
     void MvpuoEvent(const TMMFEvent &aEvent);
+
+private Q_SLOTS:
+    void updateWidget();
 
 private:
     CVideoPlayerUtility* m_player;

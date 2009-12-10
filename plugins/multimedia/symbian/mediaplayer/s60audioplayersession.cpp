@@ -40,15 +40,18 @@
 ****************************************************************************/
 
 #include "s60audioplayersession.h"
-
 #include <QtCore/qdebug.h>
 #include <QVariant>
 
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
 {    
-    TRAP_IGNORE(m_player = CMdaAudioPlayerUtility::NewL(*this, 0, EMdaPriorityPreferenceNone));
-    //TODO: Error handlind if creating audio player fails
+    TRAPD(err, m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
+#ifdef S60_DRM_SUPPORTED && __S60_50__
+    if (err == KErrNone) {
+        m_player->RegisterForAudioLoadingNotification(*this);
+    }
+#endif   
 }
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
@@ -58,8 +61,13 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
 
 void S60AudioPlayerSession::doLoad(const TDesC &path)
 {
-    TRAPD(err, m_player->OpenFileL(path));
-    if (err) {
+    int err = KErrNone;
+#ifdef S60_DRM_SUPPORTED   
+    TRAP(err, m_player->OpenFileL(path));
+#else
+    TRAP(err, m_player->OpenFileL(path));
+#endif
+    if (err != KErrNone) {
         setMediaStatus(QMediaPlayer::NoMedia);
     }
 }
@@ -112,13 +120,6 @@ void S60AudioPlayerSession::doSetPosition(qint64 microSeconds)
     m_player->SetPosition(TTimeIntervalMicroSeconds(microSeconds));
 }
 
-void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
-{
-    Q_UNUSED(aDuration);
-    setError(aError);
-    initComplete();
-}
-
 void S60AudioPlayerSession::updateMetaDataEntries()
 {
     metaDataEntries().clear();
@@ -138,9 +139,23 @@ void S60AudioPlayerSession::updateMetaDataEntries()
     emit metaDataChanged();
 }
 
+#ifdef S60_DRM_SUPPORTED   
+void S60AudioPlayerSession::MdapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
+#else 
+void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
+#endif
+{
+    Q_UNUSED(aDuration);
+    setError(aError);
+    initComplete();
+}
+
+#ifdef S60_DRM_SUPPORTED   
+void S60AudioPlayerSession::MdapcPlayComplete(TInt aError)
+#else
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
+#endif
 {
     setError(aError);
     playComplete();
 }
-
