@@ -102,7 +102,7 @@ const QString QNorthSensor::TYPE("qt.North");
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QNorthSensor::QNorthSensor(const QSensorID &id, QObject *parent)
+QNorthSensor::QNorthSensor(const QSensorId &id, QObject *parent)
     : QSensor(parent)
 {
     connectToBackend(id);

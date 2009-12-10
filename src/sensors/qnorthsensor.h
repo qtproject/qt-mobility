@@ -60,7 +60,7 @@ class Q_SENSORS_EXPORT QNorthSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QNorthSensor(const QSensorID &id, QObject *parent = 0);
+    explicit QNorthSensor(const QSensorId &id, QObject *parent = 0);
 
     static const QString TYPE;
     QString type() const { return TYPE; };

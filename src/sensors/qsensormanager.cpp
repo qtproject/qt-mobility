@@ -70,7 +70,7 @@ QSensorManager *QSensorManager::instance()
 /*!
     Register a sensor. The \a id must be unique. The \a backend Foo.
 */
-void QSensorManager::registerBackend(const QSensorID &id, QSensorBackend *backend)
+void QSensorManager::registerBackend(const QSensorId &id, QSensorBackend *backend)
 {
     Q_UNUSED(id)
     Q_UNUSED(backend)
@@ -79,7 +79,7 @@ void QSensorManager::registerBackend(const QSensorID &id, QSensorBackend *backen
 /*!
     Create a backend for \a id. Returns null if the ID is not valid.
 */
-QSensorBackend *QSensorManager::createBackend(const QSensorID &id)
+QSensorBackend *QSensorManager::createBackend(const QSensorId &id)
 {
     Q_UNUSED(id)
     return 0;

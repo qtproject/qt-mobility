@@ -54,19 +54,19 @@ public:
     static QSensorFactory *instance();
 
     // Get a sensor
-    QSensorID defaultSensorForType(QString type) const;
+    QSensorId defaultSensorForType(QString type) const;
     QSensor *createDefaultSensorForType(QString type) const;
 
     // If there are multiple sensors for a type...
-    QList<QSensorID> sensorsForType(QString type) const;
+    QList<QSensorId> sensorsForType(QString type) const;
 
     // Get all sensors on the device. Not sure why you'd want to
     // do this unless you were telling the user what sensors are
     // available.
-    QList<QSensorID> sensorList() const;
+    QList<QSensorId> sensorList() const;
 
     // Create a sensor.
-    QSensor *createSensor(const QSensorID &id) const;
+    QSensor *createSensor(const QSensorId &id) const;
 };
 
 QTM_END_NAMESPACE

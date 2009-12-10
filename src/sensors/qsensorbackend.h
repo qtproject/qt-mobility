@@ -50,8 +50,8 @@ class Q_SENSORS_EXPORT QSensorBackend
 {
 public:
     QSensorBackend();
-    QSensorID id() const;
-    void createdFor(QSensor *sensor, const QSensorID &id);
+    QSensorId id() const;
+    void createdFor(QSensor *sensor, const QSensorId &id);
     void addListener(QSensorListener *listener);
     void removeListener(QSensorListener *listener);
     void notify();
@@ -65,7 +65,7 @@ public:
     virtual void stop() = 0;
 
 private:
-    QSensorID m_id;
+    QSensorId m_id;
     QSensor *m_sensor;
     QList<QSensorListener*> m_listeners;
 };

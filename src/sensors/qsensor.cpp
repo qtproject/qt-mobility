@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \typedef QSensorID
+    \typedef QSensorId
     \relates QSensor
 
     An opaque type representing an sensor identifier.
@@ -102,7 +102,7 @@ bool QSensor::isValid() const
 /*!
     Returns the id for the sensor.
 */
-QSensorID QSensor::id() const
+QSensorId QSensor::id() const
 {
     return m_backend->id();
 }
@@ -234,9 +234,9 @@ void QSensor::valueUpdated()
 /*!
     \internal
 */
-void QSensor::connectToBackend(const QSensorID &_id)
+void QSensor::connectToBackend(const QSensorId &_id)
 {
-    QSensorID id(_id);
+    QSensorId id(_id);
     if (id.isEmpty())
         id = QSensorFactory::instance()->defaultSensorForType(type());
 

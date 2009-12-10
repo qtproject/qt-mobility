@@ -54,7 +54,7 @@ class QSensorFilter;
 class QSensorValue;
 class QSensorBackend;
 
-typedef QByteArray QSensorID;
+typedef QByteArray QSensorId;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
@@ -67,7 +67,7 @@ public:
     // May have been initialized with an invalid id
     bool isValid() const;
 
-    QSensorID id() const;
+    QSensorId id() const;
     QString name() const;
 
     virtual QString type() const = 0;
@@ -115,7 +115,7 @@ public:
     virtual void valueUpdated();
 
 protected:
-    void connectToBackend(const QSensorID &id);
+    void connectToBackend(const QSensorId &id);
 
 private:
     QSensorBackend *m_backend;

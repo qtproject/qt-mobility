@@ -123,7 +123,7 @@ const QString QAccelerationSensor::TYPE("qt.Acceleration");
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QAccelerationSensor::QAccelerationSensor(const QSensorID &id, QObject *parent)
+QAccelerationSensor::QAccelerationSensor(const QSensorId &id, QObject *parent)
     : QSensor(parent)
 {
     connectToBackend(id);

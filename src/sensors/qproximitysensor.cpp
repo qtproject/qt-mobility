@@ -98,7 +98,7 @@ const QString QProximitySensor::TYPE("qt.Proximity");
     Construct a sensor instance and attach to the sensor indicated by \a id.
     The sensor will be deleted when \a parent is deleted.
 */
-QProximitySensor::QProximitySensor(const QSensorID &id, QObject *parent)
+QProximitySensor::QProximitySensor(const QSensorId &id, QObject *parent)
     : QSensor(parent)
 {
     connectToBackend(id);
