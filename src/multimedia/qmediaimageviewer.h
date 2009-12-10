@@ -87,6 +87,7 @@ public:
     int elapsedTime() const;
 
     void bind(QObject *);
+    void unbind(QObject *);
 
 public Q_SLOTS:
     void setMedia(const QMediaContent &media);

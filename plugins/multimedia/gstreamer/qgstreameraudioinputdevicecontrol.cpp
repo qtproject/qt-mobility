@@ -66,17 +66,17 @@ int QGstreamerAudioInputDeviceControl::deviceCount() const
     return m_names.size();
 }
 
-QString QGstreamerAudioInputDeviceControl::name(int index) const
+QString QGstreamerAudioInputDeviceControl::deviceName(int index) const
 {
     return m_names[index];
 }
 
-QString QGstreamerAudioInputDeviceControl::description(int index) const
+QString QGstreamerAudioInputDeviceControl::deviceDescription(int index) const
 {
     return m_descriptions[index];
 }
 
-QIcon QGstreamerAudioInputDeviceControl::icon(int index) const
+QIcon QGstreamerAudioInputDeviceControl::deviceIcon(int index) const
 {
     Q_UNUSED(index);
     return QIcon();
@@ -98,7 +98,7 @@ void QGstreamerAudioInputDeviceControl::setSelectedDevice(int index)
     if (index != m_selectedDevice) {
         m_selectedDevice = index;
         emit selectedDeviceChanged(index);
-        emit selectedDeviceChanged(name(index));
+        emit selectedDeviceChanged(deviceName(index));
     }
 }
 

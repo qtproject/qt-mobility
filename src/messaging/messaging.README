@@ -1,5 +1,0 @@
-This is the Qt Mobility Messaging API proposal package.
-
-This package provides a cross platform API for accessing and
-manipulating messages, and for invoking certain native services
-relating to messages.

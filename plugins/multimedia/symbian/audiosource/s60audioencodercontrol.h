@@ -66,8 +66,8 @@ public:
 
     QString codecDescription(const QString &codecName) const;
 
-    int bitrate() const;
-    void setBitrate(int);
+    int bitRate() const;
+    void setBitRate(int);
 
     QtMedia::EncodingQuality quality() const;
     void setQuality(QtMedia::EncodingQuality);
@@ -79,9 +79,9 @@ public:
     int sampleRate() const;
     void setSampleRate(int sampleRate);
     QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
-    
-    int channels() const;
-    void setChannels(int channels);
+
+    int channelCount() const;
+    void setChannelCount(int channels);
     QList<int> supportedChannelCounts() const;
 
     int sampleSize() const;

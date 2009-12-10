@@ -57,8 +57,9 @@ Player::Player(QWidget *parent)
     , slider(0)
     , colorDialog(0)
 {
-    player = new QMediaPlayer;
-    playlist = new QMediaPlaylist(player);
+    player = new QMediaPlayer(this);
+    playlist = new QMediaPlaylist(this);
+    playlist->setMediaObject(player);
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));

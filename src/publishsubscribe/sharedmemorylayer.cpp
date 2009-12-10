@@ -3255,7 +3255,7 @@ void SharedMemoryLayer::doClientNotify(QValueSpacePublisher *publisher, const QB
         return;
     }
 
-    emitAttributeInterestChanged(publisher, QString::fromUtf8(emitPath.constData()), interested);
+    emitInterestChanged(publisher, QString::fromUtf8(emitPath.constData()), interested);
  }
 
 bool SharedMemoryLayer::supportsInterestNotification() const

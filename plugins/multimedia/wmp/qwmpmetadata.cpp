@@ -86,9 +86,9 @@ static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
     { QtMedia::Duration, L"Duration" },
 
     // Audio
-    { QtMedia::AudioBitrate, L"AudioBitrate" },
+    { QtMedia::AudioBitRate, L"AudioBitrate" },
     { QtMedia::AudioCodec, L"AudioCodec" },
-    { QtMedia::Channels, L"Channels" },
+    { QtMedia::ChannelCount, L"Channels" },
     { QtMedia::Frequency, L"Frequency" },
 
     // Music

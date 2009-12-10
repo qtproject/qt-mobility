@@ -59,7 +59,8 @@ class S60RadioTunerControl : public QRadioTunerControl
 public:
     S60RadioTunerControl(QObject *parent = 0);
     ~S60RadioTunerControl();
-    
+
+    bool isAvailable() const;
     QRadioTuner::State state() const;
 
     QRadioTuner::Band band() const;

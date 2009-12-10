@@ -65,17 +65,17 @@ int S60AudioDeviceControl::deviceCount() const
     return 1;
 }
 
-QString S60AudioDeviceControl::name(int index) const
+QString S60AudioDeviceControl::deviceName(int index) const
 {
     return QString();
 }
 
-QString S60AudioDeviceControl::description(int index) const
+QString S60AudioDeviceControl::deviceDescription(int index) const
 {
     return QString();
 }
 
-QIcon S60AudioDeviceControl::icon(int index) const
+QIcon S60AudioDeviceControl::deviceIcon(int index) const
 {
     Q_UNUSED(index);
     return QIcon();

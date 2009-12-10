@@ -178,7 +178,7 @@ bool QWmpPlayerControl::isVideoAvailable() const
 void QWmpPlayerControl::setVideoAvailable(bool available)
 {
     if (m_videoAvailable != available)
-        emit this->videoAvailabilityChanged(m_videoAvailable = available);
+        emit this->videoAvailableChanged(m_videoAvailable = available);
 }
 
 bool QWmpPlayerControl::isSeekable() const

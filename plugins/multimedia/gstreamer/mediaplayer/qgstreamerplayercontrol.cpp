@@ -80,8 +80,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SIGNAL(bufferStatusChanged(int)));
-    connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
-            this, SIGNAL(videoAvailabilityChanged(bool)));
+    connect(m_session, SIGNAL(videoAvailableChanged(bool)),
+            this, SIGNAL(videoAvailableChanged(bool)));
     connect(m_session, SIGNAL(seekableChanged(bool)),
             this, SIGNAL(seekableChanged(bool)));
 }
