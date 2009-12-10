@@ -232,8 +232,6 @@ private:
     
     QString privateFolderPath();
     
-    QString privateFolderPath();
-    
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
     
