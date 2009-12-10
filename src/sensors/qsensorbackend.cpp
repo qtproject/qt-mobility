@@ -69,6 +69,15 @@ QSensorBackend::QSensorBackend()
 /*!
     \internal
 */
+void QSensorBackend::createdFor(QSensor *sensor, const QSensorID &id)
+{
+    m_sensor = sensor;
+    m_id = id;
+}
+
+/*!
+    \internal
+*/
 void QSensorBackend::addListener(QSensorListener *listener)
 {
     m_listeners.append(listener);
@@ -98,7 +107,7 @@ void QSensorBackend::notify()
         }
     }
     if (!blocked)
-    {}//emit valueUpdated();
+        m_sensor->valueUpdated();
 }
 
 /*!

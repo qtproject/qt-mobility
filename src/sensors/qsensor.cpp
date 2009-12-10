@@ -241,6 +241,7 @@ void QSensor::connectToBackend(const QSensorID &_id)
         id = QSensorFactory::instance()->defaultSensorForType(type());
 
     m_backend = QSensorManager::instance()->createBackend(id);
+    m_backend->createdFor(this, id);
 }
 
 /*!
