@@ -90,7 +90,7 @@ private:
     void MapcPlayComplete(TInt aError);
 #endif
     
-#ifdef S60_DRM_SUPPORTED && __S60_50__ 
+#if defined(S60_DRM_SUPPORTED) &&  defined(__S60_50__) 
     // From MAudioLoadingObserver
     void MaloLoadingStarted() {};
     void MaloLoadingComplete() {};

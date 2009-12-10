@@ -179,7 +179,7 @@ void S60MediaPlayerControl::setMuted(bool muted)
     if (m_session)
         m_session->setMuted(muted);
     else if (m_mediaSettings.isMuted() != muted) 
-        emit mutingChanged(muted);
+        emit mutedChanged(muted);
     m_mediaSettings.setMuted(muted);
 }
 
