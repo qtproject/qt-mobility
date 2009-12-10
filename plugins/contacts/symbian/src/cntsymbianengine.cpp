@@ -57,6 +57,7 @@
 #include "cntsymbianfiltersql.h"
 #include "cntsymbiansorterdbms.h"
 #include "cntrelationship.h"
+#include "cntdisplaylabel.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
@@ -87,6 +88,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
         m_contactFilter    = new CntSymbianFilter(*m_dataBase->contactDatabase());
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
+        m_displayLabel     = new CntDisplayLabel();
     }
 }
 
@@ -97,7 +99,8 @@ CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
       m_transformContact(other.m_transformContact),
       m_contactFilter(other.m_contactFilter),
       m_contactSorter(other.m_contactSorter),
-      m_relationship(other.m_relationship)
+      m_relationship(other.m_relationship),
+      m_displayLabel(other.m_displayLabel)
 {
 }
 
@@ -108,6 +111,7 @@ CntSymbianEngine::~CntSymbianEngine()
     delete m_transformContact;
     delete m_contactSorter;
     delete m_relationship;
+    delete m_displayLabel;
 }
 
 void CntSymbianEngine::deref()
@@ -478,8 +482,8 @@ void CntSymbianEngine::updateContactL(QContact &contact)
     CleanupStack::PushL(contactItem);
 
     // Cannot update contact type. The client needs to do this itself.
-    if ((contact.type() == QContactType::TypeContact && contactItem->Type() == KUidContactGroup) || 
-        (contact.type() == QContactType::TypeGroup && contactItem->Type() == KUidContactCard)){
+    if ((contact.type() == QContactType::TypeContact && contactItem->Type() != KUidContactCard) || 
+        (contact.type() == QContactType::TypeGroup && contactItem->Type() != KUidContactGroup)){
         User::Leave(KErrAlreadyExists);
     }
     
@@ -741,44 +745,7 @@ bool CntSymbianEngine::filterSupported(const QContactFilter& filter) const
 /* Synthesise the display label of a contact */
 QString CntSymbianEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
-    QString label("");
-    error = QContactManager::NoError;
-    QContactName name = contact.detail<QContactName>();
-    if(contact.type() == QContactType::TypeContact) {
-        QContactOrganization org = contact.detail<QContactOrganization>();
-        QString customLabel = name.customLabel();
-        QString firstName = name.first();
-        QString lastName = name.last();
-
-        if(!customLabel.isEmpty()) {
-            label = name.customLabel();
-        } else if (!name.last().isEmpty()) {
-            if (!name.first().isEmpty()) {
-                label = QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
-            } else {
-                // Just last
-                label = name.last();
-            }
-        } else if (!name.first().isEmpty()) {
-            label = name.first();
-        } else if (!org.name().isEmpty()) {
-            label = org.name();
-        } else {
-            // TODO: localize?
-            label = QLatin1String("Unnamed");
-        }
-    } else if (contact.type() == QContactType::TypeGroup) {
-        if (!name.customLabel().isEmpty()) {
-            label = name.customLabel();
-        } else {
-            // TODO: localize?
-            label = QLatin1String("Unnamed");
-        }
-    }
-    else {
-        error = QContactManager::InvalidContactTypeError;
-    }
-    return label;
+    return m_displayLabel->synthesizeDisplayLabel(contact, error);
 }
 
 bool CntSymbianEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)

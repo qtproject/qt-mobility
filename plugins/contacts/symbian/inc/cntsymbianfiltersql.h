@@ -71,6 +71,6 @@ private:
 
 };
 
-#endif /* __SYMBIAN_CNTMODEL_USE_SQLITE__ */
+#endif /* SYMBIAN_BACKEND_USE_SQLITE */
 
 #endif /* CNT_SYMBIAN_FILTER_SQL_H */

@@ -95,6 +95,6 @@ private:
     CntTransformContact *m_transformContact;
 };
 
-#endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/
+#endif /*SYMBIAN_BACKEND_USE_SQLITE*/
 
 #endif /* CNTSYMBIANFILTERDBMS_H */

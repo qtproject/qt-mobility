@@ -74,6 +74,7 @@ class CntTransformContact;
 class CntAbstractContactFilter;
 class CntAbstractContactSorter;
 class CntRelationship;
+class CntDisplayLabel;
 
 QTM_USE_NAMESPACE
 
@@ -162,6 +163,7 @@ private:
     CntAbstractContactFilter *m_contactFilter;
     CntAbstractContactSorter *m_contactSorter;
     CntRelationship *m_relationship;
+    CntDisplayLabel *m_displayLabel;
 
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 #ifdef PBK_UNIT_TEST
