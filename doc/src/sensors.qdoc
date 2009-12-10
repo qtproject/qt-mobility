@@ -63,41 +63,45 @@ real-time sensors such as accelerometer data.
 
 \section1 Overview
 
-The QSensorManager class is used to get a handle to particular sensors.
+There are 2 ways to use a sensor. If you just want the default sensor
+for a particular type, instantiate that class.
+
+\code
+// On the heap (deleted when this object is deleted)
+QAccelerationSensor *sensor = new QAccelerationSensor(this);
+
+// On the stack (eg. to check the orientation on startup)
+QOrientationSensor orient_sensor;
+\endcode
+
+The QSensorFactory class can also create a sensor for you as well as
+listing the available sensors on the device.
 
 The API supports sensors that poll for their data and sensors that push
-data to the app as it arrives. Attempting to poll a sensor that operates
-using push will read a cached value. Attempting to use push notification
-on a sensor that only supports polling will result in a timer event being
-used to poll the sensor and deliver the result to the app.
+data to the app as it arrives. Each sensor will support certain update
+policies that determine how your application can receive the data from
+the sensor.
 
 \section1 Client API
 
-The client API is designed around the QSensor abstract class. This class
-is instantiated in the client application and connects to a QSensorBackend
-instance.
+The client API is designed around sub-classes of QSensor. These classes
+are instantiated in the client application and connect to a QSensorBackend
+instance that either talks directly to hardware or via a system API.
+Typically the application will use sub-classes of QSensor from the
+QtSensors API but third party sub-classes may be used as well.
 
 \image sensors-overview.png
-
-Note that different sensors work in slightly different ways so there are
-variety of concrete classes that should be used in place of QSensor.
-
-You can see too that QSensor does not care where the backend it talks to
-is located. Backends are most commonly found in the QtSensors library
-although they may also be found in plugins or in the client app itself.
 
 \section1 Backend API
 
 QSensor instances talk to a backend object. Backends are usually supplied
-with the QtSensors library for a specific device. A backend may talk
+with the QtSensors library for a specific device although third party
+backends may be used as well. A backend may talk
 directly to hardware or it may talk to a system service. In some instances
-it may even be useful to have a sensor backend that talks to another backend.
-An example of this would be a rotation sensor class for devices that lack
-a rotation sensor but have a linear acceleration sensor. The rotation sensor
-backend would use the data from the linear acceleration backend to get
-approximate rotation values.
-
-\image sensors-backend.png
+it may even talk to another backend or to another device.
+An example of this is the rotation sensor backend for devices that lack
+a rotation sensor but have a linear acceleration sensor. This backend
+talks directly to an acceleration sensor backend.
 
 \section1 Main Classes
 If you want to use the sensors on a device, these are the classes to use.
