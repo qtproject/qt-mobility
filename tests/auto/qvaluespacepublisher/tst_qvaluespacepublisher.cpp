@@ -529,6 +529,11 @@ void tst_QValueSpacePublisher::threads_data()
                 << layer->id() << uint(10) << uint(800) << false;
             QTest::newRow("100 threads, 80 items")
                 << layer->id() << uint(100) << uint(80) << false;
+        } else if(layer->id() == QVALUESPACE_SYMBIAN_SETTINGS_LAYER) {
+            QTest::newRow("1 thread, 10 items, sequential")
+                << layer->id() << uint(1) << uint(10) << true;
+            QTest::newRow("2 threads, 10 items, sequential")
+                << layer->id() << uint(2) << uint(10) << true;
         } else {
             // Assume no limits on all other layers.
             QTest::newRow("1 thread, 10 items, sequential")
@@ -620,8 +625,13 @@ void tst_QValueSpacePublisher::threads()
 
         while (!keys.isEmpty()) {
             const QString key = keys.takeFirst();
-
-            QCOMPARE(threadItem.value(key).toString(), expectedValues.value(key));
+            #ifdef Q_OS_SYMBIAN
+                QByteArray readData(threadItem.value(key).toByteArray());
+                QString value = QString::fromUtf16((const ushort *)readData.constData(), readData.size() / 2);
+                QCOMPARE(value, expectedValues.value(key));
+            #else
+                QCOMPARE(threadItem.value(key).toString(), expectedValues.value(key));
+            #endif
         }
     }
 
