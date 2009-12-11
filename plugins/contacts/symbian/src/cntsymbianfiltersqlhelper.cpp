@@ -469,7 +469,7 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDisplayLabelFilter(const QConta
                          sqlQuery += columnName + " LIKE \'" + list.at(j) + "%\'";
                         
                          //add or if not last item in list
-                         if(iterator.hasNext() || j < (list.count() - 1) ){
+                         if((i < fields.count() - 1) || iterator.hasNext() || j < (list.count() - 1) ){
                              sqlQuery += " OR ";
                          }
                      }
