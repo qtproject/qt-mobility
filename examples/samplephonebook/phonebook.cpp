@@ -392,12 +392,13 @@ void PhoneBook::displayContact()
     // display the address - again, we abuse the street() field.
     addressText->setPlainText((QContactAddress(c.detail(QContactAddress::DefinitionName))).street());
 
-    // and build the avatar filename and display it if it exists.
-    QString avatarFile = c.detail(QContactAvatar::DefinitionName).value(QContactAvatar::FieldAvatar);
-    if (avatarFile.isNull() || avatarFile.isEmpty()) {
+    QContactAvatar avatar = c.detail<QContactAvatar>();
+    QImage avatarImage = avatar.avatarImage();
+    if (avatarImage.isNull()) {
         avatarPixmapLabel->clear();
     } else {
-        QPixmap avatarPix(avatarFile);
+        QPixmap avatarPix = QPixmap::fromImage(avatarImage);
+        
 		avatarPixmapLabel->setPixmap(avatarPix.scaled(avatarPixmapLabel->size()));
     }
 

@@ -41,6 +41,7 @@
 #include <QDebug>
 #include <QByteArray>
 #include <QUrl>
+#include <QEventLoop>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
@@ -187,7 +188,7 @@ static void setIfNotEmpty(QContactDetail& detail, const QString& field, const QS
         detail.setValue(field, value);
 }
 
-static void processName(const QContactWinCEEngine* engine, IItem* /*contact*/, const QVariantList& values, QContact& ret)
+static void processName(const QContactWinCEEngine* /*engine*/, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     QContactName name;
     setIfNotEmpty(name, QContactName::FieldPrefix, values[0].toString());
@@ -288,7 +289,7 @@ static bool saveAvatarData(IItem* contact, const QByteArray& data)
 
 
 
-static void processAvatar(const QContactWinCEEngine* engine, IItem* contact, const QVariantList& values, QContact& ret)
+static void processAvatar(const QContactWinCEEngine* /*engine*/, IItem* contact, const QVariantList& values, QContact& ret)
 {
     QContactAvatar avatar;
     setIfNotEmpty(avatar, QContactAvatar::FieldSubType, values[0].toString());
@@ -649,6 +650,33 @@ static bool processQName(const QContactWinCEEngine*, IItem* /*contact*/, const Q
     return true;
 }
 
+SyncNetworkAccessManager::SyncNetworkAccessManager()
+:manager(new QNetworkAccessManager),
+ loop(new QEventLoop)
+{
+}
+SyncNetworkAccessManager::~SyncNetworkAccessManager()
+{
+    delete manager;
+    delete loop;
+}
+
+QByteArray SyncNetworkAccessManager::get(const QNetworkRequest& req)
+{
+    QNetworkReply* reply = manager->get(req);
+    
+	connect(reply,SIGNAL(finished()),SLOT(finished()));
+	loop->exec();
+    QByteArray data = reply->readAll();
+    reply->deleteLater();
+    return data;
+}
+void SyncNetworkAccessManager::finished()
+{
+	loop->exit();
+}
+
+
 static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QString avatarData = detail.value(QContactAvatar::FieldAvatar);
@@ -657,22 +685,13 @@ static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, co
         return false;
 
     QUrl url(avatarData);
-    if (!url.isValid())
+    if (!url.isValid() || url.scheme().isEmpty())
         url = QUrl::fromLocalFile(avatarData);
 
     if (url.isValid()) {
-        QNetworkAccessManager* manager = new QNetworkAccessManager();
-        QNetworkRequest req;
-
-        req.setUrl(url);
-        QNetworkReply* reply = manager->get(req);
-        
-        reply->waitForReadyRead(-1);
-        
-        if (saveAvatarData(contact, reply->readAll())) {
+        SyncNetworkAccessManager manager;
+        if (saveAvatarData(contact, manager.get(QNetworkRequest(url)))) {
             addIfNotEmpty(engine->metaAvatar(), detail.value(QContactAvatar::FieldSubType), props);
-            reply->deleteLater();
-            delete manager;
             return true;
         }
     }
