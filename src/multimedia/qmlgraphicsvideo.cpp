@@ -133,7 +133,7 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
 
 QmlGraphicsVideo::~QmlGraphicsVideo()
 {
-    QmlMediaBase::setState(QmlMedia::Stopped);
+    m_playerControl->stop();
 
     if (m_videoRendererControl)
         m_videoRendererControl->setSurface(0);
@@ -216,6 +216,33 @@ void QmlGraphicsVideo::setFillMode(FillMode mode)
             updateVideoRect(boundingRect(), m_videoSurface->surfaceFormat().sizeHint());
 
     update();
+}
+
+/*!
+    \qmlmethod Video::play()
+*/
+
+void QmlGraphicsVideo::play()
+{
+    m_playerControl->play();
+}
+
+/*!
+    \qmlmethod Video::pause()
+*/
+
+void QmlGraphicsVideo::pause()
+{
+    m_playerControl->pause();
+}
+
+/*!
+    \qmlmethod Video::stop()
+*/
+
+void QmlGraphicsVideo::stop()
+{
+    m_playerControl->stop();
 }
 
 void QmlGraphicsVideo::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)

@@ -64,8 +64,11 @@ public:
     QUrl source() const;
     void setSource(const QUrl &url);
 
-    QmlMedia::State state() const;
-    void setState(QmlMedia::State state);
+    bool isPlaying() const;
+    void setPlaying(bool playing);
+
+    bool isPaused() const;
+    void setPaused(bool paused);
 
     QmlMedia::Status status() const;
 
@@ -92,10 +95,6 @@ public:
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
-    void _q_mediaChanged(const QMediaContent &media);
-    void _q_durationChanged(qint64 duration);
-    void _q_positionChanged(qint64 position);
-    void _q_volumeChanged(int volume);
     void _q_error(QMediaPlayer::Error error, const QString &errorString);
 
     void _q_metaDataChanged();
@@ -103,24 +102,25 @@ public:
 protected:
     void setObject(QObject *object);
 
-    virtual void sourceChanged(const QUrl &url) = 0;
+    virtual void sourceChanged() = 0;
 
-    virtual void stateChanged(QmlMedia::State state) = 0;
-    virtual void statusChanged(QmlMedia::Status status) = 0;
+    virtual void playingChanged() = 0;
+    virtual void pausedChanged() = 0;
 
-    virtual void durationChanged(int duration) = 0;
-    virtual void positionChanged(int position) = 0;
+    virtual void statusChanged() = 0;
 
-    virtual void volumeChanged(qreal volume) = 0;
-    virtual void mutedChanged(bool muted) = 0;
+    virtual void durationChanged() = 0;
+    virtual void positionChanged() = 0;
 
-    virtual void bufferStatusChanged(int percentage) = 0;
+    virtual void volumeChanged() = 0;
+    virtual void mutedChanged() = 0;
 
-    virtual void seekableChanged(bool seekable) = 0;
-    virtual void playbackRateChanged(qreal rate) = 0;
+    virtual void bufferStatusChanged() = 0;
 
-    virtual void errorChanged(QmlMedia::Error error) = 0;
-    virtual void errorStringChanged(const QString &error) = 0;
+    virtual void seekableChanged() = 0;
+    virtual void playbackRateChanged() = 0;
+
+    virtual void errorChanged() = 0;
 
     QMediaService *m_mediaService;
     QMediaPlayerControl *m_playerControl;
@@ -131,9 +131,9 @@ private:
     QMetaDataControlMetaObject *m_metaObject;
     QmlMediaBaseAnimation *m_animation;
 
-    QmlMedia::State m_state;
-    QmlMedia::Status m_status;
-    QmlMedia::Error m_error;
+    QMediaPlayer::State m_state;
+    QMediaPlayer::MediaStatus m_status;
+    QMediaPlayer::Error m_error;
     QString m_errorString;
 
     friend class QmlMediaBaseAnimation;

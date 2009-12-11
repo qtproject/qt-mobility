@@ -46,11 +46,11 @@ Item {
             x: 375
             y: 25
 
-            visible: audio.state != Media.Playing
+            visible: !audio.playing || audio.paused
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: audio.state = Media.Playing;
+                onClicked: audio.play()
             }
         }
 
@@ -59,11 +59,11 @@ Item {
             x: 375
             y: 25
 
-            visible: audio.state == Media.Playing
+            visible: audio.playing && !audio.paused
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: audio.state = Media.Paused
+                onClicked: audio.pause()
             }
         }
 
@@ -72,11 +72,11 @@ Item {
             x: 305
             y: 35
 
-            visible: audio.state != Media.Stopped
+            visible: audio.playing
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: audio.state = Media.Stopped
+                onClicked: audio.stop()
             }
         }
 

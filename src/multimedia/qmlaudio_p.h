@@ -55,7 +55,8 @@ class QmlAudio : public QObject, public QmlMediaBase, public QmlParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(QmlMedia::State state READ state WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(bool playing READ isPlaying WRITE setPlaying NOTIFY playingChanged)
+    Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
     Q_PROPERTY(QmlMedia::Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
@@ -65,39 +66,42 @@ class QmlAudio : public QObject, public QmlMediaBase, public QmlParserStatus
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(QmlMedia::Error error READ error NOTIFY errorChanged)
-    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
+    Q_INTERFACES(QmlParserStatus)
 public:
     QmlAudio(QObject *parent = 0);
     ~QmlAudio();
 
+public Q_SLOTS:
+    void play();
+    void pause();
+    void stop();
+
 Q_SIGNALS:
-    void sourceChanged(const QUrl &url);
+    void sourceChanged();
 
-    void stateChanged(QmlMedia::State state);
-    void statusChanged(QmlMedia::Status status);
+    void playingChanged();
+    void pausedChanged();
 
-    void durationChanged(int duration);
-    void positionChanged(int position);
+    void statusChanged();
 
-    void volumeChanged(qreal volume);
-    void mutedChanged(bool muted);
+    void durationChanged();
+    void positionChanged();
 
-    void bufferStatusChanged(int percentage);
+    void volumeChanged();
+    void mutedChanged();
 
-    void seekableChanged(bool seekable);
-    void playbackRateChanged(qreal rate);
+    void bufferStatusChanged();
 
-    void errorChanged(QmlMedia::Error error);
-    void errorStringChanged(const QString &error);
+    void seekableChanged();
+    void playbackRateChanged();
+
+    void errorChanged();
 
 private:
     Q_DISABLE_COPY(QmlAudio)
     Q_PRIVATE_SLOT(mediaBase(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(mediaBase(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_mediaChanged(const QMediaContent &))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_durationChanged(qint64))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_positionChanged(qint64))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_volumeChanged(int))
     Q_PRIVATE_SLOT(mediaBase(), void _q_error(QMediaPlayer::Error, const QString &))
     Q_PRIVATE_SLOT(mediaBase(), void _q_metaDataChanged())
 

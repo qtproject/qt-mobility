@@ -41,6 +41,8 @@
 
 #include "qmlaudio_p.h"
 
+#include "qmediaplayercontrol.h"
+
 QML_DEFINE_TYPE(Qt,4,6,Audio,QTM_PREPEND_NAMESPACE(QmlAudio));
 
 QTM_BEGIN_NAMESPACE
@@ -69,6 +71,33 @@ QmlAudio::~QmlAudio()
 }
 
 /*!
+    \qmlmethod Audio::play()
+*/
+
+void QmlAudio::play()
+{
+    m_playerControl->play();
+}
+
+/*!
+    \qmlmethod Audio::pause()
+*/
+
+void QmlAudio::pause()
+{
+    m_playerControl->pause();
+}
+
+/*!
+    \qmlmethod Audio::stop()
+*/
+
+void QmlAudio::stop()
+{
+    m_playerControl->stop();
+}
+
+/*!
     \qmlproperty url Audio::source
 */
 
@@ -81,15 +110,15 @@ QmlAudio::~QmlAudio()
 */
 
 /*!
-    \qmlproperty real Audio::duration
+    \qmlproperty int Audio::duration
 */
 
 /*!
-    \qmlproperty real Audio::position
+    \qmlproperty int Audio::position
 */
 
 /*!
-    \qmlproperty int Audio::volume
+    \qmlproperty real Audio::volume
 */
 
 /*!

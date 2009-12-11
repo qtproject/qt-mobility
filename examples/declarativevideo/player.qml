@@ -25,11 +25,11 @@ Video {
             x: 375
             y: 25
 
-            visible: video.state != Media.Playing
+            visible: !video.playing || video.paused
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: video.state = Media.Playing;
+                onClicked: video.play()
             }
         }
 
@@ -38,11 +38,11 @@ Video {
             x: 375
             y: 25
 
-            visible: video.state == Media.Playing
+            visible: video.playing && !video.paused
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: video.state = Media.Paused
+                onClicked: video.pause()
             }
         }
 
@@ -51,11 +51,11 @@ Video {
             x: 305
             y: 35
 
-            visible: video.state != Media.Stopped
+            visible: video.playing
 
             MouseRegion {
                 anchors.fill: parent
-                onClicked: video.state = Media.Stopped
+                onClicked: video.stop()
             }
         }
 
