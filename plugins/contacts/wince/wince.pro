@@ -19,11 +19,7 @@ INCLUDEPATH += $$SOURCE_DIR/src/contacts $$SOURCE_DIR/src/contacts/details $$SOU
 target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
 INSTALLS+=target
 LIBS += pimstore.lib -lole32
-<<<<<<< HEAD
 CONFIG += mobility
 MOBILITY = contacts
-=======
 QT += network
-qtAddLibrary(QtContacts)
->>>>>>> c2663b458415956f0a06dc3c47a8632300ecd249
 
