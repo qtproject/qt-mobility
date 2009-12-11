@@ -1148,6 +1148,32 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.detailDefinitions().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
 
+    /* Self contact id */
+    QVERIFY(!manager.setSelfContactId(QContactLocalId(12)));
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.selfContactId() == QContactLocalId());
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::DoesNotExistError);
+
+    /* Relationships */
+    QContactId idOne, idTwo;
+    idOne.setLocalId(QContactLocalId(15));
+    idOne.setManagerUri(QString());
+    idTwo.setLocalId(QContactLocalId(22));
+    idTwo.setManagerUri(QString());
+    QContactRelationship invalidRel;
+    invalidRel.setFirst(idOne);
+    invalidRel.setSecond(idTwo);
+    QList<QContactRelationship> invalidRelList;
+    invalidRelList << invalidRel;
+    QVERIFY(!manager.saveRelationship(&invalidRel));
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.relationships().isEmpty());
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    manager.saveRelationships(&invalidRelList);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    manager.removeRelationships(invalidRelList);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::DoesNotExistError);
+
     /* Capabilities */
     QVERIFY(manager.supportedDataTypes().count() == 0);
     QVERIFY(!manager.hasFeature(QContactManager::ActionPreferences));
