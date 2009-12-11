@@ -106,6 +106,8 @@ void QmlGraphicsVideo::_q_frameChanged()
 
 QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
     : QmlGraphicsItem(parent)
+    , m_videoOutputControl(0)
+    , m_videoRendererControl(0)
     , m_videoSurface(0)
     , m_fillMode(QmlGraphicsVideo::PreserveAspectFit)
     , m_updatePaintDevice(true)
