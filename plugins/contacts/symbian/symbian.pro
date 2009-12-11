@@ -57,7 +57,7 @@ symbian: {
         inc/cntsymbiansrvconnection.h \
         inc/cntsymbiantransformerror.h \
         inc/cntsymbiandatabase.h \
-	inc/cntdisplaylabel.h 
+	    inc/cntdisplaylabel.h 
       
     SOURCES += \
         src/cntsymbianengine.cpp \
@@ -93,7 +93,7 @@ symbian: {
         src/cntsymbiansrvconnection.cpp \
         src/cntsymbiantransformerror.cpp \
         src/cntsymbiandatabase.cpp \
-	src/cntdisplaylabel.cpp
+	    src/cntdisplaylabel.cpp
       
     CONFIG += mobility
     MOBILITY = contacts
