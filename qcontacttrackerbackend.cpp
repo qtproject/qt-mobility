@@ -49,6 +49,7 @@
 #include <QDir>
 #include <QFile>
 #include <QSet>
+#include <QList>
 
 #include "qtcontacts.h"
 
@@ -306,29 +307,29 @@ bool QContactTrackerEngine::removeContact(const QContactLocalId& contactId, QCon
 QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact>* contacts,
                                                                   QContactManager::Error& error)
 {
-    // Signals emitted from TrackerChangeListener
-    QList<QContactManager::Error> errorList;
-    QContactManager::Error functionError = QContactManager::NoError;
-
     if(contacts == 0) {
+        QList<QContactManager::Error> errorList;
         error = QContactManager::BadArgumentError;
         return errorList;
     }
 
-    for(int i=0; i<contacts->count(); i++) {
-        QContact contact = contacts->at(i);
-        if(!saveContact(&contact, error)) {
-            functionError = error;
-            errorList.append(functionError);
-        } else {
-            // No error while saving.
-            errorList.append(QContactManager::NoError);
-            (*contacts)[i] = contact;
-        }
+    // Signal emitted from TrackerChangeListener
+    QContactSaveRequest request;
+    QList<QContact> contactList;
+    for (int i = 0; i < contacts->size(); ++i) {
+        contactList.append(contacts->at(i));
+    }
+    request.setContacts(contactList);
+    QContactTrackerEngine engine(*this);
+    engine.startRequest(&request);
+    /// @todo what should be the delay
+    engine.waitForRequestFinished(&request, 1000*contacts->size());
+    error = request.error();
+    for (int i = 0; i < contacts->size(); ++i) {
+        (*contacts)[i] = request.contacts().at(i);
     }
 
-    error = functionError;      // Last operation error is the batch error.
-    return errorList;
+    return request.errors();
 }
 
 QList<QContactManager::Error> QContactTrackerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
