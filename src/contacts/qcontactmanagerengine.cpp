@@ -1546,11 +1546,9 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // of the specified type with the specified other participant.
                 const QContactRelationshipFilter rf(filter);
 
-                // first, build contact uris
+                // first, retrieve contact uris
                 QContactId contactUri = contact.id();
                 QContactId participant = rf.otherParticipantId();
-                if (participant.managerUri().isEmpty())
-                    participant.setManagerUri(contactUri.managerUri());
 
                 // get the relationships in which this contact is involved.
                 QList<QContactRelationship> allRelationships;

@@ -1714,6 +1714,15 @@ void tst_QContactManagerFiltering::relationshipFiltering_data()
 
         // match any contact that plays any role in a "Has Assistant" relationship with contact-A
         QTest::newRow("RF-6") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bcd";
+
+        // match any contact that plays the "first" role in any relationship with contact-A
+        QTest::newRow("RF-7") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "d";
+
+        // match any contact that plays the "second" role in any relationship with contact-A
+        QTest::newRow("RF-8") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bce";
+
+        // match any contact that plays any role in any relationship with contact-A
+        QTest::newRow("RF-9") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bcde";
     }
 }
 
@@ -2782,10 +2791,26 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
         d2a.setSecond(a.id());
         d2a.setRelationshipType(QContactRelationship::HasAssistant);
 
+        QContactRelationship a2e;
+        a2e.setFirst(a.id());
+        a2e.setSecond(e.id());
+        a2e.setRelationshipType(QContactRelationship::HasSpouse);
+
+        // now for a "negative test" - the "either/any/withContactA" test shouldn't match this!
+        QContactRelationship d2nonexistent;
+        QContactId nonexistentId;
+        nonexistentId.setLocalId(a.localId());                  // despite having the same local id
+        nonexistentId.setManagerUri("nonexistent-manager-uri"); // the manager uri is different
+        d2nonexistent.setFirst(d.id());
+        d2nonexistent.setSecond(nonexistentId);
+        d2nonexistent.setRelationshipType(QContactRelationship::HasSpouse);
+
         cm->saveRelationship(&a2b);
         cm->saveRelationship(&a2c);
         cm->saveRelationship(&b2c);
         cm->saveRelationship(&d2a);
+        cm->saveRelationship(&a2e);
+        cm->saveRelationship(&d2nonexistent);
     }
 
     /* Add our newly saved contacts to our internal list of added contacts */
