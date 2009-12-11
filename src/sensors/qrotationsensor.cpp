@@ -128,7 +128,7 @@ QRotationSensor::QRotationSensor(QObject *parent, const QSensorId &id)
     If this is the case then rotation will only be accurate while the device is
     stationary and only in directions that are influenced by gravity.
 */
-bool QRotationSensor::fromAccelerometer() const
+bool QRotationSensor::isFromAccelerometer() const
 {
     return false;
 }
