@@ -76,9 +76,6 @@ private:
     };
 
 private:
-    bool isAvailable(QString path) const;
-
-private:
     QHash<QString, PathData> m_paths;
     QCrmlParser m_crmlParser;
 };
