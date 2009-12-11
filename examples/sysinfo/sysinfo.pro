@@ -12,7 +12,8 @@ HEADERS  += dialog.h
 INCLUDEPATH += ../../src/systeminfo
 
 include(../examples.pri)
-qtAddLibrary(QtSystemInfo)
+CONFIG += mobility
+MOBILITY = systeminfo
 
 CONFIG += console
 

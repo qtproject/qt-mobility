@@ -1007,7 +1007,7 @@ void tst_QMediaPlayer::testPlaylist()
     // Test the player can bind to playlist again
     playlist = new QMediaPlaylist;
     playlist->setMediaObject(player);
-    QCOMPARE(playlist->mediaObject(), player);
+    QCOMPARE(playlist->mediaObject(), qobject_cast<QMediaObject*>(player));
 
     QCOMPARE(player->media(), QMediaContent());
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
@@ -1031,7 +1031,7 @@ void tst_QMediaPlayer::testPlaylist()
 
     player->play();
     playlist2->setMediaObject(player);
-    QCOMPARE(playlist2->mediaObject(), player);
+    QCOMPARE(playlist2->mediaObject(), qobject_cast<QMediaObject*>(player));
     QVERIFY(playlist->mediaObject() == 0);
     QCOMPARE(player->media(), playlist2->currentMedia());
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
