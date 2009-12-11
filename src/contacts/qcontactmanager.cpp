@@ -105,6 +105,10 @@ QTM_BEGIN_NAMESPACE
  */
 
 
+
+#define makestr(x) (#x)
+#define makename(x) makestr(x)
+
 /*!
     Returns a list of available manager ids that can be used when constructing
     a QContactManager.  If an empty id is specified to the constructor, the
@@ -116,6 +120,14 @@ QStringList QContactManager::availableManagers()
     ret << QLatin1String("memory") << QLatin1String("invalid");
     QContactManagerData::loadFactories();
     ret.append(QContactManagerData::m_engines.keys());
+
+    // now swizzle the default engine to pole position
+#if defined(Q_CONTACTS_DEFAULT_ENGINE)
+    if (ret.removeAll(QLatin1String(makename(Q_CONTACTS_DEFAULT_ENGINE)))) {
+        ret.prepend(QLatin1String(makename(Q_CONTACTS_DEFAULT_ENGINE)));
+    }
+#endif
+
     return ret;
 }
 
