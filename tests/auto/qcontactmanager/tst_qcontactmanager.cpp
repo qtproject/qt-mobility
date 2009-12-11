@@ -1067,6 +1067,11 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.managerName() == "invalid");
     QVERIFY(manager.implementationVersion() == 0);
 
+    /* also, test the other ctor behaviour is sane also */
+    QContactManager anotherManager("this should never work", 15);
+    QVERIFY(anotherManager.managerName() == "invalid");
+    QVERIFY(anotherManager.implementationVersion() == 0);
+
     /* Now test that all the operations fail */
     QVERIFY(manager.contacts().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
