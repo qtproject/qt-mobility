@@ -201,6 +201,9 @@ void ut_qtcontacts_trackerplugin::testSaveName()
 
 void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
 {
+    // use the same values for 2 contacts
+    for (int i = 0; i <2; i++ )
+    {
     QContact c;
     QContactLocalId initialId = c.localId();
     int detailsAdded = 0;
@@ -264,6 +267,7 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
         else
             QCOMPARE(detail.subTypes()[0], phoneValues.value(number).second);
     }
+    }
 }
 
 void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
@@ -319,6 +323,11 @@ void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
             }
         }
         QVERIFY(contactToTest.localId() == contactToSave.localId()); // Just to be sure we got the saved contact
+        qDebug()<<contactToTest.details<QContactPhoneNumber>().count();
+        foreach(QContactPhoneNumber numbber, contactToTest.details<QContactPhoneNumber>())
+        {
+            qDebug()<<numbber.values();
+        }
         QVERIFY(contactToTest.details<QContactPhoneNumber>().count() == 1);
         if (0 == iterations) {
             // perform context change
@@ -327,6 +336,7 @@ void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
             contactToTest.saveDetail(&phoneToEdit);
             contactToSave = contactToTest;
         }
+        QVERIFY(contactToTest.details<QContactPhoneNumber>().count() == 1);
     }
 }
 

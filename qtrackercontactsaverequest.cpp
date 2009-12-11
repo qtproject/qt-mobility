@@ -306,26 +306,26 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
     }
 }
 
-// Delete all existing phone numbers from the contact so that edits are
+// Remove all existing references to phone numbers from the contact so that edits are
 // reflected to Tracker correctly.
-void QTrackerContactSaveRequest::deletePhoneNumbers(RDFServicePtr service, const RDFVariable& rdfContactIn) {
-    RDFUpdate up;
-    RDFVariable rdfContact = rdfContactIn.deepCopy();
-    RDFVariable rdfContact2 = rdfContactIn.deepCopy();
+// Delete the references to phone numbers - not the numbers themselves as they remain in tracker
+// with their canonical URI form - might be linked to history.
+void QTrackerContactSaveRequest::deletePhoneNumbers(RDFServicePtr service, const RDFVariable& rdfContactIn)
+{
+    {
+        RDFUpdate up;
+        RDFVariable rdfContact = rdfContactIn.deepCopy();
+        up.addDeletion(rdfContact, nco::hasPhoneNumber::iri(), rdfContact.property<nco::hasPhoneNumber>());
+        service->executeQuery(up);
+    }
 
-    // Get the associations from the contact object.
-    RDFVariable rdfAffiliations = rdfContact.property<nco::hasAffiliation>();
-    RDFVariable rdfPhonesHome = rdfContact2.property<nco::hasPhoneNumber>();
-    RDFVariable rdfPhonesWork = rdfAffiliations.property<nco::hasPhoneNumber>();
-
-    // Delete the references to phone numbers and the numbers themselves.
-    up.addDeletion(rdfContact, nco::hasPhoneNumber::iri(), rdfPhonesHome);
-    up.addDeletion(rdfPhonesHome, rdf::type::iri(), rdfs::Resource::iri());
-
-    up.addDeletion(rdfAffiliations, nco::hasPhoneNumber::iri(), rdfPhonesWork);
-    up.addDeletion(rdfPhonesWork, rdf::type::iri(), rdfs::Resource::iri());
-
-    service->executeQuery(up);
+    // affiliation
+    {
+        RDFUpdate up;
+        RDFVariable rdfContact = rdfContactIn.deepCopy().property<nco::hasAffiliation>();
+        up.addDeletion(rdfContact, nco::hasPhoneNumber::iri(), rdfContact.property<nco::hasPhoneNumber>());
+        service->executeQuery(up);
+    }
 }
 
 /*!
@@ -339,8 +339,12 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
     RDFVariable varForInsert = var.deepCopy();
     foreach(const QContactDetail& det, details)
     {
-        QUrl newPhone = ::tracker()->createLiveNode().uri();
-        up.addInsertion(varForInsert, nco::hasPhoneNumber::iri(), newPhone);
+        QString value = det.value(QContactPhoneNumber::FieldNumber);
+        // Temporary, because affiliation is still used - to be refactored next week to use Live nodes
+        // using RFC 3966 canonical URI form
+        QUrl newPhone = QString("tel:%1").arg(value);
+        Live<nco::PhoneNumber> ncoPhone = service->liveNode(newPhone);
+
         QStringList subtypes = det.value<QStringList>(QContactPhoneNumber::FieldSubTypes);
 
         if( subtypes.contains(QContactPhoneNumber::SubTypeMobile))
@@ -360,7 +364,8 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
         else
             up.addInsertion(newPhone, rdf::type::iri(), nco::VoicePhoneNumber::iri());
 
-        up.addInsertion(newPhone, nco::phoneNumber::iri(), LiteralValue(det.value(QContactPhoneNumber::FieldNumber)));
+        up.addInsertion(newPhone, nco::phoneNumber::iri(), LiteralValue(value));
+        up.addInsertion(varForInsert, nco::hasPhoneNumber::iri(), newPhone);
     }
     service->executeQuery(up);
 }
@@ -375,14 +380,17 @@ void QTrackerContactSaveRequest::saveEmails(RDFServicePtr service, RDFVariable &
     RDFUpdate up;
     RDFVariable varForInsert = var.deepCopy();
     RDFVariable emails = var.property<nco::hasEmailAddress>();
-    RDFVariable types = emails.property<rdf::type>();
+    // delete previous references - keep email IRIs
     up.addDeletion(RDFVariableStatement(var, nco::hasEmailAddress::iri(), emails));
-    up.addDeletion(emails, rdf::type::iri(), types);
+
     foreach(const QContactDetail& det, details)
     {
-        QUrl newEmail = ::tracker()->createLiveNode().uri();
+        QString value = det.value(QContactEmailAddress::FieldEmailAddress);
+        // Temporary, because affiliation is still used - to be refactored next week to use only Live nodes
+        QUrl newEmail = QString("mailto:%1").arg(value);
+        Live<nco::EmailAddress> ncoEmail = service->liveNode(newEmail);
         up.addInsertion(newEmail, rdf::type::iri(), nco::EmailAddress::iri());
-        up.addInsertion(newEmail, nco::emailAddress::iri(), LiteralValue(det.value(QContactEmailAddress::FieldEmailAddress)));
+        up.addInsertion(newEmail, nco::emailAddress::iri(), LiteralValue(value));
         up.addInsertion(RDFVariableStatement(varForInsert, nco::hasEmailAddress::iri(), newEmail));
     }
     service->executeQuery(up);
