@@ -10,7 +10,8 @@ QT += gui
 HEADERS += landlinedialer.h landlinedialerplugin.h
 SOURCES += landlinedialer.cpp landlinedialerplugin.cpp
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

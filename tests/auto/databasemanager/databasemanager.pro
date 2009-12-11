@@ -50,4 +50,5 @@ symbian {
                     tst_databasemanager.cpp
 }
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework

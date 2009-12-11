@@ -34,8 +34,8 @@ SUBDIRS += samplephonebook \
 #System Information
 !maemo:SUBDIRS += sysinfo
 
-#Multimedia
-SUBDIRS += \
+#Multimedia - disabled on Symbian due to missing backend
+!symbian:SUBDIRS += \
         radio \
         player \
         cameracapture \
@@ -54,6 +54,6 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
     !win32-g++:SUBDIRS += \
         keepintouch\
         querymessages\
-        sendmessage\
+        writemessage\
         serviceactions
 }

@@ -7,7 +7,8 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 # Contacts Includepath
 INCLUDEPATH += . \

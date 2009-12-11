@@ -14,7 +14,8 @@ INCLUDEPATH += ../../../../src/contacts \
 
 INCLUDEPATH += ../../
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 SOURCES  += tst_qcontactactions.cpp
 
 # App local deployment

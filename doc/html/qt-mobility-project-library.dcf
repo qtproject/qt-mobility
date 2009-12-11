@@ -3179,11 +3179,11 @@
     <section ref="examples.html" title="Qt Mobility Examples">
         <keyword ref="examples.html">Qt Mobility Examples</keyword>
     </section>
-    <section ref="mobility.html" title="Qt Mobility Project APIs (Technology Preview)">
-        <keyword ref="mobility.html">Qt Mobility Project APIs (Technology Preview)</keyword>
+    <section ref="mobility.html" title="Qt Mobility Project APIs">
+        <keyword ref="mobility.html">Qt Mobility Project APIs</keyword>
     </section>
-    <section ref="index.html" title="Qt Mobility Project APIs (Technology Preview) Overview">
-        <keyword ref="index.html">Qt Mobility Project APIs (Technology Preview) Overview</keyword>
+    <section ref="index.html" title="Qt Mobility Project APIs Overview">
+        <keyword ref="index.html">Qt Mobility Project APIs Overview</keyword>
     </section>
     <section ref="service-frameworks.html" title="Qt Service Framework">
         <keyword ref="service-frameworks.html">Qt Service Framework</keyword>
@@ -3191,8 +3191,8 @@
     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian">
         <keyword ref="service-framework-on-symbian.html">Qt Service Framework on Symbian</keyword>
     </section>
-    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project (Technology Preview)">
-        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project (Technology Preview)</keyword>
+    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
+        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
@@ -3217,6 +3217,9 @@
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
+    <section ref="keepintouch.html" title="'Keep in Touch' Example">
+        <keyword ref="keepintouch.html">'Keep in Touch' Example</keyword>
+    </section>
     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML">
         <keyword ref="battery-charge.html">Accessing Publish and Subscribe from QML</keyword>
     </section>
@@ -3247,8 +3250,8 @@
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
-    <section ref="incomingcalls.html" title="Incoming Calls Example">
-        <keyword ref="incomingcalls.html">Incoming Calls Example</keyword>
+    <section ref="incomingcalls.html" title="Incoming Call Simulator">
+        <keyword ref="incomingcalls.html">Incoming Call Simulator</keyword>
     </section>
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
@@ -3268,6 +3271,9 @@
     <section ref="querymessages.html" title="Query Messages Example">
         <keyword ref="querymessages.html">Query Messages Example</keyword>
     </section>
+    <section ref="querymessages.html" title="Query Messages Example">
+        <keyword ref="querymessages.html">Query Messages Example</keyword>
+    </section>
     <section ref="quickstart.html" title="Quickstart Example">
         <keyword ref="quickstart.html">Quickstart Example</keyword>
     </section>
@@ -3280,8 +3286,8 @@
     <section ref="samplephonebook.html" title="Sample Phonebook Example">
         <keyword ref="samplephonebook.html">Sample Phonebook Example</keyword>
     </section>
-    <section ref="sendmessage.html" title="Send Message Example">
-        <keyword ref="sendmessage.html">Send Message Example</keyword>
+    <section ref="serviceactions.html" title="Service Actions Example">
+        <keyword ref="serviceactions.html">Service Actions Example</keyword>
     </section>
     <section ref="serviceactions.html" title="Service Actions Example">
         <keyword ref="serviceactions.html">Service Actions Example</keyword>
@@ -3300,6 +3306,9 @@
     </section>
     <section ref="sysinfo.html" title="System Information Example">
         <keyword ref="sysinfo.html">System Information Example</keyword>
+    </section>
+    <section ref="writemessage.html" title="Write Message Example">
+        <keyword ref="writemessage.html">Write Message Example</keyword>
     </section>
 </section>
 </DCF>

@@ -19,7 +19,8 @@ HEADERS += tst_qvaluespacesubscribershared.h
 
 DEFINES += QT_START_VALUESPACE
 
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -6,7 +6,8 @@ PLUGIN_TYPE = mediaservice
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 DEPENDPATH += .
 

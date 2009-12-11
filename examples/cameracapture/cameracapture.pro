@@ -4,7 +4,8 @@ TARGET = cameracapture
 INCLUDEPATH+=../../src/multimedia
 include(../examples.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 HEADERS = cameracapture.h \
     settings.h
