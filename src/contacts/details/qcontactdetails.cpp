@@ -41,10 +41,8 @@
 #include <QByteArray>
 #include <QUrl>
 #include <QFile>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
-#include <QByteArray>
+#include <QPixmap>
+#include <QImage>
 #include "qcontactmanager.h"
 #include "qtcontacts.h"
 
@@ -1806,42 +1804,32 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * Returns the avatar's image if the avatar's subtype is SubTypeImage.
  */
-QImage QContactAvatar::avatarImage() const
+QPixmap QContactAvatar::avatarImage() const
 {
-    QImage img;
     if (subType() == QContactAvatar::SubTypeImage) {
         QUrl url(avatar());
-        
-        if (!url.isValid())
-            url =  QUrl::fromLocalFile(avatar());
+        if (url.scheme().isEmpty()) {
+            return QPixmap(avatar());
+        }
 
-        if (url.isValid()) {
-            QNetworkAccessManager* manager = new QNetworkAccessManager();
-            QNetworkRequest req;
+        if (url.scheme().startsWith("file")){
+            return QPixmap(url.toLocalFile());
+        }
 
-            req.setUrl(url);
-            QNetworkReply* reply = manager->get(req);
-            
-            reply->waitForReadyRead(-1);
-            //XXX the QImage can detect the image format automatically?
-            img = QImage::fromData(reply->readAll());
-            reply->deleteLater();
-            delete manager;
+        if (url.scheme().startsWith("data")){
+            QPixmap::fromImage(QImage::fromData(url.toEncoded(QUrl::RemoveScheme)));
         }
     }
-    return img;
-    
+
+    return QPixmap();
 }
 
 /*!
  * Returns the avatar's thumbnail image.
  */
-QImage QContactAvatar::thumbnail() const
+QPixmap QContactAvatar::thumbnail(const QSize& size) const
 {
-    //XXX todo how to report the default thumbnail size?
-    // or perhaps let the user call scaled() function directly?
-    QImage result = avatarImage().scaled(200, 150);
-    return result;
+    return avatarImage().scaled(size);
 }
 
 QTM_END_NAMESPACE
