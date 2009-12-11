@@ -67,6 +67,7 @@ CntDisplayLabel::~CntDisplayLabel()
  */
 void CntDisplayLabel::setDisplayLabelDetails()
 {
+    //this will be variated in the future
     //add the contact details definition names + fields to be used.
     //preferred details to be used (note qmap sets the values in reverse order)
     QMap<QString, QString> preferredContactDetails;
@@ -141,8 +142,13 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
                 displayLabel =  contactDetail.value(iterator.value());
             }
             else{ //read the value and append it to the display label
-                displayLabel.append(", ");
-                displayLabel.append(contactDetail.value(iterator.value()));
+                QString label = contactDetail.value(iterator.value());
+                
+                if(!label.isEmpty())
+                {
+                    displayLabel.append(delimiter());
+                    displayLabel.append(label);
+                }
             }
         }
     }
@@ -155,6 +161,16 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
     }
     
     return displayLabel;
+}
+
+/*! 
+ * delemiter to be used in display label
+ * \return delemiter 
+ */
+QString CntDisplayLabel::delimiter() const
+{
+    //this will be variated in the future.
+    return " ";
 }
 
 /*!

@@ -356,6 +356,9 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             }
             case RMobilePhoneBookStore::ETagPBTonNpi:
             {
+                // Note, that TON info can be incorporated into the phone number by Etel
+                // implementation (TSY). E.g. this is the case with Nokia TSY.  
+                // Here general case is implemented.
                 PbkPrintToLog(_L("CntSymbianSimEngine::decodeSimContactsL() - ETagPBTonNpi"));
                 // Check number type, we are only interested if it's international or not.
                 // We assume here that ETagPBTonNpi always comes after ETagPBNumber, not before.
