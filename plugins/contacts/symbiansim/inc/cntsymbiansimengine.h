@@ -56,6 +56,8 @@
 #include "qcontactmanagerenginefactory.h"
 #include <etelmm.h>
 
+QTM_USE_NAMESPACE
+
 #define CNT_SYMBIANSIM_MANAGER_NAME "symbiansim"
 
 class CntSymbianSimEngine : public QContactManagerEngine
@@ -67,32 +69,32 @@ public:
     ~CntSymbianSimEngine();
     void deref();
     QString managerName() const;
-    
+
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
- 
+
 private:
     QContact fetchContactL(const QContactLocalId &localId) const;
     QList<QContact> fetchContactsL() const;
     void transformError(TInt symbianError, QContactManager::Error& qtError) const;
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
-    
+
 private:
     RTelServer etelServer;
     RMobilePhone etelPhone;
     RMobilePhoneBookStore etelStore;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV1 etelStoreInfo;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg etelInfoPckg;
-    
+
     QString m_managerUri;
 };
 
 class Q_DECL_EXPORT CntSymbianSimFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;

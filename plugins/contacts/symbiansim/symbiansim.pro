@@ -37,7 +37,8 @@ symbian: {
             -lcntmodel \
             -letel \
             -letelmm \
-            -lflogger
+            -lflogger \
+            -lefsrv
 
     target.path = /sys/bin
     INSTALLS += target
