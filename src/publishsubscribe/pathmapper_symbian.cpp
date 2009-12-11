@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "pathmapper_symbian.h"
+#include "xqsettingsmanager.h"
 #include <QDir>
 
 #include <QDebug>
@@ -75,15 +76,32 @@ bool PathMapper::getChildren(QString path, QSet<QString> &children) const
         if (path.right(1) != QString(QLatin1Char('/')))
             path += QLatin1Char('/');
         if (i.key().startsWith(path)) {
-            QString value = i.key().mid(path.size());
-            int index = value.indexOf(QLatin1Char('/'));
-            if (index != -1)
-                value = value.mid(0, index);
-            children.insert(value);
-            found = true;
+            if (isAvailable(i.key())) {
+                QString value = i.key().mid(path.size());
+                int index = value.indexOf(QLatin1Char('/'));
+                if (index != -1)
+                    value = value.mid(0, index);
+                children.insert(value);
+                found = true;
+            }
         }
     }
     return found;
+}
+
+bool PathMapper::isAvailable(QString path) const
+{
+    PathMapper::Target target;
+    quint32 category;
+    quint32 key;
+    if (resolvePath(path, target, category, key)) {
+        XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+        XQSettingsManager settingsManager;
+        settingsManager.readItemValue(settingsKey);
+        XQSettingsManager::Error error = settingsManager.error();
+        return settingsManager.error() != XQSettingsManager::NotFoundError;
+    }
+    return false;
 }
 
 bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const

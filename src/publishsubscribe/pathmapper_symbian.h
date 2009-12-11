@@ -68,11 +68,15 @@ private:
         PathData() : m_target(TargetRPropery), m_category(0), m_key(0) {}
         PathData(Target target, quint32 category, quint32 key) :
             m_target(target), m_category(category), m_key(key) {}
+
     public:
         Target m_target;
         quint32 m_category;
         quint32 m_key;
     };
+
+private:
+    bool isAvailable(QString path) const;
 
 private:
     QHash<QString, PathData> m_paths;

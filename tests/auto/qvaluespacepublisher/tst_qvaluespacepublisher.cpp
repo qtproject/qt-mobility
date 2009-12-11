@@ -422,6 +422,7 @@ class WriteThread : public QThread
 
 public:
     WriteThread(const QString &path, const QUuid &uuid, unsigned int count);
+    ~WriteThread();
 
     void runSequential() { run(); }
 
@@ -438,6 +439,18 @@ WriteThread::WriteThread(const QString &path, const QUuid &uuid, unsigned int co
 :   path(path), count(count)
 {
     publisher = new QValueSpacePublisher(uuid, path, this);
+}
+
+WriteThread::~WriteThread()
+{
+#ifdef Q_OS_SYMBIAN
+    //Cleanup published values since the SymbianSettingLayer is permanent
+    const QString key("key%1");
+    for (unsigned int i = 0; i < count; ++i)
+        publisher->resetValue(key.arg(i));
+
+    publisher->sync();
+#endif
 }
 
 void WriteThread::run()
