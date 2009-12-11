@@ -6,8 +6,14 @@ include(../../common.pri)
 
 symbian {
     SUBDIRS += symbian
-    exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+
+    # SIM backend depends on etel MM APIs
+    exists($${EPOCROOT}epoc32/release/winscw/udeb/etelmm.lib) \
+    | exists($${EPOCROOT}epoc32/release/armv5/lib/etelmm.lib) {
         SUBDIRS += symbiansim
+        message("SIM backend enabled")
+    } else {
+        message("SIM backend disabled")
     }
 }
 wince*:SUBDIRS += wince
