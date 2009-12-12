@@ -324,6 +324,10 @@ QList<QContactManager::Error> QContactTrackerEngine::saveContacts(QList<QContact
     engine.startRequest(&request);
     /// @todo what should be the delay
     engine.waitForRequestFinished(&request, 1000*contacts->size());
+    /// @todo what should we do in case request.isFinished() == false
+    if (request.isFinished() == false) {
+        qWarning() << "QContactTrackerEngine::saveContacts:" << "request not finished";
+    }
     error = request.error();
     for (int i = 0; i < contacts->size(); ++i) {
         (*contacts)[i] = request.contacts().at(i);
