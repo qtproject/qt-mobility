@@ -123,8 +123,7 @@ private:
     }
 
 private slots:
-    void valueChanged(const XQSettingsKey& key, const QVariant& value);
-    void itemDeleted(const XQSettingsKey& key);
+    void notifyChange(const XQSettingsKey& key);
 
 private:    //data
     PathMapper pathMapper;

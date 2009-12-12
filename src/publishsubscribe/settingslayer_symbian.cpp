@@ -53,9 +53,9 @@ QVALUESPACE_AUTO_INSTALL_LAYER(SymbianSettingsLayer);
 SymbianSettingsLayer::SymbianSettingsLayer()
 {
     connect(&m_settingsManager, SIGNAL(valueChanged(const XQSettingsKey&, const QVariant&)),
-            this, SLOT(valueChanged(const XQSettingsKey&, const QVariant&)));
+            this, SLOT(notifyChange(const XQSettingsKey&)));
     connect(&m_settingsManager, SIGNAL(itemDeleted(const XQSettingsKey&)),
-            this, SLOT(itemDeleted(const XQSettingsKey&)));
+            this, SLOT(notifyChange(const XQSettingsKey&)));
 }
 
 SymbianSettingsLayer::~SymbianSettingsLayer()
@@ -435,19 +435,7 @@ bool SymbianSettingsLayer::notifyInterest(Handle, bool)
     return false;
 }
 
-void SymbianSettingsLayer::valueChanged(const XQSettingsKey& key, const QVariant& value)
-{
-    QByteArray hash;
-    hash += qHash(key.target());
-    hash += qHash(key.uid());
-    hash += qHash(key.key());
-
-    if (m_monitoringHandles.contains(hash)) {
-        emit handleChanged(Handle(m_monitoringHandles.value(hash)));
-    }
-}
-
-void SymbianSettingsLayer::itemDeleted(const XQSettingsKey& key)
+void SymbianSettingsLayer::notifyChange(const XQSettingsKey& key)
 {
     QByteArray hash;
     hash += qHash(key.target());
