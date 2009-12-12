@@ -199,22 +199,9 @@ bool QTrackerContactSaveRequest::contactHasWorkRelatedDetails(const QContact &c)
 // create nco::Affiliation if there is not one already in tracker
 void QTrackerContactSaveRequest::addAffiliation(RDFServicePtr service, QContactLocalId contactId)
 {
-    RDFVariable contact = RDFVariable::fromType<nco::PersonContact>();
-    contact.property<nco::contactUID> () = LiteralValue(QString::number(contactId));
-    RDFVariable contact1 = contact.deepCopy();
-    RDFUpdate up;
-
-    // here we will specify to add new node for affiliation if it doesnt exist already
-    RDFVariable affiliation = contact.optional().property<nco::hasAffiliation> ();
-    RDFFilter doesntExist = affiliation.isBound().not_();// do not create if it already exist
-    QUrl newAffiliation = ::tracker()->createLiveNode().uri();
-    QList<RDFVariableStatement> insertions;
-    insertions << RDFVariableStatement(contact, nco::hasAffiliation::iri(), newAffiliation)
-    << RDFVariableStatement(newAffiliation, rdf::type::iri(), nco::Affiliation::iri());
-
-    // this means that filter applies to both insertions
-    up.addInsertion(insertions);
-    service->executeQuery(up);
+    Live<nco::PersonContact> ncoContact = service->liveNode(QUrl("contact:"+(QString::number(contactId))));
+    Live<nco::Affiliation> ncoAffiliation = service->liveNode(QUrl("affiliation:"+(QString::number(contactId))));
+    ncoContact->setHasAffiliation(ncoAffiliation);
 }
 
 void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
