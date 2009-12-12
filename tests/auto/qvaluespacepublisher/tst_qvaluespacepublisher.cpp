@@ -622,7 +622,7 @@ void tst_QValueSpacePublisher::threads()
         qDebug() << "Actual Paths:" << subPaths;
     }
     QVERIFY(subPaths.toSet() == expectedPaths.toSet());
-
+    
     while (!subPaths.isEmpty()) {
         QValueSpaceSubscriber threadItem;
         threadItem.setPath(subscriber);
@@ -638,13 +638,7 @@ void tst_QValueSpacePublisher::threads()
 
         while (!keys.isEmpty()) {
             const QString key = keys.takeFirst();
-            #ifdef Q_OS_SYMBIAN
-                QByteArray readData(threadItem.value(key).toByteArray());
-                QString value = QString::fromUtf16((const ushort *)readData.constData(), readData.size() / 2);
-                QCOMPARE(value, expectedValues.value(key));
-            #else
-                QCOMPARE(threadItem.value(key).toString(), expectedValues.value(key));
-            #endif
+            QCOMPARE(threadItem.value(key).toString(), expectedValues.value(key));
         }
     }
 

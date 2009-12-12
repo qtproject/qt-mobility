@@ -45,6 +45,7 @@
 #include "qvaluespacepublisher.h"
 
 #include <QHash>
+#include <QSet>
 #include <QByteArray>
 #include <QMultiMap>
 
@@ -123,11 +124,13 @@ private:
 
 private slots:
     void valueChanged(const XQSettingsKey& key, const QVariant& value);
+    void itemDeleted(const XQSettingsKey& key);
 
 private:    //data
     PathMapper pathMapper;
     XQSettingsManager m_settingsManager;
     QHash<QByteArray, SymbianSettingsHandle *> m_monitoringHandles;
+    QSet<QString> m_monitoringPaths;
 };
 
 QTM_END_NAMESPACE

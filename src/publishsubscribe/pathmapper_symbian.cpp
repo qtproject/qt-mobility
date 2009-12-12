@@ -69,37 +69,40 @@ PathMapper::~PathMapper()
 
 bool PathMapper::getChildren(QString path, QSet<QString> &children) const
 {
-    bool found = false;
     if (path.right(1) != QString(QLatin1Char('/')))
         path += QLatin1Char('/');
-    XQSettingsManager settingsManager;
+    foreach (QString foundPath, childPaths(path)) {
+        QString value = foundPath.mid(path.size());
+        int index = value.indexOf(QLatin1Char('/'));
+        if (index != -1)
+            value = value.mid(0, index);
+        children.insert(value);
+    }
+    return children.count() > 0;
+}
+
+QStringList PathMapper::childPaths(QString basePath) const
+{
+    QStringList children;
+    if (basePath.right(1) == QString(QLatin1Char('/')))
+        basePath.chop(1);
     QHashIterator<QString, PathData> i(m_paths);
+    XQSettingsManager settingsManager;
     while (i.hasNext()) {
         i.next();
-        if (i.key().startsWith(path)) {
-            QString value = i.key().mid(path.size());
-            int index = value.indexOf(QLatin1Char('/'));
-            if (index != -1) {  //Subdirectory
-                value = value.mid(0, index);
-                children.insert(value);
-                found = true;
-            } else {    //Leaf
-                const PathData &data = i.value();
-                PathMapper::Target target = data.m_target;;
-                quint32 category = data.m_category;
-                quint32 key = data.m_key;
-                XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
-                settingsManager.readItemValue(settingsKey);
-
-                if (settingsManager.error() != XQSettingsManager::NotFoundError) {
-                    //QString value = i.key().mid(path.size());
-                    children.insert(value);
-                    found = true;
-                }
+        if (i.key().startsWith(basePath)) {
+            const PathData &data = i.value();
+            PathMapper::Target target = data.m_target;;
+            quint32 category = data.m_category;
+            quint32 key = data.m_key;
+            XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+            settingsManager.readItemValue(settingsKey);
+            if (settingsManager.error() != XQSettingsManager::NotFoundError) {
+                children << i.key();
             }
         }
     }
-    return found;
+    return children;
 }
 
 bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const

@@ -443,7 +443,11 @@ void tst_QValueSpaceSubscriber::testConstructor()
     QValueSpaceSubscriber *subscriber = qvariant_cast<QValueSpaceSubscriber*>(testItem);
     QCOMPARE(subscriber->parent(), (QObject*)this);
     QCOMPARE(subscriber->value(), value);
-    QCOMPARE(subscriber->subPaths().toSet(), subPaths.toSet());
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber->subPaths().toSet().contains(subPaths.toSet()));
+    #else
+        QCOMPARE(subscriber->subPaths().toSet(), subPaths.toSet());
+    #endif
     QCOMPARE(subscriber->path(), path);
     QCOMPARE(subscriber->value(relItemPath, 100).toInt(), expectedValue);
 }
@@ -510,23 +514,43 @@ void tst_QValueSpaceSubscriber::testPathChanges()
                   << "double" << "float" << "QChar";
 
     QCOMPARE(subscriber.path(), QLatin1String("/"));
-    QCOMPARE(subscriber.subPaths().toSet(), rootPaths.toSet());
-
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(rootPaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), rootPaths.toSet());
+    #endif
+    
     subscriber.cd("home");
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
-    QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
-
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(homePaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
+    #endif
+    
     subscriber.cd("user");
     QCOMPARE(subscriber.path(), QLatin1String("/home/user"));
-    QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
-
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
+    #endif
+    
     subscriber.cdUp();
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
-    QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
-
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(homePaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
+    #endif
+    
     subscriber.cd("/home/user");
     QCOMPARE(subscriber.path(), QLatin1String("/home/user"));
-    QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
+    #endif
 }
 
 void tst_QValueSpaceSubscriber::contentsChanged_data()
@@ -773,6 +797,10 @@ void tst_QValueSpaceSubscriber::ipcTests_data()
 
 void tst_QValueSpaceSubscriber::ipcTests()
 {
+#ifdef Q_OS_SYMBIAN
+    QSKIP("No multiple processes in Symbian emulator", SkipAll);
+#endif
+
 #if defined(QT_NO_PROCESS)
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
