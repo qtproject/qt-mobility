@@ -104,68 +104,6 @@ void QTrackerContactSaveRequest::computeProgress()
     }
 }
 
-void QTrackerContactSaveRequest::saveContact(QContact &contact)
-{
-    QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (parent());
-    Q_ASSERT(engine);
-    QContactManager::Error error;
-    // Ensure that the contact data is ok. This comes from QContactModelEngine
-    if(!engine->validateContact(contact, error)) {
-        contactsFinished << contact;
-        errorsOfContactsFinished << error;
-        computeProgress();
-        return;
-    }
-
-    QTrackerContactsLive cLive;
-    Live<nco::PersonContact> ncoContact;
-    RDFServicePtr service = cLive.service();
-
-    if(contact.localId() == 0) {
-        // Save new contact. compute ID
-        bool ok;
-        QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
-        // what if both processes read in the same time and write at the same time, no increment
-        unsigned int m_lastUsedId = definitions.value("nextAvailableContactId", "1").toUInt(&ok);
-        definitions.setValue("nextAvailableContactId", QString::number(++m_lastUsedId));
-
-        ncoContact = service->liveNode(QUrl("contact:"+(QString::number(m_lastUsedId))));
-        QContactId id; id.setLocalId(m_lastUsedId);
-        contact.setId(id);
-        ncoContact->setContactUID(QString::number(m_lastUsedId));
-        ncoContact->setContentCreated(QDateTime::currentDateTime());
-    }  else {
-        ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
-        ncoContact->setContentLastModified(QDateTime::currentDateTime());
-    }
-
-    // if there are work related details, need to be saved to Affiliation.
-    if( QTrackerContactSaveRequest::contactHasWorkRelatedDetails(contact))
-        addAffiliation(service, contact.localId());
-
-    // Add a special tag for contact added from addressbook, not from fb, telepathy etc.
-    // this is important when returning contacts to sync team
-    RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
-    rdfContact.property<nco::contactUID>() = LiteralValue(QString::number(contact.localId()));
-    addTag(service, rdfContact, "addressbook");
-
-    saveContactDetails( service, ncoContact, contact);
-
-    // name & nickname - different way from other details
-    cLive.setLiveContact(ncoContact);
-    cLive.setQContact(contact);
-    if( !contact.detail<QContactName>().isEmpty() || !contact.detail<QContactNickname>().isEmpty() )
-        cLive.saveName();
-
-    // remember to commit the transaction, otherwise all changes will be rolled back.
-    cLive.commit();
-
-    // TODO add async signal handling of for transaction's commitFinished
-    contactsFinished << contact;
-    errorsOfContactsFinished << QContactManager::NoError; // TODO ask how to get error code from tracker
-    computeProgress();
-}
-
 void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
 {
     QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (parent());
