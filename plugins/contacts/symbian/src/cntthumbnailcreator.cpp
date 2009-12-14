@@ -41,6 +41,7 @@
 #include "cntthumbnailcreator.h"
 #include "cntsymbiantransformerror.h"
 
+#include <cntdef.h>
 #include <cntfield.h>
 #include <cntfldst.h>
 #include <imageconversion.h>
