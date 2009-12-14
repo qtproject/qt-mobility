@@ -42,47 +42,20 @@
 #include "videosurfacemediatypeenum.h"
 
 #include "videosurfacemediatype.h"
+#include "videosurfacepin.h"
 
-VideoSurfaceMediaTypeEnum::VideoSurfaceMediaTypeEnum(const QVector<AM_MEDIA_TYPE> &types)
+VideoSurfaceMediaTypeEnum::VideoSurfaceMediaTypeEnum(VideoSurfacePin *pin, int token, int index)
     : m_ref(1)
-    , m_mediaTypes(types)
-    , m_index(0)
+    , m_pin(pin)
+    , m_token(token)
+    , m_index(index)
 {
-}
-
-VideoSurfaceMediaTypeEnum::VideoSurfaceMediaTypeEnum(const QList<QVideoFrame::PixelFormat> &formats)
-    : m_ref(1)
-    , m_index(0)
-{
-    m_mediaTypes.reserve(formats.count());
-
-    AM_MEDIA_TYPE type;
-    type.majortype = MEDIATYPE_Video;
-    type.bFixedSizeSamples = TRUE;
-    type.bTemporalCompression = FALSE;
-    type.lSampleSize = 0;
-    type.formattype = GUID_NULL;
-    type.pUnk = 0;
-    type.cbFormat = 0;
-    type.pbFormat = 0;
-
-    foreach (QVideoFrame::PixelFormat format, formats) {
-        type.subtype = VideoSurfaceMediaType::convertPixelFormat(format);
-
-        if (type.subtype != MEDIASUBTYPE_None)
-            m_mediaTypes.append(type);
-    }
+    m_pin->AddRef();
 }
 
 VideoSurfaceMediaTypeEnum::~VideoSurfaceMediaTypeEnum()
 {
-    QVector<AM_MEDIA_TYPE>::iterator it;
-    for (it = m_mediaTypes.begin(); it != m_mediaTypes.end(); ++it) {
-        if (it->cbFormat > 0)
-            CoTaskMemFree(it->pbFormat);
-        if (it->pUnk)
-            it->pUnk->Release();
-    }
+    m_pin->Release();
 }
 
 HRESULT VideoSurfaceMediaTypeEnum::QueryInterface(REFIID riid, void **ppvObject)
@@ -120,43 +93,18 @@ ULONG VideoSurfaceMediaTypeEnum::Release()
 HRESULT VideoSurfaceMediaTypeEnum::Next(
         ULONG cMediaTypes, AM_MEDIA_TYPE **ppMediaTypes, ULONG *pcFetched)
 {
-    if (ppMediaTypes && (cMediaTypes == 1 || pcFetched)) {
-        int count = qBound<int>(0, m_mediaTypes.count() - m_index, cMediaTypes);
 
-        for (int i = 0; i < count; ++i, ++m_index) {
-            ppMediaTypes[i] = reinterpret_cast<AM_MEDIA_TYPE *>(
-                    CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE)));
-
-            if (ppMediaTypes) {
-                VideoSurfaceMediaType::copy(ppMediaTypes[i], m_mediaTypes.at(i));
-            } else {
-                for (--i; i >= 0; --i)
-                    CoTaskMemFree(ppMediaTypes[i]);
-
-                if (pcFetched)
-                    *pcFetched = 0;
-
-                return E_OUTOFMEMORY;
-            }
-        }
-        if (pcFetched)
-            *pcFetched = count;
-
-        return count == cMediaTypes ? S_OK : S_FALSE;
-    } else  {
-        return E_POINTER;
-    }
+    return m_pin->nextMediaType(m_token, &m_index, cMediaTypes, ppMediaTypes, pcFetched);
 }
 
 HRESULT VideoSurfaceMediaTypeEnum::Skip(ULONG cMediaTypes)
 {
-    m_index = qMin<int>(m_index + cMediaTypes, m_mediaTypes.size());
-
-    return m_index < m_mediaTypes.size() ? S_OK : S_FALSE;
+    return m_pin->skipMediaType(m_token, &m_index, cMediaTypes);
 }
 
 HRESULT VideoSurfaceMediaTypeEnum::Reset()
 {
+    m_token = m_pin->currentMediaTypeToken();
     m_index = 0;
 
     return S_OK;
@@ -164,7 +112,5 @@ HRESULT VideoSurfaceMediaTypeEnum::Reset()
 
 HRESULT VideoSurfaceMediaTypeEnum::Clone(IEnumMediaTypes **ppEnum)
 {
-    *ppEnum = new VideoSurfaceMediaTypeEnum(m_mediaTypes);
-
-    return S_OK;
+    return m_pin->cloneMediaType(m_token, m_index, ppEnum);
 }

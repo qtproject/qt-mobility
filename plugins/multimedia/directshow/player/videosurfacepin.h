@@ -45,6 +45,7 @@
 #include "videosurfacemediatype.h"
 
 #include <QtCore/qbasictimer.h>
+#include <QtCore/qcoreevent.h>
 #include <QtCore/qmutex.h>
 #include <QtCore/qsemaphore.h>
 #include <QtCore/qstring.h>
@@ -54,6 +55,7 @@
 class QAbstractVideoSurface;
 
 class VideoSurfaceFilter;
+class VideoSurfaceMediaTypeEnum;
 
 class VideoSurfacePin
     : public QObject
@@ -110,11 +112,29 @@ public:
     HRESULT STDMETHODCALLTYPE ReceiveMultiple(IMediaSample **pSamples, long nSamples, long *nSamplesProcessed);
     HRESULT STDMETHODCALLTYPE ReceiveCanBlock();
 
+    int currentMediaTypeToken();
+    HRESULT nextMediaType(
+            int token, int *index, ULONG count, AM_MEDIA_TYPE **types, ULONG *fetchedCount);
+    HRESULT skipMediaType(int token, int *index, ULONG count);
+    HRESULT cloneMediaType(int token, int index, IEnumMediaTypes **enumeration);
+
 protected:
     void customEvent(QEvent *event);
 
+private Q_SLOTS:
+    void supportedFormatsChanged();
+
 private:
-    void scheduleNextFrame();
+    HRESULT start();
+    void stop();
+    void flush();
+
+    enum
+    {
+        StartSurface = QEvent::User + 1,
+        StopSurface,
+        FlushSurface
+    };
 
     LONG m_ref;
     FILTER_STATE m_state;
@@ -124,7 +144,10 @@ private:
     IPin *m_peer;
     IMemAllocator *m_allocator;
     IReferenceClock *m_clock;
+    HRESULT m_startResult;
+    int m_mediaTypeToken;
     VideoSurfaceMediaType m_mediaType;
+    QVector<AM_MEDIA_TYPE> m_mediaTypes;
     QString m_id;
     QVideoSurfaceFormat m_surfaceFormat;
     QVideoFrame m_pendingFrame;

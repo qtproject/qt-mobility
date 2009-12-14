@@ -46,6 +46,7 @@
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>
+#include <QtCore/qthread.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 
 #include <QtDebug>
@@ -59,18 +60,20 @@ VideoSurfacePin::VideoSurfacePin(VideoSurfaceFilter *filter, QAbstractVideoSurfa
     , m_peer(0)
     , m_allocator(0)
     , m_clock(0)
+    , m_startResult(S_OK)
+    , m_mediaTypeToken(0)
     , m_id(QString::fromLatin1("reference"))
     , m_renderEvent(::CreateEvent(0, 0, 0, 0))
     , m_flushEvent(::CreateEvent(0, 0, 0, 0))
     , m_flushing(false)
 {
+    connect(surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
 }
 
 VideoSurfacePin::~VideoSurfacePin()
 {
     Q_ASSERT(!m_allocator);
     Q_ASSERT(!m_peer);
-
 
     ::CloseHandle(m_renderEvent);
     ::CloseHandle(m_flushEvent);
@@ -149,31 +152,64 @@ HRESULT VideoSurfacePin::ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE
         return E_POINTER;
     } else if (!pmt) {
         return E_POINTER;
-    } else if (m_peer) {
-        return VFW_E_ALREADY_CONNECTED;
-    } else if (pmt->majortype != MEDIATYPE_Video) {
+    } else {
+        HRESULT hr;
+        QMutexLocker locker(&m_mutex);
+
+        if (m_peer) {
+            hr = VFW_E_ALREADY_CONNECTED;
+        } else if (pmt->majortype != MEDIATYPE_Video) {
+            hr = VFW_E_TYPE_NOT_ACCEPTED;
+        } else {
+            m_surfaceFormat = VideoSurfaceMediaType::formatFromType(*pmt);
+            m_bytesPerLine = VideoSurfaceMediaType::bytesPerLine(m_surfaceFormat);
+
+            if (thread() == QThread::currentThread()) {
+                hr = start();
+            } else {
+                QCoreApplication::postEvent(this, new QEvent(QEvent::Type(StartSurface)));
+
+                ::WaitForSingleObject(m_flushEvent, INFINITE);
+                ::ResetEvent(m_flushEvent);
+
+                hr = m_startResult;
+            }
+        }
+        if (hr == S_OK) {
+           m_peer = pConnector;
+           m_peer->AddRef();
+
+           VideoSurfaceMediaType::copy(&m_mediaType, *pmt);
+        }
+        return hr;
+    }
+}
+
+HRESULT VideoSurfacePin::start()
+{
+    if (!m_surface->start(m_surfaceFormat)) {
         return VFW_E_TYPE_NOT_ACCEPTED;
     } else {
-        m_surfaceFormat = VideoSurfaceMediaType::formatFromType(*pmt);
-        m_bytesPerLine = VideoSurfaceMediaType::bytesPerLine(m_surfaceFormat);
-
-        if (!m_surface->start(m_surfaceFormat)) {
-            return VFW_E_TYPE_NOT_ACCEPTED;
-        } else {
-            m_peer = pConnector;
-            m_peer->AddRef();
-
-            VideoSurfaceMediaType::copy(&m_mediaType, *pmt);
-
-            return S_OK;
-        }
+        return S_OK;
     }
 }
 
 HRESULT VideoSurfacePin::Disconnect()
 {
+    QMutexLocker locker(&m_mutex);
+
     if (!m_peer)
         return S_FALSE;
+
+    if (thread() == QThread::currentThread()) {
+        stop();
+    } else {
+        QCoreApplication::postEvent(this, new QEvent(QEvent::Type(StopSurface)));
+
+        ::WaitForSingleObject(m_flushEvent, INFINITE);
+
+        ::ResetEvent(m_flushEvent);
+    }
 
     m_mediaType.clear();
 
@@ -185,23 +221,30 @@ HRESULT VideoSurfacePin::Disconnect()
     m_peer->Release();
     m_peer = 0;
 
-    m_surface->stop();
-
     return S_OK;
+}
+
+void VideoSurfacePin::stop()
+{
+    m_surface->stop();
 }
 
 HRESULT VideoSurfacePin::ConnectedTo(IPin **ppPin)
 {
     if (!ppPin) {
         return E_POINTER;
-    } else if (!m_peer) {
-        return VFW_E_NOT_CONNECTED;
     } else {
-        m_peer->AddRef();
+        QMutexLocker locker(&m_mutex);
 
-        *ppPin = m_peer;
+        if (!m_peer) {
+            return VFW_E_NOT_CONNECTED;
+        } else {
+            m_peer->AddRef();
 
-        return S_OK;
+            *ppPin = m_peer;
+
+            return S_OK;
+        }
     }
 }
 
@@ -209,12 +252,16 @@ HRESULT VideoSurfacePin::ConnectionMediaType(AM_MEDIA_TYPE *pmt)
 {
     if (!pmt) {
         return E_POINTER;
-    } else if (!m_peer) {
-        return VFW_E_NOT_CONNECTED;
     } else {
-        VideoSurfaceMediaType::copy(pmt, m_mediaType);
+        QMutexLocker locker(&m_mutex);
 
-        return S_OK;
+        if (!m_peer) {
+            return VFW_E_NOT_CONNECTED;
+        } else {
+            VideoSurfaceMediaType::copy(pmt, m_mediaType);
+
+            return S_OK;
+        }
     }
 }
 
@@ -223,6 +270,8 @@ HRESULT VideoSurfacePin::QueryPinInfo(PIN_INFO *pInfo)
     if (!pInfo) {
         return E_POINTER;
     } else {
+        // Don't lock, the filter and id are static.
+
         m_filter->AddRef();
 
         pInfo->pFilter = m_filter;
@@ -239,6 +288,8 @@ HRESULT VideoSurfacePin::QueryId(LPWSTR *Id)
     if (!Id) {
         return E_POINTER;
     } else {
+        // Don't lock, the id is static.
+
         int bytes = (m_id.length() + 1) * 2;
 
         *Id = static_cast<LPWSTR>(::CoTaskMemAlloc(bytes));
@@ -261,7 +312,9 @@ HRESULT VideoSurfacePin::EnumMediaTypes(IEnumMediaTypes **ppEnum)
     if (!ppEnum) {
         return E_POINTER;
     } else {
-        *ppEnum = new VideoSurfaceMediaTypeEnum(m_surface->supportedPixelFormats());
+        QMutexLocker locker(&m_mutex);
+
+        *ppEnum = new VideoSurfaceMediaTypeEnum(this, m_mediaTypeToken);
 
         return S_OK;
     }
@@ -289,9 +342,14 @@ HRESULT VideoSurfacePin::BeginFlush()
     QMutexLocker locker(&m_mutex);
 
     m_pendingFrame = QVideoFrame();
-    m_surface->present(QVideoFrame());
 
-    ::SetEvent(m_flushEvent);
+    if (thread() == QThread::currentThread()) {
+        flush();
+    } else {
+        QCoreApplication::postEvent(this, new QEvent(QEvent::Type(FlushSurface)));
+
+        ::WaitForSingleObject(m_flushEvent, INFINITE);
+    }
 
     return S_OK;
 }
@@ -301,14 +359,20 @@ HRESULT VideoSurfacePin::EndFlush()
     QMutexLocker locker(&m_mutex);
 
     m_flushing = false;
-    
+
     ::ResetEvent(m_flushEvent);
 
     return S_OK;
 }
 
-HRESULT VideoSurfacePin::NewSegment(
-        REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
+void VideoSurfacePin::flush()
+{
+    m_surface->present(QVideoFrame());
+
+    ::SetEvent(m_flushEvent);
+}
+
+HRESULT VideoSurfacePin::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 {
     return S_OK;
 }
@@ -326,24 +390,24 @@ HRESULT VideoSurfacePin::QueryDirection(PIN_DIRECTION *pPinDir)
 
 HRESULT VideoSurfacePin::GetAllocator(IMemAllocator **ppAllocator)
 {
-    QMutexLocker locker(&m_mutex);
-
     if (!ppAllocator) {
         return E_POINTER;
-    } else if (!m_allocator) {
-        return VFW_E_NO_ALLOCATOR;
     } else {
-        *ppAllocator = m_allocator;
+        QMutexLocker locker(&m_mutex);
 
-        return S_OK;
+        if (!m_allocator) {
+            return VFW_E_NO_ALLOCATOR;
+        } else {
+            *ppAllocator = m_allocator;
+
+            return S_OK;
+        }
     }
 }
 
 HRESULT VideoSurfacePin::NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly)
 {
     Q_UNUSED(bReadOnly);
-
-    QMutexLocker locker(&m_mutex);
 
     HRESULT hr;
     ALLOCATOR_PROPERTIES properties;
@@ -360,6 +424,9 @@ HRESULT VideoSurfacePin::NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOn
             if ((hr = pAllocator->SetProperties(&properties, &actual)) != S_OK)
                 return hr;
         }
+
+        QMutexLocker locker(&m_mutex);
+
         if (m_allocator)
             m_allocator->Release();
 
@@ -469,13 +536,119 @@ HRESULT VideoSurfacePin::ReceiveCanBlock()
     return S_OK;
 }
 
+int VideoSurfacePin::currentMediaTypeToken()
+{
+    QMutexLocker locker(&m_mutex);
+
+    return m_mediaTypeToken;
+}
+
+HRESULT VideoSurfacePin::nextMediaType(
+        int token, int *index, ULONG count, AM_MEDIA_TYPE **types, ULONG *fetchedCount)
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (!types || (count != 1 && !fetchedCount)) {
+        return E_POINTER;
+    } else if (m_mediaTypeToken != token) {
+        return VFW_E_ENUM_OUT_OF_SYNC;
+    } else {
+        int boundedCount = qBound<int>(0, m_mediaTypes.count() - *index, count);
+
+        for (int i = 0; i < boundedCount; ++i, ++(*index)) {
+            types[i] = reinterpret_cast<AM_MEDIA_TYPE *>(CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE)));
+
+            if (types[i]) {
+                VideoSurfaceMediaType::copy(types[i], m_mediaTypes.at(*index));
+            } else {
+                for (--i; i >= 0; --i)
+                    CoTaskMemFree(types[i]);
+
+                if (fetchedCount)
+                    *fetchedCount = 0;
+
+                return E_OUTOFMEMORY;
+            }
+        }
+        if (fetchedCount)
+            *fetchedCount = boundedCount;
+
+        return boundedCount == count ? S_OK : S_FALSE;
+    }
+
+}
+
+HRESULT VideoSurfacePin::skipMediaType(int token, int *index, ULONG count)
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (m_mediaTypeToken != token) {
+        return VFW_E_ENUM_OUT_OF_SYNC;
+    } else {
+        *index = qMin<int>(*index + count, m_mediaTypes.size());
+
+        return *index < m_mediaTypes.size() ? S_OK : S_FALSE;
+    }
+}
+
+HRESULT VideoSurfacePin::cloneMediaType(int token, int index, IEnumMediaTypes **enumeration)
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (m_mediaTypeToken != token) {
+        return VFW_E_ENUM_OUT_OF_SYNC;
+    } else {
+        *enumeration = new VideoSurfaceMediaTypeEnum(this, token, index);
+
+        return S_OK;
+    }
+}
+
 void VideoSurfacePin::customEvent(QEvent *event)
 {
     if (event->type() == QEvent::User) {
         QMutexLocker locker(&m_mutex);
 
         m_surface->present(m_pendingFrame);
-        
+
         m_pendingFrame = QVideoFrame();
+    } else if (event->type() == StartSurface) {
+        m_startResult = start();
+    } else if (event->type() == StopSurface) {
+        stop();
+    } else if (event->type() == FlushSurface) {
+        flush();
+    } else {
+       QObject::customEvent(event);
     }
+}
+
+void VideoSurfacePin::supportedFormatsChanged()
+{
+    QMutexLocker locker(&m_mutex);
+
+    m_mediaTypes.clear();
+
+    QList<QVideoFrame::PixelFormat> formats = m_surface->supportedPixelFormats();
+
+    m_mediaTypes.reserve(formats.count());
+
+    AM_MEDIA_TYPE type;
+    type.majortype = MEDIATYPE_Video;
+    type.bFixedSizeSamples = TRUE;
+    type.bTemporalCompression = FALSE;
+    type.lSampleSize = 0;
+    type.formattype = GUID_NULL;
+    type.pUnk = 0;
+    type.cbFormat = 0;
+    type.pbFormat = 0;
+
+    foreach (QVideoFrame::PixelFormat format, formats) {
+        type.subtype = VideoSurfaceMediaType::convertPixelFormat(format);
+
+        if (type.subtype != MEDIASUBTYPE_None)
+            m_mediaTypes.append(type);
+    }
+
+    ++m_mediaTypeToken;
 }

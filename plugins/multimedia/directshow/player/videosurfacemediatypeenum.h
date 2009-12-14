@@ -47,11 +47,12 @@
 
 #include <dshow.h>
 
+class VideoSurfacePin;
+
 class VideoSurfaceMediaTypeEnum : public IEnumMediaTypes
 {
 public:
-    VideoSurfaceMediaTypeEnum(const QVector<AM_MEDIA_TYPE> &types);
-    VideoSurfaceMediaTypeEnum(const QList<QVideoFrame::PixelFormat> &formats);
+    VideoSurfaceMediaTypeEnum(VideoSurfacePin *pin, int token, int index = 0);
     ~VideoSurfaceMediaTypeEnum();
 
     // IUnknown
@@ -69,7 +70,8 @@ public:
 
 private:
     LONG m_ref;
-    QVector<AM_MEDIA_TYPE> m_mediaTypes;
+    VideoSurfacePin *m_pin;
+    int m_token;
     int m_index;
 };
 
