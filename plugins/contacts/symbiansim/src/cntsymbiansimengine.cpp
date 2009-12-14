@@ -44,7 +44,7 @@
 #include <mmtsy_names.h>
 #include <mpbutil.h>
 
-const int KOneSimContactBufferSize = 500;
+const int KOneSimContactBufferSize = 512;
 const TInt KDataClientBuf  = 128;
 const TInt KEtsiTonPosition = 0x70;
 
@@ -238,9 +238,10 @@ QList<QContact> CntSymbianSimEngine::fetchContactsL() const
     
     //read the contacts from the Etel store
     RBuf8 buffer;
-    buffer.CreateL(KOneSimContactBufferSize*etelStoreInfo.iTotalEntries);
+    buffer.CreateL(KOneSimContactBufferSize*etelStoreInfo.iUsedEntries);
     CleanupClosePushL(buffer);
-    //contacts are fetched starting from index 1
+    //contacts are fetched starting from index 1, all slots should be checked
+    //since slots may be not filled in a sequence.
     etelStore.Read(requestStatus, 1, etelStoreInfo.iTotalEntries, buffer);
     User::WaitForRequest(requestStatus);
     if (requestStatus.Int() != KErrNone) {
