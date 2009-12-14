@@ -27,7 +27,8 @@
                    ../../src/contacts/requests \
                    ../../src/contacts/filters
 
-    qtAddLibrary(QtContacts)
+    CONFIG += mobility
+    MOBILITY = contacts
 
     # Input
     SOURCES += main.cpp \
@@ -40,12 +41,11 @@
                qcontactlistmodel.h \
                qcontactlistmodel_p.h
 
-    qtAddLibrary(QtContacts)
     include(../examples.pri)</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

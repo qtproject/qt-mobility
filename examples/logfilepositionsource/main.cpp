@@ -38,15 +38,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QCoreApplication>
+#include <QApplication>
 
 #include "clientapplication.h"
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     ClientApplication client;
+#ifdef Q_OS_SYMBIAN
+    client.showMaximized();
+#else
+    client.show();
+#endif
 
     return app.exec();
 }

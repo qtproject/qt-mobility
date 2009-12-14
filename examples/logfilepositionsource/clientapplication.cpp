@@ -39,13 +39,17 @@
 **
 ****************************************************************************/
 #include <QtCore>
+#include <QTextEdit>
 
 #include "logfilepositionsource.h"
 #include "clientapplication.h"
 
-ClientApplication::ClientApplication(QObject *parent)
-    : QObject(parent)
+ClientApplication::ClientApplication(QWidget *parent)
+    : QMainWindow(parent)
 {
+    textEdit = new QTextEdit;
+    setCentralWidget(textEdit);
+
     LogFilePositionSource *source = new LogFilePositionSource(this);
     connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
             this, SLOT(positionUpdated(QGeoPositionInfo)));
@@ -55,6 +59,5 @@ ClientApplication::ClientApplication(QObject *parent)
 
 void ClientApplication::positionUpdated(const QGeoPositionInfo &info)
 {
-    qDebug() << "Position updated: Date/time =" << info.dateTime()
-        << "Coordinate =" << info.coordinate();
+    textEdit->append(QString("Position updated: Date/time = %1, Coordinate = %2").arg(info.dateTime().toString()).arg(info.coordinate().toString()));
 }

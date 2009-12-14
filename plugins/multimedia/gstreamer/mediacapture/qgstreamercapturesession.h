@@ -59,7 +59,7 @@ class QGstreamerAudioEncode;
 class QGstreamerVideoEncode;
 class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
-class QGstreamerMediaFormatControl;
+class QGstreamerMediaContainerControl;
 
 class QGstreamerElementFactory
 {
@@ -96,7 +96,7 @@ public:
     QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
 
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
-    QGstreamerMediaFormatControl *mediaFormatControl() const { return m_mediaFormatControl; }
+    QGstreamerMediaContainerControl *mediaContainerControl() const { return m_mediaContainerControl; }
 
     QGstreamerElementFactory *audioInput() const { return m_audioInputFactory; }
     void setAudioInput(QGstreamerElementFactory *audioInput);
@@ -164,7 +164,7 @@ private:
     QGstreamerVideoEncode *m_videoEncodeControl;
     QGstreamerImageEncode *m_imageEncodeControl;
     QGstreamerRecorderControl *m_recorderControl;
-    QGstreamerMediaFormatControl *m_mediaFormatControl;
+    QGstreamerMediaContainerControl *m_mediaContainerControl;
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;

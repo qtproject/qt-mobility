@@ -128,7 +128,7 @@ public:
    Recording Controls (QMediaRecorder):
                         Required: QMediaRecorderControl
                         Recommended: QAudioEncoderControl
-                        Optional: QMediaFormatControl
+                        Optional: QMediaContainerControl
 */
 #define Q_MEDIASERVICE_AUDIOSOURCE "com.nokia.qt.audiosource"
 
@@ -139,7 +139,7 @@ public:
     Still Capture Controls: QImageCaptureControl
     Recording Controls (QMediaRecorder):
                         Required: QMediaRecorderControl
-                        Recommended: QAudioEncoderControl, QVideoEncoderControl, QMediaFormatControl
+                        Recommended: QAudioEncoderControl, QVideoEncoderControl, QMediaContainerControl
     Viewfinder Video Output Controls (used by QWideoWidget and QGraphicsVideoItem):
                         Required: QVideoOutputControl
                         Optional: QVideoWindowControl, QVideoRendererControl, QVideoWidgetControl
@@ -152,7 +152,7 @@ public:
     Recording Controls (Optional, used by QMediaRecorder):
                         Required: QMediaRecorderControl
                         Recommended: QAudioEncoderControl
-                        Optional: QMediaFormatControl
+                        Optional: QMediaContainerControl
 */
 #define Q_MEDIASERVICE_RADIO "com.nokia.qt.radio"
 

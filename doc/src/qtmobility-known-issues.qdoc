@@ -48,7 +48,7 @@
 /*!
     \page qtmobility-known-issues.html
     \group mobility
-    \title Release Notes of the QtMobility Project (Technology Preview)
+    \title Release Notes of the QtMobility Project
 
 An up-to-date list of known issues with the release can be found via the \l {QtMobility Project Bug Tracker} on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility Project.
 
@@ -141,7 +141,6 @@ Support is present for the following System Info API classes
 
 \section2 Issues Affecting All Platforms
 \list
-    \o  For this release all QtMobility library names have a \bold _tp suffix
     \o  Messaging filtering and Sorting functions are not fully optimized.
     \o  Versit support for Contacts API is ALPHA, see \c {src/versit/README}
     \o  Not all example applications will display(fit) well on small screens.
@@ -151,6 +150,14 @@ Support is present for the following System Info API classes
 
 
 \section2 Symbian/S60 Specific
+
+Currently it is not possible to use Qt convenience header includes:
+
+\code
+    #include <QSystemInfo> //does not work on Symbian
+    //use
+    #include <qsysteminfo.h>
+\endcode
 
 \section3 Bearer Management
 No specific issues to highlight.

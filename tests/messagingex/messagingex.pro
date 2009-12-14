@@ -7,7 +7,8 @@ include(../../common.pri)
 
 # Build against the messaging library
 INCLUDEPATH += $$SOURCE_DIR/src/messaging
-qtAddLibrary(QtMessaging)
+CONFIG += mobility
+MOBILITY = messaging
 
 HEADERS += \
     messagingex.h

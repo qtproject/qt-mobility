@@ -532,7 +532,8 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(stateSpy.count(), 0);
 
-    QMediaPlaylist playlist(&viewer);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
 
     // Empty playlist so can't exit stopped state.
     viewer.play();
@@ -702,22 +703,36 @@ void tst_QMediaImageViewer::multiplePlaylists()
 
     QMediaImageViewer viewer;
 
-    QMediaPlaylist *playlist1 = new QMediaPlaylist(&viewer);
+    QMediaPlaylist *playlist1 = new QMediaPlaylist;
+    playlist1->setMediaObject(&viewer);
     playlist1->addMedia(imageMedia);
     playlist1->addMedia(posterMedia);
 
     playlist1->setCurrentIndex(0);
     QCOMPARE(viewer.media(), imageMedia);
 
-    QMediaPlaylist *playlist2 = new QMediaPlaylist(&viewer);
+    QMediaPlaylist *playlist2 = new QMediaPlaylist;
+
+    QTest::ignoreMessage(QtWarningMsg,
+                         "QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
+    playlist2->setMediaObject(&viewer);
     playlist2->addMedia(coverArtMedia);
 
-    QCOMPARE(viewer.media(), imageMedia);
+    //the first playlist is detached
+    QVERIFY(playlist1->mediaObject() == 0);
+
+    QVERIFY(viewer.media().isNull());
 
     playlist2->setCurrentIndex(0);
-    QCOMPARE(viewer.media(), imageMedia);
+    QCOMPARE(viewer.media(), coverArtMedia);
 
     delete playlist2;
+    QVERIFY(viewer.media().isNull());
+    QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
+
+    playlist1->setMediaObject(&viewer);
+    playlist1->setCurrentIndex(0);
+    QCOMPARE(viewer.media(), imageMedia);
 
     viewer.play();
     QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);
@@ -741,7 +756,8 @@ void tst_QMediaImageViewer::invalidPlaylist()
     QSignalSpy stateSpy(&viewer, SIGNAL(stateChanged(QMediaImageViewer::State)));
     QSignalSpy statusSpy(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
 
-    QMediaPlaylist playlist(&viewer);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
     playlist.addMedia(invalidMedia);
     playlist.addMedia(imageMedia);
     playlist.addMedia(invalidMedia);
@@ -802,7 +818,8 @@ void tst_QMediaImageViewer::elapsedTime()
             &QTestEventLoop::instance(), SLOT(exitLoop()));
 
 
-    QMediaPlaylist playlist(&viewer);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
     playlist.addMedia(imageMedia);
 
     QCOMPARE(viewer.elapsedTime(), 0);

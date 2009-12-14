@@ -79,7 +79,9 @@ class QMediaPlaylistPrivate
     Q_DECLARE_PUBLIC(QMediaPlaylist)
 public:
     QMediaPlaylistPrivate()
-        :control(0),
+        :mediaObject(0),
+        control(0),
+        localPlaylistControl(0),
         error(QMediaPlaylist::NoError)
     {
     }
@@ -94,8 +96,21 @@ public:
         emit q_ptr->loadFailed();
     }
 
+    void _q_mediaObjectDeleted()
+    {
+        Q_Q(QMediaPlaylist);
+        mediaObject = 0;
+        if (control != localPlaylistControl)
+            control = 0;
+        q->setMediaObject(0);
+    }
+
+    QMediaObject *mediaObject;
+
     QMediaPlaylistControl *control;
     QMediaPlaylistProvider *playlist() const { return control->playlistProvider(); }
+
+    QMediaPlaylistControl *localPlaylistControl;
 
     bool readItems(QMediaPlaylistReader *reader);
     bool writeItems(QMediaPlaylistWriter *writer);

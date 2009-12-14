@@ -158,6 +158,7 @@ private slots:
     void playbackMode_data();
     void shuffle();
     void readOnlyPlaylist();
+    void setMediaObject();
 
 private:
     QMediaContent content1;
@@ -533,7 +534,8 @@ void tst_QMediaPlaylist::shuffle()
 void tst_QMediaPlaylist::readOnlyPlaylist()
 {
     MockReadOnlyPlaylistObject mediaObject;
-    QMediaPlaylist playlist(&mediaObject);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&mediaObject);
 
     QVERIFY(playlist.isReadOnly());
     QVERIFY(!playlist.isEmpty());
@@ -593,6 +595,30 @@ void tst_QMediaPlaylist::readOnlyPlaylist()
     QCOMPARE(playlist.error(), QMediaPlaylist::AccessDeniedError);
     QVERIFY(!playlist.errorString().isEmpty());
     QCOMPARE(playlist.mediaCount(), 3);
+}
+
+void tst_QMediaPlaylist::setMediaObject()
+{
+    MockReadOnlyPlaylistObject mediaObject;
+
+    QMediaPlaylist playlist;
+    QVERIFY(playlist.mediaObject() == 0);
+    QVERIFY(!playlist.isReadOnly());
+
+    playlist.setMediaObject(&mediaObject);
+    QCOMPARE(playlist.mediaObject(), &mediaObject);
+    QCOMPARE(playlist.mediaCount(), 3);
+    QVERIFY(playlist.isReadOnly());
+
+    playlist.setMediaObject(0);
+    QVERIFY(playlist.mediaObject() == 0);
+    QCOMPARE(playlist.mediaCount(), 0);
+    QVERIFY(!playlist.isReadOnly());
+
+    playlist.setMediaObject(&mediaObject);
+    QCOMPARE(playlist.mediaObject(), &mediaObject);
+    QCOMPARE(playlist.mediaCount(), 3);
+    QVERIFY(playlist.isReadOnly());
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)

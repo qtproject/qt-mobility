@@ -94,8 +94,8 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     }
 
     //containers
-    foreach(const QString &format, mediaRecorder->supportedFormats()) {
-        ui->containerFormatBox->addItem(format+":"+mediaRecorder->formatDescription(format),
+    foreach(const QString &format, mediaRecorder->supportedContainers()) {
+        ui->containerFormatBox->addItem(format+":"+mediaRecorder->containerDescription(format),
                                         QVariant(format));
     }
 }

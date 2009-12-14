@@ -195,8 +195,8 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
         connect(m_videoPlayerSession,SIGNAL(bufferingProgressChanged(int)),
                 m_control, SIGNAL(bufferStatusChanged(int)));
-        connect(m_videoPlayerSession, SIGNAL(videoAvailabilityChanged(bool)),
-                m_control, SIGNAL(videoAvailabilityChanged(bool)));
+        connect(m_videoPlayerSession, SIGNAL(videoAvailableChanged(bool)),
+                m_control, SIGNAL(videoAvailableChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(metaDataChanged()), 
@@ -229,8 +229,8 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
                 m_control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
         connect(m_audioPlayerSession,SIGNAL(bufferingProgressChanged(int)),
                 m_control, SIGNAL(bufferStatusChanged(int)));
-        connect(m_audioPlayerSession, SIGNAL(videoAvailabilityChanged(bool)),
-                m_control, SIGNAL(videoAvailabilityChanged(bool)));
+        connect(m_audioPlayerSession, SIGNAL(videoAvailableChanged(bool)),
+                m_control, SIGNAL(videoAvailableChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(metaDataChanged()), 

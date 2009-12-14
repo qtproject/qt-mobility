@@ -203,12 +203,16 @@ void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 
     d->clearService();
 
-    if (d->mediaObject)
+    if (d->mediaObject) {
         disconnect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
+        d->mediaObject->unbind(this);
+    }
 
     d->mediaObject = object;
 
     if (d->mediaObject) {
+        d->mediaObject->bind(this);
+
         connect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
 
         d->service = d->mediaObject->service();
@@ -222,12 +226,14 @@ void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
                     d->service->control(QVideoRendererControl_iid));
 
             if (d->outputControl != 0 && d->rendererControl != 0) {
-                d->surface = new QPainterVideoSurface;
+                if (!d->surface) {
+                    d->surface = new QPainterVideoSurface;
 
-                connect(d->surface, SIGNAL(frameChanged()), this, SLOT(_q_present()));
-                connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-                        this, SLOT(_q_formatChanged(QVideoSurfaceFormat)));
-                connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+                    connect(d->surface, SIGNAL(frameChanged()), this, SLOT(_q_present()));
+                    connect(d->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
+                            this, SLOT(_q_formatChanged(QVideoSurfaceFormat)));
+                    connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+                }
 
                 d->rendererControl->setSurface(d->surface);
 
