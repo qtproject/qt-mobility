@@ -44,7 +44,6 @@
 
 #include <QMap>
 #include <QRegExp>
-
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -86,6 +85,7 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
  */
 QByteArray VersitUtils::unfold(QByteArray& text)
 {
+    // XXX build up a list of moves and do them all at once.
     char previous = 0;
     char previousOfTheprevious = 0;
     for (int i=0; i<text.length(); i++) {
@@ -112,6 +112,7 @@ QByteArray VersitUtils::unfold(QByteArray& text)
  */
 int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
 {
+    // XXX change to skipLeadingWhiteSpaces and take a cursor
     int whiteSpaceCount = 0;
     bool nonWhiteSpaceFound = false;
     for (int i=pos; i<text.length() && !nonWhiteSpaceFound; i++) {
@@ -155,6 +156,7 @@ bool VersitUtils::quotedPrintableEncode(QByteArray& text)
  */
 void VersitUtils::decodeQuotedPrintable(QByteArray& text)
 {
+    // XXX in theory we won't get newlines in this any more
     for (int i=0; i < text.length(); i++) {
         char current = text.at(i);
         if (current == '=' && i+2 < text.length()) {
@@ -223,6 +225,7 @@ bool VersitUtils::backSlashEscape(QByteArray& text)
  */
 void VersitUtils::removeBackSlashEscaping(QByteArray& text)
 {
+    // XXX build up a list of escapes and do them all at once?
     char previous = 0;
     bool withinQuotes = false;
     for (int i=0; i < text.length(); i++) {
@@ -243,42 +246,27 @@ void VersitUtils::removeBackSlashEscaping(QByteArray& text)
 }
 
 /*!
- * Finds the position of the first non-soft line break 
- * in a Quoted-Printable encoded string.
- */
-int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
-{
-    int crlfIndex = encoded.indexOf("\r\n");
-    if (crlfIndex <= 0)
-        return -1;
-    while (crlfIndex > 0 && encoded.at(crlfIndex-1) == '=') {
-        crlfIndex = encoded.indexOf("\r\n",crlfIndex+2);
-    }
-
-    return crlfIndex;
-}
-
-/*!
  * Extracts the groups and the name of the property.
+ *
+ * On entry, \a line should select a whole line.
+ * On exit, \a line will be updated to point after the groups and name.
  */
-QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
-    const QByteArray& property)
+QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCursor& line)
 {
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
     char previous = 0;
-    for (int i=0; i < property.length(); i++) {
-        char current = property.at(i);
-        if ((current == ';' && previous != '\\') ||
-            current == ':') {
-            length = i;
+    for (int i=line.position; i <= line.selection; i++) {
+        char current = line.data.at(i);
+        if ((current == ';' && previous != '\\')
+            || current == ':') {
+            length = i - line.position;
             break;
         }
         previous = current;
     }
     if (length > 0) {
-        QString trimmedGroupsAndName =
-            QString::fromAscii(property.left(length).trimmed());
+        QString trimmedGroupsAndName = QString::fromAscii(line.data.mid(line.position, length).trimmed());
         QStringList parts = trimmedGroupsAndName.split(QString::fromAscii("."));
         if (parts.count() > 1) {
             groupsAndName.second = parts.takeLast();
@@ -286,6 +274,7 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
         } else {
             groupsAndName.second = trimmedGroupsAndName;
         }
+        line.setPosition(length + line.position);
     }
 
     return groupsAndName;
@@ -293,26 +282,31 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
 
 /*!
  * Extracts the value of the property.
- * Returns an empty string if the value was not found
+ * Returns an empty string if the value was not found.
+ *
+ * On entry \a line should point to the value anyway.
+ * On exit \a line should point to newline after the value
  */
-QByteArray VersitUtils::extractPropertyValue(const QByteArray& property)
+QByteArray VersitUtils::extractPropertyValue(VersitCursor& line)
 {
-    QByteArray value;
-    int index = property.indexOf(':') + 1;
-    if (index > 0 && property.length() > index)
-        value = property.mid(index);
+    QByteArray value = line.data.mid(line.position, line.selection - line.position);
+
+    /* Now advance the cursor in all cases (TODO in state based should go to pending).. */
+    line.position = line.selection;
     return value;
 }
 
 /*!
  * Extracts the property parameters as a QMultiHash.
  * The parameters without names are added as "TYPE" parameters.
+ *
+ * On entry \a line should contain the entire line.  On exit, line will be updated to
+ * point to the start of the value.
  */
-QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(
-    const QByteArray& property)
+QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(VersitCursor& line)
 {
     QMultiHash<QString,QString> result;
-    QList<QByteArray> paramList = extractParams(property);
+    QList<QByteArray> paramList = extractParams(line);
     while (!paramList.isEmpty()) {
         QByteArray param = paramList.takeLast();
         QString name = QString::fromAscii(paramName(param));
@@ -327,11 +321,10 @@ QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(
  * Extracts the property parameters as a QMultiHash.
  * The parameters without names are added as "TYPE" parameters.
  */
-QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(
-    const QByteArray& property)
+QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCursor& line)
 {
     QMultiHash<QString,QString> result;
-    QList<QByteArray> paramList = extractParams(property);
+    QList<QByteArray> paramList = extractParams(line);
     while (!paramList.isEmpty()) {
         QByteArray param = paramList.takeLast();
         QByteArray name = paramName(param);
@@ -348,18 +341,68 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(
     return result;
 }
 
+
+/*!
+ * Get the next line of input to parse.
+ *
+ * On entry, \a line should contain the current data buffer and offset.
+ * On exit, \a line will have the updated selection corresponding to the
+ * total line (to the point just before the newline).
+ *
+ * Returns true if a full line was found, false otherwise.
+ */
+bool VersitUtils::getNextLine(VersitCursor &line)
+{
+    int crlfPos;
+
+    /* See if we can find a newline */
+    forever {
+        crlfPos = line.data.indexOf("\r\n", line.position);
+        if (crlfPos == -1)
+            crlfPos = line.data.indexOf("\n", line.position);
+        if (crlfPos == -1)
+            crlfPos = line.data.indexOf("\r", line.position);
+        if (crlfPos == line.position) {
+            /* initial newline, repeat - might need to advance two chars */
+            if ((line.position < line.data.size() - 1)
+                    && line.data.at(line.position) == '\r'
+                    && line.data.at(line.position + 1) == '\n')
+                line.setPosition(line.position + 2);
+            else
+                line.setPosition(line.position + 1);
+            continue;
+        } else if (crlfPos > line.position) {
+            line.selection = crlfPos;
+            return true;
+        } else {
+            // No crlf - return false
+            return false;
+        }
+    }
+}
+
+
 /*!
  * Extracts the parameters as delimited by semicolons.
+ *
+ * On entry \a line should point to the start of the parameter section (past the name).
+ * On exit, \a line will be updated to point to the start of the value.
  */
-QList<QByteArray> VersitUtils::extractParams(const QByteArray& property)
+QList<QByteArray> VersitUtils::extractParams(VersitCursor& line)
 {
     QList<QByteArray> params;
-    int colonIndex = property.indexOf(':');
-    if (colonIndex > 0) {
-        QByteArray nameAndParamsString = property.left(colonIndex);
+
+    /* find the end of the name&params */
+    int colonIndex = line.data.indexOf(':', line.position);
+    if (colonIndex > line.position && colonIndex < line.selection) {
+        QByteArray nameAndParamsString = line.data.mid(line.position, colonIndex - line.position);
         params = extractParts(nameAndParamsString,';');
-        if (!params.isEmpty())
-            params.removeFirst(); // Remove property name
+
+        /* Update line */
+        line.setPosition(colonIndex + 1);
+    } else if (colonIndex == line.position) {
+        // No parameters.. advance past it
+        line.setPosition(line.position + 1);
     }
 
     return params;
@@ -369,9 +412,7 @@ QList<QByteArray> VersitUtils::extractParams(const QByteArray& property)
  * Extracts the parts separated by separator
  * discarding the separators escaped with a backslash
  */
-QList<QByteArray> VersitUtils::extractParts(
-    const QByteArray& text,
-    char separator)
+QList<QByteArray> VersitUtils::extractParts(const QByteArray& text, char separator)
 {
     QList<QByteArray> parts;
     int partStartIndex = 0;
@@ -398,10 +439,7 @@ QList<QByteArray> VersitUtils::extractParts(
 /*!
  * Extracts a substring limited by /a startPosition and /a length.
  */
-QByteArray VersitUtils::extractPart(
-    const QByteArray& text,
-    int startPosition, 
-    int length)
+QByteArray VersitUtils::extractPart(const QByteArray& text, int startPosition, int length)
 {
     QByteArray part;
     if (startPosition >= 0)

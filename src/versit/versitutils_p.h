@@ -53,6 +53,22 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+class Q_AUTOTEST_EXPORT VersitCursor
+{
+public:
+    VersitCursor() : position(-1), selection(-1) {}
+    explicit VersitCursor(const QByteArray& d) :data(d), position(0), selection(0) {}
+    QByteArray data;
+    int position;
+    int selection;
+
+    void setData(const QByteArray& d) {data = d; position = selection = 0;}
+    void setPosition(int pos) {position = pos; selection = qMax(pos, selection);}
+    void setSelection(int pos) {selection = qMax(pos, position);}
+};
+
+
 class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
@@ -63,17 +79,17 @@ public:
     static void decodeQuotedPrintable(QByteArray& text);
     static bool backSlashEscape(QByteArray& text);
     static void removeBackSlashEscaping(QByteArray& text);
-    static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
-    static QPair<QStringList,QString> extractPropertyGroupsAndName(
-        const QByteArray& property);
-    static QByteArray extractPropertyValue(const QByteArray& property);
-    static QMultiHash<QString,QString> extractVCard21PropertyParams(
-        const QByteArray& property);
-    static QMultiHash<QString,QString> extractVCard30PropertyParams(
-        const QByteArray& property);
+
+    static bool getNextLine(VersitCursor& line);
+
+    /* These functions operate on a cursor describing a single line */
+    static QPair<QStringList,QString> extractPropertyGroupsAndName(VersitCursor& line);
+    static QByteArray extractPropertyValue(VersitCursor& line);
+    static QMultiHash<QString,QString> extractVCard21PropertyParams(VersitCursor& line);
+    static QMultiHash<QString,QString> extractVCard30PropertyParams(VersitCursor& line);
 
     // "Private" functions
-    static QList<QByteArray> extractParams(const QByteArray& property);
+    static QList<QByteArray> extractParams(VersitCursor& line);
     static QList<QByteArray> extractParts(const QByteArray& text, char separator);
     static QByteArray extractPart(
         const QByteArray& text,

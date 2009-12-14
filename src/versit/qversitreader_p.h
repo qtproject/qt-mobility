@@ -54,9 +54,10 @@
 // We mean it.
 //
 
+#include "qmobilityglobal.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qmobilityglobal.h"
+#include "versitutils_p.h"
 
 #include <QObject>
 #include <QThread>
@@ -67,6 +68,7 @@
 #include <QPointer>
 
 QTM_BEGIN_NAMESPACE
+
 
 class Q_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
 {
@@ -80,22 +82,22 @@ public: // New functions
     bool isReady() const;
     bool read();
 
-    bool parseVersitDocument(QByteArray& text, QVersitDocument& document);
+    bool parseVersitDocument(VersitCursor& cursor, QVersitDocument& document, bool foundBegin = false);
 
     QVersitProperty parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
-        QByteArray& text);
+        VersitCursor& text);
 
     void parseVCard21Property(
-        QByteArray& text,
+        VersitCursor& text,
         QVersitProperty& property);
 
     void parseVCard30Property(
-        QByteArray& text,
+        VersitCursor& text,
         QVersitProperty& property);
 
     void parseAgentProperty(
-        QByteArray& text,
+        VersitCursor& text,
         QVersitProperty& property);
 
     bool setVersionFromProperty(

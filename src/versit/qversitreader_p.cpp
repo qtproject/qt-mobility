@@ -42,6 +42,7 @@
 #include "qversitreader_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,12 +78,21 @@ bool QVersitReaderPrivate::read()
     if (isReady()) {
         QByteArray input = mIoDevice->readAll();
         VersitUtils::unfold(input);
-        while (input.length() > 0) {
+
+        VersitCursor cursor(input);
+        int oldPos = cursor.position;
+        do {
             QVersitDocument document;
-            if (parseVersitDocument(input,document) &&
-                document.properties().count() > 0)
+            bool ret = parseVersitDocument(cursor, document);
+
+            if (ret && document.properties().count() > 0)
                 mVersitDocuments.append(document);
-        }
+
+            if (!ret && cursor.position == oldPos)
+                break;
+
+            oldPos = cursor.position;
+        } while(cursor.position < input.size());
     }
 
     return (mVersitDocuments.count() > 0);
@@ -99,134 +109,173 @@ void QVersitReaderPrivate::run()
 /*!
  * Parses a versit document. Returns true if the parsing was successful.
  */
-bool QVersitReaderPrivate::parseVersitDocument(
-    QByteArray& text,
-    QVersitDocument& document)
+bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocument& document, bool foundBegin)
 {
     if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
         return false; // To prevent infinite recursion
-    bool parsingOk = true;
+
+    bool parsingOk = false;
     mDocumentNestingLevel++;
-    text = text.mid(VersitUtils::countLeadingWhiteSpaces(text));
-    QVersitProperty property =
-        parseNextVersitProperty(document.versitType(),text);
-    if (property.name() == QString::fromAscii("BEGIN") && 
-        property.value().trimmed().toUpper() == "VCARD") {
-        while (property.name().length() > 0 &&
-               property.name() != QString::fromAscii("END")) {
-            property = parseNextVersitProperty(document.versitType(),text);
+
+    // Skip some leading space
+    if (!foundBegin)
+        cursor.setPosition(cursor.position + VersitUtils::countLeadingWhiteSpaces(cursor.data, cursor.position));
+
+    QVersitProperty property;
+
+    if (!foundBegin)
+        property = parseNextVersitProperty(document.versitType(), cursor);
+    
+    if (foundBegin ||
+        (property.name() == QString::fromAscii("BEGIN")
+        && property.value().trimmed().toUpper() == "VCARD")) {
+        
+        parsingOk = true;
+        do {
+            /* Grab it */
+            property = parseNextVersitProperty(document.versitType(), cursor);
+
+            /* Discard embedded vcard documents (XXX why?) */
             if (property.name() == QString::fromAscii("BEGIN") &&
                 property.value().trimmed().toUpper() == "VCARD") {
                 parsingOk = false;
-                // Parse through the embedded cards, but don't save them
-                text.prepend("BEGIN:VCARD\r\n");
                 QVersitDocument nestedDocument;
-                if (!parseVersitDocument(text,nestedDocument))
+                if (!parseVersitDocument(cursor, nestedDocument, true))
                     break;
             }
-            if (!setVersionFromProperty(document,property)) {
+
+            /* See if this is a version property - we might need to restart parsing as 3.0 */
+            if (!setVersionFromProperty(document, property)) {
                 parsingOk = false;
                 break;
             }
+
+            /* Nope, something else.. just add it */
             if (property.name() != QString::fromAscii("VERSION") && 
                 property.name() != QString::fromAscii("END"))
                 document.addProperty(property);
-
-        }
+        } while (property.name().length() > 0 && property.name() != QString::fromAscii("END"));
     }
     mDocumentNestingLevel--;
     if (!parsingOk)
         document = QVersitDocument();
+
     return parsingOk;
 }
 
 /*!
  * Parses a versit document and returns whether parsing succeeded.
  */
-QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
-    QVersitDocument::VersitType versitType,
-    QByteArray& text)
+QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QVersitDocument::VersitType versitType, VersitCursor& cursor)
 {
+    if (versitType != QVersitDocument::VCard21 && versitType != QVersitDocument::VCard30)
+        return QVersitProperty();
+
+    // Make sure we have a line
+    if (!VersitUtils::getNextLine(cursor))
+        return QVersitProperty();
+
+    qDebug() << "Current line is" << cursor.position << cursor.selection << cursor.data.mid(cursor.position, cursor.selection - cursor.position);
+
+    // Otherwise, do stuff.
+    QPair<QStringList,QString> groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+
     QVersitProperty property;
-    QPair<QStringList,QString> groupsAndName =
-        VersitUtils::extractPropertyGroupsAndName(text);
     property.setGroups(groupsAndName.first);
     property.setName(groupsAndName.second);
+
     if (versitType == QVersitDocument::VCard21)
-        parseVCard21Property(text,property);
+        parseVCard21Property(cursor, property);
     else if (versitType == QVersitDocument::VCard30)
-        parseVCard30Property(text,property);
-    else
-        return QVersitProperty(); // type not supported
+        parseVCard30Property(cursor, property);
+
     return property;
 }
 
 /*!
  * Parses the property according to vCard 2.1 syntax.
  */
-void QVersitReaderPrivate::parseVCard21Property(
-    QByteArray& text,
-    QVersitProperty& property)
+void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitProperty& property)
 {
-    property.setParameters(VersitUtils::extractVCard21PropertyParams(text));
-    text = VersitUtils::extractPropertyValue(text);
+    property.setParameters(VersitUtils::extractVCard21PropertyParams(cursor));
+
+    int origPos = cursor.position;
+    QByteArray value = VersitUtils::extractPropertyValue(cursor);
+
     if (property.name() == QString::fromAscii("AGENT")) {
-        parseAgentProperty(text,property);
+        // Well, try to parse the agent thing
+        cursor.setPosition(origPos); // XXX backtracks a little..
+        parseAgentProperty(cursor, property);
     } else {
-        int crlfPos = -1;
-        QString encoding(QString::fromAscii("ENCODING"));
-        QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
-        if (property.parameters().contains(encoding,quotedPrintable)) {
-            crlfPos = VersitUtils::findHardLineBreakInQuotedPrintable(text);
-            QByteArray value = text.left(crlfPos);
+        const QString encoding(QString::fromAscii("ENCODING"));
+        const QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
+        const QString base64(QString::fromAscii("BASE64"));
+
+        if (property.parameters().contains(encoding, quotedPrintable)) {
+            // At this point, we need to accumulate bytes until we hit a real line break (no = before it)
+            // value already contains everything up to the character before the newline
+            if (value.at(value.length() - 1) == '=') {
+                value.chop(1); // Get rid of '='
+                // We add each line (minus the escaped = and newline chars)
+                while(VersitUtils::getNextLine(cursor)) {
+                    if (cursor.data.at(cursor.selection - 1) == '=') {
+                        value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position - 1));
+                        cursor.setPosition(cursor.selection);
+                        // another escaped newline.. loop again
+                    } else {
+                        value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position));
+                        cursor.setPosition(cursor.selection);
+                        // We've reached the end
+                        break;
+                    }
+                }
+            }
             VersitUtils::decodeQuotedPrintable(value);
             // Remove the encoding parameter as the value is now decoded
-            property.removeParameter(encoding,quotedPrintable);
+            property.removeParameter(encoding, quotedPrintable);
             property.setValue(value);
         } else {
-            crlfPos = text.indexOf("\r\n");
-            QByteArray value = text.left(crlfPos);
-            QString base64(QString::fromAscii("BASE64"));
-            if (property.parameters().contains(encoding,base64)) {
+            if (property.parameters().contains(encoding, base64)) {
                 // Remove the linear whitespaces left by vCard 2.1 unfolding
                 value.replace(' ',"");
                 value.replace('\t',"");
             }
             property.setValue(value);
         }
-        text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
     }
 }
 
 /*!
  * Parses the property according to vCard 3.0 syntax.
  */
-void QVersitReaderPrivate::parseVCard30Property(
-    QByteArray& text,
-    QVersitProperty& property)
+void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitProperty& property)
 {
-    property.setParameters(VersitUtils::extractVCard30PropertyParams(text));
-    text = VersitUtils::extractPropertyValue(text);
-    int crlfPos = text.indexOf("\r\n");
-    QByteArray value = text.left(crlfPos);
+    property.setParameters(VersitUtils::extractVCard30PropertyParams(cursor));
+
+    QByteArray value = VersitUtils::extractPropertyValue(cursor);
+
     VersitUtils::removeBackSlashEscaping(value);
+
     if (property.name() == QString::fromAscii("AGENT")) {
-        parseAgentProperty(value,property);
+        // XXX this means 2.1 agent handling doesn't work (you only get the first line)
+        VersitCursor agentCursor(value);
+        parseAgentProperty(agentCursor, property);
     } else {
         property.setValue(value);
     }
-    text = text.mid(crlfPos+2); // +2 is for skipping the CRLF
 }
 
 /*!
  * Parses the value of AGENT \a property from \a text
  */
-void QVersitReaderPrivate::parseAgentProperty(
-    QByteArray& text,
-    QVersitProperty& property)
+void QVersitReaderPrivate::parseAgentProperty(VersitCursor& cursor, QVersitProperty& property)
 {
     QVersitDocument agentDocument;
-    if (!parseVersitDocument(text,agentDocument)) {
+
+    // Get rid of AGENT, find the meat..
+    VersitUtils::getNextLine(cursor);
+
+    if (!parseVersitDocument(cursor, agentDocument)) {
         property = QVersitProperty();
     } else {
         property.setEmbeddedDocument(agentDocument);
@@ -236,9 +285,7 @@ void QVersitReaderPrivate::parseAgentProperty(
 /*!
  * Sets version to \a document if \a property contains a supported version.
  */
-bool QVersitReaderPrivate::setVersionFromProperty(
-    QVersitDocument& document,
-    const QVersitProperty& property) const
+bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, const QVersitProperty& property) const
 {
     bool valid = true;
     if (property.name() == QString::fromAscii("VERSION")) {
