@@ -167,7 +167,8 @@ public:
         m_phonemeta(PIMPR_INVALID_ID),
         m_emailmeta(PIMPR_INVALID_ID),
         m_factory(0),
-        m_avatarmeta(PIMPR_INVALID_ID)
+        m_avatarmeta(PIMPR_INVALID_ID),
+        m_avatatypemeta(PIMPR_INVALID_ID)
     {
     }
 
@@ -187,6 +188,7 @@ public:
     PROPID m_phonemeta;
     PROPID m_emailmeta;
     PROPID m_avatarmeta;
+    PROPID m_avatatypemeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QContactLocalId> m_ids;
@@ -260,6 +262,7 @@ public:
     
     /*helper functions*/
     PROPID metaAvatar() const;
+    PROPID metaAvatarType() const;
     PROPID metaEmail() const;
     PROPID metaPhone() const;
 private:

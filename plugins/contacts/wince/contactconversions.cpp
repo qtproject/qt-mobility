@@ -294,14 +294,22 @@ static bool saveAvatarData(IItem* contact, const QByteArray& data)
 static void processAvatar(const QContactWinCEEngine* /*engine*/, IItem* contact, const QVariantList& values, QContact& ret)
 {
     QContactAvatar avatar;
-    setIfNotEmpty(avatar, QContactAvatar::FieldSubType, values[0].toString());
-    
-    QByteArray data;
-    if (loadAvatarData(contact, &data)) {
-        QUrl url(QUrl::fromEncoded(data.toPercentEncoding()));
-        url.setScheme("data");
-        setIfNotEmpty(avatar, QContactAvatar::FieldAvatar, url.toString());
+
+    if (values[0].toString().isEmpty()) {
+        QByteArray data;
+        if (loadAvatarData(contact, &data)) {
+            if (!data.isEmpty()) {
+                QUrl url(QUrl::fromEncoded(data.toPercentEncoding()));
+                url.setScheme("data");
+                avatar.setAvatar(url.toString());
+            }
+        }
+    } else {
+        avatar.setAvatar(values[0].toString());
     }
+
+    setIfNotEmpty(avatar, QContactAvatar::FieldSubType, values[1].toString());
+    
         
     if (!avatar.isEmpty())
         ret.saveDetail(&avatar);
@@ -509,7 +517,7 @@ static void processFamily(const QContactWinCEEngine*, IItem* /*contact*/, const 
         ret.saveDetail(&family);
 }
 
-static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, CEPROPID avatarMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
+static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, CEPROPID avatarMeta, CEPROPID avatarTypeMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
 {
     static QHash<CEPROPID, PoomContactElement> hash;
     static QVector<CEPROPID> ids;
@@ -596,7 +604,7 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, CEPROPI
 
         // Avatar
         PoomContactElement avatar;
-        avatar.poom << avatarMeta; //PIMPR_PICTURE need to be handled inside the processAvatar() function seperately.
+        avatar.poom << avatarMeta << avatarTypeMeta; //PIMPR_PICTURE need to be handled inside the processAvatar() function seperately.
         avatar.func = processAvatar;
         list.append(avatar);
 
@@ -693,7 +701,8 @@ static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, co
     if (url.isValid()) {
         SyncNetworkAccessManager manager;
         if (saveAvatarData(contact, manager.get(QNetworkRequest(url)))) {
-            addIfNotEmpty(engine->metaAvatar(), detail.value(QContactAvatar::FieldSubType), props);
+            addIfNotEmpty(engine->metaAvatarType(), detail.value(QContactAvatar::FieldSubType), props);
+            addIfNotEmpty(engine->metaAvatar(), avatarData, props);
             return true;
         }
     }
@@ -991,7 +1000,7 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
     QVector<CEPROPID> props;
 
     // Get our mapping tables
-    contactP2QTransforms(d->m_phonemeta, d->m_emailmeta, d->m_avatarmeta, hash, props);
+    contactP2QTransforms(d->m_phonemeta, d->m_emailmeta, d->m_avatartypemeta, d->m_avatarmeta, hash, props);
 
     CEPROPVAL *propvals = 0;
     HRESULT hr = contact->GetProps(props.constData(), CEDB_ALLOWREALLOC, props.count(), &propvals, &cbSize, GetProcessHeap());
