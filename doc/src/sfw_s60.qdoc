@@ -75,7 +75,7 @@ More info about VID and SID can be found from:
 \section1 What's special from the security perspective?
 
 There is only one database in S60 because both databases (user and system) are combined to the same database.
-The database is located behind the server's private folder, (\c{c:\private\E3b448c24}). This ensures the database can't
+The database is located behind the server's private folder, (\c{c:\private\E3b48c24}). This ensures the database can't
 be thumbered (e.g. remove, move or replace) without Allfiles capability which isn't user-grantable (More about the
 capabilities: \l http://wiki.forum.nokia.com/index.php/Capabilities). That makes it impossible for example to replace the
 whole database with the new one which might contain malicious services.
