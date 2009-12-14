@@ -53,13 +53,13 @@ QTM_BEGIN_NAMESPACE
 
     A QMessageAccountFilter is composed of an account property, an optional comparison operator
     and a comparison value. The QMessageAccountFilter class is used in conjunction with the 
-    QMessageStore::queryAccounts() and QMessageStore::countAccounts() functions to filter results 
+    QMessageManager::queryAccounts() and QMessageManager::countAccounts() functions to filter results 
     which meet the criteria defined by the filter.
 
     QMessageAccountFilters can be combined using the logical operators (&), (|) and (~) to
     create more refined queries.
 
-    \sa QMessageStore, QMessageAccount
+    \sa QMessageManager, QMessageAccount
 */
 
 /*!

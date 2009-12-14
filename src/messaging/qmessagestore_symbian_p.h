@@ -80,16 +80,16 @@ public:
     
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
-    bool removeMessage(const QMessageId &id, QMessageStore::RemovalOption option);
-    bool removeMessages(const QMessageFilter &filter, QMessageStore::RemovalOption option);
+    bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
+    bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
     
     QMessage message(const QMessageId& id) const;
     
-    QMessageStore::NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
-    void unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId);
+    QMessageManager::NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
+    void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
 
     void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
-                             const QMessageStore::NotificationFilterIdSet &matchingFilters);
+                             const QMessageManager::NotificationFilterIdSet &matchingFilters);
 
 public Q_SLOTS:   
     void stateChanged(QMessageServiceAction::State a);
@@ -100,7 +100,7 @@ private:
     QMessageStore* q_ptr;
 
     CMTMEngine* _mtmEngine;
-    QMessageStore::ErrorCode _error;
+    QMessageManager::ErrorCode _error;
     
     NotificationType _notificationType;
     mutable QEventLoop loop;

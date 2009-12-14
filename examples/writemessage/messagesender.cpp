@@ -155,7 +155,7 @@ void MessageSender::populateAccounts()
 #endif
 
     // Find the list of available accounts and add them to combo box
-    foreach (const QMessageAccountId &id, QMessageStore::instance()->queryAccounts()) {
+    foreach (const QMessageAccountId &id, manager.queryAccounts()) {
         QMessageAccount account(id);
 
         QMessage::Type type(QMessage::NoType);
@@ -287,7 +287,7 @@ void MessageSender::stateChanged(QMessageServiceAction::State s)
     } else if (s == QMessageServiceAction::Failed) {
         QMessageBox::warning(0, tr("Failed"), tr("Unable to send message"));
 
-        if (!QMessageStore::instance()->removeMessage(sendId)) {
+        if (!manager.removeMessage(sendId)) {
             qWarning() << "Unable to remove failed message:" << sendId.toString();
         }
 

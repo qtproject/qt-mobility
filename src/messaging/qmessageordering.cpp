@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup messaging
 
     A QMessageOrdering is composed of a message property to sort and a sort order. 
-    The QMessageOrdering class is used in conjunction with the QMessageStore::queryMessages() 
+    The QMessageOrdering class is used in conjunction with the QMessageManager::queryMessages() 
     and QMessageServiceAction::queryMessages() functions to sort message results according to 
     the criteria defined by the ordering.
 
@@ -61,10 +61,10 @@ QTM_BEGIN_NAMESPACE
     To create a query for all messages sorted by their timestamp in decending order:
     \code
     QMessageOrdering ordering(QMessageOrdering::byTimeStamp(Qt::DescendingOrder));
-    QMessageIdList results = QMessageStore::instance()->queryMessages(QMessageFilter(), ordering);
+    QMessageIdList results = QMessageManager().queryMessages(QMessageFilter(), ordering);
     \endcode
     
-    \sa QMessageStore, QMessageFilter
+    \sa QMessageManager, QMessageFilter
 */
 
 /*!

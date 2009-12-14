@@ -58,6 +58,6 @@
 #include "qmessagecontentcontainerid.h"
 #include "qmessageaddress.h"
 #include "qmessageserviceaction.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 
 #endif

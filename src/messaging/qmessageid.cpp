@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
     
     The QMessageId implementation should be as small as is practical for the underlying platform.
     
-    \sa QMessage, QMessageStore
+    \sa QMessage, QMessageManager
 */
 
 /*!

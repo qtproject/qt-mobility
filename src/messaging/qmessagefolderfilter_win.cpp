@@ -245,14 +245,14 @@ bool QMessageFolderFilterPrivate::matchesFolder(const QMessageFolderFilter &filt
     return result;
 }
 
-QMessageFolderFilter QMessageFolderFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter)
+QMessageFolderFilter QMessageFolderFilterPrivate::preprocess(QMessageManager::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter)
 {
     QMessageFolderFilter result(filter);
     QMessageFolderFilterPrivate::preprocess(lastError, session, &result);
     return result;
 }
 
-void QMessageFolderFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFolderFilter *filter)
+void QMessageFolderFilterPrivate::preprocess(QMessageManager::ErrorCode *lastError, MapiSessionPtr session, QMessageFolderFilter *filter)
 {
     if (!filter)
         return;

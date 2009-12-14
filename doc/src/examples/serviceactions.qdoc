@@ -107,7 +107,7 @@
 
 \section1 Store Signals 
 
-    This example displays the activities of the QMessageStore in a QListWidget by connecting to QMessageStore::message(Added/Updated/Removed) signals.
+    This example displays the activities of the QMessageManager in a QListWidget by connecting to QMessageManager::message(Added/Updated/Removed) signals.
 
     \snippet    ../../examples/serviceactions/mainwindow.cpp store-signals
 

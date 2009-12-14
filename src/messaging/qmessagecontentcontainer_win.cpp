@@ -61,7 +61,7 @@ QByteArray attachmentContent(const QMessageId &id, ULONG number)
 {
     QByteArray result;
 
-    QMessageStore::ErrorCode error(QMessageStore::NoError);
+    QMessageManager::ErrorCode error(QMessageManager::NoError);
     MapiSessionPtr session(MapiSession::createSession(&error));
     if (session && session->isValid()) {
         result = session->attachmentData(&error, id, number);
@@ -74,12 +74,12 @@ QString attachmentTextContent(const QMessageId &id, ULONG number, const QByteArr
 {
     QString result;
 
-    QMessageStore::ErrorCode error(QMessageStore::NoError);
+    QMessageManager::ErrorCode error(QMessageManager::NoError);
     MapiSessionPtr session(MapiSession::createSession(&error));
     if (session && session->isValid()) {
         QByteArray data = session->attachmentData(&error, id, number);
 
-        if (error == QMessageStore::NoError) {
+        if (error == QMessageManager::NoError) {
             // Convert attachment data to string form
             QTextCodec *codec;
             if (!charset.isEmpty()) {

@@ -49,7 +49,7 @@
 
 #include <e32base.h>
 #include <msvapi.h> // MMsvSessionObserver
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #include "qmessagestore_symbian_p.h"
 #include "qmessagefilter.h"
 #include "qmessagefilter_p.h"
@@ -81,7 +81,7 @@ struct MessageEvent
 {
     QMessageStorePrivate::NotificationType notificationType;
     TMsvId messageId;
-    QMessageStore::NotificationFilterIdSet matchingFilters;
+    QMessageManager::NotificationFilterIdSet matchingFilters;
 };
 
 struct MessageQueryInfo
@@ -129,8 +129,8 @@ public:
     
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
-    bool removeMessage(const QMessageId &id, QMessageStore::RemovalOption option);
-    bool removeMessages(const QMessageFilter &filter, QMessageStore::RemovalOption option);
+    bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
+    bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
     bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
     bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
     bool countMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter);
@@ -152,9 +152,9 @@ public:
     QByteArray attachmentContent(long int messageId, unsigned int attachmentId);
     QString attachmentTextContent(long int messageId, unsigned int attachmentId, const QByteArray &charset);
     
-    QMessageStore::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
+    QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                         const QMessageFilter& filter);
-    void unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId);
+    void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
 
     void notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId, TMsvId aMessageId);
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
@@ -201,7 +201,7 @@ private:
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
     void applyOffsetAndLimitToMsgFolderIds(QMessageFolderIdList& idList, int offset, int limit) const;
     
-    bool removeMessageL(const QMessageId &id, QMessageStore::RemovalOption option);
+    bool removeMessageL(const QMessageId &id, QMessageManager::RemovalOption option);
     void copyMessageL(TMsvId aMessageId, TMsvId aFolder);
     QMessage messageL(const QMessageId& id) const;
     QMessage smsMessageL(CMsvEntry& receivedEntry, long int messageId) const;
@@ -276,8 +276,8 @@ private:
     
     CMsvFindOperation*  ipFindOperation;
     
-    QMessageStore::NotificationFilterId _filterId;
-    QMap<QMessageStore::NotificationFilterId, QMessageFilter> _filters;
+    QMessageManager::NotificationFilterId _filterId;
+    QMap<QMessageManager::NotificationFilterId, QMessageFilter> _filters;
     
     mutable QHash<QString, QMessageAccount> iAccounts;
     mutable QMessageAccountId idefaultEmailAccountId;

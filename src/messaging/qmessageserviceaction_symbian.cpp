@@ -151,7 +151,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     }
     
     d_ptr->_active = true;
-    d_ptr->_lastError = QMessageStore::NoError;
+    d_ptr->_lastError = QMessageManager::NoError;
     
     if (d_ptr->queryMessages(filter, ordering, limit, offset)) {
         d_ptr->_state = QMessageServiceAction::InProgress;
@@ -173,7 +173,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     }
 
     d_ptr->_active = true;
-    d_ptr->_lastError = QMessageStore::NoError;
+    d_ptr->_lastError = QMessageManager::NoError;
 
     if (d_ptr->queryMessages(filter, body, options, ordering, limit, offset)) {
         d_ptr->_state = QMessageServiceAction::InProgress;
@@ -195,7 +195,7 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
     }
     
     d_ptr->_active = true;
-    d_ptr->_lastError = QMessageStore::NoError;
+    d_ptr->_lastError = QMessageManager::NoError;
     
     if (d_ptr->countMessages(filter)) {
         d_ptr->_state = QMessageServiceAction::InProgress;
@@ -217,7 +217,7 @@ bool QMessageServiceAction::send(QMessage &message)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageStore::NoError;
+	d_ptr->_lastError = QMessageManager::NoError;
 	
     bool retVal = true;	
     
@@ -226,7 +226,7 @@ bool QMessageServiceAction::send(QMessage &message)
     
     // Check message type
     if(message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
-        d_ptr->_lastError = QMessageStore::ConstraintFailure;
+        d_ptr->_lastError = QMessageManager::ConstraintFailure;
         retVal = false;
     }
 
@@ -236,7 +236,7 @@ bool QMessageServiceAction::send(QMessage &message)
         if (!accountId.isValid()) {
             accountId = QMessageAccount::defaultAccount(message.type());
             if (!accountId.isValid()) {
-                d_ptr->_lastError = QMessageStore::InvalidId;
+                d_ptr->_lastError = QMessageManager::InvalidId;
                 retVal = false;
             }
         }
@@ -246,7 +246,7 @@ bool QMessageServiceAction::send(QMessage &message)
         // Check account/message type compatibility
         QMessageAccount account(accountId);
         if (!(account.messageTypes() & message.type())) {
-            d_ptr->_lastError = QMessageStore::ConstraintFailure;
+            d_ptr->_lastError = QMessageManager::ConstraintFailure;
             retVal = false;
         }
     }
@@ -255,7 +255,7 @@ bool QMessageServiceAction::send(QMessage &message)
         // Check recipients
         QMessageAddressList recipients = message.to() + message.bcc() + message.cc();
         if (recipients.isEmpty()) {
-            d_ptr->_lastError = QMessageStore::ConstraintFailure;
+            d_ptr->_lastError = QMessageManager::ConstraintFailure;
             return false;
         }
     }
@@ -291,7 +291,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageStore::NoError;
+	d_ptr->_lastError = QMessageManager::NoError;
 	
 	bool retVal = true;
 	d_ptr->_state = QMessageServiceAction::InProgress;
@@ -313,7 +313,7 @@ bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageStore::NoError;
+	d_ptr->_lastError = QMessageManager::NoError;
 	
 	bool retVal = true;
 	d_ptr->_state = QMessageServiceAction::InProgress;
@@ -335,7 +335,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageStore::NoError;
+	d_ptr->_lastError = QMessageManager::NoError;
 	
 	bool retVal = true;
 	d_ptr->_state = QMessageServiceAction::InProgress;
@@ -357,7 +357,7 @@ bool QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessage
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageStore::NoError;
+	d_ptr->_lastError = QMessageManager::NoError;
 
 	bool retVal = true;
 	d_ptr->_state = QMessageServiceAction::InProgress;
@@ -379,7 +379,7 @@ bool QMessageServiceAction::show(const QMessageId& id)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageStore::NoError;
+	d_ptr->_lastError = QMessageManager::NoError;
 	
 	bool retVal = true;
 	d_ptr->_state = QMessageServiceAction::InProgress;
@@ -409,7 +409,7 @@ void QMessageServiceAction::cancelOperation()
 {
 }
 
-QMessageStore::ErrorCode QMessageServiceAction::lastError() const
+QMessageManager::ErrorCode QMessageServiceAction::lastError() const
 {
     return d_ptr->_lastError;
 }

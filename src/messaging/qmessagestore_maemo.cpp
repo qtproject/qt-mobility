@@ -91,7 +91,7 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageStore::ErrorCode QMessageStore::lastError() const
+QMessageManager::ErrorCode QMessageManager::lastError() const
 {
     return NotYetImplemented;
 }
@@ -159,7 +159,7 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
     return false; // stub
 }
 
-bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::RemovalOption option)
+bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
 {
     Q_UNUSED(filter)
     Q_UNUSED(option)
@@ -196,13 +196,13 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return QMessageAccount(); // stub
 }
 
-QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
+QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
     Q_UNUSED(filter)
     return 0; // stub
 }
 
-void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
+void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
     Q_UNUSED(notificationFilterId)
 }

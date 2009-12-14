@@ -42,7 +42,7 @@
 #define QMESSAGEORDERINGPRIVATE_H
 #include "qmessageordering.h"
 #if defined(Q_OS_WIN)
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #include "qmessagefilter.h"
 #include <qpair.h>
 #include "winhelpers_p.h"
@@ -67,7 +67,7 @@ public:
     enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
     static bool lessThan(const QMessageOrdering &ordering, const QMessage &left, const QMessage &right);
-    static void sortTable(QMessageStore::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE);
+    static void sortTable(QMessageManager::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE);
     static QMessageOrdering from(QMessageOrderingPrivate::Field field, Qt::SortOrder order);
 
     static bool isFilterType(const QMessageOrdering &ordering);

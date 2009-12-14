@@ -52,7 +52,7 @@ Q_GLOBAL_STATIC(QMessageStorePrivate,messageStorePrivate);
 QMessageStorePrivate::QMessageStorePrivate()
   : q_ptr(0),
     _mtmEngine(0),
-    _error(QMessageStore::NoError)
+    _error(QMessageManager::NoError)
 {
 }
 
@@ -164,12 +164,12 @@ bool QMessageStorePrivate::updateMessage(QMessage *m)
     return _mtmEngine->updateMessage(m);
 }
 
-bool QMessageStorePrivate::removeMessage(const QMessageId &id, QMessageStore::RemovalOption option)
+bool QMessageStorePrivate::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
 {
     return _mtmEngine->removeMessage(id, option);
 }
 
-bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessageStore::RemovalOption option)
+bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option)
 {
     bool retVal = true;
     
@@ -204,18 +204,18 @@ QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
     return _mtmEngine->account(id);
 }
 
-QMessageStore::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
+QMessageManager::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
 {
     return _mtmEngine->registerNotificationFilter(*this, filter);
 }
 
-void QMessageStorePrivate::unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId)
+void QMessageStorePrivate::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
     _mtmEngine->unregisterNotificationFilter(notificationFilterId);    
 }
 
 void QMessageStorePrivate::messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
-                                               const QMessageStore::NotificationFilterIdSet &matchingFilters)
+                                               const QMessageManager::NotificationFilterIdSet &matchingFilters)
 {
     switch (type) {
         case Added:
@@ -298,7 +298,7 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
     return messageStorePrivate()->removeMessage(id, option);
 }
 
-bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::RemovalOption option)
+bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
 {
     return messageStorePrivate()->removeMessages(filter, option);
 }
@@ -328,12 +328,12 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return messageStorePrivate()->account(id);
 }
 
-QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
+QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
     return messageStorePrivate()->registerNotificationFilter(filter);
 }
 
-void QMessageStore::unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId)
+void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
     messageStorePrivate()->unregisterNotificationFilter(notificationFilterId);
 }

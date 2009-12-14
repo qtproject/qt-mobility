@@ -159,14 +159,16 @@ QMessageId addMessage(const Parameters &params)
     QString read(params["status-read"]);
     QString hasAttachments(params["status-hasAttachments"]);
 
+    QMessageManager mgr;
+
     if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
         // Find the named account
-        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
+        QMessageAccountIdList accountIds(mgr.queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
         if (accountIds.count() == 1) {
             // Find the specified folder
             QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath, QMessageDataComparator::Equal) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
-            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
+            QMessageFolderIdList folderIds(mgr.queryFolders(filter));
             if (folderIds.count() == 1) {
                 QMessage message;
 
@@ -256,7 +258,7 @@ QMessageId addMessage(const Parameters &params)
                     }
                 }
 
-                if (!QMessageStore::instance()->addMessage(&message)) {
+                if (!mgr.addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;
                 } else {
                     return message.id();

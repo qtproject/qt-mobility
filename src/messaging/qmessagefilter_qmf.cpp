@@ -376,8 +376,8 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &fi
 QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilter result;
-    QMessageStore *instance = QMessageStore::instance(); // Initialize standard folders
-    Q_UNUSED(instance)
+    QMessageManager mgr; // Ensure standard folders are initialized
+    Q_UNUSED(mgr)
 
     QMailDataComparator::InclusionComparator comparator(cmp == QMessageDataComparator::Equal ? QMailDataComparator::Includes : QMailDataComparator::Excludes); 
 

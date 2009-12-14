@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 
     A QMessageFilter is composed of a message property, an optional comparison operator
     and a comparison value. The QMessageFilter class is used in conjunction with the 
-    QMessageStore::queryMessages(), QMessageStore::countMessages(), 
+    QMessageManager::queryMessages(), QMessageManager::countMessages(), 
     QMessageServiceAction::queryMessages(), and QMessageServiceAction::countMessages()
     functions to filter results which meet the criteria defined by the filter.
 
@@ -66,10 +66,10 @@ QTM_BEGIN_NAMESPACE
     \code
     QMessageFilter subjectFilter(QMessageFilter::bySubject("meeting"));
     QMessageFilter senderFilter(QMessageFilter::bySender("joe@user.com"));
-    QMessageIdList results = QMessageStore::instance()->queryMessages(subjectFilter & senderFilter);
+    QMessageIdList results = QMessageManager().queryMessages(subjectFilter & senderFilter);
     \endcode
 
-    \sa QMessageStore, QMessage
+    \sa QMessageManager, QMessage
 */
 
 /*!

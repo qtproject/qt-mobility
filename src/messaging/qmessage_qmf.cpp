@@ -81,7 +81,7 @@ QMessageFolderId QMessagePrivate::standardFolderId(QMessage::StandardFolder fold
         QMessageFolderFilter pathFilter(QMessageFolderFilter::byPath(path));
         QMessageFolderFilter accountFilter(QMessageFolderFilter::byParentAccountId(QMessageAccountId()));
 
-        QMessageFolderId folderId(QMessageStore::instance()->queryFolders(pathFilter & accountFilter).first());
+        QMessageFolderId folderId(QMessageManager().queryFolders(pathFilter & accountFilter).first());
         it = standardFolderMap()->insert(folder, folderId);
     }
 
@@ -232,7 +232,7 @@ QMessage::QMessage()
 QMessage::QMessage(const QMessageId& id)
     : d_ptr(new QMessagePrivate)
 {
-    *this = QMessageStore::instance()->message(id);
+    *this = QMessageManager().message(id);
     setDerivedMessage(this);
     QMailStorePrivate::setUnmodified(&d_ptr->_message);
 }

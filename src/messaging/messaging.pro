@@ -28,8 +28,8 @@ PUBLIC_HEADERS += \
            qmessagefolderfilter.h \
            qmessagefolderordering.h \
            qmessagefilter.h \
+           qmessagemanager.h \
            qmessageordering.h \
-           qmessagestore.h \
            qmessageserviceaction.h
 
 PRIVATE_HEADERS += \
@@ -48,6 +48,7 @@ PRIVATE_HEADERS += \
            qmessagefolderordering_p.h \
            qmessagefilter_p.h \
            qmessageordering_p.h \
+           qmessagestore.h \
            qmessagestore_p.h
 
 SOURCES += qmessageid.cpp \
@@ -65,6 +66,7 @@ SOURCES += qmessageid.cpp \
            qmessagefolderfilter.cpp \
            qmessagefolderordering.cpp \
            qmessagefilter.cpp \
+           qmessagemanager.cpp \
            qmessageordering.cpp \
            qmessagestore.cpp \
            qmessageserviceaction.cpp

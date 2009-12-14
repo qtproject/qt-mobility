@@ -85,24 +85,24 @@ class SignalCatcher : public QObject
     Q_OBJECT
     
 public:
-    typedef QPair<QMessageId, QMessageStore::NotificationFilterIdSet> Notification;
+    typedef QPair<QMessageId, QMessageManager::NotificationFilterIdSet> Notification;
 
     QList<Notification> added;
     QList<Notification> updated;
     QList<Notification> removed;
 
 public slots:
-    void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
+    void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &filterIds)
     {
         added.append(qMakePair(id, filterIds));
     }
 
-    void messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
+    void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &filterIds)
     {
         updated.append(qMakePair(id, filterIds));
     }
 
-    void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &filterIds)
+    void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &filterIds)
     {
         removed.append(qMakePair(id, filterIds));
     }
@@ -111,22 +111,24 @@ public slots:
 class FilterRegistration
 {
 public:
-    QMessageStore::NotificationFilterId id;
+    QMessageManager::NotificationFilterId id;
+    QMessageManager *manager;
         
-    FilterRegistration(const QMessageFilter &filter)
-        : id(0)
+    FilterRegistration(const QMessageFilter &filter, QMessageManager *mgr)
+        : id(0),
+          manager(mgr)
     {
-        id = QMessageStore::instance()->registerNotificationFilter(filter);
+        id = manager->registerNotificationFilter(filter);
     }
 
     ~FilterRegistration()
     {
-        QMessageStore::instance()->unregisterNotificationFilter(id);
+        manager->unregisterNotificationFilter(id);
     }
 };
 
 /*
-    Unit test for QMessageStore class.
+    Unit test for QMessageManager class.
 */
 class tst_QMessageStore : public QObject
 {
@@ -149,6 +151,9 @@ private slots:
 
     void testMessage_data();
     void testMessage();
+
+private:
+    QMessageManager *manager;
 };
 
 QTEST_MAIN(tst_QMessageStore)
@@ -156,16 +161,20 @@ QTEST_MAIN(tst_QMessageStore)
 #include "tst_qmessagestore.moc"
 
 tst_QMessageStore::tst_QMessageStore()
+    : manager(0)
 {
 }
 
 tst_QMessageStore::~tst_QMessageStore()
 {
+    delete manager;
 }
 
 void tst_QMessageStore::initTestCase()
 {
     Support::clearMessageStore();
+
+    manager = new QMessageManager;
 }
 
 void tst_QMessageStore::cleanup()
@@ -194,12 +203,12 @@ void tst_QMessageStore::testAccount()
     p.insert("name", name);
     p.insert("fromAddress", fromAddress);
 
-    int originalCount = QMessageStore::instance()->countAccounts();
+    int originalCount = manager->countAccounts();
 
     QMessageAccountId accountId(Support::addAccount(p));
     QVERIFY(accountId.isValid());
     QVERIFY(accountId != QMessageAccountId());
-    QCOMPARE(QMessageStore::instance()->countAccounts(), originalCount + 1);
+    QCOMPARE(manager->countAccounts(), originalCount + 1);
     
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
@@ -210,7 +219,7 @@ void tst_QMessageStore::testAccount()
     QVERIFY(!(accountId < accountId));
     QVERIFY((QMessageAccountId() < accountId) || (accountId < QMessageAccountId()));
 
-    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts());
+    QMessageAccountIdList accountIds(manager->queryAccounts());
     QVERIFY(accountIds.contains(accountId));
 
     QVERIFY(QMessageAccount::defaultAccount(QMessage::Email).isValid());
@@ -238,7 +247,7 @@ void tst_QMessageStore::testFolder()
     // Ensure we have an account to link these folders to
     static const QString testAccountName("testAccount");
     QMessageAccountId testAccountId;
-    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
+    QMessageAccountIdList accountIds(manager->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
     if (accountIds.isEmpty()) {
         Support::Parameters p;
         p.insert("name", testAccountName);
@@ -261,18 +270,18 @@ void tst_QMessageStore::testFolder()
     p.insert("parentFolderPath", parentFolderPath);
 
 #if defined(Q_OS_SYMBIAN)
-    int originalCount = QMessageStore::instance()->countFolders(QMessageFolderFilter::byParentAccountId(testAccountId));
+    int originalCount = manager->countFolders(QMessageFolderFilter::byParentAccountId(testAccountId));
 #else
-    int originalCount = QMessageStore::instance()->countFolders();
+    int originalCount = manager->countFolders();
 #endif    
 
     QMessageFolderId folderId(Support::addFolder(p));
     QVERIFY(folderId.isValid());
     QVERIFY(folderId != QMessageFolderId());
 #if defined(Q_OS_SYMBIAN)
-    QCOMPARE(QMessageStore::instance()->countFolders(QMessageFolderFilter::byParentAccountId(testAccountId)), originalCount + 1);
+    QCOMPARE(manager->countFolders(QMessageFolderFilter::byParentAccountId(testAccountId)), originalCount + 1);
 #else
-    QCOMPARE(QMessageStore::instance()->countFolders(), originalCount + 1);
+    QCOMPARE(manager->countFolders(), originalCount + 1);
 #endif    
     
     QMessageFolder folder(folderId);
@@ -287,12 +296,12 @@ void tst_QMessageStore::testFolder()
 
     if (!parentFolderPath.isEmpty()) {
         QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath) & QMessageFolderFilter::byParentAccountId(testAccountId));
-        QMessageFolderIdList list(QMessageStore::instance()->queryFolders(filter));
+        QMessageFolderIdList list(manager->queryFolders(filter));
         QMessageFolderId parentFolderId(list.first());
         QCOMPARE(folder.parentFolderId(), parentFolderId);
     }
 
-    QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders());
+    QMessageFolderIdList folderIds(manager->queryFolders());
     QVERIFY(folderIds.contains(folderId));
 }
 
@@ -446,7 +455,7 @@ void tst_QMessageStore::testMessage()
     static const QString testAccountName("testAccount");
 
     QMessageAccountId testAccountId;
-    QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
+    QMessageAccountIdList accountIds(manager->queryAccounts(QMessageAccountFilter::byName(testAccountName)));
     if (accountIds.isEmpty()) {
         Support::Parameters p;
         p.insert("name", testAccountName);
@@ -459,7 +468,7 @@ void tst_QMessageStore::testMessage()
 
     QMessageFolderId testFolderId;
     QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
-    QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
+    QMessageFolderIdList folderIds(manager->queryFolders(filter));
     if (folderIds.isEmpty()) {
         Support::Parameters p;
         p.insert("path", "Inbox");
@@ -474,15 +483,15 @@ void tst_QMessageStore::testMessage()
     QMessageFolder testFolder(testFolderId);
 
     SignalCatcher catcher;
-    connect(QMessageStore::instance(), SIGNAL(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)), &catcher, SLOT(messageAdded(QMessageId, QMessageStore::NotificationFilterIdSet)));
-    connect(QMessageStore::instance(), SIGNAL(messageUpdated(QMessageId, QMessageStore::NotificationFilterIdSet)), &catcher, SLOT(messageUpdated(QMessageId, QMessageStore::NotificationFilterIdSet)));
+    connect(manager, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)), &catcher, SLOT(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)));
+    connect(manager, SIGNAL(messageUpdated(QMessageId, QMessageManager::NotificationFilterIdSet)), &catcher, SLOT(messageUpdated(QMessageId, QMessageManager::NotificationFilterIdSet)));
 
     SignalCatcher removeCatcher;
-    connect(QMessageStore::instance(), SIGNAL(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)), &removeCatcher, SLOT(messageRemoved(QMessageId, QMessageStore::NotificationFilterIdSet)));
+    connect(manager, SIGNAL(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)), &removeCatcher, SLOT(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)));
 
-    QSharedPointer<FilterRegistration> filter1(new FilterRegistration(QMessageFilter::byParentAccountId(QMessageAccountId())));
-    QSharedPointer<FilterRegistration> filter2(new FilterRegistration(QMessageFilter::byParentAccountId(testAccountId)));
-    QSharedPointer<FilterRegistration> filter3(new FilterRegistration(QMessageFilter()));
+    QSharedPointer<FilterRegistration> filter1(new FilterRegistration(QMessageFilter::byParentAccountId(QMessageAccountId()), manager));
+    QSharedPointer<FilterRegistration> filter2(new FilterRegistration(QMessageFilter::byParentAccountId(testAccountId), manager));
+    QSharedPointer<FilterRegistration> filter3(new FilterRegistration(QMessageFilter(), manager));
 
     QFETCH(QString, to);
     QFETCH(QString, from);
@@ -523,13 +532,13 @@ void tst_QMessageStore::testMessage()
         p.insert("status-hasAttachments", "true");
     }
 
-    int originalCount = QMessageStore::instance()->countMessages();
+    int originalCount = manager->countMessages();
 
     // Test message addition
     QMessageId messageId(Support::addMessage(p));
     QVERIFY(messageId.isValid());
     QVERIFY(messageId != QMessageId());
-    QCOMPARE(QMessageStore::instance()->countMessages(), originalCount + 1);
+    QCOMPARE(manager->countMessages(), originalCount + 1);
 
 #if defined(Q_OS_WIN)
 	// Give MAPI enough time to emit the message added notification
@@ -541,7 +550,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(catcher.added.count(), 1);
     QCOMPARE(catcher.added.first().first, messageId);
     QCOMPARE(catcher.added.first().second.count(), 2);
-    QCOMPARE(catcher.added.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
+    QCOMPARE(catcher.added.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
 
     // Test message retrieval
     QMessage message(messageId);
@@ -630,7 +639,7 @@ void tst_QMessageStore::testMessage()
         QAPPROXIMATECOMPARE(attachment.size(), attachmentSize[index], (attachmentSize[index] / 2));
     }
 
-    QMessageIdList messageIds(QMessageStore::instance()->queryMessages());
+    QMessageIdList messageIds(manager->queryMessages());
     QVERIFY(messageIds.contains(messageId));
 
     // Update the message to contain new text
@@ -646,8 +655,8 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72u, 36u);  
 
-    QMessageStore::instance()->updateMessage(&message);
-    QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
+    manager->updateMessage(&message);
+    QCOMPARE(manager->lastError(), QMessageManager::NoError);
 
 #if defined(Q_OS_WIN)
 	QTest::qSleep(1000);
@@ -659,7 +668,7 @@ void tst_QMessageStore::testMessage()
     QVERIFY(catcher.updated.count() > 0);
     QCOMPARE(catcher.updated.first().first, messageId);
     QCOMPARE(catcher.updated.first().second.count(), 2);
-    QCOMPARE(catcher.updated.first().second, QSet<QMessageStore::NotificationFilterId>() << filter2->id << filter3->id);
+    QCOMPARE(catcher.updated.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
 
     QMessage updated(message.id());
 
@@ -711,12 +720,12 @@ void tst_QMessageStore::testMessage()
 
     // Test message removal
     if (removeMessage == "byId") {
-        QMessageStore::instance()->removeMessage(message.id());
+        manager->removeMessage(message.id());
     } else { // byFilter
-        QMessageStore::instance()->removeMessages(QMessageFilter::byId(message.id()));
+        manager->removeMessages(QMessageFilter::byId(message.id()));
     }
-    QCOMPARE(QMessageStore::instance()->lastError(), QMessageStore::NoError);
-    QCOMPARE(QMessageStore::instance()->countMessages(), originalCount);
+    QCOMPARE(manager->lastError(), QMessageManager::NoError);
+    QCOMPARE(manager->countMessages(), originalCount);
 
 #if defined(Q_OS_WIN)
 	QTest::qSleep(1000);
@@ -728,7 +737,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
-    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageStore::NotificationFilterId>() << filter3->id);
+    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter3->id);
 #endif    
 }
 

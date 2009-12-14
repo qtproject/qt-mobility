@@ -48,7 +48,7 @@
 #include "qmessagedatacomparator.h"
 #include "qmessagefolder.h"
 #include "qmessageserviceaction.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 
 #include <qmaildatacomparator.h>
 #include <qmailmessage.h>
@@ -103,11 +103,11 @@ namespace QmfHelpers {
 
     Q_AUTOTEST_EXPORT quint64 convert(QMessage::StatusFlags v);
 
-    Q_AUTOTEST_EXPORT QMessageStore::ErrorCode convert(QMailStore::ErrorCode v);
-    //QMailStore::ErrorCode convert(QMessageStore::ErrorCode v);
+    Q_AUTOTEST_EXPORT QMessageManager::ErrorCode convert(QMailStore::ErrorCode v);
+    //QMailStore::ErrorCode convert(QMessageManager::ErrorCode v);
 
-    //QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v);
-    Q_AUTOTEST_EXPORT QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v);
+    //QMessageManager::RemovalOption convert(QMailStore::MessageRemovalOption v);
+    Q_AUTOTEST_EXPORT QMailStore::MessageRemovalOption convert(QMessageManager::RemovalOption v);
 
     Q_AUTOTEST_EXPORT QMessageServiceAction::State convert(QMailServiceAction::Activity v);
     Q_AUTOTEST_EXPORT QMailServiceAction::Activity convert(QMessageServiceAction::State v);
@@ -158,6 +158,7 @@ namespace QmfHelpers {
     //const QMailMessage* convert(const QMessage *message);
 
     Q_AUTOTEST_EXPORT QMailStore *convert(QMessageStore *store);
+    Q_AUTOTEST_EXPORT QMailStore *convert(QMessageManager &manager);
 
     Q_AUTOTEST_EXPORT quint64 highPriorityMask();
     Q_AUTOTEST_EXPORT quint64 lowPriorityMask();

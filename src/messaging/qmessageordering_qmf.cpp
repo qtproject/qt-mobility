@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "qmessageordering.h"
-#include "qmessagestore.h"
 #include "qmfhelpers_p.h"
 
 #include <qmailmessagesortkey.h>

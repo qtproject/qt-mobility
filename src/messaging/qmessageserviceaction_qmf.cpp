@@ -84,7 +84,7 @@ public:
     QMailTransmitAction _transmit;
     QMailRetrievalAction _retrieval;
     QMailServiceAction *_active;
-    QMessageStore::ErrorCode _error;
+    QMessageManager::ErrorCode _error;
 
     QList<QMessageId> _matchingIds;
     QList<QMailMessageId> _candidateIds;
@@ -119,7 +119,7 @@ private:
 QMessageServiceActionPrivate::QMessageServiceActionPrivate()
     : QObject(),
       _active(0),
-      _error(QMessageStore::NoError),
+      _error(QMessageManager::NoError),
       _limit(0),
       _offset(0)
 {
@@ -140,7 +140,7 @@ void QMessageServiceActionPrivate::transmitActivityChanged(QMailServiceAction::A
                 QMessage message(convert(id));
 
                 QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
-                if (!QMessageStore::instance()->updateMessage(&message)) {
+                if (!QMessageManager().updateMessage(&message)) {
                     qWarning() << "Unable to mark message as sent!";
                 }
             }
@@ -160,14 +160,14 @@ void QMessageServiceActionPrivate::statusChanged(const QMailServiceAction::Statu
         qWarning() << QString("Service error %1: \"%2\"").arg(s.errorCode).arg(s.text);
 
         if (s.errorCode == QMailServiceAction::Status::ErrNotImplemented) {
-            _error = QMessageStore::NotYetImplemented;
+            _error = QMessageManager::NotYetImplemented;
         } else if ((s.errorCode == QMailServiceAction::Status::ErrNonexistentMessage) ||
                    (s.errorCode == QMailServiceAction::Status::ErrEnqueueFailed) ||
                    (s.errorCode == QMailServiceAction::Status::ErrInvalidAddress) ||
                    (s.errorCode == QMailServiceAction::Status::ErrInvalidData)) {
-            _error = QMessageStore::ConstraintFailure;
+            _error = QMessageManager::ConstraintFailure;
         } else {
-            _error = QMessageStore::FrameworkFault;
+            _error = QMessageManager::FrameworkFault;
         }
     }
 }
@@ -265,7 +265,7 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
     : QObject(parent),
       d_ptr(new QMessageServiceActionPrivate)
 {
-    QMessageStore::instance(); // Prime the store TODO: Please review Matt (and Pending->InProgress change)
+    QMessageManager(); // Prime the store TODO: Please review Matt (and Pending->InProgress change)
     connect(d_ptr, SIGNAL(stateChanged(QMessageServiceAction::State)), 
             this, SIGNAL(stateChanged(QMessageServiceAction::State)));
     connect(d_ptr, SIGNAL(messagesFound(QMessageIdList)), 
@@ -292,7 +292,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(ordering), limit, offset);
     d_ptr->_error = convert(QMailStore::instance()->lastError());
 
-    if (d_ptr->_error == QMessageStore::NoError) {
+    if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = QMessageFilter();
         d_ptr->_lastOrdering = QMessageOrdering();
         d_ptr->_match = QString();
@@ -335,7 +335,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(ordering));
     d_ptr->_error = convert(QMailStore::instance()->lastError());
 
-    if (d_ptr->_error == QMessageStore::NoError) {
+    if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = filter;
         d_ptr->_lastOrdering = ordering;
         d_ptr->_match = body;
@@ -360,7 +360,7 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
     d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter));
     d_ptr->_error = convert(QMailStore::instance()->lastError());
 
-    if (d_ptr->_error == QMessageStore::NoError) {
+    if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = QMessageFilter();
         d_ptr->_lastOrdering = QMessageOrdering();
         d_ptr->_match = QString();
@@ -386,7 +386,7 @@ bool QMessageServiceAction::send(QMessage &message)
         // Attach to the default account
         message.setParentAccountId(QMessageAccount::defaultAccount(message.type()));
         if (!message.parentAccountId().isValid()) {
-            d_ptr->_error = QMessageStore::InvalidId;
+            d_ptr->_error = QMessageManager::InvalidId;
             qWarning() << "Invalid message account ID";
             return false;
         }
@@ -416,14 +416,14 @@ bool QMessageServiceAction::send(QMessage &message)
     if (msg->id().isValid()) {
         // Update the message
         if (!QMailStore::instance()->updateMessage(msg)) {
-            d_ptr->_error = QMessageStore::FrameworkFault;
+            d_ptr->_error = QMessageManager::FrameworkFault;
             qWarning() << "Unable to mark message as outgoing";
             return false;
         }
     } else {
         // Add this message to the store
         if (!QMailStore::instance()->addMessage(msg)) {
-            d_ptr->_error = QMessageStore::FrameworkFault;
+            d_ptr->_error = QMessageManager::FrameworkFault;
             qWarning() << "Unable to store message for transmission";
             return false;
         }
@@ -431,7 +431,7 @@ bool QMessageServiceAction::send(QMessage &message)
 
     d_ptr->_transmitIds = QMailStore::instance()->queryMessages(QMailMessageKey::status(QMailMessage::Outgoing) & QMailMessageKey::parentAccountId(msg->parentAccountId()));
 
-    d_ptr->_error = QMessageStore::NoError;
+    d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = &d_ptr->_transmit;
     d_ptr->_transmit.transmitMessages(msg->parentAccountId());
     return true;
@@ -446,7 +446,7 @@ bool QMessageServiceAction::compose(const QMessage &message)
     d_ptr->_active = 0;
 
     // TODO: To be implemented by integrator
-    d_ptr->_error = QMessageStore::NotYetImplemented;
+    d_ptr->_error = QMessageManager::NotYetImplemented;
     qWarning() << "QMessageServiceAction::compose not yet implemented";
     return false;
 
@@ -463,13 +463,13 @@ bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
 
     QMailMessageId messageId(convert(id));
     if (!messageId.isValid()) {
-        d_ptr->_error = QMessageStore::InvalidId;
+        d_ptr->_error = QMessageManager::InvalidId;
         qWarning() << "Invalid message ID";
         return false;
     }
 
     // Operation is not relevant to QMF - meta data retrieval always includes header information
-    d_ptr->_error = QMessageStore::NoError;
+    d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = 0;
     QTimer::singleShot(0, d_ptr, SLOT(completed()));
     return true;
@@ -485,12 +485,12 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 
     QMailMessageId messageId(convert(id));
     if (!messageId.isValid()) {
-        d_ptr->_error = QMessageStore::InvalidId;
+        d_ptr->_error = QMessageManager::InvalidId;
         qWarning() << "Invalid message ID";
         return false;
     }
 
-    d_ptr->_error = QMessageStore::NoError;
+    d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = &d_ptr->_retrieval;
     d_ptr->_retrieval.retrieveMessages(QMailMessageIdList() << messageId, QMailRetrievalAction::Content);
     return true;
@@ -507,12 +507,12 @@ bool QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessage
 
     QMailMessagePart::Location location(convert(id));
     if (!location.isValid()) {
-        d_ptr->_error = QMessageStore::InvalidId;
+        d_ptr->_error = QMessageManager::InvalidId;
         qWarning() << "Invalid message part location";
         return false;
     }
     
-    d_ptr->_error = QMessageStore::NoError;
+    d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = &d_ptr->_retrieval;
     d_ptr->_retrieval.retrieveMessagePart(location);
     return true;
@@ -527,7 +527,7 @@ bool QMessageServiceAction::show(const QMessageId& id)
     d_ptr->_active = 0;
 
     // TODO: To be implemented by integrator
-    d_ptr->_error = QMessageStore::NotYetImplemented;
+    d_ptr->_error = QMessageManager::NotYetImplemented;
     qWarning() << "QMessageServiceAction::show not yet implemented";
     return false;
 
@@ -544,12 +544,12 @@ bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
 
     QMailAccountId accountId(convert(id));
     if (!accountId.isValid()) {
-        d_ptr->_error = QMessageStore::InvalidId;
+        d_ptr->_error = QMessageManager::InvalidId;
         qWarning() << "Account ID is not valid";
         return false;
     }
 
-    d_ptr->_error = QMessageStore::NoError;
+    d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = &d_ptr->_retrieval;
     d_ptr->_retrieval.exportUpdates(accountId);
     return true;
@@ -571,7 +571,7 @@ void QMessageServiceAction::cancelOperation()
     }
 }
 
-QMessageStore::ErrorCode QMessageServiceAction::lastError() const
+QMessageManager::ErrorCode QMessageServiceAction::lastError() const
 {
     return d_ptr->_error;
 }

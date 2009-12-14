@@ -121,14 +121,16 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     QString read(params["status-read"]);
     QString hasAttachments(params["status-hasAttachments"]);
     
+    QMessageManager manager;
+
     if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
         // Find the named account
-        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
+        QMessageAccountIdList accountIds(manager.queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
         if (accountIds.count() == 1) {
             // Find the specified folder
             QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
-            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
+            QMessageFolderIdList folderIds(manager.queryFolders(filter));
             if (folderIds.count() == 1) {
                 QMessage message;
     
@@ -205,7 +207,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                 }
                 message.setStatus(flags);
     
-                if (!QMessageStore::instance()->addMessage(&message)) {
+                if (!manager.addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;
                 } else {
                     return message.id();

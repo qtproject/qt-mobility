@@ -48,7 +48,7 @@
 #endif
 #ifdef Q_OS_WIN
 #include "winhelpers_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #endif
 #include <QSet>
 
@@ -140,8 +140,8 @@ public:
 #endif
 
 #ifdef Q_OS_WIN
-    static QMessageFolderFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);
-    static void preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFolderFilter *filter);
+    static QMessageFolderFilter preprocess(QMessageManager::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);
+    static void preprocess(QMessageManager::ErrorCode *lastError, MapiSessionPtr session, QMessageFolderFilter *filter);
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
     static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif

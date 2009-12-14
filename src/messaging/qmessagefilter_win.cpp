@@ -106,10 +106,10 @@ MapiFolderIterator::MapiFolderIterator(MapiStorePtr store,
         if (parent->isValid()) {
             if (!_store->session()->equal(parent->entryId(), root->entryId()))
                 _folders.append(parent);
-            QMessageStore::ErrorCode ignored(QMessageStore::NoError);
+            QMessageManager::ErrorCode ignored(QMessageManager::NoError);
             while (true) {
                 MapiFolderPtr folder(parent->nextSubFolder(&ignored));
-                if (ignored != QMessageStore::NoError) {
+                if (ignored != QMessageManager::NoError) {
                     qWarning() << "MapiFolderIterator:: Error getting next subfolder";
                     break;
                 }
@@ -276,7 +276,7 @@ QMessageFilterPrivate* QMessageFilterPrivate::implementation(const QMessageFilte
     return filter.d_ptr;
 }
 
-MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store)
+MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageManager::ErrorCode *lastError, const MapiStorePtr &store)
 {
     return MapiFolderIterator(store, 
         store->rootFolder(lastError),
@@ -288,7 +288,7 @@ MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &f
         filter.d_ptr->_ancestorExclude);
 }
 
-MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session)
+MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageManager::ErrorCode *lastError, const MapiSessionPtr &session)
 {
     return MapiStoreIterator(session->allStores(lastError), filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude);
 }
@@ -311,10 +311,10 @@ QList<QMessageFilter> QMessageFilterPrivate::subfilters(const QMessageFilter &fi
     return result;
 }
 
-// Several filters require QMessageStore::queryX to be called to evaluate filter member variables, 
+// Several filters require QMessageManager::queryX to be called to evaluate filter member variables, 
 // namely byIds(const QMessageFilter &, ...), byParentAccountId(const QMessageAccountFilter &, ...), 
 // byFolderIds(const QMessageFolderFilter &, ...), byAncestorFolderIds(const QMessageFolderFilter &, ...)
-QMessageFilter QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFilter &filter)
+QMessageFilter QMessageFilterPrivate::preprocess(QMessageManager::ErrorCode *lastError, MapiSessionPtr session, const QMessageFilter &filter)
 {
     QMessageFilter result(filter);
     QMessageFilterPrivate::preprocess(lastError, session, &result);
@@ -322,7 +322,7 @@ QMessageFilter QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastE
 }
 
 // returns true if filter is modified
-bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
+bool QMessageFilterPrivate::preprocess(QMessageManager::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
 {
     if (!filter)
         return false;
@@ -457,13 +457,13 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
     if (!sAccountIdMatches(accountId, filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude))
         return false;
 
-    QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+    QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
 #ifdef _WIN32_WCE
     MapiFolderPtr folder = store->openFolder(&ignoredError, QMessageIdPrivate::folderRecordKey(message.id()));
 #else
     MapiFolderPtr folder = store->openFolderWithKey(&ignoredError, QMessageIdPrivate::folderRecordKey(message.id()));
 #endif
-    if (ignoredError != QMessageStore::NoError)
+    if (ignoredError != QMessageManager::NoError)
         return false;
     if (!sFolderMatches(folder, 
         filter.d_ptr->_standardFoldersInclude, 

@@ -53,13 +53,13 @@ QTM_BEGIN_NAMESPACE
 
     A QMessageFolderFilter is composed of a folder property, an optional comparison operator
     and a comparison value. The QMessageFolderFilter class is used in conjunction with the 
-    QMessageStore::queryFolders() and QMessageStore::countFolders() functions to filter results 
+    QMessageManager::queryFolders() and QMessageManager::countFolders() functions to filter results 
     which meet the criteria defined by the filter.
 
     QMessageFolderFilters can be combined using the logical operators (&), (|) and (~) to
     create more refined queries.
 
-    \sa QMessageStore, QMessageFolder
+    \sa QMessageManager, QMessageFolder
 */
 
 /*!

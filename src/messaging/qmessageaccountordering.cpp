@@ -51,10 +51,10 @@ QTM_BEGIN_NAMESPACE
     \ingroup messaging
 
     A QMessageAccountOrdering is composed of a account property to sort and a sort order. 
-    The QMessageAccountOrdering class is used in conjunction with the QMessageStore::queryAccounts() 
+    The QMessageAccountOrdering class is used in conjunction with the QMessageManager::queryAccounts() 
     function to sort account results according to the criteria defined by the ordering.
     
-    \sa QMessageStore, QMessageAccountFilter
+    \sa QMessageManager, QMessageAccountFilter
 */
 
 /*!

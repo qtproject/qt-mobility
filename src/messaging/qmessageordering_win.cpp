@@ -118,7 +118,7 @@ struct MapiSortOrderSet
     SSortOrder aSort[maxSortOrders];
 };
 
-void QMessageOrderingPrivate::sortTable(QMessageStore::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE messagesTable)
+void QMessageOrderingPrivate::sortTable(QMessageManager::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE messagesTable)
 {
     MapiSortOrderSet multiSort;
     QMessageOrderingPrivate *d(ordering.d_ptr);
@@ -172,7 +172,7 @@ void QMessageOrderingPrivate::sortTable(QMessageStore::ErrorCode *lastError, con
     //Note: Windows Mobile does not support multiple sort levels
     multiSort.cSorts = qMin<int>(maxSortOrders, fieldOrderList.count());
     if (messagesTable->SortTable(reinterpret_cast<SSortOrderSet*>(&multiSort), 0) != S_OK) {
-        *lastError = QMessageStore::NotYetImplemented;
+        *lastError = QMessageManager::NotYetImplemented;
         return;
     }
     return;

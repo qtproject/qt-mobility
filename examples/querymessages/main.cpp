@@ -41,7 +41,7 @@
 
 #include <QApplication>
 
-#include <qmessagestore.h>
+#include <qmessagemanager.h>
 #include <qdebug.h>
 
 QTM_USE_NAMESPACE
@@ -59,9 +59,12 @@ int main(int argc, char *argv[])
 //! [setup-query]
 
 //! [perform-query]
+    // Acquire a handle to the message manager
+    QMessageManager manager;
+
     // Find the matching message IDs, limiting our results to a managable number
     const int max = 100;
-    const QMessageIdList matchingIds(QMessageStore::instance()->queryMessages(filter, ordering, max));
+    const QMessageIdList matchingIds(manager.queryMessages(filter, ordering, max));
 //! [perform-query]
 
     int n = 0;
@@ -69,10 +72,10 @@ int main(int argc, char *argv[])
 //! [iterate-results]
     // Retrieve each message and print requested details
     foreach (const QMessageId &id, matchingIds) {
-        QMessage message(QMessageStore::instance()->message(id));
+        QMessage message(manager.message(id));
 //! [iterate-results]
 
-        if (QMessageStore::instance()->lastError() == QMessageStore::NoError) {
+        if (manager.lastError() == QMessageManager::NoError) {
             QStringList result;
 
             if (app.arguments().count() < 2) {

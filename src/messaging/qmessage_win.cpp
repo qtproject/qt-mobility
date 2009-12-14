@@ -42,7 +42,7 @@
 #include "qmessage_p.h"
 #include "qmessageid_p.h"
 #include "qmessageaccountid_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #include "qmessagecontentcontainer_p.h"
 #include "qmessagefolderid_p.h"
 #include "winhelpers_p.h"
@@ -105,7 +105,7 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
 void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 {
     if (!_elementsPresent.properties && _id.isValid()) {
-        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageProperties(&ignoredError, msg);
@@ -116,7 +116,7 @@ void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 void QMessagePrivate::ensureRecipientsPresent(QMessage *msg) const
 {
     if (!_elementsPresent.recipients && _id.isValid()) {
-        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageRecipients(&ignoredError, msg);
@@ -127,7 +127,7 @@ void QMessagePrivate::ensureRecipientsPresent(QMessage *msg) const
 void QMessagePrivate::ensureBodyPresent(QMessage *msg) const
 {
     if (!_elementsPresent.body && _id.isValid()) {
-        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageBody(&ignoredError, msg);
@@ -138,7 +138,7 @@ void QMessagePrivate::ensureBodyPresent(QMessage *msg) const
 void QMessagePrivate::ensureAttachmentsPresent(QMessage *msg) const
 {
     if (!_elementsPresent.attachments && _id.isValid()) {
-        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageAttachments(&ignoredError, msg);
@@ -162,7 +162,7 @@ QMessage::QMessage(const QMessageId& id)
     QMessageContentContainer(),
     d_ptr(new QMessagePrivate(this))
 {
-    *this = QMessageStore::instance()->message(id);
+    *this = QMessageManager().message(id);
     setDerivedMessage(this);
 }
 

@@ -131,9 +131,9 @@ void QMessageServiceAction::cancelOperation()
 {
 }
 
-QMessageStore::ErrorCode QMessageServiceAction::lastError() const
+QMessageManager::ErrorCode QMessageServiceAction::lastError() const
 {
-    return QMessageStore::NoError;
+    return QMessageManager::NoError;
 }
 
 QTM_END_NAMESPACE

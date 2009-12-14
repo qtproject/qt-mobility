@@ -41,7 +41,7 @@
 #include "qmessage.h"
 #include "qmessage_symbian_p.h"
 #include "qmessagecontentcontainer_symbian_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 
 
 QTM_BEGIN_NAMESPACE
@@ -104,7 +104,7 @@ QMessage::QMessage()
 QMessage::QMessage(const QMessageId& id)
  : d_ptr(new QMessagePrivate(this))
 {
-	*this = QMessageStore::instance()->message(id);
+	*this = QMessageManager().message(id);
 	setDerivedMessage(this);	
 }
 

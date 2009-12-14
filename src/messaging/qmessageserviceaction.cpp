@@ -278,7 +278,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns true if the action can be initiated; otherwise returns false.
     
-    \sa QMessageStore::addMessage(), QMessageStore::updateMessage(), QMessageStore::removeMessage(), QMessageStore::removeMessages()
+    \sa QMessageManager::addMessage(), QMessageManager::updateMessage(), QMessageManager::removeMessage(), QMessageManager::removeMessages()
 */
     
 /*!

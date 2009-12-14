@@ -85,6 +85,7 @@ private:
     QMessageId sendId;
     QMap<QString, QPair<QMessage::Type, QMessageAccountId> > accountDetails;
 
+    QMessageManager manager;
     QMessageServiceAction service;
 };
 

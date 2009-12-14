@@ -79,8 +79,8 @@
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp begin-search
 
-    We could have queried the QMessageStore instance directly using the
-    \l{QMessageStore::queryMessages()}{queryMessages} function, but that
+    We could have queried the QMessageManager instance directly using the
+    \l{QMessageManager::queryMessages()}{queryMessages} function, but that
     would keep our UI thread busy, and we wouldn't be able to keep our UI
     functioning at the same time.  Using the QMessageServiceAction interface
     allows us to process the search asynchronously.  

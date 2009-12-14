@@ -104,6 +104,8 @@ private:
     QMessageIdList messageIds;
 
     QList<int> messageSizes;
+
+    QMessageManager *manager;
 };
 
 Q_DECLARE_METATYPE(QMessageAccountIdList)
@@ -141,11 +143,13 @@ QTEST_MAIN(tst_QMessageStoreKeys)
 #include "tst_qmessagestorekeys.moc"
 
 tst_QMessageStoreKeys::tst_QMessageStoreKeys()
+    : manager(0)
 {
 }
 
 tst_QMessageStoreKeys::~tst_QMessageStoreKeys()
 {
+    delete manager;
 }
 
 class Params
@@ -177,9 +181,12 @@ void tst_QMessageStoreKeys::init()
 
 void tst_QMessageStoreKeys::initTestCase()
 {
+    // Clear any existing data before we instantiate the message manager
     Support::clearMessageStore();
 
-    existingAccountIds = QMessageStore::instance()->queryAccounts().toSet();
+    manager = new QMessageManager;
+
+    existingAccountIds = manager->queryAccounts().toSet();
     existingAccountsFilter = ~QMessageFilter();
     foreach(QMessageAccountId id, existingAccountIds) {
         existingAccountsFilter |= QMessageFilter::byParentAccountId(id);
@@ -199,7 +206,7 @@ void tst_QMessageStoreKeys::initTestCase()
         QVERIFY(accountIds.last().isValid());
     }
 
-    existingFolderIds = QMessageStore::instance()->queryFolders().toSet();
+    existingFolderIds = manager->queryFolders().toSet();
 
     QList<Support::Parameters> folderParams;
     folderParams << Params()("parentAccountName", "Alter Ego")
@@ -235,7 +242,7 @@ void tst_QMessageStoreKeys::initTestCase()
         QVERIFY(folderIds.last().isValid());
     }
 
-    existingMessageIds = QMessageStore::instance()->queryMessages(~existingAccountsFilter).toSet();
+    existingMessageIds = manager->queryMessages(~existingAccountsFilter).toSet();
 
     // For windows at least, we can't have HasAttachments set without a real attachment
 #ifndef Q_OS_SYMBIAN
@@ -655,8 +662,8 @@ void tst_QMessageStoreKeys::testAccountFilter()
         QCOMPARE(filter != QMessageAccountFilter(), !filter.isEmpty());
 
         // Order is irrelevant for filtering
-        QCOMPARE(QMessageStore::instance()->queryAccounts(filter).toSet().subtract(existingAccountIds), ids.toSet());
-        QCOMPARE(QMessageStore::instance()->queryAccounts(~filter).toSet().subtract(existingAccountIds), negatedIds.toSet());
+        QCOMPARE(manager->queryAccounts(filter).toSet().subtract(existingAccountIds), ids.toSet());
+        QCOMPARE(manager->queryAccounts(~filter).toSet().subtract(existingAccountIds), negatedIds.toSet());
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
@@ -686,7 +693,7 @@ void tst_QMessageStoreKeys::testAccountOrdering()
         QCOMPARE(ordering != QMessageAccountOrdering(), !ordering.isEmpty());
 
         // Filter out the existing accounts
-        QMessageAccountIdList sortedIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter(), ordering));
+        QMessageAccountIdList sortedIds(manager->queryAccounts(QMessageAccountFilter(), ordering));
         for (QMessageAccountIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
             if (existingAccountIds.contains(*it)) {
                 it = sortedIds.erase(it);
@@ -1346,8 +1353,8 @@ void tst_QMessageStoreKeys::testFolderFilter()
         QCOMPARE(filter != QMessageFolderFilter(), !filter.isEmpty());
 
         // Order is irrelevant for filtering
-        QCOMPARE(QMessageStore::instance()->queryFolders(filter).toSet().subtract(existingFolderIds), ids.toSet());
-        QCOMPARE(QMessageStore::instance()->queryFolders(~filter).toSet().subtract(existingFolderIds), negatedIds.toSet());
+        QCOMPARE(manager->queryFolders(filter).toSet().subtract(existingFolderIds), ids.toSet());
+        QCOMPARE(manager->queryFolders(~filter).toSet().subtract(existingFolderIds), negatedIds.toSet());
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
@@ -1411,7 +1418,7 @@ void tst_QMessageStoreKeys::testFolderOrdering()
         QCOMPARE(ordering != QMessageFolderOrdering(), !ordering.isEmpty());
 
         // Filter out the existing folders
-        QMessageFolderIdList sortedIds(QMessageStore::instance()->queryFolders(QMessageFolderFilter(), ordering));
+        QMessageFolderIdList sortedIds(manager->queryFolders(QMessageFolderFilter(), ordering));
         for (QMessageFolderIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
             if (existingFolderIds.contains(*it)) {
                 it = sortedIds.erase(it);
@@ -2818,11 +2825,11 @@ void tst_QMessageStoreKeys::testMessageFilter()
         
         // Order is irrelevant for filtering
         if (body.isEmpty()) {
-            QCOMPARE(QMessageStore::instance()->queryMessages(filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), ids.toSet());
-            QCOMPARE(QMessageStore::instance()->queryMessages(~filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), negatedIds.toSet());
+            QCOMPARE(manager->queryMessages(filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), ids.toSet());
+            QCOMPARE(manager->queryMessages(~filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), negatedIds.toSet());
         } else {
-            QCOMPARE(QMessageStore::instance()->queryMessages(filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), ids.toSet());
-            QCOMPARE(QMessageStore::instance()->queryMessages(~filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), negatedIds.toSet());
+            QCOMPARE(manager->queryMessages(filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), ids.toSet());
+            QCOMPARE(manager->queryMessages(~filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), negatedIds.toSet());
         }
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
@@ -3155,7 +3162,7 @@ void tst_QMessageStoreKeys::testMessageOrdering()
         QCOMPARE(ordering != QMessageOrdering(), !ordering.isEmpty());
 
         // Filter out the existing messages
-        QMessageIdList sortedIds(QMessageStore::instance()->queryMessages(~existingAccountsFilter, ordering));
+        QMessageIdList sortedIds(manager->queryMessages(~existingAccountsFilter, ordering));
         for (QMessageIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
             if (existingMessageIds.contains(*it)) {
                 it = sortedIds.erase(it);

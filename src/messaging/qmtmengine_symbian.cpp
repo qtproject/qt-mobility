@@ -669,7 +669,7 @@ void CMTMEngine::copyMessageL(TMsvId aMessageId, TMsvId aFolder)
     CleanupStack::PopAndDestroy(); // parentEntry
 }
 
-bool CMTMEngine::removeMessage(const QMessageId &id, QMessageStore::RemovalOption option)
+bool CMTMEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
 {
     if (!iSessionReady)
         return false;
@@ -1269,7 +1269,7 @@ void CMTMEngine::retrieveHeaderL(const QMessageId& id) const
     CleanupStack::PopAndDestroy(pEntry);
 }
 
-bool CMTMEngine::removeMessageL(const QMessageId &id, QMessageStore::RemovalOption /*option*/)
+bool CMTMEngine::removeMessageL(const QMessageId &id, QMessageManager::RemovalOption /*option*/)
 {
     long int messageId = id.toString().toLong();
     CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
@@ -1317,7 +1317,7 @@ bool CMTMEngine::removeMessageL(const QMessageId &id, QMessageStore::RemovalOpti
     return true;
 }
 
-bool CMTMEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageStore::RemovalOption /*option*/)
+bool CMTMEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)
 {
     return false;
 }
@@ -4144,7 +4144,7 @@ void CMTMEngine::releaseCMsvEntryAndPopFromCleanupStack(CMsvEntry* pEntry) const
     }
 }
 
-QMessageStore::NotificationFilterId CMTMEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
+QMessageManager::NotificationFilterId CMTMEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                                                            const QMessageFilter &filter)
 {
     ipMessageStorePrivate = &aPrivateStore;
@@ -4155,7 +4155,7 @@ QMessageStore::NotificationFilterId CMTMEngine::registerNotificationFilter(QMess
     return filterId;
 }
 
-void CMTMEngine::unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId)
+void CMTMEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
     _filters.remove(notificationFilterId);
     if (_filters.count() == 0) {
@@ -4165,7 +4165,7 @@ void CMTMEngine::unregisterNotificationFilter(QMessageStore::NotificationFilterI
 
 void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId, TMsvId aMessageId)
 {
-    QMessageStore::NotificationFilterIdSet matchingFilters;
+    QMessageManager::NotificationFilterIdSet matchingFilters;
 
     // Copy the filter map to protect against modification during traversal
     QMap<int, QMessageFilter> filters(_filters);

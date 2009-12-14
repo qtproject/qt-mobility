@@ -42,7 +42,7 @@
 #define QMESSAGESERVICEACTION_H
 #include <QObject>
 #include <qmessageglobal.h>
-#include <qmessagestore.h>
+#include <qmessagemanager.h>
 #include <qmessage.h>
 
 
@@ -81,7 +81,7 @@ public:
     bool exportUpdates(const QMessageAccountId &id);
 
     State state() const;
-    QMessageStore::ErrorCode lastError() const;
+    QMessageManager::ErrorCode lastError() const;
 
 public slots:
     void cancelOperation();

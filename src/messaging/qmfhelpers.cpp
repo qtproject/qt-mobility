@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qmfhelpers_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 
 #include <QRegExp>
 
@@ -51,7 +51,8 @@ namespace {
 
 quint64 messageStatusMask(const QString &field)
 {
-    return QmfHelpers::convert(QMessageStore::instance())->messageStatusMask(field);
+    QMessageManager mgr;
+    return QmfHelpers::convert(mgr)->messageStatusMask(field);
 }
 
 }
@@ -234,14 +235,14 @@ QMailMessage::MessageType convert(QMessage::TypeFlags v)
 }
 
 /*
-QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
+QMailStore::ErrorCode convert(QMessageManager::ErrorCode v)
 {
     switch (v) {
-    case QMessageStore::InvalidId: return QMailStore::InvalidId;
-    case QMessageStore::ConstraintFailure: return QMailStore::ConstraintFailure;
-    case QMessageStore::ContentInaccessible: return QMailStore::ContentInaccessible;
-    case QMessageStore::NotYetImplemented: return QMailStore::NotYetImplemented;
-    case QMessageStore::FrameworkFault: return QMailStore::FrameworkFault;
+    case QMessageManager::InvalidId: return QMailStore::InvalidId;
+    case QMessageManager::ConstraintFailure: return QMailStore::ConstraintFailure;
+    case QMessageManager::ContentInaccessible: return QMailStore::ContentInaccessible;
+    case QMessageManager::NotYetImplemented: return QMailStore::NotYetImplemented;
+    case QMessageManager::FrameworkFault: return QMailStore::FrameworkFault;
     default: break;
     }
 
@@ -249,24 +250,24 @@ QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
 }
 */
 
-QMessageStore::ErrorCode convert(QMailStore::ErrorCode v)
+QMessageManager::ErrorCode convert(QMailStore::ErrorCode v)
 {
     switch (v) {
-    case QMailStore::InvalidId: return QMessageStore::InvalidId;
-    case QMailStore::ConstraintFailure: return QMessageStore::ConstraintFailure;
-    case QMailStore::ContentInaccessible: return QMessageStore::ContentInaccessible;
-    case QMailStore::NotYetImplemented: return QMessageStore::NotYetImplemented;
-    case QMailStore::FrameworkFault: return QMessageStore::FrameworkFault;
+    case QMailStore::InvalidId: return QMessageManager::InvalidId;
+    case QMailStore::ConstraintFailure: return QMessageManager::ConstraintFailure;
+    case QMailStore::ContentInaccessible: return QMessageManager::ContentInaccessible;
+    case QMailStore::NotYetImplemented: return QMessageManager::NotYetImplemented;
+    case QMailStore::FrameworkFault: return QMessageManager::FrameworkFault;
     default: break;
     }
 
-    return QMessageStore::NoError;
+    return QMessageManager::NoError;
 }
 
-QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v)
+QMailStore::MessageRemovalOption convert(QMessageManager::RemovalOption v)
 {
     switch (v) {
-    case QMessageStore::RemoveOnOriginatingServer: return QMailStore::CreateRemovalRecord;
+    case QMessageManager::RemoveOnOriginatingServer: return QMailStore::CreateRemovalRecord;
     default: break;
     }
 
@@ -274,14 +275,14 @@ QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v)
 }
 
 /*
-QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
+QMessageManager::RemovalOption convert(QMailStore::MessageRemovalOption v)
 {
     switch (v) {
-    case QMailStore::CreateRemovalRecord: return QMessageStore::RemoveOnOriginatingServer;
+    case QMailStore::CreateRemovalRecord: return QMessageManager::RemoveOnOriginatingServer;
     default: break;
     }
 
-    return QMessageStore::RemoveLocalCopyOnly;
+    return QMessageManager::RemoveLocalCopyOnly;
 }
 */
 
@@ -553,7 +554,7 @@ QMailMessage* convert(QMessage *message);
 
 /* in qmessagestore_qmf.cpp
 QMailStore *convert(QMessageStore *store);
-const QMailStore *convert(const QMessageStore *store);
+QMailStore *convert(QMessageManager &manager);
 */
 
 quint64 highPriorityMask()

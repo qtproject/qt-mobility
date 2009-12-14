@@ -51,10 +51,10 @@ QTM_BEGIN_NAMESPACE
     \ingroup messaging
 
     A QMessageFolderOrdering is composed of a folder property to sort and a sort order. 
-    The QMessageFolderOrdering class is used in conjunction with the QMessageStore::queryFolders() 
+    The QMessageFolderOrdering class is used in conjunction with the QMessageManager::queryFolders() 
     function to sort folder results according to the criteria defined by the ordering.
     
-    \sa QMessageStore, QMessageFolderFilter
+    \sa QMessageManager, QMessageFolderFilter
 */
 
 /*!

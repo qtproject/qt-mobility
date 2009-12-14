@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGESTORE_H
-#define QMESSAGESTORE_H
+#ifndef QMESSAGEMANAGER_H
+#define QMESSAGEMANAGER_H
 #include <QObject>
 #include <QSet>
 #include <QMetaType>
@@ -52,20 +52,43 @@
 #include <qmessage.h>
 #include <qmessagefolder.h>
 #include <qmessageaccount.h>
-#include <qmessagemanager.h>
 
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageStorePrivate;
+class QMessageStore;
 
-class QMessageStore : public QObject
+class Q_MESSAGING_EXPORT QMessageManager : public QObject
 {
     Q_OBJECT
 
     friend class QMessageStorePrivate;
 
 public:
+    enum RemovalOption
+    {
+        RemoveLocalCopyOnly = 1,
+        RemoveOnOriginatingServer
+    };
+
+    enum ErrorCode
+    {
+        NoError = 0,
+        InvalidId,
+        ConstraintFailure,
+        ContentInaccessible,
+        NotYetImplemented,
+        FrameworkFault,
+        WorkingMemoryOverflow,
+        Busy
+    };
+
+    typedef int NotificationFilterId;
+    typedef QSet<QMessageManager::NotificationFilterId> NotificationFilterIdSet;
+
+    QMessageManager(QObject *parent = 0);
+    ~QMessageManager();
+
     QMessageManager::ErrorCode lastError() const;
 
     QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
@@ -81,17 +104,15 @@ public:
 
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
-    bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option = QMessageManager::RemoveOnOriginatingServer);
-    bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option = QMessageManager::RemoveOnOriginatingServer);
+    bool removeMessage(const QMessageId &id, RemovalOption option = RemoveOnOriginatingServer);
+    bool removeMessages(const QMessageFilter &filter, RemovalOption option = RemoveOnOriginatingServer);
 
     QMessage message(const QMessageId &id) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
     QMessageAccount account(const QMessageAccountId &id) const;
 
-    QMessageManager::NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
-    void unregisterNotificationFilter(QMessageManager::NotificationFilterId filterId);
-
-    static QMessageStore* instance();
+    NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
+    void unregisterNotificationFilter(NotificationFilterId filterId);
 
 signals:
     void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
@@ -99,12 +120,12 @@ signals:
     void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
 
 private:
-    friend class QGlobalStaticDeleter<QMessageStore>;
-    QMessageStore(QObject *parent = 0);
-    virtual ~QMessageStore();
-
-    QMessageStorePrivate *d_ptr;
+    QMessageStore *store;
 };
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMessageManager::NotificationFilterId))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMessageManager::NotificationFilterIdSet))
+
 
 #endif
