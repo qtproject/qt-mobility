@@ -56,10 +56,12 @@
 
 const TSize KThumbnailSizeUninitialized(0, 0);
 
+#ifdef _DEBUG
 _LIT(KPanicCategory, "ThumbnailCreator");
 enum TPanicReasons {
     KPanicUnitialized = 0
 };
+#endif
 
 CntThumbnailCreator::CntThumbnailCreator() :
     CActive(EPriorityStandard),
