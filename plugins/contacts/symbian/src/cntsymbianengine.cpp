@@ -170,7 +170,7 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
             }
         }
     }
-
+    
     return result;
 }
 
@@ -1117,12 +1117,14 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContactManager::Error> operationErrors;
             QList<QContactRelationship> matchingRelationships = relationships(r->relationshipType(), r->first(), QContactRelationshipFilter::First, operationError);
 
+            bool foundMatch = false;
             for (int i = 0; i < matchingRelationships.size(); i++) {
                 QContactManager::Error tempError;
                 QContactRelationship possibleMatch = matchingRelationships.at(i);
 
                 // if the second criteria matches, or is default constructed id, then we have a match and should remove it.
                 if (r->second() == QContactId() || possibleMatch.second() == r->second()) {
+                    foundMatch = true;
                     removeRelationship(matchingRelationships.at(i), tempError);
                     operationErrors.append(tempError);
 
@@ -1130,6 +1132,9 @@ void CntSymbianEngine::performAsynchronousOperation()
                         operationError = tempError;
                 }
             }
+            
+            if (foundMatch == false && operationError == QContactManager::NoError)
+                operationError = QContactManager::DoesNotExistError;
 
             // there are no results, so just update the status with the error.
             updateRequestStatus(currentRequest, operationError, operationErrors, QContactAbstractRequest::Finished);

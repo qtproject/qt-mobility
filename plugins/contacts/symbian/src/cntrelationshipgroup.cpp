@@ -106,7 +106,7 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
     //add the removed group member to the list of affected contacts
     affectedContactIds->insert(groupId->localId());
     affectedContactIds->insert(contactId->localId());
-
+    
     CleanupStack::PopAndDestroy(contact);
     CleanupStack::PopAndDestroy(groupContact);
 
@@ -164,8 +164,6 @@ void CntRelationshipGroup::isGroupMemberL(const CContactItem* contactItem, const
 //retrieve all the groups that the contact is part of
 QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error)
 {
-    Q_UNUSED(error);
-
     QList<QContactRelationship> returnValue;
     
     if (participantId != QContactId())
@@ -188,6 +186,9 @@ QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactI
         // all relationships of the given relationshipType are returned.
         fetchMembersOfAllGroupsL(&returnValue);
     }
+    
+    if (returnValue.isEmpty())
+        error = QContactManager::DoesNotExistError;
 
     return returnValue;
 }
