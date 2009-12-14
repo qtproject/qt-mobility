@@ -67,11 +67,11 @@ const QString FieldAccountPath("AccountPath");
 const ConversionLookup presenceConversion(ConversionLookup()
             <<QPair<QString, QString>("presence-status-offline", QContactOnlineAccount::PresenceOffline)
             <<QPair<QString, QString>("presence-status-available", QContactOnlineAccount::PresenceAvailable)
-            <<QPair<QString, QString>("presence_status-away", QContactOnlineAccount::PresenceAway)
-            <<QPair<QString, QString>("presence_status-extended-away", QContactOnlineAccount::PresenceExtendedAway)
-            <<QPair<QString, QString>("presence_status-busy", QContactOnlineAccount::PresenceBusy)
-            <<QPair<QString, QString>("presence_status-unknown", QContactOnlineAccount::PresenceUnknown)
-            <<QPair<QString, QString>("presence_status-hidden", QContactOnlineAccount::PresenceHidden)
+            <<QPair<QString, QString>("presence-status-away", QContactOnlineAccount::PresenceAway)
+            <<QPair<QString, QString>("presence-status-extended-away", QContactOnlineAccount::PresenceExtendedAway)
+            <<QPair<QString, QString>("presence-status-busy", QContactOnlineAccount::PresenceBusy)
+            <<QPair<QString, QString>("presence-status-unknown", QContactOnlineAccount::PresenceUnknown)
+            <<QPair<QString, QString>("presence-status-hidden", QContactOnlineAccount::PresenceHidden)
 );
 
 void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
