@@ -104,6 +104,7 @@ public:
                                              const QString &mimeType,
                                              const QStringList& codecs,
                                              int flags = 0) const;
+    virtual QStringList supportedMimeTypes(const QByteArray &serviceType, int flags = 0) const;
 
     virtual QList<QByteArray> devices(const QByteArray &serviceType) const;
     virtual QString deviceDescription(const QByteArray &serviceType, const QByteArray &device);

@@ -562,6 +562,18 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                                     flags);
 }
 
+/*!
+    Returns a list of MIME types supported by the media player.
+
+    The \a flags argument causes the resultant list to be restricted to MIME types which can be supported
+    given additional requirements, such as performance indicators.
+*/
+QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
+{
+    return QMediaServiceProvider::defaultServiceProvider()->supportedMimeTypes(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER),
+                                                                               flags);
+}
+
 
 // Enums
 /*!
