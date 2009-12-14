@@ -15,15 +15,10 @@ INCLUDEPATH += ../../src/bearer
 
 include(../examples.pri)
 
-qtAddLibrary(QtBearer)
+CONFIG += mobility
+MOBILITY = bearer
 
 CONFIG += console
 
 symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
 
-macx: {
-    contains(QT_CONFIG,qt_framework):LIBS += -framework QtBearer
-    INCLUDEPATH += ../../
-    contains(CONFIG, debug) {
-    }
-}

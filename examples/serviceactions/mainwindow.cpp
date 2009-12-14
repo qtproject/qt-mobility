@@ -235,6 +235,9 @@ void AccountsWidget::setupUi()
 
     m_busyLabel = new QLabel("Loading...");
     m_stackedLayout->addWidget(m_busyLabel);
+
+    setSizePolicy(m_accountsCombo->sizePolicy());
+
 }
 
 void AccountsWidget::setIds(const QMessageAccountIdList& ids)
@@ -362,10 +365,12 @@ void RecentMessagesWidget::currentItemChanged(QListWidgetItem*, QListWidgetItem*
         emit selected(currentMessage());
 }
 
+//! [process-results]
 void RecentMessagesWidget::messagesFound(const QMessageIdList& ids)
 {
     m_ids.append(ids);
 }
+//! [process-results]
 
 void RecentMessagesWidget::stateChanged(QMessageServiceAction::State s)
 {
@@ -377,6 +382,7 @@ void RecentMessagesWidget::stateChanged(QMessageServiceAction::State s)
     updateState();
 }
 
+
 void RecentMessagesWidget::messageUpdated(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filter)
 {
     if(!filter.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || !m_indexMap.contains(id))
@@ -387,6 +393,7 @@ void RecentMessagesWidget::messageUpdated(const QMessageId& id, const QMessageSt
     QListWidgetItem* item = m_indexMap.value(id);
     if(item)
     {
+
         QMessage message(id);
         bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
         QFont itemFont = item->font();
@@ -478,6 +485,7 @@ void RecentMessagesWidget::updateState()
 
 }
 
+//! [load-message]
 void RecentMessagesWidget::load()
 {
     m_ids.clear();
@@ -487,7 +495,9 @@ void RecentMessagesWidget::load()
     else
         m_state = Loading;
 }
+//! [load-message]
 
+//! [process-results2]
 void RecentMessagesWidget::processResults()
 {
     if(!m_ids.isEmpty())
@@ -512,6 +522,7 @@ void RecentMessagesWidget::processResults()
         updateState();
     }
 }
+//! [process-results2]
 
 class ComposeSendWidget : public QWidget
 {
@@ -571,6 +582,18 @@ m_sendAsHTMLAction(0)
     setupUi();
 }
 
+static void notifyResult(bool result, const QString& description)
+{
+#ifndef _WIN32_WCE
+    if(result) QMessageBox::information(0,description,"Succeeded!");
+    else QMessageBox::critical(0,description,"Failed.");
+#else
+    Q_UNUSED(result);
+    Q_UNUSED(description);
+#endif
+}
+
+//! [send-compose-message]
 void ComposeSendWidget::composeButtonClicked()
 {
     QMessage message(constructQMessage());
@@ -581,8 +604,9 @@ void ComposeSendWidget::sendButtonClicked()
 {
     bool asHtml = (sender() == m_sendAsHTMLAction);
     QMessage message(constructQMessage(asHtml));
-    m_service->send(message);
+    notifyResult(m_service->send(message),"Send message");
 }
+//! [send-compose-message]
 
 void ComposeSendWidget::addAttachmentButtonClicked()
 {
@@ -592,8 +616,9 @@ void ComposeSendWidget::addAttachmentButtonClicked()
 
 void ComposeSendWidget::accountChanged()
 {
-#ifdef _WIN32_WCE
-    bool isSmsAccount = m_accountsWidget->currentAccountName() == "SMS";
+    QMessageAccount currentAccount(m_accountsWidget->currentAccount());
+
+    bool isSmsAccount = (currentAccount.messageTypes() & QMessage::Sms) > 0;
 
     foreach(QWidget* emailSpecificWidget , QList<QWidget*>() << m_bccEdit << m_bccLabel <<
                                                                 m_ccEdit <<  m_ccLabel <<
@@ -603,7 +628,6 @@ void ComposeSendWidget::accountChanged()
 
     m_attachmentsAction->setEnabled(!isSmsAccount);
     m_sendAsHTMLAction->setEnabled(!isSmsAccount);
-#endif
 }
 
 void ComposeSendWidget::setupUi()
@@ -615,6 +639,7 @@ void ComposeSendWidget::setupUi()
 
     m_accountsWidget = new AccountsWidget(this);
     gl->addWidget(m_accountsWidget,0,1);
+
     connect(m_accountsWidget,SIGNAL(accountChanged()),this,SLOT(accountChanged()));
 
     QLabel* toLabel = new QLabel("To:",this);
@@ -669,6 +694,8 @@ void ComposeSendWidget::setupUi()
     addAction(m_attachmentsAction);
 }
 
+
+//! [construct-message]
 QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
 {
     QMessage message;
@@ -680,12 +707,9 @@ QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
     }
 
     QMessageAccountId selectedAccountId = m_accountsWidget->currentAccount();
-#ifdef _WIN32_WCE
     QMessageAccount selectedAccount(selectedAccountId);
-    bool composingSms = selectedAccount.name() == "SMS";
-#else
-    bool composingSms = false;
-#endif
+
+    bool composingSms = (selectedAccount.messageTypes() & QMessage::Sms) > 0;
 
     QMessageAddressList toList;
     QMessageAddressList ccList;
@@ -730,6 +754,7 @@ QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
 
     return message;
 }
+//! [construct-message]
 
 class MessageViewWidget : public QWidget
 {
@@ -817,6 +842,7 @@ void MessageViewWidget::view(const QMessageId& messageId)
     updateState();
 }
 
+//! [retrieve-message-body]
 bool MessageViewWidget::retrieveBody()
 {
     if(m_state != Loading && !m_loadTimer.isActive())
@@ -830,6 +856,8 @@ bool MessageViewWidget::retrieveBody()
 
     return false;
 }
+
+//! [retrieve-message-body]
 
 void MessageViewWidget::showEvent(QShowEvent* e)
 {
@@ -951,6 +979,7 @@ void MessageViewWidget::updateState()
     }
 }
 
+//! [partial-message-check]
 void MessageViewWidget::loadMessage()
 {
     m_messageBrowser->clear();
@@ -978,20 +1007,14 @@ void MessageViewWidget::loadMessage()
 
         QString bodyText;
 
+        //for partial message display a download link instead
+
         bool bodyAvailable = bodyPart.isContentAvailable();
 
         if(bodyAvailable)
         {
             if(bodyPart.contentType() == "text")
-            {
                 bodyText = bodyPart.textContent();
-
-                //if(bodyPart.contentSubType() == "plain")
-                //    qWarning() << "Blah";
-                //else if(bodyPart.contentSubType() == "html" || bodyPart.contentSubType() == "rtf")
-                //     qWarning() << "FOO";
-                //else bodyText = "<Unknown text content>";
-            }
             else bodyText = "<Non-text content>";
         }
         else
@@ -1003,6 +1026,7 @@ void MessageViewWidget::loadMessage()
                                  .arg(bodyText));
     }
 }
+//! [partial-message-check]
 
 void MessageViewWidget::resetService()
 {
@@ -1096,15 +1120,16 @@ m_recentMessagesWidget(0)
     setupUi();
 }
 
+//! [show-message]
 void ShowWidget::showButtonClicked()
 {
-    //get the selected account
 
     QMessageId id = m_recentMessagesWidget->currentMessage();
 
     if(id.isValid())
         m_service->show(id);
 }
+//! [show-message]
 
 void ShowWidget::setupUi()
 {
@@ -1150,6 +1175,7 @@ m_activityListWidget(0)
     setupUi();
 }
 
+//! [store-signals]
 void StoreSignalsWidget::messageAdded(const QMessageId& id, const QMessageStore::NotificationFilterIdSet& filterSet)
 {
     if(!filterSet.contains(m_notificationFilterId))
@@ -1183,6 +1209,7 @@ void StoreSignalsWidget::messageRemoved(const QMessageId& id, const QMessageStor
     QString msg = QString("Removed ID: %1 ...").arg(idString);
     m_activityListWidget->addItem(msg);
 }
+//! [store-signals]
 
 void StoreSignalsWidget::setupUi()
 {

@@ -4,7 +4,8 @@ TARGET = player
 INCLUDEPATH += ../../src/multimedia
 
 include(../examples.pri)
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 HEADERS = \
     player.h \

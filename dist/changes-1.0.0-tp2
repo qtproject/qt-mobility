@@ -1,0 +1,12 @@
+- Symbian packaging fixes
+    * DEF files added
+    * sis package fixes
+    * vendor information added
+- Documentation fixes
+    * improved example documentation
+    * quickstart and installation docs updated
+- Example changes
+    * various UI changes to adjust for smaller displays
+    * general bug fixes
+- Compile fixes
+    * for unit test

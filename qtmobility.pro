@@ -24,6 +24,8 @@ unix:!symbian:system(cat $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.templ
 win32:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
 symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
 
+#symbian does not generate make install rule. we have to copy prf manually 
+symbian:system(copy $${QT_MOBILITY_BUILD_TREE}\features\mobility.prf $$[QT_INSTALL_DATA]\mkspecs\features)
 
 # install feature file
 feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
@@ -34,18 +36,19 @@ TEMPLATE = subdirs
 CONFIG+=ordered
 
 SUBDIRS += src tools plugins
-#built documentation snippets
-SUBDIRS += doc   
+#built documentation snippets, if enabled
+contains(build_docs, yes) {
+    SUBDIRS += doc
+    include(doc/doc.pri)
+
+    OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc
+}
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
-
-include(doc/doc.pri)
 
 # install Qt style headers
 qtmheaders.path = $${QT_MOBILITY_INCLUDE}
 qtmheaders.files = $${QT_MOBILITY_BUILD_TREE}/include/*
 
 INSTALLS += qtmheaders
-
-OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc

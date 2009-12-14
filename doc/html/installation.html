@@ -20,6 +20,7 @@
 <li><a href="#building">Building</a></li>
 <ul><li><a href="#building-on-unix">Building On Unix</a></li>
 <li><a href="#building-on-windows">Building On Windows</a></li>
+<li><a href="#building-for-symbian-on-windows">Building For Symbian On Windows</a></li>
 <li><a href="#building-individual-qt-mobility-domains">Building Individual Qt Mobility Domains</a></li>
 </ul>
 <li><a href="#environment-variables">Environment Variables</a></li>
@@ -87,6 +88,18 @@
 <p>The actual commands needed to build and install Qt Mobility depends on your development system. For Microsoft Visual Studio to create and install the libraries and tools type:</p>
 <pre>    nmake
     nmake install</pre>
+<a name="building-for-symbian-on-windows"></a>
+<h3>Building For Symbian On Windows</h3>
+<p>Building Qt Mobility for Symbian is not necessary as the package contains pre-built binaries for the SDK and SIS file for the device. See the <tt>symbian\install.txt</tt> file on how to deploy these.</p>
+<p>If you wish to build QtMobility yourself, run configure in the package directory. (-prefix cannot be used since the libraries are installed into the SDK directory)</p>
+<pre>        cd c:\QtMobility\%DISTNAME%
+        configure</pre>
+<p>Type <tt>configure -help</tt> to get a list of all available options.</p>
+<p>To create and deploy the libraries and tools for the emulator run:</p>
+<pre>    make debug-winscw</pre>
+<p>To create the libraries and tools for a device run:</p>
+<pre>    make release-gcce</pre>
+<p>(Aside: <tt>make install</tt> has no meaning for building on symbian) The libraries will be deployed into the SDK and will be ready to use for compiling applications for the emulator and/or device.</p>
 <a name="building-individual-qt-mobility-domains"></a>
 <h3>Building Individual Qt Mobility Domains</h3>
 <p>Qt Mobility is comprised of several domains but all of these may not need to be built. To build a single domain, perform the configure step as outlined above, and then perform the make step in the appropriate directory to create the desired library.</p>
@@ -120,6 +133,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

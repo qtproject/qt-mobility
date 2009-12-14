@@ -45,7 +45,6 @@ symbian {
     SOURCES += settingslayer_symbian.cpp \
         pathmapper_symbian.cpp \
         qcrmlparser.cpp
-    MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
 

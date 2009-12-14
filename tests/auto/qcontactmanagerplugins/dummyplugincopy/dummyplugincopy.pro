@@ -10,7 +10,8 @@ INCLUDEPATH += ../../../../src/contacts \
                ../../../../src/contacts/requests \
                ../../../../src/contacts/filters
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 DEFINES += DUMMYPLUGINTARGET=contacts_testdummycopy
 DEFINES += DUMMYPLUGINNAME=testdummy

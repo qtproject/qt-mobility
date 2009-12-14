@@ -11,7 +11,8 @@ HEADERS += ../qlocationtestutils_p.h
 SOURCES += tst_qgeocoordinate.cpp \
            ../qlocationtestutils.cpp
 
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 
 symbian {
     INCLUDEPATH += $${EPOCROOT}/epoc32/include/osextensions

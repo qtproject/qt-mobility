@@ -6,7 +6,8 @@ SOURCES += tst_qmediapluginloader.cpp
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 wince* {
     PLUGIN_DEPLOY.sources = $$OUTPUT_DIR/plugins/mediaservice/*.dll
