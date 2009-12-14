@@ -582,6 +582,8 @@ QString QContactTrackerEngine::synthesizeDisplayLabel(const QContact& contact, Q
 {
     QString label = QContactManagerEngine::synthesizeDisplayLabel(contact, error);
     if (label.isEmpty())
-        return contact.detail<QContactNickname>().nickname();
+        label = contact.detail<QContactNickname>().nickname();
+    if(label.isEmpty())
+        label = contact.detail<QContactOnlineAccount>().nickname();
     return label;
 }
