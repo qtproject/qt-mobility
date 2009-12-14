@@ -436,6 +436,11 @@ PROPID QContactWinCEEngine::metaAvatar() const
     return d->m_avatarmeta;
 }
 
+PROPID QContactWinCEEngine::metaAvatarType() const
+{
+    return d->m_avatartypemeta;
+}
+
 PROPID QContactWinCEEngine::metaEmail() const
 {
     return d->m_emailmeta;

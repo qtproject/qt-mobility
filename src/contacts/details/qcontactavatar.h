@@ -48,10 +48,11 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
-QTM_BEGIN_NAMESPACE
-
 class QPixmap;
 class QSize;
+
+QTM_BEGIN_NAMESPACE
+
 /* Leaf class */
 class Q_CONTACTS_EXPORT QContactAvatar : public QContactDetail
 {
