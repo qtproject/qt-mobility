@@ -130,16 +130,24 @@ enter:
 
 to generate the executable which can then be run.
 
-To build for the symbian emulator run:
+If you are developing for symbian,
+to make a debug build for the emulator run:
 \code
     qmake
-    make
+    make debug-winscw
 \endcode
 
-To build a symbian sis package:
+
+To make a release build and SIS package for
+a device run:
 \code
     qmake
     make release-gcce
-    createpackage quickstart_template.pkg release-gcce
+    make sis
 \endcode
+
+For further details on how to build applications for
+symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html} 
+{The Symbian Platform - Introduction to Qt}, \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
+{Qt Quick Start} and the \c {symbian\install.txt}
 */
