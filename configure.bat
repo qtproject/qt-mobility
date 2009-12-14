@@ -240,7 +240,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == serviceframework (
     echo     SerficeFramework selected
 ) else if %FIRST% == versit (
-    echo     Versit selected (implies Contacts)
+    echo     Versit selected ^(implies Contacts^)
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
