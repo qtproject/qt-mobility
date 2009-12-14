@@ -69,7 +69,7 @@ public:
 
 private:
     /* worker methods*/
-    void saveContact(QContact &contact);
+    void saveContacts(const QList<QContact> &contacts);
     void computeProgress();
     void addAffiliation(SopranoLive::RDFServicePtr service, QContactLocalId contactId);
     void saveContactDetails(SopranoLive::RDFServicePtr service,SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact,const QContact &contact);
