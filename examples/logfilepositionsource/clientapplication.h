@@ -42,22 +42,27 @@
 #define CLIENTAPPLICATION_H
 
 #include <qmobilityglobal.h>
-#include <QObject>
+#include <QMainWindow>
 
 
 QTM_BEGIN_NAMESPACE
 class QGeoPositionInfo;
 QTM_END_NAMESPACE
 
+class QTextEdit;
+
 QTM_USE_NAMESPACE
-class ClientApplication : public QObject
+class ClientApplication : public QMainWindow
 {
     Q_OBJECT
 public:
-    ClientApplication(QObject *parent = 0);
+    ClientApplication(QWidget *parent = 0);
 
 private slots:
     void positionUpdated(const QGeoPositionInfo &info);
+
+private:
+    QTextEdit *textEdit;
 };
 
 

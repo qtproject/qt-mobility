@@ -323,7 +323,7 @@ reported to clients through various functions provided by the \l{QContactManager
 The contacts API is used by another Qt Mobility module: the \l {Versit API} {Versit}* module.  It allows
 serialization of a QContact into a vCard document, and vice versa.
 
-[*] Versit is a trademark of the Internet Mail Consortium.
+[*] Versit \reg is a trademark of the Internet Mail Consortium.
 
 \section2 Examples
 
