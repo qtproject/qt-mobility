@@ -1817,7 +1817,17 @@ QPixmap QContactAvatar::avatarImage() const
         }
 
         if (url.scheme().startsWith("data")){
-            QPixmap::fromImage(QImage::fromData(url.toEncoded(QUrl::RemoveScheme)));
+            QByteArray data = QByteArray::fromPercentEncoding(url.toEncoded(QUrl::RemoveScheme));
+            int pos = data.indexOf(',');
+            QByteArray payload = data.mid(pos + 1);
+            if (pos != -1) {
+                data.truncate(pos);
+                data = data.trimmed();
+                if (data.endsWith(";base64")) {
+                    payload = QByteArray::fromBase64(payload);
+                }
+            }
+            QPixmap::fromImage(QImage::fromData(payload));
         }
     }
 
