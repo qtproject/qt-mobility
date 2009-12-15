@@ -6,8 +6,6 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
 
-message($$(QMF_INCLUDEDIR)  - $$(QMF_LIBDIR))
-
 # QMF headers must be located at $QMF_INCLUDEDIR
 INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
 
