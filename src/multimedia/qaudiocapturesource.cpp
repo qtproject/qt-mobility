@@ -115,6 +115,10 @@ QAudioCaptureSource::QAudioCaptureSource(QObject *parent, QMediaServiceProvider 
     d->initControls();
 }
 
+/*!
+    Construct a QAudioCaptureSource using the QMediaObject \a mediaObject, with \a parent.
+*/
+
 QAudioCaptureSource::QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent)
     :QMediaObject(*new QAudioCaptureSourcePrivate, parent, mediaObject->service())
 {
@@ -215,13 +219,13 @@ void QAudioCaptureSource::setAudioInput(const QString& name)
 }
 
 /*!
-    \fn QAudioCaptureSource::activeInputChanged(const QString& name)
+    \fn QAudioCaptureSource::activeAudioInputChanged(const QString& name)
 
     Signal emitted when active audio input changes to \a name.
 */
 
 /*!
-    \fn QAudioCaptureSource::avaiableAudioInputsChanged()
+    \fn QAudioCaptureSource::availableAudioInputsChanged()
 
     Signal is emitted when the available audio inputs change.
 */
