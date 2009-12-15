@@ -887,7 +887,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
     if(d_ptr->_lastError == QMessageManager::NoError)
     {
         message = QMessage(id);
-        d_ptr->_lastError = QMessageManager::instance()->lastError();
+        d_ptr->_lastError = QMessageManager().lastError();
     }
 
 
