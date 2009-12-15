@@ -337,7 +337,13 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
     RDFVariable varForInsert = var.deepCopy();
     foreach(const QContactDetail& det, details)
     {
-        QString value = det.value(QContactPhoneNumber::FieldNumber);
+        QString formattedValue = det.value(QContactPhoneNumber::FieldNumber);
+        // Strip RFC 3966 visual-separators reg exp "[(|-|.|)| ]"
+        QString value = formattedValue.replace( QRegExp("[\\(|" \
+                                                        "\\-|" \
+                                                        "\\.|" \
+                                                        "\\)|" \
+                                                        " ]"), "");
         // Temporary, because affiliation is still used - to be refactored next week to use Live nodes
         // using RFC 3966 canonical URI form
         QUrl newPhone = QString("tel:%1").arg(value);
