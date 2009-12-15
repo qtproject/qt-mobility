@@ -49,7 +49,7 @@
 // to get QFETCH to work with the template expression...
 typedef QMap<QString,QString> tst_details_QStringMap;
 Q_DECLARE_METATYPE(tst_details_QStringMap)
-Q_DECLARE_METATYPE(QList<QUniqueId>)
+Q_DECLARE_METATYPE(QList<QContactLocalId>)
 
 
 class tst_details : public QObject
@@ -102,7 +102,7 @@ tst_details::~tst_details()
 
 void tst_details::dumpContact(const QContact& contact)
 {
-    qDebug() << "Contact: " << contact.id();
+    qDebug() << "Contact: " << contact.localId();
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
@@ -119,14 +119,14 @@ void tst_details::initTestCase()
     QVERIFY(QContactManager::availableManagers().contains("symbian"));
 
     QContactManager cm("symbian");
-    QList<QUniqueId> ids = cm.contacts();
+    QList<QContactLocalId> ids = cm.contacts();
     cm.removeContacts( &ids );
 }
 
 void tst_details::cleanupTestCase()
 {
     QContactManager cm("symbian");
-    QList<QUniqueId> ids = cm.contacts();
+    QList<QContactLocalId> ids = cm.contacts();
     cm.removeContacts( &ids );
 }
 
@@ -139,11 +139,11 @@ bool tst_details::saveAndLoadContact( QContact &original, QContact &loaded )
         return false;
     
     // Check the id
-    if( original.id() == 0 )
+    if( original.localId() == 0 )
         return false;
 
     // Load same contact from database
-    loaded = cm.contact( original.id() );
+    loaded = cm.contact( original.localId() );
     if( cm.error() )
         return false;
 
@@ -326,8 +326,8 @@ void tst_details::testOrganisation()
 {
     QContact c;
 
-    QContactOrganisation o;
-    o.setDisplayLabel( "Foreign legion" );
+    QContactOrganization o;
+    o.setName( "Foreign legion" );
     o.setTitle( "Bicycle mechanic" );
     c.saveDetail( &o );
 
@@ -336,25 +336,9 @@ void tst_details::testOrganisation()
 
 void tst_details::testPhoneNumber()
 {
-    // general number
+    // general landline number
     {
         QContact c;
-
-        QContactPhoneNumber n;
-        n.setNumber( "1" );
-        c.saveDetail( &n );
-
-        saveAndVerifyContact( c );
-    }
-
-    // general number + general landline number
-    {
-        QContact c;
-
-        // General number
-        QContactPhoneNumber n1;
-        n1.setNumber( "1" );
-        c.saveDetail( &n1 );
 
         // General landline number
         QContactPhoneNumber n2;
@@ -386,13 +370,9 @@ void tst_details::testPhoneNumber()
         saveAndVerifyContact( c );
     }
 
-    // General number + fax number + dtmf number
+    // fax number + dtmf number
     {
         QContact c;
-
-        QContactPhoneNumber n1;
-        n1.setNumber( "1" );
-        c.saveDetail( &n1 );
 
         QContactPhoneNumber n2;
         n2.setNumber( "2" );
@@ -401,7 +381,7 @@ void tst_details::testPhoneNumber()
 
         QContactPhoneNumber n3;
         n3.setNumber( "3" );
-        n3.setSubTypes( "Dtmf" ); // TODO: replace with proper definition
+        n3.setSubTypes( QContactPhoneNumber::SubTypeDtmfMenu );
         c.saveDetail( &n3 );
 
         saveAndVerifyContact( c );
@@ -414,6 +394,7 @@ void tst_details::testUrl()
 
     QContactUrl u;
     u.setUrl("http://failblog.org");
+    u.setSubType(QContactUrl::SubTypeHomePage);
     c.saveDetail( &u );
 
     saveAndVerifyContact( c );

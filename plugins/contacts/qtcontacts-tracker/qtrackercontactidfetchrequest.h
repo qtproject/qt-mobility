@@ -38,27 +38,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-#include <cntdb.h>
-#include <cntitem.h>
-#include <qtcontacts.h>
+#ifndef QTRACKERCONTACTIDFETCHREQUEST_H_
+#define QTRACKERCONTACTIDFETCHREQUEST_H_
 
-class TestCntTransformContact : public QObject
+#include <qtrackercontactasyncrequest.h>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
+class QContactAbstractRequest;
+class QContactManagerEngine;
+class QContactLocalIdFetchRequest;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
+
+/*!
+ * Running QContactLocalIdFetchRequest. Doing the async tracker query and when data is ready setting the
+ * finished status of request. \sa QTrackerContactIdFetchRequest
+ */
+class QTrackerContactIdFetchRequest : public QTrackerContactFetchRequest
 {
     Q_OBJECT
-
-private slots:
-	void initTestCase();
-	void cleanupTestCase();
-	
-	void executeCntTransformSymbianContact();
-	void executeCntTransformQtContact();
-	
-private: //validate results
-	void validateQContactEmpty(const QContact& contact) const;
-	void validateQContactPhoneNumber(const QContact& contact) const;
-	
-	void validateSymbianContactEmpty(const CContactItem& contactItem) const;
-	void validateSymbianContactPhoneNumber(const CContactItem& contactItem) const;
+public:
+    QTrackerContactIdFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
+protected slots:
+    //!\ reimp
+    void emitFinished();
+private:
+    QContactLocalIdFetchRequest *idfetchrequest;
 };
+
+
+
+#endif /* QTRACKERCONTACTIDFETCHREQUEST_H_ */
+
