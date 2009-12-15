@@ -54,7 +54,7 @@ class QComboBox;
 class QPushButton;
 class QLineEdit;
 class QLabel;
-QT_BEGIN_NAMESPACE
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

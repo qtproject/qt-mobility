@@ -50,12 +50,13 @@
 
 #include <qmediacontent.h>
 
+QT_BEGIN_NAMESPACE
 class QString;
 class QUrl;
 class QByteArray;
 class QIODevice;
 class QStringList;
-
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -96,7 +97,9 @@ QTM_END_NAMESPACE
 #define QMediaPlaylistIOInterface_iid "com.nokia.Qt.QMediaPlaylistIOInterface"
 //MOC doesn't recognire paramitized macros
 //Q_DECLARE_INTERFACE(QTM_PREPEND_NAMESPACE(QMediaPlaylistIOInterface), QMediaPlaylistIOInterface_iid);
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QtMobility::QMediaPlaylistIOInterface, QMediaPlaylistIOInterface_iid);
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

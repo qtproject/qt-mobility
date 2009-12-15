@@ -49,6 +49,8 @@
 #include <X11/extensions/Xv.h>
 #include <X11/extensions/Xvlib.h>
 
+QT_USE_NAMESPACE
+
 class QX11VideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
