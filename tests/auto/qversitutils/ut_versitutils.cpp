@@ -74,24 +74,6 @@ void UT_VersitUtils::testCountLeadingWhiteSpaces()
     QCOMPARE(VersitUtils::countLeadingWhiteSpaces(text,9), 5);   
 }
 
-void UT_VersitUtils::testFindHardLineBreakInQuotedPrintable()
-{
-    // Empty string
-    QCOMPARE(-1, VersitUtils::findHardLineBreakInQuotedPrintable(QByteArray()));
-    
-    // No line breaks
-    QCOMPARE(-1, VersitUtils::findHardLineBreakInQuotedPrintable(QByteArray("just text")));
-    
-    // No soft line breaks
-    QCOMPARE(4, VersitUtils::findHardLineBreakInQuotedPrintable(QByteArray("text\r\n")));
-    
-    // One soft line break
-    QCOMPARE(7, VersitUtils::findHardLineBreakInQuotedPrintable(QByteArray("te=\r\nxt\r\n")));
-    
-    // Two soft line breaks
-    QCOMPARE(10, VersitUtils::findHardLineBreakInQuotedPrintable(QByteArray("t=\r\ne=\r\nxt\r\n")));
-}
-
 void UT_VersitUtils::testParamName()
 {
     // Empty value

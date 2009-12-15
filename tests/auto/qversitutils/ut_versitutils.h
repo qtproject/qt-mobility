@@ -52,7 +52,6 @@ class UT_VersitUtils : public QObject
 private slots:
 
     void testCountLeadingWhiteSpaces();
-    void testFindHardLineBreakInQuotedPrintable();
     void testParamName();
     void testParamValue();
     void testExtractPart();
