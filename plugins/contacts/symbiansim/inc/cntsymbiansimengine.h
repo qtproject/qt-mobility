@@ -72,19 +72,23 @@ public:
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    bool saveContact(QContact* contact, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
  
 private:
     QContact fetchContactL(const QContactLocalId &localId) const;
     QList<QContact> fetchContactsL() const;
+    void saveContactL(QContact* contact) const;
     void transformError(TInt symbianError, QContactManager::Error& qtError) const;
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
+    QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
     
 private:
     RTelServer etelServer;
     RMobilePhone etelPhone;
     RMobilePhoneBookStore etelStore;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg etelInfoPckg;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg etelInfoPckg;
     
     QString m_managerUri;
 };
