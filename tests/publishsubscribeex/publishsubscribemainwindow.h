@@ -42,13 +42,18 @@
 #ifndef PUBLISHSUBSCRIBEMAINWINDOW_H
 #define PUBLISHSUBSCRIBEMAINWINDOW_H
 
+#include <qmobilityglobal.h>
 #include <QMainWindow>
+
+QTM_BEGIN_NAMESPACE
+class QValueSpaceSubscriber;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 namespace Ui {
     class PublishSubscribeMainWindow;
 }
-
-class QValueSpaceSubscriber;
 
 class PublishSubscribeMainWindow : public QMainWindow {
     Q_OBJECT
