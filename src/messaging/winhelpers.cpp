@@ -74,13 +74,13 @@
 #include "qmessage_p.h"
 #include "qmessagecontentcontainer_p.h"
 #include "qmessagefilter_p.h"
-#include "qmessageordering_p.h"
+#include "qmessagesortorder_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessagefolderfilter_p.h"
-#include "qmessagefolderordering_p.h"
+#include "qmessagefoldersortorder_p.h"
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter_p.h"
-#include "qmessageaccountordering_p.h"
+#include "qmessageaccountsortorder_p.h"
 #include "qmessagestore_p.h"
 
 #include <QCoreApplication>
