@@ -12,5 +12,6 @@ HEADERS += ../qlocationtestutils_p.h
 SOURCES += ../qlocationtestutils.cpp \
            tst_qgeoinfosources_wince.cpp
 
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 

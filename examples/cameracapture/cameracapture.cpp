@@ -177,7 +177,7 @@ void CameraCapture::settings()
 
     settingsDialog.setAudioSettings(mediaRecorder->audioSettings());
     settingsDialog.setVideoSettings(mediaRecorder->videoSettings());
-    settingsDialog.setFormat(mediaRecorder->format());
+    settingsDialog.setFormat(mediaRecorder->containerMimeType());
 
     if (settingsDialog.exec()) {
         mediaRecorder->setEncodingSettings(

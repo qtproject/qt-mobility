@@ -99,8 +99,8 @@ public:
 
     qint64 duration() const;
 
-    QStringList supportedFormats() const;
-    QString formatDescription(const QString &formatMimeType) const;
+    QStringList supportedContainers() const;
+    QString containerDescription(const QString &containerMimeType) const;
 
     QStringList supportedAudioCodecs() const;
     QString audioCodecDescription(const QString &codecName) const;
@@ -119,11 +119,11 @@ public:
 
     QAudioEncoderSettings audioSettings() const;
     QVideoEncoderSettings videoSettings() const;
-    QString format() const;
+    QString containerMimeType() const;
 
     void setEncodingSettings(const QAudioEncoderSettings &audioSettings,
                              const QVideoEncoderSettings &videoSettings = QVideoEncoderSettings(),
-                             const QString &format = QString());
+                             const QString &containerMimeType = QString());
 
 public Q_SLOTS:
     void record();
@@ -145,7 +145,7 @@ private:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::State);
-Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::Error);
+Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::State)
+Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::Error)
 
 #endif  // QMEDIARECORDER_H

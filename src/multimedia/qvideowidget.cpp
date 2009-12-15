@@ -567,8 +567,10 @@ void QVideoWidget::setMediaObject(QMediaObject *object)
     if (object == d->mediaObject)
         return;
 
-    if (d->mediaObject)
+    if (d->mediaObject) {
         disconnect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
+        d->mediaObject->unbind(this);
+    }
 
     d->clearService();
 
@@ -578,6 +580,7 @@ void QVideoWidget::setMediaObject(QMediaObject *object)
         d->service = d->mediaObject->service();
 
         connect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
+        d->mediaObject->bind(this);
     }
 
     if (d->service) {

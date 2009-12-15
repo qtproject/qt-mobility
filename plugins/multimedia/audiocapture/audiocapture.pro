@@ -8,7 +8,8 @@ QT += multimedia
 include (../../../common.pri)
 INCLUDEPATH += ../../../src/multimedia
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 DEPENDPATH += .
 

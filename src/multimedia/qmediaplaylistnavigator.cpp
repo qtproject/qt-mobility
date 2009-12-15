@@ -314,12 +314,6 @@ QMediaContent QMediaPlaylistNavigator::currentItem() const
     return itemAt(d_func()->currentPos);
 }
 
-/*! \property QMediaPlaylistNavigator::nextItem
-
-  Contains the media that is next in the playlist.
-
-*/
-
 /*! \fn QMediaContent QMediaPlaylistNavigator::nextItem(int steps) const
 
   Returns the media that is \a steps positions ahead of the current
@@ -331,10 +325,6 @@ QMediaContent QMediaPlaylistNavigator::nextItem(int steps) const
 {
     return itemAt(nextIndex(steps));
 }
-
-/*! \property QMediaPlaylistNavigator::previousItem
-  Contains the media at the previous position in the playlist.
- */
 
 /*!
   Returns the media that is \a steps positions behind the current

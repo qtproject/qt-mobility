@@ -62,7 +62,7 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
-    Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailabilityChanged)
+    Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailableChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
@@ -114,6 +114,7 @@ public:
     static QtMedia::SupportEstimate hasSupport(const QString &mimeType,
                                             const QStringList& codecs = QStringList(),
                                             Flags flags = 0);
+    static QStringList supportedMimeTypes(Flags flags = 0);
 
     QMediaContent media() const;
     const QIODevice *mediaStream() const;
@@ -160,7 +161,7 @@ Q_SIGNALS:
 
     void volumeChanged(int volume);
     void mutedChanged(bool muted);
-    void videoAvailabilityChanged(bool videoAvailable);
+    void videoAvailableChanged(bool videoAvailable);
 
     void bufferStatusChanged(int percentFilled);
 
@@ -169,8 +170,9 @@ Q_SIGNALS:
 
     void error(QMediaPlayer::Error error);
 
-protected:
-    void bind(QObject*);
+public:
+    virtual void bind(QObject*);
+    virtual void unbind(QObject*);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)

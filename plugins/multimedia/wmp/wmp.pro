@@ -11,7 +11,8 @@ TMP_INCLUDE = $$quote($$(INCLUDE))
 TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
 for(p, TMP_SEARCHPATHS): exists($${p}/evr.h): DEFINES *= QWMP_EVR
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 LIBS += -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
 
 HEADERS = \

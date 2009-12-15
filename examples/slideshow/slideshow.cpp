@@ -60,7 +60,8 @@ SlideShow::SlideShow(QWidget *parent)
     connect(imageViewer, SIGNAL(stateChanged(QMediaImageViewer::State)),
             this, SLOT(stateChanged(QMediaImageViewer::State)));
 
-    playlist = new QMediaPlaylist(imageViewer);
+    playlist = new QMediaPlaylist;
+    playlist->setMediaObject(imageViewer);
 
     QVideoWidget *videoWidget = new QVideoWidget;
     videoWidget->setMediaObject(imageViewer);

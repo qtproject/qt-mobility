@@ -145,15 +145,15 @@ qreal QGstreamerPlayerSession::playbackRate() const
 
 void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
 {
-    m_playbackRate = rate;
-
-    if (m_playbin) {
-        gst_element_seek(m_playbin, rate, GST_FORMAT_TIME,
-                         GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT),
-                         GST_SEEK_TYPE_NONE,0,
-                         GST_SEEK_TYPE_NONE,0 );
+    if (!qFuzzyCompare(m_playbackRate, rate)) {
+        m_playbackRate = rate;
+        if (m_playbin) {
+            gst_element_seek(m_playbin, rate, GST_FORMAT_TIME,
+                             GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT),
+                             GST_SEEK_TYPE_NONE,0,
+                             GST_SEEK_TYPE_NONE,0 );
+        }
     }
-
 }
 
 
@@ -672,7 +672,7 @@ void QGstreamerPlayerSession::getStreamsInfo()
 
     if (haveVideo != m_videoAvailable) {
         m_videoAvailable = haveVideo;
-        emit videoAvailabilityChanged(m_videoAvailable);
+        emit videoAvailableChanged(m_videoAvailable);
     }
 
     emit streamsChanged();

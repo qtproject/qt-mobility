@@ -8,7 +8,8 @@ QT = core
 
 include(../../../common.pri)
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

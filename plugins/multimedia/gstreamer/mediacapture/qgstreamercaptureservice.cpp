@@ -42,7 +42,7 @@
 #include "qgstreamercaptureservice.h"
 #include "qgstreamercapturesession.h"
 #include "qgstreamerrecordercontrol.h"
-#include "qgstreamermediaformatcontrol.h"
+#include "qgstreamermediacontainercontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
 #include "qgstreamerimageencode.h"
@@ -229,8 +229,8 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
         return m_captureSession->imageEncodeControl();
 
 
-    if (qstrcmp(name,QMediaFormatControl_iid) == 0)
-        return m_captureSession->mediaFormatControl();
+    if (qstrcmp(name,QMediaContainerControl_iid) == 0)
+        return m_captureSession->mediaContainerControl();
 
     if (qstrcmp(name,QCameraControl_iid) == 0)
         return m_cameraControl;

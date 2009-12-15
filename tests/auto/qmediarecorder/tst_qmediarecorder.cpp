@@ -48,53 +48,53 @@
 #include <qmediarecorder.h>
 #include <qaudioendpointselector.h>
 #include <qaudioencodercontrol.h>
-#include <qmediaformatcontrol.h>
+#include <qmediacontainercontrol.h>
 #include <qvideoencodercontrol.h>
 
 #include <QtMultimedia/qaudioformat.h>
 
 QTM_USE_NAMESPACE
-class MockMediaFormatControl : public QMediaFormatControl
+class MockMediaContainerControl : public QMediaContainerControl
 {
     Q_OBJECT
 public:
-    MockMediaFormatControl(QObject *parent):
-        QMediaFormatControl(parent)
+    MockMediaContainerControl(QObject *parent):
+        QMediaContainerControl(parent)
     {
-        m_supportedFormats.append("wav");
-        m_supportedFormats.append("mp3");
-        m_supportedFormats.append("mov");
+        m_supportedContainers.append("wav");
+        m_supportedContainers.append("mp3");
+        m_supportedContainers.append("mov");
 
         m_descriptions.insert("wav", "WAV format");
         m_descriptions.insert("mp3", "MP3 format");
         m_descriptions.insert("mov", "MOV format");
     }
 
-    virtual ~MockMediaFormatControl() {};
+    virtual ~MockMediaContainerControl() {};
 
-    QStringList supportedFormats() const
+    QStringList supportedContainers() const
     {
-        return m_supportedFormats;
+        return m_supportedContainers;
     }
 
-    QString format() const
+    QString containerMimeType() const
     {
         return m_format;
     }
 
-    void setFormat(const QString &formatMimeType)
+    void setContainerMimeType(const QString &formatMimeType)
     {
-        if (m_supportedFormats.contains(formatMimeType))
+        if (m_supportedContainers.contains(formatMimeType))
             m_format = formatMimeType;
     }
 
-    QString formatDescription(const QString &formatMimeType) const
+    QString containerDescription(const QString &formatMimeType) const
     {
         return m_descriptions.value(formatMimeType);
     }
 
 private:
-    QStringList m_supportedFormats;
+    QStringList m_supportedContainers;
     QMap<QString, QString> m_descriptions;
     QString m_format;
 };
@@ -363,7 +363,7 @@ public:
     {
         mockAudioEndpointSelector = new MockAudioEndpointSelectorProvider(parent);
         mockAudioEncodeControl = new MockAudioEncodeProvider(parent);
-        mockFormatControl = new MockMediaFormatControl(parent);
+        mockFormatControl = new MockMediaContainerControl(parent);
         mockVideoEncodeControl = new MockVideoEncodeProvider(parent);
     }
 
@@ -375,7 +375,7 @@ public:
             return mockAudioEndpointSelector;
         if(hasControls && qstrcmp(name,QMediaRecorderControl_iid) == 0)
             return mockControl;
-        if(hasControls && qstrcmp(name,QMediaFormatControl_iid) == 0)
+        if(hasControls && qstrcmp(name,QMediaContainerControl_iid) == 0)
             return mockFormatControl;
         if(hasControls && qstrcmp(name,QVideoEncoderControl_iid) == 0)
             return mockVideoEncodeControl;
@@ -386,7 +386,7 @@ public:
     QMediaControl   *mockControl;
     QAudioEndpointSelector  *mockAudioEndpointSelector;
     QAudioEncoderControl    *mockAudioEncodeControl;
-    QMediaFormatControl     *mockFormatControl;
+    QMediaContainerControl     *mockFormatControl;
     QVideoEncoderControl    *mockVideoEncodeControl;
     bool hasControls;
 };
@@ -468,8 +468,8 @@ void tst_QMediaRecorder::testNullService()
     QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
     QCOMPARE(recorder.error(), QMediaRecorder::NoError);
     QCOMPARE(recorder.duration(), qint64(0));
-    QCOMPARE(recorder.supportedFormats(), QStringList());
-    QCOMPARE(recorder.formatDescription(id), QString());
+    QCOMPARE(recorder.supportedContainers(), QStringList());
+    QCOMPARE(recorder.containerDescription(id), QString());
     QCOMPARE(recorder.supportedAudioCodecs(), QStringList());
     QCOMPARE(recorder.audioCodecDescription(id), QString());
     QCOMPARE(recorder.supportedAudioSampleRates(), QList<int>());
@@ -483,7 +483,7 @@ void tst_QMediaRecorder::testNullService()
     QCOMPARE(continuous, false);
     QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
     QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
-    QCOMPARE(recorder.format(), QString());
+    QCOMPARE(recorder.containerMimeType(), QString());
 }
 
 void tst_QMediaRecorder::testNullControls()
@@ -499,8 +499,8 @@ void tst_QMediaRecorder::testNullControls()
     QCOMPARE(recorder.state(), QMediaRecorder::StoppedState);
     QCOMPARE(recorder.error(), QMediaRecorder::NoError);
     QCOMPARE(recorder.duration(), qint64(0));
-    QCOMPARE(recorder.supportedFormats(), QStringList());
-    QCOMPARE(recorder.formatDescription(id), QString());
+    QCOMPARE(recorder.supportedContainers(), QStringList());
+    QCOMPARE(recorder.containerDescription(id), QString());
     QCOMPARE(recorder.supportedAudioCodecs(), QStringList());
     QCOMPARE(recorder.audioCodecDescription(id), QString());
     QCOMPARE(recorder.supportedAudioSampleRates(), QList<int>());
@@ -514,7 +514,7 @@ void tst_QMediaRecorder::testNullControls()
     QCOMPARE(continuous, false);
     QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
     QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
-    QCOMPARE(recorder.format(), QString());
+    QCOMPARE(recorder.containerMimeType(), QString());
 
     recorder.setOutputLocation(QUrl("file://test/save/file.mp4"));
     QCOMPARE(recorder.outputLocation(), QUrl());
@@ -531,7 +531,7 @@ void tst_QMediaRecorder::testNullControls()
 
     QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
     QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
-    QCOMPARE(recorder.format(), QString());
+    QCOMPARE(recorder.containerMimeType(), QString());
 
     QSignalSpy spy(&recorder, SIGNAL(stateChanged(QMediaRecorder::State)));
 
@@ -635,11 +635,11 @@ void tst_QMediaRecorder::testAudioEncodeControl()
 
 void tst_QMediaRecorder::testMediaFormatsControl()
 {
-    QCOMPARE(capture->supportedFormats(), QStringList() << "wav" << "mp3" << "mov");
+    QCOMPARE(capture->supportedContainers(), QStringList() << "wav" << "mp3" << "mov");
 
-    QCOMPARE(capture->formatDescription("wav"), QString("WAV format"));
-    QCOMPARE(capture->formatDescription("mp3"), QString("MP3 format"));
-    QCOMPARE(capture->formatDescription("ogg"), QString());
+    QCOMPARE(capture->containerDescription("wav"), QString("WAV format"));
+    QCOMPARE(capture->containerDescription("mp3"), QString("MP3 format"));
+    QCOMPARE(capture->containerDescription("ogg"), QString());
 }
 
 void tst_QMediaRecorder::testVideoEncodeControl()
@@ -685,7 +685,7 @@ void tst_QMediaRecorder::testEncodingSettings()
     QCOMPARE(videoSettings.quality(), QtMedia::NormalQuality);
     QCOMPARE(videoSettings.encodingMode(), QtMedia::ConstantQualityEncoding);
 
-    QString format = capture->format();
+    QString format = capture->containerMimeType();
     QCOMPARE(format, QString());
 
     audioSettings.setCodec("audio/mpeg");
@@ -707,7 +707,7 @@ void tst_QMediaRecorder::testEncodingSettings()
 
     QCOMPARE(capture->audioSettings(), audioSettings);
     QCOMPARE(capture->videoSettings(), videoSettings);
-    QCOMPARE(capture->format(), format);
+    QCOMPARE(capture->containerMimeType(), format);
 }
 
 void tst_QMediaRecorder::testAudioSettings()

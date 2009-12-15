@@ -13,7 +13,8 @@ SOURCES += tst_qgeosatelliteinfosource.cpp \
 HEADERS += ../testqgeosatelliteinfosource_p.h \
         ../qlocationtestutils_p.h
 
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 
 symbian {
         TARGET.CAPABILITY = ALL -TCB
