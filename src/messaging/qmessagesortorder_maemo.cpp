@@ -38,112 +38,112 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageordering.h"
-#include "qmessageordering_p.h"
+#include "qmessagesortorder.h"
+#include "qmessagesortorder_p.h"
 
 
 QTM_BEGIN_NAMESPACE
 
-QMessageOrdering::QMessageOrdering()
+QMessageSortOrder::QMessageSortOrder()
 {
 }
 
-QMessageOrdering::QMessageOrdering(const QMessageOrdering &other)
+QMessageSortOrder::QMessageSortOrder(const QMessageSortOrder &other)
 {
     Q_UNUSED(other)
 }
 
-QMessageOrdering::~QMessageOrdering()
+QMessageSortOrder::~QMessageSortOrder()
 {
 }
 
-QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
+QMessageSortOrder& QMessageSortOrder::operator=(const QMessageSortOrder& other)
 {
     Q_UNUSED(other)
     return *this; // stub
 }
 
-bool QMessageOrdering::isEmpty() const
+bool QMessageSortOrder::isEmpty() const
 {
     return false; // stub
 }
 
-bool QMessageOrdering::isSupported() const
+bool QMessageSortOrder::isSupported() const
 {
     return true; // stub
 }
 
-QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) const
+QMessageSortOrder QMessageSortOrder::operator+(const QMessageSortOrder& other) const
 {
     Q_UNUSED(other)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
+QMessageSortOrder& QMessageSortOrder::operator+=(const QMessageSortOrder& other)
 {
     Q_UNUSED(other)
     return *this; // stub
 }
 
-bool QMessageOrdering::operator==(const QMessageOrdering& other) const
+bool QMessageSortOrder::operator==(const QMessageSortOrder& other) const
 {
     Q_UNUSED(other)
     return false; // stub
 }
 
-QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byType(Qt::SortOrder order)
 {
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering QMessageOrdering::bySender(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySender(Qt::SortOrder order)
 {
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering QMessageOrdering::byRecipients(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byRecipients(Qt::SortOrder order)
 {
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering QMessageOrdering::bySubject(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySubject(Qt::SortOrder order)
 {
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering QMessageOrdering::byTimeStamp(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byTimeStamp(Qt::SortOrder order)
 {
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering QMessageOrdering::byReceptionTimeStamp(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byReceptionTimeStamp(Qt::SortOrder order)
 {
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering QMessageOrdering::byStatus(QMessage::Status flag, Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byStatus(QMessage::Status flag, Qt::SortOrder order)
 {
     Q_UNUSED(flag)
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byPriority(Qt::SortOrder order)
 {
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
-QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySize(Qt::SortOrder order)
 {
     Q_UNUSED(order)
-    return QMessageOrdering(); // stub
+    return QMessageSortOrder(); // stub
 }
 
 QTM_END_NAMESPACE

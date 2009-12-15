@@ -67,14 +67,14 @@ public:
     
     void initialize(QMessageStore *store);
     
-    QMessageIdList queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
-    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     int countMessages(const QMessageFilter& filter) const;
-    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountOrdering &ordering = QMessageAccountOrdering(), uint limit = 0, uint offset = 0) const;
+    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountSortOrder &sortOrder = QMessageAccountSortOrder(), uint limit = 0, uint offset = 0) const;
     int countAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter()) const;
     QMessageAccount account(const QMessageAccountId &id) const;
 
-    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0) const;
+    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderSortOrder &sortOrder = QMessageFolderSortOrder(), uint limit = 0, uint offset = 0) const;
     int countFolders(const QMessageFolderFilter &filter = QMessageFolderFilter()) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
     

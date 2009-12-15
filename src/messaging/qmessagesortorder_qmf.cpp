@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageordering.h"
+#include "qmessagesortorder.h"
 #include "qmfhelpers_p.h"
 
 #include <qmailmessagesortkey.h>
@@ -48,25 +48,25 @@ using namespace QTM_PREPEND_NAMESPACE(QmfHelpers);
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageOrderingPrivate
+class QMessageSortOrderPrivate
 {
 public:
     QMailMessageSortKey _key;
 
-    //static QMessageOrdering convert(const QMailMessageSortKey &key);
-    static QMailMessageSortKey convert(const QMessageOrdering &key);
+    //static QMessageSortOrder convert(const QMailMessageSortKey &key);
+    static QMailMessageSortKey convert(const QMessageSortOrder &key);
 };
 
 /*
-QMessageOrdering QMessageOrderingPrivate::convert(const QMailMessageSortKey &key)
+QMessageSortOrder QMessageSortOrderPrivate::convert(const QMailMessageSortKey &key)
 {
-    QMessageOrdering result;
+    QMessageSortOrder result;
     result.d_ptr->_key = key;
     return result;
 }
 */
 
-QMailMessageSortKey QMessageOrderingPrivate::convert(const QMessageOrdering &key)
+QMailMessageSortKey QMessageSortOrderPrivate::convert(const QMessageSortOrder &key)
 {
     return key.d_ptr->_key;
 }
@@ -74,37 +74,37 @@ QMailMessageSortKey QMessageOrderingPrivate::convert(const QMessageOrdering &key
 namespace QmfHelpers {
 
 /*
-QMessageOrdering convert(const QMailMessageSortKey &key)
+QMessageSortOrder convert(const QMailMessageSortKey &key)
 {
-    return QMessageOrderingPrivate::convert(key);
+    return QMessageSortOrderPrivate::convert(key);
 }
 */
 
-QMailMessageSortKey convert(const QMessageOrdering &key)
+QMailMessageSortKey convert(const QMessageSortOrder &key)
 {
-    return QMessageOrderingPrivate::convert(key);
+    return QMessageSortOrderPrivate::convert(key);
 }
 
 }
 
-QMessageOrdering::QMessageOrdering()
-    : d_ptr(new QMessageOrderingPrivate)
+QMessageSortOrder::QMessageSortOrder()
+    : d_ptr(new QMessageSortOrderPrivate)
 {
 }
 
-QMessageOrdering::QMessageOrdering(const QMessageOrdering &other)
-    : d_ptr(new QMessageOrderingPrivate)
+QMessageSortOrder::QMessageSortOrder(const QMessageSortOrder &other)
+    : d_ptr(new QMessageSortOrderPrivate)
 {
     this->operator=(other);
 }
 
-QMessageOrdering::~QMessageOrdering()
+QMessageSortOrder::~QMessageSortOrder()
 {
     delete d_ptr;
     d_ptr = 0;
 }
 
-QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
+QMessageSortOrder& QMessageSortOrder::operator=(const QMessageSortOrder& other)
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
@@ -113,86 +113,86 @@ QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
     return *this;
 }
 
-bool QMessageOrdering::isEmpty() const
+bool QMessageSortOrder::isEmpty() const
 {
     return d_ptr->_key.isEmpty();
 }
 
-bool QMessageOrdering::isSupported() const
+bool QMessageSortOrder::isSupported() const
 {
     return true; // stub
 }
 
-QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) const
+QMessageSortOrder QMessageSortOrder::operator+(const QMessageSortOrder& other) const
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
     return key;
 }
 
-QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
+QMessageSortOrder& QMessageSortOrder::operator+=(const QMessageSortOrder& other)
 {
     d_ptr->_key &= other.d_ptr->_key;
     return *this;
 }
 
-bool QMessageOrdering::operator==(const QMessageOrdering& other) const
+bool QMessageSortOrder::operator==(const QMessageSortOrder& other) const
 {
     return (d_ptr->_key == other.d_ptr->_key);
 }
 
-QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byType(Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = QMailMessageSortKey::messageType(order);
     return key;
 }
 
-QMessageOrdering QMessageOrdering::bySender(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySender(Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = QMailMessageSortKey::sender(order);
     return key;
 }
 
-QMessageOrdering QMessageOrdering::byRecipients(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byRecipients(Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = QMailMessageSortKey::recipients(order);
     return key;
 }
 
-QMessageOrdering QMessageOrdering::bySubject(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySubject(Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = QMailMessageSortKey::subject(order);
     return key;
 }
 
-QMessageOrdering QMessageOrdering::byTimeStamp(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byTimeStamp(Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = QMailMessageSortKey::timeStamp(order);
     return key;
 }
 
-QMessageOrdering QMessageOrdering::byReceptionTimeStamp(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byReceptionTimeStamp(Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = QMailMessageSortKey::receptionTimeStamp(order);
     return key;
 }
 
-QMessageOrdering QMessageOrdering::byStatus(QMessage::Status flag, Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byStatus(QMessage::Status flag, Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = QMailMessageSortKey::status(convert(flag), order);
     return key;
 }
 
-QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byPriority(Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
 
     if (order == Qt::DescendingOrder) {
         // Sort HighPriority descending, then LowPriority ascending
@@ -205,9 +205,9 @@ QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
     return key;
 }
 
-QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySize(Qt::SortOrder order)
 {
-    QMessageOrdering key;
+    QMessageSortOrder key;
     key.d_ptr->_key = QMailMessageSortKey::size(order);
     return key;
 }

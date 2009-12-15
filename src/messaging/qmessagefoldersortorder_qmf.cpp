@@ -38,69 +38,69 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagefolderordering.h"
+#include "qmessagefoldersortorder.h"
 
 #include <qmailfoldersortkey.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageFolderOrderingPrivate
+class QMessageFolderSortOrderPrivate
 {
 public:
     QMailFolderSortKey _key;
 
-    //static QMessageFolderOrdering convert(const QMailFolderSortKey &key);
-    static QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
+    //static QMessageFolderSortOrder convert(const QMailFolderSortKey &key);
+    static QMailFolderSortKey convert(const QMessageFolderSortOrder &sortOrder);
 };
 
 /*
-QMessageFolderOrdering QMessageFolderOrderingPrivate::convert(const QMailFolderSortKey &key)
+QMessageFolderSortOrder QMessageFolderSortOrderPrivate::convert(const QMailFolderSortKey &key)
 {
-    QMessageFolderOrdering result;
+    QMessageFolderSortOrder result;
     result.d_ptr->_key = key;
     return result;
 }
 */
 
-QMailFolderSortKey QMessageFolderOrderingPrivate::convert(const QMessageFolderOrdering &ordering)
+QMailFolderSortKey QMessageFolderSortOrderPrivate::convert(const QMessageFolderSortOrder &sortOrder)
 {
-    return ordering.d_ptr->_key;
+    return sortOrder.d_ptr->_key;
 }
 
 namespace QmfHelpers {
 
 /*
-QMessageFolderOrdering convert(const QMailFolderSortKey &key)
+QMessageFolderSortOrder convert(const QMailFolderSortKey &key)
 {
-    return QMessageFolderOrderingPrivate::convert(key);
+    return QMessageFolderSortOrderPrivate::convert(key);
 }
 */
 
-QMailFolderSortKey convert(const QMessageFolderOrdering &ordering)
+QMailFolderSortKey convert(const QMessageFolderSortOrder &sortOrder)
 {
-    return QMessageFolderOrderingPrivate::convert(ordering);
+    return QMessageFolderSortOrderPrivate::convert(sortOrder);
 }
 
 }
 
-QMessageFolderOrdering::QMessageFolderOrdering()
-    : d_ptr(new QMessageFolderOrderingPrivate)
+QMessageFolderSortOrder::QMessageFolderSortOrder()
+    : d_ptr(new QMessageFolderSortOrderPrivate)
 {
 }
 
-QMessageFolderOrdering::QMessageFolderOrdering(const QMessageFolderOrdering &other)
-    : d_ptr(new QMessageFolderOrderingPrivate)
+QMessageFolderSortOrder::QMessageFolderSortOrder(const QMessageFolderSortOrder &other)
+    : d_ptr(new QMessageFolderSortOrderPrivate)
 {
     this->operator=(other);
 }
 
-QMessageFolderOrdering::~QMessageFolderOrdering()
+QMessageFolderSortOrder::~QMessageFolderSortOrder()
 {
     delete d_ptr;
     d_ptr = 0;
 }
 
-QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOrdering& other)
+QMessageFolderSortOrder& QMessageFolderSortOrder::operator=(const QMessageFolderSortOrder& other)
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
@@ -109,46 +109,46 @@ QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOr
     return *this;
 }
 
-bool QMessageFolderOrdering::isEmpty() const
+bool QMessageFolderSortOrder::isEmpty() const
 {
     return d_ptr->_key.isEmpty();
 }
 
-bool QMessageFolderOrdering::isSupported() const
+bool QMessageFolderSortOrder::isSupported() const
 {
     return true; // stub
 }
 
-QMessageFolderOrdering QMessageFolderOrdering::operator+(const QMessageFolderOrdering& other) const
+QMessageFolderSortOrder QMessageFolderSortOrder::operator+(const QMessageFolderSortOrder& other) const
 {
-    QMessageFolderOrdering ordering;
-    ordering.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
-    return ordering;
+    QMessageFolderSortOrder sortOrder;
+    sortOrder.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
+    return sortOrder;
 }
 
-QMessageFolderOrdering& QMessageFolderOrdering::operator+=(const QMessageFolderOrdering& other)
+QMessageFolderSortOrder& QMessageFolderSortOrder::operator+=(const QMessageFolderSortOrder& other)
 {
     d_ptr->_key &= other.d_ptr->_key;
     return *this;
 }
 
-bool QMessageFolderOrdering::operator==(const QMessageFolderOrdering& other) const
+bool QMessageFolderSortOrder::operator==(const QMessageFolderSortOrder& other) const
 {
     return (d_ptr->_key == other.d_ptr->_key);
 }
 
-QMessageFolderOrdering QMessageFolderOrdering::byDisplayName(Qt::SortOrder order)
+QMessageFolderSortOrder QMessageFolderSortOrder::byDisplayName(Qt::SortOrder order)
 {
-    QMessageFolderOrdering ordering;
-    ordering.d_ptr->_key = QMailFolderSortKey::displayName(order);
-    return ordering;
+    QMessageFolderSortOrder sortOrder;
+    sortOrder.d_ptr->_key = QMailFolderSortKey::displayName(order);
+    return sortOrder;
 }
 
-QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
+QMessageFolderSortOrder QMessageFolderSortOrder::byPath(Qt::SortOrder order)
 {
-    QMessageFolderOrdering ordering;
-    ordering.d_ptr->_key = QMailFolderSortKey::path(order);
-    return ordering;
+    QMessageFolderSortOrder sortOrder;
+    sortOrder.d_ptr->_key = QMailFolderSortKey::path(order);
+    return sortOrder;
 }
 
 QTM_END_NAMESPACE

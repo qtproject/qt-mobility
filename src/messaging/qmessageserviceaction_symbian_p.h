@@ -62,8 +62,8 @@ public:
 	bool retrieveBody(const QMessageId& id);
 	bool retrieveHeader(const QMessageId& id);
 	
-    bool queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
-    bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
+    bool queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     
     bool countMessages(const QMessageFilter &filter);
 	

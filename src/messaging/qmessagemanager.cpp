@@ -62,11 +62,11 @@ QTM_BEGIN_NAMESPACE
     counting and listing the folders contained by the messaging store, and the 
     countAccounts() and queryAccounts() functions for counting and listing the
     accounts contained by the store.  These functions use the QMessageFolderFilter
-    and QMessageFolderOrdering classes, and the QMessageAccountFilter and 
-    QMessageAccountOrdering classes to constrain their searches.
+    and QMessageFolderSortOrder classes, and the QMessageAccountFilter and 
+    QMessageAccountSortOrder classes to constrain their searches.
 
     QMessageManager also implements functionality allowing the messages contained by the 
-    store to be counted or listed, using various filtering and ordering constraints.
+    store to be counted or listed, using various filtering and sortOrder constraints.
     Clients can access this functionality via the \l{QMessageServiceAction::countMessages()}{countMessages}
     and \l{QMessageServiceAction::queryMessages()}{queryMessages} functions of the
     QMessageServiceAction class.
@@ -167,33 +167,33 @@ QMessageManager::ErrorCode QMessageManager::lastError() const
 }
 
 /*!
-    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
     only messages matching the parameters set by \a filter will be returned, otherwise 
     identifiers for all messages will be returned.
-    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
-    set by \a ordering.
+    If \a sortOrder is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortOrder.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
     \sa lastError(), countMessages()
 */
-QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return store->queryMessages(filter, ordering, limit, offset);
+    return store->queryMessages(filter, sortOrder, limit, offset);
 }
 
 /*!
-    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
     only messages matching the parameters set by \a filter and with a body containing the 
     string \a body will be returned, otherwise identifiers for all messages with 
     a body containing \a body will be returned.
-    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
-    set by \a ordering.
+    If \a sortOrder is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortOrder.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -201,47 +201,47 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     
     \sa lastError(), countMessages()
 */
-QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return store->queryMessages(filter, body, options, ordering, limit, offset);
+    return store->queryMessages(filter, body, options, sortOrder, limit, offset);
 }
 
 /*!
-    \fn QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
+    \fn QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
     
     Returns the \l{QMessageFolderId}s of folders in the messaging store. If \a filter 
     is not empty only folders matching the parameters set by \a filter will be returned,
     otherwise identifiers for all folders will be returned.
-    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
-    set by \a ordering.
+    If \a sortOrder is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortOrder.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
     \sa lastError(), countFolders()
 */
-QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
+QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return store->queryFolders(filter, ordering, limit, offset);
+    return store->queryFolders(filter, sortOrder, limit, offset);
 }
 
 /*!
-    \fn QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
+    \fn QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
     
     Returns the \l{QMessageAccountId}s of accounts in the messaging store. If \a filter 
     is not empty only accounts matching the parameters set by \a filter will be returned, 
     otherwise identifiers for all accounts will be returned.
-    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
-    set by \a ordering.
+    If \a sortOrder is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortOrder.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
     \sa lastError(), countAccounts()
 */
-QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
+QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return store->queryAccounts(filter, ordering, limit, offset);
+    return store->queryAccounts(filter, sortOrder, limit, offset);
 }
 
 /*!

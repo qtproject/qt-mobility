@@ -45,33 +45,33 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageFolderOrderingPrivate;
+class QMessageFolderSortOrderPrivate;
 
-class Q_MESSAGING_EXPORT QMessageFolderOrdering
+class Q_MESSAGING_EXPORT QMessageFolderSortOrder
 {
-    friend class QMessageFolderOrderingPrivate;
+    friend class QMessageFolderSortOrderPrivate;
 
 public:
-    QMessageFolderOrdering();
-    QMessageFolderOrdering(const QMessageFolderOrdering &other);
-    virtual ~QMessageFolderOrdering();
+    QMessageFolderSortOrder();
+    QMessageFolderSortOrder(const QMessageFolderSortOrder &other);
+    virtual ~QMessageFolderSortOrder();
 
-    QMessageFolderOrdering& operator=(const QMessageFolderOrdering &other);
+    QMessageFolderSortOrder& operator=(const QMessageFolderSortOrder &other);
 
     bool isEmpty() const;
     bool isSupported() const;
 
-    QMessageFolderOrdering operator+(const QMessageFolderOrdering &other) const;
-    QMessageFolderOrdering& operator+=(const QMessageFolderOrdering &other);
+    QMessageFolderSortOrder operator+(const QMessageFolderSortOrder &other) const;
+    QMessageFolderSortOrder& operator+=(const QMessageFolderSortOrder &other);
 
-    bool operator==(const QMessageFolderOrdering &other) const;
-    bool operator!=(const QMessageFolderOrdering &other) const;
+    bool operator==(const QMessageFolderSortOrder &other) const;
+    bool operator!=(const QMessageFolderSortOrder &other) const;
 
-    static QMessageFolderOrdering byDisplayName(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageFolderOrdering byPath(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageFolderSortOrder byDisplayName(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageFolderSortOrder byPath(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-    QMessageFolderOrderingPrivate *d_ptr;
+    QMessageFolderSortOrderPrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE

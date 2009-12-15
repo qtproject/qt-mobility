@@ -38,34 +38,28 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEFOLDERORDERINGPRIVATE_H
-#define QMESSAGEFOLDERORDERINGPRIVATE_H
-#include "qmessagefolderordering.h"
-#include "qmessagefolder.h"
-#include "qpair.h"
+#ifndef QMESSAGEACCOUNTSORTORDERPRIVATE_H
+#define QMESSAGEACCOUNTSORTORDERPRIVATE_H
+#include "qmessageaccountsortorder.h"
+#include "qstring.h"
+#ifdef Q_OS_SYMBIAN
+#include <qmessageaccount.h>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageFolderOrderingPrivate
+class QMessageAccountSortOrderPrivate
 {
-    Q_DECLARE_PUBLIC(QMessageFolderOrdering)
-
 public:
-    enum Field { Name = 0, Path };
+    QMessageAccountSortOrderPrivate(QMessageAccountSortOrder *sortOrder);
 
-    QMessageFolderOrderingPrivate(QMessageFolderOrdering *ordering)
-        :q_ptr(ordering)
-    {
-    }
-
-    QMessageFolderOrdering *q_ptr;
-    QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
+    bool _empty;
+    Qt::SortOrder _order;
+    QMessageAccountSortOrder *q_ptr;
+    static Qt::SortOrder order(const QMessageAccountSortOrder &sortOrder) { return sortOrder.d_ptr->_order; }
     
-#if defined(Q_OS_WIN)
-    static bool lessthan(const QMessageFolderOrdering &ordering, const QMessageFolder &left, const QMessageFolder &right);
-#endif
 #ifdef Q_OS_SYMBIAN
-    static bool lessThan(const QMessageFolderOrdering &ordering, const QMessageFolder &folder1, const QMessageFolder &folder2);
+    static bool lessThan(const QMessageAccountSortOrder &sortOrder, const QMessageAccount &account1, const QMessageAccount &account2);
 #endif    
 };
 

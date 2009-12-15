@@ -38,15 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageordering.h"
-#include "qmessageordering_p.h"
+#include "qmessagesortorder.h"
+#include "qmessagesortorder_p.h"
 #include "qmessage_p.h"
 
 
 QTM_BEGIN_NAMESPACE
 
-QMessageOrderingPrivate::QMessageOrderingPrivate(QMessageOrdering *ordering)
-    :q_ptr(ordering),
+QMessageSortOrderPrivate::QMessageSortOrderPrivate(QMessageSortOrder *sortOrder)
+    :q_ptr(sortOrder),
      _valid(true)
 {
 }
@@ -60,9 +60,9 @@ if ((x) < (y)) { \
     continue; \
 }
 
-bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const QMessage &l, const QMessage &r)
+bool QMessageSortOrderPrivate::lessThan(const QMessageSortOrder &sortOrder, const QMessage &l, const QMessage &r)
 {
-    QMessageOrderingPrivate *d(ordering.d_ptr);
+    QMessageSortOrderPrivate *d(sortOrder.d_ptr);
 
     QList<QPair<Field, Qt::SortOrder> >::iterator it(d->_fieldOrderList.begin());
     while (it != d->_fieldOrderList.end()) {
@@ -109,7 +109,7 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering, const Q
     return false; // equality
 }
 
-const int maxSortOrders(16);  // 16 levels of sort ordering should be more than sufficient
+const int maxSortOrders(16);  // 16 levels of sort sortOrder should be more than sufficient
 struct MapiSortOrderSet
 {
     ULONG cSorts;
@@ -118,10 +118,10 @@ struct MapiSortOrderSet
     SSortOrder aSort[maxSortOrders];
 };
 
-void QMessageOrderingPrivate::sortTable(QMessageManager::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE messagesTable)
+void QMessageSortOrderPrivate::sortTable(QMessageManager::ErrorCode *lastError, const QMessageSortOrder &sortOrder, LPMAPITABLE messagesTable)
 {
     MapiSortOrderSet multiSort;
-    QMessageOrderingPrivate *d(ordering.d_ptr);
+    QMessageSortOrderPrivate *d(sortOrder.d_ptr);
     QList<QPair<Field, Qt::SortOrder> > fieldOrderList(d->_fieldOrderList);
     multiSort.cCategories = 0;
     multiSort.cExpanded = 0;
@@ -178,18 +178,18 @@ void QMessageOrderingPrivate::sortTable(QMessageManager::ErrorCode *lastError, c
     return;
 }
 
-QMessageOrdering QMessageOrderingPrivate::from(QMessageOrderingPrivate::Field field, Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Field field, Qt::SortOrder order)
 {
-    QMessageOrdering result;
-    QPair<QMessageOrderingPrivate::Field, Qt::SortOrder> fieldOrder(field, order);
+    QMessageSortOrder result;
+    QPair<QMessageSortOrderPrivate::Field, Qt::SortOrder> fieldOrder(field, order);
     result.d_ptr->_fieldOrderList.append(fieldOrder);
     return result;
 }
 
-// Is the ordering purely a filter type ordering, rather than a native ordering or composite ordering?
-bool QMessageOrderingPrivate::isFilterType(const QMessageOrdering &ordering)
+// Is the sortOrder purely a filter type sortOrder, rather than a native sortOrder or composite sortOrder?
+bool QMessageSortOrderPrivate::isFilterType(const QMessageSortOrder &sortOrder)
 {
-    QMessageOrderingPrivate *d(ordering.d_ptr);
+    QMessageSortOrderPrivate *d(sortOrder.d_ptr);
     QList<QPair<Field, Qt::SortOrder> >::iterator it(d->_fieldOrderList.begin());
     while (it != d->_fieldOrderList.end()) {
         Field field((*it).first);
@@ -202,9 +202,9 @@ bool QMessageOrderingPrivate::isFilterType(const QMessageOrdering &ordering)
 }
 
 // Break a filter up into multiple filters so that a heap merge can be performed on each sub-filter
-QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFilter> &filters, const QMessageOrdering &ordering)
+QList<QMessageFilter> QMessageSortOrderPrivate::normalize(const QList<QMessageFilter> &filters, const QMessageSortOrder &sortOrder)
 {
-    QMessageOrderingPrivate *d(ordering.d_ptr);
+    QMessageSortOrderPrivate *d(sortOrder.d_ptr);
     QList<QMessageFilter> result(filters);
 
     QList<QPair<Field, Qt::SortOrder> >::iterator it(d->_fieldOrderList.begin());
@@ -280,24 +280,24 @@ QList<QMessageFilter> QMessageOrderingPrivate::normalize(const QList<QMessageFil
 }
 
 
-QMessageOrdering::QMessageOrdering()
-    :d_ptr(new QMessageOrderingPrivate(this))
+QMessageSortOrder::QMessageSortOrder()
+    :d_ptr(new QMessageSortOrderPrivate(this))
 {
 }
 
-QMessageOrdering::~QMessageOrdering()
+QMessageSortOrder::~QMessageSortOrder()
 {
     delete d_ptr;
     d_ptr = 0;
 }
 
-QMessageOrdering::QMessageOrdering(const QMessageOrdering &other)
-    :d_ptr(new QMessageOrderingPrivate(this))
+QMessageSortOrder::QMessageSortOrder(const QMessageSortOrder &other)
+    :d_ptr(new QMessageSortOrderPrivate(this))
 {
     this->operator=(other);
 }
 
-QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
+QMessageSortOrder& QMessageSortOrder::operator=(const QMessageSortOrder& other)
 {
     if (&other != this) {
         d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
@@ -307,23 +307,23 @@ QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
     return *this;
 }
 
-bool QMessageOrdering::isEmpty() const
+bool QMessageSortOrder::isEmpty() const
 {
     return d_ptr->_fieldOrderList.isEmpty();
 }
 
-bool QMessageOrdering::isSupported() const
+bool QMessageSortOrder::isSupported() const
 {
     return d_ptr->_valid;
 }
 
-QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) const
+QMessageSortOrder QMessageSortOrder::operator+(const QMessageSortOrder& other) const
 {
-    QMessageOrdering sum;
+    QMessageSortOrder sum;
     sum.d_ptr->_fieldOrderList = d_ptr->_fieldOrderList + other.d_ptr->_fieldOrderList;
 #ifdef _WIN32_WCE
-    bool thisIsFilterType(QMessageOrderingPrivate::isFilterType(*this));
-    bool otherIsFilterType(QMessageOrderingPrivate::isFilterType(other));
+    bool thisIsFilterType(QMessageSortOrderPrivate::isFilterType(*this));
+    bool otherIsFilterType(QMessageSortOrderPrivate::isFilterType(other));
     // Multiple sort orders are not supported on WinCE
     if (!thisIsFilterType && !otherIsFilterType)
         sum.d_ptr->_valid = false;
@@ -333,14 +333,14 @@ QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) cons
     return sum;
 }
 
-QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
+QMessageSortOrder& QMessageSortOrder::operator+=(const QMessageSortOrder& other)
 {
     if (&other == this)
         return *this;
     d_ptr->_fieldOrderList += other.d_ptr->_fieldOrderList;
 #ifdef _WIN32_WCE
-    bool thisIsFilterType(QMessageOrderingPrivate::isFilterType(*this));
-    bool otherIsFilterType(QMessageOrderingPrivate::isFilterType(other));
+    bool thisIsFilterType(QMessageSortOrderPrivate::isFilterType(*this));
+    bool otherIsFilterType(QMessageSortOrderPrivate::isFilterType(other));
     // Multiple sort orders are not supported on WinCE
     if (!thisIsFilterType && !otherIsFilterType)
         d_ptr->_valid = false;
@@ -350,81 +350,81 @@ QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
     return *this;
 }
 
-bool QMessageOrdering::operator==(const QMessageOrdering& other) const
+bool QMessageSortOrder::operator==(const QMessageSortOrder& other) const
 {
     return (d_ptr->_fieldOrderList == other.d_ptr->_fieldOrderList);
 }
 
-QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byType(Qt::SortOrder order)
 {
-    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Type, order));
+    QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Type, order));
     return result;
 }
 
-QMessageOrdering QMessageOrdering::bySender(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySender(Qt::SortOrder order)
 {
     // Partially implemented, can sort by sender name only not sender email address
-    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Sender, order));
+    QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Sender, order));
     result.d_ptr->_valid = false; // Not yet implemented
     return result;
 }
 
-QMessageOrdering QMessageOrdering::byRecipients(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byRecipients(Qt::SortOrder order)
 {
-    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Recipients, order));
+    QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Recipients, order));
     result.d_ptr->_valid = false; // Not supported
     return result;
 }
 
-QMessageOrdering QMessageOrdering::bySubject(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySubject(Qt::SortOrder order)
 {
-    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Subject, order));
+    QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Subject, order));
     return result;
 }
 
-QMessageOrdering QMessageOrdering::byTimeStamp(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byTimeStamp(Qt::SortOrder order)
 {
-    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::TimeStamp, order));
+    QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::TimeStamp, order));
 #ifdef _WIN32_WCE
     result.d_ptr->_valid = false; // Not supported on WinCE
 #endif
     return result;
 }
 
-QMessageOrdering QMessageOrdering::byReceptionTimeStamp(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byReceptionTimeStamp(Qt::SortOrder order)
 {
-    return QMessageOrderingPrivate::from(QMessageOrderingPrivate::ReceptionTimeStamp, order);
+    return QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::ReceptionTimeStamp, order);
 }
 
-QMessageOrdering QMessageOrdering::byStatus(QMessage::Status flag, Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byStatus(QMessage::Status flag, Qt::SortOrder order)
 {
-    QMessageOrdering result;
+    QMessageSortOrder result;
     switch (flag) {
     case QMessage::Read:
-        result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Read, order);
+        result = QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Read, order);
         break;
     case QMessage::HasAttachments:
-        result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::HasAttachments, order);
+        result = QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::HasAttachments, order);
         break;
     case QMessage::Incoming:
-        result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Incoming, order);
+        result = QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Incoming, order);
         break;
     case QMessage::Removed:
-        result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Removed, order);
+        result = QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Removed, order);
         break;
     }
     return result;
 }
 
-QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byPriority(Qt::SortOrder order)
 {
-    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Priority, order));
+    QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Priority, order));
     return result;
 }
 
-QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySize(Qt::SortOrder order)
 {
-    QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order));
+    QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Size, order));
 #ifdef _WIN32_WCE
     result.d_ptr->_valid = false; // Not supported on WinCE
 #endif

@@ -38,30 +38,68 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNTORDERINGPRIVATE_H
-#define QMESSAGEACCOUNTORDERINGPRIVATE_H
-#include "qmessageaccountordering.h"
-#include "qstring.h"
-#ifdef Q_OS_SYMBIAN
-#include <qmessageaccount.h>
-#endif
+#include "qmessagefoldersortorder.h"
+#include "qmessagefoldersortorder_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageAccountOrderingPrivate
+QMessageFolderSortOrder::QMessageFolderSortOrder()
 {
-public:
-    QMessageAccountOrderingPrivate(QMessageAccountOrdering *ordering);
+}
 
-    bool _empty;
-    Qt::SortOrder _order;
-    QMessageAccountOrdering *q_ptr;
-    static Qt::SortOrder order(const QMessageAccountOrdering &ordering) { return ordering.d_ptr->_order; }
-    
-#ifdef Q_OS_SYMBIAN
-    static bool lessThan(const QMessageAccountOrdering &ordering, const QMessageAccount &account1, const QMessageAccount &account2);
-#endif    
-};
+QMessageFolderSortOrder::QMessageFolderSortOrder(const QMessageFolderSortOrder &other)
+{
+    Q_UNUSED(other)
+}
+
+QMessageFolderSortOrder::~QMessageFolderSortOrder()
+{
+}
+
+QMessageFolderSortOrder& QMessageFolderSortOrder::operator=(const QMessageFolderSortOrder& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+bool QMessageFolderSortOrder::isEmpty() const
+{
+    return false; // stub
+}
+
+bool QMessageFolderSortOrder::isSupported() const
+{
+    return true; // stub
+}
+
+QMessageFolderSortOrder QMessageFolderSortOrder::operator+(const QMessageFolderSortOrder& other) const
+{
+    Q_UNUSED(other)
+    return QMessageFolderSortOrder(); // stub
+}
+
+QMessageFolderSortOrder& QMessageFolderSortOrder::operator+=(const QMessageFolderSortOrder& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+bool QMessageFolderSortOrder::operator==(const QMessageFolderSortOrder& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
+
+QMessageFolderSortOrder QMessageFolderSortOrder::byDisplayName(Qt::SortOrder order)
+{
+    Q_UNUSED(order)
+    return QMessageFolderSortOrder(); // stub
+}
+
+QMessageFolderSortOrder QMessageFolderSortOrder::byPath(Qt::SortOrder order)
+{
+    Q_UNUSED(order)
+    return QMessageFolderSortOrder(); // stub
+}
 
 QTM_END_NAMESPACE
-#endif

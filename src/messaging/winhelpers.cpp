@@ -1406,7 +1406,7 @@ namespace {
     // FolderHeap is a binary heap used to merge sort messages from different folders and stores
     class FolderHeap {
     public:
-        FolderHeap(QMessageManager::ErrorCode *lastError, const QList<FolderHeapNodePtr> &protoHeap, const QMessageOrdering &ordering);
+        FolderHeap(QMessageManager::ErrorCode *lastError, const QList<FolderHeapNodePtr> &protoHeap, const QMessageSortOrder &sortOrder);
         ~FolderHeap();
 
         QMessage takeFront(QMessageManager::ErrorCode *lastError);
@@ -1416,13 +1416,13 @@ namespace {
         void sink(int i); // Also known as sift-down
 
         QMessageFilter _filter;
-        QMessageOrdering _ordering;
+        QMessageSortOrder _ordering;
         QList<FolderHeapNodePtr> _heap;
     };
 
-    FolderHeap::FolderHeap(QMessageManager::ErrorCode *lastError, const QList<FolderHeapNodePtr> &protoHeap, const QMessageOrdering &ordering)
+    FolderHeap::FolderHeap(QMessageManager::ErrorCode *lastError, const QList<FolderHeapNodePtr> &protoHeap, const QMessageSortOrder &sortOrder)
     {
-        _ordering = ordering;
+        _ordering = sortOrder;
 
         foreach (const FolderHeapNodePtr &node, protoHeap) {
             if (!node->_folder) {
@@ -1431,7 +1431,7 @@ namespace {
             }
 
             QMessageIdList messageIdList;
-            node->_table = node->_folder->queryBegin(lastError, node->_filter, ordering);
+            node->_table = node->_folder->queryBegin(lastError, node->_filter, sortOrder);
             if (*lastError == QMessageManager::NoError) {
                 if (node->_table) {
                     messageIdList = node->_folder->queryNext(lastError, node->_table, node->_filter);
@@ -1504,11 +1504,11 @@ namespace {
 
             const int rightChild(leftChild + 1);
             int minChild(leftChild);
-            if ((rightChild < _heap.count()) && (QMessageOrderingPrivate::lessThan(_ordering, _heap[rightChild]->_front, _heap[leftChild]->_front)))
+            if ((rightChild < _heap.count()) && (QMessageSortOrderPrivate::lessThan(_ordering, _heap[rightChild]->_front, _heap[leftChild]->_front)))
                 minChild = rightChild;
 
             // Reverse positions only if the child sorts before the parent
-            if (QMessageOrderingPrivate::lessThan(_ordering, _heap[minChild]->_front, _heap[i]->_front)) {
+            if (QMessageSortOrderPrivate::lessThan(_ordering, _heap[minChild]->_front, _heap[i]->_front)) {
                 FolderHeapNodePtr temp(_heap[minChild]);
                 _heap[minChild] = _heap[i];
                 _heap[i] = temp;
@@ -1531,12 +1531,12 @@ namespace {
         return bodyContainer.textContent().contains(body, Qt::CaseInsensitive);
     }
 
-    QMessageIdList filterMessages(QMessageManager::ErrorCode *lastError, QList<FolderHeapNodePtr> &folderNodes, const QMessageOrdering &ordering, uint limit, uint offset, const QString &body = QString(), QMessageDataComparator::Options options = 0)
+    QMessageIdList filterMessages(QMessageManager::ErrorCode *lastError, QList<FolderHeapNodePtr> &folderNodes, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body = QString(), QMessageDataComparator::Options options = 0)
     {
         QMessageIdList result;
         QHash<QMessageId, bool> avoidDuplicates; // For complex filters it's necessary to check for duplicates
 
-        FolderHeap folderHeap(lastError, folderNodes, ordering);
+        FolderHeap folderHeap(lastError, folderNodes, sortOrder);
         if (*lastError != QMessageManager::NoError)
             return result;
 
@@ -1828,8 +1828,8 @@ namespace WinHelpers {
 
     class StoreSortHelper {
     public:
-        StoreSortHelper(const QMessageAccountOrdering *ordering, MapiStorePtr storePtr)
-            :_ordering(ordering),
+        StoreSortHelper(const QMessageAccountSortOrder *sortOrder, MapiStorePtr storePtr)
+            :_ordering(sortOrder),
              _storePtr(storePtr)
         {}
 
@@ -1849,19 +1849,19 @@ namespace WinHelpers {
         bool operator<(const StoreSortHelper &other) const
         {
             bool result (_storePtr->name() < other._storePtr->name());
-            if (QMessageAccountOrderingPrivate::order(*_ordering) == Qt::DescendingOrder)
+            if (QMessageAccountSortOrderPrivate::order(*_ordering) == Qt::DescendingOrder)
                 result = !result;
             return result;
         }
     private:
-        const QMessageAccountOrdering *_ordering;
+        const QMessageAccountSortOrder *_ordering;
         MapiStorePtr _storePtr;
     };
 
     class FolderSortHelper {
     public:
-        FolderSortHelper(const QMessageFolderOrdering *ordering, MapiFolderPtr folderPtr, const QMessageFolder &folder)
-            :_ordering(ordering),
+        FolderSortHelper(const QMessageFolderSortOrder *sortOrder, MapiFolderPtr folderPtr, const QMessageFolder &folder)
+            :_ordering(sortOrder),
              _folderPtr(folderPtr),
              _folder(folder)
         {}
@@ -1887,10 +1887,10 @@ namespace WinHelpers {
 
         bool operator<(const FolderSortHelper &other) const
         {
-            return QMessageFolderOrderingPrivate::lessthan(*_ordering, _folder, other._folder);
+            return QMessageFolderSortOrderPrivate::lessthan(*_ordering, _folder, other._folder);
         }
     private:
-        const QMessageFolderOrdering *_ordering;
+        const QMessageFolderSortOrder *_ordering;
         MapiFolderPtr _folderPtr;
         QMessageFolder _folder;
     };
@@ -2034,7 +2034,7 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageManager::ErrorCode *lastError)
     return result;
 }
 
-LPMAPITABLE MapiFolder::queryBegin(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering)
+LPMAPITABLE MapiFolder::queryBegin(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder)
 {
     if (!_valid || !_folder) {
         Q_ASSERT(_valid && _folder);
@@ -2054,8 +2054,8 @@ LPMAPITABLE MapiFolder::queryBegin(QMessageManager::ErrorCode *lastError, const 
         SizedSPropTagArray(2, columns) = {2, {PR_ENTRYID, PR_RECORD_KEY}};
         rv = messagesTable->SetColumns(reinterpret_cast<LPSPropTagArray>(&columns), 0);
         if (HR_SUCCEEDED(rv)) {
-            if (!ordering.isEmpty()) {
-                QMessageOrderingPrivate::sortTable(lastError, ordering, messagesTable);
+            if (!sortOrder.isEmpty()) {
+                QMessageSortOrderPrivate::sortTable(lastError, sortOrder, messagesTable);
             }
             if (!restriction.isEmpty()) {
                 ULONG flags(0);
@@ -3300,7 +3300,7 @@ MapiStorePtr MapiSession::findStore(QMessageManager::ErrorCode *lastError, const
 }
 
 template<typename Predicate, typename Ordering>
-QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastError, Predicate predicate, Ordering ordering, uint limit, uint offset, bool cachedMode) const
+QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastError, Predicate predicate, Ordering sortOrder, uint limit, uint offset, bool cachedMode) const
 {
     if (!predicate._filter.isSupported()) {
         *lastError = QMessageManager::ConstraintFailure;
@@ -3345,10 +3345,10 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastEr
         mapiRelease(mapiMessageStoresTable);
     }
 
-    if (!ordering.isEmpty()) {
+    if (!sortOrder.isEmpty()) {
         QList<StoreSortHelper> accountList;
         foreach (MapiStorePtr storePtr, result) {
-            accountList.append(StoreSortHelper(&ordering, storePtr));
+            accountList.append(StoreSortHelper(&sortOrder, storePtr));
         }
         qSort(accountList.begin(), accountList.end());
         result.clear();
@@ -3366,18 +3366,18 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastEr
     }
 }
 
-QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset, bool cachedMode) const
+QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset, bool cachedMode) const
 {
     AccountFilterPredicate pred(filter);
-    return filterStores<const AccountFilterPredicate&, const QMessageAccountOrdering &>(lastError, pred, ordering, limit, offset, cachedMode);
+    return filterStores<const AccountFilterPredicate&, const QMessageAccountSortOrder &>(lastError, pred, sortOrder, limit, offset, cachedMode);
 }
 
 QList<MapiStorePtr> MapiSession::allStores(QMessageManager::ErrorCode *lastError, bool cachedMode) const
 {
-    return filterStores(lastError, QMessageAccountFilter(), QMessageAccountOrdering(), 0, 0, cachedMode);
+    return filterStores(lastError, QMessageAccountFilter(), QMessageAccountSortOrder(), 0, 0, cachedMode);
 }
 
-QList<MapiFolderPtr> MapiSession::filterFolders(QMessageManager::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset, bool cachedMode) const
+QList<MapiFolderPtr> MapiSession::filterFolders(QMessageManager::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset, bool cachedMode) const
 {
     if (!filter.isSupported()) {
         *lastError = QMessageManager::ConstraintFailure;
@@ -3395,7 +3395,7 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageManager::ErrorCode *last
         result.append(store->filterFolders(lastError, filter));
     }
 
-    if (!ordering.isEmpty()) {
+    if (!sortOrder.isEmpty()) {
         QList<FolderSortHelper> folderList;
         foreach (MapiFolderPtr folderPtr, result) {
             QMessageFolder orderFolder(folder(lastError, folderPtr->id()));
@@ -3403,7 +3403,7 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageManager::ErrorCode *last
                 folderList.clear();
                 break;
             }
-            folderList.append(FolderSortHelper(&ordering, folderPtr, orderFolder));
+            folderList.append(FolderSortHelper(&sortOrder, folderPtr, orderFolder));
         }
         qSort(folderList.begin(), folderList.end());
         result.clear();
@@ -4574,7 +4574,7 @@ QByteArray MapiSession::attachmentData(QMessageManager::ErrorCode *lastError, co
     return result;
 }
 
-QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset, const QString &body, QMessageDataComparator::Options options) const
+QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body, QMessageDataComparator::Options options) const
 {
     if (!filter.isSupported()) {
         *lastError = QMessageManager::ConstraintFailure;
@@ -4601,7 +4601,7 @@ QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError,
             for (MapiFolderPtr folder(folderIt.next()); folder && folder->isValid(); folder = folderIt.next()) {
                 QList<QMessageFilter> orderingFilters;
                 orderingFilters.append(subfilter);
-                foreach(QMessageFilter orderingFilter, QMessageOrderingPrivate::normalize(orderingFilters, ordering)) {
+                foreach(QMessageFilter orderingFilter, QMessageSortOrderPrivate::normalize(orderingFilters, sortOrder)) {
                     folderNodes.append(FolderHeapNodePtr(new FolderHeapNode(folder, orderingFilter)));
                 }
             }
@@ -4611,7 +4611,7 @@ QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError,
     if (*lastError != QMessageManager::NoError)
         return QMessageIdList();
 
-    return filterMessages(lastError, folderNodes, ordering, limit, offset, body, options);
+    return filterMessages(lastError, folderNodes, sortOrder, limit, offset, body, options);
 }
 
 void MapiSession::updateMessage(QMessageManager::ErrorCode* lastError, const QMessage& source)

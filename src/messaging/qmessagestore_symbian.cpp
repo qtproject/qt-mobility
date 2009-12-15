@@ -66,12 +66,12 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
     _mtmEngine = CMTMEngine::instance();
 }
 
-QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList ids;
     QMessageServiceAction serviceaction;
     connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    if (serviceaction.queryMessages(filter, ordering, limit, offset)) {
+    if (serviceaction.queryMessages(filter, sortOrder, limit, offset)) {
         QEventLoop loop;
         QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
         loop.exec();
@@ -81,12 +81,12 @@ QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter,
     return ids;
 }
 
-QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList ids;
     QMessageServiceAction serviceaction;
     connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    if (serviceaction.queryMessages(filter, body, options, ordering, limit, offset)) {
+    if (serviceaction.queryMessages(filter, body, options, sortOrder, limit, offset)) {
         QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
         loop.exec();
         ids = _ids;
@@ -128,9 +128,9 @@ void QMessageStorePrivate::messagesCounted(int count)
     loop.quit();
 }
 
-QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
+QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return _mtmEngine->queryAccounts(filter, ordering, limit, offset);
+    return _mtmEngine->queryAccounts(filter, sortOrder, limit, offset);
 }
 
 int QMessageStorePrivate::countAccounts(const QMessageAccountFilter &filter) const
@@ -138,9 +138,9 @@ int QMessageStorePrivate::countAccounts(const QMessageAccountFilter &filter) con
     return _mtmEngine->countAccounts(filter);
 }
 
-QMessageFolderIdList QMessageStorePrivate::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
+QMessageFolderIdList QMessageStorePrivate::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return _mtmEngine->queryFolders(filter, ordering, limit, offset);
+    return _mtmEngine->queryFolders(filter, sortOrder, limit, offset);
 }
 
 int QMessageStorePrivate::countFolders(const QMessageFolderFilter& filter) const
@@ -258,24 +258,24 @@ QMessageManager::ErrorCode QMessageStore::lastError() const
     return QMessageManager::NoError;
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return messageStorePrivate()->queryMessages(filter, ordering, limit, offset);
+    return messageStorePrivate()->queryMessages(filter, sortOrder, limit, offset);
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return messageStorePrivate()->queryMessages(filter, body, options, ordering, limit, offset);
+    return messageStorePrivate()->queryMessages(filter, body, options, sortOrder, limit, offset);
 }
 
-QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
+QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return messageStorePrivate()->queryFolders(filter, ordering, limit, offset);
+    return messageStorePrivate()->queryFolders(filter, sortOrder, limit, offset);
 }
 
-QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
+QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return messageStorePrivate()->queryAccounts(filter, ordering, limit, offset);
+    return messageStorePrivate()->queryAccounts(filter, sortOrder, limit, offset);
 }
 
 int QMessageStore::countMessages(const QMessageFilter& filter) const

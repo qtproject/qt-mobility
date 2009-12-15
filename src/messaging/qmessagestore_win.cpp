@@ -197,7 +197,7 @@ QMessageManager::ErrorCode QMessageStore::lastError() const
     return d_ptr->p_ptr->lastError;
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList result;
 
@@ -213,13 +213,13 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
         return result;
     } else {
         d_ptr->p_ptr->lastError = QMessageManager::NoError;
-        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset);
+        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset);
     }
 
     return result;
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList result;
 
@@ -239,13 +239,13 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
         return result;
     } else {
         d_ptr->p_ptr->lastError = QMessageManager::NoError;
-        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset, body, options);
+        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset, body, options);
     }
 
     return result;
 }
 
-QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
+QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageFolderIdList result;
 
@@ -261,14 +261,14 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
     }
 
     d_ptr->p_ptr->lastError = QMessageManager::NoError;
-    foreach (const MapiFolderPtr &folder, d_ptr->p_ptr->session->filterFolders(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset)) {
+    foreach (const MapiFolderPtr &folder, d_ptr->p_ptr->session->filterFolders(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset)) {
         result.append(folder->id());
     }
 
     return result;
 }
 
-QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
+QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageAccountIdList result;
 
@@ -284,7 +284,7 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
     }
 
     d_ptr->p_ptr->lastError = QMessageManager::NoError;
-    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->filterStores(&d_ptr->p_ptr->lastError, filter, ordering, limit, offset)) {
+    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->filterStores(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset)) {
         result.append(store->id());
     }
 
@@ -352,7 +352,7 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
     } else {
         d_ptr->p_ptr->lastError = QMessageManager::NoError;
 
-        QMessageIdList ids = queryMessages(filter, QMessageOrdering(), 0, 0);
+        QMessageIdList ids = queryMessages(filter, QMessageSortOrder(), 0, 0);
         if (d_ptr->p_ptr->lastError == QMessageManager::NoError) {
             d_ptr->p_ptr->session->removeMessages(&d_ptr->p_ptr->lastError, ids);
         }

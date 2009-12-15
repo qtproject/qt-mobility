@@ -139,7 +139,7 @@ QMessageManager::ErrorCode QMessageStore::lastError() const
     return convert(d_ptr->_store->lastError());
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     if (filter.options() != 0) {
         d_ptr->_error = QMessageManager::NotYetImplemented;
@@ -147,10 +147,10 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     }
     
     d_ptr->_error = QMessageManager::NoError;
-    return convert(d_ptr->_store->queryMessages(convert(filter), convert(ordering), limit, offset));
+    return convert(d_ptr->_store->queryMessages(convert(filter), convert(sortOrder), limit, offset));
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     if (filter.options() != 0) {
         d_ptr->_error = QMessageManager::NotYetImplemented;
@@ -158,7 +158,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     }
     
     d_ptr->_error = QMessageManager::NoError;
-    QMessageIdList ids(convert(d_ptr->_store->queryMessages(convert(filter), convert(ordering))));
+    QMessageIdList ids(convert(d_ptr->_store->queryMessages(convert(filter), convert(sortOrder))));
     
     Qt::CaseSensitivity searchOptions(Qt::CaseInsensitive);
     if (options & QMessageDataComparator::CaseSensitive) {
@@ -184,7 +184,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     }
 }
 
-QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
+QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
     if (filter.options() != 0) {
         d_ptr->_error = QMessageManager::NotYetImplemented;
@@ -192,10 +192,10 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
     }
     
     d_ptr->_error = QMessageManager::NoError;
-    return convert(d_ptr->_store->queryFolders(convert(filter), convert(ordering), limit, offset));
+    return convert(d_ptr->_store->queryFolders(convert(filter), convert(sortOrder), limit, offset));
 }
 
-QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
+QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
     if (filter.options() != 0) {
         d_ptr->_error = QMessageManager::NotYetImplemented;
@@ -203,7 +203,7 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
     }
     
     d_ptr->_error = QMessageManager::NoError;
-    return convert(d_ptr->_store->queryAccounts(convert(filter), convert(ordering), limit, offset));
+    return convert(d_ptr->_store->queryAccounts(convert(filter), convert(sortOrder), limit, offset));
 }
 
 int QMessageStore::countMessages(const QMessageFilter& filter) const

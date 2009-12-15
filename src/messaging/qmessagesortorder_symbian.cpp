@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageordering.h"
-#include "qmessageordering_p.h"
+#include "qmessagesortorder.h"
+#include "qmessagesortorder_p.h"
 #include "qmessage_p.h"
 
 #define COMPARE(x,y) \
@@ -54,30 +54,30 @@ if ((x) < (y)) { \
 
 QTM_BEGIN_NAMESPACE
 
-QMessageOrderingPrivate::QMessageOrderingPrivate(QMessageOrdering *ordering)
- : q_ptr(ordering),
+QMessageSortOrderPrivate::QMessageSortOrderPrivate(QMessageSortOrder *sortOrder)
+ : q_ptr(sortOrder),
    _valid(true)
 {
 }
 
-QMessageOrdering QMessageOrderingPrivate::from(QMessageOrderingPrivate::Field field, Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Field field, Qt::SortOrder order)
 {
-    QMessageOrdering result;
-    QPair<QMessageOrderingPrivate::Field, Qt::SortOrder> fieldOrder(field, order);
+    QMessageSortOrder result;
+    QPair<QMessageSortOrderPrivate::Field, Qt::SortOrder> fieldOrder(field, order);
     result.d_ptr->_fieldOrderList.append(fieldOrder);
     return result;
 }
 
-QMessageOrderingPrivate* QMessageOrderingPrivate::implementation(const QMessageOrdering &ordering)
+QMessageSortOrderPrivate* QMessageSortOrderPrivate::implementation(const QMessageSortOrder &sortOrder)
 
 {
-    return ordering.d_ptr;
+    return sortOrder.d_ptr;
 }
 
-bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering,
+bool QMessageSortOrderPrivate::lessThan(const QMessageSortOrder &sortOrder,
                                        const QMessage &message1, const QMessage &message2)
 {
-    QMessageOrderingPrivate *d(ordering.d_ptr);
+    QMessageSortOrderPrivate *d(sortOrder.d_ptr);
 
     QList<QPair<Field, Qt::SortOrder> >::iterator it(d->_fieldOrderList.begin());
     while (it != d->_fieldOrderList.end()) {
@@ -124,24 +124,24 @@ bool QMessageOrderingPrivate::lessThan(const QMessageOrdering &ordering,
     return false; // equality
 }
 
-QMessageOrdering::QMessageOrdering()
- : d_ptr(new QMessageOrderingPrivate(this))
+QMessageSortOrder::QMessageSortOrder()
+ : d_ptr(new QMessageSortOrderPrivate(this))
 {
 }
 
-QMessageOrdering::QMessageOrdering(const QMessageOrdering &other)
- : d_ptr(new QMessageOrderingPrivate(this))
+QMessageSortOrder::QMessageSortOrder(const QMessageSortOrder &other)
+ : d_ptr(new QMessageSortOrderPrivate(this))
 {
 	this->operator=(other);
 }
 
-QMessageOrdering::~QMessageOrdering()
+QMessageSortOrder::~QMessageSortOrder()
 {
 	delete d_ptr;
 	d_ptr = 0;
 }
 
-QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
+QMessageSortOrder& QMessageSortOrder::operator=(const QMessageSortOrder& other)
 {
 	if (&other != this) {
 		d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
@@ -151,24 +151,24 @@ QMessageOrdering& QMessageOrdering::operator=(const QMessageOrdering& other)
 	return *this;
 }
 
-bool QMessageOrdering::isEmpty() const
+bool QMessageSortOrder::isEmpty() const
 {
 	return d_ptr->_fieldOrderList.isEmpty();
 }
 
-bool QMessageOrdering::isSupported() const
+bool QMessageSortOrder::isSupported() const
 {
 	return d_ptr->_valid;
 }
 
-QMessageOrdering QMessageOrdering::operator+(const QMessageOrdering& other) const
+QMessageSortOrder QMessageSortOrder::operator+(const QMessageSortOrder& other) const
 {
-	QMessageOrdering sum;
+	QMessageSortOrder sum;
 	sum.d_ptr->_fieldOrderList = d_ptr->_fieldOrderList + other.d_ptr->_fieldOrderList;
 	return sum;
 }
 
-QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
+QMessageSortOrder& QMessageSortOrder::operator+=(const QMessageSortOrder& other)
 {
 	if (&other == this) {
 		 return *this;
@@ -177,76 +177,76 @@ QMessageOrdering& QMessageOrdering::operator+=(const QMessageOrdering& other)
 	return *this;
 }
 
-bool QMessageOrdering::operator==(const QMessageOrdering& other) const
+bool QMessageSortOrder::operator==(const QMessageSortOrder& other) const
 {
 	return (d_ptr->_fieldOrderList == other.d_ptr->_fieldOrderList);
 }
 
-QMessageOrdering QMessageOrdering::byType(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byType(Qt::SortOrder order)
 {
-	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Type, order));
+	QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Type, order));
 	return result;
 }
 
-QMessageOrdering QMessageOrdering::bySender(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySender(Qt::SortOrder order)
 {
-	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Sender, order));
+	QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Sender, order));
 	return result;
 }
 
-QMessageOrdering QMessageOrdering::byRecipients(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byRecipients(Qt::SortOrder order)
 {
-	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Recipients, order));
+	QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Recipients, order));
 	return result;
 }
 
-QMessageOrdering QMessageOrdering::bySubject(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySubject(Qt::SortOrder order)
 {
-	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Subject, order));
+	QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Subject, order));
 	return result;
 }
 
-QMessageOrdering QMessageOrdering::byTimeStamp(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byTimeStamp(Qt::SortOrder order)
 {
-	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::TimeStamp, order));
+	QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::TimeStamp, order));
 	return result;
 }
 
-QMessageOrdering QMessageOrdering::byReceptionTimeStamp(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byReceptionTimeStamp(Qt::SortOrder order)
 {
-	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::ReceptionTimeStamp, order));
+	QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::ReceptionTimeStamp, order));
 	return result;
 }
 
-QMessageOrdering QMessageOrdering::byStatus(QMessage::Status flag, Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byStatus(QMessage::Status flag, Qt::SortOrder order)
 {
-	QMessageOrdering result;
+	QMessageSortOrder result;
 	switch (flag) {
 	case QMessage::Read:
-		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Read, order);
+		result = QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Read, order);
 		break;
 	case QMessage::HasAttachments:
-		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::HasAttachments, order);
+		result = QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::HasAttachments, order);
 		break;
 	case QMessage::Incoming:
-		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Incoming, order);
+		result = QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Incoming, order);
 		break;
 	case QMessage::Removed:
-		result = QMessageOrderingPrivate::from(QMessageOrderingPrivate::Removed, order);
+		result = QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Removed, order);
 		break;
 	}
 	return result;
 }
 
-QMessageOrdering QMessageOrdering::byPriority(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::byPriority(Qt::SortOrder order)
 {
-	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Priority, order));
+	QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Priority, order));
 	return result;
 }
 
-QMessageOrdering QMessageOrdering::bySize(Qt::SortOrder order)
+QMessageSortOrder QMessageSortOrder::bySize(Qt::SortOrder order)
 {
-	QMessageOrdering result(QMessageOrderingPrivate::from(QMessageOrderingPrivate::Size, order));
+	QMessageSortOrder result(QMessageSortOrderPrivate::from(QMessageSortOrderPrivate::Size, order));
 	return result;
 }
 

@@ -54,7 +54,7 @@ MessagingEx::MessagingEx(QWidget* parent)
     connect(m_store, SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageUpdated(const QMessageId&)));
     m_store->registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));    
     connect(&m_serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    m_accountList = m_store->queryAccounts(QMessageAccountFilter(), QMessageAccountOrdering(), 10 , 0);
+    m_accountList = m_store->queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
         QMessageAccount account = QMessageAccount(m_accountList[i]);
         accountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
@@ -449,11 +449,11 @@ void MessagingEx::sortType()
 			break;
 	}
 	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
+	QMessageSortOrder sortOrder;
+	sortOrder.byTimeStamp(Qt::DescendingOrder);
 	QString accountId = priorityAccountComboBox->itemData(priorityAccountComboBox->currentIndex()).toString();
 	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);
 	
 }
 
@@ -477,11 +477,11 @@ void MessagingEx::sortSender()
 			break;
 	}
 	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
+	QMessageSortOrder sortOrder;
+	sortOrder.byTimeStamp(Qt::DescendingOrder);
 	QString accountId = senderAccountComboBox->itemData(senderAccountComboBox->currentIndex()).toString();
 	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);
 	
 }
 
@@ -499,11 +499,11 @@ void MessagingEx::sortRecipient()
 			break;
 	}
 	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
+	QMessageSortOrder sortOrder;
+	sortOrder.byTimeStamp(Qt::DescendingOrder);
 	QString accountId = recipientAccountComboBox->itemData(recipientAccountComboBox->currentIndex()).toString();
 	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);
 
 }
 
@@ -527,11 +527,11 @@ void MessagingEx::sortSubject()
 			break;
 	}
 	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
+	QMessageSortOrder sortOrder;
+	sortOrder.byTimeStamp(Qt::DescendingOrder);
 	QString accountId = subjectAccountComboBox->itemData(subjectAccountComboBox->currentIndex()).toString();
 	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);
 }
 
 void MessagingEx::sortTimestamp()
@@ -560,11 +560,11 @@ void MessagingEx::sortTimestamp()
 			break;
 	}
 	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
+	QMessageSortOrder sortOrder;
+	sortOrder.byTimeStamp(Qt::DescendingOrder);
 	QString accountId = timestampAccountComboBox->itemData(timestampAccountComboBox->currentIndex()).toString();
 	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);
 
 }
 
@@ -594,11 +594,11 @@ void MessagingEx::sortReceptiontimestamp()
 			break;
 	}
 	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
+	QMessageSortOrder sortOrder;
+	sortOrder.byTimeStamp(Qt::DescendingOrder);
 	QString accountId = timeAccountComboBox->itemData(timeAccountComboBox->currentIndex()).toString();
 	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);	
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);	
 }
 
 void MessagingEx::sortStatus()
@@ -656,11 +656,11 @@ void MessagingEx::sortStatus()
 			break;
 	}
 	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
+	QMessageSortOrder sortOrder;
+	sortOrder.byTimeStamp(Qt::DescendingOrder);
 	QString accountId = statusAccountComboBox->itemData(statusAccountComboBox->currentIndex()).toString();
 	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);
 
 }
 
@@ -716,9 +716,9 @@ void MessagingEx::sortStandardFolder()
 	}
 	QString accountId = folderAccountComboBox->itemData(folderAccountComboBox->currentIndex()).toString();
 	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+	QMessageSortOrder sortOrder;
+	sortOrder.byTimeStamp(Qt::DescendingOrder);
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);
 }
 
 void MessagingEx::findMessages()
@@ -754,8 +754,8 @@ void MessagingEx::findMessages()
         filter = QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
 	}
 
-	QMessageOrdering ordering = ordering.byTimeStamp(Qt::DescendingOrder);
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+	QMessageSortOrder sortOrder = sortOrder.byTimeStamp(Qt::DescendingOrder);
+	m_serviceaction.queryMessages(filter, sortOrder, 100, 0);
 	
 }
 

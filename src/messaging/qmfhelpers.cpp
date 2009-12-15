@@ -522,18 +522,18 @@ QMailMessageKey convert(const QMessageFilter &filter);
 */
 
 /* in qmessageaccountsortkey_qmf.cpp
-QMessageAccountOrdering convert(const QMailAccountSortKey &key);
-QMailAccountSortKey convert(const QMessageAccountOrdering &ordering);
+QMessageAccountSortOrder convert(const QMailAccountSortKey &key);
+QMailAccountSortKey convert(const QMessageAccountSortOrder &sortOrder);
 */
 
 /* in qmessagefoldersortkey_qmf.cpp
-QMessageFolderOrdering convert(const QMailFolderSortKey &key);
-QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
+QMessageFolderSortOrder convert(const QMailFolderSortKey &key);
+QMailFolderSortKey convert(const QMessageFolderSortOrder &sortOrder);
 */
 
 /* in qmessagesortkey_qmf.cpp
-QMessageOrdering convert(const QMailMessageSortKey &key);
-QMailMessageSortKey convert(const QMessageOrdering &ordering);
+QMessageSortOrder convert(const QMailMessageSortKey &key);
+QMailMessageSortKey convert(const QMessageSortOrder &sortOrder);
 */
 
 /* in qmessageaccount_qmf.cpp

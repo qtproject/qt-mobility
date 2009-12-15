@@ -38,54 +38,54 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageaccountordering.h"
-#include "qmessageaccountordering_p.h"
+#include "qmessageaccountsortorder.h"
+#include "qmessageaccountsortorder_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QMessageAccountOrderingPrivate::QMessageAccountOrderingPrivate(QMessageAccountOrdering *ordering)
- : q_ptr(ordering)
+QMessageAccountSortOrderPrivate::QMessageAccountSortOrderPrivate(QMessageAccountSortOrder *sortOrder)
+ : q_ptr(sortOrder)
 {
 }
 
-bool QMessageAccountOrderingPrivate::lessThan(const QMessageAccountOrdering &ordering,
+bool QMessageAccountSortOrderPrivate::lessThan(const QMessageAccountSortOrder &sortOrder,
                                               const QMessageAccount &account1, const QMessageAccount &account2)
 {
-    QMessageAccountOrderingPrivate *d(ordering.d_ptr);
+    QMessageAccountSortOrderPrivate *d(sortOrder.d_ptr);
     if (d->_order == Qt::AscendingOrder) {
         return (account1.name().compare(account2.name(), Qt::CaseInsensitive) < 0);
     }
     return (account1.name().compare(account2.name(), Qt::CaseInsensitive) > 0);
 }
 
-QMessageAccountOrdering::QMessageAccountOrdering()
+QMessageAccountSortOrder::QMessageAccountSortOrder()
  : d_ptr(0)
 {
 }
 
-QMessageAccountOrdering::QMessageAccountOrdering(const QMessageAccountOrdering &other)
- : d_ptr(new QMessageAccountOrderingPrivate(this))
+QMessageAccountSortOrder::QMessageAccountSortOrder(const QMessageAccountSortOrder &other)
+ : d_ptr(new QMessageAccountSortOrderPrivate(this))
 {
 	this->operator=(other);
 }
 
-QMessageAccountOrdering::~QMessageAccountOrdering()
+QMessageAccountSortOrder::~QMessageAccountSortOrder()
 {
 	delete d_ptr;
 	d_ptr = 0;
 }
 
-bool QMessageAccountOrdering::isEmpty() const
+bool QMessageAccountSortOrder::isEmpty() const
 {
 	return (d_ptr == 0);
 }
 
-bool QMessageAccountOrdering::isSupported() const
+bool QMessageAccountSortOrder::isSupported() const
 {
     return true;
 }
 
-bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) const
+bool QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other) const
 {
     if (!d_ptr && !other.d_ptr) {
         return true;
@@ -97,11 +97,11 @@ bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) c
 	return (d_ptr->_order == other.d_ptr->_order);
 }
 
-QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
+QMessageAccountSortOrder& QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
 {
 	if (&other != this) {
 	    if (!d_ptr) {
-			d_ptr = new QMessageAccountOrderingPrivate(this);	    
+			d_ptr = new QMessageAccountSortOrderPrivate(this);	    
 	    }
 		d_ptr->_order = other.d_ptr->_order;
 	}
@@ -109,12 +109,12 @@ QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccoun
 	return *this;
 }
 
-QMessageAccountOrdering QMessageAccountOrdering::byName(Qt::SortOrder order)
+QMessageAccountSortOrder QMessageAccountSortOrder::byName(Qt::SortOrder order)
 {
-	QMessageAccountOrdering ordering;
-	ordering.d_ptr = new QMessageAccountOrderingPrivate(&ordering);
-	ordering.d_ptr->_order = order;
-	return ordering;
+	QMessageAccountSortOrder sortOrder;
+	sortOrder.d_ptr = new QMessageAccountSortOrderPrivate(&sortOrder);
+	sortOrder.d_ptr->_order = order;
+	return sortOrder;
 }
 
 QTM_END_NAMESPACE

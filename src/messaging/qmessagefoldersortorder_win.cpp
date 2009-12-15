@@ -38,16 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagefolderordering.h"
-#include "qmessagefolderordering_p.h"
+#include "qmessagefoldersortorder.h"
+#include "qmessagefoldersortorder_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-bool QMessageFolderOrderingPrivate::lessThan(const QMessageFolderOrdering &ordering,
-                                             const QMessageFolder &folder1, const QMessageFolder &folder2)
+bool QMessageFolderSortOrderPrivate::lessthan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &l, const QMessageFolder &r)
 {
-    QMessageFolderOrderingPrivate *d(ordering.d_ptr);
-    
+    QMessageFolderSortOrderPrivate *d(sortOrder.d_ptr);
+
     QList<QPair<Field, Qt::SortOrder> >::iterator it(d->_fieldOrderList.begin());
     while (it != d->_fieldOrderList.end()) {
         Field field((*it).first);
@@ -57,11 +56,11 @@ bool QMessageFolderOrderingPrivate::lessThan(const QMessageFolderOrdering &order
         const QMessageFolder *left;
         const QMessageFolder *right;
         if (order == Qt::AscendingOrder) {
-            left = &folder1;
-            right = &folder2; 
+            left = &l;
+            right = &r; 
         } else {
-            left = &folder2;
-            right = &folder1; 
+            left = &r;
+            right = &l; 
         }
 
         switch (field)
@@ -86,28 +85,27 @@ bool QMessageFolderOrderingPrivate::lessThan(const QMessageFolderOrdering &order
         }
         } // switch
     }
-
     return false; // equality
 }
 
-QMessageFolderOrdering::QMessageFolderOrdering()
- : d_ptr(new QMessageFolderOrderingPrivate(this))
+QMessageFolderSortOrder::QMessageFolderSortOrder()
+    : d_ptr(new QMessageFolderSortOrderPrivate(this))
 {
 }
 
-QMessageFolderOrdering::QMessageFolderOrdering(const QMessageFolderOrdering &other)
- : d_ptr(new QMessageFolderOrderingPrivate(this))
+QMessageFolderSortOrder::QMessageFolderSortOrder(const QMessageFolderSortOrder &other)
+    : d_ptr(new QMessageFolderSortOrderPrivate(this))
 {
     this->operator=(other);
 }
 
-QMessageFolderOrdering::~QMessageFolderOrdering()
+QMessageFolderSortOrder::~QMessageFolderSortOrder()
 {
     delete d_ptr;
     d_ptr = 0;
 }
 
-QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOrdering& other)
+QMessageFolderSortOrder& QMessageFolderSortOrder::operator=(const QMessageFolderSortOrder& other)
 {
     if (&other != this) {
         d_ptr->_fieldOrderList = other.d_ptr->_fieldOrderList;
@@ -116,51 +114,48 @@ QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOr
     return *this;
 }
 
-bool QMessageFolderOrdering::isEmpty() const
+bool QMessageFolderSortOrder::isEmpty() const
 {
     return d_ptr->_fieldOrderList.isEmpty();
 }
 
-bool QMessageFolderOrdering::isSupported() const
+bool QMessageFolderSortOrder::isSupported() const
 {
     return true;
 }
 
-QMessageFolderOrdering QMessageFolderOrdering::operator+(const QMessageFolderOrdering& other) const
+QMessageFolderSortOrder QMessageFolderSortOrder::operator+(const QMessageFolderSortOrder& other) const
 {
-    QMessageFolderOrdering sum;
+    QMessageFolderSortOrder sum;
     sum.d_ptr->_fieldOrderList = d_ptr->_fieldOrderList + other.d_ptr->_fieldOrderList;
     return sum;
 }
 
-QMessageFolderOrdering& QMessageFolderOrdering::operator+=(const QMessageFolderOrdering& other)
+QMessageFolderSortOrder& QMessageFolderSortOrder::operator+=(const QMessageFolderSortOrder& other)
 {
-    if (&other == this) {
+    if (&other == this)
         return *this;
-    }
-    
     d_ptr->_fieldOrderList += other.d_ptr->_fieldOrderList;
-    
     return *this;
 }
 
-bool QMessageFolderOrdering::operator==(const QMessageFolderOrdering& other) const
+bool QMessageFolderSortOrder::operator==(const QMessageFolderSortOrder& other) const
 {
     return (d_ptr->_fieldOrderList == other.d_ptr->_fieldOrderList);
 }
 
-QMessageFolderOrdering QMessageFolderOrdering::byDisplayName(Qt::SortOrder order)
+QMessageFolderSortOrder QMessageFolderSortOrder::byDisplayName(Qt::SortOrder order)
 {
-    QMessageFolderOrdering result;
-    QPair<QMessageFolderOrderingPrivate::Field, Qt::SortOrder> fieldOrder(QMessageFolderOrderingPrivate::Name, order);
+    QMessageFolderSortOrder result;
+    QPair<QMessageFolderSortOrderPrivate::Field, Qt::SortOrder> fieldOrder(QMessageFolderSortOrderPrivate::Name, order);
     result.d_ptr->_fieldOrderList.append(fieldOrder);
     return result;
 }
 
-QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
+QMessageFolderSortOrder QMessageFolderSortOrder::byPath(Qt::SortOrder order)
 {
-    QMessageFolderOrdering result;
-    QPair<QMessageFolderOrderingPrivate::Field, Qt::SortOrder> fieldOrder(QMessageFolderOrderingPrivate::Path, order);
+    QMessageFolderSortOrder result;
+    QPair<QMessageFolderSortOrderPrivate::Field, Qt::SortOrder> fieldOrder(QMessageFolderSortOrderPrivate::Path, order);
     result.d_ptr->_fieldOrderList.append(fieldOrder);
     return result;
 }

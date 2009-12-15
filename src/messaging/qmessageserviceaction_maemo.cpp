@@ -52,21 +52,21 @@ QMessageServiceAction::~QMessageServiceAction()
 {
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     Q_UNUSED(filter);
-    Q_UNUSED(ordering);
+    Q_UNUSED(sortOrder);
     Q_UNUSED(limit);
     Q_UNUSED(offset);
     return false; // stub
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     Q_UNUSED(filter);
     Q_UNUSED(body);
     Q_UNUSED(options);
-    Q_UNUSED(ordering);
+    Q_UNUSED(sortOrder);
     Q_UNUSED(limit);
     Q_UNUSED(offset);
     return false; // stub

@@ -46,9 +46,9 @@
 
 #include <qmessageglobal.h>
 #include <qmessagefilter.h>
-#include <qmessageordering.h>
-#include <qmessagefolderordering.h>
-#include <qmessageaccountordering.h>
+#include <qmessagesortorder.h>
+#include <qmessagefoldersortorder.h>
+#include <qmessageaccountsortorder.h>
 #include <qmessage.h>
 #include <qmessagefolder.h>
 #include <qmessageaccount.h>
@@ -68,12 +68,12 @@ class QMessageStore : public QObject
 public:
     QMessageManager::ErrorCode lastError() const;
 
-    QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
-    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options = 0, const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options = 0, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0) const;
 
-    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0) const;
+    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderSortOrder &sortOrder = QMessageFolderSortOrder(), uint limit = 0, uint offset = 0) const;
 
-    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountOrdering &ordering = QMessageAccountOrdering(), uint limit = 0, uint offset = 0) const;
+    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountSortOrder &sortOrder = QMessageAccountSortOrder(), uint limit = 0, uint offset = 0) const;
 
     int countMessages(const QMessageFilter &filter = QMessageFilter()) const;
     int countFolders(const QMessageFolderFilter &filter = QMessageFolderFilter()) const;

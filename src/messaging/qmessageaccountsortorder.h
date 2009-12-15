@@ -38,68 +38,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagefolderordering.h"
-#include "qmessagefolderordering_p.h"
+#ifndef QMESSAGEACCOUNTSORTORDER_H
+#define QMESSAGEACCOUNTSORTORDER_H
+#include <Qt>
+#include <qmessageglobal.h>
+#include <qstring.h>
 
 QTM_BEGIN_NAMESPACE
 
-QMessageFolderOrdering::QMessageFolderOrdering()
-{
-}
+class QMessageAccountSortOrderPrivate;
 
-QMessageFolderOrdering::QMessageFolderOrdering(const QMessageFolderOrdering &other)
+class Q_MESSAGING_EXPORT QMessageAccountSortOrder
 {
-    Q_UNUSED(other)
-}
+    friend class QMessageAccountSortOrderPrivate;
 
-QMessageFolderOrdering::~QMessageFolderOrdering()
-{
-}
+public:
+    QMessageAccountSortOrder();
+    QMessageAccountSortOrder(const QMessageAccountSortOrder &other);
+    virtual ~QMessageAccountSortOrder();
 
-QMessageFolderOrdering& QMessageFolderOrdering::operator=(const QMessageFolderOrdering& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
+    QMessageAccountSortOrder& operator=(const QMessageAccountSortOrder &other);
 
-bool QMessageFolderOrdering::isEmpty() const
-{
-    return false; // stub
-}
+    bool isEmpty() const;
+    bool isSupported() const;
 
-bool QMessageFolderOrdering::isSupported() const
-{
-    return true; // stub
-}
+    bool operator==(const QMessageAccountSortOrder &other) const;
+    bool operator!=(const QMessageAccountSortOrder &other) const;
 
-QMessageFolderOrdering QMessageFolderOrdering::operator+(const QMessageFolderOrdering& other) const
-{
-    Q_UNUSED(other)
-    return QMessageFolderOrdering(); // stub
-}
+    static QMessageAccountSortOrder byName(Qt::SortOrder order = Qt::AscendingOrder);
 
-QMessageFolderOrdering& QMessageFolderOrdering::operator+=(const QMessageFolderOrdering& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
-
-bool QMessageFolderOrdering::operator==(const QMessageFolderOrdering& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
-
-QMessageFolderOrdering QMessageFolderOrdering::byDisplayName(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageFolderOrdering(); // stub
-}
-
-QMessageFolderOrdering QMessageFolderOrdering::byPath(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageFolderOrdering(); // stub
-}
+private:
+    QMessageAccountSortOrderPrivate *d_ptr;
+};
 
 QTM_END_NAMESPACE
+#endif

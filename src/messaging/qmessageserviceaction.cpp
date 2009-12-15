@@ -111,13 +111,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
+    \fn QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
     
     Emits via messagesFound() signals \l{QMessageId}s of messages in the messaging 
     store. If \a filter is not empty only identifiers for messages matching the parameters 
     set by \a filter will be emitted, otherwise identifiers for all messages will be emitted.
-    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
-    set by \a ordering.
+    If \a sortOrder is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortOrder.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -132,19 +132,19 @@ QTM_BEGIN_NAMESPACE
     Note: This function should not initiate network activity, instead only message data
     already stored on the device will be used during evaluation of the function.
     
-    \sa  QMessage, QMessageFilter, QMessageOrdering, messagesFound(), progressChanged(), countMessages()
+    \sa  QMessage, QMessageFilter, QMessageSortOrder, messagesFound(), progressChanged(), countMessages()
 */
 
 /*!
-    \fn QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
+    \fn QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
     
     Emits via the messagesFound() signal \l{QMessageId}s of messages in the messaging 
     store. If \a filter is not empty only identifiers for messages matching the parameters 
     set by \a filter and with a body containing the string \a body will be emitted, 
     otherwise identifiers for all messages with a body containing \a body using 
     search options \a options will be emitted.
-    If \a ordering is not empty, then the identifiers will be sorted by the parameters 
-    set by \a ordering.
+    If \a sortOrder is not empty, then the identifiers will be sorted by the parameters 
+    set by \a sortOrder.
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
@@ -159,7 +159,7 @@ QTM_BEGIN_NAMESPACE
     Note: This function should not initiate network activity, instead only message data
     already stored on the device will be used during evaluation of the function.
     
-    \sa  QMessage, QMessageFilter, QMessageOrdering, messagesFound(), progressChanged(), countMessages()
+    \sa  QMessage, QMessageFilter, QMessageSortOrder, messagesFound(), progressChanged(), countMessages()
 */
 
 /*!

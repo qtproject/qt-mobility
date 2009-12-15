@@ -24,12 +24,12 @@ PUBLIC_HEADERS += \
            qmessagefolder.h \
            qmessageaccount.h \
            qmessageaccountfilter.h \
-           qmessageaccountordering.h \
+           qmessageaccountsortorder.h \
            qmessagefolderfilter.h \
-           qmessagefolderordering.h \
+           qmessagefoldersortorder.h \
            qmessagefilter.h \
            qmessagemanager.h \
-           qmessageordering.h \
+           qmessagesortorder.h \
            qmessageserviceaction.h
 
 PRIVATE_HEADERS += \
@@ -43,11 +43,11 @@ PRIVATE_HEADERS += \
            qmessagefolder_p.h \ 
            qmessageaccount_p.h \
            qmessageaccountfilter_p.h \
-           qmessageaccountordering_p.h \
+           qmessageaccountsortorder_p.h \
            qmessagefolderfilter_p.h \
-           qmessagefolderordering_p.h \
+           qmessagefoldersortorder_p.h \
            qmessagefilter_p.h \
-           qmessageordering_p.h \
+           qmessagesortorder_p.h \
            qmessagestore.h \
            qmessagestore_p.h
 
@@ -62,12 +62,12 @@ SOURCES += qmessageid.cpp \
            qmessagefolder.cpp \
            qmessageaccount.cpp \
            qmessageaccountfilter.cpp \
-           qmessageaccountordering.cpp \
+           qmessageaccountsortorder.cpp \
            qmessagefolderfilter.cpp \
-           qmessagefolderordering.cpp \
+           qmessagefoldersortorder.cpp \
            qmessagefilter.cpp \
            qmessagemanager.cpp \
-           qmessageordering.cpp \
+           qmessagesortorder.cpp \
            qmessagestore.cpp \
            qmessageserviceaction.cpp
 
@@ -83,11 +83,11 @@ SOURCES += qmessageid_maemo.cpp \
            qmessagefolder_maemo.cpp \
            qmessageaccount_maemo.cpp \
            qmessageaccountfilter_maemo.cpp \
-           qmessageaccountordering_maemo.cpp \
+           qmessageaccountsortorder_maemo.cpp \
            qmessagefolderfilter_maemo.cpp \
-           qmessagefolderordering_maemo.cpp \
+           qmessagefoldersortorder_maemo.cpp \
            qmessagefilter_maemo.cpp \
-           qmessageordering_maemo.cpp \
+           qmessagesortorder_maemo.cpp \
            qmessagestore_maemo.cpp \
            qmessageserviceaction_maemo.cpp 
 }
@@ -114,11 +114,11 @@ symbian {
                qmessagefolder_symbian.cpp \
                qmessageaccount_symbian.cpp \
                qmessageaccountfilter_symbian.cpp \
-               qmessageaccountordering_symbian.cpp \
+               qmessageaccountsortorder_symbian.cpp \
                qmessagefolderfilter_symbian.cpp \
-               qmessagefolderordering_symbian.cpp \
+               qmessagefoldersortorder_symbian.cpp \
                qmessagefilter_symbian.cpp \
-               qmessageordering_symbian.cpp \
+               qmessagesortorder_symbian.cpp \
                qmessagestore_symbian.cpp \
                qmessageserviceaction_symbian.cpp
            
@@ -168,11 +168,11 @@ SOURCES += winhelpers.cpp \
            qmessagefolder_win.cpp \
            qmessageaccount_win.cpp \
            qmessageaccountfilter_win.cpp \
-           qmessageaccountordering_win.cpp \
+           qmessageaccountsortorder_win.cpp \
            qmessagefolderfilter_win.cpp \
-           qmessagefolderordering_win.cpp \
+           qmessagefoldersortorder_win.cpp \
            qmessagefilter_win.cpp \
-           qmessageordering_win.cpp \
+           qmessagesortorder_win.cpp \
            qmessagestore_win.cpp \
            qmessageserviceaction_win.cpp 
 
@@ -239,11 +239,11 @@ SOURCES += qmessageid_qmf.cpp \
            qmessagefolder_qmf.cpp \
            qmessageaccount_qmf.cpp \
            qmessageaccountfilter_qmf.cpp \
-           qmessageaccountordering_qmf.cpp \
+           qmessageaccountsortorder_qmf.cpp \
            qmessagefolderfilter_qmf.cpp \
-           qmessagefolderordering_qmf.cpp \
+           qmessagefoldersortorder_qmf.cpp \
            qmessagefilter_qmf.cpp \
-           qmessageordering_qmf.cpp \
+           qmessagesortorder_qmf.cpp \
            qmessagestore_qmf.cpp \
            qmessageserviceaction_qmf.cpp \
            qmfhelpers.cpp

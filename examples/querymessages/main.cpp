@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
     
     // Order the matching results by their reception timestamp, in descending order
-    QMessageOrdering ordering(QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder));
+    QMessageSortOrder sortOrder(QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder));
 //! [setup-query]
 
 //! [perform-query]
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
     // Find the matching message IDs, limiting our results to a managable number
     const int max = 100;
-    const QMessageIdList matchingIds(manager.queryMessages(filter, ordering, max));
+    const QMessageIdList matchingIds(manager.queryMessages(filter, sortOrder, max));
 //! [perform-query]
 
     int n = 0;

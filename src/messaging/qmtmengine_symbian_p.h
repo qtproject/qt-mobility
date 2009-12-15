@@ -91,7 +91,7 @@ struct MessageQueryInfo
     QString body;
     QMessageDataComparator::Options options;
     QMessageFilter filter;
-    QMessageOrdering ordering;
+    QMessageSortOrder sortOrder;
     int offset;
     int limit;
     QMessageServiceActionPrivate* privateAction;
@@ -118,12 +118,12 @@ public:
     CMTMEngine();
     ~CMTMEngine();
     
-    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const;
+    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const;
     int countAccounts(const QMessageAccountFilter &filter) const;
     QMessageAccount account(const QMessageAccountId &id) const;
     QMessageAccountId defaultAccount(QMessage::Type type) const;
     
-    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const;
+    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const;
     int countFolders(const QMessageFolderFilter &filter) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
     
@@ -131,8 +131,8 @@ public:
     bool updateMessage(QMessage *m);
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
     bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
-    bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
-    bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
+    bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     bool countMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter);
     bool showMessage(const QMessageId &id);
     bool composeMessage(const QMessage &message);
@@ -182,18 +182,18 @@ private:
     QMessageFolder folderL(const QMessageFolderId &id) const;
 
     static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
-    void orderAccounts(QMessageAccountIdList& accountIds,  const QMessageAccountOrdering &ordering) const;
+    void orderAccounts(QMessageAccountIdList& accountIds,  const QMessageAccountSortOrder &sortOrder) const;
     void applyOffsetAndLimitToAccountIds(QMessageAccountIdList& idList, int offset, int limit) const;
     static bool folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2);
-    void orderFolders(QMessageFolderIdList& folderIds,  const QMessageFolderOrdering &ordering) const;
+    void orderFolders(QMessageFolderIdList& folderIds,  const QMessageFolderSortOrder &sortOrder) const;
     static bool messageLessThan(const QMessage& message1, const QMessage& message2);
-    void orderMessages(QMessageIdList& messageIds,  const QMessageOrdering &ordering) const;
+    void orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder) const;
     
     void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter) const;
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
 
-    void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
-    void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
+    void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void countMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter);
     void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
     
@@ -290,9 +290,9 @@ private:
     mutable int iOperationIds;
     mutable QList<MessageQueryInfo> iMessageQueries;
     
-    mutable QMessageAccountOrdering iCurrentAccountOrdering;
-    mutable QMessageFolderOrdering iCurrentFolderOrdering;
-    mutable QMessageOrdering iCurrentMessageOrdering;
+    mutable QMessageAccountSortOrder iCurrentAccountOrdering;
+    mutable QMessageFolderSortOrder iCurrentFolderOrdering;
+    mutable QMessageSortOrder iCurrentMessageOrdering;
     
     friend class QMessageServiceAction;
     friend class CMessagesFindOperation;
@@ -305,11 +305,11 @@ public:
     ~CMessagesFindOperation();
 
     void filterAndOrderMessages(const QMessageFilter& filter,
-                                const QMessageOrdering& ordering,
+                                const QMessageSortOrder& sortOrder,
                                 const QString body = QString(),
                                 QMessageDataComparator::Options options = 0);
     void filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
-                                const QMessageOrdering& ordering,
+                                const QMessageSortOrder& sortOrder,
                                 const QString body = QString(),
                                 QMessageDataComparator::Options options = 0);
     
@@ -318,10 +318,10 @@ protected: // From CActive
     void DoCancel();
     
 private:
-    void getAllMessagesL(const TMsvSelectionOrdering ordering = TMsvSelectionOrdering());
-    void getAccountSpecificMessagesL(QMessageAccount& messageAccount, const TMsvSelectionOrdering ordering, QMessageFilterPrivate* privateFolderFilter = NULL);
-    void getServiceSpecificMessagesL(TMsvId serviceId, const TMsvSelectionOrdering ordering, QMessageFilterPrivate* privateFolderFilter = NULL);
-    void getServiceSpecificMessagesFromFolderL(TMsvId serviceId, const TMsvSelectionOrdering ordering, TMsvId standardFolderId = NULL);
+    void getAllMessagesL(const TMsvSelectionOrdering sortOrder = TMsvSelectionOrdering());
+    void getAccountSpecificMessagesL(QMessageAccount& messageAccount, const TMsvSelectionOrdering sortOrder, QMessageFilterPrivate* privateFolderFilter = NULL);
+    void getServiceSpecificMessagesL(TMsvId serviceId, const TMsvSelectionOrdering sortOrder, QMessageFilterPrivate* privateFolderFilter = NULL);
+    void getServiceSpecificMessagesFromFolderL(TMsvId serviceId, const TMsvSelectionOrdering sortOrder, TMsvId standardFolderId = NULL);
 
 private: // Data
     CMTMEngine& iOwner;

@@ -38,84 +38,84 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageaccountordering.h"
+#include "qmessageaccountsortorder.h"
 
 #include <qmailaccountsortkey.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageAccountOrderingPrivate
+class QMessageAccountSortOrderPrivate
 {
 public:
     QMailAccountSortKey _key;
 
-    //static QMessageAccountOrdering convert(const QMailAccountSortKey &key);
-    static QMailAccountSortKey convert(const QMessageAccountOrdering &ordering);
+    //static QMessageAccountSortOrder convert(const QMailAccountSortKey &key);
+    static QMailAccountSortKey convert(const QMessageAccountSortOrder &sortOrder);
 };
 
 /*
-QMessageAccountOrdering QMessageAccountOrderingPrivate::convert(const QMailAccountSortKey &key)
+QMessageAccountSortOrder QMessageAccountSortOrderPrivate::convert(const QMailAccountSortKey &key)
 {
-    QMessageAccountOrdering result;
+    QMessageAccountSortOrder result;
     result.d_ptr->_key = key;
     return result;
 }
 */
 
-QMailAccountSortKey QMessageAccountOrderingPrivate::convert(const QMessageAccountOrdering &ordering)
+QMailAccountSortKey QMessageAccountSortOrderPrivate::convert(const QMessageAccountSortOrder &sortOrder)
 {
-    return ordering.d_ptr->_key;
+    return sortOrder.d_ptr->_key;
 }
 
 namespace QmfHelpers {
 
 /*
-QMessageAccountOrdering convert(const QMailAccountSortKey &key)
+QMessageAccountSortOrder convert(const QMailAccountSortKey &key)
 {
-    return QMessageAccountOrderingPrivate::convert(key);
+    return QMessageAccountSortOrderPrivate::convert(key);
 }
 */
 
-QMailAccountSortKey convert(const QMessageAccountOrdering &ordering)
+QMailAccountSortKey convert(const QMessageAccountSortOrder &sortOrder)
 {
-    return QMessageAccountOrderingPrivate::convert(ordering);
+    return QMessageAccountSortOrderPrivate::convert(sortOrder);
 }
 
 }
 
-QMessageAccountOrdering::QMessageAccountOrdering()
-    : d_ptr(new QMessageAccountOrderingPrivate)
+QMessageAccountSortOrder::QMessageAccountSortOrder()
+    : d_ptr(new QMessageAccountSortOrderPrivate)
 {
 }
 
-QMessageAccountOrdering::QMessageAccountOrdering(const QMessageAccountOrdering &other)
-    : d_ptr(new QMessageAccountOrderingPrivate)
+QMessageAccountSortOrder::QMessageAccountSortOrder(const QMessageAccountSortOrder &other)
+    : d_ptr(new QMessageAccountSortOrderPrivate)
 {
     this->operator=(other);
 }
 
-QMessageAccountOrdering::~QMessageAccountOrdering()
+QMessageAccountSortOrder::~QMessageAccountSortOrder()
 {
     delete d_ptr;
     d_ptr = 0;
 }
 
-bool QMessageAccountOrdering::isEmpty() const
+bool QMessageAccountSortOrder::isEmpty() const
 {
     return d_ptr->_key.isEmpty();
 }
 
-bool QMessageAccountOrdering::isSupported() const
+bool QMessageAccountSortOrder::isSupported() const
 {
     return true; // stub
 }
 
-bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) const
+bool QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other) const
 {
     return d_ptr->_key == other.d_ptr->_key;
 }
 
-QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
+QMessageAccountSortOrder& QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
@@ -124,11 +124,11 @@ QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccoun
     return *this;
 }
 
-QMessageAccountOrdering QMessageAccountOrdering::byName(Qt::SortOrder order)
+QMessageAccountSortOrder QMessageAccountSortOrder::byName(Qt::SortOrder order)
 {
-    QMessageAccountOrdering ordering;
-    ordering.d_ptr->_key = QMailAccountSortKey::name(order);
-    return ordering;
+    QMessageAccountSortOrder sortOrder;
+    sortOrder.d_ptr->_key = QMailAccountSortKey::name(order);
+    return sortOrder;
 }
 
 QTM_END_NAMESPACE

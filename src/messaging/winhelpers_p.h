@@ -212,7 +212,7 @@ public:
 
     MapiFolderPtr nextSubFolder(QMessageManager::ErrorCode *lastError);
 
-    LPMAPITABLE queryBegin(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering);
+    LPMAPITABLE queryBegin(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder);
     QMessageIdList queryNext(QMessageManager::ErrorCode *lastError, LPMAPITABLE messagesTable, const QMessageFilter &filter);
     void queryEnd(LPMAPITABLE messagesTable);
 
@@ -389,11 +389,11 @@ public:
     MapiStorePtr findStore(QMessageManager::ErrorCode *lastError, const QMessageAccountId &id = QMessageAccountId(), bool cachedMode = true) const;
     MapiStorePtr defaultStore(QMessageManager::ErrorCode *lastError, bool cachedMode = true) const { return findStore(lastError,QMessageAccountId(),cachedMode); }
 
-    QList<MapiStorePtr> filterStores(QMessageManager::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering = QMessageAccountOrdering(), uint limit = 0, uint offset = 0, bool cachedMode = true) const;
+    QList<MapiStorePtr> filterStores(QMessageManager::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder = QMessageAccountSortOrder(), uint limit = 0, uint offset = 0, bool cachedMode = true) const;
 
     QList<MapiStorePtr> allStores(QMessageManager::ErrorCode *lastError, bool cachedMode = true) const;
 
-    QList<MapiFolderPtr> filterFolders(QMessageManager::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0, bool cachedMode = true) const;
+    QList<MapiFolderPtr> filterFolders(QMessageManager::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder = QMessageFolderSortOrder(), uint limit = 0, uint offset = 0, bool cachedMode = true) const;
 
     MapiStorePtr openStore(QMessageManager::ErrorCode *lastError, const MapiEntryId& id, bool cachedMode = true) const;
     MapiStorePtr openStoreWithKey(QMessageManager::ErrorCode *lastError, const MapiRecordKey& key, bool cachedMode = true) const;
@@ -422,7 +422,7 @@ public:
     bool haveAttachmentData(QMessageManager::ErrorCode* lastError, const QMessageId& id, ULONG number) const;
     QByteArray attachmentData(QMessageManager::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
 
-    QMessageIdList queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageOrdering &ordering = QMessageOrdering(), uint limit = 0, uint offset = 0, const QString &body = QString(), QMessageDataComparator::Options options = 0) const;
+    QMessageIdList queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0, const QString &body = QString(), QMessageDataComparator::Options options = 0) const;
 
     void updateMessage(QMessageManager::ErrorCode* lastError, const QMessage& source);
 
@@ -463,7 +463,7 @@ private:
     void notify(MapiStore *store, const QMessageId &id, NotifyType notifyType);
 
     template<typename Predicate, typename Ordering>
-    QList<MapiStorePtr> filterStores(QMessageManager::ErrorCode *lastError, Predicate predicate, Ordering ordering, uint limit, uint offset, bool cachedMode) const;
+    QList<MapiStorePtr> filterStores(QMessageManager::ErrorCode *lastError, Predicate predicate, Ordering sortOrder, uint limit, uint offset, bool cachedMode) const;
 
 private:
     friend class SessionManager;

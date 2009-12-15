@@ -47,40 +47,40 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageOrderingPrivate;
+class QMessageSortOrderPrivate;
 
-class Q_MESSAGING_EXPORT QMessageOrdering
+class Q_MESSAGING_EXPORT QMessageSortOrder
 {
-    friend class QMessageOrderingPrivate;
+    friend class QMessageSortOrderPrivate;
 
 public:
-    QMessageOrdering();
-    QMessageOrdering(const QMessageOrdering &other);
-    virtual ~QMessageOrdering();
+    QMessageSortOrder();
+    QMessageSortOrder(const QMessageSortOrder &other);
+    virtual ~QMessageSortOrder();
 
-    QMessageOrdering& operator=(const QMessageOrdering &other);
+    QMessageSortOrder& operator=(const QMessageSortOrder &other);
 
     bool isEmpty() const;
     bool isSupported() const;
 
-    QMessageOrdering operator+(const QMessageOrdering &other) const;
-    QMessageOrdering& operator+=(const QMessageOrdering &other);
+    QMessageSortOrder operator+(const QMessageSortOrder &other) const;
+    QMessageSortOrder& operator+=(const QMessageSortOrder &other);
 
-    bool operator==(const QMessageOrdering &other) const;
-    bool operator!=(const QMessageOrdering &other) const;
+    bool operator==(const QMessageSortOrder &other) const;
+    bool operator!=(const QMessageSortOrder &other) const;
 
-    static QMessageOrdering byType(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageOrdering bySender(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageOrdering byRecipients(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageOrdering bySubject(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageOrdering byTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageOrdering byReceptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageOrdering byStatus(QMessage::Status flag, Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageOrdering byPriority(Qt::SortOrder order = Qt::AscendingOrder);
-    static QMessageOrdering bySize(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder byType(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder bySender(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder byRecipients(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder bySubject(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder byTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder byReceptionTimeStamp(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder byStatus(QMessage::Status flag, Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder byPriority(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageSortOrder bySize(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:
-    QMessageOrderingPrivate *d_ptr;
+    QMessageSortOrderPrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE

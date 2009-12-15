@@ -89,7 +89,7 @@ public:
     QList<QMessageId> _matchingIds;
     QList<QMailMessageId> _candidateIds;
     QMessageFilter _lastFilter;
-    QMessageOrdering _lastOrdering;
+    QMessageSortOrder _lastOrdering;
     QString _match;
     int _limit;
     int _offset;
@@ -281,7 +281,7 @@ QMessageServiceAction::~QMessageServiceAction()
     delete d_ptr;
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
         qWarning() << "Action is currently busy";
@@ -289,12 +289,12 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     }
     d_ptr->_active = 0;
     
-    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(ordering), limit, offset);
+    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(sortOrder), limit, offset);
     d_ptr->_error = convert(QMailStore::instance()->lastError());
 
     if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = QMessageFilter();
-        d_ptr->_lastOrdering = QMessageOrdering();
+        d_ptr->_lastOrdering = QMessageSortOrder();
         d_ptr->_match = QString();
         d_ptr->_limit = static_cast<int>(limit);
         d_ptr->_offset = 0;
@@ -306,7 +306,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return false;
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     if (options) {
         //TODO: Support options
@@ -314,7 +314,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     }
 
     if (body.isEmpty()) {
-        return queryMessages(filter, ordering, limit, offset);
+        return queryMessages(filter, sortOrder, limit, offset);
     }
 
     if (d_ptr->_active && ((d_ptr->_active->activity() == QMailServiceAction::Pending) || (d_ptr->_active->activity() == QMailServiceAction::InProgress))) {
@@ -323,7 +323,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     }
     d_ptr->_active = 0;
     
-    if ((filter == d_ptr->_lastFilter) && (ordering == d_ptr->_lastOrdering) && (body == d_ptr->_match)) {
+    if ((filter == d_ptr->_lastFilter) && (sortOrder == d_ptr->_lastOrdering) && (body == d_ptr->_match)) {
         // This is a continuation of the last search
         d_ptr->_limit = static_cast<int>(limit);
         d_ptr->_offset = static_cast<int>(offset);
@@ -332,12 +332,12 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     }
 
     // Find all messages to perform the body search on
-    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(ordering));
+    d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(sortOrder));
     d_ptr->_error = convert(QMailStore::instance()->lastError());
 
     if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = filter;
-        d_ptr->_lastOrdering = ordering;
+        d_ptr->_lastOrdering = sortOrder;
         d_ptr->_match = body;
         d_ptr->_limit = static_cast<int>(limit);
         d_ptr->_offset = static_cast<int>(offset);
@@ -362,7 +362,7 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
 
     if (d_ptr->_error == QMessageManager::NoError) {
         d_ptr->_lastFilter = QMessageFilter();
-        d_ptr->_lastOrdering = QMessageOrdering();
+        d_ptr->_lastOrdering = QMessageSortOrder();
         d_ptr->_match = QString();
         d_ptr->_limit = 0;
         d_ptr->_offset = 0;

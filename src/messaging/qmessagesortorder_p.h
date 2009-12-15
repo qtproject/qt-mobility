@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEORDERINGPRIVATE_H
-#define QMESSAGEORDERINGPRIVATE_H
-#include "qmessageordering.h"
+#ifndef QMESSAGESORTORDERPRIVATE_H
+#define QMESSAGESORTORDERPRIVATE_H
+#include "qmessagesortorder.h"
 #if defined(Q_OS_WIN)
 #include "qmessagemanager.h"
 #include "qmessagefilter.h"
@@ -54,32 +54,32 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageOrderingPrivate
+class QMessageSortOrderPrivate
 {
-    Q_DECLARE_PUBLIC(QMessageOrdering)
+    Q_DECLARE_PUBLIC(QMessageSortOrder)
 
 public:
-    QMessageOrderingPrivate(QMessageOrdering *ordering);
+    QMessageSortOrderPrivate(QMessageSortOrder *sortOrder);
 
-    QMessageOrdering *q_ptr;
+    QMessageSortOrder *q_ptr;
     bool _valid;
 #if defined(Q_OS_WIN)
     enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
-    static bool lessThan(const QMessageOrdering &ordering, const QMessage &left, const QMessage &right);
-    static void sortTable(QMessageManager::ErrorCode *lastError, const QMessageOrdering &ordering, LPMAPITABLE);
-    static QMessageOrdering from(QMessageOrderingPrivate::Field field, Qt::SortOrder order);
+    static bool lessThan(const QMessageSortOrder &sortOrder, const QMessage &left, const QMessage &right);
+    static void sortTable(QMessageManager::ErrorCode *lastError, const QMessageSortOrder &sortOrder, LPMAPITABLE);
+    static QMessageSortOrder from(QMessageSortOrderPrivate::Field field, Qt::SortOrder order);
 
-    static bool isFilterType(const QMessageOrdering &ordering);
-    static QList<QMessageFilter> normalize(const QList<QMessageFilter> &filters, const QMessageOrdering &ordering);
+    static bool isFilterType(const QMessageSortOrder &sortOrder);
+    static QList<QMessageFilter> normalize(const QList<QMessageFilter> &filters, const QMessageSortOrder &sortOrder);
 #endif
 #ifdef Q_OS_SYMBIAN
     enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
 
-    static QMessageOrdering from(QMessageOrderingPrivate::Field field, Qt::SortOrder order);
-    static QMessageOrderingPrivate* implementation(const QMessageOrdering &ordering);
-    static bool lessThan(const QMessageOrdering &ordering, const QMessage &message1, const QMessage &message2);
+    static QMessageSortOrder from(QMessageSortOrderPrivate::Field field, Qt::SortOrder order);
+    static QMessageSortOrderPrivate* implementation(const QMessageSortOrder &sortOrder);
+    static bool lessThan(const QMessageSortOrder &sortOrder, const QMessage &message1, const QMessage &message2);
 #endif
 };
 QTM_END_NAMESPACE

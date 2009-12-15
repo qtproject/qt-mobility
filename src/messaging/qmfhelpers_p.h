@@ -136,14 +136,14 @@ namespace QmfHelpers {
     //QMessageFilter convert(const QMailMessageKey &key);
     Q_AUTOTEST_EXPORT QMailMessageKey convert(const QMessageFilter &filter);
 
-    //QMessageAccountOrdering convert(const QMailAccountSortKey &key);
-    Q_AUTOTEST_EXPORT QMailAccountSortKey convert(const QMessageAccountOrdering &ordering);
+    //QMessageAccountSortOrder convert(const QMailAccountSortKey &key);
+    Q_AUTOTEST_EXPORT QMailAccountSortKey convert(const QMessageAccountSortOrder &sortOrder);
 
-    //QMessageFolderOrdering convert(const QMailFolderSortKey &key);
-    Q_AUTOTEST_EXPORT QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
+    //QMessageFolderSortOrder convert(const QMailFolderSortKey &key);
+    Q_AUTOTEST_EXPORT QMailFolderSortKey convert(const QMessageFolderSortOrder &sortOrder);
 
-    //QMessageOrdering convert(const QMailMessageSortKey &key);
-    Q_AUTOTEST_EXPORT QMailMessageSortKey convert(const QMessageOrdering &ordering);
+    //QMessageSortOrder convert(const QMailMessageSortKey &key);
+    Q_AUTOTEST_EXPORT QMailMessageSortKey convert(const QMessageSortOrder &sortOrder);
 
     Q_AUTOTEST_EXPORT QMessageAccount convert(const QMailAccount &account);
     //QMailAccount convert(const QMessageAccount &account);

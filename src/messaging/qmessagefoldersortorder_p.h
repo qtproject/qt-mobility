@@ -38,50 +38,36 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageaccountordering.h"
-#include "qmessageaccountordering_p.h"
+#ifndef QMESSAGEFOLDERSORTORDERPRIVATE_H
+#define QMESSAGEFOLDERSORTORDERPRIVATE_H
+#include "qmessagefoldersortorder.h"
+#include "qmessagefolder.h"
+#include "qpair.h"
 
 QTM_BEGIN_NAMESPACE
 
-QMessageAccountOrdering::QMessageAccountOrdering()
+class QMessageFolderSortOrderPrivate
 {
-}
+    Q_DECLARE_PUBLIC(QMessageFolderSortOrder)
 
-QMessageAccountOrdering::QMessageAccountOrdering(const QMessageAccountOrdering &other)
-{
-    Q_UNUSED(other)
-}
+public:
+    enum Field { Name = 0, Path };
 
-QMessageAccountOrdering::~QMessageAccountOrdering()
-{
-}
+    QMessageFolderSortOrderPrivate(QMessageFolderSortOrder *sortOrder)
+        :q_ptr(sortOrder)
+    {
+    }
 
-bool QMessageAccountOrdering::isEmpty() const
-{
-    return false; // stub
-}
-
-bool QMessageAccountOrdering::isSupported() const
-{
-    return true; // stub
-}
-
-bool QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) const
-{
-    Q_UNUSED(other)
-    return false; // stub
-}
-
-QMessageAccountOrdering& QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
-{
-    Q_UNUSED(other)
-    return *this; // stub
-}
-
-QMessageAccountOrdering QMessageAccountOrdering::byName(Qt::SortOrder order)
-{
-    Q_UNUSED(order)
-    return QMessageAccountOrdering(); // stub
-}
+    QMessageFolderSortOrder *q_ptr;
+    QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
+    
+#if defined(Q_OS_WIN)
+    static bool lessthan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &left, const QMessageFolder &right);
+#endif
+#ifdef Q_OS_SYMBIAN
+    static bool lessThan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &folder1, const QMessageFolder &folder2);
+#endif    
+};
 
 QTM_END_NAMESPACE
+#endif

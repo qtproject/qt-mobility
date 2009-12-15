@@ -38,38 +38,50 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNTORDERING_H
-#define QMESSAGEACCOUNTORDERING_H
-#include <Qt>
-#include <qmessageglobal.h>
-#include <qstring.h>
+#include "qmessageaccountsortorder.h"
+#include "qmessageaccountsortorder_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageAccountOrderingPrivate;
-
-class Q_MESSAGING_EXPORT QMessageAccountOrdering
+QMessageAccountSortOrder::QMessageAccountSortOrder()
 {
-    friend class QMessageAccountOrderingPrivate;
+}
 
-public:
-    QMessageAccountOrdering();
-    QMessageAccountOrdering(const QMessageAccountOrdering &other);
-    virtual ~QMessageAccountOrdering();
+QMessageAccountSortOrder::QMessageAccountSortOrder(const QMessageAccountSortOrder &other)
+{
+    Q_UNUSED(other)
+}
 
-    QMessageAccountOrdering& operator=(const QMessageAccountOrdering &other);
+QMessageAccountSortOrder::~QMessageAccountSortOrder()
+{
+}
 
-    bool isEmpty() const;
-    bool isSupported() const;
+bool QMessageAccountSortOrder::isEmpty() const
+{
+    return false; // stub
+}
 
-    bool operator==(const QMessageAccountOrdering &other) const;
-    bool operator!=(const QMessageAccountOrdering &other) const;
+bool QMessageAccountSortOrder::isSupported() const
+{
+    return true; // stub
+}
 
-    static QMessageAccountOrdering byName(Qt::SortOrder order = Qt::AscendingOrder);
+bool QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other) const
+{
+    Q_UNUSED(other)
+    return false; // stub
+}
 
-private:
-    QMessageAccountOrderingPrivate *d_ptr;
-};
+QMessageAccountSortOrder& QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
+{
+    Q_UNUSED(other)
+    return *this; // stub
+}
+
+QMessageAccountSortOrder QMessageAccountSortOrder::byName(Qt::SortOrder order)
+{
+    Q_UNUSED(order)
+    return QMessageAccountSortOrder(); // stub
+}
 
 QTM_END_NAMESPACE
-#endif

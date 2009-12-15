@@ -100,14 +100,14 @@ bool QMessageServiceActionPrivate::compose(const QMessage &message)
 	return CMTMEngine::instance()->composeMessage(message);
 }
 
-bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, ordering, limit, offset);
+    return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, sortOrder, limit, offset);
 }
 
-bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, body, options, ordering, limit, offset);
+    return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, body, options, sortOrder, limit, offset);
 }
 
 bool QMessageServiceActionPrivate::countMessages(const QMessageFilter &filter)
@@ -144,7 +144,7 @@ QMessageServiceAction::~QMessageServiceAction()
 {
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     if (d_ptr->_active) {
         return false;
@@ -153,7 +153,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageManager::NoError;
     
-    if (d_ptr->queryMessages(filter, ordering, limit, offset)) {
+    if (d_ptr->queryMessages(filter, sortOrder, limit, offset)) {
         d_ptr->_state = QMessageServiceAction::InProgress;
         emit stateChanged(d_ptr->_state);
     } else {
@@ -166,7 +166,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return d_ptr->_active;
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     if (d_ptr->_active) {
         return false;
@@ -175,7 +175,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageManager::NoError;
 
-    if (d_ptr->queryMessages(filter, body, options, ordering, limit, offset)) {
+    if (d_ptr->queryMessages(filter, body, options, sortOrder, limit, offset)) {
         d_ptr->_state = QMessageServiceAction::InProgress;
         emit stateChanged(d_ptr->_state);
     } else {

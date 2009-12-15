@@ -38,84 +38,84 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageaccountordering.h"
+#include "qmessageaccountsortorder.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QMessageAccountOrdering
+    \class QMessageAccountSortOrder
 
     \preliminary
-    \brief The QMessageAccountOrdering class defines the parameters used for sorting a subset of 
+    \brief The QMessageAccountSortOrder class defines the parameters used for sorting a subset of 
     queried accounts from the messaging store.
     \ingroup messaging
 
-    A QMessageAccountOrdering is composed of a account property to sort and a sort order. 
-    The QMessageAccountOrdering class is used in conjunction with the QMessageManager::queryAccounts() 
-    function to sort account results according to the criteria defined by the ordering.
+    A QMessageAccountSortOrder is composed of a account property to sort and a sort order. 
+    The QMessageAccountSortOrder class is used in conjunction with the QMessageManager::queryAccounts() 
+    function to sort account results according to the criteria defined by the sort order.
     
     \sa QMessageManager, QMessageAccountFilter
 */
 
 /*!
-    \fn QMessageAccountOrdering::QMessageAccountOrdering()
+    \fn QMessageAccountSortOrder::QMessageAccountSortOrder()
   
-    Create a QMessageAccountOrdering with specifying matching parameters.
+    Create a QMessageAccountSortOrder with specifying matching parameters.
 
-    A default-constructed ordering (one for which isEmpty() returns true) sorts no accounts. 
+    A default-constructed sort order (one for which isEmpty() returns true) sorts no accounts. 
 
-    The result of combining an empty ordering with a non-empty ordering is the same as the original 
-    non-empty ordering.
+    The result of combining an empty sort order with a non-empty sort order is the same as the original 
+    non-empty sort order.
 
-    The result of combining two empty keys is an empty ordering.
+    The result of combining two empty sort orders is an empty sort order.
 */
 
 /*!
-    \fn QMessageAccountOrdering::QMessageAccountOrdering(const QMessageAccountOrdering &other)
+    \fn QMessageAccountSortOrder::QMessageAccountSortOrder(const QMessageAccountSortOrder &other)
   
     Constructs a copy of \a other.
 */
 
 /*!
-    \fn QMessageAccountOrdering::~QMessageAccountOrdering()
+    \fn QMessageAccountSortOrder::~QMessageAccountSortOrder()
     
-    Destroys the ordering.
+    Destroys the sort order.
 */
 
 /*!
     \internal
-    \fn QMessageAccountOrdering::operator=(const QMessageAccountOrdering& other)
+    \fn QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
 */
     
 /*!
-    \fn QMessageAccountOrdering::isEmpty() const
+    \fn QMessageAccountSortOrder::isEmpty() const
   
-    Returns true if the ordering remains empty after default construction; otherwise returns false.
+    Returns true if the sort order remains empty after default construction; otherwise returns false.
 */
 
 /*!
-    \fn QMessageAccountOrdering::isSupported() const
+    \fn QMessageAccountSortOrder::isSupported() const
   
-    Returns true if the ordering is supported on the current platform; otherwise returns false.
+    Returns true if the sort order is supported on the current platform; otherwise returns false.
 */
 
 /*!
     \internal
-    \fn QMessageAccountOrdering::operator==(const QMessageAccountOrdering& other) const
+    \fn QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other) const
 */
 
 /*!
     \internal
 */
-bool QMessageAccountOrdering::operator!=(const QMessageAccountOrdering& other) const
+bool QMessageAccountSortOrder::operator!=(const QMessageAccountSortOrder& other) const
 {
     return !operator==(other);
 }
 
 /*!
-    \fn QMessageAccountOrdering::byName(Qt::SortOrder order)
+    \fn QMessageAccountSortOrder::byName(Qt::SortOrder order)
   
-    Returns an ordering that sorts accounts by name, according to \a order.
+    Returns an sort order that sorts accounts by name, according to \a order.
 
     \sa QMessageAccount::name()
 */
