@@ -150,7 +150,7 @@ QueryThread::QueryThread(QMessageServiceActionPrivate *parent, const QMessageFil
     _options(options),
     _ordering(ordering),
     _limit(limit),
-    _offset(offset),
+    _offset(offset)
 {
 }
 

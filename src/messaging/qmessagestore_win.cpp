@@ -160,6 +160,11 @@ QMutex* QMessageStorePrivate::mutex(QMessageStore* store)
 {
     return &(store->d_ptr->p_ptr->mutex);
 }
+
+QMutex* QMessageStorePrivate::mutex(QMessageManager& manager)
+{
+    return &(manager.store->d_ptr->p_ptr->mutex);
+}
 #endif
 
 Q_GLOBAL_STATIC(QMessageStorePrivate,data);
@@ -301,7 +306,7 @@ int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
     return queryAccounts(filter).count();
 }
 
-bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
+bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::RemovalOption option)
 {
     // TODO: implement option
     Q_UNUSED(option)
@@ -522,7 +527,7 @@ QMessage QMessageStore::message(const QMessageId& id) const
     return d_ptr->p_ptr->session->message(&d_ptr->p_ptr->lastError, id);
 }
 
-QMessageFolder QMessageManager::folder(const QMessageFolderId& id) const
+QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
     QMessageFolder result;
 
@@ -587,7 +592,7 @@ QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(
     return d_ptr->p_ptr->session->registerNotificationFilter(&d_ptr->p_ptr->lastError, filter);
 }
 
-void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
+void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {

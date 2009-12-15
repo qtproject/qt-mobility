@@ -4700,7 +4700,7 @@ bool MapiSession::event(QEvent *e)
     if (e->type() == NotifyEvent::eventType()) {
         if (NotifyEvent *ne = static_cast<NotifyEvent*>(e)) {
 
-            QMutex* storeMutex = QMessageStorePrivate::mutex(QMessageManager::instance());
+            QMutex* storeMutex = QMessageStorePrivate::mutex(QMessageManager());
 
             if(!storeMutex->tryLock())
                 addToNotifyQueue(*ne);
