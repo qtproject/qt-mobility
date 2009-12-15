@@ -39,56 +39,61 @@
 **
 ****************************************************************************/
 
-#ifndef DIRECTSHOWPLAYERSERVICE_H
-#define DIRECTSHOWPLAYERSERVICE_H
+#ifndef DIRECTSHOWRENDERTHREAD_H
+#define DIRECTSHOWRENDERTHREAD_H
 
-#include <qmediaservice.h>
+#include <QtCore/qmutex.h>
+#include <QtCore/qthread.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qwaitcondition.h>
 
-#include <QtCore/private/qwineventnotifier_p.h>
+#include <dshow.h>
 
-#include "directshowglobal.h"
-#include "directshowrenderthread.h"
+class QUrl;
 
-class DirectShowMetaDataControl;
-class DirectShowPlayerControl;
-class DirectShowVideoOutputControl;
-class DirectShowVideoRendererControl;
-
-QTM_BEGIN_NAMESPACE
-class QMediaContent;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
-
-
-class DirectShowPlayerService : public QMediaService
+class DirectShowRenderThread : public QThread
 {
     Q_OBJECT
 public:
-    DirectShowPlayerService(QObject *parent = 0);
-    ~DirectShowPlayerService();
+    DirectShowRenderThread(QObject *parent = 0);
+    ~DirectShowRenderThread();
 
-    QMediaControl* control(const char *name) const;
+    void render(const QUrl &url, IGraphBuilder *graph);
+    void abort();
 
-    IGraphBuilder *graph() { return m_graph; }
-    IBaseFilter *source() { return 0; }
+    void setAudioOutput(IBaseFilter *filter);
+    void setVideoOutput(IBaseFilter *filter);
 
-    void load(const QMediaContent &media);
-
-private Q_SLOTS:
-    void videoOutputChanged();
-    void graphEvent(HANDLE handle);
+Q_SIGNALS:
     void loaded();
 
-private:
-    DirectShowPlayerControl *m_playerControl;
-    DirectShowMetaDataControl *m_metaDataControl;
-    DirectShowVideoOutputControl *m_videoOutputControl;
-    DirectShowVideoRendererControl *m_videoRendererControl;
-    IGraphBuilder *m_graph;
-    DirectShowRenderThread m_renderThread;
-    QWinEventNotifier m_graphEventNotifier;
-};
+protected:
+    void run();
 
+private:
+    void doRender(QMutexLocker *locker);
+    void doSetAudioOutput(QMutexLocker *locker);
+    void doSetVideoOutput(QMutexLocker *locker);
+
+    enum State
+    {
+        Return = 0x01,
+        Abort = 0x02,
+        Render = 0x04,
+        AudioOutput = 0x08,
+        VideoOutput = 0x10
+    };
+
+    int m_pendingState;
+    int m_executedState;
+    IGraphBuilder *m_graph;
+    ICaptureGraphBuilder2 *m_builder;
+    IBaseFilter *m_source;
+    IBaseFilter *m_audioOutput;
+    IBaseFilter *m_videoOutput;
+    QUrl m_url;
+    QMutex m_mutex;
+    QWaitCondition m_wait;
+};
 
 #endif

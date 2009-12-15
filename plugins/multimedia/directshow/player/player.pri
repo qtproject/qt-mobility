@@ -7,6 +7,7 @@ HEADERS += \
         $$PWD\directshowmetadatacontrol.h \
         $$PWD\directshowplayercontrol.h \
         $$PWD\directshowplayerservice.h \
+        $$PWD\directshowrenderthread.h \
         $$PWD\directshowvideooutputcontrol.h \
         $$PWD\directshowvideorenderercontrol.h \
         $$PWD\mediasamplevideobuffer.h \
@@ -20,6 +21,7 @@ SOURCES += \
         $$PWD\directshowmetadatacontrol.cpp \
         $$PWD\directshowplayercontrol.cpp \
         $$PWD\directshowplayerservice.cpp \
+        $$PWD\directshowrenderthread.cpp \
         $$PWD\directshowvideooutputcontrol.cpp \
         $$PWD\directshowvideorenderercontrol.cpp \
         $$PWD\mediasamplevideobuffer.cpp \

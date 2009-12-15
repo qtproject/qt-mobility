@@ -614,8 +614,10 @@ void VideoSurfacePin::customEvent(QEvent *event)
         m_pendingFrame = QVideoFrame();
     } else if (event->type() == StartSurface) {
         m_startResult = start();
+        ::SetEvent(m_flushEvent);
     } else if (event->type() == StopSurface) {
         stop();
+        ::SetEvent(m_flushEvent);
     } else if (event->type() == FlushSurface) {
         flush();
     } else {

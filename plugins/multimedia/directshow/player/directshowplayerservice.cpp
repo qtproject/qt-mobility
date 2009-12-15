@@ -48,6 +48,7 @@
 
 #include <qmediacontent.h>
 
+#include <QtCore/qdatetime.h>
 #include <QtCore/qurl.h>
 
 DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
@@ -57,30 +58,27 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     , m_videoOutputControl(new DirectShowVideoOutputControl)
     , m_videoRendererControl(new DirectShowVideoRendererControl)
     , m_graph(0)
-    , m_builder(0)
-    , m_source(0)
-    , m_videoOutput(0)
 {
     connect(m_videoOutputControl, SIGNAL(outputChanged()), this, SLOT(videoOutputChanged()));
     connect(m_videoRendererControl, SIGNAL(filterChanged()), this, SLOT(videoOutputChanged()));
 
     connect(&m_graphEventNotifier, SIGNAL(activated(HANDLE)), this, SLOT(graphEvent(HANDLE)));
+
+    connect(&m_renderThread, SIGNAL(loaded()), this, SLOT(loaded()), Qt::QueuedConnection);
 }
 
 DirectShowPlayerService::~DirectShowPlayerService()
 {
     if (m_graph) {
         m_graphEventNotifier.setEnabled(false);
+        m_renderThread.abort();
 
         if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
             control->Stop();
             control->Release();
         }
-        
-        m_builder->Release();
-        m_graph->Release();
-        m_source->Release();
 
+        m_graph->Release();
         m_graph = 0;
     }
 
@@ -114,104 +112,53 @@ void DirectShowPlayerService::load(const QMediaContent &media)
             control->Release();
         }
 
-        m_builder->Release();
-        m_source->Release();
         m_graph->Release();
-
-        m_builder = 0;
-        m_source = 0;
         m_graph = 0;
     }
 
-    if (!media.isNull()) {
-        m_builder = com_new<ICaptureGraphBuilder2>(CLSID_CaptureGraphBuilder2);
+    if (media.isNull()) {
+        m_renderThread.abort();
+    } else {
         m_graph = com_new<IGraphBuilder>(CLSID_FilterGraph);
 
-        QUrl uri = media.canonicalUri();
-
-        if (!m_graph || !m_builder) {
-            qWarning("failed to create com object");
-        } else if (!SUCCEEDED(m_builder->SetFiltergraph(m_graph))) {
-            qWarning("failed to set filter graph on capture builder");
-        } else if (!SUCCEEDED(m_graph->AddSourceFilter(
-                uri.toString().utf16(), L"Source", &m_source))) {
-            qWarning("Failed to add source filter");
-        } else {
-            m_builder->RenderStream(0, &MEDIATYPE_Audio, m_source, 0, 0);
-
-            if (m_videoOutput) {
-                if (!SUCCEEDED(m_graph->AddFilter(m_videoOutput, L"VideoOutput"))) {
-                    qWarning("Failed to add video output to filter graph.");
-                } else {
-                    m_builder->RenderStream(0, &MEDIATYPE_Video, m_source, 0, m_videoOutput);
-                }
+        if (IMediaEventEx *event = com_cast<IMediaEventEx>(m_graph)) {
+            HANDLE handle;
+            if (event->GetEventHandle(reinterpret_cast<OAEVENT *>(&handle)) == S_OK) {
+                qDebug("got's event handle");
+                event->CancelDefaultHandling(EC_BUFFERING_DATA);
+                event->CancelDefaultHandling(EC_COMPLETE);
+                event->CancelDefaultHandling(EC_LOADSTATUS);
+                event->CancelDefaultHandling(EC_STATE_CHANGE);
+                event->CancelDefaultHandling(EC_LENGTH_CHANGED);
+                m_graphEventNotifier.setHandle(handle);
+                m_graphEventNotifier.setEnabled(true);
             }
-
-            if (IMediaEventEx *event = com_cast<IMediaEventEx>(m_graph)) {
-                HANDLE handle;
-
-                if (event->GetEventHandle(reinterpret_cast<OAEVENT *>(&handle)) == S_OK) {
-                    event->CancelDefaultHandling(EC_BUFFERING_DATA);
-                    event->CancelDefaultHandling(EC_COMPLETE);
-                    event->CancelDefaultHandling(EC_LOADSTATUS);
-                    event->CancelDefaultHandling(EC_STATE_CHANGE);
-                    event->CancelDefaultHandling(EC_LENGTH_CHANGED);
-                    m_graphEventNotifier.setHandle(handle);
-                    m_graphEventNotifier.setEnabled(true);
-                }
-
-                event->Release();
-            }
-
-            m_metaDataControl->metaDataChanged();
-
-            return;
+            event->Release();
         }
 
-        if (m_builder)
-            m_builder->Release();
-
-        if (m_source)
-            m_source->Release();
-
-        if (m_graph)
-            m_graph->Release();
-
-        m_builder = 0;
-        m_source = 0;
-        m_graph = 0;
+        m_renderThread.render(media.canonicalUri(), m_graph);
     }
-
 }
 
 void DirectShowPlayerService::videoOutputChanged()
 {
-    if (m_videoOutput && m_graph) {
-        m_graph->RemoveFilter(m_videoOutput);
-    }
+    IBaseFilter *videoOutput = 0;
 
     switch (m_videoOutputControl->output()) {
     case QVideoOutputControl::RendererOutput:
-        m_videoOutput = m_videoRendererControl->filter();
+        videoOutput = m_videoRendererControl->filter();
         break;
     default:
-        m_videoOutput = 0;
         break;
     }
 
-    if (m_videoOutput) {
-        if (m_graph) {
-            if (!SUCCEEDED(m_graph->AddFilter(m_videoOutput, L"VideoOutput"))) {
-                qWarning("Failed to add video output to filter graph.");
-            } else {
-                m_builder->RenderStream(0, &MEDIATYPE_Video, m_source, 0, m_videoOutput);
-            }
-        }
-    }
+    m_renderThread.setVideoOutput(videoOutput);
 }
 
 void DirectShowPlayerService::graphEvent(HANDLE handle)
 {
+    qDebug(Q_FUNC_INFO);
+
     if (IMediaEvent *event = com_cast<IMediaEvent>(m_graph)) {
         long eventCode;
         LONG_PTR param1;
@@ -220,18 +167,23 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
         while (event->GetEvent(&eventCode, &param1, &param2, 0) == S_OK) {
             switch (eventCode) {
             case EC_BUFFERING_DATA:
+                qDebug("Buffering");
                 m_playerControl->bufferingData(param1);
                 break;
             case EC_COMPLETE:
+                qDebug("Complete");
                 m_playerControl->complete(HRESULT(param1));
                 break;
             case EC_LOADSTATUS:
+                qDebug("Load status");
                 m_playerControl->loadStatus(param1);
                 break;
             case EC_STATE_CHANGE:
+                qDebug("State changed");
                 m_playerControl->stateChange(param1);
                 break;
             case EC_LENGTH_CHANGED:
+                qDebug("duration changed");
                 m_playerControl->durationChanged(m_playerControl->duration());
                 break;
             default:
@@ -242,4 +194,9 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
         }
         event->Release();
     }
+}
+
+void DirectShowPlayerService::loaded()
+{
+    m_playerControl->durationChanged(m_playerControl->duration());
 }
