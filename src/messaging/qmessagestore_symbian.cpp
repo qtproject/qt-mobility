@@ -253,9 +253,9 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageStore::ErrorCode QMessageStore::lastError() const
+QMessageManager::ErrorCode QMessageStore::lastError() const
 {
-    return NoError;
+    return QMessageManager::NoError;
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
@@ -293,7 +293,7 @@ int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
     return messageStorePrivate()->countAccounts(filter);
 }
 
-bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
+bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::RemovalOption option)
 {
     return messageStorePrivate()->removeMessage(id, option);
 }
