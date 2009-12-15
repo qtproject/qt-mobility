@@ -111,7 +111,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
 
     audioSource = new QAudioCaptureSource(camera);
-    connect(audioSource, SIGNAL(devicesChanged()), SLOT(updateAudioDevices()));
+    connect(audioSource, SIGNAL(availableAudioInputsChanged()), SLOT(updateAudioDevices()));
 
     mediaRecorder->setOutputLocation(QUrl("test.mkv"));
 
@@ -140,17 +140,17 @@ void CameraCapture::updateAudioDevices()
     audioDevicesGroup->setExclusive(true);
 
     if (audioSource->isAvailable()) {
-        for (int i=0; i<audioSource->deviceCount(); i++) {
-            QString deviceName = audioSource->deviceName(i);
-            QString description = audioSource->deviceDescription(i);
-
-            QAction *audioDeviceAction = new QAction(deviceName+" "+description, audioDevicesGroup);
-            audioDeviceAction->setData(QVariant(i));
+        QList<QString> devices = audioSource->audioInputs();
+        for (int i=0; i<devices.size(); i++) {
+            QString description = audioSource->audioDescription(devices.at(i));
+            QAction *audioDeviceAction = new QAction(devices.at(i)+" "+description, audioDevicesGroup);
+            audioDeviceAction->setData(devices.at(i));
             audioDeviceAction->setCheckable(true);
 
             ui->actionAudio->menu()->addAction(audioDeviceAction);
 
-            audioDeviceAction->setChecked(audioSource->selectedDevice() == i);
+            if (devices.at(i) == audioSource->activeAudioInput())
+                audioDeviceAction->setChecked(true);
         }
     } else {
         qWarning() << "Camera service is not available";
@@ -288,5 +288,5 @@ void CameraCapture::updateCameraDevice(QAction *action)
 
 void CameraCapture::updateAudioDevice(QAction *action)
 {
-    audioSource->setSelectedDevice(action->data().toInt());
+    audioSource->setAudioInput(action->data().toString());
 }

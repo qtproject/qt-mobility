@@ -71,22 +71,18 @@ public:
 
     bool isAvailable() const;
 
-    int deviceCount() const;
+    QList<QString> audioInputs() const;
 
-    QString deviceName(int index) const;
-    QString deviceDescription(int index) const;
-    QIcon deviceIcon(int index) const;
-
-    int defaultDevice() const;
-    int selectedDevice() const;
+    QString audioDescription(const QString& name) const;
+    QString defaultAudioInput() const;
+    QString activeAudioInput() const;
 
 public Q_SLOTS:
-    void setSelectedDevice(int index);
+    void setAudioInput(const QString& name);
 
 Q_SIGNALS:
-    void selectedDeviceChanged(int index);
-    void selectedDeviceChanged(const QString &deviceName);
-    void devicesChanged();
+    void activeAudioInputChanged(const QString& name);
+    void availableAudioInputsChanged();
 
 private:
     Q_DECLARE_PRIVATE(QAudioCaptureSource)

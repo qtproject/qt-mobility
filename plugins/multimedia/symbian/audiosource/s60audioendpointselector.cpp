@@ -39,44 +39,66 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIODEVICECONTROL_H
-#define QAUDIODEVICECONTROL_H
+#include "s60audiocapturesession.h"
+#include "s60audioendpointselector.h"
 
-#include <qmediacontrol.h>
+#include <QtGui/QIcon>
+#include <QtCore/QDebug>
 
-QTM_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QAudioDeviceControl : public QMediaControl
+S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *parent)
+    :QAudioEndpointSelector(parent)
 {
-    Q_OBJECT
+    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
 
-public:
-    virtual ~QAudioDeviceControl();
+    update();
 
-    virtual int deviceCount() const = 0;
+    m_audioInput = defaultEndpoint();
+}
 
-    virtual QString deviceName(int index) const = 0;
-    virtual QString deviceDescription(int index) const = 0;
-    virtual QIcon deviceIcon(int index) const = 0;
+S60AudioEndpointSelector::~S60AudioEndpointSelector()
+{
+}
 
-    virtual int defaultDevice() const = 0;
-    virtual int selectedDevice() const = 0;
+QList<QString> S60AudioEndpointSelector::endpoints() const
+{
+    return m_names;
+}
 
-public Q_SLOTS:
-    virtual void setSelectedDevice(int index) = 0;
+QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
+{
+    QString desc;
 
-Q_SIGNALS:
-    void selectedDeviceChanged(int index);
-    void selectedDeviceChanged(const QString &deviceName);
-    void devicesChanged();
+    for(int i = 0; i < m_names.count(); i++) {
+        if (m_names.at(i).compare(name) == 0) {
+            desc = m_names.at(i);
+            break;
+        }
+    }
+    return desc;
+}
 
-protected:
-    QAudioDeviceControl(QObject *parent = 0);
-};
+QString S60AudioEndpointSelector::defaultEndpoint() const
+{
+    return QString();
+}
 
-#define QAudioDeviceControl_iid "com.nokia.Qt.QAudioDeviceControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QAudioDeviceControl, QAudioDeviceControl_iid)
+QString S60AudioEndpointSelector::activeEndpoint() const
+{
+    return m_audioInput;
+}
 
-QTM_END_NAMESPACE
+void S60AudioEndpointSelector::setEndpoint(const QString& name)
+{
+    m_audioInput = name;
+    m_session->setCaptureDevice(name);
+}
 
-#endif // QAUDIODEVICECONTROL_H
+void S60AudioDeviceControl::update()
+{
+    m_names.clear();
+    m_descriptions.clear();
+
+    m_names.append(QString("MMF"));
+    m_descriptions.append(QString("MMF"));
+}

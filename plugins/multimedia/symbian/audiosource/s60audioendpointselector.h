@@ -39,43 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIODEVICECONTROL_H
-#define AUDIODEVICECONTROL_H
+#ifndef S60AUDIOENDPOINTSELECTOR_H
+#define S60AUDIOENDPOINTSELECTOR_H
 
 #include <QStringList>
 
-#include <qaudiodevicecontrol.h>
-
-class AudioCaptureSession;
+#include <QAudioEndpointSelector>
 
 QTM_USE_NAMESPACE
 
-class AudioDeviceControl : public QAudioDeviceControl
+class S60AudioCaptureSession;
+
+class S60AudioEndpointSelector : public QAudioEndpointSelector
 {
+
 Q_OBJECT
+
 public:
-    AudioDeviceControl(QObject *parent);
-    virtual ~AudioDeviceControl();
+    S60AudioEndpointSelector(QObject *parent);
+    virtual ~S60AudioEndpointSelector();
 
-    int deviceCount() const;
-
-    QString deviceName(int index) const;
-    QString deviceDescription(int index) const;
-    QIcon deviceIcon(int index) const;
-
-    int defaultDevice() const;
-    int selectedDevice() const;
+    QList<QString> endpoints() const;
+    QString endpointDescription(const QString& name) const;
+    QString defaultEndpoint() const;
+    QString activeEndpoint() const;
 
 public Q_SLOTS:
-    void setSelectedDevice(int index);
+    void setEndpoint(const QString& name);
 
 private:
     void update();
 
-    QString     m_device;
-    QStringList m_names;
-    QStringList m_descriptions;
-    AudioCaptureSession* m_session;
+    QString          m_audioInput;
+    QList<QString>   m_names;
+    QList<QString>   m_descriptions;
+
+    S60AudioCaptureSession* m_session;
 };
 
-#endif // AUDIODEVICECONTROL_H
+#endif // S60AUDIOENDPOINTSELECTOR_H

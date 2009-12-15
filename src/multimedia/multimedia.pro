@@ -58,7 +58,7 @@ PUBLIC_HEADERS += \
     qaudiocapturesource.h \
     qmediaformatcontrol.h \
     qmediaplaylistcontrol.h \
-    qaudiodevicecontrol.h \
+    qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
     qvideorenderercontrol.h
@@ -95,7 +95,7 @@ SOURCES += qmediacontrol.cpp \
     qaudiocapturesource.cpp \
     qmediaformatcontrol.cpp \
     qmediaplaylistcontrol.cpp \
-    qaudiodevicecontrol.cpp \
+    qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp \
     qgraphicsvideoitem.cpp \

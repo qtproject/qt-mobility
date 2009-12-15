@@ -42,9 +42,6 @@
 #include <qmediaservice.h>
 #include <qmediaservice_p.h>
 
-#include <qaudiodevicecontrol.h>
-#include <qvideodevicecontrol.h>
-
 #include <QtCore/qtimer.h>
 
 

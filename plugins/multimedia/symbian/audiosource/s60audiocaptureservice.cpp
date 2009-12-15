@@ -42,7 +42,7 @@
 
 #include "s60audiocaptureservice.h"
 #include "s60audiocapturesession.h"
-#include "s60audiodevicecontrol.h"
+#include "s60audioendpointselector.h"
 #include "s60audioencodercontrol.h"
 #include "s60audiomediarecordercontrol.h"
 
@@ -52,13 +52,13 @@ S60AudioCaptureService::S60AudioCaptureService(QObject *parent):
     m_session = new S60AudioCaptureSession(this);
     m_encoderControl  = new S60AudioEncoderControl(m_session);
     m_mediaControl   = new S60AudioMediaRecorderControl(m_session);
-    m_deviceControl  = new S60AudioDeviceControl(m_session);
+    m_endpointSelector  = new S60AudioEndpointSelector(m_session);
 }
 
 S60AudioCaptureService::~S60AudioCaptureService()
 {
     delete m_encoderControl;
-    delete m_deviceControl;
+    delete m_endpointSelector;
     delete m_mediaControl;
     delete m_session;
 }
@@ -71,8 +71,8 @@ QMediaControl *S60AudioCaptureService::control(const char *name) const
     if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
         return m_encoderControl;
 
-    if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
-        return m_deviceControl;
+    if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
+        return m_EndpointSelector;
 
     return 0;
 }

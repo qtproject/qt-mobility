@@ -39,68 +39,38 @@
 **
 ****************************************************************************/
 
-#include "s60audiocapturesession.h"
-#include "s60audiodevicecontrol.h"
+#ifndef QGSTREAMERAUDIOINPUTENDPOINTSELECTOR_H
+#define QGSTREAMERAUDIOINPUTENDPOINTSELECTOR_H
 
-#include <QtGui/QIcon>
-#include <QtCore/QDebug>
+#include <qaudioendpointselector.h>
+#include <QtCore/qstringlist.h>
 
-//#include <multimedia/qaudiodeviceinfo.h>
+QTM_USE_NAMESPACE
 
-
-S60AudioDeviceControl::S60AudioDeviceControl(QObject *parent)
-    :QAudioDeviceControl(parent)
+class QGstreamerAudioInputEndpointSelector : public QAudioEndpointSelector
 {
-    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
+Q_OBJECT
+public:
+    QGstreamerAudioInputEndpointSelector(QObject *parent);
+    ~QGstreamerAudioInputEndpointSelector();
 
-    update();
-}
+    QList<QString> availableEndpoints() const;
+    QString endpointDescription(const QString& name) const;
+    QString defaultEndpoint() const;
+    QString activeEndpoint() const;
 
-S60AudioDeviceControl::~S60AudioDeviceControl()
-{
-}
+public Q_SLOTS:
+    void setActiveEndpoint(const QString& name);
 
-int S60AudioDeviceControl::deviceCount() const
-{
-    return 1;
-}
+private:
+    void update();
+    void updateAlsaDevices();
+    void updateOssDevices();
+    void updatePulseDevices();
 
-QString S60AudioDeviceControl::deviceName(int index) const
-{
-    return QString();
-}
+    QString     m_audioInput;
+    QList<QString> m_names;
+    QList<QString> m_descriptions;
+};
 
-QString S60AudioDeviceControl::deviceDescription(int index) const
-{
-    return QString();
-}
-
-QIcon S60AudioDeviceControl::deviceIcon(int index) const
-{
-    Q_UNUSED(index);
-    return QIcon();
-}
-
-int S60AudioDeviceControl::defaultDevice() const
-{
-    return 0;
-}
-
-int S60AudioDeviceControl::selectedDevice() const
-{
-    return 0;
-}
-
-void S60AudioDeviceControl::setSelectedDevice(int index)
-{
-    m_session->setCaptureDevice(QString("MMF"));    //TODO: What this should be in S60 case? There are no special devices as Linux or Windows.
-}
-
-void S60AudioDeviceControl::update()
-{
-    m_names.clear();
-    m_descriptions.clear();
-
-    m_names.append(QString("MMF"));
-    m_descriptions.append(QString("MMF"));
-}
+#endif // QGSTREAMERAUDIOINPUTENDPOINTSELECTOR_H
