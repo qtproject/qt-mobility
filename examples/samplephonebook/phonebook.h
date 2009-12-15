@@ -42,7 +42,6 @@
 #ifndef PHONEBOOK_H
 #define PHONEBOOK_H
 
-#include <qmobilityglobal.h>
 #include "qtcontacts.h"
 
 #include <QWidget>

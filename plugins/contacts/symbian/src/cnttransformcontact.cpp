@@ -109,7 +109,7 @@ void CntTransformContact::initializeCntTransformContactData()
 	m_transformContactData.insert(Note, new CntTransformNote);
 	m_transformContactData.insert(Family, new CntTransformFamily);
 
-#ifdef USE_CUSTOM_CNT_MODEL_FIELDS
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
 	// variated transform classes
     m_transformContactData.insert(Avatar, new CntTransformAvatar);
     m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
@@ -255,7 +255,7 @@ void CntTransformContact::transformContactL(
 
             // save preferred detail
             transformPreferredDetailL(contact, detailList.at(i), fieldList);
-            
+
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
@@ -422,7 +422,7 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
     return timestampDetail;
 }
 
-void CntTransformContact::transformPreferredDetailL(const QContact& contact, 
+void CntTransformContact::transformPreferredDetailL(const QContact& contact,
         const QContactDetail& detail, QList<CContactItemField*> &fieldList) const
 {
     if (fieldList.count() == 0) {

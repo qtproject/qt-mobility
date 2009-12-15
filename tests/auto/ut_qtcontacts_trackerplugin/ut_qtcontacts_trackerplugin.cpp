@@ -201,6 +201,9 @@ void ut_qtcontacts_trackerplugin::testSaveName()
 
 void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
 {
+    // use the same values for 2 contacts
+    for (int i = 0; i <2; i++ )
+    {
     QContact c;
     QContactLocalId initialId = c.localId();
     int detailsAdded = 0;
@@ -248,7 +251,6 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
 
     // verify with synchronous read too
     QContact contact = trackerEngine->contact_impl(c.localId(), error);
-    qDebug()<<Q_FUNC_INFO<<c.localId()<<error;
     QCOMPARE(error,  QContactManager::NoError);
     QList<QContactPhoneNumber> details = contact.details<QContactPhoneNumber>();
 
@@ -264,6 +266,32 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
             QCOMPARE(detail.subTypes()[0], QLatin1String(QContactPhoneNumber::SubTypeVoice));
         else
             QCOMPARE(detail.subTypes()[0], phoneValues.value(number).second);
+    }
+
+    // edit one of numbers . values, context and subtypes and save again
+    QString editedPhoneValue = "+7044866473";
+    QContactPhoneNumber phone = details[0];
+    phone.setNumber(editedPhoneValue);
+    phone.setContexts(QContactDetail::ContextWork);
+    phone.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    c = contact;
+    c.saveDetail(&phone);
+    trackerEngine->saveContact(&c, error);
+    QCOMPARE(error,  QContactManager::NoError);
+    c = this->contact(c.localId(), QStringList()<<QContactPhoneNumber::DefinitionName);
+    details = c.details<QContactPhoneNumber>();
+    QCOMPARE(details.count(), detailsAdded);
+    bool found = false;
+    foreach (QContactPhoneNumber detail, details) {
+        if(detail.number() == phone.number())
+        {
+            found = true;
+            QVERIFY(detail.subTypes().contains(QContactPhoneNumber::SubTypeMobile));
+            QVERIFY(detail.contexts().contains(QContactPhoneNumber::ContextWork));
+            break;
+        }
+    }
+    QVERIFY(found);
     }
 }
 
@@ -320,6 +348,11 @@ void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
             }
         }
         QVERIFY(contactToTest.localId() == contactToSave.localId()); // Just to be sure we got the saved contact
+        qDebug()<<contactToTest.details<QContactPhoneNumber>().count();
+        foreach(QContactPhoneNumber numbber, contactToTest.details<QContactPhoneNumber>())
+        {
+            qDebug()<<numbber.values();
+        }
         QVERIFY(contactToTest.details<QContactPhoneNumber>().count() == 1);
         if (0 == iterations) {
             // perform context change
@@ -328,6 +361,7 @@ void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
             contactToTest.saveDetail(&phoneToEdit);
             contactToSave = contactToTest;
         }
+        QVERIFY(contactToTest.details<QContactPhoneNumber>().count() == 1);
     }
 }
 
@@ -1254,7 +1288,6 @@ void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
     // if it takes more, then something is wrong
     QVERIFY(req1.isFinished());
     QVERIFY(QContactManager::NoError == req1.error());
-    qDebug()<<req1.relationships().size();
     QVERIFY(2 == req1.relationships().size());
     foreach(QContactRelationship r, req1.relationships())
     {
@@ -1314,9 +1347,9 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     {
         unsigned int contactid = 999998+i;
         idstoremove << contactid;
-        insertContact(contactid, QString::number(contactid)+ "@ovi.com", "Available");
+        insertContact(contactid, QString::number(contactid)+ "@ovi.com", "nco:presence-status-available");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
-        QVERIFY(c.id().localId() == contactid);
+        QVERIFY(c.localId() == contactid);
         QContact firstContact;
         QContactName name;
         name.setFirst("FirstMetaWithIM"+QString::number(contactid));
@@ -1363,7 +1396,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QVERIFY(containDetail);
     }
     //now update presence to IM contact and check it in metacontact (TODO and if signal is emitted)
-    updateIMContactStatus(999999, "Offline");
+    updateIMContactStatus(999999, "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId << 999999, QStringList()
@@ -1387,6 +1420,27 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     }
 
     // TODO load only one contact should load also content from other in the same metacontacts
+    {
+        QList<QContact> cons = contacts(QList<QContactLocalId> ()
+                << masterContactId, QStringList()
+                << QContactOnlineAccount::DefinitionName);
+        QVERIFY(cons.size() == 1);
+        QVERIFY(cons[0].id().localId() == masterContactId);
+
+        bool containDetail = false;
+        foreach(QContactOnlineAccount det, cons[0].details<QContactOnlineAccount>())
+            {
+                if (det.value("Account") == "999999@ovi.com" // deprecated, going to account URI
+                        || det.accountUri() == "999999@ovi.com")
+                {
+                    QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
+                    // keeping the reference to tp contact
+                    QVERIFY(det.value("QContactLocalId") == "999999");
+                    containDetail = true;
+                }
+            }
+        QVERIFY(containDetail);
+    }
 
     // remove them
     foreach(unsigned int id, idstoremove)
@@ -1401,7 +1455,6 @@ void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
     if( self->status() == QContactAbstractRequest::Finished )
     {
         ids << self->ids();
-        qDebug() << "ids:" << ids;
     }
 }
 
@@ -1414,7 +1467,6 @@ void Slots::progress(QContactFetchRequest* self, bool appendOnly)
     {
         idsFromAllContactReq << contact.localId();
     }
-    qDebug() << "ids:" << idsFromAllContactReq;
 }
 
 QString Slots::requestStatusToString(QContactAbstractRequest::Status status)

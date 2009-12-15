@@ -11,7 +11,8 @@ HEADERS += servicebrowser.h
 SOURCES += servicebrowser.cpp \
            main.cpp
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     addFiles.sources = ../filemanagerplugin/filemanagerservice.xml

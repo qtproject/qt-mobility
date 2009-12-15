@@ -42,7 +42,6 @@
 #ifndef CONTACTEDITOR_H
 #define CONTACTEDITOR_H
 
-#include <qmobilityglobal.h>
 #include "qtcontacts.h"
 
 #include <QWidget>
@@ -54,10 +53,6 @@ class QScrollArea;
 class QPushButton;
 class QLineEdit;
 QT_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-class QContactManager;
-QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

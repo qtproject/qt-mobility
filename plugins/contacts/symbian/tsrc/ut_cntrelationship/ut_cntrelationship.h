@@ -43,9 +43,11 @@
 
 #include <QObject>
 
-class QContactManager;
-class CntRelationship;
+//Qt Contacts
+#include <qtcontacts.h>
+
 class CContactDatabase;
+class CntRelationship;
 
 class TestCntRelationship : public QObject
 {
@@ -65,7 +67,10 @@ private slots:
 	void invalidFirstContactGroupRelationship();
 	void invalidSecondContactGroupRelationship();
 	void invalidFirstAndSecondContactGroupRelationship();
-	
+
+private: 
+    bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipFilter::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts);
+
 private: 
      QContactManager  *m_manager;
      CContactDatabase *m_database;

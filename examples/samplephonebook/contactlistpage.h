@@ -42,7 +42,6 @@
 #ifndef CONTACTLISTPAGE_H
 #define CONTACTLISTPAGE_H
 
-#include <qmobilityglobal.h>
 #include "qtcontacts.h"
 
 #include <QWidget>

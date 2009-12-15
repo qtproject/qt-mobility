@@ -5,7 +5,8 @@ QT = core
 CONFIG += no_icon
 INCLUDEPATH += ../../../src/serviceframework
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 SOURCES += exampleinstaller.cpp
 
