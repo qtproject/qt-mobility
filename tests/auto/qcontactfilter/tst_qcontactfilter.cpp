@@ -420,6 +420,8 @@ void tst_QContactFilter::actionFilter()
     QVERIFY(af4 == af);
     af = dfil;
     QVERIFY(af == af3);
+    af = af3;
+    af.setActionName("test"); // should force a detach
 }
 
 void tst_QContactFilter::changeLogFilter()
@@ -474,6 +476,8 @@ void tst_QContactFilter::changeLogFilter()
     QVERIFY(cf4 == cf);
     cf = dfil;
     QVERIFY(cf == cf3);
+    cf = cf3;
+    cf.setEventType(QContactChangeLogFilter::EventRemoved); // force a detach
 }
 
 void tst_QContactFilter::detailFilter()
@@ -656,6 +660,8 @@ void tst_QContactFilter::relationshipFilter()
     QVERIFY(crf4 == crf);
     crf = dfil;
     QVERIFY(crf == crf3);
+    crf = crf3;
+    crf.setRelationshipType("test"); // force a detach
 }
 
 void tst_QContactFilter::sortObject()
@@ -904,6 +910,8 @@ void tst_QContactFilter::idListFilter()
     QVERIFY(idf4 == idf); // should be a copy of idf.
     idf = dfil; // now assign.
     QVERIFY(idf == idf3); // again, should be a blank id list filter.
+    idf = idf3;
+    idf.setIds(ids); // force a detach
 }
 
 
