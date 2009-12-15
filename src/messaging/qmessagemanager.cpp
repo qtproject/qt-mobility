@@ -186,6 +186,33 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
 }
 
 /*!
+    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
+    
+    Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
+    only messages matching the parameters set by \a filter will be returned, otherwise 
+    identifiers for all messages will be returned.
+    If \a sortOrders is not empty, then the identifiers will be sorted by applying each
+    sort order element in sequence.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    \sa lastError(), countMessages()
+*/
+QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
+{
+    // Collapse the list of sort orders down to single sort object
+    QMessageSortOrder cumulativeOrder;
+    if (!sortOrders.isEmpty()) {
+        foreach (const QMessageSortOrder &sort, sortOrders) {
+            cumulativeOrder += sort;
+        }
+    }
+
+    return store->queryMessages(filter, cumulativeOrder, limit, offset);
+}
+
+/*!
     \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
@@ -204,6 +231,35 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     return store->queryMessages(filter, body, options, sortOrder, limit, offset);
+}
+
+/*!
+    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
+    
+    Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
+    only messages matching the parameters set by \a filter and with a body containing the 
+    string \a body will be returned, otherwise identifiers for all messages with 
+    a body containing \a body will be returned.
+    If \a sortOrders is not empty, then the identifiers will be sorted by applying each
+    sort order element in sequence.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+    \a options specifies the search optons to use.
+    
+    \sa lastError(), countMessages()
+*/
+QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
+{
+    // Collapse the list of sort orders down to single sort object
+    QMessageSortOrder cumulativeOrder;
+    if (!sortOrders.isEmpty()) {
+        foreach (const QMessageSortOrder &sort, sortOrders) {
+            cumulativeOrder += sort;
+        }
+    }
+
+    return store->queryMessages(filter, body, options, cumulativeOrder, limit, offset);
 }
 
 /*!
@@ -226,6 +282,33 @@ QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &f
 }
 
 /*!
+    \fn QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QList<QMessageFolderSortOrder> &sortOrders, uint limit, uint offset) const
+    
+    Returns the \l{QMessageFolderId}s of folders in the messaging store. If \a filter 
+    is not empty only folders matching the parameters set by \a filter will be returned,
+    otherwise identifiers for all folders will be returned.
+    If \a sortOrders is not empty, then the identifiers will be sorted by applying each
+    sort order element in sequence.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    \sa lastError(), countFolders()
+*/
+QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QList<QMessageFolderSortOrder> &sortOrders, uint limit, uint offset) const
+{
+    // Collapse the list of sort orders down to single sort object
+    QMessageFolderSortOrder cumulativeOrder;
+    if (!sortOrders.isEmpty()) {
+        foreach (const QMessageFolderSortOrder &sort, sortOrders) {
+            cumulativeOrder += sort;
+        }
+    }
+
+    return store->queryFolders(filter, cumulativeOrder, limit, offset);
+}
+
+/*!
     \fn QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
     
     Returns the \l{QMessageAccountId}s of accounts in the messaging store. If \a filter 
@@ -242,6 +325,31 @@ QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &f
 QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
     return store->queryAccounts(filter, sortOrder, limit, offset);
+}
+
+/*!
+    \fn QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QList<QMessageAccountSortOrder> &sortOrders, uint limit, uint offset) const
+    
+    Returns the \l{QMessageAccountId}s of accounts in the messaging store. If \a filter 
+    is not empty only accounts matching the parameters set by \a filter will be returned, 
+    otherwise identifiers for all accounts will be returned.
+    If \a sortOrders is not empty, then the identifiers will be sorted by applying each
+    sort order element in sequence.
+    If \a limit is not zero, then \a limit places an upper bound on the number of 
+    ids in the list returned.
+    \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    \sa lastError(), countAccounts()
+*/
+QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QList<QMessageAccountSortOrder> &sortOrders, uint limit, uint offset) const
+{
+    // Currently, we do not support multiple account sort orderings
+    QMessageAccountSortOrder cumulativeOrder;
+    if (!sortOrders.isEmpty()) {
+        cumulativeOrder = sortOrders.first();
+    }
+
+    return store->queryAccounts(filter, cumulativeOrder, limit, offset);
 }
 
 /*!
