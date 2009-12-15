@@ -68,7 +68,7 @@ public:
     ~QMessageServiceAction();
 
     bool queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0);
-    bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options = 0, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0);
+    bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags = 0, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0);
 
     bool countMessages(const QMessageFilter &filter = QMessageFilter());
 

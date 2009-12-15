@@ -1519,19 +1519,19 @@ namespace {
         }
     }
 
-    bool bodyMatches(const QMessage &message, const QString &body, QMessageDataComparator::Options options)
+    bool bodyMatches(const QMessage &message, const QString &body, QMessageDataComparator::MatchFlags matchFlags)
     {
         if (body.isEmpty())
             return true;
 
         QMessageContentContainer bodyContainer(message.find(message.bodyId()));
-        if (options & QMessageDataComparator::CaseSensitive) {
+        if (matchFlags & QMessageDataComparator::MatchCaseSensitive) {
             return bodyContainer.textContent().contains(body, Qt::CaseSensitive);
         }
         return bodyContainer.textContent().contains(body, Qt::CaseInsensitive);
     }
 
-    QMessageIdList filterMessages(QMessageManager::ErrorCode *lastError, QList<FolderHeapNodePtr> &folderNodes, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body = QString(), QMessageDataComparator::Options options = 0)
+    QMessageIdList filterMessages(QMessageManager::ErrorCode *lastError, QList<FolderHeapNodePtr> &folderNodes, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body = QString(), QMessageDataComparator::MatchFlags matchFlags = 0)
     {
         QMessageIdList result;
         QHash<QMessageId, bool> avoidDuplicates; // For complex filters it's necessary to check for duplicates
@@ -1552,7 +1552,7 @@ namespace {
             if (*lastError != QMessageManager::NoError)
                 return result;
 
-            if (!avoidDuplicates.contains(front.id()) && bodyMatches(front, body, options)) {
+            if (!avoidDuplicates.contains(front.id()) && bodyMatches(front, body, matchFlags)) {
                 avoidDuplicates.insert(front.id(), true);
                 if (count >= 0) {
                     result.append(front.id());
@@ -4574,7 +4574,7 @@ QByteArray MapiSession::attachmentData(QMessageManager::ErrorCode *lastError, co
     return result;
 }
 
-QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body, QMessageDataComparator::Options options) const
+QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body, QMessageDataComparator::MatchFlags matchFlags) const
 {
     if (!filter.isSupported()) {
         *lastError = QMessageManager::ConstraintFailure;
@@ -4611,7 +4611,7 @@ QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError,
     if (*lastError != QMessageManager::NoError)
         return QMessageIdList();
 
-    return filterMessages(lastError, folderNodes, sortOrder, limit, offset, body, options);
+    return filterMessages(lastError, folderNodes, sortOrder, limit, offset, body, matchFlags);
 }
 
 void MapiSession::updateMessage(QMessageManager::ErrorCode* lastError, const QMessage& source)

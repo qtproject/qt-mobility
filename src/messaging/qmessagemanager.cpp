@@ -213,7 +213,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
 }
 
 /*!
-    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
     only messages matching the parameters set by \a filter and with a body containing the 
@@ -224,17 +224,17 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
-    \a options specifies the search optons to use.
+    \a matchFlags specifies the matching method to use.
     
     \sa lastError(), countMessages()
 */
-QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return store->queryMessages(filter, body, options, sortOrder, limit, offset);
+    return store->queryMessages(filter, body, matchFlags, sortOrder, limit, offset);
 }
 
 /*!
-    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
+    \fn QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
     
     Returns the \l{QMessageId}s of messages in the messaging store. If \a filter is not empty 
     only messages matching the parameters set by \a filter and with a body containing the 
@@ -245,11 +245,11 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
-    \a options specifies the search optons to use.
+    \a matchFlags specifies the matching method to use.
     
     \sa lastError(), countMessages()
 */
-QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
+QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
 {
     // Collapse the list of sort orders down to single sort object
     QMessageSortOrder cumulativeOrder;
@@ -259,7 +259,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
         }
     }
 
-    return store->queryMessages(filter, body, options, cumulativeOrder, limit, offset);
+    return store->queryMessages(filter, body, matchFlags, cumulativeOrder, limit, offset);
 }
 
 /*!

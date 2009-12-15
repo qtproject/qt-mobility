@@ -49,7 +49,7 @@ QMessageFolderFilterPrivate::QMessageFolderFilterPrivate(QMessageFolderFilter *f
       _criterion(None),
       _equality(QMessageDataComparator::Equal),
       _inclusion(QMessageDataComparator::Includes),
-      _options(0),
+      _matchFlags(0),
       _valid(true),
       _accountFilter(0),
       _folderFilter(0)
@@ -77,7 +77,7 @@ QMessageFolderFilterPrivate& QMessageFolderFilterPrivate::operator=(const QMessa
     _value = other._value;
     _equality = other._equality;
     _inclusion = other._inclusion;
-    _options = other._options;
+    _matchFlags = other._matchFlags;
     _valid = other._valid;
     foreach(QMessageFolderFilter* filter, _arguments) {
         delete filter;
@@ -108,7 +108,7 @@ bool QMessageFolderFilterPrivate::operator==(const QMessageFolderFilterPrivate &
          (_value != other._value) ||
          (_equality != other._equality) ||
          (_inclusion != other._inclusion) ||
-         (_options != other._options)) {
+         (_matchFlags != other._matchFlags)) {
              return false;
     }
     if (_arguments.count() != other._arguments.count())
@@ -134,7 +134,7 @@ bool QMessageFolderFilterPrivate::operator==(const QMessageFolderFilterPrivate &
 bool QMessageFolderFilterPrivate::matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder)
 {
     Qt::CaseSensitivity caseSensitivity(Qt::CaseInsensitive);
-    if (filter.options() & QMessageDataComparator::CaseSensitive)
+    if (filter.matchFlags() & QMessageDataComparator::MatchCaseSensitive)
         caseSensitivity = Qt::CaseSensitive;
 
     QMessageFolderFilterPrivate *f(filter.d_ptr);
@@ -322,20 +322,20 @@ QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter
     return *this;
 }
 
-void QMessageFolderFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageFolderFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
     d_ptr->_valid = true;
-    if (d_ptr->_options & QMessageDataComparator::FullWord)
+    if (d_ptr->_matchFlags & QMessageDataComparator::MatchFullWord)
         d_ptr->_valid = false; // Not supported
     foreach(QMessageFolderFilter *subfilter, d_ptr->_arguments) {
-        subfilter->setOptions(options);
+        subfilter->setMatchFlags(matchFlags);
     }
 }
 
-QMessageDataComparator::Options QMessageFolderFilter::options() const
+QMessageDataComparator::MatchFlags QMessageFolderFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageFolderFilter::isEmpty() const

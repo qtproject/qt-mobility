@@ -68,7 +68,7 @@ public:
     void initialize(QMessageStore *store);
     
     QMessageIdList queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     int countMessages(const QMessageFilter& filter) const;
     QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountSortOrder &sortOrder = QMessageAccountSortOrder(), uint limit = 0, uint offset = 0) const;
     int countAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter()) const;

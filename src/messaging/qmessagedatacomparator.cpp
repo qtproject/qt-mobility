@@ -82,10 +82,10 @@
 */
 
 /*!
-    \enum QMessageDataComparator::Option
+    \enum QMessageDataComparator::MatchFlag
 
     This enum describes additional matching criteria when performing a search.
     
-    \value FullWord        The key should only match a complete word. Not supported on Windows and QMF platforms.
-    \value CaseSensitive   The key should be case sensitive. Not supported on QMF platform.
+    \value MatchCaseSensitive   The key should be case sensitive. Not supported on QMF platform.
+    \value MatchFullWord        The key should only match a complete word. Not supported on Windows and QMF platforms.
 */

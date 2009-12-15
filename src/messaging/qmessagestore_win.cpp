@@ -219,7 +219,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     return result;
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList result;
 
@@ -229,7 +229,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
         return result;
     }
 
-    if (options & QMessageDataComparator::FullWord) {
+    if (matchFlags & QMessageDataComparator::MatchFullWord) {
         d_ptr->p_ptr->lastError = QMessageManager::NotYetImplemented;
         return result;
     }
@@ -239,7 +239,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
         return result;
     } else {
         d_ptr->p_ptr->lastError = QMessageManager::NoError;
-        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset, body, options);
+        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset, body, matchFlags);
     }
 
     return result;

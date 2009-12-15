@@ -107,7 +107,7 @@ public:
     ~QMessageFilterPrivate();
 
     QMessageFilter *q_ptr;
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
 
 #ifdef Q_OS_SYMBIAN
     typedef QList<QMessageFilter> SortedMessageFilterList;

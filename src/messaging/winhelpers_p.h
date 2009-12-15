@@ -422,7 +422,7 @@ public:
     bool haveAttachmentData(QMessageManager::ErrorCode* lastError, const QMessageId& id, ULONG number) const;
     QByteArray attachmentData(QMessageManager::ErrorCode *lastError, const QMessageId& id, ULONG number) const;
 
-    QMessageIdList queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0, const QString &body = QString(), QMessageDataComparator::Options options = 0) const;
+    QMessageIdList queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0, const QString &body = QString(), QMessageDataComparator::MatchFlags matchFlags = 0) const;
 
     void updateMessage(QMessageManager::ErrorCode* lastError, const QMessage& source);
 

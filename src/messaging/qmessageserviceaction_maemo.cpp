@@ -61,11 +61,11 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return false; // stub
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     Q_UNUSED(filter);
     Q_UNUSED(body);
-    Q_UNUSED(options);
+    Q_UNUSED(matchFlags);
     Q_UNUSED(sortOrder);
     Q_UNUSED(limit);
     Q_UNUSED(offset);

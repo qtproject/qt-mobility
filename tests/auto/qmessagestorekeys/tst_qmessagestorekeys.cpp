@@ -635,23 +635,23 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
 
-    // Test options
+    // Test matchFlags
     QMessageAccountFilter caseInsensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
-    QTest::newRow("options:caseInsensitive 1")
+    QTest::newRow("matchFlags:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageAccountIdList() << accountIds[0] )
         << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QMessageAccountFilter caseSensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
-    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 1")
+    caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 1")
         << caseSensitive1
         << QMessageAccountIdList()
         << accountIds;
 
     QMessageAccountFilter caseSensitive2(QMessageAccountFilter::byName("Work", QMessageDataComparator::Equal));
-    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 2")
+    caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageAccountIdList() << accountIds[0] )
         << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
@@ -1326,23 +1326,23 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[3] );
 
-    // Test options
+    // Test matchFlags
     QMessageFolderFilter caseInsensitive1(QMessageFolderFilter::byDisplayName("x-a", QMessageDataComparator::Includes));
-    QTest::newRow("options:caseInsensitive 1")
+    QTest::newRow("matchFlags:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
     
     QMessageFolderFilter caseSensitive1(QMessageFolderFilter::byDisplayName("x-a", QMessageDataComparator::Includes));
-    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 1")
+    caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 1")
         << caseSensitive1
         << QMessageFolderIdList()
         << folderIds;
 
     QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byDisplayName("X-A", QMessageDataComparator::Includes));
-    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 2")
+    caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
@@ -2799,25 +2799,25 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
 
-    // Test options
+    // Test matchFlags
     QMessageFilter caseInsensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
-    QTest::newRow("options:caseInsensitive 1")
+    QTest::newRow("matchFlags:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
 
     QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
-    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 1")
+    caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 1")
         << caseSensitive1
         << QMessageIdList()
         << messageIds
         << "";
 
     QMessageFilter caseSensitive2(QMessageFilter::bySubject("Free beer", QMessageDataComparator::Equal));
-    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 2")
+    caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )

@@ -306,10 +306,10 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return false;
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
-    if (options) {
-        //TODO: Support options
+    if (matchFlags) {
+        //TODO: Support matchFlags
         return false;
     }
 

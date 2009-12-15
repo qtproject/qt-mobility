@@ -105,12 +105,12 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     return QMessageIdList(); // stub
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     Q_UNUSED(filter)
     Q_UNUSED(sortOrder)
     Q_UNUSED(body)
-    Q_UNUSED(options)
+    Q_UNUSED(matchFlags)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
     return QMessageIdList(); // stub

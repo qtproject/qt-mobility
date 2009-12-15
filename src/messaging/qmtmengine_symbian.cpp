@@ -1507,16 +1507,16 @@ void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, con
     }
 }
 
-bool CMTMEngine::queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+bool CMTMEngine::queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    TRAPD(err, queryMessagesL(privateAction, filter, body, options, sortOrder, limit, offset));
+    TRAPD(err, queryMessagesL(privateAction, filter, body, matchFlags, sortOrder, limit, offset));
     if (err != KErrNone) {
         return false;
     }
     return true;
 }
 
-void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     MessageQueryInfo queryInfo;
     queryInfo.operationId = ++iOperationIds;
@@ -1525,7 +1525,7 @@ void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, con
     }
     queryInfo.isQuery = true;
     queryInfo.body = body;
-    queryInfo.options = options;
+    queryInfo.matchFlags = matchFlags;
     queryInfo.filter = filter;
     queryInfo.sortOrder = sortOrder;
     queryInfo.offset = offset;
@@ -1542,12 +1542,12 @@ void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, con
         queryInfo.findOperation->filterAndOrderMessages(iMessageQueries[iMessageQueries.count()-1].filter,
                                                         iMessageQueries[iMessageQueries.count()-1].sortOrder,
                                                         body,
-                                                        options);
+                                                        matchFlags);
     } else {
         queryInfo.findOperation->filterAndOrderMessages(pf->_filterList[0],
                                                         iMessageQueries[iMessageQueries.count()-1].sortOrder,
                                                         body,
-                                                        options);
+                                                        matchFlags);
     }
 }
 
@@ -1642,7 +1642,7 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                 iMessageQueries[index].findOperation->filterAndOrderMessages(pf->_filterList[iMessageQueries[index].currentFilterListIndex],
                                                                              iMessageQueries[index].sortOrder,
                                                                              iMessageQueries[index].body,
-                                                                             iMessageQueries[index].options);
+                                                                             iMessageQueries[index].matchFlags);
                 return;
             } else {
                 // All filters successfully handled
@@ -4356,17 +4356,17 @@ void CMessagesFindOperation::DoCancel()
 }
 
 void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
-                                                    QString body, QMessageDataComparator::Options options)
+                                                    QString body, QMessageDataComparator::MatchFlags matchFlags)
 {
     iFilterList.clear();
     iFilterList.append(filter);
-    filterAndOrderMessages(iFilterList, sortOrder, body, options);
+    filterAndOrderMessages(iFilterList, sortOrder, body, matchFlags);
 }
 
 void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
                                                     const QMessageSortOrder& sortOrder,
                                                     QString body,
-                                                    QMessageDataComparator::Options options)
+                                                    QMessageDataComparator::MatchFlags matchFlags)
 {
     delete ipMsvFindOperation;
     ipMsvFindOperation = NULL;
@@ -4794,10 +4794,10 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
         if (iNumberOfHandledFilters < filters.count()) {    
             pf = QMessageFilterPrivate::implementation(filters[iNumberOfHandledFilters]);
             
-            if (pf->_options & QMessageDataComparator::CaseSensitive) {
+            if (pf->_matchFlags & QMessageDataComparator::MatchCaseSensitive) {
                 partlist |= KMsvFindCaseSensitive;
             }
-            if (pf->_options & QMessageDataComparator::FullWord) {
+            if (pf->_matchFlags & QMessageDataComparator::MatchFullWord) {
                 partlist |= KMsvFindWholeWord;
             }
     
@@ -4978,10 +4978,10 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
         }
     } else {
         // Body 
-        if (options & QMessageDataComparator::CaseSensitive) {
+        if (matchFlags & QMessageDataComparator::MatchCaseSensitive) {
             partlist |= KMsvFindCaseSensitive;
         }
-        if (options & QMessageDataComparator::FullWord) {
+        if (matchFlags & QMessageDataComparator::MatchFullWord) {
             partlist |= KMsvFindWholeWord;
         }
         

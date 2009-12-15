@@ -164,7 +164,7 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
         }
     }
 
-    Qt::CaseSensitivity caseSensitivity = (filter._options & QMessageDataComparator::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+    Qt::CaseSensitivity caseSensitivity = (filter._matchFlags & QMessageDataComparator::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
     switch (filter._field) {
     case QMessageFilterPrivate::Id:
@@ -651,7 +651,7 @@ QMessageFilterPrivate* QMessageFilterPrivate::implementation(const QMessageFilte
 QMessageFilter::QMessageFilter()
  : d_ptr(new QMessageFilterPrivate(this))
 {
-	d_ptr->_options = 0;
+	d_ptr->_matchFlags = 0;
 
 	d_ptr->_valid = true; // Empty filter is valid
 	d_ptr->_notFilter = false;
@@ -689,7 +689,7 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     if (&other == this)
         return *this;
     
-    d_ptr->_options = other.d_ptr->_options;
+    d_ptr->_matchFlags = other.d_ptr->_matchFlags;
     
     d_ptr->_valid = other.d_ptr->_valid;
     d_ptr->_notFilter = other.d_ptr->_notFilter;
@@ -715,14 +715,14 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     return *this;
 }
 
-void QMessageFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
 }
 
-QMessageDataComparator::Options QMessageFilter::options() const
+QMessageDataComparator::MatchFlags QMessageFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageFilter::isEmpty() const

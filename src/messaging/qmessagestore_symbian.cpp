@@ -81,12 +81,12 @@ QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter,
     return ids;
 }
 
-QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList ids;
     QMessageServiceAction serviceaction;
     connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    if (serviceaction.queryMessages(filter, body, options, sortOrder, limit, offset)) {
+    if (serviceaction.queryMessages(filter, body, matchFlags, sortOrder, limit, offset)) {
         QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
         loop.exec();
         ids = _ids;
@@ -263,9 +263,9 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     return messageStorePrivate()->queryMessages(filter, sortOrder, limit, offset);
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return messageStorePrivate()->queryMessages(filter, body, options, sortOrder, limit, offset);
+    return messageStorePrivate()->queryMessages(filter, body, matchFlags, sortOrder, limit, offset);
 }
 
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const

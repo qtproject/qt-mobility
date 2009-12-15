@@ -89,7 +89,7 @@ struct MessageQueryInfo
     int operationId;
     bool isQuery;
     QString body;
-    QMessageDataComparator::Options options;
+    QMessageDataComparator::MatchFlags matchFlags;
     QMessageFilter filter;
     QMessageSortOrder sortOrder;
     int offset;
@@ -132,7 +132,7 @@ public:
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
     bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
     bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     bool countMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter);
     bool showMessage(const QMessageId &id);
     bool composeMessage(const QMessage &message);
@@ -193,7 +193,7 @@ private:
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
 
     void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void countMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter);
     void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
     
@@ -307,11 +307,11 @@ public:
     void filterAndOrderMessages(const QMessageFilter& filter,
                                 const QMessageSortOrder& sortOrder,
                                 const QString body = QString(),
-                                QMessageDataComparator::Options options = 0);
+                                QMessageDataComparator::MatchFlags matchFlags = 0);
     void filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
                                 const QMessageSortOrder& sortOrder,
                                 const QString body = QString(),
-                                QMessageDataComparator::Options options = 0);
+                                QMessageDataComparator::MatchFlags matchFlags = 0);
     
 protected: // From CActive
     void RunL();

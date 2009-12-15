@@ -126,7 +126,7 @@ class QueryThread : public QThread
     QMessageServiceActionPrivate *_parent;
     QMessageFilter _filter;
     QString _body;
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
     QMessageSortOrder _ordering;
     uint _limit;
     uint _offset;
@@ -135,19 +135,19 @@ class QueryThread : public QThread
     QMessageManager _manager;
 
 public:
-    QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset);
+    QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
     void run();
 
 signals:
     void completed();
 };
 
-QueryThread::QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+QueryThread::QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 : QThread(),
     _parent(parent),
     _filter(filter),
     _body(body),
-    _options(options),
+    _matchFlags(matchFlags),
     _ordering(sortOrder),
     _limit(limit),
     _offset(offset)
@@ -159,7 +159,7 @@ void QueryThread::run()
     // Ensure that this thread has initialized MAPI
     WinHelpers::MapiInitializationToken token(WinHelpers::initializeMapi());
 
-    _parent->_candidateIds = _manager.queryMessages(_filter, _body, _options, _ordering, _limit, _offset);
+    _parent->_candidateIds = _manager.queryMessages(_filter, _body, _matchFlags, _ordering, _limit, _offset);
     _parent->_lastError = _manager.lastError();
     emit completed();
 }
@@ -736,10 +736,10 @@ QMessageServiceAction::~QMessageServiceAction()
 
 bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
-    return queryMessages(filter, QString(), QMessageDataComparator::Options(), sortOrder, limit, offset);
+    return queryMessages(filter, QString(), QMessageDataComparator::MatchFlags(), sortOrder, limit, offset);
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     if (d_ptr->_active) {
         qWarning() << "Action is currently busy";
@@ -753,12 +753,12 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     emit stateChanged(d_ptr->_state);
 
 #if 0
-    d_ptr->_candidateIds = d_ptr->_manager.queryMessages(filter, body, options, sortOrder, limit, offset);
+    d_ptr->_candidateIds = d_ptr->_manager.queryMessages(filter, body, matchFlags, sortOrder, limit, offset);
     d_ptr->_lastError = d_ptr->_manager.lastError();
     QTimer::singleShot(0,d_ptr,SLOT(reportMatchingIds()));
 #else
     // Perform the query in another thread to keep the UI thread free
-    QueryThread *query = new QueryThread(d_ptr, filter, body, options, sortOrder, limit, offset);
+    QueryThread *query = new QueryThread(d_ptr, filter, body, matchFlags, sortOrder, limit, offset);
     connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMatchingIds()), Qt::QueuedConnection);
     query->start();
 
@@ -787,7 +787,7 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
     emit stateChanged(d_ptr->_state);
 
     // Perform the query in another thread to keep the UI thread free
-    QueryThread *query = new QueryThread(d_ptr, filter, QString(), QMessageDataComparator::Options(), QMessageSortOrder(), 0, 0);
+    QueryThread *query = new QueryThread(d_ptr, filter, QString(), QMessageDataComparator::MatchFlags(), QMessageSortOrder(), 0, 0);
     connect(query, SIGNAL(completed()), d_ptr, SLOT(reportMessagesCounted()), Qt::QueuedConnection);
     query->start();
 

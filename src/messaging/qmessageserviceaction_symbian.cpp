@@ -105,9 +105,9 @@ bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, c
     return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, sortOrder, limit, offset);
 }
 
-bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+bool QMessageServiceActionPrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, body, options, sortOrder, limit, offset);
+    return CMTMEngine::instance()->queryMessages((QMessageServiceActionPrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
 }
 
 bool QMessageServiceActionPrivate::countMessages(const QMessageFilter &filter)
@@ -166,7 +166,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return d_ptr->_active;
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     if (d_ptr->_active) {
         return false;
@@ -175,7 +175,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageManager::NoError;
 
-    if (d_ptr->queryMessages(filter, body, options, sortOrder, limit, offset)) {
+    if (d_ptr->queryMessages(filter, body, matchFlags, sortOrder, limit, offset)) {
         d_ptr->_state = QMessageServiceAction::InProgress;
         emit stateChanged(d_ptr->_state);
     } else {
