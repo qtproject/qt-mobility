@@ -71,16 +71,12 @@ DirectShowPlayerService::~DirectShowPlayerService()
 {
     if (m_graph) {
         m_graphEventNotifier.setEnabled(false);
-        m_renderThread.stop();
-
-        if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
-            control->Stop();
-            control->Release();
-        }
 
         m_graph->Release();
         m_graph = 0;
     }
+
+    m_renderThread.shutdown();
 
     delete m_playerControl;
     delete m_metaDataControl;

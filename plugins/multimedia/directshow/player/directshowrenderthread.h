@@ -58,6 +58,8 @@ public:
     DirectShowRenderThread(QObject *parent = 0);
     ~DirectShowRenderThread();
 
+    void shutdown();
+
     void load(const QUrl &url, IGraphBuilder *graph);
 
     void setAudioOutput(IBaseFilter *filter);
@@ -87,7 +89,7 @@ private:
 
     enum Task
     {
-        Return         = 0x0001,
+        Shutdown       = 0x0001,
         Load           = 0x0002,
         SetAudioOutput = 0x0004,
         SetVideoOutput = 0x0008,

@@ -60,28 +60,41 @@ DirectShowRenderThread::DirectShowRenderThread(QObject *parent)
 
 DirectShowRenderThread::~DirectShowRenderThread()
 {
+    if (m_audioOutput)
+        m_audioOutput->Release();
+
+    if (m_videoOutput)
+        m_videoOutput->Release();
+}
+
+void DirectShowRenderThread::shutdown()
+{
     {
         QMutexLocker locker(&m_mutex);
-        m_pendingTasks = Return;
-
-        if (m_builder)
-            m_builder->Release();
+        m_pendingTasks = Shutdown;
 
         if (m_graph)
-            m_graph->Release();
-
-        if (m_source)
-            m_source->Release();
-
-        if (m_audioOutput)
-            m_audioOutput->Release();
-
-        if (m_videoOutput)
-            m_videoOutput->Release();
-
+            m_graph->Abort();
+   
         m_wait.wakeAll();
     }
+
     wait();
+
+    if (m_builder) {
+        m_builder->Release();
+        m_builder = 0;
+    }
+
+    if (m_graph) {
+        m_graph->Release();
+        m_graph = 0;
+    }
+
+    if (m_source) {
+        m_source->Release();
+        m_source = 0;
+    }
 }
 
 void DirectShowRenderThread::load(const QUrl &url, IGraphBuilder *graph)
@@ -107,12 +120,13 @@ void DirectShowRenderThread::load(const QUrl &url, IGraphBuilder *graph)
     m_url = url;
     m_graph = graph;
 
-    if (m_graph)
+    if (m_graph) {
         m_graph->AddRef();
 
-    m_pendingTasks = Load;
+        m_pendingTasks = Load;
 
-    m_wait.wakeAll();
+        m_wait.wakeAll();
+    }
 }
 
 void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
@@ -229,7 +243,6 @@ void DirectShowRenderThread::stop()
 
     if (m_executedTasks & Load) {
         if (m_executingTask & (Play | Pause | Seek)) {
-            //m_graph->Abort();
             m_pendingTasks |= Stop;
 
             m_wait.wait(&m_mutex);
@@ -250,7 +263,7 @@ void DirectShowRenderThread::run()
 {
     QMutexLocker locker(&m_mutex);
 
-    while (!(m_pendingTasks & Return)) {
+    while (!(m_pendingTasks & Shutdown)) {
         if (m_pendingTasks & Load) {
             m_pendingTasks ^= Load;
             m_executingTask = Load;
