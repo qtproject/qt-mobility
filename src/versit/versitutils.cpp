@@ -231,7 +231,7 @@ void VersitUtils::removeBackSlashEscaping(QByteArray& text)
     for (int i=0; i < text.length(); i++) {
         char current = text.at(i);
         if (previous == '\\' && !withinQuotes) {
-            if (current == ';' || current == ',' || current == '\\') {
+            if (current == ';' || current == ',' || current == '\\' || current == ':') {
                 text.remove(i-1,1);
             } else if (current == 'n' || current == 'N') {
                 text.replace(i-1,2,"\r\n");
