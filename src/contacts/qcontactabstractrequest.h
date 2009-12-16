@@ -108,6 +108,9 @@ public slots:
     bool waitForFinished(int msecs = 0);
     bool waitForProgress(int msecs = 0); // deprecated, removed entirely week 1
 
+signals:
+    void stateChanged(QContactAbstractRequest::State newState);
+
 protected:
     QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);
     QContactAbstractRequestPrivate* d_ptr;
