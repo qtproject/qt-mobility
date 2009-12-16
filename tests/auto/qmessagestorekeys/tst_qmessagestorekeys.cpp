@@ -104,19 +104,27 @@ private:
     QMessageIdList messageIds;
 
     QList<int> messageSizes;
+
+    QMessageManager *manager;
 };
 
 Q_DECLARE_METATYPE(QMessageAccountIdList)
 Q_DECLARE_METATYPE(QMessageAccountFilter)
-Q_DECLARE_METATYPE(QMessageAccountOrdering)
+Q_DECLARE_METATYPE(QMessageAccountSortOrder)
 
 Q_DECLARE_METATYPE(QMessageFolderIdList)
 Q_DECLARE_METATYPE(QMessageFolderFilter)
-Q_DECLARE_METATYPE(QMessageFolderOrdering)
+Q_DECLARE_METATYPE(QMessageFolderSortOrder)
+
+typedef QList<QMessageFolderSortOrder> FolderSortList;
+Q_DECLARE_METATYPE(FolderSortList)
 
 Q_DECLARE_METATYPE(QMessageIdList)
 Q_DECLARE_METATYPE(QMessageFilter)
-Q_DECLARE_METATYPE(QMessageOrdering)
+Q_DECLARE_METATYPE(QMessageSortOrder)
+
+typedef QList<QMessageSortOrder> MessageSortList;
+Q_DECLARE_METATYPE(MessageSortList)
 
 typedef QList<QMessageIdList> MessageListList;
 Q_DECLARE_METATYPE(MessageListList)
@@ -141,11 +149,13 @@ QTEST_MAIN(tst_QMessageStoreKeys)
 #include "tst_qmessagestorekeys.moc"
 
 tst_QMessageStoreKeys::tst_QMessageStoreKeys()
+    : manager(0)
 {
 }
 
 tst_QMessageStoreKeys::~tst_QMessageStoreKeys()
 {
+    delete manager;
 }
 
 class Params
@@ -177,9 +187,12 @@ void tst_QMessageStoreKeys::init()
 
 void tst_QMessageStoreKeys::initTestCase()
 {
+    // Clear any existing data before we instantiate the message manager
     Support::clearMessageStore();
 
-    existingAccountIds = QMessageStore::instance()->queryAccounts().toSet();
+    manager = new QMessageManager;
+
+    existingAccountIds = manager->queryAccounts().toSet();
     existingAccountsFilter = ~QMessageFilter();
     foreach(QMessageAccountId id, existingAccountIds) {
         existingAccountsFilter |= QMessageFilter::byParentAccountId(id);
@@ -199,7 +212,7 @@ void tst_QMessageStoreKeys::initTestCase()
         QVERIFY(accountIds.last().isValid());
     }
 
-    existingFolderIds = QMessageStore::instance()->queryFolders().toSet();
+    existingFolderIds = manager->queryFolders().toSet();
 
     QList<Support::Parameters> folderParams;
     folderParams << Params()("parentAccountName", "Alter Ego")
@@ -235,7 +248,7 @@ void tst_QMessageStoreKeys::initTestCase()
         QVERIFY(folderIds.last().isValid());
     }
 
-    existingMessageIds = QMessageStore::instance()->queryMessages(~existingAccountsFilter).toSet();
+    existingMessageIds = manager->queryMessages(~existingAccountsFilter).toSet();
 
     // For windows at least, we can't have HasAttachments set without a real attachment
 #ifndef Q_OS_SYMBIAN
@@ -622,23 +635,23 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << ( QMessageAccountIdList() << accountIds[0] << accountIds[2] )
         << ( QMessageAccountIdList() << accountIds[1] );
 
-    // Test options
+    // Test matchFlags
     QMessageAccountFilter caseInsensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
-    QTest::newRow("options:caseInsensitive 1")
+    QTest::newRow("matchFlags:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageAccountIdList() << accountIds[0] )
         << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
 
     QMessageAccountFilter caseSensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
-    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 1")
+    caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 1")
         << caseSensitive1
         << QMessageAccountIdList()
         << accountIds;
 
     QMessageAccountFilter caseSensitive2(QMessageAccountFilter::byName("Work", QMessageDataComparator::Equal));
-    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 2")
+    caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageAccountIdList() << accountIds[0] )
         << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
@@ -655,8 +668,8 @@ void tst_QMessageStoreKeys::testAccountFilter()
         QCOMPARE(filter != QMessageAccountFilter(), !filter.isEmpty());
 
         // Order is irrelevant for filtering
-        QCOMPARE(QMessageStore::instance()->queryAccounts(filter).toSet().subtract(existingAccountIds), ids.toSet());
-        QCOMPARE(QMessageStore::instance()->queryAccounts(~filter).toSet().subtract(existingAccountIds), negatedIds.toSet());
+        QCOMPARE(manager->queryAccounts(filter).toSet().subtract(existingAccountIds), ids.toSet());
+        QCOMPARE(manager->queryAccounts(~filter).toSet().subtract(existingAccountIds), negatedIds.toSet());
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
@@ -664,29 +677,29 @@ void tst_QMessageStoreKeys::testAccountFilter()
 
 void tst_QMessageStoreKeys::testAccountOrdering_data()
 {
-    QTest::addColumn<QMessageAccountOrdering>("ordering");
+    QTest::addColumn<QMessageAccountSortOrder>("sortOrder");
     QTest::addColumn<QMessageAccountIdList>("ids");
 
     QTest::newRow("name ascending")
-        << QMessageAccountOrdering::byName(Qt::AscendingOrder)
+        << QMessageAccountSortOrder::byName(Qt::AscendingOrder)
         << ( QMessageAccountIdList() << accountIds[2] << accountIds[1] << accountIds[0] );
 
     QTest::newRow("name descending")
-        << QMessageAccountOrdering::byName(Qt::DescendingOrder)
+        << QMessageAccountSortOrder::byName(Qt::DescendingOrder)
         << ( QMessageAccountIdList() << accountIds[0] << accountIds[1] << accountIds[2] );
 }
 
 void tst_QMessageStoreKeys::testAccountOrdering()
 {
-    QFETCH(QMessageAccountOrdering, ordering);
+    QFETCH(QMessageAccountSortOrder, sortOrder);
     QFETCH(QMessageAccountIdList, ids);
 
-    if (ordering.isSupported()) {
-        QVERIFY(ordering == ordering);
-        QCOMPARE(ordering != QMessageAccountOrdering(), !ordering.isEmpty());
+    if (sortOrder.isSupported()) {
+        QVERIFY(sortOrder == sortOrder);
+        QCOMPARE(sortOrder != QMessageAccountSortOrder(), !sortOrder.isEmpty());
 
         // Filter out the existing accounts
-        QMessageAccountIdList sortedIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter(), ordering));
+        QMessageAccountIdList sortedIds(manager->queryAccounts(QMessageAccountFilter(), sortOrder));
         for (QMessageAccountIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
             if (existingAccountIds.contains(*it)) {
                 it = sortedIds.erase(it);
@@ -1313,23 +1326,23 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[2] )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[3] );
 
-    // Test options
+    // Test matchFlags
     QMessageFolderFilter caseInsensitive1(QMessageFolderFilter::byDisplayName("x-a", QMessageDataComparator::Includes));
-    QTest::newRow("options:caseInsensitive 1")
+    QTest::newRow("matchFlags:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
     
     QMessageFolderFilter caseSensitive1(QMessageFolderFilter::byDisplayName("x-a", QMessageDataComparator::Includes));
-    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 1")
+    caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 1")
         << caseSensitive1
         << QMessageFolderIdList()
         << folderIds;
 
     QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byDisplayName("X-A", QMessageDataComparator::Includes));
-    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 2")
+    caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
@@ -1346,8 +1359,8 @@ void tst_QMessageStoreKeys::testFolderFilter()
         QCOMPARE(filter != QMessageFolderFilter(), !filter.isEmpty());
 
         // Order is irrelevant for filtering
-        QCOMPARE(QMessageStore::instance()->queryFolders(filter).toSet().subtract(existingFolderIds), ids.toSet());
-        QCOMPARE(QMessageStore::instance()->queryFolders(~filter).toSet().subtract(existingFolderIds), negatedIds.toSet());
+        QCOMPARE(manager->queryFolders(filter).toSet().subtract(existingFolderIds), ids.toSet());
+        QCOMPARE(manager->queryFolders(~filter).toSet().subtract(existingFolderIds), negatedIds.toSet());
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
@@ -1355,11 +1368,11 @@ void tst_QMessageStoreKeys::testFolderFilter()
 
 void tst_QMessageStoreKeys::testFolderOrdering_data()
 {
-    QTest::addColumn<QMessageFolderOrdering>("ordering");
+    QTest::addColumn<FolderSortList>("sorts");
     QTest::addColumn<QMessageFolderIdList>("ids");
 
     QTest::newRow("path ascending")
-        << QMessageFolderOrdering::byPath(Qt::AscendingOrder)
+        << ( FolderSortList() << QMessageFolderSortOrder::byPath(Qt::AscendingOrder) )
 #ifndef Q_OS_SYMBIAN    
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] << folderIds[0] );
 #else
@@ -1367,7 +1380,7 @@ void tst_QMessageStoreKeys::testFolderOrdering_data()
 #endif
 
     QTest::newRow("path descending")
-        << QMessageFolderOrdering::byPath(Qt::DescendingOrder)
+        << ( FolderSortList() << QMessageFolderSortOrder::byPath(Qt::DescendingOrder) )
 #ifndef Q_OS_SYMBIAN    
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[3] << folderIds[2] << folderIds[1] );
 #else
@@ -1375,25 +1388,26 @@ void tst_QMessageStoreKeys::testFolderOrdering_data()
 #endif
 
     QTest::newRow("displayName ascending")
-        << QMessageFolderOrdering::byDisplayName(Qt::AscendingOrder)
+        << ( FolderSortList() << QMessageFolderSortOrder::byDisplayName(Qt::AscendingOrder) )
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[0] << folderIds[2] << folderIds[3] );
 
     QTest::newRow("displayName descending")
-        << QMessageFolderOrdering::byDisplayName(Qt::DescendingOrder)
+        << ( FolderSortList() << QMessageFolderSortOrder::byDisplayName(Qt::DescendingOrder) )
         << ( QMessageFolderIdList() << folderIds[3] << folderIds[2] << folderIds[0] << folderIds[1] );
     
     QTest::newRow("path ascending + displayName ascending")
-        << ( QMessageFolderOrdering::byPath(Qt::AscendingOrder) + QMessageFolderOrdering::byDisplayName(Qt::AscendingOrder) )
+        << ( FolderSortList() << QMessageFolderSortOrder::byPath(Qt::AscendingOrder) << QMessageFolderSortOrder::byDisplayName(Qt::AscendingOrder) )
 #ifndef Q_OS_SYMBIAN    
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] << folderIds[0] );
 #else
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[0] << folderIds[2] << folderIds[3] );
 #endif
 
-    QMessageFolderOrdering plusEquals(QMessageFolderOrdering::byPath(Qt::AscendingOrder));
-    plusEquals += QMessageFolderOrdering::byDisplayName(Qt::AscendingOrder);
+    QMessageFolderSortOrder plusEquals(QMessageFolderSortOrder::byPath(Qt::AscendingOrder));
+    plusEquals += QMessageFolderSortOrder::byDisplayName(Qt::AscendingOrder);
+
     QTest::newRow("path ascending += displayName ascending")
-        << plusEquals
+        << ( FolderSortList() << plusEquals )
 #ifndef Q_OS_SYMBIAN    
         << ( QMessageFolderIdList() << folderIds[1] << folderIds[2] << folderIds[3] << folderIds[0] );
 #else
@@ -1403,15 +1417,20 @@ void tst_QMessageStoreKeys::testFolderOrdering_data()
 
 void tst_QMessageStoreKeys::testFolderOrdering()
 {
-    QFETCH(QMessageFolderOrdering, ordering);
+    QFETCH(FolderSortList, sorts);
     QFETCH(QMessageFolderIdList, ids);
 
-    if (ordering.isSupported()) {
-        QVERIFY(ordering == ordering);
-        QCOMPARE(ordering != QMessageFolderOrdering(), !ordering.isEmpty());
+    bool supported(true);
+    foreach (const QMessageFolderSortOrder &element, sorts) {
+        QVERIFY(element == element);
+        QCOMPARE(element != QMessageFolderSortOrder(), !element.isEmpty());
 
+        supported &= element.isSupported();
+    }
+
+    if (supported) {
         // Filter out the existing folders
-        QMessageFolderIdList sortedIds(QMessageStore::instance()->queryFolders(QMessageFolderFilter(), ordering));
+        QMessageFolderIdList sortedIds(manager->queryFolders(QMessageFolderFilter(), sorts));
         for (QMessageFolderIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
             if (existingFolderIds.contains(*it)) {
                 it = sortedIds.erase(it);
@@ -2780,25 +2799,25 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
 
-    // Test options
+    // Test matchFlags
     QMessageFilter caseInsensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
-    QTest::newRow("options:caseInsensitive 1")
+    QTest::newRow("matchFlags:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
 
     QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
-    caseSensitive1.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 1")
+    caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 1")
         << caseSensitive1
         << QMessageIdList()
         << messageIds
         << "";
 
     QMessageFilter caseSensitive2(QMessageFilter::bySubject("Free beer", QMessageDataComparator::Equal));
-    caseSensitive2.setOptions(QMessageDataComparator::CaseSensitive);
-    QTest::newRow("options:caseSensitive 2")
+    caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+    QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
@@ -2818,11 +2837,11 @@ void tst_QMessageStoreKeys::testMessageFilter()
         
         // Order is irrelevant for filtering
         if (body.isEmpty()) {
-            QCOMPARE(QMessageStore::instance()->queryMessages(filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), ids.toSet());
-            QCOMPARE(QMessageStore::instance()->queryMessages(~filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), negatedIds.toSet());
+            QCOMPARE(manager->queryMessages(filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), ids.toSet());
+            QCOMPARE(manager->queryMessages(~filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), negatedIds.toSet());
         } else {
-            QCOMPARE(QMessageStore::instance()->queryMessages(filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), ids.toSet());
-            QCOMPARE(QMessageStore::instance()->queryMessages(~filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), negatedIds.toSet());
+            QCOMPARE(manager->queryMessages(filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), ids.toSet());
+            QCOMPARE(manager->queryMessages(~filter&~existingAccountsFilter, body).toSet().subtract(existingMessageIds), negatedIds.toSet());
         }
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
@@ -2831,11 +2850,11 @@ void tst_QMessageStoreKeys::testMessageFilter()
 
 void tst_QMessageStoreKeys::testMessageOrdering_data()
 {
-    QTest::addColumn<QMessageOrdering>("ordering");
+    QTest::addColumn<MessageSortList>("sorts");
     QTest::addColumn<MessageListList>("ids");
 
     QTest::newRow("type ascending")
-        << QMessageOrdering::byType(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::AscendingOrder) )
 #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
         << ( MessageListList() << messageIds ); // All messages are Email type
 #else
@@ -2844,7 +2863,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 #endif
 
     QTest::newRow("type descending")
-        << QMessageOrdering::byType(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::DescendingOrder) )
 #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
         << ( MessageListList() << messageIds ); // All messages are Email type
 #else
@@ -2853,33 +2872,33 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 #endif
 
     QTest::newRow("sender ascending")
-        << QMessageOrdering::bySender(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::bySender(Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[3] ) );
 
     QTest::newRow("sender descending")
-        << QMessageOrdering::bySender(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::bySender(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] << messageIds[4] ) );
 
     QTest::newRow("recipients ascending")
-        << QMessageOrdering::byRecipients(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byRecipients(Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] )
                                << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[3] << messageIds[4] ) );
 
     QTest::newRow("recipients descending")
-        << QMessageOrdering::byRecipients(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byRecipients(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[3] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] ) );
 
     QTest::newRow("subject ascending")
-        << QMessageOrdering::bySubject(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::bySubject(Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[1] )
@@ -2887,7 +2906,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[3] ) );
 
     QTest::newRow("subject descending")
-        << QMessageOrdering::bySubject(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::bySubject(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] )
@@ -2895,20 +2914,20 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[4] ) );
 
     QTest::newRow("timeStamp ascending")
-        << QMessageOrdering::byTimeStamp(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byTimeStamp(Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] << messageIds[3] ) );
 
     QTest::newRow("timeStamp descending")
-        << QMessageOrdering::byTimeStamp(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byTimeStamp(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] << messageIds[3] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[1] )
                                << ( QMessageIdList() << messageIds[4] ) );
 
 #ifndef Q_OS_SYMBIAN
     QTest::newRow("receptionTimeStamp ascending")
-        << QMessageOrdering::byReceptionTimeStamp(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byReceptionTimeStamp(Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] )
                                << ( QMessageIdList() << messageIds[3] )
@@ -2916,7 +2935,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[1] ) );
 
     QTest::newRow("receptionTimeStamp descending")
-        << QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[3] )
@@ -2925,19 +2944,19 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 #endif    
 
     QTest::newRow("priority ascending")
-        << QMessageOrdering::byPriority(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byPriority(Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[3] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] ) );
 
     QTest::newRow("priority descending")
-        << QMessageOrdering::byPriority(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byPriority(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] ) );
 
     QTest::newRow("size ascending")
-        << QMessageOrdering::bySize(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::bySize(Qt::AscendingOrder) )
 #if defined(Q_OS_SYMBIAN)
         << ( MessageListList() << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[0] )
@@ -2957,7 +2976,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[2] ) );
 
     QTest::newRow("size descending")
-        << QMessageOrdering::bySize(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::bySize(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
 #if defined(Q_OS_SYMBIAN)
                                << ( QMessageIdList() << messageIds[1] )
@@ -2977,28 +2996,30 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 #endif        
 
     QTest::newRow("status:HasAttachments ascending")
-        << QMessageOrdering::byStatus(QMessage::HasAttachments, Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byStatus(QMessage::HasAttachments, Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] << messageIds[3] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] ) );
 
     QTest::newRow("status:HasAttachments descending")
-        << QMessageOrdering::byStatus(QMessage::HasAttachments, Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byStatus(QMessage::HasAttachments, Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[3] ) );
 
     QTest::newRow("status:Read ascending")
-        << QMessageOrdering::byStatus(QMessage::Read, Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byStatus(QMessage::Read, Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] ) );
 
     QTest::newRow("status:Read descending")
-        << QMessageOrdering::byStatus(QMessage::Read, Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byStatus(QMessage::Read, Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] ) );
 
     // On Windows, the following tests do not vary by type (which is always Email)
     QTest::newRow("type ascending, priority ascending, size ascending")
-        << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::AscendingOrder)
+                               << QMessageSortOrder::byPriority(Qt::AscendingOrder)
+                               << QMessageSortOrder::bySize(Qt::AscendingOrder) )
 #if defined(Q_OS_WIN)
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] )
@@ -3020,7 +3041,9 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 #endif
 
     QTest::newRow("type ascending, priority ascending, size descending")
-        << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::AscendingOrder)
+                               << QMessageSortOrder::byPriority(Qt::AscendingOrder)
+                               << QMessageSortOrder::bySize(Qt::DescendingOrder) )
 #if defined(Q_OS_WIN)
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[3] )
@@ -3042,7 +3065,9 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 #endif
 
     QTest::newRow("type ascending, priority descending, size ascending")
-        << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::DescendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::AscendingOrder) 
+                               << QMessageSortOrder::byPriority(Qt::DescendingOrder)
+                               << QMessageSortOrder::bySize(Qt::AscendingOrder) )
 #if defined(Q_OS_WIN)
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] )
@@ -3062,9 +3087,13 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[4] ) );
 #endif
+
+    QMessageSortOrder plus(QMessageSortOrder::byType(Qt::AscendingOrder) + 
+                           QMessageSortOrder::byPriority(Qt::DescendingOrder) + 
+                           QMessageSortOrder::bySize(Qt::DescendingOrder));
 
     QTest::newRow("type ascending, priority descending, size descending")
-        << QMessageOrdering::byType(Qt::AscendingOrder) + QMessageOrdering::byPriority(Qt::DescendingOrder) + QMessageOrdering::bySize(Qt::DescendingOrder)
+        << ( MessageSortList() << plus )
 #if defined(Q_OS_WIN)
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] )
@@ -3085,11 +3114,12 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[4] ) );
 #endif
 
-    QMessageOrdering plusEquals(QMessageOrdering::byType(Qt::AscendingOrder));
-    plusEquals += QMessageOrdering::byPriority(Qt::DescendingOrder);
-    plusEquals += QMessageOrdering::bySize(Qt::DescendingOrder);
+    QMessageSortOrder plusEquals(QMessageSortOrder::byType(Qt::AscendingOrder));
+    plusEquals += QMessageSortOrder::byPriority(Qt::DescendingOrder);
+    plusEquals += QMessageSortOrder::bySize(Qt::DescendingOrder);
+
     QTest::newRow("type ascending += priority descending += size descending")
-        << plusEquals
+        << ( MessageSortList() << plusEquals )
 #if defined(Q_OS_WIN)
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] )
@@ -3112,7 +3142,9 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 
 #if !defined(Q_OS_WIN) && !defined(Q_OS_SYMBIAN)
     QTest::newRow("type descending, priority ascending, size ascending")
-        << QMessageOrdering::byType(Qt::DescendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::DescendingOrder)
+                               << QMessageSortOrder::byPriority(Qt::AscendingOrder)
+                               << QMessageSortOrder::bySize(Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[1] )
@@ -3120,7 +3152,9 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[0] ) );
 
     QTest::newRow("type descending, priority ascending, size descending")
-        << QMessageOrdering::byType(Qt::DescendingOrder) + QMessageOrdering::byPriority(Qt::AscendingOrder) + QMessageOrdering::bySize(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::DescendingOrder)
+                               << QMessageSortOrder::byPriority(Qt::AscendingOrder)
+                               << QMessageSortOrder::bySize(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[4] )
                                << ( QMessageIdList() << messageIds[3] )
                                << ( QMessageIdList() << messageIds[2] )
@@ -3128,7 +3162,9 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[0] ) );
 
     QTest::newRow("type descending, priority descending, size ascending")
-        << QMessageOrdering::byType(Qt::DescendingOrder) + QMessageOrdering::byPriority(Qt::DescendingOrder) + QMessageOrdering::bySize(Qt::AscendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::DescendingOrder)
+                               << QMessageSortOrder::byPriority(Qt::DescendingOrder)
+                               << QMessageSortOrder::bySize(Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[3] )
@@ -3136,7 +3172,9 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[0] ) );
 
     QTest::newRow("type descending, priority descending, size descending")
-        << QMessageOrdering::byType(Qt::DescendingOrder) + QMessageOrdering::byPriority(Qt::DescendingOrder) + QMessageOrdering::bySize(Qt::DescendingOrder)
+        << ( MessageSortList() << QMessageSortOrder::byType(Qt::DescendingOrder)
+                               << QMessageSortOrder::byPriority(Qt::DescendingOrder)
+                               << QMessageSortOrder::bySize(Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[2] )
                                << ( QMessageIdList() << messageIds[1] )
                                << ( QMessageIdList() << messageIds[3] )
@@ -3147,15 +3185,20 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
 
 void tst_QMessageStoreKeys::testMessageOrdering()
 {
-    QFETCH(QMessageOrdering, ordering);
+    QFETCH(MessageSortList, sorts);
     QFETCH(MessageListList, ids);
 
-    if (ordering.isSupported()) {
-        QVERIFY(ordering == ordering);
-        QCOMPARE(ordering != QMessageOrdering(), !ordering.isEmpty());
+    bool supported(true);
+    foreach (const QMessageSortOrder &element, sorts) {
+        QVERIFY(element == element);
+        QCOMPARE(element != QMessageSortOrder(), !element.isEmpty());
 
+        supported &= element.isSupported();
+    }
+
+    if (supported) {
         // Filter out the existing messages
-        QMessageIdList sortedIds(QMessageStore::instance()->queryMessages(~existingAccountsFilter, ordering));
+        QMessageIdList sortedIds(manager->queryMessages(~existingAccountsFilter, sorts));
         for (QMessageIdList::iterator it = sortedIds.begin(); it != sortedIds.end(); ) {
             if (existingMessageIds.contains(*it)) {
                 it = sortedIds.erase(it);

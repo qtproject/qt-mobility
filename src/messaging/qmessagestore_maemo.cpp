@@ -91,44 +91,44 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageStore::ErrorCode QMessageStore::lastError() const
+QMessageManager::Error QMessageManager::lastError() const
 {
     return NotYetImplemented;
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     Q_UNUSED(filter)
-    Q_UNUSED(ordering)
+    Q_UNUSED(sortOrder)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
     return QMessageIdList(); // stub
 }
 
-QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const
+QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     Q_UNUSED(filter)
-    Q_UNUSED(ordering)
+    Q_UNUSED(sortOrder)
     Q_UNUSED(body)
-    Q_UNUSED(options)
+    Q_UNUSED(matchFlags)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
     return QMessageIdList(); // stub
 }
 
-QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderOrdering &ordering, uint limit, uint offset) const
+QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
     Q_UNUSED(filter)
-    Q_UNUSED(ordering)
+    Q_UNUSED(sortOrder)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
     return QMessageFolderIdList(); // stub
 }
 
-QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountOrdering &ordering, uint limit, uint offset) const
+QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
     Q_UNUSED(filter)
-    Q_UNUSED(ordering)
+    Q_UNUSED(sortOrder)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
     return QMessageAccountIdList(); // stub
@@ -159,7 +159,7 @@ bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
     return false; // stub
 }
 
-bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageStore::RemovalOption option)
+bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
 {
     Q_UNUSED(filter)
     Q_UNUSED(option)
@@ -196,13 +196,13 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
     return QMessageAccount(); // stub
 }
 
-QMessageStore::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
+QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
     Q_UNUSED(filter)
     return 0; // stub
 }
 
-void QMessageStore::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
+void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
     Q_UNUSED(notificationFilterId)
 }

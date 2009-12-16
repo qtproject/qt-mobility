@@ -143,7 +143,7 @@ bool QMessageFolderFilterPrivate::filter(const QMessageFolder &messageFolder, co
 
     bool retVal = false;
     
-    Qt::CaseSensitivity caseSensitivity = (filter._options & QMessageDataComparator::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive; 
+    Qt::CaseSensitivity caseSensitivity = (filter._matchFlags & QMessageDataComparator::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive; 
     
     switch (filter._field) {
     case QMessageFolderFilterPrivate::Id:
@@ -347,7 +347,7 @@ QMessageFolderFilterPrivate* QMessageFolderFilterPrivate::implementation(const Q
 QMessageFolderFilter::QMessageFolderFilter()
  : d_ptr(new QMessageFolderFilterPrivate(this))
 {
-    d_ptr->_options = 0;
+    d_ptr->_matchFlags = 0;
     
     d_ptr->_valid = true; // Empty filter is valid
     d_ptr->_notFilter = false;
@@ -379,7 +379,7 @@ QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter
     if (&other == this)
         return *this;
     
-    d_ptr->_options = other.d_ptr->_options;
+    d_ptr->_matchFlags = other.d_ptr->_matchFlags;
     
     d_ptr->_valid = other.d_ptr->_valid;
     d_ptr->_notFilter = other.d_ptr->_notFilter;
@@ -399,14 +399,14 @@ QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter
     return *this;
 }
 
-void QMessageFolderFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageFolderFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
 }
 
-QMessageDataComparator::Options QMessageFolderFilter::options() const
+QMessageDataComparator::MatchFlags QMessageFolderFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageFolderFilter::isEmpty() const

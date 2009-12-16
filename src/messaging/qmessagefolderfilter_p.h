@@ -48,7 +48,7 @@
 #endif
 #ifdef Q_OS_WIN
 #include "winhelpers_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #endif
 #include <QSet>
 
@@ -104,7 +104,7 @@ public:
     static bool lessThan(const QMessageFolderFilter filter1, const QMessageFolderFilter filter2); 
     static QMessageFolderFilterPrivate* implementation(const QMessageFolderFilter &filter);
 
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
     
     enum Field {None = 0, ParentAccountIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, DisplayName, Path };
     enum Comparator {Equality = 0, Inclusion};
@@ -132,7 +132,7 @@ public:
     QString _value;
     QMessageDataComparator::EqualityComparator _equality;
     QMessageDataComparator::InclusionComparator _inclusion;
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
     bool _valid;
     QList<QMessageFolderFilter*> _arguments; // for bool ops
     QMessageAccountFilter *_accountFilter;
@@ -140,8 +140,8 @@ public:
 #endif
 
 #ifdef Q_OS_WIN
-    static QMessageFolderFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);
-    static void preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFolderFilter *filter);
+    static QMessageFolderFilter preprocess(QMessageManager::Error *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);
+    static void preprocess(QMessageManager::Error *lastError, MapiSessionPtr session, QMessageFolderFilter *filter);
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
     static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif

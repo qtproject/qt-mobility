@@ -46,7 +46,7 @@
 #include <qcontactmanager.h>
 #include <qcontactphonenumber.h>
 #include <qmessage.h>
-#include <qmessageserviceaction.h>
+#include <qmessageservice.h>
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -125,8 +125,8 @@ AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
  {
     setupUi();
 
-    connect(&serviceAction, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
-    connect(&serviceAction, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
+    connect(&service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
+    connect(&service, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
 }
 
 AddressFinder::~AddressFinder()
@@ -245,10 +245,10 @@ void AddressFinder::searchMessages()
 //! [begin-search]
     if (useExclusionPeriod) {
         // Start the search for messages containing addresses to exclude
-        serviceAction.queryMessages(exclusionFilter);
+        service.queryMessages(exclusionFilter);
     } else {
         // Only search for messages containing addresses to include
-        serviceAction.queryMessages(inclusionFilter);
+        service.queryMessages(inclusionFilter);
 
         // Clear the inclusion filter to indicate that we have searched for it
         inclusionFilter = QMessageFilter();
@@ -257,12 +257,12 @@ void AddressFinder::searchMessages()
 }
 
 //! [handle-search-result]
-void AddressFinder::stateChanged(QMessageServiceAction::State s)
+void AddressFinder::stateChanged(QMessageService::State s)
 {
-    if (s == QMessageServiceAction::Successful) {
+    if (s == QMessageService::Successful) {
         if (!inclusionFilter.isEmpty()) {
             // Now find the included messages
-            serviceAction.queryMessages(inclusionFilter);
+            service.queryMessages(inclusionFilter);
 
             // Clear the inclusion filter to indicate that we have searched for it
             inclusionFilter = QMessageFilter();
@@ -279,7 +279,7 @@ void AddressFinder::stateChanged(QMessageServiceAction::State s)
 #endif
             }
         }
-    } else if (s == QMessageServiceAction::Failed) {
+    } else if (s == QMessageService::Failed) {
         qWarning() << "Search failed!";
         setSearchActionEnabled(true);
     }
@@ -508,7 +508,7 @@ void AddressFinder::showMessage()
 
         // Show the message selected
         QMessageId &messageId((addressMessages[selectedAddress])[index].second);
-        serviceAction.show(messageId);
+        service.show(messageId);
     }
 }
 //! [show-message]
@@ -528,7 +528,7 @@ void AddressFinder::forwardMessage()
         // Create a message which forwards the selected message to the same recipient
         QMessage fwd(original.createResponseMessage(QMessage::Forward));
         fwd.setTo(original.to());
-        serviceAction.compose(fwd);
+        service.compose(fwd);
     }
 }
 //! [compose-message]

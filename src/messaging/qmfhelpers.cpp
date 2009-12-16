@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qmfhelpers_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 
 #include <QRegExp>
 
@@ -51,7 +51,8 @@ namespace {
 
 quint64 messageStatusMask(const QString &field)
 {
-    return QmfHelpers::convert(QMessageStore::instance())->messageStatusMask(field);
+    QMessageManager mgr;
+    return QmfHelpers::convert(mgr)->messageStatusMask(field);
 }
 
 }
@@ -234,14 +235,14 @@ QMailMessage::MessageType convert(QMessage::TypeFlags v)
 }
 
 /*
-QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
+QMailStore::ErrorCode convert(QMessageManager::Error v)
 {
     switch (v) {
-    case QMessageStore::InvalidId: return QMailStore::InvalidId;
-    case QMessageStore::ConstraintFailure: return QMailStore::ConstraintFailure;
-    case QMessageStore::ContentInaccessible: return QMailStore::ContentInaccessible;
-    case QMessageStore::NotYetImplemented: return QMailStore::NotYetImplemented;
-    case QMessageStore::FrameworkFault: return QMailStore::FrameworkFault;
+    case QMessageManager::InvalidId: return QMailStore::InvalidId;
+    case QMessageManager::ConstraintFailure: return QMailStore::ConstraintFailure;
+    case QMessageManager::ContentInaccessible: return QMailStore::ContentInaccessible;
+    case QMessageManager::NotYetImplemented: return QMailStore::NotYetImplemented;
+    case QMessageManager::FrameworkFault: return QMailStore::FrameworkFault;
     default: break;
     }
 
@@ -249,24 +250,24 @@ QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
 }
 */
 
-QMessageStore::ErrorCode convert(QMailStore::ErrorCode v)
+QMessageManager::Error convert(QMailStore::ErrorCode v)
 {
     switch (v) {
-    case QMailStore::InvalidId: return QMessageStore::InvalidId;
-    case QMailStore::ConstraintFailure: return QMessageStore::ConstraintFailure;
-    case QMailStore::ContentInaccessible: return QMessageStore::ContentInaccessible;
-    case QMailStore::NotYetImplemented: return QMessageStore::NotYetImplemented;
-    case QMailStore::FrameworkFault: return QMessageStore::FrameworkFault;
+    case QMailStore::InvalidId: return QMessageManager::InvalidId;
+    case QMailStore::ConstraintFailure: return QMessageManager::ConstraintFailure;
+    case QMailStore::ContentInaccessible: return QMessageManager::ContentInaccessible;
+    case QMailStore::NotYetImplemented: return QMessageManager::NotYetImplemented;
+    case QMailStore::FrameworkFault: return QMessageManager::FrameworkFault;
     default: break;
     }
 
-    return QMessageStore::NoError;
+    return QMessageManager::NoError;
 }
 
-QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v)
+QMailStore::MessageRemovalOption convert(QMessageManager::RemovalOption v)
 {
     switch (v) {
-    case QMessageStore::RemoveOnOriginatingServer: return QMailStore::CreateRemovalRecord;
+    case QMessageManager::RemoveOnOriginatingServer: return QMailStore::CreateRemovalRecord;
     default: break;
     }
 
@@ -274,41 +275,41 @@ QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v)
 }
 
 /*
-QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
+QMessageManager::RemovalOption convert(QMailStore::MessageRemovalOption v)
 {
     switch (v) {
-    case QMailStore::CreateRemovalRecord: return QMessageStore::RemoveOnOriginatingServer;
+    case QMailStore::CreateRemovalRecord: return QMessageManager::RemoveOnOriginatingServer;
     default: break;
     }
 
-    return QMessageStore::RemoveLocalCopyOnly;
+    return QMessageManager::RemoveLocalCopyOnly;
 }
 */
 
-QMailServiceAction::Activity convert(QMessageServiceAction::State v)
+QMailServiceAction::Activity convert(QMessageService::State v)
 {
     switch (v) {
-    case QMessageServiceAction::Pending: return QMailServiceAction::Pending;
-    case QMessageServiceAction::InProgress: return QMailServiceAction::InProgress;
-    case QMessageServiceAction::Successful: return QMailServiceAction::Successful;
-    case QMessageServiceAction::Failed: return QMailServiceAction::Failed;
+    case QMessageService::Pending: return QMailServiceAction::Pending;
+    case QMessageService::InProgress: return QMailServiceAction::InProgress;
+    case QMessageService::Successful: return QMailServiceAction::Successful;
+    case QMessageService::Failed: return QMailServiceAction::Failed;
     default: break;
     }
 
     return QMailServiceAction::Pending;
 }
 
-QMessageServiceAction::State convert(QMailServiceAction::Activity v)
+QMessageService::State convert(QMailServiceAction::Activity v)
 {
     switch (v) {
-    case QMailServiceAction::Pending: return QMessageServiceAction::Pending;
-    case QMailServiceAction::InProgress: return QMessageServiceAction::InProgress;
-    case QMailServiceAction::Successful: return QMessageServiceAction::Successful;
-    case QMailServiceAction::Failed: return QMessageServiceAction::Failed;
+    case QMailServiceAction::Pending: return QMessageService::Pending;
+    case QMailServiceAction::InProgress: return QMessageService::InProgress;
+    case QMailServiceAction::Successful: return QMessageService::Successful;
+    case QMailServiceAction::Failed: return QMessageService::Failed;
     default: break;
     }
 
-    return QMessageServiceAction::Pending;
+    return QMessageService::Pending;
 }
 
 QMessage::StatusFlags convert(quint64 v)
@@ -381,7 +382,7 @@ QMessageAddress convert(const QMailAddress &address)
             }
         }
 
-        return QMessageAddress(addr, type);
+        return QMessageAddress(type, addr);
     }
 
     return QMessageAddress();
@@ -521,18 +522,18 @@ QMailMessageKey convert(const QMessageFilter &filter);
 */
 
 /* in qmessageaccountsortkey_qmf.cpp
-QMessageAccountOrdering convert(const QMailAccountSortKey &key);
-QMailAccountSortKey convert(const QMessageAccountOrdering &ordering);
+QMessageAccountSortOrder convert(const QMailAccountSortKey &key);
+QMailAccountSortKey convert(const QMessageAccountSortOrder &sortOrder);
 */
 
 /* in qmessagefoldersortkey_qmf.cpp
-QMessageFolderOrdering convert(const QMailFolderSortKey &key);
-QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
+QMessageFolderSortOrder convert(const QMailFolderSortKey &key);
+QMailFolderSortKey convert(const QMessageFolderSortOrder &sortOrder);
 */
 
 /* in qmessagesortkey_qmf.cpp
-QMessageOrdering convert(const QMailMessageSortKey &key);
-QMailMessageSortKey convert(const QMessageOrdering &ordering);
+QMessageSortOrder convert(const QMailMessageSortKey &key);
+QMailMessageSortKey convert(const QMessageSortOrder &sortOrder);
 */
 
 /* in qmessageaccount_qmf.cpp
@@ -553,7 +554,7 @@ QMailMessage* convert(QMessage *message);
 
 /* in qmessagestore_qmf.cpp
 QMailStore *convert(QMessageStore *store);
-const QMailStore *convert(const QMessageStore *store);
+QMailStore *convert(QMessageManager &manager);
 */
 
 quint64 highPriorityMask()

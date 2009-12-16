@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "qmessagefolder.h"
 #include "qmessagefolder_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 
 
 QTM_BEGIN_NAMESPACE
@@ -64,7 +64,7 @@ QMessageFolder::QMessageFolder()
 QMessageFolder::QMessageFolder(const QMessageFolderId &id)
     :d_ptr(new QMessageFolderPrivate(this))
 {
-    *this = QMessageStore::instance()->folder(id);
+    *this = QMessageManager().folder(id);
 }
 
 QMessageFolder::QMessageFolder(const QMessageFolder &other)

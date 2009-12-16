@@ -53,13 +53,13 @@ QTM_BEGIN_NAMESPACE
 
     A QMessageFolderFilter is composed of a folder property, an optional comparison operator
     and a comparison value. The QMessageFolderFilter class is used in conjunction with the 
-    QMessageStore::queryFolders() and QMessageStore::countFolders() functions to filter results 
+    QMessageManager::queryFolders() and QMessageManager::countFolders() functions to filter results 
     which meet the criteria defined by the filter.
 
     QMessageFolderFilters can be combined using the logical operators (&), (|) and (~) to
     create more refined queries.
 
-    \sa QMessageStore, QMessageFolder
+    \sa QMessageManager, QMessageFolder
 */
 
 /*!
@@ -90,21 +90,21 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageFolderFilter::setOptions(QMessageDataComparator::Options options)
+    \fn QMessageFolderFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
   
-    Set the options for the search filter to \a options.
+    Set the match flags for the search filter to \a matchFlags.
 
-    \sa options()
+    \sa matchFlags()
 */
 
 /*!
-    \fn QMessageDataComparator::Options QMessageFolderFilter::options() const
+    \fn QMessageDataComparator::MatchFlags QMessageFolderFilter::matchFlags() const
   
-    Return the options for the search filter.
+    Return the match flags for the search filter.
     
-    Default is no options set.
+    Default is no match flags set.
 
-    \sa setOptions()
+    \sa setMatchFlags()
 */
 
 /*!
@@ -130,7 +130,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageFolderFilter::operator~() const
   
     Returns a filter that is the logical NOT of the value of this filter (ignoring any
-    options() set on the filter).
+    matchFlags() set on the filter).
 
     If this filter is empty, the result will be a non-matching filter; if this filter is 
     non-matching, the result will be an empty filter.

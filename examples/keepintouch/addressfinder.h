@@ -76,7 +76,7 @@ private slots:
     void excludePeriodEnabled(int);
     void addressSelected(const QString&);
     void searchMessages();
-    void stateChanged(QMessageServiceAction::State a);
+    void stateChanged(QMessageService::State a);
     void messagesFound(const QMessageIdList &ids);
     void continueSearch();
 #ifndef USE_SEARCH_BUTTON
@@ -104,7 +104,7 @@ private:
     QPushButton *showButton;
     QPushButton *forwardButton;
 
-    QMessageServiceAction serviceAction;
+    QMessageService service;
 
     QMessageFilter inclusionFilter;
 

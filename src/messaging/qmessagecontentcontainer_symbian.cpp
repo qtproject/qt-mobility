@@ -315,7 +315,7 @@ bool QMessageContentContainer::isContentAvailable() const
     return d_ptr->_available;
 }
 
-uint QMessageContentContainer::size() const
+int QMessageContentContainer::size() const
 {
     return d_ptr->_size;
 }
@@ -348,12 +348,12 @@ QByteArray QMessageContentContainer::content() const
     return d_ptr->_content;
 }
 
-void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
+void QMessageContentContainer::writeTextContent(QTextStream& out) const
 {
     out << textContent();
 }
 
-void QMessageContentContainer::writeContentTo(QDataStream& out) const
+void QMessageContentContainer::writeContent(QDataStream& out) const
 {
     QByteArray data(content());
     out.writeRawData(data.constData(), data.length());

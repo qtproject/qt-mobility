@@ -49,7 +49,7 @@ QMessageAccountFilterPrivate::QMessageAccountFilterPrivate(QMessageAccountFilter
       _criterion(None),
       _equality(QMessageDataComparator::Equal),
       _inclusion(QMessageDataComparator::Includes),
-      _options(0),
+      _matchFlags(0),
       _valid(true)
 {
 }
@@ -70,7 +70,7 @@ QMessageAccountFilterPrivate &QMessageAccountFilterPrivate::operator=(const QMes
     _name = other._name;
     _equality = other._equality;
     _inclusion = other._inclusion;
-    _options = other._options;
+    _matchFlags = other._matchFlags;
     _valid = other._valid;
     foreach(QMessageAccountFilter* filter, _arguments) {
         delete filter;
@@ -91,7 +91,7 @@ bool QMessageAccountFilterPrivate::operator==(const QMessageAccountFilterPrivate
                 (_name == other._name) &&
                 (_equality == other._equality) &&
                 (_inclusion == other._inclusion) &&
-                (_options == other._options) &&
+                (_matchFlags == other._matchFlags) &&
                 (_valid == other._valid));
     if (!result)
         return false;
@@ -137,13 +137,13 @@ bool QMessageAccountFilterPrivate::matchesStore(const QMessageAccountFilter &fil
         } else if ((f->_criterion == NameEquality) || (f->_criterion == NameInclusion)) {
             QString storeName(store->name());
             QString fName(f->_name);
-            if ((f->_options & QMessageDataComparator::CaseSensitive) == 0) {
+            if ((f->_matchFlags & QMessageDataComparator::MatchCaseSensitive) == 0) {
                 storeName = storeName.toLower();
                 fName = fName.toLower();
             }
 
             if (f->_criterion == NameEquality) {
-                // TODO: Apply options
+                // TODO: Apply matchFlags
                 bool nameEqual(storeName == fName);
                 result = (f->_equality == QMessageDataComparator::Equal ? nameEqual : !nameEqual);
             } else {
@@ -208,20 +208,20 @@ QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFil
     return *this;
 }
 
-void QMessageAccountFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageAccountFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
     d_ptr->_valid = true;
-    if (d_ptr->_options & QMessageDataComparator::FullWord)
+    if (d_ptr->_matchFlags & QMessageDataComparator::MatchFullWord)
         d_ptr->_valid = false; // Not supported
     foreach(QMessageAccountFilter *subfilter, d_ptr->_arguments) {
-        subfilter->setOptions(options);
+        subfilter->setMatchFlags(matchFlags);
     }
 }
 
-QMessageDataComparator::Options QMessageAccountFilter::options() const
+QMessageDataComparator::MatchFlags QMessageAccountFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageAccountFilter::isEmpty() const

@@ -129,7 +129,7 @@ selecting a useful view of data. This reduces the burden on the client
 of the library for managing the messaging data, as well as allowing
 better use of the underlying storage mechanism.
 
-Sorting is accomplished by providing a ordering object, specifying the sort
+Sorting is accomplished by providing a sorting object, specifying the sort
 order, and the message property upon which to order.
 
 Filtering is accomplished by providing a filtering condition, specifying a
@@ -143,13 +143,13 @@ Classes to assist with sorting and filtering messages:
 
 \table
 \header \o Class \o Description
-\row \o QMessageStore \o Represents the main interface for storage and retrieval of messages, folders and accounts from the messaging store.
+\row \o QMessageManager \o Represents the main interface for storage and retrieval of messages, folders and accounts from the messaging store.
 \row \o QMessageFilter \o Defines the parameters used for querying a subset of all available messages from the messaging store.
-\row \o QMessageOrdering \o Defines the parameters used for ordering messages queried from the messaging store.
+\row \o QMessageSortOrder \o Defines the parameters used for sorting messages queried from the messaging store.
 \row \o QMessageFolderFilter \o Defines the parameters used for querying a subset of all available message folders from the messaging store.
-\row \o QMessageFolderOrdering \o Defines the parameters used for ordering message folders queried from the messaging store.
+\row \o QMessageFolderSortOrder \o Defines the parameters used for sorting message folders queried from the messaging store.
 \row \o QMessageAccountFilter \o Defines the parameters used for querying a subset of all available accounts from the messaging store.
-\row \o QMessageAccountOrdering \o Defines the parameters used for ordering accounts queried from the messaging store.
+\row \o QMessageAccountSortOrder \o Defines the parameters used for sorting accounts queried from the messaging store.
 \endtable
 
 \section2   Using the Ordering Functions
@@ -158,8 +158,8 @@ An example of the use of Ordering functions can be found in the Send Message
 example.
 
 \code
-    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilter(),
-        QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
+    QMessageIdList ids = QMessageManager().queryMessages(QMessageFilter(),
+        QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
 \endcode
 
 

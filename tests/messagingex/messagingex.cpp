@@ -53,20 +53,20 @@ MessagingEx::MessagingEx(QWidget* parent)
     connect(m_store, SIGNAL(messageRemoved(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageRemoved(const QMessageId&)));
     connect(m_store, SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageUpdated(const QMessageId&)));
     m_store->registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));    
-    connect(&m_serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    m_accountList = m_store->queryAccounts(QMessageAccountFilter(), QMessageAccountOrdering(), 10 , 0);
+    connect(&m_service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
+    m_accountList = m_store->queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
         QMessageAccount account = QMessageAccount(m_accountList[i]);
         accountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		accountComboBox_2->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		folderAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		timeAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		timestampAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		subjectAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		recipientAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		statusAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		senderAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
-		priorityAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        accountComboBox_2->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        folderAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        timeAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        timestampAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        subjectAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        recipientAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        statusAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        senderAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
+        priorityAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
     }
     connect(accountComboBox_2,SIGNAL(currentIndexChanged(int)),this,SLOT(sortParentAccountId()));
 }
@@ -190,11 +190,11 @@ void MessagingEx::createMenus()
 void MessagingEx::send()
 {
     if ( stackedWidget->currentIndex() == 0 )
-    	on_sendSmsButton_clicked();
+        on_sendSmsButton_clicked();
     if ( stackedWidget->currentIndex() == 1 )
-    	on_sendEmailButton_clicked();
+        on_sendEmailButton_clicked();
     if ( stackedWidget->currentIndex() == 2 )
-    	on_sendMmsButton_clicked();
+        on_sendMmsButton_clicked();
 }
 
 void MessagingEx::addAttachment()
@@ -213,65 +213,65 @@ void MessagingEx::addAttachment()
 
 void MessagingEx::removeAttachment()
 {
-	m_attachments.clear();
-	emailAttachmentLabel->clear();
-	m_fileNames.clear();
+    m_attachments.clear();
+    emailAttachmentLabel->clear();
+    m_fileNames.clear();
 }
 void MessagingEx::composeSMS()
 {
-	QMessage message;
-	message.setType(QMessage::Sms);
-    m_serviceaction.compose(message);
+    QMessage message;
+    message.setType(QMessage::Sms);
+    m_service.compose(message);
 }
 
 void MessagingEx::composeMMS()
 {
-	QMessage message;
-	message.setType(QMessage::Mms);
-    m_serviceaction.compose(message);
+    QMessage message;
+    message.setType(QMessage::Mms);
+    m_service.compose(message);
 }
 
 void MessagingEx::composeEmail()
 {
-	QMessage message;
-	message.setType(QMessage::Email);
-    m_serviceaction.compose(message);
+    QMessage message;
+    message.setType(QMessage::Email);
+    m_service.compose(message);
 }
 
 void MessagingEx::addMessage()
 {
-	QMessage message;
-	int index = accountComboBox->currentIndex();
-	m_account = QMessageAccount(m_accountList[index]).id();
-	QMessage::TypeFlags types = m_account.messageTypes();
-	
-	if (!emailAddressEdit->text().isEmpty()){
-		message.setTo(QMessageAddress(emailAddressEdit->text(), QMessageAddress::Email));
-	}
-	
-	message.setParentAccountId(m_account.id());
-	message.setSubject(subjectEdit->text());
-	message.setBody(QString(emailMessageEdit->toPlainText()));
-	message.appendAttachments(m_attachments);
-	
-	if (!m_attachments.isEmpty() && types == QMessage::Sms){
-		QMessageBox msgBox;
-	    msgBox.setStandardButtons(QMessageBox::Close);
-		msgBox.setText(tr("Cannot send attachments via Sms!"));
-		msgBox.exec();
-		m_attachments.clear();
-		m_fileNames.clear();
-		attachmentLabel->clear();
+    QMessage message;
+    int index = accountComboBox->currentIndex();
+    m_account = QMessageAccount(m_accountList[index]).id();
+    QMessage::TypeFlags types = m_account.messageTypes();
+    
+    if (!emailAddressEdit->text().isEmpty()){
+        message.setTo(QMessageAddress(QMessageAddress::Email, emailAddressEdit->text()));
+    }
+    
+    message.setParentAccountId(m_account.id());
+    message.setSubject(subjectEdit->text());
+    message.setBody(QString(emailMessageEdit->toPlainText()));
+    message.appendAttachments(m_attachments);
+    
+    if (!m_attachments.isEmpty() && types == QMessage::Sms){
+        QMessageBox msgBox;
+        msgBox.setStandardButtons(QMessageBox::Close);
+        msgBox.setText(tr("Cannot send attachments via Sms!"));
+        msgBox.exec();
+        m_attachments.clear();
+        m_fileNames.clear();
+        attachmentLabel->clear();
     } else {
-		m_store->addMessage(&message);
-		emailAddressEdit->clear();
-		subjectEdit->clear();
-		emailMessageEdit->clear();  
-		m_attachments.clear();
-		m_fileNames.clear();
-		emailAttachmentLabel->clear();
-		attachmentLabel->clear();
-		}   	
+        m_store->addMessage(&message);
+        emailAddressEdit->clear();
+        subjectEdit->clear();
+        emailMessageEdit->clear();  
+        m_attachments.clear();
+        m_fileNames.clear();
+        emailAttachmentLabel->clear();
+        attachmentLabel->clear();
+        }       
 }
 
 
@@ -279,12 +279,12 @@ void MessagingEx::on_sendSmsButton_clicked()
 {
     QMessage message;
     message.setType(QMessage::Sms);
-    message.setTo(QMessageAddress(phoneNumberEdit->text(), QMessageAddress::Email));
+    message.setTo(QMessageAddress(QMessageAddress::Email, phoneNumberEdit->text()));
     message.setBody(QString(smsMessageEdit->toPlainText()));
     
     if (!QString(phoneNumberEdit->text()).isEmpty())
     {
-        if (!m_serviceaction.send(message))
+        if (!m_service.send(message))
         {
             QMessageBox msgBox;
             msgBox.setStandardButtons(QMessageBox::Close);
@@ -309,14 +309,14 @@ void MessagingEx::on_sendMmsButton_clicked()
     QMessage message;
     message.setType(QMessage::Mms);
     
-    message.setTo(QMessageAddress(mmsPhoneNumberEdit->text(), QMessageAddress::Email));
+    message.setTo(QMessageAddress(QMessageAddress::Email, mmsPhoneNumberEdit->text()));
     message.setSubject(mmsSubjectEdit->text());
     message.setBody(QString(mmsBodyEdit->toPlainText()));
     message.appendAttachments(m_attachments);
     
     if (!QString(mmsPhoneNumberEdit->text()).isEmpty())
     {
-        if (!m_serviceaction.send(message))
+        if (!m_service.send(message))
         {
             QMessageBox msgBox;
             msgBox.setStandardButtons(QMessageBox::Close);
@@ -347,17 +347,17 @@ void MessagingEx::messageReceived(const QMessageId& aId)
     msgBox.setStandardButtons(QMessageBox::Close);
     msgBox.setText(tr("Message added : ")+aId.toString());
     msgBox.exec();
-	//QMessage message = m_store->message(aId);
-	m_serviceaction.show(aId);
+    //QMessage message = m_store->message(aId);
+    m_service.show(aId);
 }
 
 void MessagingEx::messageRemoved(const QMessageId& aId)
 {
-	Q_UNUSED(aId);
-	QMessageBox msgBox;
-	msgBox.setStandardButtons(QMessageBox::Close);
-	msgBox.setText(tr("Message removed : ")+aId.toString());
-	msgBox.exec();
+    Q_UNUSED(aId);
+    QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Close);
+    msgBox.setText(tr("Message removed : ")+aId.toString());
+    msgBox.exec();
 }
 
 void MessagingEx::messageUpdated(const QMessageId& aId)
@@ -366,405 +366,405 @@ void MessagingEx::messageUpdated(const QMessageId& aId)
     msgBox.setStandardButtons(QMessageBox::Close);
     msgBox.setText(tr("Message updated : ")+aId.toString());
     msgBox.exec();
-	Q_UNUSED(aId);
+    Q_UNUSED(aId);
 }
 
 void MessagingEx::queryMessages()
-{	
+{   
 
 }
 
 void MessagingEx::accountSelected(int index)
 {   
-	Q_UNUSED(index); 
+    Q_UNUSED(index); 
 }
 
 void MessagingEx::on_sendEmailButton_clicked()
 {
-	QMessage message;
-	int index = accountComboBox->currentIndex();
-	m_account = QMessageAccount(m_accountList[index]).id();
-	QMessage::TypeFlags types = m_account.messageTypes();
-	
-	if (!emailAddressEdit->text().isEmpty()){
-		message.setTo(QMessageAddress(emailAddressEdit->text(), QMessageAddress::Email));
-	}
-	
-	message.setParentAccountId(m_account.id());
-	message.setSubject(subjectEdit->text());
-	message.setBody(QString(emailMessageEdit->toPlainText()));
-	message.appendAttachments(m_attachments);
-	
-	if (!m_attachments.isEmpty() && types == QMessage::Sms){
-		QMessageBox msgBox;
-	    msgBox.setStandardButtons(QMessageBox::Close);
-		msgBox.setText(tr("Cannot send attachments via Sms!"));
-		msgBox.exec();
-		m_attachments.clear();
-		m_fileNames.clear();
-		attachmentLabel->clear();
-	} else if (QString(emailAddressEdit->text()).isEmpty()){	
-    	QMessageBox msgBox;
+    QMessage message;
+    int index = accountComboBox->currentIndex();
+    m_account = QMessageAccount(m_accountList[index]).id();
+    QMessage::TypeFlags types = m_account.messageTypes();
+    
+    if (!emailAddressEdit->text().isEmpty()){
+        message.setTo(QMessageAddress(QMessageAddress::Email, emailAddressEdit->text()));
+    }
+    
+    message.setParentAccountId(m_account.id());
+    message.setSubject(subjectEdit->text());
+    message.setBody(QString(emailMessageEdit->toPlainText()));
+    message.appendAttachments(m_attachments);
+    
+    if (!m_attachments.isEmpty() && types == QMessage::Sms){
+        QMessageBox msgBox;
         msgBox.setStandardButtons(QMessageBox::Close);
-		msgBox.setText(tr("Set address!"));
-		msgBox.exec();
+        msgBox.setText(tr("Cannot send attachments via Sms!"));
+        msgBox.exec();
+        m_attachments.clear();
+        m_fileNames.clear();
+        attachmentLabel->clear();
+    } else if (QString(emailAddressEdit->text()).isEmpty()){    
+        QMessageBox msgBox;
+        msgBox.setStandardButtons(QMessageBox::Close);
+        msgBox.setText(tr("Set address!"));
+        msgBox.exec();
     } else {
-		if (m_serviceaction.send(message)){
-			emailAddressEdit->clear();
-			subjectEdit->clear();
-			emailMessageEdit->clear();  
-			m_attachments.clear();
-			m_fileNames.clear();
-			emailAttachmentLabel->clear();
-			attachmentLabel->clear();
-		}
-	}   
+        if (m_service.send(message)){
+            emailAddressEdit->clear();
+            subjectEdit->clear();
+            emailMessageEdit->clear();  
+            m_attachments.clear();
+            m_fileNames.clear();
+            emailAttachmentLabel->clear();
+            attachmentLabel->clear();
+        }
+    }   
 }
 
 void MessagingEx::sortType()
-{	
-	QMessageFilter filter;
-	int priorityindex = priorityComboBox->currentIndex();
-	// 0 = No priority filtering 1 = High Priority, 2 = Normal Priority, 3 = Low Priority
-	switch(priorityindex){
-		case 0:
-			break;
-		case 1:
-			filter = QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::Equal);
-			break;
-		case 2:
-			filter = QMessageFilter::byPriority(QMessage::NormalPriority, QMessageDataComparator::Equal);
-			break;
-		case 3:
-			filter = QMessageFilter::byPriority(QMessage::LowPriority, QMessageDataComparator::Equal);
-			break;
-		case 4:
-			filter = QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::NotEqual);
-			break;
-		case 5:
-			filter = QMessageFilter::byPriority(QMessage::NormalPriority, QMessageDataComparator::NotEqual);
-			break;
-		case 6:
-			filter = QMessageFilter::byPriority(QMessage::LowPriority, QMessageDataComparator::NotEqual);
-			break;
-	}
-	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	QString accountId = priorityAccountComboBox->itemData(priorityAccountComboBox->currentIndex()).toString();
-	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
-	
+{   
+    QMessageFilter filter;
+    int priorityindex = priorityComboBox->currentIndex();
+    // 0 = No priority filtering 1 = High Priority, 2 = Normal Priority, 3 = Low Priority
+    switch(priorityindex){
+        case 0:
+            break;
+        case 1:
+            filter = QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::Equal);
+            break;
+        case 2:
+            filter = QMessageFilter::byPriority(QMessage::NormalPriority, QMessageDataComparator::Equal);
+            break;
+        case 3:
+            filter = QMessageFilter::byPriority(QMessage::LowPriority, QMessageDataComparator::Equal);
+            break;
+        case 4:
+            filter = QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::NotEqual);
+            break;
+        case 5:
+            filter = QMessageFilter::byPriority(QMessage::NormalPriority, QMessageDataComparator::NotEqual);
+            break;
+        case 6:
+            filter = QMessageFilter::byPriority(QMessage::LowPriority, QMessageDataComparator::NotEqual);
+            break;
+    }
+    
+    QMessageSortOrder sortOrder;
+    sortOrder.byTimeStamp(Qt::DescendingOrder);
+    QString accountId = priorityAccountComboBox->itemData(priorityAccountComboBox->currentIndex()).toString();
+    filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
+    m_service.queryMessages(filter, sortOrder, 100, 0);
+    
 }
 
 void MessagingEx::sortSender()
 {
-	QString sender = senderEdit->text();
-	QMessageFilter filter;
-	int index = sendercomboBox->currentIndex();
-	switch(index){
-		case 0:
-			filter = QMessageFilter::bySender(sender, QMessageDataComparator::Equal);
-			break;
-		case 1:
-			filter = QMessageFilter::bySender(sender, QMessageDataComparator::NotEqual);
-			break;
-		case 2:
-			filter = QMessageFilter::bySender(sender, QMessageDataComparator::Includes);
-			break;
-		case 3:
-			filter = QMessageFilter::bySender(sender, QMessageDataComparator::Excludes);
-			break;
-	}
-	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	QString accountId = senderAccountComboBox->itemData(senderAccountComboBox->currentIndex()).toString();
-	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
-	
+    QString sender = senderEdit->text();
+    QMessageFilter filter;
+    int index = sendercomboBox->currentIndex();
+    switch(index){
+        case 0:
+            filter = QMessageFilter::bySender(sender, QMessageDataComparator::Equal);
+            break;
+        case 1:
+            filter = QMessageFilter::bySender(sender, QMessageDataComparator::NotEqual);
+            break;
+        case 2:
+            filter = QMessageFilter::bySender(sender, QMessageDataComparator::Includes);
+            break;
+        case 3:
+            filter = QMessageFilter::bySender(sender, QMessageDataComparator::Excludes);
+            break;
+    }
+    
+    QMessageSortOrder sortOrder;
+    sortOrder.byTimeStamp(Qt::DescendingOrder);
+    QString accountId = senderAccountComboBox->itemData(senderAccountComboBox->currentIndex()).toString();
+    filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
+    m_service.queryMessages(filter, sortOrder, 100, 0);
+    
 }
 
 void MessagingEx::sortRecipient()
 {
-	QString recipient = recipientEdit->text();
-	QMessageFilter filter;
-	int index = recipientcomboBox->currentIndex();
-	switch(index){
-		case 0:
-			filter = QMessageFilter::byRecipients(recipient, QMessageDataComparator::Includes);
-			break;
-		case 1:
-			filter = QMessageFilter::byRecipients(recipient, QMessageDataComparator::Excludes);
-			break;
-	}
-	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	QString accountId = recipientAccountComboBox->itemData(recipientAccountComboBox->currentIndex()).toString();
-	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+    QString recipient = recipientEdit->text();
+    QMessageFilter filter;
+    int index = recipientcomboBox->currentIndex();
+    switch(index){
+        case 0:
+            filter = QMessageFilter::byRecipients(recipient, QMessageDataComparator::Includes);
+            break;
+        case 1:
+            filter = QMessageFilter::byRecipients(recipient, QMessageDataComparator::Excludes);
+            break;
+    }
+    
+    QMessageSortOrder sortOrder;
+    sortOrder.byTimeStamp(Qt::DescendingOrder);
+    QString accountId = recipientAccountComboBox->itemData(recipientAccountComboBox->currentIndex()).toString();
+    filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
+    m_service.queryMessages(filter, sortOrder, 100, 0);
 
 }
 
 void MessagingEx::sortSubject()
 {
-	QString subject = subjectEdit_2->text();
-	QMessageFilter filter;
-	int index = subjectcomboBox->currentIndex();
-	switch(index){
-		case 0:
-			filter = QMessageFilter::bySubject(subject, QMessageDataComparator::Equal);
-			break;
-		case 1:
-			filter = QMessageFilter::bySubject(subject, QMessageDataComparator::NotEqual);
-			break;
-		case 2:
-			filter = QMessageFilter::bySubject(subject, QMessageDataComparator::Includes);
-			break;
-		case 3:
-			filter = QMessageFilter::bySubject(subject, QMessageDataComparator::Excludes);
-			break;
-	}
-	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	QString accountId = subjectAccountComboBox->itemData(subjectAccountComboBox->currentIndex()).toString();
-	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+    QString subject = subjectEdit_2->text();
+    QMessageFilter filter;
+    int index = subjectcomboBox->currentIndex();
+    switch(index){
+        case 0:
+            filter = QMessageFilter::bySubject(subject, QMessageDataComparator::Equal);
+            break;
+        case 1:
+            filter = QMessageFilter::bySubject(subject, QMessageDataComparator::NotEqual);
+            break;
+        case 2:
+            filter = QMessageFilter::bySubject(subject, QMessageDataComparator::Includes);
+            break;
+        case 3:
+            filter = QMessageFilter::bySubject(subject, QMessageDataComparator::Excludes);
+            break;
+    }
+    
+    QMessageSortOrder sortOrder;
+    sortOrder.byTimeStamp(Qt::DescendingOrder);
+    QString accountId = subjectAccountComboBox->itemData(subjectAccountComboBox->currentIndex()).toString();
+    filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
+    m_service.queryMessages(filter, sortOrder, 100, 0);
 }
 
 void MessagingEx::sortTimestamp()
 {
-	QDateTime time = timestampdateTimeEdit->dateTime();
-	QMessageFilter filter;
-	int index = timestampcomboBox->currentIndex();
-	switch(index){
-		case 0:
-			filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::Equal);
-			break;
-		case 1:
-			filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::NotEqual);
-			break;
-		case 2:
-			filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::LessThan);
-			break;
-		case 3:
-			filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::LessThanEqual);
-			break;
-		case 4:
-			filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::GreaterThan);
-			break;
-		case 5:
-			filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::GreaterThanEqual);
-			break;
-	}
-	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	QString accountId = timestampAccountComboBox->itemData(timestampAccountComboBox->currentIndex()).toString();
-	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+    QDateTime time = timestampdateTimeEdit->dateTime();
+    QMessageFilter filter;
+    int index = timestampcomboBox->currentIndex();
+    switch(index){
+        case 0:
+            filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::Equal);
+            break;
+        case 1:
+            filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::NotEqual);
+            break;
+        case 2:
+            filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::LessThan);
+            break;
+        case 3:
+            filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::LessThanEqual);
+            break;
+        case 4:
+            filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::GreaterThan);
+            break;
+        case 5:
+            filter = QMessageFilter::byTimeStamp(time, QMessageDataComparator::GreaterThanEqual);
+            break;
+    }
+    
+    QMessageSortOrder sortOrder;
+    sortOrder.byTimeStamp(Qt::DescendingOrder);
+    QString accountId = timestampAccountComboBox->itemData(timestampAccountComboBox->currentIndex()).toString();
+    filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
+    m_service.queryMessages(filter, sortOrder, 100, 0);
 
 }
 
 void MessagingEx::sortReceptiontimestamp()
 {
-	QDateTime time = receptiondateTimeEdit->dateTime();
-	QMessageFilter filter;
-	int index = receptioncomboBox->currentIndex();
-	switch(index){
-		case 0:
-			filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::Equal);
-			break;
-		case 1:
-			filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::NotEqual);
-			break;
-		case 2:
-			filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::LessThan);
-			break;
-		case 3:
-			filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::LessThanEqual);
-			break;
-		case 4:
-			filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::GreaterThan);
-			break;
-		case 5:
-			filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::GreaterThanEqual);
-			break;
-	}
-	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	QString accountId = timeAccountComboBox->itemData(timeAccountComboBox->currentIndex()).toString();
-	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);	
+    QDateTime time = receptiondateTimeEdit->dateTime();
+    QMessageFilter filter;
+    int index = receptioncomboBox->currentIndex();
+    switch(index){
+        case 0:
+            filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::Equal);
+            break;
+        case 1:
+            filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::NotEqual);
+            break;
+        case 2:
+            filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::LessThan);
+            break;
+        case 3:
+            filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::LessThanEqual);
+            break;
+        case 4:
+            filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::GreaterThan);
+            break;
+        case 5:
+            filter = QMessageFilter::byReceptionTimeStamp(time, QMessageDataComparator::GreaterThanEqual);
+            break;
+    }
+    
+    QMessageSortOrder sortOrder;
+    sortOrder.byTimeStamp(Qt::DescendingOrder);
+    QString accountId = timeAccountComboBox->itemData(timeAccountComboBox->currentIndex()).toString();
+    filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
+    m_service.queryMessages(filter, sortOrder, 100, 0);   
 }
 
 void MessagingEx::sortStatus()
 {
-	QMessageFilter filter;
-	int index = statuscomboBox->currentIndex();
-	switch(index){
-		case 0:
-			filter = QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal);
-			break;
-		case 1:
-			filter = QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::NotEqual);
-			break;
-		case 2:
-			filter = QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes);
-			break;
-		case 3:
-			filter = QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Excludes);
-			break;
-		case 4:
-			filter = QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Equal);
-			break;
-		case 5:
-			filter = QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::NotEqual);
-			break;
-		case 6:
-			filter = QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Includes);
-			break;
-		case 7:
-			filter = QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Excludes);
-			break;
-		case 8:
-			filter = QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Equal);
-			break;
-		case 9:
-			filter = QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::NotEqual);
-			break;
-		case 10:
-			filter = QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Includes);
-			break;
-		case 11:
-			filter = QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes);
-			break;
-		case 12:
-			filter = QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Equal);
-			break;
-		case 13:
-			filter = QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::NotEqual);
-			break;
-		case 14:
-			filter = QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Includes);
-			break;
-		case 15:
-			filter = QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Excludes);
-			break;
-	}
-	
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	QString accountId = statusAccountComboBox->itemData(statusAccountComboBox->currentIndex()).toString();
-	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+    QMessageFilter filter;
+    int index = statuscomboBox->currentIndex();
+    switch(index){
+        case 0:
+            filter = QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal);
+            break;
+        case 1:
+            filter = QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::NotEqual);
+            break;
+        case 2:
+            filter = QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes);
+            break;
+        case 3:
+            filter = QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Excludes);
+            break;
+        case 4:
+            filter = QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Equal);
+            break;
+        case 5:
+            filter = QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::NotEqual);
+            break;
+        case 6:
+            filter = QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Includes);
+            break;
+        case 7:
+            filter = QMessageFilter::byStatus(QMessage::HasAttachments, QMessageDataComparator::Excludes);
+            break;
+        case 8:
+            filter = QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Equal);
+            break;
+        case 9:
+            filter = QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::NotEqual);
+            break;
+        case 10:
+            filter = QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Includes);
+            break;
+        case 11:
+            filter = QMessageFilter::byStatus(QMessage::Incoming, QMessageDataComparator::Excludes);
+            break;
+        case 12:
+            filter = QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Equal);
+            break;
+        case 13:
+            filter = QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::NotEqual);
+            break;
+        case 14:
+            filter = QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Includes);
+            break;
+        case 15:
+            filter = QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Excludes);
+            break;
+    }
+    
+    QMessageSortOrder sortOrder;
+    sortOrder.byTimeStamp(Qt::DescendingOrder);
+    QString accountId = statusAccountComboBox->itemData(statusAccountComboBox->currentIndex()).toString();
+    filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
+    m_service.queryMessages(filter, sortOrder, 100, 0);
 
 }
 
 void MessagingEx::sortParentAccountId()
 {
-	int index = accountComboBox_2->currentIndex();
-	folderComboBox->clear ();
-	QMessageFolderFilter filter = QMessageFolderFilter::byParentAccountId(m_accountList[index]);// & QMessageFolderFilter::byDisplayName("Inbox");
-	QMessageFolderIdList ids = m_store->queryFolders(filter);
-	for (int i=0; i < ids.count(); i++) {
-	    QMessageFolder folder;
-	    folder = m_store->folder(ids[i]);
-	    QString name = folder.displayName();
-	    folderComboBox->addItem(name, folder.id().toString());    
-	}
+    int index = accountComboBox_2->currentIndex();
+    folderComboBox->clear ();
+    QMessageFolderFilter filter = QMessageFolderFilter::byParentAccountId(m_accountList[index]);// & QMessageFolderFilter::byDisplayName("Inbox");
+    QMessageFolderIdList ids = m_store->queryFolders(filter);
+    for (int i=0; i < ids.count(); i++) {
+        QMessageFolder folder;
+        folder = m_store->folder(ids[i]);
+        QString name = folder.displayName();
+        folderComboBox->addItem(name, folder.id().toString());    
+    }
 }
 
 void MessagingEx::sortStandardFolder()
 {
-	QMessageFilter filter;
-	int index = foldercomboBox->currentIndex();
-	switch(index){
-		case 0:
-			filter = QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal);
-			break;
-		case 1:
-			filter = QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::NotEqual);
-			break;
-		case 2:
-			filter = QMessageFilter::byStandardFolder(QMessage::OutboxFolder, QMessageDataComparator::Equal);
-			break;
-		case 3:
-			filter = QMessageFilter::byStandardFolder(QMessage::OutboxFolder, QMessageDataComparator::NotEqual);
-			break;
-		case 4:
-			filter = QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal);
-			break;
-		case 5:
-			filter = QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::NotEqual);
-			break;
-		case 6:
-			filter = QMessageFilter::byStandardFolder(QMessage::SentFolder, QMessageDataComparator::Equal);
-			break;
-		case 7:
-			filter = QMessageFilter::byStandardFolder(QMessage::SentFolder, QMessageDataComparator::NotEqual);
-			break;
-		case 8:
-			filter = QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::Equal);
-			break;
-		case 9:
-			filter = QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::NotEqual);
-			break;
-	}
-	QString accountId = folderAccountComboBox->itemData(folderAccountComboBox->currentIndex()).toString();
-	filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	QMessageOrdering ordering;
-	ordering.byTimeStamp(Qt::DescendingOrder);
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
+    QMessageFilter filter;
+    int index = foldercomboBox->currentIndex();
+    switch(index){
+        case 0:
+            filter = QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal);
+            break;
+        case 1:
+            filter = QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::NotEqual);
+            break;
+        case 2:
+            filter = QMessageFilter::byStandardFolder(QMessage::OutboxFolder, QMessageDataComparator::Equal);
+            break;
+        case 3:
+            filter = QMessageFilter::byStandardFolder(QMessage::OutboxFolder, QMessageDataComparator::NotEqual);
+            break;
+        case 4:
+            filter = QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal);
+            break;
+        case 5:
+            filter = QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::NotEqual);
+            break;
+        case 6:
+            filter = QMessageFilter::byStandardFolder(QMessage::SentFolder, QMessageDataComparator::Equal);
+            break;
+        case 7:
+            filter = QMessageFilter::byStandardFolder(QMessage::SentFolder, QMessageDataComparator::NotEqual);
+            break;
+        case 8:
+            filter = QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::Equal);
+            break;
+        case 9:
+            filter = QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::NotEqual);
+            break;
+    }
+    QString accountId = folderAccountComboBox->itemData(folderAccountComboBox->currentIndex()).toString();
+    filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
+    QMessageSortOrder sortOrder;
+    sortOrder.byTimeStamp(Qt::DescendingOrder);
+    m_service.queryMessages(filter, sortOrder, 100, 0);
 }
 
 void MessagingEx::findMessages()
 {
-	QString accountId = accountComboBox_2->itemData(accountComboBox_2->currentIndex()).toString();
-	int folderIndex = folderComboBox->currentIndex();
-	int defaultIndex = defaultAccountBox->currentIndex();
-	QMessageFilter filter;
-	if (defaultIndex >= 0 && folderComboBox->count() == 0){
-		switch(defaultIndex){
-		case 0:
-			filter = QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal);
-			break;
-		case 1:
-			filter = QMessageFilter::byStandardFolder(QMessage::OutboxFolder, QMessageDataComparator::Equal);
-			break;
-		case 2:
-			filter = QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal);
-			break;
-		case 3:
-			filter = QMessageFilter::byStandardFolder(QMessage::SentFolder, QMessageDataComparator::Equal);
-			break;
-		case 4:
-			filter = QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::Equal);
-			break;
-		}
+    QString accountId = accountComboBox_2->itemData(accountComboBox_2->currentIndex()).toString();
+    int folderIndex = folderComboBox->currentIndex();
+    int defaultIndex = defaultAccountBox->currentIndex();
+    QMessageFilter filter;
+    if (defaultIndex >= 0 && folderComboBox->count() == 0){
+        switch(defaultIndex){
+        case 0:
+            filter = QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal);
+            break;
+        case 1:
+            filter = QMessageFilter::byStandardFolder(QMessage::OutboxFolder, QMessageDataComparator::Equal);
+            break;
+        case 2:
+            filter = QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal);
+            break;
+        case 3:
+            filter = QMessageFilter::byStandardFolder(QMessage::SentFolder, QMessageDataComparator::Equal);
+            break;
+        case 4:
+            filter = QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::Equal);
+            break;
+        }
         filter &= QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	}
-	else if (folderIndex >= 0) {
+    }
+    else if (folderIndex >= 0) {
         QString folderId = folderComboBox->itemData(folderComboBox->currentIndex()).toString();
-	    filter = QMessageFilter::byParentFolderId(QMessageFolderId(folderId), QMessageDataComparator::Equal);
-	} else {
+        filter = QMessageFilter::byParentFolderId(QMessageFolderId(folderId), QMessageDataComparator::Equal);
+    } else {
         filter = QMessageFilter::byParentAccountId(QMessageAccountId(accountId));
-	}
+    }
 
-	QMessageOrdering ordering = ordering.byTimeStamp(Qt::DescendingOrder);
-	m_serviceaction.queryMessages(filter, ordering, 100, 0);
-	
+    QMessageSortOrder sortOrder = sortOrder.byTimeStamp(Qt::DescendingOrder);
+    m_service.queryMessages(filter, sortOrder, 100, 0);
+    
 }
 
 void MessagingEx::messagesFound(const QMessageIdList &ids)
 {
-	QString labelText;
-	QStandardItemModel* standardModel = new QStandardItemModel(this);
-	messageListView->setModel(standardModel);
-	stackedWidget->setCurrentIndex(12);
+    QString labelText;
+    QStandardItemModel* standardModel = new QStandardItemModel(this);
+    messageListView->setModel(standardModel);
+    stackedWidget->setCurrentIndex(12);
     for (int i=0; i < ids.count(); i++) {
         QMessage message = m_store->message(ids[i]);
         QString from = message.from().recipient();
