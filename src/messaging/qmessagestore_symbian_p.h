@@ -42,7 +42,7 @@
 #define QMESSAGESTOREPRIVATE_SYMBIAN_H
 
 #include "qmessagestore.h"
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 #include <QEventLoop>
 
 

@@ -30,7 +30,7 @@ PUBLIC_HEADERS += \
            qmessagefilter.h \
            qmessagemanager.h \
            qmessagesortorder.h \
-           qmessageserviceaction.h
+           qmessageservice.h
 
 PRIVATE_HEADERS += \
            qmessageid_p.h \
@@ -69,7 +69,7 @@ SOURCES += qmessageid.cpp \
            qmessagemanager.cpp \
            qmessagesortorder.cpp \
            qmessagestore.cpp \
-           qmessageserviceaction.cpp
+           qmessageservice.cpp
 
 
 symbian|win32|maemo {
@@ -89,7 +89,7 @@ SOURCES += qmessageid_maemo.cpp \
            qmessagefilter_maemo.cpp \
            qmessagesortorder_maemo.cpp \
            qmessagestore_maemo.cpp \
-           qmessageserviceaction_maemo.cpp 
+           qmessageservice_maemo.cpp 
 }
 symbian {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -100,7 +100,7 @@ symbian {
 
     HEADERS += qmtmengine_symbian_p.h \
                qmessagestore_symbian_p.h \
-               qmessageserviceaction_symbian_p.h \
+               qmessageservice_symbian_p.h \
                qmessagecontentcontainer_symbian_p.h \
                qmessage_symbian_p.h
 
@@ -120,7 +120,7 @@ symbian {
                qmessagefilter_symbian.cpp \
                qmessagesortorder_symbian.cpp \
                qmessagestore_symbian.cpp \
-               qmessageserviceaction_symbian.cpp
+               qmessageservice_symbian.cpp
            
     LIBS += -lsendas2 \
             -lmsgs \
@@ -174,7 +174,7 @@ SOURCES += winhelpers.cpp \
            qmessagefilter_win.cpp \
            qmessagesortorder_win.cpp \
            qmessagestore_win.cpp \
-           qmessageserviceaction_win.cpp 
+           qmessageservice_win.cpp 
 
 wince* {
     # Include the source files from QMF needed for MIME parsing
@@ -245,7 +245,7 @@ SOURCES += qmessageid_qmf.cpp \
            qmessagefilter_qmf.cpp \
            qmessagesortorder_qmf.cpp \
            qmessagestore_qmf.cpp \
-           qmessageserviceaction_qmf.cpp \
+           qmessageservice_qmf.cpp \
            qmfhelpers.cpp
 }
 

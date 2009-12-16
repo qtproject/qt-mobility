@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 #include "winhelpers_p.h"
 #include "qmessagemanager.h"
 #include "qmessageid_p.h"
@@ -742,7 +742,7 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessage
 bool QMessageService::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     if (d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
 
@@ -778,7 +778,7 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QString 
 bool QMessageService::countMessages(const QMessageFilter &filter)
 {
     if (d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
     d_ptr->_active = true;
@@ -806,7 +806,7 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
 bool QMessageService::send(QMessage &message)
 {
     if(d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
 
@@ -828,7 +828,7 @@ bool QMessageService::send(QMessage &message)
 bool QMessageService::compose(const QMessage &message)
 {
     if(d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
 
@@ -849,7 +849,7 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
     Q_UNUSED(id);
 
     if(d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
 
@@ -865,7 +865,7 @@ bool QMessageService::retrieveBody(const QMessageId& id)
 {
 
     if(d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
 
@@ -921,7 +921,7 @@ bool QMessageService::retrieve(const QMessageId& messageId, const QMessageConten
 {
 
     if(d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
 
@@ -983,7 +983,7 @@ bool QMessageService::retrieve(const QMessageId& messageId, const QMessageConten
 bool QMessageService::show(const QMessageId& id)
 {
     if(d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
 
@@ -1004,7 +1004,7 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     Q_UNUSED(id);
 
     if(d_ptr->_active) {
-        qWarning() << "Action is currently busy";
+        qWarning() << "Service is currently busy";
         return false;
     }
 
@@ -1047,6 +1047,6 @@ QMessageManager::ErrorCode QMessageService::lastError() const
     return d_ptr->_lastError;
 }
 
-#include <qmessageserviceaction_win.moc>
+#include <qmessageservice_win.moc>
 
 QTM_END_NAMESPACE

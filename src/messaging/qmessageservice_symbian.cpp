@@ -46,8 +46,8 @@
 #include <mmsconst.h>
 #include <utf.h>            // CnvUtfConverter
 
-#include "qmessageserviceaction.h"
-#include "qmessageserviceaction_symbian_p.h"
+#include "qmessageservice.h"
+#include "qmessageservice_symbian_p.h"
 #include "qmtmengine_symbian_p.h"
 
 
@@ -414,5 +414,5 @@ QMessageManager::ErrorCode QMessageService::lastError() const
     return d_ptr->_lastError;
 }
 
-#include "moc_qmessageserviceaction_symbian_p.cpp"
+#include "moc_qmessageservice_symbian_p.cpp"
 QTM_END_NAMESPACE

@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 
 
 QTM_BEGIN_NAMESPACE

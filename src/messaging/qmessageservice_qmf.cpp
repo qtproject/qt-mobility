@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 #include "qmfhelpers_p.h"
 
 #include <qmailserviceaction.h>
@@ -576,7 +576,7 @@ QMessageManager::ErrorCode QMessageService::lastError() const
     return d_ptr->_error;
 }
 
-#include "qmessageserviceaction_qmf.moc"
+#include "qmessageservice_qmf.moc"
 
 
 QTM_END_NAMESPACE

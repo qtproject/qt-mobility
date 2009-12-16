@@ -41,7 +41,7 @@
 
 #include "mainwindow.h"
 #include "attachmentlistwidget.h"
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 #include <qmessagemanager.h>
 #include <QComboBox>
 #include <QListWidget>
@@ -66,8 +66,6 @@
 #include <QStackedWidget>
 #include <QMutex>
 #include <QKeyEvent>
-
-typedef QPointer<QMessageService> QMessageServiceActionPtr;
 
 static const QSize WindowGeometry(400,300);
 static const QString WindowTitle("Service-actions Example");

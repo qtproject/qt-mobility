@@ -133,13 +133,13 @@ public:
 /*
     Unit test for QMessageService class.
 */
-class tst_QMessageServiceAction : public QObject
+class tst_QMessageService : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QMessageServiceAction();
-    virtual ~tst_QMessageServiceAction();
+    tst_QMessageService();
+    virtual ~tst_QMessageService();
 
 private slots:
 
@@ -201,29 +201,29 @@ Q_DECLARE_METATYPE(QMessageIdList)
 Q_DECLARE_METATYPE(QMessageFilter)
 Q_DECLARE_METATYPE(QMessageSortOrder)
 
-QTEST_MAIN(tst_QMessageServiceAction)
+QTEST_MAIN(tst_QMessageService)
 
-#include "tst_qmessageserviceaction.moc"
+#include "tst_qmessageservice.moc"
 
-tst_QMessageServiceAction::tst_QMessageServiceAction()
+tst_QMessageService::tst_QMessageService()
 {
 }
 
-tst_QMessageServiceAction::~tst_QMessageServiceAction()
+tst_QMessageService::~tst_QMessageService()
 {
 }
 
-void tst_QMessageServiceAction::init()
+void tst_QMessageService::init()
 {
     testService = new QMessageService(this);
 }
 
-void tst_QMessageServiceAction::cleanUp()
+void tst_QMessageService::cleanUp()
 {
     if(testService) delete testService; testService = 0;
 }
 
-void tst_QMessageServiceAction::initTestCase()
+void tst_QMessageService::initTestCase()
 {
     Support::clearMessageStore();
 
@@ -406,11 +406,11 @@ void tst_QMessageServiceAction::initTestCase()
     }
 }
 
-void tst_QMessageServiceAction::cleanupTestCase()
+void tst_QMessageService::cleanupTestCase()
 {
 }
 
-void tst_QMessageServiceAction::testQueryMessages()
+void tst_QMessageService::testQueryMessages()
 {
     QFETCH(QMessageFilter, filter);
     QFETCH(QMessageIdList, ids);
@@ -453,7 +453,7 @@ void tst_QMessageServiceAction::testQueryMessages()
     }
 }
 
-void tst_QMessageServiceAction::testQueryCountData()
+void tst_QMessageService::testQueryCountData()
 {
     QTest::addColumn<QMessageFilter>("filter");
     QTest::addColumn<QMessageIdList>("ids");
@@ -1833,12 +1833,12 @@ void tst_QMessageServiceAction::testQueryCountData()
 
 }
 
-void tst_QMessageServiceAction::testQueryMessages_data()
+void tst_QMessageService::testQueryMessages_data()
 {
     testQueryCountData();
 }
 
-void tst_QMessageServiceAction::testCountMessages()
+void tst_QMessageService::testCountMessages()
 {
     QFETCH(QMessageFilter, filter);
     QFETCH(QMessageIdList, ids);
@@ -1871,12 +1871,12 @@ void tst_QMessageServiceAction::testCountMessages()
     }
 }
 
-void tst_QMessageServiceAction::testCountMessages_data()
+void tst_QMessageService::testCountMessages_data()
 {
     testQueryCountData();
 }
 
-void tst_QMessageServiceAction::testSend()
+void tst_QMessageService::testSend()
 {
     QMessage testMessage;
     testMessage.setType(QMessage::Email);
@@ -1884,7 +1884,7 @@ void tst_QMessageServiceAction::testSend()
     QVERIFY(result == true || result == false);
 }
 
-void tst_QMessageServiceAction::testCompose()
+void tst_QMessageService::testCompose()
 {
     QMessage testMessage;
     testMessage.setType(QMessage::Email);
@@ -1893,32 +1893,32 @@ void tst_QMessageServiceAction::testCompose()
 }
 
 
-void tst_QMessageServiceAction::testRetrieveHeader()
+void tst_QMessageService::testRetrieveHeader()
 {
     bool result = testService->retrieveHeader(QMessageId());
     QCOMPARE(result,false);
 }
 
-void tst_QMessageServiceAction::testRetrieveBody()
+void tst_QMessageService::testRetrieveBody()
 {
     bool result = testService->retrieveBody(QMessageId());
     QCOMPARE(result,false);
 }
 
-void tst_QMessageServiceAction::testRetrieve()
+void tst_QMessageService::testRetrieve()
 {
     bool result = testService->retrieve(QMessageId(),QMessageContentContainerId());
     QCOMPARE(result,false);
 }
 
-void tst_QMessageServiceAction::testShow()
+void tst_QMessageService::testShow()
 {
     QMessageId testId;
     bool result = testService->show(testId);
     QCOMPARE(result,false);
 }
 
-void tst_QMessageServiceAction::testExportUpdates()
+void tst_QMessageService::testExportUpdates()
 {
     bool result = testService->exportUpdates(QMessageAccountId());
     QCOMPARE(result,false);

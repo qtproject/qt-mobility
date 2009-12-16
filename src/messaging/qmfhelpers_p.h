@@ -47,7 +47,7 @@
 #include "qmessageaccount.h"
 #include "qmessagedatacomparator.h"
 #include "qmessagefolder.h"
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 #include "qmessagemanager.h"
 
 #include <qmaildatacomparator.h>

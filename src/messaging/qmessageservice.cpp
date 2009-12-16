@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 #ifdef Q_OS_SYMBIAN
-#include "qmessageserviceaction_symbian_p.h"
+#include "qmessageservice_symbian_p.h"
 #endif
 
 
@@ -80,7 +80,7 @@ QTM_BEGIN_NAMESPACE
     Each QMessageService instance will report only the changes pertaining to 
     the request that instance initiated.
 
-    Except where noted QMessageServiceActions may initiate network activity. 
+    Except where noted QMessageServices may initiate network activity. 
     Other functions in the mobility messaging API will not initiate network 
     activity, with the exception of Windows mobile and desktop platforms which 
     may initiate network activity during the evaluation of any function call.
@@ -343,5 +343,5 @@ QTM_BEGIN_NAMESPACE
     Returns a value indicating the last error condition encountered by the operation.
 */
 
-#include "moc_qmessageserviceaction.cpp"
+#include "moc_qmessageservice.cpp"
 QTM_END_NAMESPACE

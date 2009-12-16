@@ -46,7 +46,7 @@
 #include <qcontactmanager.h>
 #include <qcontactphonenumber.h>
 #include <qmessage.h>
-#include <qmessageserviceaction.h>
+#include <qmessageservice.h>
 
 #include <QCheckBox>
 #include <QComboBox>

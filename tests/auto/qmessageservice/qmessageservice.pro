@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = tst_qmessageserviceaction
+TARGET = tst_qmessageservice
 
 CONFIG += testcase
 QT += testlib
@@ -29,5 +29,5 @@ wince* {
 }
 
 SOURCES += \
-    tst_qmessageserviceaction.cpp
+    tst_qmessageservice.cpp
 

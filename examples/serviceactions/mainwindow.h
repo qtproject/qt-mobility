@@ -43,7 +43,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <qmessageserviceaction.h>
+#include <qmessageservice.h>
 
 class QComboBox;
 class QListView;

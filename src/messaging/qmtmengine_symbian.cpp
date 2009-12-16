@@ -54,7 +54,7 @@
 #include "qmessagefolder_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
-#include "qmessageserviceaction_symbian_p.h"
+#include "qmessageservice_symbian_p.h"
 #include "qmessagecontentcontainer_symbian_p.h"
 #include "qmessagecontentcontainer_p.h"
 

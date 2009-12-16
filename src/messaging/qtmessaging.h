@@ -57,7 +57,7 @@
 #include "qmessagecontentcontainer.h"
 #include "qmessagecontentcontainerid.h"
 #include "qmessageaddress.h"
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 #include "qmessagemanager.h"
 
 #endif

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 
 
 QTM_BEGIN_NAMESPACE
