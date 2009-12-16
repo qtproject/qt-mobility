@@ -185,14 +185,14 @@ QByteArray QMessageContentContainer::content() const
     return d_ptr->_container->body().data(QMailMessageBody::Decoded);
 }
 
-void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
+void QMessageContentContainer::writeTextContent(QTextStream& out) const
 {
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out);
     }
 }
 
-void QMessageContentContainer::writeContentTo(QDataStream& out) const
+void QMessageContentContainer::writeContent(QDataStream& out) const
 {
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out, QMailMessageBody::Decoded);

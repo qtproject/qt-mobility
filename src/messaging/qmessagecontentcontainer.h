@@ -82,8 +82,8 @@ public:
     QString textContent() const;
     QByteArray content() const;
 
-    void writeTextContentTo(QTextStream &out) const;
-    void writeContentTo(QDataStream &out) const;
+    void writeTextContent(QTextStream &out) const;
+    void writeContent(QDataStream &out) const;
 
     QMessageContentContainerIdList contentIds() const;
 
