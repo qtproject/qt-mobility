@@ -505,6 +505,30 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddleName, "MiddleName");
 Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLastName, "LastName");
 
 /*!
+   \variable QContactName::FieldFirst
+
+   The constant key for which the first name value is stored in
+   details of the QContactName type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "First");
+
+/*!
+   \variable QContactName::FieldMiddle
+
+   The constant key for which the middle name value is stored in
+   details of the QContactName type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "Middle");
+
+/*!
+   \variable QContactName::FieldLast
+
+   The constant key for which the last name value is stored in details
+   of the QContactName type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "Last");
+
+/*!
    \variable QContactName::FieldSuffix
 
    The constant key for which the name suffix value is stored in
@@ -1756,36 +1780,36 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactName::first() const
+   \fn QContactName::firstName() const
    Returns the first (given) name segment of the name stored in this detail.
  */
 
 /*!
-   \fn QContactName::setFirst(const QString& first)
-   Sets the first name segment of the name stored in this detail to \a first.
+   \fn QContactName::setFirstName(const QString& firstName)
+   Sets the first name segment of the name stored in this detail to \a firstName.
  */
 
 /*!
-   \fn QContactName::middle() const
+   \fn QContactName::middleName() const
    
    Returns the middle (additional, or other) name segment of the name
    stored in this detail.
  */
 
 /*!
-   \fn QContactName::setMiddle(const QString& middle)
-   Sets the middle name segment of the name stored in this detail to \a middle.
+   \fn QContactName::setMiddleName(const QString& middleName)
+   Sets the middle name segment of the name stored in this detail to \a middleName.
  */
 
 /*!
-   \fn QContactName::last() const
+   \fn QContactName::lastName() const
 
    Returns the last (family, or surname) name segment of the name
    stored in this detail.
  */
 
 /*!
-   \fn QContactName::setLast(const QString& last)
+   \fn QContactName::setLastName(const QString& lastName)
    Sets the last name segment of the name stored in this detail to \a last.
  */
 

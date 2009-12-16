@@ -57,6 +57,9 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldPrefix;
+    const char* FieldFirst; // deprecated
+    const char* FieldMiddle;// deprecated
+    const char* FieldLast;  // deprecated
     const char* FieldFirstName;
     const char* FieldMiddleName;
     const char* FieldLastName;
@@ -65,6 +68,9 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
     Q_DECLARE_LATIN1_LITERAL(FieldPrefix, "Prefix");
+    Q_DECLARE_LATIN1_LITERAL(FieldFirst, "First");  // deprecated
+    Q_DECLARE_LATIN1_LITERAL(FieldMiddle, "Middle");// deprecated
+    Q_DECLARE_LATIN1_LITERAL(FieldLast, "Last");    // deprecated
     Q_DECLARE_LATIN1_LITERAL(FieldFirstName, "FirstName");
     Q_DECLARE_LATIN1_LITERAL(FieldMiddleName, "MiddleName");
     Q_DECLARE_LATIN1_LITERAL(FieldLastName, "LastName");
@@ -85,6 +91,14 @@ public:
     void setLastName(const QString& lastName) {setValue(FieldLastName, lastName);}
     void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
     void setCustomLabel(const QString& customLabel) {setValue(FieldCustomLabel, customLabel);}
+
+    // deprecated functions, will be removed in week 1.
+    QString first() const {qWarning("QContactName::first() This function is deprecated and will be removed in week 1.  Use firstName() instead!");}
+    QString middle() const {qWarning("QContactName::middle() This function is deprecated and will be removed in week 1.  Use middleName() instead!");}
+    QString last() const {qWarning("QContactName::last() This function is deprecated and will be removed in week 1.  Use lastName() instead!");}
+    void setFirst(const QString& first) {Q_UNUSED(first);qWarning("QContactName::setFirst() This function is deprecated and will be removed in week 1.  Use setFirstName() instead!");}
+    void setMiddle(const QString& middle) {Q_UNUSED(middle);qWarning("QContactName::setMiddle() This function is deprecated and will be removed in week 1.  Use setMiddleName() instead!");}
+    void setLast(const QString& last) {Q_UNUSED(last);qWarning("QContactName::setLast() This function is deprecated and will be removed in week 1.  Use setLastName() instead!");}
 };
 
 QTM_END_NAMESPACE
