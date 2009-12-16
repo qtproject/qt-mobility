@@ -230,7 +230,7 @@ void tst_QValueSpacePublisher::testConstructor()
     delete publisher;
 
     if (layer && layer->layerOptions() & QValueSpace::PermanentLayer) {
-        QValueSpacePublisher root("/", uuid);
+        QValueSpacePublisher root(uuid, "/");
         while (!canonical.isEmpty()) {
             root.resetValue(canonical.mid(1));
             canonical.truncate(canonical.lastIndexOf('/'));

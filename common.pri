@@ -5,9 +5,6 @@
 ######################################################################
 
 
-# For symbian, we are not attempting to freeze APIs yet.
-symbian:MMP_RULES += "EXPORTUNFROZEN"
-
 CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=debug
 } else {
@@ -45,17 +42,6 @@ defineReplace(mobilityDeployFilename) {
 # Make sure this goes everywhere we need it
 symbian: load(data_caging_paths)
 
-# For symbian, we are not attempting to freeze APIs yet.
-symbian:MMP_RULES += "EXPORTUNFROZEN"
-
-# Which contacts backend we're building
-isEmpty(CONTACTS_BACKENDS) {
-    #no selection implies default selection for current target
-    ## memory / symbian / wince / kabc etc.
-    CONTACTS_BACKENDS += memory 
-    wince*:CONTACTS_BACKENDS += wince
-    symbian:CONTACTS_BACKENDS += symbian
-}
 
 # Figure out the root of where stuff should go (this could be done via configure)
 OUTPUT_DIR = $$QT_MOBILITY_BUILD_TREE
@@ -106,13 +92,13 @@ maemo {
 
 wince* {
     ### Bearer Management
-    BEARERLIB.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtBearer_beta).dll
+    BEARERLIB.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtBearer).dll
     BEARERLIB.path = .
     DEPLOYMENT += BEARERLIB
 
     ### Contacts
     # Main library
-    CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtContacts_beta).dll
+    CONTACTS_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtContacts).dll
     CONTACTS_DEPLOYMENT.path = /Windows
 
     # Plugins
@@ -121,12 +107,12 @@ wince* {
     DEPLOYMENT += CONTACTS_DEPLOYMENT CONTACTS_PLUGINS_DEPLOYMENT
 
     ### Service Framework    
-    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtServiceFramework_beta).dll
+    SFW_DEPLOYMENT.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtServiceFramework).dll
     SFW_DEPLOYMENT.path = .
     DEPLOYMENT += SFW_DEPLOYMENT
     
     ### Location
-    LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation_beta).dll
+    LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation).dll
     LOCATION.path = .
     DEPLOYMENT += LOCATION
 }
@@ -143,6 +129,9 @@ mac:contains(QT_CONFIG,qt_framework) {
     LIBS+=-F$$OUTPUT_DIR/lib
 }
 LIBS += -L$$OUTPUT_DIR/lib
+
+# For symbian, we are not freezing yet
+symbian:MMP_RULES += "EXPORTUNFROZEN"
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global

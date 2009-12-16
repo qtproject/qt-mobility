@@ -78,7 +78,7 @@
     \brief If you don't know the name of the class you want, but you
     know what the class should do, you might try looking here.
 
-    Qt Mobility classes with brief descriptions:
+    Qt Mobility Project classes with brief descriptions:
 
     \generatelist annotatedclasses
 */
@@ -107,7 +107,7 @@
     link to where each one is declared.
 
     This is the list of all documented member functions and global
-    functions in the Qt Mobility API.  Each function has a link to the class or
+    functions in the Qt Mobility Project API.  Each function has a link to the class or
     header file where it is declared and documented.
 
     \generatelist functionindex

@@ -50,54 +50,56 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QVersitContactExporter
- *
- * \brief QVersitContactExporter exports QContact(s) into QVersitDocument(s)
- *
- * If the exported QContact has some detail with an image as its value,
- * signal \l QVersitContactExporter::scale() is emitted and
- * the client can scale the image's data to the size it wishes.
- * The client may retrieve the list contact details
- * which were not exported using QVersitContactExporter::unknownContactDetails().
- *
- * \code
- *
- * // An example of exporting a QContact:
- *  QVersitContactExporter contactExporter;
- *  QContact contact;
- *
- *  // Create a name
- *  QContactName name;
- *  name.setFirst(QString::fromAscii("Simpson"));
- *  contact.saveDetail(&name);
- *
- *  // Create an avatar type which is not supported by the exporter
- *  QContactAvatar contactAvatar;
- *  contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
- *  contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
- *  contact.saveDetail(&contactAvatar);
- *
- *  // Create an organization detail with a title and a logo
- *  QContactOrganization organization;
- *  organization.setTitle(QString::fromAscii("Developer"));
- *  organization.setLogo(QString::fromAscii("/my/image/logo_path/logo.jpg"));
- *  contact.saveDetail(&organization);
- *
- *  QVersitDocument versitDocument = contactExporter.exportContact(contact);
- *  // Client will receive the signal "scale" with the logo image path
- *
- *  QList<QContactDetail> unknownDetails = contactExporter.unknownContactDetails();
- *
- *  // The returned unknownDetails can be processed by the client and
- *  // the client can append details directly into QVersitDocument if needed.
- *  // (In this example QContactAvatar::SubTypeTexturedMesh.
- *  //  Currently for QContactAvatar details,
- *  //  only exporting subtypes QContactAvatar::SubTypeImage and
- *  //  QContactAvatar::SubTypeAudioRingtone is supported.)
- *
- * \endcode
- *
- * \sa QVersitDocument, QVersitProperty
+  \class QVersitContactExporter
+ 
+  \brief The QVersitContactExporter class exports QContact(s) into QVersitDocument(s).
+
+  \ingroup versit
+ 
+  If the exported QContact has some detail with an image as its value,
+  signal \l QVersitContactExporter::scale() is emitted and
+  the client can scale the image's data to the size it wishes.
+  The client may retrieve the list contact details
+  which were not exported using QVersitContactExporter::unknownContactDetails().
+ 
+  \code
+ 
+  // An example of exporting a QContact:
+   QVersitContactExporter contactExporter;
+   QContact contact;
+ 
+   // Create a name
+   QContactName name;
+   name.setFirst(QString::fromAscii("John"));
+   contact.saveDetail(&name);
+ 
+   // Create an avatar type which is not supported by the exporter
+   QContactAvatar contactAvatar;
+   contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
+   contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
+   contact.saveDetail(&contactAvatar);
+ 
+   // Create an organization detail with a title and a logo
+   QContactOrganization organization;
+   organization.setTitle(QString::fromAscii("Developer"));
+   organization.setLogo(QString::fromAscii("/my/image/logo_path/logo.jpg"));
+   contact.saveDetail(&organization);
+ 
+   QVersitDocument versitDocument = contactExporter.exportContact(contact);
+   // Client will receive the signal "scale" with the logo image path
+ 
+   QList<QContactDetail> unknownDetails = contactExporter.unknownContactDetails();
+ 
+   // The returned unknownDetails can be processed by the client and
+   // the client can append details directly into QVersitDocument if needed.
+   // (In this example QContactAvatar::SubTypeTexturedMesh.
+   //  Currently for QContactAvatar details,
+   //  only exporting subtypes QContactAvatar::SubTypeImage and
+   //  QContactAvatar::SubTypeAudioRingtone is supported.)
+ 
+  \endcode
+ 
+  \sa QVersitDocument, QVersitProperty
  */
 
 

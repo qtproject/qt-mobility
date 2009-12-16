@@ -57,7 +57,6 @@ BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 RELEASEMODE=
 BUILD_SILENT=
-CONTACTS_PLUGIN=
 LINUX_TARGET=
 QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
@@ -88,10 +87,6 @@ usage()
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
     echo
-    echo "-contact-src <backend> ..."
-    echo "                    Compile the specified contacts API backend. Not selecting any backend"
-    echo "                    will result in default selection for build platform"
-    echo "                    options: symbian, wince, memory, maemo"
     echo "-maemo ............ Build Qt Mobility for Maemo."
     echo "                    (default: Desktop Linux)"
     echo "-sdk <sdk>..........Build using Apple provided SDK <path/to/sdk>."
@@ -142,10 +137,6 @@ while [ "$#" -gt 0 ]; do
         -silent)
             BUILD_SILENT=yes
             ;;
-        -contact-src)
-            CONTACTS_PLUGIN="$CONTACTS_PLUGIN $2"
-            shift
-            ;;
         -maemo)
             LINUX_TARGET=maemo 
             ;;
@@ -186,7 +177,6 @@ if [ -z "$RELEASEMODE" ]; then
     RELEASEMODE="debug"
 fi
 echo "CONFIG += $RELEASEMODE" >> "$CONFIG_IN"
-echo "CONTACTS_BACKENDS = $CONTACTS_PLUGIN" >> "$CONFIG_IN"
 
 #do we build for Maemo?
 if [ -n "$LINUX_TARGET" ]; then

@@ -189,12 +189,10 @@ bool QMessageContentContainerPrivate::createAttachment(const QString& attachment
 	QString fileString = fi.fileName();
 	TPtrC16 filePtr(reinterpret_cast<const TUint16*>(fileString.utf16()));
 	TBuf8<20> fileType;
-	TPtrC8 ptr8((TUint8 *)(_content.constData()));
-	HBufC8* des = HBufC8::New(_size);
-	des = ptr8.Alloc();
+	TPtrC8 ptr8((TUint8 *)(_content.constData()), _content.length());
 	if(session.Connect() == KErrNone){						
 		TDataRecognitionResult fileDataType; 					
-		session.RecognizeData(filePtr, *des, *&fileDataType); 										
+		session.RecognizeData(filePtr, ptr8, fileDataType); 										
 		fileType.Copy(fileDataType.iDataType.Des8());
 		mimeType = QByteArray((const char*)fileType.Ptr(), fileType.Length());
 		session.Close();				

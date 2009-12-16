@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility 1.0: addressfinder.cpp Example File (keepintouch/addressfinder.cpp)</title>
+  <title>Qt Mobility Project 1.0: addressfinder.cpp Example File (keepintouch/addressfinder.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -55,7 +55,14 @@
     ****************************************************************************/</span>
 
     #include &quot;addressfinder.h&quot;
-    #include &lt;qmessageaddress.h&gt;
+
+    #include &lt;qcontactdetailfilter.h&gt;
+    #include &lt;qcontactemailaddress.h&gt;
+    #include &lt;qcontactmanager.h&gt;
+    #include &lt;qcontactphonenumber.h&gt;
+    #include &lt;qmessage.h&gt;
+    #include &lt;qmessageserviceaction.h&gt;
+
     #include &lt;QComboBox&gt;
     #include &lt;QDateTime&gt;
     #include &lt;QGroupBox&gt;
@@ -69,6 +76,54 @@
     #include &lt;QMenuBar&gt;
     #include &lt;QTabWidget&gt;
 
+    namespace {
+
+    QString simpleAddress(const QString &amp;recipient)
+    {
+        QString name;
+        QString addressOnly;
+
+        QMessageAddress::parseEmailAddress(recipient, &amp;name, &amp;addressOnly);
+
+        return addressOnly;
+    }
+
+    QString simpleAddress(const QMessageAddress &amp;address)
+    {
+        return simpleAddress(address.recipient());
+    }
+
+    QString contactDisplayName(const QMessageAddress &amp;address)
+    {
+        QString addressOnly(simpleAddress(address));
+
+        <span class="comment">// See if we can match this address to a contact</span>
+        QContactDetailFilter filter;
+        if (address.type() == QMessageAddress::Email) {
+            <span class="comment">// Match contacts on email address data</span>
+            filter.setDetailDefinitionName(QContactEmailAddress::DefinitionName);
+            filter.setValue(addressOnly);
+            filter.setMatchFlags(QContactFilter::MatchContains);
+        } else if (address.type() == QMessageAddress::Phone) {
+            <span class="comment">// Match contacts on phone number data</span>
+            filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName);
+            filter.setValue(addressOnly);
+            filter.setMatchFlags(QContactFilter::MatchPhoneNumber);
+        }
+
+        QContactManager manager;
+        foreach (const QContactLocalId &amp;contactId, manager.contacts(filter)) {
+            <span class="comment">// Any match is acceptable</span>
+            const QContact &amp;contact(manager.contact(contactId));
+            return contact.displayLabel();
+        }
+
+        <span class="comment">// We couldn't match anything, so return the original address</span>
+        return address.recipient();
+    }
+
+    }
+
     AddressFinder::AddressFinder(QWidget *parent, Qt::WindowFlags flags)
         : QMainWindow(parent, flags),
           tabWidget(0),
@@ -76,13 +131,13 @@
           excludePeriod(0),
           searchAction(0),
           searchButton(0),
-          addressList(0),
+          contactList(0),
           messageCombo(0)
      {
         setupUi();
 
-        connect(&amp;service, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
-        connect(&amp;service, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
+        connect(&amp;serviceAction, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
+        connect(&amp;serviceAction, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
     }
 
     AddressFinder::~AddressFinder()
@@ -100,7 +155,6 @@
             case 2: excludePeriod-&gt;insertItem(0, &quot;3 Months&quot;);
             case 3: excludePeriod-&gt;insertItem(0, &quot;Month&quot;);
             case 4: excludePeriod-&gt;insertItem(0, &quot;Week&quot;);
-            case 5: excludePeriod-&gt;insertItem(0, &quot;Second&quot;);
             default: break;
         }
 
@@ -109,13 +163,14 @@
 
     void AddressFinder::addressSelected(const QString &amp;address)
     {
-        QString name;
-        QString addressOnly;
-        QMessageAddress::parseEmailAddress(address, &amp;name, &amp;addressOnly);
         messageCombo-&gt;clear();
 
-        foreach (const QString &amp;message, addressMessages[addressOnly]) {
-            messageCombo-&gt;addItem(message);
+        QString addressOnly(simpleAddress(address));
+
+        <span class="comment">// Add the subject of each message to this address to the message pane</span>
+        typedef QPair&lt;QString, QMessageId&gt; MessageDetails;
+        foreach (const MessageDetails &amp;message, addressMessages[addressOnly]) {
+            messageCombo-&gt;addItem(message.first);
         }
     }
 
@@ -123,14 +178,15 @@
     {
         setSearchActionEnabled(false);
 
-        addressList-&gt;clear();
+        contactList-&gt;clear();
         messageCombo-&gt;clear();
         excludedAddresses.clear();
-        includedAddresses.clear();
+        addressList.clear();
         addressMessages.clear();
 
         QDateTime now(QDateTime::currentDateTime());
 
+        <span class="comment">// Determine the dates that demarcate the selected range</span>
         QDateTime minimumDate(now);
         switch (includePeriod-&gt;currentIndex()) {
             case 0: minimumDate = minimumDate.addMonths(-12); break;
@@ -144,26 +200,37 @@
 
         QDateTime maximumDate(now);
         switch (excludePeriod-&gt;currentIndex()) {
-            case 0: maximumDate = maximumDate.addSecs(-1); break;
-            case 1: maximumDate = maximumDate.addDays(-7); break;
-            case 2: maximumDate = maximumDate.addMonths(-1); break;
-            case 3: maximumDate = maximumDate.addMonths(-3); break;
-            case 4: maximumDate = maximumDate.addMonths(-6); break;
-            case 5: maximumDate = maximumDate.addMonths(-9); break;
+            case 0: maximumDate = maximumDate.addDays(-7); break;
+            case 1: maximumDate = maximumDate.addMonths(-1); break;
+            case 2: maximumDate = maximumDate.addMonths(-3); break;
+            case 3: maximumDate = maximumDate.addMonths(-6); break;
+            case 4: maximumDate = maximumDate.addMonths(-9); break;
             default: break;
         }
 
-        QMessageFilter includeFilter((QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual))
-            | (QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual)));
-        QMessageFilter excludeFilter((QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual))
-            | (QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual)));
+        <span class="comment">// We will include addresses contacted following the minimum date</span>
+        QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
+
+        <span class="comment">// We will exclude addresses contacted following the maximum date</span>
+        QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
+
+        <span class="comment">// Not sure why reception timestamp is relevant to sent messages...</span>
+        includeFilter |= QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual);
+        excludeFilter |= QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
+
+        QMessageFilter exclusionFilter;
+
+        <span class="comment">// We only want to match messages that we sent</span>
         QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
-        <span class="comment">// Search for messages containing addresses to exclude</span>
-        service.queryMessages(sentFilter &amp; excludeFilter);
+        <span class="comment">// Create the filter needed to locate messages whose address we will exclude</span>
+        exclusionFilter = (sentFilter &amp; excludeFilter);
 
-        <span class="comment">// Create the filter needed to locate messages to search for addresses</span>
+        <span class="comment">// Create the filter needed to locate messages to search for addresses to include</span>
         inclusionFilter = (sentFilter &amp; includeFilter &amp; ~excludeFilter);
+
+        <span class="comment">// Start the search for messages containing addresses to exclude</span>
+        serviceAction.queryMessages(exclusionFilter);
     }
 
     void AddressFinder::stateChanged(QMessageServiceAction::State s)
@@ -171,15 +238,18 @@
         if (s == QMessageServiceAction::Successful) {
             if (!inclusionFilter.isEmpty()) {
                 <span class="comment">// Now find the included messages</span>
-                service.queryMessages(inclusionFilter);
+                serviceAction.queryMessages(inclusionFilter);
+
+                <span class="comment">// Clear the inclusion filter to indicate that we have searched for it</span>
                 inclusionFilter = QMessageFilter();
             } else {
-                <span class="comment">// We have found the message sets to process</span>
+                <span class="comment">// We have found the exclusion and inclusion message sets</span>
                 if (!inclusionMessages.isEmpty()) {
+                    <span class="comment">// Begin processing the message sets</span>
                     QTimer::singleShot(0, this, SLOT(continueSearch()));
                 } else {
                     searchAction-&gt;setEnabled(true);
-    #ifndef _WIN32_WCE
+    #ifdef USE_SEARCH_BUTTON
                     searchButton-&gt;setEnabled(true);
     #endif
                 }
@@ -192,6 +262,7 @@
 
     void AddressFinder::messagesFound(const QMessageIdList &amp;ids)
     {
+        <span class="comment">// Add these IDs to the relevant set</span>
         if (!inclusionFilter.isEmpty()) {
             exclusionMessages &lt;&lt; ids;
         } else {
@@ -201,57 +272,64 @@
 
     void AddressFinder::continueSearch()
     {
-        QString name;
-        QString addressOnly;
         if (!exclusionMessages.isEmpty()) {
+            <span class="comment">// Take the first message whose addreses we should exclude</span>
             QMessageId id(exclusionMessages.takeFirst());
             const QMessage message(id);
 
             <span class="comment">// All recipient addresses are to be excluded</span>
             foreach (const QMessageAddress &amp;address, message.to() + message.cc() + message.bcc()) {
-                QMessageAddress::parseEmailAddress(address.recipient(), &amp;name, &amp;addressOnly);
-                if (!excludedAddresses.contains(addressOnly))
-                    qDebug() &lt;&lt; &quot;Exclude&quot; &lt;&lt; addressOnly;
-                excludedAddresses.insert(addressOnly);
+                excludedAddresses.insert(simpleAddress(address));
             }
         } else if (!inclusionMessages.isEmpty()) {
+            <span class="comment">// Take the first message to inspect for suitable addresses</span>
             QMessageId id(inclusionMessages.takeFirst());
             const QMessage message(id);
 
-            <span class="comment">// Determine the properties of the message</span>
-            QString details(QString(&quot;[%1] %2&quot;).arg(message.date().toString(&quot;MMM d&quot;)).arg(message.subject()));
+            QString details;
 
+            <span class="comment">// For each recipient of this message</span>
             foreach (const QMessageAddress &amp;address, message.to() + message.cc() + message.bcc()) {
-                QString recipient(address.recipient());
-                QMessageAddress::parseEmailAddress(address.recipient(), &amp;name, &amp;addressOnly);
-                if (!includedAddresses.contains(addressOnly))
-                    qDebug() &lt;&lt; &quot;Include&quot; &lt;&lt; addressOnly;
-                includedAddresses.insert(addressOnly);
+                QString addressOnly(simpleAddress(address));
+
+                <span class="comment">// Ignore recipients whose addresses we have added to the exclusion set</span>
                 if (!excludedAddresses.contains(addressOnly)) {
                     <span class="comment">// Link this message to this address</span>
-                    qDebug() &lt;&lt; &quot;Exclude&quot; &lt;&lt; addressOnly;
-                    QStringList &amp;messages = addressMessages[addressOnly];
-                    if (messages.isEmpty()) {
-                        addressList-&gt;addItem(recipient);
+                    QList&lt;QPair&lt;QString, QMessageId&gt; &gt; &amp;messageList(addressMessages[addressOnly]);
+                    if (messageList.isEmpty()) {
+                        addressList.append(addressOnly);
+
+                        <span class="comment">// Add the recipient to our visible list of contacts to keep in touch with</span>
+                        contactList-&gt;addItem(contactDisplayName(address));
                     }
-                    messages.append(details);
+
+                    if (details.isEmpty()) {
+                        <span class="comment">// Determine the properties of the message</span>
+                        details = QString(&quot;[%1] %2&quot;).arg(message.date().toString(&quot;MMM d&quot;)).arg(message.subject());
+                    }
+                    messageList.append(qMakePair(details, id));
                 }
             }
         }
 
         if (!exclusionMessages.isEmpty() || !inclusionMessages.isEmpty()) {
+            <span class="comment">// There are more messages to process</span>
             QTimer::singleShot(0, this, SLOT(continueSearch()));
         } else {
+            <span class="comment">// We're finished our search</span>
             setSearchActionEnabled(true);
-    #ifdef _WIN32_WCE
+    #ifndef USE_SEARCH_BUTTON
             tabChanged(1);
     #endif
-            if (addressList-&gt;currentItem())
-                addressSelected(addressList-&gt;currentItem()-&gt;text());
+
+            if (contactList-&gt;currentItem()) {
+                <span class="comment">// Select the first address automatically</span>
+                addressSelected(contactList-&gt;currentItem()-&gt;text());
+            }
         }
     }
 
-    #ifdef _WIN32_WCE
+    #ifndef USE_SEARCH_BUTTON
     void AddressFinder::tabChanged(int index)
     {
         QWidget* currentTab = tabWidget-&gt;currentWidget();
@@ -259,6 +337,8 @@
         if(currentTab &amp;&amp; !currentTab-&gt;actions().isEmpty())
             action = currentTab-&gt;actions().first();
         menuBar()-&gt;setDefaultAction(action);
+
+        Q_UNUSED(index)
     }
     #endif
 
@@ -266,7 +346,7 @@
     {
         setWindowTitle(tr(&quot;Keep In Touch&quot;));
 
-    #ifdef _WIN32_WCE
+    #ifndef USE_SEARCH_BUTTON
         tabWidget = new QTabWidget(this);
         setCentralWidget(tabWidget);
         connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
@@ -278,7 +358,7 @@
 
         QGroupBox *inputGroup = new QGroupBox(tr(&quot;Find addresses&quot;));
         inputGroup-&gt;setAlignment(Qt::AlignLeft);
-    #ifdef _WIN32_WCE
+    #ifndef USE_SEARCH_BUTTON
         tabWidget-&gt;addTab(inputGroup,&quot;Search&quot;);
     #else
         centralLayout-&gt;addWidget(inputGroup);
@@ -295,8 +375,7 @@
         filterLayout-&gt;setAlignment(excludeLabel, Qt::AlignRight);
 
         includePeriod = new QComboBox;
-        filterLayout-&gt;addWidget(includePeriod, 0, 1);
-        includePeriod -&gt;setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        includePeriod-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         includePeriod-&gt;addItem(tr(&quot;Year&quot;));
         includePeriod-&gt;addItem(tr(&quot;9 Months&quot;));
         includePeriod-&gt;addItem(tr(&quot;6 Months&quot;));
@@ -304,22 +383,23 @@
         includePeriod-&gt;addItem(tr(&quot;Month&quot;));
         includePeriod-&gt;addItem(tr(&quot;Week&quot;));
         connect(includePeriod, SIGNAL(currentIndexChanged(int)), this, SLOT(includePeriodChanged(int)));
+        filterLayout-&gt;addWidget(includePeriod, 0, 1);
 
         excludePeriod = new QComboBox;
-        excludePeriod -&gt;setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        excludePeriod-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         filterLayout-&gt;addWidget(excludePeriod, 1, 1);
 
-    #ifndef _WIN32_WCE
+    #ifdef USE_SEARCH_BUTTON
         searchButton = new QPushButton(tr(&quot;Search&quot;));
         searchButton-&gt;setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        filterLayout-&gt;addWidget(searchButton,0,2,2,1,Qt::AlignVCenter | Qt::AlignHCenter);
         connect(searchButton, SIGNAL(clicked()), this, SLOT(searchMessages()), Qt::QueuedConnection);
+        filterLayout-&gt;addWidget(searchButton, 2, 1);
     #endif
 
-        addressList = new QListWidget(this);
-        connect(addressList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
+        contactList = new QListWidget(this);
+        connect(contactList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
 
-    #ifdef _WIN32_WCE
+    #ifndef USE_SEARCH_BUTTON
         QWidget* resultsWidget = new QWidget(this);
         QVBoxLayout* resultsLayout = new QVBoxLayout(resultsWidget);
         tabWidget-&gt;addTab(resultsWidget,&quot;Results&quot;);
@@ -327,19 +407,38 @@
         QVBoxLayout* resultsLayout = centralLayout;
     #endif
 
-        QGroupBox *addressGroup = new QGroupBox(tr(&quot;Address&quot;));
+        QGroupBox *addressGroup = new QGroupBox(tr(&quot;Contacts&quot;));
         addressGroup-&gt;setAlignment(Qt::AlignLeft);
         addressGroup-&gt;setLayout(new QVBoxLayout);
-        addressGroup-&gt;layout()-&gt;addWidget(addressList);
+        addressGroup-&gt;layout()-&gt;addWidget(contactList);
         resultsLayout-&gt;addWidget(addressGroup);
 
         QGroupBox *messageGroup = new QGroupBox(tr(&quot;Messages&quot;));
         messageGroup-&gt;setAlignment(Qt::AlignLeft);
-        messageGroup-&gt;setLayout(new QHBoxLayout);
-        resultsLayout-&gt;addWidget(messageGroup);
+
+        QVBoxLayout *groupLayout = new QVBoxLayout;
 
         messageCombo = new QComboBox;
-        messageGroup-&gt;layout()-&gt;addWidget(messageCombo);
+        connect(messageCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(messageIndexChanged(int)));
+
+        groupLayout-&gt;addWidget(messageCombo);
+
+        showButton = new QPushButton(tr(&quot;Show...&quot;));
+        showButton-&gt;setEnabled(false);
+        connect(showButton, SIGNAL(clicked()), this, SLOT(showMessage()));
+
+        forwardButton = new QPushButton(tr(&quot;Forward...&quot;));
+        forwardButton-&gt;setEnabled(false);
+        connect(forwardButton, SIGNAL(clicked()), this, SLOT(forwardMessage()));
+
+        QHBoxLayout *buttonLayout = new QHBoxLayout;
+        buttonLayout-&gt;addWidget(showButton);
+        buttonLayout-&gt;addWidget(forwardButton);
+
+        groupLayout-&gt;addLayout(buttonLayout);
+
+        messageGroup-&gt;setLayout(groupLayout);
+        resultsLayout-&gt;addWidget(messageGroup);
 
         searchAction = new QAction(&quot;Search&quot;,this);
         inputGroup-&gt;addAction(searchAction);
@@ -348,7 +447,7 @@
         connect(quitAction,SIGNAL(triggered()),qApp,SLOT(quit()));
 
         includePeriodChanged(0);
-    #ifdef _WIN32_WCE
+    #ifndef USE_SEARCH_BUTTON
         tabChanged(0);
     #endif
     }
@@ -356,13 +455,52 @@
     void AddressFinder::setSearchActionEnabled(bool val)
     {
         searchAction-&gt;setEnabled(val);
-    #ifndef _WIN32_WCE
+    #ifdef USE_SEARCH_BUTTON
         searchButton-&gt;setEnabled(val);
     #endif
+    }
+
+    void AddressFinder::messageIndexChanged(int index)
+    {
+        bool messageSelected(index != -1);
+        showButton-&gt;setEnabled(messageSelected);
+        forwardButton-&gt;setEnabled(messageSelected);
+    }
+
+    void AddressFinder::showMessage()
+    {
+        int index = messageCombo-&gt;currentIndex();
+        if (index != -1) {
+            <span class="comment">// Find the address currently selected</span>
+            const QString &amp;selectedAddress(addressList[contactList-&gt;currentRow()]);
+
+            <span class="comment">// Show the message selected</span>
+            QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);
+            serviceAction.show(messageId);
+        }
+    }
+
+    void AddressFinder::forwardMessage()
+    {
+        int index = messageCombo-&gt;currentIndex();
+        if (index != -1) {
+            <span class="comment">// Find the address currently selected</span>
+            const QString &amp;selectedAddress(addressList[contactList-&gt;currentRow()]);
+
+            <span class="comment">// Find the selected message</span>
+            QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);
+            QMessage original(messageId);
+
+            <span class="comment">// Create a message which forwards the selected message to the same recipient</span>
+            QMessage fwd(original.createResponseMessage(QMessage::Forward));
+            fwd.setTo(original.to());
+            serviceAction.compose(fwd);
+        }
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

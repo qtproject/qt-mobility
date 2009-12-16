@@ -4,10 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactrelationship.cpp -->
 <head>
-  <title>Qt Mobility 1.0: QContactRelationship Class Reference</title>
+  <title>Qt Mobility Project 1.0: QContactRelationship Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<a name="//apple_ref/cpp/cl//QContactRelationship"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -54,53 +55,71 @@
 <p>If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship in a <a href="qcontactmanager.html">QContactManager</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QContactRelationship/QContactRelationship"></a>
 <h3 class="fn"><a name="QContactRelationship"></a>QContactRelationship::QContactRelationship ()</h3>
 <p>Constructs a new relationship</p>
 <h3 class="fn"><a name="QContactRelationship-2"></a>QContactRelationship::QContactRelationship ( const QContactRelationship &amp; <i>other</i> )</h3>
 <p>Creates a copy of the <i>other</i> relationship</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/~QContactRelationship"></a>
 <h3 class="fn"><a name="dtor.QContactRelationship"></a>QContactRelationship::~QContactRelationship ()</h3>
 <p>Frees the memory in use by the relationship</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/first"></a>
 <h3 class="fn"><a name="first"></a><a href="qcontactid.html">QContactId</a> QContactRelationship::first () const</h3>
 <p>Returns the id of the locally-stored contact which has a relationship of the given type with the second contact</p>
 <p>See also <a href="qcontactrelationship.html#relationshipType">relationshipType</a>(), <a href="qcontactrelationship.html#second">second</a>(), and <a href="qcontactrelationship.html#setFirst">setFirst</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/relationshipType"></a>
 <h3 class="fn"><a name="relationshipType"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactRelationship::relationshipType () const</h3>
 <p>Returns the type of relationship which the source contact has with the destination contacts</p>
 <p>See also <a href="qcontactrelationship.html#setRelationshipType">setRelationshipType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/second"></a>
 <h3 class="fn"><a name="second"></a><a href="qcontactid.html">QContactId</a> QContactRelationship::second () const</h3>
 <p>Returns the id of the contact with which the first contact has a relationship of the given type</p>
 <p>See also <a href="qcontactrelationship.html#setSecond">setSecond</a>(), <a href="qcontactrelationship.html#relationshipType">relationshipType</a>(), and <a href="qcontactrelationship.html#first">first</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/setFirst"></a>
 <h3 class="fn"><a name="setFirst"></a>void QContactRelationship::setFirst ( const <a href="qcontactid.html">QContactId</a> &amp; <i>firstId</i> )</h3>
 <p>Sets the id of the first contact in the relationship to <i>firstId</i>. This contact must be stored in the manager in which the relationship is stored, and has a relationship of the specified type with the second contact.</p>
 <p>See also <a href="qcontactrelationship.html#first">first</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/setRelationshipType"></a>
 <h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationship::setRelationshipType ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>relationshipType</i> )</h3>
 <p>Sets the type of relationship that the source contact has with the destination contacts to <i>relationshipType</i>.</p>
 <p>See also <a href="qcontactrelationship.html#relationshipType">relationshipType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/setSecond"></a>
 <h3 class="fn"><a name="setSecond"></a>void QContactRelationship::setSecond ( const <a href="qcontactid.html">QContactId</a> &amp; <i>secondId</i> )</h3>
 <p>Sets the second contact in the relationship to <i>secondId</i>. The first contact has a relationship of the specified type with this contact.</p>
 <p>See also <a href="qcontactrelationship.html#second">second</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactRelationship::operator!= ( const QContactRelationship &amp; <i>other</i> ) const</h3>
 <p>Returns true if this relationship is not equal to <i>other</i>, otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContactRelationship &amp; QContactRelationship::operator= ( const QContactRelationship &amp; <i>other</i> )</h3>
 <p>Assigns this relationship to be equal to <i>other</i></p>
+<a name="//apple_ref/cpp/instm/QContactRelationship/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactRelationship::operator== ( const QContactRelationship &amp; <i>other</i> ) const</h3>
 <p>Returns true if this relationship is equal to the <i>other</i> relationship, otherwise returns false.</p>
 <hr />
 <h2>Member Variable Documentation</h2>
+<a name="//apple_ref/cpp/data/QContactRelationship/Aggregates"></a>
 <h3 class="fn"><a name="Aggregates-var"></a>const char * QContactRelationship::Aggregates</h3>
 <p>The relationship type which identifies the first contact as aggregating the second contact into a metacontact</p>
+<a name="//apple_ref/cpp/data/QContactRelationship/HasAssistant"></a>
 <h3 class="fn"><a name="HasAssistant-var"></a>const char * QContactRelationship::HasAssistant</h3>
 <p>The relationship type which identifies the second contact as being the assistant of the first contact</p>
+<a name="//apple_ref/cpp/data/QContactRelationship/HasManager"></a>
 <h3 class="fn"><a name="HasManager-var"></a>const char * QContactRelationship::HasManager</h3>
 <p>The relationship type which identifies the second contact as being the manager of the first contact</p>
+<a name="//apple_ref/cpp/data/QContactRelationship/HasMember"></a>
 <h3 class="fn"><a name="HasMember-var"></a>const char * QContactRelationship::HasMember</h3>
 <p>The relationship type which identifies the first contact as being a group which includes the second contact</p>
+<a name="//apple_ref/cpp/data/QContactRelationship/HasSpouse"></a>
 <h3 class="fn"><a name="HasSpouse-var"></a>const char * QContactRelationship::HasSpouse</h3>
 <p>The relationship type which identifies the second contact as being the spouse of the first contact</p>
+<a name="//apple_ref/cpp/data/QContactRelationship/Is"></a>
 <h3 class="fn"><a name="Is-var"></a>const char * QContactRelationship::Is</h3>
 <p>The relationship type which identifies the first contact as being the same contact as the second contact</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
-<td align="right"><div align="right">Qt Mobility 1.0</div></td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

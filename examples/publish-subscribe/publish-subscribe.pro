@@ -9,6 +9,7 @@ symbian {
     crmlFiles.path = c:/resource/qt/crml
     DEPLOYMENT += crmlFiles
 
+    #This is Symbian Signed UID3. Needs to match with uidValue in example.qcrml.
     TARGET.UID3 = 0x2002AC79
 }
 

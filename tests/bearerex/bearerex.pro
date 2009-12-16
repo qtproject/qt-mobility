@@ -12,8 +12,6 @@ include(../../common.pri)
 #not really a test case but deployment happens same way
 CONFIG += testcase
 
-include(../../common.pri)
-
 DEPENDPATH += .
 INCLUDEPATH += . \
                ../../src/bearer
@@ -26,12 +24,6 @@ SOURCES += bearerex.cpp \
            main.cpp \
            xqlistwidget.cpp
 
-symbian: {
-    bearerex.sources = Qtbearer_beta.dll
-    bearerex.path = /sys/bin
-    DEPLOYMENT += bearerex
-
-    TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
-}
 CONFIG += mobility
 MOBILITY = bearer
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData

@@ -116,7 +116,6 @@ unix: {
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
         TARGET.UID3 = 0x2002ac7d
-        MMP_RULES += EXPORTUNFROZEN
         
         deploy.path = $${EPOCROOT}
         exportheaders.sources = $$PUBLIC_HEADERS
@@ -127,7 +126,7 @@ unix: {
         }
 
 
-        QtSystemInfoDeployment.sources = QtSystemInfo_beta.dll
+        QtSystemInfoDeployment.sources = QtSystemInfo.dll
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }

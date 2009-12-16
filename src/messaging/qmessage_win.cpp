@@ -516,6 +516,7 @@ bool QMessage::isModified() const
 QMessage QMessage::createResponseMessage(ResponseType type) const
 {
     QMessage response;
+    response.setType(this->type());
 
     if (type == Forward) {
         response.setSubject("Fwd:" + subject());

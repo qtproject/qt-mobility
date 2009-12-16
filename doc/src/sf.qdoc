@@ -54,7 +54,7 @@ arbitrary services.
 
 \title Qt Service Framework
 
-\brief A set of APIs to that allows clients to discover and instantiate
+\brief A set of Qt APIs to that allows clients to discover and instantiate
 arbitrary services.
 
 \ingroup mobility

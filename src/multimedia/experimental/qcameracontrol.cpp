@@ -52,11 +52,20 @@ QTM_BEGIN_NAMESPACE
     \brief The QCameraControl class is an abstract base class for
     classes that control still cameras or video cameras.
 
+    \ingroup camera
+
     This service is provided by a QMediaService object via
     QMediaService::control().  It is used by QCamera.
 
     The interface name of QCameraControl is \c com.nokia.Qt.QCameraControl/1.0 as
     defined in QCameraControl_iid.
+
+
+The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
+the same level of review and testing as the rest of the APIs.
+
+The API exposed by the classes in this component are not stable, and will
+undergo modification or removal prior to the final release of Qt Mobility.
 
     \sa QMediaService::control(), QCamera
 */

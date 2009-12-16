@@ -13,37 +13,19 @@ INCLUDEPATH += . \
                ../../src/contacts/requests \
                ../../src/contacts/details 
 
-INCLUDEPATH += ../testmodel
-VPATH += ../testmodel
-
-
 CONFIG += mobility
 MOBILITY = contacts
 
 # Input
-SOURCES =  contactdetailsform.cpp \
-            maindialogform_240_320.cpp \
-            maindialogform_640_480.cpp \
-            phonebook.cpp \
-            serialiser.cpp \
-            groupeditdialog.cpp \ 
-            groupdetailsdialog.cpp \
-            main.cpp \
-            finddialog.cpp
-
-HEADERS   = contactdetailsform.h \
-            maindialogform_240_320.h \
-            maindialogform_640_480.h \
-            phonebook.h \
-            serialiser.h \
-            finddialog.h \
-            ../incomingcalls/filterdialog.h \
-            groupeditdialog.h \
-            groupdetailsdialog.h
-
-FORMS += contactdetails_240_320.ui \
-         maindialog_240_320.ui \
-         maindialog_640_480.ui 
+SOURCES += main.cpp \
+           phonebook.cpp \
+           contacteditor.cpp \
+           contactlistpage.cpp \
+           filterpage.cpp
+HEADERS += phonebook.h \
+           contacteditor.h \
+           contactlistpage.h \
+           filterpage.h
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \

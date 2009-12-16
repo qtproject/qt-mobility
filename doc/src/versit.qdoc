@@ -45,6 +45,9 @@
 
 \title Versit API
 
+\brief An API to manage Versit documents.
+
+
 \tableofcontents
 
 \section1 Overview 

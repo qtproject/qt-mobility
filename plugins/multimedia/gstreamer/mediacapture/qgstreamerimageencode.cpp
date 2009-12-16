@@ -55,18 +55,11 @@ QGstreamerImageEncode::~QGstreamerImageEncode()
 {
 }
 
-QSize QGstreamerImageEncode::minimumResolution(const QImageEncoderSettings &) const
+QList<QSize> QGstreamerImageEncode::supportedResolutions(const QImageEncoderSettings &, bool *continuous) const
 {
-    return QSize(16,16);
-}
+    if (continuous)
+        *continuous = m_session->videoInput() != 0;
 
-QSize QGstreamerImageEncode::maximumResolution(const QImageEncoderSettings &) const
-{
-    return QSize(4096,4096);
-}
-
-QList<QSize> QGstreamerImageEncode::supportedResolutions(const QImageEncoderSettings &) const
-{
     return m_session->videoInput() ? m_session->videoInput()->supportedResolutions() : QList<QSize>();
 }
 

@@ -92,8 +92,7 @@ schema itself may be defined as containing two attributes \c {Name} and
 \c {Usable}.  Change notification is modeled in this fashion also.  Were the
 \c {/Device/Buttons/1/Name} item to change, the \c {/Device/Buttons/1} item
 would also be marked as changed, and so on up the tree.  This allows, for example,
-subscription to just \c {/Device/Buttons} to be notified when anything
-"button" related changes.
+subscribers to \c {/Device/Buttons} to be notified when anything "button" related changes.
 
 Internally, the Value Space consists of an arbitrary number of data source trees, or layers, which
 are stacked on top of each other to form the final unified view.  If a "higher" layer contains an

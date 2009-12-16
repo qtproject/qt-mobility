@@ -58,42 +58,11 @@ V4LVideoEncode::~V4LVideoEncode()
 {
 }
 
-QSize V4LVideoEncode::minimumResolution(const QVideoEncoderSettings &) const
+QList<QSize> V4LVideoEncode::supportedResolutions(const QVideoEncoderSettings &, bool *continuous) const
 {
-    if(m_session) {
-        QSize minimum;
-        QList<QSize> resolutions = m_session->supportedResolutions();
-        if(resolutions.size() > 0)
-            minimum = resolutions.at(0);
+    if (continuous)
+        *continuous = false;
 
-        for(int i=0;i<resolutions.size();i++) {
-            if(resolutions.at(i).width() < minimum.width())
-                minimum = resolutions.at(i);
-        }
-        return minimum;
-    } else
-        return QSize();
-}
-
-QSize V4LVideoEncode::maximumResolution(const QVideoEncoderSettings &) const
-{
-    if(m_session) {
-        QSize maximum;
-        QList<QSize> resolutions = m_session->supportedResolutions();
-        if(resolutions.size() > 0)
-            maximum = resolutions.at(0);
-
-        for(int i=0;i<resolutions.size();i++) {
-            if(resolutions.at(i).width() > maximum.width())
-                maximum = resolutions.at(i);
-        }
-        return maximum;
-    } else
-        return QSize();
-}
-
-QList<QSize> V4LVideoEncode::supportedResolutions(const QVideoEncoderSettings &) const
-{
     if(m_session)
         return m_session->supportedResolutions();
 
@@ -101,18 +70,12 @@ QList<QSize> V4LVideoEncode::supportedResolutions(const QVideoEncoderSettings &)
     return res;
 }
 
-qreal V4LVideoEncode::minimumFrameRate(const QVideoEncoderSettings &) const
-{
-    return 12;
-}
 
-qreal V4LVideoEncode::maximumFrameRate(const QVideoEncoderSettings &) const
+QList< qreal > V4LVideoEncode::supportedFrameRates(const QVideoEncoderSettings &, bool *continuous) const
 {
-    return 24;
-}
+    if (continuous)
+        *continuous = false;
 
-QList< qreal > V4LVideoEncode::supportedFrameRates(const QVideoEncoderSettings &) const
-{
     QList<qreal> res;
     res << 24.0 << 12.0;
     return res;
