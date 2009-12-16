@@ -46,7 +46,7 @@
 #include <QUrl>
 
 #include "s60audioencodercontrol.h"
-#include "s60audiodevicecontrol.h"
+#include "s60audioendpointselector.h"
 #include "s60audiomediarecordercontrol.h"
 
 #include <QAudioFormat>
