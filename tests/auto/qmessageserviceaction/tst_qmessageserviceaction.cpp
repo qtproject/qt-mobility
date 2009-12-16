@@ -67,13 +67,13 @@ public:
 public slots:
     void messagesCounted(int count);
     void messagesFound(const QMessageIdList& messageList);
-    void stateChanged(QMessageServiceAction::State s);
+    void stateChanged(QMessageService::State s);
     void progressChanged(int,int);
 
 public:
     QMessageIdList ids;
     int count;
-    QMessageServiceAction::State state;
+    QMessageService::State state;
     int progressMin, progressMax;
 };
 
@@ -81,7 +81,7 @@ SignalCatcher::SignalCatcher(QObject* parent)
 :
 QObject(parent),
 count(0),
-state(QMessageServiceAction::Pending),
+state(QMessageService::Pending),
 progressMin(0),
 progressMax(0)
 {
@@ -97,7 +97,7 @@ void SignalCatcher::messagesFound(const QMessageIdList& results)
     ids = results;
 }
 
-void SignalCatcher::stateChanged(QMessageServiceAction::State s)
+void SignalCatcher::stateChanged(QMessageService::State s)
 {
     state = s;
 }
@@ -131,7 +131,7 @@ public:
 };
 
 /*
-    Unit test for QMessageServiceAction class.
+    Unit test for QMessageService class.
 */
 class tst_QMessageServiceAction : public QObject
 {
@@ -173,7 +173,7 @@ private:
     void testQueryCountData();
 
 private:
-    QMessageServiceAction* testServiceAction;
+    QMessageService* testService;
 
     QSet<QMessageFolderId> existingFolderIds;
     QMessageFolderIdList folderIds;
@@ -215,12 +215,12 @@ tst_QMessageServiceAction::~tst_QMessageServiceAction()
 
 void tst_QMessageServiceAction::init()
 {
-    testServiceAction = new QMessageServiceAction(this);
+    testService = new QMessageService(this);
 }
 
 void tst_QMessageServiceAction::cleanUp()
 {
-    if(testServiceAction) delete testServiceAction; testServiceAction = 0;
+    if(testService) delete testService; testService = 0;
 }
 
 void tst_QMessageServiceAction::initTestCase()
@@ -422,28 +422,28 @@ void tst_QMessageServiceAction::testQueryMessages()
         QCOMPARE(filter != QMessageFilter(), !filter.isEmpty());
 
         SignalCatcher sc(this);
-        connect(testServiceAction,SIGNAL(messagesFound(const QMessageIdList&)),&sc,SLOT(messagesFound(const QMessageIdList&)));
+        connect(testService,SIGNAL(messagesFound(const QMessageIdList&)),&sc,SLOT(messagesFound(const QMessageIdList&)));
 
         // Order is irrelevant for filtering
 
         if (body.isEmpty()) {
-            QCOMPARE(testServiceAction->queryMessages(filter&~existingAccountsFilter),true);
+            QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter),true);
             QTest::qSleep(100);
             qApp->processEvents();
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
-            QCOMPARE(testServiceAction->queryMessages(~filter&~existingAccountsFilter),true);
+            QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter),true);
             qApp->processEvents();
             QTest::qSleep(100);
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
 
         } else {
-            QCOMPARE(testServiceAction->queryMessages(filter&~existingAccountsFilter,body),true);
+            QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter,body),true);
             QTest::qSleep(30000);
             qApp->processEvents();
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
-            QCOMPARE(testServiceAction->queryMessages(~filter&~existingAccountsFilter,body),true);
+            QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter,body),true);
             qApp->processEvents();
             QTest::qSleep(30000);
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
@@ -1850,17 +1850,17 @@ void tst_QMessageServiceAction::testCountMessages()
         QCOMPARE(filter != QMessageFilter(), !filter.isEmpty());
 
         SignalCatcher sc(this);
-        connect(testServiceAction,SIGNAL(messagesCounted(int)),&sc,SLOT(messagesCounted(int)));
+        connect(testService,SIGNAL(messagesCounted(int)),&sc,SLOT(messagesCounted(int)));
 
         // Order is irrelevant for filtering
 
         if(body.isEmpty()) {
-            QCOMPARE(testServiceAction->countMessages(filter&~existingAccountsFilter),true);
+            QCOMPARE(testService->countMessages(filter&~existingAccountsFilter),true);
             QTest::qSleep(100);
             qApp->processEvents();
             QCOMPARE(sc.count-existingAccountIds.count(), ids.count());
 
-            QCOMPARE(testServiceAction->countMessages(~filter&~existingAccountsFilter),true);
+            QCOMPARE(testService->countMessages(~filter&~existingAccountsFilter),true);
             qApp->processEvents();
             QTest::qSleep(100);
             QCOMPARE(sc.count-existingAccountIds.count(), negatedIds.count());
@@ -1880,7 +1880,7 @@ void tst_QMessageServiceAction::testSend()
 {
     QMessage testMessage;
     testMessage.setType(QMessage::Email);
-    bool result = testServiceAction->send(testMessage);
+    bool result = testService->send(testMessage);
     QVERIFY(result == true || result == false);
 }
 
@@ -1888,38 +1888,38 @@ void tst_QMessageServiceAction::testCompose()
 {
     QMessage testMessage;
     testMessage.setType(QMessage::Email);
-    bool result = testServiceAction->compose(testMessage);
+    bool result = testService->compose(testMessage);
     QVERIFY(result == true || result == false);
 }
 
 
 void tst_QMessageServiceAction::testRetrieveHeader()
 {
-    bool result = testServiceAction->retrieveHeader(QMessageId());
+    bool result = testService->retrieveHeader(QMessageId());
     QCOMPARE(result,false);
 }
 
 void tst_QMessageServiceAction::testRetrieveBody()
 {
-    bool result = testServiceAction->retrieveBody(QMessageId());
+    bool result = testService->retrieveBody(QMessageId());
     QCOMPARE(result,false);
 }
 
 void tst_QMessageServiceAction::testRetrieve()
 {
-    bool result = testServiceAction->retrieve(QMessageId(),QMessageContentContainerId());
+    bool result = testService->retrieve(QMessageId(),QMessageContentContainerId());
     QCOMPARE(result,false);
 }
 
 void tst_QMessageServiceAction::testShow()
 {
     QMessageId testId;
-    bool result = testServiceAction->show(testId);
+    bool result = testService->show(testId);
     QCOMPARE(result,false);
 }
 
 void tst_QMessageServiceAction::testExportUpdates()
 {
-    bool result = testServiceAction->exportUpdates(QMessageAccountId());
+    bool result = testService->exportUpdates(QMessageAccountId());
     QCOMPARE(result,false);
 }
