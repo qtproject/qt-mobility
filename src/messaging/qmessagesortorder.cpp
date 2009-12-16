@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 
     A QMessageSortOrder is composed of a message property to sort and a sort order. 
     The QMessageSortOrder class is used in conjunction with the QMessageManager::queryMessages() 
-    and QMessageServiceAction::queryMessages() functions to sort message results according to 
+    and QMessageService::queryMessages() functions to sort message results according to 
     the criteria defined by the sort order.
 
     For example:

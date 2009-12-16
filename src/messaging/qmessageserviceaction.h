@@ -48,13 +48,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageServiceActionPrivate;
+class QMessageServicePrivate;
 
-class Q_MESSAGING_EXPORT QMessageServiceAction : public QObject
+class Q_MESSAGING_EXPORT QMessageService : public QObject
 {
     Q_OBJECT
 
-    friend class QMessageServiceActionPrivate;
+    friend class QMessageServicePrivate;
 
 public:
     enum State {
@@ -64,8 +64,8 @@ public:
         Failed
     };
 
-    QMessageServiceAction(QObject *parent = 0);
-    ~QMessageServiceAction();
+    QMessageService(QObject *parent = 0);
+    ~QMessageService();
 
     bool queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0);
     bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags = 0, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0);
@@ -87,13 +87,13 @@ public slots:
     void cancelOperation();
 
 signals:
-    void stateChanged(QMessageServiceAction::State a);
+    void stateChanged(QMessageService::State a);
     void messagesFound(const QMessageIdList &ids);
     void messagesCounted(int count);
     void progressChanged(uint value, uint total);
 
 private:
-    QMessageServiceActionPrivate *d_ptr;
+    QMessageServicePrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE

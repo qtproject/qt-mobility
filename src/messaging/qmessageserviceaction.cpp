@@ -47,71 +47,72 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QMessageServiceAction
+    \class QMessageService
 
     \preliminary
     \ingroup messaging
 
-    \brief The QMessageServiceAction class provides the interface for requesting 
-    messaging services.
+    \brief The QMessageService class provides the interface for requesting 
+    messaging service operations.
 
-    QMessageServiceAction provides the mechanisms for messaging clients to request services, 
-    and to receive information in response.  All actions present the same 
-    interface for communicating status, and progress information.
+    QMessageService provides the mechanisms for messaging clients to request services, 
+    and to receive information in response.  All requestable service operations present 
+    the same interface for communicating status, and progress information.
 
-    All actions communicate changes in their operational state by emitting the activityChanged()
-    signal.
+    All service request operations communicate changes in their operational state 
+    by emitting the activityChanged() signal.
 
-    Actions report progress information by emitting the progressChanged() signal.
+    Service request operations report progress information by emitting the 
+    progressChanged() signal.
     
-    If an action operation fails after being initiated then the lastError() function will return 
-    a value indicating the failure mode encountered.
+    If a requested operation fails after being initiated then the lastError() 
+    function will return a value indicating the failure mode encountered.
     
-    A client may attempt to cancel an operation after it has been initiated. The cancelOperation()
-    slot is provided for this purpose.
+    A client may attempt to cancel a requested operation after it has been 
+    initiated. The cancelOperation() slot is provided for this purpose.
 
-    A QMessageServiceAction instance supports only a single request at any time. Attempting to
-    initiate an operation on a QMessageServiceAction while another operation is already in
-    progress will result in the later initiating function returning false. A client may, however,
-    use multiple QMessageServiceAction instances to create a queue of requests that will be 
-    performed sequentially.
+    A QMessageService instance supports only a single request at a time. Attempting 
+    to initiate an operation on a QMessageService while another operation is already 
+    in progress will result in function initiating the latter request returning 
+    false. A client may, however, use multiple QMessageService instances to 
+    concurrently initiate a queue of requests that will be serviced sequentially.
 
-    Each QMessageServiceAction instance will report only the changes pertaining to the request
-    that instance delivers.
+    Each QMessageService instance will report only the changes pertaining to 
+    the request that instance initiated.
 
-    Except where noted QMessageServiceActions may initiate network activity. Other functions in
-    the mobility messaging API will not initiate network activity, with the exception of Windows
-    mobile and desktop platforms which may initiate network activity during the evaluation of any 
-    function call.
+    Except where noted QMessageServiceActions may initiate network activity. 
+    Other functions in the mobility messaging API will not initiate network 
+    activity, with the exception of Windows mobile and desktop platforms which 
+    may initiate network activity during the evaluation of any function call.
 */
 
 /*!
-    \enum QMessageServiceAction::State
+    \enum QMessageService::State
 
-    This enum type is used to describe the state of the requested action.
+    This enum type is used to describe the state of the requested operation.
 
-    \value Pending          The action has not yet begun execution.
-    \value InProgress       The action is currently executing.
-    \value Successful       The action has completed successfully.
-    \value Failed           The action could not be completed successfully, and has finished execution.
+    \value Pending          The operation has not yet begun execution.
+    \value InProgress       The operation is currently executing.
+    \value Successful       The operation has completed successfully.
+    \value Failed           The operation could not be completed successfully, and has finished execution.
 */
 
 /*!
-    \fn QMessageServiceAction::QMessageServiceAction(QObject *parent)
+    \fn QMessageService::QMessageService(QObject *parent)
   
-    Constructs a message service action object.
+    Constructs a message service representation object.
     
     The \a parent is passed to the QObject constructor.
 */
 
 /*!
-    \fn QMessageServiceAction::~QMessageServiceAction()
+    \fn QMessageService::~QMessageService()
   
-    Destroys the message service action.
+    Destroys the message service representation.
 */
 
 /*!
-    \fn QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+    \fn QMessageService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
     
     Emits via messagesFound() signals \l{QMessageId}s of messages in the messaging 
     store. If \a filter is not empty only identifiers for messages matching the parameters 
@@ -127,7 +128,7 @@ QTM_BEGIN_NAMESPACE
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
     
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
 
     Note: This function should not initiate network activity, instead only message data
     already stored on the device will be used during evaluation of the function.
@@ -136,7 +137,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+    \fn QMessageService::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
     
     Emits via the messagesFound() signal \l{QMessageId}s of messages in the messaging 
     store. If \a filter is not empty only identifiers for messages matching the parameters 
@@ -154,7 +155,7 @@ QTM_BEGIN_NAMESPACE
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
 
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     Note: This function should not initiate network activity, instead only message data
     already stored on the device will be used during evaluation of the function.
@@ -163,7 +164,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageServiceAction::countMessages(const QMessageFilter &filter)
+    \fn QMessageService::countMessages(const QMessageFilter &filter)
     
     Emits via a messagesCounted() signal the number messages in the messaging 
     store matching \a filter.
@@ -173,7 +174,7 @@ QTM_BEGIN_NAMESPACE
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
     
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     Note: This function should not initiate network activity, instead only message data
     already stored on the device will be used during evaluation of the function.
@@ -182,7 +183,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageServiceAction::send(QMessage &message)
+    \fn QMessageService::send(QMessage &message)
   
     Transmit \a message using the account identified by the message's \l{QMessage::parentAccountId()}{parentAccountId} function.
     If the message does not have a valid parentAccountId, it will be set to the 
@@ -193,19 +194,19 @@ QTM_BEGIN_NAMESPACE
     If transmission is successful, the message will be moved to the standard Sent
     folder for the account.
   
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessage, QMessageAccountId
 */
 
 /*!
-    \fn QMessageServiceAction::compose(const QMessage &message)
+    \fn QMessageService::compose(const QMessage &message)
   
     Open a composer application using \a message as a prototype.
   
     The default application for handling the type of \a message should be used.
   
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     On the QMF platform implementation of this function is left as a task for system 
     integrators.
@@ -214,7 +215,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageServiceAction::retrieveHeader(const QMessageId& id)
+    \fn QMessageService::retrieveHeader(const QMessageId& id)
   
     Retrieve meta data of the message identified by \a id.  
 
@@ -224,42 +225,42 @@ QTM_BEGIN_NAMESPACE
     
     If the message can not be found on the originating server it will be marked as removed.
 
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessageId, QMessage::Removed
 */
 
 /*!
-    \fn QMessageServiceAction::retrieveBody(const QMessageId& id)
+    \fn QMessageService::retrieveBody(const QMessageId& id)
   
     Retrieve the body of the message identified by \a id.  
 
     If the message can not be found on the originating server it will be marked as removed.
 
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessageId, QMessage::Removed
 */
 
 /*!
-    \fn QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
+    \fn QMessageService::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
   
     Retrieve the container identified by \a messageId and \a id, the contents of the container should also be 
     retrieved.
     
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessageContentContainerId
 */
 
 /*!
-    \fn QMessageServiceAction::show(const QMessageId& id)
+    \fn QMessageService::show(const QMessageId& id)
   
     Show the message identified by \a id.
 
     The default application for handling the type of message that \a id identifies should be used.
 
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     On the QMF platform implementation of this function is left as a task for system 
     integrators.
@@ -268,7 +269,7 @@ QTM_BEGIN_NAMESPACE
 */
     
 /*!
-    \fn QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
+    \fn QMessageService::exportUpdates(const QMessageAccountId &id)
   
     Initiate synchronization with external servers of local changes that have been queued by message store operations, 
     for messages with parent account \a id.
@@ -276,35 +277,35 @@ QTM_BEGIN_NAMESPACE
     On Windows mobile and desktop platforms this function performs no operation, as when a connection is available, 
     local changes are opportunistically synchronized with external servers.
 
-    Returns true if the action can be initiated; otherwise returns false.
+    Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessageManager::addMessage(), QMessageManager::updateMessage(), QMessageManager::removeMessage(), QMessageManager::removeMessages()
 */
     
 /*!
-    \fn QMessageServiceAction::state() const
+    \fn QMessageService::state() const
   
-    Returns the current state of the action.
+    Returns the current state of the operation.
 
     \sa stateChanged()
 */
 
 /*!
-    \fn QMessageServiceAction::cancelOperation()
+    \fn QMessageService::cancelOperation()
   
     Attempts to cancel the last requested operation.
 */
 
 /*!
-    \fn QMessageServiceAction::stateChanged(QMessageServiceAction::State newState)
+    \fn QMessageService::stateChanged(QMessageService::State newState)
 
-    This signal is emitted when the state of the action changes, with the new state described by \a newState.
+    This signal is emitted when the state of the operation changes, with the new state described by \a newState.
 
     \sa state()
 */
 
 /*!
-    \fn QMessageServiceAction::messagesFound(const QMessageIdList &ids);
+    \fn QMessageService::messagesFound(const QMessageIdList &ids);
 
     This signal is emitted when a queryMessages() operation has found
     messages.
@@ -315,7 +316,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageServiceAction::messagesCounted(int count);
+    \fn QMessageService::messagesCounted(int count);
 
     This signal is emitted when a countMessages() operation has counted
     messages.
@@ -326,9 +327,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageServiceAction::progressChanged(uint value, uint total)
+    \fn QMessageService::progressChanged(uint value, uint total)
 
-    This signal is emitted when the action operation has progressed.
+    This signal is emitted when the operation operation has progressed.
 
     \a total is the total number of progress steps to perform, or zero if
     the number of progress steps is unknown.
@@ -337,9 +338,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageServiceAction::lastError() const
+    \fn QMessageService::lastError() const
   
-    Returns a value indicating the last error condition encountered by the action.
+    Returns a value indicating the last error condition encountered by the operation.
 */
 
 #include "moc_qmessageserviceaction.cpp"

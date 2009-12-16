@@ -43,16 +43,16 @@
 
 QTM_BEGIN_NAMESPACE
 
-QMessageServiceAction::QMessageServiceAction(QObject *parent)
+QMessageService::QMessageService(QObject *parent)
     : QObject(parent)
 {
 }
 
-QMessageServiceAction::~QMessageServiceAction()
+QMessageService::~QMessageService()
 {
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     Q_UNUSED(filter);
     Q_UNUSED(sortOrder);
@@ -61,7 +61,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QM
     return false; // stub
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool QMessageService::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     Q_UNUSED(filter);
     Q_UNUSED(body);
@@ -72,66 +72,66 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     return false; // stub
 }
 
-bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
+bool QMessageService::countMessages(const QMessageFilter &filter)
 {
     // TODO: Implement this
     Q_UNUSED(filter);
     return false;
 }
 
-bool QMessageServiceAction::send(QMessage &message)
+bool QMessageService::send(QMessage &message)
 {
     Q_UNUSED(message)
     return false; // stub
 }
 
-bool QMessageServiceAction::compose(const QMessage &message)
+bool QMessageService::compose(const QMessage &message)
 {
     Q_UNUSED(message)
     return false; // stub
 }
 
-bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
+bool QMessageService::retrieveHeader(const QMessageId& id)
 {
     Q_UNUSED(id)
     return false; // stub
 }
 
-bool QMessageServiceAction::retrieveBody(const QMessageId& id)
+bool QMessageService::retrieveBody(const QMessageId& id)
 {
     Q_UNUSED(id)
     return false; // stub
 }
 
-bool QMessageServiceAction::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
+bool QMessageService::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
     Q_UNUSED(messageId)
     Q_UNUSED(id)
     return false; // stub
 }
 
-bool QMessageServiceAction::show(const QMessageId& id)
+bool QMessageService::show(const QMessageId& id)
 {
     Q_UNUSED(id)
     return false; // stub
 }
 
-bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
+bool QMessageService::exportUpdates(const QMessageAccountId &id)
 {
     Q_UNUSED(id)
     return false; // stub
 }
 
-QMessageServiceAction::State QMessageServiceAction::state() const
+QMessageService::State QMessageService::state() const
 {
     return Pending; // stub
 }
 
-void QMessageServiceAction::cancelOperation()
+void QMessageService::cancelOperation()
 {
 }
 
-QMessageManager::ErrorCode QMessageServiceAction::lastError() const
+QMessageManager::ErrorCode QMessageService::lastError() const
 {
     return QMessageManager::NoError;
 }

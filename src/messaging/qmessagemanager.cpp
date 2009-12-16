@@ -67,13 +67,13 @@ QTM_BEGIN_NAMESPACE
 
     QMessageManager also implements functionality allowing the messages contained by the 
     store to be counted or listed, using various filtering and sortOrder constraints.
-    Clients can access this functionality via the \l{QMessageServiceAction::countMessages()}{countMessages}
-    and \l{QMessageServiceAction::queryMessages()}{queryMessages} functions of the
-    QMessageServiceAction class.
+    Clients can access this functionality via the \l{QMessageService::countMessages()}{countMessages}
+    and \l{QMessageService::queryMessages()}{queryMessages} functions of the
+    QMessageService class.
     
     With the exception of Windows mobile and desktop platforms, QMessageManager functions 
     should not initiate network activity. Instead functions are restricted to operating 
-    on data already on the device. See QMessageServiceAction for functions related to 
+    on data already on the device. See QMessageService for functions related to 
     initiating network activity.
 
     If a QMessageManager operation fails, the lastError() function will return an error code
@@ -92,7 +92,7 @@ QTM_BEGIN_NAMESPACE
     Messaging store manipulations involving messages are reported via the messagesAdded(), 
     messagesUpdated() and messagesRemoved() signals.
 
-    \sa QMessage, QMessageId, QMessageContentContainerId, QMessageServiceAction
+    \sa QMessage, QMessageId, QMessageContentContainerId, QMessageService
 */
 
 /*!
@@ -405,11 +405,11 @@ int QMessageManager::countAccounts(const QMessageAccountFilter& filter) const
     Returns \c true if the operation successfully updates the store; otherwise returns \c false.
     
     To ensure the change is propagated to any affected external server
-    QMessageServiceAction::exportUpdates() should be subsequently called.
+    QMessageService::exportUpdates() should be subsequently called.
     
     \a option is ignored on Windows mobile and desktop platforms.
 
-    \sa removeMessages(), addMessage(), updateMessage(), QMessageServiceAction::exportUpdates()
+    \sa removeMessages(), addMessage(), updateMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::removeMessage(const QMessageId& id, QMessageManager::RemovalOption option)
 {
@@ -426,7 +426,7 @@ bool QMessageManager::removeMessage(const QMessageId& id, QMessageManager::Remov
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
     
     To ensure the change is propagated to any affected external server
-    QMessageServiceAction::exportUpdates() should be subsequently called.
+    QMessageService::exportUpdates() should be subsequently called.
 
     \a option is ignored on Windows mobile and desktop platforms.
 
@@ -443,7 +443,7 @@ bool QMessageManager::removeMessage(const QMessageId& id, QMessageManager::Remov
     }
     \endcode
 
-    \sa removeMessage(), addMessage(), updateMessage(), QMessageServiceAction::exportUpdates()
+    \sa removeMessage(), addMessage(), updateMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
 {
@@ -457,9 +457,9 @@ bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManag
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
     
     To ensure the change is propagated to any affected external server
-    QMessageServiceAction::exportUpdates() should be subsequently called.
+    QMessageService::exportUpdates() should be subsequently called.
 
-    \sa message(), updateMessage(), removeMessage(), QMessageServiceAction::exportUpdates()
+    \sa message(), updateMessage(), removeMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::addMessage(QMessage *m)
 {
@@ -473,9 +473,9 @@ bool QMessageManager::addMessage(QMessage *m)
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
 
     To ensure the change is propagated to any affected external server 
-    QMessageServiceAction::exportUpdates() should be subsequently called.
+    QMessageService::exportUpdates() should be subsequently called.
     
-    \sa addMessage(), removeMessage(), QMessageServiceAction::exportUpdates()
+    \sa addMessage(), removeMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::updateMessage(QMessage *m)
 {

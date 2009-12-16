@@ -486,7 +486,7 @@ QList<QByteArray> charsets;
 
     Creates a new message as a response to this message, with properties predetermined according to \a type.
   
-    \sa QMessageServiceAction::compose()
+    \sa QMessageService::compose()
 */
 
 /*!

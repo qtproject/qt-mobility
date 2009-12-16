@@ -66,15 +66,15 @@ QTM_BEGIN_NAMESPACE
 
 static const unsigned long SmsCharLimit = 160;
 
-class QMessageServiceActionPrivate : public QObject
+class QMessageServicePrivate : public QObject
 {
     Q_OBJECT
 
-    Q_DECLARE_PUBLIC(QMessageServiceAction)
+    Q_DECLARE_PUBLIC(QMessageService)
 
 public:
-    QMessageServiceActionPrivate(QMessageServiceAction* parent);
-    ~QMessageServiceActionPrivate();
+    QMessageServicePrivate(QMessageService* parent);
+    ~QMessageServicePrivate();
 
     bool send(const QMessage& message, bool showComposer = false);
     bool show(const QMessageId& id);
@@ -97,19 +97,19 @@ public slots:
 #endif
 
 signals:
-    void stateChanged(QMessageServiceAction::State);
+    void stateChanged(QMessageService::State);
     void messagesFound(const QMessageIdList&);
     void messagesCounted(int);
     void progressChanged(uint, uint);
 
 public:
-    QMessageServiceAction* q_ptr;
+    QMessageService* q_ptr;
     QMessageManager _manager;
     bool _active;
     QMessageManager::ErrorCode _lastError;
     QMessageIdList _candidateIds;
     int _count;
-    QMessageServiceAction::State _state;
+    QMessageService::State _state;
     QMessageId m_bodyDownloadTarget;
     QMessageManager::NotificationFilterId m_bodyDownloadFilterId;
     bool m_registeredUpdates;
@@ -123,7 +123,7 @@ class QueryThread : public QThread
 {
     Q_OBJECT
 
-    QMessageServiceActionPrivate *_parent;
+    QMessageServicePrivate *_parent;
     QMessageFilter _filter;
     QString _body;
     QMessageDataComparator::MatchFlags _matchFlags;
@@ -135,14 +135,14 @@ class QueryThread : public QThread
     QMessageManager _manager;
 
 public:
-    QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
+    QueryThread(QMessageServicePrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
     void run();
 
 signals:
     void completed();
 };
 
-QueryThread::QueryThread(QMessageServiceActionPrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+QueryThread::QueryThread(QMessageServicePrivate *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 : QThread(),
     _parent(parent),
     _filter(filter),
@@ -166,14 +166,14 @@ void QueryThread::run()
 
 }
 
-void QMessageServiceActionPrivate::completed()
+void QMessageServicePrivate::completed()
 {
     _active = false;
-    _state = (_lastError == QMessageManager::NoError) ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    _state = (_lastError == QMessageManager::NoError) ? QMessageService::Successful : QMessageService::Failed;
     emit stateChanged(_state);
 }
 
-void QMessageServiceActionPrivate::reportMatchingIds()
+void QMessageServicePrivate::reportMatchingIds()
 {
     if (_lastError == QMessageManager::NoError) {
         emit messagesFound(_candidateIds);
@@ -181,7 +181,7 @@ void QMessageServiceActionPrivate::reportMatchingIds()
     completed();
 }
 
-void QMessageServiceActionPrivate::reportMessagesCounted()
+void QMessageServicePrivate::reportMessagesCounted()
 {
     if (_lastError == QMessageManager::NoError) {
         emit messagesCounted(_candidateIds.count());
@@ -190,7 +190,7 @@ void QMessageServiceActionPrivate::reportMessagesCounted()
 }
 
 #ifdef _WIN32_WCE
-void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
+void QMessageServicePrivate::messageUpdated(const QMessageId& id)
 {
     if(id == m_bodyDownloadTarget)
     {
@@ -199,7 +199,7 @@ void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
         if(isBodyDownloaded)
         {
             unregisterUpdates();
-            _state = isBodyDownloaded ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+            _state = isBodyDownloaded ? QMessageService::Successful : QMessageService::Failed;
             _active = false;
             emit q_ptr->stateChanged(_state);
         }
@@ -208,16 +208,16 @@ void QMessageServiceActionPrivate::messageUpdated(const QMessageId& id)
 
 #endif
 
-QMessageServiceActionPrivate::QMessageServiceActionPrivate(QMessageServiceAction* parent)
+QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
     :q_ptr(parent),
      _active(false),
-     _state(QMessageServiceAction::Pending),
+     _state(QMessageService::Pending),
      m_registeredUpdates(false),
      m_queryThread(0)
 {
 }
 
-QMessageServiceActionPrivate::~QMessageServiceActionPrivate()
+QMessageServicePrivate::~QMessageServicePrivate()
 {
     qDeleteAll(m_obsoleteThreads);
     delete m_queryThread;
@@ -237,7 +237,7 @@ static Lptstr createMCFRecipients(const QMessageAddressList& addressList, QMessa
     return temp.isEmpty() ? Lptstr(0) : LptstrFromQString(temp.join(";"));
 }
 
-bool QMessageServiceActionPrivate::send(const QMessage& message, bool showComposer)
+bool QMessageServicePrivate::send(const QMessage& message, bool showComposer)
 {
     //check message type
 
@@ -461,7 +461,7 @@ bool QMessageServiceActionPrivate::send(const QMessage& message, bool showCompos
     return true;
 }
 
-bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
+bool QMessageServicePrivate::show(const QMessageId& messageId)
 {
     if(!messageId.isValid())
     {
@@ -538,7 +538,7 @@ bool QMessageServiceActionPrivate::show(const QMessageId& messageId)
 
 #ifdef _WIN32_WCE
 
-bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id, bool considerAttachments)
+bool QMessageServicePrivate::isPartiallyDownloaded(const QMessageId& id, bool considerAttachments)
 {
     if(!id.isValid())
     {
@@ -579,7 +579,7 @@ bool QMessageServiceActionPrivate::isPartiallyDownloaded(const QMessageId& id, b
     }
 }
 
-bool QMessageServiceActionPrivate::markForDownload(const QMessageId& id, bool includeAttachments)
+bool QMessageServicePrivate::markForDownload(const QMessageId& id, bool includeAttachments)
 {
     if(!id.isValid())
     {
@@ -644,7 +644,7 @@ bool QMessageServiceActionPrivate::markForDownload(const QMessageId& id, bool in
     return true;
 }
 
-bool QMessageServiceActionPrivate::synchronize(const QMessageAccountId& id)
+bool QMessageServicePrivate::synchronize(const QMessageAccountId& id)
 {
     if(!id.isValid())
     {
@@ -663,7 +663,7 @@ bool QMessageServiceActionPrivate::synchronize(const QMessageAccountId& id)
     return true;
 }
 
-bool QMessageServiceActionPrivate::registerUpdates(const QMessageId& id)
+bool QMessageServicePrivate::registerUpdates(const QMessageId& id)
 {
     if(!id.isValid())
     {
@@ -682,7 +682,7 @@ bool QMessageServiceActionPrivate::registerUpdates(const QMessageId& id)
     return m_registeredUpdates;
 }
 
-void QMessageServiceActionPrivate::unregisterUpdates()
+void QMessageServicePrivate::unregisterUpdates()
 {
     disconnect(&_manager, SIGNAL(messageUpdated(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)),this,SLOT(messageUpdated(const QMessageId&)));
     _manager.unregisterNotificationFilter(m_bodyDownloadFilterId);
@@ -690,7 +690,7 @@ void QMessageServiceActionPrivate::unregisterUpdates()
     m_registeredUpdates = false;
 }
 
-bool QMessageServiceActionPrivate::retrieveBody(const QMessage& partialMessage)
+bool QMessageServicePrivate::retrieveBody(const QMessage& partialMessage)
 {
     if(partialMessage.type() != QMessage::Email)
     {
@@ -714,12 +714,12 @@ bool QMessageServiceActionPrivate::retrieveBody(const QMessage& partialMessage)
 
 #endif
 
-QMessageServiceAction::QMessageServiceAction(QObject *parent)
+QMessageService::QMessageService(QObject *parent)
     : QObject(parent),
-    d_ptr(new QMessageServiceActionPrivate(this))
+    d_ptr(new QMessageServicePrivate(this))
 {
-    connect(d_ptr, SIGNAL(stateChanged(QMessageServiceAction::State)),
-        this, SIGNAL(stateChanged(QMessageServiceAction::State)));
+    connect(d_ptr, SIGNAL(stateChanged(QMessageService::State)),
+        this, SIGNAL(stateChanged(QMessageService::State)));
     connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)),
         this, SIGNAL(messagesFound(const QMessageIdList&)));
     connect(d_ptr, SIGNAL(messagesCounted(int)),
@@ -728,18 +728,18 @@ QMessageServiceAction::QMessageServiceAction(QObject *parent)
         this, SIGNAL(progressChanged(uint, uint)));
 }
 
-QMessageServiceAction::~QMessageServiceAction()
+QMessageService::~QMessageService()
 {
     delete d_ptr;
     d_ptr = 0;
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     return queryMessages(filter, QString(), QMessageDataComparator::MatchFlags(), sortOrder, limit, offset);
 }
 
-bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool QMessageService::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     if (d_ptr->_active) {
         qWarning() << "Action is currently busy";
@@ -749,7 +749,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
 
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageManager::NoError;
-    d_ptr->_state = QMessageServiceAction::InProgress;
+    d_ptr->_state = QMessageService::InProgress;
     emit stateChanged(d_ptr->_state);
 
 #if 0
@@ -775,7 +775,7 @@ bool QMessageServiceAction::queryMessages(const QMessageFilter &filter, const QS
     return true;
 }
 
-bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
+bool QMessageService::countMessages(const QMessageFilter &filter)
 {
     if (d_ptr->_active) {
         qWarning() << "Action is currently busy";
@@ -783,7 +783,7 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
     }
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageManager::NoError;
-    d_ptr->_state = QMessageServiceAction::InProgress;
+    d_ptr->_state = QMessageService::InProgress;
     emit stateChanged(d_ptr->_state);
 
     // Perform the query in another thread to keep the UI thread free
@@ -803,7 +803,7 @@ bool QMessageServiceAction::countMessages(const QMessageFilter &filter)
     return true;
 }
 
-bool QMessageServiceAction::send(QMessage &message)
+bool QMessageService::send(QMessage &message)
 {
     if(d_ptr->_active) {
         qWarning() << "Action is currently busy";
@@ -811,21 +811,21 @@ bool QMessageServiceAction::send(QMessage &message)
     }
 
     d_ptr->_active = true;
-    d_ptr->_state = QMessageServiceAction::InProgress;
+    d_ptr->_state = QMessageService::InProgress;
     d_ptr->_lastError = QMessageManager::NoError;
     emit stateChanged(d_ptr->_state);
 
 
     bool result = d_ptr->send(message);
 
-    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    d_ptr->_state = result ? QMessageService::Successful : QMessageService::Failed;
     d_ptr->_active = false;
     emit stateChanged(d_ptr->_state);
 
     return result;
 }
 
-bool QMessageServiceAction::compose(const QMessage &message)
+bool QMessageService::compose(const QMessage &message)
 {
     if(d_ptr->_active) {
         qWarning() << "Action is currently busy";
@@ -833,18 +833,18 @@ bool QMessageServiceAction::compose(const QMessage &message)
     }
 
     d_ptr->_active = true;
-    d_ptr->_state = QMessageServiceAction::InProgress;
+    d_ptr->_state = QMessageService::InProgress;
     d_ptr->_lastError = QMessageManager::NoError;
     emit stateChanged(d_ptr->_state);
 
     bool result = d_ptr->send(message,true);
-    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    d_ptr->_state = result ? QMessageService::Successful : QMessageService::Failed;
     d_ptr->_active = false;
     emit stateChanged(d_ptr->_state);
     return result;
 }
 
-bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
+bool QMessageService::retrieveHeader(const QMessageId& id)
 {
     Q_UNUSED(id);
 
@@ -853,7 +853,7 @@ bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
         return false;
     }
 
-    d_ptr->_state = QMessageServiceAction::Successful;
+    d_ptr->_state = QMessageService::Successful;
     d_ptr->_lastError = QMessageManager::NoError;
     d_ptr->_active = false;
     emit stateChanged(d_ptr->_state);
@@ -861,7 +861,7 @@ bool QMessageServiceAction::retrieveHeader(const QMessageId& id)
     return true;
 }
 
-bool QMessageServiceAction::retrieveBody(const QMessageId& id)
+bool QMessageService::retrieveBody(const QMessageId& id)
 {
 
     if(d_ptr->_active) {
@@ -917,7 +917,7 @@ bool QMessageServiceAction::retrieveBody(const QMessageId& id)
 #endif
 }
 
-bool QMessageServiceAction::retrieve(const QMessageId& messageId, const QMessageContentContainerId& id)
+bool QMessageService::retrieve(const QMessageId& messageId, const QMessageContentContainerId& id)
 {
 
     if(d_ptr->_active) {
@@ -980,7 +980,7 @@ bool QMessageServiceAction::retrieve(const QMessageId& messageId, const QMessage
     return false;
 }
 
-bool QMessageServiceAction::show(const QMessageId& id)
+bool QMessageService::show(const QMessageId& id)
 {
     if(d_ptr->_active) {
         qWarning() << "Action is currently busy";
@@ -993,13 +993,13 @@ bool QMessageServiceAction::show(const QMessageId& id)
     emit stateChanged(d_ptr->_state);
 
     bool result = d_ptr->show(id);
-    d_ptr->_state = result ? QMessageServiceAction::Successful : QMessageServiceAction::Failed;
+    d_ptr->_state = result ? QMessageService::Successful : QMessageService::Failed;
     d_ptr->_active = false;
     emit stateChanged(d_ptr->_state);
     return result;
 }
 
-bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
+bool QMessageService::exportUpdates(const QMessageAccountId &id)
 {
     Q_UNUSED(id);
 
@@ -1016,12 +1016,12 @@ bool QMessageServiceAction::exportUpdates(const QMessageAccountId &id)
     return false;
 }
 
-QMessageServiceAction::State QMessageServiceAction::state() const
+QMessageService::State QMessageService::state() const
 {
     return d_ptr->_state;
 }
 
-void QMessageServiceAction::cancelOperation()
+void QMessageService::cancelOperation()
 {
 #ifdef _WIN32_WCE
     if(d_ptr->_active)
@@ -1032,7 +1032,7 @@ void QMessageServiceAction::cancelOperation()
         {
             d_ptr->unregisterUpdates();
             d_ptr->_lastError = QMessageManager::NoError;
-            d_ptr->_state = QMessageServiceAction::Pending;
+            d_ptr->_state = QMessageService::Pending;
             d_ptr->_active = false;
             emit stateChanged(d_ptr->_state);
         }
@@ -1042,7 +1042,7 @@ void QMessageServiceAction::cancelOperation()
 #endif
 }
 
-QMessageManager::ErrorCode QMessageServiceAction::lastError() const
+QMessageManager::ErrorCode QMessageService::lastError() const
 {
     return d_ptr->_lastError;
 }

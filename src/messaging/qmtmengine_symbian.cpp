@@ -1470,16 +1470,16 @@ void CMTMEngine::handleNestedFiltersFromMessageFilter(QMessageFilter &filter) co
     }
 }
 
-bool CMTMEngine::queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+bool CMTMEngine::queryMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    TRAPD(err, queryMessagesL(privateAction, filter, sortOrder, limit, offset));
+    TRAPD(err, queryMessagesL(privateService, filter, sortOrder, limit, offset));
     if (err != KErrNone) {
         return false;
     }
     return true;
 }
 
-void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+void CMTMEngine::queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     MessageQueryInfo queryInfo;
     queryInfo.operationId = ++iOperationIds;
@@ -1492,7 +1492,7 @@ void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, con
     queryInfo.offset = offset;
     queryInfo.limit = limit;
     queryInfo.findOperation = new CMessagesFindOperation((CMTMEngine&)*this, ipMsvSession, queryInfo.operationId);
-    queryInfo.privateAction = &privateAction;
+    queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
     iMessageQueries.append(queryInfo);
     
@@ -1507,16 +1507,16 @@ void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, con
     }
 }
 
-bool CMTMEngine::queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+bool CMTMEngine::queryMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    TRAPD(err, queryMessagesL(privateAction, filter, body, matchFlags, sortOrder, limit, offset));
+    TRAPD(err, queryMessagesL(privateService, filter, body, matchFlags, sortOrder, limit, offset));
     if (err != KErrNone) {
         return false;
     }
     return true;
 }
 
-void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+void CMTMEngine::queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     MessageQueryInfo queryInfo;
     queryInfo.operationId = ++iOperationIds;
@@ -1531,7 +1531,7 @@ void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, con
     queryInfo.offset = offset;
     queryInfo.limit = limit;
     queryInfo.findOperation = new CMessagesFindOperation((CMTMEngine&)*this, ipMsvSession, queryInfo.operationId);
-    queryInfo.privateAction = &privateAction;
+    queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
     iMessageQueries.append(queryInfo);
     
@@ -1551,16 +1551,16 @@ void CMTMEngine::queryMessagesL(QMessageServiceActionPrivate& privateAction, con
     }
 }
 
-bool CMTMEngine::countMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter)
+bool CMTMEngine::countMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter)
 {
-    TRAPD(err, countMessagesL(privateAction, filter));
+    TRAPD(err, countMessagesL(privateService, filter));
     if (err != KErrNone) {
         return false;
     }
     return true;
 }
 
-void CMTMEngine::countMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter)
+void CMTMEngine::countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter)
 {
     MessageQueryInfo queryInfo;
     queryInfo.operationId = ++iOperationIds;
@@ -1572,7 +1572,7 @@ void CMTMEngine::countMessagesL(QMessageServiceActionPrivate& privateAction, con
     queryInfo.limit = 0;
     queryInfo.offset = 0;
     queryInfo.findOperation = new CMessagesFindOperation((CMTMEngine&)*this, ipMsvSession, queryInfo.operationId);
-    queryInfo.privateAction = &privateAction;
+    queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
     queryInfo.count = 0;
     iMessageQueries.append(queryInfo);
@@ -1654,12 +1654,12 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                     applyOffsetAndLimitToMsgIds(iMessageQueries[index].ids,
                                                 iMessageQueries[index].offset,
                                                 iMessageQueries[index].limit);
-                    emit iMessageQueries[index].privateAction->messagesFound(iMessageQueries[index].ids);
+                    emit iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids);
                 } else {
-                    emit iMessageQueries[index].privateAction->messagesCounted(iMessageQueries[index].offset);
+                    emit iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].offset);
                 }
-                iMessageQueries[index].privateAction->_active = false;
-                emit iMessageQueries[index].privateAction->stateChanged(QMessageServiceAction::Successful);
+                iMessageQueries[index].privateService->_active = false;
+                emit iMessageQueries[index].privateService->stateChanged(QMessageService::Successful);
             }
         } else {
             // There was only one filter or filterLists to go through
@@ -1681,16 +1681,16 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                 }
                 // Handle offest & limit
                 applyOffsetAndLimitToMsgIds(ids, iMessageQueries[index].offset, iMessageQueries[index].limit);
-                emit iMessageQueries[index].privateAction->messagesFound(ids);
+                emit iMessageQueries[index].privateService->messagesFound(ids);
             } else {
-                emit iMessageQueries[index].privateAction->messagesCounted(ids.count());
+                emit iMessageQueries[index].privateService->messagesCounted(ids.count());
             }
-            iMessageQueries[index].privateAction->_active = false;
-            emit iMessageQueries[index].privateAction->stateChanged(QMessageServiceAction::Successful);
+            iMessageQueries[index].privateService->_active = false;
+            emit iMessageQueries[index].privateService->stateChanged(QMessageService::Successful);
         }
     } else {
-        iMessageQueries[index].privateAction->_active = false;
-        emit iMessageQueries[index].privateAction->stateChanged(QMessageServiceAction::Failed);
+        iMessageQueries[index].privateService->_active = false;
+        emit iMessageQueries[index].privateService->stateChanged(QMessageService::Failed);
     }
 
     delete iMessageQueries[index].findOperation;

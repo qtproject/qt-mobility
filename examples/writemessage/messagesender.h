@@ -65,7 +65,7 @@ public:
 
 private slots:
     void populateAccounts();
-    void stateChanged(QMessageServiceAction::State s);
+    void stateChanged(QMessageService::State s);
     void removeAttachment();
     void addAttachment();
     void accountSelected(int);
@@ -86,7 +86,7 @@ private:
     QMap<QString, QPair<QMessage::Type, QMessageAccountId> > accountDetails;
 
     QMessageManager manager;
-    QMessageServiceAction service;
+    QMessageService service;
 };
 
 #endif

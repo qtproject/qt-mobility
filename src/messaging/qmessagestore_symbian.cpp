@@ -69,11 +69,11 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList ids;
-    QMessageServiceAction serviceaction;
-    connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    if (serviceaction.queryMessages(filter, sortOrder, limit, offset)) {
+    QMessageService ;
+    connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
+    if (service.queryMessages(filter, sortOrder, limit, offset)) {
         QEventLoop loop;
-        QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+        QObject::connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
         loop.exec();
         ids = _ids;
         _ids.clear();
@@ -84,10 +84,10 @@ QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter,
 QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList ids;
-    QMessageServiceAction serviceaction;
-    connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    if (serviceaction.queryMessages(filter, body, matchFlags, sortOrder, limit, offset)) {
-        QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+    QMessageService service;
+    connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
+    if (service.queryMessages(filter, body, matchFlags, sortOrder, limit, offset)) {
+        QObject::connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
         loop.exec();
         ids = _ids;
         _ids.clear();
@@ -98,10 +98,10 @@ QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter,
 int QMessageStorePrivate::countMessages(const QMessageFilter& filter) const
 {
     int count = 0;
-    QMessageServiceAction serviceaction;
-    connect(&serviceaction, SIGNAL(messagesCounted(int)), this, SLOT(messagesCounted(int)));
-    if (serviceaction.countMessages(filter)) {
-        QObject::connect(&serviceaction, SIGNAL(messagesCounted(int)), &loop, SLOT(quit()));
+    QMessageService service;
+    connect(&service, SIGNAL(messagesCounted(int)), this, SLOT(messagesCounted(int)));
+    if (service.countMessages(filter)) {
+        QObject::connect(&service, SIGNAL(messagesCounted(int)), &loop, SLOT(quit()));
         loop.exec();
         count = _count;
         _count = 0;
@@ -109,9 +109,9 @@ int QMessageStorePrivate::countMessages(const QMessageFilter& filter) const
     return count;
 }
 
-void QMessageStorePrivate::stateChanged(QMessageServiceAction::State a)
+void QMessageStorePrivate::stateChanged(QMessageService::State a)
 {
-    if (a == QMessageServiceAction::Failed) {
+    if (a == QMessageService::Failed) {
         loop.quit();
     }
 }
@@ -174,11 +174,11 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
     bool retVal = true;
     
     QMessageIdList ids;
-    QMessageServiceAction serviceaction;
-    connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    if (serviceaction.queryMessages(filter)) {
+    QMessageService service;
+    connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
+    if (service.queryMessages(filter)) {
         QEventLoop loop;
-        QObject::connect(&serviceaction, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+        QObject::connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
         loop.exec();
         ids = _ids;
         _ids.clear();

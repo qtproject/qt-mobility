@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
     A QMessageFilter is composed of a message property, an optional comparison operator
     and a comparison value. The QMessageFilter class is used in conjunction with the 
     QMessageManager::queryMessages(), QMessageManager::countMessages(), 
-    QMessageServiceAction::queryMessages(), and QMessageServiceAction::countMessages()
+    QMessageService::queryMessages(), and QMessageService::countMessages()
     functions to filter results which meet the criteria defined by the filter.
 
     QMessageFilters can be combined using the logical operators (&), (|) and (~) to

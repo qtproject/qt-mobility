@@ -44,14 +44,14 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageServiceActionPrivate : public QObject
+class QMessageServicePrivate : public QObject
 {
 	Q_OBJECT
-    Q_DECLARE_PUBLIC(QMessageServiceAction)
+    Q_DECLARE_PUBLIC(QMessageService)
 
 public:
-    QMessageServiceActionPrivate(QMessageServiceAction* parent);
-    ~QMessageServiceActionPrivate();
+    QMessageServicePrivate(QMessageService* parent);
+    ~QMessageServicePrivate();
 
 	bool sendSMS(QMessage &message);
 	bool sendMMS(QMessage &message);
@@ -68,14 +68,14 @@ public:
     bool countMessages(const QMessageFilter &filter);
 	
 signals:
-	void stateChanged(QMessageServiceAction::State);
+	void stateChanged(QMessageService::State);
 	void messagesFound(const QMessageIdList&);
     void messagesCounted(int count);
 	void progressChanged(uint, uint);
 
 private:	
-    QMessageServiceAction *q_ptr;
-    QMessageServiceAction::State _state;
+    QMessageService *q_ptr;
+    QMessageService::State _state;
     QMessageManager::ErrorCode _lastError;
     int _actionId;
     bool _active;

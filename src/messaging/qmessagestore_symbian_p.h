@@ -92,7 +92,7 @@ public:
                              const QMessageManager::NotificationFilterIdSet &matchingFilters);
 
 public Q_SLOTS:   
-    void stateChanged(QMessageServiceAction::State a);
+    void stateChanged(QMessageService::State a);
     void messagesFound(const QMessageIdList &ids);
     void messagesCounted(int count);
 

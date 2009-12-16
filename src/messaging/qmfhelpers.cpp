@@ -286,30 +286,30 @@ QMessageManager::RemovalOption convert(QMailStore::MessageRemovalOption v)
 }
 */
 
-QMailServiceAction::Activity convert(QMessageServiceAction::State v)
+QMailServiceAction::Activity convert(QMessageService::State v)
 {
     switch (v) {
-    case QMessageServiceAction::Pending: return QMailServiceAction::Pending;
-    case QMessageServiceAction::InProgress: return QMailServiceAction::InProgress;
-    case QMessageServiceAction::Successful: return QMailServiceAction::Successful;
-    case QMessageServiceAction::Failed: return QMailServiceAction::Failed;
+    case QMessageService::Pending: return QMailServiceAction::Pending;
+    case QMessageService::InProgress: return QMailServiceAction::InProgress;
+    case QMessageService::Successful: return QMailServiceAction::Successful;
+    case QMessageService::Failed: return QMailServiceAction::Failed;
     default: break;
     }
 
     return QMailServiceAction::Pending;
 }
 
-QMessageServiceAction::State convert(QMailServiceAction::Activity v)
+QMessageService::State convert(QMailServiceAction::Activity v)
 {
     switch (v) {
-    case QMailServiceAction::Pending: return QMessageServiceAction::Pending;
-    case QMailServiceAction::InProgress: return QMessageServiceAction::InProgress;
-    case QMailServiceAction::Successful: return QMessageServiceAction::Successful;
-    case QMailServiceAction::Failed: return QMessageServiceAction::Failed;
+    case QMailServiceAction::Pending: return QMessageService::Pending;
+    case QMailServiceAction::InProgress: return QMessageService::InProgress;
+    case QMailServiceAction::Successful: return QMessageService::Successful;
+    case QMailServiceAction::Failed: return QMessageService::Failed;
     default: break;
     }
 
-    return QMessageServiceAction::Pending;
+    return QMessageService::Pending;
 }
 
 QMessage::StatusFlags convert(quint64 v)

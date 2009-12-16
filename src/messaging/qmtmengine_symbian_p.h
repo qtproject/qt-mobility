@@ -54,7 +54,7 @@
 #include "qmessagefilter.h"
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter.h"
-#include "QMessageServiceAction.h"
+#include "qmessageservice.h"
 
 
 
@@ -94,7 +94,7 @@ struct MessageQueryInfo
     QMessageSortOrder sortOrder;
     int offset;
     int limit;
-    QMessageServiceActionPrivate* privateAction;
+    QMessageServicePrivate* privateService;
     CMessagesFindOperation* findOperation;
     int currentFilterListIndex;
     QMessageIdList ids;
@@ -131,9 +131,9 @@ public:
     bool updateMessage(QMessage *m);
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
     bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
-    bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    bool queryMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    bool countMessages(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter);
+    bool queryMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool queryMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool countMessages(QMessageServicePrivate& privateService, const QMessageFilter &filter);
     bool showMessage(const QMessageId &id);
     bool composeMessage(const QMessage &message);
     
@@ -192,9 +192,9 @@ private:
     void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter) const;
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
 
-    void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    void queryMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    void countMessagesL(QMessageServiceActionPrivate& privateAction, const QMessageFilter &filter);
+    void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    void countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter);
     void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
     
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
@@ -294,7 +294,7 @@ private:
     mutable QMessageFolderSortOrder iCurrentFolderOrdering;
     mutable QMessageSortOrder iCurrentMessageOrdering;
     
-    friend class QMessageServiceAction;
+    friend class QMessageService;
     friend class CMessagesFindOperation;
 };
 

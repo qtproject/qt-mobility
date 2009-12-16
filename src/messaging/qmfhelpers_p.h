@@ -109,8 +109,8 @@ namespace QmfHelpers {
     //QMessageManager::RemovalOption convert(QMailStore::MessageRemovalOption v);
     Q_AUTOTEST_EXPORT QMailStore::MessageRemovalOption convert(QMessageManager::RemovalOption v);
 
-    Q_AUTOTEST_EXPORT QMessageServiceAction::State convert(QMailServiceAction::Activity v);
-    Q_AUTOTEST_EXPORT QMailServiceAction::Activity convert(QMessageServiceAction::State v);
+    Q_AUTOTEST_EXPORT QMessageService::State convert(QMailServiceAction::Activity v);
+    Q_AUTOTEST_EXPORT QMailServiceAction::Activity convert(QMessageService::State v);
 
     Q_AUTOTEST_EXPORT QMessageAddress convert(const QMailAddress &address);
     Q_AUTOTEST_EXPORT QMailAddress convert(const QMessageAddress &address);
