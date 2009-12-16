@@ -175,7 +175,7 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QVersitDocument::V
     if (!VersitUtils::getNextLine(cursor))
         return QVersitProperty();
 
-    qDebug() << "Current line is" << cursor.position << cursor.selection << cursor.data.mid(cursor.position, cursor.selection - cursor.position);
+//    qDebug() << "Current line is" << cursor.position << cursor.selection << cursor.data.mid(cursor.position, cursor.selection - cursor.position);
 
     // Otherwise, do stuff.
     QPair<QStringList,QString> groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
