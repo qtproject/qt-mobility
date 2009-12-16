@@ -71,7 +71,7 @@ DirectShowPlayerService::~DirectShowPlayerService()
 {
     if (m_graph) {
         m_graphEventNotifier.setEnabled(false);
-        m_renderThread.abort();
+        m_renderThread.stop();
 
         if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
             control->Stop();
@@ -117,14 +117,13 @@ void DirectShowPlayerService::load(const QMediaContent &media)
     }
 
     if (media.isNull()) {
-        m_renderThread.abort();
+        m_renderThread.load(QUrl(), 0);
     } else {
         m_graph = com_new<IGraphBuilder>(CLSID_FilterGraph);
 
         if (IMediaEventEx *event = com_cast<IMediaEventEx>(m_graph)) {
             HANDLE handle;
             if (event->GetEventHandle(reinterpret_cast<OAEVENT *>(&handle)) == S_OK) {
-                qDebug("got's event handle");
                 event->CancelDefaultHandling(EC_BUFFERING_DATA);
                 event->CancelDefaultHandling(EC_COMPLETE);
                 event->CancelDefaultHandling(EC_LOADSTATUS);
@@ -136,7 +135,7 @@ void DirectShowPlayerService::load(const QMediaContent &media)
             event->Release();
         }
 
-        m_renderThread.render(media.canonicalUri(), m_graph);
+        m_renderThread.load(media.canonicalUri(), m_graph);
     }
 }
 
@@ -167,23 +166,18 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
         while (event->GetEvent(&eventCode, &param1, &param2, 0) == S_OK) {
             switch (eventCode) {
             case EC_BUFFERING_DATA:
-                qDebug("Buffering");
                 m_playerControl->bufferingData(param1);
                 break;
             case EC_COMPLETE:
-                qDebug("Complete");
                 m_playerControl->complete(HRESULT(param1));
                 break;
             case EC_LOADSTATUS:
-                qDebug("Load status");
                 m_playerControl->loadStatus(param1);
                 break;
             case EC_STATE_CHANGE:
-                qDebug("State changed");
                 m_playerControl->stateChange(param1);
                 break;
             case EC_LENGTH_CHANGED:
-                qDebug("duration changed");
                 m_playerControl->durationChanged(m_playerControl->duration());
                 break;
             default:

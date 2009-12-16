@@ -74,6 +74,13 @@ public:
     IBaseFilter *source() { return 0; }
 
     void load(const QMediaContent &media);
+    void play() { m_renderThread.play(); }
+    void pause() { m_renderThread.pause(); }
+    void stop() { m_renderThread.stop(); }
+
+    void seek(qint64 position) { m_renderThread.seek(position); }
+    void setRate(qreal rate) { m_renderThread.setRate(rate); }
+
 
 private Q_SLOTS:
     void videoOutputChanged();

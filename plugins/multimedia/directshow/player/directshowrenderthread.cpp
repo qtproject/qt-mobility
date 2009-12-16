@@ -44,13 +44,16 @@
 
 DirectShowRenderThread::DirectShowRenderThread(QObject *parent)
     : QThread(parent)
-    , m_pendingState(0)
-    , m_executedState(0)
+    , m_pendingTasks(0)
+    , m_executingTask(0)
+    , m_executedTasks(0)
     , m_graph(0)
     , m_builder(0)
     , m_source(0)
     , m_audioOutput(0)
     , m_videoOutput(0)
+    , m_rate(1.0)
+    , m_position(0)
 {
     start();
 }
@@ -59,7 +62,7 @@ DirectShowRenderThread::~DirectShowRenderThread()
 {
     {
         QMutexLocker locker(&m_mutex);
-        m_pendingState = Return;
+        m_pendingTasks = Return;
 
         if (m_builder)
             m_builder->Release();
@@ -81,7 +84,7 @@ DirectShowRenderThread::~DirectShowRenderThread()
     wait();
 }
 
-void DirectShowRenderThread::render(const QUrl &url, IGraphBuilder *graph)
+void DirectShowRenderThread::load(const QUrl &url, IGraphBuilder *graph)
 {
     QMutexLocker locker(&m_mutex);
 
@@ -91,7 +94,13 @@ void DirectShowRenderThread::render(const QUrl &url, IGraphBuilder *graph)
             m_source = 0;
         }
 
-        m_graph->Abort();
+        if (m_executingTask != 0) {
+            m_graph->Abort();
+            m_pendingTasks = Stop;
+
+            m_wait.wait(&m_mutex);
+        }
+
         m_graph->Release();
     }
 
@@ -101,39 +110,9 @@ void DirectShowRenderThread::render(const QUrl &url, IGraphBuilder *graph)
     if (m_graph)
         m_graph->AddRef();
 
-    m_pendingState = Render;
+    m_pendingTasks = Load;
 
     m_wait.wakeAll();
-}
-
-void DirectShowRenderThread::abort()
-{
-    QMutexLocker locker(&m_mutex);
-
-    Q_ASSERT(!(m_pendingState & (Abort | Return)));
-
-    if (m_pendingState != 0) {
-        m_pendingState |= Abort;
-
-        // There's a small race condition here where you could call Abort
-        // before a task is started, so we'll abort in a loop until the wait
-        // succeeds.
-        do {
-            if (m_graph)
-                m_graph->Abort();
-        } while (!m_wait.wait(&m_mutex, 300));
-    }
-
-    if (m_builder) {
-        m_builder->Release();
-        m_builder = 0;
-    }
-    if (m_graph) {
-        m_graph->Release();
-        m_graph = 0;
-    }
-
-    m_executedState = 0;
 }
 
 void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
@@ -141,7 +120,7 @@ void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
     QMutexLocker locker(&m_mutex);
 
     if (m_audioOutput) {
-        if (m_executedState & AudioOutput) {
+        if (m_executedTasks & SetAudioOutput) {
             m_graph->RemoveFilter(m_audioOutput);
         }
         m_audioOutput->Release();
@@ -152,8 +131,8 @@ void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
     if (m_audioOutput) {
         m_audioOutput->AddRef();
 
-        if (m_executedState & Render) {
-            m_pendingState |= AudioOutput;
+        if (m_executedTasks & Load) {
+            m_pendingTasks |= SetAudioOutput;
 
             m_wait.wakeAll();
         }
@@ -165,7 +144,7 @@ void DirectShowRenderThread::setVideoOutput(IBaseFilter *filter)
     QMutexLocker locker(&m_mutex);
 
     if (m_videoOutput) {
-        if (m_executedState & VideoOutput) {
+        if (m_executedTasks & SetVideoOutput) {
             m_graph->RemoveFilter(m_videoOutput);
         }
         m_videoOutput->Release();
@@ -176,10 +155,93 @@ void DirectShowRenderThread::setVideoOutput(IBaseFilter *filter)
     if (m_videoOutput) {
         m_videoOutput->AddRef();
 
-        if (m_executedState & Render) {
-            m_pendingState |= VideoOutput;
+        if (m_executedTasks & Load) {
+            m_pendingTasks |= SetVideoOutput;
 
             m_wait.wakeAll();
+        }
+    }
+}
+
+void DirectShowRenderThread::setRate(qreal rate)
+{
+    QMutexLocker locker(&m_mutex);
+
+    m_rate = rate;
+
+    m_pendingTasks |= SetRate;
+
+    if (m_executedTasks & Load)
+        m_wait.wakeAll();
+}
+
+void DirectShowRenderThread::seek(qint64 position)
+{
+    QMutexLocker locker(&m_mutex);
+
+    m_position = position;
+
+    m_pendingTasks |= Seek;
+
+    if (m_executedTasks & Load)
+        m_wait.wakeAll();
+}
+
+void DirectShowRenderThread::play()
+{
+    QMutexLocker locker(&m_mutex);
+
+    m_pendingTasks &= ~Pause;
+    m_pendingTasks |= Play;
+
+    if (m_executedTasks & Load) {
+        if (m_executedTasks & Stop) {
+            m_position = 0;
+            m_pendingTasks |= Seek;
+        }
+
+        m_wait.wakeAll();
+    }
+}
+
+void DirectShowRenderThread::pause()
+{
+    QMutexLocker locker(&m_mutex);
+
+    m_pendingTasks &= ~Play;
+    m_pendingTasks |= Pause;
+
+    if (m_executedTasks & Load) {
+        if (m_executedTasks & Stop) {
+            m_position = 0;
+            m_pendingTasks |= Seek;
+        }
+
+        m_wait.wakeAll();
+    }
+}
+
+void DirectShowRenderThread::stop()
+{
+    QMutexLocker locker(&m_mutex);
+
+    m_pendingTasks &= ~(Play | Pause | Seek);
+
+    if (m_executedTasks & Load) {
+        if (m_executingTask & (Play | Pause | Seek)) {
+            //m_graph->Abort();
+            m_pendingTasks |= Stop;
+
+            m_wait.wait(&m_mutex);
+        }
+
+        if (m_executedTasks & (Play | Pause)) {
+            if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
+                control->Stop();
+                control->Release();
+            }
+            m_executedTasks &= ~(Play | Pause);
+            m_executedTasks |= Stop;
         }
     }
 }
@@ -188,33 +250,57 @@ void DirectShowRenderThread::run()
 {
     QMutexLocker locker(&m_mutex);
 
-    while (!(m_pendingState & Return)) {
-        if (m_pendingState & Abort) {
-            m_pendingState = 0;
+    while (!(m_pendingTasks & Return)) {
+        if (m_pendingTasks & Load) {
+            m_pendingTasks ^= Load;
+            m_executingTask = Load;
 
-            m_wait.wakeAll();
-        } else if (m_pendingState & Render) {
-            m_pendingState ^= Render;
-
-            doRender(&locker);
-        } else if (m_pendingState & AudioOutput) {
-            m_pendingState ^= AudioOutput;
+            doLoad(&locker);
+        } else if (m_pendingTasks & SetAudioOutput) {
+            m_pendingTasks ^= SetAudioOutput;
+            m_executingTask = SetAudioOutput;
 
             doSetAudioOutput(&locker);
-        } else if (m_pendingState & VideoOutput) {
-            m_pendingState ^= VideoOutput;
+        } else if (m_pendingTasks & SetVideoOutput) {
+            m_pendingTasks ^= SetVideoOutput;
+            m_executingTask = SetVideoOutput;
 
             doSetVideoOutput(&locker);
-        }
+        } else if (m_pendingTasks & SetRate) {
+            m_pendingTasks ^= SetRate;
+            m_executingTask = SetRate;
 
-        if (m_pendingState == 0)
+            doSetRate(&locker);
+        } else if (m_pendingTasks & Stop) {
+            m_pendingTasks ^= Stop;
+
+            m_wait.wakeAll();
+        } else if (m_pendingTasks & Pause) {
+            m_pendingTasks ^= Pause;
+            m_executingTask = Pause;
+
+            doPause(&locker);
+        } else if (m_pendingTasks & Seek) {
+            m_pendingTasks ^= Seek;
+            m_executingTask = Seek;
+
+            doSeek(&locker);
+        } else if (m_pendingTasks & Play) {
+            m_pendingTasks ^= Play;
+            m_executingTask = Play;
+
+            doPlay(&locker);
+        }
+        m_executingTask = 0;
+
+        if (m_pendingTasks == 0)
             m_wait.wait(&m_mutex);
     }
 }
 
-void DirectShowRenderThread::doRender(QMutexLocker *locker)
+void DirectShowRenderThread::doLoad(QMutexLocker *locker)
 {
-    m_executedState = 0;
+    m_executedTasks = 0;
 
     if (m_builder)
         m_builder->Release();
@@ -239,15 +325,18 @@ void DirectShowRenderThread::doRender(QMutexLocker *locker)
         locker->relock();
 
         if (SUCCEEDED(hr)) {
-            m_executedState = Render;
+            m_executedTasks = Load;
 
             m_source = source;
 
             if (m_audioOutput)
-                m_pendingState |= AudioOutput;
+                m_pendingTasks |= SetAudioOutput;
 
             if (m_videoOutput)
-                m_pendingState |= VideoOutput;
+                m_pendingTasks |= SetVideoOutput;
+
+            if (m_rate != 1.0)
+                m_pendingTasks |= SetRate;
 
             emit loaded();
         }
@@ -275,7 +364,7 @@ void DirectShowRenderThread::doSetAudioOutput(QMutexLocker *locker)
         if (!SUCCEEDED(hr)) {
             m_graph->RemoveFilter(audioOutput);
         } else {
-            m_executedState |= AudioOutput;
+            m_executedTasks |= SetAudioOutput;
         }
     }
 
@@ -305,11 +394,63 @@ void DirectShowRenderThread::doSetVideoOutput(QMutexLocker *locker)
         if (!SUCCEEDED(hr)) {
             m_graph->RemoveFilter(videoOutput);
         } else {
-            m_executedState |= VideoOutput;
+            m_executedTasks |= SetVideoOutput;
         }
     }
 
     videoOutput->Release();
     source->Release();
     graph->Release();
+}
+
+void DirectShowRenderThread::doSetRate(QMutexLocker *locker)
+{
+    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
+        locker->unlock();
+        seeking->SetRate(m_rate);
+        locker->relock();
+
+        seeking->Release();
+    }
+}
+
+void DirectShowRenderThread::doSeek(QMutexLocker *locker)
+{
+    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
+        LONGLONG pos = LONGLONG(m_position) * 10;
+
+        locker->unlock();
+        seeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning, 0, AM_SEEKING_NoPositioning);
+        locker->relock();
+
+        seeking->Release();
+    }
+}
+
+void DirectShowRenderThread::doPlay(QMutexLocker *locker)
+{
+    if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
+        locker->unlock();
+        HRESULT hr = control->Run();
+        locker->relock();
+
+        control->Release();
+
+        if (SUCCEEDED(hr))
+            m_executedTasks |= Play;
+    }
+}
+
+void DirectShowRenderThread::doPause(QMutexLocker *locker)
+{
+    if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
+        locker->unlock();
+        HRESULT hr = control->Pause();
+        locker->relock();
+
+        control->Release();
+
+        if (SUCCEEDED(hr))
+            m_executedTasks |= Pause;
+    }
 }

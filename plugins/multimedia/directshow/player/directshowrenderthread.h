@@ -58,11 +58,17 @@ public:
     DirectShowRenderThread(QObject *parent = 0);
     ~DirectShowRenderThread();
 
-    void render(const QUrl &url, IGraphBuilder *graph);
-    void abort();
+    void load(const QUrl &url, IGraphBuilder *graph);
 
     void setAudioOutput(IBaseFilter *filter);
     void setVideoOutput(IBaseFilter *filter);
+
+    void setRate(qreal rate);
+    void seek(qint64 position);
+
+    void play();
+    void pause();
+    void stop();
 
 Q_SIGNALS:
     void loaded();
@@ -71,26 +77,37 @@ protected:
     void run();
 
 private:
-    void doRender(QMutexLocker *locker);
+    void doLoad(QMutexLocker *locker);
     void doSetAudioOutput(QMutexLocker *locker);
     void doSetVideoOutput(QMutexLocker *locker);
+    void doSetRate(QMutexLocker *locker);
+    void doSeek(QMutexLocker *locker);
+    void doPlay(QMutexLocker *locker);
+    void doPause(QMutexLocker *locker);
 
-    enum State
+    enum Task
     {
-        Return = 0x01,
-        Abort = 0x02,
-        Render = 0x04,
-        AudioOutput = 0x08,
-        VideoOutput = 0x10
+        Return         = 0x0001,
+        Load           = 0x0002,
+        SetAudioOutput = 0x0004,
+        SetVideoOutput = 0x0008,
+        SetRate        = 0x0010,
+        Seek           = 0x0020,
+        Play           = 0x0040,
+        Pause          = 0x0080,
+        Stop           = 0x0100
     };
 
-    int m_pendingState;
-    int m_executedState;
+    int m_pendingTasks;
+    int m_executingTask;
+    int m_executedTasks;
     IGraphBuilder *m_graph;
     ICaptureGraphBuilder2 *m_builder;
     IBaseFilter *m_source;
     IBaseFilter *m_audioOutput;
     IBaseFilter *m_videoOutput;
+    qreal m_rate;
+    qint64 m_position;
     QUrl m_url;
     QMutex m_mutex;
     QWaitCondition m_wait;

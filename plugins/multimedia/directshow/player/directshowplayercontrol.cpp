@@ -98,10 +98,10 @@ qint64 DirectShowPlayerControl::duration() const
 {
     LONGLONG duration = 0;
 
-    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-        seeking->GetDuration(&duration);
-        seeking->Release();
-    }
+    //if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
+    //    seeking->GetDuration(&duration);
+    //    seeking->Release();
+    //}
 
     return duration / 10;
 }
@@ -110,21 +110,17 @@ qint64 DirectShowPlayerControl::position() const
 {
     LONGLONG position = 0;
 
-    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-        seeking->GetCurrentPosition(&position);
-        seeking->Release();
-    }
+    //if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
+    //    seeking->GetCurrentPosition(&position);
+    //    seeking->Release();
+    //}
 
     return position / 10;
 }
 
 void DirectShowPlayerControl::setPosition(qint64 position)
 {
-    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-        LONGLONG pos = LONGLONG(position) * 10;
-        seeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning, 0, AM_SEEKING_NoPositioning);
-        seeking->Release();
-    }
+    m_service->seek(position);
 }
 
 int DirectShowPlayerControl::volume() const
@@ -241,10 +237,7 @@ qreal DirectShowPlayerControl::playbackRate() const
 
 void DirectShowPlayerControl::setPlaybackRate(qreal rate)
 {
-    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-        seeking->SetRate(rate);
-        seeking->Release();
-    }
+    m_service->setRate(rate);
 }
 
 QMediaContent DirectShowPlayerControl::media() const
@@ -266,38 +259,20 @@ void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *)
 
 void DirectShowPlayerControl::play()
 {
-    switch (m_state) {
-    case QMediaPlayer::PlayingState:
-        break;
-    case QMediaPlayer::StoppedState:
-        setPosition(0);
-        // Fall through.
-    case QMediaPlayer::PausedState:
-        if (IMediaControl *control = com_cast<IMediaControl>(m_service->graph())) {
-            if (SUCCEEDED(control->Run()))
-                emit stateChanged(m_state = QMediaPlayer::PlayingState);
-            control->Release();
-        }
-        break;
-    }
+    m_service->play();
+    emit stateChanged(m_state = QMediaPlayer::PlayingState);
 }
 
 void DirectShowPlayerControl::pause()
 {
-    if (IMediaControl *control = com_cast<IMediaControl>(m_service->graph())) {
-        if (SUCCEEDED(control->Pause()))
-            emit stateChanged(m_state = QMediaPlayer::PausedState);
-        control->Release();
-    }
+    m_service->pause();
+    emit stateChanged(m_state = QMediaPlayer::PausedState);
 }
 
 void DirectShowPlayerControl::stop()
 {
-    if (IMediaControl *control = com_cast<IMediaControl>(m_service->graph())) {
-        if (SUCCEEDED(control->Stop()))
-            emit stateChanged(m_state = QMediaPlayer::StoppedState);
-        control->Release();
-    }
+    m_service->stop();
+    emit stateChanged(m_state = QMediaPlayer::StoppedState);
 }
 
 void DirectShowPlayerControl::bufferingData(bool buffering)
