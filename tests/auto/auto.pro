@@ -110,5 +110,6 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
-        qmessage
+        qmessage \
+        qmessageserviceaction
 }
