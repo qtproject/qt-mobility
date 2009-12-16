@@ -53,11 +53,11 @@ access the services in a QMLContext.
 
 The GUI looks like following picture:
 
-\image DialerServiceGUI.jpg "GUI"
+\image DialerServiceGUI.png "GUI"
 
 The following picture shows the architecture of this example:
 
-\image DialerServiceUML.jpg "GUI"
+\image DialerServiceUML.png "UML"
 
 
 The following steps outline how to make a QML based application 
