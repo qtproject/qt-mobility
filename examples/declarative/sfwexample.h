@@ -58,10 +58,9 @@ class ServiceWrapper : public QObject {
 //! [0]
 
 public:
-
-	ServiceWrapper();
+    ServiceWrapper();
     
-	~ServiceWrapper() ;
+    ~ServiceWrapper() ;
 
     bool isValid() const;
 
@@ -100,7 +99,7 @@ public:
 
     void unregisterExampleServices();
 
-	void serviceStateChange(int state);
+    void serviceStateChange(int state);
 
 private:
     QServiceManager* serviceManager;

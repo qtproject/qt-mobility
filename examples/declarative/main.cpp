@@ -49,11 +49,11 @@
 //! [0]
 //Includes for using the QML objects
 #include <QmlView>
-#include <QmlContext.h>
+#include <QmlContext>
 
 //Includes for using the service framework
-#include <QServiceInterfaceDescriptor.h>
-#include <QServiceManager.h>
+#include <qserviceinterfacedescriptor.h>
+#include <qservicemanager.h>
 //! [0]
 
 #include "sfwexample.h"
