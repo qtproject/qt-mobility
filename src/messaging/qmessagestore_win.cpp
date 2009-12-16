@@ -76,7 +76,7 @@ public:
 
             _mutex->unlock();
 
-            QMessageManager::ErrorCode le = QMessageManager::NoError;
+            QMessageManager::Error le = QMessageManager::NoError;
             MapiSessionPtr p = MapiSession::createSession(&le);
             if(le == QMessageManager::NoError)
                 p->flushNotifyQueue();
@@ -102,7 +102,7 @@ public:
 
     QMessageStorePrivate *d_ptr;
     QMessageStore *q_ptr;
-    QMessageManager::ErrorCode lastError;
+    QMessageManager::Error lastError;
 
     MapiSessionPtr session;
     QMutex mutex;
@@ -192,7 +192,7 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageManager::ErrorCode QMessageStore::lastError() const
+QMessageManager::Error QMessageStore::lastError() const
 {
     return d_ptr->p_ptr->lastError;
 }
@@ -381,7 +381,7 @@ bool QMessageStore::addMessage(QMessage *message)
     }
 
     if (message && !message->id().isValid()) {
-        QMessageManager::ErrorCode* lError = &d_ptr->p_ptr->lastError;
+        QMessageManager::Error* lError = &d_ptr->p_ptr->lastError;
 
         MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(lError,message->parentAccountId(),false);
         if (*lError == QMessageManager::NoError && !mapiStore.isNull()) {
@@ -492,7 +492,7 @@ bool QMessageStore::updateMessage(QMessage *message)
 
 
     if (message && message->id().isValid()) {
-        QMessageManager::ErrorCode* lError = &d_ptr->p_ptr->lastError;
+        QMessageManager::Error* lError = &d_ptr->p_ptr->lastError;
 
         d_ptr->p_ptr->session->updateMessage(lError, *message);
         if (*lError == QMessageManager::NoError) {

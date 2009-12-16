@@ -71,7 +71,7 @@ public:
         RemoveOnOriginatingServer
     };
 
-    enum ErrorCode
+    enum Error
     {
         NoError = 0,
         InvalidId,
@@ -89,7 +89,7 @@ public:
     QMessageManager(QObject *parent = 0);
     ~QMessageManager();
 
-    QMessageManager::ErrorCode lastError() const;
+    QMessageManager::Error lastError() const;
 
     QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0) const;
     QMessageIdList queryMessages(const QMessageFilter &filter, const QList<QMessageSortOrder> &sortOrders, uint limit = 0, uint offset = 0) const;

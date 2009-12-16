@@ -409,7 +409,7 @@ void QMessageService::cancelOperation()
 {
 }
 
-QMessageManager::ErrorCode QMessageService::lastError() const
+QMessageManager::Error QMessageService::lastError() const
 {
     return d_ptr->_lastError;
 }

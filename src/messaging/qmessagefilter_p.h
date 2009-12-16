@@ -177,12 +177,12 @@ public:
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
 
-    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageManager::ErrorCode *lastError, const MapiStorePtr &store);
-    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageManager::ErrorCode *lastError, const MapiSessionPtr &session);
+    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageManager::Error *lastError, const MapiStorePtr &store);
+    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageManager::Error *lastError, const MapiSessionPtr &session);
     static QList<QMessageFilter> subfilters(const QMessageFilter &filter);
 
-    static QMessageFilter preprocess(QMessageManager::ErrorCode *lastError, MapiSessionPtr session, const QMessageFilter &filter);
-    static bool preprocess(QMessageManager::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter);
+    static QMessageFilter preprocess(QMessageManager::Error *lastError, MapiSessionPtr session, const QMessageFilter &filter);
+    static bool preprocess(QMessageManager::Error *lastError, MapiSessionPtr session, QMessageFilter *filter);
     static bool isNonMatching(const QMessageFilter &filter); // Possibly should be in public QMessageFilter API
     static bool matchesMessageSimple(const QMessageFilter &filter, const QMessage &message);
     static bool matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStore *store);

@@ -84,7 +84,7 @@ public:
     QMailTransmitAction _transmit;
     QMailRetrievalAction _retrieval;
     QMailServiceAction *_active;
-    QMessageManager::ErrorCode _error;
+    QMessageManager::Error _error;
 
     QList<QMessageId> _matchingIds;
     QList<QMailMessageId> _candidateIds;
@@ -571,7 +571,7 @@ void QMessageService::cancelOperation()
     }
 }
 
-QMessageManager::ErrorCode QMessageService::lastError() const
+QMessageManager::Error QMessageService::lastError() const
 {
     return d_ptr->_error;
 }

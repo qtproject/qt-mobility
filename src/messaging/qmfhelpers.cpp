@@ -235,7 +235,7 @@ QMailMessage::MessageType convert(QMessage::TypeFlags v)
 }
 
 /*
-QMailStore::ErrorCode convert(QMessageManager::ErrorCode v)
+QMailStore::ErrorCode convert(QMessageManager::Error v)
 {
     switch (v) {
     case QMessageManager::InvalidId: return QMailStore::InvalidId;
@@ -250,7 +250,7 @@ QMailStore::ErrorCode convert(QMessageManager::ErrorCode v)
 }
 */
 
-QMessageManager::ErrorCode convert(QMailStore::ErrorCode v)
+QMessageManager::Error convert(QMailStore::ErrorCode v)
 {
     switch (v) {
     case QMailStore::InvalidId: return QMessageManager::InvalidId;

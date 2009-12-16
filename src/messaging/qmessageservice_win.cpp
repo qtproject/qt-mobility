@@ -106,7 +106,7 @@ public:
     QMessageService* q_ptr;
     QMessageManager _manager;
     bool _active;
-    QMessageManager::ErrorCode _lastError;
+    QMessageManager::Error _lastError;
     QMessageIdList _candidateIds;
     int _count;
     QMessageService::State _state;
@@ -1042,7 +1042,7 @@ void QMessageService::cancelOperation()
 #endif
 }
 
-QMessageManager::ErrorCode QMessageService::lastError() const
+QMessageManager::Error QMessageService::lastError() const
 {
     return d_ptr->_lastError;
 }

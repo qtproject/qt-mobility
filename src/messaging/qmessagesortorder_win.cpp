@@ -118,7 +118,7 @@ struct MapiSortOrderSet
     SSortOrder aSort[maxSortOrders];
 };
 
-void QMessageSortOrderPrivate::sortTable(QMessageManager::ErrorCode *lastError, const QMessageSortOrder &sortOrder, LPMAPITABLE messagesTable)
+void QMessageSortOrderPrivate::sortTable(QMessageManager::Error *lastError, const QMessageSortOrder &sortOrder, LPMAPITABLE messagesTable)
 {
     MapiSortOrderSet multiSort;
     QMessageSortOrderPrivate *d(sortOrder.d_ptr);

@@ -66,7 +66,7 @@ class QMessageStore : public QObject
     friend class QMessageStorePrivate;
 
 public:
-    QMessageManager::ErrorCode lastError() const;
+    QMessageManager::Error lastError() const;
 
     QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0) const;
     QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags = 0, const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0) const;

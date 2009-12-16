@@ -147,7 +147,7 @@ bool QMessageFolderId::operator==(const QMessageFolderId& other) const
         if (other.isValid()) {
             bool result(true);
 #ifdef _WIN32_WCE    
-            QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+            QMessageManager::Error ignoredError(QMessageManager::NoError);
             MapiSessionPtr session(MapiSession::createSession(&ignoredError));
             if (ignoredError == QMessageManager::NoError) {
                 result &= session->equal(d_ptr->_entryId, other.d_ptr->_entryId);

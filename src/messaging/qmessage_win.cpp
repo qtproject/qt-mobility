@@ -105,7 +105,7 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
 void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 {
     if (!_elementsPresent.properties && _id.isValid()) {
-        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageProperties(&ignoredError, msg);
@@ -116,7 +116,7 @@ void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 void QMessagePrivate::ensureRecipientsPresent(QMessage *msg) const
 {
     if (!_elementsPresent.recipients && _id.isValid()) {
-        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageRecipients(&ignoredError, msg);
@@ -127,7 +127,7 @@ void QMessagePrivate::ensureRecipientsPresent(QMessage *msg) const
 void QMessagePrivate::ensureBodyPresent(QMessage *msg) const
 {
     if (!_elementsPresent.body && _id.isValid()) {
-        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageBody(&ignoredError, msg);
@@ -138,7 +138,7 @@ void QMessagePrivate::ensureBodyPresent(QMessage *msg) const
 void QMessagePrivate::ensureAttachmentsPresent(QMessage *msg) const
 {
     if (!_elementsPresent.attachments && _id.isValid()) {
-        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageAttachments(&ignoredError, msg);

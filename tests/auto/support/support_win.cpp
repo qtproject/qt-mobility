@@ -114,7 +114,7 @@ public:
 
     bool query();
     LPSRowSet rows() const;
-    QMessageManager::ErrorCode lastError() const;
+    QMessageManager::Error lastError() const;
 
 private:
     LPMAPITABLE m_table;
@@ -122,7 +122,7 @@ private:
     LPSRestriction m_restriction;
     LPSSortOrderSet m_sortOrderSet;
     LPSRowSet m_rows;
-    QMessageManager::ErrorCode m_lastError;
+    QMessageManager::Error m_lastError;
 };
 
 QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
@@ -190,7 +190,7 @@ LPSRowSet QueryAllRows::rows() const
     return m_rows;
 }
 
-QMessageManager::ErrorCode QueryAllRows::lastError() const
+QMessageManager::Error QueryAllRows::lastError() const
 {
     return m_lastError;
 }

@@ -103,8 +103,8 @@ namespace QmfHelpers {
 
     Q_AUTOTEST_EXPORT quint64 convert(QMessage::StatusFlags v);
 
-    Q_AUTOTEST_EXPORT QMessageManager::ErrorCode convert(QMailStore::ErrorCode v);
-    //QMailStore::ErrorCode convert(QMessageManager::ErrorCode v);
+    Q_AUTOTEST_EXPORT QMessageManager::Error convert(QMailStore::ErrorCode v);
+    //QMailStore::ErrorCode convert(QMessageManager::Error v);
 
     //QMessageManager::RemovalOption convert(QMailStore::MessageRemovalOption v);
     Q_AUTOTEST_EXPORT QMailStore::MessageRemovalOption convert(QMessageManager::RemovalOption v);

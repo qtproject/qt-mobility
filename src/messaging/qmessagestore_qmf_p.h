@@ -61,7 +61,7 @@ public:
     }
 
     QMailStore *_store;
-    QMessageManager::ErrorCode _error;
+    QMessageManager::Error _error;
     bool _notify;
     QMessageManager::NotificationFilterId _filterId;
     QMap<QMessageManager::NotificationFilterId, QMailMessageKey> _filters;

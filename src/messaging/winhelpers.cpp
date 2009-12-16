@@ -313,7 +313,7 @@ namespace {
         LONG rowCount();
         bool query();
         LPSRowSet rows() const;
-        QMessageManager::ErrorCode lastError() const;
+        QMessageManager::Error lastError() const;
 
         private:
         LPMAPITABLE m_table;
@@ -321,7 +321,7 @@ namespace {
         LPSRestriction m_restriction;
         LPSSortOrderSet m_sortOrderSet;
         LPSRowSet m_rows;
-        QMessageManager::ErrorCode m_lastError;
+        QMessageManager::Error m_lastError;
     };
 
     QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
@@ -407,7 +407,7 @@ namespace {
         return m_rows;
     }
 
-    QMessageManager::ErrorCode QueryAllRows::lastError() const
+    QMessageManager::Error QueryAllRows::lastError() const
     {
         return m_lastError;
     }
@@ -668,7 +668,7 @@ namespace {
         return result;
     }
 
-    ULONG streamSize(QMessageManager::ErrorCode* lastError, IStream* is)
+    ULONG streamSize(QMessageManager::Error* lastError, IStream* is)
     {
         ULONG size = 0;
         STATSTG stg = { 0 };
@@ -681,7 +681,7 @@ namespace {
         return size;
     }
 
-    QByteArray readStream(QMessageManager::ErrorCode *lastError, IStream *is)
+    QByteArray readStream(QMessageManager::Error *lastError, IStream *is)
     {
         QByteArray result;
 
@@ -702,7 +702,7 @@ namespace {
         return result;
     }
 
-    bool writeStream(QMessageManager::ErrorCode *lastError, IStream *os, const void *address, ULONG bytes, bool truncate)
+    bool writeStream(QMessageManager::Error *lastError, IStream *os, const void *address, ULONG bytes, bool truncate)
     {
         ULONG existingSize = truncate ? streamSize(lastError, os) : 0;
         if (*lastError == QMessageManager::NoError) {
@@ -995,7 +995,7 @@ namespace {
     }
 #endif
 
-    void storeMessageProperties(QMessageManager::ErrorCode *lastError, const QMessage &source, IMessage *message)
+    void storeMessageProperties(QMessageManager::Error *lastError, const QMessage &source, IMessage *message)
     {
         if (!setMapiProperty(message, PR_SUBJECT, source.subject())) {
             qWarning() << "Unable to set subject in message.";
@@ -1085,7 +1085,7 @@ namespace {
         }
     }
 
-    void replaceMessageRecipients(QMessageManager::ErrorCode *lastError, const QMessage &source, IMessage *message, IMAPISession *session)
+    void replaceMessageRecipients(QMessageManager::Error *lastError, const QMessage &source, IMessage *message, IMAPISession *session)
     {
 #ifdef _WIN32_WCE
         Q_UNUSED(session)
@@ -1207,7 +1207,7 @@ namespace {
         }
     }
 
-    void replaceMessageBody(QMessageManager::ErrorCode *lastError, const QMessage &source, IMessage *message, const MapiStorePtr &store)
+    void replaceMessageBody(QMessageManager::Error *lastError, const QMessage &source, IMessage *message, const MapiStorePtr &store)
     {
         Q_UNUSED(store);
         // Remove any preexisting body elements
@@ -1339,7 +1339,7 @@ namespace {
         }
     }
 
-    void addMessageAttachments(QMessageManager::ErrorCode *lastError, const QMessage &source, IMessage *message, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges )
+    void addMessageAttachments(QMessageManager::Error *lastError, const QMessage &source, IMessage *message, WinHelpers::SavePropertyOption saveOption = WinHelpers::SavePropertyChanges )
     {
         Q_UNUSED(saveOption);
 
@@ -1406,10 +1406,10 @@ namespace {
     // FolderHeap is a binary heap used to merge sort messages from different folders and stores
     class FolderHeap {
     public:
-        FolderHeap(QMessageManager::ErrorCode *lastError, const QList<FolderHeapNodePtr> &protoHeap, const QMessageSortOrder &sortOrder);
+        FolderHeap(QMessageManager::Error *lastError, const QList<FolderHeapNodePtr> &protoHeap, const QMessageSortOrder &sortOrder);
         ~FolderHeap();
 
-        QMessage takeFront(QMessageManager::ErrorCode *lastError);
+        QMessage takeFront(QMessageManager::Error *lastError);
         bool isEmpty() const { return _heap.count() == 0; }
 
     private:
@@ -1420,7 +1420,7 @@ namespace {
         QList<FolderHeapNodePtr> _heap;
     };
 
-    FolderHeap::FolderHeap(QMessageManager::ErrorCode *lastError, const QList<FolderHeapNodePtr> &protoHeap, const QMessageSortOrder &sortOrder)
+    FolderHeap::FolderHeap(QMessageManager::Error *lastError, const QList<FolderHeapNodePtr> &protoHeap, const QMessageSortOrder &sortOrder)
     {
         _ordering = sortOrder;
 
@@ -1460,7 +1460,7 @@ namespace {
     {
     }
 
-    QMessage FolderHeap::takeFront(QMessageManager::ErrorCode *lastError)
+    QMessage FolderHeap::takeFront(QMessageManager::Error *lastError)
     {
         QMessage result(_heap[0]->_front);
 
@@ -1531,7 +1531,7 @@ namespace {
         return bodyContainer.textContent().contains(body, Qt::CaseInsensitive);
     }
 
-    QMessageIdList filterMessages(QMessageManager::ErrorCode *lastError, QList<FolderHeapNodePtr> &folderNodes, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body = QString(), QMessageDataComparator::MatchFlags matchFlags = 0)
+    QMessageIdList filterMessages(QMessageManager::Error *lastError, QList<FolderHeapNodePtr> &folderNodes, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body = QString(), QMessageDataComparator::MatchFlags matchFlags = 0)
     {
         QMessageIdList result;
         QHash<QMessageId, bool> avoidDuplicates; // For complex filters it's necessary to check for duplicates
@@ -1907,7 +1907,7 @@ MapiFolder::MapiFolder()
 {
 }
 
-MapiFolderPtr MapiFolder::createFolder(QMessageManager::ErrorCode *lastError, const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
+MapiFolderPtr MapiFolder::createFolder(QMessageManager::Error *lastError, const MapiStorePtr &store, IMAPIFolder *folder, const MapiRecordKey &recordKey, const QString &name, const MapiEntryId &entryId, bool hasSubFolders, uint messageCount)
 {
     Q_UNUSED(lastError);
     MapiFolderPtr ptr = MapiFolderPtr(new MapiFolder(store, folder, recordKey, name, entryId, hasSubFolders, messageCount));
@@ -1937,7 +1937,7 @@ MapiFolder::~MapiFolder()
     _init = false;
 }
 
-void MapiFolder::findSubFolders(QMessageManager::ErrorCode *lastError)
+void MapiFolder::findSubFolders(QMessageManager::Error *lastError)
 {
     if (!_folder) {
         *lastError = QMessageManager::FrameworkFault;
@@ -2007,7 +2007,7 @@ void MapiFolder::findSubFolders(QMessageManager::ErrorCode *lastError)
     }
 }
 
-MapiFolderPtr MapiFolder::nextSubFolder(QMessageManager::ErrorCode *lastError)
+MapiFolderPtr MapiFolder::nextSubFolder(QMessageManager::Error *lastError)
 {
     MapiFolderPtr result;
 
@@ -2034,7 +2034,7 @@ MapiFolderPtr MapiFolder::nextSubFolder(QMessageManager::ErrorCode *lastError)
     return result;
 }
 
-LPMAPITABLE MapiFolder::queryBegin(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder)
+LPMAPITABLE MapiFolder::queryBegin(QMessageManager::Error *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder)
 {
     if (!_valid || !_folder) {
         Q_ASSERT(_valid && _folder);
@@ -2081,7 +2081,7 @@ LPMAPITABLE MapiFolder::queryBegin(QMessageManager::ErrorCode *lastError, const 
     return 0;
 }
 
-QMessageIdList MapiFolder::queryNext(QMessageManager::ErrorCode *lastError, LPMAPITABLE messagesTable, const QMessageFilter &filter)
+QMessageIdList MapiFolder::queryNext(QMessageManager::Error *lastError, LPMAPITABLE messagesTable, const QMessageFilter &filter)
 {
     QMessageIdList result;
     while (true) {
@@ -2123,7 +2123,7 @@ void MapiFolder::queryEnd(LPMAPITABLE messagesTable)
     mapiRelease(messagesTable);
 }
 
-uint MapiFolder::countMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter) const
+uint MapiFolder::countMessages(QMessageManager::Error *lastError, const QMessageFilter &filter) const
 {
     uint result(0);
 
@@ -2169,7 +2169,7 @@ uint MapiFolder::countMessages(QMessageManager::ErrorCode *lastError, const QMes
     return result;
 }
 
-void MapiFolder::removeMessages(QMessageManager::ErrorCode *lastError, const QMessageIdList &ids)
+void MapiFolder::removeMessages(QMessageManager::Error *lastError, const QMessageIdList &ids)
 {
     SBinary *bin(0);
     if (MAPIAllocateBuffer(ids.count() * sizeof(SBinary), reinterpret_cast<LPVOID*>(&bin)) != S_OK) {
@@ -2206,7 +2206,7 @@ void MapiFolder::removeMessages(QMessageManager::ErrorCode *lastError, const QMe
     MAPIFreeBuffer(bin);
 }
 
-MapiEntryId MapiFolder::messageEntryId(QMessageManager::ErrorCode *lastError, const MapiRecordKey &messageKey)
+MapiEntryId MapiFolder::messageEntryId(QMessageManager::Error *lastError, const MapiRecordKey &messageKey)
 {
     MapiEntryId result;
     MapiRecordKey key(messageKey);
@@ -2263,7 +2263,7 @@ MapiEntryId MapiFolder::messageEntryId(QMessageManager::ErrorCode *lastError, co
     return result;
 }
 
-IMessage *MapiFolder::openMessage(QMessageManager::ErrorCode *lastError, const MapiEntryId &entryId)
+IMessage *MapiFolder::openMessage(QMessageManager::Error *lastError, const MapiEntryId &entryId)
 {
     IMessage *message(0);
 
@@ -2278,12 +2278,12 @@ IMessage *MapiFolder::openMessage(QMessageManager::ErrorCode *lastError, const M
     return message;
 }
 
-QMessageFolder MapiFolder::folder(QMessageManager::ErrorCode *lastError, const QMessageFolderId& id) const
+QMessageFolder MapiFolder::folder(QMessageManager::Error *lastError, const QMessageFolderId& id) const
 {
     return _store->folder(lastError, id);
 }
 
-QMessage MapiFolder::message(QMessageManager::ErrorCode *lastError, const QMessageId& id) const
+QMessage MapiFolder::message(QMessageManager::Error *lastError, const QMessageId& id) const
 {
     return _store->message(lastError, id);
 }
@@ -2311,10 +2311,10 @@ QMessageFolderId MapiFolder::parentId() const
 {
     MapiEntryId parentEntryId;
     if (getMapiProperty(_folder, PR_PARENT_ENTRYID, &parentEntryId)) {
-        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiFolderPtr parent(_store->openFolder(&ignoredError, parentEntryId));
         if (!parent.isNull()) {
-            QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+            QMessageManager::Error ignoredError(QMessageManager::NoError);
             MapiFolderPtr root(_store->rootFolder(&ignoredError));
             if ((ignoredError != QMessageManager::NoError) 
                 || !_store->session()->equal(parent->entryId(), root->entryId())) {
@@ -2330,7 +2330,7 @@ QList<QMessageFolderId> MapiFolder::ancestorIds() const
 {
     QList<QMessageFolderId> result;
 
-    QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+    QMessageManager::Error ignoredError(QMessageManager::NoError);
     MapiFolderPtr root(_store->rootFolder(&ignoredError));
 
     if (ignoredError == QMessageManager::NoError) {
@@ -2341,7 +2341,7 @@ QList<QMessageFolderId> MapiFolder::ancestorIds() const
             // Find the parent of this folder and append to the list of ancestors
             MapiEntryId parentEntryId;
             if (getMapiProperty(current->_folder, PR_PARENT_ENTRYID, &parentEntryId)) {
-                QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+                QMessageManager::Error ignoredError(QMessageManager::NoError);
                 current = _store->openFolder(&ignoredError, parentEntryId);
                 if (!current.isNull() && !session->equal(current->entryId(), root->entryId())) {
                     result.append(current->id());
@@ -2383,7 +2383,7 @@ static unsigned long commonFolderMap(QMessage::StandardFolder folder)
     return propertyMap.value(folder);
 }
 
-IMessage *MapiFolder::createMessage(QMessageManager::ErrorCode* lastError)
+IMessage *MapiFolder::createMessage(QMessageManager::Error* lastError)
 {
     IMessage *message = 0;
 
@@ -2395,7 +2395,7 @@ IMessage *MapiFolder::createMessage(QMessageManager::ErrorCode* lastError)
     return message;
 }
 
-IMessage* MapiFolder::createMessage(QMessageManager::ErrorCode* lastError, const QMessage& source, const MapiSessionPtr &session, SavePropertyOption saveOption )
+IMessage* MapiFolder::createMessage(QMessageManager::Error* lastError, const QMessage& source, const MapiSessionPtr &session, SavePropertyOption saveOption )
 {
     IMessage* mapiMessage(0);
     HRESULT rv = _folder->CreateMessage(0, 0, &mapiMessage);
@@ -2444,7 +2444,7 @@ IMessage* MapiFolder::createMessage(QMessageManager::ErrorCode* lastError, const
     return mapiMessage;
 }
 
-MapiStorePtr MapiStore::createStore(QMessageManager::ErrorCode *lastError, const MapiSessionPtr &session, IMsgStore *store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode)
+MapiStorePtr MapiStore::createStore(QMessageManager::Error *lastError, const MapiSessionPtr &session, IMsgStore *store, const MapiRecordKey &key, const MapiEntryId &entryId, const QString &name, bool cachedMode)
 {
     Q_UNUSED(lastError);
     MapiStorePtr ptr = MapiStorePtr(new MapiStore(session, store, key, entryId, name, cachedMode));
@@ -2478,7 +2478,7 @@ MapiStore::MapiStore(const MapiSessionPtr &session, IMsgStore *store, const Mapi
                                                                             << QMessage::TrashFolder
                                                                             << QMessage::SentFolder
                                                                             << QMessage::OutboxFolder) {
-        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiEntryId entryId(standardFolderId(&ignoredError, sf));
         if (!entryId.isEmpty()) {
             _standardFolderId[sf] = entryId;
@@ -2497,7 +2497,7 @@ MapiStore::~MapiStore()
     _valid = false;
 }
 
-MapiFolderPtr MapiStore::findFolder(QMessageManager::ErrorCode *lastError, QMessage::StandardFolder sf)
+MapiFolderPtr MapiStore::findFolder(QMessageManager::Error *lastError, QMessage::StandardFolder sf)
 {
     MapiFolderPtr result;
 
@@ -2508,7 +2508,7 @@ MapiFolderPtr MapiStore::findFolder(QMessageManager::ErrorCode *lastError, QMess
     return result;
 }
 
-MapiEntryId MapiStore::standardFolderId(QMessageManager::ErrorCode *lastError, QMessage::StandardFolder sf) const
+MapiEntryId MapiStore::standardFolderId(QMessageManager::Error *lastError, QMessage::StandardFolder sf) const
 {
     MapiEntryId result;
 
@@ -2588,7 +2588,7 @@ MapiEntryId MapiStore::standardFolderId(QMessageManager::ErrorCode *lastError, Q
     return result;
 }
 
-QMessageFolderIdList MapiStore::folderIds(QMessageManager::ErrorCode *lastError) const
+QMessageFolderIdList MapiStore::folderIds(QMessageManager::Error *lastError) const
 {
     QMessageFolderIdList folderIds;
 
@@ -2614,7 +2614,7 @@ QMessageFolderIdList MapiStore::folderIds(QMessageManager::ErrorCode *lastError)
     return folderIds;
 }
 
-QMessageFolder MapiStore::folderFromId(QMessageManager::ErrorCode *lastError, const QMessageFolderId &folderId)
+QMessageFolder MapiStore::folderFromId(QMessageManager::Error *lastError, const QMessageFolderId &folderId)
 {
     QMessageFolder result;
     QList<MapiFolderPtr> folders;
@@ -2645,7 +2645,7 @@ QMessageFolder MapiStore::folderFromId(QMessageManager::ErrorCode *lastError, co
     return result;
 }
 
-QList<MapiFolderPtr> MapiStore::filterFolders(QMessageManager::ErrorCode *lastError, const QMessageFolderFilter &afilter) const
+QList<MapiFolderPtr> MapiStore::filterFolders(QMessageManager::Error *lastError, const QMessageFolderFilter &afilter) const
 {
     QList<MapiFolderPtr> result;
     QMessageFolderFilter filter(QMessageFolderFilterPrivate::preprocess(lastError, _session, afilter));
@@ -2711,7 +2711,7 @@ QList<MapiFolderPtr> MapiStore::filterFolders(QMessageManager::ErrorCode *lastEr
     return result;
 }
 
-MapiEntryId MapiStore::messageEntryId(QMessageManager::ErrorCode *lastError, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey)
+MapiEntryId MapiStore::messageEntryId(QMessageManager::Error *lastError, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey)
 {
     MapiEntryId result;
 
@@ -2723,7 +2723,7 @@ MapiEntryId MapiStore::messageEntryId(QMessageManager::ErrorCode *lastError, con
     return result;
 }
 
-MapiFolderPtr MapiStore::openFolder(QMessageManager::ErrorCode *lastError, const MapiEntryId& entryId) const
+MapiFolderPtr MapiStore::openFolder(QMessageManager::Error *lastError, const MapiEntryId& entryId) const
 {
     MapiFolderPtr result(0);
 
@@ -2772,7 +2772,7 @@ MapiFolderPtr MapiStore::openFolder(QMessageManager::ErrorCode *lastError, const
     return result;
 }
 
-MapiFolderPtr MapiStore::openFolderWithKey(QMessageManager::ErrorCode *lastError, const MapiRecordKey &recordKey) const
+MapiFolderPtr MapiStore::openFolderWithKey(QMessageManager::Error *lastError, const MapiRecordKey &recordKey) const
 {
 #if 0 // Doesn't work on desktop or mobile, only searches top level folders
     MapiFolderPtr result;
@@ -2862,7 +2862,7 @@ bool MapiStore::supports(ULONG featureFlag) const
     return true;
 }
 
-IMessage *MapiStore::openMessage(QMessageManager::ErrorCode *lastError, const MapiEntryId &entryId)
+IMessage *MapiStore::openMessage(QMessageManager::Error *lastError, const MapiEntryId &entryId)
 {
     IMessage *message(0);
 
@@ -2883,7 +2883,7 @@ IMessage *MapiStore::openMessage(QMessageManager::ErrorCode *lastError, const Ma
     return message;
 }
 
-IMAPIFolder *MapiStore::openMapiFolder(QMessageManager::ErrorCode *lastError, const MapiEntryId &entryId) const
+IMAPIFolder *MapiStore::openMapiFolder(QMessageManager::Error *lastError, const MapiEntryId &entryId) const
 {
     IMAPIFolder *folder(0);
 
@@ -2944,7 +2944,7 @@ MapiSessionPtr MapiStore::session() const
     return _session.toStrongRef();
 }
 
-MapiFolderPtr MapiStore::rootFolder(QMessageManager::ErrorCode *lastError) const
+MapiFolderPtr MapiStore::rootFolder(QMessageManager::Error *lastError) const
 {
     MapiFolderPtr result;
 
@@ -2956,7 +2956,7 @@ MapiFolderPtr MapiStore::rootFolder(QMessageManager::ErrorCode *lastError) const
     return result;
 }
 
-MapiEntryId MapiStore::rootFolderId(QMessageManager::ErrorCode *lastError) const
+MapiEntryId MapiStore::rootFolderId(QMessageManager::Error *lastError) const
 {
     MapiEntryId result;
 
@@ -2977,7 +2977,7 @@ MapiEntryId MapiStore::rootFolderId(QMessageManager::ErrorCode *lastError) const
     return result;
 }
 
-MapiFolderPtr MapiStore::receiveFolder(QMessageManager::ErrorCode *lastError) const
+MapiFolderPtr MapiStore::receiveFolder(QMessageManager::Error *lastError) const
 {
     MapiFolderPtr result;
 
@@ -2989,7 +2989,7 @@ MapiFolderPtr MapiStore::receiveFolder(QMessageManager::ErrorCode *lastError) co
     return result;
 }
 
-MapiEntryId MapiStore::receiveFolderId(QMessageManager::ErrorCode *lastError) const
+MapiEntryId MapiStore::receiveFolderId(QMessageManager::Error *lastError) const
 {
     MapiEntryId result;
 
@@ -3013,12 +3013,12 @@ MapiEntryId MapiStore::receiveFolderId(QMessageManager::ErrorCode *lastError) co
     return result;
 }
 
-QMessageFolder MapiStore::folder(QMessageManager::ErrorCode *lastError, const QMessageFolderId& id) const
+QMessageFolder MapiStore::folder(QMessageManager::Error *lastError, const QMessageFolderId& id) const
 {
     return _session.toStrongRef()->folder(lastError, id);
 }
 
-QMessage MapiStore::message(QMessageManager::ErrorCode *lastError, const QMessageId& id) const
+QMessage MapiStore::message(QMessageManager::Error *lastError, const QMessageId& id) const
 {
     return _session.toStrongRef()->message(lastError, id);
 }
@@ -3196,7 +3196,7 @@ void SessionManager::appDestroyed()
 
 Q_GLOBAL_STATIC(SessionManager, manager);
 
-MapiSessionPtr MapiSession::createSession(QMessageManager::ErrorCode *lastError)
+MapiSessionPtr MapiSession::createSession(QMessageManager::Error *lastError)
 {
     static bool initialized(manager()->initialize(new MapiSession(lastError)));
 
@@ -3219,7 +3219,7 @@ MapiSession::MapiSession()
 {
 }
 
-MapiSession::MapiSession(QMessageManager::ErrorCode *lastError)
+MapiSession::MapiSession(QMessageManager::Error *lastError)
     :QObject(),
      _token(WinHelpers::initializeMapi()),
      _mapiSession(0),
@@ -3253,7 +3253,7 @@ MapiSession::~MapiSession()
     }
 }
 
-MapiStorePtr MapiSession::findStore(QMessageManager::ErrorCode *lastError, const QMessageAccountId &id, bool cachedMode) const
+MapiStorePtr MapiSession::findStore(QMessageManager::Error *lastError, const QMessageAccountId &id, bool cachedMode) const
 {
     MapiStorePtr result(0);
     if (!_mapiSession) {
@@ -3300,7 +3300,7 @@ MapiStorePtr MapiSession::findStore(QMessageManager::ErrorCode *lastError, const
 }
 
 template<typename Predicate, typename Ordering>
-QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastError, Predicate predicate, Ordering sortOrder, uint limit, uint offset, bool cachedMode) const
+QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::Error *lastError, Predicate predicate, Ordering sortOrder, uint limit, uint offset, bool cachedMode) const
 {
     if (!predicate._filter.isSupported()) {
         *lastError = QMessageManager::ConstraintFailure;
@@ -3366,18 +3366,18 @@ QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastEr
     }
 }
 
-QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::ErrorCode *lastError, const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset, bool cachedMode) const
+QList<MapiStorePtr> MapiSession::filterStores(QMessageManager::Error *lastError, const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset, bool cachedMode) const
 {
     AccountFilterPredicate pred(filter);
     return filterStores<const AccountFilterPredicate&, const QMessageAccountSortOrder &>(lastError, pred, sortOrder, limit, offset, cachedMode);
 }
 
-QList<MapiStorePtr> MapiSession::allStores(QMessageManager::ErrorCode *lastError, bool cachedMode) const
+QList<MapiStorePtr> MapiSession::allStores(QMessageManager::Error *lastError, bool cachedMode) const
 {
     return filterStores(lastError, QMessageAccountFilter(), QMessageAccountSortOrder(), 0, 0, cachedMode);
 }
 
-QList<MapiFolderPtr> MapiSession::filterFolders(QMessageManager::ErrorCode *lastError, const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset, bool cachedMode) const
+QList<MapiFolderPtr> MapiSession::filterFolders(QMessageManager::Error *lastError, const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset, bool cachedMode) const
 {
     if (!filter.isSupported()) {
         *lastError = QMessageManager::ConstraintFailure;
@@ -3421,7 +3421,7 @@ QList<MapiFolderPtr> MapiSession::filterFolders(QMessageManager::ErrorCode *last
     }
 }
 
-IMsgStore *MapiSession::openMapiStore(QMessageManager::ErrorCode *lastError, const MapiEntryId &entryId, bool cachedMode) const
+IMsgStore *MapiSession::openMapiStore(QMessageManager::Error *lastError, const MapiEntryId &entryId, bool cachedMode) const
 {
     IMsgStore *store(0);
 
@@ -3440,7 +3440,7 @@ IMsgStore *MapiSession::openMapiStore(QMessageManager::ErrorCode *lastError, con
     return store;
 }
 
-MapiStorePtr MapiSession::openStore(QMessageManager::ErrorCode *lastError, const MapiEntryId& entryId, bool cachedMode) const
+MapiStorePtr MapiSession::openStore(QMessageManager::Error *lastError, const MapiEntryId& entryId, bool cachedMode) const
 {
     MapiStorePtr result(0);
 
@@ -3482,7 +3482,7 @@ MapiStorePtr MapiSession::openStore(QMessageManager::ErrorCode *lastError, const
     return result;
 }
 
-MapiStorePtr MapiSession::openStoreWithKey(QMessageManager::ErrorCode *lastError, const MapiRecordKey &recordKey, bool cachedMode) const
+MapiStorePtr MapiSession::openStoreWithKey(QMessageManager::Error *lastError, const MapiRecordKey &recordKey, bool cachedMode) const
 {
     MapiStorePtr result;
 
@@ -3538,7 +3538,7 @@ MapiStorePtr MapiSession::openStoreWithKey(QMessageManager::ErrorCode *lastError
     return result;
 }
 
-QMessageAccountId MapiSession::defaultAccountId(QMessageManager::ErrorCode *lastError, QMessage::Type type) const
+QMessageAccountId MapiSession::defaultAccountId(QMessageManager::Error *lastError, QMessage::Type type) const
 {
 #ifdef _WIN32_WCE
     if (type == QMessage::Sms) {
@@ -3561,7 +3561,7 @@ QMessageAccountId MapiSession::defaultAccountId(QMessageManager::ErrorCode *last
     return QMessageAccountId();
 }
 
-IMessage *MapiSession::openMapiMessage(QMessageManager::ErrorCode *lastError, const QMessageId &id, MapiStorePtr *storePtr) const
+IMessage *MapiSession::openMapiMessage(QMessageManager::Error *lastError, const QMessageId &id, MapiStorePtr *storePtr) const
 {
     IMessage *message(0);
 
@@ -3591,7 +3591,7 @@ IMessage *MapiSession::openMapiMessage(QMessageManager::ErrorCode *lastError, co
     return message;
 }
 
-MapiEntryId MapiSession::messageEntryId(QMessageManager::ErrorCode *lastError, const MapiRecordKey &storeKey, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey)
+MapiEntryId MapiSession::messageEntryId(QMessageManager::Error *lastError, const MapiRecordKey &storeKey, const MapiRecordKey &folderKey, const MapiRecordKey &messageKey)
 {
     MapiEntryId result;
 
@@ -3603,7 +3603,7 @@ MapiEntryId MapiSession::messageEntryId(QMessageManager::ErrorCode *lastError, c
     return result;
 }
 
-MapiRecordKey MapiSession::messageRecordKey(QMessageManager::ErrorCode *lastError, const QMessageId &id)
+MapiRecordKey MapiSession::messageRecordKey(QMessageManager::Error *lastError, const QMessageId &id)
 {
     MapiRecordKey result;
 
@@ -3619,7 +3619,7 @@ MapiRecordKey MapiSession::messageRecordKey(QMessageManager::ErrorCode *lastErro
     return result;
 }
 
-MapiRecordKey MapiSession::folderRecordKey(QMessageManager::ErrorCode *lastError, const QMessageId &id)
+MapiRecordKey MapiSession::folderRecordKey(QMessageManager::Error *lastError, const QMessageId &id)
 {
     MapiRecordKey result;
 
@@ -3645,7 +3645,7 @@ MapiRecordKey MapiSession::folderRecordKey(QMessageManager::ErrorCode *lastError
 
 #ifdef _WIN32_WCE
 
-MapiEntryId MapiSession::folderEntryId(QMessageManager::ErrorCode *lastError, const QMessageId &id)
+MapiEntryId MapiSession::folderEntryId(QMessageManager::Error *lastError, const QMessageId &id)
 {
     MapiEntryId result;
 
@@ -3682,7 +3682,7 @@ bool MapiSession::equal(const MapiEntryId &lhs, const MapiEntryId &rhs) const
     return (result != FALSE);
 }
 
-QMessageFolder MapiSession::folder(QMessageManager::ErrorCode *lastError, const QMessageFolderId& id) const
+QMessageFolder MapiSession::folder(QMessageManager::Error *lastError, const QMessageFolderId& id) const
 {
     QMessageFolder result;
 
@@ -3790,7 +3790,7 @@ QMessageFolder MapiSession::folder(QMessageManager::ErrorCode *lastError, const 
     return result;
 }
 
-QMessage MapiSession::message(QMessageManager::ErrorCode *lastError, const QMessageId& id) const
+QMessage MapiSession::message(QMessageManager::Error *lastError, const QMessageId& id) const
 {
     Q_UNUSED(lastError);
 
@@ -3809,7 +3809,7 @@ QMessage MapiSession::message(QMessageManager::ErrorCode *lastError, const QMess
     return result;
 }
 
-bool MapiSession::updateMessageProperties(QMessageManager::ErrorCode *lastError, QMessage *msg) const
+bool MapiSession::updateMessageProperties(QMessageManager::Error *lastError, QMessage *msg) const
 {
     bool result(false);
 
@@ -3972,7 +3972,7 @@ bool MapiSession::updateMessageProperties(QMessageManager::ErrorCode *lastError,
     return result;
 }
 
-bool MapiSession::updateMessageRecipients(QMessageManager::ErrorCode *lastError, QMessage *msg) const
+bool MapiSession::updateMessageRecipients(QMessageManager::Error *lastError, QMessage *msg) const
 {
     bool result(false);
 
@@ -4096,7 +4096,7 @@ bool MapiSession::updateMessageRecipients(QMessageManager::ErrorCode *lastError,
     return result;
 }
 
-bool MapiSession::updateMessageBody(QMessageManager::ErrorCode *lastError, QMessage *msg) const
+bool MapiSession::updateMessageBody(QMessageManager::Error *lastError, QMessage *msg) const
 {
     bool result(false);
 
@@ -4392,7 +4392,7 @@ bool MapiSession::updateMessageBody(QMessageManager::ErrorCode *lastError, QMess
     return result;
 }
 
-bool MapiSession::updateMessageAttachments(QMessageManager::ErrorCode *lastError, QMessage *msg) const
+bool MapiSession::updateMessageAttachments(QMessageManager::Error *lastError, QMessage *msg) const
 {
     bool result(false);
 
@@ -4520,7 +4520,7 @@ bool MapiSession::updateMessageAttachments(QMessageManager::ErrorCode *lastError
     return result;
 }
 
-bool MapiSession::haveAttachmentData(QMessageManager::ErrorCode *lastError, const QMessageId& id, ULONG number) const
+bool MapiSession::haveAttachmentData(QMessageManager::Error *lastError, const QMessageId& id, ULONG number) const
 {
     bool result = false;
 
@@ -4547,7 +4547,7 @@ bool MapiSession::haveAttachmentData(QMessageManager::ErrorCode *lastError, cons
 }
 
 
-QByteArray MapiSession::attachmentData(QMessageManager::ErrorCode *lastError, const QMessageId& id, ULONG number) const
+QByteArray MapiSession::attachmentData(QMessageManager::Error *lastError, const QMessageId& id, ULONG number) const
 {
     QByteArray result;
 
@@ -4574,7 +4574,7 @@ QByteArray MapiSession::attachmentData(QMessageManager::ErrorCode *lastError, co
     return result;
 }
 
-QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body, QMessageDataComparator::MatchFlags matchFlags) const
+QMessageIdList MapiSession::queryMessages(QMessageManager::Error *lastError, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset, const QString &body, QMessageDataComparator::MatchFlags matchFlags) const
 {
     if (!filter.isSupported()) {
         *lastError = QMessageManager::ConstraintFailure;
@@ -4614,7 +4614,7 @@ QMessageIdList MapiSession::queryMessages(QMessageManager::ErrorCode *lastError,
     return filterMessages(lastError, folderNodes, sortOrder, limit, offset, body, matchFlags);
 }
 
-void MapiSession::updateMessage(QMessageManager::ErrorCode* lastError, const QMessage& source)
+void MapiSession::updateMessage(QMessageManager::Error* lastError, const QMessage& source)
 {
     MapiStorePtr store;
     IMessage *mapiMessage = openMapiMessage(lastError, source.id(), &store);
@@ -4645,7 +4645,7 @@ void MapiSession::updateMessage(QMessageManager::ErrorCode* lastError, const QMe
     }
 }
 
-void MapiSession::removeMessages(QMessageManager::ErrorCode *lastError, const QMessageIdList &ids)
+void MapiSession::removeMessages(QMessageManager::Error *lastError, const QMessageIdList &ids)
 {
 #ifdef _WIN32_WCE
     typedef QPair<MapiEntryId, MapiEntryId> FolderKey;
@@ -4671,7 +4671,7 @@ void MapiSession::removeMessages(QMessageManager::ErrorCode *lastError, const QM
         const MapiRecordKey folderKey(it.key().second);
 #endif
 
-        QMessageManager::ErrorCode error(QMessageManager::NoError);
+        QMessageManager::Error error(QMessageManager::NoError);
 
 #ifdef _WIN32_WCE
         MapiStorePtr store = openStore(&error,storeKey,true);
@@ -4736,7 +4736,7 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
             continue;
         }
 
-        QMessageManager::ErrorCode ignoredError(QMessageManager::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         QMessageFilter processedFilter(QMessageFilterPrivate::preprocess(&ignoredError, _self.toStrongRef(), filter));
         if (ignoredError != QMessageManager::NoError)
             continue;
@@ -4759,7 +4759,7 @@ void MapiSession::notify(MapiStore *store, const QMessageId &id, MapiSession::No
     }
 }
 
-QMessageManager::NotificationFilterId MapiSession::registerNotificationFilter(QMessageManager::ErrorCode *lastError, const QMessageFilter &filter)
+QMessageManager::NotificationFilterId MapiSession::registerNotificationFilter(QMessageManager::Error *lastError, const QMessageFilter &filter)
 {
     QMessageManager::NotificationFilterId filterId = ++_filterId;
     _filters.insert(filterId, filter);
@@ -4775,7 +4775,7 @@ QMessageManager::NotificationFilterId MapiSession::registerNotificationFilter(QM
     return filterId;
 }
 
-void MapiSession::unregisterNotificationFilter(QMessageManager::ErrorCode *lastError, QMessageManager::NotificationFilterId filterId)
+void MapiSession::unregisterNotificationFilter(QMessageManager::Error *lastError, QMessageManager::NotificationFilterId filterId)
 {
     _filters.remove(filterId);
 

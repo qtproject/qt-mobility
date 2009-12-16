@@ -117,7 +117,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QMessageManager::ErrorCode
+    \enum QMessageManager::Error
 
     Defines the result of attempting to perform a messaging store operation.
 
@@ -161,7 +161,7 @@ QMessageManager::~QMessageManager()
     
     Returns the code of the last error condition reported by the messaging store.
 */
-QMessageManager::ErrorCode QMessageManager::lastError() const
+QMessageManager::Error QMessageManager::lastError() const
 {
     return store->lastError();
 }

@@ -100,7 +100,7 @@ private:
     QMessageStore* q_ptr;
 
     CMTMEngine* _mtmEngine;
-    QMessageManager::ErrorCode _error;
+    QMessageManager::Error _error;
     
     NotificationType _notificationType;
     mutable QEventLoop loop;
