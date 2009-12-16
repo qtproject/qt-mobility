@@ -65,6 +65,8 @@ public:
     ~V4LRadioControl();
 
     bool isAvailable() const;
+    QtMedia::AvailabilityError availabilityError() const;
+
     QRadioTuner::State state() const;
 
     QRadioTuner::Band band() const;

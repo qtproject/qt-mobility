@@ -128,11 +128,25 @@ QRadioTuner::~QRadioTuner()
 }
 
 /*!
-    Returns true if the radio tuner is supported, otherwise returns false.
+    Returns true if the radio tuner service is ready to use.
 */
 bool QRadioTuner::isAvailable() const
 {
-    return d_func()->control != NULL;
+    if (d_func()->control != NULL)
+        return d_func()->control->isAvailable();
+    else
+        return false;
+}
+
+/*!
+    Returns the availability error state.
+*/
+QtMedia::AvailabilityError QRadioTuner::availabilityError() const
+{
+    if (d_func()->control != NULL)
+        return d_func()->control->availabilityError();
+    else
+        return QtMedia::ServiceMissingError;
 }
 
 /*!

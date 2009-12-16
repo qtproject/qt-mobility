@@ -72,6 +72,14 @@ bool S60RadioTunerControl::isAvailable() const
     return available;
 }
 
+QtMedia::AvailabilityError S60RadioTunerControl::availabilityError() const
+{
+    if (available)
+        return QtMedia::NoError;
+    else
+        return QtMedia::ResourceError;
+}
+
 QRadioTuner::State S60RadioTunerControl::state() const
 {
     return m_tunerState;
