@@ -73,7 +73,7 @@ struct PartLocator
 
 struct SizeAccumulator
 {
-    uint _size;
+    int _size;
 
     SizeAccumulator() : _size(0) {}
 
@@ -163,7 +163,7 @@ bool QMessageContentContainer::isContentAvailable() const
     return (d_ptr->_container->partCount() > 0) || d_ptr->_container->contentAvailable();
 }
 
-uint QMessageContentContainer::size() const
+int QMessageContentContainer::size() const
 {
     if (d_ptr->_container->hasBody()) {
         return d_ptr->_container->body().length();

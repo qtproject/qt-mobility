@@ -423,16 +423,16 @@ void QMessage::setPriority(Priority newPriority)
     }
 }
 
-uint QMessage::size() const
+int QMessage::size() const
 {
     if ((d_ptr->_message.status() & QMailMessage::LocalOnly) && 
         (d_ptr->_message.dataModified() ||
          d_ptr->_message.contentModified())) {
         // We need to update the size estimate for this message
-        d_ptr->_message.setSize(d_ptr->_message.indicativeSize() * 1024);
+        d_ptr->_message.setSize(static_cast<int>(d_ptr->_message.indicativeSize()) * 1024);
     }
 
-    return d_ptr->_message.size();
+    return static_cast<int>(d_ptr->_message.size());
 }
 
 QMessageContentContainerId QMessage::bodyId() const

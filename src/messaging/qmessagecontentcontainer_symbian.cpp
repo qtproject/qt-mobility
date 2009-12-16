@@ -315,7 +315,7 @@ bool QMessageContentContainer::isContentAvailable() const
     return d_ptr->_available;
 }
 
-uint QMessageContentContainer::size() const
+int QMessageContentContainer::size() const
 {
     return d_ptr->_size;
 }

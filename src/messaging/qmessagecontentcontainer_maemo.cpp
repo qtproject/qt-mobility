@@ -86,7 +86,7 @@ bool QMessageContentContainer::isContentAvailable() const
     return false;
 }
 
-uint QMessageContentContainer::size() const
+int QMessageContentContainer::size() const
 {
     return 0;
 }

@@ -85,7 +85,7 @@ void QMessagePrivate::setSenderName(const QMessage &message, const QString &send
     message.d_ptr->_senderName = senderName;
 }
 
-void QMessagePrivate::setSize(const QMessage &message, uint size)
+void QMessagePrivate::setSize(const QMessage &message, int size)
 {
     message.d_ptr->_size = size;
 }
@@ -356,9 +356,9 @@ void QMessage::setPriority(Priority newPriority)
     d_ptr->_priority = newPriority;
 }
 
-uint QMessage::size() const
+int QMessage::size() const
 {
-    uint size = 0;
+    int size = 0;
 
     d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     if (d_ptr->_size != 0) {

@@ -72,7 +72,7 @@ void QMessagePrivate::setSenderName(const QMessage &message, const QString &send
     message.d_ptr->_senderName = senderName;
 }
 
-void QMessagePrivate::setSize(const QMessage &message, uint size)
+void QMessagePrivate::setSize(const QMessage &message, int size)
 {
     message.d_ptr->_size = size;
 }
@@ -294,21 +294,21 @@ void QMessage::setPriority(Priority newPriority)
     d_ptr->_modified = true;
 }
 
-uint QMessage::size() const
+int QMessage::size() const
 {
-	uint size = 0;
+    int size = 0;
     if (d_ptr->_size != 0) {
         size = d_ptr->_size;
     } else {
-    	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
-		if (container->_size != 0) {
-			size += container->_size;
-		}
-		foreach (const QMessageContentContainer &attachment, container->_attachments) {
-			size += attachment.size();
-		}
+        QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+        if (container->_size != 0) {
+            size += container->_size;
+        }
+        foreach (const QMessageContentContainer &attachment, container->_attachments) {
+            size += attachment.size();
+        }
     }
-	return size;
+    return size;
 }
 
 QMessageContentContainerId QMessage::bodyId() const

@@ -178,7 +178,7 @@ bool QMessageContentContainer::isContentAvailable() const
     return d_ptr->_available;
 }
 
-uint QMessageContentContainer::size() const
+int QMessageContentContainer::size() const
 {
     if (d_ptr->isMessage()) {
         d_ptr->_message->d_ptr->ensurePropertiesPresent(d_ptr->_message);

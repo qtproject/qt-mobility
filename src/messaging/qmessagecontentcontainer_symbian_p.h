@@ -67,7 +67,7 @@ public:
     QMessage *_message;
 
     bool _available;
-    uint _size;
+    int _size;
     QByteArray _type;
     QByteArray _subType;
     QByteArray _charset;

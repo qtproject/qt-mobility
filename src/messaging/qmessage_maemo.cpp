@@ -204,7 +204,7 @@ void QMessage::setPriority(Priority newPriority)
     Q_UNUSED(newPriority)
 }
 
-uint QMessage::size() const
+int QMessage::size() const
 {
     return 0; // stub
 }

@@ -77,7 +77,7 @@ public:
     QByteArray suggestedFileName() const;
 
     bool isContentAvailable() const;
-    uint size() const;
+    int size() const;
 
     QString textContent() const;
     QByteArray content() const;
