@@ -190,8 +190,8 @@ void TestModelUi::populateContacts()
             QContactEmailAddress e;
             QContactAvatar a;
 
-            n.setFirst(nameFirst.at(i));
-            n.setLast(nameLast.at(j));
+            n.setFirstName(nameFirst.at(i));
+            n.setLastName(nameLast.at(j));
             p.setNumber(phoneFirst.at(i) + phoneLast.at(j));
             e.setEmailAddress(emailFirst.at(i) + emailLast.at(j));
             a.setAvatar(avatarFirst.at(i) + avatarLast.at(j));

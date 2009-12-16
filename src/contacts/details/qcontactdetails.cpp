@@ -481,28 +481,28 @@ Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldSubType, "SubType");
 Q_DEFINE_LATIN1_LITERAL(QContactName::FieldPrefix, "Prefix");
 
 /*!
-   \variable QContactName::FieldFirst
+   \variable QContactName::FieldFirstName
 
    The constant key for which the first name value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "First");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirstName, "FirstName");
 
 /*!
-   \variable QContactName::FieldMiddle
+   \variable QContactName::FieldMiddleName
 
    The constant key for which the middle name value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "Middle");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddleName, "MiddleName");
 
 /*!
-   \variable QContactName::FieldLast
+   \variable QContactName::FieldLastName
 
    The constant key for which the last name value is stored in details
    of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "Last");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLastName, "LastName");
 
 /*!
    \variable QContactName::FieldSuffix

@@ -414,22 +414,22 @@ QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, 
            result += name.value(QContactName::FieldPrefix);
         }
 
-        if (!name.value(QContactName::FieldFirst).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldFirstName).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QContactName::FieldFirst);
+            result += name.value(QContactName::FieldFirstName);
         }
 
-        if (!name.value(QContactName::FieldMiddle).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldMiddleName).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QContactName::FieldMiddle);
+            result += name.value(QContactName::FieldMiddleName);
         }
 
-        if (!name.value(QContactName::FieldLast).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldLastName).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QContactName::FieldLast);
+            result += name.value(QContactName::FieldLastName);
         }
 
         if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
@@ -925,9 +925,9 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactName::FieldPrefix, f);
-    fields.insert(QContactName::FieldFirst, f);
-    fields.insert(QContactName::FieldMiddle, f);
-    fields.insert(QContactName::FieldLast, f);
+    fields.insert(QContactName::FieldFirstName, f);
+    fields.insert(QContactName::FieldMiddleName, f);
+    fields.insert(QContactName::FieldLastName, f);
     fields.insert(QContactName::FieldSuffix, f);
     fields.insert(QContactName::FieldCustomLabel, f);
     f.setDataType(QVariant::StringList);
