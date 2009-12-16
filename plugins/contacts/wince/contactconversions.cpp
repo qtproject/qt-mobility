@@ -40,11 +40,9 @@
 ****************************************************************************/
 #include <QDebug>
 #include <QByteArray>
+#include <QBuffer>
 #include <QUrl>
-#include <QEventLoop>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
+#include <QPixmap>
 #include "qcontactmanager.h"
 #include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
@@ -295,14 +293,19 @@ static void processAvatar(const QContactWinCEEngine* /*engine*/, IItem* contact,
 {
     QContactAvatar avatar;
 
+    QByteArray data;
+    if (loadAvatarData(contact, &data)) {
+        if (!data.isEmpty()) {
+            QPixmap pixmap = QPixmap::fromImage(QImage::fromData(data));
+            avatar.setPixmap(pixmap);
+        }
+    }
+
     if (values[0].toString().isEmpty()) {
-        QByteArray data;
-        if (loadAvatarData(contact, &data)) {
-            if (!data.isEmpty()) {
-                QUrl url(QUrl::fromEncoded(data.toPercentEncoding()));
-                url.setScheme("data");
-                avatar.setAvatar(url.toString());
-            }
+        if (!data.isEmpty()) {
+            QUrl url(QUrl::fromEncoded(data.toPercentEncoding()));
+            url.setScheme("data");
+            avatar.setAvatar(url.toString());
         }
     } else {
         avatar.setAvatar(values[0].toString());
@@ -660,53 +663,22 @@ static bool processQName(const QContactWinCEEngine*, IItem* /*contact*/, const Q
     return true;
 }
 
-SyncNetworkAccessManager::SyncNetworkAccessManager()
-:manager(new QNetworkAccessManager),
- loop(new QEventLoop)
-{
-}
-SyncNetworkAccessManager::~SyncNetworkAccessManager()
-{
-    delete manager;
-    delete loop;
-}
-
-QByteArray SyncNetworkAccessManager::get(const QNetworkRequest& req)
-{
-    QNetworkReply* reply = manager->get(req);
-    
-	connect(reply,SIGNAL(finished()),SLOT(finished()));
-	loop->exec();
-    QByteArray data = reply->readAll();
-    reply->deleteLater();
-    return data;
-}
-void SyncNetworkAccessManager::finished()
-{
-	loop->exit();
-}
-
-
 static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QString avatarData = detail.value(QContactAvatar::FieldAvatar);
-    
-    if (avatarData.isEmpty())
-        return false;
+    QPixmap avatarPixmap = detail.value(QContactAvatar::FieldAvatarPixmap);
 
-    QUrl url(avatarData);
-    if (!url.isValid() || url.scheme().isEmpty())
-        url = QUrl::fromLocalFile(avatarData);
+    addIfNotEmpty(engine->metaAvatarType(), detail.value(QContactAvatar::FieldSubType), props);
+    addIfNotEmpty(engine->metaAvatar(), avatarData, props);
 
-    if (url.isValid()) {
-        SyncNetworkAccessManager manager;
-        if (saveAvatarData(contact, manager.get(QNetworkRequest(url)))) {
-            addIfNotEmpty(engine->metaAvatarType(), detail.value(QContactAvatar::FieldSubType), props);
-            addIfNotEmpty(engine->metaAvatar(), avatarData, props);
-            return true;
-        }
+    if (!avatarPixmap.isNull()) {
+        QByteArray data;
+        QBuffer buffer(&data);
+        buffer.open(QIODevice::WriteOnly);
+        if (!avatarPixmap.save(&buffer) || !saveAvatarData(contact, data))
+            return false;
     }
-    return false;
+    return true;
 }
 
 static bool processQFamily(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)

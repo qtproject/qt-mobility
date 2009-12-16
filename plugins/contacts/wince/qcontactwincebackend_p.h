@@ -197,24 +197,6 @@ public:
     ContactWinceFactory* m_factory;
 };
 
-class QByteArray;
-class QNetworkRequest;
-class QEventLoop;
-class QNetworkAccessManager;
-class SyncNetworkAccessManager :public QObject {
-    Q_OBJECT
-public:
-    SyncNetworkAccessManager();
-     ~SyncNetworkAccessManager();
-    QByteArray get(const QNetworkRequest& req);
-
-protected slots:
-	void finished();
-private:
-    QEventLoop* loop;
-    QNetworkAccessManager* manager;
- };
-
 class QContactWinCEEngine : public QContactManagerEngine
 {
     Q_OBJECT

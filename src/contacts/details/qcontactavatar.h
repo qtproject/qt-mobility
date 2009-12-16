@@ -60,6 +60,7 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldAvatar;
+    const char* FieldAvatarPixmap;
     const char* FieldSubType;
     const char* SubTypeImage;
     const char* SubTypeVideo;
@@ -69,6 +70,7 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
     Q_DECLARE_LATIN1_LITERAL(FieldAvatar, "Avatar");
+    Q_DECLARE_LATIN1_LITERAL(FieldAvatarPixmap, "AvatarPixmap");
     Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
     Q_DECLARE_LATIN1_LITERAL(SubTypeImage, "Image");
     Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, "Video");
@@ -79,8 +81,9 @@ public:
 
     void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}
     QString avatar() const {return value(FieldAvatar);}
-    QPixmap QContactAvatar::avatarImage() const;
-    QPixmap QContactAvatar::thumbnail(const QSize& size) const;
+    QPixmap QContactAvatar::pixmap() const;
+    bool QContactAvatar::setPixmap(const QPixmap& pixmap);
+    
     void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
     QString subType() const {return value(FieldSubType);}
 };

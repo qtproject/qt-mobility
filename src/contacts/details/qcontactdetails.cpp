@@ -451,6 +451,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatar, "Avatar");
 
 /*!
+   \variable QContactAvatar::FieldAvatarPixmap
+
+   The constant key for which the path the avatar value is stored in
+   details of the QContactAvatar type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatarPixmap, "AvatarPixmap");
+
+/*!
    \variable QContactAvatar::FieldSubType
 
    The constant key for which the subtypes value is stored in details
@@ -1804,7 +1812,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
  * Returns the avatar's image if the avatar's subtype is SubTypeImage.
  */
-QPixmap QContactAvatar::avatarImage() const
+QPixmap QContactAvatar::pixmap() const
 {
     if (subType() == QContactAvatar::SubTypeImage) {
         QUrl url(avatar());
@@ -1834,12 +1842,9 @@ QPixmap QContactAvatar::avatarImage() const
     return QPixmap();
 }
 
-/*!
- * Returns the avatar's thumbnail image.
- */
-QPixmap QContactAvatar::thumbnail(const QSize& size) const
+bool QContactAvatar::setPixmap(const QPixmap& pixmap)
 {
-    return avatarImage().scaled(size);
+    return setValue(FieldAvatarPixmap, QVariant::fromValue(pixmap));
 }
 
 QTM_END_NAMESPACE
