@@ -62,20 +62,35 @@
 
 #define ERROR_SETVALUE_NOT_SUPPORTED 1
 
-#define QTRY_COMPARE(a,e)                       \
-    for (int _i = 0; _i < 10000; _i += 100) {    \
-        if ((a) == (e)) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QCOMPARE(a, e)
+#ifdef Q_OS_SYMBIAN
+    #define QTRY_COMPARE(a,e)                       \
+        for (int _i = 0; _i < 100; _i++) {          \
+            if ((a) == (e)) break;                  \
+            QTest::qWait(1);                        \
+        }                                           \
+        QCOMPARE(a, e)
 
-#define QTRY_VERIFY(a)                       \
-    for (int _i = 0; _i < 10000; _i += 100) {    \
-        if (a) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QVERIFY(a)
+    #define QTRY_VERIFY(a)                          \
+        for (int _i = 0; _i < 100; _i ++) {         \
+            if (a) break;                           \
+            QTest::qWait(1);                        \
+        }                                           \
+        QVERIFY(a)
+#else
+    #define QTRY_COMPARE(a,e)                       \
+        for (int _i = 0; _i < 10000; _i += 100) {    \
+            if ((a) == (e)) break;                  \
+            QTest::qWait(100);                      \
+        }                                           \
+        QCOMPARE(a, e)
 
+    #define QTRY_VERIFY(a)                       \
+        for (int _i = 0; _i < 10000; _i += 100) {    \
+            if (a) break;                  \
+            QTest::qWait(100);                      \
+        }                                           \
+        QVERIFY(a)
+#endif
 QTM_USE_NAMESPACE
 class ChangeListener : public QObject
 {
@@ -1151,14 +1166,14 @@ void tst_QValueSpaceSubscriber::threads_data()
 
     QTest::newRow("1 thread") << uint(1) << true;
     QTest::newRow("2 threads") << uint(2) << true;
-#ifdef Q_OS_WINCE
+#if defined(Q_OS_WINCE) || defined(Q_OS_SYMBIAN)
     QTest::newRow("10 threads") << uint(10) << true;
 #else
     QTest::newRow("100 threads") << uint(100) << true;
 #endif
     QTest::newRow("1 thread, unsynchronised") << uint(1) << false;
     QTest::newRow("2 threads, unsynchronised") << uint(2) << false;
-#ifdef Q_OS_WINCE
+#if defined(Q_OS_WINCE) || defined(Q_OS_SYMBIAN)
     QTest::newRow("10 threads") << uint(10) << false;
 #else
     QTest::newRow("100 threads, unsynchronised") << uint(100) << false;
