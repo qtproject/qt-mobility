@@ -552,7 +552,7 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
     Q_UNUSED(appendOnly);
 
     // first, check to make sure that the request is still valid.
-    if (d->m_manager != request->manager() || request->state() == QContactAbstractRequest::Canceled) {
+    if (d->m_manager != request->manager() || request->state() == QContactAbstractRequest::CanceledState) {
         d->m_requestCentreRows.remove(request);
         delete request;
         return; // ignore these results.
@@ -573,7 +573,7 @@ void QContactListModel::contactFetchRequestProgress(QContactFetchRequest* reques
     }
 
     // check to see if the request state is "finished" - clean up.
-    if (request->state() == QContactAbstractRequest::Finished) {
+    if (request->state() == QContactAbstractRequest::FinishedState) {
         d->m_requestCentreRows.remove(request);
         delete request;
     }

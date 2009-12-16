@@ -211,7 +211,7 @@ void TestModelUi::dataAvailable(QContactFetchRequest* request, bool appendOnly)
     Q_UNUSED(appendOnly);
 
     // first, make sure we can use the data.
-    if (currentState == TestModelUi::WaitingState || request->state() != QContactAbstractRequest::Finished)
+    if (currentState == TestModelUi::WaitingState || request->state() != QContactAbstractRequest::FinishedState)
         return;
 
     // we assume that we need the extra details.
@@ -258,7 +258,7 @@ void TestModelUi::filterResults(QContactFetchRequest* request, bool appendOnly)
     }
     textEdit->setText(text);
 
-    if (request->state() == QContactAbstractRequest::Finished) {
+    if (request->state() == QContactAbstractRequest::FinishedState) {
         if (results.isEmpty())
             textEdit->setText("Matching Contacts:\n\nNo Matches Found!");
         rightButton->setText(tr("Done"));

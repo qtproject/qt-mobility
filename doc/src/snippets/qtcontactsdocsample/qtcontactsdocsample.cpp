@@ -276,7 +276,7 @@ void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnl
     }
 
     // once we've finished retrieving results, stop processing events.
-    if (request->state() == QContactAbstractRequest::Finished || request->state() == QContactAbstractRequest::Canceled) {
+    if (request->state() == QContactAbstractRequest::FinishedState || request->state() == QContactAbstractRequest::CanceledState) {
         QCoreApplication::exit(0);
     }
 }

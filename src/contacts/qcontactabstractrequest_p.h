@@ -66,7 +66,7 @@ class QContactAbstractRequestPrivate
 public:
     QContactAbstractRequestPrivate()
         : m_error(QContactManager::NoError),
-            m_state(QContactAbstractRequest::Inactive),
+            m_state(QContactAbstractRequest::InactiveState),
             m_manager(0)
     {
     }

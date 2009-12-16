@@ -86,12 +86,12 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
     QList<QContactRelationship> relResult;
 
     // maliciously attempt to update the request with every result type
-    updateRequestState(req, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::Active);
-    updateRequest(req, defMapResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, relResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+    updateRequestState(req, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
+    updateRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
+    updateRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
+    updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState);
+    updateRequest(req, defMapResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
+    updateRequest(req, relResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
 
     QContactManagerEngine::startRequest(req);
     return true;
@@ -101,7 +101,7 @@ bool MaliciousAsyncManagerEngine::cancelRequest(QContactAbstractRequest *req)
 {
     QContactManager::Error errorResult = QContactManager::NoError;
     QList<QContactManager::Error> errorsResult;
-    updateRequestState(req, errorResult, errorsResult, QContactAbstractRequest::Canceled, false);
+    updateRequestState(req, errorResult, errorsResult, QContactAbstractRequest::CanceledState, false);
     QContactManagerEngine::cancelRequest(req);
     return true;
 }

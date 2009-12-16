@@ -57,14 +57,22 @@ public:
     QContactAbstractRequest() {}
     virtual ~QContactAbstractRequest();
 
-    enum State { // replaces the status enum.
+    enum Status { // replaces the status enum.
         Inactive = 0,   // operation not yet started
         Active,         // operation started, not yet finished
-        Canceling,      // operation started then cancelled, not yet finished
-        Canceled,       // operation is finished due to cancellation
+        Cancelling,     // operation started then cancelled, not yet finished
+        Cancelled,      // operation is finished due to cancellation
         Finished        // operation successfully completed
     };
 
+    enum State { // replaces the status enum.
+        InactiveState = 0,   // operation not yet started
+        ActiveState,         // operation started, not yet finished
+        CanceledState,       // operation is finished due to cancellation
+        FinishedState        // operation either completed successfully or failed.  No further results will become available.
+    };
+
+    Status Q_DECL_DEPRECATED status() const; // deprecated, removed week 1, replaced by state()
     State state() const; // replaces status()
     bool Q_DECL_DEPRECATED isActive() const;   // deprecated, removed entirely week 1
     bool Q_DECL_DEPRECATED isFinished() const; // deprecated, removed entirely week 1
@@ -98,7 +106,7 @@ public slots:
 
     /* waiting for stuff */
     bool waitForFinished(int msecs = 0);
-    bool waitForProgress(int msecs = 0);
+    bool waitForProgress(int msecs = 0); // deprecated, removed entirely week 1
 
 protected:
     QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);

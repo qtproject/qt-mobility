@@ -120,8 +120,7 @@ QContactAbstractRequest::~QContactAbstractRequest()
 bool QContactAbstractRequest::isActive() const
 {
     qWarning("This function is deprecated and will be removed in week 1!");
-    return (d_ptr->m_state == QContactAbstractRequest::Active
-            || d_ptr->m_state == QContactAbstractRequest::Canceling);
+    return (d_ptr->m_state == QContactAbstractRequest::ActiveState);
 }
 
 /*!
@@ -135,8 +134,8 @@ bool QContactAbstractRequest::isActive() const
 bool QContactAbstractRequest::isFinished() const
 {
     qWarning("This function is deprecated and will be removed in week 1!");
-    return (d_ptr->m_state == QContactAbstractRequest::Finished
-            || d_ptr->m_state == QContactAbstractRequest::Canceled);
+    return (d_ptr->m_state == QContactAbstractRequest::FinishedState
+            || d_ptr->m_state == QContactAbstractRequest::CanceledState);
 }
 
 /*! Returns the overall error of the most recent asynchronous operation */
@@ -157,6 +156,16 @@ QList<QContactManager::Error> QContactAbstractRequest::errors() const
 QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 {
     return d_ptr->type();
+}
+
+/*!
+ * \deprecated
+ * Returns the current status of the request.
+ */
+QContactAbstractRequest::Status Q_DECL_DEPRECATED QContactAbstractRequest::status() const
+{
+    qWarning("This function is deprecated and will be removed in week 1.  Use QContactAbstractRequest::state() instead!");
+    return QContactAbstractRequest::Inactive;
 }
 
 /*!
@@ -184,9 +193,9 @@ void QContactAbstractRequest::setManager(QContactManager* manager)
 bool QContactAbstractRequest::start()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QContactAbstractRequest::Canceled
-                   || d_ptr->m_state == QContactAbstractRequest::Finished
-                   || d_ptr->m_state == QContactAbstractRequest::Inactive)) {
+    if (engine && (d_ptr->m_state == QContactAbstractRequest::CanceledState
+                   || d_ptr->m_state == QContactAbstractRequest::FinishedState
+                   || d_ptr->m_state == QContactAbstractRequest::InactiveState)) {
         return engine->startRequest(this);
     }
 
@@ -198,7 +207,7 @@ bool QContactAbstractRequest::start()
 bool QContactAbstractRequest::cancel()
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && state() == QContactAbstractRequest::Active) {
+    if (engine && state() == QContactAbstractRequest::ActiveState) {
         return engine->cancelRequest(this);
     }
 
@@ -211,8 +220,7 @@ bool QContactAbstractRequest::cancel()
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QContactAbstractRequest::Active
-                   || d_ptr->m_state == QContactAbstractRequest::Canceling)) {
+    if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
         return engine->waitForRequestFinished(this, msecs);
     }
 
@@ -224,9 +232,9 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
     Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
+    qWarning("This function is deprecated and will be removed in week 1.");
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QContactAbstractRequest::Active
-                   || d_ptr->m_state == QContactAbstractRequest::Canceling)) {
+    if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
         return engine->waitForRequestProgress(this, msecs);
     }
 
