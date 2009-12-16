@@ -94,7 +94,7 @@ void S60AudioEndpointSelector::setEndpoint(const QString& name)
     m_session->setCaptureDevice(name);
 }
 
-void S60AudioDeviceControl::update()
+void S60AudioEndpointSelector::update()
 {
     m_names.clear();
     m_descriptions.clear();
