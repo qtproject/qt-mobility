@@ -60,7 +60,7 @@ S60AudioEndpointSelector::~S60AudioEndpointSelector()
 {
 }
 
-QList<QString> S60AudioEndpointSelector::endpoints() const
+QList<QString> S60AudioEndpointSelector::availableEndpoints() const
 {
     return m_names;
 }
@@ -88,7 +88,7 @@ QString S60AudioEndpointSelector::activeEndpoint() const
     return m_audioInput;
 }
 
-void S60AudioEndpointSelector::setEndpoint(const QString& name)
+void S60AudioEndpointSelector::setActiveEndpoint(const QString& name)
 {
     m_audioInput = name;
     m_session->setCaptureDevice(name);
