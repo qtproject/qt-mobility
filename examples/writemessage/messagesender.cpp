@@ -239,8 +239,9 @@ void MessageSender::send()
     }
 
     QMessageAddressList toList;
+    QMessageAddress::Type addrType(message.type() == QMessage::Email ? QMessageAddress::Email : QMessageAddress::Phone);
     foreach (const QString &item, to.split(QRegExp("\\s"), QString::SkipEmptyParts)) {
-        toList.append(QMessageAddress(item, message.type() == QMessage::Email ? QMessageAddress::Email : QMessageAddress::Phone));
+        toList.append(QMessageAddress(addrType, item));
     }
     message.setTo(toList);
 

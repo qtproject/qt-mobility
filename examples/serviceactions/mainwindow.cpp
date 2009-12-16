@@ -722,17 +722,17 @@ QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
     }
 
     foreach(QString s, m_toEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
-        toList.append(QMessageAddress(s,addressType));
+        toList.append(QMessageAddress(addressType, s));
     message.setTo(toList);
 
     if(!composingSms)
     {
         foreach(QString s, m_ccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
-            ccList.append(QMessageAddress(s,QMessageAddress::Email));
+            ccList.append(QMessageAddress(QMessageAddress::Email, s));
         message.setCc(ccList);
 
         foreach(QString s, m_bccEdit->text().split(QRegExp("\\s"),QString::SkipEmptyParts))
-            bccList.append(QMessageAddress(s,QMessageAddress::Email));
+            bccList.append(QMessageAddress(QMessageAddress::Email, s));
         message.setBcc(bccList);
         message.setSubject(m_subjectEdit->text());
 

@@ -3561,8 +3561,7 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     ipSmsMtm->SwitchCurrentEntryL(messageId);
     ipSmsMtm->LoadMessageL();
     CSmsHeader& header = ipSmsMtm->SmsHeader();
-    message.setFrom(QMessageAddress(QString::fromUtf16(header.FromAddress().Ptr(), header.FromAddress().Length()),
-                                    QMessageAddress::Phone));
+    message.setFrom(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(header.FromAddress().Ptr(), header.FromAddress().Length())));
     QMessagePrivate::setSenderName(message, QString::fromUtf16(header.FromAddress().Ptr(), header.FromAddress().Length()));
     
     // Read message recipients
@@ -3571,8 +3570,7 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     for (int i=0; i < array.Count(); i++) {
         CSmsNumber* smsNumber = array.At(i);
         TPtrC recipientNumber = smsNumber->Address();
-        messageAddresslist.append(QMessageAddress(QString::fromUtf16(recipientNumber.Ptr(), recipientNumber.Length()),
-                                                  QMessageAddress::Phone));
+        messageAddresslist.append(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(recipientNumber.Ptr(), recipientNumber.Length())));
     }
     message.setTo(messageAddresslist);
 
@@ -3654,8 +3652,7 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     // Read message sender
     ipMmsMtm->SwitchCurrentEntryL(messageId);
     ipMmsMtm->LoadMessageL();
-    message.setFrom(QMessageAddress(QString::fromUtf16(ipMmsMtm->Sender().Ptr(), ipMmsMtm->Sender().Length()),
-                                    QMessageAddress::Phone));
+    message.setFrom(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(ipMmsMtm->Sender().Ptr(), ipMmsMtm->Sender().Length())));
     QMessagePrivate::setSenderName(message, QString::fromUtf16(ipMmsMtm->Sender().Ptr(), ipMmsMtm->Sender().Length()));
     
     // Read message subject
@@ -3912,12 +3909,12 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     //from
     TPtrC from = emailEntry->From();
     if (from.Length() > 0) {
-        message.setFrom(QMessageAddress(QString::fromUtf16(from.Ptr(), from.Length()), QMessageAddress::Email));
+        message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
         QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
     } else {
         if (entry.iDetails.Length() > 0)  {
             QString fromString = QString::fromUtf16(receivedEntry.Entry().iDetails.Ptr(), receivedEntry.Entry().iDetails.Length());
-            message.setFrom(QMessageAddress(fromString, QMessageAddress::Email));
+            message.setFrom(QMessageAddress(QMessageAddress::Email, fromString));
             QMessagePrivate::setSenderName(message, fromString);
         }
     }
@@ -3928,7 +3925,7 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     for (TInt i = 0; i < toArray.Count(); i++)
     {
         TPtrC16 to(toArray.MdcaPoint(i));
-        toList.append(QMessageAddress(QString::fromUtf16(to.Ptr(), to.Length()), QMessageAddress::Email));            
+        toList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(to.Ptr(), to.Length())));            
     }
     message.setTo(toList);
     
@@ -3938,7 +3935,7 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     for (TInt i = 0; i < ccArray.Count(); i++)
     {
         TPtrC16 cc(ccArray.MdcaPoint(i));
-        ccList.append(QMessageAddress(QString::fromUtf16(cc.Ptr(), cc.Length()), QMessageAddress::Email));            
+        ccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(cc.Ptr(), cc.Length())));            
     }
     message.setCc(ccList);
     
@@ -3948,7 +3945,7 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     for (TInt i = 0; i < bccArray.Count(); i++)
     {
         TPtrC16 bcc(bccArray.MdcaPoint(i));
-        bccList.append(QMessageAddress(QString::fromUtf16(bcc.Ptr(), bcc.Length()), QMessageAddress::Email));            
+        bccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(bcc.Ptr(), bcc.Length())));            
     }
     message.setBcc(bccList);
     

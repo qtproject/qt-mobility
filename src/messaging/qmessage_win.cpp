@@ -572,7 +572,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
         // Prefer to reply to the trply-to address, if present
         QString replyTo(headerFieldValue("Reply-To"));
         if (!replyTo.isEmpty()) {
-            response.setTo(QMessageAddressList() << QMessageAddress(replyTo, QMessageAddress::Email));
+            response.setTo(QMessageAddressList() << QMessageAddress(QMessageAddress::Email, replyTo));
         } else {
             response.setTo(QMessageAddressList() << from());
         }

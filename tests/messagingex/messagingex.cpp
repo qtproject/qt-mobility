@@ -246,7 +246,7 @@ void MessagingEx::addMessage()
     QMessage::TypeFlags types = m_account.messageTypes();
     
     if (!emailAddressEdit->text().isEmpty()){
-        message.setTo(QMessageAddress(emailAddressEdit->text(), QMessageAddress::Email));
+        message.setTo(QMessageAddress(QMessageAddress::Email, emailAddressEdit->text()));
     }
     
     message.setParentAccountId(m_account.id());
@@ -279,7 +279,7 @@ void MessagingEx::on_sendSmsButton_clicked()
 {
     QMessage message;
     message.setType(QMessage::Sms);
-    message.setTo(QMessageAddress(phoneNumberEdit->text(), QMessageAddress::Email));
+    message.setTo(QMessageAddress(QMessageAddress::Email, phoneNumberEdit->text()));
     message.setBody(QString(smsMessageEdit->toPlainText()));
     
     if (!QString(phoneNumberEdit->text()).isEmpty())
@@ -309,7 +309,7 @@ void MessagingEx::on_sendMmsButton_clicked()
     QMessage message;
     message.setType(QMessage::Mms);
     
-    message.setTo(QMessageAddress(mmsPhoneNumberEdit->text(), QMessageAddress::Email));
+    message.setTo(QMessageAddress(QMessageAddress::Email, mmsPhoneNumberEdit->text()));
     message.setSubject(mmsSubjectEdit->text());
     message.setBody(QString(mmsBodyEdit->toPlainText()));
     message.appendAttachments(m_attachments);
@@ -387,7 +387,7 @@ void MessagingEx::on_sendEmailButton_clicked()
     QMessage::TypeFlags types = m_account.messageTypes();
     
     if (!emailAddressEdit->text().isEmpty()){
-        message.setTo(QMessageAddress(emailAddressEdit->text(), QMessageAddress::Email));
+        message.setTo(QMessageAddress(QMessageAddress::Email, emailAddressEdit->text()));
     }
     
     message.setParentAccountId(m_account.id());

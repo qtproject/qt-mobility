@@ -662,7 +662,7 @@ namespace {
                 from = (!name.isEmpty() ? name : address);
             }
 
-            result = QMessageAddress(from, QMessageAddress::Email);
+            result = QMessageAddress(QMessageAddress::Email, from);
         }
 
         return result;
@@ -4195,7 +4195,7 @@ bool MapiSession::updateMessageBody(QMessageManager::Error *lastError, QMessage 
                         foreach (const QMailAddress &addr, mimeMsg.to()) {
                             QString addressString(addr.address());
                             if(!addressString.isEmpty())
-                                addresses.append(QMessageAddress(addressString, QMessageAddress::Email));
+                                addresses.append(QMessageAddress(QMessageAddress::Email, addressString));
                         }
                         if (!addresses.isEmpty()) {
                             msg->setTo(addresses);
@@ -4205,7 +4205,7 @@ bool MapiSession::updateMessageBody(QMessageManager::Error *lastError, QMessage 
                         foreach (const QMailAddress &addr, mimeMsg.cc()) {
                             QString addressString(addr.address());
                             if(!addressString.isEmpty())
-                                addresses.append(QMessageAddress(addressString, QMessageAddress::Email));
+                                addresses.append(QMessageAddress(QMessageAddress::Email, addressString));
                         }
                         if (!addresses.isEmpty()) {
                             msg->setCc(addresses);
@@ -4214,7 +4214,7 @@ bool MapiSession::updateMessageBody(QMessageManager::Error *lastError, QMessage 
                         addresses.clear();
                         foreach (const QMailAddress &addr, mimeMsg.bcc()) {
                             QString addressString(addr.address());
-                            addresses.append(QMessageAddress(addressString, QMessageAddress::Email));
+                            addresses.append(QMessageAddress(QMessageAddress::Email, addressString));
                         }
                         if (!addresses.isEmpty()) {
                             msg->setBcc(addresses);

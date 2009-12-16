@@ -189,13 +189,13 @@ void tst_QMessage::testFrom()
     QCOMPARE(msg.from(), QMessageAddress());
     QCOMPARE(msg.isModified(), false);
 
-    QMessageAddress addr("alice@example.org", QMessageAddress::Email);
+    QMessageAddress addr(QMessageAddress::Email, "alice@example.org");
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
     QCOMPARE(msg.from() != QMessageAddress(), true);
     QCOMPARE(msg.isModified(), true);
 
-    addr = QMessageAddress("bob@example.org", QMessageAddress::Xmpp);
+    addr = QMessageAddress(QMessageAddress::Xmpp, "bob@example.org");
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
     QCOMPARE(msg.from() != QMessageAddress(), true);
@@ -256,15 +256,15 @@ void tst_QMessage::testTo()
     QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
-    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
-    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "alice@example.org"));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "bob@example.org"));
 
     msg.setTo(addresses);
     QCOMPARE(msg.to(), addresses);
     QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::System));
+    addresses.append(QMessageAddress(QMessageAddress::System, "charlie@example.org"));
     msg.setTo(addresses);
     QCOMPARE(msg.to(), addresses);
 }
@@ -277,15 +277,15 @@ void tst_QMessage::testCc()
     QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
-    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
-    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "alice@example.org"));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "bob@example.org"));
 
     msg.setCc(addresses);
     QCOMPARE(msg.cc(), addresses);
     QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Phone));
+    addresses.append(QMessageAddress(QMessageAddress::Phone, "charlie@example.org"));
     msg.setCc(addresses);
     QCOMPARE(msg.cc(), addresses);
 }
@@ -297,15 +297,15 @@ void tst_QMessage::testBcc()
     QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
-    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
-    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "alice@example.org"));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "bob@example.org"));
 
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
     QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
+    addresses.append(QMessageAddress(QMessageAddress::Xmpp, "charlie@example.org"));
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
 }

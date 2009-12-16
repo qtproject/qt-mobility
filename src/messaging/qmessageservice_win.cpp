@@ -296,9 +296,9 @@ bool QMessageServicePrivate::send(const QMessage& message, bool showComposer)
         {
             //recipients
 
-            to = createMCFRecipients(message.to(),QMessageAddress::Email);
-            cc = createMCFRecipients(message.cc(),QMessageAddress::Email);
-            bcc = createMCFRecipients(message.bcc(),QMessageAddress::Email);
+            to = createMCFRecipients(QMessageAddress::Email, message.to());
+            cc = createMCFRecipients(QMessageAddress::Email, message.cc());
+            bcc = createMCFRecipients(QMessageAddress::Email, message.bcc());
             mcf.pszTo = to;
             mcf.pszCc = cc;
             mcf.pszBcc = bcc;
@@ -340,7 +340,7 @@ bool QMessageServicePrivate::send(const QMessage& message, bool showComposer)
         {
             //recipients
 
-            to = createMCFRecipients(message.to(),QMessageAddress::Phone);
+            to = createMCFRecipients(QMessageAddress::Phone, message.to());
             mcf.pszTo = to;
 
             //body

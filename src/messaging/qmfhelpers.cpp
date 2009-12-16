@@ -382,7 +382,7 @@ QMessageAddress convert(const QMailAddress &address)
             }
         }
 
-        return QMessageAddress(addr, type);
+        return QMessageAddress(type, addr);
     }
 
     return QMessageAddress();

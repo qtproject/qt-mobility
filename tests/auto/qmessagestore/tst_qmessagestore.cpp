@@ -558,23 +558,23 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.isModified(), false);
 
     QMessageAddress toAddress;
-    toAddress.setRecipient(to);
     toAddress.setType(QMessageAddress::Email);
+    toAddress.setRecipient(to);
     QVERIFY(!message.to().isEmpty());
     QCOMPARE(message.to().first(), toAddress);
     QCOMPARE(message.to().first().recipient(), to);
 
     QMessageAddress fromAddress;
-    fromAddress.setRecipient(from);
     fromAddress.setType(QMessageAddress::Email);
+    fromAddress.setRecipient(from);
     QCOMPARE(message.from(), fromAddress);
     QCOMPARE(message.from().recipient(), from);
 
     QList<QMessageAddress> ccAddresses;
     foreach (const QString &element, cc.split(",", QString::SkipEmptyParts)) {
         QMessageAddress addr;
-        addr.setRecipient(element.trimmed());
         addr.setType(QMessageAddress::Email);
+        addr.setRecipient(element.trimmed());
         ccAddresses.append(addr);
     }
    

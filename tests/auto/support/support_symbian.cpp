@@ -139,19 +139,19 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     
                 QList<QMessageAddress> toList;
                 foreach (const QString &addr, to.split(",")) {
-                    toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                    toList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
                 }
                 message.setTo(toList);
                 
                 QList<QMessageAddress> ccList;
                 foreach (const QString &addr, cc.split(",")) {
 					if (!addr.isEmpty()) {
-                    ccList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                    ccList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
 					}
                 }
                 message.setCc(ccList);
                 
-                message.setFrom(QMessageAddress(from, QMessageAddress::Email));
+                message.setFrom(QMessageAddress(QMessageAddress::Email, from));
                 message.setSubject(subject);
     
                 QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
