@@ -288,11 +288,7 @@ void tst_QMessageService::initTestCase()
     existingMessageIds = manager->queryMessages(~existingAccountsFilter).toSet();
 
     // For windows at least, we can't have HasAttachments set without a real attachment
-#ifndef Q_OS_SYMBIAN
     const char *attachmentPaths = TESTDATA_DIR "/testdata/1.txt";
-#else
-    const char *attachmentPaths = TESTDATA_DIR "\\testdata\\1.txt";
-#endif
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
