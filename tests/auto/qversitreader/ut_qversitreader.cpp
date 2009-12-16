@@ -400,7 +400,7 @@ END:VCARD\r\n";
     vCard = beginMissing;
     cursor.setData(vCard);
     document = QVersitDocument();
-    QVERIFY(mReaderPrivate->parseVersitDocument(cursor, document));
+    QVERIFY(!mReaderPrivate->parseVersitDocument(cursor, document));
     QCOMPARE(document.properties().count(),0);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
     
@@ -411,7 +411,7 @@ END:VCAL\r\n";
     vCard = wrongType;
     cursor.setData(vCard);
     document = QVersitDocument();
-    QVERIFY(mReaderPrivate->parseVersitDocument(cursor, document));
+    QVERIFY(!mReaderPrivate->parseVersitDocument(cursor, document));
     QCOMPARE(document.properties().count(),0);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
     
@@ -424,7 +424,7 @@ END:VCARD\r\n";
     vCard = wrongVersion;
     cursor.setData(vCard);
     document = QVersitDocument();
-    QVERIFY(mReaderPrivate->parseVersitDocument(cursor, document));
+    QVERIFY(!mReaderPrivate->parseVersitDocument(cursor, document));
     QCOMPARE(document.properties().count(),0);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
 
@@ -448,7 +448,7 @@ END:VCARD";
     vCard = groupedCard;
     cursor.setData(vCard);
     document = QVersitDocument();
-    QVERIFY(mReaderPrivate->parseVersitDocument(cursor, document));
+    QVERIFY(!mReaderPrivate->parseVersitDocument(cursor, document));
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel, 0);
     QCOMPARE(mReaderPrivate->mVersitDocuments.count(), 0);
 }
