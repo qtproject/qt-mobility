@@ -43,7 +43,7 @@
 #include <qmessageaccountid.h>
 #include <qmessagefolderid.h>
 #include <qmessageid.h>
-#include <qmessagestore.h>
+#include <qmessagemanager.h>
 #include <qmessage_symbian_p.h>
 
 #include <QDebug>
