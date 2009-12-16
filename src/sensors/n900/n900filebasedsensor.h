@@ -110,27 +110,31 @@ public:
         notify();
     }
 
-    QSensorValue *currentValue()
+#if 0
+    QSensorReading *currentReading()
     {
         if (m_interval == 0) {
             poll();
         }
-        return &m_value;
+        return &m_reading;
     }
+#endif
 
     void poll()
     {
-        m_value.timestamp = QTime::currentTime();
+        /*
+        m_reading.timestamp = QTime::currentTime();
         FILE *fd = fopen(m_filename, "r");
         Q_ASSERT(fd);
         extract_value(fd);
         fclose(fd);
+        */
     }
 
     virtual void extract_value(FILE *fd) = 0;
 
 protected:
-    T m_value;
+    T m_reading;
 
 private:
     int m_interval;

@@ -44,47 +44,105 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QAccelerationValue
+    \class QAccelerationReading
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationValue class represents one value from the
+    \brief The QAccelerationReading class represents one reading from the
            acceleration sensor.
 
-    The values returned in QAccelerationValue are scaled so that
-    they are consistent between devices. The axes are arranged as follows.
+    The acceleration sensor returns acceleration values along 3 axes.
+    The scale of the values is milli-Gs. The axes are arranged as follows.
 
-    TODO picture showing axes relative to the monoblock form factor.
+\code
+             +z
+              |
+              |      +y
+              |     /
+              |----/----
+             /| NOKIA  /|
+            //|--/--- / |
+           // | /   //  /
+          //  |/   //  /
+         //   '--------------- +x
+        //       //  /
+       //       //  /
+      /---------/  /
+     /    O    /  /
+    /         /  /
+    ----------  /
+    |_________!/
+\endcode
 
-    The scale of the values is in milli-Gs.
     A monoblock device sitting at rest, face up on a desk will experience
     the force of gravity as approximately -1000 on the Z axis.
 */
 
 /*!
+    \fn QAccelerationReading::QAccelerationReading()
     \internal
 */
-QAccelerationValue::QAccelerationValue()
-    : QSensorValue(QAccelerationSensor::typeId)
-{
-}
 
 /*!
-    \variable QAccelerationValue::Acceleration::x
-
-    Holds the acceleration force acting on the X axis.
+    \fn QAccelerationReading::QAccelerationReading(QTime timestamp, int x, int y, int z)
+    \internal
 */
 
 /*!
-    \variable QAccelerationValue::Acceleration::y
-
-    Holds the acceleration for the Y axis.
+    \fn QAccelerationReading::QAccelerationReading(const QAccelerationReading &other)
+    \internal
 */
 
 /*!
-    \variable QAccelerationValue::Acceleration::z
+    \fn QAccelerationReading::~QAccelerationReading()
+    \internal
+*/
 
-    Holds the acceleration for the Z axis.
+/*!
+    \fn QAccelerationReading::timestamp() const
+
+    Returns the time when the reading was made.
+*/
+
+/*!
+    \fn QAccelerationReading::x() const
+
+    Returns the acceleration for the X axis.
+*/
+
+/*!
+    \fn QAccelerationReading::y() const
+
+    Returns the acceleration for the Y axis.
+*/
+
+/*!
+    \fn QAccelerationReading::z() const
+
+    Returns the acceleration for the Z axis.
+*/
+
+// =====================================================================
+
+/*!
+    \class QAccelerationListener
+    \ingroup sensors
+
+    \preliminary
+    \brief The QAccelerationListener class provides an efficient
+           callback facility for asynchronous notifications of
+           acceleration changes.
+
+    Since the accelerometer is typically accessed very frequently it may
+    not by suitable to use signals and slots. The QAccelerationListener
+    interface provides a way for the sensor to notify your class that a
+    new acceleration reading is available more efficiently.
+*/
+
+/*!
+    \fn QAccelerationListener::accelerationChanged(const QAccelerationReading &reading)
+
+    This function is called when a new acceleration \a reading is available.
 */
 
 // =====================================================================
@@ -97,26 +155,33 @@ QAccelerationValue::QAccelerationValue()
     \brief The QAccelerationSensor class reports on linear acceleration
            along the X, Y and Z axes.
 
-    The values returned by QAccelerationSensor are scaled so that
-    they are consistent between devices. The axes are arranged as follows.
+    The acceleration sensor returns acceleration values along 3 axes.
+    The scale of the values is milli-Gs. The axes are arranged as follows.
 
-    TODO picture showing axes relative to the monoblock form factor.
+\code
+             +z
+              |
+              |      +y
+              |     /
+              |----/----
+             /| NOKIA  /|
+            //|--/--- / |
+           // | /   //  /
+          //  |/   //  /
+         //   '--------------- +x
+        //       //  /
+       //       //  /
+      /---------/  /
+     /    O    /  /
+    /         /  /
+    ----------  /
+    |_________!/
+\endcode
 
-    The scale of the values is in milli-Gs.
     A monoblock device sitting at rest, face up on a desk will experience
     the force of gravity as approximately -1000 on the Z axis.
 
-    \sa QAccelerationValue
-*/
-
-/*!
-    \variable QAccelerationSensor::typeId
-*/
-const QString QAccelerationSensor::typeId("qt.Acceleration");
-
-/*!
-    \fn QAccelerationSensor::type() const
-    \reimp
+    \sa QAccelerationReading
 */
 
 /*!
@@ -131,28 +196,66 @@ QAccelerationSensor::QAccelerationSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
-    \fn QAccelerationSensor::currentAcceleration() const
+    \variable QAccelerationSensor::typeId
+*/
+const QString QAccelerationSensor::typeId("qt.Acceleration");
 
-    Returns the current acceleration values from the sensor.
+/*!
+    \fn QAccelerationSensor::type() const
+    \reimp
 */
 
 /*!
-    \fn QAccelerationSensor::currentXAcceleration() const
+    Add a \a listener to the sensor.
+    The listener will be invoked every time a new reading is available.
 
-    Returns the current x acceleration value from the sensor.
+    Note that the sensor does not take ownership of the listener.
+    It is the caller's responsibility to ensure the listener remains valid
+    until the sensor is destroyed or the listener is removed via
+    QAccelerationSensor::removeListener().
 */
+void QAccelerationSensor::addListener(QAccelerationListener *listener)
+{
+    Q_UNUSED(listener)
+}
 
 /*!
-    \fn QAccelerationSensor::currentYAcceleration() const
-
-    Returns the current y acceleration value from the sensor.
+    Remove a \a listener from the sensor.
+    If \a listener is 0, all listeners will be removed.
 */
+void QAccelerationSensor::removeListener(QAccelerationListener *listener)
+{
+    Q_UNUSED(listener)
+}
 
 /*!
-    \fn QAccelerationSensor::currentZAcceleration() const
+    Returns the current acceleration reading.
+*/
+QAccelerationReading QAccelerationSensor::currentReading() const
+{
+    return QAccelerationReading();
+}
 
-    Returns the current z acceleration value from the sensor.
+/*!
+    \fn QAccelerationSensor::accelerationChanged(const QAccelerationReading &reading)
+
+    This signal is emitted when a new acceleration \a reading comes in.
+    Note that this is done after the listeners have been called.
+    If a listener blocks the reading then this signal will not be emitted.
+
+    Also note that this signal should not be used if you are requesting
+    high-frequency updates as signal delivery is quite slow.
 */
 
+void QAccelerationSensor::newReadingAvailable()
+{
+    /*
+    QAccelerationReading reading = currentReading();
+    foreach (QAccelerationListener *listener, m_listeners)
+        listener->accelerationChanged(reading);
+    */
+}
+
+#include "moc_qaccelerationsensor.cpp"
 QTM_END_NAMESPACE
 

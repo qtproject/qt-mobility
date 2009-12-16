@@ -44,31 +44,83 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QRotationValue
+    \class QRotationReading
     \ingroup sensors
 
     \preliminary
-    \brief The QRotationValue class represents an rotation value.
+    \brief The QRotationReading class represents one reading from the
+           rotation sensor.
 
-    Foo bar baz.
+    The rotation sensor returns the rotation of the device along the X, Y and Z
+    axes. The scale of the values is radians. The axes are arranged as follows.
+
+\code
+             +z
+              |
+              |      +y
+              |     /
+              |----/----
+             /| NOKIA  /|
+            //|--/--- / |
+           // | /   //  /
+          //  |/   //  /
+         //   '--------------- +x
+        //       //  /
+       //       //  /
+      /---------/  /
+     /    O    /  /
+    /         /  /
+    ----------  /
+    |_________!/
+\endcode
+
+    Note that the values for the rotation sensor come from an accelerometer
+    so a device resting on its back will not be able to detect rotation around the
+    Z axis. Rotation can only be detected when it happens relative to gravity.
 */
 
 /*!
-    \variable QRotationValue::x
-
-    Holds the rotation for the X axis.
+    \fn QRotationReading::QRotationReading()
+    \internal
 */
 
 /*!
-    \variable QRotationValue::y
-
-    Holds the rotation for the Y axis.
+    \fn QRotationReading::QRotationReading(QTime timestamp, qreal x, qreal y, qreal z)
+    \internal
 */
 
 /*!
-    \variable QRotationValue::z
+    \fn QRotationReading::QRotationReading(const QRotationReading &other)
+    \internal
+*/
 
-    Holds the rotation for the Z axis.
+/*!
+    \fn QRotationReading::~QRotationReading()
+    \internal
+*/
+
+/*!
+    \fn QRotationReading::timestamp() const
+
+    Returns the time when the reading was made.
+*/
+
+/*!
+    \fn QRotationReading::x() const
+
+    Returns the rotation for the X axis.
+*/
+
+/*!
+    \fn QRotationReading::y() const
+
+    Returns the rotation for the Y axis.
+*/
+
+/*!
+    \fn QRotationReading::z() const
+
+    Returns the rotation for the Z axis.
 */
 
 // =====================================================================
@@ -81,17 +133,32 @@ QTM_BEGIN_NAMESPACE
     \brief The QRotationSensor class reports on rotation
            on the X, Y and Z axes.
 
-    Foo bar baz.
-*/
+    The rotation sensor returns the rotation of the device along the X, Y and Z
+    axes. The scale of the values is radians. The axes are arranged as follows.
 
-/*!
-    \variable QRotationSensor::typeId
-*/
-const QString QRotationSensor::typeId("qt.Rotation");
+\code
+             +z
+              |
+              |      +y
+              |     /
+              |----/----
+             /| NOKIA  /|
+            //|--/--- / |
+           // | /   //  /
+          //  |/   //  /
+         //   '--------------- +x
+        //       //  /
+       //       //  /
+      /---------/  /
+     /    O    /  /
+    /         /  /
+    ----------  /
+    |_________!/
+\endcode
 
-/*!
-    \fn QRotationSensor::type() const
-    \reimp
+    Note that the values for the rotation sensor come from an accelerometer
+    so a device resting on its back will not be able to detect rotation around the
+    Z axis. Rotation can only be detected when it happens relative to gravity.
 */
 
 /*!
@@ -106,32 +173,29 @@ QRotationSensor::QRotationSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
-    \fn QRotationSensor::currentXRotation() const
+    \variable QRotationSensor::typeId
+*/
+const QString QRotationSensor::typeId("qt.Rotation");
 
-    Returns the current x rotation value from the sensor.
+/*!
+    \fn QRotationSensor::type() const
+    \reimp
 */
 
 /*!
-    \fn QRotationSensor::currentYRotation() const
-
-    Returns the current y rotation value from the sensor.
+    Returns the current rotation reading.
 */
-
-/*!
-    \fn QRotationSensor::currentZRotation() const
-
-    Returns the current z rotation value from the sensor.
-*/
-
-/*!
-    Returns true if the rotation values are being synthesized from an accelerometer.
-    If this is the case then rotation will only be accurate while the device is
-    stationary and only in directions that are influenced by gravity.
-*/
-bool QRotationSensor::isFromAccelerometer() const
+QRotationReading QRotationSensor::currentReading() const
 {
-    return false;
+    return QRotationReading();
 }
 
+/*!
+    \fn QRotationSensor::rotationChanged(const QRotationReading &reading)
+
+    This signal is emitted when a new rotation \a reading comes in.
+*/
+
+#include "moc_qrotationsensor.cpp"
 QTM_END_NAMESPACE
 

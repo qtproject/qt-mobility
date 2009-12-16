@@ -44,16 +44,48 @@
 
 #include <qsensor.h>
 #include <QtGlobal>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QAmbientLightValue : public QSensorValue
+// implementation detail
+class QAmbientLightReadingData : public QSharedData
 {
 public:
-    QAmbientLightValue();
-    int lux;
+    QAmbientLightReadingData() {}
+    QAmbientLightReadingData(QTime _timestamp, int _lightLevel)
+        : timestamp(_timestamp), lightLevel(_lightLevel) {}
+    QAmbientLightReadingData(const QAmbientLightReadingData &other)
+        : QSharedData(other), timestamp(other.timestamp), lightLevel(other.lightLevel) {}
+    ~QAmbientLightReadingData() {}
+
+    QTime timestamp;
+    int lightLevel;
 };
 
+class Q_SENSORS_EXPORT QAmbientLightReading
+{
+public:
+    enum LightLevel {
+        Undefined = 0,
+        Dark,
+        Light
+    };
+
+    explicit QAmbientLightReading()
+    { d = new QAmbientLightReadingData; }
+    explicit QAmbientLightReading(QTime timestamp, LightLevel lightLevel)
+    { d = new QAmbientLightReadingData(timestamp, lightLevel); }
+    QAmbientLightReading(const QAmbientLightReading &other)
+        : d(other.d) {}
+    ~QAmbientLightReading() {}
+
+    QTime timestamp() const { return d->timestamp; }
+    LightLevel lightLevel() const { return static_cast<LightLevel>(d->lightLevel); }
+
+private:
+    QSharedDataPointer<QAmbientLightReadingData> d;
+};
 
 class Q_SENSORS_EXPORT QAmbientLightSensor : public QSensor
 {
@@ -64,25 +96,17 @@ public:
     static const QString typeId;
     QString type() const { return typeId; };
 
-    int currentAmbientLight() const
-    {
-        return static_cast<QAmbientLightValue*>(currentValue())->lux;
-    }
+    // For polling/checking the current (cached) value
+    QAmbientLightReading currentReading() const;
 
 signals:
-    void ambientLightChanged(int lux);
+    void ambientLightChanged(const QAmbientLightReading &reading);
 
 private:
-    void valueUpdated()
+    void newReadingAvailable()
     {
-        int lux = currentAmbientLight();
-        if (lux != lastLux) {
-            lastLux = lux;
-            emit ambientLightChanged(lux);
-        }
+        emit ambientLightChanged(currentReading());
     }
-
-    int lastLux;
 };
 
 QTM_END_NAMESPACE

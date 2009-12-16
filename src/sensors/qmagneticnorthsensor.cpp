@@ -44,28 +44,63 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QMagneticNorthValue
+    \class QMagneticNorthReading
     \ingroup sensors
 
     \preliminary
-    \brief The QMagneticNorthValue class represents a magnetic compass reading.
+    \brief The QMagneticNorthReading class represents one reading from a
+           magnetic north sensor (compass).
 
-    The magnetic north sensor returns the heading of the device. This is measured as
-    degrees from magnetic north.
+    The magnetic north sensor returns the heading of the device as degrees from
+    magnetic north in a clockwise direction based on the top of the device.
+    Note that the top of the device is a fixed point and may not represent the
+    orientation that the user is holding the device in.
+    There is also a value to indicate the calibration status of the device.
+    If the device is not calibrated the heading may not be accurate.
+
+    Digital compasses are highly susceptible to magnetic interference and
+    may need calibration after being placed near anything that emits a magnetic
+    force.
 */
 
 /*!
+    \fn QMagneticNorthReading::QMagneticNorthReading()
     \internal
 */
-QMagneticNorthValue::QMagneticNorthValue()
-    : QSensorValue(QMagneticNorthSensor::typeId)
-{
-}
 
 /*!
-    \variable QMagneticNorthValue::heading
+    \fn QMagneticNorthReading::QMagneticNorthReading(QTime timestamp, int heading, bool calibrated)
+    \internal
+*/
 
-    Holds the heading of the device.
+/*!
+    \fn QMagneticNorthReading::QMagneticNorthReading(const QMagneticNorthReading &other)
+    \internal
+*/
+
+/*!
+    \fn QMagneticNorthReading::~QMagneticNorthReading()
+    \internal
+*/
+
+/*!
+    \fn QMagneticNorthReading::timestamp() const
+
+    Returns the time when the reading was made.
+*/
+
+/*!
+    \fn QMagneticNorthReading::heading() const
+
+    Returns the heading of the device.
+*/
+
+/*!
+    \fn QMagneticNorthReading::calibrated() const
+
+    Returns \c true if the device was calibrated when the reading
+    was made and \c false otherwise. You should not trust a reading
+    from an uncalibrated device.
 */
 
 // =====================================================================
@@ -77,18 +112,16 @@ QMagneticNorthValue::QMagneticNorthValue()
     \preliminary
     \brief The QMagneticNorthSensor class reports on the heading of the device.
 
-    The magnetic north sensor returns the heading of the device. This is measured as
-    degrees from magnetic north.
-*/
+    The magnetic north sensor returns the heading of the device as degrees from
+    magnetic north in a clockwise direction based on the top of the device.
+    Note that the top of the device is a fixed point and may not represent the
+    orientation that the user is holding the device in.
+    There is also a value to indicate the calibration status of the device.
+    If the device is not calibrated the heading may not be accurate.
 
-/*!
-    \variable QMagneticNorthSensor::typeId
-*/
-const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
-
-/*!
-    \fn QMagneticNorthSensor::type() const
-    \reimp
+    Digital compasses are highly susceptible to magnetic interference and
+    may need calibration after being placed near anything that emits a magnetic
+    force.
 */
 
 /*!
@@ -103,25 +136,27 @@ QMagneticNorthSensor::QMagneticNorthSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
-    \fn QMagneticNorthSensor::currentHeading() const
+    \variable QMagneticNorthSensor::typeId
+*/
+const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
 
-    Returns the current heading of the device.
+/*!
+    \fn QMagneticNorthSensor::type() const
+    \reimp
 */
 
 /*!
-    Returns true if the device has been calibrated.
-    If the device has not been calibrated the heading
-    values may not be accurate.
+    Returns the current acceleration reading.
 */
-bool QMagneticNorthSensor::isCalibrated() const
+QMagneticNorthReading QMagneticNorthSensor::currentReading() const
 {
-    return false;
+    return QMagneticNorthReading();
 }
 
 /*!
-    \fn QMagneticNorthSensor::headingChanged(int heading)
+    \fn QMagneticNorthSensor::headingChanged(const QMagneticNorthReading &reading)
 
-    Emitted when the \a heading value changes.
+    This signal is emitted when a new magnetic north \a reading comes in.
 */
 
 #include "moc_qmagneticnorthsensor.cpp"

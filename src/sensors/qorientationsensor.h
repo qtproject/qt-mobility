@@ -43,24 +43,53 @@
 #define QORIENTATIONSENSOR_H
 
 #include <qsensor.h>
+#include <QtGlobal>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QOrientationValue : public QSensorValue
+// implementation detail
+class QOrientationReadingData : public QSharedData
 {
 public:
-    enum OrientationFlag {
-        Unknown   = 0x00,
-        Portrait  = 0x01,
-        Landscape = 0x02,
-        Inverted  = 0x04
-    };
-    Q_DECLARE_FLAGS(Orientation, OrientationFlag)
+    QOrientationReadingData() {}
+    QOrientationReadingData(QTime _timestamp, int _orientation)
+        : timestamp(_timestamp), orientation(_orientation) {}
+    QOrientationReadingData(const QOrientationReadingData &other)
+        : QSharedData(other), timestamp(other.timestamp), orientation(other.orientation) {}
+    ~QOrientationReadingData() {}
 
-    Orientation orientation;
+    QTime timestamp;
+    int orientation;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QOrientationValue::Orientation)
+class Q_SENSORS_EXPORT QOrientationReading
+{
+public:
+    enum Orientation {
+        Undefined = 0,
+        BottomUp,
+        BottomDown,
+        LeftUp,
+        RightUp,
+        FaceDown,
+        FaceUp
+    };
+
+    explicit QOrientationReading()
+    { d = new QOrientationReadingData; }
+    explicit QOrientationReading(QTime timestamp, Orientation orientation)
+    { d = new QOrientationReadingData(timestamp, orientation); }
+    QOrientationReading(const QOrientationReading &other)
+        : d(other.d) {}
+    ~QOrientationReading() {}
+
+    QTime timestamp() const { return d->timestamp; }
+    Orientation orientation() const { return static_cast<Orientation>(d->orientation); }
+
+private:
+    QSharedDataPointer<QOrientationReadingData> d;
+};
 
 class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
@@ -71,25 +100,16 @@ public:
     static const QString typeId;
     QString type() const { return typeId; };
 
-    QOrientationValue::Orientation currentOrientation() const
-    {
-        return static_cast<QOrientationValue*>(currentValue())->orientation;
-    }
+    QOrientationReading currentReading() const;
 
 signals:
-    void orientationChanged(QOrientationValue::Orientation orientation);
+    void orientationChanged(const QOrientationReading &reading);
 
 private:
-    void valueUpdated()
+    void newReadingAvailable()
     {
-        QOrientationValue::Orientation orientation = currentOrientation();
-        if (orientation != lastOrientation) {
-            lastOrientation = orientation;
-            emit orientationChanged(orientation);
-        }
+        emit orientationChanged(currentReading());
     }
-
-    QOrientationValue::Orientation lastOrientation;
 };
 
 QTM_END_NAMESPACE

@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include <qsensorbackend.h>
-#include "qsensor_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -92,22 +91,11 @@ void QSensorBackend::removeListener(QSensorListener *listener)
 }
 
 /*!
-    Notify the listeners when a value is updated.
-    If the listeners do not block the event
-    call QSensor::valueUpdated() so that signals can be emitted.
+    Notify the sensor that a new reading is available.
 */
 void QSensorBackend::notify()
 {
-    bool blocked = false;
-    QSensorValue *value = currentValue();
-    foreach (QSensorListener *listener, m_listeners) {
-        if (!listener->sensorValueUpdated(value)) {
-            blocked = true;
-            break;
-        }
-    }
-    if (!blocked)
-        m_sensor->valueUpdated();
+    m_sensor->newReadingAvailable();
 }
 
 /*!
@@ -128,12 +116,6 @@ int QSensorBackend::suggestedInterval(QSensor::UpdatePolicy policy)
 }
 
 /*!
-    \fn QSensorBackend::name() const
-
-    Returns the name of the sensor.
-*/
-
-/*!
     \fn QSensorBackend::setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
 
     Set the update \a policy. The \a interval should be used if the policy is set to
@@ -145,9 +127,11 @@ int QSensorBackend::suggestedInterval(QSensor::UpdatePolicy policy)
 
 */
 
+#if 0
 /*!
-    \fn QSensorBackend::currentValue()
+    \fn QSensorBackend::currentReading()
 */
+#endif
 
 /*!
     \fn QSensorBackend::start()

@@ -44,49 +44,74 @@
 
 #include <qsensor.h>
 #include <QtGlobal>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QAccelerationValue;
-
-class Q_SENSORS_EXPORT QAccelerationValue : public QSensorValue
+// implementation detail
+class QAccelerationReadingData : public QSharedData
 {
 public:
-    QAccelerationValue();
-    struct Acceleration
-    {
-        int x;
-        int y;
-        int z;
-    };
-    Acceleration acceleration;
+    QAccelerationReadingData() {}
+    QAccelerationReadingData(QTime _timestamp, int _x, int _y, int _z)
+        : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
+    QAccelerationReadingData(const QAccelerationReadingData &other)
+        : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
+    ~QAccelerationReadingData() {}
+
+    QTime timestamp;
+    int x;
+    int y;
+    int z;
+};
+
+class Q_SENSORS_EXPORT QAccelerationReading
+{
+public:
+    explicit QAccelerationReading()
+    { d = new QAccelerationReadingData; }
+    explicit QAccelerationReading(QTime timestamp, int x, int y, int z)
+    { d = new QAccelerationReadingData(timestamp, x, y, z); }
+    QAccelerationReading(const QAccelerationReading &other)
+        : d(other.d) {}
+    ~QAccelerationReading() {}
+
+    QTime timestamp() const { return d->timestamp; }
+    int x() const { return d->x; }
+    int y() const { return d->y; }
+    int z() const { return d->z; }
+
+private:
+    QSharedDataPointer<QAccelerationReadingData> d;
+};
+
+class Q_SENSORS_EXPORT QAccelerationListener
+{
+public:
+    virtual void accelerationChanged(const QAccelerationReading &reading) = 0;
 };
 
 class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 {
+    Q_OBJECT
 public:
     explicit QAccelerationSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
 
     static const QString typeId;
     QString type() const { return typeId; };
 
-    QAccelerationValue::Acceleration currentAcceleration() const
-    {
-        return static_cast<QAccelerationValue*>(currentValue())->acceleration;
-    }
+    // Register a listener (that will receive sensor values as they come in)
+    void addListener(QAccelerationListener *listener);
+    void removeListener(QAccelerationListener *listener);
 
-    int currentXAcceleration() const
-    {
-        return currentAcceleration().x;
-    }
-    int currentYAcceleration() const
-    {
-        return currentAcceleration().y;
-    }
-    int currentZAcceleration() const
-    {
-        return currentAcceleration().z;
-    }
+    // For polling/checking the current (cached) value
+    QAccelerationReading currentReading() const;
+
+signals:
+    void accelerationChanged(const QAccelerationReading &reading);
+
+private:
+    void newReadingAvailable();
 };
 
 QTM_END_NAMESPACE

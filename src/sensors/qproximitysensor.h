@@ -44,16 +44,48 @@
 
 #include <qsensor.h>
 #include <QtGlobal>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QProximityValue : public QSensorValue
+// implementation detail
+class QProximityReadingData : public QSharedData
 {
 public:
-    QProximityValue();
-    int distance;
+    QProximityReadingData() {}
+    QProximityReadingData(QTime _timestamp, int _proximity)
+        : timestamp(_timestamp), proximity(_proximity) {}
+    QProximityReadingData(const QProximityReadingData &other)
+        : QSharedData(other), timestamp(other.timestamp), proximity(other.proximity) {}
+    ~QProximityReadingData() {}
+
+    QTime timestamp;
+    int proximity;
 };
 
+class Q_SENSORS_EXPORT QProximityReading
+{
+public:
+    enum Proximity {
+        Undefined = 0,
+        Close,
+        NotClose
+    };
+
+    explicit QProximityReading()
+    { d = new QProximityReadingData; }
+    explicit QProximityReading(QTime timestamp, Proximity proximity)
+    { d = new QProximityReadingData(timestamp, proximity); }
+    QProximityReading(const QProximityReading &other)
+        : d(other.d) {}
+    ~QProximityReading() {}
+
+    QTime timestamp() const { return d->timestamp; }
+    Proximity proximity() const { return static_cast<Proximity>(d->proximity); }
+
+private:
+    QSharedDataPointer<QProximityReadingData> d;
+};
 
 class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 {
@@ -64,25 +96,17 @@ public:
     static const QString typeId;
     QString type() const { return typeId; };
 
-    int currentProximity() const
-    {
-        return static_cast<QProximityValue*>(currentValue())->distance;
-    }
+    // For polling/checking the current (cached) value
+    QProximityReading currentReading() const;
 
 signals:
-    void proximityChanged(int distance);
+    void proximityChanged(const QProximityReading &reading);
 
 private:
-    void valueUpdated()
+    void newReadingAvailable()
     {
-        int distance = currentProximity();
-        if (distance != lastDistance) {
-            lastDistance = distance;
-            emit proximityChanged(distance);
-        }
+        emit proximityChanged(currentReading());
     }
-
-    int lastDistance;
 };
 
 QTM_END_NAMESPACE

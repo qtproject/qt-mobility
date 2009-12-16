@@ -44,28 +44,58 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QProximityValue
+    \class QProximityReading
     \ingroup sensors
 
     \preliminary
-    \brief The QProximityValue class represents a proximity reading.
+    \brief The QProximityReading class represents one reading from the
+           proximity sensor.
 
-    The proximity sensor returns the distance to the user. The distance
-    is measured in millimeters.
+    The proximity sensor returns an indication of how far the user is
+    away from the device using the pre-defined values found in the
+    QProximityReading::Proximity enum.
 */
 
 /*!
+    \enum QProximityReading::Proximity
+
+    This enum represents the proximity of the user.
+
+    \value Undefined  The proximity is unknown.
+    \value Close      The user is close to the device.
+    \value NotClose   The user is not close to the device.
+*/
+
+/*!
+    \fn QProximityReading::QProximityReading()
     \internal
 */
-QProximityValue::QProximityValue()
-    : QSensorValue(QProximitySensor::typeId)
-{
-}
 
 /*!
-    \variable QProximityValue::distance
+    \fn QProximityReading::QProximityReading(QTime timestamp, Proximity proximity)
+    \internal
+*/
 
-    Holds the distance of the user from the phone.
+/*!
+    \fn QProximityReading::QProximityReading(const QProximityReading &other)
+    \internal
+*/
+
+/*!
+    \fn QProximityReading::~QProximityReading()
+    \internal
+*/
+
+/*!
+    \fn QProximityReading::timestamp() const
+
+    Returns the time when the reading was made.
+*/
+
+/*!
+    \fn QProximityReading::proximity() const
+
+    Returns the proximity indication.
 */
 
 // =====================================================================
@@ -77,21 +107,11 @@ QProximityValue::QProximityValue()
     \preliminary
     \brief The QProximitySensor class reports on user proximity.
 
-    The proximity sensor returns the distance to the user. The distance
-    is measured in millimeters.
+    The proximity sensor returns an indication of how far the user is
+    away from the device using the pre-defined values found in the
+    QProximityReading::Proximity enum.
 
-    Note that some proximity sensors may only return boolean results
-    (zero and greater than zero).
-*/
-
-/*!
-    \variable QProximitySensor::typeId
-*/
-const QString QProximitySensor::typeId("qt.Proximity");
-
-/*!
-    \fn QProximitySensor::type() const
-    \reimp
+    \sa QProximityReading
 */
 
 /*!
@@ -106,15 +126,27 @@ QProximitySensor::QProximitySensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
-    \fn QProximitySensor::currentProximity() const
+    \variable QProximitySensor::typeId
+*/
+const QString QProximitySensor::typeId("qt.Proximity");
 
-    Returns the current proximity value.
+/*!
+    \fn QProximitySensor::type() const
+    \reimp
 */
 
 /*!
-    \fn QProximitySensor::proximityChanged(int distance)
+    Returns the current proximity reading.
+*/
+QProximityReading QProximitySensor::currentReading() const
+{
+    return QProximityReading();
+}
 
-    Emitted when the \a distance value changes.
+/*!
+    \fn QProximitySensor::proximityChanged(const QProximityReading &reading)
+
+    This signal is emitted when a new proximity \a reading comes in.
 */
 
 #include "moc_qproximitysensor.cpp"

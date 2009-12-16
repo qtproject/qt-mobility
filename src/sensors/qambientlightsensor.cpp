@@ -44,27 +44,58 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QAmbientLightValue
+    \class QAmbientLightReading
     \ingroup sensors
 
     \preliminary
-    \brief The QAmbientLightValue class represents an ambient light reading.
+    \brief The QAmbientLightReading class represents one reading from the
+           ambient light sensor.
 
-    The ambient light sensor returns the intensity of the ambient light in lux.
+    The ambient light sensor returns the intensity of the ambient light
+    using the pre-defined values found in the QAmbientLightReading::LightLevel
+    enum.
 */
 
 /*!
+    \enum QAmbientLightReading::LightLevel
+
+    This enum represents the ambient light level.
+
+    \value Undefined  The light level is unknown.
+    \value Dark       It is dark. You are likely to be eaten by a grue.
+    \value Light      It is light.
+*/
+
+/*!
+    \fn QAmbientLightReading::QAmbientLightReading()
     \internal
 */
-QAmbientLightValue::QAmbientLightValue()
-    : QSensorValue(QAmbientLightSensor::typeId)
-{
-}
 
 /*!
-    \variable QAmbientLightValue::lux
+    \fn QAmbientLightReading::QAmbientLightReading(QTime timestamp, LightLevel lightLevel)
+    \internal
+*/
 
-    Holds the intensity of the ambient light.
+/*!
+    \fn QAmbientLightReading::QAmbientLightReading(const QAmbientLightReading &other)
+    \internal
+*/
+
+/*!
+    \fn QAmbientLightReading::~QAmbientLightReading()
+    \internal
+*/
+
+/*!
+    \fn QAmbientLightReading::timestamp() const
+
+    Returns the time when the reading was made.
+*/
+
+/*!
+    \fn QAmbientLightReading::lightLevel() const
+
+    Returns the ambient light level.
 */
 
 // =====================================================================
@@ -76,17 +107,11 @@ QAmbientLightValue::QAmbientLightValue()
     \preliminary
     \brief The QAmbientLightSensor class reports on ambient light levels.
 
-    The ambient light sensor returns the intensity of the ambient light in lux.
-*/
+    The ambient light sensor returns the intensity of the ambient light
+    using the pre-defined values found in the QAmbientLightReading::LightLevel
+    enum.
 
-/*!
-    \variable QAmbientLightSensor::typeId
-*/
-const QString QAmbientLightSensor::typeId("qt.AmbientLight");
-
-/*!
-    \fn QAmbientLightSensor::type() const
-    \reimp
+    \sa QAmbientLightReading
 */
 
 /*!
@@ -101,15 +126,27 @@ QAmbientLightSensor::QAmbientLightSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
-    \fn QAmbientLightSensor::currentAmbientLight() const
+    \variable QAmbientLightSensor::typeId
+*/
+const QString QAmbientLightSensor::typeId("qt.AmbientLight");
 
-    Returns the current ambient light value.
+/*!
+    \fn QAmbientLightSensor::type() const
+    \reimp
 */
 
 /*!
-    \fn QAmbientLightSensor::ambientLightChanged(int lux)
+    Returns the current ambient light reading.
+*/
+QAmbientLightReading QAmbientLightSensor::currentReading() const
+{
+    return QAmbientLightReading();
+}
 
-    Emitted when the ambient light \a lux value changes.
+/*!
+    \fn QAmbientLightSensor::ambientLightChanged(const QAmbientLightReading &reading)
+
+    This signal is emitted when a new ambient light \a reading comes in.
 */
 
 #include "moc_qambientlightsensor.cpp"

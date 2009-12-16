@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <qsensor.h>
-#include <qsensorbackend.h>
+//#include <qsensorbackend.h>
 #include <qsensormanager.h>
 #include <qsensorfactory.h>
 
@@ -103,15 +103,7 @@ bool QSensor::isValid() const
 */
 QSensorId QSensor::id() const
 {
-    return m_backend->id();
-}
-
-/*!
-    Returns the sensor name, suitable for displaying to the user.
-*/
-QString QSensor::name() const
-{
-    return m_backend->name();
+    return QSensorId();//m_backend->id();
 }
 
 /*!
@@ -129,7 +121,7 @@ QString QSensor::name() const
     You can determine the policies the sensor supports with the
     QSensor::supportedPolicies() method.
 
-    \value Unknown            The sensor has no specific update policy.
+    \value Undefined          The sensor has no specific update policy.
     \value OccasionalUpdates  Updates are delivered only occasionally.
     \value InfrequentUpdates  Updates are delivered every now and then.
     \value FrequentUpdates    Updates are delivered frequently.
@@ -146,7 +138,9 @@ QString QSensor::name() const
 */
 void QSensor::setUpdatePolicy(UpdatePolicy policy, int interval)
 {
-    m_backend->setUpdatePolicy(policy, interval);
+    Q_UNUSED(policy)
+    Q_UNUSED(interval)
+    //m_backend->setUpdatePolicy(policy, interval);
 }
 
 /*!
@@ -154,7 +148,7 @@ void QSensor::setUpdatePolicy(UpdatePolicy policy, int interval)
 */
 QSensor::UpdatePolicy QSensor::updatePolicy() const
 {
-    return QSensor::Unknown;
+    return QSensor::Undefined;
 }
 
 /*!
@@ -171,34 +165,7 @@ int QSensor::updateInterval() const
 */
 QSensor::UpdatePolicies QSensor::supportedPolicies() const
 {
-    return QSensor::Unknown;
-}
-
-/*!
-    Add a \a listener to the sensor.
-    The listener will be invoked every time the acceleration values
-    change.
-*/
-void QSensor::addListener(QSensorListener *listener)
-{
-    Q_UNUSED(listener)
-}
-
-/*!
-    Remove a \a listener from the sensor.
-    If \a listener is 0, all listeners will be removed from the sensor.
-*/
-void QSensor::removeListener(QSensorListener *listener)
-{
-    Q_UNUSED(listener)
-}
-
-/*!
-    Returns the current sensor value.
-*/
-QSensorValue *QSensor::currentValue() const
-{
-    return 0;
+    return QSensor::Undefined;
 }
 
 /*!
@@ -223,14 +190,6 @@ void QSensor::stop()
 }
 
 /*!
-    Subclasses should implement this method to emit signals when
-    the value has changed.
-*/
-void QSensor::valueUpdated()
-{
-}
-
-/*!
     \internal
 */
 void QSensor::connectToBackend(const QSensorId &_id)
@@ -239,62 +198,16 @@ void QSensor::connectToBackend(const QSensorId &_id)
     if (id.isEmpty())
         id = QSensorFactory::instance()->defaultSensorForType(type());
 
-    m_backend = QSensorManager::instance()->createBackend(id);
-    m_backend->createdFor(this, id);
+    //m_backend = QSensorManager::instance()->createBackend(id);
+    //m_backend->createdFor(this, id);
 }
 
 /*!
-    \class QSensorListener
-    \ingroup sensors
+    \fn QSensor::newReadingAvailable()
 
-    \preliminary
-    \brief The QSensorListener class represents an object that wishes to
-           receive notifications about sensor changes.
-
-    An instance of this class is notified by method call when
-    the sensor value changes.
+    This function is called to notify the sensor that a new reading is available.
 */
 
-/*!
-    \fn bool QSensorListener::sensorValueUpdated(QSensorValue *value)
-
-    A sensor has been updated and now has the passed \a value.
-
-    Note that other objects may be waiting to receive the updated value.
-    The function may modify the value as appropriate or return false
-    to suppress any further update notifications.
-*/
-
-/*!
-    \class QSensorValue
-    \ingroup sensors
-
-    \preliminary
-    \brief The QSensorValue class represents a sensor value update.
-
-    Actual sensor data is stored in sub-classes of QSensorValue.
-*/
-
-/*!
-    Constuct a sensor value for a \a type.
-*/
-QSensorValue::QSensorValue(const QString &type)
-    : m_type(type)
-{
-}
-
-/*!
-    \fn QSensorValue::type() const
-
-    Returns the type of value that this is.
-*/
-
-/*!
-    \variable QSensorValue::timestamp
-
-    Returns a timestamp (in milliseconds since app startup)
-    showing when the sensor value was generated.
-*/
-
+#include "moc_qsensor.cpp"
 QTM_END_NAMESPACE
 

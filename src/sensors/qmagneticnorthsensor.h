@@ -44,16 +44,44 @@
 
 #include <qsensor.h>
 #include <QtGlobal>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QMagneticNorthValue : public QSensorValue
+// implementation detail
+class QMagneticNorthReadingData : public QSharedData
 {
 public:
-    QMagneticNorthValue();
+    QMagneticNorthReadingData() {}
+    QMagneticNorthReadingData(QTime _timestamp, int _heading, bool _calibrated)
+        : timestamp(_timestamp), heading(_heading), calibrated(_calibrated) {}
+    QMagneticNorthReadingData(const QMagneticNorthReadingData &other)
+        : QSharedData(other), timestamp(other.timestamp), heading(other.heading), calibrated(other.calibrated) {}
+    ~QMagneticNorthReadingData() {}
+
+    QTime timestamp;
     int heading;
+    bool calibrated;
 };
 
+class Q_SENSORS_EXPORT QMagneticNorthReading
+{
+public:
+    explicit QMagneticNorthReading()
+    { d = new QMagneticNorthReadingData; }
+    explicit QMagneticNorthReading(QTime timestamp, int heading, bool calibrated)
+    { d = new QMagneticNorthReadingData(timestamp, heading, calibrated); }
+    QMagneticNorthReading(const QMagneticNorthReading &other)
+        : d(other.d) {}
+    ~QMagneticNorthReading() {}
+
+    QTime timestamp() const { return d->timestamp; }
+    int heading() const { return d->heading; }
+    bool calibrated() const { return d->calibrated; }
+
+private:
+    QSharedDataPointer<QMagneticNorthReadingData> d;
+};
 
 class Q_SENSORS_EXPORT QMagneticNorthSensor : public QSensor
 {
@@ -64,27 +92,17 @@ public:
     static const QString typeId;
     QString type() const { return typeId; };
 
-    int currentHeading() const
-    {
-        return static_cast<QMagneticNorthValue*>(currentValue())->heading;
-    }
-
-    bool isCalibrated() const;
+    // For polling/checking the current (cached) value
+    QMagneticNorthReading currentReading() const;
 
 signals:
-    void headingChanged(int heading);
+    void headingChanged(const QMagneticNorthReading &reading);
 
 private:
-    void valueUpdated()
+    void newReadingAvailable()
     {
-        int heading = currentHeading();
-        if (heading != lastHeading) {
-            lastHeading = heading;
-            emit headingChanged(heading);
-        }
+        emit headingChanged(currentReading());
     }
-
-    int lastHeading;
 };
 
 QTM_END_NAMESPACE

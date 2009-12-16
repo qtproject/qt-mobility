@@ -98,6 +98,10 @@ QList<QSensorId> QSensorFactory::sensorList() const
 /*!
     Create an instance of a sensor for \a id.
     If there is no sensor with the selected \a id, returns null.
+
+    Note that this method requires down-casting the returned pointer to do anything useful.
+    Instead, consider instantiating a QSensor sub-class directly, passing the id as the
+    second argument.
 */
 QSensor *QSensorFactory::createSensor(const QSensorId &id) const
 {

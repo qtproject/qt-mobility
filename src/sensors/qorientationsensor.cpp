@@ -44,34 +44,86 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QOrientationValue
+    \class QOrientationReading
     \ingroup sensors
 
     \preliminary
-    \brief The QOrientationValue class represents an orientation value.
+    \brief The QOrientationReading class represents one reading from the
+           orientation sensor.
 
-    The orientation is expressed as either portrait or landscape with an
-    inverted flag indicating the phone is upside down.
+    The orientation sensor returns the orientation of the device using
+    the pre-defined values found in the QOrientationReading::Orientation
+    enum.
 */
 
 /*!
-    \enum QOrientationValue::OrientationFlag
+    \enum QOrientationReading::Orientation
 
     This enum represents the orientation of the device.
 
-    \value Unknown    The orientation is unknown.
-    \value Portrait   The device is in the portrait orientation.
-    \value Landscape  The device is in the landscape orientation.
-    \value Inverted   The device is upside down.
+    The parts of the phone are defined as follows.
 
-    Note that Portrait and Landscape may be combined with Inverted to
-    indicate that the device is upside down.
+\code
+                      Top
+
+
+              ----------
+             /  NOKIA  /|
+            /-------- / |
+           //       //  /
+          //       //  /
+  Left   //  Face //  /    Right
+        //       //  /
+       //       //  /
+      /---------/  /
+     /    O    /  /
+    /         /  /
+    ----------  /
+    |_________!/
+
+
+      Bottom
+\endcode
+
+    \value Undefined  The orientation is unknown.
+    \value BottomUp   The device is upside down.
+    \value BottomDown The device is the right way up.
+    \value LeftUp     The device has been rotated clockwise.
+    \value RightUp    The device has been rotated counter-clockwise.
+    \value FaceDown   The screen is facing down.
+    \value FaceUp     The screen is facing up.
 */
 
 /*!
-    \variable QOrientationValue::orientation
+    \fn QOrientationReading::QOrientationReading()
+    \internal
+*/
 
-    Holds the orientation flags.
+/*!
+    \fn QOrientationReading::QOrientationReading(QTime timestamp, Orientation orientation)
+    \internal
+*/
+
+/*!
+    \fn QOrientationReading::QOrientationReading(const QOrientationReading &other)
+    \internal
+*/
+
+/*!
+    \fn QOrientationReading::~QOrientationReading()
+    \internal
+*/
+
+/*!
+    \fn QOrientationReading::timestamp() const
+
+    Returns the time when the reading was made.
+*/
+
+/*!
+    \fn QOrientationReading::orientation() const
+
+    Returns the orientation of the device.
 */
 
 // =====================================================================
@@ -81,20 +133,13 @@ QTM_BEGIN_NAMESPACE
     \ingroup sensors
 
     \preliminary
-    \brief The QOrientationSensor class reports on the orientation of the screen.
+    \brief The QOrientationSensor class reports on the orientation of the device.
 
-    The orientation sensor provides discrete orientation information. See the
-    QOrientationSensor::Orientation enum for
-*/
+    The orientation sensor returns the orientation of the device using
+    the pre-defined values found in the QOrientationReading::Orientation
+    enum.
 
-/*!
-    \variable QOrientationSensor::typeId
-*/
-const QString QOrientationSensor::typeId("qt.Orientation");
-
-/*!
-    \fn QOrientationSensor::type() const
-    \reimp
+    \sa QOrientationReading
 */
 
 /*!
@@ -109,15 +154,27 @@ QOrientationSensor::QOrientationSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
-    \fn QOrientationSensor::currentOrientation() const
+    \variable QOrientationSensor::typeId
+*/
+const QString QOrientationSensor::typeId("qt.Orientation");
 
-    Returns the current orientation of the device.
+/*!
+    \fn QOrientationSensor::type() const
+    \reimp
 */
 
 /*!
-    \fn QOrientationSensor::orientationChanged(QOrientationValue::Orientation orientation)
+    Returns the current orientation reading.
+*/
+QOrientationReading QOrientationSensor::currentReading() const
+{
+    return QOrientationReading();
+}
 
-    Emitted when the \a orientation value changes.
+/*!
+    \fn QOrientationSensor::orientationChanged(const QOrientationReading &reading)
+
+    This signal is emitted when a new orientation \a reading comes in.
 */
 
 #include "moc_qorientationsensor.cpp"

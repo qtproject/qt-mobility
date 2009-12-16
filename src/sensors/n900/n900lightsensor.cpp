@@ -39,20 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSOR_P_H
-#define QSENSOR_P_H
-
-#include "qsensor.h"
+#include <n900filebasedsensor.h>
+#include <qambientlightsensor.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QSensorPrivate
+class n900lightsensor : public n900filebasedsensor<QAmbientLightReading>
 {
 public:
-    QList <QSensorListener*> listeners;
+    n900lightsensor()
+        : n900filebasedsensor<QAmbientLightReading>("/sys/class/i2c-adapter/i2c-2/2-0029/lux")
+    {
+    }
+
+    QString name() const
+    {
+        return tr("N900 ambient light sensor");
+    }
+
+    void extract_value(FILE *fd)
+    {
+        Q_UNUSED(fd)
+        /*
+        m_reading.timestamp = QTime::currentTime();
+	int rs = fscanf(fd, "%i", &m_reading.lux);
+        Q_ASSERT(rs == 1);
+        */
+    }
 };
 
 QTM_END_NAMESPACE
 
-#endif
+REGISTER_SENSOR(QTM_NAMESPACE::n900lightsensor, "n900.light")
 

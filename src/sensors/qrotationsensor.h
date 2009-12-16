@@ -44,40 +44,67 @@
 
 #include <qsensor.h>
 #include <QtGlobal>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QRotationValue : public QSensorValue
+// implementation detail
+class QRotationReadingData : public QSharedData
 {
 public:
+    QRotationReadingData() {}
+    QRotationReadingData(QTime _timestamp, qreal _x, qreal _y, qreal _z)
+        : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
+    QRotationReadingData(const QRotationReadingData &other)
+        : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
+    ~QRotationReadingData() {}
+
+    QTime timestamp;
     qreal x;
     qreal y;
     qreal z;
 };
 
+class Q_SENSORS_EXPORT QRotationReading
+{
+public:
+    explicit QRotationReading()
+    { d = new QRotationReadingData; }
+    explicit QRotationReading(QTime timestamp, qreal x, qreal y, qreal z)
+    { d = new QRotationReadingData(timestamp, x, y, z); }
+    QRotationReading(const QRotationReading &other)
+        : d(other.d) {}
+    ~QRotationReading() {}
+
+    QTime timestamp() const { return d->timestamp; }
+    qreal x() const { return d->x; }
+    qreal y() const { return d->y; }
+    qreal z() const { return d->z; }
+
+private:
+    QSharedDataPointer<QRotationReadingData> d;
+};
 
 class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 {
+    Q_OBJECT
 public:
     explicit QRotationSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
 
     static const QString typeId;
     QString type() const { return typeId; };
 
-    qreal currentXRotation() const
-    {
-        return static_cast<QRotationValue*>(currentValue())->x;
-    }
-    qreal currentYRotation() const
-    {
-        return static_cast<QRotationValue*>(currentValue())->y;
-    }
-    qreal currentZRotation() const
-    {
-        return static_cast<QRotationValue*>(currentValue())->z;
-    }
+    // For polling/checking the current (cached) value
+    QRotationReading currentReading() const;
 
-    bool isFromAccelerometer() const;
+signals:
+    void rotationChanged(const QRotationReading &reading);
+
+private:
+    void newReadingAvailable()
+    {
+        emit rotationChanged(currentReading());
+    }
 };
 
 QTM_END_NAMESPACE

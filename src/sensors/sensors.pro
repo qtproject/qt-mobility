@@ -3,8 +3,6 @@ TARGET = QtSensors
 
 include(../../common.pri)
 
-#INCLUDEPATH += .
-
 DEFINES += QT_BUILD_SENSORS_LIB QT_MAKEDLL
 
 QMAKE_CXXFLAGS+=-Werror
@@ -18,12 +16,8 @@ PUBLIC_HEADERS += \
            qproximitysensor.h\
            qmagneticnorthsensor.h\
            qambientlightsensor.h\
-           qsensormanager.h\
-           qsensorbackend.h\
 
 PRIVATE_HEADERS += \
-
-HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES += qsensor.cpp \
            qsensorfactory.cpp\
@@ -33,16 +27,9 @@ SOURCES += qsensor.cpp \
            qproximitysensor.cpp\
            qmagneticnorthsensor.cpp\
            qambientlightsensor.cpp\
-           qsensormanager.cpp\
-           qsensorbackend.cpp\
 
-CONFIG+=n900
-n900 {
-    HEADERS += n900filebasedsensor.h
-    SOURCES += n900accelerationsensor.cpp\
-               #n900lightsensor.cpp\
-               n900proximitysensor.cpp\
+HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-}
+#include(n900/n900.pri)
 
 include(../../features/deploy.pri)

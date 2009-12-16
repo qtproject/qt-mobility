@@ -55,22 +55,20 @@ public:
         return m_id;
     }
     void createdFor(QSensor *sensor, const QSensorId &id);
-    void addListener(QSensorListener *listener);
-    void removeListener(QSensorListener *listener);
+    //void addListener(QSensorListener *listener);
+    //void removeListener(QSensorListener *listener);
     void notify();
     int suggestedInterval(QSensor::UpdatePolicy policy);
 
-    virtual QString name() const = 0;
     virtual void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval = 0) = 0;
     virtual QSensor::UpdatePolicies supportedPolicies() const = 0;
-    virtual QSensorValue *currentValue() = 0;
     virtual bool start() = 0;
     virtual void stop() = 0;
 
 private:
     QSensorId m_id;
     QSensor *m_sensor;
-    QList<QSensorListener*> m_listeners;
+    //QList<QSensorListener*> m_listeners;
 };
 
 QTM_END_NAMESPACE

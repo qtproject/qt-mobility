@@ -49,18 +49,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QSensorListener;
-class QSensorFilter;
-class QSensorValue;
 class QSensorBackend;
 
 typedef QByteArray QSensorId;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
-public:
     friend class QSensorBackend;
-
+    Q_OBJECT
+public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
 
@@ -68,12 +65,11 @@ public:
     bool isValid() const;
 
     QSensorId id() const;
-    QString name() const;
 
     virtual QString type() const = 0;
 
     enum UpdatePolicy {
-        Unknown           = 0x00, // If the sensor has no specific policy
+        Undefined         = 0x00, // If the sensor has no specific policy
 
         // These use pre-determined timing intervals, as set by the sensor
         OccasionalUpdates = 0x01, // When the system feels like it
@@ -98,51 +94,23 @@ public:
     // What policies does the sensor support
     UpdatePolicies supportedPolicies() const;
 
-    // Register a listener (that will receive sensor values as they come in)
-    void addListener(QSensorListener *listener);
-    void removeListener(QSensorListener *listener);
-
-    // For polling/checking the current (cached) value
-    QSensorValue *currentValue() const;
-
+public slots:
     // Start receiving values from the sensor
     bool start();
 
     // Stop receiving values from the sensor
     void stop();
 
-    // emit signals
-    virtual void valueUpdated();
-
 protected:
     void connectToBackend(const QSensorId &id);
 
-private:
+    virtual void newReadingAvailable() = 0;
+
+protected:
     QSensorBackend *m_backend;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);
-
-class QSensorListener
-{
-public:
-    virtual bool sensorValueUpdated(QSensorValue *value) = 0;
-};
-
-class Q_SENSORS_EXPORT QSensorValue
-{
-public:
-    explicit QSensorValue(const QString &type);
-    QString type() const
-    {
-        return m_type;
-    }
-
-    QTime timestamp;
-
-private:
-    QString m_type;
-};
 
 QTM_END_NAMESPACE
 

@@ -40,31 +40,38 @@
 ****************************************************************************/
 
 #include <n900filebasedsensor.h>
-#include <qaccelerationsensor.h>
+#include <qproximitysensor.h>
 
 QTM_BEGIN_NAMESPACE
 
-class n900accelerationsensor : public n900filebasedsensor<QAccelerationValue>
+class n900proximitysensor : public n900filebasedsensor<QProximityReading>
 {
 public:
-    n900accelerationsensor()
-        : n900filebasedsensor<QAccelerationValue>("/sys/class/i2c-adapter/i2c-3/3-001d/coord")
+    n900proximitysensor()
+        : n900filebasedsensor<QProximityReading>("/sys/bus/platform/devices/proximity/state")
     {
     }
 
     QString name() const
     {
-        return tr("N900 accelerometer");
+        return tr("N900 proximity sensor");
     }
 
     void extract_value(FILE *fd)
     {
-	int rs = fscanf(fd, "%i %i %i", &m_value.acceleration.x, &m_value.acceleration.y, &m_value.acceleration.z);
-        Q_ASSERT(rs == 3);
+        m_reading.timestamp = QTime::currentTime();
+        char buffer[20];
+	int rs = fscanf(fd, "%s", buffer);
+        Q_ASSERT(rs == 1);
+        if (strcmp(buffer, "closed") == 0) {
+            m_reading.distance = 0;
+        } else {
+            m_reading.distance = -2;
+        }
     }
 };
 
 QTM_END_NAMESPACE
 
-REGISTER_SENSOR(QTM_NAMESPACE::n900accelerationsensor, "n900.acceleration")
+REGISTER_SENSOR(QTM_NAMESPACE::n900proximitysensor, "n900.proximity")
 
