@@ -63,7 +63,6 @@ private slots:
     void testBackSlashEscape();
     void testRemoveBackSlashEscaping();
     void testExtractPropertyGroupsAndName();
-    void testExtractPropertyValue();
     void testExtractVCard21PropertyParams();
     void testExtractVCard30PropertyParams();
 };

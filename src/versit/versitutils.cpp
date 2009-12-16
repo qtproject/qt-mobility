@@ -256,7 +256,8 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCurso
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
     char previous = 0;
-    for (int i=line.position; i <= line.selection; i++) {
+    Q_ASSERT(line.data.size() > line.position);
+    for (int i=line.position; i < line.selection; i++) {
         char current = line.data.at(i);
         if ((current == ';' && previous != '\\')
             || current == ':') {
@@ -300,8 +301,8 @@ QByteArray VersitUtils::extractPropertyValue(VersitCursor& line)
  * Extracts the property parameters as a QMultiHash.
  * The parameters without names are added as "TYPE" parameters.
  *
- * On entry \a line should contain the entire line.  On exit, line will be updated to
- * point to the start of the value.
+ * On entry \a line should contain the entire line.
+ * On exit, line will be updated to point to the start of the value.
  */
 QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(VersitCursor& line)
 {
