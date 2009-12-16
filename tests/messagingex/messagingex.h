@@ -49,6 +49,7 @@
 #include "ui_mmsreceiveddialog.h"
 
 #include "QMessageService.h"
+#include "QMessageManager.h"
 #include "QMessage.h"
 #include "QMessageAccount.h"
 
@@ -94,7 +95,7 @@ private Q_SLOTS:
 
 private:
     QMessageService m_service;
-    QMessageStore* m_store;
+    QMessageManager m_manager;
         
     QAction* m_createEmail;
     QAction* m_createSms;
