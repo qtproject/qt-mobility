@@ -81,11 +81,8 @@ public:
 
     void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}
     QString avatar() const {return value(FieldAvatar);}
-    QPixmap QContactAvatar::pixmap() const
-    {
-        return value<QPixmap>(QContactAvatar::FieldAvatarPixmap);
-    }
-    bool QContactAvatar::setPixmap(const QPixmap& pixmap)
+    QPixmap pixmap() const {return value<QPixmap>(QContactAvatar::FieldAvatarPixmap);}
+    bool setPixmap(const QPixmap& pixmap)
     {
         setSubType(SubTypeImage);
         return setValue(FieldAvatarPixmap, QVariant::fromValue(pixmap));
