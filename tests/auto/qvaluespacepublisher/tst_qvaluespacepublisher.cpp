@@ -422,6 +422,7 @@ class WriteThread : public QThread
 
 public:
     WriteThread(const QString &path, const QUuid &uuid, unsigned int count);
+    ~WriteThread();
 
     void runSequential() { run(); }
 
@@ -438,6 +439,18 @@ WriteThread::WriteThread(const QString &path, const QUuid &uuid, unsigned int co
 :   path(path), count(count)
 {
     publisher = new QValueSpacePublisher(uuid, path, this);
+}
+
+WriteThread::~WriteThread()
+{
+#ifdef Q_OS_SYMBIAN
+    //Cleanup published values since the SymbianSettingLayer is permanent
+    const QString key("key%1");
+    for (unsigned int i = 0; i < count; ++i)
+        publisher->resetValue(key.arg(i));
+
+    publisher->sync();
+#endif
 }
 
 void WriteThread::run()
@@ -529,6 +542,11 @@ void tst_QValueSpacePublisher::threads_data()
                 << layer->id() << uint(10) << uint(800) << false;
             QTest::newRow("100 threads, 80 items")
                 << layer->id() << uint(100) << uint(80) << false;
+        } else if (layer->id() == QVALUESPACE_SYMBIAN_SETTINGS_LAYER) {
+            QTest::newRow("1 thread, 10 items, sequential")
+                << layer->id() << uint(1) << uint(10) << true;
+            QTest::newRow("2 threads, 10 items, sequential")
+                << layer->id() << uint(2) << uint(10) << true;
         } else {
             // Assume no limits on all other layers.
             QTest::newRow("1 thread, 10 items, sequential")
@@ -620,7 +638,6 @@ void tst_QValueSpacePublisher::threads()
 
         while (!keys.isEmpty()) {
             const QString key = keys.takeFirst();
-
             QCOMPARE(threadItem.value(key).toString(), expectedValues.value(key));
         }
     }
