@@ -5,7 +5,7 @@ QT += network \
 
 INCLUDEPATH += ../../src/multimedia
 
-include(../examples.pri)
+include(../../examples/examples.pri)
 CONFIG += mobility
 qtAddLibrary(QtMedia)
 
