@@ -105,6 +105,7 @@ QStringList CntRelationship::supportedRelationshipTypes(const QString &contactTy
 QList<QContactRelationship> CntRelationship::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
     QList<QContactRelationship> returnValue;
+    error = QContactManager::NoError;
 
     // if relationshipType is empty, relationships of any type are returned.
     if (relationshipType.isEmpty())
@@ -194,6 +195,7 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
 QList<QContactManager::Error> CntRelationship::saveRelationships(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> returnValue;
+    error = QContactManager::NoError;
     QContactManager::Error singleError;    
 
     // loop through the relationships
@@ -249,6 +251,7 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
 QList<QContactManager::Error> CntRelationship::removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     QList<QContactManager::Error> returnValue;
+    error = QContactManager::NoError;
     QContactManager::Error qtError(QContactManager::NoError);
 
     //loop through the relationships
@@ -267,6 +270,8 @@ QList<QContactManager::Error> CntRelationship::removeRelationships(QSet<QContact
 
 bool CntRelationship::validateRelationship(const QContactRelationship &relationship, QContactManager::Error& error)
 {
+    error = QContactManager::NoError;
+    
     // check if supported in this manager
     if (!m_relationshipMap.contains(relationship.relationshipType())) {
         error = QContactManager::NotSupportedError;

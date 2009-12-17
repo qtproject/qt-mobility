@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include <QDebug>
+
 #include "qcontactmanagerengine.h"
 
 #include "qcontactdetaildefinition.h"
@@ -1355,7 +1357,7 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
 }
 
 /*!
- * Returns true if the supplied \a filter matches the supplied \a contact.
+ * Returns true if the supplied contact \a contact matches the supplied filter \a filter.
  *
  * This function will test each condition in the filter, possibly recursing.
  */
@@ -1540,28 +1542,41 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
         case QContactFilter::RelationshipFilter:
             {
-                // first, build contact's uri - FIXME
-                QContactId contactUri = contact.id();
+                // matches any contact that plays the specified role in a relationship
+                // of the specified type with the specified other participant.
                 const QContactRelationshipFilter rf(filter);
+
+                // first, retrieve contact uris
+                QContactId contactUri = contact.id();
                 QContactId participant = rf.otherParticipantId();
+
+                // get the relationships in which this contact is involved.
                 QList<QContactRelationship> allRelationships;
                 allRelationships = contact.relationships();
 
-                // now check to see that the role is correct.
+// simplify the comparison of two contact id's depending on their fields.
+#define CONTACT_IDS_MATCH(specific, other) \
+            ((specific == QContactId()) \
+                || (specific.managerUri().isEmpty() && specific.localId() == other.localId()) \
+                || (specific.managerUri() == other.managerUri() && specific.localId() == QContactLocalId(0)) \
+                || (specific.managerUri() == other.managerUri() && specific.localId() == other.localId()))
+
+                // now check to see if we have a match.
                 foreach (const QContactRelationship& rel, allRelationships) {
+                    // perform the matching.
                     if (rf.role() == QContactRelationshipFilter::First) {
-                        if (rel.relationshipType() == rf.relationshipType() && rel.first() == contact.id() && rel.second() == participant) {
-                            return true;
-                        }
-                    } else if (rf.role() == QContactRelationshipFilter::Either) {
-                        if (rel.relationshipType() == rf.relationshipType()
-                                && ((rel.first() == contact.id() && rel.second() == participant)
-                                    || (rel.second() == contactUri))) {
+                        if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
+                                && CONTACT_IDS_MATCH(rel.first(), contact.id()) && CONTACT_IDS_MATCH(participant, rel.second())) {
                             return true;
                         }
                     } else if (rf.role() == QContactRelationshipFilter::Second) {
-                        if (rel.relationshipType() == rf.relationshipType()
-                                && (rel.second() == contactUri)) {
+                        if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
+                                && CONTACT_IDS_MATCH(rel.second(), contact.id()) && CONTACT_IDS_MATCH(participant, rel.first())) {
+                            return true;
+                        }
+                    } else { // QContactRelationshipFilter::Either
+                        if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
+                                && ((CONTACT_IDS_MATCH(participant, rel.first()) && !CONTACT_IDS_MATCH(contactUri, participant)) || (CONTACT_IDS_MATCH(participant, rel.second()) && !CONTACT_IDS_MATCH(contactUri, participant)))) {
                             return true;
                         }
                     }

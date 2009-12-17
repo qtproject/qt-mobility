@@ -71,9 +71,12 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
     QList<QContactManager::Error> dummy;
     QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
             QContactAbstractRequest::Active);
-    foreach(QContact contact, contacts)
-    {
-        saveContact(contact);
+
+    // Save contacts with batch size
+    /// @todo where to get reasonable batch size
+    int batchSize = 100;
+    for (int i = 0; i < contacts.size(); i+=batchSize) {
+        saveContacts(contacts.mid(i, batchSize));
     }
 }
 
@@ -101,65 +104,73 @@ void QTrackerContactSaveRequest::computeProgress()
     }
 }
 
-void QTrackerContactSaveRequest::saveContact(QContact &contact)
+void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
 {
     QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (parent());
     Q_ASSERT(engine);
-    QContactManager::Error error;
-    // Ensure that the contact data is ok. This comes from QContactModelEngine
-    if(!engine->validateContact(contact, error)) {
-        contactsFinished << contact;
-        errorsOfContactsFinished << error;
-        computeProgress();
-        return;
-    }
 
+    QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
     QTrackerContactsLive cLive;
-    Live<nco::PersonContact> ncoContact;
     RDFServicePtr service = cLive.service();
 
-    if(contact.localId() == 0) {
-        // Save new contact. compute ID
-        bool ok;
-        QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
-        // what if both processes read in the same time and write at the same time, no increment
-        unsigned int m_lastUsedId = definitions.value("nextAvailableContactId", "1").toUInt(&ok);
-        definitions.setValue("nextAvailableContactId", QString::number(++m_lastUsedId));
+    foreach(QContact contact, contacts) {
+        QContactManager::Error error;
 
-        ncoContact = service->liveNode(QUrl("contact:"+(QString::number(m_lastUsedId))));
-        QContactId id; id.setLocalId(m_lastUsedId);
-        contact.setId(id);
-        ncoContact->setContactUID(QString::number(m_lastUsedId));
-        ncoContact->setContentCreated(QDateTime::currentDateTime());
-    }  else {
-        ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
-        ncoContact->setContentLastModified(QDateTime::currentDateTime());
+        // Ensure that the contact data is ok. This comes from QContactModelEngine
+        if(!engine->validateContact(contact, error)) {
+            contactsFinished << contact;
+            errorsOfContactsFinished << error;
+            computeProgress();
+            continue;
+        }
+
+        Live<nco::PersonContact> ncoContact;
+
+        if(contact.localId() == 0) {
+            // Save new contact. compute ID
+            bool ok;
+            // what if both processes read in the same time and write at the same time, no increment
+            unsigned int m_lastUsedId = definitions.value("nextAvailableContactId", "1").toUInt(&ok);
+            definitions.setValue("nextAvailableContactId", QString::number(++m_lastUsedId));
+
+            ncoContact = service->liveNode(QUrl("contact:"+(QString::number(m_lastUsedId))));
+            QContactId id; id.setLocalId(m_lastUsedId);
+            contact.setId(id);
+            ncoContact->setContactUID(QString::number(m_lastUsedId));
+            ncoContact->setContentCreated(QDateTime::currentDateTime());
+        }  else {
+            ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
+            ncoContact->setContentLastModified(QDateTime::currentDateTime());
+        }
+
+        // if there are work related details, need to be saved to Affiliation.
+        if( QTrackerContactSaveRequest::contactHasWorkRelatedDetails(contact)) {
+            addAffiliation(service, contact.localId());
+        }
+
+        // Add a special tag for contact added from addressbook, not from fb, telepathy etc.
+        // this is important when returning contacts to sync team
+        RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
+        rdfContact.property<nco::contactUID>() = LiteralValue(QString::number(contact.localId()));
+        addTag(service, rdfContact, "addressbook");
+
+        saveContactDetails( service, ncoContact, contact);
+
+        // name & nickname - different way from other details
+        cLive.setLiveContact(ncoContact);
+        cLive.setQContact(contact);
+        if( !contact.detail<QContactName>().isEmpty() || !contact.detail<QContactNickname>().isEmpty() ) {
+            cLive.saveName();
+        }
+
+        // TODO add async signal handling of for transaction's commitFinished
+        contactsFinished << contact;
+        errorsOfContactsFinished << QContactManager::NoError; // TODO ask how to get error code from tracker
+        computeProgress();
     }
-
-    // if there are work related details, need to be saved to Affiliation.
-    if( QTrackerContactSaveRequest::contactHasWorkRelatedDetails(contact))
-        addAffiliation(service, contact.localId());
-
-    // Add a special tag for contact added from addressbook, not from fb, telepathy etc.
-    // this is important when returning contacts to sync team
-    RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
-    rdfContact.property<nco::contactUID>() = LiteralValue(QString::number(contact.localId()));
-    addTag(service, rdfContact, "addressbook");
-
-    saveContactDetails( service, ncoContact, contact);
-
-    // name & nickname - different way from other details
-    cLive.setLiveContact(ncoContact);
-    cLive.setQContact(contact);
-    if( !contact.detail<QContactName>().isEmpty() || !contact.detail<QContactNickname>().isEmpty() )
-        cLive.saveName();
 
     // remember to commit the transaction, otherwise all changes will be rolled back.
     cLive.commit();
-
-    // TODO add async signal handling of for transaction's commitFinished
-    contactsFinished << contact;
-    errorsOfContactsFinished << QContactManager::NoError; // TODO ask how to get error code from tracker
     computeProgress();
 }
 
@@ -199,22 +210,9 @@ bool QTrackerContactSaveRequest::contactHasWorkRelatedDetails(const QContact &c)
 // create nco::Affiliation if there is not one already in tracker
 void QTrackerContactSaveRequest::addAffiliation(RDFServicePtr service, QContactLocalId contactId)
 {
-    RDFVariable contact = RDFVariable::fromType<nco::PersonContact>();
-    contact.property<nco::contactUID> () = LiteralValue(QString::number(contactId));
-    RDFVariable contact1 = contact.deepCopy();
-    RDFUpdate up;
-
-    // here we will specify to add new node for affiliation if it doesnt exist already
-    RDFVariable affiliation = contact.optional().property<nco::hasAffiliation> ();
-    RDFFilter doesntExist = affiliation.isBound().not_();// do not create if it already exist
-    QUrl newAffiliation = ::tracker()->createLiveNode().uri();
-    QList<RDFVariableStatement> insertions;
-    insertions << RDFVariableStatement(contact, nco::hasAffiliation::iri(), newAffiliation)
-    << RDFVariableStatement(newAffiliation, rdf::type::iri(), nco::Affiliation::iri());
-
-    // this means that filter applies to both insertions
-    up.addInsertion(insertions);
-    service->executeQuery(up);
+    Live<nco::PersonContact> ncoContact = service->liveNode(QUrl("contact:"+(QString::number(contactId))));
+    Live<nco::Affiliation> ncoAffiliation = service->liveNode(QUrl("affiliation:"+(QString::number(contactId))));
+    ncoContact->setHasAffiliation(ncoAffiliation);
 }
 
 void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
@@ -306,26 +304,26 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
     }
 }
 
-// Delete all existing phone numbers from the contact so that edits are
+// Remove all existing references to phone numbers from the contact so that edits are
 // reflected to Tracker correctly.
-void QTrackerContactSaveRequest::deletePhoneNumbers(RDFServicePtr service, const RDFVariable& rdfContactIn) {
-    RDFUpdate up;
-    RDFVariable rdfContact = rdfContactIn.deepCopy();
-    RDFVariable rdfContact2 = rdfContactIn.deepCopy();
+// Delete the references to phone numbers - not the numbers themselves as they remain in tracker
+// with their canonical URI form - might be linked to history.
+void QTrackerContactSaveRequest::deletePhoneNumbers(RDFServicePtr service, const RDFVariable& rdfContactIn)
+{
+    {
+        RDFUpdate up;
+        RDFVariable rdfContact = rdfContactIn.deepCopy();
+        up.addDeletion(rdfContact, nco::hasPhoneNumber::iri(), rdfContact.property<nco::hasPhoneNumber>());
+        service->executeQuery(up);
+    }
 
-    // Get the associations from the contact object.
-    RDFVariable rdfAffiliations = rdfContact.property<nco::hasAffiliation>();
-    RDFVariable rdfPhonesHome = rdfContact2.property<nco::hasPhoneNumber>();
-    RDFVariable rdfPhonesWork = rdfAffiliations.property<nco::hasPhoneNumber>();
-
-    // Delete the references to phone numbers and the numbers themselves.
-    up.addDeletion(rdfContact, nco::hasPhoneNumber::iri(), rdfPhonesHome);
-    up.addDeletion(rdfPhonesHome, rdf::type::iri(), rdfs::Resource::iri());
-
-    up.addDeletion(rdfAffiliations, nco::hasPhoneNumber::iri(), rdfPhonesWork);
-    up.addDeletion(rdfPhonesWork, rdf::type::iri(), rdfs::Resource::iri());
-
-    service->executeQuery(up);
+    // affiliation
+    {
+        RDFUpdate up;
+        RDFVariable rdfContact = rdfContactIn.deepCopy().property<nco::hasAffiliation>();
+        up.addDeletion(rdfContact, nco::hasPhoneNumber::iri(), rdfContact.property<nco::hasPhoneNumber>());
+        service->executeQuery(up);
+    }
 }
 
 /*!
@@ -339,8 +337,12 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
     RDFVariable varForInsert = var.deepCopy();
     foreach(const QContactDetail& det, details)
     {
-        QUrl newPhone = ::tracker()->createLiveNode().uri();
-        up.addInsertion(varForInsert, nco::hasPhoneNumber::iri(), newPhone);
+        QString value = det.value(QContactPhoneNumber::FieldNumber);
+        // Temporary, because affiliation is still used - to be refactored next week to use Live nodes
+        // using RFC 3966 canonical URI form
+        QUrl newPhone = QString("tel:%1").arg(value);
+        Live<nco::PhoneNumber> ncoPhone = service->liveNode(newPhone);
+
         QStringList subtypes = det.value<QStringList>(QContactPhoneNumber::FieldSubTypes);
 
         if( subtypes.contains(QContactPhoneNumber::SubTypeMobile))
@@ -360,7 +362,8 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
         else
             up.addInsertion(newPhone, rdf::type::iri(), nco::VoicePhoneNumber::iri());
 
-        up.addInsertion(newPhone, nco::phoneNumber::iri(), LiteralValue(det.value(QContactPhoneNumber::FieldNumber)));
+        up.addInsertion(newPhone, nco::phoneNumber::iri(), LiteralValue(value));
+        up.addInsertion(varForInsert, nco::hasPhoneNumber::iri(), newPhone);
     }
     service->executeQuery(up);
 }
@@ -375,14 +378,17 @@ void QTrackerContactSaveRequest::saveEmails(RDFServicePtr service, RDFVariable &
     RDFUpdate up;
     RDFVariable varForInsert = var.deepCopy();
     RDFVariable emails = var.property<nco::hasEmailAddress>();
-    RDFVariable types = emails.property<rdf::type>();
+    // delete previous references - keep email IRIs
     up.addDeletion(RDFVariableStatement(var, nco::hasEmailAddress::iri(), emails));
-    up.addDeletion(emails, rdf::type::iri(), types);
+
     foreach(const QContactDetail& det, details)
     {
-        QUrl newEmail = ::tracker()->createLiveNode().uri();
+        QString value = det.value(QContactEmailAddress::FieldEmailAddress);
+        // Temporary, because affiliation is still used - to be refactored next week to use only Live nodes
+        QUrl newEmail = QString("mailto:%1").arg(value);
+        Live<nco::EmailAddress> ncoEmail = service->liveNode(newEmail);
         up.addInsertion(newEmail, rdf::type::iri(), nco::EmailAddress::iri());
-        up.addInsertion(newEmail, nco::emailAddress::iri(), LiteralValue(det.value(QContactEmailAddress::FieldEmailAddress)));
+        up.addInsertion(newEmail, nco::emailAddress::iri(), LiteralValue(value));
         up.addInsertion(RDFVariableStatement(varForInsert, nco::hasEmailAddress::iri(), newEmail));
     }
     service->executeQuery(up);

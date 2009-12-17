@@ -1065,6 +1065,12 @@ void tst_QContactManager::invalidManager()
     /* Create an invalid manager */
     QContactManager manager("this should never work");
     QVERIFY(manager.managerName() == "invalid");
+    QVERIFY(manager.implementationVersion() == 0);
+
+    /* also, test the other ctor behaviour is sane also */
+    QContactManager anotherManager("this should never work", 15);
+    QVERIFY(anotherManager.managerName() == "invalid");
+    QVERIFY(anotherManager.implementationVersion() == 0);
 
     /* Now test that all the operations fail */
     QVERIFY(manager.contacts().count() == 0);
@@ -1092,7 +1098,6 @@ void tst_QContactManager::invalidManager()
 
     QVERIFY(manager.saveContacts(0) == QList<QContactManager::Error>());
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
-
 
     /* filters */
     QContactFilter f; // matches everything
@@ -1137,16 +1142,47 @@ void tst_QContactManager::invalidManager()
     fields.insert("value", currField);
     def.setFields(fields);
 
+    QVERIFY(manager.saveDetailDefinition(def, QContactType::TypeContact) == false);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.saveDetailDefinition(def) == false);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
+    QVERIFY(manager.detailDefinitions().count(QContactType::TypeContact) == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinitions().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinition("new field").name() == QString());
-
+    QVERIFY(manager.removeDetailDefinition(def.name(), QContactType::TypeContact) == false);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.removeDetailDefinition(def.name()) == false);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinitions().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
+
+    /* Self contact id */
+    QVERIFY(!manager.setSelfContactId(QContactLocalId(12)));
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.selfContactId() == QContactLocalId());
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::DoesNotExistError);
+
+    /* Relationships */
+    QContactId idOne, idTwo;
+    idOne.setLocalId(QContactLocalId(15));
+    idOne.setManagerUri(QString());
+    idTwo.setLocalId(QContactLocalId(22));
+    idTwo.setManagerUri(QString());
+    QContactRelationship invalidRel;
+    invalidRel.setFirst(idOne);
+    invalidRel.setSecond(idTwo);
+    QList<QContactRelationship> invalidRelList;
+    invalidRelList << invalidRel;
+    QVERIFY(!manager.saveRelationship(&invalidRel));
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.relationships().isEmpty());
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    manager.saveRelationships(&invalidRelList);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    manager.removeRelationships(invalidRelList);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::DoesNotExistError);
 
     /* Capabilities */
     QVERIFY(manager.supportedDataTypes().count() == 0);

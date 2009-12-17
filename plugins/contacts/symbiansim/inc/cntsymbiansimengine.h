@@ -54,7 +54,14 @@
 //
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
+
+#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
+#include <..\tsrc\ETelTestServer\Client\Inc\etelmm_etel_test_server.h>
+#else
 #include <etelmm.h>
+#endif
+
+QTM_USE_NAMESPACE
 
 #define CNT_SYMBIANSIM_MANAGER_NAME "symbiansim"
 
@@ -67,32 +74,39 @@ public:
     ~CntSymbianSimEngine();
     void deref();
     QString managerName() const;
-    
+
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
- 
+    bool saveContact(QContact* contact, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+
+    /* Synthesize the display label of a contact */
+    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+
 private:
     QContact fetchContactL(const QContactLocalId &localId) const;
     QList<QContact> fetchContactsL() const;
+    void saveContactL(QContact* contact) const;
     void transformError(TInt symbianError, QContactManager::Error& qtError) const;
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
-    
+    QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
+
 private:
     RTelServer etelServer;
     RMobilePhone etelPhone;
     RMobilePhoneBookStore etelStore;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg etelInfoPckg;
-    
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg etelInfoPckg;
+
     QString m_managerUri;
 };
 
 class Q_DECL_EXPORT CntSymbianSimFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
         QString managerName() const;

@@ -63,13 +63,13 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework"
 MOBILITY_MODULES_UNPARSED=
 
 usage() 
 {
     echo "Usage: configure [-prefix <dir>] [headerdir <dir>] [libdir <dir>]"
-    echo "                 [-bindir <dir>] [-tests] [-examples] [-nodocs]"
+    echo "                 [-bindir <dir>] [-tests] [-examples] [-no-docs]"
     echo "                 [-debug] [-release] [-silent] [-modules <list>]"
     echo
     echo "Options:"
@@ -89,15 +89,13 @@ usage()
     echo "                    Note, this adds test symbols to all libraries"
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
-    echo "-nodocs ........... Do not build documentation (default is build docs)"
-    echo
+    echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
-    echo "                    Choose from: bearer location publishsubscribe location"
-    echo "                    multimedia contacts versit messaging systeminfo"
+    echo "                    Choose from: bearer contacts location publishsubscribe"
+    echo "                    messaging multimedia systeminfo serviceframework versit"
     echo "                    Modules should be separated by a space. If a"
     echo "                    selected module depends on other modules they"
     echo "                    will automatically be enabled."
-    echo
     echo "-maemo ............ Build Qt Mobility for Maemo."
     echo "                    (default: Desktop Linux)"
     echo "-sdk <sdk>..........Build using Apple provided SDK <path/to/sdk>."
@@ -139,11 +137,8 @@ while [ "$#" -gt 0 ]; do
         -examples)
             BUILD_EXAMPLES="yes"
             ;;
-        -nodocs)
+        -no-docs)
             BUILD_DOCS=
-            ;;
-        -docs)
-            BUILD_DOCS="yes"
             ;;
         -debug)
             RELEASEMODE=debug
@@ -163,6 +158,26 @@ while [ "$#" -gt 0 ]; do
             ;;
         -modules)
             MOBILITY_MODULES_UNPARSED=$2
+            #reset default selection
+            MOBILITY_MODULES=
+            for m in $MOBILITY_MODULES_UNPARSED; do
+                case "$m" in
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit)
+                        MOBILITY_MODULES="$MOBILITY_MODULES $m";
+                        ;;
+                    *)
+                        echo "Unknown module: $m"
+                        echo
+                        usage
+                        ;;
+
+                esac
+            done
+            if [ -z "$MOBILITY_MODULES" ]; then
+                echo "List of selected modules is empty."
+                echo 
+                usage
+            fi
             shift
             ;;
         *)
@@ -172,7 +187,6 @@ while [ "$#" -gt 0 ]; do
     esac
     shift
 done
-
 
 findframeworks()
 {
@@ -346,14 +360,12 @@ compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 
-
-
 # Now module selection
 # using 'expr match ....' should help a bit
-if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
+#if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
     # In theory we should do some sanity checking here.
-    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
-fi
+#    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
+#fi
 
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
@@ -366,14 +378,43 @@ echo "Generating Mobility Headers..."
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/global
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/location
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
+for module in $MOBILITY_MODULES; do
+    case "$module" in 
+        bearer)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
+            ;;
+        publishsubscribe)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
+            ;;
+        location)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/location
+            ;;
+        serviceframework)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
+            ;;
+        systeminfo)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
+            ;;
+        contacts)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            ;;
+        multimedia)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/experimental
+            ;;
+        messaging)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
+            ;;
+        versit)
+            #versit implies contacts
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            ;;
+        *)
+            echo "Cannot generate headers for $module"
+            ;;
+    esac
+done
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"
