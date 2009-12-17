@@ -100,7 +100,7 @@ QMediaControl *S60CameraService::control(const char *name) const
     if(qstrcmp(name,QVideoEncoderControl_iid) == 0)
         return m_videoEncoder;
 
-    if(qstrcmp(name,QMediaFormatControl_iid) == 0)
+    if(qstrcmp(name,QMediaContainerControl_iid) == 0)
         return m_mediaFormat;
 
     if(qstrcmp(name,QVideoOutputControl_iid) == 0)

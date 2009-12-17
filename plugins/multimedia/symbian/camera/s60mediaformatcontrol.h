@@ -42,12 +42,14 @@
 #ifndef S60MEDIAFORMATCONTROL_H
 #define S60MEDIAFORMATCONTROL_H
 
-#include "qmediaformatcontrol.h"
+#include "QMediaContainerControl"
 #include <QtCore/qstringlist.h>
+
+QTM_USE_NAMESPACE
 
 class S60CameraSession;
 
-class S60MediaFormatControl : public QMediaFormatControl
+class S60MediaFormatControl : public QMediaContainerControl
 {
 Q_OBJECT
 public:
@@ -55,11 +57,11 @@ public:
     S60MediaFormatControl(QObject *session, QObject *parent = 0);
     virtual ~S60MediaFormatControl() {};
 
-    virtual QStringList supportedFormats() const { return m_supportedFormats; }
-    virtual QString format() const { return m_format; }
-    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
+    virtual QStringList supportedContainers() const { return m_supportedFormats; }
+    virtual QString containerMimeType() const { return m_format; }
+    virtual void setContainerMimeType(const QString &formatMimeType) { m_format = formatMimeType; }
 
-    virtual QString formatDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
+    virtual QString containerDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
 
 private:
     S60CameraSession* m_session;

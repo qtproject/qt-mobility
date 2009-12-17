@@ -44,9 +44,12 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediaservice.h>
+#include <QMediaService>
 
 #include "qvideooutputcontrol.h"
+
+
+QTM_USE_NAMESPACE
 
 class S60MediaFormatControl;
 class S60VideoEncoder;

@@ -43,20 +43,20 @@
 #include "s60camerasession.h"
 
 S60MediaFormatControl::S60MediaFormatControl(QObject *parent)
-    :QMediaFormatControl(parent)
+    : QMediaContainerControl(parent)
 {
     m_supportedFormats.append("no mux");
-    setFormat(m_supportedFormats[0]);
+    setContainerMimeType(m_supportedFormats[0]);
 }
 
 S60MediaFormatControl::S60MediaFormatControl(QObject *session, QObject *parent)
-   :QMediaFormatControl(parent)
+   :QMediaContainerControl(parent)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
 
     m_supportedFormats.append("no mux");
-    setFormat(m_supportedFormats[0]);
+    setContainerMimeType(m_supportedFormats[0]);
 
 }
 

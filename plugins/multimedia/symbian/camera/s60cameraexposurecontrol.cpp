@@ -165,7 +165,7 @@ int S60CameraExposureControl::maximumIsoSensitivity() const
 {
     return 3200;
 }
-QList<int> S60CameraExposureControl::supportedIsoSensitivities () const
+QList<int> S60CameraExposureControl::supportedIsoSensitivities(bool *continuous) const
 {
     QList<int> res;
     res << 100;
@@ -186,7 +186,7 @@ qreal S60CameraExposureControl::aperture() const
     return -1.0;
 }
 
-QList<qreal> S60CameraExposureControl::supportedApertures() const
+QList<qreal> S60CameraExposureControl::supportedApertures(bool *continuous) const
 {
     QList<qreal> res;
     res << 2.8 << 16.0;
@@ -228,7 +228,7 @@ qreal S60CameraExposureControl::maximumShutterSpeed() const
   Returns the list of shutter speed values if camera supports only fixed set of shutter speed values,
   otherwise returns an empty list.
  */
-QList<qreal> S60CameraExposureControl::supportedShutterSpeeds() const
+QList<qreal> S60CameraExposureControl::supportedShutterSpeeds(bool *continuous) const
 {
     QList<qreal> res;
     return res;

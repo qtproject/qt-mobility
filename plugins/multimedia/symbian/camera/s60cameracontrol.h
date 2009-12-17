@@ -43,7 +43,9 @@
 #define S60CAMERACONTROL_H
 
 #include <QtCore/qobject.h>
-#include "multimedia/experimental/qcameracontrol.h"
+#include "qcameracontrol.h"
+
+QTM_USE_NAMESPACE
 
 class S60CameraService;
 class S60CameraSession;
