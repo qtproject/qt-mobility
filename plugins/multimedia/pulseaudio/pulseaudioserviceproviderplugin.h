@@ -10,7 +10,9 @@ class PulseaudioServiceProviderPlugin :
         public QMediaServiceFeaturesInterface,
         public QMediaServiceSupportedFormatsInterface
 {
-Q_OBJECT
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QMediaServiceFeaturesInterface QtMobility::QMediaServiceSupportedFormatsInterface)
+
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);
