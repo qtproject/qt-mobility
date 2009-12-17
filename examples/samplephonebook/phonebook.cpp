@@ -320,16 +320,13 @@ void PhoneBook::displayContact()
     // display the address - again, we abuse the street() field.
     addressText->setPlainText((QContactAddress(c.detail(QContactAddress::DefinitionName))).street());
 
-    QContactAvatar avatar = c.detail<QContactAvatar>();
-    QImage avatarImage = avatar.avatarImage();
-    if (avatarImage.isNull()) {
-        avatarPixmapLabel->clear();
-    } else {
-        QPixmap avatarPix = QPixmap::fromImage(avatarImage);
-        
-		avatarPixmapLabel->setPixmap(avatarPix.scaled(avatarPixmapLabel->size()));
-    }
+    QContactAvatar av = c.detail<QContactAvatar>();
+    QPixmap avatarPix = av.pixmap();
 
+    avatarPixmapLabel->clear();
+    if (!avatarPix.isNull() || avatarPix.load(av.avatar()){
+    	avatarPixmapLabel->setPixmap(avatarPix.scaled(avatarPixmapLabel->size()));
+    }   
     updateButtons();
 
 }
@@ -347,17 +344,19 @@ void PhoneBook::selectAvatar()
         QContact curr = contacts.at(currentIndex);
         QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
         av.setAvatar(selected);
+	    QPixmap avatarPix;
+
+	    if (avatarPix.load(selected)){
+	        avatarPixmapLabel->setPixmap(avatarPix.scaled(avatarPixmapLabel->size()));
+            av.setPixmap(avatarPix);
+	    }else{
+	        qWarning() << "Unable to load avatar" << selected;
+	        qWarning() << "Supported image formats are " << supportedImageFormats << " ;"  <<  QImageReader::supportedImageFormats();
+	        avatarPixmapLabel->clear();
+	    }
+
         curr.saveDetail(&av);
         contacts.replace(currentIndex, curr);
-
-	QPixmap avatarPix;
-	if (avatarPix.load(selected)){
-	    avatarPixmapLabel->setPixmap(avatarPix.scaled(avatarPixmapLabel->size()));
-	}else{
-	    qWarning() << "Unable to load avatar" << selected;
-	    qWarning() << "Supported image formats are " << supportedImageFormats << " ;"  <<  QImageReader::supportedImageFormats();
-	    avatarPixmapLabel->clear();
-	}
     }
 }
 
