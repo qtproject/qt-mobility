@@ -129,7 +129,7 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 	return CMTMEngine::instance()->retrieveHeader(id);
 }
 
-void QMessageServicePrivate::setFinished(bool successful, void (QMessageService::*signal)(QMessageService::State))
+void QMessageServicePrivate::setFinished(bool successful)
 {
     if (!successful && (_error == QMessageManager::NoError)) {
         // We must report an error of some sort
@@ -137,7 +137,7 @@ void QMessageServicePrivate::setFinished(bool successful, void (QMessageService:
     }
 
     _state = QMessageService::FinishedState;
-    emit q_ptr->(*signal)(_state);
+    emit q_ptr->stateChanged(_state);
     _active = false;
 }
 
@@ -168,7 +168,7 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessage
         d_ptr->_state = QMessageService::ActiveState;
         emit stateChanged(d_ptr->_state);
     } else {
-        d_ptr->setFinished(false, &QMessageService::stateChanged);
+        d_ptr->setFinished(false);
     }
     
     return d_ptr->_active;
@@ -187,7 +187,7 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QString 
         d_ptr->_state = QMessageService::ActiveState;
         emit stateChanged(d_ptr->_state);
     } else {
-        d_ptr->setFinished(false, &QMessageService::stateChanged);
+        d_ptr->setFinished(false);
     }
 
     return d_ptr->_active;
@@ -206,7 +206,7 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
         d_ptr->_state = QMessageService::ActiveState;
         emit stateChanged(d_ptr->_state);
     } else {
-        d_ptr->setFinished(false, &QMessageService::stateChanged);
+        d_ptr->setFinished(false);
     }
     
     return d_ptr->_active;
@@ -279,7 +279,7 @@ bool QMessageService::send(QMessage &message)
         }
     }
     
-    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
+    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -298,7 +298,7 @@ bool QMessageService::compose(const QMessage &message)
 	
 	retVal = d_ptr->compose(message);
 	
-    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
+    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -317,7 +317,7 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 
 	retVal = d_ptr->retrieveHeader(id);
 	
-    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
+    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -336,7 +336,7 @@ bool QMessageService::retrieveBody(const QMessageId& id)
 
 	retVal = d_ptr->retrieveBody(id);
 	
-    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
+    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -355,7 +355,7 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 
 	retVal = d_ptr->retrieve(messageId, id);
 	
-    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
+    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -374,7 +374,7 @@ bool QMessageService::show(const QMessageId& id)
 
     retVal = d_ptr->show(id);
     
-    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
+    d_ptr->setFinished(retVal);
     return retVal;
 }
 
