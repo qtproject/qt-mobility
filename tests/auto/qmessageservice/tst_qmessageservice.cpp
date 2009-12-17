@@ -81,7 +81,7 @@ SignalCatcher::SignalCatcher(QObject* parent)
 :
 QObject(parent),
 count(0),
-state(QMessageService::Pending),
+state(QMessageService::InactiveState),
 progressMin(0),
 progressMax(0)
 {

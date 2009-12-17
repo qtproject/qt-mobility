@@ -69,7 +69,8 @@ QTM_BEGIN_NAMESPACE
     function will return a value indicating the failure mode encountered.
     
     A client may attempt to cancel a requested operation after it has been 
-    initiated. The cancelOperation() slot is provided for this purpose.
+    initiated. The cancel() slot is provided for this purpose.  Cancelation
+    is not guaranteed to succeed, and is not possible on all platforms.
 
     A QMessageService instance supports only a single request at a time. Attempting 
     to initiate an operation on a QMessageService while another operation is already 
@@ -91,10 +92,10 @@ QTM_BEGIN_NAMESPACE
 
     This enum type is used to describe the state of the requested operation.
 
-    \value Pending          The operation has not yet begun execution.
-    \value InProgress       The operation is currently executing.
-    \value Successful       The operation has completed successfully.
-    \value Failed           The operation could not be completed successfully, and has finished execution.
+    \value InactiveState    The operation has not yet begun execution.
+    \value ActiveState      The operation is currently executing.
+    \value CanceledState    The operation was canceled.
+    \value FinishedState    The operation has finished execution; succesfully completed or otherwise.
 */
 
 /*!
@@ -291,7 +292,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageService::cancelOperation()
+    \fn QMessageService::cancel()
   
     Attempts to cancel the last requested operation.
 */

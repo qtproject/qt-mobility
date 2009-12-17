@@ -80,7 +80,8 @@ public:
         NotYetImplemented,
         FrameworkFault,
         WorkingMemoryOverflow,
-        Busy
+        Busy,
+        RequestIncomplete
     };
 
     typedef int NotificationFilterId;

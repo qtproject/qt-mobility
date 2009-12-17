@@ -87,6 +87,8 @@ public:
     bool retrieveBody(const QMessage& partialMessage);
 #endif
 
+    void setFinished(bool successful);
+
 public slots:
     void completed();
     void reportMatchingIds();
@@ -169,7 +171,7 @@ void QueryThread::run()
 void QMessageServicePrivate::completed()
 {
     _active = false;
-    _state = (_lastError == QMessageManager::NoError) ? QMessageService::Successful : QMessageService::Failed;
+    _state = QMessageService::FinishedState;
     emit stateChanged(_state);
 }
 
@@ -178,6 +180,7 @@ void QMessageServicePrivate::reportMatchingIds()
     if (_lastError == QMessageManager::NoError) {
         emit messagesFound(_candidateIds);
     }
+
     completed();
 }
 
@@ -192,16 +195,12 @@ void QMessageServicePrivate::reportMessagesCounted()
 #ifdef _WIN32_WCE
 void QMessageServicePrivate::messageUpdated(const QMessageId& id)
 {
-    if(id == m_bodyDownloadTarget)
-    {
+    if (id == m_bodyDownloadTarget) {
         bool isBodyDownloaded = !isPartiallyDownloaded(id);
-
-        if(isBodyDownloaded)
-        {
+        if (isBodyDownloaded) {
             unregisterUpdates();
-            _state = isBodyDownloaded ? QMessageService::Successful : QMessageService::Failed;
-            _active = false;
-            emit q_ptr->stateChanged(_state);
+
+            completed();
         }
     }
 }
@@ -211,7 +210,7 @@ void QMessageServicePrivate::messageUpdated(const QMessageId& id)
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
     :q_ptr(parent),
      _active(false),
-     _state(QMessageService::Pending),
+     _state(QMessageService::InactiveState),
      m_registeredUpdates(false),
      m_queryThread(0)
 {
@@ -712,6 +711,15 @@ bool QMessageServicePrivate::retrieveBody(const QMessage& partialMessage)
     return (_lastError == QMessageManager::NoError);
 }
 
+void QMessageServicePrivate::setFinished(bool successful)
+{
+    if (!successful && (_lastError == QMessageManager::NoError)) {
+        _lastError = QMessageManager::RequestIncomplete;
+    }
+
+    completed();
+}
+
 #endif
 
 QMessageService::QMessageService(QObject *parent)
@@ -749,7 +757,7 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QString 
 
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageManager::NoError;
-    d_ptr->_state = QMessageService::InProgress;
+    d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
 
 #if 0
@@ -783,7 +791,7 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
     }
     d_ptr->_active = true;
     d_ptr->_lastError = QMessageManager::NoError;
-    d_ptr->_state = QMessageService::InProgress;
+    d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
 
     // Perform the query in another thread to keep the UI thread free
@@ -811,16 +819,12 @@ bool QMessageService::send(QMessage &message)
     }
 
     d_ptr->_active = true;
-    d_ptr->_state = QMessageService::InProgress;
+    d_ptr->_state = QMessageService::ActiveState;
     d_ptr->_lastError = QMessageManager::NoError;
     emit stateChanged(d_ptr->_state);
 
-
     bool result = d_ptr->send(message);
-
-    d_ptr->_state = result ? QMessageService::Successful : QMessageService::Failed;
-    d_ptr->_active = false;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->setFinished(result);
 
     return result;
 }
@@ -833,14 +837,13 @@ bool QMessageService::compose(const QMessage &message)
     }
 
     d_ptr->_active = true;
-    d_ptr->_state = QMessageService::InProgress;
+    d_ptr->_state = QMessageService::ActiveState;
     d_ptr->_lastError = QMessageManager::NoError;
     emit stateChanged(d_ptr->_state);
 
     bool result = d_ptr->send(message,true);
-    d_ptr->_state = result ? QMessageService::Successful : QMessageService::Failed;
-    d_ptr->_active = false;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->setFinished(result);
+
     return result;
 }
 
@@ -853,10 +856,8 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
         return false;
     }
 
-    d_ptr->_state = QMessageService::Successful;
     d_ptr->_lastError = QMessageManager::NoError;
-    d_ptr->_active = false;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->setFinished(true);
 
     return true;
 }
@@ -872,7 +873,7 @@ bool QMessageService::retrieveBody(const QMessageId& id)
 #ifdef _WIN32_WCE
 
     d_ptr->_active = true;
-    d_ptr->_state = InProgress;
+    d_ptr->_state = ActiveState;
     d_ptr->_lastError = QMessageManager::NoError;
     emit stateChanged(d_ptr->_state);
 
@@ -895,12 +896,8 @@ bool QMessageService::retrieveBody(const QMessageId& id)
         d_ptr->retrieveBody(message);
 
     //emit failure immediately
-
-    if(d_ptr->_lastError != QMessageManager::NoError)
-    {
-        d_ptr->_state = Failed;
-        d_ptr->_active = false;
-        emit stateChanged(d_ptr->_state);
+    if (d_ptr->_lastError != QMessageManager::NoError) {
+        d_ptr->setFinished(false);
         return false;
     }
 
@@ -910,9 +907,7 @@ bool QMessageService::retrieveBody(const QMessageId& id)
     Q_UNUSED(id);
 
     d_ptr->_lastError = QMessageManager::NotYetImplemented;
-    d_ptr->_state = Failed;
-    d_ptr->_active = false;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->setFinished(false);
     return false;
 #endif
 }
@@ -928,7 +923,7 @@ bool QMessageService::retrieve(const QMessageId& messageId, const QMessageConten
 #ifdef _WIN32_WCE
 
     d_ptr->_active = true;
-    d_ptr->_state = InProgress;
+    d_ptr->_state = ActiveState;
     d_ptr->_lastError = QMessageManager::NoError;
     emit stateChanged(d_ptr->_state);
 
@@ -955,12 +950,8 @@ bool QMessageService::retrieve(const QMessageId& messageId, const QMessageConten
     }
 
     //emit failure immediately
-
-    if(d_ptr->_lastError != QMessageManager::NoError)
-    {
-        d_ptr->_state = Failed;
-        d_ptr->_active = false;
-        emit stateChanged(d_ptr->_state);
+    if (d_ptr->_lastError != QMessageManager::NoError) {
+        d_ptr->setFinished(false);
         return false;
     }
 
@@ -971,10 +962,7 @@ bool QMessageService::retrieve(const QMessageId& messageId, const QMessageConten
     Q_UNUSED(id)
 
     d_ptr->_lastError = QMessageManager::NotYetImplemented;
-    d_ptr->_state = Failed;
-    d_ptr->_active = false;
-    emit stateChanged(d_ptr->_state);
-
+    d_ptr->setFinished(false);
 #endif
 
     return false;
@@ -988,14 +976,13 @@ bool QMessageService::show(const QMessageId& id)
     }
 
     d_ptr->_active = true;
-    d_ptr->_state = InProgress;
+    d_ptr->_state = ActiveState;
     d_ptr->_lastError = QMessageManager::NoError;
     emit stateChanged(d_ptr->_state);
 
     bool result = d_ptr->show(id);
-    d_ptr->_state = result ? QMessageService::Successful : QMessageService::Failed;
-    d_ptr->_active = false;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->setFinished(result);
+
     return result;
 }
 
@@ -1009,9 +996,7 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     }
 
     d_ptr->_lastError = QMessageManager::NotYetImplemented;
-    d_ptr->_state = Failed;
-    d_ptr->_active = false;
-    emit stateChanged(d_ptr->_state);
+    d_ptr->setFinished(false);
 
     return false;
 }
@@ -1021,7 +1006,7 @@ QMessageService::State QMessageService::state() const
     return d_ptr->_state;
 }
 
-void QMessageService::cancelOperation()
+void QMessageService::cancel()
 {
 #ifdef _WIN32_WCE
     if(d_ptr->_active)
@@ -1032,7 +1017,7 @@ void QMessageService::cancelOperation()
         {
             d_ptr->unregisterUpdates();
             d_ptr->_lastError = QMessageManager::NoError;
-            d_ptr->_state = QMessageService::Pending;
+            d_ptr->_state = QMessageService::InactiveState;
             d_ptr->_active = false;
             emit stateChanged(d_ptr->_state);
         }

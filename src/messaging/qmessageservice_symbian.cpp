@@ -54,11 +54,10 @@
 QTM_BEGIN_NAMESPACE
 
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
- : q_ptr(0),
-   _state(QMessageService::Pending),
+ : q_ptr(parent),
+   _state(QMessageService::InactiveState),
    _active(false)
 {
-	Q_UNUSED(parent);
 }
       
 QMessageServicePrivate::~QMessageServicePrivate()
@@ -130,6 +129,18 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 	return CMTMEngine::instance()->retrieveHeader(id);
 }
 
+void QMessageServicePrivate::setFinished(bool successful, void (QMessageService::*signal)(QMessageService::State))
+{
+    if (!successful && (_lastError == QMessageManager::NoError)) {
+        // We must report an error of some sort
+        _lastError = QMessageManager::RequestIncomplete;
+    }
+
+    _state = QMessageService::FinishedState;
+    emit q_ptr->(*signal)(_state);
+    _active = false;
+}
+
 QMessageService::QMessageService(QObject *parent)
     : QObject(parent),
     d_ptr(new QMessageServicePrivate(this))
@@ -154,13 +165,10 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessage
     d_ptr->_lastError = QMessageManager::NoError;
     
     if (d_ptr->queryMessages(filter, sortOrder, limit, offset)) {
-        d_ptr->_state = QMessageService::InProgress;
+        d_ptr->_state = QMessageService::ActiveState;
         emit stateChanged(d_ptr->_state);
     } else {
-        d_ptr->_state = QMessageService::Failed;
-        emit stateChanged(d_ptr->_state);
-    
-        d_ptr->_active = false;
+        d_ptr->setFinished(false, &QMessageService::stateChanged);
     }
     
     return d_ptr->_active;
@@ -176,13 +184,10 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QString 
     d_ptr->_lastError = QMessageManager::NoError;
 
     if (d_ptr->queryMessages(filter, body, matchFlags, sortOrder, limit, offset)) {
-        d_ptr->_state = QMessageService::InProgress;
+        d_ptr->_state = QMessageService::ActiveState;
         emit stateChanged(d_ptr->_state);
     } else {
-        d_ptr->_state = QMessageService::Failed;
-        emit stateChanged(d_ptr->_state);
-    
-        d_ptr->_active = false;
+        d_ptr->setFinished(false, &QMessageService::stateChanged);
     }
 
     return d_ptr->_active;
@@ -198,13 +203,10 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
     d_ptr->_lastError = QMessageManager::NoError;
     
     if (d_ptr->countMessages(filter)) {
-        d_ptr->_state = QMessageService::InProgress;
+        d_ptr->_state = QMessageService::ActiveState;
         emit stateChanged(d_ptr->_state);
     } else {
-        d_ptr->_state = QMessageService::Failed;
-        emit stateChanged(d_ptr->_state);
-    
-        d_ptr->_active = false;
+        d_ptr->setFinished(false, &QMessageService::stateChanged);
     }
     
     return d_ptr->_active;
@@ -221,7 +223,7 @@ bool QMessageService::send(QMessage &message)
 	
     bool retVal = true;	
     
-    d_ptr->_state = QMessageService::InProgress;
+    d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
     
     // Check message type
@@ -277,10 +279,7 @@ bool QMessageService::send(QMessage &message)
         }
     }
     
-    d_ptr->_state = retVal ? QMessageService::Successful : QMessageService::Failed;
-    emit stateChanged(d_ptr->_state);
-    d_ptr->_active = false;
-    
+    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
     return retVal;
 }
 
@@ -294,15 +293,12 @@ bool QMessageService::compose(const QMessage &message)
 	d_ptr->_lastError = QMessageManager::NoError;
 	
 	bool retVal = true;
-	d_ptr->_state = QMessageService::InProgress;
+	d_ptr->_state = QMessageService::ActiveState;
 	emit stateChanged(d_ptr->_state);
 	
 	retVal = d_ptr->compose(message);
 	
-    d_ptr->_state = retVal ? QMessageService::Successful : QMessageService::Failed;
-    emit stateChanged(d_ptr->_state);
-    d_ptr->_active = false;
-    
+    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
     return retVal;
 }
 
@@ -316,15 +312,12 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 	d_ptr->_lastError = QMessageManager::NoError;
 	
 	bool retVal = true;
-	d_ptr->_state = QMessageService::InProgress;
+	d_ptr->_state = QMessageService::ActiveState;
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieveHeader(id);
 	
-    d_ptr->_state = retVal ? QMessageService::Successful : QMessageService::Failed;
-    emit stateChanged(d_ptr->_state);
-    d_ptr->_active = false;
-    
+    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
     return retVal;
 }
 
@@ -338,15 +331,12 @@ bool QMessageService::retrieveBody(const QMessageId& id)
 	d_ptr->_lastError = QMessageManager::NoError;
 	
 	bool retVal = true;
-	d_ptr->_state = QMessageService::InProgress;
+	d_ptr->_state = QMessageService::ActiveState;
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieveBody(id);
 	
-    d_ptr->_state = retVal ? QMessageService::Successful : QMessageService::Failed;
-    emit stateChanged(d_ptr->_state);
-    d_ptr->_active = false;
-    
+    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
     return retVal;
 }
 
@@ -360,15 +350,12 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 	d_ptr->_lastError = QMessageManager::NoError;
 
 	bool retVal = true;
-	d_ptr->_state = QMessageService::InProgress;
+	d_ptr->_state = QMessageService::ActiveState;
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieve(messageId, id);
 	
-    d_ptr->_state = retVal ? QMessageService::Successful : QMessageService::Failed;
-    emit stateChanged(d_ptr->_state);
-    d_ptr->_active = false;
-    
+    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
     return retVal;
 }
 
@@ -382,15 +369,12 @@ bool QMessageService::show(const QMessageId& id)
 	d_ptr->_lastError = QMessageManager::NoError;
 	
 	bool retVal = true;
-	d_ptr->_state = QMessageService::InProgress;
+	d_ptr->_state = QMessageService::ActiveState;
 	emit stateChanged(d_ptr->_state);
 
     retVal = d_ptr->show(id);
     
-    d_ptr->_state = retVal ? QMessageService::Successful : QMessageService::Failed;
-    emit stateChanged(d_ptr->_state);
-    d_ptr->_active = false;
-    
+    d_ptr->setFinished(retVal, &QMessageService::stateChanged);
     return retVal;
 }
 
@@ -405,7 +389,7 @@ QMessageService::State QMessageService::state() const
 	return d_ptr->_state;
 }
 
-void QMessageService::cancelOperation()
+void QMessageService::cancel()
 {
 }
 

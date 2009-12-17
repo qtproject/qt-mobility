@@ -129,6 +129,7 @@ QTM_BEGIN_NAMESPACE
     \value FrameworkFault         The operation failed because the messaging store encountered an error in performing the operation.
     \value WorkingMemoryOverflow  The operation failed because the messaging store exhausted all memory available for evaluating queries.
     \value Busy                   The operation failed because the messaging store is being used by another thread.
+    \value RequestIncomplete      The operation failed to report successful completion, although no specific error was reported.
 */
 
 /*!

@@ -280,20 +280,22 @@ void MessageSender::send()
     }
 }
 
-void MessageSender::stateChanged(QMessageService::State s)
+void MessageSender::stateChanged(QMessageService::State newState)
 {
-    if (s == QMessageService::Successful) {
-        QMessageBox::information(0, tr("Success"), tr("Message sent successfully"));
-        sendButton->setEnabled(true);
-    } else if (s == QMessageService::Failed) {
-        QMessageBox::warning(0, tr("Failed"), tr("Unable to send message"));
+    if (newState == QMessageService::FinishedState) {
+        if (service.lastError() == QMessageManager::NoError) {
+            QMessageBox::information(0, tr("Success"), tr("Message sent successfully"));
+            sendButton->setEnabled(true);
+        } else {
+            QMessageBox::warning(0, tr("Failed"), tr("Unable to send message"));
 
-        if (!manager.removeMessage(sendId)) {
-            qWarning() << "Unable to remove failed message:" << sendId.toString();
+            if (!manager.removeMessage(sendId)) {
+                qWarning() << "Unable to remove failed message:" << sendId.toString();
+            }
+
+            sendButton->setEnabled(true);
+            sendId = QMessageId();
         }
-
-        sendButton->setEnabled(true);
-        sendId = QMessageId();
     }
 }
 
