@@ -87,9 +87,6 @@ private: // From MVideoPlayerUtilityObserver
     void MvpuoPlayComplete(TInt aError);
     void MvpuoEvent(const TMMFEvent &aEvent);
 
-private Q_SLOTS:
-    void updateWidget();
-
 private:
     CVideoPlayerUtility* m_player;
     RWsSession* m_wsSession;

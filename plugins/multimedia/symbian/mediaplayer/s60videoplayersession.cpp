@@ -167,7 +167,6 @@ bool S60VideoPlayerSession::isVideoAvailable() const
 
 void S60VideoPlayerSession::doPlay()
 {   
-    updateWidget();
     m_player->Play();
 }
 
@@ -201,6 +200,14 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {    
+	TRAPD(err,
+	m_player->SetDisplayWindowL(*m_wsSession, 
+								  *m_screenDevice, 
+								  *m_window, 
+								  m_windowRect, 
+								  m_clipRect);
+		//m_coeControl->ActivateL();
+	);
     setError(aError);
     initComplete();
 }
@@ -242,19 +249,4 @@ void S60VideoPlayerSession::updateMetaDataEntries()
     }
     
     emit metaDataChanged();
-}
-
-
-void S60VideoPlayerSession::updateWidget()
-{
-    TRAPD(err,
-    m_player->SetDisplayWindowL(*m_wsSession, 
-                                  *m_screenDevice, 
-                                  *m_window, 
-                                  m_windowRect, 
-                                  m_clipRect);
-        //m_coeControl->ActivateL();
-    );
-    
-    //m_player->SetScaleFactorL(100,100,true);
 }
