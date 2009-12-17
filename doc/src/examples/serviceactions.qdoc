@@ -58,7 +58,7 @@
 
     \snippet    ../../examples/serviceactions/mainwindow.cpp construct-message 
 
-    The message is then passed to the QMessageServiceAction::compose or QMessageServiceAction::send 
+    The message is then passed to the QMessageService::compose() or QMessageService::send()
     service actions to initiate sending of the message by the platform, or trigger 
     display by the platforms' message composer with the QMessage contents:
 
@@ -71,11 +71,11 @@
     in its mail accounts).
 
     The last 50 messages (incoming/outgoing) are queried from the store using 
-    the QMessageServiceAction::queryMessages service action:
+    the QMessageService::queryMessages() service request:
 
     \snippet    ../../examples/serviceactions/mainwindow.cpp load-message
 
-    Once the results of the query are returned via the QMessageServiceAction::messagesFound signal,
+    Once the results of the query are returned via the QMessageService::messagesFound() signal,
     the widget loads each of the returned messages in turn and populates it's list with
     message subjects.
 
@@ -84,7 +84,7 @@
     \snippet    ../../examples/serviceactions/mainwindow.cpp process-results2
 
     Selecting "Show" from the action menu will display the selected message using the 
-    platforms' message viewer via the QMessageServiceAction::show service action.
+    platforms' message viewer via the QMessageService::show() service action.
 
     \snippet    ../../examples/serviceactions/mainwindow.cpp show-message
 
@@ -101,7 +101,7 @@
 
     \snippet    ../../examples/serviceactions/mainwindow.cpp partial-message-check
 
-    When the download link is clicked, the message body is retrieved using the QMessageServiceAction::retrieveBody service action.     
+    When the download link is clicked, the message body is retrieved using the QMessageService::retrieveBody() service action.     
      
     \snippet    ../../examples/serviceactions/mainwindow.cpp retrieve-message-body
 
