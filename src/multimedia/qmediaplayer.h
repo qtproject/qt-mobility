@@ -114,6 +114,7 @@ public:
     static QtMedia::SupportEstimate hasSupport(const QString &mimeType,
                                             const QStringList& codecs = QStringList(),
                                             Flags flags = 0);
+    static QStringList supportedMimeTypes(Flags flags = 0);
 
     QMediaContent media() const;
     const QIODevice *mediaStream() const;

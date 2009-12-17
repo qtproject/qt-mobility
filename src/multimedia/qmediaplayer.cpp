@@ -527,6 +527,10 @@ void QMediaPlayer::setPlaybackRate(qreal rate)
     If a \a stream is supplied; media data will be read from it instead of resolving the media
     source.  In this case the media source may still be used to resolve additional information
     about the media such as mime type.
+
+    Setting the media to a null QMediaContent will cause the player to discard all
+    information relating to the current media source and to cease all I/O operations related
+    to that media.
 */
 
 void QMediaPlayer::setMedia(const QMediaContent &media, QIODevice *stream)
@@ -621,6 +625,18 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                                     mimeType,
                                                                     codecs,
                                                                     flags);
+}
+
+/*!
+    Returns a list of MIME types supported by the media player.
+
+    The \a flags argument causes the resultant list to be restricted to MIME types which can be supported
+    given additional requirements, such as performance indicators.
+*/
+QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
+{
+    return QMediaServiceProvider::defaultServiceProvider()->supportedMimeTypes(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER),
+                                                                               flags);
 }
 
 
@@ -739,6 +755,10 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
     be played.
 
     By default this property has a null QMediaContent.
+
+    Setting this property to a null QMediaContent will cause the player to discard all
+    information relating to the current media source and to cease all I/O operations related
+    to that media.
 
     \sa QMediaContent
 */

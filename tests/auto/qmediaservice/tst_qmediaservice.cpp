@@ -41,7 +41,6 @@
 
 #include <QtTest/QtTest>
 
-#include <qaudiodevicecontrol.h>
 #include <qvideodevicecontrol.h>
 #include <qmediacontrol.h>
 #include <qmediaservice.h>
@@ -60,7 +59,6 @@ private slots:
 
     void control_iid();
     void control();
-    void nullAudioDeviceControl();    
 };
 
 
@@ -125,39 +123,6 @@ struct QtTestDevice
     QIcon icon;
 };
 
-class QtTestAudioDeviceControl : public QAudioDeviceControl
-{
-public:
-    QtTestAudioDeviceControl(QObject *parent = 0)
-        : QAudioDeviceControl(parent)
-        , m_selectedDevice(-1)
-        , m_defaultDevice(-1)
-    {
-    }
-
-    int deviceCount() const { return devices.count(); }
-
-    QString deviceName(int index) const { return devices.value(index).name; }
-    QString deviceDescription(int index) const { return devices.value(index).description; }
-    QIcon deviceIcon(int index) const { return devices.value(index).icon; }
-
-    int defaultDevice() const { return m_defaultDevice; }
-    void setDefaultDevice(int index) { m_defaultDevice = index; }
-
-    int selectedDevice() const { return m_selectedDevice; }
-    void setSelectedDevice(int index)
-    {
-        emit selectedDeviceChanged(m_selectedDevice = index);
-        emit selectedDeviceChanged(devices.value(index).name);
-    }
-
-    QList<QtTestDevice> devices;
-
-private:
-    int m_selectedDevice;
-    int m_defaultDevice;
-};
-
 class QtTestVideoDeviceControl : public QVideoDeviceControl
 {
 public:
@@ -209,8 +174,6 @@ public:
             return const_cast<QtTestMediaControlB *>(&controlB);
         else if (strcmp(name, QtTestMediaControlC_iid) == 0)
             return const_cast<QtTestMediaControlC *>(&controlC);
-        else if (hasDeviceControls && strcmp(name, QAudioDeviceControl_iid) == 0)
-            return const_cast<QtTestAudioDeviceControl *>(&audioDeviceControl);
         else if (hasDeviceControls && strcmp(name, QVideoDeviceControl_iid) == 0)
             return const_cast<QtTestVideoDeviceControl *>(&videoDeviceControl);
         else
@@ -222,7 +185,6 @@ public:
     QtTestMediaControlA controlA;
     QtTestMediaControlB controlB;
     QtTestMediaControlC controlC;
-    QtTestAudioDeviceControl audioDeviceControl;
     QtTestVideoDeviceControl videoDeviceControl;
     bool hasDeviceControls;
 };
@@ -250,13 +212,6 @@ void tst_QMediaService::control()
     QCOMPARE(service.control<QtTestMediaControlB *>(), &service.controlB);
     QVERIFY(!service.control<QtTestMediaControlC *>());  // Faulty implementation returns A.
     QVERIFY(!service.control<QtTestMediaControlD *>());  // No control of that type.
-}
-
-void tst_QMediaService::nullAudioDeviceControl()
-{
-    const QString deviceName(QLatin1String("test"));
-
-    QtTestMediaService service;
 }
 
 QTEST_MAIN(tst_QMediaService)

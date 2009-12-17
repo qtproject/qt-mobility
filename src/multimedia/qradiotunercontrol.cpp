@@ -97,9 +97,9 @@ QRadioTunerControl::~QRadioTunerControl()
 }
 
 /*!
-    \fn bool QRadioTunerControl::isAvailable() const
+    \fn QtMedia::Availability QRadioTunerControl::availability() const
 
-    Returns true if the radio tuner control is supported, otherwise returns false.
+    Returns the state of the radio service.
 */
 
 /*!

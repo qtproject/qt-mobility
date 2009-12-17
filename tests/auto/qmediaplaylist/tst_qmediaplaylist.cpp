@@ -606,7 +606,7 @@ void tst_QMediaPlaylist::setMediaObject()
     QVERIFY(!playlist.isReadOnly());
 
     playlist.setMediaObject(&mediaObject);
-    QCOMPARE(playlist.mediaObject(), &mediaObject);
+    QCOMPARE(playlist.mediaObject(), qobject_cast<QMediaObject*>(&mediaObject));
     QCOMPARE(playlist.mediaCount(), 3);
     QVERIFY(playlist.isReadOnly());
 
@@ -616,7 +616,7 @@ void tst_QMediaPlaylist::setMediaObject()
     QVERIFY(!playlist.isReadOnly());
 
     playlist.setMediaObject(&mediaObject);
-    QCOMPARE(playlist.mediaObject(), &mediaObject);
+    QCOMPARE(playlist.mediaObject(), qobject_cast<QMediaObject*>(&mediaObject));
     QCOMPARE(playlist.mediaCount(), 3);
     QVERIFY(playlist.isReadOnly());
 }

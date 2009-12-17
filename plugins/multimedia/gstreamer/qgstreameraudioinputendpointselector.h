@@ -39,44 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIODEVICECONTROL_H
-#define QAUDIODEVICECONTROL_H
+#ifndef QGSTREAMERAUDIOINPUTENDPOINTSELECTOR_H
+#define QGSTREAMERAUDIOINPUTENDPOINTSELECTOR_H
 
-#include <qmediacontrol.h>
+#include <qaudioendpointselector.h>
+#include <QtCore/qstringlist.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class Q_MEDIA_EXPORT QAudioDeviceControl : public QMediaControl
+class QGstreamerAudioInputEndpointSelector : public QAudioEndpointSelector
 {
-    Q_OBJECT
-
+Q_OBJECT
 public:
-    virtual ~QAudioDeviceControl();
+    QGstreamerAudioInputEndpointSelector(QObject *parent);
+    ~QGstreamerAudioInputEndpointSelector();
 
-    virtual int deviceCount() const = 0;
-
-    virtual QString deviceName(int index) const = 0;
-    virtual QString deviceDescription(int index) const = 0;
-    virtual QIcon deviceIcon(int index) const = 0;
-
-    virtual int defaultDevice() const = 0;
-    virtual int selectedDevice() const = 0;
+    QList<QString> availableEndpoints() const;
+    QString endpointDescription(const QString& name) const;
+    QString defaultEndpoint() const;
+    QString activeEndpoint() const;
 
 public Q_SLOTS:
-    virtual void setSelectedDevice(int index) = 0;
+    void setActiveEndpoint(const QString& name);
 
-Q_SIGNALS:
-    void selectedDeviceChanged(int index);
-    void selectedDeviceChanged(const QString &deviceName);
-    void devicesChanged();
+private:
+    void update();
+    void updateAlsaDevices();
+    void updateOssDevices();
+    void updatePulseDevices();
 
-protected:
-    QAudioDeviceControl(QObject *parent = 0);
+    QString     m_audioInput;
+    QList<QString> m_names;
+    QList<QString> m_descriptions;
 };
 
-#define QAudioDeviceControl_iid "com.nokia.Qt.QAudioDeviceControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QAudioDeviceControl, QAudioDeviceControl_iid)
-
-QTM_END_NAMESPACE
-
-#endif // QAUDIODEVICECONTROL_H
+#endif // QGSTREAMERAUDIOINPUTENDPOINTSELECTOR_H

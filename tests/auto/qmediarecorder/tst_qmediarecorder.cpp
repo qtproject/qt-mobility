@@ -46,7 +46,7 @@
 #include <qmediaservice.h>
 #include <qmediarecordercontrol.h>
 #include <qmediarecorder.h>
-#include <qaudiodevicecontrol.h>
+#include <qaudioendpointselector.h>
 #include <qaudioencodercontrol.h>
 #include <qmediacontainercontrol.h>
 #include <qvideoencodercontrol.h>
@@ -234,65 +234,59 @@ private:
 
 };
 
-class MockAudioDeviceProvider : public QAudioDeviceControl
+class MockAudioEndpointSelectorProvider : public QAudioEndpointSelector
 {
     Q_OBJECT
 public:
-    MockAudioDeviceProvider(QObject *parent):
-        QAudioDeviceControl(parent)
+    MockAudioEndpointSelectorProvider(QObject *parent):
+        QAudioEndpointSelector(parent)
     {
         m_names << "device1" << "device2" << "device3";
         m_descriptions << "dev1 comment" << "dev2 comment" << "dev3 comment";
-        m_index = 0;
-        emit devicesChanged();
+        emit availableEndpointsChanged();
     }
-    ~MockAudioDeviceProvider() {};
+    ~MockAudioEndpointSelectorProvider() {};
 
-    int deviceCount() const
+    QList<QString> availableEndpoints() const
     {
-        return m_names.count();
-    }
-
-    QString deviceName(int index) const
-    {
-        return m_names[index];
+        return m_names;
     }
 
-    QString deviceDescription(int index) const
+    QString endpointDescription(const QString& name) const
     {
-        return m_descriptions[index];
+        QString desc;
+
+        for(int i = 0; i < m_names.count(); i++) {
+            if (m_names.at(i).compare(name) == 0) {
+                desc = m_descriptions.at(i);
+                break;
+            }
+        }
+        return desc;
     }
 
-    QIcon deviceIcon(int index) const
+    QString defaultEndpoint() const
     {
-        Q_UNUSED(index)
-
-        return QIcon();
+        return m_names.at(0);
     }
 
-    int defaultDevice() const
+    QString activeEndpoint() const
     {
-        return 1;
-    }
-
-    int selectedDevice() const
-    {
-        return m_index;
+        return m_audioInput;
     }
 
 public Q_SLOTS:
-    void setSelectedDevice(int index)
+
+    void setActiveEndpoint(const QString& name)
     {
-        m_index = index;
-        emit selectedDeviceChanged(m_index);
-        emit selectedDeviceChanged(m_names[m_index]);
-        emit devicesChanged();
+        m_audioInput = name;
+        emit activeEndpointChanged(name);
     }
 
 private:
-    int m_index;
-    QStringList m_names;
-    QStringList m_descriptions;
+    QString         m_audioInput;
+    QList<QString>  m_names;
+    QList<QString>  m_descriptions;
 };
 
 class MockProvider : public QMediaRecorderControl
@@ -367,7 +361,7 @@ public:
         mockControl(control),
         hasControls(true)
     {
-        mockAudioDeviceControl = new MockAudioDeviceProvider(parent);
+        mockAudioEndpointSelector = new MockAudioEndpointSelectorProvider(parent);
         mockAudioEncodeControl = new MockAudioEncodeProvider(parent);
         mockFormatControl = new MockMediaContainerControl(parent);
         mockVideoEncodeControl = new MockVideoEncodeProvider(parent);
@@ -377,8 +371,8 @@ public:
     {
         if(hasControls && qstrcmp(name,QAudioEncoderControl_iid) == 0)
             return mockAudioEncodeControl;
-        if(hasControls && qstrcmp(name,QAudioDeviceControl_iid) == 0)
-            return mockAudioDeviceControl;
+        if(hasControls && qstrcmp(name,QAudioEndpointSelector_iid) == 0)
+            return mockAudioEndpointSelector;
         if(hasControls && qstrcmp(name,QMediaRecorderControl_iid) == 0)
             return mockControl;
         if(hasControls && qstrcmp(name,QMediaContainerControl_iid) == 0)
@@ -390,7 +384,7 @@ public:
     }
 
     QMediaControl   *mockControl;
-    QAudioDeviceControl     *mockAudioDeviceControl;
+    QAudioEndpointSelector  *mockAudioEndpointSelector;
     QAudioEncoderControl    *mockAudioEncodeControl;
     QMediaContainerControl     *mockFormatControl;
     QVideoEncoderControl    *mockVideoEncodeControl;
@@ -431,7 +425,7 @@ private slots:
 
 private:
     QAudioEncoderControl* encode;
-    QAudioDeviceControl* audio;
+    QAudioEndpointSelector* audio;
     MockObject      *object;
     MockService		*service;
     MockProvider    *mock;
@@ -450,7 +444,7 @@ void tst_QMediaRecorder::initTestCase()
     capture = new QMediaRecorder(object);
     capture->setNotifyInterval(100);
 
-    audio = qobject_cast<QAudioDeviceControl*>(capture->service()->control(QAudioDeviceControl_iid));
+    audio = qobject_cast<QAudioEndpointSelector*>(capture->service()->control(QAudioEndpointSelector_iid));
     encode = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
     videoEncode = qobject_cast<QVideoEncoderControl*>(capture->service()->control(QVideoEncoderControl_iid));
 }
@@ -616,15 +610,14 @@ void tst_QMediaRecorder::testRecord()
 
 void tst_QMediaRecorder::testAudioDeviceControl()
 {
-    QSignalSpy readSignal(audio,SIGNAL(selectedDeviceChanged(int)));
-    QVERIFY(audio->deviceCount() == 3);
-    QVERIFY(audio->defaultDevice() == 1);
-    audio->setSelectedDevice(1);
+    QSignalSpy readSignal(audio,SIGNAL(activeEndpointChanged(QString)));
+    QVERIFY(audio->availableEndpoints().size() == 3);
+    QVERIFY(audio->defaultEndpoint().compare("device1") == 0);
+    audio->setActiveEndpoint("device2");
     QTestEventLoop::instance().enterLoop(1);
-    QVERIFY(audio->selectedDevice() == 1);
+    QVERIFY(audio->activeEndpoint().compare("device2") == 0);
     QVERIFY(readSignal.count() == 1);
-    QVERIFY(audio->deviceName(1) == QString("device2"));
-    QVERIFY(audio->deviceDescription(1) == "dev2 comment");
+    QVERIFY(audio->endpointDescription("device2").compare("dev2 comment") == 0);
 }
 
 void tst_QMediaRecorder::testAudioEncodeControl()

@@ -170,6 +170,14 @@ namespace QtMedia
         TwoPassEncoding
     };
 
+    enum AvailabilityError
+    {
+        NoError,
+        ServiceMissingError,
+        BusyError,
+        ResourceError
+    };
+
 }
 
 QTM_END_NAMESPACE

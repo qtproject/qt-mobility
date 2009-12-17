@@ -39,44 +39,66 @@
 **
 ****************************************************************************/
 
-#ifndef S60AUDIODEVICECONTROL_H
-#define S60AUDIODEVICECONTROL_H
+#include "s60audiocapturesession.h"
+#include "s60audioendpointselector.h"
 
-#include <QStringList>
+#include <QtGui/QIcon>
+#include <QtCore/QDebug>
 
-#include <QAudioDeviceControl>
 
-QTM_USE_NAMESPACE
-
-class S60AudioCaptureSession;
-
-class S60AudioDeviceControl : public QAudioDeviceControl
+S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *parent)
+    :QAudioEndpointSelector(parent)
 {
+    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
 
-Q_OBJECT
+    update();
 
-public:
-    S60AudioDeviceControl(QObject *parent);
-    virtual ~S60AudioDeviceControl();
+    m_audioInput = defaultEndpoint();
+}
 
-    int deviceCount() const;
+S60AudioEndpointSelector::~S60AudioEndpointSelector()
+{
+}
 
-    QString deviceName(int index) const;
-    QString deviceDescription(int index) const;
-    QIcon deviceIcon(int index) const;
+QList<QString> S60AudioEndpointSelector::availableEndpoints() const
+{
+    return m_names;
+}
 
-    int defaultDevice() const;
-    int selectedDevice() const;
+QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
+{
+    QString desc;
 
-public Q_SLOTS:
-    void setSelectedDevice(int index);
+    for(int i = 0; i < m_names.count(); i++) {
+        if (m_names.at(i).compare(name) == 0) {
+            desc = m_names.at(i);
+            break;
+        }
+    }
+    return desc;
+}
 
-private:
-    void update();
+QString S60AudioEndpointSelector::defaultEndpoint() const
+{
+    return QString();
+}
 
-    QStringList             m_names;
-    QStringList             m_descriptions;
-    S60AudioCaptureSession* m_session;
-};
+QString S60AudioEndpointSelector::activeEndpoint() const
+{
+    return m_audioInput;
+}
 
-#endif // S60AUDIODEVICECONTROL_H
+void S60AudioEndpointSelector::setActiveEndpoint(const QString& name)
+{
+    m_audioInput = name;
+    m_session->setCaptureDevice(name);
+}
+
+void S60AudioEndpointSelector::update()
+{
+    m_names.clear();
+    m_descriptions.clear();
+
+    m_names.append(QString("MMF"));
+    m_descriptions.append(QString("MMF"));
+}

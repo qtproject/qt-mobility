@@ -160,6 +160,7 @@ public:
     static QString deviceDescription(const QByteArray &device);
 
     bool isAvailable() const;
+    QtMedia::AvailabilityError availabilityError() const;
 
     void start();
     void stop();
