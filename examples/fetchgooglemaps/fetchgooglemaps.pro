@@ -8,7 +8,8 @@ SOURCES = mapwindow.cpp \
           main.cpp
 
 include(../examples.pri)
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 
 symbian: {
     addFiles.sources = nmealog.txt
@@ -22,4 +23,3 @@ symbian: {
     INSTALLS += logfile
     build_pass:ALL_DEPS+=install_logfile
 }
-

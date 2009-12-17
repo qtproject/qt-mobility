@@ -16,7 +16,8 @@ MOC_DIR = .moc/
 OBJECTS_DIR = .obj/
 
 LIBS += -lqttracker
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 target.path = $$SOURCE_DIR/plugins/contacts
 INSTALLS += target

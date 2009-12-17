@@ -6,5 +6,6 @@ SOURCES += tst_qcamera.cpp
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 

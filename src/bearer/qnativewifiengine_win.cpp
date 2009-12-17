@@ -537,6 +537,7 @@ QString QNativeWifiEngine::getInterfaceFromId(const QString &id)
         }
 
         local_WlanFreeMemory(connectionAttributes);
+        local_WlanFreeMemory(interfaceList);
     }
 
     return QString();

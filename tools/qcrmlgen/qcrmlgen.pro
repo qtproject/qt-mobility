@@ -14,5 +14,6 @@ SOURCES=\
     qcrmlparser.cpp
 
 include(../../common.pri)
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 include(../../features/deploy.pri)

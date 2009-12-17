@@ -45,19 +45,19 @@
 #include <QtCore/qdebug.h>
 #include <QtGui/qapplication.h>
 #include <QtGui/qpainter.h>
+#include <QtGui/qevent.h>
 
 #include <coemain.h>    // For CCoeEnv
 #include <coecntrl.h>
 #include <w32std.h>
 
-class S60VideoWidget : public QWidget//, MVFProcessor
+class S60VideoWidget : public QWidget
 {
 public:
     S60VideoWidget(QWidget *parent = 0)
         :QWidget(parent)
     {
-        //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored); 
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         QPalette palette;
         palette.setColor(QPalette::Background, Qt::black);
         setPalette(palette);
@@ -82,21 +82,24 @@ public:
             updateGeometry();
         }
     }
-    void ViewFinderFrameReady(const QImage& image)
+    
+    void viewFinderFrameReady(const QImage& image)
     {
         m_pixmapImage = QPixmap::fromImage(image);
         repaint();
     }
-    
+
 protected:
     void paintEvent(QPaintEvent *)
     {
+        if (!updatesEnabled())
+            return; //this avoids repaint from native events
         QPainter painter(this);
         painter.fillRect(rect(), palette().background());
     }
 
-    QSize m_nativeSize;
     QPixmap m_pixmapImage;
+    QSize m_nativeSize;
 };
 
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
@@ -113,8 +116,13 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
 
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
-
-    // TODO:
+	if (e->type() == QEvent::Show) {
+		// Setting these values ensures smooth resizing since it
+		// will prevent the system from clearing the background
+		m_widget->setAttribute(Qt::WA_NoSystemBackground, true);
+		//m_widget->setAttribute(Qt::WA_PaintOnScreen, true);
+	}
+	
     return false;
 }
 
@@ -172,14 +180,14 @@ void S60VideoWidgetControl::setFullScreen(bool fullScreen)
 
         m_widget->show();
 
-        emit fullScreenChanged(m_widget->isFullScreen());
+        emit fullScreenChanged(isFullScreen());
     } else {
         m_widget->setWindowFlags(m_widget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
         m_widget->setWindowState(m_widget->windowState() & ~Qt::WindowFullScreen);
 
         m_widget->show();
 
-        emit fullScreenChanged(m_widget->isFullScreen());
+        emit fullScreenChanged(isFullScreen());
     }
 }
 

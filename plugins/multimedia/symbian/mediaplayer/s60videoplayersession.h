@@ -61,10 +61,13 @@ public:
     qint64 position() const;
     bool isVideoAvailable() const;
     
+    int mediaLoadingProgress() const;
+    
     void setVideoRenderer(QObject *renderer);
     
 protected:
     void doLoad(const TDesC &path);
+    void doLoadUrl(const TDesC &path);
     void doPlay();
     void doStop();
     void doPause();
@@ -83,9 +86,6 @@ private: // From MVideoPlayerUtilityObserver
     void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
     void MvpuoPlayComplete(TInt aError);
     void MvpuoEvent(const TMMFEvent &aEvent);
-
-private Q_SLOTS:
-    void updateWidget();
 
 private:
     CVideoPlayerUtility* m_player;

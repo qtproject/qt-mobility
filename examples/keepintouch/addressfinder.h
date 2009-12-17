@@ -45,6 +45,7 @@
 
 #include <QMap>
 #include <QObject>
+#include <QPair>
 #include <QSet>
 #include <QWidget>
 #include <QMainWindow>
@@ -53,6 +54,11 @@ class QComboBox;
 class QListWidget;
 class QPushButton;
 class QTabWidget;
+
+#if !defined(Q_OS_WIN) || !defined(_WIN32_WCE)
+// Don't use a 'Search' Button in CE
+#define USE_SEARCH_BUTTON
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -71,25 +77,31 @@ private slots:
     void stateChanged(QMessageServiceAction::State a);
     void messagesFound(const QMessageIdList &ids);
     void continueSearch();
-#ifdef _WIN32_WCE
+#ifndef USE_SEARCH_BUTTON
     void tabChanged(int index);
 #endif
+    void messageIndexChanged(int index);
+    void showMessage();
+    void forwardMessage();
 
 private:
     void setupUi();
     void setSearchActionEnabled(bool val);
 
 private:
-    QTabWidget* tabWidget;
+    QTabWidget *tabWidget;
     QComboBox *includePeriod;
     QComboBox *excludePeriod;
-    QAction* searchAction;
+
+    QAction *searchAction;
     QPushButton *searchButton;
 
-    QListWidget*  addressList;
+    QListWidget *contactList;
     QComboBox *messageCombo;
+    QPushButton *showButton;
+    QPushButton *forwardButton;
 
-    QMessageServiceAction service;
+    QMessageServiceAction serviceAction;
 
     QMessageFilter inclusionFilter;
 
@@ -97,9 +109,9 @@ private:
     QMessageIdList exclusionMessages;
 
     QSet<QString> excludedAddresses;
-    QSet<QString> includedAddresses;
-    QMap<QString, QStringList> addressMessages;
-    QMap<QString, QStringList> addressLongForm;
+    
+    QStringList addressList;
+    QMap<QString, QList<QPair<QString, QMessageId> > > addressMessages;
 };
 
 #endif

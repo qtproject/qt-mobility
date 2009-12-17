@@ -55,6 +55,7 @@ public:
     enum MediaType {
         Audio,
         Video,
+        Url,
         NotSupported = -1
     };
         

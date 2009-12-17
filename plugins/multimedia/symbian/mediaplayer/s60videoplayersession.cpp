@@ -49,6 +49,8 @@
 #include <w32std.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
+#include <QFile>
+
 S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
     , m_wsSession(0)
@@ -88,6 +90,14 @@ void S60VideoPlayerSession::doLoad(const TDesC &path)
     }
 }
 
+void S60VideoPlayerSession::doLoadUrl(const TDesC &path)
+{
+	TRAPD(err, m_player->OpenUrlL(path);)
+	if (err) {
+		setMediaStatus(QMediaPlayer::NoMedia);
+	}
+}
+
 qint64 S60VideoPlayerSession::duration() const
 {         
     Int64 duration = 0;
@@ -100,6 +110,13 @@ qint64 S60VideoPlayerSession::position() const
     Int64 position = 0;
     TRAP_IGNORE(position = m_player->PositionL().Int64() / 1000;)
     return position; 
+}
+
+int S60VideoPlayerSession::mediaLoadingProgress() const
+{
+	int progress = 0;
+	TRAP_IGNORE(m_player->GetVideoLoadingProgressL(progress);)
+	return progress;
 }
 
 void S60VideoPlayerSession::doSetPlaybackRate(qreal rate)
@@ -123,11 +140,11 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 void S60VideoPlayerSession::nativeHandles()
 {
     if (!m_videoWidgetControl) {
-        m_coeControl =  m_dummyWidget->winId(); 
+		m_coeControl =  m_dummyWidget->winId();
     } else {
         m_coeControl =  m_videoWidgetControl->videoWidget()->winId();
-        connect(m_videoWidgetControl->videoWidget(), SIGNAL(videoWindowChanged()), this, SLOT(updateWidget()));
-        connect(m_videoWidgetControl, SIGNAL(fullScreenChanged(bool)), this, SLOT(updateWidget()));
+        //connect(m_videoWidgetControl->videoWidget(), SIGNAL(videoWindowChanged()), this, SLOT(updateWidget()));
+        //connect(m_videoWidgetControl, SIGNAL(fullScreenChanged(bool)), this, SLOT(updateWidget()));
         m_coeControl->MakeVisible(ETrue);
         m_coeControl->SetPosition(TPoint(0,0));
     }
@@ -150,7 +167,6 @@ bool S60VideoPlayerSession::isVideoAvailable() const
 
 void S60VideoPlayerSession::doPlay()
 {   
-    updateWidget();
     m_player->Play();
 }
 
@@ -184,6 +200,14 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {    
+	TRAPD(err,
+	m_player->SetDisplayWindowL(*m_wsSession, 
+								  *m_screenDevice, 
+								  *m_window, 
+								  m_windowRect, 
+								  m_clipRect);
+		//m_coeControl->ActivateL();
+	);
     setError(aError);
     initComplete();
 }
@@ -225,19 +249,4 @@ void S60VideoPlayerSession::updateMetaDataEntries()
     }
     
     emit metaDataChanged();
-}
-
-
-void S60VideoPlayerSession::updateWidget()
-{
-    TRAP_IGNORE(
-    m_player->SetDisplayWindowL(*m_wsSession, 
-                                  *m_screenDevice, 
-                                  *m_window, 
-                                  m_windowRect, 
-                                  m_clipRect);
-        m_coeControl->ActivateL();
-    );
-    
-    m_coeControl->DrawNow();
 }

@@ -170,16 +170,24 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     
     S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaType(url);
     
-    if (mediaType == S60MediaRecognizer::Video) {
-        return VideoPlayerSession();
-    } else if (mediaType == S60MediaRecognizer::Audio) {
-        return AudioPlayerSession();
+    switch (mediaType) {
+    	case S60MediaRecognizer::Video:
+            return VideoPlayerSession();
+            break;
+    	case S60MediaRecognizer::Audio:
+            return AudioPlayerSession();
+    		break;
+    	case S60MediaRecognizer::Url:
+            return VideoPlayerSession(true);
+    		break;
+    	default:	
+    		break;
     }
-   
+    
     return NULL;
 }
 
-S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
+S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isUrl)
 {
     if (!m_videoPlayerSession) {
         m_videoPlayerSession = new S60VideoPlayerSession(this);
@@ -216,11 +224,11 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
     m_videoPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
     //m_videoPlayerSession->setPosition(0); // TODO: Check is this really needed???
     m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
-    
+    m_videoPlayerSession->setIsUrl(isUrl);
     return m_videoPlayerSession;
 }
 
-S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
+S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isUrl)
 {
     if (!m_audioPlayerSession) {
         m_audioPlayerSession = new S60AudioPlayerSession(this);
@@ -257,6 +265,7 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
     m_audioPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
     //m_audioPlayerSession->setPosition(0); // TODO: Check is this really needed???
     m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    m_audioPlayerSession->setIsUrl(isUrl);
     
     return m_audioPlayerSession;
 }

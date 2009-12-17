@@ -24,6 +24,6 @@ SOURCES += bearerex.cpp \
            main.cpp \
            xqlistwidget.cpp
 
+CONFIG += mobility
+MOBILITY = bearer
 symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
-
-qtAddLibrary(QtBearer)
