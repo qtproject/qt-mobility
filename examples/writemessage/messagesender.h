@@ -46,10 +46,12 @@
 
 #include <QWidget>
 
+QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QListWidget;
 class QTextEdit;
 class QPushButton;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

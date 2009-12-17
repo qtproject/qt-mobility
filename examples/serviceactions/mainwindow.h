@@ -45,11 +45,13 @@
 #include <QMainWindow>
 #include <qmessageserviceaction.h>
 
+QT_BEGIN_NAMESPACE
 class QComboBox;
 class QListView;
 class QTabWidget;
 class QMenuBar;
 class QStackedWidget;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

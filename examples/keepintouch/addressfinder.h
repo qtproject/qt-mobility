@@ -50,10 +50,12 @@
 #include <QWidget>
 #include <QMainWindow>
 
+QT_BEGIN_NAMESPACE
 class QComboBox;
 class QListWidget;
 class QPushButton;
 class QTabWidget;
+QT_END_NAMESPACE
 
 #if !defined(Q_OS_WIN) || !defined(_WIN32_WCE)
 // Don't use a 'Search' Button in CE
