@@ -43,10 +43,8 @@ symbian: {
     # add either real or test libraries for Etel
     contains(DEFINES, SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER): {
         message("Using Etel Test Server (not real Etel)")
+        INCLUDEPATH +=$${EPOCROOT}epoc32/include/internal
         LIBS += -letelserverclient
-
-        INCLUDEPATH +=tsrc/ETelTestServer/Inc
-        INCLUDEPATH +=tsrc/ETelTestServer/Client/Inc
     } else {
         message("Using real Etel APIs")
         LIBS += -letel \

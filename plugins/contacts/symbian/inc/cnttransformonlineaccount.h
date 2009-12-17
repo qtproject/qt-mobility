@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+
 #ifndef TRANSFORMONLINEACCOUNT_H
 #define TRANSFORMONLINEACCOUNT_H
 
@@ -73,4 +76,6 @@ private:
     QString decodePresence(quint32 aPresence);
 };
 
-#endif
+#endif // TRANSFORMONLINEACCOUNT_H
+
+#endif // SYMBIAN_BACKEND_USE_SQLITE

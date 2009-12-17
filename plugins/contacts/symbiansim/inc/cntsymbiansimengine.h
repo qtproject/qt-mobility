@@ -56,7 +56,7 @@
 #include "qcontactmanagerenginefactory.h"
 
 #ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <..\tsrc\ETelTestServer\Client\Inc\etelmm_etel_test_server.h>
+#include <etelmm_etel_test_server.h>
 #else
 #include <etelmm.h>
 #endif
@@ -94,11 +94,11 @@ private:
     QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
 
 private:
-    RTelServer etelServer;
-    RMobilePhone etelPhone;
-    RMobilePhoneBookStore etelStore;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg etelInfoPckg;
+    RTelServer m_etelServer;
+    RMobilePhone m_etelPhone;
+    RMobilePhoneBookStore m_etelStore;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelInfoPckg;
 
     QString m_managerUri;
 };

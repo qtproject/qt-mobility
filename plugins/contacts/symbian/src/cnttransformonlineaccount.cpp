@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+
 #include "cnttransformonlineaccount.h"
 #include "cntmodelextuids.h"
 
@@ -334,5 +336,7 @@ QString CntTransformOnlineAccount::decodePresence(quint32 aPresence)
     else
         return QContactOnlineAccount::PresenceOffline;
 }
+
+#endif // SYMBIAN_BACKEND_USE_SQLITE
 
 // End of file
