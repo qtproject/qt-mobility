@@ -67,7 +67,9 @@ QTM_END_NAMESPACE
 
 #define QMediaServiceProviderFactoryInterface_iid \
     "com.nokia.Qt.QMediaServiceProviderFactoryInterface/1.0"
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QtMobility::QMediaServiceProviderFactoryInterface, QMediaServiceProviderFactoryInterface_iid)
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -81,7 +83,9 @@ QTM_END_NAMESPACE
 
 #define QMediaServiceSupportedFormatsInterface_iid \
     "com.nokia.Qt.QMediaServiceSupportedFormatsInterface/1.0"
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QtMobility::QMediaServiceSupportedFormatsInterface, QMediaServiceSupportedFormatsInterface_iid)
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -96,7 +100,9 @@ QTM_END_NAMESPACE
 
 #define QMediaServiceSupportedDevicesInterface_iid \
     "com.nokia.Qt.QMediaServiceSupportedDevicesInterface/1.0"
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QtMobility::QMediaServiceSupportedDevicesInterface, QMediaServiceSupportedDevicesInterface_iid)
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -111,7 +117,9 @@ QTM_END_NAMESPACE
 //MOC doesn't recognire paramitized macros
 #define QMediaServiceFeaturesInterface_iid \
     "com.nokia.Qt.QMediaServiceFeaturesInterface/1.0"
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QtMobility::QMediaServiceFeaturesInterface, QMediaServiceFeaturesInterface_iid)
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

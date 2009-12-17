@@ -86,8 +86,11 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 }
 
-maemo {
-    DEFINES+= MAEMO
+maemo6 {
+    DEFINES+= Q_WS_MAEMO_6
+}
+maemo5 {
+    DEFINES+= Q_WS_MAEMO_5
 }
 
 wince* {

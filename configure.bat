@@ -1,4 +1,3 @@
-
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 :: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -302,7 +301,8 @@ echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PRO
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
-echo maemo:mobility_modules -= systeminfo  >> %PROJECT_CONFIG%
+REM no Sysinfo support on Maemo yet
+echo maemo5^|maemo6:mobility_modules -= systeminfo >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
 
 echo Checking available Qt

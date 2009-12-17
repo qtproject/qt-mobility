@@ -62,7 +62,7 @@ symbian: {
     QtBearerManagement.path = /sys/bin
     DEPLOYMENT += QtBearerManagement
 } else {
-    maemo {
+    maemo6 {
         QT += dbus
 	CONFIG += link_pkgconfig
 

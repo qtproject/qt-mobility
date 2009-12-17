@@ -39,6 +39,10 @@
 **
 ****************************************************************************/
 
+#include <qglobal.h>
+
+QT_USE_NAMESPACE
+
 #include <qmailmessage.h>
 #include <qmailglobal.h>
 
