@@ -871,6 +871,7 @@
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::Relationships</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::Anonymous</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::ChangeLogs</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::RelationshipOrdering</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::MutableDefinitions</keyword>
         <keyword ref="qcontactmanager.html#availableManagers">availableManagers</keyword>
         <keyword ref="qcontactmanager.html#buildUri">buildUri</keyword>
@@ -3294,6 +3295,9 @@
     </section>
     <section ref="servicebrowser.html" title="Service Browser Example">
         <keyword ref="servicebrowser.html">Service Browser Example</keyword>
+    </section>
+    <section ref="declarative.html" title="Service Framework using QML Example">
+        <keyword ref="declarative.html">Service Framework using QML Example</keyword>
     </section>
     <section ref="slideshow.html" title="SlideShow Example">
         <keyword ref="slideshow.html">SlideShow Example</keyword>

@@ -66,13 +66,14 @@
     public:
         VoipDialer(QObject *parent = 0);
 
+        //! [0]
+    public:
         enum ConnectionState {
             Disconnected = 0,
             Connecting,
             Connected,
             Engaged
         };
-
         Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
         ConnectionState state() const;
 
@@ -82,6 +83,7 @@
 
     signals:
         void stateChanged();
+        //! [0]
 
     protected:
         void timerEvent(QTimerEvent* event);
