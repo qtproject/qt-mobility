@@ -711,6 +711,8 @@ bool QMessageServicePrivate::retrieveBody(const QMessage& partialMessage)
     return (_lastError == QMessageManager::NoError);
 }
 
+#endif
+
 void QMessageServicePrivate::setFinished(bool successful)
 {
     if (!successful && (_lastError == QMessageManager::NoError)) {
@@ -719,8 +721,6 @@ void QMessageServicePrivate::setFinished(bool successful)
 
     completed();
 }
-
-#endif
 
 QMessageService::QMessageService(QObject *parent)
     : QObject(parent),
