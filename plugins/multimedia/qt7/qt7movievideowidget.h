@@ -39,89 +39,93 @@
 **
 ****************************************************************************/
 
-#ifndef QT7VIDEOOUTPUTCONTROL_H
-#define QT7VIDEOOUTPUTCONTROL_H
+#ifndef QT7MOVIEVIDEOWIDGET_H
+#define QT7MOVIEVIDEOWIDGET_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qmutex.h>
 
-#include <qvideooutputcontrol.h>
 #include <qvideowindowcontrol.h>
-#include <qvideowidgetcontrol.h>
-#include <qvideorenderercontrol.h>
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
+#include "qt7videooutputcontrol.h"
+
+#include <CoreVideo/CVDisplayLink.h>
+#include <CoreVideo/CVOpenGLTexture.h>
+#include <QuickTime/QuickTime.h>
 
 class QT7PlayerSession;
 class QT7PlayerService;
+class GLVideoWidget;
 
 QTM_BEGIN_NAMESPACE
 
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 
-class QT7VideoOutput {
-public:
-    virtual ~QT7VideoOutput() {}
-    virtual void setEnabled(bool enabled) = 0;
-    virtual void setMovie(void *movie) = 0;
-};
-
-class QT7VideoWindowControl : public QVideoWindowControl, public QT7VideoOutput
+class QT7MovieVideoWidget : public QT7VideoWidgetControl
 {
 public:
-    virtual ~QT7VideoWindowControl() {}
+    QT7MovieVideoWidget(QObject *parent = 0);
+    virtual ~QT7MovieVideoWidget();
+
+    void setEnabled(bool);
+    void setMovie(void *movie);
+
+    QWidget *videoWidget();
+
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
+
+    QSize nativeSize() const;
+
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+    void displayLinkEvent(const CVTimeStamp *);
 
 protected:
-    QT7VideoWindowControl(QObject *parent)
-        :QVideoWindowControl(parent)
-    {}
-};
-
-class QT7VideoRendererControl : public QVideoRendererControl, public QT7VideoOutput
-{
-public:
-    virtual ~QT7VideoRendererControl() {}
-
-protected:
-    QT7VideoRendererControl(QObject *parent)
-        :QVideoRendererControl(parent)
-    {}
-};
-
-class QT7VideoWidgetControl : public QVideoWidgetControl, public QT7VideoOutput
-{
-public:
-    virtual ~QT7VideoWidgetControl() {}
-
-protected:
-    QT7VideoWidgetControl(QObject *parent)
-        :QVideoWidgetControl(parent)
-    {}
-};
-
-class QT7VideoOutputControl : public QVideoOutputControl
-{
-Q_OBJECT
-public:
-    QT7VideoOutputControl(QObject *parent = 0);
-    ~QT7VideoOutputControl();
-
-    void setSession(QT7PlayerSession *session);
-
-    QList<Output> availableOutputs() const;
-    void enableOutput(Output);
-
-    Output output() const;
-    void setOutput(Output output);
-
-signals:
-    void videoOutputChanged(QVideoOutputControl::Output);
+    virtual bool event(QEvent *);
     
 private:
-    QT7PlayerSession *m_session;
-    Output m_output;
-    QList<Output> m_outputs;
+    void setupVideoOutput();
+    bool createVisualContext();
+
+    void updateVideoFrame();
+
+    void *m_movie;
+    GLVideoWidget *m_videoWidget;
+
+    CVDisplayLinkRef m_displayLink;
+    QMutex m_displayLinkMutex;
+    bool m_pendingDisplayLinkEvent;
+    CVTimeStamp m_frameTimeStamp;
+
+#ifdef QUICKTIME_C_API_AVAILABLE
+    QTVisualContextRef	m_visualContext;
+#endif
+    CVOpenGLTextureRef  m_currentFrame;
+
+    bool m_fullscreen;
+    QSize m_nativeSize;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    int m_brightness;
+    int m_contrast;
+    int m_hue;
+    int m_saturation;
 };
 
 QTM_END_NAMESPACE

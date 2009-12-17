@@ -54,6 +54,7 @@ class QMediaPlaylistNavigator;
 class QT7PlayerControl;
 class QT7VideoOutputControl;
 class QT7VideoWindowControl;
+class QT7VideoWidgetControl;
 class QT7VideoRendererControl;
 class QT7VideoOutput;
 QTM_END_NAMESPACE
@@ -81,6 +82,7 @@ private:
     QT7PlayerControl *m_control;    
     QT7VideoOutputControl *m_videoOutputControl;
     QT7VideoWindowControl *m_videoWidnowControl;
+    QT7VideoWidgetControl *m_videoWidgetControl;
     QT7VideoRendererControl *m_videoRendererControl;
 };
 

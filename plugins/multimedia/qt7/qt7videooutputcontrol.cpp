@@ -63,7 +63,13 @@ void QT7VideoOutputControl::setSession(QT7PlayerSession *session)
 
 QList<QVideoOutputControl::Output> QT7VideoOutputControl::availableOutputs() const
 {
-    return QList<Output>() << QVideoOutputControl::WindowOutput << QVideoOutputControl::RendererOutput;
+    return m_outputs;
+}
+
+void QT7VideoOutputControl::enableOutput(QVideoOutputControl::Output output)
+{
+    if (!m_outputs.contains(output))
+        m_outputs.append(output);
 }
 
 QVideoOutputControl::Output QT7VideoOutputControl::output() const

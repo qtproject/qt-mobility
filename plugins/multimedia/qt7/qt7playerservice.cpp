@@ -49,6 +49,7 @@
 #include "qt7videooutputcontrol.h"
 #include "qt7movieviewoutput.h"
 #include "qt7movieviewrenderer.h"
+#include "qt7movievideowidget.h"
 
 #include <qmediaplaylistnavigator.h>
 #include <qmediaplaylist.h>
@@ -65,10 +66,17 @@ QT7PlayerService::QT7PlayerService(QObject *parent):
 
 #if defined(QT_MAC_USE_COCOA)
     m_videoWidnowControl = new QT7MovieViewOutput(this);
+    m_videoOutputControl->enableOutput(QVideoOutputControl::WindowOutput);
+
     m_videoRendererControl = new QT7MovieViewRenderer(this);
+    m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
+
+    m_videoWidgetControl = 0;
 #else
     m_videoWidnowControl = 0;
     m_videoRendererControl = 0;
+    m_videoWidgetControl = new QT7MovieVideoWidget(this);
+    m_videoOutputControl->enableOutput(QVideoOutputControl::WidgetOutput);
 #endif
     connect(m_videoOutputControl, SIGNAL(videoOutputChanged(QVideoOutputControl::Output)),
             this, SLOT(updateVideoOutput()));
@@ -92,17 +100,25 @@ QMediaControl *QT7PlayerService::control(const char *name) const
     if (qstrcmp(name, QVideoRendererControl_iid) == 0)
         return m_videoRendererControl;
 
+    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
+        return m_videoWidgetControl;
+
     return 0;
 }
 
 void QT7PlayerService::updateVideoOutput()
 {
+    qDebug() << "QT7PlayerService::updateVideoOutput" << m_videoOutputControl->output();
+
     switch (m_videoOutputControl->output()) {
     case QVideoOutputControl::WindowOutput:
         m_session->setVideoOutput(m_videoWidnowControl);
         break;
     case QVideoOutputControl::RendererOutput:
         m_session->setVideoOutput(m_videoRendererControl);
+        break;
+    case QVideoOutputControl::WidgetOutput:
+        m_session->setVideoOutput(m_videoWidgetControl);
         break;
     default:
         m_session->setVideoOutput(0);
