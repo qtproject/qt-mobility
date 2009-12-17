@@ -101,6 +101,20 @@ QTM_BEGIN_NAMESPACE
     \sa QMediaObject, QMediaService, QVideoWidget, QMediaPlaylist
 */
 
+namespace
+{
+class MediaPlayerRegisterMetaTypes
+{
+public:
+    MediaPlayerRegisterMetaTypes()
+    {
+        qRegisterMetaType<QMediaPlayer::State>("QMediaPlayer::State");
+        qRegisterMetaType<QMediaPlayer::MediaStatus>("QMediaPlayer::MediaStatus");
+        qRegisterMetaType<QMediaPlayer::Error>("QMediaPlayer::Error");
+    }
+} _registerPlayerMetaTypes;
+}
+
 class QMediaPlayerPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_NON_CONST_PUBLIC(QMediaPlayer)

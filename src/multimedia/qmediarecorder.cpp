@@ -92,6 +92,20 @@ QTM_BEGIN_NAMESPACE
     \sa
 */
 
+namespace
+{
+class MediaRecorderRegisterMetaTypes
+{
+public:
+    MediaRecorderRegisterMetaTypes()
+    {
+        qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+        qRegisterMetaType<QMediaRecorder::Error>("QMediaRecorder::Error");
+    }
+} _registerRecorderMetaTypes;
+}
+
+
 class QMediaRecorderPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_NON_CONST_PUBLIC(QMediaRecorder)
