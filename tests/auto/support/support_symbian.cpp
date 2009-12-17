@@ -129,7 +129,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
         QMessageAccountIdList accountIds(manager.queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
         if (accountIds.count() == 1) {
             // Find the specified folder
-            QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
+            QMessageFolderFilter filter(QMessageFolderFilter::byName(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
             QMessageFolderIdList folderIds(manager.queryFolders(filter));
             if (folderIds.count() == 1) {
                 QMessage message;
@@ -525,7 +525,7 @@ QMessageFolderId addFolder(const Parameters &params)
     TPtrC16 symbianAccountName(KNullDesC);
     symbianAccountName.Set(reinterpret_cast<const TUint16*>(accountName.utf16()));
 
-    QString folderName(params["displayName"]);
+    QString folderName(params["name"]);
     TPtrC16 symbianFolderName(KNullDesC);
     symbianFolderName.Set(reinterpret_cast<const TUint16*>(folderName.utf16()));
     

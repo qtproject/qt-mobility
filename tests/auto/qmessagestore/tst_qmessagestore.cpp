@@ -228,9 +228,9 @@ void tst_QMessageStore::testAccount()
 void tst_QMessageStore::testFolder_data()
 {
     QTest::addColumn<QString>("path");
-    QTest::addColumn<QString>("displayName");
+    QTest::addColumn<QString>("name");
     QTest::addColumn<QString>("parentFolderPath");
-    QTest::addColumn<QString>("displayNameResult");
+    QTest::addColumn<QString>("nameResult");
 
 	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
     QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
@@ -259,13 +259,13 @@ void tst_QMessageStore::testFolder()
     QVERIFY(testAccountId.isValid());
 
     QFETCH(QString, path);
-    QFETCH(QString, displayName);
+    QFETCH(QString, name);
     QFETCH(QString, parentFolderPath);
-    QFETCH(QString, displayNameResult);
+    QFETCH(QString, nameResult);
 
     Support::Parameters p;
     p.insert("path", path);
-    p.insert("displayName", displayName);
+    p.insert("name", name);
     p.insert("parentAccountName", testAccountName);
     p.insert("parentFolderPath", parentFolderPath);
 
@@ -287,7 +287,7 @@ void tst_QMessageStore::testFolder()
     QMessageFolder folder(folderId);
     QCOMPARE(folder.id(), folderId);
     QCOMPARE(folder.path(), path);
-    QCOMPARE(folder.displayName(), displayNameResult);
+    QCOMPARE(folder.name(), nameResult);
     QCOMPARE(folder.parentAccountId(), testAccountId);
 
     QCOMPARE(QMessageFolder(folder).id(), folderId);
@@ -306,7 +306,7 @@ void tst_QMessageStore::testFolder()
 }
 
 Q_DECLARE_METATYPE(QList<QByteArray>)
-Q_DECLARE_METATYPE(QList<unsigned>)
+Q_DECLARE_METATYPE(QList<int>)
 
 typedef QMap<QString, QString> CustomFieldMap;
 Q_DECLARE_METATYPE(CustomFieldMap)
@@ -320,15 +320,15 @@ void tst_QMessageStore::testMessage_data()
     QTest::addColumn<QString>("subject");
     QTest::addColumn<QByteArray>("messageType");
     QTest::addColumn<QByteArray>("messageSubType");
-    QTest::addColumn<unsigned>("messageSize");
+    QTest::addColumn<int>("messageSize");
     QTest::addColumn<QString>("text");
     QTest::addColumn<QByteArray>("bodyType");
     QTest::addColumn<QByteArray>("bodySubType");
-    QTest::addColumn<unsigned>("bodySize");
+    QTest::addColumn<int>("bodySize");
     QTest::addColumn<QList<QByteArray> >("attachments");
     QTest::addColumn<QList<QByteArray> >("attachmentType");
     QTest::addColumn<QList<QByteArray> >("attachmentSubType");
-    QTest::addColumn<QList<unsigned> >("attachmentSize");
+    QTest::addColumn<QList<int> >("attachmentSize");
     QTest::addColumn<CustomFieldMap>("custom");
     QTest::addColumn<QString>("removeMessage");
 
@@ -345,22 +345,22 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("plain")
 #if defined(Q_OS_SYMBIAN)
-        << 89u
+        << 89
 #else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
-        << 32u
+        << 32
 #else
-        << 1400u
+        << 1400
 #endif
 #endif        
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
-        << 24u
+        << 24
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<QByteArray>()
-        << QList<unsigned>()
+        << QList<int>()
         << customData
         << "byId";
 
@@ -373,22 +373,22 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("text")
         << QByteArray("html")
 #if defined(Q_OS_SYMBIAN)
-        << 157u
+        << 157
 #else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
-        << 64u
+        << 64
 #else
-        << 1536u
+        << 1536
 #endif
 #endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
-        << 64u
+        << 64
         << QList<QByteArray>()
         << QList<QByteArray>()
         << QList<QByteArray>()
-        << QList<unsigned>()
+        << QList<int>()
         << customData
         << "byFilter";
 
@@ -401,22 +401,22 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("multipart")
         << QByteArray("mixed")
 #if defined(Q_OS_SYMBIAN)
-        << 611u
+        << 611
 #else
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
-        << 512u
+        << 512
 #else
-        << 1536u
+        << 1536
 #endif
 #endif        
         << "...before Y2K"
         << QByteArray("text")
         << QByteArray("plain")
-        << 24u
+        << 24
         << ( QList<QByteArray>() << "1.txt" )
         << ( QList<QByteArray>() << "text" )
         << ( QList<QByteArray>() << "plain" )
-        << ( QList<unsigned>() << 512u )
+        << ( QList<int>() << 512 )
         << customData
         << "byId";
 
@@ -429,22 +429,22 @@ void tst_QMessageStore::testMessage_data()
         << QByteArray("multipart")
         << QByteArray("mixed")
 #if defined(Q_OS_SYMBIAN)
-        << 4731u
+        << 4731
 #else
 #if defined(Q_OS_WIN) && !defined(_WIN32_WCE)
-        << 5120u
+        << 5120
 #else
-        << 4096u
+        << 4096
 #endif
 #endif
         << "<html><p>...before <b>Y2K</b></p></html>"
         << QByteArray("text")
         << QByteArray("html")
-        << 64u
+        << 64
         << ( QList<QByteArray>() << "1.txt" << "qtlogo.png" )
         << ( QList<QByteArray>() << "text" << "image" )
         << ( QList<QByteArray>() << "plain" << "png" )
-        << ( QList<unsigned>() << 512u << 4096u )
+        << ( QList<int>() << 512 << 4096 )
         << customData
         << "byFilter";
 }
@@ -467,12 +467,12 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testAccountId.isValid());
 
     QMessageFolderId testFolderId;
-    QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
+    QMessageFolderFilter filter(QMessageFolderFilter::byName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
     QMessageFolderIdList folderIds(manager->queryFolders(filter));
     if (folderIds.isEmpty()) {
         Support::Parameters p;
         p.insert("path", "Inbox");
-        p.insert("displayName", "Inbox");
+        p.insert("name", "Inbox");
         p.insert("parentAccountName", testAccountName);
         testFolderId = Support::addFolder(p);
     } else {
@@ -500,15 +500,15 @@ void tst_QMessageStore::testMessage()
     QFETCH(QString, subject);
     QFETCH(QByteArray, messageType);
     QFETCH(QByteArray, messageSubType);
-    QFETCH(unsigned, messageSize);
+    QFETCH(int, messageSize);
     QFETCH(QString, text);
     QFETCH(QByteArray, bodyType);
     QFETCH(QByteArray, bodySubType);
-    QFETCH(unsigned, bodySize);
+    QFETCH(int, bodySize);
     QFETCH(QList<QByteArray>, attachments);
     QFETCH(QList<QByteArray>, attachmentType);
     QFETCH(QList<QByteArray>, attachmentSubType);
-    QFETCH(QList<unsigned>, attachmentSize);
+    QFETCH(QList<int>, attachmentSize);
     QFETCH(CustomFieldMap, custom);
     QFETCH(QString, removeMessage);
 
@@ -653,10 +653,10 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
-    QAPPROXIMATECOMPARE(body.size(), 72u, 36u);  
+    QAPPROXIMATECOMPARE(body.size(), 72, 36);  
 
     manager->updateMessage(&message);
-    QCOMPARE(manager->lastError(), QMessageManager::NoError);
+    QCOMPARE(manager->error(), QMessageManager::NoError);
 
 #if defined(Q_OS_WIN)
 	QTest::qSleep(1000);
@@ -695,7 +695,7 @@ void tst_QMessageStore::testMessage()
 #endif
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
-    QAPPROXIMATECOMPARE(body.size(), 72u, 36u);
+    QAPPROXIMATECOMPARE(body.size(), 72, 36);
 
     // Test response message properties
     QMessage reply(updated.createResponseMessage(QMessage::ReplyToSender));
@@ -724,7 +724,7 @@ void tst_QMessageStore::testMessage()
     } else { // byFilter
         manager->removeMessages(QMessageFilter::byId(message.id()));
     }
-    QCOMPARE(manager->lastError(), QMessageManager::NoError);
+    QCOMPARE(manager->error(), QMessageManager::NoError);
     QCOMPARE(manager->countMessages(), originalCount);
 
 #if defined(Q_OS_WIN)

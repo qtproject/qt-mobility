@@ -74,6 +74,7 @@ QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter,
     if (service.queryMessages(filter, sortOrder, limit, offset)) {
         QEventLoop loop;
         QObject::connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+        QObject::connect(&service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
         loop.exec();
         ids = _ids;
         _ids.clear();
@@ -88,6 +89,7 @@ QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter,
     connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     if (service.queryMessages(filter, body, matchFlags, sortOrder, limit, offset)) {
         QObject::connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+        QObject::connect(&service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
         loop.exec();
         ids = _ids;
         _ids.clear();
@@ -102,6 +104,7 @@ int QMessageStorePrivate::countMessages(const QMessageFilter& filter) const
     connect(&service, SIGNAL(messagesCounted(int)), this, SLOT(messagesCounted(int)));
     if (service.countMessages(filter)) {
         QObject::connect(&service, SIGNAL(messagesCounted(int)), &loop, SLOT(quit()));
+        QObject::connect(&service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
         loop.exec();
         count = _count;
         _count = 0;
@@ -109,9 +112,9 @@ int QMessageStorePrivate::countMessages(const QMessageFilter& filter) const
     return count;
 }
 
-void QMessageStorePrivate::stateChanged(QMessageService::State a)
+void QMessageStorePrivate::stateChanged(QMessageService::State newState)
 {
-    if (a == QMessageService::Failed) {
+    if (newState == QMessageService::FinishedState) {
         loop.quit();
     }
 }
@@ -177,8 +180,9 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
     QMessageService service;
     connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     if (service.queryMessages(filter)) {
-        QEventLoop loop;
+        QEventLoop loop; // TODO: this appears to be unwanted here
         QObject::connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
+        QObject::connect(&service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
         loop.exec();
         ids = _ids;
         _ids.clear();
@@ -253,7 +257,7 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageManager::Error QMessageStore::lastError() const
+QMessageManager::Error QMessageStore::error() const
 {
     return QMessageManager::NoError;
 }

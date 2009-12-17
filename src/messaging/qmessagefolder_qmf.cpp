@@ -133,7 +133,7 @@ QMessageFolderId QMessageFolder::parentFolderId() const
     return convert(d_ptr->_folder.parentFolderId());
 }
 
-QString QMessageFolder::displayName() const
+QString QMessageFolder::name() const
 {
     return d_ptr->_folder.displayName();
 }

@@ -181,27 +181,27 @@ bool QMessageFolderFilterPrivate::filter(const QMessageFolder &messageFolder, co
         }
         break;
         }
-    case QMessageFolderFilterPrivate::DisplayName:
+    case QMessageFolderFilterPrivate::Name:
         {
         if (filter._comparatorType == QMessageFolderFilterPrivate::Equality) {
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(filter._comparatorValue));
             if (cmp == QMessageDataComparator::Equal) {
-                if (messageFolder.displayName().compare(filter._value.toString(),caseSensitivity) == 0) {
+                if (messageFolder.name().compare(filter._value.toString(),caseSensitivity) == 0) {
                     retVal = true;
                 }
             } else { // NotEqual
-                if (messageFolder.displayName().compare(filter._value.toString(),caseSensitivity) != 0) {
+                if (messageFolder.name().compare(filter._value.toString(),caseSensitivity) != 0) {
                     retVal = true;
                 }
             }
         } else if (filter._comparatorType == QMessageFolderFilterPrivate::Inclusion) {
             QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(filter._comparatorValue));
             if (cmp == QMessageDataComparator::Includes) {
-                if (messageFolder.displayName().contains(filter._value.toString(),caseSensitivity)) {
+                if (messageFolder.name().contains(filter._value.toString(),caseSensitivity)) {
                     retVal = true;
                 }
             } else { // Excludes
-                if (!messageFolder.displayName().contains(filter._value.toString(),caseSensitivity)) {
+                if (!messageFolder.name().contains(filter._value.toString(),caseSensitivity)) {
                     retVal = true;
                 }
             }
@@ -623,10 +623,10 @@ QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderFilter &filt
     return result;
 }
 
-QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFolderFilter result;
-    result.d_ptr->_field = QMessageFolderFilterPrivate::DisplayName;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::Name;
     result.d_ptr->_value = value;
     result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Equality;
     result.d_ptr->_comparatorValue = static_cast<int>(cmp);
@@ -634,10 +634,10 @@ QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, Q
     return result;
 }
 
-QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageFolderFilter result;
-    result.d_ptr->_field = QMessageFolderFilterPrivate::DisplayName;
+    result.d_ptr->_field = QMessageFolderFilterPrivate::Name;
     result.d_ptr->_value = value;
     result.d_ptr->_comparatorType = QMessageFolderFilterPrivate::Inclusion;
     result.d_ptr->_comparatorValue = static_cast<int>(cmp);

@@ -76,9 +76,9 @@ QTM_BEGIN_NAMESPACE
     on data already on the device. See QMessageService for functions related to 
     initiating network activity.
 
-    If a QMessageManager operation fails, the lastError() function will return an error code
+    If a QMessageManager operation fails, the error() function will return an error code
     value indicating the failure mode encountered.  A successful operation will set the 
-    lastError() result to QMessageManager::NoError.
+    error() result to QMessageManager::NoError.
 
     Messages in the messaging store are identified by QMessageId objects. The data associated 
     with a message is retrieved in the form of a QMessage object using message(). Likewise 
@@ -129,6 +129,7 @@ QTM_BEGIN_NAMESPACE
     \value FrameworkFault         The operation failed because the messaging store encountered an error in performing the operation.
     \value WorkingMemoryOverflow  The operation failed because the messaging store exhausted all memory available for evaluating queries.
     \value Busy                   The operation failed because the messaging store is being used by another thread.
+    \value RequestIncomplete      The operation failed to report successful completion, although no specific error was reported.
 */
 
 /*!
@@ -157,13 +158,13 @@ QMessageManager::~QMessageManager()
 }
 
 /*!
-    \fn QMessageManager::lastError() const
+    \fn QMessageManager::error() const
     
     Returns the code of the last error condition reported by the messaging store.
 */
-QMessageManager::Error QMessageManager::lastError() const
+QMessageManager::Error QMessageManager::error() const
 {
-    return store->lastError();
+    return store->error();
 }
 
 /*!
@@ -178,7 +179,7 @@ QMessageManager::Error QMessageManager::lastError() const
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages()
+    \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
@@ -197,7 +198,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countMessages()
+    \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
 {
@@ -226,7 +227,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     \a offset specifies how many ids to skip at the beginning of the list returned.
     \a matchFlags specifies the matching method to use.
     
-    \sa lastError(), countMessages()
+    \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
@@ -247,7 +248,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     \a offset specifies how many ids to skip at the beginning of the list returned.
     \a matchFlags specifies the matching method to use.
     
-    \sa lastError(), countMessages()
+    \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
 {
@@ -274,7 +275,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countFolders()
+    \sa error(), countFolders()
 */
 QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
@@ -293,7 +294,7 @@ QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &f
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countFolders()
+    \sa error(), countFolders()
 */
 QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QList<QMessageFolderSortOrder> &sortOrders, uint limit, uint offset) const
 {
@@ -320,7 +321,7 @@ QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &f
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countAccounts()
+    \sa error(), countAccounts()
 */
 QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
@@ -339,7 +340,7 @@ QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
-    \sa lastError(), countAccounts()
+    \sa error(), countAccounts()
 */
 QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QList<QMessageAccountSortOrder> &sortOrders, uint limit, uint offset) const
 {
@@ -359,7 +360,7 @@ QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter
     in QMessageFilter \a filter. If \a filter is empty the count of all 
     available messages is returned.
     
-    \sa lastError(), queryMessages()
+    \sa error(), queryMessages()
 */
 int QMessageManager::countMessages(const QMessageFilter& filter) const
 {
@@ -373,7 +374,7 @@ int QMessageManager::countMessages(const QMessageFilter& filter) const
     in QMessageFolderFilter \a filter. If \a filter is empty the count of all 
     available folders is returned.
     
-    \sa lastError(), queryFolders()
+    \sa error(), queryFolders()
 */
 int QMessageManager::countFolders(const QMessageFolderFilter& filter) const
 {
@@ -387,7 +388,7 @@ int QMessageManager::countFolders(const QMessageFolderFilter& filter) const
     in QMessageAccountFilter \a filter. If \a filter is empty the count of all 
     available accounts is returned.
     
-    \sa lastError(), queryAccounts()
+    \sa error(), queryAccounts()
 */
 int QMessageManager::countAccounts(const QMessageAccountFilter& filter) const
 {

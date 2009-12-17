@@ -101,7 +101,7 @@ QMessageAccountId addAccount(const Parameters &params)
 QMessageFolderId addFolder(const Parameters &params)
 {
     QString path(params["path"]);
-    QString displayName(params["displayName"]);
+    QString name(params["name"]);
     QString parentAccountName(params["parentAccountName"]);
     QString parentFolderPath(params["parentFolderPath"]);
 
@@ -113,8 +113,8 @@ QMessageFolderId addFolder(const Parameters &params)
             folder.setPath(path);
             folder.setParentAccountId(accountIds.first());
 
-            if (!displayName.isEmpty()) {
-                folder.setDisplayName(displayName);
+            if (!name.isEmpty()) {
+                folder.setDisplayName(name);
             }
 
             if (!parentFolderPath.isEmpty()) {

@@ -137,7 +137,7 @@ bool QMessageFolderSortOrder::operator==(const QMessageFolderSortOrder& other) c
     return (d_ptr->_key == other.d_ptr->_key);
 }
 
-QMessageFolderSortOrder QMessageFolderSortOrder::byDisplayName(Qt::SortOrder order)
+QMessageFolderSortOrder QMessageFolderSortOrder::byName(Qt::SortOrder order)
 {
     QMessageFolderSortOrder sortOrder;
     sortOrder.d_ptr->_key = QMailFolderSortKey::displayName(order);

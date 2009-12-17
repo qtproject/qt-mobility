@@ -91,7 +91,7 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageManager::Error QMessageManager::lastError() const
+QMessageManager::Error QMessageManager::error() const
 {
     return NotYetImplemented;
 }

@@ -58,10 +58,10 @@ class Q_MESSAGING_EXPORT QMessageService : public QObject
 
 public:
     enum State {
-        Pending = 0,
-        InProgress,
-        Successful,
-        Failed
+        InactiveState = 0,
+        ActiveState,
+        CanceledState,
+        FinishedState
     };
 
     QMessageService(QObject *parent = 0);
@@ -81,13 +81,13 @@ public:
     bool exportUpdates(const QMessageAccountId &id);
 
     State state() const;
-    QMessageManager::Error lastError() const;
+    QMessageManager::Error error() const;
 
 public slots:
-    void cancelOperation();
+    void cancel();
 
 signals:
-    void stateChanged(QMessageService::State a);
+    void stateChanged(QMessageService::State newState);
     void messagesFound(const QMessageIdList &ids);
     void messagesCounted(int count);
     void progressChanged(uint value, uint total);

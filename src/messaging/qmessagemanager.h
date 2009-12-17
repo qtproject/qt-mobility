@@ -80,7 +80,8 @@ public:
         NotYetImplemented,
         FrameworkFault,
         WorkingMemoryOverflow,
-        Busy
+        Busy,
+        RequestIncomplete
     };
 
     typedef int NotificationFilterId;
@@ -89,7 +90,7 @@ public:
     QMessageManager(QObject *parent = 0);
     ~QMessageManager();
 
-    QMessageManager::Error lastError() const;
+    QMessageManager::Error error() const;
 
     QMessageIdList queryMessages(const QMessageFilter &filter = QMessageFilter(), const QMessageSortOrder &sortOrder = QMessageSortOrder(), uint limit = 0, uint offset = 0) const;
     QMessageIdList queryMessages(const QMessageFilter &filter, const QList<QMessageSortOrder> &sortOrders, uint limit = 0, uint offset = 0) const;

@@ -124,14 +124,14 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
 
 QMessageService::State QMessageService::state() const
 {
-    return Pending; // stub
+    return InactiveState; // stub
 }
 
-void QMessageService::cancelOperation()
+void QMessageService::cancel()
 {
 }
 
-QMessageManager::Error QMessageService::lastError() const
+QMessageManager::Error QMessageService::error() const
 {
     return QMessageManager::NoError;
 }

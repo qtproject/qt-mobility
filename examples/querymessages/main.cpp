@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         QMessage message(manager.message(id));
 //! [iterate-results]
 
-        if (manager.lastError() == QMessageManager::NoError) {
+        if (manager.error() == QMessageManager::NoError) {
             QStringList result;
 
             if (app.arguments().count() < 2) {

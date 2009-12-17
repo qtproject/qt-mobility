@@ -67,6 +67,8 @@ public:
     
     bool countMessages(const QMessageFilter &filter);
 	
+    void setFinished(bool successful);
+
 signals:
 	void stateChanged(QMessageService::State);
 	void messagesFound(const QMessageIdList&);
@@ -76,7 +78,7 @@ signals:
 private:	
     QMessageService *q_ptr;
     QMessageService::State _state;
-    QMessageManager::Error _lastError;
+    QMessageManager::Error _error;
     int _actionId;
     bool _active;
     

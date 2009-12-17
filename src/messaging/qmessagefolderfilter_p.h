@@ -106,7 +106,7 @@ public:
 
     QMessageDataComparator::MatchFlags _matchFlags;
     
-    enum Field {None = 0, ParentAccountIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, DisplayName, Path };
+    enum Field {None = 0, ParentAccountIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, Name, Path };
     enum Comparator {Equality = 0, Inclusion};
 
     bool _valid;
@@ -140,8 +140,8 @@ public:
 #endif
 
 #ifdef Q_OS_WIN
-    static QMessageFolderFilter preprocess(QMessageManager::Error *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);
-    static void preprocess(QMessageManager::Error *lastError, MapiSessionPtr session, QMessageFolderFilter *filter);
+    static QMessageFolderFilter preprocess(QMessageManager::Error *error, MapiSessionPtr session, const QMessageFolderFilter &filter);
+    static void preprocess(QMessageManager::Error *error, MapiSessionPtr session, QMessageFolderFilter *filter);
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
     static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif

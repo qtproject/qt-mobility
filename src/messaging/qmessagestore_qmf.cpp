@@ -130,7 +130,7 @@ QMessageStore::~QMessageStore()
     delete d_ptr;
 }
 
-QMessageManager::Error QMessageStore::lastError() const
+QMessageManager::Error QMessageStore::error() const
 {
     if (d_ptr->_error != QMessageManager::NoError) {
         return d_ptr->_error;

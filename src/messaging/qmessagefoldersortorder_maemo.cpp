@@ -90,7 +90,7 @@ bool QMessageFolderSortOrder::operator==(const QMessageFolderSortOrder& other) c
     return false; // stub
 }
 
-QMessageFolderSortOrder QMessageFolderSortOrder::byDisplayName(Qt::SortOrder order)
+QMessageFolderSortOrder QMessageFolderSortOrder::byName(Qt::SortOrder order)
 {
     Q_UNUSED(order)
     return QMessageFolderSortOrder(); // stub

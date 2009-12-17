@@ -350,7 +350,7 @@ void RecentMessagesWidget::hideEvent(QHideEvent* e)
 {
     if(m_state == Loading || m_state == Processing)
     {
-        m_service->cancelOperation();
+        m_service->cancel();
         m_state = Unloaded;
         m_ids.clear();
     }
@@ -371,12 +371,15 @@ void RecentMessagesWidget::messagesFound(const QMessageIdList& ids)
 }
 //! [process-results]
 
-void RecentMessagesWidget::stateChanged(QMessageService::State s)
+void RecentMessagesWidget::stateChanged(QMessageService::State newState)
 {
-    if(s == QMessageService::Failed)
-        m_state = LoadFailed;
-    else if(s == QMessageService::Successful && m_state != LoadFailed)
-        m_state = LoadFinished;
+    if (newState == QMessageService::FinishedState) {
+        if ((m_state != LoadFailed) && (m_service->error() == QMessageManager::NoError)) {
+            m_state = LoadFinished;
+        } else {
+            m_state = LoadFailed;
+        }
+    }
 
     updateState();
 }
@@ -869,24 +872,23 @@ void MessageViewWidget::hideEvent(QHideEvent* e)
 {
     if(m_state == Loading)
     {
-        m_service->cancelOperation();
+        m_service->cancel();
         m_state = Unloaded;
     }
 
     QWidget::hideEvent(e);
 }
 
-void MessageViewWidget::stateChanged(QMessageService::State s)
+void MessageViewWidget::stateChanged(QMessageService::State newState)
 {
-    if(m_state == LoadFailed)
+    if (m_state == LoadFailed)
         return;
 
-    if(s == QMessageService::InProgress)
+    if (newState == QMessageService::ActiveState) {
         m_state = Loading;
-    else if(s == QMessageService::Failed)
-        m_state = LoadFailed;
-    else if(s == QMessageService::Successful)
-        m_state = Loaded;
+    } else if (newState == QMessageService::FinishedState) {
+        m_state = (m_service->error() == QMessageManager::NoError ? Loaded : LoadFailed);
+    }
 
     updateState();
 }
@@ -894,7 +896,7 @@ void MessageViewWidget::stateChanged(QMessageService::State s)
 void MessageViewWidget::loadTimeout()
 {
     qWarning() << "Load timeout";
-    m_service->cancelOperation();
+    m_service->cancel();
     m_state = LoadFailed;
     updateState();
 }
@@ -964,8 +966,8 @@ void MessageViewWidget::updateState()
             if(m_loadTimer.isActive())
             {
                 m_loadTimer.stop();
-                if(m_service->state() == QMessageService::InProgress)
-                    m_service->cancelOperation();
+                if(m_service->state() == QMessageService::ActiveState)
+                    m_service->cancel();
             }
 
             loadMessage();
@@ -1321,9 +1323,9 @@ bool MainWindow::eventFilter(QObject* source, QEvent* e)
 }
 #endif
 
-void MainWindow::serviceStateChanged(QMessageService::State state)
+void MainWindow::serviceStateChanged(QMessageService::State newState)
 {
-    if(state == QMessageService::Failed)
+    if ((newState == QMessageService::FinishedState) && (m_service->error() != QMessageManager::NoError))
         QMessageBox::critical(this,"Error","One or more service actions failed");
 }
 
