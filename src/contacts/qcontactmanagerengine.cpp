@@ -819,6 +819,11 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactAvatar::FieldAvatar, f);
+
+    f.setDataType(QVariant::Pixmap);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactAvatar::FieldAvatarPixmap, f);
+
     f.setDataType(QVariant::String); // only allowed to be a single subtype
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactAvatar::SubTypeImage));
