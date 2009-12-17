@@ -240,10 +240,8 @@ QAccelerationReading QAccelerationSensor::currentReading() const
     \fn QAccelerationSensor::accelerationChanged(const QAccelerationReading &reading)
 
     This signal is emitted when a new acceleration \a reading comes in.
-    Note that this is done after the listeners have been called.
-    If a listener blocks the reading then this signal will not be emitted.
 
-    Also note that this signal should not be used if you are requesting
+    Note that this signal should not be used if you are requesting
     high-frequency updates as signal delivery is quite slow.
 */
 
