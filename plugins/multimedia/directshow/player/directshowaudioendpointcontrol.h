@@ -39,65 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef DIRECTSHOWPLAYERSERVICE_H
-#define DIRECTSHOWPLAYERSERVICE_H
+#ifndef DIRECTSHOWAUDIOENDPOINTCONTROL_H
+#define DIRECTSHOWAUDIOENDPOINTCONTROL_H
 
-#include <qmediaservice.h>
+#include <qaudioendpointselector.h>
 
-#include <QtCore/private/qwineventnotifier_p.h>
+#include <dshow.h>
 
-#include "directshowglobal.h"
-#include "directshowrenderthread.h"
-
-class DirectShowAudioEndpointControl;
-class DirectShowMetaDataControl;
-class DirectShowPlayerControl;
-class DirectShowVideoOutputControl;
-class DirectShowVideoRendererControl;
-
-QTM_BEGIN_NAMESPACE
-class QMediaContent;
-QTM_END_NAMESPACE
+class DirectShowRenderThread;
 
 QTM_USE_NAMESPACE
 
-
-class DirectShowPlayerService : public QMediaService
+class DirectShowAudioEndpointControl : public QAudioEndpointSelector
 {
     Q_OBJECT
 public:
-    DirectShowPlayerService(QObject *parent = 0);
-    ~DirectShowPlayerService();
+    DirectShowAudioEndpointControl(DirectShowRenderThread *renderThread, QObject *parent = 0);
+    ~DirectShowAudioEndpointControl();
 
-    QMediaControl* control(const char *name) const;
+    QList<QString> availableEndpoints() const;
 
-    IGraphBuilder *graph() { return m_graph; }
-    IBaseFilter *source() { return 0; }
+    QString endpointDescription(const QString &name) const;
 
-    void load(const QMediaContent &media);
-    void play() { m_renderThread.play(); }
-    void pause() { m_renderThread.pause(); }
-    void stop() { m_renderThread.stop(); }
+    QString defaultEndpoint() const;
+    QString activeEndpoint() const;
 
-    void seek(qint64 position) { m_renderThread.seek(position); }
-    void setRate(qreal rate) { m_renderThread.setRate(rate); }
-
-
-private Q_SLOTS:
-    void videoOutputChanged();
-    void graphEvent(HANDLE handle);
-    void loaded();
+    void setActiveEndpoint(const QString& name);
 
 private:
-    DirectShowPlayerControl *m_playerControl;
-    DirectShowMetaDataControl *m_metaDataControl;
-    DirectShowVideoOutputControl *m_videoOutputControl;
-    DirectShowVideoRendererControl *m_videoRendererControl;
-    DirectShowAudioEndpointControl *m_audioEndpointControl;
-    IGraphBuilder *m_graph;
-    DirectShowRenderThread m_renderThread;
-    QWinEventNotifier m_graphEventNotifier;
+    void updateEndpoints();
+
+    DirectShowRenderThread *m_renderThread;
+    IBindCtx *m_bindContext;
+    ICreateDevEnum *m_deviceEnumerator;
+
+    QMap<QString, IMoniker *> m_devices;
+    QString m_defaultEndpoint;
+    QString m_activeEndpoint;
 };
 
-
 #endif
+

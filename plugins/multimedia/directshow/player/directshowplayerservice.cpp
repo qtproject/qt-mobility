@@ -41,6 +41,7 @@
 
 #include <directshowplayerservice.h>
 
+#include <directshowaudioendpointcontrol.h>
 #include <directshowmetadatacontrol.h>
 #include <directshowplayercontrol.h>
 #include <directshowvideooutputcontrol.h>
@@ -54,11 +55,14 @@
 DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     : QMediaService(parent)
     , m_playerControl(new DirectShowPlayerControl(this))
+    , m_audioEndpointControl(0)
     , m_metaDataControl(new DirectShowMetaDataControl(this))
     , m_videoOutputControl(new DirectShowVideoOutputControl)
     , m_videoRendererControl(new DirectShowVideoRendererControl)
     , m_graph(0)
 {
+    m_audioEndpointControl = new DirectShowAudioEndpointControl(&m_renderThread);
+
     connect(m_videoOutputControl, SIGNAL(outputChanged()), this, SLOT(videoOutputChanged()));
     connect(m_videoRendererControl, SIGNAL(filterChanged()), this, SLOT(videoOutputChanged()));
 
@@ -79,6 +83,7 @@ DirectShowPlayerService::~DirectShowPlayerService()
     m_renderThread.shutdown();
 
     delete m_playerControl;
+    delete m_audioEndpointControl;
     delete m_metaDataControl;
     delete m_videoOutputControl;
     delete m_videoRendererControl;
@@ -88,6 +93,8 @@ QMediaControl *DirectShowPlayerService::control(const char *name) const
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_playerControl;
+    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
+        return m_audioEndpointControl;
     else if (qstrcmp(name, QMetaDataControl_iid) == 0)
         return m_metaDataControl;
     else if (qstrcmp(name, QVideoOutputControl_iid) == 0)

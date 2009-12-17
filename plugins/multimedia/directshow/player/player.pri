@@ -3,6 +3,7 @@ INCLUDEPATH += $$PWD
 DEFINES += QMEDIA_DIRECTSHOW_PLAYER
 
 HEADERS += \
+        $$PWD\directshowaudioendpointcontrol.h \
         $$PWD\directshowglobal.h \
         $$PWD\directshowmetadatacontrol.h \
         $$PWD\directshowplayercontrol.h \
@@ -18,6 +19,7 @@ HEADERS += \
         $$PWD\videosurfacepinenum.h
 
 SOURCES += \
+        $$PWD\directshowaudioendpointcontrol.cpp \
         $$PWD\directshowmetadatacontrol.cpp \
         $$PWD\directshowplayercontrol.cpp \
         $$PWD\directshowplayerservice.cpp \
