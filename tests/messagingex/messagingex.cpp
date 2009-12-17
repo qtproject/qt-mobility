@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 #include "messagingex.h"
-#include "QMessageStore.h"
-#include "QMessageFilter.h"
+#include "qmessagestore.h"
+#include "qmessagefilter.h"
 #include <QFileDialog>
 
 MessagingEx::MessagingEx(QWidget* parent)

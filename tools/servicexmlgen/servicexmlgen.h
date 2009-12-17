@@ -44,13 +44,14 @@
 #include <qmobilityglobal.h>
 #include <QMainWindow>
 
-
+QT_BEGIN_NAMESPACE
 class QWidget;
 class QIODevice;
 class QPushButton;
-class ServiceWidget;
 class QPlainTextEdit;
+QT_END_NAMESPACE
 
+class ServiceWidget;
 
 class ServiceXmlGenerator : public QMainWindow
 {

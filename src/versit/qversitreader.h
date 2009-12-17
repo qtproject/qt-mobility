@@ -47,7 +47,9 @@
 
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

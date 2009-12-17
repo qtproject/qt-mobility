@@ -48,10 +48,12 @@
 #include <qmediaplaylist.h>
 #include <qvideowidget.h>
 
+QT_BEGIN_NAMESPACE
 class QAbstractItemView;
 class QLabel;
 class QModelIndex;
 class QSlider;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QMediaPlayer;

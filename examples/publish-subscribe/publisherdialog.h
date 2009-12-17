@@ -51,9 +51,11 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 namespace Ui {
     class PublisherDialog;
 }
+QT_END_NAMESPACE
 
 class PublisherDialog : public QDialog
 {
