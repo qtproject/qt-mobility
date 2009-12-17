@@ -1815,7 +1815,7 @@ QMessageFolderIdList CMTMEngine::filterMessageFoldersL(const QMessageFolderFilte
             }
             break;
             }
-        case QMessageFolderFilterPrivate::DisplayName:
+        case QMessageFolderFilterPrivate::Name:
             {
             if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));

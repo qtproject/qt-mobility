@@ -138,14 +138,14 @@ QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderFilter &filt
     return QMessageFolderFilter(); // stub
 }
 
-QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)
     return QMessageFolderFilter(); // stub
 }
 
-QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     Q_UNUSED(value)
     Q_UNUSED(cmp)

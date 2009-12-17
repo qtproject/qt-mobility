@@ -106,7 +106,7 @@ public:
 
     QMessageDataComparator::MatchFlags _matchFlags;
     
-    enum Field {None = 0, ParentAccountIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, DisplayName, Path };
+    enum Field {None = 0, ParentAccountIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, Name, Path };
     enum Comparator {Equality = 0, Inclusion};
 
     bool _valid;

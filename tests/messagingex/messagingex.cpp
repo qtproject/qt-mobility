@@ -665,12 +665,12 @@ void MessagingEx::sortParentAccountId()
 {
     int index = accountComboBox_2->currentIndex();
     folderComboBox->clear ();
-    QMessageFolderFilter filter = QMessageFolderFilter::byParentAccountId(m_accountList[index]);// & QMessageFolderFilter::byDisplayName("Inbox");
+    QMessageFolderFilter filter = QMessageFolderFilter::byParentAccountId(m_accountList[index]);// & QMessageFolderFilter::byName("Inbox");
     QMessageFolderIdList ids = m_manager.queryFolders(filter);
     for (int i=0; i < ids.count(); i++) {
         QMessageFolder folder;
         folder = m_manager.folder(ids[i]);
-        QString name = folder.displayName();
+        QString name = folder.name();
         folderComboBox->addItem(name, folder.id().toString());    
     }
 }

@@ -202,19 +202,19 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 */
 
 /*!
-    \fn QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+    \fn QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching folders whose display name matches \a value, according to \a cmp.
 
-    \sa QMessageFolder::displayName()
+    \sa QMessageFolder::name()
 */
 
 /*!
-    \fn QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+    \fn QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
   
     Returns a filter matching folders whose display name matches the substring \a value, according to \a cmp.
 
-    \sa QMessageFolder::displayName()
+    \sa QMessageFolder::name()
 */
 
 /*!

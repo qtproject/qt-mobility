@@ -131,11 +131,11 @@ bool QMessageFolderSortOrder::operator!=(const QMessageFolderSortOrder& other) c
 }
 
 /*!
-    \fn QMessageFolderSortOrder::byDisplayName(Qt::SortOrder order)
+    \fn QMessageFolderSortOrder::byName(Qt::SortOrder order)
   
     Returns a sort order that sorts folders by display name, according to \a order.
 
-    \sa QMessageFolder::displayName()
+    \sa QMessageFolder::name()
 */
 
 /*!

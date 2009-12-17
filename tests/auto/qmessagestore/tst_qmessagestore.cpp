@@ -228,9 +228,9 @@ void tst_QMessageStore::testAccount()
 void tst_QMessageStore::testFolder_data()
 {
     QTest::addColumn<QString>("path");
-    QTest::addColumn<QString>("displayName");
+    QTest::addColumn<QString>("name");
     QTest::addColumn<QString>("parentFolderPath");
-    QTest::addColumn<QString>("displayNameResult");
+    QTest::addColumn<QString>("nameResult");
 
 	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
     QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
@@ -259,13 +259,13 @@ void tst_QMessageStore::testFolder()
     QVERIFY(testAccountId.isValid());
 
     QFETCH(QString, path);
-    QFETCH(QString, displayName);
+    QFETCH(QString, name);
     QFETCH(QString, parentFolderPath);
-    QFETCH(QString, displayNameResult);
+    QFETCH(QString, nameResult);
 
     Support::Parameters p;
     p.insert("path", path);
-    p.insert("displayName", displayName);
+    p.insert("name", name);
     p.insert("parentAccountName", testAccountName);
     p.insert("parentFolderPath", parentFolderPath);
 
@@ -287,7 +287,7 @@ void tst_QMessageStore::testFolder()
     QMessageFolder folder(folderId);
     QCOMPARE(folder.id(), folderId);
     QCOMPARE(folder.path(), path);
-    QCOMPARE(folder.displayName(), displayNameResult);
+    QCOMPARE(folder.name(), nameResult);
     QCOMPARE(folder.parentAccountId(), testAccountId);
 
     QCOMPARE(QMessageFolder(folder).id(), folderId);
@@ -467,12 +467,12 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testAccountId.isValid());
 
     QMessageFolderId testFolderId;
-    QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
+    QMessageFolderFilter filter(QMessageFolderFilter::byName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
     QMessageFolderIdList folderIds(manager->queryFolders(filter));
     if (folderIds.isEmpty()) {
         Support::Parameters p;
         p.insert("path", "Inbox");
-        p.insert("displayName", "Inbox");
+        p.insert("name", "Inbox");
         p.insert("parentAccountName", testAccountName);
         testFolderId = Support::addFolder(p);
     } else {

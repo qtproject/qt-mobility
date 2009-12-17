@@ -67,9 +67,9 @@ bool QMessageFolderSortOrderPrivate::lessThan(const QMessageFolderSortOrder &sor
         switch (field)
         {
         case Name: {
-            if (left->displayName() < right->displayName()) {
+            if (left->name() < right->name()) {
                 return true;
-            } else if (right->displayName() < left->displayName()) {
+            } else if (right->name() < left->name()) {
                 return false;
             } else {
                 continue;
@@ -149,7 +149,7 @@ bool QMessageFolderSortOrder::operator==(const QMessageFolderSortOrder& other) c
     return (d_ptr->_fieldOrderList == other.d_ptr->_fieldOrderList);
 }
 
-QMessageFolderSortOrder QMessageFolderSortOrder::byDisplayName(Qt::SortOrder order)
+QMessageFolderSortOrder QMessageFolderSortOrder::byName(Qt::SortOrder order)
 {
     QMessageFolderSortOrder result;
     QPair<QMessageFolderSortOrderPrivate::Field, Qt::SortOrder> fieldOrder(QMessageFolderSortOrderPrivate::Name, order);

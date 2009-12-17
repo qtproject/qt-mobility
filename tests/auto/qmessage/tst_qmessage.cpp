@@ -142,7 +142,7 @@ void tst_QMessage::initTestCase()
     {
         Support::Parameters p;
         p.insert("path", "/root");
-        p.insert("displayName", "Root");
+        p.insert("name", "Root");
         p.insert("parentAccountName", "testAccount");
 
         testFolderId = Support::addFolder(p);

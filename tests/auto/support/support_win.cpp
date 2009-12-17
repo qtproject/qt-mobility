@@ -1213,7 +1213,7 @@ QMessageFolderId addFolder(const Parameters &params)
     doInit();
 
     QString folderPath(params["path"]);
-    QString folderName(params["displayName"]);
+    QString folderName(params["name"]);
     QString parentPath(params["parentFolderPath"]);
     QByteArray accountName(params["parentAccountName"].toAscii());
 

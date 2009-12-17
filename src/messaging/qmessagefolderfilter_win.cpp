@@ -506,7 +506,7 @@ QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderFilter &filt
     return result;
 }
 
-QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFolderFilter result;
     result.d_ptr->_value = value;
@@ -515,7 +515,7 @@ QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, Q
     return result;
 }
 
-QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageFolderFilter result;
     result.d_ptr->_value = value;

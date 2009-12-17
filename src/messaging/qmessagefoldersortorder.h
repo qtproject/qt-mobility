@@ -67,7 +67,7 @@ public:
     bool operator==(const QMessageFolderSortOrder &other) const;
     bool operator!=(const QMessageFolderSortOrder &other) const;
 
-    static QMessageFolderSortOrder byDisplayName(Qt::SortOrder order = Qt::AscendingOrder);
+    static QMessageFolderSortOrder byName(Qt::SortOrder order = Qt::AscendingOrder);
     static QMessageFolderSortOrder byPath(Qt::SortOrder order = Qt::AscendingOrder);
 
 private:

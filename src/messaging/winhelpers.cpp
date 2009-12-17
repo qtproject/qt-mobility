@@ -3718,7 +3718,7 @@ QMessageFolder MapiSession::folder(QMessageManager::Error *error, const QMessage
         ULONG count;
         HRESULT rv = folder->folder()->GetProps(reinterpret_cast<LPSPropTagArray>(&columns), MAPI_UNICODE, &count, &properties);
         if (HR_SUCCEEDED(rv)) {
-            QString displayName(QStringFromLpctstr(properties[0].Value.LPSZ));
+            QString name(QStringFromLpctstr(properties[0].Value.LPSZ));
             MapiEntryId parentEntryId(properties[1].Value.bin.lpb, properties[1].Value.bin.cb);
 #ifndef _WIN32_WCE
             MapiRecordKey folderKey(properties[2].Value.bin.lpb, properties[2].Value.bin.cb);
@@ -3733,11 +3733,11 @@ QMessageFolder MapiSession::folder(QMessageManager::Error *error, const QMessage
             if (equal(parentEntryId, storeRoot->entryId())) {
                 // This folder is a direct child of the root folder
                 QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
-                return QMessageFolderPrivate::from(folderId, accountId, QMessageFolderId(), displayName, displayName);
+                return QMessageFolderPrivate::from(folderId, accountId, QMessageFolderId(), name, name);
             }
 
             QStringList path;
-            path.append(displayName);
+            path.append(name);
 
             QMessageFolderId parentId;
             MapiEntryId ancestorEntryId(parentEntryId);
@@ -3772,7 +3772,7 @@ QMessageFolder MapiSession::folder(QMessageManager::Error *error, const QMessage
                     if (reachedRoot) {
                         // Reached the root and have a complete path for the folder being retrieved
                         QMessageAccountId accountId(QMessageAccountIdPrivate::from(storeRecordKey));
-                        return QMessageFolderPrivate::from(folderId, accountId, parentId, displayName, path.join("/"));
+                        return QMessageFolderPrivate::from(folderId, accountId, parentId, name, path.join("/"));
                     }
 
                     // Prepare to consider next ancestor
