@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "messagingex.h"
-#include "QMessageStore.h"
 #include "QMessageFilter.h"
 #include <QFileDialog>
 
@@ -48,13 +47,12 @@ MessagingEx::MessagingEx(QWidget* parent)
 {
     setupUi(this);
     createMenus();
-    m_store = QMessageStore::instance();
-    connect(m_store, SIGNAL(messageAdded(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageReceived(const QMessageId&)));
-    connect(m_store, SIGNAL(messageRemoved(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageRemoved(const QMessageId&)));
-    connect(m_store, SIGNAL(messageUpdated(const QMessageId&, const QMessageStore::NotificationFilterIdSet&)), this, SLOT(messageUpdated(const QMessageId&)));
-    m_store->registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));    
+    connect(&m_manager, SIGNAL(messageAdded(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageReceived(const QMessageId&)));
+    connect(&m_manager, SIGNAL(messageRemoved(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageRemoved(const QMessageId&)));
+    connect(&m_manager, SIGNAL(messageUpdated(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageUpdated(const QMessageId&)));
+    m_manager.registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));    
     connect(&m_service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
-    m_accountList = m_store->queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
+    m_accountList = m_manager.queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
         QMessageAccount account = QMessageAccount(m_accountList[i]);
         accountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
@@ -263,7 +261,7 @@ void MessagingEx::addMessage()
         m_fileNames.clear();
         attachmentLabel->clear();
     } else {
-        m_store->addMessage(&message);
+        m_manager.addMessage(&message);
         emailAddressEdit->clear();
         subjectEdit->clear();
         emailMessageEdit->clear();  
@@ -347,7 +345,6 @@ void MessagingEx::messageReceived(const QMessageId& aId)
     msgBox.setStandardButtons(QMessageBox::Close);
     msgBox.setText(tr("Message added : ")+aId.toString());
     msgBox.exec();
-    //QMessage message = m_store->message(aId);
     m_service.show(aId);
 }
 
@@ -669,10 +666,10 @@ void MessagingEx::sortParentAccountId()
     int index = accountComboBox_2->currentIndex();
     folderComboBox->clear ();
     QMessageFolderFilter filter = QMessageFolderFilter::byParentAccountId(m_accountList[index]);// & QMessageFolderFilter::byDisplayName("Inbox");
-    QMessageFolderIdList ids = m_store->queryFolders(filter);
+    QMessageFolderIdList ids = m_manager.queryFolders(filter);
     for (int i=0; i < ids.count(); i++) {
         QMessageFolder folder;
-        folder = m_store->folder(ids[i]);
+        folder = m_manager.folder(ids[i]);
         QString name = folder.displayName();
         folderComboBox->addItem(name, folder.id().toString());    
     }
@@ -766,7 +763,7 @@ void MessagingEx::messagesFound(const QMessageIdList &ids)
     messageListView->setModel(standardModel);
     stackedWidget->setCurrentIndex(12);
     for (int i=0; i < ids.count(); i++) {
-        QMessage message = m_store->message(ids[i]);
+        QMessage message = m_manager.message(ids[i]);
         QString from = message.from().recipient();
         QString subject = message.subject();
         if (subject.length() == 0) {

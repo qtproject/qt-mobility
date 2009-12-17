@@ -69,7 +69,7 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageIdList ids;
-    QMessageService ;
+    QMessageService service;
     connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     if (service.queryMessages(filter, sortOrder, limit, offset)) {
         QEventLoop loop;
