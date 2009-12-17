@@ -1809,42 +1809,4 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    this organization.
  */
 
-/*!
- * Returns the avatar's image if the avatar's subtype is SubTypeImage.
- */
-QPixmap QContactAvatar::pixmap() const
-{
-    if (subType() == QContactAvatar::SubTypeImage) {
-        QUrl url(avatar());
-        if (url.scheme().isEmpty()) {
-            return QPixmap(avatar());
-        }
-
-        if (url.scheme().startsWith("file")){
-            return QPixmap(url.toLocalFile());
-        }
-
-        if (url.scheme().startsWith("data")){
-            QByteArray data = QByteArray::fromPercentEncoding(url.toEncoded(QUrl::RemoveScheme));
-            int pos = data.indexOf(',');
-            QByteArray payload = data.mid(pos + 1);
-            if (pos != -1) {
-                data.truncate(pos);
-                data = data.trimmed();
-                if (data.endsWith(";base64")) {
-                    payload = QByteArray::fromBase64(payload);
-                }
-            }
-            QPixmap::fromImage(QImage::fromData(payload));
-        }
-    }
-
-    return QPixmap();
-}
-
-bool QContactAvatar::setPixmap(const QPixmap& pixmap)
-{
-    return setValue(FieldAvatarPixmap, QVariant::fromValue(pixmap));
-}
-
 QTM_END_NAMESPACE

@@ -43,7 +43,7 @@
 #define QCONTACTAVATAR_H
 
 #include <QString>
-
+#include <QPixmap>
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
 #include "qcontact.h"
@@ -81,8 +81,14 @@ public:
 
     void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}
     QString avatar() const {return value(FieldAvatar);}
-    QPixmap QContactAvatar::pixmap() const;
-    bool QContactAvatar::setPixmap(const QPixmap& pixmap);
+    QPixmap QContactAvatar::pixmap() const
+    {
+        return value<QPixmap>(QContactAvatar::FieldAvatarPixmap);
+    }
+    bool QContactAvatar::setPixmap(const QPixmap& pixmap)
+    {
+        return setValue(FieldAvatarPixmap, QVariant::fromValue(pixmap));
+    }
     
     void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
     QString subType() const {return value(FieldSubType);}
