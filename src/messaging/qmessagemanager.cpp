@@ -452,9 +452,12 @@ bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManag
 }
 
 /*!
-    \fn QMessageManager::addMessage(QMessage *m)
+    \fn QMessageManager::addMessage(QMessage *message)
     
-    Updates the existing QMessage \a m on the messaging store.
+    Adds a copy of the message indicated by \a message to the messaging store 
+    and modifies the message indicated by \a message to contain the identifier 
+    of the created message.
+
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
     
     To ensure the change is propagated to any affected external server
@@ -468,9 +471,13 @@ bool QMessageManager::addMessage(QMessage *m)
 }
 
 /*!
-    \fn QMessageManager::updateMessage(QMessage *m)
+    \fn QMessageManager::updateMessage(QMessage *message)
     
-    Updates the existing QMessage \a m on the messaging store.
+    Updates the messaging store so that the message whose identifier is contained 
+    by the message at \a message contains the content at \a message. If \a message
+    does not contain a valid identifier, no changes will result.  Internal data
+    of the QMessage object at \a message can be modified by this operation.
+    
     Returns \c true if the operation successfully updates the store; otherwise returns \c false. 
 
     To ensure the change is propagated to any affected external server 
@@ -486,7 +493,7 @@ bool QMessageManager::updateMessage(QMessage *m)
 /*!
     \fn QMessageManager::message(const QMessageId& id) const
     
-   Returns the QMessage identified by \a id from the store.
+    Returns the QMessage identified by \a id from the store.
 */
 QMessage QMessageManager::message(const QMessageId& id) const
 {
@@ -496,7 +503,7 @@ QMessage QMessageManager::message(const QMessageId& id) const
 /*!
     \fn QMessageManager::folder(const QMessageFolderId& id) const
     
-   Returns the QMessageFolder identified by \a id from the store.
+    Returns the QMessageFolder identified by \a id from the store.
 */
 QMessageFolder QMessageManager::folder(const QMessageFolderId& id) const
 {
@@ -506,7 +513,7 @@ QMessageFolder QMessageManager::folder(const QMessageFolderId& id) const
 /*!
     \fn QMessageManager::account(const QMessageAccountId& id) const
     
-   Returns the QMessageAccount identified by \a id from the store.
+    Returns the QMessageAccount identified by \a id from the store.
 */
 QMessageAccount QMessageManager::account(const QMessageAccountId& id) const
 {

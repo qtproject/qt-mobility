@@ -107,8 +107,9 @@ bool QMessageId::operator!=(const QMessageId &other) const
 }
 
 /*!
-    \internal
     \fn bool QMessageId::operator<(const QMessageId &other) const
+
+    Returns true if this identifier is ordered before \a other using an implementation-defined ordering.
 */
 
 /*!
