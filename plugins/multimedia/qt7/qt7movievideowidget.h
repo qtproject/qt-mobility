@@ -105,6 +105,7 @@ private:
     bool createVisualContext();
 
     void updateVideoFrame();
+    void updateColors();
 
     void *m_movie;
     GLVideoWidget *m_videoWidget;

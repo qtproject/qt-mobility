@@ -57,6 +57,8 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+#include "math.h"
+
 class GLVideoWidget : public QGLWidget
 {
 public:
@@ -64,10 +66,10 @@ public:
     GLVideoWidget(QWidget *parent, const QGLFormat &format)
         : QGLWidget(format, parent),
           m_texRef(0),
+          m_nativeSize(640,480),
           m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
     {
-        setAutoFillBackground(false);
-        m_nativeSize = QSize(640, 680);
+        setAutoFillBackground(false);        
     }
 
     void initializeGL()
@@ -96,16 +98,6 @@ public:
             glDisable(GL_CULL_FACE);
             GLenum target = CVOpenGLTextureGetTarget(m_texRef);
             glEnable(target);
-
-            /*opacity *= m_opacity;
-            if (opacity < 1){
-                glEnable(GL_BLEND);
-                glColor4f(1, 1, 1, opacity);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            } else {*/
-                glColor3f(1, 1, 1);
-                glDisable(GL_BLEND);
-            //}
 
             glBindTexture(target, CVOpenGLTextureGetName(m_texRef));
             glTexParameterf(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -340,6 +332,7 @@ int QT7MovieVideoWidget::brightness() const
 void QT7MovieVideoWidget::setBrightness(int brightness)
 {
     m_brightness = brightness;
+    updateColors();
 }
 
 int QT7MovieVideoWidget::contrast() const
@@ -349,7 +342,8 @@ int QT7MovieVideoWidget::contrast() const
 
 void QT7MovieVideoWidget::setContrast(int contrast)
 {
-    m_contrast = contrast;    
+    m_contrast = contrast;
+    updateColors();
 }
 
 int QT7MovieVideoWidget::hue() const
@@ -360,6 +354,7 @@ int QT7MovieVideoWidget::hue() const
 void QT7MovieVideoWidget::setHue(int hue)
 {
     m_hue = hue;
+    updateColors();
 }
 
 int QT7MovieVideoWidget::saturation() const
@@ -370,6 +365,26 @@ int QT7MovieVideoWidget::saturation() const
 void QT7MovieVideoWidget::setSaturation(int saturation)
 {
     m_saturation = saturation;
+    updateColors();
+}
+
+void QT7MovieVideoWidget::updateColors()
+{
+#ifdef QUICKTIME_C_API_AVAILABLE
+    if (m_movie) {
+        QTMovie *movie = (QTMovie*)m_movie;
+
+        Float32 value;
+        value = m_brightness/100.0;
+        SetMovieVisualBrightness([movie quickTimeMovie], value, 0);
+        value = pow(2, m_contrast/50.0);
+        SetMovieVisualContrast([movie quickTimeMovie], value, 0);
+        value = m_hue/100.0;
+        SetMovieVisualHue([movie quickTimeMovie], value, 0);
+        value = 1.0+m_saturation/100.0;
+        SetMovieVisualSaturation([movie quickTimeMovie], value, 0);
+    }
+#endif
 }
 
 void QT7MovieVideoWidget::displayLinkEvent(const CVTimeStamp *ts)
@@ -397,8 +412,6 @@ void QT7MovieVideoWidget::updateVideoFrame()
 
     // check for new frame
     if (m_visualContext && QTVisualContextIsNewImageAvailable(m_visualContext, &timeStamp)) {
-        //qDebug() << "Have new image";
-
         // if we have a previous frame release it
         if (m_currentFrame) {
             CVOpenGLTextureRelease(m_currentFrame);
