@@ -46,7 +46,7 @@
 #include <QUrl>
 
 #include "s60audioencodercontrol.h"
-#include "s60audiodevicecontrol.h"
+#include "s60audioendpointselector.h"
 #include "s60audiomediarecordercontrol.h"
 
 #include <QAudioFormat>
@@ -56,16 +56,6 @@
 #include <Mda\Client\Utility.h>
 #include <MdaAudioSampleEditor.h>
 
-namespace QAudio
-{
-    enum Error { NoError, OpenError, IOError, UnderrunError, FatalError };
-    enum State { ActiveState, SuspendState, StopState, IdleState };
-    enum Mode { AudioInput, AudioOutput };
-}
-
-Q_DECLARE_METATYPE(QAudio::Error)
-Q_DECLARE_METATYPE(QAudio::State)
-Q_DECLARE_METATYPE(QAudio::Mode)
 
 class S60AudioCaptureSession : public QObject, public MMdaObjectStateChangeObserver
 {

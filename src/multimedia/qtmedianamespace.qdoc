@@ -196,3 +196,14 @@
     \value AverageBitRateEncoding
     \value TwoPassEncoding
 */
+
+/*!
+    \enum QtMedia::AvailabilityError
+
+    Enumerates Service status errors.
+
+    \value NoError
+    \value ServiceMissingError
+    \value ResourceError
+    \value BusyError
+*/

@@ -221,13 +221,30 @@ QCamera::~QCamera()
 
 
 /*!
-    Returns true if the camera is supported, otherwise returns false.
+    Returne true if the camera service is ready to use.
 */
 bool QCamera::isAvailable() const
 {
-    return d_func()->control != NULL;
+    if (d_func()->control != NULL)
+        return true;
+    else
+        return false;
 }
 
+/*!
+    Returns the error state of the camera service.
+*/
+
+QtMedia::AvailabilityError QCamera::availabilityError() const
+{
+    if (d_func()->control != NULL) {
+        if (d_func()->error == QCamera::NoError)
+            return QtMedia::NoError;
+        else
+            return QtMedia::ResourceError;
+    } else
+        return QtMedia::ServiceMissingError;
+}
 
 /*!
     Returns the error state of the object.
