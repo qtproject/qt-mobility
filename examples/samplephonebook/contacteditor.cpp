@@ -184,6 +184,10 @@ void ContactEditor::saveClicked()
         em.setEmailAddress(m_emailEdit->text());
         adr.setStreet(m_addrEdit->text());
         av.setAvatar(m_newAvatarPath);
+        QPixmap pix;
+        pix.load(m_newAvatarPath);
+
+        av.setPixmap(pix);
 
         curr.saveDetail(&nm);
         curr.saveDetail(&phn);
