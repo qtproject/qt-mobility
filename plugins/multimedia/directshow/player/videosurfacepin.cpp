@@ -63,11 +63,12 @@ VideoSurfacePin::VideoSurfacePin(VideoSurfaceFilter *filter, QAbstractVideoSurfa
     , m_startResult(S_OK)
     , m_mediaTypeToken(0)
     , m_id(QString::fromLatin1("reference"))
-    , m_renderEvent(::CreateEvent(0, 0, 0, 0))
     , m_flushEvent(::CreateEvent(0, 0, 0, 0))
+    , m_sampleScheduler(this)
     , m_flushing(false)
 {
     connect(surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
+    connect(&m_sampleScheduler, SIGNAL(sampleReady()), this, SLOT(sampleReady()));
 }
 
 VideoSurfacePin::~VideoSurfacePin()
@@ -75,7 +76,6 @@ VideoSurfacePin::~VideoSurfacePin()
     Q_ASSERT(!m_allocator);
     Q_ASSERT(!m_peer);
 
-    ::CloseHandle(m_renderEvent);
     ::CloseHandle(m_flushEvent);
 
     Q_ASSERT(m_ref == 1);
@@ -88,16 +88,15 @@ void VideoSurfacePin::setState(FILTER_STATE state, REFERENCE_TIME time)
     m_state = state;
 
     if (m_state ==  State_Stopped) {
-        m_startTime = 0;
+        m_sampleScheduler.stop();
 
         m_surface->stop();
 
         ::SetEvent(m_flushEvent);
     } else if (m_state == State_Paused) {
-        ::ResetEvent(m_flushEvent);
+        m_sampleScheduler.pause();
     } else if (m_state == State_Running) {
-        m_startTime = time;
-        ::SetEvent(m_flushEvent);
+        m_sampleScheduler.run(time);
     }
 }
 
@@ -105,7 +104,7 @@ void VideoSurfacePin::setClock(IReferenceClock *clock)
 {
     QMutexLocker locker(&m_mutex);
 
-    m_clock = clock;
+    m_sampleScheduler.setClock(clock);
 }
 
 HRESULT VideoSurfacePin::QueryInterface(REFIID riid, void **ppvObject)
@@ -116,7 +115,7 @@ HRESULT VideoSurfacePin::QueryInterface(REFIID riid, void **ppvObject)
             || riid == IID_IPin) {
         *ppvObject = static_cast<IPin *>(this);
     } else if (riid == IID_IMemInputPin) {
-        *ppvObject = static_cast<IMemInputPin *>(this);
+        *ppvObject = static_cast<IMemInputPin *>(&m_sampleScheduler);
     } else {
         return E_NOINTERFACE;
     }
@@ -341,7 +340,7 @@ HRESULT VideoSurfacePin::BeginFlush()
 {
     QMutexLocker locker(&m_mutex);
 
-    m_pendingFrame = QVideoFrame();
+    m_sampleScheduler.setFlushing(true);
 
     if (thread() == QThread::currentThread()) {
         flush();
@@ -361,6 +360,8 @@ HRESULT VideoSurfacePin::EndFlush()
     m_flushing = false;
 
     ::ResetEvent(m_flushEvent);
+
+    m_sampleScheduler.setFlushing(false);
 
     return S_OK;
 }
@@ -386,154 +387,6 @@ HRESULT VideoSurfacePin::QueryDirection(PIN_DIRECTION *pPinDir)
 
         return S_OK;
     }
-}
-
-HRESULT VideoSurfacePin::GetAllocator(IMemAllocator **ppAllocator)
-{
-    if (!ppAllocator) {
-        return E_POINTER;
-    } else {
-        QMutexLocker locker(&m_mutex);
-
-        if (!m_allocator) {
-            return VFW_E_NO_ALLOCATOR;
-        } else {
-            *ppAllocator = m_allocator;
-
-            return S_OK;
-        }
-    }
-}
-
-HRESULT VideoSurfacePin::NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly)
-{
-    Q_UNUSED(bReadOnly);
-
-    HRESULT hr;
-    ALLOCATOR_PROPERTIES properties;
-
-    if (!pAllocator) {
-        return E_POINTER;
-    } else if ((hr = pAllocator->GetProperties(&properties)) != S_OK) {
-        return hr;
-    } else {
-        if (properties.cBuffers == 1) {
-            ALLOCATOR_PROPERTIES actual;
-
-            properties.cBuffers = 2;
-            if ((hr = pAllocator->SetProperties(&properties, &actual)) != S_OK)
-                return hr;
-        }
-
-        QMutexLocker locker(&m_mutex);
-
-        if (m_allocator)
-            m_allocator->Release();
-
-        m_allocator = pAllocator;
-        m_allocator->AddRef();
-
-        return S_OK;
-    }
-}
-
-HRESULT VideoSurfacePin::GetAllocatorRequirements(ALLOCATOR_PROPERTIES *pProps)
-{
-    if (!pProps)
-        return E_POINTER;
-
-    pProps->cBuffers = 2;
-
-    return S_OK;
-}
-
-HRESULT VideoSurfacePin::Receive(IMediaSample *pSample)
-{
-    if (!pSample)
-        return E_POINTER;
-
-    bool running = false;
-    bool paused = false;
-
-    {
-        QMutexLocker locker(&m_mutex);
-
-        if (m_flushing) {
-            return S_FALSE;
-        } else if (m_state == State_Stopped) {
-            return VFW_E_WRONG_STATE;
-        } else {
-            // Should be checking frame format.
-
-            m_pendingFrame = QVideoFrame(
-                    new MediaSampleVideoBuffer(pSample, m_bytesPerLine),
-                    m_surfaceFormat.frameSize(),
-                    m_surfaceFormat.pixelFormat());
-
-            REFERENCE_TIME start = 0;
-            REFERENCE_TIME end = 0;
-            if (m_clock && m_state == State_Running && pSample->GetTime(&start, &end) == S_OK) {
-                DWORD_PTR advise;
-                m_clock->AdviseTime(m_startTime, start, reinterpret_cast<HEVENT>(m_renderEvent), &advise);
-                running = true;
-            } else if (m_state == State_Paused) {
-                paused = true;
-            }
-        }
-    }
-
-    if (running) {
-        HANDLE handles[] = { m_flushEvent, m_renderEvent };
-
-        DWORD index = ::WaitForMultipleObjects(2, handles, false, INFINITE);
-
-        QMutexLocker locker(&m_mutex);
-
-        if (index == WAIT_OBJECT_0) {
-            if (m_flushing) {
-                return S_FALSE;
-            } else if (m_state == State_Stopped) {
-                return VFW_E_WRONG_STATE;
-            } else {
-                ::ResetEvent(m_flushEvent);
-            }
-        } else {
-            paused = m_state == State_Paused;
-        }
-    }
-
-    QCoreApplication::postEvent(this, new QEvent(QEvent::User));
-
-    if (paused) {
-        ::WaitForSingleObject(m_flushEvent, INFINITE);
-
-        QMutexLocker locker(&m_mutex);
-
-        if (m_state != State_Stopped && !m_flushing)
-            ::ResetEvent(m_flushEvent);
-    }
-
-    return S_OK;
-}
-
-HRESULT VideoSurfacePin::ReceiveMultiple(
-        IMediaSample **pSamples, long nSamples, long *nSamplesProcessed)
-{
-    if (!pSamples || !nSamplesProcessed)
-        return E_POINTER;
-
-    for (*nSamplesProcessed = 0; *nSamplesProcessed < nSamples; ++(*nSamplesProcessed)) {
-        HRESULT hr = Receive(pSamples[*nSamplesProcessed]);
-
-        if (hr != S_OK)
-            return hr;
-    }
-    return S_OK;
-}
-
-HRESULT VideoSurfacePin::ReceiveCanBlock()
-{
-    return S_OK;
 }
 
 int VideoSurfacePin::currentMediaTypeToken()
@@ -606,13 +459,7 @@ HRESULT VideoSurfacePin::cloneMediaType(int token, int index, IEnumMediaTypes **
 
 void VideoSurfacePin::customEvent(QEvent *event)
 {
-    if (event->type() == QEvent::User) {
-        QMutexLocker locker(&m_mutex);
-
-        m_surface->present(m_pendingFrame);
-
-        m_pendingFrame = QVideoFrame();
-    } else if (event->type() == StartSurface) {
+    if (event->type() == StartSurface) {
         m_startResult = start();
         ::SetEvent(m_flushEvent);
     } else if (event->type() == StopSurface) {
@@ -653,4 +500,18 @@ void VideoSurfacePin::supportedFormatsChanged()
     }
 
     ++m_mediaTypeToken;
+}
+
+void VideoSurfacePin::sampleReady()
+{
+    IMediaSample *sample = m_sampleScheduler.takeSample();
+
+    if (sample) {
+        m_surface->present(QVideoFrame(
+                new MediaSampleVideoBuffer(sample, m_bytesPerLine),
+                m_surfaceFormat.frameSize(),
+                m_surfaceFormat.pixelFormat()));
+
+        sample->Release();
+    }
 }

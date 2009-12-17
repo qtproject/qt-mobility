@@ -42,6 +42,7 @@
 #ifndef VIDEOSURFACEPIN_H
 #define VIDEOSURFACEPIN_H
 
+#include "directshowsamplescheduler.h"
 #include "videosurfacemediatype.h"
 
 #include <QtCore/qbasictimer.h>
@@ -60,7 +61,6 @@ class VideoSurfaceMediaTypeEnum;
 class VideoSurfacePin
     : public QObject
     , public IPin
-    , public IMemInputPin
 {
     Q_OBJECT
 public:
@@ -103,15 +103,6 @@ public:
 
     HRESULT STDMETHODCALLTYPE QueryDirection(PIN_DIRECTION *pPinDir);
 
-    // IMemInputPin
-    HRESULT STDMETHODCALLTYPE GetAllocator(IMemAllocator **ppAllocator);
-    HRESULT STDMETHODCALLTYPE NotifyAllocator(IMemAllocator *pAllocator, BOOL bReadOnly);
-    HRESULT STDMETHODCALLTYPE GetAllocatorRequirements(ALLOCATOR_PROPERTIES *pProps);
-
-    HRESULT STDMETHODCALLTYPE Receive(IMediaSample *pSample);
-    HRESULT STDMETHODCALLTYPE ReceiveMultiple(IMediaSample **pSamples, long nSamples, long *nSamplesProcessed);
-    HRESULT STDMETHODCALLTYPE ReceiveCanBlock();
-
     int currentMediaTypeToken();
     HRESULT nextMediaType(
             int token, int *index, ULONG count, AM_MEDIA_TYPE **types, ULONG *fetchedCount);
@@ -123,6 +114,7 @@ protected:
 
 private Q_SLOTS:
     void supportedFormatsChanged();
+    void sampleReady();
 
 private:
     HRESULT start();
@@ -150,8 +142,7 @@ private:
     QVector<AM_MEDIA_TYPE> m_mediaTypes;
     QString m_id;
     QVideoSurfaceFormat m_surfaceFormat;
-    QVideoFrame m_pendingFrame;
-    HANDLE m_renderEvent;
+    DirectShowSampleScheduler m_sampleScheduler;
     HANDLE m_flushEvent;
     QMutex m_mutex;
     QBasicTimer m_timer;

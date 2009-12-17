@@ -313,6 +313,7 @@ void DirectShowRenderThread::run()
 
 void DirectShowRenderThread::doLoad(QMutexLocker *locker)
 {
+    qDebug(Q_FUNC_INFO);
     m_executedTasks = 0;
 
     if (m_builder)
@@ -358,6 +359,7 @@ void DirectShowRenderThread::doLoad(QMutexLocker *locker)
 
 void DirectShowRenderThread::doSetAudioOutput(QMutexLocker *locker)
 {
+    qDebug(Q_FUNC_INFO);
     IGraphBuilder *graph = m_graph;
     graph->AddRef();
 
@@ -388,6 +390,7 @@ void DirectShowRenderThread::doSetAudioOutput(QMutexLocker *locker)
 
 void DirectShowRenderThread::doSetVideoOutput(QMutexLocker *locker)
 {
+    qDebug(Q_FUNC_INFO);
     IGraphBuilder *graph = m_graph;
     graph->AddRef();
 
@@ -418,6 +421,7 @@ void DirectShowRenderThread::doSetVideoOutput(QMutexLocker *locker)
 
 void DirectShowRenderThread::doSetRate(QMutexLocker *locker)
 {
+    qDebug(Q_FUNC_INFO);
     if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
         locker->unlock();
         seeking->SetRate(m_rate);
@@ -429,6 +433,7 @@ void DirectShowRenderThread::doSetRate(QMutexLocker *locker)
 
 void DirectShowRenderThread::doSeek(QMutexLocker *locker)
 {
+    qDebug(Q_FUNC_INFO);
     if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
         LONGLONG pos = LONGLONG(m_position) * 10;
 
@@ -442,6 +447,7 @@ void DirectShowRenderThread::doSeek(QMutexLocker *locker)
 
 void DirectShowRenderThread::doPlay(QMutexLocker *locker)
 {
+    qDebug(Q_FUNC_INFO);
     if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
         locker->unlock();
         HRESULT hr = control->Run();
@@ -456,6 +462,7 @@ void DirectShowRenderThread::doPlay(QMutexLocker *locker)
 
 void DirectShowRenderThread::doPause(QMutexLocker *locker)
 {
+    qDebug(Q_FUNC_INFO);
     if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
         locker->unlock();
         HRESULT hr = control->Pause();
