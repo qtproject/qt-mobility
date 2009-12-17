@@ -223,7 +223,7 @@ QMessageServicePrivate::~QMessageServicePrivate()
     _manager.unregisterNotificationFilter(m_bodyDownloadFilterId);
 }
 
-static Lptstr createMCFRecipients(const QMessageAddressList& addressList, QMessageAddress::Type filterAddressType)
+static Lptstr createMCFRecipients(QMessageAddress::Type filterAddressType, const QMessageAddressList& addressList)
 {
     QStringList temp;
 
