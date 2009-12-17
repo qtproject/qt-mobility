@@ -42,20 +42,21 @@
 #include "videosurfacemediatypeenum.h"
 
 #include "videosurfacemediatype.h"
-#include "videosurfacepin.h"
+#include "videosurfacefilter.h"
 
-VideoSurfaceMediaTypeEnum::VideoSurfaceMediaTypeEnum(VideoSurfacePin *pin, int token, int index)
+VideoSurfaceMediaTypeEnum::VideoSurfaceMediaTypeEnum(
+        VideoSurfaceFilter *filter, int token, int index)
     : m_ref(1)
-    , m_pin(pin)
+    , m_filter(filter)
     , m_token(token)
     , m_index(index)
 {
-    m_pin->AddRef();
+    m_filter->AddRef();
 }
 
 VideoSurfaceMediaTypeEnum::~VideoSurfaceMediaTypeEnum()
 {
-    m_pin->Release();
+    m_filter->Release();
 }
 
 HRESULT VideoSurfaceMediaTypeEnum::QueryInterface(REFIID riid, void **ppvObject)
@@ -93,18 +94,17 @@ ULONG VideoSurfaceMediaTypeEnum::Release()
 HRESULT VideoSurfaceMediaTypeEnum::Next(
         ULONG cMediaTypes, AM_MEDIA_TYPE **ppMediaTypes, ULONG *pcFetched)
 {
-
-    return m_pin->nextMediaType(m_token, &m_index, cMediaTypes, ppMediaTypes, pcFetched);
+    return m_filter->nextMediaType(m_token, &m_index, cMediaTypes, ppMediaTypes, pcFetched);
 }
 
 HRESULT VideoSurfaceMediaTypeEnum::Skip(ULONG cMediaTypes)
 {
-    return m_pin->skipMediaType(m_token, &m_index, cMediaTypes);
+    return m_filter->skipMediaType(m_token, &m_index, cMediaTypes);
 }
 
 HRESULT VideoSurfaceMediaTypeEnum::Reset()
 {
-    m_token = m_pin->currentMediaTypeToken();
+    m_token = m_filter->currentMediaTypeToken();
     m_index = 0;
 
     return S_OK;
@@ -112,5 +112,5 @@ HRESULT VideoSurfaceMediaTypeEnum::Reset()
 
 HRESULT VideoSurfaceMediaTypeEnum::Clone(IEnumMediaTypes **ppEnum)
 {
-    return m_pin->cloneMediaType(m_token, m_index, ppEnum);
+    return m_filter->cloneMediaType(m_token, m_index, ppEnum);
 }

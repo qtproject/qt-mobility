@@ -15,7 +15,6 @@ HEADERS += \
         $$PWD\videosurfacefilter.h \
         $$PWD\videosurfacemediatype.h \
         $$PWD\videosurfacemediatypeenum.h \
-        $$PWD\videosurfacepin.h \
         $$PWD\videosurfacepinenum.h
 
 SOURCES += \
@@ -30,7 +29,6 @@ SOURCES += \
         $$PWD\videosurfacefilter.cpp \
         $$PWD\videosurfacemediatype.cpp \
         $$PWD\videosurfacemediatypeenum.cpp \
-        $$PWD\videosurfacepin.cpp \
         $$PWD\videosurfacepinenum.cpp
 
 LIBS += -lstrmiids -ldmoguids -luuid -lmsdmo -lole32 -loleaut32

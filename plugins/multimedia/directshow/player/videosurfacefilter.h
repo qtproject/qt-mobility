@@ -42,7 +42,15 @@
 #ifndef VIDEOSURFACEFILTER_H
 #define VIDEOSURFACEFILTER_H
 
+#include "directshowsamplescheduler.h"
+#include "videosurfacemediatype.h"
+
+#include <QtCore/qbasictimer.h>
+#include <QtCore/qcoreevent.h>
+#include <QtCore/qmutex.h>
+#include <QtCore/qsemaphore.h>
 #include <QtCore/qstring.h>
+#include <QtCore/qwaitcondition.h>
 
 #include <dshow.h>
 
@@ -50,10 +58,15 @@ class QAbstractVideoSurface;
 
 class VideoSurfacePin;
 
-class VideoSurfaceFilter : public IBaseFilter, public IAMFilterMiscFlags
+class VideoSurfaceFilter
+    : public QObject
+    , public IBaseFilter
+    , public IAMFilterMiscFlags
+    , public IPin
 {
+    Q_OBJECT
 public:
-    VideoSurfaceFilter(QAbstractVideoSurface *surface);
+    VideoSurfaceFilter(QAbstractVideoSurface *surface, QObject *parent = 0);
     ~VideoSurfaceFilter();
 
     // IUnknown
@@ -86,14 +99,73 @@ public:
     // IAMFilterMiscFlags
     ULONG STDMETHODCALLTYPE GetMiscFlags();
 
+    // IPin
+    HRESULT STDMETHODCALLTYPE Connect(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt);
+    HRESULT STDMETHODCALLTYPE ReceiveConnection(IPin *pConnector, const AM_MEDIA_TYPE *pmt);
+    HRESULT STDMETHODCALLTYPE Disconnect();
+    HRESULT STDMETHODCALLTYPE ConnectedTo(IPin **ppPin);
+
+    HRESULT STDMETHODCALLTYPE ConnectionMediaType(AM_MEDIA_TYPE *pmt);
+
+    HRESULT STDMETHODCALLTYPE QueryPinInfo(PIN_INFO *pInfo);
+    HRESULT STDMETHODCALLTYPE QueryId(LPWSTR *Id);
+
+    HRESULT STDMETHODCALLTYPE QueryAccept(const AM_MEDIA_TYPE *pmt);
+
+    HRESULT STDMETHODCALLTYPE EnumMediaTypes(IEnumMediaTypes **ppEnum);
+
+    HRESULT STDMETHODCALLTYPE QueryInternalConnections(IPin **apPin, ULONG *nPin);
+
+    HRESULT STDMETHODCALLTYPE EndOfStream();
+
+    HRESULT STDMETHODCALLTYPE BeginFlush();
+    HRESULT STDMETHODCALLTYPE EndFlush();
+
+    HRESULT STDMETHODCALLTYPE NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
+
+    HRESULT STDMETHODCALLTYPE QueryDirection(PIN_DIRECTION *pPinDir);
+
+    int currentMediaTypeToken();
+    HRESULT nextMediaType(
+            int token, int *index, ULONG count, AM_MEDIA_TYPE **types, ULONG *fetchedCount);
+    HRESULT skipMediaType(int token, int *index, ULONG count);
+    HRESULT cloneMediaType(int token, int index, IEnumMediaTypes **enumeration);
+
+protected:
+    void customEvent(QEvent *event);
+
+private Q_SLOTS:
+    void supportedFormatsChanged();
+    void sampleReady();
+
 private:
+    HRESULT start();
+    void stop();
+    void flush();
+
+    enum
+    {
+        StartSurface = QEvent::User,
+        StopSurface,
+        FlushSurface
+    };
+
     LONG m_ref;
-    QAbstractVideoSurface *m_surface;
-    IReferenceClock *m_referenceClock;
-    VideoSurfacePin *m_sinkPin;
-    IFilterGraph *m_graph;
-    QString m_name;
     FILTER_STATE m_state;
+    QAbstractVideoSurface *m_surface;
+    IFilterGraph *m_graph;
+    IPin *m_peerPin;
+    int m_bytesPerLine;
+    int m_mediaTypeToken;
+    HRESULT m_startResult;
+    QString m_name;
+    QString m_pinId;
+    VideoSurfaceMediaType m_mediaType;
+    QVector<AM_MEDIA_TYPE> m_mediaTypes;
+    QVideoSurfaceFormat m_surfaceFormat;
+    QMutex m_mutex;
+    QWaitCondition m_wait;
+    DirectShowSampleScheduler m_sampleScheduler;
 };
 
 #endif

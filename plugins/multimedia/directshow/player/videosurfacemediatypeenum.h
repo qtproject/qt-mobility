@@ -47,12 +47,12 @@
 
 #include <dshow.h>
 
-class VideoSurfacePin;
+class VideoSurfaceFilter;
 
 class VideoSurfaceMediaTypeEnum : public IEnumMediaTypes
 {
 public:
-    VideoSurfaceMediaTypeEnum(VideoSurfacePin *pin, int token, int index = 0);
+    VideoSurfaceMediaTypeEnum(VideoSurfaceFilter *filter, int token, int index = 0);
     ~VideoSurfaceMediaTypeEnum();
 
     // IUnknown
@@ -70,7 +70,7 @@ public:
 
 private:
     LONG m_ref;
-    VideoSurfacePin *m_pin;
+    VideoSurfaceFilter *m_filter;
     int m_token;
     int m_index;
 };

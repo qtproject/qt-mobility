@@ -88,6 +88,7 @@ public:
     void stop();
     void setFlushing(bool flushing);
 
+    IReferenceClock *clock() const { return m_clock; }
     void setClock(IReferenceClock *clock);
 
     bool schedule(IMediaSample *sample);

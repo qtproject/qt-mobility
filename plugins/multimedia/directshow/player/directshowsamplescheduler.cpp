@@ -39,8 +39,7 @@
 **
 ****************************************************************************/
 
-#include <directshowsamplescheduler.h>
-#include <videosurfacepin.h>
+#include "directshowsamplescheduler.h"
 
 class DirectShowTimedSample
 {
@@ -133,6 +132,9 @@ DirectShowSampleScheduler::~DirectShowSampleScheduler()
     m_eventNotifier.setEnabled(false);
 
     ::CloseHandle(m_timeoutEvent);
+
+    Q_ASSERT(!m_clock);
+    Q_ASSERT(!m_allocator);
 }
 
 HRESULT DirectShowSampleScheduler::QueryInterface(REFIID riid, void **ppvObject)
@@ -336,7 +338,13 @@ void DirectShowSampleScheduler::setClock(IReferenceClock *clock)
 {
     QMutexLocker locker(&m_mutex);
 
+    if (m_clock)
+        m_clock->Release();
+
     m_clock = clock;
+
+    if (m_clock)
+        m_clock->AddRef();
 }
 
 IMediaSample *DirectShowSampleScheduler::takeSample()
