@@ -87,6 +87,7 @@ public:
     }
     bool QContactAvatar::setPixmap(const QPixmap& pixmap)
     {
+        setSubType(SubTypeImage);
         return setValue(FieldAvatarPixmap, QVariant::fromValue(pixmap));
     }
     

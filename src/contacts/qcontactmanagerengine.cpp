@@ -994,7 +994,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
         const QContactDetail& d = contact.details().at(i);
         QVariantMap values = d.values();
         QContactDetailDefinition def = detailDefinition(d.definitionName(), contact.type(), error);
-
         // check that the definition is supported
         if (error != QContactManager::NoError) {
             error = QContactManager::InvalidDetailError;
@@ -1031,7 +1030,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
                 error = QContactManager::InvalidDetailError;
                 return false; // attempting to write to a read-only field of a detail.
             }
-
             // check that the value is allowable
             // if the allowable values is an empty list, any are allowed.
             if (!field.allowableValues().isEmpty()) {

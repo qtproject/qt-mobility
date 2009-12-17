@@ -129,7 +129,11 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     m_phoneEdit->setText(phn.value(QContactPhoneNumber::FieldNumber));
     m_emailEdit->setText(em.value(QContactEmailAddress::FieldEmailAddress));
     m_addrEdit->setText(adr.value(QContactAddress::FieldStreet)); // ugly hack.
-    m_avatarBtn->setIcon(QIcon(av.value(QContactAvatar::FieldAvatar)));
+    if (av.pixmap().isNull()) {
+        m_avatarBtn->setIcon(QIcon(QPixmap(av.value<QString>(QContactAvatar::FieldAvatar))));
+    } else {
+        m_avatarBtn->setIcon(QIcon(av.pixmap()));
+    }
 }
 
 QString ContactEditor::nameField()
@@ -184,9 +188,9 @@ void ContactEditor::saveClicked()
         em.setEmailAddress(m_emailEdit->text());
         adr.setStreet(m_addrEdit->text());
         av.setAvatar(m_newAvatarPath);
-        QPixmap pix;
-        pix.load(m_newAvatarPath);
 
+        QPixmap pix(m_newAvatarPath);
+        bool null = pix.isNull();
         av.setPixmap(pix);
 
         curr.saveDetail(&nm);

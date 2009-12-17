@@ -296,7 +296,8 @@ static void processAvatar(const QContactWinCEEngine* /*engine*/, IItem* contact,
     QByteArray data;
     if (loadAvatarData(contact, &data)) {
         if (!data.isEmpty()) {
-            QPixmap pixmap = QPixmap::fromImage(QImage::fromData(data));
+            QPixmap pixmap;
+            pixmap.loadFromData(data, "PNG");
             avatar.setPixmap(pixmap);
         }
     }
@@ -666,7 +667,7 @@ static bool processQName(const QContactWinCEEngine*, IItem* /*contact*/, const Q
 static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QString avatarData = detail.value(QContactAvatar::FieldAvatar);
-    QPixmap avatarPixmap = detail.value(QContactAvatar::FieldAvatarPixmap);
+    QPixmap avatarPixmap = detail.value<QPixmap>(QContactAvatar::FieldAvatarPixmap);
 
     addIfNotEmpty(engine->metaAvatarType(), detail.value(QContactAvatar::FieldSubType), props);
     addIfNotEmpty(engine->metaAvatar(), avatarData, props);
@@ -675,7 +676,7 @@ static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, co
         QByteArray data;
         QBuffer buffer(&data);
         buffer.open(QIODevice::WriteOnly);
-        if (!avatarPixmap.save(&buffer) || !saveAvatarData(contact, data))
+        if (!avatarPixmap.save(&buffer, "PNG") || !saveAvatarData(contact, data))
             return false;
     }
     return true;
@@ -1056,7 +1057,7 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     
     wcsdupHelper.clear();
 
-    return false;
+    return true;
 }
 
 /**
