@@ -336,6 +336,10 @@ void DirectShowRenderThread::doLoad(QMutexLocker *locker)
         // caller an opportunity to abort.
         locker->unlock();
         HRESULT hr = m_graph->AddSourceFilter(url.toString().utf16(), L"Source", &source);
+
+        // As a temporary measure render to the default audio device.
+        m_builder->RenderStream(0, &MEDIATYPE_Audio, source, 0, 0);
+
         locker->relock();
 
         if (SUCCEEDED(hr)) {
@@ -374,6 +378,7 @@ void DirectShowRenderThread::doSetAudioOutput(QMutexLocker *locker)
     } else {
         locker->unlock();
         HRESULT hr = m_builder->RenderStream(0, &MEDIATYPE_Audio, source, 0, audioOutput);
+
         locker->relock();
 
         if (!SUCCEEDED(hr)) {
