@@ -1602,7 +1602,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName, const QStrin
 bool ServiceDatabase::close()
 {
     if(m_isDatabaseOpen) {
-        QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+        QSqlDatabase database = QSqlDatabase::database(m_connectionName, false);
         if (database.isValid()){
             if(database.isOpen()) {
                 database.close();

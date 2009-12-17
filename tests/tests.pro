@@ -1,4 +1,7 @@
 TEMPLATE = subdirs
+
+include($$QT_MOBILITY_BUILD_TREE/config.pri)
+
 SUBDIRS += auto
 contains(mobility_modules,serviceframework): SUBDIRS += testservice2 sampleserviceplugin sampleserviceplugin2
 contains(mobility_modules,bearer) {

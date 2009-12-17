@@ -38,6 +38,14 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <qglobal.h>
+#include <qmobilityglobal.h>
+
+QTM_BEGIN_NAMESPACE
+class QServiceInterfaceDescriptor;
+QTM_END_NAMESPACE
+
+uint qHash(const QtMobility::QServiceInterfaceDescriptor &desc);
 #include <qservicemanager.h>
 #include <qservicecontext.h>
 #include <qabstractsecuritysession.h>
@@ -50,6 +58,7 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QDir>
+#include <QPair>
 
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
@@ -129,8 +138,14 @@ class ServicesListener : public QObject
 {
     Q_OBJECT
 public slots:
-    void serviceAdded(const QString &, QServiceManager::Scope) {}
-    void serviceRemoved(const QString &, QServiceManager::Scope) {}
+    void serviceAdded(const QString &name , QServiceManager::Scope scope) {
+        params.append(qMakePair(name, scope));
+    }
+    void serviceRemoved(const QString &name, QServiceManager::Scope scope) {
+        params.append(qMakePair(name, scope));
+    }
+public:
+    QList<QPair<QString, QServiceManager::Scope> > params;
 };
 
 
@@ -1251,8 +1266,9 @@ void tst_QServiceManager::serviceAdded()
 
     if (expectSignal) {
         QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
-        QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+        QCOMPARE( listener->params.at(0).second , scope_modify);
     }
+    listener->params.clear();
 
     // Pause between file changes so they are detected separately
     QTest::qWait(2000);
@@ -1286,7 +1302,7 @@ void tst_QServiceManager::serviceAdded()
     }
     if (expectSignal) {
         QCOMPARE(spyAdd.at(0).at(0).toString(), serviceName);
-        QCOMPARE(spyAdd.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+        QCOMPARE(listener->params.at(0).second, scope_modify);
     }
 
     delete listener;
@@ -1361,8 +1377,9 @@ void tst_QServiceManager::serviceRemoved()
     }
     if (expectSignal) {
         QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
-        QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+        QCOMPARE(listener->params.at(0).second , scope_modify);
     }
+    listener->params.clear();
 
 #ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
     // try it again after deleting the database
@@ -1396,7 +1413,7 @@ void tst_QServiceManager::serviceRemoved()
     }
     if (expectSignal) {
         QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
-        QCOMPARE(spyRemove.at(0).at(1).value<QServiceManager::Scope>(), scope_modify);
+        QCOMPARE(listener->params.at(0).second , scope_modify);
     }
 
     delete listener;
