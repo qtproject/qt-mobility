@@ -4671,26 +4671,26 @@ void MapiSession::removeMessages(QMessageManager::Error *error, const QMessageId
         const MapiRecordKey folderKey(it.key().second);
 #endif
 
-        QMessageManager::Error error(QMessageManager::NoError);
+        QMessageManager::Error localError(QMessageManager::NoError);
 
 #ifdef _WIN32_WCE
-        MapiStorePtr store = openStore(&error,storeKey,true);
+        MapiStorePtr store = openStore(&localError,storeKey,true);
 #else
-        MapiStorePtr store = openStoreWithKey(&error, storeKey, true);
+        MapiStorePtr store = openStoreWithKey(&localError, storeKey, true);
 #endif
-        if (error == QMessageManager::NoError) {
+        if (localError == QMessageManager::NoError) {
 #ifdef _WIN32_WCE
-            MapiFolderPtr folder = store->openFolder(&error, folderKey);
+            MapiFolderPtr folder = store->openFolder(&localError, folderKey);
 #else
-            MapiFolderPtr folder = store->openFolderWithKey(&error, folderKey);
+            MapiFolderPtr folder = store->openFolderWithKey(&localError, folderKey);
 #endif
-            if (error == QMessageManager::NoError) {
-                folder->removeMessages(&error, it.value());
+            if (localError == QMessageManager::NoError) {
+                folder->removeMessages(&localError, it.value());
             }
         }
 
-        if ((error != QMessageManager::NoError) && (*error == QMessageManager::NoError)) {
-            *error = error;
+        if ((localError != QMessageManager::NoError) && (*error == QMessageManager::NoError)) {
+            *error = localError;
         }
     }
 }
