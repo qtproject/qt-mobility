@@ -238,9 +238,9 @@ QMediaContent QWmpPlayerControl::media() const
 {
     QMediaResourceList resources;
 
-    QUrl url = url();
+    QUrl tmpUrl = url();
 
-    if (!url.isEmpty())
+    if (!tmpUrl.isEmpty())
         resources << QMediaResource(url);
 
     return resources;
