@@ -12,6 +12,7 @@ class PulseAudioPlayerService : public QMediaService
 Q_OBJECT
 public:
     explicit PulseAudioPlayerService(QObject *parent = 0);
+    ~PulseAudioPlayerService();
 
     QMediaControl* control(const char *name) const;
 

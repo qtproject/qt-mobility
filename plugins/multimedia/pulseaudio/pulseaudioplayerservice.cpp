@@ -3,9 +3,15 @@
 
 
 PulseAudioPlayerService::PulseAudioPlayerService(QObject *parent) :
-    QMediaService(parent)
+    QMediaService(parent),
+    m_control(0)
 {
     m_control = new PulseAudioPlayerControl;
+}
+
+PulseAudioPlayerService::~PulseAudioPlayerService()
+{
+    delete m_control;
 }
 
 QMediaControl* PulseAudioPlayerService::control(const char *name) const
