@@ -114,7 +114,7 @@ public:
 
     bool query();
     LPSRowSet rows() const;
-    QMessageManager::Error lastError() const;
+    QMessageManager::Error error() const;
 
 private:
     LPMAPITABLE m_table;
@@ -122,7 +122,7 @@ private:
     LPSRestriction m_restriction;
     LPSSortOrderSet m_sortOrderSet;
     LPSRowSet m_rows;
-    QMessageManager::Error m_lastError;
+    QMessageManager::Error m_error;
 };
 
 QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
@@ -136,7 +136,7 @@ QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
         m_restriction(pres),
         m_sortOrderSet(psos),
         m_rows(0),
-        m_lastError(QMessageManager::NoError)
+        m_error(QMessageManager::NoError)
 {
 #ifndef _WIN32_WCE
     const ULONG options(TBL_BATCH);
@@ -157,7 +157,7 @@ QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
     if(setPosition)
         initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING, 0, NULL));
 
-    if(initFailed) m_lastError = QMessageManager::ContentInaccessible;
+    if(initFailed) m_error = QMessageManager::ContentInaccessible;
 }
 
 QueryAllRows::~QueryAllRows()
@@ -168,17 +168,17 @@ QueryAllRows::~QueryAllRows()
 
 bool QueryAllRows::query()
 {
-    if(m_lastError != QMessageManager::NoError)
+    if(m_error != QMessageManager::NoError)
         return false;
 
     FreeProws(m_rows);
     m_rows = 0;
-    m_lastError = QMessageManager::NoError;
+    m_error = QMessageManager::NoError;
 
     bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
 
     if(failed)
-        m_lastError = QMessageManager::ContentInaccessible;
+        m_error = QMessageManager::ContentInaccessible;
 
     if(failed || m_rows && !m_rows->cRows) return false;
 
@@ -190,9 +190,9 @@ LPSRowSet QueryAllRows::rows() const
     return m_rows;
 }
 
-QMessageManager::Error QueryAllRows::lastError() const
+QMessageManager::Error QueryAllRows::error() const
 {
-    return m_lastError;
+    return m_error;
 }
 
 #ifndef _WIN32_WCE
@@ -259,7 +259,7 @@ QList<ProfileDetail> profileDetails(LPPROFADMIN profAdmin)
             }
         }
 
-        if(qar.lastError() != QMessageManager::NoError)
+        if(qar.error() != QMessageManager::NoError)
             qWarning() << "profileNames: QueryAllRows failed";
 
         profileTable->Release();
@@ -316,7 +316,7 @@ QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
             }
         }
 
-        if(qar.lastError() != QMessageManager::NoError)
+        if(qar.error() != QMessageManager::NoError)
             qWarning() << "serviceDetails: QueryAllRows failed";
 
         svcTable->Release();
@@ -367,7 +367,7 @@ QList<StoreDetail> storeDetails(LPMAPISESSION session)
             }
         }
 
-        if(qar.lastError() != QMessageManager::NoError)
+        if(qar.error() != QMessageManager::NoError)
             qWarning() << "storeDetails: QueryAllRows failed";
 
         storesTable->Release();
@@ -590,7 +590,7 @@ MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
             }
         }
 
-        if(qar.lastError() != QMessageManager::NoError)
+        if(qar.error() != QMessageManager::NoError)
             qWarning() << "findProviderUid: QueryAllRows failed";
 
         providerTable->Release();
@@ -798,7 +798,7 @@ IMsgStore *openStoreByName(const QString &storeName, IMAPISession* session)
                 }
             }
 
-            if(qar.lastError() != QMessageManager::NoError)
+            if(qar.error() != QMessageManager::NoError)
                 qWarning() << "openStoreByName: QueryAllRows failed";
 
             storesTable->Release();
@@ -883,7 +883,7 @@ QList<QByteArray> subFolderEntryIds(IMAPIFolder *folder)
                 }
             }
 
-            if(qar.lastError() != QMessageManager::NoError)
+            if(qar.error() != QMessageManager::NoError)
                 qWarning() << "subFolderEntryIds: QueryAllRows failed";
 
             hierarchyTable->Release();

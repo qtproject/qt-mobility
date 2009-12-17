@@ -131,7 +131,7 @@ void QMessageService::cancel()
 {
 }
 
-QMessageManager::Error QMessageService::lastError() const
+QMessageManager::Error QMessageService::error() const
 {
     return QMessageManager::NoError;
 }

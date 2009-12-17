@@ -78,7 +78,7 @@ signals:
 private:	
     QMessageService *q_ptr;
     QMessageService::State _state;
-    QMessageManager::Error _lastError;
+    QMessageManager::Error _error;
     int _actionId;
     bool _active;
     

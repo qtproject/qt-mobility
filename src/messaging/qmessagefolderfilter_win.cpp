@@ -245,14 +245,14 @@ bool QMessageFolderFilterPrivate::matchesFolder(const QMessageFolderFilter &filt
     return result;
 }
 
-QMessageFolderFilter QMessageFolderFilterPrivate::preprocess(QMessageManager::Error *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter)
+QMessageFolderFilter QMessageFolderFilterPrivate::preprocess(QMessageManager::Error *error, MapiSessionPtr session, const QMessageFolderFilter &filter)
 {
     QMessageFolderFilter result(filter);
-    QMessageFolderFilterPrivate::preprocess(lastError, session, &result);
+    QMessageFolderFilterPrivate::preprocess(error, session, &result);
     return result;
 }
 
-void QMessageFolderFilterPrivate::preprocess(QMessageManager::Error *lastError, MapiSessionPtr session, QMessageFolderFilter *filter)
+void QMessageFolderFilterPrivate::preprocess(QMessageManager::Error *error, MapiSessionPtr session, QMessageFolderFilter *filter)
 {
     if (!filter)
         return;
@@ -263,7 +263,7 @@ void QMessageFolderFilterPrivate::preprocess(QMessageManager::Error *lastError, 
         result = ~QMessageFolderFilter();
     }
     if (filter->d_ptr->_criterion == ParentAccountFilter) {
-        QList<MapiStorePtr> stores(session->filterStores(lastError, *filter->d_ptr->_accountFilter));
+        QList<MapiStorePtr> stores(session->filterStores(error, *filter->d_ptr->_accountFilter));
         foreach(MapiStorePtr store, stores) {
             if (inclusion) {
                 result |= QMessageFolderFilter::byParentAccountId(store->id());
@@ -272,7 +272,7 @@ void QMessageFolderFilterPrivate::preprocess(QMessageManager::Error *lastError, 
             }
         }
     } else if (filter->d_ptr->_criterion == ParentFolderFilter) {
-        QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
+        QList<MapiFolderPtr> folders(session->filterFolders(error, *filter->d_ptr->_folderFilter));
         foreach(MapiFolderPtr folder, folders) {
             if (inclusion) {
                 result |= QMessageFolderFilter::byParentFolderId(folder->id());
@@ -281,7 +281,7 @@ void QMessageFolderFilterPrivate::preprocess(QMessageManager::Error *lastError, 
             }
         }
     } else if (filter->d_ptr->_criterion == AncestorFolderFilter) {
-        QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
+        QList<MapiFolderPtr> folders(session->filterFolders(error, *filter->d_ptr->_folderFilter));
         foreach(MapiFolderPtr folder, folders) {
             if (inclusion) {
                 result |= QMessageFolderFilter::byAncestorFolderIds(folder->id());
@@ -291,7 +291,7 @@ void QMessageFolderFilterPrivate::preprocess(QMessageManager::Error *lastError, 
         }
     } else {
         foreach(QMessageFolderFilter *subfilter, filter->d_ptr->_arguments) {
-            preprocess(lastError, session, subfilter);
+            preprocess(error, session, subfilter);
         }
         return;
     }

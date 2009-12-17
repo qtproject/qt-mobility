@@ -656,7 +656,7 @@ void tst_QMessageStore::testMessage()
     QAPPROXIMATECOMPARE(body.size(), 72, 36);  
 
     manager->updateMessage(&message);
-    QCOMPARE(manager->lastError(), QMessageManager::NoError);
+    QCOMPARE(manager->error(), QMessageManager::NoError);
 
 #if defined(Q_OS_WIN)
 	QTest::qSleep(1000);
@@ -724,7 +724,7 @@ void tst_QMessageStore::testMessage()
     } else { // byFilter
         manager->removeMessages(QMessageFilter::byId(message.id()));
     }
-    QCOMPARE(manager->lastError(), QMessageManager::NoError);
+    QCOMPARE(manager->error(), QMessageManager::NoError);
     QCOMPARE(manager->countMessages(), originalCount);
 
 #if defined(Q_OS_WIN)

@@ -283,7 +283,7 @@ void MessageSender::send()
 void MessageSender::stateChanged(QMessageService::State newState)
 {
     if (newState == QMessageService::FinishedState) {
-        if (service.lastError() == QMessageManager::NoError) {
+        if (service.error() == QMessageManager::NoError) {
             QMessageBox::information(0, tr("Success"), tr("Message sent successfully"));
             sendButton->setEnabled(true);
         } else {

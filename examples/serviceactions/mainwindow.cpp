@@ -374,7 +374,7 @@ void RecentMessagesWidget::messagesFound(const QMessageIdList& ids)
 void RecentMessagesWidget::stateChanged(QMessageService::State newState)
 {
     if (newState == QMessageService::FinishedState) {
-        if ((m_state != LoadFailed) && (m_service->lastError() == QMessageManager::NoError)) {
+        if ((m_state != LoadFailed) && (m_service->error() == QMessageManager::NoError)) {
             m_state = LoadFinished;
         } else {
             m_state = LoadFailed;
@@ -887,7 +887,7 @@ void MessageViewWidget::stateChanged(QMessageService::State newState)
     if (newState == QMessageService::ActiveState) {
         m_state = Loading;
     } else if (newState == QMessageService::FinishedState) {
-        m_state = (m_service->lastError() == QMessageManager::NoError ? Loaded : LoadFailed);
+        m_state = (m_service->error() == QMessageManager::NoError ? Loaded : LoadFailed);
     }
 
     updateState();
@@ -1325,7 +1325,7 @@ bool MainWindow::eventFilter(QObject* source, QEvent* e)
 
 void MainWindow::serviceStateChanged(QMessageService::State newState)
 {
-    if ((newState == QMessageService::FinishedState) && (m_service->lastError() != QMessageManager::NoError))
+    if ((newState == QMessageService::FinishedState) && (m_service->error() != QMessageManager::NoError))
         QMessageBox::critical(this,"Error","One or more service actions failed");
 }
 

@@ -261,7 +261,7 @@ void AddressFinder::searchMessages()
 void AddressFinder::stateChanged(QMessageService::State newState)
 {
     if (newState == QMessageService::FinishedState) {
-        if (service.lastError() == QMessageManager::NoError) {
+        if (service.error() == QMessageManager::NoError) {
             if (!inclusionFilter.isEmpty()) {
                 // Now find the included messages
                 service.queryMessages(inclusionFilter);

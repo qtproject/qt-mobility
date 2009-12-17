@@ -131,9 +131,9 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 
 void QMessageServicePrivate::setFinished(bool successful, void (QMessageService::*signal)(QMessageService::State))
 {
-    if (!successful && (_lastError == QMessageManager::NoError)) {
+    if (!successful && (_error == QMessageManager::NoError)) {
         // We must report an error of some sort
-        _lastError = QMessageManager::RequestIncomplete;
+        _error = QMessageManager::RequestIncomplete;
     }
 
     _state = QMessageService::FinishedState;
@@ -162,7 +162,7 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessage
     }
     
     d_ptr->_active = true;
-    d_ptr->_lastError = QMessageManager::NoError;
+    d_ptr->_error = QMessageManager::NoError;
     
     if (d_ptr->queryMessages(filter, sortOrder, limit, offset)) {
         d_ptr->_state = QMessageService::ActiveState;
@@ -181,7 +181,7 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QString 
     }
 
     d_ptr->_active = true;
-    d_ptr->_lastError = QMessageManager::NoError;
+    d_ptr->_error = QMessageManager::NoError;
 
     if (d_ptr->queryMessages(filter, body, matchFlags, sortOrder, limit, offset)) {
         d_ptr->_state = QMessageService::ActiveState;
@@ -200,7 +200,7 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
     }
     
     d_ptr->_active = true;
-    d_ptr->_lastError = QMessageManager::NoError;
+    d_ptr->_error = QMessageManager::NoError;
     
     if (d_ptr->countMessages(filter)) {
         d_ptr->_state = QMessageService::ActiveState;
@@ -219,7 +219,7 @@ bool QMessageService::send(QMessage &message)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageManager::NoError;
+	d_ptr->_error = QMessageManager::NoError;
 	
     bool retVal = true;	
     
@@ -228,7 +228,7 @@ bool QMessageService::send(QMessage &message)
     
     // Check message type
     if(message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
-        d_ptr->_lastError = QMessageManager::ConstraintFailure;
+        d_ptr->_error = QMessageManager::ConstraintFailure;
         retVal = false;
     }
 
@@ -238,7 +238,7 @@ bool QMessageService::send(QMessage &message)
         if (!accountId.isValid()) {
             accountId = QMessageAccount::defaultAccount(message.type());
             if (!accountId.isValid()) {
-                d_ptr->_lastError = QMessageManager::InvalidId;
+                d_ptr->_error = QMessageManager::InvalidId;
                 retVal = false;
             }
         }
@@ -248,7 +248,7 @@ bool QMessageService::send(QMessage &message)
         // Check account/message type compatibility
         QMessageAccount account(accountId);
         if (!(account.messageTypes() & message.type())) {
-            d_ptr->_lastError = QMessageManager::ConstraintFailure;
+            d_ptr->_error = QMessageManager::ConstraintFailure;
             retVal = false;
         }
     }
@@ -257,7 +257,7 @@ bool QMessageService::send(QMessage &message)
         // Check recipients
         QMessageAddressList recipients = message.to() + message.bcc() + message.cc();
         if (recipients.isEmpty()) {
-            d_ptr->_lastError = QMessageManager::ConstraintFailure;
+            d_ptr->_error = QMessageManager::ConstraintFailure;
             return false;
         }
     }
@@ -290,7 +290,7 @@ bool QMessageService::compose(const QMessage &message)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageManager::NoError;
+	d_ptr->_error = QMessageManager::NoError;
 	
 	bool retVal = true;
 	d_ptr->_state = QMessageService::ActiveState;
@@ -309,7 +309,7 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageManager::NoError;
+	d_ptr->_error = QMessageManager::NoError;
 	
 	bool retVal = true;
 	d_ptr->_state = QMessageService::ActiveState;
@@ -328,7 +328,7 @@ bool QMessageService::retrieveBody(const QMessageId& id)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageManager::NoError;
+	d_ptr->_error = QMessageManager::NoError;
 	
 	bool retVal = true;
 	d_ptr->_state = QMessageService::ActiveState;
@@ -347,7 +347,7 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageManager::NoError;
+	d_ptr->_error = QMessageManager::NoError;
 
 	bool retVal = true;
 	d_ptr->_state = QMessageService::ActiveState;
@@ -366,7 +366,7 @@ bool QMessageService::show(const QMessageId& id)
 	}
 	
 	d_ptr->_active = true;
-	d_ptr->_lastError = QMessageManager::NoError;
+	d_ptr->_error = QMessageManager::NoError;
 	
 	bool retVal = true;
 	d_ptr->_state = QMessageService::ActiveState;
@@ -393,9 +393,9 @@ void QMessageService::cancel()
 {
 }
 
-QMessageManager::Error QMessageService::lastError() const
+QMessageManager::Error QMessageService::error() const
 {
-    return d_ptr->_lastError;
+    return d_ptr->_error;
 }
 
 #include "moc_qmessageservice_symbian_p.cpp"

@@ -81,7 +81,7 @@ public:
     bool exportUpdates(const QMessageAccountId &id);
 
     State state() const;
-    QMessageManager::Error lastError() const;
+    QMessageManager::Error error() const;
 
 public slots:
     void cancel();

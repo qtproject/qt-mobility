@@ -1690,8 +1690,8 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
         }
     } else {
         iMessageQueries[index].privateService->_active = false;
-        if (iMessageQueries[index].privateService->_lastError == QMessageManager::NoError) {
-            iMessageQueries[index].privateService->_lastError = QMessageManager::RequestIncomplete;
+        if (iMessageQueries[index].privateService->_error == QMessageManager::NoError) {
+            iMessageQueries[index].privateService->_error = QMessageManager::RequestIncomplete;
         }
         emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
     }

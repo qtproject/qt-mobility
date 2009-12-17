@@ -67,7 +67,7 @@ public:
     enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
     static bool lessThan(const QMessageSortOrder &sortOrder, const QMessage &left, const QMessage &right);
-    static void sortTable(QMessageManager::Error *lastError, const QMessageSortOrder &sortOrder, LPMAPITABLE);
+    static void sortTable(QMessageManager::Error *error, const QMessageSortOrder &sortOrder, LPMAPITABLE);
     static QMessageSortOrder from(QMessageSortOrderPrivate::Field field, Qt::SortOrder order);
 
     static bool isFilterType(const QMessageSortOrder &sortOrder);

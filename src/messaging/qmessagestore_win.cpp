@@ -102,7 +102,7 @@ public:
 
     QMessageStorePrivate *d_ptr;
     QMessageStore *q_ptr;
-    QMessageManager::Error lastError;
+    QMessageManager::Error error;
 
     MapiSessionPtr session;
     QMutex mutex;
@@ -114,13 +114,13 @@ private slots:
 QMessageStorePrivatePlatform::QMessageStorePrivatePlatform(QMessageStorePrivate *d, QMessageStore *q)
     :d_ptr(d),
      q_ptr(q),
-     lastError(QMessageManager::NoError),
-     session(MapiSession::createSession(&lastError)),
+     error(QMessageManager::NoError),
+     session(MapiSession::createSession(&error)),
      mutex(QMutex::Recursive)
 {
     connect(QCoreApplication::instance(), SIGNAL(destroyed()), this, SLOT(appDestroyed()));
 
-    if (session && (lastError == QMessageManager::NoError)) {
+    if (session && (error == QMessageManager::NoError)) {
         MapiSession *o(session.data());
         connect(o, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)), q, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)));
         connect(o, SIGNAL(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)), q, SIGNAL(messageRemoved(QMessageId, QMessageManager::NotificationFilterIdSet)));
@@ -192,9 +192,9 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageManager::Error QMessageStore::lastError() const
+QMessageManager::Error QMessageStore::error() const
 {
-    return d_ptr->p_ptr->lastError;
+    return d_ptr->p_ptr->error;
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -204,16 +204,16 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
 
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
-        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset);
+        d_ptr->p_ptr->error = QMessageManager::NoError;
+        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->error, filter, sortOrder, limit, offset);
     }
 
     return result;
@@ -225,21 +225,21 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (matchFlags & QMessageDataComparator::MatchFullWord) {
-        d_ptr->p_ptr->lastError = QMessageManager::NotYetImplemented;
+        d_ptr->p_ptr->error = QMessageManager::NotYetImplemented;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
-        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset, body, matchFlags);
+        d_ptr->p_ptr->error = QMessageManager::NoError;
+        result = d_ptr->p_ptr->session->queryMessages(&d_ptr->p_ptr->error, filter, sortOrder, limit, offset, body, matchFlags);
     }
 
     return result;
@@ -251,17 +251,17 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     }
 
-    d_ptr->p_ptr->lastError = QMessageManager::NoError;
-    foreach (const MapiFolderPtr &folder, d_ptr->p_ptr->session->filterFolders(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset)) {
+    d_ptr->p_ptr->error = QMessageManager::NoError;
+    foreach (const MapiFolderPtr &folder, d_ptr->p_ptr->session->filterFolders(&d_ptr->p_ptr->error, filter, sortOrder, limit, offset)) {
         result.append(folder->id());
     }
 
@@ -274,17 +274,17 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     }
 
-    d_ptr->p_ptr->lastError = QMessageManager::NoError;
-    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->filterStores(&d_ptr->p_ptr->lastError, filter, sortOrder, limit, offset)) {
+    d_ptr->p_ptr->error = QMessageManager::NoError;
+    foreach (const MapiStorePtr &store, d_ptr->p_ptr->session->filterStores(&d_ptr->p_ptr->error, filter, sortOrder, limit, offset)) {
         result.append(store->id());
     }
 
@@ -315,20 +315,20 @@ bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::Removal
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
+        d_ptr->p_ptr->error = QMessageManager::NoError;
 
         QMessageIdList ids;
         ids.append(id);
-        d_ptr->p_ptr->session->removeMessages(&d_ptr->p_ptr->lastError, ids);
+        d_ptr->p_ptr->session->removeMessages(&d_ptr->p_ptr->error, ids);
 
-        result = (d_ptr->p_ptr->lastError == QMessageManager::NoError);
+        result = (d_ptr->p_ptr->error == QMessageManager::NoError);
     }
 
     return result;
@@ -343,21 +343,21 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
+        d_ptr->p_ptr->error = QMessageManager::NoError;
 
         QMessageIdList ids = queryMessages(filter, QMessageSortOrder(), 0, 0);
-        if (d_ptr->p_ptr->lastError == QMessageManager::NoError) {
-            d_ptr->p_ptr->session->removeMessages(&d_ptr->p_ptr->lastError, ids);
+        if (d_ptr->p_ptr->error == QMessageManager::NoError) {
+            d_ptr->p_ptr->session->removeMessages(&d_ptr->p_ptr->error, ids);
         }
 
-        result = (d_ptr->p_ptr->lastError == QMessageManager::NoError);
+        result = (d_ptr->p_ptr->error == QMessageManager::NoError);
     }
 
     return result;
@@ -369,19 +369,19 @@ bool QMessageStore::addMessage(QMessage *message)
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
+        d_ptr->p_ptr->error = QMessageManager::NoError;
     }
 
     if (message && !message->id().isValid()) {
-        QMessageManager::Error* lError = &d_ptr->p_ptr->lastError;
+        QMessageManager::Error* lError = &d_ptr->p_ptr->error;
 
         MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(lError,message->parentAccountId(),false);
         if (*lError == QMessageManager::NoError && !mapiStore.isNull()) {
@@ -465,23 +465,23 @@ bool QMessageStore::updateMessage(QMessage *message)
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
+        d_ptr->p_ptr->error = QMessageManager::NoError;
     }
 
     //check store/message type compatibility
-    if(MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(&d_ptr->p_ptr->lastError,message->parentAccountId()))
+    if(MapiStorePtr mapiStore = d_ptr->p_ptr->session->findStore(&d_ptr->p_ptr->error,message->parentAccountId()))
     {
         if(!(mapiStore->types() & message->type()))
         {
-            d_ptr->p_ptr->lastError = QMessageManager::ConstraintFailure;
+            d_ptr->p_ptr->error = QMessageManager::ConstraintFailure;
             return false;
         }
     }
@@ -492,7 +492,7 @@ bool QMessageStore::updateMessage(QMessage *message)
 
 
     if (message && message->id().isValid()) {
-        QMessageManager::Error* lError = &d_ptr->p_ptr->lastError;
+        QMessageManager::Error* lError = &d_ptr->p_ptr->error;
 
         d_ptr->p_ptr->session->updateMessage(lError, *message);
         if (*lError == QMessageManager::NoError) {
@@ -513,18 +513,18 @@ QMessage QMessageStore::message(const QMessageId& id) const
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
+        d_ptr->p_ptr->error = QMessageManager::NoError;
     }
 
-    return d_ptr->p_ptr->session->message(&d_ptr->p_ptr->lastError, id);
+    return d_ptr->p_ptr->session->message(&d_ptr->p_ptr->error, id);
 }
 
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
@@ -533,18 +533,18 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
+        d_ptr->p_ptr->error = QMessageManager::NoError;
     }
 
-    return d_ptr->p_ptr->session->folder(&d_ptr->p_ptr->lastError, id);
+    return d_ptr->p_ptr->session->folder(&d_ptr->p_ptr->error, id);
 }
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
@@ -553,18 +553,18 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
+        d_ptr->p_ptr->error = QMessageManager::NoError;
     }
 
-    MapiStorePtr mapiStore(d_ptr->p_ptr->session->findStore(&d_ptr->p_ptr->lastError, id));
+    MapiStorePtr mapiStore(d_ptr->p_ptr->session->findStore(&d_ptr->p_ptr->error, id));
     if (mapiStore && mapiStore->isValid()) {
         result = QMessageAccountPrivate::from(mapiStore->id(), mapiStore->name(), mapiStore->address(), mapiStore->types());
     }
@@ -578,33 +578,33 @@ QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(
 
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return result;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
         return result;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
+        d_ptr->p_ptr->error = QMessageManager::NoError;
     }
 
-    return d_ptr->p_ptr->session->registerNotificationFilter(&d_ptr->p_ptr->lastError, filter);
+    return d_ptr->p_ptr->session->registerNotificationFilter(&d_ptr->p_ptr->error, filter);
 }
 
 void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
     MutexTryLocker locker(&d_ptr->p_ptr->mutex);
     if (!locker) {
-        d_ptr->p_ptr->lastError = QMessageManager::Busy;
+        d_ptr->p_ptr->error = QMessageManager::Busy;
         return;
     }
 
     if (!d_ptr->p_ptr->session) {
-        d_ptr->p_ptr->lastError = QMessageManager::ContentInaccessible;
+        d_ptr->p_ptr->error = QMessageManager::ContentInaccessible;
     } else {
-        d_ptr->p_ptr->lastError = QMessageManager::NoError;
-        d_ptr->p_ptr->session->unregisterNotificationFilter(&d_ptr->p_ptr->lastError, notificationFilterId);
+        d_ptr->p_ptr->error = QMessageManager::NoError;
+        d_ptr->p_ptr->session->unregisterNotificationFilter(&d_ptr->p_ptr->error, notificationFilterId);
     }
 }
 

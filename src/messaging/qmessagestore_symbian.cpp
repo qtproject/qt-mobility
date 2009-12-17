@@ -257,7 +257,7 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageManager::Error QMessageStore::lastError() const
+QMessageManager::Error QMessageStore::error() const
 {
     return QMessageManager::NoError;
 }

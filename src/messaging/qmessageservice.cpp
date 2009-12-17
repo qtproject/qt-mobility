@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
     Service request operations report progress information by emitting the 
     progressChanged() signal.
     
-    If a requested operation fails after being initiated then the lastError() 
+    If a requested operation fails after being initiated then the error() 
     function will return a value indicating the failure mode encountered.
     
     A client may attempt to cancel a requested operation after it has been 
@@ -339,7 +339,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageService::lastError() const
+    \fn QMessageService::error() const
   
     Returns a value indicating the last error condition encountered by the operation.
 */
