@@ -56,7 +56,7 @@
 #include "S60camerasession.h"
 #include "S60videowidget.h"
 #include "S60videooutputcontrol.h"
-#include "S60mediaformatcontrol.h"
+#include "S60mediacontainercontrol.h"
 #include "s60videoencoder.h"
 
 S60CameraService::S60CameraService(QObject *parent)
@@ -73,7 +73,7 @@ S60CameraService::S60CameraService(QObject *parent)
     m_imageCaptureControl = new S60CameraImageCaptureControl(m_session, this);
 
     m_media = new S60MediaControl(m_session, this);
-    m_mediaFormat = new S60MediaFormatControl(m_session, this);
+    m_mediaFormat = new S60MediaContainerControl(m_session, this);
     m_videoEncoder = new S60VideoEncoder(m_session, this);
     m_videoWidget = new S60VideoWidgetControl(this);
     m_videoOutput = new S60VideoOutputControl(this);
