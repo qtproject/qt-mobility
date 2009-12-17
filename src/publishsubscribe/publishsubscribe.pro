@@ -25,12 +25,12 @@ SOURCES += \
            qvaluespacesubscriber.cpp
 
 symbian {
-    DEPENDPATH += symbian
-    INCLUDEPATH += symbian
+    DEPENDPATH += xqsettingsmanager_symbian
+    INCLUDEPATH += xqsettingsmanager_symbian
     DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
     DEFINES += XQSETTINGSMANAGER_NO_TRANSACTIONS
     DEFINES += XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
-    include(symbian/settingsmanager.pri)
+    include(xqsettingsmanager_symbian/settingsmanager.pri)
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
