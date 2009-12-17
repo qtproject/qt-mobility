@@ -43,12 +43,19 @@
 #define QTRACKERRELATIONSHIPSAVEREQUEST_H_
 
 #include <QObject>
-#include <qtrackercontactasyncrequest.h>
-#include <qtcontacts.h>
-#include <QtTracker/QLive>
 
+#include <QtTracker/QLive>
+#include <qtrackercontactasyncrequest.h>
+
+#include <qmobilityglobal.h>
+#include <qtcontacts.h>
+
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactManagerEngine;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QTrackerRelationshipSaveRequest: public QObject, public QTrackerContactAsyncRequest
 {

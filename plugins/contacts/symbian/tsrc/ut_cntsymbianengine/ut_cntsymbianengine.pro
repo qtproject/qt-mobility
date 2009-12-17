@@ -10,20 +10,22 @@ include(../tsrc.pri)
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
 INCLUDEPATH += .
+
 INCLUDEPATH += $$SYMBIAN_PATHS
 
 symbian:
 { 
-    load(data_caging_paths)
+#    load(data_caging_paths)
     
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += ut_cntsymbianengine.h \
-            $$SYMBIAN_HEADERS
+    HEADERS += $$SYMBIAN_HEADERS \
+               ut_cntsymbianengine.h
     
-    SOURCES += ut_cntsymbianengine.cpp \
-            $$SYMBIAN_SOURCES
+    SOURCES += $$SYMBIAN_SOURCES \
+               ut_cntsymbianengine.cpp
+               
             
     TARGET.CAPABILITY = ALL \
             -TCB

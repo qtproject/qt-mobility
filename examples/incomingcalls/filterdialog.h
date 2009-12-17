@@ -58,6 +58,7 @@
 #include "qcontactfilter.h"
 #include "qcontactintersectionfilter.h"
 
+QT_BEGIN_NAMESPACE
 class QLabel;
 class QLineEdit;
 class QComboBox;
@@ -65,6 +66,7 @@ class QPushButton;
 class QFormLayout;
 class QVBoxLayout;
 class QHBoxLayout;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

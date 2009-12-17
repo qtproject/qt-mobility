@@ -59,9 +59,11 @@
 #include <QQueue>
 #include <QPointer>
 
+QT_BEGIN_NAMESPACE
 class QBasicTimer;
 class QTimerEvent;
 class QTimer;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 

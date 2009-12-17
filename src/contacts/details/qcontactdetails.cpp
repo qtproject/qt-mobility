@@ -46,27 +46,32 @@ QTM_BEGIN_NAMESPACE
 /*!
    \class QContactAddress
    \brief The QContactAddress class contains an address of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactAnniversary
    \brief The QContactAnniversary class contains the anniversary of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactAvatar
    \brief The QContactAvatar class contains the avatar of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactBirthday
    \brief The QContactBirthday class contains the birthday of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactDisplayLabel
    \brief The QContactDisplayLabel class is the (possibly synthesized)
    display label of a contact.
+   \ingroup contacts-details
  */
 
 /*!
@@ -74,86 +79,101 @@ QTM_BEGIN_NAMESPACE
 
    \brief The QContactEmailAddress class contains the email address of
    a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactFamily
    \brief The QContactFamily class contains the names of the
    family members of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactGender
    \brief The QContactGender class contains the gender of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactGeolocation
    \brief The QContactGeolocation class contains the global location
    coordinate associated with a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactGuid
    \brief The QContactGuid class contains the globally unique
    Id of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactName
    \brief The QContactName class contains the name of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactNickname
    \brief The QContactNickname class contains a nickname of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactNote
    \brief The QContactNote class contains a note associated
    with a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactOnlineAccount
    \brief The QContactOnlineAccount class provides the online account,
    which the contact uses to communicate with friends and family.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactOrganization
    \brief The QContactOrganization class provides details about an
    organization that the contact is either a part of, or stands for.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactPhoneNumber
    \brief The QContactPhoneNumber class provides a phone number
    of a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactTimestamp
    \brief The QContactTimestamp class contains the creation and
    last-modified timestamp associated with the contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactType
    \brief The QContactType class describes the type of the contact.
+   \ingroup contacts-details
  */
 
 /*!
    \class QContactUrl
    \brief The QContactUrl class contains a url associated with
    a contact.
+   \ingroup contacts-details
  */
 
 /*!

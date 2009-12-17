@@ -45,7 +45,9 @@
 #include <qmediacontrol.h>
 #include <qmediarecorder.h>
 
+QT_BEGIN_NAMESPACE
 class QUrl;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

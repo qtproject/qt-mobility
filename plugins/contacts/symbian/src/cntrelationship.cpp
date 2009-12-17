@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include <cntitem.h>
+
 #include "cntrelationship.h"
 #include "cntsymbiantransformerror.h"
 
@@ -52,10 +54,13 @@
  * Constructor
  *
  * \a contactDatabase CContactDatabase with established connection to the database
+ * \a managerUri current manager uri
  */
-CntRelationship::CntRelationship(CContactDatabase* contactDatabase)
+CntRelationship::CntRelationship(CContactDatabase* contactDatabase, const QString &managerUri)
+    :m_contactDatabase(contactDatabase),
+    m_managerUri(managerUri)
 {
-    CntAbstractRelationship *relationshipGroup = new CntRelationshipGroup(contactDatabase);
+    CntAbstractRelationship *relationshipGroup = new CntRelationshipGroup(contactDatabase, managerUri);
     m_relationshipMap.insert(relationshipGroup->relationshipType(), relationshipGroup);
 }
 
@@ -77,8 +82,10 @@ CntRelationship::~CntRelationship()
 /*!
  * \return The supported relationship types.
  */
-QStringList CntRelationship::supportedRelationshipTypes(const QString& contactType) const
+QStringList CntRelationship::supportedRelationshipTypes(const QString &contactType) const
 {
+    Q_UNUSED(contactType);
+    
     QStringList supportedTypes;
 
     foreach(QString type, m_relationshipMap.keys()) {
@@ -98,9 +105,32 @@ QStringList CntRelationship::supportedRelationshipTypes(const QString& contactTy
 QList<QContactRelationship> CntRelationship::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
 {
     QList<QContactRelationship> returnValue;
+    error = QContactManager::NoError;
 
+    // if relationshipType is empty, relationships of any type are returned.
+    if (relationshipType.isEmpty())
+    {
+        foreach (QString type, m_relationshipMap.keys())
+        {
+            // get the relationship
+            CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(type);
+
+            // retrieve the relationships
+            TRAPD(symbianError, QT_TRYCATCH_LEAVING(returnValue.append(abstractRelationship->relationshipsL(participantId, role, error))));
+
+            // if error translate it into a qt error
+            if (symbianError != KErrNone){
+                CntSymbianTransformError::transformError(symbianError, error);
+            }
+            
+            // return empty list if there was an error
+            if (error != QContactManager::NoError) {
+                return QList<QContactRelationship>();
+            }
+        }
+    }
     //check if we support the relationship
-    if(m_relationshipMap.contains(relationshipType))
+    else if (m_relationshipMap.contains(relationshipType))
     {
         //get the relationship
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationshipType);
@@ -131,25 +161,27 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
 {
     bool returnValue(false);
     error = QContactManager::NoError;
-
-    if(m_relationshipMap.contains(relationship->relationshipType()))
+    if (validateRelationship(*relationship, error))
     {
+        // Update manager uri to this manager if it is empty
+        if (relationship->second().managerUri().isEmpty()) {
+            QContactId second = relationship->second();
+            second.setManagerUri(m_managerUri);
+            relationship->setSecond(second);
+        }
+        
         //get the relationship
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship->relationshipType());
-
+    
         //save the relationship
         TRAPD(symbianError, QT_TRYCATCH_LEAVING(returnValue = abstractRelationship->saveRelationshipL(affectedContactIds, relationship, error)));
-
+    
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){
             returnValue = false;
             CntSymbianTransformError::transformError(symbianError, error);
         }
     }
-    else{
-        error = QContactManager::NotSupportedError;
-    }
-
     return returnValue;
 }
 
@@ -162,17 +194,20 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
  */
 QList<QContactManager::Error> CntRelationship::saveRelationships(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
-    Q_UNUSED(error);
-
     QList<QContactManager::Error> returnValue;
-    QContactManager::Error singleError;
+    error = QContactManager::NoError;
+    QContactManager::Error singleError;    
 
-    //loop through the relationships
-    for(int i = 0; i < relationships->count(); i++)
+    // loop through the relationships
+    for (int i = 0; i < relationships->count(); i++)
     {
-        //save the relationship
+        // save the relationship
         saveRelationship(affectedContactIds, &(relationships->operator[](i)), singleError);
         returnValue.append(singleError);
+        
+        // update the total error
+        if (singleError != QContactManager::NoError)
+            error = singleError;
     }
 
     return returnValue;
@@ -186,11 +221,11 @@ QList<QContactManager::Error> CntRelationship::saveRelationships(QSet<QContactLo
  * \a error Error returned
  * \return true if no error otherwise false
  */
-bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error)
+bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship &relationship, QContactManager::Error& error)
 {
     bool returnValue(false);
-
-    if(m_relationshipMap.contains(relationship.relationshipType()))
+    error = QContactManager::NoError;
+    if (validateRelationship(relationship, error))
     {
         //get the relationship
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship.relationshipType());
@@ -203,10 +238,6 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
             CntSymbianTransformError::transformError(symbianError, error);
         }
     }
-    else{
-        error = QContactManager::NotSupportedError;
-    }
-
     return returnValue;
 }
 
@@ -219,9 +250,8 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
  */
 QList<QContactManager::Error> CntRelationship::removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
-    Q_UNUSED(error);
-
     QList<QContactManager::Error> returnValue;
+    error = QContactManager::NoError;
     QContactManager::Error qtError(QContactManager::NoError);
 
     //loop through the relationships
@@ -229,10 +259,69 @@ QList<QContactManager::Error> CntRelationship::removeRelationships(QSet<QContact
     {
         //remove the relationships
         removeRelationship(affectedContactIds, relationships.at(i), qtError);
-
-        //add the error value
         returnValue.append(qtError);
+        
+        // update the total error
+        if (qtError != QContactManager::NoError)
+            error = qtError;
+    }
+    return returnValue;
+}
+
+bool CntRelationship::validateRelationship(const QContactRelationship &relationship, QContactManager::Error& error)
+{
+    error = QContactManager::NoError;
+    
+    // check if supported in this manager
+    if (!m_relationshipMap.contains(relationship.relationshipType())) {
+        error = QContactManager::NotSupportedError;
+        return false;
+    }
+    
+    QContactId first = relationship.first();
+    QContactId second = relationship.second();    
+    
+    // zero id contacts not accepted
+    if (!(first.localId() && second.localId())) {
+        error = QContactManager::InvalidRelationshipError;
+        return false;
+    }
+    
+    // "first" must be a contact in this manager
+    if (!first.managerUri().isEmpty() && first.managerUri() != m_managerUri) {
+        error = QContactManager::InvalidRelationshipError;
+        return false;
     }
 
-    return returnValue;
+    // "first" must be found in the database
+    CContactItem* contact = 0;
+    TRAP_IGNORE(contact = m_contactDatabase->ReadContactL(first.localId()));
+    if (!contact) {
+        error = QContactManager::InvalidRelationshipError;
+        return false;
+    }
+    delete contact;
+    
+    // check if "second" is in this manager 
+    if (second.managerUri().isEmpty() || second.managerUri() == m_managerUri)
+    {
+        // circular relationships not allowed
+        if (first.localId() == second.localId()) {
+            error = QContactManager::InvalidRelationshipError;
+            return false;
+        }
+    
+        // "second" must be found in the database
+        contact = 0;
+        TRAP_IGNORE(contact = m_contactDatabase->ReadContactL(second.localId()));
+        if (!contact) {
+            error = QContactManager::InvalidRelationshipError;
+            return false;
+        }
+        delete contact;        
+    }
+    
+    // do additional checks in the actual implementation
+    CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship.relationshipType());
+    return abstractRelationship->validateRelationship(relationship, error);
 }

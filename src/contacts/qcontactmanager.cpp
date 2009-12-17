@@ -53,9 +53,11 @@
 QTM_BEGIN_NAMESPACE
 /*!
   \class QContactManager
+  \brief The QContactManager class provides clients with access to contact information stored in a particular backend.
+  \ingroup contacts-main
  
   This class provides adding, updating and removal of contacts.
-  It also provides definitions for fields that can be found in contacts.
+  It also provides definitions for details and fields that can be found in contacts.
  */
 
 /*!
@@ -103,6 +105,10 @@ QTM_BEGIN_NAMESPACE
  */
 
 
+
+#define makestr(x) (#x)
+#define makename(x) makestr(x)
+
 /*!
     Returns a list of available manager ids that can be used when constructing
     a QContactManager.  If an empty id is specified to the constructor, the
@@ -114,6 +120,14 @@ QStringList QContactManager::availableManagers()
     ret << QLatin1String("memory") << QLatin1String("invalid");
     QContactManagerData::loadFactories();
     ret.append(QContactManagerData::m_engines.keys());
+
+    // now swizzle the default engine to pole position
+#if defined(Q_CONTACTS_DEFAULT_ENGINE)
+    if (ret.removeAll(QLatin1String(makename(Q_CONTACTS_DEFAULT_ENGINE)))) {
+        ret.prepend(QLatin1String(makename(Q_CONTACTS_DEFAULT_ENGINE)));
+    }
+#endif
+
     return ret;
 }
 
@@ -573,6 +587,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
  * \value ActionPreferences The manager supports saving preferred details per action per contact
  * \value Relationships The manager supports at least some types of relationships between contacts
  * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
+ * \value RelationshipOrdering The manager supports relationships (re)ordering
  * \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
  * \value SelfContact The manager supports the concept of saving a contact which represents the current user
  * \value ChangeLogs The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps

@@ -174,4 +174,7 @@
 # define QTM_USE_NAMESPACE
 #endif
 
+//in case Qt is in namespace
+QT_USE_NAMESPACE
+
 #endif // QMOBILITYGLOBAL_H

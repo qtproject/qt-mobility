@@ -47,9 +47,10 @@
 #include <QtCore/qlist.h>
 #include <QtCore/qpair.h>
 
-
+QT_BEGIN_NAMESPACE
 class QStringList;
 class QAudioFormat;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

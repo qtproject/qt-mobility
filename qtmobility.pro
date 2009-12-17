@@ -36,18 +36,19 @@ TEMPLATE = subdirs
 CONFIG+=ordered
 
 SUBDIRS += src tools plugins
-#built documentation snippets
-SUBDIRS += doc   
+#built documentation snippets, if enabled
+contains(build_docs, yes) {
+    SUBDIRS += doc
+    include(doc/doc.pri)
+
+    OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc
+}
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
-
-include(doc/doc.pri)
 
 # install Qt style headers
 qtmheaders.path = $${QT_MOBILITY_INCLUDE}
 qtmheaders.files = $${QT_MOBILITY_BUILD_TREE}/include/*
 
 INSTALLS += qtmheaders
-
-OTHER_FILES += doc/src/*.qdoc doc/src/examples/*.qdoc
