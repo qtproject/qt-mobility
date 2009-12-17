@@ -79,6 +79,7 @@ public:
     virtual bool isVideoAvailable() const = 0;
     
     virtual void load(const QUrl &url);
+    virtual void loadUrl(const QUrl &url);
     virtual void play();
     virtual void pause();
     virtual void stop();
@@ -88,8 +89,12 @@ public:
     virtual void setMuted(bool muted);
     virtual void setVideoRenderer(QObject *renderer);
     
+    virtual bool isUrl() const;
+    virtual void setIsUrl(bool isUlr);
+    
 protected:    
     virtual void doLoad(const TDesC &path) = 0;
+    virtual void doLoadUrl(const TDesC &path) = 0;
     virtual void doPlay() = 0;
     virtual void doStop() = 0;
     virtual void doPause() = 0;
@@ -97,6 +102,7 @@ protected:
     virtual void doSetPlaybackRate(qreal rate) = 0;
     virtual void doSetPosition(qint64 microSeconds) = 0;
     virtual void updateMetaDataEntries() = 0;
+    virtual int mediaLoadingProgress() const = 0;
 
 protected:
     void setError(int error,  const QString &errorString = QString());
@@ -134,7 +140,8 @@ private:
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
     QTimer *m_timer;
-    int m_error;
+    int m_error;    
+    bool m_isUrl;
 };
 
 #endif

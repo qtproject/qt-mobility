@@ -47,6 +47,7 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
 {    
     TRAPD(err, m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
+    
 #if defined(S60_DRM_SUPPORTED) && defined(__S60_50__)
     if (err == KErrNone) {
         m_player->RegisterForAudioLoadingNotification(*this);
@@ -62,11 +63,7 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
 void S60AudioPlayerSession::doLoad(const TDesC &path)
 {
     int err = KErrNone;
-#ifdef S60_DRM_SUPPORTED   
     TRAP(err, m_player->OpenFileL(path));
-#else
-    TRAP(err, m_player->OpenFileL(path));
-#endif
     if (err != KErrNone) {
         setMediaStatus(QMediaPlayer::NoMedia);
     }

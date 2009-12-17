@@ -55,6 +55,7 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_mediaStatus(QMediaPlayer::NoMedia)
     , m_timer(new QTimer(this))
     , m_error(KErrNone)
+    , m_isUrl(false)
 {    
     connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
 }
@@ -121,12 +122,21 @@ QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const
 void S60MediaPlayerSession::load(const QUrl &url)
 {
     QString filePath = QDir::toNativeSeparators(url.toLocalFile());   
-    
     if (mediaStatus() != QMediaPlayer::LoadingMedia) {
         setMediaStatus(QMediaPlayer::LoadingMedia);
         TPtrC str(reinterpret_cast<const TUint16*>(filePath.utf16()));
         doLoad(str);
     }
+}
+
+void S60MediaPlayerSession::loadUrl(const QUrl &url)
+{
+	QString filePath = url.toString();
+	if (mediaStatus() != QMediaPlayer::LoadingMedia) {
+		setMediaStatus(QMediaPlayer::LoadingMedia);
+		TPtrC str(reinterpret_cast<const TUint16*>(filePath.utf16()));
+		doLoadUrl(str);
+	}
 }
 
 void S60MediaPlayerSession::play()
@@ -246,6 +256,9 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString)
 void S60MediaPlayerSession::tick()
 {
     emit positionChanged(position());
+    
+    if (isUrl() == true && mediaLoadingProgress() != 100)
+    	emit bufferStatusChanged(mediaLoadingProgress());
 }
 
 bool S60MediaPlayerSession::startTimer()
@@ -262,4 +275,14 @@ void S60MediaPlayerSession::stopTimer()
     if (m_timer->isActive()) {
         m_timer->stop();
     }
+}
+
+bool S60MediaPlayerSession::isUrl() const
+{
+	return m_isUrl;
+}
+
+void S60MediaPlayerSession::setIsUrl(bool isUrl)
+{
+	m_isUrl = isUrl;
 }

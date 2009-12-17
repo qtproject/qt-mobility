@@ -61,10 +61,13 @@ public:
     qint64 position() const;
     bool isVideoAvailable() const;
     
+    int mediaLoadingProgress() const;
+    
     void setVideoRenderer(QObject *renderer);
     
 protected:
     void doLoad(const TDesC &path);
+    void doLoadUrl(const TDesC &path);
     void doPlay();
     void doStop();
     void doPause();

@@ -208,10 +208,14 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     m_session = currentPlayerSession();
 
     QUrl url;
-    if (!source.isNull() && m_session) {
-        url = source.canonicalUri();
-        m_session->load(url);
-        emit mediaChanged(m_currentResource);
+    if (m_session && !source.isNull()) {
+		url = source.canonicalUri();
+		if (m_session->isUrl() == false) {
+			m_session->load(url);	
+		} else {
+			m_session->loadUrl(url);
+		}
+		emit mediaChanged(m_currentResource);
     }
     else {
         emit mediaStatusChanged(QMediaPlayer::InvalidMedia);

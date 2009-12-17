@@ -49,47 +49,51 @@
 
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
-    TRAP_IGNORE(m_recognizer = CMPMediaRecognizer::NewL());
+	TRAP_IGNORE(m_recognizer = CMPMediaRecognizer::NewL());
 }
 
 S60MediaRecognizer::~S60MediaRecognizer()
 {
-    delete m_recognizer;
-    m_recognizer = NULL;
+	delete m_recognizer;
+	m_recognizer = NULL;
 }
 
 bool S60MediaRecognizer::checkUrl(const QUrl &url)
 {
-   TBool isValidUrl = false;
-   TPtrC validUrlPtr (static_cast<const TUint16*>(url.toString().utf16()), url.toString().length());
-   isValidUrl = m_recognizer->ValidUrl(validUrlPtr);  
-   return isValidUrl;
+	TBool isValidUrl = false;
+	TPtrC validUrlPtr (static_cast<const TUint16*>(url.toString().utf16()), url.toString().length());
+	isValidUrl = m_recognizer->ValidUrl(validUrlPtr);  
+	return isValidUrl;
 }
 
 S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl &url)
-{
-   CMPMediaRecognizer::TMPMediaType type = CMPMediaRecognizer::EUnidentified;
-   QString filePath = QDir::toNativeSeparators(url.toLocalFile());
-   TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
- 
-   TRAP_IGNORE(type = m_recognizer->IdentifyMediaTypeL(urlPtr, EFalse)); 
-   m_recognizer->FreeFilehandle();
-   
-   switch (type) {
-       case CMPMediaRecognizer::ELocalAudioFile:
-           return Audio;
-       case CMPMediaRecognizer::ELocalVideoFile:
-           return Video;
-       case CMPMediaRecognizer::ELocalAudioPlaylist:
-       case CMPMediaRecognizer::EUrl:
-       // TODO: Must be considered when streams will be implemented
-       case CMPMediaRecognizer::ELocalRamFile:
-       case CMPMediaRecognizer::ELocalSdpFile:
-       // case CMPMediaRecognizer::EProgressiveDownload:
-       case CMPMediaRecognizer::EUnidentified:
-       default:
-           break;
-   }
-   
-   return NotSupported; 
+{    
+	CMPMediaRecognizer::TMPMediaType type = CMPMediaRecognizer::EUnidentified;
+	QString filePath = QDir::toNativeSeparators(url.toLocalFile());
+	if (filePath.isNull()) {
+		filePath = url.toString();		
+	}
+	TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
+
+	TRAP_IGNORE(type = m_recognizer->IdentifyMediaTypeL(urlPtr, ETrue);)
+	m_recognizer->FreeFilehandle();
+	
+	switch (type) {
+	   case CMPMediaRecognizer::ELocalAudioFile:
+		   return Audio;
+	   case CMPMediaRecognizer::ELocalVideoFile:
+		   return Video;
+	   case CMPMediaRecognizer::EUrl:
+		   return Url;
+	   case CMPMediaRecognizer::ELocalAudioPlaylist:
+	   // TODO: Must be considered when streams will be implemented
+	   case CMPMediaRecognizer::ELocalRamFile:
+	   case CMPMediaRecognizer::ELocalSdpFile:
+	   // case CMPMediaRecognizer::EProgressiveDownload:
+	   case CMPMediaRecognizer::EUnidentified:
+	   default:
+		   break;
+	}
+
+	return NotSupported; 
 }
