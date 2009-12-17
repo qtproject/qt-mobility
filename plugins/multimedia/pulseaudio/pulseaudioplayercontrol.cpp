@@ -260,7 +260,7 @@ void PulseAudioPlayerControl::setMedia(const QMediaContent &media, QIODevice *st
         if (m_networkAccessManager == 0)
             m_networkAccessManager = new QNetworkAccessManager(this);
 
-        m_stream = m_networkAccessManager->get(QNetworkRequest(m_media.canonicalUri()));
+        m_stream = m_networkAccessManager->get(QNetworkRequest(m_media.canonicalUrl()));
     }
 
     unloadSample();

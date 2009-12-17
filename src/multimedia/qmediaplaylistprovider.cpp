@@ -94,12 +94,12 @@ QMediaPlaylistProvider::~QMediaPlaylistProvider()
 
 
 /*!
-    Loads a playlist from from a URI \a location. If no playlist \a format is specified the loader
-    will inspect the URI or probe the headers to guess the format.
+    Loads a playlist from from a URL \a location. If no playlist \a format is specified the loader
+    will inspect the URL or probe the headers to guess the format.
 
     New items are appended to playlist.
 
-    Returns true if the provider supports the format and loading from the locations URI protocol,
+    Returns true if the provider supports the format and loading from the locations URL protocol,
     otherwise this will return false.
 */
 bool QMediaPlaylistProvider::load(const QUrl &location, const char *format)
@@ -126,8 +126,8 @@ bool QMediaPlaylistProvider::load(QIODevice * device, const char *format)
 }
 
 /*!
-    Saves the contents of a playlist to a URI \a location.  If no playlist \a format is specified
-    the writer will inspect the URI to guess the format.
+    Saves the contents of a playlist to a URL \a location.  If no playlist \a format is specified
+    the writer will inspect the URL to guess the format.
 
     Returns true if the playlist was saved succesfully; and false otherwise.
   */

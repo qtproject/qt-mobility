@@ -78,7 +78,7 @@ public:
     static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
     static QMediaContent resources(IWMPMedia *media);
     static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
+    static QVariant albumArtUrl(IWMPMedia *media, const char *suffix);
 
 private Q_SLOTS:
     void currentItemChangeEvent(IDispatch *dispatch);

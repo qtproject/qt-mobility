@@ -70,7 +70,7 @@ public:
 
     bool isNull() const;
 
-    QUrl canonicalUri() const;
+    QUrl canonicalUrl() const;
     QMediaResource canonicalResource() const;
 
     QMediaResourceList resources() const;
