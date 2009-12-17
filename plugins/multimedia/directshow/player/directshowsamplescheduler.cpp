@@ -178,7 +178,12 @@ HRESULT DirectShowSampleScheduler::NotifyAllocator(IMemAllocator *pAllocator, BO
     ALLOCATOR_PROPERTIES properties;
 
     if (!pAllocator) {
-        return E_POINTER;
+        if (m_allocator)
+            m_allocator->Release();
+
+        m_allocator = 0;
+
+        return S_OK;
     } else if ((hr = pAllocator->GetProperties(&properties)) != S_OK) {
         return hr;
     } else {

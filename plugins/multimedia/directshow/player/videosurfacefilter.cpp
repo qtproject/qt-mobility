@@ -325,6 +325,8 @@ HRESULT VideoSurfaceFilter::Disconnect()
 
     m_mediaType.clear();
 
+    m_sampleScheduler.NotifyAllocator(0, FALSE);
+
     m_peerPin->Release();
     m_peerPin = 0;
 
