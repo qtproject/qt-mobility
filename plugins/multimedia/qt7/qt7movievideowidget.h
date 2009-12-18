@@ -51,7 +51,6 @@
 #include <QtGui/qmacdefines_mac.h>
 #include "qt7videooutputcontrol.h"
 
-#include <CoreVideo/CVDisplayLink.h>
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>
 
@@ -63,9 +62,11 @@ QTM_BEGIN_NAMESPACE
 
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
+class QCvDisplayLink;
 
 class QT7MovieVideoWidget : public QT7VideoWidgetControl
 {
+Q_OBJECT
 public:
     QT7MovieVideoWidget(QObject *parent = 0);
     virtual ~QT7MovieVideoWidget();
@@ -95,25 +96,19 @@ public:
     int saturation() const;
     void setSaturation(int saturation);
 
-    void displayLinkEvent(const CVTimeStamp *);
-
-protected:
-    virtual bool event(QEvent *);
+private slots:
+    void updateVideoFrame(const CVTimeStamp &ts);
     
 private:
     void setupVideoOutput();
     bool createVisualContext();
 
-    void updateVideoFrame();
     void updateColors();
 
     void *m_movie;
     GLVideoWidget *m_videoWidget;
 
-    CVDisplayLinkRef m_displayLink;
-    QMutex m_displayLinkMutex;
-    bool m_pendingDisplayLinkEvent;
-    CVTimeStamp m_frameTimeStamp;
+    QCvDisplayLink *m_displayLink;
 
 #ifdef QUICKTIME_C_API_AVAILABLE
     QTVisualContextRef	m_visualContext;

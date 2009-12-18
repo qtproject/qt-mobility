@@ -50,6 +50,7 @@
 #include "qt7playercontrol.h"
 #include "qt7movievideowidget.h"
 #include "qt7playersession.h"
+#include "qcvdisplaylink.h"
 #include <QtCore/qdebug.h>
 #include <QtCore/qcoreapplication.h>
 
@@ -168,33 +169,10 @@ private:
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
 };
 
-
-static CVReturn QT7MovieVideoWidgetDisplayLinkCallback(CVDisplayLinkRef displayLink,
-                                 const CVTimeStamp *inNow,
-                                 const CVTimeStamp *inOutputTime,
-                                 CVOptionFlags flagsIn,
-                                 CVOptionFlags *flagsOut,
-                                 void *displayLinkContext)
-{
-    Q_UNUSED(displayLink);
-    Q_UNUSED(inNow);
-    //Q_UNUSED(inOutputTime);
-    Q_UNUSED(flagsIn);
-    Q_UNUSED(flagsOut);
-
-    QT7MovieVideoWidget *videoWidget = (QT7MovieVideoWidget *)displayLinkContext;
-
-    videoWidget->displayLinkEvent(inOutputTime);
-    return kCVReturnSuccess;
-}
-
-
-
 QT7MovieVideoWidget::QT7MovieVideoWidget(QObject *parent)
    :QT7VideoWidgetControl(parent),
     m_movie(0),    
     m_videoWidget(0),
-    m_pendingDisplayLinkEvent(false),
     m_currentFrame(0),
     m_fullscreen(false),
     m_aspectRatioMode(QVideoWidget::KeepAspectRatio),
@@ -209,15 +187,9 @@ QT7MovieVideoWidget::QT7MovieVideoWidget(QObject *parent)
     format.setSwapInterval(1); // Vertical sync (avoid tearing)
     m_videoWidget = new GLVideoWidget(0, format);
 
-    // create display link for the main display
-    CVDisplayLinkCreateWithCGDisplay(kCGDirectMainDisplay, &m_displayLink);
-    if (m_displayLink) {
-        // set the current display of a display link.
-        CVDisplayLinkSetCurrentCGDisplay(m_displayLink, kCGDirectMainDisplay);
+    m_displayLink = new QCvDisplayLink(this);
 
-        // set the renderer output callback function
-        CVDisplayLinkSetOutputCallback(m_displayLink, &QT7MovieVideoWidgetDisplayLinkCallback, this);
-    }
+    connect(m_displayLink, SIGNAL(tick(CVTimeStamp)), SLOT(updateVideoFrame(CVTimeStamp)));
 
     if (!createVisualContext()) {
         qWarning() << "QT7MovieVideoWidget: failed to create visual context";
@@ -248,12 +220,7 @@ bool QT7MovieVideoWidget::createVisualContext()
 
 QT7MovieVideoWidget::~QT7MovieVideoWidget()
 {
-    if (m_displayLink) {
-        CVDisplayLinkStop(m_displayLink);
-        CVDisplayLinkRelease(m_displayLink);
-        m_displayLink = NULL;
-    }
-
+    m_displayLink->stop();
     delete m_videoWidget;
 }
 
@@ -269,8 +236,7 @@ void QT7MovieVideoWidget::setupVideoOutput()
     qDebug() << "QT7MovieVideoWidget::setupVideoOutput" << m_movie;
 
     if (m_movie == 0) {
-        if (m_displayLink)
-            CVDisplayLinkStop(m_displayLink);
+        m_displayLink->stop();
         return;
     }
 
@@ -283,9 +249,7 @@ void QT7MovieVideoWidget::setupVideoOutput()
     SetMovieVisualContext([(QTMovie*)m_movie quickTimeMovie], m_visualContext);
 #endif
 
-    // activates a display link.
-    if (m_displayLink)
-        CVDisplayLinkStart(m_displayLink);
+    m_displayLink->start();
 }
 
 void QT7MovieVideoWidget::setEnabled(bool)
@@ -387,31 +351,11 @@ void QT7MovieVideoWidget::updateColors()
 #endif
 }
 
-void QT7MovieVideoWidget::displayLinkEvent(const CVTimeStamp *ts)
-{
-    // This function is called from a
-    // thread != gui thread. So we post the event.
-    // But we need to make sure that we don't post faster
-    // than the event loop can eat:
-    m_displayLinkMutex.lock();
-    bool pending = m_pendingDisplayLinkEvent;
-    m_pendingDisplayLinkEvent = true;
-    m_frameTimeStamp = *ts;
-    m_displayLinkMutex.unlock();
-
-    if (!pending)
-        qApp->postEvent(this, new QEvent(QEvent::User), Qt::HighEventPriority);
-}
-
-void QT7MovieVideoWidget::updateVideoFrame()
+void QT7MovieVideoWidget::updateVideoFrame(const CVTimeStamp &ts)
 {
 #ifdef QUICKTIME_C_API_AVAILABLE
-    m_displayLinkMutex.lock();
-    const CVTimeStamp timeStamp = m_frameTimeStamp;
-    m_displayLinkMutex.unlock();
-
     // check for new frame
-    if (m_visualContext && QTVisualContextIsNewImageAvailable(m_visualContext, &timeStamp)) {
+    if (m_visualContext && QTVisualContextIsNewImageAvailable(m_visualContext, &ts)) {
         // if we have a previous frame release it
         if (m_currentFrame) {
             CVOpenGLTextureRelease(m_currentFrame);
@@ -419,7 +363,7 @@ void QT7MovieVideoWidget::updateVideoFrame()
         }
 
         // get a "frame" (image buffer) from the Visual Context, indexed by the provided time
-        OSStatus status = QTVisualContextCopyImageForTime(m_visualContext, NULL, &timeStamp, &m_currentFrame);
+        OSStatus status = QTVisualContextCopyImageForTime(m_visualContext, NULL, &ts, &m_currentFrame);
 
         // the above call may produce a null frame so check for this first
         // if we have a frame, then draw it
@@ -428,20 +372,9 @@ void QT7MovieVideoWidget::updateVideoFrame()
             m_videoWidget->setCVTexture(m_currentFrame);
         }
     }
+#else
+    Q_UNUSED(ts);
 #endif
 }
 
-bool QT7MovieVideoWidget::event(QEvent *event)
-{
-    switch (event->type()){
-        case QEvent::User:{
-            m_displayLinkMutex.lock();
-            m_pendingDisplayLinkEvent = false;
-            m_displayLinkMutex.unlock();
-            updateVideoFrame();
-            break; }
-        default:
-            break;
-    }
-    return QObject::event(event);
-}
+#include "moc_qt7movievideowidget.cpp"

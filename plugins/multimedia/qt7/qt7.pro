@@ -37,11 +37,13 @@ HEADERS += \
     qt7playersession.h \
     qt7playerservice.h \
     qt7serviceplugin.h \
+    qcvdisplaylink.h
 
 SOURCES += \
     qt7playercontrol.cpp \
     qt7videooutputcontrol.cpp \
-    qt7playerservice.cpp
+    qt7playerservice.cpp \
+    qcvdisplaylink.cpp
 
 OBJECTIVE_SOURCES += \
     qt7backend.mm \
