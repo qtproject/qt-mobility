@@ -69,10 +69,6 @@ void BearerEx::createMenus()
     menuBar()->addAction(act1);
     connect(act1, SIGNAL(triggered()), this, SLOT(on_showDetailsButton_clicked()));
 
-    m_openAction = new QAction(tr("Open Session"), this);
-    menuBar()->addAction(m_openAction);
-    connect(m_openAction, SIGNAL(triggered()), this, SLOT(on_openSessionButton_clicked()));
-    
     QAction* exitAct = new QAction(tr("Exit"), this);
     menuBar()->addAction(exitAct);
     connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
@@ -341,7 +337,7 @@ void SessionTab::on_sendRequestButton_clicked()
 void SessionTab::on_openSessionButton_clicked()
 {
     m_NetworkSession->open();
-    if (m_NetworkSession->isActive()) {
+    if (m_NetworkSession->isOpen()) {
         newState(m_NetworkSession->state()); 
     }
 }
@@ -349,7 +345,7 @@ void SessionTab::on_openSessionButton_clicked()
 void SessionTab::on_closeSessionButton_clicked()
 {
     m_NetworkSession->close();
-    if (!m_NetworkSession->isActive()) {
+    if (!m_NetworkSession->isOpen()) {
         newState(m_NetworkSession->state()); 
     }
 }
@@ -504,8 +500,8 @@ void SessionTab::newState(QNetworkSession::State state)
     bearerLineEdit->setText(m_NetworkSession->bearerName());
 
     QString active;
-    if (m_NetworkSession->isActive()) {
-        active = " (A)";
+    if (m_NetworkSession->isOpen()) {
+        active = " (O)";
     }
     stateLineEdit->setText(stateString(state)+active);
 }

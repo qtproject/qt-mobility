@@ -72,7 +72,7 @@ QTM_BEGIN_NAMESPACE
 
     QNetworkSession supports session management within the same process and depending on the platform's 
     capabilities may support out-of-process sessions. If the same 
-    network configuration is used by multiple active sessions the underlying network interface is only terminated once
+    network configuration is used by multiple open sessions the underlying network interface is only terminated once
     the last session has been closed.
 
     \section1 Roaming
@@ -120,7 +120,7 @@ QTM_BEGIN_NAMESPACE
     \value Connecting       The network session is being established.
     \value Connected        The network session is connected. If the current process wishes to use this session
                             it has to register its interest by calling open(). A network session 
-                            is considered to be ready for socket operations if it isActive() and connected.
+                            is considered to be ready for socket operations if it isOpen() and connected.
     \value Closing          The network session is in the process of being shut down.
     \value Disconnected     The network session is not connected. The associated QNetworkConfiguration
                             has the state QNetworkConfiguration::Discovered.
@@ -239,13 +239,13 @@ QNetworkSession::~QNetworkSession()
 }
 
 /*!
-    Creates an active/open session which increases the session counter on the underlying network interface.
+    Creates an open session which increases the session counter on the underlying network interface.
     The system will not terminate a network interface until the session reference counter reaches zero.
-    Therefore an active session allows an application to register its use of the interface.
+    Therefore an open session allows an application to register its use of the interface.
 
-    The interface is started if it is not active yet. Some platforms may not provide support 
-    for out-of-process sessions. On such platforms the session counter ignores any sessions
-    held by another process. The platform capabilities can be 
+    As a result of calling open() the interface will be started if it is not connected/up yet. 
+    Some platforms may not provide support for out-of-process sessions. On such platforms the session
+    counter ignores any sessions held by another process. The platform capabilities can be 
     detected via QNetworkConfigurationManager::capabilities().
 
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
@@ -253,7 +253,7 @@ QNetworkSession::~QNetworkSession()
 
     It is not a requirement to open a session in order to monitor the underlying network interface.
 
-    \sa close(), stop(), isActive()
+    \sa close(), stop(), isOpen()
 */
 void QNetworkSession::open()
 {
@@ -303,7 +303,7 @@ bool QNetworkSession::waitForOpened(int msecs)
 /*!
     Decreases the session counter on the associated network configuration. If the session counter reaches zero
     the active network interface is shut down. This also means that state() will only change from \l Connected to
-    \l Disconnected if this was the last active session.
+    \l Disconnected if the current session was the last open session.
 
     If the platform does not support out-of-process sessions calling this function does not stop the
     interface. In this case \l{stop()} has to be used to force a shut down. 
@@ -312,7 +312,7 @@ bool QNetworkSession::waitForOpened(int msecs)
     Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired 
     by connecting to the stateChanged(), opened() or error() signals.
 
-    \sa open(), stop(), isActive()
+    \sa open(), stop(), isOpen()
 */
 void QNetworkSession::close()
 {
@@ -320,7 +320,7 @@ void QNetworkSession::close()
 }
 
 /*!
-    Invalidates all active sessions against the network interface and therefore stops the 
+    Invalidates all open sessions against the network interface and therefore stops the 
     underlying network interface. This function always changes the session's state() flag to
     \l Disconnected.
 
@@ -402,25 +402,29 @@ QNetworkInterface QNetworkSession::interface() const
 }
 
 /*!
-    Returns true if this object holds an active session on the underlying network interface.
+    Returns true if this session is open. If the number of all open sessions is greater than
+    zero the underlying network interface will remain connected/up.
+
     The session can be controlled via open() and close().
 */
-bool QNetworkSession::isActive() const
+bool QNetworkSession::isOpen() const
 {
     return d->isActive;
 }
 
 /*!
-    Returns the state of the session. If the session is based on a
-    single access point configuration the state of the session is the same as the state of the
-    associated network interface. Therefore a network session object can be used to monitor 
-    network interfaces. 
+    Returns the state of the session. 
+    
+    If the session is based on a single access point configuration the state of the 
+    session is the same as the state of the associated network interface. Therefore
+    a network session object can be used to monitor network interfaces. 
 
     A \l QNetworkConfiguration::ServiceNetwork based session summarizes the state of all its children
-    and therefore returns the \l Connected state if at least one of its sub configurations is connected. 
+    and therefore returns the \l Connected state if at least one of the service network's 
+    \l {QNetworkConfiguration::children()}{children()} configurations is active. 
 
-    Note that it is not required to hold an active session in order to obtain the network interface state.
-    A connected but inactive session may be used to monitor network interfaces whereas an active and connected
+    Note that it is not required to hold an open session in order to obtain the network interface state.
+    A connected but closed session may be used to monitor network interfaces whereas an open and connected
     session object may prevent the network interface from being shut down.
 
     \sa error(), stateChanged()
@@ -464,7 +468,7 @@ QString QNetworkSession::errorString() const
             \o Key \o Description
         \row
             \o ActiveConfigurationIdentifier
-            \o If the session \l isActive() this property returns the identifier of the
+            \o If the session \l isOpen() this property returns the identifier of the
             QNetworkConfiguration that is used by this session; otherwise an empty string.
 
             The main purpose of this key is to determine which Internet access point is used
@@ -486,7 +490,7 @@ QString QNetworkSession::errorString() const
                 \endcode
         \row
             \o UserChoiceConfigurationIdentifier
-            \o If the session \l isActive() and is bound to a QNetworkConfiguration of type
+            \o If the session \l isOpen() and is bound to a QNetworkConfiguration of type
             UserChoice, this property returns the identifier of the QNetworkConfiguration that the
             configuration resolved to when \l open() was called; otherwise an empty string.
 
@@ -600,7 +604,7 @@ void QNetworkSession::reject()
 /*!
     Returns the amount of data sent in bytes; otherwise 0.
 
-    This field value includes the usage across all active network 
+    This field value includes the usage across all open network 
     sessions which use the same network interface.
 
     If the session is based on a service network configuration the number of 
@@ -617,7 +621,7 @@ quint64 QNetworkSession::bytesWritten() const
 /*!
     Returns the amount of data received in bytes; otherwise 0.
 
-    This field value includes the usage across all active network 
+    This field value includes the usage across all open network 
     sessions which use the same network interface.
 
     If the session is based on a service network configuration the number of 

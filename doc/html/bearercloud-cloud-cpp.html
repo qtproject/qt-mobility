@@ -236,7 +236,7 @@
     void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         if (event-&gt;button() == Qt::LeftButton) {
-            if (session-&gt;isActive())
+            if (session-&gt;isOpen())
                 session-&gt;close();
             else
                 session-&gt;open();
@@ -297,10 +297,10 @@
             s = s.arg(tr(&quot;Unknown&quot;));
         }
 
-        if (session-&gt;isActive())
-            s = s.arg(tr(&quot;Active&quot;));
+        if (session-&gt;isOpen())
+            s = s.arg(tr(&quot;Open&quot;));
         else
-            s = s.arg(tr(&quot;Inactive&quot;));
+            s = s.arg(tr(&quot;Closed&quot;));
 
         tooltip += s;
 

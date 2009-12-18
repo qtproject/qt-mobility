@@ -140,10 +140,10 @@ void SessionWidget::updateSessionState(QNetworkSession::State state)
         s = s.arg(tr("Unknown"));
     }
 
-    if (session->isActive())
-        s = s.arg(tr("Active"));
+    if (session->isOpen())
+        s = s.arg(tr("Open"));
     else
-        s = s.arg(tr("Inactive"));
+        s = s.arg(tr("Closed"));
 
     sessionState->setText(s);
 }

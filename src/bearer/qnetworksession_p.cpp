@@ -321,7 +321,7 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
 quint64 QNetworkSessionPrivate::bytesWritten() const
 {
 #if defined(BACKEND_NM)
-    if( state == QNetworkSession::Connected ) {
+    if( NetworkManagerAvailable() && state == QNetworkSession::Connected ) {
         if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
             foreach (const QNetworkConfiguration &config, publicConfig.children()) {
                 if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {
@@ -339,7 +339,7 @@ quint64 QNetworkSessionPrivate::bytesWritten() const
 quint64 QNetworkSessionPrivate::bytesReceived() const
 {
 #if defined(BACKEND_NM)
-    if( state == QNetworkSession::Connected ) {
+    if( NetworkManagerAvailable() && state == QNetworkSession::Connected ) {
         if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
             foreach (const QNetworkConfiguration &config, publicConfig.children()) {
                 if ((config.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active) {

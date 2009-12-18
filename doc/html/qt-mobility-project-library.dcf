@@ -2380,7 +2380,7 @@
         <keyword ref="qnetworksession.html#errorString">errorString</keyword>
         <keyword ref="qnetworksession.html#ignore">ignore</keyword>
         <keyword ref="qnetworksession.html#interface">interface</keyword>
-        <keyword ref="qnetworksession.html#isActive">isActive</keyword>
+        <keyword ref="qnetworksession.html#isOpen">isOpen</keyword>
         <keyword ref="qnetworksession.html#migrate">migrate</keyword>
         <keyword ref="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</keyword>
         <keyword ref="qnetworksession.html#open">open</keyword>

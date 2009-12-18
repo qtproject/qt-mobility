@@ -212,7 +212,7 @@ void tst_QNetworkSession::cleanupTestCase()
 void tst_QNetworkSession::invalidSession()
 {
     QNetworkSession session(QNetworkConfiguration(), 0);
-    QVERIFY(!session.isActive());
+    QVERIFY(!session.isOpen());
     QVERIFY(session.state() == QNetworkSession::Invalid);
 }
 
@@ -302,7 +302,7 @@ void tst_QNetworkSession::userChoiceSession()
 
     QVERIFY(session.configuration() == configuration);
 
-    QVERIFY(!session.isActive());
+    QVERIFY(!session.isOpen());
 
     QVERIFY(session.sessionProperty("ActiveConfigurationIdentifier").toString().isEmpty());
 
@@ -324,7 +324,7 @@ void tst_QNetworkSession::userChoiceSession()
 
         session.waitForOpened();
 
-        if (session.isActive())
+        if (session.isOpen())
             QVERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
         if (!errorSpy.isEmpty()) {
             QNetworkSession::SessionError error =
@@ -427,7 +427,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
     // Test initial state of the session.
     {
         QVERIFY(session.configuration() == configuration);
-        QVERIFY(!session.isActive());
+        QVERIFY(!session.isOpen());
         // session may be invalid if configuration is removed between when
         // sessionOpenCloseStop_data() is called and here.
         QVERIFY((configuration.isValid() && (session.state() != QNetworkSession::Invalid)) ||
@@ -453,7 +453,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
         session.waitForOpened();
 
-        if (session.isActive())
+        if (session.isOpen())
             QVERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
         if (!errorSpy.isEmpty()) {
             QNetworkSession::SessionError error =
@@ -517,7 +517,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
     // Test opening a second session.
     {
         QVERIFY(session2.configuration() == configuration);
-        QVERIFY(!session2.isActive());
+        QVERIFY(!session2.isOpen());
         QVERIFY(session2.state() == QNetworkSession::Connected);
         QVERIFY(session.error() == QNetworkSession::UnknownSessionError);
 
@@ -525,8 +525,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
         QTRY_VERIFY(!sessionOpenedSpy2.isEmpty() || !errorSpy2.isEmpty());
 
-        QVERIFY(session.isActive());
-        QVERIFY(session2.isActive());
+        QVERIFY(session.isOpen());
+        QVERIFY(session2.isOpen());
         QVERIFY(session.state() == QNetworkSession::Connected);
         QVERIFY(session2.state() == QNetworkSession::Connected);
         QVERIFY(session.interface().isValid());
@@ -550,7 +550,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
         QTRY_VERIFY(!sessionClosedSpy2.isEmpty() || !errorSpy2.isEmpty());
 
-        QVERIFY(!session2.isActive());
+        QVERIFY(!session2.isOpen());
 
         if (!errorSpy2.isEmpty()) {
 	    QVERIFY(!errorSpy.isEmpty());
@@ -641,7 +641,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                         session3.open();
                         session3.waitForOpened();
                         
-                        if (session.isActive())
+                        if (session.isOpen())
                             QVERIFY(!sessionOpenedSpy3.isEmpty() || !errorSpy3.isEmpty());
                         
                         session.stop();
@@ -682,9 +682,9 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         QVERIFY(!sessionClosedSpy2.isEmpty());
 
 #ifndef Q_CC_NOKIAX86
-        QVERIFY(!session.isActive());
+        QVERIFY(!session.isOpen());
 #endif
-        QVERIFY(!session2.isActive());
+        QVERIFY(!session2.isOpen());
     } else {
         // Test closing the second session.
         {
@@ -698,8 +698,8 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
             QVERIFY(sessionClosedSpy.isEmpty());
 
-            QVERIFY(session.isActive());
-            QVERIFY(!session2.isActive());
+            QVERIFY(session.isOpen());
+            QVERIFY(!session2.isOpen());
             QVERIFY(session.state() == QNetworkSession::Connected);
             QVERIFY(session2.state() == QNetworkSession::Connected);
             QVERIFY(session.interface().isValid());
@@ -724,7 +724,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
 
             QTRY_VERIFY(!sessionClosedSpy.isEmpty() || !errorSpy.isEmpty());
 
-            QVERIFY(!session.isActive());
+            QVERIFY(!session.isOpen());
 
             if (expectStateChange)
                 QTRY_VERIFY(!stateChangedSpy.isEmpty() || !errorSpy.isEmpty());

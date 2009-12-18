@@ -226,7 +226,7 @@ QVariant Cloud::itemChange(GraphicsItemChange change, const QVariant &value)
 void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        if (session->isActive())
+        if (session->isOpen())
             session->close();
         else
             session->open();
@@ -289,10 +289,10 @@ void Cloud::stateChanged(QNetworkSession::State state)
         s = s.arg(tr("Unknown"));
     }
 
-    if (session->isActive())
-        s = s.arg(tr("Active"));
+    if (session->isOpen())
+        s = s.arg(tr("Open"));
     else
-        s = s.arg(tr("Inactive"));
+        s = s.arg(tr("Closed"));
 
     tooltip += s;
 

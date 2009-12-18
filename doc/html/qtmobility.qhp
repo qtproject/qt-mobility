@@ -2551,7 +2551,7 @@
             <keyword name="errorString" id="QNetworkSession::errorString" ref="qnetworksession.html#errorString"/>
             <keyword name="ignore" id="QNetworkSession::ignore" ref="qnetworksession.html#ignore"/>
             <keyword name="interface" id="QNetworkSession::interface" ref="qnetworksession.html#interface"/>
-            <keyword name="isActive" id="QNetworkSession::isActive" ref="qnetworksession.html#isActive"/>
+            <keyword name="isOpen" id="QNetworkSession::isOpen" ref="qnetworksession.html#isOpen"/>
             <keyword name="migrate" id="QNetworkSession::migrate" ref="qnetworksession.html#migrate"/>
             <keyword name="newConfigurationActivated" id="QNetworkSession::newConfigurationActivated" ref="qnetworksession.html#newConfigurationActivated"/>
             <keyword name="open" id="QNetworkSession::open" ref="qnetworksession.html#open"/>

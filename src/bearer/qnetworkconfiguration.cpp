@@ -164,9 +164,9 @@ QTM_BEGIN_NAMESPACE
                         QNetworkConfiguration::Defined. If the configuration is a service network
                         this flag is set if at least one of the underlying access points
                         configurations has the Discovered state.
-    \value Active       The configuration is currently used by an open/active network session
-                        (see \l QNetworkSession::isActive()). However this does not mean that the
-                        current process is the entity that created the active session. It merely
+    \value Active       The configuration is currently used by an open network session
+                        (see \l QNetworkSession::isOpen()). However this does not mean that the
+                        current process is the entity that created the open session. It merely
                         indicates that if a new QNetworkSession were to be constructed based on
                         this configuration \l QNetworkSession::state() would return
                         \l QNetworkSession::Connected. This state implies the

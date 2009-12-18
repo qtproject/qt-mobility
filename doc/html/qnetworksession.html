@@ -42,7 +42,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">SessionError </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QNetworkInterface </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#interface">interface</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#isActive">isActive</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#isOpen">isOpen</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#sessionProperty">sessionProperty</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#setSessionProperty">setSessionProperty</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qnetworksession.html#state">state</a></b> () const</td></tr>
@@ -93,7 +93,7 @@
 <h2>Detailed Description</h2>
 <p>The QNetworkSession class provides control over the system's access points and enables session management for cases when multiple clients access the same access point.</p>
 <p>A QNetworkSession enables control over the system's network interfaces. The session's configuration parameter are determined via the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object to which it is bound. Depending on the type of the session (single access point or service network) a session may be linked to one or more network interfaces. By means of <a href="qnetworksession.html#open">opening</a> and <a href="qnetworksession.html#close">closing</a> of network sessions a developer can start and stop the systems network interfaces. If the configuration represents multiple access points (see <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a>) more advanced features such as roaming may be supported.</p>
-<p>QNetworkSession supports session management within the same process and depending on the platform's capabilities may support out-of-process sessions. If the same network configuration is used by multiple active sessions the underlying network interface is only terminated once the last session has been closed.</p>
+<p>QNetworkSession supports session management within the same process and depending on the platform's capabilities may support out-of-process sessions. If the same network configuration is used by multiple open sessions the underlying network interface is only terminated once the last session has been closed.</p>
 <a name="roaming"></a>
 <h3>Roaming</h3>
 <p>Applications may connect to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>() signal in order to receive notifications when a more suitable access point becomes available. In response to this signal the application must either initiate the roaming via <a href="qnetworksession.html#migrate">migrate</a>() or <a href="qnetworksession.html#ignore">ignore</a>() the new access point. Once the session has roamed the <a href="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</a>() signal is emitted. The application may now test the carrier and must either <a href="qnetworksession.html#accept">accept</a>() or <a href="qnetworksession.html#reject">reject</a>() it. The session will return to the previous access point if the roaming was rejected.</p>
@@ -134,7 +134,7 @@
 <tr><td valign="top"><tt>QNetworkSession::Invalid</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The session is invalid due to an invalid configuration. This may happen due to a removed access point or a configuration that was invalid to begin with.</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::NotAvailable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The session is based on a defined but not yet discovered <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> (see <a href="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::StateFlag</a>).</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::Connecting</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The network session is being established.</td></tr>
-<tr><td valign="top"><tt>QNetworkSession::Connected</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The network session is connected. If the current process wishes to use this session it has to register its interest by calling <a href="qnetworksession.html#open">open</a>(). A network session is considered to be ready for socket operations if it <a href="qnetworksession.html#isActive">isActive</a>() and connected.</td></tr>
+<tr><td valign="top"><tt>QNetworkSession::Connected</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The network session is connected. If the current process wishes to use this session it has to register its interest by calling <a href="qnetworksession.html#open">open</a>(). A network session is considered to be ready for socket operations if it <a href="qnetworksession.html#isOpen">isOpen</a>() and connected.</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::Closing</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The network session is in the process of being shut down.</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::Disconnected</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The network session is not connected. The associated <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> has the state <a href="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Discovered</a>.</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::Roaming</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The network session is roaming from one access point to another access point.</td></tr>
@@ -174,21 +174,21 @@
 <a name="//apple_ref/cpp/instm/QNetworkSession/bytesReceived"></a>
 <h3 class="fn"><a name="bytesReceived"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::bytesReceived () const</h3>
 <p>Returns the amount of data received in bytes; otherwise 0.</p>
-<p>This field value includes the usage across all active network sessions which use the same network interface.</p>
+<p>This field value includes the usage across all open network sessions which use the same network interface.</p>
 <p>If the session is based on a service network configuration the number of sent bytes across all active member configurations are returned.</p>
 <p>This function may not always be supported on all platforms and returns 0. The platform capability can be detected via <a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::DataStatistics</a>.</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/bytesWritten"></a>
 <h3 class="fn"><a name="bytesWritten"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::bytesWritten () const</h3>
 <p>Returns the amount of data sent in bytes; otherwise 0.</p>
-<p>This field value includes the usage across all active network sessions which use the same network interface.</p>
+<p>This field value includes the usage across all open network sessions which use the same network interface.</p>
 <p>If the session is based on a service network configuration the number of sent bytes across all active member configurations are returned.</p>
 <p>This function may not always be supported on all platforms and returns 0. The platform capability can be detected via <a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::DataStatistics</a>.</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/close"></a>
 <h3 class="fn"><a name="close"></a>void QNetworkSession::close ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Decreases the session counter on the associated network configuration. If the session counter reaches zero the active network interface is shut down. This also means that <a href="qnetworksession.html#state">state</a>() will only change from <a href="qnetworksession.html#State-enum">Connected</a> to <a href="qnetworksession.html#State-enum">Disconnected</a> if this was the last active session.</p>
+<p>Decreases the session counter on the associated network configuration. If the session counter reaches zero the active network interface is shut down. This also means that <a href="qnetworksession.html#state">state</a>() will only change from <a href="qnetworksession.html#State-enum">Connected</a> to <a href="qnetworksession.html#State-enum">Disconnected</a> if the current session was the last open session.</p>
 <p>If the platform does not support out-of-process sessions calling this function does not stop the interface. In this case <a href="qnetworksession.html#stop">stop</a>() has to be used to force a shut down. The platform capabilities can be detected via <a href="qnetworkconfigurationmanager.html#capabilities">QNetworkConfigurationManager::capabilities</a>().</p>
 <p>Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired by connecting to the <a href="qnetworksession.html#stateChanged">stateChanged</a>(), <a href="qnetworksession.html#opened">opened</a>() or <a href="qnetworksession.html#error">error</a>() signals.</p>
-<p>See also <a href="qnetworksession.html#open">open</a>(), <a href="qnetworksession.html#stop">stop</a>(), and <a href="qnetworksession.html#isActive">isActive</a>().</p>
+<p>See also <a href="qnetworksession.html#open">open</a>(), <a href="qnetworksession.html#stop">stop</a>(), and <a href="qnetworksession.html#isOpen">isOpen</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/closed"></a>
 <h3 class="fn"><a name="closed"></a>void QNetworkSession::closed ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the network session has been closed.</p>
@@ -217,9 +217,10 @@
 <p>This function only returns a valid <a href="http://qt.nokia.com/doc/4.5/qnetworkinterface.html">QNetworkInterface</a> when this session is <a href="qnetworksession.html#State-enum">Connected</a>.</p>
 <p>The returned interface may change as a result of a roaming process.</p>
 <p>See also <a href="qnetworksession.html#state">state</a>().</p>
-<a name="//apple_ref/cpp/instm/QNetworkSession/isActive"></a>
-<h3 class="fn"><a name="isActive"></a>bool QNetworkSession::isActive () const</h3>
-<p>Returns true if this object holds an active session on the underlying network interface. The session can be controlled via <a href="qnetworksession.html#open">open</a>() and <a href="qnetworksession.html#close">close</a>().</p>
+<a name="//apple_ref/cpp/instm/QNetworkSession/isOpen"></a>
+<h3 class="fn"><a name="isOpen"></a>bool QNetworkSession::isOpen () const</h3>
+<p>Returns true if this session is open. If the number of all open sessions is greater than zero the underlying network interface will remain connected/up.</p>
+<p>The session can be controlled via <a href="qnetworksession.html#open">open</a>() and <a href="qnetworksession.html#close">close</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/migrate"></a>
 <h3 class="fn"><a name="migrate"></a>void QNetworkSession::migrate ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Instructs the session to roam to the new access point. The old access point remains active until the application calls <a href="qnetworksession.html#accept">accept</a>().</p>
@@ -231,11 +232,11 @@
 <p>See also <a href="qnetworksession.html#accept">accept</a>() and <a href="qnetworksession.html#reject">reject</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/open"></a>
 <h3 class="fn"><a name="open"></a>void QNetworkSession::open ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Creates an active/open session which increases the session counter on the underlying network interface. The system will not terminate a network interface until the session reference counter reaches zero. Therefore an active session allows an application to register its use of the interface.</p>
-<p>The interface is started if it is not active yet. Some platforms may not provide support for out-of-process sessions. On such platforms the session counter ignores any sessions held by another process. The platform capabilities can be detected via <a href="qnetworkconfigurationmanager.html#capabilities">QNetworkConfigurationManager::capabilities</a>().</p>
+<p>Creates an open session which increases the session counter on the underlying network interface. The system will not terminate a network interface until the session reference counter reaches zero. Therefore an open session allows an application to register its use of the interface.</p>
+<p>As a result of calling open() the interface will be started if it is not connected/up yet. Some platforms may not provide support for out-of-process sessions. On such platforms the session counter ignores any sessions held by another process. The platform capabilities can be detected via <a href="qnetworkconfigurationmanager.html#capabilities">QNetworkConfigurationManager::capabilities</a>().</p>
 <p>Note that this call is asynchronous. Depending on the outcome of this call the results can be enquired by connecting to the <a href="qnetworksession.html#stateChanged">stateChanged</a>(), <a href="qnetworksession.html#opened">opened</a>() or <a href="qnetworksession.html#error">error</a>() signals.</p>
 <p>It is not a requirement to open a session in order to monitor the underlying network interface.</p>
-<p>See also <a href="qnetworksession.html#close">close</a>(), <a href="qnetworksession.html#stop">stop</a>(), and <a href="qnetworksession.html#isActive">isActive</a>().</p>
+<p>See also <a href="qnetworksession.html#close">close</a>(), <a href="qnetworksession.html#stop">stop</a>(), and <a href="qnetworksession.html#isOpen">isOpen</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/opened"></a>
 <h3 class="fn"><a name="opened"></a>void QNetworkSession::opened ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the network session has been opened.</p>
@@ -258,7 +259,7 @@
 <p>The following property keys are guaranteed to be specified on all platforms:</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Key</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>ActiveConfigurationIdentifier</td><td>If the session <a href="qnetworksession.html#isActive">isActive</a>() this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that is used by this session; otherwise an empty string.<p>The main purpose of this key is to determine which Internet access point is used if the session is based on a <a href="qnetworkconfiguration.html#Type-enum">ServiceNetwork</a>. The following code snippet highlights the difference:</p>
+<tr valign="top" class="odd"><td>ActiveConfigurationIdentifier</td><td>If the session <a href="qnetworksession.html#isOpen">isOpen</a>() this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that is used by this session; otherwise an empty string.<p>The main purpose of this key is to determine which Internet access point is used if the session is based on a <a href="qnetworkconfiguration.html#Type-enum">ServiceNetwork</a>. The following code snippet highlights the difference:</p>
 <pre>    QNetworkConfigurationManager mgr;
     QNetworkConfiguration ap = mgr.defaultConfiguration();
     QNetworkSession* session = new QNetworkSession(ap);
@@ -272,7 +273,7 @@
         Q_ASSERT( ap.identifier() == ident );
     }</pre>
 </td></tr>
-<tr valign="top" class="even"><td>UserChoiceConfigurationIdentifier</td><td>If the session <a href="qnetworksession.html#isActive">isActive</a>() and is bound to a <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> of type UserChoice, this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the configuration resolved to when <a href="qnetworksession.html#open">open</a>() was called; otherwise an empty string.<p>The purpose of this key is to determine the real <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the session is using. This key is different to <i>ActiveConfigurationIdentifier</i> in that this key may return an identifier for either a <a href="qnetworkconfiguration.html#Type-enum">service network</a> or a <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations whereas <i>ActiveConfigurationIdentifier</i> always returns identifiers for <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations.</p>
+<tr valign="top" class="even"><td>UserChoiceConfigurationIdentifier</td><td>If the session <a href="qnetworksession.html#isOpen">isOpen</a>() and is bound to a <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> of type UserChoice, this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the configuration resolved to when <a href="qnetworksession.html#open">open</a>() was called; otherwise an empty string.<p>The purpose of this key is to determine the real <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the session is using. This key is different to <i>ActiveConfigurationIdentifier</i> in that this key may return an identifier for either a <a href="qnetworkconfiguration.html#Type-enum">service network</a> or a <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations whereas <i>ActiveConfigurationIdentifier</i> always returns identifiers for <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations.</p>
 </td></tr>
 <tr valign="top" class="odd"><td>ConnectInBackground</td><td>Setting this property to <i>true</i> before calling <a href="qnetworksession.html#open">open</a>() implies that the connection attempt is made but if no connection can be established, the user is not connsulted and asked to select a suitable connection. This property is not set by default and support for it depends on the platform.</td></tr>
 </table></p>
@@ -284,9 +285,10 @@
 <p>See also <a href="qnetworksession.html#sessionProperty">sessionProperty</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qnetworksession.html#State-enum">State</a> QNetworkSession::state () const</h3>
-<p>Returns the state of the session. If the session is based on a single access point configuration the state of the session is the same as the state of the associated network interface. Therefore a network session object can be used to monitor network interfaces.</p>
-<p>A <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a> based session summarizes the state of all its children and therefore returns the <a href="qnetworksession.html#State-enum">Connected</a> state if at least one of its sub configurations is connected.</p>
-<p>Note that it is not required to hold an active session in order to obtain the network interface state. A connected but inactive session may be used to monitor network interfaces whereas an active and connected session object may prevent the network interface from being shut down.</p>
+<p>Returns the state of the session.</p>
+<p>If the session is based on a single access point configuration the state of the session is the same as the state of the associated network interface. Therefore a network session object can be used to monitor network interfaces.</p>
+<p>A <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a> based session summarizes the state of all its children and therefore returns the <a href="qnetworksession.html#State-enum">Connected</a> state if at least one of the service network's <a href="qnetworkconfiguration.html#children">children()</a> configurations is active.</p>
+<p>Note that it is not required to hold an open session in order to obtain the network interface state. A connected but closed session may be used to monitor network interfaces whereas an open and connected session object may prevent the network interface from being shut down.</p>
 <p>See also <a href="qnetworksession.html#error">error</a>() and <a href="qnetworksession.html#stateChanged">stateChanged</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/stateChanged"></a>
 <h3 class="fn"><a name="stateChanged"></a>void QNetworkSession::stateChanged ( <a href="qnetworksession.html#State-enum">QNetworkSession::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -294,7 +296,7 @@
 <p>See also <a href="qnetworksession.html#state">state</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/stop"></a>
 <h3 class="fn"><a name="stop"></a>void QNetworkSession::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Invalidates all active sessions against the network interface and therefore stops the underlying network interface. This function always changes the session's <a href="qnetworksession.html#state">state</a>() flag to <a href="qnetworksession.html#State-enum">Disconnected</a>.</p>
+<p>Invalidates all open sessions against the network interface and therefore stops the underlying network interface. This function always changes the session's <a href="qnetworksession.html#state">state</a>() flag to <a href="qnetworksession.html#State-enum">Disconnected</a>.</p>
 <p>See also <a href="qnetworksession.html#open">open</a>() and <a href="qnetworksession.html#close">close</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/waitForOpened"></a>
 <h3 class="fn"><a name="waitForOpened"></a>bool QNetworkSession::waitForOpened ( int <i>msecs</i> = 30000 )</h3>
