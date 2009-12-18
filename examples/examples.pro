@@ -43,9 +43,14 @@ SUBDIRS += samplephonebook \
 
 #Messaging examples
 contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
-    !win32-g++:SUBDIRS += \
-        keepintouch\
-        querymessages\
-        writemessage\
-        serviceactions
+    !win32-g++ {
+        SUBDIRS += \
+            querymessages\
+            writemessage\
+            serviceactions
+
+        contains(mobility_modules,contacts) {
+            SUBDIRS += keepintouch
+        }
+    }
 }
