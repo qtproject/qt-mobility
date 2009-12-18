@@ -56,4 +56,10 @@ DEPLOYMENT += pluginDep
 #Media API spesific deployment
 QtMediaDeployment.sources = QtMedia.dll
 QtMediaDeployment.path = /sys/bin
-DEPLOYMENT += QtMediaDeployment
+
+qtmobilitymultimedia.pkg_prerules += "; Dependency to camerawrapper"
+qtmobilitymultimedia.pkg_prerules += "(0x2001EC5F), 1, 20, 0, {\"CameraWrapper\"}"
+qtmobilitymultimedia.pkg_prerules += "; Dependency to Qt Multimedia"
+qtmobilitymultimedia.pkg_prerules += "(0x2001E627), 4, 6, 0, {\"QtMultimedia\"}"
+
+DEPLOYMENT += QtMediaDeployment qtmobilitymultimedia
