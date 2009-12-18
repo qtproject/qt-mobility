@@ -40,9 +40,10 @@
 ****************************************************************************/
 
 #include <qsensor.h>
-//#include <qsensorbackend.h>
+#include <qsensorbackend.h>
 #include <qsensormanager.h>
 #include <qsensorfactory.h>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -95,7 +96,7 @@ QSensor::~QSensor()
 */
 bool QSensor::isValid() const
 {
-    return false;
+    return backend() != 0;
 }
 
 /*!
@@ -103,7 +104,7 @@ bool QSensor::isValid() const
 */
 QSensorId QSensor::id() const
 {
-    return QSensorId();//m_backend->id();
+    return backend() ? backend()->id() : QSensorId();
 }
 
 /*!
@@ -138,9 +139,8 @@ QSensorId QSensor::id() const
 */
 void QSensor::setUpdatePolicy(UpdatePolicy policy, int interval)
 {
-    Q_UNUSED(policy)
-    Q_UNUSED(interval)
-    //m_backend->setUpdatePolicy(policy, interval);
+    if (backend())
+        backend()->setUpdatePolicy(policy, interval);
 }
 
 /*!
@@ -148,7 +148,7 @@ void QSensor::setUpdatePolicy(UpdatePolicy policy, int interval)
 */
 QSensor::UpdatePolicy QSensor::updatePolicy() const
 {
-    return QSensor::Undefined;
+    return backend() ? backend()->updatePolicy() : QSensor::Undefined;
 }
 
 /*!
@@ -157,7 +157,7 @@ QSensor::UpdatePolicy QSensor::updatePolicy() const
 */
 int QSensor::updateInterval() const
 {
-    return 0;
+    return backend() ? backend()->updateInterval() : 0;
 }
 
 /*!
@@ -165,7 +165,7 @@ int QSensor::updateInterval() const
 */
 QSensor::UpdatePolicies QSensor::supportedPolicies() const
 {
-    return QSensor::Undefined;
+    return backend() ? backend()->supportedPolicies() : QSensor::Undefined;
 }
 
 /*!
@@ -179,7 +179,7 @@ QSensor::UpdatePolicies QSensor::supportedPolicies() const
 */
 bool QSensor::start()
 {
-    return false;
+    return backend() ? backend()->start() : false;
 }
 
 /*!
@@ -187,19 +187,29 @@ bool QSensor::start()
 */
 void QSensor::stop()
 {
+    if (backend())
+        backend()->stop();
 }
 
 /*!
     \internal
 */
-void QSensor::connectToBackend(const QSensorId &_id)
+QSensorBackend *QSensor::connectToBackend(const QSensorId &_id)
 {
     QSensorId id(_id);
-    if (id.isEmpty())
+    if (id.isEmpty()) {
         id = QSensorFactory::instance()->defaultSensorForType(type());
+    } else {
+        if (!QSensorFactory::instance()->sensorsForType(type()).contains(id)) {
+            qWarning() << "Sensor with identifier" << id << "does not exist for type" << type();
+            return 0;
+        }
+    }
 
-    //m_backend = QSensorManager::instance()->createBackend(id);
-    //m_backend->createdFor(this, id);
+    QSensorBackend *backend = QSensorManager::instance()->createBackend(id);
+    if (backend)
+        backend->createdFor(this, id);
+    return backend;
 }
 
 /*!

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <qsensorfactory.h>
+#include <qsensormanager.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -73,8 +74,7 @@ QSensorFactory *QSensorFactory::instance()
 */
 QSensorId QSensorFactory::defaultSensorForType(QString type) const
 {
-    Q_UNUSED(type)
-    return QSensorId();
+    return QSensorManager::instance()->firstSensorForType(type);
 }
 
 /*!

@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
     \internal
 */
 QSensorBackend::QSensorBackend()
+    : m_policy(QSensor::Undefined), m_interval(0), m_sensor(0)
 {
 }
 
@@ -72,30 +73,6 @@ void QSensorBackend::createdFor(QSensor *sensor, const QSensorId &id)
 {
     m_sensor = sensor;
     m_id = id;
-}
-
-/*!
-    \internal
-*/
-void QSensorBackend::addListener(QSensorListener *listener)
-{
-    m_listeners.append(listener);
-}
-
-/*!
-    \internal
-*/
-void QSensorBackend::removeListener(QSensorListener *listener)
-{
-    m_listeners.removeOne(listener);
-}
-
-/*!
-    Notify the sensor that a new reading is available.
-*/
-void QSensorBackend::notify()
-{
-    m_sensor->newReadingAvailable();
 }
 
 /*!

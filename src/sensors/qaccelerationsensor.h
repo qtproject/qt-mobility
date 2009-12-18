@@ -45,14 +45,18 @@
 #include <qsensor.h>
 #include <QtGlobal>
 #include <QSharedData>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
+
+class QAccelerationBackend;
 
 // implementation detail
 class QAccelerationReadingData : public QSharedData
 {
 public:
-    QAccelerationReadingData() {}
+    QAccelerationReadingData()
+        : timestamp(), x(0), y(0), z(0) {}
     QAccelerationReadingData(QTime _timestamp, int _x, int _y, int _z)
         : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
     QAccelerationReadingData(const QAccelerationReadingData &other)
@@ -110,8 +114,14 @@ public:
 signals:
     void accelerationChanged(const QAccelerationReading &reading);
 
+protected:
+    QSensorBackend *backend() const;
+
 private:
     void newReadingAvailable();
+
+    QList<QAccelerationListener*> m_listeners;
+    QAccelerationBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

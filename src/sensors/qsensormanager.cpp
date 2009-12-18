@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <qsensormanager.h>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -70,10 +71,22 @@ QSensorManager *QSensorManager::instance()
 /*!
     Register a sensor. The \a id must be unique. The \a backend Foo.
 */
-void QSensorManager::registerBackend(const QSensorId &id, QSensorBackend *backend)
+void QSensorManager::registerBackend(const QString &type, const QSensorId &id, CreateBackendFunc func)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(backend)
+    if (!m_backendsByType.contains(type)) {
+        qDebug() << "first backend of type" << type;
+        (void)m_backendsByType[type];
+    }
+    m_backendsByType[type][id] = func;
+    m_allBackends[id] = func;
+}
+
+/*!
+    \internal
+*/
+void QSensorManager::registerRegisterFunc(RegisterBackendFunc func)
+{
+    m_staticRegistrations.append(func);
 }
 
 /*!
@@ -81,8 +94,44 @@ void QSensorManager::registerBackend(const QSensorId &id, QSensorBackend *backen
 */
 QSensorBackend *QSensorManager::createBackend(const QSensorId &id)
 {
-    Q_UNUSED(id)
-    return 0;
+    if (!m_staticPluginsLoaded)
+        loadStaticPlugins();
+
+    if (!m_allBackends.contains(id)) {
+        qWarning() << "Sensor backend for identifier" << id << "does not exist.";
+        return 0;
+    }
+
+    CreateBackendFunc func = m_allBackends[id];
+    return func();
+}
+
+QSensorId QSensorManager::firstSensorForType(const QString &type)
+{
+    if (!m_staticPluginsLoaded)
+        loadStaticPlugins();
+
+    const BackendList &list = m_backendsByType[type];
+    BackendList::const_iterator iter = list.constBegin();
+    if (iter != list.constEnd()) {
+        qDebug() << "default for type" << type << "is" << iter.key();
+        return iter.key();
+    }
+    qDebug() << "NO default for type" << type;
+    return QSensorId();
+}
+
+QSensorManager::QSensorManager()
+    : m_staticPluginsLoaded(false)
+{
+}
+
+void QSensorManager::loadStaticPlugins()
+{
+    qDebug() << "initializing static plugins";
+    m_staticPluginsLoaded = true;
+    foreach (RegisterBackendFunc func, m_staticRegistrations)
+        func();
 }
 
 QTM_END_NAMESPACE

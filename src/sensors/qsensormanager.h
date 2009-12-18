@@ -43,10 +43,15 @@
 #define QSENSORMANAGER_H
 
 #include <qsensor.h>
+#include <QHash>
 
 QTM_BEGIN_NAMESPACE
 
 class QSensorBackend;
+typedef QSensorBackend *(*CreateBackendFunc)();
+typedef void(*RegisterBackendFunc)();
+typedef QHash<QSensorId,CreateBackendFunc> BackendList;
+typedef QHash<QString, BackendList> BackendTypeList;
 
 class Q_SENSORS_EXPORT QSensorManager
 {
@@ -54,9 +59,38 @@ public:
     // Get the singleton instance
     static QSensorManager *instance();
 
-    void registerBackend(const QSensorId &id, QSensorBackend *backend);
+    void registerBackend(const QString &type, const QSensorId &id, CreateBackendFunc func);
+    void registerRegisterFunc(RegisterBackendFunc func);
     QSensorBackend *createBackend(const QSensorId &id);
+    QSensorId firstSensorForType(const QString &type);
+private:
+    QSensorManager();
+    void loadStaticPlugins();
+    BackendList m_allBackends;
+    BackendTypeList m_backendsByType;
+    bool m_staticPluginsLoaded;
+    QList<RegisterBackendFunc> m_staticRegistrations;
 };
+
+#define REGISTER_SENSOR(classname, type, id)\
+    /* This generated function creates a new instance of the backend */\
+    static QSensorBackend *create_sensor_backend_ ## classname ()\
+    {\
+        return new classname();\
+    }\
+    /* This function registers the backend */\
+    static void register_sensor_backend_ ## classname ()\
+    {\
+        QSensorManager::instance()->registerBackend(type, id, create_sensor_backend_ ## classname );\
+    }\
+    /* This function schedules the above for running */\
+    static bool side_effect_sensor_backend_ ## classname ()\
+    {\
+        QSensorManager::instance()->registerRegisterFunc(register_sensor_backend_ ## classname );\
+        return false;\
+    }\
+    /* This assignment calls the function above */\
+    static bool dummy_sensor_backend_ ## classname = side_effect_sensor_backend_ ## classname();
 
 QTM_END_NAMESPACE
 

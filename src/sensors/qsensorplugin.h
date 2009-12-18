@@ -39,49 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSORBACKEND_H
-#define QSENSORBACKEND_H
+#ifndef QSENSORPLUGIN_H
+#define QSENSORPLUGIN_H
 
-#include <qsensor.h>
-#include <qaccelerationsensor.h>
-#include <qsensormanager.h>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qplugin.h>
+#include <QtCore/qfactoryinterface.h>
+#include <qmobilityglobal.h>
+
+#ifdef Q_MOC_RUN
+# pragma Q_MOC_EXPAND_MACROS
+#endif
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QSensorBackend : public QObject
+class QSensorBackend;
+
+struct Q_SENSORS_EXPORT QSensorFactoryInterface : public QFactoryInterface
 {
-public:
-    QSensorBackend();
-    QSensorId id() const { return m_id; }
-    void createdFor(QSensor *sensor, const QSensorId &id);
-
-    // returns the suggested interval to use for various policies
-    int suggestedInterval(QSensor::UpdatePolicy policy);
-
-    virtual void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval = 0) = 0;
-    virtual QSensor::UpdatePolicies supportedPolicies() const = 0;
-    virtual bool start() = 0;
-    virtual void stop() = 0;
-
-    // call this to remember these values
-    void rememberUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
-    { m_policy = policy; m_interval = interval; }
-    QSensor::UpdatePolicy updatePolicy() const { return m_policy; }
-    int updateInterval() const { return m_interval; }
-
-protected:
-    QSensor::UpdatePolicy m_policy;
-    int m_interval;
-    QSensor *m_sensor;
-
-private:
-    QSensorId m_id;
+    virtual QStringList keys() const = 0;
+    virtual QSensorBackend *create(QString const &key) = 0;
+    virtual void release(QSensorBackend *backend) = 0;
 };
 
-class Q_SENSORS_EXPORT QAccelerationBackend : public QSensorBackend
+QTM_END_NAMESPACE
+
+#define QSensorFactoryInterface_iid \
+    "com.nokia.Qt.QSensorFactoryInterface/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QSensorFactoryInterface, QSensorFactoryInterface_iid)
+
+QTM_BEGIN_NAMESPACE
+
+class Q_MEDIA_EXPORT QSensorPlugin : public QObject, public QSensorFactoryInterface
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QSensorFactoryInterface:QFactoryInterface)
+
 public:
-    virtual QAccelerationReading currentReading() = 0;
+    virtual QStringList keys() const = 0;
+    virtual QSensorBackend *create(const QString &key) = 0;
+    virtual void release(QSensorBackend *backend) = 0;
 };
 
 QTM_END_NAMESPACE

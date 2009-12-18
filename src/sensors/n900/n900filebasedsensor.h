@@ -44,6 +44,7 @@
 
 #include <qsensorbackend.h>
 #include <stdio.h>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -69,6 +70,8 @@ public:
 
     void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
     {
+        rememberUpdatePolicy(policy, interval);
+
         if (m_timerid)
             return;
 
@@ -107,7 +110,7 @@ public:
     void timerEvent(QTimerEvent * /*event*/)
     {
         poll();
-        notify();
+        m_sensor->newReadingAvailable();
     }
 
 #if 0

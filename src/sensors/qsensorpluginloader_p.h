@@ -39,49 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSORBACKEND_H
-#define QSENSORBACKEND_H
+#ifndef QSENSORPLUGINLOADER_H
+#define QSENSORPLUGINLOADER_H
 
-#include <qsensor.h>
-#include <qaccelerationsensor.h>
-#include <qsensormanager.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <qmobilityglobal.h>
+#include <QObject>
+#include <QtCore/qstring.h>
+#include <QtCore/qmap.h>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SENSORS_EXPORT QSensorBackend : public QObject
+class QSensorPlugin;
+
+class Q_AUTOTEST_EXPORT QSensorPluginLoader
 {
 public:
-    QSensorBackend();
-    QSensorId id() const { return m_id; }
-    void createdFor(QSensor *sensor, const QSensorId &id);
+    QSensorPluginLoader(const char *iid,
+                   const QString &suffix = QString(),
+                   Qt::CaseSensitivity = Qt::CaseSensitive);
 
-    // returns the suggested interval to use for various policies
-    int suggestedInterval(QSensor::UpdatePolicy policy);
+    QStringList keys() const;
+    QObject* instance(QString const &key);
+    QList<QObject*> instances(QString const &key);
 
-    virtual void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval = 0) = 0;
-    virtual QSensor::UpdatePolicies supportedPolicies() const = 0;
-    virtual bool start() = 0;
-    virtual void stop() = 0;
-
-    // call this to remember these values
-    void rememberUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
-    { m_policy = policy; m_interval = interval; }
-    QSensor::UpdatePolicy updatePolicy() const { return m_policy; }
-    int updateInterval() const { return m_interval; }
-
-protected:
-    QSensor::UpdatePolicy m_policy;
-    int m_interval;
-    QSensor *m_sensor;
+    static void setStaticPlugins(const QString &location, const QObjectList& objects);
 
 private:
-    QSensorId m_id;
-};
+    void load();
 
-class Q_SENSORS_EXPORT QAccelerationBackend : public QSensorBackend
-{
-public:
-    virtual QAccelerationReading currentReading() = 0;
+    QByteArray  m_iid;
+    QString     m_location;
+    QMap<QString, QObject*> m_instances;
 };
 
 QTM_END_NAMESPACE

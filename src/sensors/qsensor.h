@@ -55,7 +55,6 @@ typedef QByteArray QSensorId;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
-    friend class QSensorBackend;
     Q_OBJECT
 public:
     explicit QSensor(QObject *parent = 0);
@@ -94,6 +93,9 @@ public:
     // What policies does the sensor support
     UpdatePolicies supportedPolicies() const;
 
+    // A new reading is available
+    virtual void newReadingAvailable() = 0;
+
 public slots:
     // Start receiving values from the sensor
     bool start();
@@ -102,12 +104,9 @@ public slots:
     void stop();
 
 protected:
-    void connectToBackend(const QSensorId &id);
+    QSensorBackend *connectToBackend(const QSensorId &id);
 
-    virtual void newReadingAvailable() = 0;
-
-protected:
-    QSensorBackend *m_backend;
+    virtual QSensorBackend *backend() const = 0;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);

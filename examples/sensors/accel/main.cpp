@@ -28,6 +28,8 @@ int main(int argc, char **argv)
     }
     AccelerationListener listener;
     sensor.addListener(&listener);
+    sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
+    sensor.start();
 
     return app.exec();
 }

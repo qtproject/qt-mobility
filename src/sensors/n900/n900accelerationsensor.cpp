@@ -39,33 +39,106 @@
 **
 ****************************************************************************/
 
-#include <n900filebasedsensor.h>
+#include <qsensorbackend.h>
 #include <qaccelerationsensor.h>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-class n900accelerationsensor : public n900filebasedsensor<QAccelerationReading>
+class n900accelerationsensor : public QAccelerationBackend
 {
 public:
     n900accelerationsensor()
-        : n900filebasedsensor<QAccelerationReading>("/sys/class/i2c-adapter/i2c-3/3-001d/coord")
+        : m_interval(0)
+        , m_timerid(0)
+        , m_filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord")
     {
     }
 
-    QString name() const
+    QSensor::UpdatePolicies supportedPolicies() const
     {
-        return tr("N900 accelerometer");
+        return (QSensor::OccasionalUpdates |
+                QSensor::InfrequentUpdates |
+                QSensor::FrequentUpdates |
+                QSensor::TimedUpdates |
+                QSensor::PolledUpdates);
     }
 
-    void extract_value(FILE *fd)
+    void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
     {
-        Q_UNUSED(fd)
-	//int rs = fscanf(fd, "%i %i %i", &m_reading.x, &m_reading.y, &m_reading.z);
-        //Q_ASSERT(rs == 3);
+        rememberUpdatePolicy(policy, interval);
+
+        if (m_timerid)
+            return;
+
+        switch (policy) {
+        case QSensor::OccasionalUpdates:
+        case QSensor::InfrequentUpdates:
+        case QSensor::FrequentUpdates:
+            m_interval = suggestedInterval(policy);
+            break;
+        case QSensor::TimedUpdates:
+            m_interval = interval;
+            break;
+        case QSensor::PolledUpdates:
+            m_interval = 0;
+            break;
+        default:
+            break;
+        }
     }
+
+    bool start()
+    {
+        if (m_interval)
+            m_timerid = startTimer(m_interval);
+        return true;
+    }
+
+    void stop()
+    {
+        if (m_timerid) {
+            killTimer(m_timerid);
+            m_timerid = -1;
+        }
+    }
+
+    void timerEvent(QTimerEvent * /*event*/)
+    {
+        poll();
+    }
+
+    void poll()
+    {
+        qWarning() << "poll";
+        QTime timestamp = QTime::currentTime();
+        FILE *fd = fopen(m_filename, "r");
+        if (!fd) return; //Q_ASSERT(fd);
+        int x, y, z;
+	int rs = fscanf(fd, "%i %i %i", &x, &y, &z);
+        if (rs != 3) return; //Q_ASSERT(rs == 3);
+        fclose(fd);
+
+        m_lastReading = QAccelerationReading(timestamp, x, y, z);
+        if (m_interval)
+            m_sensor->newReadingAvailable();
+    }
+
+    QAccelerationReading currentReading()
+    {
+        if (m_interval == 0)
+            poll();
+        return m_lastReading;
+    }
+
+private:
+    int m_interval;
+    int m_timerid;
+    const char *m_filename;
+    QAccelerationReading m_lastReading;
 };
 
-QTM_END_NAMESPACE
+REGISTER_SENSOR(n900accelerationsensor, QAccelerationSensor::typeId, QByteArray("n900.acceleration"))
 
-REGISTER_SENSOR(QTM_NAMESPACE::n900accelerationsensor, "n900.acceleration")
+QTM_END_NAMESPACE
 
