@@ -46,8 +46,10 @@
 #include <QObject>
 #include <QDataStream>
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
 class QBuffer;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

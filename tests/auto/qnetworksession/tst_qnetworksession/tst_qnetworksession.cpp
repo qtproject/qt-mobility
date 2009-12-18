@@ -46,7 +46,7 @@
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
 
-#ifdef MAEMO
+#ifdef Q_WS_MAEMO_6
 #include <stdio.h>
 #include <iapconf.h>
 #endif
@@ -84,7 +84,7 @@ private:
 
     uint inProcessSessionManagementCount;
 
-#ifdef MAEMO
+#ifdef Q_WS_MAEMO_6
     Maemo::IAPConf *iapconf;
     Maemo::IAPConf *iapconf2;
     Maemo::IAPConf *gprsiap;
@@ -100,7 +100,7 @@ void tst_QNetworkSession::initTestCase()
     qRegisterMetaType<QNetworkSession::SessionError>("QNetworkSession::SessionError");
     qRegisterMetaType<QNetworkConfiguration>("QNetworkConfiguration");
 
-#ifdef MAEMO
+#ifdef Q_WS_MAEMO_6
     iapconf = new Maemo::IAPConf("007");
     iapconf->setValue("ipv4_type", "AUTO");
     iapconf->setValue("wlan_wepkey1", "connt");
@@ -186,7 +186,7 @@ void tst_QNetworkSession::cleanupTestCase()
               "tests in inProcessSessionManagement()");
     }
 
-#ifdef MAEMO
+#ifdef Q_WS_MAEMO_6
     iapconf->clear();
     delete iapconf;
     iapconf2->clear();
@@ -781,12 +781,15 @@ void tst_QNetworkSession::outOfProcessSession()
 
     QList<QNetworkConfiguration> before = manager.allConfigurations(QNetworkConfiguration::Active);
 
-    QSignalSpy spy(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)));
-
+    QSignalSpy spy(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)));   
+ 
     // Cannot read/write to processes on WinCE or Symbian.
     // Easiest alternative is to use sockets for IPC.
 
     QLocalServer oopServer;
+    // First remove possible earlier listening address which would cause listen to fail 
+    // (e.g. previously abruptly ended unit test might cause this)
+    QLocalServer::removeServer("tst_qnetworksession");
     oopServer.listen("tst_qnetworksession");
 
     QProcess lackey;

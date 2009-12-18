@@ -32,29 +32,29 @@
 <p>By implementing the default schema, the backend developer ensures that client code written against the default schema will work without source modification against their backend.</p>
 <a name="default-schema"></a>
 <h2>Default Schema</h2>
-<p>The leaf details that form the default schema are as follows:</p>
-<ul>
-<li><a href="qcontactaddress.html">QContactAddress</a></li>
-<li><a href="qcontactanniversary.html">QContactAnniversary</a></li>
-<li><a href="qcontactavatar.html">QContactAvatar</a></li>
-<li><a href="qcontactbirthday.html">QContactBirthday</a></li>
-<li><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></li>
-<li><a href="qcontactemailaddress.html">QContactEmailAddress</a></li>
-<li><a href="qcontactfamily.html">QContactFamily</a></li>
-<li><a href="qcontactgender.html">QContactGender</a></li>
-<li><a href="qcontactgeolocation.html">QContactGeolocation</a></li>
-<li><a href="qcontactguid.html">QContactGuid</a></li>
-<li><a href="qcontactname.html">QContactName</a></li>
-<li><a href="qcontactnickname.html">QContactNickname</a></li>
-<li><a href="qcontactnote.html">QContactNote</a></li>
-<li><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></li>
-<li><a href="qcontactorganization.html">QContactOrganization</a></li>
-<li><a href="qcontactphonenumber.html">QContactPhoneNumber</a></li>
-<li><a href="qcontactsynctarget.html">QContactSyncTarget</a></li>
-<li><a href="qcontacttimestamp.html">QContactTimestamp</a></li>
-<li><a href="qcontacttype.html">QContactType</a></li>
-<li><a href="qcontacturl.html">QContactUrl</a></li>
-</ul>
+<p>The leaf details that form the default schema are as follows: <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qcontactaddress.html">QContactAddress</a></th><td>Contains an address of a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactanniversary.html">QContactAnniversary</a></th><td>Contains the anniversary of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactavatar.html">QContactAvatar</a></th><td>Contains the avatar of a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactbirthday.html">QContactBirthday</a></th><td>Contains the birthday of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></th><td>The (possibly synthesized) display label of a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactemailaddress.html">QContactEmailAddress</a></th><td>Contains the email address of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactfamily.html">QContactFamily</a></th><td>Contains the names of the family members of a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactgender.html">QContactGender</a></th><td>Contains the gender of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactgeolocation.html">QContactGeolocation</a></th><td>Contains the global location coordinate associated with a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactguid.html">QContactGuid</a></th><td>Contains the globally unique Id of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactname.html">QContactName</a></th><td>Contains the name of a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactnickname.html">QContactNickname</a></th><td>Contains a nickname of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactnote.html">QContactNote</a></th><td>Contains a note associated with a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></th><td>The online account, which the contact uses to communicate with friends and family</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactorganization.html">QContactOrganization</a></th><td>Details about an organization that the contact is either a part of, or stands for</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactphonenumber.html">QContactPhoneNumber</a></th><td>Phone number of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactsynctarget.html">QContactSyncTarget</a></th><td>Sync target for a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontacttimestamp.html">QContactTimestamp</a></th><td>Contains the creation and last-modified timestamp associated with the contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontacttype.html">QContactType</a></th><td>Describes the type of the contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontacturl.html">QContactUrl</a></th><td>Contains a url associated with a contact</td></tr>
+</table></p>
+</p>
 <p>In the default schema, each of these definitions have various access and uniqueness constraints. Additionally, fields of the definitions may have an access constraint of read-only defined for them.</p>
 <a name="detail-definition-uniqueness"></a>
 <h3>Detail Definition Uniqueness</h3>
@@ -82,8 +82,8 @@
 <a name="field-access-constraints"></a>
 <h3>Field Access Constraints</h3>
 <p>Furthermore, some fields of some definitions are also constrained to be read-only. This is information which is generated or automatically provided by the backend, which is related to user-provided information that is also stored in the detail.</p>
-<p>The eponymous example of this is the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> leaf detail, which has an unconstrained field which stores the URI of the account, and several read-only fields in which are stored presence information, status messages, and service availability.</p>
-<p>Currently, the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> is the only leaf detail with field-level access constraints. Every field in details of this type are <tt>QContactDetailDefinition::ReadOnly</tt> except for <tt>QContactOnlineAccount::FieldAccountUri</tt>, which has no constraint.</p>
+<p>The eponymous example of this is the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> leaf detail, which has unconstrained fields which store the URI and service provider of the account, and several read-only fields in which are stored presence information, status messages, and service availability.</p>
+<p>Currently, the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> is the only leaf detail with field-level access constraints. Every field in details of this type are <tt>QContactDetailDefinition::ReadOnly</tt> except for <tt>QContactOnlineAccount::FieldAccountUri</tt> and <tt>QContactOnlineAccount::FieldServiceProvider</tt>, which have no constraint.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

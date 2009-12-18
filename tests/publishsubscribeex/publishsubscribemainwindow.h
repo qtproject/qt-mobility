@@ -45,9 +45,11 @@
 #include <QMainWindow>
 #include <qmobilityglobal.h>
 
+QT_BEGIN_NAMESPACE
 namespace Ui {
     class PublishSubscribeMainWindow;
 }
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QValueSpaceSubscriber;

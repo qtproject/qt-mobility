@@ -190,16 +190,17 @@ In this way we can build more complex conditions.
 
 \section1 Messaging Services
 
-The library provides the QMessageServiceAction class, which provides an
+The library provides the QMessageService class, which provides an
 interface to communicate with the system's native messaging services,
 including sending messages, retrieving message data, and composing or
 showing a message using a native application.
 
 Service actions communciate their operational status by emitting signals.
 
-Functions outside the QMessageServiceAction class should not invoke
-network activity. That is only QMessageServiceAction functions should
-be responsible for initiating network activity.
+Functions outside the QMessageService class should not invoke network activity. 
+That is, only QMessageService functions should be responsible for initiating 
+network activity (Note: this is not true for the Windows desktop and mobile 
+platforms, where network activity can occur outside the client's control).
 
 \section1 Concurrent Access to Messaging Data
 
@@ -210,6 +211,9 @@ The concurrent access does guarantee that data won't be corrupted by
 concurrent access, however it does not give any guarantees as to
 performance of messaging data access if accessed concurrently by
 multiple clients.
+
+A single client may access the messaging data from multiple threads, but 
+only one thread may access the data concurrently.
 
 \section1 Abstraction of Messaging Data Storage Mechanism
 

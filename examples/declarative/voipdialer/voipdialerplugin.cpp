@@ -46,6 +46,7 @@
 #include "voipdialerplugin.h"
 #include "voipdialer.h"
 
+//! [0]
 QObject* VoipDialerPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
     Q_UNUSED(descriptor);
@@ -55,3 +56,4 @@ QObject* VoipDialerPlugin::createInstance(const QServiceInterfaceDescriptor& des
 }
 
 Q_EXPORT_PLUGIN2(serviceframework_voipdialerservice, VoipDialerPlugin)
+//! [0]

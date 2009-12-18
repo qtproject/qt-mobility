@@ -72,8 +72,8 @@ SOURCES += qmessageid.cpp \
            qmessageservice.cpp
 
 
-symbian|win32|maemo {
-maemo {
+symbian|win32|maemo6 {
+maemo6 {
 SOURCES += qmessageid_maemo.cpp \
            qmessagecontentcontainerid_maemo.cpp \
            qmessagefolderid_maemo.cpp \

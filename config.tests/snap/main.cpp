@@ -38,27 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QObject>
 
-#include <cntdb.h>
-#include <cntitem.h>
-#include <qtcontacts.h>
+#include <cmmanager.h>
 
-class TestCntTransformContact : public QObject
+int main(int argc, char** argv)
 {
-    Q_OBJECT
-
-private slots:
-	void initTestCase();
-	void cleanupTestCase();
-	
-	void executeCntTransformSymbianContact();
-	void executeCntTransformQtContact();
-	
-private: //validate results
-	void validateQContactEmpty(const QContact& contact) const;
-	void validateQContactPhoneNumber(const QContact& contact) const;
-	
-	void validateSymbianContactEmpty(const CContactItem& contactItem) const;
-	void validateSymbianContactPhoneNumber(const CContactItem& contactItem) const;
-};
+	RCmManager test_if_this_compiles_or_not;
+	return 0;
+}

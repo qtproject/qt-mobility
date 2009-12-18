@@ -46,7 +46,7 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworksession_s60_p.h"
-#elif MAEMO
+#elif Q_WS_MAEMO_6
 #include "qnetworksession_maemo_p.h"
 #else
 #include "qnetworksession_p.h"
@@ -79,10 +79,10 @@ QTM_BEGIN_NAMESPACE
 
     Applications may connect to the preferredConfigurationChanged() signal in order to 
     receive notifications when a more suitable access point becomes available. 
-    In response to this signal the application may initiate the roaming via migrate()
-    or may ignore() the new access point. Once the session has roamed the 
+    In response to this signal the application must either initiate the roaming via migrate()
+    or ignore() the new access point. Once the session has roamed the 
     newConfigurationActivated() signal is emitted. The application may now test the 
-    carrier and can accept() or reject() it. The session will return to the previous
+    carrier and must either accept() or reject() it. The session will return to the previous
     access point if the roaming was rejected.
 
     Some platforms may support the notion of forced roaming and application level roaming (ALR). 
@@ -96,10 +96,11 @@ QTM_BEGIN_NAMESPACE
     without actually being aware of it. It is expected that the application detects that the underlying 
     socket is broken and automatically reconnects via the new network link.
 
-    If the platform supports both modes of roaming an application indicates its preference
+    If the platform supports both modes of roaming, an application indicates its preference
     by connecting to the preferredConfigurationChanged() signal. Connecting to this signal means that
     the application wants to take control over the roaming behavior and therefore implies application
-    level roaming.
+    level roaming. If the client does not connect to the preferredConfigurationChanged(), forced roaming
+    is used.
 
     \sa QNetworkConfiguration, QNetworkConfigurationManager
 */
@@ -167,9 +168,8 @@ QTM_BEGIN_NAMESPACE
     details such as proxy settings and \a isSeamless indicates whether roaming will
     break the sessions IP address.
 
-    As a consequence to this signal the application may start the roaming process
-    by calling migrate() or may chose to ignore() the new access point. If the application
-    doesn't call either of the two functions the session ignores the migration opportunity.
+    As a consequence to this signal the application must either start the roaming process
+    by calling migrate() or choose to ignore() the new access point.
 
     If the roaming process is non-seamless the IP address will change which means that
     a socket becomes invalid. However seamless mobility can ensure that the local IP address
@@ -194,7 +194,7 @@ QTM_BEGIN_NAMESPACE
 
     This signal is emitted once the session has roamed to the new access point.
     The application may reopen its socket and test the suitability of the new network link.
-    Subsequently it may accept() or reject() the new access point. 
+    Subsequently it must either accept() or reject() the new access point. 
 
     \sa accept(), reject()
 */
@@ -560,16 +560,14 @@ void QNetworkSession::migrate()
 }
 
 /*!
-    This function indicates that the application does not wish to roam the session. This
-    is the default behavior if an application doesn't call migrate() in response to a
-    preferredConfigurationChanged() signal.
+    This function indicates that the application does not wish to roam the session.
 
     \sa migrate()
 */
 void QNetworkSession::ignore()
 {
-    //TODO Do we really need this function if we consider that this is
-    //     the default behavior if nobody calls migrate()?
+    // Needed on at least Symbian platform: the roaming must be explicitly 
+    // ignore()'d or migrate()'d
     d->ignore();
 }
 

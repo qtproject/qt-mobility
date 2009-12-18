@@ -4,5 +4,7 @@
 #
 ######################################################################
 
+include($$QT_MOBILITY_BUILD_TREE/config.pri)
+
 TEMPLATE = subdirs
-SUBDIRS = qtcontactsdocsample
+contains(mobility_modules,contacts): SUBDIRS += qtcontactsdocsample
