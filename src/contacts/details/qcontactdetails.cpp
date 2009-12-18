@@ -1228,6 +1228,19 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
+   \fn QContactAvatar::pixmap() const
+   Returns a thumbnail for a picture associated with this contact.
+ */
+
+/*!
+   \fn QContactAvatar::setPixmap(const QPixmap& pixmap)
+   Sets the thumbnail of a picture avatar associated with the contact to \a pixmap.
+   If \a pixmap is empty, the thumbnail pixmap will be removed.
+
+   Returns true if the pixmap could be set, and false otherwise.
+ */
+
+/*!
    \fn QContactAvatar::setSubType(const QString& subType)
    Sets the subtype which this detail implements to be the given \a subType.
  */
