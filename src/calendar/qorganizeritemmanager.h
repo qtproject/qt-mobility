@@ -1,0 +1,162 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+
+#ifndef QORGANIZERITEMMANAGER_H
+#define QORGANIZERITEMMANAGER_H
+
+#include <QObject>
+
+#include <QMap>
+#include <QString>
+#include <QStringList>
+#include <QList>
+#include <QDateTime>
+
+#include "qtcalendarglobal.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemid.h"
+#include "qorganizeritemsortorder.h"
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemFilter;
+class QOrganizerItemAction;
+
+class QOrganizerItemManagerData;
+class Q_CALENDAR_EXPORT QOrganizerItemManager : public QObject
+{
+    Q_OBJECT
+
+public:
+#if Q_QDOC // qdoc's parser fails to recognise the default map argument
+    QOrganizerItemManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+    QOrganizerItemManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+#else
+    QOrganizerItemManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+    QOrganizerItemManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+#endif
+
+    static QOrganizerItemManager* fromUri(const QString& uri, QObject* parent = 0);
+    ~QOrganizerItemManager();                     // dtor
+
+    QString managerName() const;                       // e.g. "Symbian"
+    QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
+    QString managerUri() const;                        // managerName + managerParameters
+    int managerVersion() const;
+
+    static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
+    static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
+
+    /* The values of the Error enum are still to be decided! */
+    enum Error {
+        NoError = 0,
+        DoesNotExistError,
+        AlreadyExistsError,
+        InvalidDetailError,
+        LockedError,
+        DetailAccessError,
+        PermissionsError,
+        OutOfMemoryError,
+        NotSupportedError,
+        BadArgumentError,
+        UnspecifiedError,
+        VersionMismatchError,
+        LimitReachedError,
+        InvalidOrganizerItemTypeError
+    };
+
+    /* Error reporting */
+    QOrganizerItemManager::Error error() const;
+
+    /* Contacts - Accessors and Mutators */
+    QList<QOrganizerItemLocalId> organizerItems(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;    // retrieve contact ids
+    QList<QOrganizerItemLocalId> organizerItems(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const; // retrieve ids of contacts matching the filter
+
+    QOrganizerItem organizerItem(const QOrganizerItemLocalId& contactId) const;  // retrieve a contact
+
+    bool saveOrganizerItem(QOrganizerItem* contact);                 // note: MODIFIES contact (sets the contactId)
+    bool removeOrganizerItem(const QOrganizerItemLocalId& contactId);      // remove the contact from the persistent store
+    QList<QOrganizerItemManager::Error> saveOrganizerItems(QList<QOrganizerItem>* contacts);       // batch API - save
+    QList<QOrganizerItemManager::Error> removeOrganizerItems(QList<QOrganizerItemLocalId>* contactIds);  // batch API - remove
+
+    /* Synthesize the display label of an organizer item */
+    QString synthesizeDisplayLabel(const QOrganizerItem& organizerItem) const;
+
+    /* Definitions - Accessors and Mutators */
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& organizerItemType = QOrganizerItemType::TypeEvent) const;
+    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& organizerItemType = QOrganizerItemType::TypeEvent) const;
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizerItemType = QOrganizerItemType::TypeEvent);
+    bool removeDetailDefinition(const QString& definitionName, const QString& organizerItemType = QOrganizerItemType::TypeEvent);
+
+    /* Functionality reporting */
+    enum ManagerFeature {
+        ActionPreferences = 0,
+        MutableDefinitions,
+        Anonymous,
+        ChangeLogs
+    };
+    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizerItemType = QOrganizerItemType::TypeEvent) const;
+    QStringList supportedRelationshipTypes(const QString& organizerItemType = QOrganizerItemType::TypeEvent) const;
+    QList<QVariant::Type> supportedDataTypes() const;
+    bool filterSupported(const QOrganizerItemFilter& filter) const;
+    QStringList supportedOrganizerItemTypes() const; // probably not needed; types are probably auto-synthesised from details?
+
+    /* return a list of available backends for which a QOrganizerItemManager can be constructed. */
+    static QStringList availableManagers();
+
+signals:
+    void dataChanged();
+    void organizerItemsAdded(const QList<QOrganizerItemLocalId>& organizerItemIds);
+    void organizerItemsChanged(const QList<QOrganizerItemLocalId>& organizerItemIds);
+    void organizerItemsRemoved(const QList<QOrganizerItemLocalId>& organizerItemIds);
+
+private:
+    friend class QOrganizerItemManagerData;
+    void createEngine(const QString& managerName, const QMap<QString, QString>& parameters); 
+    Q_DISABLE_COPY(QOrganizerItemManager)
+    // private data pointer
+    QOrganizerItemManagerData* d;
+};
+
+QTM_END_NAMESPACE
+
+#endif
