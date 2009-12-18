@@ -166,7 +166,7 @@ void S60Player::metaDataChanged()
                 .arg(player->metaData(QtMedia::Title).toString()));
 
         if (coverLabel) {
-            QUrl uri = player->metaData(QtMedia::CoverArtUriLarge).value<QUrl>();
+            QUrl uri = player->metaData(QtMedia::CoverArtUrlLarge).value<QUrl>();
 
             coverLabel->setPixmap(!uri.isEmpty()
                     ? QPixmap(uri.toString())
