@@ -2,7 +2,7 @@ INCLUDEPATH += details \
     ./
 
 PUBLIC_HEADERS += \
-    details/qorganizeritemaccessconstraint.h \
+    details/qorganizeritemaccesscontrol.h \
     details/qorganizeritemattendee.h \
     details/qorganizeritemdatetime.h \
     details/qorganizeritemdisplaylabel.h \
@@ -13,10 +13,11 @@ PUBLIC_HEADERS += \
     details/qorganizeritemparticipationstatus.h \
     details/qorganizeritempriority.h \
     details/qorganizeritemprovenance.h \
-    details/qorganizeritemrecurrence.h \
+    details/qorganizeritemrecurrencerule.h \
     details/qorganizeritemrsvpinfo.h \
     details/qorganizeritemtimestamp.h \
     details/qorganizeritemtype.h \
+    details/qorganizeritemvisibilitytag.h \
     details/qorganizeritemdetails.h
 
 SOURCES += details/qorganizeritemdetails.cpp

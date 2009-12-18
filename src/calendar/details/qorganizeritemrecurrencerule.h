@@ -39,27 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+#ifndef QORGANIZERITEMRECURRENCERULE_H
+#define QORGANIZERITEMRECURRENCERULE_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Calendar API.
+#include <QString>
 
-#include "qorganizeritemaccesscontrol.h"
-#include "qorganizeritemattendee.h"
-#include "qorganizeritemdatetime.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemparticipationrole.h"
-#include "qorganizeritemparticipationstatus.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
-#include "qorganizeritemrecurrencerule.h"
-#include "qorganizeritemrsvpinfo.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizeritemvisibilitytag.h"
+#include "qtcalendarglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRule : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldRecurrencePattern;
+    const char* FieldFirstDateTime;
+#else
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemRecurrenceRule, "RecurrenceRule")
+    Q_DECLARE_LATIN1_LITERAL(FieldRecurrencePattern, "RecurrencePattern");
+    Q_DECLARE_LATIN1_LITERAL(FieldFirstDateTime, "FirstDateTime");
+#endif
+
+    // XXX TODO: requirements, figure out what functions / data..
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

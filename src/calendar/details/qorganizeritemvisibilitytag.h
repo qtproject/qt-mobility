@@ -39,27 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+#ifndef QORGANIZERITEMVISIBILITYTAG_H
+#define QORGANIZERITEMVISIBILITYTAG_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Calendar API.
+#include <QString>
 
-#include "qorganizeritemaccesscontrol.h"
-#include "qorganizeritemattendee.h"
-#include "qorganizeritemdatetime.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemparticipationrole.h"
-#include "qorganizeritemparticipationstatus.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
-#include "qorganizeritemrecurrencerule.h"
-#include "qorganizeritemrsvpinfo.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizeritemvisibilitytag.h"
+#include "qtcalendarglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CALENDAR_EXPORT QOrganizerItemVisibilityTag : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldTag;
+#else
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemVisibilityTag, "VisibilityTag")
+    Q_DECLARE_LATIN1_LITERAL(FieldTag, "Tag");
+#endif
+
+    void setTag(const QString& tag) {setValue(FieldTag, tag);}
+    QString tag() const {return value(FieldTag);}
+};
+
+QTM_END_NAMESPACE
 
 #endif
+
