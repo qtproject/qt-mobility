@@ -2,19 +2,21 @@ INCLUDEPATH += details \
     ./
 
 PUBLIC_HEADERS += \
-    details\qorganizeritemdisplaylabel.h
+    details/qorganizeritemaccessconstraint.h \
+    details/qorganizeritemattendee.h \
+    details/qorganizeritemdatetime.h \
+    details/qorganizeritemdisplaylabel.h \
+    details/qorganizeritemguid.h \
+    details/qorganizeritemlocation.h \
+    details/qorganizeritemnote.h \
+    details/qorganizeritemparticipationrole.h \
+    details/qorganizeritemparticipationstatus.h \
+    details/qorganizeritempriority.h \
+    details/qorganizeritemprovenance.h \
+    details/qorganizeritemrecurrence.h \
+    details/qorganizeritemrsvpinfo.h \
+    details/qorganizeritemtimestamp.h \
+    details/qorganizeritemtype.h \
+    details/qorganizeritemdetails.h
 
-#QOrganizerItemDisplayLabel
-#QOrganizerItemNote
-#QOrganizerItemDateTime?Period?  QOrganizerItemChronology?
-#QOrganizerItemRecurrence
-#QOrganizerItemLocation
-#QOrganizerItemAttendeeList
-#QOrganizerItemPriority
-#QOrganizerItemParticipationStatus
-#QOrganizerItemParticipationRole
-#QOrganizerItemProvenance
-#QOrganizerItemVisibility
-#QOrganizerItemRsvpInformation
-
-SOURCES += details/qcontactdetails.cpp
+SOURCES += details/qorganizeritemdetails.cpp
