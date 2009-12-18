@@ -8,7 +8,7 @@
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="//apple_ref/cpp/cl//QMessageFolderFilter"></a>
+<a name="//apple_ref/cpp/cl//QMessageFolderFilter" />
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -63,31 +63,31 @@
 <p>See also <a href="qmessagestore.html">QMessageStore</a> and <a href="qmessagefolder.html">QMessageFolder</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/QMessageFolderFilter"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/QMessageFolderFilter" />
 <h3 class="fn"><a name="QMessageFolderFilter"></a>QMessageFolderFilter::QMessageFolderFilter ()</h3>
 <p>Creates a <a href="qmessagefolderfilter.html">QMessageFolderFilter</a> without specifying matching parameters.</p>
 <p>A default-constructed filter (one for which <a href="qmessagefolderfilter.html#isEmpty">isEmpty</a>() returns true) matches all folders.</p>
 <p>See also <a href="qmessagefolderfilter.html#isEmpty">isEmpty</a>().</p>
 <h3 class="fn"><a name="QMessageFolderFilter-2"></a>QMessageFolderFilter::QMessageFolderFilter ( const QMessageFolderFilter &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/~QMessageFolderFilter"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/~QMessageFolderFilter" />
 <h3 class="fn"><a name="dtor.QMessageFolderFilter"></a>QMessageFolderFilter::~QMessageFolderFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
-<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byAncestorFolderIds"></a>
+<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byAncestorFolderIds" />
 <h3 class="fn"><a name="byAncestorFolderIds"></a>QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose ancestor folders' identifiers contain <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#id">QMessageFolder::id</a>().</p>
 <h3 class="fn"><a name="byAncestorFolderIds-2"></a>QMessageFolderFilter QMessageFolderFilter::byAncestorFolderIds ( const QMessageFolderFilter &amp; <i>filter</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose ancestor folders' identifiers contain a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#id">QMessageFolder::id</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byDisplayName"></a>
+<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byDisplayName" />
 <h3 class="fn"><a name="byDisplayName"></a>QMessageFolderFilter QMessageFolderFilter::byDisplayName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose display name matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#displayName">QMessageFolder::displayName</a>().</p>
 <h3 class="fn"><a name="byDisplayName-2"></a>QMessageFolderFilter QMessageFolderFilter::byDisplayName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose display name matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#displayName">QMessageFolder::displayName</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byId"></a>
+<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byId" />
 <h3 class="fn"><a name="byId"></a>QMessageFolderFilter QMessageFolderFilter::byId ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#id">QMessageFolder::id</a>().</p>
@@ -97,58 +97,58 @@
 <h3 class="fn"><a name="byId-3"></a>QMessageFolderFilter QMessageFolderFilter::byId ( const QMessageFolderFilter &amp; <i>filter</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose identifier is a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#id">QMessageFolder::id</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byParentAccountId"></a>
+<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byParentAccountId" />
 <h3 class="fn"><a name="byParentAccountId"></a>QMessageFolderFilter QMessageFolderFilter::byParentAccountId ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose parent account identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#id">QMessageAccount::id</a>().</p>
 <h3 class="fn"><a name="byParentAccountId-2"></a>QMessageFolderFilter QMessageFolderFilter::byParentAccountId ( const <a href="qmessageaccountfilter.html">QMessageAccountFilter</a> &amp; <i>filter</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose parent account identifier is a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#id">QMessageAccount::id</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byParentFolderId"></a>
+<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byParentFolderId" />
 <h3 class="fn"><a name="byParentFolderId"></a>QMessageFolderFilter QMessageFolderFilter::byParentFolderId ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose parent folder identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#id">QMessageFolder::id</a>().</p>
 <h3 class="fn"><a name="byParentFolderId-2"></a>QMessageFolderFilter QMessageFolderFilter::byParentFolderId ( const QMessageFolderFilter &amp; <i>filter</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose parent folder identifier is a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#id">QMessageFolder::id</a>().</p>
-<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byPath"></a>
+<a name="//apple_ref/cpp/clm/QMessageFolderFilter/byPath" />
 <h3 class="fn"><a name="byPath"></a>QMessageFolderFilter QMessageFolderFilter::byPath ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose path matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#path">QMessageFolder::path</a>().</p>
 <h3 class="fn"><a name="byPath-2"></a>QMessageFolderFilter QMessageFolderFilter::byPath ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching folders whose path matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessagefolder.html#path">QMessageFolder::path</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/isEmpty"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/isEmpty" />
 <h3 class="fn"><a name="isEmpty"></a>bool QMessageFolderFilter::isEmpty () const</h3>
 <p>Returns true if the filter remains empty after default construction; otherwise returns false.</p>
 <p>An empty filter matches all folders.</p>
 <p>The result of combining an empty filter with a non-empty filter is the original non-empty filter. This is true regardless of whether the combination is formed by an AND or an OR operation.</p>
 <p>The result of combining two empty filters is an empty filter.</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/isSupported"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/isSupported" />
 <h3 class="fn"><a name="isSupported"></a>bool QMessageFolderFilter::isSupported () const</h3>
 <p>Returns true if the filter is supported on the current platform; otherwise returns false.</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/options"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/options" />
 <h3 class="fn"><a name="options"></a><a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> QMessageFolderFilter::options () const</h3>
 <p>Return the options for the search filter.</p>
 <p>Default is no options set.</p>
 <p>See also <a href="qmessagefolderfilter.html#setOptions">setOptions</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/setOptions"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/setOptions" />
 <h3 class="fn"><a name="setOptions"></a>void QMessageFolderFilter::setOptions ( <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i> )</h3>
 <p>Set the options for the search filter to <i>options</i>.</p>
 <p>See also <a href="qmessagefolderfilter.html#options">options</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator&amp;"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator&" />
 <h3 class="fn"><a name="operator-and"></a>QMessageFolderFilter QMessageFolderFilter::operator&amp; ( const QMessageFolderFilter &amp; <i>other</i> ) const</h3>
 <p>Returns a filter that is the logical AND of this filter and the value of filter <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator&amp;="></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator&=" />
 <h3 class="fn"><a name="operator-and-eq"></a>const QMessageFolderFilter &amp; QMessageFolderFilter::operator&amp;= ( const QMessageFolderFilter &amp; <i>other</i> )</h3>
 <p>Performs a logical AND with this filter and the filter <i>other</i> and assigns the result to this filter.</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator|"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator|" />
 <h3 class="fn"><a name="operator-7c"></a>QMessageFolderFilter QMessageFolderFilter::operator| ( const QMessageFolderFilter &amp; <i>other</i> ) const</h3>
 <p>Returns a filter that is the logical OR of this filter and the value of filter <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator|="></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator|=" />
 <h3 class="fn"><a name="operator-7c-eq"></a>const QMessageFolderFilter &amp; QMessageFolderFilter::operator|= ( const QMessageFolderFilter &amp; <i>other</i> )</h3>
 <p>Performs a logical OR with this filter and the filter <i>other</i> and assigns the result to this filter.</p>
-<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator~"></a>
+<a name="//apple_ref/cpp/instm/QMessageFolderFilter/operator~" />
 <h3 class="fn"><a name="operator-7e"></a>QMessageFolderFilter QMessageFolderFilter::operator~ () const</h3>
 <p>Returns a filter that is the logical NOT of the value of this filter (ignoring any <a href="qmessagefolderfilter.html#options">options</a>() set on the filter).</p>
 <p>If this filter is empty, the result will be a non-matching filter; if this filter is non-matching, the result will be an empty filter.</p>
