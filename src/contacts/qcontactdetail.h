@@ -133,5 +133,9 @@ private:
     Q_DEFINE_LATIN1_LITERAL(className::DefinitionName, definitionNameString)
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactDetail), Q_MOVABLE_TYPE);
+
+
 #endif
 

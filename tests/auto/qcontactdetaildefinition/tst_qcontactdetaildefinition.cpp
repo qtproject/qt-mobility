@@ -66,6 +66,8 @@ private slots:
     void testGetSet();
     void testEquality();
     void testEmpty();
+    void traits();
+    void fieldTraits();
 };
 
 tst_QContactDetailDefinition::tst_QContactDetailDefinition()
@@ -301,6 +303,28 @@ void tst_QContactDetailDefinition::testEquality()
     def2.setFields(fields);
     QVERIFY(def1 == def2);
     QVERIFY(def2 == def1);
+}
+
+void tst_QContactDetailDefinition::traits()
+{
+    QCOMPARE(sizeof(QContactDetailDefinition), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactDetailDefinition)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
+
+void tst_QContactDetailDefinition::fieldTraits()
+{
+    QCOMPARE(sizeof(QContactDetailDefinitionField), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactDetailDefinitionField)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
 }
 
 

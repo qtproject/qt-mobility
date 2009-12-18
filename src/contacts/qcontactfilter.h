@@ -110,4 +110,6 @@ const Q_CONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, con
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactFilter), Q_MOVABLE_TYPE);
+
 #endif
