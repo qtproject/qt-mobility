@@ -132,7 +132,7 @@ QTM_BEGIN_NAMESPACE
 QMagneticNorthSensor::QMagneticNorthSensor(QObject *parent, const QSensorId &id)
     : QSensor(parent)
 {
-    connectToBackend(id);
+    m_backend = static_cast<QMagneticNorthBackend*>(connectToBackend(id));
 }
 
 /*!
@@ -144,14 +144,6 @@ const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
     \fn QMagneticNorthSensor::type() const
     \reimp
 */
-
-/*!
-    Returns the current acceleration reading.
-*/
-QMagneticNorthReading QMagneticNorthSensor::currentReading() const
-{
-    return QMagneticNorthReading();
-}
 
 /*!
     \fn QMagneticNorthSensor::headingChanged(const QMagneticNorthReading &reading)

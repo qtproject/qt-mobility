@@ -45,6 +45,7 @@
 #include <qsensor.h>
 #include <QtGlobal>
 #include <QSharedData>
+#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,7 +53,8 @@ QTM_BEGIN_NAMESPACE
 class QAmbientLightReadingData : public QSharedData
 {
 public:
-    QAmbientLightReadingData() {}
+    QAmbientLightReadingData()
+        : timestamp(), lightLevel(0) {}
     QAmbientLightReadingData(QTime _timestamp, int _lightLevel)
         : timestamp(_timestamp), lightLevel(_lightLevel) {}
     QAmbientLightReadingData(const QAmbientLightReadingData &other)
@@ -97,16 +99,21 @@ public:
     QString type() const { return typeId; };
 
     // For polling/checking the current (cached) value
-    QAmbientLightReading currentReading() const;
+    QAmbientLightReading currentReading() const { return m_backend->currentReading(); }
 
 signals:
     void ambientLightChanged(const QAmbientLightReading &reading);
+
+protected:
+    QSensorBackend *backend() const { return m_backend; }
 
 private:
     void newReadingAvailable()
     {
         emit ambientLightChanged(currentReading());
     }
+
+    QAmbientLightBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

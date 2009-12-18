@@ -45,6 +45,7 @@
 #include <qsensor.h>
 #include <QtGlobal>
 #include <QSharedData>
+#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,7 +53,8 @@ QTM_BEGIN_NAMESPACE
 class QMagneticNorthReadingData : public QSharedData
 {
 public:
-    QMagneticNorthReadingData() {}
+    QMagneticNorthReadingData()
+        : timestamp(), heading(0), calibrated(false) {}
     QMagneticNorthReadingData(QTime _timestamp, int _heading, bool _calibrated)
         : timestamp(_timestamp), heading(_heading), calibrated(_calibrated) {}
     QMagneticNorthReadingData(const QMagneticNorthReadingData &other)
@@ -93,16 +95,21 @@ public:
     QString type() const { return typeId; };
 
     // For polling/checking the current (cached) value
-    QMagneticNorthReading currentReading() const;
+    QMagneticNorthReading currentReading() const { return m_backend->currentReading(); }
 
 signals:
     void headingChanged(const QMagneticNorthReading &reading);
+
+protected:
+    QSensorBackend *backend() const { return m_backend; }
 
 private:
     void newReadingAvailable()
     {
         emit headingChanged(currentReading());
     }
+
+    QMagneticNorthBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

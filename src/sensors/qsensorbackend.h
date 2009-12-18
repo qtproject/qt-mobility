@@ -43,7 +43,6 @@
 #define QSENSORBACKEND_H
 
 #include <qsensor.h>
-#include <qaccelerationsensor.h>
 #include <qsensormanager.h>
 
 QTM_BEGIN_NAMESPACE
@@ -78,11 +77,25 @@ private:
     QSensorId m_id;
 };
 
-class Q_SENSORS_EXPORT QAccelerationBackend : public QSensorBackend
+template <typename Reading>
+class Q_SENSORS_EXPORT QTypedSensorBackend : public QSensorBackend
 {
 public:
-    virtual QAccelerationReading currentReading() = 0;
+    virtual Reading currentReading() = 0;
 };
+
+class QAccelerationReading;
+typedef QTypedSensorBackend<QAccelerationReading> QAccelerationBackend;
+class QAmbientLightReading;
+typedef QTypedSensorBackend<QAmbientLightReading> QAmbientLightBackend;
+class QMagneticNorthReading;
+typedef QTypedSensorBackend<QMagneticNorthReading> QMagneticNorthBackend;
+class QOrientationReading;
+typedef QTypedSensorBackend<QOrientationReading> QOrientationBackend;
+class QProximityReading;
+typedef QTypedSensorBackend<QProximityReading> QProximityBackend;
+class QRotationReading;
+typedef QTypedSensorBackend<QRotationReading> QRotationBackend;
 
 QTM_END_NAMESPACE
 

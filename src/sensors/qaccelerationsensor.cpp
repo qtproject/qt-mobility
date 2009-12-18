@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include <qaccelerationsensor.h>
-#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -192,7 +191,6 @@ QTM_BEGIN_NAMESPACE
 */
 QAccelerationSensor::QAccelerationSensor(QObject *parent, const QSensorId &id)
     : QSensor(parent)
-    , m_backend(0)
 {
     m_backend = static_cast<QAccelerationBackend*>(connectToBackend(id));
 }
@@ -234,14 +232,6 @@ void QAccelerationSensor::removeListener(QAccelerationListener *listener)
 }
 
 /*!
-    Returns the current acceleration reading.
-*/
-QAccelerationReading QAccelerationSensor::currentReading() const
-{
-    return m_backend->currentReading();
-}
-
-/*!
     \fn QAccelerationSensor::accelerationChanged(const QAccelerationReading &reading)
 
     This signal is emitted when a new acceleration \a reading comes in.
@@ -249,11 +239,6 @@ QAccelerationReading QAccelerationSensor::currentReading() const
     Note that this signal should not be used if you are requesting
     high-frequency updates as signal delivery is quite slow.
 */
-
-QSensorBackend *QAccelerationSensor::backend() const
-{
-    return m_backend;
-}
 
 void QAccelerationSensor::newReadingAvailable()
 {

@@ -122,7 +122,7 @@ QTM_BEGIN_NAMESPACE
 QAmbientLightSensor::QAmbientLightSensor(QObject *parent, const QSensorId &id)
     : QSensor(parent)
 {
-    connectToBackend(id);
+    m_backend = static_cast<QAmbientLightBackend*>(connectToBackend(id));
 }
 
 /*!
@@ -134,14 +134,6 @@ const QString QAmbientLightSensor::typeId("qt.AmbientLight");
     \fn QAmbientLightSensor::type() const
     \reimp
 */
-
-/*!
-    Returns the current ambient light reading.
-*/
-QAmbientLightReading QAmbientLightSensor::currentReading() const
-{
-    return QAmbientLightReading();
-}
 
 /*!
     \fn QAmbientLightSensor::ambientLightChanged(const QAmbientLightReading &reading)

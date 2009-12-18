@@ -45,11 +45,10 @@
 #include <qsensor.h>
 #include <QtGlobal>
 #include <QSharedData>
+#include <qsensorbackend.h>
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
-
-class QAccelerationBackend;
 
 // implementation detail
 class QAccelerationReadingData : public QSharedData
@@ -109,13 +108,13 @@ public:
     void removeListener(QAccelerationListener *listener);
 
     // For polling/checking the current (cached) value
-    QAccelerationReading currentReading() const;
+    QAccelerationReading currentReading() const { return m_backend->currentReading(); }
 
 signals:
     void accelerationChanged(const QAccelerationReading &reading);
 
 protected:
-    QSensorBackend *backend() const;
+    QSensorBackend *backend() const { return m_backend; }
 
 private:
     void newReadingAvailable();
