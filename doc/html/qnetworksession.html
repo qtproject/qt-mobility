@@ -259,13 +259,13 @@
 <p>The following property keys are guaranteed to be specified on all platforms:</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Key</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>ActiveConfigurationIdentifier</td><td>If the session <a href="qnetworksession.html#isOpen">isOpen</a>() this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that is used by this session; otherwise an empty string.<p>The main purpose of this key is to determine which Internet access point is used if the session is based on a <a href="qnetworkconfiguration.html#Type-enum">ServiceNetwork</a>. The following code snippet highlights the difference:</p>
+<tr valign="top" class="odd"><td>ActiveConfiguration</td><td>If the session <a href="qnetworksession.html#isOpen">isOpen</a>() this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that is used by this session; otherwise an empty string.<p>The main purpose of this key is to determine which Internet access point is used if the session is based on a <a href="qnetworkconfiguration.html#Type-enum">ServiceNetwork</a>. The following code snippet highlights the difference:</p>
 <pre>    QNetworkConfigurationManager mgr;
     QNetworkConfiguration ap = mgr.defaultConfiguration();
     QNetworkSession* session = new QNetworkSession(ap);
     ... <span class="comment">//code activates session</span>
 
-    QString ident = session-&gt;sessionProperty(&quot;ActiveConfigurationIdentifier&quot;).toString();
+    QString ident = session-&gt;sessionProperty(&quot;ActiveConfiguration&quot;).toString();
     if ( ap.type() == QNetworkConfiguration::ServiceNetwork ) {
         Q_ASSERT( ap.identifier() != ident );
         Q_ASSERT( ap.children().contains( mgr.configurationFromIdentifier(ident) ) );
@@ -273,7 +273,7 @@
         Q_ASSERT( ap.identifier() == ident );
     }</pre>
 </td></tr>
-<tr valign="top" class="even"><td>UserChoiceConfigurationIdentifier</td><td>If the session <a href="qnetworksession.html#isOpen">isOpen</a>() and is bound to a <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> of type UserChoice, this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the configuration resolved to when <a href="qnetworksession.html#open">open</a>() was called; otherwise an empty string.<p>The purpose of this key is to determine the real <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the session is using. This key is different to <i>ActiveConfigurationIdentifier</i> in that this key may return an identifier for either a <a href="qnetworkconfiguration.html#Type-enum">service network</a> or a <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations whereas <i>ActiveConfigurationIdentifier</i> always returns identifiers for <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations.</p>
+<tr valign="top" class="even"><td>UserChoiceConfiguration</td><td>If the session <a href="qnetworksession.html#isOpen">isOpen</a>() and is bound to a <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> of type UserChoice, this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the configuration resolved to when <a href="qnetworksession.html#open">open</a>() was called; otherwise an empty string.<p>The purpose of this key is to determine the real <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the session is using. This key is different to <i>ActiveConfiguration</i> in that this key may return an identifier for either a <a href="qnetworkconfiguration.html#Type-enum">service network</a> or a <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations whereas <i>ActiveConfiguration</i> always returns identifiers for <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations.</p>
 </td></tr>
 <tr valign="top" class="odd"><td>ConnectInBackground</td><td>Setting this property to <i>true</i> before calling <a href="qnetworksession.html#open">open</a>() implies that the connection attempt is made but if no connection can be established, the user is not connsulted and asked to select a suitable connection. This property is not set by default and support for it depends on the platform.</td></tr>
 </table></p>
@@ -281,7 +281,7 @@
 <a name="//apple_ref/cpp/instm/QNetworkSession/setSessionProperty"></a>
 <h3 class="fn"><a name="setSessionProperty"></a>void QNetworkSession::setSessionProperty ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets the property <i>value</i> on the session. The property is identified using <i>key</i>. Removing an already set property can be achieved by passing an invalid <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a>.</p>
-<p>Note that the <i>UserChoiceConfigurationIdentifier</i> and <i>ActiveConfigurationIdentifier</i> properties are read only and cannot be changed using this method.</p>
+<p>Note that the <i>UserChoiceConfiguration</i> and <i>ActiveConfiguration</i> properties are read only and cannot be changed using this method.</p>
 <p>See also <a href="qnetworksession.html#sessionProperty">sessionProperty</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qnetworksession.html#State-enum">State</a> QNetworkSession::state () const</h3>

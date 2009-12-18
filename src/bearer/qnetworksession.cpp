@@ -279,7 +279,7 @@ void QNetworkSession::open()
 */
 bool QNetworkSession::waitForOpened(int msecs)
 {
-    if (d->isActive)
+    if (d->isOpen)
         return true;
 
     if (d->state != Connecting)
@@ -297,7 +297,7 @@ bool QNetworkSession::waitForOpened(int msecs)
     loop->disconnect();
     loop->deleteLater();
 
-    return d->isActive;
+    return d->isOpen;
 }
 
 /*!
@@ -409,7 +409,7 @@ QNetworkInterface QNetworkSession::interface() const
 */
 bool QNetworkSession::isOpen() const
 {
-    return d->isActive;
+    return d->isOpen;
 }
 
 /*!
@@ -467,7 +467,7 @@ QString QNetworkSession::errorString() const
         \header
             \o Key \o Description
         \row
-            \o ActiveConfigurationIdentifier
+            \o ActiveConfiguration
             \o If the session \l isOpen() this property returns the identifier of the
             QNetworkConfiguration that is used by this session; otherwise an empty string.
 
@@ -480,7 +480,7 @@ QString QNetworkSession::errorString() const
                     QNetworkSession* session = new QNetworkSession(ap);
                     ... //code activates session
 
-                    QString ident = session->sessionProperty("ActiveConfigurationIdentifier").toString();
+                    QString ident = session->sessionProperty("ActiveConfiguration").toString();
                     if ( ap.type() == QNetworkConfiguration::ServiceNetwork ) {
                         Q_ASSERT( ap.identifier() != ident );
                         Q_ASSERT( ap.children().contains( mgr.configurationFromIdentifier(ident) ) );
@@ -489,17 +489,17 @@ QString QNetworkSession::errorString() const
                     }
                 \endcode
         \row
-            \o UserChoiceConfigurationIdentifier
+            \o UserChoiceConfiguration
             \o If the session \l isOpen() and is bound to a QNetworkConfiguration of type
             UserChoice, this property returns the identifier of the QNetworkConfiguration that the
             configuration resolved to when \l open() was called; otherwise an empty string.
 
             The purpose of this key is to determine the real QNetworkConfiguration that the
-            session is using. This key is different to \i ActiveConfigurationIdentifier in that
+            session is using. This key is different to \i ActiveConfiguration in that
             this key may return an identifier for either a
             \l {QNetworkConfiguration::ServiceNetwork}{service network} or a
             \l {QNetworkConfiguration::InternetAccessPoint}{Internet access points} configurations
-            whereas \i ActiveConfigurationIdentifier always returns identifiers for
+            whereas \i ActiveConfiguration always returns identifiers to 
             \l {QNetworkConfiguration::InternetAccessPoint}{Internet access points} configurations.
         \row
             \o ConnectInBackground
@@ -513,15 +513,15 @@ QVariant QNetworkSession::sessionProperty(const QString& key) const
     if (!d->publicConfig.isValid())
         return QVariant();
 
-    if (key == "ActiveConfigurationIdentifier") {
-        if (!d->isActive)
+    if (key == "ActiveConfiguration") {
+        if (!d->isOpen)
             return QString();
         else
             return d->activeConfig.identifier();
     }
 
-    if (key == "UserChoiceConfigurationIdentifier") {
-        if (!d->isActive || d->publicConfig.type() != QNetworkConfiguration::UserChoice)
+    if (key == "UserChoiceConfiguration") {
+        if (!d->isOpen || d->publicConfig.type() != QNetworkConfiguration::UserChoice)
             return QString();
 
         if (d->serviceConfig.isValid())
@@ -538,13 +538,13 @@ QVariant QNetworkSession::sessionProperty(const QString& key) const
     \a key. Removing an already set  property can be achieved by passing an 
     invalid QVariant.
 
-    Note that the \i UserChoiceConfigurationIdentifier and \i ActiveConfigurationIdentifier
+    Note that the \i UserChoiceConfiguration and \i ActiveConfiguration
     properties are read only and cannot be changed using this method.
 */
 void QNetworkSession::setSessionProperty(const QString& key, const QVariant& value)
 {
-    if (key == "ActiveConfigurationIdentifier" 
-            || key == "UserChoiceConfigurationIdentifier") 
+    if (key == "ActiveConfiguration" 
+            || key == "UserChoiceConfiguration") 
         return;
 
     d->setSessionProperty(key, value);

@@ -69,7 +69,7 @@ class QNetworkSessionPrivate : public QObject
     Q_OBJECT
 public:
     QNetworkSessionPrivate() : 
-	    tx_data(0), rx_data(0), m_activeTime(0), isActive(false),
+	    tx_data(0), rx_data(0), m_activeTime(0), isOpen(false),
 	    connectFlags(ICD_CONNECTION_FLAG_USER_EVENT)
     {
     }
@@ -142,7 +142,7 @@ private:
     void cleanupAnyConfiguration();
 
     QNetworkSession::State state;
-    bool isActive;
+    bool isOpen;
     bool opened;
     icd_connection_flags connectFlags;
 

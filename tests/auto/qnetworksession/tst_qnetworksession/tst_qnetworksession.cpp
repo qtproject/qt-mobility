@@ -304,7 +304,7 @@ void tst_QNetworkSession::userChoiceSession()
 
     QVERIFY(!session.isOpen());
 
-    QVERIFY(session.sessionProperty("ActiveConfigurationIdentifier").toString().isEmpty());
+    QVERIFY(session.sessionProperty("ActiveConfiguration").toString().isEmpty());
 
 
     // The remaining tests require the session to be not NotAvailable.
@@ -359,7 +359,7 @@ void tst_QNetworkSession::userChoiceSession()
             QVERIFY(session.interface().isValid());
 
             const QString userChoiceIdentifier =
-                session.sessionProperty("UserChoiceConfigurationIdentifier").toString();
+                session.sessionProperty("UserChoiceConfiguration").toString();
 
             QVERIFY(!userChoiceIdentifier.isEmpty());
             QVERIFY(userChoiceIdentifier != configuration.identifier());
@@ -371,12 +371,12 @@ void tst_QNetworkSession::userChoiceSession()
             QVERIFY(userChoiceConfiguration.type() != QNetworkConfiguration::UserChoice);
 
             const QString testIdentifier("abc");
-            //resetting UserChoiceConfigurationIdentifier is ignored (read only property)
-            session.setSessionProperty("UserChoiceConfigurationIdentifier", testIdentifier);
-            QVERIFY(session.sessionProperty("UserChoiceConfigurationIdentifier").toString() != testIdentifier);
+            //resetting UserChoiceConfiguration is ignored (read only property)
+            session.setSessionProperty("UserChoiceConfiguration", testIdentifier);
+            QVERIFY(session.sessionProperty("UserChoiceConfiguration").toString() != testIdentifier);
 
             const QString activeIdentifier =
-                session.sessionProperty("ActiveConfigurationIdentifier").toString();
+                session.sessionProperty("ActiveConfiguration").toString();
 
             QVERIFY(!activeIdentifier.isEmpty());
             QVERIFY(activeIdentifier != configuration.identifier());
@@ -387,9 +387,9 @@ void tst_QNetworkSession::userChoiceSession()
             QVERIFY(activeConfiguration.isValid());
             QVERIFY(activeConfiguration.type() == QNetworkConfiguration::InternetAccessPoint);
             
-            //resetting ActiveConfigurationIdentifier is ignored (read only property)
-            session.setSessionProperty("ActiveConfigurationIdentifier", testIdentifier);
-            QVERIFY(session.sessionProperty("ActiveConfigurationIdentifier").toString() != testIdentifier);
+            //resetting ActiveConfiguration is ignored (read only property)
+            session.setSessionProperty("ActiveConfiguration", testIdentifier);
+            QVERIFY(session.sessionProperty("ActiveConfiguration").toString() != testIdentifier);
 
             if (userChoiceConfiguration.type() == QNetworkConfiguration::InternetAccessPoint) {
                 QVERIFY(userChoiceConfiguration == activeConfiguration);
@@ -632,7 +632,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                         }
                     }
                     if (roamedSuccessfully) {
-                        QString configId = session.sessionProperty("ActiveConfigurationIdentifier").toString();
+                        QString configId = session.sessionProperty("ActiveConfiguration").toString();
                         QNetworkConfiguration config = manager.configurationFromIdentifier(configId); 
                         QNetworkSession session3(config);
                         QSignalSpy errorSpy3(&session3, SIGNAL(error(QNetworkSession::SessionError)));

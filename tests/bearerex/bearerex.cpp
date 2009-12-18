@@ -414,7 +414,7 @@ void SessionTab::opened()
     listItem->setText(QString("S")+QString::number(m_index)+QString(" - ")+QString("Opened"));
     m_eventListWidget->addItem(listItem);
     
-    QVariant identifier = m_NetworkSession->property("ActiveConfigurationIdentifier");
+    QVariant identifier = m_NetworkSession->property("ActiveConfiguration");
     if (!identifier.isNull()) {
         QString configId = identifier.toString();
         QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
@@ -424,7 +424,7 @@ void SessionTab::opened()
     }
 
     if (m_NetworkSession->configuration().type() == QNetworkConfiguration::UserChoice) {
-        QVariant identifier = m_NetworkSession->property("UserChoiceConfigurationIdentifier");
+        QVariant identifier = m_NetworkSession->property("UserChoiceConfiguration");
         if (!identifier.isNull()) {
             QString configId = identifier.toString();
             QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
@@ -487,7 +487,7 @@ void SessionTab::stateChanged(QNetworkSession::State state)
 void SessionTab::newState(QNetworkSession::State state)
 {
     if (state == QNetworkSession::Connected) {
-        QVariant identifier = m_NetworkSession->property("ActiveConfigurationIdentifier");
+        QVariant identifier = m_NetworkSession->property("ActiveConfiguration");
         if (!identifier.isNull()) {
             QString configId = identifier.toString();
             QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);

@@ -158,7 +158,7 @@ private: // data
     mutable QNetworkInterface activeInterface;
 
     QNetworkSession::State state;
-    bool isActive;
+    bool isOpen;
 
     QNetworkSession* q;
     QDateTime startTime;
