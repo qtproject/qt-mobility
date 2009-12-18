@@ -95,7 +95,7 @@ QMessageFolder::QMessageFolder()
 QMessageFolder::QMessageFolder(const QMessageFolderId &id)
     : d_ptr(new QMessageFolderPrivate)
 {
-    *this = QMessageStore::instance()->folder(id);
+    *this = QMessageManager().folder(id);
 }
 
 QMessageFolder::QMessageFolder(const QMessageFolder &other)
@@ -133,7 +133,7 @@ QMessageFolderId QMessageFolder::parentFolderId() const
     return convert(d_ptr->_folder.parentFolderId());
 }
 
-QString QMessageFolder::displayName() const
+QString QMessageFolder::name() const
 {
     return d_ptr->_folder.displayName();
 }

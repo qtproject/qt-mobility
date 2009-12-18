@@ -77,7 +77,7 @@ QContactDetail *CntTransformOrganisation::transformItemField(const CContactItemF
 		//Department
 		else if (field.ContentType().FieldType(i) == KUidContactFieldDepartmentName) {
 		    // Assume only a single department
-                    QStringList departments = QStringList(orgDetail);
+		    QStringList departments = QStringList(orgDetail);
             organisation->setDepartment(departments);
 		}
 		//Job title
@@ -194,9 +194,10 @@ void CntTransformOrganisation::detailDefinitions(QMap<QString, QContactDetailDef
         f.setDataType(QVariant::String);
         f.setAllowableValues(QVariantList());
         fields.insert(QContactOrganization::FieldName, f);
-        fields.insert(QContactOrganization::FieldDepartment, f);
         fields.insert(QContactOrganization::FieldTitle, f);
         fields.insert(QContactOrganization::FieldAssistantName, f);
+        f.setDataType(QVariant::StringList);
+        fields.insert(QContactOrganization::FieldDepartment, f);
 
         d.setFields(fields);
 

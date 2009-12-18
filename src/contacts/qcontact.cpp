@@ -53,6 +53,8 @@ QTM_BEGIN_NAMESPACE
   \class QContact
  
   \brief The QContact class provides an addressbook contact.
+
+  \ingroup contacts-main
  
   A QContact consists of zero or more details.
  

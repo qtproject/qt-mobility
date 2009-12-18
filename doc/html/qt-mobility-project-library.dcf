@@ -871,6 +871,7 @@
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::Relationships</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::Anonymous</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::ChangeLogs</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::RelationshipOrdering</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::MutableDefinitions</keyword>
         <keyword ref="qcontactmanager.html#availableManagers">availableManagers</keyword>
         <keyword ref="qcontactmanager.html#buildUri">buildUri</keyword>
@@ -1285,17 +1286,6 @@
         <keyword ref="qcontacturl.html#SubTypeFavourite-var">SubTypeFavourite</keyword>
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
-        <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
-        <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
-        <keyword ref="qgeoareamonitor.html#center-prop">setCenter</keyword>
-        <keyword ref="qgeoareamonitor.html#radius-prop">radius</keyword>
-        <keyword ref="qgeoareamonitor.html#radius-prop">setRadius</keyword>
-        <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
-        <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
-        <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
-        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
     </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
         <keyword ref="qgeocoordinate.html">QGeoCoordinate</keyword>
@@ -3294,6 +3284,9 @@
     </section>
     <section ref="servicebrowser.html" title="Service Browser Example">
         <keyword ref="servicebrowser.html">Service Browser Example</keyword>
+    </section>
+    <section ref="declarative.html" title="Service Framework using QML Example">
+        <keyword ref="declarative.html">Service Framework using QML Example</keyword>
     </section>
     <section ref="slideshow.html" title="SlideShow Example">
         <keyword ref="slideshow.html">SlideShow Example</keyword>

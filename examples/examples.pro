@@ -42,10 +42,11 @@ contains(mobility_modules,publishsubscribe) {
 }
 
 #System Information
-contains(mobility_modules,systeminformation): SUBDIRS += sysinfo
+contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 
 #Multimedia
 contains(mobility_modules,multimedia) {
+    #disabled on Symbian due to missing backend
     !symbian:SUBDIRS += player \
         cameracapture \
         slideshow \

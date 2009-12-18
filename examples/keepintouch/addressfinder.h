@@ -51,6 +51,7 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
+class QCheckBox;
 class QComboBox;
 class QListWidget;
 class QPushButton;
@@ -74,9 +75,10 @@ public:
 
 private slots:
     void includePeriodChanged(int);
+    void excludePeriodEnabled(int);
     void addressSelected(const QString&);
     void searchMessages();
-    void stateChanged(QMessageServiceAction::State a);
+    void stateChanged(QMessageService::State a);
     void messagesFound(const QMessageIdList &ids);
     void continueSearch();
 #ifndef USE_SEARCH_BUTTON
@@ -94,6 +96,7 @@ private:
     QTabWidget *tabWidget;
     QComboBox *includePeriod;
     QComboBox *excludePeriod;
+    QCheckBox *excludeCheckBox;
 
     QAction *searchAction;
     QPushButton *searchButton;
@@ -103,7 +106,7 @@ private:
     QPushButton *showButton;
     QPushButton *forwardButton;
 
-    QMessageServiceAction serviceAction;
+    QMessageService service;
 
     QMessageFilter inclusionFilter;
 

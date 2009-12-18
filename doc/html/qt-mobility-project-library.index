@@ -2456,37 +2456,6 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" href="qgeoareamonitor.html" location="qgeoareamonitor.h" bases="QObject" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.h" type="QGeoCoordinate">
-                <getter name="center"/>
-                <setter name="setCenter"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.h" type="qreal">
-                <getter name="radius"/>
-                <setter name="setRadius"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoAreaMonitor" fullname="QGeoAreaMonitor::QGeoAreaMonitor" href="qgeoareamonitor.html#QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoAreaMonitor(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoAreaMonitor" fullname="QGeoAreaMonitor::~QGeoAreaMonitor" href="qgeoareamonitor.html#dtor.QGeoAreaMonitor" location="qgeoareamonitor.h" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoAreaMonitor()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QGeoAreaMonitor::setCenter" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="center" type="void" signature="setCenter(const QGeoCoordinate &amp; coordinate)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoAreaMonitor::center" href="qgeoareamonitor.html#center-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="center" type="QGeoCoordinate" signature="center() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QGeoAreaMonitor::setRadius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" associated-property="radius" type="void" signature="setRadius(qreal radius)">
-                <parameter left="qreal" right="" name="radius" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QGeoAreaMonitor::radius" href="qgeoareamonitor.html#radius-prop" location="qgeoareamonitor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="radius" type="qreal" signature="radius() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createDefaultMonitor" fullname="QGeoAreaMonitor::createDefaultMonitor" href="qgeoareamonitor.html#createDefaultMonitor" location="qgeoareamonitor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QGeoAreaMonitor *" signature="createDefaultMonitor(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="areaEntered" fullname="QGeoAreaMonitor::areaEntered" href="qgeoareamonitor.html#areaEntered" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaEntered(const QGeoPositionInfo &amp; update)">
-                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="areaExited" fullname="QGeoAreaMonitor::areaExited" href="qgeoareamonitor.html#areaExited" location="qgeoareamonitor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="areaExited(const QGeoPositionInfo &amp; update)">
-                <parameter left="const QGeoPositionInfo &amp;" right="" name="update" default=""/>
-            </function>
-        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaServiceProviderHint" href="qmediaserviceproviderhint.html" location="qmediaserviceprovider.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QMediaServiceProviderHint::Type" href="qmediaserviceproviderhint.html#Type-enum" location="qmediaserviceprovider.h">
                 <value name="Null" value="0"/>
@@ -2740,9 +2709,10 @@
                 <value name="MutableDefinitions" value="2"/>
                 <value name="Relationships" value="3"/>
                 <value name="ArbitraryRelationshipTypes" value="4"/>
-                <value name="SelfContact" value="5"/>
-                <value name="Anonymous" value="6"/>
-                <value name="ChangeLogs" value="7"/>
+                <value name="RelationshipOrdering" value="5"/>
+                <value name="SelfContact" value="6"/>
+                <value name="Anonymous" value="7"/>
+                <value name="ChangeLogs" value="8"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="hasFeature" fullname="QContactManager::hasFeature" href="qcontactmanager.html#hasFeature" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasFeature(QContactManager::ManagerFeature feature, const QString &amp; contactType) const">
                 <parameter left="QContactManager::ManagerFeature" right="" name="feature" default=""/>
@@ -6508,6 +6478,30 @@
             <contents name="classes" title="Classes" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoOutputControl_iid" href="qvideooutputcontrol.html#QVideoOutputControl_iid" location="qvideooutputcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoOutputControl" type="" signature="QVideoOutputControl_iid()"/>
+<<<<<<< HEAD:doc/html/qt-mobility-project-library.index
+=======
+        <page access="public" status="commendable" name="declarative" href="declarative.html" subtype="example" title="Service Framework using QML Example" fulltitle="Service Framework using QML Example" subtitle="" location="declarative.qdoc">
+            <target name="guidesign"/>
+            <target name="addpropertyinqmlcontext"/>
+            <target name="voipdialer-h-0"/>
+            <target name="servicelist-qml-2"/>
+            <page access="public" status="commendable" name="declarative/sfwexample.cpp" href="declarative-sfwexample-cpp.html" subtype="file" title="" fulltitle="sfwexample.cpp Example File" subtitle="declarative/sfwexample.cpp" location=""/>
+            <page access="public" status="commendable" name="declarative/sfwexample.h" href="declarative-sfwexample-h.html" subtype="file" title="" fulltitle="sfwexample.h Example File" subtitle="declarative/sfwexample.h" location=""/>
+            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.cpp" href="declarative-landlinedialer-landlinedialer-cpp.html" subtype="file" title="" fulltitle="landlinedialer.cpp Example File" subtitle="declarative/landlinedialer/landlinedialer.cpp" location=""/>
+            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.h" href="declarative-landlinedialer-landlinedialer-h.html" subtype="file" title="" fulltitle="landlinedialer.h Example File" subtitle="declarative/landlinedialer/landlinedialer.h" location=""/>
+            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialerplugin.cpp" href="declarative-landlinedialer-landlinedialerplugin-cpp.html" subtype="file" title="" fulltitle="landlinedialerplugin.cpp Example File" subtitle="declarative/landlinedialer/landlinedialerplugin.cpp" location=""/>
+            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialerplugin.h" href="declarative-landlinedialer-landlinedialerplugin-h.html" subtype="file" title="" fulltitle="landlinedialerplugin.h Example File" subtitle="declarative/landlinedialer/landlinedialerplugin.h" location=""/>
+            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.cpp" href="declarative-voipdialer-voipdialer-cpp.html" subtype="file" title="" fulltitle="voipdialer.cpp Example File" subtitle="declarative/voipdialer/voipdialer.cpp" location=""/>
+            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.h" href="declarative-voipdialer-voipdialer-h.html" subtype="file" title="" fulltitle="voipdialer.h Example File" subtitle="declarative/voipdialer/voipdialer.h" location=""/>
+            <page access="public" status="commendable" name="declarative/voipdialer/voipdialerplugin.cpp" href="declarative-voipdialer-voipdialerplugin-cpp.html" subtype="file" title="" fulltitle="voipdialerplugin.cpp Example File" subtitle="declarative/voipdialer/voipdialerplugin.cpp" location=""/>
+            <page access="public" status="commendable" name="declarative/voipdialer/voipdialerplugin.h" href="declarative-voipdialer-voipdialerplugin-h.html" subtype="file" title="" fulltitle="voipdialerplugin.h Example File" subtitle="declarative/voipdialer/voipdialerplugin.h" location=""/>
+            <page access="public" status="commendable" name="declarative/main.cpp" href="declarative-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="declarative/main.cpp" location=""/>
+            <page access="public" status="commendable" name="declarative/declarative.pro" href="declarative-declarative-pro.html" subtype="file" title="" fulltitle="declarative.pro Example File" subtitle="declarative/declarative.pro" location=""/>
+            <page access="public" status="commendable" name="declarative/demo/demo.pro" href="declarative-demo-demo-pro.html" subtype="file" title="" fulltitle="demo.pro Example File" subtitle="declarative/demo/demo.pro" location=""/>
+            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.pro" href="declarative-landlinedialer-landlinedialer-pro.html" subtype="file" title="" fulltitle="landlinedialer.pro Example File" subtitle="declarative/landlinedialer/landlinedialer.pro" location=""/>
+            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.pro" href="declarative-voipdialer-voipdialer-pro.html" subtype="file" title="" fulltitle="voipdialer.pro Example File" subtitle="declarative/voipdialer/voipdialer.pro" location=""/>
+        </page>
+>>>>>>> 0f30af5c48993a7c40e1105f56363fe2dc2840d8:doc/html/qt-mobility-project-library.index
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs" fulltitle="Qt Mobility Project APIs" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs Overview" fulltitle="Qt Mobility Project APIs Overview" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>

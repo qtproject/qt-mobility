@@ -78,13 +78,13 @@ QMessageAddress::QMessageAddress()
 }
 
 /*!
-    Constructs a message address with the given recipient \a recipient and type \a type.
+    Constructs a message address with the type \a type and the recipient address \a recipient.
 */
-QMessageAddress::QMessageAddress(const QString &recipient, Type type)
+QMessageAddress::QMessageAddress(Type type, const QString &recipient)
     : d_ptr(new QMessageAddressPrivate(this))
 {
-    d_ptr->recipient = recipient;
     d_ptr->type = type;
+    d_ptr->recipient = recipient;
 }
 
 /*!

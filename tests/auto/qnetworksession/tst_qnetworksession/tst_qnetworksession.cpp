@@ -781,12 +781,15 @@ void tst_QNetworkSession::outOfProcessSession()
 
     QList<QNetworkConfiguration> before = manager.allConfigurations(QNetworkConfiguration::Active);
 
-    QSignalSpy spy(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)));
-
+    QSignalSpy spy(&manager, SIGNAL(configurationChanged(QNetworkConfiguration)));   
+ 
     // Cannot read/write to processes on WinCE or Symbian.
     // Easiest alternative is to use sockets for IPC.
 
     QLocalServer oopServer;
+    // First remove possible earlier listening address which would cause listen to fail 
+    // (e.g. previously abruptly ended unit test might cause this)
+    QLocalServer::removeServer("tst_qnetworksession");
     oopServer.listen("tst_qnetworksession");
 
     QProcess lackey;

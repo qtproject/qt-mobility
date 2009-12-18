@@ -214,9 +214,6 @@
                     <section ref="qcontacturl.html" title="QContactUrl Class Reference">
                         <section ref="qcontacturl-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
-                        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
                         <section ref="qgeocoordinate-members.html" title="List of all members"/>
                     </section>
@@ -500,6 +497,7 @@
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
                     <section ref="servicebrowser.html" title="Service Browser Example"/>
+                    <section ref="declarative.html" title="Service Framework using QML Example"/>
                     <section ref="slideshow.html" title="SlideShow Example"/>
                     <section ref="slideshow.html" title="Slideshow Example"/>
                     <section ref="streamplayer.html" title="Stream Player Example"/>
@@ -1285,6 +1283,7 @@
             <keyword name="QContactManager::MutableDefinitions" id="QContactManager::MutableDefinitions" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::Relationships" id="QContactManager::Relationships" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::ArbitraryRelationshipTypes" id="QContactManager::ArbitraryRelationshipTypes" ref="qcontactmanager.html#ManagerFeature-enum"/>
+            <keyword name="QContactManager::RelationshipOrdering" id="QContactManager::RelationshipOrdering" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::SelfContact" id="QContactManager::SelfContact" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::Anonymous" id="QContactManager::Anonymous" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::ChangeLogs" id="QContactManager::ChangeLogs" ref="qcontactmanager.html#ManagerFeature-enum"/>
@@ -1571,15 +1570,6 @@
             <keyword name="setUrl" id="QContactUrl::setUrl" ref="qcontacturl.html#setUrl"/>
             <keyword name="subType" id="QContactUrl::subType" ref="qcontacturl.html#subType"/>
             <keyword name="url" id="QContactUrl::url" ref="qcontacturl.html#url"/>
-            <keyword name="QGeoAreaMonitor" id="QGeoAreaMonitor" ref="qgeoareamonitor.html"/>
-            <keyword name="areaEntered" id="QGeoAreaMonitor::areaEntered" ref="qgeoareamonitor.html#areaEntered"/>
-            <keyword name="areaExited" id="QGeoAreaMonitor::areaExited" ref="qgeoareamonitor.html#areaExited"/>
-            <keyword name="center" id="QGeoAreaMonitor::center" ref="qgeoareamonitor.html#center-prop"/>
-            <keyword name="createDefaultMonitor" id="QGeoAreaMonitor::createDefaultMonitor" ref="qgeoareamonitor.html#createDefaultMonitor"/>
-            <keyword name="radius" id="QGeoAreaMonitor::radius" ref="qgeoareamonitor.html#radius-prop"/>
-            <keyword name="setCenter" id="QGeoAreaMonitor::setCenter" ref="qgeoareamonitor.html#center-prop"/>
-            <keyword name="setRadius" id="QGeoAreaMonitor::setRadius" ref="qgeoareamonitor.html#radius-prop"/>
-            <keyword name="~QGeoAreaMonitor" id="QGeoAreaMonitor::~QGeoAreaMonitor" ref="qgeoareamonitor.html#dtor.QGeoAreaMonitor"/>
             <keyword name="QGeoCoordinate" id="QGeoCoordinate" ref="qgeocoordinate.html"/>
             <keyword name="QGeoCoordinate::CoordinateFormat" id="QGeoCoordinate::CoordinateFormat" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DecimalDegrees" id="QGeoCoordinate::DecimalDegrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
@@ -3224,6 +3214,7 @@
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
+            <keyword name="Service Framework using QML Example" id="Service Framework using QML Example" ref="declarative.html"/>
             <keyword name="Service Frameworks Classes" id="Service Frameworks Classes" ref="servicefw.html"/>
             <keyword name="SlideShow Example" id="SlideShow Example" ref="slideshow.html"/>
             <keyword name="Slideshow Example" id="Slideshow Example" ref="slideshow.html"/>
@@ -3511,7 +3502,6 @@
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
-            <file>qgeoareamonitor-members.html</file>
             <file>qcontactunionfilter-members.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
@@ -3526,6 +3516,7 @@
             <file>player-playlistmodel-h.html</file>
             <file>qcontactdisplaylabel.html</file>
             <file>declarative.html</file>
+            <file>images/DialerServiceGUI.png</file>
             <file>servicefw.html</file>
             <file>qmediaplayercontrol.html</file>
             <file>qcontactdetaildefinitionsaverequest-members.html</file>
@@ -3585,6 +3576,7 @@
             <file>qcontactmanagerengine-members.html</file>
             <file>bearermonitor-bearermonitor-pro.html</file>
             <file>qvideorenderercontrol.html</file>
+            <file>images/DialerServiceUML.png</file>
             <file>bearer.html</file>
             <file>qcontactonlineaccount.html</file>
             <file>battery-charge-battery-publisher-main-cpp.html</file>
@@ -3624,7 +3616,6 @@
             <file>qmediaplayer.html</file>
             <file>cameracapture-cameracapture-cpp.html</file>
             <file>qcontactphonenumber-members.html</file>
-            <file>qgeoareamonitor.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
             <file>slideshow-main-cpp.html</file>
@@ -3769,22 +3760,32 @@
             <file>qcontactfamily.html</file>
             <file>qcontactlocalidfilter-members.html</file>
             <file>qvideoencodersettings-members.html</file>
+<<<<<<< HEAD:doc/html/qtmobility.qhp
             <file>images/keepintouch-example.png</file>
             <file>images/codeless.png</file>
             <file>images/bearermonitor-example.png</file>
             <file>images/qserviceinterfacedescriptor.png</file>
             <file>images/bearercloud-example.png</file>
+=======
+>>>>>>> 0f30af5c48993a7c40e1105f56363fe2dc2840d8:doc/html/qtmobility.qhp
             <file>images/servicexmlgen.png</file>
-            <file>images/battery-publisher.png</file>
-            <file>classic.css</file>
-            <file>images/servicebrowser.png</file>
-            <file>images/publish-subscribe-subscriber.png</file>
+            <file>images/slideshow-img1.png</file>
             <file>images/servicebrowser-attributes.png</file>
+            <file>images/bearercloud-example.png</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>images/qtlogo.png</file>
-            <file>images/spb-screen.png</file>
-            <file>images/slideshow-img1.png</file>
+            <file>images/codeless.png</file>
+            <file>images/bearermonitor-example.png</file>
+            <file>images/publish-subscribe-subscriber.png</file>
             <file>images/battery-subscriber.png</file>
+            <file>images/servicebrowser.png</file>
+            <file>images/battery-publisher.png</file>
+            <file>images/keepintouch-example.png</file>
+            <file>classic.css</file>
+            <file>images/spb-screen.png</file>
+            <file>images/DialerServiceUML.png</file>
+            <file>images/DialerServiceGUI.png</file>
+            <file>images/qserviceinterfacedescriptor.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

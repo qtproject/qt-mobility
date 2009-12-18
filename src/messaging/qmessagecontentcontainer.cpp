@@ -189,14 +189,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageContentContainer::writeTextContentTo(QTextStream& out) const
+    \fn QMessageContentContainer::writeTextContent(QTextStream& out) const
     
     For a non-multipart container, writes the content as returned by textContent() 
     to the stream \a out; otherwise does nothing.
 */
 
 /*!
-    \fn QMessageContentContainer::writeContentTo(QDataStream& out) const
+    \fn QMessageContentContainer::writeContent(QDataStream& out) const
     
     For a non-multipart container, writes the content as returned by content() 
     to the stream \a out; otherwise does nothing.
