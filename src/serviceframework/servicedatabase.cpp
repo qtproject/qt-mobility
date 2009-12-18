@@ -218,6 +218,10 @@ bool ServiceDatabase::open()
 //bool ServiceDatabase::registerService(ServiceMetaData &service)
 bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, const QString &securityToken)
 {
+#ifndef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    Q_UNUSED(securityToken);
+#endif
+
     if(!checkConnection()) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::registerService():-"
@@ -1354,6 +1358,10 @@ bool ServiceDatabase::setInterfaceDefault(const QServiceInterfaceDescriptor &int
 */
 bool ServiceDatabase::unregisterService(const QString &serviceName, const QString &securityToken)
 {
+#ifndef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    Q_UNUSED(securityToken);
+#endif
+
     if (!checkConnection()) {
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
         qWarning() << "ServiceDatabase::unregisterService():-"
