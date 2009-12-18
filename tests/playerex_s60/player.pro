@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = player
+TARGET = s60player
 QT += network \
       xml
 
