@@ -41,6 +41,7 @@
 
 #include "s60videoplayersession.h"
 #include "s60videowidget.h"
+#include "s60directscreenaccess.h"
 
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
@@ -74,6 +75,9 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
                                   m_windowRect, 
                                   m_clipRect)
          );
+    
+    m_dsa = S60DirectScreenAccess::NewL(*m_wsSession, *m_screenDevice, *m_window);
+    m_dsa->Start();
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
@@ -142,9 +146,7 @@ void S60VideoPlayerSession::nativeHandles()
     if (!m_videoWidgetControl) {
 		m_coeControl =  m_dummyWidget->winId();
     } else {
-        m_coeControl =  m_videoWidgetControl->videoWidget()->winId();
-        //connect(m_videoWidgetControl->videoWidget(), SIGNAL(videoWindowChanged()), this, SLOT(updateWidget()));
-        //connect(m_videoWidgetControl, SIGNAL(fullScreenChanged(bool)), this, SLOT(updateWidget()));
+        m_coeControl = m_videoWidgetControl->videoWidget()->winId();
         m_coeControl->MakeVisible(ETrue);
         m_coeControl->SetPosition(TPoint(0,0));
     }
@@ -206,8 +208,8 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 								  *m_window, 
 								  m_windowRect, 
 								  m_clipRect);
-		//m_coeControl->ActivateL();
 	);
+	
     setError(aError);
     initComplete();
 }

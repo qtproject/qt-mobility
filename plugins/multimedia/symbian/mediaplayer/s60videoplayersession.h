@@ -47,6 +47,7 @@
 #include <coecntrl.h>
 
 class S60VideoWidgetControl;
+class S60DirectScreenAccess;
 class QWidget;
 
 class S60VideoPlayerSession : public S60MediaPlayerSession, public MVideoPlayerUtilityObserver
@@ -76,7 +77,7 @@ protected:
     void doSetPosition(qint64 microSeconds);
     void updateMetaDataEntries();
 
-private: 
+private slots: 
     void nativeHandles();
 
     
@@ -98,6 +99,8 @@ private:
     
     S60VideoWidgetControl* m_videoWidgetControl;
     QWidget *m_dummyWidget;
+    
+    S60DirectScreenAccess* m_dsa;
 };
 
 #endif

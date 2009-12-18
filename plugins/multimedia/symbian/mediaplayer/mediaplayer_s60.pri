@@ -6,7 +6,8 @@ LIBS += -lmediaclientvideo \
 	-lcone \
 	-lMPEngine \
     -lmmfcontrollerframework \
-    -lefsrv 
+    -lefsrv \
+    -lbitgdi
 
 # If support to DRM is wanted then comment out the following line 
 #CONFIG += drm_supported
@@ -27,7 +28,8 @@ HEADERS += \
     $$PWD/s60videorenderer.h \
     $$PWD/s60mediarecognizer.h \
     $$PWD/s60audioplayersession.h \
-    $$PWD/ms60mediaplayerresolver.h
+    $$PWD/ms60mediaplayerresolver.h \
+    $$PWD/s60directscreenaccess.h
 
 SOURCES += \
     $$PWD/s60mediaplayercontrol.cpp \
@@ -39,7 +41,8 @@ SOURCES += \
     $$PWD/s60videooverlay.cpp \
     $$PWD/s60videorenderer.cpp \
     $$PWD/s60mediarecognizer.cpp \
-    $$PWD/s60audioplayersession.cpp
+    $$PWD/s60audioplayersession.cpp \
+    $$PWD/s60directscreenaccess.cpp
 	
 
 
