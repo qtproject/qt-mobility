@@ -23,6 +23,14 @@ SOURCES += s60serviceplugin.cpp \
            s60videowidget.cpp \
            s60videooutputcontrol.cpp 
 
+!exists($${EPOCROOT}epoc32/release/armv5/lib/camerawrapper.lib) {
+	error("Camerawrapper libraries are missing.")
+}
+
+!exists($${EPOCROOT}epoc32/include/mpmediarecognizer.h) {
+	error("Media recognizer SDK plugin is missing")
+}
+
 exists($${EPOCROOT}epoc32/include/tuner/tuner.h) {
 	include(radio/radio.pri)
 	DEFINES += USE_INTERNAL_TUNERLIB
