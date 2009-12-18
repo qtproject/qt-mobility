@@ -69,7 +69,7 @@ QCvDisplayLink::QCvDisplayLink(QObject *parent)
     m_pendingDisplayLinkEvent(false),
     m_isActive(false)
 {
- // create display link for the main display
+    // create display link for the main display
     CVDisplayLinkCreateWithCGDisplay(kCGDirectMainDisplay, &m_displayLink);
     if (m_displayLink) {
         // set the current display of a display link.
@@ -101,7 +101,7 @@ bool QCvDisplayLink::isActive() const
 
 void QCvDisplayLink::start()
 {
-     if (m_displayLink) {
+     if (m_displayLink && !m_isActive) {
         CVDisplayLinkStart(m_displayLink);
         m_isActive = true;
      }
@@ -109,7 +109,7 @@ void QCvDisplayLink::start()
 
 void QCvDisplayLink::stop()
 {
-    if (m_displayLink) {
+    if (m_displayLink && m_isActive) {
         CVDisplayLinkStop(m_displayLink);
         m_isActive = false;
     }

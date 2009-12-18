@@ -60,8 +60,6 @@ class GLVideoWidget;
 
 QTM_BEGIN_NAMESPACE
 
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
 class QCvDisplayLink;
 
 class QT7MovieVideoWidget : public QT7VideoWidgetControl

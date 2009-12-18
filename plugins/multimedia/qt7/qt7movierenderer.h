@@ -39,31 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QT7MOVIEVIEWRENDERER_H
-#define QT7MOVIEVIEWRENDERER_H
+#ifndef QT7MOVIERENDERER_H
+#define QT7MOVIERENDERER_H
 
 #include <QtCore/qobject.h>
 #include <QtCore/qmutex.h>
 
-#include <qvideowindowcontrol.h>
+#include <qvideorenderercontrol.h>
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
 #include "qt7videooutputcontrol.h"
-#include <QtMultimedia/qvideoframe.h>
 
+#include <CoreVideo/CVOpenGLTexture.h>
+#include <QuickTime/QuickTime.h>
 
 class QT7PlayerSession;
 class QT7PlayerService;
-class QVideoFrame;
 
 QTM_BEGIN_NAMESPACE
 
-class QT7MovieViewRenderer : public QT7VideoRendererControl
+class QCvDisplayLink;
+
+class QT7MovieRenderer : public QT7VideoRendererControl
 {
+Q_OBJECT
 public:
-    QT7MovieViewRenderer(QObject *parent = 0);
-    ~QT7MovieViewRenderer();
+    QT7MovieRenderer(QObject *parent = 0);
+    virtual ~QT7MovieRenderer();
 
     void setEnabled(bool);
     void setMovie(void *movie);
@@ -71,20 +74,26 @@ public:
     QAbstractVideoSurface *surface() const;
     void setSurface(QAbstractVideoSurface *surface);
 
-    void renderFrame(const QVideoFrame &);
+    QSize nativeSize() const;
 
-protected:
-    bool event(QEvent *event);
-
+private slots:
+    void updateVideoFrame(const CVTimeStamp &ts);
+    
 private:
     void setupVideoOutput();
+    bool createPixelBufferVisualContext();
+    bool createGLVisualContext();
 
     void *m_movie;
-    void *m_movieView;
-    QSize m_nativeSize;
-    QAbstractVideoSurface *m_surface;
-    QVideoFrame m_currentFrame;
+
     QMutex m_mutex;
+
+    QCvDisplayLink *m_displayLink;
+#ifdef QUICKTIME_C_API_AVAILABLE
+    QTVisualContextRef	m_visualContext;
+#endif
+    QAbstractVideoSurface *m_surface;
+    QSize m_nativeSize;
 };
 
 QTM_END_NAMESPACE

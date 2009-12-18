@@ -57,9 +57,6 @@ class QT7PlayerService;
 
 QTM_BEGIN_NAMESPACE
 
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
-
 class QT7MovieViewOutput : public QT7VideoWindowControl
 {
 public:

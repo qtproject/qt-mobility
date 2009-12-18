@@ -49,6 +49,7 @@
 #include "qt7videooutputcontrol.h"
 #include "qt7movieviewoutput.h"
 #include "qt7movieviewrenderer.h"
+#include "qt7movierenderer.h"
 #include "qt7movievideowidget.h"
 
 #include <qmediaplaylistnavigator.h>
@@ -74,7 +75,8 @@ QT7PlayerService::QT7PlayerService(QObject *parent):
     m_videoWidgetControl = 0;
 #else
     m_videoWidnowControl = 0;
-    m_videoRendererControl = 0;
+    m_videoRendererControl = new QT7MovieRenderer(this);
+    m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
     m_videoWidgetControl = new QT7MovieVideoWidget(this);
     m_videoOutputControl->enableOutput(QVideoOutputControl::WidgetOutput);
 #endif
