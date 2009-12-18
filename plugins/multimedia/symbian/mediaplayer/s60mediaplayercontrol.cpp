@@ -209,7 +209,7 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 
     QUrl url;
     if (m_session && !source.isNull()) {
-		url = source.canonicalUri();
+        url = source.canonicalUrl();
 		if (m_session->isUrl() == false) {
 			m_session->load(url);	
 		} else {

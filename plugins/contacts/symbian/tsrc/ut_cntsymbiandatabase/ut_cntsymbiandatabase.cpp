@@ -62,7 +62,7 @@ void TestCntSymbianDatabase::ctor()
     db = new CntSymbianDatabase(engine, error);
     QVERIFY(db != 0);
     QVERIFY(db->m_engine == engine);
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
     QVERIFY(db->m_contactChangeNotifier != 0);
 #endif
     QVERIFY(db->m_contactDatabase);
@@ -73,12 +73,12 @@ void TestCntSymbianDatabase::contactDatabase()
 {
     QContactManagerEngine *engine = 0;
     QContactManager::Error error;
-    CntSymbianDatabase *db; 
+    CntSymbianDatabase *db;
     db = new CntSymbianDatabase(engine, error);
     QVERIFY(db != 0);
     QVERIFY(error == QContactManager::NoError);
-    
-    CContactDatabase *cdb = 0; 
+
+    CContactDatabase *cdb = 0;
     cdb = db->contactDatabase();
     QVERIFY(cdb != 0);
     CContactDatabase *cdb1 = db->m_contactDatabase;
@@ -90,21 +90,21 @@ void TestCntSymbianDatabase::appendFunctions()
 {
     QContactManagerEngine *engine = 0;
     QContactManager::Error error;
-    CntSymbianDatabase *db; 
+    CntSymbianDatabase *db;
     db = new CntSymbianDatabase(engine, error);
     QVERIFY(db != 0);
     QVERIFY(error == QContactManager::NoError);
-    
+
     QContactLocalId id(123);
     db->appendContactEmitted(id);
     QVERIFY(db->m_contactsEmitted.contains(id));
     db->m_contactsEmitted.clear();
-    
+
     QList<QContactLocalId> contactList;
     QContactLocalId id1(345);
     QContactLocalId id2(678);
     QContactLocalId id3(910);
-    
+
     contactList.append(id1);
     contactList.append(id2);
     contactList.append(id3);

@@ -70,6 +70,10 @@ public:
     {
         return true;
     }
+    QtMedia::AvailabilityError availabilityError() const
+    {
+        return QtMedia::NoError;
+    }
 
     QRadioTuner::Band band() const
     {

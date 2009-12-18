@@ -17,12 +17,13 @@ symbian:
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += ut_cntfiltering.h \
-            $$SYMBIAN_HEADERS
+    HEADERS += $$SYMBIAN_HEADERS \
+               ut_cntfiltering.h
+               
             
-    SOURCES += ut_cntfiltering.cpp \
-            $$SYMBIAN_SOURCES            
-            
+    SOURCES += $$SYMBIAN_SOURCES \
+               ut_cntfiltering.cpp              
+
     TARGET.CAPABILITY = ALL \
         -TCB
         

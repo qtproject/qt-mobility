@@ -63,6 +63,8 @@ public:
     S60RadioTunerControl(QObject *parent = 0);
     ~S60RadioTunerControl();
     
+    QtMedia::AvailabilityError availabilityError() const;
+
     QRadioTuner::State state() const;
 
     QRadioTuner::Band band() const;

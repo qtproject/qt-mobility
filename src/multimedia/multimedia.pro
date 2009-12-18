@@ -58,7 +58,7 @@ PUBLIC_HEADERS += \
     qaudiocapturesource.h \
     qmediacontainercontrol.h \
     qmediaplaylistcontrol.h \
-    qaudiodevicecontrol.h \
+    qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
     qvideorenderercontrol.h
@@ -95,12 +95,18 @@ SOURCES += qmediacontrol.cpp \
     qaudiocapturesource.cpp \
     qmediacontainercontrol.cpp \
     qmediaplaylistcontrol.cpp \
-    qaudiodevicecontrol.cpp \
+    qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp \
     qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
     qvideorenderercontrol.cpp
+
+contains(QT_CONFIG, declarative) {
+   QT += declarative
+   PRIVATE_HEADERS += qmlsound_p.h
+   SOURCES += qmlsound.cpp
+}
 
 include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS

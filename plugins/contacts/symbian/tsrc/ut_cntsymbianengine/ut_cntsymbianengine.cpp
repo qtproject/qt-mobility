@@ -114,22 +114,13 @@ void TestSymbianEngine::ctors()
         QSKIP("Error creating CntSymbianEngine in ctor", SkipSingle);
     }
     // copy ctor
-    CntSymbianEngine *ce1(ce);
+    CntSymbianEngine* ce1 = new CntSymbianEngine(*ce);
     QVERIFY(ce->managerName() == ce1->managerName());
     QVERIFY(ce->m_contactFilter == ce1->m_contactFilter);
     QVERIFY(ce->m_contactSorter == ce1->m_contactSorter);
     QVERIFY(ce->m_dataBase == ce1->m_dataBase);
     QVERIFY(ce->m_relationship == ce1->m_relationship);
     QVERIFY(ce->m_transformContact == ce1->m_transformContact);
-
-    // assignment
-    CntSymbianEngine *ce2 = ce;
-    QVERIFY(ce->managerName() == ce2->managerName());
-    QVERIFY(ce->m_contactFilter == ce2->m_contactFilter);
-    QVERIFY(ce->m_contactSorter == ce2->m_contactSorter);
-    QVERIFY(ce->m_dataBase == ce2->m_dataBase);
-    QVERIFY(ce->m_relationship == ce2->m_relationship);
-    QVERIFY(ce->m_transformContact == ce2->m_transformContact);
 
     // dref
     ce->deref();
@@ -248,7 +239,6 @@ void TestSymbianEngine::saveContactWithPreferredDetails()
     QVERIFY(err == QContactManager::NoError);
     
     QContactDetail callDetail1 = fetched.preferredDetail("call");
-    QString name = callDetail1.definitionName();
     QVERIFY(callDetail1.definitionName() == QContactPhoneNumber::DefinitionName);
     QContactPhoneNumber fetchedNumber1 = static_cast<QContactPhoneNumber>(callDetail1);
     QVERIFY(fetchedNumber1.number() == "123");
@@ -267,6 +257,36 @@ void TestSymbianEngine::saveContactWithPreferredDetails()
     QVERIFY(emailDetail.definitionName() == QContactEmailAddress::DefinitionName);
     QContactEmailAddress fetchedEmail = static_cast<QContactEmailAddress>(emailDetail);
     QVERIFY(fetchedEmail.emailAddress() == "dummyemail");
+    
+    //save a contact with one preferred details for several actions
+    QContact c2;
+    c2.setType(QContactType::TypeContact);
+    c2.saveDetail(&number1);
+    c2.setPreferredDetail("call", number1);
+    c2.setPreferredDetail("videocall", number1);
+    c2.setPreferredDetail("message", number1);
+    
+    QVERIFY(m_engine->saveContact(&c2, err));
+    QVERIFY(err == QContactManager::NoError);
+     
+    //fetch the saved contact and check preferred details
+    QContact fetched2 = m_engine->contact(c2.localId(), err);
+    QVERIFY(err == QContactManager::NoError);
+     
+    QContactDetail callDetail4 = fetched2.preferredDetail("call");
+    QVERIFY(callDetail4.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber4 = static_cast<QContactPhoneNumber>(callDetail4);
+    QVERIFY(fetchedNumber4.number() == "123");
+     
+    QContactDetail callDetail5 = fetched2.preferredDetail("videocall");
+    QVERIFY(callDetail5.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber5 = static_cast<QContactPhoneNumber>(callDetail5);
+    QVERIFY(fetchedNumber5.number() == "123");
+
+    QContactDetail callDetail6 = fetched2.preferredDetail("message");
+    QVERIFY(callDetail6.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber6 = static_cast<QContactPhoneNumber>(callDetail6);
+    QVERIFY(fetchedNumber6.number() == "123");
 }
 
 void TestSymbianEngine::saveContacts()
@@ -754,7 +774,11 @@ void TestSymbianEngine::retrieveGroup()
     QList<QContactSortOrder> s;
 
     // retrieve group contacts
-    QList<QContactLocalId> grp_ids = m_engine->contacts(QContactType::TypeGroup, s, err);
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
+    filter.setValue(QString(QLatin1String(QContactType::TypeGroup)));
+    
+    QList<QContactLocalId> grp_ids = m_engine->contacts(filter, s, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(err == QContactManager::NoError);
 
@@ -763,7 +787,7 @@ void TestSymbianEngine::retrieveGroup()
     QVERIFY(m_engine->saveContact(&g, err));
     QVERIFY(err == QContactManager::NoError);
 
-    QList<QContactLocalId> grp_ids1 = m_engine->contacts(QContactType::TypeGroup, s, err);
+    QList<QContactLocalId> grp_ids1 = m_engine->contacts(filter, s, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(grp_ids.count() + 1 == grp_ids1.count());
 
@@ -802,6 +826,10 @@ void TestSymbianEngine::singleRelationship()
     else
         isValid = false;
     QVERIFY(isValid);
+    
+    QStringList supportedRelationships =
+        m_engine->supportedRelationshipTypes(QContactType::TypeGroup);
+    QVERIFY(supportedRelationships.contains(QContactRelationship::HasMember));
 }
 
 void TestSymbianEngine::batchRelationships()

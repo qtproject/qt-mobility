@@ -75,6 +75,14 @@ S60RadioTunerControl::~S60RadioTunerControl()
 	m_audioPlayerUtily = NULL;
     m_tunerUtility = NULL;
 }
+QtMedia::AvailabilityError S60RadioTunerControl::availabilityError() const
+{
+    if (available)
+        return QtMedia::NoError;
+    else
+        return QtMedia::ResourceError;
+}
+
 QRadioTuner::State S60RadioTunerControl::state() const
 {
     return m_apiTunerState;

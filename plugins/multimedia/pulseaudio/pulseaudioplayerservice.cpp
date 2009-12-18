@@ -39,44 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QAUDIODEVICECONTROL_H
-#define QAUDIODEVICECONTROL_H
+#include "pulseaudioplayercontrol.h"
+#include "pulseaudioplayerservice.h"
 
-#include <qmediacontrol.h>
 
-QTM_BEGIN_NAMESPACE
-
-class Q_MEDIA_EXPORT QAudioDeviceControl : public QMediaControl
+PulseAudioPlayerService::PulseAudioPlayerService(QObject *parent) :
+    QMediaService(parent),
+    m_control(0)
 {
-    Q_OBJECT
+    m_control = new PulseAudioPlayerControl;
+}
 
-public:
-    virtual ~QAudioDeviceControl();
+PulseAudioPlayerService::~PulseAudioPlayerService()
+{
+    delete m_control;
+}
 
-    virtual int deviceCount() const = 0;
+QMediaControl* PulseAudioPlayerService::control(const char *name) const
+{
+    if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
+        return m_control;
 
-    virtual QString deviceName(int index) const = 0;
-    virtual QString deviceDescription(int index) const = 0;
-    virtual QIcon deviceIcon(int index) const = 0;
-
-    virtual int defaultDevice() const = 0;
-    virtual int selectedDevice() const = 0;
-
-public Q_SLOTS:
-    virtual void setSelectedDevice(int index) = 0;
-
-Q_SIGNALS:
-    void selectedDeviceChanged(int index);
-    void selectedDeviceChanged(const QString &deviceName);
-    void devicesChanged();
-
-protected:
-    QAudioDeviceControl(QObject *parent = 0);
-};
-
-#define QAudioDeviceControl_iid "com.nokia.Qt.QAudioDeviceControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QAudioDeviceControl, QAudioDeviceControl_iid)
-
-QTM_END_NAMESPACE
-
-#endif // QAUDIODEVICECONTROL_H
+    return 0;
+}

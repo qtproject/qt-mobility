@@ -39,68 +39,30 @@
 **
 ****************************************************************************/
 
-#include "s60audiocapturesession.h"
-#include "s60audiodevicecontrol.h"
+#ifndef PULSEAUDIOSERVICEPROVIDERPLUGIN_H
+#define PULSEAUDIOSERVICEPROVIDERPLUGIN_H
 
-#include <QtGui/QIcon>
-#include <QtCore/QDebug>
+#include <qmediaserviceproviderplugin.h>
 
-//#include <multimedia/qaudiodeviceinfo.h>
+QTM_USE_NAMESPACE
 
-
-S60AudioDeviceControl::S60AudioDeviceControl(QObject *parent)
-    :QAudioDeviceControl(parent)
+class PulseaudioServiceProviderPlugin :
+        public QMediaServiceProviderPlugin,
+        public QMediaServiceFeaturesInterface,
+        public QMediaServiceSupportedFormatsInterface
 {
-    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QMediaServiceFeaturesInterface QtMobility::QMediaServiceSupportedFormatsInterface)
 
-    update();
-}
+public:
+    QStringList keys() const;
+    QMediaService* create(QString const& key);
+    void release(QMediaService *service);
 
-S60AudioDeviceControl::~S60AudioDeviceControl()
-{
-}
+    QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const;
 
-int S60AudioDeviceControl::deviceCount() const
-{
-    return 1;
-}
+    QtMedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const;
+    QStringList supportedMimeTypes() const;
+};
 
-QString S60AudioDeviceControl::deviceName(int index) const
-{
-    return QString();
-}
-
-QString S60AudioDeviceControl::deviceDescription(int index) const
-{
-    return QString();
-}
-
-QIcon S60AudioDeviceControl::deviceIcon(int index) const
-{
-    Q_UNUSED(index);
-    return QIcon();
-}
-
-int S60AudioDeviceControl::defaultDevice() const
-{
-    return 0;
-}
-
-int S60AudioDeviceControl::selectedDevice() const
-{
-    return 0;
-}
-
-void S60AudioDeviceControl::setSelectedDevice(int index)
-{
-    m_session->setCaptureDevice(QString("MMF"));    //TODO: What this should be in S60 case? There are no special devices as Linux or Windows.
-}
-
-void S60AudioDeviceControl::update()
-{
-    m_names.clear();
-    m_descriptions.clear();
-
-    m_names.append(QString("MMF"));
-    m_descriptions.append(QString("MMF"));
-}
+#endif // PULSEAUDIOSERVICEPROVIDERPLUGIN_H

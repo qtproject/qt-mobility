@@ -51,7 +51,7 @@ QTM_USE_NAMESPACE
 class S60AudioCaptureSession;
 class S60AudioEncoderControl;
 class S60AudioMediaRecorderControl;
-class S60AudioDeviceControl;
+class S60AudioEndpointSelector;
 
 
 class S60AudioCaptureService : public QMediaService
@@ -65,7 +65,7 @@ public:
 private:
     S60AudioCaptureSession       *m_session;
     S60AudioEncoderControl       *m_encoderControl;
-    S60AudioDeviceControl        *m_deviceControl;
+    S60AudioEndpointSelector     *m_endpointSelector;
     S60AudioMediaRecorderControl *m_mediaControl;
 };
 

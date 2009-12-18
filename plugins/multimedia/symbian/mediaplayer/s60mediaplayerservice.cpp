@@ -162,7 +162,7 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
 
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
-    QUrl url = m_control->media().canonicalUri();
+    QUrl url = m_control->media().canonicalUrl();
   
     if (url.isEmpty() == true) {
         return NULL;

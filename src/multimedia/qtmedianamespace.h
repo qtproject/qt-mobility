@@ -93,8 +93,8 @@ namespace QtMedia
         TrackNumber,
         TrackCount,
 
-        CoverArtUriSmall,
-        CoverArtUriLarge,
+        CoverArtUrlSmall,
+        CoverArtUrlLarge,
 
         // Image/Video
         Resolution,
@@ -105,7 +105,7 @@ namespace QtMedia
         VideoBitRate,
         VideoCodec,
 
-        PosterUri,
+        PosterUrl,
 
         // Movie
         ChapterNumber,
@@ -166,6 +166,14 @@ namespace QtMedia
         ConstantBitRateEncoding,
         AverageBitRateEncoding,
         TwoPassEncoding
+    };
+
+    enum AvailabilityError
+    {
+        NoError,
+        ServiceMissingError,
+        BusyError,
+        ResourceError
     };
 
 }

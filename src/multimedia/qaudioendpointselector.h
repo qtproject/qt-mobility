@@ -39,43 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIODEVICECONTROL_H
-#define AUDIODEVICECONTROL_H
+#ifndef QAUDIOENDPOINTSELECTOR_H
+#define QAUDIOENDPOINTSELECTOR_H
 
-#include <QStringList>
+#include <QtMultimedia/qaudio.h>
+#include <qmediacontrol.h>
 
-#include <qaudiodevicecontrol.h>
+QTM_BEGIN_NAMESPACE
 
-class AudioCaptureSession;
-
-QTM_USE_NAMESPACE
-
-class AudioDeviceControl : public QAudioDeviceControl
+class Q_MEDIA_EXPORT QAudioEndpointSelector : public QMediaControl
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
-    AudioDeviceControl(QObject *parent);
-    virtual ~AudioDeviceControl();
+    virtual ~QAudioEndpointSelector();
 
-    int deviceCount() const;
-
-    QString deviceName(int index) const;
-    QString deviceDescription(int index) const;
-    QIcon deviceIcon(int index) const;
-
-    int defaultDevice() const;
-    int selectedDevice() const;
+    virtual QList<QString> availableEndpoints() const = 0;
+    virtual QString endpointDescription(const QString& name) const = 0;
+    virtual QString defaultEndpoint() const = 0;
+    virtual QString activeEndpoint() const = 0;
 
 public Q_SLOTS:
-    void setSelectedDevice(int index);
+    virtual void setActiveEndpoint(const QString& name) = 0;
 
-private:
-    void update();
+Q_SIGNALS:
+    void activeEndpointChanged(const QString& name);
+    void availableEndpointsChanged();
 
-    QString     m_device;
-    QStringList m_names;
-    QStringList m_descriptions;
-    AudioCaptureSession* m_session;
+protected:
+    QAudioEndpointSelector(QObject *parent = 0);
 };
 
-#endif // AUDIODEVICECONTROL_H
+#define QAudioEndpointSelector_iid "com.nokia.Qt.QAudioEndpointSelector/1.0"
+Q_MEDIA_DECLARE_CONTROL(QAudioEndpointSelector, QAudioEndpointSelector_iid)
+
+QTM_END_NAMESPACE
+
+#endif // QAUDIOENDPOINTSELECTOR_H

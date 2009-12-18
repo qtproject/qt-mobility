@@ -62,7 +62,7 @@ void tst_QMediaResource::constructNull()
     QMediaResource resource;
 
     QCOMPARE(resource.isNull(), true);
-    QCOMPARE(resource.uri(), QUrl());
+    QCOMPARE(resource.url(), QUrl());
     QCOMPARE(resource.mimeType(), QString());
     QCOMPARE(resource.language(), QString());
     QCOMPARE(resource.audioCodec(), QString());
@@ -77,7 +77,7 @@ void tst_QMediaResource::constructNull()
 
 void tst_QMediaResource::construct_data()
 {
-    QTest::addColumn<QUrl>("uri");
+    QTest::addColumn<QUrl>("url");
     QTest::addColumn<QString>("mimeType");
     QTest::addColumn<QString>("language");
     QTest::addColumn<QString>("audioCodec");
@@ -141,7 +141,7 @@ void tst_QMediaResource::construct_data()
 
 void tst_QMediaResource::construct()
 {
-    QFETCH(QUrl, uri);
+    QFETCH(QUrl, url);
     QFETCH(QString, mimeType);
     QFETCH(QString, language);
     QFETCH(QString, audioCodec);
@@ -154,10 +154,10 @@ void tst_QMediaResource::construct()
     QFETCH(QSize, resolution);
 
     {
-        QMediaResource resource(uri);
+        QMediaResource resource(url);
 
         QCOMPARE(resource.isNull(), false);
-        QCOMPARE(resource.uri(), uri);
+        QCOMPARE(resource.url(), url);
         QCOMPARE(resource.mimeType(), QString());
         QCOMPARE(resource.language(), QString());
         QCOMPARE(resource.audioCodec(), QString());
@@ -170,10 +170,10 @@ void tst_QMediaResource::construct()
         QCOMPARE(resource.resolution(), QSize());
     }
     {
-        QMediaResource resource(uri, mimeType);
+        QMediaResource resource(url, mimeType);
 
         QCOMPARE(resource.isNull(), false);
-        QCOMPARE(resource.uri(), uri);
+        QCOMPARE(resource.url(), url);
         QCOMPARE(resource.mimeType(), mimeType);
         QCOMPARE(resource.language(), QString());
         QCOMPARE(resource.audioCodec(), QString());
@@ -394,19 +394,19 @@ void tst_QMediaResource::equality()
 
 void tst_QMediaResource::copy()
 {
-    const QUrl uri(QString::fromLatin1("http://test.com/test.mp4"));
+    const QUrl url(QString::fromLatin1("http://test.com/test.mp4"));
     const QString mimeType(QLatin1String("video/mp4"));
     const QString amrCodec(QLatin1String("amr"));
     const QString mp3Codec(QLatin1String("mp3"));
     const QString aacCodec(QLatin1String("aac"));
     const QString h264Codec(QLatin1String("h264"));
 
-    QMediaResource original(uri, mimeType);
+    QMediaResource original(url, mimeType);
     original.setAudioCodec(amrCodec);
 
     QMediaResource copy(original);
 
-    QCOMPARE(copy.uri(), uri);
+    QCOMPARE(copy.url(), url);
     QCOMPARE(copy.mimeType(), mimeType);
     QCOMPARE(copy.audioCodec(), amrCodec);
 
@@ -422,7 +422,7 @@ void tst_QMediaResource::copy()
     copy.setAudioCodec(aacCodec);
     copy.setVideoCodec(h264Codec);
 
-    QCOMPARE(copy.uri(), uri);
+    QCOMPARE(copy.url(), url);
     QCOMPARE(copy.mimeType(), mimeType);
 
     QCOMPARE(original.audioCodec(), mp3Codec);
@@ -430,7 +430,7 @@ void tst_QMediaResource::copy()
 
 void tst_QMediaResource::assign()
 {
-    const QUrl uri(QString::fromLatin1("http://test.com/test.mp4"));
+    const QUrl url(QString::fromLatin1("http://test.com/test.mp4"));
     const QString mimeType(QLatin1String("video/mp4"));
     const QString amrCodec(QLatin1String("amr"));
     const QString mp3Codec(QLatin1String("mp3"));
@@ -439,12 +439,12 @@ void tst_QMediaResource::assign()
 
     QMediaResource copy(QUrl(QString::fromLatin1("file:///thumbs/test.jpg")));
 
-    QMediaResource original(uri, mimeType);
+    QMediaResource original(url, mimeType);
     original.setAudioCodec(amrCodec);
 
     copy = original;
 
-    QCOMPARE(copy.uri(), uri);
+    QCOMPARE(copy.url(), url);
     QCOMPARE(copy.mimeType(), mimeType);
     QCOMPARE(copy.audioCodec(), amrCodec);
 
@@ -460,7 +460,7 @@ void tst_QMediaResource::assign()
     copy.setAudioCodec(aacCodec);
     copy.setVideoCodec(h264Codec);
 
-    QCOMPARE(copy.uri(), uri);
+    QCOMPARE(copy.url(), url);
     QCOMPARE(copy.mimeType(), mimeType);
 
     QCOMPARE(original.audioCodec(), mp3Codec);

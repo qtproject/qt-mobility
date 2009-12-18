@@ -92,6 +92,20 @@ QTM_BEGIN_NAMESPACE
     \sa
 */
 
+namespace
+{
+class MediaRecorderRegisterMetaTypes
+{
+public:
+    MediaRecorderRegisterMetaTypes()
+    {
+        qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+        qRegisterMetaType<QMediaRecorder::Error>("QMediaRecorder::Error");
+    }
+} _registerRecorderMetaTypes;
+}
+
+
 class QMediaRecorderPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_NON_CONST_PUBLIC(QMediaRecorder)
@@ -208,12 +222,25 @@ QMediaRecorder::~QMediaRecorder()
 */
 
 /*!
-    Returns true if the media object the recorder is associated with
-    supports media recording.
+    Returns true if media recorder service ready to use.
 */
 bool QMediaRecorder::isAvailable() const
 {
-    return d_func()->control != NULL;
+    if (d_func()->control != NULL)
+        return true;
+    else
+        return false;
+}
+
+/*!
+    Returns the availability error code.
+*/
+QtMedia::AvailabilityError QMediaRecorder::availabilityError() const
+{
+    if (d_func()->control != NULL)
+        return QtMedia::NoError;
+    else
+        return QtMedia::ServiceMissingError;
 }
 
 QUrl QMediaRecorder::outputLocation() const

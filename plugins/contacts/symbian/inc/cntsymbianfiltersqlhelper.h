@@ -58,15 +58,18 @@
 QTM_USE_NAMESPACE
 class CntSymbianFilterSqlHelper
 {
-public: 
-    Q_DECLARE_LATIN1_LITERAL(SingleQuote,"'")  ;
-    Q_DECLARE_LATIN1_LITERAL(PercentSign,"%") ;
-    Q_DECLARE_LATIN1_LITERAL(Space," ") ;
-    Q_DECLARE_LATIN1_LITERAL(EqualTo,"=") ;
-    Q_DECLARE_LATIN1_LITERAL(SqlLike,"LIKE") ;
-    Q_DECLARE_LATIN1_LITERAL(SqlNotNull,"NOT NULL") ;
-    Q_DECLARE_LATIN1_LITERAL(contactsTable,"contact") ;
-    Q_DECLARE_LATIN1_LITERAL(commAddrTable,"comm_addr") ;
+public:
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SingleQuote,"'")  ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::PercentSign,"%") ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::Space," ") ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::EqualTo,"=") ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SqlLike," LIKE ") ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SqlNotNull," NOT NULL ") ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SqlWhere," WHERE ") ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::SqlOr," OR ") ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::contactsTable," contact ") ;
+    Q_DECLARE_LATIN1_LITERAL(CntSymbianFilterSqlHelper::commAddrTable," comm_addr ") ;
+    
     //This is copied from pltables.h from cntmodel.
     // This definition needs to be exported and the file included
     // so that duplicity is avoided
@@ -82,15 +85,15 @@ public:
 
 public:
     /*Generic functions for all filters*/
-    QList<QContactLocalId> searchContacts(const QContactFilter& filter, 
+    QList<QContactLocalId> searchContacts(const QContactFilter& filter,
                                            QContactManager::Error& error);
-    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+    CntAbstractContactFilter::FilterSupport filterSupportLevel(const QContactFilter& filter);
 
 private:
     void createSqlQuery(const QContactFilter& filter,
                           QString& sqlQuery,
                           QContactManager::Error& error);
-    /* Return true if this filter is leaf filter*/ 
+    /* Return true if this filter is leaf filter*/
     bool isSingleFilter(const QContactFilter& filter) const;
     /*Local helper functions used for creating the sql query */
     void updateSqlQueryForSingleFilter(const QContactFilter& filter,
@@ -99,6 +102,11 @@ private:
     void updateSqlQueryForDetailFilter(const QContactFilter& filter,
                                        QString& sqlQuery,
                                        QContactManager::Error& error);
+    
+    void updateSqlQueryForDisplayLabelFilter(const QContactDetailFilter& filter,
+                                             QString& sqlQuery,
+                                             QContactManager::Error& error);
+    
     void getSqlDbTableAndColumnNameforDetailFilter(
                                 const QContactDetailFilter& filter ,
                                 bool& isSubType,
@@ -114,7 +122,7 @@ private:
             const TDesC& phoneNumber,
             const TInt matchLength);
     CntAbstractContactFilter::FilterSupport checkIfDetailFilterSupported(const QContactDetailFilter& detailFilter) const;
-    
+
 private:
     CntSymbianSrvConnection* m_srvConnection;
     CContactDatabase &m_contactDatabase;

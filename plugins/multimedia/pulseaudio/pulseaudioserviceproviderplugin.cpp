@@ -39,42 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERAUDIOINPUTDEVICECONTROL_H
-#define QGSTREAMERAUDIOINPUTDEVICECONTROL_H
+#include "pulseaudioplayerservice.h"
+#include "pulseaudioserviceproviderplugin.h"
 
-#include <qaudiodevicecontrol.h>
-#include <QtCore/qstringlist.h>
 
-QTM_USE_NAMESPACE
-
-class QGstreamerAudioInputDeviceControl : public QAudioDeviceControl
+QStringList PulseaudioServiceProviderPlugin::keys() const
 {
-Q_OBJECT
-public:
-    QGstreamerAudioInputDeviceControl(QObject *parent);
-    ~QGstreamerAudioInputDeviceControl();
+    return QStringList() << Q_MEDIASERVICE_MEDIAPLAYER;
+}
 
-    int deviceCount() const;
+QMediaService* PulseaudioServiceProviderPlugin::create(const QString &key)
+{
+    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
+        return new PulseAudioPlayerService;
 
-    QString deviceName(int index) const;
-    QString deviceDescription(int index) const;
-    QIcon deviceIcon(int index) const;
+    return 0;
+}
 
-    int defaultDevice() const;
-    int selectedDevice() const;
+void PulseaudioServiceProviderPlugin::release(QMediaService *service)
+{
+    delete service;
+}
 
-public Q_SLOTS:
-    void setSelectedDevice(int index);
+QMediaServiceProviderHint::Features PulseaudioServiceProviderPlugin::supportedFeatures(const QByteArray &service) const
+{
+    if (service == QByteArray(Q_MEDIASERVICE_MEDIAPLAYER))
+        return QMediaServiceProviderHint::LowLatencyPlayback;
 
-private:
-    void update();
-    void updateAlsaDevices();
-    void updateOssDevices();
-    void updatePulseDevices();
+    return 0;
+}
 
-    int m_selectedDevice;
-    QStringList m_names;
-    QStringList m_descriptions;
-};
+QtMedia::SupportEstimate PulseaudioServiceProviderPlugin::hasSupport(const QString &mimeType, const QStringList& codecs) const
+{
+    Q_UNUSED(codecs);
 
-#endif // QGSTREAMERAUDIOINPUTDEVICECONTROL_H
+    if (mimeType == QLatin1String("audio/x-wav"))
+        return QtMedia::ProbablySupported;
+
+    return QtMedia::NotSupported;
+}
+
+QStringList PulseaudioServiceProviderPlugin::supportedMimeTypes() const
+{
+    return QStringList() << QLatin1String("audio/x-wav");
+}
+
+
+Q_EXPORT_PLUGIN2(pulseaudio_serviceplugin, PulseaudioServiceProviderPlugin);

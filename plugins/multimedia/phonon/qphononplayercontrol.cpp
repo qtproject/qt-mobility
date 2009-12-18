@@ -203,7 +203,7 @@ void QPhononPlayerControl::setMedia(const QMediaContent &content, QIODevice *str
     QUrl url;
 
     if (!content.isNull())
-        url = content.canonicalUri();
+        url = content.canonicalUrl();
 
     m_session->stop();
     if (m_mediaStream)

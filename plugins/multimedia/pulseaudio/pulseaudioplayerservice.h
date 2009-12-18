@@ -39,44 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef S60AUDIODEVICECONTROL_H
-#define S60AUDIODEVICECONTROL_H
+#ifndef PULSEAUDIOPLAYERSERVICE_H
+#define PULSEAUDIOPLAYERSERVICE_H
 
-#include <QStringList>
-
-#include <QAudioDeviceControl>
+#include <qmediaservice.h>
 
 QTM_USE_NAMESPACE
 
-class S60AudioCaptureSession;
+class PulseAudioPlayerControl;
 
-class S60AudioDeviceControl : public QAudioDeviceControl
+class PulseAudioPlayerService : public QMediaService
 {
-
 Q_OBJECT
-
 public:
-    S60AudioDeviceControl(QObject *parent);
-    virtual ~S60AudioDeviceControl();
+    explicit PulseAudioPlayerService(QObject *parent = 0);
+    ~PulseAudioPlayerService();
 
-    int deviceCount() const;
-
-    QString deviceName(int index) const;
-    QString deviceDescription(int index) const;
-    QIcon deviceIcon(int index) const;
-
-    int defaultDevice() const;
-    int selectedDevice() const;
-
-public Q_SLOTS:
-    void setSelectedDevice(int index);
+    QMediaControl* control(const char *name) const;
 
 private:
-    void update();
-
-    QStringList             m_names;
-    QStringList             m_descriptions;
-    S60AudioCaptureSession* m_session;
+    PulseAudioPlayerControl *m_control;
 };
 
-#endif // S60AUDIODEVICECONTROL_H
+#endif // PULSEAUDIOPLAYERSERVICE_H

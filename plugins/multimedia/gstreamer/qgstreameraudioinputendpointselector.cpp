@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgstreameraudioinputdevicecontrol.h"
+#include "qgstreameraudioinputendpointselector.h"
 
 #include <QtGui/QIcon>
 #include <QtCore/QDir>
@@ -51,68 +51,67 @@
 #include <alsa/asoundlib.h>
 #endif
 
-QGstreamerAudioInputDeviceControl::QGstreamerAudioInputDeviceControl(QObject *parent)
-    :QAudioDeviceControl(parent), m_selectedDevice(0)
+QGstreamerAudioInputEndpointSelector::QGstreamerAudioInputEndpointSelector(QObject *parent)
+    :QAudioEndpointSelector(parent)
 {
     update();
 }
 
-QGstreamerAudioInputDeviceControl::~QGstreamerAudioInputDeviceControl()
+QGstreamerAudioInputEndpointSelector::~QGstreamerAudioInputEndpointSelector()
 {
 }
 
-int QGstreamerAudioInputDeviceControl::deviceCount() const
+QList<QString> QGstreamerAudioInputEndpointSelector::availableEndpoints() const
 {
-    return m_names.size();
+    return m_names;
 }
 
-QString QGstreamerAudioInputDeviceControl::deviceName(int index) const
+QString QGstreamerAudioInputEndpointSelector::endpointDescription(const QString& name) const
 {
-    return m_names[index];
+    QString desc;
+
+    for (int i = 0; i < m_names.size(); i++) {
+        if (m_names.at(i).compare(name) == 0) {
+            desc = m_descriptions.at(i);
+            break;
+        }
+    }
+    return desc;
 }
 
-QString QGstreamerAudioInputDeviceControl::deviceDescription(int index) const
+QString QGstreamerAudioInputEndpointSelector::defaultEndpoint() const
 {
-    return m_descriptions[index];
+    if (m_names.size() > 0)
+        return m_names.at(0);
+
+    return QString();
 }
 
-QIcon QGstreamerAudioInputDeviceControl::deviceIcon(int index) const
+QString QGstreamerAudioInputEndpointSelector::activeEndpoint() const
 {
-    Q_UNUSED(index);
-    return QIcon();
+    return m_audioInput;
 }
 
-int QGstreamerAudioInputDeviceControl::defaultDevice() const
+void QGstreamerAudioInputEndpointSelector::setActiveEndpoint(const QString& name)
 {
-    return 0;
-}
-
-int QGstreamerAudioInputDeviceControl::selectedDevice() const
-{
-    return m_selectedDevice;
-}
-
-
-void QGstreamerAudioInputDeviceControl::setSelectedDevice(int index)
-{
-    if (index != m_selectedDevice) {
-        m_selectedDevice = index;
-        emit selectedDeviceChanged(index);
-        emit selectedDeviceChanged(deviceName(index));
+    if (m_audioInput.compare(name) != 0) {
+        m_audioInput = name;
+        emit activeEndpointChanged(name);
     }
 }
 
-
-void QGstreamerAudioInputDeviceControl::update()
+void QGstreamerAudioInputEndpointSelector::update()
 {
     m_names.clear();
     m_descriptions.clear();
     updateAlsaDevices();
     updateOssDevices();
     updatePulseDevices();
+    if (m_names.size() > 0)
+        m_audioInput = m_names.at(0);
 }
 
-void QGstreamerAudioInputDeviceControl::updateAlsaDevices()
+void QGstreamerAudioInputEndpointSelector::updateAlsaDevices()
 {
 #ifdef HAVE_ALSA
     void **hints, **n;
@@ -146,7 +145,7 @@ void QGstreamerAudioInputDeviceControl::updateAlsaDevices()
 #endif
 }
 
-void QGstreamerAudioInputDeviceControl::updateOssDevices()
+void QGstreamerAudioInputEndpointSelector::updateOssDevices()
 {
     QDir devDir("/dev");
     devDir.setFilter(QDir::System);
@@ -162,7 +161,7 @@ void QGstreamerAudioInputDeviceControl::updateOssDevices()
 #endif
 }
 
-void QGstreamerAudioInputDeviceControl::updatePulseDevices()
+void QGstreamerAudioInputEndpointSelector::updatePulseDevices()
 {
     GstElementFactory *factory = gst_element_factory_find("pulsesrc");
     if (factory) {

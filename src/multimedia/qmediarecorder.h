@@ -88,6 +88,7 @@ public:
     ~QMediaRecorder();
 
     bool isAvailable() const;
+    QtMedia::AvailabilityError availabilityError() const;
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);
@@ -145,7 +146,7 @@ private:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::State)
-Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::Error)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::State))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::Error))
 
 #endif  // QMEDIARECORDER_H
