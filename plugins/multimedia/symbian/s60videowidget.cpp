@@ -180,14 +180,14 @@ void S60VideoWidgetControl::setFullScreen(bool fullScreen)
 
         m_widget->show();
 
-        emit fullScreenChanged(fullScreen)
+        emit fullScreenChanged(fullScreen);
     } else {
         m_widget->setWindowFlags(m_widget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
         m_widget->setWindowState(m_widget->windowState() & ~Qt::WindowFullScreen);
 
         m_widget->show();
 
-        emit fullScreenChanged(fullScreen)
+        emit fullScreenChanged(fullScreen);
     }
 }
 

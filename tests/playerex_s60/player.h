@@ -44,13 +44,15 @@
 
 #include <QtGui/QMainWindow>
 #include <QtGui/QDialog>
-#include <qtGui/QLineEdit>
-#include <qtGui/QListWidget>
+#include <QtGui/QLineEdit>
+#include <QtGui/QListWidget>
+#include <QtNetwork/QHttp>
 
 #include <qmediaplayer.h>
 #include <qmediaplaylist.h>
 #include <qvideowidget.h>
 #include "mediakeysobserver.h"
+
 
 class QAbstractItemView;
 class QLabel;
@@ -67,12 +69,12 @@ QTM_USE_NAMESPACE
 
 class PlaylistModel;
 
-class Player : public QMainWindow
+class S60Player : public QMainWindow
 {
     Q_OBJECT
 public:
-    Player(QMainWindow *parent = 0);
-    ~Player();
+    S60Player(QMainWindow *parent = 0);
+    ~S60Player();
     
     void createMenu();
 
@@ -97,6 +99,8 @@ private slots:
     void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
     
     void updateRate(const QString & rate);
+    
+    void launchYoutubeDialog();
 
 private:
     void setTrackInfo(const QString &info);
@@ -115,17 +119,14 @@ private:
     MediaKeysObserver *mediaKeysObserver;
 };
 
-#include <QHttp>
-
 class YoutubeDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-	YoutubeDialog(Player *player, QWidget* parent = 0);
+	YoutubeDialog(S60Player *player);
 	
-private Q_SLOTS:
-	void updateDataReadProgress(int bytesRead, int totalBytes);
+private slots:
 	void httpRequestFinished(int requestId, bool error);
 	void readResponseHeader(const QHttpResponseHeader& responseHeader);
 	void search();
@@ -139,7 +140,7 @@ private:
     bool httpRequestAborted;
     int httpGetId;
     
-    Player *m_player;
+    S60Player *m_player;
  };
 
 #endif

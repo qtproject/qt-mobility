@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    Player player;
+    S60Player player;
     player.showMaximized();
 
     return app.exec();

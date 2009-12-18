@@ -50,7 +50,7 @@
 #include <QtGui>
 #include <QDomDocument>
 
-Player::Player(QMainWindow *parent)
+S60Player::S60Player(QMainWindow *parent)
     : QMainWindow(parent)
     , videoWidget(0)
     , coverLabel(0)
@@ -123,43 +123,39 @@ Player::Player(QMainWindow *parent)
     metaDataChanged();
     mediaKeysObserver = new MediaKeysObserver(this);
     connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
-    
-    YoutubeDialog* youtube = new YoutubeDialog(this);
-    
-    youtube->exec();
 }
 
-Player::~Player()
+S60Player::~S60Player()
 {
     delete playlist;
     delete player;
 }
 
-void Player::open()
+void S60Player::open()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames();
     foreach (QString const &fileName, fileNames)
         playlist->addMedia(QUrl::fromLocalFile(fileName));
 }
 
-void Player::addMediaToPlayList(const QString &url)
+void S60Player::addMediaToPlayList(const QString &url)
 {
-	qDebug() << url;
 	playlist->addMedia(QUrl(url));
-	//playlist->setCurrentIndex(playlist->mediaCount());
+	
+	playlist->setCurrentIndex(playlist->mediaCount() > 0 ? playlist->mediaCount()-1 : 0);
 }
 
-void Player::durationChanged(qint64 duration)
+void S60Player::durationChanged(qint64 duration)
 {
     slider->setMaximum(duration / 1000);
 }
 
-void Player::positionChanged(qint64 progress)
+void S60Player::positionChanged(qint64 progress)
 {
     slider->setValue(progress / 1000);
 }
 
-void Player::metaDataChanged()
+void S60Player::metaDataChanged()
 {
     //qDebug() << "update metadata" << player->metaData(QtMedia::Title).toString();
     if (player->isMetaDataAvailable()) {
@@ -179,12 +175,12 @@ void Player::metaDataChanged()
     }
 }
 
-void Player::seek(int seconds)
+void S60Player::seek(int seconds)
 {
     player->setPosition(seconds * 1000);
 }
 
-void Player::statusChanged(QMediaPlayer::MediaStatus status)
+void S60Player::statusChanged(QMediaPlayer::MediaStatus status)
 {
     switch (status) {
     case QMediaPlayer::UnknownMediaStatus:
@@ -224,12 +220,12 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
     }
 }
 
-void Player::bufferingProgress(int progress)
+void S60Player::bufferingProgress(int progress)
 {
     setStatusInfo(tr("Buffering %4%%").arg(progress));
 }
 
-void Player::setTrackInfo(const QString &info)
+void S60Player::setTrackInfo(const QString &info)
 {
     trackInfo = info;
 
@@ -240,7 +236,7 @@ void Player::setTrackInfo(const QString &info)
 
 }
 
-void Player::setStatusInfo(const QString &info)
+void S60Player::setStatusInfo(const QString &info)
 {
     statusInfo = info;
 
@@ -250,7 +246,7 @@ void Player::setStatusInfo(const QString &info)
         setWindowTitle(trackInfo);
 }
 
-void Player::showColorDialog()
+void S60Player::showColorDialog()
 {
     if (!colorDialog) {
         QSlider *brightnessSlider = new QSlider(Qt::Horizontal);
@@ -290,7 +286,7 @@ void Player::showColorDialog()
     colorDialog->show();    
 }
 
-void Player::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
+void S60Player::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
 {
     switch (key) {
         case MediaKeysObserver::EVolIncKey: 
@@ -304,7 +300,7 @@ void Player::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
     }
 }
 
-void Player::createMenu()
+void S60Player::createMenu()
 {
 	if (videoWidget != 0) {
 		QAction* actionToggleFullscreen = menuBar()->addAction("Toggle fullscreen");
@@ -314,6 +310,9 @@ void Player::createMenu()
 		QAction* actionColorAdjust = menuBar()->addAction("Color Adjust");
 		connect(actionColorAdjust, SIGNAL(triggered()), this, SLOT(showColorDialog()));
 	}
+	
+    QAction *youtubeAction = menuBar()->addAction("Youtube search");
+    connect(youtubeAction, SIGNAL(triggered()), this, SLOT(launchYoutubeDialog()));
 
 	rateMenu = menuBar()->addMenu(tr("Rate"));
 
@@ -330,31 +329,36 @@ void Player::createMenu()
 	connect(menu_20Action, SIGNAL(triggered()), signalMapper, SLOT(map()));
     signalMapper->setMapping(menu_20Action, "2.0");
 
-	rateMenu->addAction(menu_05Action);
-	rateMenu->addAction(menu_10Action);
-	rateMenu->addAction(menu_20Action);
-
     connect(signalMapper, SIGNAL(mapped(const QString &)),
             this, SLOT(updateRate(const QString &)));
-
+    
+    rateMenu->addAction(menu_05Action);
+    rateMenu->addAction(menu_10Action);
+    rateMenu->addAction(menu_20Action);
 }
 
-void Player::updateRate(const QString & rate)
+void S60Player::updateRate(const QString & rate)
 {
 	player->setPlaybackRate(rate.toFloat());
 }
 
-YoutubeDialog::YoutubeDialog(Player *player, QWidget* parent)
-    : m_player(player), QDialog(parent)
+void S60Player::launchYoutubeDialog()
 {
-    searchLine= new QLineEdit;
+    YoutubeDialog youtube(this);
+    youtube.exec();    
+}
+
+YoutubeDialog::YoutubeDialog(S60Player *player)
+    : QDialog(0), m_player(player) 
+{
+    searchLine= new QLineEdit(this);
     QPushButton *searchButton = new QPushButton("Search");
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->addWidget(searchLine);
     topLayout->addWidget(searchButton);
     connect(searchButton, SIGNAL(clicked()), this, SLOT(search()));
     
-	videoList = new QListWidget;
+	videoList = new QListWidget(this);
     QPushButton *playButton = new QPushButton("Add");
     connect(playButton, SIGNAL(clicked()), this, SLOT(add()));
     QPushButton *closeButton = new QPushButton("Close");
@@ -371,14 +375,12 @@ YoutubeDialog::YoutubeDialog(Player *player, QWidget* parent)
     
     setLayout(mainLayout);
     
-    showFullScreen();   
-    
     connect(&http, SIGNAL(requestFinished(int, bool)),
         this, SLOT(httpRequestFinished(int, bool)));
-    connect(&http, SIGNAL(dataReadProgress(int, int)),
-        this, SLOT(updateDataReadProgress(int, int)));
     connect(&http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&)),
         this, SLOT(readResponseHeader(const QHttpResponseHeader&)));
+    
+    showFullScreen(); 
 }
 
 void YoutubeDialog::readResponseHeader(const QHttpResponseHeader& responseHeader)
@@ -487,7 +489,8 @@ void YoutubeDialog::httpRequestFinished(int requestId, bool error)
 			QDomElement incidentElement2 = groupElement.firstChildElement("content");
 			while(!incidentElement2.isNull()) 
 			{
-				if (incidentElement2.attribute("format") == "6") {
+                // "6" = MPEG-4 SP video (up to 176x144) and AAC audio.
+				if (incidentElement2.attribute("format") == "6") { 
 					videoList->addItem(title);
 					videoNameList.append(incidentElement2.attribute("url"));
 					break;
@@ -497,15 +500,6 @@ void YoutubeDialog::httpRequestFinished(int requestId, bool error)
 			
 			entryElement = entryElement.nextSiblingElement("entry");
 		}
-    }
-}
-
-
-void YoutubeDialog::updateDataReadProgress(int bytesRead, int totalBytes)
-{
-    if (httpRequestAborted)
-    {
-        return;
     }
 }
 
