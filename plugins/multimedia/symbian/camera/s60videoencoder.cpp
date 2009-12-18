@@ -109,7 +109,7 @@ QSize S60VideoEncoder::maximumResolution() const
 
     return maxSize;
 }
-QList<QSize> S60VideoEncoder::supportedResolutions() const
+QList<QSize> S60VideoEncoder::supportedResolutions(const QVideoEncoderSettings &settings, bool *continuous) const
 {
     QList<QSize> res;
     res << QSize(160, 120);
@@ -129,7 +129,7 @@ qreal S60VideoEncoder::maximumFrameRate() const
     return 30.0;
 }
 
-QList< qreal > S60VideoEncoder::supportedFrameRates() const
+QList< qreal > S60VideoEncoder::supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous) const
 {
     QList<qreal> res;
     res << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;

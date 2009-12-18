@@ -48,13 +48,15 @@
 #include <QUrl>
 #include <QtGui/qicon.h>
 
-#include "multimedia/experimental/qcamera.h"
+#include "qcamera.h"
 #include <QtMultimedia/qvideoframe.h>
 
 #include <e32base.h>
 #include <fbs.h>
 #include <cameraengine.h>
 #include <cameraengineobserver.h>
+
+QTM_USE_NAMESPACE
 
 class S60VideoWidgetControl;
 

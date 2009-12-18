@@ -45,6 +45,8 @@
 #include <QtCore/qobject.h>
 #include "qimageencodercontrol.h"
 
+QTM_USE_NAMESPACE
+
 class S60CameraSession;
 
 class S60CameraImageEncoderControl : public QImageEncoderControl
@@ -67,7 +69,7 @@ public:
 
     QString imageCodecDescription(const QString &codecName) const;
 
-    QtMedia::EncodingQuality quality() const = 0;
+    QtMedia::EncodingQuality quality() const;
     void setQuality(QtMedia::EncodingQuality);
 private:
     S60CameraSession *m_session;

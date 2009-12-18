@@ -47,7 +47,7 @@
 #ifdef USE_INTERNAL_TUNERLIB
 #include "s60radiotunerservice.h"
 #endif
-//#include "s60cameraservice.h" //Camera impl is on hold
+#include "s60cameraservice.h"
 #include "s60mediaplayerservice.h"
 #include "s60audiocaptureservice.h"
 
@@ -57,7 +57,7 @@ QStringList S60ServicePlugin::keys() const
 #ifdef USE_INTERNAL_TUNERLIB
     list << QLatin1String(Q_MEDIASERVICE_RADIO);
 #endif
-  //  list << QLatin1String(Q_MEDIASERVICE_CAMERA); //Camera impl is on hold
+    list << QLatin1String(Q_MEDIASERVICE_CAMERA);
     list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
     list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
     return list;
@@ -67,8 +67,8 @@ QMediaService* S60ServicePlugin::create(QString const& key)
 {
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new S60MediaPlayerService;
- /*   else if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
-        return new S60CameraService;*/ //Camera impl is on hold
+    else if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
+        return new S60CameraService;
     else if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
 #ifdef USE_INTERNAL_TUNERLIB
@@ -79,11 +79,12 @@ QMediaService* S60ServicePlugin::create(QString const& key)
     qDebug() << "unsupported key:" << key;
     return 0;
 }
+
 void S60ServicePlugin::release(QMediaService *service)
 {
     delete service;
 }
-/* Camera impl is on hold
+
 QList<QByteArray> S60ServicePlugin::devices(const QByteArray &service) const
 {
     if (service == Q_MEDIASERVICE_CAMERA) {
@@ -106,13 +107,11 @@ QString S60ServicePlugin::deviceDescription(const QByteArray &service, const QBy
             if (m_cameraDevices[i] == device)
                 return m_cameraDescriptions[i];
     }
-
     return QString();
 }
 
 void S60ServicePlugin::updateDevices() const
 {
-    
     m_cameraDevices.clear();
     m_cameraDescriptions.clear();
     for (int i=0; i < S60CameraService::deviceCount(); i ++) {
@@ -121,7 +120,6 @@ void S60ServicePlugin::updateDevices() const
         QString deviceDesc = S60CameraService::deviceDescription(i); 
         m_cameraDescriptions.append(deviceDesc);
     }
-
 }
-*/
+
 Q_EXPORT_PLUGIN2(QtMobilityMultimediaEngine, S60ServicePlugin);

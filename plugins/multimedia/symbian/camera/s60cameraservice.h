@@ -44,11 +44,14 @@
 
 #include <QtCore/qobject.h>
 
-#include <multimedia/qmediaservice.h>
+#include <QMediaService>
 
 #include "qvideooutputcontrol.h"
 
-class S60MediaFormatControl;
+
+QTM_USE_NAMESPACE
+
+class S60MediaContainerControl;
 class S60VideoEncoder;
 class S60CameraControl;
 class S60CameraVideoDeviceControl;
@@ -93,7 +96,7 @@ private slots:
 private:
 
     S60CameraSession *m_session;
-    S60MediaFormatControl *m_mediaFormat;
+    S60MediaContainerControl *m_mediaFormat;
     S60VideoEncoder *m_videoEncoder;
     S60CameraControl *m_control;
     S60CameraVideoDeviceControl *m_videoDeviceControl;

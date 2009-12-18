@@ -39,34 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef S60MEDIAFORMATCONTROL_H
-#define S60MEDIAFORMATCONTROL_H
+#include "s60mediacontainercontrol.h"
+#include "s60camerasession.h"
 
-#include "qmediaformatcontrol.h"
-#include <QtCore/qstringlist.h>
-
-class S60CameraSession;
-
-class S60MediaFormatControl : public QMediaFormatControl
+S60MediaContainerControl::S60MediaContainerControl(QObject *parent)
+    : QMediaContainerControl(parent)
 {
-Q_OBJECT
-public:
-    S60MediaFormatControl(QObject *parent = 0);
-    S60MediaFormatControl(QObject *session, QObject *parent = 0);
-    virtual ~S60MediaFormatControl() {};
+    m_supportedFormats.append("no mux");
+    setContainerMimeType(m_supportedFormats[0]);
+}
 
-    virtual QStringList supportedFormats() const { return m_supportedFormats; }
-    virtual QString format() const { return m_format; }
-    virtual void setFormat(const QString &formatMimeType) { m_format = formatMimeType; }
+S60MediaContainerControl::S60MediaContainerControl(QObject *session, QObject *parent)
+   : QMediaContainerControl(parent)
+{
+    // use cast if we want to change session class later on..
+    m_session = qobject_cast<S60CameraSession*>(session);
 
-    virtual QString formatDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
+    m_supportedFormats.append("no mux");
+    setContainerMimeType(m_supportedFormats[0]);
 
-private:
-    S60CameraSession* m_session;
+}
 
-    QString m_format;
-    QStringList m_supportedFormats;
-    QMap<QString, QString> m_formatDescriptions;
-};
-
-#endif // S60MEDIAFORMATCONTROL_H

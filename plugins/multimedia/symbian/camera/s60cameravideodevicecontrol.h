@@ -44,6 +44,8 @@
 
 #include "qvideodevicecontrol.h"
 
+QTM_USE_NAMESPACE
+
 class S60CameraSession;
 class QString;
 class QIcon;
@@ -58,9 +60,9 @@ public:
 
     int deviceCount() const;
 
-    QString name(int index) const;
-    QString description(int index) const;
-    QIcon icon(int index) const;
+    QString deviceName(int index) const;
+    QString deviceDescription(int index) const;
+    QIcon deviceIcon(int index) const;
 
     int defaultDevice() const;
     int selectedDevice() const;

@@ -43,7 +43,9 @@
 #define S60CAMERAEXPOSURECONTROL_H
 
 #include <QtCore/qobject.h>
-#include "multimedia/experimental/qcameraexposurecontrol.h"
+#include "qcameraexposurecontrol.h"
+
+QTM_USE_NAMESPACE
 
 class S60CameraService;
 class S60CameraSession;
@@ -66,7 +68,7 @@ public:
     QCamera::ExposureModes supportedExposureModes() const;
 
     qreal exposureCompensation() const;
-    void setExposureCompensation( qreal ev);
+    void setExposureCompensation(qreal ev);
 
     QCamera::MeteringMode meteringMode() const;
     void setMeteringMode(QCamera::MeteringMode mode);
@@ -81,21 +83,21 @@ public:
     int isoSensitivity() const;
     int minimumIsoSensitivity() const;
     int maximumIsoSensitivity() const;
-    QList<int> supportedIsoSensitivities () const;
+    QList<int> supportedIsoSensitivities(bool *continuous = 0) const;
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
 
     qreal aperture() const;
     qreal minimumAperture() const;
     qreal maximumAperture() const;
-    QList<qreal> supportedApertures () const;
-    void setManualAperture( qreal aperture);
+    QList<qreal> supportedApertures(bool *continuous = 0) const;
+    void setManualAperture(qreal aperture);
     void setAutoAperture();
 
     qreal shutterSpeed() const;
     qreal minimumShutterSpeed() const;
     qreal maximumShutterSpeed() const;
-    QList<qreal> supportedShutterSpeeds() const;
+    QList<qreal> supportedShutterSpeeds(bool *continuous = 0) const;
     void setManualShutterSpeed(qreal seconds);
     void setAutoShutterSpeed();
 

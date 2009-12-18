@@ -47,6 +47,8 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
 
+QTM_USE_NAMESPACE
+
 class S60CameraSession;
 
 class S60VideoEncoder : public QVideoEncoderControl
@@ -57,14 +59,14 @@ public:
     S60VideoEncoder(QObject *session, QObject *parent = 0);
     virtual ~S60VideoEncoder();
 
-    QList<QSize> supportedResolutions() const;
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings, bool *continuous = 0) const;
 
     QSize minimumResolution() const;
     QSize maximumResolution() const;
 
     qreal minimumFrameRate() const;
     qreal maximumFrameRate() const;
-    QList< qreal >  supportedFrameRates() const;
+    QList<qreal>  supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous = 0) const;
 
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;

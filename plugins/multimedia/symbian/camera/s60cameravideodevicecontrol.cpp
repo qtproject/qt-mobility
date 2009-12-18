@@ -74,7 +74,7 @@ int S60CameraVideoDeviceControl::deviceCount() const
     return defaultCameraDeviceCount;
 }
 
-QString S60CameraVideoDeviceControl::name(int index) const
+QString S60CameraVideoDeviceControl::deviceName(int index) const
 {
     QString deviceName = QString();
     if (m_session) {
@@ -83,7 +83,7 @@ QString S60CameraVideoDeviceControl::name(int index) const
     return deviceName;
 
 }
-QString S60CameraVideoDeviceControl::description(int index) const
+QString S60CameraVideoDeviceControl::deviceDescription(int index) const
 {
     QString deviceDesc = QString();
     if (m_session) {
@@ -91,7 +91,7 @@ QString S60CameraVideoDeviceControl::description(int index) const
     }
     return deviceDesc;
 }
-QIcon S60CameraVideoDeviceControl::icon(int index) const
+QIcon S60CameraVideoDeviceControl::deviceIcon(int index) const
 {
     QIcon deviceIcon = QIcon();
     if (m_session) {

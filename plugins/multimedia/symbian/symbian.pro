@@ -7,12 +7,12 @@ include (../../../common.pri)
 
 qtAddLibrary(QtMedia)
 
-# camera is on hold -lcamerawrapper -lfbscli
-
 DEPENDPATH += .
 INCLUDEPATH += . \
     $${SOURCE_DIR}/include \
-    $${SOURCE_DIR}/src/multimedia
+    $${SOURCE_DIR}/src/multimedia \
+    $${SOURCE_DIR}/src/multimedia/experimental \
+    $${SOURCE_DIR}
 
 
 HEADERS += s60serviceplugin.h \
@@ -21,7 +21,7 @@ HEADERS += s60serviceplugin.h \
            
 SOURCES += s60serviceplugin.cpp \
            s60videowidget.cpp \
-           s60videooutputcontrol.cpp
+           s60videooutputcontrol.cpp 
 
 exists($${EPOCROOT}epoc32/include/tuner/tuner.h) {
 	include(radio/radio.pri)
@@ -30,7 +30,7 @@ exists($${EPOCROOT}epoc32/include/tuner/tuner.h) {
     warning("Radio isn't compiled in due to missing tuner libraries.")
 }
 
-# include(camera/camera_s60.pri)
+include(camera/camera_s60.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 include(audiosource/audiosource_s60.pri)
 
