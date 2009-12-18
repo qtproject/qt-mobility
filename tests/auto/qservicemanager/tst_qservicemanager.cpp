@@ -38,14 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qglobal.h>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QServiceInterfaceDescriptor;
-QTM_END_NAMESPACE
-
-uint qHash(const QtMobility::QServiceInterfaceDescriptor &desc);
 #include <qservicemanager.h>
 #include <qservicecontext.h>
 #include <qabstractsecuritysession.h>
@@ -85,12 +77,14 @@ Q_DECLARE_METATYPE(QSet<QString>)
 Q_DECLARE_METATYPE(QList<QByteArray>)
 Q_DECLARE_METATYPE(QtMobility::QServiceManager::Scope)
 
+QTM_BEGIN_NAMESPACE
 typedef QHash<QtMobility::QServiceInterfaceDescriptor::PropertyKey, QVariant> DescriptorProperties;
 
 inline uint qHash(const QtMobility::QServiceInterfaceDescriptor &desc)
 {
     return qHash(desc.serviceName()) + qHash(desc.interfaceName()) + desc.majorVersion() * 7 + desc.minorVersion() * 7;
 }
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 static DescriptorProperties defaultDescriptorProperties()
