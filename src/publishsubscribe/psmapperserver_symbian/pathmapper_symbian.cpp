@@ -92,7 +92,7 @@ QStringList PathMapper::childPaths(QString basePath) const
         i.next();
         if (i.key().startsWith(basePath)) {
             const PathData &data = i.value();
-            PathMapper::Target target = data.m_target;;
+            PathMapper::Target target = data.m_target;
             quint32 category = data.m_category;
             quint32 key = data.m_key;
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);

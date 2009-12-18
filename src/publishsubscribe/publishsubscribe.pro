@@ -40,13 +40,24 @@ symbian {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 
+#    DEPENDPATH += psmapperserver_symbian
+#    INCLUDEPATH += psmapperserver_symbian
+#    HEADERS += pathmapper_symbian.h \
+#        qcrmlparser_p.h
+#    SOURCES += pathmapper_symbian.cpp \
+#        qcrmlparser.cpp
+
+
+    DEPENDPATH += psmapperserver_symbian
+    INCLUDEPATH += psmapperserver_symbian
+    HEADERS += pathmapper_proxy_symbian.h \
+        clientservercommon.h
+    SOURCES += pathmapper_proxy_symbian.cpp
+
     DEFINES += QT_BUILD_INTERNAL
-    HEADERS += settingslayer_symbian.h \
-        pathmapper_symbian.h \
-        qcrmlparser_p.h
+    HEADERS += settingslayer_symbian.h
     SOURCES += settingslayer_symbian.cpp \
-        pathmapper_symbian.cpp \
-        qcrmlparser.cpp
+
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
 
