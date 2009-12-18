@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMGEOLOCATION_H
-#define QORGANIZERITEMGEOLOCATION_H
+#ifndef QORGANIZERITEMLOCATION_H
+#define QORGANIZERITEMLOCATION_H
 
 #include <QString>
 
@@ -52,51 +52,22 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemGeolocation : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemLocation : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldLabel;
-    const char* FieldLatitude;
-    const char* FieldLongitude;
-    const char* FieldAccuracy;
-    const char* FieldAltitude;
-    const char* FieldAltitudeAccuracy;
-    const char* FieldHeading;
-    const char* FieldSpeed;
-    const char* FieldTimestamp;
+    const char* FieldGeoLocation;
+    const char* FieldAddress;
+    const char* FieldLocationName;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemGeolocation, "Geolocation")
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
-    Q_DECLARE_LATIN1_LITERAL(FieldLatitude, "Latitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldLongitude, "Longitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAccuracy, "Accuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitude, "Altitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitudeAccuracy, "AltitudeAccuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldHeading, "Heading");
-    Q_DECLARE_LATIN1_LITERAL(FieldSpeed, "Speed");
-    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemLocation, "Location")
+    Q_DECLARE_LATIN1_LITERAL(FieldGeoLocation, "GeoLocation");
+    Q_DECLARE_LATIN1_LITERAL(FieldAddress, "Address");
+    Q_DECLARE_LATIN1_LITERAL(FieldLocationName, "LocationName");
 #endif
 
-    void setLabel(const QString& label) {setValue(FieldLabel, label);}
-    QString label() const {return value(FieldLabel);}
-    void setLatitude(double latitude) {setValue(FieldLatitude, latitude);}
-    double latitude() const {return variantValue(FieldLatitude).toDouble();}
-    void setLongitude(double longitude) {setValue(FieldLongitude, longitude);}
-    double longitude() const {return variantValue(FieldLongitude).toDouble();}
-    void setAccuracy(double accuracy) {setValue(FieldAccuracy, accuracy);}
-    double accuracy() const {return variantValue(FieldAccuracy).toDouble();}
-    void setAltitude(double altitude) {setValue(FieldAltitude, altitude);}
-    double altitude() const {return variantValue(FieldAltitude).toDouble();}
-    void setAltitudeAccuracy(double altitudeAccuracy) {setValue(FieldAltitudeAccuracy, altitudeAccuracy);}
-    double altitudeAccuracy() const {return variantValue(FieldAltitudeAccuracy).toDouble();}
-    void setHeading(double heading) {setValue(FieldHeading, heading);}
-    double heading() const {return variantValue(FieldHeading).toDouble();}
-    void setSpeed(double speed) {setValue(FieldSpeed, speed);}
-    double speed() const {return variantValue(FieldSpeed).toDouble();}
-    void setTimestamp(const QDateTime& timestamp) {setValue(FieldTimestamp, timestamp);}
-    QDateTime timestamp() const {return variantValue(FieldTimestamp).toDateTime();}
+    // XXX TODO: functions / data types
 };
 
 QTM_END_NAMESPACE

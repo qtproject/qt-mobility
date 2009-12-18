@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMADDRESS_H
-#define QORGANIZERITEMADDRESS_H
+#ifndef QORGANIZERITEMPARTICIPATIONROLE_H
+#define QORGANIZERITEMPARTICIPATIONROLE_H
 
 #include <QString>
 
@@ -52,53 +52,19 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemAddress : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemParticipationRole : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldStreet;
-    const char* FieldLocality;
-    const char* FieldRegion;
-    const char* FieldPostcode;
-    const char* FieldCountry;
-    const char* FieldSubTypes;
-    const char* FieldPostOfficeBox;
-    const char* SubTypeParcel;
-    const char* SubTypePostal;
-    const char* SubTypeDomestic;
-    const char* SubTypeInternational;
+    const char* FieldParticipationRole;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemAddress, "StreetAddress")
-    Q_DECLARE_LATIN1_LITERAL(FieldStreet, "Street");
-    Q_DECLARE_LATIN1_LITERAL(FieldLocality, "Locality");
-    Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
-    Q_DECLARE_LATIN1_LITERAL(FieldPostcode, "Postcode");
-    Q_DECLARE_LATIN1_LITERAL(FieldCountry, "Country");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
-    Q_DECLARE_LATIN1_LITERAL(FieldPostOfficeBox, "PostOfficeBox");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeParcel, "Parcel");
-    Q_DECLARE_LATIN1_LITERAL(SubTypePostal, "Postal");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeDomestic, "Domestic");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeInternational, "International");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemParticipationRole, "ParticipationRole")
+    Q_DECLARE_LATIN1_LITERAL(FieldParticipationRole, "ParticipationRole");
 #endif
 
-    void setStreet(const QString& street) {setValue(FieldStreet, street);}
-    QString street() const {return value(FieldStreet);}
-    void setLocality(const QString& locality) {setValue(FieldLocality, locality);}
-    QString locality() const {return value(FieldLocality);}
-    void setRegion(const QString& region) {setValue(FieldRegion, region);}
-    QString region() const {return value(FieldRegion);}
-    void setPostcode(const QString& postcode) {setValue(FieldPostcode, postcode);}
-    QString postcode() const {return value(FieldPostcode);}
-    void setCountry(const QString& country) {setValue(FieldCountry, country);}
-    QString country() const {return value(FieldCountry);}
-    void setPostOfficeBox(const QString& postOfficeBox) {setValue(FieldPostOfficeBox, postOfficeBox);}
-    QString postOfficeBox() const {return value(FieldPostOfficeBox);}
-
-    void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
-    void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
-    QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
+    // XXX TODO: functions / data.
+    // roles: host, organizer, guest, participant, chairperson, minuter, boardmember, ...
 };
 
 QTM_END_NAMESPACE

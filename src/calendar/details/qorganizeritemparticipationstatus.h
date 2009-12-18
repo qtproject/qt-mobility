@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMBIRTHDAY_H
-#define QORGANIZERITEMBIRTHDAY_H
+#ifndef QORGANIZERITEMPARTICIPATIONSTATUS_H
+#define QORGANIZERITEMPARTICIPATIONSTATUS_H
 
 #include <QString>
 
@@ -51,19 +51,19 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemBirthday : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemParticipationStatus : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldBirthday;
+    const char* FieldParticipationStatus;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemBirthday, "Birthday")
-    Q_DECLARE_LATIN1_LITERAL(FieldBirthday, "Birthday");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemParticipationStatus, "ParticipationStatus")
+    Q_DECLARE_LATIN1_LITERAL(FieldParticipationStatus, "ParticipationStatus");
 #endif
 
-    void setDate(const QDate& date) {setValue(FieldBirthday, date);}
-    QDate date() const {return value<QDate>(FieldBirthday);}
+    // XXX TODO: functions / data
+    // statuses: definitely attending, possibly attending, definitely not attending, currently attending, did attend, did not attend ?
 };
 
 QTM_END_NAMESPACE

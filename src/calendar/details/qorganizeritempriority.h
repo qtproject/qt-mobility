@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMPRESENCE_H
-#define QORGANIZERITEMPRESENCE_H
+#ifndef QORGANIZERITEMPRIORITY_H
+#define QORGANIZERITEMPRIORITY_H
 
 #include <QtDebug>
 #include <QString>
@@ -53,45 +53,20 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemPresence : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemPriority : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldAccountUri;
-    const char* FieldNickname;
-    const char* FieldPresence;
-    const char* FieldStatusMessage;
-    const char* PresenceAvailable;
-    const char* PresenceHidden;
-    const char* PresenceBusy;
-    const char* PresenceAway;
-    const char* PresenceExtendedAway;
-    const char* PresenceUnknown;
-    const char* PresenceOffline;
+    const char* FieldPriority;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemPresence, "Presence")
-    Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
-    Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
-    Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
-    Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAway, "Away");
-    Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
-    Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
-    Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemPriority, "Priority")
+    Q_DECLARE_LATIN1_LITERAL(FieldPriority, "Priority");
 #endif
 
-    void Q_DECL_DEPRECATED setAccountUri(const QString& accountUri) {qWarning("This class has been deprecated!  Please use QOrganizerItemOnlineAccount and Read-Only Field Constraints!"); setValue(FieldAccountUri, accountUri);}
-    QString Q_DECL_DEPRECATED accountUri() const {qWarning("This class has been deprecated!  Please use QOrganizerItemOnlineAccount and Read-Only Field Constraints!"); return value(FieldAccountUri);}
-    void Q_DECL_DEPRECATED setNickname(const QString& nickname) {qWarning("This class has been deprecated!  Please use QOrganizerItemOnlineAccount and Read-Only Field Constraints!"); setValue(FieldNickname, nickname);}
-    QString Q_DECL_DEPRECATED nickname() const {qWarning("This class has been deprecated!  Please use QOrganizerItemOnlineAccount and Read-Only Field Constraints!"); return value(FieldNickname);}
-    void Q_DECL_DEPRECATED setPresence(const QString& presence) {qWarning("This class has been deprecated!  Please use QOrganizerItemOnlineAccount and Read-Only Field Constraints!"); setValue(FieldPresence, presence);}
-    QString Q_DECL_DEPRECATED presence() const {qWarning("This class has been deprecated!  Please use QOrganizerItemOnlineAccount and Read-Only Field Constraints!"); return value(FieldPresence);}
-    void Q_DECL_DEPRECATED setStatusMessage(const QString& statusMessage) {qWarning("This class has been deprecated!  Please use QOrganizerItemOnlineAccount and Read-Only Field Constraints!"); setValue(FieldStatusMessage, statusMessage);}
-    QString Q_DECL_DEPRECATED statusMessage() const {qWarning("This class has been deprecated!  Please use QOrganizerItemOnlineAccount and Read-Only Field Constraints!"); return value(FieldStatusMessage);}
+    // XXX TODO: functions / data
+    // enum? CriticalPriority, HighPriority, MediumPriority, LowPriority, NoPriority ?  granularity?  time vs impact priority?
+
 };
 
 QTM_END_NAMESPACE

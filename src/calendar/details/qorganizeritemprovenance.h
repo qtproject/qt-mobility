@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMEMAILADDRESS_H
-#define QORGANIZERITEMEMAILADDRESS_H
+#ifndef QORGANIZERITEMPROVENANCE_H
+#define QORGANIZERITEMPROVENANCE_H
 
 #include <QString>
 
@@ -52,19 +52,21 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemEmailAddress : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemProvenance : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldEmailAddress;
+    const char* FieldReceivedFrom;
+    const char* FieldTimestamp;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemEmailAddress, "EmailAddress")
-    Q_DECLARE_LATIN1_LITERAL(FieldEmailAddress, "EmailAddress");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemProvenance, "Provenance")
+    Q_DECLARE_LATIN1_LITERAL(FieldReceivedFrom, "ReceivedFrom");
+    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
 #endif
 
-    void setEmailAddress(const QString& emailAddress) {setValue(FieldEmailAddress, emailAddress);}
-    QString emailAddress() const {return value(FieldEmailAddress);}
+    // XXX TODO: functions / data.
+    // it could be a provenance chain.  more information / requires needed here...
 };
 
 QTM_END_NAMESPACE

@@ -57,13 +57,20 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldType;
-    const char* TypeContact;
-    const char* TypeGroup;
+    const char* TypeEvent;
+    const char* TypeTodo;
+    const char* TypeInvitation;
+    const char* TypeJournal;
+    const char* TypeNote;
+    // etc?
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemType, "Type")
     Q_DECLARE_LATIN1_LITERAL(FieldType, "Type");
-    Q_DECLARE_LATIN1_LITERAL(TypeContact, "Contact");
-    Q_DECLARE_LATIN1_LITERAL(TypeGroup, "Group");
+    Q_DECLARE_LATIN1_LITERAL(TypeEvent, "Event");
+    Q_DECLARE_LATIN1_LITERAL(TypeTodo, "Todo");
+    Q_DECLARE_LATIN1_LITERAL(TypeInvitation, "Invitation");
+    Q_DECLARE_LATIN1_LITERAL(TypeJournal, "Journal");
+    Q_DECLARE_LATIN1_LITERAL(TypeNote, "Note");
 #endif
 
     void setType(const QString& type) {setValue(FieldType, type);}
