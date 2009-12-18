@@ -55,8 +55,7 @@ symbian {
 }
 
 unix:!symbian {
-    maemo {
-        DEFINES += Q_WS_MAEMO_6
+    maemo6 {
         SOURCES += contextkitlayer.cpp
         CONFIG += link_pkgconfig
         PKGCONFIG += contextsubscriber-1.0 QtDBus

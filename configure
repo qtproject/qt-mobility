@@ -55,6 +55,7 @@ QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
+BUILD_DOCS=yes
 RELEASEMODE=
 BUILD_SILENT=
 LINUX_TARGET=
@@ -62,12 +63,14 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework"
+MOBILITY_MODULES_UNPARSED=
 
 usage() 
 {
     echo "Usage: configure [-prefix <dir>] [headerdir <dir>] [libdir <dir>]"
-    echo "                 [-bindir <dir>] [-tests] [-examples]"
-    echo "                 [-debug] [-release] [-silent]"
+    echo "                 [-bindir <dir>] [-tests] [-examples] [-no-docs]"
+    echo "                 [-debug] [-release] [-silent] [-modules <list>]"
     echo
     echo "Options:"
     echo
@@ -86,9 +89,15 @@ usage()
     echo "                    Note, this adds test symbols to all libraries"
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
-    echo
-    echo "-maemo ............ Build Qt Mobility for Maemo."
-    echo "                    (default: Desktop Linux)"
+    echo "-no-docs .......... Do not build documentation (build by default)"
+    echo "-modules <list> ... Restrict list of modules to build (default all supported)"
+    echo "                    Choose from: bearer contacts location publishsubscribe"
+    echo "                    messaging multimedia systeminfo serviceframework versit"
+    echo "                    Modules should be separated by a space. If a"
+    echo "                    selected module depends on other modules they"
+    echo "                    will automatically be enabled."
+    echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
+    echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Freemantle)."
     echo "-sdk <sdk>..........Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo
@@ -128,6 +137,9 @@ while [ "$#" -gt 0 ]; do
         -examples)
             BUILD_EXAMPLES="yes"
             ;;
+        -no-docs)
+            BUILD_DOCS=
+            ;;
         -debug)
             RELEASEMODE=debug
             ;;
@@ -137,11 +149,38 @@ while [ "$#" -gt 0 ]; do
         -silent)
             BUILD_SILENT=yes
             ;;
-        -maemo)
-            LINUX_TARGET=maemo 
+        -maemo5)
+            LINUX_TARGET=maemo5
+            ;;
+        -maemo6)
+            LINUX_TARGET=maemo6
             ;;
         -sdk)
             MAC_SDK="$2"
+            shift
+            ;;
+        -modules)
+            MOBILITY_MODULES_UNPARSED=$2
+            #reset default selection
+            MOBILITY_MODULES=
+            for m in $MOBILITY_MODULES_UNPARSED; do
+                case "$m" in
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit)
+                        MOBILITY_MODULES="$MOBILITY_MODULES $m";
+                        ;;
+                    *)
+                        echo "Unknown module: $m"
+                        echo
+                        usage
+                        ;;
+
+                esac
+            done
+            if [ -z "$MOBILITY_MODULES" ]; then
+                echo "List of selected modules is empty."
+                echo 
+                usage
+            fi
             shift
             ;;
         *)
@@ -151,7 +190,6 @@ while [ "$#" -gt 0 ]; do
     esac
     shift
 done
-
 
 findframeworks()
 {
@@ -180,7 +218,11 @@ echo "CONFIG += $RELEASEMODE" >> "$CONFIG_IN"
 
 #do we build for Maemo?
 if [ -n "$LINUX_TARGET" ]; then
-    echo "CONFIG+=maemo" >> "$CONFIG_IN"
+    if [ "$LINUX_TARGET" = "maemo5" ]; then
+        echo "CONFIG+=maemo5" >> "$CONFIG_IN"
+    elif [ "$LINUX_TARGET" = "maemo6" ]; then
+        echo "CONFIG+=maemo6" >> "$CONFIG_IN"
+    fi
 fi
 
 #process PREFIX
@@ -254,6 +296,11 @@ else
     echo "build_examples = yes" >> "$CONFIG_IN"
 fi
 
+if [ -z "$BUILD_DOCS" ]; then
+    echo "build_docs = no" >> "$CONFIG_IN"
+else
+    echo "build_docs = yes" >> "$CONFIG_IN"
+fi
 
 echo "Configuring Qt Mobility"
 echo 
@@ -320,19 +367,62 @@ compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 
+# Now module selection
+# using 'expr match ....' should help a bit
+#if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
+    # In theory we should do some sanity checking here.
+#    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
+#fi
+
+# It's a lot easier to make qmake do the dependency checking...
+echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
+# no Sysinfo support on Maemo yet
+echo "maemo5|maemo6:mobility_modules -= systeminfo" >> "$CONFIG_IN"
+echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+
+# Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
 $relpath/bin/syncheaders $shadowpath/include $relpath/src/global
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/location
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
+for module in $MOBILITY_MODULES; do
+    case "$module" in 
+        bearer)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
+            ;;
+        publishsubscribe)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
+            ;;
+        location)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/location
+            ;;
+        serviceframework)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
+            ;;
+        systeminfo)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
+            ;;
+        contacts)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            ;;
+        multimedia)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/experimental
+            ;;
+        messaging)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
+            ;;
+        versit)
+            #versit implies contacts
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            ;;
+        *)
+            echo "Cannot generate headers for $module"
+            ;;
+    esac
+done
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"

@@ -58,7 +58,10 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qmap.h>
 
+QT_BEGIN_NAMESPACE
 class QObject;
+QT_END_NAMESPACE
+
 QTM_BEGIN_NAMESPACE
 
 class QMediaServiceProviderPlugin;

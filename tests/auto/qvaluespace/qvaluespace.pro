@@ -17,7 +17,3 @@ MOBILITY = publishsubscribe
 symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
-
-maemo {
-    DEFINES += Q_WS_MAEMO_6
-}

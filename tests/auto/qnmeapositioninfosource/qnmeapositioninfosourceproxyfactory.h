@@ -45,8 +45,10 @@
 
 #include <qnmeapositioninfosource.h>
 
+QT_BEGIN_NAMESPACE
 class QTcpServer;
 class QIODevice;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QNmeaPositionInfoSource;

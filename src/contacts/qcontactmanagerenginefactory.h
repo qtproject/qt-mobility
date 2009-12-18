@@ -71,7 +71,9 @@ public:
 };
 QTM_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 #define QT_CONTACTS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
 Q_DECLARE_INTERFACE(QtMobility::QContactManagerEngineFactory, QT_CONTACTS_BACKEND_INTERFACE);
+QT_END_NAMESPACE
 
 #endif

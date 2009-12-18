@@ -46,40 +46,35 @@
 
 QTM_USE_NAMESPACE
 
-
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
-
+//! [0]
 class ServiceWrapper : public QObject {
     Q_OBJECT
+    Q_PROPERTY(bool isValid READ isValid);
+    Q_PROPERTY(QString serviceName READ serviceName CONSTANT);
+    Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT);
+    Q_PROPERTY(QString version READ version NOTIFY versionChanged);
+//! [0]
+
 public:
     ServiceWrapper();
+    
     ~ServiceWrapper() ;
 
-    Q_PROPERTY(bool isValid READ isValid);
     bool isValid() const;
 
-    Q_PROPERTY(QString serviceName READ serviceName CONSTANT);
     QString serviceName() const;
 
-    Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT);
     QString interfaceName() const;
 
-    void setNativeDescriptor(const QServiceInterfaceDescriptor& desc)
+    void setNativeDescriptor(const QServiceInterfaceDescriptor& desc);
 
-    Q_PROPERTY(QVariant descriptor READ descriptor WRITE setDescriptor NOTIFY descriptorChanged);
-    QVariant descriptor() const;
     void setDescriptor(QVariant& newDescriptor);
 
-    Q_PROPERTY(QString version READ version NOTIFY versionChanged);
     QString version() const;
 
-
     Q_INVOKABLE QObject* serviceObject();
-signals:
-    void descriptorChanged();
-    void nameChanged();
-    void versionChanged();
 
 private:
     QServiceInterfaceDescriptor m_descriptor;
@@ -88,18 +83,24 @@ private:
 
 QML_DECLARE_TYPE(ServiceWrapper)
 
+//! [1]
 class ServiceRegister : public QObject{
     Q_OBJECT
+    Q_PROPERTY(QList<ServiceWrapper*>* registeredservices READ registeredservices NOTIFY modelChanged CONSTANT);
+//! [1]
+
 public:
     ServiceRegister();
     ~ServiceRegister();
     
-    Q_PROPERTY(QList<ServiceWrapper *> *services READ services CONSTANT);
-    QList<ServiceWrapper *> *services() {return &m_services; }
+    QList<ServiceWrapper*> *registeredservices() {return &m_services; }
 
     void registerExampleServices();
 
     void unregisterExampleServices();
+
+    void serviceStateChange(int state);
+
 private:
     QServiceManager* serviceManager;
     QList<ServiceWrapper *> m_services;

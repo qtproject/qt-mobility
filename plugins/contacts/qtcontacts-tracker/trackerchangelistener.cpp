@@ -124,13 +124,15 @@ void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
 // TODO data changed for full query
 void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
 {
-    QList<QContactLocalId> added;
-    foreach(const QString &uri, subjects)
-    {
-        added << url2UniqueId(uri);
+    QList<QContactLocalId> changed;
+    foreach(const QString &uri, subjects) {
+        QContactLocalId id = url2UniqueId(uri);
+        if (changed.contains(id) == false) {
+            changed << id;
+        }
     }
-    qDebug() << Q_FUNC_INFO << "changed contactids:" << added;
-    emit contactsChanged(added);
+    qDebug() << Q_FUNC_INFO << "changed contactids:" << changed;
+    emit contactsChanged(changed);
 }
 
 void TrackerChangeListener::imAccountChanged(const QStringList& subjects) {

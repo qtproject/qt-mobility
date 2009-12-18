@@ -68,8 +68,7 @@ CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactMa
     {
     // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
     // exported so we need to use CContactChangeNotifier.
-    // TODO: Is it ok to use __SYMBIAN_CNTMODEL_USE_SQLITE__ flag for this?
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
         TRAP(err, m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
 #else
         TRAP(err, m_contactDatabase->AddObserverL(*this));
@@ -88,7 +87,7 @@ CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactMa
 CntSymbianDatabase::~CntSymbianDatabase()
 {
     m_engine = NULL;
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
     delete m_contactChangeNotifier;
 #else
     if (m_contactDatabase != 0) {

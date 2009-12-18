@@ -43,7 +43,10 @@
 #define QVIDEORENDERERCONTROL_H
 
 #include <qmediacontrol.h>
+
+QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
