@@ -43,7 +43,7 @@
 #include <qmessageaccountid.h>
 #include <qmessagefolderid.h>
 #include <qmessageid.h>
-#include <qmessagestore.h>
+#include <qmessagemanager.h>
 #include <qmessage_symbian_p.h>
 
 #include <QDebug>
@@ -107,6 +107,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     QString parentAccountName(params["parentAccountName"]);
     QString parentFolderPath(params["parentFolderPath"]);
     QString to(params["to"]);
+    QString cc(params["cc"]);
     QString from(params["from"]);
     QString date(params["date"]);
     QString receivedDate(params["receivedDate"]);
@@ -120,14 +121,16 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     QString read(params["status-read"]);
     QString hasAttachments(params["status-hasAttachments"]);
     
+    QMessageManager manager;
+
     if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
         // Find the named account
-        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
+        QMessageAccountIdList accountIds(manager.queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
         if (accountIds.count() == 1) {
             // Find the specified folder
-            QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
-            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
+            QMessageFolderFilter filter(QMessageFolderFilter::byName(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
+            QMessageFolderIdList folderIds(manager.queryFolders(filter));
             if (folderIds.count() == 1) {
                 QMessage message;
     
@@ -136,10 +139,19 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     
                 QList<QMessageAddress> toList;
                 foreach (const QString &addr, to.split(",")) {
-                    toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                    toList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
                 }
                 message.setTo(toList);
-                message.setFrom(QMessageAddress(from, QMessageAddress::Email));
+                
+                QList<QMessageAddress> ccList;
+                foreach (const QString &addr, cc.split(",")) {
+					if (!addr.isEmpty()) {
+                    ccList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
+					}
+                }
+                message.setCc(ccList);
+                
+                message.setFrom(QMessageAddress(QMessageAddress::Email, from));
                 message.setSubject(subject);
     
                 QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
@@ -195,7 +207,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                 }
                 message.setStatus(flags);
     
-                if (!QMessageStore::instance()->addMessage(&message)) {
+                if (!manager.addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;
                 } else {
                     return message.id();
@@ -513,7 +525,7 @@ QMessageFolderId addFolder(const Parameters &params)
     TPtrC16 symbianAccountName(KNullDesC);
     symbianAccountName.Set(reinterpret_cast<const TUint16*>(accountName.utf16()));
 
-    QString folderName(params["displayName"]);
+    QString folderName(params["name"]);
     TPtrC16 symbianFolderName(KNullDesC);
     symbianFolderName.Set(reinterpret_cast<const TUint16*>(folderName.utf16()));
     

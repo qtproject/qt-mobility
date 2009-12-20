@@ -64,6 +64,7 @@ public:
 
 #ifdef Q_OS_WIN
     static QMutex* mutex(QMessageStore*);
+    static QMutex* mutex(QMessageManager&);
 #endif
 
 };

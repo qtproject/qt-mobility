@@ -1287,17 +1287,6 @@
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
-    <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
-        <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
-        <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
-        <keyword ref="qgeoareamonitor.html#center-prop">setCenter</keyword>
-        <keyword ref="qgeoareamonitor.html#radius-prop">radius</keyword>
-        <keyword ref="qgeoareamonitor.html#radius-prop">setRadius</keyword>
-        <keyword ref="qgeoareamonitor.html#areaEntered">areaEntered</keyword>
-        <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
-        <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
-        <section ref="qgeoareamonitor-members.html" title="List of all members"/>
-    </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
         <keyword ref="qgeocoordinate.html">QGeoCoordinate</keyword>
         <keyword ref="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</keyword>

@@ -7,9 +7,9 @@ include(../examples.pri)
 
 CONFIG += mobility
 MOBILITY = messaging contacts
-INCLUDEPATH += ../../src/messaging
-INCLUDEPATH += ../../src/contacts ../../src/contacts/details ../../src/contacts/filters ../../src/contacts/requests
 
+INCLUDEPATH += ../../src/messaging 
+INCLUDEPATH += ../../src/contacts ../../src/contacts/details ../../src/contacts/filters ../../src/contacts/requests
 
 symbian|win32 {
 } else {
