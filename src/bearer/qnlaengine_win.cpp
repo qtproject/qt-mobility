@@ -252,7 +252,9 @@ QList<QNetworkConfigurationPrivate *> QNlaThread::getConfigurations()
         config->roamingSupported = fetchedConfigurations.at(i)->roamingSupported;
         config->purpose = fetchedConfigurations.at(i)->purpose;
         config->internet = fetchedConfigurations.at(i)->internet;
-        config->bearer = bearerName(config->id);
+        if (QNlaEngine *engine = qobject_cast<QNlaEngine *>(parent())) {
+            config->bearer = engine->bearerName(config->id);
+        }
 
         foundConfigurations.append(config);
     }
