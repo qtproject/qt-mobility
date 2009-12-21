@@ -482,7 +482,8 @@ void CntSymbianEngine::updateContactL(QContact &contact)
     CleanupStack::PushL(contactItem);
 
     // Cannot update contact type. The client needs to do this itself.
-    if ((contact.type() == QContactType::TypeContact && contactItem->Type() != KUidContactCard) || 
+    if ((contact.type() == QContactType::TypeContact && contactItem->Type() != KUidContactCard &&
+            contactItem->Type() != KUidContactOwnCard) ||
         (contact.type() == QContactType::TypeGroup && contactItem->Type() != KUidContactGroup)){
         User::Leave(KErrAlreadyExists);
     }
