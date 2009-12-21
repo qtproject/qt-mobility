@@ -360,6 +360,11 @@ public:
         QTimer::singleShot(100, this, SLOT(delayedInit()));
     }
 
+    ~LightMaps() 
+    {
+        m_location->stopUpdates();
+    }
+
     void stopPositioning()
     {
         m_location->stopUpdates();
