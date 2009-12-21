@@ -102,7 +102,7 @@ inline QStringList nsarrayToQStringList(void *nsarray)
 
 static QString qGetInterfaceType(const QString &interfaceString)
 {
-    return networkInterfaces.value(interfaceString);
+    return networkInterfaces.value(interfaceString, QLatin1String("Unknown"));
 }
 
 QCoreWlanEngine::QCoreWlanEngine(QObject *parent)
