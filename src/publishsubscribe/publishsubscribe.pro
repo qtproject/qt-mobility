@@ -43,6 +43,9 @@ symbian {
     DEPENDPATH += psmapperserver_symbian
     INCLUDEPATH += psmapperserver_symbian
 
+    HEADERS += pathmapper_symbian.h \
+        pathmapper_proxy_symbian.h
+
     DEFINES += QT_BUILD_INTERNAL
     HEADERS += settingslayer_symbian.h
     SOURCES += settingslayer_symbian.cpp \
@@ -52,7 +55,6 @@ symbian {
 
     QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll PSPathMapperServer.exe
     QtPublishSubscribeDeployment.path = /sys/bin
-
     DEPLOYMENT += QtPublishSubscribeDeployment
 }
 
