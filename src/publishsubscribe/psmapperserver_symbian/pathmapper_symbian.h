@@ -62,6 +62,9 @@ public:
     QStringList childPaths(QString basePath) const;
     bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
 
+private slots:
+    void updateMappings();
+
 private:
     class PathData
     {

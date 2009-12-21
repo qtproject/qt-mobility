@@ -41,19 +41,34 @@
 #include "pathmapper_symbian.h"
 #include "xqsettingsmanager.h"
 #include <QDir>
+#include <QFileSystemWatcher>
 
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
+QString crmlDir = "c:\\resource\\qt\\crml";
+
 PathMapper::PathMapper()
 {
-    const QDir crmlDir("c:\\resource\\qt\\crml");
+    QFileSystemWatcher *watcher = new QFileSystemWatcher(QStringList(crmlDir), this);
+    connect(watcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(updateMappings()));
+    updateMappings();
+}
+
+PathMapper::~PathMapper()
+{
+}
+
+void PathMapper::updateMappings()
+{
+    const QDir dir(crmlDir);
     QStringList filters;
     filters << "*.qcrml" << "*.confml";
-    QStringList files = crmlDir.entryList(filters, QDir::Files);
+    QStringList files = dir.entryList(filters, QDir::Files);
+    m_paths.clear();
     foreach (QString fileName, files) {
-        QList<KeyData> keyDatas = m_crmlParser.parseQCrml(QDir::toNativeSeparators(crmlDir.filePath(fileName)));
+        QList<KeyData> keyDatas = m_crmlParser.parseQCrml(QDir::toNativeSeparators(dir.filePath(fileName)));
         if (m_crmlParser.error() != QCrmlParser::NoError) {
             qDebug() << "error:" << m_crmlParser.errorString();
         }
@@ -61,10 +76,6 @@ PathMapper::PathMapper()
             m_paths.insert(keyData.path(), PathData(PathMapper::Target(keyData.target()), keyData.repoId(), keyData.keyId()));
         }
     }
-}
-
-PathMapper::~PathMapper()
-{
 }
 
 bool PathMapper::getChildren(QString path, QSet<QString> &children) const
