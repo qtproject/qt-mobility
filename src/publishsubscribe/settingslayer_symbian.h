@@ -49,7 +49,12 @@
 #include <QByteArray>
 #include <QMultiMap>
 
-#include "pathmapper_proxy_symbian.h"
+#ifdef __WINS__
+    #include "pathmapper_symbian.h"
+#else
+    #include "pathmapper_proxy_symbian.h"
+#endif
+
 #include "xqsettingsmanager.h"
 
 QTM_BEGIN_NAMESPACE

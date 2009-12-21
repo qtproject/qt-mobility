@@ -43,6 +43,13 @@
 #include "xqsettingskey.h"
 #include "xqpublishandsubscribeutils.h"
 
+#ifdef __WINS__
+    #include "pathmapper_symbian.cpp"
+    #include "qcrmlparser.cpp"
+#else
+    #include "pathmapper_proxy_symbian.cpp"
+#endif
+
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
