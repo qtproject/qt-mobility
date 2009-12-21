@@ -47,7 +47,11 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     MapWindow win;
+#if defined(Q_OS_SYMBIAN)
+    win.showMaximized();
+#else    
     win.show();
+#endif    
     win.start();
 
     return app.exec();

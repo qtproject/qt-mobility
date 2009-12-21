@@ -49,7 +49,8 @@ class QLabel;
 
 QTM_BEGIN_NAMESPACE
 class QGeoPositionInfo;
-class QNmeaPositionInfoSource;
+class QGeoPositionInfoSource;
+class QNetworkSession;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -59,20 +60,24 @@ class MapWindow : public QMainWindow
     Q_OBJECT
 public:
     MapWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
+    ~MapWindow();
     void start();
 
 private slots:
+    void delayedInit();
     void positionUpdated(const QGeoPositionInfo &info);
     void loadStarted();
     void loadFinished(bool ok);
 
 private:
-    QNmeaPositionInfoSource *source;
+    bool logfileInUse;
+    QGeoPositionInfoSource *source;
     QWebView *webView;
     QLabel *posLabel;
     QLabel *headingAndSpeedLabel;
     QLabel *dateTimeLabel;
     bool loading;
+    QNetworkSession *session;
 };
 
 #endif

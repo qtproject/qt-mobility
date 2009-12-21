@@ -19,7 +19,11 @@ contains(mobility_modules,bearer) {
 
 #Location examples
 contains(mobility_modules,location) {
-    SUBDIRS += logfilepositionsource
+    SUBDIRS += logfilepositionsource \
+                lightmaps \
+                flickrdemo \
+                weatherinfo \
+                satellitedialog
     contains(QT_CONFIG, webkit) {
         SUBDIRS += fetchgooglemaps
     }

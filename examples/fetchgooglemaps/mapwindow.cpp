@@ -41,7 +41,10 @@
 #include <QtGui>
 #include <QtWebKit>
 
+#include <qgeopositioninfosource.h>
 #include <qnmeapositioninfosource.h>
+#include <qnetworksession.h>
+#include <qnetworkconfigmanager.h>
 
 #include "mapwindow.h"
 
@@ -51,16 +54,24 @@ const QString GMAPS_STATICMAP_URL_TEMPLATE =  "http://maps.google.com/staticmap?
 
 MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
     : QMainWindow(parent, flags),
-      source(new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this)),
-      webView(new QWebView),
-      posLabel(new QLabel),
-      headingAndSpeedLabel(new QLabel),
-      dateTimeLabel(new QLabel),
-      loading(false)
+        logfileInUse(false),
+        webView(new QWebView),
+        posLabel(new QLabel),
+        headingAndSpeedLabel(new QLabel),
+        dateTimeLabel(new QLabel),
+        loading(false)
 {
-    QFile *logFile = new QFile(QApplication::applicationDirPath()
-            + QDir::separator() + "nmealog.txt", this);
-    source->setDevice(logFile);
+    source = QGeoPositionInfoSource::createDefaultSource(this);
+    if (source == 0) {        
+        QNmeaPositionInfoSource *nmeaSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
+        QFile *logFile = new QFile(QApplication::applicationDirPath()
+                + QDir::separator() + "nmealog.txt", this);
+        nmeaSource->setDevice(logFile);
+        source = nmeaSource;
+
+        logfileInUse = true;
+    }
+
     source->setUpdateInterval(1500);
     connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
             this, SLOT(positionUpdated(QGeoPositionInfo)));
@@ -76,8 +87,41 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
     layout->addWidget(dateTimeLabel);
     setCentralWidget(mainWidget);
 
+#if !defined(Q_OS_SYMBIAN)    
     resize(300, 300);
+#endif
     setWindowTitle(tr("Google Maps Demo"));
+
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
+}
+
+MapWindow::~MapWindow()
+{
+    source->stopUpdates();
+    session->close();
+}
+
+void MapWindow::delayedInit() {
+    if (logfileInUse) {
+        QMessageBox::information(this, tr("Fetch Google Maps"), 
+            tr("No GPS support detected, using GPS data from a sample log file instead."));
+    }
+
+    // Set Internet Access Point
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+        & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("Flickr Demo"), tr(
+            "Available Access Points not found."));
+        return;
+    }
+
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened();
 }
 
 void MapWindow::start()

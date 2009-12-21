@@ -1,17 +1,21 @@
-TEMPLATE=app
-INCLUDEPATH += ../../src/location \
+TEMPLATE = app
+
+HEADERS = ../satellitedialog/qgeosatellitedialog.h
+SOURCES = lightmaps.cpp \
+            ../satellitedialog/qgeosatellitedialog.cpp
+
+QT += network
+
+INCLUDEPATH += ../../src/global \
                 ../../src/bearer \
-                ../../src/global
-
-QT += webkit network
-
-HEADERS = mapwindow.h \
-            ../satellitedialog/qgeosatellitedialog.h
-SOURCES = mapwindow.cpp \
-            ../satellitedialog/qgeosatellitedialog.cpp \
-            main.cpp
+                ../../src/location
 
 include(../examples.pri)
+
+symbian {
+    TARGET.CAPABILITY = NetworkServices Location ReadUserData
+    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
+}
 
 CONFIG += mobility
 MOBILITY = location bearer
@@ -19,8 +23,6 @@ MOBILITY = location bearer
 symbian: {
     addFiles.sources = nmealog.txt
     DEPLOYMENT += addFiles
-    
-    TARGET.CAPABILITY = Location NetworkServices
 } else {
     logfile.path = $$DESTDIR
     logfile.files = nmealog.txt
@@ -28,4 +30,3 @@ symbian: {
     INSTALLS += logfile
     build_pass:ALL_DEPS+=install_logfile
 }
-
