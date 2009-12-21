@@ -27,6 +27,7 @@ symbian: {
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtLocation.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtSystemInfo.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtPublishSubscribe.dll \
+        $$(EPOCROOT50)epoc32/release/armv5/urel/PSPathMapperServer.exe \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtContacts.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtVersit.dll
 
