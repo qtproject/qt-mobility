@@ -49,17 +49,23 @@ QTM_BEGIN_NAMESPACE
 
 PathMapper::PathMapper()
 {
-    const QDir crmlDir("c:\\resource\\qt\\crml");
     QStringList filters;
     filters << "*.qcrml" << "*.confml";
-    QStringList files = crmlDir.entryList(filters, QDir::Files);
-    foreach (QString fileName, files) {
-        QList<KeyData> keyDatas = m_crmlParser.parseQCrml(QDir::toNativeSeparators(crmlDir.filePath(fileName)));
-        if (m_crmlParser.error() != QCrmlParser::NoError) {
-            qDebug() << "error:" << m_crmlParser.errorString();
-        }
-        foreach (KeyData keyData, keyDatas) {
-            m_paths.insert(keyData.path(), PathData(PathMapper::Target(keyData.target()), keyData.repoId(), keyData.keyId()));
+
+    foreach (const QFileInfo &info, QDir::drives()) {
+        const QDir crmlDir(info.path() + "resource/qt/crml");
+
+        foreach (const QString &fileName, crmlDir.entryList(filters, QDir::Files)) {
+            QList<KeyData> keyDatas = m_crmlParser.parseQCrml(crmlDir.filePath(fileName));
+            if (m_crmlParser.error() != QCrmlParser::NoError)
+                qDebug() << "error:" << m_crmlParser.errorString();
+
+            foreach (const KeyData &keyData, keyDatas) {
+                if (!m_paths.contains(keyData.path())) {
+                    m_paths.insert(keyData.path(), PathData(PathMapper::Target(keyData.target()),
+                                                            keyData.repoId(), keyData.keyId()));
+                }
+            }
         }
     }
 }
