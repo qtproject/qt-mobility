@@ -126,6 +126,7 @@ contains(mobility_modules,messaging) {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
-        qmessage
+        qmessage \
+        qmessageservice
     }
 }

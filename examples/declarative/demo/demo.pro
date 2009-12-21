@@ -11,7 +11,8 @@ HEADERS += ../sfwexample.h
 SOURCES += ../sfwexample.cpp \
            ../main.cpp
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

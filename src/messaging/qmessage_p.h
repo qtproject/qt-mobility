@@ -116,7 +116,7 @@ public:
 #endif
 
     QMessageId _id;
-    uint _size;
+    int _size;
     QMessageAccountId _parentAccountId;
     QMessageFolderId _parentFolderId;
     QMessage::StandardFolder _standardFolder;
@@ -138,7 +138,7 @@ public:
     static QMessage from(const QMessageId &id);
     static QString senderName(const QMessage &message);
     static void setSenderName(const QMessage &message, const QString &senderName);
-    static void setSize(const QMessage &message, uint size);
+    static void setSize(const QMessage &message, int size);
     static void setParentFolderId(QMessage& message, const QMessageFolderId& id);
 
 #if defined(Q_OS_WIN)

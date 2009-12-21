@@ -25,8 +25,16 @@
     CONFIG += console
 
     include(../examples.pri)
-    qtAddLibrary(QtLocation)
+    CONFIG += mobility
+    MOBILITY = location
 
+<<<<<<< HEAD:doc/html/logfilepositionsource-logfilepositionsource-pro.html
+    symbian: {
+        addFiles.sources = simplelog.txt
+        DEPLOYMENT += addFiles
+
+        TARGET.CAPABILITY = Location
+=======
     symbian|wince*: {
         symbian: {
             addFiles.sources = simplelog.txt
@@ -39,6 +47,7 @@
             addFiles.path = .
             DEPLOYMENT += addFiles
         }
+>>>>>>> 0f30af5c48993a7c40e1105f56363fe2dc2840d8:doc/html/logfilepositionsource-logfilepositionsource-pro.html
     } else {
         logfileexample.path = $$DESTDIR
         logfileexample.files = simplelog.txt

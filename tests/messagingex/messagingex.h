@@ -48,9 +48,10 @@
 #include "ui_accountdialog.h"
 #include "ui_mmsreceiveddialog.h"
 
-#include "qmessageserviceaction.h"
-#include "qmessage.h"
-#include "qmessageaccount.h"
+#include "QMessageService.h"
+#include "QMessageManager.h"
+#include "QMessage.h"
+#include "QMessageAccount.h"
 
 QTM_USE_NAMESPACE
 
@@ -93,9 +94,9 @@ private Q_SLOTS:
     void messagesFound(const QMessageIdList &ids);
 
 private:
-	QMessageServiceAction m_serviceaction;
-	QMessageStore* m_store;
-	
+    QMessageService m_service;
+    QMessageManager m_manager;
+        
     QAction* m_createEmail;
     QAction* m_createSms;
     QAction* m_createMms;

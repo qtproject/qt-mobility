@@ -152,7 +152,7 @@ public:
     Priority priority() const;
     void setPriority(Priority newPriority);
 
-    uint size() const;
+    int size() const;
 
     QMessageContentContainerId bodyId() const;
 
