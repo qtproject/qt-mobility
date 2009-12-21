@@ -64,6 +64,8 @@ class SignalCatcher : public QObject
 public:
     SignalCatcher(QObject* parent = 0);
 
+    void reset();
+
 public slots:
     void messagesCounted(int count);
     void messagesFound(const QMessageIdList& messageList);
@@ -79,12 +81,18 @@ public:
 
 SignalCatcher::SignalCatcher(QObject* parent)
 :
-QObject(parent),
-count(0),
-state(QMessageService::InactiveState),
-progressMin(0),
-progressMax(0)
+QObject(parent)
 {
+    reset();
+}
+
+void SignalCatcher::reset()
+{
+    ids.clear();
+    count = 0;
+    progressMin = 0;
+    progressMax = 0;
+    state = QMessageService::InactiveState;
 }
 
 void SignalCatcher::messagesCounted(int c)
@@ -94,7 +102,7 @@ void SignalCatcher::messagesCounted(int c)
 
 void SignalCatcher::messagesFound(const QMessageIdList& results)
 {
-    ids = results;
+    ids.append(results);
 }
 
 void SignalCatcher::stateChanged(QMessageService::State s)
@@ -230,6 +238,8 @@ void tst_QMessageService::initTestCase()
     QMessageManager* manager = new QMessageManager(this);
 
     existingAccountIds = manager->queryAccounts().toSet();
+
+
     existingAccountsFilter = ~QMessageFilter();
     foreach(QMessageAccountId id, existingAccountIds) {
         existingAccountsFilter |= QMessageFilter::byParentAccountId(id);
@@ -427,25 +437,41 @@ void tst_QMessageService::testQueryMessages()
         // Order is irrelevant for filtering
 
         if (body.isEmpty()) {
+            sc.reset();
             QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter),true);
-            QTest::qSleep(100);
-            qApp->processEvents();
+
+            while(testService->state() == QMessageService::ActiveState)
+                qApp->processEvents();
+
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
+            sc.reset();
+
             QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter),true);
-            qApp->processEvents();
-            QTest::qSleep(100);
+
+            while(testService->state() == QMessageService::ActiveState)
+                qApp->processEvents();
+
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
 
         } else {
+
+            sc.reset();
+
             QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter,body),true);
-            QTest::qSleep(30000);
-            qApp->processEvents();
+
+            while(testService->state() == QMessageService::ActiveState)
+                qApp->processEvents();
+
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
+            sc.reset();
+
             QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter,body),true);
-            qApp->processEvents();
-            QTest::qSleep(30000);
+
+            while(testService->state() == QMessageService::ActiveState)
+                qApp->processEvents();
+
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
         }
     } else {
@@ -1856,13 +1882,17 @@ void tst_QMessageService::testCountMessages()
 
         if(body.isEmpty()) {
             QCOMPARE(testService->countMessages(filter&~existingAccountsFilter),true);
-            QTest::qSleep(100);
-            qApp->processEvents();
+
+            while(testService->state() == QMessageService::ActiveState)
+                qApp->processEvents();
+
             QCOMPARE(sc.count-existingAccountIds.count(), ids.count());
 
             QCOMPARE(testService->countMessages(~filter&~existingAccountsFilter),true);
-            qApp->processEvents();
-            QTest::qSleep(100);
+
+            while(testService->state() == QMessageService::ActiveState)
+                qApp->processEvents();
+
             QCOMPARE(sc.count-existingAccountIds.count(), negatedIds.count());
         }
 
