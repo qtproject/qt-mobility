@@ -86,7 +86,7 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
         satellitesLabel->setText(tr("GPS not detected, replaying coordinates from sample log file."));
     }
 
-    QTimer::singleShot(0, this, SLOT(delayedInit()));
+    QTimer::singleShot(100, this, SLOT(delayedInit()));
 }
 
 FlickrDemo::~FlickrDemo()
