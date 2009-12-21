@@ -219,7 +219,7 @@ QString QCoreWlanEngine::bearerName(const QString &id)
     QString interface = getInterfaceFromId(id);
 
     if (interface.isEmpty())
-        return QString();
+        return QLatin1String("Unknown");
 
     return qGetInterfaceType(interface);
 }

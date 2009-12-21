@@ -448,7 +448,7 @@ QString QNmWifiEngine::bearerName(const QString &id)
             };
         }
     }
-    return QString();
+    return QLatin1String("Unknown");
 }
 
 void QNmWifiEngine::connectToId(const QString &id)

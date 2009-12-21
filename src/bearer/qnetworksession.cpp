@@ -342,13 +342,17 @@ QNetworkConfiguration QNetworkSession::configuration() const
 }
 
 /*!
-    Returns the type of bearer currently used by this session. The string is not translated and therefore can 
-    not be shown to the user. The subsequent table presents the currently known bearer types:
+    Returns the type of bearer currently used by this session. The string is not translated and
+    therefore can not be shown to the user. The subsequent table presents the currently known
+    bearer types:
 
     \table
         \header 
             \o Value
             \o Description
+        \row
+            \o Unknown
+            \o The session is based on an unknown or unspecified bearer type.
         \row
             \o Ethernet
             \o The session is based on Ethernet.
@@ -380,7 +384,9 @@ QNetworkConfiguration QNetworkSession::configuration() const
     active configuration is returned. Therefore the bearer type may change 
     over time.
 
-    This function returns an empty string if this session is based on an invalid configuration.
+    This function returns an empty string if this session is based on an invalid configuration, or
+    a network configuration of type \l QNetworkConfiguration::ServiceNetwork with no
+    \l {QNetworkConfiguration::children()}{children}.
 */
 QString QNetworkSession::bearerName() const
 {

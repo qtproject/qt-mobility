@@ -588,7 +588,7 @@ QString QNetworkSessionPrivate::bearerName() const
         case QNetworkConfigurationPrivate::BearerHSPA:      return QString("HSPA");
         case QNetworkConfigurationPrivate::BearerBluetooth: return QString("Bluetooth");
         case QNetworkConfigurationPrivate::BearerWiMAX:     return QString("WiMAX");
-        default: return QString();
+        default: return QString("Unknown");
     }
 }
 

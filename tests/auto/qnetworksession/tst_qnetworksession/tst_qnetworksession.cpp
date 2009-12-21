@@ -236,7 +236,7 @@ void tst_QNetworkSession::sessionProperties()
 
     QVERIFY(session.configuration() == configuration);
 
-    QStringList validBearerNames = QStringList() << QString()
+    QStringList validBearerNames = QStringList() << QLatin1String("Unknown")
                                                  << QLatin1String("Ethernet")
                                                  << QLatin1String("WLAN")
                                                  << QLatin1String("2G")
@@ -246,10 +246,16 @@ void tst_QNetworkSession::sessionProperties()
                                                  << QLatin1String("Bluetooth")
                                                  << QLatin1String("WiMAX");
 
-    if (!configuration.isValid())
+    if (!configuration.isValid()) {
         QVERIFY(session.bearerName().isEmpty());
-    else
-        QVERIFY(validBearerNames.contains(session.bearerName()));
+    } else {
+        if (configuration.type() == QNetworkConfiguration::ServiceNetwork &&
+            configuration.children().isEmpty()) {
+            QVERIFY(session.bearerName().isEmpty());
+        } else {
+            QVERIFY(validBearerNames.contains(session.bearerName()));
+        }
+    }
 
     // QNetworkSession::interface() should return an invalid interface unless
     // session is in the connected state.
