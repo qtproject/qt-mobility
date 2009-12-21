@@ -121,7 +121,7 @@ void addContact(QContactManager* cm)
 //! [Calling an existing contact]
 void callContact(QContactManager* cm)
 {
-    QList<QContactLocalId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contactIds();
     QContact a = cm->contact(contactIds.first());
 
     /* Get this contact's first phone number */
@@ -145,7 +145,7 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
     phoneFilter.setValue(incomingCallNbr);
     phoneFilter.setMatchFlags(QContactFilter::MatchExactly);
 
-    QList<QContactLocalId> matchingContacts = cm->contacts(phoneFilter);
+    QList<QContactLocalId> matchingContacts = cm->contactIds(phoneFilter);
     if (matchingContacts.size() == 0) {
         qDebug() << "Incoming call from unknown contact (" << incomingCallNbr << ")";
     } else {
@@ -160,7 +160,7 @@ void matchCall(QContactManager* cm, const QString& incomingCallNbr)
 //! [Viewing a specific detail of a contact]
 void viewSpecificDetail(QContactManager* cm)
 {
-    QList<QContactLocalId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contactIds();
     QContact a = cm->contact(contactIds.first());
     qDebug() << "The first phone number of" << a.displayLabel()
              << "is" << a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
@@ -170,7 +170,7 @@ void viewSpecificDetail(QContactManager* cm)
 //! [Viewing the details of a contact]
 void viewDetails(QContactManager* cm)
 {
-    QList<QContactLocalId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contactIds();
     QContact a = cm->contact(contactIds.first());
     qDebug() << "Viewing the details of" << a.displayLabel();
 
@@ -216,7 +216,7 @@ void addPlugin(QContactManager* cm)
 //! [Modifying an existing contact]
 void editView(QContactManager* cm)
 {
-    QList<QContactLocalId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contactIds();
     QContact a = cm->contact(contactIds.first());
     qDebug() << "Modifying the details of" << a.displayLabel();
 
@@ -286,7 +286,7 @@ void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnl
 void loadManager()
 {
     QContactManager* cm = new QContactManager("KABC");
-    QList<QContactLocalId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contactIds();
     if (!contactIds.isEmpty()) {
         QContact a = cm->contact(contactIds.first());
         qDebug() << "This manager contains" << a.displayLabel();

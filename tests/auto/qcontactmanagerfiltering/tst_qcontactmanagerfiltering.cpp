@@ -343,7 +343,7 @@ void tst_QContactManagerFiltering::detailStringFiltering()
         QVERIFY(cm->filterSupported(df) == false);
     }
 
-    ids = cm->contacts(df);
+    ids = cm->contactIds(df);
 
     QString output = convertIds(contacts, ids);
     QEXPECT_FAIL("integer == 20", "Not sure if this should pass or fail", Continue);
@@ -611,7 +611,7 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
         QVERIFY(cm->filterSupported(df) == false);
     }
 
-    ids = cm->contacts(df);
+    ids = cm->contactIds(df);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
@@ -793,7 +793,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
         /* At this point, since we're using memory, assume the filter isn't really supported */
         QVERIFY(cm->filterSupported(drf) == false);
     }
-    ids = cm->contacts(drf);
+    ids = cm->contactIds(drf);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
@@ -1232,7 +1232,7 @@ void tst_QContactManagerFiltering::intersectionFiltering()
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QList<QContactLocalId> ids;
 
-    ids = cm->contacts(resultFilter);
+    ids = cm->contactIds(resultFilter);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
@@ -1675,7 +1675,7 @@ void tst_QContactManagerFiltering::unionFiltering()
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QList<QContactLocalId> ids;
 
-    ids = cm->contacts(resultFilter);
+    ids = cm->contactIds(resultFilter);
 
     QString output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
@@ -1749,7 +1749,7 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     // grab our results
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QList<QContactLocalId> ids;
-    ids = cm->contacts(crf);
+    ids = cm->contactIds(crf);
 
     // and compare.
     QString output = convertIds(contacts, ids);
@@ -1822,7 +1822,7 @@ void tst_QContactManagerFiltering::sorting()
     if (setbp)
         s.setBlankPolicy(blankpolicy);
 
-    ids = cm->contacts(s);
+    ids = cm->contactIds(s);
     QString output = convertIds(contacts, ids);
 
     // It's possible to get some contacts back in an arbitrary order (since we single sort)
@@ -1845,7 +1845,7 @@ void tst_QContactManagerFiltering::sorting()
     QContactDetailFilter presenceName;
     presenceName.setDetailDefinitionName(QContactName::DefinitionName);
 
-    ids = cm->contacts(presenceName, s);
+    ids = cm->contactIds(presenceName, s);
 
     output = convertIds(contacts, ids);
 
@@ -1984,7 +1984,7 @@ void tst_QContactManagerFiltering::multiSorting()
     if (secondsort)
         sortOrders.append(ss);
 
-    QList<QContactLocalId> ids = cm->contacts(sortOrders);
+    QList<QContactLocalId> ids = cm->contactIds(sortOrders);
     QString output = convertIds(contacts, ids);
 
     // Just like the single sort test, we might get some contacts back in indeterminate order
@@ -2154,7 +2154,7 @@ void tst_QContactManagerFiltering::actionFiltering()
         af.setValue(value);
         af.setVendor(vendorName, version);
 
-        QList<QContactLocalId> ids = cm->contacts(af);
+        QList<QContactLocalId> ids = cm->contactIds(af);
         QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
 
         QString output = convertIds(contacts, ids);
@@ -2219,7 +2219,7 @@ void tst_QContactManagerFiltering::idListFiltering()
     idf.setIds(ids);
 
     /* Retrieve contacts matching the filter, and compare (unsorted) output */
-    ids = cm->contacts(idf);
+    ids = cm->contactIds(idf);
     QString output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
 }
@@ -2240,14 +2240,14 @@ void tst_QContactManagerFiltering::invalidFiltering()
 
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QContactInvalidFilter f; // invalid
-    QList<QContactLocalId> ids = cm->contacts(f);
+    QList<QContactLocalId> ids = cm->contactIds(f);
     QVERIFY(ids.count() == 0);
 
     // Try unions/intersections of invalids too
-    ids = cm->contacts(f | f);
+    ids = cm->contactIds(f | f);
     QVERIFY(ids.count() == 0);
 
-    ids = cm->contacts(f & f);
+    ids = cm->contactIds(f & f);
     QVERIFY(ids.count() == 0);
 }
 
@@ -2267,18 +2267,18 @@ void tst_QContactManagerFiltering::allFiltering()
 
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QContactFilter f; // default = permissive
-    QList<QContactLocalId> ids = cm->contacts(f);
+    QList<QContactLocalId> ids = cm->contactIds(f);
     QVERIFY(ids.count() == contacts.size());
     QString output = convertIds(contacts, ids);
     QString expected = convertIds(contacts, contacts); // :)
     QCOMPARE(output, expected);
 
     // Try unions/intersections of defaults
-    ids = cm->contacts(f | f);
+    ids = cm->contactIds(f | f);
     output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
 
-    ids = cm->contacts(f & f);
+    ids = cm->contactIds(f & f);
     output = convertIds(contacts, ids);
     QCOMPARE_UNSORTED(output, expected);
 }
@@ -2366,7 +2366,7 @@ void tst_QContactManagerFiltering::changelogFiltering()
         QContactChangeLogFilter clf((QContactChangeLogFilter::EventType)eventType);
         clf.setSince(since);
 
-        ids = cm->contacts(clf);
+        ids = cm->contactIds(clf);
 
         QString output = convertIds(contacts, ids);
         QCOMPARE(output, expected); // unsorted? or sorted?
@@ -2715,7 +2715,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
         d.saveDetail(&date);
 
     qDebug() << "Generating contacts with different timestamps, please wait..";
-    int originalContactCount = cm->contacts().count();
+    int originalContactCount = cm->contactIds().count();
     bool successfulSave = cm->saveContact(&a);
     Q_ASSERT(successfulSave);
     QTest::qSleep(napTime);
@@ -2749,7 +2749,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     successfulSave = cm->saveContact(&g);
     Q_ASSERT(successfulSave);
     originalContactCount += 7;
-    Q_ASSERT(cm->contacts().count() == originalContactCount);
+    Q_ASSERT(cm->contactIds().count() == originalContactCount);
 
     /* Ensure the last modified times are different */
     QTest::qSleep(napTime);
@@ -2960,7 +2960,7 @@ void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 void tst_QContactManagerFiltering::dumpContacts()
 {
     QContactManager m;
-    QList<QContactLocalId> ids = m.contacts();
+    QList<QContactLocalId> ids = m.contactIds();
 
     foreach(QContactLocalId id, ids) {
         QContact c = m.contact(id);

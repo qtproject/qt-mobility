@@ -76,11 +76,11 @@ public:
             QContactManager* cm = QContactManager::fromUri(mgrUri);
             if (cm) {
                 QList<QContact> contacts;
-                foreach (const QContactLocalId id,  cm->contacts()) {
+                foreach (const QContactLocalId id,  cm->contactIds()) {
                     contacts.push_back(cm->contact(id));
                 }
                 savedContacts.insert(cm->managerName(),contacts);
-                QList<QContactLocalId> ids = cm->contacts();
+                QList<QContactLocalId> ids = cm->contactIds();
                 cm->removeContacts(&ids);
             }
         }

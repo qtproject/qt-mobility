@@ -319,25 +319,76 @@ QContactManager::Error QContactManager::error() const
     return d->m_error;
 }
 
-/*! Return the list of added contact ids, sorted according to the given list of \a sortOrders */
+/*!
+ * \deprecated
+ * Return the list of added contact ids, sorted according to the given list of \a sortOrders
+ */
 QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
 {
+    qWarning("QContactManager::contacts() This function is deprecated and will be removed in week 3.  Use contactIds() instead!");
     return d->m_engine->contacts(sortOrders, d->m_error);
+}
+
+/*!
+ * \deprecated
+ * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
+ * Depending on the backend, this filtering operation may involve retrieving all the contacts.
+ */
+QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
+{
+    qWarning("QContactManager::contacts() This function is deprecated and will be removed in week 3.  Use contactIds() instead!");
+    return d->m_engine->contacts(filter, sortOrders, d->m_error);
+}
+
+/*!
+ * Return the list of added contact ids, sorted according to the given list of \a sortOrders
+ */
+QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder>& sortOrders) const
+{
+    return d->m_engine->contactIds(sortOrders, d->m_error);
 }
 
 /*!
  * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
  * Depending on the backend, this filtering operation may involve retrieving all the contacts.
  */
-QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders) const
 {
-    return d->m_engine->contacts(filter, sortOrders, d->m_error);
+    return d->m_engine->contactIds(filter, sortOrders, d->m_error);
 }
 
-/*! Returns the contact in the database identified by \a contactId */
-QContact QContactManager::contact(const QContactLocalId& contactId) const
+/*!
+ * Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
+ * If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
+ * all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
+ * in the \a definitionRestrictions list will be included.
+ */
+QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
-    return d->m_engine->contact(contactId, d->m_error);
+    return d->m_engine->contacts(sortOrders, definitionRestrictions, d->m_error);
+}
+
+/*!
+ * Returns a list of contacs that match the given \a filter, sorted according to the given list of \a sortOrders.
+ * Depending on the backend, this filtering operation may involve retrieving all the contacts.
+ * If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
+ * all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
+ * in the \a definitionRestrictions list will be included.
+ */
+QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
+{
+    return d->m_engine->contacts(filter, sortOrders, definitionRestrictions, d->m_error);
+}
+
+/*!
+ * Returns the contact in the database identified by \a contactId.
+ * If the list of detail definition names \a definitionRestrictions given is non-empty,
+ * the contact returned will contain only those details which are of a definition whose name is
+ * contained in the \a definitionRestrictions list.
+ */
+QContact QContactManager::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions) const
+{
+    return d->m_engine->contact(contactId, definitionRestrictions, d->m_error);
 }
 
 /*!
