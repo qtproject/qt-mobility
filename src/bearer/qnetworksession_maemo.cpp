@@ -826,7 +826,6 @@ void QNetworkSessionPrivate::do_open()
     bool st;
     QString result;
     QString iap = publicConfig.identifier();
-    QString bearer_name;
 
     if (state == QNetworkSession::Connected) {
 #ifdef BEARER_MANAGEMENT_DEBUG
@@ -922,14 +921,7 @@ void QNetworkSessionPrivate::do_open()
 	if (!name.isEmpty())
 	    config.d->name = name;
 
-	bearer_name = connect_result.connect.network_type;
-	if (bearer_name == "WLAN_INFRA" ||
-	    bearer_name == "WLAN_ADHOC")
-	    currentBearerName = "WLAN";
-	else if (bearer_name == "GPRS")
-	    currentBearerName = "HSPA";
-	else
-	    currentBearerName = bearer_name;
+        config.d->iap_type = connect_result.connect.network_type;
 
 	config.d->isValid = true;
 	config.d->state = QNetworkConfiguration::Active;
@@ -1139,15 +1131,6 @@ void QNetworkSessionPrivate::setSessionProperty(const QString& key, const QVaria
 QVariant QNetworkSessionPrivate::sessionProperty(const QString& key) const
 {
     return properties.value(key);
-}
-
-
-QString QNetworkSessionPrivate::bearerName() const
-{
-    if (!publicConfig.isValid())
-        return QString();
-
-    return currentBearerName;
 }
 
 

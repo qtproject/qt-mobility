@@ -558,40 +558,6 @@ QNetworkConfiguration QNetworkSessionPrivate::bestConfigFromSNAP(const QNetworkC
     return config;
 }
 
-QString QNetworkSessionPrivate::bearerName() const
-{
-    QNetworkConfiguration config;
-    if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
-        config = publicConfig;
-    } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-        if (activeConfig.isValid()) {
-            config = activeConfig;
-        } else {
-            config = bestConfigFromSNAP(publicConfig);
-        }
-    } else if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
-        if (activeConfig.isValid()) {
-            config = activeConfig;
-        }
-    }
-
-    if (!config.isValid()) {
-        return QString();
-    }
-
-    switch (config.d.data()->bearer) {
-        case QNetworkConfigurationPrivate::BearerEthernet:  return QString("Ethernet");
-        case QNetworkConfigurationPrivate::BearerWLAN:      return QString("WLAN");
-        case QNetworkConfigurationPrivate::Bearer2G:        return QString("2G");
-        case QNetworkConfigurationPrivate::BearerCDMA2000:  return QString("CDMA2000");
-        case QNetworkConfigurationPrivate::BearerWCDMA:     return QString("WCDMA");
-        case QNetworkConfigurationPrivate::BearerHSPA:      return QString("HSPA");
-        case QNetworkConfigurationPrivate::BearerBluetooth: return QString("Bluetooth");
-        case QNetworkConfigurationPrivate::BearerWiMAX:     return QString("WiMAX");
-        default: return QString("Unknown");
-    }
-}
-
 quint64 QNetworkSessionPrivate::bytesWritten() const
 {
     return transferredData(KUplinkData);

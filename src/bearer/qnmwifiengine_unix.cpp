@@ -376,6 +376,7 @@ void QNmWifiEngine::knownConnections()
             if(addIt) {
                 foundConfigurations.append(cpPriv);
                 configurationInterface[cpPriv->id] = cpPriv->serviceInterface.name();
+                cpPriv->bearer = bearerName(cpPriv->id);
             }
         } //end each connection service
     }
@@ -399,6 +400,7 @@ void QNmWifiEngine::accessPointConnections()
                     foundConfigurations.append(cpPriv);
                     //                    qWarning() << "adding" << cpPriv->name << "to things";
                     configurationInterface[cpPriv->id] = cpPriv->serviceInterface.name();
+                    cpPriv->bearer = bearerName(cpPriv->id);
                 }
             }
         }

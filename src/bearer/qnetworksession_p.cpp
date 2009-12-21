@@ -286,13 +286,13 @@ void QNetworkSessionPrivate::setSessionProperty(const QString& /*key*/, const QV
 {
 }
 
-QString QNetworkSessionPrivate::bearerName() const
+/*QString QNetworkSessionPrivate::bearerName() const
 {
     if (!publicConfig.isValid() || !engine)
         return QString();
 
     return engine->bearerName(activeConfig.identifier());
-}
+}*/
 
 QString QNetworkSessionPrivate::errorString() const
 {

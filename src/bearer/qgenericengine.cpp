@@ -196,6 +196,11 @@ QList<QNetworkConfigurationPrivate *> QGenericEngine::getConfigurations(bool *ok
         cpPriv->id = QString::number(identifier);
         cpPriv->state = QNetworkConfiguration::Discovered;
         cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
+        if (interface.name().isEmpty())
+            cpPriv->bearer = QLatin1String("Unknown");
+        else
+            cpPriv->bearer = qGetInterfaceType(interface.name());
+
         if (interface.flags() & QNetworkInterface::IsUp)
             cpPriv->state |= QNetworkConfiguration::Active;
 
@@ -219,7 +224,7 @@ bool QGenericEngine::hasIdentifier(const QString &id)
     return configurationInterface.contains(id.toUInt());
 }
 
-QString QGenericEngine::bearerName(const QString &id)
+/*QString QGenericEngine::bearerName(const QString &id)
 {
     QString interface = getInterfaceFromId(id);
 
@@ -227,7 +232,7 @@ QString QGenericEngine::bearerName(const QString &id)
         return QLatin1String("Unknown");
 
     return qGetInterfaceType(interface);
-}
+}*/
 
 void QGenericEngine::connectToId(const QString &id)
 {

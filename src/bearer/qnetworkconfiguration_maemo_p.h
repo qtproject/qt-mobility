@@ -89,6 +89,7 @@ public:
     /* In Maemo the id field (defined above) is the IAP id (which typically is UUID) */
     QByteArray network_id; /* typically WLAN ssid or similar */
     QString iap_type; /* is this one WLAN or GPRS */
+    QString bearerName() const;
     uint32_t network_attrs; /* network attributes for this IAP, this is the value returned by icd and passed to it when connecting */
 
     QString service_type;
@@ -103,6 +104,19 @@ private:
     QNetworkConfigurationPrivate &operator=(const QNetworkConfigurationPrivate &other);
     QNetworkConfigurationPrivate(const QNetworkConfigurationPrivate &other);
 };
+
+QString QNetworkConfigurationPrivate::bearerName() const
+{
+    if (iap_type == "WLAN_INFRA" ||
+            iap_type == "WLAN_ADHOC")
+        return QString("WLAN");
+    else if (iap_type == "GPRS")
+        return QString("HSPA");
+
+    //return whatever it is 
+    //this may have to be split up later on
+    return iap_type;
+}
 
 QTM_END_NAMESPACE
 

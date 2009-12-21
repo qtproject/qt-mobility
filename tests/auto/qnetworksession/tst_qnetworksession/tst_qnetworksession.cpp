@@ -247,13 +247,13 @@ void tst_QNetworkSession::sessionProperties()
                                                  << QLatin1String("WiMAX");
 
     if (!configuration.isValid()) {
-        QVERIFY(session.bearerName().isEmpty());
+        QVERIFY(configuration.bearerName().isEmpty());
     } else {
         if (configuration.type() == QNetworkConfiguration::ServiceNetwork &&
             configuration.children().isEmpty()) {
-            QVERIFY(session.bearerName().isEmpty());
+            QVERIFY(configuration.bearerName().isEmpty());
         } else {
-            QVERIFY(validBearerNames.contains(session.bearerName()));
+            QVERIFY(validBearerNames.contains(configuration.bearerName()));
         }
     }
 

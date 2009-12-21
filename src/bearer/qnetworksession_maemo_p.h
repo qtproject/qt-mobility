@@ -88,7 +88,6 @@ public:
     QNetworkInterface currentInterface() const;
     QVariant sessionProperty(const QString& key) const;
     void setSessionProperty(const QString& key, const QVariant& value);
-    QString bearerName() const;
 
     void open();
     void close();
@@ -152,7 +151,6 @@ private:
     friend class QNetworkSession;
 
     QDateTime startTime;
-    QString currentBearerName;
     QString currentNetworkInterface;
     friend class IcdListener;
     void updateState(QNetworkSession::State);

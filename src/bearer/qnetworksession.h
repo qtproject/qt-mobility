@@ -84,7 +84,6 @@ public:
 
     bool isOpen() const;
     QNetworkConfiguration configuration() const;
-    QString bearerName() const;
     QNetworkInterface interface() const;
 
     State state() const;

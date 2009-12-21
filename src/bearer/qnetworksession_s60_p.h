@@ -92,7 +92,6 @@ public:
     QNetworkInterface currentInterface() const;
     QVariant sessionProperty(const QString& key) const;
     void setSessionProperty(const QString& key, const QVariant& value);
-    QString bearerName() const;
     
     void setALREnabled(bool enabled);
 

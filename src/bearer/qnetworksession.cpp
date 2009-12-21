@@ -341,7 +341,7 @@ QNetworkConfiguration QNetworkSession::configuration() const
     return d->publicConfig;
 }
 
-/*!
+/*
     Returns the type of bearer currently used by this session. The string is not translated and
     therefore can not be shown to the user. The subsequent table presents the currently known
     bearer types:
@@ -388,10 +388,10 @@ QNetworkConfiguration QNetworkSession::configuration() const
     a network configuration of type \l QNetworkConfiguration::ServiceNetwork with no
     \l {QNetworkConfiguration::children()}{children}.
 */
-QString QNetworkSession::bearerName() const
+/*QString QNetworkSession::bearerName() const
 {
     return d->bearerName();
-}
+}*/
 
 /*!
     Returns the network interface that is used by this session.

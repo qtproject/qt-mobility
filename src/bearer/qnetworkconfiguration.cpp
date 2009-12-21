@@ -344,6 +344,56 @@ QList<QNetworkConfiguration> QNetworkConfiguration::children() const
     return results;
 }
 
+/*!
+    Returns the type of bearer. The string is not translated and
+    therefore can not be shown to the user. The subsequent table presents the currently known
+    bearer types:
+
+    \table
+        \header 
+            \o Value
+            \o Description
+        \row
+            \o Unknown
+            \o The session is based on an unknown or unspecified bearer type.
+        \row
+            \o Ethernet
+            \o The session is based on Ethernet.
+        \row
+            \o WLAN
+            \o The session is based on Wireless LAN.
+        \row
+            \o 2G
+            \o The session uses CSD, GPRS, HSCSD, EDGE or cdmaOne.
+        \row 
+            \o CDMA2000
+            \o The session uses CDMA.
+        \row
+            \o WCDMA
+            \o The session uses W-CDMA/UMTS.
+        \row
+            \o HSPA
+            \o The session uses High Speed Packet Access.
+        \row
+            \o Bluetooth
+            \o The session uses Bluetooth.
+        \row
+            \o WiMAX
+            \o The session uses WiMAX.
+    \endtable
+
+    This function returns an empty string if this is an invalid configuration,
+    a network configuration of type \l QNetworkConfiguration::ServiceNetwork or
+    \l QNetworkConfiguration::UserChoice.
+*/
+QString QNetworkConfiguration::bearerName() const
+{
+    if (!isValid())
+        return QString();
+
+    return d->bearerName();
+}
+
 
 QTM_END_NAMESPACE
 

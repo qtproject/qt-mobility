@@ -258,7 +258,7 @@ void Cloud::stateChanged(QNetworkSession::State state)
         tooltip += tr("<br>Interface: %1").arg(interface.humanReadableName());
     tooltip += tr("<br>Id: %1").arg(configuration.identifier());
 
-    const QString bearerName = session->bearerName();
+    const QString bearerName = configuration.bearerName();
     if (!bearerName.isEmpty())
         tooltip += tr("<br>Bearer: %1").arg(bearerName);
 
@@ -307,7 +307,7 @@ void Cloud::stateChanged(QNetworkSession::State state)
 //! [1]
 void Cloud::newConfigurationActivated()
 {
-    const QString bearerName = session->bearerName();
+    const QString bearerName = configuration.bearerName();
     if (!svgCache.contains(bearerName)) {
         if (bearerName == QLatin1String("WLAN"))
             svgCache.insert(bearerName, new QSvgRenderer(QLatin1String(":wlan.svg")));

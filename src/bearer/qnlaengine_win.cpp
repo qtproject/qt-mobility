@@ -252,6 +252,7 @@ QList<QNetworkConfigurationPrivate *> QNlaThread::getConfigurations()
         config->roamingSupported = fetchedConfigurations.at(i)->roamingSupported;
         config->purpose = fetchedConfigurations.at(i)->purpose;
         config->internet = fetchedConfigurations.at(i)->internet;
+        config->bearer = bearerName(config->id);
 
         foundConfigurations.append(config);
     }
@@ -546,12 +547,17 @@ bool QNlaEngine::hasIdentifier(const QString &id)
     if (configurationInterface.contains(id.toUInt()))
         return true;
 
-    foreach (QNetworkConfigurationPrivate *cpPriv, nlaThread->getConfigurations()) {
-        if (cpPriv->id == id)
-            return true;
+    bool result = false;
+    QList<QNetworkConfigurationPrivate *> l = nlaThread->getConfigurations();
+    while (!l.isEmpty()) {
+        QNetworkConfigurationPrivate* cpPriv = l.takeFirst();
+        if (!result && cpPriv->id == id) {
+            result = true;
+        }
+        delete cpPriv;
     }
-
-    return false;
+   
+    return result; 
 }
 
 QString QNlaEngine::bearerName(const QString &id)
