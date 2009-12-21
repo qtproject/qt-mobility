@@ -43,8 +43,11 @@
 
 #include <qgeopositioninfosource.h>
 #include <qnmeapositioninfosource.h>
+#include <qgeosatelliteinfosource.h>
 #include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
+
+#include "qgeosatellitedialog.h"
 
 #include "mapwindow.h"
 
@@ -143,6 +146,8 @@ void MapWindow::delayedInit() {
     session = new QNetworkSession(cfg, this);
     session->open();
     session->waitForOpened();
+
+    location->startUpdates();
 }
 
 void MapWindow::start()

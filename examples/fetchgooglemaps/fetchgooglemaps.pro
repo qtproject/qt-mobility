@@ -1,7 +1,8 @@
 TEMPLATE=app
 INCLUDEPATH += ../../src/location \
                 ../../src/bearer \
-                ../../src/global
+                ../../src/global \
+                ../satellitedialog
 
 QT += webkit network
 
