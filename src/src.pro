@@ -3,7 +3,8 @@ include($$QT_MOBILITY_BUILD_TREE/config.pri)
 TEMPLATE = subdirs
 SUBDIRS += global serviceframework
 symbian {
-    SUBDIRS = serviceframework/symbian/dll/databasemanagerserver_dll.pro \
+    SUBDIRS = publishsubscribe/psmapperserver_symbian \
+              serviceframework/symbian/dll/databasemanagerserver_dll.pro \
               serviceframework/symbian/exe/databasemanagerserver_exe.pro \
               $$SUBDIRS
     CONFIG += ordered

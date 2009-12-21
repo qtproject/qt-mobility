@@ -61,7 +61,7 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
 
-    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll
+    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll PSPathMapperServer.exe
     QtPublishSubscribeDeployment.path = /sys/bin
 
     DEPLOYMENT += QtPublishSubscribeDeployment
