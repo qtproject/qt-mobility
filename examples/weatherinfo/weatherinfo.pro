@@ -15,7 +15,8 @@ MOBILITY = location bearer
 
 INCLUDEPATH += ../../src/global \
                 ../../src/bearer \
-                ../../src/location
+                ../../src/location \
+                ../satellitedialog
 
 symbian {
     TARGET.CAPABILITY = NetworkServices Location ReadUserData

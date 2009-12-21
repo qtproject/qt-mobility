@@ -51,6 +51,8 @@
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
 
+#include "qgeosatellitedialog.h"
+
 // Use the QtMobility namespace
 using namespace QtMobility;
 
@@ -75,9 +77,9 @@ private:
     QHash<QString, QString> m_icons;
     QNetworkAccessManager* m_nam;
     
-    bool m_logfileInUse;
+    bool m_usingLogFile;
     bool m_gpsWeather;
-    QGeoPositionInfoSource* m_location;
+    QGeoPositionInfoSource* m_location;    
     QNetworkSession* m_session;
     QGeoCoordinate m_coordinate;
 
@@ -134,28 +136,9 @@ public:
         // Don't use the GPS until we need it
         m_location = 0;
         m_gpsWeather = false;
-/*        
-        // QGeoPositionInfoSource
-        m_location = QGeoPositionInfoSource::createDefaultSource(this);
+        m_usingLogFile = false;
 
-        if (m_location == 0) {
-            QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
-            QFile *logFile = new QFile(QApplication::applicationDirPath() + QDir::separator() + "nmealog.txt", this);
-            nmeaLocation->setDevice(logFile);
-            m_location = nmeaLocation;
-            m_logfileInUse = true;            
-        } else {
-            m_logfileInUse = false;
-        }
-
-        // Listen gps position changes
-        connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)),
-        this, SLOT(positionUpdated(QGeoPositionInfo)));
-
-        // Start listening GPS position updates
-        m_location->startUpdates();
-*/        
-        QTimer::singleShot(0, this, SLOT(delayedInit()));
+        QTimer::singleShot(100, this, SLOT(delayedInit()));
     }
 
     ~WeatherInfo()
@@ -168,11 +151,6 @@ public:
     
 private slots:
     void delayedInit() {
-        if (m_logfileInUse) {
-            QMessageBox::information(this, tr("Weather Info"), 
-                tr("No GPS support detected, using GPS data from a sample log file instead."));
-        }
-
         // Set Internet Access Point
         QNetworkConfigurationManager manager;
         const bool canStartIAP = (manager.capabilities()
@@ -197,20 +175,22 @@ private slots:
     void yourWeather() {
         m_gpsWeather = true;
 
-        if (m_location) {
+        if (!m_location) {
             // QGeoPositionInfoSource
             m_location = QGeoPositionInfoSource::createDefaultSource(this);
 
-            if (m_location) {
+            if (!m_location) {
                 QNmeaPositionInfoSource *nmeaLocation = 
                         new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
                 QFile *logFile = new QFile(QApplication::applicationDirPath() + QDir::separator()
                         + "nmealog.txt", this);
                 nmeaLocation->setDevice(logFile);
                 m_location = nmeaLocation;
-                m_logfileInUse = true;            
-            } else {
-                m_logfileInUse = false;
+
+                m_usingLogFile = true;
+
+                QMessageBox::information(this, tr("Weather Info"), 
+                    tr("No GPS support detected, using GPS data from a sample log file instead."));
             }
 
             // Listen gps position changes
@@ -219,6 +199,28 @@ private slots:
         }
 
         m_gpsWeather = true;
+
+        if (!m_usingLogFile) {
+            QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
+
+            if (m_satellite) {
+                QGeoSatelliteDialog *dialog = new QGeoSatelliteDialog(this, 
+                        30, 
+                        QGeoSatelliteDialog::ExitOnFixOrCancel, 
+                        QGeoSatelliteDialog::OrderByPrnNumber, 
+                        QGeoSatelliteDialog::ScaleToMaxPossible);                    
+
+                dialog->connectSources(m_location, m_satellite);
+
+                m_location->startUpdates();
+                m_satellite->startUpdates();
+        
+                dialog->exec();
+
+                m_location->stopUpdates();
+                m_satellite->stopUpdates();
+            }
+        } 
 
         // Start listening GPS position updates
         m_location->startUpdates();
@@ -233,6 +235,7 @@ private slots:
                 QString latitude;
                 latitude.setNum(m_coordinate.latitude());
                 requestTownName(longitude, latitude);
+                m_gpsWeather = false;
             } else {
                 QMessageBox::information(this,"Weather Info","Waiting for your GPS position...");
             }
@@ -249,31 +252,6 @@ private slots:
         }
     }
 
-
-/*
-    void yourWeather() {
-        if (m_coordinate.isValid()) {
-            QString longitude;
-            longitude.setNum(m_coordinate.longitude());
-            QString latitude;
-            latitude.setNum(m_coordinate.latitude());
-            requestTownName(longitude, latitude);
-            
-        } else {
-            QMessageBox::information(this,"Weather Info","Waiting for your GPS position...");
-        }
-    }
-
-    void positionUpdated(QGeoPositionInfo gpsPos) {
-        m_coordinate = gpsPos.coordinate();
-    }
-    
-    void chooseCity() {
-        QAction *action = qobject_cast<QAction*>(sender());
-        if (action)
-            request(action->text());
-    }
-*/
     void handleNetworkData(QNetworkReply *networkReply) {
         QUrl url = networkReply->url();
         if (!networkReply->error()) {

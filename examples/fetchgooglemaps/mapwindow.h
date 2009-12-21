@@ -70,14 +70,14 @@ private slots:
     void loadFinished(bool ok);
 
 private:
-    bool logfileInUse;
-    QGeoPositionInfoSource *source;
     QWebView *webView;
     QLabel *posLabel;
     QLabel *headingAndSpeedLabel;
     QLabel *dateTimeLabel;
     bool loading;
     QNetworkSession *session;
+    bool usingLogFile;
+    QGeoPositionInfoSource *location;
 };
 
 #endif

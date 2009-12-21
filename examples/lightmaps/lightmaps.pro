@@ -8,7 +8,8 @@ QT += network
 
 INCLUDEPATH += ../../src/global \
                 ../../src/bearer \
-                ../../src/location
+                ../../src/location \
+                ../satellitedialog
 
 include(../examples.pri)
 

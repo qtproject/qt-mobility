@@ -7,6 +7,8 @@
 
 #include <qmobilityglobal.h>
 
+#include "qgeopositioninfosource.h"
+#include "qgeosatelliteinfosource.h"
 #include "qgeopositioninfo.h"
 #include "qgeosatelliteinfo.h"
 
@@ -36,6 +38,8 @@ public:
     };
 
     QGeoSatelliteDialog(QWidget *parent = 0, int noSatelliteTimeoutSeconds = 30, ExitBehaviour exitBehaviour = ExitOnFixOrCancel, Ordering ordering = OrderBySignalStrength, StrengthScaling scaling = ScaleToMaxPossible);
+
+    void connectSources(QGeoPositionInfoSource *posSource, QGeoSatelliteInfoSource *satSource);
 
     ExitBehaviour exitBehaviour() const;
     void setExitBehaviour(ExitBehaviour exitBehaviour);

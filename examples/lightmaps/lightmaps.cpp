@@ -50,6 +50,8 @@
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
 
+#include "qgeosatellitedialog.h"
+
 // Use the QtMobility namespace
 using namespace QtMobility;
 
@@ -111,9 +113,15 @@ public:
     qreal latitude;
     qreal longitude;
 
-    SlippyMap(QNetworkSession *session, QObject *parent = 0) :
-        QObject(parent), m_session(session), width(400), height(300), zoom(15), latitude(59.9138204), longitude(
-            10.7387413)
+    SlippyMap(QNetworkSession *session, QGeoPositionInfoSource *location, QObject *parent = 0) :
+            QObject(parent),
+            width(400),
+            height(300),
+            zoom(15),
+            latitude(59.9138204),
+            longitude(10.7387413),
+            m_location(location),
+            m_session(session)
     {
         m_emptyTile = QPixmap(tdim, tdim);
         m_emptyTile.fill(Qt::lightGray);
@@ -126,41 +134,16 @@ public:
         connect(m_manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(handleNetworkData(QNetworkReply*)));
 
-        // QGeoPositionInfoSource
-        m_location = QGeoPositionInfoSource::createDefaultSource(this);
-        if (m_location == 0) {        
-            QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
-            QFile *logFile = new QFile(QApplication::applicationDirPath()
-                    + QDir::separator() + "nmealog.txt", this);
-            nmeaLocation->setDevice(logFile);
-            m_location = nmeaLocation;
-        }
-
         // Listen gps position changes
         connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)),
         this, SLOT(positionUpdated(QGeoPositionInfo)));
-
-        // Start listening GPS position updates
-        m_location->startUpdates();
-
     }
 
     ~SlippyMap()
     {
-        m_location->stopUpdates();
         m_session->close();
         delete m_session;
     }    
-
-    void stopPositioning()
-    {
-        m_location->stopUpdates();
-    }
-
-    void startPositioning()
-    {
-        m_location->startUpdates();
-    }
 
     void invalidate()
     {
@@ -309,10 +292,14 @@ Q_OBJECT
 
 public:
     LightMaps(QWidget *parent = 0) :
-        QWidget(parent), pressed(false), snapped(false), zoomed(false), invert(false)
+            QWidget(parent),
+            pressed(false),
+            snapped(false),
+            zoomed(false),
+            invert(false),
+            m_usingLogFile(false),
+            m_location(0)
     {
-        QGeoPositionInfoSource *testLocation = QGeoPositionInfoSource::createDefaultSource(this);                    
-        m_logfileInUse = (testLocation == 0);        
 
         // Set Internet Access Point
         QNetworkConfigurationManager manager;
@@ -352,29 +339,34 @@ public:
             return;
         }
 
-        m_normalMap = new SlippyMap(session1, this);
-        m_largeMap = new SlippyMap(session2, this);
+        m_location = QGeoPositionInfoSource::createDefaultSource(this);                    
+
+        if (!m_location) {        
+            QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
+            QFile *logFile = new QFile(QApplication::applicationDirPath()
+                    + QDir::separator() + "nmealog.txt", this);
+            nmeaLocation->setDevice(logFile);
+            m_location = nmeaLocation;
+            m_usingLogFile = true;
+        }
+
+        m_normalMap = new SlippyMap(session1, m_location, this);
+        m_largeMap = new SlippyMap(session2, m_location, this);
 
         connect(m_normalMap, SIGNAL(updated(QRect)),SLOT(updateMap(QRect)));
         connect(m_largeMap, SIGNAL(updated(QRect)),SLOT(update()));
 
-        QTimer::singleShot(0, this, SLOT(delayedInit()));
-    }
-
-    ~LightMaps()
-    {
+        QTimer::singleShot(100, this, SLOT(delayedInit()));
     }
 
     void stopPositioning()
     {
-        m_normalMap->stopPositioning();
-        m_largeMap->stopPositioning();
+        m_location->stopUpdates();
     }
 
     void startPositioning()
     {
-        m_normalMap->startPositioning();
-        m_largeMap->startPositioning();
+        m_location->startUpdates();
     }
 
     void setCenter(qreal lat, qreal lng)
@@ -397,14 +389,37 @@ public slots:
 private slots:
     void delayedInit() 
     {
-        if (m_logfileInUse) {
+        if (m_usingLogFile) {
             QMessageBox::information(this, tr("LightMaps"), 
                 tr("No GPS support detected, using GPS data from a sample log file instead."));
+        } else {
+            QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
+
+            if (m_satellite) {
+                QGeoSatelliteDialog *dialog = new QGeoSatelliteDialog(this, 
+                        30, 
+                        QGeoSatelliteDialog::ExitOnFixOrCancel, 
+                        QGeoSatelliteDialog::OrderByPrnNumber, 
+                        QGeoSatelliteDialog::ScaleToMaxPossible);                    
+
+                dialog->connectSources(m_location, m_satellite);
+
+                m_location->startUpdates();
+                m_satellite->startUpdates();
+        
+                dialog->exec();
+
+                m_location->stopUpdates();
+                m_satellite->stopUpdates();
+            }
         }
+
         if (!m_networkSetupError.isEmpty()) {
             QMessageBox::information(this, tr("LightMaps"),
                     m_networkSetupError);
         }
+
+        startPositioning();
     }
 
     void updateMap(const QRect &r)
@@ -616,8 +631,7 @@ protected:
 
 private:
     QNetworkSession *m_session;
-    QString m_networkSetupError;
-    bool m_logfileInUse;
+    QString m_networkSetupError;    
     SlippyMap *m_normalMap;
     SlippyMap *m_largeMap;
     bool pressed;
@@ -629,6 +643,8 @@ private:
     QPixmap zoomPixmap;
     QPixmap maskPixmap;
     bool invert;
+    bool m_usingLogFile;
+    QGeoPositionInfoSource *m_location;
 };
 
 class MapZoom: public QMainWindow
@@ -685,36 +701,10 @@ public:
         QAction *exitAction = new QAction("Exit", this);
         connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
         menuBar()->addAction(exitAction);
-#endif        
-        QTimer::singleShot(0, this, SLOT(delayedInit()));
-    }
-
-    ~MapZoom()
-    {
-        //m_session->close();
+#endif                
     }
 
 private slots:
-
-    void delayedInit()
-    {
-/*      
-        // Set Internet Access Point
-        QNetworkConfigurationManager manager;
-        const bool canStartIAP = (manager.capabilities()
-            & QNetworkConfigurationManager::CanStartAndStopInterfaces);
-        // Is there default access point, use it
-        QNetworkConfiguration cfg = manager.defaultConfiguration();
-        if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-            QMessageBox::information(this, tr("Flickr Demo"), 
-                    tr("Available Access Points not found."));
-            return;
-        }
-        m_session = new QNetworkSession(cfg, this);
-        m_session->open();
-        m_session->waitForOpened();
-*/
-    }
 
     void chooseGps()
     {

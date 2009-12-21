@@ -347,6 +347,18 @@ QGeoSatelliteDialog::QGeoSatelliteDialog(QWidget *parent,
     setLayout(mainLayout);
 
     setWindowTitle(tr("Waiting for GPS fix"));
+
+    setModal(true);
+}
+
+void QGeoSatelliteDialog::connectSources(QGeoPositionInfoSource *posSource, QGeoSatelliteInfoSource *satSource)
+{
+    connect(posSource, SIGNAL(positionUpdated(const QGeoPositionInfo &)),
+            this, SLOT(positionUpdated(const QGeoPositionInfo &)));
+    connect(satSource, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)),
+            this, SLOT(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
+    connect(satSource, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)),
+            this, SLOT(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
 }
 
 void QGeoSatelliteDialog::switchButtonClicked()

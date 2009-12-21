@@ -53,27 +53,28 @@ const QString GMAPS_STATICMAP_URL_TEMPLATE =  "http://maps.google.com/staticmap?
 
 
 MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
-    : QMainWindow(parent, flags),
-        logfileInUse(false),
+    : QMainWindow(parent, flags),        
         webView(new QWebView),
         posLabel(new QLabel),
         headingAndSpeedLabel(new QLabel),
         dateTimeLabel(new QLabel),
-        loading(false)
+        loading(false),
+        usingLogFile(false),
+        location(0)
 {
-    source = QGeoPositionInfoSource::createDefaultSource(this);
-    if (source == 0) {        
+    location = QGeoPositionInfoSource::createDefaultSource(this);
+    if (!location) {        
         QNmeaPositionInfoSource *nmeaSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
         QFile *logFile = new QFile(QApplication::applicationDirPath()
                 + QDir::separator() + "nmealog.txt", this);
         nmeaSource->setDevice(logFile);
-        source = nmeaSource;
+        location = nmeaSource;
 
-        logfileInUse = true;
+        usingLogFile = true;
     }
 
-    source->setUpdateInterval(1500);
-    connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
+    location->setUpdateInterval(1500);
+    connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
             this, SLOT(positionUpdated(QGeoPositionInfo)));
 
     connect(webView, SIGNAL(loadStarted()), this, SLOT(loadStarted()));
@@ -92,19 +93,39 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
 #endif
     setWindowTitle(tr("Google Maps Demo"));
 
-    QTimer::singleShot(0, this, SLOT(delayedInit()));
+    QTimer::singleShot(100, this, SLOT(delayedInit()));
 }
 
 MapWindow::~MapWindow()
 {
-    source->stopUpdates();
+    location->stopUpdates();
     session->close();
 }
 
 void MapWindow::delayedInit() {
-    if (logfileInUse) {
+    if (usingLogFile) {
         QMessageBox::information(this, tr("Fetch Google Maps"), 
             tr("No GPS support detected, using GPS data from a sample log file instead."));
+    } else {
+        QGeoSatelliteInfoSource *satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
+
+        if (satellite) {
+            QGeoSatelliteDialog *dialog = new QGeoSatelliteDialog(this, 
+                    30, 
+                    QGeoSatelliteDialog::ExitOnFixOrCancel, 
+                    QGeoSatelliteDialog::OrderByPrnNumber, 
+                    QGeoSatelliteDialog::ScaleToMaxPossible);                    
+
+            dialog->connectSources(location, satellite);
+
+            location->startUpdates();
+            satellite->startUpdates();
+    
+            dialog->exec();
+
+            location->stopUpdates();
+            satellite->stopUpdates();
+        }
     }
 
     // Set Internet Access Point
@@ -126,7 +147,7 @@ void MapWindow::delayedInit() {
 
 void MapWindow::start()
 {
-    source->startUpdates();
+    location->startUpdates();
 }
 
 void MapWindow::positionUpdated(const QGeoPositionInfo &info)
