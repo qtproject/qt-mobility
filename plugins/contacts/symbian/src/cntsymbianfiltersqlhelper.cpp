@@ -50,6 +50,7 @@
 #include "qcontactdetailfilter.h"
 #include "cnttransformcontact.h"
 #include "cntdisplaylabel.h"
+#include "cntdisplaylabelsqlfilter.h"
 
 // Telephony Configuration API
 // Keys under this category are used in defining telephony configuration.
@@ -221,9 +222,6 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                                                                 QString& sqlQuery,
                                                                 QContactManager::Error& error)
 {
-
-
-
     switch (filter.type()) {
            case QContactFilter::InvalidFilter :
            {
@@ -237,7 +235,8 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                
                if (detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName)
                {
-                   updateSqlQueryForDisplayLabelFilter(detailFilter,sqlQuery,error);
+                   CntDisplayLabelSqlFilter displayLabelFilter;
+                   displayLabelFilter.createSqlQuery(detailFilter,sqlQuery,error);
                }
                else
                {
@@ -408,76 +407,6 @@ void CntSymbianFilterSqlHelper::updateFieldForDeatilFilterMatchFlag(
                 break;
                 }
         }
-}
-
-/*!
- * Updates the input sql query for display label filter
- *
- * \a filter The QContactDetailFilter to be used.
- * \a sqlQuery The sql query that would be updated
- * \a error On return, contains the possible error
- */
-void CntSymbianFilterSqlHelper::updateSqlQueryForDisplayLabelFilter(const QContactDetailFilter& filter,
-                                         QString& sqlQuery,
-                                         QContactManager::Error& error)
-{
-    //SELECT contact_id FROM contact WHERE first_name LIKE 'f%' OR last_name LIKE 'l%' OR first_name LIKE 'l%' OR last_name LIKE 'f%'
-    
-    //list of values from the filter
-    QStringList list = filter.value().toStringList();
-    
-    //if list is empty fetch all
-    if(list.isEmpty()) 
-        sqlQuery = "SELECT contact_id FROM contact"; 
-        
-    else
-    {
-        //fetch the display field details to be used
-        CntDisplayLabel displayLabel;
-        QList<QMap<QString, QString> > fields = displayLabel.contactDisplayLabelDetails();
-        
-        CntTransformContact transformContact;
-        QContactDetailFilter detailFilter;
-        
-        sqlQuery = "SELECT contact_id FROM contact WHERE ";
-        
-        QString columnName, tableName;
-        bool isSubtype(false);
-        bool valuesAdded(false);
-        
-        for(int i = 0; i < fields.count(); i++ )
-        {
-             QMap<QString, QString> detailMap = fields.at(i);
-            
-            //iterate through the details
-            QMapIterator<QString, QString> iterator(detailMap);
-            QContactDetail contactDetail;
-            
-            while (iterator.hasNext()) {
-                iterator.next();
-                
-                //Create detail filter based on display label detail
-                detailFilter.setDetailDefinitionName(iterator.key(), iterator.value());
-                quint32 fieldId  = transformContact.GetIdForDetailL(detailFilter, isSubtype);
-                
-                for(int j = 0; j < list.count(); j++ )
-                {
-                     if (contactsTableIdColumNameMapping.contains(fieldId)){
-                         columnName = contactsTableIdColumNameMapping.value(fieldId);
-                    
-                         sqlQuery += columnName + " LIKE \'" + list.at(j) + "%\'";
-                        
-                         //add or if not last item in list
-                         if((i < fields.count() - 1) || iterator.hasNext() || j < (list.count() - 1) ){
-                             sqlQuery += " OR ";
-                         }
-                     }
-                    //SELECT contact_id FROM contact WHERE first_name LIKE \'F\' OR last_name LIKE \'F\' OR  OR company_name LIKE \'F\' OR "
-                }
-            }
-        }
-    }
-    qDebug() << sqlQuery;
 }
 
 /*!

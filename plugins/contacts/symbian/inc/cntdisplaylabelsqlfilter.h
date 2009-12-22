@@ -39,43 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef CNTDISPLAYLABEL_H_
-#define CNTDISPLAYLABEL_H_
+#ifndef CNTDISPLAYLABELSQLFILTER_H_
+#define CNTDISPLAYLABELSQLFILTER_H_
 
-#include <QObject>
-#include <QLatin1String>
-
+#include <qtcontactsglobal.h>
 #include <qcontactmanager.h>
-#include <qcontact.h>
-#include <qcontactdetail.h>
-
-
-#include <qmobilityglobal.h>
+#include <qcontactdetailfilter.h>
 
 QTM_USE_NAMESPACE
 
-class CntDisplayLabel : public QObject
+class CntDisplayLabelSqlFilter
 {
-    Q_OBJECT
-    
 public:
-    CntDisplayLabel();
-    virtual ~CntDisplayLabel();
-
-    QString synthesizeDisplayLabel( const QContact& contact, QContactManager::Error& error) const;
-    QList<QPair<QLatin1String, QLatin1String> > contactFilterDetails() const;
-    QList<QPair<QLatin1String, QLatin1String> > groupFilterDetails() const;
+    CntDisplayLabelSqlFilter();
+    virtual ~CntDisplayLabelSqlFilter();
     
-private:
-    void setDisplayLabelDetails();
-    QList<QList<QPair<QLatin1String, QLatin1String> > > contactDisplayLabelDetails() const;
-    QList<QList<QPair<QLatin1String, QLatin1String> > > groupDisplayLabelDetails() const;
-    QString generateDisplayLabel( const QContact &contact, const QList<QList<QPair<QLatin1String, QLatin1String> > > detailList) const;
-    QString delimiter() const;
-    
-private:
-    QList<QList<QPair<QLatin1String, QLatin1String> > > m_contactDisplayLabelDetails;
-    QList<QList<QPair<QLatin1String, QLatin1String> > > m_groupDisplayLabelDetails;
+    void createSqlQuery(const QContactDetailFilter& filter,
+                        QString& sqlQuery,
+                        QContactManager::Error& error);
+private: 
+    void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
+    void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;
+    QString createSubQuery(const QString &searchValue, const QString &column) const;
+    QString columnName(const QPair<QLatin1String, QLatin1String> &detail) const;
 };
 
-#endif /* CNTDISPLAYLABEL_H_ */
+#endif /* CNTDISPLAYLABELSQLFILTER_H_ */

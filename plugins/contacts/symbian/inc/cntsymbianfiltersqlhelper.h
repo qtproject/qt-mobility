@@ -103,15 +103,13 @@ private:
                                        QString& sqlQuery,
                                        QContactManager::Error& error);
     
-    void updateSqlQueryForDisplayLabelFilter(const QContactDetailFilter& filter,
-                                             QString& sqlQuery,
-                                             QContactManager::Error& error);
-    
     void getSqlDbTableAndColumnNameforDetailFilter(
                                 const QContactDetailFilter& filter ,
                                 bool& isSubType,
                                 QString& tableName,
                                 QString& columnName );
+    
+    
     void updateFieldForDeatilFilterMatchFlag( const QContactDetailFilter& filter,
                                               QString& fieldToUpdate ,
                                               QContactManager::Error& error) const;
