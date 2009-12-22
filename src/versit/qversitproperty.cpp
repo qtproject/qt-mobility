@@ -177,7 +177,7 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
 /*!
  * Sets the \a value of the property.
  */
-void QVersitProperty::setValue(const QByteArray& value)
+void QVersitProperty::setValue(const QString& value)
 {
     d->mValue = value;
 }
@@ -185,7 +185,7 @@ void QVersitProperty::setValue(const QByteArray& value)
 /*!
  * Returns the value of the property.
  */
-QByteArray QVersitProperty::value() const
+QString QVersitProperty::value() const
 {
     return d->mValue;
 }

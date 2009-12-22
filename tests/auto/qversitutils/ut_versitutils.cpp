@@ -415,97 +415,92 @@ void UT_VersitUtils::testDecodeQuotedPrintable()
 void UT_VersitUtils::testBackSlashEscape()
 {
     // Empty string
-    QByteArray input;
+    QString input;
     QVERIFY(!VersitUtils::backSlashEscape(input));
-    QCOMPARE(input,QByteArray());
+    QCOMPARE(input,QString());
 
     // Nothing to escape in the string
-    input = "Nothing to escape";
+    input = QString::fromAscii("Nothing to escape");
     QVERIFY(!VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("Nothing to escape"));
+    QCOMPARE(input,QString::fromAscii("Nothing to escape"));
 
     // Line break in the beginning
-    input = "\r\n input";
+    input = QString::fromAscii("\r\n input");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("\\n input"));
+    QCOMPARE(input,QString::fromAscii("\\n input"));
 
     // Line break in the end
-    input = "input\r\n";
+    input = QString::fromAscii("input\r\n");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("input\\n"));
+    QCOMPARE(input,QString::fromAscii("input\\n"));
 
     // Semicolon in the beginning
-    input = ";input";
+    input = QString::fromAscii(";input");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("\\;input"));
+    QCOMPARE(input,QString::fromAscii("\\;input"));
 
     // Semicolon in the end
-    input = "input;";
+    input = QString::fromAscii("input;");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("input\\;"));
+    QCOMPARE(input,QString::fromAscii("input\\;"));
 
     // Comma in the beginning
-    input = ",input";
+    input = QString::fromAscii(",input");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("\\,input"));
+    QCOMPARE(input,QString::fromAscii("\\,input"));
 
     // Comma in the end
-    input = "input,";
+    input = QString::fromAscii("input,");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("input\\,"));
+    QCOMPARE(input,QString::fromAscii("input\\,"));
 
     // Backslash in the beginning
-    input = "\\input";
+    input = QString::fromAscii("\\input");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("\\\\input"));
+    QCOMPARE(input,QString::fromAscii("\\\\input"));
 
     // Backslash in the end
-    input = "input\\";
+    input = QString::fromAscii("input\\");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("input\\\\"));
+    QCOMPARE(input,QString::fromAscii("input\\\\"));
 
     // Line break, semicolon, backslash and comma in the middle of the string
-    input = "Escape these \r\n ; , \\ ";
+    input = QString::fromAscii("Escape these \r\n ; , \\ ");
     QVERIFY(VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),
-             QString::fromAscii("Escape these \\n \\; \\, \\\\ "));
+    QCOMPARE(input, QString::fromAscii("Escape these \\n \\; \\, \\\\ "));
 
     // Escaping not done for an already escaped string
     QVERIFY(!VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),
-             QString::fromAscii("Escape these \\n \\; \\, \\\\ "));
+    QCOMPARE(input, QString::fromAscii("Escape these \\n \\; \\, \\\\ "));
 
     // Don't escape special characters within quotes
-    input = "Quoted \"\r\n ; , \\ \"";
+    input = QString::fromAscii("Quoted \"\r\n ; , \\ \"");
     QVERIFY(!VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),
-             QString::fromAscii("Quoted \"\r\n ; , \\ \""));
+    QCOMPARE(input, QString::fromAscii("Quoted \"\r\n ; , \\ \""));
 
 }
 
 void UT_VersitUtils::testRemoveBackSlashEscaping()
 {
     // Empty string
-    QByteArray input;
+    QString input;
     VersitUtils::removeBackSlashEscaping(input);
-    QCOMPARE(input,QByteArray());
+    QCOMPARE(input,QString());
 
     // Nothing to escape in the string
-    input = "Nothing to escape";
+    input = QString::fromAscii("Nothing to escape");
     VersitUtils::removeBackSlashEscaping(input);
-    QCOMPARE(QString::fromAscii(input),QString::fromAscii("Nothing to escape"));
+    QCOMPARE(input,QString::fromAscii("Nothing to escape"));
 
     // Line break, semicolon, backslash and comma in the string
-    input = "These should be unescaped \\n \\N \\; \\, \\\\";
+    input = QString::fromAscii("These should be unescaped \\n \\N \\; \\, \\\\");
     VersitUtils::removeBackSlashEscaping(input);
-    QCOMPARE(QString::fromAscii(input),
-             QString::fromAscii("These should be unescaped \r\n \r\n ; , \\"));
+    QCOMPARE(input, QString::fromAscii("These should be unescaped \r\n \r\n ; , \\"));
 
     // Don't remove escaping within quotes
-    input = "Quoted \"\\n \\N \\; \\,\"";
+    input = QString::fromAscii("Quoted \"\\n \\N \\; \\,\"");
     QVERIFY(!VersitUtils::backSlashEscape(input));
-    QCOMPARE(QString::fromAscii(input),
-             QString::fromAscii("Quoted \"\\n \\N \\; \\,\""));
+    QCOMPARE(input, QString::fromAscii("Quoted \"\\n \\N \\; \\,\""));
 }
 
 void UT_VersitUtils::testExtractPropertyGroupsAndName()

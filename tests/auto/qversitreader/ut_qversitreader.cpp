@@ -196,27 +196,27 @@ void UT_QVersitReader::testSetVersionFromProperty()
     
     // VERSION property with 2.1
     property.setName(QString::fromAscii("VERSION"));
-    property.setValue(QByteArray("2.1"));
+    property.setValue(QString::fromAscii("2.1"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
     QVERIFY(document.versitType() == QVersitDocument::VCard21);
     
     // VERSION property with 3.0
-    property.setValue(QByteArray("3.0"));
+    property.setValue(QString::fromAscii("3.0"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
     QVERIFY(document.versitType() == QVersitDocument::VCard30);
 
     // VERSION property with a not supported value
-    property.setValue(QByteArray("4.0"));
+    property.setValue(QString::fromAscii("4.0"));
     QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
     
     // VERSION property with BASE64 encoded supported value
-    property.setValue(QByteArray("2.1").toBase64());
+    property.setValue(QString::fromAscii(QByteArray("2.1").toBase64()));
     property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
     QVERIFY(document.versitType() == QVersitDocument::VCard21);
     
     // VERSION property with BASE64 encoded not supported value
-    property.setValue(QByteArray("4.0").toBase64());
+    property.setValue(QString::fromAscii(QByteArray("4.0").toBase64()));
     QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
 }
 
@@ -230,6 +230,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QByteArray vCard("Begin:vcard\r\n");
     vCard.append("VERSION:2.1\r\n");
     vCard.append("FN:John\r\n");
+    vCard.append("ORG:ABC\r\n");
     vCard.append("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
     vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n");
     vCard.append("AGENT:\r\nBEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n");
@@ -239,23 +240,27 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 
     QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.value(),QByteArray("vcard"));
+    QCOMPARE(property.value(),QString::fromAscii("vcard"));
     QCOMPARE(cursor.position, 11); // pointing to the  \r\n
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
-    QCOMPARE(property.value(),QByteArray("2.1"));
+    QCOMPARE(property.value(),QString::fromAscii("2.1"));
     QCOMPARE(cursor.position, 24);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
-    QCOMPARE(property.value(),QByteArray("John"));
+    QCOMPARE(property.value(),QString::fromAscii("John"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, cursor);
+    QCOMPARE(property.name(),QString::fromAscii("ORG"));
+    QCOMPARE(property.value(),QString::fromAscii("ABC"));
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
     QCOMPARE(1,property.parameters().count());
     // Linear whitespaces (SPACEs and TABs) removed from the value:
-    QCOMPARE(property.value(),QByteArray("UXQgaXMgZ3JlYXQh"));
+    QCOMPARE(property.value(),QString::fromAscii("UXQgaXMgZ3JlYXQh"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QStringList propertyGroup(QString::fromAscii("HOME"));
@@ -263,20 +268,20 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QCOMPARE(property.groups(),propertyGroup);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
-    QCOMPARE(property.value(),QByteArray("john.citizen@example.com"));
+    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QCOMPARE(property.value(),QByteArray());
+    QCOMPARE(property.value(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),1);
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));
-    QCOMPARE(property.value(),QByteArray("VCARD"));
+    QCOMPARE(property.value(),QString::fromAscii("VCARD"));
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString());
-    QCOMPARE(property.value(),QByteArray());
+    QCOMPARE(property.value(),QString());
     
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties
@@ -287,7 +292,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     property = mReaderPrivate->parseNextVersitProperty(type, agentCursor);
     QCOMPARE(property.name(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),0);
-    QCOMPARE(property.value(),QByteArray());
+    QCOMPARE(property.value(),QString());
 }
 
 void UT_QVersitReader::testParseNextVersitPropertyVCard30()
@@ -309,43 +314,43 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
 
     QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.value(),QByteArray("vcard"));
+    QCOMPARE(property.value(),QString::fromAscii("vcard"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
-    QCOMPARE(property.value(),QByteArray("3.0"));
+    QCOMPARE(property.value(),QString::fromAscii("3.0"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
-    QCOMPARE(property.value(),QByteArray("John"));
+    QCOMPARE(property.value(),QString::fromAscii("John"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("TEL"));
-    QCOMPARE(property.value(),QByteArray("123"));
+    QCOMPARE(property.value(),QString::fromAscii("123"));
     QCOMPARE(property.parameters().count(), 2);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
     QCOMPARE(1,property.parameters().count());
-    QCOMPARE(property.value(),QByteArray("UXQgaXMgZ3JlYXQh"));
+    QCOMPARE(property.value(),QString::fromAscii("UXQgaXMgZ3JlYXQh"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
-    QCOMPARE(property.value(),QByteArray("john.citizen@example.com"));
+    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QCOMPARE(property.value(),QByteArray());
+    QCOMPARE(property.value(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),1);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));
-    QCOMPARE(property.value(),QByteArray("VCARD"));
+    QCOMPARE(property.value(),QString::fromAscii("VCARD"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString());
-    QCOMPARE(property.value(),QByteArray());
+    QCOMPARE(property.value(),QString());
 
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties
@@ -356,7 +361,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     property = mReaderPrivate->parseNextVersitProperty(type, agentCursor);
     QCOMPARE(property.name(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),0);
-    QCOMPARE(property.value(),QByteArray());
+    QCOMPARE(property.value(),QString());
 }
 
 void UT_QVersitReader::testParseVersitDocument()

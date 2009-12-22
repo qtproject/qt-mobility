@@ -74,7 +74,7 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     QByteArray expectedResult = "FN:John Citizen\r\n";
     QVersitProperty property;
     property.setName(QString::fromAscii("FN"));
-    property.setValue(QByteArray("John Citizen"));
+    property.setValue(QString::fromAscii("John Citizen"));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
 
     // With parameter(s). No special characters in the value.
@@ -82,7 +82,7 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     expectedResult = "TEL;HOME:123\r\n";
 
     property.setName(QString::fromAscii("TEL"));
-    property.setValue(QByteArray("123"));
+    property.setValue(QString::fromAscii("123"));
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
     QByteArray encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(QString::fromAscii(encodedProperty), QString::fromAscii(expectedResult));
@@ -92,7 +92,7 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     // -> The value needs to be Quoted-Printable encoded.
     expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:john.citizen=40example.com\r\n";
     property.setName(QString::fromAscii("EMAIL"));
-    property.setValue(QByteArray("john.citizen@example.com"));
+    property.setValue(QString::fromAscii("john.citizen@example.com"));
     QCOMPARE(QString::fromAscii(mWriter->encodeVersitProperty(property)),
              QString::fromAscii(expectedResult));
     
@@ -106,12 +106,12 @@ END:VCARD\r\n\
 \r\n";
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("AGENT"));
-    property.setValue(QByteArray());
+    property.setValue(QString());
     property.addParameter(QString::fromAscii("X-PARAMETER"),QString::fromAscii("VALUE"));
     QVersitDocument document;
     QVersitProperty embeddedProperty;
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
-    embeddedProperty.setValue(QByteArray("Secret Agent"));
+    embeddedProperty.setValue(QString::fromAscii("Secret Agent"));
     document.addProperty(embeddedProperty);
     property.setEmbeddedDocument(document);
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
@@ -125,7 +125,7 @@ END:VCARD\r\n\
     property.setGroups(groups);
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("PHOTO"));
-    property.setValue(value);
+    property.setValue(QString::fromAscii(value));
     property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QCOMPARE(QString::fromAscii(mWriter->encodeVersitProperty(property).data()),
              QString::fromAscii(expectedResult.data()));
@@ -172,24 +172,24 @@ void UT_QVCard21Writer::testQuotedPrintableEncode()
     // no special characters in the encodedValue -> no need to use Quoted-Printable encode
     QVersitProperty property;
     property.setName(QString::fromAscii("N"));
-    property.setValue(QByteArray("Citizen;John"));
+    property.setValue(QString::fromAscii("Citizen;John"));
     QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
-    QVERIFY(encodedValue == property.value());
+    QVERIFY(encodedValue == property.value().toAscii());
     
     // The property doesn't contain ENCODING parameter,
     // special characters in the encodedValue -> needs to be Quoted-Printable encoded
     property.setName(QString::fromAscii("EMAIL"));
-    property.setValue(QByteArray("john.citizen@example.com"));
+    property.setValue(QString::fromAscii("john.citizen@example.com"));
     QVERIFY(mWriter->quotedPrintableEncode(property,encodedValue));
     QCOMPARE(QString::fromAscii(encodedValue), QString::fromAscii("john.citizen=40example.com"));
     
     // The property contains ENCODING parameter
     // -> Value should not be Quoted-Printable encoded
     property.setName(QString::fromAscii("PHOTO"));
-    property.setValue(QByteArray("the data").toBase64());
+    property.setValue(QString::fromAscii(QByteArray("the data").toBase64()));
     property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
-    QVERIFY(encodedValue == property.value());
+    QVERIFY(encodedValue == property.value().toAscii());
 }
 
 void UT_QVCard21Writer::testEncodeGroupsAndName()

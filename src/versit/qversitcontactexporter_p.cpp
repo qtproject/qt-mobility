@@ -200,12 +200,12 @@ void QVersitContactExporterPrivate::encodeName(
     const QContactDetail& detail)
 {   
     QContactName contactName = static_cast<QContactName>(detail);
-    QByteArray value =
-        escape(contactName.last().toAscii()) + ';' +
-        escape(contactName.first().toAscii()) + ';' +
-        escape(contactName.middle().toAscii()) + ';' +
-        escape(contactName.prefix().toAscii()) + ';' +
-        escape(contactName.suffix().toAscii());
+    QString value =
+        escape(contactName.last()) + QChar::fromAscii(';') +
+        escape(contactName.first()) + QChar::fromAscii(';') +
+        escape(contactName.middle()) + QChar::fromAscii(';') +
+        escape(contactName.prefix()) + QChar::fromAscii(';') +
+        escape(contactName.suffix());
     property.setValue(value);
 }
 
@@ -242,14 +242,14 @@ void QVersitContactExporterPrivate::encodeAddress(
 {
     QContactAddress address = static_cast<QContactAddress>(detail);
     encodeParameters(property, address.contexts(), address.subTypes());
-    QByteArray value =
-        escape(address.postOfficeBox().toAscii()) + ';' +
-        ';' + // Extended address
-        escape(address.street().toAscii()) + ';' +
-        escape(address.locality().toAscii()) + ';' +
-        escape(address.region().toAscii()) + ';' +
-        escape(address.postcode().toAscii()) + ';' +
-        escape(address.country().toAscii());
+    QString value =
+        escape(address.postOfficeBox()) + QChar::fromAscii(';') +
+        QChar::fromAscii(';') + // Extended address
+        escape(address.street()) + QChar::fromAscii(';') +
+        escape(address.locality()) + QChar::fromAscii(';') +
+        escape(address.region()) + QChar::fromAscii(';') +
+        escape(address.postcode()) + QChar::fromAscii(';') +
+        escape(address.country());
     property.setValue(value);
 }
 
@@ -264,7 +264,7 @@ void QVersitContactExporterPrivate::encodeUrl(
     encodeParameters(property, contactUrl.contexts());
     // The vCard specifications do not define any TYPEs for URL property.
     // No need to try to convert the subtypes to TYPEs.
-    property.setValue(contactUrl.url().toAscii());
+    property.setValue(contactUrl.url());
 }
 
 /*!
@@ -308,7 +308,7 @@ bool QVersitContactExporterPrivate::encodeRev(
             value = rev.created().toString(Qt::ISODate);
         }
     }
-    property.setValue(value.toAscii());
+    property.setValue(value);
 
     return encoded;
 }
@@ -322,7 +322,7 @@ void QVersitContactExporterPrivate::encodeBirthDay(
 {
     QContactBirthday bday = static_cast<QContactBirthday>(detail);
     QString value = bday.date().toString(Qt::ISODate);
-    property.setValue(value.toAscii());
+    property.setValue(value);
 }
 
 /*!
@@ -344,11 +344,9 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
     const QContactDetail& detail)
 {
     QContactGeolocation geoLocation = static_cast<QContactGeolocation>(detail);
-    QByteArray longitude;
-    QByteArray latitude;
-    QByteArray value =
-        longitude.setNum(geoLocation.longitude()) + ',' +
-        latitude.setNum(geoLocation.latitude());
+    QString value =
+        QString::number(geoLocation.longitude()) + QChar::fromAscii(',') +
+        QString::number(geoLocation.latitude());
     property.setValue(value);
 }
 
@@ -369,13 +367,13 @@ void QVersitContactExporterPrivate::encodeOrganization(
     if (organization.name().length() > 0 || organization.department().size() > 0) {
         QVersitProperty property;
         property.setName(QString::fromAscii("ORG"));
-        QByteArray value = escape(organization.name().toAscii());
+        QString value = escape(organization.name());
         QStringList departments(organization.department());
         if (departments.count() == 0)
-            value += ";";
+            value += QString::fromAscii(";");
         foreach (QString department, departments) {
-            value += ";";
-            value += escape(department.toAscii());
+            value += QString::fromAscii(";");
+            value += escape(department);
         }
         property.setValue(value);
         document.addProperty(property);
@@ -458,10 +456,10 @@ void QVersitContactExporterPrivate::encodeNickname(
             found = true;
         }
     }
-    QByteArray value(property.value());
+    QString value(property.value());
     if (found)
-        value += ',';
-    QByteArray nickname = escape(nicknameDetail.nickname().toAscii());
+        value += QChar::fromAscii(',');
+    QString nickname = escape(nicknameDetail.nickname());
     value.append(nickname);
     property.setValue(value);
     // Replace the current property
@@ -477,7 +475,7 @@ void QVersitContactExporterPrivate::encodeAnniversary(
     const QContactDetail& detail)
 {
     QContactAnniversary anniversary = static_cast<QContactAnniversary>(detail);
-    property.setValue(anniversary.originalDate().toString(Qt::ISODate).toAscii());
+    property.setValue(anniversary.originalDate().toString(Qt::ISODate));
 }
 
 /*!
@@ -554,11 +552,11 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
                 break;
         }
         QContactName name = static_cast<QContactName>(contactDetail);
-        QByteArray value;
+        QString value;
         if (name.customLabel().length()) {
-            value = name.customLabel().toAscii();
+            value = name.customLabel();
         } else {
-            value = name.first().toAscii() + ' ' + name.last().toAscii();
+            value = name.first() + QChar::fromAscii(' ') + name.last();
         }
         if (name.customLabel().length() ||
             name.first().length() ||
@@ -621,15 +619,16 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(
         resourceFormat = resourceExt;
 
     if (resourceFormat.length() > 0) {
-        QByteArray value;
+        QString value;
         QFile resourceFile(resourcePath);
         if ( resourceFile.open(QIODevice::ReadOnly)) {
+            QByteArray imageData;
             encodeContent = true;
             if (performScaling)
-                emit scale(resourcePath,value);
-            if (value.length() == 0)
-                value = resourceFile.readAll(); // Image not scaled
-            value = value.toBase64();
+                emit scale(resourcePath,imageData);
+            if (imageData.length() == 0)
+                imageData = resourceFile.readAll(); // Image not scaled
+            value = QString::fromAscii(imageData.toBase64());
             property.addParameter(
                 QString::fromAscii("ENCODING"),
                 QString::fromAscii("BASE64"));
@@ -637,7 +636,7 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(
         }
         else if (isValidRemoteUrl( resourcePath )) {
             encodeContent = true;
-            value = resourcePath.toAscii();
+            value = resourcePath;
             property.addParameter(
                 QString::fromAscii("VALUE"),
                 QString::fromAscii("URL"));
@@ -657,7 +656,7 @@ void QVersitContactExporterPrivate::setEscapedValue(
     QVersitProperty& property,
     const QString& value)
 {
-    QByteArray escapedValue(escape(value.toAscii()));
+    QString escapedValue(escape(value));
     property.setValue(escapedValue);
 }
 
@@ -667,9 +666,9 @@ void QVersitContactExporterPrivate::setEscapedValue(
  * Starting from 3.0 the property values having certain special
  * characters should be escaped.
  */
-QByteArray QVersitContactExporterPrivate::escape(const QByteArray& value)
+QString QVersitContactExporterPrivate::escape(const QString& value)
 {
-    QByteArray escaped(value);
+    QString escaped(value);
     if (mVersitType != QVersitDocument::VCard21) {
         VersitUtils::backSlashEscape(escaped);
     }

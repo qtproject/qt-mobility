@@ -98,7 +98,7 @@ protected:
         QVersitProperty& property,
         bool performScaling);
     void setEscapedValue(QVersitProperty& property,const QString& value);
-    QByteArray escape(const QByteArray& value);
+    QString escape(const QString& value);
 
 public: // Data
     QList<QContactDetail> mUnknownContactDetails;

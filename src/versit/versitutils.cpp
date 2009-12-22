@@ -188,25 +188,25 @@ void VersitUtils::decodeQuotedPrintable(QByteArray& text)
  * Performs backslash escaping for line breaks (CRLFs),
  * semicolons, backslashes and commas according to RFC 2426.
  */
-bool VersitUtils::backSlashEscape(QByteArray& text)
+bool VersitUtils::backSlashEscape(QString& text)
 {
     bool escaped = false;
     bool withinQuotes = false;
-    char previous = 0;
+    ushort previous = 0;
     for (int i=0; i < text.length(); i++) {
-        char current = text.at(i);
+        ushort current = text.at(i).unicode();
         if (previous != '\\' && !withinQuotes) {
-            char next = 0;
+            int next = 0;
             if (i != text.length()-1)
-                 next = text.at(i+1);
+                 next = text.at(i+1).unicode();
             if (current == ';' || current == ',' ||
                 (current == '\\' &&
                  next != '\\' && next != ';' && next != ',' && next != 'n')) {
-                text.insert(i,'\\');
+                text.insert(i,QChar::fromAscii('\\'));
                 i++;
                 escaped = true;
             } else if (previous == '\r' && current == '\n') {
-                text.replace(i-1,2,"\\n");
+                text.replace(i-1,2,QString::fromAscii("\\n"));
                 escaped = true;
             } else {
                 // NOP
@@ -223,18 +223,18 @@ bool VersitUtils::backSlashEscape(QByteArray& text)
  * Removes backslash escaping for line breaks (CRLFs),
  * semicolons, backslashes and commas according to RFC 2426.
  */
-void VersitUtils::removeBackSlashEscaping(QByteArray& text)
+void VersitUtils::removeBackSlashEscaping(QString& text)
 {
     // XXX build up a list of escapes and do them all at once?
-    char previous = 0;
+    ushort previous = 0;
     bool withinQuotes = false;
     for (int i=0; i < text.length(); i++) {
-        char current = text.at(i);
+        ushort current = text.at(i).unicode();
         if (previous == '\\' && !withinQuotes) {
             if (current == ';' || current == ',' || current == '\\' || current == ':') {
                 text.remove(i-1,1);
             } else if (current == 'n' || current == 'N') {
-                text.replace(i-1,2,"\r\n");
+                text.replace(i-1,2,QString::fromAscii("\r\n"));
             } else {
                 // NOP
             }
@@ -328,14 +328,14 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
     QList<QByteArray> paramList = extractParams(line);
     while (!paramList.isEmpty()) {
         QByteArray param = paramList.takeLast();
-        QByteArray name = paramName(param);
-        removeBackSlashEscaping(name);
+        QString nameString(QString::fromAscii(paramName(param)));
+        removeBackSlashEscaping(nameString);
         QByteArray values = paramValue(param);
         QList<QByteArray> valueList = extractParts(values,',');
         while (!valueList.isEmpty()) {
-            QByteArray value(valueList.takeLast());
-            removeBackSlashEscaping(value);
-            result.insert(QString::fromAscii(name),QString::fromAscii(value));
+            QString valueString(QString::fromAscii(valueList.takeLast()));
+            removeBackSlashEscaping(valueString);
+            result.insert(nameString,valueString);
         }
     }
 

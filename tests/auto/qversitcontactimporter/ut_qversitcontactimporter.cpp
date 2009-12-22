@@ -121,7 +121,7 @@ void UT_QVersitContactImporter::testName()
     value.append(QString::fromAscii("Dr"));//PreFix
     value.append(QString::fromAscii("MSc"));//Suffix
     nameProperty.setName(QString::fromAscii("N"));
-    nameProperty.setValue(value.join(QString::fromAscii(";")).toAscii());
+    nameProperty.setValue(value.join(QString::fromAscii(";")));
     document.addProperty(nameProperty);        
     QContact contact = mImporter->importContact(document);
     QContactName name = (QContactName)contact.detail(QContactName::DefinitionName);
@@ -140,7 +140,7 @@ void UT_QVersitContactImporter::testName()
     anotherValue.append(QString::fromAscii("FakeDr"));//PreFix
     anotherValue.append(QString::fromAscii("FakeMSc"));//Suffix
     nameProperty.setName(QString::fromAscii("N"));
-    nameProperty.setValue(anotherValue.join(QString::fromAscii(";")).toAscii());
+    nameProperty.setValue(anotherValue.join(QString::fromAscii(";")));
     document.addProperty(nameProperty);
     contact = mImporter->importContact(document);
     QList<QContactDetail> names = contact.details(QContactName::DefinitionName);
@@ -174,7 +174,7 @@ void UT_QVersitContactImporter::testAddress()
     QCOMPARE(address.country(),QString());
     
     // Address with just seprators
-    property.setValue(QByteArray(";;;;;;"));
+    property.setValue(QString::fromAscii(";;;;;;"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
@@ -186,7 +186,7 @@ void UT_QVersitContactImporter::testAddress()
     QCOMPARE(address.country(),QString());
     
     // Address with some fields missing
-    property.setValue(QByteArray(";;My Street;My Town;;12345;"));
+    property.setValue(QString::fromAscii(";;My Street;My Town;;12345;"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
@@ -198,7 +198,7 @@ void UT_QVersitContactImporter::testAddress()
     QCOMPARE(address.country(),QString());
     
     // Address with all the fields filled
-    property.setValue(QByteArray("PO Box;E;My Street;My Town;My State;12345;My Country"));
+    property.setValue(QString::fromAscii("PO Box;E;My Street;My Town;My State;12345;My Country"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
@@ -247,7 +247,7 @@ void UT_QVersitContactImporter::testOrganizationName()
     QCOMPARE(organization.department().count(),0);
 
     // Organization without separators
-    property.setValue(QByteArray("Nokia"));
+    property.setValue(QString::fromAscii("Nokia"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     organization =
@@ -257,7 +257,7 @@ void UT_QVersitContactImporter::testOrganizationName()
     QCOMPARE(organization.department().count(),0);
 
     // Organization with one separator
-    property.setValue(QByteArray(";"));
+    property.setValue(QString::fromAscii(";"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     organization =
@@ -267,7 +267,7 @@ void UT_QVersitContactImporter::testOrganizationName()
     QCOMPARE(organization.department().count(),0);
 
     // Organization with just separators
-    property.setValue(QByteArray(";;;"));
+    property.setValue(QString::fromAscii(";;;"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     organization =
@@ -277,7 +277,7 @@ void UT_QVersitContactImporter::testOrganizationName()
     QCOMPARE(organization.department().count(),0);
 
     // Organization with one Organizational Unit
-    property.setValue(QByteArray("Nokia;R&D"));
+    property.setValue(QString::fromAscii("Nokia;R&D"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     organization =
@@ -288,7 +288,7 @@ void UT_QVersitContactImporter::testOrganizationName()
     QCOMPARE(organization.department().at(0),QString::fromAscii("R&D"));
 
     // Organization with organization name and semicolon
-    property.setValue(QByteArray("Nokia;"));
+    property.setValue(QString::fromAscii("Nokia;"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     organization =
@@ -298,7 +298,7 @@ void UT_QVersitContactImporter::testOrganizationName()
     QCOMPARE(organization.department().count(),0);
 
     // Organization with semicolon and department
-    property.setValue(QByteArray(";R&D"));
+    property.setValue(QString::fromAscii(";R&D"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     organization =
@@ -309,7 +309,7 @@ void UT_QVersitContactImporter::testOrganizationName()
     QCOMPARE(organization.department().at(0),QString::fromAscii("R&D"));
 
     // Organization with more Organizational Units
-    property.setValue(QByteArray("Nokia;R&D;Devices;Qt"));
+    property.setValue(QString::fromAscii("Nokia;R&D;Devices;Qt"));
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     organization =
@@ -330,7 +330,7 @@ void UT_QVersitContactImporter::testOrganizationTitle()
 
     // One title
     property.setName(QString::fromAscii("TITLE"));
-    QByteArray titleValue("Developer");
+    QString titleValue(QString::fromAscii("Developer"));
     property.setValue(titleValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
@@ -339,11 +339,11 @@ void UT_QVersitContactImporter::testOrganizationTitle()
     QCOMPARE(organizationDetails.count(), 1);
     QContactOrganization organization =
         static_cast<QContactOrganization>(organizationDetails[0]);
-    QCOMPARE(organization.title(),QString::fromAscii(titleValue));
+    QCOMPARE(organization.title(),titleValue);
 
     // Two titles -> two QContactOrganizations created
     property.setName(QString::fromAscii("TITLE"));
-    QByteArray secondTitleValue("Hacker");
+    QString secondTitleValue(QString::fromAscii("Hacker"));
     property.setValue(secondTitleValue);
     document.addProperty(property);
     contact = mImporter->importContact(document);
@@ -351,24 +351,24 @@ void UT_QVersitContactImporter::testOrganizationTitle()
     QCOMPARE(organizationDetails.count(), 2);
     QContactOrganization firstOrganization =
         static_cast<QContactOrganization>(organizationDetails[0]);
-    QCOMPARE(firstOrganization.title(),QString::fromAscii(titleValue));
+    QCOMPARE(firstOrganization.title(),titleValue);
     QContactOrganization secondOrganization =
         static_cast<QContactOrganization>(organizationDetails[1]);
-    QCOMPARE(secondOrganization.title(),QString::fromAscii(secondTitleValue));
+    QCOMPARE(secondOrganization.title(),secondTitleValue);
 
     // Two titles and one organization name -> two QContactOrganizations created
     property.setName(QString::fromAscii("ORG"));
-    QByteArray organizationName("Nokia");
+    QString organizationName(QString::fromAscii("Nokia"));
     property.setValue(organizationName);
     document.addProperty(property);
     contact = mImporter->importContact(document);
     organizationDetails = contact.details(QContactOrganization::DefinitionName);
     QCOMPARE(organizationDetails.count(), 2);
     firstOrganization = static_cast<QContactOrganization>(organizationDetails[0]);
-    QCOMPARE(firstOrganization.title(),QString::fromAscii(titleValue));
-    QCOMPARE(firstOrganization.name(),QString::fromAscii(organizationName));
+    QCOMPARE(firstOrganization.title(),titleValue);
+    QCOMPARE(firstOrganization.name(),organizationName);
     secondOrganization = static_cast<QContactOrganization>(organizationDetails[1]);
-    QCOMPARE(secondOrganization.title(),QString::fromAscii(secondTitleValue));
+    QCOMPARE(secondOrganization.title(),secondTitleValue);
     QCOMPARE(secondOrganization.name(),QString());
 }
 
@@ -378,14 +378,14 @@ void UT_QVersitContactImporter::testOrganizationLogo()
     QVersitDocument document;
     QVersitProperty property;
     property.setName(QString::fromAscii("X-ASSISTANT"));
-    QByteArray assistantValue("Jenny");
+    QString assistantValue(QString::fromAscii("Jenny"));
     property.setValue(assistantValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     QContactOrganization organization =
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(organization.assistantName(), QString::fromAscii(assistantValue));
+    QCOMPARE(organization.assistantName(), assistantValue);
 }
 
 void UT_QVersitContactImporter::testOrganizationAssistant()
@@ -396,8 +396,8 @@ void UT_QVersitContactImporter::testOrganizationAssistant()
 
     // Embedded LOGO
     property.setName(QString::fromAscii("LOGO"));
-    QByteArray logo = "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G";
-    property.setValue(logo.toBase64());
+    QByteArray logo("R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G");
+    property.setValue(QString::fromAscii(logo.toBase64()));
     property.addParameter(QString::fromAscii("TYPE"),
                           QString::fromAscii("GIF"));
     property.addParameter(QString::fromAscii("ENCODING"),
@@ -406,20 +406,19 @@ void UT_QVersitContactImporter::testOrganizationAssistant()
     mImporter->setImagePath(imageAndAudioClipPath);
     contact = mImporter->importContact(document);
     QContactOrganization organization =
-        static_cast<QContactOrganization>(
-            contact.detail(QContactOrganization::DefinitionName));
+        static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
     QString logoFileName = organization.logo();
     QVERIFY(logoFileName.endsWith(QString::fromAscii(".gif")));
     QVERIFY(logoFileName.contains(imageAndAudioClipPath + QString::fromAscii("/")));
     QFile logoFile(logoFileName);
     QVERIFY(logoFile.open(QIODevice::ReadOnly));
-    QByteArray content = logoFile.readAll();
-    QCOMPARE(content,logo);
+    QString content = QString::fromAscii(logoFile.readAll());
+    QCOMPARE(content,QString::fromAscii(logo));
     logoFile.close();
 
     // LOGO as a URL
     property.setName(QString::fromAscii("LOGO"));
-    QByteArray logoUrl = "http://www.organization.org/logo.gif";
+    QString logoUrl(QString::fromAscii("http://www.organization.org/logo.gif"));
     property.setValue(logoUrl);
     property.addParameter(QString::fromAscii("VALUE"),QString::fromAscii("URL"));
     document = createDocumentWithProperty(property);
@@ -427,7 +426,7 @@ void UT_QVersitContactImporter::testOrganizationAssistant()
     organization =
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(organization.logo(),QString::fromAscii(logoUrl));
+    QCOMPARE(organization.logo(),logoUrl);
 }
 
 void UT_QVersitContactImporter::testOrganizationRole()
@@ -438,14 +437,14 @@ void UT_QVersitContactImporter::testOrganizationRole()
 
     // Setting the role is not yet supported by QContactOrganization
     property.setName(QString::fromAscii("ROLE"));
-    QByteArray roleValue("Very important manager and proud of it");
+    QString roleValue(QString::fromAscii("Very important manager and proud of it"));
     property.setValue(roleValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     QContactOrganization organization =
         static_cast<QContactOrganization>(
             contact.detail(QContactOrganization::DefinitionName));
-    QCOMPARE(organization.role(), QString::fromAscii(roleValue));
+    QCOMPARE(organization.role(), roleValue);
 }
 
 void UT_QVersitContactImporter::testTel()
@@ -453,7 +452,7 @@ void UT_QVersitContactImporter::testTel()
     QVersitDocument document;
     QVersitProperty property;
     property.setName(QString::fromAscii("TEL"));
-    QByteArray value("+35850987654321");
+    QString value(QString::fromAscii("+35850987654321"));
     property.setValue(value);   
 
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("VOICE"));
@@ -472,7 +471,7 @@ void UT_QVersitContactImporter::testTel()
     const QContactPhoneNumber& phone = 
         static_cast<QContactPhoneNumber>(
             contact.detail(QContactPhoneNumber::DefinitionName));
-    QCOMPARE(phone.number(),QString(QString::fromAscii(value)));
+    QCOMPARE(phone.number(),QString(value));
 
     const QStringList subTypes = phone.subTypes();
     QCOMPARE(subTypes.count(),8);
@@ -495,7 +494,7 @@ void UT_QVersitContactImporter::testEmail()
 {
     QVersitProperty property;
     property.setName(QString::fromAscii("EMAIL"));
-    QByteArray value("john.citizen@example.com");
+    QString value(QString::fromAscii("john.citizen@example.com"));
     property.setValue(value);
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
     QVersitDocument document = createDocumentWithProperty(property);
@@ -503,7 +502,7 @@ void UT_QVersitContactImporter::testEmail()
     QContactEmailAddress email =
         static_cast<QContactEmailAddress>(
             contact.detail(QContactEmailAddress::DefinitionName));
-    QCOMPARE(email.emailAddress(),QString::fromAscii(value));
+    QCOMPARE(email.emailAddress(),value);
     const QStringList contexts = email.contexts();
     QCOMPARE(contexts.count(),1);
     QVERIFY(contexts.contains(QContactDetail::ContextWork)); 
@@ -513,7 +512,7 @@ void UT_QVersitContactImporter::testUrl()
 {
     QVersitProperty property;
     property.setName(QString::fromAscii("URL"));
-    QByteArray value("http://example.com");
+    QString value(QString::fromAscii("http://example.com"));
     property.setValue(value);
     property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
     QVersitDocument document = createDocumentWithProperty(property);    
@@ -521,7 +520,7 @@ void UT_QVersitContactImporter::testUrl()
     QContactUrl url =
         static_cast<QContactUrl>(
             contact.detail(QContactUrl::DefinitionName));
-    QCOMPARE(url.url(),QString::fromAscii(value));
+    QCOMPARE(url.url(),value);
     const QStringList contexts = url.contexts();
     QCOMPARE(contexts.count(),1);
     QVERIFY(contexts.contains(QContactDetail::ContextWork));    
@@ -531,14 +530,14 @@ void UT_QVersitContactImporter::testUid()
 {
     QVersitProperty property;
     property.setName(QString::fromAscii("UID"));
-    QByteArray value("unique identifier");
+    QString value(QString::fromAscii("unique identifier"));
     property.setValue(value);
     QVersitDocument document = createDocumentWithProperty(property);
     QContact contact = mImporter->importContact(document);
     QContactGuid uid =
         static_cast<QContactGuid>(
             contact.detail(QContactGuid::DefinitionName));
-    QCOMPARE(uid.guid(),QString::fromAscii(value));    
+    QCOMPARE(uid.guid(),value);
 }
 
 void UT_QVersitContactImporter::testTimeStamp()
@@ -546,39 +545,39 @@ void UT_QVersitContactImporter::testTimeStamp()
     // Simple date : ISO 8601 extended format
     QVersitProperty property;
     property.setName(QString::fromAscii("REV"));
-    QByteArray dateValue("1981-05-20");
+    QString dateValue(QString::fromAscii("1981-05-20"));
     property.setValue(dateValue);
     QVersitDocument document = createDocumentWithProperty(property);
     QContact contact = mImporter->importContact(document);
     QContactTimestamp timeStamp =
         static_cast<QContactTimestamp>(
             contact.detail(QContactTimestamp::DefinitionName));    
-    QCOMPARE(timeStamp.lastModified().date().toString(Qt::ISODate),QString::fromAscii(dateValue));
+    QCOMPARE(timeStamp.lastModified().date().toString(Qt::ISODate),dateValue);
 
     // Date and Time : ISO 8601 extended format without utc offset
-    QByteArray dateAndTimeValue("1981-05-20T23:55:55");
+    QString dateAndTimeValue(QString::fromAscii("1981-05-20T23:55:55"));
     property.setValue(dateAndTimeValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     timeStamp =
         static_cast<QContactTimestamp>(
             contact.detail(QContactTimestamp::DefinitionName));    
-    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),QString::fromAscii(dateAndTimeValue));    
+    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),dateAndTimeValue);
 
     // Date and Time : ISO 8601 extented format with utc offset
-    QByteArray utcOffset = "Z";
-    QByteArray dateAndTimeWithUtcValue = dateAndTimeValue+utcOffset;
+    QString utcOffset(QString::fromAscii("Z"));
+    QString dateAndTimeWithUtcValue = dateAndTimeValue+utcOffset;
     property.setValue(dateAndTimeWithUtcValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
     timeStamp =
         static_cast<QContactTimestamp>(
             contact.detail(QContactTimestamp::DefinitionName));
-    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),QString::fromAscii(dateAndTimeValue));
+    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),dateAndTimeValue);
     QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
 
     // Date and Time : ISO 8601 in basic format without utc offset
-    dateAndTimeValue = "19810520T235555";
+    dateAndTimeValue = QString::fromAscii("19810520T235555");
     property.setValue(dateAndTimeValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
@@ -587,10 +586,10 @@ void UT_QVersitContactImporter::testTimeStamp()
             contact.detail(QContactTimestamp::DefinitionName));
 
     QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii("yyyyMMddThhmmss")),
-             QString::fromAscii(dateAndTimeValue));
+             dateAndTimeValue);
 
     // Date and Time : ISO 8601 in basic format with utc offset
-    dateAndTimeValue = "19810520T235555";
+    dateAndTimeValue = QString::fromAscii("19810520T235555");
     dateAndTimeWithUtcValue = dateAndTimeValue+utcOffset;
     property.setValue(dateAndTimeWithUtcValue);
     document = createDocumentWithProperty(property);
@@ -599,7 +598,7 @@ void UT_QVersitContactImporter::testTimeStamp()
         static_cast<QContactTimestamp>(
             contact.detail(QContactTimestamp::DefinitionName));
     QCOMPARE(timeStamp.lastModified().toString(QString::fromAscii("yyyyMMddThhmmss")),
-             QString::fromAscii(dateAndTimeValue));
+             dateAndTimeValue);
     QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
 }
 
@@ -608,17 +607,17 @@ void UT_QVersitContactImporter::testAnniversary()
     // Date : ISO 8601 extended format
     QVersitProperty property;
     property.setName(QString::fromAscii("X-ANNIVERSARY"));
-    QByteArray dateValue("1981-05-20");
+    QString dateValue(QString::fromAscii("1981-05-20"));
     property.setValue(dateValue);
     QVersitDocument document = createDocumentWithProperty(property);
     QContact contact = mImporter->importContact(document);
     QContactAnniversary anniversary =
         static_cast<QContactAnniversary>(
             contact.detail(QContactAnniversary::DefinitionName));
-    QCOMPARE(anniversary.originalDate().toString(Qt::ISODate),QString::fromAscii(dateValue));
+    QCOMPARE(anniversary.originalDate().toString(Qt::ISODate),dateValue);
 
     // Date : ISO 8601 in basic format
-    dateValue = "19810520";
+    dateValue = QString::fromAscii("19810520");
     property.setValue(dateValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
@@ -626,7 +625,7 @@ void UT_QVersitContactImporter::testAnniversary()
         static_cast<QContactAnniversary>(
             contact.detail(QContactAnniversary::DefinitionName));
     QCOMPARE(anniversary.originalDate().toString(QString::fromAscii("yyyyMMdd")),
-             QString::fromAscii(dateValue));
+             dateValue);
 
 }
 
@@ -635,7 +634,7 @@ void UT_QVersitContactImporter::testBirthday()
     // Date : ISO 8601 extended format
     QVersitProperty property;
     property.setName(QString::fromAscii("BDAY"));
-    QByteArray dateValue("1981-05-20");
+    QString dateValue(QString::fromAscii("1981-05-20"));
     property.setValue(dateValue);
     QVersitDocument document = createDocumentWithProperty(property);
     QContact contact = mImporter->importContact(document);
@@ -643,10 +642,10 @@ void UT_QVersitContactImporter::testBirthday()
         static_cast<QContactBirthday>(
             contact.detail(QContactBirthday::DefinitionName));
     QCOMPARE(bday.date().toString(Qt::ISODate),
-             QString::fromAscii(dateValue));
+             dateValue);
 
     // Date : ISO 8601 in basic format
-    dateValue = "19810520";
+    dateValue = QString::fromAscii("19810520");
     property.setValue(dateValue);
     document = createDocumentWithProperty(property);
     contact = mImporter->importContact(document);
@@ -654,7 +653,7 @@ void UT_QVersitContactImporter::testBirthday()
         static_cast<QContactBirthday>(
             contact.detail(QContactBirthday::DefinitionName));
     QCOMPARE(bday.date().toString(QString::fromAscii("yyyyMMdd")),
-             QString::fromAscii(dateValue));
+             dateValue);
 
 }
 
@@ -663,14 +662,14 @@ void UT_QVersitContactImporter::testGender()
     // Date : ISO 8601 extended format
     QVersitProperty property;
     property.setName(QString::fromAscii("X-GENDER"));
-    QByteArray val("Male");
+    QString val(QString::fromAscii("Male"));
     property.setValue(val);
     QVersitDocument document = createDocumentWithProperty(property);
     QContact contact = mImporter->importContact(document);
     QContactGender  gender =
         static_cast<QContactGender >(
             contact.detail(QContactGender ::DefinitionName));
-    QCOMPARE(gender.gender(),QString::fromAscii(val));
+    QCOMPARE(gender.gender(),val);
 }
 
 void UT_QVersitContactImporter::testNickname()
@@ -680,7 +679,7 @@ void UT_QVersitContactImporter::testNickname()
     QVersitProperty nameProperty;
     QString singleVal(QString::fromAscii("Homie"));
     nameProperty.setName(QString::fromAscii("NICKNAME"));
-    nameProperty.setValue(singleVal.toAscii());
+    nameProperty.setValue(singleVal);
     document.addProperty(nameProperty);
     QContact contact = mImporter->importContact(document);
     QContactNickname nickName = (QContactNickname)contact.detail(QContactNickname::DefinitionName);
@@ -694,7 +693,7 @@ void UT_QVersitContactImporter::testNickname()
     multiVal.append(QString::fromAscii("SuperHero"));
     multiVal.append(QString::fromAscii("NukeSpecialist"));
     nameProperty.setName(QString::fromAscii("NICKNAME"));
-    nameProperty.setValue(multiVal.join(QString::fromAscii(",")).toAscii());
+    nameProperty.setValue(multiVal.join(QString::fromAscii(",")));
     document.addProperty(nameProperty);
     contact = mImporter->importContact(document);
     QList<QContactDetail> nickNames = contact.details(QContactNickname::DefinitionName);
@@ -710,7 +709,7 @@ void UT_QVersitContactImporter::testNickname()
     document = QVersitDocument();
     nameProperty = QVersitProperty();
     nameProperty.setName(QString::fromAscii("X-NICKNAME"));
-    nameProperty.setValue(singleVal.toAscii());
+    nameProperty.setValue(singleVal);
     document.addProperty(nameProperty);
     contact = mImporter->importContact(document);
     nickName =
@@ -860,7 +859,7 @@ lJJJJKUkkkkpSSSSSlk6SSSlk6SSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkp"
 
     QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
-    QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
+    QString name = nameValues.join(QString::fromAscii(";"));
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("JPEG"),
@@ -887,7 +886,7 @@ void UT_QVersitContactImporter::testAvatarGifStored()
 "wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw==";
     QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
-    QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
+    QString name = nameValues.join(QString::fromAscii(";"));
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("GIF"),
@@ -1050,7 +1049,7 @@ lJJJJKUkkkkpSSSSSlk6SSSlk6SSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkp"
 
 QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
-    QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
+    QString name = nameValues.join(QString::fromAscii(";"));
     QVersitDocument document1 =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("JPEG"),
@@ -1212,7 +1211,7 @@ lJJJJKUkkkkpSSSSSlk6SSSlk6SSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkp"
 
     QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
-    QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
+    QString name = nameValues.join(QString::fromAscii(";"));
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("JPEG"),
@@ -1232,7 +1231,7 @@ void UT_QVersitContactImporter::testAvatarUrl()
 {
     QVersitProperty property;
     property.setName(QString::fromAscii("PHOTO"));
-    QByteArray value("file:///jgpublic.");
+    QString value(QString::fromAscii("file:///jgpublic."));
     property.setValue(value);
     property.addParameter(
         QString::fromAscii("VALUE"),QString::fromAscii("URL"));
@@ -1258,7 +1257,7 @@ void UT_QVersitContactImporter::testAvatarEncoding()
 "wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw==";
     QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
-    QByteArray name = nameValues.join(QString::fromAscii(";")).toAscii();
+    QString name = nameValues.join(QString::fromAscii(";"));
     QVersitDocument document =
         createDocumentWithNameAndPhoto(
             name,img,QString::fromAscii("GIF"),
@@ -1284,7 +1283,7 @@ void UT_QVersitContactImporter::testGeo()
     val.append(QString::fromAscii("18.53"));// Longtitude
     val.append(QString::fromAscii("45.32")); // Latitude
     nameProperty.setName(QString::fromAscii("GEO"));
-    nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
+    nameProperty.setValue(val.join(QString::fromAscii(",")));
     document.addProperty(nameProperty);
     QContact contact = mImporter->importContact(document);
     QContactGeolocation geo = (QContactGeolocation)contact.detail(QContactGeolocation::DefinitionName);
@@ -1300,7 +1299,7 @@ void UT_QVersitContactImporter::testGeo()
     val.append(QString::fromAscii("18.53"));// Longtitude
     val.append(QString::fromAscii("-45.32")); // Latitude
     nameProperty.setName(QString::fromAscii("GEO"));
-    nameProperty.setValue(val.join(QString::fromAscii(",")).toAscii());
+    nameProperty.setValue(val.join(QString::fromAscii(",")));
     document.addProperty(nameProperty);
     contact = mImporter->importContact(document);
     geo = (QContactGeolocation)contact.detail(QContactGeolocation::DefinitionName);
@@ -1315,46 +1314,46 @@ void UT_QVersitContactImporter::testNote()
     // single line value
     QVersitDocument document;
     QVersitProperty nameProperty;
-    QByteArray val("I will not sleep at my work -John");
+    QString val(QString::fromAscii("I will not sleep at my work -John"));
     nameProperty.setName(QString::fromAscii("NOTE"));
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
     QContact contact = mImporter->importContact(document);
     QContactNote note = (QContactNote)contact.detail(QContactNote::DefinitionName);
-    QCOMPARE(note.note(),QString::fromAscii(val));
+    QCOMPARE(note.note(),val);
 
     // Multiline value and quoted printable encoding
     document = QVersitDocument();
     nameProperty = QVersitProperty();
-    val = QByteArray("My Dad acts like he belongs,=0D=0AHe belongs in the zoo.=0D=0A");
+    val = QString::fromAscii("My Dad acts like he belongs,=0D=0AHe belongs in the zoo.=0D=0A");
     nameProperty.setName(QString::fromAscii("NOTE"));
     nameProperty.setValue(val);
     QMultiHash<QString,QString> params;
-    params.insert(QString::fromAscii("QUOTED-PRINTABLE"),QString::fromAscii(val));
+    params.insert(QString::fromAscii("QUOTED-PRINTABLE"),val);
     nameProperty.setParameters(params);
     document.addProperty(nameProperty);
     contact = mImporter->importContact(document);
     note = (QContactNote)contact.detail(QContactNote::DefinitionName);
-    QCOMPARE(note.note(),QString::fromAscii(val));
+    QCOMPARE(note.note(),val);
 }
 
 void UT_QVersitContactImporter::testLabel()
 {
     QVersitDocument document;
     QVersitProperty nameProperty;
-    QByteArray val("John Citizen");
+    QString val(QString::fromAscii("John Citizen"));
     nameProperty.setName(QString::fromAscii("FN"));
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
     QContact contact = mImporter->importContact(document);
     QContactName name =
             (QContactName)contact.detail(QContactName::DefinitionName);
-    QCOMPARE(name.customLabel(),QString::fromAscii(val));
+    QCOMPARE(name.customLabel(),val);
 }
 
 void UT_QVersitContactImporter::testOnlineAccount()
 {
-    QByteArray accountUri("sip:john.citizen@example.com");
+    QString accountUri(QString::fromAscii("sip:john.citizen@example.com"));
 
     // Plain X-SIP, no TYPE ->
     QVersitDocument document;
@@ -1366,7 +1365,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     QContactOnlineAccount onlineAccount =
          static_cast<QContactOnlineAccount>(
              contact.detail(QContactOnlineAccount::DefinitionName));
-    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    QCOMPARE(onlineAccount.accountUri(),accountUri);
     QStringList subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeSip);
@@ -1384,7 +1383,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     onlineAccount =
          static_cast<QContactOnlineAccount>(
              contact.detail(QContactOnlineAccount::DefinitionName));
-    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    QCOMPARE(onlineAccount.accountUri(),accountUri);
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeVideoShare);
@@ -1402,7 +1401,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     onlineAccount =
          static_cast<QContactOnlineAccount>(
              contact.detail(QContactOnlineAccount::DefinitionName));
-    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    QCOMPARE(onlineAccount.accountUri(),accountUri);
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeSipVoip);
@@ -1417,7 +1416,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     onlineAccount =
          static_cast<QContactOnlineAccount>(
              contact.detail(QContactOnlineAccount::DefinitionName));
-    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    QCOMPARE(onlineAccount.accountUri(),accountUri);
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
@@ -1432,7 +1431,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     onlineAccount =
          static_cast<QContactOnlineAccount>(
              contact.detail(QContactOnlineAccount::DefinitionName));
-    QCOMPARE(onlineAccount.accountUri(),QString::fromAscii(accountUri));
+    QCOMPARE(onlineAccount.accountUri(),accountUri);
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
@@ -1443,7 +1442,7 @@ void UT_QVersitContactImporter::testFamily()
     // Interesting : kid but no wife :)
     QVersitDocument document;
     QVersitProperty nameProperty;
-    QByteArray val("Jane"); // one is enough
+    QString val(QString::fromAscii("Jane")); // one is enough
     nameProperty.setName(QString::fromAscii("X-CHILDREN"));
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
@@ -1452,20 +1451,20 @@ void UT_QVersitContactImporter::testFamily()
     QStringList children = family.children();
     QCOMPARE(children.count(),1); // ensure no other kids in list
     QCOMPARE(family.spouse(),QString()); // make sure no wife
-    QCOMPARE(children[0],QString::fromAscii(val)); // ensure it is your kid
+    QCOMPARE(children[0],val); // ensure it is your kid
 
     // Critical : wife but no kids , happy hours
     document = QVersitDocument();
     nameProperty = QVersitProperty();
     nameProperty.setName(QString::fromAscii("X-SPOUSE"));
-    val = "Jenny";
+    val = QString::fromAscii("Jenny");
     nameProperty.setValue(val);
     document.addProperty(nameProperty);
     contact = mImporter->importContact(document);
     family = (QContactFamily)contact.detail(QContactFamily::DefinitionName);
     children = family.children();
     QCOMPARE(children.count(),0); // list should be empty as you know
-    QCOMPARE(family.spouse(),QString::fromAscii(val)); // make sure thats your wife:(
+    QCOMPARE(family.spouse(),val); // make sure thats your wife:(
 
     // Hopeless : couple of kids and wife
     document = QVersitDocument();
@@ -1476,10 +1475,10 @@ void UT_QVersitContactImporter::testFamily()
     kidsVal.append(QString::fromAscii("James"));
     kidsVal.append(QString::fromAscii("Jake"));
     kidsVal.append(QString::fromAscii("Jane"));
-    nameProperty.setValue(kidsVal.join(QString::fromAscii(",")).toAscii());
+    nameProperty.setValue(kidsVal.join(QString::fromAscii(",")));
     document.addProperty(nameProperty);
     // Add wife next
-    val = "Jenny";
+    val = QString::fromAscii("Jenny");
     nameProperty = QVersitProperty();
     nameProperty.setName(QString::fromAscii("X-SPOUSE"));
     nameProperty.setValue(val);
@@ -1490,7 +1489,7 @@ void UT_QVersitContactImporter::testFamily()
     QCOMPARE(children.count(),3); // too late , count them now.
     // painfull but ensure they are your kids
     QCOMPARE(children.join(QString::fromAscii(",")),kidsVal.join(QString::fromAscii(",")));
-    QCOMPARE(family.spouse(),QString::fromAscii(val)); // make sure thats your wife:(
+    QCOMPARE(family.spouse(),val); // make sure thats your wife:(
 }
 
 void UT_QVersitContactImporter::testSound()
@@ -1500,7 +1499,7 @@ void UT_QVersitContactImporter::testSound()
     QVersitDocument document;
     QVersitProperty nameProperty;
     nameProperty.setName(QString::fromAscii("N"));
-    nameProperty.setValue("Citizen;John;;;");
+    nameProperty.setValue(QString::fromAscii("Citizen;John;;;"));
     document.addProperty(nameProperty);
     nameProperty = QVersitProperty();
     QMultiHash<QString,QString> param;
@@ -1508,7 +1507,7 @@ void UT_QVersitContactImporter::testSound()
     param.insert(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     nameProperty.setName(QString::fromAscii("SOUND"));
     QByteArray val("111110000011111");
-    nameProperty.setValue(val.toBase64());
+    nameProperty.setValue(QString::fromAscii(val.toBase64()));
     nameProperty.setParameters(param);
     document.addProperty(nameProperty);
     QContact contact = mImporter->importContact(document);
@@ -1538,36 +1537,33 @@ void UT_QVersitContactImporter::testUnknownVersitProperties()
 
     // No unconverted properties, one converted property
     property.setName(QString::fromAscii("N"));
-    property.setValue("Citizen;John;Q;;");
+    property.setValue(QString::fromAscii("Citizen;John;Q;;"));
     document.addProperty(property);
     mImporter->importContact(document);
     QCOMPARE(mImporter->unknownVersitProperties().count(), 0);
 
     // One unknown property
     property.setName(QString::fromAscii("X-EXTENSION-1"));
-    property.setValue("extension value 1");
+    property.setValue(QString::fromAscii("extension value 1"));
     document.addProperty(property);
     mImporter->importContact(document);
     QList<QVersitProperty> unknownProperties =
         mImporter->unknownVersitProperties();
     QCOMPARE(unknownProperties.count(), 1);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
-    QCOMPARE(QString::fromAscii(unknownProperties[0].value()),
-             QString::fromAscii("extension value 1"));
+    QCOMPARE(unknownProperties[0].value(), QString::fromAscii("extension value 1"));
 
     // Two unknown properties
     property.setName(QString::fromAscii("X-EXTENSION-2"));
-    property.setValue("extension value 2");
+    property.setValue(QString::fromAscii("extension value 2"));
     document.addProperty(property);
     mImporter->importContact(document);
     unknownProperties = mImporter->unknownVersitProperties();
     QCOMPARE(unknownProperties.count(), 2);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
-    QCOMPARE(QString::fromAscii(unknownProperties[0].value()),
-             QString::fromAscii("extension value 1"));
+    QCOMPARE(unknownProperties[0].value(), QString::fromAscii("extension value 1"));
     QCOMPARE(unknownProperties[1].name(), QString::fromAscii("X-EXTENSION-2"));
-    QCOMPARE(QString::fromAscii(unknownProperties[1].value()),
-             QString::fromAscii("extension value 2"));
+    QCOMPARE(unknownProperties[1].value(), QString::fromAscii("extension value 2"));
 
     // Test that the previous unknown properties are cleaned
     // when importContact is called again
@@ -1586,7 +1582,7 @@ QVersitDocument UT_QVersitContactImporter::createDocumentWithProperty(
 }
 
 QVersitDocument UT_QVersitContactImporter::createDocumentWithNameAndPhoto(
-    const QByteArray& name,
+    const QString& name,
     QByteArray image,
     const QString& imageType,
     const QString& encoding)
@@ -1602,9 +1598,9 @@ QVersitDocument UT_QVersitContactImporter::createDocumentWithNameAndPhoto(
     property.setName(QString::fromAscii("PHOTO"));
     if (encoding == QString::fromAscii("BASE64") ||
         encoding == QString::fromAscii("B")){
-        property.setValue(image.toBase64());
+        property.setValue(QString::fromAscii(image.toBase64()));
     } else {
-        property.setValue(image);
+        property.setValue(QString::fromAscii(image));
     }
     if (imageType != QString()) {
         property.addParameter(QString::fromAscii("TYPE"), imageType);

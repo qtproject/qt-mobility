@@ -63,12 +63,13 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 {
     QByteArray encodedProperty(encodeGroupsAndName(property));
 
-    // Quoted-Printable encode the value and add Quoted-Pritable parameter, if necessary
-    QByteArray value(property.value());
-    bool valueQuotedPrintableEncoded = quotedPrintableEncode(property,value);
-    QString encoding(QString::fromAscii("ENCODING"));
-    QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
+    const QString encoding(QString::fromAscii("ENCODING"));
+    const QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
     QMultiHash<QString,QString> parameters = property.parameters();
+
+    // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
+    QByteArray value(property.value().toAscii());
+    bool valueQuotedPrintableEncoded = quotedPrintableEncode(property,value);
     if (valueQuotedPrintableEncoded &&
         !parameters.contains(encoding,quotedPrintable)) {
          // Add the encoding parameter to the copy, not to the actual property
@@ -131,7 +132,7 @@ bool QVCard21Writer::quotedPrintableEncode(
     QByteArray& value) const
 {
     bool encoded = false;
-    value = property.value();
+    value = property.value().toAscii();
     if (!property.parameters().contains(QString::fromAscii("ENCODING"))) {
         encoded = VersitUtils::quotedPrintableEncode(value);
     }

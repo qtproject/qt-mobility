@@ -77,8 +77,8 @@ public:
     static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
     static bool quotedPrintableEncode(QByteArray& text);
     static void decodeQuotedPrintable(QByteArray& text);
-    static bool backSlashEscape(QByteArray& text);
-    static void removeBackSlashEscaping(QByteArray& text);
+    static bool backSlashEscape(QString& text);
+    static void removeBackSlashEscaping(QString& text);
 
     static bool getNextLine(VersitCursor& line);
 

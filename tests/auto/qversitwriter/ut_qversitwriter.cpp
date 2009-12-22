@@ -96,7 +96,7 @@ END:VCARD\r\n";
     QVersitDocument document;
     QVersitProperty property;
     property.setName(QString(QString::fromAscii("FN")));
-    property.setValue(QByteArray("John"));
+    property.setValue(QString::fromAscii("John"));
     document.addProperty(property);
     document.setVersitType(QVersitDocument::VCard21);
     mWriter->setVersitDocument(document);

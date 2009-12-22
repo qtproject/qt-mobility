@@ -75,7 +75,7 @@ public:
     QStringList mGroups;
     QString mName;
     QMultiHash<QString,QString> mParameters;
-    QByteArray mValue;
+    QString mValue;
     QVersitDocument mDocument;
 };
 

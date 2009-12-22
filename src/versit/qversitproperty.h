@@ -75,8 +75,8 @@ public:
     void setParameters(const QMultiHash<QString,QString>& parameters);
     QMultiHash<QString,QString> parameters() const;
     
-    void setValue(const QByteArray& value);
-    QByteArray value() const;
+    void setValue(const QString& value);
+    QString value() const;
 
     void setEmbeddedDocument(const QVersitDocument& document);
     QVersitDocument embeddedDocument() const;

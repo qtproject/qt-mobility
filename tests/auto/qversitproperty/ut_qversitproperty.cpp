@@ -114,7 +114,7 @@ void UT_QVersitProperty::testParameters()
 
 void UT_QVersitProperty::testValue()
 {
-    QByteArray value("050484747");
+    QString value(QString::fromAscii("050484747"));
     mVersitProperty->setValue(value);
     QCOMPARE(mVersitProperty->value(), value);
 }

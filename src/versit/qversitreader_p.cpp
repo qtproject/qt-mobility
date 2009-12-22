@@ -128,7 +128,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
     
     if (foundBegin ||
         (property.name() == QString::fromAscii("BEGIN")
-        && property.value().trimmed().toUpper() == "VCARD")) {
+        && property.value().trimmed().toUpper() == QString::fromAscii("VCARD"))) {
         
         parsingOk = true;
         do {
@@ -137,7 +137,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
 
             /* Discard embedded vcard documents (XXX why?) */
             if (property.name() == QString::fromAscii("BEGIN") &&
-                property.value().trimmed().toUpper() == "VCARD") {
+                property.value().trimmed().toUpper() == QString::fromAscii("VCARD")) {
                 parsingOk = false;
                 QVersitDocument nestedDocument;
                 if (!parseVersitDocument(cursor, nestedDocument, true))
@@ -233,14 +233,16 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
             VersitUtils::decodeQuotedPrintable(value);
             // Remove the encoding parameter as the value is now decoded
             property.removeParameter(encoding, quotedPrintable);
-            property.setValue(value);
+            property.setValue(QString::fromAscii(value));
         } else {
             if (property.parameters().contains(encoding, base64)) {
                 // Remove the linear whitespaces left by vCard 2.1 unfolding
+                // XXX why is this necessary?
                 value.replace(' ',"");
                 value.replace('\t',"");
             }
-            property.setValue(value);
+            // TODO do the encoding properly
+            property.setValue(QString::fromAscii(value));
         }
     }
 }
@@ -254,14 +256,15 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
 
     QByteArray value = VersitUtils::extractPropertyValue(cursor);
 
-    VersitUtils::removeBackSlashEscaping(value);
+    QString valueString(QString::fromAscii(value));
+    VersitUtils::removeBackSlashEscaping(valueString);
 
     if (property.name() == QString::fromAscii("AGENT")) {
         // XXX this means 2.1 agent handling doesn't work (you only get the first line)
-        VersitCursor agentCursor(value);
+        VersitCursor agentCursor(valueString.toAscii());
         parseAgentProperty(agentCursor, property);
     } else {
-        property.setValue(value);
+        property.setValue(valueString);
     }
 }
 
@@ -289,13 +292,13 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
 {
     bool valid = true;
     if (property.name() == QString::fromAscii("VERSION")) {
-        QByteArray value = property.value().trimmed();
+        QString value = property.value().trimmed();
         if (property.parameters().contains(
                 QString::fromAscii("ENCODING"),QString::fromAscii("BASE64")))
-            value = QByteArray::fromBase64(value);
-        if (value == "2.1") {
+            value = QString::fromAscii(QByteArray::fromBase64(value.toAscii()));
+        if (value == QString::fromAscii("2.1")) {
             document.setVersitType(QVersitDocument::VCard21);
-        } else if (value == "3.0") {
+        } else if (value == QString::fromAscii("3.0")) {
             document.setVersitType(QVersitDocument::VCard30);         
         } else {
             valid = false;

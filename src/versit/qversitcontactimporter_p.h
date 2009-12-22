@@ -135,9 +135,9 @@ private:
 
     QStringList extractSubTypes(const QVersitProperty& property) const;
 
-    QString takeFirst(QList<QByteArray>& list) const;
+    QString takeFirst(QList<QString>& list) const;
 
-    QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;
+    QDateTime parseDateTime(const QString& text, const QString& format) const;
 
     QString saveContentToFile(
         const QString& path,

@@ -100,7 +100,7 @@ private: // Utilities
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
 
     QVersitDocument createDocumentWithNameAndPhoto(
-        const QByteArray& name,
+        const QString& name,
         QByteArray image,
         const QString& photoType,
         const QString& encoding);
