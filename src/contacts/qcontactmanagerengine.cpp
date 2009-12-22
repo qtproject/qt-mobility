@@ -1337,9 +1337,9 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  * Adds the list of contacts given by \a contact list to the database.
  * Returns true if the contacts were saved successfully, otherwise false.
  *
- * The manager will populate \a errorMap (the map of indices of the \a contacts list to
+ * The manager might populate \a errorMap (the map of indices of the \a contacts list to
  * the error which occurred when saving the contact at that index) for
- * every index for which the contact could not be saved.
+ * every index for which the contact could not be saved, if it is able.
  * The \l QContactManager::error() function will only return \c QContactManager::NoError
  * if all contacts were saved successfully.
  *
@@ -1432,9 +1432,9 @@ QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QConta
  * \a contactIds.  Returns true if all contacts were removed successfully,
  * otherwise false.
  *
- * The manager will populate \a errorMap (the map of indices of the \a contactIds list to
+ * The manager might populate \a errorMap (the map of indices of the \a contactIds list to
  * the error which occurred when saving the contact at that index) for every
- * index for which the contact could not be removed.
+ * index for which the contact could not be removed, if it is able.
  * The \l QContactManager::error() function will
  * only return \c QContactManager::NoError if all contacts were removed
  * successfully.
