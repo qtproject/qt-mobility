@@ -91,9 +91,7 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
     connect(&m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&)),
             this, SLOT(readResponseHeader(const QHttpResponseHeader&)));
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
     createMenus();
-#endif
     listWidget->setGridSize(gridSize);
     listWidget->setIconSize(thumbnailSize);
     connect(&m_progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
@@ -133,10 +131,15 @@ void FlickrDemo::delayedInit()
 void FlickrDemo::createMenus()
 {
     m_downloadAct = new QAction(tr("Download Picture List"), this);
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
     menuBar()->addAction(m_downloadAct);
+#endif
     connect(m_downloadAct, SIGNAL(triggered()), this, SLOT(on_downloadButton_clicked()));
+
     QAction* exitAct = new QAction(tr("Exit"), this);
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
     menuBar()->addAction(exitAct);
+#endif
     connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 }
 
