@@ -20,7 +20,7 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
     
-    #make a sis package from plugin + api + stub (plugin)
+    #make a sis package from plugin + stub (plugin)
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_SUBDIR}/playlistformats
     DEPLOYMENT += pluginDep
