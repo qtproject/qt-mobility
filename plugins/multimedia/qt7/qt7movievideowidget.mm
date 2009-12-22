@@ -47,6 +47,7 @@
 #import <QTKit/QTMovieLayer.h>
 #import <AppKit/NSImage.h>
 
+
 #include "qt7playercontrol.h"
 #include "qt7movievideowidget.h"
 #include "qt7playersession.h"
@@ -57,6 +58,8 @@
 #include <QGLWidget>
 
 #include <CoreFoundation/CoreFoundation.h>
+
+#import <QuartzCore/QuartzCore.h>
 
 #include "math.h"
 
@@ -122,7 +125,13 @@ public:
 
     void setCVTexture(CVOpenGLTextureRef texRef)
     {
+        if (m_texRef)
+            CVOpenGLTextureRelease(m_texRef);
+
         m_texRef = texRef;
+
+        if (m_texRef)
+            CVOpenGLTextureRetain(m_texRef);
 
         if (isVisible()) {
             makeCurrent();
@@ -172,8 +181,7 @@ private:
 QT7MovieVideoWidget::QT7MovieVideoWidget(QObject *parent)
    :QT7VideoWidgetControl(parent),
     m_movie(0),    
-    m_videoWidget(0),
-    m_currentFrame(0),
+    m_videoWidget(0),    
     m_fullscreen(false),
     m_aspectRatioMode(QVideoWidget::KeepAspectRatio),
     m_brightness(0),
@@ -207,10 +215,22 @@ bool QT7MovieVideoWidget::createVisualContext()
     NSOpenGLPixelFormat *nsglPixelFormat = [NSOpenGLView defaultPixelFormat];
     CGLPixelFormatObj cglPixelFormat = static_cast<CGLPixelFormatObj>([nsglPixelFormat CGLPixelFormatObj]);
 
-    OSStatus err = QTOpenGLTextureContextCreate(kCFAllocatorDefault, cglContext,
-                                                cglPixelFormat, NULL, &m_visualContext);
+    CFTypeRef keys[] = { kQTVisualContextWorkingColorSpaceKey };
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CFDictionaryRef textureContextAttributes = CFDictionaryCreate(kCFAllocatorDefault,
+                                                                  (const void **)keys,
+                                                                  (const void **)&colorSpace, 1,
+                                                                  &kCFTypeDictionaryKeyCallBacks,
+                                                                  &kCFTypeDictionaryValueCallBacks);
+
+    OSStatus err = QTOpenGLTextureContextCreate(kCFAllocatorDefault,
+                                                cglContext,
+                                                cglPixelFormat,
+                                                textureContextAttributes,
+                                                &m_visualContext);
     if (err != noErr)
         qWarning() << "Could not create visual context (OpenGL)";
+
 
     return (err == noErr);
 #endif // QUICKTIME_C_API_AVAILABLE
@@ -354,23 +374,22 @@ void QT7MovieVideoWidget::updateColors()
 void QT7MovieVideoWidget::updateVideoFrame(const CVTimeStamp &ts)
 {
 #ifdef QUICKTIME_C_API_AVAILABLE
+    AutoReleasePool pool;    
     // check for new frame
     if (m_visualContext && QTVisualContextIsNewImageAvailable(m_visualContext, &ts)) {
-        // if we have a previous frame release it
-        if (m_currentFrame) {
-            CVOpenGLTextureRelease(m_currentFrame);
-            m_currentFrame = NULL;
-        }
+        CVOpenGLTextureRef currentFrame = NULL;
 
         // get a "frame" (image buffer) from the Visual Context, indexed by the provided time
-        OSStatus status = QTVisualContextCopyImageForTime(m_visualContext, NULL, &ts, &m_currentFrame);
+        OSStatus status = QTVisualContextCopyImageForTime(m_visualContext, NULL, &ts, &currentFrame);
 
         // the above call may produce a null frame so check for this first
         // if we have a frame, then draw it
-        if (status == noErr && m_currentFrame) {
+        if (status == noErr && currentFrame) {
             //qDebug() << "render video frame";
-            m_videoWidget->setCVTexture(m_currentFrame);
+            m_videoWidget->setCVTexture(currentFrame);
+            CVOpenGLTextureRelease(currentFrame);
         }
+        QTVisualContextTask(m_visualContext);
     }
 #else
     Q_UNUSED(ts);

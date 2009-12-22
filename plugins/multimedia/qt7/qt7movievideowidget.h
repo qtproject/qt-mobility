@@ -111,7 +111,6 @@ private:
 #ifdef QUICKTIME_C_API_AVAILABLE
     QTVisualContextRef	m_visualContext;
 #endif
-    CVOpenGLTextureRef  m_currentFrame;
 
     bool m_fullscreen;
     QSize m_nativeSize;
