@@ -233,11 +233,23 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
            {
                const QContactDetailFilter detailFilter(filter);
                
+               //display label
                if (detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName)
                {
                    CntDisplayLabelSqlFilter displayLabelFilter;
                    displayLabelFilter.createSqlQuery(detailFilter,sqlQuery,error);
                }
+               
+               //type
+               else if(detailFilter.detailDefinitionName() == QContactType::DefinitionName)
+               {
+                   if(detailFilter.value().toString() == QContactType::TypeContact)
+                       sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=0";
+                   else if(detailFilter.value().toString() == QContactType::TypeGroup)
+                       sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=3";
+               }
+               
+               //everything else
                else
                {
                    updateSqlQueryForDetailFilter(filter,sqlQuery,error);
@@ -556,7 +568,8 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::checkIfDetail
         else if ( detailFilter.detailDefinitionName() == QContactName::DefinitionName ||
                   detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName ||
                   detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName ||
-                  detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName){
+                  detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName ||
+                  detailFilter.detailDefinitionName() == QContactType::DefinitionName){
                if (  (matchFlags == QContactFilter::MatchContains)|| (matchFlags == QContactFilter::MatchStartsWith)||
                      (matchFlags == QContactFilter::MatchEndsWith)|| (matchFlags == QContactFilter::MatchExactly)){
                 filterSupported = CntAbstractContactFilter::Supported;

@@ -132,42 +132,19 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
     error = QContactManager::NoError;
     QList<QContactLocalId> result;
     
-    //Note this is just a temporary solution, until the api has been fixed.
-    if (filter.type() == QContactFilter::RelationshipFilter){
-        
-        QContactRelationshipFilter rf = static_cast<QContactRelationshipFilter>(filter);
-        
-        if (rf.role() == QContactRelationshipFilter::First) {
-           
-            //note participant id should be changed to contact id when the api has been fixed !!
-            QList<QContactRelationship> relationshipsList = relationships(QContactRelationship::HasMember, rf.otherParticipantId(), QContactRelationshipFilter::First, error );
-            
-            if(error == QContactManager::NoError)
-            {
-                for(int i = 0; i < relationshipsList.count(); i++)
-                {
-                    result += relationshipsList.at(i).second().localId();
-                }
-            }
-        }
-    }
-    
-    else{
-        
-        bool filterSupported(true);
-        result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);;
-    
-        // Remove possible false positives
-        if(!filterSupported && error == QContactManager::NoError)
-            result = slowFilter(filter, result, error);
-    
-        // Sort the matching contacts
-        if(!sortOrders.isEmpty()&& error == QContactManager::NoError) {
-            if(m_contactSorter->sortOrderSupported(sortOrders)) {
-                result = m_contactSorter->sort(result, sortOrders, error);
-            } else {
-                result = slowSort(result, sortOrders, error);
-            }
+    bool filterSupported(true);
+    result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);;
+
+    // Remove possible false positives
+    if(!filterSupported && error == QContactManager::NoError)
+        result = slowFilter(filter, result, error);
+
+    // Sort the matching contacts
+    if(!sortOrders.isEmpty()&& error == QContactManager::NoError) {
+        if(m_contactSorter->sortOrderSupported(sortOrders)) {
+            result = m_contactSorter->sort(result, sortOrders, error);
+        } else {
+            result = slowSort(result, sortOrders, error);
         }
     }
     
