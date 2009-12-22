@@ -61,6 +61,7 @@ public:
 	bool retrieve(const QMessageId &messageId, const QMessageContentContainerId &id);
 	bool retrieveBody(const QMessageId& id);
 	bool retrieveHeader(const QMessageId& id);
+	bool exportUpdates(const QMessageAccountId &id);
 	
     bool queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     bool queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
