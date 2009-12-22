@@ -70,6 +70,7 @@ public:
     ~QAudioCaptureSource();
 
     bool isAvailable() const;
+    QtMedia::AvailabilityError availabilityError() const;
 
     QList<QString> audioInputs() const;
 
@@ -83,6 +84,9 @@ public Q_SLOTS:
 Q_SIGNALS:
     void activeAudioInputChanged(const QString& name);
     void availableAudioInputsChanged();
+
+private slots:
+    void statusChanged();
 
 private:
     Q_DECLARE_PRIVATE(QAudioCaptureSource)

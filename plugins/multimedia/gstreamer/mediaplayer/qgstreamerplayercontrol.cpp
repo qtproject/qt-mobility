@@ -220,7 +220,7 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
             url = QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0]));
         }
     } else if (!content.isNull()) {
-        url = content.canonicalUri();
+        url = content.canonicalUrl();
     }
 
     m_session->load(url);

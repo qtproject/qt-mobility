@@ -102,6 +102,12 @@ SOURCES += qmediacontrol.cpp \
     qpaintervideosurface.cpp \
     qvideorenderercontrol.cpp
 
+contains(QT_CONFIG, declarative) {
+   QT += declarative
+   PRIVATE_HEADERS += qmlsound_p.h
+   SOURCES += qmlsound.cpp
+}
+
 include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

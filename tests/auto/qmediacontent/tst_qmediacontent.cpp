@@ -50,7 +50,7 @@ class tst_QMediaContent : public QObject
 
 private slots:
     void testNull();
-    void testUriCtor();
+    void testUrlCtor();
     void testResourceCtor();
     void testResourceListCtor();
     void testCopy();
@@ -64,17 +64,17 @@ void tst_QMediaContent::testNull()
     QMediaContent media;
 
     QCOMPARE(media.isNull(), true);
-    QCOMPARE(media.canonicalUri(), QUrl());
+    QCOMPARE(media.canonicalUrl(), QUrl());
     QCOMPARE(media.canonicalResource(), QMediaResource());
     QCOMPARE(media.resources(), QMediaResourceList());
 }
 
-void tst_QMediaContent::testUriCtor()
+void tst_QMediaContent::testUrlCtor()
 {
     QMediaContent media(QUrl("http://example.com/movie.mov"));
 
-    QCOMPARE(media.canonicalUri(), QUrl("http://example.com/movie.mov"));
-    QCOMPARE(media.canonicalResource().uri(), QUrl("http://example.com/movie.mov"));
+    QCOMPARE(media.canonicalUrl(), QUrl("http://example.com/movie.mov"));
+    QCOMPARE(media.canonicalResource().url(), QUrl("http://example.com/movie.mov"));
 }
 
 void tst_QMediaContent::testResourceCtor()
@@ -91,8 +91,8 @@ void tst_QMediaContent::testResourceListCtor()
 
     QMediaContent media(resourceList);
 
-    QCOMPARE(media.canonicalUri(), QUrl("http://example.com/movie.mov"));
-    QCOMPARE(media.canonicalResource().uri(), QUrl("http://example.com/movie.mov"));
+    QCOMPARE(media.canonicalUrl(), QUrl("http://example.com/movie.mov"));
+    QCOMPARE(media.canonicalResource().url(), QUrl("http://example.com/movie.mov"));
 }
 
 void tst_QMediaContent::testCopy()

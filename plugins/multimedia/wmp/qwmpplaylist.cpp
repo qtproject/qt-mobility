@@ -133,7 +133,7 @@ bool QWmpPlaylist::addMedia(const QMediaContent &content)
 
     IWMPMedia *media = 0;
     if (!content.isNull() && m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(content.canonicalUri()), &media) == S_OK) {
+            QAutoBStr(content.canonicalUrl()), &media) == S_OK) {
         appended = m_playlist->appendItem(media) == S_OK;
 
         media->Release();
@@ -148,7 +148,7 @@ bool QWmpPlaylist::insertMedia(int pos, const QMediaContent &content)
 
     IWMPMedia *media = 0;
     if (m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(content.canonicalUri()), &media) == S_OK) {
+            QAutoBStr(content.canonicalUrl()), &media) == S_OK) {
         inserted = m_playlist->insertItem(pos, media) == S_OK;
 
         media->Release();

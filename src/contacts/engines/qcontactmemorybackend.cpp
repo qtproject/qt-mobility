@@ -234,6 +234,11 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         /* We also need to check that there are no modified create only details */
         QContact oldContact = d->m_contacts.at(index);
 
+        if (oldContact.type() != theContact->type()) {
+            error = QContactManager::AlreadyExistsError;
+            return false;
+        }
+
         QSetIterator<QString> it(d->m_createOnlyIds.value(theContact->type()));
         while (it.hasNext()) {
             const QString& id = it.next();
@@ -546,6 +551,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
 /*! \reimp */
 QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
+    error = QContactManager::NoError;
     QContactManager::Error functionError;
     QContactChangeSet changeSet;
     QList<QContactManager::Error> retn;
@@ -1021,12 +1027,14 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactManager::Error> operationErrors;
             QList<QContactRelationship> matchingRelationships = relationships(r->relationshipType(), r->first(), QContactRelationshipFilter::First, operationError);
 
+            bool foundMatch = false;
             for (int i = 0; i < matchingRelationships.size(); i++) {
                 QContactManager::Error tempError;
                 QContactRelationship possibleMatch = matchingRelationships.at(i);
 
                 // if the second criteria matches, or is default constructed id, then we have a match and should remove it.
                 if (r->second() == QContactId() || possibleMatch.second() == r->second()) {
+                    foundMatch = true;
                     removeRelationship(matchingRelationships.at(i), tempError);
                     operationErrors.append(tempError);
 
@@ -1034,6 +1042,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
                         operationError = tempError;
                 }
             }
+            
+            if (foundMatch == false && operationError == QContactManager::NoError)
+                operationError = QContactManager::DoesNotExistError;
 
             // there are no results, so just update the status with the error.
             updateRequestStatus(currentRequest, operationError, operationErrors, QContactAbstractRequest::Finished);
@@ -1084,9 +1095,8 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
         case QContactManager::Groups:
         case QContactManager::ActionPreferences:
         case QContactManager::Relationships:
-            return true;
         case QContactManager::ArbitraryRelationshipTypes:
-            return true;
+        case QContactManager::RelationshipOrdering:
         case QContactManager::MutableDefinitions:
             return true;
         case QContactManager::Anonymous:

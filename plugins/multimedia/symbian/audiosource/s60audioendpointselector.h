@@ -59,13 +59,13 @@ public:
     S60AudioEndpointSelector(QObject *parent);
     virtual ~S60AudioEndpointSelector();
 
-    QList<QString> endpoints() const;
+    QList<QString> availableEndpoints() const;
     QString endpointDescription(const QString& name) const;
     QString defaultEndpoint() const;
     QString activeEndpoint() const;
 
 public Q_SLOTS:
-    void setEndpoint(const QString& name);
+    void setActiveEndpoint(const QString& name);
 
 private:
     void update();

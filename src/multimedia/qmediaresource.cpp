@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QMediaResource class provides a description of a media resource.
     \ingroup multimedia
 
-    A media resource is composed of a \l {uri()}{URI} containing the
+    A media resource is composed of a \l {url()}{URL} containing the
     location of the resource and a set of properties that describe the
     format of the resource.  The properties provide a means to assess a
     resource without first attempting to load it, and in situations where
@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
     \l {videoBitRate()}{video} bit rates, and \l {resolution()}{resolution}
     so these constraints and others can be evaluated.
 
-    The only mandatory property of a QMediaResource is the uri().
+    The only mandatory property of a QMediaResource is the url().
 
     \sa QMediaContent
 */
@@ -88,11 +88,11 @@ QMediaResource::QMediaResource()
 }
 
 /*!
-    Constructs a media resource with the given \a mimeType from a \a uri.
+    Constructs a media resource with the given \a mimeType from a \a url.
 */
-QMediaResource::QMediaResource(const QUrl &uri, const QString &mimeType)
+QMediaResource::QMediaResource(const QUrl &url, const QString &mimeType)
 {
-    values.insert(Uri, qVariantFromValue(uri));
+    values.insert(Url, qVariantFromValue(url));
     values.insert(MimeType, mimeType);
 }
 
@@ -153,11 +153,11 @@ bool QMediaResource::isNull() const
 }
 
 /*!
-    Returns the URI of a media resource.
+    Returns the URL of a media resource.
 */
-QUrl QMediaResource::uri() const
+QUrl QMediaResource::url() const
 {
-    return qvariant_cast<QUrl>(values.value(Uri));
+    return qvariant_cast<QUrl>(values.value(Url));
 }
 
 /*!

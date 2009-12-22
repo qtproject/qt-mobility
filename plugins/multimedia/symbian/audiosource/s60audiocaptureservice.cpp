@@ -72,7 +72,7 @@ QMediaControl *S60AudioCaptureService::control(const char *name) const
         return m_encoderControl;
 
     if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
-        return m_EndpointSelector;
+        return m_endpointSelector;
 
     return 0;
 }

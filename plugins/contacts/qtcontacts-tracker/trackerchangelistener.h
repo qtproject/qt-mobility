@@ -44,11 +44,15 @@
 
 #include <QObject>
 #include <QHash>
-#include <qcontact.h>
 #include <QSharedPointer>
+
 #include <QtTracker/QLive>
 #include <QtTracker/Tracker>
 
+#include <qmobilityglobal.h>
+#include <qcontact.h>
+
+QTM_USE_NAMESPACE
 
 QContactLocalId url2UniqueId(const QString &contactUrl);
 

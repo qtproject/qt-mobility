@@ -101,6 +101,20 @@ QTM_BEGIN_NAMESPACE
     \sa QMediaObject, QMediaService, QVideoWidget, QMediaPlaylist
 */
 
+namespace
+{
+class MediaPlayerRegisterMetaTypes
+{
+public:
+    MediaPlayerRegisterMetaTypes()
+    {
+        qRegisterMetaType<QMediaPlayer::State>("QMediaPlayer::State");
+        qRegisterMetaType<QMediaPlayer::MediaStatus>("QMediaPlayer::MediaStatus");
+        qRegisterMetaType<QMediaPlayer::Error>("QMediaPlayer::Error");
+    }
+} _registerPlayerMetaTypes;
+}
+
 class QMediaPlayerPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_NON_CONST_PUBLIC(QMediaPlayer)
@@ -527,6 +541,10 @@ void QMediaPlayer::setPlaybackRate(qreal rate)
     If a \a stream is supplied; media data will be read from it instead of resolving the media
     source.  In this case the media source may still be used to resolve additional information
     about the media such as mime type.
+
+    Setting the media to a null QMediaContent will cause the player to discard all
+    information relating to the current media source and to cease all I/O operations related
+    to that media.
 */
 
 void QMediaPlayer::setMedia(const QMediaContent &media, QIODevice *stream)
@@ -751,6 +769,10 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
     be played.
 
     By default this property has a null QMediaContent.
+
+    Setting this property to a null QMediaContent will cause the player to discard all
+    information relating to the current media source and to cease all I/O operations related
+    to that media.
 
     \sa QMediaContent
 */

@@ -299,6 +299,10 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Sets the current \a media source.  If a \a stream is supplied; data will be read from that
     instead of attempting to resolve the media source.  The media source may still be used to
     supply media information such as mime type.
+
+    Setting the media to a null QMediaContent will cause the control to discard all
+    information relating to the current media source and to cease all I/O operations related
+    to that media.
 */
 
 /*!

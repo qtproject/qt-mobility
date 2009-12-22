@@ -71,7 +71,7 @@ QContactAction::~QContactAction()
   Each instance of a QContactAction is created by a \l QContactActionFactory when
   \l QContactActionFactory::instance() is called; the caller takes ownership of the action instance.
  
-  \sa QContactActionFactory
+  \sa QContactActionFactory, QContactActionFilter
  */
 
 /*!

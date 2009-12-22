@@ -94,12 +94,16 @@ public:
                        SIGNAL(activeAudioInputChanged(const QString&)));
             q->connect(audioEndpointSelector, SIGNAL(availableEndpointsChanged()),
                        SIGNAL(availableAudioInputsChanged()));
+            q->connect(audioEndpointSelector, SIGNAL(availableEndpointsChanged()),
+                       SLOT(statusChanged()));
+            errorState = QtMedia::NoError;
         }
     }
 
-    QAudioCaptureSourcePrivate():provider(0), audioEndpointSelector(0) {}
+    QAudioCaptureSourcePrivate():provider(0), audioEndpointSelector(0), errorState(QtMedia::ServiceMissingError) {}
     QMediaServiceProvider *provider;
     QAudioEndpointSelector   *audioEndpointSelector;
+    QtMedia::AvailabilityError errorState;
 };
 
 /*!
@@ -141,11 +145,28 @@ QAudioCaptureSource::~QAudioCaptureSource()
 }
 
 /*!
+    Returns the error state of the audio capture service.
+*/
+
+QtMedia::AvailabilityError QAudioCaptureSource::availabilityError() const
+{
+    Q_D(const QAudioCaptureSource);
+
+    return d->errorState;
+}
+
+/*!
     Returns true if the audio capture service is available, otherwise returns false.
 */
 bool QAudioCaptureSource::isAvailable() const
 {
-    return d_func()->service != NULL;
+    Q_D(const QAudioCaptureSource);
+
+    if (d->service != NULL) {
+        if (d->audioEndpointSelector && d->audioEndpointSelector->availableEndpoints().size() > 0)
+            return true;
+    }
+    return false;
 }
 
 
@@ -229,6 +250,28 @@ void QAudioCaptureSource::setAudioInput(const QString& name)
 
     Signal is emitted when the available audio inputs change.
 */
+
+/*!
+  \internal
+*/
+void QAudioCaptureSource::statusChanged()
+{
+    Q_D(QAudioCaptureSource);
+
+    if (d->audioEndpointSelector) {
+        if (d->audioEndpointSelector->availableEndpoints().size() > 0) {
+            d->errorState = QtMedia::NoError;
+            emit availabilityChanged(true);
+        } else {
+            d->errorState = QtMedia::BusyError;
+            emit availabilityChanged(false);
+        }
+    } else {
+        d->errorState = QtMedia::ServiceMissingError;
+        emit availabilityChanged(false);
+    }
+}
+
 #include "moc_qaudiocapturesource.cpp"
 QTM_END_NAMESPACE
 
