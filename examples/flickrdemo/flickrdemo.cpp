@@ -134,7 +134,7 @@ void FlickrDemo::createMenus()
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
     menuBar()->addAction(m_downloadAct);
 #endif
-    connect(m_downloadAct, SIGNAL(triggered()), this, SLOT(on_downloadButton_clicked()));
+    connect(m_downloadAct, SIGNAL(triggered()), this, SLOT(downloadButtonClicked()));
 
     QAction* exitAct = new QAction(tr("Exit"), this);
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)

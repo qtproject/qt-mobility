@@ -330,12 +330,20 @@ public:
         } else {
             QString ident = session1->sessionProperty("UserChoiceConfigurationIdentifier").toString();
             QNetworkConfiguration cfg2 = manager.configurationFromIdentifier(ident);
-            session2 = new QNetworkSession(cfg2);
+            if (cfg2.type() == QNetworkConfiguration::Invalid) {
+                m_networkSetupError = QString(tr("Invalid choice."));
+                delete session1;
+                QTimer::singleShot(0, this, SLOT(delayedInit()));
+                return;
+            } else {
+                session2 = new QNetworkSession(cfg2);
+            }
         }
 
         session2->open();
         if (!session2->waitForOpened()) {
             m_networkSetupError = QString(tr("Unable to open network session."));
+            delete session1;
             delete session2;
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
