@@ -58,6 +58,10 @@ public slots:
 private slots:
     void switchButtonClicked();
     void noSatelliteTimeout();
+#if defined(Q_OS_SYMBIAN)
+    // workaround for QTBUG-4771
+    void restoreWindowTitle();
+#endif
 
 private:
     int m_noSatelliteTimeoutSeconds;
@@ -67,6 +71,10 @@ private:
     QGeoSatelliteWidget *satelliteWidget;
     QPushButton *switchButton;
     QPushButton *cancelButton;
+#if defined(Q_OS_SYMBIAN)
+    // workaround for QTBUG-4771
+    QString oldTitle;
+#endif
 };
 
 #endif // #ifndef QGEOSATELLITEDIALOG_H

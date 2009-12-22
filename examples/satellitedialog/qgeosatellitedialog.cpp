@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QTimer>
 #include <QPainter>
 #include <QSize>
@@ -305,7 +306,11 @@ QGeoSatelliteDialog::QGeoSatelliteDialog(QWidget *parent,
 
     satelliteWidget = new QGeoSatelliteWidget(this, ordering, scaling);
 
+    QLabel *label = new QLabel(tr("Satellite Signal Strength"));
+    label->setAlignment(Qt::AlignCenter);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(label);
     mainLayout->addWidget(satelliteWidget);    
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
@@ -346,10 +351,24 @@ QGeoSatelliteDialog::QGeoSatelliteDialog(QWidget *parent,
 
     setLayout(mainLayout);
 
+#if defined(Q_OS_SYMBIAN)
+    // workaround for QTBUG-4771
+    oldTitle = windowTitle();
+    connect(this, SIGNAL(finished(int)), this, SLOT(restoreWindowTitle()));
+#endif
+
     setWindowTitle(tr("Waiting for GPS fix"));
 
     setModal(true);
 }
+
+#if defined(Q_OS_SYMBIAN)
+// workaround for QTBUG-4771
+void QGeoSatelliteDialog::restoreWindowTitle()
+{
+    setWindowTitle(oldTitle);
+}
+#endif
 
 void QGeoSatelliteDialog::connectSources(QGeoPositionInfoSource *posSource, QGeoSatelliteInfoSource *satSource)
 {
