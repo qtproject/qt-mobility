@@ -42,6 +42,7 @@
 #include "qversitreader_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
+#include <QTextCodec>
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -207,43 +208,8 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
         cursor.setPosition(origPos); // XXX backtracks a little..
         parseAgentProperty(cursor, property);
     } else {
-        const QString encoding(QString::fromAscii("ENCODING"));
-        const QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
-        const QString base64(QString::fromAscii("BASE64"));
-
-        if (property.parameters().contains(encoding, quotedPrintable)) {
-            // At this point, we need to accumulate bytes until we hit a real line break (no = before it)
-            // value already contains everything up to the character before the newline
-            if (value.at(value.length() - 1) == '=') {
-                value.chop(1); // Get rid of '='
-                // We add each line (minus the escaped = and newline chars)
-                while(VersitUtils::getNextLine(cursor)) {
-                    if (cursor.data.at(cursor.selection - 1) == '=') {
-                        value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position - 1));
-                        cursor.setPosition(cursor.selection);
-                        // another escaped newline.. loop again
-                    } else {
-                        value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position));
-                        cursor.setPosition(cursor.selection);
-                        // We've reached the end
-                        break;
-                    }
-                }
-            }
-            VersitUtils::decodeQuotedPrintable(value);
-            // Remove the encoding parameter as the value is now decoded
-            property.removeParameter(encoding, quotedPrintable);
-            property.setValue(QString::fromAscii(value));
-        } else {
-            if (property.parameters().contains(encoding, base64)) {
-                // Remove the linear whitespaces left by vCard 2.1 unfolding
-                // XXX why is this necessary?
-                value.replace(' ',"");
-                value.replace('\t',"");
-            }
-            // TODO do the encoding properly
-            property.setValue(QString::fromAscii(value));
-        }
+        unencode(value, cursor, property);
+        property.setValue(decodeCharset(value, property));
     }
 }
 
@@ -307,6 +273,57 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
     return valid;
 }
 
+void QVersitReaderPrivate::unencode(QByteArray& value, VersitCursor& cursor, QVersitProperty& property) const
+{
+    const QString encoding(QString::fromAscii("ENCODING"));
+    const QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
+    const QString base64(QString::fromAscii("BASE64"));
+
+    if (property.parameters().contains(encoding, quotedPrintable)) {
+        // At this point, we need to accumulate bytes until we hit a real line break (no = before it)
+        // value already contains everything up to the character before the newline
+        if (value.at(value.length() - 1) == '=') {
+            value.chop(1); // Get rid of '='
+            // We add each line (minus the escaped = and newline chars)
+            while(VersitUtils::getNextLine(cursor)) {
+                if (cursor.data.at(cursor.selection - 1) == '=') {
+                    value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position - 1));
+                    cursor.setPosition(cursor.selection);
+                    // another escaped newline.. loop again
+                } else {
+                    value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position));
+                    cursor.setPosition(cursor.selection);
+                    // We've reached the end
+                    break;
+                }
+            }
+        }
+        VersitUtils::decodeQuotedPrintable(value);
+        // Remove the encoding parameter as the value is now decoded
+        property.removeParameter(encoding, quotedPrintable);
+    } else if (property.parameters().contains(encoding, base64)) {
+        // Remove the linear whitespaces left by vCard 2.1 unfolding
+        // XXX why is this necessary?
+        value.replace(' ',"");
+        value.replace('\t',"");
+    }
+}
+
+QString QVersitReaderPrivate::decodeCharset(const QByteArray& value, QVersitProperty& property) const
+{
+    const QString charset(QString::fromAscii("CHARSET"));
+    if (property.parameters().contains(charset)) {
+        QString charsetValue = *property.parameters().find(charset);
+        property.removeParameter(charset, charsetValue);
+        QTextCodec *codec = QTextCodec::codecForName(charsetValue.toAscii());
+        if (codec != NULL) {
+            return codec->toUnicode(value);
+        } else {
+            return QString::fromAscii(value);
+        }
+    }
+    return QString::fromAscii(value);
+}
 
 #include "moc_qversitreader_p.cpp"
 
