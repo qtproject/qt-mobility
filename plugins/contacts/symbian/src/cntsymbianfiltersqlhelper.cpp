@@ -267,7 +267,7 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                        error = QContactManager::NotSupportedError;
                        break;
            case QContactFilter::DefaultFilter:
-                       sqlQuery = "SELECT DISTINCT contact_id FROM contact"; //WHERE contact type
+                       sqlQuery = "SELECT DISTINCT contact_id FROM contact WHERE (type_flags>>24)=0 OR (type_flags>>24)=3"; 
                        error = QContactManager::NoError;
                        break;
            case QContactFilter::ActionFilter:

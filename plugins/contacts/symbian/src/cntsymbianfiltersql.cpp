@@ -44,7 +44,7 @@
 #include "cntsymbianfiltersql.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
-
+#include <QLatin1String>
 #include <e32cmn.h>
 #include <cntdb.h>
 
@@ -67,26 +67,11 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
 {
     QList<QContactLocalId> matches;
     
-    //temp solution to retrieve all contacts
-    if(filter.type() == QContactFilter::DefaultFilter)
-    {
-        TTime epoch(0);
-        CContactIdArray* idArray = m_contactDatabase.ContactsChangedSinceL(epoch); // return all contacts
-        
-        // copy the matching contact ids
-        for(int i(0); i < idArray->Count(); i++) {
-            matches.append(QContactLocalId((*idArray)[i]));
-        }
-    }
+    matches = m_sqlhelper->searchContacts(filter,error);    
     
-    else
-    {
-        //sort order not supported yet
-        matches = m_sqlhelper->searchContacts(filter,error);
-        // Tell the caller do slow filtering if the filter is not supported
-        filterSupportedFlag = filterSupported(filter);
-    }
-    
+    // Tell the caller do slow filtering if the filter is not supported
+    filterSupportedFlag = filterSupported(filter);
+
     return matches;
 }
 
