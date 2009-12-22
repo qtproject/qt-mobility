@@ -317,7 +317,8 @@ public:
         QNetworkSession *session1 = new QNetworkSession(cfg1);
         session1->open();
         if (!session1->waitForOpened()) {
-            m_networkSetupError = QString(tr("Unable to open network session(1)."));
+            m_networkSetupError = QString(tr("Unable to open network session."));
+            delete session1;
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
         }
@@ -334,7 +335,8 @@ public:
 
         session2->open();
         if (!session2->waitForOpened()) {
-            m_networkSetupError = QString(tr("Unable to open network session(2)."));
+            m_networkSetupError = QString(tr("Unable to open network session."));
+            delete session2;
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
         }

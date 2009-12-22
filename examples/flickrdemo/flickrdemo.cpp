@@ -92,10 +92,11 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
 FlickrDemo::~FlickrDemo()
 {
     m_location->stopUpdates();
-    if (m_satellite != 0)
+    if (m_satellite)
         m_satellite->stopUpdates();
-    if (m_session != 0)
-        m_session->close();
+    m_http.abort();
+    if (m_session)
+        m_session->close();    
 }
 
 
