@@ -121,8 +121,11 @@ public:
 
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
     bool removeContact(const QContactLocalId& contactId);      // remove the contact from the persistent store
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts);       // batch API - save
-    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds);  // batch API - remove
+
+    QList<QContactManager::Error> Q_DECL_DEPRECATED saveContacts(QList<QContact>* contacts);       // deprecated batch API - save
+    QList<QContactManager::Error> Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds);  // deprecated batch API - remove
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap); // batch API - save.
+    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
 
     /* Synthesize the display label of a contact */
     QString synthesizeDisplayLabel(const QContact& contact) const;

@@ -88,10 +88,12 @@ public:
     virtual QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
 
     virtual bool saveContact(QContact* contact, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED saveContacts(QList<QContact>* contacts, QContactManager::Error& error);  // deprecated - removed week 3
+    virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     virtual bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
+    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error); // deprecated - removed week 3
+    virtual bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     /* Synthesize the display label of a contact */
     virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
