@@ -2277,9 +2277,17 @@ void tst_QContactManager::detailOrders()
 {
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
-
+    
     QContact a;
     //phone numbers
+
+    QContactDetailDefinition d = cm->detailDefinition(QContactPhoneNumber::DefinitionName, QContactType::TypeContact);
+    QContactDetailDefinitionField supportedContexts = d.fields().value(QContactDetail::FieldContext);
+    QString contextOther = QContactDetail::ContextOther;
+    if (!supportedContexts.allowableValues().contains(contextOther)) {
+        contextOther = QString();
+    }    
+    
     QContactPhoneNumber number1, number2, number3;
     
     number1.setNumber("11111111");
@@ -2289,7 +2297,8 @@ void tst_QContactManager::detailOrders()
     number2.setContexts(QContactPhoneNumber::ContextWork);
 
     number3.setNumber("33333333");
-    number3.setContexts(QContactPhoneNumber::ContextOther);
+    if (!contextOther.isEmpty())
+        number3.setContexts(contextOther);
 
     a.saveDetail(&number1);
     a.saveDetail(&number2);
@@ -2300,20 +2309,17 @@ void tst_QContactManager::detailOrders()
     
     QList<QContactDetail> details = a.details(QContactPhoneNumber::DefinitionName);
     QVERIFY(details.count() == 3);
-    qDebug() << details.at(0).value(QContactPhoneNumber::FieldNumber);
-    qDebug() << details.at(1).value(QContactPhoneNumber::FieldNumber);
-    qDebug() << details.at(2).value(QContactPhoneNumber::FieldNumber);
     QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
     QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextWork);
-    QVERIFY(details.at(2).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+    QVERIFY(details.at(2).value(QContactPhoneNumber::FieldContext) == contextOther);
     
-    QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(a.removeDetail(&number2));
     QVERIFY(cm->saveContact(&a));
     a = cm->contact(a.id().localId());
     details = a.details(QContactPhoneNumber::DefinitionName);
     QVERIFY(details.count() == 2);
     QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
-    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == contextOther);
 
     a.saveDetail(&number2);
     QVERIFY(cm->saveContact(&a));
@@ -2322,10 +2328,18 @@ void tst_QContactManager::detailOrders()
     details = a.details(QContactPhoneNumber::DefinitionName);
     QVERIFY(details.count() == 3);
     QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
-    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == contextOther);
     QVERIFY(details.at(2).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextWork);
 
     //addresses
+    
+    d = cm->detailDefinition(QContactAddress::DefinitionName, QContactType::TypeContact);
+    supportedContexts = d.fields().value(QContactDetail::FieldContext);
+    contextOther = (QString) QContactDetail::ContextOther;
+    if (!supportedContexts.allowableValues().contains(contextOther)) {
+        contextOther = QString();
+    }     
+    
     QContactAddress address1, address2, address3;
     
     address1.setStreet("Brandl St");
@@ -2334,7 +2348,8 @@ void tst_QContactManager::detailOrders()
 
     address1.setContexts(QContactAddress::ContextHome);
     address2.setContexts(QContactAddress::ContextWork);
-    address3.setContexts(QContactAddress::ContextOther);
+    if (!contextOther.isEmpty())
+        address3.setContexts(contextOther);
 
     a.saveDetail(&address1);
     a.saveDetail(&address2);
@@ -2348,15 +2363,15 @@ void tst_QContactManager::detailOrders()
     
     QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
     QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextWork);
-    QVERIFY(details.at(2).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+    QVERIFY(details.at(2).value(QContactAddress::FieldContext) == contextOther);
 
-    QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(a.removeDetail(&address2));
     QVERIFY(cm->saveContact(&a));
     a = cm->contact(a.id().localId());
     details = a.details(QContactAddress::DefinitionName);
     QVERIFY(details.count() == 2);
     QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
-    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == contextOther);
 
     a.saveDetail(&address2);
     QVERIFY(cm->saveContact(&a));
@@ -2365,18 +2380,26 @@ void tst_QContactManager::detailOrders()
     details = a.details(QContactAddress::DefinitionName);
     QVERIFY(details.count() == 3);
     QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
-    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == contextOther);
     QVERIFY(details.at(2).value(QContactAddress::FieldContext) == QContactAddress::ContextWork);
 
 
     //emails
+    d = cm->detailDefinition(QContactEmailAddress::DefinitionName, QContactType::TypeContact);
+    supportedContexts = d.fields().value(QContactDetail::FieldContext);
+    contextOther = (QString) QContactDetail::ContextOther;
+    if (!supportedContexts.allowableValues().contains(contextOther)) {
+        contextOther = QString();
+    }      
+    
     QContactEmailAddress email1, email2, email3;
 
     email1.setEmailAddress("aaron@example.com");
     email3 = email2 = email1;
     email1.setContexts(QContactEmailAddress::ContextHome);
     email2.setContexts(QContactEmailAddress::ContextWork);
-    email3.setContexts(QContactEmailAddress::ContextOther);
+    if (!contextOther.isEmpty())
+        email3.setContexts(contextOther);
 
     a.saveDetail(&email1);
     a.saveDetail(&email2);
@@ -2390,15 +2413,15 @@ void tst_QContactManager::detailOrders()
     
     QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
     QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextWork);
-    QVERIFY(details.at(2).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+    QVERIFY(details.at(2).value(QContactEmailAddress::FieldContext) == contextOther);
 
-    QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(a.removeDetail(&email2));
     QVERIFY(cm->saveContact(&a));
     a = cm->contact(a.id().localId());
     details = a.details(QContactEmailAddress::DefinitionName);
     QVERIFY(details.count() == 2);
     QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
-    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == contextOther);
 
     a.saveDetail(&email2);
     QVERIFY(cm->saveContact(&a));
@@ -2407,9 +2430,8 @@ void tst_QContactManager::detailOrders()
     details = a.details(QContactEmailAddress::DefinitionName);
     QVERIFY(details.count() == 3);
     QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
-    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == contextOther);
     QVERIFY(details.at(2).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextWork);
-
 
     QVERIFY(cm->removeContact(a.id().localId()));
     QVERIFY(cm->error() == QContactManager::NoError);

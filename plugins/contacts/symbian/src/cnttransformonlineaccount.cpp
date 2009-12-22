@@ -219,7 +219,22 @@ quint32 CntTransformOnlineAccount::getIdForField(const QString& fieldName) const
  */
 void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    Q_UNUSED(definitions);
     Q_UNUSED(contactType);
-    // Does not modify the default schema
+
+    if(definitions.contains(QContactOnlineAccount::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactOnlineAccount::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QContactDetailDefinitionField f;
+
+        // Don't support "ContextOther"
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(QVariantList() 
+            << QLatin1String(QContactDetail::ContextHome) 
+            << QLatin1String(QContactDetail::ContextWork));
+        fields[QContactDetail::FieldContext] = f;
+        d.setFields(fields);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

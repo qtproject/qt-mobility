@@ -175,8 +175,13 @@ void CntTransformUrl::detailDefinitions(QMap<QString, QContactDetailDefinition> 
         f.setAllowableValues(QVariantList()
                 << QString(QLatin1String(QContactUrl::SubTypeHomePage)));
         fields.insert(QContactUrl::FieldSubType, f);
-        // Context not supported in symbian back-end, remove
-        //fields.remove(QContactUrl::FieldContext);
+
+        // Don't support "ContextOther"
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(QVariantList() 
+            << QLatin1String(QContactDetail::ContextHome) 
+            << QLatin1String(QContactDetail::ContextWork));
+        fields[QContactDetail::FieldContext] = f;
 
         d.setFields(fields);
 
