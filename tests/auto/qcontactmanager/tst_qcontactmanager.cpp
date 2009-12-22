@@ -2335,7 +2335,7 @@ void tst_QContactManager::detailOrders()
     
     d = cm->detailDefinition(QContactAddress::DefinitionName, QContactType::TypeContact);
     supportedContexts = d.fields().value(QContactDetail::FieldContext);
-    contextOther = (QString) QContactDetail::ContextOther;
+    contextOther = QString(QLatin1String(QContactDetail::ContextOther));
     if (!supportedContexts.allowableValues().contains(contextOther)) {
         contextOther = QString();
     }     
@@ -2387,7 +2387,7 @@ void tst_QContactManager::detailOrders()
     //emails
     d = cm->detailDefinition(QContactEmailAddress::DefinitionName, QContactType::TypeContact);
     supportedContexts = d.fields().value(QContactDetail::FieldContext);
-    contextOther = (QString) QContactDetail::ContextOther;
+    contextOther = QString(QLatin1String(QContactDetail::ContextOther));
     if (!supportedContexts.allowableValues().contains(contextOther)) {
         contextOther = QString();
     }      
