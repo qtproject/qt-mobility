@@ -17,13 +17,11 @@
 #include <qnetworksession.h>
 
 #include "xqlistwidget.h"
-#include "ui_flickrdemo.h"
-#include "ui_previewdialog.h"
 
 // Use the QtMobility namespace
 using namespace QtMobility;
 
-class FlickrDemo: public QMainWindow, public Ui::FlickrDemoMainWindow
+class FlickrDemo: public QMainWindow
 {
 Q_OBJECT
 
@@ -42,7 +40,7 @@ private:
 private Q_SLOTS:
     void delayedInit();
 
-    void on_downloadButton_clicked();
+    void downloadButtonClicked();
     void cancelDownload();
 
     void httpRequestFinished(int requestId, bool error);
@@ -57,6 +55,11 @@ private Q_SLOTS:
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&);
 
 private:
+    QLabel *locationLabel;
+    QLabel *satellitesLabel;
+    XQListWidget *listWidget;
+    QPushButton *downloadButton;
+
     QAction* m_downloadAct;
 
     bool m_logfileInUse;
@@ -87,13 +90,18 @@ private:
     QStringList m_names;
 };
 
-class PictureDialog: public QDialog, public Ui::PreviewDialog
+class PictureDialog: public QDialog
 {
 Q_OBJECT
 
 public:
     PictureDialog(const QString& filePath, const QString& pictureName, QWidget* parent = 0);
+
+private:
+    QLabel *label;
+    QLabel *imageLabel;
+    QDialogButtonBox *buttonBox;
 };
 
 #endif // FLICKRDEMO_H
-// End of file
+

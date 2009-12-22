@@ -33,8 +33,29 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
         m_longitude(-1000),
         m_downloadPictureList(true),
         m_downloadingThumbnails(false)
-{
-    setupUi(this);
+{    
+    resize(252, 344);
+    QWidget *centralWidget = new QWidget;        
+    QVBoxLayout *verticalLayout = new QVBoxLayout();
+
+    locationLabel = new QLabel(tr("Lat: Long:"));        
+    verticalLayout->addWidget(locationLabel);
+
+    satellitesLabel = new QLabel(tr("Using 0 of 0 satellites"));        
+    verticalLayout->addWidget(satellitesLabel);
+
+    listWidget = new XQListWidget();
+    verticalLayout->addWidget(listWidget);
+
+    downloadButton = new QPushButton(tr("Download Picture List"));        
+    verticalLayout->addWidget(downloadButton);
+
+    centralWidget->setLayout(verticalLayout);
+    setCentralWidget(centralWidget);
+
+    setWindowTitle(tr("Flickr Demo"));
+
+    connect(downloadButton, SIGNAL(clicked()), this, SLOT(downloadButtonClicked()));
 
     // QGeoPositionInfoSource
     m_location = QGeoPositionInfoSource::createDefaultSource(this);
@@ -70,8 +91,9 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
     connect(&m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&)),
             this, SLOT(readResponseHeader(const QHttpResponseHeader&)));
 
-    // Create UI
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
     createMenus();
+#endif
     listWidget->setGridSize(gridSize);
     listWidget->setIconSize(thumbnailSize);
     connect(&m_progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
@@ -151,7 +173,7 @@ void FlickrDemo::viewSatelliteInfo()
     }
 }
 
-void FlickrDemo::on_downloadButton_clicked()
+void FlickrDemo::downloadButtonClicked()
 {
     if (m_downloadPictureList) {
         downloadFlickerPictureList();
@@ -462,17 +484,42 @@ void FlickrDemo::downloadNextThumbnail()
 
 PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName, QWidget* parent) :
         QDialog(parent)
-{
-    setupUi(this);
+{    
+    resize(252, 361);
+    QVBoxLayout *verticalLayout = new QVBoxLayout();
+    verticalLayout->setSpacing(6);
+    verticalLayout->setContentsMargins(11, 11, 11, 11);        
 
+    label = new QLabel();
     QString fileName = QFileInfo(filePath).fileName();
     label->setText(tr("Downloaded:\n%1\n%2").arg(pictureName).arg(fileName));
 
+    QSizePolicy sizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
+    label->setSizePolicy(sizePolicy);
+
+    verticalLayout->addWidget(label);
+
+    imageLabel = new QLabel();        
     QImage image;
     image.load(filePath);
     imageLabel->setPixmap(QPixmap::fromImage(image.scaled(imageSize, Qt::KeepAspectRatio,
                           Qt::SmoothTransformation)));
 
+    verticalLayout->addWidget(imageLabel);
+
+    buttonBox = new QDialogButtonBox();        
+    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+
+    verticalLayout->addWidget(buttonBox);
+
+    setLayout(verticalLayout);
+
+    setWindowTitle(tr("Flickr Demo"));
 }
 
-// End of file

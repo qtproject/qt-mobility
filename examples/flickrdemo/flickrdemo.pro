@@ -1,9 +1,6 @@
 TEMPLATE = app
 TARGET = FlickrDemo
 
-FORMS += flickrdemo.ui \
-         previewdialog.ui
-
 QT      += network \
            xml
 
@@ -20,8 +17,8 @@ INCLUDEPATH += . ../../src/global \
 
 include(../examples.pri)
 
-qtAddLibrary(QtLocation)
-qtAddLibrary(QtBearer)
+CONFIG += mobility
+MOBILITY = location bearer
 
 symbian:TARGET.CAPABILITY += Location \
     NetworkServices \
