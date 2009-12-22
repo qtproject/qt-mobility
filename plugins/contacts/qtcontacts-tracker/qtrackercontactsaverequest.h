@@ -43,15 +43,22 @@
 #define QTRACKERCONTACTSAVEREQUEST_H_
 
 #include <QObject>
-#include <qtrackercontactasyncrequest.h>
 #include <QPair>
 #include <QList>
 #include <QtTracker/QLive>
 #include <QtTracker/ontologies/nco.h>
+
+#include <qtrackercontactasyncrequest.h>
+
+#include <qmobilityglobal.h>
 #include <qtcontacts.h>
 
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactManagerEngine;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QTrackerContactSaveRequest: public QObject, public QTrackerContactAsyncRequest
 {
@@ -62,7 +69,7 @@ public:
 
 private:
     /* worker methods*/
-    void saveContact(QContact &contact);
+    void saveContacts(const QList<QContact> &contacts);
     void computeProgress();
     void addAffiliation(SopranoLive::RDFServicePtr service, QContactLocalId contactId);
     void saveContactDetails(SopranoLive::RDFServicePtr service,SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact,const QContact &contact);

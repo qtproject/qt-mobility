@@ -1,0 +1,116 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \example serviceactions 
+    \title Service Actions Example 
+
+    This simple example demonstrates how to compose, send, show, query and retrieve messages,
+    and also react to message store events using the Qt Mobility Messaging API.
+
+    Each of these actions is demonstrated in a separate sub example accessible from 
+    the "File" menu of each platform.
+
+\section1 Send and Compose
+ 
+    Messages are sent and composed from a composition widget under the "Compose/Send" 
+    menu. Relevant message details such as sending account, recipients and 
+    message bodies (attachments for email accounts) can be entered by the user 
+    via corresponding UI elements. A QMessage is constructed using these details:
+
+    \snippet    ../../examples/serviceactions/mainwindow.cpp construct-message 
+
+    The message is then passed to the QMessageService::compose() or QMessageService::send()
+    service actions to initiate sending of the message by the platform, or trigger 
+    display by the platforms' message composer with the QMessage contents:
+
+    \snippet    ../../examples/serviceactions/mainwindow.cpp send-compose-message
+    
+\section1 Show 
+
+    Messages are displayed by a show widget under the "Show" menu. This widget
+    displays the users last 50 messages. (Ensure the platform has one or more messages 
+    in its mail accounts).
+
+    The last 50 messages (incoming/outgoing) are queried from the store using 
+    the QMessageService::queryMessages() service request:
+
+    \snippet    ../../examples/serviceactions/mainwindow.cpp load-message
+
+    Once the results of the query are returned via the QMessageService::messagesFound() signal,
+    the widget loads each of the returned messages in turn and populates it's list with
+    message subjects.
+
+    \snippet    ../../examples/serviceactions/mainwindow.cpp process-results
+
+    \snippet    ../../examples/serviceactions/mainwindow.cpp process-results2
+
+    Selecting "Show" from the action menu will display the selected message using the 
+    platforms' message viewer via the QMessageService::show() service action.
+
+    \snippet    ../../examples/serviceactions/mainwindow.cpp show-message
+
+\section1 Query and Retrieve 
+
+    Message contents are displayed/retrieved by a retrieve widget under the "Query/Retrieve" menu.
+    This example displays the last 50 messages, as in the "Show" example, but also displays
+    message content in a QTextBrowser widget and provides the option to download messages that are incomplete.
+
+    After the message list is populated, the message display widget will attempt to load 
+    and display the currently selected message. The completeness of the message body is checked using the 
+    QMessageContentContainer::isContentAvailable function. If the message body is partially downloaded, a download link
+    is displayed.
+
+    \snippet    ../../examples/serviceactions/mainwindow.cpp partial-message-check
+
+    When the download link is clicked, the message body is retrieved using the QMessageService::retrieveBody() service action.     
+     
+    \snippet    ../../examples/serviceactions/mainwindow.cpp retrieve-message-body
+
+\section1 Store Signals 
+
+    This example displays the activities of the QMessageManager in a QListWidget by connecting to QMessageManager::message(Added/Updated/Removed) signals.
+
+    \snippet    ../../examples/serviceactions/mainwindow.cpp store-signals
+
+*/
+
+

@@ -36,6 +36,7 @@ symbian: {
         inc/cnttransformorganisation.h \
         inc/cnttransformavatar.h \
         inc/cnttransformavatarsimple.h \
+        inc/cntthumbnailcreator.h \
         inc/cnttransformsynctarget.h \
         inc/cnttransformgender.h \
         inc/cnttransformanniversary.h \
@@ -55,7 +56,8 @@ symbian: {
         inc/cntsymbianfiltersqlhelper.h \
         inc/cntsymbiansrvconnection.h \
         inc/cntsymbiantransformerror.h \
-        inc/cntsymbiandatabase.h
+        inc/cntsymbiandatabase.h \
+	    inc/cntdisplaylabel.h 
       
     SOURCES += \
         src/cntsymbianengine.cpp \
@@ -72,6 +74,7 @@ symbian: {
         src/cnttransformorganisation.cpp \
         src/cnttransformavatar.cpp \
         src/cnttransformavatarsimple.cpp \
+        src/cntthumbnailcreator.cpp\
         src/cnttransformsynctarget.cpp \
         src/cnttransformgender.cpp \
         src/cnttransformanniversary.cpp \
@@ -89,21 +92,28 @@ symbian: {
         src/cntsymbianfiltersqlhelper.cpp \
         src/cntsymbiansrvconnection.cpp \
         src/cntsymbiantransformerror.cpp \
-        src/cntsymbiandatabase.cpp
+        src/cntsymbiandatabase.cpp \
+	    src/cntdisplaylabel.cpp
       
-    qtAddLibrary(QtContacts)
+    CONFIG += mobility
+    MOBILITY = contacts
 
     LIBS += \
         -lcntmodel \
         -lcentralrepository \
         -lestor \
-        -lflogger
+        -lflogger \
+        -lefsrv \
+        -lfbscli \
+        -limageconversion \
+        -lbitmaptransforms \
+        -lbafl
 
     target.path = /sys/bin
     INSTALLS += target
 
     exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-        DEFINES += USE_CUSTOM_CNT_MODEL_FIELDS
+        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
         cntmodelResourceFile = \
             "START RESOURCE ../rss/cntmodel.rss" \
             "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \

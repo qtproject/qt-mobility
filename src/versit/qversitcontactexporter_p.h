@@ -52,9 +52,6 @@
 QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
-QTM_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
 
 class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate : public QObject
 {

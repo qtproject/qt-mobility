@@ -65,33 +65,29 @@
 
     class ServiceWrapper : public QObject {
         Q_OBJECT
+        Q_PROPERTY(bool isValid READ isValid);
+        Q_PROPERTY(QString serviceName READ serviceName CONSTANT);
+        Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT);
+        Q_PROPERTY(QString version READ version NOTIFY versionChanged);
+
     public:
         ServiceWrapper();
+
         ~ServiceWrapper() ;
 
-        Q_PROPERTY(bool isValid READ isValid);
         bool isValid() const;
 
-        Q_PROPERTY(QString serviceName READ serviceName CONSTANT);
         QString serviceName() const;
 
-        Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT);
         QString interfaceName() const;
 
-        void setNativeDescriptor(const QServiceInterfaceDescriptor&amp; desc)
+        void setNativeDescriptor(const QServiceInterfaceDescriptor&amp; desc);
 
-        Q_PROPERTY(QVariant descriptor READ descriptor WRITE setDescriptor NOTIFY descriptorChanged);
-        QVariant descriptor() const;
         void setDescriptor(QVariant&amp; newDescriptor);
 
-        Q_PROPERTY(QString version READ version NOTIFY versionChanged);
         QString version() const;
 
         Q_INVOKABLE QObject* serviceObject();
-    signals:
-        void descriptorChanged();
-        void nameChanged();
-        void versionChanged();
 
     private:
         QServiceInterfaceDescriptor m_descriptor;
@@ -102,16 +98,20 @@
 
     class ServiceRegister : public QObject{
         Q_OBJECT
+        Q_PROPERTY(QList&lt;ServiceWrapper*&gt;* registeredservices READ registeredservices NOTIFY modelChanged CONSTANT);
+
     public:
         ServiceRegister();
         ~ServiceRegister();
 
-        Q_PROPERTY(QList&lt;ServiceWrapper *&gt; *services READ services CONSTANT);
-        QList&lt;ServiceWrapper *&gt; *services() {return &amp;m_services; }
+        QList&lt;ServiceWrapper*&gt; *registeredservices() {return &amp;m_services; }
 
         void registerExampleServices();
 
         void unregisterExampleServices();
+
+        void serviceStateChange(int state);
+
     private:
         QServiceManager* serviceManager;
         QList&lt;ServiceWrapper *&gt; m_services;
@@ -120,6 +120,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

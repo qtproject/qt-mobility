@@ -54,13 +54,17 @@
     **
     ****************************************************************************/</span>
     #include &lt;QtCore&gt;
+    #include &lt;QTextEdit&gt;
 
     #include &quot;logfilepositionsource.h&quot;
     #include &quot;clientapplication.h&quot;
 
-    ClientApplication::ClientApplication(QObject *parent)
-        : QObject(parent)
+    ClientApplication::ClientApplication(QWidget *parent)
+        : QMainWindow(parent)
     {
+        textEdit = new QTextEdit;
+        setCentralWidget(textEdit);
+
         LogFilePositionSource *source = new LogFilePositionSource(this);
         connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
@@ -70,13 +74,12 @@
 
     void ClientApplication::positionUpdated(const QGeoPositionInfo &amp;info)
     {
-        qDebug() &lt;&lt; &quot;Position updated: Date/time =&quot; &lt;&lt; info.dateTime()
-            &lt;&lt; &quot;Coordinate =&quot; &lt;&lt; info.coordinate();
+        textEdit-&gt;append(QString(&quot;Position updated: Date/time = %1, Coordinate = %2&quot;).arg(info.dateTime().toString()).arg(info.coordinate().toString()));
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

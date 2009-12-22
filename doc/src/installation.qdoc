@@ -235,6 +235,42 @@ mobility libraries into $PWD/install.
     nmake install
 \endcode
 
+\section2 Building For Symbian On Windows
+    Building Qt Mobility for Symbian is not necessary as the
+    package contains pre-built binaries for the SDK and
+    SIS file for the device.  See the \c {symbian\install.txt}
+    file on how to deploy these.
+
+    If you wish to build QtMobility yourself, 
+    run configure in the package directory. (-prefix
+    cannot be used since the libraries are installed
+    into the SDK directory)
+
+    \code
+        cd c:\QtMobility\%DISTNAME%
+        configure
+    \endcode
+
+    Type \c {configure -help} to get a list of all available options.
+
+    To create and deploy the libraries and tools 
+    for the emulator run:
+\code
+    make debug-winscw
+\endcode
+
+    To create the libraries and tools for a device
+    run:
+\code
+    make release-gcce
+\endcode
+
+    (Aside: \c {make install} has no meaning for building
+    on symbian)
+    The libraries will be deployed into the SDK and will
+    be ready to use for compiling applications for the
+    emulator and/or device.
+
 \section2 Building Individual Qt Mobility Domains
 
     Qt Mobility is comprised of several domains but all of

@@ -57,23 +57,28 @@
     #ifndef PHONEBOOK_H
     #define PHONEBOOK_H
 
-    #include &quot;finddialog.h&quot;
     #include &quot;qtcontacts.h&quot;
 
     #include &lt;QWidget&gt;
     #include &lt;QMap&gt;
     #include &lt;QPlainTextEdit&gt;
 
+    class QStackedWidget;
     class QListWidget;
     class QPushButton;
     class QComboBox;
     class QLabel;
     class QLineEdit;
-    class QTextEdit;
 
-    class ContactDetailsForm;
-    class MainDialogForm640By480;
-    class MainDialogForm240By320;
+    class ContactListPage;
+    class ContactEditor;
+    class FilterPage;
+
+<<<<<<< HEAD:doc/html/samplephonebook-phonebook-h.html
+=======
+    QT_USE_NAMESPACE
+>>>>>>> 0f30af5c48993a7c40e1105f56363fe2dc2840d8:doc/html/samplephonebook-phonebook-h.html
+    QTM_USE_NAMESPACE
 
     class PhoneBook : public QWidget
     {
@@ -84,82 +89,32 @@
         ~PhoneBook();
 
     public slots:
-        void addContact();
-        void saveContact();
-        void removeContact();
-        void findContact();
-        void openContact();
-        void cancelContact();
-        void editGroupDetails();
-        void next();
-        void previous();
-        void importFromVCard();
-        void exportAsVCard();
-        void selectAvatar();
-        void contactSelected(int row);
+        void activateEditor(QContactLocalId contactId);
+        void activateList(const QContactFilter&amp; filter);
+        void activateList();
+        void activateFind();
 
-    private slots:
-        void backendChanged(const QList&lt;QContactLocalId&gt;&amp; changed);
-        void backendSelected(const QString&amp; backend);
+        void managerChanged(QContactManager *manager);
 
     private:
-        QContact buildContact() const;
-        QContactName buildName(const QString &amp;name) const;
-        void displayContact();
-        void updateButtons();
-        bool eventFilter(QObject* watched, QEvent* event);
-        void populateList(const QContact&amp; currentContact);
+        <span class="comment">// the stacked widget which will display the pages</span>
+        QStackedWidget *m_stackedWidget;
 
-        QListWidget *contactsList;
+        <span class="comment">// pages</span>
+        ContactListPage *m_listPage;
+        ContactEditor *m_editorPage;
+        FilterPage *m_filterPage;
 
-        QPushButton *addButton;
-        QPushButton *saveButton;
-        QPushButton *cancelButton;
-        QPushButton *removeButton;
-        QPushButton *findButton;
-        QPushButton *openButton;
-        QPushButton *importButton;
-        QPushButton *exportButton;
-        QPushButton *quitButton;
-        QPushButton *groupsButton;
-        QLabel *currentIndexLabel;
-        QLabel *currentBackendLabel;
-        QLabel *avatarPixmapLabel;
-
-        QComboBox *backendCombo;
-
-        QLineEdit *nameLine;
-        QPushButton *avatarButton;
-        QLineEdit *emailLine;
-        QLineEdit *homePhoneLine;
-        QLineEdit *workPhoneLine;
-        QLineEdit *mobilePhoneLine;
-        QPlainTextEdit *addressText;
-
-        FindDialog *dialog;
-
-        int currentIndex;
-        int lastIndex;
-        bool addingContact;
-        bool editingContact;
-        bool smallScreenSize;
-        QList&lt;QContact&gt; contacts;
-        QList&lt;QContactLocalId&gt; contactGroups;
-
-        QMap&lt;QString, QContactManager*&gt; managers;
-        QContactManager *cm;
-        ContactDetailsForm *contactDetailsForm;
-        MainDialogForm640By480 *mainDialogForm640By480;
-        MainDialogForm240By320 *mainDialogForm240By320;
-        QWidget *mainForm;
-        QWidget *detailsForm;
+        <span class="comment">// data</span>
+        QContactManager *m_manager;
+        QContactFilter m_currentFilter;
     };
 
-    #endif <span class="comment">//PHONEBOOK_H</span></pre>
+    #endif <span class="comment">// PHONEBOOK_H</span></pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -142,7 +142,9 @@ class BoringInterface
 
 };
 
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(BoringInterface, "REALLYBORING!")
+QT_END_NAMESPACE
 
 class BoringFactory : public QObject, public BoringInterface
 {

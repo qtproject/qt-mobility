@@ -7,5 +7,6 @@ SOURCES += tst_qradiotuner.cpp
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 

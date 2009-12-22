@@ -45,7 +45,6 @@ symbian {
     SOURCES += settingslayer_symbian.cpp \
         pathmapper_symbian.cpp \
         qcrmlparser.cpp
-    MMP_RULES += "EXPORTUNFROZEN"
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
 
@@ -56,8 +55,7 @@ symbian {
 }
 
 unix:!symbian {
-    maemo {
-        DEFINES += Q_WS_MAEMO_6
+    maemo6 {
         SOURCES += contextkitlayer.cpp
         CONFIG += link_pkgconfig
         PKGCONFIG += contextsubscriber-1.0 QtDBus

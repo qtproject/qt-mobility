@@ -56,15 +56,16 @@ remote backends. This is part of the Qt Mobility Project.
 
 \section1 Introduction
 
-Access to the backends is provided by implementations of Qt Contacts
-manager API.  This is achieved by defining generic personal information
-data abstractions which can sufficiently describe contact data stored on
-any platform. Due to the cross-platform nature of the API, and the ability
-for developers to write platform-independent implementations of a
-QContactManager which may unify one or more platform specific contact
-backends, it is intended that the semantics and quirks of the underlying
-datastores on any platform may be entirely opaque from the perspective of
-Qt-based, cross-platform client applications.
+The Contacts API provides clients with the ability to access contact data
+in a platform-independent and datastore-agnostic manner.  This is achieved
+by defining generic personal information data abstractions which can
+sufficiently describe contact data stored on any platform.  Due to the
+cross-platform nature of the API, and the ability for developers to write
+platform-independent implementations of a QContactManager which may unify
+one or more platform-specific contact backends, it is intended that the
+semantics and quirks of the underlying datastores on any platform may be
+entirely opaque from the perspective of Qt-based, cross-platform client
+applications.
 
 \section1 Overview 
 
@@ -105,13 +106,14 @@ schema, and arbitrary relationship types are also allowed.  In particular,
 membership of a contact in a group can be modeled as that group contact
 participating in a \c HasMember relationship with the contact.
 
-A manager provides access to zero or more platform-specific datastores.
-Each datastore may support different capabilities (for example, the ability
-to store certain datatypes, the ability to natively filter on different
-details or details of different definitions, the provision of locking
-mechanisms, the provision of changelog information, etc) which are reported
-by the manager on request.  The manager therefore provides access to detail
-definitions, contacts, and relationships stored in different datastores,
+Access to the contacts is provided by implementations of the Qt Contacts
+manager API. A manager provides access to zero or more platform-specific
+datastores.  Each datastore may support different capabilities (for example,
+the ability to store certain datatypes, the ability to natively filter on
+different details or details of different definitions, the provision of
+locking mechanisms, the provision of changelog information, etc) which are
+reported by the manager on request.  The manager therefore provides access to
+detail definitions, contacts, and relationships stored in different datastores,
 in a platform and datastore independent manner. The engine of a manager may
 be implemented as a plugin to allow dynamic loading of different engines at
 run-time.
@@ -264,7 +266,7 @@ they may offer their own which provide similar functionality.
 \annotatedlist contacts-details
 
 Each of these subclasses provide access to information stored in fields which
-are listed in the \l{Qt Contacts Schema}{schema}.
+may have certain constraints, as listed in the \l{Qt Contacts Schema}{schema}.
 
 \section2 Asynchronous Requests
 
@@ -321,12 +323,13 @@ reported to clients through various functions provided by the \l{QContactManager
 The contacts API is used by another Qt Mobility module: the \l {Versit API} {Versit}* module.  It allows
 serialization of a QContact into a vCard document, and vice versa.
 
-[*] Versit is a trademark of the Internet Mail Consortium.
+[*] Versit \reg is a trademark of the Internet Mail Consortium.
 
 \section2 Examples
 
 \list
     \o \l{samplephonebook}{Sample Phonebook}
+    \o \l{incomingcalls}{Incoming Call Simulator}
 \endlist
 
 */

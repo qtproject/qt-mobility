@@ -96,10 +96,10 @@
 <p>QNetworkSession supports session management within the same process and depending on the platform's capabilities may support out-of-process sessions. If the same network configuration is used by multiple active sessions the underlying network interface is only terminated once the last session has been closed.</p>
 <a name="roaming"></a>
 <h3>Roaming</h3>
-<p>Applications may connect to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>() signal in order to receive notifications when a more suitable access point becomes available. In response to this signal the application may initiate the roaming via <a href="qnetworksession.html#migrate">migrate</a>() or may <a href="qnetworksession.html#ignore">ignore</a>() the new access point. Once the session has roamed the <a href="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</a>() signal is emitted. The application may now test the carrier and can <a href="qnetworksession.html#accept">accept</a>() or <a href="qnetworksession.html#reject">reject</a>() it. The session will return to the previous access point if the roaming was rejected.</p>
+<p>Applications may connect to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>() signal in order to receive notifications when a more suitable access point becomes available. In response to this signal the application must either initiate the roaming via <a href="qnetworksession.html#migrate">migrate</a>() or <a href="qnetworksession.html#ignore">ignore</a>() the new access point. Once the session has roamed the <a href="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</a>() signal is emitted. The application may now test the carrier and must either <a href="qnetworksession.html#accept">accept</a>() or <a href="qnetworksession.html#reject">reject</a>() it. The session will return to the previous access point if the roaming was rejected.</p>
 <p>Some platforms may support the notion of forced roaming and application level roaming (ALR). ALR implies that the application controls (via <a href="qnetworksession.html#migrate">migrate</a>(), <a href="qnetworksession.html#ignore">ignore</a>(), <a href="qnetworksession.html#accept">accept</a>() and <a href="qnetworksession.html#reject">reject</a>()) whether a network session can roam from one network configuration to the next. Such control is useful if the application maintains stateful socket connections and wants to control the transition from one interface to the next.</p>
 <p>Forced roaming implies that the system automatically roams to the next network without consulting the application. This has the advantage that the application can make use of roaming features without actually being aware of it. It is expected that the application detects that the underlying socket is broken and automatically reconnects via the new network link.</p>
-<p>If the platform supports both modes of roaming an application indicates its preference by connecting to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>() signal. Connecting to this signal means that the application wants to take control over the roaming behavior and therefore implies application level roaming.</p>
+<p>If the platform supports both modes of roaming, an application indicates its preference by connecting to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>() signal. Connecting to this signal means that the application wants to take control over the roaming behavior and therefore implies application level roaming. If the client does not connect to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>(), forced roaming is used.</p>
 <p>See also <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> and <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -209,7 +209,7 @@
 <p>See also <a href="qnetworksession.html#error">error</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/ignore"></a>
 <h3 class="fn"><a name="ignore"></a>void QNetworkSession::ignore ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>This function indicates that the application does not wish to roam the session. This is the default behavior if an application doesn't call <a href="qnetworksession.html#migrate">migrate</a>() in response to a <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>() signal.</p>
+<p>This function indicates that the application does not wish to roam the session.</p>
 <p>See also <a href="qnetworksession.html#migrate">migrate</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/interface"></a>
 <h3 class="fn"><a name="interface"></a><a href="http://qt.nokia.com/doc/4.5/qnetworkinterface.html">QNetworkInterface</a> QNetworkSession::interface () const</h3>
@@ -227,7 +227,7 @@
 <p>See also <a href="qnetworksession.html#accept">accept</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/newConfigurationActivated"></a>
 <h3 class="fn"><a name="newConfigurationActivated"></a>void QNetworkSession::newConfigurationActivated ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted once the session has roamed to the new access point. The application may reopen its socket and test the suitability of the new network link. Subsequently it may <a href="qnetworksession.html#accept">accept</a>() or <a href="qnetworksession.html#reject">reject</a>() the new access point.</p>
+<p>This signal is emitted once the session has roamed to the new access point. The application may reopen its socket and test the suitability of the new network link. Subsequently it must either <a href="qnetworksession.html#accept">accept</a>() or <a href="qnetworksession.html#reject">reject</a>() the new access point.</p>
 <p>See also <a href="qnetworksession.html#accept">accept</a>() and <a href="qnetworksession.html#reject">reject</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/open"></a>
 <h3 class="fn"><a name="open"></a>void QNetworkSession::open ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
@@ -243,7 +243,7 @@
 <a name="//apple_ref/cpp/instm/QNetworkSession/preferredConfigurationChanged"></a>
 <h3 class="fn"><a name="preferredConfigurationChanged"></a>void QNetworkSession::preferredConfigurationChanged ( const <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> &amp; <i>config</i>, bool <i>isSeamless</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the preferred configuration/access point for the session changes. Only sessions which are based on service network configurations may emit this signal. <i>config</i> can be used to determine access point specific details such as proxy settings and <i>isSeamless</i> indicates whether roaming will break the sessions IP address.</p>
-<p>As a consequence to this signal the application may start the roaming process by calling <a href="qnetworksession.html#migrate">migrate</a>() or may chose to <a href="qnetworksession.html#ignore">ignore</a>() the new access point. If the application doesn't call either of the two functions the session ignores the migration opportunity.</p>
+<p>As a consequence to this signal the application must either start the roaming process by calling <a href="qnetworksession.html#migrate">migrate</a>() or choose to <a href="qnetworksession.html#ignore">ignore</a>() the new access point.</p>
 <p>If the roaming process is non-seamless the IP address will change which means that a socket becomes invalid. However seamless mobility can ensure that the local IP address does not change. This is achieved by using a virtual IP address which is bound to the actual link address. During the roaming process the virtual address is attached to the new link address.</p>
 <p>Some platforms may support the concept of Forced Roaming and Application Level Roaming (ALR). Forced roaming implies that the platform may simply roam to a new configuration without consulting applications. It is up to the application to detect the link layer loss and reestablish its sockets. In contrast ALR provides the opportunity to prevent the system from roaming. If this session is based on a configuration that supports roaming the application can choose whether it wants to be consulted (ALR use case) by connecting to this signal. For as long as this signal connection remains the session remains registered as a roaming stakeholder; otherwise roaming will be enforced by the platform.</p>
 <p>See also <a href="qnetworksession.html#migrate">migrate</a>(), <a href="qnetworksession.html#ignore">ignore</a>(), and <a href="qnetworkconfiguration.html#isRoamingAvailable">QNetworkConfiguration::isRoamingAvailable</a>().</p>
@@ -309,6 +309,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

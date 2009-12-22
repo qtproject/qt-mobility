@@ -46,6 +46,17 @@
 <h2>Detailed Description</h2>
 <p>The QContactRelationshipFilter class provides a filter based around relationship criteria.</p>
 <p>It may be used to select contacts which are involved in relationships which are of a certain type, or which involve certain contacts.</p>
+<p>One common use-case might be to select the contacts which are a member of a particular group. This use-case may be met with the following filter:</p>
+<pre>    QContactRelationshipFilter groupFilter;                            <span class="comment">// select all contacts</span>
+    groupFilter.setRole(QContactRelationshipFilter::Second);           <span class="comment">// which are the second participant</span>
+    groupFilter.setRelationshipType(QContactRelationship::HasMember);  <span class="comment">// in a group relationship</span>
+    groupFilter.setOtherParticipantId(groupContact.id());              <span class="comment">// with the group contact</span></pre>
+<p>Another common use-case might be to select the groups which a particular contact is a member of. This use-case may be met with the following filter:</p>
+<pre>    QContactRelationshipFilter whichGroupsFilter;                                 <span class="comment">// select all contacts</span>
+    whichGroupsFilter.setRole(QContactRelationshipFilter::First);                 <span class="comment">// which are the first participant</span>
+    whichGroupsFilter.setRelationshipType(QContactRelationshipFilter::HasMember); <span class="comment">// in a group relationship</span>
+    whichGroupsFilter.setOtherParticipantId(particularContact.id());              <span class="comment">// with the particular contact</span></pre>
+<p>It is important to note that the <a href="qcontactrelationshipfilter.html#setRole">setRole</a>() and <a href="qcontactrelationshipfilter.html#role">role</a>() functions relate to the role that a contact must play in a relationship in order to meet the role criteria of this filter.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactRelationshipFilter/Role"></a>
@@ -95,6 +106,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

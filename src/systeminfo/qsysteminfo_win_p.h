@@ -68,8 +68,10 @@
 
 #include <QBasicTimer>
 
+QT_BEGIN_NAMESPACE
 class QStringList;
 class QTimer;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 
@@ -196,6 +198,31 @@ private:
 
 };
 
+#if defined(Q_OS_WINCE)
+
+#include "Pm.h"
+
+class QSystemDeviceInfoPrivate;
+
+class QPowerNotificationThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QPowerNotificationThread(QSystemDeviceInfoPrivate *parent = 0);
+    ~QPowerNotificationThread();
+
+protected:
+    void run();
+
+private:
+    QSystemDeviceInfoPrivate *parent;
+    bool done;
+    QMutex mutex;
+    HANDLE wakeUpEvent;
+};
+#endif
+
 class QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -237,6 +264,9 @@ private:
     int batteryLevelCache;
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerStateCache;
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::BatteryStatus) batteryStatusCache;
+#if defined(Q_OS_WINCE)
+    QPowerNotificationThread *powerNotificationThread;
+#endif
     static QSystemDeviceInfoPrivate *self;
 };
 

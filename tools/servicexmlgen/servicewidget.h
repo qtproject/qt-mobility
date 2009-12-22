@@ -47,8 +47,10 @@
 
 #include <qmobilityglobal.h>
 
-
+QT_BEGIN_NAMESPACE
 class QLabel;
+QT_END_NAMESPACE
+
 QTM_BEGIN_NAMESPACE
 class ServiceMetaDataResults;
 QTM_END_NAMESPACE

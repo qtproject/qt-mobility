@@ -76,7 +76,7 @@
 <p>An action is anything that can be performed on a contact, or a detail of a contact. An example of an action might be &quot;Send Email&quot; or &quot;Dial&quot; or &quot;Plot Navigation Route&quot;. One action may be implemented by multiple vendors, and indeed one vendor may provide multiple implementations of the same action. The name of an action identifies its semantics, while its implementation version distinguishes it from other implementations of the action by the same vendor.</p>
 <p>Invocation of an action is asynchronous; at some stage after calling <a href="qcontactaction.html#invokeAction">invokeAction</a>() the action instance will emit the <a href="qcontactaction.html#progress">progress</a>() signal. Any results of the action may be retrieved by calling <a href="qcontactaction.html#result">result</a>().</p>
 <p>Each instance of a QContactAction is created by a <a href="qcontactactionfactory.html">QContactActionFactory</a> when <a href="qcontactactionfactory.html#instance">QContactActionFactory::instance</a>() is called; the caller takes ownership of the action instance.</p>
-<p>See also <a href="qcontactactionfactory.html">QContactActionFactory</a>.</p>
+<p>See also <a href="qcontactactionfactory.html">QContactActionFactory</a> and <a href="qcontactactionfilter.html">QContactActionFilter</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactAction/Status"></a>
@@ -141,6 +141,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

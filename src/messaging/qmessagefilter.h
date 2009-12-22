@@ -65,8 +65,8 @@ public:
 
     QMessageFilter& operator=(const QMessageFilter &other);
 
-    void setOptions(QMessageDataComparator::Options options);
-    QMessageDataComparator::Options options() const;
+    void setMatchFlags(QMessageDataComparator::MatchFlags matchFlags);
+    QMessageDataComparator::MatchFlags matchFlags() const;
 
     bool isEmpty() const;
     bool isSupported() const;

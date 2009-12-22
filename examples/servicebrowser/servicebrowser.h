@@ -47,12 +47,14 @@
 
 #include <qmobilityglobal.h>
 
+QT_BEGIN_NAMESPACE
 class QAbstractButton;
 class QGroupBox;
 class QListWidget;
 class QListWidgetItem;
 class QPushButton;
 class QRadioButton;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QServiceManager;

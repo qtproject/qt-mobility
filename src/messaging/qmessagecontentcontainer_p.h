@@ -190,7 +190,7 @@ public:
     QMessageId _messageId;
     QMessageContentContainerId _id;
     bool _available;
-    uint _size;
+    int _size;
     QList<QMessageContentContainer> _attachments;
     QMultiMap<QByteArray, QString>  _header;
 

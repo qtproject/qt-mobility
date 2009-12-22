@@ -46,14 +46,18 @@
 #include <QVariant>
 #include "qmobilityglobal.h"
 
+QT_USE_NAMESPACE
+
 #ifdef SERVICE_XML_GENERATOR
 #undef Q_SFW_EXPORT
 #define Q_SFW_EXPORT
 #endif
 
+QT_BEGIN_NAMESPACE
 class QDebug;
 class QStringList;
 class QDataStream;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 

@@ -52,7 +52,9 @@
 */
 #define QTM_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
+#define QTM_PACKAGEDATE_STR "YYYY-MM-DD"
 
+#define QTM_PACKAGE_TAG ""
 
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
@@ -171,5 +173,8 @@
 # define QTM_END_NAMESPACE
 # define QTM_USE_NAMESPACE
 #endif
+
+//in case Qt is in namespace
+QT_USE_NAMESPACE
 
 #endif // QMOBILITYGLOBAL_H
