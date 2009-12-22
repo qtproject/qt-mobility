@@ -1397,14 +1397,25 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-//    if(this->getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
-        return "Sim Not Available";
+ #if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.phone.SIM",
+                                       "/com/nokia/csd/info",
+                                       "com.nokia.csd.Info",
+                                        QDBusConnection::systemBus());
+    if(!connectionInterface.isValid()) {
+        qWarning() << "interfacenot valid";
+    }
+    QDBusReply< QString > reply = connectionInterface.call("GetIMEINumber");
+    return reply.value();
+
+#endif    
+        return "Not Available";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
 //    if(getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
-        return "Sim Not Available";
+        return "Not Available";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
