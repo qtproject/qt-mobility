@@ -161,7 +161,7 @@ void QGeoPositionInfoSourceWinCE::dataUpdated(GPS_POSITION data)
     QTime time(data.stUTCTime.wHour, data.stUTCTime.wMinute, data.stUTCTime.wSecond,
                data.stUTCTime.wMilliseconds);
 
-    QDateTime dateTime(date, time);
+    QDateTime dateTime(date, time, Qt::UTC);
 
     QGeoPositionInfo pos(coordinate, dateTime);
 

@@ -178,7 +178,8 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::getLastknownPositionS60(TPositionMo
             TDateTime datetime = pos.Time().DateTime();
             QDateTime dt(QDate(datetime.Year(),datetime.Month()+1,datetime.Day()+1),
                          QTime(datetime.Hour(),datetime.Minute(),datetime.Second(),
-                               datetime.MicroSecond()/1000));
+                               datetime.MicroSecond()/1000),
+                         Qt::UTC);
 
             //store the time stamp
             posUpdate.setDateTime(dt);
@@ -647,7 +648,8 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
     TDateTime datetime = pos.Time().DateTime();
     QDateTime dt(QDate(datetime.Year(),datetime.Month()+1,datetime.Day()+1),
                  QTime(datetime.Hour(),datetime.Minute(),datetime.Second(),
-                       datetime.MicroSecond()/1000));
+                       datetime.MicroSecond()/1000),
+                 Qt::UTC);
 
     //store the time stamp
     aPosInfo2.setDateTime(dt);
