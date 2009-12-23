@@ -51,7 +51,7 @@
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
 
-#include "qgeosatellitedialog.h"
+#include "satellitedialog.h"
 
 // Use the QtMobility namespace
 using namespace QtMobility;

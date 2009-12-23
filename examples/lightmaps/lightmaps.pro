@@ -1,8 +1,8 @@
 TEMPLATE = app
 
-HEADERS = ../satellitedialog/qgeosatellitedialog.h
+HEADERS = ../satellitedialog/satellitedialog.h
 SOURCES = lightmaps.cpp \
-            ../satellitedialog/qgeosatellitedialog.cpp
+            ../satellitedialog/satellitedialog.cpp
 
 QT += network
 

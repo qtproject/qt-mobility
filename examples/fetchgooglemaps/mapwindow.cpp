@@ -47,7 +47,7 @@
 #include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
 
-#include "qgeosatellitedialog.h"
+#include "satellitedialog.h"
 
 #include "mapwindow.h"
 

@@ -1,7 +1,7 @@
 TEMPLATE = app
 
-SOURCES += qgeosatellitedialog.cpp main.cpp
-HEADERS += qgeosatellitedialog.h 
+SOURCES += satellitedialog.cpp main.cpp
+HEADERS += satellitedialog.h 
 
 INCLUDEPATH += ../../src/location \
                 ../../src/global

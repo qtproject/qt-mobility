@@ -4,7 +4,7 @@
 #include <qgeopositioninfosource.h>
 #include <qgeosatelliteinfosource.h>
 
-#include "qgeosatellitedialog.h"
+#include "satellitedialog.h"
 
 int main(int argc, char* argv[])
 {

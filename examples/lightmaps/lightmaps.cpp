@@ -50,7 +50,7 @@
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
 
-#include "qgeosatellitedialog.h"
+#include "satellitedialog.h"
 
 // Use the QtMobility namespace
 using namespace QtMobility;
@@ -314,41 +314,19 @@ public:
             return;
         }
 
-        QNetworkSession *session1 = new QNetworkSession(cfg1);
+        QNetworkSession *session = new QNetworkSession(cfg1);
 
-        connect(session1, SIGNAL(error(QNetworkSession::SessionError)),
+        connect(session, SIGNAL(error(QNetworkSession::SessionError)),
                 this, SLOT(displaySessionError(QNetworkSession::SessionError)));
 
-        session1->open();
-        if (!session1->waitForOpened()) {
+        session->open();
+        if (!session->waitForOpened()) {
             m_networkSetupError = QString(tr("Unable to open network session."));
-            delete session1;
+            delete session;
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
         }
-/*
-        QNetworkSession *session2;
 
-        if (cfg1.type() != QNetworkConfiguration::UserChoice) {
-            session2 = new QNetworkSession(cfg1);        
-        } else {
-            QString ident = session1->sessionProperty("UserChoiceConfigurationIdentifier").toString();
-            QNetworkConfiguration cfg2 = manager.configurationFromIdentifier(ident);
-            session2 = new QNetworkSession(cfg2);
-        }
-
-        connect(session2, SIGNAL(error(QNetworkSession::SessionError)),
-                this, SLOT(displaySessionError(QNetworkSession::SessionError)));
-
-        session2->open();
-        if (!session2->waitForOpened()) {
-            m_networkSetupError = QString(tr("Unable to open network session."));
-            delete session1;
-            delete session2;
-            QTimer::singleShot(0, this, SLOT(delayedInit()));
-            return;
-        }
-*/
         m_location = QGeoPositionInfoSource::createDefaultSource(this);                    
 
         if (!m_location) {        
@@ -360,8 +338,8 @@ public:
             m_usingLogFile = true;
         }
 
-        m_normalMap = new SlippyMap(session1, m_location, this);
-        m_largeMap = new SlippyMap(session1, m_location, this);
+        m_normalMap = new SlippyMap(session, m_location, this);
+        m_largeMap = new SlippyMap(session, m_location, this);
 
         connect(m_normalMap, SIGNAL(updated(QRect)),SLOT(updateMap(QRect)));
         connect(m_largeMap, SIGNAL(updated(QRect)),SLOT(update()));

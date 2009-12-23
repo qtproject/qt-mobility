@@ -1,9 +1,9 @@
 TEMPLATE = app
 TARGET = weatherinfo
 
-HEADERS = ../satellitedialog/qgeosatellitedialog.h
+HEADERS = ../satellitedialog/satellitedialog.h
 SOURCES = weatherinfo.cpp \
-            ../satellitedialog/qgeosatellitedialog.cpp
+            ../satellitedialog/satellitedialog.cpp
 
 RESOURCES = weatherinfo.qrc
 QT += network svg

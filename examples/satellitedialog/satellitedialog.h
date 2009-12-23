@@ -2,6 +2,7 @@
 #ifndef QGEOSATELLITEDIALOG_H
 #define QGEOSATELLITEDIALOG_H
 
+#include <QObject>
 #include <QDialog>
 #include <QTimer>
 

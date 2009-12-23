@@ -7,9 +7,9 @@ INCLUDEPATH += ../../src/location \
 QT += webkit network
 
 HEADERS = mapwindow.h \
-            ../satellitedialog/qgeosatellitedialog.h
+            ../satellitedialog/satellitedialog.h
 SOURCES = mapwindow.cpp \
-            ../satellitedialog/qgeosatellitedialog.cpp \
+            ../satellitedialog/satellitedialog.cpp \
             main.cpp
 
 include(../examples.pri)
