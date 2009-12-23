@@ -65,7 +65,8 @@ private slots: // Tests
 
     void init();
     void cleanup();
-    
+
+    void testDefaultCharset();
     void testDevice();
     void testReading();
     void testResult();

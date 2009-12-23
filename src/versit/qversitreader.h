@@ -66,6 +66,9 @@ public:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
 
+    void setDefaultCharset(QByteArray charset);
+    QByteArray defaultCharset();
+
     // reading:
     bool startReading();
     bool readAll();

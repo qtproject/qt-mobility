@@ -70,6 +70,18 @@ void UT_QVersitReader::finished()
     mReadingDoneCalled = true;
 }
 
+void UT_QVersitReader::testDefaultCharset()
+{
+    // Default charset
+    QCOMPARE(mReader->defaultCharset(), QByteArray("ISO 8859-1"));
+
+    mReader->setDefaultCharset("UTF-8");
+    QCOMPARE(mReader->defaultCharset(), QByteArray("UTF-8"));
+
+    mReader->setDefaultCharset("UTF-16");
+    QCOMPARE(mReader->defaultCharset(), QByteArray("UTF-16"));
+}
+
 void UT_QVersitReader::testDevice()
 {
     // No device

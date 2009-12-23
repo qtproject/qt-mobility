@@ -117,6 +117,16 @@ QIODevice* QVersitReader::device() const
     return d->mIoDevice;
 }
 
+void QVersitReader::setDefaultCharset(QByteArray charset)
+{
+    d->mDefaultCharset = charset;
+}
+
+QByteArray QVersitReader::defaultCharset()
+{
+    return d->mDefaultCharset;
+}
+
 /*!
  * Starts reading the input asynchronously.
  * Returns false if the input device has not been set or opened or

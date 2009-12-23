@@ -66,6 +66,7 @@
 #include <QList>
 #include <QTimer>
 #include <QPointer>
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
@@ -120,6 +121,7 @@ public: // Data
     QPointer<QIODevice> mIoDevice;
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
+    QByteArray mDefaultCharset;
 };
 
 QTM_END_NAMESPACE

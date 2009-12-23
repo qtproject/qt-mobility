@@ -53,7 +53,8 @@ QTM_BEGIN_NAMESPACE
 /*! Construct a reader. */
 QVersitReaderPrivate::QVersitReaderPrivate()
     : mIoDevice(0),
-    mDocumentNestingLevel(0)
+    mDocumentNestingLevel(0),
+    mDefaultCharset("ISO 8859-1")
 {
 }
     
