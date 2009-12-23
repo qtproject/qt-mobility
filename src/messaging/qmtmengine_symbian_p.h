@@ -139,15 +139,16 @@ public:
     
     QMessage message(const QMessageId& id) const;
     
-    bool storeMMS(QMessage &message, TMsvId dest);
-    void sendMMS();
-    bool storeEmail(QMessage &message, TMsvId dest);
-    void sendEmail(QMessage &message);
-    bool storeSMS(QMessage &message, TMsvId dest);
+    bool storeMMS(QMessage &message);
+    bool sendMMS(QMessage &message);
+    bool storeEmail(QMessage &message);
+    bool sendEmail(QMessage &message);
+    bool storeSMS(QMessage &message);
     bool sendSMS(QMessage &message);
     bool retrieve(const QMessageId &messageId, const QMessageContentContainerId& id);
     bool retrieveBody(const QMessageId& id);
     bool retrieveHeader(const QMessageId& id);
+    bool exportUpdates(const QMessageAccountId &id);
     
     QByteArray attachmentContent(long int messageId, unsigned int attachmentId);
     QString attachmentTextContent(long int messageId, unsigned int attachmentId, const QByteArray &charset);
@@ -171,7 +172,7 @@ private:
     
     QMessageFolderIdList allFolders() const;
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
-    QMessageFolderIdList folderIdsByServiceEntryId(const TMsvId& serviceEntryId) const;
+    QMessageFolderIdList folderIdsByServiceEntryId(const TMsvId& serviceEntryId, const TMsvId& folderServiceEntryId) const;
     QMessageFolderId createQMessageFolderId(const TMsvId& serviceEntryId, const TMsvId& folderId) const;
     TMsvId serviceEntryIdFromQMessageFolderId(const QMessageFolderId& folderId) const;
     TMsvId folderIdFromQMessageFolderId(const QMessageFolderId& folderId) const;
@@ -218,15 +219,16 @@ private:
     void updateEmailL(QMessage &message);
     void showMessageL(const QMessageId &id);
     
-    void storeMMSL(QMessage &message, TMsvId dest);
-    void sendMMSL();
-    void storeEmailL(QMessage &message, TMsvId dest);
+    void storeMMSL(QMessage &message);
+    void sendMMSL(QMessage &message);
+    void storeEmailL(QMessage &message);
     void sendEmailL(QMessage &message);
-    void storeSMSL(QMessage &message, TMsvId dest);
+    void storeSMSL(QMessage &message);
     void sendSMSL(QMessage &message);
     void retrieveL(const QMessageId &messageId, const QMessageContentContainerId& id);
     void retrieveBodyL(const QMessageId& id) const;
     void retrieveHeaderL(const QMessageId& id) const;
+    void exportUpdatesL(const QMessageAccountId &id) const;
     void appendAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
     QByteArray attachmentContentL(long int messageId, unsigned int attachmentId);
     

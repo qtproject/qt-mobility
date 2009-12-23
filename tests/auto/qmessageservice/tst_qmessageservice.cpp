@@ -52,6 +52,20 @@
 # define TESTDATA_DIR "."
 #endif
 
+// Will try to wait for the condition while allowing event processing
+#define QTRY_VERIFY(__expr) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 90000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY(__expr); \
+    } while(0)
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -298,11 +312,7 @@ void tst_QMessageService::initTestCase()
     existingMessageIds = manager->queryMessages(~existingAccountsFilter).toSet();
 
     // For windows at least, we can't have HasAttachments set without a real attachment
-#ifndef Q_OS_SYMBIAN
     const char *attachmentPaths = TESTDATA_DIR "/testdata/1.txt";
-#else
-    const char *attachmentPaths = TESTDATA_DIR "\\testdata\\1.txt";
-#endif
 
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
@@ -433,25 +443,32 @@ void tst_QMessageService::testQueryMessages()
 
         SignalCatcher sc(this);
         connect(testService,SIGNAL(messagesFound(const QMessageIdList&)),&sc,SLOT(messagesFound(const QMessageIdList&)));
+#ifdef Q_OS_SYMBIAN
+        connect(testService,SIGNAL(stateChanged(QMessageService::State)),&sc,SLOT(stateChanged(QMessageService::State)));
+#endif        
 
         // Order is irrelevant for filtering
 
         if (body.isEmpty()) {
             sc.reset();
             QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter),true);
-
+#ifdef Q_OS_SYMBIAN            
+            QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+#else            
             while(testService->state() == QMessageService::ActiveState)
                 qApp->processEvents();
-
+#endif            
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
             sc.reset();
 
             QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter),true);
-
+#ifdef Q_OS_SYMBIAN            
+            QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+#else            
             while(testService->state() == QMessageService::ActiveState)
                 qApp->processEvents();
-
+#endif            
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
 
         } else {
@@ -459,19 +476,23 @@ void tst_QMessageService::testQueryMessages()
             sc.reset();
 
             QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter,body),true);
-
+#ifdef Q_OS_SYMBIAN            
+            QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+#else            
             while(testService->state() == QMessageService::ActiveState)
                 qApp->processEvents();
-
+#endif            
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
             sc.reset();
 
             QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter,body),true);
-
+#ifdef Q_OS_SYMBIAN            
+            QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+#else            
             while(testService->state() == QMessageService::ActiveState)
                 qApp->processEvents();
-
+#endif            
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
         }
     } else {
@@ -1856,7 +1877,6 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
-
 }
 
 void tst_QMessageService::testQueryMessages_data()
@@ -1877,23 +1897,30 @@ void tst_QMessageService::testCountMessages()
 
         SignalCatcher sc(this);
         connect(testService,SIGNAL(messagesCounted(int)),&sc,SLOT(messagesCounted(int)));
+#ifdef Q_OS_SYMBIAN
+        connect(testService,SIGNAL(stateChanged(QMessageService::State)),&sc,SLOT(stateChanged(QMessageService::State)));
+#endif        
 
         // Order is irrelevant for filtering
 
         if(body.isEmpty()) {
             QCOMPARE(testService->countMessages(filter&~existingAccountsFilter),true);
-
+#ifdef Q_OS_SYMBIAN            
+            QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+#else            
             while(testService->state() == QMessageService::ActiveState)
                 qApp->processEvents();
-
-            QCOMPARE(sc.count-existingAccountIds.count(), ids.count());
+#endif            
+            QCOMPARE(sc.count-existingMessageIds.count(), ids.count());
 
             QCOMPARE(testService->countMessages(~filter&~existingAccountsFilter),true);
-
+#ifdef Q_OS_SYMBIAN            
+            QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+#else            
             while(testService->state() == QMessageService::ActiveState)
                 qApp->processEvents();
-
-            QCOMPARE(sc.count-existingAccountIds.count(), negatedIds.count());
+#endif            
+            QCOMPARE(sc.count-existingMessageIds.count(), negatedIds.count());
         }
 
     } else {
