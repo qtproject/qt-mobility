@@ -326,7 +326,7 @@ public:
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
         }
-
+/*
         QNetworkSession *session2;
 
         if (cfg1.type() != QNetworkConfiguration::UserChoice) {
@@ -334,14 +334,7 @@ public:
         } else {
             QString ident = session1->sessionProperty("UserChoiceConfigurationIdentifier").toString();
             QNetworkConfiguration cfg2 = manager.configurationFromIdentifier(ident);
-            if (cfg2.type() == QNetworkConfiguration::Invalid) {
-                m_networkSetupError = QString(tr("Invalid choice."));
-                delete session1;
-                QTimer::singleShot(0, this, SLOT(delayedInit()));
-                return;
-            } else {
-                session2 = new QNetworkSession(cfg2);
-            }
+            session2 = new QNetworkSession(cfg2);
         }
 
         connect(session2, SIGNAL(error(QNetworkSession::SessionError)),
@@ -355,7 +348,7 @@ public:
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
         }
-
+*/
         m_location = QGeoPositionInfoSource::createDefaultSource(this);                    
 
         if (!m_location) {        
@@ -368,7 +361,7 @@ public:
         }
 
         m_normalMap = new SlippyMap(session1, m_location, this);
-        m_largeMap = new SlippyMap(session2, m_location, this);
+        m_largeMap = new SlippyMap(session1, m_location, this);
 
         connect(m_normalMap, SIGNAL(updated(QRect)),SLOT(updateMap(QRect)));
         connect(m_largeMap, SIGNAL(updated(QRect)),SLOT(update()));
