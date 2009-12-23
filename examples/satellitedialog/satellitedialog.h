@@ -18,7 +18,7 @@ class QPushButton;
 
 QTM_USE_NAMESPACE
 
-class QGeoSatelliteDialog : public QDialog
+class SatelliteDialog : public QDialog
 {
     Q_OBJECT
 
@@ -38,7 +38,7 @@ public:
         ScaleToMaxPossible
     };
 
-    QGeoSatelliteDialog(QWidget *parent = 0, int noSatelliteTimeoutSeconds = 30, ExitBehaviour exitBehaviour = ExitOnFixOrCancel, Ordering ordering = OrderBySignalStrength, StrengthScaling scaling = ScaleToMaxPossible);
+    SatelliteDialog(QWidget *parent = 0, int noSatelliteTimeoutSeconds = 30, ExitBehaviour exitBehaviour = ExitOnFixOrCancel, Ordering ordering = OrderBySignalStrength, StrengthScaling scaling = ScaleToMaxPossible);
 
     void connectSources(QGeoPositionInfoSource *posSource, QGeoSatelliteInfoSource *satSource);
 

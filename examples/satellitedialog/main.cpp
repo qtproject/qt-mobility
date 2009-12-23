@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
 
-    QGeoSatelliteDialog *dialog = new QGeoSatelliteDialog(0, 30, QGeoSatelliteDialog::ExitOnCancel, QGeoSatelliteDialog::OrderByPrnNumber, QGeoSatelliteDialog::ScaleToMaxPossible);        
+    SatelliteDialog *dialog = new SatelliteDialog(0, 30, SatelliteDialog::ExitOnCancel, SatelliteDialog::OrderByPrnNumber, SatelliteDialog::ScaleToMaxPossible);        
 
     QGeoPositionInfoSource *posSource = QGeoPositionInfoSource::createDefaultSource(0);
     QGeoSatelliteInfoSource *satSource = QGeoSatelliteInfoSource::createDefaultSource(0);

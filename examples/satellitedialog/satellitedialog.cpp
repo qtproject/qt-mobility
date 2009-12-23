@@ -1,5 +1,5 @@
 
-#include "qgeosatellitedialog.h"
+#include "satellitedialog.h"
 
 #include <QtAlgorithms>
 
@@ -16,12 +16,12 @@
 #include <QAction>
 #include <QMenuBar>
 
-class QGeoSatelliteWidget : public QWidget
+class SatelliteWidget : public QWidget
 {
 public:
-    QGeoSatelliteWidget(QWidget *parent, 
-            QGeoSatelliteDialog::Ordering ordering, 
-            QGeoSatelliteDialog::StrengthScaling scaling);
+    SatelliteWidget(QWidget *parent, 
+            SatelliteDialog::Ordering ordering, 
+            SatelliteDialog::StrengthScaling scaling);
 
     void noSatelliteTimeout();
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list);
@@ -29,11 +29,11 @@ public:
 
     QSize sizeHint() const;
 
-    QGeoSatelliteDialog::Ordering ordering() const;
-    void setOrdering(QGeoSatelliteDialog::Ordering ordering);
+    SatelliteDialog::Ordering ordering() const;
+    void setOrdering(SatelliteDialog::Ordering ordering);
 
-    QGeoSatelliteDialog::StrengthScaling strengthScaling() const;
-    void setStrengthScaling(QGeoSatelliteDialog::StrengthScaling scaling);
+    SatelliteDialog::StrengthScaling strengthScaling() const;
+    void setStrengthScaling(SatelliteDialog::StrengthScaling scaling);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -48,8 +48,8 @@ private:
     int textHeight;
     int legendHeight;    
 
-    QGeoSatelliteDialog::Ordering m_ordering;
-    QGeoSatelliteDialog::StrengthScaling m_scaling;    
+    SatelliteDialog::Ordering m_ordering;
+    SatelliteDialog::StrengthScaling m_scaling;    
     int m_maximumSignalStrength;
 
     void updateSatelliteList();
@@ -61,9 +61,9 @@ private:
     QList<QPair<QGeoSatelliteInfo, bool> > satellites;
 };
 
-QGeoSatelliteWidget::QGeoSatelliteWidget(QWidget *parent, 
-            QGeoSatelliteDialog::Ordering ordering, 
-            QGeoSatelliteDialog::StrengthScaling scaling) : QWidget(parent),
+SatelliteWidget::SatelliteWidget(QWidget *parent, 
+            SatelliteDialog::Ordering ordering, 
+            SatelliteDialog::StrengthScaling scaling) : QWidget(parent),
                         m_ordering(ordering),
                         m_scaling(scaling)
 {    
@@ -72,12 +72,12 @@ QGeoSatelliteWidget::QGeoSatelliteWidget(QWidget *parent,
     legendHeight = borderOffset + textHeight + 2;    
 }
 
-QGeoSatelliteDialog::Ordering QGeoSatelliteWidget::ordering() const
+SatelliteDialog::Ordering SatelliteWidget::ordering() const
 {
     return m_ordering;
 }
 
-void QGeoSatelliteWidget::setOrdering(QGeoSatelliteDialog::Ordering ordering)
+void SatelliteWidget::setOrdering(SatelliteDialog::Ordering ordering)
 {
     if (ordering != m_ordering) {
         m_ordering = ordering;
@@ -85,12 +85,12 @@ void QGeoSatelliteWidget::setOrdering(QGeoSatelliteDialog::Ordering ordering)
     }
 }
 
-QGeoSatelliteDialog::StrengthScaling QGeoSatelliteWidget::strengthScaling() const
+SatelliteDialog::StrengthScaling SatelliteWidget::strengthScaling() const
 {
     return m_scaling;
 }
 
-void QGeoSatelliteWidget::setStrengthScaling(QGeoSatelliteDialog::StrengthScaling scaling)
+void SatelliteWidget::setStrengthScaling(SatelliteDialog::StrengthScaling scaling)
 {
     if (scaling != m_scaling) {
         m_scaling = scaling;
@@ -108,21 +108,21 @@ bool sortBySignalStrength(const QGeoSatelliteInfo &s1, const QGeoSatelliteInfo &
     return s1.signalStrength() < s2.signalStrength();
 }
 
-void QGeoSatelliteWidget::noSatelliteTimeout()
+void SatelliteWidget::noSatelliteTimeout()
 {
     satellitesInView.clear();
     satellitesInUse.clear();
     updateSatelliteList();
 }
 
-void QGeoSatelliteWidget::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list)
+void SatelliteWidget::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list)
 {
     satellitesInView = list;
     qSort(satellitesInView.begin(), satellitesInView.end(), sortByPrn);
     updateSatelliteList();
 }
 
-void QGeoSatelliteWidget::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &list)
+void SatelliteWidget::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &list)
 {
     satellitesInUse = list;
     qSort(satellitesInUse.begin(), satellitesInUse.end(), sortByPrn);
@@ -139,7 +139,7 @@ bool sortPairsBySignalStrength(const QPair<QGeoSatelliteInfo, bool> &p1, const Q
     return sortBySignalStrength(p1.first, p2.first);
 }
 
-void QGeoSatelliteWidget::updateSatelliteList()
+void SatelliteWidget::updateSatelliteList()
 {
     satellites.clear();
 
@@ -177,7 +177,7 @@ void QGeoSatelliteWidget::updateSatelliteList()
 
     int satSize = satellites.size();
 
-    if (m_ordering == QGeoSatelliteDialog::OrderByPrnNumber) {
+    if (m_ordering == SatelliteDialog::OrderByPrnNumber) {
         qSort(satellites.begin(), satellites.end(), sortPairsByPrn);
         m_maximumSignalStrength = 0;
         for (int i = 0; i < satSize; ++i) {
@@ -193,7 +193,7 @@ void QGeoSatelliteWidget::updateSatelliteList()
     update();
 }
 
-void QGeoSatelliteWidget::paintEvent(QPaintEvent * /*event*/)
+void SatelliteWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -221,10 +221,10 @@ void QGeoSatelliteWidget::paintEvent(QPaintEvent * /*event*/)
     paintLegend(painter, legendBounds);
 }
 
-void QGeoSatelliteWidget::paintSatellite(QPainter &painter, const QRect &bounds, int index)
+void SatelliteWidget::paintSatellite(QPainter &painter, const QRect &bounds, int index)
 {    
     int bars = numBars;
-    if (m_ordering == QGeoSatelliteDialog::OrderBySignalStrength)
+    if (m_ordering == SatelliteDialog::OrderBySignalStrength)
         bars = satellites.size();
 
     double pixelsPerUnit = (double) bounds.width() / (double) (bars * spanWidth + gapWidth);
@@ -240,12 +240,12 @@ void QGeoSatelliteWidget::paintSatellite(QPainter &painter, const QRect &bounds,
     }    
 
     int maximum = 100;
-    if (m_scaling == QGeoSatelliteDialog::ScaleToMaxAvailable) {
+    if (m_scaling == SatelliteDialog::ScaleToMaxAvailable) {
         maximum = m_maximumSignalStrength;
     }
 
     int i = index;
-    if (m_ordering == QGeoSatelliteDialog::OrderByPrnNumber)
+    if (m_ordering == SatelliteDialog::OrderByPrnNumber)
         i = satellites.at(index).first.prnNumber() - 1;
 
     double height = ((double) satellites.at(index).first.signalStrength() / (double) maximum ) * bounds.height();
@@ -255,7 +255,7 @@ void QGeoSatelliteWidget::paintSatellite(QPainter &painter, const QRect &bounds,
     painter.drawRect(r);
 }
 
-void QGeoSatelliteWidget::paintLegend(QPainter &painter, const QRect &bounds)
+void SatelliteWidget::paintLegend(QPainter &painter, const QRect &bounds)
 {
     double halfWidth = (double) bounds.width() / 2.0;
 
@@ -285,12 +285,12 @@ void QGeoSatelliteWidget::paintLegend(QPainter &painter, const QRect &bounds)
 }
 
 
-QSize QGeoSatelliteWidget::sizeHint() const
+QSize SatelliteWidget::sizeHint() const
 {
     return QSize(parentWidget()->width(), parentWidget()->width()/2 + legendHeight);
 }
 
-QGeoSatelliteDialog::QGeoSatelliteDialog(QWidget *parent,
+SatelliteDialog::SatelliteDialog(QWidget *parent,
         int noSatelliteTimeoutSeconds,
         ExitBehaviour exitBehaviour, 
         Ordering ordering, 
@@ -304,7 +304,7 @@ QGeoSatelliteDialog::QGeoSatelliteDialog(QWidget *parent,
 
     connect(noSatelliteTimer, SIGNAL(timeout()), this, SLOT(noSatelliteTimeout()));
 
-    satelliteWidget = new QGeoSatelliteWidget(this, ordering, scaling);
+    satelliteWidget = new SatelliteWidget(this, ordering, scaling);
 
     QLabel *label = new QLabel(tr("Satellite Signal Strength"));
     label->setAlignment(Qt::AlignCenter);
@@ -364,13 +364,13 @@ QGeoSatelliteDialog::QGeoSatelliteDialog(QWidget *parent,
 
 #if defined(Q_OS_SYMBIAN)
 // workaround for QTBUG-4771
-void QGeoSatelliteDialog::restoreWindowTitle()
+void SatelliteDialog::restoreWindowTitle()
 {
     setWindowTitle(oldTitle);
 }
 #endif
 
-void QGeoSatelliteDialog::connectSources(QGeoPositionInfoSource *posSource, QGeoSatelliteInfoSource *satSource)
+void SatelliteDialog::connectSources(QGeoPositionInfoSource *posSource, QGeoSatelliteInfoSource *satSource)
 {
     connect(posSource, SIGNAL(positionUpdated(const QGeoPositionInfo &)),
             this, SLOT(positionUpdated(const QGeoPositionInfo &)));
@@ -380,65 +380,65 @@ void QGeoSatelliteDialog::connectSources(QGeoPositionInfoSource *posSource, QGeo
             this, SLOT(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
 }
 
-void QGeoSatelliteDialog::switchButtonClicked()
+void SatelliteDialog::switchButtonClicked()
 {
-    QGeoSatelliteDialog::Ordering o = ordering();
-    if (o == QGeoSatelliteDialog::OrderByPrnNumber)
-        setOrdering(QGeoSatelliteDialog::OrderBySignalStrength);
-    else if (o == QGeoSatelliteDialog::OrderBySignalStrength)
-        setOrdering(QGeoSatelliteDialog::OrderByPrnNumber);
+    SatelliteDialog::Ordering o = ordering();
+    if (o == SatelliteDialog::OrderByPrnNumber)
+        setOrdering(SatelliteDialog::OrderBySignalStrength);
+    else if (o == SatelliteDialog::OrderBySignalStrength)
+        setOrdering(SatelliteDialog::OrderByPrnNumber);
 }
 
-QGeoSatelliteDialog::ExitBehaviour QGeoSatelliteDialog::exitBehaviour() const 
+SatelliteDialog::ExitBehaviour SatelliteDialog::exitBehaviour() const 
 {
     return m_exitBehaviour;
 }
 
-void QGeoSatelliteDialog::setExitBehaviour(QGeoSatelliteDialog::ExitBehaviour exitBehaviour)
+void SatelliteDialog::setExitBehaviour(SatelliteDialog::ExitBehaviour exitBehaviour)
 {
     m_exitBehaviour = exitBehaviour;
 }
 
-QGeoSatelliteDialog::Ordering QGeoSatelliteDialog::ordering() const
+SatelliteDialog::Ordering SatelliteDialog::ordering() const
 {
     return satelliteWidget->ordering();
 }
 
-void QGeoSatelliteDialog::setOrdering(QGeoSatelliteDialog::Ordering ordering)
+void SatelliteDialog::setOrdering(SatelliteDialog::Ordering ordering)
 {
     satelliteWidget->setOrdering(ordering);
 }
 
-QGeoSatelliteDialog::StrengthScaling QGeoSatelliteDialog::strengthScaling() const
+SatelliteDialog::StrengthScaling SatelliteDialog::strengthScaling() const
 {
     return satelliteWidget->strengthScaling();
 }
 
-void QGeoSatelliteDialog::setStrengthScaling(QGeoSatelliteDialog::StrengthScaling scaling)
+void SatelliteDialog::setStrengthScaling(SatelliteDialog::StrengthScaling scaling)
 {
     satelliteWidget->setStrengthScaling(scaling);
 }
 
-void QGeoSatelliteDialog::noSatelliteTimeout()
+void SatelliteDialog::noSatelliteTimeout()
 {
     satelliteWidget->noSatelliteTimeout();
 }
 
-void QGeoSatelliteDialog::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list)
+void SatelliteDialog::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list)
 {
     noSatelliteTimer->stop();
     satelliteWidget->satellitesInViewUpdated(list);        
     noSatelliteTimer->start();
 }
 
-void QGeoSatelliteDialog::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &list)
+void SatelliteDialog::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &list)
 {
     noSatelliteTimer->stop();
     satelliteWidget->satellitesInUseUpdated(list);
     noSatelliteTimer->start();
 }
 
-void QGeoSatelliteDialog::positionUpdated(const QGeoPositionInfo &pos)
+void SatelliteDialog::positionUpdated(const QGeoPositionInfo &pos)
 {
     if (m_exitBehaviour == ExitOnFixOrCancel) {
         accept();

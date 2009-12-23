@@ -113,11 +113,11 @@ void MapWindow::delayedInit() {
         QGeoSatelliteInfoSource *satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
 
         if (satellite) {
-            QGeoSatelliteDialog *dialog = new QGeoSatelliteDialog(this, 
+            SatelliteDialog *dialog = new SatelliteDialog(this, 
                     30, 
-                    QGeoSatelliteDialog::ExitOnFixOrCancel, 
-                    QGeoSatelliteDialog::OrderByPrnNumber, 
-                    QGeoSatelliteDialog::ScaleToMaxPossible);                    
+                    SatelliteDialog::ExitOnFixOrCancel, 
+                    SatelliteDialog::OrderByPrnNumber, 
+                    SatelliteDialog::ScaleToMaxPossible);                    
 
             dialog->connectSources(location, satellite);
 

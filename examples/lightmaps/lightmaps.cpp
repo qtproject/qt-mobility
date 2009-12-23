@@ -424,11 +424,11 @@ private slots:
             QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
 
             if (m_satellite) {
-                QGeoSatelliteDialog *dialog = new QGeoSatelliteDialog(this, 
+                SatelliteDialog *dialog = new SatelliteDialog(this, 
                         30, 
-                        QGeoSatelliteDialog::ExitOnFixOrCancel, 
-                        QGeoSatelliteDialog::OrderByPrnNumber, 
-                        QGeoSatelliteDialog::ScaleToMaxPossible);                    
+                        SatelliteDialog::ExitOnFixOrCancel, 
+                        SatelliteDialog::OrderByPrnNumber, 
+                        SatelliteDialog::ScaleToMaxPossible);                    
 
                 dialog->connectSources(m_location, m_satellite);
 
