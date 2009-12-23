@@ -13,7 +13,7 @@
 #include "qgeopositioninfo.h"
 #include "qgeosatelliteinfo.h"
 
-class QGeoSatelliteWidget;
+class SatelliteWidget;
 class QPushButton;
 
 QTM_USE_NAMESPACE
@@ -69,7 +69,7 @@ private:
     ExitBehaviour m_exitBehaviour;
     QTimer *noSatelliteTimer;
 
-    QGeoSatelliteWidget *satelliteWidget;
+    SatelliteWidget *satelliteWidget;
     QPushButton *switchButton;
     QPushButton *cancelButton;
 #if defined(Q_OS_SYMBIAN)
