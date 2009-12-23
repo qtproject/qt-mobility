@@ -249,11 +249,16 @@ void tst_QNetworkSession::sessionProperties()
     if (!configuration.isValid()) {
         QVERIFY(configuration.bearerName().isEmpty());
     } else {
-        if (configuration.type() == QNetworkConfiguration::ServiceNetwork &&
-            configuration.children().isEmpty()) {
-            QVERIFY(configuration.bearerName().isEmpty());
-        } else {
-            QVERIFY(validBearerNames.contains(configuration.bearerName()));
+        switch (configuration.type())
+        {
+            case QNetworkConfiguration::ServiceNetwork:
+            case QNetworkConfiguration::UserChoice:
+            default:
+                QVERIFY(configuration.bearerName().isEmpty());
+                break;
+            case QNetworkConfiguration::InternetAccessPoint:
+                QVERIFY(validBearerNames.contains(configuration.bearerName()));
+                break;
         }
     }
 
