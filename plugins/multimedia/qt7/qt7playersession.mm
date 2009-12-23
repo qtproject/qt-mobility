@@ -55,6 +55,54 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
+@interface QTMovieObserver : NSObject
+{
+@private
+    QT7PlayerSession *m_session;
+    QTMovie *m_movie;
+}
+
+- (QTMovieObserver *) initWithPlayerSession:(QT7PlayerSession*)session;
+- (void) setMovie:(QTMovie *)movie;
+- (void) processEOS:(NSNotification *)notification;
+@end
+
+@implementation QTMovieObserver
+
+- (QTMovieObserver *) initWithPlayerSession:(QT7PlayerSession*)session
+{
+    if (!(self = [super init]))
+        return nil;
+
+    self->m_session = session;
+    return self;
+}
+
+- (void) setMovie:(QTMovie *)movie
+{
+    if (m_movie) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        [m_movie release];
+    }
+
+    m_movie = movie;
+
+    if (movie) {
+        [[NSNotificationCenter defaultCenter] addObserver: self selector:
+            @selector(processEOS:) name: QTMovieDidEndNotification object: m_movie];
+
+        [movie retain];
+    }
+}
+
+- (void) processEOS:(NSNotification *)notification
+{
+    Q_UNUSED(notification);
+    m_session->processEOS();
+}
+
+@end
+
 CFStringRef qString2CFStringRef(const QString &string)
 {
     return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar *>(string.unicode()),
@@ -72,10 +120,13 @@ QT7PlayerSession::QT7PlayerSession()
    , m_volume(100)
    , m_rate(1.0)
 {
+    m_movieObserver = [[QTMovieObserver alloc] initWithPlayerSession:this];
 }
 
 QT7PlayerSession::~QT7PlayerSession()
 {
+    [(QTMovieObserver*)m_movieObserver setMovie:nil];
+    [(QTMovieObserver*)m_movieObserver release];
 }
 
 void *QT7PlayerSession::movie() const
@@ -119,8 +170,6 @@ qint64 QT7PlayerSession::position() const
     QTTime qtTime = [(QTMovie*)m_QTMovie currentTime];
     quint64 t = static_cast<quint64>(float(qtTime.timeValue) / float(qtTime.timeScale) * 1000.0f);
     m_currentTime = t;
-
-    //qDebug() << "position:" << m_currentTime / 1000.0f;
 
     return m_currentTime;
 }
@@ -269,6 +318,8 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
             m_videoOutput->setMovie(0);
         }
 
+        [(QTMovieObserver*)m_movieObserver setMovie:nil];
+
         [(QTMovie*)m_QTMovie release];
         m_QTMovie = 0;
     }
@@ -279,11 +330,9 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     QUrl url;
 
     if (!content.isNull())
-        url = content.canonicalUri();
+        url = content.canonicalUrl();
     else
         return;
-
-    qDebug() << "setMedia" << url.toLocalFile();
 
     NSError *err = 0;
     QTDataReference *dataRef = 0;
@@ -317,6 +366,8 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
             m_videoOutput->setEnabled(true);
             m_videoOutput->setMovie(m_QTMovie);
         }
+
+        [(QTMovieObserver*)m_movieObserver setMovie:(QTMovie*)m_QTMovie];
 
         emit m_control->durationChanged(duration());
         emit m_control->videoAvailableChanged(isVideoAvailable());

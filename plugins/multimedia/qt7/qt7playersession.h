@@ -115,6 +115,7 @@ public:
 
 private:
     void *m_QTMovie;
+    void *m_movieObserver;
 
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
