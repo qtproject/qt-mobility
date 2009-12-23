@@ -55,6 +55,7 @@
     ****************************************************************************/</span>
 
     #include &quot;sessionwidget.h&quot;
+    #include &quot;qnetworkconfigmanager.h&quot;
 
     SessionWidget::SessionWidget(const QNetworkConfiguration &amp;config, QWidget *parent)
     :   QWidget(parent)
@@ -94,7 +95,13 @@
         updateSessionState(session-&gt;state());
         updateSessionError(session-&gt;error());
 
-        bearer-&gt;setText(session-&gt;bearerName());
+        if (session-&gt;configuration().type() == QNetworkConfiguration::InternetAccessPoint)
+            bearer-&gt;setText(session-&gt;configuration().bearerName());
+        else {
+            QNetworkConfigurationManager mgr;
+            QNetworkConfiguration c = mgr.configurationFromIdentifier(session-&gt;sessionProperty(&quot;ActiveConfiguration&quot;).toString());
+            bearer-&gt;setText(c.bearerName());
+        }
 
         interfaceName-&gt;setText(session-&gt;interface().humanReadableName());
         interfaceGuid-&gt;setText(session-&gt;interface().name());

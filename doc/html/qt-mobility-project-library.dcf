@@ -2316,6 +2316,7 @@
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::UserChoice</keyword>
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</keyword>
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</keyword>
+        <keyword ref="qnetworkconfiguration.html#bearerName">bearerName</keyword>
         <keyword ref="qnetworkconfiguration.html#children">children</keyword>
         <keyword ref="qnetworkconfiguration.html#identifier">identifier</keyword>
         <keyword ref="qnetworkconfiguration.html#isRoamingAvailable">isRoamingAvailable</keyword>
@@ -2370,7 +2371,6 @@
         <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Closing</keyword>
         <keyword ref="qnetworksession.html#accept">accept</keyword>
         <keyword ref="qnetworksession.html#activeTime">activeTime</keyword>
-        <keyword ref="qnetworksession.html#bearerName">bearerName</keyword>
         <keyword ref="qnetworksession.html#bytesReceived">bytesReceived</keyword>
         <keyword ref="qnetworksession.html#bytesWritten">bytesWritten</keyword>
         <keyword ref="qnetworksession.html#close">close</keyword>

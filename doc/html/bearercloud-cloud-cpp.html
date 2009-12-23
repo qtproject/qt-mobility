@@ -266,7 +266,7 @@
             tooltip += tr(&quot;&lt;br&gt;Interface: %1&quot;).arg(interface.humanReadableName());
         tooltip += tr(&quot;&lt;br&gt;Id: %1&quot;).arg(configuration.identifier());
 
-        const QString bearerName = session-&gt;bearerName();
+        const QString bearerName = configuration.bearerName();
         if (!bearerName.isEmpty())
             tooltip += tr(&quot;&lt;br&gt;Bearer: %1&quot;).arg(bearerName);
 
@@ -313,7 +313,7 @@
 
     void Cloud::newConfigurationActivated()
     {
-        const QString bearerName = session-&gt;bearerName();
+        const QString bearerName = configuration.bearerName();
         if (!svgCache.contains(bearerName)) {
             if (bearerName == QLatin1String(&quot;WLAN&quot;))
                 svgCache.insert(bearerName, new QSvgRenderer(QLatin1String(&quot;:wlan.svg&quot;)));

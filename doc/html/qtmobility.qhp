@@ -2492,6 +2492,7 @@
             <keyword name="QNetworkConfiguration::ServiceNetwork" id="QNetworkConfiguration::ServiceNetwork" ref="qnetworkconfiguration.html#Type-enum"/>
             <keyword name="QNetworkConfiguration::UserChoice" id="QNetworkConfiguration::UserChoice" ref="qnetworkconfiguration.html#Type-enum"/>
             <keyword name="QNetworkConfiguration::Invalid" id="QNetworkConfiguration::Invalid" ref="qnetworkconfiguration.html#Type-enum"/>
+            <keyword name="bearerName" id="QNetworkConfiguration::bearerName" ref="qnetworkconfiguration.html#bearerName"/>
             <keyword name="children" id="QNetworkConfiguration::children" ref="qnetworkconfiguration.html#children"/>
             <keyword name="identifier" id="QNetworkConfiguration::identifier" ref="qnetworkconfiguration.html#identifier"/>
             <keyword name="isRoamingAvailable" id="QNetworkConfiguration::isRoamingAvailable" ref="qnetworkconfiguration.html#isRoamingAvailable"/>
@@ -2542,7 +2543,6 @@
             <keyword name="QNetworkSession::Roaming" id="QNetworkSession::Roaming" ref="qnetworksession.html#State-enum"/>
             <keyword name="accept" id="QNetworkSession::accept" ref="qnetworksession.html#accept"/>
             <keyword name="activeTime" id="QNetworkSession::activeTime" ref="qnetworksession.html#activeTime"/>
-            <keyword name="bearerName" id="QNetworkSession::bearerName" ref="qnetworksession.html#bearerName"/>
             <keyword name="bytesReceived" id="QNetworkSession::bytesReceived" ref="qnetworksession.html#bytesReceived"/>
             <keyword name="bytesWritten" id="QNetworkSession::bytesWritten" ref="qnetworksession.html#bytesWritten"/>
             <keyword name="close" id="QNetworkSession::close" ref="qnetworksession.html#close"/>
