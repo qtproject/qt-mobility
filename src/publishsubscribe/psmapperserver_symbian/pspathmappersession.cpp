@@ -184,11 +184,15 @@ void CPSPathMapperServerSession::ResolvePathLengthL(const RMessage2& aMessage)
     PathMapper::Target target;
     quint32 category;
     quint32 key;
-    iPathMapper.resolvePath(path, target, category, key);
-    qDebug() << "target" << target << "category" << category << "key" << key;
-    
-    QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
-    out << (int)target << category << key;
+    if (iPathMapper.resolvePath(path, target, category, key)) {
+        qDebug() << "target" << target << "category" << category << "key" << key;
+
+        QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
+        out << (int)target << category << key;
+    } else {
+        qDebug("not found");
+        iResultByteArray.clear();
+    }
     
     TPckgBuf<TInt> lengthPckg(iResultByteArray.size());
     aMessage.Write(1, lengthPckg);
