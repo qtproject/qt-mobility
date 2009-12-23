@@ -20,6 +20,7 @@ PUBLIC_HEADERS += \
     qorganizeritem.h \
     qorganizeritemabstractrequest.h \
     qorganizeritemaction.h \
+    qorganizeritemactiondescriptor.h \
     qorganizeritemdetail.h \
     qorganizeritemdetaildefinition.h \
     qorganizeritemdetaildefinitionfield.h \
