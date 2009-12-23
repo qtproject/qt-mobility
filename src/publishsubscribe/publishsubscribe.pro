@@ -41,8 +41,8 @@ symbian {
     }
 
     DEFINES += QT_BUILD_INTERNAL
-    HEADERS += settingslayer_symbian.h \
-        pathmapper_symbian.h \
+    HEADERS += settingslayer_symbian_p.h \
+        pathmapper_symbian_p.h \
         qcrmlparser_p.h
     SOURCES += settingslayer_symbian.cpp \
         pathmapper_symbian.cpp \

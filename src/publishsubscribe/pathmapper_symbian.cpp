@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "pathmapper_symbian.h"
+#include "pathmapper_symbian_p.h"
 #include "xqsettingsmanager.h"
 #include <QDir>
 
@@ -124,6 +124,6 @@ bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, qu
     return false;
 }
 
-#include "moc_pathmapper_symbian.cpp"
+#include "moc_pathmapper_symbian_p.cpp"
 
 QTM_END_NAMESPACE

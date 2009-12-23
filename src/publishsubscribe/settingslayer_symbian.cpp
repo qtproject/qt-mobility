@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "settingslayer_symbian.h"
+#include "settingslayer_symbian_p.h"
 #include <QVariant>
 #include "xqsettingskey.h"
 #include "xqpublishandsubscribeutils.h"
@@ -448,6 +448,6 @@ void SymbianSettingsLayer::notifyChange(const XQSettingsKey& key)
     }
 }
 
-#include "moc_settingslayer_symbian.cpp"
+#include "moc_settingslayer_symbian_p.cpp"
 
 QTM_END_NAMESPACE
