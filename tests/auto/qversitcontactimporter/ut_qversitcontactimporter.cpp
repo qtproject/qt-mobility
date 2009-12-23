@@ -154,6 +154,28 @@ void UT_QVersitContactImporter::testName()
     QCOMPARE(name.suffix(),value[4]);
 }
 
+// check that it doesn't crash if the FN property comes before the N property.
+void UT_QVersitContactImporter::testNameWithFormatted()
+{
+    QVersitDocument document;
+    QVersitProperty fnProperty;
+    fnProperty.setName(QString::fromAscii("FN"));
+    fnProperty.setValue(QString::fromAscii("First Last"));
+    document.addProperty(fnProperty);
+    QVersitProperty nProperty;
+    nProperty.setName(QString::fromAscii("N"));
+    nProperty.setValue(QString::fromAscii("Last;First;Middle;Prefix;Suffix"));
+    document.addProperty(nProperty);
+    QContact contact = mImporter->importContact(document);
+    QContactName name = static_cast<QContactName>(contact.detail(QContactName::DefinitionName));
+    QCOMPARE(name.first(), QString::fromAscii("First"));
+    QCOMPARE(name.last(), QString::fromAscii("Last"));
+    QCOMPARE(name.middle(), QString::fromAscii("Middle"));
+    QCOMPARE(name.prefix(), QString::fromAscii("Prefix"));
+    QCOMPARE(name.suffix(), QString::fromAscii("Suffix"));
+    QCOMPARE(name.customLabel(), QString::fromAscii("First Last"));
+}
+
 void UT_QVersitContactImporter::testAddress()
 {
     QContact contact;

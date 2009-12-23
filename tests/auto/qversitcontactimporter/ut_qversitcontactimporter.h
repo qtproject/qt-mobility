@@ -66,6 +66,7 @@ private slots: // Tests
     void cleanup();
     
     void testName();
+    void testNameWithFormatted();
     void testAddress();
     void testTel();    
     void testEmail();

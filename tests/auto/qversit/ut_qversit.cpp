@@ -50,6 +50,7 @@ void UT_QVersit::cleanup()
 void UT_QVersit::testImportFiles()
 {
     QFETCH(QString, filename);
+
     QVersitReader reader;
     QFile file(filename);
     QVERIFY2(file.open(QIODevice::ReadOnly), filename.toAscii());
@@ -82,10 +83,10 @@ void UT_QVersit::testImportFiles_data()
 //            << QString::fromAscii("Entourage11/basic.vcf")
 //            << QString::fromAscii("Entourage11/image.vcf")
 //            << QString::fromAscii("Entourage11/nonascii.vcf")
-//            << QString::fromAscii("Entourage12/basic.vcf")
-//            << QString::fromAscii("Entourage12/kevin.vcf")
-//            << QString::fromAscii("Entourage12/nonascii.vcf")
-//            << QString::fromAscii("gmail.vcf")
+            << QString::fromAscii("Entourage12/basic.vcf")
+            << QString::fromAscii("Entourage12/kevin.vcf")
+            << QString::fromAscii("Entourage12/nonascii.vcf")
+            << QString::fromAscii("gmail.vcf")
             ;
     foreach (QString filename, filenames) {
         QTest::newRow(filename.toAscii()) << testdir+filename;

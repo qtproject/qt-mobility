@@ -189,10 +189,7 @@ QContactDetail* QVersitContactImporterPrivate::createName(
     QContactName* name = 0;
     QContactDetail detail = contact.detail(QContactName::DefinitionName);
     if (!detail.isEmpty()) {
-        // If multiple name properties exist,
-        // discard all except the first occurence
-        if (!detail.value(QContactName::FieldFirst).isEmpty())
-            return 0;
+        name = new QContactName(static_cast<QContactName>(detail));
     } else {
         name = new QContactName();
     }
