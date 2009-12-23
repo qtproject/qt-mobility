@@ -43,6 +43,7 @@
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 
+#include "qt7backend.h"
 #include "qt7playerservice.h"
 #include "qt7playercontrol.h"
 #include "qt7playersession.h"
@@ -55,6 +56,7 @@
 #include <qmediaplaylistnavigator.h>
 #include <qmediaplaylist.h>
 
+
 QT7PlayerService::QT7PlayerService(QObject *parent):
     QMediaService(parent)
 {
@@ -65,21 +67,30 @@ QT7PlayerService::QT7PlayerService(QObject *parent):
 
     m_videoOutputControl = new QT7VideoOutputControl(this);
 
+    m_videoWidnowControl = 0;
+    m_videoWidgetControl = 0;
+    m_videoRendererControl = 0;
+
 #if defined(QT_MAC_USE_COCOA)
     m_videoWidnowControl = new QT7MovieViewOutput(this);
     m_videoOutputControl->enableOutput(QVideoOutputControl::WindowOutput);
+    qDebug() << "Using cocoa";
+#endif
 
-    m_videoRendererControl = new QT7MovieViewRenderer(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
-
-    m_videoWidgetControl = 0;
-#else
-    m_videoWidnowControl = 0;
+#ifdef QUICKTIME_C_API_AVAILABLE
     m_videoRendererControl = new QT7MovieRenderer(this);
     m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
+
     m_videoWidgetControl = new QT7MovieVideoWidget(this);
     m_videoOutputControl->enableOutput(QVideoOutputControl::WidgetOutput);
+    qDebug() << "QuickTime C API is available";
+#else
+    m_videoRendererControl = new QT7MovieViewRenderer(this);
+    m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
+    qDebug() << "QuickTime C API is not available";
 #endif
+
+
     connect(m_videoOutputControl, SIGNAL(videoOutputChanged(QVideoOutputControl::Output)),
             this, SLOT(updateVideoOutput()));
 }

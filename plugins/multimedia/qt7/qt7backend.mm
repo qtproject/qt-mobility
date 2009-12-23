@@ -41,6 +41,10 @@
 
 #include "qt7backend.h"
 
+#import <Foundation/NSAutoreleasePool.h>
+#include <CoreFoundation/CFBase.h>
+
+
 QTM_BEGIN_NAMESPACE
 
 AutoReleasePool::AutoReleasePool()

@@ -45,8 +45,6 @@
 #include "qmobilityglobal.h"
 
 #include <QtCore/QString>
-#import <Foundation/NSAutoreleasePool.h>
-#include <CoreFoundation/CFBase.h>
 
 #ifndef Q_WS_MAC64
 #define QUICKTIME_C_API_AVAILABLE
