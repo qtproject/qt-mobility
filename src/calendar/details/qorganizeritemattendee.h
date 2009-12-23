@@ -61,13 +61,13 @@ public:
     const char* FieldParticipationStatus;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemAttendee, "Attendee")
-    Q_DECLARE_LATIN1_LITERAL(FieldAttendeeName, "AttendeeName");
+    Q_DECLARE_LATIN1_LITERAL(FieldAttendeeDisplayLabel, "AttendeeDisplayLabel");
     Q_DECLARE_LATIN1_LITERAL(FieldAttendeeContactUri, "AttendeeContactUri");
     Q_DECLARE_LATIN1_LITERAL(FieldParticipationStatus, "ParticipationStatus");
 #endif
 
-    void setAttendeeName(const QString& attendeeName) {setValue(FieldAttendeeName, attendeeName);}
-    QString attendeeName() const {return value(FieldAttendeeName);}
+    void setAttendeeDisplayLabel(const QString& attendeeDisplayLabel) {setValue(FieldAttendeeDisplayLabel, attendeeDisplayLabel);}
+    QString attendeeDisplayLabel() const {return value(FieldAttendeeDisplayLabel);}
 
     void setAttendeeContactUri(const QString& contactUri) {setValue(FieldAttendeeContactUri, contactUri);}
     QString attendeeContactUri() const {return value(FieldAttendeeContactUri);}

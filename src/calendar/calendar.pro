@@ -4,8 +4,8 @@
 TEMPLATE = lib
 
 # Target gets fixed up in common.pri
-TARGET = QtContacts
-DEFINES += QT_BUILD_CONTACTS_LIB QT_MAKEDLL\
+TARGET = QtCalendar
+DEFINES += QT_BUILD_CALENDAR_LIB QT_MAKEDLL\
     QT_ASCII_CAST_WARNINGS
 
 include(../../common.pri)
@@ -31,39 +31,8 @@ PUBLIC_HEADERS += \
     qtcalendarglobal.h \
     qtcalendar.h
 
-# Private Headers
-PRIVATE_HEADERS += \
-    qcontact_p.h \
-    qcontactabstractrequest_p.h \
-    qcontactactiondescriptor_p.h \
-    qcontactchangeset_p.h \
-    qcontactdetail_p.h \
-    qcontactdetaildefinition_p.h \
-    qcontactdetaildefinitionfield_p.h \
-    qcontactfilter_p.h \
-    qcontactid_p.h \
-    qcontactmanager_p.h \
-    qcontactrelationship_p.h \
-    qcontactsortorder_p.h
-
-SOURCES += \
-    qcontact.cpp \
-    qcontactabstractrequest.cpp \
-    qcontactaction.cpp \
-    qcontactactiondescriptor.cpp \
-    qcontactactionfactory.cpp \
-    qcontactchangeset.cpp \
-    qcontactdetail.cpp \
-    qcontactdetaildefinition.cpp \
-    qcontactdetaildefinitionfield.cpp \
-    qcontactfilter.cpp \
-    qcontactid.cpp \
-    qcontactmanager_p.cpp \
-    qcontactmanager.cpp \
-    qcontactmanagerengine.cpp \
-    qcontactmanagerenginefactory.cpp \
-    qcontactrelationship.cpp \
-    qcontactsortorder.cpp
+#PRIVATE_HEADERS += \
+#SOURCES += \
 
 HEADERS += \
     $$PUBLIC_HEADERS \
@@ -76,9 +45,9 @@ symbian {
 
     ### Contacts
     # Main library
-    CONTACTS_DEPLOYMENT.sources = QtCalendar.dll
-    CONTACTS_DEPLOYMENT.path = \sys\bin
-    DEPLOYMENT += CONTACTS_DEPLOYMENT
+    CALENDAR_DEPLOYMENT.sources = QtCalendar.dll
+    CALENDAR_DEPLOYMENT.path = \sys\bin
+    DEPLOYMENT += CALENDAR_DEPLOYMENT
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS

@@ -228,6 +228,81 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemVisibilityTag::DefinitionName, "Visibility
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+/*!
+   \variable QOrganizerItemAccessControl::FieldReadAccess
+
+   The constant key for which the read access value is stored in
+   details of the QContactOrganizerItemAccessControl type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldReadAccess, "ReadAccess");
+
+/*!
+   \variable QOrganizerItemAccessControl::FieldShareAccess
+
+   The constant key for which the share access value is stored in
+   details of the QContactOrganizerItemAccessControl type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldShareAccess, "ShareAccess");
+
+/*!
+   \variable QOrganizerItemAccessControl::FieldWriteAccess
+
+   The constant key for which the write access value is stored in
+   details of the QContactOrganizerItemAccessControl type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldWriteAccess, "WhiteAccess");
+
+/*!
+   \variable QOrganizerItemAttendee::FieldAttendeeDisplayLabel
+
+   The constant key for which the display label value of the attendee is stored in
+   details of the QOrganizerItemAttendee type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeDisplayLabel, "AttendeeDisplayLabel");
+
+/*!
+   \variable QOrganizerItemAttendee::FieldAttendeeContactUri
+
+   The constant key for which the contact URI value of the attendee is stored in
+   details of the QOrganizerItemAttendee type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeContactUri, "AttendeeContactUri");
+
+/*!
+   \variable QOrganizerItemAttendee::FieldAttendeeParticipationStatus
+
+   The constant key for which the participation status value of the attendee is stored in
+   details of the QOrganizerItemAttendee type.  XXX TODO: detail linking instead?
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
+
+/*!
+   \variable QOrganizerItemDateTime::FieldStartDateTime
+
+   The constant key for which the start datetime value of the organizer item is stored in
+   details of the QOrganizerItemDateTime type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDateTime::FieldStartDateTime, "StartDateTime");
+
+/*!
+   \variable QOrganizerItemDateTime::FieldEndDateTime
+
+   The constant key for which the end datetime value of the organizer item is stored in
+   details of the QOrganizerItemDateTime type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDateTime::FieldEndDateTime, "EndDateTime");
+
 /*!
    \variable QOrganizerItemDisplayLabel::FieldLabel
 
@@ -245,6 +320,30 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDisplayLabel::FieldLabel, "Label");
 Q_DEFINE_LATIN1_LITERAL(QOrganizerItemGuid::FieldGuid, "Guid");
 
 /*!
+   \variable QOrganizerItemLocation::FieldGeoLocation
+
+   The constant key for which the geolocation value is
+   stored in details of the QOrganizerItemLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation");
+
+/*!
+   \variable QOrganizerItemLocation::FieldAddress
+
+   The constant key for which the street address value is
+   stored in details of the QOrganizerItemLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldAddress, "Address");
+
+/*!
+   \variable QOrganizerItemLocation::FieldLocationName
+
+   The constant key for which the location label value is
+   stored in details of the QOrganizerItemLocation type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldLocationName, "LocationName");
+
+/*!
    \variable QOrganizerItemNote::FieldNote
 
    The constant key for which the note value is stored in details of
@@ -253,11 +352,76 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemGuid::FieldGuid, "Guid");
 Q_DEFINE_LATIN1_LITERAL(QOrganizerItemNote::FieldNote, "Note");
 
 /*!
+   \variable QOrganizerItemParticipationRole::FieldParticipationRole
+
+   The constant key for which the participation role value is stored in details of
+   the QOrganizerItemParticipationRole type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemParticipationRole::FieldParticipationRole, "ParticipationRole");
+
+/*!
+   \variable QOrganizerItemParticipationStatus::FieldParticipationStatus
+
+   The constant key for which the participation status value is stored in details of
+   the QOrganizerItemParticipationStatus type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemParticipationStatus::FieldParticipationStatus, "ParticipationStatus");
+
+/*!
+   \variable QOrganizerItemPriority::FieldPriority
+
+   The constant key for which the priority value is stored in details of
+   the QOrganizerItemPriority type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemPriority::FieldPriority, "Priority");
+
+/*!
+   \variable QOrganizerItemProvenance::FieldReceivedFrom
+
+   The constant key for which the contact URI from whom the item was received from is stored in details of
+   the QOrganizerItemProvenance type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemProvenance::FieldReceivedFrom, "ReceivedFrom");
+
+/*!
+   \variable QOrganizerItemProvenance::FieldTimestamp
+
+   The constant key for which the receipt timestamp is stored in details of
+   the QOrganizerItemProvenance type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
+
+/*!
+   \variable QOrganizerItemRsvpInfo::FieldDeadline
+
+   The constant key for which the deadline timestamp is stored in details of
+   the QOrganizerItemRsvpInfo type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldDeadline, "Deadline");
+
+/*!
+   \variable QOrganizerItemRsvpInfo::FieldResponseDate
+
+   The constant key for which the response date timestamp is stored in details of
+   the QOrganizerItemRsvpInfo type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldResponseDate, "ResponseDate");
+
+/*!
+   \variable QOrganizerItemRsvpInfo::FieldContactUri
+
+   The constant key for which the contact URI to whom the RSVP must be sent is stored in details of
+   the QOrganizerItemRsvpInfo type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldContactUri, "ContactUri");
+
+
+/*!
    \variable QOrganizerItemTimestamp::FieldModificationTimestamp
 
    The constant key for the value which is stored in details of the
    QOrganizerItemTimestamp type which describes the last modification date
-   and time of a contact.
+   and time of an organizer item.
  */
 Q_DEFINE_LATIN1_LITERAL(QOrganizerItemTimestamp::FieldModificationTimestamp, "ModificationTimestamp");
 
@@ -266,7 +430,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemTimestamp::FieldModificationTimestamp, "Mo
 
    The constant key for the value which is stored in details of the
    QOrganizerItemTimestamp type which describes the creation date and time
-   of a contact.
+   of an organizer item.
  */
 Q_DEFINE_LATIN1_LITERAL(QOrganizerItemTimestamp::FieldCreationTimestamp, "CreationTimestamp");
 
@@ -313,388 +477,37 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeNote, "Note");
  */
 Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeTodo, "Todo");
 
-
-
-
-
-/*!
-   \fn QOrganizerItemSyncTarget::syncTarget() const
-
-   Returns the identifier of the backend store to which the contact
-   containing this detail should be synchronised.
- */
-
-/*!
-   \fn QOrganizerItemSyncTarget::setSyncTarget(const QString& syncTarget)
-
-   Sets the identifier of the backend store to which the contact
-   containing this detail should be synchronised to \a syncTarget.
- */
-
-/*!
-   \fn QOrganizerItemEmailAddress::emailAddress() const
-   Returns the email address of the contact which is stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemEmailAddress::setEmailAddress(const QString& emailAddress)
-   Sets the email address of the contact which is stored in this detail to \a emailAddress.
- */
-
-/*!
-   \fn QOrganizerItemFamily::spouse() const
-   Returns the name of the spouse of the contact which is stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemFamily::setSpouse(const QString& spouseName)
-   Sets the name of the spouse of the contact which is stored in this detail to \a spouseName.
- */
-
-/*!
-   \fn QOrganizerItemFamily::children() const
-   Returns the names of the children of the contact which is stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemFamily::setChildren(const QStringList& childrenNames)
-   Sets the names of the children of the contact which is stored in this detail to \a childrenNames.
- */
-
-/*!
-   \fn QOrganizerItemAnniversary::originalDate() const
-   Returns the original date of occurrance of the event stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemAnniversary::setOriginalDate(const QDate& date)
-   Sets the original date of occurrance of the event stored in this detail to \a date.
- */
-
-/*!
-   \fn QOrganizerItemAnniversary::calendarId() const
- * Returns the identifier of the calendar entry associated with this anniversary.
- */
-
-/*!
-   \fn QOrganizerItemAnniversary::setCalendarId(const QString& calendarId)
-   Sets the identifier of the calendar entry associated with this anniversary to \a calendarId.
- */
-
-/*!
-   \fn QOrganizerItemAnniversary::event() const
-   Returns the name of the event for which this detail contains information.
- */
-
-/*!
-   \fn QOrganizerItemAnniversary::setEvent(const QString& event)
-   Sets the name of the event for which this detail contains information to \a event.
- */
-
-/*!
-   \fn QOrganizerItemAnniversary::setSubType(const QString& subType)
-   Sets the subtype which this detail implements to be the given \a subType.
- */
-
-/*!
-   \fn QOrganizerItemAnniversary::subType() const
-   Returns the subtype that this detail implements, if defined.
- */
-
-/*!
-   \fn QOrganizerItemAvatar::avatar() const
-   Returns the location of an avatar file associated with the contact.
- */
-
-/*!
-   \fn QOrganizerItemAvatar::setAvatar(const QString& avatar)
-   Sets the location of an avatar file associated with the contact to \a avatar.
- */
-
-/*!
-   \fn QOrganizerItemAvatar::setSubType(const QString& subType)
-   Sets the subtype which this detail implements to be the given \a subType.
- */
-
-/*!
-   \fn QOrganizerItemAvatar::subType() const
-   Returns the subtype that this detail implements, if defined.
- */
-
-/*!
-   \fn QOrganizerItemAddress::postOfficeBox() const
-   Returns the post office box segment of the address stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemAddress::setPostOfficeBox(const QString& postOfficeBox)
-   Sets the post office box segment of the address stored in this detail to \a postOfficeBox.
- */
-
-/*!
-   \fn QOrganizerItemAddress::street() const
-   Returns the street segment of the address stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemAddress::setStreet(const QString& street)
-   Sets the street segment of the address stored in this detail to \a street.
- */
-
-/*!
-   \fn QOrganizerItemAddress::locality() const
-   Returns the locality segment of the address stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemAddress::setLocality(const QString& locality)
-   Sets the locality segment of the address stored in this detail to \a locality.
- */
-
-/*!
-   \fn QOrganizerItemAddress::region() const
-   Returns the region segment of the address stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemAddress::setRegion(const QString& region)
-   Sets the region segment of the address stored in this detail to \a region.
- */
-
-/*!
-   \fn QOrganizerItemAddress::postcode() const
-   Returns the postcode segment of the address stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemAddress::setPostcode(const QString& postcode)
-   Sets the postcode segment of the address stored in this detail to \a postcode.
- */
-
 /*!
-   \fn QOrganizerItemAddress::country() const
-   Returns the country segment of the address stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemAddress::setCountry(const QString& country)
-   Sets the country segment of the address stored in this detail to \a country.
- */
-
-/*!
-   \fn QOrganizerItemAddress::setSubTypes(const QStringList& subTypes)
-   Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes.
- */
-
-/*!
-   \fn QOrganizerItemAddress::setSubTypes(const QString& subType)
-   Sets the subtypes which this detail implements to be just the given \a subType.
- */
-
-/*!
-   \fn QOrganizerItemAddress::subTypes() const
-   Returns the list of subtypes that this detail implements.
- */
-
-/*!
-   \fn QOrganizerItemUrl::url() const
-   Returns the url stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemUrl::setUrl(const QString& url)
-   Sets the url stored in this detail to \a url.
- */
-
-/*!
-   \fn QOrganizerItemUrl::setSubType(const QString& subType)
-   Sets the subtype which this detail implements to be the given \a subType.
- */
-
-/*!
-   \fn QOrganizerItemUrl::subType() const
-   Returns the subtype that this detail implements, if defined.
- */
-
-/*!
-   \fn QOrganizerItemPhoneNumber::number() const
-   Returns the phone number stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemPhoneNumber::setNumber(const QString& number)
-   Sets the phone number stored in this detail to \a number.
- */
-
-/*!
-   \fn QOrganizerItemPhoneNumber::setSubTypes(const QStringList& subTypes)
-   Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
- */
-
-/*!
-   \fn QOrganizerItemPhoneNumber::setSubTypes(const QString& subType)
-   Sets the subtypes which this detail implements to be just the given \a subType.
- */
-
-/*!
-   \fn QOrganizerItemPhoneNumber::subTypes() const
-   Returns the list of subtypes that this detail implements.
- */
-
-/*!
-   \fn QOrganizerItemBirthday::date() const
-   Returns the date of the birthday which is stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemBirthday::setDate(const QDate& date)
-   Sets the date of the birthday which is stored in this detail to \a date.
- */
-
-/*!
-   \fn QOrganizerItemGender::gender() const
-
-   Returns the gender of the contact, as stored in this detail.  The
-   possible values for the value stored are "Male", "Female" and
-   "Unspecified".
- */
-
-/*!
-   \fn QOrganizerItemGender::setGender(const QString& gender)
-
-   Sets the gender of the contact (as stored in this detail) to \a
-   gender, if \a gender is either "Male" or "Female", otherwise sets
-   it to "Unspecified".
- */
-
-/*!
-   \fn QOrganizerItemGeolocation::setLabel(const QString& label)
-   Sets the label of the location stored in the detail to \a label.
- */
-
-/*!
-   \fn QOrganizerItemGeolocation::label() const
-   Returns the label of the location stored in the detail.
- */
-
-/*!
-   \fn QOrganizerItemGeolocation::setLatitude(double latitude)
-
-   Sets the latitude portion of the coordinate (in decimal degrees) of
-   the location stored in the detail to \a latitude.
- */
-
-/*!
-   \fn QOrganizerItemGeolocation::latitude() const
-
-   Returns the latitude portion of the coordinate (specified in
-   decimal degrees) of the location stored in the detail.
- */
-
-/*!
-   \fn QOrganizerItemGeolocation::setLongitude(double longitude)
-
-   Sets the longitude portion of the coordinate (in decimal degrees)
-   of the location stored in the detail to \a longitude.
- */
-
-/*!
-   \fn QOrganizerItemGeolocation::longitude() const
+   \variable QOrganizerItemVisibilityTag::FieldTag
 
-   Returns the longitude portion of the coordinate (specified in
-   decimal degrees) of the location stored in the detail.
+   The constant key for the tag value which is stored in details of
+   the QOrganizerItemVisibilityTag definition.
  */
+Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::FieldTag, "Tag");
 
-/*!
-   \fn QOrganizerItemGeolocation::setAccuracy(double accuracy)
-
-   Specifies that the latitude and longitude portions of the location
-   stored in the detail are accurate to within \a accuracy metres.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::accuracy() const
 
-   Returns the accuracy (in metres) of the latitude and longitude of
-   the location stored in the detail.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::setAltitude(double altitude)
 
-   Sets the altitude portion of the coordinate (in metres above the
-   ellipsoid) of the location stored in the detail to \a altitude.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::altitude() const
-   Returns the altitude (in metres) of the location stored in the detail.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::setAltitudeAccuracy(double altitudeAccuracy)
 
-   Sets the altitude-accuracy portion of the coordinate (in metres) of
-   the location stored in the detail to \a altitudeAccuracy.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::altitudeAccuracy() const
 
-   Returns the accuracy of the altitude portion of the location stored
-   in the detail.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::setHeading(double heading)
-
-   Sets the heading portion of the coordinate (in decimal degrees
-   clockwise relative to true north) of the location-aware device at
-   the time of measurement to \a heading.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::heading() const
-
-   Returns the heading (at the time of measurement) of the
-   location-aware device that recorded (or was provided) the
-   measurement.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::setSpeed(double speed)
 
-   Sets the speed portion of the coordinate (in metres per second) of
-   the location-aware device at the time of measurement to \a speed.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::speed() const
-
-   Returns the speed (at the time of measurement) of the
-   location-aware device that recorded (or was provided) the
-   measurement.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::setTimestamp(const QDateTime& timestamp)
 
-   Sets the creation (or first-valid) timestamp of the location
-   information to \a timestamp.
- */
 
-/*!
-   \fn QOrganizerItemGeolocation::timestamp() const
 
-   Returns the timestamp associated with the location stored in the
-   detail.
- */
 
 /*!
    \fn QOrganizerItemGuid::guid() const
 
-   Returns the globally unique identifier which is stored in this
-   detail.
+   Returns the globally unique identifier which is stored in this detail.
  */
 
 /*!
@@ -703,87 +516,13 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeTodo, "Todo");
  */
 
 /*!
-   \fn QOrganizerItemName::prefix() const
-   Returns the prefix segment of the name stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemName::setPrefix(const QString& prefix)
-   Sets the prefix segment of the name stored in this detail to \a prefix.
- */
-
-/*!
-   \fn QOrganizerItemName::first() const
-   Returns the first (given) name segment of the name stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemName::setFirst(const QString& first)
-   Sets the first name segment of the name stored in this detail to \a first.
- */
-
-/*!
-   \fn QOrganizerItemName::middle() const
-   
-   Returns the middle (additional, or other) name segment of the name
-   stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemName::setMiddle(const QString& middle)
-   Sets the middle name segment of the name stored in this detail to \a middle.
- */
-
-/*!
-   \fn QOrganizerItemName::last() const
-
-   Returns the last (family, or surname) name segment of the name
-   stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemName::setLast(const QString& last)
-   Sets the last name segment of the name stored in this detail to \a last.
- */
-
-/*!
-   \fn QOrganizerItemName::suffix() const
-   Returns the suffix segment of the name stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemName::setSuffix(const QString& suffix)
-   Sets the suffix segment of the name stored in this detail to \a suffix.
- */
-
-/*!
-   \fn QOrganizerItemName::customLabel() const
-   Returns the custom label of the name stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemName::setCustomLabel(const QString& customLabel)
-   Sets the custom label of the name stored in this detail to \a customLabel.
- */
-
-/*!
-   \fn QOrganizerItemNickname::setNickname(const QString& nickname)
-   Sets the nickname of the contact which is stored in this detail to \a nickname.
- */
-
-/*!
-   \fn QOrganizerItemNickname::nickname() const
-   Returns the nickname of the contact which is stored in this detail.
- */
-
-/*!
    \fn QOrganizerItemNote::setNote(const QString& note)
-   Sets a note associated with a contact to \a note.
+   Sets a note associated with an organizer item to \a note.
  */
 
 /*!
    \fn QOrganizerItemNote::note() const
-   Returns a string for a note associated with a contact.
+   Returns a string for a note associated with an organizer item.
  */
 
 /*!
@@ -808,189 +547,20 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeTodo, "Todo");
 
 /*!
    \fn QOrganizerItemType::type() const
-   Returns the contact type value stored in this detail.
+   Returns the organizer item type value stored in this detail.
  */
 
 /*!
    \fn QOrganizerItemType::setType(const QString& type)
-   Sets the type of the contact to be the give \a type.
+   Sets the type of the organizer item to be the give \a type.
  */
 
 
 /*!
    \fn QOrganizerItemDisplayLabel::label() const
-   Returns the display label of the contact.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::setAccountUri(const QString& accountUri)
-   
-   Sets the universal resource identifier of the contact's online
-   account to \a accountUri.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::accountUri() const
-
-   Returns the universal resource identifier of the online account of
-   the contact.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::setServiceProvider(const QString& serviceProvider)
-
-   Sets the service provider of the contact's online account to \a
-   serviceProvider.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::serviceProvider() const
-   Returns the service provider of the online account of the contact.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::setSubTypes(const QStringList& subTypes)
-   
-   Sets the subtypes which this detail implements to be those
-   contained in the list of given \a subTypes.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::setSubTypes(const QString& subType)
-   Sets the subtypes which this detail implements to be just the given \a subType.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::subTypes() const
-   Returns the list of subtypes that this detail implements.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::setNickname(const QString& nickname)
-   
-   Sets the last-known nickname used by the contact during
-   communications via the online account about which this detail
-   stores presence information to \a nickname.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::nickname() const
-   
-   Returns the last-known nickname used by the contact during
-   communications via the online account.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::setPresence(const QString& presence)
-   
-   Sets the presence of the online account according to the presence
-   information provider to \a presence.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::presence() const
-   
-   Returns the presence of the online account according to the
-   presence provider.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::setStatusMessage(const QString& statusMessage)
-
-   Sets the last-known status message of the contact which was
-   communicated via the online account about which this detail stores
-   presence information to \a statusMessage.
- */
-
-/*!
-   \fn QOrganizerItemOnlineAccount::statusMessage() const
-   
-   Returns the last-known status message of the contact which was
-   communicated via the online account about which this detail stores
-   presence information.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::setName(const QString& name)
-   Sets the name of the organization stored in this detail to \a name.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::name() const
-   Returns the name of the organization stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::setLogo(const QString& logo)
-   Sets the logo of the organization stored in this detail to \a logo.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::logo() const
-   Returns the logo of the organization stored in this detail.
+   Returns the display label of the organizer item.
  */
 
 
-/*!
-   \fn QOrganizerItemOrganization::setDepartment(const QStringList& department)
-   
-   Sets the contact's department of the organization stored in this
-   detail to \a department.  The department is a list of progressively
-   finer-grained information.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::department() const
-   Returns the contact's department stored in this detail.
- */
-
-
-/*!
-   \fn QOrganizerItemOrganization::setLocation(const QString& location)
-   
-   Sets the location (e.g. city or suburb) of the organization stored
-   in this detail to \a location.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::location() const
-   Returns the location of the organization stored in this detail.
- */
-
-
-/*!
-   \fn QOrganizerItemOrganization::setRole(const QString& role)
-   Sets the contact's role within the organization stored in this detail to \a role.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::role() const
-   Returns the contact's role within the organization stored in this detail.
- */
-
-
-/*!
-   \fn QOrganizerItemOrganization::setTitle(const QString& title)
-   Sets the contact's title within the organization stored in this detail to \a title.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::title() const
-   Returns the contact's title within the organization stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::setAssistantName(const QString& assistantName)
-   
-   Sets the name of the default assistant of contacts belonging to
-   this organization to \a assistantName.
- */
-
-/*!
-   \fn QOrganizerItemOrganization::assistantName() const
-
-   Returns the name of the default assistant of contacts belonging to
-   this organization.
- */
 
 QTM_END_NAMESPACE

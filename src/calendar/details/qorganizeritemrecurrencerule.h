@@ -65,6 +65,7 @@ public:
 #endif
 
     // XXX TODO: requirements, figure out what functions / data..
+    // frequency, start + end date (or count), workday, workweek, ..?
 };
 
 QTM_END_NAMESPACE
