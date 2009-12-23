@@ -82,7 +82,7 @@ TInt PathMapper::RPathMapperServerSession::Connect()
     if (err == KErrNone)
     {
         qDebug() << "CreateSession(KPSPathMapperServerName, Version());";
-        err = CreateSession(KPSPathMapperServerName, Version()); //Default message slots
+        err = CreateSession(KPSPathMapperServerName, Version(), 8, EIpcSession_Sharable);
     }
     qDebug() << "err" << err;
     return err;

@@ -46,7 +46,7 @@
 QTM_BEGIN_NAMESPACE
 
 CPSPathMapperServer::CPSPathMapperServer()
-    : CServer2(EPriorityNormal)
+    : CServer2(EPriorityNormal, ESharableSessions)
 {
     qDebug("CPSPathMapperServer::CPSPathMapperServer()");
 }
