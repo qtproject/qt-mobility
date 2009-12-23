@@ -77,6 +77,10 @@ QVariant S60MediaMetaDataProvider::metaData(QtMedia::MetaData key) const
 
 void S60MediaMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const &value)
 {
+//    TODO:Metadata writing using sessions
+//    m_session = m_mediaPlayerResolver.PlayerSession();
+//    if (m_session)
+//        return m_session->setMetaData(key, value);
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
@@ -101,6 +105,10 @@ QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
 
 void S60MediaMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
 {
+    //    TODO:Metadata writing using sessions
+    //    m_session = m_mediaPlayerResolver.PlayerSession();
+    //    if (m_session)
+    //        return m_session->setExtendedMetaData(key, value);
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
