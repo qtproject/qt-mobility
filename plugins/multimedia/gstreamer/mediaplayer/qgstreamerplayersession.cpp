@@ -279,7 +279,7 @@ void QGstreamerPlayerSession::stop()
 
 void QGstreamerPlayerSession::seek(qint64 ms)
 {
-    if (m_playbin) {
+    if (m_playbin && m_state != QMediaPlayer::StoppedState) {
         gint64  position = (gint64)ms * 1000000;
         gst_element_seek_simple(m_playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH, position);
     }
