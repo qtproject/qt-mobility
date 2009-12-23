@@ -241,6 +241,7 @@ bool QT7MovieVideoWidget::createVisualContext()
 QT7MovieVideoWidget::~QT7MovieVideoWidget()
 {
     m_displayLink->stop();
+    [(QTMovie*)m_movie release];
     delete m_videoWidget;
 }
 
@@ -278,7 +279,17 @@ void QT7MovieVideoWidget::setEnabled(bool)
 
 void QT7MovieVideoWidget::setMovie(void *movie)
 {
+    if (m_movie == movie)
+        return;
+
+    if (m_movie) {
+        SetMovieVisualContext([(QTMovie*)m_movie quickTimeMovie], nil);
+        [(QTMovie*)m_movie release];
+    }
+
     m_movie = movie;
+    [(QTMovie*)m_movie retain];
+
     setupVideoOutput();
 }
 
