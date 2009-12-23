@@ -12,6 +12,10 @@ QTM_USE_NAMESPACE
 
 const QString imageAndAudioClipPath(QString::fromAscii("tmp_ut_qversit"));
 
+#ifndef TESTDATA_DIR
+#define TESTDATA_DIR "./"
+#endif
+
 void UT_QVersit::initTestCase()
 {
     // Create the directory to store the image
@@ -50,11 +54,15 @@ void UT_QVersit::cleanup()
 void UT_QVersit::testImportFiles()
 {
     QFETCH(QString, filename);
+    QFETCH(QByteArray, charset);
 
     QVersitReader reader;
     QFile file(filename);
     QVERIFY2(file.open(QIODevice::ReadOnly), filename.toAscii());
     reader.setDevice(&file);
+    if (charset != "") {
+        reader.setDefaultCharset(charset);
+    }
     QVERIFY2(reader.readAll(), filename.toAscii());
     QList<QVersitDocument> result = reader.result();
     foreach (QVersitDocument doc, result) {
@@ -65,32 +73,30 @@ void UT_QVersit::testImportFiles()
     }
 }
 
+#define QTEST_NEW_ROW(filename,charset) \
+        QTest::newRow(filename) \
+        << QString::fromAscii(TESTDATA_DIR "testdata/") + QString::fromAscii(filename) \
+        << QByteArray(charset);
+
 void UT_QVersit::testImportFiles_data()
 {
-    QString testdir(QString::fromAscii(TESTDATA_DIR "testdata/"));
     QTest::addColumn<QString>("filename");
+    QTest::addColumn<QByteArray>("charset");
 
-    QStringList filenames;
-
-    // Commented out expected fails because they take a long time to run.
-    filenames
-//            << QString::fromAscii("AAB4/MultipleAll.vcf")
-            << QString::fromAscii("AAB4/MultipleAscii.vcf")
-            << QString::fromAscii("AAB4/SingleCompany.vcf")
-            << QString::fromAscii("AAB4/SingleExtensive.vcf")
-//            << QString::fromAscii("AAB4/SingleNonAscii.vcf")
-            << QString::fromAscii("AAB5/SingleNonAscii.vcf")
-//            << QString::fromAscii("Entourage11/basic.vcf")
-//            << QString::fromAscii("Entourage11/image.vcf")
-//            << QString::fromAscii("Entourage11/nonascii.vcf")
-            << QString::fromAscii("Entourage12/basic.vcf")
-            << QString::fromAscii("Entourage12/kevin.vcf")
-            << QString::fromAscii("Entourage12/nonascii.vcf")
-            << QString::fromAscii("gmail.vcf")
-            ;
-    foreach (QString filename, filenames) {
-        QTest::newRow(filename.toAscii()) << testdir+filename;
-    }
+    // Failing test cases commented out because they take a long time to run.
+//    QTEST_NEW_ROW("AAB4/MultipleAll.vcf", "UTF-16");
+    QTEST_NEW_ROW("AAB4/MultipleAscii.vcf", "");
+    QTEST_NEW_ROW("AAB4/SingleCompany.vcf", "");
+    QTEST_NEW_ROW("AAB4/SingleExtensive.vcf", "");
+//    QTEST_NEW_ROW("AAB4/SingleNonAscii.vcf", "UTF-16");
+    QTEST_NEW_ROW("AAB5/SingleNonAscii.vcf", "");
+//    QTEST_NEW_ROW("Entourage11/basic.vcf", "UTF-16");
+//    QTEST_NEW_ROW("Entourage11/image.vcf", "UTF-16");
+//    QTEST_NEW_ROW("Entourage11/nonascii.vcf", "UTF-16");
+    QTEST_NEW_ROW("Entourage12/basic.vcf", "");
+    QTEST_NEW_ROW("Entourage12/kevin.vcf", "");
+    QTEST_NEW_ROW("Entourage12/nonascii.vcf", "");
+    QTEST_NEW_ROW("gmail.vcf", "");
 }
 
 QTEST_MAIN(UT_QVersit)
