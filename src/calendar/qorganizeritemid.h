@@ -45,7 +45,7 @@
 #include <QString>
 #include <QSharedDataPointer>
 
-#include "qtcontactsglobal.h"
+#include "qtcalendarglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
