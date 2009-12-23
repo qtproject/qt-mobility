@@ -160,6 +160,7 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
             m_avatarBtn->setIcon(QIcon(QPixmap(av.avatar())));
         }
     } else {
+        m_newAvatarPath = av.avatar();
         m_avatarBtn->setIcon(QIcon(av.pixmap()));
     }
 }
