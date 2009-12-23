@@ -55,17 +55,17 @@
         }
 
         foreach(QString s, m_toEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-            toList.append(QMessageAddress(s,addressType));
+            toList.append(QMessageAddress(addressType, s));
         message.setTo(toList);
 
         if(!composingSms)
         {
             foreach(QString s, m_ccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-                ccList.append(QMessageAddress(s,QMessageAddress::Email));
+                ccList.append(QMessageAddress(QMessageAddress::Email, s));
             message.setCc(ccList);
 
             foreach(QString s, m_bccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-                bccList.append(QMessageAddress(s,QMessageAddress::Email));
+                bccList.append(QMessageAddress(QMessageAddress::Email, s));
             message.setBcc(bccList);
             message.setSubject(m_subjectEdit-&gt;text());
 
@@ -86,7 +86,7 @@
 
         return message;
     }</pre>
-<p>The message is then passed to the QMessageServiceAction::compose or QMessageServiceAction::send service actions to initiate sending of the message by the platform, or trigger display by the platforms' message composer with the <a href="qmessage.html">QMessage</a> contents:</p>
+<p>The message is then passed to the <a href="qmessageservice.html#compose">QMessageService::compose</a>() or <a href="qmessageservice.html#send">QMessageService::send</a>() service actions to initiate sending of the message by the platform, or trigger display by the platforms' message composer with the <a href="qmessage.html">QMessage</a> contents:</p>
 <pre>    void ComposeSendWidget::composeButtonClicked()
     {
         QMessage message(constructQMessage());
@@ -102,17 +102,17 @@
 <a name="show"></a>
 <h2>Show</h2>
 <p>Messages are displayed by a show widget under the &quot;Show&quot; menu. This widget displays the users last 50 messages. (Ensure the platform has one or more messages in its mail accounts).</p>
-<p>The last 50 messages (incoming/outgoing) are queried from the store using the QMessageServiceAction::queryMessages service action:</p>
+<p>The last 50 messages (incoming/outgoing) are queried from the store using the <a href="qmessageservice.html#queryMessages">QMessageService::queryMessages</a>() service request:</p>
 <pre>    void RecentMessagesWidget::load()
     {
         m_ids.clear();
 
-        if(!m_service-&gt;queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
+        if(!m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
             m_state = LoadFailed;
         else
             m_state = Loading;
     }</pre>
-<p>Once the results of the query are returned via the QMessageServiceAction::messagesFound signal, the widget loads each of the returned messages in turn and populates it's list with message subjects.</p>
+<p>Once the results of the query are returned via the <a href="qmessageservice.html#messagesFound">QMessageService::messagesFound</a>() signal, the widget loads each of the returned messages in turn and populates it's list with message subjects.</p>
 <pre>    void RecentMessagesWidget::messagesFound(const QMessageIdList&amp; ids)
     {
         m_ids.append(ids);
@@ -141,7 +141,7 @@
             updateState();
         }
     }</pre>
-<p>Selecting &quot;Show&quot; from the action menu will display the selected message using the platforms' message viewer via the QMessageServiceAction::show service action.</p>
+<p>Selecting &quot;Show&quot; from the action menu will display the selected message using the platforms' message viewer via the <a href="qmessageservice.html#show">QMessageService::show</a>() service action.</p>
 <pre>    void ShowWidget::showButtonClicked()
     {
 
@@ -200,7 +200,7 @@
                                      .arg(bodyText));
         }
     }</pre>
-<p>When the download link is clicked, the message body is retrieved using the QMessageServiceAction::retrieveBody service action.</p>
+<p>When the download link is clicked, the message body is retrieved using the <a href="qmessageservice.html#retrieveBody">QMessageService::retrieveBody</a>() service action.</p>
 <pre>    bool MessageViewWidget::retrieveBody()
     {
         if(m_state != Loading &amp;&amp; !m_loadTimer.isActive())
@@ -216,8 +216,8 @@
     }</pre>
 <a name="store-signals"></a>
 <h2>Store Signals</h2>
-<p>This example displays the activities of the <a href="qmessagestore.html">QMessageStore</a> in a <a href="http://qt.nokia.com/doc/4.5/qlistwidget.html">QListWidget</a> by connecting to QMessageStore::message(Added/Updated/Removed) signals.</p>
-<pre>    void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filterSet)
+<p>This example displays the activities of the <a href="qmessagemanager.html">QMessageManager</a> in a <a href="http://qt.nokia.com/doc/4.5/qlistwidget.html">QListWidget</a> by connecting to QMessageManager::message(Added/Updated/Removed) signals.</p>
+<pre>    void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(!filterSet.contains(m_notificationFilterId))
             return;
@@ -228,7 +228,7 @@
         m_activityListWidget-&gt;addItem(msg);
     }
 
-    void StoreSignalsWidget::messageUpdated(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filterSet)
+    void StoreSignalsWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(!filterSet.contains(m_notificationFilterId))
             return;
@@ -239,7 +239,7 @@
         m_activityListWidget-&gt;addItem(msg);
     }
 
-    void StoreSignalsWidget::messageRemoved(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filterSet)
+    void StoreSignalsWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(!filterSet.contains(m_notificationFilterId))
             return;

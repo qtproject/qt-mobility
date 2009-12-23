@@ -61,14 +61,16 @@
     #include &lt;qcontactmanager.h&gt;
     #include &lt;qcontactphonenumber.h&gt;
     #include &lt;qmessage.h&gt;
-    #include &lt;qmessageserviceaction.h&gt;
+    #include &lt;qmessageservice.h&gt;
 
+    #include &lt;QCheckBox&gt;
     #include &lt;QComboBox&gt;
     #include &lt;QDateTime&gt;
     #include &lt;QGroupBox&gt;
     #include &lt;QLabel&gt;
     #include &lt;QLayout&gt;
     #include &lt;QListWidget&gt;
+    #include &lt;QMessageBox&gt;
     #include &lt;QPushButton&gt;
     #include &lt;QTimer&gt;
     #include &lt;QDebug&gt;
@@ -129,6 +131,7 @@
           tabWidget(0),
           includePeriod(0),
           excludePeriod(0),
+          excludeCheckBox(0),
           searchAction(0),
           searchButton(0),
           contactList(0),
@@ -136,8 +139,8 @@
      {
         setupUi();
 
-        connect(&amp;serviceAction, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
-        connect(&amp;serviceAction, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
+        connect(&amp;service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
+        connect(&amp;service, SIGNAL(messagesFound(QMessageIdList)), this, SLOT(messagesFound(QMessageIdList)));
     }
 
     AddressFinder::~AddressFinder()
@@ -159,6 +162,11 @@
         }
 
         excludePeriod-&gt;setCurrentIndex(0);
+    }
+
+    void AddressFinder::excludePeriodEnabled(int state)
+    {
+        excludePeriod-&gt;setEnabled(state == Qt::Checked);
     }
 
     void AddressFinder::addressSelected(const QString &amp;address)
@@ -183,8 +191,11 @@
         excludedAddresses.clear();
         addressList.clear();
         addressMessages.clear();
+        inclusionMessages.clear();
+        exclusionMessages.clear();
 
         QDateTime now(QDateTime::currentDateTime());
+        bool useExclusionPeriod(excludeCheckBox-&gt;isChecked());
 
         <span class="comment">// Determine the dates that demarcate the selected range</span>
         QDateTime minimumDate(now);
@@ -199,20 +210,26 @@
         }
 
         QDateTime maximumDate(now);
-        switch (excludePeriod-&gt;currentIndex()) {
-            case 0: maximumDate = maximumDate.addDays(-7); break;
-            case 1: maximumDate = maximumDate.addMonths(-1); break;
-            case 2: maximumDate = maximumDate.addMonths(-3); break;
-            case 3: maximumDate = maximumDate.addMonths(-6); break;
-            case 4: maximumDate = maximumDate.addMonths(-9); break;
-            default: break;
+        if (useExclusionPeriod) {
+            <span class="comment">// We have an exclusion period to apply</span>
+            switch (excludePeriod-&gt;currentIndex()) {
+                case 0: maximumDate = maximumDate.addDays(-7); break;
+                case 1: maximumDate = maximumDate.addMonths(-1); break;
+                case 2: maximumDate = maximumDate.addMonths(-3); break;
+                case 3: maximumDate = maximumDate.addMonths(-6); break;
+                case 4: maximumDate = maximumDate.addMonths(-9); break;
+                default: break;
+            }
         }
 
         <span class="comment">// We will include addresses contacted following the minimum date</span>
         QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
 
-        <span class="comment">// We will exclude addresses contacted following the maximum date</span>
-        QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));
+        QMessageFilter excludeFilter;
+        if (useExclusionPeriod) {
+            <span class="comment">// We will exclude addresses contacted following the maximum date</span>
+            excludeFilter = QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
+        }
 
         <span class="comment">// Not sure why reception timestamp is relevant to sent messages...</span>
         includeFilter |= QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual);
@@ -223,40 +240,53 @@
         <span class="comment">// We only want to match messages that we sent</span>
         QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
-        <span class="comment">// Create the filter needed to locate messages whose address we will exclude</span>
-        exclusionFilter = (sentFilter &amp; excludeFilter);
-
         <span class="comment">// Create the filter needed to locate messages to search for addresses to include</span>
         inclusionFilter = (sentFilter &amp; includeFilter &amp; ~excludeFilter);
 
-        <span class="comment">// Start the search for messages containing addresses to exclude</span>
-        serviceAction.queryMessages(exclusionFilter);
+        if (useExclusionPeriod) {
+            <span class="comment">// Create the filter needed to locate messages whose address we will exclude</span>
+            exclusionFilter = (sentFilter &amp; excludeFilter);
+        }
+
+        if (useExclusionPeriod) {
+            <span class="comment">// Start the search for messages containing addresses to exclude</span>
+            service.queryMessages(exclusionFilter);
+        } else {
+            <span class="comment">// Only search for messages containing addresses to include</span>
+            service.queryMessages(inclusionFilter);
+
+            <span class="comment">// Clear the inclusion filter to indicate that we have searched for it</span>
+            inclusionFilter = QMessageFilter();
+        }
     }
 
-    void AddressFinder::stateChanged(QMessageServiceAction::State s)
+    void AddressFinder::stateChanged(QMessageService::State newState)
     {
-        if (s == QMessageServiceAction::Successful) {
-            if (!inclusionFilter.isEmpty()) {
-                <span class="comment">// Now find the included messages</span>
-                serviceAction.queryMessages(inclusionFilter);
+        if (newState == QMessageService::FinishedState) {
+            if (service.error() == QMessageManager::NoError) {
+                if (!inclusionFilter.isEmpty()) {
+                    <span class="comment">// Now find the included messages</span>
+                    service.queryMessages(inclusionFilter);
 
-                <span class="comment">// Clear the inclusion filter to indicate that we have searched for it</span>
-                inclusionFilter = QMessageFilter();
-            } else {
-                <span class="comment">// We have found the exclusion and inclusion message sets</span>
-                if (!inclusionMessages.isEmpty()) {
-                    <span class="comment">// Begin processing the message sets</span>
-                    QTimer::singleShot(0, this, SLOT(continueSearch()));
+                    <span class="comment">// Clear the inclusion filter to indicate that we have searched for it</span>
+                    inclusionFilter = QMessageFilter();
                 } else {
-                    searchAction-&gt;setEnabled(true);
+                    <span class="comment">// We have found the exclusion and inclusion message sets</span>
+                    if (!inclusionMessages.isEmpty()) {
+                        <span class="comment">// Begin processing the message sets</span>
+                        QTimer::singleShot(0, this, SLOT(continueSearch()));
+                    } else {
+                        QMessageBox::information(0, tr(&quot;Empty&quot;), tr(&quot;No messages found&quot;));
+                        searchAction-&gt;setEnabled(true);
     #ifdef USE_SEARCH_BUTTON
-                    searchButton-&gt;setEnabled(true);
+                        searchButton-&gt;setEnabled(true);
     #endif
+                    }
                 }
+            } else {
+                QMessageBox::warning(0, tr(&quot;Failed&quot;), tr(&quot;Unable to perform search&quot;));
+                setSearchActionEnabled(true);
             }
-        } else if (s == QMessageServiceAction::Failed) {
-            qWarning() &lt;&lt; &quot;Search failed!&quot;;
-            setSearchActionEnabled(true);
         }
     }
 
@@ -370,9 +400,11 @@
         filterLayout-&gt;addWidget(includeLabel, 0, 0);
         filterLayout-&gt;setAlignment(includeLabel, Qt::AlignRight);
 
-        QLabel *excludeLabel = new QLabel(tr(&quot;But not last&quot;));
-        filterLayout-&gt;addWidget(excludeLabel, 1, 0);
-        filterLayout-&gt;setAlignment(excludeLabel, Qt::AlignRight);
+        excludeCheckBox = new QCheckBox(tr(&quot;But not last&quot;));
+        excludeCheckBox-&gt;setCheckState(Qt::Checked);
+        connect(excludeCheckBox, SIGNAL(stateChanged(int)), this, SLOT(excludePeriodEnabled(int)));
+        filterLayout-&gt;addWidget(excludeCheckBox, 1, 0);
+        filterLayout-&gt;setAlignment(excludeCheckBox, Qt::AlignRight);
 
         includePeriod = new QComboBox;
         includePeriod-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -476,7 +508,7 @@
 
             <span class="comment">// Show the message selected</span>
             QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);
-            serviceAction.show(messageId);
+            service.show(messageId);
         }
     }
 
@@ -494,7 +526,7 @@
             <span class="comment">// Create a message which forwards the selected message to the same recipient</span>
             QMessage fwd(original.createResponseMessage(QMessage::Forward));
             fwd.setTo(original.to());
-            serviceAction.compose(fwd);
+            service.compose(fwd);
         }
     }</pre>
 <p /><address><hr /><div align="center">

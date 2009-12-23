@@ -265,9 +265,9 @@ mobility libraries into $PWD/install.
     make release-gcce
 \endcode
 
-    (Aside: \c {make install} has no meaning for building
-    on symbian)
-    The libraries will be deployed into the SDK and will
+    Note: \c {make install} has no meaning for building
+    on Symbian.
+    The libraries will be deployed into the SDK (when running make) and will
     be ready to use for compiling applications for the
     emulator and/or device.
 
