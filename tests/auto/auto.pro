@@ -7,7 +7,7 @@ contains(mobility_modules,serviceframework) {
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
-#           qservicemanager \  #remove until qhash namespace issue resolved
+           qservicemanager \
            qabstractsecuritysession \
            qservicecontext
 
