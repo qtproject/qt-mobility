@@ -315,6 +315,10 @@ public:
         }
 
         QNetworkSession *session1 = new QNetworkSession(cfg1);
+
+        connect(session1, SIGNAL(error(QNetworkSession::SessionError)),
+                this, SLOT(displaySessionError(QNetworkSession::SessionError)));
+
         session1->open();
         if (!session1->waitForOpened()) {
             m_networkSetupError = QString(tr("Unable to open network session."));
@@ -339,6 +343,9 @@ public:
                 session2 = new QNetworkSession(cfg2);
             }
         }
+
+        connect(session2, SIGNAL(error(QNetworkSession::SessionError)),
+                this, SLOT(displaySessionError(QNetworkSession::SessionError)));
 
         session2->open();
         if (!session2->waitForOpened()) {
@@ -406,6 +413,35 @@ private slots:
     void positionUpdated(const QGeoPositionInfo &pos)
     {
         setCenter(pos.coordinate().latitude(), pos.coordinate().longitude());
+    }
+    
+    void displaySessionError(QNetworkSession::SessionError error)
+    {
+        switch(error) {
+            case QNetworkSession::UnknownSessionError:
+                QMessageBox::information(this, tr("LightMaps"), 
+                    tr("UnknownSessionError"));
+                break;
+            case QNetworkSession::SessionAbortedError:
+                QMessageBox::information(this, tr("LightMaps"), 
+                    tr("SessionAbortedError"));
+                break;
+            case QNetworkSession::RoamingError:
+                QMessageBox::information(this, tr("LightMaps"), 
+                    tr("RoamingError"));
+                break;
+            case QNetworkSession::OperationNotSupportedError:
+                QMessageBox::information(this, tr("LightMaps"), 
+                    tr("OperationNotSupportedError"));
+                break;
+            case QNetworkSession::InvalidConfigurationError:
+                QMessageBox::information(this, tr("LightMaps"), 
+                    tr("InvalidConfigurationError"));
+                break;
+            default:
+                QMessageBox::information(this, tr("LightMaps"), 
+                    tr("Unknown Error"));
+        }
     }
 
     void delayedInit() 
