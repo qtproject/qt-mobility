@@ -52,18 +52,13 @@ class QMediaPlayerControl;
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 class QT7PlayerControl;
+class QT7PlayerMetaDataControl;
 class QT7VideoOutputControl;
 class QT7VideoWindowControl;
 class QT7VideoWidgetControl;
 class QT7VideoRendererControl;
 class QT7VideoOutput;
-QTM_END_NAMESPACE
-
-class QT7MetaData;
 class QT7PlayerSession;
-class QT7MetaDataProvider;
-
-QTM_USE_NAMESPACE
 
 class QT7PlayerService : public QMediaService
 {
@@ -84,6 +79,11 @@ private:
     QT7VideoWindowControl *m_videoWidnowControl;
     QT7VideoWidgetControl *m_videoWidgetControl;
     QT7VideoRendererControl *m_videoRendererControl;
+    QT7PlayerMetaDataControl *m_playerMetaDataControl;
 };
+
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 #endif

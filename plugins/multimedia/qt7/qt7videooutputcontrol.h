@@ -52,13 +52,14 @@
 
 #include <QtGui/qmacdefines_mac.h>
 
-class QT7PlayerSession;
-class QT7PlayerService;
 
 QTM_BEGIN_NAMESPACE
 
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
+class QT7PlayerSession;
+class QT7PlayerService;
+
 
 class QT7VideoOutput {
 public:

@@ -60,6 +60,8 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+QTM_USE_NAMESPACE
+
 class NSBitmapVideoBuffer : public QAbstractVideoBuffer
 {
 public:

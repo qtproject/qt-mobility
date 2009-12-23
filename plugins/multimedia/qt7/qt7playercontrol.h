@@ -49,17 +49,17 @@
 
 #include <QtGui/qmacdefines_mac.h>
 
-class QT7PlayerSession;
-class QT7PlayerService;
 
 QTM_BEGIN_NAMESPACE
 
+class QT7PlayerSession;
+class QT7PlayerService;
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 
 class QT7PlayerControl : public QMediaPlayerControl
 {
-    friend class ::QT7PlayerSession;
+    friend class QT7PlayerSession;
 Q_OBJECT
 public:
     QT7PlayerControl(QObject *parent = 0);

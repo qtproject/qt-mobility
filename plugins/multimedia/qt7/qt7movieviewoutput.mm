@@ -54,6 +54,8 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+QTM_USE_NAMESPACE
+
 #define VIDEO_TRANSPARENT(m) -(void)m:(NSEvent *)e{[[self superview] m:e];}
 
 @interface TransparentQTMovieView : QTMovieView

@@ -55,6 +55,8 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
+QTM_USE_NAMESPACE
+
 @interface QTMovieObserver : NSObject
 {
 @private
@@ -80,6 +82,9 @@
 
 - (void) setMovie:(QTMovie *)movie
 {
+    if (m_movie == movie)
+        return;
+
     if (m_movie) {
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         [m_movie release];
@@ -313,12 +318,12 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     AutoReleasePool pool;
 
     if (m_QTMovie) {
+        [(QTMovieObserver*)m_movieObserver setMovie:nil];
+
         if (m_videoOutput) {
             m_videoOutput->setEnabled(false);
             m_videoOutput->setMovie(0);
         }
-
-        [(QTMovieObserver*)m_movieObserver setMovie:nil];
 
         [(QTMovie*)m_QTMovie release];
         m_QTMovie = 0;
@@ -362,12 +367,12 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
         qDebug() << "QT7PlayerSession::setMedia error";
         //setError(err);
     } else {
+        [(QTMovieObserver*)m_movieObserver setMovie:(QTMovie*)m_QTMovie];
+
         if (m_videoOutput) {
             m_videoOutput->setEnabled(true);
             m_videoOutput->setMovie(m_QTMovie);
         }
-
-        [(QTMovieObserver*)m_movieObserver setMovie:(QTMovie*)m_QTMovie];
 
         emit m_control->durationChanged(duration());
         emit m_control->videoAvailableChanged(isVideoAvailable());
@@ -386,8 +391,11 @@ bool QT7PlayerSession::isVideoAvailable() const
     return [[(QTMovie*)m_QTMovie attributeForKey:@"QTMovieHasVideoAttribute"] boolValue] == YES;
 }
 
+#include <QThread>
+#include <QApplication>
+
 void QT7PlayerSession::processEOS()
-{
+{    
     m_mediaStatus = QMediaPlayer::EndOfMedia;
     emit stateChanged(m_state = QMediaPlayer::StoppedState);
     emit mediaStatusChanged(m_mediaStatus);

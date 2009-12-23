@@ -52,10 +52,12 @@
 #include "qt7movieviewrenderer.h"
 #include "qt7movierenderer.h"
 #include "qt7movievideowidget.h"
+#include "qt7playermetadata.h"
 
 #include <qmediaplaylistnavigator.h>
 #include <qmediaplaylist.h>
 
+QTM_USE_NAMESPACE
 
 QT7PlayerService::QT7PlayerService(QObject *parent):
     QMediaService(parent)
@@ -64,6 +66,9 @@ QT7PlayerService::QT7PlayerService(QObject *parent):
 
     m_control = new QT7PlayerControl(this);
     m_control->setSession(m_session);
+
+    m_playerMetaDataControl = new QT7PlayerMetaDataControl(m_session, this);
+    connect(m_control, SIGNAL(mediaChanged(QMediaContent)), m_playerMetaDataControl, SLOT(updateTags()));
 
     m_videoOutputControl = new QT7VideoOutputControl(this);
 
@@ -115,6 +120,9 @@ QMediaControl *QT7PlayerService::control(const char *name) const
 
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
         return m_videoWidgetControl;
+
+    if (qstrcmp(name, QMetaDataControl_iid) == 0)
+        return m_playerMetaDataControl;
 
     return 0;
 }

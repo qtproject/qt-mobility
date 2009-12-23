@@ -38,6 +38,7 @@ HEADERS += \
     qt7playerservice.h \
     qt7serviceplugin.h \    
     qt7movierenderer.h \
+    qt7playermetadata.h \
     qcvdisplaylink.h
 
 SOURCES += \
@@ -53,6 +54,7 @@ OBJECTIVE_SOURCES += \
     qt7movieviewoutput.mm \
     qt7movievideowidget.mm \
     qt7movieviewrenderer.mm \
+    qt7playermetadata.mm \
     qt7movierenderer.mm \
 
 

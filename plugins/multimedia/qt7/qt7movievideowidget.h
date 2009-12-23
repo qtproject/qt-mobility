@@ -54,13 +54,13 @@
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>
 
-class QT7PlayerSession;
-class QT7PlayerService;
 class GLVideoWidget;
 
 QTM_BEGIN_NAMESPACE
 
 class QCvDisplayLink;
+class QT7PlayerSession;
+class QT7PlayerService;
 
 class QT7MovieVideoWidget : public QT7VideoWidgetControl
 {

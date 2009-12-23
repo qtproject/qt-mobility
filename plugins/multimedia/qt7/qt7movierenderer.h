@@ -42,6 +42,8 @@
 #ifndef QT7MOVIERENDERER_H
 #define QT7MOVIERENDERER_H
 
+#include "qt7backend.h"
+
 #include <QtCore/qobject.h>
 #include <QtCore/qmutex.h>
 
@@ -54,12 +56,13 @@
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>
 
-class QT7PlayerSession;
-class QT7PlayerService;
+class QGLContext;
 
 QTM_BEGIN_NAMESPACE
 
 class QCvDisplayLink;
+class QT7PlayerSession;
+class QT7PlayerService;
 
 class QT7MovieRenderer : public QT7VideoRendererControl
 {
@@ -91,6 +94,8 @@ private:
     QCvDisplayLink *m_displayLink;
 #ifdef QUICKTIME_C_API_AVAILABLE
     QTVisualContextRef	m_visualContext;
+    bool m_usingGLContext;
+    const QGLContext *m_currentGLContext;
 #endif
     QAbstractVideoSurface *m_surface;
     QSize m_nativeSize;

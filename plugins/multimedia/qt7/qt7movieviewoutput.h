@@ -51,11 +51,10 @@
 #include "qt7videooutputcontrol.h"
 
 
+QTM_BEGIN_NAMESPACE
+
 class QT7PlayerSession;
 class QT7PlayerService;
-
-
-QTM_BEGIN_NAMESPACE
 
 class QT7MovieViewOutput : public QT7VideoWindowControl
 {

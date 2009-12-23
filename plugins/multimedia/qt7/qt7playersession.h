@@ -54,12 +54,11 @@ class QT7PlayerControl;
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 class QT7VideoOutput;
-QTM_END_NAMESPACE
-
 class QT7PlayerSession;
 class QT7PlayerService;
+QTM_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QT7PlayerSession
 {
@@ -69,7 +68,7 @@ public:
 
     void *movie() const;
 
-    void setControl(QT_PREPEND_NAMESPACE(QT7PlayerControl) *control);
+    void setControl(QT7PlayerControl *control);
     void setVideoOutput(QT7VideoOutput *output);
 
     QMediaPlayer::State state() const;
@@ -122,7 +121,7 @@ private:
     QIODevice *m_mediaStream;
     QMediaContent m_resources;
 
-    QT_PREPEND_NAMESPACE(QT7PlayerControl) *m_control;
+    QT7PlayerControl *m_control;
     QT7VideoOutput *m_videoOutput;
 
     mutable qint64 m_currentTime;
@@ -131,5 +130,7 @@ private:
     int m_volume;
     qreal m_rate;
 };
+
+QTM_END_NAMESPACE
 
 #endif

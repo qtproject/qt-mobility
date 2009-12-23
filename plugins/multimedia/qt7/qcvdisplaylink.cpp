@@ -42,6 +42,7 @@
 #include "qcvdisplaylink.h"
 
 #include <QtCore/qcoreapplication.h>
+#include <QtCore/qdebug.h>
 
 QTM_USE_NAMESPACE
 
@@ -139,7 +140,9 @@ bool QCvDisplayLink::event(QEvent *event)
                 m_pendingDisplayLinkEvent = false;
                 CVTimeStamp ts = m_frameTimeStamp;
                 m_displayLinkMutex.unlock();
+
                 emit tick(ts);
+
                 return false;
             }
             break;

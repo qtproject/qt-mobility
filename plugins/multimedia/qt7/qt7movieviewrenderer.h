@@ -52,12 +52,12 @@
 #include "qt7videooutputcontrol.h"
 #include <QtMultimedia/qvideoframe.h>
 
-
-class QT7PlayerSession;
-class QT7PlayerService;
 class QVideoFrame;
 
 QTM_BEGIN_NAMESPACE
+
+class QT7PlayerSession;
+class QT7PlayerService;
 
 class QT7MovieViewRenderer : public QT7VideoRendererControl
 {

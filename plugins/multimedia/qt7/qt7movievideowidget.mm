@@ -63,6 +63,8 @@
 
 #include "math.h"
 
+QTM_USE_NAMESPACE
+
 class GLVideoWidget : public QGLWidget
 {
 public:

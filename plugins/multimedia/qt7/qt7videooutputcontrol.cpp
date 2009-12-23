@@ -44,6 +44,7 @@
 #include "qt7playersession.h"
 #include <QtCore/qdebug.h>
 
+QTM_USE_NAMESPACE
 
 QT7VideoOutputControl::QT7VideoOutputControl(QObject *parent)
    :QVideoOutputControl(parent), 

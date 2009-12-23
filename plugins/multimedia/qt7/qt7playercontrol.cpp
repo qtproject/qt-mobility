@@ -47,6 +47,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
+QTM_USE_NAMESPACE
 
 QT7PlayerControl::QT7PlayerControl(QObject *parent)
    : QMediaPlayerControl(parent)
@@ -163,6 +164,8 @@ const QIODevice *QT7PlayerControl::mediaStream() const
 void QT7PlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
     m_session->setMedia(content, stream);
+
+    emit mediaChanged(content);
 }
 
 
