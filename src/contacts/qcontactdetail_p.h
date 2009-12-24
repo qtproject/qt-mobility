@@ -88,7 +88,12 @@ public:
     QString m_definitionName;
     QVariantMap m_values; // the value(s) stored in this field.
     QList<QContactActionDescriptor> m_preferredActions;
-    QContactDetail::AccessConstraint m_access;
+    QContactDetail::AccessConstraints m_access;
+
+    static void setAccessConstraints(QContactDetail *d, QContactDetail::AccessConstraints constraint)
+    {
+        d->d->m_access = constraint;
+    }
 };
 
 QTM_END_NAMESPACE

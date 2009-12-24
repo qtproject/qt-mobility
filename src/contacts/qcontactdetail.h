@@ -65,11 +65,12 @@ public:
 
     enum AccessConstraint {
         NoConstraint = 0,
-        ReadOnly = 1,
-        Irremovable = 2
+        ReadOnly = 0x01,
+        Irremovable = 0x02
     };
+    Q_DECLARE_FLAGS(AccessConstraints, AccessConstraint);
 
-    AccessConstraint accessConstraint() const;
+    AccessConstraints accessConstraints() const;
 
     // Predefined attribute names and values
 #ifdef Q_QDOC
@@ -126,8 +127,11 @@ protected:
 
 private:
     friend class QContact;
+    friend class QContactDetailPrivate;
     QSharedDataPointer<QContactDetailPrivate> d;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetail::AccessConstraints);
 
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
     className() : QContactDetail(DefinitionName) {} \

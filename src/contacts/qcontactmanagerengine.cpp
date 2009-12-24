@@ -56,7 +56,7 @@
 #include "qcontactrequests_p.h"
 
 #include "qcontact_p.h"
-
+#include "qcontactdetail_p.h"
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -453,6 +453,7 @@ QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLab
     QContact retn = contact;
     QContactDisplayLabel dl;
     dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
+    setDetailAccessConstraints(&dl, QContactDetail::Irremovable);
     retn.d->m_details.replace(0, dl);
     return retn;
 }
@@ -1170,6 +1171,23 @@ bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName
     Q_UNUSED(contactType);
     error = QContactManager::NotSupportedError;
     return false;
+}
+
+/*!
+ * Sets the access constraints of \a detail to the supplied \a constraints.
+ *
+ * This function is provided to allow engine implementations to report the
+ * access constraints of retrieved details, without generally allowing the
+ * access constraints to be modified after retrieval.
+ *
+ * Application code should not call this function, since validation of the
+ * detail will happen in the engine in any case.
+ */
+void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, QContactDetail::AccessConstraints constraint) const
+{
+    if (detail) {
+        QContactDetailPrivate::setAccessConstraints(detail, constraint);
+    }
 }
 
 /*!

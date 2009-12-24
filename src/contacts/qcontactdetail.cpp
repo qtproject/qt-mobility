@@ -306,14 +306,14 @@ QVariantMap QContactDetail::values() const
 
 
 /*!
- * Returns the access constraint associated with the detail.
+ * Returns the access constraints associated with the detail.
  *
  * Some details may not be written to, while other details may
  * not be removed from a contact.
  *
- * \sa QContactDetail::AccessConstraint
+ * \sa QContactDetail::AccessConstraints
  */
-QContactDetail::AccessConstraint QContactDetail::accessConstraint() const
+QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
 {
     return d.constData()->m_access;
 }

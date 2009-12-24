@@ -158,6 +158,9 @@ public:
     static QList<QContactLocalId> sortContacts(const QList<QContact>& contacts, const QList<QContactSortOrder>& sortOrders);
     static void setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships);
 
+protected:
+    void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints) const;
+
 private:
     /* QContactChangeSet is a utility class used to emit the appropriate signals */
     friend class QContactChangeSet;
