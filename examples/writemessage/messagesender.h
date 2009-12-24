@@ -47,11 +47,13 @@
 #include <QMap>
 #include <QWidget>
 
+QT_BEGIN_NAMESPACE
 class QComboBox;
 class QLineEdit;
 class QListWidget;
 class QPushButton;
 class QTextEdit;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
