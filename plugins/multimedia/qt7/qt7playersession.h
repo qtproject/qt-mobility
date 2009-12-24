@@ -60,10 +60,11 @@ QTM_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-class QT7PlayerSession
+class QT7PlayerSession : public QObject
 {
+Q_OBJECT
 public:
-    QT7PlayerSession();
+    QT7PlayerSession(QObject *parent = 0);
     ~QT7PlayerSession();
 
     void *movie() const;
@@ -104,13 +105,15 @@ public:
 
     void processEOS();
 
-//signals:
+signals:
     void positionChanged(qint64 position);
+    void durationChanged(qint64 duration);
     void stateChanged(QMediaPlayer::State newState);
     void mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void volumeChanged(int volume);
     void mutedChanged(bool muted);
     void videoAvailableChanged(bool videoAvailable);
+    void error(int error, const QString &errorString);
 
 private:
     void *m_QTMovie;
@@ -121,7 +124,6 @@ private:
     QIODevice *m_mediaStream;
     QMediaContent m_resources;
 
-    QT7PlayerControl *m_control;
     QT7VideoOutput *m_videoOutput;
 
     mutable qint64 m_currentTime;

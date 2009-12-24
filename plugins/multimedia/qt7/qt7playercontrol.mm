@@ -61,7 +61,17 @@ QT7PlayerControl::~QT7PlayerControl()
 void QT7PlayerControl::setSession(QT7PlayerSession *session)
 {
     m_session = session;
-    m_session->setControl(this);
+
+    connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(positionChanged(qint64)));
+    connect(m_session, SIGNAL(durationChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
+            this, SIGNAL(stateChanged(QMediaPlayer::State)));
+    connect(m_session, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
+            this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
+    connect(m_session, SIGNAL(volumeChanged(int)), this, SIGNAL(volumeChanged(int)));
+    connect(m_session, SIGNAL(mutedChanged(bool)), this, SIGNAL(mutedChanged(bool)));
+    connect(m_session, SIGNAL(videoAvailableChanged(bool)), this, SIGNAL(videoAvailableChanged(bool)));
+    connect(m_session, SIGNAL(error(int,QString)), this, SIGNAL(error(int,QString)));
 }
 
 qint64 QT7PlayerControl::position() const

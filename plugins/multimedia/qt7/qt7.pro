@@ -41,11 +41,6 @@ HEADERS += \
     qt7playermetadata.h \
     qcvdisplaylink.h
 
-SOURCES += \
-    qt7playercontrol.cpp \
-    qt7videooutputcontrol.cpp \
-    qt7playerservice.cpp \
-    qcvdisplaylink.cpp
 
 OBJECTIVE_SOURCES += \
     qt7backend.mm \
@@ -56,6 +51,10 @@ OBJECTIVE_SOURCES += \
     qt7movieviewrenderer.mm \
     qt7playermetadata.mm \
     qt7movierenderer.mm \
+    qt7playercontrol.mm \
+    qt7videooutputcontrol.mm \
+    qt7playerservice.mm \
+    qcvdisplaylink.mm
 
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice

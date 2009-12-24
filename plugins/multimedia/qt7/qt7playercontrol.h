@@ -59,7 +59,6 @@ class QMediaPlaylistNavigator;
 
 class QT7PlayerControl : public QMediaPlayerControl
 {
-    friend class QT7PlayerSession;
 Q_OBJECT
 public:
     QT7PlayerControl(QObject *parent = 0);

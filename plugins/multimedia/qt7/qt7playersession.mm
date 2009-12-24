@@ -108,18 +108,18 @@ QTM_USE_NAMESPACE
 
 @end
 
-CFStringRef qString2CFStringRef(const QString &string)
+static CFStringRef qString2CFStringRef(const QString &string)
 {
     return CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar *>(string.unicode()),
                                         string.length());
 }
 
-QT7PlayerSession::QT7PlayerSession()
-   : m_QTMovie(0)
+QT7PlayerSession::QT7PlayerSession(QObject *parent)
+   : QObject(parent)
+   , m_QTMovie(0)
    , m_state(QMediaPlayer::StoppedState)
    , m_mediaStatus(QMediaPlayer::NoMedia)
    , m_mediaStream(0)
-   , m_control(0)
    , m_videoOutput(0)
    , m_muted(false)
    , m_volume(100)
@@ -137,11 +137,6 @@ QT7PlayerSession::~QT7PlayerSession()
 void *QT7PlayerSession::movie() const
 {
     return m_QTMovie;
-}
-
-void QT7PlayerSession::setControl(QT_PREPEND_NAMESPACE(QT7PlayerControl) *control)
-{
-    m_control = control;
 }
 
 void QT7PlayerSession::setVideoOutput(QT7VideoOutput *output)
@@ -364,8 +359,10 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     if (err) {
         [(QTMovie*)m_QTMovie release];
         m_QTMovie = 0;
-        qDebug() << "QT7PlayerSession::setMedia error";
-        //setError(err);
+        QString description = QString::fromUtf8([[err localizedDescription] UTF8String]);
+
+        qDebug() << "QT7PlayerSession::setMedia error" << description;
+        emit error(QMediaPlayer::FormatError, description );
     } else {
         [(QTMovieObserver*)m_movieObserver setMovie:(QTMovie*)m_QTMovie];
 
@@ -374,8 +371,8 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
             m_videoOutput->setMovie(m_QTMovie);
         }
 
-        emit m_control->durationChanged(duration());
-        emit m_control->videoAvailableChanged(isVideoAvailable());
+        emit durationChanged(duration());
+        emit videoAvailableChanged(isVideoAvailable());
 
         [(QTMovie*)m_QTMovie setMuted:m_muted];
         setVolume(m_volume);
@@ -391,9 +388,6 @@ bool QT7PlayerSession::isVideoAvailable() const
     return [[(QTMovie*)m_QTMovie attributeForKey:@"QTMovieHasVideoAttribute"] boolValue] == YES;
 }
 
-#include <QThread>
-#include <QApplication>
-
 void QT7PlayerSession::processEOS()
 {    
     m_mediaStatus = QMediaPlayer::EndOfMedia;
@@ -401,32 +395,4 @@ void QT7PlayerSession::processEOS()
     emit mediaStatusChanged(m_mediaStatus);
 }
 
-void QT7PlayerSession::positionChanged(qint64 position)
-{
-    emit m_control->positionChanged(position);
-}
-
-void QT7PlayerSession::stateChanged(QMediaPlayer::State newState)
-{
-    emit m_control->stateChanged(newState);
-}
-
-void QT7PlayerSession::mediaStatusChanged(QMediaPlayer::MediaStatus status)
-{
-    emit m_control->mediaStatusChanged(status);
-}
-
-void QT7PlayerSession::volumeChanged(int volume)
-{
-    emit m_control->volumeChanged(volume);
-}
-
-void QT7PlayerSession::mutedChanged(bool muted)
-{
-    emit m_control->mutedChanged(muted);
-}
-
-void QT7PlayerSession::videoAvailableChanged(bool videoAvailable)
-{
-    emit m_control->videoAvailableChanged(videoAvailable);
-}
+#include "moc_qt7playersession.cpp"
