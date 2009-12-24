@@ -197,7 +197,7 @@ void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition>
 {
     if(definitions.contains(QContactName::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactName::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
         // groups support only custom label
         if(contactType == QContactType::TypeGroup) {

@@ -658,12 +658,12 @@ void tst_QContactManager::add()
 
         // otherwise, create a new detail of the given type and save it to the contact
         QContactDetail det(def.name());
-        QMap<QString, QContactDetailDefinitionField> fieldmap = def.fields();
+        QMap<QString, QContactDetailFieldDefinition> fieldmap = def.fields();
         QStringList fieldKeys = fieldmap.keys();
         foreach (const QString& fieldKey, fieldKeys) {
             // get the field, and check to see that it's not constrained.
-            QContactDetailDefinitionField currentField = fieldmap.value(fieldKey);
-            if (currentField.accessConstraint() == QContactDetailDefinitionField::ReadOnly) {
+            QContactDetailFieldDefinition currentField = fieldmap.value(fieldKey);
+            if (currentField.accessConstraint() == QContactDetailFieldDefinition::ReadOnly) {
                 // we cannot write to this field.
                 continue;
             }
@@ -1136,8 +1136,8 @@ void tst_QContactManager::invalidManager()
     def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     def.setUnique(true);
     def.setName("new field");
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField currField;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition currField;
     currField.setDataType(QVariant::String);
     fields.insert("value", currField);
     def.setFields(fields);
@@ -1541,8 +1541,8 @@ void tst_QContactManager::contactValidation()
      * 4) a unique create only detail
      */
     QContactDetailDefinition uniqueDef;
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField field;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition field;
     field.setDataType(QVariant::String);
     fields.insert("value", field);
 
@@ -1898,8 +1898,8 @@ void tst_QContactManager::detailDefinitions()
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;
-    QContactDetailDefinitionField field;
-    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailFieldDefinition field;
+    QMap<QString, QContactDetailFieldDefinition> fields;
     field.setDataType(cm->supportedDataTypes().value(0));
     fields.insert("New Value", field);
     newDef.setName("New Definition");
@@ -1934,14 +1934,14 @@ void tst_QContactManager::detailDefinitions()
 
     QContactDetailDefinition invalidFieldKeyDef;
     invalidFieldKeyDef.setName("Invalid field key");
-    QMap<QString, QContactDetailDefinitionField> badfields;
+    QMap<QString, QContactDetailFieldDefinition> badfields;
     badfields.insert(QString(), field);
     invalidFieldKeyDef.setFields(badfields);
 
     QContactDetailDefinition invalidFieldTypeDef;
     invalidFieldTypeDef.setName("Invalid field type");
     badfields.clear();
-    QContactDetailDefinitionField badfield;
+    QContactDetailFieldDefinition badfield;
     badfield.setDataType((QVariant::Type) qMetaTypeId<UnsupportedMetatype>());
     badfields.insert("Bad type", badfield);
     invalidFieldTypeDef.setFields(badfields);
@@ -2001,7 +2001,7 @@ void tst_QContactManager::detailDefinitions()
         QVERIFY(def == newDef);
 
         /* Update it */
-        QMap<QString, QContactDetailDefinitionField> newFields = def.fields();
+        QMap<QString, QContactDetailFieldDefinition> newFields = def.fields();
         newFields.insert("Another new value", field);
         newDef.setFields(newFields);
 
@@ -2282,7 +2282,7 @@ void tst_QContactManager::detailOrders()
     //phone numbers
 
     QContactDetailDefinition d = cm->detailDefinition(QContactPhoneNumber::DefinitionName, QContactType::TypeContact);
-    QContactDetailDefinitionField supportedContexts = d.fields().value(QContactDetail::FieldContext);
+    QContactDetailFieldDefinition supportedContexts = d.fields().value(QContactDetail::FieldContext);
     QString contextOther = QContactDetail::ContextOther;
     if (!supportedContexts.allowableValues().contains(contextOther)) {
         contextOther = QString();

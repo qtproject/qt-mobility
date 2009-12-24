@@ -286,10 +286,10 @@ void CntTransformPhoneNumber::detailDefinitions(QMap<QString, QContactDetailDefi
 
     if(definitions.contains(QContactPhoneNumber::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactPhoneNumber::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
         
         // Don't support "ContextOther"
-        QContactDetailDefinitionField f;
+        QContactDetailFieldDefinition f;
         f.setDataType(QVariant::StringList);
         f.setAllowableValues(QVariantList() 
             << QLatin1String(QContactDetail::ContextHome) 

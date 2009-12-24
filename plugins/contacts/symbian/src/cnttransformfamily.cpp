@@ -149,8 +149,8 @@ void CntTransformFamily::detailDefinitions(QMap<QString, QContactDetailDefinitio
     Q_UNUSED(contactType);
 
     // Note: Family is not defined in the default schema
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition f;
     QContactDetailDefinition d;
 
     d.setName(QContactFamily::DefinitionName);

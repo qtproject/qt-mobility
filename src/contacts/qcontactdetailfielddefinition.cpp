@@ -39,25 +39,25 @@
 **
 ****************************************************************************/
 
-#include "qcontactdetaildefinitionfield.h"
-#include "qcontactdetaildefinitionfield_p.h"
+#include "qcontactdetailfielddefinition.h"
+#include "qcontactdetailfielddefinition_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QContactDetailDefinitionField
-  \brief The QContactDetailDefinitionField class provides a field in a QContactDetail.
+  \class QContactDetailFieldDefinition
+  \brief The QContactDetailFieldDefinition class provides a field in a QContactDetail.
  
   Encapsulates information about a particular datum which may be part of a
   QContactDetail, including the type, allowable values and access constraints.
  */
 
 /*!
- * \enum QContactDetailDefinitionField::AccessConstraint
+ * \enum QContactDetailFieldDefinition::AccessConstraint
  *
  * This enum defines the access constraints which may be set on fields of a detail definition in the store for which the definition is valid.
  * The constraint which applies to the definition takes precedence over a constraint which applies to a field of that definition.
- * For example, if a field has the \c QContactDetailDefinitionField::NoConstraint constraint, but the detail definition from which the field came has
+ * For example, if a field has the \c QContactDetailFieldDefinition::NoConstraint constraint, but the detail definition from which the field came has
  * either the \c QContactDetailDefinition::ReadOnly or \c QContactDetailDefinition::CreateOnly constraint, then the field will be a read-only field.
  *
  * \value NoConstraint Fields with this access constraint set have no special access semantics associated with them.  Users can read, write, and otherwise modify such fields in any manner.
@@ -67,22 +67,22 @@ QTM_BEGIN_NAMESPACE
 /*!
  * Constructs a new field with no constraints and an invalid data type.
  */
-QContactDetailDefinitionField::QContactDetailDefinitionField()
-        : d(new QContactDetailDefinitionFieldPrivate)
+QContactDetailFieldDefinition::QContactDetailFieldDefinition()
+        : d(new QContactDetailFieldDefinitionPrivate)
 {
 }
 
 /*!
  * Cleans up the memory in use by the field
  */
-QContactDetailDefinitionField::~QContactDetailDefinitionField()
+QContactDetailFieldDefinition::~QContactDetailFieldDefinition()
 {
 }
 
 /*!
  * Constructs a copy of the \a other field
  */
-QContactDetailDefinitionField::QContactDetailDefinitionField(const QContactDetailDefinitionField& other)
+QContactDetailFieldDefinition::QContactDetailFieldDefinition(const QContactDetailFieldDefinition& other)
         : d(other.d)
 {
 }
@@ -90,7 +90,7 @@ QContactDetailDefinitionField::QContactDetailDefinitionField(const QContactDetai
 /*!
  * Assigns the field to be equal to the \a other field
  */
-QContactDetailDefinitionField& QContactDetailDefinitionField::operator=(const QContactDetailDefinitionField& other)
+QContactDetailFieldDefinition& QContactDetailFieldDefinition::operator=(const QContactDetailFieldDefinition& other)
 {
     d = other.d;
     return *this;
@@ -99,7 +99,7 @@ QContactDetailDefinitionField& QContactDetailDefinitionField::operator=(const QC
 /*!
  * Returns the data type of the field
  */
-QVariant::Type QContactDetailDefinitionField::dataType() const
+QVariant::Type QContactDetailFieldDefinition::dataType() const
 {
     return d->m_dataType;
 }
@@ -107,7 +107,7 @@ QVariant::Type QContactDetailDefinitionField::dataType() const
 /*!
  * Sets the data type of the field to \a type
  */
-void QContactDetailDefinitionField::setDataType(QVariant::Type type)
+void QContactDetailFieldDefinition::setDataType(QVariant::Type type)
 {
     d->m_dataType = type;
 }
@@ -115,7 +115,7 @@ void QContactDetailDefinitionField::setDataType(QVariant::Type type)
 /*!
  * Returns the list of allowable values which this field may store
  */
-QVariantList QContactDetailDefinitionField::allowableValues() const
+QVariantList QContactDetailFieldDefinition::allowableValues() const
 {
     return d->m_allowableValues;
 }
@@ -123,7 +123,7 @@ QVariantList QContactDetailDefinitionField::allowableValues() const
 /*!
  * Sets the list of allowable values which this field may store to \a values
  */
-void QContactDetailDefinitionField::setAllowableValues(const QVariantList values)
+void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values)
 {
     d->m_allowableValues = values;
 }
@@ -131,7 +131,7 @@ void QContactDetailDefinitionField::setAllowableValues(const QVariantList values
 /*!
  * Returns the access constraints which apply to this field
  */
-QContactDetailDefinitionField::AccessConstraint QContactDetailDefinitionField::accessConstraint() const
+QContactDetailFieldDefinition::AccessConstraint QContactDetailFieldDefinition::accessConstraint() const
 {
     return d->m_accessConstraint;
 }
@@ -139,7 +139,7 @@ QContactDetailDefinitionField::AccessConstraint QContactDetailDefinitionField::a
 /*!
  * Sets the access constraints which apply to this field to \a constraint
  */
-void QContactDetailDefinitionField::setAccessConstraint(QContactDetailDefinitionField::AccessConstraint constraint)
+void QContactDetailFieldDefinition::setAccessConstraint(QContactDetailFieldDefinition::AccessConstraint constraint)
 {
     d->m_accessConstraint = constraint;
 }
@@ -147,7 +147,7 @@ void QContactDetailDefinitionField::setAccessConstraint(QContactDetailDefinition
 /*!
  * Returns true if the access constraint, allowable values and data type of the \a other field are equal to those of this field
  */
-bool QContactDetailDefinitionField::operator==(const QContactDetailDefinitionField& other) const
+bool QContactDetailFieldDefinition::operator==(const QContactDetailFieldDefinition& other) const
 {
     if (d->m_accessConstraint != other.d->m_accessConstraint)
         return false;
@@ -161,7 +161,7 @@ bool QContactDetailDefinitionField::operator==(const QContactDetailDefinitionFie
 /*!
  * Returns true if the access constraint, allowable values or data type of the \a other field differ from those of this field
  */
-bool QContactDetailDefinitionField::operator!=(const QContactDetailDefinitionField& other) const
+bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefinition& other) const
 {
     return !(*this == other);
 }

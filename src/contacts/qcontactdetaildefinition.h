@@ -49,7 +49,7 @@
 #include <QVariant>
 
 #include "qtcontactsglobal.h"
-#include "qcontactdetaildefinitionfield.h"
+#include "qcontactdetailfielddefinition.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -83,9 +83,9 @@ public:
     bool isUnique() const;
 
     /* Mapping of field key to fields allowed in details of this definition */
-    void setFields(const QMap<QString, QContactDetailDefinitionField>& fields);
-    QMap<QString, QContactDetailDefinitionField> fields() const;
-    QMap<QString, QContactDetailDefinitionField>& fields();
+    void setFields(const QMap<QString, QContactDetailFieldDefinition>& fields);
+    QMap<QString, QContactDetailFieldDefinition> fields() const;
+    QMap<QString, QContactDetailFieldDefinition>& fields();
 
     /* Access constraints which may apply to details of a definition */
     enum AccessConstraint {

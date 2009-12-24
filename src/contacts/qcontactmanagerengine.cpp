@@ -44,7 +44,7 @@
 #include "qcontactmanagerengine.h"
 
 #include "qcontactdetaildefinition.h"
-#include "qcontactdetaildefinitionfield.h"
+#include "qcontactdetailfielddefinition.h"
 #include "qcontactdetails.h"
 #include "qcontactsortorder.h"
 #include "qcontactfilters.h"
@@ -539,8 +539,8 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     QMap<QString, QContactDetailDefinition> retn;
 
     // local variables for reuse
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition f;
     QContactDetailDefinition d;
     QVariantList contexts;
     contexts << QString(QLatin1String(QContactDetail::ContextHome)) << QString(QLatin1String(QContactDetail::ContextWork)) << QString(QLatin1String(QContactDetail::ContextOther));
@@ -789,7 +789,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
-    f.setAccessConstraint(QContactDetailDefinitionField::ReadOnly);
+    f.setAccessConstraint(QContactDetailFieldDefinition::ReadOnly);
     fields.insert(QContactOnlineAccount::FieldNickname, f);
     fields.insert(QContactOnlineAccount::FieldStatusMessage, f);
     QVariantList presenceValues;
@@ -803,7 +803,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setAllowableValues(presenceValues);
     fields.insert(QContactOnlineAccount::FieldPresence, f);
     f.setDataType(QVariant::StringList);
-    f.setAccessConstraint(QContactDetailDefinitionField::NoConstraint);
+    f.setAccessConstraint(QContactDetailFieldDefinition::NoConstraint);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
     f.setAllowableValues(QVariantList()); // allow any subtypes!
@@ -1018,7 +1018,7 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
                 return false; // value for nonexistent field.
             }
 
-            QContactDetailDefinitionField field = def.fields().value(key);
+            QContactDetailFieldDefinition field = def.fields().value(key);
             // check that the type of each value corresponds to the allowable field type
             if (field.dataType() != values.value(key).type()) {
                 error = QContactManager::InvalidDetailError;
@@ -1026,7 +1026,7 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
             }
 
             // check that the field is not read only
-            if (field.accessConstraint() == QContactDetailDefinitionField::ReadOnly) {
+            if (field.accessConstraint() == QContactDetailFieldDefinition::ReadOnly) {
                 error = QContactManager::InvalidDetailError;
                 return false; // attempting to write to a read-only field of a detail.
             }
@@ -1089,7 +1089,7 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
 
     // Check each field now
     QList<QVariant::Type> types = supportedDataTypes();
-    QMapIterator<QString, QContactDetailDefinitionField> it(definition.fields());
+    QMapIterator<QString, QContactDetailFieldDefinition> it(definition.fields());
     while(it.hasNext()) {
         it.next();
         if (it.key().isEmpty()) {

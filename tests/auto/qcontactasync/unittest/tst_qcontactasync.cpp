@@ -1091,8 +1091,8 @@ void tst_QContactAsync::definitionSave()
     int originalCount = cm->detailDefinitions().keys().size();
     QContactDetailDefinition testDef;
     testDef.setName("TestDefinitionId");
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition f;
     f.setDataType(QVariant::String);
     fields.insert("TestDefinitionField", f);
     testDef.setFields(fields);

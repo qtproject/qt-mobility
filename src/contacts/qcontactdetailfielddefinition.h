@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILDEFINITIONFIELD_H
-#define QCONTACTDETAILDEFINITIONFIELD_H
+#ifndef QCONTACTDETAILFIELDDEFINITION_H
+#define QCONTACTDETAILFIELDDEFINITION_H
 
 #include <QList>
 #include <QVariant>
@@ -50,15 +50,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QContactDetailDefinitionFieldPrivate;
-class Q_CONTACTS_EXPORT QContactDetailDefinitionField
+class QContactDetailFieldDefinitionPrivate;
+class Q_CONTACTS_EXPORT QContactDetailFieldDefinition
 {
 public:
-    QContactDetailDefinitionField();
-    ~QContactDetailDefinitionField();
+    QContactDetailFieldDefinition();
+    ~QContactDetailFieldDefinition();
 
-    QContactDetailDefinitionField(const QContactDetailDefinitionField& other);
-    QContactDetailDefinitionField& operator=(const QContactDetailDefinitionField& other);
+    QContactDetailFieldDefinition(const QContactDetailFieldDefinition& other);
+    QContactDetailFieldDefinition& operator=(const QContactDetailFieldDefinition& other);
 
     QVariant::Type dataType() const;
     void setDataType(QVariant::Type type);
@@ -71,18 +71,18 @@ public:
         ReadOnly
     };
 
-    QContactDetailDefinitionField::AccessConstraint accessConstraint() const;
-    void setAccessConstraint(QContactDetailDefinitionField::AccessConstraint constraint);
+    QContactDetailFieldDefinition::AccessConstraint accessConstraint() const;
+    void setAccessConstraint(QContactDetailFieldDefinition::AccessConstraint constraint);
 
-    bool operator==(const QContactDetailDefinitionField& other) const;
-    bool operator!=(const QContactDetailDefinitionField& other) const;
+    bool operator==(const QContactDetailFieldDefinition& other) const;
+    bool operator!=(const QContactDetailFieldDefinition& other) const;
 
 private:
-    QSharedDataPointer<QContactDetailDefinitionFieldPrivate> d;
+    QSharedDataPointer<QContactDetailFieldDefinitionPrivate> d;
 };
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactDetailDefinitionField), Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactDetailFieldDefinition), Q_MOVABLE_TYPE);
 
 #endif

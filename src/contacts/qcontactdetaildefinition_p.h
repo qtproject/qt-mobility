@@ -86,7 +86,7 @@ public:
     QContactDetailDefinition::AccessConstraint m_constraint;
     QString m_name;
     bool m_unique;
-    QMap<QString, QContactDetailDefinitionField> m_fields;
+    QMap<QString, QContactDetailFieldDefinition> m_fields;
 };
 
 QTM_END_NAMESPACE

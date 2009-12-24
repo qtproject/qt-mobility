@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qcontactdetaildefinitionfield.h"
+#include "qcontactdetailfielddefinition.h"
 
 #include <QSharedData>
 #include <QMap>
@@ -63,17 +63,17 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QContactDetailDefinitionFieldPrivate : public QSharedData
+class QContactDetailFieldDefinitionPrivate : public QSharedData
 {
 public:
-    QContactDetailDefinitionFieldPrivate()
+    QContactDetailFieldDefinitionPrivate()
         : QSharedData(),
         m_dataType(QVariant::Invalid),
-        m_accessConstraint(QContactDetailDefinitionField::NoConstraint)
+        m_accessConstraint(QContactDetailFieldDefinition::NoConstraint)
     {
     }
 
-    QContactDetailDefinitionFieldPrivate(const QContactDetailDefinitionFieldPrivate& other)
+    QContactDetailFieldDefinitionPrivate(const QContactDetailFieldDefinitionPrivate& other)
         : QSharedData(other),
         m_allowableValues(other.m_allowableValues),
         m_dataType(other.m_dataType),
@@ -81,13 +81,13 @@ public:
     {
     }
 
-    ~QContactDetailDefinitionFieldPrivate()
+    ~QContactDetailFieldDefinitionPrivate()
     {
     }
 
     QVariantList m_allowableValues;
     QVariant::Type m_dataType;
-    QContactDetailDefinitionField::AccessConstraint m_accessConstraint;
+    QContactDetailFieldDefinition::AccessConstraint m_accessConstraint;
 };
 
 QTM_END_NAMESPACE

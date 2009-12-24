@@ -202,10 +202,10 @@ void CntTransformAvatarSimple::detailDefinitions(QMap<QString, QContactDetailDef
 
     if(definitions.contains(QContactAvatar::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactAvatar::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
         // Update sub-types
-        QContactDetailDefinitionField f;
+        QContactDetailFieldDefinition f;
         f.setDataType(QVariant::String); // only allowed to be a single subtype
         f.setAllowableValues(QVariantList()
                 << QString(QLatin1String(QContactAvatar::SubTypeImage))

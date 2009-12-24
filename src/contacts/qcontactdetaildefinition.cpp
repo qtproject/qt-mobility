@@ -146,13 +146,13 @@ bool QContactDetailDefinition::isUnique() const
 }
 
 /*! Sets the fields which constitute the data of details of this this definition to \a fields */
-void QContactDetailDefinition::setFields(const QMap<QString, QContactDetailDefinitionField>& fields)
+void QContactDetailDefinition::setFields(const QMap<QString, QContactDetailFieldDefinition>& fields)
 {
     d->m_fields = fields;
 }
 
 /*! Returns the map of keys to fields which are present in details of this definition */
-QMap<QString, QContactDetailDefinitionField> QContactDetailDefinition::fields() const
+QMap<QString, QContactDetailFieldDefinition> QContactDetailDefinition::fields() const
 {
     return d->m_fields;
 }
@@ -162,7 +162,7 @@ QMap<QString, QContactDetailDefinitionField> QContactDetailDefinition::fields() 
  *
  * You can make changes to the returned map.
  */
-QMap<QString, QContactDetailDefinitionField>& QContactDetailDefinition::fields()
+QMap<QString, QContactDetailFieldDefinition>& QContactDetailDefinition::fields()
 {
     return d->m_fields;
 }
