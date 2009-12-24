@@ -50,8 +50,11 @@
 #include <QDateTime>
 #include <QSharedDataPointer>
 
+#include "qorganizeritemid.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemdetaildefinition.h"
+#include "qorganizeritemactiondescriptor.h"
+#include "qorganizeritemtype.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,7 +80,7 @@ public:
     void setId(const QOrganizerItemId& id);
     QOrganizerItemLocalId localId() const;
 
-    /* Type - event, todo, journal, invitation, ... */
+    /* Type - event, todo, journal, invitation, ...  is the type backend synthesised? */
     QString type() const;
     void setType(const QString& type);
     void setType(const QOrganizerItemType& type);
