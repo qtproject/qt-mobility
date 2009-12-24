@@ -93,13 +93,11 @@ QContact::QContact()
     // insert the contact's display label detail.
     QContactDisplayLabel contactLabel;
     contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
-    contactLabel.d->m_id = 1;
     d->m_details.insert(0, contactLabel);
 
     // and the contact type detail.
     QContactType contactType;
     contactType.setType(QContactType::TypeContact);
-    contactType.d->m_id = 2;
     d->m_details.insert(1, contactType);
 }
 
@@ -137,9 +135,7 @@ void QContact::clearDetails()
 {
     QContactDisplayLabel dl = d->m_details.at(0);
     dl.setValue(QContactDisplayLabel::FieldLabel, QString());
-    dl.d->m_id = 1;
     QContactType typeDet = d->m_details.at(1);
-    typeDet.d->m_id = 2;
 
     d->m_details.clear();
     d->m_details.insert(0, dl);
@@ -317,7 +313,6 @@ bool QContact::saveDetail(QContactDetail* detail)
     /* Also handle contact type specially - only one of them. */
     if (detail->definitionName() == QContactType::DefinitionName) {
         d->m_details[1] = *detail;
-        detail->d->m_id = 2;
         return true;
     }
 
@@ -333,7 +328,6 @@ bool QContact::saveDetail(QContactDetail* detail)
     }
 
     // this is a new detail!  add it to the contact.
-    detail->d->m_id = ++d->m_nextDetailId;
     d->m_details.append(*detail);
     return true;
 }
@@ -384,7 +378,6 @@ bool QContact::removeDetail(QContactDetail* detail)
 
     // then remove the detail.
     d->m_details.removeOne(*detail);
-    detail->d->m_id = 0;
     return true;
 }
 

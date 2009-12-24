@@ -67,7 +67,7 @@ class QContactDetailPrivate : public QSharedData
 public:
     QContactDetailPrivate()
         : QSharedData(),
-        m_id(0)
+        m_id(lastDetailKey.fetchAndAddOrdered(1))
     {
     }
 
@@ -82,10 +82,12 @@ public:
 
     ~QContactDetailPrivate() {}
 
-    quint32 m_id; // internal, unique id.
+    int m_id; // internal, unique id.
     QString m_definitionName;
     QVariantMap m_values; // the value(s) stored in this field.
     QList<QContactActionDescriptor> m_preferredActions;
+
+    static QAtomicInt lastDetailKey;
 };
 
 QTM_END_NAMESPACE

@@ -70,11 +70,15 @@ public:
     const char* ContextHome;
     const char* ContextWork;
     const char* ContextOther;
+    const char* FieldDetailUri;
+    const char* FieldLinkedDetailUri;
 #else
     Q_DECLARE_LATIN1_LITERAL(FieldContext, "Context");
     Q_DECLARE_LATIN1_LITERAL(ContextHome, "Home");
     Q_DECLARE_LATIN1_LITERAL(ContextWork, "Work");
     Q_DECLARE_LATIN1_LITERAL(ContextOther, "Other");
+    Q_DECLARE_LATIN1_LITERAL(FieldDetailUri, "DetailUri");
+    Q_DECLARE_LATIN1_LITERAL(FieldLinkedDetailUris, "LinkedDetailUris");
 #endif
 
     bool operator==(const QContactDetail& other) const;
@@ -82,6 +86,8 @@ public:
 
     QString definitionName() const;
     bool isEmpty() const;
+
+    int key() const;
 
     void setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
     QList<QContactActionDescriptor> preferredActions() const;
@@ -98,6 +104,8 @@ public:
         return variantValue(key).value<T>();
     }
 
+
+
     void setContexts(const QStringList& contexts)
     {
         setValue(FieldContext, contexts);
@@ -111,6 +119,31 @@ public:
     QStringList contexts() const
     {
         return value<QStringList>(FieldContext);
+    }
+
+    void setDetailUri(const QString& detailUri)
+    {
+        setValue(FieldDetailUri, detailUri);
+    }
+
+    QString detailUri() const
+    {
+        return value(FieldDetailUri);
+    }
+
+    void setLinkedDetailUris(const QStringList& linkedDetailUris)
+    {
+        setValue(FieldLinkedDetailUris, linkedDetailUris);
+    }
+
+    void setLinkedDetailUris(const QString& linkedDetailUri)
+    {
+        setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));
+    }
+
+    QStringList linkedDetailUris() const
+    {
+        return value<QStringList>(FieldLinkedDetailUris);
     }
 
 protected:
