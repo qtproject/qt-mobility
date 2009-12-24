@@ -96,6 +96,7 @@ private:
     QTVisualContextRef	m_visualContext;
     bool m_usingGLContext;
     const QGLContext *m_currentGLContext;
+    QSize m_pixelBufferContextGeometry;
 #endif
     QAbstractVideoSurface *m_surface;
     QSize m_nativeSize;
