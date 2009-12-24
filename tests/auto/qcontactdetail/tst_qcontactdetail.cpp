@@ -154,10 +154,11 @@ void tst_QContactDetail::classHierarchy()
     QCOMPARE(p2.number(), p1.number());
     QCOMPARE(p2.number(), QString("123456"));
 
-    p2.setNumber("5678");
-    QVERIFY(p1 != p2);
+    p2.setNumber("5678"); // NOTE: this also sets p1 (since p1, p2 and f2 share the same datapointer)
+    QVERIFY(p1 == p2);
     QVERIFY(p1 == f2);
-    QVERIFY(p2 != f2);
+    QVERIFY(p2 == f2);
+    QCOMPARE(p1.number(), QString("5678"));
 
     /* Bad assignment */
     p2 = m1; // assign a name to a phone number
@@ -176,11 +177,12 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(m2.isEmpty());
 
     /* Check contexts are considered for equality */
-    p2 = p1;
+    p2 = QContactPhoneNumber(); // new id / detach
+    p2.setNumber(p1.number());
     p2.setContexts(QContactDetail::ContextHome);
     QVERIFY(p1 != p2);
     p2.removeValue(QContactDetail::FieldContext); // note, context is a value.
-    QVERIFY(p1 == p2);
+    QVERIFY(p1 == p2); // different ids but same values should be equal
 
     /* Copy ctor from valid type */
     QContactDetail f3(p2);
@@ -201,6 +203,7 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(p4.isEmpty());
 
     /* Try a reference */
+    p1.setNumber("123456");
     QContactDetail& ref = p1;
     QVERIFY(p1.number() == "123456");
     QVERIFY(p1.value(QContactPhoneNumber::FieldNumber) == "123456");

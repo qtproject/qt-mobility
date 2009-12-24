@@ -172,6 +172,7 @@ void tst_QContact::details()
     QVERIFY(p == p3);
 
     // now we want to add multiple details of the same type, and test that retrieval works correctly.
+    p2 = QContactPhoneNumber();
     p2.setNumber("22222");
     p2.setValue("nonexistent-field", QVariant("22222-2"));
     c.saveDetail(&p);
