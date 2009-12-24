@@ -630,18 +630,10 @@ QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(
         d->m_definitions = QContactManagerEngine::schemaDefinitions();
 
         // Extract create only definitions
-        QMap<QString, QContactDetailDefinition> defMapForThisType(d->m_definitions.value(contactType));
-        QStringList defMapKeys = defMapForThisType.keys();
         QSet<QString> createOnlyDefs;
-        for (int i = 0; i < defMapKeys.size(); i++) {
-            if (defMapForThisType.value(defMapKeys.at(i)).accessConstraint() == QContactDetailDefinition::CreateOnly) {
-                createOnlyDefs.insert(defMapKeys.at(i));
-            }
-        }
-
-        if (!createOnlyDefs.isEmpty()) {
-            d->m_createOnlyIds.insert(contactType, createOnlyDefs);
-        }
+        createOnlyDefs << QContactSyncTarget::DefinitionName << QContactType::DefinitionName << QContactGuid::DefinitionName;
+        d->m_createOnlyIds.insert(QContactType::TypeContact, createOnlyDefs);
+        d->m_createOnlyIds.insert(QContactType::TypeGroup, createOnlyDefs);
     }
 
     error = QContactManager::NoError;
@@ -661,11 +653,6 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
     QMap<QString, QContactDetailDefinition> defsForThisType = d->m_definitions.value(contactType);
     defsForThisType.insert(def.name(), def);
     d->m_definitions.insert(contactType, defsForThisType);
-    if (def.accessConstraint() == QContactDetailDefinition::CreateOnly) {
-        QSet<QString> createOnlyDefs = d->m_createOnlyIds.value(contactType);
-        createOnlyDefs.insert(def.name());
-        d->m_createOnlyIds.insert(contactType, createOnlyDefs);
-    }
 
     error = QContactManager::NoError;
     return true;

@@ -67,7 +67,8 @@ class QContactDetailPrivate : public QSharedData
 public:
     QContactDetailPrivate()
         : QSharedData(),
-        m_id(0)
+        m_id(0),
+        m_access(QContactDetail::NoConstraint)
     {
     }
 
@@ -76,7 +77,8 @@ public:
         m_id(other.m_id),
         m_definitionName(other.m_definitionName),
         m_values(other.m_values),
-        m_preferredActions(other.m_preferredActions)
+        m_preferredActions(other.m_preferredActions),
+        m_access(other.m_access)
     {
     }
 
@@ -86,6 +88,7 @@ public:
     QString m_definitionName;
     QVariantMap m_values; // the value(s) stored in this field.
     QList<QContactActionDescriptor> m_preferredActions;
+    QContactDetail::AccessConstraint m_access;
 };
 
 QTM_END_NAMESPACE

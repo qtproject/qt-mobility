@@ -2389,8 +2389,8 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         // check the current definition.
         QContactDetailDefinition def = allDefs.value(defName);
 
-        // if unique or read/create only, we cannot use this definition.
-        if (def.isUnique() || def.accessConstraint() != QContactDetailDefinition::NoConstraint) {
+        // if unique, we cannot use this definition.
+        if (def.isUnique()) {
             continue;
         }
 
@@ -2451,7 +2451,6 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         QMap<QString, QContactDetailFieldDefinition> fields;
         fields.insert("generatedField", generatedField);
         generatedDefinition.setFields(fields);
-        generatedDefinition.setAccessConstraint(QContactDetailDefinition::NoConstraint);
         generatedDefinition.setUnique(false);
 
         // attempt to save it to the manager.

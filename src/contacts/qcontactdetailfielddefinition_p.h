@@ -68,16 +68,14 @@ class QContactDetailFieldDefinitionPrivate : public QSharedData
 public:
     QContactDetailFieldDefinitionPrivate()
         : QSharedData(),
-        m_dataType(QVariant::Invalid),
-        m_accessConstraint(QContactDetailFieldDefinition::NoConstraint)
+        m_dataType(QVariant::Invalid)
     {
     }
 
     QContactDetailFieldDefinitionPrivate(const QContactDetailFieldDefinitionPrivate& other)
         : QSharedData(other),
         m_allowableValues(other.m_allowableValues),
-        m_dataType(other.m_dataType),
-        m_accessConstraint(other.m_accessConstraint)
+        m_dataType(other.m_dataType)
     {
     }
 
@@ -87,7 +85,6 @@ public:
 
     QVariantList m_allowableValues;
     QVariant::Type m_dataType;
-    QContactDetailFieldDefinition::AccessConstraint m_accessConstraint;
 };
 
 QTM_END_NAMESPACE

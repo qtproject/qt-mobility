@@ -87,7 +87,7 @@ public:
     QMap<QString, QContactDetailFieldDefinition> fields() const;
     QMap<QString, QContactDetailFieldDefinition>& fields();
 
-    /* Access constraints which may apply to details of a definition */
+    /* Access constraints which may apply to details of a definition - to be removed week 3 */
     enum AccessConstraint {
         NoConstraint = 0,
         ReadOnly,
@@ -95,8 +95,8 @@ public:
     };
 
     /* Accessor and mutator for access constraints on details of this definition */
-    QContactDetailDefinition::AccessConstraint accessConstraint() const;
-    void setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint);
+    QContactDetailDefinition::AccessConstraint Q_DECL_DEPRECATED accessConstraint() const;
+    void Q_DECL_DEPRECATED setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint);
 
 private:
     QSharedDataPointer<QContactDetailDefinitionData> d;

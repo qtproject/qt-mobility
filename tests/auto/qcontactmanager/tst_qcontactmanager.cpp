@@ -651,7 +651,8 @@ void tst_QContactManager::add()
     QMap<QString, QContactDetailDefinition> defmap = cm->detailDefinitions();
     QList<QContactDetailDefinition> defs = defmap.values();
     foreach (const QContactDetailDefinition def, defs) {
-        // if the definition is read only, we cannot create details of the definition, so skip it.
+
+        // Leave these warnings here - might need an API for this
         if (def.accessConstraint() == QContactDetailDefinition::ReadOnly) {
             continue;
         }
@@ -663,12 +664,8 @@ void tst_QContactManager::add()
         foreach (const QString& fieldKey, fieldKeys) {
             // get the field, and check to see that it's not constrained.
             QContactDetailFieldDefinition currentField = fieldmap.value(fieldKey);
-            if (currentField.accessConstraint() == QContactDetailFieldDefinition::ReadOnly) {
-                // we cannot write to this field.
-                continue;
-            }
 
-            // we can write to this field.  attempt to create a worthy value
+            // Attempt to create a worthy value
             if (!currentField.allowableValues().isEmpty()) {
                 // we want to save a value that will be accepted.
                 if (currentField.dataType() == QVariant::StringList)
@@ -1133,7 +1130,6 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
 
     QContactDetailDefinition def;
-    def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     def.setUnique(true);
     def.setName("new field");
     QMap<QString, QContactDetailFieldDefinition> fields;
@@ -1561,27 +1557,6 @@ void tst_QContactManager::contactValidation()
 
     QVERIFY(cm->saveDetailDefinition(restrictedDef));
 
-    QContactDetailDefinition createOnlyDef;
-    createOnlyDef.setName("CreateOnlyDetail");
-    createOnlyDef.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    fields.clear();
-    field.setAllowableValues(QList<QVariant>());
-    fields.insert("value", field);
-    createOnlyDef.setFields(fields);
-
-    QVERIFY(cm->saveDetailDefinition(createOnlyDef));
-
-    QContactDetailDefinition createOnlyUniqueDef;
-    createOnlyUniqueDef.setName("CreateOnlyUniqueDetail");
-    createOnlyUniqueDef.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    createOnlyUniqueDef.setUnique(true);
-    fields.clear();
-    field.allowableValues().clear();
-    fields.insert("value", field);
-    createOnlyUniqueDef.setFields(fields);
-
-    QVERIFY(cm->saveDetailDefinition(createOnlyUniqueDef));
-
     // first, test an invalid definition
     QContactDetail d1 = QContactDetail("UnknownDefinition");
     d1.setValue("test", "test");
@@ -1646,42 +1621,6 @@ void tst_QContactManager::contactValidation()
     QVERIFY(cm->saveContact(&c));
     QCOMPARE(cm->error(), QContactManager::NoError);
     c.removeDetail(&d7);
-
-    /* Test a write once detail */
-    QContactDetail d8 = QContactDetail("CreateOnlyDetail");
-    d8.setValue("value", "First value");
-    c.saveDetail(&d8);
-
-    QVERIFY(cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::NoError);
-
-    /* Changing or adding some other detail should also be fine, and resaving it */
-    QContactPhoneNumber p1;
-    p1.setNumber("123467");
-    c.saveDetail(&p1);
-    QVERIFY(cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::NoError);
-
-    /* Adding a second detail should be fine */
-    QContactDetail d9 = QContactDetail("CreateOnlyDetail");
-    d9.setValue("value", "Second value");
-    c.saveDetail(&d9);
-    QVERIFY(cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::NoError);
-
-    /* Changing a value should fail */
-    d8.setValue("value", "Third value");
-    c.saveDetail(&d8);
-
-    QVERIFY(!cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::DetailAccessError);
-
-    c.removeDetail(&d8);
-    /* Removing a create only should also fail */
-    QVERIFY(!cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::DetailAccessError);
-
-
 
     delete cm;
 }
@@ -1918,19 +1857,12 @@ void tst_QContactManager::detailDefinitions()
     fields.insert("Restricted value", field);
     allowedDef.setFields(fields);
 
-    /* XXX A create only definition */
-
     /* Many invalid definitions */
     QContactDetailDefinition noIdDef;
     noIdDef.setFields(fields);
 
     QContactDetailDefinition noFieldsDef;
     noFieldsDef.setName("No fields");
-
-    QContactDetailDefinition readOnlyDef;
-    readOnlyDef.setName("Read only");
-    readOnlyDef.setAccessConstraint(QContactDetailDefinition::ReadOnly);
-    readOnlyDef.setFields(fields);
 
     QContactDetailDefinition invalidFieldKeyDef;
     invalidFieldKeyDef.setName("Invalid field key");
@@ -1971,9 +1903,6 @@ void tst_QContactManager::detailDefinitions()
         QVERIFY(cm->error() == QContactManager::BadArgumentError);
 
         QVERIFY(cm->saveDetailDefinition(noFieldsDef) == false);
-        QVERIFY(cm->error() == QContactManager::BadArgumentError);
-
-        QVERIFY(cm->saveDetailDefinition(readOnlyDef) == false);
         QVERIFY(cm->error() == QContactManager::BadArgumentError);
 
         QVERIFY(cm->saveDetailDefinition(invalidFieldKeyDef) == false);

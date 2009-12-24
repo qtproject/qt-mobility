@@ -557,7 +557,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
     // timestamp
@@ -572,7 +571,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
 
     // type
@@ -585,7 +583,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
     // guid
@@ -599,7 +596,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
     // display label
@@ -610,7 +606,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDisplayLabel::FieldLabel, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
 
     // email address
@@ -624,7 +619,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // organisation
@@ -642,7 +636,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // phone number
@@ -672,7 +665,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // anniversary
@@ -701,7 +693,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // birthday
@@ -715,7 +706,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // nickname
@@ -729,7 +719,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // note
@@ -743,7 +732,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // url
@@ -763,7 +751,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // gender
@@ -777,7 +764,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // online account
@@ -789,7 +775,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
-    f.setAccessConstraint(QContactDetailFieldDefinition::ReadOnly);
     fields.insert(QContactOnlineAccount::FieldNickname, f);
     fields.insert(QContactOnlineAccount::FieldStatusMessage, f);
     QVariantList presenceValues;
@@ -803,14 +788,12 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setAllowableValues(presenceValues);
     fields.insert(QContactOnlineAccount::FieldPresence, f);
     f.setDataType(QVariant::StringList);
-    f.setAccessConstraint(QContactDetailFieldDefinition::NoConstraint);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
     f.setAllowableValues(QVariantList()); // allow any subtypes!
     fields.insert(QContactOnlineAccount::FieldSubTypes, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // avatar
@@ -836,7 +819,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // geolocation
@@ -860,7 +842,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // street address
@@ -887,7 +868,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // name
@@ -906,7 +886,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     // in the default schema, we have two contact types: TypeContact, TypeGroup.
@@ -1025,11 +1004,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
                 return false; // type doesn't match.
             }
 
-            // check that the field is not read only
-            if (field.accessConstraint() == QContactDetailFieldDefinition::ReadOnly) {
-                error = QContactManager::InvalidDetailError;
-                return false; // attempting to write to a read-only field of a detail.
-            }
             // check that the value is allowable
             // if the allowable values is an empty list, any are allowed.
             if (!field.allowableValues().isEmpty()) {
@@ -1061,9 +1035,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
  * are supported by this engine.  This function is called before
  * trying to save a definition.
  *
- * Note that a ReadOnly definition will fail validation, since
- * they are intended to be provided by an engine directly.
- *
  * Returns true if the \a definition seems valid, otherwise returns
  * false.
  *
@@ -1078,11 +1049,6 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
     }
 
     if (definition.fields().count() == 0) {
-        error = QContactManager::BadArgumentError;
-        return false;
-    }
-
-    if (definition.accessConstraint() == QContactDetailDefinition::ReadOnly) {
         error = QContactManager::BadArgumentError;
         return false;
     }

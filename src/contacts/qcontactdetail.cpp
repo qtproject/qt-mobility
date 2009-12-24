@@ -294,6 +294,31 @@ QVariantMap QContactDetail::values() const
 }
 
 /*!
+ * \enum QContactDetail::AccessConstraint
+ *
+ * This enum defines the access constraints for a detail.  This information is typically provided by
+ * the manager when a contact is retrieved.
+ *
+ * \value NoConstraint Users can read, write, and otherwise modify this detail in any manner.
+ * \value ReadOnly Users cannot write or modify values in this detail.
+ * \value Irremovable Users cannot remove this detail from a contact.
+ */
+
+
+/*!
+ * Returns the access constraint associated with the detail.
+ *
+ * Some details may not be written to, while other details may
+ * not be removed from a contact.
+ *
+ * \sa QContactDetail::AccessConstraint
+ */
+QContactDetail::AccessConstraint QContactDetail::accessConstraint() const
+{
+    return d.constData()->m_access;
+}
+
+/*!
  * \fn void QContactDetail::setContexts(const QStringList& contexts)
  *
  * This is a convenience function that sets the \c Context field of this detail to the given \a contexts.

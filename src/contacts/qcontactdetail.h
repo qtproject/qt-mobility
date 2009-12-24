@@ -63,6 +63,13 @@ public:
     QContactDetail(const QContactDetail& other);
     QContactDetail& operator=(const QContactDetail& other);
 
+    enum AccessConstraint {
+        NoConstraint = 0,
+        ReadOnly = 1,
+        Irremovable = 2
+    };
+
+    AccessConstraint accessConstraint() const;
 
     // Predefined attribute names and values
 #ifdef Q_QDOC

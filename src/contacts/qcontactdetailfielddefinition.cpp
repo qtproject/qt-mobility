@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
 /*!
  * \enum QContactDetailFieldDefinition::AccessConstraint
  *
+ * \obsolete
+ *
  * This enum defines the access constraints which may be set on fields of a detail definition in the store for which the definition is valid.
  * The constraint which applies to the definition takes precedence over a constraint which applies to a field of that definition.
  * For example, if a field has the \c QContactDetailFieldDefinition::NoConstraint constraint, but the detail definition from which the field came has
@@ -130,27 +132,32 @@ void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values
 
 /*!
  * Returns the access constraints which apply to this field
+ *
+ * \obsolete
+ * Obsolete - use \l QContactDetail::accessConstraint instead.
  */
 QContactDetailFieldDefinition::AccessConstraint QContactDetailFieldDefinition::accessConstraint() const
 {
-    return d->m_accessConstraint;
+    return QContactDetailFieldDefinition::NoConstraint;
 }
 
 /*!
  * Sets the access constraints which apply to this field to \a constraint
+ *
+ * \obsolete
+ *
+ * This is no longer used.
  */
 void QContactDetailFieldDefinition::setAccessConstraint(QContactDetailFieldDefinition::AccessConstraint constraint)
 {
-    d->m_accessConstraint = constraint;
+    Q_UNUSED(constraint);
 }
 
 /*!
- * Returns true if the access constraint, allowable values and data type of the \a other field are equal to those of this field
+ * Returns true if the allowable values and data type of the \a other field are equal to those of this field
  */
 bool QContactDetailFieldDefinition::operator==(const QContactDetailFieldDefinition& other) const
 {
-    if (d->m_accessConstraint != other.d->m_accessConstraint)
-        return false;
     if (d->m_allowableValues != other.d->m_allowableValues)
         return false;
     if (d->m_dataType != other.d->m_dataType)
@@ -159,7 +166,7 @@ bool QContactDetailFieldDefinition::operator==(const QContactDetailFieldDefiniti
 }
 
 /*!
- * Returns true if the access constraint, allowable values or data type of the \a other field differ from those of this field
+ * Returns true if the allowable values or data type of the \a other field differ from those of this field
  */
 bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefinition& other) const
 {

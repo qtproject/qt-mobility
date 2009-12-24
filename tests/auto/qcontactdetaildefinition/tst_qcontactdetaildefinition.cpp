@@ -94,7 +94,6 @@ void tst_QContactDetailDefinition::testCtor()
     /* Check the ctor sets sane things */
     QVERIFY(def.isEmpty());
     QVERIFY(def.name().isEmpty());
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::NoConstraint);
     QVERIFY(def.fields().isEmpty());
     QVERIFY(def.isUnique() == false);
 
@@ -107,20 +106,17 @@ void tst_QContactDetailDefinition::testCtor()
     map.insert("datetime", currField);
 
     def.setName("Test ID");
-    def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     def.setUnique(true);
     def.setFields(map);
 
     QVERIFY(def.name() == "Test ID");
     QVERIFY(def.isUnique());
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def.fields() == map);
 
     QContactDetailDefinition def2(def);
 
     QVERIFY(def2.name() == "Test ID");
     QVERIFY(def2.isUnique());
-    QVERIFY(def2.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def2.fields() == map);
 
     QContactDetailDefinition def3;
@@ -128,7 +124,6 @@ void tst_QContactDetailDefinition::testCtor()
 
     QVERIFY(def3.name() == "Test ID");
     QVERIFY(def3.isUnique());
-    QVERIFY(def3.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def3.fields() == map);
 
     /* Make sure they aren't improperly shared */
@@ -157,16 +152,6 @@ void tst_QContactDetailDefinition::testGetSet()
 
     def.setUnique(false);
     QVERIFY(def.isUnique() == false);
-
-    /* Access constraints */
-    def.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::NoConstraint);
-
-    def.setAccessConstraint(QContactDetailDefinition::ReadOnly);
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::ReadOnly);
-
-    def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::CreateOnly);
 
     /* Type map */
     QMap<QString, QContactDetailFieldDefinition> map;
@@ -244,19 +229,6 @@ void tst_QContactDetailDefinition::testEquality()
     QVERIFY(def2 != def1);
 
     def2.setUnique(true);
-    QVERIFY(def1 == def2);
-    QVERIFY(def2 == def1);
-
-    /* Access constraint */
-    def1.setAccessConstraint(QContactDetailDefinition::ReadOnly);
-    QVERIFY(def1 != def2);
-    QVERIFY(def2 != def1);
-
-    def1.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    QVERIFY(def1 != def2);
-    QVERIFY(def2 != def1);
-
-    def2.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     QVERIFY(def1 == def2);
     QVERIFY(def2 == def1);
 
