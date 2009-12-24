@@ -133,6 +133,17 @@ public:
     // setDayCriterion is mex to setDayOfMonth and setDayOfYear
     // setMonthCriterion is mex to setDayOfYearCriterion // is it?  maybe not... 28th friday of the year, if it's in june (ie not if it's in july)
 
+
+    // total-specification of occurrence dates - mutually exclusive to all of the above criteria
+
+    void setOccurrences(const QList<QDateTime>& occurrences);
+    bool isTotallySpecified() const; // returns true if setOccurrences() has been called.
+
+
+    // accessing the occurrence dates - lazy calculation?
+
+    QList<QDateTime> calculateOccurrences() const; // not a simple accessor, unless isTotallySpecified() returns true.
+
 private:
     QSharedDataPointer<QOrganizerItemRecurrenceRuleCriteriaPrivate> d;
 };
