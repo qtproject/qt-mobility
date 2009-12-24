@@ -310,6 +310,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         QContactTimestamp ts = theContact->detail(QContactTimestamp::DefinitionName);
         ts.setLastModified(QDateTime::currentDateTime());
         ts.setCreated(ts.lastModified());
+        setDetailAccessConstraints(&ts, QContactDetail::ReadOnly | QContactDetail::Irremovable);
         theContact->saveDetail(&ts);
 
         // update the contact item - set its ID
