@@ -146,4 +146,4 @@ void QT7PlayerService::updateVideoOutput()
     }
 }
 
-//#include "moc_qt7playerservice.cpp"
+#include "moc_qt7playerservice.cpp"

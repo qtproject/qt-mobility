@@ -45,7 +45,7 @@
 
 #include <qmediaserviceproviderplugin.h>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 class QT7ServicePlugin : public QMediaServiceProviderPlugin
 {
@@ -54,5 +54,7 @@ public:
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
 };
+
+QTM_END_NAMESPACE
 
 #endif // QGSTREAMERSERVICEPLUGIN_H

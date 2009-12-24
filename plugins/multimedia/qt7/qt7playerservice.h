@@ -84,6 +84,4 @@ private:
 
 QTM_END_NAMESPACE
 
-QTM_USE_NAMESPACE
-
 #endif

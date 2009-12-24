@@ -256,3 +256,4 @@ void QT7PlayerMetaDataControl::updateTags()
         emit metaDataChanged();
 }
 
+#include "moc_qt7playermetadata.cpp"
