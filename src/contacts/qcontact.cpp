@@ -399,6 +399,36 @@ bool QContact::removeDetail(QContactDetail* detail)
     return true;
 }
 
+/*!
+ * Sets the order of the details in the contact.  This order may or may not be persisted by the backend, depending on its capabilities.
+ * Returns true if the total detail order specified is valid and does not contain any details which are not present in the contact, and false
+ * if it contains details which are not present in the contact, or if it doesn't contain some details which are present in the contact.
+ */
+bool QContact::setDetailOrder(const QList<QContactDetail>& totallyOrdered)
+{
+    if (totallyOrdered.size() != d->m_details.size())
+        return false;
+
+    for (int i = 0; i < totallyOrdered.size(); i++) {
+        QContactDetail curr = totallyOrdered.at(i);
+        bool found = false;
+        for (int j = 0; j < d->m_details.size(); j++) {
+            if (curr.key() == d->m_details.at(j).key()) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            // could find the current detail in the ordered list!
+            return false;
+        }
+    }
+
+    d->m_details = totallyOrdered;
+    return true;
+}
+
 /*! Returns true if this contact is equal to the \a other contact, false if either the id or stored details are not the same */
 bool QContact::operator==(const QContact& other) const
 {
