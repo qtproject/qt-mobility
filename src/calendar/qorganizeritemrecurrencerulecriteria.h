@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
  * The expression tree gets expanded to occurrence dates, internally?
  */
 
-class QOrganizerItemRecurrenceRuleCriteria
+class Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRuleCriteria
 {
 public:
 

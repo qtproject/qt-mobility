@@ -30,6 +30,7 @@ PUBLIC_HEADERS += \
     qorganizeritemmanagerengine.h \
     qorganizeritemmanagerenginefactory.h \
     qorganizeritemrecurrencerulecriteria.h \
+    qorganizeritemrecurrencerules.h \
     qorganizeritemsortorder.h \
     qtcalendarglobal.h \
     qtcalendar.h
