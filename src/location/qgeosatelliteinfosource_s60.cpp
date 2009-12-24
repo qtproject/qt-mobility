@@ -398,7 +398,7 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt
                 delete mReqUpdateAO;
                 mReqUpdateAO = NULL;
                 mReqModuleId = TUid::Null();
-                emit requestTimeout;
+                emit requestTimeout();
             }
 
         }
