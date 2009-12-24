@@ -285,7 +285,9 @@ void QT7MovieVideoWidget::setMovie(void *movie)
         return;
 
     if (m_movie) {
+#ifdef QUICKTIME_C_API_AVAILABLE
         SetMovieVisualContext([(QTMovie*)m_movie quickTimeMovie], nil);
+#endif
         [(QTMovie*)m_movie release];
     }
 

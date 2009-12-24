@@ -239,7 +239,7 @@ void QT7PlayerMetaDataControl::updateTags()
         readFormattedData(metaDataRef, kQTMetaDataStorageFormatQuickTime, metaMap);
         readFormattedData(metaDataRef, kQTMetaDataStorageFormatiTunes, metaMap);
 #else
-        NSString *name = [m_videoPlayer->qtMovie() attributeForKey:@"QTMovieDisplayNameAttribute"];
+        NSString *name = [movie attributeForKey:@"QTMovieDisplayNameAttribute"];
         metaMap.insert(QLatin1String("nam"), QString::fromUtf8([name UTF8String]));
 #endif // QUICKTIME_C_API_AVAILABLE
 
