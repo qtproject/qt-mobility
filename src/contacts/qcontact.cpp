@@ -94,12 +94,14 @@ QContact::QContact()
     QContactDisplayLabel contactLabel;
     contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
     contactLabel.d->m_id = 1;
+    contactLabel.d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
     d->m_details.insert(0, contactLabel);
 
     // and the contact type detail.
     QContactType contactType;
     contactType.setType(QContactType::TypeContact);
     contactType.d->m_id = 2;
+    contactType.d->m_access = QContactDetail::Irremovable;
     d->m_details.insert(1, contactType);
 }
 
@@ -138,8 +140,11 @@ void QContact::clearDetails()
     QContactDisplayLabel dl = d->m_details.at(0);
     dl.setValue(QContactDisplayLabel::FieldLabel, QString());
     dl.d->m_id = 1;
+    dl.d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
+
     QContactType typeDet = d->m_details.at(1);
     typeDet.d->m_id = 2;
+    typeDet.d->m_access = QContactDetail::Irremovable;
 
     d->m_details.clear();
     d->m_details.insert(0, dl);
@@ -194,6 +199,8 @@ void QContact::setType(const QString& type)
     // type is detail 1
     QContactType newType;
     newType.setType(type);
+    newType.d->m_access = QContactDetail::Irremovable;
+
     d->m_details[1] = newType;
 }
 
@@ -204,6 +211,7 @@ void QContact::setType(const QContactType& type)
 {
     // type is detail 1
     d->m_details[1] = type;
+    d->m_details[1].d->m_access = QContactDetail::Irremovable;
 }
 
 /*!
@@ -295,12 +303,12 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
  * this contact, that detail is overwritten.  Otherwise, a new Id is generated
  * and set in the detail, and the detail is added to the list.
  *
+ * If the detail's access constraint includes \c QContactDetail::ReadOnly,
+ * this function will return false.
+ *
  * If \a detail is a contact type, the existing contact type will
  * be overwritten with \a detail.  There is never more than one contact type
  * in a contact.
- *
- * If \a detail is a display label, the operation will fail.
- * The display label can never be updated manually and must be synthesized by the backend.
  *
  * Returns true if the detail was saved successfully, otherwise returns false
  */
@@ -309,10 +317,8 @@ bool QContact::saveDetail(QContactDetail* detail)
     if (!detail)
         return false;
 
-    /* Handle display labels specially - cannot save them! */
-    if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
+    if (detail->accessConstraints() & QContactDetail::ReadOnly)
         return false;
-    }
 
     /* Also handle contact type specially - only one of them. */
     if (detail->definitionName() == QContactType::DefinitionName) {
@@ -345,10 +351,8 @@ bool QContact::saveDetail(QContactDetail* detail)
  * The Id of the \a detail is removed, to signify that it is no longer
  * part of the contact.
  *
- * If the detail is the contact type for this contact, the type
- * will be reset to \c QContactType::TypeContact, and the function will return success.
- *
- * If the detail is a display label, the operation will fail and return false.
+ * If the detail's access constraint includes \c QContactDetail::Irremovable,
+ * this function will return false.
  *
  * Returns true if the detail was removed successfully, false if an error occurred
  */
@@ -360,18 +364,8 @@ bool QContact::removeDetail(QContactDetail* detail)
     if (!d->m_details.contains(*detail))
         return false;
 
-    // Check if this a display label
-    if (detail->d->m_definitionName == QContactDisplayLabel::DefinitionName) {
+    if (detail->accessConstraints() & QContactDetail::Irremovable)
         return false;
-    }
-
-    // Check if this a type
-    if (detail->d->m_definitionName == QContactType::DefinitionName) {
-        QContactType type = d->m_details[1];
-        type.setType(QContactType::TypeContact);
-        d->m_details[1] = type;
-        return true;
-    }
 
     // remove any preferences we may have stored for the detail.
     QStringList keys = d->m_preferences.keys();
