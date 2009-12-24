@@ -286,7 +286,7 @@ SessionTab::SessionTab(QNetworkConfiguration* apNetworkConfiguration,
     } else if (apNetworkConfiguration->type() == QNetworkConfiguration::ServiceNetwork) {
         snapLineEdit->setText(apNetworkConfiguration->name()+" ("+apNetworkConfiguration->identifier()+")");
     }
-    bearerLineEdit->setText(m_NetworkSession->bearerName());
+    bearerLineEdit->setText(apNetworkConfiguration->bearerName());
     sentRecDataLineEdit->setText(QString::number(m_NetworkSession->bytesWritten())+
                                  QString(" / ")+
                                  QString::number(m_NetworkSession->bytesReceived()));
@@ -486,18 +486,17 @@ void SessionTab::stateChanged(QNetworkSession::State state)
 
 void SessionTab::newState(QNetworkSession::State state)
 {
-    if (state == QNetworkSession::Connected) {
-        QVariant identifier = m_NetworkSession->property("ActiveConfiguration");
-        if (!identifier.isNull()) {
-            QString configId = identifier.toString();
-            QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
-            if (config.isValid()) {
-                iapLineEdit->setText(config.name()+" ("+config.identifier()+")");
-            }
+    QVariant identifier = m_NetworkSession->property("ActiveConfiguration");
+    if (state == QNetworkSession::Connected && !identifier.isNull()) {
+        QString configId = identifier.toString();
+        QNetworkConfiguration config = m_ConfigManager->configurationFromIdentifier(configId);
+        if (config.isValid()) {
+            iapLineEdit->setText(config.name()+" ("+config.identifier()+")");
+            bearerLineEdit->setText(config.bearerName());
         }
+    } else {
+        bearerLineEdit->setText(m_NetworkSession->configuration().bearerName());
     }
-
-    bearerLineEdit->setText(m_NetworkSession->bearerName());
 
     QString active;
     if (m_NetworkSession->isOpen()) {
