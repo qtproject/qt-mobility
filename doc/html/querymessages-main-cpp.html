@@ -56,7 +56,7 @@
 
     #include &lt;QApplication&gt;
 
-    #include &lt;qmessagestore.h&gt;
+    #include &lt;qmessagemanager.h&gt;
     #include &lt;qdebug.h&gt;
 
     QTM_USE_NAMESPACE
@@ -69,19 +69,22 @@
         QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
 
         <span class="comment">// Order the matching results by their reception timestamp, in descending order</span>
-        QMessageOrdering ordering(QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder));
+        QMessageSortOrder sortOrder(QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder));
+
+        <span class="comment">// Acquire a handle to the message manager</span>
+        QMessageManager manager;
 
         <span class="comment">// Find the matching message IDs, limiting our results to a managable number</span>
         const int max = 100;
-        const QMessageIdList matchingIds(QMessageStore::instance()-&gt;queryMessages(filter, ordering, max));
+        const QMessageIdList matchingIds(manager.queryMessages(filter, sortOrder, max));
 
         int n = 0;
 
         <span class="comment">// Retrieve each message and print requested details</span>
         foreach (const QMessageId &amp;id, matchingIds) {
-            QMessage message(QMessageStore::instance()-&gt;message(id));
+            QMessage message(manager.message(id));
 
-            if (QMessageStore::instance()-&gt;lastError() == QMessageStore::NoError) {
+            if (manager.error() == QMessageManager::NoError) {
                 QStringList result;
 
                 if (app.arguments().count() &lt; 2) {
