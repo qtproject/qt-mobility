@@ -342,10 +342,7 @@ bool QContact::saveDetail(QContactDetail* detail)
  *
  * The detail in the contact which has the same key as that of the given \a detail
  * will be removed if it exists.  That is, the information in the detail may be different.
- *
  * Any preference for the given field is also removed.
- * The Id of the \a detail is removed, to signify that it is no longer
- * part of the contact.
  *
  * If the detail is the contact type for this contact, the type
  * will be reset to \c QContactType::TypeContact, and the function will return success.

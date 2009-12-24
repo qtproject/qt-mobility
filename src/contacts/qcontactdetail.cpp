@@ -46,7 +46,7 @@
 QTM_BEGIN_NAMESPACE
 
 /* Initialise our static private data member */
-QAtomicInt QContactDetailPrivate::lastDetailKey = QAtomicInt(1);
+QAtomicInt QContactDetailPrivate::lastDetailKey(1);
 
 /* Definitions of predefined string constants */
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
