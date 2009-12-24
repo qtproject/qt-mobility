@@ -47,20 +47,52 @@
 #include "qtcalendarglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
+#include "qorganizeritemrecurrencerulecriteria.h"
 
 QTM_BEGIN_NAMESPACE
 
 class Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules
 {
 public:
+    QOrganizerItemRecurrenceRules();
+    ~QOrganizerItemRecurrenceRules();
+
+
+    // calculate and return all of the occurrence dates
+    QSet<QDateTime> occurrences() const;
+
     // QOrganizerItemRecurrenceRules is either:
-    // 1) a single QOrganizerItemRecurrenceRuleCriteria
-    // 2) a pair of QOrganizerItemRecurrenceRules joined by an operator (and, or, not)
+    // 1) a single QOrganizerItemRecurrenceRuleCriteria (via setCriteria())
+    // 2) a pair of QOrganizerItemRecurrenceRules joined by a set operator, created via the public "operator" functions.
+
+    bool isCriteria() const;
+    inline bool isExpression() const { return !isCriteria(); }
+
+    bool setCriteria(const QOrganizerItemRecurrenceRuleCriteria& criteria);
+    QOrganizerItemRecurrenceRuleCriteria criteria() const;
+
+    enum Expression {
+        Intersection,               // both left and right must be satisfied
+        Union,                      // either left or right must be satisfied
+        LeftRelativeComplement,     // the occurrences in the left which are not occurrences of the right
+        RightRelativeComplement     // the occurrences in the right which are not occurrences of the left
+    };
+
+    QOrganizerItemRecurrenceRules left() const;
+    QOrganizerItemRecurrenceRules right() const;
+    Expression joiningExpression() const;
 };
 
-const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules operator&(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right);
-const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules operator|(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right);
-const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules operator~(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right);
+
+const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules notOf(const QOrganizerItemRecurrenceRules& input);
+
+const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules intersectionOf(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right);
+const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules unionOf(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right);
+const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules leftRelativeComplementOf(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right);
+const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules rightRelativeComplementOf(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right);
+
+const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules completeRelativeComplementOf(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right); // union(lrc(left, right), rrc(left, right))
+const Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRules inverseUnionOf(const QOrganizerItemRecurrenceRules& left, const QOrganizerItemRecurrenceRules& right); // not(union(left, right))
 
 QTM_END_NAMESPACE
 
