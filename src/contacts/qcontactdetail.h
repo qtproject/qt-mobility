@@ -46,7 +46,7 @@
 #include "qtcontactsglobal.h"
 #include "qcontactactiondescriptor.h"
 
-#include <QSharedDataPointer>
+#include <QExplicitlySharedDataPointer>
 #include <QStringList>
 #include <QVariant>
 
@@ -152,7 +152,7 @@ protected:
 
 private:
     friend class QContact;
-    QSharedDataPointer<QContactDetailPrivate> d;
+    QExplicitlySharedDataPointer<QContactDetailPrivate> d;
 };
 
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \

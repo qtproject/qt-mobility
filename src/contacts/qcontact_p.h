@@ -89,7 +89,7 @@ public:
     QList<QContactDetail> m_details;
     QList<QContactRelationship> m_relationshipsCache;
     QList<QContactRelationship> m_reorderedRelationshipsCache;
-    QMap<QString, quint32> m_preferences;
+    QMap<QString, int> m_preferences;
     quint32 m_nextDetailId;
 };
 
