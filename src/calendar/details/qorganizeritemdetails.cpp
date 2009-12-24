@@ -101,7 +101,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QOrganizerItemRecurrenceRule
+   \deprecated
    \brief The QOrganizerItemRecurrenceRule class contains the recurrence rule which determines when the event described in the organizer item will occur.
+   NOTE: the QOrganizerItemRecurrenceRuleCriteria and QOrganizerItemRecurrenceRules classes may REPLACE this class -- ie, how the recurrence rules are stored is still under discussion.
  */
 
 /*!

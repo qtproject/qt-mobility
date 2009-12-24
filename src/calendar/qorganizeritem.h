@@ -55,6 +55,7 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemactiondescriptor.h"
 #include "qorganizeritemtype.h"
+#include "qorganizeritemrecurrencerules.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -91,6 +92,10 @@ public:
     /* Is this an empty item? */
     bool isEmpty() const;
     void clearDetails();
+
+    /* The recurrence rules which apply to this item */
+    bool setRecurrenceRules(const QOrganizerItemRecurrenceRules& rules);
+    QOrganizerItemRecurrenceRules recurrenceRules() const;
 
     /* Access details of particular type or which support a particular action */
     QOrganizerItemDetail detail(const QString& definitionId) const;

@@ -66,6 +66,9 @@ public:
 
     // XXX TODO: requirements, figure out what functions / data..
     // frequency, start + end date (or count), workday, workweek, ..?
+
+    // Maybe we don't model the recurrence rules as a detail after all?
+    // See documentation for more information.
 };
 
 QTM_END_NAMESPACE
