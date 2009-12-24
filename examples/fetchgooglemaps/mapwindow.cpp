@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include <QtGui>
 #include <QtWebKit>
 
@@ -56,7 +57,7 @@ const QString GMAPS_STATICMAP_URL_TEMPLATE =  "http://maps.google.com/staticmap?
 
 
 MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
-    : QMainWindow(parent, flags),        
+        : QMainWindow(parent, flags),
         webView(new QWebView),
         posLabel(new QLabel),
         headingAndSpeedLabel(new QLabel),
@@ -66,10 +67,10 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
         location(0)
 {
     location = QGeoPositionInfoSource::createDefaultSource(this);
-    if (!location) {        
+    if (!location) {
         QNmeaPositionInfoSource *nmeaSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
         QFile *logFile = new QFile(QApplication::applicationDirPath()
-                + QDir::separator() + "nmealog.txt", this);
+                                   + QDir::separator() + "nmealog.txt", this);
         nmeaSource->setDevice(logFile);
         location = nmeaSource;
 
@@ -91,7 +92,7 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
     layout->addWidget(dateTimeLabel);
     setCentralWidget(mainWidget);
 
-#if !defined(Q_OS_SYMBIAN)    
+#if !defined(Q_OS_SYMBIAN)
     resize(300, 300);
 #endif
     setWindowTitle(tr("Google Maps Demo"));
@@ -105,25 +106,26 @@ MapWindow::~MapWindow()
     session->close();
 }
 
-void MapWindow::delayedInit() {
+void MapWindow::delayedInit()
+{
     if (usingLogFile) {
-        QMessageBox::information(this, tr("Fetch Google Maps"), 
-            tr("No GPS support detected, using GPS data from a sample log file instead."));
+        QMessageBox::information(this, tr("Fetch Google Maps"),
+                                 tr("No GPS support detected, using GPS data from a sample log file instead."));
     } else {
         QGeoSatelliteInfoSource *satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
 
         if (satellite) {
-            SatelliteDialog *dialog = new SatelliteDialog(this, 
-                    30, 
-                    SatelliteDialog::ExitOnFixOrCancel, 
-                    SatelliteDialog::OrderByPrnNumber, 
-                    SatelliteDialog::ScaleToMaxPossible);                    
+            SatelliteDialog *dialog = new SatelliteDialog(this,
+                    30,
+                    SatelliteDialog::ExitOnFixOrCancel,
+                    SatelliteDialog::OrderByPrnNumber,
+                    SatelliteDialog::ScaleToMaxPossible);
 
             dialog->connectSources(location, satellite);
 
             location->startUpdates();
             satellite->startUpdates();
-    
+
             dialog->exec();
 
             location->stopUpdates();
@@ -134,12 +136,12 @@ void MapWindow::delayedInit() {
     // Set Internet Access Point
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
-        & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
     // Is there default access point, use it
     QNetworkConfiguration cfg = manager.defaultConfiguration();
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
         QMessageBox::information(this, tr("Flickr Demo"), tr(
-            "Available Access Points not found."));
+                                     "Available Access Points not found."));
         return;
     }
 
@@ -167,17 +169,17 @@ void MapWindow::positionUpdated(const QGeoPositionInfo &info)
     headingAndSpeedLabel->setText(tr("Bearing %1, travelling at %2 km/h").arg(heading).arg(speed));
 
     dateTimeLabel->setText(tr("(Last update: %1)").
-            arg(info.dateTime().toLocalTime().time().toString()));            
+                           arg(info.dateTime().toLocalTime().time().toString()));
 
     if (!loading) {
         // Google Maps does not provide maps larger than 640x480
         int width = qMin(webView->width(), 640);
         int height = qMin(webView->height(), 480);
         QString url = GMAPS_STATICMAP_URL_TEMPLATE
-                            .arg(QString::number(info.coordinate().latitude()))
-                            .arg(QString::number(info.coordinate().longitude()))
-                            .arg(QString::number(width))
-                            .arg(QString::number(height));
+                      .arg(QString::number(info.coordinate().latitude()))
+                      .arg(QString::number(info.coordinate().longitude()))
+                      .arg(QString::number(width))
+                      .arg(QString::number(height));
         webView->load(url);
     }
 }

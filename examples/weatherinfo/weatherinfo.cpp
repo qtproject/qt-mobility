@@ -45,7 +45,9 @@
 #include <QtSvg>
 
 // QtMobility API headers
+#include <qmobilityglobal.h>
 #include <qgeopositioninfosource.h>
+#include <qgeosatelliteinfosource.h>
 #include <qnmeapositioninfosource.h>
 #include <qgeopositioninfo.h>
 #include <qnetworkconfigmanager.h>
@@ -54,7 +56,7 @@
 #include "satellitedialog.h"
 
 // Use the QtMobility namespace
-using namespace QtMobility;
+QTM_USE_NAMESPACE
 
 class WeatherInfo: public QMainWindow
 {
@@ -76,10 +78,10 @@ private:
     QTimeLine m_timeLine;
     QHash<QString, QString> m_icons;
     QNetworkAccessManager* m_nam;
-    
+
     bool m_usingLogFile;
     bool m_gpsWeather;
-    QGeoPositionInfoSource* m_location;    
+    QGeoPositionInfoSource* m_location;
     QNetworkSession* m_session;
     QGeoCoordinate m_coordinate;
 
@@ -97,13 +99,13 @@ public:
         m_view->setFrameShape(QFrame::NoFrame);
         setWindowTitle("Weather Info");
 
-        QAction *your = new QAction("Your weather", this);        
+        QAction *your = new QAction("Your weather", this);
         connect(your, SIGNAL(triggered()), SLOT(yourWeather()));
         addAction(your);
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
-            menuBar()->addAction(your);
+        menuBar()->addAction(your);
 #endif
-        
+
         QStringList cities;
         cities << "Helsinki";
         cities << "Oslo";
@@ -127,7 +129,7 @@ public:
 #endif
 
         setContextMenuPolicy(Qt::ActionsContextMenu);
-        
+
         // QNetworkAccessManager
         m_nam = new QNetworkAccessManager(this);
         connect(m_nam, SIGNAL(finished(QNetworkReply*)),
@@ -141,31 +143,30 @@ public:
         QTimer::singleShot(100, this, SLOT(delayedInit()));
     }
 
-    ~WeatherInfo()
-    {
+    ~WeatherInfo() {
         if (m_location)
             m_location->stopUpdates();
         m_session->close();
     }
-    
-    
+
+
 private slots:
     void delayedInit() {
         // Set Internet Access Point
         QNetworkConfigurationManager manager;
         const bool canStartIAP = (manager.capabilities()
-            & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+                                  & QNetworkConfigurationManager::CanStartAndStopInterfaces);
         // Is there default access point, use it
         QNetworkConfiguration cfg = manager.defaultConfiguration();
         if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
             QMessageBox::information(this, tr("Weather Info"), tr(
-                "Available Access Points not found."));
+                                         "Available Access Points not found."));
             return;
         }
         m_session = new QNetworkSession(cfg, this);
         m_session->open();
         m_session->waitForOpened();
-        
+
         m_gpsWeather = false;
         request("Helsinki");
     }
@@ -180,21 +181,21 @@ private slots:
             m_location = QGeoPositionInfoSource::createDefaultSource(this);
 
             if (!m_location) {
-                QNmeaPositionInfoSource *nmeaLocation = 
-                        new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
+                QNmeaPositionInfoSource *nmeaLocation =
+                    new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
                 QFile *logFile = new QFile(QApplication::applicationDirPath() + QDir::separator()
-                        + "nmealog.txt", this);
+                                           + "nmealog.txt", this);
                 nmeaLocation->setDevice(logFile);
                 m_location = nmeaLocation;
 
                 m_usingLogFile = true;
 
-                QMessageBox::information(this, tr("Weather Info"), 
-                    tr("No GPS support detected, using GPS data from a sample log file instead."));
+                QMessageBox::information(this, tr("Weather Info"),
+                                         tr("No GPS support detected, using GPS data from a sample log file instead."));
             }
 
             // Listen gps position changes
-            connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this, 
+            connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this,
                     SLOT(positionUpdated(QGeoPositionInfo)));
         }
 
@@ -204,23 +205,23 @@ private slots:
             QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
 
             if (m_satellite) {
-                SatelliteDialog *dialog = new SatelliteDialog(this, 
-                        30, 
-                        SatelliteDialog::ExitOnFixOrCancel, 
-                        SatelliteDialog::OrderByPrnNumber, 
-                        SatelliteDialog::ScaleToMaxPossible);                    
+                SatelliteDialog *dialog = new SatelliteDialog(this,
+                        30,
+                        SatelliteDialog::ExitOnFixOrCancel,
+                        SatelliteDialog::OrderByPrnNumber,
+                        SatelliteDialog::ScaleToMaxPossible);
 
                 dialog->connectSources(m_location, m_satellite);
 
                 m_location->startUpdates();
                 m_satellite->startUpdates();
-        
+
                 dialog->exec();
 
                 m_location->stopUpdates();
                 m_satellite->stopUpdates();
             }
-        } 
+        }
 
         // Start listening GPS position updates
         m_location->startUpdates();
@@ -237,11 +238,11 @@ private slots:
                 requestTownName(longitude, latitude);
                 m_gpsWeather = false;
             } else {
-                QMessageBox::information(this,"Weather Info","Waiting for your GPS position...");
+                QMessageBox::information(this, "Weather Info", "Waiting for your GPS position...");
             }
         }
     }
-    
+
     void chooseCity() {
         QAction *action = qobject_cast<QAction*>(sender());
         if (action) {
@@ -257,7 +258,7 @@ private slots:
         if (!networkReply->error()) {
             QString data = QString::fromUtf8(networkReply->readAll());
             qDebug() << data;
-            if (data.contains("<LocalityName>",Qt::CaseInsensitive)) {
+            if (data.contains("<LocalityName>", Qt::CaseInsensitive)) {
                 requestWeatherOfTown(data);
             } else {
                 digest(data);
@@ -324,9 +325,9 @@ private:
     void requestTownName(QString longitude, QString latitude) {
         // http://code.google.com/intl/en/apis/maps/documentation/geocoding/index.html#ReverseGeocoding
         QUrl url("http://maps.google.com/maps/geo");
-        url.addEncodedQueryItem("q", QUrl::toPercentEncoding(latitude+","+longitude));
+        url.addEncodedQueryItem("q", QUrl::toPercentEncoding(latitude + "," + longitude));
         url.addEncodedQueryItem("output", QUrl::toPercentEncoding("xml"));
-        
+
         m_nam->get(QNetworkRequest(url));
 
         city = QString();
@@ -336,16 +337,16 @@ private:
     void requestWeatherOfTown(QString xml) {
         // Try to find <LocalityName>xxxxxx</LocalityName>
         int start = xml.indexOf("<LocalityName>");
-        int end = xml.indexOf("</LocalityName>",start);
-        QString town = xml.mid(start+14,end-start-14);
+        int end = xml.indexOf("</LocalityName>", start);
+        QString town = xml.mid(start + 14, end - start - 14);
         request(town);
     }
-    
+
     void request(const QString &location) {
         QUrl url("http://www.google.com/ig/api");
         url.addEncodedQueryItem("hl", "en");
         url.addEncodedQueryItem("weather", QUrl::toPercentEncoding(location));
-        
+
         m_nam->get(QNetworkRequest(url));
 
         city = QString();
@@ -395,7 +396,7 @@ private:
         if (!ok)
             return QString();
         if (unit != "SI")
-            degree = ((degree - 32) * 5 + 8)/ 9;
+            degree = ((degree - 32) * 5 + 8) / 9;
         return QString::number(degree) + QChar(176);
     }
 
@@ -406,11 +407,11 @@ private:
 
         if (data.contains("<problem_cause")) {
             setWindowTitle("Weather Info");
-            QMessageBox::information(this,"Weather Info","Could not find weather info");
+            QMessageBox::information(this, "Weather Info", "Could not find weather info");
             return;
         }
 
-        
+
         QColor textColor = palette().color(QPalette::WindowText);
         QString unitSystem;
 
@@ -472,7 +473,7 @@ private:
                         xml.readNext();
                         if (xml.name() == "forecast_conditions") {
                             if (dayItem && statusItem &&
-                                !lowT.isEmpty() && !highT.isEmpty()) {
+                                    !lowT.isEmpty() && !highT.isEmpty()) {
                                 m_dayItems << dayItem;
                                 m_conditionItems << statusItem;
                                 QString txt = highT + '/' + lowT;

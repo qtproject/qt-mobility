@@ -44,7 +44,9 @@
 #include <QtNetwork>
 
 // QtMobility API headers
+#include <qmobilityglobal.h>
 #include <qgeopositioninfosource.h>
+#include <qgeosatelliteinfosource.h>
 #include <qnmeapositioninfosource.h>
 #include <qgeopositioninfo.h>
 #include <qnetworkconfigmanager.h>
@@ -53,7 +55,7 @@
 #include "satellitedialog.h"
 
 // Use the QtMobility namespace
-using namespace QtMobility;
+QTM_USE_NAMESPACE
 
 #include <math.h>
 
@@ -81,7 +83,7 @@ const int tdim = 256;
 
 QPointF tileForCoordinate(qreal lat, qreal lng, int zoom)
 {
-    qreal zn = static_cast<qreal> (1 << zoom);
+    qreal zn = static_cast<qreal>(1 << zoom);
     qreal tx = (lng + 180.0) / 360.0;
     qreal ty = (1.0 - log(tan(lat * M_PI / 180.0) + 1.0 / cos(lat * M_PI / 180.0)) / M_PI) / 2.0;
     return QPointF(tx * zn, ty * zn);
@@ -89,14 +91,14 @@ QPointF tileForCoordinate(qreal lat, qreal lng, int zoom)
 
 qreal longitudeFromTile(qreal tx, int zoom)
 {
-    qreal zn = static_cast<qreal> (1 << zoom);
+    qreal zn = static_cast<qreal>(1 << zoom);
     qreal lat = tx / zn * 360.0 - 180.0;
     return lat;
 }
 
 qreal latitudeFromTile(qreal ty, int zoom)
 {
-    qreal zn = static_cast<qreal> (1 << zoom);
+    qreal zn = static_cast<qreal>(1 << zoom);
     qreal n = M_PI - 2 * M_PI * ty / zn;
     qreal lng = 180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n)));
     return lng;
@@ -104,7 +106,7 @@ qreal latitudeFromTile(qreal ty, int zoom)
 
 class SlippyMap: public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     int width;
@@ -121,8 +123,7 @@ public:
             latitude(59.9138204),
             longitude(10.7387413),
             m_location(location),
-            m_session(session)
-    {
+            m_session(session) {
         m_emptyTile = QPixmap(tdim, tdim);
         m_emptyTile.fill(Qt::lightGray);
 
@@ -132,21 +133,19 @@ public:
         cache->setCacheDirectory(QDesktopServices::storageLocation(QDesktopServices::CacheLocation));
         m_manager->setCache(cache);
         connect(m_manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(handleNetworkData(QNetworkReply*)));
+                this, SLOT(handleNetworkData(QNetworkReply*)));
 
         // Listen gps position changes
         connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)),
-        this, SLOT(positionUpdated(QGeoPositionInfo)));
+                this, SLOT(positionUpdated(QGeoPositionInfo)));
     }
 
-    ~SlippyMap()
-    {
+    ~SlippyMap() {
         m_session->close();
         delete m_session;
-    }    
+    }
 
-    void invalidate()
-    {
+    void invalidate() {
         if (width <= 0 || height <= 0)
             return;
 
@@ -161,15 +160,15 @@ public:
         // first tile vertical and horizontal
         int xa = (xp + tdim - 1) / tdim;
         int ya = (yp + tdim - 1) / tdim;
-        int xs = static_cast<int> (tx) - xa;
-        int ys = static_cast<int> (ty) - ya;
+        int xs = static_cast<int>(tx) - xa;
+        int ys = static_cast<int>(ty) - ya;
 
         // offset for top-left tile
         m_offset = QPoint(xp - xa * tdim, yp - ya * tdim);
 
         // last tile vertical and horizontal
-        int xe = static_cast<int> (tx) + (width - xp - 1) / tdim;
-        int ye = static_cast<int> (ty) + (height - yp - 1) / tdim;
+        int xe = static_cast<int>(tx) + (width - xp - 1) / tdim;
+        int ye = static_cast<int>(ty) + (height - yp - 1) / tdim;
 
         // build a rect
         m_tilesRect = QRect(xs, ys, xe - xs + 1, ye - ys + 1);
@@ -180,8 +179,7 @@ public:
         emit updated(QRect(0, 0, width, height));
     }
 
-    void render(QPainter *p, const QRect &rect)
-    {
+    void render(QPainter *p, const QRect &rect) {
         for (int x = 0; x <= m_tilesRect.width(); ++x)
             for (int y = 0; y <= m_tilesRect.height(); ++y) {
                 QPoint tp(x + m_tilesRect.left(), y + m_tilesRect.top());
@@ -195,8 +193,7 @@ public:
             }
     }
 
-    void pan(const QPoint &delta)
-    {
+    void pan(const QPoint &delta) {
         QPointF dx = QPointF(delta) / qreal(tdim);
         QPointF center = tileForCoordinate(latitude, longitude, zoom) - dx;
         latitude = latitudeFromTile(center.y(), zoom);
@@ -206,15 +203,13 @@ public:
 
 private slots:
 
-    void positionUpdated(QGeoPositionInfo gpsPos)
-    {
+    void positionUpdated(const QGeoPositionInfo &gpsPos) {
         latitude = gpsPos.coordinate().latitude();
         longitude = gpsPos.coordinate().longitude();
         invalidate();
     }
 
-    void handleNetworkData(QNetworkReply *reply)
-    {
+    void handleNetworkData(QNetworkReply *reply) {
         QImage img;
         QPoint tp = reply->request().attribute(QNetworkRequest::User).toPoint();
         QUrl url = reply->url();
@@ -229,15 +224,14 @@ private slots:
 
         // purge unused spaces
         QRect bound = m_tilesRect.adjusted(-2, -2, 2, 2);
-        foreach(QPoint tp, m_tilePixmaps.keys()) 
-                if (!bound.contains(tp))
-                    m_tilePixmaps.remove(tp);
+        foreach(QPoint tp, m_tilePixmaps.keys())
+        if (!bound.contains(tp))
+            m_tilePixmaps.remove(tp);
 
         download();
     }
 
-    void download()
-    {
+    void download() {
         QPoint grab(0, 0);
         for (int x = 0; x <= m_tilesRect.width(); ++x)
             for (int y = 0; y <= m_tilesRect.height(); ++y) {
@@ -261,12 +255,11 @@ private slots:
         m_manager->get(request);
     }
 
-    signals:
+signals:
     void updated(const QRect &rect);
 
 protected:
-    QRect tileRect(const QPoint &tp)
-    {
+    QRect tileRect(const QPoint &tp) {
         QPoint t = tp - m_tilesRect.topLeft();
         int x = t.x() * tdim + m_offset.x();
         int y = t.y() * tdim + m_offset.y();
@@ -288,7 +281,7 @@ private:
 
 class LightMaps: public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     LightMaps(QWidget *parent = 0) :
@@ -298,13 +291,12 @@ public:
             zoomed(false),
             invert(false),
             m_usingLogFile(false),
-            m_location(0)
-    {
+            m_location(0) {
 
         // Set Internet Access Point
         QNetworkConfigurationManager manager;
         const bool canStartIAP = (manager.capabilities()
-            & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+                                  & QNetworkConfigurationManager::CanStartAndStopInterfaces);
 
         // Is there default access point, use it
         QNetworkConfiguration cfg1 = manager.defaultConfiguration();
@@ -316,9 +308,6 @@ public:
 
         QNetworkSession *session = new QNetworkSession(cfg1);
 
-        connect(session, SIGNAL(error(QNetworkSession::SessionError)),
-                this, SLOT(displaySessionError(QNetworkSession::SessionError)));
-
         session->open();
         if (!session->waitForOpened()) {
             m_networkSetupError = QString(tr("Unable to open network session."));
@@ -327,12 +316,12 @@ public:
             return;
         }
 
-        m_location = QGeoPositionInfoSource::createDefaultSource(this);                    
+        m_location = QGeoPositionInfoSource::createDefaultSource(this);
 
-        if (!m_location) {        
+        if (!m_location) {
             QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
             QFile *logFile = new QFile(QApplication::applicationDirPath()
-                    + QDir::separator() + "nmealog.txt", this);
+                                       + QDir::separator() + "nmealog.txt", this);
             nmeaLocation->setDevice(logFile);
             m_location = nmeaLocation;
             m_usingLogFile = true;
@@ -341,30 +330,26 @@ public:
         m_normalMap = new SlippyMap(session, m_location, this);
         m_largeMap = new SlippyMap(session, m_location, this);
 
-        connect(m_normalMap, SIGNAL(updated(QRect)),SLOT(updateMap(QRect)));
-        connect(m_largeMap, SIGNAL(updated(QRect)),SLOT(update()));
+        connect(m_normalMap, SIGNAL(updated(QRect)), SLOT(updateMap(QRect)));
+        connect(m_largeMap, SIGNAL(updated(QRect)), SLOT(update()));
         connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(positionUpdated(QGeoPositionInfo)));
 
         QTimer::singleShot(100, this, SLOT(delayedInit()));
     }
 
-    ~LightMaps() 
-    {
+    ~LightMaps() {
         m_location->stopUpdates();
     }
 
-    void stopPositioning()
-    {
+    void stopPositioning() {
         m_location->stopUpdates();
     }
 
-    void startPositioning()
-    {
+    void startPositioning() {
         m_location->startUpdates();
     }
 
-    void setCenter(qreal lat, qreal lng)
-    {
+    void setCenter(qreal lat, qreal lng) {
         m_normalMap->latitude = lat;
         m_normalMap->longitude = lng;
         m_normalMap->invalidate();
@@ -374,67 +359,35 @@ public:
     }
 
 public slots:
-    void toggleNightMode()
-    {
+    void toggleNightMode() {
         invert = !invert;
         update();
     }
 
 private slots:
-    void positionUpdated(const QGeoPositionInfo &pos)
-    {
+    void positionUpdated(const QGeoPositionInfo &pos) {
         setCenter(pos.coordinate().latitude(), pos.coordinate().longitude());
     }
-    
-    void displaySessionError(QNetworkSession::SessionError error)
-    {
-        switch(error) {
-            case QNetworkSession::UnknownSessionError:
-                QMessageBox::information(this, tr("LightMaps"), 
-                    tr("UnknownSessionError"));
-                break;
-            case QNetworkSession::SessionAbortedError:
-                QMessageBox::information(this, tr("LightMaps"), 
-                    tr("SessionAbortedError"));
-                break;
-            case QNetworkSession::RoamingError:
-                QMessageBox::information(this, tr("LightMaps"), 
-                    tr("RoamingError"));
-                break;
-            case QNetworkSession::OperationNotSupportedError:
-                QMessageBox::information(this, tr("LightMaps"), 
-                    tr("OperationNotSupportedError"));
-                break;
-            case QNetworkSession::InvalidConfigurationError:
-                QMessageBox::information(this, tr("LightMaps"), 
-                    tr("InvalidConfigurationError"));
-                break;
-            default:
-                QMessageBox::information(this, tr("LightMaps"), 
-                    tr("Unknown Error"));
-        }
-    }
 
-    void delayedInit() 
-    {
+    void delayedInit() {
         if (m_usingLogFile) {
-            QMessageBox::information(this, tr("LightMaps"), 
-                tr("No GPS support detected, using GPS data from a sample log file instead."));
+            QMessageBox::information(this, tr("LightMaps"),
+                                     tr("No GPS support detected, using GPS data from a sample log file instead."));
         } else {
             QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
 
             if (m_satellite) {
-                SatelliteDialog *dialog = new SatelliteDialog(this, 
-                        30, 
-                        SatelliteDialog::ExitOnFixOrCancel, 
-                        SatelliteDialog::OrderByPrnNumber, 
-                        SatelliteDialog::ScaleToMaxPossible);                    
+                SatelliteDialog *dialog = new SatelliteDialog(this,
+                        30,
+                        SatelliteDialog::ExitOnFixOrCancel,
+                        SatelliteDialog::OrderByPrnNumber,
+                        SatelliteDialog::ScaleToMaxPossible);
 
                 dialog->connectSources(m_location, m_satellite);
 
                 m_location->startUpdates();
                 m_satellite->startUpdates();
-        
+
                 dialog->exec();
 
                 m_location->stopUpdates();
@@ -444,21 +397,19 @@ private slots:
 
         if (!m_networkSetupError.isEmpty()) {
             QMessageBox::information(this, tr("LightMaps"),
-                    m_networkSetupError);
+                                     m_networkSetupError);
         }
 
         startPositioning();
     }
 
-    void updateMap(const QRect &r)
-    {
+    void updateMap(const QRect &r) {
         update(r);
     }
 
 protected:
 
-    void activateZoom()
-    {
+    void activateZoom() {
         stopPositioning();
         zoomed = true;
         tapTimer.stop();
@@ -471,8 +422,7 @@ protected:
         update();
     }
 
-    void resizeEvent(QResizeEvent *)
-    {
+    void resizeEvent(QResizeEvent *) {
         m_normalMap->width = width();
         m_normalMap->height = height();
         m_normalMap->invalidate();
@@ -481,8 +431,7 @@ protected:
         m_largeMap->invalidate();
     }
 
-    void paintEvent(QPaintEvent *event)
-    {
+    void paintEvent(QPaintEvent *event) {
         QPainter p;
         p.begin(this);
         m_normalMap->render(&p, event->rect());
@@ -493,7 +442,7 @@ protected:
         p.setFont(font);
 #endif
         p.drawText(rect(), Qt::AlignBottom | Qt::TextWordWrap,
-            "Map data CCBYSA 2009 OpenStreetMap.org contributors");
+                   "Map data CCBYSA 2009 OpenStreetMap.org contributors");
         p.end();
 
         if (zoomed) {
@@ -564,15 +513,13 @@ protected:
         }
     }
 
-    void timerEvent(QTimerEvent *)
-    {
+    void timerEvent(QTimerEvent *) {
         if (!zoomed)
             activateZoom();
         update();
     }
 
-    void mousePressEvent(QMouseEvent *event)
-    {
+    void mousePressEvent(QMouseEvent *event) {
         if (event->buttons() != Qt::LeftButton)
             return;
         pressed = snapped = true;
@@ -581,8 +528,7 @@ protected:
         tapTimer.start(HOLD_TIME, this);
     }
 
-    void mouseMoveEvent(QMouseEvent *event)
-    {
+    void mouseMoveEvent(QMouseEvent *event) {
         if (!event->buttons())
             return;
 
@@ -594,8 +540,7 @@ protected:
                 pressPos = event->pos();
                 m_normalMap->pan(delta);
                 return;
-            }
-            else {
+            } else {
                 const int threshold = 10;
                 QPoint delta = event->pos() - pressPos;
                 if (snapped) {
@@ -607,21 +552,18 @@ protected:
                 if (!snapped)
                     tapTimer.stop();
             }
-        }
-        else {
+        } else {
             dragPos = event->pos();
             update();
         }
     }
 
-    void mouseReleaseEvent(QMouseEvent *)
-    {
+    void mouseReleaseEvent(QMouseEvent *) {
         zoomed = false;
         update();
     }
 
-    void keyPressEvent(QKeyEvent *event)
-    {
+    void keyPressEvent(QKeyEvent *event) {
         if (!zoomed) {
             if (event->key() == Qt::Key_Left)
                 m_normalMap->pan(QPoint(20, 0));
@@ -635,8 +577,7 @@ protected:
                 dragPos = QPoint(width() / 2, height() / 2);
                 activateZoom();
             }
-        }
-        else {
+        } else {
             if (event->key() == Qt::Key_Z || event->key() == Qt::Key_Select) {
                 zoomed = false;
                 update();
@@ -658,8 +599,7 @@ protected:
     }
 
 private:
-    QNetworkSession *m_session;
-    QString m_networkSetupError;    
+    QString m_networkSetupError;
     SlippyMap *m_normalMap;
     SlippyMap *m_largeMap;
     bool pressed;
@@ -677,16 +617,14 @@ private:
 
 class MapZoom: public QMainWindow
 {
-Q_OBJECT
+    Q_OBJECT
 
 private:
     LightMaps *map;
-    //QNetworkSession* m_session;
 
 public:
     MapZoom() :
-        QMainWindow(0)
-    {
+            QMainWindow(0) {
         map = new LightMaps(this);
         setCentralWidget(map);
         map->setFocus();
@@ -696,16 +634,16 @@ public:
         QAction *berlinAction = new QAction("&Berlin", this);
         QAction *jakartaAction = new QAction("&Jakarta", this);
         QAction *nightModeAction = new QAction("Night Mode", this);
-        
+
         nightModeAction->setCheckable(true);
         nightModeAction->setChecked(false);
         QAction *osmAction = new QAction("About OpenStreetMap", this);
-        connect(gpsAction, SIGNAL(triggered()),SLOT(chooseGps()));
-        connect(osloAction, SIGNAL(triggered()),SLOT(chooseOslo()));
-        connect(berlinAction, SIGNAL(triggered()),SLOT(chooseBerlin()));
-        connect(jakartaAction, SIGNAL(triggered()),SLOT(chooseJakarta()));
+        connect(gpsAction, SIGNAL(triggered()), SLOT(chooseGps()));
+        connect(osloAction, SIGNAL(triggered()), SLOT(chooseOslo()));
+        connect(berlinAction, SIGNAL(triggered()), SLOT(chooseBerlin()));
+        connect(jakartaAction, SIGNAL(triggered()), SLOT(chooseJakarta()));
         connect(nightModeAction, SIGNAL(triggered()), map, SLOT(toggleNightMode()));
-        connect(osmAction, SIGNAL(triggered()),SLOT(aboutOsm()));
+        connect(osmAction, SIGNAL(triggered()), SLOT(aboutOsm()));
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
         menuBar()->addAction(gpsAction);
@@ -729,36 +667,31 @@ public:
         QAction *exitAction = new QAction("Exit", this);
         connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
         menuBar()->addAction(exitAction);
-#endif                
+#endif
     }
 
 private slots:
 
-    void chooseGps()
-    {
+    void chooseGps() {
         map->startPositioning();
     }
 
-    void chooseOslo()
-    {
+    void chooseOslo() {
         map->stopPositioning();
         map->setCenter(59.9138204, 10.7387413);
     }
 
-    void chooseBerlin()
-    {
+    void chooseBerlin() {
         map->stopPositioning();
         map->setCenter(52.52958999943302, 13.383053541183472);
     }
 
-    void chooseJakarta()
-    {
+    void chooseJakarta() {
         map->stopPositioning();
         map->setCenter(-6.211544, 106.845172);
     }
 
-    void aboutOsm()
-    {
+    void aboutOsm() {
         QDesktopServices::openUrl(QUrl("http://www.openstreetmap.org"));
     }
 };

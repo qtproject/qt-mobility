@@ -1,11 +1,54 @@
-/*
- * Copyright (c) 2009 Nokia Corporation.
- */
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 #include "flickrdemo.h"
 #include <QDomDocument>
 
 #include <qnmeapositioninfosource.h>
+#include <qgeopositioninfosource.h>
+#include <qgeosatelliteinfosource.h>
+#include <qgeopositioninfo.h>
+#include <qgeosatelliteinfo.h>
+#include <qnetworkconfigmanager.h>
+#include <qnetworksession.h>
 
 static const QSize gridSize(52, 52);
 static const QSize thumbnailSize(50, 50);
@@ -20,8 +63,8 @@ static const QString savePath = QDir::tempPath();
 
 FlickrDemo::FlickrDemo(QWidget* parent) :
         QMainWindow(parent),
-        m_session(0),
         m_logfileInUse(false),
+        m_session(0),
         m_file(0),
         m_httpGetId(-1),
         m_httpThumbnailGetId(-1),
@@ -33,21 +76,21 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
         m_longitude(-1000),
         m_downloadPictureList(true),
         m_downloadingThumbnails(false)
-{    
+{
     resize(252, 344);
-    QWidget *centralWidget = new QWidget;        
+    QWidget *centralWidget = new QWidget;
     QVBoxLayout *verticalLayout = new QVBoxLayout();
 
-    locationLabel = new QLabel(tr("Lat: Long:"));        
+    locationLabel = new QLabel(tr("Lat: Long:"));
     verticalLayout->addWidget(locationLabel);
 
-    satellitesLabel = new QLabel(tr("Using 0 of 0 satellites"));        
+    satellitesLabel = new QLabel(tr("Using 0 of 0 satellites"));
     verticalLayout->addWidget(satellitesLabel);
 
     listWidget = new XQListWidget();
     verticalLayout->addWidget(listWidget);
 
-    downloadButton = new QPushButton(tr("Download Picture List"));        
+    downloadButton = new QPushButton(tr("Download Picture List"));
     verticalLayout->addWidget(downloadButton);
 
     centralWidget->setLayout(verticalLayout);
@@ -63,7 +106,7 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
     if (m_location == 0) {
         QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
         QFile *logFile = new QFile(QApplication::applicationDirPath()
-                + QDir::separator() + "nmealog.txt", this);
+                                   + QDir::separator() + "nmealog.txt", this);
         nmeaLocation->setDevice(logFile);
         m_location = nmeaLocation;
         m_logfileInUse = true;
@@ -78,9 +121,9 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
     // Listen satellite status changes
     if (m_satellite != 0) {
         connect(m_satellite, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&)),
-            this, SLOT(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&)));
+                this, SLOT(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&)));
         connect(m_satellite, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&)),
-            this, SLOT(satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&)));
+                this, SLOT(satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&)));
     }
 
     // QHttp
@@ -116,15 +159,15 @@ FlickrDemo::~FlickrDemo()
         m_satellite->stopUpdates();
     m_http.abort();
     if (m_session)
-        m_session->close();    
+        m_session->close();
 }
 
 
 void FlickrDemo::delayedInit()
 {
     if (m_logfileInUse) {
-        QMessageBox::information(this, tr("Flickr Demo"), 
-            tr("No GPS support detected, using GPS data from a sample log file instead."));
+        QMessageBox::information(this, tr("Flickr Demo"),
+                                 tr("No GPS support detected, using GPS data from a sample log file instead."));
     }
 }
 
@@ -143,7 +186,7 @@ void FlickrDemo::createMenus()
     connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 }
 
-void FlickrDemo::positionUpdated(QGeoPositionInfo gpsPos)
+void FlickrDemo::positionUpdated(const QGeoPositionInfo &gpsPos)
 {
     if (gpsPos.isValid()) {
         QGeoCoordinate coord = gpsPos.coordinate();
@@ -169,8 +212,7 @@ void FlickrDemo::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellit
 void FlickrDemo::viewSatelliteInfo()
 {
     if (m_satellite != 0) {
-        satellitesLabel->setText(tr("Using %1 of %2 satellites").arg(
-                                 QString::number(m_satellitesUsed), QString::number(m_satellitesInView)));    
+        satellitesLabel->setText(tr("Using %1 of %2 satellites").arg(QString::number(m_satellitesUsed), QString::number(m_satellitesInView)));
     } else {
         satellitesLabel->setText(tr("GPS not detected, replaying coordinates from sample log file."));
     }
@@ -188,9 +230,12 @@ void FlickrDemo::downloadButtonClicked()
 void FlickrDemo::downloadFlickerPictureList()
 {
     if (m_latitude == -1000 || m_longitude == -1000) {
-        if (QMessageBox::question(this, tr("Flickr Demo"), tr("No satellite connection.\n"
-                                  "Use hard coded coordinates?"), QMessageBox::Ok | QMessageBox::Cancel,
-                                  QMessageBox::Cancel) == QMessageBox::Cancel) {
+        if (QMessageBox::question(this,
+                                  tr("Flickr Demo"),
+                                  tr("No satellite connection.\n""Use hard coded coordinates?"),
+                                  QMessageBox::Ok | QMessageBox::Cancel,
+                                  QMessageBox::Cancel)
+                == QMessageBox::Cancel) {
             return;
         }
         // If GPS signal is not detected, Tampere area is used as default location
@@ -206,7 +251,7 @@ void FlickrDemo::downloadFlickerPictureList()
         QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
         return;
     }
-    m_session = new QNetworkSession(cfg, this);    
+    m_session = new QNetworkSession(cfg, this);
     m_session->open();
 
     bool ok = m_session->waitForOpened();
@@ -251,9 +296,9 @@ bool FlickrDemo::parsePictureList(QString xmlString)
 
     QDomDocument domDocument;
     if (!domDocument.setContent(xmlString, true, &errorStr, &errorLine, &errorColumn)) {
-        QMessageBox::information(window(), tr("Flickr Demo"), tr(
-                                     "XML Parse error at line %1, column %2:\n%3") .arg(errorLine) .arg(errorColumn) .arg(
-                                     errorStr));
+        QMessageBox::information(window(),
+                                 tr("Flickr Demo"),
+                                 tr("XML Parse error at line %1, column %2:\n%3").arg(errorLine).arg(errorColumn).arg(errorStr));
         return false;
     }
     QDomElement root = domDocument.documentElement();
@@ -325,8 +370,12 @@ void FlickrDemo::downloadPictureFromFlickr()
     m_filePath.append(fileName);
 
     if (QFile::exists(m_filePath)) {
-        if (QMessageBox::question(this, tr("Flickr Demo"), tr("File %1 is already downloaded."
-                                  "Overwrite?").arg(fileName), QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel)
+        if (QMessageBox::question(this,
+                                  tr("Flickr Demo"),
+                                  tr("File %1 is already downloaded."
+                                     "Overwrite?").arg(fileName),
+                                  QMessageBox::Ok | QMessageBox::Cancel,
+                                  QMessageBox::Cancel)
                 == QMessageBox::Cancel) {
             return;
         }
@@ -336,7 +385,7 @@ void FlickrDemo::downloadPictureFromFlickr()
     m_file = new QFile(m_filePath);
     if (!m_file->open(QIODevice::WriteOnly)) {
         QMessageBox::information(this, tr("Flickr Demo"),
-                                 tr("Unable to save the file %1: %2.") .arg(m_filePath).arg(m_file->errorString()));
+                                 tr("Unable to save the file %1: %2.").arg(m_filePath).arg(m_file->errorString()));
         delete m_file;
         m_file = 0;
         return;
@@ -411,8 +460,9 @@ void FlickrDemo::httpRequestFinished(int requestId, bool error)
         if (!m_downloadPictureList) {
             m_file->remove();
         }
-        QMessageBox::information(this, tr("Flickr Demo"), tr("Download failed: %1.") .arg(
-                                     m_http.errorString()));
+        QMessageBox::information(this,
+                                 tr("Flickr Demo"),
+                                 tr("Download failed: %1.").arg(m_http.errorString()));
     }
 
     if (m_downloadPictureList) {
@@ -449,8 +499,9 @@ void FlickrDemo::readResponseHeader(const QHttpResponseHeader& responseHeader)
             // these are not error conditions
             break;
         default:
-            QMessageBox::information(this, tr("Flickr Demo"), tr("Download failed: %1.") .arg(
-                                         responseHeader.reasonPhrase()));
+            QMessageBox::information(this,
+                                     tr("Flickr Demo"),
+                                     tr("Download failed: %1.").arg(responseHeader.reasonPhrase()));
             m_downloadingThumbnails = false;
             m_httpRequestAborted = true;
             m_progressDialog.hide();
@@ -487,11 +538,11 @@ void FlickrDemo::downloadNextThumbnail()
 
 PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName, QWidget* parent) :
         QDialog(parent)
-{    
+{
     resize(252, 361);
     QVBoxLayout *verticalLayout = new QVBoxLayout();
     verticalLayout->setSpacing(6);
-    verticalLayout->setContentsMargins(11, 11, 11, 11);        
+    verticalLayout->setContentsMargins(11, 11, 11, 11);
 
     label = new QLabel();
     QString fileName = QFileInfo(filePath).fileName();
@@ -505,7 +556,7 @@ PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName
 
     verticalLayout->addWidget(label);
 
-    imageLabel = new QLabel();        
+    imageLabel = new QLabel();
     QImage image;
     image.load(filePath);
     imageLabel->setPixmap(QPixmap::fromImage(image.scaled(imageSize, Qt::KeepAspectRatio,
@@ -513,8 +564,8 @@ PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName
 
     verticalLayout->addWidget(imageLabel);
 
-    buttonBox = new QDialogButtonBox();        
-    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+    buttonBox = new QDialogButtonBox();
+    buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
 
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
