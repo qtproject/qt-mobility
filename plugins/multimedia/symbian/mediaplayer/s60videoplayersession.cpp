@@ -50,8 +50,6 @@
 #include <w32std.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
-#include <QFile>
-
 S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
     , m_wsSession(0)
@@ -145,10 +143,9 @@ void S60VideoPlayerSession::nativeHandles()
 {
     if (!m_videoWidgetControl) {
 		m_coeControl =  m_dummyWidget->winId();
-    } else {
+    } else { 
         m_coeControl = m_videoWidgetControl->videoWidget()->winId();
-        m_coeControl->MakeVisible(ETrue);
-        m_coeControl->SetPosition(TPoint(0,0));
+        connect(m_videoWidgetControl, SIGNAL(resizeVideo()), this, SLOT(updateVideo()));
     }
     
     CCoeEnv* const coeEnv = m_coeControl->ControlEnv();
@@ -251,4 +248,18 @@ void S60VideoPlayerSession::updateMetaDataEntries()
     }
     
     emit metaDataChanged();
+}
+
+void S60VideoPlayerSession::updateVideo()
+{   
+    m_windowRect = TRect(
+        m_coeControl->DrawableWindow()->AbsPosition(),
+        m_coeControl->DrawableWindow()->Size());
+    m_clipRect = m_windowRect;
+    
+    TRAP_IGNORE(m_player->SetDisplayWindowL(*m_wsSession, 
+                                     *m_screenDevice, 
+                                     *m_window, 
+                                     m_windowRect, 
+                                     m_clipRect);)
 }

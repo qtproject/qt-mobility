@@ -79,6 +79,7 @@ protected:
 
 private slots: 
     void nativeHandles();
+    void updateVideo();
 
     
 private: // From MVideoPlayerUtilityObserver

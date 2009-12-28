@@ -47,20 +47,26 @@
 #include <QtGui/qpainter.h>
 #include <QtGui/qevent.h>
 
+#include <QtGui/private/qwidget_p.h>
+
 #include <coemain.h>    // For CCoeEnv
 #include <coecntrl.h>
 #include <w32std.h>
+
+#include <QTimer>
 
 class S60VideoWidget : public QWidget
 {
 public:
     S60VideoWidget(QWidget *parent = 0)
-        :QWidget(parent)
+        : QWidget(parent)
     {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         QPalette palette;
         palette.setColor(QPalette::Background, Qt::black);
         setPalette(palette);
+        setAttribute(Qt::WA_OpaquePaintEvent, true);
+        setAttribute(Qt::WA_NoSystemBackground, true);
     }
 
     virtual ~S60VideoWidget() {}
@@ -70,7 +76,7 @@ public:
         return m_nativeSize;
     }
 
-    void setNativeSize( const QSize &size)
+    void setNativeSize(const QSize &size)
     {
         if (size != m_nativeSize) {
             m_nativeSize = size;
@@ -88,12 +94,12 @@ public:
         m_pixmapImage = QPixmap::fromImage(image);
         repaint();
     }
-
+    
 protected:
     void paintEvent(QPaintEvent *)
     {
         if (!updatesEnabled())
-            return; //this avoids repaint from native events
+            return;
         QPainter painter(this);
         painter.fillRect(rect(), palette().background());
     }
@@ -114,16 +120,29 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
     delete m_widget;
 }
 
-bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
+;bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
 	if (e->type() == QEvent::Show) {
-		// Setting these values ensures smooth resizing since it
-		// will prevent the system from clearing the background
 		m_widget->setAttribute(Qt::WA_NoSystemBackground, true);
-		//m_widget->setAttribute(Qt::WA_PaintOnScreen, true);
+
+		return true;
 	}
 	
-    return false;
+	if (e->type() == QEvent::Resize) {
+        emit resizeVideo();
+        return true;
+	}
+	
+	if (e->type() == QEvent::Paint) {
+        QTimer::singleShot(20, this, SLOT(enableUpdates()));
+	}
+    
+	return QVideoWidgetControl::eventFilter(object, e);
+}
+
+void S60VideoWidgetControl::enableUpdates()
+{
+    emit resizeVideo();
 }
 
 void S60VideoWidgetControl::setOverlay()

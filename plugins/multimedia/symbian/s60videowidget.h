@@ -87,6 +87,10 @@ public:
 
 public slots:
     void updateNativeVideoSize();
+    void enableUpdates();
+    
+signals:
+    void resizeVideo();
 
 private:
     void windowExposed();
