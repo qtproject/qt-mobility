@@ -43,6 +43,7 @@
 #include "xqsettingsmanager.h"
 #include <QDir>
 #include <QFileSystemWatcher>
+#include <QTimer>
 
 #include <QDebug>
 
@@ -56,7 +57,13 @@ PathMapper::PathMapper()
     }
 
     QFileSystemWatcher *watcher = new QFileSystemWatcher(crmlDirs, this);
-    connect(watcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(updateMappings()));
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(1000);
+
+    connect(watcher, SIGNAL(directoryChanged(const QString&)), timer, SLOT(start()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateMappings()));
+
     updateMappings();
 }
 
