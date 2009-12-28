@@ -53,8 +53,7 @@ CPSPathMapperServer::CPSPathMapperServer()
 CSession2* CPSPathMapperServer::NewSessionL(const TVersion& aVersion, const RMessage2& /*aMessage*/) const
 {
     if (!User::QueryVersionSupported(TVersion(KServerMajorVersionNumber, 
-        KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion))
-    {
+        KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion)) {
         User::Leave(KErrNotSupported);
     }
 

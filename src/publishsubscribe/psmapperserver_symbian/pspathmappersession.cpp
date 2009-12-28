@@ -66,29 +66,28 @@ void CPSPathMapperServerSession::ServiceL(const RMessage2& aMessage)
 	        
 void CPSPathMapperServerSession::DispatchMessageL(const RMessage2& aMessage)
 {
-    switch (aMessage.Function())
-    {
-        case EGetChildrenLengthRequest:
-            GetChildrenLengthL(aMessage);
-            break;
-        case EGetChildrenRequest:
-            GetChildrenL(aMessage);
-            break;
-        case EChildPathsLengthRequest:
-            ChildPathsLengthL(aMessage);
-            break;
-        case EChildPathsRequest:
-            ChildPathsL(aMessage);
-            break;
-        case EResolvePathLengthRequest:
-            ResolvePathLengthL(aMessage);
-            break;
-        case EResolvePathRequest:
-            ResolvePathL(aMessage);
-            break;
-        default:
-            aMessage.Panic(KUnknownOpCode, KErrNotSupported);
-            break;
+    switch (aMessage.Function()) {
+    case EGetChildrenLengthRequest:
+        GetChildrenLengthL(aMessage);
+        break;
+    case EGetChildrenRequest:
+        GetChildrenL(aMessage);
+        break;
+    case EChildPathsLengthRequest:
+        ChildPathsLengthL(aMessage);
+        break;
+    case EChildPathsRequest:
+        ChildPathsL(aMessage);
+        break;
+    case EResolvePathLengthRequest:
+        ResolvePathLengthL(aMessage);
+        break;
+    case EResolvePathRequest:
+        ResolvePathL(aMessage);
+        break;
+    default:
+        aMessage.Panic(KUnknownOpCode, KErrNotSupported);
+        break;
     }
 }
 
@@ -107,10 +106,12 @@ void CPSPathMapperServerSession::GetChildrenLengthL(const RMessage2& aMessage)
 
     QSet<QString> children;
     iPathMapper.getChildren(path, children);
-
-    QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
-    out << children;
-    
+    if (children.size() > 0) {
+        QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
+        out << children;
+    } else {
+        iResultByteArray.clear();
+    }
     TPckgBuf<TInt> lengthPckg(iResultByteArray.size());
     aMessage.Write(1, lengthPckg);
 }
@@ -137,9 +138,12 @@ void CPSPathMapperServerSession::ChildPathsLengthL(const RMessage2& aMessage)
     QStringList childPaths;
     childPaths = iPathMapper.childPaths(path);
 
-    QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
-    out << childPaths;
-    
+    if (childPaths.size() > 0) {
+        QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
+        out << childPaths;
+    } else {
+        iResultByteArray.clear();
+    }
     TPckgBuf<TInt> lengthPckg(iResultByteArray.size());
     aMessage.Write(1, lengthPckg);
 }

@@ -55,8 +55,7 @@ int main(int argc, char **argv)
     CPSPathMapperServer* server = new CPSPathMapperServer;
     TInt err = server->Start(KPSPathMapperServerName);
 
-    if (err != KErrNone)
-    {
+    if (err != KErrNone) {
         CPSPathMapperServer::PanicServer(ESvrStartServer);
     }
     RProcess::Rendezvous(err);
