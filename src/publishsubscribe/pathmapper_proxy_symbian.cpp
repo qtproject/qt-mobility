@@ -77,14 +77,11 @@ PathMapper::RPathMapperServerSession::RPathMapperServerSession()
 
 TInt PathMapper::RPathMapperServerSession::Connect()
 {
-    qDebug() << "TInt PathMapper::RPathMapperServerSession::Connect()";
     TInt err = StartServer();
     if (err == KErrNone)
     {
-        qDebug() << "CreateSession(KPSPathMapperServerName, Version());";
         err = CreateSession(KPSPathMapperServerName, Version(), 8, EIpcSession_Sharable);
     }
-    qDebug() << "err" << err;
     return err;
 }
 
@@ -96,8 +93,6 @@ TVersion PathMapper::RPathMapperServerSession::Version() const
 
 bool PathMapper::RPathMapperServerSession::getChildren(QString path, QSet<QString> &children) const
 {
-    qDebug() << "bool PathMapper::RPathMapperServerSession::getChildren()" << path;
-
     QByteArray pathByteArray;
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
@@ -127,7 +122,6 @@ bool PathMapper::RPathMapperServerSession::getChildren(QString path, QSet<QStrin
 
 QStringList PathMapper::RPathMapperServerSession::childPaths(QString basePath) const
 {
-    qDebug() << "QStringList PathMapper::RPathMapperServerSession::childPaths()" << basePath;
     QByteArray pathByteArray;
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
@@ -157,7 +151,6 @@ QStringList PathMapper::RPathMapperServerSession::childPaths(QString basePath) c
 
 bool PathMapper::RPathMapperServerSession::resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const
 {
-    qDebug() << "bool PathMapper::RPathMapperServerSession::resolvePath()" << path;
     QByteArray pathByteArray;
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
@@ -191,44 +184,37 @@ bool PathMapper::RPathMapperServerSession::resolvePath(QString path, Target &tar
     category = c;
     key = k;
     delete keyDetailsBuf;
+    return true;
 }
 
 TInt PathMapper::RPathMapperServerSession::StartServer()
 {
-    qDebug() << "TInt PathMapper::RPathMapperServerSession::StartServer()";
-
     TInt ret = KErrNone;
     TFindServer findServer(KPSPathMapperServerName);
     TFullName name;
     if (findServer.Next(name) != KErrNone) {
-        qDebug() << "not found";
         TRequestStatus status;
         RProcess server;
         ret = server.Create(KPSPathMapperServerName, KNullDesC);
         if(ret != KErrNone) {
-            qDebug() << "create failed";
             return ret;
         }
         server.Rendezvous(status);
         if(status != KRequestPending) {
-            qDebug() << "kill server";
             server.Kill(KErrNone);
             server.Close();
             return KErrGeneral;
         } else {
-            qDebug() << "resume server";
             server.Resume();
         }
 
         User::WaitForRequest(status);
         if(status != KErrNone) {
-            qDebug() << "close server";
             server.Close();
             return status.Int();
         }
         server.Close();
     }
-    qDebug() << "return" << ret;
     return ret;
 }
 

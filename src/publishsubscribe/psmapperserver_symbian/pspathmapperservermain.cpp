@@ -48,32 +48,13 @@
 
 QTM_USE_NAMESPACE
 
-#include <QFile>
-#include <QTextStream>
-void debugOutput(QtMsgType type, const char *msg)
-{
-    QFile file("C:\\Data\\pspathmapperserver_debug.txt");
-
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append))
-      return;
-
-    QTextStream out(&file);
-    out << "Debug: ";
-    out << msg;
-    out << "\n";
-}
-
 int main(int argc, char **argv)
 {
-    qInstallMsgHandler(debugOutput);
-
     QCoreApplication app(argc, argv);
-    
-    qDebug("Attempting to create CPSPathMapperServer");
     
     CPSPathMapperServer* server = new CPSPathMapperServer;
     TInt err = server->Start(KPSPathMapperServerName);
-    qDebug() << "err" << err;
+
     if (err != KErrNone)
     {
         CPSPathMapperServer::PanicServer(ESvrStartServer);

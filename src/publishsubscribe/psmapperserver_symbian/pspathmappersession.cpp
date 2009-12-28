@@ -94,8 +94,6 @@ void CPSPathMapperServerSession::DispatchMessageL(const RMessage2& aMessage)
 
 void CPSPathMapperServerSession::GetChildrenLengthL(const RMessage2& aMessage)
 {
-    qDebug("void CPSPathMapperServerSession::GetChildrenLengthL(const RMessage2& aMessage)");
-
     HBufC8* pathBuf = HBufC8::NewLC(aMessage.GetDesLength(0));
     TPtr8 pathPtr(pathBuf->Des());
     aMessage.ReadL(0, pathPtr);
@@ -106,14 +104,10 @@ void CPSPathMapperServerSession::GetChildrenLengthL(const RMessage2& aMessage)
     in >> path;
 
     CleanupStack::PopAndDestroy(pathBuf);
-    
-    qDebug() << "path" << path;
-
 
     QSet<QString> children;
     iPathMapper.getChildren(path, children);
-    qDebug() << "children" << children;
-    
+
     QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
     out << children;
     
@@ -123,15 +117,12 @@ void CPSPathMapperServerSession::GetChildrenLengthL(const RMessage2& aMessage)
 
 void CPSPathMapperServerSession::GetChildrenL(const RMessage2& aMessage)
 {
-    qDebug("void CPSPathMapperServerSession::GetChildrenL(const RMessage2& aMessage)");
-    
     TPtrC8 childrenPtr((TUint8*)(iResultByteArray.constData()), iResultByteArray.size());
     aMessage.Write(0, childrenPtr);
 }
 
 void CPSPathMapperServerSession::ChildPathsLengthL(const RMessage2& aMessage)
 {
-    qDebug("void CPSPathMapperServerSession::ChildPathsL(const RMessage2& aMessage)");
     HBufC8* pathBuf = HBufC8::NewLC(aMessage.GetDesLength(0));
     TPtr8 pathPtr(pathBuf->Des());
     aMessage.ReadL(0, pathPtr);
@@ -142,14 +133,10 @@ void CPSPathMapperServerSession::ChildPathsLengthL(const RMessage2& aMessage)
     in >> path;
 
     CleanupStack::PopAndDestroy(pathBuf);
-    
-    qDebug() << "path" << path;
-
 
     QStringList childPaths;
     childPaths = iPathMapper.childPaths(path);
-    qDebug() << "childPaths" << childPaths;
-    
+
     QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
     out << childPaths;
     
@@ -159,14 +146,12 @@ void CPSPathMapperServerSession::ChildPathsLengthL(const RMessage2& aMessage)
 
 void CPSPathMapperServerSession::ChildPathsL(const RMessage2& aMessage)
 {
-    qDebug("void CPSPathMapperServerSession::ChildPathsL(const RMessage2& aMessage)");
     TPtrC8 childPathsPtr((TUint8*)(iResultByteArray.constData()), iResultByteArray.size());
     aMessage.Write(0, childPathsPtr);
 }
 
 void CPSPathMapperServerSession::ResolvePathLengthL(const RMessage2& aMessage)
 {
-    qDebug("void CPSPathMapperServerSession::ResolvePathL(const RMessage2& aMessage)");
     HBufC8* pathBuf = HBufC8::NewLC(aMessage.GetDesLength(0));
     TPtr8 pathPtr(pathBuf->Des());
     aMessage.ReadL(0, pathPtr);
@@ -177,20 +162,14 @@ void CPSPathMapperServerSession::ResolvePathLengthL(const RMessage2& aMessage)
     in >> path;
 
     CleanupStack::PopAndDestroy(pathBuf);
-    
-    qDebug() << "path" << path;
-
 
     PathMapper::Target target;
     quint32 category;
     quint32 key;
     if (iPathMapper.resolvePath(path, target, category, key)) {
-        qDebug() << "target" << target << "category" << category << "key" << key;
-
         QDataStream out(&iResultByteArray, QIODevice::WriteOnly);
         out << (int)target << category << key;
     } else {
-        qDebug("not found");
         iResultByteArray.clear();
     }
     
@@ -200,7 +179,6 @@ void CPSPathMapperServerSession::ResolvePathLengthL(const RMessage2& aMessage)
 
 void CPSPathMapperServerSession::ResolvePathL(const RMessage2& aMessage)
 {
-    qDebug("void CPSPathMapperServerSession::ResolvePathL(const RMessage2& aMessage)");
     TPtrC8 keyDetailsPtr((TUint8*)(iResultByteArray.constData()), iResultByteArray.size());
     aMessage.Write(0, keyDetailsPtr);
 }

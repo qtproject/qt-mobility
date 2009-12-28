@@ -48,13 +48,10 @@ QTM_BEGIN_NAMESPACE
 CPSPathMapperServer::CPSPathMapperServer()
     : CServer2(EPriorityNormal, ESharableSessions)
 {
-    qDebug("CPSPathMapperServer::CPSPathMapperServer()");
 }
 
 CSession2* CPSPathMapperServer::NewSessionL(const TVersion& aVersion, const RMessage2& /*aMessage*/) const
 {
-    qDebug() << "CSession2* CPSPathMapperServer::NewSessionL()";
-
     if (!User::QueryVersionSupported(TVersion(KServerMajorVersionNumber, 
         KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion))
     {
