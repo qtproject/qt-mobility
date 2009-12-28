@@ -53,7 +53,7 @@
 #ifdef __WINS__
     #include "pathmapper_symbian_p.h"
 #else
-    #include "pathmapper_proxy_symbian.h"
+    #include "pathmapper_proxy_symbian_p.h"
 #endif
 
 #include "xqsettingsmanager.h"

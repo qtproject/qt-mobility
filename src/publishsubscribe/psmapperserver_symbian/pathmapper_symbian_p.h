@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef PATHMAPPER_H
-#define PATHMAPPER_H
+#ifndef PATHMAPPER_SYMBIAN_P_H
+#define PATHMAPPER_SYMBIAN_P_H
 
 #include <QStringList>
 #include <QHash>
@@ -86,4 +86,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif //PATHMAPPER_H
+#endif //PATHMAPPER_SYMBIAN_P_H

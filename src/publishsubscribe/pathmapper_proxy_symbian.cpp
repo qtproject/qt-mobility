@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "pathmapper_proxy_symbian.h"
+#include "pathmapper_proxy_symbian_p.h"
 #include "clientservercommon.h"
 
 #include <QDir>
@@ -218,6 +218,6 @@ TInt PathMapper::RPathMapperServerSession::StartServer()
     return ret;
 }
 
-#include "moc_pathmapper_proxy_symbian.cpp"
+#include "moc_pathmapper_proxy_symbian_p.cpp"
 
 QTM_END_NAMESPACE
