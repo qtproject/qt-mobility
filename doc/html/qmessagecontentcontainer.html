@@ -38,11 +38,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a></b> ( const QByteArray &amp; <i>name</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#headerFields">headerFields</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">uint </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#size">size</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#size">size</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#suggestedFileName">suggestedFileName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#textContent">textContent</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a></b> ( QDataStream &amp; <i>out</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#writeTextContentTo">writeTextContentTo</a></b> ( QTextStream &amp; <i>out</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#writeContent">writeContent</a></b> ( QDataStream &amp; <i>out</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#writeTextContent">writeTextContent</a></b> ( QTextStream &amp; <i>out</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -55,7 +55,7 @@
 <p>The internet media (MIME) type of the container is returned by <a href="qmessagecontentcontainer.html#contentType">contentType</a>(), the content subtype is returned by <a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a>(), the content type charset parameter is returned by <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>(), and the content suggested filename by <a href="qmessagecontentcontainer.html#suggestedFileName">suggestedFileName</a>().</p>
 <p>The type of a container that contains multiple parts of content must be &quot;multipart&quot; (case insensitive). A list of identifiers for directly contained parts of content is returned by <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>().</p>
 <p>An indication of the size of the container and its contents on the originating server is given by <a href="qmessagecontentcontainer.html#size">size</a>(). If the content is entirely available on the device <a href="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</a>() will return true.</p>
-<p>Non-multipart content can be serialized to a <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> using <a href="qmessagecontentcontainer.html#writeContentTo">writeContentTo</a>(), or to a <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> using <a href="qmessagecontentcontainer.html#writeTextContentTo">writeTextContentTo</a>().</p>
+<p>Non-multipart content can be serialized to a <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> using writeContentTo(), or to a <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> using writeTextContentTo().</p>
 <p>A container also stores name-value pairs known as header fields. Names are ASCII strings, while values are charset encoded unicode strings. A list of the header fields present in a container is returned by <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>(). The unicode string values associated with a particular header field name are returned by <a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a>().</p>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
 <hr />
@@ -114,7 +114,7 @@
 <h3 class="fn"><a name="isContentAvailable"></a>bool QMessageContentContainer::isContentAvailable () const</h3>
 <p>Returns true if the entirety of the content contained is available on the device; otherwise returns false.</p>
 <a name="//apple_ref/cpp/instm/QMessageContentContainer/size"></a>
-<h3 class="fn"><a name="size"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> QMessageContentContainer::size () const</h3>
+<h3 class="fn"><a name="size"></a>int QMessageContentContainer::size () const</h3>
 <p>If the size of the container is known then returns an indication of the size of the container on the originating server, including contents; otherwise returns 0.</p>
 <a name="//apple_ref/cpp/instm/QMessageContentContainer/suggestedFileName"></a>
 <h3 class="fn"><a name="suggestedFileName"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMessageContentContainer::suggestedFileName () const</h3>
@@ -123,11 +123,11 @@
 <a name="//apple_ref/cpp/instm/QMessageContentContainer/textContent"></a>
 <h3 class="fn"><a name="textContent"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageContentContainer::textContent () const</h3>
 <p>For textual content encoded with a recognized charset, returns the content as a unicode string; otherwise a null string is returned.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/writeContentTo"></a>
-<h3 class="fn"><a name="writeContentTo"></a>void QMessageContentContainer::writeContentTo ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QMessageContentContainer/writeContent"></a>
+<h3 class="fn"><a name="writeContent"></a>void QMessageContentContainer::writeContent ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i> ) const</h3>
 <p>For a non-multipart container, writes the content as returned by <a href="qmessagecontentcontainer.html#content">content</a>() to the stream <i>out</i>; otherwise does nothing.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/writeTextContentTo"></a>
-<h3 class="fn"><a name="writeTextContentTo"></a>void QMessageContentContainer::writeTextContentTo ( <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> &amp; <i>out</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QMessageContentContainer/writeTextContent"></a>
+<h3 class="fn"><a name="writeTextContent"></a>void QMessageContentContainer::writeTextContent ( <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> &amp; <i>out</i> ) const</h3>
 <p>For a non-multipart container, writes the content as returned by <a href="qmessagecontentcontainer.html#textContent">textContent</a>() to the stream <i>out</i>; otherwise does nothing.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

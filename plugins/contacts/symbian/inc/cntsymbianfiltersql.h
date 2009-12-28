@@ -39,32 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSYMBIANFILTER_H
-#define QCONTACTSYMBIANFILTER_H
+#ifndef CNT_SYMBIAN_FILTER_SQL_H
+#define CNT_SYMBIAN_FILTER_SQL_H
 
-#ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
 
 #include "cntabstractcontactfilter.h"
+#include "cntsymbianfiltersqlhelper.h"
 
 class CContactDatabase;
 QTM_USE_NAMESPACE
-class QContactSymbianFilter : public CntAbstractContactFilter
+class CntSymbianFilter : public CntAbstractContactFilter
 {
 public:
-    QContactSymbianFilter(CContactDatabase& contactDatabase);
-    ~QContactSymbianFilter();
+    CntSymbianFilter(CContactDatabase& contactDatabase);
+    ~CntSymbianFilter();
 
     /* from CntAbstractContactFilter */
     QList<QContactLocalId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
+            bool &filterSupportedFlag,
             QContactManager::Error& error);
-    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+    bool filterSupported(const QContactFilter& filter);
 
 private:
+    FilterSupport filterSupportLevel(const QContactFilter& filter);
+
     CContactDatabase& m_contactDatabase;
+    CntSymbianFilterSqlHelper* m_sqlhelper;
+
 };
 
-#endif /* __SYMBIAN_CNTMODEL_USE_SQLITE__ */
+#endif /* SYMBIAN_BACKEND_USE_SQLITE */
 
-#endif /* QCONTACTSYMBIANFILTER_H */
+#endif /* CNT_SYMBIAN_FILTER_SQL_H */

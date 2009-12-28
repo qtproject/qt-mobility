@@ -43,7 +43,7 @@
 
 #include <e32base.h>
 #include "pspathmapperserver.pan"
-#include "pathmapper_symbian.h"
+#include "pathmapper_symbian_p.h"
 
 namespace QtMobility {
 

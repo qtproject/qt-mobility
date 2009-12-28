@@ -62,8 +62,8 @@ public:
 
     QMessageFolderFilter& operator=(const QMessageFolderFilter &other);
 
-    void setOptions(QMessageDataComparator::Options options);
-    QMessageDataComparator::Options options() const;
+    void setMatchFlags(QMessageDataComparator::MatchFlags matchFlags);
+    QMessageDataComparator::MatchFlags matchFlags() const;
 
     bool isEmpty() const;
     bool isSupported() const;
@@ -81,8 +81,8 @@ public:
     static QMessageFolderFilter byId(const QMessageFolderIdList &ids, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
     static QMessageFolderFilter byId(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
-    static QMessageFolderFilter byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp);
-    static QMessageFolderFilter byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
+    static QMessageFolderFilter byName(const QString &value, QMessageDataComparator::EqualityComparator cmp);
+    static QMessageFolderFilter byName(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);
 
     static QMessageFolderFilter byPath(const QString &value, QMessageDataComparator::EqualityComparator cmp);
     static QMessageFolderFilter byPath(const QString &value, QMessageDataComparator::InclusionComparator cmp = QMessageDataComparator::Includes);

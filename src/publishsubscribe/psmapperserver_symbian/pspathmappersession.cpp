@@ -42,7 +42,7 @@
 #include "clientservercommon.h"
 #include "pspathmappersession.h"
 #include "pspathmapperserver.pan"
-#include "pathmapper_symbian.h"
+#include "pathmapper_symbian_p.h"
 #include <QByteArray>
 #include <QDataStream>
 #include <QSet>

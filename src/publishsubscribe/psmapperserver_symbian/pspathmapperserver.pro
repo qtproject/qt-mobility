@@ -13,7 +13,7 @@ INCLUDEPATH += ../xqsettingsmanager_symbian
 DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
 include(../xqsettingsmanager_symbian/settingsmanager.pri)
 
-HEADERS += pathmapper_symbian.h \
+HEADERS += pathmapper_symbian_p.h \
     qcrmlparser_p.h
 
 SOURCES += pathmapper_symbian.cpp \

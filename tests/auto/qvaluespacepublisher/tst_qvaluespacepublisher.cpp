@@ -542,7 +542,7 @@ void tst_QValueSpacePublisher::threads_data()
                 << layer->id() << uint(10) << uint(800) << false;
             QTest::newRow("100 threads, 80 items")
                 << layer->id() << uint(100) << uint(80) << false;
-        } else if(layer->id() == QVALUESPACE_SYMBIAN_SETTINGS_LAYER) {
+        } else if (layer->id() == QVALUESPACE_SYMBIAN_SETTINGS_LAYER) {
             QTest::newRow("1 thread, 10 items, sequential")
                 << layer->id() << uint(1) << uint(10) << true;
             QTest::newRow("2 threads, 10 items, sequential")
@@ -622,7 +622,7 @@ void tst_QValueSpacePublisher::threads()
         qDebug() << "Actual Paths:" << subPaths;
     }
     QVERIFY(subPaths.toSet() == expectedPaths.toSet());
-    
+
     while (!subPaths.isEmpty()) {
         QValueSpaceSubscriber threadItem;
         threadItem.setPath(subscriber);

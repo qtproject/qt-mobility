@@ -25,6 +25,7 @@
 <p align="center"><img src="images/keepintouch-example.png" /></p><p>The 'Keep in Touch' application locates people you have sent messages to in the past, but with whom you have not communicated recently. It defines a user-selected date range in the past, beginning a certain amount of time ago and finishing more recently. Any address that you sent a message to in this period is located. Any address that you sent a message to more recently than this period will not be displayed. So, now might be a good time to say hello to the people whose addresses are reported!</p>
 <p>We find addresses when the user clicks the Search button. First of all we find the dates that define the period that the user has selected.</p>
 <pre>        QDateTime now(QDateTime::currentDateTime());
+        bool useExclusionPeriod(excludeCheckBox-&gt;isChecked());
 
         <span class="comment">// Determine the dates that demarcate the selected range</span>
         QDateTime minimumDate(now);
@@ -39,34 +40,50 @@
         }
 
         QDateTime maximumDate(now);
-        switch (excludePeriod-&gt;currentIndex()) {
-            case 0: maximumDate = maximumDate.addDays(-7); break;
-            case 1: maximumDate = maximumDate.addMonths(-1); break;
-            case 2: maximumDate = maximumDate.addMonths(-3); break;
-            case 3: maximumDate = maximumDate.addMonths(-6); break;
-            case 4: maximumDate = maximumDate.addMonths(-9); break;
-            default: break;
+        if (useExclusionPeriod) {
+            <span class="comment">// We have an exclusion period to apply</span>
+            switch (excludePeriod-&gt;currentIndex()) {
+                case 0: maximumDate = maximumDate.addDays(-7); break;
+                case 1: maximumDate = maximumDate.addMonths(-1); break;
+                case 2: maximumDate = maximumDate.addMonths(-3); break;
+                case 3: maximumDate = maximumDate.addMonths(-6); break;
+                case 4: maximumDate = maximumDate.addMonths(-9); break;
+                default: break;
+            }
         }</pre>
 <p>We create filter objects that will constrain our message search to the date range that the user has selected:</p>
 <pre>        <span class="comment">// We will include addresses contacted following the minimum date</span>
         QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
 
-        <span class="comment">// We will exclude addresses contacted following the maximum date</span>
-        QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual));</pre>
+        QMessageFilter excludeFilter;
+        if (useExclusionPeriod) {
+            <span class="comment">// We will exclude addresses contacted following the maximum date</span>
+            excludeFilter = QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
+        }</pre>
 <p>Now we combine our filters to precisely specify the messages that we would like to inspect to perform our address search:</p>
 <pre>        <span class="comment">// We only want to match messages that we sent</span>
         QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
-        <span class="comment">// Create the filter needed to locate messages whose address we will exclude</span>
-        exclusionFilter = (sentFilter &amp; excludeFilter);
-
         <span class="comment">// Create the filter needed to locate messages to search for addresses to include</span>
-        inclusionFilter = (sentFilter &amp; includeFilter &amp; ~excludeFilter);</pre>
-<p>Now that we know what messages to search for, we use an instance of <a href="qmessageserviceaction.html">QMessageServiceAction</a> to perform our first search:</p>
-<pre>        <span class="comment">// Start the search for messages containing addresses to exclude</span>
-        serviceAction.queryMessages(exclusionFilter);</pre>
-<p>We could have queried the <a href="qmessagestore.html">QMessageStore</a> instance directly using the <a href="qmessagestore.html#queryMessages">queryMessages</a> function, but that would keep our UI thread busy, and we wouldn't be able to keep our UI functioning at the same time. Using the <a href="qmessageserviceaction.html">QMessageServiceAction</a> interface allows us to process the search asynchronously.</p>
-<p>We receive the notification of matching messages by responding to the <a href="qmessageserviceaction.html#messagesFound">QMessageServiceAction::messagesFound</a>() signal:</p>
+        inclusionFilter = (sentFilter &amp; includeFilter &amp; ~excludeFilter);
+
+        if (useExclusionPeriod) {
+            <span class="comment">// Create the filter needed to locate messages whose address we will exclude</span>
+            exclusionFilter = (sentFilter &amp; excludeFilter);
+        }</pre>
+<p>Now that we know what messages to search for, we use an instance of <a href="qmessageservice.html">QMessageService</a> to perform our first search:</p>
+<pre>        if (useExclusionPeriod) {
+            <span class="comment">// Start the search for messages containing addresses to exclude</span>
+            service.queryMessages(exclusionFilter);
+        } else {
+            <span class="comment">// Only search for messages containing addresses to include</span>
+            service.queryMessages(inclusionFilter);
+
+            <span class="comment">// Clear the inclusion filter to indicate that we have searched for it</span>
+            inclusionFilter = QMessageFilter();
+        }</pre>
+<p>We could have queried the <a href="qmessagemanager.html">QMessageManager</a> instance directly using the <a href="qmessagemanager.html#queryMessages">queryMessages</a> function, but that would keep our UI thread busy, and we wouldn't be able to keep our UI functioning at the same time. Using the <a href="qmessageservice.html">QMessageService</a> interface allows us to process the search asynchronously.</p>
+<p>We receive the notification of matching messages by responding to the <a href="qmessageservice.html#messagesFound">QMessageService::messagesFound</a>() signal:</p>
 <pre>    void AddressFinder::messagesFound(const QMessageIdList &amp;ids)
     {
         <span class="comment">// Add these IDs to the relevant set</span>
@@ -76,21 +93,22 @@
             inclusionMessages &lt;&lt; ids;
         }
     }</pre>
-<p>When the search is completed, the <a href="qmessageserviceaction.html#stateChanged">QMessageServiceAction::stateChanged</a>() signal is emitted. We have to perform two searches, so when the first finishes our handler initiates the second; when the second finishes, we begin processing the results:</p>
-<pre>    void AddressFinder::stateChanged(QMessageServiceAction::State s)
+<p>When the search is completed, the <a href="qmessageservice.html#stateChanged">QMessageService::stateChanged</a>() signal is emitted. If the user specified an exclusion period then we have to perform two searches, so when the first finishes our handler initiates the second; when the second finishes, we begin processing the results:</p>
+<pre>    void AddressFinder::stateChanged(QMessageService::State newState)
     {
-        if (s == QMessageServiceAction::Successful) {
-            if (!inclusionFilter.isEmpty()) {
-                <span class="comment">// Now find the included messages</span>
-                serviceAction.queryMessages(inclusionFilter);
+        if (newState == QMessageService::FinishedState) {
+            if (service.error() == QMessageManager::NoError) {
+                if (!inclusionFilter.isEmpty()) {
+                    <span class="comment">// Now find the included messages</span>
+                    service.queryMessages(inclusionFilter);
 
-                <span class="comment">// Clear the inclusion filter to indicate that we have searched for it</span>
-                inclusionFilter = QMessageFilter();
-            } else {
-                <span class="comment">// We have found the exclusion and inclusion message sets</span>
-                if (!inclusionMessages.isEmpty()) {
-                    <span class="comment">// Begin processing the message sets</span>
-                    QTimer::singleShot(0, this, SLOT(continueSearch()));</pre>
+                    <span class="comment">// Clear the inclusion filter to indicate that we have searched for it</span>
+                    inclusionFilter = QMessageFilter();
+                } else {
+                    <span class="comment">// We have found the exclusion and inclusion message sets</span>
+                    if (!inclusionMessages.isEmpty()) {
+                        <span class="comment">// Begin processing the message sets</span>
+                        QTimer::singleShot(0, this, SLOT(continueSearch()));</pre>
 <p>The <tt>continueSearch</tt> function processes the results of our searches, one message at a time. Each address we sent a message to in the excluded time period is added to our exclusion list. For each address we sent a message to in our included time period, and which is not in the exclusion list, we create a set of the messages that we sent to that address.</p>
 <pre>    void AddressFinder::continueSearch()
     {
@@ -192,7 +210,7 @@
             messageCombo-&gt;addItem(message.first);
         }
     }</pre>
-<p>When the user has selected a message, two further actions become possible. We can use the <a href="qmessageserviceaction.html">QMessageServiceAction</a> facility to either view the message or to compose a new message to the recipient of the earlier message. To view the message we only need to invoke the <a href="qmessageserviceaction.html#show">show</a> function for the relevant <a href="qmessageid.html">QMessageId</a>:</p>
+<p>When the user has selected a message, two further actions become possible. We can use the <a href="qmessageservice.html">QMessageService</a> facility to either view the message or to compose a new message to the recipient of the earlier message. To view the message we only need to invoke the <a href="qmessageservice.html#show">show</a> function for the relevant <a href="qmessageid.html">QMessageId</a>:</p>
 <pre>    void AddressFinder::showMessage()
     {
         int index = messageCombo-&gt;currentIndex();
@@ -202,7 +220,7 @@
 
             <span class="comment">// Show the message selected</span>
             QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);
-            serviceAction.show(messageId);
+            service.show(messageId);
         }
     }</pre>
 <p>To compose a response, we will create a new message that forwards the existing message content to the same recipient, and requests that the system display a message composer prepared with the message content we have prepared:</p>
@@ -220,7 +238,7 @@
             <span class="comment">// Create a message which forwards the selected message to the same recipient</span>
             QMessage fwd(original.createResponseMessage(QMessage::Forward));
             fwd.setTo(original.to());
-            serviceAction.compose(fwd);
+            service.compose(fwd);
         }
     }</pre>
 <p /><address><hr /><div align="center">

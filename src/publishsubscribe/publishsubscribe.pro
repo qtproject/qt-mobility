@@ -43,12 +43,12 @@ symbian {
     DEPENDPATH += psmapperserver_symbian
     INCLUDEPATH += psmapperserver_symbian
 
-    HEADERS += pathmapper_symbian.h \
+    HEADERS += pathmapper_symbian_p.h \
         pathmapper_proxy_symbian.h
 
     DEFINES += QT_BUILD_INTERNAL
-    HEADERS += settingslayer_symbian.h
-    SOURCES += settingslayer_symbian.cpp \
+    HEADERS += settingslayer_symbian_p.h
+    SOURCES += settingslayer_symbian.cpp
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
@@ -59,8 +59,7 @@ symbian {
 }
 
 unix:!symbian {
-    maemo {
-        DEFINES += Q_WS_MAEMO_6
+    maemo6 {
         SOURCES += contextkitlayer.cpp
         CONFIG += link_pkgconfig
         PKGCONFIG += contextsubscriber-1.0 QtDBus

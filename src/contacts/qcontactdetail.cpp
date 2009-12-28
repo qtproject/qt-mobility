@@ -110,7 +110,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
   // otherAddress.definitionName() == QContactAddress::staticType()
   \endcode
  
-  \sa QContact, QContactDetailDefinition, Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \sa QContact, QContactDetailDefinition, QContactDetailFilter, QContactDetailRangeFilter, Q_DECLARE_CUSTOM_CONTACT_DETAIL
  */
 
 /*!

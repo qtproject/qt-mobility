@@ -42,7 +42,6 @@
 #ifndef PUBLISHSUBSCRIBEMAINWINDOW_H
 #define PUBLISHSUBSCRIBEMAINWINDOW_H
 
-#include <qmobilityglobal.h>
 #include <QMainWindow>
 #include <qmobilityglobal.h>
 

@@ -53,8 +53,8 @@ QTM_BEGIN_NAMESPACE
 
     A QMessageFilter is composed of a message property, an optional comparison operator
     and a comparison value. The QMessageFilter class is used in conjunction with the 
-    QMessageStore::queryMessages(), QMessageStore::countMessages(), 
-    QMessageServiceAction::queryMessages(), and QMessageServiceAction::countMessages()
+    QMessageManager::queryMessages(), QMessageManager::countMessages(), 
+    QMessageService::queryMessages(), and QMessageService::countMessages()
     functions to filter results which meet the criteria defined by the filter.
 
     QMessageFilters can be combined using the logical operators (&), (|) and (~) to
@@ -66,10 +66,10 @@ QTM_BEGIN_NAMESPACE
     \code
     QMessageFilter subjectFilter(QMessageFilter::bySubject("meeting"));
     QMessageFilter senderFilter(QMessageFilter::bySender("joe@user.com"));
-    QMessageIdList results = QMessageStore::instance()->queryMessages(subjectFilter & senderFilter);
+    QMessageIdList results = QMessageManager().queryMessages(subjectFilter & senderFilter);
     \endcode
 
-    \sa QMessageStore, QMessage
+    \sa QMessageManager, QMessage
 */
 
 /*!
@@ -100,21 +100,21 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageFilter::setOptions(QMessageDataComparator::Options options)
+    \fn QMessageFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
   
-    Set the options for the search filter to \a options.
+    Set the match flags for the search filter to \a matchFlags.
 
-    \sa options()
+    \sa matchFlags()
 */
 
 /*!
-    \fn QMessageFilter::options() const
+    \fn QMessageFilter::matchFlags() const
   
-    Return the options for the search filter.
+    Return the match flags for the search filter.
     
-    Default is no options set.
+    Default is no match flags set.
 
-    \sa setOptions()
+    \sa setMatchFlags()
 */
 
 /*!
@@ -140,7 +140,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageFilter::operator~() const
   
     Returns a filter that is the logical NOT of the value of this filter (ignoring any
-    options() set on the filter).
+    matchFlags() set on the filter).
 
     If this filter is empty, the result will be a non-matching filter; if this filter is 
     non-matching, the result will be an empty filter.

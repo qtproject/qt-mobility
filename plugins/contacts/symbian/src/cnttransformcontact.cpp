@@ -109,7 +109,7 @@ void CntTransformContact::initializeCntTransformContactData()
 	m_transformContactData.insert(Note, new CntTransformNote);
 	m_transformContactData.insert(Family, new CntTransformFamily);
 
-#ifdef USE_CUSTOM_CNT_MODEL_FIELDS
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
 	// variated transform classes
     m_transformContactData.insert(Avatar, new CntTransformAvatar);
     m_transformContactData.insert(Anniversary, new CntTransformAnniversary);
@@ -255,7 +255,7 @@ void CntTransformContact::transformContactL(
 
             // save preferred detail
             transformPreferredDetailL(contact, detailList.at(i), fieldList);
-            
+
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
@@ -422,7 +422,7 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
     return timestampDetail;
 }
 
-void CntTransformContact::transformPreferredDetailL(const QContact& contact, 
+void CntTransformContact::transformPreferredDetailL(const QContact& contact,
         const QContactDetail& detail, QList<CContactItemField*> &fieldList) const
 {
     if (fieldList.count() == 0) {
@@ -432,13 +432,13 @@ void CntTransformContact::transformPreferredDetailL(const QContact& contact,
     if (contact.isPreferredDetail("call", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForCall));
     }
-    else if (contact.isPreferredDetail("email", detail)) {
+    if (contact.isPreferredDetail("email", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForEmail));
     }
-    else if (contact.isPreferredDetail("videocall", detail)) {
+    if (contact.isPreferredDetail("videocall", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForVideoCall));
     }
-    else if (contact.isPreferredDetail("message", detail)) {
+    if (contact.isPreferredDetail("message", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForMessage));
     }
 }
@@ -449,13 +449,13 @@ void CntTransformContact::transformPreferredDetail(const CContactItemField& fiel
     if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForCall))) {
         contact.setPreferredDetail("call", detail);
     }
-    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForEmail))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForEmail))) {
         contact.setPreferredDetail("email", detail);
     }
-    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForVideoCall))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForVideoCall))) {
         contact.setPreferredDetail("videocall", detail);
     }
-    else if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
         contact.setPreferredDetail("message", detail);
     }
 }

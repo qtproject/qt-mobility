@@ -534,7 +534,7 @@ void tst_QValueSpaceSubscriber::testPathChanges()
     #else
         QCOMPARE(subscriber.subPaths().toSet(), rootPaths.toSet());
     #endif
-    
+
     subscriber.cd("home");
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
     #ifdef Q_OS_SYMBIAN
@@ -542,7 +542,7 @@ void tst_QValueSpaceSubscriber::testPathChanges()
     #else
         QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
     #endif
-    
+
     subscriber.cd("user");
     QCOMPARE(subscriber.path(), QLatin1String("/home/user"));
     #ifdef Q_OS_SYMBIAN
@@ -550,7 +550,7 @@ void tst_QValueSpaceSubscriber::testPathChanges()
     #else
         QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
     #endif
-    
+
     subscriber.cdUp();
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
     #ifdef Q_OS_SYMBIAN
@@ -558,7 +558,7 @@ void tst_QValueSpaceSubscriber::testPathChanges()
     #else
         QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
     #endif
-    
+
     subscriber.cd("/home/user");
     QCOMPARE(subscriber.path(), QLatin1String("/home/user"));
     #ifdef Q_OS_SYMBIAN

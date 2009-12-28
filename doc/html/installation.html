@@ -90,19 +90,16 @@
     nmake install</pre>
 <a name="building-for-symbian-on-windows"></a>
 <h3>Building For Symbian On Windows</h3>
-<p>To configure the Qt Mobility libraries, run configure in the package directory. (-prefix cannot be used since the libraries are installed into the SDK directory)</p>
+<p>Building Qt Mobility for Symbian is not necessary as the package contains pre-built binaries for the SDK and SIS file for the device. See the <tt>symbian\install.txt</tt> file on how to deploy these.</p>
+<p>If you wish to build QtMobility yourself, run configure in the package directory. (-prefix cannot be used since the libraries are installed into the SDK directory)</p>
 <pre>        cd c:\QtMobility\%DISTNAME%
         configure</pre>
 <p>Type <tt>configure -help</tt> to get a list of all available options.</p>
-<p>To create and install all the libraries and tools, type:</p>
-<pre>    make</pre>
-<p>(Note: no make install step is necessary) The libraries will be deployed into the SDK and will be ready to use for applications running within the emulator.</p>
-<p>Rather than building the libraries it is also possible to deploy a prebuilt set of libraries. Under the <tt>c:\QtMobility\%DISTNAME%\symbian</tt> directory there contains <tt>Mobility_tech_preview_libraries.zip</tt>. Extract this into the SDK root directory to add the necessary libraries. If you have multiple SDKs then repeat this step for each of them.</p>
-<p>To build an SIS package for a particular library such as bearer management run the following commands</p>
-<pre>    cd src/bearer
-    make release-gcce
-    createpackage bearer_template.pkg release-gcce</pre>
-<p>There is also a set of prebuilt SIS file for all the libraries under <tt>c:\QtMobility\%DISTNAME%\symbian\Mobility_tech_preview.sis</tt> which can be deployed on your device.</p>
+<p>To create and deploy the libraries and tools for the emulator run:</p>
+<pre>    make debug-winscw</pre>
+<p>To create the libraries and tools for a device run:</p>
+<pre>    make release-gcce</pre>
+<p>Note: <tt>make install</tt> has no meaning for building on Symbian. The libraries will be deployed into the SDK (when running make) and will be ready to use for compiling applications for the emulator and/or device.</p>
 <a name="building-individual-qt-mobility-domains"></a>
 <h3>Building Individual Qt Mobility Domains</h3>
 <p>Qt Mobility is comprised of several domains but all of these may not need to be built. To build a single domain, perform the configure step as outlined above, and then perform the make step in the appropriate directory to create the desired library.</p>

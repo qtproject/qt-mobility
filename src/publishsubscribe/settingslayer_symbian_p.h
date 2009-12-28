@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef SYMBIANSETTINGSLAYER_H
 #define SYMBIANSETTINGSLAYER_H
 
@@ -50,7 +51,7 @@
 #include <QMultiMap>
 
 #ifdef __WINS__
-    #include "pathmapper_symbian.h"
+    #include "pathmapper_symbian_p.h"
 #else
     #include "pathmapper_proxy_symbian.h"
 #endif

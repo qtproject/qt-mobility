@@ -81,7 +81,7 @@ QMessageFolderId QMessageFolder::parentFolderId() const
     return QMessageFolderId(); // stub
 }
 
-QString QMessageFolder::displayName() const
+QString QMessageFolder::name() const
 {
     return QString::null; // stub
 }

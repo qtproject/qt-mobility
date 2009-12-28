@@ -112,9 +112,10 @@
 */
 
 /*!
-    \fn QMessageFolder::displayName() const
+    \fn QMessageFolder::name() const
     
-    Returns the display name of the folder suitable for viewing in a user interface.
+    Returns the display name of the folder suitable for viewing in a user interface.  This is
+    typically the same as, or a simplification of the path() for the folder.
 */
 
 /*!

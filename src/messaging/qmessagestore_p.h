@@ -42,7 +42,9 @@
 #define QMESSAGESTOREPRIVATE_H
 #include "qmessagestore.h"
 #ifdef Q_OS_WIN
+QT_BEGIN_NAMESPACE
 class QMutex;
+QT_END_NAMESPACE
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -64,6 +66,7 @@ public:
 
 #ifdef Q_OS_WIN
     static QMutex* mutex(QMessageStore*);
+    static QMutex* mutex(QMessageManager&);
 #endif
 
 };

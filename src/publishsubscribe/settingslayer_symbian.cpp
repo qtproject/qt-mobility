@@ -38,7 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "settingslayer_symbian.h"
+
+#include "settingslayer_symbian_p.h"
 #include <QVariant>
 #include "xqsettingskey.h"
 #include "xqpublishandsubscribeutils.h"
@@ -239,7 +240,7 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
     if (!sh)
         return;
 
-    foreach(QString fullPath, pathMapper.childPaths(sh->path)) {
+    foreach (QString fullPath, pathMapper.childPaths(sh->path)) {
         PathMapper::Target target;
         quint32 category;
         quint32 key;
@@ -454,6 +455,6 @@ void SymbianSettingsLayer::notifyChange(const XQSettingsKey& key)
     }
 }
 
-#include "moc_settingslayer_symbian.cpp"
+#include "moc_settingslayer_symbian_p.cpp"
 
 QTM_END_NAMESPACE

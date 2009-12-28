@@ -47,7 +47,9 @@
 #include <qmediacontent.h>
 #include <qmediaplaylist.h>
 
+QT_BEGIN_NAMESPACE
 class QString;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

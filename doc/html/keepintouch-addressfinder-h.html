@@ -65,6 +65,7 @@
     #include &lt;QWidget&gt;
     #include &lt;QMainWindow&gt;
 
+    class QCheckBox;
     class QComboBox;
     class QListWidget;
     class QPushButton;
@@ -87,9 +88,10 @@
 
     private slots:
         void includePeriodChanged(int);
+        void excludePeriodEnabled(int);
         void addressSelected(const QString&amp;);
         void searchMessages();
-        void stateChanged(QMessageServiceAction::State a);
+        void stateChanged(QMessageService::State a);
         void messagesFound(const QMessageIdList &amp;ids);
         void continueSearch();
     #ifndef USE_SEARCH_BUTTON
@@ -107,6 +109,7 @@
         QTabWidget *tabWidget;
         QComboBox *includePeriod;
         QComboBox *excludePeriod;
+        QCheckBox *excludeCheckBox;
 
         QAction *searchAction;
         QPushButton *searchButton;
@@ -116,7 +119,7 @@
         QPushButton *showButton;
         QPushButton *forwardButton;
 
-        QMessageServiceAction serviceAction;
+        QMessageService service;
 
         QMessageFilter inclusionFilter;
 

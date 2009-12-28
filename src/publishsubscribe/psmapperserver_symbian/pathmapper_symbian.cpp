@@ -38,7 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "pathmapper_symbian.h"
+
+#include "pathmapper_symbian_p.h"
 #include "xqsettingsmanager.h"
 #include <QDir>
 #include <QFileSystemWatcher>
@@ -47,11 +48,14 @@
 
 QTM_BEGIN_NAMESPACE
 
-QString crmlDir = "c:\\resource\\qt\\crml";
-
 PathMapper::PathMapper()
 {
-    QFileSystemWatcher *watcher = new QFileSystemWatcher(QStringList(crmlDir), this);
+    QStringList crmlDirs;
+    foreach (const QFileInfo &info, QDir::drives()) {
+    	crmlDirs << info.path() + "resource/qt/crml";
+    }
+
+    QFileSystemWatcher *watcher = new QFileSystemWatcher(crmlDirs, this);
     connect(watcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(updateMappings()));
     updateMappings();
 }
@@ -62,18 +66,24 @@ PathMapper::~PathMapper()
 
 void PathMapper::updateMappings()
 {
-    const QDir dir(crmlDir);
     QStringList filters;
     filters << "*.qcrml" << "*.confml";
-    QStringList files = dir.entryList(filters, QDir::Files);
     m_paths.clear();
-    foreach (QString fileName, files) {
-        QList<KeyData> keyDatas = m_crmlParser.parseQCrml(QDir::toNativeSeparators(dir.filePath(fileName)));
-        if (m_crmlParser.error() != QCrmlParser::NoError) {
-            qDebug() << "error:" << m_crmlParser.errorString();
-        }
-        foreach (KeyData keyData, keyDatas) {
-            m_paths.insert(keyData.path(), PathData(PathMapper::Target(keyData.target()), keyData.repoId(), keyData.keyId()));
+
+    foreach (const QFileInfo &info, QDir::drives()) {
+        const QDir crmlDir(info.path() + "resource/qt/crml");
+
+        foreach (const QString &fileName, crmlDir.entryList(filters, QDir::Files)) {
+            QList<KeyData> keyDatas = m_crmlParser.parseQCrml(crmlDir.filePath(fileName));
+            if (m_crmlParser.error() != QCrmlParser::NoError)
+                qDebug() << "error:" << m_crmlParser.errorString();
+
+            foreach (const KeyData &keyData, keyDatas) {
+                if (!m_paths.contains(keyData.path())) {
+                    m_paths.insert(keyData.path(), PathData(PathMapper::Target(keyData.target()),
+                                                            keyData.repoId(), keyData.keyId()));
+                }
+            }
         }
     }
 }
@@ -128,6 +138,6 @@ bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, qu
     return false;
 }
 
-#include "moc_pathmapper_symbian.cpp"
+#include "moc_pathmapper_symbian_p.cpp"
 
 QTM_END_NAMESPACE
