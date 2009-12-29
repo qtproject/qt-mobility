@@ -43,10 +43,31 @@
 
 #include <QStringList>
 #include <QHash>
+#include <f32file.h>
 
 #include "qcrmlparser_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+class CCRMLDirectoryMonitor : public QObject, public CActive
+{
+    Q_OBJECT
+
+public:
+    CCRMLDirectoryMonitor();
+    ~CCRMLDirectoryMonitor();
+
+signals:
+    void directoryChanged();
+
+private:
+    void IssueNotifyChange();
+    void RunL();
+    void DoCancel();
+
+private:
+    RFs m_fs;
+};
 
 class PathMapper : public QObject
 {
@@ -82,6 +103,7 @@ private:
 private:
     QHash<QString, PathData> m_paths;
     QCrmlParser m_crmlParser;
+    CCRMLDirectoryMonitor *m_CRMLDirectoryMonitor;
 };
 
 QTM_END_NAMESPACE

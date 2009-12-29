@@ -21,5 +21,6 @@ SOURCES += pathmapper_symbian.cpp \
     pspathmapperserver.cpp \
     pspathmappersession.cpp \
     
+LIBS += -lefsrv
             
 TARGET.CAPABILITY = ALL -TCB

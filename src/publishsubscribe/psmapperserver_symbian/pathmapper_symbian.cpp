@@ -49,19 +49,44 @@
 
 QTM_BEGIN_NAMESPACE
 
+CCRMLDirectoryMonitor::CCRMLDirectoryMonitor() : CActive(EPriorityStandard)
+{
+    if (m_fs.Connect() == KErrNone) {
+        CActiveScheduler::Add(this);
+        IssueNotifyChange();
+    }
+}
+
+CCRMLDirectoryMonitor::~CCRMLDirectoryMonitor()
+{
+    Cancel();
+    m_fs.Close();
+}
+
+void CCRMLDirectoryMonitor::IssueNotifyChange()
+{
+    _LIT(KCRMLDirectory, "?:\\resource\\qt\\crml");
+    m_fs.NotifyChange(ENotifyFile, iStatus, KCRMLDirectory);
+    SetActive();
+}
+
+void CCRMLDirectoryMonitor::RunL()
+{
+    emit directoryChanged();
+    IssueNotifyChange();
+}
+
+
+void CCRMLDirectoryMonitor::DoCancel()
+{
+    m_fs.NotifyChangeCancel();
+}
+
 PathMapper::PathMapper()
 {
-    QStringList crmlDirs;
-    foreach (const QFileInfo &info, QDir::drives()) {
-    	crmlDirs << info.path() + "resource/qt/crml";
-    }
+    m_CRMLDirectoryMonitor = new CCRMLDirectoryMonitor;
 
-    QFileSystemWatcher *watcher = new QFileSystemWatcher(crmlDirs, this);
-    QTimer *timer = new QTimer(this);
-    timer->setSingleShot(true);
-    timer->setInterval(1000);
-
-    connect(watcher, SIGNAL(directoryChanged(const QString&)), timer, SLOT(start()));
+    connect(m_CRMLDirectoryMonitor, SIGNAL(directoryChanged()), timer, SLOT(start()));
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMappings()));
 
     updateMappings();
@@ -69,6 +94,7 @@ PathMapper::PathMapper()
 
 PathMapper::~PathMapper()
 {
+    delete m_CRMLDirectoryMonitor;
 }
 
 void PathMapper::updateMappings()
