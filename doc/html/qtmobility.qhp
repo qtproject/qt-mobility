@@ -478,6 +478,7 @@
                 </section>
                 <section ref="" title="Examples">
                     <section ref="keepintouch.html" title="'Keep in Touch' Example"/>
+                    <section ref="writemessage.html" title="'Write Message' Example"/>
                     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML"/>
                     <section ref="audiorecorder.html" title="Audio Recorder Example"/>
                     <section ref="bearercloud.html" title="Bearer Cloud Example"/>
@@ -550,6 +551,7 @@
         </toc>
         <keywords>
             <keyword name="'Keep in Touch' Example" id="'Keep in Touch' Example" ref="keepintouch.html"/>
+            <keyword name="'Write Message' Example" id="'Write Message' Example" ref="writemessage.html"/>
             <keyword name="Accessing Publish and Subscribe from QML" id="Accessing Publish and Subscribe from QML" ref="battery-charge.html"/>
             <keyword name="All Functions" id="All Functions" ref="functions.html"/>
             <keyword name="All Qt Mobility Classes" id="All Qt Mobility Classes" ref="classes.html"/>
@@ -2492,6 +2494,7 @@
             <keyword name="QNetworkConfiguration::ServiceNetwork" id="QNetworkConfiguration::ServiceNetwork" ref="qnetworkconfiguration.html#Type-enum"/>
             <keyword name="QNetworkConfiguration::UserChoice" id="QNetworkConfiguration::UserChoice" ref="qnetworkconfiguration.html#Type-enum"/>
             <keyword name="QNetworkConfiguration::Invalid" id="QNetworkConfiguration::Invalid" ref="qnetworkconfiguration.html#Type-enum"/>
+            <keyword name="bearerName" id="QNetworkConfiguration::bearerName" ref="qnetworkconfiguration.html#bearerName"/>
             <keyword name="children" id="QNetworkConfiguration::children" ref="qnetworkconfiguration.html#children"/>
             <keyword name="identifier" id="QNetworkConfiguration::identifier" ref="qnetworkconfiguration.html#identifier"/>
             <keyword name="isRoamingAvailable" id="QNetworkConfiguration::isRoamingAvailable" ref="qnetworkconfiguration.html#isRoamingAvailable"/>
@@ -2542,7 +2545,6 @@
             <keyword name="QNetworkSession::Roaming" id="QNetworkSession::Roaming" ref="qnetworksession.html#State-enum"/>
             <keyword name="accept" id="QNetworkSession::accept" ref="qnetworksession.html#accept"/>
             <keyword name="activeTime" id="QNetworkSession::activeTime" ref="qnetworksession.html#activeTime"/>
-            <keyword name="bearerName" id="QNetworkSession::bearerName" ref="qnetworksession.html#bearerName"/>
             <keyword name="bytesReceived" id="QNetworkSession::bytesReceived" ref="qnetworksession.html#bytesReceived"/>
             <keyword name="bytesWritten" id="QNetworkSession::bytesWritten" ref="qnetworksession.html#bytesWritten"/>
             <keyword name="close" id="QNetworkSession::close" ref="qnetworksession.html#close"/>
@@ -2552,7 +2554,7 @@
             <keyword name="errorString" id="QNetworkSession::errorString" ref="qnetworksession.html#errorString"/>
             <keyword name="ignore" id="QNetworkSession::ignore" ref="qnetworksession.html#ignore"/>
             <keyword name="interface" id="QNetworkSession::interface" ref="qnetworksession.html#interface"/>
-            <keyword name="isActive" id="QNetworkSession::isActive" ref="qnetworksession.html#isActive"/>
+            <keyword name="isOpen" id="QNetworkSession::isOpen" ref="qnetworksession.html#isOpen"/>
             <keyword name="migrate" id="QNetworkSession::migrate" ref="qnetworksession.html#migrate"/>
             <keyword name="newConfigurationActivated" id="QNetworkSession::newConfigurationActivated" ref="qnetworksession.html#newConfigurationActivated"/>
             <keyword name="open" id="QNetworkSession::open" ref="qnetworksession.html#open"/>
@@ -3250,6 +3252,7 @@
             <file>qradiotunercontrol.html</file>
             <file>qvideoencodercontrol-members.html</file>
             <file>qcontactdetaildefinition.html</file>
+            <file>images/writemessage-example.png</file>
             <file>logfilepositionsource-logfilepositionsource-cpp.html</file>
             <file>qmessagefolder-members.html</file>
             <file>qmessageaccountfilter-members.html</file>
@@ -3779,6 +3782,7 @@
             <file>images/slideshow-img1.png</file>
             <file>images/servicebrowser-attributes.png</file>
             <file>images/bearercloud-example.png</file>
+            <file>images/writemessage-example.png</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>images/qtlogo.png</file>
             <file>images/codeless.png</file>

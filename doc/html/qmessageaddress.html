@@ -71,7 +71,7 @@
 <a name="//apple_ref/cpp/instm/QMessageAddress/QMessageAddress"></a>
 <h3 class="fn"><a name="QMessageAddress"></a>QMessageAddress::QMessageAddress ()</h3>
 <p>Constructs an empty message address.</p>
-<h3 class="fn"><a name="QMessageAddress-2"></a>QMessageAddress::QMessageAddress ( <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>recipient</i> )</h3>
+<h3 class="fn"><a name="QMessageAddress-2"></a>QMessageAddress::QMessageAddress ( <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>recipient</i> )</h3>
 <p>Constructs a message address with the type <i>type</i> and the recipient address <i>recipient</i>.</p>
 <h3 class="fn"><a name="QMessageAddress-3"></a>QMessageAddress::QMessageAddress ( const QMessageAddress &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
@@ -79,18 +79,18 @@
 <h3 class="fn"><a name="dtor.QMessageAddress"></a>QMessageAddress::~QMessageAddress ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the message address.</p>
 <a name="//apple_ref/cpp/clm/QMessageAddress/parseEmailAddress"></a>
-<h3 class="fn"><a name="parseEmailAddress"></a>void QMessageAddress::parseEmailAddress ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>emailAddress</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>name</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>address</i>, <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="parseEmailAddress"></a>void QMessageAddress::parseEmailAddress ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>emailAddress</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>name</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>address</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Parses an email address into name, address and suffix parts.</p>
 <p>* <i>name</i> is set to the name part of the email address. * <i>address</i> is set to the address part of the email address. * <i>suffix</i> is set to the suffix part of the email address.</p>
 <p>If the starting delimeter between the name and address part of the email address is found then * <i>startDelimeterFound</i> is set to true; otherwise * <i>startDelimeterFound</i> is set to false;</p>
 <p>If the starting delimeter is not found, then the parsing is ambiguous and both * <i>name</i> and * <i>address</i> will be set to the input <i>emailAddress</i>.</p>
 <p>If the ending delimeter of the address part of the email address is found then * <i>endDelimeterFound</i> is set to true; otherwise * <i>endDelimeterFound</i> is set to false;</p>
 <a name="//apple_ref/cpp/instm/QMessageAddress/recipient"></a>
-<h3 class="fn"><a name="recipient"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageAddress::recipient () const</h3>
+<h3 class="fn"><a name="recipient"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMessageAddress::recipient () const</h3>
 <p>Returns the recipient.</p>
 <p>See also <a href="qmessageaddress.html#setRecipient">setRecipient</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageAddress/setRecipient"></a>
-<h3 class="fn"><a name="setRecipient"></a>void QMessageAddress::setRecipient ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>recipient</i> )</h3>
+<h3 class="fn"><a name="setRecipient"></a>void QMessageAddress::setRecipient ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>recipient</i> )</h3>
 <p>Sets the recipient to <i>recipient</i>.</p>
 <p>See also <a href="qmessageaddress.html#recipient">recipient</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageAddress/setType"></a>

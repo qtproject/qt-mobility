@@ -65,7 +65,7 @@
         <span class="comment">//...</span>
         canvas.execute();
         canvas.show();</pre>
-<p>Furthermore we are using the <a href="http://qt.nokia.com/doc/4.5/qmlcontext.html">QmlContext</a> header which we need to add our own implemented object in the Qml context. This means that we can create our own object and access it in a QML script file. <a name="addpropertyinqmlcontext"></a>In this case we can access our service list over the &quot;services&quot; property in Qml script.</p>
+<p>Furthermore we are using the <a href="http://qt.nokia.com/doc/4.6/qmlcontext.html">QmlContext</a> header which we need to add our own implemented object in the Qml context. This means that we can create our own object and access it in a QML script file. <a name="addpropertyinqmlcontext"></a>In this case we can access our service list over the &quot;services&quot; property in Qml script.</p>
 <pre>        QmlContext* ctxt = canvas.rootContext();
         ServiceRegister registration;
         ctxt-&gt;addDefaultObject(&amp;registration);
@@ -99,7 +99,7 @@
     }
 
     Q_EXPORT_PLUGIN2(serviceframework_voipdialerservice, VoipDialerPlugin)</pre>
-<p>As you can see the createInstance function create the appropriate dialer object and returns it. The Q_EXPORT_PLUGIN2 macro provides the neccessary implementation for a plugin. See <a href="http://qt.nokia.com/doc/4.5/plugins-howto.html">How to Create Qt Plugins</a> for more details.</p>
+<p>As you can see the createInstance function create the appropriate dialer object and returns it. The Q_EXPORT_PLUGIN2 macro provides the neccessary implementation for a plugin. See <a href="http://qt.nokia.com/doc/4.6/plugins-howto.html">How to Create Qt Plugins</a> for more details.</p>
 <p>The last thing we need to provide in our services are the states, properties, signals and slots that we want to access in out QML script later.</p>
 <a name="voipdialer-h-0"></a><pre>    public:
         enum ConnectionState {
@@ -133,7 +133,7 @@
             QString path = QCoreApplication::applicationDirPath() + &quot;/../../examples/declarative/&quot; + fileName;
             serviceManager-&gt;addService(path);
         }</pre>
-<p>After this call the ServiceRegister fills it's internal ServiceWrappper <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>.</p>
+<p>After this call the ServiceRegister fills it's internal ServiceWrappper <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>.</p>
 <pre>        ServiceWrapper *service;
         QServiceFilter filter(&quot;com.nokia.qt.examples.Dialer&quot;);
         QList&lt;QServiceInterfaceDescriptor&gt; allImpl = serviceManager-&gt;findInterfaces(filter);
@@ -143,11 +143,11 @@
             service-&gt;setNativeDescriptor(allImpl.at(i));
             m_services.append(service);
         }</pre>
-<p>In the header of ServiceRegister we allow external objects to access the ServiceWrapper <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>.</p>
+<p>In the header of ServiceRegister we allow external objects to access the ServiceWrapper <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>.</p>
 <pre>    class ServiceRegister : public QObject{
         Q_OBJECT
         Q_PROPERTY(QList&lt;ServiceWrapper*&gt;* registeredservices READ registeredservices NOTIFY modelChanged CONSTANT);</pre>
-<p>You may remember that we add this <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a> to our qml context as a property named <a href="#addpropertyinqmlcontext"> services</a></p>
+<p>You may remember that we add this <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a> to our qml context as a property named <a href="#addpropertyinqmlcontext"> services</a></p>
 <p><b>Service access on the QML site</b></p>
 <p>The QML elements are implemented in 4 different qml scripting files <a href="#guidesign"> see GUI design</a>.</p>
 <p>In the ServiceList.qml file the services property is assigned to the ListView model property.</p>

@@ -85,6 +85,7 @@ public:
     QMailRetrievalAction _retrieval;
     QMailServiceAction *_active;
     QMessageManager::Error _error;
+    bool _activeStoreAction;
 
     QList<QMessageId> _matchingIds;
     QList<QMailMessageId> _candidateIds;
@@ -123,7 +124,8 @@ QMessageServicePrivate::QMessageServicePrivate()
       _active(0),
       _error(QMessageManager::NoError),
       _limit(0),
-      _offset(0)
+      _offset(0),
+      _activeStoreAction(false)
 {
     connect(&_transmit, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(transmitActivityChanged(QMailServiceAction::Activity)));
     connect(&_transmit, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
@@ -134,7 +136,8 @@ QMessageServicePrivate::QMessageServicePrivate()
 
 bool QMessageServicePrivate::isBusy() const
 {
-    if (_active && ((_active->activity() == QMailServiceAction::Pending) || (_active->activity() == QMailServiceAction::InProgress))) {
+    if (_active && ((_active->activity() == QMailServiceAction::Pending) || (_active->activity() == QMailServiceAction::InProgress)) ||
+        _activeStoreAction) {
         qWarning() << "Action is currently busy";
         return true;
     }
@@ -201,6 +204,7 @@ void QMessageServicePrivate::retrievalActivityChanged(QMailServiceAction::Activi
 
 void QMessageServicePrivate::completed()
 {
+    _activeStoreAction = false;
     emit stateChanged(QMessageService::FinishedState);
 }
 
@@ -252,7 +256,7 @@ void QMessageServicePrivate::findMatchingIds()
         emit messagesFound(_matchingIds.mid(_offset, _limit));
     }
 
-    if (required > 0) {
+    if ((required > 0 || _limit == 0) && !_candidateIds.isEmpty()) {
         QTimer::singleShot(0, this, SLOT(testNextMessage()));
     } else {
         completed();
@@ -262,7 +266,7 @@ void QMessageServicePrivate::findMatchingIds()
 void QMessageServicePrivate::testNextMessage()
 {
     int required = ((_offset + _limit) - _matchingIds.count());
-    if (required > 0) {
+    if (required > 0 || _limit==0) {
         QMailMessageId messageId(_candidateIds.takeFirst());
         if (messageMatch(messageId)) {
             _matchingIds.append(convert(messageId));
@@ -274,7 +278,7 @@ void QMessageServicePrivate::testNextMessage()
             }
         }
 
-        if ((required > 0) && !_candidateIds.isEmpty()) {
+        if ((required > 0 || _limit == 0) && !_candidateIds.isEmpty()) {
             QTimer::singleShot(0, this, SLOT(testNextMessage()));
             return;
         }
@@ -311,7 +315,9 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessage
         return false;
     }
     d_ptr->_active = 0;
-    
+    d_ptr->_activeStoreAction = true;
+    emit stateChanged(QMessageService::ActiveState);
+
     d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter), convert(sortOrder), limit, offset);
     d_ptr->_error = convert(QMailStore::instance()->lastError());
 
@@ -343,8 +349,11 @@ bool QMessageService::queryMessages(const QMessageFilter &filter, const QString 
     if (d_ptr->isBusy()) {
         return false;
     }
+
     d_ptr->_active = 0;
-    
+    d_ptr->_activeStoreAction = true;
+    emit stateChanged(QMessageService::ActiveState);
+
     if ((filter == d_ptr->_lastFilter) && (sortOrder == d_ptr->_lastOrdering) && (body == d_ptr->_match)) {
         // This is a continuation of the last search
         d_ptr->_limit = static_cast<int>(limit);
@@ -377,6 +386,7 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
         return false;
     }
     d_ptr->_active = 0;
+    d_ptr->_activeStoreAction = true;
     
     d_ptr->_candidateIds = QMailStore::instance()->queryMessages(convert(filter));
     d_ptr->_error = convert(QMailStore::instance()->lastError());
@@ -575,6 +585,8 @@ QMessageService::State QMessageService::state() const
     if (d_ptr->_active) {
         return convert(d_ptr->_active->activity());
     }
+    else if(d_ptr->_activeStoreAction)
+        return QMessageService::ActiveState;
 
     return FinishedState;
 }
@@ -584,6 +596,8 @@ void QMessageService::cancel()
     if (d_ptr->_active) {
         d_ptr->_active->cancelOperation();
     }
+    else if(d_ptr->_activeStoreAction)
+        d_ptr->_activeStoreAction = false;
 }
 
 QMessageManager::Error QMessageService::error() const
