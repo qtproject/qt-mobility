@@ -55,13 +55,13 @@ class PathMapper : public QObject
 
 public:
     PathMapper();
-    /*virtual*/ ~PathMapper();
+    ~PathMapper();
 
     enum Target {TargetCRepository, TargetRPropery};
 
-    bool getChildren(QString path, QSet<QString> &children) const;
-    QStringList childPaths(QString basePath) const;
-    bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
+    bool getChildren(const QString &path, QSet<QString> &children) const;
+    QStringList childPaths(const QString &path) const;
+    bool resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const;
 
 private:
     class PathData
@@ -86,9 +86,9 @@ private:
         TInt Connect();
         TVersion Version() const;
 
-        bool getChildren(QString path, QSet<QString> &children) const;
-        QStringList childPaths(QString basePath) const;
-        bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
+        bool getChildren(const QString &path, QSet<QString> &children) const;
+        QStringList childPaths(const QString &path) const;
+        bool resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const;
 
     private:
         TInt StartServer();

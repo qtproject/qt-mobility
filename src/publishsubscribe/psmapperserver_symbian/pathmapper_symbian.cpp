@@ -125,12 +125,13 @@ void PathMapper::updateMappings()
     }
 }
 
-bool PathMapper::getChildren(QString path, QSet<QString> &children) const
+bool PathMapper::getChildren(const QString &path, QSet<QString> &children) const
 {
-    if (path.right(1) != QString(QLatin1Char('/')))
-        path += QLatin1Char('/');
-    foreach (QString foundPath, childPaths(path)) {
-        QString value = foundPath.mid(path.size());
+    QString basePath = path;
+    if (basePath.right(1) != QString(QLatin1Char('/')))
+        basePath += QLatin1Char('/');
+    foreach (QString foundPath, childPaths(basePath)) {
+        QString value = foundPath.mid(basePath.size());
         int index = value.indexOf(QLatin1Char('/'));
         if (index != -1)
             value = value.mid(0, index);
@@ -139,8 +140,9 @@ bool PathMapper::getChildren(QString path, QSet<QString> &children) const
     return children.count() > 0;
 }
 
-QStringList PathMapper::childPaths(QString basePath) const
+QStringList PathMapper::childPaths(const QString &path) const
 {
+    QString basePath = path;
     QStringList children;
     if (basePath.right(1) == QString(QLatin1Char('/')))
         basePath.chop(1);
@@ -163,7 +165,7 @@ QStringList PathMapper::childPaths(QString basePath) const
     return children;
 }
 
-bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const
+bool PathMapper::resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const
 {
     if (m_paths.contains(path)) {
         const PathData &data = m_paths.value(path);

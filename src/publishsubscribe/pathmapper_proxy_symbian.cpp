@@ -56,17 +56,17 @@ PathMapper::~PathMapper()
     m_pathMapperServerSession.Close();
 }
 
-bool PathMapper::getChildren(QString path, QSet<QString> &children) const
+bool PathMapper::getChildren(const QString &path, QSet<QString> &children) const
 {
     return m_pathMapperServerSession.getChildren(path, children);
 }
 
-QStringList PathMapper::childPaths(QString basePath) const
+QStringList PathMapper::childPaths(const QString &path) const
 {
-    return m_pathMapperServerSession.childPaths(basePath);
+    return m_pathMapperServerSession.childPaths(path);
 }
 
-bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const
+bool PathMapper::resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const
 {
     return m_pathMapperServerSession.resolvePath(path, target, category, key);
 }
@@ -90,7 +90,7 @@ TVersion PathMapper::RPathMapperServerSession::Version() const
     return TVersion(KServerMajorVersionNumber, KServerMinorVersionNumber, KServerBuildVersionNumber);
 }
 
-bool PathMapper::RPathMapperServerSession::getChildren(QString path, QSet<QString> &children) const
+bool PathMapper::RPathMapperServerSession::getChildren(const QString &path, QSet<QString> &children) const
 {
     QByteArray pathByteArray;
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
@@ -119,12 +119,12 @@ bool PathMapper::RPathMapperServerSession::getChildren(QString path, QSet<QStrin
     return true;
 }
 
-QStringList PathMapper::RPathMapperServerSession::childPaths(QString basePath) const
+QStringList PathMapper::RPathMapperServerSession::childPaths(const QString &path) const
 {
     QByteArray pathByteArray;
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
-    out << basePath;
+    out << path;
     TPtrC8 pathPtr((TUint8*)(pathByteArray.constData()), pathByteArray.size());
     TPckgBuf<TInt> lengthPckg(0);
     SendReceive(EChildPathsLengthRequest, TIpcArgs(&pathPtr, &lengthPckg));
@@ -148,7 +148,7 @@ QStringList PathMapper::RPathMapperServerSession::childPaths(QString basePath) c
     return childPaths;
 }
 
-bool PathMapper::RPathMapperServerSession::resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const
+bool PathMapper::RPathMapperServerSession::resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const
 {
     QByteArray pathByteArray;
     QDataStream out(&pathByteArray, QIODevice::WriteOnly);
