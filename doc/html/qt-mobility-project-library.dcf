@@ -3221,6 +3221,9 @@
     <section ref="keepintouch.html" title="'Keep in Touch' Example">
         <keyword ref="keepintouch.html">'Keep in Touch' Example</keyword>
     </section>
+    <section ref="writemessage.html" title="'Write Message' Example">
+        <keyword ref="writemessage.html">'Write Message' Example</keyword>
+    </section>
     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML">
         <keyword ref="battery-charge.html">Accessing Publish and Subscribe from QML</keyword>
     </section>
