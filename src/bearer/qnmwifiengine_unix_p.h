@@ -146,7 +146,6 @@ private slots:
 Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);
     void updateAccessPointState(const QString &, quint32);
-//    void slotActivationFinished(QDBusPendingCallWatcher*);
 
 private slots:
     void accessPointAdded( const QString &aPath, QDBusObjectPath oPath);

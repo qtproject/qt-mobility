@@ -127,21 +127,21 @@
 <p>Returns a filter matching messages whose priority matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#priority">QMessage::priority</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/byReceptionTimeStamp"></a>
-<h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose reception timestamp matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">QMessage::receivedDate</a>().</p>
-<h3 class="fn"><a name="byReceptionTimeStamp-2"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byReceptionTimeStamp-2"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose reception timestamp has the relation to <i>value</i> that is specified by <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">QMessage::receivedDate</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/byRecipients"></a>
-<h3 class="fn"><a name="byRecipients"></a>QMessageFilter QMessageFilter::byRecipients ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byRecipients"></a>QMessageFilter QMessageFilter::byRecipients ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose recipients include the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#to">QMessage::to</a>(), <a href="qmessage.html#cc">QMessage::cc</a>(), and <a href="qmessage.html#bcc">QMessage::bcc</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/bySender"></a>
-<h3 class="fn"><a name="bySender"></a>QMessageFilter QMessageFilter::bySender ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="bySender"></a>QMessageFilter QMessageFilter::bySender ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose sender matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
-<h3 class="fn"><a name="bySender-2"></a>QMessageFilter QMessageFilter::bySender ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="bySender-2"></a>QMessageFilter QMessageFilter::bySender ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose sender matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/bySize"></a>
@@ -163,17 +163,17 @@
 <p>Returns a filter matching messages whose status is a bitwise match to <i>mask</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/bySubject"></a>
-<h3 class="fn"><a name="bySubject"></a>QMessageFilter QMessageFilter::bySubject ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="bySubject"></a>QMessageFilter QMessageFilter::bySubject ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose subject matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#subject">QMessage::subject</a>().</p>
-<h3 class="fn"><a name="bySubject-2"></a>QMessageFilter QMessageFilter::bySubject ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="bySubject-2"></a>QMessageFilter QMessageFilter::bySubject ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose subject matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#subject">QMessage::subject</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/byTimeStamp"></a>
-<h3 class="fn"><a name="byTimeStamp"></a>QMessageFilter QMessageFilter::byTimeStamp ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byTimeStamp"></a>QMessageFilter QMessageFilter::byTimeStamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose timestamp matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>().</p>
-<h3 class="fn"><a name="byTimeStamp-2"></a>QMessageFilter QMessageFilter::byTimeStamp ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byTimeStamp-2"></a>QMessageFilter QMessageFilter::byTimeStamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose timestamp has the relation to <i>value</i> that is specified by <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/byType"></a>

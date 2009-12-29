@@ -222,28 +222,47 @@ TInt CCentralRepositoryHandler::findKeyL(unsigned long partialKey, TUint32 mask,
     return negative ? iRepository->FindNeqL(partialKey, mask, value, aFoundKeys) : iRepository->FindEqL(partialKey, mask, value, aFoundKeys);
 }
 
+#ifndef XQSETTINGSMANAGER_NO_TRANSACTIONS
 TInt CCentralRepositoryHandler::startTransaction(CRepository::TTransactionMode transactionMode)
 {
     return iRepository->StartTransaction(transactionMode);
 }
+#else
+TInt CCentralRepositoryHandler::startTransaction(CRepository::TTransactionMode /*transactionMode*/)
+{
+    return KErrNotSupported;
+}
+#endif
 
 TInt CCentralRepositoryHandler::commitTransaction()
 {
-    TUint32 keyInfo;
-    return iRepository->CommitTransaction(keyInfo);
+    #ifndef XQSETTINGSMANAGER_NO_TRANSACTIONS
+        TUint32 keyInfo;
+        return iRepository->CommitTransaction(keyInfo);
+    #else
+        return KErrNotSupported;
+    #endif        
 }
 
 void CCentralRepositoryHandler::cancelTransaction()
 {
-    iRepository->CancelTransaction();
+    #ifndef XQSETTINGSMANAGER_NO_TRANSACTIONS
+        iRepository->CancelTransaction();
+    #endif        
 }
 
 void CCentralRepositoryHandler::failTransaction()
 {
-    iRepository->FailTransaction();
+    #ifndef XQSETTINGSMANAGER_NO_TRANSACTIONS
+        iRepository->FailTransaction();
+    #endif        
 }
 
 TInt CCentralRepositoryHandler::transactionState() const
 {
-    return iRepository->TransactionState();
+    #ifndef XQSETTINGSMANAGER_NO_TRANSACTIONS
+        return iRepository->TransactionState();
+    #else
+        return KErrNotSupported;
+    #endif        
 }

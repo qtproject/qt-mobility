@@ -102,7 +102,7 @@ inline QStringList nsarrayToQStringList(void *nsarray)
 
 static QString qGetInterfaceType(const QString &interfaceString)
 {
-    return networkInterfaces.value(interfaceString);
+    return networkInterfaces.value(interfaceString, QLatin1String("Unknown"));
 }
 
 QCoreWlanEngine::QCoreWlanEngine(QObject *parent)
@@ -166,10 +166,12 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::getConfigurations(bool *o
                 config->purpose = fetchedConfigurations.at(i)->purpose;
                 config->internet = fetchedConfigurations.at(i)->internet;
                 config->serviceInterface = fetchedConfigurations.at(i)->serviceInterface;
+                config->bearer = fetchedConfigurations.at(i)->bearer;
 
                 identifier = config->name.toUInt();
                 configurationInterface[identifier] =  config->serviceInterface.name();
                 foundConfigurations.append(config);
+                //do we have a memory leak? who deletes fetchedConfigurations entries?
             }
         }
 
@@ -197,6 +199,7 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::getConfigurations(bool *o
             cpPriv->internet = true;
         }
         configurationInterface[identifier] = interface.name();
+        cpPriv->bearer = interface.name().isEmpty()? QLatin1String("Unknown") : qGetInterfaceType(interface.name());
         foundConfigurations.append(cpPriv);
     }
     [autoreleasepool release];
@@ -214,15 +217,15 @@ bool QCoreWlanEngine::hasIdentifier(const QString &id)
     return configurationInterface.contains(id.toUInt());
 }
 
-QString QCoreWlanEngine::bearerName(const QString &id)
+/*QString QCoreWlanEngine::bearerName(const QString &id)
 {
     QString interface = getInterfaceFromId(id);
 
     if (interface.isEmpty())
-        return QString();
+        return QLatin1String("Unknown");
 
     return qGetInterfaceType(interface);
-}
+}*/
 
 void QCoreWlanEngine::connectToId(const QString &id)
 {
@@ -334,6 +337,7 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
             cpPriv->isValid = true;
             cpPriv->id = networkSsid;
             cpPriv->internet = true;
+            cpPriv->bearer = QLatin1String("WLAN");
             cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
             cpPriv->serviceInterface = QNetworkInterface::interfaceFromName(nsstringToQString([[CWInterface interface]  name]));
 
