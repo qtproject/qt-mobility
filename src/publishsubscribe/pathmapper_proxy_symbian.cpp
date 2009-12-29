@@ -116,7 +116,7 @@ bool PathMapper::RPathMapperServerSession::getChildren(QString path, QSet<QStrin
 
     delete childrenBuf;
 
-    return false;
+    return true;
 }
 
 QStringList PathMapper::RPathMapperServerSession::childPaths(QString basePath) const
@@ -170,7 +170,6 @@ bool PathMapper::RPathMapperServerSession::resolvePath(QString path, Target &tar
 
     QByteArray keyDetailsByteArray((const char*)keyDetailsPtr.Ptr(), keyDetailsPtr.Length());
     QDataStream in(keyDetailsByteArray);
-    QStringList childPaths;
 
     int t;
     quint32 c;

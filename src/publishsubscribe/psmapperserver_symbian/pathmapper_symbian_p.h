@@ -75,7 +75,7 @@ class PathMapper : public QObject
 
 public:
     PathMapper();
-    /*virtual*/ ~PathMapper();
+    ~PathMapper();
 
     enum Target {TargetCRepository, TargetRPropery};
 

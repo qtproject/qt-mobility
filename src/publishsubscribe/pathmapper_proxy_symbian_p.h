@@ -78,22 +78,21 @@ private:
     };
 
     class RPathMapperServerSession : public RSessionBase
-        {
-        public:
-            RPathMapperServerSession();
+    {
+    public:
+        RPathMapperServerSession();
 
-        public:
-            TInt Connect();
-            TVersion Version() const;
+    public:
+        TInt Connect();
+        TVersion Version() const;
 
-            bool getChildren(QString path, QSet<QString> &children) const;
-            QStringList childPaths(QString basePath) const;
-            bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
+        bool getChildren(QString path, QSet<QString> &children) const;
+        QStringList childPaths(QString basePath) const;
+        bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
 
-        private:
-            TInt StartServer();
-
-        };
+    private:
+        TInt StartServer();
+    };
 
 private:
     RPathMapperServerSession m_pathMapperServerSession;
