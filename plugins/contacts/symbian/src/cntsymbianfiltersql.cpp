@@ -67,7 +67,7 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
 {
     QList<QContactLocalId> matches;
     
-    matches = m_sqlhelper->searchContacts(filter,error);    
+    matches = m_sqlhelper->searchContacts(filter, sortOrders, error);    
     
     // Tell the caller do slow filtering if the filter is not supported
     filterSupportedFlag = filterSupported(filter);

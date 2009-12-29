@@ -79,9 +79,9 @@ void CntDisplayLabel::setDisplayLabelDetails()
     m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
     
     //if preferred details doesn't exist use these
-    QList<QPair<QLatin1String, QLatin1String> > contactPreffered2DisplayLabelDetails;
-    contactPreffered2DisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
-    m_contactDisplayLabelDetails.append(contactPreffered2DisplayLabelDetails);
+    //QList<QPair<QLatin1String, QLatin1String> > contactPreffered2DisplayLabelDetails;
+    //contactPreffered2DisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
+    //m_contactDisplayLabelDetails.append(contactPreffered2DisplayLabelDetails);
     
     //Group
     QList<QPair<QLatin1String, QLatin1String> > preferredGroupDisplayLabelDetails;
@@ -156,7 +156,7 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
     if(displayLabel.isEmpty())
     {
         //should the unnamned be read from somewhere?
-        displayLabel = QString(tr("Unnamed"));
+        displayLabel = unNamned();
     }
     
     return displayLabel;
@@ -170,6 +170,14 @@ QString CntDisplayLabel::delimiter() const
 {
     //this will be variated in the future.
     return " ";
+}
+
+/*!
+ * return the name used for unknown contacts
+ */
+QString CntDisplayLabel::unNamned() const
+{
+    return "Unnamed";
 }
 
 /*!

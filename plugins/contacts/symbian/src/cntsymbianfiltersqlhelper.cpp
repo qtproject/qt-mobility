@@ -119,7 +119,7 @@ CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
  * \a error On return, contains the possible error.
  * \return the list of matched contact ids
  */
-QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactFilter& filter,
+QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders,
                                                                   QContactManager::Error& error)
 {
     isPhoneNumberSearchforDetailFilter = false;
@@ -135,13 +135,19 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
         // Query the database
         // If isPhoneNumberSearchforDetailFilter flag is set, we use the existing cntmodel
         // else call searchContacts
-        if(isPhoneNumberSearchforDetailFilter){
+        if(isPhoneNumberSearchforDetailFilter)
+        {
             // cast the filter into detail filte
             const QContactDetailFilter detailFilter(filter);
             idList = HandlePhonenumberDetailFilter(detailFilter);
-            }
-        else{
-        idList =  m_srvConnection->searchContacts(sqlQuery, error);
+        }
+        else
+        {
+            //append the sort order to the query
+            appendSortOrderQuery(sqlQuery, sortOrders);
+            
+            //fetch the contacts
+            idList =  m_srvConnection->searchContacts(sqlQuery, error);
         }
 
     }
@@ -152,6 +158,87 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
     return idList;
 
 
+}
+
+/*!
+ * Append the sort order to the sql query
+ *
+ * \a sqlQuery to add the sort order to
+ * \a sortOrders to be added
+ */
+void CntSymbianFilterSqlHelper::appendSortOrderQuery(QString& sqlQuery, const QList<QContactSortOrder>& sortOrders)
+{
+    QString column;
+    CntDisplayLabel displayLabel;
+    
+    bool first(true);
+    
+    for(int i = 0; i < sortOrders.count(); i++)
+    {
+        columnName(column, sortOrders.at(i).detailDefinitionName(), sortOrders.at(i).detailFieldName());
+      
+        if(!column.isEmpty())
+        {
+            if(first)
+            {
+                sqlQuery += " ORDER BY";
+                first = false;        
+            }
+          
+            else
+            {
+                sqlQuery += ",";
+            }
+            
+            //use the display label if the name is null, ignore case
+            sqlQuery += " CASE WHEN " + column + " ISNULL THEN \'"+ displayLabel.unNamned().toLower() + "\' ELSE lower(" + column + ") END";
+            
+            if(sortOrders.at(i).direction() == Qt::AscendingOrder)
+            {
+                sqlQuery += " ASC";
+            }
+                
+            else if(sortOrders.at(i).direction() == Qt::DescendingOrder)
+            {
+                sqlQuery += " DESC";
+            }
+        }
+    }
+}
+
+/*!
+ * Retrieve a column name
+ *
+ * \a columnName to be saved the column name if found
+ * \a detailDefinitionName of the detail to fetch column name for
+ * \a detailFieldName of the detail to fetch column name for
+ */
+void CntSymbianFilterSqlHelper::columnName( QString &columnName, const QString &detailDefinitionName, const QString & detailFieldName)
+{
+    columnName = "";
+
+    //Name detail
+    if(detailDefinitionName == QContactName::DefinitionName)
+    {
+        if(detailFieldName == QContactName::FieldFirst)
+        {
+            columnName = "first_name";
+        }
+        
+        else if(detailFieldName == QContactName::FieldLast)
+        {
+            columnName = "last_name";
+        }
+    }
+    
+    //Organization
+    else if(detailDefinitionName == QContactOrganization::DefinitionName)
+    {
+        if(detailFieldName == QContactOrganization::FieldName)
+        {
+            columnName = "company_name";
+        }
+    }
 }
 
 /*!

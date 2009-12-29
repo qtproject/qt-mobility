@@ -63,6 +63,7 @@ public:
     virtual ~CntDisplayLabel();
 
     QString synthesizeDisplayLabel( const QContact& contact, QContactManager::Error& error) const;
+    QString unNamned() const;
     QList<QPair<QLatin1String, QLatin1String> > contactFilterDetails() const;
     QList<QPair<QLatin1String, QLatin1String> > groupFilterDetails() const;
     

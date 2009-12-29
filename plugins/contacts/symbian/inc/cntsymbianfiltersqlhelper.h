@@ -85,11 +85,14 @@ public:
 
 public:
     /*Generic functions for all filters*/
-    QList<QContactLocalId> searchContacts(const QContactFilter& filter,
-                                           QContactManager::Error& error);
+    QList<QContactLocalId> searchContacts(const QContactFilter& filter, 
+                                          const QList<QContactSortOrder>& sortOrders,
+                                          QContactManager::Error& error);
     CntAbstractContactFilter::FilterSupport filterSupportLevel(const QContactFilter& filter);
 
 private:
+    void appendSortOrderQuery(QString& sqlQuery, const QList<QContactSortOrder>& sortOrders);
+    void columnName( QString &columnName, const QString &detailDefinitionName, const QString & detailFieldName);
     void createSqlQuery(const QContactFilter& filter,
                           QString& sqlQuery,
                           QContactManager::Error& error);
