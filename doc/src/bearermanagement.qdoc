@@ -179,20 +179,20 @@ implement a custom dialog which is populated based on what
 \section3 Managing network sessions
 
 A QNetworkSession object separates a \l {QNetworkSession::state()}{state()}
-and an \l{QNetworkSession::isActive()}{isActive()} condition. 
+and an \l{QNetworkSession::isOpen()}{isOpen()} condition. 
 
 The state() attribute enables developers to detect whether the system
 currently maintains a global network session for the given
-QNetworkConfiguration. If \l {QNetworkSession::isActive()}{isActive()}
+QNetworkConfiguration. If \l {QNetworkSession::isOpen()}{isOpen()}
 returns true the QNetworkSession instance at hand was at least one of the
 entities requesting the global network session. This distinction is
 required to support the notion of session registrations. For as long as
-there are one or more active QNetworkSession instances the underlying
+there are one or more open QNetworkSession instances the underlying
 network interface is not shut down. Therefore the session
 \l{QNetworkSession::state()}{state()} can be used to monitor the state of
 network interfaces.
 
-An active session is created by calling \l {QNetworkSession::open()} and
+An open session is created by calling \l {QNetworkSession::open()} and
 closed via \l{QNetworkSession::close()}, respectively. If the session
 is \l{QNetworkSession::Disconnected}{disconnected} at the time of the
 \l{QNetworkSession::open()}{open()} call the underlying interface is started;
@@ -201,7 +201,7 @@ incremeted. The opposite behavior can be observed when using
 \l{QNetworkSession::close()}{close()}.
 
 In some use cases it may be necessary to turn the interface off despite of
-active sessions. This can be achieved by calling
+open sessions. This can be achieved by calling
 \l{QNetworkSession::stop()}{stop()}. An example use case could be a
 network manager type of application allowing the user to control the
 overall state of the devices connectivity.

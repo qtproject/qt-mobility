@@ -38,11 +38,13 @@
 <pre>    private slots:
         void createNewObject();
         void intValueChanged(int value);
+        void unsetIntValue();
         void setStringValue();
         void setByteArrayValue();</pre>
 <p>And connect them to signals from the widgets in the constructor.</p>
 <pre>        connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
         connect(ui-&gt;intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
+        connect(ui-&gt;unsetIntButton, SIGNAL(clicked()), this, SLOT(unsetIntValue()));
         connect(ui-&gt;setStringButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
         connect(ui-&gt;setByteArrayButton, SIGNAL(clicked()), this, SLOT(setByteArrayValue()));</pre>
 <p>To publish values in the Value Space we first need to create a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a>. We do this in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other two slots.</p>
@@ -60,6 +62,11 @@
 <pre>    void PublisherDialog::intValueChanged(int value)
     {
         publisher-&gt;setValue(&quot;intValue&quot;, value);
+    }
+
+    void PublisherDialog::unsetIntValue()
+    {
+        publisher-&gt;resetValue(&quot;intValue&quot;);
     }
 
     void PublisherDialog::setStringValue()

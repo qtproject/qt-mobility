@@ -23,6 +23,10 @@ CONFIG += mobility
 MOBILITY = publishsubscribe
 
 symbian {
+    crml.sources = qvaluespacesubscriber.qcrml
+    crml.path = c:/resource/qt/crml
+    DEPLOYMENT += crml
+    TARGET.UID3 = 0x2002ac86
     TARGET.CAPABILITY = ALL -TCB
 }
 

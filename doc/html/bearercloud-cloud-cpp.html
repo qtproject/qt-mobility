@@ -236,7 +236,7 @@
     void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         if (event-&gt;button() == Qt::LeftButton) {
-            if (session-&gt;isActive())
+            if (session-&gt;isOpen())
                 session-&gt;close();
             else
                 session-&gt;open();
@@ -266,7 +266,7 @@
             tooltip += tr(&quot;&lt;br&gt;Interface: %1&quot;).arg(interface.humanReadableName());
         tooltip += tr(&quot;&lt;br&gt;Id: %1&quot;).arg(configuration.identifier());
 
-        const QString bearerName = session-&gt;bearerName();
+        const QString bearerName = configuration.bearerName();
         if (!bearerName.isEmpty())
             tooltip += tr(&quot;&lt;br&gt;Bearer: %1&quot;).arg(bearerName);
 
@@ -297,10 +297,10 @@
             s = s.arg(tr(&quot;Unknown&quot;));
         }
 
-        if (session-&gt;isActive())
-            s = s.arg(tr(&quot;Active&quot;));
+        if (session-&gt;isOpen())
+            s = s.arg(tr(&quot;Open&quot;));
         else
-            s = s.arg(tr(&quot;Inactive&quot;));
+            s = s.arg(tr(&quot;Closed&quot;));
 
         tooltip += s;
 
@@ -313,7 +313,7 @@
 
     void Cloud::newConfigurationActivated()
     {
-        const QString bearerName = session-&gt;bearerName();
+        const QString bearerName = configuration.bearerName();
         if (!svgCache.contains(bearerName)) {
             if (bearerName == QLatin1String(&quot;WLAN&quot;))
                 svgCache.insert(bearerName, new QSvgRenderer(QLatin1String(&quot;:wlan.svg&quot;)));
