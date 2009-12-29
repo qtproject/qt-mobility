@@ -78,8 +78,7 @@ PathMapper::RPathMapperServerSession::RPathMapperServerSession()
 TInt PathMapper::RPathMapperServerSession::Connect()
 {
     TInt err = StartServer();
-    if (err == KErrNone)
-    {
+    if (err == KErrNone)    {
         err = CreateSession(KPSPathMapperServerName, Version(), 8, EIpcSession_Sharable);
     }
     return err;
@@ -104,7 +103,7 @@ bool PathMapper::RPathMapperServerSession::getChildren(QString path, QSet<QStrin
     if (length == 0)
         return false;
 
-    HBufC8* childrenBuf = HBufC8::New(length);
+    HBufC8 *childrenBuf = HBufC8::New(length);
     if (!childrenBuf)
         return false;
 
@@ -133,7 +132,7 @@ QStringList PathMapper::RPathMapperServerSession::childPaths(QString basePath) c
     if (length == 0)
         return QStringList();
 
-    HBufC8* childPathsBuf = HBufC8::New(length);
+    HBufC8 *childPathsBuf = HBufC8::New(length);
     if (!childPathsBuf)
         return QStringList();
 
@@ -162,7 +161,7 @@ bool PathMapper::RPathMapperServerSession::resolvePath(QString path, Target &tar
     if (length == 0)
         return false;
 
-    HBufC8* keyDetailsBuf = HBufC8::New(length);
+    HBufC8 *keyDetailsBuf = HBufC8::New(length);
     if (!keyDetailsBuf)
         return false;
 
