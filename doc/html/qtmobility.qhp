@@ -3646,6 +3646,7 @@
             <file>qversitproperty.html</file>
             <file>qcontactmemoryengine.html</file>
             <file>incomingcalls-qcontactlistmodel-p-h.html</file>
+            <file>images/roaming-states.png</file>
             <file>qcontactemailaddress.html</file>
             <file>qcameraexposurecontrol.html</file>
             <file>qsystemdeviceinfo-members.html</file>
@@ -3794,6 +3795,7 @@
             <file>images/keepintouch-example.png</file>
             <file>classic.css</file>
             <file>images/spb-screen.png</file>
+            <file>images/roaming-states.png</file>
             <file>images/DialerServiceUML.png</file>
             <file>images/DialerServiceGUI.png</file>
             <file>images/qserviceinterfacedescriptor.png</file>
