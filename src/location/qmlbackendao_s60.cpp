@@ -103,7 +103,7 @@ TInt CQMLBackendAO::ConstructL(QObject *aRequester, RequestType  aRequestType,
         else
             PosServer = mRequester->getPositionServer();
 
-        error  =  mPositioner.Open(PosServer,aModId);
+        error  =  mPositioner.Open(PosServer, aModId);
 
         if (error != KErrNone)
             return error;
@@ -211,7 +211,7 @@ void CQMLBackendAO::notifyDeviceStatus(TPositionModuleStatusEventBase &aStatusEv
 
     aStatusEvent.SetRequestedEvents(RequestedEvents);
 
-    PosServ.NotifyModuleStatusEvent(aStatusEvent,iStatus);
+    PosServ.NotifyModuleStatusEvent(aStatusEvent, iStatus);
 
     SetActive();
 
@@ -372,20 +372,20 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
             if (mRequestType == RegularUpdate) {
                 if (mRequester) {
                     initializePosInfo();
-                    mPositioner.NotifyPositionUpdate(*mPosInfo , iStatus);
+                    mPositioner.NotifyPositionUpdate(*mPosInfo, iStatus);
                 } else
-                    mPositioner.NotifyPositionUpdate(mPosSatInfo,iStatus);
+                    mPositioner.NotifyPositionUpdate(mPosSatInfo, iStatus);
 
                 SetActive();
             }
 
             //KErrTimedOut should not be emited for regular update
-            if ((aError!= KErrTimedOut) || (mRequestType != RegularUpdate)) {
+            if ((aError != KErrTimedOut) || (mRequestType != RegularUpdate)) {
                 if (mRequester) {
-                    mRequester->updatePosition(positionInfo,aError);
+                    mRequester->updatePosition(positionInfo, aError);
                     delete positionInfo;
                 } else
-                    mRequesterSatellite->updatePosition(satInfo,aError,(mRequestType == RegularUpdate));
+                    mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
             }
 
             break;

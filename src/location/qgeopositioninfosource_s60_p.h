@@ -206,8 +206,6 @@ private:
     //get the more accuarte method with time to first fix < than timeout
     TInt getMoreAccurateMethod(TInt aTimeout, TUint8 aBits);
 
-    QGeoPositionInfo getLastknownPositionS60(TPositionModuleId aModuleID) const;
-
     void TPositionInfo2QGeoPositionInfo(HPositionGenericInfo *mPosInfo,
                                         QGeoPositionInfo& posUpdate);
 

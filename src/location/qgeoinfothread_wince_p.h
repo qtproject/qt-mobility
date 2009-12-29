@@ -95,7 +95,7 @@ public:
 
 signals:
     void dataUpdated(GPS_POSITION data);
-    void requestTimeout();
+    void updateTimeout();
 
 protected:
     void run();

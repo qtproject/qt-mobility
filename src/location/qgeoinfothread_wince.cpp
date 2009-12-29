@@ -339,7 +339,7 @@ void QGeoInfoThreadWinCE::run()
             // Check for request timeouts.
             if (requestScheduled && msecsTo(now, requestNextTime) < 0) {
                 requestScheduled = false;
-                emit requestTimeout();
+                emit updateTimeout();
             }
 
             // Check to see if a periodic update is due.

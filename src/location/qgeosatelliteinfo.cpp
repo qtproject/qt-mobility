@@ -212,7 +212,7 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
     dbg.nospace() << info.d->signal;
 
     QList<int> props = info.d->doubleProps.keys();
-    for (int i=0; i<props.count(); i++) {
+    for (int i = 0; i < props.count(); i++) {
         dbg.nospace() << ", ";
         switch (props[i]) {
             case QGeoSatelliteInfo::Elevation:
