@@ -86,6 +86,10 @@ PathMapper::PathMapper()
 {
     m_CRMLDirectoryMonitor = new CCRMLDirectoryMonitor;
 
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(1000);
+
     connect(m_CRMLDirectoryMonitor, SIGNAL(directoryChanged()), timer, SLOT(start()));
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMappings()));
 
