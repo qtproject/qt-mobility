@@ -157,7 +157,6 @@ void S60Player::positionChanged(qint64 progress)
 
 void S60Player::metaDataChanged()
 {
-    //qDebug() << "update metadata" << player->metaData(QtMedia::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("(%1/%2) %3 - %4")
         		.arg(playlist->currentIndex()+1)
@@ -175,6 +174,7 @@ void S60Player::metaDataChanged()
     }
 }
 
+
 void S60Player::seek(int seconds)
 {
     player->setPosition(seconds * 1000);
@@ -183,9 +183,12 @@ void S60Player::seek(int seconds)
 void S60Player::statusChanged(QMediaPlayer::MediaStatus status)
 {
     switch (status) {
+    case QMediaPlayer::LoadedMedia:
+        setStatusInfo(QString());
+        player->play();
+        break;
     case QMediaPlayer::UnknownMediaStatus:
     case QMediaPlayer::NoMedia:
-    case QMediaPlayer::LoadedMedia:
     case QMediaPlayer::BufferingMedia:
     case QMediaPlayer::BufferedMedia:
 #ifndef QT_NO_CURSOR
