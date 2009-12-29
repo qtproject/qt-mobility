@@ -130,7 +130,7 @@ CMTMEngine::CMTMEngine()
                                                               QString("MMS"),
                                                               mtmServiceEntryIdL(CMTMEngine::MTMTypeMMS),
                                                               0,
-                                                              QMessage::Mms);
+                                                              QMessage::Mms | QMessage::Email);
         iAccounts.insert(iMMSAccountidAsString, mmsAcc);
         updateEmailAccountsL();
         );
@@ -451,8 +451,7 @@ void CMTMEngine::updateEmailAccountsL() const
 
 TUid CMTMEngine::mtmUidByType(MTMType aMTMType)
 {
-    switch(aMTMType)
-    {
+    switch(aMTMType) {
     case CMTMEngine::MTMTypeSMS:  return KUidMsgTypeSMS;
     case CMTMEngine::MTMTypeMMS:  return KUidMsgTypeMultimedia;
     case CMTMEngine::MTMTypeSMTP: return KUidMsgTypeSMTP;
@@ -483,8 +482,7 @@ CBaseMtm* CMTMEngine::mtmByUid(TUid aMTMUid)
 TMsvId CMTMEngine::mtmServiceEntryIdL(MTMType aMTMType) const
 {
     TUid mtmUID;
-    switch(aMTMType)
-    {
+    switch(aMTMType) {
     case CMTMEngine::MTMTypeSMS:
         mtmUID = KUidMsgTypeSMS;
         break;
@@ -557,8 +555,7 @@ bool CMTMEngine::switchToMTMRootEntry(MTMType aMTMType)
 
 CBaseMtm* CMTMEngine::mtmByType(MTMType aMTMType)
 {
-    switch(aMTMType)
-    {
+    switch(aMTMType) {
     case CMTMEngine::MTMTypeSMS: return ipSmsMtm;
     case CMTMEngine::MTMTypeMMS: return ipMmsMtm;
     case CMTMEngine::MTMTypeSMTP: return ipSmtpMtm;
@@ -571,8 +568,7 @@ CBaseMtm* CMTMEngine::mtmByType(MTMType aMTMType)
 
 TMsvId CMTMEngine::standardFolderId(QMessage::StandardFolder standardFolder)
 {
-    switch(standardFolder)
-    {
+    switch(standardFolder) {
     case QMessage::InboxFolder:  return KMsvGlobalInBoxIndexEntryIdValue;
     case QMessage::OutboxFolder: return KMsvGlobalOutBoxIndexEntryIdValue;
     case QMessage::DraftsFolder: return KMsvDraftEntryIdValue;
@@ -583,37 +579,40 @@ TMsvId CMTMEngine::standardFolderId(QMessage::StandardFolder standardFolder)
     return TMsvId();
 }
 
-bool CMTMEngine::addMessage(QMessage* m)
+bool CMTMEngine::addMessage(QMessage* message)
 {
-    bool retVal = true;
-    if (m->parentAccountId().isValid()){    
-        QMessageAccount account = QMessageAccount(m->parentAccountId());
-        QMessage::TypeFlags types = account.messageTypes();
-        if (types == QMessage::Email){
-            m->setType(QMessage::Email);
-        }
-        else if (types == QMessage::Mms){
-            m->setType(QMessage::Mms);
-        }
-        if (types == QMessage::Sms){
-            m->setType(QMessage::Sms);
-        }
-    } 
+    bool retVal = false;
     
-    if (m->type() == QMessage::Sms){
-        TRAPD(err, storeSMSL(*m, KMsvDraftEntryId));
-        if (err != KErrNone)
-            retVal = false;
+    if (message->type() == QMessage::NoType) {
+        if (message->parentAccountId().isValid()){    
+            QMessageAccount account = QMessageAccount(message->parentAccountId());
+            QMessage::TypeFlags types = account.messageTypes();
+            if (types == QMessage::Email){
+                message->setType(QMessage::Email);
+            }
+            else if (types == QMessage::Mms){
+                message->setType(QMessage::Mms);
+            }
+            if (types == QMessage::Sms){
+                message->setType(QMessage::Sms);
+            }
+        } else {
+            return false;
+        }
     }
-    else if (m->type() == QMessage::Mms){
-        TRAPD(err, storeMMSL(*m, KMsvDraftEntryId));
-        if (err != KErrNone)
-            retVal = false;
+
+    if (!message->parentAccountId().isValid() && message->type() != QMessage::NoType) {
+        message->setParentAccountId(QMessageAccount::defaultAccount(message->type()));
     }
-    else if (m->type() == QMessage::Email){
-        TRAPD(err, storeEmailL(*m, KMsvDraftEntryId));
-        if (err != KErrNone)
-            retVal = false;
+    
+    if (message->type() == QMessage::Sms){
+        retVal = storeSMS(*message);
+    }
+    else if (message->type() == QMessage::Mms){
+        retVal = storeMMS(*message);
+    }
+    else if (message->type() == QMessage::Email){
+        retVal = storeEmail(*message);
     }
     
     return retVal;
@@ -1269,6 +1268,59 @@ void CMTMEngine::retrieveHeaderL(const QMessageId& id) const
     CleanupStack::PopAndDestroy(pEntry);
 }
 
+bool CMTMEngine::exportUpdates(const QMessageAccountId &id)
+{
+    TRAPD(err, exportUpdatesL(id));
+    if (err != KErrNone) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void CMTMEngine::exportUpdatesL(const QMessageAccountId &id) const
+{
+    QMessageAccount account = this->account(id);
+    CMsvEntry* pEntry = retrieveCMsvEntryAndPushToCleanupStack(account.d_ptr->_service1EntryId);
+    if (!pEntry) {
+        User::Leave(KErrNotFound);
+    }
+    if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4) {
+        TPckgBuf<TInt> parameter;
+        CMsvEntrySelection* pMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+        CleanupStack::PushL(pMsvEntrySelection);
+        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+        
+        ipImap4Mtm->SwitchCurrentEntryL(account.d_ptr->_service1EntryId);
+        pMsvEntrySelection->AppendL(account.d_ptr->_service1EntryId);
+        
+        CMsvOperation* pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect, *pMsvEntrySelection,
+                                                                        parameter, pMsvOperationWait->iStatus);
+        CleanupStack::PushL(pMsvOperation);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        CleanupStack::PopAndDestroy(pMsvOperation);
+
+        pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMFullSync, *pMsvEntrySelection,
+                                                         parameter, pMsvOperationWait->iStatus);
+        CleanupStack::PushL(pMsvOperation);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        CleanupStack::PopAndDestroy(pMsvOperation);
+        
+        pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect, *pMsvEntrySelection,
+                                                         parameter, pMsvOperationWait->iStatus);
+        CleanupStack::PushL(pMsvOperation);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        CleanupStack::PopAndDestroy(pMsvOperation);
+        
+        CleanupStack::PopAndDestroy(pMsvOperationWait);
+        CleanupStack::PopAndDestroy(pMsvEntrySelection);
+    }
+    releaseCMsvEntryAndPopFromCleanupStack(pEntry);
+}
+
 bool CMTMEngine::removeMessageL(const QMessageId &id, QMessageManager::RemovalOption /*option*/)
 {
     long int messageId = id.toString().toLong();
@@ -1302,14 +1354,26 @@ bool CMTMEngine::removeMessageL(const QMessageId &id, QMessageManager::RemovalOp
         ipImap4Mtm->SwitchCurrentEntryL(messageId);
         TMsvId parent = ipImap4Mtm->Entry().Entry().Parent();
         ipImap4Mtm->SwitchCurrentEntryL(parent);
-        ipImap4Mtm->Entry().DeleteL(messageId);
+        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+        CMsvOperation* pMsvOperation = ipImap4Mtm->Entry().DeleteL(messageId, pMsvOperationWait->iStatus);
+        CleanupStack::PushL(pMsvOperation);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        CleanupStack::PopAndDestroy(pMsvOperation);
+        CleanupStack::PopAndDestroy(pMsvOperationWait);
     } else if (pEntry->Entry().iMtm == KUidMsgTypePOP3) {
         if (!ipPop3Mtm)
             return false;
         ipPop3Mtm->SwitchCurrentEntryL(messageId);
         TMsvId parent = ipPop3Mtm->Entry().Entry().Parent();
         ipPop3Mtm->SwitchCurrentEntryL(parent);
-        ipPop3Mtm->Entry().DeleteL(messageId);
+        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+        CMsvOperation* pMsvOperation = ipPop3Mtm->Entry().DeleteL(messageId, pMsvOperationWait->iStatus);
+        CleanupStack::PushL(pMsvOperation);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        CleanupStack::PopAndDestroy(pMsvOperation);
+        CleanupStack::PopAndDestroy(pMsvOperationWait);
     } 
     
     CleanupStack::PopAndDestroy(pEntry);
@@ -1568,14 +1632,18 @@ void CMTMEngine::countMessagesL(QMessageServicePrivate& privateService, const QM
         queryInfo.operationId = 1;
     }
     queryInfo.isQuery = false;
+    queryInfo.matchFlags = 0;
     queryInfo.filter = filter;
-    queryInfo.limit = 0;
+    queryInfo.sortOrder = QMessageSortOrder();
     queryInfo.offset = 0;
+    queryInfo.limit = 0;
     queryInfo.findOperation = new CMessagesFindOperation((CMTMEngine&)*this, ipMsvSession, queryInfo.operationId);
     queryInfo.privateService = &privateService;
     queryInfo.currentFilterListIndex = 0;
     queryInfo.count = 0;
     iMessageQueries.append(queryInfo);
+    
+    handleNestedFiltersFromMessageFilter(iMessageQueries[iMessageQueries.count()-1].filter);
     
     QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(iMessageQueries[iMessageQueries.count()-1].filter);
     if (pf->_filterList.count() == 0) {
@@ -1616,23 +1684,17 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
         }
 
         if (pf->_filterList.count() > 0) {
-            // There are more than one filterLists to go through
+            // Filter contains filterlist (or filterlists), not just one single filter 
             if (iMessageQueries[index].currentFilterListIndex == 0) {
-                if (iMessageQueries[index].isQuery) {
-                    iMessageQueries[index].ids << ids;
-                } else {
-                    iMessageQueries[index].count = ids.count(); 
-                }
+                iMessageQueries[index].ids << ids;
+                iMessageQueries[index].count = ids.count(); 
             } else {
-                if (iMessageQueries[index].isQuery) {
-                    // Append new ids to resultset
-                    for (int i=0; i < ids.count(); i++) {
-                        if (!iMessageQueries[index].ids.contains(ids[i])) {
-                            iMessageQueries[index].ids.append(ids[i]);
-                        }
+                // Append new ids to resultset
+                for (int i=0; i < ids.count(); i++) {
+                    if (!iMessageQueries[index].ids.contains(ids[i])) {
+                        iMessageQueries[index].ids.append(ids[i]);
+                        iMessageQueries[index].count++;; 
                     }
-                } else {
-                    iMessageQueries[index].count += ids.count(); 
                 }
             }
             
@@ -1656,13 +1718,13 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                                                 iMessageQueries[index].limit);
                     emit iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids);
                 } else {
-                    emit iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].offset);
+                    emit iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
                 }
                 iMessageQueries[index].privateService->_active = false;
                 emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
             }
         } else {
-            // There was only one filter or filterLists to go through
+            // There was only one single filter to handle
             if (numberOfHandledFilters == 0) {
                 // The one and only filter was not handled
                 // => Do filtering for all returned messages
@@ -1967,15 +2029,18 @@ QMessageFolderIdList CMTMEngine::allFolders() const
 QMessageFolderIdList CMTMEngine::folderIdsByAccountId(const QMessageAccountId& accountId) const
 {
     QMessageAccount messageAccount = account(accountId);
-    QMessageFolderIdList ids = folderIdsByServiceEntryId(messageAccount.d_ptr->_service1EntryId);
+    QMessageFolderIdList ids = folderIdsByServiceEntryId(messageAccount.d_ptr->_service1EntryId,
+                                                         messageAccount.d_ptr->_service1EntryId);
     if (messageAccount.d_ptr->_service2EntryId) {
-        QMessageFolderIdList ids2 = folderIdsByServiceEntryId(messageAccount.d_ptr->_service2EntryId);
+        QMessageFolderIdList ids2 = folderIdsByServiceEntryId(messageAccount.d_ptr->_service2EntryId,
+                                                              messageAccount.d_ptr->_service1EntryId);
         ids << ids2;
     }
     return ids;
 }
 
-QMessageFolderIdList CMTMEngine::folderIdsByServiceEntryId(const TMsvId& serviceEntryId) const
+QMessageFolderIdList CMTMEngine::folderIdsByServiceEntryId(const TMsvId& serviceEntryId,
+                                                           const TMsvId& folderServiceEntryId) const
 {
     QMessageFolderIdList ids;
 
@@ -1986,17 +2051,17 @@ QMessageFolderIdList CMTMEngine::folderIdsByServiceEntryId(const TMsvId& service
             // Add all Standard Folders to FolderIdList
             if (entry.iMtm != KUidMsgTypeSMTP) {
                 // SMTP is for sending only => Don't add Inbox for SMTP
-                ids.append(createQMessageFolderId(serviceEntryId, KMsvGlobalInBoxIndexEntryId));
+                ids.append(createQMessageFolderId(folderServiceEntryId, KMsvGlobalInBoxIndexEntryId));
             }
-            ids.append(createQMessageFolderId(serviceEntryId, KMsvGlobalOutBoxIndexEntryId));
-            ids.append(createQMessageFolderId(serviceEntryId, KMsvDraftEntryId));
-            ids.append(createQMessageFolderId(serviceEntryId, KMsvSentEntryId));
-            ids.append(createQMessageFolderId(serviceEntryId, KMsvDeletedEntryFolderEntryId));
+            ids.append(createQMessageFolderId(folderServiceEntryId, KMsvGlobalOutBoxIndexEntryId));
+            ids.append(createQMessageFolderId(folderServiceEntryId, KMsvDraftEntryId));
+            ids.append(createQMessageFolderId(folderServiceEntryId, KMsvSentEntryId));
+            ids.append(createQMessageFolderId(folderServiceEntryId, KMsvDeletedEntryFolderEntryId));
             pEntry->SetEntryL(KDocumentsEntryIdValue);
         }
     
         if (entry.iMtm == KUidMsgTypePOP3) {
-            ids.append(createQMessageFolderId(serviceEntryId, serviceEntryId));
+            ids.append(createQMessageFolderId(folderServiceEntryId, serviceEntryId));
         } else {
             CMsvEntryFilter* pFilter = CMsvEntryFilter::NewLC();
             pFilter->SetService(serviceEntryId);
@@ -2006,7 +2071,7 @@ QMessageFolderIdList CMTMEngine::folderIdsByServiceEntryId(const TMsvId& service
             ipMsvSession->GetChildIdsL(pEntry->Entry().Id(), *pFilter, *pSelection);
             if (pSelection->Count() > 0) {
                 for(TInt i = 0; i < pSelection->Count(); i++) {
-                    ids.append(createQMessageFolderId(serviceEntryId, pSelection->At(i)));
+                    ids.append(createQMessageFolderId(folderServiceEntryId, pSelection->At(i)));
                 }
             }
             CleanupStack::PopAndDestroy(pSelection);
@@ -2278,87 +2343,113 @@ QMessage CMTMEngine::messageL(const QMessageId& id) const
     return message;
 }
 
-bool CMTMEngine::storeMMS(QMessage &message, TMsvId dest)
+bool CMTMEngine::storeMMS(QMessage &message)
 {
-    if (!iSessionReady)
+    if (!iSessionReady) {
         return false;
+    }
     
-    TRAPD(err, storeMMSL(message, dest));
-    if (err != KErrNone)
+    TRAPD(err, storeMMSL(message));
+    if (err != KErrNone) {
         return false;
-    else
-        return true;
-}
-
-void CMTMEngine::sendMMS()
-{
-    if (!iSessionReady)
-        return;
-
-    TRAPD(err, sendMMSL());
-    Q_UNUSED(err)
-}
-
-bool CMTMEngine::storeEmail(QMessage &message, TMsvId dest)
-{
-    if (!iSessionReady)
-        return false;
+    }
     
-    TRAPD(err, storeEmailL(message, dest));
-    if (err != KErrNone)
-        return false;
-    else
-        return true;
+    return true;
 }
 
-void CMTMEngine::sendEmail(QMessage &message)
+bool CMTMEngine::sendMMS(QMessage &message)
 {
-    if (!iSessionReady)
-        return;
+    if (!iSessionReady) {
+        return false;
+    }
+
+    TRAPD(err, sendMMSL(message));
+    if (err != KErrNone) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool CMTMEngine::storeEmail(QMessage &message)
+{
+    if (!iSessionReady) {
+        return false;
+    }
+    
+    TRAPD(err, storeEmailL(message));
+    if (err != KErrNone) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool CMTMEngine::sendEmail(QMessage &message)
+{
+    if (!iSessionReady) {
+        return false;
+    }
 
     TRAPD(err, sendEmailL(message));
-    Q_UNUSED(err)
+    if (err != KErrNone) {
+        return false;
+    }
+    
+    return true;
 }
 
-bool CMTMEngine::storeSMS(QMessage &message, TMsvId dest)
+bool CMTMEngine::storeSMS(QMessage &message)
 {
     if (!iSessionReady)
         return false;
     
-    TRAPD(err, storeSMSL(message, dest));
-    if (err != KErrNone)
+    TRAPD(err, storeSMSL(message));
+    if (err != KErrNone) {
         return false;
-    else
-        return true;
+    }
+    
+    return true;
 }
 
-void CMTMEngine::storeSMSL(QMessage &message, TMsvId dest)
+void CMTMEngine::storeSMSL(QMessage &message)
 {
-    Q_UNUSED(dest);
-    if (!iSessionReady)
-        return;
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
+    }
+    
+    TMsvId destinationFolderId;
+    if (message.parentFolderId().isValid()) {
+        destinationFolderId = folderIdFromQMessageFolderId(message.parentFolderId());
+    } else {
+        // parentFolderId was not defined for new Message
+        // => Message will be created into defined standard Folder (Default value is Drafts Folder)
+        destinationFolderId =  standardFolderId(message.standardFolder());
+    }
     
     // Current entry is the Draft folder.    
-    ipSmsMtm->SwitchCurrentEntryL(KMsvDraftEntryId);     
+    ipSmsMtm->SwitchCurrentEntryL(destinationFolderId);     
     // Create a new SMS message entry as a child of the current context.    
     ipSmsMtm->CreateMessageL(KUidMsgTypeSMS.iUid);     
     TMsvEntry entry = ipSmsMtm->Entry().Entry();
     
-    switch(message.priority()) {
-        case QMessage::HighPriority:
-            entry.SetPriority(EMsvHighPriority);
-            break;
-        case QMessage::NormalPriority:
-            entry.SetPriority(EMsvMediumPriority);
-            break;
-        case QMessage::LowPriority:
-            entry.SetPriority(EMsvLowPriority);
-            break;
+    switch (message.priority()) {
+    case QMessage::HighPriority:
+        entry.SetPriority(EMsvHighPriority);
+        break;
+    case QMessage::NormalPriority:
+        entry.SetPriority(EMsvMediumPriority);
+        break;
+    case QMessage::LowPriority:
+        entry.SetPriority(EMsvLowPriority);
+        break;
     }
     if (message.status() & QMessage::Read) { 
         entry.SetUnread(false);
+        entry.SetNew(false);
     } else {
         entry.SetUnread(true);
+        entry.SetNew(true);
     }
     ipSmsMtm->Entry().ChangeL(entry);
     
@@ -2412,102 +2503,68 @@ void CMTMEngine::storeSMSL(QMessage &message, TMsvId dest)
 
 bool CMTMEngine::sendSMS(QMessage &message)
 {
-    if (!iSessionReady)
+    if (!iSessionReady) {
         return false;
+    }
     
     TRAPD(err, sendSMSL(message));
-    if (err != KErrNone)
+    if (err != KErrNone) {
         return false;
-    else
-        return true;
+    }
+    
+    return true;
 }
 
 void CMTMEngine::sendSMSL(QMessage &message)
 {
-    if (!iSessionReady)
-        return;
-    
-    // Current entry is the Draft folder.    
-    ipSmsMtm->SwitchCurrentEntryL(KMsvDraftEntryId);     
-    // Create a new SMS message entry as a child of the current context.    
-    ipSmsMtm->CreateMessageL( KUidMsgTypeSMS.iUid );     
-    TMsvEntry entry = ipSmsMtm->Entry().Entry();
-    
-    switch(message.priority()) {
-        case QMessage::HighPriority:
-            entry.SetPriority(EMsvHighPriority);
-            break;
-        case QMessage::NormalPriority:
-            entry.SetPriority(EMsvMediumPriority);
-            break;
-        case QMessage::LowPriority:
-            entry.SetPriority(EMsvLowPriority);
-            break;
-    }
-    if (message.status() & QMessage::Read) { 
-        entry.SetUnread(false);
-    } else {
-        entry.SetUnread(true);
-    }
-    ipSmsMtm->Entry().ChangeL(entry);
-    
-    QList<QMessageAddress> list(message.to());
-    if (!list.empty()){
-        TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
-        for (int i = 0; i < list.size(); ++i) {
-            qreceiver = list.at(i).recipient();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            ipSmsMtm->AddAddresseeL(receiver); 
-            ipSmsMtm->SaveMessageL();
-            }
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
     }
     
-    CMsvStore* store = ipSmsMtm->Entry().EditStoreL(); 
-    CleanupStack::PushL(store);
+    bool messageCreated = false;
+    if (!message.id().isValid()) {
+        QMessagePrivate::setStandardFolder(message, QMessage::DraftsFolder);
+        storeSMSL(message);
+        messageCreated = true;
+    }
     
-    QString body = message.textContent();
-    if (!body.isEmpty()){
-        TPtrC16 msg(reinterpret_cast<const TUint16*>(body.utf16()));
-        if (!ipRichText) {
-            ipCharFormatLayer = CCharFormatLayer::NewL();
-            ipParaFormatLayer = CParaFormatLayer::NewL();
-            ipRichText=CRichText::NewL(ipParaFormatLayer,ipCharFormatLayer);
-        }
-        ipRichText->Reset();
-        ipRichText->InsertL(0, msg);
-        store->StoreBodyTextL(*ipRichText);
-        store->CommitL();
-    } 
-    CleanupStack::PopAndDestroy(store);
+    long int messageId = message.id().toString().toLong();
+    if (messageId == 0) {
+        User::Leave(KErrNotReady);
+    }
     
-    CMsvOperationWait* wait = CMsvOperationWait::NewLC();
-    wait->iStatus = KRequestPending; 
+    CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
+    CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
     
-    CMsvEntry* draftEntry = ipMsvSession->GetEntryL(KMsvDraftEntryId);
-    CleanupStack::PushL(draftEntry);
+    ipSmsMtm->SwitchCurrentEntryL(pMsvEntry->Entry().Parent());
+    // Following sends SMS and _moves_ SMS from Drafts Folder to Sent Folder
+    CMsvOperation* pMsvOperation = ipSmsMtm->Entry().CopyL(messageId, ipSmsMtm->ServiceId(), pMsvOperationWait->iStatus);
+    pMsvOperationWait->Start();
+    CActiveScheduler::Start();
+    delete pMsvOperation;    
     
-    CMsvOperation* op = NULL;
-    TRAPD(err, op = draftEntry->CopyL(entry.Id(), ipSmsMtm->ServiceId(), wait->iStatus));
-    Q_UNUSED(err)
-    CleanupStack::PushL(op);
-    wait->Start();
-    CActiveScheduler::Start();     
-    
-    CleanupStack::PopAndDestroy(3);
-    
-    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(QString::number(entry.Id())); 
+    CleanupStack::PopAndDestroy(pMsvOperationWait);
+    releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);    
 }
 
-void CMTMEngine::storeMMSL(QMessage &message, TMsvId dest)
+void CMTMEngine::storeMMSL(QMessage &message)
 {
-    if (!iSessionReady)
-        return;
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
+    }
+    
+    TMsvId destinationFolderId;
+    if (message.parentFolderId().isValid()) {
+        destinationFolderId = folderIdFromQMessageFolderId(message.parentFolderId());
+    } else {
+        // parentFolderId was not defined for new Message
+        // => Message will be created into defined standard Folder (Default value is Drafts Folder)
+        destinationFolderId =  standardFolderId(message.standardFolder());
+    }
         
     CMsvOperationWait* wait = CMsvOperationWait::NewLC();
     wait->Start();
-    CMsvOperation* operation = ipMmsMtm->CreateNewEntryL(dest, wait->iStatus);
+    CMsvOperation* operation = ipMmsMtm->CreateNewEntryL(destinationFolderId, wait->iStatus);
     CleanupStack::PushL(operation);
     CActiveScheduler::Start();
     if (wait->iStatus.Int() != KErrNone){ 
@@ -2539,21 +2596,23 @@ void CMTMEngine::storeMMSL(QMessage &message, TMsvId dest)
     ent.SetInPreparation(EFalse); 
     ent.SetVisible(ETrue);
     
-    switch(message.priority()) {
-        case QMessage::HighPriority:
-            ent.SetPriority(EMsvHighPriority);
-            break;
-        case QMessage::NormalPriority:
-            ent.SetPriority(EMsvMediumPriority);
-            break;
-        case QMessage::LowPriority:
-            ent.SetPriority(EMsvLowPriority);
-            break;
+    switch (message.priority()) {
+    case QMessage::HighPriority:
+        ent.SetPriority(EMsvHighPriority);
+        break;
+    case QMessage::NormalPriority:
+        ent.SetPriority(EMsvMediumPriority);
+        break;
+    case QMessage::LowPriority:
+        ent.SetPriority(EMsvLowPriority);
+        break;
     }
     if (message.status() & QMessage::Read) { 
         ent.SetUnread(false);
+        ent.SetNew(false);
     } else {
         ent.SetUnread(true);
+        ent.SetNew(true);
     }
     ipMmsMtm->Entry().ChangeL(ent); 
     // Save the changes    
@@ -2699,8 +2758,9 @@ void CMTMEngine::storeMMSL(QMessage &message, TMsvId dest)
 
 void CMTMEngine::updateSMSL(QMessage &message)
 {
-    if (!iSessionReady)
-        return;
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
+    }
     
     QMessageId id = message.id();
     long int messageId = id.toString().toLong();
@@ -2714,21 +2774,23 @@ void CMTMEngine::updateSMSL(QMessage &message)
     ipSmsMtm->LoadMessageL();
     
     TMsvEntry tEntry = ipSmsMtm->Entry().Entry();
-    switch(message.priority()) {
-        case QMessage::HighPriority:
-            tEntry.SetPriority(EMsvHighPriority);
-            break;
-        case QMessage::NormalPriority:
-            tEntry.SetPriority(EMsvMediumPriority);
-            break;
-        case QMessage::LowPriority:
-            tEntry.SetPriority(EMsvLowPriority);
-            break;            
+    switch (message.priority()) {
+    case QMessage::HighPriority:
+        tEntry.SetPriority(EMsvHighPriority);
+        break;
+    case QMessage::NormalPriority:
+        tEntry.SetPriority(EMsvMediumPriority);
+        break;
+    case QMessage::LowPriority:
+        tEntry.SetPriority(EMsvLowPriority);
+        break;            
     }
     if (message.status() & QMessage::Read) { 
         tEntry.SetUnread(false);
+        tEntry.SetNew(false);
     } else {
         tEntry.SetUnread(true);
+        tEntry.SetNew(true);
     }
     ipSmsMtm->Entry().ChangeL(tEntry); 
     // Save the changes    
@@ -2782,8 +2844,9 @@ void CMTMEngine::updateSMSL(QMessage &message)
 
 void CMTMEngine::updateMMSL(QMessage &message)
 {
-    if (!iSessionReady)
-        return;
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
+    }
     
     QMessageId id = message.id();
     long int messageId = id.toString().toLong();
@@ -2816,21 +2879,23 @@ void CMTMEngine::updateMMSL(QMessage &message)
     ent.SetInPreparation(EFalse); 
     ent.SetVisible(ETrue);    
     
-    switch(message.priority()) {
-        case QMessage::HighPriority:
-            ent.SetPriority(EMsvHighPriority);
-            break;
-        case QMessage::NormalPriority:
-            ent.SetPriority(EMsvMediumPriority);
-            break;
-        case QMessage::LowPriority:
-            ent.SetPriority(EMsvLowPriority);
-            break;
+    switch (message.priority()) {
+    case QMessage::HighPriority:
+        ent.SetPriority(EMsvHighPriority);
+        break;
+    case QMessage::NormalPriority:
+        ent.SetPriority(EMsvMediumPriority);
+        break;
+    case QMessage::LowPriority:
+        ent.SetPriority(EMsvLowPriority);
+        break;
     }
     if (message.status() & QMessage::Read) { 
         ent.SetUnread(false);
+        ent.SetNew(false);
     } else {
         ent.SetUnread(true);
+        ent.SetNew(true);
     }
     ipMmsMtm->Entry().ChangeL(ent); 
     // Save the changes    
@@ -2972,35 +3037,72 @@ void CMTMEngine::updateMMSL(QMessage &message)
 
 void CMTMEngine::updateEmailL(QMessage &message)
 {
-    if (!iSessionReady)
-        return;  
-    
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
+    }
+
     QMessageId id = message.id();
     long int messageId = id.toString().toLong();
     if (messageId == 0)
         return;
     
-    ipSmtpMtm->SwitchCurrentEntryL(messageId);
-    ipSmtpMtm->LoadMessageL();
+    CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
+    TUid mtmUid = pEntry->Entry().iMtm;
+    delete pEntry;
     
-    TMsvEntry tEntry = ipSmtpMtm->Entry().Entry();
-    switch(message.priority()) {
-        case QMessage::HighPriority:
-            tEntry.SetPriority(EMsvHighPriority);
-            break;
-        case QMessage::NormalPriority:
-            tEntry.SetPriority(EMsvMediumPriority);
-            break;
-        case QMessage::LowPriority:
-            tEntry.SetPriority(EMsvLowPriority);
-            break;            
+    TMsvEntry msvEntry;
+    if (mtmUid == KUidMsgTypeSMTP) {
+        ipSmtpMtm->SwitchCurrentEntryL(messageId);
+        ipSmtpMtm->LoadMessageL();
+        msvEntry = ipSmtpMtm->Entry().Entry();
+    } else if (mtmUid == KUidMsgTypePOP3) {
+        ipPop3Mtm->SwitchCurrentEntryL(messageId);
+        ipPop3Mtm->LoadMessageL();
+        msvEntry = ipPop3Mtm->Entry().Entry();
+    } else if (mtmUid == KUidMsgTypeIMAP4) {
+        ipImap4Mtm->SwitchCurrentEntryL(messageId);
+        ipImap4Mtm->LoadMessageL();
+        msvEntry = ipImap4Mtm->Entry().Entry();
     }
-    if (message.status() & QMessage::Read) { 
-        tEntry.SetUnread(false);
+
+    switch (message.priority()) {
+    case QMessage::HighPriority:
+        msvEntry.SetPriority(EMsvHighPriority);
+        break;
+    case QMessage::NormalPriority:
+        msvEntry.SetPriority(EMsvMediumPriority);
+        break;
+    case QMessage::LowPriority:
+        msvEntry.SetPriority(EMsvLowPriority);
+        break;            
+    }
+    if (message.status() & QMessage::Read) {
+        msvEntry.SetUnread(false);
+        msvEntry.SetNew(false);
     } else {
-        tEntry.SetUnread(true);
+        msvEntry.SetUnread(true);
+        msvEntry.SetNew(true);
     }
-    ipSmtpMtm->Entry().ChangeL(tEntry); 
+    
+    msvEntry.iDescription.Set(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
+    msvEntry.iDetails.Set(TPtrC(reinterpret_cast<const TUint16*>(message.from().recipient().utf16())));
+    
+    if (mtmUid == KUidMsgTypeSMTP) {
+        ipSmtpMtm->Entry().ChangeL(msvEntry);
+    } else {
+        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+        CMsvOperation* pMsvOperation = NULL;
+        if (mtmUid == KUidMsgTypePOP3) {
+            pMsvOperation = ipPop3Mtm->Entry().ChangeL(msvEntry, pMsvOperationWait->iStatus);
+        } else {
+            pMsvOperation = ipImap4Mtm->Entry().ChangeL(msvEntry, pMsvOperationWait->iStatus);
+        }
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        delete pMsvOperation;
+        CleanupStack::PopAndDestroy(pMsvOperationWait);
+    }
+    
     // Save the changes    
     ipSmtpMtm->SaveMessageL();
     
@@ -3122,7 +3224,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
     CMsvStore* store = entry->EditStoreL();
     CleanupStack::PushL(store);
     CImHeader* emailEntry = CImHeader::NewLC();
-    emailEntry->RestoreL(*store);
+    TRAPD(err, emailEntry->RestoreL(*store));
     mime->StoreL(*store);
     emailEntry->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
     
@@ -3134,7 +3236,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
             qreceiver = toList.at(i).recipient();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             emailEntry->ToRecipients().AppendL(receiver); 
-            }
+        }
     }
     
     QList<QMessageAddress> ccList(message.cc());
@@ -3145,7 +3247,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
             qreceiver = ccList.at(i).recipient();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             emailEntry->CcRecipients().AppendL(receiver); 
-            }
+        }
     }
         
     QList<QMessageAddress> bccList(message.bcc());
@@ -3156,13 +3258,13 @@ void CMTMEngine::updateEmailL(QMessage &message)
             qreceiver = bccList.at(i).recipient();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             emailEntry->BccRecipients().AppendL(receiver); 
-            }
+        }
     }
      
     emailEntry->StoreL(*store);
     // Store the changes permanently
     store->CommitL();
-
+    
     CleanupStack::PopAndDestroy(6, entry); 
     // mailMsg, emailEntry, store, waiter, entry, mime   
 
@@ -3176,25 +3278,71 @@ void CMTMEngine::updateEmailL(QMessage &message)
         } else {
             changedEntry.iDate = qDateTimeToSymbianTTime(message.receivedDate());
         }
-        pEntry->ChangeL(changedEntry);
+        if (mtmUid == KUidMsgTypeSMTP) {
+            ipSmtpMtm->Entry().ChangeL(changedEntry);
+        } else {
+            CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+            CMsvOperation* pMsvOperation = NULL;
+            if (mtmUid == KUidMsgTypePOP3) {
+                pMsvOperation = ipPop3Mtm->Entry().ChangeL(changedEntry, pMsvOperationWait->iStatus);
+            } else {
+                pMsvOperation = ipImap4Mtm->Entry().ChangeL(changedEntry, pMsvOperationWait->iStatus);
+            }
+            pMsvOperationWait->Start();
+            CActiveScheduler::Start();
+            delete pMsvOperation;
+            CleanupStack::PopAndDestroy(pMsvOperationWait);
+        }
         CleanupStack::PopAndDestroy(pEntry);
     }
 }
 
-void CMTMEngine::sendMMSL()
+void CMTMEngine::sendMMSL(QMessage &message)
 {
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
+    }
+
+    bool messageCreated = false;
+    if (!message.id().isValid()) {
+        QMessagePrivate::setStandardFolder(message, QMessage::OutboxFolder);
+        storeMMSL(message);
+        messageCreated = true;
+    }
+    
+    long int messageId = message.id().toString().toLong();
+    if (messageId == 0) {
+        User::Leave(KErrNotReady);
+    }
+
+    CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
+    CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+    
+    CMsvOperation* pMsvOperation = NULL;
+    if (!messageCreated) {
+        ipMmsMtm->SwitchCurrentEntryL(pMsvEntry->Entry().Parent());
+        pMsvOperation = ipMmsMtm->Entry().CopyL(messageId, KMsvGlobalOutBoxIndexEntryId, pMsvOperationWait->iStatus);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        delete pMsvOperation;
+        pMsvOperation = NULL;
+    }
+    
     // Start sending the message via the Server MTM to the MMS server    
-    CMsvOperationWait* wait = CMsvOperationWait::NewLC();    
-    wait->iStatus = KRequestPending;    
-    CMsvOperation* op = NULL;    
-    op = ipMmsMtm->SendL(wait->iStatus);    
-    wait->Start();    
-    CleanupStack::PushL(op);    
-    CActiveScheduler::Start();     
+    CMsvEntrySelection* pMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+    pMsvEntrySelection->AppendL(messageId);
+    ipMmsMtm->SwitchCurrentEntryL(KMsvGlobalOutBoxIndexEntryId);
+    pMsvOperation = ipMmsMtm->SendL(*pMsvEntrySelection, pMsvOperationWait->iStatus);
+    pMsvOperationWait->Start();
+    CActiveScheduler::Start();
+    delete pMsvOperation;
    
-    while(wait->iStatus == KRequestPending)        
-         CActiveScheduler::Start();     
-    CleanupStack::PopAndDestroy(2); // op, wait    
+    while (pMsvOperationWait->iStatus == KRequestPending) {
+         CActiveScheduler::Start();
+    }
+    
+    CleanupStack::PopAndDestroy(pMsvOperationWait);
+    releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);    
 }
 
 QString CMTMEngine::privateFolderPath()
@@ -3215,284 +3363,355 @@ QString CMTMEngine::privateFolderPath()
     return QString::fromUtf16(driveLetterAndPath.Ptr(), driveLetterAndPath.Length());
 }
 
-void CMTMEngine::storeEmailL(QMessage &message, TMsvId dest)
+void CMTMEngine::storeEmailL(QMessage &message)
 {
-    if (!iSessionReady)
-    {
-        return;   
-    } 
-        
-    // Set the context to the folder into which message has to be created
-    CMsvEntry* entry;
-    if (message.parentFolderId().isValid()) {
-        dest = folderIdFromQMessageFolderId(message.parentFolderId());
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
     }
-    entry = CMsvEntry::NewL(*ipMsvSession, dest, TMsvSelectionOrdering());
-    CleanupStack::PushL(entry);
+
+    TMsvId destinationFolderId = 0;
+    TMsvId imapDestinationFolderId = 0;
+    if (message.parentFolderId().isValid()) {
+        destinationFolderId = folderIdFromQMessageFolderId(message.parentFolderId());
+        CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(destinationFolderId);
+        if (pMsvEntry->Entry().iMtm == KUidMsgTypeIMAP4 || pMsvEntry->Entry().iMtm == KUidMsgTypePOP3) {
+            // New IMAP or POP3 message can not be created to IMAP or POP3 service folder.
+            // => Create IMAP or POP3 message into Drafts folder instead
+            destinationFolderId = KMsvDraftEntryId; 
+            if (pMsvEntry->Entry().iMtm == KUidMsgTypeIMAP4) {
+                // It's possible to copy newly created IMAP message from Drafts folder
+                // to IMAP service folder.
+                // Note: IMAP message can not be created directly to IMAP service folder.
+                imapDestinationFolderId = destinationFolderId;
+            }
+        }
+        releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);
+    } else {
+        // parentFolderId was not defined for new Message
+        // => Message will be created into defined standard Folder (Default value is Drafts Folder)
+        destinationFolderId =  standardFolderId(message.standardFolder());
+    }
     
-    CMsvOperationWait* waiter = CMsvOperationWait::NewLC();
+    QMessageAccount messageAccount = this->account(message.parentAccountId());
     
+    CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
     TMsvEmailTypeList msvEmailTypeList = 0;
-    TMsvPartList partList = (KMsvMessagePartBody | KMsvMessagePartAttachments);
-    
-    QMessageAccount account = this->account(message.parentAccountId());
-    CImEmailOperation* emailOperation = CImEmailOperation::CreateNewL(waiter->iStatus, *ipMsvSession, dest,
-                                                                      account.d_ptr->_service2EntryId,
-                                                                      partList, msvEmailTypeList, KUidMsgTypeSMTP);
-    CleanupStack::PushL(emailOperation);
-    waiter->Start();
+    TMsvPartList msvPartList = 0;
+    if (message.status() & QMessage::HasAttachments == QMessage::HasAttachments) {
+        msvPartList = (KMsvMessagePartBody | KMsvMessagePartAttachments);
+    } else {
+        msvPartList = KMsvMessagePartBody;
+    }
+    CImEmailOperation* pImEmailOperation = CImEmailOperation::CreateNewL(pMsvOperationWait->iStatus, *ipMsvSession, destinationFolderId,
+                                                                         messageAccount.d_ptr->_service2EntryId, msvPartList,
+                                                                         msvEmailTypeList, KUidMsgTypeSMTP);
+    CleanupStack::PushL(pImEmailOperation);
+    pMsvOperationWait->Start();
     CActiveScheduler::Start();
     
-    TMsvId temp;
-    TPckgC<TMsvId> paramPack(temp);
-    const TDesC8& progBuf = emailOperation->ProgressL();
-    paramPack.Set(progBuf);
     TMsvId newMessageId;
+    TPckgC<TMsvId> paramPack(newMessageId);
+    paramPack.Set(pImEmailOperation->ProgressL());
     newMessageId = paramPack();
+    CleanupStack::PopAndDestroy(pImEmailOperation);
     
     ipSmtpMtm->SwitchCurrentEntryL(newMessageId);
     ipSmtpMtm->LoadMessageL();
-    TMsvEntry tEntry = ipSmtpMtm->Entry().Entry();
-    switch(message.priority()) {
-        case QMessage::HighPriority:
-            tEntry.SetPriority(EMsvHighPriority);
-            break;
-        case QMessage::NormalPriority:
-            tEntry.SetPriority(EMsvMediumPriority);
-            break;
-        case QMessage::LowPriority:
-            tEntry.SetPriority(EMsvLowPriority);
-            break;            
+    
+    TMsvEntry msvEntry = ipSmtpMtm->Entry().Entry();
+    switch (message.priority()) {
+    case QMessage::HighPriority:
+        msvEntry.SetPriority(EMsvHighPriority);
+        break;
+    case QMessage::NormalPriority:
+        msvEntry.SetPriority(EMsvMediumPriority);
+        break;
+    case QMessage::LowPriority:
+        msvEntry.SetPriority(EMsvLowPriority);
+        break;            
     }
     if (message.status() & QMessage::Read) { 
-        tEntry.SetUnread(false);
+        msvEntry.SetUnread(false);
+        msvEntry.SetNew(false);
     } else {
-        tEntry.SetUnread(true);
+        msvEntry.SetUnread(true);
+        msvEntry.SetNew(true);
     }
-    ipSmtpMtm->Entry().ChangeL(tEntry); 
-    // Save the changes    
+    
+    ipSmtpMtm->Entry().ChangeL(msvEntry); 
     ipSmtpMtm->SaveMessageL();
 
-    entry->SetEntryL(newMessageId);
-    CImEmailMessage* emailMessage = CImEmailMessage::NewL(*entry);
-    CleanupStack::PushL(emailMessage);
-    
-    CImMimeHeader* mime = CImMimeHeader::NewLC(); 
-    //content type
+    CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(newMessageId);
+
+    // Create email message MIME header 
+    CImMimeHeader* pImMimeHeader = CImMimeHeader::NewLC(); 
     QByteArray contentType = message.contentType();
     TPtrC8 content((TUint8 *)(contentType.constData()));
-    mime->SetContentTypeL(content);
-    // content subtype
+    pImMimeHeader->SetContentTypeL(content);
     QByteArray subType = message.contentSubType();
     TPtrC8 contentSubType((TUint8 *)(subType.constData()));
-    mime->SetContentSubTypeL(contentSubType);
-    // content charset
+    pImMimeHeader->SetContentSubTypeL(contentSubType);
     QByteArray charset = message.contentCharset();
     if (charset == "UTF-8") {
-        mime->SetMimeCharset(KCharacterSetIdentifierUtf8);
+        pImMimeHeader->SetMimeCharset(KCharacterSetIdentifierUtf8);
     }
     if (charset == "UTF-16") {
-        mime->SetMimeCharset(KCharacterSetIdentifierUcs2);
+        pImMimeHeader->SetMimeCharset(KCharacterSetIdentifierUcs2);
     }
+
+    CImEmailMessage* pImEmailMessage = CImEmailMessage::NewL(*pMsvEntry);
+    CleanupStack::PushL(pImEmailMessage);
     
-    QByteArray filePath;
-    QMessageContentContainerIdList contentIds = message.contentIds();
-    foreach (QMessageContentContainerId id, contentIds){
-        QMessageContentContainer container = message.find(id);
-        filePath = QMessageContentContainerPrivate::attachmentFilename(container);
-        QString body = container.textContent();
-        if (!filePath.isEmpty()) { // content is attachment
-            filePath.replace(QByteArray("/"), QByteArray("\\"));
-            if (filePath.startsWith('.')) {
-                filePath.remove(0,2); // Remove ".\"
-                filePath.insert(0,privateFolderPath().toAscii());
-            }
-            QString temp_path = QString(filePath);
-            TPtrC16 attachmentPath(KNullDesC);
-            attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
-            TFileName attachmentFile;
-            attachmentFile.Append(attachmentPath);    
-        
-            RFile attachment;    
-            User::LeaveIfError(attachment.Open(CEikonEnv::Static()->FsSession(),attachmentFile, EFileShareReadersOnly | EFileRead));    
-            CleanupClosePushL(attachment);   
-            
-            CMsvAttachment* attachmentInfo = CMsvAttachment::NewL(CMsvAttachment::EMsvFile);
-            QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
-            int last = filePath.lastIndexOf("/");
-            int count = filePath.count();
-            QByteArray name = filePath.right(count-last-1);
-            QString fileName = QString(name);
-            CleanupStack::PushL(attachmentInfo);  
-            attachmentInfo->SetAttachmentNameL(TPtrC(reinterpret_cast<const TUint16*>(fileName.utf16())));
-            emailMessage->AttachmentManager().AddAttachmentL(attachment, attachmentInfo, waiter->iStatus);
-            waiter->Start();
-            CActiveScheduler::Start();
-            CleanupStack::Pop(attachmentInfo);
-            CleanupStack::Pop(&attachment); // close file
-        }
-        else if (!body.isEmpty()) { // content is body text
-            CParaFormatLayer* paragraphFormatLayer = CParaFormatLayer::NewL();
-            CleanupStack::PushL(paragraphFormatLayer);
+    if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+        // Message contains only body (not attachments)
+        QString messageBody = message.textContent();
+        if (!messageBody.isEmpty()) {
+            CParaFormatLayer* pParaFormatLayer = CParaFormatLayer::NewL();
+            CleanupStack::PushL(pParaFormatLayer);
+            CCharFormatLayer* pCharFormatLayer = CCharFormatLayer::NewL(); 
+            CleanupStack::PushL(pCharFormatLayer);
     
-            CCharFormatLayer* characterFormatLayer = CCharFormatLayer::NewL(); 
-            CleanupStack::PushL(characterFormatLayer);
-    
-            CRichText* bodyText = CRichText::NewL(paragraphFormatLayer, characterFormatLayer, CEditableText::EFlatStorage, 256);
-            CleanupStack::PushL(bodyText);
-            
-            CImMimeHeader* bodyMime = CImMimeHeader::NewLC();
-            //content type
-            QByteArray contentType = container.contentType();
-            TPtrC8 content((TUint8 *)(contentType.constData()));
-            bodyMime->SetContentTypeL(content);
-            // content subtype
-            QByteArray subType = container.contentSubType();
-            TPtrC8 contentSubType((TUint8 *)(subType.constData()));
-            bodyMime->SetContentSubTypeL(contentSubType);
-            // content charset
-            QByteArray charset = container.contentCharset();
-            if (charset == "UTF-8") {
-                bodyMime->SetMimeCharset(KCharacterSetIdentifierUtf8);
-            }
-            if (charset == "UTF-16") {
-                bodyMime->SetMimeCharset(KCharacterSetIdentifierUcs2);
-            }
+            CRichText* pBodyRichText = CRichText::NewL(pParaFormatLayer, pCharFormatLayer, CEditableText::EFlatStorage, 256);
+            CleanupStack::PushL(pBodyRichText);
     
             // Insert the contents of a buffer into the document at specified position
-            bodyText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-            emailMessage->StoreBodyTextWithMimeHeaderL(newMessageId, *bodyText, *bodyMime, waiter->iStatus);
-            waiter->Start();
+            pBodyRichText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
+            // Note: Email message MIME header is same as Body MIME header
+            pImEmailMessage->StoreBodyTextWithMimeHeaderL(newMessageId, *pBodyRichText, *pImMimeHeader,
+                                                          pMsvOperationWait->iStatus);
+            pMsvOperationWait->Start();
             CActiveScheduler::Start();
-            CleanupStack::PopAndDestroy(4);
-            //bodyText, characterFormatLayer, paragraphFormatLayer,
-        }        
-    }  
+            
+            CleanupStack::PopAndDestroy(pBodyRichText);
+            CleanupStack::PopAndDestroy(pCharFormatLayer);
+            CleanupStack::PopAndDestroy(pParaFormatLayer);
+        }
+    } else {
+        // Message contains body and attachments
+        QMessageContentContainerIdList contentIds = message.contentIds();
+        foreach (QMessageContentContainerId id, contentIds){
+            QMessageContentContainer container = message.find(id);
+            QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+            if (pPrivateContainer->_id == message.bodyId()) {
+                // ContentContainer is body
+                if (!container.textContent().isEmpty()) {
+                    // Create MIME header for body
+                    CImMimeHeader* pBodyImMimeHeader = CImMimeHeader::NewLC();
+                    QByteArray contentType = container.contentType();
+                    TPtrC8 content((TUint8 *)(contentType.constData()));
+                    pBodyImMimeHeader->SetContentTypeL(content);
+                    QByteArray subType = container.contentSubType();
+                    TPtrC8 contentSubType((TUint8 *)(subType.constData()));
+                    pBodyImMimeHeader->SetContentSubTypeL(contentSubType);
+                    QByteArray charset = container.contentCharset();
+                    if (charset == "UTF-8") {
+                        pBodyImMimeHeader->SetMimeCharset(KCharacterSetIdentifierUtf8);
+                    }
+                    if (charset == "UTF-16") {
+                        pBodyImMimeHeader->SetMimeCharset(KCharacterSetIdentifierUcs2);
+                    }
     
-    QString messageBody = message.textContent();
-    if (!messageBody.isEmpty()) {
-        CParaFormatLayer* paragraphFormatLayer = CParaFormatLayer::NewL();
-        CleanupStack::PushL(paragraphFormatLayer);
-
-        CCharFormatLayer* characterFormatLayer = CCharFormatLayer::NewL(); 
-        CleanupStack::PushL(characterFormatLayer);
-
-        CRichText* bodyText = CRichText::NewL(paragraphFormatLayer, characterFormatLayer, CEditableText::EFlatStorage, 256);
-        CleanupStack::PushL(bodyText);
-
-        // Insert the contents of a buffer into the document at specified position
-        bodyText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
-        emailMessage->StoreBodyTextWithMimeHeaderL(newMessageId, *bodyText, *mime, waiter->iStatus);
-        waiter->Start();
-        CActiveScheduler::Start();
-        CleanupStack::PopAndDestroy(3);
-        //bodyText, characterFormatLayer, paragraphFormatLayer,
+                    // Create CRichText containing body text
+                    CParaFormatLayer* pParaFormatLayer = CParaFormatLayer::NewL();
+                    CleanupStack::PushL(pParaFormatLayer);
+                    CCharFormatLayer* pCharFormatLayer = CCharFormatLayer::NewL(); 
+                    CleanupStack::PushL(pCharFormatLayer);
+            
+                    CRichText* pBodyRichText = CRichText::NewL(pParaFormatLayer, pCharFormatLayer, CEditableText::EFlatStorage);
+                    CleanupStack::PushL(pBodyRichText);
+                    // Insert the contents of a buffer into the document at specified position
+                    pBodyRichText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+            
+                    // Store MIME Header and Body text to message
+                    pImEmailMessage->StoreBodyTextWithMimeHeaderL(newMessageId, *pBodyRichText, *pBodyImMimeHeader, pMsvOperationWait->iStatus);
+                    pMsvOperationWait->Start();
+                    CActiveScheduler::Start();
+                    
+                    CleanupStack::PopAndDestroy(pBodyRichText);
+                    CleanupStack::PopAndDestroy(pCharFormatLayer);
+                    CleanupStack::PopAndDestroy(pParaFormatLayer);
+                    CleanupStack::PopAndDestroy(pBodyImMimeHeader);
+                }
+            } else {
+                // ContentContainer is attachment
+                QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
+                // Replace Qt style path separator "/" with Symbian path separator "\"
+                filePath.replace(QByteArray("/"), QByteArray("\\"));
+                // Make sure that "." folder is translated to application private folder
+                // For example: "." = "<drive letter>:\private\<application specific private folder>\" 
+                if (filePath.startsWith('.')) {
+                    filePath.remove(0,2); // Remove ".\"
+                    filePath.insert(0,privateFolderPath().toAscii());
+                }
+                QString temp_path = QString(filePath);
+                TPtrC16 attachmentPath(KNullDesC);
+                attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
+                TFileName attachmentFileName;
+                attachmentFileName.Append(attachmentPath);    
+            
+                RFile attachmentFile;    
+                User::LeaveIfError(attachmentFile.Open(CEikonEnv::Static()->FsSession(), attachmentFileName,
+                                                       EFileShareReadersOnly | EFileRead));    
+                CleanupClosePushL(attachmentFile);   
+                
+                CMsvAttachment* pMsvAttachment = CMsvAttachment::NewL(CMsvAttachment::EMsvFile);
+                int last = filePath.lastIndexOf("\\");
+                int count = filePath.count();
+                QByteArray name = filePath.right(count-last-1);
+                QString fileName = QString(name);
+                CleanupStack::PushL(pMsvAttachment);  
+                pMsvAttachment->SetAttachmentNameL(TPtrC(reinterpret_cast<const TUint16*>(fileName.utf16())));
+                // Note: Following call transfers ownership of attachmentFile and pMsvAttachment to AttachmentManager
+                pImEmailMessage->AttachmentManager().AddAttachmentL(attachmentFile, pMsvAttachment, pMsvOperationWait->iStatus);
+                pMsvOperationWait->Start();
+                CActiveScheduler::Start();
+                CleanupStack::Pop(pMsvAttachment); // Pop attachment from CleanupStack
+                CleanupStack::Pop(&attachmentFile); // Pop file from CleanupStack
+            }        
+        }
     }
+    CleanupStack::PopAndDestroy(pImEmailMessage);
+
+    CMsvStore* pMsvStore = pMsvEntry->EditStoreL();
+    CleanupStack::PushL(pMsvStore);
     
-    CMsvStore* store = entry->EditStoreL();
-    CleanupStack::PushL(store);
+    pImMimeHeader->StoreL(*pMsvStore);
     
-    mime->StoreL(*store);
-    CImHeader* emailEntry = CImHeader::NewLC();
-    emailEntry->RestoreL(*store);
-    emailEntry->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
-    emailEntry->SetFromL(TPtrC(reinterpret_cast<const TUint16*>(message.from().recipient().utf16())));
+    CImHeader* pImHeader = CImHeader::NewLC();
+    pImHeader->RestoreL(*pMsvStore);
+    pImHeader->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
+    pImHeader->SetFromL(TPtrC(reinterpret_cast<const TUint16*>(message.from().recipient().utf16())));
     
     QList<QMessageAddress> toList(message.to());
-    if (toList.count() > 0){
+    if (toList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < toList.size(); ++i) {
             qreceiver = toList.at(i).recipient();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            emailEntry->ToRecipients().AppendL(receiver); 
-            }
+            pImHeader->ToRecipients().AppendL(receiver); 
+        }
     }
     
     QList<QMessageAddress> ccList(message.cc());
-    if (ccList.count() > 0){
+    if (ccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < ccList.size(); ++i) {
             qreceiver = ccList.at(i).recipient();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            emailEntry->CcRecipients().AppendL(receiver); 
+            pImHeader->CcRecipients().AppendL(receiver); 
         }
     }
         
     QList<QMessageAddress> bccList(message.bcc());
-    if (bccList.count() > 0){
+    if (bccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < bccList.size(); ++i) {
             qreceiver = bccList.at(i).recipient();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            emailEntry->BccRecipients().AppendL(receiver); 
+            pImHeader->BccRecipients().AppendL(receiver); 
         }
     }
    
-    emailEntry->StoreL(*store);
+    pImHeader->StoreL(*pMsvStore);
+    CleanupStack::PopAndDestroy(pImHeader);
+
     // Store the changes permanently
-    store->CommitL();
-    
-    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(QString::number(newMessageId)); 
-    
-    CleanupStack::PopAndDestroy(7, entry);
-    // emailmessage,  emailEntry, store, waiter, emailOperation, entry, mime   
-    
+    pMsvStore->CommitL();
+    CleanupStack::PopAndDestroy(pMsvStore);
+    CleanupStack::PopAndDestroy(pImMimeHeader);
+
+    TMsvEntry changedEntry = pMsvEntry->Entry();
+    changedEntry.iDescription.Set(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
+    if (toList.count() > 0) {
+        changedEntry.iDetails.Set(TPtrC(reinterpret_cast<const TUint16*>(toList.at(0).recipient().utf16())));
+    }
     if (!message.receivedDate().isNull() || !message.date().isNull()) {
         // Change the date to given date
-        CMsvEntry* pEntry = ipMsvSession->GetEntryL(newMessageId);
-        CleanupStack::PushL(pEntry);
-        TMsvEntry changedEntry = pEntry->Entry();
         if (!message.date().isNull()) {
             changedEntry.iDate = qDateTimeToSymbianTTime(message.date());
         } else {
             changedEntry.iDate = qDateTimeToSymbianTTime(message.receivedDate());
         }
-        pEntry->ChangeL(changedEntry);
-        CleanupStack::PopAndDestroy(pEntry);
     }
+    pMsvEntry->ChangeL(changedEntry);
+    
+    if (imapDestinationFolderId != 0) {
+        TMsvId parent = pMsvEntry->Entry().Parent();
+        ipImap4Mtm->SwitchCurrentEntryL(parent);        
+        CMsvOperation* pMsvOperation = ipImap4Mtm->Entry().MoveL(newMessageId, imapDestinationFolderId,
+                                                                 pMsvOperationWait->iStatus);
+        CleanupStack::PushL(pMsvOperation);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        CleanupStack::PopAndDestroy(pMsvOperation);
+    }
+    
+    releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);
+
+    CleanupStack::PopAndDestroy(pMsvOperationWait);
+    
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+    privateMessage->_id = QMessageId(QString::number(newMessageId)); 
 }
 
 void CMTMEngine::sendEmailL(QMessage &message)
 {
+    if (!iSessionReady) {
+        User::Leave(KErrNotReady);
+    }
+
     QMessageAccountId accountId = message.parentAccountId();
     QMessageAccount messageAccount;
     if (accountId.isValid()) {
         messageAccount = account(accountId);
-    }
-    else {
+    } else {
         accountId = defaultAccount(QMessage::Email);
         messageAccount = account(accountId);
     }
-    CMsvEntry* entry = ipMsvSession->GetEntryL(messageAccount.d_ptr->_service2EntryId);
-    QString name = messageAccount.name();
-    CleanupStack::PushL(entry);
-
-    TMsvId outboxId = KMsvGlobalOutBoxIndexEntryId;
     
-    // creating Childrenselection
-    TMsvSelectionOrdering order;
-    order.SetShowInvisibleEntries(ETrue);
-    entry->SetSortTypeL(order);
-    entry->SetEntryL(outboxId);
-    CMsvEntrySelection* selection = entry->ChildrenWithMtmL(KUidMsgTypeSMTP);
-
-    // Fetch the Id of the first entry
-    TMsvId entryId = KMsvNullIndexEntryId;
-    entryId = (*selection)[0];   
-    delete selection;
-
-    CMsvOperationWait* waiter = CMsvOperationWait::NewLC();
-    TMsvId id = messageAccount.d_ptr->_service2EntryId;
-    CMsvOperation* operation = entry->CopyL(entryId, id, waiter->iStatus); 
-    CleanupStack::PushL(operation);
+    bool messageCreated = false;
+    if (!message.id().isValid()) {
+        // Message id is not valid
+        // => Message is not in message store
+        //    => New message must be created into Outbox folder
+        QMessagePrivate::setStandardFolder(message, QMessage::OutboxFolder);
+        message.setParentAccountId(accountId);
+        storeEmailL(message);
+        messageCreated = true;
+    }    
     
-    waiter->Start();
-    CActiveScheduler::Start(); 
-    CleanupStack::PopAndDestroy(3, entry); //operation,waiter,entry
+    long int messageId = message.id().toString().toLong();
+    if (messageId == 0) {
+        User::Leave(KErrNotReady);
+    }    
+
+    CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
+    CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+    
+    CMsvOperation* pMsvOperation = NULL;
+    if (!messageCreated) {
+        // Sending (old) message that's in message store
+        // => Copy message from its original location to Outbox folder
+        ipSmtpMtm->SwitchCurrentEntryL(pMsvEntry->Entry().Parent());
+        pMsvOperation = ipSmtpMtm->Entry().CopyL(messageId, KMsvGlobalOutBoxIndexEntryId, pMsvOperationWait->iStatus);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        delete pMsvOperation;
+        pMsvOperation = NULL;
+    }    
+    
+    ipSmtpMtm->SwitchCurrentEntryL(pMsvEntry->Entry().Parent());
+    // Following sends Email and _moves_ Email from Outbox Folder to Sent Folder
+    pMsvOperation = ipSmtpMtm->Entry().CopyL(messageId, messageAccount.d_ptr->_service2EntryId, pMsvOperationWait->iStatus);
+    pMsvOperationWait->Start();
+    CActiveScheduler::Start();
+    delete pMsvOperation;    
+    
+    CleanupStack::PopAndDestroy(pMsvOperationWait);
+    releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);   
 }
 
 QDateTime CMTMEngine::symbianTTimetoQDateTime(const TTime& time) const
@@ -3537,17 +3756,16 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
         privateMessage->_status = privateMessage->_status | QMessage::Read; 
     }
 
-    switch (entry.Priority()) 
-    {
-       case EMsvHighPriority: 
-           message.setPriority(QMessage::HighPriority);
-           break;
-       case EMsvMediumPriority:
-           message.setPriority(QMessage::NormalPriority);
-           break;
-       case EMsvLowPriority:
-           message.setPriority(QMessage::LowPriority);
-           break;
+    switch (entry.Priority()) {
+    case EMsvHighPriority: 
+        message.setPriority(QMessage::HighPriority);
+        break;
+    case EMsvMediumPriority:
+        message.setPriority(QMessage::NormalPriority);
+        break;
+    case EMsvLowPriority:
+        message.setPriority(QMessage::LowPriority);
+        break;
     }
     
     if (entry.Parent() == KMsvGlobalInBoxIndexEntryId) {
@@ -3629,17 +3847,16 @@ QMessage CMTMEngine::mmsMessageL(CMsvEntry& receivedEntry, long int messageId) c
         privateMessage->_status = privateMessage->_status | QMessage::Read; 
     }
 
-    switch (entry.Priority()) 
-    {
-       case EMsvHighPriority:
-           message.setPriority(QMessage::HighPriority);
-           break;
-       case EMsvMediumPriority:
-           message.setPriority(QMessage::NormalPriority);
-           break;
-       case EMsvLowPriority:
-           message.setPriority(QMessage::LowPriority);
-           break;
+    switch (entry.Priority()) {
+    case EMsvHighPriority:
+        message.setPriority(QMessage::HighPriority);
+        break;
+    case EMsvMediumPriority:
+        message.setPriority(QMessage::NormalPriority);
+        break;
+    case EMsvLowPriority:
+        message.setPriority(QMessage::LowPriority);
+        break;
     }
 
     if (entry.Parent() == KMsvGlobalInBoxIndexEntryId) {
@@ -3741,24 +3958,25 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId)
     message.setDate(symbianTTimetoQDateTime(entry.iDate));
     message.setReceivedDate(symbianTTimetoQDateTime(entry.iDate));
     
+    QMessageAccount messageAccount = account(accountIdByServiceId(entry.iServiceId));
+    message.setParentAccountId(messageAccount.id());
+
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_parentFolderId = createQMessageFolderId(entry.iServiceId, entry.Parent());
+    privateMessage->_parentFolderId = createQMessageFolderId(messageAccount.d_ptr->_service1EntryId, entry.Parent());
     if (!entry.Unread()) {
         privateMessage->_status = privateMessage->_status | QMessage::Read; 
     }
-    message.setParentAccountId(accountIdByServiceId(entry.iServiceId));
     
-    switch (entry.Priority()) 
-    {
-       case EMsvHighPriority:
-           message.setPriority(QMessage::HighPriority);
-           break;
-       case EMsvMediumPriority:
-           message.setPriority(QMessage::NormalPriority);
-           break;
-       case EMsvLowPriority:
-           message.setPriority(QMessage::LowPriority);
-           break;
+    switch (entry.Priority()) {
+    case EMsvHighPriority:
+        message.setPriority(QMessage::HighPriority);
+        break;
+    case EMsvMediumPriority:
+        message.setPriority(QMessage::NormalPriority);
+        break;
+    case EMsvLowPriority:
+        message.setPriority(QMessage::LowPriority);
+        break;
     }
 
     if (entry.iMtm == KUidMsgTypePOP3) {
@@ -4292,45 +4510,42 @@ void CMTMEngine::DoCancel()
 void CMTMEngine::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1,
                                     TAny* aArg2, TAny* /*aArg3*/)
 {
-    switch (aEvent) 
-    {
-       case EMsvServerReady:
-           iSessionReady = ETrue;
-           break;
-       case EMsvEntriesCreated:
-       case EMsvEntriesChanged:
-       case EMsvEntriesDeleted:
-       case EMsvEntriesMoved:
-           if (aArg2 && iListenForNotifications) {
-               CMsvEntrySelection* entries = static_cast<CMsvEntrySelection*>(aArg1);
-
-               if (entries != NULL) {
-                   TInt count = entries->Count();
-                   while (count--) {
-                       const TMsvId id = (*entries)[count];
-                       if (aEvent == EMsvEntriesDeleted) {
-                           notification(aEvent, TUid(), *(static_cast<TMsvId*>(aArg2)), id);
-                       } else {
-                           CMsvEntry* pReceivedEntry = NULL;
-                           TRAPD(err, pReceivedEntry = ipMsvSession->GetEntryL(id));
-                           if (err == KErrNone) {
-                               const TMsvEntry& entry = pReceivedEntry->Entry();
-                               if (entry.iType == KUidMsvMessageEntry) {
-                                   notification(aEvent, entry.iMtm, *(static_cast<TMsvId*>(aArg2)), id);
-                               }
-                               delete pReceivedEntry;
+    switch (aEvent) {
+    case EMsvServerReady:
+        iSessionReady = ETrue;
+        break;
+    case EMsvEntriesCreated:
+    case EMsvEntriesChanged:
+    case EMsvEntriesDeleted:
+    case EMsvEntriesMoved:
+        if (aArg2 && iListenForNotifications) {
+            CMsvEntrySelection* entries = static_cast<CMsvEntrySelection*>(aArg1);
+            
+            if (entries != NULL) {
+               TInt count = entries->Count();
+               while (count--) {
+                   const TMsvId id = (*entries)[count];
+                   if (aEvent == EMsvEntriesDeleted) {
+                       notification(aEvent, TUid(), *(static_cast<TMsvId*>(aArg2)), id);
+                   } else {
+                       CMsvEntry* pReceivedEntry = NULL;
+                       TRAPD(err, pReceivedEntry = ipMsvSession->GetEntryL(id));
+                       if (err == KErrNone) {
+                           const TMsvEntry& entry = pReceivedEntry->Entry();
+                           if (entry.iType == KUidMsvMessageEntry) {
+                               notification(aEvent, entry.iMtm, *(static_cast<TMsvId*>(aArg2)), id);
                            }
+                           delete pReceivedEntry;
                        }
                    }
                }
-           }
-           
-           break;
-
-       default:
-           break;
-   }
-
+            }
+        }
+        break;
+    
+    default:
+        break;
+    }
 }
 
 CMessagesFindOperation::CMessagesFindOperation(CMTMEngine& aOwner, CMsvSession* apMsvSession, int aOperationId)
@@ -4633,27 +4848,61 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
         {
         if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessageFolderId
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
-            long int folderId = iOwner.folderIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString())); 
-            long int serviceEntryId = iOwner.serviceEntryIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString()));
             if (cmp == QMessageDataComparator::Equal) {
-                iNumberOfHandledFilters++;
-                CMsvEntry* pEntry = iOwner.retrieveCMsvEntryAndPushToCleanupStack(serviceEntryId);
-                if (pEntry) {
-                    TUid mtm = pEntry->Entry().iMtm;
-                    iOwner.releaseCMsvEntryAndPopFromCleanupStack(pEntry);
+                long int folderId = iOwner.folderIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString())); 
+                long int serviceEntryId = iOwner.serviceEntryIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString()));
+                QMessageAccount messageAccount = iOwner.account(iOwner.accountIdByServiceId(serviceEntryId));
+                if (messageAccount.messageTypes() == QMessage::Email) {
+                    iNumberOfHandledFilters++;
                     CMsvEntryFilter* pFilter = CMsvEntryFilter::NewLC();
-                    if (mtm == KUidMsgTypeSMS || mtm == KUidMsgTypeMultimedia) {
-                        pFilter->SetMtm(mtm);
-                    } else {
-                        pFilter->SetService(serviceEntryId);
-                    }
                     pFilter->SetOrder(iOrdering);
                     pFilter->SetType(KUidMsvMessageEntry);
-                    ipEntrySelection = new(ELeave)CMsvEntrySelection;
-                    ipMsvSession->GetChildIdsL(folderId, *pFilter, *ipEntrySelection);
+                    // Get POP3 or IMAP messages from folder 
+                    CMsvEntrySelection* pEntrySelection1 = new(ELeave)CMsvEntrySelection;
+                    CleanupStack::PushL(pEntrySelection1);
+                    pFilter->SetService(messageAccount.d_ptr->_service1EntryId);
+                    ipMsvSession->GetChildIdsL(folderId, *pFilter, *pEntrySelection1);
+                    // Get SMTP messages from folder 
+                    CMsvEntrySelection* pEntrySelection2 = new(ELeave)CMsvEntrySelection;
+                    CleanupStack::PushL(pEntrySelection2);
+                    pFilter->SetService(messageAccount.d_ptr->_service2EntryId);
+                    ipMsvSession->GetChildIdsL(folderId, *pFilter, *pEntrySelection2);
+                    if (pEntrySelection1->Count() > 0 && pEntrySelection2->Count() > 0) {
+                        ipEntrySelection = pEntrySelection1;
+                        for (int i = 0; i < pEntrySelection2->Count(); i++) {
+                            ipEntrySelection->AppendL(pEntrySelection2->At(i));
+                        }
+                        CleanupStack::PopAndDestroy(pEntrySelection2);
+                        CleanupStack::Pop(pEntrySelection1);
+                    } else if (pEntrySelection1->Count() > 0) {
+                        ipEntrySelection = pEntrySelection1;
+                        CleanupStack::PopAndDestroy(pEntrySelection2);
+                        CleanupStack::Pop(pEntrySelection1);
+                        iResultCorrectlyOrdered = true;
+                    } else {
+                        // (pEntrySelection2->Count() > 0) or both selections are empty
+                        ipEntrySelection = pEntrySelection2;
+                        CleanupStack::Pop(pEntrySelection2);
+                        CleanupStack::PopAndDestroy(pEntrySelection1);
+                        iResultCorrectlyOrdered = true;
+                    }
                     CleanupStack::PopAndDestroy(pFilter);
+                } else if (messageAccount.messageTypes() == QMessage::Sms || messageAccount.messageTypes() == QMessage::Mms) {
+                    iNumberOfHandledFilters++;
+                    CMsvEntry* pEntry = iOwner.retrieveCMsvEntryAndPushToCleanupStack(serviceEntryId);
+                    if (pEntry) {
+                        TUid mtm = pEntry->Entry().iMtm;
+                        iOwner.releaseCMsvEntryAndPopFromCleanupStack(pEntry);
+                        CMsvEntryFilter* pFilter = CMsvEntryFilter::NewLC();
+                        pFilter->SetMtm(mtm);
+                        pFilter->SetOrder(iOrdering);
+                        pFilter->SetType(KUidMsvMessageEntry);
+                        ipEntrySelection = new(ELeave)CMsvEntrySelection;
+                        ipMsvSession->GetChildIdsL(folderId, *pFilter, *ipEntrySelection);
+                        CleanupStack::PopAndDestroy(pFilter);
+                    }
+                    iResultCorrectlyOrdered = true;
                 }
-                iResultCorrectlyOrdered = true;
             } else { // NotEqual
                 // TODO:
             }

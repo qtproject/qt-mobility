@@ -49,6 +49,7 @@
 #include "qmessageservice.h"
 #include "qmessageservice_symbian_p.h"
 #include "qmtmengine_symbian_p.h"
+#include "qmessage_symbian_p.h"
 
 
 QTM_BEGIN_NAMESPACE
@@ -66,27 +67,17 @@ QMessageServicePrivate::~QMessageServicePrivate()
 
 bool QMessageServicePrivate::sendSMS(QMessage &message)
 {
-	return CMTMEngine::instance()->sendSMS(message);
+    return CMTMEngine::instance()->sendSMS(message);
 }
 
 bool QMessageServicePrivate::sendMMS(QMessage &message)
 {
-	CMTMEngine* mtmEngine = CMTMEngine::instance();
-	bool retVal = mtmEngine->storeMMS(message, KMsvGlobalOutBoxIndexEntryId);
-	if (retVal){
-		mtmEngine->sendMMS();
-	}
-	return retVal;
+    return CMTMEngine::instance()->sendMMS(message);
 }
 
 bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
-	CMTMEngine* mtmEngine = CMTMEngine::instance();
-	bool retVal = mtmEngine->storeEmail(message, KMsvGlobalOutBoxIndexEntryId);
-	if (retVal){
-		mtmEngine->sendEmail(message);
-	}
-	return retVal;
+    return CMTMEngine::instance()->sendEmail(message);
 }
 
 bool QMessageServicePrivate::show(const QMessageId& id)
@@ -127,6 +118,11 @@ bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
 	return CMTMEngine::instance()->retrieveHeader(id);
+}
+
+bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
+{
+    return CMTMEngine::instance()->exportUpdates(id);
 }
 
 void QMessageServicePrivate::setFinished(bool successful)
@@ -244,9 +240,9 @@ bool QMessageService::send(QMessage &message)
         }
     }
 
+    QMessageAccount account(accountId);
     if (retVal) {
         // Check account/message type compatibility
-        QMessageAccount account(accountId);
         if (!(account.messageTypes() & message.type())) {
             d_ptr->_error = QMessageManager::ConstraintFailure;
             retVal = false;
@@ -270,11 +266,11 @@ bool QMessageService::send(QMessage &message)
     }
     
     if (retVal) {
-        if (message.type() == QMessage::Sms) {
+        if (account.messageTypes() & QMessage::Sms) {
             retVal = d_ptr->sendSMS(outgoing);
-        } else if (message.type() == QMessage::Mms) {
+        } else if (account.messageTypes() & QMessage::Mms) {
             retVal = d_ptr->sendMMS(outgoing);
-        } else if (message.type() == QMessage::Email) {
+        } else if (account.messageTypes() & QMessage::Email) {
             retVal = d_ptr->sendEmail(outgoing);
         }
     }
@@ -308,6 +304,11 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 		return false;
 	}
 	
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+    
 	d_ptr->_active = true;
 	d_ptr->_error = QMessageManager::NoError;
 	
@@ -327,6 +328,11 @@ bool QMessageService::retrieveBody(const QMessageId& id)
 		return false;
 	}
 	
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+    
 	d_ptr->_active = true;
 	d_ptr->_error = QMessageManager::NoError;
 	
@@ -346,6 +352,11 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 		return false;
 	}
 	
+    if (!messageId.isValid() || !id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+    
 	d_ptr->_active = true;
 	d_ptr->_error = QMessageManager::NoError;
 
@@ -365,6 +376,11 @@ bool QMessageService::show(const QMessageId& id)
 		return false;
 	}
 	
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+    
 	d_ptr->_active = true;
 	d_ptr->_error = QMessageManager::NoError;
 	
@@ -378,10 +394,28 @@ bool QMessageService::show(const QMessageId& id)
     return retVal;
 }
 
-bool QMessageService::exportUpdates(const QMessageAccountId &/*id*/)
+bool QMessageService::exportUpdates(const QMessageAccountId &id)
 {
-	//Not supported
-	return true;
+    if (d_ptr->_active) {
+        return false;
+    }
+    
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+    
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+    
+    bool retVal = true;
+    d_ptr->_state = QMessageService::ActiveState;
+    emit stateChanged(d_ptr->_state);
+    
+    retVal = d_ptr->exportUpdates(id);
+    
+    d_ptr->setFinished(retVal);
+    return retVal;
 }
 
 QMessageService::State QMessageService::state() const

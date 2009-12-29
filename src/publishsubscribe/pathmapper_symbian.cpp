@@ -38,7 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "pathmapper_symbian.h"
+
+#include "pathmapper_symbian_p.h"
+#include "xqsettingsmanager.h"
 #include <QDir>
 
 #include <QDebug>
@@ -47,17 +49,23 @@ QTM_BEGIN_NAMESPACE
 
 PathMapper::PathMapper()
 {
-    const QDir crmlDir("c:\\resource\\qt\\crml");
     QStringList filters;
     filters << "*.qcrml" << "*.confml";
-    QStringList files = crmlDir.entryList(filters, QDir::Files);
-    foreach (QString fileName, files) {
-        QList<KeyData> keyDatas = m_crmlParser.parseQCrml(QDir::toNativeSeparators(crmlDir.filePath(fileName)));
-        if (m_crmlParser.error() != QCrmlParser::NoError) {
-            qDebug() << "error:" << m_crmlParser.errorString();
-        }
-        foreach (KeyData keyData, keyDatas) {
-            m_paths.insert(keyData.path(), PathData(PathMapper::Target(keyData.target()), keyData.repoId(), keyData.keyId()));
+
+    foreach (const QFileInfo &info, QDir::drives()) {
+        const QDir crmlDir(info.path() + "resource/qt/crml");
+
+        foreach (const QString &fileName, crmlDir.entryList(filters, QDir::Files)) {
+            QList<KeyData> keyDatas = m_crmlParser.parseQCrml(crmlDir.filePath(fileName));
+            if (m_crmlParser.error() != QCrmlParser::NoError)
+                qDebug() << "error:" << m_crmlParser.errorString();
+
+            foreach (const KeyData &keyData, keyDatas) {
+                if (!m_paths.contains(keyData.path())) {
+                    m_paths.insert(keyData.path(), PathData(PathMapper::Target(keyData.target()),
+                                                            keyData.repoId(), keyData.keyId()));
+                }
+            }
         }
     }
 }
@@ -68,22 +76,40 @@ PathMapper::~PathMapper()
 
 bool PathMapper::getChildren(QString path, QSet<QString> &children) const
 {
-    bool found = false;
+    if (path.right(1) != QString(QLatin1Char('/')))
+        path += QLatin1Char('/');
+    foreach (QString foundPath, childPaths(path)) {
+        QString value = foundPath.mid(path.size());
+        int index = value.indexOf(QLatin1Char('/'));
+        if (index != -1)
+            value = value.mid(0, index);
+        children.insert(value);
+    }
+    return children.count() > 0;
+}
+
+QStringList PathMapper::childPaths(QString basePath) const
+{
+    QStringList children;
+    if (basePath.right(1) == QString(QLatin1Char('/')))
+        basePath.chop(1);
     QHashIterator<QString, PathData> i(m_paths);
+    XQSettingsManager settingsManager;
     while (i.hasNext()) {
         i.next();
-        if (path.right(1) != QString(QLatin1Char('/')))
-            path += QLatin1Char('/');
-        if (i.key().startsWith(path)) {
-            QString value = i.key().mid(path.size());
-            int index = value.indexOf(QLatin1Char('/'));
-            if (index != -1)
-                value = value.mid(0, index);
-            children.insert(value);
-            found = true;
+        if (i.key().startsWith(basePath)) {
+            const PathData &data = i.value();
+            PathMapper::Target target = data.m_target;;
+            quint32 category = data.m_category;
+            quint32 key = data.m_key;
+            XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+            settingsManager.readItemValue(settingsKey);
+            if (settingsManager.error() != XQSettingsManager::NotFoundError) {
+                children << i.key();
+            }
         }
     }
-    return found;
+    return children;
 }
 
 bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const
@@ -98,6 +124,6 @@ bool PathMapper::resolvePath(QString path, Target &target, quint32 &category, qu
     return false;
 }
 
-#include "moc_pathmapper_symbian.cpp"
+#include "moc_pathmapper_symbian_p.cpp"
 
 QTM_END_NAMESPACE
