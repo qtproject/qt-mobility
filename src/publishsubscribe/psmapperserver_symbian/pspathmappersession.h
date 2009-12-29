@@ -53,26 +53,26 @@ class PathMapper;
 
 class CPSPathMapperServerSession : public CSession2
 {
-    public:
-        CPSPathMapperServerSession(const PathMapper& aPathMapper);
-        virtual ~CPSPathMapperServerSession();
+public:
+    CPSPathMapperServerSession(const PathMapper &aPathMapper);
+    virtual ~CPSPathMapperServerSession();
 
-        void ServiceL(const RMessage2& aMessage);
-        void DispatchMessageL(const RMessage2& aMessage);
+    void ServiceL(const RMessage2 &aMessage);
+    void DispatchMessageL(const RMessage2 &aMessage);
 
-        void GetChildrenLengthL(const RMessage2& aMessage);
-        void GetChildrenL(const RMessage2& aMessage);
-        void ChildPathsLengthL(const RMessage2& aMessage);
-        void ChildPathsL(const RMessage2& aMessage);
-        void ResolvePathLengthL(const RMessage2& aMessage);
-        void ResolvePathL(const RMessage2& aMessage);
+    void GetChildrenLengthL(const RMessage2 &aMessage);
+    void GetChildrenL(const RMessage2 &aMessage);
+    void ChildPathsLengthL(const RMessage2 &aMessage);
+    void ChildPathsL(const RMessage2 &aMessage);
+    void ResolvePathLengthL(const RMessage2 &aMessage);
+    void ResolvePathL(const RMessage2 &aMessage);
 
-    protected:
-        void PanicClient(const RMessage2& aMessage, TInt aPanic) const;
+protected:
+    void PanicClient(const RMessage2 &aMessage, TInt aPanic) const;
 
-    private:
-        const PathMapper& iPathMapper;
-        QByteArray iResultByteArray;
+private:
+    const PathMapper &iPathMapper;
+    QByteArray iResultByteArray;
 };
 
 QTM_END_NAMESPACE

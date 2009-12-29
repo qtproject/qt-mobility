@@ -41,10 +41,10 @@
 
 #include <qmobilityglobal.h>
 #include <QCoreApplication>
-#include <QFile>
-#include <QDebug>
 #include "pspathmapperserver.h"
 #include "clientservercommon.h"
+
+#include <QDebug>
 
 QTM_USE_NAMESPACE
 
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     
-    CPSPathMapperServer* server = new CPSPathMapperServer;
+    CPSPathMapperServer *server = new CPSPathMapperServer;
     TInt err = server->Start(KPSPathMapperServerName);
 
     if (err != KErrNone) {

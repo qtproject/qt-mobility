@@ -50,7 +50,7 @@ CPSPathMapperServer::CPSPathMapperServer()
 {
 }
 
-CSession2* CPSPathMapperServer::NewSessionL(const TVersion& aVersion, const RMessage2& /*aMessage*/) const
+CSession2 *CPSPathMapperServer::NewSessionL(const TVersion &aVersion, const RMessage2 & /*aMessage*/) const
 {
     if (!User::QueryVersionSupported(TVersion(KServerMajorVersionNumber, 
         KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion)) {
@@ -62,7 +62,7 @@ CSession2* CPSPathMapperServer::NewSessionL(const TVersion& aVersion, const RMes
 
 void CPSPathMapperServer::PanicServer(TPSPathMapperServerPanic aPanic)
 {
-    _LIT(KTxtServerPanic,"Path mapper server panic");
+    _LIT(KTxtServerPanic, "Path mapper server panic");
     User::Panic(KTxtServerPanic, aPanic);
 }
 

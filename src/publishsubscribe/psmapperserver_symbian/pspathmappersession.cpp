@@ -43,13 +43,14 @@
 #include "pspathmappersession.h"
 #include "pspathmapperserver.pan"
 #include "pathmapper_symbian_p.h"
-#include <QByteArray>
 #include <QDataStream>
 #include <QSet>
+
 #include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
-CPSPathMapperServerSession::CPSPathMapperServerSession(const PathMapper& aPathMapper) :
+CPSPathMapperServerSession::CPSPathMapperServerSession(const PathMapper &aPathMapper) :
     iPathMapper(aPathMapper)
 {
 }
@@ -58,13 +59,13 @@ CPSPathMapperServerSession::~CPSPathMapperServerSession()
 {
 }
 
-void CPSPathMapperServerSession::ServiceL(const RMessage2& aMessage)
+void CPSPathMapperServerSession::ServiceL(const RMessage2 &aMessage)
 {
     TRAPD(err, DispatchMessageL(aMessage));
     aMessage.Complete(err);
 }
 	        
-void CPSPathMapperServerSession::DispatchMessageL(const RMessage2& aMessage)
+void CPSPathMapperServerSession::DispatchMessageL(const RMessage2 &aMessage)
 {
     switch (aMessage.Function()) {
     case EGetChildrenLengthRequest:
@@ -91,7 +92,7 @@ void CPSPathMapperServerSession::DispatchMessageL(const RMessage2& aMessage)
     }
 }
 
-void CPSPathMapperServerSession::GetChildrenLengthL(const RMessage2& aMessage)
+void CPSPathMapperServerSession::GetChildrenLengthL(const RMessage2 &aMessage)
 {
     HBufC8* pathBuf = HBufC8::NewLC(aMessage.GetDesLength(0));
     TPtr8 pathPtr(pathBuf->Des());
@@ -116,13 +117,13 @@ void CPSPathMapperServerSession::GetChildrenLengthL(const RMessage2& aMessage)
     aMessage.Write(1, lengthPckg);
 }
 
-void CPSPathMapperServerSession::GetChildrenL(const RMessage2& aMessage)
+void CPSPathMapperServerSession::GetChildrenL(const RMessage2 &aMessage)
 {
     TPtrC8 childrenPtr((TUint8*)(iResultByteArray.constData()), iResultByteArray.size());
     aMessage.Write(0, childrenPtr);
 }
 
-void CPSPathMapperServerSession::ChildPathsLengthL(const RMessage2& aMessage)
+void CPSPathMapperServerSession::ChildPathsLengthL(const RMessage2 &aMessage)
 {
     HBufC8* pathBuf = HBufC8::NewLC(aMessage.GetDesLength(0));
     TPtr8 pathPtr(pathBuf->Des());
@@ -148,13 +149,13 @@ void CPSPathMapperServerSession::ChildPathsLengthL(const RMessage2& aMessage)
     aMessage.Write(1, lengthPckg);
 }
 
-void CPSPathMapperServerSession::ChildPathsL(const RMessage2& aMessage)
+void CPSPathMapperServerSession::ChildPathsL(const RMessage2 &aMessage)
 {
     TPtrC8 childPathsPtr((TUint8*)(iResultByteArray.constData()), iResultByteArray.size());
     aMessage.Write(0, childPathsPtr);
 }
 
-void CPSPathMapperServerSession::ResolvePathLengthL(const RMessage2& aMessage)
+void CPSPathMapperServerSession::ResolvePathLengthL(const RMessage2 &aMessage)
 {
     HBufC8* pathBuf = HBufC8::NewLC(aMessage.GetDesLength(0));
     TPtr8 pathPtr(pathBuf->Des());
@@ -181,7 +182,7 @@ void CPSPathMapperServerSession::ResolvePathLengthL(const RMessage2& aMessage)
     aMessage.Write(1, lengthPckg);
 }
 
-void CPSPathMapperServerSession::ResolvePathL(const RMessage2& aMessage)
+void CPSPathMapperServerSession::ResolvePathL(const RMessage2 &aMessage)
 {
     TPtrC8 keyDetailsPtr((TUint8*)(iResultByteArray.constData()), iResultByteArray.size());
     aMessage.Write(0, keyDetailsPtr);

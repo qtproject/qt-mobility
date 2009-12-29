@@ -45,7 +45,7 @@
 #include "pspathmapperserver.pan"
 #include "pathmapper_symbian_p.h"
 
-namespace QtMobility {
+QTM_BEGIN_NAMESPACE
 
 // needed for creating server thread.
 const TUint KDefaultHeapSize = 0x10000;
@@ -54,7 +54,7 @@ class CPSPathMapperServer : public CServer2
 {
     public:
         CPSPathMapperServer();
-        CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
+        CSession2 *NewSessionL(const TVersion &aVersion, const RMessage2 &aMessage) const;
 
     public:
         static void PanicServer(TPSPathMapperServerPanic aPanic);
@@ -62,7 +62,8 @@ class CPSPathMapperServer : public CServer2
     private:
         PathMapper iPathMapper;
 };
-}
+
+QTM_END_NAMESPACE
 
 #endif  //PSPATHMAPPERSERVER_H
 
