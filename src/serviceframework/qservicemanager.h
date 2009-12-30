@@ -61,7 +61,7 @@ class QServiceContext;
 class QAbstractSecuritySession;
 class QServiceFilter;
 class QServiceManagerPrivate;
-class Q_SFW_EXPORT QServiceManager : public QObject
+class Q_SERVICEFW_EXPORT QServiceManager : public QObject
 {
     Q_OBJECT
 public:

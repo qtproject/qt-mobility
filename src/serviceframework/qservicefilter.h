@@ -53,7 +53,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QServiceFilterPrivate;
-class Q_SFW_EXPORT QServiceFilter
+class Q_SERVICEFW_EXPORT QServiceFilter
 {
 public:
     enum VersionMatchRule {
@@ -101,14 +101,14 @@ private:
     friend class QServiceManager;
     //friend class ServiceDatabase;
 #ifndef QT_NO_DATASTREAM
-    friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
-    friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
+    friend Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
+    friend Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
 #endif
 };
 
 #ifndef QT_NO_DATASTREAM
-Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
-Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
+Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
+Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
 #endif
 
 QTM_END_NAMESPACE
