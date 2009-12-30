@@ -327,12 +327,9 @@ void QNmWifiEngine::disconnectFromId(const QString &id)
         QScopedPointer<QNetworkManagerSettingsConnection> settingsCon;
         settingsCon.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(), activeCon->connection().path()));
 
-        if(settingsCon->isAutoConnect()) {
-//            qWarning() << id << "is autoconnect";
+        if(settingsCon->getType() == NM_DEVICE_TYPE_ETHERNET) {
             emit connectionError(id, OperationNotSupported);
-            //unsupported
         } else {
-//            qWarning() <<id << "is NOT autoconnect";
             QDBusObjectPath dbpath(activeConnectionPath);
             iface->deactivateConnection(dbpath);
             activatingConnectionPath = "";
