@@ -50,15 +50,16 @@
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
 
-static const QSize gridSize(52, 52);
-static const QSize thumbnailSize(50, 50);
-static const QSize imageSize(150, 150);
-static const QString apikey = "e36784df8a03fea04c22ed93318b291c";
+// static constant intialization
 
+const QSize FlickrDemo::gridSize = QSize(52, 52);
+const QSize FlickrDemo::thumbnailSize = QSize(50, 50);
+const QSize FlickrDemo::imageSize = QSize(150, 150);
+const QString FlickrDemo::apikey = QString("e36784df8a03fea04c22ed93318b291c");    
 #ifdef Q_OS_SYMBIAN
-static const QString savePath = "c:\\Data\\Images\\"; // In S60 Download images to Gallery
+    const QString FlickrDemo::savePath = "c:\\Data\\Images\\"; // In S60 Download images to Gallery
 #else
-static const QString savePath = QDir::tempPath();
+    const QString FlickrDemo::savePath = QDir::tempPath();
 #endif
 
 FlickrDemo::FlickrDemo(QWidget* parent) :
@@ -254,21 +255,7 @@ void FlickrDemo::downloadFlickerPictureList()
         m_latitude = 61.4500;
         m_longitude = 23.8502;
     }
-    /*
-        QNetworkConfigurationManager manager;
-        const bool canStartIAP = (manager.capabilities()
-                                  & QNetworkConfigurationManager::CanStartAndStopInterfaces);
-        QNetworkConfiguration cfg = manager.defaultConfiguration();
-        if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-            QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
-            return;
-        }
-        m_session = new QNetworkSession(cfg, this);
-        m_session->open();
 
-        bool ok = m_session->waitForOpened();
-        if (ok) {
-        */
     // Set IAP name
     satellitesLabel->setText(tr("Access Point: %1").arg(m_session->configuration().name()));
     locationLabel->setText(tr("Lat: %1 Long: %2").arg(QString::number(m_latitude),
@@ -298,7 +285,6 @@ void FlickrDemo::downloadFlickerPictureList()
     m_progressDialog->setMaximum(10);
     m_progressDialog->setValue(0);
     m_progressDialog->show();
-    //}
 }
 
 bool FlickrDemo::parsePictureList(QString xmlString)
@@ -488,19 +474,6 @@ void FlickrDemo::httpRequestFinished(int requestId, bool error)
         }
     } else {
         displayImage();
-        /*
-                PictureDialog dialog(m_filePath, listWidget->currentItem()->text(), this);
-        #if defined(Q_OS_SYMBIAN) || defined (Q_OS_WINCE)
-                dialog.showMaximized();
-        #endif
-                if (!dialog.exec()) {
-                    if (m_file->exists()) {
-                        m_file->remove();
-                    }
-                }
-                delete m_file;
-                m_file = 0;
-        */
     }
 
     downloadButton->setEnabled(true);
@@ -568,6 +541,10 @@ void FlickrDemo::downloadNextThumbnail()
         m_downloadingThumbnails = false;
     }
 }
+
+// static constant intialization
+
+const QSize PictureDialog::imageSize = QSize(150, 150);
 
 PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName, QWidget* parent) :
         QDialog(parent)

@@ -95,6 +95,12 @@ private Q_SLOTS:
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&);
 
 private:
+    static const QSize gridSize;
+    static const QSize thumbnailSize;
+    static const QSize imageSize;
+    static const QString apikey;
+    static const QString savePath;
+
     void displayImage();
 
     QLabel *locationLabel;
@@ -143,6 +149,8 @@ private slots:
     void clicked(QAbstractButton *button);
 
 private:
+    static const QSize imageSize;
+
     QLabel *label;
     QLabel *imageLabel;
     QDialogButtonBox *buttonBox;
