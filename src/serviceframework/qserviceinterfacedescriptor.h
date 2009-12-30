@@ -49,8 +49,8 @@
 QT_USE_NAMESPACE
 
 #ifdef SERVICE_XML_GENERATOR
-#undef Q_SFW_EXPORT
-#define Q_SFW_EXPORT
+#undef Q_SERVICEFW_EXPORT
+#define Q_SERVICEFW_EXPORT
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -64,7 +64,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptorPrivate;
-class Q_SFW_EXPORT QServiceInterfaceDescriptor
+class Q_SERVICEFW_EXPORT QServiceInterfaceDescriptor
 {
 public:
     enum PropertyKey {
@@ -105,17 +105,17 @@ private:
     friend class ServiceMetaData;
     friend class DatabaseManager;
 #ifndef QT_NO_DATASTREAM
-    friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
-    friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
+    friend Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
+    friend Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
 #endif
 };
 
 #ifndef QT_NO_DATASTREAM
-Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
-Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
+Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
+Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
 #endif
 #ifndef QT_NO_DEBUG_STREAM
-Q_SFW_EXPORT QDebug operator<<(QDebug, const QServiceInterfaceDescriptor &);
+Q_SERVICEFW_EXPORT QDebug operator<<(QDebug, const QServiceInterfaceDescriptor &);
 #endif
 
 
