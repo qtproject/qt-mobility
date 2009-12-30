@@ -107,8 +107,8 @@ private:
     QGeoSatelliteInfoSource* m_satellite;
     QNetworkSession* m_session;
 
-    QProgressDialog m_progressDialog;
-    QHttp m_http;
+    QProgressDialog *m_progressDialog;
+    QHttp *m_http;
     QString m_filePath;
     QFile* m_file;
     int m_httpGetId;

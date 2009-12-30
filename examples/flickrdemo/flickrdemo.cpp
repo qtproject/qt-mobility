@@ -127,17 +127,19 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
     }
 
     // QHttp
-    connect(&m_http, SIGNAL(requestFinished(int, bool)),
+    m_http = new QHttp(this);
+    connect(m_http, SIGNAL(requestFinished(int, bool)),
             this, SLOT(httpRequestFinished(int, bool)));
-    connect(&m_http, SIGNAL(dataReadProgress(int, int)),
+    connect(m_http, SIGNAL(dataReadProgress(int, int)),
             this, SLOT(updateDataReadProgress(int, int)));
-    connect(&m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&)),
+    connect(m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&)),
             this, SLOT(readResponseHeader(const QHttpResponseHeader&)));
 
     createMenus();
     listWidget->setGridSize(gridSize);
     listWidget->setIconSize(thumbnailSize);
-    connect(&m_progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
+    m_progressDialog = new QProgressDialog(this);
+    connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
 
     // Start listening GPS position updates
     m_location->startUpdates();
@@ -149,7 +151,8 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
         satellitesLabel->setText(tr("GPS not detected, replaying coordinates from sample log file."));
     }
 
-    QTimer::singleShot(100, this, SLOT(delayedInit()));
+    //QTimer::singleShot(100, this, SLOT(delayedInit()));
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
 
 FlickrDemo::~FlickrDemo()
@@ -157,7 +160,7 @@ FlickrDemo::~FlickrDemo()
     m_location->stopUpdates();
     if (m_satellite)
         m_satellite->stopUpdates();
-    m_http.abort();
+    //m_http.abort();
     if (m_session)
         m_session->close();
 }
@@ -276,15 +279,15 @@ void FlickrDemo::downloadFlickerPictureList()
 
         QUrl url(urlstring);
 
-        m_http.setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
+        m_http->setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
         m_httpRequestAborted = false;
 
-        m_httpGetId = m_http.get(urlstring);
+        m_httpGetId = m_http->get(urlstring);
 
-        m_progressDialog.setWindowTitle(tr("FlickrDemo"));
-        m_progressDialog.setLabelText(tr("Downloading\nPicture List."));
-        m_progressDialog.setMaximum(10);
-        m_progressDialog.setValue(1);
+        m_progressDialog->setWindowTitle(tr("FlickrDemo"));
+        m_progressDialog->setLabelText(tr("Downloading\nPicture List."));
+        m_progressDialog->setMaximum(10);
+        m_progressDialog->setValue(1);        
     }
 }
 
@@ -391,19 +394,19 @@ void FlickrDemo::downloadPictureFromFlickr()
         return;
     }
 
-    m_http.setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
+    m_http->setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
 
     m_httpRequestAborted = false;
     QByteArray encodedUrl = QUrl::toPercentEncoding(url.path(), "!$&'()*+,;=:@/");
     if (encodedUrl.isEmpty()) {
         encodedUrl = "/";
     }
-    m_httpGetId = m_http.get(encodedUrl, m_file);
+    m_httpGetId = m_http->get(encodedUrl, m_file);
 
-    m_progressDialog.setWindowTitle(tr("Flickr Demo"));
-    m_progressDialog.setLabelText(tr("Downloading:\n%1").arg(fileName));
-    m_progressDialog.setMaximum(10);
-    m_progressDialog.setValue(1);
+    m_progressDialog->setWindowTitle(tr("Flickr Demo"));
+    m_progressDialog->setLabelText(tr("Downloading:\n%1").arg(fileName));
+    m_progressDialog->setMaximum(10);
+    m_progressDialog->setValue(1);
 
     downloadButton->setEnabled(false);
 }
@@ -412,7 +415,7 @@ void FlickrDemo::cancelDownload()
 {
     m_httpRequestAborted = true;
     m_downloadingThumbnails = false;
-    m_http.abort();
+    m_http->abort();
     downloadButton->setEnabled(true);
 }
 
@@ -420,7 +423,7 @@ void FlickrDemo::httpRequestFinished(int requestId, bool error)
 {
     if (m_downloadingThumbnails && m_httpThumbnailGetId == requestId) {
         if (!error) {
-            QByteArray picture = m_http.readAll();
+            QByteArray picture = m_http->readAll();
             if (!picture.isNull() && picture.size() > 0) {
                 QListWidgetItem* item = listWidget->item(m_nameCounter);
                 QImage image;
@@ -439,7 +442,7 @@ void FlickrDemo::httpRequestFinished(int requestId, bool error)
         return;
     }
 
-    m_progressDialog.hide();
+    m_progressDialog->hide();
 
     if (m_httpRequestAborted) {
         if (m_file) {
@@ -462,11 +465,11 @@ void FlickrDemo::httpRequestFinished(int requestId, bool error)
         }
         QMessageBox::information(this,
                                  tr("Flickr Demo"),
-                                 tr("Download failed: %1.").arg(m_http.errorString()));
+                                 tr("Download failed: %1.").arg(m_http->errorString()));
     }
 
     if (m_downloadPictureList) {
-        if (parsePictureList(QString::fromUtf8(m_http.readAll()))) {
+        if (parsePictureList(QString::fromUtf8(m_http->readAll()))) {
             m_downloadPictureList = false;
             downloadButton->setText(tr("Download Selected Picture"));
             m_downloadAct->setText(tr("Download Selected Picture"));
@@ -504,8 +507,8 @@ void FlickrDemo::readResponseHeader(const QHttpResponseHeader& responseHeader)
                                      tr("Download failed: %1.").arg(responseHeader.reasonPhrase()));
             m_downloadingThumbnails = false;
             m_httpRequestAborted = true;
-            m_progressDialog.hide();
-            m_http.abort();
+            m_progressDialog->hide();
+            m_http->abort();
     }
 }
 
@@ -516,8 +519,8 @@ void FlickrDemo::updateDataReadProgress(int bytesRead, int totalBytes)
     }
 
     if (!m_downloadingThumbnails) {
-        m_progressDialog.setMaximum(totalBytes);
-        m_progressDialog.setValue(bytesRead);
+        m_progressDialog->setMaximum(totalBytes);
+        m_progressDialog->setValue(bytesRead);
     }
 }
 
@@ -528,9 +531,9 @@ void FlickrDemo::downloadNextThumbnail()
         QString pictureUrl = m_names[m_nameCounter];
         pictureUrl.append("_s.jpg");
         QUrl url(pictureUrl);
-        m_http.setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
+        m_http->setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
         m_downloadingThumbnails = true;
-        m_httpThumbnailGetId = m_http.get(pictureUrl);
+        m_httpThumbnailGetId = m_http->get(pictureUrl);
     } else {
         m_downloadingThumbnails = false;
     }

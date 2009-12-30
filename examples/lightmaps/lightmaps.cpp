@@ -140,11 +140,6 @@ public:
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
     }
 
-    ~SlippyMap() {
-        m_session->close();
-        delete m_session;
-    }
-
     void invalidate() {
         if (width <= 0 || height <= 0)
             return;
@@ -306,12 +301,11 @@ public:
             return;
         }
 
-        QNetworkSession *session = new QNetworkSession(cfg1);
+        m_session = new QNetworkSession(cfg1, this);
 
-        session->open();
-        if (!session->waitForOpened()) {
+        m_session->open();
+        if (!m_session->waitForOpened()) {
             m_networkSetupError = QString(tr("Unable to open network session."));
-            delete session;
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
         }
@@ -327,17 +321,19 @@ public:
             m_usingLogFile = true;
         }
 
-        m_normalMap = new SlippyMap(session, m_location, this);
-        m_largeMap = new SlippyMap(session, m_location, this);
+        m_normalMap = new SlippyMap(m_session, m_location, this);
+        m_largeMap = new SlippyMap(m_session, m_location, this);
 
         connect(m_normalMap, SIGNAL(updated(QRect)), SLOT(updateMap(QRect)));
         connect(m_largeMap, SIGNAL(updated(QRect)), SLOT(update()));
         connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(positionUpdated(QGeoPositionInfo)));
 
-        QTimer::singleShot(100, this, SLOT(delayedInit()));
+        //QTimer::singleShot(100, this, SLOT(delayedInit()));
+        QTimer::singleShot(0, this, SLOT(delayedInit()));
     }
 
     ~LightMaps() {
+        m_session->close();
         m_location->stopUpdates();
     }
 
@@ -359,15 +355,13 @@ public:
     }
 
 public slots:
+
     void toggleNightMode() {
         invert = !invert;
         update();
     }
 
 private slots:
-    void positionUpdated(const QGeoPositionInfo &pos) {
-        setCenter(pos.coordinate().latitude(), pos.coordinate().longitude());
-    }
 
     void delayedInit() {
         if (m_usingLogFile) {
@@ -401,6 +395,10 @@ private slots:
         }
 
         startPositioning();
+    }
+
+    void positionUpdated(const QGeoPositionInfo &pos) {
+        setCenter(pos.coordinate().latitude(), pos.coordinate().longitude());
     }
 
     void updateMap(const QRect &r) {
@@ -613,6 +611,7 @@ private:
     bool invert;
     bool m_usingLogFile;
     QGeoPositionInfoSource *m_location;
+    QNetworkSession *m_session;
 };
 
 class MapZoom: public QMainWindow
