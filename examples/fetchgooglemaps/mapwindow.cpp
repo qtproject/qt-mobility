@@ -89,8 +89,8 @@ void MapWindow::positionUpdated(const QGeoPositionInfo &info)
 {
     QString heading = "?";
     QString speed = "?";
-    if (info.hasProperty(QGeoPositionInfo::Heading))
-        heading = QString("%1%2").arg(info.property(QGeoPositionInfo::Heading)).arg(QChar(0x00b0));
+    if (info.hasProperty(QGeoPositionInfo::Direction))
+        heading = QString("%1%2").arg(info.property(QGeoPositionInfo::Direction)).arg(QChar(0x00b0));
     if (info.hasProperty(QGeoPositionInfo::GroundSpeed))
         speed = QString::number(info.property(QGeoPositionInfo::GroundSpeed) * 3.6, 'f', 1);
     posLabel->setText(tr("Position: %1").arg(info.coordinate().toString()));

@@ -183,10 +183,10 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::getLastknownPositionS60(TPositionMo
             posUpdate.setDateTime(dt);
 
             //store the horizontal accuracy
-            posUpdate.setProperty(QGeoPositionInfo::HorizontalAccuracy,pos.HorizontalAccuracy());
+            posUpdate.setAttribute(QGeoPositionInfo::HorizontalAccuracy,pos.HorizontalAccuracy());
 
             //store the vertical accuracy
-            posUpdate.setProperty(QGeoPositionInfo::VerticalAccuracy,pos.VerticalAccuracy());
+            posUpdate.setAttribute(QGeoPositionInfo::VerticalAccuracy,pos.VerticalAccuracy());
         }
     }
     return posUpdate;
@@ -652,33 +652,33 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
     aPosInfo2.setDateTime(dt);
 
     //store the horizontal accuracy
-    aPosInfo2.setProperty(QGeoPositionInfo::HorizontalAccuracy,pos.HorizontalAccuracy());
+    aPosInfo2.setAttribute(QGeoPositionInfo::HorizontalAccuracy,pos.HorizontalAccuracy());
 
     //store the vertical accuracy
-    aPosInfo2.setProperty(QGeoPositionInfo::VerticalAccuracy,pos.VerticalAccuracy());
+    aPosInfo2.setAttribute(QGeoPositionInfo::VerticalAccuracy,pos.VerticalAccuracy());
 
     //check for the horizontal speed
     if (aPosInfo1->IsFieldAvailable(EPositionFieldHorizontalSpeed)) {
         aPosInfo1->GetValue(EPositionFieldHorizontalSpeed,val);
-        aPosInfo2.setProperty(QGeoPositionInfo::GroundSpeed,val);
+        aPosInfo2.setAttribute(QGeoPositionInfo::GroundSpeed,val);
     }
 
     //check for the vertcal speed
     if (aPosInfo1->IsFieldAvailable(EPositionFieldVerticalSpeed)) {
         aPosInfo1->GetValue(EPositionFieldVerticalSpeed,val);
-        aPosInfo2.setProperty(QGeoPositionInfo::VerticalSpeed,val);
+        aPosInfo2.setAttribute(QGeoPositionInfo::VerticalSpeed,val);
     }
 
     //check for the magnetic variation
     if (aPosInfo1->IsFieldAvailable(EPositionFieldMagneticCourseError)) {
         aPosInfo1->GetValue(EPositionFieldMagneticCourseError,val);
-        aPosInfo2.setProperty(QGeoPositionInfo::MagneticVariation,val);
+        aPosInfo2.setAttribute(QGeoPositionInfo::MagneticVariation,val);
     }
 
     //check for the heading
     if (aPosInfo1->IsFieldAvailable(EPositionFieldHeading)) {
         aPosInfo1->GetValue(EPositionFieldHeading,val);
-        aPosInfo2.setProperty(QGeoPositionInfo::Heading,val);
+        aPosInfo2.setAttribute(QGeoPositionInfo::Direction,val);
     }
 }
 //

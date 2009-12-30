@@ -133,12 +133,12 @@ void QGeoSatelliteInfoSourceWinCE::dataUpdated(GPS_POSITION data)
         // The following properties are optional, and so are set if the data is present and valid
         // in the GPS_POSITION structure.
         if ((data.dwValidFields & GPS_VALID_SATELLITES_IN_VIEW_AZIMUTH) != 0) {
-            satellite.setProperty(QGeoSatelliteInfo::Azimuth,
+            satellite.setAttribute(QGeoSatelliteInfo::Azimuth,
                                   data.rgdwSatellitesInViewAzimuth[i]);
         }
 
         if ((data.dwValidFields & GPS_VALID_SATELLITES_IN_VIEW_ELEVATION) != 0) {
-            satellite.setProperty(QGeoSatelliteInfo::Elevation,
+            satellite.setAttribute(QGeoSatelliteInfo::Elevation,
                                   data.rgdwSatellitesInViewElevation[i]);
         }
 

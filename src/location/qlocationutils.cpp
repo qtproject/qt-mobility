@@ -157,12 +157,12 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 7 && parts[7].count() > 0) {
         value = parts[7].toDouble(&parsed);
         if (parsed)
-            info->setProperty(QGeoPositionInfo::GroundSpeed, qreal(value * 1.852 / 3.6));    // knots -> m/s
+            info->setAttribute(QGeoPositionInfo::GroundSpeed, qreal(value * 1.852 / 3.6));    // knots -> m/s
     }
     if (parts.count() > 8 && parts[8].count() > 0) {
         value = parts[8].toDouble(&parsed);
         if (parsed)
-            info->setProperty(QGeoPositionInfo::Heading, qreal(value));
+            info->setAttribute(QGeoPositionInfo::Direction, qreal(value));
     }
     if (parts.count() > 11 && parts[11].count() == 1
             && (parts[11][0] == 'E' || parts[11][0] == 'W')) {
@@ -170,7 +170,7 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
         if (parsed) {
             if (parts[11][0] == 'W')
                 value *= -1;
-            info->setProperty(QGeoPositionInfo::MagneticVariation, qreal(value));
+            info->setAttribute(QGeoPositionInfo::MagneticVariation, qreal(value));
         }
     }
 
@@ -193,12 +193,12 @@ static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 1 && parts[1].count() > 0) {
         value = parts[1].toDouble(&parsed);
         if (parsed)
-            info->setProperty(QGeoPositionInfo::Heading, qreal(value));
+            info->setAttribute(QGeoPositionInfo::Direction, qreal(value));
     }
     if (parts.count() > 7 && parts[7].count() > 0) {
         value = parts[7].toDouble(&parsed);
         if (parsed)
-            info->setProperty(QGeoPositionInfo::GroundSpeed, qreal(value / 3.6));    // km/h -> m/s
+            info->setAttribute(QGeoPositionInfo::GroundSpeed, qreal(value / 3.6));    // km/h -> m/s
     }
 }
 
