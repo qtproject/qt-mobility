@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = FlickrDemo
+TARGET = flickrdemo
 
 QT      += network \
            xml

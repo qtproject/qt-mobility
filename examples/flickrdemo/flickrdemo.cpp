@@ -78,12 +78,12 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
         m_downloadingThumbnails(false)
 {
     resize(252, 344);
-    
+
     locationLabel = new QLabel(tr("Lat: Long:"));
     satellitesLabel = new QLabel(tr("Using 0 of 0 satellites"));
-    listWidget = new XQListWidget();   
+    listWidget = new XQListWidget();
     downloadButton = new QPushButton(tr("Download Picture List"));
-    
+
     QVBoxLayout *verticalLayout = new QVBoxLayout();
     verticalLayout->addWidget(locationLabel);
     verticalLayout->addWidget(satellitesLabel);
@@ -98,6 +98,7 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
     listWidget->setGridSize(gridSize);
     listWidget->setIconSize(thumbnailSize);
     m_progressDialog = new QProgressDialog(this);
+    m_progressDialog->setModal(true);
     connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
 
     setWindowTitle(tr("Flickr Demo"));
@@ -146,7 +147,7 @@ FlickrDemo::~FlickrDemo()
 {
     m_location->stopUpdates();
     if (m_satellite)
-        m_satellite->stopUpdates();    
+        m_satellite->stopUpdates();
     m_http->abort();
     if (m_session)
         m_session->close();
@@ -253,49 +254,50 @@ void FlickrDemo::downloadFlickerPictureList()
         m_latitude = 61.4500;
         m_longitude = 23.8502;
     }
-/*
-    QNetworkConfigurationManager manager;
-    const bool canStartIAP = (manager.capabilities()
-                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-        QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
-        return;
-    }
-    m_session = new QNetworkSession(cfg, this);
-    m_session->open();
+    /*
+        QNetworkConfigurationManager manager;
+        const bool canStartIAP = (manager.capabilities()
+                                  & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+        QNetworkConfiguration cfg = manager.defaultConfiguration();
+        if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+            QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
+            return;
+        }
+        m_session = new QNetworkSession(cfg, this);
+        m_session->open();
 
-    bool ok = m_session->waitForOpened();
-    if (ok) {
-    */
-        // Set IAP name
-        satellitesLabel->setText(tr("Access Point: %1").arg(m_session->configuration().name()));
-        locationLabel->setText(tr("Lat: %1 Long: %2").arg(QString::number(m_latitude),
-                               QString::number(m_longitude)));
+        bool ok = m_session->waitForOpened();
+        if (ok) {
+        */
+    // Set IAP name
+    satellitesLabel->setText(tr("Access Point: %1").arg(m_session->configuration().name()));
+    locationLabel->setText(tr("Lat: %1 Long: %2").arg(QString::number(m_latitude),
+                           QString::number(m_longitude)));
 
-        QString
-        urlstring =
-            "http://api.flickr.com/services/rest/?min_taken_date=2000-01-01+0:00:00&extras=date_taken&method=flickr.photos.search&per_page=30&sort=date-taken-desc";
-        urlstring.append("&api_key=");
-        urlstring.append(apikey);
-        urlstring.append("&lat=");
-        urlstring.append(QString::number(m_latitude));
-        urlstring.append("&lon=");
-        urlstring.append(QString::number(m_longitude));
-        urlstring.append("&page=");
-        urlstring.append(QString::number(m_page));
+    QString
+    urlstring =
+        "http://api.flickr.com/services/rest/?min_taken_date=2000-01-01+0:00:00&extras=date_taken&method=flickr.photos.search&per_page=30&sort=date-taken-desc";
+    urlstring.append("&api_key=");
+    urlstring.append(apikey);
+    urlstring.append("&lat=");
+    urlstring.append(QString::number(m_latitude));
+    urlstring.append("&lon=");
+    urlstring.append(QString::number(m_longitude));
+    urlstring.append("&page=");
+    urlstring.append(QString::number(m_page));
 
-        QUrl url(urlstring);
+    QUrl url(urlstring);
 
-        m_http->setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
-        m_httpRequestAborted = false;
+    m_http->setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
+    m_httpRequestAborted = false;
 
-        m_httpGetId = m_http->get(urlstring);
+    m_httpGetId = m_http->get(urlstring);
 
-        m_progressDialog->setWindowTitle(tr("FlickrDemo"));
-        m_progressDialog->setLabelText(tr("Downloading\nPicture List."));
-        m_progressDialog->setMaximum(10);
-        m_progressDialog->setValue(1);        
+    m_progressDialog->setWindowTitle(tr("FlickrDemo"));
+    m_progressDialog->setLabelText(tr("Downloading\nPicture List."));
+    m_progressDialog->setMaximum(10);
+    m_progressDialog->setValue(0);
+    m_progressDialog->show();
     //}
 }
 
@@ -385,9 +387,10 @@ void FlickrDemo::downloadPictureFromFlickr()
                                   tr("Flickr Demo"),
                                   tr("File %1 is already downloaded."
                                      "Overwrite?").arg(fileName),
-                                  QMessageBox::Ok | QMessageBox::Cancel,
-                                  QMessageBox::Cancel)
-                == QMessageBox::Cancel) {
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No)
+                == QMessageBox::No) {
+            displayImage();
             return;
         }
         QFile::remove(m_filePath);
@@ -414,7 +417,8 @@ void FlickrDemo::downloadPictureFromFlickr()
     m_progressDialog->setWindowTitle(tr("Flickr Demo"));
     m_progressDialog->setLabelText(tr("Downloading:\n%1").arg(fileName));
     m_progressDialog->setMaximum(10);
-    m_progressDialog->setValue(1);
+    m_progressDialog->setValue(0);
+    m_progressDialog->show();
 
     downloadButton->setEnabled(false);
 }
@@ -483,20 +487,38 @@ void FlickrDemo::httpRequestFinished(int requestId, bool error)
             m_downloadAct->setText(tr("Download Selected Picture"));
         }
     } else {
-        PictureDialog dialog(m_filePath, listWidget->currentItem()->text(), this);
-#if defined(Q_OS_SYMBIAN) || defined (Q_OS_WINCE)
-        dialog.showMaximized();
-#endif
-        if (!dialog.exec()) {
-            if (m_file->exists()) {
-                m_file->remove();
-            }
-        }
-        delete m_file;
-        m_file = 0;
+        displayImage();
+        /*
+                PictureDialog dialog(m_filePath, listWidget->currentItem()->text(), this);
+        #if defined(Q_OS_SYMBIAN) || defined (Q_OS_WINCE)
+                dialog.showMaximized();
+        #endif
+                if (!dialog.exec()) {
+                    if (m_file->exists()) {
+                        m_file->remove();
+                    }
+                }
+                delete m_file;
+                m_file = 0;
+        */
     }
 
     downloadButton->setEnabled(true);
+}
+
+void FlickrDemo::displayImage()
+{
+    PictureDialog dialog(m_filePath, listWidget->currentItem()->text(), this);
+#if defined(Q_OS_SYMBIAN) || defined (Q_OS_WINCE)
+    dialog.showMaximized();
+#endif
+    if (!dialog.exec()) {
+        if (m_file->exists()) {
+            m_file->remove();
+        }
+    }
+    delete m_file;
+    m_file = 0;
 }
 
 void FlickrDemo::readResponseHeader(const QHttpResponseHeader& responseHeader)
@@ -575,11 +597,14 @@ PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName
 
     verticalLayout->addWidget(imageLabel);
 
-    buttonBox = new QDialogButtonBox();
-    buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
+    keepButton = new QPushButton(tr("Keep"));
+    keepButton->setDefault(true);
+    discardButton = new QPushButton(tr("Discard"));
 
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    buttonBox = new QDialogButtonBox();
+    buttonBox->addButton(keepButton, QDialogButtonBox::AcceptRole);
+    buttonBox->addButton(discardButton, QDialogButtonBox::DestructiveRole);
+    connect(buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(clicked(QAbstractButton *)));
 
     verticalLayout->addWidget(buttonBox);
 
@@ -588,3 +613,11 @@ PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName
     setWindowTitle(tr("Flickr Demo"));
 }
 
+void PictureDialog::clicked(QAbstractButton* button)
+{
+    if (button == keepButton) {
+        accept();
+    } else if (button == discardButton) {
+        reject();
+    }
+}

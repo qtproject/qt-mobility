@@ -95,6 +95,8 @@ private Q_SLOTS:
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&);
 
 private:
+    void displayImage();
+
     QLabel *locationLabel;
     QLabel *satellitesLabel;
     XQListWidget *listWidget;
@@ -137,10 +139,15 @@ class PictureDialog: public QDialog
 public:
     PictureDialog(const QString& filePath, const QString& pictureName, QWidget* parent = 0);
 
+private slots:
+    void clicked(QAbstractButton *button);
+
 private:
     QLabel *label;
     QLabel *imageLabel;
     QDialogButtonBox *buttonBox;
+    QPushButton *keepButton;
+    QPushButton *discardButton;
 };
 
 #endif // FLICKRDEMO_H

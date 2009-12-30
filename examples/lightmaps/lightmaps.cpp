@@ -327,7 +327,7 @@ public:
         connect(m_normalMap, SIGNAL(updated(QRect)), SLOT(updateMap(QRect)));
         connect(m_largeMap, SIGNAL(updated(QRect)), SLOT(update()));
         connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(positionUpdated(QGeoPositionInfo)));
-        
+
         QTimer::singleShot(0, this, SLOT(delayedInit()));
     }
 
