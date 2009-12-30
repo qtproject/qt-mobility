@@ -112,11 +112,9 @@ private:
 
     QStringList devicePaths;
 
-    void getActiveConnectionsPaths();
     void getKnownSsids();
     void accessPointConnections();
     void knownConnections();
-    void findConnections();
     QString deviceConnectionPath(const QString &mac);
 
     QList<QNetworkConfigurationPrivate *> foundConfigurations;

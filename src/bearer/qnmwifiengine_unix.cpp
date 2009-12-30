@@ -131,7 +131,6 @@ QList<QNetworkConfigurationPrivate *> QNmWifiEngine::getConfigurations(bool *ok)
             getKnownSsids(); // list of ssids that have user configurations.
 
         scanForAccessPoints();
-        getActiveConnectionsPaths();
         knownConnections();
 
         accessPointConnections();
@@ -141,158 +140,6 @@ QList<QNetworkConfigurationPrivate *> QNmWifiEngine::getConfigurations(bool *ok)
         updated = true;
     }
     return foundConfigurations;
-}
-
-void QNmWifiEngine::findConnections()
-{
-    QList<QDBusObjectPath> list = iface->getDevices();
-
-    QScopedPointer<QNetworkManagerInterfaceDevice> devIface;
-    foreach(QDBusObjectPath path, list) {
-        devIface.reset(new QNetworkManagerInterfaceDevice(path.path()));
-
-        //// eth
-        switch (devIface->deviceType()) {
-//            qWarning() << devIface->connectionInterface()->path();
-
-        case DEVICE_TYPE_802_3_ETHERNET:
-            {
-                QString ident;
-                QScopedPointer<QNetworkManagerInterfaceDeviceWired> devWiredIface;
-                devWiredIface.reset(new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path()));
-
-                ident = devWiredIface->hwAddress();
-
-                QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-                cpPriv->name = getNameForConfiguration(devIface.data());
-                cpPriv->isValid = true;
-                cpPriv->id = ident;
-                cpPriv->internet = devWiredIface->carrier();
-
-                cpPriv->serviceInterface = devIface->interface();
-                cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-                switch (devIface->state()) {
-                case  NM_DEVICE_STATE_UNKNOWN:
-                case NM_DEVICE_STATE_UNMANAGED:
-                case NM_DEVICE_STATE_FAILED:
-                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
-                    break;
-                case  NM_DEVICE_STATE_UNAVAILABLE:
-                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Defined);
-                    break;
-                case NM_DEVICE_STATE_PREPARE:
-                case NM_DEVICE_STATE_CONFIG:
-                case NM_DEVICE_STATE_NEED_AUTH:
-                case NM_DEVICE_STATE_IP_CONFIG:
-                case NM_DEVICE_STATE_DISCONNECTED:
-                    {
-                        cpPriv->state = ( cpPriv->state | QNetworkConfiguration::Discovered
-                                          | QNetworkConfiguration::Defined);
-                    }
-                    break;
-                case NM_DEVICE_STATE_ACTIVATED:
-                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Active );
-                    break;
-                default:
-                    cpPriv->state = (cpPriv->state | QNetworkConfiguration::Undefined);
-                    break;
-                };
-                cpPriv->purpose = QNetworkConfiguration::PublicPurpose;
-                foundConfigurations.append(cpPriv);
-                configurationInterface[cpPriv->id] = cpPriv->serviceInterface.name();
-            }
-            break;
-        case DEVICE_TYPE_802_11_WIRELESS:
-            {
-//                QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
-//                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
-//
-//               //// connections
-//                QStringList connectionServices;
-//                connectionServices << NM_DBUS_SERVICE_SYSTEM_SETTINGS;
-//                connectionServices << NM_DBUS_SERVICE_USER_SETTINGS;
-//
-//                QString connPath;
-//
-//                foreach (QString service, connectionServices) {
-//                    QString ident;
-//                    QNetworkManagerSettings *settingsiface;
-//                    settingsiface = new QNetworkManagerSettings(service);
-//                    QList<QDBusObjectPath> list = settingsiface->listConnections();
-//
-//                    foreach(QDBusObjectPath path, list) { //for each connection path
-//qWarning() << path.path();
-//                        ident = path.path();
-//                        bool addIt = false;
-//                        QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-//                        cpPriv->isValid = true;
-//                        cpPriv->id = ident;
-//                        cpPriv->internet = true;
-//
-//                        cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-//                        cpPriv->state = ( cpPriv->state | QNetworkConfiguration::Discovered
-//                                          | QNetworkConfiguration::Defined);
-//                        cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
-//
-//                        QNetworkManagerSettingsConnection *sysIface;
-//                        sysIface = new QNetworkManagerSettingsConnection(service, path.path());
-//                        cpPriv->name = sysIface->getId();//ii.value().toString();
-//qWarning() << cpPriv->name;
-//                        if(sysIface->getType() ==  DEVICE_TYPE_802_3_ETHERNET/*type == "802-3-ethernet"*/
-//                           && devIface->deviceType() == DEVICE_TYPE_802_3_ETHERNET) {
-//                            cpPriv->serviceInterface = devIface->interface();
-//                            addIt = true;
-//                        } else if(sysIface->getType() == DEVICE_TYPE_802_11_WIRELESS/*type == "802-11-wireless"*/
-//                                  && devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
-//                            cpPriv->serviceInterface = devIface->interface();
-//                            addIt = true;
-//                            // get the wifi interface state first.. do we need this?
-//                            //   QString activeAPPath = devWirelessIface->activeAccessPoint().path();
-//                        }
-//
-//                        //#if 0
-//                        foreach(QString conpath, activeConnectionPaths) {
-//                            QNetworkManagerConnectionActive *aConn;
-//                            aConn = new QNetworkManagerConnectionActive(conpath);
-//                            // in case of accesspoint, specificObject will hold the accessPOintObjectPath
-//                            //                        qWarning() << aConn->connection().path() << aConn->specificObject().path() << aConn->devices().count();
-//                            if( aConn->connection().path() == ident) {
-//
-//                                QList <QDBusObjectPath>  devs = aConn->devices();
-//                                foreach(QDBusObjectPath device, devs) {
-//                                    QNetworkManagerInterfaceDevice *ifaceDevice;
-//                                    ifaceDevice = new QNetworkManagerInterfaceDevice(device.path());
-//                                    cpPriv->serviceInterface = ifaceDevice->interface();
-//                                    cpPriv->state = getStateFlag(ifaceDevice->state());
-//                                    //cpPriv->accessPoint = aConn->specificObject().path();
-//
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                        //#endif
-//              //      } //end while connection
-//                    if(addIt) {
-//                        foundConfigurations.append(cpPriv);
-//                        configurationInterface[cpPriv->id] = cpPriv->serviceInterface.name();
-//                    }
-//                }
-//            } //end each connection service
-//
-//            //                ////////////// AccessPoints
-////                QList<QDBusObjectPath> apList = devWirelessIface->getAccessPoints();
-//////                qWarning() << apList.count();
-////                foreach(QDBusObjectPath path, apList) {
-////                    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-////                    cpPriv = addAccessPoint( devIface->connectionInterface()->path(), path);
-////                    if(cpPriv->isValid) {
-////                        foundConfigurations.append(cpPriv);
-////                    }
-////                }
-            } // end DEVICE_TYPE_802_11_WIRELESS
-            break;
-        };
-    } //end foreach device
 }
 
 void QNmWifiEngine::knownConnections()
@@ -412,10 +259,7 @@ bool QNmWifiEngine::hasIdentifier(const QString &id)
 {
     if (configurationInterface.contains(id))
         return true;
-    foreach (QNetworkConfigurationPrivate *cpPriv, getConfigurations()) {
-        if (cpPriv->id == id)
-            return true;
-    }
+
     return false;
 }
 
@@ -531,26 +375,6 @@ void  QNmWifiEngine::getKnownSsids()
             QNetworkManagerSettingsConnection sysIface(service, path.path());
             knownSsids << sysIface.getSsid();
         }
-    }
-}
-
-void QNmWifiEngine::getActiveConnectionsPaths()
-{
-//    qWarning() << Q_FUNC_INFO;
-    QScopedPointer<QNetworkManagerInterface> dbIface;
-    activeConnectionPaths.clear();
-    dbIface.reset(new QNetworkManagerInterface);
-    QList <QDBusObjectPath> connections = dbIface->activeConnections();
-
-    foreach(QDBusObjectPath conpath, connections) {
-        activeConnectionPaths << conpath.path();
-//        qWarning() << __FUNCTION__ <<  conpath.path() << activeConnectionPaths.count();
-
-        //QNetworkManagerConnectionActive *activeConn;
-        //activeConn = new QNetworkManagerConnectionActive(conpath.path(), this);
-
-//        qWarning() << activeConn->connection().path() /*<< activeConn->specificObject().path() */<< activeConn->devices()[0].path();
-
     }
 }
 
