@@ -84,7 +84,8 @@ private slots:  // Test cases
     void testUnionFilter();
     void testLocalIdFilter();
     void testDefaultFilter();
-
+    void testDefaultFilterWithPredictiveSearch();
+    
 private:
     QContactManager                             *mCntMng;
     CntSymbianFilterSqlHelper                   *mSqlFilter;

@@ -123,13 +123,17 @@ private:
             const TDesC& phoneNumber,
             const TInt matchLength);
     CntAbstractContactFilter::FilterSupport checkIfDetailFilterSupported(const QContactDetailFilter& detailFilter) const;
-
+    QList<QContactLocalId> HandlePredictiveSearchFilter(const QContactFilter& filter, bool& isPredSearch, QContactManager::Error& error);      
+    
 private:
     CntSymbianSrvConnection* m_srvConnection;
     CContactDatabase &m_contactDatabase;
     bool isPhoneNumberSearchforDetailFilter;
     QHash<int,QString> contactsTableIdColumNameMapping;
     QHash<int,int> commAddrTableIdColumNameMapping;
+    
+    friend class ut_cntsymbianfiltersqlhelper;
+
 };
 
 #endif//CNTSYMBIANFILTERSQLHELPER_H

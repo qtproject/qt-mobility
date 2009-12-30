@@ -124,7 +124,12 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
 {
     isPhoneNumberSearchforDetailFilter = false;
     QList<QContactLocalId> idList;
-    if(filterSupportLevel(filter)){
+    bool isPredSearch;
+    idList =  HandlePredictiveSearchFilter(filter,isPredSearch, error);
+    if(isPredSearch)
+            return idList;
+   if(filterSupportLevel(filter)){
+        
         // Create sql query from the filters
         QString sqlQuery;
         createSqlQuery(filter, sqlQuery, error);
@@ -156,9 +161,36 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
         error = QContactManager::NotSupportedError;
         }
     return idList;
-
-
+    
+        
 }
+
+QList<QContactLocalId>  CntSymbianFilterSqlHelper::HandlePredictiveSearchFilter(const QContactFilter& filter, bool &isPredSearch,
+        QContactManager::Error& error)
+    {
+    isPredSearch = false;
+    QString sqlQuery;
+    if(filter.type() == QContactFilter::ContactDetailFilter){
+       const QContactDetailFilter detailFilter(filter);
+       if(  detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation ){
+          //convert string to numeric format
+            QString pattern = detailFilter.value().toString();
+            sqlQuery = "SELECT contact_id FROM predictivesearch WHERE (first_name_as_number LIKE '% " 
+                      + pattern  + "%') OR (last_name_as_number LIKE '% " + pattern + "%') ORDER BY first_name_as_number ASC;";
+            isPredSearch = true;
+            //sqlQuery = "select contact_id from predictivesearch;";
+            return  m_srvConnection->searchContacts(sqlQuery, error);  
+           }
+       else
+           {
+           return QList<QContactLocalId>();
+           }
+        }
+    else
+        {
+        return QList<QContactLocalId>();
+        }
+    }
 
 /*!
  * Append the sort order to the sql query
@@ -661,7 +693,8 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::checkIfDetail
                      (matchFlags == QContactFilter::MatchEndsWith)|| (matchFlags == QContactFilter::MatchExactly)){
                 filterSupported = CntAbstractContactFilter::Supported;
                }
-
+               if(matchFlags == QContactFilter::MatchKeypadCollation)
+                      filterSupported = CntAbstractContactFilter::Supported;
         }
         return filterSupported;
 
