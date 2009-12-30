@@ -108,6 +108,7 @@ unix: {
             -lfeatdiscovery \
             -lhwrmvibraclient \
             -lavkon \    #Used by AknLayoutUtils::PenEnabled(). Try to remove this dependency.
+            -lcone \
             -lws32 \
             -lcentralrepository \
             -lprofileengine \
