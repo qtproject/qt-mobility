@@ -151,8 +151,15 @@ void TestCntTransformContactData::executeCntTransformBithday()
 
 void TestCntTransformContactData::executeCntTransformOnlineAccount()
 {
-    TRAPD(err, validateCntTransformOnlineAccountL(_L("dummysip"), QString("dummysip"));
-        validateCntTransformOnlineAccountL(_L(""), QString(""));
+    TRAPD(err, validateCntTransformOnlineAccountL(_L("dummysip"), QString("dummysip"),
+                                                  _L("nokia"), QString("nokia"),
+                                                  _L("Available"), QString("Available"),
+                                                  _L("Sleeping.."), QString("Sleeping.."));
+    
+        validateCntTransformOnlineAccountL(_L(""), QString(""),
+                                           _L(""), QString(""),
+                                           _L(""), QString(""),
+                                           _L(""), QString(""));
         );
     QVERIFY(err == 0);
 }
@@ -1015,7 +1022,11 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
     delete transformBirthday;
 }
 
-void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sipField, QString sipDetail)
+void TestCntTransformContactData::validateCntTransformOnlineAccountL(
+    TPtrC16 sipField, QString sipDetail,
+    TPtrC16 providerField, QString providerDetail,
+    TPtrC16 presenceField, QString presenceDetail,
+    TPtrC16 statusField, QString statusDetail)
 {
     CntTransformContactData* transformOnlineAccount = new CntTransformOnlineAccount();
     QVERIFY(transformOnlineAccount != 0);
@@ -1046,17 +1057,36 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
 
     QContactOnlineAccount onlineAccount1;
     onlineAccount1.setAccountUri(sipDetail);
+    onlineAccount1.setServiceProvider(providerDetail);
+    onlineAccount1.setPresence(presenceDetail);
+    onlineAccount1.setStatusMessage(statusDetail);
+    
     onlineAccount1.setSubTypes(QContactOnlineAccount::SubTypeSipVoip);
     QList<CContactItemField *> fields = transformOnlineAccount->transformDetailL(onlineAccount1);
     if(sipDetail.isEmpty()) {
         QVERIFY(fields.count() == 0);
     } else {
-        QVERIFY(fields.count() == 1);
+        QVERIFY(fields.count() == 4);
+        
         QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
         QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
         QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
         QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVCardMapVOIP));
         QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(sipField), 0);
+
+        QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldServiceProvider));
+        QCOMPARE(fields.at(1)->TextStorage()->Text(), providerField );
+        
+        QVERIFY(fields.at(2)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(2)->ContentType().ContainsFieldType(KUidContactFieldPresence));
+        //Presence information is encoded as single charcter value defined in enum
+        //1 for Availble
+        QCOMPARE(fields.at(2)->TextStorage()->Text(), _L("1") );
+        
+        QVERIFY(fields.at(3)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(3)->ContentType().ContainsFieldType(KUidContactFieldStatusMsg));
+        QCOMPARE(fields.at(3)->TextStorage()->Text(), statusField );
     }
 
     QContactOnlineAccount onlineAccount2;
@@ -1066,7 +1096,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     if(sipDetail.isEmpty()) {
         QVERIFY(fields.count() == 0);
     } else {
-        QVERIFY(fields.count() == 1);
+        QCOMPARE(fields.count(), 1);
         QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
         QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
         QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
@@ -1081,7 +1111,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     if(sipDetail.isEmpty()) {
         QVERIFY(fields.count() == 0);
     } else {
-        QVERIFY(fields.count() == 1);
+        QCOMPARE(fields.count(), 1);
         QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
         QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
         QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapSIPID);
@@ -1096,7 +1126,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     if(sipDetail.isEmpty()) {
         QVERIFY(fields.count() == 0);
     } else {
-        QVERIFY(fields.count() == 1);
+        QCOMPARE(fields.count(), 1);
         QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
         QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldIMPP));
         QVERIFY(fields.at(0)->ContentType().Mapping() == KUidContactFieldVCardMapUnknown);
@@ -1146,6 +1176,37 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(TPtrC16 sip
     const QContactOnlineAccount* onlineAccountDetail4(static_cast<const QContactOnlineAccount*>(contactDetail));
     QCOMPARE(onlineAccountDetail4->accountUri(), sipDetail);
     QVERIFY(onlineAccountDetail4->subTypes().contains(QContactOnlineAccount::SubTypeImpp));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldServiceProvider);
+    newField->TextStorage()->SetTextL(providerField);
+    contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
+    const QContactOnlineAccount* onlineAccountDetail5(static_cast<const QContactOnlineAccount*>(contactDetail));
+    QCOMPARE(onlineAccountDetail5->serviceProvider(), providerDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPresence);
+    // Set the presence availble i.e. 1
+    newField->TextStorage()->SetTextL(_L("1"));
+    contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
+    const QContactOnlineAccount* onlineAccountDetail6(static_cast<const QContactOnlineAccount*>(contactDetail));
+    QCOMPARE(onlineAccountDetail6->presence(), QString::fromAscii("Available"));
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldStatusMsg);
+    newField->TextStorage()->SetTextL(statusField);
+    contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
+    const QContactOnlineAccount* onlineAccountDetail7(static_cast<const QContactOnlineAccount*>(contactDetail));
+    QCOMPARE(onlineAccountDetail7->statusMessage(), statusDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;

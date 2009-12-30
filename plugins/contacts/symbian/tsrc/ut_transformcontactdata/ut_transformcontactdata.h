@@ -88,7 +88,12 @@ private:
                                   TPtrC16 postOfficeBoxField, QString postOfficeBoxDetail);
     void validateCntTransformUrlL(TPtrC16 field, QString detail);
     void validateCntTransformBirthdayL(TTime field, QDate detail);
-    void validateCntTransformOnlineAccountL(TPtrC16 sipField, QString sipDetail);
+    void validateCntTransformOnlineAccountL(
+        TPtrC16 sipField, QString sipDetail,
+        TPtrC16 providerField, QString providerDetail,
+        TPtrC16 presenceField, QString presenceDetail,
+        TPtrC16 statusField, QString statusDetail);
+    
     void validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
                                        TPtrC16 departmentField, QStringList departmentDetail,
                                        TPtrC16 jobtitleField, QString jobtitleDetail,
