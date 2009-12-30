@@ -78,23 +78,27 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
         m_downloadingThumbnails(false)
 {
     resize(252, 344);
-    QWidget *centralWidget = new QWidget;
-    QVBoxLayout *verticalLayout = new QVBoxLayout();
-
+    
     locationLabel = new QLabel(tr("Lat: Long:"));
-    verticalLayout->addWidget(locationLabel);
-
     satellitesLabel = new QLabel(tr("Using 0 of 0 satellites"));
-    verticalLayout->addWidget(satellitesLabel);
-
-    listWidget = new XQListWidget();
-    verticalLayout->addWidget(listWidget);
-
+    listWidget = new XQListWidget();   
     downloadButton = new QPushButton(tr("Download Picture List"));
+    
+    QVBoxLayout *verticalLayout = new QVBoxLayout();
+    verticalLayout->addWidget(locationLabel);
+    verticalLayout->addWidget(satellitesLabel);
+    verticalLayout->addWidget(listWidget);
     verticalLayout->addWidget(downloadButton);
 
+    QWidget *centralWidget = new QWidget;
     centralWidget->setLayout(verticalLayout);
     setCentralWidget(centralWidget);
+
+    createMenus();
+    listWidget->setGridSize(gridSize);
+    listWidget->setIconSize(thumbnailSize);
+    m_progressDialog = new QProgressDialog(this);
+    connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
 
     setWindowTitle(tr("Flickr Demo"));
 
@@ -135,11 +139,37 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
     connect(m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&)),
             this, SLOT(readResponseHeader(const QHttpResponseHeader&)));
 
-    createMenus();
-    listWidget->setGridSize(gridSize);
-    listWidget->setIconSize(thumbnailSize);
-    m_progressDialog = new QProgressDialog(this);
-    connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
+}
+
+FlickrDemo::~FlickrDemo()
+{
+    m_location->stopUpdates();
+    if (m_satellite)
+        m_satellite->stopUpdates();    
+    m_http->abort();
+    if (m_session)
+        m_session->close();
+}
+
+void FlickrDemo::delayedInit()
+{
+    if (m_logfileInUse) {
+        QMessageBox::information(this, tr("Flickr Demo"),
+                                 tr("No GPS support detected, using GPS data from a sample log file instead."));
+    }
+
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
+        return;
+    }
+    m_session = new QNetworkSession(cfg, this);
+    m_session->open();
+    m_session->waitForOpened();
 
     // Start listening GPS position updates
     m_location->startUpdates();
@@ -149,28 +179,6 @@ FlickrDemo::FlickrDemo(QWidget* parent) :
         m_satellite->startUpdates();
     } else {
         satellitesLabel->setText(tr("GPS not detected, replaying coordinates from sample log file."));
-    }
-
-    //QTimer::singleShot(100, this, SLOT(delayedInit()));
-    QTimer::singleShot(0, this, SLOT(delayedInit()));
-}
-
-FlickrDemo::~FlickrDemo()
-{
-    m_location->stopUpdates();
-    if (m_satellite)
-        m_satellite->stopUpdates();
-    //m_http.abort();
-    if (m_session)
-        m_session->close();
-}
-
-
-void FlickrDemo::delayedInit()
-{
-    if (m_logfileInUse) {
-        QMessageBox::information(this, tr("Flickr Demo"),
-                                 tr("No GPS support detected, using GPS data from a sample log file instead."));
     }
 }
 
@@ -245,7 +253,7 @@ void FlickrDemo::downloadFlickerPictureList()
         m_latitude = 61.4500;
         m_longitude = 23.8502;
     }
-
+/*
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
                               & QNetworkConfigurationManager::CanStartAndStopInterfaces);
@@ -259,9 +267,9 @@ void FlickrDemo::downloadFlickerPictureList()
 
     bool ok = m_session->waitForOpened();
     if (ok) {
+    */
         // Set IAP name
-        satellitesLabel->setText(tr("Access Point: %1").arg(cfg.name()));
-
+        satellitesLabel->setText(tr("Access Point: %1").arg(m_session->configuration().name()));
         locationLabel->setText(tr("Lat: %1 Long: %2").arg(QString::number(m_latitude),
                                QString::number(m_longitude)));
 
@@ -288,7 +296,7 @@ void FlickrDemo::downloadFlickerPictureList()
         m_progressDialog->setLabelText(tr("Downloading\nPicture List."));
         m_progressDialog->setMaximum(10);
         m_progressDialog->setValue(1);        
-    }
+    //}
 }
 
 bool FlickrDemo::parsePictureList(QString xmlString)

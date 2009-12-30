@@ -140,7 +140,6 @@ public:
         m_gpsWeather = false;
         m_usingLogFile = false;
 
-        //QTimer::singleShot(100, this, SLOT(delayedInit()));
         QTimer::singleShot(0, this, SLOT(delayedInit()));
     }
 
