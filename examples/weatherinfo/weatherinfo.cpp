@@ -194,13 +194,7 @@ private slots:
                 QMessageBox::information(this, tr("Weather Info"),
                                          tr("No GPS support detected, using GPS data from a sample log file instead."));
             }
-
-            // Listen gps position changes
-            connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this,
-                    SLOT(positionUpdated(QGeoPositionInfo)));
         }
-
-        m_gpsWeather = true;
 
         if (!m_usingLogFile) {
             QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
@@ -224,6 +218,10 @@ private slots:
             }
         }
 
+        // Listen gps position changes
+        connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this,
+                SLOT(positionUpdated(QGeoPositionInfo)));
+
         // Start listening GPS position updates
         m_location->startUpdates();
     }
@@ -238,6 +236,7 @@ private slots:
                 latitude.setNum(m_coordinate.latitude());
                 requestTownName(longitude, latitude);
                 m_gpsWeather = false;
+                m_location->stopUpdates();
             } else {
                 QMessageBox::information(this, "Weather Info", "Waiting for your GPS position...");
             }
