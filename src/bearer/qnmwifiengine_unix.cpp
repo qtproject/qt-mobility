@@ -311,19 +311,15 @@ void QNmWifiEngine::knownConnections()
         settingsiface.reset(new QNetworkManagerSettings(service));
         QList<QDBusObjectPath> list = settingsiface->listConnections();
 
-        QScopedPointer<QNetworkManagerSettingsConnection> sysIface;
-        QScopedPointer<QNetworkConfigurationPrivate> cpPriv;
-
+        QNetworkManagerSettingsConnection *sysIface;
         foreach(QDBusObjectPath path, list) { //for each connection path
             //qWarning() << "COnnection path:" << path.path();
             ident = path.path();
             bool addIt = false;
-
-            cpPriv.reset(new QNetworkConfigurationPrivate());
-            sysIface.reset(new QNetworkManagerSettingsConnection(service, path.path(), this));
+            QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+            sysIface = new QNetworkManagerSettingsConnection(service, path.path(), this);
             sysIface->setConnections();
-
-            connect(sysIface.data(), SIGNAL(removed(QString)),
+            connect(sysIface, SIGNAL(removed(QString)),
                     this,SLOT(settingsConnectionRemoved(QString)));
 
             cpPriv->name = sysIface->getId();
@@ -375,7 +371,7 @@ void QNmWifiEngine::knownConnections()
                 //   QString activeAPPath = devWirelessIface->activeAccessPoint().path();
             }
             if(addIt) {
-                foundConfigurations.append(cpPriv.data());
+                foundConfigurations.append(cpPriv);
                 configurationInterface[cpPriv->id] = cpPriv->serviceInterface.name();
                 cpPriv->bearer = bearerName(cpPriv->id);
             }
