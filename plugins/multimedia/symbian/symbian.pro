@@ -15,11 +15,11 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}
 
 
-HEADERS += s60serviceplugin.h \
+HEADERS += s60mediaserviceplugin.h \
            s60videowidget.h \
            s60videooutputcontrol.h
            
-SOURCES += s60serviceplugin.cpp \
+SOURCES += s60mediaserviceplugin.cpp \
            s60videowidget.cpp \
            s60videooutputcontrol.cpp 
 

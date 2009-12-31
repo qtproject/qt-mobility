@@ -42,8 +42,7 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qdebug.h>
 
-
-#include "s60serviceplugin.h"
+#include "s60mediaserviceplugin.h"
 #ifdef USE_INTERNAL_TUNERLIB
 #include "s60radiotunerservice.h"
 #endif
@@ -51,7 +50,7 @@
 #include "s60mediaplayerservice.h"
 #include "s60audiocaptureservice.h"
 
-QStringList S60ServicePlugin::keys() const
+QStringList S60MediaServicePlugin::keys() const
 {
     QStringList list;
 #ifdef USE_INTERNAL_TUNERLIB
@@ -63,7 +62,7 @@ QStringList S60ServicePlugin::keys() const
     return list;
 }
 
-QMediaService* S60ServicePlugin::create(QString const& key)
+QMediaService* S60MediaServicePlugin::create(QString const& key)
 {
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new S60MediaPlayerService;
@@ -80,12 +79,12 @@ QMediaService* S60ServicePlugin::create(QString const& key)
     return 0;
 }
 
-void S60ServicePlugin::release(QMediaService *service)
+void S60MediaServicePlugin::release(QMediaService *service)
 {
     delete service;
 }
 
-QList<QByteArray> S60ServicePlugin::devices(const QByteArray &service) const
+QList<QByteArray> S60MediaServicePlugin::devices(const QByteArray &service) const
 {
     if (service == Q_MEDIASERVICE_CAMERA) {
         if (m_cameraDevices.isEmpty())
@@ -97,7 +96,7 @@ QList<QByteArray> S60ServicePlugin::devices(const QByteArray &service) const
     return QList<QByteArray>();
 }
 
-QString S60ServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
+QString S60MediaServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
 {
     if (service == Q_MEDIASERVICE_CAMERA) {
         if (m_cameraDevices.isEmpty())
@@ -110,7 +109,7 @@ QString S60ServicePlugin::deviceDescription(const QByteArray &service, const QBy
     return QString();
 }
 
-void S60ServicePlugin::updateDevices() const
+void S60MediaServicePlugin::updateDevices() const
 {
     m_cameraDevices.clear();
     m_cameraDescriptions.clear();
@@ -122,4 +121,4 @@ void S60ServicePlugin::updateDevices() const
     }
 }
 
-Q_EXPORT_PLUGIN2(QtMobilityMultimediaEngine, S60ServicePlugin);
+Q_EXPORT_PLUGIN2(QtMobilityMultimediaEngine, S60MediaServicePlugin);
