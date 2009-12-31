@@ -45,13 +45,13 @@
 #include <QtCore/qobject.h>
 #include <QRadioTunerControl>
 #include <QRadioTuner>
-#include <tuner/tuner.h>
+#include <tuner.h>
 
 class S60RadioTunerService;
 
 QTM_USE_NAMESPACE
 
-class S60RadioTunerControl : public QRadioTunerControl, 
+class S60RadioTunerControl : public QRadioTunerControl,
 	public MMMTunerObserver,
 	public MMMTunerStereoObserver,
 	public MMMSignalStrengthObserver,
@@ -63,8 +63,6 @@ public:
     S60RadioTunerControl(QObject *parent = 0);
     ~S60RadioTunerControl();
     
-    QtMedia::AvailabilityError availabilityError() const;
-
     QRadioTuner::State state() const;
 
     QRadioTuner::Band band() const;
@@ -103,31 +101,29 @@ public:
     QRadioTuner::Error error() const;
     QString errorString() const;
     
-    // for device interfaces if needed 
-    static int deviceCount();
-    
-    //from MMMTunerObserver
+    //MMMTunerObserver
     void MToTuneComplete(TInt aError);
-    void MToTunerEvent(MMMTunerObserver::TEventType aType, TInt aError, TAny* aAdditionalInfo);
-    // from MMMTunerStereoObserver
+    
+    //MMMTunerChangeObserver
+    void MTcoFrequencyChanged(const TFrequency& aOldFrequency, const TFrequency& aNewFrequency);
+    void MTcoStateChanged(const TUint32& aOldState, const TUint32& aNewState);
+    void MTcoAntennaDetached();
+    void MTcoAntennaAttached();
+    void FlightModeChanged(TBool aFlightMode);
+    
+    //MMMTunerStereoObserver
     void MTsoStereoReceptionChanged(TBool aStereo);
     void MTsoForcedMonoChanged(TBool aForcedMono);
+    
     //MMMSignalStrengthObserver
     void MssoSignalStrengthChanged(TInt aNewSignalStrength);
-    //MMMTunerChangeObserver
-	void MTcoFrequencyChanged(const TFrequency& aOldFrequency, const TFrequency& aNewFrequency);
-	void MTcoChannelChanged(const TChannel& aOldChannel, const TChannel& aNewChannel);
-	void MTcoStateChanged(const TUint32& aOldState, const TUint32& aNewState);
-	void MTcoAntennaDetached();
-	void MTcoAntennaAttached();
-	void MTcoFlightModeChanged(TBool aFlightMode);
-	void MTcoSquelchChanged(TBool aSquelch);
-    //From MMMTunerAudioPlayerObserver
-	void MTapoInitializeComplete(TInt aError);
-	void MTapoPlayEvent(MMMTunerAudioPlayerObserver::TEventType aEvent, TInt aError, TAny* aAdditionalInfo);
+    
+    //MMMTunerAudioPlayerObserver
+    void MTapoInitializeComplete(TInt aError);
+    void MTapoPlayEvent(TEventType aEvent, TInt aError, TAny* aAdditionalInfo);
 
 private slots:
-    void search();
+
 
 private:
     bool initRadio();
@@ -135,8 +131,9 @@ private:
 
     mutable int m_error;
     CMMTunerUtility *m_tunerUtility;
-    CMMTunerAudioPlayerUtility *m_audioPlayerUtily;
-    bool audioInitializationComplete;
+    CMMTunerAudioPlayerUtility *m_audioPlayerUtility;
+    
+    bool m_audioInitializationComplete;
     bool m_muted;
     bool m_isStereo;
     bool m_available;
@@ -146,7 +143,7 @@ private:
     mutable int  m_signal;
     bool m_scanning;
     bool forward;
-    QRadioTuner::Band   m_currentBand;
+    QRadioTuner::Band m_currentBand;
     qint64 m_currentFreq;
     
     QRadioTuner::Error m_radioError;
