@@ -173,13 +173,10 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     switch (mediaType) {
     	case S60MediaRecognizer::Video:
             return VideoPlayerSession();
-            break;
     	case S60MediaRecognizer::Audio:
             return AudioPlayerSession();
-    		break;
     	case S60MediaRecognizer::Url:
             return VideoPlayerSession(true);
-    		break;
     	default:	
     		break;
     }

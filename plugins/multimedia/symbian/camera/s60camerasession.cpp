@@ -404,7 +404,7 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 
         TDisplayMode displayMode = aBitmap->DisplayMode();  
 
-        QImage::Format format;
+        QImage::Format format = QImage::Format_Invalid;
         switch(displayMode)
         {
             case EColor256:
@@ -617,6 +617,7 @@ bool S60CameraSession::setImageCaptureCodec(const QString &codecName)
 QString S60CameraSession::imageCaptureCodecDescription(const QString &codecName) const
 {
     Q_UNUSED(codecName);
+    return QString();
 }
 
 QtMedia::EncodingQuality S60CameraSession::captureQuality() const
