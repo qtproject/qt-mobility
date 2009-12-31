@@ -21,6 +21,9 @@ contains(mobility_modules,bearer) {
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
 		satellitedialog
+    contains(mobility_modules,bearer) {
+    	SUBDIRS += flickrdemo
+    }		
     contains(QT_CONFIG, webkit) {
         SUBDIRS += fetchgooglemaps
     }
