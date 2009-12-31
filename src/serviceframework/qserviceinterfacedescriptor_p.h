@@ -76,8 +76,8 @@ public:
                 && minor == other.minor
                 && interfaceName == other.interfaceName
                 && serviceName == other.serviceName
-                && properties == other.properties 
-                && customProperties == other.customProperties
+                && attributes == other.attributes 
+                && customAttributes == other.customAttributes
                 && scope == other.scope)
             return true;
         return false;
@@ -89,8 +89,8 @@ public:
         interfaceName = other.interfaceName;
         minor = other.minor;
         major = other.major;
-        properties = other.properties;
-        customProperties = other.customProperties;
+        attributes = other.attributes;
+        customAttributes = other.customAttributes;
         scope = other.scope;
 
         return *this;
@@ -113,8 +113,8 @@ public:
 
     QString serviceName;
     QString interfaceName;
-    QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant> properties;
-    QHash<QString, QString> customProperties;
+    QHash<QServiceInterfaceDescriptor::Attribute, QVariant> attributes;
+    QHash<QString, QString> customAttributes;
     int major;
     int minor;
     QService::Scope scope;

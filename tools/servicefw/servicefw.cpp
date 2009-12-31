@@ -289,15 +289,15 @@ void CommandProcessor::showServiceInfo(const QString &service)
         return;
     }
 
-    QString description = descriptors[0].property(
+    QString description = descriptors[0].attribute(
             QServiceInterfaceDescriptor::ServiceDescription).toString();
-    QStringList capabilities = descriptors[0].property(
+    QStringList capabilities = descriptors[0].attribute(
             QServiceInterfaceDescriptor::Capabilities).toStringList();
 
     *stdoutStream << service << ":\n";
     if (!description.isEmpty())
         *stdoutStream << '\t' << description << '\n';
-    *stdoutStream << "\tLibrary: " << descriptors[0].property(
+    *stdoutStream << "\tLibrary: " << descriptors[0].attribute(
                     QServiceInterfaceDescriptor::Location).toString() << '\n'
             << "\tCapabilities: " << (capabilities.isEmpty() ? "" : capabilities.join(", ")) << '\n'
             << "\tImplements:\n";

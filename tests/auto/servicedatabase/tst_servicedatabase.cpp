@@ -62,9 +62,9 @@ private slots:
     void getInterfaces();
     void searchByInterfaceName();
     void searchByInterfaceAndService();
-    void searchByCustomProperty();
+    void searchByCustomAttribute();
     void searchByCapability();
-    void properties();
+    void attributes();
     void getServiceNames();
     void defaultExternalIfaceIDs();
     void interfaceDefault();
@@ -595,7 +595,7 @@ void ServiceDatabaseUnitTest::searchByCapability()
     QCOMPARE(interfaces.count(), 14); //show all services which don't require any caps
 }
 
-void ServiceDatabaseUnitTest::searchByCustomProperty()
+void ServiceDatabaseUnitTest::searchByCustomAttribute()
 {
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
@@ -687,7 +687,7 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     filter.removeCustomProperty("extension");
     QCOMPARE(filter.customPropertyKeys().length(), 0);
 
-    //test clearing of custom properties
+    //test clearing of custom attributes
     filter.setCustomProperty("bot", "automatic");
     filter.setCustomProperty("extension", "multidrive");
     QCOMPARE(filter.customPropertyKeys().length(),2);
@@ -744,7 +744,7 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     QVERIFY(database.close());
 }
 
-void ServiceDatabaseUnitTest::properties()
+void ServiceDatabaseUnitTest::attributes()
 {
     QVERIFY(database.open());
 
@@ -757,7 +757,7 @@ void ServiceDatabaseUnitTest::properties()
     QCOMPARE(database.lastError().code(), DBError::NoError);
     QCOMPARE(interfaces.count(), 1);
     QServiceInterfaceDescriptor interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), QStringList());
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), QStringList());
 
     //get empty list of capabilites from an interface registered without a
     //capabilities attribute
@@ -766,7 +766,7 @@ void ServiceDatabaseUnitTest::properties()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), QStringList());
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), QStringList());
 
     //get a list of capabilites from an interface with only 1 capability
     filter.setServiceName("Omni");
@@ -776,7 +776,7 @@ void ServiceDatabaseUnitTest::properties()
     interface = interfaces[0];
     QStringList capabilities;
     capabilities  << "SurroundingsDD";
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
 
     //get a list of capabilites from an interface with multiple capabilities
     filter.setServiceName("Omni");
@@ -786,13 +786,13 @@ void ServiceDatabaseUnitTest::properties()
     interface = interfaces[0];
     capabilities.clear();
     capabilities  << "MultimediaDD" << "NetworkServices" << "ReadUserData" << "WriteUserData";
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
 
     //get a list of capabilities from a default service
     interface = database.interfaceDefault("com.cyberdyne.terminator");
     capabilities.clear();
     capabilities << "NetworkServices";
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
 
     // == Interface Description Property ==
     //get the interface description off an interface registered without a description tag
@@ -801,7 +801,7 @@ void ServiceDatabaseUnitTest::properties()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString());
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString());
 
     //get the interface description off an interface registered with an
     //empty description tag
@@ -810,7 +810,7 @@ void ServiceDatabaseUnitTest::properties()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString());
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString());
 
     //get the interface description of an interface
     filter.setServiceName("Skynet");
@@ -818,12 +818,12 @@ void ServiceDatabaseUnitTest::properties()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
             QString("Remote communications interface for the T-800v1.5"));
 
     //get a description from a default service
     interface = database.interfaceDefault("com.omni.device.Accelerometer");
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
             QString("Interface that provides accelerometer readings(omni)"));
 
     QVERIFY(database.close());
@@ -881,7 +881,7 @@ void ServiceDatabaseUnitTest::getServiceNames()
 bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
     QString interfaceName, QString serviceName, int majorVersion, int minorVersion)
 {
-    interface.d->properties[QServiceInterfaceDescriptor::Capabilities] = QStringList();
+    interface.d->attributes[QServiceInterfaceDescriptor::Capabilities] = QStringList();
 
     QHash<QString,QString> customs;
     return compareDescriptor(interface, interfaceName, serviceName, majorVersion, minorVersion,
@@ -918,9 +918,9 @@ bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
         return false;
     }
 
-    if (capabilities.count() != 0 || interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() != 0 ) {
+    if (capabilities.count() != 0 || interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() != 0 ) {
         QStringList securityCapabilities;
-        securityCapabilities = interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
+        securityCapabilities = interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList();
 
         if(securityCapabilities.count() != capabilities.count()) {
             qWarning() << "Capabilities count mismatch: expected =" << capabilities.count()
@@ -940,41 +940,41 @@ bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
     }
 
     if (!filePath.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::Location).toString() != filePath) {
+        if (interface.attribute(QServiceInterfaceDescriptor::Location).toString() != filePath) {
             qWarning() << "File path mismatch: expected =" << filePath
-                << " actual =" << interface.property(QServiceInterfaceDescriptor::Location).toString();
+                << " actual =" << interface.attribute(QServiceInterfaceDescriptor::Location).toString();
             return false;
         }
     }
     if (!serviceDescription.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::ServiceDescription).toString() != serviceDescription) {
+        if (interface.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString() != serviceDescription) {
             qWarning() << "Service Description mismatch: expected =" << serviceDescription
-                        << " actual=" << interface.property(QServiceInterfaceDescriptor::ServiceDescription).toString();
+                        << " actual=" << interface.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString();
             return false;
         }
     }
     if (!interfaceDescription.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() != interfaceDescription) {
+        if (interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString() != interfaceDescription) {
             qWarning() << "Interface Description mismatch: expected =" << interfaceDescription
-                        << " actual =" << interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString();
+                        << " actual =" << interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString();
             return false;
         }
 
     }
 
-    if (interface.d->customProperties.size() != customProps.size()) {
-        qWarning() << "Number of Interface custom properties don't match. expected: " 
-            <<customProps.size() << "actual: " << interface.d->customProperties.size();
+    if (interface.d->customAttributes.size() != customProps.size()) {
+        qWarning() << "Number of Interface custom attributes don't match. expected: " 
+            <<customProps.size() << "actual: " << interface.d->customAttributes.size();
             ;
-        qWarning() << "expected:" << customProps << "actual:" << interface.d->customProperties;
+        qWarning() << "expected:" << customProps << "actual:" << interface.d->customAttributes;
         return false;
     }
 
     QHash<QString, QString>::const_iterator i;
     for (i = customProps.constBegin(); i!=customProps.constEnd(); i++) {
-        if (interface.customProperty(i.key()) != i.value()) {
+        if (interface.customAttribute(i.key()) != i.value()) {
             qWarning() << "Interface custom property mismatch: expected =" << i.key() <<"("<<i.value()<<")" 
-                        << " actual =" << i.key() << "(" << interface.customProperty(i.key()) << ")";
+                        << " actual =" << i.key() << "(" << interface.customAttribute(i.key()) << ")";
             return false;
         }
     }
@@ -1250,7 +1250,7 @@ void ServiceDatabaseUnitTest::unregister()
     interface = database.interfaceDefault("com.omni.service.Video");
     QVERIFY(interface.serviceName() == "OMNI");//no other services implmement this interface
 
-    //confirm that interface and service properties exist for the service
+    //confirm that interface and service attributes exist for the service
     QStringList serviceIDs = getServiceIDs("omni");
     foreach(const QString &serviceID, serviceIDs)
         QVERIFY(existsInServicePropertyTable(serviceID));

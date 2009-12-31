@@ -432,7 +432,7 @@ bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interfac
 
     if (interface.d == NULL )
         return false;
-    interface.d->properties[QServiceInterfaceDescriptor::Capabilities] = QStringList();
+    interface.d->attributes[QServiceInterfaceDescriptor::Capabilities] = QStringList();
 
     return compareDescriptor(interface, interfaceName, serviceName, majorVersion, minorVersion,
             QStringList());
@@ -468,9 +468,9 @@ bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interfac
         return false;
     }
 
-    if (capabilities.count() != 0 || interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() != 0 ) {
+    if (capabilities.count() != 0 || interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() != 0 ) {
         QStringList securityCapabilities;
-        securityCapabilities = interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
+        securityCapabilities = interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList();
 
         if(securityCapabilities.count() != capabilities.count()) {
             qWarning() << "Capabilities count mismatch: expected =" << capabilities.count()
@@ -490,23 +490,23 @@ bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interfac
     }
 
     if (!filePath.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::Location).toString() != filePath) {
+        if (interface.attribute(QServiceInterfaceDescriptor::Location).toString() != filePath) {
             qWarning() << "File path mismatch: expected =" << filePath
-                << " actual =" << interface.property(QServiceInterfaceDescriptor::Location).toString();
+                << " actual =" << interface.attribute(QServiceInterfaceDescriptor::Location).toString();
             return false;
         }
     }
     if (!serviceDescription.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::ServiceDescription).toString() != serviceDescription) {
+        if (interface.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString() != serviceDescription) {
             qWarning() << "Service Description mismatch: expected =" << serviceDescription
-                        << " actual=" << interface.property(QServiceInterfaceDescriptor::ServiceDescription).toString();
+                        << " actual=" << interface.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString();
             return false;
         }
     }
     if (!interfaceDescription.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() != interfaceDescription) {
+        if (interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString() != interfaceDescription) {
             qWarning() << "Interface Description mismatch: expected =" << interfaceDescription
-                        << " actual =" << interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString();
+                        << " actual =" << interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString();
             return false;
         }
 

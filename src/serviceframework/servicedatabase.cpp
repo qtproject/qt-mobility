@@ -618,11 +618,11 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
     }
 
     statement = "INSERT INTO InterfaceProperty(InterfaceID, Key, Value) VALUES(?,?,?)";
-    QHash<QServiceInterfaceDescriptor::PropertyKey, QVariant>::const_iterator iter = interface.d->properties.constBegin();
+    QHash<QServiceInterfaceDescriptor::Attribute, QVariant>::const_iterator iter = interface.d->attributes.constBegin();
     bool isValidInterfaceProperty;
     QString capabilities;
     QString interfaceDescription;
-    while (iter != interface.d->properties.constEnd()) {
+    while (iter != interface.d->attributes.constEnd()) {
         isValidInterfaceProperty = true;
 
         bindValues.clear();
@@ -630,7 +630,7 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
         switch (iter.key()) {
             case (QServiceInterfaceDescriptor::Capabilities):
                 bindValues.append(INTERFACE_CAPABILITY_KEY);
-                capabilities = interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().join(",");
+                capabilities = interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().join(",");
                 if (capabilities.isNull())
                     capabilities = "";
                 bindValues.append(capabilities);
@@ -643,7 +643,7 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
                 break;
             case(QServiceInterfaceDescriptor::InterfaceDescription):
                 bindValues.append(INTERFACE_DESCRIPTION_KEY);
-                interfaceDescription = interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString();
+                interfaceDescription = interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString();
                 if (interfaceDescription.isNull())
                     interfaceDescription = "";
                 bindValues.append(interfaceDescription);
@@ -665,9 +665,9 @@ bool ServiceDatabase::insertInterfaceData(QSqlQuery *query,const QServiceInterfa
         ++iter;
     }
 
-    //add custom properties
-    QHash<QString, QString>::const_iterator customIter = interface.d->customProperties.constBegin();
-    while(customIter!=interface.d->customProperties.constEnd()) {
+    //add custom attributes
+    QHash<QString, QString>::const_iterator customIter = interface.d->customAttributes.constBegin();
+    while(customIter!=interface.d->customAttributes.constEnd()) {
         bindValues.clear();
         bindValues.append(interfaceID);
         //to avoid key clashes use separate c_ namespace ->is this sufficient?
@@ -855,14 +855,14 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
 
     while(query.next()){
         difference.clear();
-        interface.d->customProperties.clear();
-        interface.d->properties.clear();
+        interface.d->customAttributes.clear();
+        interface.d->attributes.clear();
         interface.d->interfaceName =query.value(EBindIndex).toString();
         interface.d->serviceName = query.value(EBindIndex1).toString();
         interface.d->major = query.value(EBindIndex2).toInt();
         interface.d->minor = query.value(EBindIndex3).toInt();
 
-        interface.d->properties[QServiceInterfaceDescriptor::Location]
+        interface.d->attributes[QServiceInterfaceDescriptor::Location]
             = query.value(EBindIndex4).toString();
 
         serviceID = query.value(EBindIndex5).toString();
@@ -883,7 +883,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
             return interfaces;
         }
 
-        const QSet<QString> ifaceCaps = interface.d->properties.value(QServiceInterfaceDescriptor::Capabilities).toStringList().toSet();
+        const QSet<QString> ifaceCaps = interface.d->attributes.value(QServiceInterfaceDescriptor::Capabilities).toStringList().toSet();
         difference = ((filter.capabilityMatchRule() == QServiceFilter::MatchAll) ? (filterCaps-ifaceCaps) : (ifaceCaps-filterCaps));
         if (!difference.isEmpty())
             continue;
@@ -891,12 +891,12 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         //only return those interfaces that comply with set custom filters
         if (filter.customPropertyKeys().size() > 0) {
             QSet<QString> keyDiff = filter.customPropertyKeys().toSet();
-            keyDiff.subtract(interface.d->customProperties.uniqueKeys().toSet());
+            keyDiff.subtract(interface.d->customAttributes.uniqueKeys().toSet());
             if (keyDiff.isEmpty()) { //target descriptor has same custom keys as filter
                 bool isMatch = true;
                 const QStringList keys = filter.customPropertyKeys();
                 for(int i = 0; i<keys.count(); i++) {
-                    if (interface.d->customProperties.value(keys[i]) !=
+                    if (interface.d->customAttributes.value(keys[i]) !=
                             filter.customProperty(keys[i])) {
                         isMatch = false;
                         break;
@@ -983,7 +983,7 @@ QServiceInterfaceDescriptor ServiceDatabase::getInterface(const QString &interfa
     interface.d->serviceName = query.value(EBindIndex1).toString();
     interface.d->major = query.value(EBindIndex2).toInt();
     interface.d->minor = query.value(EBindIndex3).toInt();
-    interface.d->properties[QServiceInterfaceDescriptor::Location]
+    interface.d->attributes[QServiceInterfaceDescriptor::Location]
         = query.value(EBindIndex4).toString();
 
     QString serviceID = query.value(EBindIndex5).toString();
@@ -1173,7 +1173,7 @@ QServiceInterfaceDescriptor ServiceDatabase::interfaceDefault(const QString &int
     interface.d->major = query.value(EBindIndex2).toInt();
     interface.d->minor = query.value(EBindIndex3).toInt();
 
-    interface.d->properties[QServiceInterfaceDescriptor::Location]
+    interface.d->attributes[QServiceInterfaceDescriptor::Location]
         = query.value(EBindIndex4).toString();
 
     QString serviceID = query.value(EBindIndex5).toString();
@@ -2015,7 +2015,7 @@ bool ServiceDatabase::rollbackTransaction(QSqlQuery *query)
 
 /*
     Helper function that populates a service \a interface descriptor
-    with interface related properties corresponding to the interface
+    with interface related attributes corresponding to the interface
     represented by \a interfaceID
 
     It is already assumed that a transaction has been started by the time
@@ -2041,24 +2041,24 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
     }
 
     bool isFound = false;
-    QString propertyKey;
+    QString attribute;
     while (query.next()) {
         isFound = true;
-        propertyKey = query.value(EBindIndex).toString();
-        if (propertyKey == INTERFACE_CAPABILITY_KEY) {
+        attribute = query.value(EBindIndex).toString();
+        if (attribute == INTERFACE_CAPABILITY_KEY) {
             const QStringList capabilities = query.value(EBindIndex1).toString().split(",");
             if (capabilities.count() == 1 && capabilities[0].isEmpty()) {
-                interface->d->properties[QServiceInterfaceDescriptor::Capabilities]
+                interface->d->attributes[QServiceInterfaceDescriptor::Capabilities]
                     = QStringList();
             } else {
-                interface->d->properties[QServiceInterfaceDescriptor::Capabilities]
+                interface->d->attributes[QServiceInterfaceDescriptor::Capabilities]
                 = capabilities;
             }
-        } else if (propertyKey == INTERFACE_DESCRIPTION_KEY) {
-            interface->d->properties[QServiceInterfaceDescriptor::InterfaceDescription]
+        } else if (attribute == INTERFACE_DESCRIPTION_KEY) {
+            interface->d->attributes[QServiceInterfaceDescriptor::InterfaceDescription]
                = query.value(EBindIndex1).toString();
-        } else if (propertyKey.startsWith("c_")) {
-            interface->d->customProperties[propertyKey.mid(2)]
+        } else if (attribute.startsWith("c_")) {
+            interface->d->customAttributes[attribute.mid(2)]
                = query.value(EBindIndex1).toString();
         }
     }
@@ -2078,7 +2078,7 @@ bool ServiceDatabase::populateInterfaceProperties(QServiceInterfaceDescriptor *i
 
 /*
     Helper function that populates a service \a interface descriptor
-    with service related properties corresponding to the service
+    with service related attributes corresponding to the service
     represented by \a serviceID
 
     It is already assumed that a transaction has been started by the time
@@ -2104,12 +2104,12 @@ bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *int
     }
 
     bool isFound = false;
-    QString propertyKey;
+    QString attribute;
     while (query.next()) {
         isFound = true;
-        propertyKey = query.value(EBindIndex).toString();
-        if (propertyKey == SERVICE_DESCRIPTION_KEY) {
-                interface->d->properties[QServiceInterfaceDescriptor::ServiceDescription]
+        attribute = query.value(EBindIndex).toString();
+        if (attribute == SERVICE_DESCRIPTION_KEY) {
+                interface->d->attributes[QServiceInterfaceDescriptor::ServiceDescription]
                     = query.value(EBindIndex1).toString();
         }
     }

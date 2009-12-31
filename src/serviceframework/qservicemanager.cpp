@@ -387,14 +387,14 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         return 0;
     }
 
-    const QStringList serviceCaps = descriptor.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
+    const QStringList serviceCaps = descriptor.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList();
     if ( session && !session->isAllowed(serviceCaps) ) {
         d->setError(ServiceCapabilityDenied);
         return 0;
     }
 
     QString serviceFilePath = qservicemanager_resolveLibraryPath(
-            descriptor.property(QServiceInterfaceDescriptor::Location).toString());
+            descriptor.attribute(QServiceInterfaceDescriptor::Location).toString());
     if (serviceFilePath.isEmpty()) {
         d->setError(InvalidServiceLocation);
         return 0;
@@ -568,7 +568,7 @@ bool QServiceManager::removeService(const QString& serviceName)
     QSet<QString> pluginPathsSet;
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
     for (int i=0; i<descriptors.count(); i++)
-        pluginPathsSet << descriptors[i].property(QServiceInterfaceDescriptor::Location).toString();
+        pluginPathsSet << descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
 
     QList<QString> pluginPaths = pluginPathsSet.toList();
     for (int i=0; i<pluginPaths.count(); i++) {
