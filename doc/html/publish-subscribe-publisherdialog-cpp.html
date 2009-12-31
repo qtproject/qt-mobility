@@ -81,6 +81,7 @@
         //! [1]
         connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
         connect(ui-&gt;intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
+        connect(ui-&gt;unsetIntButton, SIGNAL(clicked()), this, SLOT(unsetIntValue()));
         connect(ui-&gt;setStringButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
         connect(ui-&gt;setByteArrayButton, SIGNAL(clicked()), this, SLOT(setByteArrayValue()));
         //! [1]
@@ -111,6 +112,11 @@
     void PublisherDialog::intValueChanged(int value)
     {
         publisher-&gt;setValue(&quot;intValue&quot;, value);
+    }
+
+    void PublisherDialog::unsetIntValue()
+    {
+        publisher-&gt;resetValue(&quot;intValue&quot;);
     }
 
     void PublisherDialog::setStringValue()

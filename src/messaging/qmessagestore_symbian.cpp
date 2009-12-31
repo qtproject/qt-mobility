@@ -42,8 +42,6 @@
 #include "qmtmengine_symbian_p.h"
 
 #include <QString>
-#include <QEventLoop>
-
 
 QTM_BEGIN_NAMESPACE
 
@@ -72,7 +70,6 @@ QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter,
     QMessageService service;
     connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     if (service.queryMessages(filter, sortOrder, limit, offset)) {
-        QEventLoop loop;
         QObject::connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
         QObject::connect(&service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
         loop.exec();
@@ -180,7 +177,6 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
     QMessageService service;
     connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     if (service.queryMessages(filter)) {
-        QEventLoop loop; // TODO: this appears to be unwanted here
         QObject::connect(&service, SIGNAL(messagesFound(const QMessageIdList&)), &loop, SLOT(quit()));
         QObject::connect(&service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
         loop.exec();

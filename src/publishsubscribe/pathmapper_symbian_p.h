@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef PATHMAPPER_H
 #define PATHMAPPER_H
 
@@ -59,6 +60,7 @@ public:
     enum Target {TargetCRepository, TargetRPropery};
 
     bool getChildren(QString path, QSet<QString> &children) const;
+    QStringList childPaths(QString basePath) const;
     bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
 
 private:
@@ -68,6 +70,7 @@ private:
         PathData() : m_target(TargetRPropery), m_category(0), m_key(0) {}
         PathData(Target target, quint32 category, quint32 key) :
             m_target(target), m_category(category), m_key(key) {}
+
     public:
         Target m_target;
         quint32 m_category;

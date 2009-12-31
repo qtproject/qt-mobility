@@ -152,7 +152,7 @@
     }</pre>
 <a name="query-and-retrieve"></a>
 <h2>Query and Retrieve</h2>
-<p>Message contents are displayed/retrieved by a retrieve widget under the &quot;Query/Retrieve&quot; menu. This example displays the last 50 messages, as in the &quot;Show&quot; example, but also displays message content in a <a href="http://qt.nokia.com/doc/4.5/qtextbrowser.html">QTextBrowser</a> widget and provides the option to download messages that are incomplete.</p>
+<p>Message contents are displayed/retrieved by a retrieve widget under the &quot;Query/Retrieve&quot; menu. This example displays the last 50 messages, as in the &quot;Show&quot; example, but also displays message content in a <a href="http://qt.nokia.com/doc/4.6/qtextbrowser.html">QTextBrowser</a> widget and provides the option to download messages that are incomplete.</p>
 <p>After the message list is populated, the message display widget will attempt to load and display the currently selected message. The completeness of the message body is checked using the QMessageContentContainer::isContentAvailable function. If the message body is partially downloaded, a download link is displayed.</p>
 <pre>    void MessageViewWidget::loadMessage()
     {
@@ -216,7 +216,7 @@
     }</pre>
 <a name="store-signals"></a>
 <h2>Store Signals</h2>
-<p>This example displays the activities of the <a href="qmessagemanager.html">QMessageManager</a> in a <a href="http://qt.nokia.com/doc/4.5/qlistwidget.html">QListWidget</a> by connecting to QMessageManager::message(Added/Updated/Removed) signals.</p>
+<p>This example displays the activities of the <a href="qmessagemanager.html">QMessageManager</a> in a <a href="http://qt.nokia.com/doc/4.6/qlistwidget.html">QListWidget</a> by connecting to QMessageManager::message(Added/Updated/Removed) signals.</p>
 <pre>    void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(!filterSet.contains(m_notificationFilterId))
