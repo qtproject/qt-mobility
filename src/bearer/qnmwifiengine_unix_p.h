@@ -112,6 +112,7 @@ private:
 
     QStringList devicePaths;
 
+    void getActiveConnectionsPaths();
     void getKnownSsids();
     void accessPointConnections();
     void knownConnections();
