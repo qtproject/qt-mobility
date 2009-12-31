@@ -151,6 +151,8 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
     is not between -180 to 180 inclusive, none of the values are set and
     the type() will be QGeoCoordinate::InvalidCoordinate.
 
+    Note that \a altitude specifies the metres above sea level.
+
     \sa isValid()
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitude)
