@@ -304,7 +304,7 @@ public:
         m_session = new QNetworkSession(cfg1, this);
 
         m_session->open();
-        if (!m_session->waitForOpened()) {
+        if (!m_session->waitForOpened(-1)) {
             m_networkSetupError = QString(tr("Unable to open network session."));
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
@@ -325,8 +325,7 @@ public:
         m_largeMap = new SlippyMap(m_session, m_location, this);
 
         connect(m_normalMap, SIGNAL(updated(QRect)), SLOT(updateMap(QRect)));
-        connect(m_largeMap, SIGNAL(updated(QRect)), SLOT(update()));
-        connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(positionUpdated(QGeoPositionInfo)));
+        connect(m_largeMap, SIGNAL(updated(QRect)), SLOT(update()));        
 
         QTimer::singleShot(0, this, SLOT(delayedInit()));
     }
@@ -392,6 +391,11 @@ private slots:
             QMessageBox::information(this, tr("LightMaps"),
                                      m_networkSetupError);
         }
+
+        connect(m_location,
+            SIGNAL(positionUpdated(QGeoPositionInfo)),
+            this,
+            SLOT(positionUpdated(QGeoPositionInfo)));
 
         startPositioning();
     }
