@@ -323,7 +323,7 @@ void QNmWifiEngine::disconnectFromId(const QString &id)
         QScopedPointer<QNetworkManagerSettingsConnection> settingsCon;
         settingsCon.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(), activeCon->connection().path()));
 
-        if(settingsCon->getType() == NM_DEVICE_TYPE_ETHERNET) {
+        if(settingsCon->getType() ==  DEVICE_TYPE_802_3_ETHERNET /*NM_DEVICE_TYPE_ETHERNET*/) { //use depreciated value for now
             emit connectionError(id, OperationNotSupported);
         } else {
             QDBusObjectPath dbpath(activeConnectionPath);
