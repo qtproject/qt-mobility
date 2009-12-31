@@ -147,7 +147,7 @@ void MapWindow::delayedInit()
 
     session = new QNetworkSession(cfg, this);
     session->open();
-    session->waitForOpened();
+    session->waitForOpened(-1);
 
     location->startUpdates();
 }

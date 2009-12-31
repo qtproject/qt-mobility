@@ -166,7 +166,7 @@ private slots:
         }
         m_session = new QNetworkSession(cfg, this);
         m_session->open();
-        m_session->waitForOpened();
+        m_session->waitForOpened(-1);
 
         m_gpsWeather = false;
         request("Helsinki");
