@@ -661,6 +661,7 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupport
             case QContactFilter::ActionFilter:
             case QContactFilter::IntersectionFilter:
             case QContactFilter::UnionFilter:
+            case QContactFilter::RelationshipFilter: 
             default:
                     filterSupported = CntAbstractContactFilter::NotSupported;
                     break;
