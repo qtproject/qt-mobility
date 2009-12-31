@@ -16,11 +16,9 @@ INCLUDEPATH += . \
 
 
 HEADERS += s60mediaserviceplugin.h \
-           s60videowidget.h \
            s60videooutputcontrol.h
            
 SOURCES += s60mediaserviceplugin.cpp \
-           s60videowidget.cpp \
            s60videooutputcontrol.cpp 
 
 !exists($${EPOCROOT}epoc32/release/armv5/lib/camerawrapper.lib) {
