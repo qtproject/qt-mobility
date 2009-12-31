@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "s60videowidget.h"
+#include "s60viewfinderwidget.h"
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qdebug.h>
@@ -55,72 +55,41 @@
 
 #include <QTimer>
 
-class S60VideoWidget : public QWidget
+S60ViewFinderWidget::S60ViewFinderWidget(QWidget *parent)
+    : QWidget(parent)
 {
-public:
-    S60VideoWidget(QWidget *parent = 0)
-        : QWidget(parent)
-    {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        QPalette palette;
-        palette.setColor(QPalette::Background, Qt::black);
-        setPalette(palette);
-        setAttribute(Qt::WA_OpaquePaintEvent, true);
-        setAttribute(Qt::WA_NoSystemBackground, true);
-    }
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QPalette palette;
+    palette.setColor(QPalette::Background, Qt::black);
+    setPalette(palette);
+}
 
-    virtual ~S60VideoWidget() {}
+void S60ViewFinderWidget::ViewFinderFrameReady(const QImage& image)
+{
+    m_pixmapImage = QPixmap::fromImage(image);
+    repaint();
+}
 
-    QSize sizeHint() const
-    {
-        return m_nativeSize;
-    }
+void S60ViewFinderWidget::paintEvent(QPaintEvent *)
+{
+    QPainter painter(this);   
+    QPoint point(pos());
+    painter.drawPixmap(point, m_pixmapImage.scaled(size(), Qt::KeepAspectRatio));
+}
 
-    void setNativeSize(const QSize &size)
-    {
-        if (size != m_nativeSize) {
-            m_nativeSize = size;
-            if (size.isEmpty())
-                setMinimumSize(0,0);
-            else
-                setMinimumSize(160,120);
-
-            updateGeometry();
-        }
-    }
-    
-    void viewFinderFrameReady(const QImage& image)
-    {
-        m_pixmapImage = QPixmap::fromImage(image);
-        repaint();
-    }
-    
-protected:
-    void paintEvent(QPaintEvent *)
-    {
-        if (!updatesEnabled())
-            return;
-        QPainter painter(this);
-        painter.fillRect(rect(), palette().background());
-    }
-
-    QPixmap m_pixmapImage;
-    QSize m_nativeSize;
-};
-
-S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
+S60ViewFinderWidgetControl::S60ViewFinderWidgetControl(QObject *parent)
     : QVideoWidgetControl(parent)
-    , m_widget(new S60VideoWidget)
+    , m_widget(new S60ViewFinderWidget)
 {
     m_widget->installEventFilter(this);
 }
 
-S60VideoWidgetControl::~S60VideoWidgetControl()
+S60ViewFinderWidgetControl::~S60ViewFinderWidgetControl()
 {
     delete m_widget;
 }
 
-;bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
+;bool S60ViewFinderWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
 	if (e->type() == QEvent::Show) {
 		m_widget->setAttribute(Qt::WA_NoSystemBackground, true);
@@ -134,64 +103,64 @@ S60VideoWidgetControl::~S60VideoWidgetControl()
 	}
 	
 	if (e->type() == QEvent::Paint) {
-        QTimer::singleShot(20, this, SLOT(enableUpdates()));
+        //QTimer::singleShot(20, this, SLOT(enableUpdates()));
 	}
     
 	return QVideoWidgetControl::eventFilter(object, e);
 }
 
-void S60VideoWidgetControl::enableUpdates()
+void S60ViewFinderWidgetControl::enableUpdates()
 {
     emit resizeVideo();
 }
 
-void S60VideoWidgetControl::setOverlay()
+void S60ViewFinderWidgetControl::setOverlay()
 {
 	// TODO:
 }
 
-void S60VideoWidgetControl::updateNativeVideoSize()
+void S60ViewFinderWidgetControl::updateNativeVideoSize()
 {
     // TODO:
 }
 
 
-void S60VideoWidgetControl::windowExposed()
+void S60ViewFinderWidgetControl::windowExposed()
 {
     // TODO:
 }
 
-QWidget *S60VideoWidgetControl::videoWidget()
+S60ViewFinderWidget *S60ViewFinderWidgetControl::videoWidget()
 {
     return m_widget;
 }
 
-QVideoWidget::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
+QVideoWidget::AspectRatioMode S60ViewFinderWidgetControl::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-QSize S60VideoWidgetControl::customAspectRatio() const
+QSize S60ViewFinderWidgetControl::customAspectRatio() const
 {
     return m_customAspectRatio;
 }
 
-void S60VideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode ratio)
+void S60ViewFinderWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode ratio)
 {
     // TODO:
 }
 
-void S60VideoWidgetControl::setCustomAspectRatio(const QSize &ratio)
+void S60ViewFinderWidgetControl::setCustomAspectRatio(const QSize &ratio)
 {
     m_customAspectRatio = ratio;
 }
 
-bool S60VideoWidgetControl::isFullScreen() const
+bool S60ViewFinderWidgetControl::isFullScreen() const
 {
     return m_widget->isFullScreen();
 }
 
-void S60VideoWidgetControl::setFullScreen(bool fullScreen)
+void S60ViewFinderWidgetControl::setFullScreen(bool fullScreen)
 {
     if (fullScreen) {
         m_widget->setWindowFlags(m_widget->windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
@@ -210,7 +179,7 @@ void S60VideoWidgetControl::setFullScreen(bool fullScreen)
     }
 }
 
-int S60VideoWidgetControl::brightness() const
+int S60ViewFinderWidgetControl::brightness() const
 {
     int brightness = 0;
 
@@ -219,14 +188,14 @@ int S60VideoWidgetControl::brightness() const
     return brightness / 10;
 }
 
-void S60VideoWidgetControl::setBrightness(int brightness)
+void S60ViewFinderWidgetControl::setBrightness(int brightness)
 {
     // TODO:
 
     emit brightnessChanged(brightness);
 }
 
-int S60VideoWidgetControl::contrast() const
+int S60ViewFinderWidgetControl::contrast() const
 {
     int contrast = 0;
 
@@ -235,14 +204,14 @@ int S60VideoWidgetControl::contrast() const
     return contrast / 10;
 }
 
-void S60VideoWidgetControl::setContrast(int contrast)
+void S60ViewFinderWidgetControl::setContrast(int contrast)
 {
     // TODO:
 
     emit contrastChanged(contrast);
 }
 
-int S60VideoWidgetControl::hue() const
+int S60ViewFinderWidgetControl::hue() const
 {
     int hue = 0;
 
@@ -251,14 +220,14 @@ int S60VideoWidgetControl::hue() const
     return hue / 10;
 }
 
-void S60VideoWidgetControl::setHue(int hue)
+void S60ViewFinderWidgetControl::setHue(int hue)
 {
     // TODO:
 
     emit hueChanged(hue);
 }
 
-int S60VideoWidgetControl::saturation() const
+int S60ViewFinderWidgetControl::saturation() const
 {
     int saturation = 0;
 
@@ -267,7 +236,7 @@ int S60VideoWidgetControl::saturation() const
     return saturation / 10;
 }
 
-void S60VideoWidgetControl::setSaturation(int saturation)
+void S60ViewFinderWidgetControl::setSaturation(int saturation)
 {
     // TODO:
 

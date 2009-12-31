@@ -58,8 +58,6 @@
 
 QTM_USE_NAMESPACE
 
-class S60VideoWidgetControl;
-
 class MVFProcessor
 {
 public:
@@ -133,7 +131,6 @@ public:
     bool startCamera();
     void stopCamera();
     void capture();
-    void setVFProcessor(MVFProcessor* VFProcessor);
     
     // for mediacontrol
     void startRecording();
@@ -200,14 +197,13 @@ private:
     //ADDED
     CCameraEngine* m_cameraEngine;
     QSize m_captureSize;
-    QSize iViewFinderSize;
+    QSize m_VFWidgetSize;
+    TSize iVFSize;
     TInt m_deviceIndex; //index indication chosen camera device
     mutable int iError;
     // information about camera
     TCameraInfo m_info;
     MVFProcessor* m_VFProcessor;
-    S60VideoWidgetControl* m_videoWidgetControl;
-    
 };
 
 #endif

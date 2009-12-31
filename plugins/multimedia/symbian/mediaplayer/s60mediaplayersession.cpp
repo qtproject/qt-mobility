@@ -237,8 +237,8 @@ void S60MediaPlayerSession::initComplete()
 
 void S60MediaPlayerSession::playComplete()
 {
-    setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::EndOfMedia);
+    setState(QMediaPlayer::StoppedState);
     emit positionChanged(0);
     stopTimer();
 }

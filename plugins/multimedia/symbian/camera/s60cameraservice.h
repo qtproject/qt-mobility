@@ -62,7 +62,7 @@ class S60CameraFocusControl;
 class S60CameraExposureControl;
 class S60CameraImageProcessingControl;
 class S60CameraImageCaptureControl;
-class S60VideoWidgetControl;
+class S60ViewFinderWidgetControl;
 
 class S60CameraService : public QMediaService
 {
@@ -106,7 +106,7 @@ private:
     S60CameraImageCaptureControl *m_imageCaptureControl;
     S60VideoOutputControl *m_videoOutput;
     S60MediaControl  *m_media;
-    S60VideoWidgetControl *m_videoWidget;
+    S60ViewFinderWidgetControl *m_viewFinderWidget;
 };
 
 #endif

@@ -45,20 +45,35 @@
 #include <QtCore/qobject.h>
 #include <QVideoWidgetControl>
 
-class S60VideoWidget;
+#include "s60camerasession.h"
 
 QTM_USE_NAMESPACE
 
-class S60VideoWidgetControl
+class S60ViewFinderWidget : public QWidget, public MVFProcessor
+{
+public:
+    S60ViewFinderWidget(QWidget *parent = 0);
+    virtual ~S60ViewFinderWidget() {};
+    
+protected:
+    void ViewFinderFrameReady(const QImage& image);
+    
+protected:
+    void paintEvent(QPaintEvent *);
+    
+    QPixmap m_pixmapImage;
+};
+
+class S60ViewFinderWidgetControl
         : public QVideoWidgetControl
 {
     Q_OBJECT
 	
 public:
-    S60VideoWidgetControl(QObject *parent = 0);
-    virtual ~S60VideoWidgetControl();
+    S60ViewFinderWidgetControl(QObject *parent = 0);
+    virtual ~S60ViewFinderWidgetControl();
 
-    QWidget *videoWidget();
+    S60ViewFinderWidget *videoWidget();
 
     QVideoWidget::AspectRatioMode aspectRatioMode() const;
     QSize customAspectRatio() const;
@@ -95,7 +110,7 @@ signals:
 private:
     void windowExposed();
 
-    S60VideoWidget *m_widget;
+    S60ViewFinderWidget *m_widget;
     WId m_windowId;
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QSize m_customAspectRatio;

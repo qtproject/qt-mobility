@@ -54,7 +54,7 @@
 #include "s60cameraimagecapturecontrol.h"
 #include "S60mediacontrol.h"
 #include "S60camerasession.h"
-#include "S60videowidget.h"
+#include "S60viewfinderwidget.h"
 #include "S60videooutputcontrol.h"
 #include "S60mediacontainercontrol.h"
 #include "s60videoencoder.h"
@@ -75,7 +75,7 @@ S60CameraService::S60CameraService(QObject *parent)
     m_media = new S60MediaControl(m_session, this);
     m_mediaFormat = new S60MediaContainerControl(m_session, this);
     m_videoEncoder = new S60VideoEncoder(m_session, this);
-    m_videoWidget = new S60VideoWidgetControl(this);
+    m_viewFinderWidget = new S60ViewFinderWidgetControl(this);
     m_videoOutput = new S60VideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
@@ -110,7 +110,7 @@ QMediaControl *S60CameraService::control(const char *name) const
         return m_exposureControl;
     
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
-        return m_videoWidget;
+        return m_viewFinderWidget;
     
     if(qstrcmp(name,QCameraFocusControl_iid) == 0)
         return m_focusControl;
@@ -145,7 +145,7 @@ void S60CameraService::videoOutputChanged(QVideoOutputControl::Output output)
         m_control->setVideoOutput(0);
         break;
     case QVideoOutputControl::WidgetOutput:
-        m_control->setVideoOutput(m_videoWidget);
+        m_control->setVideoOutput(m_viewFinderWidget);
         break;
     default:
         qWarning("Invalid video output selection");
