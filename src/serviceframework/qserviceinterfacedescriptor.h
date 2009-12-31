@@ -44,7 +44,7 @@
 
 #include <QString>
 #include <QVariant>
-#include "qmobilityglobal.h"
+#include "qservice.h"
 
 QT_USE_NAMESPACE
 
@@ -90,7 +90,7 @@ public:
 
     bool isValid() const;
 
-    bool inSystemScope() const;
+    QService::Scope scope() const;
 
     QVariant property(QServiceInterfaceDescriptor::PropertyKey key) const;
     QString customProperty(const QString& key) const;

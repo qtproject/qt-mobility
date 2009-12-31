@@ -44,6 +44,7 @@
 
 #include "qmobilityglobal.h"
 
+#include "qservice.h"
 #include "qserviceinterfacedescriptor.h"
 #include "qservicefilter.h"
 
@@ -65,12 +66,8 @@ class Q_SERVICEFW_EXPORT QServiceManager : public QObject
 {
     Q_OBJECT
 public:
-    enum Scope {
-        UserScope,
-        SystemScope
-    };
 
-    enum Error {
+   enum Error {
         NoError,
         StorageAccessError,
         InvalidServiceLocation,
@@ -85,10 +82,10 @@ public:
     };
 
     explicit QServiceManager(QObject *parent = 0);
-    explicit QServiceManager(Scope scope, QObject *parent = 0);
+    explicit QServiceManager(QService::Scope scope, QObject *parent = 0);
     ~QServiceManager();
 
-    Scope scope() const;
+    QService::Scope scope() const;
 
     QStringList findServices(const QString& interfaceName = QString()) const;
     QList<QServiceInterfaceDescriptor> findInterfaces(const QServiceFilter& filter = QServiceFilter()) const;
@@ -145,8 +142,8 @@ protected:
     void disconnectNotify(const char *signal);
 
 Q_SIGNALS:
-    void serviceAdded(const QString& serviceName, QServiceManager::Scope scope);
-    void serviceRemoved(const QString& serviceName, QServiceManager::Scope scope);
+    void serviceAdded(const QString& serviceName, QService::Scope scope);
+    void serviceRemoved(const QString& serviceName, QService::Scope scope);
 
 private:
     friend class QServiceManagerPrivate;

@@ -230,7 +230,7 @@ bool CommandProcessor::setOptions(const QStringList &options)
     QMutableListIterator<QString> i(opts);
     while (i.hasNext()) {
         if (i.next() == "--system") {
-            serviceManager = new QServiceManager(QServiceManager::SystemScope, this);
+            serviceManager = new QServiceManager(QService::SystemScope, this);
             i.remove();
         }
     }
