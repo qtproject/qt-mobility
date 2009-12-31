@@ -53,7 +53,7 @@ class QServiceInterfaceDescriptor;
 class QServiceContext;
 class QAbstractSecuritySession;
 
-class Q_SFW_EXPORT QServicePluginInterface
+class Q_SERVICEFW_EXPORT QServicePluginInterface
 {
 public:
     QServicePluginInterface();

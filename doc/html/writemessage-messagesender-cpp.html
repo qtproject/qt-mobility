@@ -173,6 +173,7 @@
         foreach (const QMessageAccountId &amp;id, manager.queryAccounts()) {
             QMessageAccount account(id);
 
+            <span class="comment">// What is the most capable message type supported by this account?</span>
             QMessage::Type type(QMessage::NoType);
             if (account.messageTypes() &amp; QMessage::Email) {
                 type = QMessage::Email;
@@ -223,9 +224,11 @@
         if (!name.isEmpty()) {
             QPair&lt;QMessage::Type, QMessageAccountId&gt; details = accountDetails[name];
 
-            <span class="comment">// Disable subject and attachments for SMS</span>
+            <span class="comment">// Enable subject only for email</span>
+            subjectEdit-&gt;setEnabled(details.first == QMessage::Email);
+
+            <span class="comment">// Disable attachments for SMS</span>
             const bool smsOnly(details.first == QMessage::Sms);
-            subjectEdit-&gt;setEnabled(!smsOnly);
             addButton-&gt;setEnabled(!smsOnly);
             removeButton-&gt;setEnabled(!smsOnly);
         }
@@ -238,14 +241,17 @@
 
     void MessageSender::send()
     {
+        QString accountName(accountCombo-&gt;currentText());
+        if (accountName.isEmpty()) {
+            QMessageBox::warning(0, tr(&quot;Missing information&quot;), tr(&quot;No account is selected for transmission&quot;));
+            return;
+        }
+
         QMessage message;
 
-        QString name(accountCombo-&gt;currentText());
-        if (!name.isEmpty()) {
-            QPair&lt;QMessage::Type, QMessageAccountId&gt; details = accountDetails[name];
-            message.setType(details.first);
-            message.setParentAccountId(details.second);
-        }
+        QPair&lt;QMessage::Type, QMessageAccountId&gt; details = accountDetails[accountName];
+        message.setType(details.first);
+        message.setParentAccountId(details.second);
 
         QString to(toEdit-&gt;text());
         if (to.isEmpty()) {
@@ -253,8 +259,10 @@
             return;
         }
 
-        QMessageAddressList toList;
+        <span class="comment">// Find the address type to use for this message</span>
         QMessageAddress::Type addrType(message.type() == QMessage::Email ? QMessageAddress::Email : QMessageAddress::Phone);
+
+        QMessageAddressList toList;
         foreach (const QString &amp;item, to.split(QRegExp(&quot;\\s&quot;), QString::SkipEmptyParts)) {
             toList.append(QMessageAddress(addrType, item));
         }
@@ -300,17 +308,17 @@
         if (newState == QMessageService::FinishedState) {
             if (service.error() == QMessageManager::NoError) {
                 QMessageBox::information(0, tr(&quot;Success&quot;), tr(&quot;Message sent successfully&quot;));
-                sendButton-&gt;setEnabled(true);
             } else {
                 QMessageBox::warning(0, tr(&quot;Failed&quot;), tr(&quot;Unable to send message&quot;));
 
+                <span class="comment">// Try to delete the failed message</span>
                 if (!manager.removeMessage(sendId)) {
                     qWarning() &lt;&lt; &quot;Unable to remove failed message:&quot; &lt;&lt; sendId.toString();
                 }
-
-                sendButton-&gt;setEnabled(true);
-                sendId = QMessageId();
             }
+
+            sendId = QMessageId();
+            sendButton-&gt;setEnabled(true);
         }
     }</pre>
 <p /><address><hr /><div align="center">

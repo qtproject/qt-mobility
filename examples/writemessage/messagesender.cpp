@@ -154,10 +154,12 @@ void MessageSender::populateAccounts()
     setCursor(Qt::BusyCursor);
 #endif
 
+//! [accounts-listing]
     // Find the list of available accounts and add them to combo box
     foreach (const QMessageAccountId &id, manager.queryAccounts()) {
         QMessageAccount account(id);
 
+        // What is the most capable message type supported by this account?
         QMessage::Type type(QMessage::NoType);
         if (account.messageTypes() & QMessage::Email) {
             type = QMessage::Email;
@@ -173,6 +175,7 @@ void MessageSender::populateAccounts()
             accountCombo->addItem(name);
         }
     }
+//! [accounts-listing]
 
     if (accountDetails.isEmpty()) {
         QMessageBox::warning(0, tr("Cannot send"), tr("No accounts are available to send with!"));
@@ -202,19 +205,23 @@ void MessageSender::addAttachment()
     }
 }
 
+//! [account-selected]
 void MessageSender::accountSelected(int index)
 {
     QString name(accountCombo->itemText(index));
     if (!name.isEmpty()) {
         QPair<QMessage::Type, QMessageAccountId> details = accountDetails[name];
 
-        // Disable subject and attachments for SMS
+        // Enable subject only for email
+        subjectEdit->setEnabled(details.first == QMessage::Email);
+
+        // Disable attachments for SMS
         const bool smsOnly(details.first == QMessage::Sms);
-        subjectEdit->setEnabled(!smsOnly);
         addButton->setEnabled(!smsOnly);
         removeButton->setEnabled(!smsOnly);
     }
 }
+//! [account-selected]
 
 void MessageSender::attachmentSelected(int index)
 {
@@ -223,28 +230,38 @@ void MessageSender::attachmentSelected(int index)
 
 void MessageSender::send()
 {
-    QMessage message;
-
-    QString name(accountCombo->currentText());
-    if (!name.isEmpty()) {
-        QPair<QMessage::Type, QMessageAccountId> details = accountDetails[name];
-        message.setType(details.first);
-        message.setParentAccountId(details.second);
+//! [associate-account]
+    QString accountName(accountCombo->currentText());
+    if (accountName.isEmpty()) {
+        QMessageBox::warning(0, tr("Missing information"), tr("No account is selected for transmission"));
+        return;
     }
 
+    QMessage message;
+
+    QPair<QMessage::Type, QMessageAccountId> details = accountDetails[accountName];
+    message.setType(details.first);
+    message.setParentAccountId(details.second);
+//! [associate-account]
+
+//! [set-recipients]
     QString to(toEdit->text());
     if (to.isEmpty()) {
         QMessageBox::warning(0, tr("Missing information"), tr("Please enter a recipient address"));
         return;
     }
 
-    QMessageAddressList toList;
+    // Find the address type to use for this message
     QMessageAddress::Type addrType(message.type() == QMessage::Email ? QMessageAddress::Email : QMessageAddress::Phone);
+
+    QMessageAddressList toList;
     foreach (const QString &item, to.split(QRegExp("\\s"), QString::SkipEmptyParts)) {
         toList.append(QMessageAddress(addrType, item));
     }
     message.setTo(toList);
+//! [set-recipients]
 
+//! [set-properties]
     if (message.type() == QMessage::Email) {
         QString subject(subjectEdit->text());
         if (subject.isEmpty()) {
@@ -260,7 +277,9 @@ void MessageSender::send()
         return;
     }
     message.setBody(text);
+//! [set-properties]
 
+//! [add-attachments]
     if (message.type() != QMessage::Sms) {
         if (attachmentsList->count()) {
             QStringList paths;
@@ -271,31 +290,36 @@ void MessageSender::send()
             message.appendAttachments(paths);
         }
     }
+//! [add-attachments]
 
+//! [send-message]
     if (service.send(message)) {
         sendButton->setEnabled(false);
         sendId = message.id();
     } else {
         QMessageBox::warning(0, tr("Failed"), tr("Unable to send message"));
     }
+//! [send-message]
 }
 
+//! [handle-response]
 void MessageSender::stateChanged(QMessageService::State newState)
 {
     if (newState == QMessageService::FinishedState) {
         if (service.error() == QMessageManager::NoError) {
             QMessageBox::information(0, tr("Success"), tr("Message sent successfully"));
-            sendButton->setEnabled(true);
         } else {
             QMessageBox::warning(0, tr("Failed"), tr("Unable to send message"));
 
+            // Try to delete the failed message
             if (!manager.removeMessage(sendId)) {
                 qWarning() << "Unable to remove failed message:" << sendId.toString();
             }
-
-            sendButton->setEnabled(true);
-            sendId = QMessageId();
         }
+
+        sendId = QMessageId();
+        sendButton->setEnabled(true);
     }
 }
+//! [handle-response]
 

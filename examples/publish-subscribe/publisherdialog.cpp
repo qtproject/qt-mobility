@@ -66,6 +66,7 @@ PublisherDialog::PublisherDialog(QWidget *parent)
     //! [1]
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
     connect(ui->intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
+    connect(ui->unsetIntButton, SIGNAL(clicked()), this, SLOT(unsetIntValue()));
     connect(ui->setStringButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
     connect(ui->setByteArrayButton, SIGNAL(clicked()), this, SLOT(setByteArrayValue()));
     //! [1]
@@ -97,6 +98,11 @@ void PublisherDialog::changeEvent(QEvent *e)
 void PublisherDialog::intValueChanged(int value)
 {
     publisher->setValue("intValue", value);
+}
+
+void PublisherDialog::unsetIntValue()
+{
+    publisher->resetValue("intValue");
 }
 
 void PublisherDialog::setStringValue()
