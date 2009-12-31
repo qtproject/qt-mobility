@@ -44,6 +44,8 @@
 #   include "qgeosatelliteinfosource_s60_p.h"
 #elif defined(Q_OS_WINCE) 
 #   include "qgeosatelliteinfosource_wince_p.h"
+#elif defined(Q_WS_MAEMO_6)
+#   include "qgeosatelliteinfosource_maemo_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -89,6 +91,16 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoSatelliteInfoSourceWinCE(parent);
+#elif defined(Q_WS_MAEMO_6)    
+    QGeoSatelliteInfoSourceMaemo *source = new QGeoSatelliteInfoSourceMaemo(parent);
+    int status = source->init();
+
+    if (status == -1) {
+        delete source;
+        return 0;
+    }
+
+    return source;
 #else
     Q_UNUSED(parent);
 #endif

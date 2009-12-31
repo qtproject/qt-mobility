@@ -44,6 +44,8 @@
 #   include "qgeopositioninfosource_s60_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeopositioninfosource_wince_p.h"
+#elif defined(Q_WS_MAEMO_6)
+#   include "qgeopositioninfosource_maemo_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -188,6 +190,16 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
+#elif defined(Q_WS_MAEMO_6)    
+    QGeoPositionInfoSource *source = new QGeoPositionInfoSourceMaemo(parent);
+
+    int status = source->init();
+    if (status == -1) {
+        delete source;
+        return 0;
+    }
+
+    return source;
 #else 
     Q_UNUSED(parent); 
 #endif 

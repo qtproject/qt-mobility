@@ -64,6 +64,19 @@ wince* {
     LIBS += -lgpsapi
 }
 
+maemo6 {
+    CONFIG += qdbus link_pkgconfig
+
+    SOURCES += qgeopositioninfosource_maemo.cpp \
+                qgeosatelliteinfosource_maemo.cpp \
+                dbuscomm_maemo.cpp \
+                dbusserver_maemo.cpp
+    HEADERS += qgeopositioninfosource_maemo_p.h \
+                qgeosatelliteinfosource_maemo_p.h \
+                dbuscomm_maemo_p.h \
+                dbusserver_maemo_p.h
+}
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES +=  qlocationutils.cpp \
