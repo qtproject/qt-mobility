@@ -58,7 +58,7 @@ public:
     int majorVersion;
     int minorVersion;
     QServiceFilter::VersionMatchRule matchingRule;
-    QHash<QString,QString> customProperties;
+    QHash<QString,QString> customAttributes;
     QStringList capabilities;
     QServiceFilter::CapabilityMatchRule capMatchingRule;
 };
@@ -168,7 +168,7 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
     d->majorVersion = other.d->majorVersion;
     d->minorVersion = other.d->minorVersion;
     d->matchingRule = other.d->matchingRule;
-    d->customProperties = other.d->customProperties;
+    d->customAttributes = other.d->customAttributes;
     d->capabilities = other.d->capabilities;
     d->capMatchingRule = other.d->capMatchingRule;
 
@@ -302,54 +302,46 @@ int QServiceFilter::interfaceMinorVersion() const
 }
 
 /*!
-    \fn  void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
+    \fn  void QServiceFilter::setCustomAttribute(const QString& key, const QString& value)
     
-    The filter only matches implementations which have the custom property
+    The filter only matches implementations which have the custom attribute
     \a key with the given \a value. Such constraints are specified via the 
     \i{<customproperty>} tag within the service xml.
 
-    \sa customProperty(), removeCustomProperty()
+    \sa customAttribute(), clearCustomAttribute()
 */
-void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
+void QServiceFilter::setCustomAttribute(const QString& key, const QString& value)
 {
-    d->customProperties.insert(key, value);
+    d->customAttributes.insert(key, value);
 }
 
 /*!
-    \fn  QString QServiceFilter::customProperty(const QString& key) const
+    \fn  QString QServiceFilter::customAttribute(const QString& key) const
     
-    Returns the value for the custom property \a key; otherwise
+    Returns the value for the custom attribute \a key; otherwise
     returns a null string.
 
-    \sa setCustomProperty(), removeCustomProperty()
+    \sa setCustomAttribute(), clearCustomAttribute()
 */
-QString QServiceFilter::customProperty(const QString& key) const
+QString QServiceFilter::customAttribute(const QString& key) const
 {
-    return d->customProperties.value(key);
+    return d->customAttributes.value(key);
 }
 
 /*!
-    \fn  void QServiceFilter::removeCustomProperty(const QString &key)
+    \fn  void QServiceFilter::clearCustomAttribute(const QString &key)
     
-    Removes the custom property \a key from the filter's set of constraints
+    Clears the custom attribute \a key from the filter's set of constraints.
+    If \a key is empty all custom attributes are cleared.
 
-    \sa clearCustomProperties(), setCustomProperty()
+    \sa setCustomAttribute()
 */
-void QServiceFilter::removeCustomProperty(const QString &key)
+void QServiceFilter::clearCustomAttribute(const QString &key)
 {
-    d->customProperties.remove(key);
-}
-
-/*!
-    \fn  void QServiceFilter::clearCustomProperties()
-    
-    Clears all custom properties from the filter's set of constraints
-
-    \sa removeCustomProperty()
-*/
-void QServiceFilter::clearCustomProperties()
-{
-    d->customProperties.clear();
+    if (key.isEmpty())
+        d->customAttributes.clear();
+    else
+        d->customAttributes.remove(key);
 }
 
 /*!
@@ -365,13 +357,13 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 }
 
 /*!
-    \fn  QList<QString> QServiceFilter::customPropertyKeys() const
+    \fn  QList<QString> QServiceFilter::customAttributes() const
     
     Returns the list of custom keys which have been added to the filter.
 */
-QStringList QServiceFilter::customPropertyKeys() const
+QStringList QServiceFilter::customAttributes() const
 {
-    return d->customProperties.keys();
+    return d->customAttributes.keys();
 }
 
 /*!
@@ -442,7 +434,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
         << mj
         << mn
         << versionrule
-        << sf.d->customProperties
+        << sf.d->customAttributes
         << caprule
         << sf.d->capabilities;
     return out;
@@ -484,7 +476,7 @@ QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
         >> mj
         >> mn
         >> versionrule
-        >> sf.d->customProperties
+        >> sf.d->customAttributes
         >> caprule
         >> sf.d->capabilities;
 

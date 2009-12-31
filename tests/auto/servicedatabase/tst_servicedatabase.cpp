@@ -608,8 +608,8 @@ void ServiceDatabaseUnitTest::searchByCustomAttribute()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),5);
 
-    filter.setCustomProperty("bot", "automatic");
-    QCOMPARE(filter.customProperty("bot"), QString("automatic"));
+    filter.setCustomAttribute("bot", "automatic");
+    QCOMPARE(filter.customAttribute("bot"), QString("automatic"));
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),3);
 
@@ -629,9 +629,9 @@ void ServiceDatabaseUnitTest::searchByCustomAttribute()
     QVERIFY(compareDescriptor(interfaces[2], "com.cybertron.transform", "Autobot", 1, 9,
                 capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
-    filter.setCustomProperty("extension","multidrive");
-    QCOMPARE(filter.customProperty("extension"), QString("multidrive"));
-    QCOMPARE(filter.customProperty("bot"), QString("automatic"));
+    filter.setCustomAttribute("extension","multidrive");
+    QCOMPARE(filter.customAttribute("extension"), QString("multidrive"));
+    QCOMPARE(filter.customAttribute("bot"), QString("automatic"));
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),1);
     
@@ -642,7 +642,7 @@ void ServiceDatabaseUnitTest::searchByCustomAttribute()
                 capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     QServiceFilter manualFilter;
-    manualFilter.setCustomProperty("bot", "manual");
+    manualFilter.setCustomAttribute("bot", "manual");
     interfaces = database.getInterfaces(manualFilter);
     QCOMPARE(interfaces.count(),2);
 
@@ -657,7 +657,7 @@ void ServiceDatabaseUnitTest::searchByCustomAttribute()
                 capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     QServiceFilter multidriveFilter;
-    multidriveFilter.setCustomProperty("extension", "multidrive");
+    multidriveFilter.setCustomAttribute("extension", "multidrive");
     interfaces = database.getInterfaces(multidriveFilter);
     QCOMPARE(interfaces.count(),1);
 
@@ -670,36 +670,36 @@ void ServiceDatabaseUnitTest::searchByCustomAttribute()
     //test whether querying a custom property will affect the filter
     filter.setServiceName("");
     filter.setInterface("");
-    filter.clearCustomProperties();
+    filter.clearCustomAttribute();
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
-    QString customProperty = filter.customProperty("spark");
+    QString customProperty = filter.customAttribute("spark");
     QVERIFY(customProperty.isEmpty());
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
 
     //test the removal of a custom property from the filter
-    filter.setCustomProperty("bot", "automatic");
-    filter.setCustomProperty("extension", "multidrive");
-    QCOMPARE(filter.customPropertyKeys().length(), 2);
-    filter.removeCustomProperty("bot");
-    QCOMPARE(filter.customPropertyKeys().length(), 1);
-    filter.removeCustomProperty("extension");
-    QCOMPARE(filter.customPropertyKeys().length(), 0);
+    filter.setCustomAttribute("bot", "automatic");
+    filter.setCustomAttribute("extension", "multidrive");
+    QCOMPARE(filter.customAttributes().length(), 2);
+    filter.clearCustomAttribute("bot");
+    QCOMPARE(filter.customAttributes().length(), 1);
+    filter.clearCustomAttribute("extension");
+    QCOMPARE(filter.customAttributes().length(), 0);
 
     //test clearing of custom attributes
-    filter.setCustomProperty("bot", "automatic");
-    filter.setCustomProperty("extension", "multidrive");
-    QCOMPARE(filter.customPropertyKeys().length(),2);
+    filter.setCustomAttribute("bot", "automatic");
+    filter.setCustomAttribute("extension", "multidrive");
+    QCOMPARE(filter.customAttributes().length(),2);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
-    filter.clearCustomProperties();
-    QCOMPARE(filter.customPropertyKeys().length(), 0);
+    filter.clearCustomAttribute();
+    QCOMPARE(filter.customAttributes().length(), 0);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
 
     //test searching for an empty custom property
-    filter.setCustomProperty("weapon", "");
+    filter.setCustomAttribute("weapon", "");
     interfaces = database.getInterfaces(filter);
     customs.clear();
     customs["bot"] = "automatic";
@@ -715,19 +715,19 @@ void ServiceDatabaseUnitTest::searchByCustomAttribute()
                 capabilities, customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
 
 
-    filter.clearCustomProperties();
+    filter.clearCustomAttribute();
 
     //test searching against a non-existent custom property
-    filter.setCustomProperty("fluxcapacitor", "fluxing");
+    filter.setCustomAttribute("fluxcapacitor", "fluxing");
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 0);
     QCOMPARE(database.lastError().code(), DBError::NoError);
 
     //try searching for custom property with service name and interface constraints
-    filter.clearCustomProperties();
+    filter.clearCustomAttribute();
     filter.setServiceName("autobot");
     filter.setInterface("com.cybertron.transform", "2.0");
-    filter.setCustomProperty("bot", "automatic");
+    filter.setCustomAttribute("bot", "automatic");
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),2);
     QVERIFY(interfaces[0].majorVersion() == 2 && interfaces[0].minorVersion() == 7);
@@ -735,11 +735,11 @@ void ServiceDatabaseUnitTest::searchByCustomAttribute()
 
     //test that there is a difference between querying a custom
     //property with an empty value and a custom property that has not been set
-    filter.clearCustomProperties();
-    filter.setCustomProperty("AllSpark", "");
-    QVERIFY(!filter.customProperty("AllSpark").isNull());
-    QVERIFY(filter.customProperty("AllSpark").isEmpty());
-    QVERIFY(filter.customProperty("Non-existentProperty").isNull());
+    filter.clearCustomAttribute();
+    filter.setCustomAttribute("AllSpark", "");
+    QVERIFY(!filter.customAttribute("AllSpark").isNull());
+    QVERIFY(filter.customAttribute("AllSpark").isEmpty());
+    QVERIFY(filter.customAttribute("Non-existentProperty").isNull());
 
     QVERIFY(database.close());
 }
