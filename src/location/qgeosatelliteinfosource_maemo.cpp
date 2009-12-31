@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qsatelliteinfosourcemaemo.h"
+#include "qsatelliteinfosource_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -121,5 +121,6 @@ void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
     void requestTimeout();
 #endif
 
+#include "moc_qgeosatelliteinfosource_maemo_p.cpp"
 QTM_END_NAMESPACE
 

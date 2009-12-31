@@ -42,9 +42,9 @@
 #ifndef QGEOSATELLITEINFOSOURCE_MAEMO_H
 #define QGEOSATELLITEINFOSOURCE_MAEMO_H
 
-#include "qsatelliteinfosource.h"
-#include "qsatelliteinfo.h"
-#include "dbuscomm_maemo.h"
+#include "qgeosatelliteinfosource.h"
+#include "qgeosatelliteinfo.h"
+#include "dbuscomm_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 

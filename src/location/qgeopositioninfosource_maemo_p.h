@@ -43,7 +43,7 @@
 #define QGEOPOSITIONINFOSOURCEMAEMO_H
 
 #include "qgeopositioninfosource.h"
-#include "dbuscomm.h"
+#include "dbuscomm_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 

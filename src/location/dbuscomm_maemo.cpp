@@ -185,5 +185,6 @@ void DBusComm::createUniqueName()
 
 }
 
+#include "moc_dbuscomm_maemo_p.cpp"
 QTM_END_NAMESPACE
 

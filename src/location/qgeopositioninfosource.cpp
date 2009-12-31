@@ -191,7 +191,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
 #elif defined(Q_WS_MAEMO_6)    
-    QGeoPositionInfoSource *source = new QGeoPositionInfoSourceMaemo(parent);
+    QGeoPositionInfoSourceMaemo *source = new QGeoPositionInfoSourceMaemo(parent);
 
     int status = source->init();
     if (status == -1) {

@@ -80,5 +80,6 @@ Q_NOREPLY void DBusServer::currentSettings(const QGeoPositionInfoSource::Positio
 
 }
 
+#include "moc_dbusserver_maemo_p.cpp"
 QTM_END_NAMESPACE
 

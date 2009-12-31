@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgeopositioninfosourcemaemo.h"
+#include "qgeopositioninfosource_maemo_p.h"
 #include <iostream>
 
 #if 0 
@@ -171,5 +171,6 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
     if(timeout) {}
 }
 
+#include "moc_qgeopositioninfosource_maemo_p.cpp"
 QTM_END_NAMESPACE
 
