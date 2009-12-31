@@ -44,6 +44,7 @@
 #include <iostream>
 using namespace std;
 
+QTM_BEGIN_NAMESPACE
 
 DBusComm::DBusComm()
 {
@@ -183,3 +184,6 @@ void DBusComm::createUniqueName()
     myInterface = "com.nokia.qlocation.updates";
 
 }
+
+QTM_END_NAMESPACE
+

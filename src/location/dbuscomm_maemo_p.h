@@ -50,6 +50,8 @@
 #include "qgeopositioninfosource.h"
 #include "dbusserver_maemo_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class DBusServer;
 class DBusComm: public QObject
 {
@@ -86,5 +88,7 @@ signals:
     void receivedMessage(const QByteArray &msg);
     void receivedPositionUpdate(const QGeoPositionInfo &update);
 };
+
+QTM_END_NAMESPACE
 
 #endif

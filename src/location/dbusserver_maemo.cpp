@@ -41,6 +41,8 @@
 
 #include "dbusserver_maemo_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 void DBusServer::setHandlerObject(DBusComm* p)
 {
     handler = p;
@@ -77,3 +79,6 @@ Q_NOREPLY void DBusServer::currentSettings(const QGeoPositionInfoSource::Positio
     return;
 
 }
+
+QTM_END_NAMESPACE
+

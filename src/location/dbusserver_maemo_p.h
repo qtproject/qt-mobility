@@ -48,6 +48,8 @@
 #include "qgeopositioninfo.h"
 #include "qgeopositioninfosource.h"
 
+QTM_BEGIN_NAMESPACE
+
 class DBusComm;
 class DBusServer: public QDBusAbstractAdaptor
 {
@@ -66,5 +68,7 @@ public slots:
     Q_NOREPLY void currentSettings(const QGeoPositionInfoSource::PositioningMethod methods,
                                    const int interval);
 };
+
+QTM_END_NAMESPACE
 
 #endif
