@@ -14,3 +14,5 @@ SOURCES = main.cpp \
     settings.cpp
 FORMS += cameracapture.ui \
     settings.ui
+    
+symbian:TARGET.CAPABILITY = UserEnvironment
