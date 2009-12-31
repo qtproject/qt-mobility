@@ -5,18 +5,16 @@ exists($${EPOCROOT}epoc32\release\armv5\lib\tunerutility.lib) {
 	LIBS += -ltunerutility
 	LIBS += -lAudioOutputRouting
 	DEFINES += TUNERLIBUSED
-	INCLUDEPATH += $${EPOCROOT}epoc32\include\mmf\common
-	
-} else {
-       warning("Radio isn't compiled in 3.1 due to missing tuner libraries.")
+	INCLUDEPATH += $${EPOCROOT}epoc32\include\mmf\common	
 }
 
 exists($${EPOCROOT}epoc32\release\armv5\lib\Radio_Utility.lib) {
    	CONFIG += RADIOUTILITYLIB
 	LIBS += -lRadio_Utility
 	DEFINES += RADIOUTILITYLIBUSED
-} else {
-       warning("Radio isn't compiled in 3.2 -> due to missing radio utility libraries.")
+}
+contains(QT_CONFIG, TUNERLIB) && !contains(QT_CONFIG, RADIOUTILITYLIB) {
+	warning("Radio isn't compiled in due to missing libraries. (3.1 tuner and since 3.2 radio utility libraries)")
 }
 
 TUNERLIB {
