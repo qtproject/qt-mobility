@@ -85,7 +85,7 @@ void CntDisplayLabel::setDisplayLabelDetails()
     
     //Group
     QList<QPair<QLatin1String, QLatin1String> > preferredGroupDisplayLabelDetails;
-    preferredGroupDisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
+    preferredGroupDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldCustomLabel)));
     m_groupDisplayLabelDetails.append(preferredGroupDisplayLabelDetails);
 }
 
