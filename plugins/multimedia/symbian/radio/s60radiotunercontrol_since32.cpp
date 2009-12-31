@@ -295,6 +295,11 @@ bool S60RadioTunerControl::isAvailable() const
 	return m_available;
 }
 
+QtMedia::AvailabilityError S60RadioTunerControl::availabilityError() const
+{
+    return QtMedia::NoError; // TODO:
+}
+
 void S60RadioTunerControl::start()
 {
 	if (m_fmTunerUtility) {
@@ -323,7 +328,7 @@ QString S60RadioTunerControl::errorString() const
 }
 int S60RadioTunerControl::deviceCount()
 {
-   
+    return 1; // TODO:
 }
 
 void S60RadioTunerControl::MrpoStateChange(TPlayerState aState, TInt aError)

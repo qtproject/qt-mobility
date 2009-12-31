@@ -328,6 +328,11 @@ bool S60RadioTunerControl::isAvailable() const
     return m_available;
 }
 
+QtMedia::AvailabilityError availabilityError() const
+{
+    return QtMedia::NoError; // TODO:
+}
+
 void S60RadioTunerControl::start()
 {
     if (m_audioPlayerUtility) { 

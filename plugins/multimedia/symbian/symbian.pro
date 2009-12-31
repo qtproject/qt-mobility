@@ -34,8 +34,6 @@ MMP_RULES += EXPORTUNFROZEN
 
 #make a sis package from plugin + api + stub (plugin)
 pluginDep.sources = $${TARGET}.dll
-message($${QT_PLUGINS_BASE_DIR})
-message($${PLUGIN_SUBDIR})
 pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_SUBDIR}
 DEPLOYMENT += pluginDep      
 
