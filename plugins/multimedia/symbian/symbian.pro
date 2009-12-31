@@ -21,22 +21,8 @@ HEADERS += s60mediaserviceplugin.h \
 SOURCES += s60mediaserviceplugin.cpp \
            s60videooutputcontrol.cpp 
 
-!exists($${EPOCROOT}epoc32/release/armv5/lib/camerawrapper.lib) {
-	error("Camerawrapper libraries are missing.")
-}
-
-!exists($${EPOCROOT}epoc32/include/mpmediarecognizer.h) {
-	error("Media recognizer SDK plugin is missing")
-}
-
-exists($${EPOCROOT}epoc32/include/tuner/tuner.h) {
-	include(radio/radio.pri)
-	DEFINES += USE_INTERNAL_TUNERLIB
-} else {
-    warning("Radio isn't compiled in due to missing tuner libraries.")
-}
-
 include(camera/camera_s60.pri)
+include(radio/radio.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 include(audiosource/audiosource_s60.pri)
 
@@ -48,6 +34,8 @@ MMP_RULES += EXPORTUNFROZEN
 
 #make a sis package from plugin + api + stub (plugin)
 pluginDep.sources = $${TARGET}.dll
+message($${QT_PLUGINS_BASE_DIR})
+message($${PLUGIN_SUBDIR})
 pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_SUBDIR}
 DEPLOYMENT += pluginDep      
 
