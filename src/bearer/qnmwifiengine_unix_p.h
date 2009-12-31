@@ -112,8 +112,8 @@ private:
 
     QStringList devicePaths;
 
-    void getActiveConnectionsPaths();
-    void getKnownSsids();
+    void updateActiveConnectionsPaths();
+    void updateKnownSsids();
     void accessPointConnections();
     void knownConnections();
     QString deviceConnectionPath(const QString &mac);
@@ -144,7 +144,6 @@ private slots:
 
 Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);
-    void updateAccessPointState(const QString &, quint32);
 
 private slots:
     void accessPointAdded( const QString &aPath, QDBusObjectPath oPath);

@@ -127,10 +127,10 @@ QList<QNetworkConfigurationPrivate *> QNmWifiEngine::getConfigurations(bool *ok)
     if(!updated) {
         foundConfigurations.clear();
         if(knownSsids.isEmpty())
-            getKnownSsids(); // list of ssids that have user configurations.
+            updateKnownSsids(); // list of ssids that have user configurations.
 
         scanForAccessPoints();
-        getActiveConnectionsPaths();
+        updateActiveConnectionsPaths();
         knownConnections();
 
         accessPointConnections();
@@ -354,7 +354,7 @@ QNmWifiEngine *QNmWifiEngine::instance()
     return 0;
 }
 
-void  QNmWifiEngine::getKnownSsids()
+void  QNmWifiEngine::updateKnownSsids()
 {
     QStringList connectionServices;
     connectionServices << NM_DBUS_SERVICE_SYSTEM_SETTINGS;
@@ -371,7 +371,7 @@ void  QNmWifiEngine::getKnownSsids()
     }
 }
 
-void QNmWifiEngine::getActiveConnectionsPaths()
+void QNmWifiEngine::updateActiveConnectionsPaths()
 { //need to know which connection paths are currently active/connected
     QScopedPointer<QNetworkManagerInterface> dbIface;
     activeConnectionPaths.clear();
