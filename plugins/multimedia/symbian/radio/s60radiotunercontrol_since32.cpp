@@ -45,46 +45,40 @@
 #include <QtCore/qdebug.h>
 #include <radiofmtunerutility.h>
 
-
 S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
-    :QRadioTunerControl(parent)
-{
-    m_error = 0;
-    m_tunerState = 0;
-    m_apiTunerState = QRadioTuner::StoppedState;
-    audioInitializationComplete = false;
-    m_errorString = QString();
-    m_radioError = QRadioTuner::NoError;
-    m_muted = false;
-    m_isStereo = true;
-    m_stereoMode = QRadioTuner::Auto;
-    m_signal = 0;
-    m_currentBand = QRadioTuner::FM;
-    m_currentFreq = 89400000;
-    //m_step = 100000;
-    m_scanning = false;
-    m_tuners = 0;
-    m_vol = 100;
+    : QRadioTunerControl(parent)
+    , m_error(0)
+    , m_radioUtility(NULL)   
+    , m_fmTunerUtility(NULL)
+    , m_playerUtility(NULL)
+    , m_audioInitializationComplete(false)
+    , m_muted(false)
+    , m_isStereo(true)
+    , m_tuners(0)
+    , m_vol(100)
+    , m_signal(0)
+    , m_radioError(QRadioTuner::NoError)
+    , m_scanning(false)
+    , m_currentBand(QRadioTuner::FM)
+    , m_currentFreq(89400000)
+    , m_stereoMode(QRadioTuner::Auto)
+    , m_tunerState(0)
+    , m_apiTunerState(QRadioTuner::StoppedState)
+{   
     initRadio();
-
 }
 
 S60RadioTunerControl::~S60RadioTunerControl()
 {
-	if (m_fmTunerUtility)
-		{
+	if (m_fmTunerUtility) {
 		m_fmTunerUtility->Close();
-		}
+	}
 	
-	if(m_playerUtility)
-		{
+	if(m_playerUtility) {
 		m_playerUtility->Close();
-		}
+	}
 	
-	if (m_radioUtility)
-		{
-		delete m_radioUtility;
-		}
+	delete m_radioUtility;
 }
 
 QRadioTuner::State S60RadioTunerControl::state() const
@@ -154,8 +148,8 @@ QPair<int,int> S60RadioTunerControl::frequencyRange(QRadioTuner::Band band) cons
     int bandError = KErrNone;
     TFmRadioFrequencyRange range;
     
-    if (m_fmTunerUtility){
-        bandError = m_fmTunerUtility->GetFrequencyRange(range, bottomFreq, topFreq );
+    if (m_fmTunerUtility) {
+        bandError = m_fmTunerUtility->GetFrequencyRange(range, bottomFreq, topFreq);
     }    
     if (!bandError) {
         return qMakePair<int,int>(bottomFreq, topFreq);
@@ -177,7 +171,7 @@ QRadioTuner::StereoMode S60RadioTunerControl::stereoMode() const
 void S60RadioTunerControl::setStereoMode(QRadioTuner::StereoMode mode)
 {
 	if (m_fmTunerUtility) { 
-	    if (QRadioTuner::ForceMono == mode ) {
+	    if (QRadioTuner::ForceMono == mode) {
 	    	m_fmTunerUtility->ForceMonoReception(true);
 	    	m_stereoMode = QRadioTuner::ForceMono;
 			m_isStereo = false;
@@ -315,7 +309,7 @@ void S60RadioTunerControl::stop()
 		m_playerUtility->Stop();
 		m_apiTunerState = QRadioTuner::StoppedState;
 		emit stateChanged(m_apiTunerState);
-		}
+    }
 }
 
 QRadioTuner::Error S60RadioTunerControl::error() const
@@ -347,7 +341,7 @@ void S60RadioTunerControl::MrpoStateChange(TPlayerState aState, TInt aError)
 			m_apiTunerState = QRadioTuner::ActiveState;
 			//m_radioError = QRadioTuner::OpenError;
 			emit stateChanged(m_apiTunerState);
-		} if (aState == ERadioPlayerPlaying) {
+		} else if (aState == ERadioPlayerPlaying) {
 			m_apiTunerState = QRadioTuner::ActiveState;
 			//m_radioError = QRadioTuner::OpenError;
 			emit stateChanged(m_apiTunerState);
@@ -424,7 +418,7 @@ void S60RadioTunerControl::MrftoFmTransmitterStatusChange(TBool aActive)
 	//no actions
 }
 
-void S60RadioTunerControl::MrftoAntennaStatusChange( TBool aAttached )
+void S60RadioTunerControl::MrftoAntennaStatusChange(TBool aAttached)
 {
 	if (aAttached && m_tunerControl) {
 		m_playerUtility->Play();
@@ -433,7 +427,7 @@ void S60RadioTunerControl::MrftoAntennaStatusChange( TBool aAttached )
 	}
 }
 
-void S60RadioTunerControl::MrftoOfflineModeStatusChange(TBool aOfflineMode)
+void S60RadioTunerControl::MrftoOfflineModeStatusChange(TBool /*aOfflineMode*/)
 {
 
 }
@@ -442,8 +436,7 @@ void S60RadioTunerControl::MrftoFrequencyRangeChange(TFmRadioFrequencyRange aBan
 {
 	if (aBand == EFmRangeEuroAmerica) {
 		setBand(QRadioTuner::FM);
-	}
-	else if (aBand == EFmRangeJapan) {
+	} else if (aBand == EFmRangeJapan) {
 		//m_radioError = QRadioTuner::OpenError;
 	}
 }
@@ -457,10 +450,11 @@ void S60RadioTunerControl::MrftoFrequencyChange(TInt aNewFrequency)
 
 void S60RadioTunerControl::MrftoForcedMonoChange(TBool aForcedMono)
 {
-	if (aForcedMono) 
+	if (aForcedMono) {
 		m_stereoMode = QRadioTuner::ForceMono;
-	else
+	} else {
 		m_stereoMode = QRadioTuner::ForceStereo;
+	}
 	
 	emit stereoStatusChanged(!aForcedMono);
 }

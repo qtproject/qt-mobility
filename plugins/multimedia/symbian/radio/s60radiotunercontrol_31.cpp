@@ -51,25 +51,23 @@ const TInt KAudioPriorityFMRadio = 79;
 const TUint KAudioPrefRadioAudioEvent = 0x03000001;
 
 S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
-    :QRadioTunerControl(parent)
+    : QRadioTunerControl(parent)
+    , m_error(0)
+    , m_tunerState(0)
+    , m_apiTunerState(QRadioTuner::StoppedState)
+    , m_audioInitializationComplete(false)
+    , m_radioError(QRadioTuner::NoError)
+    , m_muted(false)
+    , m_isStereo(true)
+    , m_stereoMode(QRadioTuner::Auto)
+    , m_signal(0)
+    , m_currentBand(QRadioTuner::FM)
+    , m_currentFreq(104100000)
+    , m_scanning(false)
+    , m_tuners(0)
+    , m_vol(100;)
 {
-    m_error = 0;
-    m_tunerState = 0;
-    m_apiTunerState = QRadioTuner::StoppedState;
-    m_audioInitializationComplete = false;
-    m_errorString = QString();
-    m_radioError = QRadioTuner::NoError;
-    m_muted = false;
-    m_isStereo = true;
-    m_stereoMode = QRadioTuner::Auto;
-    m_signal = 0;
-    m_currentBand = QRadioTuner::FM;
-    m_currentFreq = 104100000;
-    m_scanning = false;
-    m_tuners = 0;
-    m_vol = 100;
     initRadio();   
-
 }
 
 S60RadioTunerControl::~S60RadioTunerControl()
@@ -120,7 +118,6 @@ void S60RadioTunerControl::setBand(QRadioTuner::Band b)
         m_currentBand = b;  
         emit bandChanged(m_currentBand);
     }
-    
 }
 
 int S60RadioTunerControl::frequency() const
@@ -231,7 +228,7 @@ void S60RadioTunerControl::setVolume(int volume)
 		m_vol = volume;
 		TInt error = m_audioPlayerUtility->SetVolume(volume);
 		emit volumeChanged(m_vol);
-    	}
+    }
 }
 
 bool S60RadioTunerControl::isMuted() const
@@ -302,9 +299,9 @@ bool S60RadioTunerControl::initRadio()
 	TRAPD(tunerError, m_tunerUtility = CMMTunerUtility::NewL(*this, CMMTunerUtility::ETunerBandFm, 1, 
 												CMMTunerUtility::ETunerAccessPriorityNormal));
 	if (tunerError != KErrNone) {
-			m_radioError = QRadioTuner::OpenError;
-			return m_available;
-		}
+        m_radioError = QRadioTuner::OpenError;
+        return m_available;
+    }
 	
 	TRAPD(playerError, m_audioPlayerUtility = m_tunerUtility->TunerPlayerUtilityL(*this));
 	if (playerError != KErrNone) {
@@ -444,8 +441,7 @@ void S60RadioTunerControl::MTapoInitializeComplete(TInt aError)
 		m_audioPlayerUtility->Play();
 		m_apiTunerState = QRadioTuner::ActiveState;
 		emit stateChanged(m_apiTunerState);
-	}
-	else if (aError != KErrNone) {
+	} else if (aError != KErrNone) {
 		m_radioError = QRadioTuner::OpenError;
 	}
 }
@@ -454,8 +450,7 @@ void S60RadioTunerControl::MTapoPlayEvent(TEventType aEvent, TInt aError, TAny* 
 {
 	if (aError != KErrNone) {
 	// TODO:
-		}
-	else {
+    } else {
 	// TODO:
 	}
 }

@@ -57,9 +57,10 @@ class CFMRadioEngineCallObserver;
 
 QTM_USE_NAMESPACE
 
-class S60RadioTunerControl : public QRadioTunerControl,
-	public MRadioPlayerObserver,
-	public MRadioFmTunerObserver
+class S60RadioTunerControl 
+    : public QRadioTunerControl
+    , public MRadioPlayerObserver
+    , public MRadioFmTunerObserver
 {
     Q_OBJECT
 public:
@@ -258,10 +259,6 @@ public:
 	 */
 	void MrftoSquelchChange( TBool aSquelch );
 
-
-private slots:
-   // void search();
-
 private:
     bool initRadio();
 
@@ -272,31 +269,28 @@ private:
     CRadioPlayerUtility* m_playerUtility;
     TRadioSettings* m_radioSettings;
     TInt m_maxVolume;
-	CFMRadioEngineCallObserver* iCallObserver;
-	CCentralRepositoryHandler* iCentralRepositoryHandler;
-	bool m_tunerControl;
 
-    bool audioInitializationComplete;
+	bool m_tunerControl;
+    bool m_audioInitializationComplete;
     bool m_muted;
     bool m_isStereo;
     bool m_available;
     int  m_tuners;
     int  m_step;
     int  m_vol;
-    mutable int  m_signal;
+    mutable int m_signal;
     bool m_scanning;
     bool forward;
-    QRadioTuner::Band   m_currentBand;
+    QRadioTuner::Band m_currentBand;
     qint64 m_currentFreq;
     
     QRadioTuner::Error m_radioError;
     QRadioTuner::StereoMode m_stereoMode;
     QString m_errorString;
-    //caps meaning what the tuner can do.
-  //  TTunerCapabilities m_currentTunerCapabilities;
+    // caps meaning what the tuner can do.
+    // TTunerCapabilities m_currentTunerCapabilities;
     long m_tunerState; 
     QRadioTuner::State m_apiTunerState;
-    
 };
 
 #endif

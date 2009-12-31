@@ -39,11 +39,6 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
-
 #include "s60radiotunerservice.h"
 
 
@@ -60,10 +55,9 @@ S60RadioTunerService::~S60RadioTunerService()
 
 QMediaControl *S60RadioTunerService::control(const char* name) const
 {
-	if (qstrcmp(name,QRadioTunerControl_iid) == 0)
+	if (qstrcmp(name, QRadioTunerControl_iid) == 0)
 		return m_playerControl;
 
 	return 0;
-
 }
 

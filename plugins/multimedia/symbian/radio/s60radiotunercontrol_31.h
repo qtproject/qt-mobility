@@ -51,12 +51,13 @@ class S60RadioTunerService;
 
 QTM_USE_NAMESPACE
 
-class S60RadioTunerControl : public QRadioTunerControl,
-	public MMMTunerObserver,
-	public MMMTunerStereoObserver,
-	public MMMSignalStrengthObserver,
-	public MMMTunerChangeObserver,
-	public MMMTunerAudioPlayerObserver
+class S60RadioTunerControl 
+    : public QRadioTunerControl
+    , public MMMTunerObserver
+    , public MMMTunerStereoObserver
+    , public MMMSignalStrengthObserver
+    , public MMMTunerChangeObserver
+    , public MMMTunerAudioPlayerObserver
 {
     Q_OBJECT
 public:
