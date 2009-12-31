@@ -76,7 +76,7 @@ public:
     static int deviceCount();
     static QString deviceDescription(const int index);
 
-private slots:
+private Q_SLOTS:
     void videoOutputChanged(QVideoOutputControl::Output output);
 /*
     virtual bool isEndpointSupported(QMediaService::MediaEndpoint endpointType);

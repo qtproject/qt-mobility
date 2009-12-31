@@ -82,7 +82,6 @@ S60CameraService::S60CameraService(QObject *parent)
     
     m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
             << QVideoOutputControl::WidgetOutput);
-
 }
 
 S60CameraService::~S60CameraService()
