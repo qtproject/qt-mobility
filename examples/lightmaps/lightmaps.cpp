@@ -281,6 +281,10 @@ class LightMaps: public QWidget
 public:
     LightMaps(QWidget *parent = 0) :
             QWidget(parent),
+            m_normalMap(0),
+            m_largeMap(0),
+            firstLat(0.0),
+            firstLong(0.0),
             pressed(false),
             snapped(false),
             zoomed(false),
@@ -297,6 +301,8 @@ public:
         QNetworkConfiguration cfg1 = manager.defaultConfiguration();
         if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QNetworkConfiguration::Active)) {
             m_networkSetupError = QString(tr("Avaliable Access Points not found."));
+            m_normalMap = 0;
+            m_largeMap = 0;
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
         }
@@ -304,7 +310,7 @@ public:
         m_session = new QNetworkSession(cfg1, this);
 
         m_session->open();
-        if (!m_session->waitForOpened()) {
+        if (!m_session->waitForOpened(-1)) {
             m_networkSetupError = QString(tr("Unable to open network session."));
             QTimer::singleShot(0, this, SLOT(delayedInit()));
             return;
@@ -321,12 +327,10 @@ public:
             m_usingLogFile = true;
         }
 
-        m_normalMap = new SlippyMap(m_session, m_location, this);
-        m_largeMap = new SlippyMap(m_session, m_location, this);
-
-        connect(m_normalMap, SIGNAL(updated(QRect)), SLOT(updateMap(QRect)));
-        connect(m_largeMap, SIGNAL(updated(QRect)), SLOT(update()));
-        connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(positionUpdated(QGeoPositionInfo)));
+        connect(m_location,
+                SIGNAL(positionUpdated(QGeoPositionInfo)),
+                this,
+                SLOT(positionUpdated(QGeoPositionInfo)));
 
         QTimer::singleShot(0, this, SLOT(delayedInit()));
     }
@@ -345,6 +349,12 @@ public:
     }
 
     void setCenter(qreal lat, qreal lng) {
+        if (!m_normalMap || !m_largeMap) {
+            firstLat = lat;
+            firstLong = lng;
+            return;
+        }
+
         m_normalMap->latitude = lat;
         m_normalMap->longitude = lng;
         m_normalMap->invalidate();
@@ -393,6 +403,14 @@ private slots:
                                      m_networkSetupError);
         }
 
+        m_normalMap = new SlippyMap(m_session, m_location, this);
+        m_largeMap = new SlippyMap(m_session, m_location, this);
+
+        connect(m_normalMap, SIGNAL(updated(QRect)), SLOT(updateMap(QRect)));
+        connect(m_largeMap, SIGNAL(updated(QRect)), SLOT(update()));
+
+        setCenter(firstLat, firstLong);
+
         startPositioning();
     }
 
@@ -420,6 +438,9 @@ protected:
     }
 
     void resizeEvent(QResizeEvent *) {
+        if (!m_normalMap || !m_largeMap)
+            return;
+
         m_normalMap->width = width();
         m_normalMap->height = height();
         m_normalMap->invalidate();
@@ -429,6 +450,9 @@ protected:
     }
 
     void paintEvent(QPaintEvent *event) {
+        if (!m_normalMap || !m_largeMap)
+            return;
+
         QPainter p;
         p.begin(this);
         m_normalMap->render(&p, event->rect());
@@ -517,6 +541,9 @@ protected:
     }
 
     void mousePressEvent(QMouseEvent *event) {
+        if (!m_normalMap || !m_largeMap)
+            return;
+
         if (event->buttons() != Qt::LeftButton)
             return;
         pressed = snapped = true;
@@ -526,6 +553,9 @@ protected:
     }
 
     void mouseMoveEvent(QMouseEvent *event) {
+        if (!m_normalMap || !m_largeMap)
+            return;
+
         if (!event->buttons())
             return;
 
@@ -556,11 +586,17 @@ protected:
     }
 
     void mouseReleaseEvent(QMouseEvent *) {
+        if (!m_normalMap || !m_largeMap)
+            return;
+
         zoomed = false;
         update();
     }
 
     void keyPressEvent(QKeyEvent *event) {
+        if (!m_normalMap || !m_largeMap)
+            return;
+
         if (!zoomed) {
             if (event->key() == Qt::Key_Left)
                 m_normalMap->pan(QPoint(20, 0));
@@ -599,6 +635,8 @@ private:
     QString m_networkSetupError;
     SlippyMap *m_normalMap;
     SlippyMap *m_largeMap;
+    qreal firstLat;
+    qreal firstLong;
     bool pressed;
     bool snapped;
     QPoint pressPos;
