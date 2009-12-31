@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qsatelliteinfosource_maemo_p.h"
+#include "qgeosatelliteinfosource_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
