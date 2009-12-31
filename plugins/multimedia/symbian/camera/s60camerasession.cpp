@@ -44,7 +44,7 @@
 #include <QWidget>
 
 #include "s60camerasession.h"
-#include "s60videowidget.h"
+#include "s60viewfinderwidget.h"
 #include <fbs.h>
 
 S60CameraSession::S60CameraSession(QObject *parent)
@@ -353,12 +353,14 @@ void S60CameraSession::MceoCameraReady()
 {
     emit stateChanged(QCamera::ActiveState);
     if (m_cameraEngine) {
-        TSize size (m_windowSize.width(), m_windowSize.height());
+        iVFSize =  TSize(m_VFWidgetSize.width(), m_VFWidgetSize.height());
         iError = KErrNone;
-        TRAP(iError, m_cameraEngine->StartViewFinderL(size));
+        TRAP(iError, m_cameraEngine->StartViewFinderL(iVFSize));
         if (iError) {
             // TODO add error emitting to cameracontrol
         }
+
+        emit readyForCaptureChanged(true);
     }
 }
 
@@ -446,13 +448,15 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
 {
     if (m_VFProcessor) {
-        int bytesPerLine = aFrame.ScanLineLength(iViewFinderSize.width(), aFrame.DisplayMode());
-        QImage image((uchar *)aFrame.DataAddress(), iViewFinderSize.width(),
-                iViewFinderSize.height(), bytesPerLine, QImage::Format_RGB32);
+        int bytesPerLine = aFrame.ScanLineLength(iVFSize.iWidth, aFrame.DisplayMode());
+
+        QImage image((uchar *)aFrame.DataAddress(), iVFSize.iWidth,
+                iVFSize.iHeight, bytesPerLine, QImage::Format_RGB32);
 
         m_VFProcessor->ViewFinderFrameReady(image);
-        m_cameraEngine->ReleaseViewFinderBuffer();
      }
+
+     m_cameraEngine->ReleaseViewFinderBuffer();
 }
 
 void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
@@ -460,11 +464,6 @@ void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aErro
     Q_UNUSED(aErrorType);
     //EErrAutoFocusMode (-5)
     iError = aError;
-}
-
-void S60CameraSession::setVFProcessor(MVFProcessor* VFProcessor)
-{
-    m_VFProcessor = VFProcessor;
 }
 
 // For S60Cameravideodevicecontrol
@@ -619,10 +618,12 @@ QString S60CameraSession::imageCaptureCodecDescription(const QString &codecName)
 {
     Q_UNUSED(codecName);
 }
+
 QtMedia::EncodingQuality S60CameraSession::captureQuality() const
 {
     return m_quality;
 }
+
 void S60CameraSession::setCaptureQuality(QtMedia::EncodingQuality quality)
 {
     m_quality = quality;
@@ -630,8 +631,11 @@ void S60CameraSession::setCaptureQuality(QtMedia::EncodingQuality quality)
 
 void S60CameraSession::setVideoRenderer(QObject *videoOutput)
 {
-//    m_videoWidgetControl = qobject_cast<S60VideoWidgetControl*>(videoOutput);
-//    MVFProcessor *widgetProcessor = dynamic_cast<MVFProcessor*>(m_videoWidgetControl->videoWidget());
-//    if (widgetProcessor)
-//        setVFProcessor(widgetProcessor);
+    S60ViewFinderWidgetControl* viewFinderWidgetControl = 
+            qobject_cast<S60ViewFinderWidgetControl*>(videoOutput);
+
+    if (viewFinderWidgetControl) {
+        m_VFProcessor = viewFinderWidgetControl->videoWidget();
+        m_VFWidgetSize = viewFinderWidgetControl->videoWidget()->size();
+    }   
 }
