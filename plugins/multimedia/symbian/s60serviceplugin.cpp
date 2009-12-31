@@ -69,7 +69,6 @@ QMediaService* S60ServicePlugin::create(QString const& key)
         return new S60AudioCaptureService;
     else if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
         return new S60RadioTunerService;
-#endif
 
     qDebug() << "unsupported key:" << key;
     return 0;
