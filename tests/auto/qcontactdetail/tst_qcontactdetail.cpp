@@ -69,6 +69,7 @@ private slots:
     void contexts();
     void values();
     void preferredActions();
+    void traits();
 };
 
 tst_QContactDetail::tst_QContactDetail()
@@ -558,6 +559,17 @@ void tst_QContactDetail::preferredActions()
     QVERIFY(det.preferredActions() == prefs);
 }
 
+void tst_QContactDetail::traits()
+{
+    // QContactDetail has a vtable and a dpointer, so we can't really make claims about the size
+    // QCOMPARE(sizeof(QContactDetail), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactDetail)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(ti.isLarge); // virtual table + d pointer
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
 
 QTEST_MAIN(tst_QContactDetail)
 #include "tst_qcontactdetail.moc"

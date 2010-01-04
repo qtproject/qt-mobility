@@ -66,6 +66,9 @@ private slots:
     void displayName();
     void type();
     void emptiness();
+    void traits();
+    void idTraits();
+    void localIdTraits();
 };
 
 tst_QContact::tst_QContact()
@@ -640,6 +643,40 @@ void tst_QContact::emptiness()
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
 }
+
+void tst_QContact::traits()
+{
+    QVERIFY(sizeof(QContact) == sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContact)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
+
+void tst_QContact::idTraits()
+{
+    QVERIFY(sizeof(QContactId) == sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactId)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
+
+void tst_QContact::localIdTraits()
+{
+    QVERIFY(sizeof(QContactId) == sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactLocalId)> ti;
+    QVERIFY(!ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
+
 
 QTEST_MAIN(tst_QContact)
 #include "tst_qcontact.moc"

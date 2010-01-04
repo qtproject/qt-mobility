@@ -244,10 +244,20 @@ void tst_QContactDetails::avatar()
     QCOMPARE(a1.subType(), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
     QCOMPARE(a1.value(QContactAvatar::FieldSubType), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
 
+    a1.setSubType(QContactAvatar::SubTypeImage);
+    
+    //pixmap
+    uchar pixDataRGB[] = {255, 0, 0, 0, 0, 255, 0, 0, 255, 255, 0, 0}; // Red, Blue, Red, Blue
+    QImage img(pixDataRGB, 2, 2, 6, QImage::Format_RGB888); // 2 pixels width, 2 pixels height, 6 bytes per line, RGB888 format
+    QImage scaled = img.scaled(100, 100); // Scale image to show results better
+    QPixmap pix = QPixmap::fromImage(scaled); // Create pixmap from image
+    a1.setPixmap(pix);
+
     // test property add
     QVERIFY(c.saveDetail(&a1));
     QCOMPARE(c.details(QContactAvatar::DefinitionName).count(), 1);
     QCOMPARE(QContactAvatar(c.details(QContactAvatar::DefinitionName).value(0)).avatar(), a1.avatar());
+    QCOMPARE(a1.pixmap(), pix);
 
     // test property update
     a1.setValue("label","label1");

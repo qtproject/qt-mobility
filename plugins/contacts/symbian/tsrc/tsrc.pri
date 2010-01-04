@@ -82,6 +82,7 @@ SYMBIAN_SOURCES += \
         ../../src/cntdisplaylabel.cpp
 SYMBIAN_LIBS += \
         -lcntmodel \
+        -lQtContacts \
         -lcentralrepository \
         -lestor \
         -lefsrv \

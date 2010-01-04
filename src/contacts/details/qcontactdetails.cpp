@@ -38,6 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QByteArray>
+#include <QUrl>
+#include <QFile>
+#include <QPixmap>
+#include <QImage>
+#include "qcontactmanager.h"
+#include "qtcontacts.h"
 
 #include "qcontactdetails.h"
 
@@ -442,6 +449,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
    details of the QContactAvatar type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatar, "Avatar");
+
+/*!
+   \variable QContactAvatar::FieldAvatarPixmap
+
+   The constant key for which the path the avatar value is stored in
+   details of the QContactAvatar type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatarPixmap, "AvatarPixmap");
 
 /*!
    \variable QContactAvatar::FieldSubType
@@ -1210,6 +1225,19 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
    \fn QContactAvatar::setAvatar(const QString& avatar)
    Sets the location of an avatar file associated with the contact to \a avatar.
+ */
+
+/*!
+   \fn QContactAvatar::pixmap() const
+   Returns a thumbnail for a picture associated with this contact.
+ */
+
+/*!
+   \fn QContactAvatar::setPixmap(const QPixmap& pixmap)
+   Sets the thumbnail of a picture avatar associated with the contact to \a pixmap.
+   If \a pixmap is empty, the thumbnail pixmap will be removed.
+
+   Returns true if the pixmap could be set, and false otherwise.
  */
 
 /*!

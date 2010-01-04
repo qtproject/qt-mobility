@@ -45,12 +45,15 @@
 
 class CntSymbianFilterSqlHelper;
 
+QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 typedef struct {
     QContactFilter filter;
     QString name;
     int result;
     int error;
 } TFilter;
+QTM_END_NAMESPACE
 
 class TestFiltering : public QObject
 {
@@ -59,7 +62,7 @@ class TestFiltering : public QObject
 private slots:  // Init & cleanup
 	void initTestCase();
 	void cleanupTestCase();
-	
+
 private:
     void parseFilters();
     void addFilter(QVector<QString> param);
@@ -81,6 +84,7 @@ private slots:  // Test cases
     void testUnionFilter();
     void testLocalIdFilter();
     void testDefaultFilter();
+    void testDefaultFilterWithPredictiveSearch();
     
 private:
     QContactManager                             *mCntMng;

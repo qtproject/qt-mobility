@@ -194,7 +194,22 @@ quint32 CntTransformGeolocation::getIdForField(const QString& fieldName) const
  */
 void CntTransformGeolocation::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    Q_UNUSED(definitions);
     Q_UNUSED(contactType);
-    // Does not modify the default schema
+    
+    if(definitions.contains(QContactGeolocation::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactGeolocation::DefinitionName);
+        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        
+        // Don't support "ContextOther"
+        QContactDetailDefinitionField f;
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(QVariantList() 
+            << QLatin1String(QContactDetail::ContextHome) 
+            << QLatin1String(QContactDetail::ContextWork));
+        fields[QContactDetail::FieldContext] = f;
+        d.setFields(fields);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

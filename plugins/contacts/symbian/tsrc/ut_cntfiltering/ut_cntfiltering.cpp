@@ -43,6 +43,7 @@
 #include "cntsymbianfiltersqlhelper.h"
 
 #include <qtcontacts.h>
+#include <QContactDetailFilter.h>
 #include <QtTest/QtTest>
 
 void TestFiltering::initTestCase()
@@ -241,9 +242,7 @@ void TestFiltering::createContact_1()
     QContactEmailAddress email;
     email.setEmailAddress("ste.Fed@nokia.com");
     phonecontact.saveDetail(&email);
-    
-    
-    mCntMng->saveContact(&phonecontact);
+    QVERIFY(mCntMng->saveContact(&phonecontact));
    
 
 }
@@ -272,9 +271,7 @@ void TestFiltering::createContact_2()
     email.setEmailAddress("Len.Jo@nokia.com");
     phonecontact.saveDetail(&email);
         
-
-    
-    mCntMng->saveContact(&phonecontact);
+    QVERIFY(mCntMng->saveContact(&phonecontact));
     
     
 
@@ -303,7 +300,7 @@ void TestFiltering::createContact_3()
     email.setEmailAddress("Joronn.Bondnn@nokia.com");
     phonecontact.saveDetail(&email);
     
-    mCntMng->saveContact(&phonecontact);
+    QVERIFY(mCntMng->saveContact(&phonecontact));
     
 
 
@@ -332,7 +329,7 @@ void TestFiltering::createContact_4()
     email.setEmailAddress("micheal.jack@nokia.com");
     phonecontact.saveDetail(&email);
     
-    mCntMng->saveContact(&phonecontact);
+    QVERIFY(mCntMng->saveContact(&phonecontact));
     
 }
 void TestFiltering::createContact_5()
@@ -358,7 +355,7 @@ void TestFiltering::createContact_5()
     email.setEmailAddress("dan.susa@nokia.com");
     phonecontact.saveDetail(&email);
     
-    mCntMng->saveContact(&phonecontact);
+    QVERIFY(mCntMng->saveContact(&phonecontact));
     
 
 
@@ -512,4 +509,53 @@ void TestFiltering::testDefaultFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-QTEST_MAIN(TestFiltering);
+void TestFiltering::testDefaultFilterWithPredictiveSearch()
+{
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QContactManager::Error error;
+
+    bool isPredSearch = false;
+    QString pattern = "6";
+       
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mSqlFilter->searchContacts(df, error);
+
+    for( int i=0;i<cnt_ids.count();i++ ) {
+            QString firstName("Micheal");
+            QString lastName("Jack");
+            QContactLocalId cid = cnt_ids.at( i );    
+            QContact contact = mCntMng->contact( cid );
+            QContactName contactName = contact.detail( QContactName::DefinitionName );
+            QVERIFY( firstName == contactName.value( QContactName::FieldFirst ) );
+            QVERIFY( lastName == contactName.value( QContactName::FieldLast ) );
+            } 
+}
+
+//QTEST_MAIN(TestFiltering);
+int main(int argc, char *argv[]) 
+{
+    bool promptOnExit(true);
+    for (int i=0; i<argc; i++) {
+        if (QString(argv[i]) == "-noprompt")
+            promptOnExit = false;
+    }
+    printf("Running tests...\n");
+    
+    QApplication app(argc, argv);
+    //TestResultXmlParser parser;
+    
+    TestFiltering testFiltering;
+    QString resultFileName = "c:/testFiltering.xml";
+    QStringList args_logsTestFiltering( "testFiltering");
+    args_logsTestFiltering << "-xml" << "-o" << resultFileName;
+    QTest::qExec(&testFiltering, args_logsTestFiltering);
+    
+    if (promptOnExit) {
+        printf("Press any key...\n");
+        getchar(); 
+    }
+    return 0;   
+}

@@ -44,7 +44,7 @@
 
 #include "qtcontacts.h"
 
-#include <QWidget>
+#include <QMainWindow>
 #include <QMap>
 #include <QPlainTextEdit>
 
@@ -63,7 +63,7 @@ class FilterPage;
 
 QTM_USE_NAMESPACE
 
-class PhoneBook : public QWidget
+class PhoneBook : public QMainWindow 
 {
     Q_OBJECT
 

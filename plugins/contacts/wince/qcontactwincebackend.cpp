@@ -87,12 +87,14 @@ QContactWinCEEngine::QContactWinCEEngine(ContactWinceFactory* factory, const QSt
                 if(SUCCEEDED(d->m_app->GetDefaultFolder(olFolderContacts, &d->m_folder))) {
                     if(SUCCEEDED(d->m_folder->get_Items(&d->m_collection))) {
                         // Register/retrieve our custom ids
-                        LPCWSTR customIds[2] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META" };
-                        CEPROPID outIds[2];
+                        LPCWSTR customIds[4] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META", L"QTCONTACTS_AVATAR_META",  L"QTCONTACTS_AVATAR_TYPE_META" };
+                        CEPROPID outIds[4];
 
-                        if (SUCCEEDED(d->m_app->GetIDsFromNames(2, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
+                        if (SUCCEEDED(d->m_app->GetIDsFromNames(4, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
                             d->m_phonemeta = outIds[0];
                             d->m_emailmeta = outIds[1];
+                            d->m_avatarmeta = outIds[2];
+                            d->m_avatartypemeta = outIds[3];
                         }
 
                         // get an IPOLItems2 pointer for the collection, too
@@ -425,6 +427,28 @@ QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QCo
         // XXX grargh.
         return QLatin1String("Unnamed");
     }
+}
+
+
+
+PROPID QContactWinCEEngine::metaAvatar() const
+{
+    return d->m_avatarmeta;
+}
+
+PROPID QContactWinCEEngine::metaAvatarType() const
+{
+    return d->m_avatartypemeta;
+}
+
+PROPID QContactWinCEEngine::metaEmail() const
+{
+    return d->m_emailmeta;
+}
+
+PROPID QContactWinCEEngine::metaPhone() const
+{
+    return d->m_phonemeta;
 }
 
 /*! \reimp */

@@ -49,13 +49,11 @@ ContactListPage::ContactListPage(QWidget *parent)
     m_manager = 0;
     m_currentFilter = QContactFilter();
 
-    m_backendsLabel = new QLabel("Store:", this);
-    m_backendsLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_backendsCombo = new QComboBox(this);
     QStringList availableManagers = QContactManager::availableManagers();
     m_backendsCombo->addItems(availableManagers);
     connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
-    m_filterActiveLabel = new QLabel("Filter: Inactive");
+    m_filterActiveLabel = new QLabel("Inactive");
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
     m_contactsList = new QListWidget(this);
@@ -64,18 +62,20 @@ ContactListPage::ContactListPage(QWidget *parent)
     connect(m_addContactBtn, SIGNAL(clicked()), this, SLOT(addContactClicked()));
     m_editBtn = new QPushButton("Edit", this);
     connect(m_editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
-    m_findBtn = new QPushButton("Find", this);
-    connect(m_findBtn, SIGNAL(clicked()), this, SLOT(findClicked()));
+    m_deleteBtn = new QPushButton("Delete", this);
+    connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+    m_filterBtn = new QPushButton("Filter", this);
+    connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
 
-    QHBoxLayout *backendLayout = new QHBoxLayout;
-    backendLayout->addWidget(m_backendsLabel);
-    backendLayout->addWidget(m_backendsCombo);
-    backendLayout->addWidget(m_filterActiveLabel);
+    QFormLayout *backendLayout = new QFormLayout;
+    backendLayout->addRow("Store:", m_backendsCombo);
+    backendLayout->addRow("Filter:", m_filterActiveLabel);
 
     QHBoxLayout *btnLayout = new QHBoxLayout;
     btnLayout->addWidget(m_addContactBtn);
     btnLayout->addWidget(m_editBtn);
-    btnLayout->addWidget(m_findBtn);
+    btnLayout->addWidget(m_deleteBtn);
+    btnLayout->addWidget(m_filterBtn);
 
     QVBoxLayout *bookLayout = new QVBoxLayout;
     bookLayout->addLayout(backendLayout);
@@ -124,9 +124,9 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
 {
     // first, check to see whether the filter does anything
     if (filter == QContactFilter())
-        m_filterActiveLabel->setText("Filter: Inactive");
+        m_filterActiveLabel->setText("Inactive");
     else
-        m_filterActiveLabel->setText("Filter: Active");
+        m_filterActiveLabel->setText("Active");
 
     QContact currContact;
     m_currentFilter = filter;
@@ -155,7 +155,29 @@ void ContactListPage::editClicked()
     // else, nothing selected; ignore.
 }
 
-void ContactListPage::findClicked()
+void ContactListPage::filterClicked()
 {
     emit showFilterPage(m_currentFilter);
+}
+
+void ContactListPage::deleteClicked()
+{
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot delete.";
+        return;
+    }
+
+    if (!m_contactsList->currentItem()) {
+        qWarning() << "Nothing to delete.";
+        return;
+    }
+        
+    QContactLocalId contactId = QContactLocalId(m_contactsList->currentItem()->data(Qt::UserRole).toUInt());
+    bool success = m_manager->removeContact(contactId);
+    if (success) {
+        delete m_contactsList->takeItem(m_contactsList->currentRow());
+        QMessageBox::information(this, "Success!", "Contact deleted successfully!");
+    }
+    else
+        QMessageBox::information(this, "Failed!", "Failed to delete contact!");
 }

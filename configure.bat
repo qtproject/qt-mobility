@@ -306,7 +306,7 @@ echo maemo:mobility_modules -= systeminfo  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
-%QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
+call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
 if errorlevel 1 goto qmakeNotFound
 goto qmakeFound
 :qmakeNotFound
@@ -321,7 +321,7 @@ echo >&2Aborting.
 goto errorTag
 
 :qmakeFound
-%QT_PATH%qmake -query QT_VERSION
+call %QT_PATH%qmake -query QT_VERSION
 
 goto checkMake
 
@@ -338,28 +338,28 @@ setlocal
         cd config.tests\make
     )
 
-    for /f "tokens=3" %%i in ('%QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
+    for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
 
     if %BUILDSYSTEM% == symbian-abld (
-        make -h >> %PROJECT_LOG% 2>&1
+        call make -h >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... Symbian abld make found.
             set MAKE=make
         )
     ) else if %BUILDSYSTEM% == symbian-sbsv2 (
-        make -h >> %PROJECT_LOG% 2>&1
+        call make -h >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... Symbian sbsv2 make found.
             set MAKE=make
         )
     ) else if %BUILDSYSTEM% == win32-nmake (
-        nmake /? >> %PROJECT_LOG% 2>&1
+        call nmake /? >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... nmake found.
             set MAKE=nmake
         )
     ) else if %BUILDSYSTEM% == win32-mingw (
-        mingw32-make -v >> %PROJECT_LOG% 2>&1
+        call mingw32-make -v >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... mingw32-make found.
             set MAKE=mingw32-make
@@ -367,8 +367,8 @@ setlocal
     ) else (
         echo ... Unknown target environment %BUILDSYSTEM%.
     )
-    cd %CURRENT_PWD%
-endlocal&set %1=%MAKE%&set %2=%BUILDSYSTEM%&goto :EOF
+    call cd %CURRENT_PWD%
+call endlocal&set %1=%MAKE%&set %2=%BUILDSYSTEM%&goto :EOF
 
 :checkMake
 echo Checking make
@@ -393,9 +393,9 @@ setlocal
         cd config.tests\%2
     )
 
-    %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
-    %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
-    %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
+    call %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
+    call %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
+    call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
 
     set FAILED=0
     if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
@@ -447,6 +447,9 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == location (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
 ) else if %FIRST% == messaging (
@@ -464,6 +467,9 @@ if %FIRST% == bearer (
     REM versit implies contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
 )
 
 if "%REMAINING%" == "" (
@@ -482,7 +488,7 @@ ren %PROJECT_CONFIG% config.pri
 
 echo.
 echo Running qmake...
-%QT_PATH%qmake -recursive %VC_TEMPLATE_OPTION% %SOURCE_PATH%\qtmobility.pro
+call %QT_PATH%qmake -recursive %VC_TEMPLATE_OPTION% %SOURCE_PATH%\qtmobility.pro
 if errorlevel 1 goto qmakeRecError
 echo.
 echo configure has finished. You may run %MOBILITY_MAKE% to build the project now.

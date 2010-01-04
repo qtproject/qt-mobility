@@ -50,6 +50,7 @@
 #include "qcontactdetailfilter.h"
 #include "cnttransformcontact.h"
 #include "cntdisplaylabel.h"
+#include "cntdisplaylabelsqlfilter.h"
 
 // Telephony Configuration API
 // Keys under this category are used in defining telephony configuration.
@@ -118,12 +119,17 @@ CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
  * \a error On return, contains the possible error.
  * \return the list of matched contact ids
  */
-QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactFilter& filter,
+QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders,
                                                                   QContactManager::Error& error)
 {
     isPhoneNumberSearchforDetailFilter = false;
     QList<QContactLocalId> idList;
-    if(filterSupportLevel(filter)){
+    bool isPredSearch;
+    idList =  HandlePredictiveSearchFilter(filter,isPredSearch, error);
+    if(isPredSearch)
+            return idList;
+   if(filterSupportLevel(filter)){
+        
         // Create sql query from the filters
         QString sqlQuery;
         createSqlQuery(filter, sqlQuery, error);
@@ -134,13 +140,19 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
         // Query the database
         // If isPhoneNumberSearchforDetailFilter flag is set, we use the existing cntmodel
         // else call searchContacts
-        if(isPhoneNumberSearchforDetailFilter){
+        if(isPhoneNumberSearchforDetailFilter)
+        {
             // cast the filter into detail filte
             const QContactDetailFilter detailFilter(filter);
             idList = HandlePhonenumberDetailFilter(detailFilter);
-            }
-        else{
-        idList =  m_srvConnection->searchContacts(sqlQuery, error);
+        }
+        else
+        {
+            //append the sort order to the query
+            appendSortOrderQuery(sqlQuery, sortOrders);
+            
+            //fetch the contacts
+            idList =  m_srvConnection->searchContacts(sqlQuery, error);
         }
 
     }
@@ -149,8 +161,116 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::searchContacts(const QContactF
         error = QContactManager::NotSupportedError;
         }
     return idList;
+    
+        
+}
 
+QList<QContactLocalId>  CntSymbianFilterSqlHelper::HandlePredictiveSearchFilter(const QContactFilter& filter, bool &isPredSearch,
+        QContactManager::Error& error)
+    {
+    isPredSearch = false;
+    QString sqlQuery;
+    if(filter.type() == QContactFilter::ContactDetailFilter){
+       const QContactDetailFilter detailFilter(filter);
+       if(  detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation ){
+          //convert string to numeric format
+            QString pattern = detailFilter.value().toString();
+            sqlQuery = "SELECT contact_id FROM predictivesearch WHERE (first_name_as_number LIKE '% " 
+                      + pattern  + "%') OR (last_name_as_number LIKE '% " + pattern + "%') ORDER BY first_name_as_number ASC;";
+            isPredSearch = true;
+            //sqlQuery = "select contact_id from predictivesearch;";
+            return  m_srvConnection->searchContacts(sqlQuery, error);  
+           }
+       else
+           {
+           return QList<QContactLocalId>();
+           }
+        }
+    else
+        {
+        return QList<QContactLocalId>();
+        }
+    }
 
+/*!
+ * Append the sort order to the sql query
+ *
+ * \a sqlQuery to add the sort order to
+ * \a sortOrders to be added
+ */
+void CntSymbianFilterSqlHelper::appendSortOrderQuery(QString& sqlQuery, const QList<QContactSortOrder>& sortOrders)
+{
+    QString column;
+    CntDisplayLabel displayLabel;
+    
+    bool first(true);
+    
+    for(int i = 0; i < sortOrders.count(); i++)
+    {
+        columnName(column, sortOrders.at(i).detailDefinitionName(), sortOrders.at(i).detailFieldName());
+      
+        if(!column.isEmpty())
+        {
+            if(first)
+            {
+                sqlQuery += " ORDER BY";
+                first = false;        
+            }
+          
+            else
+            {
+                sqlQuery += ",";
+            }
+            
+            //use the display label if the name is null, ignore case
+            sqlQuery += " CASE WHEN " + column + " ISNULL THEN \'"+ displayLabel.unNamned().toLower() + "\' ELSE lower(" + column + ") END";
+            
+            if(sortOrders.at(i).direction() == Qt::AscendingOrder)
+            {
+                sqlQuery += " ASC";
+            }
+                
+            else if(sortOrders.at(i).direction() == Qt::DescendingOrder)
+            {
+                sqlQuery += " DESC";
+            }
+        }
+    }
+}
+
+/*!
+ * Retrieve a column name
+ *
+ * \a columnName to be saved the column name if found
+ * \a detailDefinitionName of the detail to fetch column name for
+ * \a detailFieldName of the detail to fetch column name for
+ */
+void CntSymbianFilterSqlHelper::columnName( QString &columnName, const QString &detailDefinitionName, const QString & detailFieldName)
+{
+    columnName = "";
+
+    //Name detail
+    if(detailDefinitionName == QContactName::DefinitionName)
+    {
+        if(detailFieldName == QContactName::FieldFirst)
+        {
+            columnName = "first_name";
+        }
+        
+        else if(detailFieldName == QContactName::FieldLast)
+        {
+            columnName = "last_name";
+        }
+    }
+    
+    //Organization
+    else if(detailDefinitionName == QContactOrganization::DefinitionName)
+    {
+        if(detailFieldName == QContactOrganization::FieldName)
+        {
+            columnName = "company_name";
+        }
+    }
 }
 
 /*!
@@ -221,9 +341,6 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                                                                 QString& sqlQuery,
                                                                 QContactManager::Error& error)
 {
-
-
-
     switch (filter.type()) {
            case QContactFilter::InvalidFilter :
            {
@@ -235,10 +352,23 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
            {
                const QContactDetailFilter detailFilter(filter);
                
+               //display label
                if (detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName)
                {
-                   updateSqlQueryForDisplayLabelFilter(detailFilter,sqlQuery,error);
+                   CntDisplayLabelSqlFilter displayLabelFilter;
+                   displayLabelFilter.createSqlQuery(detailFilter,sqlQuery,error);
                }
+               
+               //type
+               else if(detailFilter.detailDefinitionName() == QContactType::DefinitionName)
+               {
+                   if(detailFilter.value().toString() == QContactType::TypeContact)
+                       sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=0";
+                   else if(detailFilter.value().toString() == QContactType::TypeGroup)
+                       sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=3";
+               }
+               
+               //everything else
                else
                {
                    updateSqlQueryForDetailFilter(filter,sqlQuery,error);
@@ -256,7 +386,7 @@ void  CntSymbianFilterSqlHelper::updateSqlQueryForSingleFilter( const QContactFi
                        error = QContactManager::NotSupportedError;
                        break;
            case QContactFilter::DefaultFilter:
-                       sqlQuery = "SELECT DISTINCT contact_id FROM contact"; //WHERE contact type
+                       sqlQuery = "SELECT DISTINCT contact_id FROM contact WHERE (type_flags>>24)=0 OR (type_flags>>24)=3"; 
                        error = QContactManager::NoError;
                        break;
            case QContactFilter::ActionFilter:
@@ -411,76 +541,6 @@ void CntSymbianFilterSqlHelper::updateFieldForDeatilFilterMatchFlag(
 }
 
 /*!
- * Updates the input sql query for display label filter
- *
- * \a filter The QContactDetailFilter to be used.
- * \a sqlQuery The sql query that would be updated
- * \a error On return, contains the possible error
- */
-void CntSymbianFilterSqlHelper::updateSqlQueryForDisplayLabelFilter(const QContactDetailFilter& filter,
-                                         QString& sqlQuery,
-                                         QContactManager::Error& error)
-{
-    //SELECT contact_id FROM contact WHERE first_name LIKE 'f%' OR last_name LIKE 'l%' OR first_name LIKE 'l%' OR last_name LIKE 'f%'
-    
-    //list of values from the filter
-    QStringList list = filter.value().toStringList();
-    
-    //if list is empty fetch all
-    if(list.isEmpty()) 
-        sqlQuery = "SELECT contact_id FROM contact"; 
-        
-    else
-    {
-        //fetch the display field details to be used
-        CntDisplayLabel displayLabel;
-        QList<QMap<QString, QString> > fields = displayLabel.contactDisplayLabelDetails();
-        
-        CntTransformContact transformContact;
-        QContactDetailFilter detailFilter;
-        
-        sqlQuery = "SELECT contact_id FROM contact WHERE ";
-        
-        QString columnName, tableName;
-        bool isSubtype(false);
-        bool valuesAdded(false);
-        
-        for(int i = 0; i < fields.count(); i++ )
-        {
-             QMap<QString, QString> detailMap = fields.at(i);
-            
-            //iterate through the details
-            QMapIterator<QString, QString> iterator(detailMap);
-            QContactDetail contactDetail;
-            
-            while (iterator.hasNext()) {
-                iterator.next();
-                
-                //Create detail filter based on display label detail
-                detailFilter.setDetailDefinitionName(iterator.key(), iterator.value());
-                quint32 fieldId  = transformContact.GetIdForDetailL(detailFilter, isSubtype);
-                
-                for(int j = 0; j < list.count(); j++ )
-                {
-                     if (contactsTableIdColumNameMapping.contains(fieldId)){
-                         columnName = contactsTableIdColumNameMapping.value(fieldId);
-                    
-                         sqlQuery += columnName + " LIKE \'" + list.at(j) + "%\'";
-                        
-                         //add or if not last item in list
-                         if((i < fields.count() - 1) || iterator.hasNext() || j < (list.count() - 1) ){
-                             sqlQuery += " OR ";
-                         }
-                     }
-                    //SELECT contact_id FROM contact WHERE first_name LIKE \'F\' OR last_name LIKE \'F\' OR  OR company_name LIKE \'F\' OR "
-                }
-            }
-        }
-    }
-    qDebug() << sqlQuery;
-}
-
-/*!
  * Converts filed id to column name of the database table.
  * QContactManager::contacts function.
  *
@@ -601,6 +661,7 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::filterSupport
             case QContactFilter::ActionFilter:
             case QContactFilter::IntersectionFilter:
             case QContactFilter::UnionFilter:
+            case QContactFilter::RelationshipFilter: 
             default:
                     filterSupported = CntAbstractContactFilter::NotSupported;
                     break;
@@ -627,12 +688,14 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilterSqlHelper::checkIfDetail
         else if ( detailFilter.detailDefinitionName() == QContactName::DefinitionName ||
                   detailFilter.detailDefinitionName() == QContactEmailAddress::DefinitionName ||
                   detailFilter.detailDefinitionName() == QContactOnlineAccount::DefinitionName ||
-                  detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName){
+                  detailFilter.detailDefinitionName() == QContactDisplayLabel::DefinitionName ||
+                  detailFilter.detailDefinitionName() == QContactType::DefinitionName){
                if (  (matchFlags == QContactFilter::MatchContains)|| (matchFlags == QContactFilter::MatchStartsWith)||
                      (matchFlags == QContactFilter::MatchEndsWith)|| (matchFlags == QContactFilter::MatchExactly)){
                 filterSupported = CntAbstractContactFilter::Supported;
                }
-
+               if(matchFlags == QContactFilter::MatchKeypadCollation)
+                      filterSupported = CntAbstractContactFilter::Supported;
         }
         return filterSupported;
 
