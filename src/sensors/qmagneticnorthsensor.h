@@ -66,6 +66,8 @@ public:
     bool calibrated;
 };
 
+// =====================================================================
+
 class Q_SENSORS_EXPORT QMagneticNorthReading
 {
 public:
@@ -84,6 +86,10 @@ public:
 private:
     QSharedDataPointer<QMagneticNorthReadingData> d;
 };
+
+typedef QTypedSensorBackend<QMagneticNorthReading> QMagneticNorthBackend;
+
+// =====================================================================
 
 class Q_SENSORS_EXPORT QMagneticNorthSensor : public QSensor
 {

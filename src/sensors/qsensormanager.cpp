@@ -107,6 +107,9 @@ QSensorBackend *QSensorManager::createBackend(const QSensorId &id)
     return func();
 }
 
+/*!
+    Returns the first registered sensor identifier for \a type.
+*/
 QSensorId QSensorManager::firstSensorForType(const QString &type)
 {
     if (!m_staticPluginsLoaded)

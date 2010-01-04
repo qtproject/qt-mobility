@@ -169,7 +169,7 @@ QTM_BEGIN_NAMESPACE
 QRotationSensor::QRotationSensor(QObject *parent, const QSensorId &id)
     : QSensor(parent)
 {
-    connectToBackend(id);
+    m_backend = static_cast<QRotationBackend*>(connectToBackend(id));
 }
 
 /*!
@@ -183,17 +183,20 @@ const QString QRotationSensor::typeId("qt.Rotation");
 */
 
 /*!
+    \fn QRotationSensor::currentReading() const
+
     Returns the current rotation reading.
 */
-QRotationReading QRotationSensor::currentReading() const
-{
-    return QRotationReading();
-}
 
 /*!
     \fn QRotationSensor::rotationChanged(const QRotationReading &reading)
 
     This signal is emitted when a new rotation \a reading comes in.
+*/
+
+/*!
+    \fn QRotationSensor::backend() const
+    \reimp
 */
 
 #include "moc_qrotationsensor.cpp"

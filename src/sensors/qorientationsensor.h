@@ -45,6 +45,7 @@
 #include <qsensor.h>
 #include <QtGlobal>
 #include <QSharedData>
+#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,6 +63,8 @@ public:
     QTime timestamp;
     int orientation;
 };
+
+// =====================================================================
 
 class Q_SENSORS_EXPORT QOrientationReading
 {
@@ -91,6 +94,10 @@ private:
     QSharedDataPointer<QOrientationReadingData> d;
 };
 
+typedef QTypedSensorBackend<QOrientationReading> QOrientationBackend;
+
+// =====================================================================
+
 class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
     Q_OBJECT
@@ -100,16 +107,22 @@ public:
     static const QString typeId;
     QString type() const { return typeId; };
 
-    QOrientationReading currentReading() const;
+    // For polling/checking the current (cached) value
+    QOrientationReading currentReading() const { return m_backend->currentReading(); }
 
 signals:
     void orientationChanged(const QOrientationReading &reading);
+
+protected:
+    QSensorBackend *backend() const { return m_backend; }
 
 private:
     void newReadingAvailable()
     {
         emit orientationChanged(currentReading());
     }
+
+    QOrientationBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

@@ -84,19 +84,6 @@ public:
     virtual Reading currentReading() = 0;
 };
 
-class QAccelerationReading;
-typedef QTypedSensorBackend<QAccelerationReading> QAccelerationBackend;
-class QAmbientLightReading;
-typedef QTypedSensorBackend<QAmbientLightReading> QAmbientLightBackend;
-class QMagneticNorthReading;
-typedef QTypedSensorBackend<QMagneticNorthReading> QMagneticNorthBackend;
-class QOrientationReading;
-typedef QTypedSensorBackend<QOrientationReading> QOrientationBackend;
-class QProximityReading;
-typedef QTypedSensorBackend<QProximityReading> QProximityBackend;
-class QRotationReading;
-typedef QTypedSensorBackend<QRotationReading> QRotationBackend;
-
 QTM_END_NAMESPACE
 
 #endif

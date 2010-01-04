@@ -150,7 +150,7 @@ QTM_BEGIN_NAMESPACE
 QOrientationSensor::QOrientationSensor(QObject *parent, const QSensorId &id)
     : QSensor(parent)
 {
-    connectToBackend(id);
+    m_backend = static_cast<QOrientationBackend*>(connectToBackend(id));
 }
 
 /*!
@@ -164,17 +164,20 @@ const QString QOrientationSensor::typeId("qt.Orientation");
 */
 
 /*!
+    \fn QOrientationSensor::currentReading() const
+
     Returns the current orientation reading.
 */
-QOrientationReading QOrientationSensor::currentReading() const
-{
-    return QOrientationReading();
-}
 
 /*!
     \fn QOrientationSensor::orientationChanged(const QOrientationReading &reading)
 
     This signal is emitted when a new orientation \a reading comes in.
+*/
+
+/*!
+    \fn QOrientationSensor::backend() const
+    \reimp
 */
 
 #include "moc_qorientationsensor.cpp"

@@ -10,10 +10,10 @@ QMAKE_CXXFLAGS+=-Werror
 PUBLIC_HEADERS += \
            qsensor.h\
            qsensorfactory.h\
-           #qorientationsensor.h\
+           qorientationsensor.h\
            qaccelerationsensor.h\
-           #qrotationsensor.h\
-           #qproximitysensor.h\
+           qrotationsensor.h\
+           qproximitysensor.h\
            qmagneticnorthsensor.h\
            qambientlightsensor.h\
            qsensormanager.h\
@@ -25,10 +25,10 @@ PRIVATE_HEADERS += \
 
 SOURCES += qsensor.cpp \
            qsensorfactory.cpp\
-           #qorientationsensor.cpp\
+           qorientationsensor.cpp\
            qaccelerationsensor.cpp\
-           #qrotationsensor.cpp\
-           #qproximitysensor.cpp\
+           qrotationsensor.cpp\
+           qproximitysensor.cpp\
            qmagneticnorthsensor.cpp\
            qambientlightsensor.cpp\
            qsensormanager.cpp\

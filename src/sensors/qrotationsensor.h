@@ -45,6 +45,7 @@
 #include <qsensor.h>
 #include <QtGlobal>
 #include <QSharedData>
+#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -64,6 +65,8 @@ public:
     qreal y;
     qreal z;
 };
+
+// =====================================================================
 
 class Q_SENSORS_EXPORT QRotationReading
 {
@@ -85,6 +88,10 @@ private:
     QSharedDataPointer<QRotationReadingData> d;
 };
 
+typedef QTypedSensorBackend<QRotationReading> QRotationBackend;
+
+// =====================================================================
+
 class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 {
     Q_OBJECT
@@ -95,16 +102,21 @@ public:
     QString type() const { return typeId; };
 
     // For polling/checking the current (cached) value
-    QRotationReading currentReading() const;
+    QRotationReading currentReading() const { return m_backend->currentReading(); }
 
 signals:
     void rotationChanged(const QRotationReading &reading);
+
+protected:
+    QSensorBackend *backend() const { return m_backend; }
 
 private:
     void newReadingAvailable()
     {
         emit rotationChanged(currentReading());
     }
+
+    QRotationBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

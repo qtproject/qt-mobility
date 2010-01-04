@@ -65,6 +65,8 @@ public:
     int lightLevel;
 };
 
+// =====================================================================
+
 class Q_SENSORS_EXPORT QAmbientLightReading
 {
 public:
@@ -91,6 +93,10 @@ public:
 private:
     QSharedDataPointer<QAmbientLightReadingData> d;
 };
+
+typedef QTypedSensorBackend<QAmbientLightReading> QAmbientLightBackend;
+
+// =====================================================================
 
 class Q_SENSORS_EXPORT QAmbientLightSensor : public QSensor
 {

@@ -68,6 +68,8 @@ public:
     int z;
 };
 
+// =====================================================================
+
 class Q_SENSORS_EXPORT QAccelerationReading
 {
 public:
@@ -93,6 +95,10 @@ class Q_SENSORS_EXPORT QAccelerationListener
 public:
     virtual void accelerationChanged(const QAccelerationReading &reading) = 0;
 };
+
+typedef QTypedSensorBackend<QAccelerationReading> QAccelerationBackend;
+
+// =====================================================================
 
 class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 {

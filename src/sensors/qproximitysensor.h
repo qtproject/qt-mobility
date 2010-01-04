@@ -45,6 +45,7 @@
 #include <qsensor.h>
 #include <QtGlobal>
 #include <QSharedData>
+#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,6 +63,8 @@ public:
     QTime timestamp;
     int proximity;
 };
+
+// =====================================================================
 
 class Q_SENSORS_EXPORT QProximityReading
 {
@@ -87,6 +90,10 @@ private:
     QSharedDataPointer<QProximityReadingData> d;
 };
 
+typedef QTypedSensorBackend<QProximityReading> QProximityBackend;
+
+// =====================================================================
+
 class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 {
     Q_OBJECT
@@ -97,16 +104,21 @@ public:
     QString type() const { return typeId; };
 
     // For polling/checking the current (cached) value
-    QProximityReading currentReading() const;
+    QProximityReading currentReading() const { return m_backend->currentReading(); }
 
 signals:
     void proximityChanged(const QProximityReading &reading);
+
+protected:
+    QSensorBackend *backend() const { return m_backend; }
 
 private:
     void newReadingAvailable()
     {
         emit proximityChanged(currentReading());
     }
+
+    QProximityBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

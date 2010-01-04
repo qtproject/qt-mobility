@@ -146,6 +146,12 @@ const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
 */
 
 /*!
+    \fn QMagneticNorthSensor::currentReading() const
+
+    Returns the current magnetic north reading.
+*/
+
+/*!
     \fn QMagneticNorthSensor::headingChanged(const QMagneticNorthReading &reading)
 
     This signal is emitted when a new magnetic north \a reading comes in.

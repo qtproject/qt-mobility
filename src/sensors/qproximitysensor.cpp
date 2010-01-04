@@ -122,7 +122,7 @@ QTM_BEGIN_NAMESPACE
 QProximitySensor::QProximitySensor(QObject *parent, const QSensorId &id)
     : QSensor(parent)
 {
-    connectToBackend(id);
+    m_backend = static_cast<QProximityBackend*>(connectToBackend(id));
 }
 
 /*!
@@ -136,17 +136,20 @@ const QString QProximitySensor::typeId("qt.Proximity");
 */
 
 /*!
+    \fn QProximitySensor::currentReading() const
+
     Returns the current proximity reading.
 */
-QProximityReading QProximitySensor::currentReading() const
-{
-    return QProximityReading();
-}
 
 /*!
     \fn QProximitySensor::proximityChanged(const QProximityReading &reading)
 
     This signal is emitted when a new proximity \a reading comes in.
+*/
+
+/*!
+    \fn QProximitySensor::backend() const
+    \reimp
 */
 
 #include "moc_qproximitysensor.cpp"
