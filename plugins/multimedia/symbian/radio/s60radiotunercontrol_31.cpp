@@ -65,7 +65,7 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_currentFreq(104100000)
     , m_scanning(false)
     , m_tuners(0)
-    , m_vol(100;)
+    , m_vol(100)
 {
     initRadio();   
 }
