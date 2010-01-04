@@ -45,6 +45,8 @@
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
+#include <QTextCodec>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -119,12 +121,15 @@ QIODevice* QVersitReader::device() const
 
 void QVersitReader::setDefaultCharset(QByteArray charset)
 {
-    d->mDefaultCharset = charset;
+    QTextCodec *codec = QTextCodec::codecForName(charset);
+    if (codec != NULL) {
+        d->mDefaultCodec = codec;
+    }
 }
 
 QByteArray QVersitReader::defaultCharset()
 {
-    return d->mDefaultCharset;
+    return d->mDefaultCodec->name();
 }
 
 /*!

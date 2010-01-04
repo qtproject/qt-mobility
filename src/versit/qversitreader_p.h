@@ -121,7 +121,7 @@ public: // Data
     QPointer<QIODevice> mIoDevice;
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
-    QByteArray mDefaultCharset;
+    QTextCodec* mDefaultCodec;
 };
 
 QTM_END_NAMESPACE

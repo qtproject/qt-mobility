@@ -45,12 +45,15 @@
 #include <QObject>
 #include <qmobilityglobal.h>
 
+class QTextCodec;
+
 class UT_VersitUtils : public QObject
 {
      Q_OBJECT
 
 private slots:
-
+    void init();
+    void cleanup();
     void testCountLeadingWhiteSpaces();
     void testParamName();
     void testParamValue();
@@ -65,6 +68,9 @@ private slots:
     void testExtractPropertyGroupsAndName();
     void testExtractVCard21PropertyParams();
     void testExtractVCard30PropertyParams();
+
+private:
+    QTextCodec* m_asciiCodec;
 };
 
 #endif // UT_VERSITUTILS_H

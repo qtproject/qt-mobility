@@ -43,7 +43,8 @@
 #include "qmobilityglobal.h"
 
 #include <QMap>
-#include <QRegExp>
+#include <QTextCodec>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -246,12 +247,13 @@ void VersitUtils::removeBackSlashEscaping(QString& text)
 }
 
 /*!
- * Extracts the groups and the name of the property.
+ * Extracts the groups and the name of the property using \a codec to determine the delimeters
  *
  * On entry, \a line should select a whole line.
  * On exit, \a line will be updated to point after the groups and name.
  */
-QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCursor& line)
+QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCursor& line,
+                                                                     QTextCodec *codec)
 {
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
@@ -298,20 +300,21 @@ QByteArray VersitUtils::extractPropertyValue(VersitCursor& line)
 }
 
 /*!
- * Extracts the property parameters as a QMultiHash.
+ * Extracts the property parameters as a QMultiHash using \a codec to determine the delimeters.
  * The parameters without names are added as "TYPE" parameters.
  *
  * On entry \a line should contain the entire line.
  * On exit, line will be updated to point to the start of the value.
  */
-QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(VersitCursor& line)
+QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(VersitCursor& line,
+                                                                      QTextCodec *codec)
 {
     QMultiHash<QString,QString> result;
-    QList<QByteArray> paramList = extractParams(line);
+    QList<QByteArray> paramList = extractParams(line, codec);
     while (!paramList.isEmpty()) {
         QByteArray param = paramList.takeLast();
-        QString name = QString::fromAscii(paramName(param));
-        QString value = QString::fromAscii(paramValue(param));
+        QString name = paramName(param, codec);
+        QString value = paramValue(param, codec);
         result.insert(name,value);
     }
 
@@ -319,23 +322,33 @@ QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(VersitCurs
 }
 
 /*!
- * Extracts the property parameters as a QMultiHash.
+ * Extracts the property parameters as a QMultiHash using \a codec to determine the delimeters.
  * The parameters without names are added as "TYPE" parameters.
  */
-QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCursor& line)
+QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCursor& line,
+                                                                      QTextCodec *codec)
 {
     QMultiHash<QString,QString> result;
-    QList<QByteArray> paramList = extractParams(line);
+    QList<QByteArray> paramList = extractParams(line, codec);
     while (!paramList.isEmpty()) {
         QByteArray param = paramList.takeLast();
-        QString nameString(QString::fromAscii(paramName(param)));
-        removeBackSlashEscaping(nameString);
-        QByteArray values = paramValue(param);
-        QList<QByteArray> valueList = extractParts(values,',');
-        while (!valueList.isEmpty()) {
-            QString valueString(QString::fromAscii(valueList.takeLast()));
-            removeBackSlashEscaping(valueString);
-            result.insert(nameString,valueString);
+        QString name(paramName(param, codec));
+        removeBackSlashEscaping(name);
+        QString values = paramValue(param, codec);
+        QList<QString> valueList = values.split(QString::fromAscii(","), QString::SkipEmptyParts);
+        QString buffer; // for any part ending in a backslash, join it to the next.
+        foreach (QString value, valueList) {
+            if (value.endsWith(QChar::fromAscii('\\'))) {
+                value.chop(1);
+                buffer.append(value);
+                buffer.append(QString::fromAscii(",")); // because the comma got nuked by split()
+            }
+            else {
+                buffer.append(value);
+                removeBackSlashEscaping(buffer);
+                result.insert(name, buffer);
+                buffer.clear();
+            }
         }
     }
 
@@ -344,7 +357,7 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
 
 
 /*!
- * Get the next line of input to parse.
+ * Get the next line of input to parse using \a codec to determine the line delimeters.
  *
  * On entry, \a line should contain the current data buffer and offset.
  * On exit, \a line will have the updated selection corresponding to the
@@ -352,7 +365,7 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
  *
  * Returns true if a full line was found, false otherwise.
  */
-bool VersitUtils::getNextLine(VersitCursor &line)
+bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
 {
     int crlfPos;
 
@@ -384,12 +397,12 @@ bool VersitUtils::getNextLine(VersitCursor &line)
 
 
 /*!
- * Extracts the parameters as delimited by semicolons.
+ * Extracts the parameters as delimited by semicolons using \a codec to determine the delimeters.
  *
  * On entry \a line should point to the start of the parameter section (past the name).
  * On exit, \a line will be updated to point to the start of the value.
  */
-QList<QByteArray> VersitUtils::extractParams(VersitCursor& line)
+QList<QByteArray> VersitUtils::extractParams(VersitCursor& line, QTextCodec *codec)
 {
     QList<QByteArray> params;
 
@@ -397,7 +410,7 @@ QList<QByteArray> VersitUtils::extractParams(VersitCursor& line)
     int colonIndex = line.data.indexOf(':', line.position);
     if (colonIndex > line.position && colonIndex < line.selection) {
         QByteArray nameAndParamsString = line.data.mid(line.position, colonIndex - line.position);
-        params = extractParts(nameAndParamsString,';');
+        params = extractParts(nameAndParamsString, ";", codec);
 
         /* Update line */
         line.setPosition(colonIndex + 1);
@@ -410,24 +423,27 @@ QList<QByteArray> VersitUtils::extractParams(VersitCursor& line)
 }
 
 /*!
- * Extracts the parts separated by separator
- * discarding the separators escaped with a backslash
+ * Extracts the parts separated by separator discarding the separators escaped with a backslash
+ * encoded with \a codec
  */
-QList<QByteArray> VersitUtils::extractParts(const QByteArray& text, char separator)
+QList<QByteArray> VersitUtils::extractParts(const QByteArray& text, const QByteArray& separator,
+                                            QTextCodec* codec)
 {
     QList<QByteArray> parts;
     int partStartIndex = 0;
-    char previous = 0;
-    for (int i=0; i<text.length(); i++) {
-        char current = text.at(i);
-        if (current == separator && previous != '\\') {
+    int textLength = text.length();
+    int separatorLength = separator.length();
+    QByteArray backslash = encode('\\', codec);
+
+    for (int i=0; i < textLength-separatorLength+1; i++) {
+        if (containsAt(text, separator, i)
+            && !containsAt(text, backslash, i-backslash.length())) {
             int length = i-partStartIndex;
             QByteArray part = extractPart(text,partStartIndex,length);
             if (part.length() > 0)
                 parts.append(part);
-            partStartIndex = i+1;
+            partStartIndex = i+separatorLength;
         }
-        previous = current;
     }
 
     // Add the last or only part
@@ -449,38 +465,61 @@ QByteArray VersitUtils::extractPart(const QByteArray& text, int startPosition, i
 }
 
 /*!
- * Extracts the name of the parameter.
+ * Extracts the name of the parameter using \a codec to determine the delimeters.
  * No name is interpreted as an implicit "TYPE".
  */
-QByteArray VersitUtils::paramName(const QByteArray& parameter)
+QString VersitUtils::paramName(const QByteArray& parameter, QTextCodec* codec)
 {
      if (parameter.trimmed().length() == 0)
-         return QByteArray();
-     int equalsIndex = parameter.indexOf('=');
+         return QString();
+     QByteArray equals = encode('=', codec);
+     int equalsIndex = parameter.indexOf(equals);
      if (equalsIndex > 0) {
-         return parameter.left(equalsIndex).trimmed();
+         return codec->toUnicode(parameter.left(equalsIndex)).trimmed();
      }
 
-     return QByteArray("TYPE");
+     return QString::fromAscii("TYPE");
 }
 
 /*!
- * Extracts the value of the parameter
+ * Extracts the value of the parameter using \a codec to determine the delimeters
  */
-QByteArray VersitUtils::paramValue(const QByteArray& parameter)
+QString VersitUtils::paramValue(const QByteArray& parameter, QTextCodec* codec)
 {
     QByteArray value(parameter);
-    int equalsIndex = parameter.indexOf('=');
+    QByteArray equals = encode('=', codec);
+    int equalsIndex = parameter.indexOf(equals);
     if (equalsIndex > 0) {
-        if (equalsIndex == parameter.length()-1) {
-            value = QByteArray();
-        } else {
-            int valueLength = parameter.length() - (equalsIndex + 1);
-            value = parameter.right(valueLength).trimmed();
-        }    
+        int valueLength = parameter.length() - (equalsIndex + equals.length());
+        value = parameter.right(valueLength).trimmed();
     }
 
-    return value;
+    return codec->toUnicode(value);
+}
+
+/*!
+ * Encode \a ch with \a codec, without adding an byte-order mark
+ */
+QByteArray VersitUtils::encode(char ch, QTextCodec* codec)
+{
+    QChar qch = QChar::fromAscii(ch);
+    QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
+    return codec->fromUnicode(&qch, 1, &state);
+}
+
+/*!
+ * Returns true if and only if \a text contains \a ba at \a index
+ */
+bool VersitUtils::containsAt(const QByteArray& text, const QByteArray& ba, int index)
+{
+    int n = ba.length();
+    if (text.length() - index - n < 0 || index < 0)
+        return false;
+    for (int i = 0; i < n; i++) {
+        if (text.at(index+i) != ba.at(i))
+            return false;
+    }
+    return true;
 }
 
 /*!

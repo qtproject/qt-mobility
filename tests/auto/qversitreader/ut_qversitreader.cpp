@@ -73,7 +73,7 @@ void UT_QVersitReader::finished()
 void UT_QVersitReader::testDefaultCharset()
 {
     // Default charset
-    QCOMPARE(mReader->defaultCharset(), QByteArray("ISO 8859-1"));
+    QCOMPARE(mReader->defaultCharset(), QByteArray("ISO-8859-1"));
 
     mReader->setDefaultCharset("UTF-8");
     QCOMPARE(mReader->defaultCharset(), QByteArray("UTF-8"));

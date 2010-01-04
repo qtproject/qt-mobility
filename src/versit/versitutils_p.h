@@ -80,23 +80,29 @@ public:
     static bool backSlashEscape(QString& text);
     static void removeBackSlashEscaping(QString& text);
 
-    static bool getNextLine(VersitCursor& line);
+    static bool getNextLine(VersitCursor& line, QTextCodec* codec);
 
     /* These functions operate on a cursor describing a single line */
-    static QPair<QStringList,QString> extractPropertyGroupsAndName(VersitCursor& line);
+    static QPair<QStringList,QString> extractPropertyGroupsAndName(VersitCursor& line,
+                                                                   QTextCodec* codec);
     static QByteArray extractPropertyValue(VersitCursor& line);
-    static QMultiHash<QString,QString> extractVCard21PropertyParams(VersitCursor& line);
-    static QMultiHash<QString,QString> extractVCard30PropertyParams(VersitCursor& line);
+    static QMultiHash<QString,QString> extractVCard21PropertyParams(VersitCursor& line,
+                                                                    QTextCodec* codec);
+    static QMultiHash<QString,QString> extractVCard30PropertyParams(VersitCursor& line,
+                                                                    QTextCodec* codec);
 
     // "Private" functions
-    static QList<QByteArray> extractParams(VersitCursor& line);
-    static QList<QByteArray> extractParts(const QByteArray& text, char separator);
+    static QList<QByteArray> extractParams(VersitCursor& line, QTextCodec *codec);
+    static QList<QByteArray> extractParts(const QByteArray& text, const QByteArray& separator,
+                                          QTextCodec *codec);
     static QByteArray extractPart(
         const QByteArray& text,
         int startPosition, 
         int length=-1);
-    static QByteArray paramName(const QByteArray& parameter);
-    static QByteArray paramValue(const QByteArray& parameter);
+    static QString paramName(const QByteArray& parameter, QTextCodec* codec);
+    static QString paramValue(const QByteArray& parameter, QTextCodec* codec);
+    static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
+    static QByteArray encode(char ch, QTextCodec* codec);
     static bool shouldBeQuotedPrintableEncoded(char chr);
 };
 

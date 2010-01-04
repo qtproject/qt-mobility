@@ -42,10 +42,20 @@
 #include "ut_versitutils.h"
 #include <QByteArray>
 #include <QtTest/QtTest>
+#include <QTextCodec>
 
 #include "versitutils_p.h"
 
 QTM_USE_NAMESPACE
+
+void UT_VersitUtils::init()
+{
+    m_asciiCodec = QTextCodec::codecForName("ISO 8859-1");
+}
+
+void UT_VersitUtils::cleanup()
+{
+}
 
 void UT_VersitUtils::testCountLeadingWhiteSpaces()
 {
@@ -78,52 +88,67 @@ void UT_VersitUtils::testParamName()
 {
     // Empty value
     QByteArray param;
-    QCOMPARE(VersitUtils::paramName(param),QByteArray());
+    QCOMPARE(VersitUtils::paramName(param, m_asciiCodec),QString());
 
     // Only value present
     param = "WORK";
-    QCOMPARE(QString::fromAscii(VersitUtils::paramName(param)),
+    QCOMPARE(VersitUtils::paramName(param, m_asciiCodec),
              QString::fromAscii("TYPE"));
 
+    // The below tests intentionally use the misspelling TIPE to avoid the default behaviour of
+    // returning TYPE when the name can't be parsed.
     // Both name and value, spaces after the name
-    param = "TYPE \t =WORK";
-    QCOMPARE(QString::fromAscii(VersitUtils::paramName(param)),
-             QString::fromAscii("TYPE"));
+    param = "TIPE \t =WORK";
+    QCOMPARE(VersitUtils::paramName(param, m_asciiCodec),
+             QString::fromAscii("TIPE"));
 
     // Both name and value, no spaces after the name
-    param = "TYPE=WORK";
-    QCOMPARE(QString::fromAscii(VersitUtils::paramName(param)),
-             QString::fromAscii("TYPE"));
+    param = "TIPE=WORK";
+    QCOMPARE(VersitUtils::paramName(param, m_asciiCodec),
+             QString::fromAscii("TIPE"));
+
+    // Test wide character support.
+    QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
+    param = codec->fromUnicode(QString::fromAscii("TIPE=WORK"));
+    QCOMPARE(VersitUtils::paramName(param, codec),
+             QString::fromAscii("TIPE"));
+
 }
 
 void UT_VersitUtils::testParamValue()
 {
     // Empty value
     QByteArray param;
-    QCOMPARE(VersitUtils::paramValue(param),QByteArray());
+    QCOMPARE(VersitUtils::paramValue(param, m_asciiCodec),QString());
     
     // Only value present
     param = "WORK";
-    QCOMPARE(QString::fromAscii(VersitUtils::paramValue(param)),
+    QCOMPARE(VersitUtils::paramValue(param, m_asciiCodec),
              QString::fromAscii("WORK"));
     
     // Name and equals sign, but no value
     param = "TYPE=";
-    QCOMPARE(VersitUtils::paramValue(param),QByteArray());
+    QCOMPARE(VersitUtils::paramValue(param, m_asciiCodec),QString());
     
     // Name and equals sign, but value has only spaces
     param = "TYPE=  \t ";
-    QCOMPARE(VersitUtils::paramValue(param),QByteArray());
+    QCOMPARE(VersitUtils::paramValue(param, m_asciiCodec),QString());
     
     // Both name and value, spaces before the value
     param = "TYPE= \t  WORK";
-    QCOMPARE(QString::fromAscii(VersitUtils::paramValue(param)),
+    QCOMPARE(VersitUtils::paramValue(param, m_asciiCodec),
              QString::fromAscii("WORK"));
     
     // Both name and value, no spaces before the value
     param = "ENCODING=QUOTED-PRINTABLE";
-    QCOMPARE(QString::fromAscii(VersitUtils::paramValue(param)),
+    QCOMPARE(VersitUtils::paramValue(param, m_asciiCodec),
              QString::fromAscii("QUOTED-PRINTABLE"));
+
+    // Test wide character support.
+    QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
+    param = codec->fromUnicode(QString::fromAscii("TYPE=WORK"));
+    QCOMPARE(VersitUtils::paramValue(param, codec),
+             QString::fromAscii("WORK"));
 }
 
 void UT_VersitUtils::testExtractPart()
@@ -164,48 +189,48 @@ void UT_VersitUtils::testExtractParts()
 
     // Empty value
     QByteArray text;
-    parts = VersitUtils::extractParts(text,';');
+    parts = VersitUtils::extractParts(text,";", m_asciiCodec);
     QVERIFY(parts.isEmpty());
 
     // Only separator
     text = ";";
-    parts = VersitUtils::extractParts(text,';');
+    parts = VersitUtils::extractParts(text,";", m_asciiCodec);
     QVERIFY(parts.isEmpty());
 
     // One part
     text = "part";
-    parts = VersitUtils::extractParts(text,';');
+    parts = VersitUtils::extractParts(text,";", m_asciiCodec);
     QCOMPARE(parts.count(),1);
     QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("part"));
 
     // Separator in the beginning, one part
     text = ";part";
-    parts = VersitUtils::extractParts(text,';');
+    parts = VersitUtils::extractParts(text,";", m_asciiCodec);
     QCOMPARE(parts.count(),1);
     QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("part"));
 
     // Separator in the end, one part
     text = "part;";
-    parts = VersitUtils::extractParts(text,';');
+    parts = VersitUtils::extractParts(text,";", m_asciiCodec);
     QCOMPARE(parts.count(),1);
     QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("part"));
 
     // One part that contains escaped separator
     text = "part\\;";
-    parts = VersitUtils::extractParts(text,';');
+    parts = VersitUtils::extractParts(text,";", m_asciiCodec);
     QCOMPARE(parts.count(),1);
     QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("part\\;"));
 
     // Two parts
     text = "part1;part2";
-    parts = VersitUtils::extractParts(text,';');
+    parts = VersitUtils::extractParts(text,";", m_asciiCodec);
     QCOMPARE(parts.count(),2);
     QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("part1"));
     QCOMPARE(QString::fromAscii(parts[1]),QString::fromAscii("part2"));
 
     // Two parts that contain escaped separators
     text = "pa\\;rt1;par\\;t2";
-    parts = VersitUtils::extractParts(text,';');
+    parts = VersitUtils::extractParts(text,";", m_asciiCodec);
     QCOMPARE(parts.count(),2);
     QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("pa\\;rt1"));
     QCOMPARE(QString::fromAscii(parts[1]),QString::fromAscii("par\\;t2"));
@@ -509,7 +534,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
 
     // Empty string
     VersitCursor cursor(QByteArray(" "));
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString());
     
@@ -517,7 +542,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     QByteArray property("TEL");
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString());
     
@@ -525,7 +550,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     property = "TEL:123";
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
@@ -533,7 +558,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     property = "TEL :123";
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
@@ -541,7 +566,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     property = "TEL \t  :123";
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
@@ -549,7 +574,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     property = "group1.TEL:1234";
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),1);
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
@@ -558,7 +583,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     property = "group1.group2.TEL:12345";
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),2);
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
@@ -568,7 +593,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     property = "TEL;WORK:123";
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
 
@@ -576,7 +601,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     property = "EMAIL;INTERNET;ENCODING=QUOTED-PRINTABLE:user=40ovi.com";
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("EMAIL"));
     
@@ -584,7 +609,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     property = "X-proper\\;ty:value";
     cursor.setData(property);
     cursor.selection = property.size();
-    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("X-proper\\;ty"));
 }
@@ -594,32 +619,33 @@ void UT_VersitUtils::testExtractVCard21PropertyParams()
     // No parameters
     VersitCursor cursor(QByteArray(":123"));
     cursor.setSelection(cursor.data.size());
-    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor).count(), 0);
+    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor, m_asciiCodec).count(), 0);
     
     // "Empty" parameter
     cursor.setData(QByteArray(";:123"));
     cursor.setSelection(cursor.data.size());
-    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor).count(), 0);
+    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor, m_asciiCodec).count(), 0);
     
     // Semicolon found, but no value for the property
     cursor.setData(QByteArray(";TYPE=X-TYPE"));
     cursor.setSelection(cursor.data.size());
-    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor).count(), 0);
+    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor, m_asciiCodec).count(), 0);
     
     // The property name contains an escaped semicolon, no parameters
     cursor.setData(QByteArray(":value"));
     cursor.setSelection(cursor.data.size());
-    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor).count(), 0);
+    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor, m_asciiCodec).count(), 0);
 
     // The property value contains a semicolon, no parameters
     cursor.setData(QByteArray(":va;lue"));
     cursor.setSelection(cursor.data.size());
-    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor).count(), 0);
+    QCOMPARE(VersitUtils::extractVCard21PropertyParams(cursor, m_asciiCodec).count(), 0);
     
     // One parameter
     cursor.setData(QByteArray(";HOME:123"));
     cursor.setSelection(cursor.data.size());
-    QMultiHash<QString,QString> params = VersitUtils::extractVCard21PropertyParams(cursor);
+    QMultiHash<QString,QString> params = VersitUtils::extractVCard21PropertyParams(cursor,
+                                                                                   m_asciiCodec);
     QCOMPARE(1, params.count());
     QCOMPARE(1, params.values(QString::fromAscii("TYPE")).count());
     QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
@@ -627,7 +653,7 @@ void UT_VersitUtils::testExtractVCard21PropertyParams()
     // Two parameters of the same type
     cursor.setData(QByteArray(";HOME;VOICE:123"));
     cursor.setSelection(cursor.data.size());
-    params = VersitUtils::extractVCard21PropertyParams(cursor);
+    params = VersitUtils::extractVCard21PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(2, params.count());
     QCOMPARE(2, params.values(QString::fromAscii("TYPE")).count());
     QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
@@ -636,7 +662,7 @@ void UT_VersitUtils::testExtractVCard21PropertyParams()
     // Two parameters, several empty parameters (extra semicolons)
     cursor.setData(QByteArray(";;;;HOME;;;;;VOICE;;;:123"));
     cursor.setSelection(cursor.data.size());
-    params = VersitUtils::extractVCard21PropertyParams(cursor);
+    params = VersitUtils::extractVCard21PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(2, params.count());
     QCOMPARE(2, params.values(QString::fromAscii("TYPE")).count());
     QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
@@ -646,7 +672,7 @@ void UT_VersitUtils::testExtractVCard21PropertyParams()
     cursor.setData(QByteArray(";INTERNET;ENCODING=QUOTED-PRINTABLE:user=40ovi.com"));
     cursor.setSelection(cursor.data.size());
     params.clear();
-    params = VersitUtils::extractVCard21PropertyParams(cursor);
+    params = VersitUtils::extractVCard21PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(2, params.count());
     QList<QString> typeParams = params.values(QString::fromAscii("TYPE"));
     QCOMPARE(1, typeParams.count());
@@ -661,12 +687,13 @@ void UT_VersitUtils::testExtractVCard30PropertyParams()
     // No parameters
     VersitCursor cursor(QByteArray(":123"));
     cursor.setSelection(cursor.data.size());
-    QCOMPARE(VersitUtils::extractVCard30PropertyParams(cursor).count(), 0);
+    QCOMPARE(VersitUtils::extractVCard30PropertyParams(cursor, m_asciiCodec).count(), 0);
 
     // One parameter
     cursor.setData(QByteArray(";TYPE=HOME:123"));
     cursor.setSelection(cursor.data.size());
-    QMultiHash<QString,QString> params = VersitUtils::extractVCard30PropertyParams(cursor);
+    QMultiHash<QString,QString> params = VersitUtils::extractVCard30PropertyParams(cursor,
+                                                                                   m_asciiCodec);
     QCOMPARE(params.count(), 1);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 1);
     QCOMPARE(params.values(QString::fromAscii("TYPE"))[0], QString::fromAscii("HOME"));
@@ -674,7 +701,7 @@ void UT_VersitUtils::testExtractVCard30PropertyParams()
     // One parameter with an escaped semicolon
     cursor.setData(QByteArray(";para\\;meter:value"));
     cursor.setSelection(cursor.data.size());
-    params = VersitUtils::extractVCard30PropertyParams(cursor);
+    params = VersitUtils::extractVCard30PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(params.count(), 1);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 1);
     QCOMPARE(params.values(QString::fromAscii("TYPE"))[0], QString::fromAscii("para;meter"));
@@ -682,7 +709,7 @@ void UT_VersitUtils::testExtractVCard30PropertyParams()
     // One parameter with and escaped comma in the name and the value
     cursor.setData(QByteArray(";X-PA\\,RAM=VAL\\,UE:123"));
     cursor.setSelection(cursor.data.size());
-    params = VersitUtils::extractVCard30PropertyParams(cursor);
+    params = VersitUtils::extractVCard30PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(params.count(), 1);
     QCOMPARE(params.values(QString::fromAscii("X-PA,RAM")).count(), 1);
     QCOMPARE(params.values(QString::fromAscii("X-PA,RAM"))[0], QString::fromAscii("VAL,UE"));
@@ -690,36 +717,36 @@ void UT_VersitUtils::testExtractVCard30PropertyParams()
     // Two parameters of the same type
     cursor.setData(QByteArray(";TYPE=HOME,VOICE:123"));
     cursor.setSelection(cursor.data.size());
-    params = VersitUtils::extractVCard30PropertyParams(cursor);
+    params = VersitUtils::extractVCard30PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(params.count(), 2);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 2);
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[1],QString::fromAscii("VOICE"));
+    QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("HOME")));
+    QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("VOICE")));
 
     // Two parameters of the same type in separate name-values
     cursor.setData(QByteArray(";TYPE=HOME;TYPE=VOICE:123"));
     cursor.setSelection(cursor.data.size());
-    params = VersitUtils::extractVCard30PropertyParams(cursor);
+    params = VersitUtils::extractVCard30PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(params.count(), 2);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 2);
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("HOME"));
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[1],QString::fromAscii("VOICE"));
+    QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("HOME")));
+    QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("VOICE")));
 
     // Three parameters of the same type
     cursor.setData(QByteArray(";TYPE=PREF,HOME,VOICE:123"));
     cursor.setSelection(cursor.data.size());
-    params = VersitUtils::extractVCard30PropertyParams(cursor);
+    params = VersitUtils::extractVCard30PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(params.count(), 3);
     QCOMPARE(params.values(QString::fromAscii("TYPE")).count(), 3);
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[0],QString::fromAscii("PREF"));
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[1],QString::fromAscii("HOME"));
-    QCOMPARE(params.values(QString::fromAscii("TYPE"))[2],QString::fromAscii("VOICE"));
+    QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("PREF")));
+    QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("HOME")));
+    QVERIFY(params.values(QString::fromAscii("TYPE")).contains(QString::fromAscii("VOICE")));
 
     // Two parameters with different types
     cursor.setData(QByteArray(";TYPE=HOME;X-PARAM=X-VALUE:Home Street 1"));
     cursor.setSelection(cursor.data.size());
     params.clear();
-    params = VersitUtils::extractVCard30PropertyParams(cursor);
+    params = VersitUtils::extractVCard30PropertyParams(cursor, m_asciiCodec);
     QCOMPARE(params.count(), 2);
     QList<QString> typeParams = params.values(QString::fromAscii("TYPE"));
     QCOMPARE(typeParams.count(), 1);

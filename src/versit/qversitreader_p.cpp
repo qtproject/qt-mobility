@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 QVersitReaderPrivate::QVersitReaderPrivate()
     : mIoDevice(0),
     mDocumentNestingLevel(0),
-    mDefaultCharset("ISO 8859-1")
+    mDefaultCodec(QTextCodec::codecForName("ISO 8859-1"))
 {
 }
     
@@ -174,13 +174,14 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QVersitDocument::V
         return QVersitProperty();
 
     // Make sure we have a line
-    if (!VersitUtils::getNextLine(cursor))
+    if (!VersitUtils::getNextLine(cursor, mDefaultCodec))
         return QVersitProperty();
 
 //    qDebug() << "Current line is" << cursor.position << cursor.selection << cursor.data.mid(cursor.position, cursor.selection - cursor.position);
 
     // Otherwise, do stuff.
-    QPair<QStringList,QString> groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor);
+    QPair<QStringList,QString> groupsAndName =
+            VersitUtils::extractPropertyGroupsAndName(cursor, mDefaultCodec);
 
     QVersitProperty property;
     property.setGroups(groupsAndName.first);
@@ -199,7 +200,7 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QVersitDocument::V
  */
 void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitProperty& property)
 {
-    property.setParameters(VersitUtils::extractVCard21PropertyParams(cursor));
+    property.setParameters(VersitUtils::extractVCard21PropertyParams(cursor, mDefaultCodec));
 
     int origPos = cursor.position;
     QByteArray value = VersitUtils::extractPropertyValue(cursor);
@@ -219,7 +220,7 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
  */
 void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitProperty& property)
 {
-    property.setParameters(VersitUtils::extractVCard30PropertyParams(cursor));
+    property.setParameters(VersitUtils::extractVCard30PropertyParams(cursor, mDefaultCodec));
 
     QByteArray value = VersitUtils::extractPropertyValue(cursor);
 
@@ -243,7 +244,7 @@ void QVersitReaderPrivate::parseAgentProperty(VersitCursor& cursor, QVersitPrope
     QVersitDocument agentDocument;
 
     // Get rid of AGENT, find the meat..
-    VersitUtils::getNextLine(cursor);
+    VersitUtils::getNextLine(cursor, mDefaultCodec);
 
     if (!parseVersitDocument(cursor, agentDocument)) {
         property = QVersitProperty();
@@ -286,7 +287,7 @@ void QVersitReaderPrivate::unencode(QByteArray& value, VersitCursor& cursor, QVe
         if (value.at(value.length() - 1) == '=') {
             value.chop(1); // Get rid of '='
             // We add each line (minus the escaped = and newline chars)
-            while(VersitUtils::getNextLine(cursor)) {
+            while(VersitUtils::getNextLine(cursor, mDefaultCodec)) {
                 if (cursor.data.at(cursor.selection - 1) == '=') {
                     value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position - 1));
                     cursor.setPosition(cursor.selection);
