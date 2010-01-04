@@ -88,7 +88,8 @@ void UT_QVersit::testImportFiles_data()
     QTEST_NEW_ROW("AAB4/MultipleAscii.vcf", "");
     QTEST_NEW_ROW("AAB4/SingleCompany.vcf", "");
     QTEST_NEW_ROW("AAB4/SingleExtensive.vcf", "");
-//    QTEST_NEW_ROW("AAB4/SingleNonAscii.vcf", "UTF-16");
+    QTEST_NEW_ROW("AAB4/SingleNonAscii.vcf", "UTF-16");
+//    QTEST_NEW_ROW("AAB4/SingleNonAsciiWithPhoto.vcf", "UTF-16");
     QTEST_NEW_ROW("AAB5/SingleNonAscii.vcf", "");
 //    QTEST_NEW_ROW("Entourage11/basic.vcf", "UTF-16");
 //    QTEST_NEW_ROW("Entourage11/image.vcf", "UTF-16");
