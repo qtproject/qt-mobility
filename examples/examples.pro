@@ -23,7 +23,8 @@ contains(mobility_modules,location) {
 		satellitedialog
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
-			weatherinfo
+		    weatherinfo \
+		    lightmaps
     }		
     contains(QT_CONFIG, webkit) {
         SUBDIRS += fetchgooglemaps
