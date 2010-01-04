@@ -82,6 +82,7 @@ public:
                 savedContacts.insert(cm->managerName(),contacts);
                 QList<QContactLocalId> ids = cm->contacts();
                 cm->removeContacts(&ids);
+                delete cm;
             }
         }
     }
@@ -100,6 +101,7 @@ public:
                     c.setId(QContactId());
                     cm->saveContact(&c);
                 }
+                delete cm;
             }
         }
     }

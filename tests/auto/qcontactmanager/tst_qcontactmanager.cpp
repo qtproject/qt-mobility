@@ -410,7 +410,7 @@ void tst_QContactManager::metadata()
 {
     // ensure that the backend is publishing its metadata (name / parameters / uri) correctly
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(new QContactManager("memory"));
     QVERIFY(QContactManager::buildUri(cm->managerName(), cm->managerParameters()) == cm->managerUri());
 }
 
@@ -418,7 +418,7 @@ void tst_QContactManager::metadata()
 void tst_QContactManager::nullIdOperations()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(new QContactManager("memory"));
     QVERIFY(!cm->removeContact(QContactLocalId()));
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
 
@@ -427,7 +427,6 @@ void tst_QContactManager::nullIdOperations()
     QVERIFY(c.id() == QContactId());
     QVERIFY(c.isEmpty());
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
-    delete cm;
 }
 
 void tst_QContactManager::uriParsing()
@@ -507,9 +506,9 @@ void tst_QContactManager::ctors()
     QContactManager cm3(defaultStore, QMap<QString, QString>());
     QContactManager cm4(cm.managerUri()); // should fail
 
-    QContactManager* cm5 = QContactManager::fromUri(QContactManager::buildUri(defaultStore, QMap<QString, QString>()));
-    QContactManager* cm6 = QContactManager::fromUri(cm.managerUri()); // uri is not a name; should fail.
-    QContactManager* cm9 = QContactManager::fromUri(QString(), &parent);
+    QScopedPointer<QContactManager> cm5(QContactManager::fromUri(QContactManager::buildUri(defaultStore, QMap<QString, QString>())));
+    QScopedPointer<QContactManager> cm6(QContactManager::fromUri(cm.managerUri())); // uri is not a name; should fail.
+    QScopedPointer<QContactManager> cm9(QContactManager::fromUri(QString(), &parent));
 
     QVERIFY(cm9->parent() == &parent);
 
@@ -534,9 +533,9 @@ void tst_QContactManager::ctors()
     QContactManager em3("memory", randomParameters);
 
     /* Also invalid, since we don't have one of these anyway */
-    QContactManager* em4 = QContactManager::fromUri("invalid uri");
-    QContactManager* em5 = QContactManager::fromUri(QContactManager::buildUri("nonexistent", QMap<QString, QString>()));
-    QContactManager* em6 = QContactManager::fromUri(em3.managerUri());
+    QScopedPointer<QContactManager> em4(QContactManager::fromUri("invalid uri"));
+    QScopedPointer<QContactManager> em5(QContactManager::fromUri(QContactManager::buildUri("nonexistent", QMap<QString, QString>())));
+    QScopedPointer<QContactManager> em6(QContactManager::fromUri(em3.managerUri()));
 
 
     /*
@@ -571,16 +570,6 @@ void tst_QContactManager::ctors()
     QCOMPARE(em4->managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em5->managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em3.managerParameters(), em6->managerParameters()); // memory engine discards the given params, replaces with id.
-
-
-    /* Cleanse */
-    delete em4;
-    delete em5;
-    delete em6;
-    delete cm5;
-    delete cm6;
-
-    /* cm9 should be deleted by ~parent */
 }
 
 void tst_QContactManager::doDump()
@@ -588,16 +577,16 @@ void tst_QContactManager::doDump()
     // Only do this if it has been explicitly selected
     if (QCoreApplication::arguments().contains("doDump")) {
         QFETCH(QString, uri);
-        QContactManager* cm = QContactManager::fromUri(uri);
+        QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
-        dumpContacts(cm);
+        dumpContacts(cm.data());
     }
 }
 
 void tst_QContactManager::add()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     QContact alice;
     QContactName na;
@@ -623,7 +612,7 @@ void tst_QContactManager::add()
     QVERIFY(added.id() == alice.id());
 
     if (!isSuperset(added, alice)) {
-        dumpContacts(cm);
+        dumpContacts(cm.data());
         dumpContactDifferences(added, alice);
         QCOMPARE(added, alice);
     }
@@ -748,14 +737,12 @@ void tst_QContactManager::add()
         QEXPECT_FAIL("mgr='wince'", "Number of phones supported mismatch", Continue);
         QCOMPARE(veryContactable, retrievedContactable);
     }
-
-    delete cm;
 }
 
 void tst_QContactManager::update()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
     bool didUpdate = false;
 
     /* Save a new contact first */
@@ -812,14 +799,12 @@ void tst_QContactManager::update()
     jabberwock.setType(QContactType::TypeContact);
     QVERIFY(!cm->saveContact(&jabberwock));
     QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
-
-    delete cm;
 }
 
 void tst_QContactManager::remove()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     /* Save a new contact first */
     QContact alice;
@@ -851,15 +836,13 @@ void tst_QContactManager::remove()
         }
     }
 
-    delete cm;
-
     QVERIFY(atLeastOne);
 }
 
 void tst_QContactManager::batch()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     /* First test null pointer operations */
     QVERIFY(cm->saveContacts(0).count() == 0);
@@ -1056,8 +1039,6 @@ void tst_QContactManager::batch()
     } else {
         QVERIFY(ids.at(2) != 0);
     }
-
-    delete cm;
 }
 
 void tst_QContactManager::invalidManager()
@@ -1529,7 +1510,7 @@ void tst_QContactManager::nameSynthesis()
 void tst_QContactManager::contactValidation()
 {
     /* Use the memory engine as a reference (validation is not engine specific) */
-    QContactManager* cm = new QContactManager("memory");
+    QScopedPointer<QContactManager> cm(new QContactManager("memory"));
     QContact c;
 
     /*
@@ -1680,26 +1661,22 @@ void tst_QContactManager::contactValidation()
     /* Removing a create only should also fail */
     QVERIFY(!cm->saveContact(&c));
     QCOMPARE(cm->error(), QContactManager::DetailAccessError);
-
-
-
-    delete cm;
 }
 
 void tst_QContactManager::signalEmission()
 {
     QFETCH(QString, uri);
-    QContactManager* m1 = QContactManager::fromUri(uri);
-    QContactManager* m2 = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> m1(QContactManager::fromUri(uri));
+    QScopedPointer<QContactManager> m2(QContactManager::fromUri(uri));
 
     QVERIFY(m1->hasFeature(QContactManager::Anonymous) ==
         m2->hasFeature(QContactManager::Anonymous));
 
     qRegisterMetaType<QContactLocalId>("QContactLocalId");
     qRegisterMetaType<QList<QContactLocalId> >("QList<QContactLocalId>");
-    QSignalSpy spyCA(m1, SIGNAL(contactsAdded(QList<QContactLocalId>)));
-    QSignalSpy spyCM(m1, SIGNAL(contactsChanged(QList<QContactLocalId>)));
-    QSignalSpy spyCR(m1, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
+    QSignalSpy spyCA(m1.data(), SIGNAL(contactsAdded(QList<QContactLocalId>)));
+    QSignalSpy spyCM(m1.data(), SIGNAL(contactsChanged(QList<QContactLocalId>)));
+    QSignalSpy spyCR(m1.data(), SIGNAL(contactsRemoved(QList<QContactLocalId>)));
 
     QList<QVariant> args;
     QContact c;
@@ -1851,9 +1828,6 @@ void tst_QContactManager::signalEmission()
         m2->removeContact(c.localId());
         QTRY_COMPARE(spyCR.count(), 1); // check that we received the remove signal.
     }
-
-    delete m1;
-    delete m2;
 }
 
 void tst_QContactManager::errorStayingPut()
@@ -1893,7 +1867,7 @@ void tst_QContactManager::errorStayingPut()
 void tst_QContactManager::detailDefinitions()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
     QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
 
     /* Try to make a credible definition */
@@ -2046,14 +2020,12 @@ void tst_QContactManager::detailDefinitions()
         QVERIFY(cm->removeDetailDefinition(updatedDef.name()) == false);
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
     }
-
-    delete cm;
 }
 
 void tst_QContactManager::displayName()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     /*
      * Very similar to the tst_QContact functions, except we test
@@ -2095,18 +2067,15 @@ void tst_QContactManager::displayName()
 
     /* And delete the contact */
     QVERIFY(cm->removeContact(d.id().localId()));
-
-    delete cm;
 }
 
 void tst_QContactManager::actionPreferences()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     // early out if the manager doesn't support action preference saving.
     if (!cm->hasFeature(QContactManager::ActionPreferences)) {
-        delete cm;
         QSKIP("Manager does not support action preferences", SkipSingle);
     }
 
@@ -2143,7 +2112,6 @@ void tst_QContactManager::actionPreferences()
     QVERIFY(pref == p2);
 
     cm->removeContact(c.id().localId());
-    delete cm;
 }
 
 void tst_QContactManager::changeSet()
@@ -2208,7 +2176,7 @@ void tst_QContactManager::changeSet()
 void tst_QContactManager::selfContactId()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     // early out if the manager doesn't support self contact id saving
     QContactLocalId selfContact = cm->selfContactId();
@@ -2233,7 +2201,7 @@ void tst_QContactManager::selfContactId()
 
     // Setup signal spy
     qRegisterMetaType<QContactLocalId>("QContactLocalId");
-    QSignalSpy spy(cm, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+    QSignalSpy spy(cm.data(), SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
 
     // Set new self contact
     QVERIFY(cm->setSelfContactId(newSelfContact));
@@ -2276,8 +2244,8 @@ QList<QContactDetail> tst_QContactManager::removeAllDefaultDetails(const QList<Q
 void tst_QContactManager::detailOrders()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
-    
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
+
     QContact a;
     //phone numbers
 
@@ -2440,7 +2408,7 @@ void tst_QContactManager::detailOrders()
 void tst_QContactManager::relationships()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     // save some contacts
     QContact source;
@@ -2834,7 +2802,7 @@ void tst_QContactManager::relationships()
 void tst_QContactManager::contactType()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = QContactManager::fromUri(uri);
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     if (!cm->hasFeature(QContactManager::Groups))
         QSKIP("Skipping: This manager does not support group contacts!", SkipSingle);
