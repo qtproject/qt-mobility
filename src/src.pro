@@ -21,7 +21,7 @@ contains(mobility_modules,contacts): SUBDIRS += contacts
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += publishsubscribe
     symbian {
-        SUBDIRS += publishsubscribe/psmapperserver_symbian
+        SUBDIRS += publishsubscribe/psmapperserver_symbian/pspathmapperserver.pro
     }
 }
 
