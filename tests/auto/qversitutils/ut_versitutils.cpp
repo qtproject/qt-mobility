@@ -234,6 +234,14 @@ void UT_VersitUtils::testExtractParts()
     QCOMPARE(parts.count(),2);
     QCOMPARE(QString::fromAscii(parts[0]),QString::fromAscii("pa\\;rt1"));
     QCOMPARE(QString::fromAscii(parts[1]),QString::fromAscii("par\\;t2"));
+
+    // Test wide character support
+    QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
+    text = codec->fromUnicode(QString::fromAscii("part1;part2"));
+    parts = VersitUtils::extractParts(text,";", codec);
+    QCOMPARE(parts.count(),2);
+    QCOMPARE(codec->toUnicode(parts[0]),QString::fromAscii("part1"));
+    QCOMPARE(codec->toUnicode(parts[1]),QString::fromAscii("part2"));
 }
 
 void UT_VersitUtils::testFold()
@@ -588,6 +596,7 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
+    QCOMPARE(cursor.position, 17);
 
     // Property contains one parameter
     property = "TEL;WORK:123";
@@ -612,6 +621,19 @@ void UT_VersitUtils::testExtractPropertyGroupsAndName()
     groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, m_asciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString::fromAscii("X-proper\\;ty"));
+
+    // Test wide character support
+    QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
+    property = codec->fromUnicode(QString::fromAscii("group1.group2.TEL;WORK:123"));
+    cursor.setData(property);
+    cursor.selection = property.size();
+    groupsAndName = VersitUtils::extractPropertyGroupsAndName(cursor, codec);
+    QCOMPARE(groupsAndName.first.count(),2);
+    QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group1"));
+    QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
+    QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
+    QCOMPARE(cursor.position, 36); // 2 bytes * 17 characters + 2 byte BOM.
+
 }
 
 void UT_VersitUtils::testExtractVCard21PropertyParams()

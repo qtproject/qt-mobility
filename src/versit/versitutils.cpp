@@ -257,19 +257,21 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCurso
 {
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
-    char previous = 0;
     Q_ASSERT(line.data.size() > line.position);
     for (int i=line.position; i < line.selection; i++) {
-        char current = line.data.at(i);
-        if ((current == ';' && previous != '\\')
-            || current == ':') {
+        QByteArray semicolon = encode(';', codec);
+        QByteArray colon = encode(':', codec);
+        QByteArray backslash = encode('\\', codec);
+        if ((containsAt(line.data, semicolon, i)
+                && !containsAt(line.data, backslash, i-semicolon.length()))
+            || containsAt(line.data, colon, i)) {
             length = i - line.position;
             break;
         }
-        previous = current;
     }
     if (length > 0) {
-        QString trimmedGroupsAndName = QString::fromAscii(line.data.mid(line.position, length).trimmed());
+        QString trimmedGroupsAndName =
+                codec->toUnicode(line.data.mid(line.position, length)).trimmed();
         QStringList parts = trimmedGroupsAndName.split(QString::fromAscii("."));
         if (parts.count() > 1) {
             groupsAndName.second = parts.takeLast();
