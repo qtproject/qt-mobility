@@ -396,18 +396,6 @@ bool QCoreWlanEngine::isKnownSsid(const QString &interfaceName, const QString &s
     return false;
 }
 
-QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::getWlanProfiles(const QString &interfaceName)
-{
-    Q_UNUSED(interfaceName)
-#if defined(MAC_SDK_10_6)
-//    for( CW8021XProfile *each8021XProfile in [CW8021XProfile allUser8021XProfiles] ) {
-//        qWarning() << "Profile name" << nsstringToQString([each8021XProfile ssid]);
-//    }
-
-#endif
-    return QList<QNetworkConfigurationPrivate *> ();
-}
-
 bool QCoreWlanEngine::getAllScInterfaces()
 {
     networkInterfaces.clear();
