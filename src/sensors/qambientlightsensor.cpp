@@ -63,7 +63,10 @@ QTM_BEGIN_NAMESPACE
 
     \value Undefined  The light level is unknown.
     \value Dark       It is dark. You are likely to be eaten by a grue.
-    \value Light      It is light.
+    \value Twilight   It is darkish, there may be vampires about.
+    \value Light      It is light (eg. internal lights).
+    \value Bright     It is bright (eg. shade).
+    \value Sunny      It is very bright (eg. direct sunlight).
 */
 
 /*!
@@ -133,6 +136,12 @@ const QString QAmbientLightSensor::typeId("qt.AmbientLight");
 /*!
     \fn QAmbientLightSensor::type() const
     \reimp
+*/
+
+/*!
+    \fn QAmbientLightSensor::currentReading() const
+
+    Returns the current ambient light reading.
 */
 
 /*!

@@ -71,7 +71,10 @@ public:
     enum LightLevel {
         Undefined = 0,
         Dark,
-        Light
+        Twilight,
+        Light,
+        Bright,
+        Sunny
     };
 
     explicit QAmbientLightReading()
