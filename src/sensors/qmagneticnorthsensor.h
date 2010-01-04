@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #ifndef QMAGNETICNORTHSENSOR_H
-#define QNMAGNETICORTHSENSOR_H
+#define QMAGNETICNORTHSENSOR_H
 
 #include <qsensor.h>
 #include <QtGlobal>
