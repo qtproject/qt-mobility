@@ -64,8 +64,6 @@ cd $shell_path/../build/tests/bin
 ./tst_qservicemanager
 ./tst_qabstractsecuritysession
 
-exit
-
 #BearerManagement
 ./tst_qnetworkconfiguration
 ./tst_qnetworkconfigurationmanager
