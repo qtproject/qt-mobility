@@ -71,7 +71,7 @@ void CntDisplayLabelSqlFilter::createSqlQuery(const QContactDetailFilter& filter
     QStringList searchStrings = filter.value().toStringList();
 
     //default sql query
-    sqlQuery = "SELECT contact_id FROM contact";
+    sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=0";
     
     //everything ok
     if(!searchStrings.isEmpty() && searchStrings.count() <= contactFields.count() )
@@ -98,7 +98,7 @@ void CntDisplayLabelSqlFilter::createSqlQuery(const QContactDetailFilter& filter
         }
         
         if(!subQuery.isEmpty()){
-            sqlQuery += " WHERE " + subQuery;
+            sqlQuery += " AND (" + subQuery + ")";
         }
    
         error = QContactManager::NoError;
