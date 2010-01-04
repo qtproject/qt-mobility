@@ -32,7 +32,6 @@ symbian: {
                         WriteUserData \
                         ReadDeviceData \
                         WriteDeviceData \
-                        AllFiles \
                         SwEvent
 }
 include(../examples.pri)
