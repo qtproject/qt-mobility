@@ -204,7 +204,7 @@ private slots:
 
     A service is a stand-alone component that can be used by multiple clients.
     Each service implementation must derive from QObject. Clients request a
-    reference to a service via \l loadInterface() or \l loadLocallyTypedInterface().
+    reference to a service via \l loadInterface() or \l loadLocalTypedInterface().
 
     Services are separate deliveries in the form of plug-ins. New services can be (de)registered
     at any time via \l addService() and \l removeService() respectively. Such an event is
@@ -422,7 +422,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 }
 
 /*!
-    \fn T* QServiceManager::loadLocallyTypedInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
+    \fn T* QServiceManager::loadLocalTypedInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
 
     Loads the service object implementing \a interfaceName,
     as provided by the default service for this interface, using the given
@@ -443,7 +443,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 
 
 /*!
-    \fn T* QServiceManager::loadLocallyTypedInterface(const QServiceInterfaceDescriptor& serviceDescriptor, QServiceContext* context, QAbstractSecuritySession* session)
+    \fn T* QServiceManager::loadLocalTypedInterface(const QServiceInterfaceDescriptor& serviceDescriptor, QServiceContext* context, QAbstractSecuritySession* session)
 
     Loads the service object identified by \a serviceDescriptor
     using the given \a context and \a session. \a context and \a session object are owned

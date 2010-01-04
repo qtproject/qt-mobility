@@ -95,13 +95,13 @@ public:
     QObject* loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context = 0, QAbstractSecuritySession* session = 0);
 
     template <class T>
-    T* loadLocallyTypedInterface(const QString& interfaceName, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
+    T* loadLocalTypedInterface(const QString& interfaceName, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
     {
-        return loadLocallyTypedInterface<T>(interfaceDefault(interfaceName), context, session);
+        return loadLocalTypedInterface<T>(interfaceDefault(interfaceName), context, session);
     }
 
     template <class T>
-    T* loadLocallyTypedInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
+    T* loadLocalTypedInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
     {
         T* instance = 0;
         if (descriptor.isValid()) {
