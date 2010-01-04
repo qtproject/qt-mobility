@@ -69,7 +69,8 @@ QSensorManager *QSensorManager::instance()
 }
 
 /*!
-    Register a sensor. The \a id must be unique. The \a backend Foo.
+    Register a sensor for \a type. The \a id must be unique. The \a func must return an instance
+    of the appropriate backend class.
 */
 void QSensorManager::registerBackend(const QString &type, const QSensorId &id, CreateBackendFunc func)
 {

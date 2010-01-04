@@ -150,6 +150,11 @@ const QString QAmbientLightSensor::typeId("qt.AmbientLight");
     This signal is emitted when a new ambient light \a reading comes in.
 */
 
+/*!
+    \fn QAmbientLightSensor::backend() const
+    \reimp
+*/
+
 #include "moc_qambientlightsensor.cpp"
 QTM_END_NAMESPACE
 

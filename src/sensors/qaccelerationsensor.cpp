@@ -232,12 +232,23 @@ void QAccelerationSensor::removeListener(QAccelerationListener *listener)
 }
 
 /*!
+    \fn QAccelerationSensor::currentReading() const
+
+    Returns the current ambient light reading.
+*/
+
+/*!
     \fn QAccelerationSensor::accelerationChanged(const QAccelerationReading &reading)
 
     This signal is emitted when a new acceleration \a reading comes in.
 
     Note that this signal should not be used if you are requesting
     high-frequency updates as signal delivery is quite slow.
+*/
+
+/*!
+    \fn QAccelerationSensor::backend() const
+    \reimp
 */
 
 void QAccelerationSensor::newReadingAvailable()

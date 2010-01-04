@@ -120,5 +120,26 @@ int QSensorBackend::suggestedInterval(QSensor::UpdatePolicy policy)
     \fn QSensorBackend::stop()
 */
 
+/*!
+    \fn QSensorBackend::rememberUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
+
+    Stores the \a policy and \a interval.
+    \sa updatePolicy(), updateInterval()
+*/
+
+/*!
+    \fn QSensorBackend::updatePolicy() const
+
+    Returns the stored policy.
+    \sa rememberUpdatePolicy()
+*/
+
+/*!
+    \fn QSensorBackend::updateInterval() const
+
+    Returns the stored interval.
+    \sa rememberUpdatePolicy()
+*/
+
 QTM_END_NAMESPACE
 

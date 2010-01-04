@@ -151,6 +151,11 @@ const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
     This signal is emitted when a new magnetic north \a reading comes in.
 */
 
+/*!
+    \fn QMagneticNorthSensor::backend() const
+    \reimp
+*/
+
 #include "moc_qmagneticnorthsensor.cpp"
 QTM_END_NAMESPACE
 
