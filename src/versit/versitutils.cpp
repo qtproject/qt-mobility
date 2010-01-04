@@ -409,10 +409,10 @@ QList<QByteArray> VersitUtils::extractParams(VersitCursor& line, QTextCodec *cod
     QList<QByteArray> params;
 
     /* find the end of the name&params */
-    int colonIndex = line.data.indexOf(':', line.position);
+    int colonIndex = line.data.indexOf(encode(':', codec), line.position);
     if (colonIndex > line.position && colonIndex < line.selection) {
         QByteArray nameAndParamsString = line.data.mid(line.position, colonIndex - line.position);
-        params = extractParts(nameAndParamsString, ";", codec);
+        params = extractParts(nameAndParamsString, encode(';', codec), codec);
 
         /* Update line */
         line.setPosition(colonIndex + 1);
