@@ -819,18 +819,18 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         if (!filter.interfaceName().isEmpty()) {
             whereComponent.append("AND Interface.Name = ?").append(" COLLATE NOCASE ");
             bindValues.append(filter.interfaceName());
-            if (filter.interfaceMajorVersion() >=0 && filter.interfaceMinorVersion() >=0) {
+            if (filter.majorVersion() >=0 && filter.minorVersion() >=0) {
                 if (filter.versionMatchRule() == QServiceFilter::ExactVersionMatch) {
                     whereComponent.append("AND Interface.VerMaj = ?").append(" AND Interface.VerMin = ? ");
-                    bindValues.append(QString::number(filter.interfaceMajorVersion()));
-                    bindValues.append(QString::number(filter.interfaceMinorVersion()));
+                    bindValues.append(QString::number(filter.majorVersion()));
+                    bindValues.append(QString::number(filter.minorVersion()));
                 }
                 else if (filter.versionMatchRule() == QServiceFilter::MinimumVersionMatch) {
                     whereComponent.append("AND ((Interface.VerMaj > ?")
                         .append(") OR Interface.VerMaj = ?").append(" AND Interface.VerMin >= ?").append(") ");
-                    bindValues.append(QString::number(filter.interfaceMajorVersion()));
-                    bindValues.append(QString::number(filter.interfaceMajorVersion()));
-                    bindValues.append(QString::number(filter.interfaceMinorVersion()));
+                    bindValues.append(QString::number(filter.majorVersion()));
+                    bindValues.append(QString::number(filter.majorVersion()));
+                    bindValues.append(QString::number(filter.minorVersion()));
                 }
             }
         }
@@ -884,7 +884,7 @@ QList<QServiceInterfaceDescriptor> ServiceDatabase::getInterfaces(const QService
         }
 
         const QSet<QString> ifaceCaps = interface.d->attributes.value(QServiceInterfaceDescriptor::Capabilities).toStringList().toSet();
-        difference = ((filter.capabilityMatchRule() == QServiceFilter::MatchAll) ? (filterCaps-ifaceCaps) : (ifaceCaps-filterCaps));
+        difference = ((filter.capabilityMatchRule() == QServiceFilter::MatchMinimum) ? (filterCaps-ifaceCaps) : (ifaceCaps-filterCaps));
         if (!difference.isEmpty())
             continue;
 

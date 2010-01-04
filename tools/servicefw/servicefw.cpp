@@ -264,8 +264,8 @@ void CommandProcessor::showAllEntries()
 void CommandProcessor::showInterfaceInfo(const QServiceFilter &filter)
 {
     QString interface = filter.interfaceName();
-    if (filter.interfaceMajorVersion() >= 0 && filter.interfaceMinorVersion() >= 0) {
-        interface += QString(" %1.%2").arg(filter.interfaceMajorVersion()).arg(filter.interfaceMinorVersion());
+    if (filter.majorVersion() >= 0 && filter.minorVersion() >= 0) {
+        interface += QString(" %1.%2").arg(filter.majorVersion()).arg(filter.minorVersion());
         if (filter.versionMatchRule() == QServiceFilter::MinimumVersionMatch)
             interface += '+';
     }

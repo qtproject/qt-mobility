@@ -530,7 +530,7 @@ void ServiceDatabaseUnitTest::searchByCapability()
 
     QStringList caps;
     caps << "hunt" << "spy";
-    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    filter.setCapabilities(QServiceFilter::MatchMinimum, caps);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),2);
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,
@@ -550,7 +550,7 @@ void ServiceDatabaseUnitTest::searchByCapability()
     
     caps.clear();
     caps << "hunt";
-    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    filter.setCapabilities(QServiceFilter::MatchMinimum, caps);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),3);
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,
@@ -570,7 +570,7 @@ void ServiceDatabaseUnitTest::searchByCapability()
                 QStringList(), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
 
     caps.clear();
-    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    filter.setCapabilities(QServiceFilter::MatchMinimum, caps);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),4);
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,

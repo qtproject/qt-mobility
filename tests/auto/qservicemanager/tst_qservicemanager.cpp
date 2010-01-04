@@ -254,7 +254,7 @@ private slots:
 
     void loadInterface_testLoadedObjectAttributes();
 
-    void getInterface();
+    void loadLocallyTypedInterface();
 
     void addService();
     void addService_data();
@@ -883,7 +883,7 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
     QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 }
 
-void tst_QServiceManager::getInterface()
+void tst_QServiceManager::loadLocallyTypedInterface()
 {
     //ensure the plugin exists 
     QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_sampleserviceplugin");
@@ -902,7 +902,7 @@ void tst_QServiceManager::getInterface()
 
     //use manual descriptor -> avoid database involvement
     SampleServicePluginClass *plugin = 0;
-    plugin = mgr.getInterface<SampleServicePluginClass>(descriptor, &context, &session);
+    plugin = mgr.loadLocallyTypedInterface<SampleServicePluginClass>(descriptor, &context, &session);
 
     QVERIFY(plugin != 0);
     QCOMPARE(plugin->context(), (QServiceContext *)&context);
@@ -924,7 +924,7 @@ void tst_QServiceManager::getInterface()
     QList<SampleServicePluginClass*> serviceObjects;
     QVERIFY(ifaces.count() == 3);
     for (int i = 0; i<ifaces.count(); i++) {
-        plugin = mgr.getInterface<SampleServicePluginClass>(ifaces.at(i), &context, &session);
+        plugin = mgr.loadLocallyTypedInterface<SampleServicePluginClass>(ifaces.at(i), &context, &session);
 
         if (ifaces.at(i).interfaceName() == "com.nokia.qt.TestInterfaceC") {
             QVERIFY(plugin == 0);
@@ -951,7 +951,7 @@ void tst_QServiceManager::getInterface()
 
 
     //use default lookup
-    plugin = mgr.getInterface<SampleServicePluginClass>("com.nokia.qt.TestInterfaceA", &context, &session);
+    plugin = mgr.loadLocallyTypedInterface<SampleServicePluginClass>("com.nokia.qt.TestInterfaceA", &context, &session);
     QVERIFY(plugin != 0);
     QCOMPARE(plugin->context(), (QServiceContext *)&context);
     QCOMPARE(plugin->securitySession(), (QAbstractSecuritySession *)&session);
@@ -961,12 +961,12 @@ void tst_QServiceManager::getInterface()
     plugin = 0;
 
     //use totally wrong but QObject based template class type
-    QFile *w = mgr.getInterface<QFile>("com.nokia.qt.TestInterfaceA", &context, &session);
+    QFile *w = mgr.loadLocallyTypedInterface<QFile>("com.nokia.qt.TestInterfaceA", &context, &session);
     QVERIFY(!w);
 
     //use non QObject based template class type
     //doesn't compile and should never compile
-    //QString* s = mgr.getInterface<QString>("com.nokia.qt.TestInterfaceA", &context, &session);
+    //QString* s = mgr.loadLocallyTypedInterface<QString>("com.nokia.qt.TestInterfaceA", &context, &session);
     //QVERIFY(!s);
 }
 
