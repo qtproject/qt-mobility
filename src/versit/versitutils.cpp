@@ -373,21 +373,29 @@ bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
 
     /* See if we can find a newline */
     forever {
-        crlfPos = line.data.indexOf("\r\n", line.position);
-        if (crlfPos == -1)
-            crlfPos = line.data.indexOf("\n", line.position);
-        if (crlfPos == -1)
-            crlfPos = line.data.indexOf("\r", line.position);
+        QByteArray dosNewline = encode("\r\n", codec);
+        QByteArray unixNewline = encode("\n", codec);
+        QByteArray macNewline = encode("\r", codec);
+        crlfPos = line.data.indexOf(dosNewline, line.position);
         if (crlfPos == line.position) {
-            /* initial newline, repeat - might need to advance two chars */
-            if ((line.position < line.data.size() - 1)
-                    && line.data.at(line.position) == '\r'
-                    && line.data.at(line.position + 1) == '\n')
-                line.setPosition(line.position + 2);
-            else
-                line.setPosition(line.position + 1);
+            line.position += dosNewline.length();
             continue;
-        } else if (crlfPos > line.position) {
+        }
+        else if (crlfPos == -1) {
+            crlfPos = line.data.indexOf(unixNewline, line.position);
+            if (crlfPos == line.position) {
+                line.position += unixNewline.length();
+                continue;
+            }
+            else if (crlfPos == -1) {
+                crlfPos = line.data.indexOf(macNewline, line.position);
+                if (crlfPos == line.position) {
+                    line.position += macNewline.length();
+                    continue;
+                }
+            }
+        }
+        if (crlfPos > line.position) {
             line.selection = crlfPos;
             return true;
         } else {
@@ -507,6 +515,15 @@ QByteArray VersitUtils::encode(char ch, QTextCodec* codec)
     QChar qch = QChar::fromAscii(ch);
     QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
     return codec->fromUnicode(&qch, 1, &state);
+}
+
+/*!
+ * Encode \a ba with \a codec, without adding an byte-order mark.  \a ba is interpreted as ASCII
+ */
+QByteArray VersitUtils::encode(const QByteArray& ba, QTextCodec* codec)
+{
+    QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
+    return codec->fromUnicode(QString::fromAscii(ba.data()).data(), ba.length(), &state);
 }
 
 /*!

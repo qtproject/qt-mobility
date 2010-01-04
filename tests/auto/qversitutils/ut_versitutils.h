@@ -68,6 +68,7 @@ private slots:
     void testExtractPropertyGroupsAndName();
     void testExtractVCard21PropertyParams();
     void testExtractVCard30PropertyParams();
+    void testGetNextLine();
 
 private:
     QTextCodec* m_asciiCodec;

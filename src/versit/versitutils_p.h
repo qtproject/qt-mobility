@@ -102,6 +102,7 @@ public:
     static QString paramName(const QByteArray& parameter, QTextCodec* codec);
     static QString paramValue(const QByteArray& parameter, QTextCodec* codec);
     static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
+    static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
     static QByteArray encode(char ch, QTextCodec* codec);
     static bool shouldBeQuotedPrintableEncoded(char chr);
 };
