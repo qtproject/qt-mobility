@@ -43,7 +43,7 @@
 #include <QtCore/qdebug.h>
 
 #include "s60mediaserviceplugin.h"
-#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIB) 
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
 #include "s60radiotunerservice.h"
 #endif
 #include "s60cameraservice.h"
@@ -68,7 +68,7 @@ QMediaService* S60MediaServicePlugin::create(QString const& key)
         return new S60CameraService; //Camera impl is on hold
     else if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
-#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIB) 
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
     else if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
         return new S60RadioTunerService;
 #endif
