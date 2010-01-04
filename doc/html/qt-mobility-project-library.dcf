@@ -2590,7 +2590,7 @@
         <keyword ref="qservicemanager.html#findServices">findServices</keyword>
         <keyword ref="qservicemanager.html#interfaceDefault">interfaceDefault</keyword>
         <keyword ref="qservicemanager.html#loadInterface">loadInterface</keyword>
-        <keyword ref="qservicemanager.html#loadLocallyTypedInterface">loadLocallyTypedInterface</keyword>
+        <keyword ref="qservicemanager.html#loadLocalTypedInterface">loadLocalTypedInterface</keyword>
         <keyword ref="qservicemanager.html#removeService">removeService</keyword>
         <keyword ref="qservicemanager.html#scope">scope</keyword>
         <keyword ref="qservicemanager.html#serviceAdded">serviceAdded</keyword>

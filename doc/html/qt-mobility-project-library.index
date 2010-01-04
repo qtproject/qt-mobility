@@ -948,12 +948,12 @@
                 <parameter left="QServiceContext *" right="" name="context" default="0"/>
                 <parameter left="QAbstractSecuritySession *" right="" name="session" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="loadLocallyTypedInterface" fullname="QServiceManager::loadLocallyTypedInterface" href="qservicemanager.html#loadLocallyTypedInterface" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="T *" signature="loadLocallyTypedInterface(const QString &amp; interfaceName, QServiceContext * context, QAbstractSecuritySession * session)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="loadLocalTypedInterface" fullname="QServiceManager::loadLocalTypedInterface" href="qservicemanager.html#loadLocalTypedInterface" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="T *" signature="loadLocalTypedInterface(const QString &amp; interfaceName, QServiceContext * context, QAbstractSecuritySession * session)">
                 <parameter left="const QString &amp;" right="" name="interfaceName" default=""/>
                 <parameter left="QServiceContext *" right="" name="context" default="0"/>
                 <parameter left="QAbstractSecuritySession *" right="" name="session" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="loadLocallyTypedInterface" fullname="QServiceManager::loadLocallyTypedInterface" href="qservicemanager.html#loadLocallyTypedInterface-2" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="T *" signature="loadLocallyTypedInterface(const QServiceInterfaceDescriptor &amp; serviceDescriptor, QServiceContext * context, QAbstractSecuritySession * session)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="loadLocalTypedInterface" fullname="QServiceManager::loadLocalTypedInterface" href="qservicemanager.html#loadLocalTypedInterface-2" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="T *" signature="loadLocalTypedInterface(const QServiceInterfaceDescriptor &amp; serviceDescriptor, QServiceContext * context, QAbstractSecuritySession * session)">
                 <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="serviceDescriptor" default=""/>
                 <parameter left="QServiceContext *" right="" name="context" default="0"/>
                 <parameter left="QAbstractSecuritySession *" right="" name="session" default="0"/>

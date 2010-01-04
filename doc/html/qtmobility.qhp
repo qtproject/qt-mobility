@@ -2748,7 +2748,7 @@
             <keyword name="findServices" id="QServiceManager::findServices" ref="qservicemanager.html#findServices"/>
             <keyword name="interfaceDefault" id="QServiceManager::interfaceDefault" ref="qservicemanager.html#interfaceDefault"/>
             <keyword name="loadInterface" id="QServiceManager::loadInterface" ref="qservicemanager.html#loadInterface"/>
-            <keyword name="loadLocallyTypedInterface" id="QServiceManager::loadLocallyTypedInterface" ref="qservicemanager.html#loadLocallyTypedInterface"/>
+            <keyword name="loadLocalTypedInterface" id="QServiceManager::loadLocalTypedInterface" ref="qservicemanager.html#loadLocalTypedInterface"/>
             <keyword name="removeService" id="QServiceManager::removeService" ref="qservicemanager.html#removeService"/>
             <keyword name="scope" id="QServiceManager::scope" ref="qservicemanager.html#scope"/>
             <keyword name="serviceAdded" id="QServiceManager::serviceAdded" ref="qservicemanager.html#serviceAdded"/>
