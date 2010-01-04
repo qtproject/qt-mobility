@@ -354,7 +354,6 @@ public:
             firstLong = lng;
             return;
         }
-
         m_normalMap->latitude = lat;
         m_normalMap->longitude = lng;
         m_normalMap->invalidate();
@@ -410,6 +409,11 @@ private slots:
         connect(m_largeMap, SIGNAL(updated(QRect)), SLOT(update()));
 
         setCenter(firstLat, firstLong);
+
+        m_normalMap->width = width();
+        m_normalMap->height = height();
+        m_largeMap->width = m_normalMap->width * 2;
+        m_largeMap->height = m_normalMap->height * 2;
 
         startPositioning();
     }
