@@ -53,7 +53,7 @@ Radio::Radio()
         radio->setBand(QRadioTuner::FM);
     else {
         qWarning()<<"Currently only works for FM";
-        exit(0);
+      //  exit(0);
     }
 
     QWidget *window = new QWidget;

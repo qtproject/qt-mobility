@@ -48,12 +48,12 @@
 
 
 S60CameraControl::S60CameraControl(QObject *parent)
-    :QCameraControl(parent)
+    : QCameraControl(parent)
 {
 }
 
 S60CameraControl::S60CameraControl(QObject *session, QObject *parent)
-   :QCameraControl(parent)
+   : QCameraControl(parent)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
@@ -65,6 +65,7 @@ S60CameraControl::S60CameraControl(QObject *session, QObject *parent)
 S60CameraControl::~S60CameraControl()
 {
 }
+
 void S60CameraControl::start()
 {
     // start the default (primary camera)
@@ -81,6 +82,7 @@ void S60CameraControl::stop()
         m_session->stopCamera();
 
 }
+
 QCamera::State S60CameraControl::state() const
 {
     if (m_session) {

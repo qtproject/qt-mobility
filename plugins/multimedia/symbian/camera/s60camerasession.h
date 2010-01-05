@@ -43,7 +43,6 @@
 #define S60CAMERASESSION_H
 
 #include <QtCore/qobject.h>
-#include <QSocketNotifier>
 #include <QTime>
 #include <QUrl>
 #include <QtGui/qicon.h>
@@ -52,13 +51,10 @@
 #include <QtMultimedia/qvideoframe.h>
 
 #include <e32base.h>
-#include <fbs.h>
 #include <cameraengine.h>
 #include <cameraengineobserver.h>
 
 QTM_USE_NAMESPACE
-
-class S60VideoWidgetControl;
 
 class MVFProcessor
 {
@@ -126,14 +122,11 @@ public:
     qint64 position() const;
     int state() const;
 
-    void setVideoOutput(QWidget* widget);
-    
     //added based on s60 camera needs
     void releaseImageBuffer();
     bool startCamera();
     void stopCamera();
     void capture();
-    void setVFProcessor(MVFProcessor* VFProcessor);
     
     // for mediacontrol
     void startRecording();
@@ -164,7 +157,7 @@ public:
     
     void setVideoRenderer(QObject *renderer);
     
-protected:
+protected: // From MCameraEngineObserver
     void MceoCameraReady();
     void MceoFocusComplete();
     void MceoCapturedDataReady(TDesC8* aData);
@@ -191,30 +184,23 @@ private Q_SLOTS:
     void captureFrame();
 
 private:
-    QSocketNotifier *notifier;
-
-    int sfd;
+    CCameraEngine *m_cameraEngine;
+    MVFProcessor *m_VFProcessor;
     QtMedia::EncodingQuality m_quality;
-    QTime timeStamp;
-    bool available;
-    QCamera::State m_state;
-    QUrl m_sink;
-    QVideoFrame::PixelFormat pixelF;
-    QSize m_windowSize;
-    QList<QSize> resolutions;
-    QList<unsigned int> formats;
-    
-    //ADDED
-    CCameraEngine* m_cameraEngine;
     QSize m_captureSize;
-    QSize iViewFinderSize;
+    QCamera::State m_state;
+    QSize m_windowSize;
+    QVideoFrame::PixelFormat m_pixelF;
     TInt m_deviceIndex; //index indication chosen camera device
-    mutable int iError;
-    // information about camera
-    TCameraInfo m_info;
-    MVFProcessor* m_VFProcessor;
-    S60VideoWidgetControl* m_videoWidgetControl;
+    mutable int m_error;
     
+    QTime m_timeStamp;
+    QUrl m_sink;
+    QList<QSize> m_resolutions;
+    QList<uint> m_formats;   
+    QSize m_VFWidgetSize;
+    TSize m_VFSize;
+    TCameraInfo m_info; // information about camera
 };
 
 #endif

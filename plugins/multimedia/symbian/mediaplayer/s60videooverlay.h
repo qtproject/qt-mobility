@@ -42,8 +42,6 @@
 #ifndef S60VIDEOOVERLAY_H
 #define S60VIDEOOVERLAY_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <QtCore/qobject.h>
 #include <QVideoWindowControl>
 
@@ -105,7 +103,5 @@ private:
     QSize m_aspectRatio;
     bool m_fullScreen;
 };
-
-#endif // QT_NO_MULTIMEDIA
 
 #endif // S60VIDEOOVERLAY_H

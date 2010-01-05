@@ -15,30 +15,14 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}
 
 
-HEADERS += s60serviceplugin.h \
-           s60videowidget.h \
+HEADERS += s60mediaserviceplugin.h \
            s60videooutputcontrol.h
            
-SOURCES += s60serviceplugin.cpp \
-           s60videowidget.cpp \
+SOURCES += s60mediaserviceplugin.cpp \
            s60videooutputcontrol.cpp 
 
-!exists($${EPOCROOT}epoc32/release/armv5/lib/camerawrapper.lib) {
-	error("Camerawrapper libraries are missing.")
-}
-
-!exists($${EPOCROOT}epoc32/include/mpmediarecognizer.h) {
-	error("Media recognizer SDK plugin is missing")
-}
-
-exists($${EPOCROOT}epoc32/include/tuner/tuner.h) {
-	include(radio/radio.pri)
-	DEFINES += USE_INTERNAL_TUNERLIB
-} else {
-    warning("Radio isn't compiled in due to missing tuner libraries.")
-}
-
 include(camera/camera_s60.pri)
+include(radio/radio.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 include(audiosource/audiosource_s60.pri)
 

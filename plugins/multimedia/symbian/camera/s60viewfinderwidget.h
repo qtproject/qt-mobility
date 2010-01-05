@@ -39,32 +39,81 @@
 **
 ****************************************************************************/
 
-#ifndef S60RADIOTUNERSERVICE_H
-#define S60RADIOTUNERSERVICE_H
+#ifndef S60VIDEOWIDGET_H
+#define S60VIDEOWIDGET_H
 
 #include <QtCore/qobject.h>
+#include <QVideoWidgetControl>
 
-#include <QMediaService>
-
-#ifdef TUNERLIBUSED
-#include "s60radiotunercontrol_31.h"
-#else
-#include "s60radiotunercontrol_since32.h"
-#endif
+#include "s60camerasession.h"
 
 QTM_USE_NAMESPACE
 
-class S60RadioTunerService : public QMediaService
+class S60ViewFinderWidget : public QWidget, public MVFProcessor
 {
-    Q_OBJECT
 public:
-    S60RadioTunerService(QObject *parent = 0);
-    ~S60RadioTunerService();
-
-    QMediaControl *control(const char* name) const;
-
-private:
-    S60RadioTunerControl *m_playerControl;
+    S60ViewFinderWidget(QWidget *parent = 0);
+    virtual ~S60ViewFinderWidget() {};
+    
+protected:
+    void ViewFinderFrameReady(const QImage& image);
+    
+protected:
+    void paintEvent(QPaintEvent *);
+    
+    QPixmap m_pixmapImage;
 };
 
-#endif
+class S60ViewFinderWidgetControl
+        : public QVideoWidgetControl
+{
+    Q_OBJECT
+	
+public:
+    S60ViewFinderWidgetControl(QObject *parent = 0);
+    virtual ~S60ViewFinderWidgetControl();
+
+    S60ViewFinderWidget *videoWidget();
+
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    QSize customAspectRatio() const;
+
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode ratio);
+    void setCustomAspectRatio(const QSize &customRatio);
+
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+    void setOverlay();
+
+    bool eventFilter(QObject *object, QEvent *event);
+
+public slots:
+    void updateNativeVideoSize();
+    void enableUpdates();
+    
+signals:
+    void resizeVideo();
+
+private:
+    void windowExposed();
+
+    S60ViewFinderWidget *m_widget;
+    WId m_windowId;
+    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    QSize m_customAspectRatio;
+};
+
+#endif // S60VIDEOWIDGET_H

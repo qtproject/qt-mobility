@@ -41,8 +41,9 @@
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
-#include <QWidget>
 #include "s60camerasession.h"
+#include "s60viewfinderwidget.h"
+
 #include <fbs.h>
 #include <qglobal.h>
 #ifdef Q_CC_NOKIAX86
@@ -50,18 +51,17 @@ _LIT8(KCameraTemp,"test data");
 #endif
 
 S60CameraSession::S60CameraSession(QObject *parent)
-    :QObject(parent), m_cameraEngine(NULL), m_VFProcessor(NULL)
+    : QObject(parent)
+    , m_cameraEngine(NULL)
+    , m_VFProcessor(NULL)
+    , m_quality(QtMedia::NormalQuality)
+    , m_captureSize(QSize(1600, 1200))
+    , m_state(QCamera::StoppedState)
+    , m_windowSize(QSize(320/2, 240/2))
+    , m_pixelF(QVideoFrame::Format_RGB24)
+    , m_deviceIndex(0)
+    , m_error(NoError)
 {
-    available = false;
-    m_quality = QtMedia::NormalQuality;
-    resolutions.clear();
-    formats.clear();
-    m_captureSize = QSize(1600,1200); // some dummy default size
-    m_state = QCamera::StoppedState;
-    m_windowSize = QSize(320/2,240/2); // default windows size for symbian devices
-    pixelF = QVideoFrame::Format_RGB24;
-    m_deviceIndex = 0; 
-    
 }
 
 S60CameraSession::~S60CameraSession()
@@ -79,14 +79,14 @@ bool S60CameraSession::startCamera()
     if (m_cameraEngine) {
         delete m_cameraEngine;
         m_cameraEngine = NULL;
-        iError = KErrNone;
+        m_error = KErrNone;
     }
 
-    TRAP(iError, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
-    if (!iError)
+    TRAP(m_error, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
+    if (!m_error)
         m_cameraEngine->ReserveAndPowerOn();
 	
-    return (iError == KErrNone);
+    return (m_error == KErrNone);
 }
 
 void S60CameraSession::stopCamera()
@@ -141,11 +141,6 @@ bool S60CameraSession::deviceReady()
         return m_cameraEngine->IsCameraReady();
     else
         return EFalse;
-}
-
-void S60CameraSession::setVideoOutput(QWidget* widget)
-{
-    qDebug() << "S60CameraSession::setVideoOutput(), widget="<<widget;
 }
 
 int S60CameraSession::framerate() const
@@ -349,7 +344,7 @@ QUrl S60CameraSession::outputLocation() const
 qint64 S60CameraSession::position() const
 {
     qDebug() << "S60CameraSession::position";
-    return timeStamp.elapsed();
+    return m_timeStamp.elapsed();
 }
 
 int S60CameraSession::state() const
@@ -393,12 +388,14 @@ void S60CameraSession::MceoCameraReady()
     m_state = QCamera::ActiveState;
     emit stateChanged(m_state);
     if (m_cameraEngine) {
-        TSize size (m_windowSize.width(), m_windowSize.height());
-        iError = KErrNone;
-        TRAP(iError, m_cameraEngine->StartViewFinderL(size));
-        if (iError) {
+        m_VFSize =  TSize(m_VFWidgetSize.width(), m_VFWidgetSize.height());
+        m_error = KErrNone;
+        TRAP(m_error, m_cameraEngine->StartViewFinderL(m_VFSize));
+        if (m_error) {
             // TODO add error emitting to cameracontrol
         }
+
+        emit readyForCaptureChanged(true);
     }
 }
 
@@ -411,7 +408,7 @@ void S60CameraSession::MceoFocusComplete()
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
     QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
-    emit imageCaptured(m_sink.toLocalFile(), snapImage  );
+    emit imageCaptured(m_sink.toLocalFile(), snapImage);
     releaseImageBuffer();
 }
 
@@ -427,22 +424,22 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
     {
         
         TSize size = aBitmap->SizeInPixels();
-        TUint32 sizeInWords = size.iHeight * CFbsBitmap::ScanLineLength( size.iWidth, aBitmap->DisplayMode()) / sizeof( TUint32 );
+        TUint32 sizeInWords = size.iHeight * CFbsBitmap::ScanLineLength(size.iWidth, aBitmap->DisplayMode()) / sizeof( TUint32 );
 
-        TUint32* pixelData = new TUint32[ sizeInWords ];
+        TUint32 *pixelData = new TUint32[sizeInWords];
 
-        if ( !pixelData )
+        if (!pixelData)
             return;
 
         // convert to QImage
         aBitmap->LockHeap();
-        TUint32* dataPtr = aBitmap->DataAddress();
+        TUint32 *dataPtr = aBitmap->DataAddress();
         memcpy(pixelData, dataPtr, sizeof(TUint32) * sizeInWords);
         aBitmap->UnlockHeap();
 
         TDisplayMode displayMode = aBitmap->DisplayMode();  
 
-        QImage::Format format;
+        QImage::Format format = QImage::Format_Invalid;
         switch(displayMode)
         {
             case EColor256:
@@ -472,8 +469,8 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
                 (uchar*)pixelData,
                 size.iWidth,
                 size.iHeight,
-                CFbsBitmap::ScanLineLength( size.iWidth, aBitmap->DisplayMode() ),
-                format );
+                CFbsBitmap::ScanLineLength(size.iWidth, aBitmap->DisplayMode()),
+                format);
         
         aBitmap = NULL;
 
@@ -487,27 +484,24 @@ void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
 {
     qDebug() << "S60CameraSession::MceoViewFinderFrameReady";
     if (m_VFProcessor) {
-        int bytesPerLine = aFrame.ScanLineLength(iViewFinderSize.width(), aFrame.DisplayMode());
-        QImage image((uchar *)aFrame.DataAddress(), iViewFinderSize.width(),
-                iViewFinderSize.height(), bytesPerLine, QImage::Format_RGB32);
+        int bytesPerLine = aFrame.ScanLineLength(m_VFSize.iWidth, aFrame.DisplayMode());
+
+        QImage image((uchar *)aFrame.DataAddress(), m_VFSize.iWidth,
+                m_VFSize.iHeight, bytesPerLine, QImage::Format_RGB32);
 
         m_VFProcessor->ViewFinderFrameReady(image);
-        m_cameraEngine->ReleaseViewFinderBuffer();
      }
+
+     m_cameraEngine->ReleaseViewFinderBuffer();
 }
 
 void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
 {   
     Q_UNUSED(aErrorType);
     //EErrAutoFocusMode (-5)
-    iError = aError;
+    m_error = aError;
     QString errorString = QLatin1String("camera engine errorcode:") + aErrorType;
     emit error(aError,errorString);
-}
-
-void S60CameraSession::setVFProcessor(MVFProcessor* VFProcessor)
-{
-    m_VFProcessor = VFProcessor;
 }
 
 // For S60Cameravideodevicecontrol
@@ -640,23 +634,23 @@ void S60CameraSession::setCaptureSize(const QSize &size)
 
 QList<QSize> S60CameraSession::supportedCaptureSizes()
 {
-        QList<QSize> list;
-        // if we have cameraengine loaded and we can update camerainfo
-        if (m_cameraEngine && queryCurrentCameraInfo()) {
-                CCamera *camera = m_cameraEngine->Camera();
-                for (int i=0; i < m_info.iNumImageSizesSupported; i++) {
-                        TSize size;
-                        // TODO check formats
-                        camera->EnumerateCaptureSizes(size,i, CCamera::EFormatFbsBitmapColor16MU );
-                        list << QSize(size.iWidth, size.iHeight);
-                }
+    QList<QSize> list;
+    // if we have cameraengine loaded and we can update camerainfo
+    if (m_cameraEngine && queryCurrentCameraInfo()) {
+        CCamera *camera = m_cameraEngine->Camera();
+        for (int i=0; i < m_info.iNumImageSizesSupported; i++) {
+            TSize size;
+            // TODO check formats
+            camera->EnumerateCaptureSizes(size,i, CCamera::EFormatFbsBitmapColor16MU);
+            list << QSize(size.iWidth, size.iHeight);
         }
+    }
         #ifdef Q_CC_NOKIAX86
         qDebug() << "S60CameraSession::supportedCaptureSizes";
         list << QSize(50,50);
         list << QSize(100,100);
         #endif
-        return list;
+    return list;
 }
 
 
@@ -681,14 +675,15 @@ QString S60CameraSession::imageCaptureCodecDescription(const QString &codecName)
 {
     qDebug() << "S60CameraSession::imageCaptureCodecDescription, codename="<<codecName;
     Q_UNUSED(codecName);
-    //TODO return imageCaptureCodecDescription
-    return QLatin1String("");
+    return QString();
 }
+
 QtMedia::EncodingQuality S60CameraSession::captureQuality() const
 {
     qDebug() << "S60CameraSession::CaptureQuality";
     return m_quality;
 }
+
 void S60CameraSession::setCaptureQuality(QtMedia::EncodingQuality quality)
 {
     qDebug() << "S60CameraSession::setCaptureQuality, EncodingQuality="<<quality;
@@ -698,4 +693,11 @@ void S60CameraSession::setCaptureQuality(QtMedia::EncodingQuality quality)
 void S60CameraSession::setVideoRenderer(QObject *videoOutput)
 {
     qDebug() << "S60CameraSession::setVideoRenderer, videoOutput="<<videoOutput;
+    S60ViewFinderWidgetControl* viewFinderWidgetControl = 
+            qobject_cast<S60ViewFinderWidgetControl*>(videoOutput);
+
+    if (viewFinderWidgetControl) {
+        m_VFProcessor = viewFinderWidgetControl->videoWidget();
+        m_VFWidgetSize = viewFinderWidgetControl->videoWidget()->size();
+    }   
 }

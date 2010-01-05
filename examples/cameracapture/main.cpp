@@ -48,7 +48,11 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     CameraCapture cameraCapture;
+#ifdef Q_OS_SYMBIAN
+    cameraCapture.showMaximized();
+#else
     cameraCapture.show();
-
+#endif
+    
     return app.exec();
 };

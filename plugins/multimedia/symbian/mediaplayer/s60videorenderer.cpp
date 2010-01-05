@@ -41,8 +41,6 @@
 
 #include "s60videorenderer.h"
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <QtCore/qcoreevent.h>
 #include <QtGui/qapplication.h>
 
@@ -66,5 +64,3 @@ void S60VideoRenderer::setSurface(QAbstractVideoSurface *surface)
     m_surface = surface;
 }
 
-
-#endif
