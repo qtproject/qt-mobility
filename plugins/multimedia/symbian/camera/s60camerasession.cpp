@@ -296,14 +296,14 @@ QList<QVideoFrame::PixelFormat> S60CameraSession::supportedPixelFormats()
 
 QVideoFrame::PixelFormat S60CameraSession::pixelFormat() const
 {
-    qDebug() << "S60CameraSession::pixeformat, returning="<<pixelF;
-    return pixelF;
+    qDebug() << "S60CameraSession::pixeformat, returning="<<m_pixelF;
+    return m_pixelF;
 }
 
 void S60CameraSession::setPixelFormat(QVideoFrame::PixelFormat fmt)
 {
     qDebug() << "S60CameraSession::setPixelFormat, format="<<fmt;
-    pixelF = fmt;
+    m_pixelF = fmt;
 }
 
 QList<QSize> S60CameraSession::supportedVideoResolutions()
