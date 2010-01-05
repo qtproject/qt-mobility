@@ -84,8 +84,12 @@ public:
         return QGeoPositionInfo();
     }
 
+    void setSupportedPositioningMethods(PositioningMethods methods) {
+        m_methods = methods;
+    }
+
     virtual PositioningMethods supportedPositioningMethods() const {
-        return 0;
+        return m_methods;
     }
     virtual int minimumUpdateInterval() const {
         return 0;
@@ -95,6 +99,9 @@ public:
     virtual void stopUpdates() {}
 
     virtual void requestUpdate(int) {}
+
+private:
+    PositioningMethods m_methods;
 };
 
 class DefaultSourceTest : public TestQGeoPositionInfoSource
@@ -126,7 +133,7 @@ void TestQGeoPositionInfoSource::test_slot1()
 
 void TestQGeoPositionInfoSource::test_slot2()
 {
-	m_testSlot2Called = true;
+    m_testSlot2Called = true;
 }
 
 void TestQGeoPositionInfoSource::base_initTestCase()
@@ -197,24 +204,68 @@ void TestQGeoPositionInfoSource::updateInterval()
 
 void TestQGeoPositionInfoSource::setPreferredPositioningMethods()
 {
-    QFETCH(int, methods);
+    QFETCH(int, supported);
+    QFETCH(int, preferred);
+    QFETCH(int, resulting);
 
     MyPositionSource s;
+    s.setSupportedPositioningMethods(
+        static_cast<QGeoPositionInfoSource::PositioningMethods>(supported));
     s.setPreferredPositioningMethods(
-        static_cast<QGeoPositionInfoSource::PositioningMethods>(methods));
+        static_cast<QGeoPositionInfoSource::PositioningMethods>(preferred));
     QCOMPARE(s.preferredPositioningMethods(),
-             static_cast<QGeoPositionInfoSource::PositioningMethods>(methods));
+             static_cast<QGeoPositionInfoSource::PositioningMethods>(resulting));
 }
 
 void TestQGeoPositionInfoSource::setPreferredPositioningMethods_data()
 {
-    QTest::addColumn<int>("methods");
+    QTest::addColumn<int>("supported");
+    QTest::addColumn<int>("preferred");
+    QTest::addColumn<int>("resulting");
+
+    QTest::newRow("Sat supported, Sat preferred")
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+    QTest::newRow("Sat supported, Non-Sat prefered")
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+    QTest::newRow("Sat supported, All prefered")
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::AllPositioningMethods)
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+
+    QTest::newRow("Non-Sat supported, Sat preferred")
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    QTest::newRow("Non-Sat supported, Non-Sat prefered")
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    QTest::newRow("Non-Sat supported, All prefered")
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::AllPositioningMethods)
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+
+    QTest::newRow("All supported, Sat preferred")
+    << int(QGeoPositionInfoSource::AllPositioningMethods)
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+    QTest::newRow("All supported, Non-Sat prefered")
+    << int(QGeoPositionInfoSource::AllPositioningMethods)
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
+    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+    QTest::newRow("All supported, All prefered")
+    << int(QGeoPositionInfoSource::AllPositioningMethods)
+    << int(QGeoPositionInfoSource::AllPositioningMethods)
+    << int(QGeoPositionInfoSource::AllPositioningMethods);
+
     QTest::newRow("sat") << int(QGeoPositionInfoSource::SatellitePositioningMethods);
     QTest::newRow("sat | non-sat") << int(QGeoPositionInfoSource::SatellitePositioningMethods
                                           | QGeoPositionInfoSource::NonSatellitePositioningMethods);
     QTest::newRow("all") << int(QGeoPositionInfoSource::AllPositioningMethods);
-    QTest::newRow("all | sat") << int(QGeoPositionInfoSource::AllPositioningMethods
-                                      | QGeoPositionInfoSource::NonSatellitePositioningMethods);
 }
 
 void TestQGeoPositionInfoSource::preferredPositioningMethods()
@@ -275,6 +326,13 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
 {
     CHECK_SOURCE_VALID;
 
+    QFETCH(int, positioningMethod);
+    QFETCH(int, lastKnownPositionArgument);
+    QFETCH(int, positionValid);
+
+    m_source->setPreferredPositioningMethods(
+        static_cast<QGeoPositionInfoSource::PositioningMethods>(positioningMethod));
+
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     int time_out = 20000;
     m_source->setUpdateInterval(time_out);
@@ -300,16 +358,55 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     QGeoPositionInfo info;
     info = list.at(0).value<QGeoPositionInfo>();
     QGeoPositionInfo lastPositioninfo;
-    lastPositioninfo = m_source->lastKnownPosition();
+    lastPositioninfo = m_source->lastKnownPosition(lastKnownPositionArgument);
 
-    QCOMPARE(info.coordinate(), lastPositioninfo.coordinate());
-    QCOMPARE(info.dateTime(), lastPositioninfo.dateTime());
+    QCOMPARE(lastPositioninfo.isValid(), positionValid);
 
-    QCOMPARE(qFuzzyCompare(info.property(QGeoPositionInfo::HorizontalAccuracy),
-                           lastPositioninfo.property(QGeoPositionInfo::HorizontalAccuracy)), TRUE);
+    if (positionValid) {
+        QCOMPARE(info.coordinate(), lastPositioninfo.coordinate());
+        QCOMPARE(info.dateTime(), lastPositioninfo.dateTime());
 
-    QCOMPARE(qFuzzyCompare(info.property(QGeoPositionInfo::VerticalAccuracy),
-                           lastPositioninfo.property(QGeoPositionInfo::VerticalAccuracy)), TRUE);
+        QCOMPARE(qFuzzyCompare(info.property(QGeoPositionInfo::HorizontalAccuracy),
+                               lastPositioninfo.property(QGeoPositionInfo::HorizontalAccuracy)), TRUE);
+
+        QCOMPARE(qFuzzyCompare(info.property(QGeoPositionInfo::VerticalAccuracy),
+                               lastPositioninfo.property(QGeoPositionInfo::VerticalAccuracy)), TRUE);
+    }
+}
+
+void TestQGeoPositionInfoSource::lastKnownPosition_data()
+{
+    QTest::addColumn<int>("positioningMethod");
+    QTest::addColumn<bool>("lastKnownPositionArgument");
+    QTest::addColumn<bool>("positionValid");
+
+    if (m_source != 0) {
+        QGeoPositionInfoSource::PositioningMethods methods = m_source->supportedPositioningMethods();
+        if ((methods & QGeoPositionInfoSource::SatellitePositioningMethods) != 0) {
+            QTest::newRow("satellite - false")
+            << int(QGeoPositionInfoSource::SatellitePositioningMethods)
+            << false << true;
+            QTest::newRow("satellite - true")
+            << int(QGeoPositionInfoSource::SatellitePositioningMethods)
+            << true << true;
+        }
+        if ((methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) != 0) {
+            QTest::newRow("nonsatellite - false")
+            << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
+            << false << false;
+            QTest::newRow("nonsatellite - true")
+            << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
+            << true << true;
+        }
+        if ((methods & QGeoPositionInfoSource::AllPositioningMethods) != 0) {
+            QTest::newRow("all - false")
+            << int(QGeoPositionInfoSource::AllPositioningMethods)
+            << false << true;
+            QTest::newRow("all - true")
+            << int(QGeoPositionInfoSource::AllPositioningMethods)
+            << true << true;
+        }
+    }
 }
 
 void TestQGeoPositionInfoSource::minimumUpdateInterval()
@@ -697,31 +794,31 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
 
 void TestQGeoPositionInfoSource::removeSlotForRequestTimeout()
 {
-	CHECK_SOURCE_VALID;
-	
-	bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot2()));
-	QVERIFY(i==true);
-	i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	
-	m_source->requestUpdate(-1);
+    CHECK_SOURCE_VALID;
+
+    bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+    i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot2()));
+    QVERIFY(i == true);
+    i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+
+    m_source->requestUpdate(-1);
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 1000);
 }
 
 void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
 {
-	CHECK_SOURCE_VALID;
-	
-	bool i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot2()));
-	QVERIFY(i==true);
-	i = disconnect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	
-	m_source->requestUpdate(60000);
+    CHECK_SOURCE_VALID;
+
+    bool i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+    i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot2()));
+    QVERIFY(i == true);
+    i = disconnect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+
+    m_source->requestUpdate(60000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 

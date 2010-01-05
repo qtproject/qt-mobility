@@ -85,11 +85,6 @@ QGeoPositionInfoSourceWinCE::~QGeoPositionInfoSourceWinCE()
     delete infoThread;
 }
 
-void QGeoPositionInfoSourceWinCE::setPreferredPositioningMethods(PositioningMethods /*methods*/)
-{
-    QGeoPositionInfoSource::setPreferredPositioningMethods(QGeoPositionInfoSource::SatellitePositioningMethods);
-}
-
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinCE::supportedPositioningMethods() const
 {
     return QGeoPositionInfoSource::SatellitePositioningMethods;
