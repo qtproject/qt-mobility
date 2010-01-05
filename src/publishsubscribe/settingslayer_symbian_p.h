@@ -50,7 +50,12 @@
 #include <QByteArray>
 #include <QMultiMap>
 
-#include "pathmapper_symbian_p.h"
+#ifdef __WINS__
+    #include "pathmapper_symbian_p.h"
+#else
+    #include "pathmapper_proxy_symbian_p.h"
+#endif
+
 #include "xqsettingsmanager.h"
 
 QTM_BEGIN_NAMESPACE
@@ -109,7 +114,7 @@ private:
         unsigned int refCount;
     };
 
-    QHash<QString, SymbianSettingsHandle *> handles;
+    QHash<QString, SymbianSettingsHandle *> m_handles;
 
     SymbianSettingsHandle *symbianSettingsHandle(Handle handle)
     {
@@ -117,7 +122,7 @@ private:
             return 0;
 
         SymbianSettingsHandle *h = reinterpret_cast<SymbianSettingsHandle *>(handle);
-        if (handles.values().contains(h))
+        if (m_handles.values().contains(h))
             return h;
 
         return 0;
@@ -127,7 +132,7 @@ private slots:
     void notifyChange(const XQSettingsKey& key);
 
 private:    //data
-    PathMapper pathMapper;
+    PathMapper m_pathMapper;
     XQSettingsManager m_settingsManager;
     QHash<QByteArray, SymbianSettingsHandle *> m_monitoringHandles;
     QSet<QString> m_monitoringPaths;

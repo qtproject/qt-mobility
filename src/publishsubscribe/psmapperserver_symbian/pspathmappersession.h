@@ -38,50 +38,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef PSPATHMAPPERSESSION_H
+#define PSPATHMAPPERSESSION_H
 
-#ifndef PATHMAPPER_H
-#define PATHMAPPER_H
+#include <qmobilityglobal.h>
+#include <e32base.h>
 
-#include <QStringList>
-#include <QHash>
-
-#include "qcrmlparser_p.h"
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
-class PathMapper : public QObject
+class CPSPathMapperServer;
+class PathMapper;
+
+class CPSPathMapperServerSession : public CSession2
 {
-    Q_OBJECT
-
 public:
-    PathMapper();
-    /*virtual*/ ~PathMapper();
+    CPSPathMapperServerSession(const PathMapper &aPathMapper);
+    virtual ~CPSPathMapperServerSession();
 
-    enum Target {TargetCRepository, TargetRPropery};
+    void ServiceL(const RMessage2 &aMessage);
+    void DispatchMessageL(const RMessage2 &aMessage);
 
-    bool getChildren(QString path, QSet<QString> &children) const;
-    QStringList childPaths(QString basePath) const;
-    bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
+    void GetChildrenLengthL(const RMessage2 &aMessage);
+    void GetChildrenL(const RMessage2 &aMessage);
+    void ChildPathsLengthL(const RMessage2 &aMessage);
+    void ChildPathsL(const RMessage2 &aMessage);
+    void ResolvePathLengthL(const RMessage2 &aMessage);
+    void ResolvePathL(const RMessage2 &aMessage);
 
-private:
-    class PathData
-    {
-    public:
-        PathData() : m_target(TargetRPropery), m_category(0), m_key(0) {}
-        PathData(Target target, quint32 category, quint32 key) :
-            m_target(target), m_category(category), m_key(key) {}
-
-    public:
-        Target m_target;
-        quint32 m_category;
-        quint32 m_key;
-    };
+protected:
+    void PanicClient(const RMessage2 &aMessage, TInt aPanic) const;
 
 private:
-    QHash<QString, PathData> m_paths;
-    QCrmlParser m_crmlParser;
+    const PathMapper &iPathMapper;
+    QByteArray iResultByteArray;
 };
 
 QTM_END_NAMESPACE
 
-#endif //PATHMAPPER_H
+#endif  //PSPATHMAPPERSESSION_H
+
+// End of File
