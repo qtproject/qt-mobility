@@ -77,6 +77,7 @@ protected:
 private slots:
     void createNewObject();
     void intValueChanged(int value);
+    void unsetIntValue();
     void setStringValue();
     void setByteArrayValue();
 //! [0]

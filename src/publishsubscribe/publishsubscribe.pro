@@ -25,10 +25,12 @@ SOURCES += \
            qvaluespacesubscriber.cpp
 
 symbian {
-    DEPENDPATH += symbian
-    INCLUDEPATH += symbian
+    DEPENDPATH += xqsettingsmanager_symbian
+    INCLUDEPATH += xqsettingsmanager_symbian
     DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
-    include(symbian/settingsmanager.pri)
+    DEFINES += XQSETTINGSMANAGER_NO_TRANSACTIONS
+    DEFINES += XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
+    include(xqsettingsmanager_symbian/settingsmanager.pri)
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
@@ -38,19 +40,22 @@ symbian {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 
+    DEPENDPATH += psmapperserver_symbian
+    INCLUDEPATH += psmapperserver_symbian
+
+    HEADERS += pathmapper_symbian_p.h \
+        pathmapper_proxy_symbian_p.h
+    LIBS += -lefsrv
+
     DEFINES += QT_BUILD_INTERNAL
-    HEADERS += settingslayer_symbian.h \
-        pathmapper_symbian.h \
-        qcrmlparser_p.h
-    SOURCES += settingslayer_symbian.cpp \
-        pathmapper_symbian.cpp \
-        qcrmlparser.cpp
+    HEADERS += settingslayer_symbian_p.h
+    SOURCES += settingslayer_symbian.cpp
+
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
 
-    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll
+    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll PSPathMapperServer.exe
     QtPublishSubscribeDeployment.path = /sys/bin
-
     DEPLOYMENT += QtPublishSubscribeDeployment
 }
 

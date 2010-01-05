@@ -9,8 +9,6 @@ DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 INCLUDEPATH += .
 DEPENDPATH += .
 
-PUBLIC_HEADERS +=
-
 PUBLIC_HEADERS += qgeocoordinate.h \
                   qgeopositioninfo.h \
                   qgeosatelliteinfo.h \

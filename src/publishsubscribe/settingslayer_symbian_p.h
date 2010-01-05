@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef SYMBIANSETTINGSLAYER_H
 #define SYMBIANSETTINGSLAYER_H
 
@@ -45,10 +46,16 @@
 #include "qvaluespacepublisher.h"
 
 #include <QHash>
+#include <QSet>
 #include <QByteArray>
 #include <QMultiMap>
 
-#include "pathmapper_symbian.h"
+#ifdef __WINS__
+    #include "pathmapper_symbian_p.h"
+#else
+    #include "pathmapper_proxy_symbian_p.h"
+#endif
+
 #include "xqsettingsmanager.h"
 
 QTM_BEGIN_NAMESPACE
@@ -107,7 +114,7 @@ private:
         unsigned int refCount;
     };
 
-    QHash<QString, SymbianSettingsHandle *> handles;
+    QHash<QString, SymbianSettingsHandle *> m_handles;
 
     SymbianSettingsHandle *symbianSettingsHandle(Handle handle)
     {
@@ -115,19 +122,20 @@ private:
             return 0;
 
         SymbianSettingsHandle *h = reinterpret_cast<SymbianSettingsHandle *>(handle);
-        if (handles.values().contains(h))
+        if (m_handles.values().contains(h))
             return h;
 
         return 0;
     }
 
 private slots:
-    void valueChanged(const XQSettingsKey& key, const QVariant& value);
+    void notifyChange(const XQSettingsKey& key);
 
 private:    //data
-    PathMapper pathMapper;
+    PathMapper m_pathMapper;
     XQSettingsManager m_settingsManager;
     QHash<QByteArray, SymbianSettingsHandle *> m_monitoringHandles;
+    QSet<QString> m_monitoringPaths;
 };
 
 QTM_END_NAMESPACE

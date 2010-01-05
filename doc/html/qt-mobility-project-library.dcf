@@ -2316,6 +2316,7 @@
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::UserChoice</keyword>
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</keyword>
         <keyword ref="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</keyword>
+        <keyword ref="qnetworkconfiguration.html#bearerName">bearerName</keyword>
         <keyword ref="qnetworkconfiguration.html#children">children</keyword>
         <keyword ref="qnetworkconfiguration.html#identifier">identifier</keyword>
         <keyword ref="qnetworkconfiguration.html#isRoamingAvailable">isRoamingAvailable</keyword>
@@ -2370,7 +2371,6 @@
         <keyword ref="qnetworksession.html#State-enum">QNetworkSession::Closing</keyword>
         <keyword ref="qnetworksession.html#accept">accept</keyword>
         <keyword ref="qnetworksession.html#activeTime">activeTime</keyword>
-        <keyword ref="qnetworksession.html#bearerName">bearerName</keyword>
         <keyword ref="qnetworksession.html#bytesReceived">bytesReceived</keyword>
         <keyword ref="qnetworksession.html#bytesWritten">bytesWritten</keyword>
         <keyword ref="qnetworksession.html#close">close</keyword>
@@ -2380,7 +2380,7 @@
         <keyword ref="qnetworksession.html#errorString">errorString</keyword>
         <keyword ref="qnetworksession.html#ignore">ignore</keyword>
         <keyword ref="qnetworksession.html#interface">interface</keyword>
-        <keyword ref="qnetworksession.html#isActive">isActive</keyword>
+        <keyword ref="qnetworksession.html#isOpen">isOpen</keyword>
         <keyword ref="qnetworksession.html#migrate">migrate</keyword>
         <keyword ref="qnetworksession.html#newConfigurationActivated">newConfigurationActivated</keyword>
         <keyword ref="qnetworksession.html#open">open</keyword>
@@ -2505,6 +2505,12 @@
         <keyword ref="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</keyword>
         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
     </section>
+    <section ref="qservice.html" title="QService Namespace Reference">
+        <keyword ref="qservice.html">QService</keyword>
+        <keyword ref="qservice.html#Scope-enum">Scope</keyword>
+        <keyword ref="qservice.html#Scope-enum">QService::UserScope</keyword>
+        <keyword ref="qservice.html#Scope-enum">QService::SystemScope</keyword>
+    </section>
     <section ref="qservicecontext.html" title="QServiceContext Class Reference">
         <keyword ref="qservicecontext.html">QServiceContext</keyword>
         <keyword ref="qservicecontext.html#ContextType-enum">ContextType</keyword>
@@ -2521,23 +2527,22 @@
     <section ref="qservicefilter.html" title="QServiceFilter Class Reference">
         <keyword ref="qservicefilter.html">QServiceFilter</keyword>
         <keyword ref="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</keyword>
-        <keyword ref="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::MatchAll</keyword>
+        <keyword ref="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::MatchMinimum</keyword>
         <keyword ref="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::MatchLoadable</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::ExactVersionMatch</keyword>
         <keyword ref="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::MinimumVersionMatch</keyword>
         <keyword ref="qservicefilter.html#capabilities">capabilities</keyword>
         <keyword ref="qservicefilter.html#capabilityMatchRule">capabilityMatchRule</keyword>
-        <keyword ref="qservicefilter.html#clearCustomProperties">clearCustomProperties</keyword>
-        <keyword ref="qservicefilter.html#customProperty">customProperty</keyword>
-        <keyword ref="qservicefilter.html#customPropertyKeys">customPropertyKeys</keyword>
-        <keyword ref="qservicefilter.html#interfaceMajorVersion">interfaceMajorVersion</keyword>
-        <keyword ref="qservicefilter.html#interfaceMinorVersion">interfaceMinorVersion</keyword>
+        <keyword ref="qservicefilter.html#clearCustomAttribute">clearCustomAttribute</keyword>
+        <keyword ref="qservicefilter.html#customAttribute">customAttribute</keyword>
+        <keyword ref="qservicefilter.html#customAttributes">customAttributes</keyword>
         <keyword ref="qservicefilter.html#interfaceName">interfaceName</keyword>
-        <keyword ref="qservicefilter.html#removeCustomProperty">removeCustomProperty</keyword>
+        <keyword ref="qservicefilter.html#majorVersion">majorVersion</keyword>
+        <keyword ref="qservicefilter.html#minorVersion">minorVersion</keyword>
         <keyword ref="qservicefilter.html#serviceName">serviceName</keyword>
         <keyword ref="qservicefilter.html#setCapabilities">setCapabilities</keyword>
-        <keyword ref="qservicefilter.html#setCustomProperty">setCustomProperty</keyword>
+        <keyword ref="qservicefilter.html#setCustomAttribute">setCustomAttribute</keyword>
         <keyword ref="qservicefilter.html#setInterface">setInterface</keyword>
         <keyword ref="qservicefilter.html#setServiceName">setServiceName</keyword>
         <keyword ref="qservicefilter.html#versionMatchRule">versionMatchRule</keyword>
@@ -2546,19 +2551,19 @@
     </section>
     <section ref="qserviceinterfacedescriptor.html" title="QServiceInterfaceDescriptor Class Reference">
         <keyword ref="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">PropertyKey</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::ServiceDescription</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::InterfaceDescription</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Capabilities</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#PropertyKey-enum">QServiceInterfaceDescriptor::Location</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#customProperty">customProperty</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#customPropertyKeys">customPropertyKeys</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#inSystemScope">inSystemScope</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#Attribute-enum">Attribute</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#Attribute-enum">QServiceInterfaceDescriptor::ServiceDescription</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#Attribute-enum">QServiceInterfaceDescriptor::InterfaceDescription</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#Attribute-enum">QServiceInterfaceDescriptor::Capabilities</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#Attribute-enum">QServiceInterfaceDescriptor::Location</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#attribute">attribute</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#customAttribute">customAttribute</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#customAttributes">customAttributes</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#interfaceName">interfaceName</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#isValid">isValid</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#majorVersion">majorVersion</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#minorVersion">minorVersion</keyword>
-        <keyword ref="qserviceinterfacedescriptor.html#property">property</keyword>
+        <keyword ref="qserviceinterfacedescriptor.html#scope">scope</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#serviceName">serviceName</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qserviceinterfacedescriptor.html#operator-eq">operator=</keyword>
@@ -2579,16 +2584,13 @@
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::InvalidServiceLocation</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::InvalidServiceXml</keyword>
         <keyword ref="qservicemanager.html#Error-enum">QServiceManager::InvalidServiceInterfaceDescriptor</keyword>
-        <keyword ref="qservicemanager.html#Scope-enum">Scope</keyword>
-        <keyword ref="qservicemanager.html#Scope-enum">QServiceManager::UserScope</keyword>
-        <keyword ref="qservicemanager.html#Scope-enum">QServiceManager::SystemScope</keyword>
         <keyword ref="qservicemanager.html#addService">addService</keyword>
         <keyword ref="qservicemanager.html#error">error</keyword>
         <keyword ref="qservicemanager.html#findInterfaces">findInterfaces</keyword>
         <keyword ref="qservicemanager.html#findServices">findServices</keyword>
-        <keyword ref="qservicemanager.html#getInterface">getInterface</keyword>
         <keyword ref="qservicemanager.html#interfaceDefault">interfaceDefault</keyword>
         <keyword ref="qservicemanager.html#loadInterface">loadInterface</keyword>
+        <keyword ref="qservicemanager.html#loadLocalTypedInterface">loadLocalTypedInterface</keyword>
         <keyword ref="qservicemanager.html#removeService">removeService</keyword>
         <keyword ref="qservicemanager.html#scope">scope</keyword>
         <keyword ref="qservicemanager.html#serviceAdded">serviceAdded</keyword>
@@ -3220,6 +3222,9 @@
 <section ref="examples.html" title="Tutorial &amp; Examples">
     <section ref="keepintouch.html" title="'Keep in Touch' Example">
         <keyword ref="keepintouch.html">'Keep in Touch' Example</keyword>
+    </section>
+    <section ref="writemessage.html" title="'Write Message' Example">
+        <keyword ref="writemessage.html">'Write Message' Example</keyword>
     </section>
     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML">
         <keyword ref="battery-charge.html">Accessing Publish and Subscribe from QML</keyword>

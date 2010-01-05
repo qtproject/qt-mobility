@@ -43,13 +43,14 @@
 
 /*!
     \class XQCentralRepositorySearchCriteria
+    \internal
 
     \brief The XQCentralRepositorySearchCriteria defines search criteria
     used in XQCentralRepositoryUtils::findKeys().
 */
 
 
-/*!
+/* 
     Constructs an XQCentralRepositorySearchCriteria object.
     \param repositoryUid Central repository where the key is searched
     \param partialKey Partial Central repository key
@@ -62,14 +63,14 @@ XQCentralRepositorySearchCriteria::XQCentralRepositorySearchCriteria(long int re
 {
 }
 
-/*!
+/* 
     Destructs an XQCentralRepositorySearchCriteria object.
 */
 XQCentralRepositorySearchCriteria::~XQCentralRepositorySearchCriteria()
 {
 }
 
-/*!
+/* 
     Sets the value criteria. If this function is not called or value is NULL object
     every key in the repository is returned in XQCentralRepositoryUtils::findKeys().
     \param value Value to be searched. The type is determined with
@@ -84,7 +85,7 @@ void XQCentralRepositorySearchCriteria::setValueCriteria(const QVariant& value, 
     m_negativeCriteria = negativeCriteria;
 }
 
-/*!
+/* 
     \return Repository UID
 */
 long int XQCentralRepositorySearchCriteria::repositoryUid() const
@@ -92,7 +93,7 @@ long int XQCentralRepositorySearchCriteria::repositoryUid() const
     return m_repositoryUid;
 }
 
-/*!
+/* 
     \return Partial key
 */
 unsigned long int XQCentralRepositorySearchCriteria::partialKey() const
@@ -100,7 +101,7 @@ unsigned long int XQCentralRepositorySearchCriteria::partialKey() const
     return m_partialKey;
 }
 
-/*!
+/* 
     \return Bit mask for the partial key
 */
 unsigned long int XQCentralRepositorySearchCriteria::bitMask() const
@@ -108,7 +109,7 @@ unsigned long int XQCentralRepositorySearchCriteria::bitMask() const
     return m_bitMask;
 }
 
-/*!
+/* 
     \return Value criteria
 */
 const QVariant& XQCentralRepositorySearchCriteria::value() const
@@ -116,7 +117,7 @@ const QVariant& XQCentralRepositorySearchCriteria::value() const
     return m_value;
 }
 
-/*!
+/* 
     \return True if value criteria is negative
 */
 bool XQCentralRepositorySearchCriteria::negativeCriteria() const

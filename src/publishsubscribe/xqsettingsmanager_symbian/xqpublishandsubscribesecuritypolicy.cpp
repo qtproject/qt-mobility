@@ -43,6 +43,7 @@
 
 /*!
     \class XQPublishAndSubscribeSecurityPolicy
+    \internal
 
     \brief The XQPublishAndSubscribeSecurityPolicy defines security policies
     used in XQPublishAndSubscribeUtils class. This class is just a Qt-like wrapper
@@ -54,90 +55,90 @@
 
     This enum defines the possible policy types.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::SecPolicyAlwaysFail XQPublishAndSubscribeSecurityPolicy::SecPolicyAlwaysFail
+/*  \var XQPublishAndSubscribeSecurityPolicy::SecPolicyAlwaysFail XQPublishAndSubscribeSecurityPolicy::SecPolicyAlwaysFail
     The checks made against this policy always fail.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::SecPolicyAlwaysPass XQPublishAndSubscribeSecurityPolicy::SecPolicyAlwaysPass
+/*  \var XQPublishAndSubscribeSecurityPolicy::SecPolicyAlwaysPass XQPublishAndSubscribeSecurityPolicy::SecPolicyAlwaysPass
     The checks made against this policy always pass.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::SecPolicyUndefined XQPublishAndSubscribeSecurityPolicy::SecPolicyUndefined
+/*  \var XQPublishAndSubscribeSecurityPolicy::SecPolicyUndefined XQPublishAndSubscribeSecurityPolicy::SecPolicyUndefined
     Policy type is not defined.
 */
 
-/*!
+/* 
     \enum XQPublishAndSubscribeSecurityPolicy::Capability
 
     This enum defines the possible capabilities.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityTCB XQPublishAndSubscribeSecurityPolicy::CapabilityTCB
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityTCB XQPublishAndSubscribeSecurityPolicy::CapabilityTCB
     Grants TCB level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityCommDD XQPublishAndSubscribeSecurityPolicy::CapabilityCommDD
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityCommDD XQPublishAndSubscribeSecurityPolicy::CapabilityCommDD
     Grants CapabilityCommDD level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityPowerMgmt XQPublishAndSubscribeSecurityPolicy::CapabilityPowerMgmt
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityPowerMgmt XQPublishAndSubscribeSecurityPolicy::CapabilityPowerMgmt
     Grants CapabilityPowerMgmt level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityMultimediaDD XQPublishAndSubscribeSecurityPolicy::CapabilityMultimediaDD
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityMultimediaDD XQPublishAndSubscribeSecurityPolicy::CapabilityMultimediaDD
     Grants CapabilityMultimediaDD level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityReadDeviceData XQPublishAndSubscribeSecurityPolicy::CapabilityReadDeviceData
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityReadDeviceData XQPublishAndSubscribeSecurityPolicy::CapabilityReadDeviceData
     Grants CapabilityReadDeviceData level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityWriteDeviceData XQPublishAndSubscribeSecurityPolicy::CapabilityWriteDeviceData
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityWriteDeviceData XQPublishAndSubscribeSecurityPolicy::CapabilityWriteDeviceData
     Grants CapabilityWriteDeviceData level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityDRM XQPublishAndSubscribeSecurityPolicy::CapabilityDRM
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityDRM XQPublishAndSubscribeSecurityPolicy::CapabilityDRM
     Grants CapabilityDRM level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityTrustedUI XQPublishAndSubscribeSecurityPolicy::CapabilityTrustedUI
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityTrustedUI XQPublishAndSubscribeSecurityPolicy::CapabilityTrustedUI
     Grants CapabilityTrustedUI level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityProtServ XQPublishAndSubscribeSecurityPolicy::CapabilityProtServ
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityProtServ XQPublishAndSubscribeSecurityPolicy::CapabilityProtServ
     Grants CapabilityProtServ level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityDiskAdmin XQPublishAndSubscribeSecurityPolicy::CapabilityDiskAdmin
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityDiskAdmin XQPublishAndSubscribeSecurityPolicy::CapabilityDiskAdmin
     Grants CapabilityDiskAdmin level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityNetworkControl XQPublishAndSubscribeSecurityPolicy::CapabilityNetworkControl
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityNetworkControl XQPublishAndSubscribeSecurityPolicy::CapabilityNetworkControl
     Grants CapabilityNetworkControl level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityAllFiles XQPublishAndSubscribeSecurityPolicy::CapabilityAllFiles
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityAllFiles XQPublishAndSubscribeSecurityPolicy::CapabilityAllFiles
     Grants CapabilityAllFiles level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilitySwEvent XQPublishAndSubscribeSecurityPolicy::CapabilitySwEvent
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilitySwEvent XQPublishAndSubscribeSecurityPolicy::CapabilitySwEvent
     Grants CapabilitySwEvent level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityNetworkServices XQPublishAndSubscribeSecurityPolicy::CapabilityNetworkServices
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityNetworkServices XQPublishAndSubscribeSecurityPolicy::CapabilityNetworkServices
     Grants CapabilityNetworkServices level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityLocalServices XQPublishAndSubscribeSecurityPolicy::CapabilityLocalServices
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityLocalServices XQPublishAndSubscribeSecurityPolicy::CapabilityLocalServices
     Grants CapabilityLocalServices level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityReadUserData XQPublishAndSubscribeSecurityPolicy::CapabilityReadUserData
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityReadUserData XQPublishAndSubscribeSecurityPolicy::CapabilityReadUserData
     Grants CapabilityReadUserData level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityWriteUserData XQPublishAndSubscribeSecurityPolicy::CapabilityWriteUserData
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityWriteUserData XQPublishAndSubscribeSecurityPolicy::CapabilityWriteUserData
     Grants CapabilityWriteUserData level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityLocation XQPublishAndSubscribeSecurityPolicy::CapabilityLocation
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityLocation XQPublishAndSubscribeSecurityPolicy::CapabilityLocation
     Grants CapabilityLocation level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilitySurroundingsDD XQPublishAndSubscribeSecurityPolicy::CapabilitySurroundingsDD
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilitySurroundingsDD XQPublishAndSubscribeSecurityPolicy::CapabilitySurroundingsDD
     Grants CapabilitySurroundingsDD level access.
 */
-/*! \var XQPublishAndSubscribeSecurityPolicy::CapabilityUserEnvironment XQPublishAndSubscribeSecurityPolicy::CapabilityUserEnvironment
+/*  \var XQPublishAndSubscribeSecurityPolicy::CapabilityUserEnvironment XQPublishAndSubscribeSecurityPolicy::CapabilityUserEnvironment
     Grants CapabilityUserEnvironment level access.
 */
 
-/*!
+/* 
     \return Secure ID
 */
 XQPublishAndSubscribeSecurityPolicy::SecureId::SecureId(long int uid) : m_uid(uid)
 {
 }
 
-/*!
+/* 
     \return Vendor ID
 */
 XQPublishAndSubscribeSecurityPolicy::VendorId::VendorId(long int uid) : m_uid(uid)
@@ -145,7 +146,7 @@ XQPublishAndSubscribeSecurityPolicy::VendorId::VendorId(long int uid) : m_uid(ui
 }
 
 
-/*!
+/* 
     Constructs an XQPublishAndSubscribeSecurityPolicy object.
     \param secPolicyType Policy type
 */
@@ -154,7 +155,7 @@ XQPublishAndSubscribeSecurityPolicy::XQPublishAndSubscribeSecurityPolicy(SecPoli
 {
 }
 
-/*!
+/* 
     Constructs an XQPublishAndSubscribeSecurityPolicy object.
     \param capabilities List of needed capabilities. Max seven capabilities can be given. Extra capabilities
     in the list will not be used.
@@ -165,7 +166,7 @@ XQPublishAndSubscribeSecurityPolicy::XQPublishAndSubscribeSecurityPolicy(QList<C
 {
 }
 
-/*!
+/* 
     Constructs an XQPublishAndSubscribeSecurityPolicy object.
     \param secureId Secure ID
     \param capabilities List of needed capabilities. Max three capabilities can be given. Extra capabilities
@@ -177,7 +178,7 @@ XQPublishAndSubscribeSecurityPolicy::XQPublishAndSubscribeSecurityPolicy(SecureI
 {
 }
 
-/*!
+/* 
     Constructs an XQPublishAndSubscribeSecurityPolicy object.
     \param vendorId Vendor ID
     \param capabilities List of needed capabilities. Max three capabilities can be given. Extra capabilities
@@ -189,14 +190,14 @@ XQPublishAndSubscribeSecurityPolicy::XQPublishAndSubscribeSecurityPolicy(VendorI
 {
 }
 
-/*!
+/* 
     Destructs an XQPublishAndSubscribeSecurityPolicy object.
 */
 XQPublishAndSubscribeSecurityPolicy::~XQPublishAndSubscribeSecurityPolicy()
 {
 }
 
-/*!
+/* 
     \return Policy type.
 */
 XQPublishAndSubscribeSecurityPolicy::SecPolicyType XQPublishAndSubscribeSecurityPolicy::secPolicyType() const
@@ -204,7 +205,7 @@ XQPublishAndSubscribeSecurityPolicy::SecPolicyType XQPublishAndSubscribeSecurity
     return m_secPolicyType;
 }
 
-/*!
+/* 
     \return Secure ID or -1 if not defined.
 */
 XQPublishAndSubscribeSecurityPolicy::SecureId XQPublishAndSubscribeSecurityPolicy::secureId() const
@@ -212,7 +213,7 @@ XQPublishAndSubscribeSecurityPolicy::SecureId XQPublishAndSubscribeSecurityPolic
     return m_secureId;
 }
 
-/*!
+/* 
     \return Vendor ID or -1 if not defined.
 */
 XQPublishAndSubscribeSecurityPolicy::VendorId XQPublishAndSubscribeSecurityPolicy::vendorId() const
@@ -220,7 +221,7 @@ XQPublishAndSubscribeSecurityPolicy::VendorId XQPublishAndSubscribeSecurityPolic
     return m_vendorId;
 }
 
-/*!
+/* 
     \return List of capabilities
 */
 QList<XQPublishAndSubscribeSecurityPolicy::Capability> XQPublishAndSubscribeSecurityPolicy::capabilities() const

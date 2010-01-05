@@ -32,7 +32,7 @@
 </ul>
 <a name="overview"></a>
 <h3>Overview</h3>
-<p>The Qt Value Space unifies various sources of hierarchical data into a single consistent model. Conceptually the Value Space is a hierarchical tree of which each node or leaf can optionally contain a <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> value. A serialized version of a simple example Value Space might look like this.</p>
+<p>The Qt Value Space unifies various sources of hierarchical data into a single consistent model. Conceptually the Value Space is a hierarchical tree of which each node or leaf can optionally contain a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> value. A serialized version of a simple example Value Space might look like this.</p>
 <pre>    /Device/Buttons = 3
     /Device/Buttons/1/Name = Menu
     /Device/Buttons/1/Usable = true
@@ -63,7 +63,7 @@
 <h4>Shared Memory Layer</h4>
 <p>The Shared Memory layer stores all values in a 10MB block of shared memory which is reserved when the Value Space server initializes. As the layer creates this region at startup, it is assumed that the operating system lazily commits memory. If this assumption is invalid, the Shared Memory layer will unnecessarily consume 10MB of memory.</p>
 <p>Value Space clients read from the Shared Memory layer's shared memory region directly. A kernel lock is acquired for each read to prevent corruption. While the layer supports concurrent readers, it is possible that a faulty or malicious application could acquire and refuse to release this lock causing any layer updates to be delayed indefinitely.</p>
-<p>Only the Value Space server ever writes to the shared memory region. When clients attempt to add items to the layer, their changes are transmitted via a <a href="http://qt.nokia.com/doc/4.5/qlocalsocket.html">QLocalSocket</a> (e.g&#x2e; <tt>/tmp/qt/valuespace_shmlayer</tt> domain socket on Unix systems) to the server where the update is performed. Updates are batched in-process and sent when the process re-enters the Qt event loop. Transmission and synchronization of changes can be forced manually by the <a href="qvaluespacepublisher.html#sync">QValueSpacePublisher::sync</a>() function, although as this requires a round trip between the client and server, doing so frequently may significantly degrade performance.</p>
+<p>Only the Value Space server ever writes to the shared memory region. When clients attempt to add items to the layer, their changes are transmitted via a <a href="http://qt.nokia.com/doc/4.6/qlocalsocket.html">QLocalSocket</a> (e.g&#x2e; <tt>/tmp/qt/valuespace_shmlayer</tt> domain socket on Unix systems) to the server where the update is performed. Updates are batched in-process and sent when the process re-enters the Qt event loop. Transmission and synchronization of changes can be forced manually by the <a href="qvaluespacepublisher.html#sync">QValueSpacePublisher::sync</a>() function, although as this requires a round trip between the client and server, doing so frequently may significantly degrade performance.</p>
 <p>Change notifications are transmitted to clients in the form of &quot;something has changed&quot; messages. Nodes within the shared memory region are versioned, which allows clients to quickly determine exactly what has changed without the need for a bulkier change notification protocol.</p>
 <a name="symbian-settings-layer"></a>
 <h4>Symbian Settings Layer</h4>
@@ -97,7 +97,7 @@
     }</pre>
 <a name="limitations"></a>
 <h5>Limitations</h5>
-<p>Symbian OS Properties are limited to data of type <tt>int</tt> and <tt>QByteArray</tt>. <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> is also possible to be passed via Value Space but it is recognized as <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> in the receiving end. Use <a href="http://qt.nokia.com/doc/4.5/qvariant.html#toString">QVariant::toString</a>() to explicitly convert it back into a <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> in cases where you know that the data was originally a <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>. The maximum size for <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> is 65535 bytes.</p>
+<p>Symbian OS Properties are limited to data of type <tt>int</tt> and <tt>QByteArray</tt>. <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> is also possible to be passed via Value Space but it is recognized as <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> in the receiving end. Use <a href="http://qt.nokia.com/doc/4.6/qvariant.html#toString">QVariant::toString</a>() to explicitly convert it back into a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> in cases where you know that the data was originally a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>. The maximum size for <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> is 65535 bytes.</p>
 <p>In addition to the types supported by Symbian OS Properties, Central Repository also supports qreal.</p>
 <a name="examples"></a>
 <h3>Examples</h3>
