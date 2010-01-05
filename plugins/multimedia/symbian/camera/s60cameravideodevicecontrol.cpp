@@ -58,9 +58,9 @@ S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *session, QObje
    :QVideoDeviceControl(parent)
 {
     m_session = qobject_cast<S60CameraSession*>(session);
-    connect(m_session,SIGNAL(selectedDeviceChanged(int), this, SIGNAL(selectedDeviceChanged(int))));
-    connect(m_session,SIGNAL(selectedDeviceChanged(const QString &), this, SIGNAL(selectedDeviceChanged(const QString &))));
-    connect(m_session,SIGNAL(devicesChanged(), this, SIGNAL(devicesChanged())));
+    connect(m_session,SIGNAL(selectedDeviceChanged(int)), this, SIGNAL(selectedDeviceChanged(int)) );
+    connect(m_session,SIGNAL(selectedDeviceChanged(const QString &)), this, SIGNAL(selectedDeviceChanged(const QString &)) );
+    connect(m_session,SIGNAL(devicesChanged()), this, SIGNAL(devicesChanged()) );
 
 }
 

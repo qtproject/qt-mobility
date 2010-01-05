@@ -58,6 +58,7 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
+    connect(m_session, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
 }
 
 
@@ -131,4 +132,3 @@ void S60CameraFocusControl::lockFocus()
 void S60CameraFocusControl::unlockFocus()
 {
 }
-

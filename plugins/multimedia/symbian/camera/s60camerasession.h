@@ -177,8 +177,15 @@ private:
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);
+    void error(int error, const QString &errorString);
     void readyForCaptureChanged(bool);
     void imageCaptured(const QString &fileName, const QImage &preview);
+    //for focuscontrol
+    void focusLocked();
+    //for device control
+    void selectedDeviceChanged(int index);
+    void selectedDeviceChanged(const QString &deviceName);
+    void devicesChanged();
 
 private Q_SLOTS:
     void captureFrame();
