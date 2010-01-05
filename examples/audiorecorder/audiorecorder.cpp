@@ -55,7 +55,11 @@ AudioRecorder::AudioRecorder()
     capture = new QMediaRecorder(audiosource);
 
     // set a default file
+#ifdef Q_OS_SYMBIAN
+    capture->setOutputLocation(QUrl("c:\\data\\test.wav"));
+#else
     capture->setOutputLocation(QUrl("test.raw"));
+#endif
 
     QWidget *window = new QWidget;
     QGridLayout* layout = new QGridLayout;
@@ -75,8 +79,9 @@ AudioRecorder::AudioRecorder()
     qualityBox = new QComboBox(this);
     qualityBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-    for(int i = 0; i < audiosource->deviceCount(); i++)
-        deviceBox->addItem(audiosource->name(i));
+    QList<QString> inputs = audiosource->audioInputs();
+    for(int i = 0; i < inputs.size(); i++)
+        deviceBox->addItem(inputs.at(i));
 
     QStringList codecs = capture->supportedAudioCodecs();
     for(int i = 0; i < codecs.count(); i++)
@@ -143,10 +148,7 @@ void AudioRecorder::stateChanged(QMediaRecorder::State state)
 
 void AudioRecorder::deviceChanged(int idx)
 {
-    for(int i = 0; i < audiosource->deviceCount(); i++) {
-        if(deviceBox->itemText(idx).compare(audiosource->name(i)) == 0)
-            audiosource->setSelectedDevice(i);
-    }
+    audiosource->setAudioInput(deviceBox->itemText(idx));
 }
 
 void AudioRecorder::codecChanged(int idx)

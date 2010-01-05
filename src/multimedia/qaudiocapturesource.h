@@ -65,24 +65,28 @@ class Q_MEDIA_EXPORT QAudioCaptureSource : public QMediaObject
 
 public:
     QAudioCaptureSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
+    QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent = 0);
+
     ~QAudioCaptureSource();
 
-    int deviceCount() const;
+    bool isAvailable() const;
+    QtMedia::AvailabilityError availabilityError() const;
 
-    QString name(int index) const;
-    QString description(int index) const;
-    QIcon icon(int index) const;
+    QList<QString> audioInputs() const;
 
-    int defaultDevice() const;
-    int selectedDevice() const;
+    QString audioDescription(const QString& name) const;
+    QString defaultAudioInput() const;
+    QString activeAudioInput() const;
 
 public Q_SLOTS:
-    void setSelectedDevice(int index);
+    void setAudioInput(const QString& name);
 
 Q_SIGNALS:
-    void selectedDeviceChanged(int index);
-    void selectedDeviceChanged(const QString &deviceName);
-    void devicesChanged();
+    void activeAudioInputChanged(const QString& name);
+    void availableAudioInputsChanged();
+
+private slots:
+    void statusChanged();
 
 private:
     Q_DECLARE_PRIVATE(QAudioCaptureSource)

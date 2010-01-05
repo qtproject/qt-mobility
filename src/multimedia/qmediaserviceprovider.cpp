@@ -421,6 +421,37 @@ public:
         return supportEstimate;
     }
 
+    QStringList supportedMimeTypes(const QByteArray &serviceType, int flags) const
+    {
+        QList<QObject*> instances = loader()->instances(serviceType);
+
+        QStringList supportedTypes;
+
+        foreach(QObject *obj, instances) {
+            QMediaServiceSupportedFormatsInterface *iface =
+                    qobject_cast<QMediaServiceSupportedFormatsInterface*>(obj);
+
+            // If low latency playback was asked for, skip MIME types from services known
+            // not to provide low latency playback
+            if (flags & QMediaPlayer::LowLatency) {
+                QMediaServiceFeaturesInterface *iface =
+                        qobject_cast<QMediaServiceFeaturesInterface*>(obj);
+
+                if (iface && !(iface->supportedFeatures(serviceType) & QMediaServiceProviderHint::LowLatencyPlayback))
+                    continue;
+            }
+
+            if (iface) {
+                supportedTypes << iface->supportedMimeTypes();
+            }
+        }
+
+        // Multiple services may support the same MIME type
+        supportedTypes.removeDuplicates();
+
+        return supportedTypes;
+    }
+
     QList<QByteArray> devices(const QByteArray &serviceType) const
     {
         QList<QByteArray> res;
@@ -495,6 +526,21 @@ QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &ser
     Q_UNUSED(flags);
 
     return QtMedia::MaybeSupported;
+}
+
+/*!
+    \fn QStringList QMediaServiceProvider::supportedMimeTypes(const QByteArray &serviceType, int flags) const
+
+    Returns a list of MIME types supported by the service provider for the specified \a serviceType.
+
+    The resultant list is restricted to MIME types which can be supported given the constraints in \a flags.
+*/
+QStringList QMediaServiceProvider::supportedMimeTypes(const QByteArray &serviceType, int flags) const
+{
+    Q_UNUSED(serviceType);
+    Q_UNUSED(flags);
+
+    return QStringList();
 }
 
 /*!
@@ -575,6 +621,12 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     \fn QMediaServiceSupportedFormatsInterface::hasSupport(const QString &mimeType, const QStringList& codecs) const
 
     Returns the level of support a media service plug-in has for a \a mimeType and set of \a codecs.
+*/
+
+/*!
+    \fn QMediaServiceSupportedFormatsInterface::supportedMimeTypes() const
+
+    Returns a list of MIME types supported by the media service plug-in.
 */
 
 /*!

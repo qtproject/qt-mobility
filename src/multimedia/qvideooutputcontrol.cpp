@@ -46,10 +46,10 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QVideoOutputControl
     \preliminary
+
     \brief The QVideoOutputControl class provides a means of selecting the
     active video output control.
 
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     There are multiple controls which a QMediaService may use to output

@@ -184,10 +184,10 @@ void Player::metaDataChanged()
                 .arg(player->metaData(QtMedia::Title).toString()));
 
         if (coverLabel) {
-            QUrl uri = player->metaData(QtMedia::CoverArtUriLarge).value<QUrl>();
+            QUrl url = player->metaData(QtMedia::CoverArtUrlLarge).value<QUrl>();
 
-            coverLabel->setPixmap(!uri.isEmpty()
-                    ? QPixmap(uri.toString())
+            coverLabel->setPixmap(!url.isEmpty()
+                    ? QPixmap(url.toString())
                     : QPixmap());
         }
     }
