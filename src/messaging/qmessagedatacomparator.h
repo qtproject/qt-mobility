@@ -66,15 +66,15 @@ namespace QMessageDataComparator {
         GreaterThanEqual
     };
 
-    enum Option
+    enum MatchFlag
     {
-        FullWord        = 0x1,
-        CaseSensitive   = 0x2
+        MatchCaseSensitive   = Qt::MatchCaseSensitive,
+        MatchFullWord        = 128
     };
-    Q_DECLARE_FLAGS(Options, Option)
+    Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
 
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS(QMessageDataComparator::Options)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QMessageDataComparator::MatchFlags)
 
 QTM_END_NAMESPACE
 

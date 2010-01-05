@@ -96,8 +96,8 @@ usage()
     echo "                    Modules should be separated by a space. If a"
     echo "                    selected module depends on other modules they"
     echo "                    will automatically be enabled."
-    echo "-maemo ............ Build Qt Mobility for Maemo."
-    echo "                    (default: Desktop Linux)"
+    echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
+    echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Freemantle)."
     echo "-sdk <sdk>..........Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo
@@ -149,8 +149,11 @@ while [ "$#" -gt 0 ]; do
         -silent)
             BUILD_SILENT=yes
             ;;
-        -maemo)
-            LINUX_TARGET=maemo 
+        -maemo5)
+            LINUX_TARGET=maemo5
+            ;;
+        -maemo6)
+            LINUX_TARGET=maemo6
             ;;
         -sdk)
             MAC_SDK="$2"
@@ -215,7 +218,11 @@ echo "CONFIG += $RELEASEMODE" >> "$CONFIG_IN"
 
 #do we build for Maemo?
 if [ -n "$LINUX_TARGET" ]; then
-    echo "CONFIG+=maemo" >> "$CONFIG_IN"
+    if [ "$LINUX_TARGET" = "maemo5" ]; then
+        echo "CONFIG+=maemo5" >> "$CONFIG_IN"
+    elif [ "$LINUX_TARGET" = "maemo6" ]; then
+        echo "CONFIG+=maemo6" >> "$CONFIG_IN"
+    fi
 fi
 
 #process PREFIX
@@ -369,7 +376,8 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
-echo "maemo:mobility_modules -= systeminfo" >> "$CONFIG_IN"
+# no Sysinfo support on Maemo yet
+echo "maemo5|maemo6:mobility_modules -= systeminfo" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
 
 # Ideally we'd skip generating headers for modules that are not enabled

@@ -46,9 +46,12 @@
 #include <qmediarecorder.h>
 #include <qaudiocapturesource.h>
 
+QT_BEGIN_NAMESPACE
 namespace Ui {
     class CameraCapture;
 }
+QT_END_NAMESPACE
+
 
 #include <QMainWindow>
 #include <QDir>

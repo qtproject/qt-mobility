@@ -54,19 +54,20 @@ public:
     QMessageStorePrivate() 
         : QObject(), 
           _store(QMailStore::instance()), 
-          _error(QMessageStore::NoError), 
+          _error(QMessageManager::NoError), 
           _notify(true),
           _filterId(0)
     {
     }
 
     QMailStore *_store;
-    QMessageStore::ErrorCode _error;
+    QMessageManager::Error _error;
     bool _notify;
-    QMessageStore::NotificationFilterId _filterId;
-    QMap<QMessageStore::NotificationFilterId, QMailMessageKey> _filters;
+    QMessageManager::NotificationFilterId _filterId;
+    QMap<QMessageManager::NotificationFilterId, QMailMessageKey> _filters;
 
     static QMailStore *convert(QMessageStore *store);
+    static QMailStore *convert(QMessageManager &manager);
 
     Q_SCOPED_STATIC_DECLARE(QMessageStore,storeInstance);
 
@@ -79,18 +80,18 @@ public slots:
     void messagesUpdated(const QMailMessageIdList &ids);
 
 signals:
-    void messageAdded(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
-    void messageRemoved(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
-    void messageUpdated(const QMessageId &id, const QMessageStore::NotificationFilterIdSet &matchingFilterIds);
+    void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
 
 private:
-    void processFilters(const QMailMessageIdList &ids, void (QMessageStorePrivate::*signal)(const QMessageId &, const QMessageStore::NotificationFilterIdSet &))
+    void processFilters(const QMailMessageIdList &ids, void (QMessageStorePrivate::*signal)(const QMessageId &, const QMessageManager::NotificationFilterIdSet &))
     {
-        QMap<QMailMessageId, QMessageStore::NotificationFilterIdSet> matches;
+        QMap<QMailMessageId, QMessageManager::NotificationFilterIdSet> matches;
 
         // Copy the filter map to protect against modification during traversal
-        QMap<QMessageStore::NotificationFilterId, QMailMessageKey> filters(_filters);
-        QMap<QMessageStore::NotificationFilterId, QMailMessageKey>::const_iterator it = filters.begin(), end = filters.end();
+        QMap<QMessageManager::NotificationFilterId, QMailMessageKey> filters(_filters);
+        QMap<QMessageManager::NotificationFilterId, QMailMessageKey>::const_iterator it = filters.begin(), end = filters.end();
         for ( ; it != end; ++it) {
             const QMailMessageKey &key(it.value());
 
@@ -107,7 +108,7 @@ private:
             }
         }
 
-        QMap<QMailMessageId, QMessageStore::NotificationFilterIdSet>::const_iterator mit = matches.begin(), mend = matches.end();
+        QMap<QMailMessageId, QMessageManager::NotificationFilterIdSet>::const_iterator mit = matches.begin(), mend = matches.end();
         for ( ; mit != mend; ++mit) {
             emit (this->*signal)(QmfHelpers::convert(mit.key()), mit.value());
         }

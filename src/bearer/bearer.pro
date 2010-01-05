@@ -19,8 +19,7 @@ SOURCES += qnetworksession.cpp \
            qnetworkconfiguration.cpp
 
 symbian: {
-    exists($${EPOCROOT}epoc32/release/winscw/udeb/cmmanager.lib)| \
-    exists($${EPOCROOT}epoc32/release/armv5/lib/cmmanager.lib) {
+    contains(snap_enabled, yes) {
         message("Building with SNAP support")
         DEFINES += SNAP_FUNCTIONALITY_AVAILABLE=1
         LIBS += -lcmmanager
@@ -62,7 +61,7 @@ symbian: {
     QtBearerManagement.path = /sys/bin
     DEPLOYMENT += QtBearerManagement
 } else {
-    maemo {
+    maemo6 {
         QT += dbus
 	CONFIG += link_pkgconfig
 

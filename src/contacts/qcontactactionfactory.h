@@ -73,8 +73,10 @@ uint qHash(const QContactActionDescriptor& ad);
 
 QTM_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 #define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
 Q_DECLARE_INTERFACE(QtMobility::QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
+QT_END_NAMESPACE
 
 
 #endif

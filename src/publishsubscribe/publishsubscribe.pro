@@ -28,6 +28,8 @@ symbian {
     DEPENDPATH += symbian
     INCLUDEPATH += symbian
     DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
+    DEFINES += XQSETTINGSMANAGER_NO_TRANSACTIONS
+    DEFINES += XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
     include(symbian/settingsmanager.pri)
 
     deploy.path = $$EPOCROOT
@@ -39,8 +41,8 @@ symbian {
     }
 
     DEFINES += QT_BUILD_INTERNAL
-    HEADERS += settingslayer_symbian.h \
-        pathmapper_symbian.h \
+    HEADERS += settingslayer_symbian_p.h \
+        pathmapper_symbian_p.h \
         qcrmlparser_p.h
     SOURCES += settingslayer_symbian.cpp \
         pathmapper_symbian.cpp \
@@ -55,8 +57,7 @@ symbian {
 }
 
 unix:!symbian {
-    maemo {
-        DEFINES += Q_WS_MAEMO_6
+    maemo6 {
         SOURCES += contextkitlayer.cpp
         CONFIG += link_pkgconfig
         PKGCONFIG += contextsubscriber-1.0 QtDBus

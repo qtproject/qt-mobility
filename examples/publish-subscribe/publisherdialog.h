@@ -51,9 +51,11 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 namespace Ui {
     class PublisherDialog;
 }
+QT_END_NAMESPACE
 
 class PublisherDialog : public QDialog
 {
@@ -75,6 +77,7 @@ protected:
 private slots:
     void createNewObject();
     void intValueChanged(int value);
+    void unsetIntValue();
     void setStringValue();
     void setByteArrayValue();
 //! [0]

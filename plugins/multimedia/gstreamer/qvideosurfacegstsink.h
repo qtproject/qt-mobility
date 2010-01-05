@@ -51,7 +51,9 @@
 #include <QtMultimedia/qvideosurfaceformat.h>
 #include <QtMultimedia/qvideoframe.h>
 
+QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
+QT_END_NAMESPACE
 
 class QVideoSurfaceGstDelegate : public QObject
 {
@@ -128,8 +130,5 @@ class QVideoSurfaceGstSinkClass
 public:
     GstVideoSinkClass parent_class;
 };
-
-
-QT_END_NAMESPACE
 
 #endif

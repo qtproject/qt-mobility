@@ -44,17 +44,23 @@
 #include <QFileInfo>
 #include <QString>
 #include <QUrl>
-#include <QmlView>
 #include <QtCore>
-#include <qml.h>
-#include <qmlcontext.h>
+
+//! [0]
+//Includes for using the QML objects
+#include <QmlView>
+#include <QmlContext>
+
+//Includes for using the service framework
 #include <qserviceinterfacedescriptor.h>
 #include <qservicemanager.h>
+//! [0]
+
 #include "sfwexample.h"
 
 void usage()
 {
-    qWarning() << "Usage: sfw-kinetic-example file.qml";
+    qWarning() << "Usage: sfw-kinetic-example.qml";
 }
 
 int main(int argc, char** argv)
@@ -75,19 +81,33 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    //! [1]
     QUrl url(qmlFile);
     QFileInfo fi(qmlFile);
     if (fi.exists())
         url = QUrl::fromLocalFile(fi.absoluteFilePath());
+    else
+        return 1;
 
-    ServiceRegister registration;
     QmlView canvas;
     canvas.setUrl(url);
-    QmlContext* ctxt = canvas.rootContext();
-    ctxt->addDefaultObject(&registration);
+    //! [1]
 
+    //! [2]
+    //...
+    //! [2]
+
+    //! [4]
+    QmlContext* ctxt = canvas.rootContext();
+    ServiceRegister registration;
+    ctxt->addDefaultObject(&registration);
+    ctxt->setContextProperty("services", QVariant::fromValue<QList<ServiceWrapper*>*>(registration.registeredservices()));
+    //! [4]
+
+    //! [3]
     canvas.execute();
     canvas.show();
+    //! [3]
+
     return app.exec();
-    //return 0;
 }

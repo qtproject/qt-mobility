@@ -61,7 +61,9 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideoframe.h>
 
+QT_BEGIN_NAMESPACE
 class QGLContext;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

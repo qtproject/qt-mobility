@@ -44,7 +44,9 @@
 #include "qmobilityglobal.h"
 #include "qgeopositioninfosource.h"
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 

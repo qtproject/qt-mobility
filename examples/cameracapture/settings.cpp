@@ -51,7 +51,7 @@
 
 Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Settings),
+    ui(new Ui::SettingsUi),
     mediaRecorder(mediaRecorder)
 {
     ui->setupUi(this);

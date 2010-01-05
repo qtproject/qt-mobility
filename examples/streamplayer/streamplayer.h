@@ -46,7 +46,9 @@
 #include <QtCore/qfile.h>
 #include <QtGui/qwidget.h>
 
+QT_BEGIN_NAMESPACE
 class QProgressBar;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QMediaPlayer;

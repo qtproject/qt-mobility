@@ -61,7 +61,7 @@ One can start using Qt Mobility with 3 simple steps.
 Steps 1 and 2 are shown in the example below:
 \snippet quickstart/main.cpp 0
 
-Here we are using the QSystemInfo headers to print out the 
+This example uses the QSystemInfo headers to print out the 
 system's current country code.  All the domain APIs are wrapped
 within the \c QtMobility namespace and thus developers either 
 need to declare \c {using namespace QtMobility} or
@@ -77,13 +77,11 @@ System Information we declare in the project file:
 
 \snippet quickstart/quickstart.pro 0
 
-Here we've declared that the application uses
-Qt Mobility and that we are using the 
-System Information domain. (Internally this results
-in qmake setting up include and library search paths.
-See mobility.prf for details to see what those
-paths are, it is copied into 
-the mkspecs/features directory of Qt's install path)
+The project file states that the application uses
+Qt Mobility and that it requires the 
+System Information API. Internally this results
+in qmake setting up the correct include and library paths.
+For more details see \c {mobility.prf} (in \c{$QTDIR/mkspecs/features}).
 
 The following table lists the domains and the 
 corresponding values that can be assigned to
