@@ -70,12 +70,6 @@ public:
 public Q_SLOTS:
     void setSelectedDevice(int index);
 
-/*Q_SIGNALS:
-    void selectedDeviceChanged(int index);
-    void selectedDeviceChanged(const QString &deviceName);
-    void devicesChanged();
-  */
-
 private:
     S60CameraSession* m_session;
 
