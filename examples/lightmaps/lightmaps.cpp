@@ -290,7 +290,8 @@ public:
             zoomed(false),
             invert(false),
             m_usingLogFile(false),
-            m_location(0) {
+            m_location(0),
+            waitingForFix(false) {
 
         // Set Internet Access Point
         QNetworkConfigurationManager manager;
@@ -317,6 +318,7 @@ public:
         }
 
         m_location = QGeoPositionInfoSource::createDefaultSource(this);
+        m_location->setUpdateInterval(20000);
 
         if (!m_location) {
             QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -376,6 +378,7 @@ private slots:
             QMessageBox::information(this, tr("LightMaps"),
                                      tr("No GPS support detected, using GPS data from a sample log file instead."));
         } else {
+            /*
             QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
 
             if (m_satellite) {
@@ -392,9 +395,14 @@ private slots:
 
                 dialog->exec();
 
-                m_location->stopUpdates();
                 m_satellite->stopUpdates();
+
+                delete m_satellite;
+                m_location->stopUpdates();
             }
+            */
+            waitForFix();
+            m_location->stopUpdates();
         }
 
         if (!m_networkSetupError.isEmpty()) {
@@ -415,7 +423,41 @@ private slots:
         m_largeMap->width = m_normalMap->width * 2;
         m_largeMap->height = m_normalMap->height * 2;
 
+        connect(m_location, SIGNAL(updateTimeout()), this, SLOT(waitForFix()));
+
         startPositioning();
+    }
+
+    // Brings up a satellite strength dialog box until a position fix is received.
+    // This will also start the position updates if they are not already started.
+    void waitForFix() {
+        if (waitingForFix)
+            return;
+
+        waitingForFix = true;
+
+        QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
+
+        if (m_satellite) {
+            SatelliteDialog *dialog = new SatelliteDialog(this,
+                    30,
+                    SatelliteDialog::ExitOnFixOrCancel,
+                    SatelliteDialog::OrderByPrnNumber,
+                    SatelliteDialog::ScaleToMaxPossible);
+
+            dialog->connectSources(m_location, m_satellite);
+
+            m_location->startUpdates();
+            m_satellite->startUpdates();
+
+            dialog->exec();
+
+            m_satellite->stopUpdates();
+
+            delete m_satellite;
+        }
+
+        waitingForFix = false;
     }
 
     void positionUpdated(const QGeoPositionInfo &pos) {
@@ -652,6 +694,7 @@ private:
     bool invert;
     bool m_usingLogFile;
     QGeoPositionInfoSource *m_location;
+    bool waitingForFix;
     QNetworkSession *m_session;
 };
 
