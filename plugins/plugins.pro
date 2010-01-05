@@ -5,5 +5,5 @@
 ######################################################################
 
 TEMPLATE = subdirs
-SUBDIRS += contacts multimedia
+SUBDIRS += contacts multimedia sensors
 

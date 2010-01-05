@@ -39,45 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSORPLUGINLOADER_H
-#define QSENSORPLUGINLOADER_H
+#include "n900accelerationsensor.h"
+#include "n900lightsensor.h"
+#include "n900proximitysensor.h"
+#include <qsensorplugin.h>
+#include <qsensorbackend.h>
+#include <qsensormanager.h>
+#include <QDebug>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+CREATE_FUNC(n900accelerationsensor)
+CREATE_FUNC(n900lightsensor)
+CREATE_FUNC(n900proximitysensor)
 
-#include <qmobilityglobal.h>
-#include <QObject>
-#include <QtCore/qstring.h>
-#include <QtCore/qlist.h>
-
-QTM_BEGIN_NAMESPACE
-
-class QSensorPlugin;
-
-class Q_AUTOTEST_EXPORT QSensorPluginLoader
+class n900 : public QSensorPlugin
 {
 public:
-    QSensorPluginLoader(const char *iid, const QString &suffix = QString());
-
-    QList<QSensorPlugin*> plugins() const { return m_plugins; }
-
-private:
-    void load();
-
-    QByteArray  m_iid;
-    QString     m_location;
-    QList<QSensorPlugin*> m_plugins;
+    void registerSensors()
+    {
+        qWarning() << "Loaded the N900 plugin";
+        REGISTER_STATEMENT(n900accelerationsensor, QAccelerationSensor::typeId, QByteArray("n900.acceleration"));
+        REGISTER_STATEMENT(n900lightsensor, QAmbientLightSensor::typeId, QByteArray("n900.light"));
+        REGISTER_STATEMENT(n900proximitysensor, QProximitySensor::typeId, QByteArray("n900.proximity"));
+    }
 };
 
-QTM_END_NAMESPACE
-
-#endif
+Q_EXPORT_PLUGIN2(libsensors_n900, n900);
 

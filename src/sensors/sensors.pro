@@ -40,6 +40,4 @@ SOURCES += qsensor.cpp \
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-include(n900/n900.pri)
-
 include(../../features/deploy.pri)

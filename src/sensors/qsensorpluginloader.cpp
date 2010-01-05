@@ -49,81 +49,43 @@
 
 QTM_BEGIN_NAMESPACE
 
-typedef QMap<QString,QObjectList> ObjectListMap;
-Q_GLOBAL_STATIC(ObjectListMap, staticSensorPlugins);
-
-QSensorPluginLoader::QSensorPluginLoader(const char *iid, const QString &location, Qt::CaseSensitivity):
-    m_iid(iid)
+QSensorPluginLoader::QSensorPluginLoader(const char *iid, const QString &location)
+    : m_iid(iid)
 {
     m_location = location + "/";
     load();
 }
 
-QStringList QSensorPluginLoader::keys() const
-{
-    return m_instances.keys();
-}
-
-QObject* QSensorPluginLoader::instance(QString const &key)
-{
-    return m_instances.value(key);
-}
-
-QList<QObject*> QSensorPluginLoader::instances(QString const &key)
-{
-    return m_instances.values(key);
-}
-
-//to be used for testing purposes only
-void QSensorPluginLoader::setStaticPlugins(const QString &location, const QObjectList& objects)
-{
-    staticSensorPlugins()->insert(location+"/", objects);
-}
-
 void QSensorPluginLoader::load()
 {
-    if (!m_instances.isEmpty())
+    if (!m_plugins.isEmpty())
         return;
 
-    if (staticSensorPlugins() && staticSensorPlugins()->contains(m_location)) {
-        qWarning() << "Load static plugins for" << m_location;
-        foreach(QObject *o, staticSensorPlugins()->value(m_location)) {
+    QStringList     paths = QCoreApplication::libraryPaths();
+
+    foreach (QString const &path, paths) {
+        QString     pluginPathName(path + m_location);
+        QDir        pluginDir(pluginPathName);
+
+        if (!pluginDir.exists())
+            continue;
+
+        foreach (QString pluginLib, pluginDir.entryList(QDir::Files)) {
+            QPluginLoader   loader(pluginPathName + pluginLib);
+
+            QObject *o = loader.instance();
             if (o != 0 && o->qt_metacast(m_iid) != 0) {
-                QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
+                QSensorPlugin *p = qobject_cast<QSensorPlugin*>(o);
                 if (p != 0) {
-                    foreach (QString const &key, p->keys())
-                        m_instances.insertMulti(key, o);
+                    m_plugins << p;
                 }
-            }
-        }
-    } else {
-        QStringList     paths = QCoreApplication::libraryPaths();
 
-        foreach (QString const &path, paths) {
-            QString     pluginPathName(path + m_location);
-            QDir        pluginDir(pluginPathName);
-
-            if (!pluginDir.exists())
                 continue;
-
-            foreach (QString pluginLib, pluginDir.entryList(QDir::Files)) {
-                QPluginLoader   loader(pluginPathName + pluginLib);
-
-                QObject *o = loader.instance();
-                if (o != 0 && o->qt_metacast(m_iid) != 0) {
-                    QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
-                    if (p != 0) {
-                        foreach (QString const &key, p->keys())
-                            m_instances.insertMulti(key, o);
-                    }
-
-                    continue;
-                } else {
-                    qWarning() << "QSensorPluginLoader: Failed to load plugin: " << pluginLib << loader.errorString();
-                }
-                delete o;
-                loader.unload();
+            } else {
+                qWarning() << "QSensorPluginLoader: Failed to load plugin: " << pluginLib << loader.errorString();
             }
+            delete o;
+            loader.unload();
         }
     }
 }

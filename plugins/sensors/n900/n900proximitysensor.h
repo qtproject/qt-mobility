@@ -39,45 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QSENSORPLUGINLOADER_H
-#define QSENSORPLUGINLOADER_H
+#ifndef N900PROXIMITYSENSOR_H
+#define N900PROXIMITYSENSOR_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qproximitysensor.h>
 
-#include <qmobilityglobal.h>
-#include <QObject>
-#include <QtCore/qstring.h>
-#include <QtCore/qlist.h>
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class QSensorPlugin;
-
-class Q_AUTOTEST_EXPORT QSensorPluginLoader
+class n900proximitysensor : public QProximityBackend
 {
 public:
-    QSensorPluginLoader(const char *iid, const QString &suffix = QString());
+    n900proximitysensor();
 
-    QList<QSensorPlugin*> plugins() const { return m_plugins; }
+    QSensor::UpdatePolicies supportedPolicies() const;
+    void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval);
+    bool start();
+    void stop();
+    void timerEvent(QTimerEvent * /*event*/);
+    void poll();
+    QProximityReading currentReading();
 
 private:
-    void load();
-
-    QByteArray  m_iid;
-    QString     m_location;
-    QList<QSensorPlugin*> m_plugins;
+    int m_interval;
+    int m_timerid;
+    const char *m_filename;
+    QProximityReading m_lastReading;
 };
-
-QTM_END_NAMESPACE
 
 #endif
 

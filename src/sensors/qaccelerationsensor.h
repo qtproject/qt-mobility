@@ -105,6 +105,7 @@ class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
     Q_OBJECT
 public:
     explicit QAccelerationSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
+    virtual ~QAccelerationSensor();
 
     static const QString typeId;
     QString type() const { return typeId; };

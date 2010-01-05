@@ -65,24 +65,33 @@ public:
     QSensorId firstSensorForType(const QString &type);
 private:
     QSensorManager();
-    void loadStaticPlugins();
+    void loadPlugins();
     BackendList m_allBackends;
     BackendTypeList m_backendsByType;
-    bool m_staticPluginsLoaded;
+    bool m_pluginsLoaded;
     QList<RegisterBackendFunc> m_staticRegistrations;
 };
 
-#define REGISTER_SENSOR(classname, type, id)\
+#define CREATE_FUNC(classname)\
     /* This generated function creates a new instance of the backend */\
     static QSensorBackend *create_sensor_backend_ ## classname ()\
     {\
         return new classname();\
-    }\
+    }
+
+#define REGISTER_STATEMENT(classname, type, id)\
+    QSensorManager::instance()->registerBackend(type, id, create_sensor_backend_ ## classname )\
+
+#define REGISTER_FUNC(classname, type, id)\
     /* This function registers the backend */\
     static void register_sensor_backend_ ## classname ()\
     {\
-        QSensorManager::instance()->registerBackend(type, id, create_sensor_backend_ ## classname );\
-    }\
+        REGISTER_STATEMENT(classname, type, id);\
+    }
+
+#define REGISTER_LOCAL_SENSOR(classname, type, id)\
+    CREATE_FUNC(classname)\
+    REGISTER_FUNC(clasaname, type, id)\
     /* This function schedules the above for running */\
     static bool side_effect_sensor_backend_ ## classname ()\
     {\

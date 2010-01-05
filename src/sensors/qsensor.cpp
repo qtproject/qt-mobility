@@ -84,11 +84,10 @@ QSensor::QSensor(QObject *parent)
 }
 
 /*!
-    Destroy the sensor. Stops the sensor if it has not already been stopped.
+    Destroy the sensor.
 */
 QSensor::~QSensor()
 {
-    stop();
 }
 
 /*!

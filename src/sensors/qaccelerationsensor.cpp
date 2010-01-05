@@ -196,6 +196,14 @@ QAccelerationSensor::QAccelerationSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+QAccelerationSensor::~QAccelerationSensor()
+{
+    stop();
+}
+
+/*!
     \variable QAccelerationSensor::typeId
 */
 const QString QAccelerationSensor::typeId("qt.Acceleration");

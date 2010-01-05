@@ -55,11 +55,9 @@ QTM_BEGIN_NAMESPACE
 
 class QSensorBackend;
 
-struct Q_SENSORS_EXPORT QSensorFactoryInterface : public QFactoryInterface
+struct Q_SENSORS_EXPORT QSensorFactoryInterface
 {
-    virtual QStringList keys() const = 0;
-    virtual QSensorBackend *create(QString const &key) = 0;
-    virtual void release(QSensorBackend *backend) = 0;
+    virtual void registerSensors() = 0;
 };
 
 QTM_END_NAMESPACE
@@ -73,12 +71,7 @@ QTM_BEGIN_NAMESPACE
 class Q_MEDIA_EXPORT QSensorPlugin : public QObject, public QSensorFactoryInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QSensorFactoryInterface:QFactoryInterface)
-
-public:
-    virtual QStringList keys() const = 0;
-    virtual QSensorBackend *create(const QString &key) = 0;
-    virtual void release(QSensorBackend *backend) = 0;
+    Q_INTERFACES(QtMobility::QSensorFactoryInterface)
 };
 
 QTM_END_NAMESPACE

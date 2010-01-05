@@ -41,8 +41,12 @@
 
 #include <qsensormanager.h>
 #include <QDebug>
+#include "qsensorpluginloader_p.h"
+#include <qsensorplugin.h>
 
 QTM_BEGIN_NAMESPACE
+
+Q_GLOBAL_STATIC_WITH_ARGS(QSensorPluginLoader, pluginLoader, (QSensorFactoryInterface_iid, QLatin1String("/sensors")))
 
 /*!
     \class QSensorManager
@@ -95,8 +99,8 @@ void QSensorManager::registerRegisterFunc(RegisterBackendFunc func)
 */
 QSensorBackend *QSensorManager::createBackend(const QSensorId &id)
 {
-    if (!m_staticPluginsLoaded)
-        loadStaticPlugins();
+    if (!m_pluginsLoaded)
+        loadPlugins();
 
     if (!m_allBackends.contains(id)) {
         qWarning() << "Sensor backend for identifier" << id << "does not exist.";
@@ -112,8 +116,8 @@ QSensorBackend *QSensorManager::createBackend(const QSensorId &id)
 */
 QSensorId QSensorManager::firstSensorForType(const QString &type)
 {
-    if (!m_staticPluginsLoaded)
-        loadStaticPlugins();
+    if (!m_pluginsLoaded)
+        loadPlugins();
 
     const BackendList &list = m_backendsByType[type];
     BackendList::const_iterator iter = list.constBegin();
@@ -126,16 +130,23 @@ QSensorId QSensorManager::firstSensorForType(const QString &type)
 }
 
 QSensorManager::QSensorManager()
-    : m_staticPluginsLoaded(false)
+    : m_pluginsLoaded(false)
 {
 }
 
-void QSensorManager::loadStaticPlugins()
+void QSensorManager::loadPlugins()
 {
     qDebug() << "initializing static plugins";
-    m_staticPluginsLoaded = true;
+    m_pluginsLoaded = true;
+
     foreach (RegisterBackendFunc func, m_staticRegistrations)
         func();
+
+    qDebug() << "initializing plugins";
+
+    foreach (QSensorPlugin *plugin, pluginLoader()->plugins()) {
+        plugin->registerSensors();
+    }
 }
 
 QTM_END_NAMESPACE
