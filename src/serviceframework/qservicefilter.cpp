@@ -58,7 +58,7 @@ public:
     int majorVersion;
     int minorVersion;
     QServiceFilter::VersionMatchRule matchingRule;
-    QHash<QString,QString> customProperties;
+    QHash<QString,QString> customAttributes;
     QStringList capabilities;
     QServiceFilter::CapabilityMatchRule capMatchingRule;
 };
@@ -92,21 +92,46 @@ public:
 /*!
     \enum QServiceFilter::CapabilityMatchRule
 
-    This enum describes the capability matching rule.
+    This enum describes the capability/permission matching rules. Some platforms restrict what services clients 
+    can access using "capabilities" or permissions. Services with more capabilities require 
+    more privileged clients. Platforms without capabilities may ignore this type of matching
+    rule as the default behavior is to ignore any capability restrictions.
 
-    \value MatchAll         The filter matches any services that requires all of the given 
-                            capabilities. This implies that the returned service
-                            may require more capabilities than the specified ones. If this
-                            rule is provided alongside an empty capability search list the filter will
-                            match all available services regardless of their respective capabilities.
-                            Such a search is equivalent to a wildcard match. This
-                            is the default matching rules.
-    \value MatchLoadable    The filter matches any service that could be loaded if
-                            a client has all of the given capabilities. This includes services
-                            with no capabilities. If this rule
+    This is a brief example. Assuming that the system knows the services S1 - S6 which require capabilities as stated below:
+    \table
+        \header     \o Service  \o Required capabilities
+        \row        \o S1       \o \{\}
+        \row        \o S2       \o \{A\}
+        \row        \o S3       \o \{A,B\}
+        \row        \o S4       \o \{A,B,C,D\}
+        \row        \o S5       \o \{A,D\}
+        \row        \o S6       \o \{F\}
+    \endtable
+
+    The matching rules would apply as follows:
+
+    \table
+        \header     \o Matching rule    \o Filter's capabilities    \o Matching services
+        \row        \o MatchLoadable    \o \{\}                       \o S1
+        \row        \o MatchLoadable    \o \{A\}                      \o S1, S2
+        \row        \o MatchLoadable    \o \{A,B,C\}                  \o S1, S2, S3
+        \row        \o MatchMinimum     \o \{\}                       \o S1, S2, S3, S4, S5, S6
+        \row        \o MatchMinimum     \o \{A\}                      \o S2, S3, S4, S5
+        \row        \o MatchMinimum     \o \{A,B,C\}                  \o S4
+    \endtable
+    
+    \value MatchMinimum     The filter matches any service that requires at least the given 
+                            filter capabilities. This may mean that the returned services
+                            may require more capabilities than the specified ones.
+                            Such a search is equivalent to a wildcard match if the passed filter's capability list is empty. In mathematical set notation 
+                            this rule is equivalent to Cap\sub{(Filter)} \\ Cap\sub{(Service)} = {}. This is the default matching rule.
+    \value MatchLoadable    The filter matches any service that could be loaded by the client.
+                            Using this matching rule guarantees that the returned services do not
+                            require more capabilites than specified by this rule. It includes services
+                            with no capability requirements. If this rule
                             is provided alongside an empty capability search list the returned 
                             services do not require any capabilities and thus can be accessed
-                            by any client.
+                            by any client. The equivalent set notation is Cap\sub{(Service)} \\ Cap\sub{(Filter)} = {}.
 */
 
 /*!
@@ -118,7 +143,7 @@ QServiceFilter::QServiceFilter()
     d->majorVersion = -1;
     d->minorVersion = -1;
     d->matchingRule = QServiceFilter::MinimumVersionMatch;
-    d->capMatchingRule = QServiceFilter::MatchAll;
+    d->capMatchingRule = QServiceFilter::MatchMinimum;
 }
 
 /*!
@@ -143,7 +168,7 @@ QServiceFilter::QServiceFilter(const QString& interfaceName, const QString& vers
     d->majorVersion = -1;
     d->minorVersion = -1;
     d->matchingRule = QServiceFilter::MinimumVersionMatch;
-    d->capMatchingRule = QServiceFilter::MatchAll;
+    d->capMatchingRule = QServiceFilter::MatchMinimum;
     setInterface(interfaceName, version, rule);
 }
 
@@ -168,7 +193,7 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
     d->majorVersion = other.d->majorVersion;
     d->minorVersion = other.d->minorVersion;
     d->matchingRule = other.d->matchingRule;
-    d->customProperties = other.d->customProperties;
+    d->customAttributes = other.d->customAttributes;
     d->capabilities = other.d->capabilities;
     d->capMatchingRule = other.d->capMatchingRule;
 
@@ -278,78 +303,70 @@ QString QServiceFilter::interfaceName() const
 }
 
 /*!
-    \fn  int QServiceFilter::interfaceMajorVersion() const
+    \fn  int QServiceFilter::majorVersion() const
     
     Returns the major interface version for this filter.
 
     \sa setInterface()
 */
-int QServiceFilter::interfaceMajorVersion() const
+int QServiceFilter::majorVersion() const
 {
     return d->majorVersion;
 }
 
 /*!
-    \fn  int QServiceFilter::interfaceMinorVersion() const
+    \fn  int QServiceFilter::minorVersion() const
     
     Returns the minor interface version for this filter.
 
     \sa setInterface()
 */
-int QServiceFilter::interfaceMinorVersion() const
+int QServiceFilter::minorVersion() const
 {
     return d->minorVersion;
 }
 
 /*!
-    \fn  void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
+    \fn  void QServiceFilter::setCustomAttribute(const QString& key, const QString& value)
     
-    The filter only matches implementations which have the custom property
+    The filter only matches implementations which have the custom attribute
     \a key with the given \a value. Such constraints are specified via the 
     \i{<customproperty>} tag within the service xml.
 
-    \sa customProperty(), removeCustomProperty()
+    \sa customAttribute(), clearCustomAttribute()
 */
-void QServiceFilter::setCustomProperty(const QString& key, const QString& value)
+void QServiceFilter::setCustomAttribute(const QString& key, const QString& value)
 {
-    d->customProperties.insert(key, value);
+    d->customAttributes.insert(key, value);
 }
 
 /*!
-    \fn  QString QServiceFilter::customProperty(const QString& key) const
+    \fn  QString QServiceFilter::customAttribute(const QString& key) const
     
-    Returns the value for the custom property \a key; otherwise
+    Returns the value for the custom attribute \a key; otherwise
     returns a null string.
 
-    \sa setCustomProperty(), removeCustomProperty()
+    \sa setCustomAttribute(), clearCustomAttribute()
 */
-QString QServiceFilter::customProperty(const QString& key) const
+QString QServiceFilter::customAttribute(const QString& key) const
 {
-    return d->customProperties.value(key);
+    return d->customAttributes.value(key);
 }
 
 /*!
-    \fn  void QServiceFilter::removeCustomProperty(const QString &key)
+    \fn  void QServiceFilter::clearCustomAttribute(const QString &key)
     
-    Removes the custom property \a key from the filter's set of constraints
+    Clears the custom attribute \a key from the filter's set of constraints.
+    If \a key is empty all custom attributes are cleared.
 
-    \sa clearCustomProperties(), setCustomProperty()
+    \sa setCustomAttribute()
 */
-void QServiceFilter::removeCustomProperty(const QString &key)
+void QServiceFilter::clearCustomAttribute(const QString &key)
 {
-    d->customProperties.remove(key);
-}
-
-/*!
-    \fn  void QServiceFilter::clearCustomProperties()
-    
-    Clears all custom properties from the filter's set of constraints
-
-    \sa removeCustomProperty()
-*/
-void QServiceFilter::clearCustomProperties()
-{
-    d->customProperties.clear();
+    if (key.isEmpty())
+        d->customAttributes.clear();
+    else
+        d->customAttributes.remove(key);
 }
 
 /*!
@@ -365,13 +382,13 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 }
 
 /*!
-    \fn  QList<QString> QServiceFilter::customPropertyKeys() const
+    \fn  QList<QString> QServiceFilter::customAttributes() const
     
     Returns the list of custom keys which have been added to the filter.
 */
-QStringList QServiceFilter::customPropertyKeys() const
+QStringList QServiceFilter::customAttributes() const
 {
-    return d->customProperties.keys();
+    return d->customAttributes.keys();
 }
 
 /*!
@@ -442,7 +459,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
         << mj
         << mn
         << versionrule
-        << sf.d->customProperties
+        << sf.d->customAttributes
         << caprule
         << sf.d->capabilities;
     return out;
@@ -484,7 +501,7 @@ QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
         >> mj
         >> mn
         >> versionrule
-        >> sf.d->customProperties
+        >> sf.d->customAttributes
         >> caprule
         >> sf.d->capabilities;
 

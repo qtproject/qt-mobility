@@ -326,8 +326,8 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
     }
     for (int i = 0; i<icount; i++) {
         serviceInterfaces.at(i).d->serviceName = serviceName;
-        serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::Location] = serviceLocation;
-        serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
+        serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::Location] = serviceLocation;
+        serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
     }
 
     if (parseError) {
@@ -363,7 +363,7 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
             //Found <name> tag for interface
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
             //Found <description> tag
-            aInterface.d->properties[QServiceInterfaceDescriptor::InterfaceDescription] = aXMLReader.readElementText();
+            aInterface.d->attributes[QServiceInterfaceDescriptor::InterfaceDescription] = aXMLReader.readElementText();
             dupITags[3]++;
         //Found </interface>, leave the loop
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_VERSION) {
@@ -386,21 +386,21 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_CAPABILITY) {
             tmp.clear();
             tmp= aXMLReader.readElementText();
-            aInterface.d->properties[QServiceInterfaceDescriptor::Capabilities] = tmp.split(",", QString::SkipEmptyParts);
+            aInterface.d->attributes[QServiceInterfaceDescriptor::Capabilities] = tmp.split(",", QString::SkipEmptyParts);
             dupITags[2]++;
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_CUSTOM_PROPERTY) {
             parseError = true;
             if (aXMLReader.attributes().hasAttribute("key")) {
                 const QString ref = aXMLReader.attributes().value("key").toString();
                 if (!ref.isEmpty()) {
-                    if (aInterface.d->customProperties.contains(ref)) {
+                    if (aInterface.d->customAttributes.contains(ref)) {
                         latestError = SFW_ERROR_DUPLICATED_CUSTOM_KEY;
                         continue;
                     } else {
                         QString value = aXMLReader.readElementText();
                         if (value.isNull())
                             value = QString("");
-                        aInterface.d->customProperties[ref] = value;
+                        aInterface.d->customAttributes[ref] = value;
                         parseError = false;
                     }
                 }

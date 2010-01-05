@@ -42,8 +42,9 @@
 #include "xqpublishandsubscribeutils.h"
 #include "xqpublishandsubscribeutils_p.h"
 
-/*!
+/* 
     \class XQPublishAndSubscribeUtils
+    \internal
 
     \brief The XQPublishAndSubscribeUtils implements Publish and Subscribe related special
     features in SettingsManager. This class is just a Qt-like wrapper to
@@ -51,7 +52,7 @@
 */
 
 
-/*!
+/* 
     Constructs an XQPublishAndSubscribeUtils object.
     \param settingsManager Reference to XQSettingsManager instance
 */
@@ -60,14 +61,14 @@ XQPublishAndSubscribeUtils::XQPublishAndSubscribeUtils(XQSettingsManager& settin
 {
 }
 
-/*!
+/* 
     Destructs an XQPublishAndSubscribeUtils object.
 */
 XQPublishAndSubscribeUtils::~XQPublishAndSubscribeUtils()
 {
 }
 
-/*!
+/* 
     Defines a propery
     \param key XQPublishAndSubscribeSettingsKey which defines the propery details
     \param type Propery type (NOTE: TypeDouble is not supported by Publish and Subscribe.)
@@ -78,7 +79,7 @@ bool XQPublishAndSubscribeUtils::defineProperty(const XQPublishAndSubscribeSetti
     return d->defineProperty(key, type);
 }
 
-/*!
+/* 
     Defines a propery with security policies
     \param key XQPublishAndSubscribeSettingsKey which defines the propery details
     \param type Propery type (NOTE: TypeDouble is not supported by Publish and Subscribe.)
@@ -92,7 +93,7 @@ bool XQPublishAndSubscribeUtils::defineProperty(const XQPublishAndSubscribeSetti
     return d->defineProperty(key, type, readPolicy, writePolicy);
 }
 
-/*!
+/* 
     Deletes a propery
     \param key XQPublishAndSubscribeSettingsKey which defines the propery details
     \return True if the property was succesfully defined, otherwise return false.

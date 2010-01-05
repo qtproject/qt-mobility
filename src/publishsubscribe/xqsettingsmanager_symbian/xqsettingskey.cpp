@@ -47,25 +47,26 @@
  *
  ****************************************************/
 
-/*!
+/* 
     \class XQSettingsKey
+    \internal
 
     \brief The XQSettingsKey defines the target for XQSettingsManager operations.
 */
 
-/*!
+/* 
     \enum XQSettingsKey::Target
 
     This enum defines the possible item target for an XQSettingsKey object.
 */
-/*! \var XQSettingsKey::TargetCentralRepository XQSettingsKey::TargetCentralRepository
+/*  \var XQSettingsKey::TargetCentralRepository XQSettingsKey::TargetCentralRepository
     The settings key targets to Symbian OS's Central Repository.
 */
-/*! \var XQSettingsKey::TargetPublishAndSubscribe XQSettingsKey::TargetPublishAndSubscribe
+/*  \var XQSettingsKey::TargetPublishAndSubscribe XQSettingsKey::TargetPublishAndSubscribe
     The settings key targets to Symbian OS's Publish and Subscribe property.
 */
 
-/*!
+/* 
     Constructs an XQSettingsKey object.
     \param target This is either XQSettingsKey::TargetCentralRepository or 
     XQSettingsKey::TargetPublishAndSubscribe.
@@ -86,7 +87,7 @@ XQSettingsKey::~XQSettingsKey()
 {
 }
 
-/*!
+/* 
     Gets a target of the item.
 
     \return target Either XQSettingsKey::TargetCentralRepository or 
@@ -97,7 +98,7 @@ XQSettingsKey::Target XQSettingsKey::target() const
     return m_target;
 }
 
-/*!
+/* 
     Gets a uid of the item
 
     \return uid. In case of Central Repository a CenRep Uid. In case of
@@ -108,7 +109,7 @@ long int XQSettingsKey::uid() const
     return m_uid;
 }
 
-/*!
+/* 
     Gets a key of the item
 
     \return Key
@@ -118,14 +119,15 @@ unsigned long int XQSettingsKey::key() const
     return m_key;
 }
 
-/*!
+/* 
     \class XQCentralRepositorySettingsKey
+    \internal
 
     \brief The XQCentralRepositorySettingsKey defines the Central Repository
     target for XQSettingsManager operations.
 */
 
-/*!
+/* 
     Constructs an XQCentralRepositorySettingsKey object.
     \param repositoryUid CenRep Uid
     \param key Settings Key
@@ -135,21 +137,22 @@ XQCentralRepositorySettingsKey::XQCentralRepositorySettingsKey(long int reposito
 {
 }
 
-/*!
+/* 
     Destructs an XQCentralRepositorySettingsKey object.
 */
 XQCentralRepositorySettingsKey::~XQCentralRepositorySettingsKey()
 {
 }
 
-/*!
+/* 
     \class XQPublishAndSubscribeSettingsKey
+    \internal
 
     \brief The XQPublishAndSubscribeSettingsKey defines the Publish and
     Subscribe target for XQSettingsManager operations.
 */
 
-/*!
+/* 
     Constructs an XQPublishAndSubscribeSettingsKey object.
     \param categoryUid RProperty category Uid.
     \param key Settings Key
@@ -159,7 +162,7 @@ XQPublishAndSubscribeSettingsKey::XQPublishAndSubscribeSettingsKey(long int cate
 {
 }
 
-/*!
+/* 
     Destructs an XQPublishAndSubscribeSettingsKey object.
 */
 XQPublishAndSubscribeSettingsKey::~XQPublishAndSubscribeSettingsKey()

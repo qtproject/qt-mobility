@@ -41,6 +41,7 @@
 
 /*!
     \namespace QtMedia
+    \ingroup multimedia
 
     \brief The QtMedia namespace contains miscellaneous identifiers used throughout the Qt Media
     library.
