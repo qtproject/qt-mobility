@@ -264,10 +264,11 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCurso
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
     Q_ASSERT(line.data.size() > line.position);
-
-    for (int i=line.position; i < line.selection; i++) {
+    
+    int separatorLength = semicolon.length();
+    for (int i = line.position; i < line.selection - separatorLength + 1; i++) {
         if ((containsAt(line.data, semicolon, i)
-                && !containsAt(line.data, backslash, i-semicolon.length()))
+                && !containsAt(line.data, backslash, i-separatorLength))
             || containsAt(line.data, colon, i)) {
             length = i - line.position;
             break;
@@ -449,10 +450,12 @@ QList<QByteArray> VersitUtils::extractParts(const QByteArray& text, const QByteA
     int textLength = text.length();
     int separatorLength = separator.length();
     QByteArray backslash = encode('\\', codec);
+    int backslashLength = backslash.length();
 
     for (int i=0; i < textLength-separatorLength+1; i++) {
         if (containsAt(text, separator, i)
-            && !containsAt(text, backslash, i-backslash.length())) {
+            && (i < backslashLength
+                || !containsAt(text, backslash, i-backslashLength))) {
             int length = i-partStartIndex;
             QByteArray part = extractPart(text,partStartIndex,length);
             if (part.length() > 0)
@@ -540,14 +543,18 @@ QByteArray VersitUtils::encode(const QByteArray& ba, QTextCodec* codec)
 
 /*!
  * Returns true if and only if \a text contains \a ba at \a index
+ *
+ * On entry, these preconditions should hold:
+ *   \a text.length() - \a index >= \a n
+ *   \a index < 0
  */
-bool VersitUtils::containsAt(const QByteArray& text, const QByteArray& ba, int index)
+bool VersitUtils::containsAt(const QByteArray& text, const QByteArray& match, int index)
 {
-    int n = ba.length();
-    if (text.length() - index - n < 0 || index < 0)
-        return false;
-    for (int i = 0; i < n; i++) {
-        if (text.at(index+i) != ba.at(i))
+    int n = match.length();
+    const char* textData = text.data();
+    const char* matchData = match.data();
+    for (int i = n-1; i >= 0; i--) {
+        if (textData[index+i] != matchData[i])
             return false;
     }
     return true;
