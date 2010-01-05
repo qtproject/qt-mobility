@@ -91,6 +91,7 @@ private slots:
     void updateAudioDevices();
 
     void processCapturedImage(const QString& fname, const QImage& img);
+    void focusLocked();
 
 private:
     Ui::CameraCapture *ui;
