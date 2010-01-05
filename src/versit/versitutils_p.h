@@ -105,6 +105,10 @@ public:
     static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
     static QByteArray encode(char ch, QTextCodec* codec);
     static bool shouldBeQuotedPrintableEncoded(char chr);
+
+private:
+    static QTextCodec* m_previousCodec;
+    static QByteArray m_encodingMap[256];
 };
 
 QTM_END_NAMESPACE

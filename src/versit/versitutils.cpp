@@ -47,6 +47,9 @@
 
 QTM_BEGIN_NAMESPACE
 
+QTextCodec* VersitUtils::m_previousCodec = 0;
+QByteArray VersitUtils::m_encodingMap[256];
+
 /*!
  * Folds \a text by making all lines \a maxChars long.
  */
@@ -255,13 +258,14 @@ void VersitUtils::removeBackSlashEscaping(QString& text)
 QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCursor& line,
                                                                      QTextCodec *codec)
 {
+    const QByteArray semicolon = encode(';', codec);
+    const QByteArray colon = encode(':', codec);
+    const QByteArray backslash = encode('\\', codec);
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
     Q_ASSERT(line.data.size() > line.position);
+
     for (int i=line.position; i < line.selection; i++) {
-        QByteArray semicolon = encode(';', codec);
-        QByteArray colon = encode(':', codec);
-        QByteArray backslash = encode('\\', codec);
         if ((containsAt(line.data, semicolon, i)
                 && !containsAt(line.data, backslash, i-semicolon.length()))
             || containsAt(line.data, colon, i)) {
@@ -369,13 +373,13 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
  */
 bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
 {
+    const QByteArray dosNewline = encode("\r\n", codec);
+    const QByteArray unixNewline = encode("\n", codec);
+    const QByteArray macNewline = encode("\r", codec);
     int crlfPos;
 
     /* See if we can find a newline */
     forever {
-        QByteArray dosNewline = encode("\r\n", codec);
-        QByteArray unixNewline = encode("\n", codec);
-        QByteArray macNewline = encode("\r", codec);
         crlfPos = line.data.indexOf(dosNewline, line.position);
         if (crlfPos == line.position) {
             line.position += dosNewline.length();
@@ -414,9 +418,9 @@ bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
  */
 QList<QByteArray> VersitUtils::extractParams(VersitCursor& line, QTextCodec *codec)
 {
+    const QByteArray colon = encode(':', codec);
     QList<QByteArray> params;
 
-    QByteArray colon = encode(':', codec);
     /* find the end of the name&params */
     int colonIndex = line.data.indexOf(colon, line.position);
     if (colonIndex > line.position && colonIndex < line.selection) {
@@ -513,9 +517,16 @@ QString VersitUtils::paramValue(const QByteArray& parameter, QTextCodec* codec)
  */
 QByteArray VersitUtils::encode(char ch, QTextCodec* codec)
 {
-    QChar qch = QChar::fromAscii(ch);
-    QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
-    return codec->fromUnicode(&qch, 1, &state);
+    if (codec != m_previousCodec) {
+        QChar qch;
+        QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
+        for (int c = 0; c < 256; c++) {
+            qch = QChar::fromAscii(c);
+            m_encodingMap[c] = codec->fromUnicode(&qch, 1, &state);
+        }
+        m_previousCodec = codec;
+    }
+    return m_encodingMap[(int)ch];
 }
 
 /*!
