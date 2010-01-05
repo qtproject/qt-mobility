@@ -35,7 +35,3 @@ contains(mobility_modules,messaging) {
 symbian {
     SUBDIRS += s60installs/s60installs.pro
 }
-
-symbian {
-    SUBDIRS += s60installs/s60installs.pro
-}
