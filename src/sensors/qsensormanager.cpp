@@ -149,5 +149,36 @@ void QSensorManager::loadPlugins()
     }
 }
 
+/*!
+    \macro CREATE_FUNC(classname)
+    \relates QSensorManager
+
+    Defines a static function that creates an instance of \a classname.
+    \sa {Creating a sensor plugin}
+*/
+
+/*!
+    \macro REGISTER_STATEMENT(classname, type, id)
+    \relates QSensorManager
+
+    Registers a sensor plugin using a creation function as defined by CREATE_FUNC().
+
+    Designed to register an instance of \a classname with sensor \a type and unique \a id.
+    \sa CREATE_FUNC(), {Creating a sensor plugin}
+*/
+
+/*!
+    \macro REGISTER_LOCAL_SENSOR(classname, type, id)
+    \relates QSensorManager
+
+    Registers a local sensor plugin.
+
+    Designed to register an instance of \a classname with sensor \a type and unique \a id.
+
+    Note that this macro relies on static initialization so it may not be appropriate
+    for use in a library.
+    \sa {Creating a sensor plugin}
+*/
+
 QTM_END_NAMESPACE
 

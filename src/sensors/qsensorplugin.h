@@ -72,6 +72,8 @@ class Q_MEDIA_EXPORT QSensorPlugin : public QObject, public QSensorFactoryInterf
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QSensorFactoryInterface)
+
+    virtual void registerSensors() = 0;
 };
 
 QTM_END_NAMESPACE

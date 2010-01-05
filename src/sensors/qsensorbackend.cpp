@@ -104,12 +104,6 @@ int QSensorBackend::suggestedInterval(QSensor::UpdatePolicy policy)
 
 */
 
-#if 0
-/*!
-    \fn QSensorBackend::currentReading()
-*/
-#endif
-
 /*!
     \fn QSensorBackend::start()
 
