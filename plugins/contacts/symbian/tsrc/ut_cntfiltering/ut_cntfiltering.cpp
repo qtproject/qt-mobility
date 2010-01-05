@@ -382,7 +382,9 @@ void TestFiltering::testInvalidFilter()
     QContactFilter filter;
     QContactManager::Error error;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    QList<QContactSortOrder> sortOrder;
+    
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -391,13 +393,14 @@ void TestFiltering::testContactDetailFilter()
 {
     QList<QContactLocalId> cnt_ids;
     QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
 
     QList<TFilter> fs = mFilters->values(QContactFilter::ContactDetailFilter);
     int cnt = fs.count();
     for(int i=0; i< cnt; i++) {
         qDebug() << fs[i].name;
         const QContactDetailFilter cdf(fs[i].filter);
-        cnt_ids = mSqlFilter->searchContacts(cdf, error);
+        cnt_ids = mSqlFilter->searchContacts(cdf, sortOrder, error);
         //QVERIFY(error == fs[i].error);
         int err = fs[i].error;
         // check counts 
@@ -426,8 +429,9 @@ void TestFiltering::testContactDetailRangeFilter()
     QList<QContactLocalId> cnt_ids;
     QContactDetailRangeFilter filter;
     QContactManager::Error error;
-
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    QList<QContactSortOrder> sortOrder;
+    
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -437,8 +441,9 @@ void TestFiltering::testChangeLogFilter()
     QList<QContactLocalId> cnt_ids;
     QContactChangeLogFilter filter;
     QContactManager::Error error;
-
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    QList<QContactSortOrder> sortOrder;
+    
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -448,8 +453,9 @@ void TestFiltering::testActionFilter()
     QList<QContactLocalId> cnt_ids;
     QContactActionFilter filter;
     QContactManager::Error error;
-
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    QList<QContactSortOrder> sortOrder;
+    
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -459,8 +465,9 @@ void TestFiltering::testRelationshipFilter()
     QList<QContactLocalId> cnt_ids;
     QContactRelationshipFilter filter;
     QContactManager::Error error;
-
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    QList<QContactSortOrder> sortOrder;
+    
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -470,8 +477,9 @@ void TestFiltering::testIntersectionFilter()
     QList<QContactLocalId> cnt_ids;
     QContactIntersectionFilter filter;
     QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -481,8 +489,9 @@ void TestFiltering::testUnionFilter()
     QList<QContactLocalId> cnt_ids;
     QContactUnionFilter filter;
     QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -492,8 +501,9 @@ void TestFiltering::testLocalIdFilter()
     QList<QContactLocalId> cnt_ids;
     QContactLocalIdFilter filter;
     QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -503,8 +513,9 @@ void TestFiltering::testDefaultFilter()
     QList<QContactLocalId> cnt_ids;
     QContactFilter filter;
     QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, error);
+    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder,error);
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -514,6 +525,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
 
     bool isPredSearch = false;
     QString pattern = "6";
@@ -521,7 +533,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mSqlFilter->searchContacts(df, error);
+    cnt_ids = mSqlFilter->searchContacts(df, sortOrder, error);
 
     for( int i=0;i<cnt_ids.count();i++ ) {
             QString firstName("Micheal");
