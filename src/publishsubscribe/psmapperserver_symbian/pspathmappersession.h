@@ -38,30 +38,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef PSPATHMAPPERSESSION_H
+#define PSPATHMAPPERSESSION_H
 
-#ifndef QABSTRACTSECURITYSESSION_H
-#define QABSTRACTSECURITYSESSION_H
+#include <qmobilityglobal.h>
+#include <e32base.h>
 
-#include "qmobilityglobal.h"
-#include <QObject>
-
-QT_BEGIN_HEADER
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
-{
-    Q_OBJECT
-public:
-    QAbstractSecuritySession(QObject* parent = 0);
-    virtual ~QAbstractSecuritySession();
+class CPSPathMapperServer;
+class PathMapper;
 
-    virtual bool isAllowed(const QStringList& capabilityList) = 0;
+class CPSPathMapperServerSession : public CSession2
+{
+public:
+    CPSPathMapperServerSession(const PathMapper &aPathMapper);
+    virtual ~CPSPathMapperServerSession();
+
+    void ServiceL(const RMessage2 &aMessage);
+    void DispatchMessageL(const RMessage2 &aMessage);
+
+    void GetChildrenLengthL(const RMessage2 &aMessage);
+    void GetChildrenL(const RMessage2 &aMessage);
+    void ChildPathsLengthL(const RMessage2 &aMessage);
+    void ChildPathsL(const RMessage2 &aMessage);
+    void ResolvePathLengthL(const RMessage2 &aMessage);
+    void ResolvePathL(const RMessage2 &aMessage);
+
+protected:
+    void PanicClient(const RMessage2 &aMessage, TInt aPanic) const;
+
+private:
+    const PathMapper &iPathMapper;
+    QByteArray iResultByteArray;
 };
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
+#endif  //PSPATHMAPPERSESSION_H
 
-#endif //QABSTRACTSECURITYSESSION_H
-
+// End of File

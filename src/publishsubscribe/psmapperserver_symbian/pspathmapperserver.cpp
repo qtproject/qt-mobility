@@ -38,30 +38,34 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QABSTRACTSECURITYSESSION_H
-#define QABSTRACTSECURITYSESSION_H
-
-#include "qmobilityglobal.h"
-#include <QObject>
-
-QT_BEGIN_HEADER
+#include "pspathmapperserver.h"
+#include "clientservercommon.h"
+#include "pspathmappersession.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
+CPSPathMapperServer::CPSPathMapperServer()
+    : CServer2(EPriorityNormal, ESharableSessions)
 {
-    Q_OBJECT
-public:
-    QAbstractSecuritySession(QObject* parent = 0);
-    virtual ~QAbstractSecuritySession();
+}
 
-    virtual bool isAllowed(const QStringList& capabilityList) = 0;
-};
+CSession2 *CPSPathMapperServer::NewSessionL(const TVersion &aVersion, const RMessage2 & /*aMessage*/) const
+{
+    if (!User::QueryVersionSupported(TVersion(KServerMajorVersionNumber, 
+        KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion)) {
+        User::Leave(KErrNotSupported);
+    }
+
+    return new (ELeave) CPSPathMapperServerSession(iPathMapper);
+}
+
+void CPSPathMapperServer::PanicServer(TPSPathMapperServerPanic aPanic)
+{
+    _LIT(KTxtServerPanic, "Path mapper server panic");
+    User::Panic(KTxtServerPanic, aPanic);
+}
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif //QABSTRACTSECURITYSESSION_H
-
+// End of File

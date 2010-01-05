@@ -38,30 +38,21 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef PSPATHMAPPERSERVER_PAN_
+#define PSPATHMAPPERSERVER_PAN_
 
-#ifndef QABSTRACTSECURITYSESSION_H
-#define QABSTRACTSECURITYSESSION_H
+// Panic category
+_LIT(KPSPathMapperServer, "PSPathMapperServer");
+_LIT(KUnknownOpCode, "Unknown op code");
+_LIT(KBadDescriptor, "Bad descriptor");
 
-#include "qmobilityglobal.h"
-#include <QObject>
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
+enum TPSPathMapperServerPanic
 {
-    Q_OBJECT
-public:
-    QAbstractSecuritySession(QObject* parent = 0);
-    virtual ~QAbstractSecuritySession();
-
-    virtual bool isAllowed(const QStringList& capabilityList) = 0;
+    EBadRequest = 1,
+    ESrvCreateServer = 2,
+    ESvrStartServer = 3
 };
 
-QTM_END_NAMESPACE
+#endif
 
-QT_END_HEADER
-
-#endif //QABSTRACTSECURITYSESSION_H
-
+// End of File

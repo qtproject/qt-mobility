@@ -2672,6 +2672,10 @@
             <keyword name="volumeChanged" id="QRadioTunerControl::volumeChanged" ref="qradiotunercontrol.html#volumeChanged"/>
             <keyword name="~QRadioTunerControl" id="QRadioTunerControl::~QRadioTunerControl" ref="qradiotunercontrol.html#dtor.QRadioTunerControl"/>
             <keyword name="QRadioTunerControl_iid" id="QRadioTunerControl_iid" ref="qradiotunercontrol.html#QRadioTunerControl_iid"/>
+            <keyword name="QService" id="QService" ref="qservice.html"/>
+            <keyword name="QService::Scope" id="QService::Scope" ref="qservice.html#Scope-enum"/>
+            <keyword name="QService::UserScope" id="QService::UserScope" ref="qservice.html#Scope-enum"/>
+            <keyword name="QService::SystemScope" id="QService::SystemScope" ref="qservice.html#Scope-enum"/>
             <keyword name="QServiceContext" id="QServiceContext" ref="qservicecontext.html"/>
             <keyword name="QServiceContext::ContextType" id="QServiceContext::ContextType" ref="qservicecontext.html#ContextType-enum"/>
             <keyword name="QServiceContext::DisplayContext" id="QServiceContext::DisplayContext" ref="qservicecontext.html#ContextType-enum"/>
@@ -2685,37 +2689,36 @@
             <keyword name="~QServiceContext" id="QServiceContext::~QServiceContext" ref="qservicecontext.html#dtor.QServiceContext"/>
             <keyword name="QServiceFilter" id="QServiceFilter" ref="qservicefilter.html"/>
             <keyword name="QServiceFilter::CapabilityMatchRule" id="QServiceFilter::CapabilityMatchRule" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
-            <keyword name="QServiceFilter::MatchAll" id="QServiceFilter::MatchAll" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
+            <keyword name="QServiceFilter::MatchMinimum" id="QServiceFilter::MatchMinimum" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
             <keyword name="QServiceFilter::MatchLoadable" id="QServiceFilter::MatchLoadable" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
             <keyword name="QServiceFilter::VersionMatchRule" id="QServiceFilter::VersionMatchRule" ref="qservicefilter.html#VersionMatchRule-enum"/>
             <keyword name="QServiceFilter::ExactVersionMatch" id="QServiceFilter::ExactVersionMatch" ref="qservicefilter.html#VersionMatchRule-enum"/>
             <keyword name="QServiceFilter::MinimumVersionMatch" id="QServiceFilter::MinimumVersionMatch" ref="qservicefilter.html#VersionMatchRule-enum"/>
             <keyword name="capabilities" id="QServiceFilter::capabilities" ref="qservicefilter.html#capabilities"/>
             <keyword name="capabilityMatchRule" id="QServiceFilter::capabilityMatchRule" ref="qservicefilter.html#capabilityMatchRule"/>
-            <keyword name="clearCustomProperties" id="QServiceFilter::clearCustomProperties" ref="qservicefilter.html#clearCustomProperties"/>
-            <keyword name="customProperty" id="QServiceFilter::customProperty" ref="qservicefilter.html#customProperty"/>
-            <keyword name="customPropertyKeys" id="QServiceFilter::customPropertyKeys" ref="qservicefilter.html#customPropertyKeys"/>
-            <keyword name="interfaceMajorVersion" id="QServiceFilter::interfaceMajorVersion" ref="qservicefilter.html#interfaceMajorVersion"/>
-            <keyword name="interfaceMinorVersion" id="QServiceFilter::interfaceMinorVersion" ref="qservicefilter.html#interfaceMinorVersion"/>
+            <keyword name="clearCustomAttribute" id="QServiceFilter::clearCustomAttribute" ref="qservicefilter.html#clearCustomAttribute"/>
+            <keyword name="customAttribute" id="QServiceFilter::customAttribute" ref="qservicefilter.html#customAttribute"/>
+            <keyword name="customAttributes" id="QServiceFilter::customAttributes" ref="qservicefilter.html#customAttributes"/>
             <keyword name="interfaceName" id="QServiceFilter::interfaceName" ref="qservicefilter.html#interfaceName"/>
+            <keyword name="majorVersion" id="QServiceFilter::majorVersion" ref="qservicefilter.html#majorVersion"/>
+            <keyword name="minorVersion" id="QServiceFilter::minorVersion" ref="qservicefilter.html#minorVersion"/>
             <keyword name="operator=" id="QServiceFilter::operator=" ref="qservicefilter.html#operator-eq"/>
-            <keyword name="removeCustomProperty" id="QServiceFilter::removeCustomProperty" ref="qservicefilter.html#removeCustomProperty"/>
             <keyword name="serviceName" id="QServiceFilter::serviceName" ref="qservicefilter.html#serviceName"/>
             <keyword name="setCapabilities" id="QServiceFilter::setCapabilities" ref="qservicefilter.html#setCapabilities"/>
-            <keyword name="setCustomProperty" id="QServiceFilter::setCustomProperty" ref="qservicefilter.html#setCustomProperty"/>
+            <keyword name="setCustomAttribute" id="QServiceFilter::setCustomAttribute" ref="qservicefilter.html#setCustomAttribute"/>
             <keyword name="setInterface" id="QServiceFilter::setInterface" ref="qservicefilter.html#setInterface"/>
             <keyword name="setServiceName" id="QServiceFilter::setServiceName" ref="qservicefilter.html#setServiceName"/>
             <keyword name="versionMatchRule" id="QServiceFilter::versionMatchRule" ref="qservicefilter.html#versionMatchRule"/>
             <keyword name="~QServiceFilter" id="QServiceFilter::~QServiceFilter" ref="qservicefilter.html#dtor.QServiceFilter"/>
             <keyword name="QServiceInterfaceDescriptor" id="QServiceInterfaceDescriptor" ref="qserviceinterfacedescriptor.html"/>
-            <keyword name="QServiceInterfaceDescriptor::PropertyKey" id="QServiceInterfaceDescriptor::PropertyKey" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="QServiceInterfaceDescriptor::Capabilities" id="QServiceInterfaceDescriptor::Capabilities" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="QServiceInterfaceDescriptor::Location" id="QServiceInterfaceDescriptor::Location" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="QServiceInterfaceDescriptor::ServiceDescription" id="QServiceInterfaceDescriptor::ServiceDescription" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="QServiceInterfaceDescriptor::InterfaceDescription" id="QServiceInterfaceDescriptor::InterfaceDescription" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="customProperty" id="QServiceInterfaceDescriptor::customProperty" ref="qserviceinterfacedescriptor.html#customProperty"/>
-            <keyword name="customPropertyKeys" id="QServiceInterfaceDescriptor::customPropertyKeys" ref="qserviceinterfacedescriptor.html#customPropertyKeys"/>
-            <keyword name="inSystemScope" id="QServiceInterfaceDescriptor::inSystemScope" ref="qserviceinterfacedescriptor.html#inSystemScope"/>
+            <keyword name="QServiceInterfaceDescriptor::Attribute" id="QServiceInterfaceDescriptor::Attribute" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="QServiceInterfaceDescriptor::Capabilities" id="QServiceInterfaceDescriptor::Capabilities" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="QServiceInterfaceDescriptor::Location" id="QServiceInterfaceDescriptor::Location" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="QServiceInterfaceDescriptor::ServiceDescription" id="QServiceInterfaceDescriptor::ServiceDescription" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="QServiceInterfaceDescriptor::InterfaceDescription" id="QServiceInterfaceDescriptor::InterfaceDescription" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="attribute" id="QServiceInterfaceDescriptor::attribute" ref="qserviceinterfacedescriptor.html#attribute"/>
+            <keyword name="customAttribute" id="QServiceInterfaceDescriptor::customAttribute" ref="qserviceinterfacedescriptor.html#customAttribute"/>
+            <keyword name="customAttributes" id="QServiceInterfaceDescriptor::customAttributes" ref="qserviceinterfacedescriptor.html#customAttributes"/>
             <keyword name="interfaceName" id="QServiceInterfaceDescriptor::interfaceName" ref="qserviceinterfacedescriptor.html#interfaceName"/>
             <keyword name="isValid" id="QServiceInterfaceDescriptor::isValid" ref="qserviceinterfacedescriptor.html#isValid"/>
             <keyword name="majorVersion" id="QServiceInterfaceDescriptor::majorVersion" ref="qserviceinterfacedescriptor.html#majorVersion"/>
@@ -2723,7 +2726,7 @@
             <keyword name="operator!=" id="QServiceInterfaceDescriptor::operator!=" ref="qserviceinterfacedescriptor.html#operator-not-eq"/>
             <keyword name="operator=" id="QServiceInterfaceDescriptor::operator=" ref="qserviceinterfacedescriptor.html#operator-eq"/>
             <keyword name="operator==" id="QServiceInterfaceDescriptor::operator==" ref="qserviceinterfacedescriptor.html#operator-eq-eq"/>
-            <keyword name="property" id="QServiceInterfaceDescriptor::property" ref="qserviceinterfacedescriptor.html#property"/>
+            <keyword name="scope" id="QServiceInterfaceDescriptor::scope" ref="qserviceinterfacedescriptor.html#scope"/>
             <keyword name="serviceName" id="QServiceInterfaceDescriptor::serviceName" ref="qserviceinterfacedescriptor.html#serviceName"/>
             <keyword name="~QServiceInterfaceDescriptor" id="QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor" ref="qserviceinterfacedescriptor.html#dtor.QServiceInterfaceDescriptor"/>
             <keyword name="QServiceManager" id="QServiceManager" ref="qservicemanager.html"/>
@@ -2739,16 +2742,13 @@
             <keyword name="QServiceManager::ComponentNotFound" id="QServiceManager::ComponentNotFound" ref="qservicemanager.html#Error-enum"/>
             <keyword name="QServiceManager::ServiceCapabilityDenied" id="QServiceManager::ServiceCapabilityDenied" ref="qservicemanager.html#Error-enum"/>
             <keyword name="QServiceManager::UnknownError" id="QServiceManager::UnknownError" ref="qservicemanager.html#Error-enum"/>
-            <keyword name="QServiceManager::Scope" id="QServiceManager::Scope" ref="qservicemanager.html#Scope-enum"/>
-            <keyword name="QServiceManager::UserScope" id="QServiceManager::UserScope" ref="qservicemanager.html#Scope-enum"/>
-            <keyword name="QServiceManager::SystemScope" id="QServiceManager::SystemScope" ref="qservicemanager.html#Scope-enum"/>
             <keyword name="addService" id="QServiceManager::addService" ref="qservicemanager.html#addService"/>
             <keyword name="error" id="QServiceManager::error" ref="qservicemanager.html#error"/>
             <keyword name="findInterfaces" id="QServiceManager::findInterfaces" ref="qservicemanager.html#findInterfaces"/>
             <keyword name="findServices" id="QServiceManager::findServices" ref="qservicemanager.html#findServices"/>
-            <keyword name="getInterface" id="QServiceManager::getInterface" ref="qservicemanager.html#getInterface"/>
             <keyword name="interfaceDefault" id="QServiceManager::interfaceDefault" ref="qservicemanager.html#interfaceDefault"/>
             <keyword name="loadInterface" id="QServiceManager::loadInterface" ref="qservicemanager.html#loadInterface"/>
+            <keyword name="loadLocalTypedInterface" id="QServiceManager::loadLocalTypedInterface" ref="qservicemanager.html#loadLocalTypedInterface"/>
             <keyword name="removeService" id="QServiceManager::removeService" ref="qservicemanager.html#removeService"/>
             <keyword name="scope" id="QServiceManager::scope" ref="qservicemanager.html#scope"/>
             <keyword name="serviceAdded" id="QServiceManager::serviceAdded" ref="qservicemanager.html#serviceAdded"/>
@@ -3391,6 +3391,7 @@
             <file>trademarks.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-h.html</file>
             <file>qcontactdetaildefinitionfield.html</file>
+            <file>qservice.html</file>
             <file>declarative-landlinedialer-landlinedialer-pro.html</file>
             <file>qmessageaccount-members.html</file>
             <file>qcamerafocuscontrol.html</file>

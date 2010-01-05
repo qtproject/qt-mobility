@@ -108,57 +108,57 @@ void ServiceMetadataTest::parseValidServiceXML()
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.IDownloader"));
     QCOMPARE(aInterface.majorVersion(), 1);
     QCOMPARE(aInterface.minorVersion(), 4);
-    QVERIFY(aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
-    QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides download support"));
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
+    QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides download support"));
         
     aInterface = allInterfaces.at(1);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ILocation"));
     QCOMPARE(aInterface.majorVersion(), 1);
     QCOMPARE(aInterface.minorVersion(), 4);
-    QVERIFY(aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
-    QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides location support"));
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 0);
+    QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides location support"));
     
     aInterface = allInterfaces.at(2);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ISysInfo"));
     QCOMPARE(aInterface.majorVersion(), 2);
     QCOMPARE(aInterface.minorVersion(), 3);
-    QVERIFY(aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 1);
-    QVERIFY(aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().contains("ReadUserData"));
-    QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides system information support"));
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() == 1);
+    QVERIFY(aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().contains("ReadUserData"));
+    QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides system information support"));
     
 
     aInterface = allInterfaces.at(3);
     QCOMPARE(aInterface.interfaceName(),QString("com.nokia.qt.tests.ISendMessage"));
     QCOMPARE(aInterface.majorVersion(), 3);
     QCOMPARE(aInterface.minorVersion(), 0);
-    QStringList capabilities = aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
+    QStringList capabilities = aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList();
     QVERIFY(capabilities.count() == 2);
     QVERIFY(capabilities.contains("ReadUserData"));
     QVERIFY(capabilities.contains("WriteUserData"));
-    QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides message sending support"));
+    QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides message sending support"));
 
     aInterface = allInterfaces.at(4);
     QCOMPARE(aInterface.interfaceName(), QString("com.nokia.qt.tests.IReceiveMessage"));
     QCOMPARE(aInterface.majorVersion(), 1);
     QCOMPARE(aInterface.minorVersion(), 1);
-    capabilities = aInterface.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
+    capabilities = aInterface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList();
     QVERIFY(capabilities.count() == 3);
     QVERIFY(capabilities.contains("ReadUserData"));
     QVERIFY(capabilities.contains("WriteUserData"));
     QVERIFY(capabilities.contains("ExecUserData"));
-    QCOMPARE(aInterface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides message receiving support"));
-    QCOMPARE(aInterface.customProperty("key1"), QString("value1"));
-    QCOMPARE(aInterface.customProperty("key2"), QString("value2"));
-    QCOMPARE(aInterface.customProperty("key3"), QString(""));
-    QCOMPARE(aInterface.customProperty("key4"), QString());
+    QCOMPARE(aInterface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString("Interface that provides message receiving support"));
+    QCOMPARE(aInterface.customAttribute("key1"), QString("value1"));
+    QCOMPARE(aInterface.customAttribute("key2"), QString("value2"));
+    QCOMPARE(aInterface.customAttribute("key3"), QString(""));
+    QCOMPARE(aInterface.customAttribute("key4"), QString());
     
     ServiceMetaData parser1(dir.absoluteFilePath("WrongOrder.xml"));
     QCOMPARE(parser1.extractMetadata(),true);
     QList<QServiceInterfaceDescriptor> allInterfacesWrongOrder = parser1.parseResults().interfaces;
     foreach(const QServiceInterfaceDescriptor d, allInterfacesWrongOrder) {
         QCOMPARE(d.serviceName(), QString("ovi"));
-        QCOMPARE(d.property(QServiceInterfaceDescriptor::Location).toString(), QString("C:/Nokia/ovi.dll"));
-        QCOMPARE(d.property(QServiceInterfaceDescriptor::ServiceDescription).toString(), QString("Ovi Services"));
+        QCOMPARE(d.attribute(QServiceInterfaceDescriptor::Location).toString(), QString("C:/Nokia/ovi.dll"));
+        QCOMPARE(d.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString(), QString("Ovi Services"));
     }
 }
 
@@ -325,7 +325,7 @@ void ServiceMetadataTest::latestInterfaceVersion()
     QServiceInterfaceDescriptor interface = parser.latestInterfaceVersion("com.nokia.service.contacts");
     QCOMPARE(interface.majorVersion(), major);
     QCOMPARE(interface.minorVersion(), minor);
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
             QString("Contacts management service")); //make sure we're getting the right interface
 }
 

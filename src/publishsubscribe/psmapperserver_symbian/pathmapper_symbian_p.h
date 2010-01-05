@@ -38,30 +38,74 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef PATHMAPPER_SYMBIAN_P_H
+#define PATHMAPPER_SYMBIAN_P_H
 
-#ifndef QABSTRACTSECURITYSESSION_H
-#define QABSTRACTSECURITYSESSION_H
+#include <QStringList>
+#include <QHash>
+#include <f32file.h>
 
-#include "qmobilityglobal.h"
-#include <QObject>
-
-QT_BEGIN_HEADER
+#include "qcrmlparser_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
+class CCRMLDirectoryMonitor : public QObject, public CActive
 {
     Q_OBJECT
-public:
-    QAbstractSecuritySession(QObject* parent = 0);
-    virtual ~QAbstractSecuritySession();
 
-    virtual bool isAllowed(const QStringList& capabilityList) = 0;
+public:
+    CCRMLDirectoryMonitor();
+    ~CCRMLDirectoryMonitor();
+
+signals:
+    void directoryChanged();
+
+private:
+    void IssueNotifyChange();
+    void RunL();
+    void DoCancel();
+
+private:
+    RFs m_fs;
+};
+
+class PathMapper : public QObject
+{
+    Q_OBJECT
+
+public:
+    PathMapper();
+    ~PathMapper();
+
+    enum Target {TargetCRepository, TargetRPropery};
+
+    bool getChildren(const QString &path, QSet<QString> &children) const;
+    QStringList childPaths(const QString &path) const;
+    bool resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const;
+
+private slots:
+    void updateMappings();
+
+private:
+    class PathData
+    {
+    public:
+        PathData() : m_target(TargetRPropery), m_category(0), m_key(0) {}
+        PathData(Target target, quint32 category, quint32 key) :
+            m_target(target), m_category(category), m_key(key) {}
+
+    public:
+        Target m_target;
+        quint32 m_category;
+        quint32 m_key;
+    };
+
+private:
+    QHash<QString, PathData> m_paths;
+    QCrmlParser m_crmlParser;
+    CCRMLDirectoryMonitor *m_CRMLDirectoryMonitor;
 };
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif //QABSTRACTSECURITYSESSION_H
-
+#endif //PATHMAPPER_SYMBIAN_P_H

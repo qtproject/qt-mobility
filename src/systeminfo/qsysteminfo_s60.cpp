@@ -281,8 +281,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         case QSystemInfo::HapticsFeature:
         {
-            //TODO: Do something with the AVKON dependency
-            return AknLayoutUtils::PenEnabled();
+            if (CCoeEnv::Static()) {
+                //TODO: Do something with the AVKON dependency
+                return AknLayoutUtils::PenEnabled();
+            }
+            return false;
         }
         case QSystemInfo::FmradioFeature:   //Not available in public SDK
         case QSystemInfo::LedFeature:
@@ -863,8 +866,10 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
     methods |= QSystemDeviceInfo::Keys;
     methods |= QSystemDeviceInfo::Keypad;
 
-    //TODO: Do something with the AVKON dependency
-    if (AknLayoutUtils::PenEnabled()) methods |= QSystemDeviceInfo::SingleTouch;
+    if (CCoeEnv::Static()) {
+        //TODO: Do something with the AVKON dependency
+        if (AknLayoutUtils::PenEnabled()) methods |= QSystemDeviceInfo::SingleTouch;
+    }
 
     TRAP_IGNORE(
         if (CFeatureDiscovery::IsFeatureSupportedL(KFeatureIdQwertyInput)) {

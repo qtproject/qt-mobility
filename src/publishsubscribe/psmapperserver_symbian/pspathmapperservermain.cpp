@@ -39,29 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTSECURITYSESSION_H
-#define QABSTRACTSECURITYSESSION_H
+#include <qmobilityglobal.h>
+#include <QCoreApplication>
+#include "pspathmapperserver.h"
+#include "clientservercommon.h"
 
-#include "qmobilityglobal.h"
-#include <QObject>
+#include <QDebug>
 
-QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
+int main(int argc, char **argv)
 {
-    Q_OBJECT
-public:
-    QAbstractSecuritySession(QObject* parent = 0);
-    virtual ~QAbstractSecuritySession();
+    QCoreApplication app(argc, argv);
+    
+    CPSPathMapperServer *server = new CPSPathMapperServer;
+    TInt err = server->Start(KPSPathMapperServerName);
 
-    virtual bool isAllowed(const QStringList& capabilityList) = 0;
-};
+    if (err != KErrNone) {
+        CPSPathMapperServer::PanicServer(ESvrStartServer);
+    }
+    RProcess::Rendezvous(err);
 
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif //QABSTRACTSECURITYSESSION_H
+    return app.exec();
+}
 

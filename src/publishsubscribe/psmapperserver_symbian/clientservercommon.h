@@ -38,30 +38,29 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef CLIENTSERVERCOMMON_H_
+#define CLIENTSERVERCOMMON_H_
 
-#ifndef QABSTRACTSECURITYSESSION_H
-#define QABSTRACTSECURITYSESSION_H
+#include <e32base.h>
 
-#include "qmobilityglobal.h"
-#include <QObject>
+_LIT(KPSPathMapperServerName, "PSPathMapperServer");
 
-QT_BEGIN_HEADER
+const TUint KServerMajorVersionNumber = 0;
+const TUint KServerMinorVersionNumber = 1;
+const TUint KServerBuildVersionNumber = 1;
 
-QTM_BEGIN_NAMESPACE
+IMPORT_C TInt StartThread(RThread& aServerThread);
 
-class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
+enum TPSPathMapperRequest
 {
-    Q_OBJECT
-public:
-    QAbstractSecuritySession(QObject* parent = 0);
-    virtual ~QAbstractSecuritySession();
-
-    virtual bool isAllowed(const QStringList& capabilityList) = 0;
+    EGetChildrenLengthRequest,
+    EGetChildrenRequest,
+    EChildPathsLengthRequest,
+    EChildPathsRequest,
+    EResolvePathLengthRequest,
+    EResolvePathRequest
 };
 
-QTM_END_NAMESPACE
+#endif // CLIENTSERVERCOMMON_H_
 
-QT_END_HEADER
-
-#endif //QABSTRACTSECURITYSESSION_H
-
+// End of file

@@ -38,30 +38,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef PSPATHMAPPERSERVER_H
+#define PSPATHMAPPERSERVER_H
 
-#ifndef QABSTRACTSECURITYSESSION_H
-#define QABSTRACTSECURITYSESSION_H
-
-#include "qmobilityglobal.h"
-#include <QObject>
-
-QT_BEGIN_HEADER
+#include <e32base.h>
+#include "pspathmapperserver.pan"
+#include "pathmapper_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
-{
-    Q_OBJECT
-public:
-    QAbstractSecuritySession(QObject* parent = 0);
-    virtual ~QAbstractSecuritySession();
+// needed for creating server thread.
+const TUint KDefaultHeapSize = 0x10000;
 
-    virtual bool isAllowed(const QStringList& capabilityList) = 0;
+class CPSPathMapperServer : public CServer2
+{
+    public:
+        CPSPathMapperServer();
+        CSession2 *NewSessionL(const TVersion &aVersion, const RMessage2 &aMessage) const;
+
+    public:
+        static void PanicServer(TPSPathMapperServerPanic aPanic);
+
+    private:
+        PathMapper iPathMapper;
 };
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
+#endif  //PSPATHMAPPERSERVER_H
 
-#endif //QABSTRACTSECURITYSESSION_H
-
+// End of File

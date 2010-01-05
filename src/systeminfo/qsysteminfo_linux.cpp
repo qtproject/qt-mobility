@@ -2065,8 +2065,8 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
                 return reply.value();
             }
         }
-    }
 #endif
+    }
     return false;
 }
 

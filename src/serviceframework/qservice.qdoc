@@ -39,29 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QABSTRACTSECURITYSESSION_H
-#define QABSTRACTSECURITYSESSION_H
+/*!
+    \namespace QService
+    \ingroup servicefw
 
-#include "qmobilityglobal.h"
-#include <QObject>
+    \brief The QService namespace contains miscellaneous identifiers used throughout the
+    Qt Service framework library.
+*/
 
-QT_BEGIN_HEADER
+/*!
+    \enum QService::Scope
+    Defines the scope to be used when accessing services. Note that Symbian
+    does not distinguish scopes and therefore UserScope and SystemScope may
+    be used interchangeably.
 
-QTM_BEGIN_NAMESPACE
+    \value UserScope When adding and removing services, uses a storage location
+    specific to the current user.
+    When searching for services and interface implementations, first searches in the
+    user-specific location; if the service or interface implementation
+    is not found, searches in the system-wide storage location (if the user has
+    sufficient permissions to do so).
 
-class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
-{
-    Q_OBJECT
-public:
-    QAbstractSecuritySession(QObject* parent = 0);
-    virtual ~QAbstractSecuritySession();
+    \value SystemScope When adding and removing services, use a system-wide
+    storage location accessible to all users. When searching
+    for services and interface implementations, search only in the system-wide
+    storage location.
+*/
 
-    virtual bool isAllowed(const QStringList& capabilityList) = 0;
-};
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif //QABSTRACTSECURITYSESSION_H
 
