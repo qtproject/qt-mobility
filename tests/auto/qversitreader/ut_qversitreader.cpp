@@ -331,6 +331,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     QByteArray vCard("Begin:vcard\r\n");
     vCard.append("VERSION:3.0\r\n");
     vCard.append("FN:John\r\n");
+    vCard.append("ORG;CHARSET=UTF-8:\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86\r\n");
     vCard.append("TEL;TYPE=PREF;HOME:123\r\n");
     vCard.append("PHOTO;ENCODING=B:UXQgaXMgZ3JlYXQh\r\n");
     vCard.append("EMAIL:john.citizen@example.com\r\n");
@@ -350,6 +351,10 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
     QCOMPARE(property.value(),QString::fromAscii("John"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, cursor);
+    QCOMPARE(property.name(),QString::fromAscii("ORG"));
+    QCOMPARE(property.value(),QString::fromUtf8("\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("TEL"));

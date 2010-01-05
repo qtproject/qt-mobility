@@ -224,7 +224,7 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
 
     QByteArray value = VersitUtils::extractPropertyValue(cursor);
 
-    QString valueString(QString::fromAscii(value));
+    QString valueString(decodeCharset(value, property));
     VersitUtils::removeBackSlashEscaping(valueString);
 
     if (property.name() == QString::fromAscii("AGENT")) {
