@@ -82,7 +82,7 @@
     \value AverageLevel The average volume level of the media.  int.
     \value ChannelCount The number of channels in the media's audio stream. int.
     \value PeakValue The peak volume of the media's audio stream. int
-    \value Frequency The frequency of the media's audio stream. int
+    \value SampleRate The sample rate of the media's audio stream in hertz. int
 
     Music attributes
     \value AlbumTitle The title of the album the media belongs to.  QString.

@@ -80,7 +80,7 @@ namespace QtMedia
         AverageLevel,
         ChannelCount,
         PeakValue,
-        Frequency,
+        SampleRate,
 
         // Music
         AlbumTitle,
