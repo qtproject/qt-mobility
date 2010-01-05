@@ -889,5 +889,45 @@ void UT_VersitUtils::testGetNextLine()
 
 }
 
+void UT_VersitUtils::testExtractParams()
+{
+    VersitCursor cursor;
+    QByteArray data = ":123";
+    cursor.setData(data);
+    cursor.setPosition(0);
+    cursor.setSelection(cursor.data.size());
+    QList<QByteArray> params = VersitUtils::extractParams(cursor, m_asciiCodec);
+    QCOMPARE(params.size(), 0);
+    QCOMPARE(cursor.position, 1);
+
+    data = "a;b:123";
+    cursor.setData(data);
+    cursor.setPosition(0);
+    cursor.setSelection(cursor.data.size());
+    params = VersitUtils::extractParams(cursor, m_asciiCodec);
+    QCOMPARE(params.size(), 2);
+    QCOMPARE(cursor.position, 4);
+    QCOMPARE(params.at(0), QByteArray("a"));
+    QCOMPARE(params.at(1), QByteArray("b"));
+
+    QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
+    data = VersitUtils::encode(":123", codec);
+    cursor.setData(data);
+    cursor.setPosition(0);
+    cursor.setSelection(cursor.data.size());
+    params = VersitUtils::extractParams(cursor, codec);
+    QCOMPARE(params.size(), 0);
+    QCOMPARE(cursor.position, 2);
+
+    data = VersitUtils::encode("a;b:123", codec);
+    cursor.setData(data);
+    cursor.setPosition(0);
+    cursor.setSelection(cursor.data.size());
+    params = VersitUtils::extractParams(cursor, codec);
+    QCOMPARE(params.size(), 2);
+    QCOMPARE(cursor.position, 8);
+
+}
+
 QTEST_MAIN(UT_VersitUtils)
 

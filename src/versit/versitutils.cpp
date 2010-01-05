@@ -416,17 +416,18 @@ QList<QByteArray> VersitUtils::extractParams(VersitCursor& line, QTextCodec *cod
 {
     QList<QByteArray> params;
 
+    QByteArray colon = encode(':', codec);
     /* find the end of the name&params */
-    int colonIndex = line.data.indexOf(encode(':', codec), line.position);
+    int colonIndex = line.data.indexOf(colon, line.position);
     if (colonIndex > line.position && colonIndex < line.selection) {
         QByteArray nameAndParamsString = line.data.mid(line.position, colonIndex - line.position);
         params = extractParts(nameAndParamsString, encode(';', codec), codec);
 
         /* Update line */
-        line.setPosition(colonIndex + 1);
+        line.setPosition(colonIndex + colon.length());
     } else if (colonIndex == line.position) {
         // No parameters.. advance past it
-        line.setPosition(line.position + 1);
+        line.setPosition(line.position + colon.length());
     }
 
     return params;

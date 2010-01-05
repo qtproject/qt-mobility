@@ -42,6 +42,7 @@
 #include "ut_qversitreader.h"
 #include "qversitreader.h"
 #include "qversitreader_p.h"
+#include "versitutils_p.h"
 #include <QtTest/QtTest>
 
 QTM_USE_NAMESPACE
@@ -119,6 +120,21 @@ void UT_QVersitReader::testReading()
     mInputDevice->seek(0);
     QVERIFY(mReader->readAll());
     QCOMPARE(mReader->result().count(),1);
+
+    // Wide charset with no byte-order mark
+    QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
+    const QByteArray& wideDocument =
+            VersitUtils::encode("BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n", codec);
+    delete mInputDevice;
+    mInputDevice = new QBuffer;
+    mInputDevice->open(QBuffer::ReadWrite);
+    mInputDevice->write(wideDocument);
+    mInputDevice->seek(0);
+    mReader->setDevice(mInputDevice);
+    mReader->setDefaultCharset("UTF-16BE");
+    QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->result().count(),1);
+    mReader->setDefaultCharset("ISO-8859-1");
 
     // Two documents
     const QByteArray& twoDocuments =

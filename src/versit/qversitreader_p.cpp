@@ -324,7 +324,7 @@ QString QVersitReaderPrivate::decodeCharset(const QByteArray& value, QVersitProp
             return QString::fromAscii(value);
         }
     }
-    return QString::fromAscii(value);
+    return mDefaultCodec->toUnicode(value);
 }
 
 #include "moc_qversitreader_p.cpp"

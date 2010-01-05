@@ -63,7 +63,7 @@ void UT_QVersit::testImportFiles()
     if (charset != "") {
         reader.setDefaultCharset(charset);
     }
-    QVERIFY2(reader.readAll(), filename.toAscii());
+    QVERIFY(reader.readAll());
     QList<QVersitDocument> result = reader.result();
     foreach (QVersitDocument doc, result) {
         QVersitContactImporter importer;
@@ -84,16 +84,16 @@ void UT_QVersit::testImportFiles_data()
     QTest::addColumn<QByteArray>("charset");
 
     // Failing test cases commented out because they take a long time to run.
-//    QTEST_NEW_ROW("AAB4/MultipleAll.vcf", "UTF-16");
+    QTEST_NEW_ROW("AAB4/MultipleAll.vcf", "UTF-16BE");
     QTEST_NEW_ROW("AAB4/MultipleAscii.vcf", "");
     QTEST_NEW_ROW("AAB4/SingleCompany.vcf", "");
     QTEST_NEW_ROW("AAB4/SingleExtensive.vcf", "");
-//    QTEST_NEW_ROW("AAB4/SingleNonAscii.vcf", "UTF-16");
-//    QTEST_NEW_ROW("AAB4/SingleNonAsciiWithPhoto.vcf", "UTF-16");
+    QTEST_NEW_ROW("AAB4/SingleNonAscii.vcf", "UTF-16BE");
+    QTEST_NEW_ROW("AAB4/SingleNonAsciiWithPhoto.vcf", "UTF-16BE");
     QTEST_NEW_ROW("AAB5/SingleNonAscii.vcf", "");
-//    QTEST_NEW_ROW("Entourage11/basic.vcf", "UTF-16");
-//    QTEST_NEW_ROW("Entourage11/image.vcf", "UTF-16");
-//    QTEST_NEW_ROW("Entourage11/nonascii.vcf", "UTF-16");
+//    QTEST_NEW_ROW("Entourage11/basic.vcf", "UTF-16BE");
+//    QTEST_NEW_ROW("Entourage11/image.vcf", "UTF-16BE");
+//    QTEST_NEW_ROW("Entourage11/nonascii.vcf", "UTF-16BE");
     QTEST_NEW_ROW("Entourage12/basic.vcf", "");
     QTEST_NEW_ROW("Entourage12/kevin.vcf", "");
     QTEST_NEW_ROW("Entourage12/nonascii.vcf", "");
