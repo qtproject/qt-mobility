@@ -54,6 +54,29 @@ QTM_BEGIN_NAMESPACE
  
   It may be used to select contacts which are involved in relationships
   which are of a certain type, or which involve certain contacts.
+
+  One common use-case might be to select the contacts which are a member of a particular group.
+  This use-case may be met with the following filter:
+
+  \code
+  QContactRelationshipFilter groupFilter;                            // select all contacts
+  groupFilter.setRole(QContactRelationshipFilter::Second);           // which are the second participant
+  groupFilter.setRelationshipType(QContactRelationship::HasMember);  // in a group relationship
+  groupFilter.setOtherParticipantId(groupContact.id());              // with the group contact
+  \endcode
+
+  Another common use-case might be to select the groups which a particular contact is a member of.
+  This use-case may be met with the following filter:
+
+  \code
+  QContactRelationshipFilter whichGroupsFilter;                                 // select all contacts
+  whichGroupsFilter.setRole(QContactRelationshipFilter::First);                 // which are the first participant
+  whichGroupsFilter.setRelationshipType(QContactRelationshipFilter::HasMember); // in a group relationship
+  whichGroupsFilter.setOtherParticipantId(particularContact.id());              // with the particular contact
+  \endcode
+
+  It is important to note that the setRole() and role() functions relate to the role
+  that a contact must play in a relationship in order to meet the role criteria of this filter.
  */
 
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)

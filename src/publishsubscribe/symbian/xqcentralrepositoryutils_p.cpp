@@ -45,8 +45,6 @@
 #include "ccentralrepositoryhandler.h"
 #include "xqcentralrepositorysearchcriteria.h"
 
-//#define PUBLIC_RELEASE
-
 XQCentralRepositoryUtilsPrivate::XQCentralRepositoryUtilsPrivate(XQSettingsManager& settingsManager)
     : m_settingsManagerPrivate(*settingsManager.d)
 {
@@ -56,7 +54,7 @@ XQCentralRepositoryUtilsPrivate::~XQCentralRepositoryUtilsPrivate()
 {
 }
 
-#ifdef PUBLIC_RELEASE
+#ifdef XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
 bool XQCentralRepositoryUtilsPrivate::createKey(const XQCentralRepositorySettingsKey& /*key*/, const QVariant& /*value*/)
 {
     m_settingsManagerPrivate.iError = KErrNotSupported;
@@ -106,7 +104,7 @@ bool XQCentralRepositoryUtilsPrivate::createKey(const XQCentralRepositorySetting
 }
 #endif
 
-#ifdef PUBLIC_RELEASE
+#ifdef XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
 bool XQCentralRepositoryUtilsPrivate::deleteKey(const XQCentralRepositorySettingsKey& /*key*/)
 {
     m_settingsManagerPrivate.iError = KErrNotSupported;

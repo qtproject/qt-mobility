@@ -43,7 +43,9 @@
 
 #include "qmobilityglobal.h"
 
+QT_BEGIN_NAMESPACE
 class QDebug;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 

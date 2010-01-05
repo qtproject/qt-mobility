@@ -159,7 +159,7 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
 
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
-    QUrl url = m_control->media().canonicalUri();
+    QUrl url = m_control->media().canonicalUrl();
     S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaType(url);
     
     if (mediaType == S60MediaRecognizer::Video) {

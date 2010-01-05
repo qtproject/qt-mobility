@@ -43,9 +43,12 @@
 #ifndef QGSTREAMERCAMERACONTROL_H
 #define QGSTREAMERCAMERACONTROL_H
 
+#include <QHash>
 #include <experimental/qcameracontrol.h>
 #include "qgstreamercapturesession.h"
+
 QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerCameraControl : public QCameraControl, public QGstreamerVideoInput
 {

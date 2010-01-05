@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "qmessagefolder.h"
 #include "qmessagefolder_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 
 
 QTM_BEGIN_NAMESPACE
@@ -51,7 +51,7 @@ QMessageFolder QMessageFolderPrivate::from(const QMessageFolderId &id, const QMe
     result.d_ptr->_id = id;
     result.d_ptr->_parentAccountId = accountId;
     result.d_ptr->_parentFolderId = parentId;
-    result.d_ptr->_displayName = name;
+    result.d_ptr->_name = name;
     result.d_ptr->_path = path;
     return result;
 }
@@ -64,7 +64,7 @@ QMessageFolder::QMessageFolder()
 QMessageFolder::QMessageFolder(const QMessageFolderId &id)
     :d_ptr(new QMessageFolderPrivate(this))
 {
-    *this = QMessageStore::instance()->folder(id);
+    *this = QMessageManager().folder(id);
 }
 
 QMessageFolder::QMessageFolder(const QMessageFolder &other)
@@ -102,9 +102,9 @@ QMessageFolderId QMessageFolder::parentFolderId() const
     return d_ptr->_parentFolderId;
 }
 
-QString QMessageFolder::displayName() const
+QString QMessageFolder::name() const
 {
-    return d_ptr->_displayName;
+    return d_ptr->_name;
 }
 
 QString QMessageFolder::path() const

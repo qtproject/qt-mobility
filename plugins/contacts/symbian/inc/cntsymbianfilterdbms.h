@@ -42,7 +42,7 @@
 #ifndef CNTSYMBIANFILTERDBMS_H
 #define CNTSYMBIANFILTERDBMS_H
 
-#ifndef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
 
 #include "cntabstractcontactfilter.h"
 #include <e32cmn.h>
@@ -52,26 +52,30 @@ class CContactIdArray;
 class CntAbstractContactSorter;
 class CntTransformContact;
 class CContactItemFieldDef;
+class CContactItemFieldSet;
 
 QTM_BEGIN_NAMESPACE
 class QContactDetailFilter;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
-class CntSymbianFilterDbms : public CntAbstractContactFilter
+class CntSymbianFilter : public CntAbstractContactFilter
 {
 public:
-    CntSymbianFilterDbms(CContactDatabase& contactDatabase);
-    ~CntSymbianFilterDbms();
+    CntSymbianFilter(CContactDatabase& contactDatabase);
+    ~CntSymbianFilter();
 
     /* from CntAbstractContactFilter */
-    QList<QContactLocalId> contacts(
-            const QContactFilter& filter,
-            const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error);
-    CntAbstractContactFilter::FilterSupport filterSupported(const QContactFilter& filter);
+    QList<QContactLocalId> contacts(const QContactFilter& filter,
+                                    const QList<QContactSortOrder>& sortOrders,
+                                    bool &filterSupported,
+                                    QContactManager::Error& error);
+    bool filterSupported(const QContactFilter& filter);
 
 private:
+    FilterSupport filterSupportLevel(const QContactFilter& filter);
+    QList<QContactLocalId> filterContacts(const QContactFilter& filter,
+                                          QContactManager::Error& error);
     void transformDetailFilterL(const QContactDetailFilter& detailFilter, CContactItemFieldDef*& fieldDef);
     TInt findContacts(
             CContactIdArray*& idArray,
@@ -84,12 +88,13 @@ private:
             CContactIdArray*& idArray,
             const TDesC& phoneNumber,
             const TInt matchLength);
+    bool isFalsePositive(const CContactItemFieldSet& fieldSet, const TUid& fieldTypeUid, const TDesC& searchString);
     void getMatchLengthL(TInt& matchLength);
     CContactDatabase &m_contactDatabase;
     CntAbstractContactSorter *m_contactSorter;
     CntTransformContact *m_transformContact;
 };
 
-#endif /*__SYMBIAN_CNTMODEL_USE_SQLITE__*/
+#endif /*SYMBIAN_BACKEND_USE_SQLITE*/
 
-#endif /* CntSymbianFilterDbmsDBMS_H */
+#endif /* CNTSYMBIANFILTERDBMS_H */

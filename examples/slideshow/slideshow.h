@@ -45,8 +45,10 @@
 #include <QWidget>
 #include <qmediaimageviewer.h>
 
+QT_BEGIN_NAMESPACE
 class QAbstractButton;
 class QLabel;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QMediaPlaylist;

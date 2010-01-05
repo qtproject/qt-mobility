@@ -62,19 +62,22 @@ public:
     };
 
     QMessageAddress();
-    QMessageAddress(const QString &recipient, Type type);
+    QMessageAddress(Type type, const QString &recipient);
     QMessageAddress(const QMessageAddress &other);
+
+    virtual ~QMessageAddress();
 
     QMessageAddress& operator=(const QMessageAddress &other);
 
     bool operator==(const QMessageAddress &other) const;
     bool operator!=(const QMessageAddress &other) const;
 
-    virtual ~QMessageAddress();
-    QString recipient() const;
-    void setRecipient(const QString &recipient);
     Type type() const;
     void setType(Type type);
+
+    QString recipient() const;
+    void setRecipient(const QString &recipient);
+
     static void parseEmailAddress(const QString& emailAddress, QString *name, QString *address, QString *suffix = 0, bool *startDelimeterFound = 0, bool *endDelimeterFound = 0);
 
 private:

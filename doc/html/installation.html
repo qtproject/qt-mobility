@@ -40,14 +40,14 @@
 </td><td>N</td><td>Y</td></tr>
 <tr valign="top" class="even"><td>Contacts</td><td>The Maemo 6 backend depends on libqttracker. For more information on libqttracker visit <a href="http://maemo.gitorious.org/maemo-af/libqttracker">libqttracker public repository</a>. Other components offered by the Maemo 6 platform may be required in order to support the full functionality of the Maemo 6 backend.</td><td>Y</td><td>N</td></tr>
 <tr valign="top" class="odd"><td>Service Framework</td><td>The Service Framework depends on SQLite version 3 and that Qt has been built with an sqlite driver. Building the driver by Qt is most easily achieved by using one of the following configure options: <tt>-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite</tt></td><td>N</td><td>Y</td></tr>
-<tr valign="top" class="even"><td>Multimedia</td><td>The Multimedia component depends on the <a href="http://qt.nokia.com/doc/4.5/qtmultimedia.html">QtMultimedia</a> module in Qt. Qt by default is configured to make this module with the <tt>-multimedia</tt> option.<p>The linux X11 backend requires that gstreamer be installed, including libgstreamer, gstreamer-devel, plugins-base and plugins-good packages. The linux backend was tested with gstreamer 0.10.19 and newer versions.</p>
+<tr valign="top" class="even"><td>Multimedia</td><td>The Multimedia component depends on the <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a> module in Qt. Qt by default is configured to make this module with the <tt>-multimedia</tt> option.<p>The linux X11 backend requires that gstreamer be installed, including libgstreamer, gstreamer-devel, plugins-base and plugins-good packages. The linux backend was tested with gstreamer 0.10.19 and newer versions.</p>
 </td><td>Y</td><td>N</td></tr>
 <tr valign="top" class="odd"><td>Location</td><td>The Symbian backend uses the LBT (Location Based Triggering) library for area notifications. Area notifications will be disabled at compile time if the LBT library is not found.<p>The LBT library is not publicly available at the time of writing. The developer documentation for <a href="http://carbidehelp.nokia.com/help/index.jsp?topic=/S60_5th_Edition_Cpp_Developers_Library/GUID-759FBC7F-5384-4487-8457-A8D4B76F6AA6/html/Location_ServicesIndexPage.html">S60 Location Services</a> is probably the best source for LBT availability updates, as it will be updated when the library is relased.</p>
 </td><td>N(Y)</td><td>N</td></tr>
-<tr valign="top" class="even"><td>System Information</td><td>The Linux backend depands on <a href="http://qt.nokia.com/doc/4.5/qtdbus.html">QtDBus</a>, HAL and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although System Information will compile without them, there will be reduced functionality.<p>On Mac OS X, System Information depends on the 10.6 SDK (<a href="http://qt.nokia.com/doc/4.5/deployment-mac.html">XCode</a> 3.2&#x2e;1), although it will compile with older SDK's there will be reduced functionality.</p>
+<tr valign="top" class="even"><td>System Information</td><td>The Linux backend depands on <a href="http://qt.nokia.com/doc/4.6/qtdbus.html">QtDBus</a>, HAL and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although System Information will compile without them, there will be reduced functionality.<p>On Mac OS X, System Information depends on the 10.6 SDK (<a href="http://qt.nokia.com/doc/4.6/deployment-mac.html">XCode</a> 3.2&#x2e;1), although it will compile with older SDK's there will be reduced functionality.</p>
 </td><td>N(Y)</td><td>N</td></tr>
 <tr valign="top" class="odd"><td>Publish &amp; Subscribe</td><td>The Maemo 6 backend depends on <a href="http://maemo.gitorious.org/maemo-af/contextkit">Context Kit</a></td><td>Y</td><td>N</td></tr>
-<tr valign="top" class="even"><td>Bearer Management</td><td>The Linux backend depends on <a href="http://qt.nokia.com/doc/4.5/qtdbus.html">QtDBus</a> and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although Bearer Management will compile without them there will be reduced functionality.</td><td>N(Y)</td><td>N</td></tr>
+<tr valign="top" class="even"><td>Bearer Management</td><td>The Linux backend depends on <a href="http://qt.nokia.com/doc/4.6/qtdbus.html">QtDBus</a> and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although Bearer Management will compile without them there will be reduced functionality.</td><td>N(Y)</td><td>N</td></tr>
 </table></p>
 <a name="unpacking"></a>
 <h2>Unpacking</h2>
@@ -90,19 +90,16 @@
     nmake install</pre>
 <a name="building-for-symbian-on-windows"></a>
 <h3>Building For Symbian On Windows</h3>
-<p>To configure the Qt Mobility libraries, run configure in the package directory. (-prefix cannot be used since the libraries are installed into the SDK directory)</p>
+<p>Building Qt Mobility for Symbian is not necessary as the package contains pre-built binaries for the SDK and SIS file for the device. See the <tt>symbian\install.txt</tt> file on how to deploy these.</p>
+<p>If you wish to build QtMobility yourself, run configure in the package directory. (-prefix cannot be used since the libraries are installed into the SDK directory)</p>
 <pre>        cd c:\QtMobility\%DISTNAME%
         configure</pre>
 <p>Type <tt>configure -help</tt> to get a list of all available options.</p>
-<p>To create and install all the libraries and tools, type:</p>
-<pre>    make</pre>
-<p>(Note: no make install step is necessary) The libraries will be deployed into the SDK and will be ready to use for applications running within the emulator.</p>
-<p>Rather than building the libraries it is also possible to deploy a prebuilt set of libraries. Under the <tt>c:\QtMobility\%DISTNAME%\symbian</tt> directory there contains <tt>Mobility_tech_preview_libraries.zip</tt>. Extract this into the SDK root directory to add the necessary libraries. If you have multiple SDKs then repeat this step for each of them.</p>
-<p>To build an SIS package for a particular library such as bearer management run the following commands</p>
-<pre>    cd src/bearer
-    make release-gcce
-    createpackage bearer_template.pkg release-gcce</pre>
-<p>There is also a set of prebuilt SIS file for all the libraries under <tt>c:\QtMobility\%DISTNAME%\symbian\Mobility_tech_preview.sis</tt> which can be deployed on your device.</p>
+<p>To create and deploy the libraries and tools for the emulator run:</p>
+<pre>    make debug-winscw</pre>
+<p>To create the libraries and tools for a device run:</p>
+<pre>    make release-gcce</pre>
+<p>Note: <tt>make install</tt> has no meaning for building on Symbian. The libraries will be deployed into the SDK (when running make) and will be ready to use for compiling applications for the emulator and/or device.</p>
 <a name="building-individual-qt-mobility-domains"></a>
 <h3>Building Individual Qt Mobility Domains</h3>
 <p>Qt Mobility is comprised of several domains but all of these may not need to be built. To build a single domain, perform the configure step as outlined above, and then perform the make step in the appropriate directory to create the desired library.</p>

@@ -46,9 +46,17 @@
 
 #include <QtTracker/Tracker>
 #include <QtTracker/QLive>
+
+#include <qmobilityglobal.h>
 #include <qcontact.h>
+#include <qcontactonlineaccount.h>
+
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactManagerEngine;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 /*!
  * Current implementation only server get all contacts requests.
@@ -79,40 +87,45 @@ public slots:
     void emailAddressesReady();
     void iMAcountsReady();
 
+protected:
+    void applyFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
+
+protected slots:
+    virtual void run();
+    virtual void emitFinished();
+
 private:
     // fills received phone number from tracker to list of contacts to QContactPhoneMumber details
-    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, QList<QContact>& contacts, bool affiliationNumbers);
-    void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, QList<QContact>& contacts, bool affiliationEmails);
-    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts, QList<QContact>& contacts, bool affiliationAccounts);
+    // all the following methods update \sa result
+    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, bool affiliationNumbers);
+    void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, bool affiliationEmails);
+    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts);
     void validateRequest();
+    void readFromQueryRowToContact(QContact &contact, int queryRow);
+    QContact &linkContactsWithSameMetaContact(QContact &first, QContact &second);
+    void addContactToResultSet(QContact &contact, const QString &metacontact);
+    QContactOnlineAccount getOnlineAccountFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow);
 
 protected:
+    // contacts query
     SopranoLive::LiveNodes query;
 
     QList<SopranoLive::LiveNodes> queryPhoneNumbersNodes; // 2 - one for affiliations and another one for PersonContact
-    int queryPhoneNumbersNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
+    int queryPhoneNumbersNodesPending;
     QList<SopranoLive::LiveNodes> queryEmailAddressNodes; // 2 - one for affiliations and another one for PersonContact
-    int queryEmailAddressNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
-    QList<SopranoLive::LiveNodes> queryIMAccountNodes; // 2 - one for affiliations and another one for PersonContact
-    int queryIMAccountNodesReady; // remove after figuring out how to check if data in LiveNodes is updated
+    int queryEmailAddressNodesPending;
+    SopranoLive::LiveNodes queryIMAccountNodes;
+    int queryIMAccountNodesPending;
+
+    // result of the request - multiple queries updating it
+    QList<QContact> result;
+
+private:
+    // access existing contacts in result list, contactid to index in \sa result lookup
+    QHash<quint32, int> id2ContactLookup;
+    // metacontact to index in \sa result lookup - index of metacontact contact: only 1 contact returned when multiple have the same metacontact
+    QHash<QString, int> metacontactLookup;
+
 };
-
-/*!
- * Running QContactLocalIdFetchRequest. Doing the async tracker query and when data is ready setting the
- * finished status of request. \sa QTrackerContactIdFetchRequest
- */
-class QTrackerContactIdFetchRequest : public QObject, public QTrackerContactAsyncRequest
-{
-    Q_OBJECT
-public:
-    QTrackerContactIdFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
-public slots:
-    void modelUpdated();
-
-protected:
-    SopranoLive::LiveNodes query;
-};
-
-
 
 #endif /* QTRACKERCONTACTASYNCREQUEST_H_ */

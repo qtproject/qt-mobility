@@ -97,9 +97,15 @@ QRadioTunerControl::~QRadioTunerControl()
 }
 
 /*!
-    \fn QtMedia::Availability QRadioTunerControl::availability() const
+    \fn bool QRadioTunerControl::isAvailable() const
 
-    Returns the state of the radio service.
+    Returns true if the radio service is ready to use.
+*/
+
+/*!
+    \fn QtMedia::AvailabilityError QRadioTunerControl::availabilityError() const
+
+    Returns the error state of the radio service.
 */
 
 /*!

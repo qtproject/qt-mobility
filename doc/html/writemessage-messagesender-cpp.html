@@ -56,6 +56,8 @@
 
     #include &quot;messagesender.h&quot;
 
+    #include &lt;QComboBox&gt;
+    #include &lt;QCoreApplication&gt;
     #include &lt;QDateTime&gt;
     #include &lt;QFileDialog&gt;
     #include &lt;QGroupBox&gt;
@@ -71,6 +73,7 @@
 
     MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
         : QWidget(parent, flags),
+          accountCombo(0),
           toEdit(0),
           subjectEdit(0),
           textEdit(0),
@@ -79,11 +82,17 @@
           addButton(0),
           attachmentsList(0)
     {
-        setWindowTitle(tr(&quot;Send Message&quot;));
+        setWindowTitle(tr(&quot;Write Message&quot;));
+
+        accountCombo = new QComboBox;
+        connect(accountCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(accountSelected(int)));
 
         toEdit = new QLineEdit;
 
         subjectEdit = new QLineEdit;
+
+        QLabel *accountLabel = new QLabel(tr(&quot;Account&quot;));
+        accountLabel-&gt;setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
         QLabel *toLabel = new QLabel(tr(&quot;To&quot;));
         toLabel-&gt;setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -93,12 +102,15 @@
 
         QGridLayout *metaDataLayout = new QGridLayout;
         metaDataLayout-&gt;setContentsMargins(0, 0, 0, 0);
-        metaDataLayout-&gt;addWidget(toLabel, 0, 0);
+        metaDataLayout-&gt;addWidget(accountLabel, 0, 0);
+        metaDataLayout-&gt;setAlignment(accountLabel, Qt::AlignRight);
+        metaDataLayout-&gt;addWidget(toLabel, 1, 0);
         metaDataLayout-&gt;setAlignment(toLabel, Qt::AlignRight);
-        metaDataLayout-&gt;addWidget(subjectLabel, 1, 0);
+        metaDataLayout-&gt;addWidget(subjectLabel, 2, 0);
         metaDataLayout-&gt;setAlignment(subjectLabel, Qt::AlignRight);
-        metaDataLayout-&gt;addWidget(toEdit, 0, 1);
-        metaDataLayout-&gt;addWidget(subjectEdit, 1, 1);
+        metaDataLayout-&gt;addWidget(accountCombo, 0, 1);
+        metaDataLayout-&gt;addWidget(toEdit, 1, 1);
+        metaDataLayout-&gt;addWidget(subjectEdit, 2, 1);
 
         removeButton = new QPushButton(tr(&quot;Remove&quot;));
         removeButton-&gt;setEnabled(false);
@@ -141,11 +153,53 @@
         mainLayout-&gt;addWidget(sendButton, 0);
         mainLayout-&gt;setAlignment(sendButton, Qt::AlignRight);
 
-        connect(&amp;service, SIGNAL(stateChanged(QMessageServiceAction::State)), this, SLOT(stateChanged(QMessageServiceAction::State)));
+        connect(&amp;service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
+
+        QTimer::singleShot(0, this, SLOT(populateAccounts()));
     }
 
     MessageSender::~MessageSender()
     {
+    }
+
+    void MessageSender::populateAccounts()
+    {
+    #ifndef _WIN32_WCE
+        <span class="comment">// How long can the accounts query take?</span>
+        setCursor(Qt::BusyCursor);
+    #endif
+
+        <span class="comment">// Find the list of available accounts and add them to combo box</span>
+        foreach (const QMessageAccountId &amp;id, manager.queryAccounts()) {
+            QMessageAccount account(id);
+
+            <span class="comment">// What is the most capable message type supported by this account?</span>
+            QMessage::Type type(QMessage::NoType);
+            if (account.messageTypes() &amp; QMessage::Email) {
+                type = QMessage::Email;
+            } else if (account.messageTypes() &amp; QMessage::Mms) {
+                type = QMessage::Mms;
+            } else if (account.messageTypes() &amp; QMessage::Sms) {
+                type = QMessage::Sms;
+            }
+
+            if (type != QMessage::NoType) {
+                QString name(account.name());
+                accountDetails.insert(name, qMakePair(type, account.id()));
+                accountCombo-&gt;addItem(name);
+            }
+        }
+
+        if (accountDetails.isEmpty()) {
+            QMessageBox::warning(0, tr(&quot;Cannot send&quot;), tr(&quot;No accounts are available to send with!&quot;));
+            QCoreApplication::instance()-&gt;quit();
+        } else {
+            accountCombo-&gt;setCurrentIndex(0);
+        }
+
+    #ifndef _WIN32_WCE
+        setCursor(Qt::ArrowCursor);
+    #endif
     }
 
     void MessageSender::removeAttachment()
@@ -164,6 +218,22 @@
         }
     }
 
+    void MessageSender::accountSelected(int index)
+    {
+        QString name(accountCombo-&gt;itemText(index));
+        if (!name.isEmpty()) {
+            QPair&lt;QMessage::Type, QMessageAccountId&gt; details = accountDetails[name];
+
+            <span class="comment">// Enable subject only for email</span>
+            subjectEdit-&gt;setEnabled(details.first == QMessage::Email);
+
+            <span class="comment">// Disable attachments for SMS</span>
+            const bool smsOnly(details.first == QMessage::Sms);
+            addButton-&gt;setEnabled(!smsOnly);
+            removeButton-&gt;setEnabled(!smsOnly);
+        }
+    }
+
     void MessageSender::attachmentSelected(int index)
     {
         removeButton-&gt;setEnabled(index != -1);
@@ -171,62 +241,84 @@
 
     void MessageSender::send()
     {
-        QString to(toEdit-&gt;text());
-        if (to.isEmpty()) {
-            QMessageBox::warning(0, &quot;Missing information&quot;, &quot;Please enter a recipient address&quot;);
-            return;
-        }
-
-        QString subject(subjectEdit-&gt;text());
-        if (subject.isEmpty()) {
-            QMessageBox::warning(0, &quot;Missing information&quot;, &quot;Please enter a subject&quot;);
-            return;
-        }
-
-        QString text(textEdit-&gt;toPlainText());
-        if (text.isEmpty()) {
-            QMessageBox::warning(0, &quot;Missing information&quot;, &quot;Please enter a message&quot;);
+        QString accountName(accountCombo-&gt;currentText());
+        if (accountName.isEmpty()) {
+            QMessageBox::warning(0, tr(&quot;Missing information&quot;), tr(&quot;No account is selected for transmission&quot;));
             return;
         }
 
         QMessage message;
-        message.setType(QMessage::Email);
-        message.setTo(QMessageAddress(to, QMessageAddress::Email));
-        message.setSubject(subject);
 
+        QPair&lt;QMessage::Type, QMessageAccountId&gt; details = accountDetails[accountName];
+        message.setType(details.first);
+        message.setParentAccountId(details.second);
+
+        QString to(toEdit-&gt;text());
+        if (to.isEmpty()) {
+            QMessageBox::warning(0, tr(&quot;Missing information&quot;), tr(&quot;Please enter a recipient address&quot;));
+            return;
+        }
+
+        <span class="comment">// Find the address type to use for this message</span>
+        QMessageAddress::Type addrType(message.type() == QMessage::Email ? QMessageAddress::Email : QMessageAddress::Phone);
+
+        QMessageAddressList toList;
+        foreach (const QString &amp;item, to.split(QRegExp(&quot;\\s&quot;), QString::SkipEmptyParts)) {
+            toList.append(QMessageAddress(addrType, item));
+        }
+        message.setTo(toList);
+
+        if (message.type() == QMessage::Email) {
+            QString subject(subjectEdit-&gt;text());
+            if (subject.isEmpty()) {
+                QMessageBox::warning(0, tr(&quot;Missing information&quot;), tr(&quot;Please enter a subject&quot;));
+                return;
+            }
+            message.setSubject(subject);
+        }
+
+        QString text(textEdit-&gt;toPlainText());
+        if (text.isEmpty()) {
+            QMessageBox::warning(0, tr(&quot;Missing information&quot;), tr(&quot;Please enter a message&quot;));
+            return;
+        }
         message.setBody(text);
 
-        if (attachmentsList-&gt;count()) {
-            QStringList paths;
-            for (int i = 0; i &lt; attachmentsList-&gt;count(); ++i) {
-                paths.append(attachmentsList-&gt;item(i)-&gt;text());
-            }
+        if (message.type() != QMessage::Sms) {
+            if (attachmentsList-&gt;count()) {
+                QStringList paths;
+                for (int i = 0; i &lt; attachmentsList-&gt;count(); ++i) {
+                    paths.append(attachmentsList-&gt;item(i)-&gt;text());
+                }
 
-            message.appendAttachments(paths);
+                message.appendAttachments(paths);
+            }
         }
 
         if (service.send(message)) {
             sendButton-&gt;setEnabled(false);
             sendId = message.id();
         } else {
-            QMessageBox::warning(0, &quot;Failed&quot;, &quot;Unable to send message&quot;);
+            QMessageBox::warning(0, tr(&quot;Failed&quot;), tr(&quot;Unable to send message&quot;));
         }
     }
 
-    void MessageSender::stateChanged(QMessageServiceAction::State s)
+    void MessageSender::stateChanged(QMessageService::State newState)
     {
-        if (s == QMessageServiceAction::Successful) {
-            QMessageBox::information(0, &quot;Success&quot;, &quot;Message sent successfully&quot;);
-            sendButton-&gt;setEnabled(true);
-        } else if (s == QMessageServiceAction::Failed) {
-            QMessageBox::warning(0, &quot;Failed&quot;, &quot;Unable to send message&quot;);
+        if (newState == QMessageService::FinishedState) {
+            if (service.error() == QMessageManager::NoError) {
+                QMessageBox::information(0, tr(&quot;Success&quot;), tr(&quot;Message sent successfully&quot;));
+            } else {
+                QMessageBox::warning(0, tr(&quot;Failed&quot;), tr(&quot;Unable to send message&quot;));
 
-            if (!QMessageStore::instance()-&gt;removeMessage(sendId)) {
-                qWarning() &lt;&lt; &quot;Unable to remove failed message:&quot; &lt;&lt; sendId.toString();
+                <span class="comment">// Try to delete the failed message</span>
+                if (!manager.removeMessage(sendId)) {
+                    qWarning() &lt;&lt; &quot;Unable to remove failed message:&quot; &lt;&lt; sendId.toString();
+                }
             }
 
-            sendButton-&gt;setEnabled(true);
             sendId = QMessageId();
+            sendButton-&gt;setEnabled(true);
         }
     }</pre>
 <p /><address><hr /><div align="center">

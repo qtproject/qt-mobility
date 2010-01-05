@@ -144,7 +144,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
         }
 
         // the engine factory could lie to us, so check the real implementation version
-        if (m_engine->version() != apiVersion || (implementationVersion != -1 && m_engine->implementationVersion() != implementationVersion)) {
+        if (m_engine && (m_engine->version() != apiVersion || (implementationVersion != -1 && m_engine->implementationVersion() != implementationVersion))) {
             m_error = QContactManager::VersionMismatchError;
             m_engine = 0;
         }

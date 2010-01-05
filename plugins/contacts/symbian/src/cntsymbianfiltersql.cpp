@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
 
 #include "cntsymbianfiltersql.h"
 #include "qcontactdetailfilter.h"
@@ -48,57 +48,65 @@
 #include <e32cmn.h>
 #include <cntdb.h>
 
-QContactSymbianFilter::QContactSymbianFilter(CContactDatabase& contactDatabase):
+CntSymbianFilter::CntSymbianFilter(CContactDatabase& contactDatabase):
     m_contactDatabase(contactDatabase)
 {
+    m_sqlhelper = new CntSymbianFilterSqlHelper(contactDatabase);
 }
 
-QContactSymbianFilter::~QContactSymbianFilter()
+CntSymbianFilter::~CntSymbianFilter()
 {
+    delete m_sqlhelper;
 }
 
-QList<QContactLocalId> QContactSymbianFilter::contacts(
+QList<QContactLocalId> CntSymbianFilter::contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
+            bool &filterSupportedFlag,
             QContactManager::Error& error)
 {
     QList<QContactLocalId> matches;
-
-    if (filter.type() == QContactFilter::ContactDetailFilter)
+    
+    //temp solution to retrieve all contacts
+    if(filter.type() == QContactFilter::DefaultFilter)
     {
-        const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName) {
-            QString number((detailFilter.value()).toString());
-            TPtrC commPtr(reinterpret_cast<const TUint16*>(number.utf16()));
-            // TODO: Leaving code in a non-leaving function!!!
-            CContactIdArray* idArray = m_contactDatabase.MatchPhoneNumberL(commPtr, 7);
-            CleanupStack::PushL(idArray);
-            for(int i(0); i < idArray->Count(); i++)
-                matches.append(QContactLocalId((*idArray)[i]));
-            CleanupStack::PopAndDestroy(idArray);
-        } else {
-            error = QContactManager::NotSupportedError;
+        TTime epoch(0);
+        CContactIdArray* idArray = m_contactDatabase.ContactsChangedSinceL(epoch); // return all contacts
+        
+        // copy the matching contact ids
+        for(int i(0); i < idArray->Count(); i++) {
+            matches.append(QContactLocalId((*idArray)[i]));
         }
     }
+    
     else
     {
-        error = QContactManager::NotSupportedError;
+        //sort order not supported yet
+        matches = m_sqlhelper->searchContacts(filter,error);
+        // Tell the caller do slow filtering if the filter is not supported
+        filterSupportedFlag = filterSupported(filter);
     }
+    
     return matches;
 }
 
-CntAbstractContactFilter::FilterSupport QContactSymbianFilter::filterSupported(const QContactFilter& filter)
+bool CntSymbianFilter::filterSupported(const QContactFilter& filter)
 {
-    // TODO: modify depending on the supported filters
+    TBool result;
 
-    FilterSupport filterSupported(NotSupported);
-    if (filter.type() == QContactFilter::ContactDetailFilter) {
-        const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-        if (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName)
-            filterSupported = Supported;
+    // Map filter support into a boolean value
+    FilterSupport support = filterSupportLevel(filter);
+    if (support == Supported || support == SupportedPreFilterOnly) {
+        result = true;
+    } else {
+        result = false;
     }
-    return filterSupported;
+    return result;
+}
+
+CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(const QContactFilter& filter)
+{
+    return m_sqlhelper->filterSupportLevel(filter);
 }
 
 #endif

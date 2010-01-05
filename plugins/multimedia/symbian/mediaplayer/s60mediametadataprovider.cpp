@@ -154,13 +154,13 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
         case QtMedia::Lyrics:
         case QtMedia::Mood:
         case QtMedia::TrackCount:
-        case QtMedia::CoverArtUriSmall:
-        case QtMedia::CoverArtUriLarge:
+        case QtMedia::CoverArtUrlSmall:
+        case QtMedia::CoverArtUrlLarge:
         case QtMedia::Resolution:
         case QtMedia::PixelAspectRatio:
         case QtMedia::VideoFrameRate:
         case QtMedia::VideoCodec:
-        case QtMedia::PosterUri:
+        case QtMedia::PosterUrl:
         case QtMedia::ChapterNumber:
         case QtMedia::Director:
         case QtMedia::LeadPerformer:
