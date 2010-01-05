@@ -39,39 +39,115 @@
 **
 ****************************************************************************/
 
-#include <n900filebasedsensor.h>
 #include <qproximitysensor.h>
+#include <QDebug>
+#include <string.h>
 
 QTM_BEGIN_NAMESPACE
 
-class n900proximitysensor : public n900filebasedsensor<QProximityReading>
+class n900proximitysensor : public QProximityBackend
 {
 public:
     n900proximitysensor()
-        : n900filebasedsensor<QProximityReading>("/sys/bus/platform/devices/proximity/state")
+        : m_interval(0)
+        , m_timerid(0)
+        , m_filename("/sys/bus/platform/devices/proximity/state")
     {
     }
 
-    QString name() const
+    QSensor::UpdatePolicies supportedPolicies() const
     {
-        return tr("N900 proximity sensor");
+        return (QSensor::OccasionalUpdates |
+                QSensor::InfrequentUpdates |
+                QSensor::FrequentUpdates |
+                QSensor::TimedUpdates |
+                QSensor::PolledUpdates);
     }
 
-    void extract_value(FILE *fd)
+    void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
     {
-        m_reading.timestamp = QTime::currentTime();
-        char buffer[20];
-	int rs = fscanf(fd, "%s", buffer);
-        Q_ASSERT(rs == 1);
-        if (strcmp(buffer, "closed") == 0) {
-            m_reading.distance = 0;
-        } else {
-            m_reading.distance = -2;
+        rememberUpdatePolicy(policy, interval);
+
+        if (m_timerid)
+            return;
+
+        switch (policy) {
+        case QSensor::OccasionalUpdates:
+        case QSensor::InfrequentUpdates:
+        case QSensor::FrequentUpdates:
+            m_interval = suggestedInterval(policy);
+            break;
+        case QSensor::TimedUpdates:
+            m_interval = interval;
+            break;
+        case QSensor::PolledUpdates:
+            m_interval = 0;
+            break;
+        default:
+            break;
         }
     }
+
+    bool start()
+    {
+        if (m_interval)
+            m_timerid = startTimer(m_interval);
+        return true;
+    }
+
+    void stop()
+    {
+        if (m_timerid) {
+            killTimer(m_timerid);
+            m_timerid = -1;
+        }
+    }
+
+    void timerEvent(QTimerEvent * /*event*/)
+    {
+        poll();
+    }
+
+    void poll()
+    {
+        qWarning() << "poll";
+        QTime timestamp = QTime::currentTime();
+        FILE *fd = fopen(m_filename, "r");
+        if (!fd) return;
+        char buffer[20];
+	int rs = fscanf(fd, "%s", buffer);
+        fclose(fd);
+        if (rs != 1) return;
+
+        QProximityReading::Proximity proximity = QProximityReading::Undefined;
+        if (strcmp(buffer, "closed") == 0) {
+            proximity = QProximityReading::Close;
+        } else {
+            proximity = QProximityReading::NotClose;
+        }
+
+        m_lastReading = QProximityReading(timestamp, proximity);
+        if (m_interval)
+            m_sensor->newReadingAvailable();
+    }
+
+    QProximityReading currentReading()
+    {
+        if (m_interval == 0)
+            poll();
+        return m_lastReading;
+    }
+
+private:
+    int m_interval;
+    int m_timerid;
+    const char *m_filename;
+    QProximityReading m_lastReading;
 };
 
-QTM_END_NAMESPACE
+REGISTER_SENSOR(n900proximitysensor,
+        QProximitySensor::typeId,
+        QByteArray("n900.proximity"))
 
-REGISTER_SENSOR(QTM_NAMESPACE::n900proximitysensor, "n900.proximity")
+QTM_END_NAMESPACE
 

@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include <qsensorbackend.h>
 #include <qaccelerationsensor.h>
 #include <QDebug>
 
@@ -113,11 +112,11 @@ public:
         qWarning() << "poll";
         QTime timestamp = QTime::currentTime();
         FILE *fd = fopen(m_filename, "r");
-        if (!fd) return; //Q_ASSERT(fd);
+        if (!fd) return;
         int x, y, z;
 	int rs = fscanf(fd, "%i %i %i", &x, &y, &z);
-        if (rs != 3) return; //Q_ASSERT(rs == 3);
         fclose(fd);
+        if (rs != 3) return;
 
         m_lastReading = QAccelerationReading(timestamp, x, y, z);
         if (m_interval)
@@ -138,7 +137,9 @@ private:
     QAccelerationReading m_lastReading;
 };
 
-REGISTER_SENSOR(n900accelerationsensor, QAccelerationSensor::typeId, QByteArray("n900.acceleration"))
+REGISTER_SENSOR(n900accelerationsensor,
+        QAccelerationSensor::typeId,
+        QByteArray("n900.acceleration"))
 
 QTM_END_NAMESPACE
 

@@ -39,36 +39,119 @@
 **
 ****************************************************************************/
 
-#include <n900filebasedsensor.h>
 #include <qambientlightsensor.h>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-class n900lightsensor : public n900filebasedsensor<QAmbientLightReading>
+class n900lightsensor : public QAmbientLightBackend
 {
 public:
     n900lightsensor()
-        : n900filebasedsensor<QAmbientLightReading>("/sys/class/i2c-adapter/i2c-2/2-0029/lux")
+        : m_interval(0)
+        , m_timerid(0)
+        , m_filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux")
     {
     }
 
-    QString name() const
+    QSensor::UpdatePolicies supportedPolicies() const
     {
-        return tr("N900 ambient light sensor");
+        return (QSensor::OccasionalUpdates |
+                QSensor::InfrequentUpdates |
+                QSensor::FrequentUpdates |
+                QSensor::TimedUpdates |
+                QSensor::PolledUpdates);
     }
 
-    void extract_value(FILE *fd)
+    void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
     {
-        Q_UNUSED(fd)
-        /*
-        m_reading.timestamp = QTime::currentTime();
-	int rs = fscanf(fd, "%i", &m_reading.lux);
-        Q_ASSERT(rs == 1);
-        */
+        rememberUpdatePolicy(policy, interval);
+
+        if (m_timerid)
+            return;
+
+        switch (policy) {
+        case QSensor::OccasionalUpdates:
+        case QSensor::InfrequentUpdates:
+        case QSensor::FrequentUpdates:
+            m_interval = suggestedInterval(policy);
+            break;
+        case QSensor::TimedUpdates:
+            m_interval = interval;
+            break;
+        case QSensor::PolledUpdates:
+            m_interval = 0;
+            break;
+        default:
+            break;
+        }
     }
+
+    bool start()
+    {
+        if (m_interval)
+            m_timerid = startTimer(m_interval);
+        return true;
+    }
+
+    void stop()
+    {
+        if (m_timerid) {
+            killTimer(m_timerid);
+            m_timerid = -1;
+        }
+    }
+
+    void timerEvent(QTimerEvent * /*event*/)
+    {
+        poll();
+    }
+
+    void poll()
+    {
+        qWarning() << "poll";
+        QTime timestamp = QTime::currentTime();
+        FILE *fd = fopen(m_filename, "r");
+        if (!fd) return;
+        int lux;
+	int rs = fscanf(fd, "%i", &lux);
+        fclose(fd);
+        if (rs != 1) return;
+
+        QAmbientLightReading::LightLevel lightLevel = QAmbientLightReading::Undefined;
+        if (lux < 10)
+            lightLevel = QAmbientLightReading::Dark;
+        else if (lux < 50)
+            lightLevel = QAmbientLightReading::Twilight;
+        else if (lux < 100)
+            lightLevel = QAmbientLightReading::Light;
+        else if (lux < 150)
+            lightLevel = QAmbientLightReading::Bright;
+        else
+            lightLevel = QAmbientLightReading::Sunny;
+
+        m_lastReading = QAmbientLightReading(timestamp, lightLevel);
+        if (m_interval)
+            m_sensor->newReadingAvailable();
+    }
+
+    QAmbientLightReading currentReading()
+    {
+        if (m_interval == 0)
+            poll();
+        return m_lastReading;
+    }
+
+private:
+    int m_interval;
+    int m_timerid;
+    const char *m_filename;
+    QAmbientLightReading m_lastReading;
 };
 
-QTM_END_NAMESPACE
+REGISTER_SENSOR(n900lightsensor,
+        QAmbientLightSensor::typeId,
+        QByteArray("n900.light"))
 
-REGISTER_SENSOR(QTM_NAMESPACE::n900lightsensor, "n900.light")
+QTM_END_NAMESPACE
 
