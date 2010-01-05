@@ -139,7 +139,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     Attempts to get the current satellite information and emit
     satellitesInViewUpdated() and satellitesInUseUpdated() with this
     information. If the current position cannot be found
-    within the given \a timeout (in milliseconds), requestTimeout() is
+    within the given \a timeout (in milliseconds), updateTimeout() is
     emitted.
 
     If the timeout is zero, the timeout defaults to a reasonable timeout
@@ -151,7 +151,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 */
 
 /*!
-    \fn void QGeoSatelliteInfoSource::requestTimeout();
+    \fn void QGeoSatelliteInfoSource::updateTimeout();
 
     Emitted if requestUpdate() was called and the current satellite
     information could not be retrieved within the specified timeout.

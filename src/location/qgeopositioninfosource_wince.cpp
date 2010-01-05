@@ -73,11 +73,11 @@ QGeoPositionInfoSourceWinCE::QGeoPositionInfoSourceWinCE(QObject *parent)
     QGeoInfoValidator *validator = new QGeoPositionInfoValidator();
 
     // The QGeoInfoThreadWinCE instance takes ownership of the validator.
-    infoThread = new QGeoInfoThreadWinCE(validator, this);
+    infoThread = new QGeoInfoThreadWinCE(validator, true, this);
 
     // QGeoInfoThreadWinCE takes care of registering GPS_POSITION as a metatype.
     connect(infoThread, SIGNAL(dataUpdated(GPS_POSITION)), this, SLOT(dataUpdated(GPS_POSITION)));
-    connect(infoThread, SIGNAL(requestTimeout()), this, SIGNAL(requestTimeout()));
+    connect(infoThread, SIGNAL(updateTimeout()), this, SIGNAL(updateTimeout()));
 }
 
 QGeoPositionInfoSourceWinCE::~QGeoPositionInfoSourceWinCE()
@@ -125,9 +125,9 @@ void QGeoPositionInfoSourceWinCE::requestUpdate(int timeout)
 {
     // A timeout of 0 means to use the default timeout, which is handled by the QGeoInfoThreadWinCE
     // instance, otherwise if timeout is less than the minimum update interval we emit a
-    // requestTimeout signal
+    // updateTimeout signal
     if (timeout < minimumUpdateInterval() && timeout != 0)
-        emit requestTimeout();
+        emit updateTimeout();
     else
         infoThread->requestUpdate(timeout);
 }

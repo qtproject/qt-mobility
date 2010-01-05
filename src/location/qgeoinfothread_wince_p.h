@@ -84,7 +84,7 @@ public:
         MaximumMainLoopWaitTime = 5000
     };
 
-    QGeoInfoThreadWinCE(QGeoInfoValidator *validator, QObject *parent = 0);
+    QGeoInfoThreadWinCE(QGeoInfoValidator *validator, bool timeoutsForPeriodicUpdates, QObject *parent = 0);
     ~QGeoInfoThreadWinCE();
 
 //public slots:
@@ -95,7 +95,7 @@ public:
 
 signals:
     void dataUpdated(GPS_POSITION data);
-    void requestTimeout();
+    void updateTimeout();
 
 protected:
     void run();
@@ -115,6 +115,8 @@ private:
     bool updatesScheduled;
     qint32 updatesInterval;
     QDateTime updatesNextTime;
+
+    bool timeoutsForPeriodicUpdates;
 
     bool gpsReachedOnState;
 

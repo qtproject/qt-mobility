@@ -261,11 +261,6 @@ void TestQGeoPositionInfoSource::setPreferredPositioningMethods_data()
     << int(QGeoPositionInfoSource::AllPositioningMethods)
     << int(QGeoPositionInfoSource::AllPositioningMethods)
     << int(QGeoPositionInfoSource::AllPositioningMethods);
-
-    QTest::newRow("sat") << int(QGeoPositionInfoSource::SatellitePositioningMethods);
-    QTest::newRow("sat | non-sat") << int(QGeoPositionInfoSource::SatellitePositioningMethods
-                                          | QGeoPositionInfoSource::NonSatellitePositioningMethods);
-    QTest::newRow("all") << int(QGeoPositionInfoSource::AllPositioningMethods);
 }
 
 void TestQGeoPositionInfoSource::preferredPositioningMethods()
@@ -327,11 +322,16 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     CHECK_SOURCE_VALID;
 
     QFETCH(int, positioningMethod);
-    QFETCH(int, lastKnownPositionArgument);
-    QFETCH(int, positionValid);
+    QFETCH(bool, lastKnownPositionArgument);
+    QFETCH(bool, positionValid);
 
-    m_source->setPreferredPositioningMethods(
-        static_cast<QGeoPositionInfoSource::PositioningMethods>(positioningMethod));
+    QGeoPositionInfoSource::PositioningMethods method
+            = static_cast<QGeoPositionInfoSource::PositioningMethods>(positioningMethod);
+
+    if ((m_source->supportedPositioningMethods() & method) == 0)
+        QSKIP("Not a supported positioning method for this position source", SkipSingle);
+
+    m_source->setPreferredPositioningMethods(method);
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     int time_out = 20000;
@@ -380,33 +380,12 @@ void TestQGeoPositionInfoSource::lastKnownPosition_data()
     QTest::addColumn<bool>("lastKnownPositionArgument");
     QTest::addColumn<bool>("positionValid");
 
-    if (m_source != 0) {
-        QGeoPositionInfoSource::PositioningMethods methods = m_source->supportedPositioningMethods();
-        if ((methods & QGeoPositionInfoSource::SatellitePositioningMethods) != 0) {
-            QTest::newRow("satellite - false")
-            << int(QGeoPositionInfoSource::SatellitePositioningMethods)
-            << false << true;
-            QTest::newRow("satellite - true")
-            << int(QGeoPositionInfoSource::SatellitePositioningMethods)
-            << true << true;
-        }
-        if ((methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) != 0) {
-            QTest::newRow("nonsatellite - false")
-            << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
-            << false << false;
-            QTest::newRow("nonsatellite - true")
-            << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
-            << true << true;
-        }
-        if ((methods & QGeoPositionInfoSource::AllPositioningMethods) != 0) {
-            QTest::newRow("all - false")
-            << int(QGeoPositionInfoSource::AllPositioningMethods)
-            << false << true;
-            QTest::newRow("all - true")
-            << int(QGeoPositionInfoSource::AllPositioningMethods)
-            << true << true;
-        }
-    }
+    QTest::newRow("satellite - false") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << false << true;
+    QTest::newRow("satellite - true") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << true << true;
+    QTest::newRow("nonsatellite - false") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << false << false;
+    QTest::newRow("nonsatellite - true") << int(QGeoPositionInfoSource::NonSatellitePositioningMethods) << true << true;
+    QTest::newRow("all - false") << int(QGeoPositionInfoSource::AllPositioningMethods) << false << true;
+    QTest::newRow("all - true") << int(QGeoPositionInfoSource::AllPositioningMethods) << true << true;
 }
 
 void TestQGeoPositionInfoSource::minimumUpdateInterval()
@@ -598,7 +577,7 @@ void TestQGeoPositionInfoSource::requestUpdate()
     CHECK_SOURCE_VALID;
 
     QFETCH(int, timeout);
-    QSignalSpy spy(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spy(m_source, SIGNAL(updateTimeout()));
     m_source->requestUpdate(timeout);
     QTRY_COMPARE(spy.count(), 1);
 }
@@ -641,7 +620,7 @@ void TestQGeoPositionInfoSource::requestUpdate_timeoutLessThanMinimumInterval()
 {
     CHECK_SOURCE_VALID;
 
-    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
     m_source->requestUpdate(1);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
@@ -687,7 +666,7 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
-    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
@@ -717,7 +696,7 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
-    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->setUpdateInterval(10000);
     m_source->startUpdates();
@@ -747,7 +726,7 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
-    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(20000);
 
@@ -773,7 +752,7 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
-    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(5000);
 
@@ -796,11 +775,11 @@ void TestQGeoPositionInfoSource::removeSlotForRequestTimeout()
 {
     CHECK_SOURCE_VALID;
 
-    bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+    bool i = connect(m_source, SIGNAL(updateTimeout()), this, SLOT(test_slot1()));
     QVERIFY(i == true);
-    i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot2()));
+    i = connect(m_source, SIGNAL(updateTimeout()), this, SLOT(test_slot2()));
     QVERIFY(i == true);
-    i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+    i = disconnect(m_source, SIGNAL(updateTimeout()), this, SLOT(test_slot1()));
     QVERIFY(i == true);
 
     m_source->requestUpdate(-1);

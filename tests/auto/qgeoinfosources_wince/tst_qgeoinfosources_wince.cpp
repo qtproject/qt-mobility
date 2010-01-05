@@ -157,7 +157,7 @@ void tst_QGeoInfoSourcesWinCE::simultaneousUpdates()
 //   make a timeout harder to force
 void tst_QGeoInfoSourcesWinCE::satTriggerTimeoutSignal()
 {
-    QSignalSpy spyTimeout(satSource, SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(satSource, SIGNAL(updateTimeout()));
 
     satSource->requestUpdate(1);
 

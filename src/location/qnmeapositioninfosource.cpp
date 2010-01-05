@@ -325,7 +325,7 @@ void QNmeaPositionInfoSourcePrivate::requestUpdate(int msec)
         return;
 
     if (msec <= 0 || msec < m_source->minimumUpdateInterval()) {
-        emit m_source->requestTimeout();
+        emit m_source->updateTimeout();
         return;
     }
 
@@ -336,7 +336,7 @@ void QNmeaPositionInfoSourcePrivate::requestUpdate(int msec)
 
     bool initialized = initialize();
     if (!initialized) {
-        emit m_source->requestTimeout();
+        emit m_source->updateTimeout();
         return;
     }
 
@@ -349,7 +349,7 @@ void QNmeaPositionInfoSourcePrivate::requestUpdate(int msec)
 void QNmeaPositionInfoSourcePrivate::updateRequestTimeout()
 {
     m_requestTimer->stop();
-    emit m_source->requestTimeout();
+    emit m_source->updateTimeout();
 }
 
 void QNmeaPositionInfoSourcePrivate::notifyNewUpdate(QGeoPositionInfo *update, bool hasFix)

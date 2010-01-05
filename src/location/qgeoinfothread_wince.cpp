@@ -58,9 +58,10 @@ QGeoInfoValidator::~QGeoInfoValidator() {}
 
 // This QGeoInfoThreadWinCE instance takes ownership of the validator, and must delete it before
 // it is destructed.
-QGeoInfoThreadWinCE::QGeoInfoThreadWinCE(QGeoInfoValidator *validator, QObject *parent)
+QGeoInfoThreadWinCE::QGeoInfoThreadWinCE(QGeoInfoValidator *validator, bool timeoutsForPeriodicUpdates, QObject *parent)
         : QThread(parent),
         validator(validator),
+        timeoutsForPeriodicUpdates(timeoutsForPeriodicUpdates),
         requestScheduled(false),
         requestInterval(0),
         updatesScheduled(false),
@@ -339,15 +340,20 @@ void QGeoInfoThreadWinCE::run()
             // Check for request timeouts.
             if (requestScheduled && msecsTo(now, requestNextTime) < 0) {
                 requestScheduled = false;
-                emit requestTimeout();
+                emit updateTimeout();
             }
 
             // Check to see if a periodic update is due.
             if (updatesScheduled && updatesInterval != 0 && msecsTo(now, updatesNextTime) < 0) {
                 while (msecsTo(now, updatesNextTime) < 0)
                     updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
-                if (hasLastPosition)
+                if (hasLastPosition) {
+                    hasLastPosition = false;
                     emit dataUpdated(m_lastPosition);
+                } else {
+                    if (timeoutsForPeriodicUpdates)
+                        emit updateTimeout();
+                }
             }
         }
     }
