@@ -80,7 +80,7 @@ QGeoSatelliteInfoSourceWinCE::QGeoSatelliteInfoSourceWinCE(QObject *parent) : QG
 
     // QGeoInfoThreadWinCE takes care of registering GPS_POSITION as a metatype.
     connect(infoThread, SIGNAL(dataUpdated(GPS_POSITION)), this, SLOT(dataUpdated(GPS_POSITION)));
-    connect(infoThread, SIGNAL(updateTimeout()), this, SIGNAL(updateTimeout()));
+    connect(infoThread, SIGNAL(updateTimeout()), this, SIGNAL(requestTimeout()));
 }
 
 QGeoSatelliteInfoSourceWinCE::~QGeoSatelliteInfoSourceWinCE()
@@ -101,7 +101,7 @@ void QGeoSatelliteInfoSourceWinCE::stopUpdates()
 void QGeoSatelliteInfoSourceWinCE::requestUpdate(int timeout)
 {
     if (timeout < 0)
-        emit updateTimeout();
+        emit requestTimeout();
     else
         infoThread->requestUpdate(timeout);
 }

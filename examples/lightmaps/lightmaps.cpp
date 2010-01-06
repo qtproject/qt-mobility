@@ -318,7 +318,6 @@ public:
         }
 
         m_location = QGeoPositionInfoSource::createDefaultSource(this);
-        m_location->setUpdateInterval(20000);
 
         if (!m_location) {
             QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -454,6 +453,7 @@ private slots:
 
             m_satellite->stopUpdates();
 
+            delete dialog;
             delete m_satellite;
         }
 

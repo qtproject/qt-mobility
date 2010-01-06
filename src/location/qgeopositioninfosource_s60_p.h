@@ -270,6 +270,8 @@ private:
      */
     TBool mStartUpdates;
 
+    TBool mRegularUpdateTimedOut;
+
     /*
      * flags for the modules
      */

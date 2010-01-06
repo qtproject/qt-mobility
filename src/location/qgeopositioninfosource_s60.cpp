@@ -60,6 +60,7 @@ CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoP
         mCurrentMethod(PositioningMethod(0)),
         mListSize(0),
         mStartUpdates(FALSE),
+        mRegularUpdateTimedOut(FALSE),
         mModuleFlags(0)
 {
     memset(mList, 0 , MAX_SIZE * sizeof(CPosMethodInfo));
@@ -642,14 +643,30 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
         //fill posUpdate
         TPositionInfo2QGeoPositionInfo(aPosInfo, posInfo);
 
+        mRegularUpdateTimedOut = false;
+
         //emit posUpdate
         emit positionUpdated(posInfo);
     } else if (aError == KErrTimedOut) {
         //request has timed out
-        emit updateTimeout();
+        if (mStartUpdates) {
+            if (!mRegularUpdateTimedOut) {
+                mRegularUpdateTimedOut = true;
+                emit updateTimeout();
+            }
+        } else {
+            emit updateTimeout();
+        }
     } else {
         //posiitoning module is unable to return any position information
-        emit positionUpdated(posInfo);
+        if (mStartUpdates) {
+            if (!mRegularUpdateTimedOut) {
+                mRegularUpdateTimedOut = true;
+                emit updateTimeout();
+            }
+        } else {
+            emit positionUpdated(posInfo);
+        }
     }
 }
 
