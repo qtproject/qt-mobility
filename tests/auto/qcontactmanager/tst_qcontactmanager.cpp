@@ -756,6 +756,7 @@ void tst_QContactManager::update()
 {
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
+    bool didUpdate = false;
 
     /* Save a new contact first */
     QContact alice;
@@ -787,24 +788,32 @@ void tst_QContactManager::update()
             QContact updated = cm->contact(ids.at(i));
             QContactName cn = updated.detail(QContactName::DefinitionName);
             QCOMPARE(cn.middle(), nc.middle());
-            delete cm;
-            return; // pass
+            didUpdate = true;
+            break;
         }
     }
 
-    // now test context/subtype specific cases.
-    ph.setContexts(QStringList() << "Work" << "x-nokia-mobility-contacts-test-invalidcontext");
-    ph.setSubTypes("Mobile");
-    alice.saveDetail(&ph);
-    QVERIFY(!cm->saveContact(&alice)); // validation should fail due to invalid context
-    ph.setContexts(QStringList()); // empty list
-    QVERIFY(cm->saveContact(&alice));
-    QVERIFY(cm->contact(alice.id().localId()) == alice);
+    QVERIFY(didUpdate);
+
+    // Try changing types - not allowed
+    // from contact -> group
+    alice.setType(QContactType::TypeGroup);
+    alice.removeDetail(&na);
+    QVERIFY(!cm->saveContact(&alice));
+    QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
+    
+    // from group -> contact
+    QContact jabberwock;
+    QContactPhoneNumber n;
+    n.setNumber("1234567890");
+    jabberwock.saveDetail(&n);
+    jabberwock.setType(QContactType::TypeGroup);
+    QVERIFY(cm->saveContact(&jabberwock));
+    jabberwock.setType(QContactType::TypeContact);
+    QVERIFY(!cm->saveContact(&jabberwock));
+    QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
 
     delete cm;
-
-    // force fail.
-    QVERIFY(false);
 }
 
 void tst_QContactManager::remove()
@@ -1056,6 +1065,12 @@ void tst_QContactManager::invalidManager()
     /* Create an invalid manager */
     QContactManager manager("this should never work");
     QVERIFY(manager.managerName() == "invalid");
+    QVERIFY(manager.implementationVersion() == 0);
+
+    /* also, test the other ctor behaviour is sane also */
+    QContactManager anotherManager("this should never work", 15);
+    QVERIFY(anotherManager.managerName() == "invalid");
+    QVERIFY(anotherManager.implementationVersion() == 0);
 
     /* Now test that all the operations fail */
     QVERIFY(manager.contacts().count() == 0);
@@ -1083,7 +1098,6 @@ void tst_QContactManager::invalidManager()
 
     QVERIFY(manager.saveContacts(0) == QList<QContactManager::Error>());
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
-
 
     /* filters */
     QContactFilter f; // matches everything
@@ -1128,16 +1142,47 @@ void tst_QContactManager::invalidManager()
     fields.insert("value", currField);
     def.setFields(fields);
 
+    QVERIFY(manager.saveDetailDefinition(def, QContactType::TypeContact) == false);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.saveDetailDefinition(def) == false);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
+    QVERIFY(manager.detailDefinitions().count(QContactType::TypeContact) == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinitions().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinition("new field").name() == QString());
-
+    QVERIFY(manager.removeDetailDefinition(def.name(), QContactType::TypeContact) == false);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.removeDetailDefinition(def.name()) == false);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
     QVERIFY(manager.detailDefinitions().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
+
+    /* Self contact id */
+    QVERIFY(!manager.setSelfContactId(QContactLocalId(12)));
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.selfContactId() == QContactLocalId());
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::DoesNotExistError);
+
+    /* Relationships */
+    QContactId idOne, idTwo;
+    idOne.setLocalId(QContactLocalId(15));
+    idOne.setManagerUri(QString());
+    idTwo.setLocalId(QContactLocalId(22));
+    idTwo.setManagerUri(QString());
+    QContactRelationship invalidRel;
+    invalidRel.setFirst(idOne);
+    invalidRel.setSecond(idTwo);
+    QList<QContactRelationship> invalidRelList;
+    invalidRelList << invalidRel;
+    QVERIFY(!manager.saveRelationship(&invalidRel));
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    QVERIFY(manager.relationships().isEmpty());
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    manager.saveRelationships(&invalidRelList);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError);
+    manager.removeRelationships(invalidRelList);
+    QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::DoesNotExistError);
 
     /* Capabilities */
     QVERIFY(manager.supportedDataTypes().count() == 0);
@@ -2234,61 +2279,137 @@ void tst_QContactManager::detailOrders()
     QContactManager* cm = QContactManager::fromUri(uri);
 
     QContact a;
-    QContactName name;
-    QContactPhoneNumber number;
-    QContactEmailAddress email;
-    QContactAddress address;
+    //phone numbers
+    QContactPhoneNumber number1, number2, number3;
+    
+    number1.setNumber("11111111");
+    number1.setContexts(QContactPhoneNumber::ContextHome);
 
-    name.setFirst("Aaron");
-    name.setLast("Aaronson");
-    number.setNumber("555-1212");
-    email.setEmailAddress("aaron@example.com");
-    address.setStreet("Brandl St");
-    address.setRegion("Brisbane");
+    number2.setNumber("22222222");
+    number2.setContexts(QContactPhoneNumber::ContextWork);
 
-    a.saveDetail(&name);
-    a.saveDetail(&number);
-    a.saveDetail(&email);
-    a.saveDetail(&address);
+    number3.setNumber("33333333");
+    number3.setContexts(QContactPhoneNumber::ContextOther);
+
+    a.saveDetail(&number1);
+    a.saveDetail(&number2);
+    a.saveDetail(&number3);
 
     QVERIFY(cm->saveContact(&a));
-
     a = cm->contact(a.id().localId());
-
-    QList<QContactDetail> details = removeAllDefaultDetails(a.details());
-    QVERIFY(details.count() == 4);
-    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactEmailAddress::DefinitionName);
-    QVERIFY(details.at(3).definitionName() == QContactAddress::DefinitionName);
-
-    QVERIFY(a.removeDetail(&details[2]));
-    QVERIFY(cm->saveContact(&a));
-    a = cm->contact(a.id().localId());
-    details = removeAllDefaultDetails(a.details());
+    
+    QList<QContactDetail> details = a.details(QContactPhoneNumber::DefinitionName);
     QVERIFY(details.count() == 3);
-    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactAddress::DefinitionName);
-
-    a.saveDetail(&email);
-    QVERIFY(cm->saveContact(&a));
-    a = cm->contact(a.id().localId());
-    details = removeAllDefaultDetails(a.details());
-    QVERIFY(details.count() == 4);
-    QVERIFY(details.at(0).definitionName() == QContactName::DefinitionName);
-    QVERIFY(details.at(1).definitionName() == QContactPhoneNumber::DefinitionName);
-    QVERIFY(details.at(2).definitionName() == QContactAddress::DefinitionName);
-    QVERIFY(details.at(3).definitionName() == QContactEmailAddress::DefinitionName);
-
-    QVERIFY(a.removeDetail(&details[3]));
+    qDebug() << details.at(0).value(QContactPhoneNumber::FieldNumber);
+    qDebug() << details.at(1).value(QContactPhoneNumber::FieldNumber);
+    qDebug() << details.at(2).value(QContactPhoneNumber::FieldNumber);
+    QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
+    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextWork);
+    QVERIFY(details.at(2).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+    
     QVERIFY(a.removeDetail(&details[1]));
-    QVERIFY(a.removeDetail(&details[0]));
     QVERIFY(cm->saveContact(&a));
     a = cm->contact(a.id().localId());
-    details = removeAllDefaultDetails(a.details());
-    QVERIFY(details.count() == 1);
-    QVERIFY(details.at(0).definitionName() == QContactAddress::DefinitionName);
+    details = a.details(QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.count() == 2);
+    QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
+    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+
+    a.saveDetail(&number2);
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactPhoneNumber::DefinitionName);
+    QVERIFY(details.count() == 3);
+    QVERIFY(details.at(0).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextHome);
+    QVERIFY(details.at(1).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextOther);
+    QVERIFY(details.at(2).value(QContactPhoneNumber::FieldContext) == QContactPhoneNumber::ContextWork);
+
+    //addresses
+    QContactAddress address1, address2, address3;
+    
+    address1.setStreet("Brandl St");
+    address1.setRegion("Brisbane");
+    address3 = address2 = address1;
+
+    address1.setContexts(QContactAddress::ContextHome);
+    address2.setContexts(QContactAddress::ContextWork);
+    address3.setContexts(QContactAddress::ContextOther);
+
+    a.saveDetail(&address1);
+    a.saveDetail(&address2);
+    a.saveDetail(&address3);
+
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactAddress::DefinitionName);
+    QVERIFY(details.count() == 3);
+    
+    QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextWork);
+    QVERIFY(details.at(2).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+
+    QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    details = a.details(QContactAddress::DefinitionName);
+    QVERIFY(details.count() == 2);
+    QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+
+    a.saveDetail(&address2);
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactAddress::DefinitionName);
+    QVERIFY(details.count() == 3);
+    QVERIFY(details.at(0).value(QContactAddress::FieldContext) == QContactAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactAddress::FieldContext) == QContactAddress::ContextOther);
+    QVERIFY(details.at(2).value(QContactAddress::FieldContext) == QContactAddress::ContextWork);
+
+
+    //emails
+    QContactEmailAddress email1, email2, email3;
+
+    email1.setEmailAddress("aaron@example.com");
+    email3 = email2 = email1;
+    email1.setContexts(QContactEmailAddress::ContextHome);
+    email2.setContexts(QContactEmailAddress::ContextWork);
+    email3.setContexts(QContactEmailAddress::ContextOther);
+
+    a.saveDetail(&email1);
+    a.saveDetail(&email2);
+    a.saveDetail(&email3);
+
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactEmailAddress::DefinitionName);
+    QVERIFY(details.count() == 3);
+    
+    QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextWork);
+    QVERIFY(details.at(2).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+
+    QVERIFY(a.removeDetail(&details[1]));
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    details = a.details(QContactEmailAddress::DefinitionName);
+    QVERIFY(details.count() == 2);
+    QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+
+    a.saveDetail(&email2);
+    QVERIFY(cm->saveContact(&a));
+    a = cm->contact(a.id().localId());
+    
+    details = a.details(QContactEmailAddress::DefinitionName);
+    QVERIFY(details.count() == 3);
+    QVERIFY(details.at(0).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextHome);
+    QVERIFY(details.at(1).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextOther);
+    QVERIFY(details.at(2).value(QContactEmailAddress::FieldContext) == QContactEmailAddress::ContextWork);
+
 
     QVERIFY(cm->removeContact(a.id().localId()));
     QVERIFY(cm->error() == QContactManager::NoError);
@@ -2299,50 +2420,39 @@ void tst_QContactManager::relationships()
     QFETCH(QString, uri);
     QContactManager* cm = QContactManager::fromUri(uri);
 
-    if (!cm->hasFeature(QContactManager::Relationships))
-        QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
-
-    int totalRelationships = cm->relationships().size();
-    int totalManagerRelationships = cm->relationships(QContactRelationship::HasManager).size();
-
-    QStringList availableRelationshipTypes = cm->supportedRelationshipTypes();
-    if (availableRelationshipTypes.isEmpty()) {
-        // if empty, but has the relationships feature, then it must support arbitrary types.
-        // so, add a few types that we can use.
-        // if it doesn't support relationships, then it doesn't matter anyway.
-        availableRelationshipTypes.append(QContactRelationship::HasManager);
-        availableRelationshipTypes.append(QContactRelationship::HasSpouse);
-        availableRelationshipTypes.append(QContactRelationship::HasAssistant);
-    }
-
+    // save some contacts
     QContact source;
-    QContact dest1, dest2, dest3;
-    QContactPhoneNumber n1, n2, n3;
+    QContact dest1, dest2, dest3, dest4;
+    QContactPhoneNumber n1, n2, n3, n4;
     n1.setNumber("1");
     n2.setNumber("2");
     n3.setNumber("3");
+    n4.setNumber("4");
 
     dest1.saveDetail(&n1);
     dest2.saveDetail(&n2);
     dest3.saveDetail(&n3);
+    dest4.saveDetail(&n3);
 
     cm->saveContact(&source);
     cm->saveContact(&dest1);
     cm->saveContact(&dest2);
     cm->saveContact(&dest3);
+    cm->saveContact(&dest4);
 
+    // check if manager supports relationships
     if (!cm->hasFeature(QContactManager::Relationships)) {
         // ensure that the operations all fail as required.
         QContactRelationship r1, r2, r3;
         r1.setFirst(source.id());
         r1.setSecond(dest1.id());
-        r1.setRelationshipType(availableRelationshipTypes.at(0));
+        r1.setRelationshipType(QContactRelationship::HasManager);
         r2.setFirst(source.id());
         r2.setSecond(dest2.id());
-        r2.setRelationshipType(availableRelationshipTypes.at(0));
+        r2.setRelationshipType(QContactRelationship::HasManager);
         r3.setFirst(source.id());
         r3.setSecond(dest3.id());
-        r3.setRelationshipType(availableRelationshipTypes.at(0));
+        r3.setRelationshipType(QContactRelationship::HasManager);
 
         QList<QContactRelationship> batchList;
         batchList << r2 << r3;
@@ -2370,29 +2480,54 @@ void tst_QContactManager::relationships()
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
 
 
-        retrieveList = cm->relationships(availableRelationshipTypes.at(0), source.id(), QContactRelationshipFilter::First);
+        retrieveList = cm->relationships(QContactRelationship::HasManager, source.id(), QContactRelationshipFilter::First);
         QVERIFY(retrieveList.isEmpty());
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
-        retrieveList = cm->relationships(availableRelationshipTypes.at(0), source.id(), QContactRelationshipFilter::Second);
+        retrieveList = cm->relationships(QContactRelationship::HasManager, source.id(), QContactRelationshipFilter::Second);
         QVERIFY(retrieveList.isEmpty());
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
-        retrieveList = cm->relationships(availableRelationshipTypes.at(0), source.id(), QContactRelationshipFilter::Either);
+        retrieveList = cm->relationships(QContactRelationship::HasManager, source.id(), QContactRelationshipFilter::Either);
         QVERIFY(retrieveList.isEmpty());
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
-        retrieveList = cm->relationships(availableRelationshipTypes.at(0), source.id());
+        retrieveList = cm->relationships(QContactRelationship::HasManager, source.id());
         QVERIFY(retrieveList.isEmpty());
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
-        retrieveList = cm->relationships(availableRelationshipTypes.at(0));
+        retrieveList = cm->relationships(QContactRelationship::HasManager);
         QVERIFY(retrieveList.isEmpty());
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
-
-        //QSKIP("Skipping: This manager does not support relationships!", SkipSingle);
         return;
     }
+    
+    // Get supported relationship types
+    QStringList availableRelationshipTypes = cm->supportedRelationshipTypes();
+    
+    // Check arbitary relationship support
+    if (cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
+        // add some arbitary type for testing
+        if (availableRelationshipTypes.count())
+            availableRelationshipTypes.insert(0, "test-arbitrary-relationship-type");
+        else {
+            availableRelationshipTypes.append("test-arbitrary-relationship-type");
+            availableRelationshipTypes.append(QContactRelationship::HasMember);
+            availableRelationshipTypes.append(QContactRelationship::HasAssistant);
+        }
+    }
+    
+    // Verify that we have relationship types. If there are none then the manager
+    // is saying it supports relationships but does not actually implement any 
+    // relationship type.
+    QVERIFY(!availableRelationshipTypes.isEmpty());
+    
+    // Some backends (eg. symbian) require that when type is "HasMember" 
+    // then "first" contact must be a group.
+    if (availableRelationshipTypes.at(0) == QContactRelationship::HasMember) {
+        cm->removeContact(source.localId());
+        source.setId(QContactId());
+        source.setType(QContactType::TypeGroup);
+        cm->saveContact(&source);
+    }
 
-    totalRelationships = cm->relationships().size();
-    totalManagerRelationships = cm->relationships(QContactRelationship::HasManager).size();
-
+    // Create some common contact id's for testing
     QContactId dest1Uri = dest1.id();
     QContactId dest1EmptyUri;
     dest1EmptyUri.setManagerUri(QString());
@@ -2413,31 +2548,31 @@ void tst_QContactManager::relationships()
     QVERIFY(customRelationshipOne.relationshipType() == availableRelationshipTypes.at(0));
 
     // save the relationship
+    int managerRelationshipsCount = cm->relationships(availableRelationshipTypes.at(0)).count();
     QVERIFY(cm->saveRelationship(&customRelationshipOne));
     // test that the empty manager URI has been updated.
     QCOMPARE(customRelationshipOne.second(), dest1Uri); // updated with correct manager URI
 
     // test our accessors.
-    QCOMPARE(cm->relationships(availableRelationshipTypes.at(0)).size(), (totalManagerRelationships + 1));
-    QVERIFY(cm->relationships(availableRelationshipTypes.at(0), source.id()).size() == 1);
+    QCOMPARE(cm->relationships(availableRelationshipTypes.at(0)).count(), (managerRelationshipsCount + 1));
+    QVERIFY(cm->relationships(availableRelationshipTypes.at(0), source.id()).count() == 1);
 
-    // remove the dest1 contact, relationship shoudl be removed.
+    // remove the dest1 contact, relationship should be removed.
     cm->removeContact(dest1.localId());
-    QCOMPARE(cm->relationships(availableRelationshipTypes.at(0), dest1Uri, QContactRelationshipFilter::Second).size(), 0);
+    QCOMPARE(cm->relationships(availableRelationshipTypes.at(0), dest1Uri, QContactRelationshipFilter::Second).count(), 0);
 
     // modify and save the relationship
     customRelationshipOne.setSecond(dest2Uri);
     QVERIFY(cm->saveRelationship(&customRelationshipOne));
 
     // attempt to save the relationship again.  XXX TODO: what should the result be?  currently succeeds (overwrites)
-    int relationshipCount = cm->relationships().count();
+    int relationshipsCount = cm->relationships().count();
     QVERIFY(cm->saveRelationship(&customRelationshipOne));    // succeeds, but just overwrites
-    QCOMPARE(relationshipCount, cm->relationships().count()); // shouldn't change; save should have overwritten.
+    QCOMPARE(relationshipsCount, cm->relationships().count()); // shouldn't change; save should have overwritten.
 
     // removing the source contact should result in removal of the relationship.
-    QCOMPARE(cm->relationships().size(), (totalRelationships + 1));
     QVERIFY(cm->removeContact(source.id().localId()));
-    QCOMPARE(cm->relationships().size(), totalRelationships); // the relationship should have been removed.
+    QCOMPARE(cm->relationships().count(), relationshipsCount - 1); // the relationship should have been removed.
 
     // now ensure that qcontact relationship caching works as required - perhaps this should be in tst_QContact?
     source.setId(QContactId());         // reset id so we can resave
@@ -2446,13 +2581,15 @@ void tst_QContactManager::relationships()
     customRelationshipOne.setSecond(dest2.id());
     QVERIFY(cm->saveRelationship(&customRelationshipOne));
 
+    // Add a second relationship
     QContactRelationship customRelationshipTwo;
-    if (availableRelationshipTypes.size() > 1) {
-        customRelationshipTwo.setFirst(source.id());
+    customRelationshipTwo.setFirst(source.id());
+    if (availableRelationshipTypes.count() > 1)
         customRelationshipTwo.setRelationshipType(availableRelationshipTypes.at(1));
-        customRelationshipTwo.setSecond(dest3.id());
-        QVERIFY(cm->saveRelationship(&customRelationshipTwo));
-    }
+    else
+        customRelationshipTwo.setRelationshipType(availableRelationshipTypes.at(0));
+    customRelationshipTwo.setSecond(dest3.id());
+    QVERIFY(cm->saveRelationship(&customRelationshipTwo));
 
     // currently, the contacts are "stale" - no cached relationships
     QVERIFY(dest3.relatedContacts().isEmpty());
@@ -2466,64 +2603,52 @@ void tst_QContactManager::relationships()
     source = cm->contact(source.localId());
 
     // and test again.
-    QVERIFY(!dest3.relationships().contains(customRelationshipOne));
-    if (availableRelationshipTypes.size() > 1) {
-        QVERIFY(dest3.relatedContacts().contains(source.id()));
-        QVERIFY(dest3.relationships().contains(customRelationshipTwo));
-    }
+    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::First).isEmpty()); // source is always the first, so this should be empty.
+    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::Second).contains(dest2.id()));
+    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::Either).contains(dest2.id()));
+    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::Second).contains(dest3.id()));
+    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::Either).contains(dest3.id()));
+    QVERIFY(source.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).contains(dest2.id()));
+    QVERIFY(source.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::First).isEmpty());
+
     QVERIFY(dest2.relatedContacts().contains(source.id()));
+    QVERIFY(dest2.relationships().contains(customRelationshipOne));
+    QVERIFY(!dest2.relationships().contains(customRelationshipTwo));
+    QVERIFY(dest2.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipOne));
+    QVERIFY(!dest2.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipTwo));
     QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0)).contains(source.id()));
     QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::First).contains(source.id()));
     QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).isEmpty());
-    QVERIFY(dest2.relationships().contains(customRelationshipOne));
-    if (availableRelationshipTypes.size() > 1) {
-        QVERIFY(!dest2.relationships().contains(customRelationshipTwo));
-    }
-
+    QVERIFY(!dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).contains(source.id()));
+    
+    QVERIFY(dest3.relatedContacts().contains(source.id()));
+    QVERIFY(!dest3.relationships().contains(customRelationshipOne));
+    QVERIFY(dest3.relationships().contains(customRelationshipTwo));
     QVERIFY(!dest3.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipOne));
-    if (availableRelationshipTypes.size() > 1) {
+    
+    if (availableRelationshipTypes.count() > 1) {
+        QVERIFY(source.relatedContacts(availableRelationshipTypes.at(1), QContactRelationshipFilter::Second).contains(dest3.id()));
+        QVERIFY(source.relatedContacts(availableRelationshipTypes.at(1), QContactRelationshipFilter::First).isEmpty());
+        
+        QVERIFY(dest2.relationships(availableRelationshipTypes.at(1)).isEmpty());
+        
         QVERIFY(!dest3.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipTwo));
         QVERIFY(dest3.relationships(availableRelationshipTypes.at(1)).contains(customRelationshipTwo));
         QVERIFY(!dest3.relationships(availableRelationshipTypes.at(1)).contains(customRelationshipOne));
         QVERIFY(dest3.relatedContacts(availableRelationshipTypes.at(1)).contains(source.id()));
-    }
-
-    QVERIFY(dest2.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipOne));
-    QVERIFY(!dest2.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipTwo));
-    if (availableRelationshipTypes.size() > 1) {
-        QVERIFY(dest2.relationships(availableRelationshipTypes.at(1)).isEmpty());
-    }
-
-    QVERIFY(!dest3.relatedContacts(availableRelationshipTypes.at(0)).contains(source.id()));
-    if (availableRelationshipTypes.size() > 1) {
+        QVERIFY(!dest3.relatedContacts(availableRelationshipTypes.at(0)).contains(source.id()));
         QVERIFY(dest3.relatedContacts(availableRelationshipTypes.at(1)).contains(source.id())); // role = either
         QVERIFY(!dest3.relatedContacts(availableRelationshipTypes.at(1), QContactRelationshipFilter::Second).contains(source.id()));
         QVERIFY(dest3.relatedContacts(availableRelationshipTypes.at(1), QContactRelationshipFilter::First).contains(source.id()));
-    }
-
-    QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0)).contains(source.id()));
-    if (availableRelationshipTypes.size() > 1) {
         QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(1)).isEmpty());
     }
-    QVERIFY(!dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).contains(source.id()));
-    QVERIFY(dest2.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::First).contains(source.id()));
-
-    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::First).isEmpty()); // source is always the first, so this should be empty.
-    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::Second).contains(dest2.id()));
-    QVERIFY(source.relatedContacts(QString(), QContactRelationshipFilter::Either).contains(dest2.id()));
-    QVERIFY(source.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).contains(dest2.id()));
-    QVERIFY(source.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::First).isEmpty());
-
-    // test arbitrary relationship types.
-    if (cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
-        customRelationshipOne.setFirst(source.id());
-        customRelationshipOne.setSecond(dest3.id());
-        customRelationshipOne.setRelationshipType("test-arbitrary-relationship-type");
-        QVERIFY(cm->saveRelationship(&customRelationshipOne));
-        dest3 = cm->contact(dest3.localId()); // refresh
-        QVERIFY(dest3.relationships("test-arbitrary-relationship-type").size() == 1);
-        QVERIFY(dest3.relationships("test-arbitrary-relationship-type").contains(customRelationshipOne));
+    else {
+        QVERIFY(source.relatedContacts(availableRelationshipTypes.at(0), QContactRelationshipFilter::Second).contains(dest3.id()));
     }
+    
+    // Cleanup a bit
+    QVERIFY(cm->removeRelationship(customRelationshipOne));
+    QVERIFY(cm->removeRelationship(customRelationshipTwo));
 
     // test batch API and ordering in contacts
     QList<QContactRelationship> currentRelationships = cm->relationships(source.id(), QContactRelationshipFilter::First);
@@ -2531,13 +2656,22 @@ void tst_QContactManager::relationships()
     QContactRelationship br1, br2, br3;
     br1.setFirst(source.id());
     br1.setSecond(dest2.id());
-    br1.setRelationshipType(QContactRelationship::HasMember);
+    br1.setRelationshipType(availableRelationshipTypes.at(0));    
     br2.setFirst(source.id());
     br2.setSecond(dest3.id());
-    br2.setRelationshipType(QContactRelationship::HasMember);
-    br3.setFirst(source.id());
-    br3.setSecond(dest3.id());
-    br3.setRelationshipType(QContactRelationship::HasAssistant);
+    br2.setRelationshipType(availableRelationshipTypes.at(0));
+    if (availableRelationshipTypes.count() > 1)
+    {
+        br3.setFirst(source.id());
+        br3.setSecond(dest3.id());
+        br3.setRelationshipType(availableRelationshipTypes.at(1));
+    }
+    else
+    {
+        br3.setFirst(source.id());
+        br3.setSecond(dest4.id());
+        br3.setRelationshipType(availableRelationshipTypes.at(0));
+    }
     batchList << br1 << br2 << br3;
 
     // ensure that the batch save works properly
@@ -2547,41 +2681,45 @@ void tst_QContactManager::relationships()
     QVERIFY(batchRetrieve.contains(br1));
     QVERIFY(batchRetrieve.contains(br2));
     QVERIFY(batchRetrieve.contains(br3));
-
-    // test relationship ordering in the contact
-    source = cm->contact(source.localId());
-    QList<QContactRelationship> cachedRelationships = source.relationships();
-    QList<QContactRelationship> orderedRelationships = source.relationshipOrder();
-    QCOMPARE(cachedRelationships, orderedRelationships); // initially, should be the same
-    QVERIFY(orderedRelationships.contains(br1));
-    QVERIFY(orderedRelationships.contains(br2));
-    QVERIFY(orderedRelationships.contains(br3));
-
-    // ensure that the reordering works as required.
-    QContactRelationship temp1 = orderedRelationships.takeAt(0); // now fiddle with the order
-    QContactRelationship temp2 = orderedRelationships.at(0);     // this is the new first relationship
-    orderedRelationships.insert(2, temp1);                       // and save the old first back at position 3.
-    source.setRelationshipOrder(orderedRelationships);           // set the new relationship order
-    cm->saveContact(&source);                                    // save the contact to persist the new order
-    source = cm->contact(source.localId());                      // reload the contact
-    QCOMPARE(source.relationshipOrder(), orderedRelationships);  // ensure that it was persisted.
-
-    // now lets try a negative reordering test: adding relationships which don't exist in the database.
-    QContactRelationship maliciousRel;
-    maliciousRel.setFirst(source.id());
-    maliciousRel.setSecond(dest2.id());
-    maliciousRel.setRelationshipType("test-nokia-invalid-relationship-type");
-    orderedRelationships << maliciousRel;
-    source.setRelationshipOrder(orderedRelationships);
-    QVERIFY(!cm->saveContact(&source));
-    QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
-    orderedRelationships.removeOne(br3);
-    source.setRelationshipOrder(orderedRelationships);
-    QVERIFY(!cm->saveContact(&source));
-    QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
-    source.setRelationshipOrder(QList<QContactRelationship>());
-    QVERIFY(!cm->saveContact(&source));
-    QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+    
+    // Check relationship ordering support
+    if (cm->hasFeature(QContactManager::RelationshipOrdering))
+    {   
+        // test relationship ordering in the contact
+        source = cm->contact(source.localId());
+        QList<QContactRelationship> cachedRelationships = source.relationships();
+        QList<QContactRelationship> orderedRelationships = source.relationshipOrder();
+        QCOMPARE(cachedRelationships, orderedRelationships); // initially, should be the same
+        QVERIFY(orderedRelationships.contains(br1));
+        QVERIFY(orderedRelationships.contains(br2));
+        QVERIFY(orderedRelationships.contains(br3));    
+     
+        // ensure that the reordering works as required.
+        QContactRelationship temp1 = orderedRelationships.takeAt(0); // now fiddle with the order
+        QContactRelationship temp2 = orderedRelationships.at(0);     // this is the new first relationship
+        orderedRelationships.insert(2, temp1);                       // and save the old first back at position 3.
+        source.setRelationshipOrder(orderedRelationships);           // set the new relationship order
+        cm->saveContact(&source);                                    // save the contact to persist the new order
+        source = cm->contact(source.localId());                      // reload the contact
+        QCOMPARE(source.relationshipOrder(), orderedRelationships);  // ensure that it was persisted.
+    
+        // now lets try a negative reordering test: adding relationships which don't exist in the database.
+        QContactRelationship invalidRel;
+        invalidRel.setFirst(source.id());
+        invalidRel.setSecond(dest2.id());
+        invalidRel.setRelationshipType("test-nokia-invalid-relationship-type");
+        orderedRelationships << invalidRel;
+        source.setRelationshipOrder(orderedRelationships);
+        QVERIFY(!cm->saveContact(&source));
+        QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+        orderedRelationships.removeOne(br3);
+        source.setRelationshipOrder(orderedRelationships);
+        QVERIFY(!cm->saveContact(&source));
+        QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+        source.setRelationshipOrder(QList<QContactRelationship>());
+        QVERIFY(!cm->saveContact(&source));
+        QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
+    }
 
     // remove a single relationship
     QVERIFY(cm->removeRelationship(br3));
@@ -2614,6 +2752,7 @@ void tst_QContactManager::relationships()
         QVERIFY(nonexistentLocalId != QContactLocalId(0)); // integer overflow check.
     }
     nonexistentDest.setLocalId(nonexistentLocalId);
+    QContactRelationship maliciousRel;
     maliciousRel.setFirst(source.id());
     maliciousRel.setSecond(nonexistentDest);
     maliciousRel.setRelationshipType("nokia-test-invalid-relationship-type");
@@ -2649,10 +2788,10 @@ void tst_QContactManager::relationships()
     QVERIFY(!cm->saveRelationship(&maliciousRel));
 
     // remove the nonexistent relationship
-    relationshipCount = cm->relationships().count();
+    relationshipsCount = cm->relationships().count();
     QVERIFY(!cm->removeRelationship(maliciousRel));         // does not exist; fail remove.
-    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
-    QCOMPARE(cm->relationships().count(), relationshipCount); // should be unchanged.
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError || cm->error() == QContactManager::InvalidRelationshipError);
+    QCOMPARE(cm->relationships().count(), relationshipsCount); // should be unchanged.
 
     // now clean up and remove our dests.
     QVERIFY(cm->removeContact(source.localId()));
@@ -2665,9 +2804,9 @@ void tst_QContactManager::relationships()
     cm->saveRelationships(&batchList);
     QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
     QVERIFY(!cm->removeRelationship(br1));
-    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError || cm->error() == QContactManager::InvalidRelationshipError);
     cm->removeRelationships(batchList);
-    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError || cm->error() == QContactManager::InvalidRelationshipError);
 }
 
 void tst_QContactManager::contactType()

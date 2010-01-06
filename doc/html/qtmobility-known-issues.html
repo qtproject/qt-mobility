@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qtmobility-known-issues.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Release Notes of the QtMobility Project (Technology Preview)</title>
+  <title>Qt Mobility Project 1.0: Release Notes of the QtMobility Project</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -12,7 +12,7 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Release Notes of the QtMobility Project (Technology Preview)<br /><span class="subtitle"></span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Release Notes of the QtMobility Project<br /><span class="subtitle"></span>
 </h1>
 <p>An up-to-date list of known issues with the release can be found via the <a href="http://bugreports.qt.nokia.com">QtMobility Project Bug Tracker</a> on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility Project.</p>
 <p>The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see <a href="index.html#platform-compatability">Platform Compatability</a>.</p>
@@ -126,13 +126,16 @@
 <a name="issues-affecting-all-platforms"></a>
 <h3>Issues Affecting All Platforms</h3>
 <ul>
-<li>For this release all QtMobility library names have a <b>_tp</b> suffix</li>
 <li>Messaging filtering and Sorting functions are not fully optimized.</li>
 <li>Versit support for Contacts API is ALPHA, see <tt>src/versit/README</tt></li>
 <li>Not all example applications will display(fit) well on small screens.</li>
 </ul>
 <a name="symbian-s60-specific"></a>
 <h3>Symbian/S60 Specific</h3>
+<p>Currently it is not possible to use Qt convenience header includes:</p>
+<pre>    #include &lt;QSystemInfo&gt; <span class="comment">//does not work on Symbian</span>
+<span class="comment">    //use</span>
+    #include &lt;qsysteminfo.h&gt;</pre>
 <a name="bearer-management"></a>
 <h4>Bearer Management</h4>
 <p>No specific issues to highlight.</p>
@@ -217,7 +220,7 @@
 </ul>
 <a name="messaging-api"></a>
 <h4>Messaging API</h4>
-<p>For the <a href="qmessageserviceaction.html">QMessageServiceAction</a> class the following limitations apply to this release:</p>
+<p>For the QMessageServiceAction class the following limitations apply to this release:</p>
 <ul>
 <li><tt>QMessageServiceAction::exportUpdates</tt> : Full account synchronization currently unavailable due to lack of synchronous control of update progress.</li>
 <li><tt>QMessageSerivceAction::retrieve</tt> : Only retrieves content for messages bodies at present. Attachment retrieval overridden by mapi/mail client settings.</li>
@@ -236,6 +239,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -120,12 +120,12 @@
 <p>The return value is undefined if the altitude has not been set.</p>
 <p>See also <a href="qgeocoordinate.html#setAltitude">setAltitude</a>() and <a href="qgeocoordinate.html#type">type</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoCoordinate/azimuthTo"></a>
-<h3 class="fn"><a name="azimuthTo"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::azimuthTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="azimuthTo"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::azimuthTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns the azimuth (or bearing) in degrees from this coordinate to the coordinate specified by <i>other</i>. Altitude is not used in the calculation.</p>
 <p>There is an assumption that the Earth is spherical for the purpose of this calculation.</p>
 <p>Returns 0 if the type of this coordinate or the type of <i>other</i> is <a href="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</a>.</p>
 <a name="//apple_ref/cpp/instm/QGeoCoordinate/distanceTo"></a>
-<h3 class="fn"><a name="distanceTo"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::distanceTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="distanceTo"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoCoordinate::distanceTo ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns the distance (in meters) from this coordinate to the coordinate specified by <i>other</i>. Altitude is not used in the calculation.</p>
 <p>This calculation returns the great-circle distance between the two coordinates, with an assumption that the Earth is spherical for the purpose of this calculation.</p>
 <p>Returns 0 if the type of this coordinate or the type of <i>other</i> is <a href="qgeocoordinate.html#CoordinateType-enum">QGeoCoordinate::InvalidCoordinate</a>.</p>
@@ -157,7 +157,7 @@
 <p>To be valid, the longitude must be between -180 to 180 inclusive.</p>
 <p>See also <a href="qgeocoordinate.html#longitude">longitude</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoCoordinate/toString"></a>
-<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QGeoCoordinate::toString ( <a href="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</a> <i>format</i> = DegreesMinutesSecondsWithHemisphere ) const</h3>
+<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoCoordinate::toString ( <a href="qgeocoordinate.html#CoordinateFormat-enum">CoordinateFormat</a> <i>format</i> = DegreesMinutesSecondsWithHemisphere ) const</h3>
 <p>Returns this coordinate as a string in the specified <i>format</i>.</p>
 <p>For example, if this coordinate has a latitude of -27.46758, a longitude of 153.027892 and an altitude of 28.1, these are the strings returned depending on <i>format</i>:</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
@@ -185,16 +185,16 @@
 <p>Returns true if the latitude, longitude and altitude of this coordinate are the same as those of <i>other</i>.</p>
 <hr />
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-lt-lt-77"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, const QGeoCoordinate &amp; <i>coordinate</i> )</h3>
+<h3 class="fn"><a name="operator-lt-lt-77"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, const QGeoCoordinate &amp; <i>coordinate</i> )</h3>
 <p>Writes the given <i>coordinate</i> to the specified <i>stream</i>.</p>
-<p>See also <a href="http://qt.nokia.com/doc/4.5/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
-<h3 class="fn"><a name="operator-gt-gt-72"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, QGeoCoordinate &amp; <i>coordinate</i> )</h3>
+<p>See also <a href="http://qt.nokia.com/doc/4.6/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
+<h3 class="fn"><a name="operator-gt-gt-72"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, QGeoCoordinate &amp; <i>coordinate</i> )</h3>
 <p>Reads a coordinate from the specified <i>stream</i> into the given <i>coordinate</i>.</p>
-<p>See also <a href="http://qt.nokia.com/doc/4.5/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
+<p>See also <a href="http://qt.nokia.com/doc/4.6/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

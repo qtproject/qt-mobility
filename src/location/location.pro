@@ -9,8 +9,6 @@ DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 INCLUDEPATH += .
 DEPENDPATH += .
 
-PUBLIC_HEADERS +=
-
 PUBLIC_HEADERS += qgeocoordinate.h \
                   qgeopositioninfo.h \
                   qgeosatelliteinfo.h \
@@ -77,6 +75,8 @@ SOURCES +=  qlocationutils.cpp \
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002AC83
+
     INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions \
                    $$EPOCROOT\epoc32\include\LBTHeaders
     LIBS += -llbs
@@ -93,7 +93,7 @@ symbian {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
 
-    QtLocationDeployment.sources = QtLocation_tp.dll
+    QtLocationDeployment.sources = QtLocation.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
 }

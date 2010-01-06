@@ -70,25 +70,10 @@ public:
 
     bool isNull() const;
 
-    QUrl canonicalUri() const;
+    QUrl canonicalUrl() const;
     QMediaResource canonicalResource() const;
 
     QMediaResourceList resources() const;
-
-    QUrl posterUri() const;
-    void setPosterUri(const QUrl &url);
-
-    QUrl coverArtUriSmall() const;
-    void setCoverArtUriSmall(const QUrl &url);
-
-    QUrl coverArtUriLarge() const;
-    void setCoverArtUriLarge(const QUrl &url);
-
-    QUrl thumbnailUriSmall() const;
-    void setThumbnailUriSmall(const QUrl &url);
-
-    QUrl thumbnailUriLarge() const;
-    void setThumbnailUriLarge(const QUrl &url);
 
 private:
     QSharedDataPointer<QMediaContentPrivate> d;

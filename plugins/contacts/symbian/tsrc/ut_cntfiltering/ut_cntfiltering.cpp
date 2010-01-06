@@ -49,7 +49,7 @@ void TestFiltering::initTestCase()
 {
     mCntMng = new QContactManager("symbian");
     //open symbian database
-    CContactDatabase *m_database;
+    CContactDatabase *m_database = 0;
         TRAPD(error, m_database = CContactDatabase::OpenL());
         QVERIFY(error == KErrNone);
     mSqlFilter = new CntSymbianFilterSqlHelper(*m_database);

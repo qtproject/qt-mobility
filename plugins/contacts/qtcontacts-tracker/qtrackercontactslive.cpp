@@ -95,26 +95,4 @@ void QTrackerContactsLive::commit() {
     transaction_->commit();
 }
 
-// TODO this code is not used anymore: Left it here as Johan probably have plans to refactor it
-// It contains blocking call and if it is used inside transaction introduces a bug:
-// node doesnt exist so it tries to create it 2 times and add to contact to nco:hasAffiliation
-// which is a single field value - so contact cannot be saved as transaction is broken
-Live<nco::Role> QTrackerContactsLive::contactByContext(const QContactDetail& det, const Live<nco::PersonContact>& ncoContact) {
-    if (locationContext(det) == ContactContext::Work) {
-        return ncoContact->getHasAffiliation();
-    } else {   // Assume home context.
-        // Tracker will return the same contact as we are editing - we want to add "home" properties to it.
-        return ncoContact;
-    }
-}
-
-ContactContext::Location QTrackerContactsLive::locationContext(const QContactDetail& det) const {
-    if (det.contexts().contains(QContactDetail::ContextHome)) {
-        return ContactContext::Home;
-    } else if(det.contexts().contains(QContactDetail::ContextWork)) {
-        return ContactContext::Work;
-    }
-    return ContactContext::Unknown;
-}
-
 

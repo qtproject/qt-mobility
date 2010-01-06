@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qsensorbackend.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QSensorBackend Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QSensorBackend"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSensorBackend Class Reference</h1>
+<p>The QSensorBackend class is a sensor implementation. <a href="#details">More...</a></p>
+<pre>    #include &lt;QSensorBackend&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qsensorbackend-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QSensorId </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#id">id</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#rememberUpdatePolicy">rememberUpdatePolicy</a></b> ( QSensor::UpdatePolicy <i>policy</i>, int <i>interval</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setUpdatePolicy">setUpdatePolicy</a></b> ( QSensor::UpdatePolicy <i>policy</i>, int <i>interval</i> = 0 ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#start">start</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#stop">stop</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#suggestedInterval">suggestedInterval</a></b> ( QSensor::UpdatePolicy <i>policy</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QSensor::UpdatePolicies </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#supportedPolicies">supportedPolicies</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#updateInterval">updateInterval</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSensor::UpdatePolicy </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#updatePolicy">updatePolicy</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QSensorBackend class is a sensor implementation.</p>
+<p>Sensors on a device will be represented by sub-classes of QSensorBackend.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QSensorBackend/id"></a>
+<h3 class="fn"><a name="id"></a><a href="qsensor.html#QSensorId-typedef">QSensorId</a> QSensorBackend::id () const</h3>
+<a name="//apple_ref/cpp/instm/QSensorBackend/rememberUpdatePolicy"></a>
+<h3 class="fn"><a name="rememberUpdatePolicy"></a>void QSensorBackend::rememberUpdatePolicy ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicy</a> <i>policy</i>, int <i>interval</i> )</h3>
+<p>Stores the <i>policy</i> and <i>interval</i>.</p>
+<p>See also <a href="qsensorbackend.html#updatePolicy">updatePolicy</a>() and <a href="qsensorbackend.html#updateInterval">updateInterval</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/setUpdatePolicy"></a>
+<h3 class="fn"><a name="setUpdatePolicy"></a>void QSensorBackend::setUpdatePolicy ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicy</a> <i>policy</i>, int <i>interval</i> = 0 )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Set the update <i>policy</i>. The <i>interval</i> should be used if the policy is set to <a href="qsensor.html#UpdatePolicy-enum">QSensor::TimedUpdates</a>. For suggested intervals to use see <a href="qsensorbackend.html#suggestedInterval">suggestedInterval</a>().</p>
+<p>See also <a href="qsensorbackend.html#updatePolicy">updatePolicy</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/start"></a>
+<h3 class="fn"><a name="start"></a>bool QSensorBackend::start ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns true if the sensor was able to start.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/stop"></a>
+<h3 class="fn"><a name="stop"></a>void QSensorBackend::stop ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QSensorBackend/suggestedInterval"></a>
+<h3 class="fn"><a name="suggestedInterval"></a>int QSensorBackend::suggestedInterval ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicy</a> <i>policy</i> )</h3>
+<p>Returns the suggested interval to use for a given update <i>policy</i>.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/supportedPolicies"></a>
+<h3 class="fn"><a name="supportedPolicies"></a><a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicies</a> QSensorBackend::supportedPolicies () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QSensorBackend/updateInterval"></a>
+<h3 class="fn"><a name="updateInterval"></a>int QSensorBackend::updateInterval () const</h3>
+<p>Returns the stored interval.</p>
+<p>See also <a href="qsensorbackend.html#rememberUpdatePolicy">rememberUpdatePolicy</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/updatePolicy"></a>
+<h3 class="fn"><a name="updatePolicy"></a><a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicy</a> QSensorBackend::updatePolicy () const</h3>
+<p>Returns the stored policy.</p>
+<p>See also <a href="qsensorbackend.html#setUpdatePolicy">setUpdatePolicy</a>() and <a href="qsensorbackend.html#rememberUpdatePolicy">rememberUpdatePolicy</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

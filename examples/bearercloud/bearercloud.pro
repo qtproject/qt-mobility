@@ -20,4 +20,4 @@ MOBILITY = bearer
 
 CONFIG += console
 
-include(../examples.pri)
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData

@@ -55,11 +55,19 @@ private slots:  // Init & cleanup
 	void cleanupTestCase();
 
 private slots:  // Test cases
-	void createSimpleContacts();
-	void removeSimpleContacts();
-	void createComplexContacts();
-	void sortContacts();
-	void filterContacts();
+    void createSimpleContacts();
+    void removeSimpleContacts();
+    void createComplexContacts();
+    void sortContacts();
+    void filterContacts();
+    void filterUnions();
+    void filterNameListStyle();
+    void filterPhoneNumberMatch();
+
+    // Data providers
+	void filterNameListStyle_data();
+	void filterPhoneNumberMatch_data();
+
 	/*
 	void createViews();
 	void operation1();
@@ -68,9 +76,13 @@ private slots:  // Test cases
 	void asyncOperation2();
 	// feel free to add more...
 	*/
-	void removeComplexContacts();
+    void removeComplexContacts();
 
 private:
+    int measureContactsFetch(
+            QString debugMessage,
+            const QContactFilter &filter,
+            const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>());
     QContactManager     *mCntMng;
     QTime               mTime;
 };

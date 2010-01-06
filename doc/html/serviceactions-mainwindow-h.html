@@ -58,7 +58,7 @@
     #define MAINWINDOW_H
 
     #include &lt;QMainWindow&gt;
-    #include &lt;qmessageserviceaction.h&gt;
+    #include &lt;qmessageservice.h&gt;
 
     class QComboBox;
     class QListView;
@@ -81,12 +81,12 @@
     #endif
 
     private slots:
-        void serviceStateChanged(QMessageServiceAction::State state);
+        void serviceStateChanged(QMessageService::State state);
         void viewSelected();
 
     private:
         QTabWidget* m_tabWidget;
-        QMessageServiceAction* m_serviceAction;
+        QMessageService* m_service;
         QStackedWidget* m_widgetStack;
     };
 
@@ -95,6 +95,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

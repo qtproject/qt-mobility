@@ -44,26 +44,30 @@
 
 #include <QString>
 #include <QVariant>
-#include "qmobilityglobal.h"
+#include "qservice.h"
+
+QT_USE_NAMESPACE
 
 #ifdef SERVICE_XML_GENERATOR
-#undef Q_SFW_EXPORT
-#define Q_SFW_EXPORT
+#undef Q_SERVICEFW_EXPORT
+#define Q_SERVICEFW_EXPORT
 #endif
 
+QT_BEGIN_NAMESPACE
 class QDebug;
 class QStringList;
 class QDataStream;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptorPrivate;
-class Q_SFW_EXPORT QServiceInterfaceDescriptor
+class Q_SERVICEFW_EXPORT QServiceInterfaceDescriptor
 {
 public:
-    enum PropertyKey {
+    enum Attribute {
         Capabilities = 0,
         Location, 
         ServiceDescription,
@@ -86,11 +90,11 @@ public:
 
     bool isValid() const;
 
-    bool inSystemScope() const;
+    QService::Scope scope() const;
 
-    QVariant property(QServiceInterfaceDescriptor::PropertyKey key) const;
-    QString customProperty(const QString& key) const;
-    QStringList customPropertyKeys() const;
+    QVariant attribute(QServiceInterfaceDescriptor::Attribute which) const;
+    QString customAttribute(const QString& which) const;
+    QStringList customAttributes() const;
 
 private:
     QServiceInterfaceDescriptorPrivate* d;
@@ -101,17 +105,17 @@ private:
     friend class ServiceMetaData;
     friend class DatabaseManager;
 #ifndef QT_NO_DATASTREAM
-    friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
-    friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
+    friend Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
+    friend Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
 #endif
 };
 
 #ifndef QT_NO_DATASTREAM
-Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
-Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
+Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceInterfaceDescriptor &);
+Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceInterfaceDescriptor &);
 #endif
 #ifndef QT_NO_DEBUG_STREAM
-Q_SFW_EXPORT QDebug operator<<(QDebug, const QServiceInterfaceDescriptor &);
+Q_SERVICEFW_EXPORT QDebug operator<<(QDebug, const QServiceInterfaceDescriptor &);
 #endif
 
 

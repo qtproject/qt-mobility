@@ -46,7 +46,7 @@
 #include <QUrl>
 
 #include "audioencodercontrol.h"
-#include "audiodevicecontrol.h"
+#include "audioendpointselector.h"
 #include "audiomediarecordercontrol.h"
 
 #include <QtMultimedia/qaudioformat.h>

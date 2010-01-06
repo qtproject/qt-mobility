@@ -3,41 +3,41 @@ mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
-    qtAddLibrary(QtBearer_tp)
+    qtAddLibrary(QtBearer)
 }
 
 contains(MOBILITY, publishsubscribe) {
-    qtAddLibrary(QtPublishSubscribe_tp)
+    qtAddLibrary(QtPublishSubscribe)
 }
 
 contains(MOBILITY, location) {
-    qtAddLibrary(QtLocation_tp)
+    qtAddLibrary(QtLocation)
 }
 
 contains(MOBILITY, serviceframework) {
-    qtAddLibrary(QtServiceFramework_tp)
+    qtAddLibrary(QtServiceFramework)
 }
 
 contains(MOBILITY, systeminfo) {
-    qtAddLibrary(QtSystemInfo_tp)
+    qtAddLibrary(QtSystemInfo)
 }
 
 contains(MOBILITY, multimedia) {
-    qtAddLibrary(QtMedia_tp)
+    qtAddLibrary(QtMedia)
 }
 
 contains(MOBILITY, contacts) {
-    qtAddLibrary(QtContacts_tp)
+    qtAddLibrary(QtContacts)
 }
 
 contains(MOBILITY, messaging) {
-    qtAddLibrary(QtMessaging_tp)
+    qtAddLibrary(QtMessaging)
 }
 
 contains(MOBILITY, versit) {
-    qtAddLibrary(QtVersit_tp)
+    qtAddLibrary(QtVersit)
 }
 
 contains(MOBILITY, sensors) {
-    qtAddLibrary(QtSensors_tp)
+    qtAddLibrary(QtSensors)
 }

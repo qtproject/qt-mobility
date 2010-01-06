@@ -55,7 +55,7 @@
 #include <QTimer>
 #include <QMapIterator>
 
-s#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
 #include <QtDBus>
 #include <QDBusConnection>
@@ -107,15 +107,43 @@ s#if !defined(QT_NO_DBUS)
 #include <linux/wireless.h>
 #include <sys/ioctl.h>
 
+#include <QDBusInterface>
+
 
 
 QTM_BEGIN_NAMESPACE
+
+        static bool halAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.Hal");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        }
+    }
+#endif
+    //  qDebug() << "Hal is not running";
+    return false;
+}
+
+bool halIsAvailable;
+//////// QSystemInfo
+QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
+ : QObject(parent)
+{
+    halIsAvailable = halAvailable();
+    langCached = currentLanguage();
+    startLanguagePolling();
+}
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-void QSystemInfoPrivate::startLangaugePolling()
+void QSystemInfoPrivate::startLanguagePolling()
 {
     QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
     if(langCached.isEmpty()) {
@@ -127,7 +155,7 @@ void QSystemInfoPrivate::startLangaugePolling()
         langCached = checkLang;
     }
     langTimer = new QTimer(this);
-    QTimer::singleShot(1000, this, SLOT(startLangaugePolling()));
+    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
 }
 
 // 2 letter ISO 639-1
@@ -196,7 +224,32 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
        break;
    case QSystemInfo::Firmware :
        {
-       }
+
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.SystemInfo",
+                                       "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo",
+                                        QDBusConnection::systemBus());
+    if(!connectionInterface.isValid()) {
+        qWarning() << "interfacenot valid";
+    }
+    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver"); 
+    return reply.value();
+// RX-51_BLAH
+//
+#endif    
+    if(halIsAvailable) {
+#if !defined(QT_NO_DBUS)
+        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+        QString productName;
+        if (iface.isValid()) {
+            return iface.getPropertyString("system.firmware.version");
+            } else {
+                return productName;
+            }
+#endif
+    }
+    }
        break;
     };
   return errorStr;
@@ -295,7 +348,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             QStringList filters;
             filters << "*";
             QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(sysList.contains("radio")) {
+            if(sysList.contains("radio0")) {
                 featureSupported = true;
             }
         }
@@ -349,7 +402,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VibFeature :
 #if !defined(QT_NO_DBUS)
-        featureSupported = hasHalDeviceFeature("vibrator"); //might not always be true
+        featureSupported = hasHalDeviceFeature("vibra"); //might not always be true
         if(featureSupported)
             return featureSupported;
 #endif
@@ -386,7 +439,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             QStringList filters;
             filters << "*";
             QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(sysList.contains("video")) {
+            if(sysList.contains("video0")) {
                 featureSupported = true;
             }
         }
@@ -404,20 +457,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent)
 {
-#if !defined(QT_NO_DBUS)
-    setupNmConnections();
-#endif
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
-
-void QSystemNetworkInfoPrivate::updateDeviceInterfaceState(const QString &/*path*/, quint32 /*nmState*/)
-{
- //   qWarning() << __FUNCTION__ << path << nmState;
-}
-
 
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -563,6 +607,9 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 #endif
         }
         break;
+    case QSystemNetworkInfo::GsmMode:
+    case QSystemNetworkInfo::CdmaMode:
+    case QSystemNetworkInfo::WcdmaMode:
     default:
         break;
     };
@@ -795,7 +842,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                                 in >> operatingState;
                                 rx.close();
                                 if(!operatingState.contains("unknown")
-                                    || !operatingState.contains("down")) {                                    
+                                    || !operatingState.contains("down")) {
                                     if(isDefaultInterface(deviceName))
                                         return QNetworkInterface::interfaceFromName(deviceName);
                                 }
@@ -1350,14 +1397,25 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-//    if(this->getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
-        return "Sim Not Available";
+ #if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.phone.SIM",
+                                       "/com/nokia/csd/info",
+                                       "com.nokia.csd.Info",
+                                        QDBusConnection::systemBus());
+    if(!connectionInterface.isValid()) {
+        qWarning() << "interfacenot valid";
+    }
+    QDBusReply< QString > reply = connectionInterface.call("GetIMEINumber");
+    return reply.value();
+
+#endif    
+        return "Not Available";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
 //    if(getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
-        return "Sim Not Available";
+        return "Not Available";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
@@ -1439,7 +1497,8 @@ QString QSystemDeviceInfoPrivate::productName()
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString productName;
         if (iface.isValid()) {
-            productName = iface.getPropertyString("info.product");
+            productName = iface.getPropertyString("system.hardware.product");
+//            productName = iface.getPropertyString("info.product");
             if(productName.isEmpty()) {
                 productName = iface.getPropertyString("system.product");
                 if(!productName.isEmpty())
@@ -1575,7 +1634,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
-{    
+{
     QSystemScreenSaverPrivate priv;
 
     if(priv.isScreenLockEnabled()
@@ -1683,9 +1742,6 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
          : QObject(parent)
  {
-     kdeIsRunning = false;
-     gnomeIsRunning = false;
-     whichWMRunning();
  }
 
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
@@ -1714,6 +1770,6 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
     return false;
 }
 
-#include "moc_qsysteminfo_linux_p.cpp"
+#include "moc_qsysteminfo_maemo_p.cpp"
 
 QTM_END_NAMESPACE

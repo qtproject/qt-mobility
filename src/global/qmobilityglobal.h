@@ -52,7 +52,9 @@
 */
 #define QTM_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
+#define QTM_PACKAGEDATE_STR "YYYY-MM-DD"
 
+#define QTM_PACKAGE_TAG ""
 
 #if defined(QTM_BUILD_UNITTESTS)
 # include <qconfig.h>
@@ -63,7 +65,7 @@
 #include <QtCore/qglobal.h>
 
 #if defined(SYMBIAN_DATABASEMANAGER_SERVER)
-#  define Q_SFW_EXPORT
+#  define Q_SERVICEFW_EXPORT
 #else
 #  if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
 #    if defined(QT_NODLL)
@@ -109,9 +111,9 @@
 #        define Q_MEDIA_EXPORT Q_DECL_IMPORT
 #      endif
 #      if defined(QT_BUILD_SFW_LIB)
-#        define Q_SFW_EXPORT Q_DECL_EXPORT
+#        define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
 #      else
-#        define Q_SFW_EXPORT Q_DECL_IMPORT
+#        define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
 #      endif
 #      if defined(QT_BUILD_SYSINFO_LIB)
 #        define Q_SYSINFO_EXPORT Q_DECL_EXPORT
@@ -131,13 +133,13 @@
 #      define Q_LOCATION_EXPORT Q_DECL_IMPORT
 #      define Q_MEDIA_EXPORT Q_DECL_IMPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
-#      define Q_SFW_EXPORT Q_DECL_IMPORT
+#      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
 #      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
 #      define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    endif
 #  else
 #  endif
-#  if !defined(Q_SFW_EXPORT)
+#  if !defined(Q_SERVICEFW_EXPORT)
 #    if defined(QT_SHARED)
 #      define Q_BEARER_EXPORT Q_DECL_EXPORT
 #      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
@@ -146,7 +148,7 @@
 #      define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #      define Q_MEDIA_EXPORT Q_DECL_EXPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
-#      define Q_SFW_EXPORT Q_DECL_EXPORT
+#      define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
 #      define Q_SYSINFO_EXPORT Q_DECL_EXPORT
 #      define Q_SENSORS_EXPORT Q_DECL_EXPORT
 #    else
@@ -157,7 +159,7 @@
 #      define Q_LOCATION_EXPORT
 #      define Q_MEDIA_EXPORT
 #      define Q_MESSAGING_EXPORT
-#      define Q_SFW_EXPORT
+#      define Q_SERVICEFW_EXPORT
 #      define Q_SYSINFO_EXPORT
 #      define Q_SENSORS_EXPORT
 #    endif
@@ -179,5 +181,8 @@
 # define QTM_END_NAMESPACE
 # define QTM_USE_NAMESPACE
 #endif
+
+//in case Qt is in namespace
+QT_USE_NAMESPACE
 
 #endif // QMOBILITYGLOBAL_H

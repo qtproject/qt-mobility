@@ -93,7 +93,9 @@ QContactDetail *CntTransformAnniversary::transformItemField(const CContactItemFi
 	}
 
 	if (dateFound) {
-        anniversary->setEvent(unformattedAnniversary.right(unformattedAnniversary.length()-separatorPos-1));
+        if (unformattedAnniversary.length()-separatorPos-1 > 0) {
+            anniversary->setEvent(unformattedAnniversary.right(unformattedAnniversary.length()-separatorPos-1));
+        }
 	}
 	else {
         anniversary->setEvent(unformattedAnniversary);

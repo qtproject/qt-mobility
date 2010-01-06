@@ -60,11 +60,6 @@
 */
 
 /*!
-    \example incomingcalls
-    \title Incoming Calls Example
-*/
-
-/*!
     \example keepintouch
     \title Keep in Touch Example
 */
@@ -95,8 +90,8 @@
 */
 
 /*!
-    \example sendmessage
-    \title Send Message Example
+    \example writemessage
+    \title Write Message Example
 */
 
 /*!

@@ -58,7 +58,8 @@
 
     QML_DEFINE_TYPE(QtSFW,1,0,Service,ServiceWrapper)
 
-    ServiceWrapper::ServiceWrapper() : serviceInstance(0)
+    ServiceWrapper::ServiceWrapper()
+    : serviceInstance(0)
     {
     }
 
@@ -96,25 +97,18 @@
             return QString(&quot;0.0&quot;);
     }
 
-    QVariant ServiceWrapper::descriptor() const
-    {
-        return qVariantFromValue(m_descriptor);
-    }
-
     void ServiceWrapper::setNativeDescriptor(const QServiceInterfaceDescriptor &amp;d)
     {
         if (d == m_descriptor)
             return;
 
         m_descriptor = d;
-        emit descriptorChanged();
-        emit nameChanged();
-        emit versionChanged();
         if (serviceInstance)
             delete serviceInstance;
 
         serviceInstance = 0;
     }
+
     void ServiceWrapper::setDescriptor(QVariant &amp;newDescriptor)
     {
         QServiceInterfaceDescriptor d = newDescriptor.value&lt;QServiceInterfaceDescriptor&gt;();
@@ -123,7 +117,7 @@
 
     QObject* ServiceWrapper::serviceObject()
     {
-        <span class="comment">//qDebug() &lt;&lt; &quot;called serviceObject&quot;;</span>
+        qDebug() &lt;&lt; &quot;called serviceObject&quot;;
         if (serviceInstance) {
             return serviceInstance;
         }
@@ -142,6 +136,7 @@
         serviceManager = new QServiceManager();
         registerExampleServices();
 
+        //! [1]
         ServiceWrapper *service;
         QServiceFilter filter(&quot;com.nokia.qt.examples.Dialer&quot;);
         QList&lt;QServiceInterfaceDescriptor&gt; allImpl = serviceManager-&gt;findInterfaces(filter);
@@ -151,30 +146,35 @@
             service-&gt;setNativeDescriptor(allImpl.at(i));
             m_services.append(service);
         }
+        //! [1]
     }
 
-    ServiceRegister::~ServiceRegister() {
+    ServiceRegister::~ServiceRegister()
+    {
         unregisterExampleServices();
     }
 
     void ServiceRegister::registerExampleServices()
     {
+        //! [0]
         QStringList exampleXmlFiles;
         exampleXmlFiles &lt;&lt;&quot;voipdialerservice.xml&quot; &lt;&lt; &quot;landlinedialerservice.xml&quot;;
         foreach (const QString &amp;fileName, exampleXmlFiles) {
-            QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
+            QString path = QCoreApplication::applicationDirPath() + &quot;/../../examples/declarative/&quot; + fileName;
             serviceManager-&gt;addService(path);
         }
+        //! [0]
     }
 
     void ServiceRegister::unregisterExampleServices()
     {
         serviceManager-&gt;removeService(&quot;VoipDialer&quot;);
+        serviceManager-&gt;removeService(&quot;LandlineDialer&quot;);
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

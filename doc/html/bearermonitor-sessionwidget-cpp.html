@@ -55,6 +55,7 @@
     ****************************************************************************/</span>
 
     #include &quot;sessionwidget.h&quot;
+    #include &quot;qnetworkconfigmanager.h&quot;
 
     SessionWidget::SessionWidget(const QNetworkConfiguration &amp;config, QWidget *parent)
     :   QWidget(parent)
@@ -94,7 +95,13 @@
         updateSessionState(session-&gt;state());
         updateSessionError(session-&gt;error());
 
-        bearer-&gt;setText(session-&gt;bearerName());
+        if (session-&gt;configuration().type() == QNetworkConfiguration::InternetAccessPoint)
+            bearer-&gt;setText(session-&gt;configuration().bearerName());
+        else {
+            QNetworkConfigurationManager mgr;
+            QNetworkConfiguration c = mgr.configurationFromIdentifier(session-&gt;sessionProperty(&quot;ActiveConfiguration&quot;).toString());
+            bearer-&gt;setText(c.bearerName());
+        }
 
         interfaceName-&gt;setText(session-&gt;interface().humanReadableName());
         interfaceGuid-&gt;setText(session-&gt;interface().name());
@@ -155,10 +162,10 @@
             s = s.arg(tr(&quot;Unknown&quot;));
         }
 
-        if (session-&gt;isActive())
-            s = s.arg(tr(&quot;Active&quot;));
+        if (session-&gt;isOpen())
+            s = s.arg(tr(&quot;Open&quot;));
         else
-            s = s.arg(tr(&quot;Inactive&quot;));
+            s = s.arg(tr(&quot;Closed&quot;));
 
         sessionState-&gt;setText(s);
     }
@@ -172,6 +179,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

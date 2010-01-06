@@ -1,14 +1,14 @@
+include(../tsrc.pri)
 QT += testlib
 TEMPLATE=app
 TARGET=tst_details
 CONFIG+=testcase
+INCLUDEPATH += $$SYMBIAN_PATHS
 
-include(../../../common.pri)
+HEADERS += $$SYMBIAN_HEADERS
 
-INCLUDEPATH += ../../../src/contacts \
-               ../../../src/contacts/details \
-               ../../../src/contacts/requests \
-               ../../../src/contacts/filters
+SOURCES  += $$SYMBIAN_SOURCES \
+            tst_details.cpp
 
 CONFIG += mobility
 MOBILITY = contacts

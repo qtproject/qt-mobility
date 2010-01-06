@@ -84,7 +84,7 @@
 <h3 class="fn"><a name="QGeoPositionInfo"></a>QGeoPositionInfo::QGeoPositionInfo ()</h3>
 <p>Creates an invalid <a href="qgeopositioninfo.html">QGeoPositionInfo</a> object.</p>
 <p>See also <a href="qgeopositioninfo.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QGeoPositionInfo-2"></a>QGeoPositionInfo::QGeoPositionInfo ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>dateTime</i> )</h3>
+<h3 class="fn"><a name="QGeoPositionInfo-2"></a>QGeoPositionInfo::QGeoPositionInfo ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>dateTime</i> )</h3>
 <p>Creates a <a href="qgeopositioninfo.html">QGeoPositionInfo</a> for the given <i>coordinate</i> and <i>dateTime</i>.</p>
 <h3 class="fn"><a name="QGeoPositionInfo-3"></a>QGeoPositionInfo::QGeoPositionInfo ( const QGeoPositionInfo &amp; <i>other</i> )</h3>
 <p>Creates a <a href="qgeopositioninfo.html">QGeoPositionInfo</a> with the values of <i>other</i>.</p>
@@ -97,9 +97,9 @@
 <p>Returns an invalid coordinate if no coordinate has been set.</p>
 <p>See also <a href="qgeopositioninfo.html#setCoordinate">setCoordinate</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfo/dateTime"></a>
-<h3 class="fn"><a name="dateTime"></a><a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> QGeoPositionInfo::dateTime () const</h3>
+<h3 class="fn"><a name="dateTime"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QGeoPositionInfo::dateTime () const</h3>
 <p>Returns the date and time at which this position was reported, in UTC time.</p>
-<p>Returns an invalid <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> if no date/time value has been set.</p>
+<p>Returns an invalid <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> if no date/time value has been set.</p>
 <p>See also <a href="qgeopositioninfo.html#setDateTime">setDateTime</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfo/hasProperty"></a>
 <h3 class="fn"><a name="hasProperty"></a>bool QGeoPositionInfo::hasProperty ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
@@ -107,9 +107,9 @@
 <a name="//apple_ref/cpp/instm/QGeoPositionInfo/isValid"></a>
 <h3 class="fn"><a name="isValid"></a>bool QGeoPositionInfo::isValid () const</h3>
 <p>Returns true if the <a href="qgeopositioninfo.html#dateTime">dateTime</a>() and <a href="qgeopositioninfo.html#coordinate">coordinate</a>() values are both valid.</p>
-<p>See also <a href="qgeocoordinate.html#isValid">QGeoCoordinate::isValid</a>() and <a href="http://qt.nokia.com/doc/4.5/qdatetime.html#isValid">QDateTime::isValid</a>().</p>
+<p>See also <a href="qgeocoordinate.html#isValid">QGeoCoordinate::isValid</a>() and <a href="http://qt.nokia.com/doc/4.6/qdatetime.html#isValid">QDateTime::isValid</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfo/property"></a>
-<h3 class="fn"><a name="property"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> QGeoPositionInfo::property ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
+<h3 class="fn"><a name="property"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoPositionInfo::property ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i> ) const</h3>
 <p>Returns the value of the specified <i>property</i> as a qreal value.</p>
 <p>Returns -1 if the value has not been set.</p>
 <p>See also <a href="qgeopositioninfo.html#hasProperty">hasProperty</a>() and <a href="qgeopositioninfo.html#setProperty">setProperty</a>().</p>
@@ -121,12 +121,12 @@
 <p>Sets the coordinate for this position to <i>coordinate</i>.</p>
 <p>See also <a href="qgeopositioninfo.html#coordinate">coordinate</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfo/setDateTime"></a>
-<h3 class="fn"><a name="setDateTime"></a>void QGeoPositionInfo::setDateTime ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>dateTime</i> )</h3>
+<h3 class="fn"><a name="setDateTime"></a>void QGeoPositionInfo::setDateTime ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>dateTime</i> )</h3>
 <p>Sets the date and time at which this position was reported to <i>dateTime</i>.</p>
 <p>The <i>dateTime</i> must be in UTC time.</p>
 <p>See also <a href="qgeopositioninfo.html#dateTime">dateTime</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfo/setProperty"></a>
-<h3 class="fn"><a name="setProperty"></a>void QGeoPositionInfo::setProperty ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i>, <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )</h3>
+<h3 class="fn"><a name="setProperty"></a>void QGeoPositionInfo::setProperty ( <a href="qgeopositioninfo.html#Property-enum">Property</a> <i>property</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )</h3>
 <p>Sets the value for <i>property</i> to <i>value</i>.</p>
 <p>See also <a href="qgeopositioninfo.html#property">property</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfo/operator!="></a>
@@ -140,16 +140,16 @@
 <p>Returns true if all of this object's values are the same as those of <i>other</i>.</p>
 <hr />
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-lt-lt-79"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, const QGeoPositionInfo &amp; <i>info</i> )</h3>
+<h3 class="fn"><a name="operator-lt-lt-79"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, const QGeoPositionInfo &amp; <i>info</i> )</h3>
 <p>Writes the given <i>info</i> to the specified <i>stream</i>.</p>
-<p>See also <a href="http://qt.nokia.com/doc/4.5/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
-<h3 class="fn"><a name="operator-gt-gt-73"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, QGeoPositionInfo &amp; <i>info</i> )</h3>
+<p>See also <a href="http://qt.nokia.com/doc/4.6/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
+<h3 class="fn"><a name="operator-gt-gt-73"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, QGeoPositionInfo &amp; <i>info</i> )</h3>
 <p>Reads a coordinate from the specified <i>stream</i> into the given <i>info</i>.</p>
-<p>See also <a href="http://qt.nokia.com/doc/4.5/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
+<p>See also <a href="http://qt.nokia.com/doc/4.6/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

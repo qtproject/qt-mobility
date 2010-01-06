@@ -59,17 +59,21 @@
     #include &lt;QFileInfo&gt;
     #include &lt;QString&gt;
     #include &lt;QUrl&gt;
-    #include &lt;QmlView&gt;
     #include &lt;QtCore&gt;
-    #include &lt;qml.h&gt;
-    #include &lt;qmlcontext.h&gt;
+
+<span class="comment">    //Includes for using the QML objects</span>
+    #include &lt;QmlView&gt;
+    #include &lt;QmlContext&gt;
+
+<span class="comment">    //Includes for using the service framework</span>
     #include &lt;qserviceinterfacedescriptor.h&gt;
     #include &lt;qservicemanager.h&gt;
+
     #include &quot;sfwexample.h&quot;
 
     void usage()
     {
-        qWarning() &lt;&lt; &quot;Usage: sfw-kinetic-example file.qml&quot;;
+        qWarning() &lt;&lt; &quot;Usage: sfw-kinetic-example.qml&quot;;
     }
 
     int main(int argc, char** argv)
@@ -90,26 +94,40 @@
             return 1;
         }
 
+        //! [1]
         QUrl url(qmlFile);
         QFileInfo fi(qmlFile);
         if (fi.exists())
             url = QUrl::fromLocalFile(fi.absoluteFilePath());
+        else
+            return 1;
 
-        ServiceRegister registration;
         QmlView canvas;
         canvas.setUrl(url);
-        QmlContext* ctxt = canvas.rootContext();
-        ctxt-&gt;addDefaultObject(&amp;registration);
+        //! [1]
 
+        //! [2]
+        <span class="comment">//...</span>
+        //! [2]
+
+        //! [4]
+        QmlContext* ctxt = canvas.rootContext();
+        ServiceRegister registration;
+        ctxt-&gt;addDefaultObject(&amp;registration);
+        ctxt-&gt;setContextProperty(&quot;services&quot;, QVariant::fromValue&lt;QList&lt;ServiceWrapper*&gt;*&gt;(registration.registeredservices()));
+        //! [4]
+
+        //! [3]
         canvas.execute();
         canvas.show();
+        //! [3]
+
         return app.exec();
-        <span class="comment">//return 0;</span>
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -44,13 +44,21 @@
 
 #include <experimental/qcamera.h>
 #include <qmediarecorder.h>
+#include <qaudiocapturesource.h>
 
+QT_BEGIN_NAMESPACE
 namespace Ui {
     class CameraCapture;
 }
+QT_END_NAMESPACE
+
 
 #include <QMainWindow>
 #include <QDir>
+
+QTM_BEGIN_NAMESPACE
+class QVideoWidget;
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -83,6 +91,7 @@ private slots:
     void updateRecorderState(QMediaRecorder::State state);
 
     void updateRecordTime();
+    void updateAudioDevices();
 
     void processCapturedImage(const QString& fname, const QImage& img);
 
@@ -90,10 +99,10 @@ private:
     Ui::CameraCapture *ui;
 
     QDir outputDir;
-    QMediaRecorder* mediaRecorder;
     QCamera *camera;
-    QMediaService *service;
-    QWidget *videoWidget;
+    QMediaRecorder* mediaRecorder;
+    QAudioCaptureSource *audioSource;
+    QVideoWidget *videoWidget;
 };
 
 #endif

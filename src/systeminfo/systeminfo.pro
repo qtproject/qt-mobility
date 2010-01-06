@@ -43,7 +43,7 @@ win32 {
 
 unix: {
     QT += gui
-    !maemo:linux-*: {
+    !maemo6:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
         contains(networkmanager_enabled, yes):contains(QT_CONFIG,dbus): {
@@ -53,7 +53,7 @@ unix: {
 
         }
     }
-    maemo: {
+    maemo6: {
             SOURCES += qsysteminfo_maemo.cpp
             HEADERS += qsysteminfo_maemo_p.h
         contains(QT_CONFIG,dbus): {
@@ -108,6 +108,7 @@ unix: {
             -lfeatdiscovery \
             -lhwrmvibraclient \
             -lavkon \    #Used by AknLayoutUtils::PenEnabled(). Try to remove this dependency.
+            -lcone \
             -lws32 \
             -lcentralrepository \
             -lprofileengine \
@@ -116,7 +117,6 @@ unix: {
         TARGET.CAPABILITY = ALL -TCB
         TARGET.EPOCALLOWDLLDATA = 1
         TARGET.UID3 = 0x2002ac7d
-        MMP_RULES += EXPORTUNFROZEN
         
         deploy.path = $${EPOCROOT}
         exportheaders.sources = $$PUBLIC_HEADERS
@@ -127,7 +127,7 @@ unix: {
         }
 
 
-        QtSystemInfoDeployment.sources = QtSystemInfo_tp.dll
+        QtSystemInfoDeployment.sources = QtSystemInfo.dll
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }

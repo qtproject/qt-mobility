@@ -58,15 +58,15 @@
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
 #include <qnetworkmanagerservice_linux_p.h>
-#include <QtDBus>
-#include <QDBusConnection>
-#include <QDBusError>
-#include <QDBusInterface>
-#include <QDBusMessage>
-#include <QDBusReply>
-#include <QDBusPendingCallWatcher>
-#include <QDBusObjectPath>
-#include <QDBusPendingCall>
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusError>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusPendingCallWatcher>
+#include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusPendingCall>
 #endif
 
 #include <locale.h>
@@ -134,14 +134,14 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
 {
     halIsAvailable = halAvailable();
     langCached = currentLanguage();
-    startLangaugePolling();
+    startLanguagePolling();
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-void QSystemInfoPrivate::startLangaugePolling()
+void QSystemInfoPrivate::startLanguagePolling()
 {
     QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
     if(langCached.isEmpty()) {
@@ -153,7 +153,7 @@ void QSystemInfoPrivate::startLangaugePolling()
         langCached = checkLang;
     }
     langTimer = new QTimer(this);
-    QTimer::singleShot(1000, this, SLOT(startLangaugePolling()));
+    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
 }
 
 // 2 letter ISO 639-1
@@ -2065,8 +2065,8 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
                 return reply.value();
             }
         }
-    }
 #endif
+    }
     return false;
 }
 

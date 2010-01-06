@@ -88,7 +88,7 @@
     #ifndef Q_OS_SYMBIAN
             publisher-&gt;show();
     #else
-            publisher-&gt;showFullScreen();
+            publisher-&gt;showMaximized();
     #endif
         }
 
@@ -99,15 +99,18 @@
     #ifndef Q_OS_SYMBIAN
             subscriber-&gt;show();
     #else
-            subscriber-&gt;showFullScreen();
+            subscriber-&gt;showMaximized();
     #endif
         }
 
     #ifdef Q_OS_SYMBIAN
-        QObject::connect(subscriber, SIGNAL(switchRequested()), subscriber, SLOT(hide()));
-        QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(showFullScreen()));
+        QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(showMaximized()));
+        QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(repaint()));
         QObject::connect(publisher, SIGNAL(switchRequested()), publisher, SLOT(hide()));
-        QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(showFullScreen()));
+
+        QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(showMaximized()));
+        QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(repaint()));
+        QObject::connect(subscriber, SIGNAL(switchRequested()), subscriber, SLOT(hide()));
     #endif
 
         int result = app.exec();
@@ -123,6 +126,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technical Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

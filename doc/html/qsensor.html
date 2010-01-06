@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qsensor.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QSensor Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QSensor"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSensor Class Reference</h1>
+<p>The QSensor class represents a single hardware sensor. <a href="#details">More...</a></p>
+<pre>    #include &lt;QSensor&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<p>Inherited by <a href="qaccelerationsensor.html">QAccelerationSensor</a>, <a href="qambientlightsensor.html">QAmbientLightSensor</a>, <a href="qmagneticnorthsensor.html">QMagneticNorthSensor</a>, <a href="qorientationsensor.html">QOrientationSensor</a>, <a href="qproximitysensor.html">QProximitySensor</a>, <a href="qrotationsensor.html">QRotationSensor</a>, and <a href="qtapsensor.html">QTapSensor</a>.</p>
+<ul>
+<li><a href="qsensor-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#UpdatePolicy-enum">UpdatePolicies</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#UpdatePolicy-enum">UpdatePolicy</a></b> { Undefined, OccasionalUpdates, InfrequentUpdates, FrequentUpdates, TimedUpdates, PolledUpdates }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#dtor.QSensor">~QSensor</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSensorId </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#id">id</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#newReadingAvailable">newReadingAvailable</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#setUpdatePolicy">setUpdatePolicy</a></b> ( UpdatePolicy <i>policy</i>, int <i>interval</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">UpdatePolicies </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#supportedPolicies">supportedPolicies</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#type">type</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#updateInterval">updateInterval</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">UpdatePolicy </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#updatePolicy">updatePolicy</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="public-slots"></a>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#start">start</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#stop">stop</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+</ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QSensorBackend * </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#backend">backend</a></b> () const = 0</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="related-non-members"></a>
+<h2>Related Non-Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">typedef </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#QSensorId-typedef">QSensorId</a></b></td></tr>
+</table>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QSensor class represents a single hardware sensor.</p>
+<p>The life cycle of a sensor is typically:</p>
+<ul>
+<li>Create a sub-class of QSensor on the stack or heap.</li>
+<li>Setup as required by the application.</li>
+<li>Start receiving values.</li>
+<li>Sensor data is used by the application.</li>
+<li>Stop receiving values.</li>
+</ul>
+<p>Please see the individual sensor classes for details on their use.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QSensor/UpdatePolicy"></a>
+<a name="//apple_ref/cpp/econst/QSensor/Undefined"></a>
+<a name="//apple_ref/cpp/econst/QSensor/OccasionalUpdates"></a>
+<a name="//apple_ref/cpp/econst/QSensor/InfrequentUpdates"></a>
+<a name="//apple_ref/cpp/econst/QSensor/FrequentUpdates"></a>
+<a name="//apple_ref/cpp/econst/QSensor/TimedUpdates"></a>
+<a name="//apple_ref/cpp/econst/QSensor/PolledUpdates"></a>
+<a name="//apple_ref/cpp/tdef/QSensor/UpdatePolicies"></a>
+<h3 class="flags"><a name="UpdatePolicy-enum"></a>enum QSensor::UpdatePolicy<br />flags QSensor::UpdatePolicies</h3>
+<p>This enum is used to indicate to the sensor how often data will be collected. Note that most sensors will only support one sensitivity. Setting an update policy that the sensor does not support will result in undefined behaviour. You can determine the policies the sensor supports with the <a href="qsensor.html#supportedPolicies">QSensor::supportedPolicies</a>() method.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QSensor::Undefined</tt></td><td align="center" valign="top"><tt>0x00</tt></td><td valign="top">The sensor has no specific update policy.</td></tr>
+<tr><td valign="top"><tt>QSensor::OccasionalUpdates</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">Updates are delivered only occasionally.</td></tr>
+<tr><td valign="top"><tt>QSensor::InfrequentUpdates</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">Updates are delivered every now and then.</td></tr>
+<tr><td valign="top"><tt>QSensor::FrequentUpdates</tt></td><td align="center" valign="top"><tt>0x04</tt></td><td valign="top">Updates are delivered frequently.</td></tr>
+<tr><td valign="top"><tt>QSensor::TimedUpdates</tt></td><td align="center" valign="top"><tt>0x08</tt></td><td valign="top">Updates are delivered at the specified time interval.</td></tr>
+<tr><td valign="top"><tt>QSensor::PolledUpdates</tt></td><td align="center" valign="top"><tt>0x10</tt></td><td valign="top">Updates are retrieved when the device is polled.</td></tr>
+</table></p>
+<p>The UpdatePolicies type is a typedef for <a href="qflags.html">QFlags</a>&lt;UpdatePolicy&gt;. It stores an OR combination of UpdatePolicy values.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QSensor/~QSensor"></a>
+<h3 class="fn"><a name="dtor.QSensor"></a>QSensor::~QSensor ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroy the sensor.</p>
+<a name="//apple_ref/cpp/instm/QSensor/backend"></a>
+<h3 class="fn"><a name="backend"></a><a href="qsensorbackend.html">QSensorBackend</a> * QSensor::backend () const&nbsp;&nbsp;<tt> [pure virtual protected]</tt></h3>
+<p>Returns a pointer to the backend for the sensor.</p>
+<a name="//apple_ref/cpp/instm/QSensor/id"></a>
+<h3 class="fn"><a name="id"></a><a href="qsensor.html#QSensorId-typedef">QSensorId</a> QSensor::id () const</h3>
+<p>Returns the id for the sensor.</p>
+<a name="//apple_ref/cpp/instm/QSensor/isValid"></a>
+<h3 class="fn"><a name="isValid"></a>bool QSensor::isValid () const</h3>
+<p>Returns true if the sensor is connected to a backend.</p>
+<a name="//apple_ref/cpp/instm/QSensor/newReadingAvailable"></a>
+<h3 class="fn"><a name="newReadingAvailable"></a>void QSensor::newReadingAvailable ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>This function is called to notify the sensor that a new reading is available.</p>
+<a name="//apple_ref/cpp/instm/QSensor/setUpdatePolicy"></a>
+<h3 class="fn"><a name="setUpdatePolicy"></a>void QSensor::setUpdatePolicy ( <a href="qsensor.html#UpdatePolicy-enum">UpdatePolicy</a> <i>policy</i>, int <i>interval</i> = 0 )</h3>
+<p>Change the update <i>policy</i> of the sensor. If using <a href="qsensor.html#UpdatePolicy-enum">TimedUpdates</a> you must also supply the <i>interval</i>. Note that not all sensors support changing the update policy. If you set a policy that the sensor does not support the behaviour is undefined.</p>
+<p>See also <a href="qsensor.html#updatePolicy">updatePolicy</a>() and <a href="qsensor.html#supportedPolicies">supportedPolicies</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensor/start"></a>
+<h3 class="fn"><a name="start"></a>bool QSensor::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Start retrieving values from the sensor.</p>
+<p>Note that some sensors require exclusive access so this function may fail and return false.</p>
+<p>Also note that some sensors may not honour settings set after this method is called.</p>
+<a name="//apple_ref/cpp/instm/QSensor/stop"></a>
+<h3 class="fn"><a name="stop"></a>void QSensor::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Stop retrieving values from the sensor.</p>
+<a name="//apple_ref/cpp/instm/QSensor/supportedPolicies"></a>
+<h3 class="fn"><a name="supportedPolicies"></a><a href="qsensor.html#UpdatePolicy-enum">UpdatePolicies</a> QSensor::supportedPolicies () const</h3>
+<p>Returns the update policies that the sensor supports.</p>
+<a name="//apple_ref/cpp/instm/QSensor/type"></a>
+<h3 class="fn"><a name="type"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QSensor::type () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the type of the sensor.</p>
+<a name="//apple_ref/cpp/instm/QSensor/updateInterval"></a>
+<h3 class="fn"><a name="updateInterval"></a>int QSensor::updateInterval () const</h3>
+<p>Returns the update interval the sensor is using (only applicable when using the <a href="qsensor.html#UpdatePolicy-enum">TimedUpdates</a> policy).</p>
+<a name="//apple_ref/cpp/instm/QSensor/updatePolicy"></a>
+<h3 class="fn"><a name="updatePolicy"></a><a href="qsensor.html#UpdatePolicy-enum">UpdatePolicy</a> QSensor::updatePolicy () const</h3>
+<p>Returns the update policy the sensor is using.</p>
+<p>See also <a href="qsensor.html#setUpdatePolicy">setUpdatePolicy</a>().</p>
+<hr />
+<h2>Related Non-Members</h2>
+<a name="//apple_ref/cpp/tdef//QSensorId"></a>
+<h3 class="fn"><a name="QSensorId-typedef"></a>typedef QSensorId</h3>
+<p>An opaque type representing an sensor identifier. These can be obtained from the <a href="qsensorfactory.html">QSensorFactory</a> class.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

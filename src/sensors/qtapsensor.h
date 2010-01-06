@@ -123,7 +123,10 @@ protected:
     QSensorBackend *backend() const { return m_backend; }
 
 private:
-    void newReadingAvailable();
+    void newReadingAvailable()
+    {
+        emit tapDetected(currentReading());
+    }
 
     QTapBackend *m_backend;
 };

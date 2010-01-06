@@ -54,8 +54,10 @@
 
 #include "qmobilityglobal.h"
 
+QT_BEGIN_NAMESPACE
 class QTime;
 class QByteArray;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

@@ -42,7 +42,6 @@
 #ifndef PHONEBOOK_H
 #define PHONEBOOK_H
 
-#include "finddialog.h"
 #include "qtcontacts.h"
 
 #include <QWidget>
@@ -50,17 +49,20 @@
 #include <QPlainTextEdit>
 
 QT_BEGIN_NAMESPACE
+class QStackedWidget;
 class QListWidget;
 class QPushButton;
 class QComboBox;
 class QLabel;
 class QLineEdit;
-class QTextEdit;
 QT_END_NAMESPACE
 
-class ContactDetailsForm;
-class MainDialogForm640By480;
-class MainDialogForm240By320;
+class ContactListPage;
+class ContactEditor;
+class FilterPage;
+
+QT_USE_NAMESPACE
+QTM_USE_NAMESPACE
 
 class PhoneBook : public QWidget
 {
@@ -71,75 +73,25 @@ public:
     ~PhoneBook();
 
 public slots:
-    void addContact();
-    void saveContact();
-    void removeContact();
-    void findContact();
-    void openContact();
-    void cancelContact();
-    void editGroupDetails();
-    void next();
-    void previous();
-    void importFromVCard();
-    void exportAsVCard();
-    void selectAvatar();
-    void contactSelected(int row);
+    void activateEditor(QContactLocalId contactId);
+    void activateList(const QContactFilter& filter);
+    void activateList();
+    void activateFind();
 
-private slots:
-    void backendChanged(const QList<QContactLocalId>& changed);
-    void backendSelected(const QString& backend);
+    void managerChanged(QContactManager *manager);
 
 private:
-    QContact buildContact() const;
-    QContactName buildName(const QString &name) const;
-    void displayContact();
-    void updateButtons();
-    bool eventFilter(QObject* watched, QEvent* event);
-    void populateList(const QContact& currentContact);
+    // the stacked widget which will display the pages
+    QStackedWidget *m_stackedWidget;
 
-    QListWidget *contactsList;
+    // pages
+    ContactListPage *m_listPage;
+    ContactEditor *m_editorPage;
+    FilterPage *m_filterPage;
 
-    QPushButton *addButton;
-    QPushButton *saveButton;
-    QPushButton *cancelButton;
-    QPushButton *removeButton;
-    QPushButton *findButton;
-    QPushButton *openButton;
-    QPushButton *importButton;
-    QPushButton *exportButton;
-    QPushButton *quitButton;
-    QPushButton *groupsButton;
-    QLabel *currentIndexLabel;
-    QLabel *currentBackendLabel;
-    QLabel *avatarPixmapLabel;
-
-    QComboBox *backendCombo;
-
-    QLineEdit *nameLine;
-    QPushButton *avatarButton;
-    QLineEdit *emailLine;
-    QLineEdit *homePhoneLine;
-    QLineEdit *workPhoneLine;
-    QLineEdit *mobilePhoneLine;
-    QPlainTextEdit *addressText;
-
-    FindDialog *dialog;
-
-    int currentIndex;
-    int lastIndex;
-    bool addingContact;
-    bool editingContact;
-    bool smallScreenSize;
-    QList<QContact> contacts;
-    QList<QContactLocalId> contactGroups;
-
-    QMap<QString, QContactManager*> managers;
-    QContactManager *cm;
-    ContactDetailsForm *contactDetailsForm;
-    MainDialogForm640By480 *mainDialogForm640By480;
-    MainDialogForm240By320 *mainDialogForm240By320;
-    QWidget *mainForm;
-    QWidget *detailsForm;
+    // data
+    QContactManager *m_manager;
+    QContactFilter m_currentFilter;
 };
 
-#endif //PHONEBOOK_H
+#endif // PHONEBOOK_H

@@ -133,7 +133,7 @@ public:
 
     virtual bool writeItem(const QMediaContent& item)
     {
-        *m_textStream << item.canonicalUri().toString() << endl;
+        *m_textStream << item.canonicalUrl().toString() << endl;
         return true;
     }
 

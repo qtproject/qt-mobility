@@ -62,8 +62,8 @@ class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
     Q_PROPERTY(StereoMode stereoMode READ stereoMode WRITE setStereoMode)
     Q_PROPERTY(int signalStrength READ signalStrength NOTIFY signalStrengthChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
-    Q_PROPERTY(bool searching READ isSearching NOTIFY searchingStatusChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
+    Q_PROPERTY(bool searching READ isSearching NOTIFY searchingChanged)
     Q_ENUMS(State)
     Q_ENUMS(Band)
     Q_ENUMS(Error)
@@ -77,6 +77,9 @@ public:
 
     QRadioTuner(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QRadioTuner();
+
+    bool isAvailable() const;
+    QtMedia::AvailabilityError availabilityError() const;
 
     State state() const;
 
@@ -121,10 +124,10 @@ Q_SIGNALS:
     void bandChanged(QRadioTuner::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
-    void searchingStatusChanged(bool searching);
+    void searchingChanged(bool searching);
     void signalStrengthChanged(int signalStrength);
     void volumeChanged(int volume);
-    void mutingChanged(bool muted);
+    void mutedChanged(bool muted);
     void error(Error err);
 
 private:

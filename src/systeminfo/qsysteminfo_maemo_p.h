@@ -66,8 +66,10 @@
 
 QT_BEGIN_HEADER
 
+QT_BEGIN_NAMESPACE
 class QStringList;
 class QTimer;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -103,7 +105,7 @@ private:
     QString langCached;
 
 private Q_SLOTS:
-    void startLangaugePolling();
+    void startLanguagePolling();
 
 
 };
