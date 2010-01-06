@@ -51,8 +51,8 @@ QTM_BEGIN_NAMESPACE
     \brief The QTapReading class represents one reading from the
            tap sensor.
 
-    The tap sensor registers tap and double tap events along one of the
-    three axes. The axes are arranged as follows.
+    The tap sensor registers tap and double tap events in one of the six directions.
+    There are 3 axes that originate from the phone. They are arranged as follows.
 \code
              +z
               |
@@ -77,11 +77,19 @@ QTM_BEGIN_NAMESPACE
 /*!
     \enum QTapReading::TapDirection
 
-    Foobar
+    The tap direction is reported as one of the six directions (X, Y, Z, positive and negative).
+    There are 3 flags that you can use if you only care about the axis in use.
 
-    \value X
-    \value Y
-    \value Z
+    \value Undefined This value means that the direction is unknown.
+    \value X     This flag is set if the tap was along the X axis.
+    \value Y     This flag is set if the tap was along the Y axis.
+    \value Z     This flag is set if the tap was along the Z axis.
+    \value X_Pos This value is returned if the tap was towards the positive X direction.
+    \value Y_Pos This value is returned if the tap was towards the positive Y direction.
+    \value Z_Pos This value is returned if the tap was towards the positive Z direction.
+    \value X_Neg This value is returned if the tap was towards the negative X direction.
+    \value Y_Neg This value is returned if the tap was towards the negative Y direction.
+    \value Z_Neg This value is returned if the tap was towards the negative Z direction.
 */
 
 /*!
@@ -90,7 +98,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QTapReading::QTapReading(QTime timestamp, TapDirection tapDirection, int tapCount)
+    \fn QTapReading::QTapReading(QTime timestamp, TapDirection tapDirection, bool doubleTap)
     \internal
 */
 
@@ -117,9 +125,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QTapReading::tapCount() const
+    \fn QTapReading::doubleTap() const
 
-    Returns 1 for a tap, 2 for a double tap.
+    Returns true if the tap was a double tap, false if it was a single tap.
 */
 
 // =====================================================================
@@ -131,8 +139,8 @@ QTM_BEGIN_NAMESPACE
     \preliminary
     \brief The QTapSensor class reports on taps.
 
-    The tap sensor registers tap and double tap events along one of the
-    three axes. The axes are arranged as follows.
+    The tap sensor registers tap and double tap events in one of the six directions.
+    There are 3 axes that originate from the phone. They are arranged as follows.
 \code
              +z
               |

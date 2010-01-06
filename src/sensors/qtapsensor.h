@@ -54,16 +54,16 @@ class QTapReadingData : public QSharedData
 {
 public:
     QTapReadingData()
-        : timestamp(), tapDirection(0), tapCount(0) {}
-    QTapReadingData(QTime _timestamp, int _tapDirection, int _tapCount)
-        : timestamp(_timestamp), tapDirection(_tapDirection), tapCount(_tapCount) {}
+        : timestamp(), tapDirection(0), doubleTap(false) {}
+    QTapReadingData(QTime _timestamp, int _tapDirection, bool _doubleTap)
+        : timestamp(_timestamp), tapDirection(_tapDirection), doubleTap(_doubleTap) {}
     QTapReadingData(const QTapReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), tapDirection(other.tapDirection), tapCount(other.tapCount) {}
+        : QSharedData(other), timestamp(other.timestamp), tapDirection(other.tapDirection), doubleTap(other.doubleTap) {}
     ~QTapReadingData() {}
 
     QTime timestamp;
     int tapDirection;
-    int tapCount;
+    bool doubleTap;
 };
 
 // =====================================================================
@@ -72,22 +72,29 @@ class Q_SENSORS_EXPORT QTapReading
 {
 public:
     enum TapDirection {
-        X,
-        Y,
-        Z
+        Undefined = 0,
+        X     = 0x0001,
+        Y     = 0x0002,
+        Z     = 0x0004,
+        X_Pos = 0x0011,
+        Y_Pos = 0x0022,
+        Z_Pos = 0x0044,
+        X_Neg = 0x0101,
+        Y_Neg = 0x0202,
+        Z_Neg = 0x0404
     };
 
     explicit QTapReading()
     { d = new QTapReadingData; }
-    explicit QTapReading(QTime timestamp, TapDirection tapDirection, int tapCount)
-    { d = new QTapReadingData(timestamp, tapDirection, tapCount); }
+    explicit QTapReading(QTime timestamp, TapDirection tapDirection, bool doubleTap)
+    { d = new QTapReadingData(timestamp, tapDirection, doubleTap); }
     QTapReading(const QTapReading &other)
         : d(other.d) {}
     ~QTapReading() {}
 
     QTime timestamp() const { return d->timestamp; }
     TapDirection tapDirection() const { return static_cast<TapDirection>(d->tapDirection); }
-    int tapCount() const { return d->tapCount; }
+    bool doubleTap() const { return d->doubleTap; }
 
 private:
     QSharedDataPointer<QTapReadingData> d;
@@ -116,10 +123,7 @@ protected:
     QSensorBackend *backend() const { return m_backend; }
 
 private:
-    void newReadingAvailable()
-    {
-        emit tapDetected(currentReading());
-    }
+    void newReadingAvailable();
 
     QTapBackend *m_backend;
 };
