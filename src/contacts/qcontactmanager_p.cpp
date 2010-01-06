@@ -74,6 +74,7 @@ QHash<QString, int> QContactManagerData::m_vendormap;
 QHash<QString, int> QContactManagerData::m_actionmap;
 
 bool QContactManagerData::m_discovered;
+bool QContactManagerData::m_discoveredStatic;
 QStringList QContactManagerData::m_pluginPaths;
 
 static void qContactsCleanEngines()
@@ -121,28 +122,46 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
     }
 
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
-    if (builtManagerName == QLatin1String("memory"))
+    if (builtManagerName == QLatin1String("memory")) {
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
-    else {
+    } else {
         int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
-        /* Look for a factory */
-        loadFactories();
+
+        bool found = false;
+        bool loadedDynamic = false;
+
+        /* First check static factories */
+        loadStaticFactories();
+
+        /* See if we got a fast hit */
         QList<QContactManagerEngineFactory*> factories = m_engines.values(builtManagerName);
         m_error = QContactManager::NoError;
 
-        
-        foreach (QContactManagerEngineFactory* f, factories) {
-            QList<int> versions = f->supportedImplementationVersions();
-            if (f && f->version() == apiVersion) {
-                if (implementationVersion == -1 ||//no given implementation version required
-                    versions.isEmpty() || //the manager engine factory does not report any version
-                    versions.contains(implementationVersion)) {
-                    m_engine = f->engine(parameters, m_error);
-                    break;
+        while(!found) {
+            foreach (QContactManagerEngineFactory* f, factories) {
+                QList<int> versions = f->supportedImplementationVersions();
+                if (f && f->version() == apiVersion) {
+                    if (implementationVersion == -1 //no given implementation version required
+                        || versions.isEmpty() //the manager engine factory does not report any version
+                        || versions.contains(implementationVersion)) {
+                        m_engine = f->engine(parameters, m_error);
+                        found = true;
+                        break;
+                    }
                 }
             }
+
+            // If this is the second time through, break
+            if (loadedDynamic)
+                break;
+
+            // otherwise load dynamic factories and reloop
+            loadFactories();
+            factories = m_engines.values(builtManagerName);
+            loadedDynamic = true;
         }
 
+        // XXX remove this
         // the engine factory could lie to us, so check the real implementation version
         if (m_engine && (m_engine->version() != apiVersion || (implementationVersion != -1 && m_engine->implementationVersion() != implementationVersion))) {
             m_error = QContactManager::VersionMismatchError;
@@ -157,20 +176,16 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
     }
 }
 
-/* Plugin loader */
-void QContactManagerData::loadFactories()
+
+void QContactManagerData::loadStaticFactories()
 {
-    if (!m_discovered || QApplication::libraryPaths() != m_pluginPaths) {
-        m_discovered = true;
-        m_pluginPaths = QApplication::libraryPaths();
+    if (!m_discoveredStatic) {
+        m_discoveredStatic = true;
 
         /* Clean stuff up at the end */
         qAddPostRoutine(qContactsCleanEngines);
 
-        /* Discover a bunch o plugins */
-        QStringList plugins;
-
-        /* First the static ones */
+        /* Loop over all the static plugins */
         QObjectList staticPlugins = QPluginLoader::staticInstances();
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
@@ -211,6 +226,21 @@ void QContactManagerData::loadFactories()
                 }
             }
         }
+    }
+}
+
+/* Plugin loader */
+void QContactManagerData::loadFactories()
+{
+    // Always do this..
+    loadStaticFactories();
+
+    if (!m_discovered || QApplication::libraryPaths() != m_pluginPaths) {
+        m_discovered = true;
+        m_pluginPaths = QApplication::libraryPaths();
+
+        /* Discover a bunch o plugins */
+        QStringList plugins;
 
         QStringList paths;
         QSet<QString> processed;
@@ -292,7 +322,6 @@ void QContactManagerData::loadFactories()
                 qDebug() << "Unknown plugin:" << qpl.errorString() << " [qobject:" << qpl.instance() << "]";
             }
         }
-
         
         QStringList engineNames;
         foreach (QContactManagerEngineFactory* f, m_engines.values()) {
