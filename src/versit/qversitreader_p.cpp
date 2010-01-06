@@ -79,7 +79,6 @@ bool QVersitReaderPrivate::read()
     mVersitDocuments.clear();
     if (isReady()) {
         QByteArray input = mIoDevice->readAll();
-        VersitUtils::unfold(input);
 
         VersitCursor cursor(input);
         int oldPos = cursor.position;

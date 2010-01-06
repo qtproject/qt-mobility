@@ -374,36 +374,25 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
  */
 bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
 {
-    const QByteArray dosNewline = encode("\r\n", codec);
-    const QByteArray unixNewline = encode("\n", codec);
-    const QByteArray macNewline = encode("\r", codec);
+    QList<QByteArray> newlines;
+    newlines.append(encode("\r\n", codec));
+    newlines.append(encode("\n", codec));
+    newlines.append(encode("\r", codec));
     int crlfPos;
 
     /* See if we can find a newline */
     forever {
-        crlfPos = line.data.indexOf(dosNewline, line.position);
-        if (crlfPos == line.position) {
-            line.position += dosNewline.length();
-            continue;
-        }
-        else if (crlfPos == -1) {
-            crlfPos = line.data.indexOf(unixNewline, line.position);
+        foreach(QByteArray newline, newlines) {
+            crlfPos = line.data.indexOf(newline, line.position);
             if (crlfPos == line.position) {
-                line.position += unixNewline.length();
-                continue;
-            }
-            else if (crlfPos == -1) {
-                crlfPos = line.data.indexOf(macNewline, line.position);
-                if (crlfPos == line.position) {
-                    line.position += macNewline.length();
-                    continue;
-                }
+                line.position += newline.length();
+                break;
+            } else if (crlfPos > line.position) {
+                line.selection = crlfPos;
+                return true;
             }
         }
-        if (crlfPos > line.position) {
-            line.selection = crlfPos;
-            return true;
-        } else {
+        if (crlfPos == -1) {
             // No crlf - return false
             return false;
         }

@@ -849,7 +849,6 @@ void UT_VersitUtils::testGetNextLine()
     QCOMPARE(cursor.position, 2);
     QCOMPARE(cursor.selection, 3);
 
-
     // Wide character support
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     QByteArray data = VersitUtils::encode("a\r\nb\r\n", codec);
