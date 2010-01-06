@@ -46,7 +46,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC_WITH_ARGS(QSensorPluginLoader, pluginLoader, (QSensorFactoryInterface_iid, QLatin1String("/sensors")))
+Q_GLOBAL_STATIC_WITH_ARGS(QSensorPluginLoader, pluginLoader, (QSensorPluginInterface_iid, QLatin1String("/sensors")))
 
 /*!
     \class QSensorManager
@@ -144,7 +144,7 @@ void QSensorManager::loadPlugins()
 
     qDebug() << "initializing plugins";
 
-    foreach (QSensorPlugin *plugin, pluginLoader()->plugins()) {
+    foreach (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
         plugin->registerSensors();
     }
 }

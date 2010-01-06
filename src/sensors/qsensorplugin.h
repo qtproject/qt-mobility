@@ -55,28 +55,16 @@ QTM_BEGIN_NAMESPACE
 
 class QSensorBackend;
 
-struct Q_SENSORS_EXPORT QSensorFactoryInterface
+struct Q_SENSORS_EXPORT QSensorPluginInterface
 {
     virtual void registerSensors() = 0;
 };
 
 QTM_END_NAMESPACE
 
-#define QSensorFactoryInterface_iid \
-    "com.nokia.Qt.QSensorFactoryInterface/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QSensorFactoryInterface, QSensorFactoryInterface_iid)
-
-QTM_BEGIN_NAMESPACE
-
-class Q_MEDIA_EXPORT QSensorPlugin : public QObject, public QSensorFactoryInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QSensorFactoryInterface)
-
-    virtual void registerSensors() = 0;
-};
-
-QTM_END_NAMESPACE
+#define QSensorPluginInterface_iid \
+    "com.nokia.Qt.QSensorPluginInterface/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QSensorPluginInterface, QSensorPluginInterface_iid)
 
 #endif
 

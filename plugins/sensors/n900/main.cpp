@@ -51,8 +51,10 @@ CREATE_FUNC(n900accelerationsensor)
 CREATE_FUNC(n900lightsensor)
 CREATE_FUNC(n900proximitysensor)
 
-class n900 : public QSensorPlugin
+class n900SensorPlugin : public QObject, public QSensorPluginInterface
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QSensorPluginInterface)
 public:
     void registerSensors()
     {
@@ -63,5 +65,7 @@ public:
     }
 };
 
-Q_EXPORT_PLUGIN2(libsensors_n900, n900);
+Q_EXPORT_PLUGIN2(libsensors_n900, n900SensorPlugin);
+
+#include "main.moc"
 

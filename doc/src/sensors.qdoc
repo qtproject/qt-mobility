@@ -114,3 +114,51 @@ classes to use.
 
 */
 
+/*!
+\page creating-a-sensor-plugin.html
+\title Creating a sensor plugin
+
+\section1 How a sensor plugin is loaded
+
+Since sensor backends are created on demand, the sensor plugin is loaded and asked
+to register the sensor backends it handles. It does this primarily with the help
+of the CREATE_FUNC() and REGISTER_STATEMENT() macros found in \c qsensormanager.h.
+
+The simplest plugin will have just once sensor backend although there is no reason
+that multiple sensor backends cannot be in a plugin.
+
+An example follows.
+
+\code
+#include "mybackend.h"
+#include <qsensorplugin.h>
+#include <qsensormanager.h>
+
+CREATE_FUNC(MyBackend)
+//CREATE_FUNC(MyOtherBackend)
+
+class MyPluginClass : public QtMobility::QSensorPluginInterface
+{
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QSensorPluginInterface)
+public:
+    void registerSensors()
+    {
+        REGISTER_STATEMENT(MyBackend, QAccelerationSensor::typeId, QByteArray("my.acceleration.sensor"));
+        //REGISTER_STATEMENT(MyOtherBackend, QProximitySensor::typeId, QByteArray("my.proximity.sensor"));
+    }
+};
+
+Q_EXPORT_PLUGIN2(libmy_plugin_file_name, MyPluginClass);
+
+#include "main.moc"
+\endcode
+
+This example shows that the backend class definition must exist so that the
+CREATE_FUNC() macro can be used. The plugin class has only one method which uses
+the REGISTER_STATEMENT() macro to register the sensor backend. The commented lines
+show how you would handle multiple sensor backends in a single plugin. Finally,
+the plugin class is exported as a Qt plugin with the Q_EXPORT_PLUGIN2() macro
+and the moc file (which supplies things like the vtable) is included.
+
+*/

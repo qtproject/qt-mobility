@@ -75,7 +75,7 @@ void QSensorPluginLoader::load()
 
             QObject *o = loader.instance();
             if (o != 0 && o->qt_metacast(m_iid) != 0) {
-                QSensorPlugin *p = qobject_cast<QSensorPlugin*>(o);
+                QSensorPluginInterface *p = qobject_cast<QSensorPluginInterface*>(o);
                 if (p != 0) {
                     m_plugins << p;
                 }

@@ -60,21 +60,21 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QSensorPlugin;
+struct QSensorPluginInterface;
 
 class Q_AUTOTEST_EXPORT QSensorPluginLoader
 {
 public:
     QSensorPluginLoader(const char *iid, const QString &suffix = QString());
 
-    QList<QSensorPlugin*> plugins() const { return m_plugins; }
+    QList<QSensorPluginInterface*> plugins() const { return m_plugins; }
 
 private:
     void load();
 
     QByteArray  m_iid;
     QString     m_location;
-    QList<QSensorPlugin*> m_plugins;
+    QList<QSensorPluginInterface*> m_plugins;
 };
 
 QTM_END_NAMESPACE
