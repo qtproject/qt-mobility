@@ -148,7 +148,7 @@ void UT_QVersit::testImportFiles_data()
         QTEST_NEW_ROW("Entourage11/basic.vcf", "UTF-16BE", list);
     }
 
-//    QTEST_NEW_ROW("Entourage11/image.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("Entourage11/image.vcf", "UTF-16BE", QList<QContact>());
 
     QTEST_NEW_ROW("Entourage11/nonascii.vcf", "UTF-16BE", QList<QContact>());
 

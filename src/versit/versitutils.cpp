@@ -44,6 +44,7 @@
 
 #include <QMap>
 #include <QTextCodec>
+#include <QScopedPointer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -338,6 +339,7 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
 
 /*!
  * Get the next line of input to parse using \a codec to determine the line delimeters.
+ * Also performs unfolding by removing sequences of newline-space from the retrieved line.
  *
  * On entry, \a line should contain the current data buffer and offset.
  * On exit, \a line will have the updated selection corresponding to the
@@ -347,25 +349,45 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
  */
 bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
 {
+    // This function works by searching for DOS, UNIX and Mac newline delimeters in turn. It may
+    // need to do this multiple times (either if it finds a newline at the start, or a "folding"
+    // newline.  If it finds a folding newline, it is likely that it will continue to find a
+    // series of folds (eg. the line contains a base64 encoded image).  In this case, it is more
+    // efficient to search only for the newline type that it has already found, rather than
+    // continuing to loop through all three.  This has the side-effect that if a Mac newline is
+    // used to fold, and somewhere later, a DOS newline is used, this function will not recognise
+    // the DOS newline.
+
     int crlfPos;
 
-    /* See if we can find a newline */
-    QList<QByteArray>* newlines = newlineList(codec);
+    QList<QByteArray>* crlfList = newlineList(codec);
+    QScopedPointer<QList<QByteArray> > crlfScopedPointer;
     QByteArray space = encode(' ', codec);
     QByteArray tab = encode('\t', codec);
+
+    int i = line.position;
     forever {
-        foreach(QByteArray newline, *newlines) {
-            int newlineLength = newline.length();
-            crlfPos = line.data.indexOf(newline, line.position);
+        foreach(QByteArray crlf, *crlfList) {
+            int newlineLength = crlf.length();
+            crlfPos = line.data.indexOf(crlf, i);
             if (crlfPos == line.position) {
-                // Newline at start of line.  Set position to directly after it
+                // Newline at start of line.  Set position to directly after it.
                 line.position += newlineLength;
+                i = line.position;
                 break;
             } else if (crlfPos > line.position) {
                 // Found the newline.  Check that it's not followed by a whitespace.
                 if (containsAt(line.data, space, crlfPos + newlineLength)
                     || containsAt(line.data, tab, crlfPos + newlineLength)) {
                     line.data.remove(crlfPos, newlineLength + space.length());
+                    i = crlfPos;
+
+                    // Do the optimisation, if not already done (see big comment above).
+                    if (crlfScopedPointer.isNull()) {
+                        crlfList = new QList<QByteArray>;
+                        crlfList->append(crlf);
+                        crlfScopedPointer.reset(crlfList); // to ensure it's deleted on return.
+                    }
                     break;
                 } else {
                     line.selection = crlfPos;
