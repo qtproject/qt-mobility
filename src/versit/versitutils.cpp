@@ -48,6 +48,7 @@
 QTM_BEGIN_NAMESPACE
 
 QTextCodec* VersitUtils::m_previousCodec = 0;
+QList<QByteArray>* VersitUtils::m_newlineList = 0;
 QByteArray VersitUtils::m_encodingMap[256];
 
 /*!
@@ -362,7 +363,6 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
     return result;
 }
 
-
 /*!
  * Get the next line of input to parse using \a codec to determine the line delimeters.
  *
@@ -374,15 +374,12 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
  */
 bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
 {
-    QList<QByteArray> newlines;
-    newlines.append(encode("\r\n", codec));
-    newlines.append(encode("\n", codec));
-    newlines.append(encode("\r", codec));
     int crlfPos;
 
     /* See if we can find a newline */
+    QList<QByteArray>* newlines = newlineList(codec);
     forever {
-        foreach(QByteArray newline, newlines) {
+        foreach(QByteArray newline, *newlines) {
             crlfPos = line.data.indexOf(newline, line.position);
             if (crlfPos == line.position) {
                 line.position += newline.length();
@@ -559,6 +556,24 @@ bool VersitUtils::shouldBeQuotedPrintableEncoded(char chr)
             chr == '=' || chr == '@' || chr == '[' || chr == '\\' || 
             chr == ']' || chr == '^' || chr == '`' ||
             chr > 122 ); 
+}
+
+/*!
+ * Returns the list of DOS, UNIX and Mac newline characters for a given codec.
+ */
+QList<QByteArray>* VersitUtils::newlineList(QTextCodec* codec)
+{
+    if (m_newlineList != 0 && codec == m_previousCodec) {
+        return m_newlineList;
+    }
+    if (m_newlineList != 0)
+        delete m_newlineList;
+    m_newlineList = new QList<QByteArray>;
+    m_newlineList->append(encode("\r\n", codec));
+    m_newlineList->append(encode("\n", codec));
+    m_newlineList->append(encode("\r", codec));
+    m_previousCodec = codec;
+    return m_newlineList;
 }
 
 QTM_END_NAMESPACE

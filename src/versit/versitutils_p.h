@@ -68,7 +68,6 @@ public:
     void setSelection(int pos) {selection = qMax(pos, position);}
 };
 
-
 class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
@@ -107,8 +106,15 @@ public:
     static bool shouldBeQuotedPrintableEncoded(char chr);
 
 private:
+    static QList<QByteArray>* newlineList(QTextCodec* codec);
+
+    // These are caches for performance:
+    // The previous codec that encode(char, QTextCodec) was called with
     static QTextCodec* m_previousCodec;
+    // The QByteArray corresponding to each char from 0-255, encoded with m_previousCodec
     static QByteArray m_encodingMap[256];
+    // List of different newline delimeters, encoded with m_previousCodec
+    static QList<QByteArray>* m_newlineList;
 };
 
 QTM_END_NAMESPACE
