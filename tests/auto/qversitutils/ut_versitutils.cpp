@@ -306,61 +306,6 @@ void UT_VersitUtils::testFold()
         QString::fromAscii(folded));
 }
 
-void UT_VersitUtils::testUnfold()
-{
-    // No folding
-    QCOMPARE(QByteArray("no folding\r\n"), QByteArray("no folding\r\n"));
-    
-    // Single space
-    QByteArray folded("unfol\r\n ded\r\n");
-    QByteArray unfolded("unfolded\r\n");
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-
-    // Multiple spaces
-    folded = "unfol\r\n  ded\r\n";
-    unfolded = "unfol ded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-
-    // Single tab
-    folded = "unfol\r\n\tded\r\n";
-    unfolded = "unfolded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-
-    // Multiple tabs
-    folded = "unfol\r\n\t\tded\r\n";
-    unfolded = "unfol\tded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-    
-    // One space and one tab
-    folded = "unfol\r\n \tded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-    
-    // One tab and one space
-    folded = "unfol\r\n\t ded\r\n";
-    unfolded = "unfol ded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-    
-    // Multiple spaces and tabs
-    folded = "unfol\r\n\t \t  \t\t ded\r\n";
-    unfolded = "unfol \t  \t\t ded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-    
-    // Two foldings
-    folded = "un\r\n\tfol\r\n ded\r\n";
-    unfolded = "unfolded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-
-    // Three foldings
-    folded = "un\r\n fol\r\n\tde\r\n d\r\n";
-    unfolded = "unfolded\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-    
-    // Two actual lines containing foldings
-    folded = "li\r\n\tne1\r\nl\r\n ine2\r\n";
-    unfolded = "line1\r\nline2\r\n";
-    QCOMPARE(unfolded, VersitUtils::unfold(folded));
-}
-
 void UT_VersitUtils::testQuotedPrintableEncode()
 {
     QByteArray encodedBytes;
@@ -849,6 +794,30 @@ void UT_VersitUtils::testGetNextLine()
     QCOMPARE(cursor.position, 2);
     QCOMPARE(cursor.selection, 3);
 
+    // Basic unfolding
+    cursor.setData("eno\r\n rmous\r\nelephant\r\n");
+    cursor.setPosition(0);
+    QVERIFY(VersitUtils::getNextLine(cursor, m_asciiCodec));
+    QCOMPARE(cursor.data, QByteArray("enormous\r\nelephant\r\n"));
+    QCOMPARE(cursor.position, 0);
+    QCOMPARE(cursor.selection, 8);
+
+    // Unfold tabs
+    cursor.setData("eno\r\n\trmous\r\nelephant\r\n");
+    cursor.setPosition(0);
+    QVERIFY(VersitUtils::getNextLine(cursor, m_asciiCodec));
+    QCOMPARE(cursor.data, QByteArray("enormous\r\nelephant\r\n"));
+    QCOMPARE(cursor.position, 0);
+    QCOMPARE(cursor.selection, 8);
+
+    // Unfold multiple times
+    cursor.setData("un\r\n fol\r\n\tde\r\n d\r\nline");
+    cursor.setPosition(0);
+    QVERIFY(VersitUtils::getNextLine(cursor, m_asciiCodec));
+    QCOMPARE(cursor.data, QByteArray("unfolded\r\nline"));
+    QCOMPARE(cursor.position, 0);
+    QCOMPARE(cursor.selection, 8);
+
     // Wide character support
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     QByteArray data = VersitUtils::encode("a\r\nb\r\n", codec);
@@ -886,6 +855,14 @@ void UT_VersitUtils::testGetNextLine()
     QCOMPARE(cursor.position, 4);
     QCOMPARE(cursor.selection, 6);
 
+    // Unfold multiple times
+    data = VersitUtils::encode("un\r\n fol\r\n\tde\r\n d\r\nline", codec);
+    cursor.setData(data);
+    cursor.setPosition(0);
+    QVERIFY(VersitUtils::getNextLine(cursor, codec));
+    QCOMPARE(cursor.data, VersitUtils::encode("unfolded\r\nline", codec));
+    QCOMPARE(cursor.position, 0);
+    QCOMPARE(cursor.selection, 16);
 }
 
 void UT_VersitUtils::testExtractParams()

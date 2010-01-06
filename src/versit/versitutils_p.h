@@ -72,7 +72,6 @@ class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
     static QByteArray fold(QByteArray& text, int maxChars);
-    static QByteArray unfold(QByteArray& text);
     static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
     static bool quotedPrintableEncode(QByteArray& text);
     static void decodeQuotedPrintable(QByteArray& text);
@@ -104,10 +103,9 @@ public:
     static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
     static QByteArray encode(char ch, QTextCodec* codec);
     static bool shouldBeQuotedPrintableEncoded(char chr);
-
-private:
     static QList<QByteArray>* newlineList(QTextCodec* codec);
-
+    static void changeCodec(QTextCodec* codec);
+private:
     // These are caches for performance:
     // The previous codec that encode(char, QTextCodec) was called with
     static QTextCodec* m_previousCodec;

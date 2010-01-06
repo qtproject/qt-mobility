@@ -85,33 +85,6 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
 }
 
 /*!
- * Unfolds \a text by removing all the CRLFs
- *followed immediately by a linear whitespace (SPACE or TAB).
- */
-QByteArray VersitUtils::unfold(QByteArray& text)
-{
-    // XXX build up a list of moves and do them all at once.
-    char previous = 0;
-    char previousOfTheprevious = 0;
-    for (int i=0; i<text.length(); i++) {
-        char current = text.at(i);
-        if ((current == ' ' || current == '\t') &&
-             previous == '\n' &&
-             previousOfTheprevious == '\r') {
-            text.replace(i-2,3,QByteArray());
-            previous = 0;
-            previousOfTheprevious = 0;
-            i--;
-        } else {
-            previousOfTheprevious = previous;
-            previous = current;
-        }
-    }
-
-    return text;
-}
-
-/*!
  * Returns the count of leading whitespaces in /a text
  * starting from /a pos.
  */
@@ -378,15 +351,26 @@ bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
 
     /* See if we can find a newline */
     QList<QByteArray>* newlines = newlineList(codec);
+    QByteArray space = encode(' ', codec);
+    QByteArray tab = encode('\t', codec);
     forever {
         foreach(QByteArray newline, *newlines) {
+            int newlineLength = newline.length();
             crlfPos = line.data.indexOf(newline, line.position);
             if (crlfPos == line.position) {
-                line.position += newline.length();
+                // Newline at start of line.  Set position to directly after it
+                line.position += newlineLength;
                 break;
             } else if (crlfPos > line.position) {
-                line.selection = crlfPos;
-                return true;
+                // Found the newline.  Check that it's not followed by a whitespace.
+                if (containsAt(line.data, space, crlfPos + newlineLength)
+                    || containsAt(line.data, tab, crlfPos + newlineLength)) {
+                    line.data.remove(crlfPos, newlineLength + space.length());
+                    break;
+                } else {
+                    line.selection = crlfPos;
+                    return true;
+                }
             }
         }
         if (crlfPos == -1) {
@@ -502,41 +486,15 @@ QString VersitUtils::paramValue(const QByteArray& parameter, QTextCodec* codec)
 }
 
 /*!
- * Encode \a ch with \a codec, without adding an byte-order mark
- */
-QByteArray VersitUtils::encode(char ch, QTextCodec* codec)
-{
-    if (codec != m_previousCodec) {
-        QChar qch;
-        QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
-        for (int c = 0; c < 256; c++) {
-            qch = QChar::fromAscii(c);
-            m_encodingMap[c] = codec->fromUnicode(&qch, 1, &state);
-        }
-        m_previousCodec = codec;
-    }
-    return m_encodingMap[(int)ch];
-}
-
-/*!
- * Encode \a ba with \a codec, without adding an byte-order mark.  \a ba is interpreted as ASCII
- */
-QByteArray VersitUtils::encode(const QByteArray& ba, QTextCodec* codec)
-{
-    QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
-    return codec->fromUnicode(QString::fromAscii(ba.data()).data(), ba.length(), &state);
-}
-
-/*!
  * Returns true if and only if \a text contains \a ba at \a index
  *
- * On entry, these preconditions should hold:
- *   \a text.length() - \a index >= \a n
- *   \a index < 0
+ * On entry, index must be >= 0
  */
 bool VersitUtils::containsAt(const QByteArray& text, const QByteArray& match, int index)
 {
     int n = match.length();
+    if (text.length() - index < n)
+        return false;
     const char* textData = text.data();
     const char* matchData = match.data();
     for (int i = n-1; i >= 0; i--) {
@@ -559,21 +517,58 @@ bool VersitUtils::shouldBeQuotedPrintableEncoded(char chr)
 }
 
 /*!
- * Returns the list of DOS, UNIX and Mac newline characters for a given codec.
+ * Encode \a ch with \a codec, without adding an byte-order mark
+ */
+QByteArray VersitUtils::encode(char ch, QTextCodec* codec)
+{
+    if (codec != m_previousCodec) {
+        changeCodec(codec);
+    }
+    return m_encodingMap[(int)ch];
+}
+
+/*!
+ * Encode \a ba with \a codec, without adding an byte-order mark.  \a ba is interpreted as ASCII
+ */
+QByteArray VersitUtils::encode(const QByteArray& ba, QTextCodec* codec)
+{
+    QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
+    return codec->fromUnicode(QString::fromAscii(ba.data()).data(), ba.length(), &state);
+}
+
+/*!
+ * Returns the list of DOS, UNIX and Mac newline characters for \a codec.
  */
 QList<QByteArray>* VersitUtils::newlineList(QTextCodec* codec)
 {
     if (m_newlineList != 0 && codec == m_previousCodec) {
         return m_newlineList;
     }
+    changeCodec(codec);
+    return m_newlineList;
+}
+
+/*!
+ * Update the cached tables of pregenerated encoded text with \a codec.
+ */
+void VersitUtils::changeCodec(QTextCodec* codec) {
+    // Build m_encodingMap
+    QChar qch;
+    QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
+    for (int c = 0; c < 256; c++) {
+        qch = QChar::fromAscii(c);
+        m_encodingMap[c] = codec->fromUnicode(&qch, 1, &state);
+    }
+
+    // Build m_newlineList
     if (m_newlineList != 0)
         delete m_newlineList;
     m_newlineList = new QList<QByteArray>;
     m_newlineList->append(encode("\r\n", codec));
     m_newlineList->append(encode("\n", codec));
     m_newlineList->append(encode("\r", codec));
+
     m_previousCodec = codec;
-    return m_newlineList;
 }
 
 QTM_END_NAMESPACE

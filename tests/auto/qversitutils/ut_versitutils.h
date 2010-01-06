@@ -60,7 +60,6 @@ private slots:
     void testExtractPart();
     void testExtractParts();
     void testFold();
-    void testUnfold();
     void testQuotedPrintableEncode();
     void testDecodeQuotedPrintable();
     void testBackSlashEscape();
