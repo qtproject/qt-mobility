@@ -54,7 +54,6 @@ class QGeoSatelliteInfoSource;
 class QGeoSatelliteInfo;
 QTM_END_NAMESPACE
 
-class QLabel;
 class SatelliteWidget;
 class QPushButton;
 class QTimer;
@@ -120,7 +119,6 @@ private:
 
     QTimer *noSatelliteTimer;
 
-    QLabel *posUpdatesLabel;
     SatelliteWidget *satelliteWidget;
     QPushButton *switchButton;
     QPushButton *cancelButton;

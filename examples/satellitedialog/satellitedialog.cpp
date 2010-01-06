@@ -360,14 +360,10 @@ SatelliteDialog::SatelliteDialog(QWidget *parent,
     satelliteWidget = new SatelliteWidget(this, ordering, scaling);
 
     QLabel *titleLabel = new QLabel(tr("Satellite Signal Strength"));
-    titleLabel->setAlignment(Qt::AlignCenter);
-
-    posUpdatesLabel = new QLabel(tr("No Fix"));
-    posUpdatesLabel->setAlignment(Qt::AlignRight);
+    titleLabel->setAlignment(Qt::AlignCenter | Qt::AlignBottom);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(titleLabel);
-    mainLayout->addWidget(posUpdatesLabel);
     mainLayout->addWidget(satelliteWidget);
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
@@ -483,20 +479,18 @@ void SatelliteDialog::noSatelliteTimeout()
     satelliteWidget->clearSatellites();
 }
 
-void SatelliteDialog::positionUpdated(const QGeoPositionInfo &pos)
+void SatelliteDialog::positionUpdated(const QGeoPositionInfo &/*pos*/)
 {
     if (m_exitBehaviour == ExitOnFixOrCancel) {
         accept();
     } else {
         hasPositionUpdates = true;
-        posUpdatesLabel->setText(tr("Fix"));
     }
 }
 
 void SatelliteDialog::positionUpdateTimeout()
 {
     hasPositionUpdates = false;
-    posUpdatesLabel->setText(tr("No Fix"));
 }
 
 void SatelliteDialog::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list)

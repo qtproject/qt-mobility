@@ -66,7 +66,8 @@ QGeoInfoThreadWinCE::QGeoInfoThreadWinCE(QGeoInfoValidator *validator, bool time
         requestInterval(0),
         updatesScheduled(false),
         updatesInterval(0),
-        hasLastPosition(false)
+        hasLastPosition(false),
+        updateTimeoutTriggered(false)
 {
     qRegisterMetaType<GPS_POSITION>();
     m_newDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -146,6 +147,7 @@ void QGeoInfoThreadWinCE::startUpdates()
         QMutexLocker locker(&mutex);
 
         updatesScheduled = true;
+        hasLastPosition = false;
 
         if (updatesInterval != 0)
             updatesNextTime = currentDateTime().addMSecs(updatesInterval);
@@ -278,6 +280,7 @@ void QGeoInfoThreadWinCE::run()
 
                 m_lastPosition = posn;
                 hasLastPosition = true;
+                updateTimeoutTriggered = false;
 
                 // A request and a periodic update could both be satisfied at once.
                 // We use this flag to prevent a double update.
@@ -304,6 +307,7 @@ void QGeoInfoThreadWinCE::run()
 
                 if (emitDataUpdated) {
                     emit dataUpdated(m_lastPosition);
+                    hasLastPosition = false;
                 }
             }
         } else {
@@ -348,11 +352,13 @@ void QGeoInfoThreadWinCE::run()
                 while (msecsTo(now, updatesNextTime) < 0)
                     updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
                 if (hasLastPosition) {
-                    hasLastPosition = false;
                     emit dataUpdated(m_lastPosition);
+                    hasLastPosition = false;
                 } else {
-                    if (timeoutsForPeriodicUpdates)
+                    if (timeoutsForPeriodicUpdates && !updateTimeoutTriggered) {
                         emit updateTimeout();
+                        updateTimeoutTriggered = true;
+                    }
                 }
             }
         }

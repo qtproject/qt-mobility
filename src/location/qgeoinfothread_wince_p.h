@@ -121,6 +121,7 @@ private:
     bool gpsReachedOnState;
 
     bool hasLastPosition;
+    bool updateTimeoutTriggered;
     GPS_POSITION m_lastPosition;
 
     QMutex mutex;
