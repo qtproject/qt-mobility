@@ -39,55 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFOSOURCE_WINCE_P_H
-#define QGEOPOSITIONINFOSOURCE_WINCE_P_H
+#include "xqlistwidget.h"
 
-#include <qgeopositioninfosource.h>
-
-#include "qgeoinfothread_wince_p.h"
-
-QTM_BEGIN_NAMESPACE
-
-class QGeoPositionInfoValidator : public QGeoInfoValidator
+XQListWidget::XQListWidget(QWidget* parent) : QListWidget(parent)
 {
-public:
-    QGeoPositionInfoValidator();
-    ~QGeoPositionInfoValidator();
+}
 
-    bool valid(const GPS_POSITION &data) const;
-};
-
-class QGeoPositionInfoSourceWinCE : public QGeoPositionInfoSource
+void XQListWidget::keyPressEvent(QKeyEvent* event)
 {
-    Q_OBJECT
-
-public:
-    enum {
-        // The minimum acceptable interval for periodic updates.
-        MinimumUpdateInterval = 100
-    };
-
-    explicit QGeoPositionInfoSourceWinCE(QObject *parent = 0);
-    ~QGeoPositionInfoSourceWinCE();
-
-    void setUpdateInterval(int msec);
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
-    PositioningMethods supportedPositioningMethods() const;
-    int minimumUpdateInterval() const;
-
-public slots:
-    virtual void startUpdates();
-    virtual void stopUpdates();
-    virtual void requestUpdate(int timeout = 0);
-
-private slots:
-    void dataUpdated(GPS_POSITION data);
-
-private:
-    QGeoPositionInfo lastPosition;
-    QGeoInfoThreadWinCE *infoThread;
-};
-
-QTM_END_NAMESPACE
-
-#endif //#ifndef QGEOPOSITIONINFOSOURCE_WINCE_P_H
+    switch (event->key()) {
+        case Qt::Key_Left: {
+            focusPreviousChild();
+            break;
+        }
+        case Qt::Key_Right: {
+            focusNextChild();
+            break;
+        }
+        default: {
+            QListWidget::keyPressEvent(event);
+        }
+    }
+}

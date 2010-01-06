@@ -287,7 +287,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate()
     CHECK_SOURCE_VALID;
 
     QFETCH(int, timeout);
-    QSignalSpy spy(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spy(m_source, SIGNAL(updateTimeout()));
     m_source->requestUpdate(timeout);
     QTRY_COMPARE(spy.count(), 1);
 }
@@ -380,7 +380,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
     QSignalSpy spyUse(m_source,
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
 	QSignalSpy spyTimeout(m_source,
-                      SIGNAL(requestTimeout()));
+                      SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(0);
     m_source->requestUpdate(1);
@@ -400,7 +400,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     QSignalSpy spyUse(m_source,
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
-    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->startUpdates();
 
@@ -435,7 +435,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     QSignalSpy spyUse(m_source,
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
-    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
     m_source->requestUpdate(5000);
 
@@ -460,11 +460,11 @@ void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 {
 	CHECK_SOURCE_VALID;
 	
-	bool i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+	bool i = connect(m_source, SIGNAL(updateTimeout()), this, SLOT(test_slot1()));
 	QVERIFY(i==true);
-	i = connect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot2()));
+	i = connect(m_source, SIGNAL(updateTimeout()), this, SLOT(test_slot2()));
 	QVERIFY(i==true);
-	i = disconnect(m_source, SIGNAL(requestTimeout()), this, SLOT(test_slot1()));
+	i = disconnect(m_source, SIGNAL(updateTimeout()), this, SLOT(test_slot1()));
 	QVERIFY(i==true);
 	
 	m_source->requestUpdate(-1);

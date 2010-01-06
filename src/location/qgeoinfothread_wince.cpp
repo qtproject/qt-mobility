@@ -58,14 +58,16 @@ QGeoInfoValidator::~QGeoInfoValidator() {}
 
 // This QGeoInfoThreadWinCE instance takes ownership of the validator, and must delete it before
 // it is destructed.
-QGeoInfoThreadWinCE::QGeoInfoThreadWinCE(QGeoInfoValidator *validator, QObject *parent)
+QGeoInfoThreadWinCE::QGeoInfoThreadWinCE(QGeoInfoValidator *validator, bool timeoutsForPeriodicUpdates, QObject *parent)
         : QThread(parent),
         validator(validator),
+        timeoutsForPeriodicUpdates(timeoutsForPeriodicUpdates),
         requestScheduled(false),
         requestInterval(0),
         updatesScheduled(false),
         updatesInterval(0),
-        hasLastPosition(false)
+        hasLastPosition(false),
+        updateTimeoutTriggered(false)
 {
     qRegisterMetaType<GPS_POSITION>();
     m_newDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -145,6 +147,7 @@ void QGeoInfoThreadWinCE::startUpdates()
         QMutexLocker locker(&mutex);
 
         updatesScheduled = true;
+        hasLastPosition = false;
 
         if (updatesInterval != 0)
             updatesNextTime = currentDateTime().addMSecs(updatesInterval);
@@ -277,6 +280,7 @@ void QGeoInfoThreadWinCE::run()
 
                 m_lastPosition = posn;
                 hasLastPosition = true;
+                updateTimeoutTriggered = false;
 
                 // A request and a periodic update could both be satisfied at once.
                 // We use this flag to prevent a double update.
@@ -303,6 +307,7 @@ void QGeoInfoThreadWinCE::run()
 
                 if (emitDataUpdated) {
                     emit dataUpdated(m_lastPosition);
+                    hasLastPosition = false;
                 }
             }
         } else {
@@ -339,15 +344,22 @@ void QGeoInfoThreadWinCE::run()
             // Check for request timeouts.
             if (requestScheduled && msecsTo(now, requestNextTime) < 0) {
                 requestScheduled = false;
-                emit requestTimeout();
+                emit updateTimeout();
             }
 
             // Check to see if a periodic update is due.
             if (updatesScheduled && updatesInterval != 0 && msecsTo(now, updatesNextTime) < 0) {
                 while (msecsTo(now, updatesNextTime) < 0)
                     updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
-                if (hasLastPosition)
+                if (hasLastPosition) {
                     emit dataUpdated(m_lastPosition);
+                    hasLastPosition = false;
+                } else {
+                    if (timeoutsForPeriodicUpdates && !updateTimeoutTriggered) {
+                        emit updateTimeout();
+                        updateTimeoutTriggered = true;
+                    }
+                }
             }
         }
     }

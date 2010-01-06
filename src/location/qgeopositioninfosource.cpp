@@ -81,7 +81,7 @@ QTM_BEGIN_NAMESPACE
     Note that the position source may have a minimum value requirement for
     update intervals, as returned by minimumIntervalForType().
 
-    \warning On Windows CE it is not possible to detect if a device is GPS enabled.  
+    \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default position source on a Windows CE device without GPS support will never provide any position data.
 */
 
@@ -155,6 +155,9 @@ int QGeoPositionInfoSource::updateInterval() const
     If \a methods includes a method that is not supported by the source, the
     unsupported method will be ignored.
 
+    If \a methods does not include any methods supported by the source, the
+    preferred methods will be set to the set of methods which the source supports.
+
     \bold {Note:} When reimplementing this method, subclasses must call the
     base method implementation to ensure preferredPositioningMethods() returns the correct value.
 
@@ -162,7 +165,10 @@ int QGeoPositionInfoSource::updateInterval() const
 */
 void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods methods)
 {
-    d->methods = methods;
+    d->methods = methods & supportedPositioningMethods();
+    if (d->methods == 0) {
+        d->methods = supportedPositioningMethods();
+    }
 }
 
 /*!
@@ -182,15 +188,15 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
 
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
-#if defined(Q_OS_SYMBIAN)   
-    QGeoPositionInfoSource *ret = NULL; 
-    TRAPD(error,ret = CQGeoPositionInfoSourceS60::NewL(parent));
+#if defined(Q_OS_SYMBIAN)
+    QGeoPositionInfoSource *ret = NULL;
+    TRAPD(error, ret = CQGeoPositionInfoSourceS60::NewL(parent));
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
-#else 
-    Q_UNUSED(parent); 
-#endif 
+#else
+    Q_UNUSED(parent);
+#endif
     return 0;
 }
 
@@ -244,7 +250,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     Attempts to get the current position and emit positionUpdated() with
     this information. If the current position cannot be found within the given \a timeout
     (in milliseconds) or if \a timeout is less than the value returned by
-    minimumUpdateInterval(), requestTimeout() is emitted.
+    minimumUpdateInterval(), updateTimeout() is emitted.
 
     If the timeout is zero, the timeout defaults to a reasonable timeout
     period as appropriate for the source.
@@ -268,7 +274,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 */
 
 /*!
-    \fn void QGeoPositionInfoSource::requestTimeout();
+    \fn void QGeoPositionInfoSource::updateTimeout();
 
     Emitted if requestUpdate() was called and the current position could
     not be retrieved within the specified timeout.

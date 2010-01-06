@@ -70,7 +70,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
+    void updateTimeout();
 
 private:
     Q_DISABLE_COPY(QGeoSatelliteInfoSource)

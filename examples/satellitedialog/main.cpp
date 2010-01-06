@@ -39,55 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFOSOURCE_WINCE_P_H
-#define QGEOPOSITIONINFOSOURCE_WINCE_P_H
-
+#include <QApplication>
+#include <QMainWindow>
+#include <QTimer>
 #include <qgeopositioninfosource.h>
+#include <qgeosatelliteinfosource.h>
 
-#include "qgeoinfothread_wince_p.h"
+#include "satellitedialog.h"
 
-QTM_BEGIN_NAMESPACE
-
-class QGeoPositionInfoValidator : public QGeoInfoValidator
+int main(int argc, char* argv[])
 {
-public:
-    QGeoPositionInfoValidator();
-    ~QGeoPositionInfoValidator();
+    QApplication app(argc, argv);
 
-    bool valid(const GPS_POSITION &data) const;
-};
+    SatelliteDialog *dialog = new SatelliteDialog(0,
+            30,
+            SatelliteDialog::ExitOnCancel,
+            SatelliteDialog::OrderByPrnNumber,
+            SatelliteDialog::ScaleToMaxPossible);
 
-class QGeoPositionInfoSourceWinCE : public QGeoPositionInfoSource
-{
-    Q_OBJECT
+    QGeoPositionInfoSource *posSource = QGeoPositionInfoSource::createDefaultSource(0);
+    posSource->setUpdateInterval(5000);
+    QGeoSatelliteInfoSource *satSource = QGeoSatelliteInfoSource::createDefaultSource(0);
 
-public:
-    enum {
-        // The minimum acceptable interval for periodic updates.
-        MinimumUpdateInterval = 100
-    };
+    dialog->connectSources(posSource, satSource);
 
-    explicit QGeoPositionInfoSourceWinCE(QObject *parent = 0);
-    ~QGeoPositionInfoSourceWinCE();
+    posSource->startUpdates();
+    satSource->startUpdates();
 
-    void setUpdateInterval(int msec);
-    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
-    PositioningMethods supportedPositioningMethods() const;
-    int minimumUpdateInterval() const;
+    QTimer::singleShot(1, dialog, SLOT(show()));
 
-public slots:
-    virtual void startUpdates();
-    virtual void stopUpdates();
-    virtual void requestUpdate(int timeout = 0);
+    int result = app.exec();
 
-private slots:
-    void dataUpdated(GPS_POSITION data);
+    posSource->stopUpdates();
+    satSource->stopUpdates();
 
-private:
-    QGeoPositionInfo lastPosition;
-    QGeoInfoThreadWinCE *infoThread;
-};
+    delete posSource;
+    delete satSource;
+    delete dialog;
 
-QTM_END_NAMESPACE
-
-#endif //#ifndef QGEOPOSITIONINFOSOURCE_WINCE_P_H
+    return result;
+}

@@ -192,7 +192,7 @@ void tst_QNmeaPositionInfoSource::lastKnownPosition()
 
     // source may need requestUpdate() or startUpdates() to be called to
     // trigger reading of data channel
-    QSignalSpy spyTimeout(proxy->source(), SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(updateTimeout()));
     proxy->source()->requestUpdate(proxy->source()->minimumUpdateInterval());
     QTRY_COMPARE(spyTimeout.count(), 1);
 
@@ -409,7 +409,7 @@ void tst_QNmeaPositionInfoSource::requestUpdate()
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-    QSignalSpy spyTimeout(proxy->source(), SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(updateTimeout()));
     QDateTime dt;
 
     proxy->source()->requestUpdate(100);
@@ -434,7 +434,7 @@ void tst_QNmeaPositionInfoSource::requestUpdate()
     QCOMPARE(spyTimeout.count(), 0);
     spyUpdate.clear();
 
-    // delay the update and expect requestTimeout() to be emitted
+    // delay the update and expect updateTimeout() to be emitted
     dt = QDateTime::currentDateTime().toUTC();
     proxy->source()->requestUpdate(500);
     QTest::qWait(1000);
@@ -451,7 +451,7 @@ void tst_QNmeaPositionInfoSource::requestUpdate_after_start()
     QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
 
     QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-    QSignalSpy spyTimeout(proxy->source(), SIGNAL(requestTimeout()));
+    QSignalSpy spyTimeout(proxy->source(), SIGNAL(updateTimeout()));
 
     // Start updates with 500ms interval and requestUpdate() with 100ms
     // timeout. Feed an update, and it should be emitted immediately due to
