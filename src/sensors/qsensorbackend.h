@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
 
 class Q_SENSORS_EXPORT QSensorBackend : public QObject
 {
+    Q_OBJECT
 public:
     QSensorBackend();
     QSensorId id() const { return m_id; }

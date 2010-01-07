@@ -143,5 +143,6 @@ void QSensorBackend::newReadingAvailable()
     m_sensor->newReadingAvailable();
 }
 
+#include "moc_qsensorbackend.cpp"
 QTM_END_NAMESPACE
 
