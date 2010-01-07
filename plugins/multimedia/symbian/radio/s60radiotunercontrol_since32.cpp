@@ -251,7 +251,7 @@ void S60RadioTunerControl::searchForward()
 
 void S60RadioTunerControl::searchBackward()
 {
-	m_fmTunerUtility->StationSeek(true);
+	m_fmTunerUtility->StationSeek(false);
 	m_scanning = true;
 	emit searchingChanged(true);
 }
