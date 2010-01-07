@@ -77,10 +77,10 @@ void QmlSound::setSource(const QUrl &url)
         m_player->setVolume(m_volume);
         m_player->setMuted(m_muted);
 
-        connect(m_player, SIGNAL(volumeChanged()), SIGNAL(volumeChanged()));
-        connect(m_player, SIGNAL(mutedChanged()), SIGNAL(mutedChanged()));
-        connect(m_player, SIGNAL(durationChanged()), SIGNAL(durationChanged()));
-        connect(m_player, SIGNAL(stateChanged()), SLOT(repeat()));
+        connect(m_player, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged()));
+        connect(m_player, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged()));
+        connect(m_player, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged()));
+        connect(m_player, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(repeat()));
     }
 
     m_player->setMedia(url);
