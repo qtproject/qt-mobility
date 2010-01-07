@@ -103,7 +103,7 @@ public:
     // For polling/checking the current (cached) value
     QMagneticNorthReading currentReading() const { return m_backend->currentReading(); }
 
-signals:
+Q_SIGNALS:
     void headingChanged(const QMagneticNorthReading &reading);
 
 protected:

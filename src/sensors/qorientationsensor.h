@@ -110,7 +110,7 @@ public:
     // For polling/checking the current (cached) value
     QOrientationReading currentReading() const { return m_backend->currentReading(); }
 
-signals:
+Q_SIGNALS:
     void orientationChanged(const QOrientationReading &reading);
 
 protected:

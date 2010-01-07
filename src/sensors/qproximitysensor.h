@@ -106,7 +106,7 @@ public:
     // For polling/checking the current (cached) value
     QProximityReading currentReading() const { return m_backend->currentReading(); }
 
-signals:
+Q_SIGNALS:
     void proximityChanged(const QProximityReading &reading);
 
 protected:

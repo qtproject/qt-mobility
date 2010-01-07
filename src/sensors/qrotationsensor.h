@@ -104,7 +104,7 @@ public:
     // For polling/checking the current (cached) value
     QRotationReading currentReading() const { return m_backend->currentReading(); }
 
-signals:
+Q_SIGNALS:
     void rotationChanged(const QRotationReading &reading);
 
 protected:

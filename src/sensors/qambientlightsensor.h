@@ -110,7 +110,7 @@ public:
     // For polling/checking the current (cached) value
     QAmbientLightReading currentReading() const { return m_backend->currentReading(); }
 
-signals:
+Q_SIGNALS:
     void ambientLightChanged(const QAmbientLightReading &reading);
 
 protected:
