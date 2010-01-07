@@ -154,6 +154,14 @@ QOrientationSensor::QOrientationSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+QOrientationSensor::~QOrientationSensor()
+{
+    stop();
+}
+
+/*!
     \variable QOrientationSensor::typeId
 */
 const QString QOrientationSensor::typeId("qt.Orientation");

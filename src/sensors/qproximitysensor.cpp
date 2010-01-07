@@ -126,6 +126,14 @@ QProximitySensor::QProximitySensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+QProximitySensor::~QProximitySensor()
+{
+    stop();
+}
+
+/*!
     \variable QProximitySensor::typeId
 */
 const QString QProximitySensor::typeId("qt.Proximity");

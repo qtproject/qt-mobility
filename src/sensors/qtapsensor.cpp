@@ -176,6 +176,14 @@ QTapSensor::QTapSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+QTapSensor::~QTapSensor()
+{
+    stop();
+}
+
+/*!
     \variable QTapSensor::typeId
 */
 const QString QTapSensor::typeId("qt.Tap");

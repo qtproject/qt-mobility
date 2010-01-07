@@ -103,6 +103,7 @@ class Q_SENSORS_EXPORT QAmbientLightSensor : public QSensor
     Q_OBJECT
 public:
     explicit QAmbientLightSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
+    virtual ~QAmbientLightSensor();
 
     static const QString typeId;
     QString type() const { return typeId; };

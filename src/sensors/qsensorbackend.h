@@ -52,6 +52,8 @@ class Q_SENSORS_EXPORT QSensorBackend : public QObject
     Q_OBJECT
 public:
     QSensorBackend();
+    virtual ~QSensorBackend();
+
     QSensorId id() const { return m_id; }
     void createdFor(QSensor *sensor, const QSensorId &id);
 

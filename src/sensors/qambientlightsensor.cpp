@@ -129,6 +129,14 @@ QAmbientLightSensor::QAmbientLightSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+QAmbientLightSensor::~QAmbientLightSensor()
+{
+    stop();
+}
+
+/*!
     \variable QAmbientLightSensor::typeId
 */
 const QString QAmbientLightSensor::typeId("qt.AmbientLight");

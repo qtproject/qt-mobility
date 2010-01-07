@@ -109,6 +109,7 @@ class Q_SENSORS_EXPORT QTapSensor : public QSensor
     Q_OBJECT
 public:
     explicit QTapSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
+    virtual ~QTapSensor();
 
     static const QString typeId;
     QString type() const { return typeId; };

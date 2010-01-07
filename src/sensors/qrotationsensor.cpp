@@ -173,6 +173,14 @@ QRotationSensor::QRotationSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+QRotationSensor::~QRotationSensor()
+{
+    stop();
+}
+
+/*!
     \variable QRotationSensor::typeId
 */
 const QString QRotationSensor::typeId("qt.Rotation");

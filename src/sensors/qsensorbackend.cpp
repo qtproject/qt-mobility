@@ -63,6 +63,13 @@ QSensorBackend::QSensorBackend()
 }
 
 /*!
+    \internal
+*/
+QSensorBackend::~QSensorBackend()
+{
+}
+
+/*!
     \fn QSensorBackend::id() const
 */
 

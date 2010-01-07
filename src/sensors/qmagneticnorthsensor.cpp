@@ -136,6 +136,14 @@ QMagneticNorthSensor::QMagneticNorthSensor(QObject *parent, const QSensorId &id)
 }
 
 /*!
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+QMagneticNorthSensor::~QMagneticNorthSensor()
+{
+    stop();
+}
+
+/*!
     \variable QMagneticNorthSensor::typeId
 */
 const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
