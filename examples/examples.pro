@@ -47,7 +47,7 @@ contains(mobility_modules,systeminformation): SUBDIRS += sysinfo
 #Multimedia
 contains(mobility_modules,multimedia) {
     #disabled on Symbian due to missing backend
-    !symbian:SUBDIRS += \
+    SUBDIRS += \
         radio \
         player \
         cameracapture \

@@ -40,7 +40,11 @@
 ****************************************************************************/
 
 #include "settings.h"
+#ifdef Q_OS_SYMBIAN
+#include "ui_settings_s60.h"
+#else
 #include "ui_settings.h"
+#endif
 
 #include <QtGui/qcombobox.h>
 #include <QtCore/qdebug.h>

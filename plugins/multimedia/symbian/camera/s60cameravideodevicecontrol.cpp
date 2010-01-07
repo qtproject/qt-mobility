@@ -57,10 +57,12 @@ S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *parent)
 S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *session, QObject *parent)
    :QVideoDeviceControl(parent)
 {
-    // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
-}
+    connect(m_session,SIGNAL(selectedDeviceChanged(int)), this, SIGNAL(selectedDeviceChanged(int)) );
+    connect(m_session,SIGNAL(selectedDeviceChanged(const QString &)), this, SIGNAL(selectedDeviceChanged(const QString &)) );
+    connect(m_session,SIGNAL(devicesChanged()), this, SIGNAL(devicesChanged()) );
 
+}
 
 S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
 {
@@ -68,31 +70,23 @@ S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
 
 int S60CameraVideoDeviceControl::deviceCount() const
 {
-    if (m_session) {
-        return m_session->deviceCount();
-    }
-    return defaultCameraDeviceCount;
+    qDebug() << "S60CameraVideoDeviceControl::deviceCount" ;
+    return S60CameraSession::deviceCount();
 }
 
 QString S60CameraVideoDeviceControl::deviceName(int index) const
 {
-    QString deviceName = QString();
-    if (m_session) {
-        deviceName = m_session->name(index);
-    }
-    return deviceName;
-
+    qDebug() << "S60CameraVideoDeviceControl::deviceName, index=() called" << index;
+    return S60CameraSession::name(index);
 }
 QString S60CameraVideoDeviceControl::deviceDescription(int index) const
 {
-    QString deviceDesc = QString();
-    if (m_session) {
-        deviceDesc = m_session->description(index);
-    }
-    return deviceDesc;
+    qDebug() << "S60CameraVideoDeviceControl::deviceDescription, index=() called" << index;
+    return S60CameraSession::description(index);
 }
 QIcon S60CameraVideoDeviceControl::deviceIcon(int index) const
 {
+    qDebug() << "S60CameraVideoDeviceControl::deviceIcon() called";
     QIcon deviceIcon = QIcon();
     if (m_session) {
         deviceIcon =  m_session->icon(index);
@@ -108,6 +102,7 @@ int S60CameraVideoDeviceControl::defaultDevice() const
 }
 int S60CameraVideoDeviceControl::selectedDevice() const
 {
+    qDebug() << "S60CameraVideoDeviceControl::selectedDevice() called";
     if (m_session) {
        return m_session->selectedDevice();
     }
@@ -116,6 +111,7 @@ int S60CameraVideoDeviceControl::selectedDevice() const
 
 void S60CameraVideoDeviceControl::setSelectedDevice(int index)
 {
+    qDebug() << "S60CameraVideoDeviceControl::setSelectedDevice() called";
     if (m_session) {
         m_session->setSelectedDevice(index);
     }

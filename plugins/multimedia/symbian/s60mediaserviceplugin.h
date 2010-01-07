@@ -52,6 +52,8 @@ QTM_USE_NAMESPACE
 class S60MediaServicePlugin : public QMediaServiceProviderPlugin , public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
+
 public:
 
     QStringList keys() const;

@@ -59,8 +59,11 @@ CameraCapture::CameraCapture(QWidget *parent) :
     videoWidget(0)
 {
     ui->setupUi(this);
-
+    #if defined(Q_OS_SYMBIAN)
+    outputDir = QDir::rootPath(); // this defaults to C:\Data in symbian
+    #else
     outputDir = QDir::currentPath();
+    #endif
 
     //camera devices
     QByteArray cameraDevice;
@@ -99,13 +102,13 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
-
     if (cameraDevice.isEmpty())
         camera = new QCamera;
     else
         camera = new QCamera(cameraDevice);
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
+    connect(camera, SIGNAL(focusLocked()), this, SLOT(focusLocked()));
 
     mediaRecorder = new QMediaRecorder(camera);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
@@ -153,7 +156,7 @@ void CameraCapture::updateAudioDevices()
                 audioDeviceAction->setChecked(true);
         }
     } else {
-        qWarning() << "Camera service is not available";
+        qWarning() << "No audio device for camera service available";
     }
 
     connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
@@ -227,6 +230,7 @@ void CameraCapture::toggleCamera()
 
 void CameraCapture::updateCameraState(QCamera::State state)
 {
+    qDebug() << "CameraCapture::updateCameraState(), state="<<state;
     if (state == QCamera::ActiveState) {
         ui->actionCamera->setEnabled(false);
         ui->actionAudio->setEnabled(false);
@@ -234,6 +238,7 @@ void CameraCapture::updateCameraState(QCamera::State state)
 
         ui->startCameraButton->setText(tr("Stop Camera"));
         ui->startCameraButton->setChecked(true);
+        ui->imageCaptureBox->setEnabled(true);
         ui->videoCaptureBox->setEnabled(true);
     } else {
         ui->actionCamera->setEnabled(true);
@@ -289,4 +294,8 @@ void CameraCapture::updateCameraDevice(QAction *action)
 void CameraCapture::updateAudioDevice(QAction *action)
 {
     audioSource->setAudioInput(action->data().toString());
+}
+void CameraCapture::focusLocked()
+{
+    qDebug() << "CameraCapture focus locked";
 }
