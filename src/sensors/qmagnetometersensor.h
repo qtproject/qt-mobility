@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QACCELERATIONSENSOR_H
-#define QACCELERATIONSENSOR_H
+#ifndef QMAGNETOMETERSENSOR_H
+#define QMAGNETOMETERSENSOR_H
 
 #include <qsensor.h>
 #include <QtGlobal>
@@ -50,16 +50,16 @@
 QTM_BEGIN_NAMESPACE
 
 // implementation detail
-class QAccelerationReadingData : public QSharedData
+class QMagnetometerReadingData : public QSharedData
 {
 public:
-    QAccelerationReadingData()
+    QMagnetometerReadingData()
         : timestamp(), x(0), y(0), z(0) {}
-    QAccelerationReadingData(QDateTime _timestamp, int _x, int _y, int _z)
+    QMagnetometerReadingData(QDateTime _timestamp, int _x, int _y, int _z)
         : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
-    QAccelerationReadingData(const QAccelerationReadingData &other)
+    QMagnetometerReadingData(const QMagnetometerReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
-    ~QAccelerationReadingData() {}
+    ~QMagnetometerReadingData() {}
 
     QDateTime timestamp;
     int x;
@@ -69,16 +69,16 @@ public:
 
 // =====================================================================
 
-class Q_SENSORS_EXPORT QAccelerationReading
+class Q_SENSORS_EXPORT QMagnetometerReading
 {
 public:
-    explicit QAccelerationReading()
-    { d = new QAccelerationReadingData; }
-    explicit QAccelerationReading(QDateTime timestamp, int x, int y, int z)
-    { d = new QAccelerationReadingData(timestamp, x, y, z); }
-    QAccelerationReading(const QAccelerationReading &other)
+    explicit QMagnetometerReading()
+    { d = new QMagnetometerReadingData; }
+    explicit QMagnetometerReading(QDateTime timestamp, int x, int y, int z)
+    { d = new QMagnetometerReadingData(timestamp, x, y, z); }
+    QMagnetometerReading(const QMagnetometerReading &other)
         : d(other.d) {}
-    ~QAccelerationReading() {}
+    ~QMagnetometerReading() {}
 
     QDateTime timestamp() const { return d->timestamp; }
     int x() const { return d->x; }
@@ -86,39 +86,39 @@ public:
     int z() const { return d->z; }
 
 private:
-    QSharedDataPointer<QAccelerationReadingData> d;
+    QSharedDataPointer<QMagnetometerReadingData> d;
 };
 
-class Q_SENSORS_EXPORT QAccelerationListener
+class Q_SENSORS_EXPORT QMagnetometerListener
 {
 public:
-    virtual void accelerationChanged(const QAccelerationReading &reading) = 0;
+    virtual void magnetometerChanged(const QMagnetometerReading &reading) = 0;
 };
 
-typedef QTypedSensorBackend<QAccelerationReading> QAccelerationBackend;
+typedef QTypedSensorBackend<QMagnetometerReading> QMagnetometerBackend;
 
 // =====================================================================
 
-class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
+class Q_SENSORS_EXPORT QMagnetometerSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAccelerationSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
-    virtual ~QAccelerationSensor();
+    explicit QMagnetometerSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
+    virtual ~QMagnetometerSensor();
 
-    Q_PROPERTY(QAccelerationReading currentReading READ currentReading)
+    Q_PROPERTY(QMagnetometerReading currentReading READ currentReading)
 
     static const QString typeId;
     QString type() const { return typeId; };
 
     // Register a listener (that will receive sensor values as they come in)
-    void setListener(QAccelerationListener *listener);
+    void setListener(QMagnetometerListener *listener);
 
     // For polling/checking the current (cached) value
-    QAccelerationReading currentReading() const { return m_backend->currentReading(); }
+    QMagnetometerReading currentReading() const { return m_backend->currentReading(); }
 
 Q_SIGNALS:
-    void accelerationChanged(const QAccelerationReading &reading);
+    void magnetometerChanged(const QMagnetometerReading &reading);
 
 protected:
     QSensorBackend *backend() const { return m_backend; }
@@ -126,8 +126,8 @@ protected:
 private:
     void newReadingAvailable();
 
-    QAccelerationListener *m_listener;
-    QAccelerationBackend *m_backend;
+    QMagnetometerListener *m_listener;
+    QMagnetometerBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

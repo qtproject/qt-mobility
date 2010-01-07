@@ -39,20 +39,20 @@
 **
 ****************************************************************************/
 
-#include <qaccelerationsensor.h>
+#include <qmagnetometersensor.h>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QAccelerationReading
+    \class QMagnetometerReading
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationReading class represents one reading from the
-           acceleration sensor.
+    \brief The QMagnetometerReading class represents one reading from the
+           magnetometer sensor.
 
-    The acceleration sensor returns acceleration values along 3 axes.
-    The scale of the values is milli-Gs. The axes are arranged as follows.
+    The magnetometer sensor returns magnetic flux values along 3 axes.
+    The scale of the values is unknown. The axes are arranged as follows.
 
 \code
              +z
@@ -74,85 +74,86 @@ QTM_BEGIN_NAMESPACE
     |_________!/
 \endcode
 
-    A monoblock device sitting at rest, face up on a desk will experience
-    the force of gravity as approximately -1000 on the Z axis.
+    Similarly to the accelerometer, the magnetometer can be used to find
+    magnetic north. The strongest reading can be obtained for an axis by
+    pointing that axis directly at magnetic north.
 */
 
 /*!
-    \fn QAccelerationReading::QAccelerationReading()
+    \fn QMagnetometerReading::QMagnetometerReading()
     \internal
 */
 
 /*!
-    \fn QAccelerationReading::QAccelerationReading(QDateTime timestamp, int x, int y, int z)
+    \fn QMagnetometerReading::QMagnetometerReading(QDateTime timestamp, int x, int y, int z)
     \internal
 */
 
 /*!
-    \fn QAccelerationReading::QAccelerationReading(const QAccelerationReading &other)
+    \fn QMagnetometerReading::QMagnetometerReading(const QMagnetometerReading &other)
     \internal
 */
 
 /*!
-    \fn QAccelerationReading::~QAccelerationReading()
+    \fn QMagnetometerReading::~QMagnetometerReading()
     \internal
 */
 
 /*!
-    \fn QAccelerationReading::timestamp() const
+    \fn QMagnetometerReading::timestamp() const
 
     Returns the time when the reading was made.
 */
 
 /*!
-    \fn QAccelerationReading::x() const
+    \fn QMagnetometerReading::x() const
 
-    Returns the acceleration for the X axis.
+    Returns the flux density for the X axis.
 */
 
 /*!
-    \fn QAccelerationReading::y() const
+    \fn QMagnetometerReading::y() const
 
-    Returns the acceleration for the Y axis.
+    Returns the flux density for the Y axis.
 */
 
 /*!
-    \fn QAccelerationReading::z() const
+    \fn QMagnetometerReading::z() const
 
-    Returns the acceleration for the Z axis.
+    Returns the flux density for the Z axis.
 */
 
 // =====================================================================
 
 /*!
-    \class QAccelerationListener
+    \class QMagnetometerListener
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationListener class provides an efficient
+    \brief The QMagnetometerListener class provides an efficient
            callback facility for asynchronous notifications of
-           acceleration changes.
+           flux density changes.
 
-    Since the accelerometer is typically accessed very frequently it may
-    not by suitable to use signals and slots. The QAccelerationListener
+    Since the magnetometer may be accessed very frequently it may
+    not by suitable to use signals and slots. The QMagnetometerListener
     interface provides a way for the sensor to notify your class that a
-    new acceleration reading is available more efficiently.
+    new flux density reading is available more efficiently.
 */
 
 /*!
-    \fn QAccelerationListener::accelerationChanged(const QAccelerationReading &reading)
+    \fn QMagnetometerListener::magnetometerChanged(const QMagnetometerReading &reading)
 
-    This function is called when a new acceleration \a reading is available.
+    This function is called when a new flux desity \a reading is available.
 */
 
 // =====================================================================
 
 /*!
-    \class QAccelerationSensor
+    \class QMagnetometerSensor
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationSensor class reports on linear acceleration
+    \brief The QMagnetometerSensor class reports on flux density
            along the X, Y and Z axes.
 
     The acceleration sensor returns acceleration values along 3 axes.
@@ -181,7 +182,7 @@ QTM_BEGIN_NAMESPACE
     A monoblock device sitting at rest, face up on a desk will experience
     the force of gravity as approximately -1000 on the Z axis.
 
-    \sa QAccelerationReading
+    \sa QMagnetometerReading
 */
 
 /*!
@@ -189,33 +190,33 @@ QTM_BEGIN_NAMESPACE
     If the \a id is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QAccelerationSensor::QAccelerationSensor(QObject *parent, const QSensorId &id)
+QMagnetometerSensor::QMagnetometerSensor(QObject *parent, const QSensorId &id)
     : QSensor(parent)
     , m_listener(0)
 {
-    m_backend = static_cast<QAccelerationBackend*>(connectToBackend(id));
+    m_backend = static_cast<QMagnetometerBackend*>(connectToBackend(id));
 }
 
 /*!
     Destroy the sensor. Stops the sensor if it has not already been stopped.
 */
-QAccelerationSensor::~QAccelerationSensor()
+QMagnetometerSensor::~QMagnetometerSensor()
 {
     stop();
 }
 
 /*!
-    \property QAccelerationSensor::currentReading
+    \property QMagnetometerSensor::currentReading
     \brief the current reading from the sensor.
 */
 
 /*!
-    \variable QAccelerationSensor::typeId
+    \variable QMagnetometerSensor::typeId
 */
-const QString QAccelerationSensor::typeId("qt.Acceleration");
+const QString QMagnetometerSensor::typeId("qt.Magnetometer");
 
 /*!
-    \fn QAccelerationSensor::type() const
+    \fn QMagnetometerSensor::type() const
     \reimp
 */
 
@@ -228,19 +229,19 @@ const QString QAccelerationSensor::typeId("qt.Acceleration");
     It is the caller's responsibility to ensure the listener remains valid
     until the sensor is destroyed or the listener is removed.
 */
-void QAccelerationSensor::setListener(QAccelerationListener *listener)
+void QMagnetometerSensor::setListener(QMagnetometerListener *listener)
 {
     m_listener = listener;
 }
 
 /*!
-    \fn QAccelerationSensor::currentReading() const
+    \fn QMagnetometerSensor::currentReading() const
 
     Returns the current ambient light reading.
 */
 
 /*!
-    \fn QAccelerationSensor::accelerationChanged(const QAccelerationReading &reading)
+    \fn QMagnetometerSensor::accelerationChanged(const QMagnetometerReading &reading)
 
     This signal is emitted when a new acceleration \a reading comes in.
 
@@ -249,13 +250,13 @@ void QAccelerationSensor::setListener(QAccelerationListener *listener)
 */
 
 /*!
-    \fn QAccelerationSensor::backend() const
+    \fn QMagnetometerSensor::backend() const
     \reimp
 */
 
-void QAccelerationSensor::newReadingAvailable()
+void QMagnetometerSensor::newReadingAvailable()
 {
-    QAccelerationReading reading = currentReading();
+    QMagnetometerReading reading = currentReading();
     if (m_listener)
         m_listener->accelerationChanged(reading);
     emit accelerationChanged(reading);
