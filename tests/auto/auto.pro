@@ -118,7 +118,12 @@ contains(mobility_modules,multimedia) {
                 qgraphicsvideoitem \
                 qpaintervideosurface
 
-}
+    }
+
+    symbian: {
+        #symbian spesific autotests
+        SUBDIRS += symbian
+    }
 }
 #Messaging
 contains(mobility_modules,messaging) {
