@@ -861,7 +861,7 @@ void tst_QContactDetails::type()
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
     QVERIFY(c.removeDetail(&t2)); // cannot remove type - "succeeds" but count remains unchanged
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&t2) == false);
+    QVERIFY(c.removeDetail(&t2)); // Should still succeed
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
 }
 
