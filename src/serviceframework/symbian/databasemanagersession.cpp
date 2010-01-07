@@ -445,7 +445,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
     if (ret != KErrNone)
         {
         iDb->lastError().setError(DBError::UnknownError);
-        aMessage.Write(2, LastErrorCode());
+        aMessage.Write(1, LastErrorCode());
         delete interfaceBuf;
         return ret;
         }
