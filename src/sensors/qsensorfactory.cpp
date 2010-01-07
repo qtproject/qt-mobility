@@ -52,8 +52,8 @@ QTM_BEGIN_NAMESPACE
     \brief The QSensorFactory class returns the sensors on a device.
 
     A given device will have a variety of sensors. The sensors are
-    categorized by type. The QSensor::Type enum defined the types that
-    the API supports.
+    categorized by type. Each sensor has a ::typeId value that holds the
+    unique type for that sensor. eg. QAccelerationSensor::typeId, QProximitySensor::typeId.
 */
 
 /*!
