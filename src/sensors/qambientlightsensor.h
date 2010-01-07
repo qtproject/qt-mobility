@@ -105,6 +105,8 @@ public:
     explicit QAmbientLightSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
     virtual ~QAmbientLightSensor();
 
+    Q_PROPERTY(QAmbientLightReading currentReading READ currentReading)
+
     static const QString typeId;
     QString type() const { return typeId; };
 

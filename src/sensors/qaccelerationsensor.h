@@ -107,6 +107,8 @@ public:
     explicit QAccelerationSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
     virtual ~QAccelerationSensor();
 
+    Q_PROPERTY(QAccelerationReading currentReading READ currentReading)
+
     static const QString typeId;
     QString type() const { return typeId; };
 

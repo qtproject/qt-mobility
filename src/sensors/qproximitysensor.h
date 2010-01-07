@@ -101,6 +101,8 @@ public:
     explicit QProximitySensor(QObject *parent = 0, const QSensorId &id = QSensorId());
     virtual ~QProximitySensor();
 
+    Q_PROPERTY(QProximityReading currentReading READ currentReading)
+
     static const QString typeId;
     QString type() const { return typeId; };
 

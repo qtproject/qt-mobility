@@ -111,6 +111,8 @@ public:
     explicit QTapSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
     virtual ~QTapSensor();
 
+    Q_PROPERTY(QTapReading currentReading READ currentReading)
+
     static const QString typeId;
     QString type() const { return typeId; };
 

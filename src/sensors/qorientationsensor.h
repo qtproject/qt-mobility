@@ -105,6 +105,8 @@ public:
     explicit QOrientationSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
     virtual ~QOrientationSensor();
 
+    Q_PROPERTY(QOrientationReading currentReading READ currentReading)
+
     static const QString typeId;
     QString type() const { return typeId; };
 

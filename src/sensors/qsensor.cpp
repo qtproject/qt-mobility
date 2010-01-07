@@ -91,6 +91,40 @@ QSensor::~QSensor()
 }
 
 /*!
+    \property QSensor::id
+    \brief the unique identifer for the sensor.
+*/
+
+/*!
+    \property QSensor::isValid
+    \brief the validity of the sensor.
+
+    If the sensor is not valid then you cannot use it.
+*/
+
+/*!
+    \property QSensor::supportedPolicies
+    \brief the supported policies of the sensor.
+*/
+
+/*!
+    \property QSensor::type
+    \brief the type of the sensor.
+*/
+
+/*!
+    \property QSensor::updatePolicy
+    \brief the update policy of the sensor.
+*/
+
+/*!
+    \property QSensor::updateInterval
+    \brief the update interval of the sensor.
+
+    This value is only useful if the QSensor::updatePolicy property is set to TimedUpdates.
+*/
+
+/*!
     Returns true if the sensor is connected to a backend.
 */
 bool QSensor::isValid() const

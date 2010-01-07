@@ -184,6 +184,11 @@ QTapSensor::~QTapSensor()
 }
 
 /*!
+    \property QTapSensor::currentReading
+    \brief the current reading from the sensor.
+*/
+
+/*!
     \variable QTapSensor::typeId
 */
 const QString QTapSensor::typeId("qt.Tap");

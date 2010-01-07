@@ -134,6 +134,11 @@ QProximitySensor::~QProximitySensor()
 }
 
 /*!
+    \property QProximitySensor::currentReading
+    \brief the current reading from the sensor.
+*/
+
+/*!
     \variable QProximitySensor::typeId
 */
 const QString QProximitySensor::typeId("qt.Proximity");

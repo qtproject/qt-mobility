@@ -137,6 +137,11 @@ QAmbientLightSensor::~QAmbientLightSensor()
 }
 
 /*!
+    \property QAmbientLightSensor::currentReading
+    \brief the current reading from the sensor.
+*/
+
+/*!
     \variable QAmbientLightSensor::typeId
 */
 const QString QAmbientLightSensor::typeId("qt.AmbientLight");

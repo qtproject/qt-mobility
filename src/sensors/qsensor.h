@@ -62,6 +62,13 @@ public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
 
+    Q_PROPERTY(QSensorId id READ id)
+    Q_PROPERTY(QString type READ type)
+    Q_PROPERTY(bool isValid READ isValid)
+    Q_PROPERTY(UpdatePolicies supportedPolicies READ supportedPolicies)
+    Q_PROPERTY(UpdatePolicy updatePolicy READ updatePolicy WRITE setUpdatePolicy)
+    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
+
     // May have been initialized with an invalid id
     bool isValid() const;
 

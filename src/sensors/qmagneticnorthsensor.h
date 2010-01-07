@@ -98,6 +98,8 @@ public:
     explicit QMagneticNorthSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
     virtual ~QMagneticNorthSensor();
 
+    Q_PROPERTY(QMagneticNorthReading currentReading READ currentReading)
+
     static const QString typeId;
     QString type() const { return typeId; };
 

@@ -204,6 +204,11 @@ QAccelerationSensor::~QAccelerationSensor()
 }
 
 /*!
+    \property QAccelerationSensor::currentReading
+    \brief the current reading from the sensor.
+*/
+
+/*!
     \variable QAccelerationSensor::typeId
 */
 const QString QAccelerationSensor::typeId("qt.Acceleration");

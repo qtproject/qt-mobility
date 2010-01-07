@@ -162,6 +162,11 @@ QOrientationSensor::~QOrientationSensor()
 }
 
 /*!
+    \property QOrientationSensor::currentReading
+    \brief the current reading from the sensor.
+*/
+
+/*!
     \variable QOrientationSensor::typeId
 */
 const QString QOrientationSensor::typeId("qt.Orientation");

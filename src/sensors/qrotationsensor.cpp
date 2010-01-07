@@ -181,6 +181,11 @@ QRotationSensor::~QRotationSensor()
 }
 
 /*!
+    \property QRotationSensor::currentReading
+    \brief the current reading from the sensor.
+*/
+
+/*!
     \variable QRotationSensor::typeId
 */
 const QString QRotationSensor::typeId("qt.Rotation");

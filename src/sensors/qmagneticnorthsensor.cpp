@@ -144,6 +144,11 @@ QMagneticNorthSensor::~QMagneticNorthSensor()
 }
 
 /*!
+    \property QMagneticNorthSensor::currentReading
+    \brief the current reading from the sensor.
+*/
+
+/*!
     \variable QMagneticNorthSensor::typeId
 */
 const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
