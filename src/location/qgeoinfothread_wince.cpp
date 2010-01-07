@@ -314,7 +314,6 @@ void QGeoInfoThreadWinCE::run()
                 }
             }
         }
-        //} else {
         if (dwRet != WAIT_OBJECT_0 || invalidDataReceived) {
             invalidDataReceived = false;
 
