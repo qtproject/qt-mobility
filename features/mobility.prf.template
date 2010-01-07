@@ -19,6 +19,8 @@ contains(MOBILITY, serviceframework) {
 }
 
 contains(MOBILITY, systeminfo) {
+    #QSystemInfo header requires QNetworkInterface
+    QT += network
     qtAddLibrary(QtSystemInfo)
 }
 
