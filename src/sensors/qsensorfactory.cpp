@@ -72,7 +72,7 @@ QSensorFactory *QSensorFactory::instance()
     Returns the id of the default sensor for \a type.
     If there is no sensor of that type available, returns a null string.
 */
-QSensorId QSensorFactory::defaultSensorForType(QString type) const
+QSensorId QSensorFactory::defaultSensorForType(const QString &type) const
 {
     return QSensorManager::instance()->firstSensorForType(type);
 }
@@ -81,7 +81,7 @@ QSensorId QSensorFactory::defaultSensorForType(QString type) const
     Returns a list of ids for each of the sensors for \a type.
     If there are no sensors of that type available the list will be empty.
 */
-QList<QSensorId> QSensorFactory::sensorsForType(QString type) const
+QList<QSensorId> QSensorFactory::sensorsForType(const QString &type) const
 {
     Q_UNUSED(type)
     return QList<QSensorId>();

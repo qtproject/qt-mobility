@@ -54,10 +54,10 @@ public:
     static QSensorFactory *instance();
 
     // Get a sensor
-    QSensorId defaultSensorForType(QString type) const;
+    QSensorId defaultSensorForType(const QString &type) const;
 
     // If there are multiple sensors for a type...
-    QList<QSensorId> sensorsForType(QString type) const;
+    QList<QSensorId> sensorsForType(const QString &type) const;
 
     // Get all sensors on the device. Not sure why you'd want to
     // do this unless you were telling the user what sensors are
