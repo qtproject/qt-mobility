@@ -127,7 +127,7 @@ void n900lightsensor::poll()
 
     m_lastReading = QAmbientLightReading(timestamp, lightLevel);
     if (m_interval)
-        m_sensor->newReadingAvailable();
+        newReadingAvailable();
 }
 
 QAmbientLightReading n900lightsensor::currentReading()

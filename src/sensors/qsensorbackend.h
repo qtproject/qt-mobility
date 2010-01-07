@@ -54,9 +54,6 @@ public:
     QSensorId id() const { return m_id; }
     void createdFor(QSensor *sensor, const QSensorId &id);
 
-    // returns the suggested interval to use for various policies
-    int suggestedInterval(QSensor::UpdatePolicy policy);
-
     virtual void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval = 0) = 0;
     virtual QSensor::UpdatePolicies supportedPolicies() const = 0;
     virtual bool start() = 0;
@@ -67,6 +64,10 @@ public:
     { m_policy = policy; m_interval = interval; }
     QSensor::UpdatePolicy updatePolicy() const { return m_policy; }
     int updateInterval() const { return m_interval; }
+
+    // returns the suggested interval to use for various policies
+    int suggestedInterval(QSensor::UpdatePolicy policy);
+    void newReadingAvailable();
 
 protected:
     QSensor::UpdatePolicy m_policy;

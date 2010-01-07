@@ -115,7 +115,7 @@ void n900accelerationsensor::poll()
 
     m_lastReading = QAccelerationReading(timestamp, x, y, z);
     if (m_interval)
-        m_sensor->newReadingAvailable();
+        newReadingAvailable();
 }
 
 QAccelerationReading n900accelerationsensor::currentReading()

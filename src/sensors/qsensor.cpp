@@ -212,15 +212,15 @@ QSensorBackend *QSensor::connectToBackend(const QSensorId &_id)
 }
 
 /*!
-    \fn QSensor::newReadingAvailable()
-
-    This function is called to notify the sensor that a new reading is available.
-*/
-
-/*!
     \fn QSensor::backend() const
 
     Returns a pointer to the backend for the sensor.
+*/
+
+/*!
+    \fn QSensor::newReadingAvailable()
+
+    This function is called to notify the sensor that a new reading is available.
 */
 
 #include "moc_qsensor.cpp"

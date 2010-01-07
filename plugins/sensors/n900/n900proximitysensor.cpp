@@ -123,7 +123,7 @@ void n900proximitysensor::poll()
 
     m_lastReading = QProximityReading(timestamp, proximity);
     if (m_interval)
-        m_sensor->newReadingAvailable();
+        newReadingAvailable();
 }
 
 QProximityReading n900proximitysensor::currentReading()

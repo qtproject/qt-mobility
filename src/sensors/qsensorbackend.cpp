@@ -135,5 +135,13 @@ int QSensorBackend::suggestedInterval(QSensor::UpdatePolicy policy)
     \sa rememberUpdatePolicy()
 */
 
+/*!
+    Notify the QSensor class that a new reading is available.
+*/
+void QSensorBackend::newReadingAvailable()
+{
+    m_sensor->newReadingAvailable();
+}
+
 QTM_END_NAMESPACE
 
