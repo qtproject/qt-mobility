@@ -1,6 +1,5 @@
 
-message($${MOBILITY_INCLUDE})
-!symbian{
+!symbian {
     INCLUDEPATH += $${MOBILITY_INCLUDE}
 } else {
     load(data_caging_paths)
