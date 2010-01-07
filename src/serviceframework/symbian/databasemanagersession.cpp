@@ -406,7 +406,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefaultL(const RMessage2& aMessa
     QServiceFilter filter;
     filter.setServiceName(serviceName);
     filter.setInterface(interfaceName);
-
+    // Nothing should be returned, because we are checking on nonexistent service
     descriptors = iDb->getInterfaces(filter);
 
     //find the descriptor with the latest version
@@ -416,7 +416,15 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefaultL(const RMessage2& aMessa
                 latestIndex = i;
     }
 
-    iDb->setInterfaceDefault(descriptors[latestIndex]);
+    if (!descriptors.isEmpty()) {
+        iDb->setInterfaceDefault(descriptors[latestIndex]);     
+    }
+    else {
+        aMessage.Write(2, TError(DBError::NotFound));
+        delete serviceNameBuf;
+        delete interfaceNameBuf;
+        return KErrNotFound;
+    }
 
     aMessage.Write(2, LastErrorCode());
     delete serviceNameBuf;
@@ -448,7 +456,7 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
     out >> interfaceDescriptor;
     
     iDb->setInterfaceDefault(interfaceDescriptor);
-    aMessage.Write(2, LastErrorCode());
+    aMessage.Write(1, LastErrorCode());
     delete interfaceBuf;
     
     return ret;
@@ -482,7 +490,7 @@ void CDatabaseManagerServerSession::SetChangeNotificationsEnabled(const RMessage
         delete iDatabaseManagerSignalHandler;
         iDatabaseManagerSignalHandler = NULL;
     }
-    aMessage.Write(2, LastErrorCode());
+    aMessage.Write(1, LastErrorCode());
 }
 
 TError CDatabaseManagerServerSession::LastErrorCode()
