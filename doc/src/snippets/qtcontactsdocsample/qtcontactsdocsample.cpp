@@ -52,6 +52,7 @@ static void callContact(QContactManager*);
 static void matchCall(QContactManager*, const QString&);
 static void viewSpecificDetail(QContactManager*);
 static void viewDetails(QContactManager*);
+static void detailSharing(QContactManager*);
 static void addPlugin(QContactManager*);
 static void editView(QContactManager*);
 static void loadManager();
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
     matchCall(cm, "12345678");    // alice's number.
     viewSpecificDetail(cm);
     viewDetails(cm);
+    detailSharing(cm);
     addPlugin(cm);
     editView(cm);
 
@@ -131,8 +133,8 @@ void callContact(QContactManager* cm)
         // This may be through the (previously announced) Qt Service Framework:
         //QServiceManager* manager = new QServiceManager();
         //QObject* dialer = manager->loadInterface("com.nokia.qt.mobility.contacts.Dialer");
-        //QContactAbstractAction* dialerImpl = static_cast<QContactAbstractAction*>dialer;
-        //dialerImpl->performAction("DialActionId", a, phn);
+        //QContactAction* dialerImpl = static_cast<QContactAction*>dialer;
+        //dialerImpl->invokeAction(a, phn);
     }
 }
 //! [Calling an existing contact]
@@ -188,6 +190,65 @@ void viewDetails(QContactManager* cm)
     }
 }
 //! [Viewing the details of a contact]
+
+//! [Demonstration of detail sharing semantics]
+void detailSharing(QContactManager* cm)
+{
+    QList<QContactLocalId> contactIds = cm->contacts();
+    QContact a = cm->contact(contactIds.first());
+    qDebug() << "Demonstrating detail sharing semantics with" << a.displayLabel();
+
+    /* Create a new phone number detail. */
+    QContactPhoneNumber newNumber;
+    newNumber.setNumber("123123123");
+    qDebug() << "\tThe new phone number is" << newNumber.number();
+
+    /*
+     * Create a copy of that detail.  These will be explicitly shared;
+     * changes to nnCopy will affect newNumber, and vice versa.
+     * That is, nnCopy and newNumber are handles to the same detail.
+     */
+    QContactPhoneNumber nnCopy(newNumber);
+    nnCopy.setNumber("456456456");
+    qDebug() << "\tThe number has been changed to" << newNumber.number();
+
+    /* Save the detail in the contact, then remove via the copy, then resave. */
+    a.saveDetail(&newNumber); // causes a detach internally, see next section.
+    a.removeDetail(&nnCopy);  // identical to a.removeDetail(&newNumber);
+    a.saveDetail(&nnCopy);    // identical to a.saveDetail(&newNumber);
+
+    /*
+     * However, note that changes made to details are not
+     * propagated automatically to the contact.
+     * To persist changes to a detail, you must call saveDetail().
+     */
+    QList<QContactPhoneNumber> allNumbers = a.details<QContactPhoneNumber>();
+    foreach (const QContactPhoneNumber& savedPhn, allNumbers) {
+        if (savedPhn.key() != nnCopy.key()) {
+            continue;
+        }
+
+        /*
+         * This phone number is the saved copy of the newNumber detail.
+         * It is detached from the newNumber detail, so changes to newNumber
+         * shouldn't affect savedPhn until saveDetail() is called again.
+         */
+        qDebug() << "\tCurrently, the (stack) newNumber is" << newNumber.number()
+                 << ", and the saved newNumber is" << savedPhn.number();
+        newNumber.setNumber("123123123");
+        qDebug() << "\tNow, the (stack) newNumber is" << newNumber.number()
+                 << ", but the saved newNumber is" << savedPhn.number();
+    }
+
+    /*
+     * Removal of the detail depends only on the key of the detail; the fact
+     * that the values differ is not taken into account by the remove operation.
+     */
+    bool succeeded = a.removeDetail(&newNumber);
+    qDebug() << (succeeded ? "\tSucceeded in removing" : "\tFailed to remove") << "the temporary detail.";
+    qDebug();
+}
+//! [Demonstration of detail sharing semantics]
 
 //! [Installing a plugin which modifies a definition]
 void addPlugin(QContactManager* cm)
