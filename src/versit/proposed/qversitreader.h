@@ -88,9 +88,10 @@ public:
     QList<QVersitDocument> results() const;
 
     Error error() const;
+    QList<Error> errors() const;
 
 signals:
-    void finished(bool ok);
+    void finished();
     
 private: // data
     QVersitReaderPrivate* d;   

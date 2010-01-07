@@ -63,7 +63,7 @@ public:
         UnspecifiedError,
         IOError,
         OutOfMemoryError,
-        WriteInProgressError
+        NotReadyError
    };
 
     QVersitWriter();
@@ -82,9 +82,10 @@ public:
     bool writeAll();
 
     Error error() const;
+    QList<Error> errors() const;
 
 signals:
-    void finished(bool ok);
+    void finished();
 
 private: // data
     QVersitWriterPrivate* d;
