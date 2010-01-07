@@ -125,7 +125,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QTapReading::doubleTap() const
+    \fn QTapReading::isDoubleTap() const
 
     Returns true if the tap was a double tap, false if it was a single tap.
 */

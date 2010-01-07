@@ -81,7 +81,7 @@ public:
 
     QTime timestamp() const { return d->timestamp; }
     int heading() const { return d->heading; }
-    bool calibrated() const { return d->calibrated; }
+    bool isCalibrated() const { return d->calibrated; }
 
 private:
     QSharedDataPointer<QMagneticNorthReadingData> d;

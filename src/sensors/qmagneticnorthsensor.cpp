@@ -96,7 +96,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMagneticNorthReading::calibrated() const
+    \fn QMagneticNorthReading::isCalibrated() const
 
     Returns \c true if the device was calibrated when the reading
     was made and \c false otherwise. You should not trust a reading

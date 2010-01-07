@@ -94,7 +94,7 @@ public:
 
     QTime timestamp() const { return d->timestamp; }
     TapDirection tapDirection() const { return static_cast<TapDirection>(d->tapDirection); }
-    bool doubleTap() const { return d->doubleTap; }
+    bool isDoubleTap() const { return d->doubleTap; }
 
 private:
     QSharedDataPointer<QTapReadingData> d;
