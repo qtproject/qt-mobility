@@ -52,7 +52,6 @@ public:
     n900proximitysensor();
 
     QSensor::UpdatePolicies supportedPolicies() const;
-    void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval);
     bool start();
     void stop();
     void timerEvent(QTimerEvent * /*event*/);
@@ -60,7 +59,6 @@ public:
     QProximityReading currentReading();
 
 private:
-    int m_interval;
     int m_timerid;
     const char *m_filename;
     QProximityReading m_lastReading;

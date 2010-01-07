@@ -55,29 +55,22 @@ public:
     virtual ~QSensorBackend();
 
     QSensorId id() const { return m_id; }
-    void createdFor(QSensor *sensor, const QSensorId &id);
+    QSensor::UpdatePolicy updatePolicy() const { return m_policy; }
+    int updateInterval() const { return m_interval; }
 
-    virtual void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval = 0) = 0;
+    void createdFor(QSensor *sensor, const QSensorId &id);
+    void newReadingAvailable();
+    void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval);
+    int suggestedInterval();
+
     virtual QSensor::UpdatePolicies supportedPolicies() const = 0;
     virtual bool start() = 0;
     virtual void stop() = 0;
 
-    // call this to remember these values
-    void rememberUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
-    { m_policy = policy; m_interval = interval; }
-    QSensor::UpdatePolicy updatePolicy() const { return m_policy; }
-    int updateInterval() const { return m_interval; }
-
-    // returns the suggested interval to use for various policies
-    int suggestedInterval(QSensor::UpdatePolicy policy);
-    void newReadingAvailable();
-
-protected:
+private:
     QSensor::UpdatePolicy m_policy;
     int m_interval;
     QSensor *m_sensor;
-
-private:
     QSensorId m_id;
 };
 

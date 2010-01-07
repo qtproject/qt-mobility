@@ -43,8 +43,7 @@
 #include <QDebug>
 
 n900lightsensor::n900lightsensor()
-    : m_interval(0)
-    , m_timerid(0)
+    : m_timerid(0)
     , m_filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux")
 {
 }
@@ -58,34 +57,13 @@ QSensor::UpdatePolicies n900lightsensor::supportedPolicies() const
             QSensor::PolledUpdates);
 }
 
-void n900lightsensor::setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
-{
-    rememberUpdatePolicy(policy, interval);
-
-    if (m_timerid)
-        return;
-
-    switch (policy) {
-    case QSensor::OccasionalUpdates:
-    case QSensor::InfrequentUpdates:
-    case QSensor::FrequentUpdates:
-        m_interval = suggestedInterval(policy);
-        break;
-    case QSensor::TimedUpdates:
-        m_interval = interval;
-        break;
-    case QSensor::PolledUpdates:
-        m_interval = 0;
-        break;
-    default:
-        break;
-    }
-}
-
 bool n900lightsensor::start()
 {
-    if (m_interval)
-        m_timerid = startTimer(m_interval);
+    if (m_timerid)
+        return false;
+
+    if (suggestedInterval())
+        m_timerid = startTimer(suggestedInterval());
     return true;
 }
 
@@ -126,13 +104,13 @@ void n900lightsensor::poll()
         lightLevel = QAmbientLightReading::Sunny;
 
     m_lastReading = QAmbientLightReading(timestamp, lightLevel);
-    if (m_interval)
+    if (updatePolicy() != QSensor::PolledUpdates)
         newReadingAvailable();
 }
 
 QAmbientLightReading n900lightsensor::currentReading()
 {
-    if (m_interval == 0)
+    if (updatePolicy() == QSensor::PolledUpdates)
         poll();
     return m_lastReading;
 }

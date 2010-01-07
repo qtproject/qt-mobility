@@ -187,9 +187,8 @@ void QSensor::setUpdatePolicy(UpdatePolicy policy)
     if (policy == TimedUpdates)
         return;
 
-    if (backend()) {
+    if (backend())
         backend()->setUpdatePolicy(policy, 0);
-    }
 }
 
 /*!
@@ -202,9 +201,8 @@ void QSensor::setUpdatePolicy(UpdatePolicy policy)
 */
 void QSensor::setUpdateInterval(int interval)
 {
-    if (backend()) {
+    if (backend())
         backend()->setUpdatePolicy(TimedUpdates, interval);
-    }
 }
 
 /*!

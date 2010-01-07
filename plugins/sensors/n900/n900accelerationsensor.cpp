@@ -43,8 +43,7 @@
 #include <QDebug>
 
 n900accelerationsensor::n900accelerationsensor()
-    : m_interval(0)
-    , m_timerid(0)
+    : m_timerid(0)
     , m_filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord")
 {
 }
@@ -58,34 +57,13 @@ QSensor::UpdatePolicies n900accelerationsensor::supportedPolicies() const
             QSensor::PolledUpdates);
 }
 
-void n900accelerationsensor::setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
-{
-    rememberUpdatePolicy(policy, interval);
-
-    if (m_timerid)
-        return;
-
-    switch (policy) {
-    case QSensor::OccasionalUpdates:
-    case QSensor::InfrequentUpdates:
-    case QSensor::FrequentUpdates:
-        m_interval = suggestedInterval(policy);
-        break;
-    case QSensor::TimedUpdates:
-        m_interval = interval;
-        break;
-    case QSensor::PolledUpdates:
-        m_interval = 0;
-        break;
-    default:
-        break;
-    }
-}
-
 bool n900accelerationsensor::start()
 {
-    if (m_interval)
-        m_timerid = startTimer(m_interval);
+    if (m_timerid)
+        return false;
+
+    if (suggestedInterval())
+        m_timerid = startTimer(suggestedInterval());
     return true;
 }
 
@@ -93,7 +71,7 @@ void n900accelerationsensor::stop()
 {
     if (m_timerid) {
         killTimer(m_timerid);
-        m_timerid = -1;
+        m_timerid = 0;
     }
 }
 
@@ -114,13 +92,13 @@ void n900accelerationsensor::poll()
     if (rs != 3) return;
 
     m_lastReading = QAccelerationReading(timestamp, x, y, z);
-    if (m_interval)
+    if (updatePolicy() != QSensor::PolledUpdates)
         newReadingAvailable();
 }
 
 QAccelerationReading n900accelerationsensor::currentReading()
 {
-    if (m_interval == 0)
+    if (updatePolicy() == QSensor::PolledUpdates)
         poll();
     return m_lastReading;
 }

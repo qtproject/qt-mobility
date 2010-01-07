@@ -71,6 +71,21 @@ QSensorBackend::~QSensorBackend()
 
 /*!
     \fn QSensorBackend::id() const
+
+    Returns the id for the sensor.
+*/
+
+/*!
+    \fn QSensorBackend::updatePolicy() const
+
+    Returns the update policy the sensor is using.
+*/
+
+/*!
+    \fn QSensorBackend::updateInterval() const
+
+    Returns the update interval the sensor is using (only applicable when
+    using the TimedUpdates policy).
 */
 
 /*!
@@ -83,72 +98,58 @@ void QSensorBackend::createdFor(QSensor *sensor, const QSensorId &id)
 }
 
 /*!
-    Returns the suggested interval to use for a given update \a policy.
-*/
-int QSensorBackend::suggestedInterval(QSensor::UpdatePolicy policy)
-{
-    switch (policy) {
-        case QSensor::OccasionalUpdates:
-            return 5000;
-        case QSensor::InfrequentUpdates:
-            return 1000;
-        case QSensor::FrequentUpdates:
-            return 100;
-        default:
-            return 0;
-    }
-}
-
-/*!
-    \fn QSensorBackend::setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
-
-    Set the update \a policy. The \a interval should be used if the policy is set to
-    QSensor::TimedUpdates. For suggested intervals to use see suggestedInterval().
-*/
-
-/*!
-    \fn QSensorBackend::supportedPolicies() const
-
-*/
-
-/*!
-    \fn QSensorBackend::start()
-
-    Returns true if the sensor was able to start.
-*/
-
-/*!
-    \fn QSensorBackend::stop()
-*/
-
-/*!
-    \fn QSensorBackend::rememberUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
-
-    Stores the \a policy and \a interval.
-    \sa updatePolicy(), updateInterval()
-*/
-
-/*!
-    \fn QSensorBackend::updatePolicy() const
-
-    Returns the stored policy.
-    \sa rememberUpdatePolicy()
-*/
-
-/*!
-    \fn QSensorBackend::updateInterval() const
-
-    Returns the stored interval.
-    \sa rememberUpdatePolicy()
-*/
-
-/*!
     Notify the QSensor class that a new reading is available.
 */
 void QSensorBackend::newReadingAvailable()
 {
     m_sensor->newReadingAvailable();
 }
+
+/*!
+    \internal
+*/
+void QSensorBackend::setUpdatePolicy(QSensor::UpdatePolicy policy, int interval)
+{
+    m_policy = policy;
+    m_interval = interval;
+}
+
+/*!
+    Returns the suggested interval to use for the current update policy.
+*/
+int QSensorBackend::suggestedInterval()
+{
+    switch (m_policy) {
+        case QSensor::OccasionalUpdates:
+            return 5000;
+        case QSensor::InfrequentUpdates:
+            return 1000;
+        case QSensor::FrequentUpdates:
+            return 100;
+        case QSensor::TimedUpdates:
+            return m_interval;
+        default:
+            return 0;
+    }
+}
+
+/*!
+    \fn QSensorBackend::supportedPolicies() const
+
+    Returns the update policies that the sensor supports.
+*/
+
+/*!
+    \fn QSensorBackend::start()
+
+    Start reporting values. Returns true if the sensor was able to start.
+*/
+
+/*!
+    \fn QSensorBackend::stop()
+
+    Stop reporting values.
+*/
 
 #include "moc_qsensorbackend.cpp"
 QTM_END_NAMESPACE
