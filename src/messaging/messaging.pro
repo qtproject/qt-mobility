@@ -144,7 +144,7 @@ symbian {
 
     deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
+    exportheaders.path = epoc32/include/mw
     for(header, exportheaders.sources) {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }

@@ -1,4 +1,17 @@
-!symbian:INCLUDEPATH += $${MOBILITY_INCLUDE}
+
+message($${MOBILITY_INCLUDE})
+!symbian{
+    INCLUDEPATH += $${MOBILITY_INCLUDE}
+} else {
+    load(data_caging_paths)
+    contains(MOBILITY, contacts) {
+        INCLUDEPATH+=$${EPOCROOT}epoc32/include/app
+    }
+
+    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|versit|messaging|serviceframework) {
+        INCLUDEPATH+=$${EPOCROOT}epoc32/include/mw
+    }
+}
 mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 

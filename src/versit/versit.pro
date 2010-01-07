@@ -63,7 +63,7 @@ symbian {
         -TCB
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
+    exportheaders.path = epoc32/include/mw
     DEPLOYMENT += exportheaders
     
     # This is for new exporting system coming in garden
