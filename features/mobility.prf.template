@@ -39,3 +39,13 @@ contains(MOBILITY, messaging) {
 contains(MOBILITY, versit) {
     qtAddLibrary(QtVersit)
 }
+
+# Add dependency to QtMobility package to all projects besides QtMobility package itself.
+# Mobility libs have UID3 0x2002AC89
+# self-sgned MObility libs have UID3 0xE002AC89
+symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
+    mobility_default_deployment.pkg_prerules += \
+        "; Default dependency to QtMobility libraries" \
+        "(0x2002AC89), 0, 2, 0, {\"QtMobility\"}"
+    DEPLOYMENT += mobility_default_deployment
+}
