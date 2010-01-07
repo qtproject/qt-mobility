@@ -54,13 +54,13 @@ class QRotationReadingData : public QSharedData
 {
 public:
     QRotationReadingData() {}
-    QRotationReadingData(QTime _timestamp, qreal _x, qreal _y, qreal _z)
+    QRotationReadingData(QDateTime _timestamp, qreal _x, qreal _y, qreal _z)
         : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
     QRotationReadingData(const QRotationReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
     ~QRotationReadingData() {}
 
-    QTime timestamp;
+    QDateTime timestamp;
     qreal x;
     qreal y;
     qreal z;
@@ -73,13 +73,13 @@ class Q_SENSORS_EXPORT QRotationReading
 public:
     explicit QRotationReading()
     { d = new QRotationReadingData; }
-    explicit QRotationReading(QTime timestamp, qreal x, qreal y, qreal z)
+    explicit QRotationReading(QDateTime timestamp, qreal x, qreal y, qreal z)
     { d = new QRotationReadingData(timestamp, x, y, z); }
     QRotationReading(const QRotationReading &other)
         : d(other.d) {}
     ~QRotationReading() {}
 
-    QTime timestamp() const { return d->timestamp; }
+    QDateTime timestamp() const { return d->timestamp; }
     qreal x() const { return d->x; }
     qreal y() const { return d->y; }
     qreal z() const { return d->z; }

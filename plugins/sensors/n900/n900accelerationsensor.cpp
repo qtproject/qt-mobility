@@ -105,7 +105,7 @@ void n900accelerationsensor::timerEvent(QTimerEvent * /*event*/)
 void n900accelerationsensor::poll()
 {
     qWarning() << "poll";
-    QTime timestamp = QTime::currentTime();
+    QDateTime timestamp = QDateTime::currentDateTime();
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
     int x, y, z;

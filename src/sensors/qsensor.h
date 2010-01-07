@@ -45,7 +45,7 @@
 #include <qmobilityglobal.h>
 #include <QObject>
 #include <QString>
-#include <QTime>
+#include <QDateTime>
 
 QTM_BEGIN_NAMESPACE
 

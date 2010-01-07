@@ -84,7 +84,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QAccelerationReading::QAccelerationReading(QTime timestamp, int x, int y, int z)
+    \fn QAccelerationReading::QAccelerationReading(QDateTime timestamp, int x, int y, int z)
     \internal
 */
 

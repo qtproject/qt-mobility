@@ -55,13 +55,13 @@ class QMagneticNorthReadingData : public QSharedData
 public:
     QMagneticNorthReadingData()
         : timestamp(), heading(0), calibrated(false) {}
-    QMagneticNorthReadingData(QTime _timestamp, int _heading, bool _calibrated)
+    QMagneticNorthReadingData(QDateTime _timestamp, int _heading, bool _calibrated)
         : timestamp(_timestamp), heading(_heading), calibrated(_calibrated) {}
     QMagneticNorthReadingData(const QMagneticNorthReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), heading(other.heading), calibrated(other.calibrated) {}
     ~QMagneticNorthReadingData() {}
 
-    QTime timestamp;
+    QDateTime timestamp;
     int heading;
     bool calibrated;
 };
@@ -73,13 +73,13 @@ class Q_SENSORS_EXPORT QMagneticNorthReading
 public:
     explicit QMagneticNorthReading()
     { d = new QMagneticNorthReadingData; }
-    explicit QMagneticNorthReading(QTime timestamp, int heading, bool calibrated)
+    explicit QMagneticNorthReading(QDateTime timestamp, int heading, bool calibrated)
     { d = new QMagneticNorthReadingData(timestamp, heading, calibrated); }
     QMagneticNorthReading(const QMagneticNorthReading &other)
         : d(other.d) {}
     ~QMagneticNorthReading() {}
 
-    QTime timestamp() const { return d->timestamp; }
+    QDateTime timestamp() const { return d->timestamp; }
     int heading() const { return d->heading; }
     bool isCalibrated() const { return d->calibrated; }
 

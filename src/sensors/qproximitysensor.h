@@ -54,13 +54,13 @@ class QProximityReadingData : public QSharedData
 {
 public:
     QProximityReadingData() {}
-    QProximityReadingData(QTime _timestamp, int _proximity)
+    QProximityReadingData(QDateTime _timestamp, int _proximity)
         : timestamp(_timestamp), proximity(_proximity) {}
     QProximityReadingData(const QProximityReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), proximity(other.proximity) {}
     ~QProximityReadingData() {}
 
-    QTime timestamp;
+    QDateTime timestamp;
     int proximity;
 };
 
@@ -77,13 +77,13 @@ public:
 
     explicit QProximityReading()
     { d = new QProximityReadingData; }
-    explicit QProximityReading(QTime timestamp, Proximity proximity)
+    explicit QProximityReading(QDateTime timestamp, Proximity proximity)
     { d = new QProximityReadingData(timestamp, proximity); }
     QProximityReading(const QProximityReading &other)
         : d(other.d) {}
     ~QProximityReading() {}
 
-    QTime timestamp() const { return d->timestamp; }
+    QDateTime timestamp() const { return d->timestamp; }
     Proximity proximity() const { return static_cast<Proximity>(d->proximity); }
 
 private:

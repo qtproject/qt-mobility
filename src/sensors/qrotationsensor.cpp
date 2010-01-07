@@ -85,7 +85,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QRotationReading::QRotationReading(QTime timestamp, qreal x, qreal y, qreal z)
+    \fn QRotationReading::QRotationReading(QDateTime timestamp, qreal x, qreal y, qreal z)
     \internal
 */
 

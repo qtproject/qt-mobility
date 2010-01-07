@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMagneticNorthReading::QMagneticNorthReading(QTime timestamp, int heading, bool calibrated)
+    \fn QMagneticNorthReading::QMagneticNorthReading(QDateTime timestamp, int heading, bool calibrated)
     \internal
 */
 

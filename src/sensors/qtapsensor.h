@@ -55,13 +55,13 @@ class QTapReadingData : public QSharedData
 public:
     QTapReadingData()
         : timestamp(), tapDirection(0), doubleTap(false) {}
-    QTapReadingData(QTime _timestamp, int _tapDirection, bool _doubleTap)
+    QTapReadingData(QDateTime _timestamp, int _tapDirection, bool _doubleTap)
         : timestamp(_timestamp), tapDirection(_tapDirection), doubleTap(_doubleTap) {}
     QTapReadingData(const QTapReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), tapDirection(other.tapDirection), doubleTap(other.doubleTap) {}
     ~QTapReadingData() {}
 
-    QTime timestamp;
+    QDateTime timestamp;
     int tapDirection;
     bool doubleTap;
 };
@@ -86,13 +86,13 @@ public:
 
     explicit QTapReading()
     { d = new QTapReadingData; }
-    explicit QTapReading(QTime timestamp, TapDirection tapDirection, bool doubleTap)
+    explicit QTapReading(QDateTime timestamp, TapDirection tapDirection, bool doubleTap)
     { d = new QTapReadingData(timestamp, tapDirection, doubleTap); }
     QTapReading(const QTapReading &other)
         : d(other.d) {}
     ~QTapReading() {}
 
-    QTime timestamp() const { return d->timestamp; }
+    QDateTime timestamp() const { return d->timestamp; }
     TapDirection tapDirection() const { return static_cast<TapDirection>(d->tapDirection); }
     bool isDoubleTap() const { return d->doubleTap; }
 

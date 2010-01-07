@@ -106,7 +106,7 @@ void n900proximitysensor::timerEvent(QTimerEvent * /*event*/)
 void n900proximitysensor::poll()
 {
     qWarning() << "poll";
-    QTime timestamp = QTime::currentTime();
+    QDateTime timestamp = QDateTime::currentDateTime();
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
     char buffer[20];

@@ -56,13 +56,13 @@ class QAccelerationReadingData : public QSharedData
 public:
     QAccelerationReadingData()
         : timestamp(), x(0), y(0), z(0) {}
-    QAccelerationReadingData(QTime _timestamp, int _x, int _y, int _z)
+    QAccelerationReadingData(QDateTime _timestamp, int _x, int _y, int _z)
         : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
     QAccelerationReadingData(const QAccelerationReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
     ~QAccelerationReadingData() {}
 
-    QTime timestamp;
+    QDateTime timestamp;
     int x;
     int y;
     int z;
@@ -75,13 +75,13 @@ class Q_SENSORS_EXPORT QAccelerationReading
 public:
     explicit QAccelerationReading()
     { d = new QAccelerationReadingData; }
-    explicit QAccelerationReading(QTime timestamp, int x, int y, int z)
+    explicit QAccelerationReading(QDateTime timestamp, int x, int y, int z)
     { d = new QAccelerationReadingData(timestamp, x, y, z); }
     QAccelerationReading(const QAccelerationReading &other)
         : d(other.d) {}
     ~QAccelerationReading() {}
 
-    QTime timestamp() const { return d->timestamp; }
+    QDateTime timestamp() const { return d->timestamp; }
     int x() const { return d->x; }
     int y() const { return d->y; }
     int z() const { return d->z; }

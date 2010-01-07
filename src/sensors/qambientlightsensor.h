@@ -55,13 +55,13 @@ class QAmbientLightReadingData : public QSharedData
 public:
     QAmbientLightReadingData()
         : timestamp(), lightLevel(0) {}
-    QAmbientLightReadingData(QTime _timestamp, int _lightLevel)
+    QAmbientLightReadingData(QDateTime _timestamp, int _lightLevel)
         : timestamp(_timestamp), lightLevel(_lightLevel) {}
     QAmbientLightReadingData(const QAmbientLightReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), lightLevel(other.lightLevel) {}
     ~QAmbientLightReadingData() {}
 
-    QTime timestamp;
+    QDateTime timestamp;
     int lightLevel;
 };
 
@@ -81,13 +81,13 @@ public:
 
     explicit QAmbientLightReading()
     { d = new QAmbientLightReadingData; }
-    explicit QAmbientLightReading(QTime timestamp, LightLevel lightLevel)
+    explicit QAmbientLightReading(QDateTime timestamp, LightLevel lightLevel)
     { d = new QAmbientLightReadingData(timestamp, lightLevel); }
     QAmbientLightReading(const QAmbientLightReading &other)
         : d(other.d) {}
     ~QAmbientLightReading() {}
 
-    QTime timestamp() const { return d->timestamp; }
+    QDateTime timestamp() const { return d->timestamp; }
     LightLevel lightLevel() const { return static_cast<LightLevel>(d->lightLevel); }
 
 private:
