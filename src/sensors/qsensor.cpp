@@ -121,25 +121,56 @@ QSensorId QSensor::id() const
     You can determine the policies the sensor supports with the
     QSensor::supportedPolicies() method.
 
-    \value Undefined          The sensor has no specific update policy.
-    \value OccasionalUpdates  Updates are delivered only occasionally.
-    \value InfrequentUpdates  Updates are delivered every now and then.
-    \value FrequentUpdates    Updates are delivered frequently.
-    \value TimedUpdates       Updates are delivered at the specified time interval.
-    \value PolledUpdates      Updates are retrieved when the device is polled.
+    \value Undefined          The sensor has no specific update policy. Updates may
+                              arrive frequently or infrequently. Updates based on
+                              user interaction are likely to fit into this category.
+    \value OccasionalUpdates  Updates are delivered occasionally, about one every
+                              5 seconds.
+    \value InfrequentUpdates  Updates are delivered infrequently, no more than once
+                              per second.
+    \value FrequentUpdates    Updates are delivered frequently, several per second.
+    \value TimedUpdates       Updates are delivered at a specific time interval.
+                              Note that not all sensors may be able to run with the
+                              exact timings requested and may operate slightly faster
+                              or slower.
+    \value PolledUpdates      Updates are retrieved when the currentReading()
+                              method is called.
 */
 
 /*!
-    Change the update \a policy of the sensor. If using TimedUpdates
-    you must also supply the \a interval. Note that not all sensors
-    support changing the update policy. If you set a policy that
-    the sensor does not support the behaviour is undefined.
+    Change the update \a policy of the sensor. Note that not all
+    sensors support changing the update policy. If you set a
+    policy that the sensor does not support the behaviour is
+    undefined.
+
+    If you wish to use the TimedUpdates policy, please call
+    setUpdateInterval() with the desired interval.
+
     \sa supportedPolicies()
 */
-void QSensor::setUpdatePolicy(UpdatePolicy policy, int interval)
+void QSensor::setUpdatePolicy(UpdatePolicy policy)
 {
-    if (backend())
-        backend()->setUpdatePolicy(policy, interval);
+    if (policy == TimedUpdates)
+        return;
+
+    if (backend()) {
+        backend()->setUpdatePolicy(policy, 0);
+    }
+}
+
+/*!
+    Change the update \a interval of the sensor. This
+    requires the sensor to spport the TimedUpdates policy.
+    Note that not all sensors support changing the update policy.
+    If you set a policy that the sensor does not support the behaviour
+    is undefined.
+    \sa supportedPolicies()
+*/
+void QSensor::setUpdateInterval(int interval)
+{
+    if (backend()) {
+        backend()->setUpdatePolicy(TimedUpdates, interval);
+    }
 }
 
 /*!

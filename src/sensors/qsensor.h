@@ -70,23 +70,24 @@ public:
     virtual QString type() const = 0;
 
     enum UpdatePolicy {
-        Undefined         = 0x00, // If the sensor has no specific policy
+        Undefined         = 0x01, // If the sensor has no specific policy
 
         // These use pre-determined timing intervals, as set by the sensor
-        OccasionalUpdates = 0x01, // When the system feels like it
-        InfrequentUpdates = 0x02, // Every now and then
-        FrequentUpdates   = 0x04, // Often (eg. for gaming controls)
+        OccasionalUpdates = 0x02,
+        InfrequentUpdates = 0x04,
+        FrequentUpdates   = 0x08,
 
         // For more control
-        TimedUpdates      = 0x08, // Every x milliseconds (may not be supported by all sensors)
-        PolledUpdates     = 0x10  // As often as polled (may not be supported by all sensors)
+        TimedUpdates      = 0x10, // Every x milliseconds (may not be supported by all sensors)
+        PolledUpdates     = 0x11  // As often as polled (may not be supported by all sensors)
     };
     Q_DECLARE_FLAGS(UpdatePolicies, UpdatePolicy)
 
     // Set the desired update policy (default is defined by the sensor)
     // Use documentation to determine the policies that the sensor
     // supports.
-    void setUpdatePolicy(UpdatePolicy policy, int interval = 0);
+    void setUpdatePolicy(UpdatePolicy policy);
+    void setUpdateInterval(int interval);
 
     // Retrieve the policy
     UpdatePolicy updatePolicy() const;
