@@ -210,17 +210,18 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 
 RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1)
 {
-    RDFVariable imaccount = rdfcontact1.property<nco::hasIMAccount> ();
+//    ::tracker()->setVerbosity(4);
+    RDFVariable imaccount = rdfcontact1.fromType<nco::IMContact> ();
     // columns
     RDFSelect queryidsimacccounts;
     queryidsimacccounts.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
 
-    queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imID> ());
-    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imPresence> ());
-    queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imStatusMessage> ());
-    queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imNickname> ());
-    queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::imAccountType> ());
-    queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
+    queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imContactId> ());
+    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imContactPresence> ());
+    queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imContactNickname> ());
+    queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::fromIMAccount> ());
+  // queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
 
     queryidsimacccounts.addColumn("metacontact", rdfcontact1.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
@@ -858,7 +859,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
     account.setValue("Account", imAccountQuery->index(queryRow, 1).data().toString()); // IMId
     if (!imAccountQuery->index(queryRow, 5).data().toString().isEmpty())
         account.setValue(FieldAccountPath, imAccountQuery->index(queryRow, 5).data().toString()); // getImAccountType?
-    account.setValue("Capabilities", imAccountQuery->index(queryRow, 6).data().toString()); // getImAccountType?
+   // account.setValue("Capabilities", imAccountQuery->index(queryRow, 6).data().toString()); // getImAccountType?
     account.setNickname(imAccountQuery->index(queryRow, 4).data().toString()); // nick
 
     QString presence = imAccountQuery->index(queryRow, 2).data().toString(); // imPresence iri
@@ -866,6 +867,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
     account.setPresence(presenceConversion[presence]);
 
     account.setStatusMessage(imAccountQuery->index(queryRow, 3).data().toString()); // imStatusMessage
+    qDebug()<<  imAccountQuery->index(queryRow, 4).data().toString();
     return account;
 }
 
