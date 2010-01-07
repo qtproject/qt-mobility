@@ -122,7 +122,11 @@ contains(mobility_modules,multimedia) {
 
     symbian: {
         #symbian spesific autotests
-        SUBDIRS += symbian
+        SUBDIRS += symbian 
+        SUBDIRS -= \
+                qcamera \
+                qmediaplayer \
+                qradiotuner
     }
 }
 #Messaging
