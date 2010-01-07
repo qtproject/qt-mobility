@@ -67,6 +67,7 @@ QGeoInfoThreadWinCE::QGeoInfoThreadWinCE(QGeoInfoValidator *validator, bool time
         updatesScheduled(false),
         updatesInterval(0),
         hasLastPosition(false),
+        invalidDataReceived(false),
         updateTimeoutTriggered(false)
 {
     qRegisterMetaType<GPS_POSITION>();
@@ -147,6 +148,7 @@ void QGeoInfoThreadWinCE::startUpdates()
         QMutexLocker locker(&mutex);
 
         updatesScheduled = true;
+        updateTimeoutTriggered = false;
         hasLastPosition = false;
 
         if (updatesInterval != 0)
@@ -275,42 +277,46 @@ void QGeoInfoThreadWinCE::run()
             dwRet = GPSGetPosition(m_gps, &posn, timeout, 0);
 
             if (dwRet == ERROR_SUCCESS) {
-                if (!validator->valid(posn))
-                    continue;
+                if (!validator->valid(posn)) {
+                    invalidDataReceived = true;
+                } else {
+                    m_lastPosition = posn;
+                    hasLastPosition = true;
+                    updateTimeoutTriggered = false;
 
-                m_lastPosition = posn;
-                hasLastPosition = true;
-                updateTimeoutTriggered = false;
+                    // A request and a periodic update could both be satisfied at once.
+                    // We use this flag to prevent a double update.
+                    bool emitDataUpdated = false;
 
-                // A request and a periodic update could both be satisfied at once.
-                // We use this flag to prevent a double update.
-                bool emitDataUpdated = false;
-
-                // If a request is in process we emit the dataUpdated signal.
-                if (requestScheduled) {
-                    emitDataUpdated = true;
-                    requestScheduled = false;
-                }
-
-                // If we are updating as data becomes available or if the update period has elapsed
-                // we emit the dataUpdated signal.
-                if (updatesScheduled) {
-                    QDateTime now = currentDateTime();
-                    if (updatesInterval == 0) {
+                    // If a request is in process we emit the dataUpdated signal.
+                    if (requestScheduled) {
                         emitDataUpdated = true;
-                    } else if (msecsTo(now, updatesNextTime) < 0) {
-                        while (msecsTo(now, updatesNextTime) < 0)
-                            updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
-                        emitDataUpdated = true;
+                        requestScheduled = false;
+                    }
+
+                    // If we are updating as data becomes available or if the update period has elapsed
+                    // we emit the dataUpdated signal.
+                    if (updatesScheduled) {
+                        QDateTime now = currentDateTime();
+                        if (updatesInterval == 0) {
+                            emitDataUpdated = true;
+                        } else if (msecsTo(now, updatesNextTime) < 0) {
+                            while (msecsTo(now, updatesNextTime) < 0)
+                                updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
+                            emitDataUpdated = true;
+                        }
+                    }
+
+                    if (emitDataUpdated) {
+                        hasLastPosition = false;
+                        emit dataUpdated(m_lastPosition);                    
                     }
                 }
-
-                if (emitDataUpdated) {
-                    emit dataUpdated(m_lastPosition);
-                    hasLastPosition = false;
-                }
             }
-        } else {
+        }
+        //} else {
+        if (dwRet != WAIT_OBJECT_0 || invalidDataReceived) {
+            invalidDataReceived = false;
 
             // Third party apps may have the ability to turn off the gps hardware independently of
             // the Microsoft GPS API.
@@ -335,7 +341,8 @@ void QGeoInfoThreadWinCE::run()
             }
 
             // We reach this point if the gps state has changed, if the wake up event has been
-            // triggered, or if a timeout occurred while waiting for gps data.
+            // triggered, if we received data we were not interested in from the GPS, 
+            // or if a timeout occurred while waiting for gps data.
             //
             // In all of these cases we should check for request and periodic update timeouts.
 
@@ -352,12 +359,12 @@ void QGeoInfoThreadWinCE::run()
                 while (msecsTo(now, updatesNextTime) < 0)
                     updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
                 if (hasLastPosition) {
-                    emit dataUpdated(m_lastPosition);
                     hasLastPosition = false;
+                    emit dataUpdated(m_lastPosition);                    
                 } else {
                     if (timeoutsForPeriodicUpdates && !updateTimeoutTriggered) {
-                        emit updateTimeout();
                         updateTimeoutTriggered = true;
+                        emit updateTimeout();                    
                     }
                 }
             }
