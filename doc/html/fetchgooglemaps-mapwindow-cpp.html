@@ -78,7 +78,8 @@
             dateTimeLabel(new QLabel),
             loading(false),
             usingLogFile(false),
-            location(0)
+            location(0),
+            waitingForFix(false)
     {
         location = QGeoPositionInfoSource::createDefaultSource(this);
         if (!location) {
@@ -91,7 +92,7 @@
             usingLogFile = true;
         }
 
-        location-&gt;setUpdateInterval(1500);
+        location-&gt;setUpdateInterval(5000);
         connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
 
@@ -126,25 +127,8 @@
             QMessageBox::information(this, tr(&quot;Fetch Google Maps&quot;),
                                      tr(&quot;No GPS support detected, using GPS data from a sample log file instead.&quot;));
         } else {
-            QGeoSatelliteInfoSource *satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
-
-            if (satellite) {
-                SatelliteDialog *dialog = new SatelliteDialog(this,
-                        30,
-                        SatelliteDialog::ExitOnFixOrCancel,
-                        SatelliteDialog::OrderByPrnNumber,
-                        SatelliteDialog::ScaleToMaxPossible);
-
-                dialog-&gt;connectSources(location, satellite);
-
-                location-&gt;startUpdates();
-                satellite-&gt;startUpdates();
-
-                dialog-&gt;exec();
-
-                location-&gt;stopUpdates();
-                satellite-&gt;stopUpdates();
-            }
+            waitForFix();
+            location-&gt;stopUpdates();
         }
 
         <span class="comment">// Set Internet Access Point</span>
@@ -163,7 +147,42 @@
         session-&gt;open();
         session-&gt;waitForOpened(-1);
 
+        connect(location, SIGNAL(updateTimeout()), this, SLOT(waitForFix()));
+
         location-&gt;startUpdates();
+    }
+
+<span class="comment">    // Brings up a satellite strength dialog box until a position fix is received.</span>
+<span class="comment">    // This will also start the position updates if they are not already started.</span>
+    void MapWindow::waitForFix() {
+        if (waitingForFix)
+            return;
+
+        waitingForFix = true;
+
+        QGeoSatelliteInfoSource *satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
+
+        if (satellite) {
+            SatelliteDialog *dialog = new SatelliteDialog(this,
+                    30,
+                    SatelliteDialog::ExitOnFixOrCancel,
+                    SatelliteDialog::OrderByPrnNumber,
+                    SatelliteDialog::ScaleToMaxPossible);
+
+            dialog-&gt;connectSources(location, satellite);
+
+            location-&gt;startUpdates();
+            satellite-&gt;startUpdates();
+
+            dialog-&gt;exec();
+
+            satellite-&gt;stopUpdates();
+
+            delete dialog;
+            delete satellite;
+        }
+
+        waitingForFix = false;
     }
 
     void MapWindow::start()
@@ -175,10 +194,10 @@
     {
         QString heading = &quot;?&quot;;
         QString speed = &quot;?&quot;;
-        if (info.hasProperty(QGeoPositionInfo::Heading))
-            heading = QString(&quot;%1%2&quot;).arg(info.property(QGeoPositionInfo::Heading)).arg(QChar(0x00b0));
-        if (info.hasProperty(QGeoPositionInfo::GroundSpeed))
-            speed = QString::number(info.property(QGeoPositionInfo::GroundSpeed) * 3.6, 'f', 1);
+        if (info.hasAttribute(QGeoPositionInfo::Direction))
+            heading = QString(&quot;%1%2&quot;).arg(info.attribute(QGeoPositionInfo::Direction)).arg(QChar(0x00b0));
+        if (info.hasAttribute(QGeoPositionInfo::GroundSpeed))
+            speed = QString::number(info.attribute(QGeoPositionInfo::GroundSpeed) * 3.6, 'f', 1);
         posLabel-&gt;setText(tr(&quot;Position: %1&quot;).arg(info.coordinate().toString()));
         headingAndSpeedLabel-&gt;setText(tr(&quot;Bearing %1, travelling at %2 km/h&quot;).arg(heading).arg(speed));
 

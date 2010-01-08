@@ -81,6 +81,7 @@
 
     private slots:
         void delayedInit();
+        void waitForFix();
         void positionUpdated(const QGeoPositionInfo &amp;info);
         void loadStarted();
         void loadFinished(bool ok);
@@ -94,6 +95,7 @@
         QNetworkSession *session;
         bool usingLogFile;
         QGeoPositionInfoSource *location;
+        bool waitingForFix;
     };
 
     #endif</pre>

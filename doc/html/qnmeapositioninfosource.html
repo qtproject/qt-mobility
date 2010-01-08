@@ -32,6 +32,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#QNmeaPositionInfoSource">QNmeaPositionInfoSource</a></b> ( UpdateMode <i>updateMode</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#dtor.QNmeaPositionInfoSource">~QNmeaPositionInfoSource</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#device">device</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#parsePosInfoFromNmeaData">parsePosInfoFromNmeaData</a></b> ( const char * <i>data</i>, int <i>size</i>, QGeoPositionInfo * <i>posInfo</i>, bool * <i>hasFix</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">UpdateMode </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#updateMode">updateMode</a></b> () const</td></tr>
 </table>
@@ -111,6 +112,8 @@
 <a name="//apple_ref/cpp/instm/QNmeaPositionInfoSource/minimumUpdateInterval"></a>
 <h3 class="fn"><a name="minimumUpdateInterval"></a>int QNmeaPositionInfoSource::minimumUpdateInterval () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">QGeoPositionInfoSource::minimumUpdateInterval</a>().</p>
+<a name="//apple_ref/cpp/instm/QNmeaPositionInfoSource/parsePosInfoFromNmeaData"></a>
+<h3 class="fn"><a name="parsePosInfoFromNmeaData"></a>bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData ( const char * <i>data</i>, int <i>size</i>, <a href="qgeopositioninfo.html">QGeoPositionInfo</a> * <i>posInfo</i>, bool * <i>hasFix</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <a name="//apple_ref/cpp/instm/QNmeaPositionInfoSource/requestUpdate"></a>
 <h3 class="fn"><a name="requestUpdate"></a>void QNmeaPositionInfoSource::requestUpdate ( int <i>msec</i> = 0 )&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#requestUpdate">QGeoPositionInfoSource::requestUpdate</a>().</p>
