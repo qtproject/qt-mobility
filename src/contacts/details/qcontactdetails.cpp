@@ -293,7 +293,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
    Note: this class has been deprecated and will be removed in week 1.
    Use QContactGeoLocation instead!
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "Geolocation");
+Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "GeoLocation");
 
 /*!
    \variable QContactGeoLocation::DefinitionName

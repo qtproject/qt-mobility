@@ -116,7 +116,7 @@ public:
     const char* FieldSpeed;
     const char* FieldTimestamp;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeolocation, "Geolocation")
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeolocation, "GeoLocation") // change defn name to point to the new class defn name.
     Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
     Q_DECLARE_LATIN1_LITERAL(FieldLatitude, "Latitude");
     Q_DECLARE_LATIN1_LITERAL(FieldLongitude, "Longitude");
