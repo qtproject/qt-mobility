@@ -90,19 +90,7 @@ QTM_BEGIN_NAMESPACE
 QContact::QContact()
     : d(new QContactData)
 {
-    // insert the contact's display label detail.
-    QContactDisplayLabel contactLabel;
-    contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
-    contactLabel.d->m_id = 1;
-    contactLabel.d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
-    d->m_details.insert(0, contactLabel);
-
-    // and the contact type detail.
-    QContactType contactType;
-    contactType.setType(QContactType::TypeContact);
-    contactType.d->m_id = 2;
-    contactType.d->m_access = QContactDetail::Irremovable;
-    d->m_details.insert(1, contactType);
+    clearDetails();
 }
 
 /*! Initializes this QContact from \a other */
@@ -119,8 +107,6 @@ QContact::QContact(const QContact& other)
  */
 bool QContact::isEmpty() const
 {
-    //stopcompilation;
-
     /* Every contact has a display label field.. */
     if (d->m_details.count() > 2)
         return false;
@@ -137,18 +123,21 @@ bool QContact::isEmpty() const
  */
 void QContact::clearDetails()
 {
-    QContactDisplayLabel dl = d->m_details.at(0);
-    dl.setValue(QContactDisplayLabel::FieldLabel, QString());
-    dl.d->m_id = 1;
-    dl.d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
-
-    QContactType typeDet = d->m_details.at(1);
-    typeDet.d->m_id = 2;
-    typeDet.d->m_access = QContactDetail::Irremovable;
-
     d->m_details.clear();
-    d->m_details.insert(0, dl);
-    d->m_details.insert(1, typeDet);
+
+    // insert the contact's display label detail.
+    QContactDisplayLabel contactLabel;
+    contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
+    contactLabel.d->m_id = 1;
+    contactLabel.d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
+    d->m_details.insert(0, contactLabel);
+
+    // and the contact type detail.
+    QContactType contactType;
+    contactType.setType(QContactType::TypeContact);
+    contactType.d->m_id = 2;
+    contactType.d->m_access = QContactDetail::Irremovable;
+    d->m_details.insert(1, contactType);
 }
 
 /*! Replace the contents of this QContact with \a other */
@@ -177,7 +166,7 @@ QContactLocalId QContact::localId() const
 
 /*!
  * Returns the type of the contact.  Every contact has exactly one type which
- * is either set manually (by saving a modified copy of the QCotnactType
+ * is either set manually (by saving a modified copy of the QContactType
  * in the contact, or by calling \l setType()) or synthesized automatically.
  *
  * \sa setType()
@@ -308,7 +297,12 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
  *
  * If \a detail is a contact type, the existing contact type will
  * be overwritten with \a detail.  There is never more than one contact type
- * in a contact.
+ * in a contact.  The supplied \a detail will have its accessConstraint set to
+ * QContactDetail::Irremovable.
+ *
+ * If \a detail is a display label, the supplied \a detail will have its
+ * accessConstraint set to QContactDetail::Irremovable | QContactDetail::ReadOnly,
+ * and the function will return false.
  *
  * Returns true if the detail was saved successfully, otherwise returns false
  */
@@ -322,9 +316,16 @@ bool QContact::saveDetail(QContactDetail* detail)
 
     /* Also handle contact type specially - only one of them. */
     if (detail->definitionName() == QContactType::DefinitionName) {
+        detail->d->m_access = QContactDetail::Irremovable;
         d->m_details[1] = *detail;
         detail->d->m_id = 2;
         return true;
+    }
+
+    /* And display label.. */
+    if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
+        detail->d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
+        return false;
     }
 
     // try to find the "old version" of this field
@@ -332,6 +333,8 @@ bool QContact::saveDetail(QContactDetail* detail)
     for (int i = 0; i < d->m_details.size(); i++) {
         const QContactDetail& curr = d->m_details.at(i);
         if (detail->d->m_definitionName == curr.d->m_definitionName && detail->d->m_id == curr.d->m_id) {
+            // update the detail constraints of the supplied detail
+            detail->d->m_access = d->m_details[i].accessConstraints();
             // Found the old version.  Replace it with this one.
             d->m_details[i] = *detail;
             return true;
