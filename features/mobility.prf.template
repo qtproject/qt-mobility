@@ -3,11 +3,11 @@
     INCLUDEPATH += $${MOBILITY_INCLUDE}
 } else {
     load(data_caging_paths)
-    contains(MOBILITY, contacts) {
+    contains(MOBILITY, contacts|versit) {
         INCLUDEPATH+=$${EPOCROOT}epoc32/include/app
     }
 
-    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|versit|messaging|serviceframework) {
+    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework) {
         INCLUDEPATH+=$${EPOCROOT}epoc32/include/mw
     }
 }
