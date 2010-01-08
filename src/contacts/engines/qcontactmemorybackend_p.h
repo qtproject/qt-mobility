@@ -112,7 +112,6 @@ public:
     QMap<QContactLocalId, QList<QContactRelationship> > m_orderedRelationships; // map of ordered lists of contact relationships
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QMap<QString, QContactDetailDefinition> > m_definitions; // map of contact type to map of definition name to definitions.
-    mutable QMap<QString, QSet<QString> > m_createOnlyIds; // a list of create only definitions for each contact type
     QContactLocalId m_nextContactId;
     bool m_anonymous;                              // Is this backend ever shared?
     QString m_engineName;                          // name of this engine as supplied by factory (memory)
