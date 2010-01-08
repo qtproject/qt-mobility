@@ -77,6 +77,7 @@ struct Q_MEDIA_EXPORT QMediaServiceSupportedFormatsInterface
 {
     virtual ~QMediaServiceSupportedFormatsInterface() {}
     virtual QtMedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const = 0;
+    virtual QStringList supportedMimeTypes() const = 0;
 };
 
 QTM_END_NAMESPACE
