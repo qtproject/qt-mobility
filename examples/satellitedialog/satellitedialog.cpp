@@ -348,8 +348,9 @@ SatelliteDialog::SatelliteDialog(QWidget *parent,
                                  Ordering ordering,
                                  StrengthScaling scaling) : QDialog(parent),
         m_noSatelliteTimeoutSeconds(noSatelliteTimeoutSeconds),
-        m_exitBehaviour(exitBehaviour)
-        m_exitBehaviour(exitBehaviour)
+        m_exitBehaviour(exitBehaviour),
+        m_ordering(ordering),
+        m_scaling(scaling)
 {
     noSatelliteTimer = new QTimer(this);
     noSatelliteTimer->setInterval(m_noSatelliteTimeoutSeconds * 1000);

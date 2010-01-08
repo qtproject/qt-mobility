@@ -113,6 +113,8 @@ private slots:
 private:
     int m_noSatelliteTimeoutSeconds;
     ExitBehaviour m_exitBehaviour;
+    Ordering m_ordering;
+    StrengthScaling m_scaling;
 
     QTimer *noSatelliteTimer;
 
