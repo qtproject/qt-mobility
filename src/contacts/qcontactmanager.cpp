@@ -700,7 +700,7 @@ QStringList QContactManager::supportedContactTypes() const
  */
 int QContactManager::version() 
 {
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  (Unnecessary API)");
+    qWarning("QContactManager::version() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  (Unnecessary API)");
     return QTCONTACTS_VERSION; 
 }
 

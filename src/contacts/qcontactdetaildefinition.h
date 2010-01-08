@@ -85,7 +85,7 @@ public:
     /* Mapping of field key to fields allowed in details of this definition */
     void setFields(const QMap<QString, QContactDetailDefinitionField>& fields);
     QMap<QString, QContactDetailDefinitionField> fields() const;
-    QMap<QString, QContactDetailDefinitionField>& Q_DECL_DEPRECATED fields(); // deprecated, removed.
+    QMap<QString, QContactDetailDefinitionField>& Q_DECL_DEPRECATED fields(); // deprecated, removed.  unnecessary API.
 
     /* Access constraints which may apply to details of a definition */
     enum AccessConstraint {
