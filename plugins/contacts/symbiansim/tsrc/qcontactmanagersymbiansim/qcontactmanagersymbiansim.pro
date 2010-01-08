@@ -1,18 +1,13 @@
-QT += testlib
 TEMPLATE=app
 TARGET=tst_qcontactmanagersymbiansim
-CONFIG += testcase
-#CONFIG += qtestlib
-CONFIG += mobility
-MOBILITY = contacts
-SOURCES  += tst_qcontactmanagersymbiansim.cpp
+
+QT += testlib
+CONFIG += qtestlib
 
 symbian: {
+    INCLUDEPATH += .\inc
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-    TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData \
-                        AllFiles
+    SOURCES  += tst_qcontactmanagersymbiansim.cpp
+    TARGET.CAPABILITY = ALL -TCB
     LIBS += -lqtcontacts
 }
