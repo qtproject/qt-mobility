@@ -854,14 +854,14 @@ void tst_QContactDetails::type()
     QCOMPARE(c.details(QContactType::DefinitionName).value(0).value(QContactType::FieldType), QString(QLatin1String(QContactType::TypeContact)));
 
     // test property remove
-    QVERIFY(c.removeDetail(&t1)); // cannot remove type - "succeeds" but count remains unchanged
+    QVERIFY(!c.removeDetail(&t1)); // cannot remove type
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
     t2.setType(QContactType::TypeGroup);
     QVERIFY(c.saveDetail(&t2)); // overwrites t1
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&t2)); // cannot remove type - "succeeds" but count remains unchanged
+    QVERIFY(!c.removeDetail(&t2)); // cannot remove type - "succeeds" but count remains unchanged
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&t2) == false);
+    QVERIFY(!c.removeDetail(&t2));
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
 }
 
