@@ -599,9 +599,6 @@ QList<QContactLocalId> CntSymbianFilterSqlHelper::HandlePhonenumberDetailFilter(
                 TInt matchLength(KDefaultMatchLength);
                 // no need to propagate error, we can use the default match length
                 TRAP_IGNORE(getMatchLengthL(matchLength));
-                int actualLength = number.length();
-                if(actualLength > matchLength)
-                    matchLength = actualLength;
 
                 //cal the search
                 CContactIdArray* idArray(0);
