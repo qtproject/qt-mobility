@@ -73,8 +73,9 @@ bool QLocationTestUtils::hasDefaultMonitor()
 {
 #if defined(Q_OS_SYMBIAN)
     return true;
-#endif
+#else
     return false;
+#endif
 }
 
 QString QLocationTestUtils::addNmeaChecksumAndBreaks(const QString &sentence)
