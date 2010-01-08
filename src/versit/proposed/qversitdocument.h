@@ -77,8 +77,8 @@ public:
     void removeAllProperties(const QString& name);
     void removeProperty(const QVersitProperty& property);
 
-    void setDefaultCharset(QByteArray charset);
-    QByteArray defaultCharset() const;
+    void setDefaultCodec(QTextCodec* charset);
+    QTextCodec* defaultCodec() const;
 
     bool isEmpty() const;
 
@@ -88,5 +88,7 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_NAMESPACE::QVersitDocument)
 
 #endif // QVERSITDOCUMENT_H

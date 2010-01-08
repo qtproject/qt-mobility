@@ -64,7 +64,14 @@ public:
         IOError,
         OutOfMemoryError,
         NotReadyError
-   };
+    };
+
+    enum State {
+        InactiveState = 0,   // operation not yet started
+        ActiveState,         // operation started, not yet finished
+        CanceledState,       // operation is finished due to cancelation
+        FinishedState        // operation successfully completed
+    };
 
     QVersitWriter();
     ~QVersitWriter();
@@ -81,6 +88,8 @@ public:
     bool startWriting();
     bool writeAll();
 
+    // status getters:
+    State state() const;
     Error error() const;
     QList<Error> errors() const;
 

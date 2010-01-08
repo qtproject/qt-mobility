@@ -54,6 +54,58 @@ class QVersitDocument;
 class QVersitProperty;
 class QVersitContactImporterPrivate;
 
+
+class QVersitContactPropertyImporter
+{
+protected:
+    /*!
+     * Converts \a property into a QContactDetail.
+     *
+     * \a *ok is set to true on success, false on failure.
+     *
+     * This function is called on every QVersitProperty encountered during an import.  Supply this
+     * function and set *ok to true to implement custom import behaviour.
+     */
+    virtual QContactDetail processProperty(const QVersitProperty& property, bool* ok);
+
+    /*!
+     * Converts \a property into a QContactDetail.
+     *
+     * \a *ok is set to true on success, false on failure.
+     *
+     * This function is called on every QVersitProperty encountered during an import which is not
+     * handled by either \l processProperty() or by QVersitContactImporter.  Supply this
+     * function and set *ok to true to implement support for QVersitProperties not supported by
+     * QVersitContactImporter.
+     *
+     * Note that QVersitContactImporter doesn't support images or audio clips and this function
+     * must be supplied to support these.
+     *
+     * An example for processing avatars:
+     * QContactDetail CustomImporter::processProperty(const QVersitProperty& property, bool* ok)
+     * {
+     *     if (property.name() == QLatin1String("IMAGE")) {
+     *         QVariant value = property.value();
+     *         switch (value.type) {
+     *         case QMetaType::QString:
+     *             QString url = value.toString();
+     *             // Interpret the value as a URL and return the converted QContactDetail
+     *             // In reality, you probably want to check the property parameters to tell if
+     *             // it's a URL or a base-64 encoded binary.
+     *         case QMetaType::QImage:
+     *             QImage image = value.value<QImage>();
+     *             // Return the converted QContactDetail
+     *         }
+     *     } else {
+     *         *ok = false;
+     *         return QContactDetail();
+     *     }
+     * }
+     *
+     */
+    virtual QContactDetail processUnknownProperty(const QVersitProperty& property, bool* ok);
+};
+
 class Q_VERSIT_EXPORT QVersitContactImporter
 {
 public:
@@ -62,48 +114,8 @@ public:
 
     QList<QContact> importContacts(const QList<QVersitDocument>& versitDocuments);
 
-protected:
-    /*!
-     * Converts \a property into a QContactDetail.
-     *
-     * \a ok is set to true on success, false on failure.
-     *
-     * This function is called on every QVersitProperty encountered during an import.  Override this
-     * function to implement custom import behaviour.  This can be used to implement support for
-     * QVersitProperties not supported by QVersitContactImporter.
-     *
-     * Note that QVersitContactImporter doesn't support images or audio clips and this function
-     * must be overridden in a subclass to support these.
-     *
-     * An example for processing avatars:
-     * class CustomImporter : public QVersitContactImporter
-     * {
-     * ...
-     *     QContactDetail processProperty(const QVersitProperty& property, bool* ok)
-     *     {
-     *         if (property.name() == QLatin1String("IMAGE")) {
-     *             QVariant value = property.value();
-     *             switch (value.type) {
-     *             case QMetaType::QString:
-     *                 QString url = value.toString();
-     *                 // Interpret the value as a URL and return the converted QContactDetail
-     *                 // In reality, you probably want to check the property parameters to tell if
-     *                 // it's a URL or a base-64 encoded binary.
-     *                 break;
-     *             case QMetaType::QImage:
-     *                 QImage image = value.value<QImage>();
-     *                 // Return the converted QContactDetail
-     *                 break;
-     *             }
-     *         } else {
-     *             // The property is handled by the parent class.
-     *             return QVersitContactImporter::processProperty(property, ok);
-     *         }
-     *     }
-     * }
-     *
-     */
-    virtual QContactDetail processProperty(const QVersitProperty& property, bool* ok);
+    void setPropertyImporter(QVersitContactPropertyImporter* importer);
+    QVersitContactPropertyImporter* propertyImporter();
     
 private:
     QVersitContactImporterPrivate* d;

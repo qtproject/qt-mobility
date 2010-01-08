@@ -68,7 +68,14 @@ public:
         ParseError,
         InvalidCharsetError,
         BadDeviceError
-   };
+    };
+
+    enum State {
+        InactiveState = 0,   // operation not yet started
+        ActiveState,         // operation started, not yet finished
+        CanceledState,       // operation is finished due to cancelation
+        FinishedState        // operation successfully completed
+    };
 
     QVersitReader();
     ~QVersitReader();
@@ -77,8 +84,8 @@ public:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
 
-    void setDefaultCharset(QByteArray charset);
-    QByteArray defaultCharset() const;
+    void setDefaultCodec(QTextCodec* charset);
+    QTextCodec* defaultCodec() const;
 
     // reading:
     bool startReading();
@@ -87,6 +94,8 @@ public:
     // output:
     QList<QVersitDocument> results() const;
 
+    // status getters:
+    State state() const;
     Error error() const;
     QList<Error> errors() const;
 

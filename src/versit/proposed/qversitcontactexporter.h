@@ -54,6 +54,47 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate;
 
+class QVersitContactDetailExporter
+{
+protected:
+    /*!
+     * Converts \a detail into a QVersitProperty.
+     *
+     * \a *ok is set to true on success, false on failure.
+     *
+     * This function is called on every QContactDetail encountered during an export.  Supply this
+     * function and set *ok to true to implement custom export behaviour.
+     */
+    virtual QVersitProperty processDetail(const QContactDetail& detail, bool* ok);
+     
+    /*!
+     * Converts \a detail into a QVersitProperty.
+     *
+     * \a *ok is set to true on success, false on failure.
+     *
+     * This function is called on every QContactDetail encountered during an export which is not
+     * handled by either \l processDetail() or by QVersitContactExporter.  This can be used to
+     * implement support for QContactDetails not supported by QVersitContactExporter.
+     *
+     * Note that QVersitContactExporter doesn't support avatars or audio clips and this function
+     * must be supplied to support these.
+     *
+     * An example for processing avatars:
+     * QVersitProperty CustomExporter::processUnknownDetail(const QContactDetail& detail, bool* ok)
+     * {
+     *     if (detail.definitionName() == QContactAvatar::DefinitionName) {
+     *         QContactAvatar avatar = static_cast<QContactAvatar>(detail);
+     *         // Process avatar and return a corresponding QVersitProperty
+     *     } else {
+     *         *ok = false;
+     *         return QVersitProperty();
+     *     }
+     * }
+     *
+     */
+    virtual QVersitProperty processUnknownDetail(const QContactDetail& detail, bool* ok);
+};
+
 class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
 {
     Q_OBJECT
@@ -66,37 +107,8 @@ public:
         const QList<QContact>& contacts,
         QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
 
-protected:
-    /*!
-     * Converts \a detail into a QVersitProperty.
-     *
-     * \a ok is set to true on success, false on failure.
-     *
-     * This function is called on every QContactDetail encountered during an export.  Override this
-     * function to implement custom export behaviour.  This can be used to implement support for
-     * QContactDetails not supported by QVersitContactExporter.
-     *
-     * Note that QVersitContactExporter doesn't support avatars and this function must be overridden
-     * in a subclass to support these.
-     *
-     * An example for processing avatars:
-     * class CustomExporter : public QVersitContactExporter
-     * {
-     * ...
-     *     QVersitProperty processDetail(const QContactDetail& detail, bool* ok)
-     *     {
-     *         if (detail.definitionName() == QContactAvatar::DefinitionName) {
-     *             QContactAvatar avatar = static_cast<QContactAvatar>(detail);
-     *             // Process avatar and return a corresponding QVersitProperty
-     *         } else {
-     *             // The detail definition is to be handled by the parent class.
-     *             return QVersitContactExporter::processDetail(detail, ok);
-     *         }
-     *     }
-     * }
-     *
-     */
-    virtual QVersitProperty processDetail(const QContactDetail& detail, bool* ok);
+    void setDetailExporter(QVersitContactDetailExporter* exporter);
+    QVersitContactDetailExporter* detailExporter();
 
 private:
     QVersitContactExporterPrivate* d;    
