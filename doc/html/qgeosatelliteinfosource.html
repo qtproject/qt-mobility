@@ -84,10 +84,9 @@
 <p>Returns 0 if the system has no default source.</p>
 <a name="//apple_ref/cpp/instm/QGeoSatelliteInfoSource/requestTimeout"></a>
 <h3 class="fn"><a name="requestTimeout"></a>void QGeoSatelliteInfoSource::requestTimeout ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Emitted if <a href="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</a>() was called and the current satellite information could not be retrieved within the specified timeout.</p>
 <a name="//apple_ref/cpp/instm/QGeoSatelliteInfoSource/requestUpdate"></a>
 <h3 class="fn"><a name="requestUpdate"></a>void QGeoSatelliteInfoSource::requestUpdate ( int <i>timeout</i> = 0 )&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
-<p>Attempts to get the current satellite information and emit <a href="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and <a href="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() with this information. If the current position cannot be found within the given <i>timeout</i> (in milliseconds), <a href="qgeosatelliteinfosource.html#requestTimeout">requestTimeout</a>() is emitted.</p>
+<p>Attempts to get the current satellite information and emit <a href="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and <a href="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() with this information. If the current position cannot be found within the given <i>timeout</i> (in milliseconds), updateTimeout() is emitted.</p>
 <p>If the timeout is zero, the timeout defaults to a reasonable timeout period as appropriate for the source.</p>
 <p>This does nothing if another update request is in progress. However it can be called even if <a href="qgeosatelliteinfosource.html#startUpdates">startUpdates</a>() has already been called and regular updates are in progress.</p>
 <a name="//apple_ref/cpp/instm/QGeoSatelliteInfoSource/satellitesInUseUpdated"></a>

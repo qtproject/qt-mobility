@@ -1364,12 +1364,12 @@
         <keyword ref="qgeopositioninfosource.html#lastKnownPosition">lastKnownPosition</keyword>
         <keyword ref="qgeopositioninfosource.html#positionUpdated">positionUpdated</keyword>
         <keyword ref="qgeopositioninfosource.html#preferredPositioningMethods">preferredPositioningMethods</keyword>
-        <keyword ref="qgeopositioninfosource.html#requestTimeout">requestTimeout</keyword>
         <keyword ref="qgeopositioninfosource.html#requestUpdate">requestUpdate</keyword>
         <keyword ref="qgeopositioninfosource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</keyword>
         <keyword ref="qgeopositioninfosource.html#startUpdates">startUpdates</keyword>
         <keyword ref="qgeopositioninfosource.html#stopUpdates">stopUpdates</keyword>
         <keyword ref="qgeopositioninfosource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
+        <keyword ref="qgeopositioninfosource.html#updateTimeout">updateTimeout</keyword>
         <section ref="qgeopositioninfosource-members.html" title="List of all members"/>
     </section>
     <section ref="qgeosatelliteinfo.html" title="QGeoSatelliteInfo Class Reference">

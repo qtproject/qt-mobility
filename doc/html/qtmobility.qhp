@@ -1643,7 +1643,6 @@
             <keyword name="minimumUpdateInterval" id="QGeoPositionInfoSource::minimumUpdateInterval" ref="qgeopositioninfosource.html#minimumUpdateInterval-prop"/>
             <keyword name="positionUpdated" id="QGeoPositionInfoSource::positionUpdated" ref="qgeopositioninfosource.html#positionUpdated"/>
             <keyword name="preferredPositioningMethods" id="QGeoPositionInfoSource::preferredPositioningMethods" ref="qgeopositioninfosource.html#preferredPositioningMethods"/>
-            <keyword name="requestTimeout" id="QGeoPositionInfoSource::requestTimeout" ref="qgeopositioninfosource.html#requestTimeout"/>
             <keyword name="requestUpdate" id="QGeoPositionInfoSource::requestUpdate" ref="qgeopositioninfosource.html#requestUpdate"/>
             <keyword name="setPreferredPositioningMethods" id="QGeoPositionInfoSource::setPreferredPositioningMethods" ref="qgeopositioninfosource.html#setPreferredPositioningMethods"/>
             <keyword name="setUpdateInterval" id="QGeoPositionInfoSource::setUpdateInterval" ref="qgeopositioninfosource.html#updateInterval-prop"/>
@@ -1651,6 +1650,7 @@
             <keyword name="stopUpdates" id="QGeoPositionInfoSource::stopUpdates" ref="qgeopositioninfosource.html#stopUpdates"/>
             <keyword name="supportedPositioningMethods" id="QGeoPositionInfoSource::supportedPositioningMethods" ref="qgeopositioninfosource.html#supportedPositioningMethods"/>
             <keyword name="updateInterval" id="QGeoPositionInfoSource::updateInterval" ref="qgeopositioninfosource.html#updateInterval-prop"/>
+            <keyword name="updateTimeout" id="QGeoPositionInfoSource::updateTimeout" ref="qgeopositioninfosource.html#updateTimeout"/>
             <keyword name="~QGeoPositionInfoSource" id="QGeoPositionInfoSource::~QGeoPositionInfoSource" ref="qgeopositioninfosource.html#dtor.QGeoPositionInfoSource"/>
             <keyword name="QGeoSatelliteInfo" id="QGeoSatelliteInfo" ref="qgeosatelliteinfo.html"/>
             <keyword name="QGeoSatelliteInfo::Property" id="QGeoSatelliteInfo::Property" ref="qgeosatelliteinfo.html#Property-enum"/>

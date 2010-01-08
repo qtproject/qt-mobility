@@ -53,10 +53,17 @@
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
+
     #include &lt;QtGui&gt;
     #include &lt;QtWebKit&gt;
 
+    #include &lt;qgeopositioninfosource.h&gt;
     #include &lt;qnmeapositioninfosource.h&gt;
+    #include &lt;qgeosatelliteinfosource.h&gt;
+    #include &lt;qnetworksession.h&gt;
+    #include &lt;qnetworkconfigmanager.h&gt;
+
+    #include &quot;satellitedialog.h&quot;
 
     #include &quot;mapwindow.h&quot;
 
@@ -64,19 +71,28 @@
     const QString GMAPS_STATICMAP_URL_TEMPLATE =  &quot;http:<span class="comment">//maps.google.com/staticmap?center=%1,%2&amp;zoom=14&amp;size=%3x%4&amp;map type=mobile&amp;markers=%1,%2&amp;key=ABQIAAAAnfs7bKE82qgb3Zc2YyS-oBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSySz_REpPq-4WZA27OwgbtyR3VcA&amp;sensor=false&quot;;</span>
 
     MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
-        : QMainWindow(parent, flags),
-          source(new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this)),
-          webView(new QWebView),
-          posLabel(new QLabel),
-          headingAndSpeedLabel(new QLabel),
-          dateTimeLabel(new QLabel),
-          loading(false)
+            : QMainWindow(parent, flags),
+            webView(new QWebView),
+            posLabel(new QLabel),
+            headingAndSpeedLabel(new QLabel),
+            dateTimeLabel(new QLabel),
+            loading(false),
+            usingLogFile(false),
+            location(0)
     {
-        QFile *logFile = new QFile(QApplication::applicationDirPath()
-                + QDir::separator() + &quot;nmealog.txt&quot;, this);
-        source-&gt;setDevice(logFile);
-        source-&gt;setUpdateInterval(1500);
-        connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
+        location = QGeoPositionInfoSource::createDefaultSource(this);
+        if (!location) {
+            QNmeaPositionInfoSource *nmeaSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
+            QFile *logFile = new QFile(QApplication::applicationDirPath()
+                                       + QDir::separator() + &quot;nmealog.txt&quot;, this);
+            nmeaSource-&gt;setDevice(logFile);
+            location = nmeaSource;
+
+            usingLogFile = true;
+        }
+
+        location-&gt;setUpdateInterval(1500);
+        connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
 
         connect(webView, SIGNAL(loadStarted()), this, SLOT(loadStarted()));
@@ -90,13 +106,69 @@
         layout-&gt;addWidget(dateTimeLabel);
         setCentralWidget(mainWidget);
 
+    #if !defined(Q_OS_SYMBIAN)
         resize(300, 300);
+    #endif
         setWindowTitle(tr(&quot;Google Maps Demo&quot;));
+
+        QTimer::singleShot(0, this, SLOT(delayedInit()));
+    }
+
+    MapWindow::~MapWindow()
+    {
+        location-&gt;stopUpdates();
+        session-&gt;close();
+    }
+
+    void MapWindow::delayedInit()
+    {
+        if (usingLogFile) {
+            QMessageBox::information(this, tr(&quot;Fetch Google Maps&quot;),
+                                     tr(&quot;No GPS support detected, using GPS data from a sample log file instead.&quot;));
+        } else {
+            QGeoSatelliteInfoSource *satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
+
+            if (satellite) {
+                SatelliteDialog *dialog = new SatelliteDialog(this,
+                        30,
+                        SatelliteDialog::ExitOnFixOrCancel,
+                        SatelliteDialog::OrderByPrnNumber,
+                        SatelliteDialog::ScaleToMaxPossible);
+
+                dialog-&gt;connectSources(location, satellite);
+
+                location-&gt;startUpdates();
+                satellite-&gt;startUpdates();
+
+                dialog-&gt;exec();
+
+                location-&gt;stopUpdates();
+                satellite-&gt;stopUpdates();
+            }
+        }
+
+        <span class="comment">// Set Internet Access Point</span>
+        QNetworkConfigurationManager manager;
+        const bool canStartIAP = (manager.capabilities()
+                                  &amp; QNetworkConfigurationManager::CanStartAndStopInterfaces);
+        <span class="comment">// Is there default access point, use it</span>
+        QNetworkConfiguration cfg = manager.defaultConfiguration();
+        if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QNetworkConfiguration::Active)) {
+            QMessageBox::information(this, tr(&quot;Flickr Demo&quot;), tr(
+                                         &quot;Available Access Points not found.&quot;));
+            return;
+        }
+
+        session = new QNetworkSession(cfg, this);
+        session-&gt;open();
+        session-&gt;waitForOpened(-1);
+
+        location-&gt;startUpdates();
     }
 
     void MapWindow::start()
     {
-        source-&gt;startUpdates();
+        location-&gt;startUpdates();
     }
 
     void MapWindow::positionUpdated(const QGeoPositionInfo &amp;info)
@@ -109,18 +181,19 @@
             speed = QString::number(info.property(QGeoPositionInfo::GroundSpeed) * 3.6, 'f', 1);
         posLabel-&gt;setText(tr(&quot;Position: %1&quot;).arg(info.coordinate().toString()));
         headingAndSpeedLabel-&gt;setText(tr(&quot;Bearing %1, travelling at %2 km/h&quot;).arg(heading).arg(speed));
+
         dateTimeLabel-&gt;setText(tr(&quot;(Last update: %1)&quot;).
-                arg(info.dateTime().toLocalTime().time().toString()));
+                               arg(info.dateTime().toLocalTime().time().toString()));
 
         if (!loading) {
             <span class="comment">// Google Maps does not provide maps larger than 640x480</span>
             int width = qMin(webView-&gt;width(), 640);
             int height = qMin(webView-&gt;height(), 480);
             QString url = GMAPS_STATICMAP_URL_TEMPLATE
-                                .arg(QString::number(info.coordinate().latitude()))
-                                .arg(QString::number(info.coordinate().longitude()))
-                                .arg(QString::number(width))
-                                .arg(QString::number(height));
+                          .arg(QString::number(info.coordinate().latitude()))
+                          .arg(QString::number(info.coordinate().longitude()))
+                          .arg(QString::number(width))
+                          .arg(QString::number(height));
             webView-&gt;load(url);
         }
     }
