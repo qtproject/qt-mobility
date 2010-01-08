@@ -563,33 +563,17 @@ QList<QContactManager::Error> QContactManager::removeRelationships(const QList<Q
 }
 
 /*!
- * \deprecated
  * Returns a map of identifier to detail definition for the registered detail definitions which are valid for contacts whose type is the given \a contactType
  * which are valid for the contacts in this store
  */
 QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const QString& contactType) const
 {
-    qWarning("This function has been deprecated and will be removed in week 1!  Use detailDefinitionMap() instead!");
     if (!supportedContactTypes().contains(contactType)) {
         d->m_error = QContactManager::InvalidContactTypeError;
         return QMap<QString, QContactDetailDefinition>();
     }
 
-    return d->m_engine->detailDefinitionMap(contactType, d->m_error);
-}
-
-/*!
- * Returns a map of identifier to detail definition for the registered detail definitions which are valid for contacts whose type is the given \a contactType
- * which are valid for the contacts in this store
- */
-QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitionMap(const QString& contactType) const
-{
-    if (!supportedContactTypes().contains(contactType)) {
-        d->m_error = QContactManager::InvalidContactTypeError;
-        return QMap<QString, QContactDetailDefinition>();
-    }
-
-    return d->m_engine->detailDefinitionMap(contactType, d->m_error);
+    return d->m_engine->detailDefinitions(contactType, d->m_error);
 }
 
 /*! Returns the definition identified by the given \a definitionName that is valid for the contacts whose type is the given \a contactType in this store, or a default-constructed QContactDetailDefinition if no such definition exists */

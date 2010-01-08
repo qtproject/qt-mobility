@@ -193,7 +193,7 @@ void viewDetails(QContactManager* cm)
 void addPlugin(QContactManager* cm)
 {
     /* Find the definition that we are modifying */
-    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitionMap();
+    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitions();
     QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
 
     /* Make our modifications: we add a "Label" field to email addresses */
@@ -304,7 +304,7 @@ void loadManagerWithParameters()
     QMap<QString, QString> parameters;
     parameters.insert("Settings", "~/.qcontactmanager-kabc-settings.ini");
     QContactManager* cm = new QContactManager("KABC", parameters);
-    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitionMap();
+    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitions();
 
     qDebug() << "This backend currently supports the following detail definitions:";
     QList<QContactDetailDefinition> allDefinitions = definitions.values();

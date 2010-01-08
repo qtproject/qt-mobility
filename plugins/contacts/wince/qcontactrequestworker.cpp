@@ -423,7 +423,7 @@ void QContactRequestWorker::processContactDetailDefinitionFetchRequest(QContactD
         QMap<QString, QContactDetailDefinition> requestedDefinitions;
         QStringList names = req->names();
         if (names.isEmpty()) {
-            names = req->manager()->detailDefinitionMap().keys(); // all definitions.
+            names = req->manager()->detailDefinitions().keys(); // all definitions.
             operationError = req->manager()->error();
         }
 

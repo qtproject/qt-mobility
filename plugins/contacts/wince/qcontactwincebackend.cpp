@@ -305,7 +305,7 @@ bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QConta
     return false;
 }
 
-QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
     error = QContactManager::NoError;
     QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();

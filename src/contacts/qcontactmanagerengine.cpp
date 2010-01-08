@@ -1021,7 +1021,7 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
     // check that each detail conforms to its definition as supported by this manager.
     for (int i=0; i < contact.details().count(); i++) {
         const QContactDetail& d = contact.details().at(i);
-        QVariantMap values = d.variantValueMap();
+        QVariantMap values = d.variantValues();
         QContactDetailDefinition def = detailDefinition(d.definitionName(), contact.type(), error);
 
         // check that the definition is supported
@@ -1165,27 +1165,12 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 }
 
 /*!
- * \deprecated
  * Returns the registered detail definitions which are valid for contacts whose type is of the given \a contactType in this engine.
  *
  * Any errors encountered during this operation should be stored to
  * \a error.
  */
 QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
-{
-    Q_UNUSED(contactType);
-    qWarning("This function is deprecated and will be removed in week 1!  Please use detailDefinitionMap() instead!");
-    error = QContactManager::NotSupportedError;
-    return QMap<QString, QContactDetailDefinition>();
-}
-
-/*!
- * Returns the registered detail definitions which are valid for contacts whose type is of the given \a contactType in this engine.
- *
- * Any errors encountered during this operation should be stored to
- * \a error.
- */
-QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const
 {
     Q_UNUSED(contactType);
     error = QContactManager::NotSupportedError;
@@ -1204,7 +1189,7 @@ QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& 
 {
     Q_UNUSED(definitionName);
 
-    QMap<QString, QContactDetailDefinition> definitions = detailDefinitionMap(contactType, error);
+    QMap<QString, QContactDetailDefinition> definitions = detailDefinitions(contactType, error);
     if (definitions.contains(definitionName))  {
         error = QContactManager::NoError;
         return definitions.value(definitionName);
@@ -1454,7 +1439,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                         const QContactDetail& detail = details.at(j);
 
                         /* Check that the field is present and has a non-empty value */
-                        if (detail.variantValueMap().contains(cdf.detailFieldName()) && !detail.value(cdf.detailFieldName()).isEmpty())
+                        if (detail.variantValues().contains(cdf.detailFieldName()) && !detail.value(cdf.detailFieldName()).isEmpty())
                             return true;
                     }
                     return false;
@@ -1518,7 +1503,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 if (!cdf.minValue().isValid() && !cdf.maxValue().isValid()) {
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
-                        if (detail.variantValueMap().contains(cdf.detailFieldName()))
+                        if (detail.variantValues().contains(cdf.detailFieldName()))
                             return true;
                     }
                     return false;

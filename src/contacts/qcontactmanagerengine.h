@@ -110,8 +110,7 @@ public:
     virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error& error) const;
 
     /* Definitions - Accessors and Mutators */
-    virtual QMap<QString, QContactDetailDefinition> Q_DECL_DEPRECATED detailDefinitions(const QString& contactType, QContactManager::Error& error) const; // deprecated
-    virtual QMap<QString, QContactDetailDefinition> detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const; // replaces the above
+    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
     virtual QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error) const;
     virtual bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error);
     virtual bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error);

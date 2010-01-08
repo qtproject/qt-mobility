@@ -230,7 +230,7 @@ void TestModelUi::dataAvailable(QContactFetchRequest* request, bool appendOnly)
     foreach (const QContactDetail& det, allDetails) {
         QString defName = det.definitionName();
         text += defName + ":" + "\n";
-        QList<QString> fieldKeys = det.variantValueMap().keys();
+        QList<QString> fieldKeys = det.variantValues().keys();
         foreach (const QString& key, fieldKeys) {
             text += "\t" + key + " = " + det.value(key) + "\n";
         }

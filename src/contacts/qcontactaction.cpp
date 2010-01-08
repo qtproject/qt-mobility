@@ -152,6 +152,7 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
 
 /*!
  * \enum QContactAction::Status
+ * \deprecated This enum has been deprecated and will be replaced by the State enum.
  * Describes the current status of the asynchronous action operation
  * \value Inactive The operation has not yet been initiated
  * \value Autonomous The operation was initiated but no further information is or will be available
@@ -161,7 +162,18 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
  */
 
 /*!
+ * \enum QContactAction::State
+ * Describes the current status of the asynchronous action operation
+ * \value InactiveState The operation has not yet been initiated
+ * \value AutonomousState The operation was initiated but no further information is or will be available
+ * \value ActiveState The operation was initiated and is not yet finished
+ * \value FinishedState The operation successfully completed
+ * \value FinishedWithErrorState The operation has finished, but an error occurred
+ */
+
+/*!
  * \fn QContactAction::progress(QContactAction::Status status, const QVariantMap& result)
+ * \deprecated This function is deprecated and will be replaced by the progress signal which includes a State.
  * This signal is emitted by an action instance whose functionality has been initiated with \l invokeAction().
  * It provides clients with the current \a status of the action, and any \a result associated with the action.
  * This signal must be emitted at least once by every action instance after \l invokeAction() is called.
@@ -169,6 +181,18 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
  * If the action implementation is incapable of reporting the status of the operation (for example, the
  * action is implemented via a one-way IPC call) it should emit the progress signal with \a status
  * set to \c QContactAction::Autonomous.
+ */
+
+
+/*!
+ * \fn QContactAction::progress(QContactAction::State state, const QVariantMap& result)
+ * This signal is emitted by an action instance whose functionality has been initiated with \l invokeAction().
+ * It provides clients with the current \a state of the action, and any \a result associated with the action.
+ * This signal must be emitted at least once by every action instance after \l invokeAction() is called.
+ *
+ * If the action implementation is incapable of reporting the status of the operation (for example, the
+ * action is implemented via a one-way IPC call) it should emit the progress signal with \a state
+ * set to \c QContactAction::AutonomousState.
  */
 
 /*!

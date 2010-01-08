@@ -84,19 +84,29 @@ public:
     virtual void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
 
     /* The possible states of an action */
+    enum State {
+        InactiveState = 0,      // operation not yet started
+        AutonomousState,        // operation started, no further information available - name under discussion.
+        ActiveState,            // operation started, not yet finished
+        FinishedState,          // operation successfully completed
+        FinishedWithErrorState  // operation finished, but error occurred
+    };
+
+    /* The possible statuses of an action - DEPRECATED to be replaced by State */
     enum Status {
-        Inactive = 0,      // operation not yet started
-        Autonomous,        // operation started, no further information available - name under discussion.
-        Active,            // operation started, not yet finished
-        Finished,          // operation successfully completed
-        FinishedWithError  // operation finished, but error occurred
+        Inactive = InactiveState,                   // operation not yet started
+        Autonomous = AutonomousState,               // operation started, no further information available - name under discussion.
+        Active = ActiveState,                       // operation started, not yet finished
+        Finished = FinishedState,                   // operation successfully completed
+        FinishedWithError = FinishedWithErrorState  // operation finished, but error occurred
     };
 
     /* Returns the most recently received result, or an invalid QVariantMap if no results received */
     virtual QVariantMap result() const = 0;
 
 signals:
-    void progress(QContactAction::Status status, const QVariantMap& result);
+    void progress(QContactAction::Status status, const QVariantMap& result); // deprecated by the following signal
+    void progress(QContactAction::State state, const QVariantMap& result);   // replaces the above
 };
 
 QTM_END_NAMESPACE

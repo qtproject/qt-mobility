@@ -689,7 +689,7 @@ QList<QContactManager::Error> CntSymbianEngine::removeRelationships(const QList<
     return returnValue;
 }
 
-QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
     // TODO: update for SIM contacts later
     if (contactType != QContactType::TypeContact && contactType != QContactType::TypeGroup) {
@@ -986,7 +986,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             QMap<QString, QContactDetailDefinition> requestedDefinitions;
             QStringList names = r->names();
             if (names.isEmpty())
-                names = detailDefinitionMap(r->contactType(), operationError).keys(); // all definitions.
+                names = detailDefinitions(r->contactType(), operationError).keys(); // all definitions.
 
             QContactManager::Error tempError;
             for (int i = 0; i < names.size(); i++) {

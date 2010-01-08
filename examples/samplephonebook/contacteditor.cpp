@@ -142,7 +142,7 @@ QString ContactEditor::nameField()
     if (!m_manager)
         return QString();
 
-    QMap<QString, QContactDetailDefinition> defs = m_manager->detailDefinitionMap(QContactType::TypeContact);
+    QMap<QString, QContactDetailDefinition> defs = m_manager->detailDefinitions(QContactType::TypeContact);
     QContactDetailDefinition nameDef = defs.value(QContactName::DefinitionName);
     if (nameDef.fields().keys().contains(QContactName::FieldCustomLabel)) {
         return QString(QLatin1String(QContactName::FieldCustomLabel));

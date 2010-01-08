@@ -69,8 +69,7 @@ public:
     QString contactType() const;
 
     /* Results */
-    QMap<QString, QContactDetailDefinition> Q_DECL_DEPRECATED definitions() const; // deprecated
-    QMap<QString, QContactDetailDefinition> definitionMap() const; // replaces the above
+    QMap<QString, QContactDetailDefinition> definitions() const;
 
 signals:
     void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly);

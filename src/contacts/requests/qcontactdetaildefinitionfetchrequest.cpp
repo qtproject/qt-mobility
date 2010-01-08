@@ -121,18 +121,9 @@ QString QContactDetailDefinitionFetchRequest::contactType() const
 }
 
 /*!
- * \deprecated
  * Returns the map of detail definition names to detail definitions that was the result of the request
  */
-QMap<QString, QContactDetailDefinition> Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::definitions() const
-{
-    Q_D(const QContactDetailDefinitionFetchRequest);
-    qWarning("This function has been deprecated and will be removed in week 1!  Use definitionMap() instead!");
-    return d->m_definitions;
-}
-
-/*! Returns the map of detail definition names to detail definitions that was the result of the request */
-QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitionMap() const
+QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_definitions;

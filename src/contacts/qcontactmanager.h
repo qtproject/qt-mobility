@@ -140,8 +140,7 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> Q_DECL_DEPRECATED detailDefinitions(const QString& contactType = QContactType::TypeContact) const; // deprecated
-    QMap<QString, QContactDetailDefinition> detailDefinitionMap(const QString& contactType = QContactType::TypeContact) const; // replaces the above
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType = QContactType::TypeContact) const;
     QContactDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact) const;
     bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType = QContactType::TypeContact);
     bool removeDetailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact);

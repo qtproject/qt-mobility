@@ -155,7 +155,7 @@ public:
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitionMap(const QString& contactType, QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
     bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error);
     bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error);
 

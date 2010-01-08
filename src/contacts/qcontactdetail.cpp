@@ -293,14 +293,14 @@ bool QContactDetail::removeValue(const QString& key)
  */
 QVariantMap Q_DECL_DEPRECATED QContactDetail::values() const
 {
-    qWarning("This function is deprecated and will be removed in week 1!  Use variantValueMap() instead!");
+    qWarning("This function is deprecated and will be removed in week 1!  Use variantValues() instead!");
     return d.constData()->m_values;
 }
 
 /*!
- * Returns the values stored in this detail
+ * Returns the values stored in this detail as a map from value key to value
  */
-QVariantMap QContactDetail::variantValueMap() const
+QVariantMap QContactDetail::variantValues() const
 {
     return d.constData()->m_values;
 }
