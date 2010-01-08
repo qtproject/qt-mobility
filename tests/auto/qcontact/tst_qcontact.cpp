@@ -599,7 +599,7 @@ void tst_QContact::displayName()
     /*
      * The display label is not updated until you save the contact!
      */
-    QString synth = cm.synthesizeDisplayLabel(d);
+    QString synth = cm.synthesizedDisplayLabel(d);
     QVERIFY(d.displayLabel().isEmpty());
     //QVERIFY(synth == name.customLabel()); // XXX Perhaps not guaranteed, depends on backend synth rules.
 

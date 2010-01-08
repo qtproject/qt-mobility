@@ -145,7 +145,7 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
     QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
 
-    m_nameEdit->setText(manager->synthesizeDisplayLabel(curr));
+    m_nameEdit->setText(manager->synthesizedDisplayLabel(curr));
     m_phoneEdit->setText(phn.value(QContactPhoneNumber::FieldNumber));
     m_emailEdit->setText(em.value(QContactEmailAddress::FieldEmailAddress));
     m_addrEdit->setText(adr.value(QContactAddress::FieldStreet)); // ugly hack.
@@ -212,7 +212,7 @@ void ContactEditor::saveClicked()
         QString saveNameField = nameField();
         if (!saveNameField.isEmpty()) {
             // if the name has changed (ie, is different to the synthed label) then save it as a custom label.
-            if (m_nameEdit->text() != m_manager->synthesizeDisplayLabel(curr)) {
+            if (m_nameEdit->text() != m_manager->synthesizedDisplayLabel(curr)) {
                 nm.setValue(nameField(), m_nameEdit->text());
             }
         }
@@ -222,7 +222,6 @@ void ContactEditor::saveClicked()
         av.setAvatar(m_newAvatarPath);
 
         QPixmap pix(m_newAvatarPath);
-        bool null = pix.isNull();
         av.setPixmap(pix);
 
         curr.saveDetail(&nm);

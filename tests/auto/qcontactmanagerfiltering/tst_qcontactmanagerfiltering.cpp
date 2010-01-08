@@ -340,7 +340,7 @@ void tst_QContactManagerFiltering::detailStringFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->filterSupported(df) == false);
+        QVERIFY(cm->isFilterSupported(df) == false);
     }
 
     ids = cm->contacts(df);
@@ -608,7 +608,7 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->filterSupported(df) == false);
+        QVERIFY(cm->isFilterSupported(df) == false);
     }
 
     ids = cm->contacts(df);
@@ -791,7 +791,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->filterSupported(drf) == false);
+        QVERIFY(cm->isFilterSupported(drf) == false);
     }
     ids = cm->contacts(drf);
 
@@ -2413,7 +2413,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
                 // step two: check to see whether the definition/field is natively filterable
                 QContactDetailFilter filter;
                 filter.setDetailDefinitionName(definitionName, fieldName);
-                bool isNativelyFilterable = cm->filterSupported(filter);
+                bool isNativelyFilterable = cm->isFilterSupported(filter);
 
                 if (isNativelyFilterable) {
                     // we've found the optimal definition + field for our test.
@@ -2596,9 +2596,9 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     QContactDetail uintt(definitionDetails.value("UInt").first);
     QContactDetail charr(definitionDetails.value("Char").first);
 
-    name.setFirst("Aaron");
-    name.setLast("Aaronson");
-    name.setMiddle("Arne");
+    name.setFirstName("Aaron");
+    name.setLastName("Aaronson");
+    name.setMiddleName("Arne");
     name.setPrefix("Sir");
     name.setSuffix("Dr.");
     QContactNickname nick;
@@ -2634,8 +2634,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
         a.saveDetail(&time);
 
     name = QContactName();
-    name.setFirst("Bob");
-    name.setLast("Aaronsen");
+    name.setFirstName("Bob");
+    name.setLastName("Aaronsen");
     number.setNumber("555-3456");
     string.setValue(definitionDetails.value("String").second, "Bob Aaronsen");
     integer.setValue(definitionDetails.value("Integer").second, 20);
@@ -2668,8 +2668,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     if (!definitionDetails.value("Char").first.isEmpty() && !definitionDetails.value("Char").second.isEmpty())
         b.saveDetail(&charr);
 
-    name.setFirst("Boris");
-    name.setLast("Aaronsun");
+    name.setFirstName("Boris");
+    name.setLastName("Aaronsun");
     string.setValue(definitionDetails.value("String").second, "Boris Aaronsun");
     integer.setValue(definitionDetails.value("Integer").second, -20);
     datetime.setValue(definitionDetails.value("DateTime").second, QDateTime(QDate(2009, 06, 29), QTime(16, 54, 17, 0)));
@@ -2694,8 +2694,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     if (!definitionDetails.value("Char").first.isEmpty() && !definitionDetails.value("Char").second.isEmpty())
         c.saveDetail(&charr);
 
-    name.setFirst("Dennis");
-    name.setLast("FitzMacintyre");
+    name.setFirstName("Dennis");
+    name.setLastName("FitzMacintyre");
     string.setValue(definitionDetails.value("String").second, "Dennis FitzMacintyre");
     dubble.setValue(definitionDetails.value("Double").second, -128.0);
     llong.setValue(definitionDetails.value("LongLong").second, (qlonglong)-14000000000LL);
@@ -2732,15 +2732,19 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     /* Now add some contacts specifically for multisorting */
     QContact e,f,g;
     QContactName n;
-    n.setFirst("John");
-    n.setLast("Smithee");
+    n.setFirstName("John");
+    n.setLastName("Smithee");
     string.setValue(definitionDetails.value("String").second, "");
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
         e.saveDetail(&string);
     e.saveDetail(&n);
-    n.setLast("Smithey");
+    n = QContactName();
+    n.setFirstName("John");
+    n.setLastName("Smithey");
     f.saveDetail(&n);
-    n.setLast("Smithy");
+    n = QContactName();
+    n.setFirstName("John");
+    n.setLastName("Smithy");
     g.saveDetail(&n);
     successfulSave = cm->saveContact(&e);
     Q_ASSERT(successfulSave);
@@ -2864,9 +2868,9 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
     QContactName n2 = b.detail(QContactName::DefinitionName);
 
     // Check the name components in more detail
-    QCOMPARE(n1.first(), n2.first());
-    QCOMPARE(n1.middle(), n2.middle());
-    QCOMPARE(n1.last(), n2.last());
+    QCOMPARE(n1.firstName(), n2.firstName());
+    QCOMPARE(n1.middleName(), n2.middleName());
+    QCOMPARE(n1.lastName(), n2.lastName());
     QCOMPARE(n1.prefix(), n2.prefix());
     QCOMPARE(n1.suffix(), n2.suffix());
     QCOMPARE(n1.customLabel(), n2.customLabel());
@@ -2949,7 +2953,7 @@ bool tst_QContactManagerFiltering::isSuperset(const QContact& ca, const QContact
 void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizeDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizedDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";

@@ -60,9 +60,9 @@ public:
     enum Status { // replaces the status enum.
         Inactive = 0,   // operation not yet started
         Active,         // operation started, not yet finished
-        Cancelling,     // operation started then cancelled, not yet finished
         Cancelled,      // operation is finished due to cancellation
-        Finished        // operation successfully completed
+        Finished,        // operation successfully completed
+        Cancelling     // operation started then cancelled, not yet finished // moved to end so that (deprecated) status() impl is simple.
     };
 
     enum State { // replaces the status enum.
@@ -72,10 +72,10 @@ public:
         FinishedState        // operation either completed successfully or failed.  No further results will become available.
     };
 
-    Status Q_DECL_DEPRECATED status() const; // deprecated, removed week 1, replaced by state()
+    Status Q_DECL_DEPRECATED status() const; // deprecated in week 1, removed after transition period, replaced by state()
     State state() const; // replaces status()
-    bool Q_DECL_DEPRECATED isActive() const;   // deprecated, removed entirely week 1
-    bool Q_DECL_DEPRECATED isFinished() const; // deprecated, removed entirely week 1
+    bool Q_DECL_DEPRECATED isActive() const;   // deprecated in week 1, removed after transition period
+    bool Q_DECL_DEPRECATED isFinished() const; // deprecated in week 1, removed after transition period
     QList<QContactManager::Error> errors() const;
     QContactManager::Error error() const;
 

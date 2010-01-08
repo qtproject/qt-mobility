@@ -110,7 +110,7 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(p1.definitionName() == QContactPhoneNumber::DefinitionName);
 
     QContactName m1;
-    m1.setFirst("Bob");
+    m1.setFirstName("Bob");
     QVERIFY(!m1.isEmpty());
     QVERIFY(m1.definitionName() == QContactName::DefinitionName);
 
