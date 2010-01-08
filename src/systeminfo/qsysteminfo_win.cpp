@@ -76,7 +76,7 @@
 #include <Winbase.h>
 #include <Winuser.h>
 #include <Pm.h>
-#include <qfunctions_wince.h>
+#include "qplatformdefs.h"
 #endif
 
 
