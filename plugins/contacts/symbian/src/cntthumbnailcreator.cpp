@@ -41,6 +41,7 @@
 #include "cntthumbnailcreator.h"
 #include "cntsymbiantransformerror.h"
 
+#include <cntdef.h>
 #include <cntfield.h>
 #include <cntfldst.h>
 #include <imageconversion.h>
@@ -55,10 +56,12 @@
 
 const TSize KThumbnailSizeUninitialized(0, 0);
 
+#ifdef _DEBUG
 _LIT(KPanicCategory, "ThumbnailCreator");
 enum TPanicReasons {
     KPanicUnitialized = 0
 };
+#endif
 
 CntThumbnailCreator::CntThumbnailCreator() :
     CActive(EPriorityStandard),

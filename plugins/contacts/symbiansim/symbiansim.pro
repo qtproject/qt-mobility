@@ -33,11 +33,23 @@ symbian: {
       
     qtAddLibrary(QtContacts)
 
-    LIBS += \
-            -lcntmodel \
-            -letel \
-            -letelmm \
-            -lflogger
+    LIBS += -lcntmodel \
+            -lflogger \
+            -lefsrv
+
+    # Uncomment this to use Etel test server (instead of real Etel APIs)
+    #DEFINES += SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
+
+    # add either real or test libraries for Etel
+    contains(DEFINES, SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER): {
+        message("Using Etel Test Server (not real Etel)")
+        INCLUDEPATH +=$${EPOCROOT}epoc32/include/internal
+        LIBS += -letelserverclient
+    } else {
+        message("Using real Etel APIs")
+        LIBS += -letel \
+                -letelmm
+    }
 
     target.path = /sys/bin
     INSTALLS += target
@@ -45,5 +57,6 @@ symbian: {
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = /resource/qt/plugins/contacts
     DEPLOYMENT += symbianplugin
+
 }
 

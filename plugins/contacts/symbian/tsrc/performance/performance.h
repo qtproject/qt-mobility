@@ -41,10 +41,11 @@
 #include <QObject>
 #include <qtcontacts.h>
 
-class QDebug;
-class QFile;
-
+QTM_BEGIN_NAMESPACE
 #define NO_OF_CONTACTS 1000
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class SymbianPluginPerfomance : public QObject
 {

@@ -104,4 +104,6 @@ private:
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactDetailDefinition), Q_MOVABLE_TYPE);
+
 #endif

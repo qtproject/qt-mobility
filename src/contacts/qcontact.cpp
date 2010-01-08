@@ -357,9 +357,6 @@ bool QContact::removeDetail(QContactDetail* detail)
     if (!detail)
         return false;
 
-    if (!d->m_details.contains(*detail))
-        return false;
-
     // Check if this a display label
     if (detail->d->m_definitionName == QContactDisplayLabel::DefinitionName) {
         return false;
@@ -372,6 +369,9 @@ bool QContact::removeDetail(QContactDetail* detail)
         d->m_details[1] = type;
         return true;
     }
+
+    if (!d->m_details.contains(*detail))
+        return false;
 
     // remove any preferences we may have stored for the detail.
     QStringList keys = d->m_preferences.keys();

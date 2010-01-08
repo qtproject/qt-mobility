@@ -132,45 +132,51 @@ QList<QContactLocalId> CntSymbianEngine::contacts(
     error = QContactManager::NoError;
     QList<QContactLocalId> result;
     
-    //Note this is just a temporary solution, until the api has been fixed.
-    if (filter.type() == QContactFilter::RelationshipFilter){
-        
-        QContactRelationshipFilter rf = static_cast<QContactRelationshipFilter>(filter);
-        
-        if (rf.role() == QContactRelationshipFilter::First) {
-           
-            //note participant id should be changed to contact id when the api has been fixed !!
-            QList<QContactRelationship> relationshipsList = relationships(QContactRelationship::HasMember, rf.otherParticipantId(), QContactRelationshipFilter::First, error );
-            
-            if(error == QContactManager::NoError)
-            {
-                for(int i = 0; i < relationshipsList.count(); i++)
-                {
-                    result += relationshipsList.at(i).second().localId();
-                }
-            }
+    
+    if (filter.type() == QContactFilter::RelationshipFilter)
+    {
+         QContactRelationshipFilter rf = static_cast<QContactRelationshipFilter>(filter);
+         
+         if (rf.relationshipType() == QContactRelationship::HasMember && rf.role() == QContactRelationshipFilter::Second)
+         {
+             //note participant id should be changed to contact id when the api has been fixed !!
+             QList<QContactRelationship> relationshipsList = relationships(rf.relationshipType(), rf.otherParticipantId(), QContactRelationshipFilter::First, error );
+             
+             if(error == QContactManager::NoError)
+             {
+                 for(int i = 0; i < relationshipsList.count(); i++)
+                 {
+                     result += relationshipsList.at(i).second().localId();
+                 }
+             }
         }
     }
-    
-    else{
-        
+    else
+    {
         bool filterSupported(true);
-        result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);;
+        result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);
+            
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
     
+        // Remove possible false positives
+        if(!filterSupported && error == QContactManager::NotSupportedError)
+            result = slowFilter(filter, result, error);
+
+#else
         // Remove possible false positives
         if(!filterSupported && error == QContactManager::NoError)
             result = slowFilter(filter, result, error);
-    
+        
         // Sort the matching contacts
-        if(!sortOrders.isEmpty()&& error == QContactManager::NoError) {
+        if(!sortOrders.isEmpty()&& error == QContactManager::NoError ) {
             if(m_contactSorter->sortOrderSupported(sortOrders)) {
                 result = m_contactSorter->sort(result, sortOrders, error);
             } else {
                 result = slowSort(result, sortOrders, error);
             }
         }
+#endif
     }
-
     return result;
 }
 
@@ -482,7 +488,8 @@ void CntSymbianEngine::updateContactL(QContact &contact)
     CleanupStack::PushL(contactItem);
 
     // Cannot update contact type. The client needs to do this itself.
-    if ((contact.type() == QContactType::TypeContact && contactItem->Type() != KUidContactCard) || 
+    if ((contact.type() == QContactType::TypeContact && contactItem->Type() != KUidContactCard &&
+            contactItem->Type() != KUidContactOwnCard) ||
         (contact.type() == QContactType::TypeGroup && contactItem->Type() != KUidContactGroup)){
         User::Leave(KErrAlreadyExists);
     }
@@ -1117,12 +1124,14 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContactManager::Error> operationErrors;
             QList<QContactRelationship> matchingRelationships = relationships(r->relationshipType(), r->first(), QContactRelationshipFilter::First, operationError);
 
+            bool foundMatch = false;
             for (int i = 0; i < matchingRelationships.size(); i++) {
                 QContactManager::Error tempError;
                 QContactRelationship possibleMatch = matchingRelationships.at(i);
 
                 // if the second criteria matches, or is default constructed id, then we have a match and should remove it.
                 if (r->second() == QContactId() || possibleMatch.second() == r->second()) {
+                    foundMatch = true;
                     removeRelationship(matchingRelationships.at(i), tempError);
                     operationErrors.append(tempError);
 
@@ -1130,6 +1139,9 @@ void CntSymbianEngine::performAsynchronousOperation()
                         operationError = tempError;
                 }
             }
+            
+            if (foundMatch == false && operationError == QContactManager::NoError)
+                operationError = QContactManager::DoesNotExistError;
 
             // there are no results, so just update the status with the error.
             updateRequestState(currentRequest, operationError, operationErrors, QContactAbstractRequest::Finished);

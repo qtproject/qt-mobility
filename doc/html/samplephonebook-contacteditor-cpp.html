@@ -140,15 +140,15 @@
         QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
         QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
 
-        QString saveNameField = nameField();
-        if (!saveNameField.isEmpty())
-            m_nameEdit-&gt;setText(nm.value(saveNameField));
-        else
-            m_nameEdit-&gt;setText(QString());
+        m_nameEdit-&gt;setText(manager-&gt;synthesizeDisplayLabel(curr));
         m_phoneEdit-&gt;setText(phn.value(QContactPhoneNumber::FieldNumber));
         m_emailEdit-&gt;setText(em.value(QContactEmailAddress::FieldEmailAddress));
         m_addrEdit-&gt;setText(adr.value(QContactAddress::FieldStreet)); <span class="comment">// ugly hack.</span>
-        m_avatarBtn-&gt;setIcon(QIcon(av.value(QContactAvatar::FieldAvatar)));
+        if (av.pixmap().isNull()) {
+            m_avatarBtn-&gt;setIcon(QIcon(QPixmap(av.value&lt;QString&gt;(QContactAvatar::FieldAvatar))));
+        } else {
+            m_avatarBtn-&gt;setIcon(QIcon(av.pixmap()));
+        }
     }
 
     QString ContactEditor::nameField()
@@ -193,12 +193,20 @@
             QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
 
             QString saveNameField = nameField();
-            if (!saveNameField.isEmpty())
-                nm.setValue(nameField(), m_nameEdit-&gt;text());
+            if (!saveNameField.isEmpty()) {
+                <span class="comment">// if the name has changed (ie, is different to the synthed label) then save it as a custom label.</span>
+                if (m_nameEdit-&gt;text() != m_manager-&gt;synthesizeDisplayLabel(curr)) {
+                    nm.setValue(nameField(), m_nameEdit-&gt;text());
+                }
+            }
             phn.setNumber(m_phoneEdit-&gt;text());
             em.setEmailAddress(m_emailEdit-&gt;text());
             adr.setStreet(m_addrEdit-&gt;text());
             av.setAvatar(m_newAvatarPath);
+
+            QPixmap pix(m_newAvatarPath);
+            bool null = pix.isNull();
+            av.setPixmap(pix);
 
             curr.saveDetail(&amp;nm);
             curr.saveDetail(&amp;phn);

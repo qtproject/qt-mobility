@@ -49,7 +49,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SFW_EXPORT QAbstractSecuritySession : public QObject
+class Q_SERVICEFW_EXPORT QAbstractSecuritySession : public QObject
 {
     Q_OBJECT
 public:

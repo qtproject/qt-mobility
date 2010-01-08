@@ -43,7 +43,8 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbiansrvconnection.h \
         ../../inc/cntsymbiantransformerror.h \
         ../../inc/cntsymbiandatabase.h \
-        ../../inc/cntdisplaylabel.h 
+        ../../inc/cntdisplaylabel.h \
+        ../../inc/cntdisplaylabelsqlfilter.h 
 
 SYMBIAN_SOURCES += \
         ../../src/cntsymbianengine.cpp \
@@ -79,9 +80,12 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbiansrvconnection.cpp \
         ../../src/cntsymbiantransformerror.cpp \
         ../../src/cntsymbiandatabase.cpp \
-        ../../src/cntdisplaylabel.cpp
+        ../../src/cntdisplaylabel.cpp \
+        ../../src/cntdisplaylabelsqlfilter.cpp 
+        
 SYMBIAN_LIBS += \
         -lcntmodel \
+        -lQtContacts \
         -lcentralrepository \
         -lestor \
         -lefsrv \

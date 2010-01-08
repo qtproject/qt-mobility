@@ -853,6 +853,11 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactAvatar::FieldAvatar, f);
+
+    f.setDataType(QVariant::Pixmap);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactAvatar::FieldAvatarPixmap, f);
+
     f.setDataType(QVariant::String); // only allowed to be a single subtype
     subTypes.clear();
     subTypes << QString(QLatin1String(QContactAvatar::SubTypeImage));
@@ -1023,7 +1028,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
         const QContactDetail& d = contact.details().at(i);
         QVariantMap values = d.variantValues();
         QContactDetailDefinition def = detailDefinition(d.definitionName(), contact.type(), error);
-
         // check that the definition is supported
         if (error != QContactManager::NoError) {
             error = QContactManager::InvalidDetailError;
@@ -1060,7 +1064,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
                 error = QContactManager::InvalidDetailError;
                 return false; // attempting to write to a read-only field of a detail.
             }
-
             // check that the value is allowable
             // if the allowable values is an empty list, any are allowed.
             if (!field.allowableValues().isEmpty()) {

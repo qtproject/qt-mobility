@@ -2740,9 +2740,10 @@
                 <value name="MutableDefinitions" value="2"/>
                 <value name="Relationships" value="3"/>
                 <value name="ArbitraryRelationshipTypes" value="4"/>
-                <value name="SelfContact" value="5"/>
-                <value name="Anonymous" value="6"/>
-                <value name="ChangeLogs" value="7"/>
+                <value name="RelationshipOrdering" value="5"/>
+                <value name="SelfContact" value="6"/>
+                <value name="Anonymous" value="7"/>
+                <value name="ChangeLogs" value="8"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="hasFeature" fullname="QContactManager::hasFeature" href="qcontactmanager.html#hasFeature" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasFeature(QContactManager::ManagerFeature feature, const QString &amp; contactType) const">
                 <parameter left="QContactManager::ManagerFeature" right="" name="feature" default=""/>
@@ -2838,6 +2839,7 @@
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAvatar" href="qcontactavatar.html" location="qcontactavatar.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactAvatar::DefinitionName" href="qcontactavatar.html#DefinitionName-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldAvatar" fullname="QContactAvatar::FieldAvatar" href="qcontactavatar.html#FieldAvatar-var" location="qcontactavatar.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldAvatarPixmap" fullname="QContactAvatar::FieldAvatarPixmap" href="qcontactavatar.html#FieldAvatarPixmap-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSubType" fullname="QContactAvatar::FieldSubType" href="qcontactavatar.html#FieldSubType-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeImage" fullname="QContactAvatar::SubTypeImage" href="qcontactavatar.html#SubTypeImage-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeVideo" fullname="QContactAvatar::SubTypeVideo" href="qcontactavatar.html#SubTypeVideo-var" location="qcontactavatar.h" type="const char *" static="false"/>
@@ -2848,6 +2850,10 @@
                 <parameter left="const QString &amp;" right="" name="avatar" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="avatar" fullname="QContactAvatar::avatar" href="qcontactavatar.html#avatar" location="qcontactavatar.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="avatar() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="pixmap" fullname="QContactAvatar::pixmap" href="qcontactavatar.html#pixmap" location="qcontactavatar.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPixmap" signature="pixmap() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPixmap" fullname="QContactAvatar::setPixmap" href="qcontactavatar.html#setPixmap" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setPixmap(const QPixmap &amp; pixmap)">
+                <parameter left="const QPixmap &amp;" right="" name="pixmap" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSubType" fullname="QContactAvatar::setSubType" href="qcontactavatar.html#setSubType" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubType(const QString &amp; subType)">
                 <parameter left="const QString &amp;" right="" name="subType" default=""/>
             </function>
@@ -5793,6 +5799,7 @@
                 <value name="MatchFixedString" value="Qt::MatchFixedString"/>
                 <value name="MatchCaseSensitive" value="Qt::MatchCaseSensitive"/>
                 <value name="MatchPhoneNumber" value="1024"/>
+                <value name="MatchKeypadCollation" value="1025"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="MatchFlags" fullname="QContactFilter::MatchFlags" href="qcontactfilter.html#MatchFlags-typedef" location="qcontactfilter.h" enum="QContactFilter::MatchFlag"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactFilter::operator==" href="qcontactfilter.html#operator==" location="qcontactfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactFilter &amp; other) const">
