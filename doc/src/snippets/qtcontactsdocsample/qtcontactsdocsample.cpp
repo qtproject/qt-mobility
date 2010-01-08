@@ -93,8 +93,8 @@ void addContact(QContactManager* cm)
 
     /* Set the contact's name */
     QContactName aliceName;
-    aliceName.setFirst("Alice");
-    aliceName.setLast("Jones");
+    aliceName.setFirstName("Alice");
+    aliceName.setLastName("Jones");
     aliceName.setCustomLabel("Ally Jones");
     alice.saveDetail(&aliceName);
 
