@@ -743,6 +743,7 @@ void CQGeoPositionInfoSourceS60::startUpdates()
 {
     if (receivers(SIGNAL(positionUpdated(QGeoPositionInfo))) > 0 && !mStartUpdates)
         mRegUpdateAO->startUpdates();
+    mRegularUpdateTimedOut = false;
     mStartUpdates = true;
 }
 

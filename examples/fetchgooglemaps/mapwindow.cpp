@@ -78,7 +78,7 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
         usingLogFile = true;
     }
 
-    location->setUpdateInterval(1500);
+    location->setUpdateInterval(5000);
     connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
             this, SLOT(positionUpdated(QGeoPositionInfo)));
 

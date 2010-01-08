@@ -379,15 +379,14 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
                 SetActive();
             }
 
-            //Old comment: KErrTimedOut should not be emited for regular update
-                if (mRequester) {
-                    mRequester->updatePosition(positionInfo, aError);
-                    delete positionInfo;
-                } else {
-                    if ((aError != KErrTimedOut) || (mRequestType != RegularUpdate)) {
-                        mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
-                    }
+            if (mRequester) {
+               mRequester->updatePosition(positionInfo, aError);
+               delete positionInfo;
+            } else {
+                if ((aError != KErrTimedOut) || (mRequestType != RegularUpdate)) {
+                    mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
                 }
+            }
 
             break;
 
@@ -450,10 +449,10 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
     // seconds converted to TTimeIntervalMicroSeconds
     aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds(mUpdateInterval * 1000));
 
-    // set the timeout to the smaller of 150% of interval or 10 seconds
+    // set the timeout to the smaller of 150% of interval or update interval + 10 seconds
     TInt mUpdateTimeout = (mUpdateInterval * 3) / 2;
-    if (mUpdateTimeout > 10000)
-        mUpdateTimeout = 10000;
+    if (mUpdateTimeout > mUpdateInterval + 10000)
+        mUpdateTimeout = mUpdateInterval + 10000;
 
     aPosOption.SetUpdateTimeOut(TTimeIntervalMicroSeconds(mUpdateTimeout * 1000));
 

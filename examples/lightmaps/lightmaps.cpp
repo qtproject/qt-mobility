@@ -319,7 +319,7 @@ public:
         }
 
         m_location = QGeoPositionInfoSource::createDefaultSource(this);
-	m_location->setUpdateInterval(10000);
+        m_location->setUpdateInterval(10000);
 
         if (!m_location) {
             QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
