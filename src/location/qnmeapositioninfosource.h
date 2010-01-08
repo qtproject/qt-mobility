@@ -65,6 +65,11 @@ public:
     explicit QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent = 0);
     ~QNmeaPositionInfoSource();
 
+    virtual bool parsePosInfoFromNmeaData(const char *data, 
+        int size, 
+        QGeoPositionInfo *posInfo, 
+        bool *hasFix);
+
     UpdateMode updateMode() const;
 
     void setDevice(QIODevice *source);

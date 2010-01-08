@@ -62,7 +62,7 @@ void QNmeaRealTimeReader::readAvailableData()
     char buf[1024];
     qint64 size = m_proxy->m_device->readLine(buf, sizeof(buf));
     while (size > 0) {
-        if (QLocationUtils::getPosInfoFromNmea(buf, size, &update, &hasFix))
+        if (m_proxy->parsePosInfoFromNmeaData(buf, size, &update, &hasFix))        
             m_proxy->notifyNewUpdate(&update, hasFix);
         memset(buf, 0, size);
         size = m_proxy->m_device->readLine(buf, sizeof(buf));
@@ -118,7 +118,7 @@ bool QNmeaSimulatedReader::setFirstDateTime()
         qint64 size = m_proxy->m_device->readLine(buf, sizeof(buf));
         if (size <= 0)
             continue;
-        bool ok = QLocationUtils::getPosInfoFromNmea(buf, size, &update, &hasFix);
+        bool ok = m_proxy->parsePosInfoFromNmeaData(buf, size, &update, &hasFix);
         if (ok && update.dateTime().isValid()) {
             QPendingGeoPositionInfo pending;
             pending.info = update;
@@ -165,7 +165,7 @@ void QNmeaSimulatedReader::processNextSentence()
         qint64 size = m_proxy->m_device->readLine(buf, sizeof(buf));
         if (size <= 0)
             continue;
-        if (QLocationUtils::getPosInfoFromNmea(buf, size, &info, &hasFix)) {
+        if (m_proxy->parsePosInfoFromNmeaData(buf, size, &info, &hasFix)) {
             QTime time = info.dateTime().time();
             if (time.isValid()) {
                 if (!prevTime.isValid()) {
@@ -273,6 +273,12 @@ void QNmeaPositionInfoSourcePrivate::prepareSourceDevice()
         connect(m_device, SIGNAL(readyRead()), SLOT(readyRead()));
         m_connectedReadyRead = true;
     }
+}
+
+bool QNmeaPositionInfoSourcePrivate::parsePosInfoFromNmeaData(const char *data, int size, 
+            QGeoPositionInfo *posInfo, bool *hasFix)
+{
+    return m_source->parsePosInfoFromNmeaData(data, size, posInfo, hasFix);
 }
 
 void QNmeaPositionInfoSourcePrivate::startUpdates()
@@ -470,6 +476,12 @@ QNmeaPositionInfoSource::QNmeaPositionInfoSource(UpdateMode updateMode, QObject 
 QNmeaPositionInfoSource::~QNmeaPositionInfoSource()
 {
     delete d;
+}
+
+bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int size,
+                                                       QGeoPositionInfo *posInfo, bool *hasFix)
+{
+    return QLocationUtils::getPosInfoFromNmea(data, size, posInfo, hasFix) 
 }
 
 /*!

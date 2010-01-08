@@ -163,13 +163,13 @@ void QGeoPositionInfoSourceWinCE::dataUpdated(GPS_POSITION data)
     // The following properties are optional, and so are set if the data is present and valid in
     // the GPS_POSITION structure.
     if ((data.dwValidFields & GPS_VALID_SPEED) != 0)
-        pos.setProperty(QGeoPositionInfo::GroundSpeed, data.flSpeed);
+        pos.setAttribute(QGeoPositionInfo::GroundSpeed, data.flSpeed);
 
     if ((data.dwValidFields & GPS_VALID_HEADING) != 0)
-        pos.setProperty(QGeoPositionInfo::Heading, data.flHeading);
+        pos.setAttribute(QGeoPositionInfo::Direction, data.flHeading);
 
     if ((data.dwValidFields & GPS_VALID_MAGNETIC_VARIATION) != 0)
-        pos.setProperty(QGeoPositionInfo::MagneticVariation, data.dblMagneticVariation);
+        pos.setAttribute(QGeoPositionInfo::MagneticVariation, data.dblMagneticVariation);
 
     lastPosition = pos;
     emit positionUpdated(pos);

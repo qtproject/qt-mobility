@@ -196,7 +196,7 @@ private slots:
 
         for (int i=0; i<dblValues.count(); i++) {
             info = QGeoPositionInfo();
-            info.setProperty(QGeoPositionInfo::Heading, dblValues[i]);
+            info.setProperty(QGeoPositionInfo::Direction, dblValues[i]);
             QTest::newRow(qPrintable(QString("RMC-heading %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPRMC,,,,,,,,%1,,,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << info << false << true;
         }
@@ -226,7 +226,7 @@ private slots:
 
         info = QGeoPositionInfo(QGeoCoordinate(-lat, lng), QDateTime(QDate(2008,4,3), QTime(22,1,25,999), Qt::UTC));
         info.setProperty(QGeoPositionInfo::GroundSpeed, 8.9 * 1.852 / 3.6);
-        info.setProperty(QGeoPositionInfo::Heading, 47.6);
+        info.setProperty(QGeoPositionInfo::Direction, 47.6);
         info.setProperty(QGeoPositionInfo::MagneticVariation, -11.2);
         QTest::newRow("RMC-all") << addChecksumEtc("$GPRMC,220125.999,A,2734.7964,S,15306.0124,E,8.9,47.6,030408,11.2,W,A*")
                 << info
@@ -236,7 +236,7 @@ private slots:
 
         for (int i=0; i<dblValues.count(); i++) {
             info = QGeoPositionInfo();
-            info.setProperty(QGeoPositionInfo::Heading, dblValues[i]);
+            info.setProperty(QGeoPositionInfo::Direction, dblValues[i]);
             QTest::newRow(qPrintable(QString("VTG-heading %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPVTG,%1,,,,,,,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << info << false << true;
         }
@@ -249,7 +249,7 @@ private slots:
         }
 
         info = QGeoPositionInfo();
-        info.setProperty(QGeoPositionInfo::Heading, 158.7);
+        info.setProperty(QGeoPositionInfo::Direction, 158.7);
         info.setProperty(QGeoPositionInfo::GroundSpeed, 61.5 / 3.6);
         QTest::newRow("VTG-all") << addChecksumEtc("$GPVTG,158.7,T,169.9,M,33.2,N,61.5,K,A*")
                 << info

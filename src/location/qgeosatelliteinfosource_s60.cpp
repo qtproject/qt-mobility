@@ -473,8 +473,8 @@ void CQGeoSatelliteInfoSourceS60::TPositionSatelliteInfo2QGeoSatelliteInfo(
         aSatInfo.GetSatelliteData(i,satData);
         qInfo.setSignalStrength(satData.SignalStrength());
         qInfo.setPrnNumber(satData.SatelliteId());
-        qInfo.setProperty(QGeoSatelliteInfo::Elevation, satData.Elevation());
-        qInfo.setProperty(QGeoSatelliteInfo::Azimuth, satData.Azimuth());
+        qInfo.setAttribute(QGeoSatelliteInfo::Elevation,satData.Elevation());
+        qInfo.setAttribute(QGeoSatelliteInfo::Azimuth,satData.Azimuth());
         if (satData.IsUsed() == TRUE) {
             qListSatInUse.append(qInfo);
         }
