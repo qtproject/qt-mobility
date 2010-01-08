@@ -366,11 +366,11 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
         QCOMPARE(info.coordinate(), lastPositioninfo.coordinate());
         QCOMPARE(info.dateTime(), lastPositioninfo.dateTime());
 
-        QCOMPARE(qFuzzyCompare(info.property(QGeoPositionInfo::HorizontalAccuracy),
-                               lastPositioninfo.property(QGeoPositionInfo::HorizontalAccuracy)), TRUE);
+        QCOMPARE(qFuzzyCompare(info.attribute(QGeoPositionInfo::HorizontalAccuracy),
+                               lastPositioninfo.attribute(QGeoPositionInfo::HorizontalAccuracy)), TRUE);
 
-        QCOMPARE(qFuzzyCompare(info.property(QGeoPositionInfo::VerticalAccuracy),
-                               lastPositioninfo.property(QGeoPositionInfo::VerticalAccuracy)), TRUE);
+        QCOMPARE(qFuzzyCompare(info.attribute(QGeoPositionInfo::VerticalAccuracy),
+                               lastPositioninfo.attribute(QGeoPositionInfo::VerticalAccuracy)), TRUE);
     }
 }
 

@@ -478,10 +478,24 @@ QNmeaPositionInfoSource::~QNmeaPositionInfoSource()
     delete d;
 }
 
+/*!
+    Parses an NMEA sentence string into a QGeoPositionInfo.
+    
+    The default implementation will parse standard NMEA sentences.
+    This method should be reimplemented in a subclass whenever the need to deal with non-standard 
+    NMEA sentences arises.    
+    
+    The parser reads \a size bytes from \a data and uses that information to setup \a posInfo and 
+    \a hasFix.  If \a hasFix is set to false then \a posInfo may contain only the time or the date 
+    and the time.
+
+    Returns true if the sentence was succsesfully parsed, otherwise returns false and should not 
+    modifiy \a posInfo or \a hasFix.
+*/
 bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int size,
                                                        QGeoPositionInfo *posInfo, bool *hasFix)
 {
-    return QLocationUtils::getPosInfoFromNmea(data, size, posInfo, hasFix) 
+    return QLocationUtils::getPosInfoFromNmea(data, size, posInfo, hasFix);
 }
 
 /*!

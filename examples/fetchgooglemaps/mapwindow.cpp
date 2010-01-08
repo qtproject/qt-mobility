@@ -180,10 +180,10 @@ void MapWindow::positionUpdated(const QGeoPositionInfo &info)
 {
     QString heading = "?";
     QString speed = "?";
-    if (info.hasProperty(QGeoPositionInfo::Direction))
-        heading = QString("%1%2").arg(info.property(QGeoPositionInfo::Direction)).arg(QChar(0x00b0));
-    if (info.hasProperty(QGeoPositionInfo::GroundSpeed))
-        speed = QString::number(info.property(QGeoPositionInfo::GroundSpeed) * 3.6, 'f', 1);
+    if (info.hasAttribute(QGeoPositionInfo::Direction))
+        heading = QString("%1%2").arg(info.attribute(QGeoPositionInfo::Direction)).arg(QChar(0x00b0));
+    if (info.hasAttribute(QGeoPositionInfo::GroundSpeed))
+        speed = QString::number(info.attribute(QGeoPositionInfo::GroundSpeed) * 3.6, 'f', 1);
     posLabel->setText(tr("Position: %1").arg(info.coordinate().toString()));
     headingAndSpeedLabel->setText(tr("Bearing %1, travelling at %2 km/h").arg(heading).arg(speed));
 

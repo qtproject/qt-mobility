@@ -70,7 +70,7 @@ public:
     \enum QGeoPositionInfo::Attribute
     Defines the attributes for positional information.
 
-    \value Direction The bearing to true north, in degrees.
+    \value Direction The bearing to true north from the direction of travel, in degrees.
     \value GroundSpeed The ground speed, in metres/sec.
     \value VerticalSpeed The vertical speed, in metres/sec.
     \value MagneticVariation The angle between the horizontal component of the magnetic field and true north, in degrees. Also known as magnetic declination. A positive value indicates a clockwise direction from true north and a negative value indicates a counter-clockwise direction.
@@ -253,7 +253,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
     dbg.nospace() << update.d->coord;
 
     QList<int> attribs = update.d->doubleAttribs.keys();
-    for (int i = 0; i < props.count(); i++) {
+    for (int i = 0; i < attribs.count(); i++) {
         dbg.nospace() << ", ";
         switch (attribs[i]) {
             case QGeoPositionInfo::Direction:
