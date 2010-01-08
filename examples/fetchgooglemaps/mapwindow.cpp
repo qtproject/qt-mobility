@@ -64,7 +64,8 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
         dateTimeLabel(new QLabel),
         loading(false),
         usingLogFile(false),
-        location(0)
+        location(0),
+        waitingForFix(false)
 {
     location = QGeoPositionInfoSource::createDefaultSource(this);
     if (!location) {
@@ -112,25 +113,8 @@ void MapWindow::delayedInit()
         QMessageBox::information(this, tr("Fetch Google Maps"),
                                  tr("No GPS support detected, using GPS data from a sample log file instead."));
     } else {
-        QGeoSatelliteInfoSource *satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
-
-        if (satellite) {
-            SatelliteDialog *dialog = new SatelliteDialog(this,
-                    30,
-                    SatelliteDialog::ExitOnFixOrCancel,
-                    SatelliteDialog::OrderByPrnNumber,
-                    SatelliteDialog::ScaleToMaxPossible);
-
-            dialog->connectSources(location, satellite);
-
-            location->startUpdates();
-            satellite->startUpdates();
-
-            dialog->exec();
-
-            location->stopUpdates();
-            satellite->stopUpdates();
-        }
+        waitForFix();
+        location->stopUpdates();
     }
 
     // Set Internet Access Point
@@ -149,7 +133,42 @@ void MapWindow::delayedInit()
     session->open();
     session->waitForOpened(-1);
 
+    connect(location, SIGNAL(updateTimeout()), this, SLOT(waitForFix()));
+
     location->startUpdates();
+}
+
+// Brings up a satellite strength dialog box until a position fix is received.
+// This will also start the position updates if they are not already started.
+void MapWindow::waitForFix() {
+    if (waitingForFix)
+        return;
+
+    waitingForFix = true;
+
+    QGeoSatelliteInfoSource *satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
+
+    if (satellite) {
+        SatelliteDialog *dialog = new SatelliteDialog(this,
+                30,
+                SatelliteDialog::ExitOnFixOrCancel,
+                SatelliteDialog::OrderByPrnNumber,
+                SatelliteDialog::ScaleToMaxPossible);
+
+        dialog->connectSources(location, satellite);
+
+        location->startUpdates();
+        satellite->startUpdates();
+
+        dialog->exec();
+
+        satellite->stopUpdates();
+
+        delete dialog;
+        delete satellite;
+    }
+
+    waitingForFix = false;
 }
 
 void MapWindow::start()
