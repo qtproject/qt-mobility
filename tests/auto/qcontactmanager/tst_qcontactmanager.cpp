@@ -2615,6 +2615,17 @@ void tst_QContactManager::relationships()
     QVERIFY(!dest3.relationships().contains(customRelationshipOne));
     QVERIFY(dest3.relationships().contains(customRelationshipTwo));
     QVERIFY(!dest3.relationships(availableRelationshipTypes.at(0)).contains(customRelationshipOne));
+
+    // Test iteration
+    QList<QContactRelationship> relats = source.relationships();
+    QList<QContactRelationship>::iterator it = relats.begin();
+
+    while (it != relats.end()) {
+        QContactId firstId = it->first();
+        QVERIFY(firstId == source.id());
+        QVERIFY(it->second() == dest2.id() || it->second() == dest3.id());
+        it++;
+    }
     
     if (availableRelationshipTypes.count() > 1) {
         QVERIFY(source.relatedContacts(availableRelationshipTypes.at(1), QContactRelationshipFilter::Second).contains(dest3.id()));
