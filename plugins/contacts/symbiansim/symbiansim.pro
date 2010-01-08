@@ -44,7 +44,7 @@ symbian: {
     contains(DEFINES, SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER): {
         message("Using Etel Test Server (not real Etel)")
         INCLUDEPATH +=$${EPOCROOT}epoc32/include/internal
-        LIBS += -letelserverclient
+        LIBS += -leteltestserverclient
     } else {
         message("Using real Etel APIs")
         LIBS += -letel \

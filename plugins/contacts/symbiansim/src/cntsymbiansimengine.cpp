@@ -234,9 +234,175 @@ bool CntSymbianSimEngine::removeContact(const QContactLocalId& contactId, QConta
     return (requestStatus.Int() == KErrNone);
 }
 
+/*!
+ * Returns a map of identifier to detail definition which are valid for contacts whose type is the given \a contactType
+ * which are valid for the contacts in this store
+ */
+QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
+{
+    if (!supportedContactTypes().contains(contactType)) {
+        // Should never happen
+        error = QContactManager::InvalidContactTypeError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
+    // the map we will eventually return
+    QMap<QString, QContactDetailDefinition> retn;
+
+    // local variables for reuse
+    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailDefinitionField f;
+    QContactDetailDefinition d;
+    QVariantList subTypes;
+
+    // sync target
+    d.setName(QContactSyncTarget::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    subTypes.clear();
+    // TODO: groups supported by some USIM cards?
+    subTypes << (QString)KSimSyncTarget;
+    f.setAllowableValues(subTypes);
+    fields.insert(QContactSyncTarget::FieldSyncTarget, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
+    retn.insert(d.name(), d);
+
+    // type
+    d.setName(QContactType::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    subTypes.clear();
+    // TODO: groups supported by some USIM cards?
+    subTypes << QString(QLatin1String(QContactType::TypeContact));
+    f.setAllowableValues(subTypes);
+    fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
+    retn.insert(d.name(), d);
+
+/* TODO
+    // guid
+    d.setName(QContactGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactGuid::FieldGuid, f);
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(contexts);
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
+    retn.insert(d.name(), d);
+*/
+
+    // display label
+    d.setName(QContactDisplayLabel::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactDisplayLabel::FieldLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
+    retn.insert(d.name(), d);
+
+    // email address
+    // TODO: email support needs to be checked run-time, because it is SIM specific
+    d.setName(QContactEmailAddress::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactEmailAddress::FieldEmailAddress, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    retn.insert(d.name(), d);
+
+    // phone number
+    d.setName(QContactPhoneNumber::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactPhoneNumber::FieldNumber, f);
+    // TODO: subtypes supported in case a sim contact can have multiple phone numbers?
+/*
+    f.setDataType(QVariant::StringList); // can implement multiple subtypes
+    subTypes.clear();
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeAssistant));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeCar));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeFacsimile));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeLandline));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMobile));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeModem));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypePager));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeVideo));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeVoice));
+    f.setAllowableValues(subTypes);
+    fields.insert(QContactPhoneNumber::FieldSubTypes, f);
+*/
+    d.setFields(fields);
+    // TODO: multiple numbers supported?
+    d.setUnique(false);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    retn.insert(d.name(), d);
+
+    // nickname
+    // TODO: nickname support needs to be checked run-time, because it is SIM specific
+    d.setName(QContactNickname::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactNickname::FieldNickname, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    retn.insert(d.name(), d);
+
+    // name
+    d.setName(QContactName::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    /*
+    fields.insert(QContactName::FieldPrefix, f);
+    fields.insert(QContactName::FieldFirst, f);
+    fields.insert(QContactName::FieldMiddle, f);
+    fields.insert(QContactName::FieldLast, f);
+    fields.insert(QContactName::FieldSuffix, f);
+    */
+    fields.insert(QContactName::FieldCustomLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    retn.insert(d.name(), d);
+
+    return retn;
+}
+
+/*!
+ * Returns true if the given feature \a feature is supported by the manager,
+ * for the specified type of contact \a contactType
+ */
+bool CntSymbianSimEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
+{
+    Q_UNUSED(feature);
+    Q_UNUSED(contactType);
+    return false;
+}
+
+/*!
+ * Returns the list of data types supported by the manager
+ */
 QStringList CntSymbianSimEngine::supportedContactTypes() const
 {
-    // TODO: groups supported by some sim cards?
+    // TODO: groups supported by some USIM cards?
     return QStringList() << QContactType::TypeContact;
 }
 
