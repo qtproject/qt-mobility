@@ -314,6 +314,7 @@ void tst_QContactDetails::birthday()
 void tst_QContactDetails::displayLabel()
 {
     QContactDisplayLabel d1;
+    QContact c;
 
     QVERIFY(d1.label().isEmpty());
     QVERIFY(d1.value(QContactDisplayLabel::FieldLabel).isEmpty());
@@ -321,7 +322,22 @@ void tst_QContactDetails::displayLabel()
     QVERIFY(d1.value(QContactDisplayLabel::FieldLabel) == QString("Test"));
     QVERIFY(d1.label() == QString("Test"));
 
-    /* XXX TODO: test property add, update and remove.  Special semantics for display label. */
+    QContactDisplayLabel d2;
+    d2.setValue(QContactDisplayLabel::FieldLabel, "Test 2");
+
+    // test property add [== fail]
+    QVERIFY(!c.saveDetail(&d2));
+    QVERIFY(d2.accessConstraints() & QContactDetail::ReadOnly);
+    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
+
+    // test property update [== fail]
+    d1 = c.detail<QContactDisplayLabel>();
+    QVERIFY(!c.saveDetail(&d1));
+    QVERIFY(d1.accessConstraints() & QContactDetail::ReadOnly);
+
+    // test property remove
+    QVERIFY(!c.removeDetail(&d1)); // cannot remove display label
+    QCOMPARE(c.details<QContactDisplayLabel>().count(), 1);
 }
 
 void tst_QContactDetails::emailAddress()
