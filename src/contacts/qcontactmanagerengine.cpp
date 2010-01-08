@@ -1887,6 +1887,77 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 }
 
 /*!
+ * \deprecated
+ * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
+ * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ */
+void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+{
+    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after transition period!");
+    updateRequestState(req, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+}
+
+
+/*!
+ * \deprecated
+ * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
+ * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+{
+    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after transition period!");
+    updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+}
+
+
+/*!
+ * \deprecated
+ * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
+ * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+{
+    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after transition period!");
+    updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+}
+
+
+/*!
+ * \deprecated
+ * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
+ * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+{
+    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after transition period!");
+    updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status));
+}
+
+
+/*!
+ * \deprecated
+ * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
+ * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+{
+    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after transition period!");
+    updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+}
+
+
+/*!
+ * \deprecated
+ * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
+ * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ */
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+{
+    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after transition period!");
+    updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+}
+
+/*!
  * Updates the given asynchronous request \a req by setting the overall operation \a error, any individual \a errors that occurred during the operation, and the new \a state of the request.  It then causes the progress signal to be emitted by the request, with the \a appendOnly flag set (if required) to indicate result ordering stability.
  */
 void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::State state, bool appendOnly)
