@@ -262,8 +262,8 @@ void UT_QVersitContactExporter::testEncodeName()
     name.setPrefix(QString::fromAscii(";Mr."));
     name.setSuffix(QString::fromAscii("Sir,"));
     contact.saveDetail(&name);
-    document = mExporter->exportContact(contact,QVersitDocument::VCard30);
-    QCOMPARE(document.versitType(),QVersitDocument::VCard30);
+    document = mExporter->exportContact(contact,QVersitDocument::VCard30Type);
+    QCOMPARE(document.versitType(),QVersitDocument::VCard30Type);
 
     // Each Contact has display label detail by default. Display label is enocded
     // if some value exisit for the Label or if value for Name exisit.
@@ -363,8 +363,8 @@ void UT_QVersitContactExporter::testEncodeStreetAddress()
     address.setPostcode(QString::fromAscii("12345;"));
     address.setCountry(QString::fromAscii("My;Country"));
     contact.saveDetail(&address);
-    document = mExporter->exportContact(contact,QVersitDocument::VCard30);
-    QCOMPARE(document.versitType(),QVersitDocument::VCard30);
+    document = mExporter->exportContact(contact,QVersitDocument::VCard30Type);
+    QCOMPARE(document.versitType(),QVersitDocument::VCard30Type);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     // Check name
@@ -419,8 +419,8 @@ void UT_QVersitContactExporter::testEncodeUid()
     contact.removeDetail(&guid);
     guid.setGuid(QString::fromAscii("1;2,3\r\n4\\5"));
     contact.saveDetail(&guid);
-    document = mExporter->exportContact(contact,QVersitDocument::VCard30);
-    QCOMPARE(document.versitType(),QVersitDocument::VCard30);
+    document = mExporter->exportContact(contact,QVersitDocument::VCard30Type);
+    QCOMPARE(document.versitType(),QVersitDocument::VCard30Type);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     // Check name
@@ -1091,7 +1091,7 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
     contact = QContact();
     contactName.setCustomLabel(QString::fromAscii("Custom,Label"));
     contact.saveDetail(&contactName);
-    document = mExporter->exportContact(contact, QVersitDocument::VCard30);
+    document = mExporter->exportContact(contact, QVersitDocument::VCard30Type);
     displayProperty = document.properties().at(0);
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
     QCOMPARE(displayProperty.value(),

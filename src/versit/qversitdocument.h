@@ -63,8 +63,9 @@ public:
     
     /*! Versit document type */
     enum VersitType {
-        VCard21,   // vCard version 2.1
-        VCard30    // vCard version 3.0 (RFC 2426)
+        InvalidType,
+        VCard21Type,   // vCard version 2.1
+        VCard30Type    // vCard version 3.0 (RFC 2426)
     };
 
     // metadata about the versit document itself.
@@ -74,6 +75,8 @@ public:
     void addProperty(const QVersitProperty& property);
     QList<QVersitProperty> properties() const;
     void removeProperties(const QString& name);
+
+    bool isEmpty() const;
 
 private:
     

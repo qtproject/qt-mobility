@@ -56,7 +56,7 @@ class QVersitDocumentPrivate : public QSharedData
 public:
     QVersitDocumentPrivate() 
         : QSharedData(),
-        mVersitType(QVersitDocument::VCard21)
+        mVersitType(QVersitDocument::InvalidType)
     {
     }
     

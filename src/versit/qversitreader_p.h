@@ -55,6 +55,7 @@
 //
 
 #include "qmobilityglobal.h"
+#include "qversitreader.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "versitutils_p.h"
@@ -124,6 +125,7 @@ public: // Data
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
     QTextCodec* mDefaultCodec;
+    QVersitReader::Error mLastError;
 };
 
 QTM_END_NAMESPACE

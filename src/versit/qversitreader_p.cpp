@@ -54,7 +54,8 @@ QTM_BEGIN_NAMESPACE
 QVersitReaderPrivate::QVersitReaderPrivate()
     : mIoDevice(0),
     mDocumentNestingLevel(0),
-    mDefaultCodec(QTextCodec::codecForName("ISO 8859-1"))
+    mDefaultCodec(QTextCodec::codecForName("ISO 8859-1")),
+    mLastError(QVersitReader::NoError)
 {
 }
     
@@ -77,26 +78,42 @@ bool QVersitReaderPrivate::isReady() const
 bool QVersitReaderPrivate::read()
 {
     mVersitDocuments.clear();
+    bool ret = true;
     if (isReady()) {
+        if (!mIoDevice->isReadable()) {
+            mLastError = QVersitReader::IOError;
+            return false;
+        }
         QByteArray input = mIoDevice->readAll();
 
         VersitCursor cursor(input);
         int oldPos = cursor.position;
         do {
             QVersitDocument document;
-            bool ret = parseVersitDocument(cursor, document);
+            bool ok = parseVersitDocument(cursor, document);
 
-            if (ret && document.properties().count() > 0)
-                mVersitDocuments.append(document);
+            if (ok) {
+                if (document.isEmpty())
+                    break;
+                else
+                    mVersitDocuments.append(document);
+            }
 
-            if (!ret && cursor.position == oldPos)
-                break;
+            if (!ok) {
+                ret = false;
+                mLastError = QVersitReader::ParseError;
+                if (cursor.position == oldPos)
+                    break;
+            }
 
             oldPos = cursor.position;
         } while(cursor.position < input.size());
+    } else {
+        mLastError = QVersitReader::NotReadyError;
+        return false;
     }
 
-    return (mVersitDocuments.count() > 0);
+    return ret;
 }
 
 /*!
@@ -110,13 +127,18 @@ void QVersitReaderPrivate::run()
 /*!
  * Parses a versit document. Returns true if the parsing was successful.
  */
-bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocument& document, bool foundBegin)
+bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocument& document,
+                                               bool foundBegin)
 {
     if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
         return false; // To prevent infinite recursion
 
-    bool parsingOk = false;
+    bool parsingOk = true;
     mDocumentNestingLevel++;
+
+    // TODO: Various readers should be made subclasses and eliminate assumptions like this.
+    // We don't know what type it is: just assume it's a vCard 2.1
+    document.setVersitType(QVersitDocument::VCard21Type);
 
     // Skip some leading space
     if (!foundBegin)
@@ -124,19 +146,26 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
 
     QVersitProperty property;
 
-    if (!foundBegin)
+    if (!foundBegin) {
         property = parseNextVersitProperty(document.versitType(), cursor);
+        if (property.name() == QLatin1String("BEGIN")
+            && property.value().trimmed().toUpper() == QLatin1String("VCARD")) {
+            foundBegin = true;
+        } else if (property.isEmpty()) {
+            // A blank document (or end of file) was found.
+            document = QVersitDocument();
+        } else {
+            // Some property other than BEGIN was found.
+            parsingOk = false;
+        }
+    }
     
-    if (foundBegin ||
-        (property.name() == QString::fromAscii("BEGIN")
-        && property.value().trimmed().toUpper() == QString::fromAscii("VCARD"))) {
-        
-        parsingOk = true;
+    if (foundBegin) {
         do {
             /* Grab it */
             property = parseNextVersitProperty(document.versitType(), cursor);
 
-            /* Discard embedded vcard documents (XXX why?) */
+            /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
             if (property.name() == QString::fromAscii("BEGIN") &&
                 property.value().trimmed().toUpper() == QString::fromAscii("VCARD")) {
                 parsingOk = false;
@@ -145,7 +174,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
                     break;
             }
 
-            /* See if this is a version property - we might need to restart parsing as 3.0 */
+            // See if this is a version property and continue parsing under that version
             if (!setVersionFromProperty(document, property)) {
                 parsingOk = false;
                 break;
@@ -169,7 +198,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
  */
 QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QVersitDocument::VersitType versitType, VersitCursor& cursor)
 {
-    if (versitType != QVersitDocument::VCard21 && versitType != QVersitDocument::VCard30)
+    if (versitType != QVersitDocument::VCard21Type && versitType != QVersitDocument::VCard30Type)
         return QVersitProperty();
 
     // Make sure we have a line
@@ -186,9 +215,9 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(QVersitDocument::V
     property.setGroups(groupsAndName.first);
     property.setName(groupsAndName.second);
 
-    if (versitType == QVersitDocument::VCard21)
+    if (versitType == QVersitDocument::VCard21Type)
         parseVCard21Property(cursor, property);
-    else if (versitType == QVersitDocument::VCard30)
+    else if (versitType == QVersitDocument::VCard30Type)
         parseVCard30Property(cursor, property);
 
     return property;
@@ -267,9 +296,9 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
                 QString::fromAscii("ENCODING"),QString::fromAscii("BASE64")))
             value = QString::fromAscii(QByteArray::fromBase64(value.toAscii()));
         if (value == QString::fromAscii("2.1")) {
-            document.setVersitType(QVersitDocument::VCard21);
+            document.setVersitType(QVersitDocument::VCard21Type);
         } else if (value == QString::fromAscii("3.0")) {
-            document.setVersitType(QVersitDocument::VCard30);         
+            document.setVersitType(QVersitDocument::VCard30Type);
         } else {
             valid = false;
         }

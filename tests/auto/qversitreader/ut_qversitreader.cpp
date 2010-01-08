@@ -67,7 +67,7 @@ void UT_QVersitReader::cleanup()
 
 void UT_QVersitReader::finished()
 {
-    QCOMPARE(mReader->result().count(),mExpectedDocumentCount);
+    QCOMPARE(mReader->results().count(),mExpectedDocumentCount);
     mReadingDoneCalled = true;
 }
 
@@ -110,8 +110,8 @@ void UT_QVersitReader::testReading()
     // Device set, no data
     mReader->setDevice(mInputDevice);
     mInputDevice->open(QBuffer::ReadWrite);
-    QVERIFY(!mReader->readAll());
-    QCOMPARE(mReader->result().count(),0);
+    QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->results().count(),0);
 
     // Device set, one document
     const QByteArray& oneDocument = 
@@ -119,7 +119,7 @@ void UT_QVersitReader::testReading()
     mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
     QVERIFY(mReader->readAll());
-    QCOMPARE(mReader->result().count(),1);
+    QCOMPARE(mReader->results().count(),1);
 
     // Wide charset with no byte-order mark
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
@@ -133,7 +133,7 @@ void UT_QVersitReader::testReading()
     mReader->setDevice(mInputDevice);
     mReader->setDefaultCharset("UTF-16BE");
     QVERIFY(mReader->readAll());
-    QCOMPARE(mReader->result().count(),1);
+    QCOMPARE(mReader->results().count(),1);
     mReader->setDefaultCharset("ISO-8859-1");
 
     // Two documents
@@ -147,7 +147,7 @@ void UT_QVersitReader::testReading()
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
     QVERIFY(mReader->readAll());
-    QCOMPARE(mReader->result().count(),2);
+    QCOMPARE(mReader->results().count(),2);
 
     // Valid documents and a grouped document between them
     const QByteArray& validDocumentsAndGroupedDocument =
@@ -167,8 +167,9 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
     mInputDevice->write(validDocumentsAndGroupedDocument);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    QVERIFY(mReader->readAll());
-    QCOMPARE(mReader->result().count(),4);
+    // readAll() returns false because some of them failed, but the rest are still readable.
+    QVERIFY(!mReader->readAll());
+    QCOMPARE(mReader->results().count(),4);
 
     // Valid documents and a grouped document between them
     const QByteArray& validDocumentsAndGroupedDocument2 =
@@ -188,8 +189,9 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     mInputDevice->write(validDocumentsAndGroupedDocument2);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    QVERIFY(mReader->readAll());
-    QCOMPARE(mReader->result().count(),4);
+    // readAll() returns false because some of them failed, but the rest are still readable.
+    QVERIFY(!mReader->readAll());
+    QCOMPARE(mReader->results().count(),4);
 
 
     // Asynchronous reading
@@ -210,7 +212,7 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
 
 void UT_QVersitReader::testResult()
 {
-    QCOMPARE(mReader->result().count(),0);
+    QCOMPARE(mReader->results().count(),0);
 }
 
 void UT_QVersitReader::testSetVersionFromProperty()
@@ -226,12 +228,12 @@ void UT_QVersitReader::testSetVersionFromProperty()
     property.setName(QString::fromAscii("VERSION"));
     property.setValue(QString::fromAscii("2.1"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.versitType() == QVersitDocument::VCard21);
+    QVERIFY(document.versitType() == QVersitDocument::VCard21Type);
     
     // VERSION property with 3.0
     property.setValue(QString::fromAscii("3.0"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.versitType() == QVersitDocument::VCard30);
+    QVERIFY(document.versitType() == QVersitDocument::VCard30Type);
 
     // VERSION property with a not supported value
     property.setValue(QString::fromAscii("4.0"));
@@ -241,7 +243,7 @@ void UT_QVersitReader::testSetVersionFromProperty()
     property.setValue(QString::fromAscii(QByteArray("2.1").toBase64()));
     property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.versitType() == QVersitDocument::VCard21);
+    QVERIFY(document.versitType() == QVersitDocument::VCard21Type);
     
     // VERSION property with BASE64 encoded not supported value
     property.setValue(QString::fromAscii(QByteArray("4.0").toBase64()));
@@ -250,7 +252,7 @@ void UT_QVersitReader::testSetVersionFromProperty()
 
 void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 {
-    QVersitDocument::VersitType type = QVersitDocument::VCard21;
+    QVersitDocument::VersitType type = QVersitDocument::VCard21Type;
 
     // Test a valid vCard 2.1 with properties having separate handling:
     // AGENT property, ENCODING parameters (BASE64 and QUOTED-PRINTABLE) and CHARSET parameter
@@ -332,7 +334,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 
 void UT_QVersitReader::testParseNextVersitPropertyVCard30()
 {
-    QVersitDocument::VersitType type = QVersitDocument::VCard30;
+    QVersitDocument::VersitType type = QVersitDocument::VCard30Type;
 
     // Test a valid vCard 3.0 with properties having separate handling:
     // AGENT property and some other property

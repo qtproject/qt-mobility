@@ -111,10 +111,10 @@ void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
 {
     QVersitWriterPrivate* updatedWriter = 0;
     switch (versitDocument.versitType()) {
-        case QVersitDocument::VCard21:
+        case QVersitDocument::VCard21Type:
             updatedWriter = new QVCard21Writer;
             break;
-        case QVersitDocument::VCard30:
+        case QVersitDocument::VCard30Type:
             updatedWriter = new QVCard30Writer;
             break;
         default:

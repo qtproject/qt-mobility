@@ -61,15 +61,16 @@ void UT_QVersitDocument::cleanup()
 
 void UT_QVersitDocument::testConstructor()
 {
-    QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
+    QCOMPARE(QVersitDocument::InvalidType, mVersitDocument->versitType());
 }
 
 void UT_QVersitDocument::testVersitType()
 {
-    QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
+    mVersitDocument->setVersitType(QVersitDocument::VCard21Type);
+    QCOMPARE(QVersitDocument::VCard21Type, mVersitDocument->versitType());
 
-    mVersitDocument->setVersitType(QVersitDocument::VCard30);
-    QCOMPARE(QVersitDocument::VCard30, mVersitDocument->versitType());
+    mVersitDocument->setVersitType(QVersitDocument::VCard30Type);
+    QCOMPARE(QVersitDocument::VCard30Type, mVersitDocument->versitType());
 }
 
 void UT_QVersitDocument::testAddProperty()

@@ -76,7 +76,7 @@ QTM_BEGIN_NAMESPACE
  * Constructor.
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
-    mVersitType(QVersitDocument::VCard21)
+    mVersitType(QVersitDocument::InvalidType)
 {
     // Detail mappings
     int versitPropertyCount =
@@ -669,7 +669,7 @@ void QVersitContactExporterPrivate::setEscapedValue(
 QString QVersitContactExporterPrivate::escape(const QString& value)
 {
     QString escaped(value);
-    if (mVersitType != QVersitDocument::VCard21) {
+    if (mVersitType != QVersitDocument::VCard21Type) {
         VersitUtils::backSlashEscape(escaped);
     }
     return escaped;

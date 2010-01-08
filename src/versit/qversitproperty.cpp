@@ -207,4 +207,16 @@ QVersitDocument QVersitProperty::embeddedDocument() const
     return d->mDocument;
 }
 
+/*!
+ * Returns true if the property is empty.
+ */
+bool QVersitProperty::isEmpty() const
+{
+    return d->mGroups.isEmpty()
+            && d->mName.isEmpty()
+            && d->mParameters.isEmpty()
+            && d->mValue.isEmpty()
+            && d->mDocument.isEmpty();
+}
+
 QTM_END_NAMESPACE

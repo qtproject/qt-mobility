@@ -59,6 +59,17 @@ class Q_VERSIT_EXPORT QVersitReader : public QObject
     Q_OBJECT  
     
 public:
+    enum Error {
+        NoError = 0,
+        UnspecifiedError,
+        IOError,
+        OutOfMemoryError,
+        NotReadyError,
+        ParseError,
+        InvalidCharsetError,
+        BadDeviceError
+   };
+
     QVersitReader();
     ~QVersitReader();
 
@@ -74,7 +85,9 @@ public:
     bool readAll();
 
     // output:
-    QList<QVersitDocument> result() const;
+    QList<QVersitDocument> results() const;
+
+    Error error() const;
 
 signals:
     void finished();

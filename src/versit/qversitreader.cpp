@@ -150,8 +150,10 @@ bool QVersitReader::startReading()
 
 /*!
  * Reads the input synchronously.
- * Returns false if the input device has not been set or opened or
- * if there is an asynchronous read operation pending.
+ * Returns false if:
+ *   the input device has not been set or opened, or
+ *   if there is an asynchronous read operation pending, or
+ *   or there was an error reading any of the documents.
  * Using this function may block the user thread for an undefined period.
  * In most cases asynchronous \l startReading() should be used instead.
  */
@@ -167,9 +169,17 @@ bool QVersitReader::readAll()
  * Returns the reading result or an empty list
  * if the reading was not completed successfully.
  */
-QList<QVersitDocument> QVersitReader::result() const
+QList<QVersitDocument> QVersitReader::results() const
 {
     return d->mVersitDocuments;
+}
+
+/*!
+ * Returns the error encountered by the last operation.
+ */
+QVersitReader::Error QVersitReader::error() const
+{
+    return d->mLastError;
 }
 
 #include "moc_qversitreader.cpp"

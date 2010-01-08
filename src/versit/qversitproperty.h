@@ -81,6 +81,8 @@ public:
     void setEmbeddedDocument(const QVersitDocument& document);
     QVersitDocument embeddedDocument() const;
 
+    bool isEmpty() const;
+
 private:
     
     QSharedDataPointer<QVersitPropertyPrivate> d;

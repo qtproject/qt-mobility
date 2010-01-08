@@ -132,4 +132,12 @@ void QVersitDocument::removeProperties(const QString& name)
     }
 }
 
+/*!
+ * Returns true if the document is empty.
+ */
+bool QVersitDocument::isEmpty() const
+{
+    return d->mProperties.count() == 0;
+}
+
 QTM_END_NAMESPACE

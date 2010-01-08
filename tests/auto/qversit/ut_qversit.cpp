@@ -70,11 +70,11 @@ void UT_QVersit::testImportFiles()
         reader.setDefaultCharset(charset);
     }
     QVERIFY(reader.readAll());
-    QList<QVersitDocument> result = reader.result();
+    QList<QVersitDocument> results = reader.results();
     if (contacts.size() > 0) {
-        QCOMPARE(result.size(), contacts.size());
+        QCOMPARE(results.size(), contacts.size());
         QListIterator<QContact> i(contacts);
-        foreach (QVersitDocument doc, result) {
+        foreach (QVersitDocument doc, results) {
             QContact expected = i.next();
             QVersitContactImporter importer;
             importer.setAudioClipPath(imageAndAudioClipPath);
