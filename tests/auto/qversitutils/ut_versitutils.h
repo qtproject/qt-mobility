@@ -54,7 +54,7 @@ class UT_VersitUtils : public QObject
 private slots:
     void init();
     void cleanup();
-    void testCountLeadingWhiteSpaces();
+    void testSkipLeadingWhiteSpaces();
     void testParamName();
     void testParamValue();
     void testExtractPart();

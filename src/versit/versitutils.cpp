@@ -86,27 +86,19 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
 }
 
 /*!
- * Returns the count of leading whitespaces in /a text
- * starting from /a pos.
+ * Advances the cursor \a line past any horizontal whitespace, using \a codec to determine what a
+ * space is.
  */
-int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
+void VersitUtils::skipLeadingWhiteSpaces(VersitCursor &line, QTextCodec* codec)
 {
-    // XXX change to skipLeadingWhiteSpaces and take a cursor
-    int whiteSpaceCount = 0;
-    bool nonWhiteSpaceFound = false;
-    for (int i=pos; i<text.length() && !nonWhiteSpaceFound; i++) {
-        char current = text.at(i);
-        if (current == ' ' ||
-            current == '\t' ||
-            current == '\r' ||
-            current == '\n') {
-            whiteSpaceCount++;
-        } else {
-            nonWhiteSpaceFound = true;
-        }
+    QByteArray space = encode(' ', codec);
+    QByteArray tab = encode('\t', codec);
+    while (line.data.size() - line.position >= space.length() && (
+            containsAt(line.data, space, line.position)
+            || containsAt(line.data, tab, line.position))) {
+        // We don't bother with newline characters because getNextLine can handle those.
+        line.position += space.length();
     }
-
-    return whiteSpaceCount;
 }
 
 /*!
@@ -133,31 +125,26 @@ bool VersitUtils::quotedPrintableEncode(QByteArray& text)
 /*!
  * Decodes Quoted-Printable encoded (RFC 1521) characters in /a text.
  */
-void VersitUtils::decodeQuotedPrintable(QByteArray& text)
+void VersitUtils::decodeQuotedPrintable(QString& text)
 {
-    // XXX in theory we won't get newlines in this any more
     for (int i=0; i < text.length(); i++) {
-        char current = text.at(i);
-        if (current == '=' && i+2 < text.length()) {
-            char next = text.at(i+1);
-            char nextAfterNext = text.at(i+2);
-            if (next == '\r' && nextAfterNext == '\n') {
-                text.remove(i,3);
-            }
+        QChar current = text.at(i);
+        if (current == QLatin1Char('=') && i+2 < text.length()) {
+            int next = text.at(i+1).unicode();
+            int nextAfterNext = text.at(i+2).unicode();
             if (((next >= 'a' && next <= 'f') ||
                  (next >= 'A' && next <= 'F') ||
                  (next >= '0' && next <= '9')) &&
                 ((nextAfterNext >= 'a' && nextAfterNext <= 'f') ||
                  (nextAfterNext >= 'A' && nextAfterNext <= 'F') ||
                  (nextAfterNext >= '0' && nextAfterNext <= '9'))) {
-                QByteArray hexEncodedChar(text.mid(i+1,2));
-                bool decoded = false; 
-                char decodedChar = hexEncodedChar.toInt(&decoded,16);
-                QByteArray decodedCharAsByteArray;
-                decodedCharAsByteArray.append(decodedChar);
-                if (decoded) {
-                    text.replace(i,3,decodedCharAsByteArray);
-                }
+                bool ok;
+                QChar decodedChar(text.mid(i+1, 2).toInt(&ok,16));
+                if (ok)
+                    text.replace(i, 3, decodedChar);
+            } else if (next == '\r' && nextAfterNext == '\n') {
+                // Newlines can still be found here if they are encoded in a non-default charset.
+                text.remove(i, 3);
             }
         }
     }

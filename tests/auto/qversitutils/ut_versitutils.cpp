@@ -57,31 +57,43 @@ void UT_VersitUtils::cleanup()
 {
 }
 
-void UT_VersitUtils::testCountLeadingWhiteSpaces()
+void UT_VersitUtils::testSkipLeadingWhiteSpaces()
 {
+    VersitCursor line;
     // Empty string
-    QByteArray text;
-    QCOMPARE(VersitUtils::countLeadingWhiteSpaces(text), 0);
+    line.setPosition(0);
+    VersitUtils::skipLeadingWhiteSpaces(line, m_asciiCodec);
+    QCOMPARE(line.position, 0);
     
     // Only whitespaces
-    text = " \r \n\t \t";
-    QCOMPARE(VersitUtils::countLeadingWhiteSpaces(text), 7);
+    line.setData(" \t \t");
+    line.setPosition(0);
+    VersitUtils::skipLeadingWhiteSpaces(line, m_asciiCodec);
+    QCOMPARE(line.position, 4);
 
     // One whitespace with other characters
-    text = " text";
-    QCOMPARE(VersitUtils::countLeadingWhiteSpaces(text), 1);
+    line.setData(" text");
+    line.setPosition(0);
+    VersitUtils::skipLeadingWhiteSpaces(line, m_asciiCodec);
+    QCOMPARE(line.position, 1);
     
     // Several whitespaces with other characters
-    text = "\t\r\n\r\n text";
-    QCOMPARE(VersitUtils::countLeadingWhiteSpaces(text), 6);    
+    line.setData(" \t \ttext");
+    line.setPosition(0);
+    VersitUtils::skipLeadingWhiteSpaces(line, m_asciiCodec);
+    QCOMPARE(line.position, 4);
     
     // No whitespaces
-    text = "text";
-    QCOMPARE(VersitUtils::countLeadingWhiteSpaces(text), 0);
+    line.setData("text");
+    line.setPosition(0);
+    VersitUtils::skipLeadingWhiteSpaces(line, m_asciiCodec);
+    QCOMPARE(line.position, 0);
     
     // Start counting whitespaces in the middle of the string
-    text = "something \r\n\r\n";
-    QCOMPARE(VersitUtils::countLeadingWhiteSpaces(text,9), 5);   
+    line.setData("some text");
+    line.setPosition(4);
+    VersitUtils::skipLeadingWhiteSpaces(line, m_asciiCodec);
+    QCOMPARE(line.position, 5);
 }
 
 void UT_VersitUtils::testParamName()
@@ -371,21 +383,21 @@ void UT_VersitUtils::testQuotedPrintableEncode()
 void UT_VersitUtils::testDecodeQuotedPrintable()
 {
     // Soft line breaks
-    QByteArray encoded("This=\r\n is =\r\none line.");
-    QByteArray decoded("This is one line.");
+    QString encoded(QLatin1String("This=\r\n is =\r\none line."));
+    QString decoded(QLatin1String("This is one line."));
     VersitUtils::decodeQuotedPrintable(encoded);
     QCOMPARE(encoded, decoded);
     
     // Characters recommended to be encoded according to RFC 1521:
-    encoded = "To be decoded: =0A=0D=21=22=23=24=3D=40=5B=5C=5D=5E=60=7B=7C=7D=7E";
-    decoded = "To be decoded: \n\r!\"#$=@[\\]^`{|}~";
+    encoded = QLatin1String("To be decoded: =0A=0D=21=22=23=24=3D=40=5B=5C=5D=5E=60=7B=7C=7D=7E");
+    decoded = QLatin1String("To be decoded: \n\r!\"#$=@[\\]^`{|}~");
     VersitUtils::decodeQuotedPrintable(encoded);
     QCOMPARE(encoded, decoded);
     
     // Other random characters encoded.
     // Some implementation may encode these too, as it is allowed.
-    encoded = "=45=6E=63=6F=64=65=64 =64=61=74=61";
-    decoded = "Encoded data";
+    encoded = QLatin1String("=45=6E=63=6F=64=65=64 =64=61=74=61");
+    decoded = QLatin1String("Encoded data");
     VersitUtils::decodeQuotedPrintable(encoded);
     QCOMPARE(encoded, decoded);
 }

@@ -254,12 +254,16 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 
     // Test a valid vCard 2.1 with properties having separate handling:
     // AGENT property, ENCODING parameters (BASE64 and QUOTED-PRINTABLE) and CHARSET parameter
+    QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     QByteArray vCard("Begin:vcard\r\n");
     vCard.append("VERSION:2.1\r\n");
     vCard.append("FN:John\r\n");
     vCard.append("ORG;CHARSET=UTF-8:\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86\r\n");
     vCard.append("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
     vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n");
+    vCard.append("EMAIL;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-16BE:");
+    vCard.append(codec->fromUnicode(QLatin1String("john.citizen=40exam=\r\nple.com")));
+    vCard.append("\r\n");
     vCard.append("AGENT:\r\nBEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n");
     vCard.append("End:VCARD\r\n");
 
@@ -296,7 +300,11 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
     QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
-    
+
+    property = mReaderPrivate->parseNextVersitProperty(type, cursor);
+    QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
+    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
+
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
     QCOMPARE(property.value(),QString());

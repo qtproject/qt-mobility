@@ -120,7 +120,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
 
     // Skip some leading space
     if (!foundBegin)
-        cursor.setPosition(cursor.position + VersitUtils::countLeadingWhiteSpaces(cursor.data, cursor.position));
+        VersitUtils::skipLeadingWhiteSpaces(cursor, mDefaultCodec);
 
     QVersitProperty property;
 
@@ -209,8 +209,10 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
         cursor.setPosition(origPos); // XXX backtracks a little..
         parseAgentProperty(cursor, property);
     } else {
-        unencode(value, cursor, property);
-        property.setValue(decodeCharset(value, property));
+        QTextCodec* codec;
+        QString valueString = decodeCharset(value, property, &codec);
+        unencode(valueString, cursor, property, codec);
+        property.setValue(valueString);
     }
 }
 
@@ -223,7 +225,8 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
 
     QByteArray value = VersitUtils::extractPropertyValue(cursor);
 
-    QString valueString(decodeCharset(value, property));
+    QTextCodec* codec;
+    QString valueString(decodeCharset(value, property, &codec));
     VersitUtils::removeBackSlashEscaping(valueString);
 
     if (property.name() == QString::fromAscii("AGENT")) {
@@ -274,55 +277,58 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
     return valid;
 }
 
-void QVersitReaderPrivate::unencode(QByteArray& value, VersitCursor& cursor, QVersitProperty& property) const
+void QVersitReaderPrivate::unencode(QString& value, VersitCursor& cursor,
+                                    QVersitProperty& property, QTextCodec* codec) const
 {
     const QString encoding(QString::fromAscii("ENCODING"));
     const QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
     const QString base64(QString::fromAscii("BASE64"));
+    QByteArray equals = VersitUtils::encode('=', codec);
 
     if (property.parameters().contains(encoding, quotedPrintable)) {
-        // At this point, we need to accumulate bytes until we hit a real line break (no = before it)
-        // value already contains everything up to the character before the newline
-        if (value.at(value.length() - 1) == '=') {
+        // At this point, we need to accumulate bytes until we hit a real line break (no = before
+        // it) value already contains everything up to the character before the newline
+        while (value.endsWith(QLatin1Char('='))) {
             value.chop(1); // Get rid of '='
             // We add each line (minus the escaped = and newline chars)
-            while(VersitUtils::getNextLine(cursor, mDefaultCodec)) {
-                if (cursor.data.at(cursor.selection - 1) == '=') {
-                    value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position - 1));
-                    cursor.setPosition(cursor.selection);
-                    // another escaped newline.. loop again
-                } else {
-                    value.append(cursor.data.mid(cursor.position, cursor.selection - cursor.position));
-                    cursor.setPosition(cursor.selection);
-                    // We've reached the end
-                    break;
-                }
-            }
+            VersitUtils::getNextLine(cursor, codec);
+            QString line = codec->toUnicode(
+                    cursor.data.mid(cursor.position, cursor.selection-cursor.position));
+            value.append(line);
+            cursor.setPosition(cursor.selection);
         }
         VersitUtils::decodeQuotedPrintable(value);
         // Remove the encoding parameter as the value is now decoded
         property.removeParameter(encoding, quotedPrintable);
     } else if (property.parameters().contains(encoding, base64)) {
         // Remove the linear whitespaces left by vCard 2.1 unfolding
-        // XXX why is this necessary?
-        value.replace(' ',"");
-        value.replace('\t',"");
+        value.remove(QLatin1Char(' '));
+        value.remove(QLatin1Char('\t'));
+        // TODO: do the base64 decoding here and store as a QVariant?
     }
 }
 
-QString QVersitReaderPrivate::decodeCharset(const QByteArray& value, QVersitProperty& property) const
+/*!
+ * Decodes \a value, after working out what charset it is in using the context of \a property and
+ * returns it.  The codec used to decode is returned in \a codec.
+ */
+QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
+                                            QVersitProperty& property,
+                                            QTextCodec** codec) const
 {
     const QString charset(QString::fromAscii("CHARSET"));
     if (property.parameters().contains(charset)) {
         QString charsetValue = *property.parameters().find(charset);
         property.removeParameter(charset, charsetValue);
-        QTextCodec *codec = QTextCodec::codecForName(charsetValue.toAscii());
-        if (codec != NULL) {
-            return codec->toUnicode(value);
+        *codec = QTextCodec::codecForName(charsetValue.toAscii());
+        if (*codec != NULL) {
+            return (*codec)->toUnicode(value);
         } else {
-            return QString::fromAscii(value);
+            *codec = mDefaultCodec;
+            return mDefaultCodec->toUnicode(value);
         }
     }
+    *codec = mDefaultCodec;
     return mDefaultCodec->toUnicode(value);
 }
 

@@ -106,13 +106,15 @@ public: // New functions
         const QVersitProperty& property) const;
 
     void unencode(
-        QByteArray& value,
+        QString& value,
         VersitCursor& cursor,
-        QVersitProperty& property) const;
+        QVersitProperty& property,
+        QTextCodec* codec) const;
 
     QString decodeCharset(
         const QByteArray& value,
-        QVersitProperty& property) const;
+        QVersitProperty& property,
+        QTextCodec** codec) const;
 
 protected: // From QThread
      void run();
