@@ -113,13 +113,13 @@ QContactAbstractRequest::~QContactAbstractRequest()
  * \deprecated
  *
  * Returns true if the request is pending, processing or cancelling; otherwise, returns false.
- * This function is deprecated and will be removed in week 1.
+ * This function was deprecated in week 1 and will be removed after the transition period has elapsed.
  *
  * \sa state()
  */
 bool QContactAbstractRequest::isActive() const
 {
-    qWarning("This function is deprecated and will be removed in week 1!");
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     return (d_ptr->m_state == QContactAbstractRequest::ActiveState);
 }
 
@@ -127,13 +127,13 @@ bool QContactAbstractRequest::isActive() const
  * \deprecated
  *
  * Returns true if the request is finished or cancelled; otherwise, returns false.
- * This function is deprecated and will be removed in week 1.
+ * This function was deprecated in week 1 and will be removed after the transition period has elapsed.
  *
  * \sa state()
  */
 bool QContactAbstractRequest::isFinished() const
 {
-    qWarning("This function is deprecated and will be removed in week 1!");
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     return (d_ptr->m_state == QContactAbstractRequest::FinishedState
             || d_ptr->m_state == QContactAbstractRequest::CanceledState);
 }
@@ -164,8 +164,8 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
  */
 QContactAbstractRequest::Status Q_DECL_DEPRECATED QContactAbstractRequest::status() const
 {
-    qWarning("This function is deprecated and will be removed in week 1.  Use QContactAbstractRequest::state() instead!");
-    return QContactAbstractRequest::Inactive;
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use QContactAbstractRequest::state() instead!");
+    return static_cast<QContactAbstractRequest::Status>(d_ptr->m_state);
 }
 
 /*!
@@ -232,7 +232,7 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
     Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
-    qWarning("This function is deprecated and will be removed in week 1.");
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed.");
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
         return engine->waitForRequestProgress(this, msecs);

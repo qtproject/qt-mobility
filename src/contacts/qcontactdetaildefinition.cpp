@@ -165,7 +165,7 @@ QMap<QString, QContactDetailDefinitionField> QContactDetailDefinition::fields() 
  */
 QMap<QString, QContactDetailDefinitionField>& Q_DECL_DEPRECATED QContactDetailDefinition::fields()
 {
-    qWarning("This function has been deprecated and will be removed in week 1!  (Unnecessary API)");
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  (Unnecessary API)");
     return d->m_fields;
 }
 

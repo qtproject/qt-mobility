@@ -137,7 +137,7 @@ QStringList QContactManager::availableManagers()
  */
 bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
 {
-    qWarning("This function is deprecated and will be removed in week 1!  Use parseUri() instead!");
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use parseUri() instead!");
     return parseUri(uri, pManagerId, pParams);
 }
 
@@ -453,7 +453,7 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
  */
 QString QContactManager::synthesizeDisplayLabel(const QContact& contact) const
 {
-    qWarning("This function is deprecated and will be removed in week 1!  Use synthesizedDisplayLabel() instead!");
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use synthesizedDisplayLabel() instead!");
     return d->m_engine->synthesizedDisplayLabel(contact, d->m_error);
 }
 
@@ -651,7 +651,7 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
  */
 bool Q_DECL_DEPRECATED QContactManager::filterSupported(const QContactFilter& filter) const
 {
-    qWarning("filterSupported() is deprecated and will be removed in week 1!  Use isFilterSupported() instead!");
+    qWarning("filterSupported() is deprecated and will be removed after the transition period has elapsed!  Use isFilterSupported() instead!");
     return d->m_engine->isFilterSupported(filter);
 }
 
@@ -700,7 +700,7 @@ QStringList QContactManager::supportedContactTypes() const
  */
 int QContactManager::version() 
 {
-    qWarning("This function is deprecated and will be removed in week 1!  (Unnecessary API)");
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  (Unnecessary API)");
     return QTCONTACTS_VERSION; 
 }
 
@@ -710,7 +710,7 @@ int QContactManager::version()
  */
 int QContactManager::implementationVersion() const 
 {
-    qWarning("This function is deprecated and will be removed in week 1!  Use managerVersion() instead!");
+    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use managerVersion() instead!");
     return d->m_engine->managerVersion();
 }
 

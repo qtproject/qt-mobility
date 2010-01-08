@@ -128,24 +128,24 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
 #endif
 
-    void Q_DECL_DEPRECATED setLabel(const QString& label) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldLabel, label);}
-    QString Q_DECL_DEPRECATED label() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return value(FieldLabel);}
-    void Q_DECL_DEPRECATED setLatitude(double latitude) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldLatitude, latitude);}
-    double Q_DECL_DEPRECATED latitude() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return variantValue(FieldLatitude).toDouble();}
-    void Q_DECL_DEPRECATED setLongitude(double longitude) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldLongitude, longitude);}
-    double Q_DECL_DEPRECATED longitude() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return variantValue(FieldLongitude).toDouble();}
-    void Q_DECL_DEPRECATED setAccuracy(double accuracy) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldAccuracy, accuracy);}
-    double Q_DECL_DEPRECATED accuracy() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return variantValue(FieldAccuracy).toDouble();}
-    void Q_DECL_DEPRECATED setAltitude(double altitude) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldAltitude, altitude);}
-    double Q_DECL_DEPRECATED altitude() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return variantValue(FieldAltitude).toDouble();}
-    void Q_DECL_DEPRECATED setAltitudeAccuracy(double altitudeAccuracy) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldAltitudeAccuracy, altitudeAccuracy);}
-    double Q_DECL_DEPRECATED altitudeAccuracy() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return variantValue(FieldAltitudeAccuracy).toDouble();}
-    void Q_DECL_DEPRECATED setHeading(double heading) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldHeading, heading);}
-    double Q_DECL_DEPRECATED heading() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return variantValue(FieldHeading).toDouble();}
-    void Q_DECL_DEPRECATED setSpeed(double speed) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldSpeed, speed);}
-    double Q_DECL_DEPRECATED speed() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return variantValue(FieldSpeed).toDouble();}
-    void Q_DECL_DEPRECATED setTimestamp(const QDateTime& timestamp) {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");setValue(FieldTimestamp, timestamp);}
-    QDateTime Q_DECL_DEPRECATED timestamp() const {qWarning("This class is deprecated and will be removed in week 1!  Use QContactGeoLocation instead!");return variantValue(FieldTimestamp).toDateTime();}
+    void Q_DECL_DEPRECATED setLabel(const QString& label) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldLabel, label);}
+    QString Q_DECL_DEPRECATED label() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return value(FieldLabel);}
+    void Q_DECL_DEPRECATED setLatitude(double latitude) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldLatitude, latitude);}
+    double Q_DECL_DEPRECATED latitude() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldLatitude).toDouble();}
+    void Q_DECL_DEPRECATED setLongitude(double longitude) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldLongitude, longitude);}
+    double Q_DECL_DEPRECATED longitude() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldLongitude).toDouble();}
+    void Q_DECL_DEPRECATED setAccuracy(double accuracy) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldAccuracy, accuracy);}
+    double Q_DECL_DEPRECATED accuracy() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldAccuracy).toDouble();}
+    void Q_DECL_DEPRECATED setAltitude(double altitude) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldAltitude, altitude);}
+    double Q_DECL_DEPRECATED altitude() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldAltitude).toDouble();}
+    void Q_DECL_DEPRECATED setAltitudeAccuracy(double altitudeAccuracy) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldAltitudeAccuracy, altitudeAccuracy);}
+    double Q_DECL_DEPRECATED altitudeAccuracy() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldAltitudeAccuracy).toDouble();}
+    void Q_DECL_DEPRECATED setHeading(double heading) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldHeading, heading);}
+    double Q_DECL_DEPRECATED heading() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldHeading).toDouble();}
+    void Q_DECL_DEPRECATED setSpeed(double speed) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldSpeed, speed);}
+    double Q_DECL_DEPRECATED speed() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldSpeed).toDouble();}
+    void Q_DECL_DEPRECATED setTimestamp(const QDateTime& timestamp) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldTimestamp, timestamp);}
+    QDateTime Q_DECL_DEPRECATED timestamp() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldTimestamp).toDateTime();}
 };
 
 QTM_END_NAMESPACE

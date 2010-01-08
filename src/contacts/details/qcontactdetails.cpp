@@ -290,7 +290,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
    The constant string which identifies the definition of details
    which describe a location associated with a contact.
 
-   Note: this class has been deprecated and will be removed in week 1.
+   Note: this class was deprecated in week 1 and will be removed after the transition period has elapsed.
    Use QContactGeoLocation instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "GeoLocation");
