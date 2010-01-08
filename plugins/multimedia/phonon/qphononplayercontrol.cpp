@@ -64,14 +64,14 @@ QPhononPlayerControl::QPhononPlayerControl(Phonon::MediaObject *session, QObject
             this, SIGNAL(durationChanged(qint64)));
 
     connect(m_audioOutput, SIGNAL(mutedChanged(bool)),
-            this, SIGNAL(mutingChanged(bool)));
+            this, SIGNAL(mutedChanged(bool)));
     connect(m_audioOutput, SIGNAL(volumeChanged(qreal)),
             this, SLOT(updateVolume()));
 
     connect(m_session, SIGNAL(stateChanged(Phonon::State,Phonon::State)),
             this, SLOT(updateState(Phonon::State,Phonon::State)));
     connect(m_session, SIGNAL(hasVideoChanged(bool)),
-            this, SIGNAL(videoAvailabilityChanged(bool)));
+            this, SIGNAL(videoAvailableChanged(bool)));
     connect(m_session, SIGNAL(seekableChanged(bool)),
             this, SIGNAL(seekableChanged(bool)));
     connect(m_session, SIGNAL(finished()),
@@ -203,7 +203,7 @@ void QPhononPlayerControl::setMedia(const QMediaContent &content, QIODevice *str
     QUrl url;
 
     if (!content.isNull())
-        url = content.canonicalUri();
+        url = content.canonicalUrl();
 
     m_session->stop();
     if (m_mediaStream)

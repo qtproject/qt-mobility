@@ -1214,6 +1214,11 @@ void tst_QValueSpaceSubscriber::threads()
         writeLoop.exec();
 
     delete writeThread;
+    #ifdef Q_OS_SYMBIAN
+        QValueSpacePublisher resetPublisher("/threads");
+        resetPublisher.resetValue("value");
+    #endif
+
 }
 
 #include "tst_qvaluespacesubscribershared.moc"

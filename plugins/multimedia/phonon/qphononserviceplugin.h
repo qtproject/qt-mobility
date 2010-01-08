@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#ifndef QPHONONSERVICEPLUGIN_H
+#define QPHONONSERVICEPLUGIN_H
 
 #include <qmediaserviceproviderplugin.h>
 
@@ -56,4 +56,4 @@ public:
     void release(QMediaService *service);
 };
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+#endif

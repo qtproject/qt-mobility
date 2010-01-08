@@ -21,8 +21,8 @@ PRIVATE_HEADERS += \
     qmediaplaylistprovider_p.h \
     qmediaimageviewerservice_p.h \
     qvideowidget_p.h \
-    qmediapluginloader_p.h
-
+    qmediapluginloader_p.h \
+    qpaintervideosurface_p.h
 
 PUBLIC_HEADERS += \
     qmediacontrol.h \
@@ -56,11 +56,12 @@ PUBLIC_HEADERS += \
     qvideoencodercontrol.h \
     qimageencodercontrol.h \
     qaudiocapturesource.h \
-    qmediaformatcontrol.h \
+    qmediacontainercontrol.h \
     qmediaplaylistcontrol.h \
-    qaudiodevicecontrol.h \
-    qvideodevicecontrol.h
-
+    qaudioendpointselector.h \
+    qvideodevicecontrol.h \
+    qgraphicsvideoitem.h \
+    qvideorenderercontrol.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -92,38 +93,33 @@ SOURCES += qmediacontrol.cpp \
     qvideoencodercontrol.cpp \
     qimageencodercontrol.cpp \
     qaudiocapturesource.cpp \
-    qmediaformatcontrol.cpp \
+    qmediacontainercontrol.cpp \
     qmediaplaylistcontrol.cpp \
-    qaudiodevicecontrol.cpp \
+    qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
-    qmediapluginloader.cpp
+    qmediapluginloader.cpp \
+    qgraphicsvideoitem.cpp \
+    qpaintervideosurface.cpp \
+    qvideorenderercontrol.cpp
 
-contains(QT_CONFIG, multimedia) {
-    PUBLIC_HEADERS += \
-        qgraphicsvideoitem.h \
-        qvideorenderercontrol.h
-
-    PRIVATE_HEADERS += \
-        qpaintervideosurface_p.h
-
-    SOURCES += \
-        qgraphicsvideoitem.cpp \
-        qpaintervideosurface.cpp \
-        qvideorenderercontrol.cpp
-} else {
-    PUBLIC_HEADERS += qaudioformat.h
-    SOURCES += qaudioformat.cpp
+contains(QT_CONFIG, declarative) {
+   QT += declarative
+   PRIVATE_HEADERS += qmlsound_p.h
+   SOURCES += qmlsound.cpp
 }
 
 include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
+    load(data_caging_paths)
     QtMediaDeployment.sources = QtMedia.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
+    TARGET.UID3=0x2002AC77
+    MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
-    
+
     deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include

@@ -61,13 +61,15 @@
         connect(imageViewer, SIGNAL(stateChanged(QMediaImageViewer::State)),
                 this, SLOT(stateChanged(QMediaImageViewer::State)));
 
-        playlist = new QMediaPlaylist(imageViewer);
+        playlist = new QMediaPlaylist;
+        playlist->setMediaObject(imageViewer);
     \endcode
 
     We create a QVideoWidget to display the viewer and add it to the dialog.
 
     \code
-        QVideoWidget *videoWidget = new QVideoWidget(imageViewer);
+        QVideoWidget *videoWidget = new QVideoWidget;
+        videoWidget->setMediaObject(imageViewer);
     \endcode
 
 

@@ -83,6 +83,19 @@ V4LRadioControl::~V4LRadioControl()
         ::close(fd);
 }
 
+bool V4LRadioControl::isAvailable() const
+{
+    return available;
+}
+
+QtMedia::AvailabilityError V4LRadioControl::availabilityError() const
+{
+    if (fd > 0)
+        return QtMedia::NoError;
+    else
+        return QtMedia::ResourceError;
+}
+
 QRadioTuner::State V4LRadioControl::state() const
 {
     return fd > 0 ? QRadioTuner::ActiveState : QRadioTuner::StoppedState;
@@ -324,7 +337,7 @@ void V4LRadioControl::setMuted(bool muted)
             control.value = (muted ? queryctrl.maximum : queryctrl.minimum );
             ioctl( fd, VIDIOC_S_CTRL, &control );
             this->muted = muted;
-            emit mutingChanged(muted);
+            emit mutedChanged(muted);
         }
     }
 }

@@ -72,11 +72,11 @@ public:
     QString codec() const;
     void setCodec(const QString& codec);
 
-    int bitrate() const;
-    void setBitrate(int bitrate);
+    int bitRate() const;
+    void setBitRate(int bitrate);
 
-    int channels() const;
-    void setChannels(int channels);
+    int channelCount() const;
+    void setChannelCount(int channels);
 
     int sampleRate() const;
     void setSampleRate(int rate);
@@ -116,8 +116,8 @@ public:
     qreal frameRate() const;
     void setFrameRate(qreal rate);
 
-    int bitrate() const;
-    void setBitrate(int bitrate);
+    int bitRate() const;
+    void setBitRate(int bitrate);
 
     QtMedia::EncodingQuality quality() const;
     void setQuality(QtMedia::EncodingQuality quality);

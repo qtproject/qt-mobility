@@ -108,7 +108,7 @@ int DSVideoDeviceControl::deviceCount() const
     return devices.count();
 }
 
-QString DSVideoDeviceControl::name(int index) const
+QString DSVideoDeviceControl::deviceName(int index) const
 {
     if(index >= 0 && index <= devices.count())
         return devices.at(index);
@@ -116,7 +116,7 @@ QString DSVideoDeviceControl::name(int index) const
     return QString();
 }
 
-QString DSVideoDeviceControl::description(int index) const
+QString DSVideoDeviceControl::deviceDescription(int index) const
 {
     if(index >= 0 && index <= descriptions.count())
         return descriptions.at(index);
@@ -124,7 +124,7 @@ QString DSVideoDeviceControl::description(int index) const
     return QString();
 }
 
-QIcon DSVideoDeviceControl::icon(int index) const
+QIcon DSVideoDeviceControl::deviceIcon(int index) const
 {
     Q_UNUSED(index)
 

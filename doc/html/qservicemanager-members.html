@@ -17,9 +17,8 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qservicemanager.html#Error-enum">Error</a></b></div></li>
-<li><div class="fn">enum <b><a href="qservicemanager.html#Scope-enum">Scope</a></b></div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#QServiceManager">QServiceManager</a></b> ( QObject * )</div></li>
-<li><div class="fn"><b><a href="qservicemanager.html#QServiceManager-2">QServiceManager</a></b> ( Scope, QObject * )</div></li>
+<li><div class="fn"><b><a href="qservicemanager.html#QServiceManager-2">QServiceManager</a></b> ( QService::Scope, QObject * )</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#dtor.QServiceManager">~QServiceManager</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#addService">addService</a></b> ( const QString &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#addService-2">addService</a></b> ( QIODevice * ) : bool</div></li>
@@ -49,16 +48,16 @@
 <li><div class="fn"><b><a href="qservicemanager.html#findInterfaces">findInterfaces</a></b> ( const QServiceFilter &amp; ) const : QList&lt;QServiceInterfaceDescriptor&gt;</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#findInterfaces-2">findInterfaces</a></b> ( const QString &amp; ) const : QList&lt;QServiceInterfaceDescriptor&gt;</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#findServices">findServices</a></b> ( const QString &amp; ) const : QStringList</div></li>
-<li><div class="fn"><b><a href="qservicemanager.html#getInterface">getInterface</a></b> ( const QString &amp;, QServiceContext *, QAbstractSecuritySession * ) : T *</div></li>
-</ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qservicemanager.html#getInterface-2">getInterface</a></b> ( const QServiceInterfaceDescriptor &amp;, QServiceContext *, QAbstractSecuritySession * ) : T *</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#interfaceDefault">interfaceDefault</a></b> ( const QString &amp; ) const : QServiceInterfaceDescriptor</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#loadInterface">loadInterface</a></b> ( const QString &amp;, QServiceContext *, QAbstractSecuritySession * ) : QObject *</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#loadInterface-2">loadInterface</a></b> ( const QServiceInterfaceDescriptor &amp;, QServiceContext *, QAbstractSecuritySession * ) : QObject *</div></li>
+<li><div class="fn"><b><a href="qservicemanager.html#loadLocalTypedInterface">loadLocalTypedInterface</a></b> ( const QString &amp;, QServiceContext *, QAbstractSecuritySession * ) : T *</div></li>
+<li><div class="fn"><b><a href="qservicemanager.html#loadLocalTypedInterface-2">loadLocalTypedInterface</a></b> ( const QServiceInterfaceDescriptor &amp;, QServiceContext *, QAbstractSecuritySession * ) : T *</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#metaObject">metaObject</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
@@ -67,10 +66,10 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#removeService">removeService</a></b> ( const QString &amp; ) : bool</div></li>
-<li><div class="fn"><b><a href="qservicemanager.html#scope">scope</a></b> () const : Scope</div></li>
+<li><div class="fn"><b><a href="qservicemanager.html#scope">scope</a></b> () const : QService::Scope</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#sender">sender</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qservicemanager.html#serviceAdded">serviceAdded</a></b> ( const QString &amp;, QServiceManager::Scope )</div></li>
-<li><div class="fn"><b><a href="qservicemanager.html#serviceRemoved">serviceRemoved</a></b> ( const QString &amp;, QServiceManager::Scope )</div></li>
+<li><div class="fn"><b><a href="qservicemanager.html#serviceAdded">serviceAdded</a></b> ( const QString &amp;, QService::Scope )</div></li>
+<li><div class="fn"><b><a href="qservicemanager.html#serviceRemoved">serviceRemoved</a></b> ( const QString &amp;, QService::Scope )</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a></b> ( const QString &amp;, const QString &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="qservicemanager.html#setInterfaceDefault-2">setInterfaceDefault</a></b> ( const QServiceInterfaceDescriptor &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>

@@ -98,8 +98,8 @@ Q_SIGNALS:
     void stateChanged(QMediaPlayer::State newState);
     void mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void volumeChanged(int volume);
-    void mutingChanged(bool muted);
-    void videoAvailabilityChanged(bool videoAvailable);
+    void mutedChanged(bool muted);
+    void videoAvailableChanged(bool videoAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);
     void seekRangeChanged(const QPair<qint64,qint64>&);

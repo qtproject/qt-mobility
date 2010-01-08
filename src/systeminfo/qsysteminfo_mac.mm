@@ -288,7 +288,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent), signalStrengthCache(0)
 {
-    rssiTimer = new QTimer();
+    rssiTimer = new QTimer(this);
     connect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
     rssiTimer->start(1000);
 }
@@ -661,6 +661,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     updateVolumesMap();
     OSStatus osstatusResult = noErr;
     ItemCount volumeIndex;
+QSystemStorageInfo::DriveType drivetype = QSystemStorageInfo::NoDrive;
 
     for (volumeIndex = 1; osstatusResult == noErr || osstatusResult != nsvErr; volumeIndex++) {
         FSVolumeRefNum actualVolume;
@@ -694,19 +695,19 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
                                                                      0);
 
                         if((volumeParmeters.vMExtendedAttributes & (1L << bIsRemovable))) {
-                            CFRelease(wholeMedia);
-                            return QSystemStorageInfo::RemovableDrive;
+                            drivetype = QSystemStorageInfo::RemovableDrive;
                         } else {
-                            return QSystemStorageInfo::InternalDrive;
+                            drivetype = QSystemStorageInfo::InternalDrive;
                         }
+                        CFRelease(wholeMedia);
                     }
                 } else {
-                    return QSystemStorageInfo::RemoteDrive;
+                    drivetype = QSystemStorageInfo::RemoteDrive;
                 }
             }
         }
     }
-    return QSystemStorageInfo::NoDrive;
+    return drivetype;
 }
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()

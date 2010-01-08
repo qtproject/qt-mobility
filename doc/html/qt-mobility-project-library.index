@@ -907,10 +907,6 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" href="qservicemanager.html" location="qservicemanager.h" bases="QObject" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Scope" fullname="QServiceManager::Scope" href="qservicemanager.html#Scope-enum" location="qservicemanager.h">
-                <value name="UserScope" value="0"/>
-                <value name="SystemScope" value="1"/>
-            </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QServiceManager::Error" href="qservicemanager.html#Error-enum" location="qservicemanager.h">
                 <value name="NoError" value="0"/>
                 <value name="StorageAccessError" value="1"/>
@@ -927,12 +923,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" fullname="QServiceManager::QServiceManager" href="qservicemanager.html#QServiceManager" location="qservicemanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceManager(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" fullname="QServiceManager::QServiceManager" href="qservicemanager.html#QServiceManager-2" location="qservicemanager.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QServiceManager(Scope scope, QObject * parent)">
-                <parameter left="Scope" right="" name="scope" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" fullname="QServiceManager::QServiceManager" href="qservicemanager.html#QServiceManager-2" location="qservicemanager.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QServiceManager(QService::Scope scope, QObject * parent)">
+                <parameter left="QService::Scope" right="" name="scope" default=""/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QServiceManager" fullname="QServiceManager::~QServiceManager" href="qservicemanager.html#dtor.QServiceManager" location="qservicemanager.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QServiceManager()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="scope" fullname="QServiceManager::scope" href="qservicemanager.html#scope" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Scope" signature="scope() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="scope" fullname="QServiceManager::scope" href="qservicemanager.html#scope" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QService::Scope" signature="scope() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="findServices" fullname="QServiceManager::findServices" href="qservicemanager.html#findServices" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="findServices(const QString &amp; interfaceName) const">
                 <parameter left="const QString &amp;" right="" name="interfaceName" default="QString()"/>
             </function>
@@ -952,15 +948,15 @@
                 <parameter left="QServiceContext *" right="" name="context" default="0"/>
                 <parameter left="QAbstractSecuritySession *" right="" name="session" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="getInterface" fullname="QServiceManager::getInterface" href="qservicemanager.html#getInterface" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="T *" signature="getInterface(const QString &amp; interfaceName, QServiceContext * context, QAbstractSecuritySession * session)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="loadLocalTypedInterface" fullname="QServiceManager::loadLocalTypedInterface" href="qservicemanager.html#loadLocalTypedInterface" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="T *" signature="loadLocalTypedInterface(const QString &amp; interfaceName, QServiceContext * context, QAbstractSecuritySession * session)">
                 <parameter left="const QString &amp;" right="" name="interfaceName" default=""/>
                 <parameter left="QServiceContext *" right="" name="context" default="0"/>
                 <parameter left="QAbstractSecuritySession *" right="" name="session" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="getInterface" fullname="QServiceManager::getInterface" href="qservicemanager.html#getInterface-2" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="T *" signature="getInterface(const QServiceInterfaceDescriptor &amp; serviceDescriptor, QServiceContext * context, QAbstractSecuritySession * session)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="loadLocalTypedInterface" fullname="QServiceManager::loadLocalTypedInterface" href="qservicemanager.html#loadLocalTypedInterface-2" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="T *" signature="loadLocalTypedInterface(const QServiceInterfaceDescriptor &amp; serviceDescriptor, QServiceContext * context, QAbstractSecuritySession * session)">
                 <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="serviceDescriptor" default=""/>
-                <parameter left="QServiceContext *" right="" name="context" default=""/>
-                <parameter left="QAbstractSecuritySession *" right="" name="session" default=""/>
+                <parameter left="QServiceContext *" right="" name="context" default="0"/>
+                <parameter left="QAbstractSecuritySession *" right="" name="session" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="addService" fullname="QServiceManager::addService" href="qservicemanager.html#addService" location="qservicemanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="addService(const QString &amp; xmlFilePath)">
                 <parameter left="const QString &amp;" right="" name="xmlFilePath" default=""/>
@@ -982,13 +978,13 @@
                 <parameter left="const QString &amp;" right="" name="interfaceName" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QServiceManager::error" href="qservicemanager.html#error" location="qservicemanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="serviceAdded" fullname="QServiceManager::serviceAdded" href="qservicemanager.html#serviceAdded" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceAdded(const QString &amp; serviceName, QServiceManager::Scope scope)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceAdded" fullname="QServiceManager::serviceAdded" href="qservicemanager.html#serviceAdded" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceAdded(const QString &amp; serviceName, QService::Scope scope)">
                 <parameter left="const QString &amp;" right="" name="serviceName" default=""/>
-                <parameter left="QServiceManager::Scope" right="" name="scope" default=""/>
+                <parameter left="QService::Scope" right="" name="scope" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="serviceRemoved" fullname="QServiceManager::serviceRemoved" href="qservicemanager.html#serviceRemoved" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceRemoved(const QString &amp; serviceName, QServiceManager::Scope scope)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceRemoved" fullname="QServiceManager::serviceRemoved" href="qservicemanager.html#serviceRemoved" location="qservicemanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceRemoved(const QString &amp; serviceName, QService::Scope scope)">
                 <parameter left="const QString &amp;" right="" name="serviceName" default=""/>
-                <parameter left="QServiceManager::Scope" right="" name="scope" default=""/>
+                <parameter left="QService::Scope" right="" name="scope" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactSyncTarget" href="qcontactsynctarget.html" location="qcontactsynctarget.h" bases="QContactDetail" module="">
@@ -3604,6 +3600,12 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QContactManagerEngineFactory::managerName" href="qcontactmanagerenginefactory.html#managerName" location="qcontactmanagerenginefactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
         </class>
+        <namespace access="public" threadsafety="unspecified" status="commendable" name="QService" href="qservice.html" location="qservice.h" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Scope" fullname="QService::Scope" href="qservice.html#Scope-enum" location="qservice.h">
+                <value name="UserScope" value="0"/>
+                <value name="SystemScope" value="1"/>
+            </enum>
+        </namespace>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactIntersectionFilter" href="qcontactintersectionfilter.html" location="qcontactintersectionfilter.h" bases="QContactFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactIntersectionFilter" fullname="QContactIntersectionFilter::QContactIntersectionFilter" href="qcontactintersectionfilter.html#QContactIntersectionFilter" location="qcontactintersectionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactIntersectionFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactIntersectionFilter" fullname="QContactIntersectionFilter::QContactIntersectionFilter" href="qcontactintersectionfilter.html#QContactIntersectionFilter-2" location="qcontactintersectionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactIntersectionFilter(const QContactFilter &amp; other)">
@@ -5242,7 +5244,7 @@
                 <value name="MinimumVersionMatch" value="1"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="CapabilityMatchRule" fullname="QServiceFilter::CapabilityMatchRule" href="qservicefilter.html#CapabilityMatchRule-enum" location="qservicefilter.h">
-                <value name="MatchAll" value="0"/>
+                <value name="MatchMinimum" value="0"/>
                 <value name="MatchLoadable" value="1"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QServiceFilter" fullname="QServiceFilter::QServiceFilter" href="qservicefilter.html#QServiceFilter" location="qservicefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QServiceFilter()"/>
@@ -5268,21 +5270,20 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="serviceName" fullname="QServiceFilter::serviceName" href="qservicefilter.html#serviceName" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="serviceName() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="interfaceName" fullname="QServiceFilter::interfaceName" href="qservicefilter.html#interfaceName" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="interfaceName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="interfaceMajorVersion" fullname="QServiceFilter::interfaceMajorVersion" href="qservicefilter.html#interfaceMajorVersion" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="interfaceMajorVersion() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="interfaceMinorVersion" fullname="QServiceFilter::interfaceMinorVersion" href="qservicefilter.html#interfaceMinorVersion" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="interfaceMinorVersion() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="majorVersion" fullname="QServiceFilter::majorVersion" href="qservicefilter.html#majorVersion" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="majorVersion() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minorVersion" fullname="QServiceFilter::minorVersion" href="qservicefilter.html#minorVersion" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="minorVersion() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="versionMatchRule" fullname="QServiceFilter::versionMatchRule" href="qservicefilter.html#versionMatchRule" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="VersionMatchRule" signature="versionMatchRule() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="customPropertyKeys" fullname="QServiceFilter::customPropertyKeys" href="qservicefilter.html#customPropertyKeys" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customPropertyKeys() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="customProperty" fullname="QServiceFilter::customProperty" href="qservicefilter.html#customProperty" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="customProperty(const QString &amp; key) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAttributes" fullname="QServiceFilter::customAttributes" href="qservicefilter.html#customAttributes" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customAttributes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAttribute" fullname="QServiceFilter::customAttribute" href="qservicefilter.html#customAttribute" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="customAttribute(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomProperty" fullname="QServiceFilter::setCustomProperty" href="qservicefilter.html#setCustomProperty" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomProperty(const QString &amp; key, const QString &amp; value)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomAttribute" fullname="QServiceFilter::setCustomAttribute" href="qservicefilter.html#setCustomAttribute" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomAttribute(const QString &amp; key, const QString &amp; value)">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
                 <parameter left="const QString &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeCustomProperty" fullname="QServiceFilter::removeCustomProperty" href="qservicefilter.html#removeCustomProperty" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeCustomProperty(const QString &amp; key)">
-                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clearCustomAttribute" fullname="QServiceFilter::clearCustomAttribute" href="qservicefilter.html#clearCustomAttribute" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearCustomAttribute(const QString &amp; key)">
+                <parameter left="const QString &amp;" right="" name="key" default="QString()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="clearCustomProperties" fullname="QServiceFilter::clearCustomProperties" href="qservicefilter.html#clearCustomProperties" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearCustomProperties()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCapabilities" fullname="QServiceFilter::setCapabilities" href="qservicefilter.html#setCapabilities" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCapabilities(QServiceFilter::CapabilityMatchRule rule, const QStringList &amp; capabilities)">
                 <parameter left="QServiceFilter::CapabilityMatchRule" right="" name="rule" default=""/>
                 <parameter left="const QStringList &amp;" right="" name="capabilities" default="QStringList()"/>
@@ -6133,7 +6134,7 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QServiceInterfaceDescriptor" href="qserviceinterfacedescriptor.html" location="qserviceinterfacedescriptor.h" bases="" module="">
             <contents name="namespaces" title="Namespaces" level="1"/>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="PropertyKey" fullname="QServiceInterfaceDescriptor::PropertyKey" href="qserviceinterfacedescriptor.html#PropertyKey-enum" location="qserviceinterfacedescriptor.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Attribute" fullname="QServiceInterfaceDescriptor::Attribute" href="qserviceinterfacedescriptor.html#Attribute-enum" location="qserviceinterfacedescriptor.h">
                 <value name="Capabilities" value="0"/>
                 <value name="Location" value="1"/>
                 <value name="ServiceDescription" value="2"/>
@@ -6158,14 +6159,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="majorVersion" fullname="QServiceInterfaceDescriptor::majorVersion" href="qserviceinterfacedescriptor.html#majorVersion" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="majorVersion() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="minorVersion" fullname="QServiceInterfaceDescriptor::minorVersion" href="qserviceinterfacedescriptor.html#minorVersion" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="minorVersion() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QServiceInterfaceDescriptor::isValid" href="qserviceinterfacedescriptor.html#isValid" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="inSystemScope" fullname="QServiceInterfaceDescriptor::inSystemScope" href="qserviceinterfacedescriptor.html#inSystemScope" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="inSystemScope() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="property" fullname="QServiceInterfaceDescriptor::property" href="qserviceinterfacedescriptor.html#property" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="property(QServiceInterfaceDescriptor::PropertyKey key) const">
-                <parameter left="QServiceInterfaceDescriptor::PropertyKey" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="scope" fullname="QServiceInterfaceDescriptor::scope" href="qserviceinterfacedescriptor.html#scope" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QService::Scope" signature="scope() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="attribute" fullname="QServiceInterfaceDescriptor::attribute" href="qserviceinterfacedescriptor.html#attribute" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="attribute(QServiceInterfaceDescriptor::Attribute which) const">
+                <parameter left="QServiceInterfaceDescriptor::Attribute" right="" name="which" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="customProperty" fullname="QServiceInterfaceDescriptor::customProperty" href="qserviceinterfacedescriptor.html#customProperty" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="customProperty(const QString &amp; key) const">
-                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAttribute" fullname="QServiceInterfaceDescriptor::customAttribute" href="qserviceinterfacedescriptor.html#customAttribute" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="customAttribute(const QString &amp; which) const">
+                <parameter left="const QString &amp;" right="" name="which" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="customPropertyKeys" fullname="QServiceInterfaceDescriptor::customPropertyKeys" href="qserviceinterfacedescriptor.html#customPropertyKeys" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customPropertyKeys() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customAttributes" fullname="QServiceInterfaceDescriptor::customAttributes" href="qserviceinterfacedescriptor.html#customAttributes" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customAttributes() const"/>
         </class>
         <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-81" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="81" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
