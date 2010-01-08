@@ -81,7 +81,7 @@ int V4LVideoDeviceControl::deviceCount() const
     return devices.count();
 }
 
-QString V4LVideoDeviceControl::name(int index) const
+QString V4LVideoDeviceControl::deviceName(int index) const
 {
     if(index >= 0 && index <= devices.count())
         return devices.at(index);
@@ -89,7 +89,7 @@ QString V4LVideoDeviceControl::name(int index) const
     return QString();
 }
 
-QString V4LVideoDeviceControl::description(int index) const
+QString V4LVideoDeviceControl::deviceDescription(int index) const
 {
     if(index >= 0 && index <= descriptions.count())
         return descriptions.at(index);
@@ -97,7 +97,7 @@ QString V4LVideoDeviceControl::description(int index) const
     return QString();
 }
 
-QIcon V4LVideoDeviceControl::icon(int index) const
+QIcon V4LVideoDeviceControl::deviceIcon(int index) const
 {
     Q_UNUSED(index)
 

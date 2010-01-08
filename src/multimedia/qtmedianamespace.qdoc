@@ -78,10 +78,10 @@
     \value Duration The duration in millseconds of the media.  qint64.
 
     Audio attributes
-    \value AudioBitrate The bit rate of the media's audio stream in bits per second.  int.
+    \value AudioBitRate The bit rate of the media's audio stream in bits per second.  int.
     \value AudioCodec The codec of the media's audio stream.  QString.
     \value AverageLevel The average volume level of the media.  int.
-    \value Channels The number of channels in the media's audio stream. int.
+    \value ChannelCount The number of channels in the media's audio stream. int.
     \value PeakValue The peak volume of the media's audio stream. int
     \value Frequency The frequency of the media's audio stream. int
 
@@ -96,8 +96,8 @@
     \value TrackNumber The track number of the media.  int.
     \value TrackCount The number of tracks on the album containing the media.  int.
 
-    \value CoverArtUriSmall The URI of a small cover art image. QUrl.
-    \value CoverArtUriLarge The URI of a large cover art image. QUrl.
+    \value CoverArtUrlSmall The URL of a small cover art image. QUrl.
+    \value CoverArtUrlLarge The URL of a large cover art image. QUrl.
 
     Image and video attributes
     \value Resolution The dimensions of an image or video.  QSize.
@@ -108,7 +108,7 @@
     \value VideoBitRate The bit rate of the media's video stream in bits per second.  int.
     \value VideoCodec The codec of the media's video stream.  QString.
 
-    \value PosterUri The URI of a poster image.  QUrl.
+    \value PosterUrl The URL of a poster image.  QUrl.
 
     Movie attributes
     \value ChapterNumber The chapter number of the media.  int.
@@ -193,7 +193,18 @@
     Enumerates encoding modes.
 
     \value ConstantQualityEncoding
-    \value ConstantBitrateEncoding
-    \value AverageBitrateEncoding
+    \value ConstantBitRateEncoding
+    \value AverageBitRateEncoding
     \value TwoPassEncoding
+*/
+
+/*!
+    \enum QtMedia::AvailabilityError
+
+    Enumerates Service status errors.
+
+    \value NoError
+    \value ServiceMissingError
+    \value ResourceError
+    \value BusyError
 */
