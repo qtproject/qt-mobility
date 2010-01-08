@@ -196,7 +196,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::mutingChanged(bool mute)
+    \fn QMediaPlayerControl::mutedChanged(bool mute)
 
     Signals a change in the \a mute status of a player control.
 
@@ -227,7 +227,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::videoAvailabilityChanged(bool video)
+    \fn QMediaPlayerControl::videoAvailableChanged(bool video)
 
     Signals that there has been a change in the availability of \a video output.
 
@@ -299,6 +299,10 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Sets the current \a media source.  If a \a stream is supplied; data will be read from that
     instead of attempting to resolve the media source.  The media source may still be used to
     supply media information such as mime type.
+
+    Setting the media to a null QMediaContent will cause the control to discard all
+    information relating to the current media source and to cease all I/O operations related
+    to that media.
 */
 
 /*!

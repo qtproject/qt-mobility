@@ -291,7 +291,8 @@ public:
             invert(false),
             m_usingLogFile(false),
             m_location(0),
-            waitingForFix(false) {
+            waitingForFix(false) 
+{
 
         // Set Internet Access Point
         QNetworkConfigurationManager manager;
@@ -318,6 +319,7 @@ public:
         }
 
         m_location = QGeoPositionInfoSource::createDefaultSource(this);
+	m_location->setUpdateInterval(10000);
 
         if (!m_location) {
             QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -377,29 +379,6 @@ private slots:
             QMessageBox::information(this, tr("LightMaps"),
                                      tr("No GPS support detected, using GPS data from a sample log file instead."));
         } else {
-            /*
-            QGeoSatelliteInfoSource *m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
-
-            if (m_satellite) {
-                SatelliteDialog *dialog = new SatelliteDialog(this,
-                        30,
-                        SatelliteDialog::ExitOnFixOrCancel,
-                        SatelliteDialog::OrderByPrnNumber,
-                        SatelliteDialog::ScaleToMaxPossible);
-
-                dialog->connectSources(m_location, m_satellite);
-
-                m_location->startUpdates();
-                m_satellite->startUpdates();
-
-                dialog->exec();
-
-                m_satellite->stopUpdates();
-
-                delete m_satellite;
-                m_location->stopUpdates();
-            }
-            */
             waitForFix();
             m_location->stopUpdates();
         }

@@ -58,7 +58,10 @@ int main(int argc, char* argv[])
             SatelliteDialog::ScaleToMaxPossible);
 
     QGeoPositionInfoSource *posSource = QGeoPositionInfoSource::createDefaultSource(0);
+<<<<<<< HEAD:examples/satellitedialog/main.cpp
+=======
     posSource->setUpdateInterval(5000);
+>>>>>>> fdc56e1880711d3532bcfe653b2f366464da339d:examples/satellitedialog/main.cpp
     QGeoSatelliteInfoSource *satSource = QGeoSatelliteInfoSource::createDefaultSource(0);
 
     dialog->connectSources(posSource, satSource);

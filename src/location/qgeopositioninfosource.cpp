@@ -44,6 +44,8 @@
 #   include "qgeopositioninfosource_s60_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeopositioninfosource_wince_p.h"
+#elif defined(Q_WS_MAEMO_6)
+#   include "qgeopositioninfosource_maemo_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -61,12 +63,12 @@ QTM_BEGIN_NAMESPACE
     Users of a QGeoPositionInfoSource subclass can request the current position using
     requestUpdate(), or start and stop regular position updates using
     startUpdates() and stopUpdates(). When an update is available,
-    positionUpdate() is emitted. The last known position can be accessed with
-    lastUpdate().
+    positionUpdated() is emitted. The last known position can be accessed with
+    lastKnownPosition().
 
     If regular position updates are required, setUpdateInterval() can be used
-    to specify how often these updates should be emitted. (If no interval is
-    specified, updates are simply provided whenever they are available.)
+    to specify how often these updates should be emitted. If no interval is
+    specified, updates are simply provided whenever they are available.
     For example:
 
     \code
@@ -79,7 +81,7 @@ QTM_BEGIN_NAMESPACE
     setUpdateInterval() with a value of 0.
 
     Note that the position source may have a minimum value requirement for
-    update intervals, as returned by minimumIntervalForType().
+    update intervals, as returned by minimumUpdateInterval().
 
     \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default position source on a Windows CE device without GPS support will never provide any position data.
@@ -194,9 +196,19 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
-#else
-    Q_UNUSED(parent);
-#endif
+#elif defined(Q_WS_MAEMO_6)    
+    QGeoPositionInfoSourceMaemo *source = new QGeoPositionInfoSourceMaemo(parent);
+
+    int status = source->init();
+    if (status == -1) {
+        delete source;
+        return 0;
+    }
+
+    return source;
+#else 
+    Q_UNUSED(parent); 
+#endif 
     return 0;
 }
 
@@ -236,6 +248,12 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 
     If setUpdateInterval() has not been called, the source will emit updates
     as soon as they become available.
+
+    An updateTimout() signal will be emitted if this QGeoPositionInfoSource subclass determines 
+    that it will not be able to provide regular updates.  This could happen if a satelllite fix is 
+    lost or if a hardware error is detected.  Position updates will recommence if the data becomes 
+    available later on.  The updateTimout() signal will not be emitted again until after the 
+    periodic updates resume.
 */
 
 /*!
@@ -276,8 +294,12 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 /*!
     \fn void QGeoPositionInfoSource::updateTimeout();
 
-    Emitted if requestUpdate() was called and the current position could
-    not be retrieved within the specified timeout.
+    If requestUpdate() was called, this signal will be emitted if the current position could not 
+    be retrieved within the specified timeout.
+
+    If startUpdates() has been called, this signal will be emitted if this QGeoPositionInfoSource 
+    subclass determines that it will not be able to provide further regular updates.  This signal 
+    will not be emitted again until after the regular updates resume.
 */
 
 #include "moc_qgeopositioninfosource.cpp"

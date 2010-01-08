@@ -50,6 +50,8 @@ class QLabel;
 class QPushButton;
 class QSlider;
 
+QTM_USE_NAMESPACE
+
 class Radio : public QMainWindow
 {
     Q_OBJECT

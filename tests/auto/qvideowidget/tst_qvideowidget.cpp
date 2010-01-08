@@ -67,6 +67,8 @@ private slots:
     void nullOutputControl();
     void noOutputs();
     void serviceDestroyed();
+    void objectDestroyed();
+    void setMediaObject();
 
     void showWindowControl();
     void fullScreenWindowControl();
@@ -346,7 +348,7 @@ public:
 
 void tst_QVideoWidget::nullObject()
 {
-    QVideoWidget widget(0);
+    QVideoWidget widget;
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QVERIFY(widget.sizeHint().isEmpty());
@@ -429,7 +431,9 @@ void tst_QVideoWidget::nullService()
 {
     QtTestVideoObject object(0);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
+
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QVERIFY(widget.sizeHint().isEmpty());
@@ -458,7 +462,8 @@ void tst_QVideoWidget::nullOutputControl()
 {
     QtTestVideoObject object(new QtTestVideoService(0, 0, 0, 0));
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QVERIFY(widget.sizeHint().isEmpty());
@@ -484,7 +489,8 @@ void tst_QVideoWidget::noOutputs()
 {
     QtTestVideoObject object(0, 0, 0);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QVERIFY(widget.sizeHint().isEmpty());
@@ -507,12 +513,10 @@ void tst_QVideoWidget::noOutputs()
 
 void tst_QVideoWidget::serviceDestroyed()
 {
-    QtTestVideoObject *object = new QtTestVideoObject(
-            new QtTestWindowControl,
-            new QtTestWidgetControl,
-            0);
+    QtTestVideoObject object(new QtTestWindowControl, new QtTestWidgetControl, 0);
 
-    QVideoWidget widget(object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     widget.show();
@@ -523,7 +527,10 @@ void tst_QVideoWidget::serviceDestroyed()
     widget.setHue(100);
     widget.setSaturation(100);
 
-    delete object;
+    delete object.testService;
+    object.testService = 0;
+
+    QCOMPARE(widget.mediaObject(), static_cast<QMediaObject *>(&object));
 
     QCOMPARE(widget.brightness(), 100);
     QCOMPARE(widget.contrast(), 100);
@@ -534,12 +541,100 @@ void tst_QVideoWidget::serviceDestroyed()
     QCOMPARE(widget.isFullScreen(), true);
 }
 
+void tst_QVideoWidget::objectDestroyed()
+{
+    QtTestVideoObject *object = new QtTestVideoObject(
+            new QtTestWindowControl,
+            new QtTestWidgetControl,
+            0);
+
+    QVideoWidget widget;
+    widget.setMediaObject(object);
+    widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
+
+    widget.show();
+    QTest::qWaitForWindowShown(&widget);
+
+    widget.setBrightness(100);
+    widget.setContrast(100);
+    widget.setHue(100);
+    widget.setSaturation(100);
+
+    // Delete the media object without deleting the service.
+    QtTestVideoService *service = object->testService;
+    object->testService = 0;
+
+    delete object;
+    object = 0;
+
+    QCOMPARE(widget.mediaObject(), static_cast<QMediaObject *>(object));
+
+    QCOMPARE(service->outputControl->output(), QVideoOutputControl::NoOutput);
+
+    QCOMPARE(widget.brightness(), 100);
+    QCOMPARE(widget.contrast(), 100);
+    QCOMPARE(widget.hue(), 100);
+    QCOMPARE(widget.saturation(), 100);
+
+    widget.setFullScreen(true);
+    QCOMPARE(widget.isFullScreen(), true);
+
+    delete service;
+}
+
+void tst_QVideoWidget::setMediaObject()
+{
+    QMediaObject *nullObject = 0;
+    QtTestVideoObject windowObject(new QtTestWindowControl, 0, 0);
+    QtTestVideoObject widgetObject(0, new QtTestWidgetControl, 0);
+    QtTestVideoObject rendererObject(0, 0, new QtTestRendererControl);
+
+    QVideoWidget widget;
+    widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
+
+    widget.show();
+    QTest::qWaitForWindowShown(&widget);
+
+    QCOMPARE(widget.mediaObject(), nullObject);
+    QCOMPARE(windowObject.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(widgetObject.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(rendererObject.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+
+    widget.setMediaObject(&windowObject);
+    QCOMPARE(widget.mediaObject(), static_cast<QMediaObject *>(&windowObject));
+    QCOMPARE(windowObject.testService->outputControl->output(), QVideoOutputControl::WindowOutput);
+    QVERIFY(windowObject.testService->windowControl->winId() != 0);
+
+
+    widget.setMediaObject(&widgetObject);
+    QCOMPARE(widget.mediaObject(), static_cast<QMediaObject *>(&widgetObject));
+    QCOMPARE(widgetObject.testService->outputControl->output(), QVideoOutputControl::WidgetOutput);
+
+    QCoreApplication::processEvents(QEventLoop::AllEvents);
+    QCOMPARE(widgetObject.testService->widgetControl->videoWidget()->isVisible(), true);
+
+    QCOMPARE(windowObject.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+
+    widget.setMediaObject(&rendererObject);
+    QCOMPARE(widget.mediaObject(), static_cast<QMediaObject *>(&rendererObject));
+    QCOMPARE(rendererObject.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
+    QVERIFY(rendererObject.testService->rendererControl->surface() != 0);
+
+    QCOMPARE(widgetObject.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+
+    widget.setMediaObject(0);
+    QCOMPARE(widget.mediaObject(), nullObject);
+
+    QCOMPARE(rendererObject.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+}
+
 void tst_QVideoWidget::showWindowControl()
 {
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     object.testService->windowControl->setNativeSize(QSize(240, 180));
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
@@ -566,7 +661,8 @@ void tst_QVideoWidget::showWindowControl()
 void tst_QVideoWidget::showWidgetControl()
 {
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
@@ -590,7 +686,8 @@ void tst_QVideoWidget::showWidgetControl()
 void tst_QVideoWidget::showRendererControl()
 {
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
@@ -615,7 +712,8 @@ void tst_QVideoWidget::aspectRatioWindowControl()
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     object.testService->windowControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     // Test the aspect ratio defaults to keeping the aspect ratio.
@@ -646,7 +744,8 @@ void tst_QVideoWidget::aspectRatioWidgetControl()
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     object.testService->widgetControl->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     // Test the aspect ratio defaults to keeping the aspect ratio.
@@ -676,7 +775,8 @@ void tst_QVideoWidget::aspectRatioRendererControl()
 {
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     // Test the aspect ratio defaults to keeping the aspect ratio.
@@ -712,7 +812,8 @@ void tst_QVideoWidget::sizeHintWindowControl()
     QFETCH(QSize, size);
 
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
@@ -728,7 +829,8 @@ void tst_QVideoWidget::sizeHintWidgetControl()
     QFETCH(QSize, size);
 
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
@@ -774,7 +876,8 @@ void tst_QVideoWidget::sizeHintRendererControl()
     QFETCH(QSize, expectedSize);
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     widget.show();
@@ -793,7 +896,8 @@ void tst_QVideoWidget::sizeHintRendererControl()
 void tst_QVideoWidget::fullScreenWindowControl()
 {
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
 
@@ -873,7 +977,8 @@ void tst_QVideoWidget::fullScreenWindowControl()
 void tst_QVideoWidget::fullScreenWidgetControl()
 {
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
 
@@ -954,7 +1059,8 @@ void tst_QVideoWidget::fullScreenWidgetControl()
 void tst_QVideoWidget::fullScreenRendererControl()
 {
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
 
@@ -1049,7 +1155,8 @@ void tst_QVideoWidget::brightnessWindowControl()
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     object.testService->windowControl->setBrightness(controlValue);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
@@ -1089,7 +1196,8 @@ void tst_QVideoWidget::brightnessWidgetControl()
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     object.testService->widgetControl->setBrightness(controlValue);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QCOMPARE(widget.brightness(), 0);
@@ -1123,7 +1231,8 @@ void tst_QVideoWidget::brightnessRendererControl()
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
@@ -1149,7 +1258,8 @@ void tst_QVideoWidget::contrastWindowControl()
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     object.testService->windowControl->setContrast(controlValue);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QCOMPARE(widget.contrast(), 0);
@@ -1186,7 +1296,8 @@ void tst_QVideoWidget::contrastWidgetControl()
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     object.testService->widgetControl->setContrast(controlValue);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     QCOMPARE(widget.contrast(), 0);
 
@@ -1220,7 +1331,8 @@ void tst_QVideoWidget::contrastRendererControl()
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
@@ -1246,7 +1358,8 @@ void tst_QVideoWidget::hueWindowControl()
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     object.testService->windowControl->setHue(controlValue);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     QCOMPARE(widget.hue(), 0);
 
@@ -1282,7 +1395,8 @@ void tst_QVideoWidget::hueWidgetControl()
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     object.testService->widgetControl->setHue(controlValue);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     QCOMPARE(widget.hue(), 0);
 
@@ -1316,7 +1430,8 @@ void tst_QVideoWidget::hueRendererControl()
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
@@ -1342,7 +1457,8 @@ void tst_QVideoWidget::saturationWindowControl()
     QtTestVideoObject object(new QtTestWindowControl, 0, 0);
     object.testService->windowControl->setSaturation(controlValue);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     QCOMPARE(widget.saturation(), 0);
     widget.show();
@@ -1377,7 +1493,8 @@ void tst_QVideoWidget::saturationWidgetControl()
     QtTestVideoObject object(0, new QtTestWidgetControl, 0);
     object.testService->widgetControl->setSaturation(controlValue);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     QCOMPARE(widget.saturation(), 0);
@@ -1412,7 +1529,8 @@ void tst_QVideoWidget::saturationRendererControl()
 
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
@@ -1438,7 +1556,8 @@ void tst_QVideoWidget::paintRendererControl()
 {
     QtTestVideoObject object(0, 0, new QtTestRendererControl);
 
-    QVideoWidget widget(&object);
+    QVideoWidget widget;
+    widget.setMediaObject(&object);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
     widget.show();
     QTest::qWaitForWindowShown(&widget);

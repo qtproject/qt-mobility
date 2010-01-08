@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 SOURCES += satellitedialog.cpp main.cpp
-HEADERS += satellitedialog.h 
+HEADERS += satellitedialog.h
 
 INCLUDEPATH += ../../src/location \
                 ../../src/global

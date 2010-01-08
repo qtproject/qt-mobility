@@ -48,7 +48,7 @@
 
 #include <gst/gst.h>
 QTM_BEGIN_NAMESPACE
-class QAudioDeviceControl;
+class QAudioEndpointSelector;
 class QVideoDeviceControl;
 QTM_END_NAMESPACE
 
@@ -83,7 +83,7 @@ private:
     QGstreamerCameraControl *m_cameraControl;
     QGstreamerCaptureMetaDataControl *m_metaDataControl;
 
-    QAudioDeviceControl *m_audioInputDevice;
+    QAudioEndpointSelector *m_audioInputEndpointSelector;
     QVideoDeviceControl *m_videoInputDevice;
 
     QGstreamerVideoOutputControl *m_videoOutput;

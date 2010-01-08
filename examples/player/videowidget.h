@@ -49,7 +49,7 @@ class VideoWidget : public QVideoWidget
 {
     Q_OBJECT
 public:
-    VideoWidget(QMediaObject *object, QWidget *parent = 0);
+    VideoWidget(QWidget *parent = 0);
 
 protected:
     void keyPressEvent(QKeyEvent *event);

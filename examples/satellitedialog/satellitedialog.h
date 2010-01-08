@@ -99,7 +99,6 @@ public:
 
 private slots:
     void positionUpdated(const QGeoPositionInfo &pos);
-    void positionUpdateTimeout();
 
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &list);
@@ -114,8 +113,6 @@ private slots:
 private:
     int m_noSatelliteTimeoutSeconds;
     ExitBehaviour m_exitBehaviour;
-
-    bool hasPositionUpdates;
 
     QTimer *noSatelliteTimer;
 

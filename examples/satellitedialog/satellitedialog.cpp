@@ -348,8 +348,8 @@ SatelliteDialog::SatelliteDialog(QWidget *parent,
                                  Ordering ordering,
                                  StrengthScaling scaling) : QDialog(parent),
         m_noSatelliteTimeoutSeconds(noSatelliteTimeoutSeconds),
-        m_exitBehaviour(exitBehaviour),
-        hasPositionUpdates(false)
+        m_exitBehaviour(exitBehaviour)
+        m_exitBehaviour(exitBehaviour)
 {
     noSatelliteTimer = new QTimer(this);
     noSatelliteTimer->setInterval(m_noSatelliteTimeoutSeconds * 1000);
@@ -427,7 +427,6 @@ void SatelliteDialog::connectSources(QGeoPositionInfoSource *posSource, QGeoSate
 {
     connect(posSource, SIGNAL(positionUpdated(const QGeoPositionInfo &)),
             this, SLOT(positionUpdated(const QGeoPositionInfo &)));
-    connect(posSource, SIGNAL(updateTimeout()), this, SLOT(positionUpdateTimeout()));
 
     connect(satSource, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)),
             this, SLOT(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
@@ -483,14 +482,7 @@ void SatelliteDialog::positionUpdated(const QGeoPositionInfo &/*pos*/)
 {
     if (m_exitBehaviour == ExitOnFixOrCancel) {
         accept();
-    } else {
-        hasPositionUpdates = true;
     }
-}
-
-void SatelliteDialog::positionUpdateTimeout()
-{
-    hasPositionUpdates = false;
 }
 
 void SatelliteDialog::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list)

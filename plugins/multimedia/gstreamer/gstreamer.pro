@@ -34,7 +34,7 @@ HEADERS += \
     qgstreamervideorendererinterface.h \
     qgstreamervideowidget.h \
     qgstreamerserviceplugin.h \
-    qgstreameraudioinputdevicecontrol.h \
+    qgstreameraudioinputendpointselector.h \
     qgstreamervideoinputdevicecontrol.h
 
 SOURCES += \
@@ -44,7 +44,7 @@ SOURCES += \
     qgstreamervideorendererinterface.cpp \
     qgstreamervideowidget.cpp \
     qgstreamerserviceplugin.cpp \
-    qgstreameraudioinputdevicecontrol.cpp \
+    qgstreameraudioinputendpointselector.cpp \
     qgstreamervideoinputdevicecontrol.cpp
 
 contains(QT_CONFIG, multimedia) {

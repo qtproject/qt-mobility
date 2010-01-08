@@ -63,8 +63,8 @@ tst_qnetworksession.exe
 ::Location
 tst_qgeocoordinate.exe
 tst_qgeopositioninfo.exe
-tst_qsatelliteinfo.exe
-tst_qsatelliteinfosource.exe
+tst_qgeosatelliteinfo.exe
+tst_qgeosatelliteinfosource.exe
 tst_qgeopositioninfosource.exe
 tst_qgeoareamonitor.exe
 tst_qlocationutils.exe

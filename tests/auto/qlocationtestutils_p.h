@@ -103,6 +103,7 @@ public:
 
     static QString createRmcSentence(const QDateTime &dt);
     static QString createGgaSentence(const QTime &time);
+    static QString createGgaSentence(int lat, int lng, const QTime &time);
     static QString createZdaSentence(const QDateTime &dt);
 };
 
