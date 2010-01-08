@@ -73,7 +73,7 @@ private slots:
     void emailAddress();
     void family();
     void gender();
-    void geoLocation();
+    void geolocation();
     void guid();
     void name();
     void nickname();
@@ -244,10 +244,20 @@ void tst_QContactDetails::avatar()
     QCOMPARE(a1.subType(), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
     QCOMPARE(a1.value(QContactAvatar::FieldSubType), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
 
+    a1.setSubType(QContactAvatar::SubTypeImage);
+    
+    //pixmap
+    uchar pixDataRGB[] = {255, 0, 0, 0, 0, 255, 0, 0, 255, 255, 0, 0}; // Red, Blue, Red, Blue
+    QImage img(pixDataRGB, 2, 2, 6, QImage::Format_RGB888); // 2 pixels width, 2 pixels height, 6 bytes per line, RGB888 format
+    QImage scaled = img.scaled(100, 100); // Scale image to show results better
+    QPixmap pix = QPixmap::fromImage(scaled); // Create pixmap from image
+    //a1.setPixmap(pix); // XXX TODO: fixme after merge.
+
     // test property add
     QVERIFY(c.saveDetail(&a1));
     QCOMPARE(c.details(QContactAvatar::DefinitionName).count(), 1);
     QCOMPARE(QContactAvatar(c.details(QContactAvatar::DefinitionName).value(0)).avatar(), a1.avatar());
+    //QCOMPARE(a1.pixmap(), pix); // XXX TODO: fixme after merge.
 
     // test property update
     a1.setValue("label","label1");
@@ -416,60 +426,60 @@ void tst_QContactDetails::gender()
     QCOMPARE(c.details(QContactGender::DefinitionName).count(), 0);
 }
 
-void tst_QContactDetails::geoLocation()
+void tst_QContactDetails::geolocation()
 {
     QContact c;
-    QContactGeoLocation g1, g2;
+    QContactGeolocation g1, g2;
 
     // test property set
     g1.setLabel("1234");
     QCOMPARE(g1.label(), QString("1234"));
-    QCOMPARE(g1.value(QContactGeoLocation::FieldLabel), QString("1234"));
+    QCOMPARE(g1.value(QContactGeolocation::FieldLabel), QString("1234"));
     g1.setAccuracy(3.2);
     QCOMPARE(g1.accuracy(), 3.2);
-    QCOMPARE(g1.variantValue(QContactGeoLocation::FieldAccuracy), QVariant(3.2));
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldAccuracy), QVariant(3.2));
     g1.setAltitude(3.3);
     QCOMPARE(g1.altitude(), 3.3);
-    QCOMPARE(g1.variantValue(QContactGeoLocation::FieldAltitude), QVariant(3.3));
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldAltitude), QVariant(3.3));
     g1.setAltitudeAccuracy(3.4);
     QCOMPARE(g1.altitudeAccuracy(), 3.4);
-    QCOMPARE(g1.variantValue(QContactGeoLocation::FieldAltitudeAccuracy), QVariant(3.4));
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldAltitudeAccuracy), QVariant(3.4));
     g1.setHeading(3.5);
     QCOMPARE(g1.heading(), 3.5);
-    QCOMPARE(g1.variantValue(QContactGeoLocation::FieldHeading), QVariant(3.5));
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldHeading), QVariant(3.5));
     g1.setLatitude(3.6);
     QCOMPARE(g1.latitude(), 3.6);
-    QCOMPARE(g1.variantValue(QContactGeoLocation::FieldLatitude), QVariant(3.6));
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldLatitude), QVariant(3.6));
     g1.setLongitude(3.7);
     QCOMPARE(g1.longitude(), 3.7);
-    QCOMPARE(g1.variantValue(QContactGeoLocation::FieldLongitude), QVariant(3.7));
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldLongitude), QVariant(3.7));
     QDateTime current = QDateTime::currentDateTime();
     g1.setTimestamp(current);
     QCOMPARE(g1.timestamp(), current);
-    QCOMPARE(g1.variantValue(QContactGeoLocation::FieldTimestamp), QVariant(current));
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldTimestamp), QVariant(current));
     g1.setSpeed(3.8);
     QCOMPARE(g1.speed(), 3.8);
-    QCOMPARE(g1.variantValue(QContactGeoLocation::FieldSpeed), QVariant(3.8));
+    QCOMPARE(g1.variantValue(QContactGeolocation::FieldSpeed), QVariant(3.8));
 
     // test property add
     QVERIFY(c.saveDetail(&g1));
-    QCOMPARE(c.details(QContactGeoLocation::DefinitionName).count(), 1);
-    QCOMPARE(QContactGeoLocation(c.details(QContactGeoLocation::DefinitionName).value(0)).label(), g1.label());
+    QCOMPARE(c.details(QContactGeolocation::DefinitionName).count(), 1);
+    QCOMPARE(QContactGeolocation(c.details(QContactGeolocation::DefinitionName).value(0)).label(), g1.label());
 
     // test property update
     g1.setLabel("12345");
     QVERIFY(c.saveDetail(&g1));
-    QCOMPARE(c.details(QContactGeoLocation::DefinitionName).value(0).value(QContactGeoLocation::FieldLabel), QString("12345"));
+    QCOMPARE(c.details(QContactGeolocation::DefinitionName).value(0).value(QContactGeolocation::FieldLabel), QString("12345"));
 
     // test property remove
     QVERIFY(c.removeDetail(&g1));
-    QCOMPARE(c.details(QContactGeoLocation::DefinitionName).count(), 0);
+    QCOMPARE(c.details(QContactGeolocation::DefinitionName).count(), 0);
     QVERIFY(c.saveDetail(&g2));
-    QCOMPARE(c.details(QContactGeoLocation::DefinitionName).count(), 1);
+    QCOMPARE(c.details(QContactGeolocation::DefinitionName).count(), 1);
     QVERIFY(c.removeDetail(&g2));
-    QCOMPARE(c.details(QContactGeoLocation::DefinitionName).count(), 0);
+    QCOMPARE(c.details(QContactGeolocation::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&g2) == false);
-    QCOMPARE(c.details(QContactGeoLocation::DefinitionName).count(), 0);
+    QCOMPARE(c.details(QContactGeolocation::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::guid()
@@ -851,7 +861,7 @@ void tst_QContactDetails::type()
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
     QVERIFY(c.removeDetail(&t2)); // cannot remove type - "succeeds" but count remains unchanged
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&t2) == false);
+    QVERIFY(c.removeDetail(&t2)); // Should still succeed
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
 }
 

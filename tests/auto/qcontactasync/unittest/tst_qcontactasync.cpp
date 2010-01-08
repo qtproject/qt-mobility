@@ -98,7 +98,8 @@ private slots:
 private:
     bool containsIgnoringTimestamps(const QList<QContact>& list, const QContact& c);
     bool compareIgnoringTimestamps(const QContact& ca, const QContact& cb);
-    QContactManager* prepareModel(const QString& uri);
+    bool prepareModel(const QString &uri, QContactManager *&cm);
+    bool prepareModel(const QString &uri, QContactManager *&cm, QList<QContact> &contacts, QList<QContactRelationship> &relationships);
 
     Qt::HANDLE m_mainThreadId;
     Qt::HANDLE m_progressSlotThreadId;
@@ -180,11 +181,13 @@ bool tst_QContactAsync::compareIgnoringTimestamps(const QContact& ca, const QCon
 void tst_QContactAsync::testDestructor()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QVERIFY(prepareModel(uri, cm));
     QContactFetchRequest* req = new QContactFetchRequest;
     req->setManager(cm);
 
-    QContactManager* cm2 = prepareModel(uri);
+    QContactManager* cm2(0);
+    QVERIFY(prepareModel(uri, cm2));
     QContactFetchRequest* req2 = new QContactFetchRequest;
     req2->setManager(cm2);
 
@@ -200,7 +203,8 @@ void tst_QContactAsync::testDestructor()
 void tst_QContactAsync::contactFetch()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QVERIFY(prepareModel(uri, cm));
     QContactFetchRequest cfr;
     QVERIFY(cfr.type() == QContactAbstractRequest::ContactFetchRequest);
 
@@ -228,7 +232,7 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());  // already started.
     QVERIFY(cfr.waitForFinished());
@@ -253,7 +257,7 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());  // already started.
     QVERIFY(cfr.waitForFinished());
@@ -281,7 +285,7 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());  // already started.
     QVERIFY(cfr.waitForFinished());
@@ -307,7 +311,7 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());  // already started.
     QVERIFY(cfr.waitForFinished());
@@ -370,9 +374,10 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(cfr.cancel());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(cfr.isActive());    // still cancelling
     QVERIFY(!cfr.isFinished()); // not finished cancelling
     QVERIFY(!cfr.start());      // already started.
@@ -381,15 +386,16 @@ void tst_QContactAsync::contactFetch()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(cfr.isFinished());
     QVERIFY(!cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelled);
 
     // restart, and wait for progress after cancel.
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(cfr.cancel());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(cfr.isActive());    // still cancelling
     QVERIFY(!cfr.isFinished()); // not finished cancelling
     QVERIFY(!cfr.start());      // already started.
@@ -398,7 +404,7 @@ void tst_QContactAsync::contactFetch()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(cfr.isFinished());
     QVERIFY(!cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelled);
 
     delete cm;
 }
@@ -406,7 +412,8 @@ void tst_QContactAsync::contactFetch()
 void tst_QContactAsync::contactIdFetch()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QVERIFY(prepareModel(uri, cm));
     QContactLocalIdFetchRequest cfr;
     QVERIFY(cfr.type() == QContactAbstractRequest::ContactLocalIdFetchRequest);
 
@@ -434,7 +441,7 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());  // already started.
     QVERIFY(cfr.waitForFinished());
@@ -455,7 +462,7 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());  // already started.
     QVERIFY(cfr.waitForFinished());
@@ -479,7 +486,7 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(!cfr.start());  // already started.
     QVERIFY(cfr.waitForFinished());
@@ -499,9 +506,10 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(cfr.cancel());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(cfr.isActive());    // still cancelling
     QVERIFY(!cfr.isFinished()); // not finished cancelling
     QVERIFY(!cfr.start());      // already started.
@@ -510,15 +518,16 @@ void tst_QContactAsync::contactIdFetch()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(cfr.isFinished());
     QVERIFY(!cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelled);
 
     // restart, and wait for progress after cancel.
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY(cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!cfr.isFinished());
     QVERIFY(cfr.cancel());
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(cfr.isActive());    // still cancelling
     QVERIFY(!cfr.isFinished()); // not finished cancelling
     QVERIFY(!cfr.start());      // already started.
@@ -527,7 +536,7 @@ void tst_QContactAsync::contactIdFetch()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(cfr.isFinished());
     QVERIFY(!cfr.isActive());
-    QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(cfr.status() == QContactAbstractRequest::Cancelled);
 
     delete cm;
 }
@@ -535,7 +544,8 @@ void tst_QContactAsync::contactIdFetch()
 void tst_QContactAsync::contactRemove()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QVERIFY(prepareModel(uri, cm));
     QContactRemoveRequest crr;
     QVERIFY(crr.type() == QContactAbstractRequest::ContactRemoveRequest);
 
@@ -565,7 +575,7 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
     QVERIFY(crr.isActive());
-    QVERIFY(crr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
     QVERIFY(!crr.isFinished());
     QVERIFY(!crr.start());  // already started.
     QVERIFY(crr.waitForFinished());
@@ -584,7 +594,7 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
     QVERIFY(crr.isActive());
-    QVERIFY(crr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
     QVERIFY(!crr.isFinished());
     QVERIFY(!crr.start());  // already started.
     QVERIFY(crr.waitForFinished());
@@ -598,16 +608,17 @@ void tst_QContactAsync::contactRemove()
     // cancelling
     QContact temp;
     QContactName nameDetail;
-    nameDetail.setFirstName("Should not be removed");
+    nameDetail.setFirst("Should not be removed");
     temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
     crr.setFilter(dfil);
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
     QVERIFY(crr.isActive());
-    QVERIFY(crr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
     QVERIFY(!crr.isFinished());
     QVERIFY(crr.cancel());
+    QVERIFY(crr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(crr.isActive());    // still cancelling
     QVERIFY(!crr.isFinished()); // not finished cancelling
     QVERIFY(!crr.start());      // already started.
@@ -616,7 +627,7 @@ void tst_QContactAsync::contactRemove()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(crr.isFinished());
     QVERIFY(!crr.isActive());
-    QVERIFY(crr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(crr.status() == QContactAbstractRequest::Cancelled);
 
     QCOMPARE(cm->contacts().size(), 1);
     QCOMPARE(cm->contact(cm->contacts().first()), temp);
@@ -625,9 +636,10 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
     QVERIFY(crr.isActive());
-    QVERIFY(crr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(crr.status() == QContactAbstractRequest::Active);
     QVERIFY(!crr.isFinished());
     QVERIFY(crr.cancel());
+    QVERIFY(crr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(crr.isActive());    // still cancelling
     QVERIFY(!crr.isFinished()); // not finished cancelling
     QVERIFY(!crr.start());      // already started.
@@ -636,7 +648,7 @@ void tst_QContactAsync::contactRemove()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(crr.isFinished());
     QVERIFY(!crr.isActive());
-    QVERIFY(crr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(crr.status() == QContactAbstractRequest::Cancelled);
 
     QCOMPARE(cm->contacts().size(), 1);
     QCOMPARE(cm->contact(cm->contacts().first()), temp);
@@ -648,7 +660,8 @@ void tst_QContactAsync::contactRemove()
 void tst_QContactAsync::contactSave()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QVERIFY(prepareModel(uri, cm));
     QContactSaveRequest csr;
     QVERIFY(csr.type() == QContactAbstractRequest::ContactSaveRequest);
 
@@ -664,7 +677,7 @@ void tst_QContactAsync::contactSave()
     int originalCount = cm->contacts().size();
     QContact testContact;
     QContactName nameDetail;
-    nameDetail.setFirstName("Test Contact");
+    nameDetail.setFirst("Test Contact");
     testContact.saveDetail(&nameDetail);
     QList<QContact> saveList;
     saveList << testContact;
@@ -682,7 +695,7 @@ void tst_QContactAsync::contactSave()
     QVERIFY(!csr.cancel()); // not started
     QVERIFY(csr.start());
     QVERIFY(csr.isActive());
-    QVERIFY(csr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(csr.status() == QContactAbstractRequest::Active);
     QVERIFY(!csr.isFinished());
     QVERIFY(!csr.start());  // already started.
     QVERIFY(csr.waitForFinished());
@@ -709,7 +722,7 @@ void tst_QContactAsync::contactSave()
     QVERIFY(!csr.cancel()); // not started
     QVERIFY(csr.start());
     QVERIFY(csr.isActive());
-    QVERIFY(csr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(csr.status() == QContactAbstractRequest::Active);
     QVERIFY(!csr.isFinished());
     QVERIFY(!csr.start());  // already started.
     QVERIFY(csr.waitForFinished());
@@ -740,9 +753,10 @@ void tst_QContactAsync::contactSave()
     QVERIFY(!csr.cancel()); // not started
     QVERIFY(csr.start());
     QVERIFY(csr.isActive());
-    QVERIFY(csr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(csr.status() == QContactAbstractRequest::Active);
     QVERIFY(!csr.isFinished());
     QVERIFY(csr.cancel());
+    QVERIFY(csr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(csr.isActive());    // still cancelling
     QVERIFY(!csr.isFinished()); // not finished cancelling
     QVERIFY(!csr.start());      // already started.
@@ -751,7 +765,7 @@ void tst_QContactAsync::contactSave()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(csr.isFinished());
     QVERIFY(!csr.isActive());
-    QVERIFY(csr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(csr.status() == QContactAbstractRequest::Cancelled);
 
     // verify that the changes were not saved
     expected.clear();
@@ -766,9 +780,10 @@ void tst_QContactAsync::contactSave()
     QVERIFY(!csr.cancel()); // not started
     QVERIFY(csr.start());
     QVERIFY(csr.isActive());
-    QVERIFY(csr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(csr.status() == QContactAbstractRequest::Active);
     QVERIFY(!csr.isFinished());
     QVERIFY(csr.cancel());
+    QVERIFY(csr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(csr.isActive());    // still cancelling
     QVERIFY(!csr.isFinished()); // not finished cancelling
     QVERIFY(!csr.start());      // already started.
@@ -777,7 +792,7 @@ void tst_QContactAsync::contactSave()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(csr.isFinished());
     QVERIFY(!csr.isActive());
-    QVERIFY(csr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(csr.status() == QContactAbstractRequest::Cancelled);
 
     // verify that the changes were not saved
     expected.clear();
@@ -794,7 +809,8 @@ void tst_QContactAsync::contactSave()
 void tst_QContactAsync::definitionFetch()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QVERIFY(prepareModel(uri, cm));
     QContactDetailDefinitionFetchRequest dfr;
     QVERIFY(dfr.type() == QContactAbstractRequest::DetailDefinitionFetchRequest);
     dfr.setContactType(QContactType::TypeContact);
@@ -818,11 +834,11 @@ void tst_QContactAsync::definitionFetch()
     QVERIFY(!dfr.waitForProgress());
     qRegisterMetaType<QContactDetailDefinitionFetchRequest*>("QContactDetailDefinitionFetchRequest*");
     QSignalSpy spy(&dfr, SIGNAL(progress(QContactDetailDefinitionFetchRequest*, bool)));
-    dfr.setDefinitionNames(QStringList());
+    dfr.setNames(QStringList());
     QVERIFY(!dfr.cancel()); // not started
     QVERIFY(dfr.start());
     QVERIFY(dfr.isActive());
-    QVERIFY(dfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(dfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!dfr.isFinished());
     QVERIFY(!dfr.start());  // already started.
     QVERIFY(dfr.waitForFinished());
@@ -831,18 +847,18 @@ void tst_QContactAsync::definitionFetch()
     QVERIFY(dfr.isFinished());
     QVERIFY(!dfr.isActive());
 
-    QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitionMap();
-    QMap<QString, QContactDetailDefinition> result = dfr.definitionMap();
+    QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
+    QMap<QString, QContactDetailDefinition> result = dfr.definitions();
     QCOMPARE(defs, result);
 
     // specific definition retrieval
     QStringList specific;
     specific << QContactUrl::DefinitionName;
-    dfr.setDefinitionNames(specific);
+    dfr.setNames(specific);
     QVERIFY(!dfr.cancel()); // not started
     QVERIFY(dfr.start());
     QVERIFY(dfr.isActive());
-    QVERIFY(dfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(dfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!dfr.isFinished());
     QVERIFY(!dfr.start());  // already started.
     QVERIFY(dfr.waitForFinished());
@@ -853,17 +869,18 @@ void tst_QContactAsync::definitionFetch()
 
     defs.clear();
     defs.insert(QContactUrl::DefinitionName, cm->detailDefinition(QContactUrl::DefinitionName));
-    result = dfr.definitionMap();
+    result = dfr.definitions();
     QCOMPARE(defs, result);
 
     // cancelling
-    dfr.setDefinitionNames(QStringList());
+    dfr.setNames(QStringList());
     QVERIFY(!dfr.cancel()); // not started
     QVERIFY(dfr.start());
     QVERIFY(dfr.isActive());
-    QVERIFY(dfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(dfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!dfr.isFinished());
     QVERIFY(dfr.cancel());
+    QVERIFY(dfr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(dfr.isActive());    // still cancelling
     QVERIFY(!dfr.isFinished()); // not finished cancelling
     QVERIFY(!dfr.start());      // already started.
@@ -872,15 +889,16 @@ void tst_QContactAsync::definitionFetch()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(dfr.isFinished());
     QVERIFY(!dfr.isActive());
-    QVERIFY(dfr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(dfr.status() == QContactAbstractRequest::Cancelled);
 
     // restart, and wait for progress after cancel.
     QVERIFY(!dfr.cancel()); // not started
     QVERIFY(dfr.start());
     QVERIFY(dfr.isActive());
-    QVERIFY(dfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(dfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!dfr.isFinished());
-    QVERIFY(dfr.cancel());;
+    QVERIFY(dfr.cancel());
+    QVERIFY(dfr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(dfr.isActive());    // still cancelling
     QVERIFY(!dfr.isFinished()); // not finished cancelling
     QVERIFY(!dfr.start());      // already started.
@@ -889,7 +907,7 @@ void tst_QContactAsync::definitionFetch()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(dfr.isFinished());
     QVERIFY(!dfr.isActive());
-    QVERIFY(dfr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(dfr.status() == QContactAbstractRequest::Cancelled);
 
     delete cm;
 }
@@ -897,7 +915,8 @@ void tst_QContactAsync::definitionFetch()
 void tst_QContactAsync::definitionRemove()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QVERIFY(prepareModel(uri, cm));
     if (!cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact)) {
        QSKIP("This contact manager doest not support mutable definitions, can't remove a definition!", SkipSingle);
     }
@@ -915,10 +934,10 @@ void tst_QContactAsync::definitionRemove()
     QVERIFY(!drr.waitForProgress());
 
     // specific group removal
-    int originalCount = cm->detailDefinitionMap().keys().size();
+    int originalCount = cm->detailDefinitions().keys().size();
     QStringList removeIds;
-    removeIds << cm->detailDefinitionMap().keys().first();
-    drr.setDefinitionNames(removeIds);
+    removeIds << cm->detailDefinitions().keys().first();
+    drr.setNames(removeIds);
     drr.setManager(cm);
     QCOMPARE(drr.manager(), cm);
     QVERIFY(!drr.isActive());
@@ -928,11 +947,11 @@ void tst_QContactAsync::definitionRemove()
     QVERIFY(!drr.waitForProgress());
     qRegisterMetaType<QContactDetailDefinitionRemoveRequest*>("QContactDetailDefinitionRemoveRequest*");
     QSignalSpy spy(&drr, SIGNAL(progress(QContactDetailDefinitionRemoveRequest*)));
-    QVERIFY(drr.definitionNames() == removeIds);
+    QVERIFY(drr.names() == removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.isActive());
-    QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
     QVERIFY(!drr.isFinished());
     QVERIFY(!drr.start());  // already started.
     QVERIFY(drr.waitForFinished());
@@ -941,16 +960,16 @@ void tst_QContactAsync::definitionRemove()
     QVERIFY(drr.isFinished());
     QVERIFY(!drr.isActive());
 
-    QCOMPARE(cm->detailDefinitionMap().keys().size(), originalCount - 1);
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 1);
     cm->detailDefinition(removeIds.first()); // check that it has already been removed.
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent group - should fail.
-    drr.setDefinitionNames(removeIds);
+    drr.setNames(removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.isActive());
-    QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
     QVERIFY(!drr.isFinished());
     QVERIFY(!drr.start());  // already started.
     QVERIFY(drr.waitForFinished());
@@ -959,16 +978,16 @@ void tst_QContactAsync::definitionRemove()
     QVERIFY(drr.isFinished());
     QVERIFY(!drr.isActive());
 
-    QCOMPARE(cm->detailDefinitionMap().keys().size(), originalCount - 1); // hasn't changed
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 1); // hasn't changed
     QCOMPARE(drr.error(), QContactManager::DoesNotExistError);
 
     // remove with list containing one valid and one invalid id.
-    removeIds << cm->detailDefinitionMap().keys().first();
-    drr.setDefinitionNames(removeIds);
+    removeIds << cm->detailDefinitions().keys().first();
+    drr.setNames(removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.isActive());
-    QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
     QVERIFY(!drr.isFinished());
     QVERIFY(!drr.start());  // already started.
     QVERIFY(drr.waitForFinished());
@@ -977,17 +996,17 @@ void tst_QContactAsync::definitionRemove()
     QVERIFY(drr.isFinished());
     QVERIFY(!drr.isActive());
 
-    QCOMPARE(cm->detailDefinitionMap().keys().size(), originalCount - 2); // only one more has been removed
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // only one more has been removed
     QCOMPARE(drr.errors().first(), QContactManager::DoesNotExistError);
     QCOMPARE(drr.errors().at(1), QContactManager::NoError);
 
     // remove with empty list - nothing should happen.
     removeIds.clear();
-    drr.setDefinitionNames(removeIds);
+    drr.setNames(removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.isActive());
-    QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
     QVERIFY(!drr.isFinished());
     QVERIFY(!drr.start());  // already started.
     QVERIFY(drr.waitForFinished());
@@ -996,19 +1015,20 @@ void tst_QContactAsync::definitionRemove()
     QVERIFY(drr.isFinished());
     QVERIFY(!drr.isActive());
 
-    QCOMPARE(cm->detailDefinitionMap().keys().size(), originalCount - 2); // hasn't changed
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
     QCOMPARE(drr.error(), QContactManager::NoError);  // no error but no effect.
 
     // cancelling
     removeIds.clear();
-    removeIds << cm->detailDefinitionMap().keys().first();
-    drr.setDefinitionNames(removeIds);
+    removeIds << cm->detailDefinitions().keys().first();
+    drr.setNames(removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.isActive());
-    QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
     QVERIFY(!drr.isFinished());
     QVERIFY(drr.cancel());
+    QVERIFY(drr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(drr.isActive());    // still cancelling
     QVERIFY(!drr.isFinished()); // not finished cancelling
     QVERIFY(!drr.start());      // already started.
@@ -1017,17 +1037,18 @@ void tst_QContactAsync::definitionRemove()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(drr.isFinished());
     QVERIFY(!drr.isActive());
-    QVERIFY(drr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(drr.status() == QContactAbstractRequest::Cancelled);
 
-    QCOMPARE(cm->detailDefinitionMap().keys().size(), originalCount - 2); // hasn't changed
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
 
     // restart, and wait for progress after cancel.
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.isActive());
-    QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(drr.status() == QContactAbstractRequest::Active);
     QVERIFY(!drr.isFinished());
     QVERIFY(drr.cancel());
+    QVERIFY(drr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(drr.isActive());    // still cancelling
     QVERIFY(!drr.isFinished()); // not finished cancelling
     QVERIFY(!drr.start());      // already started.
@@ -1036,9 +1057,9 @@ void tst_QContactAsync::definitionRemove()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(drr.isFinished());
     QVERIFY(!drr.isActive());
-    QVERIFY(drr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(drr.status() == QContactAbstractRequest::Cancelled);
 
-    QCOMPARE(cm->detailDefinitionMap().keys().size(), originalCount - 2); // hasn't changed
+    QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
 
     delete cm;
 }
@@ -1046,7 +1067,8 @@ void tst_QContactAsync::definitionRemove()
 void tst_QContactAsync::definitionSave()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QVERIFY(prepareModel(uri, cm));
     
     if (!cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact)) {
        QSKIP("This contact manager doest not support mutable definitions, can't save a definition!", SkipSingle);
@@ -1066,7 +1088,7 @@ void tst_QContactAsync::definitionSave()
     QVERIFY(!dsr.waitForProgress());
 
     // save a new detail definition
-    int originalCount = cm->detailDefinitionMap().keys().size();
+    int originalCount = cm->detailDefinitions().keys().size();
     QContactDetailDefinition testDef;
     testDef.setName("TestDefinitionId");
     QMap<QString, QContactDetailDefinitionField> fields;
@@ -1090,7 +1112,7 @@ void tst_QContactAsync::definitionSave()
     QVERIFY(!dsr.cancel()); // not started
     QVERIFY(dsr.start());
     QVERIFY(dsr.isActive());
-    QVERIFY(dsr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(dsr.status() == QContactAbstractRequest::Active);
     QVERIFY(!dsr.isFinished());
     QVERIFY(!dsr.start());  // already started.
     QVERIFY(dsr.waitForFinished());
@@ -1104,7 +1126,7 @@ void tst_QContactAsync::definitionSave()
     QList<QContactDetailDefinition> result = dsr.definitions();
     QCOMPARE(expected, result);
     QVERIFY(expected.contains(testDef));
-    QCOMPARE(cm->detailDefinitionMap().values().size(), originalCount + 1);
+    QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
 
     // update a previously saved group
     fields.insert("TestDefinitionFieldTwo", f);
@@ -1116,7 +1138,7 @@ void tst_QContactAsync::definitionSave()
     QVERIFY(!dsr.cancel()); // not started
     QVERIFY(dsr.start());
     QVERIFY(dsr.isActive());
-    QVERIFY(dsr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(dsr.status() == QContactAbstractRequest::Active);
     QVERIFY(!dsr.isFinished());
     QVERIFY(!dsr.start());  // already started.
     QVERIFY(dsr.waitForFinished());
@@ -1130,7 +1152,7 @@ void tst_QContactAsync::definitionSave()
     result = dsr.definitions();
     QCOMPARE(expected, result);
     QVERIFY(expected.contains(testDef));
-    QCOMPARE(cm->detailDefinitionMap().values().size(), originalCount + 1);
+    QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
 
     // cancelling
     fields.insert("TestDefinitionFieldThree - shouldn't get saved", f);
@@ -1142,9 +1164,10 @@ void tst_QContactAsync::definitionSave()
     QVERIFY(!dsr.cancel()); // not started
     QVERIFY(dsr.start());
     QVERIFY(dsr.isActive());
-    QVERIFY(dsr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(dsr.status() == QContactAbstractRequest::Active);
     QVERIFY(!dsr.isFinished());
     QVERIFY(dsr.cancel());
+    QVERIFY(dsr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(dsr.isActive());    // still cancelling
     QVERIFY(!dsr.isFinished()); // not finished cancelling
     QVERIFY(!dsr.start());      // already started.
@@ -1153,20 +1176,21 @@ void tst_QContactAsync::definitionSave()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(dsr.isFinished());
     QVERIFY(!dsr.isActive());
-    QVERIFY(dsr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(dsr.status() == QContactAbstractRequest::Cancelled);
 
     // verify that the changes were not saved
-    QList<QContactDetailDefinition> allDefs = cm->detailDefinitionMap().values();
+    QList<QContactDetailDefinition> allDefs = cm->detailDefinitions().values();
     QVERIFY(!allDefs.contains(testDef));
-    QCOMPARE(cm->detailDefinitionMap().values().size(), originalCount + 1);
+    QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
 
     // restart, and wait for progress after cancel.
     QVERIFY(!dsr.cancel()); // not started
     QVERIFY(dsr.start());
     QVERIFY(dsr.isActive());
-    QVERIFY(dsr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(dsr.status() == QContactAbstractRequest::Active);
     QVERIFY(!dsr.isFinished());
     QVERIFY(dsr.cancel());
+    QVERIFY(dsr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(dsr.isActive());    // still cancelling
     QVERIFY(!dsr.isFinished()); // not finished cancelling
     QVERIFY(!dsr.start());      // already started.
@@ -1175,12 +1199,12 @@ void tst_QContactAsync::definitionSave()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(dsr.isFinished());
     QVERIFY(!dsr.isActive());
-    QVERIFY(dsr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(dsr.status() == QContactAbstractRequest::Cancelled);
 
     // verify that the changes were not saved
-    allDefs = cm->detailDefinitionMap().values();
+    allDefs = cm->detailDefinitions().values();
     QVERIFY(!allDefs.contains(testDef));
-    QCOMPARE(cm->detailDefinitionMap().values().size(), originalCount + 1);
+    QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
 
     delete cm;
 }
@@ -1188,17 +1212,57 @@ void tst_QContactAsync::definitionSave()
 void tst_QContactAsync::relationshipFetch()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QList<QContact> contacts;
+    QList<QContactRelationship> relationships;
+    QVERIFY(prepareModel(uri, cm, contacts, relationships));
     QContactRelationshipFetchRequest rfr;
     QVERIFY(rfr.type() == QContactAbstractRequest::RelationshipFetchRequest);
-
+    
     // initial state - not started, no manager.
     QVERIFY(!rfr.isActive());
     QVERIFY(!rfr.isFinished());
     QVERIFY(!rfr.start());
     QVERIFY(!rfr.cancel());
     QVERIFY(!rfr.waitForFinished());
-    QVERIFY(!rfr.waitForProgress());
+    QVERIFY(!rfr.waitForProgress());    
+    
+    if (!cm->hasFeature(QContactManager::Relationships))
+    {
+        // ensure manager returs errors
+        rfr.setManager(cm);
+        QCOMPARE(rfr.manager(), cm);
+        QVERIFY(!rfr.isActive());
+        QVERIFY(!rfr.isFinished());
+        QVERIFY(!rfr.cancel());
+        QVERIFY(!rfr.waitForFinished());
+        QVERIFY(!rfr.waitForProgress());
+        QVERIFY(!rfr.cancel()); // not started
+        QVERIFY(rfr.start());
+        QVERIFY(rfr.isActive());
+        QVERIFY(rfr.status() == QContactAbstractRequest::Active);
+        QVERIFY(!rfr.isFinished());
+        QVERIFY(!rfr.start());  // already started.
+        QVERIFY(rfr.waitForFinished());
+        QVERIFY(rfr.error() == QContactManager::NotSupportedError);
+        QVERIFY(rfr.isFinished());
+        QVERIFY(!rfr.isActive());
+        return;
+    }
+    
+    // use variables to make code more readable
+    QContactId aId = contacts.at(0).id();
+    QContactId bId = contacts.at(1).id();
+    QContactId cId = contacts.at(2).id();
+    QContactId dId = contacts.at(3).id();
+    QContactId eId = contacts.at(4).id();
+    QContactId fId = contacts.at(5).id();    
+    QContactRelationship adRel = relationships.at(0);
+    QContactRelationship aeRel = relationships.at(1);
+    QContactRelationship beRel = relationships.at(2);
+    QContactRelationship ceRel = relationships.at(3);
+    QContactRelationship cfRel = relationships.at(4);
+    QString relType = adRel.relationshipType();
 
     // "all relationships" retrieval
     rfr.setManager(cm);
@@ -1213,170 +1277,147 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rfr.isFinished());
     QVERIFY(!rfr.start());  // already started.
     QVERIFY(rfr.waitForFinished());
+    QVERIFY(rfr.error() == QContactManager::NoError);
     int expectedCount = 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
-
     QList<QContactRelationship> rels = cm->relationships();
     QList<QContactRelationship> result = rfr.relationships();
     QCOMPARE(rels, result);
-
+    
     // specific relationship type retrieval
-    rfr.setRelationshipType(QContactRelationship::HasManager);
+    rfr.setRelationshipType(relType);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rfr.isFinished());
     QVERIFY(!rfr.start());  // already started.
     QVERIFY(rfr.waitForFinished());
+    QVERIFY(rfr.error() == QContactManager::NoError);
     expectedCount += 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
-
-    rels = cm->relationships(QContactRelationship::HasManager);
+    rels = cm->relationships(relType);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
     // specific source contact retrieval
-    rfr.setRelationshipType(QString());
-    QList<QContactLocalId> contacts = cm->contacts();
-    QContactId aId;
-    foreach (const QContactLocalId& currId, contacts) {
-        QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Aaron")) {
-            aId = curr.id();
-            break;
-        }
-    }
     rfr.setFirst(aId);
+    rfr.setRelationshipType(QString());
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rfr.isFinished());
     QVERIFY(!rfr.start());  // already started.
     QVERIFY(rfr.waitForFinished());
+    QVERIFY(rfr.error() == QContactManager::NoError);
     expectedCount += 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
-
     rels = cm->relationships(aId, QContactRelationshipFilter::First);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
     // specific participant retrieval #1 - destination participant
     rfr.setFirst(QContactId());
-    contacts = cm->contacts();
-    QContactId bId;
-    foreach (const QContactLocalId& currId, contacts) {
-        QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Bob")) {
-            bId = curr.id();
-            break;
-        }
-    }
-    rfr.setParticipant(bId, QContactRelationshipFilter::Second);
+    rfr.setParticipant(eId, QContactRelationshipFilter::Second);
     QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Second);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rfr.isFinished());
     QVERIFY(!rfr.start());  // already started.
     QVERIFY(rfr.waitForFinished());
+    QVERIFY(rfr.error() == QContactManager::NoError);
     expectedCount += 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
-
-    // retrieve rels where second = id of B, and ensure that we get the same results
-    rels = cm->relationships(bId, QContactRelationshipFilter::Second);
+    rels = cm->relationships(eId, QContactRelationshipFilter::Second);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
     // specific participant retrieval #2 - source participant
     rfr.setFirst(QContactId());
-    contacts = cm->contacts();
-    QContactId cId;
-    foreach (const QContactLocalId& currId, contacts) {
-        QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Borris")) {
-            cId = curr.id();
-            break;
-        }
-    }
     rfr.setParticipant(cId, QContactRelationshipFilter::First);
     QVERIFY(rfr.participantRole() == QContactRelationshipFilter::First);
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rfr.isFinished());
     QVERIFY(!rfr.start());  // already started.
     QVERIFY(rfr.waitForFinished());
+    QVERIFY(rfr.error() == QContactManager::NoError);
     expectedCount += 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
-
-    // retrieve rels where first = id of C and compare the results
     rels = cm->relationships(cId, QContactRelationshipFilter::First);
     result = rfr.relationships();
     QCOMPARE(rels, result);
-
-    // specific participant retrieval #3 - either participant
-    rfr.setFirst(QContactId());
-    rfr.setParticipant(aId, QContactRelationshipFilter::Either);
-    QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Either);
-    QVERIFY(!rfr.cancel()); // not started
-    QVERIFY(rfr.start());
-    QVERIFY(rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(!rfr.isFinished());
-    QVERIFY(!rfr.start());  // already started.
-    QVERIFY(rfr.waitForFinished());
-    expectedCount += 2;
-    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
-    QVERIFY(rfr.isFinished());
-    QVERIFY(!rfr.isActive());
-
-    rels = cm->relationships(aId); // either role.
-    result = rfr.relationships();
-    QCOMPARE(rels, result);
+    
+    if (relationships.count() > 4)
+    {
+        // specific participant retrieval #3 - either participant
+        rfr.setFirst(QContactId());
+        rfr.setParticipant(aId, QContactRelationshipFilter::Either);
+        QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Either);
+        QVERIFY(!rfr.cancel()); // not started
+        QVERIFY(rfr.start());
+        QVERIFY(rfr.isActive());
+        QVERIFY(rfr.status() == QContactAbstractRequest::Active);
+        QVERIFY(!rfr.isFinished());
+        QVERIFY(!rfr.start());  // already started.
+        QVERIFY(rfr.waitForFinished());
+        QVERIFY(rfr.error() == QContactManager::NoError);
+        expectedCount += 2;
+        QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+        QVERIFY(rfr.isFinished());
+        QVERIFY(!rfr.isActive());
+        rels = cm->relationships(aId); // either role.
+        result = rfr.relationships();
+        QCOMPARE(rels, result);
+    }    
 
     // cancelling
     rfr.setRelationshipType(QString());
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rfr.isFinished());
     QVERIFY(rfr.cancel());
+    QVERIFY(rfr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(rfr.isActive());    // still cancelling
     QVERIFY(!rfr.isFinished()); // not finished cancelling
     QVERIFY(!rfr.start());      // already started.
     QVERIFY(rfr.waitForFinished());
+    QVERIFY(rfr.error() == QContactManager::NoError);
     expectedCount += 3;
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(rfr.status() == QContactAbstractRequest::Cancelled);
 
     // restart, and wait for progress after cancel.
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
     QVERIFY(rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rfr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rfr.isFinished());
     QVERIFY(rfr.cancel());
+    QVERIFY(rfr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(rfr.isActive());    // still cancelling
     QVERIFY(!rfr.isFinished()); // not finished cancelling
     QVERIFY(!rfr.start());      // already started.
@@ -1385,18 +1426,59 @@ void tst_QContactAsync::relationshipFetch()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(rfr.isFinished());
     QVERIFY(!rfr.isActive());
-    QVERIFY(rfr.state() == QContactAbstractRequest::CanceledState);
-
+    QVERIFY(rfr.status() == QContactAbstractRequest::Cancelled);
+    
     delete cm;
 }
 
 void tst_QContactAsync::relationshipRemove()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QList<QContact> contacts;
+    QList<QContactRelationship> relationships;
+    QVERIFY(prepareModel(uri, cm, contacts, relationships));
     QContactRelationshipRemoveRequest rrr;
     QVERIFY(rrr.type() == QContactAbstractRequest::RelationshipRemoveRequest);
+        
+    if (!cm->hasFeature(QContactManager::Relationships))
+    {
+        // ensure manager returns error
+        rrr.setFirst(contacts.at(0).id());
+        rrr.setManager(cm);
+        QCOMPARE(rrr.manager(), cm);
+        QVERIFY(!rrr.isActive());
+        QVERIFY(!rrr.isFinished());
+        QVERIFY(!rrr.cancel());
+        QVERIFY(!rrr.waitForFinished());
+        QVERIFY(!rrr.waitForProgress());
+        QVERIFY(!rrr.cancel()); // not started
+        QVERIFY(rrr.start());
+        QVERIFY(rrr.isActive());
+        QVERIFY(rrr.status() == QContactAbstractRequest::Active);
+        QVERIFY(!rrr.isFinished());
+        QVERIFY(!rrr.start());  // already started.
+        QVERIFY(rrr.waitForFinished());
+        QVERIFY(rrr.error() == QContactManager::NotSupportedError);
+        QVERIFY(rrr.isFinished());
+        QVERIFY(!rrr.isActive());
+        return;
+    }
 
+    // use variables to make code more readable
+    QContactId aId = contacts.at(0).id();
+    QContactId bId = contacts.at(1).id();
+    QContactId cId = contacts.at(2).id();
+    QContactId dId = contacts.at(3).id();
+    QContactId eId = contacts.at(4).id();
+    QContactId fId = contacts.at(5).id();    
+    QContactRelationship adRel = relationships.at(0);
+    QContactRelationship aeRel = relationships.at(1);
+    QContactRelationship beRel = relationships.at(2);
+    QContactRelationship ceRel = relationships.at(3);
+    QContactRelationship cfRel = relationships.at(4);
+    QString relType = adRel.relationshipType();
+    
     // initial state - not started, no manager.
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.isFinished());
@@ -1405,28 +1487,11 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
 
-    QList<QContactLocalId> contacts = cm->contacts();
-    QContactId aId, bId, cId;
-    foreach (const QContactLocalId& currId, contacts) {
-        QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Aaron")) {
-            aId = curr.id();
-            continue;
-        }
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Bob")) {
-            bId = curr.id();
-            continue;
-        }
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Borris")) {
-            cId = curr.id();
-            continue;
-        }
-    }
-
     // specific source, destination and type removal
-    rrr.setFirst(aId);
-    rrr.setSecond(cId);
-    rrr.setRelationshipType(QContactRelationship::HasAssistant);
+    int relationshipCount = cm->relationships().count();
+    rrr.setFirst(adRel.first());
+    rrr.setSecond(adRel.second());
+    rrr.setRelationshipType(adRel.relationshipType());
     rrr.setManager(cm);
     qRegisterMetaType<QContactRelationshipRemoveRequest*>("QContactRelationshipRemoveRequest*");
     QSignalSpy spy(&rrr, SIGNAL(progress(QContactRelationshipRemoveRequest*)));
@@ -1436,93 +1501,67 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasAssistant)));
+    QVERIFY(rrr.relationshipType() == adRel.relationshipType());
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rrr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rrr.isFinished());
     QVERIFY(!rrr.start());  // already started.
     QVERIFY(rrr.waitForFinished());
+    QVERIFY(rrr.error() == QContactManager::NoError);
     int expectedCount = 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
-    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, cId, QContactRelationshipFilter::Second).size(), 1);
-
-    // specific relationship type removal
-    rrr.setFirst(QContactId());
-    rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QContactRelationship::HasSpouse);
-    rrr.setManager(cm);
-    QCOMPARE(rrr.manager(), cm);
-    QVERIFY(!rrr.isActive());
-    QVERIFY(!rrr.cancel());
-    QVERIFY(!rrr.waitForFinished());
-    QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasSpouse)));
-    QVERIFY(!rrr.cancel()); // not started
-    QVERIFY(rrr.start());
-    QVERIFY(rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(!rrr.isFinished());
-    QVERIFY(!rrr.start());  // already started.
-    QVERIFY(rrr.waitForFinished());
-    expectedCount += 2;
-    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
-    QVERIFY(rrr.isFinished());
-    QVERIFY(!rrr.isActive());
-
-    QCOMPARE(cm->relationships(QContactRelationship::HasSpouse).size(), 0);
-    (void)(cm->relationships(QContactRelationship::HasSpouse)); // check that it has already been removed.
-    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
-
+    QCOMPARE(cm->relationships().count(), relationshipCount-1);
+    
     // remove (asynchronously) a nonexistent relationship - should fail.
-    rrr.setFirst(cId);
+    relationshipCount = cm->relationships().count();
+    rrr.setFirst(bId);
     rrr.setSecond(aId);
-    rrr.setRelationshipType(QContactRelationship::HasManager);
+    rrr.setRelationshipType(relType);
     rrr.setManager(cm);
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rrr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rrr.isFinished());
     QVERIFY(!rrr.start());  // already started.
     QVERIFY(rrr.waitForFinished());
+    QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
     expectedCount += 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
-
-    QCOMPARE(cm->relationships(QContactRelationship::HasManager, cId, QContactRelationshipFilter::First).size(), 0);
-    QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
-
+    QCOMPARE(cm->relationships().count(), relationshipCount);
+    
     // specific relationship type plus source removal
-    rrr.setFirst(bId);
+    rrr.setFirst(cId);
     rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QContactRelationship::HasAssistant);
+    rrr.setRelationshipType(relType);
     rrr.setManager(cm);
     QCOMPARE(rrr.manager(), cm);
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
     QVERIFY(!rrr.waitForProgress());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasAssistant)));
+    QVERIFY(rrr.relationshipType() == relType);
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rrr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rrr.isFinished());
     QVERIFY(!rrr.start());  // already started.
     QVERIFY(rrr.waitForFinished());
+    QVERIFY(rrr.error() == QContactManager::NoError);
     expectedCount += 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
-
-    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, bId, QContactRelationshipFilter::First).size(), 0);
+    QCOMPARE(cm->relationships(relType, cId, QContactRelationshipFilter::First).size(), 0);
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
-
+    
     // specific source removal
     rrr.setFirst(aId);
     rrr.setSecond(QContactId());
@@ -1537,46 +1576,49 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rrr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rrr.isFinished());
     QVERIFY(!rrr.start());  // already started.
     QVERIFY(rrr.waitForFinished());
+    QVERIFY(rrr.error() == QContactManager::NoError);
     expectedCount += 2;
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
-
-    QCOMPARE(cm->relationships(aId).size(), 0);
+    QCOMPARE(cm->relationships(aId, QContactRelationshipFilter::First).size(), 0);
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
-
+    
     // cancelling
-    rrr.setFirst(cId);
+    rrr.setFirst(bId);
     rrr.setSecond(QContactId());
+    rrr.setRelationshipType(QString());
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rrr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rrr.isFinished());
     QVERIFY(rrr.cancel());
+    QVERIFY(rrr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(rrr.isActive());    // still cancelling
     QVERIFY(!rrr.isFinished()); // not finished cancelling
     QVERIFY(!rrr.start());      // already started.
     QVERIFY(rrr.waitForFinished());
+    QVERIFY(rrr.error() == QContactManager::NoError);
     expectedCount += 3;
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::CanceledState);
-
-    QVERIFY(cm->relationships(cId).size() != 0); // didn't remove them.
-
+    QVERIFY(rrr.status() == QContactAbstractRequest::Cancelled);
+    QVERIFY(cm->relationships(bId).size() != 0); // didn't remove them.
+    
     // restart, and wait for progress after cancel.
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
     QVERIFY(rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rrr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rrr.isFinished());
     QVERIFY(rrr.cancel());
+    QVERIFY(rrr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(rrr.isActive());    // still cancelling
     QVERIFY(!rrr.isFinished()); // not finished cancelling
     QVERIFY(!rrr.start());      // already started.
@@ -1585,9 +1627,36 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(rrr.isFinished());
     QVERIFY(!rrr.isActive());
-    QVERIFY(rrr.state() == QContactAbstractRequest::CanceledState);
-
-    QVERIFY(cm->relationships(cId).size() != 0); // didn't remove them.
+    QVERIFY(rrr.status() == QContactAbstractRequest::Cancelled);
+    QVERIFY(cm->relationships(bId).size() != 0); // didn't remove them.
+    
+    // specific relationship type removal
+    rrr.setFirst(QContactId());
+    rrr.setSecond(QContactId());
+    rrr.setRelationshipType(relType);
+    rrr.setManager(cm);
+    QCOMPARE(rrr.manager(), cm);
+    QVERIFY(!rrr.isActive());
+    QVERIFY(!rrr.cancel());
+    QVERIFY(!rrr.waitForFinished());
+    QVERIFY(!rrr.waitForProgress());
+    QVERIFY(rrr.relationshipType() == relType);
+    QVERIFY(!rrr.cancel()); // not started
+    QVERIFY(rrr.start());
+    QVERIFY(rrr.isActive());
+    QVERIFY(rrr.status() == QContactAbstractRequest::Active);
+    QVERIFY(!rrr.isFinished());
+    QVERIFY(!rrr.start());  // already started.
+    QVERIFY(rrr.waitForFinished());
+    QVERIFY(rrr.error() == QContactManager::NoError);
+    expectedCount += 2;
+    QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
+    QVERIFY(rrr.isFinished());
+    QVERIFY(!rrr.isActive());
+    
+    QCOMPARE(cm->relationships(relType).size(), 0);
+    cm->relationships(relType); // check that it has already been removed.
+    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     delete cm;
 }
@@ -1595,9 +1664,57 @@ void tst_QContactAsync::relationshipRemove()
 void tst_QContactAsync::relationshipSave()
 {
     QFETCH(QString, uri);
-    QContactManager* cm = prepareModel(uri);
+    QContactManager* cm(0);
+    QList<QContact> contacts;
+    QList<QContactRelationship> relationships;
+    QVERIFY(prepareModel(uri, cm, contacts, relationships));
     QContactRelationshipSaveRequest rsr;
     QVERIFY(rsr.type() == QContactAbstractRequest::RelationshipSaveRequest);
+    
+    if (!cm->hasFeature(QContactManager::Relationships))
+    {
+        // ensure saving returns errors
+        QContactRelationship rel;
+        rel.setFirst(contacts.at(0).id());
+        rel.setSecond(contacts.at(1).id());
+        rel.setRelationshipType(QContactRelationship::HasManager);
+        QList<QContactRelationship> list;
+        list << rel;
+        rsr.setManager(cm);
+        QCOMPARE(rsr.manager(), cm);
+        QVERIFY(!rsr.isActive());
+        QVERIFY(!rsr.isFinished());
+        QVERIFY(!rsr.cancel());
+        QVERIFY(!rsr.waitForFinished());
+        QVERIFY(!rsr.waitForProgress());
+        rsr.setRelationships(list);
+        QCOMPARE(rsr.relationships(), list);
+        QVERIFY(!rsr.cancel()); // not started
+        QVERIFY(rsr.start());
+        QVERIFY(rsr.isActive());
+        QVERIFY(rsr.status() == QContactAbstractRequest::Active);
+        QVERIFY(!rsr.isFinished());
+        QVERIFY(!rsr.start());  // already started.
+        QVERIFY(rsr.waitForFinished());
+        QVERIFY(rsr.error() == QContactManager::NotSupportedError);
+        QVERIFY(rsr.isFinished());
+        QVERIFY(!rsr.isActive());
+        return;
+    }
+    
+    // use variables to make code more readable
+    QContactId aId = contacts.at(0).id();
+    QContactId bId = contacts.at(1).id();
+    QContactId cId = contacts.at(2).id();
+    QContactId dId = contacts.at(3).id();
+    QContactId eId = contacts.at(4).id();
+    QContactId fId = contacts.at(5).id();    
+    QContactRelationship adRel = relationships.at(0);
+    QContactRelationship aeRel = relationships.at(1);
+    QContactRelationship beRel = relationships.at(2);
+    QContactRelationship ceRel = relationships.at(3);
+    QContactRelationship cfRel = relationships.at(4);
+    QString relType = adRel.relationshipType();
 
     // initial state - not started, no manager.
     QVERIFY(!rsr.isActive());
@@ -1607,25 +1724,12 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.waitForFinished());
     QVERIFY(!rsr.waitForProgress());
 
-    QList<QContactLocalId> contacts = cm->contacts();
-    QContactId cId, aId, bId;
-    foreach (const QContactLocalId& currId, contacts) {
-        QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Borris")) {
-            cId = curr.id();
-        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Bob")) {
-            bId = curr.id();
-        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Aaron")) {
-            aId = curr.id();
-        }
-    }
-
     // save a new relationship
-    int originalCount = cm->relationships(aId).size();
+    int originalCount = cm->relationships(bId).size();
     QContactRelationship testRel;
-    testRel.setFirst(aId);
-    testRel.setRelationshipType(QContactRelationship::HasSpouse);
-    testRel.setSecond(bId);
+    testRel.setFirst(bId);
+    testRel.setSecond(dId);
+    testRel.setRelationshipType(relType);
     QList<QContactRelationship> saveList;
     saveList << testRel;
     rsr.setManager(cm);
@@ -1642,7 +1746,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.cancel()); // not started
     QVERIFY(rsr.start());
     QVERIFY(rsr.isActive());
-    QVERIFY(rsr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rsr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rsr.isFinished());
     QVERIFY(!rsr.start());  // already started.
     QVERIFY(rsr.waitForFinished());
@@ -1650,15 +1754,14 @@ void tst_QContactAsync::relationshipSave()
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rsr.isFinished());
     QVERIFY(!rsr.isActive());
-
-    QList<QContactRelationship> expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationshipFilter::First);
     QList<QContactRelationship> result = rsr.relationships();
-    QCOMPARE(expected, result);
     QVERIFY(result.contains(testRel));
-    QCOMPARE(cm->relationships(aId).size(), originalCount + 1); // should be one extra
+    QList<QContactRelationship> bRelationships = cm->relationships(relType, bId, QContactRelationshipFilter::First);
+    QVERIFY(bRelationships.contains(testRel));
+    QCOMPARE(cm->relationships(bId).size(), originalCount + 1); // should be one extra
 
     // save a new relationship
-    testRel.setSecond(cId);
+    testRel.setSecond(fId);
     saveList.clear();
     saveList << testRel;
     rsr.setRelationships(saveList);
@@ -1666,7 +1769,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.cancel()); // not started
     QVERIFY(rsr.start());
     QVERIFY(rsr.isActive());
-    QVERIFY(rsr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rsr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rsr.isFinished());
     QVERIFY(!rsr.start());  // already started.
     QVERIFY(rsr.waitForFinished());
@@ -1674,16 +1777,15 @@ void tst_QContactAsync::relationshipSave()
     QCOMPARE(spy.count(), expectedCount); // active + finished progress signals.
     QVERIFY(rsr.isFinished());
     QVERIFY(!rsr.isActive());
-
-    expected.clear();
-    expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationshipFilter::First);
+    bRelationships.clear();
+    bRelationships = cm->relationships(relType, bId, QContactRelationshipFilter::First);
     result = rsr.relationships();
     QCOMPARE(result, QList<QContactRelationship>() << testRel);
-    QVERIFY(expected.contains(testRel));
-    QCOMPARE(cm->relationships(aId).size(), originalCount + 2); // should now be two extra
+    QVERIFY(bRelationships.contains(testRel));
+    QCOMPARE(cm->relationships(bId).size(), originalCount + 2); // should now be two extra
 
     // cancelling
-    testRel.setSecond(aId); // shouldn't get saved (circular anyway)
+    testRel.setSecond(bId); // shouldn't get saved (circular anyway)
     saveList.clear();
     saveList << testRel;
     rsr.setRelationships(saveList);
@@ -1691,9 +1793,10 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.cancel()); // not started
     QVERIFY(rsr.start());
     QVERIFY(rsr.isActive());
-    QVERIFY(rsr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rsr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rsr.isFinished());
     QVERIFY(rsr.cancel());
+    QVERIFY(rsr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(rsr.isActive());    // still cancelling
     QVERIFY(!rsr.isFinished()); // not finished cancelling
     QVERIFY(!rsr.start());      // already started.
@@ -1702,20 +1805,21 @@ void tst_QContactAsync::relationshipSave()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(rsr.isFinished());
     QVERIFY(!rsr.isActive());
-    QVERIFY(rsr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(rsr.status() == QContactAbstractRequest::Cancelled);
 
     // verify that the changes were not saved
-    QList<QContactRelationship> aRels = cm->relationships(aId, QContactRelationshipFilter::First);
+    QList<QContactRelationship> aRels = cm->relationships(bId, QContactRelationshipFilter::First);
     QVERIFY(!aRels.contains(testRel));
-    QCOMPARE(cm->relationships(aId).size(), originalCount + 2); // should still only be two extra
+    QCOMPARE(cm->relationships(bId).size(), originalCount + 2); // should still only be two extra
 
     // restart, and wait for progress after cancel.
     QVERIFY(!rsr.cancel()); // not started
     QVERIFY(rsr.start());
     QVERIFY(rsr.isActive());
-    QVERIFY(rsr.state() == QContactAbstractRequest::ActiveState);
+    QVERIFY(rsr.status() == QContactAbstractRequest::Active);
     QVERIFY(!rsr.isFinished());
     QVERIFY(rsr.cancel());
+    QVERIFY(rsr.status() == QContactAbstractRequest::Cancelling);
     QVERIFY(rsr.isActive());    // still cancelling
     QVERIFY(!rsr.isFinished()); // not finished cancelling
     QVERIFY(!rsr.start());      // already started.
@@ -1724,12 +1828,12 @@ void tst_QContactAsync::relationshipSave()
     QCOMPARE(spy.count(), expectedCount); // active + cancelling + cancelled progress signals.
     QVERIFY(rsr.isFinished());
     QVERIFY(!rsr.isActive());
-    QVERIFY(rsr.state() == QContactAbstractRequest::CanceledState);
+    QVERIFY(rsr.status() == QContactAbstractRequest::Cancelled);
 
     // verify that the changes were not saved
-    aRels = cm->relationships(aId);
+    aRels = cm->relationships(bId);
     QVERIFY(!aRels.contains(testRel));
-    QCOMPARE(cm->relationships(aId).size(), originalCount + 2); // should still only be two extra
+    QCOMPARE(cm->relationships(bId).size(), originalCount + 2); // should still only be two extra
 
     delete cm;
 }
@@ -1812,7 +1916,7 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(csr.cancel());
 
     QContactDetailDefinitionFetchRequest dfr;
-    dfr.setDefinitionNames(emptyDNList);
+    dfr.setNames(emptyDNList);
     dfr.setManager(&mcm);
     QVERIFY(dfr.start());
     QVERIFY(dfr.cancel());
@@ -1836,7 +1940,7 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(dsr.cancel());
 
     QContactDetailDefinitionRemoveRequest drr;
-    drr.setDefinitionNames(emptyDNList);
+    drr.setNames(emptyDNList);
     drr.setManager(&mcm);
     QVERIFY(drr.start());
     QVERIFY(drr.cancel());
@@ -1851,7 +1955,8 @@ void tst_QContactAsync::maliciousManager()
 void tst_QContactAsync::threadDelivery()
 {
     QFETCH(QString, uri);
-    QContactManager *cm = prepareModel(uri);
+    QContactManager *cm(0);
+    QVERIFY(prepareModel(uri, cm));
     m_mainThreadId = cm->thread()->currentThreadId();
     m_progressSlotThreadId = m_mainThreadId;
 
@@ -1862,7 +1967,7 @@ void tst_QContactAsync::threadDelivery()
     req->start();
 
     int totalWaitTime = 0;
-    while (req->state() != QContactAbstractRequest::FinishedState) {
+    while (req->status() != QContactAbstractRequest::Finished) {
         // ensure that the progress signal was delivered to the main thread.
         QCOMPARE(m_mainThreadId, m_progressSlotThreadId);
 
@@ -1911,77 +2016,149 @@ void tst_QContactAsync::addManagers()
     }
 }
 
-QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
+bool tst_QContactAsync::prepareModel(const QString &managerUri, QContactManager *&cm)
 {
-    QContactManager* cm = QContactManager::fromUri(managerUri);
+    QList<QContact> contacts;
+    QList<QContactRelationship> relationships;
+    return prepareModel(managerUri, cm, contacts, relationships);
+}
+
+bool tst_QContactAsync::prepareModel(const QString &managerUri, QContactManager *&cm, QList<QContact> &contacts, QList<QContactRelationship> &relationships)
+{
+    cm = QContactManager::fromUri(managerUri);
 
     // XXX TODO: ensure that this is the case:
     // there should be no contacts in the database.
     QList<QContactLocalId> toRemove = cm->contacts();
-    foreach (const QContactLocalId& removeId, toRemove)
-        cm->removeContact(removeId);
+    foreach (const QContactLocalId& removeId, toRemove) {
+        if (!cm->removeContact(removeId))
+            return false;
+    }
 
-    QContact a, b, c;
-    QContactName aNameDetail;
-    aNameDetail.setFirstName("Aaron");
-    aNameDetail.setLastName("Aaronson");
-    a.saveDetail(&aNameDetail);
-    QContactName bNameDetail;
-    bNameDetail.setFirstName("Bob");
-    bNameDetail.setLastName("Aaronsen");
-    b.saveDetail(&bNameDetail);
-    QContactName cNameDetail;
-    cNameDetail.setFirstName("Borris");
-    cNameDetail.setLastName("Aaronsun");
-    c.saveDetail(&cNameDetail);
-
-    QContactPhoneNumber phn;
-    phn.setNumber("0123");
-    c.saveDetail(&phn);
-    phn.setNumber("3456");
-    b.saveDetail(&phn);
-    phn.setNumber("6789");
-    a.saveDetail(&phn);
+    QContact a, b, c, d, e, f;
+    QContactPhoneNumber n;
+    n.setNumber("1");
+    a.saveDetail(&n);
+    n.setNumber("2");
+    b.saveDetail(&n);
+    n.setNumber("3");
+    c.saveDetail(&n);
+    n.setNumber("4");
+    d.saveDetail(&n);
+    n.setNumber("5");
+    e.saveDetail(&n);
+    n.setNumber("6");
+    f.saveDetail(&n);    
 
     QContactUrl url;
     url.setUrl("http://test.nokia.com");
     a.saveDetail(&url);
+    
+    a.setType(QContactType::TypeGroup);
+    b.setType(QContactType::TypeGroup);
+    c.setType(QContactType::TypeGroup);
 
-    cm->saveContact(&a);
-    cm->saveContact(&b);
-    cm->saveContact(&c);
+    if (!cm->saveContact(&a)) 
+        return false;
+    if (!cm->saveContact(&b)) 
+        return false;
+    if (!cm->saveContact(&c)) 
+        return false;
+    if (!cm->saveContact(&d)) 
+        return false;
+    if (!cm->saveContact(&e)) 
+        return false;
+    if (!cm->saveContact(&f)) 
+        return false;
+    
+    contacts.append(a);
+    contacts.append(b);
+    contacts.append(c);
+    contacts.append(d);
+    contacts.append(e);
+    contacts.append(f);
+    
+    if (cm->hasFeature(QContactManager::Relationships))
+    {
+        QStringList supportedRelationshipTypes = cm->supportedRelationshipTypes();
 
-    QContactRelationship arb;
-    arb.setFirst(a.id());
-    arb.setSecond(b.id());
-    arb.setRelationshipType(QContactRelationship::HasManager);
-    cm->saveRelationship(&arb);
+        if (cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
+            supportedRelationshipTypes.insert(0, "some-arbitrary-relationship");
+            if (!supportedRelationshipTypes.contains(QContactRelationship::HasManager))
+                supportedRelationshipTypes.append(QContactRelationship::HasManager);
+            if (!supportedRelationshipTypes.contains(QContactRelationship::HasAssistant))
+                supportedRelationshipTypes.append(QContactRelationship::HasAssistant);
+            if (!supportedRelationshipTypes.contains(QContactRelationship::HasSpouse))
+                supportedRelationshipTypes.append(QContactRelationship::HasSpouse);
+        }
+                    
+        if (supportedRelationshipTypes.count() == 0)
+            return false; // should not happen
+                
+        QContactRelationship adRel;
+        adRel.setFirst(a.id());
+        adRel.setSecond(d.id());
+        adRel.setRelationshipType(supportedRelationshipTypes.at(0));
+        if (!cm->saveRelationship(&adRel))
+            return false;
+        relationships.append(adRel);
+        
+        QContactRelationship aeRel;
+        aeRel.setFirst(a.id());
+        aeRel.setSecond(e.id());
+        aeRel.setRelationshipType(supportedRelationshipTypes.at(0));
+        if (!cm->saveRelationship(&aeRel))
+            return false;
+        relationships.append(aeRel);
+        
+        QContactRelationship beRel;
+        beRel.setFirst(b.id());
+        beRel.setSecond(e.id());
+        beRel.setRelationshipType(supportedRelationshipTypes.at(0));
+        if (!cm->saveRelationship(&beRel))
+            return false; 
+        relationships.append(beRel);
+        
+        QContactRelationship ceRel;
+        ceRel.setFirst(c.id());
+        ceRel.setSecond(e.id());
+        ceRel.setRelationshipType(supportedRelationshipTypes.at(0));
+        if (!cm->saveRelationship(&ceRel))
+            return false;
+        relationships.append(ceRel);
+       
+        QContactRelationship cfRel;
+        cfRel.setFirst(c.id());
+        cfRel.setSecond(f.id());
+        cfRel.setRelationshipType(supportedRelationshipTypes.at(0));
+        if (!cm->saveRelationship(&cfRel))
+            return false;
+        relationships.append(cfRel);
+        
+        if (supportedRelationshipTypes.count() > 1)
+        {
+            QContactRelationship daRel;
+            daRel.setFirst(d.id());
+            daRel.setSecond(a.id());
+            daRel.setRelationshipType(supportedRelationshipTypes.at(1));
+            if (!cm->saveRelationship(&daRel)) 
+                return false;
+            relationships.append(daRel);
+        }
+        
+        if (supportedRelationshipTypes.count() > 2)
+        {
+            QContactRelationship adRel2;
+            adRel2.setFirst(a.id());
+            adRel2.setSecond(d.id());
+            adRel2.setRelationshipType(supportedRelationshipTypes.at(2));
+            if (!cm->saveRelationship(&adRel2)) 
+                return false;
+            relationships.append(adRel2);
+        }
+    }
 
-    QContactRelationship brc;
-    brc.setFirst(b.id());
-    brc.setSecond(c.id());
-    brc.setRelationshipType(QContactRelationship::HasAssistant);
-    cm->saveRelationship(&brc);
-
-    QContactRelationship cra;
-    cra.setFirst(c.id());
-    cra.setSecond(a.id());
-    cra.setRelationshipType(QContactRelationship::HasSpouse);
-    cm->saveRelationship(&cra);
-
-    QContactRelationship arc;
-    arc.setFirst(a.id());
-    arc.setSecond(c.id());
-    arc.setRelationshipType(QContactRelationship::HasAssistant);
-    cm->saveRelationship(&arc);
-
-    QContactRelationship crb;
-    crb.setFirst(c.id());
-    crb.setSecond(b.id());
-    crb.setRelationshipType(QContactRelationship::Is);
-    cm->saveRelationship(&crb);
-
-    return cm;
+    return true;
 
     // TODO: cleanup once test is complete
 }

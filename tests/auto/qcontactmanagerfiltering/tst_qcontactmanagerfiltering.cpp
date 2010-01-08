@@ -340,7 +340,7 @@ void tst_QContactManagerFiltering::detailStringFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->isFilterSupported(df) == false);
+        QVERIFY(cm->filterSupported(df) == false);
     }
 
     ids = cm->contacts(df);
@@ -608,7 +608,7 @@ void tst_QContactManagerFiltering::detailVariantFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->isFilterSupported(df) == false);
+        QVERIFY(cm->filterSupported(df) == false);
     }
 
     ids = cm->contacts(df);
@@ -791,7 +791,7 @@ void tst_QContactManagerFiltering::rangeFiltering()
 
     if (cm->managerName() == "memory") {
         /* At this point, since we're using memory, assume the filter isn't really supported */
-        QVERIFY(cm->isFilterSupported(drf) == false);
+        QVERIFY(cm->filterSupported(drf) == false);
     }
     ids = cm->contacts(drf);
 
@@ -2381,7 +2381,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
     QString definitionName, fieldName;
 
     // step one: search for an existing definition with a field of the specified type
-    QMap<QString, QContactDetailDefinition> allDefs = cm->detailDefinitionMap();
+    QMap<QString, QContactDetailDefinition> allDefs = cm->detailDefinitions();
     QStringList defNames = allDefs.keys();
     bool found = false;
     bool isNativelyFilterable = false;
@@ -2413,7 +2413,7 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
                 // step two: check to see whether the definition/field is natively filterable
                 QContactDetailFilter filter;
                 filter.setDetailDefinitionName(definitionName, fieldName);
-                bool isNativelyFilterable = cm->isFilterSupported(filter);
+                bool isNativelyFilterable = cm->filterSupported(filter);
 
                 if (isNativelyFilterable) {
                     // we've found the optimal definition + field for our test.
@@ -2895,12 +2895,12 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
-            qDebug() << "A contact had extra detail:" << d.definitionName() << d.variantValueMap();
+            qDebug() << "A contact had extra detail:" << d.definitionName() << d.values();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
-            qDebug() << "B contact had extra detail:" << d.definitionName() << d.variantValueMap();
+            qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
     }
 
     QCOMPARE(b, a);
@@ -2949,11 +2949,11 @@ bool tst_QContactManagerFiltering::isSuperset(const QContact& ca, const QContact
 void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizedDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizeDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        qDebug() << "    Vals:" << d.variantValueMap();
+        qDebug() << "    Vals:" << d.values();
     }
 }
 

@@ -69,6 +69,7 @@ private slots:
     void contexts();
     void values();
     void preferredActions();
+    void traits();
 };
 
 tst_QContactDetail::tst_QContactDetail()
@@ -305,7 +306,7 @@ void tst_QContactDetail::values()
 {
     QContactDetail p;
 
-    QCOMPARE(p.variantValueMap(), QVariantMap());
+    QCOMPARE(p.values(), QVariantMap());
 
     QDateTime dt = QDateTime::currentDateTime();
     QTime t = dt.time();
@@ -392,13 +393,13 @@ void tst_QContactDetail::values()
 
     /* Now set everything again */
     QVariantMap emptyValues;
-    QVariantMap values = p.variantValueMap();
+    QVariantMap values = p.values();
     QStringList keys = values.keys();
     foreach (const QString& key, keys)
         QVERIFY(p.setValue(key, QVariant()));
 
-    QCOMPARE(p.variantValueMap(), emptyValues);
-    QVERIFY(p.variantValueMap().count() == 0);
+    QCOMPARE(p.values(), emptyValues);
+    QVERIFY(p.values().count() == 0);
     QVERIFY(!p.hasValue("string"));
     QVERIFY(!p.hasValue("date"));
     QVERIFY(!p.hasValue("datetime"));
@@ -482,11 +483,11 @@ void tst_QContactDetail::values()
     QCOMPARE(p.value<QDateTime>("stringdate"), ddt);
 
     /* Reset again */
-    values = p.variantValueMap();
+    values = p.values();
     keys = values.keys();
     foreach (const QString& key, keys)
         QVERIFY(p.setValue(key, QVariant()));
-    QCOMPARE(p.variantValueMap(), emptyValues);
+    QCOMPARE(p.values(), emptyValues);
 
     /* Check that we can add a null variant */
     //QVERIFY(p.setValue("nullvariant", QVariant()));
@@ -494,38 +495,38 @@ void tst_QContactDetail::values()
     //QCOMPARE(p.value("nullvariant"), QString());
     //QCOMPARE(p.variantValue("nullvariant"), QVariant());
     //QVERIFY(p.removeValue("nullvariant"));
-    //QVERIFY(p.variantValueMap().count() == 0);
+    //QVERIFY(p.values().count() == 0);
 
     /* Check that adding a value, then setting it to null updates it */
     //QVERIFY(p.setValue("string", QString("string value")));
-    //QCOMPARE(p.variantValueMap().count(), 1);
+    //QCOMPARE(p.values().count(), 1);
     //QCOMPARE(p.value("string"), QString("string value"));
     //QVERIFY(p.setValue("string", QVariant()));
-    //QCOMPARE(p.variantValueMap().count(), 1);
+    //QCOMPARE(p.values().count(), 1);
     //QVERIFY(p.hasValue("string"));
     //QVERIFY(p.removeValue("string"));
-    //QCOMPARE(p.variantValueMap().count(), 0);
+    //QCOMPARE(p.values().count(), 0);
 
     /* See if adding a null QString triggers the same behaviour */
     //QVERIFY(p.setValue("string", QString("string value")));
-    //QCOMPARE(p.variantValueMap().count(), 1);
+    //QCOMPARE(p.values().count(), 1);
     //QCOMPARE(p.value("string"), QString("string value"));
     //QVERIFY(p.setValue("string", QString()));
-    //QCOMPARE(p.variantValueMap().count(), 1);
+    //QCOMPARE(p.values().count(), 1);
     //QVERIFY(p.hasValue("string"));
     //QVERIFY(p.removeValue("string"));
-    //QCOMPARE(p.variantValueMap().count(), 0);
+    //QCOMPARE(p.values().count(), 0);
 
     /* Check adding a null value removes the field */
     p.setValue("string", "stringvalue");
-    QVERIFY(p.variantValueMap().contains("string"));
+    QVERIFY(p.values().contains("string"));
     QVERIFY(p.value("string") == QString("stringvalue"));
     p.setValue("string", QVariant());
-    QVERIFY(!p.variantValueMap().contains("string"));
+    QVERIFY(!p.values().contains("string"));
 
     /* Check adding a field whose value is an empty string */
     p.setValue("string", "");
-    QVERIFY(p.variantValueMap().contains("string"));
+    QVERIFY(p.values().contains("string"));
     QVERIFY(p.value("string") == QString(""));
 
     /* Check accessing a missing value */
@@ -558,6 +559,17 @@ void tst_QContactDetail::preferredActions()
     QVERIFY(det.preferredActions() == prefs);
 }
 
+void tst_QContactDetail::traits()
+{
+    // QContactDetail has a vtable and a dpointer, so we can't really make claims about the size
+    // QCOMPARE(sizeof(QContactDetail), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactDetail)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(ti.isLarge); // virtual table + d pointer
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
 
 QTEST_MAIN(tst_QContactDetail)
 #include "tst_qcontactdetail.moc"
