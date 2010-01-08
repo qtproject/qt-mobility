@@ -66,7 +66,7 @@ protected:
      * This function is called on every QVersitProperty encountered during an import.  Supply this
      * function and set *ok to true to implement custom import behaviour.
      */
-    virtual QContactDetail processProperty(const QVersitProperty& property, bool* ok);
+    virtual QContactDetail processProperty(const QVersitProperty& property, bool* ok) = 0;
 
     /*!
      * Converts \a property into a QContactDetail.
@@ -103,7 +103,7 @@ protected:
      * }
      *
      */
-    virtual QContactDetail processUnknownProperty(const QVersitProperty& property, bool* ok);
+    virtual QContactDetail processUnknownProperty(const QVersitProperty& property, bool* ok) = 0;
 };
 
 class Q_VERSIT_EXPORT QVersitContactImporter
@@ -115,7 +115,7 @@ public:
     QList<QContact> importContacts(const QList<QVersitDocument>& versitDocuments);
 
     void setPropertyImporter(QVersitContactPropertyImporter* importer);
-    QVersitContactPropertyImporter* propertyImporter();
+    QVersitContactPropertyImporter* propertyImporter() const;
     
 private:
     QVersitContactImporterPrivate* d;

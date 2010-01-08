@@ -64,7 +64,7 @@ public:
         UnspecifiedError,
         IOError,
         OutOfMemoryError,
-        ReadInProgressError,
+        NotReadyError,
         ParseError,
         InvalidCharsetError,
         BadDeviceError

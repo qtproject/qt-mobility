@@ -65,7 +65,7 @@ protected:
      * This function is called on every QContactDetail encountered during an export.  Supply this
      * function and set *ok to true to implement custom export behaviour.
      */
-    virtual QVersitProperty processDetail(const QContactDetail& detail, bool* ok);
+    virtual QVersitProperty processDetail(const QContactDetail& detail, bool* ok) = 0;
      
     /*!
      * Converts \a detail into a QVersitProperty.
@@ -92,7 +92,7 @@ protected:
      * }
      *
      */
-    virtual QVersitProperty processUnknownDetail(const QContactDetail& detail, bool* ok);
+    virtual QVersitProperty processUnknownDetail(const QContactDetail& detail, bool* ok) = 0;
 };
 
 class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
@@ -108,7 +108,7 @@ public:
         QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
 
     void setDetailExporter(QVersitContactDetailExporter* exporter);
-    QVersitContactDetailExporter* detailExporter();
+    QVersitContactDetailExporter* detailExporter() const;
 
 private:
     QVersitContactExporterPrivate* d;    
