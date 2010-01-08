@@ -119,6 +119,7 @@ private:
     QDate m_currentDate;
     QTimer *m_requestTimer;
     bool m_noUpdateLastInterval;
+    bool m_updateTimeoutSent;
     bool m_connectedReadyRead;
 };
 

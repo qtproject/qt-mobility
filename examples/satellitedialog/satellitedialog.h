@@ -44,7 +44,6 @@
 
 #include <QObject>
 #include <QDialog>
-#include <QTimer>
 
 #include <qmobilityglobal.h>
 
@@ -57,6 +56,7 @@ QTM_END_NAMESPACE
 
 class SatelliteWidget;
 class QPushButton;
+class QTimer;
 
 QTM_USE_NAMESPACE
 
@@ -97,12 +97,12 @@ public:
     StrengthScaling strengthScaling() const;
     void setStrengthScaling(StrengthScaling scaling);
 
-public slots:
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &list);
+private slots:
     void positionUpdated(const QGeoPositionInfo &pos);
 
-private slots:
+    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list);
+    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &list);
+
     void switchButtonClicked();
     void noSatelliteTimeout();
 #if defined(Q_OS_SYMBIAN)
@@ -113,6 +113,7 @@ private slots:
 private:
     int m_noSatelliteTimeoutSeconds;
     ExitBehaviour m_exitBehaviour;
+
     QTimer *noSatelliteTimer;
 
     SatelliteWidget *satelliteWidget;

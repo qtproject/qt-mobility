@@ -106,6 +106,12 @@ QString QLocationTestUtils::createGgaSentence(const QTime &time)
     return addNmeaChecksumAndBreaks(nmea);
 }
 
+QString QLocationTestUtils::createGgaSentence(int lat, int lng, const QTime &time) {
+    QString nmea = QString("$GPGGA,%1,%200.00000,S,%300.,E,1,04,3.5,49.4,M,39.2,M,,*")
+            .arg(time.toString("hhmmss.zzz")).arg(lat).arg(lng);
+    return addNmeaChecksumAndBreaks(nmea);
+}
+
 QString QLocationTestUtils::createZdaSentence(const QDateTime &dt)
 {
     QString time = dt.toString("hhmmss.zzz");

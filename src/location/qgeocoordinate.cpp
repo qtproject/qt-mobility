@@ -202,9 +202,9 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
 */
 bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 {
-    return ( (qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat) )
-            && ( (qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng) )
-            && ( (qIsNaN(d->alt) && qIsNaN(other.d->alt)) || qFuzzyCompare(d->alt, other.d->alt) );
+    return ( (qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat))
+            && ( (qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng))
+            && ( (qIsNaN(d->alt) && qIsNaN(other.d->alt)) || qFuzzyCompare(d->alt, other.d->alt));
 }
 
 /*!
@@ -335,11 +335,11 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
     // Haversine formula
     double dlat = qgeocoordinate_degToRad(other.d->lat - d->lat);
     double dlon = qgeocoordinate_degToRad(other.d->lng - d->lng);
-    double y = sin(dlat/2.0) * sin(dlat/2.0)
+    double y = sin(dlat / 2.0) * sin(dlat / 2.0)
             + cos(qgeocoordinate_degToRad(d->lat))
             * cos(qgeocoordinate_degToRad(other.d->lat))
-            * sin(dlon/2.0) * sin(dlon/2.0);
-    double x = 2 * atan2(sqrt(y), sqrt(1-y));
+            * sin(dlon / 2.0) * sin(dlon / 2.0);
+    double x = 2 * atan2(sqrt(y), sqrt(1 - y));
     return qreal(x * qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 }
 
@@ -544,8 +544,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
 
 #ifndef QT_NO_DATASTREAM
 /*!
-    \fn  QDataStream &operator>>(QDataStream &stream, QGeoCoordinate
-&coordinate)
+    \fn  QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
     \relates QGeoCoordinate
 
     Reads a coordinate from the specified \a stream into the given

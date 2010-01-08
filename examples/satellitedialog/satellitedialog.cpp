@@ -68,7 +68,7 @@ public:
                     SatelliteDialog::Ordering ordering,
                     SatelliteDialog::StrengthScaling scaling);
 
-    void noSatelliteTimeout();
+    void clearSatellites();
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &list);
 
@@ -90,6 +90,7 @@ private:
     static const int spanWidth = gapWidth + barWidth;
     static const int borderOffset = 4;
     static const int legendTextOffset = 5;
+
     int textHeight;
     int legendHeight;
 
@@ -159,7 +160,7 @@ bool sortBySignalStrength(const QGeoSatelliteInfo &s1, const QGeoSatelliteInfo &
     return s1.signalStrength() < s2.signalStrength();
 }
 
-void SatelliteWidget::noSatelliteTimeout()
+void SatelliteWidget::clearSatellites()
 {
     satellitesInView.clear();
     satellitesInUse.clear();
@@ -348,6 +349,7 @@ SatelliteDialog::SatelliteDialog(QWidget *parent,
                                  StrengthScaling scaling) : QDialog(parent),
         m_noSatelliteTimeoutSeconds(noSatelliteTimeoutSeconds),
         m_exitBehaviour(exitBehaviour)
+        m_exitBehaviour(exitBehaviour)
 {
     noSatelliteTimer = new QTimer(this);
     noSatelliteTimer->setInterval(m_noSatelliteTimeoutSeconds * 1000);
@@ -357,11 +359,11 @@ SatelliteDialog::SatelliteDialog(QWidget *parent,
 
     satelliteWidget = new SatelliteWidget(this, ordering, scaling);
 
-    QLabel *label = new QLabel(tr("Satellite Signal Strength"));
-    label->setAlignment(Qt::AlignCenter);
+    QLabel *titleLabel = new QLabel(tr("Satellite Signal Strength"));
+    titleLabel->setAlignment(Qt::AlignCenter | Qt::AlignBottom);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(label);
+    mainLayout->addWidget(titleLabel);
     mainLayout->addWidget(satelliteWidget);
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
@@ -425,6 +427,7 @@ void SatelliteDialog::connectSources(QGeoPositionInfoSource *posSource, QGeoSate
 {
     connect(posSource, SIGNAL(positionUpdated(const QGeoPositionInfo &)),
             this, SLOT(positionUpdated(const QGeoPositionInfo &)));
+
     connect(satSource, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)),
             this, SLOT(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     connect(satSource, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)),
@@ -472,7 +475,14 @@ void SatelliteDialog::setStrengthScaling(SatelliteDialog::StrengthScaling scalin
 
 void SatelliteDialog::noSatelliteTimeout()
 {
-    satelliteWidget->noSatelliteTimeout();
+    satelliteWidget->clearSatellites();
+}
+
+void SatelliteDialog::positionUpdated(const QGeoPositionInfo &/*pos*/)
+{
+    if (m_exitBehaviour == ExitOnFixOrCancel) {
+        accept();
+    }
 }
 
 void SatelliteDialog::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &list)
@@ -489,10 +499,4 @@ void SatelliteDialog::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &lis
     noSatelliteTimer->start();
 }
 
-void SatelliteDialog::positionUpdated(const QGeoPositionInfo &pos)
-{
-    if (m_exitBehaviour == ExitOnFixOrCancel) {
-        accept();
-    }
-}
 
