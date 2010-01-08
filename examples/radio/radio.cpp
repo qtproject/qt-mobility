@@ -53,7 +53,7 @@ Radio::Radio()
         radio->setBand(QRadioTuner::FM);
     else {
         qWarning()<<"Currently only works for FM";
-      //  exit(0);
+        exit(0);
     }
 
     QWidget *window = new QWidget;
@@ -142,10 +142,11 @@ void Radio::freqChanged(int)
 
 void Radio::signalChanged(int)
 {
-    if(radio->signalStrength() > 25)
+  /*  if(radio->signalStrength() > 25)
         signal->setText(tr("Got Signal"));
     else
-        signal->setText(tr("No Signal"));
+        signal->setText(tr("No Signal"));*/
+	signal->setText(QString("Signal %1").arg(radio->signalStrength()));
 }
 
 void Radio::updateVolume(int v)
