@@ -65,7 +65,7 @@ public:
     QList<QSensorId> sensorList() const;
 
     // Create a sensor.
-    QSensor *createSensor(const QSensorId &id) const;
+    QSensor *createSensor(const QSensorId &identifier) const;
 };
 
 QTM_END_NAMESPACE

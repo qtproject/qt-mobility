@@ -104,7 +104,7 @@ class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAccelerationSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
+    explicit QAccelerationSensor(QObject *parent = 0, const QSensorId &identifier = QSensorId());
     virtual ~QAccelerationSensor();
 
     Q_PROPERTY(QAccelerationReading currentReading READ currentReading)

@@ -70,9 +70,9 @@ QSensorBackend::~QSensorBackend()
 }
 
 /*!
-    \fn QSensorBackend::id() const
+    \fn QSensorBackend::identifier() const
 
-    Returns the id for the sensor.
+    Returns the identifier for the sensor.
 */
 
 /*!
@@ -91,10 +91,10 @@ QSensorBackend::~QSensorBackend()
 /*!
     \internal
 */
-void QSensorBackend::createdFor(QSensor *sensor, const QSensorId &id)
+void QSensorBackend::createdFor(QSensor *sensor, const QSensorId &identifier)
 {
     m_sensor = sensor;
-    m_id = id;
+    m_identifier = identifier;
 }
 
 /*!

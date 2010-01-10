@@ -59,9 +59,9 @@ public:
     // Get the singleton instance
     static QSensorManager *instance();
 
-    void registerBackend(const QString &type, const QSensorId &id, CreateBackendFunc func);
+    void registerBackend(const QString &type, const QSensorId &identifier, CreateBackendFunc func);
     void registerRegisterFunc(RegisterBackendFunc func);
-    QSensorBackend *createBackend(const QSensorId &id);
+    QSensorBackend *createBackend(const QSensorId &identifier);
     QSensorId firstSensorForType(const QString &type);
 private:
     QSensorManager();
@@ -79,19 +79,19 @@ private:
         return new classname();\
     }
 
-#define REGISTER_STATEMENT(classname, type, id)\
-    QSensorManager::instance()->registerBackend(type, id, create_sensor_backend_ ## classname )\
+#define REGISTER_STATEMENT(classname, type, identifier)\
+    QSensorManager::instance()->registerBackend(type, identifier, create_sensor_backend_ ## classname )\
 
-#define REGISTER_FUNC(classname, type, id)\
+#define REGISTER_FUNC(classname, type, identifier)\
     /* This function registers the backend */\
     static void register_sensor_backend_ ## classname ()\
     {\
-        REGISTER_STATEMENT(classname, type, id);\
+        REGISTER_STATEMENT(classname, type, identifier);\
     }
 
-#define REGISTER_LOCAL_SENSOR(classname, type, id)\
+#define REGISTER_LOCAL_SENSOR(classname, type, identifier)\
     CREATE_FUNC(classname)\
-    REGISTER_FUNC(clasaname, type, id)\
+    REGISTER_FUNC(clasaname, type, identifier)\
     /* This function schedules the above for running */\
     static bool side_effect_sensor_backend_ ## classname ()\
     {\

@@ -98,7 +98,7 @@ class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QProximitySensor(QObject *parent = 0, const QSensorId &id = QSensorId());
+    explicit QProximitySensor(QObject *parent = 0, const QSensorId &identifier = QSensorId());
     virtual ~QProximitySensor();
 
     Q_PROPERTY(QProximityReading currentReading READ currentReading)

@@ -95,7 +95,7 @@ class Q_SENSORS_EXPORT QMagneticNorthSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QMagneticNorthSensor(QObject *parent = 0, const QSensorId &id = QSensorId());
+    explicit QMagneticNorthSensor(QObject *parent = 0, const QSensorId &identifier = QSensorId());
     virtual ~QMagneticNorthSensor();
 
     Q_PROPERTY(QMagneticNorthReading currentReading READ currentReading)

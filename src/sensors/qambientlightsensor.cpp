@@ -119,13 +119,13 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     Construct a sensor instance with specified \a parent.
-    If the \a id is passed the sensor will connect to that
+    If the \a identifier is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QAmbientLightSensor::QAmbientLightSensor(QObject *parent, const QSensorId &id)
+QAmbientLightSensor::QAmbientLightSensor(QObject *parent, const QSensorId &identifier)
     : QSensor(parent)
 {
-    m_backend = static_cast<QAmbientLightBackend*>(connectToBackend(id));
+    m_backend = static_cast<QAmbientLightBackend*>(connectToBackend(identifier));
 }
 
 /*!

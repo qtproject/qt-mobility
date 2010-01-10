@@ -69,7 +69,7 @@ QSensorFactory *QSensorFactory::instance()
 }
 
 /*!
-    Returns the id of the default sensor for \a type.
+    Returns the identifier of the default sensor for \a type.
     If there is no sensor of that type available, returns a null string.
 */
 QSensorId QSensorFactory::defaultSensorForType(const QString &type) const
@@ -96,16 +96,16 @@ QList<QSensorId> QSensorFactory::sensorList() const
 }
 
 /*!
-    Create an instance of a sensor for \a id.
-    If there is no sensor with the selected \a id, returns null.
+    Create an instance of a sensor for \a identifier.
+    If there is no sensor with the selected \a identifier, returns null.
 
     Note that this method requires down-casting the returned pointer to do anything useful.
-    Instead, consider instantiating a QSensor sub-class directly, passing the id as the
+    Instead, consider instantiating a QSensor sub-class directly, passing the identifier as the
     second argument.
 */
-QSensor *QSensorFactory::createSensor(const QSensorId &id) const
+QSensor *QSensorFactory::createSensor(const QSensorId &identifier) const
 {
-    Q_UNUSED(id)
+    Q_UNUSED(identifier)
     return 0;
 }
 

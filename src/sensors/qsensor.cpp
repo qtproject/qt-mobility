@@ -91,7 +91,7 @@ QSensor::~QSensor()
 }
 
 /*!
-    \property QSensor::id
+    \property QSensor::identifier
     \brief the unique identifer for the sensor.
 */
 
@@ -133,11 +133,11 @@ bool QSensor::isValid() const
 }
 
 /*!
-    Returns the id for the sensor.
+    Returns the identifier for the sensor.
 */
-QSensorId QSensor::id() const
+QSensorId QSensor::identifier() const
 {
-    return backend() ? backend()->id() : QSensorId();
+    return backend() ? backend()->identifier() : QSensorId();
 }
 
 /*!
@@ -256,21 +256,21 @@ void QSensor::stop()
 /*!
     \internal
 */
-QSensorBackend *QSensor::connectToBackend(const QSensorId &_id)
+QSensorBackend *QSensor::connectToBackend(const QSensorId &id)
 {
-    QSensorId id(_id);
-    if (id.isEmpty()) {
-        id = QSensorFactory::instance()->defaultSensorForType(type());
+    QSensorId identifier(id);
+    if (identifier.isEmpty()) {
+        identifier = QSensorFactory::instance()->defaultSensorForType(type());
     } else {
-        if (!QSensorFactory::instance()->sensorsForType(type()).contains(id)) {
-            qWarning() << "Sensor with identifier" << id << "does not exist for type" << type();
+        if (!QSensorFactory::instance()->sensorsForType(type()).contains(identifier)) {
+            qWarning() << "Sensor with identifier" << identifier << "does not exist for type" << type();
             return 0;
         }
     }
 
-    QSensorBackend *backend = QSensorManager::instance()->createBackend(id);
+    QSensorBackend *backend = QSensorManager::instance()->createBackend(identifier);
     if (backend)
-        backend->createdFor(this, id);
+        backend->createdFor(this, identifier);
     return backend;
 }
 

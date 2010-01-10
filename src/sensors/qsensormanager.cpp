@@ -73,17 +73,17 @@ QSensorManager *QSensorManager::instance()
 }
 
 /*!
-    Register a sensor for \a type. The \a id must be unique. The \a func must return an instance
+    Register a sensor for \a type. The \a identifier must be unique. The \a func must return an instance
     of the appropriate backend class.
 */
-void QSensorManager::registerBackend(const QString &type, const QSensorId &id, CreateBackendFunc func)
+void QSensorManager::registerBackend(const QString &type, const QSensorId &identifier, CreateBackendFunc func)
 {
     if (!m_backendsByType.contains(type)) {
         qDebug() << "first backend of type" << type;
         (void)m_backendsByType[type];
     }
-    m_backendsByType[type][id] = func;
-    m_allBackends[id] = func;
+    m_backendsByType[type][identifier] = func;
+    m_allBackends[identifier] = func;
 }
 
 /*!
@@ -95,19 +95,19 @@ void QSensorManager::registerRegisterFunc(RegisterBackendFunc func)
 }
 
 /*!
-    Create a backend for \a id. Returns null if the ID is not valid.
+    Create a backend for \a identifier. Returns null if the identifier is not valid.
 */
-QSensorBackend *QSensorManager::createBackend(const QSensorId &id)
+QSensorBackend *QSensorManager::createBackend(const QSensorId &identifier)
 {
     if (!m_pluginsLoaded)
         loadPlugins();
 
-    if (!m_allBackends.contains(id)) {
-        qWarning() << "Sensor backend for identifier" << id << "does not exist.";
+    if (!m_allBackends.contains(identifier)) {
+        qWarning() << "Sensor backend for identifier" << identifier << "does not exist.";
         return 0;
     }
 
-    CreateBackendFunc func = m_allBackends[id];
+    CreateBackendFunc func = m_allBackends[identifier];
     return func();
 }
 
@@ -158,22 +158,22 @@ void QSensorManager::loadPlugins()
 */
 
 /*!
-    \macro REGISTER_STATEMENT(classname, type, id)
+    \macro REGISTER_STATEMENT(classname, type, identifier)
     \relates QSensorManager
 
     Registers a sensor plugin using a creation function as defined by CREATE_FUNC().
 
-    Designed to register an instance of \a classname with sensor \a type and unique \a id.
+    Designed to register an instance of \a classname with sensor \a type and unique \a identifier.
     \sa CREATE_FUNC(), {Creating a sensor plugin}
 */
 
 /*!
-    \macro REGISTER_LOCAL_SENSOR(classname, type, id)
+    \macro REGISTER_LOCAL_SENSOR(classname, type, identifier)
     \relates QSensorManager
 
     Registers a local sensor plugin.
 
-    Designed to register an instance of \a classname with sensor \a type and unique \a id.
+    Designed to register an instance of \a classname with sensor \a type and unique \a identifier.
 
     Note that this macro relies on static initialization so it may not be appropriate
     for use in a library.
