@@ -65,11 +65,6 @@ public:
     explicit QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent = 0);
     ~QNmeaPositionInfoSource();
 
-    virtual bool parsePosInfoFromNmeaData(const char *data, 
-        int size, 
-        QGeoPositionInfo *posInfo, 
-        bool *hasFix);
-
     UpdateMode updateMode() const;
 
     void setDevice(QIODevice *source);
@@ -85,6 +80,12 @@ public Q_SLOTS:
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int timeout = 0);
+
+protected:
+    virtual bool parsePosInfoFromNmeaData(const char *data, 
+        int size, 
+        QGeoPositionInfo *posInfo, 
+        bool *hasFix);
 
 private:
     Q_DISABLE_COPY(QNmeaPositionInfoSource)
