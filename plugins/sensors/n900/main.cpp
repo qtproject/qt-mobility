@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "n900accelerationsensor.h"
+#include "n900accelerometer.h"
 #include "n900lightsensor.h"
 #include "n900proximitysensor.h"
 #include <qsensorplugin.h>
@@ -47,7 +47,7 @@
 #include <qsensormanager.h>
 #include <QDebug>
 
-CREATE_FUNC(n900accelerationsensor)
+CREATE_FUNC(n900accelerometer)
 CREATE_FUNC(n900lightsensor)
 CREATE_FUNC(n900proximitysensor)
 
@@ -59,7 +59,7 @@ public:
     void registerSensors()
     {
         qWarning() << "Loaded the N900 plugin";
-        REGISTER_STATEMENT(n900accelerationsensor, QAccelerationSensor::typeId, QByteArray("n900.acceleration"));
+        REGISTER_STATEMENT(n900accelerometer, QAccelerometer::typeId, QByteArray("n900.accelerometer"));
         REGISTER_STATEMENT(n900lightsensor, QAmbientLightSensor::typeId, QByteArray("n900.light"));
         REGISTER_STATEMENT(n900proximitysensor, QProximitySensor::typeId, QByteArray("n900.proximity"));
     }

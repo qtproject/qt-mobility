@@ -39,19 +39,19 @@
 **
 ****************************************************************************/
 
-#include <qaccelerationsensor.h>
+#include <qaccelerometer.h>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QAccelerationReading
+    \class QAccelerometerReading
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationReading class represents one reading from the
-           acceleration sensor.
+    \brief The QAccelerometerReading class represents one reading from the
+           accelerometer.
 
-    The acceleration sensor returns acceleration values along 3 axes.
+    The accelerometer returns linear acceleration values along 3 axes.
     The scale of the values is milli-Gs. The axes are arranged as follows.
 
 \code
@@ -79,45 +79,45 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QAccelerationReading::QAccelerationReading()
+    \fn QAccelerometerReading::QAccelerometerReading()
     \internal
 */
 
 /*!
-    \fn QAccelerationReading::QAccelerationReading(QDateTime timestamp, int x, int y, int z)
+    \fn QAccelerometerReading::QAccelerometerReading(QDateTime timestamp, int x, int y, int z)
     \internal
 */
 
 /*!
-    \fn QAccelerationReading::QAccelerationReading(const QAccelerationReading &other)
+    \fn QAccelerometerReading::QAccelerometerReading(const QAccelerometerReading &other)
     \internal
 */
 
 /*!
-    \fn QAccelerationReading::~QAccelerationReading()
+    \fn QAccelerometerReading::~QAccelerometerReading()
     \internal
 */
 
 /*!
-    \fn QAccelerationReading::timestamp() const
+    \fn QAccelerometerReading::timestamp() const
 
     Returns the time when the reading was made.
 */
 
 /*!
-    \fn QAccelerationReading::x() const
+    \fn QAccelerometerReading::x() const
 
     Returns the acceleration for the X axis.
 */
 
 /*!
-    \fn QAccelerationReading::y() const
+    \fn QAccelerometerReading::y() const
 
     Returns the acceleration for the Y axis.
 */
 
 /*!
-    \fn QAccelerationReading::z() const
+    \fn QAccelerometerReading::z() const
 
     Returns the acceleration for the Z axis.
 */
@@ -125,37 +125,37 @@ QTM_BEGIN_NAMESPACE
 // =====================================================================
 
 /*!
-    \class QAccelerationListener
+    \class QAccelerometerListener
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationListener class provides an efficient
+    \brief The QAccelerometerListener class provides an efficient
            callback facility for asynchronous notifications of
            acceleration changes.
 
     Since the accelerometer is typically accessed very frequently it may
-    not by suitable to use signals and slots. The QAccelerationListener
+    not by suitable to use signals and slots. The QAccelerometerListener
     interface provides a way for the sensor to notify your class that a
-    new acceleration reading is available more efficiently.
+    new accelerometer reading is available more efficiently.
 */
 
 /*!
-    \fn QAccelerationListener::accelerationChanged(const QAccelerationReading &reading)
+    \fn QAccelerometerListener::accelerationChanged(const QAccelerometerReading &reading)
 
-    This function is called when a new acceleration \a reading is available.
+    This function is called when a new accelerometer \a reading is available.
 */
 
 // =====================================================================
 
 /*!
-    \class QAccelerationSensor
+    \class QAccelerometer
     \ingroup sensors
 
     \preliminary
-    \brief The QAccelerationSensor class reports on linear acceleration
+    \brief The QAccelerometer class reports on linear acceleration
            along the X, Y and Z axes.
 
-    The acceleration sensor returns acceleration values along 3 axes.
+    The accelerometer returns acceleration values along 3 axes.
     The scale of the values is milli-Gs. The axes are arranged as follows.
 
 \code
@@ -181,7 +181,7 @@ QTM_BEGIN_NAMESPACE
     A monoblock device sitting at rest, face up on a desk will experience
     the force of gravity as approximately -1000 on the Z axis.
 
-    \sa QAccelerationReading
+    \sa QAccelerometerReading
 */
 
 /*!
@@ -189,32 +189,32 @@ QTM_BEGIN_NAMESPACE
     If the \a identifier is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QAccelerationSensor::QAccelerationSensor(QObject *parent, const QSensorId &identifier)
+QAccelerometer::QAccelerometer(QObject *parent, const QSensorId &identifier)
     : QSensor(parent)
 {
-    m_backend = static_cast<QAccelerationBackend*>(connectToBackend(identifier));
+    m_backend = static_cast<QAccelerometerBackend*>(connectToBackend(identifier));
 }
 
 /*!
     Destroy the sensor. Stops the sensor if it has not already been stopped.
 */
-QAccelerationSensor::~QAccelerationSensor()
+QAccelerometer::~QAccelerometer()
 {
     stop();
 }
 
 /*!
-    \property QAccelerationSensor::currentReading
+    \property QAccelerometer::currentReading
     \brief the current reading from the sensor.
 */
 
 /*!
-    \variable QAccelerationSensor::typeId
+    \variable QAccelerometer::typeId
 */
-const QString QAccelerationSensor::typeId("qt.Acceleration");
+const QString QAccelerometer::typeId("qt.Accelerometer");
 
 /*!
-    \fn QAccelerationSensor::type() const
+    \fn QAccelerometer::type() const
     \reimp
 */
 
@@ -225,9 +225,9 @@ const QString QAccelerationSensor::typeId("qt.Acceleration");
     Note that the sensor does not take ownership of the listener.
     It is the caller's responsibility to ensure the listener remains valid
     until the sensor is destroyed or the listener is removed via
-    QAccelerationSensor::removeListener().
+    QAccelerometer::removeListener().
 */
-void QAccelerationSensor::addListener(QAccelerationListener *listener)
+void QAccelerometer::addListener(QAccelerometerListener *listener)
 {
     m_listeners.append(listener);
 }
@@ -236,7 +236,7 @@ void QAccelerationSensor::addListener(QAccelerationListener *listener)
     Remove a \a listener from the sensor.
     If \a listener is 0, all listeners will be removed.
 */
-void QAccelerationSensor::removeListener(QAccelerationListener *listener)
+void QAccelerometer::removeListener(QAccelerometerListener *listener)
 {
     if (listener)
         m_listeners.removeOne(listener);
@@ -245,35 +245,35 @@ void QAccelerationSensor::removeListener(QAccelerationListener *listener)
 }
 
 /*!
-    \fn QAccelerationSensor::currentReading() const
+    \fn QAccelerometer::currentReading() const
 
     Returns the current ambient light reading.
 */
 
 /*!
-    \fn QAccelerationSensor::accelerationChanged(const QAccelerationReading &reading)
+    \fn QAccelerometer::accelerationChanged(const QAccelerometerReading &reading)
 
-    This signal is emitted when a new acceleration \a reading comes in.
+    This signal is emitted when a new accelerometer \a reading comes in.
 
     Note that this signal should not be used if you are requesting
     high-frequency updates as signal delivery is quite slow.
 */
 
 /*!
-    \fn QAccelerationSensor::backend() const
+    \fn QAccelerometer::backend() const
     \reimp
 */
 
-void QAccelerationSensor::newReadingAvailable()
+void QAccelerometer::newReadingAvailable()
 {
-    QAccelerationReading reading = currentReading();
-    for (QList<QAccelerationListener*>::const_iterator iter = m_listeners.constBegin();
+    QAccelerometerReading reading = currentReading();
+    for (QList<QAccelerometerListener*>::const_iterator iter = m_listeners.constBegin();
             iter != m_listeners.constEnd();
             ++iter) {
         (*iter)->accelerationChanged(reading);
     }
 }
 
-#include "moc_qaccelerationsensor.cpp"
+#include "moc_qaccelerometer.cpp"
 QTM_END_NAMESPACE
 

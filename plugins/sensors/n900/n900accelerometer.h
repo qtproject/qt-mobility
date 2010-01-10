@@ -39,67 +39,30 @@
 **
 ****************************************************************************/
 
-#include "n900accelerationsensor.h"
-#include <QDebug>
+#ifndef N900ACCELEROMETER_H
+#define N900ACCELEROMETER_H
 
-n900accelerationsensor::n900accelerationsensor()
-    : m_timerid(0)
-    , m_filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord")
+#include <qaccelerometer.h>
+
+QTM_USE_NAMESPACE
+
+class n900accelerometer : public QAccelerometerBackend
 {
-}
+public:
+    n900accelerometer();
 
-QSensor::UpdatePolicies n900accelerationsensor::supportedPolicies() const
-{
-    return (QSensor::OccasionalUpdates |
-            QSensor::InfrequentUpdates |
-            QSensor::FrequentUpdates |
-            QSensor::TimedUpdates |
-            QSensor::PolledUpdates);
-}
+    QSensor::UpdatePolicies supportedPolicies() const;
+    bool start();
+    void stop();
+    void timerEvent(QTimerEvent * /*event*/);
+    void poll();
+    QAccelerometerReading currentReading();
 
-bool n900accelerationsensor::start()
-{
-    if (m_timerid)
-        return false;
+private:
+    int m_timerid;
+    const char *m_filename;
+    QAccelerometerReading m_lastReading;
+};
 
-    if (suggestedInterval())
-        m_timerid = startTimer(suggestedInterval());
-    return true;
-}
-
-void n900accelerationsensor::stop()
-{
-    if (m_timerid) {
-        killTimer(m_timerid);
-        m_timerid = 0;
-    }
-}
-
-void n900accelerationsensor::timerEvent(QTimerEvent * /*event*/)
-{
-    poll();
-}
-
-void n900accelerationsensor::poll()
-{
-    qWarning() << "poll";
-    QDateTime timestamp = QDateTime::currentDateTime();
-    FILE *fd = fopen(m_filename, "r");
-    if (!fd) return;
-    int x, y, z;
-    int rs = fscanf(fd, "%i %i %i", &x, &y, &z);
-    fclose(fd);
-    if (rs != 3) return;
-
-    m_lastReading = QAccelerationReading(timestamp, x, y, z);
-    if (updatePolicy() != QSensor::PolledUpdates)
-        newReadingAvailable();
-}
-
-QAccelerationReading n900accelerationsensor::currentReading()
-{
-    if (updatePolicy() == QSensor::PolledUpdates)
-        poll();
-    return m_lastReading;
-}
+#endif
 

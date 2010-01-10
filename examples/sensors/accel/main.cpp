@@ -1,13 +1,13 @@
 #include <QtCore>
-#include <QAccelerationSensor>
+#include <QAccelerometer>
 #include <QSensorFactory>
 
 QTM_USE_NAMESPACE
 
-class AccelerationListener : public QAccelerationListener
+class AccelerometerListener : public QAccelerometerListener
 {
 public:
-    void accelerationChanged(const QAccelerationReading &reading)
+    void accelerationChanged(const QAccelerometerReading &reading)
     {
         qDebug() << "acceleration: "
                  << QString().sprintf("%i %i %i",
@@ -21,12 +21,12 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
 
-    QAccelerationSensor sensor;
+    QAccelerometer sensor;
     if (!sensor.isValid()) {
         qWarning() << "No accelerometer!";
         return 1;
     }
-    AccelerationListener listener;
+    AccelerometerListener listener;
     sensor.addListener(&listener);
     sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
     sensor.start();

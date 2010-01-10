@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QACCELERATIONSENSOR_H
-#define QACCELERATIONSENSOR_H
+#ifndef QACCELEROMETER_H
+#define QACCELEROMETER_H
 
 #include <qsensor.h>
 #include <QtGlobal>
@@ -51,16 +51,16 @@
 QTM_BEGIN_NAMESPACE
 
 // implementation detail
-class QAccelerationReadingData : public QSharedData
+class QAccelerometerReadingData : public QSharedData
 {
 public:
-    QAccelerationReadingData()
+    QAccelerometerReadingData()
         : timestamp(), x(0), y(0), z(0) {}
-    QAccelerationReadingData(QDateTime _timestamp, int _x, int _y, int _z)
+    QAccelerometerReadingData(QDateTime _timestamp, int _x, int _y, int _z)
         : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
-    QAccelerationReadingData(const QAccelerationReadingData &other)
+    QAccelerometerReadingData(const QAccelerometerReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
-    ~QAccelerationReadingData() {}
+    ~QAccelerometerReadingData() {}
 
     QDateTime timestamp;
     int x;
@@ -70,16 +70,16 @@ public:
 
 // =====================================================================
 
-class Q_SENSORS_EXPORT QAccelerationReading
+class Q_SENSORS_EXPORT QAccelerometerReading
 {
 public:
-    explicit QAccelerationReading()
-    { d = new QAccelerationReadingData; }
-    explicit QAccelerationReading(QDateTime timestamp, int x, int y, int z)
-    { d = new QAccelerationReadingData(timestamp, x, y, z); }
-    QAccelerationReading(const QAccelerationReading &other)
+    explicit QAccelerometerReading()
+    { d = new QAccelerometerReadingData; }
+    explicit QAccelerometerReading(QDateTime timestamp, int x, int y, int z)
+    { d = new QAccelerometerReadingData(timestamp, x, y, z); }
+    QAccelerometerReading(const QAccelerometerReading &other)
         : d(other.d) {}
-    ~QAccelerationReading() {}
+    ~QAccelerometerReading() {}
 
     QDateTime timestamp() const { return d->timestamp; }
     int x() const { return d->x; }
@@ -87,40 +87,40 @@ public:
     int z() const { return d->z; }
 
 private:
-    QSharedDataPointer<QAccelerationReadingData> d;
+    QSharedDataPointer<QAccelerometerReadingData> d;
 };
 
-class Q_SENSORS_EXPORT QAccelerationListener
+class Q_SENSORS_EXPORT QAccelerometerListener
 {
 public:
-    virtual void accelerationChanged(const QAccelerationReading &reading) = 0;
+    virtual void accelerationChanged(const QAccelerometerReading &reading) = 0;
 };
 
-typedef QTypedSensorBackend<QAccelerationReading> QAccelerationBackend;
+typedef QTypedSensorBackend<QAccelerometerReading> QAccelerometerBackend;
 
 // =====================================================================
 
-class Q_SENSORS_EXPORT QAccelerationSensor : public QSensor
+class Q_SENSORS_EXPORT QAccelerometer : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAccelerationSensor(QObject *parent = 0, const QSensorId &identifier = QSensorId());
-    virtual ~QAccelerationSensor();
+    explicit QAccelerometer(QObject *parent = 0, const QSensorId &identifier = QSensorId());
+    virtual ~QAccelerometer();
 
-    Q_PROPERTY(QAccelerationReading currentReading READ currentReading)
+    Q_PROPERTY(QAccelerometerReading currentReading READ currentReading)
 
     static const QString typeId;
     QString type() const { return typeId; };
 
     // Register a listener (that will receive sensor values as they come in)
-    void addListener(QAccelerationListener *listener);
-    void removeListener(QAccelerationListener *listener);
+    void addListener(QAccelerometerListener *listener);
+    void removeListener(QAccelerometerListener *listener);
 
     // For polling/checking the current (cached) value
-    QAccelerationReading currentReading() const { return m_backend->currentReading(); }
+    QAccelerometerReading currentReading() const { return m_backend->currentReading(); }
 
 Q_SIGNALS:
-    void accelerationChanged(const QAccelerationReading &reading);
+    void accelerationChanged(const QAccelerometerReading &reading);
 
 protected:
     QSensorBackend *backend() const { return m_backend; }
@@ -128,8 +128,8 @@ protected:
 private:
     void newReadingAvailable();
 
-    QList<QAccelerationListener*> m_listeners;
-    QAccelerationBackend *m_backend;
+    QList<QAccelerometerListener*> m_listeners;
+    QAccelerometerBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

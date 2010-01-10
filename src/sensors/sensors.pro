@@ -11,7 +11,7 @@ PUBLIC_HEADERS += \
            qsensor.h\
            qsensorfactory.h\
            qorientationsensor.h\
-           qaccelerationsensor.h\
+           qaccelerometer.h\
            qrotationsensor.h\
            qproximitysensor.h\
            qmagneticnorthsensor.h\
@@ -27,7 +27,7 @@ PRIVATE_HEADERS += \
 SOURCES += qsensor.cpp \
            qsensorfactory.cpp\
            qorientationsensor.cpp\
-           qaccelerationsensor.cpp\
+           qaccelerometer.cpp\
            qrotationsensor.cpp\
            qproximitysensor.cpp\
            qmagneticnorthsensor.cpp\
