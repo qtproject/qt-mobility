@@ -140,10 +140,37 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \internal
+*/
+QAccelerometerListener::QAccelerometerListener()
+{
+}
+
+/*!
+    Notifies any sensors that the listener is being destroyed.
+*/
+QAccelerometerListener::~QAccelerometerListener()
+{
+    foreach (QAccelerometer *sensor, m_sensors) {
+        sensor->setListener(0);
+    }
+}
+
+/*!
     \fn QAccelerometerListener::accelerationChanged(const QAccelerometerReading &reading)
 
     This function is called when a new accelerometer \a reading is available.
 */
+
+void QAccelerometerListener::addSensor(QAccelerometer *sensor)
+{
+    m_sensors << sensor;
+}
+
+void QAccelerometerListener::removeSensor(QAccelerometer *sensor)
+{
+    m_sensors.removeOne(sensor);
+}
 
 // =====================================================================
 
@@ -191,6 +218,7 @@ QTM_BEGIN_NAMESPACE
 */
 QAccelerometer::QAccelerometer(QObject *parent, const QSensorId &identifier)
     : QSensor(parent)
+    , m_listener(0)
 {
     m_backend = static_cast<QAccelerometerBackend*>(connectToBackend(identifier));
 }
@@ -201,6 +229,8 @@ QAccelerometer::QAccelerometer(QObject *parent, const QSensorId &identifier)
 QAccelerometer::~QAccelerometer()
 {
     stop();
+    if (m_listener)
+        m_listener->removeSensor(this);
 }
 
 /*!
@@ -219,29 +249,22 @@ const QString QAccelerometer::typeId("qt.Accelerometer");
 */
 
 /*!
-    Add a \a listener to the sensor.
+    Set the \a listener for the sensor. Pass 0 to clear a previously-set
+    listener.
     The listener will be invoked every time a new reading is available.
 
-    Note that the sensor does not take ownership of the listener.
-    It is the caller's responsibility to ensure the listener remains valid
-    until the sensor is destroyed or the listener is removed via
-    QAccelerometer::removeListener().
+    Note that the sensor does not take ownership of the listener although
+    the listener interface will notify the accelerometer if it is destroyed.
 */
-void QAccelerometer::addListener(QAccelerometerListener *listener)
+void QAccelerometer::setListener(QAccelerometerListener *listener)
 {
-    m_listeners.append(listener);
-}
-
-/*!
-    Remove a \a listener from the sensor.
-    If \a listener is 0, all listeners will be removed.
-*/
-void QAccelerometer::removeListener(QAccelerometerListener *listener)
-{
+    if (listener == m_listener)
+        return;
+    if (m_listener)
+        m_listener->removeSensor(this);
     if (listener)
-        m_listeners.removeOne(listener);
-    else
-        m_listeners.clear();
+        listener->addSensor(this);
+    m_listener = listener;
 }
 
 /*!
@@ -267,11 +290,10 @@ void QAccelerometer::removeListener(QAccelerometerListener *listener)
 void QAccelerometer::newReadingAvailable()
 {
     QAccelerometerReading reading = currentReading();
-    for (QList<QAccelerometerListener*>::const_iterator iter = m_listeners.constBegin();
-            iter != m_listeners.constEnd();
-            ++iter) {
-        (*iter)->accelerationChanged(reading);
-    }
+    if (m_listener)
+        m_listener->accelerationChanged(reading);
+    // TODO this is apparenlty expensive...
+    emit accelerationChanged(reading);
 }
 
 #include "moc_qaccelerometer.cpp"

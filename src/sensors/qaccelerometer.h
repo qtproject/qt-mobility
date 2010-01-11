@@ -46,7 +46,6 @@
 #include <QtGlobal>
 #include <QSharedData>
 #include <qsensorbackend.h>
-#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
@@ -90,13 +89,24 @@ private:
     QSharedDataPointer<QAccelerometerReadingData> d;
 };
 
+typedef QTypedSensorBackend<QAccelerometerReading> QAccelerometerBackend;
+
+// =====================================================================
+
+class QAccelerometer;
+
 class Q_SENSORS_EXPORT QAccelerometerListener
 {
+    friend class QAccelerometer;
 public:
+    QAccelerometerListener();
+    virtual ~QAccelerometerListener();
     virtual void accelerationChanged(const QAccelerometerReading &reading) = 0;
+private:
+    void addSensor(QAccelerometer *sensor);
+    void removeSensor(QAccelerometer *sensor);
+    QList<QAccelerometer *> m_sensors;
 };
-
-typedef QTypedSensorBackend<QAccelerometerReading> QAccelerometerBackend;
 
 // =====================================================================
 
@@ -113,8 +123,7 @@ public:
     QString type() const { return typeId; };
 
     // Register a listener (that will receive sensor values as they come in)
-    void addListener(QAccelerometerListener *listener);
-    void removeListener(QAccelerometerListener *listener);
+    void setListener(QAccelerometerListener *listener);
 
     // For polling/checking the current (cached) value
     QAccelerometerReading currentReading() const { return m_backend->currentReading(); }
@@ -128,7 +137,7 @@ protected:
 private:
     void newReadingAvailable();
 
-    QList<QAccelerometerListener*> m_listeners;
+    QAccelerometerListener *m_listener;
     QAccelerometerBackend *m_backend;
 };
 

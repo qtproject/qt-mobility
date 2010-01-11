@@ -27,7 +27,7 @@ int main(int argc, char **argv)
         return 1;
     }
     AccelerometerListener listener;
-    sensor.addListener(&listener);
+    sensor.setListener(&listener);
     sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
     sensor.start();
 
