@@ -111,13 +111,58 @@ bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 		TRAPD(err, m_recorderUtility->SetDestinationSampleRateL(format.frequency()));
 		qWarning() << err;
 		
-		TRAP(err, m_recorderUtility->SetDestinationBitRateL(format.sampleSize()));
-		qWarning() << err;
-
 		//set channels 
 		TRAP(err, m_recorderUtility->SetDestinationNumberOfChannelsL(format.channels()));
 		qWarning() << err;
+		
+		TFourCC fourCC;
+		
+		if (format.sampleSize() == 8) {
+			switch (format.sampleType()) {
+				case QAudioFormat::SignedInt: {
+					fourCC.Set(KMMFFourCCCodePCM8);
+					break;
+				}
+				case QAudioFormat::UnSignedInt: {
+					fourCC.Set(KMMFFourCCCodePCMU8);
+					break;
+				}
+				default: {
+					fourCC.Set(KMMFFourCCCodePCM8);
+					break;
+				}
+			}
+		} else if (format.sampleSize() == 16) {
+			// 16 bit here
+			switch (format.sampleType()) {
+				case QAudioFormat::SignedInt: {
+					if (format.byteOrder() == QAudioFormat::LittleEndian) {
+						fourCC.Set(fourCC = KMMFFourCCCodePCM16);
+						break;
+					}
+					if (format.byteOrder() == QAudioFormat::BigEndian) {
+						fourCC.Set(KMMFFourCCCodePCM16B);
+						break;
+					}
+				}
+				case QAudioFormat::UnSignedInt: {
+					if (format.byteOrder() == QAudioFormat::LittleEndian) {
+						fourCC.Set(KMMFFourCCCodePCMU16);
+						break;
+					}
+					if (format.byteOrder() == QAudioFormat::BigEndian) {
+						fourCC.Set(KMMFFourCCCodePCMU16B);
+						break;
+					}
+				}
+				default: {
+					fourCC.Set(KMMFFourCCCodePCM16);
+					break;
+				}
+			}
+		}
 
+		m_recorderUtility->SetDestinationDataTypeL(fourCC);
 		return true;
 	}
     //TODO:
