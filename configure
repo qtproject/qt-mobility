@@ -376,8 +376,6 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
-# no Sysinfo support on Maemo yet
-echo "maemo5|maemo6:mobility_modules -= systeminfo" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
 
 # Ideally we'd skip generating headers for modules that are not enabled
