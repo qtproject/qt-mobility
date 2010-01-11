@@ -392,118 +392,6 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
         spyUpdate.clear();
     }
 }
-void unused() {
-    QNmeaPositionInfoSource::UpdateMode m_mode = QNmeaPositionInfoSource::RealTimeMode;
-    QNmeaPositionInfoSource source(m_mode);    
-    QNmeaPositionInfoSourceProxyFactory factory;
-    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
-
-    QSignalSpy spyUpdate(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
-    QSignalSpy spyTimeout(proxy->source(), SIGNAL(updateTimeout()));
-
-    proxy->source()->setUpdateInterval(1000);
-    proxy->source()->startUpdates();
-
-    QGeoPositionInfo pos;
-
-    QDateTime dt = QDateTime::currentDateTime().toUTC();
-    //snip above
-
-    //proxy->feedBytes(QLocationTestUtils::createZdaSentence(dt).toLatin1());    
-    
-    /*
-    // dt
-    QTest::qWait(900);
-    // dt + 900    
-    QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
-    */
-    for (int i = 0; i < 10; ++i) {
-        QTest::qWait(100);
-        qDebug() << QString("%1 %2 %3").arg(i).arg(spyUpdate.count()).arg(spyTimeout.count());
-    }
-
-    //proxy->feedBytes(QLocationTestUtils::createGgaSentence(1, 1, dt.addMSecs(1000).time()).toLatin1());    
-    proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(1000)).toLatin1());    
-    for (int i = 10; i < 20; ++i) {
-        QTest::qWait(100);
-        qDebug() << QString("%1 %2 %3").arg(i).arg(spyUpdate.count()).arg(spyTimeout.count());
-    }
-    /*
-    QTest::qWait(200);
-    // dt + 1100
-    QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
-        QGeoPositionInfo pos = spyUpdate.at(0).at(0).value<QGeoPositionInfo>();        
-        qDebug() << QString("%1").arg(pos.coordinate().toString());
-        qDebug() << QString("%1 %2").arg(pos.dateTime().time().second()).arg(pos.dateTime().time().msec());
-    spyUpdate.clear();
-    spyTimeout.clear();
-
-    QTest::qWait(800);
-    // dt + 1900    
-    QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
-        */
-    //proxy->feedBytes(QLocationTestUtils::createGgaSentence(2, 2, dt.addMSecs(2000).time()).toLatin1());
-    proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(2000)).toLatin1());    
-    for (int i = 20; i < 30; ++i) {
-        QTest::qWait(100);
-        qDebug() << QString("%1 %2 %3").arg(i).arg(spyUpdate.count()).arg(spyTimeout.count());
-    }
-    /*
-    QTest::qWait(200);
-    // dt + 2100
-    QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
-        pos = spyUpdate.at(0).at(0).value<QGeoPositionInfo>();        
-        qDebug() << QString("%1").arg(pos.coordinate().toString());
-        qDebug() << QString("%1 %2").arg(pos.dateTime().time().second()).arg(pos.dateTime().time().msec());
-    spyUpdate.clear();
-    spyTimeout.clear();
-
-    QTest::qWait(800);
-    // dt + 2900
-    QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
-    */
-    //proxy->feedBytes(QLocationTestUtils::createGgaSentence(3, 3, dt.addMSecs(3000).time()).toLatin1());
-    proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(3000)).toLatin1());    
-    QTest::qWait(200);
-    // dt + 3100
-    QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
-        pos = spyUpdate.at(0).at(0).value<QGeoPositionInfo>();
-        qDebug() << QString("%1").arg(pos.coordinate().toString());
-        qDebug() << QString("%1 %2").arg(pos.dateTime().time().second()).arg(pos.dateTime().time().msec());
-    spyUpdate.clear();
-    spyTimeout.clear();
-/*
-    for (int i = 0; i < 76; ++i) {
-        qDebug() << QString("%1 %2").arg(spyUpdate.count()).arg(spyTimeout.count());
-        QTest::qWait(50);
-    }
-*/
-    if (spyUpdate.count() > 0) {
-        pos = spyUpdate.at(0).at(0).value<QGeoPositionInfo>();
-        qDebug() << QString("%1").arg(pos.coordinate().toString());
-        qDebug() << QString("%1 %2").arg(pos.dateTime().time().second()).arg(pos.dateTime().time().msec());
-    }
-
-    //QTest::qWait(3800);
-    // dt + 6900
-    //qDebug() << QString("%1 %2").arg(spyUpdate.count()).arg(spyTimeout.count());
-
-    QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 1);
-    spyUpdate.clear();
-    spyTimeout.clear();
-/*
-    proxy->feedBytes(QLocationTestUtils::createGgaSentence(dt.addMSecs(7000).time()).toLatin1());
-    QTest::qWait(200);
-    // dt + 7100
-    //qDebug() << "Second wait";
-    //for (int i = 0; i < 10; ++i) {
-        qDebug() << QString("%1 %2").arg(spyUpdate.count()).arg(spyTimeout.count());
-    //    QTest::qWait(20);
-    //}
-    QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
-    //QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() == 1 && spyTimeout.count() == 0), 200);
-    */
-}
 
 void tst_QNmeaPositionInfoSource::startUpdates_expectLatestUpdateOnly()
 {
@@ -722,7 +610,6 @@ void tst_QNmeaPositionInfoSource::testWithBadNmea_data()
             << (QList<QDateTime>() << firstDateTime << lastDateTime) << StartUpdatesMethod;
 }
 
-
 class tst_QNmeaPositionInfoSource_RealTime : public tst_QNmeaPositionInfoSource
 {
     Q_OBJECT
@@ -842,12 +729,121 @@ protected:
 
 };
 
+class DummyNmeaPositionInfoSource : public QNmeaPositionInfoSource
+{
+    Q_OBJECT
+
+public:
+    DummyNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent = 0);
+
+protected:
+    virtual bool parsePosInfoFromNmeaData(const char *data, 
+        int size, 
+        QGeoPositionInfo *posInfo, 
+        bool *hasFix);
+
+private:
+    int callCount;
+};
+
+DummyNmeaPositionInfoSource::DummyNmeaPositionInfoSource(QNmeaPositionInfoSource::UpdateMode mode, QObject *parent) : 
+                                                            QNmeaPositionInfoSource(mode, parent),
+                                                            callCount(0) 
+{
+}
+
+bool DummyNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char* data, 
+                                                            int size, 
+                                                            QGeoPositionInfo *posInfo, 
+                                                            bool *hasFix)
+{
+    Q_UNUSED(data);
+    Q_UNUSED(size);
+
+    posInfo->setCoordinate(QGeoCoordinate(callCount * 1.0, callCount * 1.0, callCount * 1.0));
+    posInfo->setDateTime(QDateTime::currentDateTime().toUTC());
+    *hasFix = true;
+    ++callCount;
+
+    return true;
+}
+
+class tst_DummyNmeaPositionInfoSource : public QObject
+{
+    Q_OBJECT
+
+public:
+    tst_DummyNmeaPositionInfoSource();
+
+private slots:
+    void initTestCase();
+    void testOverloadedParseFunction();
+};
+
+
+tst_DummyNmeaPositionInfoSource::tst_DummyNmeaPositionInfoSource() {}
+
+void tst_DummyNmeaPositionInfoSource::initTestCase()
+{
+    qRegisterMetaType<QGeoPositionInfo>();
+}
+
+void tst_DummyNmeaPositionInfoSource::testOverloadedParseFunction()
+{
+    DummyNmeaPositionInfoSource source(QNmeaPositionInfoSource::RealTimeMode);
+    QNmeaPositionInfoSourceProxyFactory factory;
+    QNmeaPositionInfoSourceProxy *proxy = static_cast<QNmeaPositionInfoSourceProxy*>(factory.createProxy(&source));
+
+    QSignalSpy spy(proxy->source(), SIGNAL(positionUpdated(QGeoPositionInfo)));
+
+    QGeoPositionInfo pos;
+
+    proxy->source()->startUpdates();
+
+    proxy->feedBytes(QString("The parser converts\n").toAscii());
+
+    QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1), 10000);    
+    pos = spy.at(0).at(0).value<QGeoPositionInfo>();
+
+    QVERIFY((pos.coordinate().latitude() == 0.0)
+        && (pos.coordinate().longitude() == 0.0)
+        && (pos.coordinate().altitude() == 0.0));
+    
+    spy.clear();
+
+    proxy->feedBytes(QString("any data it receives\n").toAscii());
+
+    QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1), 10000);
+    pos = spy.at(0).at(0).value<QGeoPositionInfo>();
+
+    QVERIFY((pos.coordinate().latitude() == 1.0)
+        && (pos.coordinate().longitude() == 1.0)
+        && (pos.coordinate().altitude() == 1.0));
+
+    spy.clear();
+
+    proxy->feedBytes(QString("into positions\n").toAscii());
+
+    QTRY_VERIFY_WITH_TIMEOUT((spy.count() == 1), 10000);
+    pos = spy.at(0).at(0).value<QGeoPositionInfo>();
+
+    QVERIFY((pos.coordinate().latitude() == 2.0)
+        && (pos.coordinate().longitude() == 2.0)
+        && (pos.coordinate().altitude() == 2.0));
+
+    spy.clear();
+}
+
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     int r;
     bool fail = false;
+
+    tst_DummyNmeaPositionInfoSource dummy;
+    r = QTest::qExec(&dummy, argc, argv);
+    if (r < 0) fail = true;
 
     tst_QNmeaPositionInfoSource_RealTime common_realTime;
     r = QTest::qExec(&common_realTime, argc, argv);
