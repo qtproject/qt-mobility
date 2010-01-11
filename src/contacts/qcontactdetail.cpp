@@ -45,6 +45,9 @@
 
 QTM_BEGIN_NAMESPACE
 
+/* Initialise our static private data member */
+QAtomicInt QContactDetailPrivate::lastDetailKey(1);
+
 /* Definitions of predefined string constants */
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextOther, "Other");
@@ -65,9 +68,18 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
   restrictions on their values, and any restrictions on creating or updating details of that
   definition.
  
-  A field which is common to all details is the context field.  This field is intended to store the
-  context that this detail is associated with.  Commonly this will be something like
-  "Home" or "Work", although no limitations are placed on which values may be stored in this field.
+  One field which is common to all details is the context field.  This field is intended to store the
+  context or contexts that this detail is associated with.  Commonly this will be something like
+  "Home" and/or "Work", although no limitations are placed on which values may be stored in this field
+  in the default schema.
+
+  There are two other, related fields which are common to all details.  The first is
+  \a QContactDetail::FieldDetailUri, which stores the unique URI of the detail if one exists.
+  The field is not mandatory, and backends are not required to verify that the given URI is indeed
+  unique within the contact.  The second field is \a QContactDetail::LinkedDetailUris, which stores
+  a list of detail URIs to which this detail is linked.  The link is one-way, and intended mainly
+  for use by read-only details which are populated by the backend (for example, a presence detail
+  which is linked to a particular online account detail of the contact).
  
   It is possible to inherit from QContactDetail to provide convenience or
   standardized access to values.  For example, \l QContactPhoneNumber provides
@@ -240,6 +252,12 @@ bool QContactDetail::isEmpty() const
     return true;
 }
 
+/*! Returns the key of this detail. */
+int QContactDetail::key() const
+{
+    return d->m_id;
+}
+
 /*! Returns the value stored in this detail for the given \a key as a QString, or an empty QString if no value for the given \a key exists */
 QString QContactDetail::value(const QString& key) const
 {
@@ -339,7 +357,76 @@ QVariantMap QContactDetail::variantValues() const
  *
  * It is equivalent to the following code:
  * \code
- * value(QContactDetail::FieldContext);
+ * value<QStringList>(QContactDetail::FieldContext);
+ * \endcode
+ *
+ * \sa value()
+ */
+
+
+/*!
+ * \fn void QContactDetail::setDetailUri(const QString& detailUri)
+ *
+ * This is a convenience function that sets the \c DetailUri field of this detail to the given \a detailUri.
+ * In order to be linked to, a detail must have a specific and (per-contact) unique detail URI set.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * setValue(FieldDetailUri, detailUri);
+ * \endcode
+ *
+ * \sa setValue()
+ */
+
+/*!
+ * \fn QString QContactDetail::detailUri() const
+ *
+ * This is a convenience function to return the \c DetailUri field of this detail.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * value(QContactDetail::FieldDetailUri);
+ * \endcode
+ *
+ * \sa value()
+ */
+
+
+/*!
+ * \fn void QContactDetail::setLinkedDetailUris(const QStringList& linkedDetailUris)
+ *
+ * This is a convenience function that sets the \c LinkedDetailUris field of this detail to the given \a linkedDetailUris.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * setValue(QContactDetail::FieldLinkedDetailUris, linkedDetailUris);
+ * \endcode
+ *
+ * \sa setValue()
+ */
+
+/*!
+ * \fn void QContactDetail::setLinkedDetailUris(const QString& linkedDetailUri)
+ *
+ * This is a convenience function that sets the \c LinkedDetailUris field of this detail to the given \a linkedDetailUri.
+ * It is useful if the detail is linked to a single other detail in the contact.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));
+ * \endcode
+ *
+ * \sa setValue()
+ */
+
+/*!
+ * \fn QStringList QContactDetail::linkedDetailUris() const
+ *
+ * This is a convenience function to return the \c Context field of this detail.
+ *
+ * It is equivalent to the following code:
+ * \code
+ * value<QStringList>(QContactDetail::FieldLinkedDetailUris);
  * \endcode
  *
  * \sa value()

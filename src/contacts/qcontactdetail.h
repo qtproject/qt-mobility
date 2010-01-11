@@ -46,7 +46,7 @@
 #include "qtcontactsglobal.h"
 #include "qcontactactiondescriptor.h"
 
-#include <QSharedDataPointer>
+#include <QExplicitlySharedDataPointer>
 #include <QStringList>
 #include <QVariant>
 
@@ -70,11 +70,15 @@ public:
     const char* ContextHome;
     const char* ContextWork;
     const char* ContextOther;
+    const char* FieldDetailUri;
+    const char* FieldLinkedDetailUri;
 #else
     Q_DECLARE_LATIN1_LITERAL(FieldContext, "Context");
     Q_DECLARE_LATIN1_LITERAL(ContextHome, "Home");
     Q_DECLARE_LATIN1_LITERAL(ContextWork, "Work");
     Q_DECLARE_LATIN1_LITERAL(ContextOther, "Other");
+    Q_DECLARE_LATIN1_LITERAL(FieldDetailUri, "DetailUri");
+    Q_DECLARE_LATIN1_LITERAL(FieldLinkedDetailUris, "LinkedDetailUris");
 #endif
 
     bool operator==(const QContactDetail& other) const;
@@ -82,6 +86,8 @@ public:
 
     QString definitionName() const;
     bool isEmpty() const;
+
+    int key() const;
 
     void setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
     QList<QContactActionDescriptor> preferredActions() const;
@@ -99,6 +105,8 @@ public:
         return variantValue(key).value<T>();
     }
 
+
+
     void setContexts(const QStringList& contexts)
     {
         setValue(FieldContext, contexts);
@@ -114,13 +122,38 @@ public:
         return value<QStringList>(FieldContext);
     }
 
+    void setDetailUri(const QString& detailUri)
+    {
+        setValue(FieldDetailUri, detailUri);
+    }
+
+    QString detailUri() const
+    {
+        return value(FieldDetailUri);
+    }
+
+    void setLinkedDetailUris(const QStringList& linkedDetailUris)
+    {
+        setValue(FieldLinkedDetailUris, linkedDetailUris);
+    }
+
+    void setLinkedDetailUris(const QString& linkedDetailUri)
+    {
+        setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));
+    }
+
+    QStringList linkedDetailUris() const
+    {
+        return value<QStringList>(FieldLinkedDetailUris);
+    }
+
 protected:
     QContactDetail(const QContactDetail& other, const QString& expectedDefinitionId);
     QContactDetail& assign(const QContactDetail& other, const QString& expectedDefinitionId);
 
 private:
     friend class QContact;
-    QSharedDataPointer<QContactDetailPrivate> d;
+    QExplicitlySharedDataPointer<QContactDetailPrivate> d;
 };
 
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \

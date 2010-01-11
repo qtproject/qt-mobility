@@ -133,6 +133,9 @@ public:
     bool saveDetail(QContactDetail* detail);   // modifies the detail - sets its ID if detail already exists
     bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
 
+    /* set the order of details */
+    bool setDetailOrder(const QList<QContactDetail>& totallyOrdered);
+
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;

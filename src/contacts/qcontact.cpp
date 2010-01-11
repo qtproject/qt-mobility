@@ -93,13 +93,11 @@ QContact::QContact()
     // insert the contact's display label detail.
     QContactDisplayLabel contactLabel;
     contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
-    contactLabel.d->m_id = 1;
     d->m_details.insert(0, contactLabel);
 
     // and the contact type detail.
     QContactType contactType;
     contactType.setType(QContactType::TypeContact);
-    contactType.d->m_id = 2;
     d->m_details.insert(1, contactType);
 }
 
@@ -137,9 +135,7 @@ void QContact::clearDetails()
 {
     QContactDisplayLabel dl = d->m_details.at(0);
     dl.setValue(QContactDisplayLabel::FieldLabel, QString());
-    dl.d->m_id = 1;
     QContactType typeDet = d->m_details.at(1);
-    typeDet.d->m_id = 2;
 
     d->m_details.clear();
     d->m_details.insert(0, dl);
@@ -258,7 +254,8 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
         sublist = d->m_details;
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
-            const QContactDetail& existing = d->m_details.at(i);
+            QContactDetail existing = d->m_details.at(i);
+            existing.d.detach(); // explicitly detach - client must save detail in order to update with changes.
             if (definitionName == existing.definitionName()) {
                 sublist.append(existing);
             }
@@ -279,7 +276,8 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
         sublist = details(definitionName);
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
-            const QContactDetail& existing = d->m_details.at(i);
+            QContactDetail existing = d->m_details.at(i);
+            existing.d.detach(); // explicitly detach - client must save detail in order to update with changes.
             if (definitionName == existing.definitionName() && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
                 sublist.append(existing);
             }
@@ -314,10 +312,12 @@ bool QContact::saveDetail(QContactDetail* detail)
         return false;
     }
 
+    QContactDetail detachedCopy = *detail;
+    detachedCopy.d.detach(); // explicitly detach - client must save detail in order to update with changes.
+
     /* Also handle contact type specially - only one of them. */
     if (detail->definitionName() == QContactType::DefinitionName) {
-        d->m_details[1] = *detail;
-        detail->d->m_id = 2;
+        d->m_details[1] = detachedCopy;
         return true;
     }
 
@@ -327,23 +327,22 @@ bool QContact::saveDetail(QContactDetail* detail)
         const QContactDetail& curr = d->m_details.at(i);
         if (detail->d->m_definitionName == curr.d->m_definitionName && detail->d->m_id == curr.d->m_id) {
             // Found the old version.  Replace it with this one.
-            d->m_details[i] = *detail;
+            d->m_details[i] = detachedCopy;
             return true;
         }
     }
 
     // this is a new detail!  add it to the contact.
-    detail->d->m_id = ++d->m_nextDetailId;
-    d->m_details.append(*detail);
+    d->m_details.append(detachedCopy);
     return true;
 }
 
 /*!
  * Removes the \a detail from the contact.
  *
+ * The detail in the contact which has the same key as that of the given \a detail
+ * will be removed if it exists.  That is, the information in the detail may be different.
  * Any preference for the given field is also removed.
- * The Id of the \a detail is removed, to signify that it is no longer
- * part of the contact.
  *
  * If the detail is the contact type for this contact, the type
  * will be reset to \c QContactType::TypeContact, and the function will return success.
@@ -355,6 +354,19 @@ bool QContact::saveDetail(QContactDetail* detail)
 bool QContact::removeDetail(QContactDetail* detail)
 {
     if (!detail)
+        return false;
+
+    // find the detail stored in the contact which has the same key as the detail argument
+    int removeIndex = -1;
+    for (int i = 0; i < d->m_details.size(); i++) {
+        if (d->m_details.at(i).key() == detail->key()) {
+            removeIndex = i;
+            break;
+        }
+    }
+
+    // make sure the detail exists (in some form) in the contact.
+    if (removeIndex < 0)
         return false;
 
     // Check if this a display label
@@ -382,9 +394,38 @@ bool QContact::removeDetail(QContactDetail* detail)
         }
     }
 
-    // then remove the detail.
-    d->m_details.removeOne(*detail);
-    detail->d->m_id = 0;
+    // then remove the detail.  // OLD BEHAVIOUR (24/12/2009): d->m_details.removeOne(*detail);
+    d->m_details.removeAt(removeIndex);
+    return true;
+}
+
+/*!
+ * Sets the order of the details in the contact.  This order may or may not be persisted by the backend, depending on its capabilities.
+ * Returns true if the total detail order specified is valid and does not contain any details which are not present in the contact, and false
+ * if it contains details which are not present in the contact, or if it doesn't contain some details which are present in the contact.
+ */
+bool QContact::setDetailOrder(const QList<QContactDetail>& totallyOrdered)
+{
+    if (totallyOrdered.size() != d->m_details.size())
+        return false;
+
+    for (int i = 0; i < totallyOrdered.size(); i++) {
+        QContactDetail curr = totallyOrdered.at(i);
+        bool found = false;
+        for (int j = 0; j < d->m_details.size(); j++) {
+            if (curr.key() == d->m_details.at(j).key()) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            // could find the current detail in the ordered list!
+            return false;
+        }
+    }
+
+    d->m_details = totallyOrdered;
     return true;
 }
 
@@ -574,7 +615,7 @@ bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail
     if (actionName.isEmpty())
          return d->m_preferences.values().contains(detail.d->m_id);
 
-    QMap<QString, quint32>::const_iterator it = d->m_preferences.find(actionName);
+    QMap<QString, int>::const_iterator it = d->m_preferences.find(actionName);
     if (it != d->m_preferences.end() && it.value() == detail.d->m_id)
         return true;
 
