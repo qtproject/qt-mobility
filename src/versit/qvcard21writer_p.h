@@ -53,20 +53,20 @@
 // We mean it.
 //
 
-#include "qversitwriter_p.h"
+#include "qversitdocumentwriter_p.h"
 #include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QVCard21Writer : public QVersitWriterPrivate
+class Q_AUTOTEST_EXPORT QVCard21Writer : public QVersitDocumentWriter
 {
 public:
     QVCard21Writer();
     ~QVCard21Writer();
 
-protected: // From QVersitWriterPrivate
     QByteArray encodeVersitProperty(const QVersitProperty& property);
     QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
+    
     bool quotedPrintableEncode(const QVersitProperty& property, QByteArray& value) const;
 };
 

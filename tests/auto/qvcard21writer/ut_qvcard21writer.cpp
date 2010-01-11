@@ -47,20 +47,9 @@
 
 QTM_USE_NAMESPACE
 
-
-class MyQVCard21Writer : public QVCard21Writer
-{
-public:
-    // expose some protected functions as public
-    QByteArray encodeVersitProperty(const QVersitProperty& property) {return QVCard21Writer::encodeVersitProperty(property);}
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const {return QVCard21Writer::encodeParameters(parameters);}
-    bool quotedPrintableEncode(const QVersitProperty& property, QByteArray& value) const {return QVCard21Writer::quotedPrintableEncode(property, value);}
-    QByteArray encodeGroupsAndName(const QVersitProperty& property) const {return QVCard21Writer::encodeGroupsAndName(property);}
-};
-
 void UT_QVCard21Writer::init()
 {
-    mWriter = new MyQVCard21Writer;
+    mWriter = new QVCard21Writer;
 }
 
 void UT_QVCard21Writer::cleanup()

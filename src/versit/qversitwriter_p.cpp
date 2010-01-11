@@ -39,32 +39,22 @@
 **
 ****************************************************************************/
 
-#include "qversitwriter_p.h"
-#include "versitutils_p.h"
 #include "qmobilityglobal.h"
+#include "qversitwriter_p.h"
+#include "qversitdocumentwriter_p.h"
+#include "qvcard21writer_p.h"
+#include "qvcard30writer_p.h"
+#include "versitutils_p.h"
 
 #include <QStringList>
 #include <QMutexLocker>
+#include <QScopedPointer>
 
 QTM_BEGIN_NAMESPACE
-
-#define MAX_CHARS_FOR_LINE 76
 
 /*! Constructs a writer. */
 QVersitWriterPrivate::QVersitWriterPrivate()
     : mIoDevice(0),
-    mState(QVersitWriter::InactiveState),
-    mError(QVersitWriter::NoError)
-{
-}
-
-/*! Constructs a writer. */
-QVersitWriterPrivate::QVersitWriterPrivate(
-    const QByteArray& documentType,
-    const QByteArray& version)
-    : mIoDevice(0),
-    mDocumentType(documentType),
-    mVersion(version),
     mState(QVersitWriter::InactiveState),
     mError(QVersitWriter::NoError)
 {
@@ -81,7 +71,8 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
 bool QVersitWriterPrivate::isReady() const
 {
     return state() != QVersitWriter::ActiveState
-            && mIoDevice && mIoDevice->isOpen()
+            && mIoDevice
+            && mIoDevice->isOpen()
             && !mVersitDocument.properties().empty();
 }
 
@@ -94,7 +85,8 @@ bool QVersitWriterPrivate::write()
     bool ok = true;
     if (isReady()) {
         setState(QVersitWriter::ActiveState);
-        QByteArray output = encodeVersitDocument(mVersitDocument);
+        QScopedPointer<QVersitDocumentWriter> writer(writerForType(mVersitDocument.versitType()));
+        QByteArray output = writer->encodeVersitDocument(mVersitDocument);
         int c = mIoDevice->write(output);
         if (c <= 0) {
             setError(QVersitWriter::IOError);
@@ -115,42 +107,6 @@ bool QVersitWriterPrivate::write()
 void QVersitWriterPrivate::run()
 {
     write();
-}
-
-/*!
-* Encodes the \a document to text.
-*/
-QByteArray QVersitWriterPrivate::encodeVersitDocument(const QVersitDocument& document)
-{
-    QList<QVersitProperty> properties = document.properties();
-    QByteArray encodedDocument;
-
-    encodedDocument += "BEGIN:" + mDocumentType + "\r\n";
-    encodedDocument += "VERSION:" + mVersion + "\r\n";
-    foreach (QVersitProperty property, properties) {
-        encodedDocument.append(encodeVersitProperty(property));
-    }
-    encodedDocument += "END:" + mDocumentType + "\r\n";
-
-    VersitUtils::fold(encodedDocument,MAX_CHARS_FOR_LINE);
-    return encodedDocument;
-}
-
-/*!
- * Encodes the groups and name in the \a property to text.
- */
-QByteArray QVersitWriterPrivate::encodeGroupsAndName(
-    const QVersitProperty& property) const
-{
-    QByteArray encodedGroupAndName;
-    QStringList groups = property.groups();
-    if (!groups.isEmpty()) {
-        QString groupAsString = groups.join(QString::fromAscii("."));
-        encodedGroupAndName.append(groupAsString.toAscii());
-        encodedGroupAndName.append(".");
-    }
-    encodedGroupAndName.append(property.name().toAscii());
-    return encodedGroupAndName;
 }
 
 void QVersitWriterPrivate::setState(QVersitWriter::State state)
@@ -175,6 +131,21 @@ QVersitWriter::Error QVersitWriterPrivate::error() const
 {
     QMutexLocker locker(&mMutex);
     return mError;
+}
+
+/*!
+ * Returns a QVersitDocumentWriter that can encode a QVersitDocument of type \a type.
+ */
+QVersitDocumentWriter* QVersitWriterPrivate::writerForType(QVersitDocument::VersitType type)
+{
+    switch (type) {
+        case QVersitDocument::VCard21Type:
+            return new QVCard21Writer;
+        case QVersitDocument::VCard30Type:
+            return new QVCard30Writer;
+        default:
+            return new QVCard21Writer;
+    }
 }
 
 #include "moc_qversitwriter_p.cpp"

@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a writer. */
 QVCard30Writer::QVCard30Writer()
-    : QVersitWriterPrivate(QByteArray("VCARD"),QByteArray("3.0"))
+    : QVersitDocumentWriter(QByteArray("VCARD"),QByteArray("3.0"))
 {
     mPropertyNameMappings.insert(
         QString::fromAscii("X-NICKNAME"),QString::fromAscii("NICKNAME"));

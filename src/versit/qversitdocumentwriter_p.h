@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITWRITER_P_H
-#define QVERSITWRITER_P_H
+#ifndef QVERSITDOCUMENTWRITER_H
+#define QVERSITDOCUMENTWRITER_H
 
 //
 //  W A R N I N G
@@ -53,46 +53,27 @@
 // We mean it.
 //
 
-#include "qversitwriter.h"
-#include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qmobilityglobal.h"
-#include "qversitwriter.h"
-
-#include <QThread>
-#include <QIODevice>
-#include <QMutex>
+#include <QByteArray>
+#include <QMultiHash>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitDocumentWriter;
-
-class Q_AUTOTEST_EXPORT QVersitWriterPrivate : public QThread
+class Q_VERSIT_EXPORT QVersitDocumentWriter
 {
-    Q_OBJECT
-
 public:
-    QVersitWriterPrivate();
-    virtual ~QVersitWriterPrivate();
-    bool isReady() const;
-    bool write();
+    QVersitDocumentWriter(const QByteArray& documentType, const QByteArray& version);
 
-    // mutexed getters and setters.
-    void setState(QVersitWriter::State);
-    QVersitWriter::State state() const;
-    void setError(QVersitWriter::Error);
-    QVersitWriter::Error error() const;
-    void run();
+    virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
+    virtual QByteArray encodeParameters(
+        const QMultiHash<QString,QString>& parameters) const = 0;
+    QByteArray encodeVersitDocument(const QVersitDocument& document);
+    QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
 
-    static QVersitDocumentWriter* writerForType(QVersitDocument::VersitType type);
-
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
-    QVersitWriter::State mState;
-    QVersitWriter::Error mError;
-    mutable QMutex mMutex;
+    QByteArray mDocumentType;
+    QByteArray mVersion;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QVERSITWRITER_P_H
+#endif // QVERSITDOCUMENTWRITER_H

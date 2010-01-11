@@ -40,8 +40,7 @@
 ****************************************************************************/
 
 #include "qversitwriter.h"
-#include "qvcard21writer_p.h"
-#include "qvcard30writer_p.h"
+#include "qversitwriter_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
@@ -73,7 +72,7 @@ QTM_BEGIN_NAMESPACE
   property.setName("N");
   property.setValue("Citizen;John;Q;;");
   document.addProperty(property);
-  writer.setVersitDocument(document);
+  writer.setInput(document);
   if (writer.writeAll()) {
       // Use the vCardBuffer...
   }
@@ -88,7 +87,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*! Constructs a new writer. */
-QVersitWriter::QVersitWriter() : d(new QVCard21Writer)
+QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
 {
     connect(d,SIGNAL(finished()),this,SIGNAL(finished()),Qt::DirectConnection);
 }
@@ -109,23 +108,6 @@ QVersitWriter::~QVersitWriter()
  */
 void QVersitWriter::setDocument(const QVersitDocument& versitDocument)
 {
-    QVersitWriterPrivate* updatedWriter = 0;
-    switch (versitDocument.versitType()) {
-        case QVersitDocument::VCard21Type:
-            updatedWriter = new QVCard21Writer;
-            break;
-        case QVersitDocument::VCard30Type:
-            updatedWriter = new QVCard30Writer;
-            break;
-        default:
-            break;
-    }
-    if (updatedWriter) {
-        updatedWriter->mIoDevice = d->mIoDevice;
-        delete d;
-        d = updatedWriter;
-        connect(d,SIGNAL(finished()),this,SIGNAL(finished()),Qt::DirectConnection);
-    }
     d->mVersitDocument = versitDocument;
 }
 

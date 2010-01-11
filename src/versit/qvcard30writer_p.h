@@ -53,18 +53,17 @@
 // We mean it.
 //
 
-#include "qversitwriter_p.h"
+#include "qversitdocumentwriter_p.h"
 #include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QVCard30Writer : public QVersitWriterPrivate
+class Q_AUTOTEST_EXPORT QVCard30Writer : public QVersitDocumentWriter
 {
 public:
     QVCard30Writer();
     ~QVCard30Writer();
 
-protected: // From QVersitWriterPrivate
     QByteArray encodeVersitProperty(const QVersitProperty& property);
     QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
     QHash<QString,QString> mPropertyNameMappings;

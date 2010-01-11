@@ -28,6 +28,7 @@ PUBLIC_HEADERS +=  \
 
 # Private Headers
 PRIVATE_HEADERS += qversitdocument_p.h \
+    qversitdocumentwriter_p.h \
     qversitproperty_p.h \
     qversitreader_p.h \
     qversitwriter_p.h \
@@ -40,6 +41,7 @@ PRIVATE_HEADERS += qversitdocument_p.h \
 
 # Implementation
 SOURCES += qversitdocument.cpp \
+    qversitdocumentwriter_p.cpp \
     qversitproperty.cpp \
     qversitreader.cpp \
     qversitreader_p.cpp \
