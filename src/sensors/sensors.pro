@@ -14,7 +14,7 @@ PUBLIC_HEADERS += \
            qaccelerometer.h\
            qrotationsensor.h\
            qproximitysensor.h\
-           qmagneticnorthsensor.h\
+           qcompass.h\
            qambientlightsensor.h\
            qtapsensor.h\
            qsensormanager.h\
@@ -30,7 +30,7 @@ SOURCES += qsensor.cpp \
            qaccelerometer.cpp\
            qrotationsensor.cpp\
            qproximitysensor.cpp\
-           qmagneticnorthsensor.cpp\
+           qcompass.cpp\
            qambientlightsensor.cpp\
            qtapsensor.cpp\
            qsensormanager.cpp\

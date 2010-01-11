@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAGNETICNORTHSENSOR_H
-#define QMAGNETICNORTHSENSOR_H
+#ifndef QCOMPASS_H
+#define QCOMPASS_H
 
 #include <qsensor.h>
 #include <QtGlobal>
@@ -50,16 +50,16 @@
 QTM_BEGIN_NAMESPACE
 
 // implementation detail
-class QMagneticNorthReadingData : public QSharedData
+class QCompassReadingData : public QSharedData
 {
 public:
-    QMagneticNorthReadingData()
+    QCompassReadingData()
         : timestamp(), heading(0), calibrated(false) {}
-    QMagneticNorthReadingData(QDateTime _timestamp, int _heading, bool _calibrated)
+    QCompassReadingData(QDateTime _timestamp, int _heading, bool _calibrated)
         : timestamp(_timestamp), heading(_heading), calibrated(_calibrated) {}
-    QMagneticNorthReadingData(const QMagneticNorthReadingData &other)
+    QCompassReadingData(const QCompassReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), heading(other.heading), calibrated(other.calibrated) {}
-    ~QMagneticNorthReadingData() {}
+    ~QCompassReadingData() {}
 
     QDateTime timestamp;
     int heading;
@@ -68,46 +68,46 @@ public:
 
 // =====================================================================
 
-class Q_SENSORS_EXPORT QMagneticNorthReading
+class Q_SENSORS_EXPORT QCompassReading
 {
 public:
-    explicit QMagneticNorthReading()
-    { d = new QMagneticNorthReadingData; }
-    explicit QMagneticNorthReading(QDateTime timestamp, int heading, bool calibrated)
-    { d = new QMagneticNorthReadingData(timestamp, heading, calibrated); }
-    QMagneticNorthReading(const QMagneticNorthReading &other)
+    explicit QCompassReading()
+    { d = new QCompassReadingData; }
+    explicit QCompassReading(QDateTime timestamp, int heading, bool calibrated)
+    { d = new QCompassReadingData(timestamp, heading, calibrated); }
+    QCompassReading(const QCompassReading &other)
         : d(other.d) {}
-    ~QMagneticNorthReading() {}
+    ~QCompassReading() {}
 
     QDateTime timestamp() const { return d->timestamp; }
     int heading() const { return d->heading; }
     bool isCalibrated() const { return d->calibrated; }
 
 private:
-    QSharedDataPointer<QMagneticNorthReadingData> d;
+    QSharedDataPointer<QCompassReadingData> d;
 };
 
-typedef QTypedSensorBackend<QMagneticNorthReading> QMagneticNorthBackend;
+typedef QTypedSensorBackend<QCompassReading> QCompassBackend;
 
 // =====================================================================
 
-class Q_SENSORS_EXPORT QMagneticNorthSensor : public QSensor
+class Q_SENSORS_EXPORT QCompass : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QMagneticNorthSensor(QObject *parent = 0, const QSensorId &identifier = QSensorId());
-    virtual ~QMagneticNorthSensor();
+    explicit QCompass(QObject *parent = 0, const QSensorId &identifier = QSensorId());
+    virtual ~QCompass();
 
-    Q_PROPERTY(QMagneticNorthReading currentReading READ currentReading)
+    Q_PROPERTY(QCompassReading currentReading READ currentReading)
 
     static const QString typeId;
     QString type() const { return typeId; };
 
     // For polling/checking the current (cached) value
-    QMagneticNorthReading currentReading() const { return m_backend->currentReading(); }
+    QCompassReading currentReading() const { return m_backend->currentReading(); }
 
 Q_SIGNALS:
-    void headingChanged(const QMagneticNorthReading &reading);
+    void headingChanged(const QCompassReading &reading);
 
 protected:
     QSensorBackend *backend() const { return m_backend; }
@@ -118,7 +118,7 @@ private:
         emit headingChanged(currentReading());
     }
 
-    QMagneticNorthBackend *m_backend;
+    QCompassBackend *m_backend;
 };
 
 QTM_END_NAMESPACE

@@ -39,19 +39,19 @@
 **
 ****************************************************************************/
 
-#include <qmagneticnorthsensor.h>
+#include <qcompass.h>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QMagneticNorthReading
+    \class QCompassReading
     \ingroup sensors
 
     \preliminary
-    \brief The QMagneticNorthReading class represents one reading from a
-           magnetic north sensor (compass).
+    \brief The QCompassReading class represents one reading from a
+           compass.
 
-    The magnetic north sensor returns the heading of the device as degrees from
+    The compass returns the heading of the device as degrees from
     magnetic north in a clockwise direction based on the top of the device.
     Note that the top of the device is a fixed point and may not represent the
     orientation that the user is holding the device in.
@@ -64,39 +64,39 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMagneticNorthReading::QMagneticNorthReading()
+    \fn QCompassReading::QCompassReading()
     \internal
 */
 
 /*!
-    \fn QMagneticNorthReading::QMagneticNorthReading(QDateTime timestamp, int heading, bool calibrated)
+    \fn QCompassReading::QCompassReading(QDateTime timestamp, int heading, bool calibrated)
     \internal
 */
 
 /*!
-    \fn QMagneticNorthReading::QMagneticNorthReading(const QMagneticNorthReading &other)
+    \fn QCompassReading::QCompassReading(const QCompassReading &other)
     \internal
 */
 
 /*!
-    \fn QMagneticNorthReading::~QMagneticNorthReading()
+    \fn QCompassReading::~QCompassReading()
     \internal
 */
 
 /*!
-    \fn QMagneticNorthReading::timestamp() const
+    \fn QCompassReading::timestamp() const
 
     Returns the time when the reading was made.
 */
 
 /*!
-    \fn QMagneticNorthReading::heading() const
+    \fn QCompassReading::heading() const
 
     Returns the heading of the device.
 */
 
 /*!
-    \fn QMagneticNorthReading::isCalibrated() const
+    \fn QCompassReading::isCalibrated() const
 
     Returns \c true if the device was calibrated when the reading
     was made and \c false otherwise. You should not trust a reading
@@ -106,13 +106,13 @@ QTM_BEGIN_NAMESPACE
 // =====================================================================
 
 /*!
-    \class QMagneticNorthSensor
+    \class QCompass
     \ingroup sensors
 
     \preliminary
-    \brief The QMagneticNorthSensor class reports on the heading of the device.
+    \brief The QCompass class reports on the heading of the device.
 
-    The magnetic north sensor returns the heading of the device as degrees from
+    The compass returns the heading of the device as degrees from
     magnetic north in a clockwise direction based on the top of the device.
     Note that the top of the device is a fixed point and may not represent the
     orientation that the user is holding the device in.
@@ -129,52 +129,52 @@ QTM_BEGIN_NAMESPACE
     If the \a identifier is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QMagneticNorthSensor::QMagneticNorthSensor(QObject *parent, const QSensorId &identifier)
+QCompass::QCompass(QObject *parent, const QSensorId &identifier)
     : QSensor(parent)
 {
-    m_backend = static_cast<QMagneticNorthBackend*>(connectToBackend(identifier));
+    m_backend = static_cast<QCompassBackend*>(connectToBackend(identifier));
 }
 
 /*!
     Destroy the sensor. Stops the sensor if it has not already been stopped.
 */
-QMagneticNorthSensor::~QMagneticNorthSensor()
+QCompass::~QCompass()
 {
     stop();
 }
 
 /*!
-    \property QMagneticNorthSensor::currentReading
+    \property QCompass::currentReading
     \brief the current reading from the sensor.
 */
 
 /*!
-    \variable QMagneticNorthSensor::typeId
+    \variable QCompass::typeId
 */
-const QString QMagneticNorthSensor::typeId("qt.MagneticNorth");
+const QString QCompass::typeId("qt.Compass");
 
 /*!
-    \fn QMagneticNorthSensor::type() const
+    \fn QCompass::type() const
     \reimp
 */
 
 /*!
-    \fn QMagneticNorthSensor::currentReading() const
+    \fn QCompass::currentReading() const
 
-    Returns the current magnetic north reading.
+    Returns the current compass reading.
 */
 
 /*!
-    \fn QMagneticNorthSensor::headingChanged(const QMagneticNorthReading &reading)
+    \fn QCompass::headingChanged(const QCompassReading &reading)
 
-    This signal is emitted when a new magnetic north \a reading comes in.
+    This signal is emitted when a new compass \a reading comes in.
 */
 
 /*!
-    \fn QMagneticNorthSensor::backend() const
+    \fn QCompass::backend() const
     \reimp
 */
 
-#include "moc_qmagneticnorthsensor.cpp"
+#include "moc_qcompass.cpp"
 QTM_END_NAMESPACE
 
