@@ -5,11 +5,13 @@ QT      += network \
            xml
 
 HEADERS += flickrdemo.h \
-           xqlistwidget.h
+           xqlistwidget.h \
+           connectivityhelper.h
 
 SOURCES += flickrdemo.cpp \
            main.cpp \
-           xqlistwidget.cpp
+           xqlistwidget.cpp \ 
+           connectivityhelper.cpp
 
 INCLUDEPATH += . ../../src/global \
                 ../../src/bearer \

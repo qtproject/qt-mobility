@@ -1,15 +1,18 @@
 TEMPLATE = app
 
-HEADERS = ../satellitedialog/satellitedialog.h
+HEADERS = ../satellitedialog/satellitedialog.h \
+            ../flickrdemo/connectivityhelper.h
 SOURCES = lightmaps.cpp \
-            ../satellitedialog/satellitedialog.cpp
+            ../satellitedialog/satellitedialog.cpp \
+            ../flickrdemo/connectivityhelper.cpp
 
 QT += network
 
 INCLUDEPATH += ../../src/global \
                 ../../src/bearer \
                 ../../src/location \
-                ../satellitedialog
+                ../satellitedialog \
+                ../flickrdemo
 
 include(../examples.pri)
 

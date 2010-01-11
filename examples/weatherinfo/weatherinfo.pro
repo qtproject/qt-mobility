@@ -1,9 +1,11 @@
 TEMPLATE = app
 TARGET = weatherinfo
 
-HEADERS = ../satellitedialog/satellitedialog.h
+HEADERS = ../satellitedialog/satellitedialog.h \
+            ../flickrdemo/connectivityhelper.h
 SOURCES = weatherinfo.cpp \
-            ../satellitedialog/satellitedialog.cpp
+            ../satellitedialog/satellitedialog.cpp \
+            ../flickrdemo/connectivityhelper.cpp
 
 RESOURCES = weatherinfo.qrc
 QT += network svg
@@ -16,7 +18,8 @@ MOBILITY = location bearer
 INCLUDEPATH += ../../src/global \
                 ../../src/bearer \
                 ../../src/location \
-                ../satellitedialog
+                ../satellitedialog \
+                ../flickrdemo
 
 symbian {
     TARGET.CAPABILITY = NetworkServices Location ReadUserData

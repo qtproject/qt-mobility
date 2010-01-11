@@ -55,11 +55,11 @@
 const QSize FlickrDemo::gridSize = QSize(52, 52);
 const QSize FlickrDemo::thumbnailSize = QSize(50, 50);
 const QSize FlickrDemo::imageSize = QSize(150, 150);
-const QString FlickrDemo::apikey = QString("e36784df8a03fea04c22ed93318b291c");    
+const QString FlickrDemo::apikey = QString("e36784df8a03fea04c22ed93318b291c");
 #ifdef Q_OS_SYMBIAN
-    const QString FlickrDemo::savePath = "c:\\Data\\Images\\"; // In S60 Download images to Gallery
+const QString FlickrDemo::savePath = "c:\\Data\\Images\\"; // In S60 Download images to Gallery
 #else
-    const QString FlickrDemo::savePath = QDir::tempPath();
+const QString FlickrDemo::savePath = QDir::tempPath();
 #endif
 
 FlickrDemo::FlickrDemo(QWidget* parent) :
@@ -169,10 +169,17 @@ void FlickrDemo::delayedInit()
         QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
         return;
     }
-    m_session = new QNetworkSession(cfg, this);
-    m_session->open();
-    m_session->waitForOpened(-1);
 
+    m_session = new QNetworkSession(cfg, this);
+    m_connectivityHelper = new ConnectivityHelper(m_session, this);
+    connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
+    connect(m_connectivityHelper, SIGNAL(networkingCancelled()), qApp, SLOT(quit()));
+
+    m_session->open();
+}
+
+void FlickrDemo::networkSessionOpened()
+{
     // Start listening GPS position updates
     m_location->startUpdates();
 

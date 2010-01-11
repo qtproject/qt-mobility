@@ -58,6 +58,8 @@ class QGeoSatelliteInfoSource;
 class QGeoSatelliteInfo;
 QTM_END_NAMESPACE
 
+#include "connectivityhelper.h"
+
 // Use the QtMobility namespace
 QTM_USE_NAMESPACE
 
@@ -79,6 +81,7 @@ private:
 
 private Q_SLOTS:
     void delayedInit();
+    void networkSessionOpened();
 
     void downloadButtonClicked();
     void cancelDownload();
@@ -113,7 +116,9 @@ private:
     bool m_logfileInUse;
     QGeoPositionInfoSource* m_location;
     QGeoSatelliteInfoSource* m_satellite;
+
     QNetworkSession* m_session;
+    ConnectivityHelper *m_connectivityHelper;
 
     QProgressDialog *m_progressDialog;
     QHttp *m_http;

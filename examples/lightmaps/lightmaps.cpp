@@ -53,6 +53,7 @@
 #include <qnetworksession.h>
 
 #include "satellitedialog.h"
+#include "connectivityhelper.h"
 
 // Use the QtMobility namespace
 QTM_USE_NAMESPACE
@@ -140,6 +141,12 @@ public:
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
     }
 
+    ~SlippyMap() {
+        for (int i = 0; i < m_pendingReplies.size(); ++i) {
+            delete m_pendingReplies.at(i);
+        }
+    }
+
     void invalidate() {
         if (width <= 0 || height <= 0)
             return;
@@ -211,6 +218,14 @@ private slots:
         if (!reply->error())
             if (!img.load(reply, 0))
                 img = QImage();
+
+        for (int i = 0; i < m_pendingReplies.size(); ++i) {
+            if (m_pendingReplies.at(i) == reply) {
+                m_pendingReplies.removeAt(i);
+                break;
+            }
+        }
+
         reply->deleteLater();
         m_tilePixmaps[tp] = QPixmap::fromImage(img);
         if (img.isNull())
@@ -247,7 +262,7 @@ private slots:
         request.setUrl(m_url);
         request.setRawHeader("User-Agent", "Nokia (Qt) Graphics Dojo 1.0");
         request.setAttribute(QNetworkRequest::User, QVariant(grab));
-        m_manager->get(request);
+        m_pendingReplies << m_manager->get(request);
     }
 
 signals:
@@ -271,6 +286,7 @@ private:
 
     QGeoPositionInfoSource* m_location;
     QNetworkSession* m_session;
+    QList<QNetworkReply*> m_pendingReplies;
 
 };
 
@@ -291,8 +307,7 @@ public:
             invert(false),
             m_usingLogFile(false),
             m_location(0),
-            waitingForFix(false) 
-{
+            waitingForFix(false) {
 
         // Set Internet Access Point
         QNetworkConfigurationManager manager;
@@ -310,32 +325,11 @@ public:
         }
 
         m_session = new QNetworkSession(cfg1, this);
+        m_connectivityHelper = new ConnectivityHelper(m_session, this);
+        connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
+        connect(m_connectivityHelper, SIGNAL(networkingCancelled()), qApp, SLOT(quit()));
 
         m_session->open();
-        if (!m_session->waitForOpened(-1)) {
-            m_networkSetupError = QString(tr("Unable to open network session."));
-            QTimer::singleShot(0, this, SLOT(delayedInit()));
-            return;
-        }
-
-        m_location = QGeoPositionInfoSource::createDefaultSource(this);
-        m_location->setUpdateInterval(10000);
-
-        if (!m_location) {
-            QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
-            QFile *logFile = new QFile(QApplication::applicationDirPath()
-                                       + QDir::separator() + "nmealog.txt", this);
-            nmeaLocation->setDevice(logFile);
-            m_location = nmeaLocation;
-            m_usingLogFile = true;
-        }
-
-        connect(m_location,
-                SIGNAL(positionUpdated(QGeoPositionInfo)),
-                this,
-                SLOT(positionUpdated(QGeoPositionInfo)));
-
-        QTimer::singleShot(0, this, SLOT(delayedInit()));
     }
 
     ~LightMaps() {
@@ -374,7 +368,24 @@ public slots:
 
 private slots:
 
-    void delayedInit() {
+    void networkSessionOpened() {
+        m_location = QGeoPositionInfoSource::createDefaultSource(this);
+        m_location->setUpdateInterval(10000);
+
+        if (!m_location) {
+            QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
+            QFile *logFile = new QFile(QApplication::applicationDirPath()
+                                       + QDir::separator() + "nmealog.txt", this);
+            nmeaLocation->setDevice(logFile);
+            m_location = nmeaLocation;
+            m_usingLogFile = true;
+        }
+
+        connect(m_location,
+                SIGNAL(positionUpdated(QGeoPositionInfo)),
+                this,
+                SLOT(positionUpdated(QGeoPositionInfo)));
+
         if (m_usingLogFile) {
             QMessageBox::information(this, tr("LightMaps"),
                                      tr("No GPS support detected, using GPS data from a sample log file instead."));
@@ -675,6 +686,7 @@ private:
     QGeoPositionInfoSource *m_location;
     bool waitingForFix;
     QNetworkSession *m_session;
+    ConnectivityHelper *m_connectivityHelper;
 };
 
 class MapZoom: public QMainWindow

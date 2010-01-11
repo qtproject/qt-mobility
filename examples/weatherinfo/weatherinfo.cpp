@@ -54,6 +54,7 @@
 #include <qnetworksession.h>
 
 #include "satellitedialog.h"
+#include "connectivityhelper.h"
 
 // Use the QtMobility namespace
 QTM_USE_NAMESPACE
@@ -83,6 +84,7 @@ private:
     bool m_gpsWeather;
     QGeoPositionInfoSource* m_location;
     QNetworkSession* m_session;
+    ConnectivityHelper* m_connectivityHelper;
     QGeoCoordinate m_coordinate;
 
 public:
@@ -149,7 +151,6 @@ public:
         m_session->close();
     }
 
-
 private slots:
 
     void delayedInit() {
@@ -165,14 +166,17 @@ private slots:
             return;
         }
         m_session = new QNetworkSession(cfg, this);
-        m_session->open();
-        m_session->waitForOpened(-1);
+        m_connectivityHelper = new ConnectivityHelper(m_session, this);
+        connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
+        connect(m_connectivityHelper, SIGNAL(networkingCancelled()), qApp, SLOT(quit()));
 
+        m_session->open();
+    }
+
+    void networkSessionOpened() {
         m_gpsWeather = false;
         request("Helsinki");
     }
-
-private slots:
 
     void yourWeather() {
         m_gpsWeather = true;
