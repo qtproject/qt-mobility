@@ -70,12 +70,13 @@ TrackerChangeListener::TrackerChangeListener(QObject* parent)
                 SLOT(subjectsChanged(const QStringList &)));
     }
     //this corresponds with telepathysupport/ TrackerSink::onSimplePresenceChanged
+    /*
        signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nfo::IMAccount::iri());
+                    nco::IMContact::iri());
         connect(signaler,
                 SIGNAL(subjectsChanged(const QStringList &)),
                 SLOT(imAccountChanged(const QStringList &)));
-
+ */
 }
 
 TrackerChangeListener::~TrackerChangeListener()
@@ -139,12 +140,13 @@ void TrackerChangeListener::imAccountChanged(const QStringList& subjects) {
     // leave the debug output for few days as TODO remainder to fix writing to tracker
     qDebug() << Q_FUNC_INFO << subjects;
 
-    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
+    RDFVariable RDFContact = RDFVariable::fromType<nco::IMContact>();
     // fetch all changed contacts at once
     QSet<QUrl> urls;
     foreach(const QString &str, subjects)
         urls << QUrl(str);
-    RDFContact.property<nco::hasIMAccount>().isMemberOf(urls.toList());
+    
+   // RDFContact.property<nco::hasIMAccount>().isMemberOf(urls.toList());
     RDFSelect query;
     query.addColumn("contactId", RDFContact.property<nco::contactUID>());
 
