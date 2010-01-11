@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QCompassReading::QCompassReading(QDateTime timestamp, int heading, bool calibrated)
+    \fn QCompassReading::QCompassReading(QDateTime timestamp, float heading, bool calibrated)
     \internal
 */
 

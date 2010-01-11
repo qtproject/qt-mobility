@@ -55,14 +55,14 @@ class QCompassReadingData : public QSharedData
 public:
     QCompassReadingData()
         : timestamp(), heading(0), calibrated(false) {}
-    QCompassReadingData(QDateTime _timestamp, int _heading, bool _calibrated)
+    QCompassReadingData(QDateTime _timestamp, float _heading, bool _calibrated)
         : timestamp(_timestamp), heading(_heading), calibrated(_calibrated) {}
     QCompassReadingData(const QCompassReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), heading(other.heading), calibrated(other.calibrated) {}
     ~QCompassReadingData() {}
 
     QDateTime timestamp;
-    int heading;
+    float heading;
     bool calibrated;
 };
 
@@ -73,14 +73,14 @@ class Q_SENSORS_EXPORT QCompassReading
 public:
     explicit QCompassReading()
     { d = new QCompassReadingData; }
-    explicit QCompassReading(QDateTime timestamp, int heading, bool calibrated)
+    explicit QCompassReading(QDateTime timestamp, float heading, bool calibrated)
     { d = new QCompassReadingData(timestamp, heading, calibrated); }
     QCompassReading(const QCompassReading &other)
         : d(other.d) {}
     ~QCompassReading() {}
 
     QDateTime timestamp() const { return d->timestamp; }
-    int heading() const { return d->heading; }
+    float heading() const { return d->heading; }
     bool isCalibrated() const { return d->calibrated; }
 
 private:
