@@ -65,6 +65,8 @@ void UT_QVersitWriter::cleanup()
 void UT_QVersitWriter::writingDone()
 {
     mWritingDoneCalled = true;
+    QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
+    QCOMPARE(mWriter->error(), QVersitWriter::NoError);
 }
 
 void UT_QVersitWriter::testDevice()
@@ -99,8 +101,10 @@ END:VCARD\r\n";
     property.setValue(QString::fromAscii("John"));
     document.addProperty(property);
     document.setVersitType(QVersitDocument::VCard21Type);
-    mWriter->setVersitDocument(document);
+    mWriter->setDocument(document);
     QVERIFY(mWriter->writeAll());
+    QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
+    QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
     QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard21));
@@ -112,9 +116,11 @@ VERSION:3.0\r\n\
 FN:John\r\n\
 END:VCARD\r\n";
     document.setVersitType(QVersitDocument::VCard30Type);
-    mWriter->setVersitDocument(document);
+    mWriter->setDocument(document);
     mOutputDevice->reset();
     QVERIFY(mWriter->writeAll());
+    QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
+    QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
     result = mOutputDevice->readAll();
     QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard30));

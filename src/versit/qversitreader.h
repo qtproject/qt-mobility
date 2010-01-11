@@ -48,6 +48,7 @@
 #include <QObject>
 
 class QIODevice;
+class QTextCodec;
 
 QTM_BEGIN_NAMESPACE
 
@@ -68,7 +69,14 @@ public:
         ParseError,
         InvalidCharsetError,
         BadDeviceError
-   };
+    };
+
+    enum State {
+        InactiveState = 0,   // operation not yet started
+        ActiveState,         // operation started, not yet finished
+        CanceledState,       // operation is finished due to cancelation
+        FinishedState        // operation successfully completed
+    };
 
     QVersitReader();
     ~QVersitReader();
@@ -77,8 +85,8 @@ public:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
 
-    void setDefaultCharset(QByteArray charset);
-    QByteArray defaultCharset();
+    void setDefaultCodec(QTextCodec* codec);
+    QTextCodec* defaultCodec();
 
     // reading:
     bool startReading();
@@ -87,6 +95,7 @@ public:
     // output:
     QList<QVersitDocument> results() const;
 
+    State state() const;
     Error error() const;
 
 signals:

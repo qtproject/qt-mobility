@@ -67,7 +67,7 @@ void UT_QVersit::testImportFiles()
     QVERIFY2(file.open(QIODevice::ReadOnly), filename.toAscii());
     reader.setDevice(&file);
     if (charset != "") {
-        reader.setDefaultCharset(charset);
+        reader.setDefaultCodec(QTextCodec::codecForName(charset));
     }
     QVERIFY(reader.readAll());
     QList<QVersitDocument> results = reader.results();
@@ -108,14 +108,13 @@ void UT_QVersit::testImportFiles_data()
     QTest::addColumn<QByteArray>("charset");
     QTest::addColumn<QList<QContact> >("contacts");
 
-    // Failing test cases commented out because they take a long time to run.
     QTEST_NEW_ROW("AAB4/MultipleAll.vcf", "UTF-16BE", QList<QContact>());
     QTEST_NEW_ROW("AAB4/MultipleAscii.vcf", "", QList<QContact>());
     QTEST_NEW_ROW("AAB4/SingleCompany.vcf", "", QList<QContact>());
     QTEST_NEW_ROW("AAB4/SingleExtensive.vcf", "", QList<QContact>());
     QTEST_NEW_ROW("AAB4/SingleNonAscii.vcf", "UTF-16BE", QList<QContact>());
     QTEST_NEW_ROW("AAB4/SingleNonAsciiWithPhoto.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB5/SingleNonAscii.vcf", "", QList<QContact>());
+    QTEST_NEW_ROW("AAB5/SingleNonAscii.vcf", "UTF-8", QList<QContact>());
 
     {
         QList<QContact> list;
@@ -171,9 +170,9 @@ void UT_QVersit::testImportFiles_data()
         QTEST_NEW_ROW("Entourage12/basic.vcf", "", list);
     }
 
-    QTEST_NEW_ROW("Entourage12/kevin.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("Entourage12/nonascii.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("gmail.vcf", "", QList<QContact>());
+    QTEST_NEW_ROW("Entourage12/kevin.vcf", "UTF-8", QList<QContact>());
+    QTEST_NEW_ROW("Entourage12/nonascii.vcf", "UTF-8", QList<QContact>());
+    QTEST_NEW_ROW("gmail.vcf", "UTF-8", QList<QContact>());
 }
 
 QTEST_MAIN(UT_QVersit)

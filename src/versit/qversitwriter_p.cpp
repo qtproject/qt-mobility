@@ -44,6 +44,7 @@
 #include "qmobilityglobal.h"
 
 #include <QStringList>
+#include <QMutexLocker>
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,7 +52,9 @@ QTM_BEGIN_NAMESPACE
 
 /*! Constructs a writer. */
 QVersitWriterPrivate::QVersitWriterPrivate()
-    : mIoDevice(0)
+    : mIoDevice(0),
+    mState(QVersitWriter::InactiveState),
+    mError(QVersitWriter::NoError)
 {
 }
 
@@ -59,7 +62,11 @@ QVersitWriterPrivate::QVersitWriterPrivate()
 QVersitWriterPrivate::QVersitWriterPrivate(
     const QByteArray& documentType,
     const QByteArray& version)
-    : mIoDevice(0), mDocumentType(documentType), mVersion(version)
+    : mIoDevice(0),
+    mDocumentType(documentType),
+    mVersion(version),
+    mState(QVersitWriter::InactiveState),
+    mError(QVersitWriter::NoError)
 {
 }
 
@@ -73,20 +80,32 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
  */
 bool QVersitWriterPrivate::isReady() const
 {
-    return (mIoDevice && mIoDevice->isOpen() && !mVersitDocument.properties().empty());
+    return state() != QVersitWriter::ActiveState
+            && mIoDevice && mIoDevice->isOpen()
+            && !mVersitDocument.properties().empty();
 }
 
 /*!
- * Do the actual writing.
+ * Do the actual writing and set the error and state appropriately.
  */
 bool QVersitWriterPrivate::write()
 {
-    bool ok = false;
+    setError(QVersitWriter::NoError);
+    bool ok = true;
     if (isReady()) {
+        setState(QVersitWriter::ActiveState);
         QByteArray output = encodeVersitDocument(mVersitDocument);
-        ok = (mIoDevice->write(output) > 0);
+        int c = mIoDevice->write(output);
+        if (c <= 0) {
+            setError(QVersitWriter::IOError);
+        }
+    } else {
+        // leave the state unchanged but set the error.
+        setError(QVersitWriter::NotReadyError);
+        return false;
     }
 
+    setState(QVersitWriter::FinishedState);
     return ok;
 }
 
@@ -132,6 +151,30 @@ QByteArray QVersitWriterPrivate::encodeGroupsAndName(
     }
     encodedGroupAndName.append(property.name().toAscii());
     return encodedGroupAndName;
+}
+
+void QVersitWriterPrivate::setState(QVersitWriter::State state)
+{
+    QMutexLocker locker(&mMutex);
+    mState = state;
+}
+
+QVersitWriter::State QVersitWriterPrivate::state() const
+{
+    QMutexLocker locker(&mMutex);
+    return mState;
+}
+
+void QVersitWriterPrivate::setError(QVersitWriter::Error error)
+{
+    QMutexLocker locker(&mMutex);
+    mError = error;
+}
+
+QVersitWriter::Error QVersitWriterPrivate::error() const
+{
+    QMutexLocker locker(&mMutex);
+    return mError;
 }
 
 #include "moc_qversitwriter_p.cpp"

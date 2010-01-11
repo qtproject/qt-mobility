@@ -46,6 +46,7 @@
 #include "qmobilityglobal.h"
 
 #include <QTextCodec>
+#include <QMutexLocker>
 
 QTM_BEGIN_NAMESPACE
 
@@ -73,9 +74,9 @@ QTM_BEGIN_NAMESPACE
   vCardBuffer.seek(0);
   QVersitReader reader;
   reader.setDevice(&vCardBuffer);
-  if (reader.readAll()) {
-      QList<QVersitDocument> versitDocuments = reader.result();
-      // Use the resulting document(s)...
+  bool ok = reader.readAll();
+  QList<QVersitDocument> versitDocuments = reader.results();
+  // Use the resulting document(s)...
   }
   \endcode
  
@@ -119,17 +120,25 @@ QIODevice* QVersitReader::device() const
     return d->mIoDevice;
 }
 
-void QVersitReader::setDefaultCharset(QByteArray charset)
+/*!
+ * Sets the codec for the reader to use when parsing the input stream.
+ * This codec is not used when overridden with a CHARSET Versit parameter.
+ */
+void QVersitReader::setDefaultCodec(QTextCodec *codec)
 {
-    QTextCodec *codec = QTextCodec::codecForName(charset);
     if (codec != NULL) {
         d->mDefaultCodec = codec;
+    } else {
+        d->mDefaultCodec = QTextCodec::codecForName("ISO 8859-1");
     }
 }
 
-QByteArray QVersitReader::defaultCharset()
+/*!
+ * Returns the codec the reader uses when parsing the input stream.
+ */
+QTextCodec* QVersitReader::defaultCodec()
 {
-    return d->mDefaultCodec->name();
+    return d->mDefaultCodec;
 }
 
 /*!
@@ -154,20 +163,28 @@ bool QVersitReader::startReading()
  *   the input device has not been set or opened, or
  *   if there is an asynchronous read operation pending, or
  *   or there was an error reading any of the documents.
+ * Sets the error value to indicate what kind of error (if any) occured, and
+ * the state value to indicate what the state of parsing is.
+ *
+ * Even if false is returned, a list of partial results may still be available.
  * Using this function may block the user thread for an undefined period.
  * In most cases asynchronous \l startReading() should be used instead.
  */
 bool QVersitReader::readAll()
 {
-    bool ok = false;
-    if (!d->isRunning()) 
-        ok = d->read();
-    return ok;
+    if (!d->isRunning()) {
+        return d->read();
+    }
+    else {
+        // leave the state unchanged but set the error.
+        d->setError(QVersitReader::NotReadyError);
+        return false;
+    }
 }
 
 /*!
- * Returns the reading result or an empty list
- * if the reading was not completed successfully.
+ * Returns the reading result.  Even if there was an error, a partial list of results may be
+ * returned.
  */
 QList<QVersitDocument> QVersitReader::results() const
 {
@@ -175,11 +192,19 @@ QList<QVersitDocument> QVersitReader::results() const
 }
 
 /*!
+ * Returns the state of the reader.
+ */
+QVersitReader::State QVersitReader::state() const
+{
+    return d->state();
+}
+
+/*!
  * Returns the error encountered by the last operation.
  */
 QVersitReader::Error QVersitReader::error() const
 {
-    return d->mLastError;
+    return d->error();
 }
 
 #include "moc_qversitreader.cpp"

@@ -107,7 +107,7 @@ QVersitWriter::~QVersitWriter()
  * Set the versit document to be written to \a versitDocument and
  * selects the actual writer implementation based on the versit document type.
  */
-void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
+void QVersitWriter::setDocument(const QVersitDocument& versitDocument)
 {
     QVersitWriterPrivate* updatedWriter = 0;
     switch (versitDocument.versitType()) {
@@ -132,7 +132,7 @@ void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
 /*!
  * Returns the current versit document.
  */
-QVersitDocument QVersitWriter::versitDocument() const
+QVersitDocument QVersitWriter::document() const
 {
     return d->mVersitDocument;
 }
@@ -174,15 +174,38 @@ bool QVersitWriter::startWriting()
  * Writes the output synchronously.
  * Returns false if the output device has not been set or opened or
  * if there is an asynchronous write operation pending.
+ * Sets the error value to indicate what kind of error (if any) occured, and
+ * the state value to indicate what the state of parsing is..
+ * 
  * Using this function may block the user thread for an undefined period.
  * In most cases asynchronous \l startWriting() should be used instead.
  */
 bool QVersitWriter::writeAll()
 {
-    bool ok = false;
-    if (!d->isRunning())
-        ok = d->write();
-    return ok;
+    if (!d->isRunning()) {
+        return d->write();
+    }
+    else {
+        // leave the state unchanged but set the error.
+        d->setError(QVersitWriter::NotReadyError);
+        return false;
+    }
+}
+
+/*!
+ * Returns the state of the writer.
+ */
+QVersitWriter::State QVersitWriter::state() const
+{
+    return d->state();
+}
+
+/*!
+ * Returns the error encountered by the last operation.
+ */
+QVersitWriter::Error QVersitWriter::error() const
+{
+    return d->error();
 }
 
 #include "moc_qversitwriter.cpp"

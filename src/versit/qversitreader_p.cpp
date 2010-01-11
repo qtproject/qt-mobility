@@ -44,6 +44,7 @@
 #include "qmobilityglobal.h"
 #include <QTextCodec>
 #include <QDebug>
+#include <QMutexLocker>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,7 +56,8 @@ QVersitReaderPrivate::QVersitReaderPrivate()
     : mIoDevice(0),
     mDocumentNestingLevel(0),
     mDefaultCodec(QTextCodec::codecForName("ISO 8859-1")),
-    mLastError(QVersitReader::NoError)
+    mState(QVersitReader::InactiveState),
+    mError(QVersitReader::NoError)
 {
 }
     
@@ -69,19 +71,24 @@ QVersitReaderPrivate::~QVersitReaderPrivate()
  */
 bool QVersitReaderPrivate::isReady() const
 {
-    return (mIoDevice && mIoDevice->isOpen());
+    return state() != QVersitReader::ActiveState
+            && mIoDevice
+            && mIoDevice->isOpen();
 }
 
 /*!
- * Inherited from QThread. Does the actual reading.
+ * Does the actual reading and sets the error and state as appropriate.
  */
 bool QVersitReaderPrivate::read()
 {
+    setError(QVersitReader::NoError);
     mVersitDocuments.clear();
     bool ret = true;
     if (isReady()) {
+        setState(QVersitReader::ActiveState);
         if (!mIoDevice->isReadable()) {
-            mLastError = QVersitReader::IOError;
+            setError(QVersitReader::IOError);
+            setState(QVersitReader::FinishedState);
             return false;
         }
         QByteArray input = mIoDevice->readAll();
@@ -97,11 +104,9 @@ bool QVersitReaderPrivate::read()
                     break;
                 else
                     mVersitDocuments.append(document);
-            }
-
-            if (!ok) {
+            } else {
                 ret = false;
-                mLastError = QVersitReader::ParseError;
+                setError(QVersitReader::ParseError);
                 if (cursor.position == oldPos)
                     break;
             }
@@ -109,10 +114,12 @@ bool QVersitReaderPrivate::read()
             oldPos = cursor.position;
         } while(cursor.position < input.size());
     } else {
-        mLastError = QVersitReader::NotReadyError;
+        // leave the state unchanged but set the error.
+        setError(QVersitReader::NotReadyError);
         return false;
     }
 
+    setState(QVersitReader::FinishedState);
     return ret;
 }
 
@@ -359,6 +366,30 @@ QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
     }
     *codec = mDefaultCodec;
     return mDefaultCodec->toUnicode(value);
+}
+
+void QVersitReaderPrivate::setState(QVersitReader::State state)
+{
+    QMutexLocker locker(&mMutex);
+    mState = state;
+}
+
+QVersitReader::State QVersitReaderPrivate::state() const
+{
+    QMutexLocker locker(&mMutex);
+    return mState;
+}
+
+void QVersitReaderPrivate::setError(QVersitReader::Error error)
+{
+    QMutexLocker locker(&mMutex);
+    mError = error;
+}
+
+QVersitReader::Error QVersitReaderPrivate::error() const
+{
+    QMutexLocker locker(&mMutex);
+    return mError;
 }
 
 #include "moc_qversitreader_p.cpp"

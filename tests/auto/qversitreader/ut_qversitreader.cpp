@@ -67,20 +67,10 @@ void UT_QVersitReader::cleanup()
 
 void UT_QVersitReader::finished()
 {
-    QCOMPARE(mReader->results().count(),mExpectedDocumentCount);
     mReadingDoneCalled = true;
-}
-
-void UT_QVersitReader::testDefaultCharset()
-{
-    // Default charset
-    QCOMPARE(mReader->defaultCharset(), QByteArray("ISO-8859-1"));
-
-    mReader->setDefaultCharset("UTF-8");
-    QCOMPARE(mReader->defaultCharset(), QByteArray("UTF-8"));
-
-    mReader->setDefaultCharset("UTF-16");
-    QCOMPARE(mReader->defaultCharset(), QByteArray("UTF-16"));
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), mExpectedError);
+    QCOMPARE(mReader->results().count(),mExpectedDocumentCount);
 }
 
 void UT_QVersitReader::testDevice()
@@ -111,6 +101,8 @@ void UT_QVersitReader::testReading()
     mReader->setDevice(mInputDevice);
     mInputDevice->open(QBuffer::ReadWrite);
     QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(mReader->results().count(),0);
 
     // Device set, one document
@@ -119,6 +111,8 @@ void UT_QVersitReader::testReading()
     mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
     QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(mReader->results().count(),1);
 
     // Wide charset with no byte-order mark
@@ -131,10 +125,12 @@ void UT_QVersitReader::testReading()
     mInputDevice->write(wideDocument);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    mReader->setDefaultCharset("UTF-16BE");
+    mReader->setDefaultCodec(codec);
     QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(mReader->results().count(),1);
-    mReader->setDefaultCharset("ISO-8859-1");
+    mReader->setDefaultCodec(NULL);
 
     // Two documents
     const QByteArray& twoDocuments =
@@ -147,6 +143,8 @@ void UT_QVersitReader::testReading()
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
     QVERIFY(mReader->readAll());
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(mReader->results().count(),2);
 
     // Valid documents and a grouped document between them
@@ -169,6 +167,8 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
     mReader->setDevice(mInputDevice);
     // readAll() returns false because some of them failed, but the rest are still readable.
     QVERIFY(!mReader->readAll());
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::ParseError);
     QCOMPARE(mReader->results().count(),4);
 
     // Valid documents and a grouped document between them
@@ -191,6 +191,8 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     mReader->setDevice(mInputDevice);
     // readAll() returns false because some of them failed, but the rest are still readable.
     QVERIFY(!mReader->readAll());
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::ParseError);
     QCOMPARE(mReader->results().count(),4);
 
 
@@ -204,6 +206,7 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
     mExpectedDocumentCount = 1;
+    mExpectedError = QVersitReader::NoError;
     QVERIFY(mReader->startReading());
     delete mReader; // waits for the thread to finish
     mReader = 0;

@@ -45,10 +45,10 @@
 #include <QObject>
 #include <QBuffer>
 #include <qmobilityglobal.h>
+#include "qversitreader.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitReader;
 class QVersitReaderPrivate;
 
 QTM_END_NAMESPACE
@@ -66,7 +66,6 @@ private slots: // Tests
     void init();
     void cleanup();
 
-    void testDefaultCharset();
     void testDevice();
     void testReading();
     void testResult();
@@ -81,6 +80,7 @@ private: // Data
     QVersitReaderPrivate* mReaderPrivate;
     QBuffer* mInputDevice;
     int mExpectedDocumentCount;
+    QVersitReader::Error mExpectedError;
     bool mReadingDoneCalled;
 };
 

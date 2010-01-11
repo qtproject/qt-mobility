@@ -53,13 +53,16 @@
 // We mean it.
 //
 
+#include "qversitwriter.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
+#include "qversitwriter.h"
 
 #include <QThread>
 #include <QByteArray>
 #include <QIODevice>
+#include <QMutex>
 
 QTM_BEGIN_NAMESPACE
 
@@ -68,35 +71,31 @@ class Q_AUTOTEST_EXPORT QVersitWriterPrivate : public QThread
     Q_OBJECT
 
 public:
+    QVersitWriterPrivate();
+    QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
     virtual ~QVersitWriterPrivate();
     bool isReady() const;
     bool write();
 
-public: // Data
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
+    void setState(QVersitWriter::State);
+    QVersitWriter::State state() const;
+    void setError(QVersitWriter::Error);
+    QVersitWriter::Error error() const;
 
-protected: // To be implemented in each of the subclasses
     virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
     virtual QByteArray encodeParameters(
         const QMultiHash<QString,QString>& parameters) const = 0;
-
-protected: // Protected Constructors
-    QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
-
-protected: // From QThread
-     void run();
-
-protected: // New functions
     QByteArray encodeVersitDocument(const QVersitDocument& document);
     QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
+    void run();
 
-private: // Constructors
-    QVersitWriterPrivate();
-
-private: // Data
+    QIODevice* mIoDevice;
+    QVersitDocument mVersitDocument;
     QByteArray mDocumentType;
     QByteArray mVersion;
+    QVersitWriter::State mState;
+    QVersitWriter::Error mError;
+    mutable QMutex mMutex;
 };
 
 QTM_END_NAMESPACE

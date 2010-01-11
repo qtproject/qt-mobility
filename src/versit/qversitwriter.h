@@ -58,12 +58,30 @@ class Q_VERSIT_EXPORT QVersitWriter : public QObject
     Q_OBJECT
 
 public:
+    enum Error {
+        NoError = 0,
+        UnspecifiedError,
+        IOError,
+        OutOfMemoryError,
+        NotReadyError,
+        ParseError,
+        InvalidCharsetError,
+        BadDeviceError
+    };
+
+    enum State {
+        InactiveState = 0,   // operation not yet started
+        ActiveState,         // operation started, not yet finished
+        CanceledState,       // operation is finished due to cancelation
+        FinishedState        // operation successfully completed
+    };
+
     QVersitWriter();
     ~QVersitWriter();
 
     // input:
-    void setVersitDocument(const QVersitDocument& versitDocument);
-    QVersitDocument versitDocument() const;
+    void setDocument(const QVersitDocument& versitDocument);
+    QVersitDocument document() const;
 
     // output:
     void setDevice(QIODevice* device);
@@ -72,6 +90,9 @@ public:
     // writing:
     bool startWriting();
     bool writeAll();
+
+    State state() const;
+    Error error() const;
 
 signals:
     void finished();

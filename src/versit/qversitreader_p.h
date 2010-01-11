@@ -65,9 +65,9 @@
 #include <QByteArray>
 #include <QIODevice>
 #include <QList>
-#include <QTimer>
 #include <QPointer>
 #include <QByteArray>
+#include <QMutex>
 
 QTM_BEGIN_NAMESPACE
 
@@ -84,7 +84,9 @@ public: // New functions
     bool isReady() const;
     bool read();
 
-    bool parseVersitDocument(VersitCursor& cursor, QVersitDocument& document, bool foundBegin = false);
+    bool parseVersitDocument(VersitCursor& cursor,
+                             QVersitDocument& document,
+                             bool foundBegin = false);
 
     QVersitProperty parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
@@ -117,6 +119,12 @@ public: // New functions
         QVersitProperty& property,
         QTextCodec** codec) const;
 
+    // mutexed getters and setters.
+    void setState(QVersitReader::State);
+    QVersitReader::State state() const;
+    void setError(QVersitReader::Error);
+    QVersitReader::Error error() const;
+
 protected: // From QThread
      void run();
 
@@ -125,7 +133,9 @@ public: // Data
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
     QTextCodec* mDefaultCodec;
-    QVersitReader::Error mLastError;
+    QVersitReader::State mState;
+    QVersitReader::Error mError;
+    mutable QMutex mMutex;
 };
 
 QTM_END_NAMESPACE
