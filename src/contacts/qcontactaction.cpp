@@ -173,7 +173,7 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
 
 /*!
  * \fn QContactAction::progress(QContactAction::Status status, const QVariantMap& result)
- * \deprecated This function is deprecated and will be replaced by the progress signal which includes a State.
+ * \deprecated This function was deprecated in week 1 and will be replaced by the progress signal which includes a State after the transition period has elapsed.
  * This signal is emitted by an action instance whose functionality has been initiated with \l invokeAction().
  * It provides clients with the current \a status of the action, and any \a result associated with the action.
  * This signal must be emitted at least once by every action instance after \l invokeAction() is called.

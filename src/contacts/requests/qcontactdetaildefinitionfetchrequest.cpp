@@ -77,7 +77,7 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 void Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use setDefinitionNames() instead!");
+    qWarning("QContactDetailDefinitionFetchRequest::setNames() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use setDefinitionNames() instead!");
     d->m_names = names;
 }
 
@@ -88,7 +88,7 @@ void Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStr
 QStringList Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use definitionNames() instead!");
+    qWarning("QContactDetailDefinitionFetchRequest::names() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use definitionNames() instead!");
     return d->m_names;
 }
 

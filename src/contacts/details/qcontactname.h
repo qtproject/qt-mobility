@@ -92,7 +92,7 @@ public:
     void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
     void setCustomLabel(const QString& customLabel) {setValue(FieldCustomLabel, customLabel);}
 
-    // deprecated functions, will be removed in week 1.
+    // deprecated functions, will be removed after transition period according to process.
     QString Q_DECL_DEPRECATED first() const {qWarning("QContactName::first() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use firstName() instead!"); return firstName();}
     QString Q_DECL_DEPRECATED middle() const {qWarning("QContactName::middle() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use middleName() instead!"); return middleName();}
     QString Q_DECL_DEPRECATED last() const {qWarning("QContactName::last() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use lastName() instead!"); return lastName();}

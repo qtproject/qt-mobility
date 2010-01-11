@@ -119,7 +119,7 @@ QContactAbstractRequest::~QContactAbstractRequest()
  */
 bool QContactAbstractRequest::isActive() const
 {
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactAbstractRequest::isActive() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     return (d_ptr->m_state == QContactAbstractRequest::ActiveState);
 }
 
@@ -133,7 +133,7 @@ bool QContactAbstractRequest::isActive() const
  */
 bool QContactAbstractRequest::isFinished() const
 {
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactAbstractRequest::isFinished() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     return (d_ptr->m_state == QContactAbstractRequest::FinishedState
             || d_ptr->m_state == QContactAbstractRequest::CanceledState);
 }
@@ -164,7 +164,7 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
  */
 QContactAbstractRequest::Status Q_DECL_DEPRECATED QContactAbstractRequest::status() const
 {
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use QContactAbstractRequest::state() instead!");
+    qWarning("QContactAbstractRequest::status() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use QContactAbstractRequest::state() instead!");
     return static_cast<QContactAbstractRequest::Status>(d_ptr->m_state);
 }
 

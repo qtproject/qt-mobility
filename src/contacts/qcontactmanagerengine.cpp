@@ -467,7 +467,7 @@ QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const Q
  */
 QString Q_DECL_DEPRECATED QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use synthesizedDisplayLabel() instead!");
+    qWarning("QContactManagerEngine::synthesizeDisplayLabel() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use synthesizedDisplayLabel() instead!");
     return synthesizedDisplayLabel(contact, error);
 }
 
@@ -572,7 +572,7 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 bool Q_DECL_DEPRECATED QContactManagerEngine::filterSupported(const QContactFilter& filter) const
 {
     Q_UNUSED(filter);
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use isFilterSupported() instead!");
+    qWarning("QContactManagerEngine::filterSupported() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use isFilterSupported() instead!");
     return false;
 }
 
@@ -633,7 +633,7 @@ int QContactManagerEngine::version()
  */ 
 int Q_DECL_DEPRECATED QContactManagerEngine::implementationVersion() const
 { 
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use managerVersion() instead!");
+    qWarning("QContactManagerEngine::implementationVersion() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use managerVersion() instead!");
     return 0;
 } 
 

@@ -311,7 +311,7 @@ bool QContactDetail::removeValue(const QString& key)
  */
 QVariantMap Q_DECL_DEPRECATED QContactDetail::values() const
 {
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use variantValues() instead!");
+    qWarning("QContactDetail::values() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use variantValues() instead!");
     return d.constData()->m_values;
 }
 
