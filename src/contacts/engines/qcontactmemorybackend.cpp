@@ -798,7 +798,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactManager::Error operationError;
             QList<QContactManager::Error> operationErrors;
             QList<QContact> requestedContacts;
-            QList<QContactLocalId> requestedContactIds = contacts(filter, sorting, operationError);
+            QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, operationError);
 
             QContactManager::Error tempError;
             for (int i = 0; i < requestedContactIds.size(); i++) {
@@ -837,7 +837,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactSortOrder> sorting = r->sorting();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> requestedContactIds = contacts(filter, sorting, operationError);
+            QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, operationError);
 
             updateRequest(currentRequest, requestedContactIds, operationError, QList<QContactManager::Error>(), QContactAbstractRequest::FinishedState);
         }
@@ -873,7 +873,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactFilter filter = r->filter();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> contactsToRemove = contacts(filter, QList<QContactSortOrder>(), operationError);
+            QList<QContactLocalId> contactsToRemove = contactIds(filter, QList<QContactSortOrder>(), operationError);
 
             for (int i = 0; i < contactsToRemove.size(); i++) {
                 QContactManager::Error tempError;

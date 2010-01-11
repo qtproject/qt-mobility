@@ -249,7 +249,7 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& fil
     QList<QContactLocalId> ret;
 
     /* Retrieve each contact.. . . */
-    const QList<QContactLocalId>& all = contacts(sortOrders, error);
+    const QList<QContactLocalId>& all = contactIds(sortOrders, error);
     if (error != QContactManager::NoError)
         return ret;
 
@@ -257,7 +257,7 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& fil
         return all;
 
     for (int j = 0; j < all.count(); j++) {
-        if (testFilter(filter, contact(all.at(j), error)))
+        if (testFilter(filter, contact(all.at(j), QStringList(), error)))
             ret << all.at(j);
     }
 
@@ -291,17 +291,22 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
     /* Slow way */
     QList<QContactLocalId> ret;
 
-    /* Retrieve each contact.. . . */
-    const QList<QContactLocalId>& all = contacts(sortOrders, error);
+    /* If the filter matches all ids, then return the list of all ids */
+    if (filter.type() == QContactFilter::DefaultFilter) {
+        const QList<QContactLocalId>& allIds = contactIds(sortOrders, error);
+        if (error != QContactManager::NoError)
+            return ret;
+        return allIds;
+    }
+
+    /* Otherwise, retrieve all contacts, test and return matching */
+    const QList<QContact>& all = contacts(sortOrders, QStringList(), error);
     if (error != QContactManager::NoError)
         return ret;
 
-    if (filter.type() == QContactFilter::DefaultFilter)
-        return all;
-
     for (int j = 0; j < all.count(); j++) {
-        if (testFilter(filter, contact(all.at(j), error)))
-            ret << all.at(j);
+        if (testFilter(filter, all.at(j)))
+            ret << all.at(j).localId();
     }
 
     return ret;

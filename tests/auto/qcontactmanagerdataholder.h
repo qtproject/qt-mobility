@@ -81,7 +81,8 @@ public:
                 }
                 savedContacts.insert(cm->managerName(),contacts);
                 QList<QContactLocalId> ids = cm->contactIds();
-                cm->removeContacts(&ids);
+                QMap<int, QContactManager::Error> errorMap;
+                cm->removeContacts(&ids, &errorMap);
                 delete cm;
             }
         }
