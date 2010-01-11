@@ -132,7 +132,7 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
     m_currentFilter = filter;
     m_contactsList->clear();
     m_idToListIndex.clear();
-    QList<QContactLocalId> contactIds = m_manager->contacts(m_currentFilter);
+    QList<QContactLocalId> contactIds = m_manager->contactIds(m_currentFilter);
     foreach (const QContactLocalId& id, contactIds) {
         QListWidgetItem *currItem = new QListWidgetItem;
         currContact = m_manager->contact(id);

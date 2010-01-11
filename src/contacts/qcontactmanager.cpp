@@ -336,25 +336,76 @@ QContactManager::Error QContactManager::error() const
     return d->m_error;
 }
 
-/*! Return the list of added contact ids, sorted according to the given list of \a sortOrders */
+/*!
+ * \deprecated
+ * Return the list of added contact ids, sorted according to the given list of \a sortOrders
+ */
 QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
 {
+    qWarning("QContactManager::contacts() This function is deprecated and will be removed in week 3.  Use contactIds() instead!");
     return d->m_engine->contacts(sortOrders, d->m_error);
+}
+
+/*!
+ * \deprecated
+ * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
+ * Depending on the backend, this filtering operation may involve retrieving all the contacts.
+ */
+QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
+{
+    qWarning("QContactManager::contacts() This function is deprecated and will be removed in week 3.  Use contactIds() instead!");
+    return d->m_engine->contacts(filter, sortOrders, d->m_error);
+}
+
+/*!
+ * Return the list of added contact ids, sorted according to the given list of \a sortOrders
+ */
+QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder>& sortOrders) const
+{
+    return d->m_engine->contactIds(sortOrders, d->m_error);
 }
 
 /*!
  * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
  * Depending on the backend, this filtering operation may involve retrieving all the contacts.
  */
-QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
+QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders) const
 {
-    return d->m_engine->contacts(filter, sortOrders, d->m_error);
+    return d->m_engine->contactIds(filter, sortOrders, d->m_error);
 }
 
-/*! Returns the contact in the database identified by \a contactId */
-QContact QContactManager::contact(const QContactLocalId& contactId) const
+/*!
+ * Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
+ * If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
+ * all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
+ * in the \a definitionRestrictions list will be included.
+ */
+QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
-    return d->m_engine->contact(contactId, d->m_error);
+    return d->m_engine->contacts(sortOrders, definitionRestrictions, d->m_error);
+}
+
+/*!
+ * Returns a list of contacs that match the given \a filter, sorted according to the given list of \a sortOrders.
+ * Depending on the backend, this filtering operation may involve retrieving all the contacts.
+ * If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
+ * all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
+ * in the \a definitionRestrictions list will be included.
+ */
+QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
+{
+    return d->m_engine->contacts(filter, sortOrders, definitionRestrictions, d->m_error);
+}
+
+/*!
+ * Returns the contact in the database identified by \a contactId.
+ * If the list of detail definition names \a definitionRestrictions given is non-empty,
+ * the contact returned will contain only those details which are of a definition whose name is
+ * contained in the \a definitionRestrictions list.
+ */
+QContact QContactManager::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions) const
+{
+    return d->m_engine->contact(contactId, definitionRestrictions, d->m_error);
 }
 
 /*!
@@ -408,6 +459,7 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
 }
 
 /*!
+ * \deprecated
  * Adds the list of contacts given by \a contactList to the database.
  * Returns a list of the error codes corresponding to the contacts in
  * the \a contactList.  The \l QContactManager::error() function will
@@ -419,14 +471,65 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
  * when saving a new contact, the id will be cleared.  If a failure occurs
  * when updating a contact that already exists, then TODO.
  *
+ * This function is deprecated and will be removed in week 3.
+ *
  * \sa QContactManager::saveContact()
  */
 QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
 {
+    qWarning("QContactManager::saveContacts() This function is deprecated and will be removed in week 3.  Use the other saveContacts() function instead!");
     return d->m_engine->saveContacts(contactList, d->m_error);
 }
 
 /*!
+ * Adds the list of contacts given by \a contact list to the database.
+ * Returns true if the contacts were saved successfully, otherwise false.
+ *
+ * The manager might populate \a errorMap (the map of indices of the \a contacts list to
+ * the error which occurred when saving the contact at that index) for
+ * every index for which the contact could not be saved, if it is able.
+ * The \l QContactManager::error() function will only return \c QContactManager::NoError
+ * if all contacts were saved successfully.
+ *
+ * For each newly saved contact that was successful, the id of the contact
+ * in the \a contacts list will be updated with the new value.  If a failure occurs
+ * when saving a new contact, the id will be cleared.
+ *
+ * \sa QContactManager::saveContact()
+ */
+bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap)
+{
+    return d->m_engine->saveContacts(contacts, errorMap, d->m_error);
+}
+
+/*!
+ * Remove every contact whose id is contained in the list of contacts ids
+ * \a contactIds.  Returns true if all contacts were removed successfully,
+ * otherwise false.
+ *
+ * The manager might populate \a errorMap (the map of indices of the \a contactIds list to
+ * the error which occurred when saving the contact at that index) for every
+ * index for which the contact could not be removed, if it is able.
+ * The \l QContactManager::error() function will
+ * only return \c QContactManager::NoError if all contacts were removed
+ * successfully.
+ *
+ * For each contact that was removed succesfully, the corresponding
+ * id in the \a contactIds list will be retained but set to zero.  The id of contacts
+ * that were not successfully removed will be left alone.
+ *
+ * Any contact that was removed successfully will have the relationships
+ * in which it was involved removed also.
+ *
+ * \sa QContactManager::removeContact()
+ */
+bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
+{
+    return d->m_engine->removeContacts(contactIds, errorMap, d->m_error);
+}
+
+/*!
+ * \deprecated
  * Remove the list of contacts identified in \a idList.
  * Returns a list of the error codes corresponding to the contact ids in
  * the \a idList.  The \l QContactManager::error() function will
@@ -440,10 +543,13 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
  * Any contact that was removed successfully will have the relationships
  * in which it was involved removed also.
  *
+ * This function is deprecated and will be removed in week 3.
+ *
  * \sa QContactManager::removeContact()
  */
 QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLocalId>* idList)
 {
+    qWarning("QContactManager::removeContacts() This function is deprecated and will be removed in week 3.  Use the other removeContacts() function instead!");
     return d->m_engine->removeContacts(idList, d->m_error);
 }
 

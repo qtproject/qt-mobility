@@ -220,6 +220,8 @@ QString QContactManagerEngine::managerUri() const
 }
 
 /*!
+ * \deprecated
+ *
  * Return the list of contact ids present in this engine, sorted according to the given \a sortOrders.
  *
  * Any errors encountered should be stored to \a error.
@@ -227,11 +229,13 @@ QString QContactManagerEngine::managerUri() const
 QList<QContactLocalId> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     Q_UNUSED(sortOrders);
+    qWarning("QContactManagerEngine::contacts() This function is deprecated and will be removed in week 3.  Use contactIds() instead.");
     error = QContactManager::NotSupportedError;
     return QList<QContactLocalId>();
 }
 
 /*!
+ * \deprecated
  * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrders.
  * Any error that occurs will be stored in \a error.
  *
@@ -239,6 +243,8 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QList<QContactSortO
  */
 QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
+    qWarning("QContactManagerEngine::contacts() This function is deprecated and will be removed in week 3.  Use contactIds() instead!");
+
     /* Slow way */
     QList<QContactLocalId> ret;
 
@@ -259,6 +265,8 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& fil
 }
 
 /*!
+ * \deprecated
+ *
  * Returns the contact in the database identified by \a contactId
  *
  * Any errors encountered should be stored to \a error.
@@ -266,6 +274,77 @@ QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& fil
 QContact QContactManagerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     Q_UNUSED(contactId);
+    qWarning("QContactManagerEngine::contact() This function has been deprecated and will be removed in week 3.  Use contact() taking a list of restrictions instead!");
+    error = QContactManager::NotSupportedError;
+    return QContact();
+}
+
+QList<QContactLocalId> QContactManagerEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+    Q_UNUSED(sortOrders);
+    error = QContactManager::NotSupportedError;
+    return QList<QContactLocalId>();
+}
+
+QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+    /* Slow way */
+    QList<QContactLocalId> ret;
+
+    /* Retrieve each contact.. . . */
+    const QList<QContactLocalId>& all = contacts(sortOrders, error);
+    if (error != QContactManager::NoError)
+        return ret;
+
+    if (filter.type() == QContactFilter::DefaultFilter)
+        return all;
+
+    for (int j = 0; j < all.count(); j++) {
+        if (testFilter(filter, contact(all.at(j), error)))
+            ret << all.at(j);
+    }
+
+    return ret;
+}
+
+QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(definitionRestrictions);
+    error = QContactManager::NotSupportedError;
+    return QList<QContact>();
+}
+
+QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    /* Slow way */
+    QList<QContact> ret;
+
+    /* Retrieve each contact.. . . */
+    const QList<QContact>& all = contacts(sortOrders, definitionRestrictions, error);
+    if (error != QContactManager::NoError)
+        return ret;
+
+    if (filter.type() == QContactFilter::DefaultFilter)
+        return all;
+
+    for (int j = 0; j < all.count(); j++) {
+        if (testFilter(filter, all.at(j)))
+            ret << all.at(j);
+    }
+
+    return ret;
+}
+
+/*!
+ * Returns the contact in the database identified by \a contactId
+ *
+ * Any errors encountered should be stored to \a error.
+ */
+QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    Q_UNUSED(contactId);
+    Q_UNUSED(definitionRestrictions);
     error = QContactManager::NotSupportedError;
     return QContact();
 }
@@ -1241,6 +1320,7 @@ bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName
 }
 
 /*!
+ * \deprecated
  * Adds the list of contacts given by \a contacts to the database.
  * Returns a list of the error codes corresponding to the contacts in
  * the \a contacts.  The \l QContactManager::error() function will
@@ -1258,10 +1338,13 @@ bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName
  * Any errors encountered during this operation should be stored to
  * \a error.
  *
+ * This function is deprecated and will be removed in week 3.
+ *
  * \sa QContactManager::saveContact()
  */
 QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
 {
+    qWarning("QContactManagerEngine::saveContacts() This function is deprecated and will be removed in week 3.  Use the other saveContacts() function instead!");
     QList<QContactManager::Error> ret;
     if (!contacts) {
         error = QContactManager::BadArgumentError;
@@ -1285,6 +1368,50 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
 }
 
 /*!
+ * Adds the list of contacts given by \a contact list to the database.
+ * Returns true if the contacts were saved successfully, otherwise false.
+ *
+ * The manager might populate \a errorMap (the map of indices of the \a contacts list to
+ * the error which occurred when saving the contact at that index) for
+ * every index for which the contact could not be saved, if it is able.
+ * The \l QContactManager::error() function will only return \c QContactManager::NoError
+ * if all contacts were saved successfully.
+ *
+ * For each newly saved contact that was successful, the id of the contact
+ * in the \a contacts list will be updated with the new value.  If a failure occurs
+ * when saving a new contact, the id will be cleared.
+ *
+ * Any errors encountered during this operation should be stored to
+ * \a error.
+ *
+ * \sa QContactManager::saveContact()
+ */
+bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+{
+    if (!contacts) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
+    QContactManager::Error functionError = QContactManager::NoError;
+    for (int i = 0; i < contacts->count(); i++) {
+        QContact current = contacts->at(i);
+        if (!saveContact(&current, error)) {
+            functionError = error;
+            if (errorMap) {
+                errorMap->insert(i, functionError);
+            }
+        } else {
+            (*contacts)[i] = current;
+        }
+    }
+
+    error = functionError;
+    return (functionError == QContactManager::NoError);
+}
+
+/*!
+ * \deprecated
  * Remove the list of contacts identified in \a contactIds.
  * Returns a list of the error codes corresponding to the contact ids in
  * the \a contactIds.  The \l QContactManager::error() function will
@@ -1304,10 +1431,13 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  * Any errors encountered during this operation should be stored to
  * \a error.
  *
+ * This function is deprecated and will be removed in week 3.
+ *
  * \sa QContactManager::removeContact()
  */
 QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
 {
+    qWarning("QContactManagerEngine::removeContacts() This function is deprecated and will be removed in week 3.  Use the other removeContacts() function instead!");
     QList<QContactManager::Error> ret;
     if (!contactIds) {
         error = QContactManager::BadArgumentError;
@@ -1329,6 +1459,54 @@ QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QConta
         error = functionError;
         return ret;
     }
+}
+
+/*!
+ * Remove every contact whose id is contained in the list of contacts ids
+ * \a contactIds.  Returns true if all contacts were removed successfully,
+ * otherwise false.
+ *
+ * The manager might populate \a errorMap (the map of indices of the \a contactIds list to
+ * the error which occurred when saving the contact at that index) for every
+ * index for which the contact could not be removed, if it is able.
+ * The \l QContactManager::error() function will
+ * only return \c QContactManager::NoError if all contacts were removed
+ * successfully.
+ *
+ * For each contact that was removed succesfully, the corresponding
+ * id in the \a contactIds list will be retained but set to zero.  The id of contacts
+ * that were not successfully removed will be left alone.
+ *
+ * Any contact that was removed successfully will have the relationships
+ * in which it was involved removed also.
+ *
+ * Any errors encountered during this operation should be stored to
+ * \a error.
+ *
+ * \sa QContactManager::removeContact()
+ */
+bool QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+{
+    if (!contactIds) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
+    QContactManager::Error functionError = QContactManager::NoError;
+    for (int i = 0; i < contactIds->count(); i++) {
+        QContactLocalId current = contactIds->at(i);
+        if (!removeContact(current, error)) {
+            functionError = error;
+            if (errorMap) {
+                errorMap->insert(i, functionError);
+            }
+        } else {
+            (*contactIds)[i] = 0;
+        }
+    }
+
+    error = functionError;
+    return (functionError == QContactManager::NoError);
 }
 
 /*!
