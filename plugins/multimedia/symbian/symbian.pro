@@ -24,7 +24,9 @@ SOURCES += s60serviceplugin.cpp \
 
 include(radio/radio.pri)
 # include(camera/camera_s60.pri)
-include(mediaplayer/mediaplayer_s60.pri)
+exists($${EPOCROOT}epoc32/release/winscw/udeb/mpengine.lib){
+    include(mediaplayer/mediaplayer_s60.pri)
+}
 include(audiosource/audiosource_s60.pri)
 
 load(data_caging_paths)
