@@ -62,7 +62,7 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_stereoMode(QRadioTuner::Auto)
     , m_signal(0)
     , m_currentBand(QRadioTuner::FM)
-    , m_currentFreq(104100000)
+    , m_currentFreq(98700000)
     , m_scanning(false)
     , m_tuners(0)
     , m_vol(100)
@@ -105,6 +105,8 @@ bool S60RadioTunerControl::initRadio()
 	m_tunerUtility->NotifyStereoChange(*this);
 	m_tunerUtility->NotifySignalStrength(*this);
 	
+	m_available = true;
+	
     return m_available;
 }
 
@@ -113,13 +115,14 @@ void S60RadioTunerControl::start()
 	TFrequency freq(m_currentFreq);
 	m_tunerUtility->Tune(freq);
 	m_available = true;
+	m_apiTunerState = QRadioTuner::ActiveState;
+	emit stateChanged(m_apiTunerState);
 }
 
 void S60RadioTunerControl::stop()
 {
     if (m_audioPlayerUtility && m_audioInitializationComplete) {
 		m_audioPlayerUtility->Stop();
-		m_tunerUtility->CancelNotifyChange();
 		m_apiTunerState = QRadioTuner::StoppedState;
 		emit stateChanged(m_apiTunerState);
     }		
@@ -152,9 +155,8 @@ bool S60RadioTunerControl::isBandSupported(QRadioTuner::Band b) const
 void S60RadioTunerControl::setBand(QRadioTuner::Band b)
 {
     QRadioTuner::Band tempBand = b; 
-    //m_step = frequencyStep(b);
     if (tempBand != m_currentBand) {
-        m_currentBand = b;  
+        m_currentBand = b;        
         emit bandChanged(m_currentBand);
     }
 }
@@ -169,9 +171,8 @@ void S60RadioTunerControl::setFrequency(int frequency)
     m_currentFreq = frequency;
     TFrequency freq(m_currentFreq);
     m_tunerUtility->Tune(freq);
-    //emit that frequency is changed
-    emit frequencyChanged(m_currentFreq);
 }
+
 int S60RadioTunerControl::frequencyStep(QRadioTuner::Band b) const
 {
     int step = 0;
@@ -199,18 +200,18 @@ QPair<int,int> S60RadioTunerControl::frequencyRange(QRadioTuner::Band band) cons
 		if (!bandError) {
 			return qMakePair<int,int>(bottomFreq.iFrequency, topFreq.iFrequency);
 		}
-	}
-   
+	}  
    return qMakePair<int,int>(0,0);
 }
+
 CMMTunerUtility::TTunerBand S60RadioTunerControl::getNativeBand(QRadioTuner::Band b) const
 {
     // api match to native s60 bands    
-    if(b == QRadioTuner::AM)
+    if (b == QRadioTuner::AM)
         return CMMTunerUtility::ETunerBandAm;
-    else if(b == QRadioTuner::FM)
+    else if (b == QRadioTuner::FM)
         return CMMTunerUtility::ETunerBandFm;
-    else if(b == QRadioTuner::LW)
+    else if (b == QRadioTuner::LW)
         return CMMTunerUtility::ETunerBandLw;
     else
         return CMMTunerUtility::ETunerNoBand;
@@ -292,8 +293,7 @@ bool S60RadioTunerControl::isSearching() const
     	m_tunerUtility->GetState(tempState);
     	if (tempState == CMMTunerUtility::ETunerStateRetuning || m_scanning) {
 			return true;
-    	}
-    	else
+    	} else
     		return false;
     }
     return true;
@@ -332,13 +332,17 @@ bool S60RadioTunerControl::isAvailable() const
 
 QtMedia::AvailabilityError S60RadioTunerControl::availabilityError() const
 {
-    return QtMedia::NoError; // TODO:
+    if (m_available)
+        return QtMedia::NoError;
+    else
+        return QtMedia::ResourceError;
 }
 
 QRadioTuner::Error S60RadioTunerControl::error() const
 {
     return m_radioError;
 }
+
 QString S60RadioTunerControl::errorString() const
 {
 	return m_errorString;
@@ -355,11 +359,6 @@ void S60RadioTunerControl::MToTuneComplete(TInt aError)
 				m_radioError = QRadioTuner::OpenError;
 			}
 		}
-		else
-			m_audioPlayerUtility->Play();
-	}
-	
-	if (aError != KErrNone) {
 	}
 }
 
@@ -377,8 +376,7 @@ void S60RadioTunerControl::MTcoStateChanged(const TUint32& aOldState, const TUin
 	}
 	if (aNewState == CMMTunerUtility::ETunerStatePlaying) {
 		m_apiTunerState = QRadioTuner::ActiveState;
-	}
-	
+	}	
 	if (aOldState != aNewState){
 		emit stateChanged(m_apiTunerState);
 	}
@@ -386,37 +384,30 @@ void S60RadioTunerControl::MTcoStateChanged(const TUint32& aOldState, const TUin
 
 void S60RadioTunerControl::MTcoAntennaDetached()
 {
-	QMessageBox msgBox;
-	msgBox.setText(tr("MTcoAntennaDetached"));
-	msgBox.exec();
+	// no actions
 }
 
 void S60RadioTunerControl::MTcoAntennaAttached()
 {
-	QMessageBox msgBox;
-	msgBox.setText(tr("MTcoAntennaAttached"));
-	msgBox.exec();
+	// no actions
 }
 
 void S60RadioTunerControl::FlightModeChanged(TBool aFlightMode)
 {
-	QMessageBox msgBox;
-	msgBox.setText(tr("FlightModeChanged"));
-	msgBox.exec();
+	// no actions
 }
 
 void S60RadioTunerControl::MTsoStereoReceptionChanged(TBool aStereo)
 {
-	QMessageBox msgBox;
-	msgBox.setText(tr("MTsoStereoReceptionChanged"));
-	msgBox.exec();
+	m_isStereo = aStereo;
+	emit stereoStatusChanged(aStereo);
 }
 
 void S60RadioTunerControl::MTsoForcedMonoChanged(TBool aForcedMono)
 {
-	QMessageBox msgBox;
-	msgBox.setText(tr("MTsoForcedMonoChanged"));
-	msgBox.exec();
+	if (aForcedMono) {
+		m_stereoMode = QRadioTuner::ForceMono;
+	}
 }
 
 void S60RadioTunerControl::MssoSignalStrengthChanged(TInt aNewSignalStrength)
@@ -434,16 +425,13 @@ void S60RadioTunerControl::MTapoInitializeComplete(TInt aError)
 		m_apiTunerState = QRadioTuner::ActiveState;
 		emit stateChanged(m_apiTunerState);
 	} else if (aError != KErrNone) {
+		m_radioError = QRadioTuner::OpenError;
 	}
 }
 
 void S60RadioTunerControl::MTapoPlayEvent(TEventType aEvent, TInt aError, TAny* aAdditionalInfo)
 {
-	if (aError != KErrNone) {
-	// TODO:
-    } else {
-	// TODO:
-	}
+	// no actions
 }
 
 

@@ -248,16 +248,15 @@ void tst_QRadioTuner::testFunctionalitiesGenerally()
         QTestEventLoop::instance().enterLoop(1);
         QVERIFY(radio->isMuted());
         QVERIFY(readSignal.count() == 1);
-        // If radio is muted there should not come new mutedChanged signal.
         radio->setMuted(true);
         QTestEventLoop::instance().enterLoop(1);
         QVERIFY(radio->isMuted());
-        QVERIFY(readSignal.count() == 1);
+        QVERIFY(readSignal.count() == 2);
         // Set back to not muted
         radio->setMuted(false);
         QTestEventLoop::instance().enterLoop(1);
         QVERIFY(radio->isMuted());
-        QVERIFY(readSignal.count() == 2);
+        QVERIFY(readSignal.count() == 3);
     }
 
     // Test searching after mute and verify
