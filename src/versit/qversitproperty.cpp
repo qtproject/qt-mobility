@@ -92,6 +92,22 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
     return *this;    
 }
 
+/*! Returns true if this is equal to other; false if it is not equal. */
+bool QVersitProperty::operator==(const QVersitProperty& other)
+{
+    return d->mGroups == other.d->mGroups &&
+            d->mName == other.d->mName &&
+            d->mParameters == other.d->mParameters &&
+            d->mValue == other.d->mValue &&
+            d->mDocument == other.d->mDocument;
+}
+
+/*! Returns true if this is not equal to other; false if it is equal. */
+bool QVersitProperty::operator!=(const QVersitProperty& other)
+{
+    return !(*this == other);
+}
+
 /*!
  * Sets the groups in the property to the given list of \a groups.
  */

@@ -463,7 +463,7 @@ void QVersitContactExporterPrivate::encodeNickname(
     value.append(nickname);
     property.setValue(value);
     // Replace the current property
-    document.removeProperties(QString::fromAscii("X-NICKNAME"));
+    document.removeAllProperties(QString::fromAscii("X-NICKNAME"));
     document.addProperty(property);
 }
 

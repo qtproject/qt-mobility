@@ -86,6 +86,19 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
     return *this;    
 }
 
+/*! Returns true if this is equal to other; false if it is not equal. */
+bool QVersitDocument::operator==(const QVersitDocument& other)
+{
+    return d->mVersitType == other.d->mVersitType &&
+            d->mProperties == other.d->mProperties;
+}
+
+/*! Returns true if this is not equal to other; false if it is equal. */
+bool QVersitDocument::operator!=(const QVersitDocument& other)
+{
+    return !(*this == other);
+}
+
 /*!
  * Sets the versit document type to \a type.
  */
@@ -112,24 +125,32 @@ void QVersitDocument::addProperty(const QVersitProperty& property)
 }
 
 /*!
- * Gets the list of the contained versit properties.
- * Note that the actual properties cannot be modified using the copy.
+ * Removes the property \a property from the versit document.
  */
-QList<QVersitProperty> QVersitDocument::properties() const
+void QVersitDocument::removeProperty(const QVersitProperty& property)
 {
-    return d->mProperties;  
+    d->mProperties.removeAll(property);
 }
 
 /*!
  * Removes all the properties with \a name from the versit document.
  */
-void QVersitDocument::removeProperties(const QString& name)
+void QVersitDocument::removeAllProperties(const QString& name)
 {
     for (int i=d->mProperties.count()-1; i >=0; i--) {
         if (d->mProperties[i].name() == name) {
             d->mProperties.removeAt(i);
         }
     }
+}
+
+/*!
+ * Gets the list of the contained versit properties.
+ * Note that the actual properties cannot be modified using the copy.
+ */
+QList<QVersitProperty> QVersitDocument::properties() const
+{
+    return d->mProperties;
 }
 
 /*!

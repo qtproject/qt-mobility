@@ -60,6 +60,8 @@ public:
     ~QVersitDocument();
 
     QVersitDocument& operator=(const QVersitDocument& other);
+    bool operator==(const QVersitDocument& other);
+    bool operator!=(const QVersitDocument& other);
     
     /*! Versit document type */
     enum VersitType {
@@ -73,8 +75,9 @@ public:
     VersitType versitType() const;
 
     void addProperty(const QVersitProperty& property);
+    void removeProperty(const QVersitProperty& property);
+    void removeAllProperties(const QString& name);
     QList<QVersitProperty> properties() const;
-    void removeProperties(const QString& name);
 
     bool isEmpty() const;
 

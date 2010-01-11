@@ -63,6 +63,8 @@ public:
     ~QVersitProperty();
     
     QVersitProperty& operator=(const QVersitProperty& other);
+    bool operator==(const QVersitProperty& other);
+    bool operator!=(const QVersitProperty& other);
 
     void setGroups(const QStringList& groups);
     QStringList groups() const;

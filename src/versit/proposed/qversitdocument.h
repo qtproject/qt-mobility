@@ -60,6 +60,8 @@ public:
     ~QVersitDocument();
 
     QVersitDocument& operator=(const QVersitDocument& other);
+    bool operator==(const QVersitDocument& other);
+    bool operator!=(const QVersitDocument& other);
     
     /*! Versit document type */
     enum VersitType {

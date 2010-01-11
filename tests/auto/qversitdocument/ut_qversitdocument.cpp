@@ -81,13 +81,44 @@ void UT_QVersitDocument::testAddProperty()
     QCOMPARE(1, mVersitDocument->properties().count());
 }
 
-void UT_QVersitDocument::testRemoveProperties()
+void UT_QVersitDocument::testRemoveProperty()
+{
+    // Remove an empty property.
+    QCOMPARE(mVersitDocument->properties().count(), 0);
+    QVersitProperty property;
+    mVersitDocument->addProperty(property);
+    mVersitDocument->removeProperty(property);
+    QCOMPARE(mVersitDocument->properties().count(), 0);
+
+    // A full property.
+    property.setName(QLatin1String("TEL"));
+    property.setGroups(QStringList(QLatin1String("HOME")));
+    QMultiHash<QString, QString> params;
+    params.insert(QLatin1String("TYPE"), QLatin1String("HOME"));
+    property.setParameters(params);
+    property.setValue(QLatin1String("123"));
+    mVersitDocument->addProperty(property);
+    QCOMPARE(mVersitDocument->properties().count(), 1);
+    QVersitProperty property2;
+    property2.setName(QLatin1String("TEL"));
+    // Remove with a partial property fails.
+    mVersitDocument->removeProperty(property2);
+    QCOMPARE(mVersitDocument->properties().count(), 1);
+    property2.setGroups(QStringList(QLatin1String("HOME")));
+    property2.setParameters(params);
+    property2.setValue(QLatin1String("123"));
+    // Remove with a fully specified property succeeds.
+    mVersitDocument->removeProperty(property2);
+    QCOMPARE(mVersitDocument->properties().count(), 0);
+}
+
+void UT_QVersitDocument::testRemoveAllProperties()
 {
     QString name(QString::fromAscii("FN"));
 
     // Try to remove from an empty document
     QCOMPARE(0, mVersitDocument->properties().count());
-    mVersitDocument->removeProperties(name);
+    mVersitDocument->removeAllProperties(name);
     QCOMPARE(0, mVersitDocument->properties().count());
 
     // Try to remove from a non-empty document, name does not match
@@ -95,11 +126,11 @@ void UT_QVersitDocument::testRemoveProperties()
     property.setName(QString::fromAscii("TEL"));
     mVersitDocument->addProperty(property);
     QCOMPARE(1, mVersitDocument->properties().count());
-    mVersitDocument->removeProperties(name);
+    mVersitDocument->removeAllProperties(name);
     QCOMPARE(1, mVersitDocument->properties().count());
 
     // Remove from a non-empty document, name matches
-    mVersitDocument->removeProperties(QString::fromAscii("TEL"));
+    mVersitDocument->removeAllProperties(QString::fromAscii("TEL"));
     QCOMPARE(0, mVersitDocument->properties().count());
 
     // Remove from a document with two properties, first matches
@@ -108,14 +139,14 @@ void UT_QVersitDocument::testRemoveProperties()
     property.setName(QString::fromAscii("TEL"));
     mVersitDocument->addProperty(property);
     QCOMPARE(2, mVersitDocument->properties().count());
-    mVersitDocument->removeProperties(name);
+    mVersitDocument->removeAllProperties(name);
     QCOMPARE(1, mVersitDocument->properties().count());
 
     // Remove from a document with two properties, second matches
     property.setName(name);
     mVersitDocument->addProperty(property);
     QCOMPARE(2, mVersitDocument->properties().count());
-    mVersitDocument->removeProperties(name);
+    mVersitDocument->removeAllProperties(name);
     QCOMPARE(1, mVersitDocument->properties().count());
 }
 
