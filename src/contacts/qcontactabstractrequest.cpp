@@ -216,7 +216,9 @@ bool QContactAbstractRequest::cancel()
 
 /*! Blocks until the request has been completed by the manager engine, or until \a msecs milliseconds has elapsed.
     If \a msecs is zero, this function will block indefinitely.
-    Returns true if the request was cancelled or completed successfully within the given period, otherwise false. */
+    Returns true if the request was cancelled or completed successfully within the given period, otherwise false.
+    Some backends are unable to support this operation safely, and will return false immediately.
+ */
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
@@ -232,7 +234,7 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
     Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
-    qWarning("This function was deprecated in week 1 and will be removed after the transition period has elapsed.");
+    qWarning("QContactAbstractRequest::waitForProgress() This function was deprecated in week 1 and will be removed after the transition period has elapsed.");
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
         return engine->waitForRequestProgress(this, msecs);

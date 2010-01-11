@@ -2079,7 +2079,7 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
  */
 void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequestState(req, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
@@ -2091,7 +2091,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
@@ -2103,7 +2103,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
@@ -2115,7 +2115,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
-    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status));
 }
 
@@ -2127,7 +2127,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
@@ -2139,7 +2139,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QCME::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
