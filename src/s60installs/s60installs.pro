@@ -6,7 +6,11 @@ symbian: {
     SUBDIRS =
     TARGET = "QtMobility"
     TARGET.UID3 = 0x2002AC89
-    VERSION = 0.1.0
+    # TP preview 0.1.0
+    # Beta 0.2.0
+    # Final 1.0.0
+
+    VERSION = 0.2.0
 
     vendorinfo = \
         "; Localised Vendor name" \
