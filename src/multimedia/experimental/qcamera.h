@@ -109,8 +109,9 @@ public:
     Q_DECLARE_FLAGS(FocusModes, FocusMode)
 
     enum FocusStatus {
-        FocusDisabled, //manual mode
+        FocusInitial,
         FocusRequested,
+        FocusCanceled,
         FocusReached,
         FocusLost,
         FocusUnableToReach
@@ -227,7 +228,6 @@ public:
     void zoomTo(qreal value);
 
     bool isExposureLocked() const;
-    bool isFocusLocked() const;
 
     Error error() const;
     QString errorString() const;
@@ -241,8 +241,8 @@ public Q_SLOTS:
     void lockExposure();
     void unlockExposure();
 
-    void lockFocus();
-    void unlockFocus();
+    void startFocusing();
+    void cancelFocusing();
 
 Q_SIGNALS:
     void captureModeChanged(QCamera::CaptureMode);
@@ -256,7 +256,9 @@ Q_SIGNALS:
     void isoSensitivityChanged(int);
 
     void exposureLocked();
-    void focusLocked();
+
+    void focusReached();
+    void focusUnableToReach();
 
     void stateChanged(QCamera::State);
     void error(QCamera::Error);
@@ -265,6 +267,7 @@ private:
     Q_DISABLE_COPY(QCamera)
     Q_DECLARE_PRIVATE(QCamera)
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
+    Q_PRIVATE_SLOT(d_func(), void _q_updateFocusStatus(QCamera::FocusStatus))
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::CaptureModes)

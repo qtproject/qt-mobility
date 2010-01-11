@@ -308,10 +308,10 @@ class MockCameraFocusControl : public QCameraFocusControl
 public:
     MockCameraFocusControl(QObject *parent = 0):
         QCameraFocusControl(parent),
-        m_focusLocked(false),
         m_zoomValue(1.0),
         m_macroFocusingEnabled(false),
-        m_focusMode(QCamera::AutoFocus)
+        m_focusMode(QCamera::AutoFocus),
+        m_focusStatus(QCamera::FocusInitial)
     {
     }
 
@@ -335,7 +335,7 @@ public:
 
     QCamera::FocusStatus focusStatus() const
     {
-        return QCamera::FocusReached;
+        return m_focusStatus;
     }
 
     bool macroFocusingEnabled() const
@@ -375,30 +375,20 @@ public:
         m_zoomValue = value;
     }
 
-    bool isFocusLocked() const
-    {
-        return m_focusLocked;
-    }
-
 public Q_SLOTS:
-    void lockFocus()
+    void startFocusing()
     {
-        if (!m_focusLocked) {
-            m_focusLocked = true;
-            emit focusLocked();
-        }
     }
 
-    void unlockFocus()
+    void cancelFocusing()
     {
-        m_focusLocked = false;
     }
 
 private:
-    bool m_focusLocked;
     qreal m_zoomValue;
     bool m_macroFocusingEnabled;
     QCamera::FocusMode m_focusMode;
+    QCamera::FocusStatus m_focusStatus;
 };
 
 class MockImageProcessingControl : public QImageProcessingControl
@@ -746,7 +736,7 @@ void tst_QCamera::testSimpleCameraFocus()
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
     camera.setFocusMode(QCamera::ContinuousFocus);
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
-    QCOMPARE(camera.focusStatus(), QCamera::FocusDisabled);
+    QCOMPARE(camera.focusStatus(), QCamera::FocusInitial);
 
     QVERIFY(!camera.isMacroFocusingSupported());
     QVERIFY(!camera.macroFocusingEnabled());
@@ -758,8 +748,6 @@ void tst_QCamera::testSimpleCameraFocus()
     QCOMPARE(camera.zoomValue(), 1.0);
     camera.zoomTo(100);
     QCOMPARE(camera.zoomValue(), 1.0);
-
-    QCOMPARE(camera.isFocusLocked(), true);
 }
 
 void tst_QCamera::testSimpleCameraCapture()
@@ -941,7 +929,7 @@ void tst_QCamera::testCameraFocus()
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
     camera.setFocusMode(QCamera::ContinuousFocus);
     QCOMPARE(camera.focusMode(), QCamera::ContinuousFocus);
-    QCOMPARE(camera.focusStatus(), QCamera::FocusReached);
+    QCOMPARE(camera.focusStatus(), QCamera::FocusInitial);
 
     QVERIFY(camera.isMacroFocusingSupported());
     QVERIFY(!camera.macroFocusingEnabled());
@@ -958,11 +946,12 @@ void tst_QCamera::testCameraFocus()
     camera.zoomTo(2000000.0);
     QVERIFY(qFuzzyCompare(camera.zoomValue(), camera.maximumOpticalZoom()*camera.maximumDigitalZoom()));
 
-    QCOMPARE(camera.isFocusLocked(), false);
+
+    /*QCOMPARE(camera.isFocusLocked(), false);
     camera.lockFocus();
     QCOMPARE(camera.isFocusLocked(), true);
     camera.unlockFocus();
-    QCOMPARE(camera.isFocusLocked(), false);
+    QCOMPARE(camera.isFocusLocked(), false);*/
 }
 
 void tst_QCamera::testImageSettings()
