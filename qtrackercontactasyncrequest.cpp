@@ -137,6 +137,7 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
                 rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
             } else if (QContactOnlineAccount::DefinitionName == filt.detailDefinitionName()
                        && filt.detailFieldName() == "Account") {
+                qDebug() << Q_FUNC_INFO;
                 RDFVariable imaccount = variable.property<nco::hasIMAccount>();
                 imaccount.property<nco::imID>().isMemberOf(QStringList()<<filt.value().toString());
             } else {
@@ -210,18 +211,19 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 
 RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1)
 {
-//    ::tracker()->setVerbosity(4);
+    ::tracker()->setVerbosity(4);
+
     RDFVariable imaccount = rdfcontact1.fromType<nco::IMContact> ();
     // columns
     RDFSelect queryidsimacccounts;
-    queryidsimacccounts.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
+    queryidsimacccounts.addColumn("contactId", imaccount.property<nco::contactUID> ());
 
     queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imContactId> ());
     queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imContactPresence> ());
     queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imContactStatusMessage> ());
     queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imContactNickname> ());
     queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::fromIMAccount> ());
-  // queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
+   //queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
 
     queryidsimacccounts.addColumn("metacontact", rdfcontact1.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
@@ -733,13 +735,13 @@ QContact &QTrackerContactFetchRequest::linkContactsWithSameMetaContact(QContact 
     QContact *returned, *linked;
     if( returnFirst )
     {
-        returned = &first;
-        linked = &second;
+        returned = &second;
+        linked = &first;
     }
     else
     {
-        returned = &second;
-        linked = &first;
+        returned = &first;
+        linked = &second;
     }
 
     // 2) now insert linking information to returned contact
