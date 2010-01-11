@@ -80,8 +80,8 @@ public:
     ~QVersitWriter();
 
     // input:
-    void setDocument(const QVersitDocument& versitDocument);
-    QVersitDocument document() const;
+    void setInput(const QList<QVersitDocument>& input);
+    QList<QVersitDocument> input() const;
 
     // output:
     void setDevice(QIODevice* device);

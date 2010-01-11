@@ -103,20 +103,19 @@ QVersitWriter::~QVersitWriter()
 }
 
 /*!
- * Set the versit document to be written to \a versitDocument and
- * selects the actual writer implementation based on the versit document type.
+ * Set the list of versit documents to be written to the device.
  */
-void QVersitWriter::setDocument(const QVersitDocument& versitDocument)
+void QVersitWriter::setInput(const QList<QVersitDocument>& input)
 {
-    d->mVersitDocument = versitDocument;
+    d->mInput = input;
 }
 
 /*!
- * Returns the current versit document.
+ * Returns the list of versit documents to be written to the device.
  */
-QVersitDocument QVersitWriter::document() const
+QList<QVersitDocument> QVersitWriter::input() const
 {
-    return d->mVersitDocument;
+    return d->mInput;
 }
 
 /*!

@@ -101,7 +101,9 @@ END:VCARD\r\n";
     property.setValue(QString::fromAscii("John"));
     document.addProperty(property);
     document.setVersitType(QVersitDocument::VCard21Type);
-    mWriter->setDocument(document);
+    QList<QVersitDocument> list;
+    list.append(document);
+    mWriter->setInput(list);
     QVERIFY(mWriter->writeAll());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
@@ -116,7 +118,9 @@ VERSION:3.0\r\n\
 FN:John\r\n\
 END:VCARD\r\n";
     document.setVersitType(QVersitDocument::VCard30Type);
-    mWriter->setDocument(document);
+    list.clear();
+    list.append(document);
+    mWriter->setInput(list);
     mOutputDevice->reset();
     QVERIFY(mWriter->writeAll());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);

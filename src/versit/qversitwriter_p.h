@@ -87,7 +87,7 @@ public:
     static QVersitDocumentWriter* writerForType(QVersitDocument::VersitType type);
 
     QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
+    QList<QVersitDocument> mInput;
     QVersitWriter::State mState;
     QVersitWriter::Error mError;
     mutable QMutex mMutex;

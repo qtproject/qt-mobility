@@ -72,8 +72,7 @@ bool QVersitWriterPrivate::isReady() const
 {
     return state() != QVersitWriter::ActiveState
             && mIoDevice
-            && mIoDevice->isOpen()
-            && !mVersitDocument.properties().empty();
+            && mIoDevice->isOpen();
 }
 
 /*!
@@ -85,11 +84,15 @@ bool QVersitWriterPrivate::write()
     bool ok = true;
     if (isReady()) {
         setState(QVersitWriter::ActiveState);
-        QScopedPointer<QVersitDocumentWriter> writer(writerForType(mVersitDocument.versitType()));
-        QByteArray output = writer->encodeVersitDocument(mVersitDocument);
-        int c = mIoDevice->write(output);
-        if (c <= 0) {
-            setError(QVersitWriter::IOError);
+        foreach (QVersitDocument document, mInput) {
+            QScopedPointer<QVersitDocumentWriter> writer(
+                    writerForType(document.versitType()));
+            QByteArray output = writer->encodeVersitDocument(document);
+            int c = mIoDevice->write(output);
+            if (c <= 0) {
+                setError(QVersitWriter::IOError);
+                break;
+            }
         }
     } else {
         // leave the state unchanged but set the error.
@@ -135,6 +138,7 @@ QVersitWriter::Error QVersitWriterPrivate::error() const
 
 /*!
  * Returns a QVersitDocumentWriter that can encode a QVersitDocument of type \a type.
+ * The caller is responsible for deleting the object.
  */
 QVersitDocumentWriter* QVersitWriterPrivate::writerForType(QVersitDocument::VersitType type)
 {
