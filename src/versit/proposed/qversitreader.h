@@ -97,7 +97,6 @@ public:
     // status getters:
     State state() const;
     Error error() const;
-    QList<Error> errors() const;
 
 signals:
     void finished();
