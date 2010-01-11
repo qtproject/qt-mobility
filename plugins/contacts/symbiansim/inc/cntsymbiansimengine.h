@@ -82,6 +82,13 @@ public:
     bool saveContact(QContact* contact, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
 
+    /* Functionality reporting */
+    //bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
+    //QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
+    //QList<QVariant::Type> supportedDataTypes() const;
+    //bool filterSupported(const QContactFilter& filter) const;
+    QStringList supportedContactTypes() const;
+
     /* Synthesize the display label of a contact */
     QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 

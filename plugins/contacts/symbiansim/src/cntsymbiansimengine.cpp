@@ -234,6 +234,12 @@ bool CntSymbianSimEngine::removeContact(const QContactLocalId& contactId, QConta
     return (requestStatus.Int() == KErrNone);
 }
 
+QStringList CntSymbianSimEngine::supportedContactTypes() const
+{
+    // TODO: groups supported by some sim cards?
+    return QStringList() << QContactType::TypeContact;
+}
+
 /*!
  * Private leaving implementation for contact()
  */
