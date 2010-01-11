@@ -108,7 +108,7 @@ QTM_BEGIN_NAMESPACE
    \brief The QContactGeolocation class contains the global location
    coordinate associated with a contact.
    This class has been deprecated and is replaced by QContactGeoLocation.
-   It will be removed in week 1.  See commit SHA1:
+   It was deprecated in week 1 and will be removed after the transition period has elapsed.
  */
 
 /*!

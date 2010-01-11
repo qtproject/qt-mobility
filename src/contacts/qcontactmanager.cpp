@@ -342,7 +342,7 @@ QContactManager::Error QContactManager::error() const
  */
 QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
 {
-    qWarning("QContactManager::contacts() This function is deprecated and will be removed in week 3.  Use contactIds() instead!");
+    qWarning("QContactManager::contacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use contactIds() instead!");
     return d->m_engine->contacts(sortOrders, d->m_error);
 }
 
@@ -353,7 +353,7 @@ QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>&
  */
 QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
 {
-    qWarning("QContactManager::contacts() This function is deprecated and will be removed in week 3.  Use contactIds() instead!");
+    qWarning("QContactManager::contacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use contactIds() instead!");
     return d->m_engine->contacts(filter, sortOrders, d->m_error);
 }
 
@@ -471,13 +471,13 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
  * when saving a new contact, the id will be cleared.  If a failure occurs
  * when updating a contact that already exists, then TODO.
  *
- * This function is deprecated and will be removed in week 3.
+ * This function was deprecated in week 1 and will be removed after the transition period has elapsed.
  *
  * \sa QContactManager::saveContact()
  */
 QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
 {
-    qWarning("QContactManager::saveContacts() This function is deprecated and will be removed in week 3.  Use the other saveContacts() function instead!");
+    qWarning("QContactManager::saveContacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use the other saveContacts() function instead!");
     return d->m_engine->saveContacts(contactList, d->m_error);
 }
 
@@ -543,13 +543,13 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
  * Any contact that was removed successfully will have the relationships
  * in which it was involved removed also.
  *
- * This function is deprecated and will be removed in week 3.
+ * This function was deprecated in week 1 and will be removed after the transition period has elapsed.
  *
  * \sa QContactManager::removeContact()
  */
 QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLocalId>* idList)
 {
-    qWarning("QContactManager::removeContacts() This function is deprecated and will be removed in week 3.  Use the other removeContacts() function instead!");
+    qWarning("QContactManager::removeContacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use the other removeContacts() function instead!");
     return d->m_engine->removeContacts(idList, d->m_error);
 }
 
