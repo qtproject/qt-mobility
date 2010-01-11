@@ -62,14 +62,23 @@ class Q_MEDIA_EXPORT QCamera : public QMediaObject
 {
     Q_OBJECT
 
-    Q_ENUMS(State Error FocusStatus)
+    Q_ENUMS(CaptureMode State Error FocusStatus)
 
+    Q_PROPERTY(CaptureMode captureMode READ captureMode WRITE setCaptureMode NOTIFY captureModeChanged)
     Q_PROPERTY(qreal aperture READ aperture WRITE setManualAperture NOTIFY apertureChanged)
     Q_PROPERTY(qreal shutterSpeed READ shutterSpeed WRITE setManualShutterSpeed NOTIFY shutterSpeedChanged)
     Q_PROPERTY(int isoSensitivity READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
 
 public:
     enum State { ActiveState, SuspendedState, StoppedState };
+
+    enum CaptureMode
+    {
+        CaptureDisabled = 0,
+        CaptureStillImage = 0x1,
+        CaptureVideo = 0x2
+    };
+    Q_DECLARE_FLAGS(CaptureModes, CaptureMode)
 
     enum Error
     {
@@ -150,7 +159,6 @@ public:
     Q_DECLARE_FLAGS(WhiteBalanceModes, WhiteBalanceMode)
 
     Q_PROPERTY(QCamera::State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(bool readyForCapture READ isReadyForCapture NOTIFY readyForCaptureChanged)
 
     QCamera(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     QCamera(const QByteArray& device, QObject *parent = 0);
@@ -162,10 +170,10 @@ public:
     bool isAvailable() const;
     QtMedia::AvailabilityError availabilityError() const;
 
-    void start();
-    void stop();
-
     State state() const;
+
+    CaptureMode captureMode() const;
+    CaptureModes supportedCaptureModes() const;
 
     FlashMode flashMode() const;
     void setFlashMode(FlashMode mode);
@@ -221,21 +229,23 @@ public:
     bool isExposureLocked() const;
     bool isFocusLocked() const;
 
-    bool isReadyForCapture() const;
-
     Error error() const;
     QString errorString() const;
 
 public Q_SLOTS:
+    void start();
+    void stop();
+
+    void setCaptureMode(QCamera::CaptureMode mode);
+
     void lockExposure();
     void unlockExposure();
 
     void lockFocus();
     void unlockFocus();
 
-    void capture(const QString &fileName);
-
 Q_SIGNALS:
+    void captureModeChanged(QCamera::CaptureMode);
     void flashReady(bool);
     void focusStatusChanged(QCamera::FocusStatus);
     void zoomValueChanged(qreal);
@@ -248,10 +258,6 @@ Q_SIGNALS:
     void exposureLocked();
     void focusLocked();
 
-    void readyForCaptureChanged(bool);
-    void imageCaptured(const QString &fileName, const QImage &preview);
-    void imageSaved(const QString &fileName);
-
     void stateChanged(QCamera::State);
     void error(QCamera::Error);
 
@@ -261,6 +267,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::CaptureModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FlashModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FocusModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::WhiteBalanceModes)
