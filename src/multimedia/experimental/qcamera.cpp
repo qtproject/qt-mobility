@@ -70,7 +70,8 @@ QTM_BEGIN_NAMESPACE
         viewFinder = new QVideoWidget(camera);
         viewFinder->show();
 
-        recorder = QMediaRecorder(camera);
+        recorder = new QMediaRecorder(camera);
+        imageCapture = new QStillImageCapture(camera);
 
         camera->start();
     \endcode
@@ -125,6 +126,8 @@ void QCameraPrivate::initControls()
 
         if (control) {
             q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
+            q->connect(control, SIGNAL(captureModeChanged(QCamera::CaptureMode)),
+                       q, SIGNAL(captureModeChanged(QCamera::CaptureMode)));
             q->connect(control, SIGNAL(error(int,QString)), q, SLOT(_q_error(int,QString)));
         }
 
@@ -159,16 +162,7 @@ void QCameraPrivate::initControls()
                 q, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
         q->connect(focusControl, SIGNAL(zoomValueChanged(qreal)), q, SIGNAL(zoomValueChanged(qreal)));
         q->connect(focusControl, SIGNAL(focusLocked()), q, SIGNAL(focusLocked()));
-    }
-
-    if (captureControl) {
-        q->connect(captureControl, SIGNAL(imageCaptured(QString,QImage)),
-                q, SIGNAL(imageCaptured(QString,QImage)));
-        q->connect(captureControl, SIGNAL(imageSaved(QString)),
-                        q, SIGNAL(imageSaved(QString)));
-        q->connect(captureControl, SIGNAL(readyForCaptureChanged(bool)),
-                q, SIGNAL(readyForCaptureChanged(bool)));
-    }
+    }   
 }
 
 /*!
@@ -262,6 +256,35 @@ QString QCamera::errorString() const
 {
     return d_func()->errorString;
 }
+
+
+/*!
+    Returns the supported capture modes.
+*/
+QCamera::CaptureModes QCamera::supportedCaptureModes() const
+{
+    return d_func()->control ? d_func()->control->supportedCaptureModes() : QCamera::CaptureDisabled;
+}
+
+/*!
+  \property QCamera::captureMode
+
+  Returns the type of media (video or still images),
+  the camera is configured to capture.
+*/
+
+QCamera::CaptureMode QCamera::captureMode() const
+{
+    return d_func()->control ? d_func()->control->captureMode() : QCamera::CaptureDisabled;
+}
+
+void QCamera::setCaptureMode(QCamera::CaptureMode mode)
+{
+    Q_D(QCamera);
+    if (d->control)
+        d->control->setCaptureMode(mode);
+}
+
 
 /*!
     Starts the camera.
@@ -818,44 +841,6 @@ bool QCamera::isFocusLocked() const
 {
     return d_func()->focusControl ? d_func()->focusControl->isFocusLocked() : true;
 }
-
-/*!
-  \property QCamera::readyForCapture
-   Indicates the camera is ready to capture an image immediately.
-*/
-
-bool QCamera::isReadyForCapture() const
-{
-    return d_func()->captureControl ? d_func()->captureControl->isReadyForCapture() : false;
-}
-
-/*!
-    \fn QCamera::readyForCaptureChanged(bool ready)
-
-    Signals that a camera's \a ready for capture state has changed.
-*/
-
-/*!
-    Capture the image and save it to \a file.
-    This operation is asynchronous in majority of cases,
-    followed by signal QCamera::imageCaptured() or error()
-*/
-void QCamera::capture(const QString &file)
-{
-    Q_D(QCamera);
-
-    d->unsetError();
-
-    if (d->captureControl) {
-        d->captureControl->capture(file);
-    } else {
-        d->error = NotSupportedFeatureError;
-        d->errorString = tr("Device does not support images capture.");
-
-        emit error(d->error);
-    }
-}
-
 
 /*!
     \enum QCamera::State
