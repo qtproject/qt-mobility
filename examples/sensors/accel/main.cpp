@@ -10,7 +10,7 @@ public:
     void accelerationChanged(const QAccelerometerReading &reading)
     {
         qDebug() << "acceleration: "
-                 << QString().sprintf("%i %i %i",
+                 << QString().sprintf("%0.2f %0.2f %0.2f",
                          reading.x(),
                          reading.y(),
                          reading.z());

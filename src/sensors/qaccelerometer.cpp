@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
            accelerometer.
 
     The accelerometer returns linear acceleration values along 3 axes.
-    The scale of the values is milli-Gs. The axes are arranged as follows.
+    The scale of the values is meters per second per second. The axes are arranged as follows.
 
 \code
              +z
@@ -75,7 +75,7 @@ QTM_BEGIN_NAMESPACE
 \endcode
 
     A monoblock device sitting at rest, face up on a desk will experience
-    the force of gravity as approximately -1000 on the Z axis.
+    the force of Earth's gravity as approximately -9.8 on the Z axis.
 */
 
 /*!
@@ -84,7 +84,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QAccelerometerReading::QAccelerometerReading(QDateTime timestamp, int x, int y, int z)
+    \fn QAccelerometerReading::QAccelerometerReading(QDateTime timestamp, float x, float y, float z)
     \internal
 */
 
@@ -183,7 +183,7 @@ void QAccelerometerListener::removeSensor(QAccelerometer *sensor)
            along the X, Y and Z axes.
 
     The accelerometer returns acceleration values along 3 axes.
-    The scale of the values is milli-Gs. The axes are arranged as follows.
+    The scale of the values is meters per second per second. The axes are arranged as follows.
 
 \code
              +z
@@ -206,7 +206,7 @@ void QAccelerometerListener::removeSensor(QAccelerometer *sensor)
 \endcode
 
     A monoblock device sitting at rest, face up on a desk will experience
-    the force of gravity as approximately -1000 on the Z axis.
+    the force of Earth's gravity as approximately -9.8 on the Z axis.
 
     \sa QAccelerometerReading
 */

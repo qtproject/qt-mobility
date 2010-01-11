@@ -82,7 +82,10 @@ void n900accelerometer::timerEvent(QTimerEvent * /*event*/)
 
 void n900accelerometer::poll()
 {
-    qWarning() << "poll";
+    // Note that this is a rather inefficient way to generate this data.
+    // Ideally the kernel would scale the hardware's values to m/s^2 for us
+    // and give us a timestamp along with that data.
+
     QDateTime timestamp = QDateTime::currentDateTime();
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
@@ -91,7 +94,12 @@ void n900accelerometer::poll()
     fclose(fd);
     if (rs != 3) return;
 
-    m_lastReading = QAccelerometerReading(timestamp, x, y, z);
+    // Convert from milli-Gs to meters per second per second
+    // Using 1 G = 9.80665 m/s^2
+    float ax = x * 0.00980665;
+    float ay = y * 0.00980665;
+    float az = z * 0.00980665;
+    m_lastReading = QAccelerometerReading(timestamp, ax, ay, az);
     if (updatePolicy() != QSensor::PolledUpdates)
         newReadingAvailable();
 }
