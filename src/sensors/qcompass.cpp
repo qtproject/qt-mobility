@@ -64,12 +64,21 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QCompassReading::CalibrationLevel
+
+    \value Undefined The calibration level is not defined or is too low.
+    \value Low       The reported azimuth may be off by up to 15.4 degrees.
+    \value Middle    The reported azimuth may be off by up to 11.8 degrees.
+    \value High      The reported azimuth may be off by up to 7.4 degrees.
+*/
+
+/*!
     \fn QCompassReading::QCompassReading()
     \internal
 */
 
 /*!
-    \fn QCompassReading::QCompassReading(QDateTime timestamp, qreal azimuth, bool calibrated)
+    \fn QCompassReading::QCompassReading(QDateTime timestamp, qreal azimuth, CalibrationLevel calibration)
     \internal
 */
 
@@ -96,11 +105,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QCompassReading::isCalibrated() const
+    \fn QCompassReading::calibrationLevel() const
 
-    Returns \c true if the device was calibrated when the reading
-    was made and \c false otherwise. You should not trust a reading
-    from an uncalibrated device.
+    Returns the calibration level of the reading. The higher the calibration, the more accurate the measurement is.
 */
 
 // =====================================================================

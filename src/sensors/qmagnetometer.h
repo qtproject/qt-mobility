@@ -54,17 +54,21 @@ class QMagnetometerReadingData : public QSharedData
 {
 public:
     QMagnetometerReadingData()
-        : timestamp(), x(0), y(0), z(0) {}
-    QMagnetometerReadingData(QDateTime _timestamp, qreal _x, qreal _y, qreal _z)
-        : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
+        : timestamp(), x(0), y(0), z(0), cx(0), cy(0), cz(0), calibration(0) {}
+    QMagnetometerReadingData(QDateTime _timestamp, qreal _x, qreal _y, qreal _z, qreal _cx, qreal _cy, qreal _cz, int _calibration)
+        : timestamp(_timestamp), x(_x), y(_y), z(_z), cx(_cx), cy(_cy), cz(_cz), calibration(_calibration) {}
     QMagnetometerReadingData(const QMagnetometerReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
+        : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z), cx(other.cx), cy(other.cy), cz(other.cz), calibration(other.calibration) {}
     ~QMagnetometerReadingData() {}
 
     QDateTime timestamp;
     qreal x;
     qreal y;
     qreal z;
+    qreal cx;
+    qreal cy;
+    qreal cz;
+    int calibration;
 };
 
 // =====================================================================
@@ -72,10 +76,17 @@ public:
 class Q_SENSORS_EXPORT QMagnetometerReading
 {
 public:
+    enum CalibrationLevel {
+        Undefined = 0,
+        Low       = 1,
+        Middle    = 2,
+        High      = 3
+    };
+
     explicit QMagnetometerReading()
     { d = new QMagnetometerReadingData; }
-    explicit QMagnetometerReading(QDateTime timestamp, qreal x, qreal y, qreal z)
-    { d = new QMagnetometerReadingData(timestamp, x, y, z); }
+    explicit QMagnetometerReading(QDateTime timestamp, qreal x, qreal y, qreal z, qreal cx, qreal cy, qreal cz, CalibrationLevel calibration)
+    { d = new QMagnetometerReadingData(timestamp, x, y, z, cx, cy, cz, calibration); }
     QMagnetometerReading(const QMagnetometerReading &other)
         : d(other.d) {}
     ~QMagnetometerReading() {}
@@ -84,6 +95,10 @@ public:
     qreal x() const { return d->x; }
     qreal y() const { return d->y; }
     qreal z() const { return d->z; }
+    qreal calibrated_x() const { return d->cx; }
+    qreal calibrated_y() const { return d->cy; }
+    qreal calibrated_z() const { return d->cz; }
+    CalibrationLevel calibrationLevel() const { return static_cast<CalibrationLevel>(d->calibration); }
 
 private:
     QSharedDataPointer<QMagnetometerReadingData> d;

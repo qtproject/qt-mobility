@@ -76,17 +76,26 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QMagnetometerReading::CalibrationLevel
+
+    \value Undefined The calibration level is not defined or is too low.
+    \value Low       The calibrated values may be inaccurate by up to 3 micro Teslas.
+    \value Middle    The calibrated values may be inaccurate by up to 2 micro Teslas.
+    \value High      The calibrated values may be inaccurate by up to 1 micro Tesla.
+*/
+
+/*!
     \fn QMagnetometerReading::QMagnetometerReading()
     \internal
 */
 
 /*!
-    \fn QMagnetometerReading::QMagnetometerReading(QDateTime timestamp, qreal x, qreal y, qreal z)
+    \fn QMagnetometerReading::QMagnetometerReading(QDateTime timestamp, qreal x, qreal y, qreal z, qreal cx, qreal cy, qreal cz, CalibrationLevel calibration)
     \internal
 */
 
 /*!
-    \fn QMagnetometerReading::QMagnetometerReading(const QMagnetometerReading &other)
+    \fn QMagnetometerReading::QMagnetometerReading(const QMagnetometerReading &o)
     \internal
 */
 
@@ -117,6 +126,30 @@ QTM_BEGIN_NAMESPACE
     \fn QMagnetometerReading::z() const
 
     Returns the magnetic flux density for the Z axis.
+*/
+
+/*!
+    \fn QMagnetometerReading::calibrated_x() const
+
+    Returns the calibrated magnetic flux density for the Z axis.
+*/
+
+/*!
+    \fn QMagnetometerReading::calibrated_y() const
+
+    Returns the calibrated magnetic flux density for the Y axis.
+*/
+
+/*!
+    \fn QMagnetometerReading::calibrated_z() const
+
+    Returns the calibrated magnetic flux density for the Z axis.
+*/
+
+/*!
+    \fn QMagnetometerReading::calibrationLevel() const
+
+    Returns the calibration level of the reading. The higher the calibration, the more accurate the measurement is.
 */
 
 // =====================================================================

@@ -54,16 +54,16 @@ class QCompassReadingData : public QSharedData
 {
 public:
     QCompassReadingData()
-        : timestamp(), azimuth(0), calibrated(false) {}
-    QCompassReadingData(QDateTime _timestamp, qreal _azimuth, bool _calibrated)
-        : timestamp(_timestamp), azimuth(_azimuth), calibrated(_calibrated) {}
+        : timestamp(), azimuth(0), calibration(0) {}
+    QCompassReadingData(QDateTime _timestamp, qreal _azimuth, int _calibration)
+        : timestamp(_timestamp), azimuth(_azimuth), calibration(_calibration) {}
     QCompassReadingData(const QCompassReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), azimuth(other.azimuth), calibrated(other.calibrated) {}
+        : QSharedData(other), timestamp(other.timestamp), azimuth(other.azimuth), calibration(other.calibration) {}
     ~QCompassReadingData() {}
 
     QDateTime timestamp;
     qreal azimuth;
-    bool calibrated;
+    int calibration;
 };
 
 // =====================================================================
@@ -71,17 +71,24 @@ public:
 class Q_SENSORS_EXPORT QCompassReading
 {
 public:
+    enum CalibrationLevel {
+        Undefined = 0,
+        Low       = 1,
+        Middle    = 2,
+        High      = 3
+    };
+
     explicit QCompassReading()
     { d = new QCompassReadingData; }
-    explicit QCompassReading(QDateTime timestamp, qreal azimuth, bool calibrated)
-    { d = new QCompassReadingData(timestamp, azimuth, calibrated); }
+    explicit QCompassReading(QDateTime timestamp, qreal azimuth, CalibrationLevel calibration)
+    { d = new QCompassReadingData(timestamp, azimuth, calibration); }
     QCompassReading(const QCompassReading &other)
         : d(other.d) {}
     ~QCompassReading() {}
 
     QDateTime timestamp() const { return d->timestamp; }
     qreal azimuth() const { return d->azimuth; }
-    bool isCalibrated() const { return d->calibrated; }
+    CalibrationLevel calibrationLevel() const { return static_cast<CalibrationLevel>(d->calibration); }
 
 private:
     QSharedDataPointer<QCompassReadingData> d;
