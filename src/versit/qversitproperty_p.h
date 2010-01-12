@@ -77,8 +77,7 @@ public:
         mGroups(other.mGroups),
         mName(other.mName),
         mParameters(other.mParameters),
-        mValue(other.mValue),
-        mDocument(other.mDocument)
+        mValue(other.mValue)
     {
     }     
     
@@ -88,7 +87,6 @@ public:
     QString mName;
     QMultiHash<QString,QString> mParameters;
     QVariant mValue;
-    QVersitDocument mDocument;
 };
 
 QTM_END_NAMESPACE

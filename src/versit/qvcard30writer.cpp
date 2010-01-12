@@ -73,14 +73,17 @@ QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
     encodedProperty.append(encodeParameters(modifiedProperty.parameters()));
     encodedProperty.append(":");
     // TODO: do charset encoding
-    QByteArray value(modifiedProperty.valueString().toAscii());
-    if (modifiedProperty.name() == QString::fromAscii("AGENT")) {
-        QVersitDocument embeddedDocument = modifiedProperty.embeddedDocument();
+    QByteArray value;
+    QVariant variant(modifiedProperty.value());
+    if (variant.canConvert<QVersitDocument>()) {
+        QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         value = encodeVersitDocument(embeddedDocument);
         QString escapedValue(QString::fromAscii(value));
         VersitUtils::backSlashEscape(escapedValue);
         value = escapedValue.toAscii();
-    }    
+    } else {
+        value = variant.toString().toAscii();
+    }
     encodedProperty.append(value);
     encodedProperty.append("\r\n");
 

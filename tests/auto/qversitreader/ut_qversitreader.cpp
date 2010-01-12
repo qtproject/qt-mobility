@@ -134,7 +134,7 @@ void UT_QVersitReader::testReading()
 
     // Two documents
     const QByteArray& twoDocuments =
-        "BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\nBEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n";
+        " \r\n BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\nBEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n";
     delete mInputDevice;
     mInputDevice = 0;
     mInputDevice = new QBuffer;
@@ -313,7 +313,8 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
     QCOMPARE(property.valueString(),QString());
-    QCOMPARE(property.embeddedDocument().properties().count(),1);
+    QVERIFY(property.value().canConvert<QVersitDocument>());
+    QCOMPARE(property.value().value<QVersitDocument>().properties().count(), 1);
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));
@@ -330,9 +331,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     VersitCursor agentCursor(agentProperty);
 
     property = mReaderPrivate->parseNextVersitProperty(type, agentCursor);
-    QCOMPARE(property.name(),QString());
-    QCOMPARE(property.embeddedDocument().properties().count(),0);
-    QCOMPARE(property.valueString(),QString());
+    QVERIFY(property.isEmpty());
 }
 
 void UT_QVersitReader::testParseNextVersitPropertyVCard30()
@@ -386,8 +385,8 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QCOMPARE(property.valueString(),QString());
-    QCOMPARE(property.embeddedDocument().properties().count(),1);
+    QVERIFY(property.value().canConvert<QVersitDocument>());
+    QCOMPARE(property.value().value<QVersitDocument>().properties().count(),1);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));
@@ -404,9 +403,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
 
     VersitCursor agentCursor(agentProperty);
     property = mReaderPrivate->parseNextVersitProperty(type, agentCursor);
-    QCOMPARE(property.name(),QString());
-    QCOMPARE(property.embeddedDocument().properties().count(),0);
-    QCOMPARE(property.valueString(),QString());
+    QVERIFY(property.isEmpty());
 }
 
 void UT_QVersitReader::testParseVersitDocument()

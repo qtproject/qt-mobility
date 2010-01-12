@@ -66,14 +66,19 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     const QString encoding(QString::fromAscii("ENCODING"));
     const QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
     QMultiHash<QString,QString> parameters = property.parameters();
+    QVariant variant = property.value();
 
-    // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
-    QByteArray value(property.valueString().toAscii());
-    bool valueQuotedPrintableEncoded = quotedPrintableEncode(property,value);
-    if (valueQuotedPrintableEncoded &&
-        !parameters.contains(encoding,quotedPrintable)) {
-         // Add the encoding parameter to the copy, not to the actual property
-         parameters.insert(encoding,quotedPrintable);
+    QByteArray valueString;
+
+    if (variant.canConvert(QVariant::String)) {
+        // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
+        valueString = variant.toString().toAscii();
+        bool valueQuotedPrintableEncoded = quotedPrintableEncode(property, valueString);
+        if (valueQuotedPrintableEncoded &&
+            !parameters.contains(encoding, quotedPrintable)) {
+             // Add the encoding parameter to the copy, not to the actual property
+             parameters.insert(encoding, quotedPrintable);
+        }
     }
 
     // Encode parameters
@@ -81,18 +86,16 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 
     // Encode value
     encodedProperty.append(":");
-    if (property.name() == QString::fromAscii("AGENT")) {
+    if (variant.canConvert<QVersitDocument>()) {
         encodedProperty.append("\r\n");
-        QVersitDocument embeddedDocument = property.embeddedDocument();
+        QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         encodedProperty.append(encodeVersitDocument(embeddedDocument));
+    } else if (parameters.contains(encoding, QString::fromAscii("BASE64"))) {
+        // One extra folding before the value and
+        // one extra line break after the value are needed in vCard 2.1
+        encodedProperty += "\r\n " + valueString + "\r\n";
     } else {
-        if (parameters.contains(encoding,QString::fromAscii("BASE64"))) {
-            // One extra folding before the value and
-            // one extra line break after the value are needed in vCard 2.1
-            encodedProperty += "\r\n " + value + "\r\n";
-        } else {
-            encodedProperty += value;
-        }
+        encodedProperty += valueString;
     }
     encodedProperty.append("\r\n");
 

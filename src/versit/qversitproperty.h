@@ -83,9 +83,6 @@ public:
     QVariant value() const;
     QString valueString() const;
 
-    void setEmbeddedDocument(const QVersitDocument& document);
-    QVersitDocument embeddedDocument() const;
-
     bool isEmpty() const;
 
 private:

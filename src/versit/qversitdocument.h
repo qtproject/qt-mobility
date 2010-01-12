@@ -46,6 +46,7 @@
 
 #include <QList>
 #include <QSharedDataPointer>
+#include <QVariant>
 
 class QTextCodec;
 
@@ -92,5 +93,7 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_NAMESPACE::QVersitDocument);
 
 #endif // QVERSITDOCUMENT_H

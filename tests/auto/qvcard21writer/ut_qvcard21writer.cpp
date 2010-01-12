@@ -42,8 +42,10 @@
 #include "ut_qvcard21writer.h"
 #include "qvcard21writer_p.h"
 #include "qversitproperty.h"
+#include "qversitdocument.h"
 #include <QtTest/QtTest>
 #include <QByteArray>
+#include <QVariant>
 
 QTM_USE_NAMESPACE
 
@@ -102,7 +104,7 @@ END:VCARD\r\n\
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));
     document.addProperty(embeddedProperty);
-    property.setEmbeddedDocument(document);
+    property.setValue(QVariant::fromValue(document));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
 
     // Value is base64 encoded.

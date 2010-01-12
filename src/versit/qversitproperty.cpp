@@ -98,8 +98,7 @@ bool QVersitProperty::operator==(const QVersitProperty& other)
     return d->mGroups == other.d->mGroups &&
             d->mName == other.d->mName &&
             d->mParameters == other.d->mParameters &&
-            d->mValue == other.d->mValue &&
-            d->mDocument == other.d->mDocument;
+            d->mValue == other.d->mValue;
 }
 
 /*! Returns true if this is not equal to other; false if it is equal. */
@@ -217,23 +216,6 @@ QString QVersitProperty::valueString() const
 }
 
 /*!
- * Sets the embedded \a document of the property
- */
-void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
-{
-    d->mDocument = document;
-}
-
-/*!
- * Returns the embedded document of the property.
- * If the embedded document has not been set, an empty document is returned.
- */
-QVersitDocument QVersitProperty::embeddedDocument() const
-{
-    return d->mDocument;
-}
-
-/*!
  * Returns true if the property is empty.
  */
 bool QVersitProperty::isEmpty() const
@@ -241,8 +223,7 @@ bool QVersitProperty::isEmpty() const
     return d->mGroups.isEmpty()
             && d->mName.isEmpty()
             && d->mParameters.isEmpty()
-            && !d->mValue.isValid()
-            && d->mDocument.isEmpty();
+            && !d->mValue.isValid();
 }
 
 QTM_END_NAMESPACE

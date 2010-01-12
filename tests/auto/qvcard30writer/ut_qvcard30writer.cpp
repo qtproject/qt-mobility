@@ -41,9 +41,11 @@
 
 #include "ut_qvcard30writer.h"
 #include "qvcard30writer_p.h"
+#include "qversitdocument.h"
 #include "qversitproperty.h"
 #include <QtTest/QtTest>
 #include <QByteArray>
+#include <QVariant>
 
 QTM_USE_NAMESPACE
 
@@ -102,7 +104,7 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));
     document.addProperty(embeddedProperty);
-    property.setEmbeddedDocument(document);
+    property.setValue(QVariant::fromValue(document));
     encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
 }

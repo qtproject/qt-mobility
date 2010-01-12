@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qversitreader_p.h"
+#include "qversitdocument.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 #include <QTextCodec>
@@ -288,7 +289,7 @@ void QVersitReaderPrivate::parseAgentProperty(VersitCursor& cursor, QVersitPrope
     if (!parseVersitDocument(cursor, agentDocument)) {
         property = QVersitProperty();
     } else {
-        property.setEmbeddedDocument(agentDocument);
+        property.setValue(QVariant::fromValue(agentDocument));
     }
 }
 
