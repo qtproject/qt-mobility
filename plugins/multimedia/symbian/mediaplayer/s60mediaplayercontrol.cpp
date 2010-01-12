@@ -115,7 +115,7 @@ bool S60MediaPlayerControl::isSeekable() const
     if (m_session)
        return  m_session->isSeekable();
     
-    return true;
+    return false;
 }
 
 QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
