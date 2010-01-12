@@ -53,6 +53,13 @@
 
 #include <QDir>
 
+#include <mmf\common\mmfcontrollerpluginresolver.h>
+#include <mmf\common\mmfcontroller.h>
+
+#include <private/qcore_symbian_p.h>
+
+#include <BADESCA.H>
+
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     QObject(parent), m_recorderUtility(NULL)
 {
@@ -99,6 +106,65 @@ bool S60AudioCaptureSession::isFormatSupported(const QAudioFormat &format) const
 
 bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 {
+	if (m_recorderUtility) {
+		
+		TRAPD(err, m_recorderUtility->SetDestinationSampleRateL(format.frequency()));
+		qWarning() << err;
+		
+		//set channels 
+		TRAP(err, m_recorderUtility->SetDestinationNumberOfChannelsL(format.channels()));
+		qWarning() << err;
+		
+		TFourCC fourCC;
+		
+		if (format.sampleSize() == 8) {
+			switch (format.sampleType()) {
+				case QAudioFormat::SignedInt: {
+					fourCC.Set(KMMFFourCCCodePCM8);
+					break;
+				}
+				case QAudioFormat::UnSignedInt: {
+					fourCC.Set(KMMFFourCCCodePCMU8);
+					break;
+				}
+				default: {
+					fourCC.Set(KMMFFourCCCodePCM8);
+					break;
+				}
+			}
+		} else if (format.sampleSize() == 16) {
+			// 16 bit here
+			switch (format.sampleType()) {
+				case QAudioFormat::SignedInt: {
+					if (format.byteOrder() == QAudioFormat::LittleEndian) {
+						fourCC.Set(fourCC = KMMFFourCCCodePCM16);
+						break;
+					}
+					if (format.byteOrder() == QAudioFormat::BigEndian) {
+						fourCC.Set(KMMFFourCCCodePCM16B);
+						break;
+					}
+				}
+				case QAudioFormat::UnSignedInt: {
+					if (format.byteOrder() == QAudioFormat::LittleEndian) {
+						fourCC.Set(KMMFFourCCCodePCMU16);
+						break;
+					}
+					if (format.byteOrder() == QAudioFormat::BigEndian) {
+						fourCC.Set(KMMFFourCCCodePCMU16B);
+						break;
+					}
+				}
+				default: {
+					fourCC.Set(KMMFFourCCCodePCM16);
+					break;
+				}
+			}
+		}
+
+		m_recorderUtility->SetDestinationDataTypeL(fourCC);
+		return true;
+	}
     //TODO:
     /*
     if(m_recorderUtility) {
@@ -124,40 +190,122 @@ bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 
 QStringList S60AudioCaptureSession::supportedAudioCodecs() const
 {
+	QStringList list;
+	
+	TRAPD(err, list = supportedAudioCodecsL());
+	qWarning() << err;
+	
+	return list;
+}
+
+QStringList S60AudioCaptureSession::supportedAudioCodecsL() const
+{
     QStringList list;
-    //TODO:
-    /*
-    if(m_recorderUtility) {
-        list = m_recorderUtility->supportedCodecs();
-    }
-    */
+
+    CMMFControllerPluginSelectionParameters* pluginParameters = 
+    	CMMFControllerPluginSelectionParameters::NewLC();
+	CMMFFormatSelectionParameters* formatParameters = 
+		CMMFFormatSelectionParameters::NewLC();
+	 
+	pluginParameters->SetRequiredRecordFormatSupportL(*formatParameters);
+	 
+	RArray<TUid> ids;
+	User::LeaveIfError(ids.Append(KUidMediaTypeAudio));  
+
+	pluginParameters->SetMediaIdsL(ids, 
+		CMMFPluginSelectionParameters::EAllowOtherMediaIds);
+	 
+	RMMFControllerImplInfoArray controllers; 
+	CleanupResetAndDestroyPushL(controllers);
+	 
+	//Get all audio/video play and record controllers/formats that are supported
+	pluginParameters->ListImplementationsL(controllers);
+	 
+	for (TInt index=0; index<controllers.Count(); index++) {
+		const RMMFFormatImplInfoArray& recordFormats = 
+			controllers[index]->RecordFormats();
+		for (TInt j=0; j<recordFormats.Count(); j++) {
+			const CDesC8Array& mimeTypes = recordFormats[j]->SupportedMimeTypes();
+			TInt count = mimeTypes.Count();
+			if (count > 0) {
+				TPtrC8 mimeType = mimeTypes[0];
+				list << QString::fromUtf8((char *)mimeType.Ptr(), mimeType.Length());
+			}
+		}
+	}
+	 
+	CleanupStack::PopAndDestroy(3);//controllers, formatParameters, pluginParameters
+
     return list;
 }
 
 QString S60AudioCaptureSession::codecDescription(const QString &codecName)
 {
-    //TODO:
-    /*
-    if(m_recorderUtility) {
-        if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/pcm") == 0)
-            return QString(tr("Pulse Code Modulation"));
-    }
-    */
-    return QString();
+	QString description;
+
+	TRAPD(err, description = codecDescriptionL(codecName));
+	qWarning() << err;
+	
+    return description;
+}
+
+
+QString S60AudioCaptureSession::codecDescriptionL(const QString &codecName)
+{
+	QString description;
+	
+    CMMFControllerPluginSelectionParameters* pluginParameters = 
+    	CMMFControllerPluginSelectionParameters::NewLC();
+	CMMFFormatSelectionParameters* formatParameters = 
+		CMMFFormatSelectionParameters::NewLC();
+	 
+	pluginParameters->SetRequiredRecordFormatSupportL(*formatParameters);
+	 
+	RArray<TUid> ids;
+	User::LeaveIfError(ids.Append(KUidMediaTypeAudio));  
+
+	pluginParameters->SetMediaIdsL(ids, 
+		CMMFPluginSelectionParameters::EAllowOtherMediaIds);
+	 
+	RMMFControllerImplInfoArray controllers; 
+	CleanupResetAndDestroyPushL(controllers);
+	 
+	//Get all audio/video play and record controllers/formats that are supported
+	pluginParameters->ListImplementationsL(controllers);
+	 
+	for (TInt index=0; index<controllers.Count(); index++) {
+		const RMMFFormatImplInfoArray& recordFormats = 
+			controllers[index]->RecordFormats();
+		for (TInt j=0; j<recordFormats.Count(); j++) {
+			const CDesC8Array& mimetypes = 
+					recordFormats[j]->SupportedMimeTypes();
+			TInt count = mimetypes.Count();
+			for (TInt i=0; i<count; i++) {
+				TPtrC8 mimeType = mimetypes[0];
+				if (QString::fromUtf8((char *)mimeType.Ptr(), 
+						mimeType.Length()) == codecName)
+					description = 
+						qt_TDesC2QString(recordFormats[j]->DisplayName());
+			}
+		}
+	}
+	 
+	CleanupStack::PopAndDestroy(3);//controllers, formatParameters, pluginParameters
+
+    return description;
 }
 
 bool S60AudioCaptureSession::setAudioCodec(const QString &codecName)
 {
-    //TODO:
-    /*
+
     if(m_recorderUtility) {
-        QStringList codecs = m_recorderUtility->supportedCodecs();
+        QStringList codecs = supportedAudioCodecs();
         if(codecs.contains(codecName)) {
             m_format.setCodec(codecName);
             return true;
         }
     }
-    */
+
     return false;
 }
 

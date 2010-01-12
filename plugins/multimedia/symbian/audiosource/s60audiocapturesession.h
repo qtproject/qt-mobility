@@ -103,7 +103,12 @@ private:
             TInt aCurrentState, TInt aErrorCode);
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
+    
+    QStringList supportedAudioCodecsL() const;
 
+    QString codecDescriptionL(const QString &codecName);
+
+    
     QString m_captureDevice;
     QUrl m_sink;
     QMediaRecorder::State m_state;
