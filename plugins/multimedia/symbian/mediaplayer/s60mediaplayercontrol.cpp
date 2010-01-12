@@ -65,7 +65,7 @@ qint64 S60MediaPlayerControl::position() const
     if (m_session)
         return m_session->position();
     
-    return -1;
+    return 0;
 }
 
 qint64 S60MediaPlayerControl::duration() const
