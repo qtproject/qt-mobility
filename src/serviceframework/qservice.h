@@ -39,49 +39,21 @@
 **
 ****************************************************************************/
 
-#ifndef PATHMAPPER_H
-#define PATHMAPPER_H
+#ifndef Q_SERVICE_H
+#define Q_SERVICE_H
 
-#include <QStringList>
-#include <QHash>
-
-#include "qcrmlparser_p.h"
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class PathMapper : public QObject
+namespace QService 
 {
-    Q_OBJECT
-
-public:
-    PathMapper();
-    /*virtual*/ ~PathMapper();
-
-    enum Target {TargetCRepository, TargetRPropery};
-
-    bool getChildren(QString path, QSet<QString> &children) const;
-    QStringList childPaths(QString basePath) const;
-    bool resolvePath(QString path, Target &target, quint32 &category, quint32 &key) const;
-
-private:
-    class PathData
-    {
-    public:
-        PathData() : m_target(TargetRPropery), m_category(0), m_key(0) {}
-        PathData(Target target, quint32 category, quint32 key) :
-            m_target(target), m_category(category), m_key(key) {}
-
-    public:
-        Target m_target;
-        quint32 m_category;
-        quint32 m_key;
+    enum Scope {
+        UserScope = 0,
+        SystemScope
     };
-
-private:
-    QHash<QString, PathData> m_paths;
-    QCrmlParser m_crmlParser;
-};
+}
 
 QTM_END_NAMESPACE
 
-#endif //PATHMAPPER_H
+#endif //Q_SERVICE_H

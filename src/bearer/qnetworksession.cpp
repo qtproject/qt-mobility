@@ -83,15 +83,16 @@ QTM_BEGIN_NAMESPACE
     or ignore() the new access point. Once the session has roamed the 
     newConfigurationActivated() signal is emitted. The application may now test the 
     carrier and must either accept() or reject() it. The session will return to the previous
-    access point if the roaming was rejected.
+    access point if the roaming was rejected. The subsequent state diagram depicts the required
+    state transitions.
+    
+    \image roaming-states.png
 
-    Some platforms may support the notion of forced roaming and application level roaming (ALR). 
+    Some platforms may distinguish forced roaming and application level roaming (ALR). 
     ALR implies that the application controls (via migrate(), ignore(), accept() and reject()) 
-    whether a network session can roam from one network configuration to the next. Such control is useful
+    whether a network session can roam from one access point to the next. Such control is useful
     if the application maintains stateful socket connections and wants to control the transition from
-    one interface to the next.
-
-    Forced roaming implies that the system automatically roams to the next network without 
+    one interface to the next. Forced roaming implies that the system automatically roams to the next network without 
     consulting the application. This has the advantage that the application can make use of roaming features
     without actually being aware of it. It is expected that the application detects that the underlying 
     socket is broken and automatically reconnects via the new network link.
@@ -100,7 +101,12 @@ QTM_BEGIN_NAMESPACE
     by connecting to the preferredConfigurationChanged() signal. Connecting to this signal means that
     the application wants to take control over the roaming behavior and therefore implies application
     level roaming. If the client does not connect to the preferredConfigurationChanged(), forced roaming
-    is used.
+    is used. If forced roaming is not supported the network session will not roam by default.
+
+    Some applications may want to suppress any form of roaming altogether. Possible use cases may be 
+    high priority downloads or remote services which cannot handle a roaming enabled client. Clients
+    can suppress roaming by connecting to the preferredConfigurationChanged() signal and answer each
+    signal emission with ignore().
 
     \sa QNetworkConfiguration, QNetworkConfigurationManager
 */

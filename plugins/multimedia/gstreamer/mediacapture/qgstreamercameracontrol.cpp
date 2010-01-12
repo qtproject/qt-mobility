@@ -66,7 +66,7 @@ static bool operator<(const QSize &s1, const QSize s2)
 QT_END_NAMESPACE
 
 QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
-    :QCameraControl(session), m_session(session), m_state(QCamera::StoppedState)
+    :QCameraControl(session), m_captureMode(QCamera::CaptureStillImage), m_session(session), m_state(QCamera::StoppedState)
 {
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)),
             this, SLOT(updateState()));

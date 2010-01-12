@@ -62,9 +62,9 @@ private slots:
     void getInterfaces();
     void searchByInterfaceName();
     void searchByInterfaceAndService();
-    void searchByCustomProperty();
+    void searchByCustomAttribute();
     void searchByCapability();
-    void properties();
+    void attributes();
     void getServiceNames();
     void defaultExternalIfaceIDs();
     void interfaceDefault();
@@ -530,7 +530,7 @@ void ServiceDatabaseUnitTest::searchByCapability()
 
     QStringList caps;
     caps << "hunt" << "spy";
-    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    filter.setCapabilities(QServiceFilter::MatchMinimum, caps);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),2);
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,
@@ -550,7 +550,7 @@ void ServiceDatabaseUnitTest::searchByCapability()
     
     caps.clear();
     caps << "hunt";
-    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    filter.setCapabilities(QServiceFilter::MatchMinimum, caps);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),3);
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,
@@ -570,7 +570,7 @@ void ServiceDatabaseUnitTest::searchByCapability()
                 QStringList(), customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
 
     caps.clear();
-    filter.setCapabilities(QServiceFilter::MatchAll, caps);
+    filter.setCapabilities(QServiceFilter::MatchMinimum, caps);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),4);
     QVERIFY(compareDescriptor(interfaces[0], "com.cybertron.transform", "Decepticon", 2, 0,
@@ -595,7 +595,7 @@ void ServiceDatabaseUnitTest::searchByCapability()
     QCOMPARE(interfaces.count(), 14); //show all services which don't require any caps
 }
 
-void ServiceDatabaseUnitTest::searchByCustomProperty()
+void ServiceDatabaseUnitTest::searchByCustomAttribute()
 {
     QServiceFilter filter;
     QList<QServiceInterfaceDescriptor> interfaces;
@@ -608,8 +608,8 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),5);
 
-    filter.setCustomProperty("bot", "automatic");
-    QCOMPARE(filter.customProperty("bot"), QString("automatic"));
+    filter.setCustomAttribute("bot", "automatic");
+    QCOMPARE(filter.customAttribute("bot"), QString("automatic"));
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),3);
 
@@ -629,9 +629,9 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     QVERIFY(compareDescriptor(interfaces[2], "com.cybertron.transform", "Autobot", 1, 9,
                 capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
-    filter.setCustomProperty("extension","multidrive");
-    QCOMPARE(filter.customProperty("extension"), QString("multidrive"));
-    QCOMPARE(filter.customProperty("bot"), QString("automatic"));
+    filter.setCustomAttribute("extension","multidrive");
+    QCOMPARE(filter.customAttribute("extension"), QString("multidrive"));
+    QCOMPARE(filter.customAttribute("bot"), QString("automatic"));
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),1);
     
@@ -642,7 +642,7 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
                 capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     QServiceFilter manualFilter;
-    manualFilter.setCustomProperty("bot", "manual");
+    manualFilter.setCustomAttribute("bot", "manual");
     interfaces = database.getInterfaces(manualFilter);
     QCOMPARE(interfaces.count(),2);
 
@@ -657,7 +657,7 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
                 capabilities, customs, "C:/Ark/matrix.dll", "Autobot Protection Services", "Transformation interface"));
 
     QServiceFilter multidriveFilter;
-    multidriveFilter.setCustomProperty("extension", "multidrive");
+    multidriveFilter.setCustomAttribute("extension", "multidrive");
     interfaces = database.getInterfaces(multidriveFilter);
     QCOMPARE(interfaces.count(),1);
 
@@ -670,36 +670,36 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
     //test whether querying a custom property will affect the filter
     filter.setServiceName("");
     filter.setInterface("");
-    filter.clearCustomProperties();
+    filter.clearCustomAttribute();
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
-    QString customProperty = filter.customProperty("spark");
+    QString customProperty = filter.customAttribute("spark");
     QVERIFY(customProperty.isEmpty());
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
 
     //test the removal of a custom property from the filter
-    filter.setCustomProperty("bot", "automatic");
-    filter.setCustomProperty("extension", "multidrive");
-    QCOMPARE(filter.customPropertyKeys().length(), 2);
-    filter.removeCustomProperty("bot");
-    QCOMPARE(filter.customPropertyKeys().length(), 1);
-    filter.removeCustomProperty("extension");
-    QCOMPARE(filter.customPropertyKeys().length(), 0);
+    filter.setCustomAttribute("bot", "automatic");
+    filter.setCustomAttribute("extension", "multidrive");
+    QCOMPARE(filter.customAttributes().length(), 2);
+    filter.clearCustomAttribute("bot");
+    QCOMPARE(filter.customAttributes().length(), 1);
+    filter.clearCustomAttribute("extension");
+    QCOMPARE(filter.customAttributes().length(), 0);
 
-    //test clearing of custom properties
-    filter.setCustomProperty("bot", "automatic");
-    filter.setCustomProperty("extension", "multidrive");
-    QCOMPARE(filter.customPropertyKeys().length(),2);
+    //test clearing of custom attributes
+    filter.setCustomAttribute("bot", "automatic");
+    filter.setCustomAttribute("extension", "multidrive");
+    QCOMPARE(filter.customAttributes().length(),2);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
-    filter.clearCustomProperties();
-    QCOMPARE(filter.customPropertyKeys().length(), 0);
+    filter.clearCustomAttribute();
+    QCOMPARE(filter.customAttributes().length(), 0);
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 36);
 
     //test searching for an empty custom property
-    filter.setCustomProperty("weapon", "");
+    filter.setCustomAttribute("weapon", "");
     interfaces = database.getInterfaces(filter);
     customs.clear();
     customs["bot"] = "automatic";
@@ -715,19 +715,19 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
                 capabilities, customs, "C:/Cybertron/unicron.dll", "Decepticon Elimination Services", "Transformation interface"));
 
 
-    filter.clearCustomProperties();
+    filter.clearCustomAttribute();
 
     //test searching against a non-existent custom property
-    filter.setCustomProperty("fluxcapacitor", "fluxing");
+    filter.setCustomAttribute("fluxcapacitor", "fluxing");
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 0);
     QCOMPARE(database.lastError().code(), DBError::NoError);
 
     //try searching for custom property with service name and interface constraints
-    filter.clearCustomProperties();
+    filter.clearCustomAttribute();
     filter.setServiceName("autobot");
     filter.setInterface("com.cybertron.transform", "2.0");
-    filter.setCustomProperty("bot", "automatic");
+    filter.setCustomAttribute("bot", "automatic");
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(),2);
     QVERIFY(interfaces[0].majorVersion() == 2 && interfaces[0].minorVersion() == 7);
@@ -735,16 +735,16 @@ void ServiceDatabaseUnitTest::searchByCustomProperty()
 
     //test that there is a difference between querying a custom
     //property with an empty value and a custom property that has not been set
-    filter.clearCustomProperties();
-    filter.setCustomProperty("AllSpark", "");
-    QVERIFY(!filter.customProperty("AllSpark").isNull());
-    QVERIFY(filter.customProperty("AllSpark").isEmpty());
-    QVERIFY(filter.customProperty("Non-existentProperty").isNull());
+    filter.clearCustomAttribute();
+    filter.setCustomAttribute("AllSpark", "");
+    QVERIFY(!filter.customAttribute("AllSpark").isNull());
+    QVERIFY(filter.customAttribute("AllSpark").isEmpty());
+    QVERIFY(filter.customAttribute("Non-existentProperty").isNull());
 
     QVERIFY(database.close());
 }
 
-void ServiceDatabaseUnitTest::properties()
+void ServiceDatabaseUnitTest::attributes()
 {
     QVERIFY(database.open());
 
@@ -757,7 +757,7 @@ void ServiceDatabaseUnitTest::properties()
     QCOMPARE(database.lastError().code(), DBError::NoError);
     QCOMPARE(interfaces.count(), 1);
     QServiceInterfaceDescriptor interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), QStringList());
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), QStringList());
 
     //get empty list of capabilites from an interface registered without a
     //capabilities attribute
@@ -766,7 +766,7 @@ void ServiceDatabaseUnitTest::properties()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), QStringList());
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), QStringList());
 
     //get a list of capabilites from an interface with only 1 capability
     filter.setServiceName("Omni");
@@ -776,7 +776,7 @@ void ServiceDatabaseUnitTest::properties()
     interface = interfaces[0];
     QStringList capabilities;
     capabilities  << "SurroundingsDD";
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
 
     //get a list of capabilites from an interface with multiple capabilities
     filter.setServiceName("Omni");
@@ -786,13 +786,13 @@ void ServiceDatabaseUnitTest::properties()
     interface = interfaces[0];
     capabilities.clear();
     capabilities  << "MultimediaDD" << "NetworkServices" << "ReadUserData" << "WriteUserData";
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
 
     //get a list of capabilities from a default service
     interface = database.interfaceDefault("com.cyberdyne.terminator");
     capabilities.clear();
     capabilities << "NetworkServices";
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(), capabilities);
 
     // == Interface Description Property ==
     //get the interface description off an interface registered without a description tag
@@ -801,7 +801,7 @@ void ServiceDatabaseUnitTest::properties()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString());
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString());
 
     //get the interface description off an interface registered with an
     //empty description tag
@@ -810,7 +810,7 @@ void ServiceDatabaseUnitTest::properties()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString());
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(), QString());
 
     //get the interface description of an interface
     filter.setServiceName("Skynet");
@@ -818,12 +818,12 @@ void ServiceDatabaseUnitTest::properties()
     interfaces = database.getInterfaces(filter);
     QCOMPARE(interfaces.count(), 1);
     interface = interfaces[0];
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
             QString("Remote communications interface for the T-800v1.5"));
 
     //get a description from a default service
     interface = database.interfaceDefault("com.omni.device.Accelerometer");
-    QCOMPARE(interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
+    QCOMPARE(interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString(),
             QString("Interface that provides accelerometer readings(omni)"));
 
     QVERIFY(database.close());
@@ -881,7 +881,7 @@ void ServiceDatabaseUnitTest::getServiceNames()
 bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor interface,
     QString interfaceName, QString serviceName, int majorVersion, int minorVersion)
 {
-    interface.d->properties[QServiceInterfaceDescriptor::Capabilities] = QStringList();
+    interface.d->attributes[QServiceInterfaceDescriptor::Capabilities] = QStringList();
 
     QHash<QString,QString> customs;
     return compareDescriptor(interface, interfaceName, serviceName, majorVersion, minorVersion,
@@ -918,9 +918,9 @@ bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
         return false;
     }
 
-    if (capabilities.count() != 0 || interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() != 0 ) {
+    if (capabilities.count() != 0 || interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() != 0 ) {
         QStringList securityCapabilities;
-        securityCapabilities = interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
+        securityCapabilities = interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList();
 
         if(securityCapabilities.count() != capabilities.count()) {
             qWarning() << "Capabilities count mismatch: expected =" << capabilities.count()
@@ -940,41 +940,41 @@ bool ServiceDatabaseUnitTest::compareDescriptor(QServiceInterfaceDescriptor inte
     }
 
     if (!filePath.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::Location).toString() != filePath) {
+        if (interface.attribute(QServiceInterfaceDescriptor::Location).toString() != filePath) {
             qWarning() << "File path mismatch: expected =" << filePath
-                << " actual =" << interface.property(QServiceInterfaceDescriptor::Location).toString();
+                << " actual =" << interface.attribute(QServiceInterfaceDescriptor::Location).toString();
             return false;
         }
     }
     if (!serviceDescription.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::ServiceDescription).toString() != serviceDescription) {
+        if (interface.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString() != serviceDescription) {
             qWarning() << "Service Description mismatch: expected =" << serviceDescription
-                        << " actual=" << interface.property(QServiceInterfaceDescriptor::ServiceDescription).toString();
+                        << " actual=" << interface.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString();
             return false;
         }
     }
     if (!interfaceDescription.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() != interfaceDescription) {
+        if (interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString() != interfaceDescription) {
             qWarning() << "Interface Description mismatch: expected =" << interfaceDescription
-                        << " actual =" << interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString();
+                        << " actual =" << interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString();
             return false;
         }
 
     }
 
-    if (interface.d->customProperties.size() != customProps.size()) {
-        qWarning() << "Number of Interface custom properties don't match. expected: " 
-            <<customProps.size() << "actual: " << interface.d->customProperties.size();
+    if (interface.d->customAttributes.size() != customProps.size()) {
+        qWarning() << "Number of Interface custom attributes don't match. expected: " 
+            <<customProps.size() << "actual: " << interface.d->customAttributes.size();
             ;
-        qWarning() << "expected:" << customProps << "actual:" << interface.d->customProperties;
+        qWarning() << "expected:" << customProps << "actual:" << interface.d->customAttributes;
         return false;
     }
 
     QHash<QString, QString>::const_iterator i;
     for (i = customProps.constBegin(); i!=customProps.constEnd(); i++) {
-        if (interface.customProperty(i.key()) != i.value()) {
+        if (interface.customAttribute(i.key()) != i.value()) {
             qWarning() << "Interface custom property mismatch: expected =" << i.key() <<"("<<i.value()<<")" 
-                        << " actual =" << i.key() << "(" << interface.customProperty(i.key()) << ")";
+                        << " actual =" << i.key() << "(" << interface.customAttribute(i.key()) << ")";
             return false;
         }
     }
@@ -1250,7 +1250,7 @@ void ServiceDatabaseUnitTest::unregister()
     interface = database.interfaceDefault("com.omni.service.Video");
     QVERIFY(interface.serviceName() == "OMNI");//no other services implmement this interface
 
-    //confirm that interface and service properties exist for the service
+    //confirm that interface and service attributes exist for the service
     QStringList serviceIDs = getServiceIDs("omni");
     foreach(const QString &serviceID, serviceIDs)
         QVERIFY(existsInServicePropertyTable(serviceID));

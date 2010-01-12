@@ -64,7 +64,7 @@ public:
     };
 
     enum CapabilityMatchRule {
-        MatchAll = 0,
+        MatchMinimum = 0,
         MatchLoadable
     };
 
@@ -84,15 +84,14 @@ public:
 
     QString serviceName() const;
     QString interfaceName() const;
-    int interfaceMajorVersion() const;
-    int interfaceMinorVersion() const;
+    int majorVersion() const;
+    int minorVersion() const;
     VersionMatchRule versionMatchRule() const;
 
-    QStringList customPropertyKeys() const;
-    QString customProperty(const QString& key) const;
-    void setCustomProperty(const QString& key, const QString& value);
-    void removeCustomProperty(const QString &key);
-    void clearCustomProperties();
+    QStringList customAttributes() const;
+    QString customAttribute(const QString& which) const;
+    void setCustomAttribute(const QString& key, const QString& value);
+    void clearCustomAttribute(const QString &key = QString());
 
     void setCapabilities(QServiceFilter::CapabilityMatchRule, const QStringList& capabilities = QStringList() );
     QStringList capabilities() const;
