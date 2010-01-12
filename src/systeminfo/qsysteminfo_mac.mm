@@ -365,12 +365,13 @@ QRunLoopThread::QRunLoopThread(QObject *parent)
 QRunLoopThread::~QRunLoopThread()
 {
     stopLoop();
+#ifdef MAC_SDK_10_6
     [listener release];
+#endif
 }
 
 void QRunLoopThread::run()
 {
-
 #ifdef MAC_SDK_10_6
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     listener = [[QNSListener alloc] init];
@@ -391,7 +392,9 @@ void QRunLoopThread::stopLoop()
 
 void QRunLoopThread::startLoop()
 {
+#ifdef MAC_SDK_10_6
     listener = [[QNSListener alloc] init];
+#endif
 }
 
 void qax_winEventFilter(void *message)
@@ -399,6 +402,7 @@ void qax_winEventFilter(void *message)
     NSNotification *notification = (NSNotification *)message;
     qWarning() << __FUNCTION__ << notification;
 }
+
 
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent), signalStrengthCache(0)
@@ -707,6 +711,7 @@ runloopThread->stopLoop();
         emit networkStatusChanged( QSystemNetworkInfo::WlanMode, status);
     }
     if(notification == "POWER_CHANGED_NOTIFICATION") {
+#ifdef MAC_SDK_10_6
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
             if(!rssiTimer->isActive())
@@ -715,6 +720,7 @@ runloopThread->stopLoop();
             if(rssiTimer->isActive())
             rssiTimer->stop();
         }
+#endif
     }
 runloopThread->start();
 }
