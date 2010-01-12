@@ -127,6 +127,9 @@ void UT_QVersitContactExporter::init()
         mExporter, SIGNAL(scale(const QString&,QByteArray&)),
         this, SLOT(scale(const QString&,QByteArray&)));
     mExporterPrivate = new MyQVersitContactExporterPrivate();
+    QObject::connect(
+        mExporterPrivate, SIGNAL(scale(const QString&,QByteArray&)),
+        this, SLOT(scale(const QString&,QByteArray&)));
     QVERIFY(!mExporterPrivate->ParameterMappings().empty());
     QVERIFY(!mExporterPrivate->PropertyMappings().empty());
     mScaleSignalEmitted = false;
@@ -184,27 +187,31 @@ void UT_QVersitContactExporter::testConvertContact()
     contact.saveDetail(&phoneNumber);
 
     // Convert contact into versit properties
-    QVersitDocument document = mExporter->exportContact(contact);
+    QList<QContact> list;
+    list.append(contact);
+    QList<QVersitDocument> documents = mExporter->exportContacts(list);
 
     // Each Contact has display label detail by default. Display label is enocded
     // if some value exisit for the Label or if value for Name exisit.
-    QCOMPARE(document.properties().count(), 3);
+    QCOMPARE(documents.size(), 1);
+    QCOMPARE(documents.first().properties().count(), 3);
 }
 
 void UT_QVersitContactExporter::testUnknownContactDetails()
 {
     // Test1: Un-supported Avatar Test
     QContact contact;
-    QVersitDocument versitDocument;
+    QVersitDocument document;
     QContactAvatar contactAvatar;
     const QString url = QString::fromAscii("http://www.myhome.com/test.jpg");
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 0);
-    QList<QContactDetail> unknowndDetails = mExporter->unknownContactDetails();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 0);
+    QList<QContactDetail> unknownDetails = mExporterPrivate->mUnknownContactDetails;
     QString defintionName = contactAvatar.definitionName();
-    QContactDetail detail = searchDetail(unknowndDetails,defintionName);
+    QContactDetail detail = searchDetail(unknownDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
 
     // Test2: Un-supported Online Account
@@ -213,12 +220,14 @@ void UT_QVersitContactExporter::testUnknownContactDetails()
     onlineAccount.setAccountUri(testUri);
     onlineAccount.setSubTypes(QString::fromAscii("unsupported"));
     contact.saveDetail(&onlineAccount);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 0);
-    unknowndDetails = mExporter->unknownContactDetails();
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 0);
+    unknownDetails = mExporterPrivate->mUnknownContactDetails;
     defintionName = onlineAccount.definitionName();
     detail = QContactDetail();
-    detail = searchDetail(unknowndDetails,defintionName);
+    detail = searchDetail(unknownDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
 }
 
@@ -226,6 +235,7 @@ void UT_QVersitContactExporter::testEncodeName()
 {
     QContact contact;
     QContactName name;
+    QVersitDocument document;
 
     // vCard 2.1
     name.setFirst(QString::fromAscii("Heido"));
@@ -234,7 +244,8 @@ void UT_QVersitContactExporter::testEncodeName()
     name.setPrefix(QString::fromAscii("Mr."));
     name.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&name);
-    QVersitDocument document = mExporter->exportContact(contact);
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
 
     // Each Contact has display label detail by default. Display label is enocded
     // if some value exisit for the Label or if value for Name exisit.
@@ -262,7 +273,9 @@ void UT_QVersitContactExporter::testEncodeName()
     name.setPrefix(QString::fromAscii(";Mr."));
     name.setSuffix(QString::fromAscii("Sir,"));
     contact.saveDetail(&name);
-    document = mExporter->exportContact(contact,QVersitDocument::VCard30Type);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard30Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.versitType(),QVersitDocument::VCard30Type);
 
     // Each Contact has display label detail by default. Display label is enocded
@@ -292,7 +305,9 @@ void UT_QVersitContactExporter::testEncodePhoneNumber()
     phoneNumber.setContexts(QContactDetail::ContextHome);
     phoneNumber.setSubTypes(QContactPhoneNumber::SubTypeMobile);
     contact.saveDetail(&phoneNumber);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     // Check parameters
@@ -314,7 +329,9 @@ void UT_QVersitContactExporter::testEncodeEmailAddress()
     email.setEmailAddress(QString::fromAscii("test@test"));
     email.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&email);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     // Check parameters
@@ -340,7 +357,9 @@ void UT_QVersitContactExporter::testEncodeStreetAddress()
     address.setContexts(QContactDetail::ContextHome);
     address.setSubTypes(QContactAddress::SubTypePostal);
     contact.saveDetail(&address);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     // Check parameters
@@ -363,7 +382,9 @@ void UT_QVersitContactExporter::testEncodeStreetAddress()
     address.setPostcode(QString::fromAscii("12345;"));
     address.setCountry(QString::fromAscii("My;Country"));
     contact.saveDetail(&address);
-    document = mExporter->exportContact(contact,QVersitDocument::VCard30Type);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard30Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.versitType(),QVersitDocument::VCard30Type);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
@@ -382,7 +403,9 @@ void UT_QVersitContactExporter::testEncodeUrl()
     url.setContexts(QContactDetail::ContextHome);
     url.setSubType(QContactUrl::SubTypeHomePage);
     contact.saveDetail(&url);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     // Check parameters
@@ -404,7 +427,9 @@ void UT_QVersitContactExporter::testEncodeUid()
     guid.setContexts(QContactDetail::ContextHome);
     guid.setGuid(QString::fromAscii("0101222"));
     contact.saveDetail(&guid);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     // Check parameters
@@ -419,7 +444,9 @@ void UT_QVersitContactExporter::testEncodeUid()
     contact.removeDetail(&guid);
     guid.setGuid(QString::fromAscii("1;2,3\r\n4\\5"));
     contact.saveDetail(&guid);
-    document = mExporter->exportContact(contact,QVersitDocument::VCard30Type);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard30Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.versitType(),QVersitDocument::VCard30Type);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
@@ -444,7 +471,10 @@ void UT_QVersitContactExporter::testEncodeRev()
     // Contexts not allowed in REV property, check that they are not added
     timeStamp.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&timeStamp);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.parameters().count(), 0);
@@ -457,7 +487,9 @@ void UT_QVersitContactExporter::testEncodeRev()
     timeStamp.setLastModified(emptyTime);
     timeStamp.setCreated(revisionTime);
     contact.saveDetail(&timeStamp);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     QCOMPARE(property.valueString(), expectedValueUTCEncoded);
@@ -468,7 +500,9 @@ void UT_QVersitContactExporter::testEncodeRev()
     timeStamp.setCreated(localTime);
     revisionTime.setTimeSpec(Qt::LocalTime);
     contact.saveDetail(&timeStamp);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     QString expectedValueEncoded = QString::fromAscii("2009-01-01T06:01:02");
@@ -478,7 +512,9 @@ void UT_QVersitContactExporter::testEncodeRev()
     timeStamp.setLastModified(emptyTime);
     timeStamp.setCreated(emptyTime);
     contact.saveDetail(&timeStamp);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 0);
 }
 
@@ -491,7 +527,10 @@ void UT_QVersitContactExporter::testEncodeBirthDay()
     // Contexts not allowed in BDAY property, check that they are not added
     birthDay.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&birthDay);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.parameters().count(), 0);
@@ -507,7 +546,9 @@ void UT_QVersitContactExporter::testEncodeNote()
     // Contexts not allowed in NOTE property, check that they are not added
     note.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&note);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.parameters().count(), 0);
@@ -526,7 +567,9 @@ void UT_QVersitContactExporter::testEncodeGeoLocation()
     // Contexts not allowed in GEO property, check that they are not added
     geoLocation.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&geoLocation);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.parameters().count(), 0);
@@ -539,7 +582,7 @@ void UT_QVersitContactExporter::testEncodeOrganization()
 {
     QContact contact;
     QContactOrganization organization;
-    QVersitDocument versitDocument;
+    QVersitDocument document;
     QVersitProperty property;
     QString title(QString::fromAscii("Developer"));
     QString organizationName(QString::fromAscii("Nokia"));
@@ -548,9 +591,11 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     // TITLE
     organization.setTitle(title);
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
-    property = versitDocument.properties().at(0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("TITLE"));
     QCOMPARE(property.valueString(), title);
 
@@ -558,9 +603,11 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     organization.setTitle(QString());
     organization.setName(QString::fromAscii("Nokia"));
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
-    property = versitDocument.properties().at(0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
     QCOMPARE(property.valueString(), QString::fromAscii("Nokia;"));
 
@@ -570,30 +617,36 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     departments.append(QString::fromAscii("Qt"));
     organization.setDepartment(departments);
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
-    property = versitDocument.properties().at(0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
     QCOMPARE(property.valueString(), QString::fromAscii(";R&D;Qt"));
 
     // ORG with name and department/unit
     organization.setName(QString::fromAscii("Nokia"));
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
-    property = versitDocument.properties().at(0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
     QCOMPARE(property.valueString(), QString::fromAscii("Nokia;R&D;Qt"));
 
     // TITLE and ORG
     organization.setTitle(QString::fromAscii("Developer"));
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 2);
-    property = versitDocument.properties().at(0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 2);
+    property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("TITLE"));
     QCOMPARE(property.valueString(), title);
-    property = versitDocument.properties().at(1);
+    property = document.properties().at(1);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
     QCOMPARE(property.valueString(), QString::fromAscii("Nokia;R&D;Qt"));
 
@@ -605,23 +658,25 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     organization = QContactOrganization();
     organization.setLogo(url);
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QVERIFY(!mScaleSignalEmitted);
 
     //Media type, and source type are encoded.
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
+    QCOMPARE(document.properties().at(0).parameters().count(), 2);
 
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+    QVERIFY(document.properties().at(0).parameters().contains(
             QString::fromAscii("TYPE"), QString::fromAscii("JPEG")));
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+    QVERIFY(document.properties().at(0).parameters().contains(
             QString::fromAscii("VALUE"), QString::fromAscii("URL")));
 
     //Check property Name
-    QString propertyName = versitDocument.properties().at(0).name();
+    QString propertyName = document.properties().at(0).name();
     QCOMPARE(propertyName, QString::fromAscii("LOGO"));
 
     //Check property value
-    QString value = versitDocument.properties().at(0).valueString();
+    QString value = document.properties().at(0).valueString();
     QCOMPARE(value, url);
 
     // ORG LOGO Test2: LOGO File.
@@ -629,20 +684,22 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     organization = QContactOrganization();
     organization.setLogo(mTestPhotoFile);
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QVERIFY(mScaleSignalEmitted);
 
     //Media type, source encoding is encoded i.e. base64
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
+    QCOMPARE(document.properties().at(0).parameters().count(), 2);
 
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+    QVERIFY(document.properties().at(0).parameters().contains(
             QString::fromAscii("TYPE"), QString::fromAscii("JPEG")));
 
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+    QVERIFY(document.properties().at(0).parameters().contains(
             QString::fromAscii("ENCODING"), QString::fromAscii("BASE64")));
 
     //Ensure value1 is not URL
-    QString value1 = versitDocument.properties().at(0).valueString();
+    QString value1 = document.properties().at(0).valueString();
     QVERIFY(value1.toAscii() != url.toAscii());
 
     // Assistant Name Test.
@@ -650,9 +707,11 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     organization = QContactOrganization();
     organization.setAssistantName(QString::fromAscii("myAssistant"));
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
-    property = versitDocument.properties().at(0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("X-ASSISTANT"));
     QCOMPARE(property.valueString(), QString::fromAscii("myAssistant"));
 
@@ -661,9 +720,11 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     organization = QContactOrganization();
     organization.setRole(QString::fromAscii("Executive"));
     contact.saveDetail(&organization);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
-    property = versitDocument.properties().at(0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
+    property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("ROLE"));
     QCOMPARE(property.valueString(), QString::fromAscii("Executive"));
 
@@ -681,19 +742,23 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     contactAvatar.setAvatar(url);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    QVersitDocument versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().at(0).parameters().count(), 2);
     QVERIFY(!mScaleSignalEmitted);
 
     // Test 2: Local Media PHOTO
     contactAvatar.setAvatar(mTestPhotoFile);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QVERIFY(mScaleSignalEmitted);
 
     //Media type, source encoding is encoded i.e. base64
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
+    QCOMPARE(document.properties().at(0).parameters().count(), 2);
 
     // Test3: UnSupported Media Type, properties and parameters are not encoded
     mScaleSignalEmitted = false;
@@ -702,8 +767,10 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     // un-supported media type is encoded
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 0);
     QVERIFY(!mScaleSignalEmitted);
 }
 
@@ -718,9 +785,11 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     contactAvatar.setAvatar(url);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    QVersitDocument versitDocument = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QVERIFY(!mScaleSignalEmitted);
-    QVersitProperty photoProperty = versitDocument.properties().at(0);
+    QVersitProperty photoProperty = document.properties().at(0);
     QCOMPARE(photoProperty.parameters().count(), 2);
     QVERIFY(photoProperty.parameters().contains(
             QString::fromAscii("TYPE"),QString::fromAscii("JPEG")));
@@ -733,9 +802,11 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     contactAvatar.setAvatar(mTestPhotoFile);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QVERIFY(mScaleSignalEmitted);
-    photoProperty = versitDocument.properties().at(0);
+    photoProperty = document.properties().at(0);
     QCOMPARE(photoProperty.parameters().count(), 2);
     QVERIFY(photoProperty.parameters().contains(
         QString::fromAscii("TYPE"),
@@ -751,9 +822,11 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     // Test 3: Local PHOTO, image scaled by the "client"
     mScaleSignalEmitted = false;
     mSimulatedImageData = "simulated image data";
-    versitDocument = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QVERIFY(mScaleSignalEmitted);
-    photoProperty = versitDocument.properties().at(0);
+    photoProperty = document.properties().at(0);
     QCOMPARE(photoProperty.parameters().count(), 2);
     QVERIFY(photoProperty.parameters().contains(
         QString::fromAscii("TYPE"),
@@ -768,9 +841,11 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     contactAvatar.setAvatar(mTestAudioFile);
     contactAvatar.setSubType(QContactAvatar::SubTypeAudioRingtone);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QVERIFY(!mScaleSignalEmitted);
-    QVersitProperty soundProperty = versitDocument.properties().at(0);
+    QVersitProperty soundProperty = document.properties().at(0);
     QCOMPARE(soundProperty.parameters().count(), 2);
     QVERIFY(soundProperty.parameters().contains(
         QString::fromAscii("TYPE"),
@@ -785,13 +860,15 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     contactAvatar.setAvatar(testUrl);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QVERIFY(!mScaleSignalEmitted);
-    QCOMPARE(versitDocument.properties().count(), 1);
-    QCOMPARE(versitDocument.properties().at(0).parameters().count(), 2);
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+    QCOMPARE(document.properties().count(), 1);
+    QCOMPARE(document.properties().at(0).parameters().count(), 2);
+    QVERIFY(document.properties().at(0).parameters().contains(
             QString::fromAscii("TYPE"), QString::fromAscii("GGG")));
-    QVERIFY(versitDocument.properties().at(0).parameters().contains(
+    QVERIFY(document.properties().at(0).parameters().contains(
             QString::fromAscii("VALUE"),QString::fromAscii("URL")));
 
     // Test 7: Unsupported media type, properties and parameters are not encoded
@@ -800,8 +877,10 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     // un-supported media type is encoded
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 0);
 }
 
 void UT_QVersitContactExporter::testEncodeParameters()
@@ -816,7 +895,9 @@ void UT_QVersitContactExporter::testEncodeParameters()
     subtypes.append(QContactPhoneNumber::SubTypeDtmfMenu);
     phoneNumber.setSubTypes(subtypes);
     contact.saveDetail(&phoneNumber);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.parameters().count(), 2);
@@ -830,47 +911,57 @@ void UT_QVersitContactExporter::testIsValidRemoteUrl()
 {
     QContact contact;
     QContactAvatar contactAvatar;
-    QVersitDocument versitDocument;
+    QVersitDocument document;
 
     // Test1: http URL
     QString url = QString::fromAscii("http://www.nonoh.com/test.jpg");
     contactAvatar.setAvatar(url);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
 
     // Test2: FTP URL
     url = QString::fromAscii("ftp://nonoh.com/test.jpg");
     contactAvatar.setAvatar(url);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
 
     // Test3: NEW Protocol URL
     url = QString::fromAscii("myProtocol://nonoh.com/test.jpg");
     contactAvatar.setAvatar(url);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
 
     // Test4: URL without scheme
     url = QString::fromAscii("www.nonoh.com/test.jpg");
     contactAvatar.setAvatar(url);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 1);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 1);
 
     // Test5: File Name but File does not Exisit
     url = QString::fromAscii("c:/filedoesnotexisit.jok");
     contactAvatar.setAvatar(url);
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
-    versitDocument = mExporter->exportContact(contact);
-    QCOMPARE(versitDocument.properties().count(), 0);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
+    QCOMPARE(document.properties().count(), 0);
 }
 
 void UT_QVersitContactExporter::testEncodeGender()
@@ -880,7 +971,9 @@ void UT_QVersitContactExporter::testEncodeGender()
     gender.setGender(QContactGender::GenderMale);
     gender.setContexts(QContactGender::ContextHome); // Should not be encoded
     contact.saveDetail(&gender);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.parameters().count(), 0);
@@ -927,7 +1020,9 @@ void UT_QVersitContactExporter::testEncodeAnniversary()
     anniversary.setContexts(QContactDetail::ContextHome);
     anniversary.setSubType(QContactAnniversary::SubTypeWedding);
     contact.saveDetail(&anniversary);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     // The contexts and subtypes are not defined for X-ANNIVERSARY property
@@ -950,7 +1045,9 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeVideoShare);
     onlineAccount.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&onlineAccount);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
     // Check parameters
@@ -968,7 +1065,9 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeSipVoip);
     onlineAccount.setContexts(QContactDetail::ContextWork);
     contact.saveDetail(&onlineAccount);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     // Check parameters
@@ -986,7 +1085,9 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeSip);
     onlineAccount.setContexts(QContactDetail::ContextWork);
     contact.saveDetail(&onlineAccount);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     // Check parameters, SIP not added as a TYPE parameter
@@ -1002,7 +1103,9 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
     onlineAccount.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&onlineAccount);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     // Check parameters, SIP not added as a TYPE parameter
@@ -1017,7 +1120,9 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     // Other subtypes not converted
     onlineAccount.setSubTypes(QString::fromAscii("INVALIDSUBTYPE"));
     contact.saveDetail(&onlineAccount);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 0);
 }
 
@@ -1029,14 +1134,18 @@ void UT_QVersitContactExporter::testEncodeFamily()
     // No spouse, no family
     family.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&family);
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 0);
 
     // Only spouse present
     QString spouce = QString::fromAscii("ABC");
     family.setSpouse(spouce);
     contact.saveDetail(&family);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty spouseProperty = document.properties().at(0);
     QCOMPARE(spouseProperty.parameters().count(), 0);
@@ -1049,7 +1158,9 @@ void UT_QVersitContactExporter::testEncodeFamily()
     family.setChildren(children);
     family.setSpouse(spouce);
     contact.saveDetail(&family);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 2);
     spouseProperty = document.properties().at(0);
     QCOMPARE(spouseProperty.parameters().count(), 0);
@@ -1069,7 +1180,9 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
     QContactName contactName;
 
     // No display label and no QContactName
-    QVersitDocument document = mExporter->exportContact(contact);
+    QVersitDocument document;
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 0);
 
     // No display label, but QContactName found
@@ -1077,7 +1190,9 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
     contactName.setLast(QString::fromAscii("Last"));
     contactName.setMiddle(QString::fromAscii("Middle"));
     contact.saveDetail(&contactName);
-    document = mExporter->exportContact(contact);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard21Type);
+    mExporterPrivate->exportContact(document, contact);
     QCOMPARE(document.properties().count(), 2);
     QVersitProperty displayProperty = document.properties().at(0);
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
@@ -1091,7 +1206,9 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
     contact = QContact();
     contactName.setCustomLabel(QString::fromAscii("Custom,Label"));
     contact.saveDetail(&contactName);
-    document = mExporter->exportContact(contact, QVersitDocument::VCard30Type);
+    document = QVersitDocument();
+    document.setVersitType(QVersitDocument::VCard30Type);
+    mExporterPrivate->exportContact(document, contact);
     displayProperty = document.properties().at(0);
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
     QCOMPARE(displayProperty.valueString(),

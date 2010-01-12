@@ -62,8 +62,8 @@ public:
     QVersitContactExporter();
     ~QVersitContactExporter();
 
-    QVersitDocument exportContact(
-        const QContact& contact,
+    QList<QVersitDocument> exportContacts(
+        const QList<QContact>& contacts,
         QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type);
 		
     QList<QContactDetail> unknownContactDetails();

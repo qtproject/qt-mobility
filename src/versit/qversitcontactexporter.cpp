@@ -132,18 +132,22 @@ QVersitContactExporter::~QVersitContactExporter()
 }
 
 /*!
- * Returns the versit document corresponding
- * to the \a contact and \a versitType.
+ * Converts \a contacts into a list of corresponding
+ * QVersitDocuments, using the format given by \a versitType.
  */
-QVersitDocument QVersitContactExporter::exportContact(
-    const QContact& contact,
+QList<QVersitDocument> QVersitContactExporter::exportContacts(
+    const QList<QContact>& contacts,
     QVersitDocument::VersitType versitType)
 {
-    QVersitDocument versitDocument;
-    versitDocument.setVersitType(versitType);
-    d->exportContact(versitDocument,contact);
+    QList<QVersitDocument> list;
+    foreach (QContact contact, contacts) {
+        QVersitDocument versitDocument;
+        versitDocument.setVersitType(versitType);
+        d->exportContact(versitDocument, contact);
+        list.append(versitDocument);
+    }
 
-    return versitDocument;
+    return list;
 }
 
 /*!
