@@ -127,7 +127,7 @@ void tst_QMediaPlayer::initTestCase_data()
     << QMediaContent() // mediaContent
 	<< qint64(-1) // duration
 	<< qint64(0) // position
-	<< true // seekable
+	<< false // seekable
 	<< 0 // volume
 	<< false // muted
 	<< false; // videoAvailable
@@ -160,7 +160,7 @@ void tst_QMediaPlayer::initTestCase_data()
 	//<< QMediaPlayer::UnknownMediaStatus // status
 	<< QMediaContent(QUrl("file:///C:/data/testfiles/test_amr.amr")) // mediaContent
 	<< qint64(14400) // duration
-	<< qint64(0) // position
+	<< qint64(200) // position
 	<< true // seekable
 	<< 0 // volume
 	<< false // muted
@@ -186,13 +186,14 @@ void tst_QMediaPlayer::initTestCase_data()
 	//<< QMediaPlayer::NoError // error
 	//<< QString(); // errorString
 
+    //TODO: Remove this IF
     if (QSysInfo::symbianVersion() == (QSysInfo::SV_S60_3_2 | QSysInfo::SV_S60_5_0)) {
         QTest::newRow("test_invalid_extension_mp4.xyz")
         << true // valid
         //<< QMediaPlayer::StoppedState // state
         //<< QMediaPlayer::UnknownMediaStatus // status
         << QMediaContent(QUrl("file:///C:/data/testfiles/test_invalid_extension_mp4.xyz")) // mediaContent
-        << qint64(0) // duration
+        << qint64(0) // duration //2701 TODO: FIXME: In this case duration could not be read
         << qint64(0) // position
         << true // seekable
         << 0 // volume
@@ -210,7 +211,7 @@ void tst_QMediaPlayer::initTestCase_data()
 	//<< QMediaPlayer::UnknownMediaStatus // status
 	<< QMediaContent(QUrl("file:///C:/data/testfiles/test_invalid_extension_wav.xyz")) // mediaContent
 	<< qint64(12400) // duration
-	<< qint64(0) // position
+	<< qint64(400) // position
 	<< true // seekable
 	<< 0 // volume
 	<< false // muted
@@ -226,8 +227,8 @@ void tst_QMediaPlayer::initTestCase_data()
 	//<< QMediaPlayer::UnknownMediaStatus // status
 	<< QMediaContent(QUrl("file:///C:/data/testfiles/test_mp3.mp3")) // mediaContent
 	<< qint64(102044) // duration
-	<< qint64(0) // position
-	<< false // seekable
+	<< qint64(123) // position
+	<< true // seekable
 	<< 0 // volume
 	<< false // muted
 	<< false; // videoAvailable
@@ -236,6 +237,7 @@ void tst_QMediaPlayer::initTestCase_data()
 	//<< QMediaPlayer::NoError // error
 	//<< QString(); // errorString
 
+    //TODO: Remove this IF
     if (QSysInfo::symbianVersion() == (QSysInfo::SV_S60_3_2 | QSysInfo::SV_S60_5_0)) {
         QTest::newRow("test_mp4.mp4")
         << true // valid
@@ -260,7 +262,7 @@ void tst_QMediaPlayer::initTestCase_data()
 	//<< QMediaPlayer::UnknownMediaStatus // status
 	<< QMediaContent(QUrl("file:///C:/data/testfiles/test_wav.wav")) // mediaContent
 	<< qint64(12400) // duration
-	<< qint64(0) // position
+	<< qint64(321) // position
 	<< true // seekable
 	<< 0 // volume
 	<< false // muted
@@ -276,7 +278,7 @@ void tst_QMediaPlayer::initTestCase_data()
 	//<< QMediaPlayer::UnknownMediaStatus // status
 	<< QMediaContent(QUrl("file:///C:/data/testfiles/test_wmv9.wmv")) // mediaContent
 	<< qint64(169389) // duration
-	<< qint64(0) // position
+	<< qint64(789) // position
 	<< true // seekable
 	<< 0 // volume
 	<< false // muted
@@ -286,6 +288,7 @@ void tst_QMediaPlayer::initTestCase_data()
 	//<< QMediaPlayer::NoError // error
 	//<< QString(); // errorString
 
+    //TODO: Remove this IF
     if (QSysInfo::symbianVersion() == (QSysInfo::SV_S60_3_2 | QSysInfo::SV_S60_5_0)) {
         QTest::newRow("test youtube stream")
         << true // valid
@@ -397,6 +400,8 @@ void tst_QMediaPlayer::testPosition()
     QVERIFY(player.duration() == duration);
 
     if (seekable) {
+        qDebug() << player.media().canonicalUrl().toString();
+        
         { QSignalSpy spy(&player, SIGNAL(positionChanged(qint64)));
         player.setPosition(position);
         QCOMPARE(player.position(), position);
@@ -449,6 +454,7 @@ void tst_QMediaPlayer::testVolume()
     player.setVolume(volume);
     QVERIFY(player.volume() == volume);
 
+    //TODO: Remove this IF
     if (valid && mediaContent != QMediaContent(QUrl("file:///C:/data/testfiles/test_flash_video.flv"))) { // TODO: testVolume fails with FLV files
         { QSignalSpy spy(&player, SIGNAL(volumeChanged(int)));
         player.setVolume(10);
@@ -511,7 +517,7 @@ void tst_QMediaPlayer::testVideoAvailable()
 void tst_QMediaPlayer::testBufferStatus()
 {
     QFETCH_GLOBAL(int, bufferStatus);
-    
+
     QMediaPlayer player;
 
     mockService->setBufferStatus(bufferStatus);
