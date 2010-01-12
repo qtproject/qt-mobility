@@ -84,7 +84,7 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
          QString fileName = lib.fileName();
          fileName.chop(4); // .dll is removed
          libPath = QDir::toNativeSeparators(fi2.absolutePath()) + QDir::separator() + fileName + QLatin1String(".qtplugin");
-         qDebug() << libPath;
+         // qDebug() << libPath;
          return libPath;  
 #endif
             return lib.fileName();
