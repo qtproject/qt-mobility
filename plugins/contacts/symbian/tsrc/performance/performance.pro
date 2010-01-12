@@ -8,6 +8,7 @@ CONFIG += qtestlib
 
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
+include(../tsrc.pri)
 INCLUDEPATH += .
 INCLUDEPATH += .\inc
 INCLUDEPATH += ..\..\inc
