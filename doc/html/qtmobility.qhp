@@ -334,8 +334,8 @@
                     <section ref="qmessageaccountid.html" title="QMessageAccountId Class Reference">
                         <section ref="qmessageaccountid-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qmessageaccountordering.html" title="QMessageAccountOrdering Class Reference">
-                        <section ref="qmessageaccountordering-members.html" title="List of all members"/>
+                    <section ref="qmessageaccountsortorder.html" title="QMessageAccountSortOrder Class Reference">
+                        <section ref="qmessageaccountsortorder-members.html" title="List of all members"/>
                     </section>
                     <section ref="qmessageaddress.html" title="QMessageAddress Class Reference">
                         <section ref="qmessageaddress-members.html" title="List of all members"/>
@@ -358,20 +358,20 @@
                     <section ref="qmessagefolderid.html" title="QMessageFolderId Class Reference">
                         <section ref="qmessagefolderid-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qmessagefolderordering.html" title="QMessageFolderOrdering Class Reference">
-                        <section ref="qmessagefolderordering-members.html" title="List of all members"/>
+                    <section ref="qmessagefoldersortorder.html" title="QMessageFolderSortOrder Class Reference">
+                        <section ref="qmessagefoldersortorder-members.html" title="List of all members"/>
                     </section>
                     <section ref="qmessageid.html" title="QMessageId Class Reference">
                         <section ref="qmessageid-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qmessageordering.html" title="QMessageOrdering Class Reference">
-                        <section ref="qmessageordering-members.html" title="List of all members"/>
+                    <section ref="qmessagemanager.html" title="QMessageManager Class Reference">
+                        <section ref="qmessagemanager-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qmessageserviceaction.html" title="QMessageServiceAction Class Reference">
-                        <section ref="qmessageserviceaction-members.html" title="List of all members"/>
+                    <section ref="qmessageservice.html" title="QMessageService Class Reference">
+                        <section ref="qmessageservice-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qmessagestore.html" title="QMessageStore Class Reference">
-                        <section ref="qmessagestore-members.html" title="List of all members"/>
+                    <section ref="qmessagesortorder.html" title="QMessageSortOrder Class Reference">
+                        <section ref="qmessagesortorder-members.html" title="List of all members"/>
                     </section>
                     <section ref="qmetadatacontrol.html" title="QMetaDataControl Class Reference">
                         <section ref="qmetadatacontrol-members.html" title="List of all members"/>
@@ -478,6 +478,7 @@
                 </section>
                 <section ref="" title="Examples">
                     <section ref="keepintouch.html" title="'Keep in Touch' Example"/>
+                    <section ref="writemessage.html" title="'Write Message' Example"/>
                     <section ref="battery-charge.html" title="Accessing Publish and Subscribe from QML"/>
                     <section ref="audiorecorder.html" title="Audio Recorder Example"/>
                     <section ref="bearercloud.html" title="Bearer Cloud Example"/>
@@ -500,6 +501,7 @@
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
                     <section ref="servicebrowser.html" title="Service Browser Example"/>
+                    <section ref="declarative.html" title="Service Framework using QML Example"/>
                     <section ref="slideshow.html" title="SlideShow Example"/>
                     <section ref="slideshow.html" title="Slideshow Example"/>
                     <section ref="streamplayer.html" title="Stream Player Example"/>
@@ -549,6 +551,7 @@
         </toc>
         <keywords>
             <keyword name="'Keep in Touch' Example" id="'Keep in Touch' Example" ref="keepintouch.html"/>
+            <keyword name="'Write Message' Example" id="'Write Message' Example" ref="writemessage.html"/>
             <keyword name="Accessing Publish and Subscribe from QML" id="Accessing Publish and Subscribe from QML" ref="battery-charge.html"/>
             <keyword name="All Functions" id="All Functions" ref="functions.html"/>
             <keyword name="All Qt Mobility Classes" id="All Qt Mobility Classes" ref="classes.html"/>
@@ -2249,26 +2252,25 @@
             <keyword name="byName" id="QMessageAccountFilter::byName" ref="qmessageaccountfilter.html#byName"/>
             <keyword name="isEmpty" id="QMessageAccountFilter::isEmpty" ref="qmessageaccountfilter.html#isEmpty"/>
             <keyword name="isSupported" id="QMessageAccountFilter::isSupported" ref="qmessageaccountfilter.html#isSupported"/>
+            <keyword name="matchFlags" id="QMessageAccountFilter::matchFlags" ref="qmessageaccountfilter.html#matchFlags"/>
             <keyword name="operator&amp;" id="QMessageAccountFilter::operator&amp;" ref="qmessageaccountfilter.html#operator-and"/>
             <keyword name="operator&amp;=" id="QMessageAccountFilter::operator&amp;=" ref="qmessageaccountfilter.html#operator-and-eq"/>
             <keyword name="operator|" id="QMessageAccountFilter::operator|" ref="qmessageaccountfilter.html#operator-7c"/>
             <keyword name="operator|=" id="QMessageAccountFilter::operator|=" ref="qmessageaccountfilter.html#operator-7c-eq"/>
             <keyword name="operator~" id="QMessageAccountFilter::operator~" ref="qmessageaccountfilter.html#operator-7e"/>
-            <keyword name="options" id="QMessageAccountFilter::options" ref="qmessageaccountfilter.html#options"/>
-            <keyword name="setOptions" id="QMessageAccountFilter::setOptions" ref="qmessageaccountfilter.html#setOptions"/>
+            <keyword name="setMatchFlags" id="QMessageAccountFilter::setMatchFlags" ref="qmessageaccountfilter.html#setMatchFlags"/>
             <keyword name="~QMessageAccountFilter" id="QMessageAccountFilter::~QMessageAccountFilter" ref="qmessageaccountfilter.html#dtor.QMessageAccountFilter"/>
             <keyword name="QMessageAccountId" id="QMessageAccountId" ref="qmessageaccountid.html"/>
             <keyword name="isValid" id="QMessageAccountId::isValid" ref="qmessageaccountid.html#isValid"/>
-            <keyword name="operator=" id="QMessageAccountId::operator=" ref="qmessageaccountid.html#operator-eq"/>
-            <keyword name="operator==" id="QMessageAccountId::operator==" ref="qmessageaccountid.html#operator-eq-eq"/>
+            <keyword name="operator&lt;" id="QMessageAccountId::operator&lt;" ref="qmessageaccountid.html#operator-lt"/>
             <keyword name="toString" id="QMessageAccountId::toString" ref="qmessageaccountid.html#toString"/>
             <keyword name="~QMessageAccountId" id="QMessageAccountId::~QMessageAccountId" ref="qmessageaccountid.html#dtor.QMessageAccountId"/>
             <keyword name="QMessageAccountIdList" id="QMessageAccountIdList" ref="AQMessageAccountIdList-typedef"/>
-            <keyword name="QMessageAccountOrdering" id="QMessageAccountOrdering" ref="qmessageaccountordering.html"/>
-            <keyword name="byName" id="QMessageAccountOrdering::byName" ref="qmessageaccountordering.html#byName"/>
-            <keyword name="isEmpty" id="QMessageAccountOrdering::isEmpty" ref="qmessageaccountordering.html#isEmpty"/>
-            <keyword name="isSupported" id="QMessageAccountOrdering::isSupported" ref="qmessageaccountordering.html#isSupported"/>
-            <keyword name="~QMessageAccountOrdering" id="QMessageAccountOrdering::~QMessageAccountOrdering" ref="qmessageaccountordering.html#dtor.QMessageAccountOrdering"/>
+            <keyword name="QMessageAccountSortOrder" id="QMessageAccountSortOrder" ref="qmessageaccountsortorder.html"/>
+            <keyword name="byName" id="QMessageAccountSortOrder::byName" ref="qmessageaccountsortorder.html#byName"/>
+            <keyword name="isEmpty" id="QMessageAccountSortOrder::isEmpty" ref="qmessageaccountsortorder.html#isEmpty"/>
+            <keyword name="isSupported" id="QMessageAccountSortOrder::isSupported" ref="qmessageaccountsortorder.html#isSupported"/>
+            <keyword name="~QMessageAccountSortOrder" id="QMessageAccountSortOrder::~QMessageAccountSortOrder" ref="qmessageaccountsortorder.html#dtor.QMessageAccountSortOrder"/>
             <keyword name="QMessageAddress" id="QMessageAddress" ref="qmessageaddress.html"/>
             <keyword name="QMessageAddress::Type" id="QMessageAddress::Type" ref="qmessageaddress.html#Type-enum"/>
             <keyword name="QMessageAddress::System" id="QMessageAddress::System" ref="qmessageaddress.html#Type-enum"/>
@@ -2297,8 +2299,8 @@
             <keyword name="size" id="QMessageContentContainer::size" ref="qmessagecontentcontainer.html#size"/>
             <keyword name="suggestedFileName" id="QMessageContentContainer::suggestedFileName" ref="qmessagecontentcontainer.html#suggestedFileName"/>
             <keyword name="textContent" id="QMessageContentContainer::textContent" ref="qmessagecontentcontainer.html#textContent"/>
-            <keyword name="writeContentTo" id="QMessageContentContainer::writeContentTo" ref="qmessagecontentcontainer.html#writeContentTo"/>
-            <keyword name="writeTextContentTo" id="QMessageContentContainer::writeTextContentTo" ref="qmessagecontentcontainer.html#writeTextContentTo"/>
+            <keyword name="writeContent" id="QMessageContentContainer::writeContent" ref="qmessagecontentcontainer.html#writeContent"/>
+            <keyword name="writeTextContent" id="QMessageContentContainer::writeTextContent" ref="qmessagecontentcontainer.html#writeTextContent"/>
             <keyword name="~QMessageContentContainer" id="QMessageContentContainer::~QMessageContentContainer" ref="qmessagecontentcontainer.html#dtor.QMessageContentContainer"/>
             <keyword name="QMessageContentContainerId" id="QMessageContentContainerId" ref="qmessagecontentcontainerid.html"/>
             <keyword name="isValid" id="QMessageContentContainerId::isValid" ref="qmessagecontentcontainerid.html#isValid"/>
@@ -2312,10 +2314,10 @@
             <keyword name="QMessageDataComparator::InclusionComparator" id="QMessageDataComparator::InclusionComparator" ref="qmessagedatacomparator.html#InclusionComparator-enum"/>
             <keyword name="QMessageDataComparator::Includes" id="QMessageDataComparator::Includes" ref="qmessagedatacomparator.html#InclusionComparator-enum"/>
             <keyword name="QMessageDataComparator::Excludes" id="QMessageDataComparator::Excludes" ref="qmessagedatacomparator.html#InclusionComparator-enum"/>
-            <keyword name="QMessageDataComparator::Option" id="QMessageDataComparator::Option" ref="qmessagedatacomparator.html#Option-enum"/>
-            <keyword name="QMessageDataComparator::FullWord" id="QMessageDataComparator::FullWord" ref="qmessagedatacomparator.html#Option-enum"/>
-            <keyword name="QMessageDataComparator::CaseSensitive" id="QMessageDataComparator::CaseSensitive" ref="qmessagedatacomparator.html#Option-enum"/>
-            <keyword name="QMessageDataComparator::Options" id="QMessageDataComparator::Options" ref="qmessagedatacomparator.html#Option-enum"/>
+            <keyword name="QMessageDataComparator::MatchFlag" id="QMessageDataComparator::MatchFlag" ref="qmessagedatacomparator.html#MatchFlag-enum"/>
+            <keyword name="QMessageDataComparator::MatchCaseSensitive" id="QMessageDataComparator::MatchCaseSensitive" ref="qmessagedatacomparator.html#MatchFlag-enum"/>
+            <keyword name="QMessageDataComparator::MatchFullWord" id="QMessageDataComparator::MatchFullWord" ref="qmessagedatacomparator.html#MatchFlag-enum"/>
+            <keyword name="QMessageDataComparator::MatchFlags" id="QMessageDataComparator::MatchFlags" ref="qmessagedatacomparator.html#MatchFlag-enum"/>
             <keyword name="QMessageDataComparator::RelationComparator" id="QMessageDataComparator::RelationComparator" ref="qmessagedatacomparator.html#RelationComparator-enum"/>
             <keyword name="QMessageDataComparator::LessThan" id="QMessageDataComparator::LessThan" ref="qmessagedatacomparator.html#RelationComparator-enum"/>
             <keyword name="QMessageDataComparator::LessThanEqual" id="QMessageDataComparator::LessThanEqual" ref="qmessagedatacomparator.html#RelationComparator-enum"/>
@@ -2338,130 +2340,132 @@
             <keyword name="byType" id="QMessageFilter::byType" ref="qmessagefilter.html#byType"/>
             <keyword name="isEmpty" id="QMessageFilter::isEmpty" ref="qmessagefilter.html#isEmpty"/>
             <keyword name="isSupported" id="QMessageFilter::isSupported" ref="qmessagefilter.html#isSupported"/>
+            <keyword name="matchFlags" id="QMessageFilter::matchFlags" ref="qmessagefilter.html#matchFlags"/>
             <keyword name="operator&amp;" id="QMessageFilter::operator&amp;" ref="qmessagefilter.html#operator-and"/>
             <keyword name="operator&amp;=" id="QMessageFilter::operator&amp;=" ref="qmessagefilter.html#operator-and-eq"/>
             <keyword name="operator|" id="QMessageFilter::operator|" ref="qmessagefilter.html#operator-7c"/>
             <keyword name="operator|=" id="QMessageFilter::operator|=" ref="qmessagefilter.html#operator-7c-eq"/>
             <keyword name="operator~" id="QMessageFilter::operator~" ref="qmessagefilter.html#operator-7e"/>
-            <keyword name="options" id="QMessageFilter::options" ref="qmessagefilter.html#options"/>
-            <keyword name="setOptions" id="QMessageFilter::setOptions" ref="qmessagefilter.html#setOptions"/>
+            <keyword name="setMatchFlags" id="QMessageFilter::setMatchFlags" ref="qmessagefilter.html#setMatchFlags"/>
             <keyword name="~QMessageFilter" id="QMessageFilter::~QMessageFilter" ref="qmessagefilter.html#dtor.QMessageFilter"/>
             <keyword name="QMessageFolder" id="QMessageFolder" ref="qmessagefolder.html"/>
-            <keyword name="displayName" id="QMessageFolder::displayName" ref="qmessagefolder.html#displayName"/>
             <keyword name="id" id="QMessageFolder::id" ref="qmessagefolder.html#id"/>
+            <keyword name="name" id="QMessageFolder::name" ref="qmessagefolder.html#name"/>
             <keyword name="parentAccountId" id="QMessageFolder::parentAccountId" ref="qmessagefolder.html#parentAccountId"/>
             <keyword name="parentFolderId" id="QMessageFolder::parentFolderId" ref="qmessagefolder.html#parentFolderId"/>
             <keyword name="path" id="QMessageFolder::path" ref="qmessagefolder.html#path"/>
             <keyword name="~QMessageFolder" id="QMessageFolder::~QMessageFolder" ref="qmessagefolder.html#dtor.QMessageFolder"/>
             <keyword name="QMessageFolderFilter" id="QMessageFolderFilter" ref="qmessagefolderfilter.html"/>
             <keyword name="byAncestorFolderIds" id="QMessageFolderFilter::byAncestorFolderIds" ref="qmessagefolderfilter.html#byAncestorFolderIds"/>
-            <keyword name="byDisplayName" id="QMessageFolderFilter::byDisplayName" ref="qmessagefolderfilter.html#byDisplayName"/>
             <keyword name="byId" id="QMessageFolderFilter::byId" ref="qmessagefolderfilter.html#byId"/>
+            <keyword name="byName" id="QMessageFolderFilter::byName" ref="qmessagefolderfilter.html#byName"/>
             <keyword name="byParentAccountId" id="QMessageFolderFilter::byParentAccountId" ref="qmessagefolderfilter.html#byParentAccountId"/>
             <keyword name="byParentFolderId" id="QMessageFolderFilter::byParentFolderId" ref="qmessagefolderfilter.html#byParentFolderId"/>
             <keyword name="byPath" id="QMessageFolderFilter::byPath" ref="qmessagefolderfilter.html#byPath"/>
             <keyword name="isEmpty" id="QMessageFolderFilter::isEmpty" ref="qmessagefolderfilter.html#isEmpty"/>
             <keyword name="isSupported" id="QMessageFolderFilter::isSupported" ref="qmessagefolderfilter.html#isSupported"/>
+            <keyword name="matchFlags" id="QMessageFolderFilter::matchFlags" ref="qmessagefolderfilter.html#matchFlags"/>
             <keyword name="operator&amp;" id="QMessageFolderFilter::operator&amp;" ref="qmessagefolderfilter.html#operator-and"/>
             <keyword name="operator&amp;=" id="QMessageFolderFilter::operator&amp;=" ref="qmessagefolderfilter.html#operator-and-eq"/>
             <keyword name="operator|" id="QMessageFolderFilter::operator|" ref="qmessagefolderfilter.html#operator-7c"/>
             <keyword name="operator|=" id="QMessageFolderFilter::operator|=" ref="qmessagefolderfilter.html#operator-7c-eq"/>
             <keyword name="operator~" id="QMessageFolderFilter::operator~" ref="qmessagefolderfilter.html#operator-7e"/>
-            <keyword name="options" id="QMessageFolderFilter::options" ref="qmessagefolderfilter.html#options"/>
-            <keyword name="setOptions" id="QMessageFolderFilter::setOptions" ref="qmessagefolderfilter.html#setOptions"/>
+            <keyword name="setMatchFlags" id="QMessageFolderFilter::setMatchFlags" ref="qmessagefolderfilter.html#setMatchFlags"/>
             <keyword name="~QMessageFolderFilter" id="QMessageFolderFilter::~QMessageFolderFilter" ref="qmessagefolderfilter.html#dtor.QMessageFolderFilter"/>
             <keyword name="QMessageFolderId" id="QMessageFolderId" ref="qmessagefolderid.html"/>
             <keyword name="isValid" id="QMessageFolderId::isValid" ref="qmessagefolderid.html#isValid"/>
-            <keyword name="operator=" id="QMessageFolderId::operator=" ref="qmessagefolderid.html#operator-eq"/>
+            <keyword name="operator&lt;" id="QMessageFolderId::operator&lt;" ref="qmessagefolderid.html#operator-lt"/>
             <keyword name="toString" id="QMessageFolderId::toString" ref="qmessagefolderid.html#toString"/>
             <keyword name="~QMessageFolderId" id="QMessageFolderId::~QMessageFolderId" ref="qmessagefolderid.html#dtor.QMessageFolderId"/>
             <keyword name="QMessageFolderIdList" id="QMessageFolderIdList" ref="AQMessageFolderIdList-typedef"/>
-            <keyword name="QMessageFolderOrdering" id="QMessageFolderOrdering" ref="qmessagefolderordering.html"/>
-            <keyword name="byDisplayName" id="QMessageFolderOrdering::byDisplayName" ref="qmessagefolderordering.html#byDisplayName"/>
-            <keyword name="byPath" id="QMessageFolderOrdering::byPath" ref="qmessagefolderordering.html#byPath"/>
-            <keyword name="isEmpty" id="QMessageFolderOrdering::isEmpty" ref="qmessagefolderordering.html#isEmpty"/>
-            <keyword name="isSupported" id="QMessageFolderOrdering::isSupported" ref="qmessagefolderordering.html#isSupported"/>
-            <keyword name="operator+" id="QMessageFolderOrdering::operator+" ref="qmessagefolderordering.html#operator-2b"/>
-            <keyword name="operator+=" id="QMessageFolderOrdering::operator+=" ref="qmessagefolderordering.html#operator-2b-eq"/>
-            <keyword name="~QMessageFolderOrdering" id="QMessageFolderOrdering::~QMessageFolderOrdering" ref="qmessagefolderordering.html#dtor.QMessageFolderOrdering"/>
+            <keyword name="QMessageFolderSortOrder" id="QMessageFolderSortOrder" ref="qmessagefoldersortorder.html"/>
+            <keyword name="byName" id="QMessageFolderSortOrder::byName" ref="qmessagefoldersortorder.html#byName"/>
+            <keyword name="byPath" id="QMessageFolderSortOrder::byPath" ref="qmessagefoldersortorder.html#byPath"/>
+            <keyword name="isEmpty" id="QMessageFolderSortOrder::isEmpty" ref="qmessagefoldersortorder.html#isEmpty"/>
+            <keyword name="isSupported" id="QMessageFolderSortOrder::isSupported" ref="qmessagefoldersortorder.html#isSupported"/>
+            <keyword name="operator+" id="QMessageFolderSortOrder::operator+" ref="qmessagefoldersortorder.html#operator-2b"/>
+            <keyword name="operator+=" id="QMessageFolderSortOrder::operator+=" ref="qmessagefoldersortorder.html#operator-2b-eq"/>
+            <keyword name="~QMessageFolderSortOrder" id="QMessageFolderSortOrder::~QMessageFolderSortOrder" ref="qmessagefoldersortorder.html#dtor.QMessageFolderSortOrder"/>
             <keyword name="QMessageId" id="QMessageId" ref="qmessageid.html"/>
             <keyword name="isValid" id="QMessageId::isValid" ref="qmessageid.html#isValid"/>
+            <keyword name="operator&lt;" id="QMessageId::operator&lt;" ref="qmessageid.html#operator-lt"/>
             <keyword name="toString" id="QMessageId::toString" ref="qmessageid.html#toString"/>
             <keyword name="~QMessageId" id="QMessageId::~QMessageId" ref="qmessageid.html#dtor.QMessageId"/>
             <keyword name="QMessageIdList" id="QMessageIdList" ref="AQMessageIdList-typedef"/>
-            <keyword name="QMessageOrdering" id="QMessageOrdering" ref="qmessageordering.html"/>
-            <keyword name="byPriority" id="QMessageOrdering::byPriority" ref="qmessageordering.html#byPriority"/>
-            <keyword name="byReceptionTimeStamp" id="QMessageOrdering::byReceptionTimeStamp" ref="qmessageordering.html#byReceptionTimeStamp"/>
-            <keyword name="byRecipients" id="QMessageOrdering::byRecipients" ref="qmessageordering.html#byRecipients"/>
-            <keyword name="bySender" id="QMessageOrdering::bySender" ref="qmessageordering.html#bySender"/>
-            <keyword name="bySize" id="QMessageOrdering::bySize" ref="qmessageordering.html#bySize"/>
-            <keyword name="byStatus" id="QMessageOrdering::byStatus" ref="qmessageordering.html#byStatus"/>
-            <keyword name="bySubject" id="QMessageOrdering::bySubject" ref="qmessageordering.html#bySubject"/>
-            <keyword name="byTimeStamp" id="QMessageOrdering::byTimeStamp" ref="qmessageordering.html#byTimeStamp"/>
-            <keyword name="byType" id="QMessageOrdering::byType" ref="qmessageordering.html#byType"/>
-            <keyword name="isEmpty" id="QMessageOrdering::isEmpty" ref="qmessageordering.html#isEmpty"/>
-            <keyword name="isSupported" id="QMessageOrdering::isSupported" ref="qmessageordering.html#isSupported"/>
-            <keyword name="operator+" id="QMessageOrdering::operator+" ref="qmessageordering.html#operator-2b"/>
-            <keyword name="operator+=" id="QMessageOrdering::operator+=" ref="qmessageordering.html#operator-2b-eq"/>
-            <keyword name="~QMessageOrdering" id="QMessageOrdering::~QMessageOrdering" ref="qmessageordering.html#dtor.QMessageOrdering"/>
-            <keyword name="QMessageServiceAction" id="QMessageServiceAction" ref="qmessageserviceaction.html"/>
-            <keyword name="QMessageServiceAction::State" id="QMessageServiceAction::State" ref="qmessageserviceaction.html#State-enum"/>
-            <keyword name="QMessageServiceAction::Pending" id="QMessageServiceAction::Pending" ref="qmessageserviceaction.html#State-enum"/>
-            <keyword name="QMessageServiceAction::InProgress" id="QMessageServiceAction::InProgress" ref="qmessageserviceaction.html#State-enum"/>
-            <keyword name="QMessageServiceAction::Successful" id="QMessageServiceAction::Successful" ref="qmessageserviceaction.html#State-enum"/>
-            <keyword name="QMessageServiceAction::Failed" id="QMessageServiceAction::Failed" ref="qmessageserviceaction.html#State-enum"/>
-            <keyword name="cancelOperation" id="QMessageServiceAction::cancelOperation" ref="qmessageserviceaction.html#cancelOperation"/>
-            <keyword name="compose" id="QMessageServiceAction::compose" ref="qmessageserviceaction.html#compose"/>
-            <keyword name="countMessages" id="QMessageServiceAction::countMessages" ref="qmessageserviceaction.html#countMessages"/>
-            <keyword name="exportUpdates" id="QMessageServiceAction::exportUpdates" ref="qmessageserviceaction.html#exportUpdates"/>
-            <keyword name="lastError" id="QMessageServiceAction::lastError" ref="qmessageserviceaction.html#lastError"/>
-            <keyword name="messagesCounted" id="QMessageServiceAction::messagesCounted" ref="qmessageserviceaction.html#messagesCounted"/>
-            <keyword name="messagesFound" id="QMessageServiceAction::messagesFound" ref="qmessageserviceaction.html#messagesFound"/>
-            <keyword name="progressChanged" id="QMessageServiceAction::progressChanged" ref="qmessageserviceaction.html#progressChanged"/>
-            <keyword name="queryMessages" id="QMessageServiceAction::queryMessages" ref="qmessageserviceaction.html#queryMessages"/>
-            <keyword name="retrieve" id="QMessageServiceAction::retrieve" ref="qmessageserviceaction.html#retrieve"/>
-            <keyword name="retrieveBody" id="QMessageServiceAction::retrieveBody" ref="qmessageserviceaction.html#retrieveBody"/>
-            <keyword name="retrieveHeader" id="QMessageServiceAction::retrieveHeader" ref="qmessageserviceaction.html#retrieveHeader"/>
-            <keyword name="send" id="QMessageServiceAction::send" ref="qmessageserviceaction.html#send"/>
-            <keyword name="show" id="QMessageServiceAction::show" ref="qmessageserviceaction.html#show"/>
-            <keyword name="state" id="QMessageServiceAction::state" ref="qmessageserviceaction.html#state"/>
-            <keyword name="stateChanged" id="QMessageServiceAction::stateChanged" ref="qmessageserviceaction.html#stateChanged"/>
-            <keyword name="~QMessageServiceAction" id="QMessageServiceAction::~QMessageServiceAction" ref="qmessageserviceaction.html#dtor.QMessageServiceAction"/>
-            <keyword name="QMessageStore" id="QMessageStore" ref="qmessagestore.html"/>
-            <keyword name="QMessageStore::ErrorCode" id="QMessageStore::ErrorCode" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::NoError" id="QMessageStore::NoError" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::InvalidId" id="QMessageStore::InvalidId" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::ConstraintFailure" id="QMessageStore::ConstraintFailure" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::ContentInaccessible" id="QMessageStore::ContentInaccessible" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::NotYetImplemented" id="QMessageStore::NotYetImplemented" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::FrameworkFault" id="QMessageStore::FrameworkFault" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::WorkingMemoryOverflow" id="QMessageStore::WorkingMemoryOverflow" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::Busy" id="QMessageStore::Busy" ref="qmessagestore.html#ErrorCode-enum"/>
-            <keyword name="QMessageStore::NotificationFilterId" id="QMessageStore::NotificationFilterId" ref="qmessagestore.html#NotificationFilterId-typedef"/>
-            <keyword name="QMessageStore::NotificationFilterIdSet" id="QMessageStore::NotificationFilterIdSet" ref="qmessagestore.html#NotificationFilterIdSet-typedef"/>
-            <keyword name="QMessageStore::RemovalOption" id="QMessageStore::RemovalOption" ref="qmessagestore.html#RemovalOption-enum"/>
-            <keyword name="QMessageStore::RemoveLocalCopyOnly" id="QMessageStore::RemoveLocalCopyOnly" ref="qmessagestore.html#RemovalOption-enum"/>
-            <keyword name="QMessageStore::RemoveOnOriginatingServer" id="QMessageStore::RemoveOnOriginatingServer" ref="qmessagestore.html#RemovalOption-enum"/>
-            <keyword name="account" id="QMessageStore::account" ref="qmessagestore.html#account"/>
-            <keyword name="addMessage" id="QMessageStore::addMessage" ref="qmessagestore.html#addMessage"/>
-            <keyword name="countAccounts" id="QMessageStore::countAccounts" ref="qmessagestore.html#countAccounts"/>
-            <keyword name="countFolders" id="QMessageStore::countFolders" ref="qmessagestore.html#countFolders"/>
-            <keyword name="countMessages" id="QMessageStore::countMessages" ref="qmessagestore.html#countMessages"/>
-            <keyword name="folder" id="QMessageStore::folder" ref="qmessagestore.html#folder"/>
-            <keyword name="instance" id="QMessageStore::instance" ref="qmessagestore.html#instance"/>
-            <keyword name="lastError" id="QMessageStore::lastError" ref="qmessagestore.html#lastError"/>
-            <keyword name="message" id="QMessageStore::message" ref="qmessagestore.html#message"/>
-            <keyword name="messageAdded" id="QMessageStore::messageAdded" ref="qmessagestore.html#messageAdded"/>
-            <keyword name="messageRemoved" id="QMessageStore::messageRemoved" ref="qmessagestore.html#messageRemoved"/>
-            <keyword name="messageUpdated" id="QMessageStore::messageUpdated" ref="qmessagestore.html#messageUpdated"/>
-            <keyword name="queryAccounts" id="QMessageStore::queryAccounts" ref="qmessagestore.html#queryAccounts"/>
-            <keyword name="queryFolders" id="QMessageStore::queryFolders" ref="qmessagestore.html#queryFolders"/>
-            <keyword name="queryMessages" id="QMessageStore::queryMessages" ref="qmessagestore.html#queryMessages"/>
-            <keyword name="registerNotificationFilter" id="QMessageStore::registerNotificationFilter" ref="qmessagestore.html#registerNotificationFilter"/>
-            <keyword name="removeMessage" id="QMessageStore::removeMessage" ref="qmessagestore.html#removeMessage"/>
-            <keyword name="removeMessages" id="QMessageStore::removeMessages" ref="qmessagestore.html#removeMessages"/>
-            <keyword name="unregisterNotificationFilter" id="QMessageStore::unregisterNotificationFilter" ref="qmessagestore.html#unregisterNotificationFilter"/>
-            <keyword name="updateMessage" id="QMessageStore::updateMessage" ref="qmessagestore.html#updateMessage"/>
+            <keyword name="QMessageManager" id="QMessageManager" ref="qmessagemanager.html"/>
+            <keyword name="QMessageManager::Error" id="QMessageManager::Error" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::NoError" id="QMessageManager::NoError" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::InvalidId" id="QMessageManager::InvalidId" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::ConstraintFailure" id="QMessageManager::ConstraintFailure" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::ContentInaccessible" id="QMessageManager::ContentInaccessible" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::NotYetImplemented" id="QMessageManager::NotYetImplemented" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::FrameworkFault" id="QMessageManager::FrameworkFault" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::WorkingMemoryOverflow" id="QMessageManager::WorkingMemoryOverflow" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::Busy" id="QMessageManager::Busy" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::RequestIncomplete" id="QMessageManager::RequestIncomplete" ref="qmessagemanager.html#Error-enum"/>
+            <keyword name="QMessageManager::NotificationFilterId" id="QMessageManager::NotificationFilterId" ref="qmessagemanager.html#NotificationFilterId-typedef"/>
+            <keyword name="QMessageManager::NotificationFilterIdSet" id="QMessageManager::NotificationFilterIdSet" ref="qmessagemanager.html#NotificationFilterIdSet-typedef"/>
+            <keyword name="QMessageManager::RemovalOption" id="QMessageManager::RemovalOption" ref="qmessagemanager.html#RemovalOption-enum"/>
+            <keyword name="QMessageManager::RemoveLocalCopyOnly" id="QMessageManager::RemoveLocalCopyOnly" ref="qmessagemanager.html#RemovalOption-enum"/>
+            <keyword name="QMessageManager::RemoveOnOriginatingServer" id="QMessageManager::RemoveOnOriginatingServer" ref="qmessagemanager.html#RemovalOption-enum"/>
+            <keyword name="account" id="QMessageManager::account" ref="qmessagemanager.html#account"/>
+            <keyword name="addMessage" id="QMessageManager::addMessage" ref="qmessagemanager.html#addMessage"/>
+            <keyword name="countAccounts" id="QMessageManager::countAccounts" ref="qmessagemanager.html#countAccounts"/>
+            <keyword name="countFolders" id="QMessageManager::countFolders" ref="qmessagemanager.html#countFolders"/>
+            <keyword name="countMessages" id="QMessageManager::countMessages" ref="qmessagemanager.html#countMessages"/>
+            <keyword name="error" id="QMessageManager::error" ref="qmessagemanager.html#error"/>
+            <keyword name="folder" id="QMessageManager::folder" ref="qmessagemanager.html#folder"/>
+            <keyword name="message" id="QMessageManager::message" ref="qmessagemanager.html#message"/>
+            <keyword name="messageAdded" id="QMessageManager::messageAdded" ref="qmessagemanager.html#messageAdded"/>
+            <keyword name="messageRemoved" id="QMessageManager::messageRemoved" ref="qmessagemanager.html#messageRemoved"/>
+            <keyword name="messageUpdated" id="QMessageManager::messageUpdated" ref="qmessagemanager.html#messageUpdated"/>
+            <keyword name="queryAccounts" id="QMessageManager::queryAccounts" ref="qmessagemanager.html#queryAccounts"/>
+            <keyword name="queryFolders" id="QMessageManager::queryFolders" ref="qmessagemanager.html#queryFolders"/>
+            <keyword name="queryMessages" id="QMessageManager::queryMessages" ref="qmessagemanager.html#queryMessages"/>
+            <keyword name="registerNotificationFilter" id="QMessageManager::registerNotificationFilter" ref="qmessagemanager.html#registerNotificationFilter"/>
+            <keyword name="removeMessage" id="QMessageManager::removeMessage" ref="qmessagemanager.html#removeMessage"/>
+            <keyword name="removeMessages" id="QMessageManager::removeMessages" ref="qmessagemanager.html#removeMessages"/>
+            <keyword name="unregisterNotificationFilter" id="QMessageManager::unregisterNotificationFilter" ref="qmessagemanager.html#unregisterNotificationFilter"/>
+            <keyword name="updateMessage" id="QMessageManager::updateMessage" ref="qmessagemanager.html#updateMessage"/>
+            <keyword name="~QMessageManager" id="QMessageManager::~QMessageManager" ref="qmessagemanager.html#dtor.QMessageManager"/>
+            <keyword name="QMessageService" id="QMessageService" ref="qmessageservice.html"/>
+            <keyword name="QMessageService::State" id="QMessageService::State" ref="qmessageservice.html#State-enum"/>
+            <keyword name="QMessageService::InactiveState" id="QMessageService::InactiveState" ref="qmessageservice.html#State-enum"/>
+            <keyword name="QMessageService::ActiveState" id="QMessageService::ActiveState" ref="qmessageservice.html#State-enum"/>
+            <keyword name="QMessageService::CanceledState" id="QMessageService::CanceledState" ref="qmessageservice.html#State-enum"/>
+            <keyword name="QMessageService::FinishedState" id="QMessageService::FinishedState" ref="qmessageservice.html#State-enum"/>
+            <keyword name="cancel" id="QMessageService::cancel" ref="qmessageservice.html#cancel"/>
+            <keyword name="compose" id="QMessageService::compose" ref="qmessageservice.html#compose"/>
+            <keyword name="countMessages" id="QMessageService::countMessages" ref="qmessageservice.html#countMessages"/>
+            <keyword name="error" id="QMessageService::error" ref="qmessageservice.html#error"/>
+            <keyword name="exportUpdates" id="QMessageService::exportUpdates" ref="qmessageservice.html#exportUpdates"/>
+            <keyword name="messagesCounted" id="QMessageService::messagesCounted" ref="qmessageservice.html#messagesCounted"/>
+            <keyword name="messagesFound" id="QMessageService::messagesFound" ref="qmessageservice.html#messagesFound"/>
+            <keyword name="progressChanged" id="QMessageService::progressChanged" ref="qmessageservice.html#progressChanged"/>
+            <keyword name="queryMessages" id="QMessageService::queryMessages" ref="qmessageservice.html#queryMessages"/>
+            <keyword name="retrieve" id="QMessageService::retrieve" ref="qmessageservice.html#retrieve"/>
+            <keyword name="retrieveBody" id="QMessageService::retrieveBody" ref="qmessageservice.html#retrieveBody"/>
+            <keyword name="retrieveHeader" id="QMessageService::retrieveHeader" ref="qmessageservice.html#retrieveHeader"/>
+            <keyword name="send" id="QMessageService::send" ref="qmessageservice.html#send"/>
+            <keyword name="show" id="QMessageService::show" ref="qmessageservice.html#show"/>
+            <keyword name="state" id="QMessageService::state" ref="qmessageservice.html#state"/>
+            <keyword name="stateChanged" id="QMessageService::stateChanged" ref="qmessageservice.html#stateChanged"/>
+            <keyword name="~QMessageService" id="QMessageService::~QMessageService" ref="qmessageservice.html#dtor.QMessageService"/>
+            <keyword name="QMessageSortOrder" id="QMessageSortOrder" ref="qmessagesortorder.html"/>
+            <keyword name="byPriority" id="QMessageSortOrder::byPriority" ref="qmessagesortorder.html#byPriority"/>
+            <keyword name="byReceptionTimeStamp" id="QMessageSortOrder::byReceptionTimeStamp" ref="qmessagesortorder.html#byReceptionTimeStamp"/>
+            <keyword name="byRecipients" id="QMessageSortOrder::byRecipients" ref="qmessagesortorder.html#byRecipients"/>
+            <keyword name="bySender" id="QMessageSortOrder::bySender" ref="qmessagesortorder.html#bySender"/>
+            <keyword name="bySize" id="QMessageSortOrder::bySize" ref="qmessagesortorder.html#bySize"/>
+            <keyword name="byStatus" id="QMessageSortOrder::byStatus" ref="qmessagesortorder.html#byStatus"/>
+            <keyword name="bySubject" id="QMessageSortOrder::bySubject" ref="qmessagesortorder.html#bySubject"/>
+            <keyword name="byTimeStamp" id="QMessageSortOrder::byTimeStamp" ref="qmessagesortorder.html#byTimeStamp"/>
+            <keyword name="byType" id="QMessageSortOrder::byType" ref="qmessagesortorder.html#byType"/>
+            <keyword name="isEmpty" id="QMessageSortOrder::isEmpty" ref="qmessagesortorder.html#isEmpty"/>
+            <keyword name="isSupported" id="QMessageSortOrder::isSupported" ref="qmessagesortorder.html#isSupported"/>
+            <keyword name="operator+" id="QMessageSortOrder::operator+" ref="qmessagesortorder.html#operator-2b"/>
+            <keyword name="operator+=" id="QMessageSortOrder::operator+=" ref="qmessagesortorder.html#operator-2b-eq"/>
+            <keyword name="~QMessageSortOrder" id="QMessageSortOrder::~QMessageSortOrder" ref="qmessagesortorder.html#dtor.QMessageSortOrder"/>
             <keyword name="QMetaDataControl" id="QMetaDataControl" ref="qmetadatacontrol.html"/>
             <keyword name="availableExtendedMetaData" id="QMetaDataControl::availableExtendedMetaData" ref="qmetadatacontrol.html#availableExtendedMetaData"/>
             <keyword name="availableMetaData" id="QMetaDataControl::availableMetaData" ref="qmetadatacontrol.html#availableMetaData"/>
@@ -2493,6 +2497,7 @@
             <keyword name="QNetworkConfiguration::ServiceNetwork" id="QNetworkConfiguration::ServiceNetwork" ref="qnetworkconfiguration.html#Type-enum"/>
             <keyword name="QNetworkConfiguration::UserChoice" id="QNetworkConfiguration::UserChoice" ref="qnetworkconfiguration.html#Type-enum"/>
             <keyword name="QNetworkConfiguration::Invalid" id="QNetworkConfiguration::Invalid" ref="qnetworkconfiguration.html#Type-enum"/>
+            <keyword name="bearerName" id="QNetworkConfiguration::bearerName" ref="qnetworkconfiguration.html#bearerName"/>
             <keyword name="children" id="QNetworkConfiguration::children" ref="qnetworkconfiguration.html#children"/>
             <keyword name="identifier" id="QNetworkConfiguration::identifier" ref="qnetworkconfiguration.html#identifier"/>
             <keyword name="isRoamingAvailable" id="QNetworkConfiguration::isRoamingAvailable" ref="qnetworkconfiguration.html#isRoamingAvailable"/>
@@ -2543,7 +2548,6 @@
             <keyword name="QNetworkSession::Roaming" id="QNetworkSession::Roaming" ref="qnetworksession.html#State-enum"/>
             <keyword name="accept" id="QNetworkSession::accept" ref="qnetworksession.html#accept"/>
             <keyword name="activeTime" id="QNetworkSession::activeTime" ref="qnetworksession.html#activeTime"/>
-            <keyword name="bearerName" id="QNetworkSession::bearerName" ref="qnetworksession.html#bearerName"/>
             <keyword name="bytesReceived" id="QNetworkSession::bytesReceived" ref="qnetworksession.html#bytesReceived"/>
             <keyword name="bytesWritten" id="QNetworkSession::bytesWritten" ref="qnetworksession.html#bytesWritten"/>
             <keyword name="close" id="QNetworkSession::close" ref="qnetworksession.html#close"/>
@@ -2553,7 +2557,7 @@
             <keyword name="errorString" id="QNetworkSession::errorString" ref="qnetworksession.html#errorString"/>
             <keyword name="ignore" id="QNetworkSession::ignore" ref="qnetworksession.html#ignore"/>
             <keyword name="interface" id="QNetworkSession::interface" ref="qnetworksession.html#interface"/>
-            <keyword name="isActive" id="QNetworkSession::isActive" ref="qnetworksession.html#isActive"/>
+            <keyword name="isOpen" id="QNetworkSession::isOpen" ref="qnetworksession.html#isOpen"/>
             <keyword name="migrate" id="QNetworkSession::migrate" ref="qnetworksession.html#migrate"/>
             <keyword name="newConfigurationActivated" id="QNetworkSession::newConfigurationActivated" ref="qnetworksession.html#newConfigurationActivated"/>
             <keyword name="open" id="QNetworkSession::open" ref="qnetworksession.html#open"/>
@@ -2671,6 +2675,10 @@
             <keyword name="volumeChanged" id="QRadioTunerControl::volumeChanged" ref="qradiotunercontrol.html#volumeChanged"/>
             <keyword name="~QRadioTunerControl" id="QRadioTunerControl::~QRadioTunerControl" ref="qradiotunercontrol.html#dtor.QRadioTunerControl"/>
             <keyword name="QRadioTunerControl_iid" id="QRadioTunerControl_iid" ref="qradiotunercontrol.html#QRadioTunerControl_iid"/>
+            <keyword name="QService" id="QService" ref="qservice.html"/>
+            <keyword name="QService::Scope" id="QService::Scope" ref="qservice.html#Scope-enum"/>
+            <keyword name="QService::UserScope" id="QService::UserScope" ref="qservice.html#Scope-enum"/>
+            <keyword name="QService::SystemScope" id="QService::SystemScope" ref="qservice.html#Scope-enum"/>
             <keyword name="QServiceContext" id="QServiceContext" ref="qservicecontext.html"/>
             <keyword name="QServiceContext::ContextType" id="QServiceContext::ContextType" ref="qservicecontext.html#ContextType-enum"/>
             <keyword name="QServiceContext::DisplayContext" id="QServiceContext::DisplayContext" ref="qservicecontext.html#ContextType-enum"/>
@@ -2684,37 +2692,36 @@
             <keyword name="~QServiceContext" id="QServiceContext::~QServiceContext" ref="qservicecontext.html#dtor.QServiceContext"/>
             <keyword name="QServiceFilter" id="QServiceFilter" ref="qservicefilter.html"/>
             <keyword name="QServiceFilter::CapabilityMatchRule" id="QServiceFilter::CapabilityMatchRule" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
-            <keyword name="QServiceFilter::MatchAll" id="QServiceFilter::MatchAll" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
+            <keyword name="QServiceFilter::MatchMinimum" id="QServiceFilter::MatchMinimum" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
             <keyword name="QServiceFilter::MatchLoadable" id="QServiceFilter::MatchLoadable" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
             <keyword name="QServiceFilter::VersionMatchRule" id="QServiceFilter::VersionMatchRule" ref="qservicefilter.html#VersionMatchRule-enum"/>
             <keyword name="QServiceFilter::ExactVersionMatch" id="QServiceFilter::ExactVersionMatch" ref="qservicefilter.html#VersionMatchRule-enum"/>
             <keyword name="QServiceFilter::MinimumVersionMatch" id="QServiceFilter::MinimumVersionMatch" ref="qservicefilter.html#VersionMatchRule-enum"/>
             <keyword name="capabilities" id="QServiceFilter::capabilities" ref="qservicefilter.html#capabilities"/>
             <keyword name="capabilityMatchRule" id="QServiceFilter::capabilityMatchRule" ref="qservicefilter.html#capabilityMatchRule"/>
-            <keyword name="clearCustomProperties" id="QServiceFilter::clearCustomProperties" ref="qservicefilter.html#clearCustomProperties"/>
-            <keyword name="customProperty" id="QServiceFilter::customProperty" ref="qservicefilter.html#customProperty"/>
-            <keyword name="customPropertyKeys" id="QServiceFilter::customPropertyKeys" ref="qservicefilter.html#customPropertyKeys"/>
-            <keyword name="interfaceMajorVersion" id="QServiceFilter::interfaceMajorVersion" ref="qservicefilter.html#interfaceMajorVersion"/>
-            <keyword name="interfaceMinorVersion" id="QServiceFilter::interfaceMinorVersion" ref="qservicefilter.html#interfaceMinorVersion"/>
+            <keyword name="clearCustomAttribute" id="QServiceFilter::clearCustomAttribute" ref="qservicefilter.html#clearCustomAttribute"/>
+            <keyword name="customAttribute" id="QServiceFilter::customAttribute" ref="qservicefilter.html#customAttribute"/>
+            <keyword name="customAttributes" id="QServiceFilter::customAttributes" ref="qservicefilter.html#customAttributes"/>
             <keyword name="interfaceName" id="QServiceFilter::interfaceName" ref="qservicefilter.html#interfaceName"/>
+            <keyword name="majorVersion" id="QServiceFilter::majorVersion" ref="qservicefilter.html#majorVersion"/>
+            <keyword name="minorVersion" id="QServiceFilter::minorVersion" ref="qservicefilter.html#minorVersion"/>
             <keyword name="operator=" id="QServiceFilter::operator=" ref="qservicefilter.html#operator-eq"/>
-            <keyword name="removeCustomProperty" id="QServiceFilter::removeCustomProperty" ref="qservicefilter.html#removeCustomProperty"/>
             <keyword name="serviceName" id="QServiceFilter::serviceName" ref="qservicefilter.html#serviceName"/>
             <keyword name="setCapabilities" id="QServiceFilter::setCapabilities" ref="qservicefilter.html#setCapabilities"/>
-            <keyword name="setCustomProperty" id="QServiceFilter::setCustomProperty" ref="qservicefilter.html#setCustomProperty"/>
+            <keyword name="setCustomAttribute" id="QServiceFilter::setCustomAttribute" ref="qservicefilter.html#setCustomAttribute"/>
             <keyword name="setInterface" id="QServiceFilter::setInterface" ref="qservicefilter.html#setInterface"/>
             <keyword name="setServiceName" id="QServiceFilter::setServiceName" ref="qservicefilter.html#setServiceName"/>
             <keyword name="versionMatchRule" id="QServiceFilter::versionMatchRule" ref="qservicefilter.html#versionMatchRule"/>
             <keyword name="~QServiceFilter" id="QServiceFilter::~QServiceFilter" ref="qservicefilter.html#dtor.QServiceFilter"/>
             <keyword name="QServiceInterfaceDescriptor" id="QServiceInterfaceDescriptor" ref="qserviceinterfacedescriptor.html"/>
-            <keyword name="QServiceInterfaceDescriptor::PropertyKey" id="QServiceInterfaceDescriptor::PropertyKey" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="QServiceInterfaceDescriptor::Capabilities" id="QServiceInterfaceDescriptor::Capabilities" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="QServiceInterfaceDescriptor::Location" id="QServiceInterfaceDescriptor::Location" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="QServiceInterfaceDescriptor::ServiceDescription" id="QServiceInterfaceDescriptor::ServiceDescription" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="QServiceInterfaceDescriptor::InterfaceDescription" id="QServiceInterfaceDescriptor::InterfaceDescription" ref="qserviceinterfacedescriptor.html#PropertyKey-enum"/>
-            <keyword name="customProperty" id="QServiceInterfaceDescriptor::customProperty" ref="qserviceinterfacedescriptor.html#customProperty"/>
-            <keyword name="customPropertyKeys" id="QServiceInterfaceDescriptor::customPropertyKeys" ref="qserviceinterfacedescriptor.html#customPropertyKeys"/>
-            <keyword name="inSystemScope" id="QServiceInterfaceDescriptor::inSystemScope" ref="qserviceinterfacedescriptor.html#inSystemScope"/>
+            <keyword name="QServiceInterfaceDescriptor::Attribute" id="QServiceInterfaceDescriptor::Attribute" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="QServiceInterfaceDescriptor::Capabilities" id="QServiceInterfaceDescriptor::Capabilities" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="QServiceInterfaceDescriptor::Location" id="QServiceInterfaceDescriptor::Location" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="QServiceInterfaceDescriptor::ServiceDescription" id="QServiceInterfaceDescriptor::ServiceDescription" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="QServiceInterfaceDescriptor::InterfaceDescription" id="QServiceInterfaceDescriptor::InterfaceDescription" ref="qserviceinterfacedescriptor.html#Attribute-enum"/>
+            <keyword name="attribute" id="QServiceInterfaceDescriptor::attribute" ref="qserviceinterfacedescriptor.html#attribute"/>
+            <keyword name="customAttribute" id="QServiceInterfaceDescriptor::customAttribute" ref="qserviceinterfacedescriptor.html#customAttribute"/>
+            <keyword name="customAttributes" id="QServiceInterfaceDescriptor::customAttributes" ref="qserviceinterfacedescriptor.html#customAttributes"/>
             <keyword name="interfaceName" id="QServiceInterfaceDescriptor::interfaceName" ref="qserviceinterfacedescriptor.html#interfaceName"/>
             <keyword name="isValid" id="QServiceInterfaceDescriptor::isValid" ref="qserviceinterfacedescriptor.html#isValid"/>
             <keyword name="majorVersion" id="QServiceInterfaceDescriptor::majorVersion" ref="qserviceinterfacedescriptor.html#majorVersion"/>
@@ -2722,7 +2729,7 @@
             <keyword name="operator!=" id="QServiceInterfaceDescriptor::operator!=" ref="qserviceinterfacedescriptor.html#operator-not-eq"/>
             <keyword name="operator=" id="QServiceInterfaceDescriptor::operator=" ref="qserviceinterfacedescriptor.html#operator-eq"/>
             <keyword name="operator==" id="QServiceInterfaceDescriptor::operator==" ref="qserviceinterfacedescriptor.html#operator-eq-eq"/>
-            <keyword name="property" id="QServiceInterfaceDescriptor::property" ref="qserviceinterfacedescriptor.html#property"/>
+            <keyword name="scope" id="QServiceInterfaceDescriptor::scope" ref="qserviceinterfacedescriptor.html#scope"/>
             <keyword name="serviceName" id="QServiceInterfaceDescriptor::serviceName" ref="qserviceinterfacedescriptor.html#serviceName"/>
             <keyword name="~QServiceInterfaceDescriptor" id="QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor" ref="qserviceinterfacedescriptor.html#dtor.QServiceInterfaceDescriptor"/>
             <keyword name="QServiceManager" id="QServiceManager" ref="qservicemanager.html"/>
@@ -2738,16 +2745,13 @@
             <keyword name="QServiceManager::ComponentNotFound" id="QServiceManager::ComponentNotFound" ref="qservicemanager.html#Error-enum"/>
             <keyword name="QServiceManager::ServiceCapabilityDenied" id="QServiceManager::ServiceCapabilityDenied" ref="qservicemanager.html#Error-enum"/>
             <keyword name="QServiceManager::UnknownError" id="QServiceManager::UnknownError" ref="qservicemanager.html#Error-enum"/>
-            <keyword name="QServiceManager::Scope" id="QServiceManager::Scope" ref="qservicemanager.html#Scope-enum"/>
-            <keyword name="QServiceManager::UserScope" id="QServiceManager::UserScope" ref="qservicemanager.html#Scope-enum"/>
-            <keyword name="QServiceManager::SystemScope" id="QServiceManager::SystemScope" ref="qservicemanager.html#Scope-enum"/>
             <keyword name="addService" id="QServiceManager::addService" ref="qservicemanager.html#addService"/>
             <keyword name="error" id="QServiceManager::error" ref="qservicemanager.html#error"/>
             <keyword name="findInterfaces" id="QServiceManager::findInterfaces" ref="qservicemanager.html#findInterfaces"/>
             <keyword name="findServices" id="QServiceManager::findServices" ref="qservicemanager.html#findServices"/>
-            <keyword name="getInterface" id="QServiceManager::getInterface" ref="qservicemanager.html#getInterface"/>
             <keyword name="interfaceDefault" id="QServiceManager::interfaceDefault" ref="qservicemanager.html#interfaceDefault"/>
             <keyword name="loadInterface" id="QServiceManager::loadInterface" ref="qservicemanager.html#loadInterface"/>
+            <keyword name="loadLocalTypedInterface" id="QServiceManager::loadLocalTypedInterface" ref="qservicemanager.html#loadLocalTypedInterface"/>
             <keyword name="removeService" id="QServiceManager::removeService" ref="qservicemanager.html#removeService"/>
             <keyword name="scope" id="QServiceManager::scope" ref="qservicemanager.html#scope"/>
             <keyword name="serviceAdded" id="QServiceManager::serviceAdded" ref="qservicemanager.html#serviceAdded"/>
@@ -3228,6 +3232,7 @@
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
+            <keyword name="Service Framework using QML Example" id="Service Framework using QML Example" ref="declarative.html"/>
             <keyword name="Service Frameworks Classes" id="Service Frameworks Classes" ref="servicefw.html"/>
             <keyword name="SlideShow Example" id="SlideShow Example" ref="slideshow.html"/>
             <keyword name="Slideshow Example" id="Slideshow Example" ref="slideshow.html"/>
@@ -3250,6 +3255,7 @@
             <file>qradiotunercontrol.html</file>
             <file>qvideoencodercontrol-members.html</file>
             <file>qcontactdetaildefinition.html</file>
+            <file>images/writemessage-example.png</file>
             <file>logfilepositionsource-logfilepositionsource-cpp.html</file>
             <file>qmessagefolder-members.html</file>
             <file>qmessageaccountfilter-members.html</file>
@@ -3303,6 +3309,7 @@
             <file>qcameracontrol-members.html</file>
             <file>qmediaobject-members.html</file>
             <file>qsystemdisplayinfo-members.html</file>
+            <file>qmessagefoldersortorder-members.html</file>
             <file>qcontactdetail.html</file>
             <file>qmediastreamscontrol.html</file>
             <file>qversitcontactimporter-members.html</file>
@@ -3362,6 +3369,7 @@
             <file>location-overview.html</file>
             <file>qcontactinvalidfilter.html</file>
             <file>qmediaplayercontrol-members.html</file>
+            <file>qmessagemanager.html</file>
             <file>qmessage-members.html</file>
             <file>qcontactemailaddress-members.html</file>
             <file>qcontactactionfactory-members.html</file>
@@ -3379,21 +3387,23 @@
             <file>lgpl.html</file>
             <file>writemessage.html</file>
             <file>qcontactdetaildefinitionfetchrequest.html</file>
+            <file>qmessageaccountsortorder-members.html</file>
             <file>cameracapture-cameracapture-h.html</file>
             <file>logfilepositionsource-main-cpp.html</file>
             <file>recorder-recorder-cpp.html</file>
             <file>trademarks.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-h.html</file>
             <file>qcontactdetaildefinitionfield.html</file>
+            <file>qservice.html</file>
             <file>declarative-landlinedialer-landlinedialer-pro.html</file>
             <file>qmessageaccount-members.html</file>
             <file>qcamerafocuscontrol.html</file>
             <file>qtmedia.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
-            <file>qmessageaccountordering.html</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
             <file>images/slideshow-img1.png</file>
+            <file>qmessagesortorder-members.html</file>
             <file>streamplayer-streamplayer-pro.html</file>
             <file>incomingcalls-testmodelui-h.html</file>
             <file>qvideoencodersettings.html</file>
@@ -3417,7 +3427,6 @@
             <file>cameracapture-cameracapture-pro.html</file>
             <file>qcontactid.html</file>
             <file>qmessagefilter-members.html</file>
-            <file>qmessagestore-members.html</file>
             <file>samplephonebook-contacteditor-cpp.html</file>
             <file>qcontactnote.html</file>
             <file>qcontactonlineaccount-members.html</file>
@@ -3432,7 +3441,6 @@
             <file>samplephonebook-contactlistpage-cpp.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qvideowidget-members.html</file>
-            <file>qmessageaccountordering-members.html</file>
             <file>qimageencodercontrol-members.html</file>
             <file>servicebrowser-servicebrowser-cpp.html</file>
             <file>qcontacturl.html</file>
@@ -3449,7 +3457,6 @@
             <file>qcontactaddress.html</file>
             <file>player-main-cpp.html</file>
             <file>qmediaplaylistioplugin.html</file>
-            <file>qmessagestore.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
             <file>bearer-management.html</file>
@@ -3463,6 +3470,7 @@
             <file>player-playercontrols-h.html</file>
             <file>qmessagefolderid.html</file>
             <file>bearermonitor-main-cpp.html</file>
+            <file>qmessageservice-members.html</file>
             <file>filemanagerplugin.html</file>
             <file>qservicecontext.html</file>
             <file>qnetworkconfigurationmanager.html</file>
@@ -3481,13 +3489,13 @@
             <file>qcontactnote-members.html</file>
             <file>qcontactactionfactory.html</file>
             <file>qcontactdetaildefinition-members.html</file>
-            <file>qmessageordering-members.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
             <file>samplephonebook-filterpage-h.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
             <file>qimageencodersettings-members.html</file>
             <file>qcontactbirthday.html</file>
+            <file>qmessageaccountsortorder.html</file>
             <file>qgeosatelliteinfo-members.html</file>
             <file>qcontactrelationshipfetchrequest-members.html</file>
             <file>qvideowindowcontrol-members.html</file>
@@ -3503,6 +3511,7 @@
             <file>serviceactions-mainwindow-h.html</file>
             <file>qmediarecorder-members.html</file>
             <file>player-player-cpp.html</file>
+            <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
             <file>audiorecorder-main-cpp.html</file>
             <file>qcontactrelationshipremoverequest-members.html</file>
@@ -3517,6 +3526,7 @@
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
             <file>qgeoareamonitor-members.html</file>
             <file>qcontactunionfilter-members.html</file>
+            <file>qmessagesortorder.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
             <file>qcameraexposurecontrol-members.html</file>
@@ -3530,6 +3540,7 @@
             <file>player-playlistmodel-h.html</file>
             <file>qcontactdisplaylabel.html</file>
             <file>declarative.html</file>
+            <file>images/DialerServiceGUI.png</file>
             <file>servicefw.html</file>
             <file>qmediaplayercontrol.html</file>
             <file>qcontactdetaildefinitionsaverequest-members.html</file>
@@ -3537,7 +3548,6 @@
             <file>qgeopositioninfo.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
-            <file>qmessagefolderordering.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
             <file>qcontactmanager.html</file>
@@ -3589,6 +3599,7 @@
             <file>qcontactmanagerengine-members.html</file>
             <file>bearermonitor-bearermonitor-pro.html</file>
             <file>qvideorenderercontrol.html</file>
+            <file>images/DialerServiceUML.png</file>
             <file>bearer.html</file>
             <file>qcontactonlineaccount.html</file>
             <file>battery-charge-battery-publisher-main-cpp.html</file>
@@ -3598,7 +3609,6 @@
             <file>radio-main-cpp.html</file>
             <file>slideshow.html</file>
             <file>qcontactnickname.html</file>
-            <file>qmessagefolderordering-members.html</file>
             <file>qcontactrelationship.html</file>
             <file>qcontactsortorder.html</file>
             <file>serviceactions-attachmentlistwidget-h.html</file>
@@ -3629,6 +3639,7 @@
             <file>cameracapture-cameracapture-cpp.html</file>
             <file>qcontactphonenumber-members.html</file>
             <file>qgeoareamonitor.html</file>
+            <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
             <file>slideshow-main-cpp.html</file>
@@ -3639,9 +3650,9 @@
             <file>qversitproperty.html</file>
             <file>qcontactmemoryengine.html</file>
             <file>incomingcalls-qcontactlistmodel-p-h.html</file>
+            <file>images/roaming-states.png</file>
             <file>qcontactemailaddress.html</file>
             <file>qcameraexposurecontrol.html</file>
-            <file>qmessageordering.html</file>
             <file>qsystemdeviceinfo-members.html</file>
             <file>qcontactdetaildefinitionremoverequest-members.html</file>
             <file>qserviceplugininterface.html</file>
@@ -3661,7 +3672,6 @@
             <file>qversitwriter.html</file>
             <file>sysinfo-main-cpp.html</file>
             <file>installation.html</file>
-            <file>qmessageserviceaction-members.html</file>
             <file>licensing.html</file>
             <file>qimageencodercontrol.html</file>
             <file>qaudioformat.html</file>
@@ -3746,10 +3756,10 @@
             <file>declarative-voipdialer-voipdialer-cpp.html</file>
             <file>qgeopositioninfo-members.html</file>
             <file>images/battery-subscriber.png</file>
+            <file>qmessageservice.html</file>
             <file>qcontactfetchrequest-members.html</file>
             <file>qcamerafocuscontrol-members.html</file>
             <file>qnmeapositioninfosource-members.html</file>
-            <file>qmessageserviceaction.html</file>
             <file>recorder-recorder-pro.html</file>
             <file>qmediaimageviewer.html</file>
             <file>qaudiocapturesource-members.html</file>
@@ -3773,22 +3783,26 @@
             <file>qcontactfamily.html</file>
             <file>qcontactlocalidfilter-members.html</file>
             <file>qvideoencodersettings-members.html</file>
-            <file>images/keepintouch-example.png</file>
-            <file>images/codeless.png</file>
-            <file>images/bearermonitor-example.png</file>
-            <file>images/qserviceinterfacedescriptor.png</file>
-            <file>images/bearercloud-example.png</file>
             <file>images/servicexmlgen.png</file>
-            <file>images/battery-publisher.png</file>
-            <file>classic.css</file>
-            <file>images/servicebrowser.png</file>
-            <file>images/publish-subscribe-subscriber.png</file>
+            <file>images/slideshow-img1.png</file>
             <file>images/servicebrowser-attributes.png</file>
+            <file>images/bearercloud-example.png</file>
+            <file>images/writemessage-example.png</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>images/qtlogo.png</file>
-            <file>images/spb-screen.png</file>
-            <file>images/slideshow-img1.png</file>
+            <file>images/codeless.png</file>
+            <file>images/bearermonitor-example.png</file>
+            <file>images/publish-subscribe-subscriber.png</file>
             <file>images/battery-subscriber.png</file>
+            <file>images/servicebrowser.png</file>
+            <file>images/battery-publisher.png</file>
+            <file>images/keepintouch-example.png</file>
+            <file>classic.css</file>
+            <file>images/spb-screen.png</file>
+            <file>images/roaming-states.png</file>
+            <file>images/DialerServiceUML.png</file>
+            <file>images/DialerServiceGUI.png</file>
+            <file>images/qserviceinterfacedescriptor.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

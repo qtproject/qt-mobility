@@ -43,8 +43,8 @@
 
 #include <QtGui>
 
-VideoWidget::VideoWidget(QMediaObject *object, QWidget *parent)
-    : QVideoWidget(object, parent)
+VideoWidget::VideoWidget(QWidget *parent)
+    : QVideoWidget(parent)
 {
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 }

@@ -52,7 +52,9 @@ To begin, obtain the most recent distrubution package from
 \section1 Pre-requisites & Dependencies
 To install Qt Mobility you must already have installed
 Qt 4.6 or higher, visit \l {http://get.qt.nokia.com} to obtain
-a copy.
+a copy. Furthermore perl must be installed and available in the environment path. Windows
+environments may require the installtion of a perl interpreter such as
+\l {http://www.activestate.com/activeperl} {ActivePerl}.
 
 Qt Mobility Project APIs are comprised of a number of domains. Some of
 these domains have dependencies and these are outlined below:
@@ -265,9 +267,9 @@ mobility libraries into $PWD/install.
     make release-gcce
 \endcode
 
-    (Aside: \c {make install} has no meaning for building
-    on symbian)
-    The libraries will be deployed into the SDK and will
+    Note: \c {make install} has no meaning for building
+    on Symbian.
+    The libraries will be deployed into the SDK (when running make) and will
     be ready to use for compiling applications for the
     emulator and/or device.
 

@@ -6,7 +6,7 @@ DEPENDPATH += ../../src/publishsubscribe
 
 symbian {
     crmlFiles.sources = example.qcrml
-    crmlFiles.path = c:/resource/qt/crml
+    crmlFiles.path = /resource/qt/crml
     DEPLOYMENT += crmlFiles
 
     #This is Symbian Signed UID3. Needs to match with uidValue in example.qcrml.

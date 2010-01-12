@@ -75,25 +75,25 @@
     \snippet    ../../examples/keepintouch/addressfinder.cpp create-composite-filters
 
     Now that we know what messages to search for, we use an instance of
-    QMessageServiceAction to perform our first search:
+    QMessageService to perform our first search:
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp begin-search
 
-    We could have queried the QMessageStore instance directly using the
-    \l{QMessageStore::queryMessages()}{queryMessages} function, but that
+    We could have queried the QMessageManager instance directly using the
+    \l{QMessageManager::queryMessages()}{queryMessages} function, but that
     would keep our UI thread busy, and we wouldn't be able to keep our UI
-    functioning at the same time.  Using the QMessageServiceAction interface
+    functioning at the same time.  Using the QMessageService interface
     allows us to process the search asynchronously.  
     
     We receive the notification of matching messages by responding to the
-    QMessageServiceAction::messagesFound() signal:
+    QMessageService::messagesFound() signal:
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp accumulate-matches
 
-    When the search is completed, the QMessageServiceAction::stateChanged()
-    signal is emitted.  We have to perform two searches, so when the first
-    finishes our handler initiates the second; when the second finishes, we
-    begin processing the results:
+    When the search is completed, the QMessageService::stateChanged()
+    signal is emitted.  If the user specified an exclusion period then we have 
+    to perform two searches, so when the first finishes our handler initiates 
+    the second; when the second finishes, we begin processing the results:
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp handle-search-result
 
@@ -120,10 +120,10 @@
     \snippet    ../../examples/keepintouch/addressfinder.cpp address-selected
 
     When the user has selected a message, two further actions become possible.
-    We can use the QMessageServiceAction facility to either view the message
+    We can use the QMessageService facility to either view the message
     or to compose a new message to the recipient of the earlier message. To
     view the message we only need to invoke the
-    \l {QMessageServiceAction::show()}{show} function for the relevant QMessageId:
+    \l {QMessageService::show()}{show} function for the relevant QMessageId:
 
     \snippet    ../../examples/keepintouch/addressfinder.cpp show-message
 

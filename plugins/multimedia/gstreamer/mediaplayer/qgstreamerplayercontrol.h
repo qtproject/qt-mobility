@@ -56,7 +56,10 @@ class QMediaPlaylist;
 class QGstreamerPlayerSession;
 class QGstreamerPlayerService;
 class QMediaPlaylistNavigator;
+
+QT_BEGIN_NAMESPACE
 class QSocketNotifier;
+QT_END_NAMESPACE
 
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {

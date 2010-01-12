@@ -75,10 +75,10 @@ namespace QtMedia
         Duration,
 
         // Audio
-        AudioBitrate,
+        AudioBitRate,
         AudioCodec,
         AverageLevel,
-        Channels,
+        ChannelCount,
         PeakValue,
         Frequency,
 
@@ -93,8 +93,8 @@ namespace QtMedia
         TrackNumber,
         TrackCount,
 
-        CoverArtUriSmall,
-        CoverArtUriLarge,
+        CoverArtUrlSmall,
+        CoverArtUrlLarge,
 
         // Image/Video
         Resolution,
@@ -105,7 +105,7 @@ namespace QtMedia
         VideoBitRate,
         VideoCodec,
 
-        PosterUri,
+        PosterUrl,
 
         // Movie
         ChapterNumber,
@@ -163,9 +163,17 @@ namespace QtMedia
     enum EncodingMode
     {
         ConstantQualityEncoding,
-        ConstantBitrateEncoding,
-        AverageBitrateEncoding,
+        ConstantBitRateEncoding,
+        AverageBitRateEncoding,
         TwoPassEncoding
+    };
+
+    enum AvailabilityError
+    {
+        NoError,
+        ServiceMissingError,
+        BusyError,
+        ResourceError
     };
 
 }

@@ -50,17 +50,17 @@ class VoipDialer : public QObject
     Q_ENUMS(ConnectionState)
 public:
     VoipDialer(QObject *parent = 0);
-    
+
+    //! [0]
+public:
     enum ConnectionState {
         Disconnected = 0,
         Connecting,
         Connected,
         Engaged
     };
-
     Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
     ConnectionState state() const;
-
 
 public slots:
     void dialNumber(const QString& number);
@@ -68,6 +68,7 @@ public slots:
 
 signals:
     void stateChanged();
+    //! [0]
 
 protected:
     void timerEvent(QTimerEvent* event);

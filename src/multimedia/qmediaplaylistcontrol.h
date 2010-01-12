@@ -61,10 +61,10 @@ public:
     virtual QMediaPlaylistProvider* playlistProvider() const = 0;
     virtual bool setPlaylistProvider(QMediaPlaylistProvider *playlist) = 0;
 
-    virtual int currentPosition() const = 0;
-    virtual void setCurrentPosition(int position) = 0;
-    virtual int nextPosition(int steps) const = 0;
-    virtual int previousPosition(int steps) const = 0;
+    virtual int currentIndex() const = 0;
+    virtual void setCurrentIndex(int position) = 0;
+    virtual int nextIndex(int steps) const = 0;
+    virtual int previousIndex(int steps) const = 0;
 
     virtual void next() = 0;
     virtual void previous() = 0;
@@ -74,7 +74,7 @@ public:
 
 Q_SIGNALS:
     void playlistProviderChanged();
-    void playlistPositionChanged(int position);
+    void currentIndexChanged(int position);
     void currentMediaChanged(const QMediaContent&);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
 

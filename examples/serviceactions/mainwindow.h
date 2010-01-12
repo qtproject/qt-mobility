@@ -43,13 +43,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <qmessageserviceaction.h>
+#include <qmessageservice.h>
 
+QT_BEGIN_NAMESPACE
 class QComboBox;
 class QListView;
 class QTabWidget;
 class QMenuBar;
 class QStackedWidget;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -66,12 +68,12 @@ protected:
 #endif
 
 private slots:
-    void serviceStateChanged(QMessageServiceAction::State state);
+    void serviceStateChanged(QMessageService::State state);
     void viewSelected();
 
 private:
     QTabWidget* m_tabWidget;
-    QMessageServiceAction* m_serviceAction;
+    QMessageService* m_service;
     QStackedWidget* m_widgetStack;
 };
 

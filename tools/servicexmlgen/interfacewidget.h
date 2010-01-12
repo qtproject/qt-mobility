@@ -45,8 +45,11 @@
 #include <QWidget>
 #include <QXmlStreamWriter>
 
+QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QSpinBox;
+QT_END_NAMESPACE
+
 class CapabilitiesWidget;
 class CustomPropertiesWidget;
 

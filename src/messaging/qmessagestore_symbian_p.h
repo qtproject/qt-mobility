@@ -42,7 +42,7 @@
 #define QMESSAGESTOREPRIVATE_SYMBIAN_H
 
 #include "qmessagestore.h"
-#include "qmessageserviceaction.h"
+#include "qmessageservice.h"
 #include <QEventLoop>
 
 
@@ -67,32 +67,32 @@ public:
     
     void initialize(QMessageStore *store);
     
-    QMessageIdList queryMessages(const QMessageFilter &filter, const QMessageOrdering &ordering, uint limit, uint offset) const;
-    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::Options options, const QMessageOrdering &ordering, uint limit, uint offset) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    QMessageIdList queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     int countMessages(const QMessageFilter& filter) const;
-    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountOrdering &ordering = QMessageAccountOrdering(), uint limit = 0, uint offset = 0) const;
+    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter(), const QMessageAccountSortOrder &sortOrder = QMessageAccountSortOrder(), uint limit = 0, uint offset = 0) const;
     int countAccounts(const QMessageAccountFilter &filter = QMessageAccountFilter()) const;
     QMessageAccount account(const QMessageAccountId &id) const;
 
-    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderOrdering &ordering = QMessageFolderOrdering(), uint limit = 0, uint offset = 0) const;
+    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter = QMessageFolderFilter(), const QMessageFolderSortOrder &sortOrder = QMessageFolderSortOrder(), uint limit = 0, uint offset = 0) const;
     int countFolders(const QMessageFolderFilter &filter = QMessageFolderFilter()) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
     
     bool addMessage(QMessage *m);
     bool updateMessage(QMessage *m);
-    bool removeMessage(const QMessageId &id, QMessageStore::RemovalOption option);
-    bool removeMessages(const QMessageFilter &filter, QMessageStore::RemovalOption option);
+    bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
+    bool removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option);
     
     QMessage message(const QMessageId& id) const;
     
-    QMessageStore::NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
-    void unregisterNotificationFilter(QMessageStore::NotificationFilterId notificationFilterId);
+    QMessageManager::NotificationFilterId registerNotificationFilter(const QMessageFilter &filter);
+    void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
 
     void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
-                             const QMessageStore::NotificationFilterIdSet &matchingFilters);
+                             const QMessageManager::NotificationFilterIdSet &matchingFilters);
 
 public Q_SLOTS:   
-    void stateChanged(QMessageServiceAction::State a);
+    void stateChanged(QMessageService::State a);
     void messagesFound(const QMessageIdList &ids);
     void messagesCounted(int count);
 
@@ -100,7 +100,7 @@ private:
     QMessageStore* q_ptr;
 
     CMTMEngine* _mtmEngine;
-    QMessageStore::ErrorCode _error;
+    QMessageManager::Error _error;
     
     NotificationType _notificationType;
     mutable QEventLoop loop;

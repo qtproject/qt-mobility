@@ -61,6 +61,7 @@ class ContactListPage;
 class ContactEditor;
 class FilterPage;
 
+QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
 class PhoneBook : public QMainWindow 

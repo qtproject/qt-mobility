@@ -51,7 +51,7 @@
 
 Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Settings),
+    ui(new Ui::SettingsUi),
     mediaRecorder(mediaRecorder)
 {
     ui->setupUi(this);
@@ -94,8 +94,8 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     }
 
     //containers
-    foreach(const QString &format, mediaRecorder->supportedFormats()) {
-        ui->containerFormatBox->addItem(format+":"+mediaRecorder->formatDescription(format),
+    foreach(const QString &format, mediaRecorder->supportedContainers()) {
+        ui->containerFormatBox->addItem(format+":"+mediaRecorder->containerDescription(format),
                                         QVariant(format));
     }
 }

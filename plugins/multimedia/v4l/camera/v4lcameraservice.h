@@ -53,7 +53,7 @@ class V4LVideoOutputControl;
 class V4LVideoDeviceControl;
 class V4LVideoRendererControl;
 class V4LImageCaptureControl;
-class V4LMediaFormatControl;
+class V4LMediaContainerControl;
 class V4LVideoEncode;
 class V4LRecorderControl;
 
@@ -74,7 +74,7 @@ private:
     V4LVideoDeviceControl   *m_videoDevice;
     V4LVideoRendererControl *m_videoRenderer;
     V4LImageCaptureControl  *m_imageCapture;
-    V4LMediaFormatControl   *m_formatControl;
+    V4LMediaContainerControl   *m_formatControl;
     V4LVideoEncode          *m_videoEncode;
     V4LRecorderControl      *m_recorderControl;
     QByteArray m_device;

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.0: sessionwidget.cpp Example File (bearermonitor/sessionwidget.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">sessionwidget.cpp Example File<br /><span class="small-subtitle">bearermonitor/sessionwidget.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:LGPL$
+    ** No Commercial Usage
+    ** This file contains pre-release code and may not be distributed.
+    ** You may use this file in accordance with the terms and conditions
+    ** contained in the Technology Preview License Agreement accompanying
+    ** this package.
+    **
+    ** GNU Lesser General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU Lesser
+    ** General Public License version 2.1 as published by the Free Software
+    ** Foundation and appearing in the file LICENSE.LGPL included in the
+    ** packaging of this file.  Please review the following information to
+    ** ensure the GNU Lesser General Public License version 2.1 requirements
+    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    **
+    ** In addition, as a special exception, Nokia gives you certain additional
+    ** rights.  These rights are described in the Nokia Qt LGPL Exception
+    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+    **
+    ** If you have questions regarding the use of this file, please contact
+    ** Nokia at qt-info@nokia.com.
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;sessionwidget.h&quot;
+    #include &quot;qnetworkconfigmanager.h&quot;
+
+    SessionWidget::SessionWidget(const QNetworkConfiguration &amp;config, QWidget *parent)
+    :   QWidget(parent)
+    {
+        setupUi(this);
+
+        session = new QNetworkSession(config, this);
+
+        connect(session, SIGNAL(stateChanged(QNetworkSession::State)),
+                this, SLOT(updateSession()));
+        connect(session, SIGNAL(error(QNetworkSession::SessionError)),
+                this, SLOT(updateSession()));
+
+        updateSession();
+
+        sessionId-&gt;setText(QString(&quot;0x%1&quot;).arg(qulonglong(session), 8, 16, QChar('0')));
+
+        configuration-&gt;setText(session-&gt;configuration().name());
+
+        connect(openSessionButton, SIGNAL(clicked()),
+                this, SLOT(openSession()));
+        connect(openSyncSessionButton, SIGNAL(clicked()),
+                this, SLOT(openSyncSession()));
+        connect(closeSessionButton, SIGNAL(clicked()),
+                this, SLOT(closeSession()));
+        connect(stopSessionButton, SIGNAL(clicked()),
+                this, SLOT(stopSession()));
+    }
+
+    SessionWidget::~SessionWidget()
+    {
+        delete session;
+    }
+
+    void SessionWidget::updateSession()
+    {
+        updateSessionState(session-&gt;state());
+        updateSessionError(session-&gt;error());
+
+        if (session-&gt;configuration().type() == QNetworkConfiguration::InternetAccessPoint)
+            bearer-&gt;setText(session-&gt;configuration().bearerName());
+        else {
+            QNetworkConfigurationManager mgr;
+            QNetworkConfiguration c = mgr.configurationFromIdentifier(session-&gt;sessionProperty(&quot;ActiveConfiguration&quot;).toString());
+            bearer-&gt;setText(c.bearerName());
+        }
+
+        interfaceName-&gt;setText(session-&gt;interface().humanReadableName());
+        interfaceGuid-&gt;setText(session-&gt;interface().name());
+    }
+
+    void SessionWidget::openSession()
+    {
+        session-&gt;open();
+        updateSession();
+    }
+
+    void SessionWidget::openSyncSession()
+    {
+        session-&gt;open();
+        session-&gt;waitForOpened();
+        updateSession();
+    }
+
+    void SessionWidget::closeSession()
+    {
+        session-&gt;close();
+        updateSession();
+    }
+
+    void SessionWidget::stopSession()
+    {
+        session-&gt;stop();
+        updateSession();
+    }
+
+    void SessionWidget::updateSessionState(QNetworkSession::State state)
+    {
+        QString s = tr(&quot;%1 (%2)&quot;);
+
+        switch (state) {
+        case QNetworkSession::Invalid:
+            s = s.arg(tr(&quot;Invalid&quot;));
+            break;
+        case QNetworkSession::NotAvailable:
+            s = s.arg(tr(&quot;Not Available&quot;));
+            break;
+        case QNetworkSession::Connecting:
+            s = s.arg(tr(&quot;Connecting&quot;));
+            break;
+        case QNetworkSession::Connected:
+            s = s.arg(tr(&quot;Connected&quot;));
+            break;
+        case QNetworkSession::Closing:
+            s = s.arg(tr(&quot;Closing&quot;));
+            break;
+        case QNetworkSession::Disconnected:
+            s = s.arg(tr(&quot;Disconnected&quot;));
+            break;
+        case QNetworkSession::Roaming:
+            s = s.arg(tr(&quot;Roaming&quot;));
+            break;
+        default:
+            s = s.arg(tr(&quot;Unknown&quot;));
+        }
+
+        if (session-&gt;isOpen())
+            s = s.arg(tr(&quot;Open&quot;));
+        else
+            s = s.arg(tr(&quot;Closed&quot;));
+
+        sessionState-&gt;setText(s);
+    }
+
+    void SessionWidget::updateSessionError(QNetworkSession::SessionError error)
+    {
+        lastError-&gt;setText(QString::number(error));
+        errorString-&gt;setText(session-&gt;errorString());
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

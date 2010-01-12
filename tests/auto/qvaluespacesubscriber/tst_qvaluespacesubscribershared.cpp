@@ -62,20 +62,35 @@
 
 #define ERROR_SETVALUE_NOT_SUPPORTED 1
 
-#define QTRY_COMPARE(a,e)                       \
-    for (int _i = 0; _i < 10000; _i += 100) {    \
-        if ((a) == (e)) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QCOMPARE(a, e)
+#ifdef Q_OS_SYMBIAN
+    #define QTRY_COMPARE(a,e)                       \
+        for (int _i = 0; _i < 100; _i++) {          \
+            if ((a) == (e)) break;                  \
+            QTest::qWait(1);                        \
+        }                                           \
+        QCOMPARE(a, e)
 
-#define QTRY_VERIFY(a)                       \
-    for (int _i = 0; _i < 10000; _i += 100) {    \
-        if (a) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QVERIFY(a)
+    #define QTRY_VERIFY(a)                          \
+        for (int _i = 0; _i < 100; _i ++) {         \
+            if (a) break;                           \
+            QTest::qWait(1);                        \
+        }                                           \
+        QVERIFY(a)
+#else
+    #define QTRY_COMPARE(a,e)                       \
+        for (int _i = 0; _i < 10000; _i += 100) {    \
+            if ((a) == (e)) break;                  \
+            QTest::qWait(100);                      \
+        }                                           \
+        QCOMPARE(a, e)
 
+    #define QTRY_VERIFY(a)                       \
+        for (int _i = 0; _i < 10000; _i += 100) {    \
+            if (a) break;                  \
+            QTest::qWait(100);                      \
+        }                                           \
+        QVERIFY(a)
+#endif
 QTM_USE_NAMESPACE
 class ChangeListener : public QObject
 {
@@ -443,7 +458,11 @@ void tst_QValueSpaceSubscriber::testConstructor()
     QValueSpaceSubscriber *subscriber = qvariant_cast<QValueSpaceSubscriber*>(testItem);
     QCOMPARE(subscriber->parent(), (QObject*)this);
     QCOMPARE(subscriber->value(), value);
-    QCOMPARE(subscriber->subPaths().toSet(), subPaths.toSet());
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber->subPaths().toSet().contains(subPaths.toSet()));
+    #else
+        QCOMPARE(subscriber->subPaths().toSet(), subPaths.toSet());
+    #endif
     QCOMPARE(subscriber->path(), path);
     QCOMPARE(subscriber->value(relItemPath, 100).toInt(), expectedValue);
 }
@@ -510,23 +529,43 @@ void tst_QValueSpaceSubscriber::testPathChanges()
                   << "double" << "float" << "QChar";
 
     QCOMPARE(subscriber.path(), QLatin1String("/"));
-    QCOMPARE(subscriber.subPaths().toSet(), rootPaths.toSet());
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(rootPaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), rootPaths.toSet());
+    #endif
 
     subscriber.cd("home");
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
-    QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(homePaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
+    #endif
 
     subscriber.cd("user");
     QCOMPARE(subscriber.path(), QLatin1String("/home/user"));
-    QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
+    #endif
 
     subscriber.cdUp();
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
-    QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(homePaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
+    #endif
 
     subscriber.cd("/home/user");
     QCOMPARE(subscriber.path(), QLatin1String("/home/user"));
-    QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
+    #ifdef Q_OS_SYMBIAN
+        QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
+    #else
+        QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
+    #endif
 }
 
 void tst_QValueSpaceSubscriber::contentsChanged_data()
@@ -773,6 +812,10 @@ void tst_QValueSpaceSubscriber::ipcTests_data()
 
 void tst_QValueSpaceSubscriber::ipcTests()
 {
+#ifdef Q_OS_SYMBIAN
+    QSKIP("No multiple processes in Symbian emulator", SkipAll);
+#endif
+
 #if defined(QT_NO_PROCESS)
     QSKIP("Qt was compiled with QT_NO_PROCESS", SkipAll);
 #else
@@ -1123,14 +1166,14 @@ void tst_QValueSpaceSubscriber::threads_data()
 
     QTest::newRow("1 thread") << uint(1) << true;
     QTest::newRow("2 threads") << uint(2) << true;
-#ifdef Q_OS_WINCE
+#if defined(Q_OS_WINCE) || defined(Q_OS_SYMBIAN)
     QTest::newRow("10 threads") << uint(10) << true;
 #else
     QTest::newRow("100 threads") << uint(100) << true;
 #endif
     QTest::newRow("1 thread, unsynchronised") << uint(1) << false;
     QTest::newRow("2 threads, unsynchronised") << uint(2) << false;
-#ifdef Q_OS_WINCE
+#if defined(Q_OS_WINCE) || defined(Q_OS_SYMBIAN)
     QTest::newRow("10 threads") << uint(10) << false;
 #else
     QTest::newRow("100 threads, unsynchronised") << uint(100) << false;
@@ -1171,6 +1214,11 @@ void tst_QValueSpaceSubscriber::threads()
         writeLoop.exec();
 
     delete writeThread;
+    #ifdef Q_OS_SYMBIAN
+        QValueSpacePublisher resetPublisher("/threads");
+        resetPublisher.resetValue("value");
+    #endif
+
 }
 
 #include "tst_qvaluespacesubscribershared.moc"
