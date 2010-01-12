@@ -82,7 +82,7 @@ System Information API. By adding \c mobility to \c CONFIG qmake finds
 the \c {mobility.prf} file in \c{$QTDIR/mkspecs/features} and includes it when
 processing the current project file. \c{mobility.prf} is generated when running 
 the QtMobility configure script and points qmake to the relevant include and prefix
-paths. The \c MOBILITY variable itself is part of \c {mobility.prf} and is used to
+paths and ensures that deployment and package dependencies are set. The \c MOBILITY variable itself is part of \c {mobility.prf} and is used to
 determine the QtMobility library the current project should link to (in this example the SystemInfo library).
 
 Each QtMobility API has its corresponding value which has to be added to \c MOBILITY. The subsequent table lists the APIs and the 
