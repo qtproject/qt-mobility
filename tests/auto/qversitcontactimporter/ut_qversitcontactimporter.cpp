@@ -1573,7 +1573,7 @@ void UT_QVersitContactImporter::testUnknownVersitProperties()
         mImporter->unknownVersitProperties();
     QCOMPARE(unknownProperties.count(), 1);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
-    QCOMPARE(unknownProperties[0].value(), QString::fromAscii("extension value 1"));
+    QCOMPARE(unknownProperties[0].valueString(), QString::fromAscii("extension value 1"));
 
     // Two unknown properties
     property.setName(QString::fromAscii("X-EXTENSION-2"));
@@ -1583,9 +1583,9 @@ void UT_QVersitContactImporter::testUnknownVersitProperties()
     unknownProperties = mImporter->unknownVersitProperties();
     QCOMPARE(unknownProperties.count(), 2);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
-    QCOMPARE(unknownProperties[0].value(), QString::fromAscii("extension value 1"));
+    QCOMPARE(unknownProperties[0].valueString(), QString::fromAscii("extension value 1"));
     QCOMPARE(unknownProperties[1].name(), QString::fromAscii("X-EXTENSION-2"));
-    QCOMPARE(unknownProperties[1].value(), QString::fromAscii("extension value 2"));
+    QCOMPARE(unknownProperties[1].valueString(), QString::fromAscii("extension value 2"));
 
     // Test that the previous unknown properties are cleaned
     // when importContact is called again

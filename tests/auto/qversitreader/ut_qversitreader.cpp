@@ -276,27 +276,27 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 
     QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.value(),QString::fromAscii("vcard"));
+    QCOMPARE(property.valueString(),QString::fromAscii("vcard"));
     QCOMPARE(cursor.position, 11); // pointing to the  \r\n
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
-    QCOMPARE(property.value(),QString::fromAscii("2.1"));
+    QCOMPARE(property.valueString(),QString::fromAscii("2.1"));
     QCOMPARE(cursor.position, 24);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
-    QCOMPARE(property.value(),QString::fromAscii("John"));
+    QCOMPARE(property.valueString(),QString::fromAscii("John"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("ORG"));
-    QCOMPARE(property.value(),QString::fromUtf8("\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86"));
+    QCOMPARE(property.valueString(),QString::fromUtf8("\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86"));
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
     QCOMPARE(1,property.parameters().count());
     // Linear whitespaces (SPACEs and TABs) removed from the value:
-    QCOMPARE(property.value(),QString::fromAscii("UXQgaXMgZ3JlYXQh"));
+    QCOMPARE(property.valueString(),QString::fromAscii("UXQgaXMgZ3JlYXQh"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QStringList propertyGroup(QString::fromAscii("HOME"));
@@ -304,24 +304,24 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QCOMPARE(property.groups(),propertyGroup);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
-    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
+    QCOMPARE(property.valueString(),QString::fromAscii("john.citizen@example.com"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
-    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
+    QCOMPARE(property.valueString(),QString::fromAscii("john.citizen@example.com"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QCOMPARE(property.value(),QString());
+    QCOMPARE(property.valueString(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),1);
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));
-    QCOMPARE(property.value(),QString::fromAscii("VCARD"));
+    QCOMPARE(property.valueString(),QString::fromAscii("VCARD"));
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString());
-    QCOMPARE(property.value(),QString());
+    QCOMPARE(property.valueString(),QString());
     
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties
@@ -332,7 +332,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     property = mReaderPrivate->parseNextVersitProperty(type, agentCursor);
     QCOMPARE(property.name(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),0);
-    QCOMPARE(property.value(),QString());
+    QCOMPARE(property.valueString(),QString());
 }
 
 void UT_QVersitReader::testParseNextVersitPropertyVCard30()
@@ -355,47 +355,47 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
 
     QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.value(),QString::fromAscii("vcard"));
+    QCOMPARE(property.valueString(),QString::fromAscii("vcard"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
-    QCOMPARE(property.value(),QString::fromAscii("3.0"));
+    QCOMPARE(property.valueString(),QString::fromAscii("3.0"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
-    QCOMPARE(property.value(),QString::fromAscii("John"));
+    QCOMPARE(property.valueString(),QString::fromAscii("John"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("ORG"));
-    QCOMPARE(property.value(),QString::fromUtf8("\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86"));
+    QCOMPARE(property.valueString(),QString::fromUtf8("\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("TEL"));
-    QCOMPARE(property.value(),QString::fromAscii("123"));
+    QCOMPARE(property.valueString(),QString::fromAscii("123"));
     QCOMPARE(property.parameters().count(), 2);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
     QCOMPARE(1,property.parameters().count());
-    QCOMPARE(property.value(),QString::fromAscii("UXQgaXMgZ3JlYXQh"));
+    QCOMPARE(property.valueString(),QString::fromAscii("UXQgaXMgZ3JlYXQh"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
-    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
+    QCOMPARE(property.valueString(),QString::fromAscii("john.citizen@example.com"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QCOMPARE(property.value(),QString());
+    QCOMPARE(property.valueString(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),1);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));
-    QCOMPARE(property.value(),QString::fromAscii("VCARD"));
+    QCOMPARE(property.valueString(),QString::fromAscii("VCARD"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString());
-    QCOMPARE(property.value(),QString());
+    QCOMPARE(property.valueString(),QString());
 
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties
@@ -406,7 +406,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     property = mReaderPrivate->parseNextVersitProperty(type, agentCursor);
     QCOMPARE(property.name(),QString());
     QCOMPARE(property.embeddedDocument().properties().count(),0);
-    QCOMPARE(property.value(),QString());
+    QCOMPARE(property.valueString(),QString());
 }
 
 void UT_QVersitReader::testParseVersitDocument()

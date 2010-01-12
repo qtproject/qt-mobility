@@ -51,6 +51,8 @@
 #include <QByteArray>
 #include <QSharedDataPointer>
 
+class QVariant;
+
 QTM_BEGIN_NAMESPACE
 
 class QVersitPropertyPrivate;
@@ -77,8 +79,9 @@ public:
     void setParameters(const QMultiHash<QString,QString>& parameters);
     QMultiHash<QString,QString> parameters() const;
     
-    void setValue(const QString& value);
-    QString value() const;
+    void setValue(const QVariant& value);
+    QVariant value() const;
+    QString valueString() const;
 
     void setEmbeddedDocument(const QVersitDocument& document);
     QVersitDocument embeddedDocument() const;

@@ -45,6 +45,7 @@
 #include <QTextCodec>
 #include <QDebug>
 #include <QMutexLocker>
+#include <QVariant>
 
 QTM_BEGIN_NAMESPACE
 
@@ -156,7 +157,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
     if (!foundBegin) {
         property = parseNextVersitProperty(document.versitType(), cursor);
         if (property.name() == QLatin1String("BEGIN")
-            && property.value().trimmed().toUpper() == QLatin1String("VCARD")) {
+            && property.valueString().trimmed().toUpper() == QLatin1String("VCARD")) {
             foundBegin = true;
         } else if (property.isEmpty()) {
             // A blank document (or end of file) was found.
@@ -174,7 +175,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
 
             /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
             if (property.name() == QString::fromAscii("BEGIN") &&
-                property.value().trimmed().toUpper() == QString::fromAscii("VCARD")) {
+                property.valueString().trimmed().toUpper() == QString::fromAscii("VCARD")) {
                 parsingOk = false;
                 QVersitDocument nestedDocument;
                 if (!parseVersitDocument(cursor, nestedDocument, true))
@@ -298,7 +299,7 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
 {
     bool valid = true;
     if (property.name() == QString::fromAscii("VERSION")) {
-        QString value = property.value().trimmed();
+        QString value = property.valueString().trimmed();
         if (property.parameters().contains(
                 QString::fromAscii("ENCODING"),QString::fromAscii("BASE64")))
             value = QString::fromAscii(QByteArray::fromBase64(value.toAscii()));

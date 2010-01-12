@@ -116,7 +116,7 @@ void UT_QVersitProperty::testValue()
 {
     QString value(QString::fromAscii("050484747"));
     mVersitProperty->setValue(value);
-    QCOMPARE(mVersitProperty->value(), value);
+    QCOMPARE(mVersitProperty->valueString(), value);
 }
 
 void UT_QVersitProperty::testEmbeddedDocument()

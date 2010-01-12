@@ -193,7 +193,7 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
 /*!
  * Sets the \a value of the property.
  */
-void QVersitProperty::setValue(const QString& value)
+void QVersitProperty::setValue(const QVariant& value)
 {
     d->mValue = value;
 }
@@ -201,9 +201,19 @@ void QVersitProperty::setValue(const QString& value)
 /*!
  * Returns the value of the property.
  */
-QString QVersitProperty::value() const
+QVariant QVersitProperty::value() const
 {
     return d->mValue;
+}
+
+/*!
+ * Returns the value of the property as a string if possible, otherwise
+ * return an empty string.
+ * \sa QVariant::toString()
+ */
+QString QVersitProperty::valueString() const
+{
+    return d->mValue.toString();
 }
 
 /*!
@@ -231,7 +241,7 @@ bool QVersitProperty::isEmpty() const
     return d->mGroups.isEmpty()
             && d->mName.isEmpty()
             && d->mParameters.isEmpty()
-            && d->mValue.isEmpty()
+            && d->mValue.isValid()
             && d->mDocument.isEmpty();
 }
 

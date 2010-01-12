@@ -163,7 +163,7 @@ void UT_QVCard21Writer::testQuotedPrintableEncode()
     property.setName(QString::fromAscii("N"));
     property.setValue(QString::fromAscii("Citizen;John"));
     QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
-    QVERIFY(encodedValue == property.value().toAscii());
+    QVERIFY(encodedValue == property.valueString().toAscii());
     
     // The property doesn't contain ENCODING parameter,
     // special characters in the encodedValue -> needs to be Quoted-Printable encoded
@@ -178,7 +178,7 @@ void UT_QVCard21Writer::testQuotedPrintableEncode()
     property.setValue(QString::fromAscii(QByteArray("the data").toBase64()));
     property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
-    QVERIFY(encodedValue == property.value().toAscii());
+    QVERIFY(encodedValue == property.valueString().toAscii());
 }
 
 void UT_QVCard21Writer::testEncodeGroupsAndName()

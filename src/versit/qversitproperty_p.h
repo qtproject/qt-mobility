@@ -61,6 +61,7 @@
 #include <QStringList>
 #include <QMultiHash>
 #include <QByteArray>
+#include <QVariant>
 
 QTM_BEGIN_NAMESPACE
 
@@ -86,7 +87,7 @@ public:
     QStringList mGroups;
     QString mName;
     QMultiHash<QString,QString> mParameters;
-    QString mValue;
+    QVariant mValue;
     QVersitDocument mDocument;
 };
 
