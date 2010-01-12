@@ -241,7 +241,7 @@ bool QVersitProperty::isEmpty() const
     return d->mGroups.isEmpty()
             && d->mName.isEmpty()
             && d->mParameters.isEmpty()
-            && d->mValue.isValid()
+            && !d->mValue.isValid()
             && d->mDocument.isEmpty();
 }
 
