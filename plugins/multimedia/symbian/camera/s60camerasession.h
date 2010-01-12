@@ -46,13 +46,15 @@
 #include <QTime>
 #include <QUrl>
 #include <QtGui/qicon.h>
+#include <QList>
+#include <QtMultimedia/qvideoframe.h>
+#include <QMultiMap>
 
 #include "qcamera.h"
-#include <QtMultimedia/qvideoframe.h>
-
 #include <e32base.h>
 #include <cameraengine.h>
 #include <cameraengineobserver.h>
+
 
 QTM_USE_NAMESPACE
 
@@ -124,9 +126,10 @@ public:
 
     //added based on s60 camera needs
     void releaseImageBuffer();
-    bool startCamera();
+    void startCamera();
     void stopCamera();
     void capture();
+    
     
     // for mediacontrol
     void startRecording();
@@ -144,17 +147,17 @@ public:
     
     //imageencodercontrol
     QSize captureSize() const;
-    QSize minimumCaptureSize() const;
-    QSize maximumCaptureSize() const;
-    QList<QSize> supportedCaptureSizes();
+    QSize minimumCaptureSize();
+    QSize maximumCaptureSize();
+    QList<QSize> supportedCaptureSizesForCodec(const QString &codecName);
     void setCaptureSize(const QSize &size);
-    QStringList supportedImageCaptureCodecs() const;
-    QString imageCaptureCodec() const;
-    bool setImageCaptureCodec(const QString &codecName);
-    QString imageCaptureCodecDescription(const QString &codecName) const;
+    QStringList supportedImageCaptureCodecs();
+    QString imageCaptureCodec();
+    void setImageCaptureCodec(const QString &codecName);
+    QString imageCaptureCodecDescription(const QString &codecName);
     QtMedia::EncodingQuality captureQuality() const;
     void setCaptureQuality(QtMedia::EncodingQuality);
-    
+
     void setVideoRenderer(QObject *renderer);
     
 protected: // From MCameraEngineObserver
@@ -167,6 +170,10 @@ protected: // From MCameraEngineObserver
     
 private:
     bool queryCurrentCameraInfo();
+    QMap<QString, int> formatMap();
+    QMap<QString, int> formatDescMap();
+    void updateImageCaptureCodecs();
+    void initCamera();
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -186,21 +193,21 @@ private Q_SLOTS:
 private:
     CCameraEngine *m_cameraEngine;
     MVFProcessor *m_VFProcessor;
-    QtMedia::EncodingQuality m_quality;
+    int m_imageQuality;
     QSize m_captureSize;
     QCamera::State m_state;
     QSize m_windowSize;
     QVideoFrame::PixelFormat m_pixelF;
     TInt m_deviceIndex; //index indication chosen camera device
     mutable int m_error;
-    
+    CCamera::TFormat m_currentcodec;
     QTime m_timeStamp;
     QUrl m_sink;
     QList<QSize> m_resolutions;
     QList<uint> m_formats;   
     QSize m_VFWidgetSize;
     TSize m_VFSize;
-    TCameraInfo m_info; // information about camera
+    mutable TCameraInfo m_info; // information about camera
 };
 
 #endif

@@ -46,6 +46,8 @@
 
 #include <fbs.h>
 #include <qglobal.h>
+const int KSymbianImageQualityCoefficient = 25;
+CCamera::TFormat KSymbianDefaultImageCodec = CCamera::EFormatExif;
 #ifdef Q_CC_NOKIAX86
 _LIT8(KCameraTemp,"test data");
 #endif
@@ -54,14 +56,17 @@ S60CameraSession::S60CameraSession(QObject *parent)
     : QObject(parent)
     , m_cameraEngine(NULL)
     , m_VFProcessor(NULL)
-    , m_quality(QtMedia::NormalQuality)
+    , m_imageQuality(QtMedia::NormalQuality*KSymbianImageQualityCoefficient)
     , m_captureSize(QSize(1600, 1200))
     , m_state(QCamera::StoppedState)
     , m_windowSize(QSize(320/2, 240/2))
     , m_pixelF(QVideoFrame::Format_RGB24)
     , m_deviceIndex(0)
     , m_error(NoError)
+    , m_currentcodec(KSymbianDefaultImageCodec)
 {
+    //init camera
+    initCamera();
 }
 
 S60CameraSession::~S60CameraSession()
@@ -69,24 +74,32 @@ S60CameraSession::~S60CameraSession()
     delete m_cameraEngine;
     m_cameraEngine = NULL;
 }
-bool S60CameraSession::startCamera()
+void S60CameraSession::initCamera()
 {
-#ifdef Q_CC_NOKIAX86
-   qDebug() << "Starting null camera";
-   MceoCameraReady(); // signal that we are ready
-   return true;
-#endif
     if (m_cameraEngine) {
         delete m_cameraEngine;
         m_cameraEngine = NULL;
         m_error = KErrNone;
+        m_state = QCamera::StoppedState;
     }
-
     TRAP(m_error, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
-    if (!m_error)
+    if (m_error != KErrNone)
+        emit error(m_error, QString(m_error));
+}
+
+void S60CameraSession::startCamera()
+{
+#ifdef Q_CC_NOKIAX86
+   qDebug() << "Starting null camera";
+   MceoCameraReady(); // signal that we are ready
+#endif
+    if (!m_error) {
         m_cameraEngine->ReserveAndPowerOn();
-	
-    return (m_error == KErrNone);
+        updateImageCaptureCodecs();
+    }
+    if (m_error != KErrNone)
+        emit error(m_error, QString(m_error));
+
 }
 
 void S60CameraSession::stopCamera()
@@ -102,28 +115,11 @@ void S60CameraSession::stopCamera()
 void S60CameraSession::capture()
 {
     qDebug() << "S60CameraSession::capture";
-    /**
-     * Capture image: Gets the image size for the index passed by calling the 
-     * CCamera::EnumerateCaptureSizes() function. The image details such as image format and 
-     * the size index are passed to the CCamera::PrepareImageCaptureL() function to allocate
-     * the memory for the image to be captured. Then, a call to the CCamera::CaptureImage() 
-     * captures the image.
-     */
     if (m_cameraEngine)
     {
-        // TODO: not yet support for ImageEncodeControl
         TSize size(m_captureSize.width(), m_captureSize.height());
-        // TODO check supported formats
-        if(m_deviceIndex == 0)
-        {
-            m_cameraEngine->PrepareL(size);
-            m_cameraEngine->CaptureL();
-        }
-        else
-        {
-            m_cameraEngine->PrepareL(size, CCamera::EFormatFbsBitmapColor64K);
-            m_cameraEngine->CaptureL();
-        }
+        m_cameraEngine->PrepareL(size, m_currentcodec);
+        m_cameraEngine->CaptureL();
     }
     #ifdef Q_CC_NOKIAX86
     QImage *snapImage = new QImage(QLatin1String("C:/Data/testimage.jpg"));
@@ -284,10 +280,10 @@ void S60CameraSession::setFrameSize(const QSize& s)
 
 QList<QVideoFrame::PixelFormat> S60CameraSession::supportedPixelFormats()
 {
+
     QList<QVideoFrame::PixelFormat> list;
     #ifdef Q_CC_NOKIAX86
-    list << QVideoFrame::Format_RGB32;
-    list << QVideoFrame::Format_ARGB32;
+    list << QVideoFrame::Format_RGB565;
     #endif
     //TODO: add supportedformats 
     qDebug() << "S60CameraSession::pixeformat, returning="<<list;
@@ -315,8 +311,7 @@ QList<QSize> S60CameraSession::supportedVideoResolutions()
 		CCamera *camera = m_cameraEngine->Camera();
 		for (int i=0; i < m_info.iNumVideoFrameSizesSupported; i++) {
 			TSize size;
-			// TODO check formats
-			camera->EnumerateVideoFrameSizes(size,i, CCamera::EFormatFbsBitmapColor16MU );
+			camera->EnumerateVideoFrameSizes(size,i, m_currentcodec );
 			list << QSize(size.iWidth, size.iHeight);
 		}
     }
@@ -609,85 +604,192 @@ bool S60CameraSession::queryCurrentCameraInfo()
     }
     return returnValue;
 }
+
 // End for S60Cameravideodevicecontrol
 QSize S60CameraSession::captureSize() const
 {
     qDebug() << "S60CameraSession::captureSize";
-    return QSize();
+    return m_captureSize;
 }
-QSize S60CameraSession::minimumCaptureSize() const
+QSize S60CameraSession::minimumCaptureSize() 
 {
     qDebug() << "S60CameraSession::minimunCaptureSize";
-    return QSize();
+    return supportedCaptureSizesForCodec(formatMap().key(m_currentcodec)).first();
 }
-QSize S60CameraSession::maximumCaptureSize() const
+QSize S60CameraSession::maximumCaptureSize()
 {
     qDebug() << "S60CameraSession::maximumCaptureSize";
-    return QSize();
+    return supportedCaptureSizesForCodec(formatMap().key(m_currentcodec)).last();
 }
 
 void S60CameraSession::setCaptureSize(const QSize &size)
 {
     qDebug() << "S60CameraSession::setCaptureSizes, size="<<size;
-    Q_UNUSED(size);
+    if (size.isEmpty()) {
+        //an empty QSize indicates the encoder should make an optimal choice based on what is
+        //available from the image source and the limitations of the codec.
+        m_captureSize = supportedCaptureSizesForCodec(formatMap().key(m_currentcodec)).last();
+    }
+    else
+        m_captureSize = size;
 }
 
-QList<QSize> S60CameraSession::supportedCaptureSizes()
+QList<QSize> S60CameraSession::supportedCaptureSizesForCodec(const QString &codecName)
 {
+    qDebug() << "S60CameraSession::supportedCaptureSizesForCodec, codec="<<codecName;
     QList<QSize> list;
     // if we have cameraengine loaded and we can update camerainfo
     if (m_cameraEngine && queryCurrentCameraInfo()) {
+        int codecIndex = formatMap().value(codecName);
+        CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );
         CCamera *camera = m_cameraEngine->Camera();
         for (int i=0; i < m_info.iNumImageSizesSupported; i++) {
             TSize size;
-            // TODO check formats
-            camera->EnumerateCaptureSizes(size,i, CCamera::EFormatFbsBitmapColor16MU);
+            camera->EnumerateVideoFrameSizes(size,i, format );
             list << QSize(size.iWidth, size.iHeight);
         }
     }
-        #ifdef Q_CC_NOKIAX86
-        qDebug() << "S60CameraSession::supportedCaptureSizes";
-        list << QSize(50,50);
-        list << QSize(100,100);
-        #endif
+    #ifdef Q_CC_NOKIAX86
+    list << QSize(50, 50);
+    list << QSize(100, 100);
+    list << QSize(800,600);
+    #endif
     return list;
+
 }
 
+QMap<QString, int> S60CameraSession::formatMap()
+{
+    QMap<QString, int> formats;
+    // format list copied from ecam.h CCamera::TFormat
 
-QStringList S60CameraSession::supportedImageCaptureCodecs() const
+    formats.insert("Monochrome",0);
+    formats.insert("16bitRGB444",1);
+    formats.insert("16bitRGB565",2);
+    formats.insert("16bitRGB888",3);
+    formats.insert("Jpeg",4);
+    formats.insert("ExifJpeg",5);
+    formats.insert("FbsBitmapColor4K",6);
+    formats.insert("FbsBitmapColor64K",7);
+    formats.insert("FbsBitmapColor16M",8);
+    formats.insert("UserDefined",9);
+    formats.insert("YUV420Interleaved",10);
+    formats.insert("YUV420Planar",11);
+    formats.insert("YUV422",11);
+    formats.insert("YUV422Reversed",12);
+    formats.insert("YUV444",13);
+    formats.insert("YUV420SemiPlanar",14);
+    formats.insert("FbsBitmapColor16MU",15);
+    formats.insert("MJPEG",16);
+    formats.insert("EncodedH264",17);
+
+    return formats;
+}
+QMap<QString, int> S60CameraSession::formatDescMap()
+{
+    QMap<QString, int> formats;
+    formats.insert("monochrome",0);
+    formats.insert("RGB444",1);
+    formats.insert("RGB565",2);
+    formats.insert("RGB888",3);
+    formats.insert("jpeg",4);
+    formats.insert("exifjpeg",5);
+    formats.insert("FbsBitmap4K",6);
+    formats.insert("FbsBitmap64K",7);
+    formats.insert("FbsBitmap16M",8);
+    formats.insert("UserDefined",9);
+    formats.insert("YUV420Interleaved",10);
+    formats.insert("YUV420Planar",11);
+    formats.insert("YUV422",11);
+    formats.insert("YUV422Reversed",12);
+    formats.insert("YUV444",13);
+    formats.insert("YUV420SemiPlanar",14);
+    formats.insert("FbsBitmapColor16MU",15);
+    formats.insert("MJPEG",16);
+    formats.insert("EncodedH264",17);
+
+    return formats;
+}
+QStringList S60CameraSession::supportedImageCaptureCodecs()
 {
     qDebug() << "S60CameraSession::supportedImageCaptureCodecs";
-    return QStringList();
+    QStringList list;
+    #ifdef Q_CC_NOKIAX86
+    return formatMap().keys();
+    #endif
+
+    for (int i = 0; i < m_formats.length() ; i++) {
+        list << formatMap().key(m_formats.at(i));
+    }
+    qDebug()<< "S60CameraSession::supportedImageCaptureCodecs, return formatList.count()="+list.count();
+    return list;
 }
-QString S60CameraSession::imageCaptureCodec() const
+void S60CameraSession::updateImageCaptureCodecs()
 {
-    qDebug() << "S60CameraSession::imageCaptureCodec";
-    return QString();
-}
-bool S60CameraSession::setImageCaptureCodec(const QString &codecName)
-{
-    qDebug() << "S60CameraSession::setTmageCaptureCodec, coded="<<codecName;
-    Q_UNUSED(codecName);
-    return false;
+    m_formats.clear();
+    qDebug() << "S60CameraSession::updateImageCaptureCodecs";
+    if (m_cameraEngine && queryCurrentCameraInfo()) {
+
+        TUint32 supportedFormats = m_info.iImageFormatsSupported;
+        QStringList allFormats = formatMap().keys();
+        int formatMask = 1;
+
+        for ( int i = 0; i < allFormats.count() ; ++i ) {
+            if ( supportedFormats & formatMask ) {
+                qDebug() << "S60CameraSession::updateImageCaptureCodecs, adding format="+allFormats.at(i);
+                m_formats << i; // store index of supported format
+            }
+
+            formatMask <<= 1;
+        }
+    }
 }
 
-QString S60CameraSession::imageCaptureCodecDescription(const QString &codecName) const
+QString S60CameraSession::imageCaptureCodec()
+{
+    qDebug() << "S60CameraSession::imageCaptureCodec";
+    return formatMap().key(m_currentcodec);
+}
+void S60CameraSession::setImageCaptureCodec(const QString &codecName)
+{
+    qDebug() << "S60CameraSession::setImageCaptureCodec, coded="<<codecName;
+    m_currentcodec = static_cast<CCamera::TFormat>( formatMap().value(codecName) );
+}
+
+QString S60CameraSession::imageCaptureCodecDescription(const QString &codecName)
 {
     qDebug() << "S60CameraSession::imageCaptureCodecDescription, codename="<<codecName;
-    Q_UNUSED(codecName);
-    return QString();
+    return formatDescMap().key(formatMap().value(codecName));
 }
 
 QtMedia::EncodingQuality S60CameraSession::captureQuality() const
 {
     qDebug() << "S60CameraSession::CaptureQuality";
-    return m_quality;
+    if (m_imageQuality <= 1) {
+        return QtMedia::VeryLowQuality;
+    }
+    else
+        return static_cast<QtMedia::EncodingQuality> (m_imageQuality / KSymbianImageQualityCoefficient);
+
 }
 
 void S60CameraSession::setCaptureQuality(QtMedia::EncodingQuality quality)
 {
     qDebug() << "S60CameraSession::setCaptureQuality, EncodingQuality="<<quality;
-    m_quality = quality;
+    switch (quality) {
+    case QtMedia::VeryLowQuality:
+        m_imageQuality = 1;
+        break;
+    default:
+        m_imageQuality = quality * KSymbianImageQualityCoefficient;
+        break;
+    }
+    if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
+        camera->SetJpegQuality(m_imageQuality);
+        camera = NULL;
+    }
+     
 }
 
 void S60CameraSession::setVideoRenderer(QObject *videoOutput)

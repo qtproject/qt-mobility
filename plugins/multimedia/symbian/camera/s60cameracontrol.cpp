@@ -68,11 +68,8 @@ S60CameraControl::~S60CameraControl()
 
 void S60CameraControl::start()
 {
-    // start the default (primary camera)
-    // this is also called with enable preview.
-    if (m_session->startCamera()) {
-        //TODO fix error code
-        emit error(-1, QLatin1String("Unable to start camera or no cameras in devices"));
+    if (m_session) {
+        m_session->startCamera();
     }
         
 }
@@ -80,7 +77,6 @@ void S60CameraControl::stop()
 {
     if (m_session)
         m_session->stopCamera();
-
 }
 
 QCamera::State S60CameraControl::state() const
