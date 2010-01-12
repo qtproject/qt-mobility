@@ -289,7 +289,10 @@ determining the feature support:
         \o Symbian Platform & S60 3.2+
         \o This platform enjoys the most comprehensive feature set. In addition to the features support by the S60 3.1 Network roaming is supported.
     \row
-        \o All other platforms (*nix, Mac OS\unicode{0xAE}, Windows Mobile)
+        \o Mac OS\unicode{0xAE}
+        \o This platform has full support by way of CoreWLAN offered in Mac OS 10.6. Previous versions of Mac OS - 10.5 and 10.4 have limited support. 
+    \row
+        \o All other platforms (*nix, Windows Mobile)
         \o This backend is the fallback for all platforms supports network interface notifications via active polling only.
 \endtable
 
