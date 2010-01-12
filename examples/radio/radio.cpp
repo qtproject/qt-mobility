@@ -59,6 +59,9 @@ Radio::Radio()
     QWidget *window = new QWidget;
     QVBoxLayout* layout = new QVBoxLayout;
     QHBoxLayout* buttonBar = new QHBoxLayout;
+#if defined Q_OS_SYMBIAN // this is so that we can see all buttons also in 3.1 devices, where the screens are smaller..
+    QHBoxLayout* buttonBar2 = new QHBoxLayout;
+#endif
     QHBoxLayout* topBar = new QHBoxLayout;
 
     layout->addLayout(topBar);
@@ -73,12 +76,18 @@ Radio::Radio()
 
     volumeSlider = new QSlider(Qt::Vertical,this);
     volumeSlider->setRange(0,100);
+#if defined Q_OS_SYMBIAN
+    volumeSlider->setRange(0,10);
+#endif
     qWarning()<<radio->volume();
     volumeSlider->setValue(radio->volume());
     connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
     topBar->addWidget(volumeSlider);
 
     layout->addLayout(buttonBar);
+#if defined Q_OS_SYMBIAN
+    layout->addLayout(buttonBar2);
+#endif
 
     searchLeft = new QPushButton;
     searchLeft->setText(tr("scan Down"));
@@ -88,12 +97,20 @@ Radio::Radio()
     left = new QPushButton;
     left->setText(tr("Freq Down"));
     connect(left,SIGNAL(clicked()),SLOT(freqDown()));
+#if defined Q_OS_SYMBIAN
+    buttonBar2->addWidget(left);
+#else
     buttonBar->addWidget(left);
-
+#endif
+    
     right = new QPushButton;
     connect(right,SIGNAL(clicked()),SLOT(freqUp()));
     right->setText(tr("Freq Up"));
+#if defined Q_OS_SYMBIAN
+    buttonBar2->addWidget(right);
+#else
     buttonBar->addWidget(right);
+#endif
 
     searchRight = new QPushButton;
     searchRight->setText(tr("scan Up"));
@@ -142,11 +159,10 @@ void Radio::freqChanged(int)
 
 void Radio::signalChanged(int)
 {
-  /*  if(radio->signalStrength() > 25)
-        signal->setText(tr("Got Signal"));
+    if(radio->signalStrength() > 25)
+    	signal->setText(tr("Got Signal"));
     else
-        signal->setText(tr("No Signal"));*/
-	signal->setText(QString("Signal %1").arg(radio->signalStrength()));
+    	signal->setText(tr("No Signal"));
 }
 
 void Radio::updateVolume(int v)
