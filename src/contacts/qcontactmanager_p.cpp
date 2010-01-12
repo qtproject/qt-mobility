@@ -319,7 +319,10 @@ void QContactManagerData::loadFactories()
 
             /* Debugging */
             if (!f && !g) {
-                qDebug() << "Unknown plugin:" << qpl.errorString() << " [qobject:" << qpl.instance() << "]";
+                qDebug() << "Unknown plugin:" << qpl.errorString();
+                if (qpl.instance()) {
+                    qDebug() << "[qobject:" << qpl.instance() << "]";
+                }
             }
         }
         
