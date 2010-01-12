@@ -60,23 +60,16 @@
 #include <QSharedData>
 #include <QList>
 
+class QTextCodec;
+
 QTM_BEGIN_NAMESPACE
 
 class QVersitDocumentPrivate : public QSharedData
 {
 public:
-    QVersitDocumentPrivate() 
-        : QSharedData(),
-        mVersitType(QVersitDocument::InvalidType)
-    {
-    }
+    QVersitDocumentPrivate();
     
-    QVersitDocumentPrivate(const QVersitDocumentPrivate& other) 
-        : QSharedData(other),
-        mVersitType(other.mVersitType),
-        mProperties(other.mProperties)
-    {
-    }    
+    QVersitDocumentPrivate(const QVersitDocumentPrivate& other);
     
     ~QVersitDocumentPrivate()
     {
@@ -84,6 +77,7 @@ public:
 
     QVersitDocument::VersitType mVersitType;
     QList<QVersitProperty> mProperties;
+    QTextCodec* mDefaultCodec;
 };
 
 QTM_END_NAMESPACE

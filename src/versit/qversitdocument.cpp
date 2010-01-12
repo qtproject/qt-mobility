@@ -43,6 +43,8 @@
 #include "qversitdocument_p.h"
 #include "qmobilityglobal.h"
 
+#include <QTextCodec>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -151,6 +153,27 @@ void QVersitDocument::removeAllProperties(const QString& name)
 QList<QVersitProperty> QVersitDocument::properties() const
 {
     return d->mProperties;
+}
+
+/*!
+ * Sets the codec to use for properties that cannot be encoded with the
+ * general codec used by the writer.
+ */
+void QVersitDocument::setCodec(QTextCodec *codec)
+{
+    if (codec != NULL) {
+        d->mDefaultCodec = codec;
+    } else {
+        d->mDefaultCodec = QTextCodec::codecForName("UTF-8");
+    }
+}
+
+/*!
+ * Returns the document's codec.
+ */
+QTextCodec* QVersitDocument::codec()
+{
+    return d->mDefaultCodec;
 }
 
 /*!

@@ -41,6 +41,7 @@ PRIVATE_HEADERS += qversitdocument_p.h \
 
 # Implementation
 SOURCES += qversitdocument.cpp \
+    qversitdocument_p.cpp \
     qversitdocumentwriter_p.cpp \
     qversitproperty.cpp \
     qversitreader.cpp \

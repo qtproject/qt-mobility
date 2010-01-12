@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,58 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITDOCUMENT_H
-#define QVERSITDOCUMENT_H
+#include "qversitdocument_p.h"
 
-#include "qmobilityglobal.h"
-
-#include <QList>
-#include <QSharedDataPointer>
-
-class QTextCodec;
+#include <QTextCodec>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitDocumentPrivate;
-class QVersitProperty;
-
-class Q_VERSIT_EXPORT QVersitDocument
+QVersitDocumentPrivate::QVersitDocumentPrivate()
+    : QSharedData(),
+    mVersitType(QVersitDocument::InvalidType),
+    mDefaultCodec(QTextCodec::codecForName("UTF-8"))
 {
-public:
-    QVersitDocument();
-    QVersitDocument(const QVersitDocument& other);
-    ~QVersitDocument();
+}
 
-    QVersitDocument& operator=(const QVersitDocument& other);
-    bool operator==(const QVersitDocument& other);
-    bool operator!=(const QVersitDocument& other);
-    
-    /*! Versit document type */
-    enum VersitType {
-        InvalidType,
-        VCard21Type,   // vCard version 2.1
-        VCard30Type    // vCard version 3.0 (RFC 2426)
-    };
-
-    // metadata about the versit document itself.
-    void setVersitType(VersitType type);
-    VersitType versitType() const;
-
-    void addProperty(const QVersitProperty& property);
-    void removeProperty(const QVersitProperty& property);
-    void removeAllProperties(const QString& name);
-    QList<QVersitProperty> properties() const;
-
-    void setCodec(QTextCodec* codec);
-    QTextCodec* codec();
-
-    bool isEmpty() const;
-
-private:
-    
-    QSharedDataPointer<QVersitDocumentPrivate> d;
-};
+QVersitDocumentPrivate::QVersitDocumentPrivate(const QVersitDocumentPrivate& other)
+    : QSharedData(other),
+    mVersitType(other.mVersitType),
+    mProperties(other.mProperties),
+    mDefaultCodec(other.mDefaultCodec)
+{
+}
 
 QTM_END_NAMESPACE
-
-#endif // QVERSITDOCUMENT_H
