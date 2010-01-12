@@ -55,16 +55,16 @@ class QAccelerometerReadingData : public QSharedData
 public:
     QAccelerometerReadingData()
         : timestamp(), x(0), y(0), z(0) {}
-    QAccelerometerReadingData(QDateTime _timestamp, float _x, float _y, float _z)
+    QAccelerometerReadingData(QDateTime _timestamp, qreal _x, qreal _y, qreal _z)
         : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
     QAccelerometerReadingData(const QAccelerometerReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
     ~QAccelerometerReadingData() {}
 
     QDateTime timestamp;
-    float x;
-    float y;
-    float z;
+    qreal x;
+    qreal y;
+    qreal z;
 };
 
 // =====================================================================
@@ -74,16 +74,16 @@ class Q_SENSORS_EXPORT QAccelerometerReading
 public:
     explicit QAccelerometerReading()
     { d = new QAccelerometerReadingData; }
-    explicit QAccelerometerReading(QDateTime timestamp, float x, float y, float z)
+    explicit QAccelerometerReading(QDateTime timestamp, qreal x, qreal y, qreal z)
     { d = new QAccelerometerReadingData(timestamp, x, y, z); }
     QAccelerometerReading(const QAccelerometerReading &other)
         : d(other.d) {}
     ~QAccelerometerReading() {}
 
     QDateTime timestamp() const { return d->timestamp; }
-    float x() const { return d->x; }
-    float y() const { return d->y; }
-    float z() const { return d->z; }
+    qreal x() const { return d->x; }
+    qreal y() const { return d->y; }
+    qreal z() const { return d->z; }
 
 private:
     QSharedDataPointer<QAccelerometerReadingData> d;

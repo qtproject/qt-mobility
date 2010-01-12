@@ -54,15 +54,15 @@ class QCompassReadingData : public QSharedData
 {
 public:
     QCompassReadingData()
-        : timestamp(), heading(0), calibrated(false) {}
-    QCompassReadingData(QDateTime _timestamp, float _heading, bool _calibrated)
-        : timestamp(_timestamp), heading(_heading), calibrated(_calibrated) {}
+        : timestamp(), azimuth(0), calibrated(false) {}
+    QCompassReadingData(QDateTime _timestamp, qreal _azimuth, bool _calibrated)
+        : timestamp(_timestamp), azimuth(_azimuth), calibrated(_calibrated) {}
     QCompassReadingData(const QCompassReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), heading(other.heading), calibrated(other.calibrated) {}
+        : QSharedData(other), timestamp(other.timestamp), azimuth(other.azimuth), calibrated(other.calibrated) {}
     ~QCompassReadingData() {}
 
     QDateTime timestamp;
-    float heading;
+    qreal azimuth;
     bool calibrated;
 };
 
@@ -73,14 +73,14 @@ class Q_SENSORS_EXPORT QCompassReading
 public:
     explicit QCompassReading()
     { d = new QCompassReadingData; }
-    explicit QCompassReading(QDateTime timestamp, float heading, bool calibrated)
-    { d = new QCompassReadingData(timestamp, heading, calibrated); }
+    explicit QCompassReading(QDateTime timestamp, qreal azimuth, bool calibrated)
+    { d = new QCompassReadingData(timestamp, azimuth, calibrated); }
     QCompassReading(const QCompassReading &other)
         : d(other.d) {}
     ~QCompassReading() {}
 
     QDateTime timestamp() const { return d->timestamp; }
-    float heading() const { return d->heading; }
+    qreal azimuth() const { return d->azimuth; }
     bool isCalibrated() const { return d->calibrated; }
 
 private:
@@ -107,7 +107,7 @@ public:
     QCompassReading currentReading() const { return m_backend->currentReading(); }
 
 Q_SIGNALS:
-    void headingChanged(const QCompassReading &reading);
+    void azimuthChanged(const QCompassReading &reading);
 
 protected:
     QSensorBackend *backend() const { return m_backend; }
@@ -115,7 +115,7 @@ protected:
 private:
     void newReadingAvailable()
     {
-        emit headingChanged(currentReading());
+        emit azimuthChanged(currentReading());
     }
 
     QCompassBackend *m_backend;

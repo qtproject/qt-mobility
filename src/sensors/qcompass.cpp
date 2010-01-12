@@ -51,12 +51,12 @@ QTM_BEGIN_NAMESPACE
     \brief The QCompassReading class represents one reading from a
            compass.
 
-    The compass returns the heading of the device as degrees from
+    The compass returns the azimuth of the device as degrees from
     magnetic north in a clockwise direction based on the top of the device.
     Note that the top of the device is a fixed point and may not represent the
     orientation that the user is holding the device in.
     There is also a value to indicate the calibration status of the device.
-    If the device is not calibrated the heading may not be accurate.
+    If the device is not calibrated the azimuth may not be accurate.
 
     Digital compasses are highly susceptible to magnetic interference and
     may need calibration after being placed near anything that emits a magnetic
@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QCompassReading::QCompassReading(QDateTime timestamp, float heading, bool calibrated)
+    \fn QCompassReading::QCompassReading(QDateTime timestamp, qreal azimuth, bool calibrated)
     \internal
 */
 
@@ -90,9 +90,9 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QCompassReading::heading() const
+    \fn QCompassReading::azimuth() const
 
-    Returns the heading of the device.
+    Returns the azimuth of the device.
 */
 
 /*!
@@ -110,14 +110,14 @@ QTM_BEGIN_NAMESPACE
     \ingroup sensors
 
     \preliminary
-    \brief The QCompass class reports on the heading of the device.
+    \brief The QCompass class reports on the azimuth of the device.
 
-    The compass returns the heading of the device as degrees from
+    The compass returns the azimuth of the device as degrees from
     magnetic north in a clockwise direction based on the top of the device.
     Note that the top of the device is a fixed point and may not represent the
     orientation that the user is holding the device in.
     There is also a value to indicate the calibration status of the device.
-    If the device is not calibrated the heading may not be accurate.
+    If the device is not calibrated the azimuth may not be accurate.
 
     Digital compasses are highly susceptible to magnetic interference and
     may need calibration after being placed near anything that emits a magnetic
@@ -165,7 +165,7 @@ const QString QCompass::typeId("qt.Compass");
 */
 
 /*!
-    \fn QCompass::headingChanged(const QCompassReading &reading)
+    \fn QCompass::azimuthChanged(const QCompassReading &reading)
 
     This signal is emitted when a new compass \a reading comes in.
 */

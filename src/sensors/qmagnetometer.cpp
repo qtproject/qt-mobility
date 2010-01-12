@@ -81,7 +81,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMagnetometerReading::QMagnetometerReading(QDateTime timestamp, float x, float y, float z)
+    \fn QMagnetometerReading::QMagnetometerReading(QDateTime timestamp, qreal x, qreal y, qreal z)
     \internal
 */
 

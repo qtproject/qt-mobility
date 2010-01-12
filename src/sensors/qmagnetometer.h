@@ -55,16 +55,16 @@ class QMagnetometerReadingData : public QSharedData
 public:
     QMagnetometerReadingData()
         : timestamp(), x(0), y(0), z(0) {}
-    QMagnetometerReadingData(QDateTime _timestamp, float _x, float _y, float _z)
+    QMagnetometerReadingData(QDateTime _timestamp, qreal _x, qreal _y, qreal _z)
         : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
     QMagnetometerReadingData(const QMagnetometerReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
     ~QMagnetometerReadingData() {}
 
     QDateTime timestamp;
-    float x;
-    float y;
-    float z;
+    qreal x;
+    qreal y;
+    qreal z;
 };
 
 // =====================================================================
@@ -74,16 +74,16 @@ class Q_SENSORS_EXPORT QMagnetometerReading
 public:
     explicit QMagnetometerReading()
     { d = new QMagnetometerReadingData; }
-    explicit QMagnetometerReading(QDateTime timestamp, float x, float y, float z)
+    explicit QMagnetometerReading(QDateTime timestamp, qreal x, qreal y, qreal z)
     { d = new QMagnetometerReadingData(timestamp, x, y, z); }
     QMagnetometerReading(const QMagnetometerReading &other)
         : d(other.d) {}
     ~QMagnetometerReading() {}
 
     QDateTime timestamp() const { return d->timestamp; }
-    float x() const { return d->x; }
-    float y() const { return d->y; }
-    float z() const { return d->z; }
+    qreal x() const { return d->x; }
+    qreal y() const { return d->y; }
+    qreal z() const { return d->z; }
 
 private:
     QSharedDataPointer<QMagnetometerReadingData> d;
