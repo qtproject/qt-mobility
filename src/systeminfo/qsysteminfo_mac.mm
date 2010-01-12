@@ -192,9 +192,11 @@ inline NSString *qstringToNSString(const QString &qstr)
 @end
 #endif
 
-        QTM_BEGIN_NAMESPACE
-QNSListener *listener;
+QTM_BEGIN_NAMESPACE
 
+#ifdef MAC_SDK_10_6
+QNSListener *listener;
+#endif
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
