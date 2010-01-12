@@ -441,10 +441,9 @@ void S60RadioTunerControl::MrftoFrequencyRangeChange(TFmRadioFrequencyRange aBan
 
 void S60RadioTunerControl::MrftoFrequencyChange(TInt aNewFrequency)
 {
-	if (aNewFrequency != m_currentFreq) {
-		m_currentFreq = aNewFrequency;
-		emit frequencyChanged(m_currentFreq);
-	}
+	m_currentFreq = aNewFrequency;
+	emit frequencyChanged(m_currentFreq);
+
 	int signal = signalStrength();
 	if (m_signal != signal) {
 		emit signalStrengthChanged(signal);

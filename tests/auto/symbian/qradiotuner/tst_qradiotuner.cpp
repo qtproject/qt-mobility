@@ -49,6 +49,8 @@
 #include <qradiotunercontrol.h>
 #include <qradiotuner.h>
 
+#include <QMessageBox>
+
 QTM_USE_NAMESPACE
 
 class tst_QRadioTuner: public QObject
@@ -67,7 +69,6 @@ private slots:
     void testVolume();
     void testSignal();
     void testStereo();
-    void testFunctionalitiesGenerally();
 
 private:
     QRadioTuner    *radio;
@@ -83,7 +84,7 @@ void tst_QRadioTuner::initTestCase()
 
     QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
 
-    QCOMPARE(radio->state(), QRadioTuner::StoppedState);    
+    QCOMPARE(radio->state(), QRadioTuner::StoppedState); 
     radio->start();
     QCOMPARE(radio->state(), QRadioTuner::ActiveState);
 
@@ -192,116 +193,6 @@ void tst_QRadioTuner::testStereo()
     QVERIFY(radio->isStereo());
     radio->setStereoMode(QRadioTuner::ForceMono);
     QVERIFY(radio->stereoMode() == QRadioTuner::ForceMono);
-}
-
-void tst_QRadioTuner::testFunctionalitiesGenerally()
-{
-    // TODO: Check states with QSignalSpy
-    // Stop radio
-    radio->stop();
-    QTestEventLoop::instance().enterLoop(1);
-    QCOMPARE(radio->state(), QRadioTuner::StoppedState);
-    // Start radio and verify
-    radio->start();
-    QCOMPARE(radio->state(), QRadioTuner::ActiveState);
-    // Stop radio again and verify
-    radio->stop();
-    QTestEventLoop::instance().enterLoop(1);
-    QCOMPARE(radio->state(), QRadioTuner::StoppedState);
-    // Start radio again and verify
-    radio->start();
-    QCOMPARE(radio->state(), QRadioTuner::ActiveState);
-
-    // Set volume 85 and verify
-    radio->setVolume(85);
-    QVERIFY(radio->volume() == 85);
-    // Set volume 50 and verify
-    radio->setVolume(50);
-    QVERIFY(radio->volume() == 50);
-
-    // Test searching and verify
-    {
-            QSignalSpy readSignal(radio, SIGNAL(searchingChanged(bool)));
-            QVERIFY(!radio->isSearching());
-
-            radio->searchForward();
-            QVERIFY(radio->isSearching());
-            QVERIFY(readSignal.count() == 1);
-
-            radio->cancelSearch();
-            QTestEventLoop::instance().enterLoop(1);
-            QVERIFY(!radio->isSearching());
-            QVERIFY(readSignal.count() == 2);
-
-            radio->searchBackward();
-            QVERIFY(radio->isSearching());
-            QVERIFY(readSignal.count() == 3);
-
-            radio->cancelSearch();
-            QVERIFY(!radio->isSearching());
-    }
-
-    // Test setMuted
-    {
-        QSignalSpy readSignal(radio, SIGNAL(mutedChanged(bool)));
-        radio->setMuted(true);
-        QTestEventLoop::instance().enterLoop(1);
-        QVERIFY(radio->isMuted());
-        QVERIFY(readSignal.count() == 1);
-        radio->setMuted(true);
-        QTestEventLoop::instance().enterLoop(1);
-        QVERIFY(radio->isMuted());
-        QVERIFY(readSignal.count() == 2);
-        // Set back to not muted
-        radio->setMuted(false);
-        QTestEventLoop::instance().enterLoop(1);
-        QVERIFY(radio->isMuted());
-        QVERIFY(readSignal.count() == 3);
-    }
-
-    // Test searching after mute and verify
-    {
-            QSignalSpy readSignal(radio, SIGNAL(searchingChanged(bool)));
-            QVERIFY(!radio->isSearching());
-
-            radio->searchForward();
-            QVERIFY(radio->isSearching());
-            QVERIFY(readSignal.count() == 1);
-
-            radio->cancelSearch();
-            QTestEventLoop::instance().enterLoop(1);
-            QVERIFY(!radio->isSearching());
-            QVERIFY(readSignal.count() == 2);
-
-            radio->searchBackward();
-            QVERIFY(radio->isSearching());
-            QVERIFY(readSignal.count() == 3);
-
-            radio->cancelSearch();
-            QVERIFY(!radio->isSearching());
-    }
-
-    // Test searching after mute and verify
-    {
-            QSignalSpy readSignal(radio, SIGNAL(searchingChanged(bool)));
-            QVERIFY(!radio->isSearching());
-
-            radio->searchForward();
-            QVERIFY(radio->isSearching());
-            QVERIFY(readSignal.count() == 1);
-
-            radio->cancelSearch();
-            QTestEventLoop::instance().enterLoop(1);
-            QVERIFY(!radio->isSearching());
-            QVERIFY(readSignal.count() == 2);
-
-            radio->searchBackward();
-            QVERIFY(radio->isSearching());
-            QVERIFY(readSignal.count() == 3);
-
-            radio->cancelSearch();
-            QVERIFY(!radio->isSearching());
-    }
 }
 
 QTEST_MAIN(tst_QRadioTuner)
