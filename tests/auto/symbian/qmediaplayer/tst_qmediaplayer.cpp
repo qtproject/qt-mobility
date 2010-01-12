@@ -491,7 +491,7 @@ void tst_QMediaPlayer::testMuted()
         player.setVolume(volume);
         QVERIFY(player.isMuted() == muted);
 
-        QSignalSpy spy(&player, SIGNAL(mutingChanged(bool)));
+        QSignalSpy spy(&player, SIGNAL(mutedChanged(bool)));
         player.setMuted(!muted);
         QCOMPARE(player.isMuted(), !muted);
         QCOMPARE(player.volume(), volume);
