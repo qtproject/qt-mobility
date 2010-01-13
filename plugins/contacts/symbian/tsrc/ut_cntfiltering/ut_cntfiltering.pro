@@ -22,7 +22,10 @@ symbian:
                
             
     SOURCES += $$SYMBIAN_SOURCES \
-               ut_cntfiltering.cpp              
+               ut_cntfiltering.cpp
+
+    CONFIG += mobility
+    MOBILITY = contacts
 
     TARGET.CAPABILITY = ALL \
         -TCB

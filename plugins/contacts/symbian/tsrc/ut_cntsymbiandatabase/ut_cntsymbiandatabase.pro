@@ -26,11 +26,13 @@ symbian:
             mock_cntdb.cpp \
             ../../src/cntsymbiandatabase.cpp \
             ../../src/cntsymbiantransformerror.cpp
+
+    CONFIG += mobility
+    MOBILITY = contacts
             
     TARGET.CAPABILITY = ALL \
         -TCB
         
     LIBS += \
-        -lcntmodel \
-        -lQtContacts
+        -lcntmodel
 }

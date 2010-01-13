@@ -33,13 +33,15 @@ symbian:
 	            ../../src/cntsymbiantransformerror.cpp \ 
 				../../src/cntrelationship.cpp \
 				../../src/cntabstractrelationship.cpp \
-      	        ../../src/cntrelationshipgroup.cpp  
+                ../../src/cntrelationshipgroup.cpp
+
+    CONFIG += mobility
+    MOBILITY = contacts
  
       
 	TARGET.CAPABILITY = ALL -TCB
   
   LIBS += \
-  	-lcntmodel \
-  	-lQtContacts 
+        -lcntmodel
 }
 

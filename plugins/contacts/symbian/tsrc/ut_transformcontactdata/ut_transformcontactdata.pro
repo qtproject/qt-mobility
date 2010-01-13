@@ -61,11 +61,13 @@ symbian:
 				../../src/cnttransformnote.cpp \
 				../../src/cnttransformfamily.cpp
 
+    CONFIG += mobility
+    MOBILITY = contacts
+
 	TARGET.CAPABILITY = ALL -TCB
   
     LIBS += \
-           -lcntmodel \
-           -lQtContacts
+           -lcntmodel
 
 	exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
 	    DEFINES += SYMBIAN_BACKEND_USE_SQLITE

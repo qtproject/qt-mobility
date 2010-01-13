@@ -25,6 +25,9 @@ symbian:
     
     SOURCES += $$SYMBIAN_SOURCES \
                ut_cntsymbianengine.cpp
+
+    CONFIG += mobility
+    MOBILITY = contacts
                
             
     TARGET.CAPABILITY = ALL \
