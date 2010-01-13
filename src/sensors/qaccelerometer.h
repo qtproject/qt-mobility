@@ -102,10 +102,11 @@ public:
     QAccelerometerListener();
     virtual ~QAccelerometerListener();
     virtual void accelerationChanged(const QAccelerometerReading &reading) = 0;
+protected:
+    virtual void setSensor(QAccelerometer *sensor);
+    QAccelerometer *sensor() const { return m_sensor; }
 private:
-    void addSensor(QAccelerometer *sensor);
-    void removeSensor(QAccelerometer *sensor);
-    QList<QAccelerometer *> m_sensors;
+    QAccelerometer *m_sensor;
 };
 
 // =====================================================================
@@ -135,7 +136,10 @@ protected:
     QSensorBackend *backend() const { return m_backend; }
 
 private:
-    void newReadingAvailable();
+    void newReadingAvailable()
+    {
+        m_listener->accelerationChanged(currentReading());
+    }
 
     QAccelerometerListener *m_listener;
     QAccelerometerBackend *m_backend;

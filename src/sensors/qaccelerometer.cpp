@@ -43,6 +43,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QSignallingAccelerometerListener;
+
 /*!
     \class QAccelerometerReading
     \ingroup sensors
@@ -151,9 +153,8 @@ QAccelerometerListener::QAccelerometerListener()
 */
 QAccelerometerListener::~QAccelerometerListener()
 {
-    foreach (QAccelerometer *sensor, m_sensors) {
-        sensor->setListener(0);
-    }
+    if (m_sensor)
+        m_sensor->setListener(0);
 }
 
 /*!
@@ -162,15 +163,44 @@ QAccelerometerListener::~QAccelerometerListener()
     This function is called when a new accelerometer \a reading is available.
 */
 
-void QAccelerometerListener::addSensor(QAccelerometer *sensor)
+/*!
+    \internal
+*/
+void QAccelerometerListener::setSensor(QAccelerometer *sensor)
 {
-    m_sensors << sensor;
+    m_sensor = sensor;
 }
 
-void QAccelerometerListener::removeSensor(QAccelerometer *sensor)
+/*!
+    \fn QAccelerometerListener::sensor() const
+    \internal
+*/
+
+// =====================================================================
+
+class QSignallingAccelerometerListener : public QObject, public QAccelerometerListener
 {
-    m_sensors.removeOne(sensor);
-}
+    //friend class QAccelerometer;
+    Q_OBJECT
+public:
+    QSignallingAccelerometerListener()
+    {
+    }
+
+    void setSensor(QAccelerometer *_sensor)
+    {
+        if (sensor())
+            disconnect(this, SIGNAL(accelerationChanged(QAccelerometerReading)), sensor(), SIGNAL(accelerationChanged(QAccelerometerReading)));
+        QAccelerometerListener::setSensor(_sensor);
+        if (_sensor)
+            connect(this, SIGNAL(accelerationChanged(QAccelerometerReading)), _sensor, SIGNAL(accelerationChanged(QAccelerometerReading)));
+        else
+            delete this; // remove us automatically
+    }
+
+signals:
+    void accelerationChanged(const QAccelerometerReading &reading);
+};
 
 // =====================================================================
 
@@ -221,6 +251,7 @@ QAccelerometer::QAccelerometer(QObject *parent, const QSensorId &identifier)
     , m_listener(0)
 {
     m_backend = static_cast<QAccelerometerBackend*>(connectToBackend(identifier));
+    setListener(0);
 }
 
 /*!
@@ -230,7 +261,7 @@ QAccelerometer::~QAccelerometer()
 {
     stop();
     if (m_listener)
-        m_listener->removeSensor(this);
+        m_listener->setSensor(0);
 }
 
 /*!
@@ -255,16 +286,21 @@ const QString QAccelerometer::typeId("qt.Accelerometer");
 
     Note that the sensor does not take ownership of the listener although
     the listener interface will notify the accelerometer if it is destroyed.
+
+    Also note that setting a listener will prevent the accelerationChanged()
+    signal from being emitted.
 */
 void QAccelerometer::setListener(QAccelerometerListener *listener)
 {
     if (listener == m_listener)
         return;
     if (m_listener)
-        m_listener->removeSensor(this);
+        m_listener->setSensor(0);
     if (listener)
-        listener->addSensor(this);
-    m_listener = listener;
+        m_listener = listener;
+    else
+        m_listener = new QSignallingAccelerometerListener;
+    m_listener->setSensor(this);
 }
 
 /*!
@@ -276,10 +312,15 @@ void QAccelerometer::setListener(QAccelerometerListener *listener)
 /*!
     \fn QAccelerometer::accelerationChanged(const QAccelerometerReading &reading)
 
-    This signal is emitted when a new accelerometer \a reading comes in.
+    This signal may be emitted when a new accelerometer \a reading comes in.
+
+    This signal is only emitted if no listener has been set. If a listener has been
+    set via setListener() then this signal will not be emitted.
 
     Note that this signal should not be used if you are requesting
     high-frequency updates as signal delivery is quite slow.
+
+    \sa setListener()
 */
 
 /*!
@@ -287,15 +328,7 @@ void QAccelerometer::setListener(QAccelerometerListener *listener)
     \reimp
 */
 
-void QAccelerometer::newReadingAvailable()
-{
-    QAccelerometerReading reading = currentReading();
-    if (m_listener)
-        m_listener->accelerationChanged(reading);
-    // TODO this is apparenlty expensive...
-    emit accelerationChanged(reading);
-}
-
 #include "moc_qaccelerometer.cpp"
+#include "qaccelerometer.moc"
 QTM_END_NAMESPACE
 
