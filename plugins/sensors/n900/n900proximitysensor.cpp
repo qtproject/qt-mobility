@@ -45,7 +45,7 @@
 
 n900proximitysensor::n900proximitysensor()
     : m_timerid(0)
-    , m_filename("/sys/bus/platform/devices/proximity/state")
+    , m_filename(PROXIMITY_FILE)
 {
 }
 

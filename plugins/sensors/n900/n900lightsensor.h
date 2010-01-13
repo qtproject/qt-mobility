@@ -44,6 +44,8 @@
 
 #include <qambientlightsensor.h>
 
+#define LIGHTSENSOR_FILE "/sys/class/i2c-adapter/i2c-2/2-0029/lux"
+
 QTM_USE_NAMESPACE
 
 class n900lightsensor : public QAmbientLightBackend

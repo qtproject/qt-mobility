@@ -45,11 +45,29 @@
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
+#include <QFile>
 #include <QDebug>
 
-CREATE_FUNC(n900accelerometer)
-CREATE_FUNC(n900lightsensor)
-CREATE_FUNC(n900proximitysensor)
+static QSensorBackend *create_sensor_backend_n900accelerometer()
+{
+    if (QFile::exists(ACCELEROMETER_FILE))
+        return new n900accelerometer();
+    return 0;
+}
+
+static QSensorBackend *create_sensor_backend_n900lightsensor()
+{
+    if (QFile::exists(LIGHTSENSOR_FILE))
+        return new n900lightsensor();
+    return 0;
+}
+
+static QSensorBackend *create_sensor_backend_n900proximitysensor()
+{
+    if (QFile::exists(PROXIMITY_FILE))
+        return new n900proximitysensor();
+    return 0;
+}
 
 class n900SensorPlugin : public QObject, public QSensorPluginInterface
 {

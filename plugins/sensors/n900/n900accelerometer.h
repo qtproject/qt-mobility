@@ -44,6 +44,8 @@
 
 #include <qaccelerometer.h>
 
+#define ACCELEROMETER_FILE "/sys/class/i2c-adapter/i2c-3/3-001d/coord"
+
 QTM_USE_NAMESPACE
 
 class n900accelerometer : public QAccelerometerBackend

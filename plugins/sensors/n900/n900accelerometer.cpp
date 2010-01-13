@@ -44,7 +44,7 @@
 
 n900accelerometer::n900accelerometer()
     : m_timerid(0)
-    , m_filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord")
+    , m_filename(ACCELEROMETER_FILE)
 {
 }
 

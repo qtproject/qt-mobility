@@ -44,7 +44,7 @@
 
 n900lightsensor::n900lightsensor()
     : m_timerid(0)
-    , m_filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux")
+    , m_filename(LIGHTSENSOR_FILE)
 {
 }
 

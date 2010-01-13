@@ -44,6 +44,8 @@
 
 #include <qproximitysensor.h>
 
+#define PROXIMITY_FILE "/sys/bus/platform/devices/proximity/state"
+
 QTM_USE_NAMESPACE
 
 class n900proximitysensor : public QProximityBackend
