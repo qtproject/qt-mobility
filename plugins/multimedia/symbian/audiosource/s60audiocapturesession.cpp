@@ -443,16 +443,16 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
             {
                 if(aPreviousState == CMdaAudioClipUtility::ENotReady)
                 {
-					RArray<TUint> aSupportedSampleRates;
-					m_recorderUtility->GetSupportedSampleRatesL(aSupportedSampleRates);
+					RArray<TUint> supportedSampleRates;
+					m_recorderUtility->GetSupportedSampleRatesL(supportedSampleRates);
 					
-					for (TInt i = 0; i < aSupportedSampleRates.Count(); i++ ) {
-						if (aSupportedSampleRates[i] == m_format.frequency()) {
+					for (TInt i = 0; i < supportedSampleRates.Count(); i++ ) {
+						if (supportedSampleRates[i] == m_format.frequency()) {
 							TRAPD(err, m_recorderUtility->SetDestinationSampleRateL(m_format.frequency()));
 							qWarning() << err;							
 						}
 					}
-					 
+					
 					//set channels 
 					TRAPD(error, m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels()));
 
