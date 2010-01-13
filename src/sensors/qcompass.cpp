@@ -58,9 +58,9 @@ QTM_BEGIN_NAMESPACE
     There is also a value to indicate the calibration status of the device.
     If the device is not calibrated the azimuth may not be accurate.
 
-    Digital compasses are highly susceptible to magnetic interference and
-    may need calibration after being placed near anything that emits a magnetic
-    force.
+    Digital compasses are susceptible to magnetic interference and may need
+    calibration after being placed near anything that emits a magnetic force.
+    Accuracy of the compass can be affected by any ferrous materials that are nearby.
 */
 
 /*!
