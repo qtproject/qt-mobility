@@ -199,7 +199,10 @@ bool CntTransformOnlineAccount::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldSIPID.iUid ||
-        fieldType == KUidContactFieldIMPP.iUid )
+        fieldType == KUidContactFieldIMPP.iUid  ||
+        fieldType == KUidContactFieldServiceProvider.iUid  ||
+        fieldType == KUidContactFieldPresence.iUid  ||
+        fieldType == KUidContactFieldStatusMsg.iUid )         
     {
         ret = true;
     }
