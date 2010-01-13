@@ -15,10 +15,16 @@ INCLUDEPATH += ../../inc
 symbian:
  { 
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-    
+
     # Input
-    HEADERS += performance.h
-    SOURCES += performance.cpp
+    HEADERS += $$SYMBIAN_HEADERS \
+               performance.h
+    SOURCES += $$SYMBIAN_SOURCES \
+               performance.cpp
+
+    CONFIG += mobility
+    MOBILITY = contacts
+
     TARGET.CAPABILITY = ALL \
         -TCB    
     LIBS += \
