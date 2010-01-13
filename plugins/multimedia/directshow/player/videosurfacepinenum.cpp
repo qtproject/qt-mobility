@@ -68,6 +68,8 @@ HRESULT VideoSurfacePinEnum::QueryInterface(REFIID riid, void **ppvObject)
 
         return S_OK;
     } else {
+        *ppvObject = 0;
+
         return E_NOINTERFACE;
     }
 }

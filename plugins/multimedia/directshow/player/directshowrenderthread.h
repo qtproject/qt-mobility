@@ -60,7 +60,7 @@ public:
 
     void shutdown();
 
-    void load(const QUrl &url, IGraphBuilder *graph);
+    void load(const QUrl &url, QIODevice *stream, IFilterGraph2 *graph);
 
     void setAudioOutput(IBaseFilter *filter);
     void setVideoOutput(IBaseFilter *filter);
@@ -103,8 +103,8 @@ private:
     int m_pendingTasks;
     int m_executingTask;
     int m_executedTasks;
-    IGraphBuilder *m_graph;
-    ICaptureGraphBuilder2 *m_builder;
+    QIODevice *m_stream;
+    IFilterGraph2 *m_graph;
     IBaseFilter *m_source;
     IBaseFilter *m_audioOutput;
     IBaseFilter *m_videoOutput;

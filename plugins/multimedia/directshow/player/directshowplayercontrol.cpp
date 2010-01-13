@@ -77,6 +77,7 @@ DirectShowPlayerControl::DirectShowPlayerControl(DirectShowPlayerService *servic
     , m_state(QMediaPlayer::StoppedState)
     , m_status(QMediaPlayer::UnknownMediaStatus)
     , m_muteVolume(-1)
+    , m_stream(0)
 {
 }
 
@@ -247,14 +248,15 @@ QMediaContent DirectShowPlayerControl::media() const
 
 const QIODevice *DirectShowPlayerControl::mediaStream() const
 {
-    return 0;
+    return m_stream;
 }
 
-void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *)
+void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *stream)
 {
     m_media = media;
+    m_stream = stream;
 
-    m_service->load(media);
+    m_service->load(media, stream);
 }
 
 void DirectShowPlayerControl::play()

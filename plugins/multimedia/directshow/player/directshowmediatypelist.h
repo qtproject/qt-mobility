@@ -39,40 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef VIDEOSURFACEMEDIATYPEENUM_H
-#define VIDEOSURFACEMEDIATYPEENUM_H
+#ifndef DIRECTSHOWMEDIATYPELIST_H
+#define DIRECTSHOWMEDIATYPELIST_H
 
 #include <QtCore/qvector.h>
-#include <QtMultimedia/qvideoframe.h>
 
 #include <dshow.h>
 
-class VideoSurfaceFilter;
-
-class VideoSurfaceMediaTypeEnum : public IEnumMediaTypes
+class DirectShowMediaTypeList : public IUnknown
 {
 public:
-    VideoSurfaceMediaTypeEnum(VideoSurfaceFilter *filter, int token, int index = 0);
-    ~VideoSurfaceMediaTypeEnum();
+    DirectShowMediaTypeList();
 
-    // IUnknown
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
-    ULONG STDMETHODCALLTYPE AddRef();
-    ULONG STDMETHODCALLTYPE Release();
+    IEnumMediaTypes *createMediaTypeEnum();
 
-    // IEnumMediaTypes
-    HRESULT STDMETHODCALLTYPE Next(
-            ULONG cMediaTypes, AM_MEDIA_TYPE **ppMediaTypes, ULONG *pcFetched);
-    HRESULT STDMETHODCALLTYPE Skip(ULONG cMediaTypes);
-    HRESULT STDMETHODCALLTYPE Reset();
+    void setMediaTypes(const QVector<AM_MEDIA_TYPE> &types);
 
-    HRESULT STDMETHODCALLTYPE Clone(IEnumMediaTypes **ppEnum);
+    virtual int currentMediaTypeToken();
+    virtual HRESULT nextMediaType(
+            int token, int *index, ULONG count, AM_MEDIA_TYPE **types, ULONG *fetchedCount);
+    virtual HRESULT skipMediaType(int token, int *index, ULONG count);
+    virtual HRESULT cloneMediaType(int token, int index, IEnumMediaTypes **enumeration);
 
 private:
-    LONG m_ref;
-    VideoSurfaceFilter *m_filter;
-    int m_token;
-    int m_index;
+    int m_mediaTypeToken;
+    QVector<AM_MEDIA_TYPE> m_mediaTypes;
 };
 
 #endif

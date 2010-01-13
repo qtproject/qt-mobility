@@ -105,6 +105,7 @@ private:
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;
     int m_muteVolume;
+    QIODevice *m_stream;
     QMediaContent m_media;
     long m_loadStatus;
     bool m_buffering;

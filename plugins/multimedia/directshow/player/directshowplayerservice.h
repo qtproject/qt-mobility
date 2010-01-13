@@ -71,10 +71,10 @@ public:
 
     QMediaControl* control(const char *name) const;
 
-    IGraphBuilder *graph() { return m_graph; }
+    IFilterGraph2 *graph() { return m_graph; }
     IBaseFilter *source() { return 0; }
 
-    void load(const QMediaContent &media);
+    void load(const QMediaContent &media, QIODevice *stream);
     void play() { m_renderThread.play(); }
     void pause() { m_renderThread.pause(); }
     void stop() { m_renderThread.stop(); }
@@ -94,7 +94,7 @@ private:
     DirectShowVideoOutputControl *m_videoOutputControl;
     DirectShowVideoRendererControl *m_videoRendererControl;
     DirectShowAudioEndpointControl *m_audioEndpointControl;
-    IGraphBuilder *m_graph;
+    IFilterGraph2 *m_graph;
     DirectShowRenderThread m_renderThread;
     QWinEventNotifier m_graphEventNotifier;
 };

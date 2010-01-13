@@ -105,7 +105,7 @@ QMediaControl *DirectShowPlayerService::control(const char *name) const
         return 0;
 }
 
-void DirectShowPlayerService::load(const QMediaContent &media)
+void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream)
 {
     if (m_graph) {
         m_graphEventNotifier.setEnabled(false);
@@ -119,10 +119,10 @@ void DirectShowPlayerService::load(const QMediaContent &media)
         m_graph = 0;
     }
 
-    if (media.isNull()) {
-        m_renderThread.load(QUrl(), 0);
+    if (media.isNull() && !stream) {
+        m_renderThread.load(QUrl(), 0, 0);
     } else {
-        m_graph = com_new<IGraphBuilder>(CLSID_FilterGraph);
+        m_graph = com_new<IFilterGraph2>(CLSID_FilterGraph);
 
         if (IMediaEventEx *event = com_cast<IMediaEventEx>(m_graph)) {
             HANDLE handle;
@@ -138,7 +138,7 @@ void DirectShowPlayerService::load(const QMediaContent &media)
             event->Release();
         }
 
-        m_renderThread.load(media.canonicalUri(), m_graph);
+        m_renderThread.load(media.canonicalUri(), stream, m_graph);
     }
 }
 

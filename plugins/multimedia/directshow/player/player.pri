@@ -5,6 +5,9 @@ DEFINES += QMEDIA_DIRECTSHOW_PLAYER
 HEADERS += \
         $$PWD\directshowaudioendpointcontrol.h \
         $$PWD\directshowglobal.h \
+        $$PWD\directshowioreader.h \
+        $$PWD\directshowiosource.h \
+        $$PWD\directshowmediatypelist.h \
         $$PWD\directshowmetadatacontrol.h \
         $$PWD\directshowplayercontrol.h \
         $$PWD\directshowplayerservice.h \
@@ -15,11 +18,13 @@ HEADERS += \
         $$PWD\mediasamplevideobuffer.h \
         $$PWD\videosurfacefilter.h \
         $$PWD\videosurfacemediatype.h \
-        $$PWD\videosurfacemediatypeenum.h \
         $$PWD\videosurfacepinenum.h
 
 SOURCES += \
         $$PWD\directshowaudioendpointcontrol.cpp \
+        $$PWD\directshowioreader.cpp \
+        $$PWD\directshowiosource.cpp \
+        $$PWD\directshowmediatypelist.cpp \
         $$PWD\directshowmetadatacontrol.cpp \
         $$PWD\directshowplayercontrol.cpp \
         $$PWD\directshowplayerservice.cpp \
@@ -30,7 +35,6 @@ SOURCES += \
         $$PWD\mediasamplevideobuffer.cpp \
         $$PWD\videosurfacefilter.cpp \
         $$PWD\videosurfacemediatype.cpp \
-        $$PWD\videosurfacemediatypeenum.cpp \
         $$PWD\videosurfacepinenum.cpp
 
 LIBS += -lstrmiids -ldmoguids -luuid -lmsdmo -lole32 -loleaut32

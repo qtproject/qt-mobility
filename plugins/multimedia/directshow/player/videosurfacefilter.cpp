@@ -64,7 +64,6 @@ VideoSurfaceFilter::VideoSurfaceFilter(QAbstractVideoSurface *surface, QObject *
     , m_graph(0)
     , m_peerPin(0)
     , m_bytesPerLine(0)
-    , m_mediaTypeToken(0)
     , m_startResult(S_OK)
     , m_pinId(QString::fromLatin1("reference"))
     , m_sampleScheduler(static_cast<IPin *>(this))
@@ -94,6 +93,8 @@ HRESULT VideoSurfaceFilter::QueryInterface(REFIID riid, void **ppvObject)
     } else if (riid == IID_IMemInputPin) {
         *ppvObject = static_cast<IMemInputPin *>(&m_sampleScheduler);
     } else {
+        *ppvObject = 0;
+
         return E_NOINTERFACE;
     }
 
@@ -119,7 +120,6 @@ ULONG VideoSurfaceFilter::Release()
 HRESULT VideoSurfaceFilter::GetClassID(CLSID *pClassID)
 {
     *pClassID = CLSID_VideoSurfaceFilter;
-    *pClassID = CLSID_NULL;
 
     return S_OK;
 }
@@ -421,7 +421,7 @@ HRESULT VideoSurfaceFilter::EnumMediaTypes(IEnumMediaTypes **ppEnum)
     } else {
         QMutexLocker locker(&m_mutex);
 
-        *ppEnum = new VideoSurfaceMediaTypeEnum(this, m_mediaTypeToken);
+        *ppEnum = createMediaTypeEnum();
 
         return S_OK;
     }
@@ -477,6 +477,10 @@ void VideoSurfaceFilter::flush()
 
 HRESULT VideoSurfaceFilter::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 {
+    Q_UNUSED(tStart);
+    Q_UNUSED(tStop);
+    Q_UNUSED(dRate);
+
     return S_OK;
 }
 
@@ -495,7 +499,7 @@ int VideoSurfaceFilter::currentMediaTypeToken()
 {
     QMutexLocker locker(&m_mutex);
 
-    return m_mediaTypeToken;
+    return DirectShowMediaTypeList::currentMediaTypeToken();
 }
 
 HRESULT VideoSurfaceFilter::nextMediaType(
@@ -503,33 +507,7 @@ HRESULT VideoSurfaceFilter::nextMediaType(
 {
     QMutexLocker locker(&m_mutex);
 
-    if (!types || (count != 1 && !fetchedCount)) {
-        return E_POINTER;
-    } else if (m_mediaTypeToken != token) {
-        return VFW_E_ENUM_OUT_OF_SYNC;
-    } else {
-        int boundedCount = qBound<int>(0, m_mediaTypes.count() - *index, count);
-
-        for (int i = 0; i < boundedCount; ++i, ++(*index)) {
-            types[i] = reinterpret_cast<AM_MEDIA_TYPE *>(CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE)));
-
-            if (types[i]) {
-                VideoSurfaceMediaType::copy(types[i], m_mediaTypes.at(*index));
-            } else {
-                for (--i; i >= 0; --i)
-                    CoTaskMemFree(types[i]);
-
-                if (fetchedCount)
-                    *fetchedCount = 0;
-
-                return E_OUTOFMEMORY;
-            }
-        }
-        if (fetchedCount)
-            *fetchedCount = boundedCount;
-
-        return boundedCount == count ? S_OK : S_FALSE;
-    }
+    return DirectShowMediaTypeList::nextMediaType(token, index, count, types, fetchedCount);
 
 }
 
@@ -537,26 +515,14 @@ HRESULT VideoSurfaceFilter::skipMediaType(int token, int *index, ULONG count)
 {
     QMutexLocker locker(&m_mutex);
 
-    if (m_mediaTypeToken != token) {
-        return VFW_E_ENUM_OUT_OF_SYNC;
-    } else {
-        *index = qMin<int>(*index + count, m_mediaTypes.size());
-
-        return *index < m_mediaTypes.size() ? S_OK : S_FALSE;
-    }
+    return DirectShowMediaTypeList::skipMediaType(token, index, count);
 }
 
 HRESULT VideoSurfaceFilter::cloneMediaType(int token, int index, IEnumMediaTypes **enumeration)
 {
     QMutexLocker locker(&m_mutex);
 
-    if (m_mediaTypeToken != token) {
-        return VFW_E_ENUM_OUT_OF_SYNC;
-    } else {
-        *enumeration = new VideoSurfaceMediaTypeEnum(this, token, index);
-
-        return S_OK;
-    }
+    return DirectShowMediaTypeList::cloneMediaType(token, index, enumeration);
 }
 
 void VideoSurfaceFilter::customEvent(QEvent *event)
@@ -588,11 +554,10 @@ void VideoSurfaceFilter::supportedFormatsChanged()
 {
     QMutexLocker locker(&m_mutex);
 
-    m_mediaTypes.clear();
-
     QList<QVideoFrame::PixelFormat> formats = m_surface->supportedPixelFormats();
 
-    m_mediaTypes.reserve(formats.count());
+    QVector<AM_MEDIA_TYPE> mediaTypes;
+    mediaTypes.reserve(formats.count());
 
     AM_MEDIA_TYPE type;
     type.majortype = MEDIATYPE_Video;
@@ -608,10 +573,10 @@ void VideoSurfaceFilter::supportedFormatsChanged()
         type.subtype = VideoSurfaceMediaType::convertPixelFormat(format);
 
         if (type.subtype != MEDIASUBTYPE_None)
-            m_mediaTypes.append(type);
+            mediaTypes.append(type);
     }
 
-    ++m_mediaTypeToken;
+    setMediaTypes(mediaTypes);
 }
 
 void VideoSurfaceFilter::sampleReady()
