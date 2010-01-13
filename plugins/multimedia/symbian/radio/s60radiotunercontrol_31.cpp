@@ -44,7 +44,6 @@
 
 #include <QtCore/qdebug.h>
 #include <QFile>
-#include <QMessageBox>
 
 // from AudioPreference.h
 const TInt KAudioPriorityFMRadio = 79;
@@ -112,16 +111,20 @@ bool S60RadioTunerControl::initRadio()
 
 void S60RadioTunerControl::start()
 {
-	TFrequency freq(m_currentFreq);
-	m_tunerUtility->Tune(freq);
-	m_available = true;
+	if (!m_audioInitializationComplete) {
+		TFrequency freq(m_currentFreq);
+		m_tunerUtility->Tune(freq);
+	} else {
+		m_audioPlayerUtility->Play();
+	}
+
 	m_apiTunerState = QRadioTuner::ActiveState;
 	emit stateChanged(m_apiTunerState);
 }
 
 void S60RadioTunerControl::stop()
 {
-    if (m_audioPlayerUtility && m_audioInitializationComplete) {
+    if (m_audioPlayerUtility) {
 		m_audioPlayerUtility->Stop();
 		m_apiTunerState = QRadioTuner::StoppedState;
 		emit stateChanged(m_apiTunerState);
