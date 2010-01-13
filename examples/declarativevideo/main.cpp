@@ -50,7 +50,7 @@
 #include <qml.h>
 #include <qmlcontext.h>
 
-#include <qmediaserviceprovider.h>
+#include <qmediaplayer.h>
 
 QTM_USE_NAMESPACE
 
@@ -58,7 +58,8 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
-    QMediaServiceProvider::defaultServiceProvider();
+    //QMediaServiceProvider::defaultServiceProvider();
+    QMediaPlayer player;
 
     QString videoFile = QFileDialog::getOpenFileName(0, QObject::tr("Open Video"));
 

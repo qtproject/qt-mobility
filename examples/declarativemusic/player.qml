@@ -12,7 +12,7 @@ Item {
 
     Image {
         id: coverArt
-        source: audio.coverArtUriLarge
+        source: audio.coverArtUrlLarge
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: title.top
     }
