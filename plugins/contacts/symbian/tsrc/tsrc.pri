@@ -2,6 +2,7 @@
 SYMBIAN_PATHS += \
         ../../inc \
         ../../rss \
+        ../../../../../src/global \
         ../../../../../src/contacts \
         ../../../../../src/contacts/details \
         ../../../../../src/contacts/filters \
