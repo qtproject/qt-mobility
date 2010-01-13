@@ -62,8 +62,8 @@ QTM_BEGIN_NAMESPACE
     This enum represents the ambient light level.
 
     \value Undefined  The light level is unknown.
-    \value Dark       It is dark. You are likely to be eaten by a grue.
-    \value Twilight   It is darkish, there may be vampires about.
+    \value Dark       It is dark.
+    \value Twilight   It is darkish.
     \value Light      It is light (eg. internal lights).
     \value Bright     It is bright (eg. shade).
     \value Sunny      It is very bright (eg. direct sunlight).
