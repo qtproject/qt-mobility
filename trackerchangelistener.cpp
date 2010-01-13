@@ -69,14 +69,6 @@ TrackerChangeListener::TrackerChangeListener(QObject* parent)
                 SIGNAL(subjectsChanged(const QStringList &)),
                 SLOT(subjectsChanged(const QStringList &)));
     }
-    //this corresponds with telepathysupport/ TrackerSink::onSimplePresenceChanged
-    /*
-       signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nco::IMContact::iri());
-        connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)),
-                SLOT(imAccountChanged(const QStringList &)));
- */
 }
 
 TrackerChangeListener::~TrackerChangeListener()
@@ -136,25 +128,6 @@ void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
     emit contactsChanged(changed);
 }
 
-void TrackerChangeListener::imAccountChanged(const QStringList& subjects) {
-    // leave the debug output for few days as TODO remainder to fix writing to tracker
-    qDebug() << Q_FUNC_INFO << subjects;
-
-    RDFVariable RDFContact = RDFVariable::fromType<nco::IMContact>();
-    // fetch all changed contacts at once
-    QSet<QUrl> urls;
-    foreach(const QString &str, subjects)
-        urls << QUrl(str);
-    
-   // RDFContact.property<nco::hasIMAccount>().isMemberOf(urls.toList());
-    RDFSelect query;
-    query.addColumn("contactId", RDFContact.property<nco::contactUID>());
-
-    QSharedPointer<AsyncQuery> request = QSharedPointer<AsyncQuery> (new AsyncQuery(query),
-                       &QObject::deleteLater);
-    connect(request.data(), SIGNAL(queryReady(AsyncQuery*)), SLOT(imQueryReady(AsyncQuery*)));
-    pendingQueries[request.data()] = request;
-}
 
 AsyncQuery::AsyncQuery(RDFSelect selectQuery)
 {
@@ -168,16 +141,3 @@ void AsyncQuery::queryReady()
     emit queryReady(this);
 }
 
-void TrackerChangeListener::imQueryReady(AsyncQuery* req)
-{
-    if( pendingQueries.contains(req))
-    {
-        QSharedPointer<AsyncQuery> query = pendingQueries.take(req);
-        QSet<QContactLocalId> contactsChangedPresence;
-        for(int i=0; i<query->nodes->rowCount(); i++) {
-            contactsChangedPresence << query->nodes->index(i, 0).data().toUInt();
-        }
-        if( !contactsChangedPresence.isEmpty() )
-            emit contactsChanged(contactsChangedPresence.toList());
-    }
-}

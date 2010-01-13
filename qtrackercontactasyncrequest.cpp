@@ -209,11 +209,11 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
     return queryidsnumbers;
 }
 
-RDFSelect prepareIMContactsQuery(RDFVariable &rdfcontact1)
+RDFSelect prepareIMContactsQuery(RDFVariable &imaccount)
 {
     //::tracker()->setVerbosity(4);
 
-    RDFVariable imaccount = rdfcontact1.fromType<nco::IMContact> ();
+    //RDFVariable imaccount = rdfcontact1.fromType<nco::IMContact> ();
     // columns
     RDFSelect queryidsimacccounts;
     queryidsimacccounts.addColumn("contactId", imaccount.property<nco::contactUID> ());
@@ -225,7 +225,7 @@ RDFSelect prepareIMContactsQuery(RDFVariable &rdfcontact1)
     queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::fromIMAccount> ());
    //queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
 
-    queryidsimacccounts.addColumn("metacontact", rdfcontact1.optional().property<nco::metacontact> ());
+    queryidsimacccounts.addColumn("metacontact", imaccount.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
 }
 
@@ -348,6 +348,7 @@ void QTrackerContactFetchRequest::run()
         queryIMAccountNodesPending = 1;
 
         RDFVariable contact4;
+        contact4 = contact4.fromType<nco::IMContact> ();
         // prepare query to get all im contacts
         RDFSelect queryidsimacccounts = prepareIMContactsQuery(contact4);
 
@@ -897,7 +898,7 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
             QContactId id; id.setLocalId(contactid);
             contact.setId(id);
             contact.saveDetail(&account);
-            QString metacontact = queryIMContacts->index(i, 7).data().toString(); // \sa prepareIMContactsQuery()
+            QString metacontact = queryIMContacts->index(i, 6).data().toString(); // \sa prepareIMContactsQuery()
             addContactToResultSet(contact, metacontact);
         }
     }
