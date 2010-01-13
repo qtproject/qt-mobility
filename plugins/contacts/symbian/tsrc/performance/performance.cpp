@@ -375,7 +375,7 @@ void SymbianPluginPerfomance::removeComplexContacts()
     mTime.restart();
     mCntMng->removeContacts(&cnt_ids);
     int elapsed = mTime.elapsed();
-    qDebug() << "Removed " << cnt_ids.count() << " simple contacts in"
+    qDebug() << "Removed " << cnt_ids.count() << " complex contacts in"
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
 }
 
@@ -399,4 +399,99 @@ int SymbianPluginPerfomance::measureContactsFetch(
     return cnt_ids.count();
 }
 
+void SymbianPluginPerfomance::createComplexContactsWithOnlineAccount()
+{
+    QList<QContact> contactsList;
+    for(int i=0; i<NO_OF_CONTACTS; i++) {
+        QContact alice;
+        QString c = QString::number(i);
+        QString first("Alice");
+        QString last("Jones");
+        QContactName aliceName;
+        aliceName.setFirst(first.append(c));
+        aliceName.setLast(last.append(c));
+        alice.saveDetail(&aliceName);
+        QContactPhoneNumber number;
+        number.setContexts("Home");
+        number.setSubTypes("Mobile");
+        number.setNumber("12345678");
+        alice.saveDetail(&number);
+        alice.setPreferredDetail("DialAction", number);
+        QContactPhoneNumber number2;
+        number2.setContexts("Work");
+        number2.setSubTypes("Landline");
+        number2.setNumber("555-4444");
+        alice.saveDetail(&number2);
+        QContactAddress add;
+        add.setStreet("Leeds West Yorkshire");
+        add.setPostcode("10087");
+        add.setRegion("New York");
+        add.setCountry("United States");
+        alice.saveDetail(&add);
+        QContactBirthday bday;
+        bday.setDate(QDate(25,10,1978));
+        alice.saveDetail(&bday);
+        QContactEmailAddress email;
+        email.setEmailAddress("mailto:alice.jones@nokia.com");
+        alice.saveDetail(&email);
+        QContactOrganization org;
+        org.setDepartment(QStringList("Services"));
+        org.setTitle("Assistant Manager");
+        alice.saveDetail(&org);
+        QContactOnlineAccount aliceOnlineAccount;
+        QString uri = first + "@yahoo.com";
+        aliceOnlineAccount.setAccountUri(uri);
+        aliceOnlineAccount.setServiceProvider("yahoo");
+        aliceOnlineAccount.setNickname("something");
+        aliceOnlineAccount.setSubTypes(QContactOnlineAccount::SubTypeSip);
+        alice.saveDetail(&aliceOnlineAccount);
+        contactsList.append(alice);
+    }
+    mTime.restart();
+    QList<QContactManager::Error> errors = mCntMng->saveContacts(&contactsList);
+    foreach(QContactManager::Error error, errors) {
+        QCOMPARE(error, QContactManager::NoError);
+    }
+    int elapsed = mTime.elapsed();
+    qDebug() << "Created " << contactsList.count() << " complex contacts with online account in"
+        << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
+}
+void SymbianPluginPerfomance::sortContactsWithOnlineAccount()
+{
+    QList<QContactLocalId> cnt_ids;
+    QContactSortOrder sortOrder;
+    QContactSortOrder sortOrder1;
+    sortOrder.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldFirst);
+    sortOrder.setBlankPolicy(QContactSortOrder::BlanksLast);
+    sortOrder.setDirection(Qt::AscendingOrder);
+    sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
+    sortOrder1.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldLast);
+    sortOrder1.setBlankPolicy(QContactSortOrder::BlanksLast);
+    sortOrder1.setDirection(Qt::AscendingOrder);
+    sortOrder1.setCaseSensitivity(Qt::CaseInsensitive);
+    QList<QContactSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
+    sortOrders.append(sortOrder1);
+    measureContactsFetch(
+            "Sorting with first name, last name and online account sort order with",
+            QContactInvalidFilter(),
+            sortOrders);
+    cnt_ids.clear();
+    sortOrders.clear();
+    sortOrders.append(sortOrder1);
+    sortOrders.append(sortOrder);
+    measureContactsFetch(
+            "Sorting with last name, first name and online account sort order with",
+            QContactInvalidFilter(),
+            sortOrders);
+}
+void SymbianPluginPerfomance::removeComplextContactsWithOnlineAccount()
+{
+    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
+    mTime.restart();
+    mCntMng->removeContacts(&cnt_ids);
+    int elapsed = mTime.elapsed();
+    qDebug() << "Removed " << cnt_ids.count() << " complext contacts with online account in"
+        << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
+}
 QTEST_MAIN(SymbianPluginPerfomance);
