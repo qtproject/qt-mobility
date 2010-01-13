@@ -56,6 +56,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
     , m_screenDevice(0)
     , m_window(0)
     , m_videoWidgetControl(0)
+    , m_dsa(NULL)
 {    
     m_dummyWidget = new QWidget();
     
@@ -74,8 +75,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
                                   m_clipRect)
          );
     
-    m_dsa = S60DirectScreenAccess::NewL(*m_wsSession, *m_screenDevice, *m_window);
-    m_dsa->Start();
+    TRAP_IGNORE(m_dsa = S60DirectScreenAccess::NewL(*m_wsSession, *m_screenDevice, *m_window);)
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
@@ -165,7 +165,8 @@ bool S60VideoPlayerSession::isVideoAvailable() const
 }
 
 void S60VideoPlayerSession::doPlay()
-{   
+{
+    m_dsa->Start();
     m_player->Play();
 }
 
@@ -223,6 +224,7 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
     m_player->Close();
     setError(aError);
     playComplete();
+    m_dsa->Stop();
 }
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
