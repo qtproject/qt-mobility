@@ -4,5 +4,6 @@ include(../../examples.pri)
 QT=core
 CONFIG+=mobility
 MOBILITY+=sensors
+INCLUDEPATH += ../../../src/sensors
 SOURCES=main.cpp
 QMAKE_CXXFLAGS+=-Werror

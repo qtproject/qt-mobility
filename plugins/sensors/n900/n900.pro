@@ -1,3 +1,5 @@
+INCLUDEPATH+=../../../src/sensors
+
 include(version.pri)
 include(n900.pri)
 include(../../../common.pri)
