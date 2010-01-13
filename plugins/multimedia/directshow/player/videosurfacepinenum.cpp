@@ -93,14 +93,17 @@ ULONG VideoSurfacePinEnum::Release()
 HRESULT VideoSurfacePinEnum::Next(ULONG cPins, IPin **ppPins, ULONG *pcFetched)
 {
     if (ppPins && (pcFetched || cPins == 1)) {
-        *pcFetched = qBound(0, m_pins.count() - m_index, int(cPins));
+        ULONG count = qBound<ULONG>(0, cPins, m_pins.count() - m_index);
 
-        for (ULONG i = 0; i < *pcFetched; ++i, ++m_index) {
+        for (ULONG i = 0; i < count; ++i, ++m_index) {
             ppPins[i] = m_pins.at(m_index);
             ppPins[i]->AddRef();
         }
 
-        return *pcFetched == cPins ? S_OK : S_FALSE;
+        if (pcFetched)
+            *pcFetched = count;
+
+        return count == cPins ? S_OK : S_FALSE;
     } else {
         return E_POINTER;
     }

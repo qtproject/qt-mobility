@@ -80,8 +80,7 @@ protected:
 
 private:
     void doLoad(QMutexLocker *locker);
-    void doSetAudioOutput(QMutexLocker *locker);
-    void doSetVideoOutput(QMutexLocker *locker);
+    void doRender(QMutexLocker *locker);
     void doSetRate(QMutexLocker *locker);
     void doSeek(QMutexLocker *locker);
     void doPlay(QMutexLocker *locker);
@@ -93,11 +92,12 @@ private:
         Load           = 0x0002,
         SetAudioOutput = 0x0004,
         SetVideoOutput = 0x0008,
-        SetRate        = 0x0010,
-        Seek           = 0x0020,
-        Play           = 0x0040,
-        Pause          = 0x0080,
-        Stop           = 0x0100
+        Render         = 0x0010,
+        SetRate        = 0x0020,
+        Seek           = 0x0040,
+        Play           = 0x0080,
+        Pause          = 0x0100,
+        Stop           = 0x0200
     };
 
     int m_pendingTasks;

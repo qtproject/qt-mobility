@@ -43,6 +43,8 @@
 #include "directshowiosource.h"
 #include "directshowrenderthread.h"
 
+#include <QtCore/qvarlengtharray.h>
+
 DirectShowRenderThread::DirectShowRenderThread(QObject *parent)
     : QThread(parent)
     , m_pendingTasks(0)
@@ -50,7 +52,6 @@ DirectShowRenderThread::DirectShowRenderThread(QObject *parent)
     , m_executedTasks(0)
     , m_stream(0)
     , m_graph(0)
-    , m_builder(0)
     , m_source(0)
     , m_audioOutput(0)
     , m_videoOutput(0)
@@ -82,11 +83,6 @@ void DirectShowRenderThread::shutdown()
     }
 
     wait();
-
-    if (m_builder) {
-        m_builder->Release();
-        m_builder = 0;
-    }
 
     if (m_graph) {
         m_graph->Release();
@@ -136,6 +132,11 @@ void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
 {
     QMutexLocker locker(&m_mutex);
 
+    // Don't mess with the graph while it's being generated.
+    // But should be smarter than this and interrupt; see IAMOpenProgress.
+    while (m_executingTask == Render)
+        m_wait.wait(&m_mutex);
+
     if (m_audioOutput) {
         if (m_executedTasks & SetAudioOutput && m_graph) {
             m_graph->RemoveFilter(m_audioOutput);
@@ -149,16 +150,23 @@ void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
         m_audioOutput->AddRef();
 
         if (m_executedTasks & Load && m_graph) {
-            m_pendingTasks |= SetAudioOutput;
+            m_pendingTasks |= SetAudioOutput | Render;
 
             m_wait.wakeAll();
         }
+    } else {
+        m_pendingTasks &= ~SetAudioOutput;
     }
 }
 
 void DirectShowRenderThread::setVideoOutput(IBaseFilter *filter)
 {
     QMutexLocker locker(&m_mutex);
+
+    // Don't mess with the graph while it's being generated.
+    // But should be smarter than this and interrupt; see IAMOpenProgress.
+    while (m_executingTask == Render)
+        m_wait.wait(&m_mutex);
 
     if (m_videoOutput) {
         if (m_executedTasks & SetVideoOutput && m_graph) {
@@ -177,6 +185,8 @@ void DirectShowRenderThread::setVideoOutput(IBaseFilter *filter)
 
             m_wait.wakeAll();
         }
+    } else {
+        m_pendingTasks &= ~ SetVideoOutput;
     }
 }
 
@@ -272,16 +282,11 @@ void DirectShowRenderThread::run()
             m_executingTask = Load;
 
             doLoad(&locker);
-        } else if (m_pendingTasks & SetAudioOutput) {
-            m_pendingTasks ^= SetAudioOutput;
-            m_executingTask = SetAudioOutput;
+        } else if (m_pendingTasks & Render) {
+            m_pendingTasks ^= Render;
+            m_executingTask = Render;
 
-            doSetAudioOutput(&locker);
-        } else if (m_pendingTasks & SetVideoOutput) {
-            m_pendingTasks ^= SetVideoOutput;
-            m_executingTask = SetVideoOutput;
-
-            doSetVideoOutput(&locker);
+            doRender(&locker);
         } else if (m_pendingTasks & SetRate) {
             m_pendingTasks ^= SetRate;
             m_executingTask = SetRate;
@@ -325,47 +330,27 @@ void DirectShowRenderThread::doLoad(QMutexLocker *locker)
 
     HRESULT hr = S_OK;
 
-    if (m_audioOutput)
-        m_graph->AddFilter(m_audioOutput, L"AudioOutput");
-    if (m_videoOutput)
-        m_graph->AddFilter(m_videoOutput, L"VideoOutput");
-
     if (stream) {
         source = new DirectShowIOSource(stream);
 
-        hr = m_graph->AddFilter(source, L"Source");
-
-        if (!SUCCEEDED(hr)) {
+        if (!SUCCEEDED(hr = m_graph->AddFilter(source, L"Source"))) {
             source->Release();
             source = 0;
-        } else {
-             IPin *pin = 0;
-
-             source->FindPin(L"Data", &pin);
-
-             if (pin) {
-                 locker->unlock();
-                 m_graph->RenderEx(pin, AM_RENDEREX_RENDERTOEXISTINGRENDERERS, 0);
-                 locker->relock();
-             }
         }
     } else {
         locker->unlock();
-        if (SUCCEEDED(hr = m_graph->AddSourceFilter(
-                url.toString().utf16(), L"Source", &source))) {
-
-            IEnumPins *pins = 0;
-            if (SUCCEEDED(hr = source->EnumPins(&pins))) {
-                for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release())
-                    m_graph->RenderEx(pin, AM_RENDEREX_RENDERTOEXISTINGRENDERERS, 0);
-                pins->Release();
-            }
-        }
+        hr = m_graph->AddSourceFilter(url.toString().utf16(), L"Source", &source);
         locker->relock();
     }
 
     if (SUCCEEDED(hr)) {
         m_executedTasks = Load;
+        m_pendingTasks |= Render;
+
+        if (m_audioOutput)
+            m_pendingTasks |= SetAudioOutput;
+        if (m_videoOutput)
+            m_pendingTasks |= SetVideoOutput;
 
         m_source = source;
 
@@ -376,67 +361,52 @@ void DirectShowRenderThread::doLoad(QMutexLocker *locker)
     }
 }
 
-void DirectShowRenderThread::doSetAudioOutput(QMutexLocker *locker)
+void DirectShowRenderThread::doRender(QMutexLocker *locker)
 {
-    //qDebug(Q_FUNC_INFO);
-    //IFilterGraph2 *graph = m_graph;
-    //graph->AddRef();
+    if (m_pendingTasks & SetAudioOutput) {
+        m_graph->AddFilter(m_audioOutput, L"AudioOutput");
 
-    //IBaseFilter *source = m_source;
-    //source->AddRef();
+        m_pendingTasks ^= SetAudioOutput;
+        m_executedTasks |= SetAudioOutput;
+    }
+    if (m_pendingTasks & SetVideoOutput) {
+        m_graph->AddFilter(m_videoOutput, L"VideoOutput");
 
-    //IBaseFilter *audioOutput = m_audioOutput;
-    //audioOutput->AddRef();
+        m_pendingTasks ^= SetVideoOutput;
+        m_executedTasks |= SetVideoOutput;
+    }
 
-    //if (!SUCCEEDED(graph->AddFilter(m_audioOutput, L"AudioOutput"))) {
-    //    qWarning("Failed to add audio output to filter graph.");
-    //} else {
-    //    locker->unlock();
-    //    HRESULT hr = m_builder->RenderStream(0, &MEDIATYPE_Stream, source, 0, audioOutput);
-    //    locker->relock();
+    QVarLengthArray<IBaseFilter *, 16> filters;
+    m_source->AddRef();
+    filters.append(m_source);
 
-    //    if (!SUCCEEDED(hr)) {
-    //        qDebug("Failed to renader audio output");
-    //        m_graph->RemoveFilter(audioOutput);
-    //    } else {
-    //        m_executedTasks |= SetAudioOutput;
-    //    }
-    //}
+    while (!filters.isEmpty()) {
+        IEnumPins *pins = 0;
+        IBaseFilter *filter = filters[filters.size() - 1];
+        filters.removeLast();
 
-    //audioOutput->Release();
-    //source->Release();
-    //graph->Release();
-}
-
-void DirectShowRenderThread::doSetVideoOutput(QMutexLocker *locker)
-{
-    //qDebug(Q_FUNC_INFO);
-    //IFilterGraph2 *graph = m_graph;
-    //graph->AddRef();
-
-    //IBaseFilter *source = m_source;
-    //source->AddRef();
-
-    //IBaseFilter *videoOutput = m_videoOutput;
-    //videoOutput->AddRef();
-
-    //if (!SUCCEEDED(graph->AddFilter(m_videoOutput, L"VideoOutput"))) {
-    //    qWarning("Failed to add video output to filter graph.");
-    //} else {
-    //    locker->unlock();
-    //    HRESULT hr = m_builder->RenderStream(0, &MEDIATYPE_Video, source, 0, videoOutput);
-    //    locker->relock();
-
-    //    if (!SUCCEEDED(hr)) {
-    //        m_graph->RemoveFilter(videoOutput);
-    //    } else {
-    //        m_executedTasks |= SetVideoOutput;
-    //    }
-    //}
-
-    //videoOutput->Release();
-    //source->Release();
-    //graph->Release();
+        if (SUCCEEDED(filter->EnumPins(&pins))) {
+            for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release()) {
+                PIN_DIRECTION direction;
+                if (pin->QueryDirection(&direction) == S_OK && direction == PINDIR_OUTPUT) {
+                    IPin *peer = 0;
+                    if (pin->ConnectedTo(&peer) == S_OK) {
+                        PIN_INFO peerInfo;
+                        if (peer->QueryPinInfo(&peerInfo) == S_OK) {
+                            filters.append(peerInfo.pFilter);
+                        } else {
+                            peerInfo.pFilter->Release();
+                        }
+                    } else {
+                        locker->unlock();
+                        m_graph->RenderEx(pin, AM_RENDEREX_RENDERTOEXISTINGRENDERERS, 0);
+                        locker->relock();
+                    }
+                }
+            }
+        }
+        filter->Release();
+    }
 }
 
 void DirectShowRenderThread::doSetRate(QMutexLocker *locker)
