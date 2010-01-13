@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include "cnttransformavatarsimple.h"
 #include "cntthumbnailcreator.h"
+#include "cntsymbiantransformerror.h"
 
 // S60 specific contact field type containing image call object data
 #define KUidContactFieldCodImageValue 0x101F8841
@@ -78,15 +79,9 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 
         QString subType = avatar.subType();
         TUid uid(KNullUid);
+        // Default to SubTypeImage
         if(subType.isEmpty() || subType.compare(subTypeImage) == 0) {
             uid = KUidContactFieldCodImage;
-
-            // Add a thumbnail also, if there is an image available
-            CntThumbnailCreator* creator = new (ELeave) CntThumbnailCreator();
-            CleanupStack::PushL(creator);
-            // Note: scaling to thumbnail may take some time if the image is big
-            creator->addThumbnailFieldL(&fieldList, filename, KMaxThumbnailSize);
-            CleanupStack::PopAndDestroy(creator);
 	    } else if (subType.compare(subTypeAudioRingtone) == 0) {
 	        uid = KUidContactFieldRingTone;
 	    } else {
@@ -99,7 +94,25 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 
 	    fieldList.append(newField);
 	    CleanupStack::Pop(newField);
-	}
+    }
+
+	if(!avatar.pixmap().isNull()) {
+	    CntThumbnailCreator* creator = new (ELeave) CntThumbnailCreator();
+        CleanupStack::PushL(creator);
+
+        // Scaling is done before converting to CFbsBitmap because
+        // toSymbianCFbsBitmap may generate a duplicate of the bitmap data
+        // Note: scaling to thumbnail may take some time if the image is big
+        // TODO: aspect ratio?
+        QPixmap scaled = avatar.pixmap().scaled(KMaxThumbnailSize.iWidth, KMaxThumbnailSize.iHeight);
+        CFbsBitmap* bitmap = scaled.toSymbianCFbsBitmap();
+        CleanupStack::PushL(bitmap);
+
+        creator->addThumbnailFieldL(&fieldList, bitmap, KMaxThumbnailSize);
+        //creator->addThumbnailFieldL(&fieldList, _L("C:\\data\\Images\\contact.jpg"), KMaxThumbnailSize);
+        CleanupStack::Pop(bitmap); // ownership transferred
+        CleanupStack::PopAndDestroy(creator);
+    }
 
 	return fieldList;
 }
@@ -107,18 +120,34 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 QContactDetail *CntTransformAvatarSimple::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	Q_UNUSED(contact);
-
 	QContactAvatar *avatar = new QContactAvatar();
-
-	CContactTextField* storage = field.TextStorage();
-	QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	avatar->setAvatar(avatarString);
-
+	
 	if (field.ContentType().ContainsFieldType(KUidContactFieldCodImage)) {
+	    CContactTextField* storage = field.TextStorage();
+	    QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+	    avatar->setAvatar(avatarString);
         avatar->setSubType(QContactAvatar::SubTypeImage);
-    }
-	else if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
+    } else if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
+        CContactTextField* storage = field.TextStorage();
+        QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+        avatar->setAvatar(avatarString);
         avatar->setSubType(QContactAvatar::SubTypeAudioRingtone);
+	} else if (field.ContentType().ContainsFieldType(KUidContactFieldPicture)) {
+	    // use the existing QContactAvatar (if available) in case of a pixmap
+	    // field.
+	    delete avatar;
+	    avatar = 0;
+	    avatar = new QContactAvatar(contact.detail<QContactAvatar>());
+	    CContactStoreField* storage = field.StoreStorage();
+        QPixmap pixmap;
+        HBufC8 *theThing = storage->Thing();
+        QByteArray bytes((char*)theThing->Ptr(), theThing->Length());
+        bool loaded = pixmap.loadFromData(bytes, "JPG");
+        if (loaded) {
+            avatar->setPixmap(pixmap);
+        } else {
+            User::Leave(KErrInvalidContactDetail);
+        }
 	}
 
 	return avatar;
@@ -128,7 +157,10 @@ bool CntTransformAvatarSimple::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
     if (fieldType == KUidContactFieldCodImage.iUid
-        || fieldType == KUidContactFieldRingTone.iUid) {
+        || fieldType == KUidContactFieldRingTone.iUid
+        || fieldType == KUidContactFieldPicture.iUid
+        // Used as "extra mapping/extra field type" by thumbnail data fields
+        || fieldType == KUidContactFieldVCardMapJPEG.iUid) {
         ret = true;
     }
     return ret;

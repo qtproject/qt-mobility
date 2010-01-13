@@ -113,6 +113,30 @@ void CntThumbnailCreator::addThumbnailFieldL(QList<CContactItemField *> *fieldLi
     User::LeaveIfError(m_err);
 }
 
+void CntThumbnailCreator::addThumbnailFieldL(QList<CContactItemField *> *fieldList, CFbsBitmap *bitmap, const TSize& maxSize)
+{
+    Cancel();
+    m_fieldList = fieldList;
+    m_thumbnailSize = maxSize;
+    delete m_bitmap;
+    m_bitmap = bitmap;
+
+    // Lazy instantiation to save resources
+    if (m_rfs.Handle() == KNullHandle)
+        m_rfs.Connect();
+    if(!m_activeSchedulerWait)
+        m_activeSchedulerWait = new (ELeave) CActiveSchedulerWait;
+
+    m_state = EStateEncodeImage;
+    EncodeImageL();
+
+    // Synchronize asynchronous operations (wait loop is finished in RunL when
+    // image operations are done, or in RunError if an error occurs)
+    m_activeSchedulerWait->Start();
+    User::LeaveIfError(m_err);
+}
+
+
 void CntThumbnailCreator::RunL()
 {
     __ASSERT_DEBUG(m_activeSchedulerWait, User::Panic(KPanicCategory, KPanicUnitialized));
