@@ -114,7 +114,8 @@ unix: {
             -lprofileengine \
             -lbluetooth
 
-        TARGET.CAPABILITY = ALL -TCB
+        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData WriteUserData UserEnvironment Location ReadDeviceData TrustedUI
+
         TARGET.EPOCALLOWDLLDATA = 1
         TARGET.UID3 = 0x2002ac7d
         
