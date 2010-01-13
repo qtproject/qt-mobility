@@ -102,9 +102,9 @@ AudioRecorder::AudioRecorder()
     connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
     layout->addWidget(codecsBox,1,1,Qt::AlignLeft);
 
-    layout->addWidget(qualityLabel,1,2,Qt::AlignHCenter);
+    layout->addWidget(qualityLabel,2,0,Qt::AlignHCenter);
     connect(qualityBox,SIGNAL(activated(int)),SLOT(qualityChanged(int)));
-    layout->addWidget(qualityBox,1,3,Qt::AlignLeft);
+    layout->addWidget(qualityBox,2,1,Qt::AlignLeft);
 
     fileButton = new QPushButton(this);
     fileButton->setText(tr("Output File"));
@@ -114,7 +114,7 @@ AudioRecorder::AudioRecorder()
     button = new QPushButton(this);
     button->setText(tr("Record"));
     connect(button,SIGNAL(clicked()),SLOT(toggleRecord()));
-    layout->addWidget(button,3,3,Qt::AlignHCenter);
+    layout->addWidget(button,3,1,Qt::AlignHCenter);
 
     recTime = new QLabel;
     recTime->setText("0 sec");
@@ -153,8 +153,12 @@ void AudioRecorder::deviceChanged(int idx)
 
 void AudioRecorder::codecChanged(int idx)
 {
-    Q_UNUSED(idx);
-    //capture->setAudioCodec(codecsBox->itemText(idx));
+    //Q_UNUSED(idx);
+    QAudioEncoderSettings audioSettings = capture->audioSettings();
+    audioSettings.setCodec(codecsBox->itemText(idx));
+    //audioSettings.setQuality(QtMedia::HighQuality);
+
+    capture->setEncodingSettings(audioSettings);
 }
 
 void AudioRecorder::qualityChanged(int idx)
