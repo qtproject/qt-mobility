@@ -132,30 +132,48 @@ void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
 {
     QMutexLocker locker(&m_mutex);
 
-    // Don't mess with the graph while it's being generated.
-    // But should be smarter than this and interrupt; see IAMOpenProgress.
-    while (m_executingTask == Render)
-        m_wait.wait(&m_mutex);
+    if (m_graph) {
+        // Don't mess with the graph while it's being generated.
+        // But should be smarter than this and interrupt; see IAMOpenProgress.
+        while (m_executingTask == Render) {
+            m_pendingTasks |= SetAudioOutput;
 
-    if (m_audioOutput) {
-        if (m_executedTasks & SetAudioOutput && m_graph) {
-            m_graph->RemoveFilter(m_audioOutput);
+            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
+                progress->AbortOperation();
+                progress->Release();
+            }
+
+            m_wait.wait(&m_mutex);
         }
-        m_audioOutput->Release();
-    }
 
-    m_audioOutput = filter;
+        if (m_audioOutput) {
+            if (m_executedTasks & SetAudioOutput) {
+                m_graph->RemoveFilter(m_audioOutput);
+            }
+            m_audioOutput->Release();
+        }
 
-    if (m_audioOutput) {
-        m_audioOutput->AddRef();
+        m_audioOutput = filter;
 
-        if (m_executedTasks & Load && m_graph) {
-            m_pendingTasks |= SetAudioOutput | Render;
+        if (m_executedTasks & Load) {
+            m_pendingTasks |= Render | SetAudioOutput;
 
             m_wait.wakeAll();
         }
+
+        if (m_audioOutput) {
+            m_audioOutput->AddRef();
+        } else {
+            m_pendingTasks &= ~SetAudioOutput;
+        }
     } else {
-        m_pendingTasks &= ~SetAudioOutput;
+        if (m_audioOutput)
+            m_audioOutput->Release();
+
+        m_audioOutput = filter;
+
+        if (m_audioOutput)
+            m_audioOutput->AddRef();
     }
 }
 
@@ -165,28 +183,47 @@ void DirectShowRenderThread::setVideoOutput(IBaseFilter *filter)
 
     // Don't mess with the graph while it's being generated.
     // But should be smarter than this and interrupt; see IAMOpenProgress.
-    while (m_executingTask == Render)
-        m_wait.wait(&m_mutex);
 
-    if (m_videoOutput) {
-        if (m_executedTasks & SetVideoOutput && m_graph) {
-            m_graph->RemoveFilter(m_videoOutput);
+    if (m_graph) {
+        while (m_executingTask == Render) {
+            m_pendingTasks |= SetVideoOutput;
+
+                if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
+                    progress->AbortOperation();
+                    progress->Release();
+                }
+
+            m_wait.wait(&m_mutex);
         }
-        m_videoOutput->Release();
-    }
 
-    m_videoOutput = filter;
+        if (m_videoOutput) {
+            if (m_executedTasks & SetVideoOutput && m_graph) {
+                m_graph->RemoveFilter(m_videoOutput);
+            }
+            m_videoOutput->Release();
+        }
 
-    if (m_videoOutput) {
-        m_videoOutput->AddRef();
+        m_videoOutput = filter;
 
         if (m_executedTasks & Load && m_graph) {
-            m_pendingTasks |= SetVideoOutput;
+            m_pendingTasks |= Render | SetVideoOutput;
 
             m_wait.wakeAll();
         }
+
+        if (m_videoOutput) {
+            m_videoOutput->AddRef();
+        } else {
+            m_pendingTasks &= ~ SetVideoOutput;
+        }
     } else {
-        m_pendingTasks &= ~ SetVideoOutput;
+        if (m_videoOutput)
+            m_videoOutput->Release();
+        
+        m_videoOutput = filter;
+
+        if (m_videoOutput)
+            m_videoOutput->AddRef();
     }
 }
 
@@ -385,7 +422,8 @@ void DirectShowRenderThread::doRender(QMutexLocker *locker)
         IBaseFilter *filter = filters[filters.size() - 1];
         filters.removeLast();
 
-        if (SUCCEEDED(filter->EnumPins(&pins))) {
+        if (!(m_pendingTasks & (SetAudioOutput | SetVideoOutput))
+                && SUCCEEDED(filter->EnumPins(&pins))) {
             for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release()) {
                 PIN_DIRECTION direction;
                 if (pin->QueryDirection(&direction) == S_OK && direction == PINDIR_OUTPUT) {
@@ -397,6 +435,7 @@ void DirectShowRenderThread::doRender(QMutexLocker *locker)
                         } else {
                             peerInfo.pFilter->Release();
                         }
+                        peer->Release();
                     } else {
                         locker->unlock();
                         m_graph->RenderEx(pin, AM_RENDEREX_RENDERTOEXISTINGRENDERERS, 0);

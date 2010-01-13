@@ -436,7 +436,7 @@ HRESULT DirectShowIOSource::ReceiveConnection(IPin *pConnector, const AM_MEDIA_T
     Q_UNUSED(pConnector);
     Q_UNUSED(pmt);
     // Output pin.
-    return E_POINTER;
+    return E_NOTIMPL;
 }
 
 HRESULT DirectShowIOSource::Disconnect()
@@ -451,8 +451,10 @@ HRESULT DirectShowIOSource::Disconnect()
         if (!SUCCEEDED(hr))
             return hr;
 
-        if (m_allocator)
+        if (m_allocator) {
             m_allocator->Release();
+            m_allocator = 0;
+        }
 
         m_peerPin->Release();
         m_peerPin = 0;
