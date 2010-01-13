@@ -60,7 +60,7 @@ void UT_QVersit::testImportFiles()
 {
     QFETCH(QString, filename);
     QFETCH(QByteArray, charset);
-    QFETCH(QList<QContact>, contacts);
+    QFETCH(QList<QContact>, expectedContacts);
 
     QVersitReader reader;
     QFile file(filename);
@@ -70,17 +70,17 @@ void UT_QVersit::testImportFiles()
         reader.setDefaultCodec(QTextCodec::codecForName(charset));
     }
     QVERIFY(reader.readAll());
-    QList<QVersitDocument> results = reader.results();
-    if (contacts.size() > 0) {
-        QCOMPARE(results.size(), contacts.size());
-        QListIterator<QContact> i(contacts);
-        foreach (QVersitDocument doc, results) {
-            QContact expected = i.next();
-            QVersitContactImporter importer;
-            importer.setAudioClipPath(imageAndAudioClipPath);
-            importer.setImagePath(imageAndAudioClipPath);
-            QContact parsed = importer.importContact(doc);
+    QList<QVersitDocument> documents = reader.results();
+    QVersitContactImporter importer;
+    importer.setAudioClipPath(imageAndAudioClipPath);
+    importer.setImagePath(imageAndAudioClipPath);
+    QList<QContact> contacts = importer.importContacts(documents);
 
+    if (expectedContacts.size() > 0) {
+        QCOMPARE(contacts.size(), expectedContacts.size());
+        QListIterator<QContact> i(expectedContacts);
+        foreach (QContact parsed, contacts) {
+            QContact expected = i.next();
             QList<QContactDetail> expectedDetails = expected.details();
             foreach(QContactDetail expectedDetail, expectedDetails) {
                 QString name = expectedDetail.definitionName();
@@ -106,7 +106,7 @@ void UT_QVersit::testImportFiles_data()
 {
     QTest::addColumn<QString>("filename");
     QTest::addColumn<QByteArray>("charset");
-    QTest::addColumn<QList<QContact> >("contacts");
+    QTest::addColumn<QList<QContact> >("expectedContacts");
 
     QTEST_NEW_ROW("AAB4/MultipleAll.vcf", "UTF-16BE", QList<QContact>());
     QTEST_NEW_ROW("AAB4/MultipleAscii.vcf", "", QList<QContact>());

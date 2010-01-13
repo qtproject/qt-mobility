@@ -65,14 +65,10 @@ QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
 class QContactOrganization;
-QTM_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-
 class QVersitProperty;
 class QVersitDocument;
 
-class QVersitContactImporterPrivate
+class Q_AUTOTEST_EXPORT QVersitContactImporterPrivate
 {
 public:
     QVersitContactImporterPrivate();
