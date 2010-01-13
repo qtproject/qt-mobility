@@ -6,12 +6,12 @@ TARGET =
 QT += testlib
 CONFIG += qtestlib
 
+include(../tsrc.pri)
+
 DEFINES += PBK_UNIT_TEST
 DEPENDPATH += .
-include(../tsrc.pri)
 INCLUDEPATH += .
-INCLUDEPATH += .\inc
-INCLUDEPATH += ..\..\inc
+INCLUDEPATH += ../../inc
 symbian:
  { 
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE

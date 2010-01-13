@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include <QObject>
+#include <qmobilityglobal.h>
 #include <qtcontacts.h>
 
 QTM_BEGIN_NAMESPACE

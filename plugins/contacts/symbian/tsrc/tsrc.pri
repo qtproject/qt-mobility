@@ -1,11 +1,11 @@
 # Symbian plugin header and source files
 SYMBIAN_PATHS += \
-        ..\inc \
-        ..\rss \
-        ..\..\..\..\src\contacts \
-        ..\..\..\..\src\contacts\details \
-        ..\..\..\..\src\contacts\filters \
-        ..\..\..\..\src\contacts\requests
+        ../inc \
+        ../rss \
+        ../../../../src/contacts \
+        ../../../../src/contacts/details \
+        ../../../../src/contacts/filters \
+        ../../../../src/contacts/requests
         
 SYMBIAN_HEADERS += \
         ../inc/cntsymbianengine.h \
