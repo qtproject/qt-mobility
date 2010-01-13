@@ -117,10 +117,11 @@ public:
     QMagnetometerListener();
     virtual ~QMagnetometerListener();
     virtual void fluxDensityChanged(const QMagnetometerReading &reading) = 0;
+protected:
+    void setSensor(QMagnetometer *sensor);
+    QMagnetometer *sensor() const { return m_sensor; }
 private:
-    void addSensor(QMagnetometer *sensor);
-    void removeSensor(QMagnetometer *sensor);
-    QList<QMagnetometer *> m_sensors;
+    QMagnetometer *m_sensor;
 };
 
 // =====================================================================
@@ -150,7 +151,10 @@ protected:
     QSensorBackend *backend() const { return m_backend; }
 
 private:
-    void newReadingAvailable();
+    void newReadingAvailable()
+    {
+        m_listener->fluxDensityChanged(currentReading());
+    }
 
     QMagnetometerListener *m_listener;
     QMagnetometerBackend *m_backend;

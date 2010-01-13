@@ -181,9 +181,8 @@ QMagnetometerListener::QMagnetometerListener()
 */
 QMagnetometerListener::~QMagnetometerListener()
 {
-    foreach (QMagnetometer *sensor, m_sensors) {
-        sensor->setListener(0);
-    }
+    if (m_sensor)
+        m_sensor->setListener(0);
 }
 
 /*!
@@ -192,15 +191,43 @@ QMagnetometerListener::~QMagnetometerListener()
     This function is called when a new magnetometer \a reading is available.
 */
 
-void QMagnetometerListener::addSensor(QMagnetometer *sensor)
+/*!
+    \internal
+*/
+void QMagnetometerListener::setSensor(QMagnetometer *sensor)
 {
-    m_sensors << sensor;
+    m_sensor = sensor;
 }
 
-void QMagnetometerListener::removeSensor(QMagnetometer *sensor)
+/*!
+    \fn QMagnetometerListener::sensor() const
+    \internal
+*/
+
+// =====================================================================
+
+class QSignallingMagnetometerListener : public QObject, public QMagnetometerListener
 {
-    m_sensors.removeOne(sensor);
-}
+    Q_OBJECT
+public:
+    QSignallingMagnetometerListener()
+    {
+    }
+
+    void setSensor(QMagnetometer *_sensor)
+    {
+        if (sensor())
+            disconnect(this, SIGNAL(fluxDensityChanged(QMagnetometerReading)), sensor(), SIGNAL(fluxDensityChanged(QMagnetometerReading)));
+        QMagnetometerListener::setSensor(_sensor);
+        if (_sensor)
+            connect(this, SIGNAL(fluxDensityChanged(QMagnetometerReading)), _sensor, SIGNAL(fluxDensityChanged(QMagnetometerReading)));
+        else
+            delete this; // remove us automatically
+    }
+
+signals:
+    void fluxDensityChanged(const QMagnetometerReading &reading);
+};
 
 // =====================================================================
 
@@ -248,6 +275,7 @@ QMagnetometer::QMagnetometer(QObject *parent, const QSensorId &identifier)
     , m_listener(0)
 {
     m_backend = static_cast<QMagnetometerBackend*>(connectToBackend(identifier));
+    setListener(0);
 }
 
 /*!
@@ -257,7 +285,7 @@ QMagnetometer::~QMagnetometer()
 {
     stop();
     if (m_listener)
-        m_listener->removeSensor(this);
+        m_listener->setSensor(0);
 }
 
 /*!
@@ -282,16 +310,21 @@ const QString QMagnetometer::typeId("qt.Magnetometer");
 
     Note that the sensor does not take ownership of the listener although
     the listener interface will notify the magnetometer if it is destroyed.
+
+    Also note that setting a listener will prevent the fluxDensityChanged()
+    signal from being emitted.
 */
 void QMagnetometer::setListener(QMagnetometerListener *listener)
 {
     if (listener == m_listener)
         return;
     if (m_listener)
-        m_listener->removeSensor(this);
+        m_listener->setSensor(0);
     if (listener)
-        listener->addSensor(this);
-    m_listener = listener;
+        m_listener = listener;
+    else
+        m_listener = new QSignallingMagnetometerListener;
+    m_listener->setSensor(this);
 }
 
 /*!
@@ -303,10 +336,15 @@ void QMagnetometer::setListener(QMagnetometerListener *listener)
 /*!
     \fn QMagnetometer::fluxDensityChanged(const QMagnetometerReading &reading)
 
-    This signal is emitted when a new magnetometer \a reading comes in.
+    This signal may be emitted when a new magnetometer \a reading comes in.
+
+    This signal is only emitted if no listener has been set. If a listener has been
+    set via setListener() then this signal will not be emitted.
 
     Note that this signal should not be used if you are requesting
     high-frequency updates as signal delivery is quite slow.
+
+    \sa setListener()
 */
 
 /*!
@@ -314,15 +352,7 @@ void QMagnetometer::setListener(QMagnetometerListener *listener)
     \reimp
 */
 
-void QMagnetometer::newReadingAvailable()
-{
-    QMagnetometerReading reading = currentReading();
-    if (m_listener)
-        m_listener->fluxDensityChanged(reading);
-    // TODO this is apparenlty expensive...
-    emit fluxDensityChanged(reading);
-}
-
 #include "moc_qmagnetometer.cpp"
+#include "qmagnetometer.moc"
 QTM_END_NAMESPACE
 

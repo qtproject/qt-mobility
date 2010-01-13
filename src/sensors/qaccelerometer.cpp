@@ -54,7 +54,7 @@ class QSignallingAccelerometerListener;
            accelerometer.
 
     The accelerometer returns linear acceleration values along 3 axes.
-    The scale of the values is meters per second per second. The axes are arranged as follows.
+    The scale of the values is meters per second squared. The axes are arranged as follows.
 
 \code
              +z
@@ -180,7 +180,6 @@ void QAccelerometerListener::setSensor(QAccelerometer *sensor)
 
 class QSignallingAccelerometerListener : public QObject, public QAccelerometerListener
 {
-    //friend class QAccelerometer;
     Q_OBJECT
 public:
     QSignallingAccelerometerListener()
@@ -213,7 +212,7 @@ signals:
            along the X, Y and Z axes.
 
     The accelerometer returns acceleration values along 3 axes.
-    The scale of the values is meters per second per second. The axes are arranged as follows.
+    The scale of the values is meters per second squared. The axes are arranged as follows.
 
 \code
              +z
