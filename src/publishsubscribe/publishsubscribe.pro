@@ -65,13 +65,22 @@ unix:!symbian {
         CONFIG += link_pkgconfig
         PKGCONFIG += contextsubscriber-1.0 QtDBus
     } else {
+        HEADERS += gconflayer_linux_p.h
+        SOURCES += gconflayer_linux.cpp
+        CONFIG += link_pkgconfig
+        PKGCONFIG += glib-2.0 gconf-2.0
+
+        #As a workaround build GConfItem wrapper class with the project
+        HEADERS += gconfitem.h
+        SOURCES += gconfitem.cpp
+
         HEADERS += qsystemreadwritelock_p.h \
-           	   qmallocpool_p.h \
-		   qpacketprotocol_p.h
+                   qmallocpool_p.h \
+                   qpacketprotocol_p.h
         SOURCES += sharedmemorylayer.cpp \
-           	   qmallocpool.cpp \
+                   qmallocpool.cpp \
                    qsystemreadwritelock_unix.cpp \
-		   qpacketprotocol.cpp
+                   qpacketprotocol.cpp
     }
 }
 
