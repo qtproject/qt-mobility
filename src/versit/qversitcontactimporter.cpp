@@ -73,12 +73,15 @@ QTM_BEGIN_NAMESPACE
   property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
   property.setValue("some value");
   document.addProperty(property);
+
+  QList<QVersitDocument> list;
+  list.append(document);
  
   QVersitContactImporter importer;
   importer.setImagePath(QString::fromAscii("/my/image/path"));
   importer.setAudioClipPath(QString::fromAscii("my/audio_clip/path"));
  
-  QContact contact = importer.importContact(document);
+  QContact contact = importer.importContacts(list).first();
   // contact now contains the "N" property as a QContactName
   QList<QVersitProperty> unknownProperties = importer.unknownVersitProperties();
   // unknownProperties contains "X-UNKNOWN-PROPERTY"

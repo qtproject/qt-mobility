@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
 #include "qversitdefs.h"
 #include "versitutils_p.h"
@@ -76,6 +77,8 @@ QTM_BEGIN_NAMESPACE
  * Constructor.
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
+    mDetailExporter(NULL),
+    mFileLoader(NULL),
     mVersitType(QVersitDocument::InvalidType)
 {
     // Detail mappings
@@ -137,6 +140,7 @@ void QVersitContactExporterPrivate::exportContact(
         QVersitProperty property;
         property.setName(mPropertyMappings.value(detail.definitionName()));
         bool addProperty = true;
+        bool unknown = false;
 
         if (detail.definitionName() == QContactName::DefinitionName) {
             encodeName(property, detail);
@@ -164,7 +168,7 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactAvatar::DefinitionName){
             addProperty = encodeAvatar(property, detail);
             if (!addProperty)
-                mUnknownContactDetails.append(detail);
+                unknown = true;
         } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
             encodeAnniversary(property, detail);
         } else if (detail.definitionName() == QContactNickname::DefinitionName) {
@@ -175,20 +179,24 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
             addProperty = encodeOnlineAccount(property, detail);
             if (!addProperty)
-                mUnknownContactDetails.append(detail);
+                unknown = true;
         } else if (detail.definitionName() == QContactFamily::DefinitionName) {
             addProperty = encodeFamily(versitDocument, detail);
         } else if (detail.definitionName() == QContactDisplayLabel::DefinitionName) {
             addProperty = encodeDisplayLabel(property, detail, contact);
             if (!addProperty)
-                mUnknownContactDetails.append(detail);
+                unknown = true;
         } else {
             addProperty = false;
-            mUnknownContactDetails.append(detail);
+            unknown = true;
         }
 
         if (addProperty)
             versitDocument.addProperty(property);
+
+        if (unknown && mDetailExporter) {
+            mDetailExporter->processUnknownDetail(detail, &versitDocument);
+        }
     }
 }
 

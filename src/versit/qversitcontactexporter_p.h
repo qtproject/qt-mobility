@@ -63,6 +63,8 @@
 QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
+class QVersitContactDetailExporter;
+class QVersitFileLoader;
 QTM_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
@@ -113,6 +115,8 @@ protected:
 
 public: // Data
     QList<QContactDetail> mUnknownContactDetails;
+    QVersitContactDetailExporter* mDetailExporter;
+    QVersitFileLoader* mFileLoader;
 
 protected: // Data
     QHash<QString,QString> mPropertyMappings;

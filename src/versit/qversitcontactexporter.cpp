@@ -50,6 +50,50 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+ * \class QVersitContactDetailExporter
+ *
+ * \brief The QVersitContactDetailExporter class is an interface for clients wishing to implement
+ * custom export behaviour for certain contact details.
+ */
+
+/*!
+ * \fn virtual bool QVersitContactDetailExporter::processDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
+ * Process \a detail and update \a document with the correct QVersitProperty(s).
+ *
+ * Returns true on success, false on failure.
+ *
+ * This function is called on every QContactDetail encountered during an export.  Supply this
+ * function and return true to implement custom export behaviour.
+ */
+
+/*!
+ * \fn virtual bool QVersitContactDetailExporter::processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
+ * Process \a detail and update \a document with the correct QVersitProperty(s).
+ *
+ * Returns true on success, false on failure.
+ *
+ * This function is called on every QContactDetail encountered during an export which is not
+ * handled by either \l processDetail() or by QVersitContactExporter.  This can be used to
+ * implement support for QContactDetails not supported by QVersitContactExporter.
+ */
+
+/*!
+ * \class QVersitFileLoader
+ *
+ * \brief The QVersitFileLoader class is an interface for clients wishing to implement file
+ * loading from disk when exporting.
+ *
+ * \sa QVersitContactExporter
+ *
+ * \fn virtual bool QVersitFileLoader::loadFile(const QString& filename, QByteArray* contents, QString* mimeType) = 0;
+ * Loads a file from \a filename.
+ *
+ * \a *contents is filled with the contents of the file and \a *mimeType is set to the MIME
+ * type that it is determined to be.
+ * Returns true on success, false on failure.
+ */
+
+/*!
   \class QVersitContactExporter
  
   \brief The QVersitContactExporter class exports QContact(s) into QVersitDocument(s).
@@ -59,8 +103,10 @@ QTM_BEGIN_NAMESPACE
   If the exported QContact has some detail with an image as its value,
   signal \l QVersitContactExporter::scale() is emitted and
   the client can scale the image's data to the size it wishes.
-  The client may retrieve the list contact details
-  which were not exported using QVersitContactExporter::unknownContactDetails().
+
+  The client can optionally choose to override the processing of details, or
+  pass in a handler for details that QVersitContactExporter doesn't support by
+  using setDetailExporter().
  
   \code
  
@@ -90,13 +136,6 @@ QTM_BEGIN_NAMESPACE
  
    QList<QContactDetail> unknownDetails = contactExporter.unknownContactDetails();
  
-   // The returned unknownDetails can be processed by the client and
-   // the client can append details directly into QVersitDocument if needed.
-   // (In this example QContactAvatar::SubTypeTexturedMesh.
-   //  Currently for QContactAvatar details,
-   //  only exporting subtypes QContactAvatar::SubTypeImage and
-   //  QContactAvatar::SubTypeAudioRingtone is supported.)
- 
   \endcode
  
   \sa QVersitDocument, QVersitProperty
@@ -112,6 +151,7 @@ QTM_BEGIN_NAMESPACE
  * it should write the result to \a imageData.
  * Image scaling can be done for example by using class QImage.
  */
+
 
 /*!
  * Constructs a new contact exporter
@@ -151,14 +191,36 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
 }
 
 /*!
- * Returns the list of contact details, which were not exported
- * by the most recent call of \l QVersitContactExporter::exportContact().
+ * Sets \a exporter to be the handler for processing QContactDetails.
  */
-QList<QContactDetail> QVersitContactExporter::unknownContactDetails()
+void QVersitContactExporter::setDetailExporter(QVersitContactDetailExporter* exporter)
 {
-    return d->mUnknownContactDetails;
+    d->mDetailExporter = exporter;
 }
 
+/*!
+ * Gets the handler for processing QContactDetails.
+ */
+QVersitContactDetailExporter* QVersitContactExporter::detailExporter() const
+{
+    return d->mDetailExporter;
+}
+
+/*!
+ * Sets \a loader to be the handler to load files with.
+ */
+void QVersitContactExporter::setFileLoader(QVersitFileLoader* loader)
+{
+    d->mFileLoader = loader;
+}
+
+/*!
+ * Returns the file loader.
+ */
+QVersitFileLoader* QVersitContactExporter::fileLoader() const
+{
+    return d->mFileLoader;
+}
 
 #include "moc_qversitcontactexporter.cpp"
 

@@ -45,6 +45,7 @@
 #include "qversitproperty.h"
 #include "qversitdefs.h"
 #include <QString>
+#include <QStringList>
 #include <QList>
 #include <QtTest/QtTest>
 #include <qcontact.h>
@@ -107,6 +108,36 @@ public:
     QHash<QString, QString>& ParameterMappings() {return mParameterMappings;}
 
 };
+
+class MyQVersitContactDetailExporter : public QVersitContactDetailExporter
+{
+public:
+    bool processDetail(const QContactDetail& detail, QVersitDocument* document)
+    {
+        mProcessedDetails.append(detail);
+        if (mDefinitionNamesToProcess.contains(detail.definitionName())) {
+            QVersitProperty property;
+            property.setName(detail.definitionName());
+            property.setValue(detail.definitionName());
+            document->addProperty(property);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document)
+    {
+        Q_UNUSED(document)
+        mUnknownDetails.append(detail);
+        return false;
+    }
+
+    QStringList mDefinitionNamesToProcess;
+    QList<QContactDetail> mUnknownDetails;
+    QList<QContactDetail> mProcessedDetails;
+};
+
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -133,6 +164,7 @@ void UT_QVersitContactExporter::init()
     QVERIFY(!mExporterPrivate->ParameterMappings().empty());
     QVERIFY(!mExporterPrivate->PropertyMappings().empty());
     mScaleSignalEmitted = false;
+
 }
 
 void UT_QVersitContactExporter::cleanup()
@@ -206,10 +238,13 @@ void UT_QVersitContactExporter::testUnknownContactDetails()
     const QString url = QString::fromAscii("http://www.myhome.com/test.jpg");
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
-    document.setVersitType(QVersitDocument::VCard21Type);
-    mExporterPrivate->exportContact(document, contact);
+    QList<QContact> contacts;
+    contacts.append(contact);
+    MyQVersitContactDetailExporter detailExporter;
+    mExporter->setDetailExporter(&detailExporter);
+    document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
-    QList<QContactDetail> unknownDetails = mExporterPrivate->mUnknownContactDetails;
+    QList<QContactDetail> unknownDetails = detailExporter.mUnknownDetails;
     QString defintionName = contactAvatar.definitionName();
     QContactDetail detail = searchDetail(unknownDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
@@ -220,14 +255,16 @@ void UT_QVersitContactExporter::testUnknownContactDetails()
     onlineAccount.setAccountUri(testUri);
     onlineAccount.setSubTypes(QString::fromAscii("unsupported"));
     contact.saveDetail(&onlineAccount);
-    document = QVersitDocument();
-    document.setVersitType(QVersitDocument::VCard21Type);
-    mExporterPrivate->exportContact(document, contact);
+    contacts.clear();
+    contacts.append(contact);
+    detailExporter = MyQVersitContactDetailExporter();
+    mExporter->setDetailExporter(&detailExporter);
+    document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
-    unknownDetails = mExporterPrivate->mUnknownContactDetails;
+    unknownDetails = detailExporter.mUnknownDetails;
     defintionName = onlineAccount.definitionName();
     detail = QContactDetail();
-    detail = searchDetail(unknownDetails,defintionName);
+    detail = searchDetail(unknownDetails, defintionName);
     QCOMPARE(defintionName, detail.definitionName());
 }
 

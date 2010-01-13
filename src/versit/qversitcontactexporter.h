@@ -54,6 +54,21 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate;
 
+class QVersitContactDetailExporter
+{
+public:
+    virtual bool processDetail(const QContactDetail& detail, QVersitDocument* document)
+            = 0;
+
+    virtual bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
+};
+
+class QVersitFileLoader
+{
+public:
+    virtual bool loadFile(const QString& filename, QByteArray* contents, QString* mimeType) = 0;
+};
+
 class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
 {
     Q_OBJECT
@@ -65,8 +80,12 @@ public:
     QList<QVersitDocument> exportContacts(
         const QList<QContact>& contacts,
         QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type);
-		
-    QList<QContactDetail> unknownContactDetails();
+
+    void setDetailExporter(QVersitContactDetailExporter* exporter);
+    QVersitContactDetailExporter* detailExporter() const;
+
+    void setFileLoader(QVersitFileLoader* loader);
+    QVersitFileLoader* fileLoader() const;
 
 signals:
     void scale(const QString& imageFileName, QByteArray& imageData);

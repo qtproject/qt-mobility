@@ -56,43 +56,42 @@ class QVersitContactExporterPrivate;
 
 class QVersitContactDetailExporter
 {
-protected:
+public:
     /*!
-     * Converts \a detail into a QVersitProperty.
+     * Process \a detail and update \a document with the correct QVersitProperty(s).
      *
-     * \a *ok is set to true on success, false on failure.
+     * Returns true on success, false on failure.
      *
      * This function is called on every QContactDetail encountered during an export.  Supply this
-     * function and set *ok to true to implement custom export behaviour.
+     * function and return true to implement custom export behaviour.
      */
-    virtual QVersitProperty processDetail(const QContactDetail& detail, bool* ok) = 0;
-     
+    virtual bool processDetail(const QContactDetail& detail, QVersitDocument* document)
+            = 0;
+
     /*!
-     * Converts \a detail into a QVersitProperty.
+     * Process \a detail and update \a document with the correct QVersitProperty(s).
      *
-     * \a *ok is set to true on success, false on failure.
+     * Returns true on success, false on failure.
      *
      * This function is called on every QContactDetail encountered during an export which is not
      * handled by either \l processDetail() or by QVersitContactExporter.  This can be used to
      * implement support for QContactDetails not supported by QVersitContactExporter.
      *
-     * Note that QVersitContactExporter doesn't support avatars or audio clips and this function
-     * must be supplied to support these.
-     *
-     * An example for processing avatars:
-     * QVersitProperty CustomExporter::processUnknownDetail(const QContactDetail& detail, bool* ok)
-     * {
-     *     if (detail.definitionName() == QContactAvatar::DefinitionName) {
-     *         QContactAvatar avatar = static_cast<QContactAvatar>(detail);
-     *         // Process avatar and return a corresponding QVersitProperty
-     *     } else {
-     *         *ok = false;
-     *         return QVersitProperty();
-     *     }
-     * }
-     *
      */
-    virtual QVersitProperty processUnknownDetail(const QContactDetail& detail, bool* ok) = 0;
+    virtual bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
+};
+
+class QVersitImageLoader
+{
+public:
+    /*!
+     * Loads an image from \a filename.
+     *
+     * \a *contents is filled with the contents of the file and \a *mimeType is set to the MIME
+     * type that it is determined to be.
+     * Returns true on success, false on failure.
+     */
+    virtual bool loadImage(const QString& filename, QByteArray* contents, QString* mimeType) = 0;
 };
 
 class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
