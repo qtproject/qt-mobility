@@ -76,7 +76,7 @@ QString S60AudioEncoderControl::audioCodec() const
 bool S60AudioEncoderControl::setAudioCodec(const QString &codecName)
 {
     QAudioFormat fmt = m_session->format();
-    //fmt.setCodec(codecName);
+    fmt.setCodec(codecName);
     return m_session->setFormat(fmt);
 }
 
