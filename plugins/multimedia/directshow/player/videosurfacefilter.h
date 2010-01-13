@@ -44,7 +44,7 @@
 
 #include "directshowmediatypelist.h"
 #include "directshowsamplescheduler.h"
-#include "videosurfacemediatype.h"
+#include "directshowmediatype.h"
 
 #include <QtCore/qbasictimer.h>
 #include <QtCore/qcoreevent.h>
@@ -161,7 +161,7 @@ private:
     HRESULT m_startResult;
     QString m_name;
     QString m_pinId;
-    VideoSurfaceMediaType m_mediaType;
+    DirectShowMediaType m_mediaType;
     QVideoSurfaceFormat m_surfaceFormat;
     QMutex m_mutex;
     QWaitCondition m_wait;

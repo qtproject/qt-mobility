@@ -42,8 +42,8 @@
 #include "directshowiosource.h"
 
 #include "directshowglobal.h"
-#include "videosurfacemediatype.h"
-#include "videosurfacepinenum.h"
+#include "directshowmediatype.h"
+#include "directshowpinenum.h"
 
 
 static const GUID directshow_subtypes[] =
@@ -244,7 +244,7 @@ HRESULT DirectShowIOSource::EnumPins(IEnumPins **ppEnum)
     if (!ppEnum) {
         return E_POINTER;
     } else {
-        *ppEnum = new VideoSurfacePinEnum(QList<IPin *>() << this);
+        *ppEnum = new DirectShowPinEnum(QList<IPin *>() << this);
 
         return S_OK;
     }
@@ -336,10 +336,10 @@ HRESULT DirectShowIOSource::Connect(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt)
             if (pReceivePin->EnumMediaTypes(&mediaTypes) == S_OK) {
                 for (AM_MEDIA_TYPE *type = 0;
                         mediaTypes->Next(1, &type, 0) == S_OK;
-                        VideoSurfaceMediaType::free(type)) {
+                        DirectShowMediaType::free(type)) {
                     switch (tryConnect(pReceivePin, type)) {
                         case S_OK:
-                            VideoSurfaceMediaType::free(type);
+                            DirectShowMediaType::free(type);
                             mediaTypes->Release();
                             return S_OK;
                         case VFW_E_NO_TRANSPORT:
@@ -498,7 +498,7 @@ HRESULT DirectShowIOSource::ConnectionMediaType(AM_MEDIA_TYPE *pmt)
 
             return VFW_E_NOT_CONNECTED;
         } else {
-            VideoSurfaceMediaType::copy(pmt, m_mediaType);
+            DirectShowMediaType::copy(pmt, m_mediaType);
 
             return S_OK;
         }

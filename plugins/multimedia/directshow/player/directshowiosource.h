@@ -43,8 +43,8 @@
 #define DIRECTSHOWIOSOURCE_H
 
 #include "directshowioreader.h"
+#include "directshowmediatype.h"
 #include "directshowmediatypelist.h"
-#include "videosurfacemediatype.h"
 
 class QIODevice;
 
@@ -125,7 +125,7 @@ private:
     IReferenceClock *m_clock;
     IMemAllocator *m_allocator;
     IPin *m_peerPin;
-    VideoSurfaceMediaType m_mediaType;
+    DirectShowMediaType m_mediaType;
     QString m_filterName;
     const QString m_pinId;
     QMutex m_mutex;

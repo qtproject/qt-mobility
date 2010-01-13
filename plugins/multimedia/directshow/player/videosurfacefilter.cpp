@@ -42,7 +42,7 @@
 #include "videosurfacefilter.h"
 
 #include "mediasamplevideobuffer.h"
-#include "videosurfacepinenum.h"
+#include "directshowpinenum.h"
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>
@@ -188,7 +188,7 @@ HRESULT VideoSurfaceFilter::GetSyncSource(IReferenceClock **ppClock)
 HRESULT VideoSurfaceFilter::EnumPins(IEnumPins **ppEnum)
 {
     if (ppEnum) {
-        *ppEnum = new VideoSurfacePinEnum(QList<IPin *>() << this);
+        *ppEnum = new DirectShowPinEnum(QList<IPin *>() << this);
 
         return S_OK;
     } else {
@@ -275,8 +275,8 @@ HRESULT VideoSurfaceFilter::ReceiveConnection(IPin *pConnector, const AM_MEDIA_T
         } else if (pmt->majortype != MEDIATYPE_Video) {
             hr = VFW_E_TYPE_NOT_ACCEPTED;
         } else {
-            m_surfaceFormat = VideoSurfaceMediaType::formatFromType(*pmt);
-            m_bytesPerLine = VideoSurfaceMediaType::bytesPerLine(m_surfaceFormat);
+            m_surfaceFormat = DirectShowMediaType::formatFromType(*pmt);
+            m_bytesPerLine = DirectShowMediaType::bytesPerLine(m_surfaceFormat);
 
             if (thread() == QThread::currentThread()) {
                 hr = start();
@@ -292,7 +292,7 @@ HRESULT VideoSurfaceFilter::ReceiveConnection(IPin *pConnector, const AM_MEDIA_T
            m_peerPin = pConnector;
            m_peerPin->AddRef();
 
-           VideoSurfaceMediaType::copy(&m_mediaType, *pmt);
+           DirectShowMediaType::copy(&m_mediaType, *pmt);
         }
         return hr;
     }
@@ -366,7 +366,7 @@ HRESULT VideoSurfaceFilter::ConnectionMediaType(AM_MEDIA_TYPE *pmt)
         if (!m_peerPin) {
             return VFW_E_NOT_CONNECTED;
         } else {
-            VideoSurfaceMediaType::copy(pmt, m_mediaType);
+            DirectShowMediaType::copy(pmt, m_mediaType);
 
             return S_OK;
         }
@@ -408,7 +408,7 @@ HRESULT VideoSurfaceFilter::QueryId(LPWSTR *Id)
 
 HRESULT VideoSurfaceFilter::QueryAccept(const AM_MEDIA_TYPE *pmt)
 {
-    return !m_surface->isFormatSupported(VideoSurfaceMediaType::formatFromType(*pmt))
+    return !m_surface->isFormatSupported(DirectShowMediaType::formatFromType(*pmt))
             ? S_OK
             : S_FALSE;
 }
@@ -569,7 +569,7 @@ void VideoSurfaceFilter::supportedFormatsChanged()
     type.pbFormat = 0;
 
     foreach (QVideoFrame::PixelFormat format, formats) {
-        type.subtype = VideoSurfaceMediaType::convertPixelFormat(format);
+        type.subtype = DirectShowMediaType::convertPixelFormat(format);
 
         if (type.subtype != MEDIASUBTYPE_None)
             mediaTypes.append(type);

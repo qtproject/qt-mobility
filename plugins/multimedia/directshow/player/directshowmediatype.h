@@ -39,27 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef VIDEOSURFACEMEDIATYPE_H
-#define VIDEOSURFACEMEDIATYPE_H
+#ifndef DIRECTSHOWMEDIATYPE_H
+#define DIRECTSHOWMEDIATYPE_H
 
 #include <QtMultimedia/qvideosurfaceformat.h>
 
 #include <dshow.h>
 #include <dvdmedia.h>
 
-class VideoSurfaceMediaType : public AM_MEDIA_TYPE
+class DirectShowMediaType : public AM_MEDIA_TYPE
 {
 public:
-    VideoSurfaceMediaType() { memset(this, 0, sizeof(VideoSurfaceMediaType)); }
-    VideoSurfaceMediaType(const AM_MEDIA_TYPE &type) { copy(this, type); }
-    VideoSurfaceMediaType(const VideoSurfaceMediaType &other) { copy(this, other); }
-    VideoSurfaceMediaType &operator =(const AM_MEDIA_TYPE &type) {
+    DirectShowMediaType() { memset(this, 0, sizeof(DirectShowMediaType)); }
+    DirectShowMediaType(const AM_MEDIA_TYPE &type) { copy(this, type); }
+    DirectShowMediaType(const DirectShowMediaType &other) { copy(this, other); }
+    DirectShowMediaType &operator =(const AM_MEDIA_TYPE &type) {
         free(this); copy(this, type); return *this; }
-    VideoSurfaceMediaType &operator =(const VideoSurfaceMediaType &other) {
+    DirectShowMediaType &operator =(const DirectShowMediaType &other) {
         free(this); copy(this, other); return *this; }
-    ~VideoSurfaceMediaType() { free(this); }
+    ~DirectShowMediaType() { free(this); }
 
-    void clear() { free(this); memset(this, 0, sizeof(VideoSurfaceMediaType)); }
+    void clear() { free(this); memset(this, 0, sizeof(DirectShowMediaType)); }
 
     static void copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &source);
     static void free(AM_MEDIA_TYPE *type);

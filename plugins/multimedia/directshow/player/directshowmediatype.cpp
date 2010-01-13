@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "videosurfacemediatype.h"
+#include "directshowmediatype.h"
 
 namespace
 {
@@ -57,7 +57,7 @@ namespace
     };
 }
 
-void VideoSurfaceMediaType::copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &source)
+void DirectShowMediaType::copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &source)
 {
     *target = source;
 
@@ -69,7 +69,7 @@ void VideoSurfaceMediaType::copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &sou
         target->pUnk->AddRef();
 }
 
-void VideoSurfaceMediaType::free(AM_MEDIA_TYPE *type)
+void DirectShowMediaType::free(AM_MEDIA_TYPE *type)
 {
     if (type->cbFormat > 0)
         CoTaskMemFree(type->pbFormat);
@@ -79,7 +79,7 @@ void VideoSurfaceMediaType::free(AM_MEDIA_TYPE *type)
 }
 
 
-GUID VideoSurfaceMediaType::convertPixelFormat(QVideoFrame::PixelFormat format)
+GUID DirectShowMediaType::convertPixelFormat(QVideoFrame::PixelFormat format)
 {
     const int count = sizeof(qt_typeLookup) / sizeof(TypeLookup);
 
@@ -89,7 +89,7 @@ GUID VideoSurfaceMediaType::convertPixelFormat(QVideoFrame::PixelFormat format)
     return MEDIASUBTYPE_None;
 }
 
-QVideoSurfaceFormat VideoSurfaceMediaType::formatFromType(const AM_MEDIA_TYPE &type)
+QVideoSurfaceFormat DirectShowMediaType::formatFromType(const AM_MEDIA_TYPE &type)
 {
     const int count = sizeof(qt_typeLookup) / sizeof(TypeLookup);
 
@@ -131,7 +131,7 @@ QVideoSurfaceFormat VideoSurfaceMediaType::formatFromType(const AM_MEDIA_TYPE &t
     return QVideoSurfaceFormat();
 }
 
-int VideoSurfaceMediaType::bytesPerLine(const QVideoSurfaceFormat &format)
+int DirectShowMediaType::bytesPerLine(const QVideoSurfaceFormat &format)
 {
     switch (format.pixelFormat()) {
     case QVideoFrame::Format_RGB24:

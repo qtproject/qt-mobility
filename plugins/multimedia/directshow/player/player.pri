@@ -7,8 +7,10 @@ HEADERS += \
         $$PWD\directshowglobal.h \
         $$PWD\directshowioreader.h \
         $$PWD\directshowiosource.h \
+        $$PWD\directshowmediatype.h \
         $$PWD\directshowmediatypelist.h \
         $$PWD\directshowmetadatacontrol.h \
+        $$PWD\directshowpinenum.h \
         $$PWD\directshowplayercontrol.h \
         $$PWD\directshowplayerservice.h \
         $$PWD\directshowrenderthread.h \
@@ -16,16 +18,16 @@ HEADERS += \
         $$PWD\directshowvideooutputcontrol.h \
         $$PWD\directshowvideorenderercontrol.h \
         $$PWD\mediasamplevideobuffer.h \
-        $$PWD\videosurfacefilter.h \
-        $$PWD\videosurfacemediatype.h \
-        $$PWD\videosurfacepinenum.h
+        $$PWD\videosurfacefilter.h
 
 SOURCES += \
         $$PWD\directshowaudioendpointcontrol.cpp \
         $$PWD\directshowioreader.cpp \
         $$PWD\directshowiosource.cpp \
+        $$PWD\directshowmediatype.cpp \
         $$PWD\directshowmediatypelist.cpp \
         $$PWD\directshowmetadatacontrol.cpp \
+        $$PWD\directshowpinenum.cpp \
         $$PWD\directshowplayercontrol.cpp \
         $$PWD\directshowplayerservice.cpp \
         $$PWD\directshowrenderthread.cpp \
@@ -33,9 +35,7 @@ SOURCES += \
         $$PWD\directshowvideooutputcontrol.cpp \
         $$PWD\directshowvideorenderercontrol.cpp \
         $$PWD\mediasamplevideobuffer.cpp \
-        $$PWD\videosurfacefilter.cpp \
-        $$PWD\videosurfacemediatype.cpp \
-        $$PWD\videosurfacepinenum.cpp
+        $$PWD\videosurfacefilter.cpp
 
 LIBS += -lstrmiids -ldmoguids -luuid -lmsdmo -lole32 -loleaut32
 

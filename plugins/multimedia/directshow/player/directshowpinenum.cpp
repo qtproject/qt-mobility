@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include "videosurfacepinenum.h"
+#include "directshowpinenum.h"
 
 #include <QtMultimedia>
 
-VideoSurfacePinEnum::VideoSurfacePinEnum(const QList<IPin *> &pins)
+DirectShowPinEnum::DirectShowPinEnum(const QList<IPin *> &pins)
     : m_ref(1)
     , m_pins(pins)
     , m_index(0)
@@ -52,13 +52,13 @@ VideoSurfacePinEnum::VideoSurfacePinEnum(const QList<IPin *> &pins)
         pin->AddRef();
 }
 
-VideoSurfacePinEnum::~VideoSurfacePinEnum()
+DirectShowPinEnum::~DirectShowPinEnum()
 {
     foreach (IPin *pin, m_pins)
         pin->Release();
 }
 
-HRESULT VideoSurfacePinEnum::QueryInterface(REFIID riid, void **ppvObject)
+HRESULT DirectShowPinEnum::QueryInterface(REFIID riid, void **ppvObject)
 {
     if (riid == IID_IUnknown
             || riid == IID_IEnumPins) {
@@ -74,12 +74,12 @@ HRESULT VideoSurfacePinEnum::QueryInterface(REFIID riid, void **ppvObject)
     }
 }
 
-ULONG VideoSurfacePinEnum::AddRef()
+ULONG DirectShowPinEnum::AddRef()
 {
     return InterlockedIncrement(&m_ref);
 }
 
-ULONG VideoSurfacePinEnum::Release()
+ULONG DirectShowPinEnum::Release()
 {
     ULONG ref = InterlockedDecrement(&m_ref);
 
@@ -90,7 +90,7 @@ ULONG VideoSurfacePinEnum::Release()
     return ref;
 }
 
-HRESULT VideoSurfacePinEnum::Next(ULONG cPins, IPin **ppPins, ULONG *pcFetched)
+HRESULT DirectShowPinEnum::Next(ULONG cPins, IPin **ppPins, ULONG *pcFetched)
 {
     if (ppPins && (pcFetched || cPins == 1)) {
         ULONG count = qBound<ULONG>(0, cPins, m_pins.count() - m_index);
@@ -109,24 +109,24 @@ HRESULT VideoSurfacePinEnum::Next(ULONG cPins, IPin **ppPins, ULONG *pcFetched)
     }
 }
 
-HRESULT VideoSurfacePinEnum::Skip(ULONG cPins)
+HRESULT DirectShowPinEnum::Skip(ULONG cPins)
 {
     m_index = qMin(int(m_index + cPins), m_pins.count());
 
     return m_index < m_pins.count() ? S_OK : S_FALSE;
 }
 
-HRESULT VideoSurfacePinEnum::Reset()
+HRESULT DirectShowPinEnum::Reset()
 {
     m_index = 0;
 
     return S_OK;
 }
 
-HRESULT VideoSurfacePinEnum::Clone(IEnumPins **ppEnum)
+HRESULT DirectShowPinEnum::Clone(IEnumPins **ppEnum)
 {
     if (ppEnum) {
-        *ppEnum = new VideoSurfacePinEnum(m_pins);
+        *ppEnum = new DirectShowPinEnum(m_pins);
 
         return S_OK;
     } else {

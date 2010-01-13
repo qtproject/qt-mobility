@@ -41,7 +41,7 @@
 
 #include "directshowmediatypelist.h"
 
-#include "videosurfacemediatype.h"
+#include "directshowmediatype.h"
 #include "videosurfacefilter.h"
 
 
@@ -184,7 +184,7 @@ HRESULT DirectShowMediaTypeList::nextMediaType(
             types[i] = reinterpret_cast<AM_MEDIA_TYPE *>(CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE)));
 
             if (types[i]) {
-                VideoSurfaceMediaType::copy(types[i], m_mediaTypes.at(*index));
+                DirectShowMediaType::copy(types[i], m_mediaTypes.at(*index));
             } else {
                 for (--i; i >= 0; --i)
                     CoTaskMemFree(types[i]);

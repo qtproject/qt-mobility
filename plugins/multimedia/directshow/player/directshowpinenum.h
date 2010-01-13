@@ -39,18 +39,18 @@
 **
 ****************************************************************************/
 
-#ifndef VIDEOSURFACEPINENUM_H
-#define VIDEOSURFACEPINENUM_H
+#ifndef DIRECTSHOWPINENUM_H
+#define DIRECTSHOWPINENUM_H
 
 #include <QtCore/qlist.h>
 
 #include <dshow.h>
 
-class VideoSurfacePinEnum : public IEnumPins
+class DirectShowPinEnum : public IEnumPins
 {
 public:
-    VideoSurfacePinEnum(const QList<IPin *> &pins);
-    ~VideoSurfacePinEnum();
+    DirectShowPinEnum(const QList<IPin *> &pins);
+    ~DirectShowPinEnum();
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
