@@ -22,6 +22,7 @@ SYMBIAN_HEADERS += \
         ../../inc/cnttransformorganisation.h \
         ../../inc/cnttransformavatar.h \
         ../../inc/cnttransformavatarsimple.h \
+        ../../inc/cntthumbnailcreator.h \        
         ../../inc/cnttransformsynctarget.h \
         ../../inc/cnttransformgender.h \
         ../../inc/cnttransformanniversary.h \
@@ -41,7 +42,8 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbianfiltersqlhelper.h \
         ../../inc/cntsymbiansrvconnection.h \
         ../../inc/cntsymbiantransformerror.h \
-        ../../inc/cntsymbiandatabase.h
+        ../../inc/cntsymbiandatabase.h \
+        ../../inc/cntdisplaylabel.h 
 
 SYMBIAN_SOURCES += \
         ../../src/cntsymbianengine.cpp \
@@ -58,6 +60,7 @@ SYMBIAN_SOURCES += \
         ../../src/cnttransformorganisation.cpp \
         ../../src/cnttransformavatar.cpp \
         ../../src/cnttransformavatarsimple.cpp \
+        ../../src/cntthumbnailcreator.cpp \
         ../../src/cnttransformsynctarget.cpp \
         ../../src/cnttransformgender.cpp \
         ../../src/cnttransformanniversarysimple.cpp \
@@ -75,9 +78,15 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbianfiltersqlhelper.cpp \
         ../../src/cntsymbiansrvconnection.cpp \
         ../../src/cntsymbiantransformerror.cpp \
-        ../../src/cntsymbiandatabase.cpp
-
+        ../../src/cntsymbiandatabase.cpp \
+        ../../src/cntdisplaylabel.cpp
 SYMBIAN_LIBS += \
         -lcntmodel \
         -lcentralrepository \
-        -lestor
+        -lestor \
+        -lefsrv \
+        -lfbscli \
+        -limageconversion \
+        -lbitmaptransforms \ 
+        -lbafl
+        

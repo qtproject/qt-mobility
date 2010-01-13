@@ -54,18 +54,18 @@
 
 #include <qmobilityglobal.h>
 
-#include <QtDBus>
-#include <QDBusConnection>
-#include <QDBusError>
-#include <QDBusInterface>
-#include <QDBusMessage>
-#include <QDBusReply>
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusError>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusReply>
 #include <QNetworkInterface>
 
 
-#include <QDBusPendingCallWatcher>
-#include <QDBusObjectPath>
-#include <QDBusContext>
+#include <QtDBus/QDBusPendingCallWatcher>
+#include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusContext>
 #include <QMap>
 
 typedef enum NMDeviceType

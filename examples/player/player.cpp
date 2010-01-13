@@ -150,6 +150,13 @@ Player::Player(QWidget *parent)
     setLayout(layout);
 
     metaDataChanged();
+
+    QStringList fileNames = qApp->arguments();
+    fileNames.removeAt(0);
+    foreach (QString const &fileName, fileNames) {
+        if (QFileInfo(fileName).exists())
+            playlist->addMedia(QUrl::fromLocalFile(fileName));
+    }
 }
 
 Player::~Player()
@@ -184,10 +191,10 @@ void Player::metaDataChanged()
                 .arg(player->metaData(QtMedia::Title).toString()));
 
         if (coverLabel) {
-            QUrl uri = player->metaData(QtMedia::CoverArtUriLarge).value<QUrl>();
+            QUrl url = player->metaData(QtMedia::CoverArtUrlLarge).value<QUrl>();
 
-            coverLabel->setPixmap(!uri.isEmpty()
-                    ? QPixmap(uri.toString())
+            coverLabel->setPixmap(!url.isEmpty()
+                    ? QPixmap(url.toString())
                     : QPixmap());
         }
     }
@@ -197,6 +204,7 @@ void Player::jump(const QModelIndex &index)
 {
     if (index.isValid()) {
         playlist->setCurrentIndex(index.row());
+        player->play();
     }
 }
 

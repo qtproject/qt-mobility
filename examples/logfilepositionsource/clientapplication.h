@@ -49,7 +49,9 @@ QTM_BEGIN_NAMESPACE
 class QGeoPositionInfo;
 QTM_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 class QTextEdit;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 class ClientApplication : public QMainWindow

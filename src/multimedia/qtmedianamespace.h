@@ -82,7 +82,7 @@ namespace QtMedia
         AverageLevel,
         ChannelCount,
         PeakValue,
-        Frequency,
+        SampleRate,
 
         // Music
         AlbumTitle,
@@ -95,8 +95,8 @@ namespace QtMedia
         TrackNumber,
         TrackCount,
 
-        CoverArtUriSmall,
-        CoverArtUriLarge,
+        CoverArtUrlSmall,
+        CoverArtUrlLarge,
 
         // Image/Video
         Resolution,
@@ -107,7 +107,7 @@ namespace QtMedia
         VideoBitRate,
         VideoCodec,
 
-        PosterUri,
+        PosterUrl,
 
         // Movie
         ChapterNumber,

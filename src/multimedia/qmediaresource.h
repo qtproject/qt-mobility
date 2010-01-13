@@ -53,7 +53,7 @@ class Q_MEDIA_EXPORT QMediaResource
 {
 public:
     QMediaResource();
-    QMediaResource(const QUrl &uri, const QString &mimeType = QString());
+    QMediaResource(const QUrl &url, const QString &mimeType = QString());
     QMediaResource(const QMediaResource &other);
     QMediaResource &operator =(const QMediaResource &other);
     ~QMediaResource();
@@ -63,7 +63,7 @@ public:
     bool operator ==(const QMediaResource &other) const;
     bool operator !=(const QMediaResource &other) const;
 
-    QUrl uri() const;
+    QUrl url() const;
     QString mimeType() const;
 
     QString language() const;
@@ -81,8 +81,8 @@ public:
     int audioBitRate() const;
     void setAudioBitRate(int rate);
 
-    int frequency() const;
-    void setFrequency(int frequency);
+    int sampleRate() const;
+    void setSampleRate(int frequency);
 
     int channelCount() const;
     void setChannelCount(int channels);
@@ -98,7 +98,7 @@ public:
 private:
     enum Property
     {
-        Uri,
+        Url,
         MimeType,
         Language,
         AudioCodec,
@@ -106,7 +106,7 @@ private:
         DataSize,
         AudioBitRate,
         VideoBitRate,
-        Frequency,
+        SampleRate,
         ChannelCount,
         Resolution,
     };

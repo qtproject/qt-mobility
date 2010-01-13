@@ -74,28 +74,8 @@ the default schema will work without source modification against their backend.
 \section1 Default Schema
 
 The leaf details that form the default schema are as follows:
-\list
-    \o \l{QContactAddress}
-    \o \l{QContactAnniversary}
-    \o \l{QContactAvatar}
-    \o \l{QContactBirthday}
-    \o \l{QContactDisplayLabel}
-    \o \l{QContactEmailAddress}
-    \o \l{QContactFamily}
-    \o \l{QContactGender}
-    \o \l{QContactGeolocation}
-    \o \l{QContactGuid}
-    \o \l{QContactName}
-    \o \l{QContactNickname}
-    \o \l{QContactNote}
-    \o \l{QContactOnlineAccount}
-    \o \l{QContactOrganization}
-    \o \l{QContactPhoneNumber}
-    \o \l{QContactSyncTarget}
-    \o \l{QContactTimestamp}
-    \o \l{QContactType}
-    \o \l{QContactUrl}
-\endlist
+\annotatedlist contacts-details
+
 
 In the default schema, each of these definitions have various access and uniqueness constraints.
 Additionally, fields of the definitions may have an access constraint of read-only defined for them.
@@ -148,10 +128,11 @@ the default display label for the contact.
 Furthermore, some fields of some definitions are also constrained to be read-only.  This is information which is generated or automatically
 provided by the backend, which is related to user-provided information that is also stored in the detail.
 
-The eponymous example of this is the \l{QContactOnlineAccount} leaf detail, which has an unconstrained field which stores the URI of the
-account, and several read-only fields in which are stored presence information, status messages, and service availability.
+The eponymous example of this is the \l{QContactOnlineAccount} leaf detail, which has unconstrained fields which store the URI and service
+provider of the account, and several read-only fields in which are stored presence information, status messages, and service availability.
 
 Currently, the \l{QContactOnlineAccount} is the only leaf detail with field-level access constraints.  Every field in details of this
-type are \c QContactDetailDefinition::ReadOnly except for \c QContactOnlineAccount::FieldAccountUri, which has no constraint.
+type are \c QContactDetailDefinition::ReadOnly except for \c QContactOnlineAccount::FieldAccountUri and
+\c QContactOnlineAccount::FieldServiceProvider, which have no constraint.
 
 */

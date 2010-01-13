@@ -108,7 +108,7 @@ QList<TUid> CntTransformAnniversarySimple::supportedSortingFieldTypes(QString /*
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformAnniversarySimple::supportsSubType(const QString& subType) const
+bool CntTransformAnniversarySimple::supportsSubType(const QString& /*subType*/) const
 {
     return false;
 }
@@ -119,7 +119,7 @@ bool CntTransformAnniversarySimple::supportsSubType(const QString& subType) cons
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformAnniversarySimple::getIdForField(const QString& fieldName) const
+quint32 CntTransformAnniversarySimple::getIdForField(const QString& /*fieldName*/) const
 {
     return 0;
 }

@@ -68,8 +68,10 @@
 
 #include <QBasicTimer>
 
+QT_BEGIN_NAMESPACE
 class QStringList;
 class QTimer;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 

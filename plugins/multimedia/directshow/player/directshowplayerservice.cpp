@@ -138,7 +138,7 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
             event->Release();
         }
 
-        m_renderThread.load(media.canonicalUri(), stream, m_graph);
+        m_renderThread.load(media.canonicalUrl(), stream, m_graph);
     }
 }
 

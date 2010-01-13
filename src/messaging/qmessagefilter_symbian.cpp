@@ -164,7 +164,7 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
         }
     }
 
-    Qt::CaseSensitivity caseSensitivity = (filter._options & QMessageDataComparator::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+    Qt::CaseSensitivity caseSensitivity = (filter._matchFlags & QMessageDataComparator::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
     switch (filter._field) {
     case QMessageFilterPrivate::Id:
@@ -608,6 +608,8 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
         }
         break;
         }
+    case QMessageFilterPrivate::ParentAccountIdFilter:
+    case QMessageFilterPrivate::ParentFolderIdFilter:
     case QMessageFilterPrivate::None:
         break;
     }
@@ -649,7 +651,7 @@ QMessageFilterPrivate* QMessageFilterPrivate::implementation(const QMessageFilte
 QMessageFilter::QMessageFilter()
  : d_ptr(new QMessageFilterPrivate(this))
 {
-	d_ptr->_options = 0;
+	d_ptr->_matchFlags = 0;
 
 	d_ptr->_valid = true; // Empty filter is valid
 	d_ptr->_notFilter = false;
@@ -659,16 +661,26 @@ QMessageFilter::QMessageFilter()
 	d_ptr->_field = QMessageFilterPrivate::None;
 	d_ptr->_comparatorType = QMessageFilterPrivate::Equality;
 	d_ptr->_comparatorValue = 0;
+    d_ptr->_accountFilter = 0;
+    d_ptr->_folderFilter = 0;
 }
 
 QMessageFilter::QMessageFilter(const QMessageFilter &other)
  : d_ptr(new QMessageFilterPrivate(this))
 {
+    d_ptr->_accountFilter = 0;
+    d_ptr->_folderFilter = 0;
+
     this->operator=(other);
 }
 
 QMessageFilter::~QMessageFilter()
 {
+    delete d_ptr->_accountFilter;
+    d_ptr->_accountFilter = 0;
+    delete d_ptr->_folderFilter;
+    d_ptr->_folderFilter = 0;
+
     delete d_ptr;
 }
 
@@ -677,7 +689,7 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     if (&other == this)
         return *this;
     
-    d_ptr->_options = other.d_ptr->_options;
+    d_ptr->_matchFlags = other.d_ptr->_matchFlags;
     
     d_ptr->_valid = other.d_ptr->_valid;
     d_ptr->_notFilter = other.d_ptr->_notFilter;
@@ -688,18 +700,29 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     d_ptr->_comparatorType = other.d_ptr->_comparatorType;
     d_ptr->_comparatorValue = other.d_ptr->_comparatorValue;
     d_ptr->_filterList = other.d_ptr->_filterList;
+
+    delete d_ptr->_accountFilter;
+    d_ptr->_accountFilter = 0;
+    if (other.d_ptr->_accountFilter) {
+        d_ptr->_accountFilter = new QMessageAccountFilter(*other.d_ptr->_accountFilter);
+    }
+    delete d_ptr->_folderFilter;
+    d_ptr->_folderFilter = 0;
+    if (other.d_ptr->_folderFilter) {
+        d_ptr->_folderFilter = new QMessageFolderFilter(*other.d_ptr->_folderFilter);
+    }
     
     return *this;
 }
 
-void QMessageFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
 }
 
-QMessageDataComparator::Options QMessageFilter::options() const
+QMessageDataComparator::MatchFlags QMessageFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageFilter::isEmpty() const
@@ -875,6 +898,18 @@ bool QMessageFilter::operator==(const QMessageFilter& other) const
         }
     }
     
+    if (d_ptr->_accountFilter || other.d_ptr->_accountFilter) {
+        if (!d_ptr->_accountFilter || !other.d_ptr->_accountFilter || (*d_ptr->_accountFilter != *other.d_ptr->_accountFilter)) {
+            return false;
+        }
+    }
+    if (d_ptr->_folderFilter || other.d_ptr->_folderFilter) {
+        if (!d_ptr->_folderFilter || !other.d_ptr->_folderFilter || (*d_ptr->_folderFilter != *other.d_ptr->_folderFilter)) {
+            return false;
+        }
+    }
+    
+    
     return true;
 }
 
@@ -902,10 +937,13 @@ QMessageFilter QMessageFilter::byId(const QMessageIdList &ids, QMessageDataCompa
 
 QMessageFilter QMessageFilter::byId(const QMessageFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    // TODO:
-    return QMessageFilter(); // stub
+    QMessageFilter result;
+    *result.d_ptr = *filter.d_ptr;
+    if (cmp == QMessageDataComparator::Excludes) {
+        // Invert the sense of comparison
+        result = ~result;
+    }
+    return result;
 }
 
 QMessageFilter QMessageFilter::byType(QMessage::Type type, QMessageDataComparator::EqualityComparator cmp)
@@ -1010,7 +1048,7 @@ QMessageFilter QMessageFilter::byTimeStamp(const QDateTime &value, QMessageDataC
 QMessageFilter QMessageFilter::byReceptionTimeStamp(const QDateTime &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilter result;
-    result.d_ptr->_field = QMessageFilterPrivate::ReceptionTimeStamp;
+    result.d_ptr->_field = QMessageFilterPrivate::TimeStamp;
     result.d_ptr->_value = value;
     result.d_ptr->_comparatorType = QMessageFilterPrivate::Equality;
     result.d_ptr->_comparatorValue = static_cast<int>(cmp);
@@ -1021,7 +1059,7 @@ QMessageFilter QMessageFilter::byReceptionTimeStamp(const QDateTime &value, QMes
 QMessageFilter QMessageFilter::byReceptionTimeStamp(const QDateTime &value, QMessageDataComparator::RelationComparator cmp)
 {
     QMessageFilter result;
-    result.d_ptr->_field = QMessageFilterPrivate::ReceptionTimeStamp;
+    result.d_ptr->_field = QMessageFilterPrivate::TimeStamp;
     result.d_ptr->_value = value;
     result.d_ptr->_comparatorType = QMessageFilterPrivate::Relation;
     result.d_ptr->_comparatorValue = static_cast<int>(cmp);
@@ -1097,10 +1135,12 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountId &id, QM
 
 QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    // TODO:
-    return QMessageFilter(); // stub
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::ParentAccountIdFilter;
+    result.d_ptr->_accountFilter = new QMessageAccountFilter(filter);
+    result.d_ptr->_comparatorType = QMessageFilterPrivate::Inclusion;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    return result;
 }
 
 QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder, QMessageDataComparator::EqualityComparator cmp)
@@ -1127,20 +1167,20 @@ QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderId &id, QMes
 
 QMessageFilter QMessageFilter::byParentFolderId(const QMessageFolderFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    // TODO:
-    return QMessageFilter(); // stub
+    QMessageFilter result;
+    result.d_ptr->_field = QMessageFilterPrivate::ParentFolderIdFilter;
+    result.d_ptr->_folderFilter = new QMessageFolderFilter(filter);
+    result.d_ptr->_comparatorType = QMessageFilterPrivate::Inclusion;
+    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
+    return result;
 }
 
 QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderId &id, QMessageDataComparator::InclusionComparator cmp)
 {
+    Q_UNUSED(id)
+    Q_UNUSED(cmp)
     QMessageFilter result;
-    result.d_ptr->_field = QMessageFilterPrivate::AncestorFolderIds;
-    result.d_ptr->_value = id.toString();
-    result.d_ptr->_comparatorType = QMessageFilterPrivate::Inclusion;
-    result.d_ptr->_comparatorValue = static_cast<int>(cmp);
-    result.d_ptr->_valid = true;
+    result.d_ptr->_valid = false;
     return result;
 }
 
@@ -1148,8 +1188,9 @@ QMessageFilter QMessageFilter::byAncestorFolderIds(const QMessageFolderFilter &f
 {
     Q_UNUSED(filter)
     Q_UNUSED(cmp)
-    // TODO:
-    return QMessageFilter(); // stub
+    QMessageFilter result;
+    result.d_ptr->_valid = false;
+    return result;
 }
 
 QTM_END_NAMESPACE

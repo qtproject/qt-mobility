@@ -41,6 +41,7 @@
 
 /*!
     \namespace QtMedia
+    \ingroup multimedia
 
     \brief The QtMedia namespace contains miscellaneous identifiers used throughout the Qt Media
     library.
@@ -82,7 +83,7 @@
     \value AverageLevel The average volume level of the media.  int.
     \value ChannelCount The number of channels in the media's audio stream. int.
     \value PeakValue The peak volume of the media's audio stream. int
-    \value Frequency The frequency of the media's audio stream. int
+    \value SampleRate The sample rate of the media's audio stream in hertz. int
 
     Music attributes
     \value AlbumTitle The title of the album the media belongs to.  QString.
@@ -95,8 +96,8 @@
     \value TrackNumber The track number of the media.  int.
     \value TrackCount The number of tracks on the album containing the media.  int.
 
-    \value CoverArtUriSmall The URI of a small cover art image. QUrl.
-    \value CoverArtUriLarge The URI of a large cover art image. QUrl.
+    \value CoverArtUrlSmall The URL of a small cover art image. QUrl.
+    \value CoverArtUrlLarge The URL of a large cover art image. QUrl.
 
     Image and video attributes
     \value Resolution The dimensions of an image or video.  QSize.
@@ -107,7 +108,7 @@
     \value VideoBitRate The bit rate of the media's video stream in bits per second.  int.
     \value VideoCodec The codec of the media's video stream.  QString.
 
-    \value PosterUri The URI of a poster image.  QUrl.
+    \value PosterUrl The URL of a poster image.  QUrl.
 
     Movie attributes
     \value ChapterNumber The chapter number of the media.  int.

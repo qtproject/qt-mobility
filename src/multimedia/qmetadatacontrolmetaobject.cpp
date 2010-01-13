@@ -83,7 +83,7 @@ namespace
         { QtMedia::AverageLevel, "averageLevel" },
         { QtMedia::ChannelCount, "channelCount" },
         { QtMedia::PeakValue, "peakValue" },
-        { QtMedia::Frequency, "frequency" },
+        { QtMedia::SampleRate, "frequency" },
 
         // Music
         { QtMedia::AlbumTitle, "albumTitle" },
@@ -96,8 +96,8 @@ namespace
         { QtMedia::TrackNumber, "trackNumber" },
         { QtMedia::TrackCount, "trackCount" },
 
-        { QtMedia::CoverArtUriSmall, "coverArtUriSmall" },
-        { QtMedia::CoverArtUriLarge, "coverArtUriLarge" },
+        { QtMedia::CoverArtUrlSmall, "coverArtUrlSmall" },
+        { QtMedia::CoverArtUrlLarge, "coverArtUrlLarge" },
 
         // Image/Video
         { QtMedia::Resolution, "resolution" },
@@ -108,7 +108,7 @@ namespace
         { QtMedia::VideoBitRate, "videoBitRate" },
         { QtMedia::VideoCodec, "videoCodec" },
 
-        { QtMedia::PosterUri, "posterUri" },
+        { QtMedia::PosterUrl, "posterUrl" },
 
         // Movie
         { QtMedia::ChapterNumber, "chapterNumber" },

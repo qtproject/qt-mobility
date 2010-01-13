@@ -29,12 +29,16 @@ unix:!mac:!symbian {
         gstreamer-interfaces-0.10 >= 0.10.19 \
         gstreamer-audio-0.10 >= 0.10.19 \
         gstreamer-video-0.10 >= 0.10.19
-    system(pkg-config --exists \'$${TMP_GST_LIBS}\' --print-errors): {
-        SUBDIRS += gstreamer v4l
-    } else {
-        contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture v4l
-    }
 
+    system(pkg-config --exists \'$${TMP_GST_LIBS}\' --print-errors): {
+        SUBDIRS += gstreamer
+    } else {
+        contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
+    }
+   
+    system(pkg-config --exists \'libpulse >= 0.9.14\'):SUBDIRS += pulseaudio
+
+    SUBDIRS += v4l
 }
 
 mac {

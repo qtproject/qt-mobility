@@ -78,7 +78,7 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     { QtMedia::AudioBitRate, GST_TAG_BITRATE },
     { QtMedia::AudioCodec, GST_TAG_AUDIO_CODEC },
     //{ QtMedia::ChannelCount, 0 },
-    //{ QtMedia::Frequency, 0 },
+    //{ QtMedia::SampleRate, 0 },
 
     // Music
     { QtMedia::AlbumTitle, GST_TAG_ALBUM },
@@ -92,8 +92,8 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     //{ QtMedia::Mood, 0 },
     { QtMedia::TrackNumber, GST_TAG_TRACK_NUMBER },
 
-    //{ QtMedia::CoverArtUriSmall, 0 },
-    //{ QtMedia::CoverArtUriLarge, 0 },
+    //{ QtMedia::CoverArtUrlSmall, 0 },
+    //{ QtMedia::CoverArtUrlLarge, 0 },
 
     // Image/Video
     //{ QtMedia::Resolution, 0 },
@@ -104,7 +104,7 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     //{ QtMedia::VideoBitRate, 0 },
     { QtMedia::VideoCodec, GST_TAG_VIDEO_CODEC },
 
-    //{ QtMedia::PosterUri, 0 },
+    //{ QtMedia::PosterUrl, 0 },
 
     // Movie
     //{ QtMedia::ChapterNumber, 0 },

@@ -41,7 +41,16 @@
 #include <QMainWindow>
 #include <QItemDelegate>
 
+QT_BEGIN_NAMESPACE
 class QTableWidget;
+class QLabel;
+class QLineEdit;
+class QTableWidget;
+class QPushButton;
+class QAbstractButton;
+class QRadioButton;
+QT_END_NAMESPACE
+
 class EditorWidget;
 class QCrmlGenerator : public QMainWindow
 {
@@ -70,12 +79,6 @@ private:
     QString m_saveFile;
 };
 
-class QLabel;
-class QLineEdit;
-class QTableWidget;
-class QPushButton;
-class QAbstractButton;
-class QRadioButton;
 
 //#define INCL_TYPE 1
 

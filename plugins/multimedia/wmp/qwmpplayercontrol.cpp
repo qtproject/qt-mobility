@@ -238,10 +238,10 @@ QMediaContent QWmpPlayerControl::media() const
 {
     QMediaResourceList resources;
 
-    QUrl uri = url();
+    QUrl tmpUrl = url();
 
-    if (!uri.isEmpty())
-        resources << QMediaResource(uri);
+    if (!tmpUrl.isEmpty())
+        resources << QMediaResource(tmpUrl);
 
     return resources;
 }
@@ -254,7 +254,7 @@ const QIODevice *QWmpPlayerControl::mediaStream() const
 void QWmpPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
     if (!content.isNull() && !stream)
-        setUrl(content.canonicalUri());
+        setUrl(content.canonicalUrl());
     else
         setUrl(QUrl());
 }

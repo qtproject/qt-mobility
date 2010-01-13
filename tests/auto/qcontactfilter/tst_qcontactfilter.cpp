@@ -412,6 +412,16 @@ void tst_QContactFilter::actionFilter()
     /* Self assignment should do nothing */
     af2 = af2;
     QVERIFY(af2 == af);
+
+    QContactDetailFilter dfil;
+    QContactActionFilter af3(dfil);
+    QVERIFY(af3.type() == QContactFilter::ActionFilter);
+    QContactActionFilter af4(af);
+    QVERIFY(af4 == af);
+    af = dfil;
+    QVERIFY(af == af3);
+    af = af3;
+    af.setActionName("test"); // should force a detach
 }
 
 void tst_QContactFilter::changeLogFilter()
@@ -458,6 +468,16 @@ void tst_QContactFilter::changeLogFilter()
     /* Self assignment should do nothing */
     cf2 = cf2;
     QVERIFY(cf2 == cf);
+
+    QContactDetailFilter dfil;
+    QContactChangeLogFilter cf3(dfil);
+    QVERIFY(cf3.type() == QContactFilter::ChangeLogFilter);
+    QContactChangeLogFilter cf4(cf);
+    QVERIFY(cf4 == cf);
+    cf = dfil;
+    QVERIFY(cf == cf3);
+    cf = cf3;
+    cf.setEventType(QContactChangeLogFilter::EventRemoved); // force a detach
 }
 
 void tst_QContactFilter::detailFilter()
@@ -632,6 +652,16 @@ void tst_QContactFilter::relationshipFilter()
     /* Self assignment should do nothing */
     crf2 = crf2;
     QVERIFY(crf2 == crf);
+
+    QContactDetailFilter dfil;
+    QContactRelationshipFilter crf3(dfil);
+    QVERIFY(crf3.type() == QContactFilter::RelationshipFilter); // should be a blank rel fil
+    QContactRelationshipFilter crf4(crf);
+    QVERIFY(crf4 == crf);
+    crf = dfil;
+    QVERIFY(crf == crf3);
+    crf = crf3;
+    crf.setRelationshipType("test"); // force a detach
 }
 
 void tst_QContactFilter::sortObject()
@@ -872,6 +902,16 @@ void tst_QContactFilter::idListFilter()
     /* Self assignment should do nothing */
     idf2 = idf2;
     QVERIFY(idf2 == idf);
+
+    QContactDetailFilter dfil;
+    QContactLocalIdFilter idf3(dfil);
+    QVERIFY(idf3.type() == QContactFilter::LocalIdFilter); // should be a blank id list filter
+    QContactLocalIdFilter idf4(idf);
+    QVERIFY(idf4 == idf); // should be a copy of idf.
+    idf = dfil; // now assign.
+    QVERIFY(idf == idf3); // again, should be a blank id list filter.
+    idf = idf3;
+    idf.setIds(ids); // force a detach
 }
 
 

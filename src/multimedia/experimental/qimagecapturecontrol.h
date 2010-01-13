@@ -44,7 +44,9 @@
 
 #include <qmediacontrol.h>
 
+QT_BEGIN_NAMESPACE
 class QImage;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -64,6 +66,8 @@ Q_SIGNALS:
 
     void imageCaptured(const QString &fileName, const QImage &preview);
     void imageSaved(const QString &fileName);
+
+    void error(int error, const QString &errorString);
 
 protected:
     QImageCaptureControl(QObject* parent = 0);

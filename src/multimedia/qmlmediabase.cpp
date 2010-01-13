@@ -222,7 +222,7 @@ void QmlMediaBase::setObject(QObject *object)
 
 QUrl QmlMediaBase::source() const
 {
-    return m_playerControl->media().canonicalUri();
+    return m_playerControl->media().canonicalUrl();
 }
 
 void QmlMediaBase::setSource(const QUrl &url)

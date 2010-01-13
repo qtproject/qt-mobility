@@ -2,23 +2,28 @@ TEMPLATE = subdirs
 
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
-SUBDIRS += databasemanager \                #service framework
+contains(mobility_modules,serviceframework) {
+    SUBDIRS += databasemanager \                #service framework
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
-#           qservicemanager \  #remove until qhash namespace issue resolved
+           qservicemanager \
            qabstractsecuritysession \
            qservicecontext
 
 # servicedatabase is not compiled into the serviceframework library on symbian,
 # special handling is needed
-!symbian:SUBDIRS+=servicedatabase
+    !symbian:SUBDIRS+=servicedatabase
+}
 
-SUBDIRS += qnetworkconfigmanager \          #Bearer management
+contains(mobility_modules,bearer) {
+    SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
            qnetworksession
+}
 
-SUBDIRS += qgeocoordinate \                 #Location
+contains(mobility_modules,location) {
+    SUBDIRS += qgeocoordinate \                 #Location
           qgeopositioninfo \
           qgeosatelliteinfo \
           qgeosatelliteinfosource \
@@ -27,36 +32,43 @@ SUBDIRS += qgeocoordinate \                 #Location
           qlocationutils \
           qnmeapositioninfosource
 
-wince* {
-    SUBDIRS += qgeoinfosources_wince
+    wince* {
+        SUBDIRS += qgeoinfosources_wince
+    }
 }
 
-SUBDIRS += qvaluespace \                           #Publish and Subscribe
+
+contains(mobility_modules,publishsubscribe) {
+    SUBDIRS += qvaluespace \                           #Publish and Subscribe
            qvaluespacepublisher \
            qvaluespacesubscriber \
 	   qcrmlparser
 
-unix|win32 {
-    !symbian:!maemo: SUBDIRS+= \
-        qsystemreadwritelock \
-        qsystemreadwritelock_oop
+    unix|win32 {
+        !symbian:!maemo6: SUBDIRS+= \
+            qsystemreadwritelock \
+            qsystemreadwritelock_oop
+    }
+
+    unix:!symbian:!maemo6: {
+        SUBDIRS+= \
+               qpacket \
+               qmallocpool \
+               qpacketprotocol
+    }
 }
 
-unix:!symbian:!maemo: {
-    SUBDIRS+= \
-           qpacket \
-           qmallocpool \
-           qpacketprotocol
-}
-
-!maemo:SUBDIRS += qsysteminfo \                    #SystemInformation
+contains(mobility_modules,systeminfo) {
+    SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemstorageinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
+}
 
-SUBDIRS +=  qcontact \                      #Contacts
+contains(mobility_modules,contacts) {
+    SUBDIRS +=  qcontact \                      #Contacts
             qcontactactions \
             qcontactasync \
             qcontactdetail \
@@ -67,9 +79,11 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactmanagerplugins \
             qcontactmanagerfiltering \
             qcontactrelationship
+}
 
-# Versit module
-SUBDIRS += \
+contains(mobility_modules,versit) {
+    # Versit module
+    SUBDIRS += \
             qvcard21writer \
             qvcard30writer \
             qversitcontactexporter \
@@ -79,9 +93,10 @@ SUBDIRS += \
             qversitreader \
             qversitutils \
             qversitwriter
+}
 
-
-SUBDIRS += \             #Multimedia
+contains(mobility_modules,multimedia) {
+    SUBDIRS += \             #Multimedia
         qaudiocapturesource \
         qcamera \
         qmediaimageviewer \
@@ -98,17 +113,20 @@ SUBDIRS += \             #Multimedia
         qradiotuner \
         qvideowidget
 
-contains(QT_CONFIG, multimedia) {
-    SUBDIRS += \
-            qgraphicsvideoitem \
-            qpaintervideosurface
+    contains(QT_CONFIG, multimedia) {
+        SUBDIRS += \
+                qgraphicsvideoitem \
+                qpaintervideosurface
 
 }
-
+}
 #Messaging
-contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
+contains(mobility_modules,messaging) {
+    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
-        qmessage
+        qmessage \
+        qmessageservice
+    }
 }

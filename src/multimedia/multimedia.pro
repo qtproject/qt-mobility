@@ -111,13 +111,15 @@ contains(QT_CONFIG, declarative) {
         qmlaudio_p.h \
         qmlgraphicsvideo_p.h \
         qmlmedia_p.h \
-        qmlmediabase_p.h
+        qmlmediabase_p.h \
+        qmlsound_p.h
 
     SOURCES += \
         qmlaudio.cpp \
         qmlgraphicsvideo.cpp \
         qmlmedia.cpp \
-        qmlmediabase.cpp
+        qmlmediabase.cpp \
+        qmlsound.cpp
 }
 
 include (experimental/experimental.pri)
@@ -134,7 +136,7 @@ symbian {
 
     deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
+    exportheaders.path = epoc32/include/mw
     
     for(header, exportheaders.sources) {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"

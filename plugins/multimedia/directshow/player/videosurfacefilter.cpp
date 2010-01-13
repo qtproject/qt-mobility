@@ -42,7 +42,6 @@
 #include "videosurfacefilter.h"
 
 #include "mediasamplevideobuffer.h"
-#include "videosurfacemediatypeenum.h"
 #include "videosurfacepinenum.h"
 
 #include <QtCore/qcoreapplication.h>

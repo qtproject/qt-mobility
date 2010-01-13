@@ -48,11 +48,11 @@
 
 #include <QtCore/qpair.h>
 
-
+QT_BEGIN_NAMESPACE
 class QUrl;
 class QSize;
-
 class QAudioFormat;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -146,7 +146,7 @@ private:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::State)
-Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::Error)
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::State))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::Error))
 
 #endif  // QMEDIARECORDER_H

@@ -79,11 +79,11 @@ private:
 
     QMediaContent is used within the multimedia framework as the logical handle
     to media content.  A QMediaContent object is composed of one or more
-    \l {QMediaResource}s where each resource provides the URI and format
+    \l {QMediaResource}s where each resource provides the URL and format
     information of a different encoding of the content.
 
     A non-null QMediaContent will always have a primary or canonical reference to
-    the content available through the canonicalUri() or canonicalResource()
+    the content available through the canonicalUrl() or canonicalResource()
     methods, any additional resources are optional.
 */
 
@@ -97,13 +97,13 @@ QMediaContent::QMediaContent()
 }
 
 /*!
-    Constructs a media content with \a uri providing a reference to the content.
+    Constructs a media content with \a url providing a reference to the content.
 */
 
-QMediaContent::QMediaContent(const QUrl &uri):
+QMediaContent::QMediaContent(const QUrl &url):
     d(new QMediaContentPrivate)
 {
-    d->resources << QMediaResource(uri);
+    d->resources << QMediaResource(url);
 }
 
 /*!
@@ -185,9 +185,9 @@ bool QMediaContent::isNull() const
     Returns a QUrl that represents that canonical resource for this media content.
 */
 
-QUrl QMediaContent::canonicalUri() const
+QUrl QMediaContent::canonicalUrl() const
 {
-    return canonicalResource().uri();
+    return canonicalResource().url();
 }
 
 /*!

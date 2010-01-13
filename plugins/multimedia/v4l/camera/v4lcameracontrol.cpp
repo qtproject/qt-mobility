@@ -47,7 +47,7 @@
 
 
 V4LCameraControl::V4LCameraControl(QObject *parent)
-    :QCameraControl(parent)
+    :QCameraControl(parent),m_captureMode(QCamera::CaptureStillImage)
 {
     m_session = qobject_cast<V4LCameraSession*>(parent);
     connect(m_session, SIGNAL(cameraStateChanged(QCamera::State)),this, SIGNAL(stateChanged(QCamera::State)));
