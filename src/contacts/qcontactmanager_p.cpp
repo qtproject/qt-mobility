@@ -264,7 +264,11 @@ void QContactManagerData::loadFactories()
                  pluginsDir.cdUp();
              }
 #endif
-            if (pluginsDir.cd(QLatin1String("plugins/contacts")) || pluginsDir.cd(QLatin1String("contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) {
+             // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
+             // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should 
+             // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings. See for example: qpluginloader.cpp::setFileName() for solution ideas.
+             // Alternatively, this whole changing directory thing should be altered (see for example Qtmultimedia's plugin loading)
+             if (pluginsDir.cd(QLatin1String("plugins/contacts")) || pluginsDir.cd(QLatin1String("contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) { 
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
                 qDebug() << "Looking for plugins in" << pluginsDir.path() << files;
                 for (int j=0; j < files.count(); j++) {
