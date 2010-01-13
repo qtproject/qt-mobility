@@ -46,7 +46,9 @@
 #include "s60serviceplugin.h"
 #include "s60radiotunerservice.h"
 //#include "s60cameraservice.h" //Camera impl is on hold
+#ifdef HAS_MEDIA_PLAYER
 #include "s60mediaplayerservice.h"
+#endif
 #include "s60audiocaptureservice.h"
 
 QStringList S60ServicePlugin::keys() const
@@ -54,19 +56,23 @@ QStringList S60ServicePlugin::keys() const
     QStringList list;
     list << QLatin1String(Q_MEDIASERVICE_RADIO);
   //  list << QLatin1String(Q_MEDIASERVICE_CAMERA); //Camera impl is on hold
+#ifdef HAS_MEDIA_PLAYER  
     list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
+#endif    
     list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
     return list;
 }
 
 QMediaService* S60ServicePlugin::create(QString const& key)
 {
-    if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
+    if (key == QLatin1String(Q_MEDIASERVICE_RADIO))
         return new S60RadioTunerService;
  /*   else if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new S60CameraService;*/ //Camera impl is on hold
+#ifdef HAS_MEDIA_PLAYER
     else if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new S60MediaPlayerService;
+#endif
     else if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
 
@@ -106,13 +112,13 @@ QString S60ServicePlugin::deviceDescription(const QByteArray &service, const QBy
 
 void S60ServicePlugin::updateDevices() const
 {
-    
+
     m_cameraDevices.clear();
     m_cameraDescriptions.clear();
     for (int i=0; i < S60CameraService::deviceCount(); i ++) {
         QString deviceName = QString().number(i);
         m_cameraDevices.append(deviceName.toUtf8());
-        QString deviceDesc = S60CameraService::deviceDescription(i); 
+        QString deviceDesc = S60CameraService::deviceDescription(i);
         m_cameraDescriptions.append(deviceDesc);
     }
 
