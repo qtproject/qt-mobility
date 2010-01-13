@@ -15,6 +15,7 @@ INCLUDEPATH += ../../inc
 symbian:
  { 
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+    INCLUDEPATH += $$SYMBIAN_PATHS
 
     # Input
     HEADERS += $$SYMBIAN_HEADERS \
