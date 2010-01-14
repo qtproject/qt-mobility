@@ -4,73 +4,35 @@
 
 TEMPLATE = app
 TARGET = 
-
 QT += testlib
-CONFIG  += qtestlib
+CONFIG += qtestlib
+include(../tsrc.pri)
           
 DEFINES += PBK_UNIT_TEST
-
 DEPENDPATH += .
 INCLUDEPATH += .
-INCLUDEPATH += .\inc
-INCLUDEPATH += ..\..\inc
-INCLUDEPATH += ..\..\rss
 
 symbian:
 {
-	INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+    INCLUDEPATH += $$SYMBIAN_PATHS
+    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 	
-	# Input
-	HEADERS +=  ut_transformcontactdata.h \
-				../../inc/cnttransformcontactdata.h \
-				../../inc/cnttransformemail.h \
-				../../inc/cnttransformname.h \
-				../../inc/cnttransformnickname.h \
-				../../inc/cnttransformphonenumber.h \
-				../../inc/cnttransformaddress.h \
-				../../inc/cnttransformurl.h \
-				../../inc/cnttransformbirthday.h \
-				../../inc/cnttransformonlineaccount.h \
-				../../inc/cnttransformorganisation.h \
-				../../inc/cnttransformavatar.h \
-				../../inc/cnttransformsynctarget.h \
-                ../../inc/cnttransformgender.h \
-                ../../inc/cnttransformanniversary.h \
-                ../../inc/cnttransformanniversarysimple.h \
-                ../../inc/cnttransformgeolocation.h \
-                ../../inc/cnttransformnote.h \
-                ../../inc/cnttransformfamily.h
+    # Input
+    HEADERS += $$SYMBIAN_HEADERS \
+                ut_transformcontactdata.h
 	
-	SOURCES += ut_transformcontactdata.cpp \ 
-				../../src/cnttransformcontactdata.cpp \
-				../../src/cnttransformemail.cpp \
-				../../src/cnttransformname.cpp \
-				../../src/cnttransformnickname.cpp \
-				../../src/cnttransformphonenumber.cpp \
-				../../src/cnttransformaddress.cpp \
-				../../src/cnttransformurl.cpp \
-				../../src/cnttransformbirthday.cpp \
-				../../src/cnttransformonlineaccount.cpp \
-				../../src/cnttransformorganisation.cpp \
-				../../src/cnttransformavatar.cpp \
-				../../src/cnttransformsynctarget.cpp \
-				../../src/cnttransformgender.cpp \
-				../../src/cnttransformanniversary.cpp \
-                ../../src/cnttransformanniversarysimple.cpp \
-				../../src/cnttransformgeolocation.cpp \
-				../../src/cnttransformnote.cpp \
-				../../src/cnttransformfamily.cpp
+    SOURCES += $$SYMBIAN_SOURCES \
+                ut_transformcontactdata.cpp
 
     CONFIG += mobility
     MOBILITY = contacts
 
-	TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = ALL -TCB
   
-    LIBS += \
-           -lcntmodel
+    LIBS += $$SYMBIAN_LIBS
 
-	exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-	    DEFINES += SYMBIAN_BACKEND_USE_SQLITE
-	}
+    exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+    }
 }
 
