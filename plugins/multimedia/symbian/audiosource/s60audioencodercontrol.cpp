@@ -230,7 +230,7 @@ QList<int> S60AudioEncoderControl::supportedSampleSizes() const
 QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 {
     QAudioEncoderSettings settings;
-    //settings.setCodec(audioCodec());
+    settings.setCodec(audioCodec());
     settings.setBitRate(bitRate());
     settings.setQuality(quality());
     settings.setSampleRate(sampleRate());

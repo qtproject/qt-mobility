@@ -58,8 +58,9 @@
 
 struct ItemData
 {
-	int uid;
-	QString description;
+	int controllerUid;
+	int destinationFormatUid;
+	QString destinationFormatDescription;
 };
 
 
