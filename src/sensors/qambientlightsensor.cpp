@@ -75,7 +75,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QAmbientLightReading::QAmbientLightReading(QDateTime timestamp, LightLevel lightLevel)
+    \fn QAmbientLightReading::QAmbientLightReading(qtimestamp timestamp, LightLevel lightLevel)
     \internal
 */
 

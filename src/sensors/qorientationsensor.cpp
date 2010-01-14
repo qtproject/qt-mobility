@@ -100,7 +100,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QOrientationReading::QOrientationReading(QDateTime timestamp, Orientation orientation)
+    \fn QOrientationReading::QOrientationReading(qtimestamp timestamp, Orientation orientation)
     \internal
 */
 

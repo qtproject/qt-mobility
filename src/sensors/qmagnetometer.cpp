@@ -90,7 +90,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMagnetometerReading::QMagnetometerReading(QDateTime timestamp, qreal x, qreal y, qreal z, qreal cx, qreal cy, qreal cz, CalibrationLevel calibration)
+    \fn QMagnetometerReading::QMagnetometerReading(qtimestamp timestamp, qreal x, qreal y, qreal z, qreal cx, qreal cy, qreal cz, CalibrationLevel calibration)
     \internal
 */
 

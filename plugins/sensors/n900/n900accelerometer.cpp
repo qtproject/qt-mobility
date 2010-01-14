@@ -41,6 +41,7 @@
 
 #include "n900accelerometer.h"
 #include <QDebug>
+#include <time.h>
 
 n900accelerometer::n900accelerometer()
     : m_timerid(0)
@@ -86,7 +87,7 @@ void n900accelerometer::poll()
     // Ideally the kernel would scale the hardware's values to m/s^2 for us
     // and give us a timestamp along with that data.
 
-    QDateTime timestamp = QDateTime::currentDateTime();
+    qtimestamp timestamp = clock();
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
     int x, y, z;

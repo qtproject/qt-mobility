@@ -98,7 +98,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QTapReading::QTapReading(QDateTime timestamp, TapDirection tapDirection, bool doubleTap)
+    \fn QTapReading::QTapReading(qtimestamp timestamp, TapDirection tapDirection, bool doubleTap)
     \internal
 */
 

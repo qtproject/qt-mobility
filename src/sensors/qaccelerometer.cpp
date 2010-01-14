@@ -86,7 +86,7 @@ class QSignallingAccelerometerListener;
 */
 
 /*!
-    \fn QAccelerometerReading::QAccelerometerReading(QDateTime timestamp, qreal x, qreal y, qreal z)
+    \fn QAccelerometerReading::QAccelerometerReading(qtimestamp timestamp, qreal x, qreal y, qreal z)
     \internal
 */
 

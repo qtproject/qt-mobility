@@ -54,13 +54,13 @@ class QOrientationReadingData : public QSharedData
 {
 public:
     QOrientationReadingData() {}
-    QOrientationReadingData(QDateTime _timestamp, int _orientation)
+    QOrientationReadingData(qtimestamp _timestamp, int _orientation)
         : timestamp(_timestamp), orientation(_orientation) {}
     QOrientationReadingData(const QOrientationReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), orientation(other.orientation) {}
     ~QOrientationReadingData() {}
 
-    QDateTime timestamp;
+    qtimestamp timestamp;
     int orientation;
 };
 
@@ -81,13 +81,13 @@ public:
 
     explicit QOrientationReading()
     { d = new QOrientationReadingData; }
-    explicit QOrientationReading(QDateTime timestamp, Orientation orientation)
+    explicit QOrientationReading(qtimestamp timestamp, Orientation orientation)
     { d = new QOrientationReadingData(timestamp, orientation); }
     QOrientationReading(const QOrientationReading &other)
         : d(other.d) {}
     ~QOrientationReading() {}
 
-    QDateTime timestamp() const { return d->timestamp; }
+    qtimestamp timestamp() const { return d->timestamp; }
     Orientation orientation() const { return static_cast<Orientation>(d->orientation); }
 
 private:

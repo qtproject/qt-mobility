@@ -78,7 +78,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QCompassReading::QCompassReading(QDateTime timestamp, qreal azimuth, CalibrationLevel calibration)
+    \fn QCompassReading::QCompassReading(qtimestamp timestamp, qreal azimuth, CalibrationLevel calibration)
     \internal
 */
 

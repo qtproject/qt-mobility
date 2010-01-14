@@ -56,6 +56,19 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \typedef qtimestamp
+    \relates QSensor
+
+    Sensor timestamps are represented by this typedef which is a 64 bit unsigned integer.
+
+    Timestamps values are microseconds since a fixed point.
+    You can use timestamps to see how far apart two sensor readings are.
+
+    Note that sensor timestamps from different sensors may not be directly
+    comparable (as they may choose different fixed points for their reference).
+*/
+
+/*!
     \class QSensor
     \ingroup sensors
 

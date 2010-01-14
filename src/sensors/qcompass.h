@@ -55,13 +55,13 @@ class QCompassReadingData : public QSharedData
 public:
     QCompassReadingData()
         : timestamp(), azimuth(0), calibration(0) {}
-    QCompassReadingData(QDateTime _timestamp, qreal _azimuth, int _calibration)
+    QCompassReadingData(qtimestamp _timestamp, qreal _azimuth, int _calibration)
         : timestamp(_timestamp), azimuth(_azimuth), calibration(_calibration) {}
     QCompassReadingData(const QCompassReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), azimuth(other.azimuth), calibration(other.calibration) {}
     ~QCompassReadingData() {}
 
-    QDateTime timestamp;
+    qtimestamp timestamp;
     qreal azimuth;
     int calibration;
 };
@@ -80,13 +80,13 @@ public:
 
     explicit QCompassReading()
     { d = new QCompassReadingData; }
-    explicit QCompassReading(QDateTime timestamp, qreal azimuth, CalibrationLevel calibration)
+    explicit QCompassReading(qtimestamp timestamp, qreal azimuth, CalibrationLevel calibration)
     { d = new QCompassReadingData(timestamp, azimuth, calibration); }
     QCompassReading(const QCompassReading &other)
         : d(other.d) {}
     ~QCompassReading() {}
 
-    QDateTime timestamp() const { return d->timestamp; }
+    qtimestamp timestamp() const { return d->timestamp; }
     qreal azimuth() const { return d->azimuth; }
     CalibrationLevel calibrationLevel() const { return static_cast<CalibrationLevel>(d->calibration); }
 

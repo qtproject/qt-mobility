@@ -55,13 +55,13 @@ class QMagnetometerReadingData : public QSharedData
 public:
     QMagnetometerReadingData()
         : timestamp(), x(0), y(0), z(0), cx(0), cy(0), cz(0), calibration(0) {}
-    QMagnetometerReadingData(QDateTime _timestamp, qreal _x, qreal _y, qreal _z, qreal _cx, qreal _cy, qreal _cz, int _calibration)
+    QMagnetometerReadingData(qtimestamp _timestamp, qreal _x, qreal _y, qreal _z, qreal _cx, qreal _cy, qreal _cz, int _calibration)
         : timestamp(_timestamp), x(_x), y(_y), z(_z), cx(_cx), cy(_cy), cz(_cz), calibration(_calibration) {}
     QMagnetometerReadingData(const QMagnetometerReadingData &other)
         : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z), cx(other.cx), cy(other.cy), cz(other.cz), calibration(other.calibration) {}
     ~QMagnetometerReadingData() {}
 
-    QDateTime timestamp;
+    qtimestamp timestamp;
     qreal x;
     qreal y;
     qreal z;
@@ -85,13 +85,13 @@ public:
 
     explicit QMagnetometerReading()
     { d = new QMagnetometerReadingData; }
-    explicit QMagnetometerReading(QDateTime timestamp, qreal x, qreal y, qreal z, qreal cx, qreal cy, qreal cz, CalibrationLevel calibration)
+    explicit QMagnetometerReading(qtimestamp timestamp, qreal x, qreal y, qreal z, qreal cx, qreal cy, qreal cz, CalibrationLevel calibration)
     { d = new QMagnetometerReadingData(timestamp, x, y, z, cx, cy, cz, calibration); }
     QMagnetometerReading(const QMagnetometerReading &other)
         : d(other.d) {}
     ~QMagnetometerReading() {}
 
-    QDateTime timestamp() const { return d->timestamp; }
+    qtimestamp timestamp() const { return d->timestamp; }
     qreal x() const { return d->x; }
     qreal y() const { return d->y; }
     qreal z() const { return d->z; }

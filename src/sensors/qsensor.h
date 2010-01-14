@@ -45,13 +45,13 @@
 #include <qmobilityglobal.h>
 #include <QObject>
 #include <QString>
-#include <QDateTime>
 
 QTM_BEGIN_NAMESPACE
 
 class QSensorBackend;
 
 typedef QByteArray QSensorId;
+typedef quint64 qtimestamp;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {

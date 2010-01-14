@@ -42,6 +42,7 @@
 #include "n900proximitysensor.h"
 #include <QDebug>
 #include <string.h>
+#include <time.h>
 
 n900proximitysensor::n900proximitysensor()
     : m_timerid(0)
@@ -84,7 +85,7 @@ void n900proximitysensor::timerEvent(QTimerEvent * /*event*/)
 void n900proximitysensor::poll()
 {
     qWarning() << "poll";
-    QDateTime timestamp = QDateTime::currentDateTime();
+    qtimestamp timestamp = clock();
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
     char buffer[20];

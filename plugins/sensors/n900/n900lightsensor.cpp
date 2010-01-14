@@ -41,6 +41,7 @@
 
 #include "n900lightsensor.h"
 #include <QDebug>
+#include <time.h>
 
 n900lightsensor::n900lightsensor()
     : m_timerid(0)
@@ -83,7 +84,7 @@ void n900lightsensor::timerEvent(QTimerEvent * /*event*/)
 void n900lightsensor::poll()
 {
     qWarning() << "poll";
-    QDateTime timestamp = QDateTime::currentDateTime();
+    qtimestamp timestamp = clock();
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
     int lux;

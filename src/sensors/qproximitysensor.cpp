@@ -72,7 +72,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QProximityReading::QProximityReading(QDateTime timestamp, Proximity proximity)
+    \fn QProximityReading::QProximityReading(qtimestamp timestamp, Proximity proximity)
     \internal
 */
 
