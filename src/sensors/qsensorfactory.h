@@ -64,6 +64,11 @@ public:
     // available.
     QList<QSensorId> sensorList() const;
 
+    // Get all sensor types on the device. Not sure why you'd want to
+    // do this unless you were telling the user what sensors are
+    // available.
+    QList<QString> sensorTypes() const;
+
     // Create a sensor.
     QSensor *createSensor(const QSensorId &identifier) const;
 };

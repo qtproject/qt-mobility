@@ -96,6 +96,14 @@ QList<QSensorId> QSensorFactory::sensorList() const
 }
 
 /*!
+    Returns a list of ids for each of the sensors.
+*/
+QList<QString> QSensorFactory::sensorTypes() const
+{
+    return QList<QString>();
+}
+
+/*!
     Create an instance of a sensor for \a identifier.
     If there is no sensor with the selected \a identifier, returns null.
 
