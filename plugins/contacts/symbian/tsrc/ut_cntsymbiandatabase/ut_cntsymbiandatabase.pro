@@ -31,5 +31,6 @@ symbian:
             
     TARGET.CAPABILITY = ALL -TCB
 
-    LIBS += -lcntmodel
+    #LIBS += -lcntmodel
+    #LIBS += $$SYMBIAN_LIBS
 }
