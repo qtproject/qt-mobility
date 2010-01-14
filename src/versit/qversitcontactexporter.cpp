@@ -54,11 +54,15 @@ QTM_BEGIN_NAMESPACE
  *
  * \brief The QVersitContactDetailExporter class is an interface for clients wishing to implement
  * custom export behaviour for certain contact details.
+ *
+ * \ingroup versit
+ *
+ * \sa QVersitContactExporter
  */
 
 /*!
  * \fn virtual bool QVersitContactDetailExporter::processDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
- * Process \a detail and update \a document with the correct QVersitProperty(s).
+ * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  *
  * Returns true on success, false on failure.
  *
@@ -68,7 +72,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
  * \fn virtual bool QVersitContactDetailExporter::processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
- * Process \a detail and update \a document with the correct QVersitProperty(s).
+ * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  *
  * Returns true on success, false on failure.
  *
@@ -83,6 +87,8 @@ QTM_BEGIN_NAMESPACE
  * \brief The QVersitFileLoader class is an interface for clients wishing to implement file
  * loading from disk when exporting.
  *
+ * \ingroup versit
+ *
  * \sa QVersitContactExporter
  *
  * \fn virtual bool QVersitFileLoader::loadFile(const QString& filename, QByteArray* contents, QString* mimeType) = 0;
@@ -94,64 +100,85 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \class QVersitContactExporter
- 
-  \brief The QVersitContactExporter class exports QContact(s) into QVersitDocument(s).
-
-  \ingroup versit
- 
-  If the exported QContact has some detail with an image as its value,
-  signal \l QVersitContactExporter::scale() is emitted and
-  the client can scale the image's data to the size it wishes.
-
-  The client can optionally choose to override the processing of details, or
-  pass in a handler for details that QVersitContactExporter doesn't support by
-  using setDetailExporter().
- 
-  \code
- 
-  // An example of exporting a QContact:
-   QVersitContactExporter contactExporter;
-   QContact contact;
- 
-   // Create a name
-   QContactName name;
-   name.setFirst(QString::fromAscii("John"));
-   contact.saveDetail(&name);
- 
-   // Create an avatar type which is not supported by the exporter
-   QContactAvatar contactAvatar;
-   contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
-   contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
-   contact.saveDetail(&contactAvatar);
- 
-   // Create an organization detail with a title and a logo
-   QContactOrganization organization;
-   organization.setTitle(QString::fromAscii("Developer"));
-   organization.setLogo(QString::fromAscii("/my/image/logo_path/logo.jpg"));
-   contact.saveDetail(&organization);
- 
-   QVersitDocument versitDocument = contactExporter.exportContact(contact);
-   // Client will receive the signal "scale" with the logo image path
- 
-   QList<QContactDetail> unknownDetails = contactExporter.unknownContactDetails();
- 
-  \endcode
- 
-  \sa QVersitDocument, QVersitProperty
+ * \class QVersitContactExporter
+ *
+ * \brief The QVersitContactExporter class exports QContact(s) into QVersitDocument(s).
+ *
+ * \ingroup versit
+ *
+ * The exporter does not by default support loading files from disk during an export, and a
+ * QVersitFileLoader must be supplied with setFileLoader() to support this.  If an exported QContact
+ * has some detail with a reference to a file stored on disk, the QVersitFileLoader associated with
+ * the exporter is called to handle the load.
+ *
+ * By associating a QVersitContactDetailExporter with the exporter using setDetailExporter(), the
+ * client can pass in a handler to override the processing of details and/or handle details that
+ * QVersitContactExporter doesn't support.
+ *
+ * \code
+ *
+ * class MyDetailExporter : public QVersitContactDetailExporter {
+ * public:
+ *     bool processDetail(const QContactDetail& detail, QVersitDocument* document) {
+ *         return false;
+ *     }
+ *     bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) {
+ *         mUnknownDetails.append(detail);
+ *         return false;
+ *     }
+ *     QList<QContactDetail> mUnknownDetails;
+ * };
+ *
+ * class MyFileLoader : public QVersitFileLoader {
+ * public:
+ *     bool loadFile(const QString& filename, QByteArray* contents, QString* mimeType) {
+ *         QFile file(filename);
+ *         file.open(QIODevice::ReadOnly);
+ *         if (file.isReadable()) {
+ *             *contents = file.readAll();
+ *             return true;
+ *         } else {
+ *             return false;
+ *         }
+ *     }
+ * };
+ *
+ * // An example of exporting a QContact:
+ * QVersitContactExporter contactExporter;
+ *
+ * MyDetailExporter detailExporter;
+ * contactExporter.setDetailExporter(&detailExporter);
+ * MyFileLoader fileLoader;
+ * contactExporter.setFileLoader(&fileLoader);
+ *
+ * QContact contact;
+ * // Create a name
+ * QContactName name;
+ * name.setFirst(QString::fromAscii("John"));
+ * contact.saveDetail(&name);
+ *
+ * // Create an avatar type which is not supported by the exporter
+ * QContactAvatar contactAvatar;
+ * contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
+ * contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
+ * contact.saveDetail(&contactAvatar);
+ *
+ * // Create an organization detail with a title and a logo
+ * QContactOrganization organization;
+ * organization.setTitle(QString::fromAscii("Developer"));
+ * organization.setLogo(QString::fromAscii("/my/image/logo_path/logo.jpg"));
+ * contact.saveDetail(&organization);
+ *
+ * QList<QContact> contactList;
+ * contactList.append(contact);
+ * QList<QVersitDocument> versitDocuments = contactExporter.exportContacts(contactList);
+ *
+ * // detailExporter->mUnknownDetails now contains the list of unknown details
+ *
+ * \endcode
+ *
+ * \sa QVersitDocument, QVersitProperty, QVersitContactDetailExporter, QVersitFileLoader
  */
-
-
-/*!
- * \fn void QVersitContactExporter::scale(const QString& imageFileName, QByteArray& imageData)
- * This signal is emitted by \l QVersitContactExporter::exportContact(),
- * when a contact detail containing an image is found in a QContact.
- * The input for the client is the path of the image in \a imageFileName.
- * When the client has performed the scaling,
- * it should write the result to \a imageData.
- * Image scaling can be done for example by using class QImage.
- */
-
 
 /*!
  * Constructs a new contact exporter
