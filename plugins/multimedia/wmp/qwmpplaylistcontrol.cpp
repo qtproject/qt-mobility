@@ -79,7 +79,7 @@ bool QWmpPlaylistControl::setPlaylistProvider(QMediaPlaylistProvider *playlist)
     return false;
 }
 
-int QWmpPlaylistControl::currentPosition() const
+int QWmpPlaylistControl::currentIndex() const
 {
     int position = 0;
 
@@ -93,7 +93,7 @@ int QWmpPlaylistControl::currentPosition() const
     return position;
 }
 
-void QWmpPlaylistControl::setCurrentPosition(int position)
+void QWmpPlaylistControl::setCurrentIndex(int position)
 {
 
     IWMPPlaylist *playlist = 0;
@@ -108,14 +108,14 @@ void QWmpPlaylistControl::setCurrentPosition(int position)
     }
 }
 
-int QWmpPlaylistControl::nextPosition(int steps) const
+int QWmpPlaylistControl::nextIndex(int steps) const
 {
-    return currentPosition() + steps;
+    return currentIndex() + steps;
 }
 
-int QWmpPlaylistControl::previousPosition(int steps) const
+int QWmpPlaylistControl::previousIndex(int steps) const
 {
-    return currentPosition() - steps;
+    return currentIndex() - steps;
 }
 
 void QWmpPlaylistControl::next()
@@ -147,7 +147,7 @@ void QWmpPlaylistControl::currentItemChangeEvent(IDispatch *dispatch)
             __uuidof(IWMPMedia), reinterpret_cast<void **>(&media)) == S_OK) {
         int index = QWmpMetaData::value(media, QAutoBStr(L"PlaylistIndex")).toInt();
 
-        emit playlistPositionChanged(index);
+        emit currentIndexChanged(index);
         emit currentMediaChanged(m_playlist->media(index));
     }
 }
