@@ -464,12 +464,13 @@ TInt CDatabaseManagerServerSession::SetInterfaceDefault2L(const RMessage2& aMess
 
 void CDatabaseManagerServerSession::SetChangeNotificationsEnabled(const RMessage2& aMessage)
 {
-    if (aMessage.Int1() == true)
+    if (aMessage.Int0() == true)
     {
         if (!iDatabaseManagerSignalHandler)
         {
             iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
         }
+
         QObject::connect(iDb, SIGNAL(serviceAdded(const QString&)), 
                 iDatabaseManagerSignalHandler, SLOT(ServiceAdded(const QString&)));
         
