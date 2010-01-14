@@ -132,11 +132,11 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
     
     nativeHandles();   
       
-    m_player->SetDisplayWindowL(*m_wsSession, 
+    TRAP_IGNORE( m_player->SetDisplayWindowL(*m_wsSession, 
          *m_screenDevice, 
          *m_window, 
          m_windowRect, 
-         m_clipRect);
+         m_clipRect));
 }
 
 void S60VideoPlayerSession::nativeHandles()
@@ -263,5 +263,5 @@ void S60VideoPlayerSession::updateVideo()
                                      *m_screenDevice, 
                                      *m_window, 
                                      m_windowRect, 
-                                     m_clipRect);)
+                                     m_clipRect));
 }
