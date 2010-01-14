@@ -69,17 +69,13 @@ QTM_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate : public QObject
+class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate
 {
-    Q_OBJECT
 public:
     QVersitContactExporterPrivate();
     ~QVersitContactExporterPrivate();
 
     void exportContact(QVersitDocument& versitDocument, const QContact& contact);
-
-signals:
-    void scale(const QString& imageFileName, QByteArray& imageData);
 
 protected:
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
@@ -107,9 +103,7 @@ protected:
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
         const QStringList& subTypes=QStringList());
-    bool encodeEmbeddedContent(const QString& resourcePath,
-        QVersitProperty& property,
-        bool performScaling);
+    bool encodeEmbeddedContent(const QString& resourcePath, QVersitProperty& property);
     void setEscapedValue(QVersitProperty& property,const QString& value);
     QString escape(const QString& value);
 

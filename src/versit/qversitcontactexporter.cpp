@@ -159,8 +159,6 @@ QTM_BEGIN_NAMESPACE
 QVersitContactExporter::QVersitContactExporter()
     : d(new QVersitContactExporterPrivate())
 {
-    connect(d, SIGNAL(scale(const QString&,QByteArray&)),
-            this, SIGNAL(scale(const QString&,QByteArray&)));
 }
 
 /*!

@@ -66,10 +66,8 @@
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
 
-#include <QFile>
 #include <QUrl>
 #include <QBuffer>
-#include <QImageWriter>
 
 QTM_BEGIN_NAMESPACE
 
@@ -388,7 +386,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
     }
     if (organization.logo().length() > 0) {
         QVersitProperty property;
-        if (encodeEmbeddedContent(organization.logo(), property, true)) {
+        if (encodeEmbeddedContent(organization.logo(), property)) {
             property.setName(QString::fromAscii("LOGO"));
             document.addProperty(property);
         }
@@ -416,11 +414,9 @@ bool QVersitContactExporterPrivate::encodeAvatar(
     const QContactDetail& detail)
 {
     QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
-    bool scalingAllowed = false;
     bool encoded = false;
     QString propertyName;
     if (contactAvatar.subType() == QContactAvatar::SubTypeImage) {
-        scalingAllowed = true;
         propertyName = QString::fromAscii("PHOTO");
     } else if (contactAvatar.subType() == QContactAvatar::SubTypeAudioRingtone) {
         propertyName = QString::fromAscii("SOUND");
@@ -428,7 +424,7 @@ bool QVersitContactExporterPrivate::encodeAvatar(
         // NOP
     }
     if (propertyName.length() > 0) {
-        encoded = encodeEmbeddedContent(contactAvatar.avatar(), property, scalingAllowed);
+        encoded = encodeEmbeddedContent(contactAvatar.avatar(), property);
         if (encoded)
             property.setName(propertyName);
     }
@@ -585,7 +581,7 @@ bool QVersitContactExporterPrivate::isValidRemoteUrl(
     QUrl remoteResource(resourceIdentifier);
     if ((!remoteResource.scheme().isEmpty() &&
          !remoteResource.host().isEmpty()) ||
-         resourceIdentifier.contains(QString::fromAscii("www."),Qt::CaseInsensitive))
+        resourceIdentifier.contains(QString::fromAscii("www."), Qt::CaseInsensitive))
         return true;
     return false;
 }
@@ -614,10 +610,8 @@ void QVersitContactExporterPrivate::encodeParameters(
 /*!
  * Encode embedded content into the Versit Document
  */
-bool QVersitContactExporterPrivate::encodeEmbeddedContent(
-    const QString& resourcePath,
-    QVersitProperty& property,
-    bool performScaling)
+bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourcePath,
+                                                          QVersitProperty& property)
 {
     bool encodeContent = false;
     QString resourceExt = resourcePath.section(QString::fromAscii("."), -1).toUpper();
@@ -628,27 +622,23 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(
 
     if (resourceFormat.length() > 0) {
         QString value;
-        QFile resourceFile(resourcePath);
-        if ( resourceFile.open(QIODevice::ReadOnly)) {
-            QByteArray imageData;
-            encodeContent = true;
-            if (performScaling)
-                emit scale(resourcePath,imageData);
-            if (imageData.length() == 0)
-                imageData = resourceFile.readAll(); // Image not scaled
-            value = QString::fromAscii(imageData.toBase64());
-            property.addParameter(
-                QString::fromAscii("ENCODING"),
-                QString::fromAscii("BASE64"));
-            property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
-        }
-        else if (isValidRemoteUrl( resourcePath )) {
+        QByteArray imageData;
+        QString mimeType;
+        if (isValidRemoteUrl( resourcePath )) {
             encodeContent = true;
             value = resourcePath;
             property.addParameter(
                 QString::fromAscii("VALUE"),
                 QString::fromAscii("URL"));
             property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
+        } else if (mFileLoader
+                   && mFileLoader->loadFile(resourcePath, &imageData, &mimeType)) {
+            value = QString::fromAscii(imageData.toBase64());
+            property.addParameter(
+                    QString::fromAscii("ENCODING"),
+                    QString::fromAscii("BASE64"));
+            property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
+            encodeContent = true;
         } else {
             // The file has been removed. Don't encode the path to a local file.
         }

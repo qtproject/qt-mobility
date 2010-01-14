@@ -47,7 +47,6 @@
 
 #include <qcontact.h>
 
-#include <QObject>
 #include <QImage>
 
 QTM_BEGIN_NAMESPACE
@@ -57,8 +56,7 @@ class QVersitContactExporterPrivate;
 class QVersitContactDetailExporter
 {
 public:
-    virtual bool processDetail(const QContactDetail& detail, QVersitDocument* document)
-            = 0;
+    virtual bool processDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
 
     virtual bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
 };
@@ -69,10 +67,8 @@ public:
     virtual bool loadFile(const QString& filename, QByteArray* contents, QString* mimeType) = 0;
 };
 
-class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
+class Q_VERSIT_EXPORT QVersitContactExporter
 {
-    Q_OBJECT
-
 public:
     QVersitContactExporter();
     ~QVersitContactExporter();
@@ -86,9 +82,6 @@ public:
 
     void setFileLoader(QVersitFileLoader* loader);
     QVersitFileLoader* fileLoader() const;
-
-signals:
-    void scale(const QString& imageFileName, QByteArray& imageData);
 
 private:
     QVersitContactExporterPrivate* d;    
