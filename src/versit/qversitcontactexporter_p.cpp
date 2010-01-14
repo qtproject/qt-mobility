@@ -673,6 +673,4 @@ QString QVersitContactExporterPrivate::escape(const QString& value)
     return escaped;
 }
 
-#include "moc_qversitcontactexporter_p.cpp"
-
 QTM_END_NAMESPACE

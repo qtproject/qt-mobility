@@ -220,6 +220,4 @@ QVersitFileLoader* QVersitContactExporter::fileLoader() const
     return d->mFileLoader;
 }
 
-#include "moc_qversitcontactexporter.cpp"
-
 QTM_END_NAMESPACE
