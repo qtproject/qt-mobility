@@ -188,7 +188,7 @@ QRotationSensor::~QRotationSensor()
 /*!
     \variable QRotationSensor::typeId
 */
-const QString QRotationSensor::typeId("qt.Rotation");
+const QByteArray QRotationSensor::typeId("qt.Rotation");
 
 /*!
     \fn QRotationSensor::type() const

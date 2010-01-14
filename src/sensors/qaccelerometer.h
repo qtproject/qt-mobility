@@ -120,8 +120,8 @@ public:
 
     Q_PROPERTY(QAccelerometerReading currentReading READ currentReading)
 
-    static const QString typeId;
-    QString type() const { return typeId; };
+    static const QByteArray typeId;
+    QByteArray type() const { return typeId; };
 
     // Register a listener (that will receive sensor values as they come in)
     void setListener(QAccelerometerListener *listener);

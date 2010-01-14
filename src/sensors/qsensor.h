@@ -44,7 +44,7 @@
 
 #include <qmobilityglobal.h>
 #include <QObject>
-#include <QString>
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,7 +62,7 @@ public:
     virtual ~QSensor();
 
     Q_PROPERTY(QByteArray identifier READ identifier)
-    Q_PROPERTY(QString type READ type)
+    Q_PROPERTY(QByteArray type READ type)
     Q_PROPERTY(bool isValid READ isValid)
     Q_PROPERTY(UpdatePolicies supportedPolicies READ supportedPolicies)
     Q_PROPERTY(UpdatePolicy updatePolicy READ updatePolicy WRITE setUpdatePolicy)
@@ -73,7 +73,7 @@ public:
 
     QByteArray identifier() const;
 
-    virtual QString type() const = 0;
+    virtual QByteArray type() const = 0;
 
     enum UpdatePolicy {
         Undefined         = 0x01, // If the sensor has no specific policy

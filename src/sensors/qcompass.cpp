@@ -158,7 +158,7 @@ QCompass::~QCompass()
 /*!
     \variable QCompass::typeId
 */
-const QString QCompass::typeId("qt.Compass");
+const QByteArray QCompass::typeId("qt.Compass");
 
 /*!
     \fn QCompass::type() const

@@ -107,8 +107,8 @@ public:
 
     Q_PROPERTY(QOrientationReading currentReading READ currentReading)
 
-    static const QString typeId;
-    QString type() const { return typeId; };
+    static const QByteArray typeId;
+    QByteArray type() const { return typeId; };
 
     // For polling/checking the current (cached) value
     QOrientationReading currentReading() const { return m_backend->currentReading(); }

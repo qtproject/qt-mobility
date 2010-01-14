@@ -169,7 +169,7 @@ QOrientationSensor::~QOrientationSensor()
 /*!
     \variable QOrientationSensor::typeId
 */
-const QString QOrientationSensor::typeId("qt.Orientation");
+const QByteArray QOrientationSensor::typeId("qt.Orientation");
 
 /*!
     \fn QOrientationSensor::type() const

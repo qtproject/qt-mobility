@@ -107,8 +107,8 @@ public:
 
     Q_PROPERTY(QAmbientLightReading currentReading READ currentReading)
 
-    static const QString typeId;
-    QString type() const { return typeId; };
+    static const QByteArray typeId;
+    QByteArray type() const { return typeId; };
 
     // For polling/checking the current (cached) value
     QAmbientLightReading currentReading() const { return m_backend->currentReading(); }

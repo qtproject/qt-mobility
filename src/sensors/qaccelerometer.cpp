@@ -272,7 +272,7 @@ QAccelerometer::~QAccelerometer()
 /*!
     \variable QAccelerometer::typeId
 */
-const QString QAccelerometer::typeId("qt.Accelerometer");
+const QByteArray QAccelerometer::typeId("qt.Accelerometer");
 
 /*!
     \fn QAccelerometer::type() const

@@ -144,7 +144,7 @@ QAmbientLightSensor::~QAmbientLightSensor()
 /*!
     \variable QAmbientLightSensor::typeId
 */
-const QString QAmbientLightSensor::typeId("qt.AmbientLight");
+const QByteArray QAmbientLightSensor::typeId("qt.AmbientLight");
 
 /*!
     \fn QAmbientLightSensor::type() const

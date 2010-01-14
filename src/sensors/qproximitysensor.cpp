@@ -141,7 +141,7 @@ QProximitySensor::~QProximitySensor()
 /*!
     \variable QProximitySensor::typeId
 */
-const QString QProximitySensor::typeId("qt.Proximity");
+const QByteArray QProximitySensor::typeId("qt.Proximity");
 
 /*!
     \fn QProximitySensor::type() const

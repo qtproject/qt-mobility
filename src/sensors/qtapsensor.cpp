@@ -191,7 +191,7 @@ QTapSensor::~QTapSensor()
 /*!
     \variable QTapSensor::typeId
 */
-const QString QTapSensor::typeId("qt.Tap");
+const QByteArray QTapSensor::typeId("qt.Tap");
 
 /*!
     \fn QTapSensor::type() const

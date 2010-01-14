@@ -76,7 +76,7 @@ QSensorManager *QSensorManager::instance()
     Register a sensor for \a type. The \a identifier must be unique. The \a func must return an instance
     of the appropriate backend class.
 */
-void QSensorManager::registerBackend(const QString &type, const QByteArray &identifier, CreateBackendFunc func)
+void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &identifier, CreateBackendFunc func)
 {
     if (!m_backendsByType.contains(type)) {
         qDebug() << "first backend of type" << type;
@@ -114,7 +114,7 @@ QSensorBackend *QSensorManager::createBackend(const QByteArray &identifier)
 /*!
     Returns the first registered sensor identifier for \a type.
 */
-QByteArray QSensorManager::firstSensorForType(const QString &type)
+QByteArray QSensorManager::firstSensorForType(const QByteArray &type)
 {
     if (!m_pluginsLoaded)
         loadPlugins();

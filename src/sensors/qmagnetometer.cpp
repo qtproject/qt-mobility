@@ -296,7 +296,7 @@ QMagnetometer::~QMagnetometer()
 /*!
     \variable QMagnetometer::typeId
 */
-const QString QMagnetometer::typeId("qt.Magnetometer");
+const QByteArray QMagnetometer::typeId("qt.Magnetometer");
 
 /*!
     \fn QMagnetometer::type() const
