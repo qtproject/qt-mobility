@@ -90,20 +90,41 @@ WLAN access point details (e.g ESSID, encryption details) and user specific
 information (for example username and password). Once the network interface
 was configured and started according to the configuration blue print,
 multiple applications are free to use this link layer connection/session
-for their own socket operations. This API carefully distinguishes a
-network session and the network connections (represented by socket
-sessions) which it supports.
+for their own socket operations. Note that the QNetworkConfiguration object
+only provides limited information about the configuration details themselves.
+It's main purpose is to act as a configuration identifier through which link
+layer connections can be created, destroyed and monitored.
 
-The distinction between physical network interfaces, their mappping to
-multiple configurations, how such a mapping can create an active link
-layer connection and a network connection that can be created once the
-session has been established is important to understand the various
-elements of this API. The Bearer Management API in conjunction with
-QNetworkInterface follows the same principle. QNetworkInterface already
-provides the required abstraction for physical network interface. In
-addition QNetworkConfiguration encapsulates a network configuration which
-can be used to create, destroy and monitor link layer connections
-(represented by QNetworkSession object).
+QNetworkSession provies two types of use cases. It enables the monitoring of
+physical network interfaces and management of network sessions. Network sessions
+are a common feature on mobile devices where multiple applications
+can request network sessions as they see fit. The system consolidates and tracks
+active network sessions for the same network interface by maintaining the link 
+layer connections until the last session has been closed. The subsequent table
+lists the major QNetworkSession functions and how they fit into the session and 
+hardware management categories:
+
+\table 60%
+\header \o Interface management             \o Session management
+\row    \o QNetworkSession::stop()          \o QNetworkSession::open()
+\row    \o QNetworkSession::interface()     \o QNetworkSession::close()
+\row    \o QNetworkSession::state()         \o QNetworkSession::isOpen()
+\row    \o QNetworkSession::bytesWritten()  \o QNetworkSession::migrate()
+\row    \o QNetworkSession::bytesReceived() \o QNetworkSession::ignore()
+\row    \o QNetworkSession::activeTime()    \o QNetworkSession::accept()
+\row    \o QNetworkSession::stateChanged()  \o QNetworkSession::reject()
+\row    \o                                  \o QNetworkSession::opened()
+\row    \o                                  \o QNetworkSession::closed()
+\endtable
+
+The state of the session represents the state of the underlying access point 
+whereas the session's openess implies the networking/connectivity state available
+to the current process.
+
+Possible use cases for interface management are network management related
+applications which intend to monitor the connetivity state but do not engage
+in network communication themselves. Any application wanting to open a socket
+to a remote address will typically use session management related functionality.
 
 \section3 Service networks
 
@@ -127,7 +148,8 @@ by \l {QNetworkConfiguration::ServiceNetwork} configurations. Service
 networks are place holders until such time when the user attempts to
 \l {QNetworkSession::open()}{open()} a new session. At that point in time
 the system determines which of the configurations \l{QNetworkConfiguration::children()}
-is best to use. A service network can only have one level of indirection
+is best to use. The selection algorithm is provided by the platform and is usually managed
+by network settings applications. A service network can only have one level of indirection
 which implies children can only be of type \l {QNetworkConfiguration::InternetAccessPoint}.
 
 Most systems allow the user to define the systems default configuration.
@@ -139,7 +161,7 @@ point in time. The application does not have to handle the user input. This
 API provides the \l QNetworkConfigurationManager::defaultConfiguration()
 call which serves a similar purpose. The subsequent code snippet provides
 a quick way how an application can quickly create a new network session
-without having to interact with the user:
+without (or only minimal) user interaction:
 
 \code
     QNetworkConfigurationManager manager;
@@ -155,7 +177,8 @@ without having to interact with the user:
             // no user interaction -> system determines best IAP in group and starts it
             break;
         case QNetworkConfiguration::UserChoice:
-            // IAP resolved by asking user as part of QNetworkSession::open()
+            // automatic IAP resolution by system or by asking user as 
+            // part of QNetworkSession::open() call
             break;
     }
     QNetworkSession* session = new QNetworkSession(cfg);
@@ -213,6 +236,31 @@ If the system does not support global session calling
 
 \section3 Roaming
 
+Roaming is the process of reconnecting a device from one network to another
+while minimizing the impact on the application. The system notifies the application
+about link layer changes so that the required preparation can be taken.
+The most common reaction would be to reinitialize sockets and to renegotiate
+statefull connections with other parties. In the most extreme cases applications
+may even prevent the roaming altogether.
+
+Roaming is initiated when the system determines that a more appropriate access point
+becomes available to the user. In general such a decision is based on cost, network speed
+or network type (access to certain private networks may only be provided via certain access points).
+Almost all devices providing roaming support have some form of global configuration application
+enabling the user to define such groups of access points (service networks) and priorities.
+
+This API supports two types of roaming. Application level roaming (ALR)
+provides the most control over the process. Applications will be notified about upcoming
+link layer changes and get the opportunity to test the new access point. Eventually they can
+reject or accept the link layer change. The second form of roaming is referred to as Forced Roaming.
+The system simply changes the link layer without consulting the application. It is up to
+the application to detect that some of its internal socket may have become invalid. As a consequence
+it has to reinitialize those sockets and reestablish the previous user session without
+any interruption. Forced roaming has the advantage that applications don't have to
+manage the entire roaming process by themselves.
+
+QNetworkSession is the central class for managing roaming related issues.
+
 \section3 Platform capabilities
 
 Some API features are not available on all platforms. The
@@ -241,7 +289,10 @@ determining the feature support:
         \o Symbian Platform & S60 3.2+
         \o This platform enjoys the most comprehensive feature set. In addition to the features support by the S60 3.1 Network roaming is supported.
     \row
-        \o All other platforms (*nix, Mac OS\unicode{0xAE}, Windows Mobile)
+        \o Mac OS\unicode{0xAE}
+        \o This platform has full support by way of CoreWLAN offered in Mac OS 10.6. Previous versions of Mac OS - 10.5 and 10.4 have limited support. 
+    \row
+        \o All other platforms (*nix, Windows Mobile)
         \o This backend is the fallback for all platforms supports network interface notifications via active polling only.
 \endtable
 

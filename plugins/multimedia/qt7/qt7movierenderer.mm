@@ -39,13 +39,9 @@
 **
 ****************************************************************************/
 
-#include "qt7backend.h"
+#import <QTKit/QTKit.h>
 
-#import <QTKit/QTDataReference.h>
-#import <QTKit/QTMovie.h>
-#import <QTKit/QTMovieView.h>
-#import <QTKit/QTMovieLayer.h>
-#import <AppKit/NSImage.h>
+#include "qt7backend.h"
 
 #include "qt7playercontrol.h"
 #include "qt7movierenderer.h"
@@ -55,8 +51,6 @@
 #include <QtCore/qcoreapplication.h>
 
 #include <QGLWidget>
-
-#include <CoreFoundation/CoreFoundation.h>
 
 #include <QtMultimedia/qabstractvideobuffer.h>
 #include <QtMultimedia/qabstractvideosurface.h>
@@ -71,7 +65,7 @@ public:
         : QAbstractVideoBuffer(NoHandle)
         , m_buffer(buffer)
         , m_mode(NotMapped)
-    {        
+    {
         CVOpenGLTextureRetain(m_buffer);
     }
 

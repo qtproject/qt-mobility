@@ -147,7 +147,7 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
         case QtMedia::AverageLevel:
         case QtMedia::ChannelCount:
         case QtMedia::PeakValue:
-        case QtMedia::Frequency:
+        case QtMedia::SampleRate:
         case QtMedia::Author:
         case QtMedia::ContributingArtist:
         case QtMedia::Conductor:

@@ -179,8 +179,8 @@ storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage")
 
 \section1 Service Scope
 
-The QServiceManager operates in either \l{QServiceManager::UserScope}{User scope}
-or \l{QServiceManager::SystemScope}{System scope}. By default, it operates
+The QServiceManager operates in either \l{QService::UserScope}{User scope}
+or \l{QService::SystemScope}{System scope}. By default, it operates
 in user scope. The choice of scope affects whether registered services are
 available system-wide or only to the current user, and whether service and
 interface lookups are limited to system-wide service or whether the current
