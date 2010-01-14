@@ -49,12 +49,15 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
+//#define USE_PLAYBIN2
+
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     :QObject(parent),
      m_state(QMediaPlayer::StoppedState),
      m_mediaStatus(QMediaPlayer::UnknownMediaStatus),
      m_busHelper(0),
      m_playbin(0),
+     m_nullVideoOutput(0),
      m_bus(0),
      m_renderer(0),
      m_volume(100),
@@ -71,14 +74,21 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         gst_init(NULL, NULL);
     }
 
-
+#ifdef USE_PLAYBIN2
+    m_playbin = gst_element_factory_make("playbin2", NULL);
+#else
     m_playbin = gst_element_factory_make("playbin", NULL);
+#endif
+
     if (m_playbin != 0) {
         // Sort out messages
         m_bus = gst_element_get_bus(m_playbin);
         m_busHelper = new QGstreamerBusHelper(m_bus, this);
         connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
         m_busHelper->installSyncEventFilter(this);
+
+        m_nullVideoOutput = gst_element_factory_make("fakesink", NULL);
+        g_object_set(G_OBJECT(m_playbin), "video-sink", m_nullVideoOutput, NULL);
 
         // Initial volume
         double volume = 1.0;
@@ -139,15 +149,15 @@ qreal QGstreamerPlayerSession::playbackRate() const
 
 void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
 {
-    m_playbackRate = rate;
-
-    if (m_playbin) {
-        gst_element_seek(m_playbin, rate, GST_FORMAT_TIME,
-                         GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT),
-                         GST_SEEK_TYPE_NONE,0,
-                         GST_SEEK_TYPE_NONE,0 );
+    if (!qFuzzyCompare(m_playbackRate, rate)) {
+        m_playbackRate = rate;
+        if (m_playbin) {
+            gst_element_seek(m_playbin, rate, GST_FORMAT_TIME,
+                             GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT),
+                             GST_SEEK_TYPE_NONE,0,
+                             GST_SEEK_TYPE_NONE,0 );
+        }
     }
-
 }
 
 
@@ -170,11 +180,19 @@ int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType strea
         }
     }
 
+#ifdef USE_PLAYBIN2
+    streamNumber += m_playbin2StreamOffset.value(streamType,0);
+#endif
+
     return streamNumber;
 }
 
 void QGstreamerPlayerSession::setActiveStream(QMediaStreamsControl::StreamType streamType, int streamNumber)
 {
+#ifdef USE_PLAYBIN2
+    streamNumber -= m_playbin2StreamOffset.value(streamType,0);
+#endif
+
     if (m_playbin) {
         switch (streamType) {
         case QMediaStreamsControl::AudioStream:
@@ -219,7 +237,7 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
     if (m_renderer)
         g_object_set(G_OBJECT(m_playbin), "video-sink", m_renderer->videoSink(), NULL);
     else
-        g_object_set(G_OBJECT(m_playbin), "video-sink", 0, NULL);
+        g_object_set(G_OBJECT(m_playbin), "video-sink", m_nullVideoOutput, NULL);
 }
 
 bool QGstreamerPlayerSession::isVideoAvailable() const
@@ -265,7 +283,7 @@ void QGstreamerPlayerSession::stop()
 
 void QGstreamerPlayerSession::seek(qint64 ms)
 {
-    if (m_playbin) {
+    if (m_playbin && m_state != QMediaPlayer::StoppedState) {
         gint64  position = (gint64)ms * 1000000;
         gst_element_seek_simple(m_playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH, position);
     }
@@ -284,7 +302,10 @@ void QGstreamerPlayerSession::setVolume(int volume)
 void QGstreamerPlayerSession::setMuted(bool muted)
 {
     m_muted = muted;
+
     g_object_set(G_OBJECT(m_playbin), "volume", (m_muted ? 0 : m_volume/100.0), NULL);
+
+    emit mutedStateChanged(m_muted);
 }
 
 static void addTagToMap(const GstTagList *list,
@@ -544,6 +565,66 @@ void QGstreamerPlayerSession::getStreamsInfo()
     }
 
     //check if video is available:
+    bool haveVideo = false;
+    m_streamProperties.clear();
+    m_streamTypes.clear();
+
+#ifdef USE_PLAYBIN2
+    gint audioStreamsCount = 0;
+    gint videoStreamsCount = 0;
+    gint textStreamsCount = 0;
+
+    g_object_get(G_OBJECT(m_playbin), "n-audio", &audioStreamsCount, NULL);
+    g_object_get(G_OBJECT(m_playbin), "n-video", &videoStreamsCount, NULL);
+    g_object_get(G_OBJECT(m_playbin), "n-text", &textStreamsCount, NULL);
+
+    m_playbin2StreamOffset[QMediaStreamsControl::AudioStream] = 0;
+    m_playbin2StreamOffset[QMediaStreamsControl::VideoStream] = audioStreamsCount;
+    m_playbin2StreamOffset[QMediaStreamsControl::SubPictureStream] = audioStreamsCount+videoStreamsCount;
+
+    for (int i=0; i<audioStreamsCount; i++)
+        m_streamTypes.append(QMediaStreamsControl::AudioStream);
+
+    for (int i=0; i<videoStreamsCount; i++)
+        m_streamTypes.append(QMediaStreamsControl::VideoStream);
+
+    for (int i=0; i<textStreamsCount; i++)
+        m_streamTypes.append(QMediaStreamsControl::SubPictureStream);
+
+    for (int i=0; i<m_streamTypes.count(); i++) {
+        QMediaStreamsControl::StreamType streamType = m_streamTypes[i];
+        QMap<QtMedia::MetaData, QVariant> streamProperties;
+
+        int streamIndex = i - m_playbin2StreamOffset[streamType];
+
+        GstTagList *tags = 0;
+        switch (streamType) {
+        case QMediaStreamsControl::AudioStream:
+            g_signal_emit_by_name(G_OBJECT(m_playbin), "get-audio-tags", streamIndex, &tags);
+            break;
+        case QMediaStreamsControl::VideoStream:
+            g_signal_emit_by_name(G_OBJECT(m_playbin), "get-video-tags", streamIndex, &tags);
+            break;
+        case QMediaStreamsControl::SubPictureStream:
+            g_signal_emit_by_name(G_OBJECT(m_playbin), "get-text-tags", streamIndex, &tags);
+            break;
+        default:
+            break;
+        }
+
+        if (tags && gst_is_tag_list(tags)) {
+            gchar *languageCode = 0;
+            if (gst_tag_list_get_string(tags, GST_TAG_LANGUAGE_CODE, &languageCode))
+                streamProperties[QtMedia::Language] = QString::fromUtf8(languageCode);
+
+            //qDebug() << "language for setream" << i << QString::fromUtf8(languageCode);
+            g_free (languageCode);
+        }
+
+        m_streamProperties.append(streamProperties);
+    }
+
+#else
     enum {
         GST_STREAM_TYPE_UNKNOWN,
         GST_STREAM_TYPE_AUDIO,
@@ -555,10 +636,6 @@ void QGstreamerPlayerSession::getStreamsInfo()
 
     GList*      streamInfo;
     g_object_get(G_OBJECT(m_playbin), "stream-info", &streamInfo, NULL);
-
-    bool haveVideo = false;
-    m_streamProperties.clear();
-    m_streamTypes.clear();
 
     for (; streamInfo != 0; streamInfo = g_list_next(streamInfo)) {
         gint        type;
@@ -595,10 +672,11 @@ void QGstreamerPlayerSession::getStreamsInfo()
         m_streamProperties.append(streamProperties);
         m_streamTypes.append(streamType);
     }
+#endif
 
     if (haveVideo != m_videoAvailable) {
         m_videoAvailable = haveVideo;
-        emit videoAvailabilityChanged(m_videoAvailable);
+        emit videoAvailableChanged(m_videoAvailable);
     }
 
     emit streamsChanged();

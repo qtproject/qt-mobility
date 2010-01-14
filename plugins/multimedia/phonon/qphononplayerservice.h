@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERPLAYERSERVICE_H
-#define QGSTREAMERPLAYERSERVICE_H
+#ifndef QPHONONPLAYERSERVICE_H
+#define QPHONONPLAYERSERVICE_H
 
 #include <QtCore/qobject.h>
 

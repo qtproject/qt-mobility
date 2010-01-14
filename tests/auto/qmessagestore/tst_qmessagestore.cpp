@@ -172,6 +172,11 @@ tst_QMessageStore::~tst_QMessageStore()
 
 void tst_QMessageStore::initTestCase()
 {
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+    if (!Support::mapiAvailable())
+        QSKIP("Skipping tests because a MAPI subsystem does not appear to be available", SkipAll);
+#endif
+
     Support::clearMessageStore();
 
     manager = new QMessageManager;

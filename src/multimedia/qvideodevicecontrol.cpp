@@ -89,19 +89,19 @@ QVideoDeviceControl::~QVideoDeviceControl()
 */
 
 /*!
-    \fn QVideoDeviceControl::name(int index) const
+    \fn QVideoDeviceControl::deviceName(int index) const
 
     Returns the name of the video device at \a index.
 */
 
 /*!
-    \fn QVideoDeviceControl::description(int index) const
+    \fn QVideoDeviceControl::deviceDescription(int index) const
 
     Returns a description of the video device at \a index.
 */
 
 /*!
-    \fn QVideoDeviceControl::icon(int index) const
+    \fn QVideoDeviceControl::deviceIcon(int index) const
 
     Returns an icon for the video device at \a index.
 */

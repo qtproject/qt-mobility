@@ -86,7 +86,7 @@ class QVideoWidgetBackend : public QObject, public QVideoWidgetControlInterface
 public:
     virtual QSize sizeHint() const = 0;
 
-    virtual void showEvent(QShowEvent *event) = 0;
+    virtual void showEvent() = 0;
     virtual void hideEvent(QHideEvent *event) = 0;
     virtual void resizeEvent(QResizeEvent *event) = 0;
     virtual void moveEvent(QMoveEvent *event) = 0;
@@ -139,7 +139,7 @@ public:
 
     QSize sizeHint() const;
 
-    void showEvent(QShowEvent *event);
+    void showEvent();
     void hideEvent(QHideEvent *event);
     void resizeEvent(QResizeEvent *event);
     void moveEvent(QMoveEvent *event);
@@ -184,7 +184,7 @@ public:
 
     QSize sizeHint() const;
 
-    void showEvent(QShowEvent *event);
+    void showEvent();
     void hideEvent(QHideEvent *event);
     void resizeEvent(QResizeEvent *event);
     void moveEvent(QMoveEvent *event);
@@ -206,6 +206,7 @@ class QVideoWidgetPrivate
 public:
     QVideoWidgetPrivate()
         : q_ptr(0)
+        , mediaObject(0)
         , service(0)
         , outputControl(0)
         , widgetBackend(0)
@@ -224,6 +225,7 @@ public:
     }
 
     QVideoWidget *q_ptr;
+    QMediaObject *mediaObject;
     QMediaService *service;
     QVideoOutputControl *outputControl;
     QVideoWidgetControlBackend *widgetBackend;
@@ -240,8 +242,11 @@ public:
     bool wasFullScreen;
 
     void setCurrentControl(QVideoWidgetControlInterface *control);
+    void show();
+    void clearService();
 
     void _q_serviceDestroyed();
+    void _q_mediaObjectDestroyed();
     void _q_brightnessChanged(int brightness);
     void _q_contrastChanged(int contrast);
     void _q_hueChanged(int hue);
