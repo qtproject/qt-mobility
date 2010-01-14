@@ -108,7 +108,7 @@ QSensor::~QSensor()
 */
 
 /*!
-    \property QSensor::supportedPolicies
+    \property QSensor::supportedUpdatePolicies
     \brief the supported policies of the sensor.
 */
 
@@ -158,7 +158,7 @@ QByteArray QSensor::identifier() const
     Note that most sensors will only support one sensitivity. Setting an update
     policy that the sensor does not support will result in undefined behaviour.
     You can determine the policies the sensor supports with the
-    QSensor::supportedPolicies() method.
+    QSensor::supportedUpdatePolicies() method.
 
     \value Undefined          The sensor has no specific update policy. Updates may
                               arrive frequently or infrequently. Updates based on
@@ -185,7 +185,7 @@ QByteArray QSensor::identifier() const
     If you wish to use the TimedUpdates policy, please call
     setUpdateInterval() with the desired interval.
 
-    \sa supportedPolicies()
+    \sa supportedUpdatePolicies()
 */
 void QSensor::setUpdatePolicy(UpdatePolicy policy)
 {
@@ -202,7 +202,7 @@ void QSensor::setUpdatePolicy(UpdatePolicy policy)
     Note that not all sensors support changing the update policy.
     If you set a policy that the sensor does not support the behaviour
     is undefined.
-    \sa supportedPolicies()
+    \sa supportedUpdatePolicies()
 */
 void QSensor::setUpdateInterval(int interval)
 {
@@ -230,9 +230,9 @@ int QSensor::updateInterval() const
 /*!
     Returns the update policies that the sensor supports.
 */
-QSensor::UpdatePolicies QSensor::supportedPolicies() const
+QSensor::UpdatePolicies QSensor::supportedUpdatePolicies() const
 {
-    return backend() ? backend()->supportedPolicies() : QSensor::Undefined;
+    return backend() ? backend()->supportedUpdatePolicies() : QSensor::Undefined;
 }
 
 /*!

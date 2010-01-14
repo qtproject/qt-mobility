@@ -63,7 +63,7 @@ public:
     void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval);
     int suggestedInterval();
 
-    virtual QSensor::UpdatePolicies supportedPolicies() const = 0;
+    virtual QSensor::UpdatePolicies supportedUpdatePolicies() const = 0;
     virtual bool start() = 0;
     virtual void stop() = 0;
 

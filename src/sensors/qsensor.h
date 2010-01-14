@@ -64,7 +64,7 @@ public:
     Q_PROPERTY(QByteArray identifier READ identifier)
     Q_PROPERTY(QByteArray type READ type)
     Q_PROPERTY(bool isValid READ isValid)
-    Q_PROPERTY(UpdatePolicies supportedPolicies READ supportedPolicies)
+    Q_PROPERTY(UpdatePolicies supportedUpdatePolicies READ supportedUpdatePolicies)
     Q_PROPERTY(UpdatePolicy updatePolicy READ updatePolicy WRITE setUpdatePolicy)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
 
@@ -100,7 +100,7 @@ public:
     int updateInterval() const;
 
     // What policies does the sensor support
-    UpdatePolicies supportedPolicies() const;
+    UpdatePolicies supportedUpdatePolicies() const;
 
 public slots:
     // Start receiving values from the sensor

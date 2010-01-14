@@ -134,7 +134,7 @@ int QSensorBackend::suggestedInterval()
 }
 
 /*!
-    \fn QSensorBackend::supportedPolicies() const
+    \fn QSensorBackend::supportedUpdatePolicies() const
 
     Returns the update policies that the sensor supports.
 */
