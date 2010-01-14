@@ -54,6 +54,13 @@ class QVersitDocument;
 class QVersitProperty;
 class QVersitContactImporterPrivate;
 
+class QVersitContactPropertyImporter
+{
+public:
+    virtual bool processProperty(const QVersitProperty& property, QContact* contact) = 0;
+    virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
+};
+
 class Q_VERSIT_EXPORT QVersitContactImporter
 {
 public:
@@ -67,7 +74,9 @@ public:
     QString audioClipPath() const;
 
     QList<QContact> importContacts(const QList<QVersitDocument>& documents);
-    QList<QVersitProperty> unknownVersitProperties();
+
+    void setPropertyImporter(QVersitContactPropertyImporter* importer);
+    QVersitContactPropertyImporter* propertyImporter() const;
     
 private:
     QVersitContactImporterPrivate* d;

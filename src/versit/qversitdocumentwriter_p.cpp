@@ -1,7 +1,7 @@
 #include "qversitdocumentwriter_p.h"
 #include "versitutils_p.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 #define MAX_CHARS_FOR_LINE 76
 
@@ -57,5 +57,3 @@ QByteArray QVersitDocumentWriter::encodeGroupsAndName(
     encodedGroupAndName.append(property.name().toAscii());
     return encodedGroupAndName;
 }
-
-QTM_END_NAMESPACE

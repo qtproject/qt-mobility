@@ -43,7 +43,7 @@
 
 #include <QTextCodec>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 QVersitDocumentPrivate::QVersitDocumentPrivate()
     : QSharedData(),
@@ -59,5 +59,3 @@ QVersitDocumentPrivate::QVersitDocumentPrivate(const QVersitDocumentPrivate& oth
     mDefaultCodec(other.mDefaultCodec)
 {
 }
-
-QTM_END_NAMESPACE

@@ -69,7 +69,7 @@
 #include <QUrl>
 #include <QBuffer>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
  * Constructor.
@@ -672,5 +672,3 @@ QString QVersitContactExporterPrivate::escape(const QString& value)
     }
     return escaped;
 }
-
-QTM_END_NAMESPACE

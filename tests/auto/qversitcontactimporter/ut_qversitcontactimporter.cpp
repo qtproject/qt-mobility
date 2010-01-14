@@ -67,6 +67,27 @@
 #include <qcontactfamily.h>
 #include <QDir>
 
+QTM_BEGIN_NAMESPACE
+class MyQVersitContactPropertyImporter : public QVersitContactPropertyImporter
+{
+public:
+    bool processProperty(const QVersitProperty& property, QContact* contact)
+    {
+        return false;
+    }
+
+    bool processUnknownProperty(const QVersitProperty& property, QContact* contact)
+    {
+        Q_UNUSED(contact)
+        mUnknownProperties.append(property);
+        return false;
+    }
+
+    QStringList mPropertyNamesToProcess;
+    QList<QVersitProperty> mUnknownProperties;
+    QList<QVersitProperty> mProcessedProperties;
+};
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -1562,48 +1583,52 @@ void UT_QVersitContactImporter::testUnknownVersitProperties()
 {
     QVersitDocument document;
     QVersitProperty property;
-    QCOMPARE(mImporter->unknownVersitProperties().count(), 0);
 
     // No unconverted properties, no converted properties either
-    mImporterPrivate->importContact(document);
-    QCOMPARE(mImporterPrivate->mUnknownVersitProperties.count(), 0);
+    MyQVersitContactPropertyImporter propertyImporter;
+    mImporter->setPropertyImporter(&propertyImporter);
+    QList<QVersitDocument> documents;
+    documents.append(document);
+    mImporter->importContacts(documents);
+    QCOMPARE(propertyImporter.mUnknownProperties.size(), 0);
 
     // No unconverted properties, one converted property
+    propertyImporter = MyQVersitContactPropertyImporter();
     property.setName(QString::fromAscii("N"));
     property.setValue(QString::fromAscii("Citizen;John;Q;;"));
     document.addProperty(property);
-    mImporterPrivate->importContact(document);
-    QCOMPARE(mImporterPrivate->mUnknownVersitProperties.count(), 0);
+    documents.clear();
+    documents.append(document);
+    mImporter->importContacts(documents);
+    QCOMPARE(propertyImporter.mUnknownProperties.size(), 0);
 
     // One unknown property
+    propertyImporter = MyQVersitContactPropertyImporter();
     property.setName(QString::fromAscii("X-EXTENSION-1"));
     property.setValue(QString::fromAscii("extension value 1"));
     document.addProperty(property);
-    mImporterPrivate->importContact(document);
-    QList<QVersitProperty> unknownProperties =
-        mImporterPrivate->mUnknownVersitProperties;
+    documents.clear();
+    documents.append(document);
+    mImporter->importContacts(documents);
+    QList<QVersitProperty> unknownProperties = propertyImporter.mUnknownProperties;
     QCOMPARE(unknownProperties.count(), 1);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
     QCOMPARE(unknownProperties[0].valueString(), QString::fromAscii("extension value 1"));
 
     // Two unknown properties
+    propertyImporter = MyQVersitContactPropertyImporter();
     property.setName(QString::fromAscii("X-EXTENSION-2"));
     property.setValue(QString::fromAscii("extension value 2"));
     document.addProperty(property);
-    mImporterPrivate->importContact(document);
-    unknownProperties = mImporterPrivate->mUnknownVersitProperties;
+    documents.clear();
+    documents.append(document);
+    mImporter->importContacts(documents);
+    unknownProperties = propertyImporter.mUnknownProperties;
     QCOMPARE(unknownProperties.count(), 2);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
     QCOMPARE(unknownProperties[0].valueString(), QString::fromAscii("extension value 1"));
     QCOMPARE(unknownProperties[1].name(), QString::fromAscii("X-EXTENSION-2"));
     QCOMPARE(unknownProperties[1].valueString(), QString::fromAscii("extension value 2"));
-
-    // Test that the previous unknown properties are cleaned
-    // when importContact is called again
-    document = QVersitDocument();
-    mImporterPrivate->importContact(document);
-    unknownProperties = mImporterPrivate->mUnknownVersitProperties;
-    QCOMPARE(unknownProperties.count(), 0);
 }
 
 QVersitDocument UT_QVersitContactImporter::createDocumentWithProperty(

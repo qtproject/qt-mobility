@@ -46,7 +46,7 @@
 #include <QTextCodec>
 #include <QScopedPointer>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 QTextCodec* VersitUtils::m_previousCodec = 0;
 QList<QByteArray>* VersitUtils::m_newlineList = 0;
@@ -579,5 +579,3 @@ void VersitUtils::changeCodec(QTextCodec* codec) {
 
     m_previousCodec = codec;
 }
-
-QTM_END_NAMESPACE

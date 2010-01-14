@@ -44,7 +44,7 @@
 #include "qversitdefs.h"
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
 QVCard30Writer::QVCard30Writer()
@@ -122,5 +122,3 @@ QByteArray QVCard30Writer::encodeParameters(
 
     return encodedParameters;
 }
-
-QTM_END_NAMESPACE

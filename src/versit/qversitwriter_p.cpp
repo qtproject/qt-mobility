@@ -50,7 +50,7 @@
 #include <QMutexLocker>
 #include <QScopedPointer>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
 QVersitWriterPrivate::QVersitWriterPrivate()
@@ -153,5 +153,3 @@ QVersitDocumentWriter* QVersitWriterPrivate::writerForType(QVersitDocument::Vers
 }
 
 #include "moc_qversitwriter_p.cpp"
-
-QTM_END_NAMESPACE

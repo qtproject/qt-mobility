@@ -48,7 +48,7 @@
 #include <QTextCodec>
 #include <QMutexLocker>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitReader
@@ -208,5 +208,3 @@ QVersitReader::Error QVersitReader::error() const
 }
 
 #include "moc_qversitreader.cpp"
-
-QTM_END_NAMESPACE

@@ -48,7 +48,7 @@
 #include <QMutexLocker>
 #include <QVariant>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 // Some big enough value for nested versit documents to prevent infite recursion
 #define MAX_VERSIT_DOCUMENT_NESTING_DEPTH 20
@@ -395,5 +395,3 @@ QVersitReader::Error QVersitReaderPrivate::error() const
 }
 
 #include "moc_qversitreader_p.cpp"
-
-QTM_END_NAMESPACE

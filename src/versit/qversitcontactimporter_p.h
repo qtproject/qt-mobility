@@ -55,6 +55,7 @@
 
 #include "qversitdefs.h"
 #include "qmobilityglobal.h"
+#include "qversitcontactimporter.h"
 
 #include <QList>
 #include <QDateTime>
@@ -144,7 +145,7 @@ private:
 public: // Data
     QString mImagePath;
     QString mAudioClipPath;
-    QList<QVersitProperty> mUnknownVersitProperties;
+    QVersitContactPropertyImporter* mPropertyImporter;
 
 private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;

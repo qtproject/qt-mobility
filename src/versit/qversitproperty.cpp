@@ -45,7 +45,7 @@
 
 #include <QStringList>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitProperty
@@ -225,5 +225,3 @@ bool QVersitProperty::isEmpty() const
             && d->mParameters.isEmpty()
             && !d->mValue.isValid();
 }
-
-QTM_END_NAMESPACE

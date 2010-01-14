@@ -45,7 +45,7 @@
 
 #include <QTextCodec>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitDocument
@@ -183,5 +183,3 @@ bool QVersitDocument::isEmpty() const
 {
     return d->mProperties.count() == 0;
 }
-
-QTM_END_NAMESPACE

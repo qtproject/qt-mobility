@@ -47,7 +47,7 @@
 #include <qcontact.h>
 #include <qcontactdetail.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
  * \class QVersitContactDetailExporter
@@ -246,5 +246,3 @@ QVersitFileLoader* QVersitContactExporter::fileLoader() const
 {
     return d->mFileLoader;
 }
-
-QTM_END_NAMESPACE

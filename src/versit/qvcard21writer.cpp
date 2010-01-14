@@ -43,7 +43,7 @@
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
 QVCard21Writer::QVCard21Writer()
@@ -143,5 +143,3 @@ bool QVCard21Writer::quotedPrintableEncode(
     return encoded;
 }
 
-QTM_END_NAMESPACE
- 

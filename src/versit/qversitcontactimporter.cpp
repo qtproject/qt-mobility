@@ -45,51 +45,93 @@
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
-  \class QVersitContactImporter
- 
-  \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
+ * \class QVersitContactPropertyImporter
+ *
+ * \brief The QVersitContactPropertyImporter class is an interface for clients wishing to implement
+ * custom import behaviour for certain versit properties
+ *
+ * \ingroup versit
+ *
+ * \sa QVersitContactExporter
+ */
 
-  \ingroup versit
- 
-  The versit properties (\l QVersitProperty) that were not imported by
-  \l QVersitContactImporter::importContact() can be fetched after importing
-  by calling \l QVersitContactImporter::unknownVersitProperties().
-  For the returned properties,
-  the client can perform the conversions from versit properties
-  to contact details and add the converted details to the QContact.
- 
-  \code
- 
-  QVersitDocument document;
-  QVersitProperty property;
- 
-  property.setName(QString::fromAscii("N"));
-  property.setValue("Citizen;John;Q;;");
-  document.addProperty(property);
- 
-  property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
-  property.setValue("some value");
-  document.addProperty(property);
+/*!
+ * \fn virtual bool processProperty(const QVersitProperty& property, QContact* contact) = 0;
+ * Process \a property and update \a contact with the corresponding QContactDetail(s).
+ *
+ * Returns true on success, false on failure.
+ *
+ * This function is called on every QVersitProperty encountered during an import.  Supply this
+ * function and return true to implement custom import behaviour.
+ */
 
-  QList<QVersitDocument> list;
-  list.append(document);
- 
-  QVersitContactImporter importer;
-  importer.setImagePath(QString::fromAscii("/my/image/path"));
-  importer.setAudioClipPath(QString::fromAscii("my/audio_clip/path"));
- 
-  QContact contact = importer.importContacts(list).first();
-  // contact now contains the "N" property as a QContactName
-  QList<QVersitProperty> unknownProperties = importer.unknownVersitProperties();
-  // unknownProperties contains "X-UNKNOWN-PROPERTY"
-  // that can be handled by the client itself
- 
-  \endcode
- 
-  \sa QVersitDocument, QVersitReader
+/*!
+ * \fn virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
+ * Process \a property and update \a contact with the corresponding QContactDetail(s).
+ *
+ * Returns true on success, false on failure.
+ *
+ * This function is called on every QVersitProperty encountered during an import which is not
+ * handled by either \l processProperty() or by QVersitContactImporter.  Supply this
+ * function and return true to implement support for QVersitProperties not supported by
+ * QVersitContactImporter.
+ */
+
+/*!
+ * \class QVersitContactImporter
+ *
+ * \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
+ *
+ * \ingroup versit
+ *
+ * By associating a QVersitContactPropertyImporter with the importer using setPropertyImporter(), the
+ * client can pass in a handler to override the processing of properties and/or handle properties that
+ * QVersitContactImporter doesn't support.
+ *
+ * \code
+ *
+ * class MyPropertyImporter : public QVersitContactPropertyImporter {
+ * public:
+ *    bool processProperty(const QVersitProperty& property, QContact* contact) {
+ *        return false;
+ *    }
+ *    bool processUnknownProperty(const QVersitProperty& property, QContact* contact) {
+ *        mUnknownProperties.append(property);
+ *        return false;
+ *    }
+ *    QList<QVersitProperty> mUnknownProperties;
+ * };
+ *
+ * QVersitDocument document;
+ *
+ * QVersitProperty property;
+ * property.setName(QString::fromAscii("N"));
+ * property.setValue("Citizen;John;Q;;");
+ * document.addProperty(property);
+ *
+ * property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
+ * property.setValue("some value");
+ * document.addProperty(property);
+ *
+ * QList<QVersitDocument> list;
+ * list.append(document);
+ *
+ * QVersitContactImporter importer;
+ * importer.setImagePath(QString::fromAscii("/my/image/path"));
+ * importer.setAudioClipPath(QString::fromAscii("my/audio_clip/path"));
+ * MyPropertyImporter propertyImporter;
+ * importer.setPropertyImporter(&propertyImporter);
+ *
+ * QList<QContact> contactList = importer.importContacts(list);
+ * // contactList.first() now contains the "N" property as a QContactName
+ * // propertyImporter.mUnknownProperties contains the list of unknown properties
+ *
+ * \endcode
+ *
+ * \sa QVersitDocument, QVersitReader, QVersitContactPropertyImporter
  */
 
 /*! Constructs a new importer */
@@ -158,12 +200,17 @@ QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocume
 }
 
 /*!
- * Returns the list of versit properties that were not imported
- * by the most recent call of \l importContact().
+ * Sets \a importer to be the handler for processing QVersitProperties
  */
-QList<QVersitProperty> QVersitContactImporter::unknownVersitProperties()
+void QVersitContactImporter::setPropertyImporter(QVersitContactPropertyImporter* importer)
 {
-    return d->mUnknownVersitProperties;
+    d->mPropertyImporter = importer;
 }
 
-QTM_END_NAMESPACE
+/*!
+ * Gets the handler for processing QVersitProperties
+ */
+QVersitContactPropertyImporter* QVersitContactImporter::propertyImporter() const
+{
+    return d->mPropertyImporter;
+}

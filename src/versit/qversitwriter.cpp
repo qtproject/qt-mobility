@@ -46,7 +46,7 @@
 
 #include <QStringList>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitWriter
@@ -190,5 +190,3 @@ QVersitWriter::Error QVersitWriter::error() const
 }
 
 #include "moc_qversitwriter.cpp"
-
-QTM_END_NAMESPACE

@@ -69,12 +69,13 @@
 #include <QHash>
 #include <QFile>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
  * Constructor.
  */
-QVersitContactImporterPrivate::QVersitContactImporterPrivate()
+QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
+    mPropertyImporter(NULL)
 {
     // Contact detail mappings
     int versitPropertyCount =
@@ -128,7 +129,6 @@ QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 QContact QVersitContactImporterPrivate::importContact(
      const QVersitDocument& versitDocument)
 {
-    mUnknownVersitProperties.clear();
     QContact contact;
     const QList<QVersitProperty> properties = versitDocument.properties();
     foreach (QVersitProperty property, properties) {
@@ -164,8 +164,6 @@ QContact QVersitContactImporterPrivate::importContact(
             detail = createLabel(property, contact);
         } else {
             detail = createNameValueDetail(property);
-            if (!detail)
-                mUnknownVersitProperties.append(property);
         }
 
         if (detail) {
@@ -174,6 +172,9 @@ QContact QVersitContactImporterPrivate::importContact(
                 detail->setContexts(contexts);
             contact.saveDetail(detail);
             delete detail;
+        } else {
+            if (mPropertyImporter)
+                mPropertyImporter->processUnknownProperty(property, &contact);
         }
     }
 
@@ -627,5 +628,3 @@ QString QVersitContactImporterPrivate::getFirstAndLastName(
     }
     return name;
 }
-
-QTM_END_NAMESPACE
