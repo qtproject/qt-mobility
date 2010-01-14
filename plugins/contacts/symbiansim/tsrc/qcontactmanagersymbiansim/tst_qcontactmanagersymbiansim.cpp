@@ -42,8 +42,7 @@
 #include <QtTest/QtTest>
 #include <QObject>
 
-#include "qtcontacts.h"
-#include "qcontactchangeset.h"
+#include <qtcontacts.h>
 
 QTM_USE_NAMESPACE
 

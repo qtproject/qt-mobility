@@ -42,8 +42,7 @@
 #include <QtTest/QtTest>
 #include <QObject>
 
-#include "qtcontacts.h"
-#include "qcontactchangeset.h"
+#include <qtcontacts.h>
 
 QTM_USE_NAMESPACE
 
@@ -54,7 +53,9 @@ QTM_USE_NAMESPACE
  * This class if for testing symbian backend QContactManager API
  * implementation. Specifically those symbian specific cases that cannot be
  * tested with the generic auto tests on QtMobility Contacts level
- * (like tst_QContactManager).
+ * (like tst_QContactManager). Generic test cases that are expected to pass on
+ * all contact backends should not be here, they should be included as
+ * QtMobility auto tests instead.
  */
 class tst_QContactManagerSymbian : public QObject
 {
@@ -116,12 +117,12 @@ void tst_QContactManagerSymbian::avatarSubTypes_data()
     QString emptyString;
 
     // TODO: file names
-    QTest::newRow("Sub type image") << "C:\\Data\\Images\\contact.jpg" << "Image";
+    QTest::newRow("Sub type image") << "C:\\Data\\Images\\avatar_sharks_s.jpg" << "Image";
     //QTest::newRow("Sub type video") << "C:\\Data\\Videos\\video.mpg" << "Video";
     //QTest::newRow("Sub type textured mesh") << "C:\\Data\\" << "TexturedMesh";
-    QTest::newRow("Sub type audio ringtone") << "C:\\Data\\Sounds\\Chat message tone.aac" << "AudioRingtone";
-    QTest::newRow("Sub type video ringtone") << "C:\\Data\\Videos\\" << "VideoRingtone"; // TODO
-    QTest::newRow("No sub type") << "C:\\Data\\Images\\contact.jpg" << emptyString;
+    QTest::newRow("Sub type audio ringtone") << "C:\\Data\\Sounds\\avatar_sound.aac" << "AudioRingtone";
+    QTest::newRow("Sub type video ringtone") << "C:\\Data\\Videos\\avatar_video.3gp" << "VideoRingtone"; // TODO
+    QTest::newRow("No sub type") << "C:\\Data\\Images\\avatar_sharks_s.jpg" << emptyString;
 }
 
 void tst_QContactManagerSymbian::avatarSubTypes()
@@ -150,12 +151,13 @@ void tst_QContactManagerSymbian::avatarSubTypes()
         // image is used by default. A side effect is that after loading this kind
         // of an avatar, the sub type has been set to sub type image.
         // -> clear sub type to make the following compare pass
-        retrievedAvatar.setSubType("");
+        QVERIFY(retrievedAvatar.removeValue(QContactAvatar::FieldSubType));
     }
     QCOMPARE(retrievedAvatar, avatar);
 
     // Remove avatar
-    QVERIFY(testContact.removeDetail(&avatar));
+    retrievedAvatar = testContact.detail(QContactAvatar::DefinitionName);
+    QVERIFY(testContact.removeDetail(&retrievedAvatar));
     QVERIFY(m_cm->saveContact(&testContact));
     QCOMPARE(testContact.details(QContactAvatar::DefinitionName).count(), 0);
 }
@@ -164,8 +166,10 @@ void tst_QContactManagerSymbian::avatarPixmap_data()
 {
     QTest::addColumn<QString>("fileName");
 
-    // TODO: file names
-    QTest::newRow("Small JPEG") << "C:\\Data\\Images\\contact.jpg";
+    QTest::newRow("ExtraSmall JPEG") << "C:\\Data\\Images\\avatar_sharks_xs.jpg";
+    QTest::newRow("Small JPEG") << "C:\\Data\\Images\\avatar_sharks_s.jpg";
+    QTest::newRow("Medium JPEG") << "C:\\Data\\Images\\avatar_sharks_m.jpg";
+    QTest::newRow("XXLarge JPEG") << "C:\\Data\\Images\\avatar_sharks_xxl.jpg";
 }
 
 void tst_QContactManagerSymbian::avatarPixmap()
@@ -191,7 +195,7 @@ void tst_QContactManagerSymbian::avatarPixmap()
 
 void tst_QContactManagerSymbian::avatarPathAndPixmap()
 {
-    QString fileName("C:\\Data\\Images\\contact.jpg");
+    QString fileName("C:\\Data\\Images\\avatar_sharks_s.jpg");
     QContact testContact = m_cm->contact(m_contactId.localId());
 
     // Set

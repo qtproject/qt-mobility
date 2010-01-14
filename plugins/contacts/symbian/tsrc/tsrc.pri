@@ -84,9 +84,13 @@ SYMBIAN_SOURCES += \
         ../../src/cntdisplaylabel.cpp \
         ../../src/cntdisplaylabelsqlfilter.cpp 
  
-exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
-    } 
+exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
+| exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
+    # Building on S60 3.1 - TB 9.2 Platform
+} else {
+    # Building on 10.1 platform
+    DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+}
  
 SYMBIAN_LIBS += \
         -lcntmodel \
