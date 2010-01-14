@@ -18,13 +18,15 @@ symbian:
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     # Input
-    HEADERS += $$SYMBIAN_HEADERS \
-            ut_cntsymbiandatabase.h \
-            mock_cntdb.h
+    HEADERS += ut_cntsymbiandatabase.h \
+            mock_cntdb.h \
+            ../../inc/cntsymbiandatabase.h \
+            ../../inc/cntsymbiantransformerror.h
             
-    SOURCES += $$SYMBIAN_SOURCES \
-            ut_cntsymbiandatabase.cpp \
-            mock_cntdb.cpp
+    SOURCES += ut_cntsymbiandatabase.cpp \
+            mock_cntdb.cpp \
+            ../../src/cntsymbiandatabase.cpp \
+            ../../src/cntsymbiantransformerror.cpp
 
     CONFIG += mobility
     MOBILITY = contacts
