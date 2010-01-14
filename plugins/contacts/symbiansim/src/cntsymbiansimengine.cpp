@@ -261,7 +261,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     f.setDataType(QVariant::String);
     subTypes.clear();
     // TODO: groups supported by some USIM cards?
-    subTypes << (QString)KSimSyncTarget;
+    subTypes << static_cast<QLatin1String>(KSimSyncTarget);
     f.setAllowableValues(subTypes);
     fields.insert(QContactSyncTarget::FieldSyncTarget, f);
     d.setFields(fields);
