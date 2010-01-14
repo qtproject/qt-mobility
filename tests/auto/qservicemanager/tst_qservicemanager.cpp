@@ -826,7 +826,7 @@ void tst_QServiceManager::loadInterface_descriptor_data()
 #if defined (Q_OS_SYMBIAN)
     priv->attributes[QServiceInterfaceDescriptor::Location] = "plugins/" + lib.fileName();
 #else
-	  priv->attributes[QServiceInterfaceDescriptor::Location] = lib.fileName();
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
 #endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw_sampleserviceplugin")
@@ -837,10 +837,10 @@ void tst_QServiceManager::loadInterface_descriptor_data()
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
 
-#if defined (Q_OS_SYMBIAN)
-    priv->attributes[QServiceInterfaceDescriptor::Location] = "plugins/" + lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
 #else
-		priv->attributes[QServiceInterfaceDescriptor::Location] = lib.fileName();
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
 #endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw_sampleserviceplugin2")
@@ -857,10 +857,10 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
-#if defined (Q_OS_SYMBIAN)
-    priv->attributes[QServiceInterfaceDescriptor::Location] = "plugins/" + lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
 #else
-	  priv->attributes[QServiceInterfaceDescriptor::Location] = lib.fileName();
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
 #endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 
@@ -930,10 +930,10 @@ void tst_QServiceManager::loadLocalTypedInterface()
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
-#if defined (Q_OS_SYMBIAN)
-    priv->attributes[QServiceInterfaceDescriptor::Location] = "plugins/" + lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
 #else
-		priv->attributes[QServiceInterfaceDescriptor::Location] = lib.fileName();
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
 #endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 

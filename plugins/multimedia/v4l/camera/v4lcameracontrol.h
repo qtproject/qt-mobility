@@ -62,9 +62,25 @@ public:
     void stop();
     QCamera::State state() const;
 
+    QCamera::CaptureMode captureMode() const { return m_captureMode; }
+    void setCaptureMode(QCamera::CaptureMode mode)
+    {
+        if (m_captureMode != mode) {
+            m_captureMode = mode;
+            emit captureModeChanged(mode);
+        }
+    }
+
+    QCamera::CaptureModes supportedCaptureModes() const
+    {
+        return QCamera::CaptureStillImage | QCamera::CaptureVideo;
+    }
+
+
 private:
     V4LCameraSession *m_session;
     V4LCameraService *m_service;
+    QCamera::CaptureMode m_captureMode;
 };
 
 #endif
