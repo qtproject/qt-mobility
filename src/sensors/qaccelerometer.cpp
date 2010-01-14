@@ -246,7 +246,7 @@ signals:
     If the \a identifier is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QAccelerometer::QAccelerometer(QObject *parent, const QSensorId &identifier)
+QAccelerometer::QAccelerometer(QObject *parent, const QByteArray &identifier)
     : QSensor(parent)
     , m_listener(0)
 {

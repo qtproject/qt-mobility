@@ -54,15 +54,15 @@ public:
     static QSensorFactory *instance();
 
     // Get a sensor
-    QSensorId defaultSensorForType(const QString &type) const;
+    QByteArray defaultSensorForType(const QString &type) const;
 
     // If there are multiple sensors for a type...
-    QList<QSensorId> sensorsForType(const QString &type) const;
+    QList<QByteArray> sensorsForType(const QString &type) const;
 
     // Get all sensors on the device. Not sure why you'd want to
     // do this unless you were telling the user what sensors are
     // available.
-    QList<QSensorId> sensorList() const;
+    QList<QByteArray> sensorList() const;
 
     // Get all sensor types on the device. Not sure why you'd want to
     // do this unless you were telling the user what sensors are
@@ -70,7 +70,7 @@ public:
     QList<QString> sensorTypes() const;
 
     // Create a sensor.
-    QSensor *createSensor(const QSensorId &identifier) const;
+    QSensor *createSensor(const QByteArray &identifier) const;
 };
 
 QTM_END_NAMESPACE

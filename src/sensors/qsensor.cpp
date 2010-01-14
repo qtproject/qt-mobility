@@ -48,14 +48,6 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \typedef QSensorId
-    \relates QSensor
-
-    An opaque type representing an sensor identifier.
-    These can be obtained from the QSensorFactory class.
-*/
-
-/*!
     \typedef qtimestamp
     \relates QSensor
 
@@ -148,9 +140,9 @@ bool QSensor::isValid() const
 /*!
     Returns the identifier for the sensor.
 */
-QSensorId QSensor::identifier() const
+QByteArray QSensor::identifier() const
 {
-    return backend() ? backend()->identifier() : QSensorId();
+    return backend() ? backend()->identifier() : QByteArray();
 }
 
 /*!
@@ -269,9 +261,9 @@ void QSensor::stop()
 /*!
     \internal
 */
-QSensorBackend *QSensor::connectToBackend(const QSensorId &id)
+QSensorBackend *QSensor::connectToBackend(const QByteArray &id)
 {
-    QSensorId identifier(id);
+    QByteArray identifier(id);
     if (identifier.isEmpty()) {
         identifier = QSensorFactory::instance()->defaultSensorForType(type());
     } else {

@@ -122,7 +122,7 @@ QTM_BEGIN_NAMESPACE
     If the \a identifier is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QAmbientLightSensor::QAmbientLightSensor(QObject *parent, const QSensorId &identifier)
+QAmbientLightSensor::QAmbientLightSensor(QObject *parent, const QByteArray &identifier)
     : QSensor(parent)
 {
     m_backend = static_cast<QAmbientLightBackend*>(connectToBackend(identifier));

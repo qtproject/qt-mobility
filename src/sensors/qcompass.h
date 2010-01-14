@@ -102,7 +102,7 @@ class Q_SENSORS_EXPORT QCompass : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QCompass(QObject *parent = 0, const QSensorId &identifier = QSensorId());
+    explicit QCompass(QObject *parent = 0, const QByteArray &identifier = QByteArray());
     virtual ~QCompass();
 
     Q_PROPERTY(QCompassReading currentReading READ currentReading)

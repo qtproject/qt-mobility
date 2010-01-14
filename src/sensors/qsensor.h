@@ -50,7 +50,6 @@ QTM_BEGIN_NAMESPACE
 
 class QSensorBackend;
 
-typedef QByteArray QSensorId;
 typedef quint64 qtimestamp;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
@@ -62,7 +61,7 @@ public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
 
-    Q_PROPERTY(QSensorId identifier READ identifier)
+    Q_PROPERTY(QByteArray identifier READ identifier)
     Q_PROPERTY(QString type READ type)
     Q_PROPERTY(bool isValid READ isValid)
     Q_PROPERTY(UpdatePolicies supportedPolicies READ supportedPolicies)
@@ -72,7 +71,7 @@ public:
     // May have been initialized with an invalid identifier
     bool isValid() const;
 
-    QSensorId identifier() const;
+    QByteArray identifier() const;
 
     virtual QString type() const = 0;
 
@@ -111,7 +110,7 @@ public slots:
     void stop();
 
 protected:
-    QSensorBackend *connectToBackend(const QSensorId &identifier);
+    QSensorBackend *connectToBackend(const QByteArray &identifier);
 
     virtual QSensorBackend *backend() const = 0;
 

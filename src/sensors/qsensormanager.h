@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
 class QSensorBackend;
 typedef QSensorBackend *(*CreateBackendFunc)();
 typedef void(*RegisterBackendFunc)();
-typedef QHash<QSensorId,CreateBackendFunc> BackendList;
+typedef QHash<QByteArray,CreateBackendFunc> BackendList;
 typedef QHash<QString, BackendList> BackendTypeList;
 
 class Q_SENSORS_EXPORT QSensorManager
@@ -59,10 +59,10 @@ public:
     // Get the singleton instance
     static QSensorManager *instance();
 
-    void registerBackend(const QString &type, const QSensorId &identifier, CreateBackendFunc func);
+    void registerBackend(const QString &type, const QByteArray &identifier, CreateBackendFunc func);
     void registerRegisterFunc(RegisterBackendFunc func);
-    QSensorBackend *createBackend(const QSensorId &identifier);
-    QSensorId firstSensorForType(const QString &type);
+    QSensorBackend *createBackend(const QByteArray &identifier);
+    QByteArray firstSensorForType(const QString &type);
 private:
     QSensorManager();
     void loadPlugins();

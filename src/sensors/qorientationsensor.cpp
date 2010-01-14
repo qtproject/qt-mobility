@@ -147,7 +147,7 @@ QTM_BEGIN_NAMESPACE
     If the \a identifier is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QOrientationSensor::QOrientationSensor(QObject *parent, const QSensorId &identifier)
+QOrientationSensor::QOrientationSensor(QObject *parent, const QByteArray &identifier)
     : QSensor(parent)
 {
     m_backend = static_cast<QOrientationBackend*>(connectToBackend(identifier));

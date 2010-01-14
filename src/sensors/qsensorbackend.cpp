@@ -91,7 +91,7 @@ QSensorBackend::~QSensorBackend()
 /*!
     \internal
 */
-void QSensorBackend::createdFor(QSensor *sensor, const QSensorId &identifier)
+void QSensorBackend::createdFor(QSensor *sensor, const QByteArray &identifier)
 {
     m_sensor = sensor;
     m_identifier = identifier;

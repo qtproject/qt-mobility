@@ -270,7 +270,7 @@ signals:
     If the \a identifier is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QMagnetometer::QMagnetometer(QObject *parent, const QSensorId &identifier)
+QMagnetometer::QMagnetometer(QObject *parent, const QByteArray &identifier)
     : QSensor(parent)
     , m_listener(0)
 {

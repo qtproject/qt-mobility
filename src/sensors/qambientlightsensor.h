@@ -102,7 +102,7 @@ class Q_SENSORS_EXPORT QAmbientLightSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAmbientLightSensor(QObject *parent = 0, const QSensorId &identifier = QSensorId());
+    explicit QAmbientLightSensor(QObject *parent = 0, const QByteArray &identifier = QByteArray());
     virtual ~QAmbientLightSensor();
 
     Q_PROPERTY(QAmbientLightReading currentReading READ currentReading)

@@ -119,7 +119,7 @@ QTM_BEGIN_NAMESPACE
     If the \a identifier is passed the sensor will connect to that
     specific sensor, otherwise the default will be used.
 */
-QProximitySensor::QProximitySensor(QObject *parent, const QSensorId &identifier)
+QProximitySensor::QProximitySensor(QObject *parent, const QByteArray &identifier)
     : QSensor(parent)
 {
     m_backend = static_cast<QProximityBackend*>(connectToBackend(identifier));

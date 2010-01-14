@@ -96,7 +96,7 @@ class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QRotationSensor(QObject *parent = 0, const QSensorId &identifier = QSensorId());
+    explicit QRotationSensor(QObject *parent = 0, const QByteArray &identifier = QByteArray());
     virtual ~QRotationSensor();
 
     Q_PROPERTY(QRotationReading currentReading READ currentReading)

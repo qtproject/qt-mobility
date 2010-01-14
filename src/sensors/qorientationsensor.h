@@ -102,7 +102,7 @@ class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QOrientationSensor(QObject *parent = 0, const QSensorId &identifier = QSensorId());
+    explicit QOrientationSensor(QObject *parent = 0, const QByteArray &identifier = QByteArray());
     virtual ~QOrientationSensor();
 
     Q_PROPERTY(QOrientationReading currentReading READ currentReading)
