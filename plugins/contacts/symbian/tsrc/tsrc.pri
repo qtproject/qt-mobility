@@ -84,6 +84,10 @@ SYMBIAN_SOURCES += \
         ../../src/cntdisplaylabel.cpp \
         ../../src/cntdisplaylabelsqlfilter.cpp 
  
+exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+    } 
+ 
 SYMBIAN_LIBS += \
         -lcntmodel \
         -lQtContacts \
