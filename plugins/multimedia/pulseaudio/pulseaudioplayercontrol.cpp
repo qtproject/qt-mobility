@@ -325,7 +325,7 @@ void PulseAudioPlayerControl::play()
             pa_context_play_sample(daemon()->context(),
                                    m_name.constData(),
                                    0,
-                                   PA_VOLUME_NORM,
+                                   PA_VOLUME_NORM/100*m_volume,
                                    play_callback,
                                    this)
             );
