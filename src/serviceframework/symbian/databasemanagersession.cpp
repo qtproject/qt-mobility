@@ -166,8 +166,7 @@ TInt CDatabaseManagerServerSession::InterfaceDefaultSize(const RMessage2& aMessa
     
     QString interfaceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());   
     QServiceInterfaceDescriptor descriptor;
-    QString interfaceID;
-    descriptor = iDb->interfaceDefault(interfaceName, &interfaceID);
+    descriptor = iDb->interfaceDefault(interfaceName);
     
     iByteArray = new QByteArray();
     
