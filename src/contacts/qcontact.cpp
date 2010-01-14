@@ -633,7 +633,7 @@ QContactDetail QContact::preferredDetail(const QString& actionName) const
         return QContactDetail();
 
     QContactDetail retn;
-    quint32 detId = d->m_preferences.value(actionName);
+    int detId = d->m_preferences.value(actionName);
     for (int i = 0; i < d->m_details.size(); i++) {
         QContactDetail det = d->m_details.at(i);
         if (det.d->m_id == detId) {

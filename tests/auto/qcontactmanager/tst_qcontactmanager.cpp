@@ -829,7 +829,7 @@ void tst_QContactManager::remove()
         QContact current = cm->contact(ids.at(i));
         QContactName nc = current.detail(QContactName::DefinitionName);
         if (nc.firstName() == "Alice" && nc.lastName() == "inWonderland") {
-            int currCount = cm->contacts().count();
+            int currCount = cm->contactIds().count();
             atLeastOne = cm->removeContact(current.id().localId());
             QVERIFY(atLeastOne);
             QCOMPARE(cm->contactIds().count(), currCount - 1);

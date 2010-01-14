@@ -140,7 +140,9 @@ public:
     QContactLocalId selfContactId(QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder> &sortOrders, QContactManager::Error &error) const;
+    QList<QContact> contacts(const QList<QContactSortOrder> &sortOrders, const QStringList& definitionRestrictions, QContactManager::Error &error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
     QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
     bool saveContact(QContact* contact, QContactManager::Error& error);

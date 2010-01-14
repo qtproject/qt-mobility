@@ -220,7 +220,9 @@ QString QContactDetail::definitionName() const
     return d.constData()->m_definitionName;
 }
 
-/*! Compares this detail to \a other.  Returns true if the definition and values of \a other are equal to those of this detail */
+/*! Compares this detail to \a other.  Returns true if the definition and values of \a other are equal to those of this detail.
+    The keys of each detail are not considered during the comparison, in order to allow details from different contacts to
+    be compared according to their values. */
 bool QContactDetail::operator==(const QContactDetail& other) const
 {
     if (d.constData()->m_definitionName != other.d.constData()->m_definitionName)
@@ -256,6 +258,14 @@ bool QContactDetail::isEmpty() const
 int QContactDetail::key() const
 {
     return d->m_id;
+}
+
+/*! Causes the implicitly-shared detail to be detached from any other copies, and generates a new key for it.
+    This ensures that calling QContact::saveDetail() will result in a new detail being saved, rather than
+    another detail being updated. */
+void QContactDetail::resetKey()
+{
+    d->m_id = QContactDetailPrivate::lastDetailKey.fetchAndAddOrdered(1);
 }
 
 /*! Returns the value stored in this detail for the given \a key as a QString, or an empty QString if no value for the given \a key exists */

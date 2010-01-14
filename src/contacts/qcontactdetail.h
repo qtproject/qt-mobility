@@ -46,7 +46,7 @@
 #include "qtcontactsglobal.h"
 #include "qcontactactiondescriptor.h"
 
-#include <QExplicitlySharedDataPointer>
+#include <QSharedDataPointer>
 #include <QStringList>
 #include <QVariant>
 
@@ -88,6 +88,7 @@ public:
     bool isEmpty() const;
 
     int key() const;
+    void resetKey();
 
     void setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
     QList<QContactActionDescriptor> preferredActions() const;
@@ -153,7 +154,7 @@ protected:
 
 private:
     friend class QContact;
-    QExplicitlySharedDataPointer<QContactDetailPrivate> d;
+    QSharedDataPointer<QContactDetailPrivate> d;
 };
 
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \

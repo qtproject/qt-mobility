@@ -1972,7 +1972,7 @@ bool tst_QContactAsync::prepareModel(const QString &managerUri, QContactManager 
 
     // XXX TODO: ensure that this is the case:
     // there should be no contacts in the database.
-    QList<QContactLocalId> toRemove = cm->contacts();
+    QList<QContactLocalId> toRemove = cm->contactIds();
     foreach (const QContactLocalId& removeId, toRemove) {
         if (!cm->removeContact(removeId))
             return false;

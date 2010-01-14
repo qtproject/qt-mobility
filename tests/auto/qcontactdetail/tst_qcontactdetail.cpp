@@ -154,11 +154,12 @@ void tst_QContactDetail::classHierarchy()
     QCOMPARE(p2.number(), p1.number());
     QCOMPARE(p2.number(), QString("123456"));
 
-    p2.setNumber("5678"); // NOTE: this also sets p1 (since p1, p2 and f2 share the same datapointer)
-    QVERIFY(p1 == p2);
+    p2.setNumber("5678"); // NOTE: implicitly shared, this has caused a detach so p1 != 2
+    QVERIFY(p1 != p2);
     QVERIFY(p1 == f2);
-    QVERIFY(p2 == f2);
-    QCOMPARE(p1.number(), QString("5678"));
+    QVERIFY(p2 != f2);
+    QCOMPARE(p2.number(), QString("5678"));
+    QCOMPARE(p1.number(), QString("123456"));
 
     /* Bad assignment */
     p2 = m1; // assign a name to a phone number

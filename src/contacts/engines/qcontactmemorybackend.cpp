@@ -182,6 +182,12 @@ QContactLocalId QContactMemoryEngine::selfContactId(QContactManager::Error& erro
 /*! \reimp */
 QList<QContactLocalId> QContactMemoryEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
+    return contactIds(sortOrders, error);
+}
+
+/*! \reimp */
+QList<QContactLocalId> QContactMemoryEngine::contactIds(const QList<QContactSortOrder> &sortOrders, QContactManager::Error &error) const
+{
     // TODO: this needs to be done properly...
     error = QContactManager::NoError;
     QList<QContactLocalId> sortedIds;
@@ -191,6 +197,20 @@ QList<QContactLocalId> QContactMemoryEngine::contacts(const QList<QContactSortOr
     for (int i = 0; i < sortedContacts.size(); i++)
         sortedIds.append(sortedContacts.at(i).id().localId());
     return sortedIds;
+}
+
+/*! \reimp */
+QList<QContact> QContactMemoryEngine::contacts(const QList<QContactSortOrder> &sortOrders, const QStringList& definitionRestrictions, QContactManager::Error &error) const
+{
+    Q_UNUSED(definitionRestrictions);
+    error = QContactManager::NoError;
+    QList<QContact> sortedContacts;
+    for (int i = 0; i < d->m_contacts.size(); i++)
+        QContactManagerEngine::addSorted(&sortedContacts, contact(d->m_contacts.at(i).localId(), error), sortOrders);
+    // we ignore the restrictions - we don't want to do extra work to remove them.
+    // note that the restriction is "optional" - it defines the minimum set of detail types which _must_ be returned
+    // but doesn't require that they are the _only_ detail types which are returned.
+    return sortedContacts;
 }
 
 /*! \reimp */
@@ -798,7 +818,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactManager::Error operationError;
             QList<QContactManager::Error> operationErrors;
             QList<QContact> requestedContacts;
-            QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, operationError);
+            QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
 
             QContactManager::Error tempError;
             for (int i = 0; i < requestedContactIds.size(); i++) {
@@ -837,7 +857,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactSortOrder> sorting = r->sorting();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, operationError);
+            QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
 
             updateRequest(currentRequest, requestedContactIds, operationError, QList<QContactManager::Error>(), QContactAbstractRequest::FinishedState);
         }
@@ -873,7 +893,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactFilter filter = r->filter();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> contactsToRemove = contactIds(filter, QList<QContactSortOrder>(), operationError);
+            QList<QContactLocalId> contactsToRemove = QContactManagerEngine::contactIds(filter, QList<QContactSortOrder>(), operationError);
 
             for (int i = 0; i < contactsToRemove.size(); i++) {
                 QContactManager::Error tempError;

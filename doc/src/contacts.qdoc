@@ -167,7 +167,7 @@ The client retrieves all of the details of a contact, and displays them
 
     \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Viewing the details of a contact
 
-It is important to note that details are explicitly shared objects with particular
+It is important to note that details are implicitly shared objects with particular
 semantics surrounding saving, removal and modification.  The following example
 demonstrates these semantics
 

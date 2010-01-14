@@ -116,7 +116,9 @@ void addContact(QContactManager* cm)
     alice.saveDetail(&number2);
 
     /* Save the contact */
-    cm->saveContact(&alice);
+    cm->saveContact(&alice) ? qDebug() << "Successfully saved" << aliceName.customLabel()
+                            : qDebug() << "Failed to save" << aliceName.customLabel();
+    qDebug() << "The backend has synthesized a display label for the contact:" << alice.displayLabel();
 }
 //! [Creating a new contact]
 
@@ -194,7 +196,7 @@ void viewDetails(QContactManager* cm)
 //! [Demonstration of detail sharing semantics]
 void detailSharing(QContactManager* cm)
 {
-    QList<QContactLocalId> contactIds = cm->contacts();
+    QList<QContactLocalId> contactIds = cm->contactIds();
     QContact a = cm->contact(contactIds.first());
     qDebug() << "Demonstrating detail sharing semantics with" << a.displayLabel();
 
@@ -204,27 +206,41 @@ void detailSharing(QContactManager* cm)
     qDebug() << "\tThe new phone number is" << newNumber.number();
 
     /*
-     * Create a copy of that detail.  These will be explicitly shared;
-     * changes to nnCopy will affect newNumber, and vice versa.
-     * That is, nnCopy and newNumber are handles to the same detail.
+     * Create a copy of that detail.  These will be implicitly shared;
+     * changes to nnCopy will not affect newNumber, and vice versa.
+     * However, attempting to save them will cause overwrite to occur.
+     * Removal is done purely via key() checking, also.
      */
     QContactPhoneNumber nnCopy(newNumber);
     nnCopy.setNumber("456456456");
-    qDebug() << "\tThe number has been changed to" << newNumber.number();
+    qDebug() << "\tThat number is still" << newNumber.number() << ", the copy is" << nnCopy.number();
 
     /* Save the detail in the contact, then remove via the copy, then resave. */
-    a.saveDetail(&newNumber); // causes a detach internally, see next section.
+    a.saveDetail(&newNumber);
     a.removeDetail(&nnCopy);  // identical to a.removeDetail(&newNumber);
-    a.saveDetail(&nnCopy);    // identical to a.saveDetail(&newNumber);
+    a.saveDetail(&newNumber); // since newNumber.key() == nnCopy.key();
+
+    /* Saving will cause overwrite */
+    qDebug() << "Prior to saving nnCopy," << a.displayLabel() << "has" << a.details().count() << "details.";
+    a.saveDetail(&nnCopy);
+    qDebug() << "After saving nnCopy," << a.displayLabel() << "still has" << a.details().count() << "details.";
+
+    /* In order to save nnCopy as a new detail, we must reset its key */
+    nnCopy.resetKey();
+    qDebug() << "The copy key is now" << nnCopy.key() << ", whereas the original key is" << newNumber.key();
+    qDebug() << "Prior to saving (key reset) nnCopy," << a.displayLabel() << "has" << a.details().count() << "details.";
+    a.saveDetail(&nnCopy);
+    qDebug() << "After saving (key reset) nnCopy," << a.displayLabel() << "still has" << a.details().count() << "details.";
+    a.removeDetail(&nnCopy);
 
     /*
-     * However, note that changes made to details are not
+     * Note that changes made to details are not
      * propagated automatically to the contact.
      * To persist changes to a detail, you must call saveDetail().
      */
     QList<QContactPhoneNumber> allNumbers = a.details<QContactPhoneNumber>();
     foreach (const QContactPhoneNumber& savedPhn, allNumbers) {
-        if (savedPhn.key() != nnCopy.key()) {
+        if (savedPhn.key() != newNumber.key()) {
             continue;
         }
 
@@ -235,7 +251,7 @@ void detailSharing(QContactManager* cm)
          */
         qDebug() << "\tCurrently, the (stack) newNumber is" << newNumber.number()
                  << ", and the saved newNumber is" << savedPhn.number();
-        newNumber.setNumber("123123123");
+        newNumber.setNumber("678678678");
         qDebug() << "\tNow, the (stack) newNumber is" << newNumber.number()
                  << ", but the saved newNumber is" << savedPhn.number();
     }
@@ -244,9 +260,8 @@ void detailSharing(QContactManager* cm)
      * Removal of the detail depends only on the key of the detail; the fact
      * that the values differ is not taken into account by the remove operation.
      */
-    bool succeeded = a.removeDetail(&newNumber);
-    qDebug() << (succeeded ? "\tSucceeded in removing" : "\tFailed to remove") << "the temporary detail.";
-    qDebug();
+    a.removeDetail(&newNumber) ? qDebug() << "\tSucceeded in removing the temporary detail."
+                               : qDebug() << "\tFailed to remove the temporary detail.\n";
 }
 //! [Demonstration of detail sharing semantics]
 

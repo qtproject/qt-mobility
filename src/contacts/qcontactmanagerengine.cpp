@@ -279,6 +279,11 @@ QContact QContactManagerEngine::contact(const QContactLocalId& contactId, QConta
     return QContact();
 }
 
+/*!
+ * Returns a list of contact ids sorted according to the given list of \a sortOrders.
+ * Depending on the backend, this operation may involve retrieving all the contacts.
+ * Any error which occurs will be saved in \a error.
+ */
 QList<QContactLocalId> QContactManagerEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     Q_UNUSED(sortOrders);
@@ -286,6 +291,11 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QList<QContactSor
     return QList<QContactLocalId>();
 }
 
+/*!
+ * Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
+ * Depending on the backend, this filtering operation may involve retrieving all the contacts.
+ * Any error which occurs will be saved in \a error.
+ */
 QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     /* Slow way */
@@ -312,6 +322,13 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
     return ret;
 }
 
+/*!
+ * Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
+ * If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
+ * all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
+ * in the \a definitionRestrictions list will be included.
+ * Any error which occurs will be saved in \a error.
+ */
 QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
     Q_UNUSED(sortOrders);
@@ -320,6 +337,14 @@ QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& 
     return QList<QContact>();
 }
 
+/*!
+ * Returns a list of contacs that match the given \a filter, sorted according to the given list of \a sortOrders.
+ * Depending on the backend, this filtering operation may involve retrieving all the contacts.
+ * If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
+ * all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
+ * in the \a definitionRestrictions list will be included.
+ * Any error which occurs will be saved in \a error.
+ */
 QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
     /* Slow way */
