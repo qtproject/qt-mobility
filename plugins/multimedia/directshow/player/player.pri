@@ -4,6 +4,7 @@ DEFINES += QMEDIA_DIRECTSHOW_PLAYER
 
 HEADERS += \
         $$PWD\directshowaudioendpointcontrol.h \
+        $$PWD\directshoweventloop.h \
         $$PWD\directshowglobal.h \
         $$PWD\directshowioreader.h \
         $$PWD\directshowiosource.h \
@@ -22,6 +23,7 @@ HEADERS += \
 
 SOURCES += \
         $$PWD\directshowaudioendpointcontrol.cpp \
+        $$PWD\directshoweventloop.cpp \
         $$PWD\directshowioreader.cpp \
         $$PWD\directshowiosource.cpp \
         $$PWD\directshowmediatype.cpp \

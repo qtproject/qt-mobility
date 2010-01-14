@@ -46,6 +46,7 @@
 
 #include <dshow.h>
 
+class DirectShowEventLoop;
 class VideoSurfaceFilter;
 
 QTM_USE_NAMESPACE
@@ -54,7 +55,7 @@ class DirectShowVideoRendererControl : public QVideoRendererControl
 {
     Q_OBJECT
 public:
-    DirectShowVideoRendererControl(QObject *parent = 0);
+    DirectShowVideoRendererControl(DirectShowEventLoop *loop, QObject *parent = 0);
     ~DirectShowVideoRendererControl();
 
     QAbstractVideoSurface *surface() const;
@@ -66,6 +67,7 @@ Q_SIGNALS:
     void filterChanged();
 
 private:
+    DirectShowEventLoop *m_loop;
     QAbstractVideoSurface *m_surface;
     VideoSurfaceFilter *m_filter;
 };

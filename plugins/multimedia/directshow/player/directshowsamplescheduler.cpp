@@ -41,6 +41,8 @@
 
 #include "directshowsamplescheduler.h"
 
+#include <QtCore/qcoreevent.h>
+
 class DirectShowTimedSample
 {
 public:
@@ -108,7 +110,7 @@ bool DirectShowTimedSample::isReady(IReferenceClock *clock) const
 }
 
 DirectShowSampleScheduler::DirectShowSampleScheduler(IUnknown *pin, QObject *parent)
-    : QObject(parent)
+    : QWinEventNotifier(parent)
     , m_pin(pin)
     , m_clock(0)
     , m_allocator(0)
@@ -121,15 +123,13 @@ DirectShowSampleScheduler::DirectShowSampleScheduler(IUnknown *pin, QObject *par
 {
     m_semaphore.release(m_maximumSamples);
 
-    m_eventNotifier.setHandle(m_timeoutEvent);
-    m_eventNotifier.setEnabled(true);
-
-    connect(&m_eventNotifier, SIGNAL(activated(HANDLE)), this, SLOT(timerActivated()));
+    setHandle(m_timeoutEvent);
+    setEnabled(true);
 }
 
 DirectShowSampleScheduler::~DirectShowSampleScheduler()
 {
-    m_eventNotifier.setEnabled(false);
+    setEnabled(false);
 
     ::CloseHandle(m_timeoutEvent);
 
@@ -375,7 +375,15 @@ IMediaSample *DirectShowSampleScheduler::takeSample()
     }
 }
 
-void DirectShowSampleScheduler::timerActivated()
+bool DirectShowSampleScheduler::event(QEvent *event)
 {
-    emit sampleReady();
+    if (event->type() == QEvent::WinEventAct) {
+        QObject::event(event);
+
+        emit sampleReady();
+
+        return true;
+    } else {
+        return QWinEventNotifier::event(event);
+    }
 }

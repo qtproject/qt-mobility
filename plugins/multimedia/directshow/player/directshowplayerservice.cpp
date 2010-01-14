@@ -54,14 +54,20 @@
 
 DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     : QMediaService(parent)
-    , m_playerControl(new DirectShowPlayerControl(this))
+    , m_playerControl(0)
     , m_audioEndpointControl(0)
-    , m_metaDataControl(new DirectShowMetaDataControl(this))
-    , m_videoOutputControl(new DirectShowVideoOutputControl)
-    , m_videoRendererControl(new DirectShowVideoRendererControl)
+    , m_metaDataControl(0)
+    , m_videoOutputControl(0)
+    , m_videoRendererControl(0)
     , m_graph(0)
+    , m_renderThread(&m_loop)
 {
+    m_playerControl = new DirectShowPlayerControl(this);
+    m_metaDataControl = new DirectShowMetaDataControl(this);
+    m_videoOutputControl = new DirectShowVideoOutputControl; 
     m_audioEndpointControl = new DirectShowAudioEndpointControl(&m_renderThread);
+    m_videoRendererControl = new DirectShowVideoRendererControl(&m_loop);
+
 
     connect(m_videoOutputControl, SIGNAL(outputChanged()), this, SLOT(videoOutputChanged()));
     connect(m_videoRendererControl, SIGNAL(filterChanged()), this, SLOT(videoOutputChanged()));

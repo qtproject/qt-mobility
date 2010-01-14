@@ -41,6 +41,7 @@
 
 #include "directshowioreader.h"
 
+#include "directshoweventloop.h"
 #include "directshowglobal.h"
 #include "directshowiosource.h"
 
@@ -75,9 +76,11 @@ public:
     HRESULT result;
 };
 
-DirectShowIOReader::DirectShowIOReader(QIODevice *device, DirectShowIOSource *source)
+DirectShowIOReader::DirectShowIOReader(
+        QIODevice *device, DirectShowIOSource *source, DirectShowEventLoop *loop)
     : m_source(source)
     , m_device(device)
+    , m_loop(loop)
     , m_pendingHead(0)
     , m_pendingTail(0)
     , m_readyHead(0)
@@ -182,7 +185,7 @@ HRESULT DirectShowIOReader::Request(IMediaSample *pSample, DWORD_PTR dwUser)
                 m_pendingTail->next = request;
                 m_pendingHead = request;
             } else {
-                QCoreApplication::postEvent(this, new QEvent(QEvent::User));
+                m_loop->postEvent(this, new QEvent(QEvent::User));
             }
             m_pendingTail = request;
 
@@ -258,7 +261,7 @@ HRESULT DirectShowIOReader::SyncReadAligned(IMediaSample *pSample)
                 m_synchronousLength = length;
                 m_synchronousBuffer = buffer;
 
-                QCoreApplication::postEvent(this, new QEvent(QEvent::User));
+                m_loop->postEvent(this, new QEvent(QEvent::User));
 
                 m_wait.wait(&m_mutex);
 
@@ -289,7 +292,7 @@ HRESULT DirectShowIOReader::SyncRead(LONGLONG llPosition, LONG lLength, BYTE *pB
             m_synchronousLength = lLength;
             m_synchronousBuffer = pBuffer;
 
-            QCoreApplication::postEvent(this, new QEvent(QEvent::User));
+            m_loop->postEvent(this, new QEvent(QEvent::User));
 
             m_wait.wait(&m_mutex);
 

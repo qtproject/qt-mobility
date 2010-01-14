@@ -39,14 +39,17 @@
 **
 ****************************************************************************/
 
+#include "directshowrenderthread.h"
+
+#include "directshoweventloop.h"
 #include "directshowglobal.h"
 #include "directshowiosource.h"
-#include "directshowrenderthread.h"
 
 #include <QtCore/qvarlengtharray.h>
 
-DirectShowRenderThread::DirectShowRenderThread(QObject *parent)
+DirectShowRenderThread::DirectShowRenderThread(DirectShowEventLoop *loop, QObject *parent)
     : QThread(parent)
+    , m_loop(loop)
     , m_pendingTasks(0)
     , m_executingTask(0)
     , m_executedTasks(0)
@@ -76,10 +79,16 @@ void DirectShowRenderThread::shutdown()
         QMutexLocker locker(&m_mutex);
         m_pendingTasks = Shutdown;
 
-        if (m_graph)
+        if (m_graph) {
+            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
+                progress->AbortOperation();
+                progress->Release();
+            }
             m_graph->Abort();
-   
+        }
         m_wait.wakeAll();
+
+        m_loop->wait(&m_mutex);
     }
 
     wait();
@@ -106,10 +115,13 @@ void DirectShowRenderThread::load(const QUrl &url, QIODevice *stream, IFilterGra
         }
 
         if (m_executingTask != 0) {
-            m_graph->Abort();
+            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
+                progress->AbortOperation();
+                progress->Release();
+            }
             m_pendingTasks = Stop;
 
-            m_wait.wait(&m_mutex);
+            m_loop->wait(&m_mutex);
         }
 
         m_graph->Release();
@@ -133,8 +145,6 @@ void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
     QMutexLocker locker(&m_mutex);
 
     if (m_graph) {
-        // Don't mess with the graph while it's being generated.
-        // But should be smarter than this and interrupt; see IAMOpenProgress.
         while (m_executingTask == Render) {
             m_pendingTasks |= SetAudioOutput;
 
@@ -143,7 +153,7 @@ void DirectShowRenderThread::setAudioOutput(IBaseFilter *filter)
                 progress->Release();
             }
 
-            m_wait.wait(&m_mutex);
+            m_loop->wait(&m_mutex);
         }
 
         if (m_audioOutput) {
@@ -188,12 +198,12 @@ void DirectShowRenderThread::setVideoOutput(IBaseFilter *filter)
         while (m_executingTask == Render) {
             m_pendingTasks |= SetVideoOutput;
 
-                if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
-                    progress->AbortOperation();
-                    progress->Release();
-                }
+            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
+                progress->AbortOperation();
+                progress->Release();
+            }
 
-            m_wait.wait(&m_mutex);
+            m_loop->wait(&m_mutex);
         }
 
         if (m_videoOutput) {
@@ -332,7 +342,7 @@ void DirectShowRenderThread::run()
         } else if (m_pendingTasks & Stop) {
             m_pendingTasks ^= Stop;
 
-            m_wait.wakeAll();
+            m_loop->wake();
         } else if (m_pendingTasks & Pause) {
             m_pendingTasks ^= Pause;
             m_executingTask = Pause;
@@ -354,6 +364,8 @@ void DirectShowRenderThread::run()
         if (m_pendingTasks == 0)
             m_wait.wait(&m_mutex);
     }
+
+    m_loop->wake();
 }
 
 void DirectShowRenderThread::doLoad(QMutexLocker *locker)
@@ -368,7 +380,7 @@ void DirectShowRenderThread::doLoad(QMutexLocker *locker)
     HRESULT hr = S_OK;
 
     if (stream) {
-        source = new DirectShowIOSource(stream);
+        source = new DirectShowIOSource(stream, m_loop);
 
         if (!SUCCEEDED(hr = m_graph->AddFilter(source, L"Source"))) {
             source->Release();
@@ -446,6 +458,8 @@ void DirectShowRenderThread::doRender(QMutexLocker *locker)
         }
         filter->Release();
     }
+
+    m_loop->wake();
 }
 
 void DirectShowRenderThread::doSetRate(QMutexLocker *locker)

@@ -39,67 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef DIRECTSHOWPLAYERSERVICE_H
-#define DIRECTSHOWPLAYERSERVICE_H
+#ifndef DIRECTSHOWEVENTLOOP_H
+#define DIRECTSHOWEVENTLOOP_H
 
-#include <qmediaservice.h>
-
+#include <QtCore/qmutex.h>
 #include <QtCore/private/qwineventnotifier_p.h>
 
-#include "directshoweventloop.h"
-#include "directshowglobal.h"
-#include "directshowrenderthread.h"
+class DirectShowPostedEvent;
 
-class DirectShowAudioEndpointControl;
-class DirectShowMetaDataControl;
-class DirectShowPlayerControl;
-class DirectShowVideoOutputControl;
-class DirectShowVideoRendererControl;
-
-QTM_BEGIN_NAMESPACE
-class QMediaContent;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
-
-
-class DirectShowPlayerService : public QMediaService
+class DirectShowEventLoop : public QWinEventNotifier
 {
     Q_OBJECT
 public:
-    DirectShowPlayerService(QObject *parent = 0);
-    ~DirectShowPlayerService();
+    DirectShowEventLoop(QObject *parent = 0);
+    ~DirectShowEventLoop();
 
-    QMediaControl* control(const char *name) const;
+    void wait(QMutex *mutex);
+    void wake();
 
-    IFilterGraph2 *graph() { return m_graph; }
-    IBaseFilter *source() { return 0; }
+    void postEvent(QObject *object, QEvent *event);
 
-    void load(const QMediaContent &media, QIODevice *stream);
-    void play() { m_renderThread.play(); }
-    void pause() { m_renderThread.pause(); }
-    void stop() { m_renderThread.stop(); }
-
-    void seek(qint64 position) { m_renderThread.seek(position); }
-    void setRate(qreal rate) { m_renderThread.setRate(rate); }
-
-
-private Q_SLOTS:
-    void videoOutputChanged();
-    void graphEvent(HANDLE handle);
-    void loaded();
+    bool event(QEvent *event);
 
 private:
-    DirectShowPlayerControl *m_playerControl;
-    DirectShowMetaDataControl *m_metaDataControl;
-    DirectShowVideoOutputControl *m_videoOutputControl;
-    DirectShowVideoRendererControl *m_videoRendererControl;
-    DirectShowAudioEndpointControl *m_audioEndpointControl;
-    IFilterGraph2 *m_graph;
-    DirectShowEventLoop m_loop;
-    DirectShowRenderThread m_renderThread;
-    QWinEventNotifier m_graphEventNotifier;
-};
+    void processEvents();
 
+    DirectShowPostedEvent *m_postsHead;
+    DirectShowPostedEvent *m_postsTail;
+    HANDLE m_eventHandle;
+    HANDLE m_waitHandle;
+    QMutex m_mutex;
+};
 
 #endif

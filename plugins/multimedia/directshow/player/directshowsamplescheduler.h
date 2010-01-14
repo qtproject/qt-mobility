@@ -52,7 +52,7 @@
 
 class DirectShowTimedSample;
 
-class DirectShowSampleScheduler : public QObject, public IMemInputPin
+class DirectShowSampleScheduler : public QWinEventNotifier, public IMemInputPin
 {
     Q_OBJECT
 public:
@@ -95,11 +95,10 @@ public:
 
     IMediaSample *takeSample();
 
+    bool event(QEvent *event);
+
 Q_SIGNALS:
     void sampleReady();
-
-private Q_SLOTS:
-    void timerActivated();
 
 private:
     IUnknown *m_pin;
@@ -113,7 +112,6 @@ private:
     HANDLE m_timeoutEvent;
     QSemaphore m_semaphore;
     QMutex m_mutex;
-    QWinEventNotifier m_eventNotifier;
 };
 
 #endif

@@ -55,7 +55,7 @@ class DirectShowIOSource
     , public IPin
 {
 public:
-    DirectShowIOSource(QIODevice *device);
+    DirectShowIOSource(QIODevice *device, DirectShowEventLoop *loop);
     ~DirectShowIOSource();
 
     void setAllocator(IMemAllocator *allocator);

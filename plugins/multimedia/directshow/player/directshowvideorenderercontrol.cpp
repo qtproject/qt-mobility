@@ -43,8 +43,9 @@
 
 #include "videosurfacefilter.h"
 
-DirectShowVideoRendererControl::DirectShowVideoRendererControl(QObject *parent)
+DirectShowVideoRendererControl::DirectShowVideoRendererControl(DirectShowEventLoop *loop, QObject *parent)
     : QVideoRendererControl(parent)
+    , m_loop(loop)
     , m_surface(0)
     , m_filter(0)
 {
@@ -68,7 +69,7 @@ void DirectShowVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
         VideoSurfaceFilter *existingFilter = m_filter;
 
         if (surface) {
-            m_filter = new VideoSurfaceFilter(surface);
+            m_filter = new VideoSurfaceFilter(surface, m_loop);
         } else {
             m_filter = 0;
         }

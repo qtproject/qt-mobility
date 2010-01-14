@@ -50,6 +50,7 @@
 
 class QIODevice;
 
+class DirectShowEventLoop;
 class DirectShowIOSource;
 class DirectShowSampleRequest;
 
@@ -57,7 +58,7 @@ class DirectShowIOReader : public QObject, public IAsyncReader
 {
     Q_OBJECT
 public:
-    DirectShowIOReader(QIODevice *device, DirectShowIOSource *source);
+    DirectShowIOReader(QIODevice *device, DirectShowIOSource *source, DirectShowEventLoop *loop);
     ~DirectShowIOReader();
 
     // IUnknown
@@ -97,6 +98,7 @@ private:
 
     DirectShowIOSource *m_source;
     QIODevice *m_device;
+    DirectShowEventLoop *m_loop;
     DirectShowSampleRequest *m_pendingHead;
     DirectShowSampleRequest *m_pendingTail;
     DirectShowSampleRequest *m_readyHead;

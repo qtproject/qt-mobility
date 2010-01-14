@@ -51,11 +51,13 @@
 
 class QUrl;
 
+class DirectShowEventLoop;
+
 class DirectShowRenderThread : public QThread
 {
     Q_OBJECT
 public:
-    DirectShowRenderThread(QObject *parent = 0);
+    DirectShowRenderThread(DirectShowEventLoop *loop, QObject *parent = 0);
     ~DirectShowRenderThread();
 
     void shutdown();
@@ -103,6 +105,7 @@ private:
     int m_pendingTasks;
     int m_executingTask;
     int m_executedTasks;
+    DirectShowEventLoop *m_loop;
     QIODevice *m_stream;
     IFilterGraph2 *m_graph;
     IBaseFilter *m_source;

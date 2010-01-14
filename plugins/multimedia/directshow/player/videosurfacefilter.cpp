@@ -41,8 +41,9 @@
 
 #include "videosurfacefilter.h"
 
-#include "mediasamplevideobuffer.h"
+#include "directshoweventloop.h"
 #include "directshowpinenum.h"
+#include "mediasamplevideobuffer.h"
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>
@@ -55,11 +56,13 @@
 DEFINE_GUID(CLSID_VideoSurfaceFilter,
 0xe23cad72, 0x153d, 0x406c, 0xbf, 0x3f, 0x4c, 0x4b, 0x52, 0x3d, 0x96, 0xf2);
 
-VideoSurfaceFilter::VideoSurfaceFilter(QAbstractVideoSurface *surface, QObject *parent)
+VideoSurfaceFilter::VideoSurfaceFilter(
+        QAbstractVideoSurface *surface, DirectShowEventLoop *loop, QObject *parent)
     : QObject(parent)
     , m_ref(1)
     , m_state(State_Stopped)
     , m_surface(surface)
+    , m_loop(loop)
     , m_graph(0)
     , m_peerPin(0)
     , m_bytesPerLine(0)
@@ -281,7 +284,7 @@ HRESULT VideoSurfaceFilter::ReceiveConnection(IPin *pConnector, const AM_MEDIA_T
             if (thread() == QThread::currentThread()) {
                 hr = start();
             } else {
-                QCoreApplication::postEvent(this, new QEvent(QEvent::Type(StartSurface)));
+                m_loop->postEvent(this, new QEvent(QEvent::Type(StartSurface)));
 
                 m_wait.wait(&m_mutex);
 
@@ -317,7 +320,7 @@ HRESULT VideoSurfaceFilter::Disconnect()
     if (thread() == QThread::currentThread()) {
         stop();
     } else {
-        QCoreApplication::postEvent(this, new QEvent(QEvent::Type(StopSurface)));
+        m_loop->postEvent(this, new QEvent(QEvent::Type(StopSurface)));
 
         m_wait.wait(&m_mutex);
     }
@@ -448,7 +451,7 @@ HRESULT VideoSurfaceFilter::BeginFlush()
     if (thread() == QThread::currentThread()) {
         flush();
     } else {
-        QCoreApplication::postEvent(this, new QEvent(QEvent::Type(FlushSurface)));
+        m_loop->postEvent(this, new QEvent(QEvent::Type(FlushSurface)));
 
         m_wait.wait(&m_mutex);
     }

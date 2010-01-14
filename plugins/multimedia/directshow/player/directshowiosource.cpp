@@ -59,7 +59,7 @@ static const GUID directshow_subtypes[] =
     MEDIASUBTYPE_NULL
 };
 
-DirectShowIOSource::DirectShowIOSource(QIODevice *device)
+DirectShowIOSource::DirectShowIOSource(QIODevice *device, DirectShowEventLoop *loop)
     : m_ref(1)
     , m_state(State_Stopped)
     , m_graph(0)
@@ -67,7 +67,7 @@ DirectShowIOSource::DirectShowIOSource(QIODevice *device)
     , m_allocator(0)
     , m_peerPin(0)
     , m_pinId(QLatin1String("Data"))
-    , m_reader(device, this)
+    , m_reader(device, this, loop)
 {
     QVector<AM_MEDIA_TYPE> mediaTypes;
 

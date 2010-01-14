@@ -57,7 +57,7 @@
 
 class QAbstractVideoSurface;
 
-class VideoSurfacePin;
+class DirectShowEventLoop;
 
 class VideoSurfaceFilter
     : public QObject
@@ -68,7 +68,8 @@ class VideoSurfaceFilter
 {
     Q_OBJECT
 public:
-    VideoSurfaceFilter(QAbstractVideoSurface *surface, QObject *parent = 0);
+    VideoSurfaceFilter(
+            QAbstractVideoSurface *surface, DirectShowEventLoop *loop, QObject *parent = 0);
     ~VideoSurfaceFilter();
 
     // IUnknown
@@ -155,6 +156,7 @@ private:
     LONG m_ref;
     FILTER_STATE m_state;
     QAbstractVideoSurface *m_surface;
+    DirectShowEventLoop *m_loop;
     IFilterGraph *m_graph;
     IPin *m_peerPin;
     int m_bytesPerLine;
