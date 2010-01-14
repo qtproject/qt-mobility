@@ -221,16 +221,16 @@ void detailSharing(QContactManager* cm)
     a.saveDetail(&newNumber); // since newNumber.key() == nnCopy.key();
 
     /* Saving will cause overwrite */
-    qDebug() << "Prior to saving nnCopy," << a.displayLabel() << "has" << a.details().count() << "details.";
+    qDebug() << "\tPrior to saving nnCopy," << a.displayLabel() << "has" << a.details().count() << "details.";
     a.saveDetail(&nnCopy);
-    qDebug() << "After saving nnCopy," << a.displayLabel() << "still has" << a.details().count() << "details.";
+    qDebug() << "\tAfter saving nnCopy," << a.displayLabel() << "still has" << a.details().count() << "details.";
 
     /* In order to save nnCopy as a new detail, we must reset its key */
     nnCopy.resetKey();
-    qDebug() << "The copy key is now" << nnCopy.key() << ", whereas the original key is" << newNumber.key();
-    qDebug() << "Prior to saving (key reset) nnCopy," << a.displayLabel() << "has" << a.details().count() << "details.";
+    qDebug() << "\tThe copy key is now" << nnCopy.key() << ", whereas the original key is" << newNumber.key();
+    qDebug() << "\tPrior to saving (key reset) nnCopy," << a.displayLabel() << "has" << a.details().count() << "details.";
     a.saveDetail(&nnCopy);
-    qDebug() << "After saving (key reset) nnCopy," << a.displayLabel() << "still has" << a.details().count() << "details.";
+    qDebug() << "\tAfter saving (key reset) nnCopy," << a.displayLabel() << "still has" << a.details().count() << "details.";
     a.removeDetail(&nnCopy);
 
     /*
@@ -322,10 +322,12 @@ void RequestExample::performRequest()
 {
     // retrieve any contact whose first name is "Alice"
     QContactDetailFilter dfil;
-    dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
     dfil.setValue("Alice");
     dfil.setMatchFlags(QContactFilter::MatchExactly);
 
+    // m_fetchRequest was created with m_fetchRequest = new QContactFetchRequest() in the ctor.
+    m_fetchRequest->setManager(this->m_manager); // m_manager is a QContactManager*.
     m_fetchRequest->setFilter(dfil);
     connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
     if (!m_fetchRequest->start()) {
@@ -353,6 +355,7 @@ void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnl
 
     // once we've finished retrieving results, stop processing events.
     if (request->state() == QContactAbstractRequest::FinishedState || request->state() == QContactAbstractRequest::CanceledState) {
+        qDebug() << "Finished displaying asynchronously retrieved contacts!";
         QCoreApplication::exit(0);
     }
 }

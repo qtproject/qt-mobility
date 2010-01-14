@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
-
 #include "qcontactmanagerengine.h"
 
 #include "qcontactdetaildefinition.h"
@@ -359,24 +357,31 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
         return all;
 
     for (int j = 0; j < all.count(); j++) {
-        if (testFilter(filter, all.at(j)))
+        if (testFilter(filter, all.at(j))) {
             ret << all.at(j);
+        }
     }
 
     return ret;
 }
 
 /*!
- * Returns the contact in the database identified by \a contactId
+ * Returns the contact in the database identified by \a contactId.
+ * If the list of detail definition names \a definitionRestrictions given is non-empty,
+ * the contact returned will contain at least those details which are of a definition whose name is
+ * contained in the \a definitionRestrictions list.
+ * Note that the returned contact may also contain other details, but this function guarantees that
+ * all details whose definition name is included in the given list of definition names \a definitionRestrictions
+ * will be included in the returned contact.
+ *
+ * The default implementation returns the entire contact.
  *
  * Any errors encountered should be stored to \a error.
  */
 QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
-    Q_UNUSED(contactId);
     Q_UNUSED(definitionRestrictions);
-    error = QContactManager::NotSupportedError;
-    return QContact();
+    return contact(contactId, error);
 }
 
 /*!
@@ -1684,7 +1689,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 } else {
                     /* Nope, testing the values as a variant */
                     /* Value equality test */
-                    for(int j=0; j < details.count(); j++) {
+                    for(int j = 0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
                         const QVariant& var = detail.variantValue(cdf.detailFieldName());
                         if (!var.isNull() && compareVariant(var, cdf.value(), cs) == 0)
@@ -2116,7 +2121,7 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
@@ -2128,7 +2133,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
@@ -2140,7 +2145,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
-    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status));
 }
 
@@ -2152,7 +2157,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
@@ -2164,7 +2169,7 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
+    qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 

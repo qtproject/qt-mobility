@@ -400,8 +400,11 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
 /*!
  * Returns the contact in the database identified by \a contactId.
  * If the list of detail definition names \a definitionRestrictions given is non-empty,
- * the contact returned will contain only those details which are of a definition whose name is
+ * the contact returned will contain at least those details which are of a definition whose name is
  * contained in the \a definitionRestrictions list.
+ * Note that the returned contact may also contain other details, but this function guarantees that
+ * all details whose definition name is included in the given list of definition names \a definitionRestrictions
+ * will be included in the returned contact.
  */
 QContact QContactManager::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions) const
 {

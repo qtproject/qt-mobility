@@ -817,33 +817,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
             QContactManager::Error operationError;
             QList<QContactManager::Error> operationErrors;
-            QList<QContact> requestedContacts;
-            QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
-
-            QContactManager::Error tempError;
-            for (int i = 0; i < requestedContactIds.size(); i++) {
-                QContact current = contact(requestedContactIds.at(i), tempError);
-                operationErrors.append(tempError);
-
-                // check for single error; update total operation error if required
-                if (tempError != QContactManager::NoError)
-                    operationError = tempError;
-
-                // apply the required detail definition restrictions
-                if (!defs.isEmpty()) {
-                    QList<QContactDetail> allDetails = current.details();
-                    for (int j = 0; j < allDetails.size(); j++) {
-                        QContactDetail d = allDetails.at(j);
-                        if (!defs.contains(d.definitionName())) {
-                            // this detail is not required.
-                            current.removeDetail(&d);
-                        }
-                    }
-                }
-
-                // add the contact to the result list.
-                requestedContacts.append(current);
-            }
+            QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, defs, operationError);
 
             // update the request with the results.
             updateRequest(currentRequest, requestedContacts, operationError, operationErrors, QContactAbstractRequest::FinishedState);
