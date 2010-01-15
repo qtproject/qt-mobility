@@ -81,8 +81,8 @@ public:
     int audioBitRate() const;
     void setAudioBitRate(int rate);
 
-    int frequency() const;
-    void setFrequency(int frequency);
+    int sampleRate() const;
+    void setSampleRate(int frequency);
 
     int channelCount() const;
     void setChannelCount(int channels);
@@ -106,7 +106,7 @@ private:
         DataSize,
         AudioBitRate,
         VideoBitRate,
-        Frequency,
+        SampleRate,
         ChannelCount,
         Resolution,
     };

@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#import <QTKit/QTKit.h>
+
 #include "qt7backend.h"
 
 #include "qt7playercontrol.h"
@@ -52,13 +54,6 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
-#import <QTKit/QTDataReference.h>
-#import <QTKit/QTMovie.h>
-#import <QTKit/QTMovieView.h>
-#import <QTKit/QTMovieLayer.h>
-#import <AppKit/NSImage.h>
-
-#include <CoreFoundation/CoreFoundation.h>
 
 QTM_USE_NAMESPACE
 

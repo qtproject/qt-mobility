@@ -278,24 +278,24 @@ void QMediaResource::setAudioBitRate(int rate)
 }
 
 /*!
-    Returns the audio sample frequency of a media resource.
+    Returns the audio sample rate of a media resource.
 
     This may be zero if the sample size is unknown, or the resource contains no audio stream.
 */
-int QMediaResource::frequency() const
+int QMediaResource::sampleRate() const
 {
-    return qvariant_cast<int>(values.value(Frequency));
+    return qvariant_cast<int>(values.value(SampleRate));
 }
 
 /*!
-    Sets the audio sample \a frequency of a media resource.
+    Sets the audio \a sampleRate of a media resource.
 */
-void QMediaResource::setFrequency(int frequency)
+void QMediaResource::setSampleRate(int sampleRate)
 {
-    if (frequency != 0)
-        values.insert(Frequency, frequency);
+    if (sampleRate != 0)
+        values.insert(SampleRate, sampleRate);
     else
-        values.remove(Frequency);
+        values.remove(SampleRate);
 }
 
 /*!
