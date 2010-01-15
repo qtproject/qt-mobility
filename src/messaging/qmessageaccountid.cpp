@@ -88,10 +88,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \internal
     \fn bool QMessageAccountId::operator==(const QMessageAccountId &other) const
-
-    Returns true if this identifier and the \a other identifier are identical;
-    otherwise returns false.
 */
 
 /*! \internal */
@@ -101,14 +99,14 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
 }
 
 /*!
-    \internal
     \fn bool QMessageAccountId::operator<(const QMessageAccountId &other) const
+
+    Returns true if this identifier is ordered before \a other using an implementation-defined ordering.
 */
 
 /*!
+    \internal
     \fn QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId &other)
-
-    Assigns \a other to this identifier and returns a reference to this identifier.
 */
 
 /*!

@@ -41,15 +41,15 @@
 
 #include <QObject>
 #include <QList>
-#include <QtDBus>
-#include <QDBusConnection>
-#include <QDBusError>
-#include <QDBusInterface>
-#include <QDBusMessage>
-#include <QDBusReply>
-#include <QDBusPendingCallWatcher>
-#include <QDBusObjectPath>
-#include <QDBusPendingCall>
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusError>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusPendingCallWatcher>
+#include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusPendingCall>
 
 #include "qnetworkmanagerservice_linux_p.h"
 

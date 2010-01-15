@@ -45,20 +45,18 @@
 #include <QtCore/qobject.h>
 
 #include <QMediaPlayerControl>
-#include <QMediaPlayer>
 
 #include "ms60mediaplayerresolver.h"
 #include <QtCore/qdebug.h>
+
 QTM_BEGIN_NAMESPACE
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
+class QMediaPlayer;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
 class S60MediaPlayerSession;
 class S60MediaPlayerService;
-
 
 class S60MediaSettings
 {
@@ -108,7 +106,7 @@ public:
     void setVideoOutput(QObject *output);
 
     bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 	
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);

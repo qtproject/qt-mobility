@@ -72,12 +72,10 @@ public:
     qreal zoomValue() const;
     void zoomTo(qreal value);
 
-    bool isFocusLocked() const;
-
 public Q_SLOTS:
 
-    void lockFocus();
-    void unlockFocus();
+    void startFocusing();
+    void cancelFocusing();
 
 private:
     S60CameraSession *m_session;

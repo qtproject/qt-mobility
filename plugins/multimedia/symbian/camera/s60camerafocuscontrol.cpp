@@ -83,7 +83,8 @@ QCamera::FocusModes S60CameraFocusControl::supportedFocusModes() const
 
 QCamera::FocusStatus S60CameraFocusControl::focusStatus() const
 {
-    return QCamera::FocusDisabled;
+    //TODO: return correct focus status
+    return QCamera::FocusInitial;
 }
 
 bool S60CameraFocusControl::macroFocusingEnabled() const
@@ -120,15 +121,10 @@ void S60CameraFocusControl::zoomTo(qreal value)
     Q_UNUSED(value);
 }
 
-bool S60CameraFocusControl::isFocusLocked() const
-{
-    return true;
-}
-
-void S60CameraFocusControl::lockFocus()
+void S60CameraFocusControl::startFocusing()
 {
 }
 
-void S60CameraFocusControl::unlockFocus()
+void S60CameraFocusControl::cancelFocusing()
 {
 }

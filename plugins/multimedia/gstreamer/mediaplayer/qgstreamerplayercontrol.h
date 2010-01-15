@@ -56,7 +56,10 @@ class QMediaPlaylist;
 class QGstreamerPlayerSession;
 class QGstreamerPlayerService;
 class QMediaPlaylistNavigator;
+
+QT_BEGIN_NAMESPACE
 class QSocketNotifier;
+QT_END_NAMESPACE
 
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
@@ -81,7 +84,7 @@ public:
     void setVideoOutput(QObject *output);
 
     bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);

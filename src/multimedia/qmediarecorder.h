@@ -48,11 +48,11 @@
 
 #include <QtCore/qpair.h>
 
-
+QT_BEGIN_NAMESPACE
 class QUrl;
 class QSize;
-
 class QAudioFormat;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

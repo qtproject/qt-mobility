@@ -62,12 +62,12 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     return *this; // stub
 }
 
-void QMessageFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    Q_UNUSED(options)
+    Q_UNUSED(matchFlags)
 }
 
-QMessageDataComparator::Options QMessageFilter::options() const
+QMessageDataComparator::MatchFlags QMessageFilter::matchFlags() const
 {
     return 0;
 }

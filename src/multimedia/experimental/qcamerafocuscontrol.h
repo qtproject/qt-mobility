@@ -70,11 +70,9 @@ public:
     virtual qreal zoomValue() const = 0;
     virtual void zoomTo(qreal value) = 0;
 
-    virtual bool isFocusLocked() const = 0;
-
 public Q_SLOTS:
-    virtual void lockFocus() = 0;
-    virtual void unlockFocus() = 0;
+    virtual void startFocusing() = 0;
+    virtual void cancelFocusing() = 0;
 
 Q_SIGNALS:
     void zoomValueChanged(qreal);

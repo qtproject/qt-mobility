@@ -60,10 +60,12 @@
 #include "qcontactlistmodel.h"
 #include "filterdialog.h"
 
+QT_BEGIN_NAMESPACE
 class QStackedWidget;
 class QTextEdit;
 class QLabel;
 class QPushButton;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QContactFetchRequest;
@@ -86,7 +88,6 @@ private:
     QContactListModel *model;
 };
 
-class QPushButton;
 class TestModelUi : public QWidget
 {
     Q_OBJECT

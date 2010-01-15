@@ -54,6 +54,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CameraCapture),
     camera(0),
+    imageCapture(0),
     mediaRecorder(0),
     audioSource(0),
     videoWidget(0)
@@ -99,6 +100,7 @@ CameraCapture::~CameraCapture()
 
 void CameraCapture::setCamera(const QByteArray &cameraDevice)
 {
+    delete imageCapture;
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
@@ -112,6 +114,8 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     mediaRecorder = new QMediaRecorder(camera);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
+
+    imageCapture = new QStillImageCapture(camera);
 
     audioSource = new QAudioCaptureSource(camera);
     connect(audioSource, SIGNAL(availableAudioInputsChanged()), SLOT(updateAudioDevices()));
@@ -131,8 +135,8 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     updateRecorderState(mediaRecorder->state());
     updateAudioDevices();
 
-    connect(camera, SIGNAL(readyForCaptureChanged(bool)), ui->imageCaptureBox, SLOT(setEnabled(bool)));
-    connect(camera, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
+    connect(imageCapture, SIGNAL(readyForCaptureChanged(bool)), ui->imageCaptureBox, SLOT(setEnabled(bool)));
+    connect(imageCapture, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
 
 }
 
@@ -214,10 +218,10 @@ void CameraCapture::takeImage()
         lastImage = qMax(lastImage, imgNumber);
     }
 
-    camera->capture(QString("img_%1.jpg").arg(lastImage+1,
-                                              4, //fieldWidth
-                                              10,
-                                              QLatin1Char('0')));
+    imageCapture->capture(QString("img_%1.jpg").arg(lastImage+1,
+                                                    4, //fieldWidth
+                                                    10,
+                                                    QLatin1Char('0')));
 }
 
 void CameraCapture::toggleCamera()

@@ -44,11 +44,15 @@
 
 #include <experimental/qcamera.h>
 #include <qmediarecorder.h>
+#include <experimental/qstillimagecapture.h>
 #include <qaudiocapturesource.h>
 
+QT_BEGIN_NAMESPACE
 namespace Ui {
     class CameraCapture;
 }
+QT_END_NAMESPACE
+
 
 #include <QMainWindow>
 #include <QDir>
@@ -98,6 +102,7 @@ private:
 
     QDir outputDir;
     QCamera *camera;
+    QStillImageCapture *imageCapture;
     QMediaRecorder* mediaRecorder;
     QAudioCaptureSource *audioSource;
     QVideoWidget *videoWidget;

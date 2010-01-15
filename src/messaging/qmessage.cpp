@@ -68,7 +68,7 @@ QList<QByteArray> charsets;
     the telephony types SMS and MMS, and also XMPP messages.
      
     The QMessageId identifier for a message is returned by id(). Messages can be constructed by 
-    retrieval from the messaging store via their identifier using QMessageStore::message(). A 
+    retrieval from the messaging store via their identifier using QMessageManager::message(). A 
     QMessage can also be constructed piece by piece using functions such as 
     setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments(). 
     
@@ -88,7 +88,7 @@ QList<QByteArray> charsets;
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
     or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.
     
-    \sa QMessageContentContainer, QMessageStore, QMessageId
+    \sa QMessageContentContainer, QMessageManager, QMessageId
 */
 
 /*!
@@ -158,11 +158,11 @@ QList<QByteArray> charsets;
 */
 
 /*!
-    \fn QMessage::(const QMessageId& id)
+    \fn QMessage::QMessage(const QMessageId& id)
 
     Constructs a message from data stored in the messaging store with identifier \a id.
     
-    \sa QMessageStore
+    \sa QMessageManager::message()
 */
 
 /*!
@@ -486,7 +486,7 @@ QList<QByteArray> charsets;
 
     Creates a new message as a response to this message, with properties predetermined according to \a type.
   
-    \sa QMessageServiceAction::compose()
+    \sa QMessageService::compose()
 */
 
 /*!
@@ -494,6 +494,8 @@ QList<QByteArray> charsets;
     
     Sets the ordered-by-preference list of names of charsets to use when encoding 
     unicode QString data to a serialized form to \a charsetNames.
+
+    The set of valid charset names is returned by QTextCodec::availableCharsets().
 
     \sa preferredCharsets(), preferredCharsetFor(), setBody()
 */

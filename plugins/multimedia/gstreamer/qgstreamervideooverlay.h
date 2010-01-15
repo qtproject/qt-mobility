@@ -48,7 +48,9 @@
 
 QTM_USE_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
+QT_END_NAMESPACE
 class QX11VideoSurface;
 
 class QGstreamerVideoOverlay : public QVideoWindowControl, public QGstreamerVideoRendererInterface

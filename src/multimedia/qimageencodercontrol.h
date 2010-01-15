@@ -48,8 +48,10 @@
 
 #include <QtCore/qsize.h>
 
+QT_BEGIN_NAMESPACE
 class QByteArray;
 class QStringList;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
