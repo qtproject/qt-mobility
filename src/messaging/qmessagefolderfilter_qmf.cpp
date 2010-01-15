@@ -52,10 +52,10 @@ QTM_BEGIN_NAMESPACE
 class QMessageFolderFilterPrivate
 {
 public:
-    QMessageFolderFilterPrivate() : _key(), _options(0) {}
+    QMessageFolderFilterPrivate() : _key(), _matchFlags(0) {}
 
     QMailFolderKey _key;
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
 
     //static QMessageFolderFilter convert(const QMailFolderKey &key);
     static QMailFolderKey convert(const QMessageFolderFilter &filter);
@@ -112,20 +112,20 @@ QMessageFolderFilter& QMessageFolderFilter::operator=(const QMessageFolderFilter
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
-        d_ptr->_options = other.d_ptr->_options;
+        d_ptr->_matchFlags = other.d_ptr->_matchFlags;
     }
 
     return *this;
 }
 
-void QMessageFolderFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageFolderFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
 }
 
-QMessageDataComparator::Options QMessageFolderFilter::options() const
+QMessageDataComparator::MatchFlags QMessageFolderFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageFolderFilter::isEmpty() const
@@ -135,7 +135,7 @@ bool QMessageFolderFilter::isEmpty() const
 
 bool QMessageFolderFilter::isSupported() const
 {
-    return !d_ptr->_options;
+    return !d_ptr->_matchFlags;
 }
 
 QMessageFolderFilter QMessageFolderFilter::operator~() const
@@ -149,7 +149,7 @@ QMessageFolderFilter QMessageFolderFilter::operator&(const QMessageFolderFilter&
 {
     QMessageFolderFilter result;
     result.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
-    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
+    result.d_ptr->_matchFlags = d_ptr->_matchFlags | other.d_ptr->_matchFlags; // matchFlags not supported
     return result;
 }
 
@@ -157,28 +157,28 @@ QMessageFolderFilter QMessageFolderFilter::operator|(const QMessageFolderFilter&
 {
     QMessageFolderFilter result;
     result.d_ptr->_key = d_ptr->_key | other.d_ptr->_key;
-    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
+    result.d_ptr->_matchFlags = d_ptr->_matchFlags | other.d_ptr->_matchFlags; // matchFlags not supported
     return result;
 }
 
 const QMessageFolderFilter& QMessageFolderFilter::operator&=(const QMessageFolderFilter& other)
 {
     d_ptr->_key &= other.d_ptr->_key;
-    d_ptr->_options |= other.d_ptr->_options; // options not supported
+    d_ptr->_matchFlags |= other.d_ptr->_matchFlags; // matchFlags not supported
     return *this;
 }
 
 const QMessageFolderFilter& QMessageFolderFilter::operator|=(const QMessageFolderFilter& other)
 {
     d_ptr->_key |= other.d_ptr->_key;
-    d_ptr->_options |= other.d_ptr->_options; // options not supported
+    d_ptr->_matchFlags |= other.d_ptr->_matchFlags; // matchFlags not supported
     return *this;
 }
 
 bool QMessageFolderFilter::operator==(const QMessageFolderFilter& other) const
 {
     return ((d_ptr->_key == other.d_ptr->_key)
-            && (d_ptr->_options == other.d_ptr->_options));
+            && (d_ptr->_matchFlags == other.d_ptr->_matchFlags));
 }
 
 QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderId &id, QMessageDataComparator::EqualityComparator cmp)
@@ -202,14 +202,14 @@ QMessageFolderFilter QMessageFolderFilter::byId(const QMessageFolderFilter &filt
     return result;
 }
 
-QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFolderFilter result;
     result.d_ptr->_key = QMailFolderKey::displayName(value, convert(cmp));
     return result;
 }
 
-QMessageFolderFilter QMessageFolderFilter::byDisplayName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
+QMessageFolderFilter QMessageFolderFilter::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
 {
     QMessageFolderFilter result;
     result.d_ptr->_key = QMailFolderKey::displayName(value, convert(cmp));

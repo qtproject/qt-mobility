@@ -1,11 +1,12 @@
 # Symbian plugin header and source files
 SYMBIAN_PATHS += \
-        ..\..\inc \
-        ..\..\rss \
-        ..\..\..\..\..\src\contacts \
-        ..\..\..\..\..\src\contacts\details \
-        ..\..\..\..\..\src\contacts\filters \
-        ..\..\..\..\..\src\contacts\requests
+        ../../inc \
+        ../../rss \
+        ../../../../../src/global \
+        ../../../../../src/contacts \
+        ../../../../../src/contacts/details \
+        ../../../../../src/contacts/filters \
+        ../../../../../src/contacts/requests
         
 SYMBIAN_HEADERS += \
         ../../inc/cntsymbianengine.h \
@@ -82,7 +83,15 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbiandatabase.cpp \
         ../../src/cntdisplaylabel.cpp \
         ../../src/cntdisplaylabelsqlfilter.cpp 
-        
+ 
+exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
+| exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
+    # Building on S60 3.1 - TB 9.2 Platform
+} else {
+    # Building on 10.1 platform
+    DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+}
+ 
 SYMBIAN_LIBS += \
         -lcntmodel \
         -lQtContacts \

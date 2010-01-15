@@ -44,6 +44,7 @@
 
 #include <QObject>
 
+//! [0]
 #include <qserviceplugininterface.h>
 
 QTM_USE_NAMESPACE
@@ -58,5 +59,6 @@ public:
                             QServiceContext* context,
                             QAbstractSecuritySession* session);
 };
+//! [0]
 
 #endif

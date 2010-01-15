@@ -44,16 +44,20 @@
 
 #include <QString>
 #include <QVariant>
-#include "qmobilityglobal.h"
+#include "qservice.h"
+
+QT_USE_NAMESPACE
 
 #ifdef SERVICE_XML_GENERATOR
 #undef Q_SERVICEFW_EXPORT
 #define Q_SERVICEFW_EXPORT
 #endif
 
+QT_BEGIN_NAMESPACE
 class QDebug;
 class QStringList;
 class QDataStream;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 
@@ -63,7 +67,7 @@ class QServiceInterfaceDescriptorPrivate;
 class Q_SERVICEFW_EXPORT QServiceInterfaceDescriptor
 {
 public:
-    enum PropertyKey {
+    enum Attribute {
         Capabilities = 0,
         Location, 
         ServiceDescription,
@@ -86,11 +90,11 @@ public:
 
     bool isValid() const;
 
-    bool inSystemScope() const;
+    QService::Scope scope() const;
 
-    QVariant property(QServiceInterfaceDescriptor::PropertyKey key) const;
-    QString customProperty(const QString& key) const;
-    QStringList customPropertyKeys() const;
+    QVariant attribute(QServiceInterfaceDescriptor::Attribute which) const;
+    QString customAttribute(const QString& which) const;
+    QStringList customAttributes() const;
 
 private:
     QServiceInterfaceDescriptorPrivate* d;

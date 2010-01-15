@@ -117,8 +117,8 @@ signals:
     void stateChanged(QMediaPlayer::State state);
     void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
     void volumeChanged(int volume);
-    void mutedStateChaned(bool muted);
-    void videoAvailabilityChanged(bool videoAvailable);
+    void mutedStateChanged(bool muted);
+    void videoAvailableChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
     void bufferingProgressChanged(int percentFilled);
     void playbackFinished();
@@ -139,12 +139,14 @@ private:
     QMediaPlayer::MediaStatus m_mediaStatus;
     QGstreamerBusHelper* m_busHelper;
     GstElement* m_playbin;
+    GstElement* m_nullVideoOutput;
     GstBus* m_bus;
     QGstreamerVideoRendererInterface *m_renderer;
 
     QMap<QByteArray, QVariant> m_tags;
     QList< QMap<QtMedia::MetaData,QVariant> > m_streamProperties;
     QList<QMediaStreamsControl::StreamType> m_streamTypes;
+    QMap<QMediaStreamsControl::StreamType, int> m_playbin2StreamOffset;
 
 
     int m_volume;

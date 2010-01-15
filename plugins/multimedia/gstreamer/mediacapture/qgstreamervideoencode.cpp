@@ -221,7 +221,7 @@ GstElement *QGstreamerVideoEncode::createEncoder()
                 g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);
             }
         } else {
-            int bitrate = m_videoSettings.bitrate();
+            int bitrate = m_videoSettings.bitRate();
             if (bitrate > 0) {
                 g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
             }

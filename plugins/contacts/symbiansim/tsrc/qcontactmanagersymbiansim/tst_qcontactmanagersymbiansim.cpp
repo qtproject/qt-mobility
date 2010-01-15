@@ -42,8 +42,7 @@
 #include <QtTest/QtTest>
 #include <QObject>
 
-#include "qtcontacts.h"
-#include "qcontactchangeset.h"
+#include <qtcontacts.h>
 
 QTM_USE_NAMESPACE
 
@@ -160,6 +159,11 @@ void tst_QContactManagerSymbianSim::detailDefinitions()
     // check that at least definitions for name and phone number exist
     QVERIFY(detailDefinitions.contains(QContactName::DefinitionName));
     QVERIFY(detailDefinitions.contains(QContactPhoneNumber::DefinitionName));
+    QVERIFY(detailDefinitions.contains(QContactDisplayLabel::DefinitionName));
+    QVERIFY(detailDefinitions.contains(QContactType::DefinitionName));
+    QVERIFY(detailDefinitions.contains(QContactSyncTarget::DefinitionName));
+
+    // TODO: QContactGuid?
 }
 
 void tst_QContactManagerSymbianSim::addContact_data()
@@ -217,7 +221,9 @@ bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
         
     foreach(QContactDetail detail, contact.details()) {
         if(detailDefinitions.contains(detail.definitionName())) {
+            // TODO: check the fields of the detail
             // TODO: check the "writability" of the detail?
+            // TODO: uniquenes of the detail? (for example, create a test case with multiple names)
         } else {
             return false;
         }

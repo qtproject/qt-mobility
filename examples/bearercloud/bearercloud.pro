@@ -20,5 +20,4 @@ MOBILITY = bearer
 
 CONFIG += console
 
-symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
-
+symbian:TARGET.CAPABILITY = NetworkServices ReadUserData

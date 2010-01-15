@@ -97,6 +97,18 @@ QRadioTunerControl::~QRadioTunerControl()
 }
 
 /*!
+    \fn bool QRadioTunerControl::isAvailable() const
+
+    Returns true if the radio service is ready to use.
+*/
+
+/*!
+    \fn QtMedia::AvailabilityError QRadioTunerControl::availabilityError() const
+
+    Returns the error state of the radio service.
+*/
+
+/*!
     \fn QRadioTuner::State QRadioTunerControl::state() const
 
     Returns the current radio tuner state.
@@ -281,7 +293,7 @@ QRadioTunerControl::~QRadioTunerControl()
 */
 
 /*!
-    \fn void QRadioTunerControl::searchingStatusChanged(bool searching)
+    \fn void QRadioTunerControl::searchingChanged(bool searching)
 
     Signals that the \a searching state of a radio tuner has changed.
 */
@@ -299,7 +311,7 @@ QRadioTunerControl::~QRadioTunerControl()
 */
 
 /*!
-    \fn void QRadioTunerControl::mutingChanged(bool muted)
+    \fn void QRadioTunerControl::mutedChanged(bool muted)
 
     Signals that the \a muted state of a radio tuner's audio output has changed.
 */

@@ -46,9 +46,11 @@
 
 #include <QtGui/qwidget.h>
 
+QT_BEGIN_NAMESPACE
 class QAbstractButton;
 class QAbstractSlider;
 class QComboBox;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

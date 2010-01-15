@@ -57,6 +57,7 @@
 #include <QObject>
 #include <QQueue>
 
+#include <qmobilityglobal.h>
 #include "qtcontactsglobal.h"
 #include "qcontact.h"
 #include "qcontactname.h"

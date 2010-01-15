@@ -99,7 +99,7 @@ private:
     // all the following methods update \sa result
     void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, bool affiliationNumbers);
     void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, bool affiliationEmails);
-    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts);
+    void processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts);
     void validateRequest();
     void readFromQueryRowToContact(QContact &contact, int queryRow);
     QContact &linkContactsWithSameMetaContact(QContact &first, QContact &second);

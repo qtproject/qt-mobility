@@ -13,7 +13,7 @@ symbian|win32 {
             LIBS += cemapi.lib
         }
         else {
-            LIBS += mapi32.lib 
+            LIBS += mapi32.lib Advapi32.lib
         }
 
     }

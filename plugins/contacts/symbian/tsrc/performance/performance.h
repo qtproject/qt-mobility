@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include <QObject>
+#include <qmobilityglobal.h>
 #include <qtcontacts.h>
 
 QTM_BEGIN_NAMESPACE
@@ -79,6 +80,9 @@ private slots:  // Test cases
 	*/
     void removeComplexContacts();
 
+    void createComplexContactsWithOnlineAccount();
+    void sortContactsWithOnlineAccount();
+    void removeComplextContactsWithOnlineAccount();   
 private:
     int measureContactsFetch(
             QString debugMessage,

@@ -26,12 +26,13 @@ symbian: {
 
     HEADERS += \
         $$PUBLIC_HEADERS \
-        inc/cntsymbiansimengine.h \
+        inc/cntsymbiansimengine.h
       
     SOURCES += \
-        src/cntsymbiansimengine.cpp \
-      
-    qtAddLibrary(QtContacts)
+        src/cntsymbiansimengine.cpp
+
+    CONFIG += mobility
+    MOBILITY = contacts
 
     LIBS += -lcntmodel \
             -lflogger \
@@ -44,7 +45,7 @@ symbian: {
     contains(DEFINES, SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER): {
         message("Using Etel Test Server (not real Etel)")
         INCLUDEPATH +=$${EPOCROOT}epoc32/include/internal
-        LIBS += -letelserverclient
+        LIBS += -leteltestserverclient
     } else {
         message("Using real Etel APIs")
         LIBS += -letel \

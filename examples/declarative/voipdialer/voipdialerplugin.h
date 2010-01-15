@@ -48,11 +48,14 @@
 
 QTM_USE_NAMESPACE
 
+//! [0]
 class VoipDialerPlugin : public QObject,
                                 public QServicePluginInterface
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QServicePluginInterface)
+//! [0]
+
 public:
     QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
                             QServiceContext* context,

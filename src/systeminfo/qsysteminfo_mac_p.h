@@ -62,11 +62,16 @@
 #include <qmobilityglobal.h>
 
 #include <QTimer>
+#include <QtCore/qthread.h>
+#include <QtCore/qmutex.h>
+ #include <QEventLoop>
 
 QT_BEGIN_HEADER
 
+QT_BEGIN_NAMESPACE
 class QStringList;
 class QTimer;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -100,6 +105,7 @@ private Q_SLOTS:
 
 };
 
+class QRunLoopThread;
 class QSystemNetworkInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -124,6 +130,8 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    static QSystemNetworkInfoPrivate *instance() {return self;}
+    void networkChanged(const QString &notification, const QString interfaceName);
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -137,10 +145,10 @@ private:
     bool isInterfaceActive(const char* netInterface);
     QTimer *rssiTimer;
     int signalStrengthCache;
-    
+    static QSystemNetworkInfoPrivate *self;
+    QRunLoopThread * runloopThread ;
 private slots:
     void rssiTimeout();
-
 };
 
 class QSystemDisplayInfoPrivate : public QObject
@@ -246,6 +254,27 @@ private:
 private slots:
     void activityTimeout();
 
+};
+
+class QRunLoopThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QRunLoopThread(QObject *parent = 0);
+    ~QRunLoopThread();
+    bool done;
+
+    void stopLoop();
+    void startLoop();
+
+protected:
+    void run();
+
+private:
+
+    QMutex mutex;
+private slots:
 };
 
 QTM_END_NAMESPACE
