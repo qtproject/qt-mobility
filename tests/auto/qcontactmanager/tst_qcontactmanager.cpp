@@ -2246,6 +2246,9 @@ void tst_QContactManager::detailOrders()
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
+    if (!cm->hasFeature(QContactManager::DetailOrdering))
+        QSKIP("Skipping: This manager does not support detail ordering!", SkipSingle);
+
     QContact a;
     //phone numbers
 

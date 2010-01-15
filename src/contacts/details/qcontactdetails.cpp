@@ -525,7 +525,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLastName, "LastName");
    The constant key for which the first name value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "First");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "FirstName");
 
 /*!
    \variable QContactName::FieldMiddle
@@ -533,7 +533,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "First");
    The constant key for which the middle name value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "Middle");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "MiddleName");
 
 /*!
    \variable QContactName::FieldLast
@@ -541,7 +541,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "Middle");
    The constant key for which the last name value is stored in details
    of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "Last");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "LastName");
 
 /*!
    \variable QContactName::FieldSuffix

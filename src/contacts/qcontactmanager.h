@@ -161,6 +161,7 @@ public:
         Relationships,
         ArbitraryRelationshipTypes,
         RelationshipOrdering,
+        DetailOrdering,
         SelfContact,
         Anonymous,
         ChangeLogs

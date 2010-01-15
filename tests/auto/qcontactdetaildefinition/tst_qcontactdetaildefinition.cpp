@@ -182,14 +182,13 @@ void tst_QContactDetailDefinition::testGetSet()
     def.setFields(QMap<QString, QContactDetailDefinitionField>());
     QVERIFY(def.fields().isEmpty());
 
-    /* Non const accessor */
-    def.fields() = map;
-    QVERIFY(def.fields() == map);
-
-    QMap<QString, QContactDetailDefinitionField>& rmap = def.fields();
-    def.fields().clear();
-
-    QVERIFY(rmap == def.fields());
+    /* Non const accessor - XXX TODO: remove after deprecation transition period. */
+    //def.fields() = map;
+    //QVERIFY(def.fields() == map);
+    //
+    //QMap<QString, QContactDetailDefinitionField>& rmap = def.fields();
+    //def.fields().clear();
+    //QVERIFY(rmap == def.fields());
 }
 
 void tst_QContactDetailDefinition::testEmpty()

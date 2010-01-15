@@ -68,9 +68,9 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
     Q_DECLARE_LATIN1_LITERAL(FieldPrefix, "Prefix");
-    Q_DECLARE_LATIN1_LITERAL(FieldFirst, "First");  // deprecated
-    Q_DECLARE_LATIN1_LITERAL(FieldMiddle, "Middle");// deprecated
-    Q_DECLARE_LATIN1_LITERAL(FieldLast, "Last");    // deprecated
+    Q_DECLARE_LATIN1_LITERAL(FieldFirst, "FirstName");  // deprecated
+    Q_DECLARE_LATIN1_LITERAL(FieldMiddle, "MiddleName");// deprecated
+    Q_DECLARE_LATIN1_LITERAL(FieldLast, "LastName");    // deprecated
     Q_DECLARE_LATIN1_LITERAL(FieldFirstName, "FirstName");
     Q_DECLARE_LATIN1_LITERAL(FieldMiddleName, "MiddleName");
     Q_DECLARE_LATIN1_LITERAL(FieldLastName, "LastName");
