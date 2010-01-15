@@ -57,7 +57,9 @@
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
+#ifndef QT_NO_NETWORKMANAGER
 #include <qnetworkmanagerservice_linux_p.h>
+#endif
 #include <QtDBus/QtDBus>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusError>
@@ -459,7 +461,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent)
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
 #endif
 }
@@ -468,7 +470,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
 void QSystemNetworkInfoPrivate::setupNmConnections()
 {
     iface = new QNetworkManagerInterface();
@@ -690,7 +692,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
             return getBluetoothNetStatus();
 #endif
        }
@@ -1088,7 +1090,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
-#if !defined(QT_NO_DBUS)
 bool QSystemNetworkInfoPrivate::isDefaultInterface(const QString &deviceName)
 {
     QFile routeFilex("/proc/net/route");
@@ -1110,6 +1111,7 @@ bool QSystemNetworkInfoPrivate::isDefaultInterface(const QString &deviceName)
     return false;
 }
 
+#if !defined(QT_NO_DBUS)
 int QSystemNetworkInfoPrivate::getBluetoothRssi()
 {
     return 0;

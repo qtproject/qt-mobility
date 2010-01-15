@@ -46,11 +46,16 @@ unix: {
     !maemo*:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
-        contains(networkmanager_enabled, yes):contains(QT_CONFIG,dbus): {
+        contains(QT_CONFIG,dbus): {
             QT += dbus
-            SOURCES += qhalservice_linux.cpp qnetworkmanagerservice_linux.cpp
-            HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
-
+            SOURCES += qhalservice_linux.cpp
+            HEADERS += qhalservice_linux_p.h
+                contains(networkmanager_enabled, yes): {
+                    SOURCES += qnetworkmanagerservice_linux.cpp
+                    HEADERS += qnetworkmanagerservice_linux_p.h
+                } else {
+                DEFINES += QT_NO_NETWORKMANAGER
+                }
         }
     }
     maemo*: {
