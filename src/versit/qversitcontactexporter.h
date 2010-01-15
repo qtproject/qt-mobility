@@ -53,6 +53,8 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate;
 
+// XXX fooHandler
+// I wonder if we need both process & processUnknown...
 class QVersitContactDetailExporter
 {
 public:
@@ -61,6 +63,7 @@ public:
     virtual bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
 };
 
+// XXX resource loader perhaps (or resourceResolver etc)
 class QVersitFileLoader
 {
 public:

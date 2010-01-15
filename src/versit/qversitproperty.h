@@ -74,11 +74,16 @@ public:
     void setName(const QString& name);
     QString name() const;
 
+    // XXX I think we decided that order of params didn't matter? (-> use hash)
+    // XXX perhaps insertParameter, since it's a QMultiHash
     void addParameter(const QString& name, const QString& value);
     void removeParameter(const QString& name, const QString& value);
+
     void setParameters(const QMultiHash<QString,QString>& parameters);
     QMultiHash<QString,QString> parameters() const;
     
+    // XXX Follow QContactDetail {QString value, QVariant variantValue}
+    // XXX or remove variantValue entirely and use value<T>
     void setValue(const QVariant& value);
     QVariant value() const;
     QString valueString() const;

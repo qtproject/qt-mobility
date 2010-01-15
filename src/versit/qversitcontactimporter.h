@@ -54,16 +54,28 @@ class QVersitDocument;
 class QVersitProperty;
 class QVersitContactImporterPrivate;
 
+
+// XXX I think these should be QVersitContactImporterPropertyHandler
+// and QVersitContactImporterBinaryPropertyHandler
+// actually the binary stuff is just another aspect of property handling, really,
+// but QVCIPH is about converting a property to detail. hrm
+// QVersitContactImporterDetailHandler
+
+// I guess we still need filesaver for other blobs?
+// hrm... more thought needed :)
+
 class QVersitContactPropertyImporter
 {
 public:
+    // XXX virtual dtor
     virtual bool processProperty(const QVersitProperty& property, QContact* contact) = 0;
     virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
 };
 
-class QVersitFileSaver
+class QVersitFileSaver // XXX this isn't really contacts specific
 {
 public:
+    // XXX virtual dtor
     virtual bool saveFile(const QByteArray& contents, const QVersitProperty& property,
                           QString* filename) = 0;
 };
@@ -74,8 +86,10 @@ public:
     QVersitContactImporter();
     ~QVersitContactImporter();
 
+    // XXX I'm not sure about importing vs converting (same for class name)
     QList<QContact> importContacts(const QList<QVersitDocument>& documents);
 
+    // XXX setFooHandler
     void setPropertyImporter(QVersitContactPropertyImporter* importer);
     QVersitContactPropertyImporter* propertyImporter() const;
     

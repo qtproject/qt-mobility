@@ -79,6 +79,12 @@ public:
     QVersitWriter();
     ~QVersitWriter();
 
+    // XXX it seems like most Qt classes have something like:
+    // setDevice(output)
+    // write(input data)
+    // so we should perhaps remove these functions and move it to
+    // writeAll/startWriting
+
     // input:
     void setInput(const QList<QVersitDocument>& input);
     QList<QVersitDocument> input() const;
@@ -88,7 +94,7 @@ public:
     QIODevice* device() const;
 
     // writing:
-    bool startWriting();
+    bool startWriting(); // XXX again, perhaps add list param here, and maybe change names to be more intuitive
     bool writeAll();
 
     State state() const;
@@ -96,6 +102,7 @@ public:
 
 signals:
     void finished();
+    // XXX Do we need incremental results?  I think we're more likely to just write it to the device, so no
 
 private: // data
     QVersitWriterPrivate* d;

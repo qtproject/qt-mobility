@@ -88,18 +88,25 @@ public:
     void setDefaultCodec(QTextCodec* codec);
     QTextCodec* defaultCodec();
 
+    // XXX Other Qt classes have something like:
+    // QVersitDocument read() or QList<QVersitDocument> readAll() etc..
+    // we need to either pick an async signal driven API or an iterative while(state!=finished) read{}
+    // (or something)
+
     // reading:
-    bool startReading();
+    bool startReading(); // XXX these two functions are still a little confusing/not intuitive
     bool readAll();
 
     // output:
     QList<QVersitDocument> results() const;
 
     State state() const;
-    Error error() const;
+    Error error() const; // XXX If error are we in FinishedState ?
 
 signals:
     void finished();
+    // XXX No incremental progress!
+    // void progress(QList<QVersitDocument>& documents) ?
     
 private: // data
     QVersitReaderPrivate* d;   

@@ -73,6 +73,7 @@ public:
         VCard30Type    // vCard version 3.0 (RFC 2426)
     };
 
+    // XXX We use setVersitType but not addVersitProperty.. maybe just setType?
     // metadata about the versit document itself.
     void setVersitType(VersitType type);
     VersitType versitType() const;
@@ -82,8 +83,9 @@ public:
     void removeAllProperties(const QString& name);
     QList<QVersitProperty> properties() const;
 
+    // XXX this is setDefaultCodec in QVersitProperty
     void setCodec(QTextCodec* codec);
-    QTextCodec* codec();
+    QTextCodec* codec(); // XXX const
 
     bool isEmpty() const;
 
