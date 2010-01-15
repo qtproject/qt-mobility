@@ -82,6 +82,7 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
 {
     delete m_player;
     delete m_dummyWidget;
+    delete m_dsa;
 }
 
 void S60VideoPlayerSession::doLoad(const TDesC &path)
