@@ -163,19 +163,25 @@ void AudioRecorder::codecChanged(int idx)
 
 void AudioRecorder::qualityChanged(int idx)
 {
-    Q_UNUSED(idx);
+    //Q_UNUSED(idx);
     
     QAudioEncoderSettings audioSettings = capture->audioSettings();
 
     if(qualityBox->itemText(idx).compare("Low") == 0) {
 		// 8000Hz mono is 8kbps
 		audioSettings.setBitRate(8);
+		audioSettings.setSampleRate(8000);
+		audioSettings.setChannelCount(1);
 	} else if(qualityBox->itemText(idx).compare("Medium") == 0) {
 		// 22050Hz mono is 44.1kbps
 		audioSettings.setBitRate(44);
+		audioSettings.setSampleRate(22050);
+		audioSettings.setChannelCount(1);
 	} else if(qualityBox->itemText(idx).compare("High") == 0) {
 		// 44100Hz mono is 88.2kbps
 		audioSettings.setBitRate(88);
+		audioSettings.setSampleRate(44100);
+		audioSettings.setChannelCount(1);
 	}
     capture->setEncodingSettings(audioSettings);
 }
