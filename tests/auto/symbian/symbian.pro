@@ -11,6 +11,8 @@ contains(mobility_modules,multimedia) {
 #Multimedia
     SUBDIRS += \             
             qcamera \
+            qmediaobject \
             qmediaplayer \
+            qmediaplaylist \
             qradiotuner
 }

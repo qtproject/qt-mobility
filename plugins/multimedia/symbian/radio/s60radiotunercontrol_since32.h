@@ -51,8 +51,6 @@
 #include <radioplayerutility.h>
 
 class S60RadioTunerService;
-class TRadioSettings;
-class CCentralRepositoryHandler;
 class CFMRadioEngineCallObserver;
 
 QTM_USE_NAMESPACE
@@ -106,9 +104,6 @@ public:
     QRadioTuner::Error error() const;
     QString errorString() const;
     
-    // for device interfaces if needed 
-    static int deviceCount();
-    
     /**
 	 * From MRadioPlayerObserver.
 	 * Called when Radio state changed.
@@ -117,7 +112,7 @@ public:
 	 * @param aState Radio player state
 	 * @param aError A standard system error code, only used when aState is ERadioPlayerIdle
 	 */
-	void MrpoStateChange( TPlayerState aState, TInt aError );
+	void MrpoStateChange(TPlayerState aState, TInt aError);
 
 	/**
 	 * From MRadioPlayerObserver.
@@ -126,7 +121,7 @@ public:
 	 * @since S60 3.2
 	 * @param aVolume Current volume.
 	 */
-	void MrpoVolumeChange( TInt aVolume );
+	void MrpoVolumeChange(TInt aVolume);
 
 	/**
 	 * From MRadioPlayerObserver.
@@ -135,7 +130,7 @@ public:
 	 * @since S60 3.2
 	 * @param aMute ETrue indicates audio is muted.
 	 */
-	void MrpoMuteChange( TBool aMute );
+	void MrpoMuteChange(TBool aMute);
 
 	/**
 	 * From MRadioPlayerObserver.
@@ -150,7 +145,7 @@ public:
 	 *        Right speaker volume percentage. This can be any value from zero to 100.
 	 *        Zero value means right speaker is muted.
 	 */
-	void MrpoBalanceChange( TInt aLeftPercentage, TInt aRightPercentage );
+	void MrpoBalanceChange(TInt aLeftPercentage, TInt aRightPercentage);
 
 	
 	/**
@@ -160,7 +155,7 @@ public:
 	 * @since S60 3.2
 	 * @param aError A standard system error code or FM tuner error (TFmRadioTunerError).
 	 */
-	void MrftoRequestTunerControlComplete( TInt aError );
+	void MrftoRequestTunerControlComplete(TInt aError);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -170,7 +165,7 @@ public:
 	 * @since S60 3.2
 	 * @param aError A standard system error code or FM tuner error (TFmRadioTunerError).
 	 */
-	void MrftoSetFrequencyRangeComplete( TInt aError );
+	void MrftoSetFrequencyRangeComplete(TInt aError);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -180,7 +175,7 @@ public:
 	 * @since S60 3.2
 	 * @param aError A standard system error code or FM tuner error (TFmRadioTunerError).
 	 */
-	void MrftoSetFrequencyComplete( TInt aError );
+	void MrftoSetFrequencyComplete(TInt aError);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -191,7 +186,7 @@ public:
 	 * @param aError A standard system error code or FM tuner error (TFmRadioTunerError).
 	 * @param aFrequency The frequency(Hz) of the radio station that was found.
 	 */
-	void MrftoStationSeekComplete( TInt aError, TInt aFrequency );
+	void MrftoStationSeekComplete(TInt aError, TInt aFrequency);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -201,7 +196,7 @@ public:
 	 * @since S60 3.2
 	 * @param aActive ETrue if FM transmitter is active; EFalse otherwise.
 	 */
-	void MrftoFmTransmitterStatusChange( TBool aActive );
+	void MrftoFmTransmitterStatusChange(TBool aActive);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -210,7 +205,7 @@ public:
 	 * @since S60 3.2
 	 * @param aAttached ETrue if antenna is attached; EFalse otherwise.
 	 */
-	void MrftoAntennaStatusChange( TBool aAttached );
+	void MrftoAntennaStatusChange(TBool aAttached);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -219,7 +214,7 @@ public:
 	 *
 	 ** @param aAttached ETrue if offline mode is enabled; EFalse otherwise.
 	 */
-	void MrftoOfflineModeStatusChange( TBool aOfflineMode );
+	void MrftoOfflineModeStatusChange(TBool aOfflineMode);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -238,7 +233,7 @@ public:
 	 * @since S60 3.2
 	 * @param aNewFrequency The new tuned frequency(Hz).
 	 */
-	void MrftoFrequencyChange( TInt aNewFrequency );
+	void MrftoFrequencyChange(TInt aNewFrequency);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -247,7 +242,7 @@ public:
 	 * @since S60 3.2
 	 * @param aForcedMono ETrue if forced mono mode is enabled; EFalse otherwise.
 	 */
-	void MrftoForcedMonoChange( TBool aForcedMono );
+	void MrftoForcedMonoChange(TBool aForcedMono);
 
 	/**
 	 * From MRadioFmTunerObserver.
@@ -257,7 +252,7 @@ public:
 	 * @since S60 3.2
 	 * @param aSquelch ETrue if squelch is enabled; EFalse otherwise.
 	 */
-	void MrftoSquelchChange( TBool aSquelch );
+	void MrftoSquelchChange(TBool aSquelch);
 
 private:
     bool initRadio();
@@ -267,7 +262,6 @@ private:
     CRadioUtility* m_radioUtility;   
     CRadioFmTunerUtility* m_fmTunerUtility;
     CRadioPlayerUtility* m_playerUtility;
-    TRadioSettings* m_radioSettings;
     TInt m_maxVolume;
 
 	bool m_tunerControl;
@@ -275,12 +269,9 @@ private:
     bool m_muted;
     bool m_isStereo;
     bool m_available;
-    int  m_tuners;
-    int  m_step;
     int  m_vol;
     mutable int m_signal;
     bool m_scanning;
-    bool forward;
     QRadioTuner::Band m_currentBand;
     qint64 m_currentFreq;
     
@@ -289,7 +280,6 @@ private:
     QString m_errorString;
     // caps meaning what the tuner can do.
     // TTunerCapabilities m_currentTunerCapabilities;
-    long m_tunerState; 
     QRadioTuner::State m_apiTunerState;
 };
 

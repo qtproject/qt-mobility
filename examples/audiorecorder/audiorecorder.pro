@@ -19,5 +19,5 @@ SOURCES = \
     audiorecorder.cpp
 
 symbian: {
-    TARGET.CAPABILITY = UserEnvironment
+    TARGET.CAPABILITY = UserEnvironment ReadDeviceData
 }

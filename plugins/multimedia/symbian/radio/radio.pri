@@ -3,7 +3,6 @@ INCLUDEPATH += $$PWD
 exists($${EPOCROOT}epoc32\release\armv5\lib\tunerutility.lib) {
 	CONFIG += TUNERLIB
 	LIBS += -ltunerutility
-	LIBS += -lAudioOutputRouting
 	DEFINES += TUNERLIBUSED
 	INCLUDEPATH += $${EPOCROOT}epoc32\include\mmf\common	
 }

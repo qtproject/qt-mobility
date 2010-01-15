@@ -102,9 +102,9 @@ AudioRecorder::AudioRecorder()
     connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
     layout->addWidget(codecsBox,1,1,Qt::AlignLeft);
 
-    layout->addWidget(qualityLabel,1,2,Qt::AlignHCenter);
+    layout->addWidget(qualityLabel,2,0,Qt::AlignHCenter);
     connect(qualityBox,SIGNAL(activated(int)),SLOT(qualityChanged(int)));
-    layout->addWidget(qualityBox,1,3,Qt::AlignLeft);
+    layout->addWidget(qualityBox,2,1,Qt::AlignLeft);
 
     fileButton = new QPushButton(this);
     fileButton->setText(tr("Output File"));
@@ -114,7 +114,7 @@ AudioRecorder::AudioRecorder()
     button = new QPushButton(this);
     button->setText(tr("Record"));
     connect(button,SIGNAL(clicked()),SLOT(toggleRecord()));
-    layout->addWidget(button,3,3,Qt::AlignHCenter);
+    layout->addWidget(button,3,1,Qt::AlignHCenter);
 
     recTime = new QLabel;
     recTime->setText("0 sec");
@@ -153,27 +153,37 @@ void AudioRecorder::deviceChanged(int idx)
 
 void AudioRecorder::codecChanged(int idx)
 {
-    Q_UNUSED(idx);
-    //capture->setAudioCodec(codecsBox->itemText(idx));
+    //Q_UNUSED(idx);
+    QAudioEncoderSettings audioSettings = capture->audioSettings();
+    audioSettings.setCodec(codecsBox->itemText(idx));
+    //audioSettings.setQuality(QtMedia::HighQuality);
+
+    capture->setEncodingSettings(audioSettings);
 }
 
 void AudioRecorder::qualityChanged(int idx)
 {
-    Q_UNUSED(idx);
-    /*
-    if(capture->audioCodec().compare("audio/pcm") == 0) {
-        if(qualityBox->itemText(idx).compare("Low") == 0) {
-            // 8000Hz mono is 8kbps
-            capture->setAudioBitrate(8);
-        } else if(qualityBox->itemText(idx).compare("Medium") == 0) {
-            // 22050Hz mono is 44.1kbps
-            capture->setAudioBitrate(44);
-        } else if(qualityBox->itemText(idx).compare("High") == 0) {
-            // 44100Hz mono is 88.2kbps
-            capture->setAudioBitrate(88);
-        }
-    }
-    */
+    //Q_UNUSED(idx);
+    
+    QAudioEncoderSettings audioSettings = capture->audioSettings();
+
+    if(qualityBox->itemText(idx).compare("Low") == 0) {
+		// 8000Hz mono is 8kbps
+		audioSettings.setBitRate(8);
+		audioSettings.setSampleRate(8000);
+		audioSettings.setChannelCount(1);
+	} else if(qualityBox->itemText(idx).compare("Medium") == 0) {
+		// 22050Hz mono is 44.1kbps
+		audioSettings.setBitRate(44);
+		audioSettings.setSampleRate(22050);
+		audioSettings.setChannelCount(1);
+	} else if(qualityBox->itemText(idx).compare("High") == 0) {
+		// 44100Hz mono is 88.2kbps
+		audioSettings.setBitRate(88);
+		audioSettings.setSampleRate(44100);
+		audioSettings.setChannelCount(1);
+	}
+    capture->setEncodingSettings(audioSettings);
 }
 
 void AudioRecorder::toggleRecord()

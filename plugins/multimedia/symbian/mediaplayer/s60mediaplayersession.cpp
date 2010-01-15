@@ -212,15 +212,19 @@ void S60MediaPlayerSession::setPlaybackRate(qreal rate)
 
 void S60MediaPlayerSession::setPosition(qint64 pos)
 {
+    if (pos == position())
+        return;
+
     if (state() == QMediaPlayer::PlayingState) 
         doPause();
-    
+
     doSetPosition(pos * 1000);
-    
+
     if (state() == QMediaPlayer::PlayingState)
         doPlay();
-    
+
     emit positionChanged(position());
+
 }
 
 void S60MediaPlayerSession::initComplete()

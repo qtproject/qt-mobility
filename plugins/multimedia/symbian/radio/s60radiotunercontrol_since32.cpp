@@ -54,7 +54,6 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_audioInitializationComplete(false)
     , m_muted(false)
     , m_isStereo(true)
-    , m_tuners(0)
     , m_vol(100)
     , m_signal(0)
     , m_radioError(QRadioTuner::NoError)
@@ -62,8 +61,8 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_currentBand(QRadioTuner::FM)
     , m_currentFreq(89400000)
     , m_stereoMode(QRadioTuner::Auto)
-    , m_tunerState(0)
     , m_apiTunerState(QRadioTuner::StoppedState)
+    , m_maxVolume(100)
 {   
     initRadio();
 }
@@ -108,12 +107,10 @@ bool S60RadioTunerControl::isBandSupported(QRadioTuner::Band b) const
 void S60RadioTunerControl::setBand(QRadioTuner::Band b)
 {
     QRadioTuner::Band tempBand = b; 
-    //m_step = frequencyStep(b);
     if (tempBand != m_currentBand) {
         m_currentBand = b;  
         emit bandChanged(m_currentBand);
-    }
-    
+    }   
 }
 
 int S60RadioTunerControl::frequency() const
@@ -145,6 +142,7 @@ QPair<int,int> S60RadioTunerControl::frequencyRange(QRadioTuner::Band band) cons
 {
     int bottomFreq;
     int topFreq;
+    
     int bandError = KErrNone;
     TFmRadioFrequencyRange range;
     
@@ -195,7 +193,7 @@ int S60RadioTunerControl::signalStrength() const
             m_error = m_fmTunerUtility->GetSignalStrength(currentSignalStrength);
             if (m_error == KErrNone) {
 				if (currentSignalStrength == 0 || maxSignalStrength == 0) {
-					return 0;
+					return currentSignalStrength;
 				}
                 m_signal = currentSignalStrength / maxSignalStrength;                
             }           
@@ -212,8 +210,9 @@ int S60RadioTunerControl::volume() const
 void S60RadioTunerControl::setVolume(int volume)
 {
 	if (m_playerUtility) {
-		TInt error = m_playerUtility->SetVolume(volume);
 		m_vol = volume;
+		m_playerUtility->SetVolume(volume);
+		emit volumeChanged(m_vol);
 	}
 }
 
@@ -277,11 +276,7 @@ bool S60RadioTunerControl::initRadio()
 		return m_available;
 	}
 	
-	m_fmTunerUtility->RequestTunerControl();
-	
 	m_tunerControl = false;
-	
-	m_playerUtility->GetMaxVolume(m_maxVolume);
 	
 	m_available = true;
 	return m_available;
@@ -294,16 +289,24 @@ bool S60RadioTunerControl::isAvailable() const
 
 QtMedia::AvailabilityError S60RadioTunerControl::availabilityError() const
 {
-    return QtMedia::NoError; // TODO:
+	if (m_available)
+		return QtMedia::NoError;
+	else
+		return QtMedia::ResourceError;
 }
 
 void S60RadioTunerControl::start()
-{
-	if (m_tunerControl) {
+{	
+	if (!m_tunerControl) {
+		m_fmTunerUtility->RequestTunerControl();
+		m_apiTunerState = QRadioTuner::ActiveState;
+		emit stateChanged(m_apiTunerState);
+	} else {
 		m_playerUtility->Play();
 		m_apiTunerState = QRadioTuner::ActiveState;
 		emit stateChanged(m_apiTunerState);
 	}
+		
 }
 
 void S60RadioTunerControl::stop()
@@ -323,30 +326,17 @@ QString S60RadioTunerControl::errorString() const
 {
 	return m_errorString;
 }
-int S60RadioTunerControl::deviceCount()
-{
-    return 1; // TODO:
-}
 
 void S60RadioTunerControl::MrpoStateChange(TPlayerState aState, TInt aError)
 {
 	if (aError == KErrNone){
+		m_radioError = QRadioTuner::NoError;
 		if (aState == ERadioPlayerIdle) {
 			m_apiTunerState = QRadioTuner::ActiveState;
 		} else if (aState == ERadioPlayerPlaying) {
 			m_apiTunerState = QRadioTuner::ActiveState;
 		}
-	}
-	else {
-		if (aState == ERadioPlayerIdle) {
-			m_apiTunerState = QRadioTuner::ActiveState;
-			//m_radioError = QRadioTuner::OpenError;
-		} else if (aState == ERadioPlayerPlaying) {
-			m_apiTunerState = QRadioTuner::ActiveState;
-			//m_radioError = QRadioTuner::OpenError;
-			
-		}
-	}
+	}	
 	emit stateChanged(m_apiTunerState);
 }
 
@@ -359,7 +349,7 @@ void S60RadioTunerControl::MrpoVolumeChange(TInt aVolume)
 void S60RadioTunerControl::MrpoMuteChange(TBool aMute)
 {
 	m_muted = aMute;
-    emit mutedChanged(m_muted);
+	emit mutedChanged(m_muted);
 }
 
 void S60RadioTunerControl::MrpoBalanceChange(TInt aLeftPercentage, TInt aRightPercentage)
@@ -370,33 +360,47 @@ void S60RadioTunerControl::MrpoBalanceChange(TInt aLeftPercentage, TInt aRightPe
 void S60RadioTunerControl::MrftoRequestTunerControlComplete(TInt aError)
 {
 	if (aError == KErrNone) {
+		m_playerUtility->GetMaxVolume(m_maxVolume);
+		m_radioError = QRadioTuner::NoError;
 		m_tunerControl = true;
+		m_available = true;
+		m_fmTunerUtility->SetFrequency(m_currentFreq);
 		m_playerUtility->Play();
+		int signal = signalStrength();
+		if (m_signal != signal) {
+			emit signalStrengthChanged(signal);
+			m_signal = signal;
+		}
+		
 	} else if (aError == KFmRadioErrAntennaNotConnected) {
-
-	} else if ( aError == KErrAlreadyExists ){
-
-	} else if ( aError == KFmRadioErrFmTransmitterActive ) {
-
-	} else if ( aError == KFmRadioErrOfflineMode ) {
-
+		// 
+	} else if (aError == KErrAlreadyExists){
+		m_radioError = QRadioTuner::ResourceError;
+	} else if (aError == KFmRadioErrFrequencyOutOfBandRange) {
+		m_radioError = QRadioTuner::OutOfRangeError;
 	}else{
-		//m_radioError = QRadioTuner::OpenError;
+		m_radioError = QRadioTuner::OpenError;
 	}
 
 }
 
 void S60RadioTunerControl::MrftoSetFrequencyRangeComplete(TInt aError)
 {
-
+	if (aError == KFmRadioErrFrequencyOutOfBandRange || KFmRadioErrFrequencyNotValid) {
+		m_radioError = QRadioTuner::OutOfRangeError;
+	} else if (aError == KFmRadioErrHardwareFaulty || KFmRadioErrOfflineMode) {
+		m_radioError = QRadioTuner::OpenError;
+	}
 }
 
 void S60RadioTunerControl::MrftoSetFrequencyComplete(TInt aError)
 {
 	if (aError == KErrNone) {
-		emit frequencyChanged(m_currentFreq);
-	} else {
-		//m_radioError = QRadioTuner::OpenError;
+		m_radioError = QRadioTuner::NoError;
+	} else if (aError == KFmRadioErrFrequencyOutOfBandRange || KFmRadioErrFrequencyNotValid) {
+		m_radioError = QRadioTuner::OutOfRangeError;
+	} else if (aError == KFmRadioErrHardwareFaulty || KFmRadioErrOfflineMode) {
+		m_radioError = QRadioTuner::OpenError;
 	}
 }
 
@@ -404,14 +408,11 @@ void S60RadioTunerControl::MrftoStationSeekComplete(TInt aError, TInt aFrequency
 {
 	m_scanning = false;
 	if (aError == KErrNone) {
+		m_radioError = QRadioTuner::NoError;
 		m_currentFreq = aFrequency;
-		emit frequencyChanged(m_currentFreq);
-		emit signalStrengthChanged(30);
 	} else {
-		//m_radioError = QRadioTuner::OpenError;
+		m_radioError = QRadioTuner::OpenError;
 	}
-	m_signal = signalStrength();
-	emit signalStrengthChanged(m_signal);
 }
 
 void S60RadioTunerControl::MrftoFmTransmitterStatusChange(TBool aActive)
@@ -423,8 +424,6 @@ void S60RadioTunerControl::MrftoAntennaStatusChange(TBool aAttached)
 {
 	if (aAttached && m_tunerControl) {
 		m_playerUtility->Play();
-	} else {
-		//m_radioError = QRadioTuner::OpenError; // no antenna!
 	}
 }
 
@@ -437,15 +436,19 @@ void S60RadioTunerControl::MrftoFrequencyRangeChange(TFmRadioFrequencyRange aBan
 {
 	if (aBand == EFmRangeEuroAmerica) {
 		setBand(QRadioTuner::FM);
-	} else if (aBand == EFmRangeJapan) {
-		//m_radioError = QRadioTuner::OpenError;
-	}
+	} 
 }
 
 void S60RadioTunerControl::MrftoFrequencyChange(TInt aNewFrequency)
 {
 	m_currentFreq = aNewFrequency;
 	emit frequencyChanged(m_currentFreq);
+
+	int signal = signalStrength();
+	if (m_signal != signal) {
+		emit signalStrengthChanged(signal);
+		m_signal = signal;
+	}
 }
 
 void S60RadioTunerControl::MrftoForcedMonoChange(TBool aForcedMono)
@@ -454,8 +457,7 @@ void S60RadioTunerControl::MrftoForcedMonoChange(TBool aForcedMono)
 		m_stereoMode = QRadioTuner::ForceMono;
 	} else {
 		m_stereoMode = QRadioTuner::ForceStereo;
-	}
-	
+	}	
 	emit stereoStatusChanged(!aForcedMono);
 }
 
