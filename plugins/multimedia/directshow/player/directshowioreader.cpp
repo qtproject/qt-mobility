@@ -376,15 +376,15 @@ void DirectShowIOReader::readyRead()
                 &m_synchronousResult)) {
             m_wait.wakeAll();
         }
-    } else if (m_pendingHead) {
+    } else {
         qint64 bytesRead = 0;
 
-        if (nonBlockingRead(
+        while (m_pendingHead && nonBlockingRead(
                 m_pendingHead->position,
                 m_pendingHead->length,
                 m_pendingHead->buffer,
                 &bytesRead,
-                &m_pendingHead->result)) {
+            &m_pendingHead->result)) {
             m_pendingHead->sample->SetActualDataLength(bytesRead);
 
             if (m_readyTail)
