@@ -72,17 +72,17 @@ int QGstreamerVideoInputDeviceControl::deviceCount() const
     return m_names.size();
 }
 
-QString QGstreamerVideoInputDeviceControl::name(int index) const
+QString QGstreamerVideoInputDeviceControl::deviceName(int index) const
 {
     return m_names[index];
 }
 
-QString QGstreamerVideoInputDeviceControl::description(int index) const
+QString QGstreamerVideoInputDeviceControl::deviceDescription(int index) const
 {
     return m_descriptions[index];
 }
 
-QIcon QGstreamerVideoInputDeviceControl::icon(int index) const
+QIcon QGstreamerVideoInputDeviceControl::deviceIcon(int index) const
 {
     Q_UNUSED(index);
     return QIcon();
@@ -104,7 +104,7 @@ void QGstreamerVideoInputDeviceControl::setSelectedDevice(int index)
     if (index != m_selectedDevice) {
         m_selectedDevice = index;
         emit selectedDeviceChanged(index);
-        emit selectedDeviceChanged(name(index));
+        emit selectedDeviceChanged(deviceName(index));
     }
 }
 

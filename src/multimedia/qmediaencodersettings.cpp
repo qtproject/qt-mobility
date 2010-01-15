@@ -96,7 +96,7 @@ private:
     \code
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("audio/mpeg");
-    audioSettings.setChannels(2);
+    audioSettings.setChannelCount(2);
 
     recorder->setEncodingSettings(audioSettings);
     \endcode
@@ -221,7 +221,7 @@ void QAudioEncoderSettings::setCodec(const QString& codec)
 /*!
     Returns the bit rate of the compressed audio stream in bits per second.
 */
-int QAudioEncoderSettings::bitrate() const
+int QAudioEncoderSettings::bitRate() const
 {
     return d->bitrate;
 }
@@ -229,7 +229,7 @@ int QAudioEncoderSettings::bitrate() const
 /*!
     Returns the number of audio channels.
 */
-int QAudioEncoderSettings::channels() const
+int QAudioEncoderSettings::channelCount() const
 {
     return d->channels;
 }
@@ -240,7 +240,7 @@ int QAudioEncoderSettings::channels() const
     A value of -1 indicates the encoder should make an optimal choice based on what is available
     from the audio source and the limitations of the codec.
 */
-void QAudioEncoderSettings::setChannels(int channels)
+void QAudioEncoderSettings::setChannelCount(int channels)
 {
     d->isNull = false;
     d->channels = channels;
@@ -249,7 +249,7 @@ void QAudioEncoderSettings::setChannels(int channels)
 /*!
     Sets the audio bit \a rate.
 */
-void QAudioEncoderSettings::setBitrate(int rate)
+void QAudioEncoderSettings::setBitRate(int rate)
 {
     d->isNull = false;
     d->bitrate = rate;
@@ -466,7 +466,7 @@ void QVideoEncoderSettings::setCodec(const QString& codec)
 /*!
     Returns bit rate of the encoded video stream.
 */
-int QVideoEncoderSettings::bitrate() const
+int QVideoEncoderSettings::bitRate() const
 {
     return d->bitrate;
 }
@@ -475,7 +475,7 @@ int QVideoEncoderSettings::bitrate() const
     Sets the bit rate of the encoded video stream to \a value.
 */
 
-void QVideoEncoderSettings::setBitrate(int value)
+void QVideoEncoderSettings::setBitRate(int value)
 {
     d->isNull = false;
     d->bitrate = value;

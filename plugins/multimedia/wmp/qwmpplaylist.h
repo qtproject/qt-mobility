@@ -63,15 +63,15 @@ public:
     bool save(const QString &location, const char *format = 0);
     bool save(QIODevice * device, const char *format);
 
-    int size() const;
+    int mediaCount() const;
     QMediaContent media(int pos) const;
 
     bool isReadOnly() const;
 
-    bool appendItem(const QMediaContent &content);
-    bool insertItem(int pos, const QMediaContent &content);
-    bool removeItem(int pos);
-    bool removeItems(int start, int end);
+    bool addMedia(const QMediaContent &content);
+    bool insertMedia(int pos, const QMediaContent &content);
+    bool removeMedia(int pos);
+    bool removeMedia(int start, int end);
     bool clear();
 
     QStringList keys(int index) const;

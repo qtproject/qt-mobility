@@ -41,6 +41,7 @@
 
 #include <QtTest/QtTest>
 #include <QDebug>
+#include <QStringList>
 
 #include <qmediaserviceprovider.h>
 #include <qmediaserviceproviderplugin.h>
@@ -103,6 +104,11 @@ public:
         return QtMedia::MaybeSupported;
     }
 
+    QStringList supportedMimeTypes() const
+    {
+        return QStringList("audio/ogg");
+    }
+
     QList<QByteArray> devices(const QByteArray &service) const
     {
         QList<QByteArray> res;
@@ -154,6 +160,11 @@ public:
             return QtMedia::PreferedService;        
 
         return QtMedia::NotSupported;
+    }
+
+    QStringList supportedMimeTypes() const
+    {
+        return QStringList("audio/wav");
     }
 
     QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const
@@ -241,6 +252,7 @@ private slots:
     void testDefaultProviderAvailable();
     void testObtainService();
     void testHasSupport();
+    void testSupportedMimeTypes();
     void testDevices();
     void testProviderHints();
 
@@ -319,6 +331,17 @@ void tst_QMediaServiceProvider::testHasSupport()
 
     QMediaPlayer mediaPlayer;
     QVERIFY(mediaPlayer.service()->objectName() != QLatin1String("MockServicePlugin2"));
+}
+
+void tst_QMediaServiceProvider::testSupportedMimeTypes()
+{
+    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
+
+    if (provider == 0)
+        QSKIP("No default provider", SkipSingle);
+
+    QVERIFY(provider->supportedMimeTypes(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER)).contains("audio/ogg"));
+    QVERIFY(!provider->supportedMimeTypes(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER)).contains("audio/mp3"));
 }
 
 void tst_QMediaServiceProvider::testDevices()

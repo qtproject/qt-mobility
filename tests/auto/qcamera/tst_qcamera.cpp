@@ -50,6 +50,7 @@
 #include <experimental/qimageprocessingcontrol.h>
 #include <qmediaservice.h>
 #include <experimental/qcamera.h>
+#include <experimental/qstillimagecapture.h>
 
 QTM_USE_NAMESPACE
 class MockCaptureControl;
@@ -61,17 +62,34 @@ class MockCameraControl : public QCameraControl
 public:
     MockCameraControl(QObject *parent = 0):
             QCameraControl(parent),
-            m_state(QCamera::StoppedState)
+            m_state(QCamera::StoppedState),
+            m_captureMode(QCamera::CaptureStillImage)
     {
     }
 
     ~MockCameraControl() {}
 
-    void start() { m_state = QCamera::ActiveState; };
+    void start() { m_state = QCamera::ActiveState; }
     virtual void stop() { m_state = QCamera::StoppedState; }
     QCamera::State state() const { return m_state; }
 
+    QCamera::CaptureMode captureMode() const { return m_captureMode; }
+    void setCaptureMode(QCamera::CaptureMode mode)
+    {
+        if (m_captureMode != mode) {
+            m_captureMode = mode;
+            emit captureModeChanged(mode);
+        }
+    }
+
+    QCamera::CaptureModes supportedCaptureModes() const
+    {
+        return QCamera::CaptureStillImage | QCamera::CaptureVideo;
+    }
+
+
     QCamera::State m_state;
+    QCamera::CaptureMode m_captureMode;
 };
 
 class MockCaptureControl : public QImageCaptureControl
@@ -94,8 +112,8 @@ public:
         if (isReadyForCapture())
             emit imageCaptured(fileName, QImage());
         else
-            m_cameraControl->error(QCamera::NotReadyToCaptureError,
-                                   QLatin1String("Could not capture in stopped state"));
+            emit error(QStillImageCapture::NotReadyError,
+                       QLatin1String("Could not capture in stopped state"));
     }
 
     MockCameraControl *m_cameraControl;
@@ -190,14 +208,17 @@ public:
         return m_isoSensitivity;
     }
 
-    int minimumIsoSensitivity() const {return 50;}
-    int maximumIsoSensitivity() const {return 3200;}
-    QList<int> supportedIsoSensitivities() const {return QList<int>();}
+    QList<int> supportedIsoSensitivities(bool * continuous) const
+    {
+        if (continuous)
+            *continuous = false;
+        return QList<int>() << 100 << 200 << 400 << 800;
+    }
 
 
     void setManualIsoSensitivity(int iso)
     {
-        m_isoSensitivity = qBound(50, iso, 3200);
+        m_isoSensitivity = 100*qRound(qBound(100, iso, 800)/100.0);
     }
 
     void setAutoIsoSensitivity()
@@ -210,9 +231,12 @@ public:
         return m_aperture;
     }
 
-    qreal minimumAperture() const {return 2.8;}
-    qreal maximumAperture() const {return 16.0;}
-    QList<qreal> supportedApertures() const {return QList<qreal>();}
+    QList<qreal> supportedApertures(bool *continuous) const
+    {
+        if (continuous)
+            *continuous = true;
+        return QList<qreal>() << 2.8 << 4 << 5.6 << 8 << 11 << 16;
+    }
 
     void setManualAperture(qreal aperture)
     {
@@ -229,13 +253,17 @@ public:
         return m_shutterSpeed;
     }
 
-    qreal minimumShutterSpeed() const {return 0.001;}
-    qreal maximumShutterSpeed() const {return 30.0;}
-    QList<qreal> supportedShutterSpeeds() const {return QList<qreal>();}
+    QList<qreal> supportedShutterSpeeds(bool *continuous) const
+    {
+        if (continuous)
+            *continuous = false;
+
+        return QList<qreal>() << 0.001 << 0.01 << 0.1 << 1.0;
+    }
 
     void setManualShutterSpeed(qreal shutterSpeed)
     {
-        m_shutterSpeed = qBound<qreal>(0.001, shutterSpeed, 30.0);
+        m_shutterSpeed = qBound<qreal>(0.001, shutterSpeed, 1.0);
     }
 
     void setAutoShutterSpeed()
@@ -280,10 +308,10 @@ class MockCameraFocusControl : public QCameraFocusControl
 public:
     MockCameraFocusControl(QObject *parent = 0):
         QCameraFocusControl(parent),
-        m_focusLocked(false),
         m_zoomValue(1.0),
         m_macroFocusingEnabled(false),
-        m_focusMode(QCamera::AutoFocus)
+        m_focusMode(QCamera::AutoFocus),
+        m_focusStatus(QCamera::FocusInitial)
     {
     }
 
@@ -307,7 +335,7 @@ public:
 
     QCamera::FocusStatus focusStatus() const
     {
-        return QCamera::FocusReached;
+        return m_focusStatus;
     }
 
     bool macroFocusingEnabled() const
@@ -347,30 +375,20 @@ public:
         m_zoomValue = value;
     }
 
-    bool isFocusLocked() const
-    {
-        return m_focusLocked;
-    }
-
 public Q_SLOTS:
-    void lockFocus()
+    void startFocusing()
     {
-        if (!m_focusLocked) {
-            m_focusLocked = true;
-            emit focusLocked();
-        }
     }
 
-    void unlockFocus()
+    void cancelFocusing()
     {
-        m_focusLocked = false;
     }
 
 private:
-    bool m_focusLocked;
     qreal m_zoomValue;
     bool m_macroFocusingEnabled;
     QCamera::FocusMode m_focusMode;
+    QCamera::FocusStatus m_focusStatus;
 };
 
 class MockImageProcessingControl : public QImageProcessingControl
@@ -590,7 +608,7 @@ void tst_QCamera::initTestCase()
     mockSimpleCameraService = new MockSimpleCameraService;
     provider->service = mockSimpleCameraService;
 
-    qRegisterMetaType<QCamera::Error>();
+    qRegisterMetaType<QCamera::Error>("QCamera::Error");
 }
 
 void tst_QCamera::cleanupTestCase()
@@ -638,7 +656,6 @@ void tst_QCamera::testCtorWithDevice()
 void tst_QCamera::testSimpleCamera()
 {
     QCamera camera(0, provider);
-
     QCOMPARE(camera.service(), (QMediaService*)mockSimpleCameraService);
 
     QCOMPARE(camera.state(), QCamera::StoppedState);
@@ -686,9 +703,7 @@ void tst_QCamera::testSimpleCameraExposure()
     camera.setExposureCompensation(2.0);
     QCOMPARE(camera.exposureCompensation(), 0.0);
 
-    QCOMPARE(camera.isoSensitivity(), -1);
-    QCOMPARE(camera.minimumIsoSensitivity(), -1);
-    QCOMPARE(camera.maximumIsoSensitivity(), -1);
+    QCOMPARE(camera.isoSensitivity(), -1);    
     QVERIFY(camera.supportedIsoSensitivities().isEmpty());
     camera.setManualIsoSensitivity(100);
     QCOMPARE(camera.isoSensitivity(), -1);
@@ -696,8 +711,6 @@ void tst_QCamera::testSimpleCameraExposure()
     QCOMPARE(camera.isoSensitivity(), -1);
 
     QVERIFY(camera.aperture() < 0);
-    QVERIFY(camera.minimumAperture() < 0);
-    QVERIFY(camera.maximumAperture() < 0);
     QVERIFY(camera.supportedApertures().isEmpty());
     camera.setAutoAperture();
     QVERIFY(camera.aperture() < 0);
@@ -705,8 +718,6 @@ void tst_QCamera::testSimpleCameraExposure()
     QVERIFY(camera.aperture() < 0);
 
     QVERIFY(camera.shutterSpeed() < 0);
-    QVERIFY(camera.minimumShutterSpeed() < 0);
-    QVERIFY(camera.maximumShutterSpeed() < 0);
     QVERIFY(camera.supportedShutterSpeeds().isEmpty());
     camera.setAutoShutterSpeed();
     QVERIFY(camera.shutterSpeed() < 0);
@@ -725,7 +736,7 @@ void tst_QCamera::testSimpleCameraFocus()
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
     camera.setFocusMode(QCamera::ContinuousFocus);
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
-    QCOMPARE(camera.focusStatus(), QCamera::FocusDisabled);
+    QCOMPARE(camera.focusStatus(), QCamera::FocusInitial);
 
     QVERIFY(!camera.isMacroFocusingSupported());
     QVERIFY(!camera.macroFocusingEnabled());
@@ -737,24 +748,24 @@ void tst_QCamera::testSimpleCameraFocus()
     QCOMPARE(camera.zoomValue(), 1.0);
     camera.zoomTo(100);
     QCOMPARE(camera.zoomValue(), 1.0);
-
-    QCOMPARE(camera.isFocusLocked(), true);
 }
 
 void tst_QCamera::testSimpleCameraCapture()
 {
     QCamera camera(0, provider);
+    QStillImageCapture imageCapture(&camera);
 
-    QVERIFY(!camera.isReadyForCapture());
+    QVERIFY(!imageCapture.isReadyForCapture());
+    QVERIFY(!imageCapture.isAvailable());
 
-    QCOMPARE(camera.error(), QCamera::NoError);
-    QVERIFY(camera.errorString().isEmpty());
+    QCOMPARE(imageCapture.error(), QStillImageCapture::NoError);
+    QVERIFY(imageCapture.errorString().isEmpty());
 
-    QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
-    camera.capture(QString::fromLatin1("/dev/null"));
+    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QStillImageCapture::Error)));
+    imageCapture.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(errorSignal.size(), 1);
-    QCOMPARE(camera.error(), QCamera::NotSupportedFeatureError);
-    QVERIFY(!camera.errorString().isEmpty());
+    QCOMPARE(imageCapture.error(), QStillImageCapture::NotSupportedFeatureError);
+    QVERIFY(!imageCapture.errorString().isEmpty());
 }
 
 void tst_QCamera::testCameraCapture()
@@ -762,27 +773,29 @@ void tst_QCamera::testCameraCapture()
     MockCameraService service;
     provider->service = &service;
     QCamera camera(0, provider);
+    QStillImageCapture imageCapture(&camera);
 
-    QVERIFY(!camera.isReadyForCapture());
 
-    QSignalSpy capturedSignal(&camera, SIGNAL(imageCaptured(QString,QImage)));
-    QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
+    QVERIFY(!imageCapture.isReadyForCapture());
 
-    camera.capture(QString::fromLatin1("/dev/null"));
+    QSignalSpy capturedSignal(&imageCapture, SIGNAL(imageCaptured(QString,QImage)));
+    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QStillImageCapture::Error)));
+
+    imageCapture.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(capturedSignal.size(), 0);
     QCOMPARE(errorSignal.size(), 1);
-    QCOMPARE(camera.error(), QCamera::NotReadyToCaptureError);
+    QCOMPARE(imageCapture.error(), QStillImageCapture::NotReadyError);
 
     errorSignal.clear();
 
     camera.start();
-    QVERIFY(camera.isReadyForCapture());
+    QVERIFY(imageCapture.isReadyForCapture());
     QCOMPARE(errorSignal.size(), 0);
 
-    camera.capture(QString::fromLatin1("/dev/null"));
+    imageCapture.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(capturedSignal.size(), 1);
     QCOMPARE(errorSignal.size(), 0);
-    QCOMPARE(camera.error(), QCamera::NoError);
+    QCOMPARE(imageCapture.error(), QStillImageCapture::NoError);
 }
 
 void tst_QCamera::testCameraWhiteBalance()
@@ -846,13 +859,13 @@ void tst_QCamera::testCameraExposure()
     camera.setExposureCompensation(2.0);
     QCOMPARE(camera.exposureCompensation(), 2.0);
 
-    int minIso = camera.minimumIsoSensitivity();
-    int maxIso = camera.maximumIsoSensitivity();
+    int minIso = camera.supportedIsoSensitivities().first();
+    int maxIso = camera.supportedIsoSensitivities().last();
     QVERIFY(camera.isoSensitivity() > 0);
     QVERIFY(minIso > 0);
     QVERIFY(maxIso > 0);
-    camera.setManualIsoSensitivity(100);
-    QCOMPARE(camera.isoSensitivity(), 100);
+    camera.setManualIsoSensitivity(minIso);
+    QCOMPARE(camera.isoSensitivity(), minIso);
     camera.setManualIsoSensitivity(maxIso*10);
     QCOMPARE(camera.isoSensitivity(), maxIso);
     camera.setManualIsoSensitivity(-10);
@@ -860,8 +873,8 @@ void tst_QCamera::testCameraExposure()
     camera.setAutoIsoSensitivity();
     QCOMPARE(camera.isoSensitivity(), 100);
 
-    qreal minAperture = camera.minimumAperture();
-    qreal maxAperture = camera.maximumAperture();
+    qreal minAperture = camera.supportedApertures().first();
+    qreal maxAperture = camera.supportedApertures().last();
     QVERIFY(minAperture > 0);
     QVERIFY(maxAperture > 0);
     QVERIFY(camera.aperture() >= minAperture);
@@ -878,8 +891,8 @@ void tst_QCamera::testCameraExposure()
     QCOMPARE(camera.aperture(), maxAperture);
 
 
-    qreal minShutterSpeed = camera.minimumShutterSpeed();
-    qreal maxShutterSpeed = camera.maximumShutterSpeed();
+    qreal minShutterSpeed = camera.supportedShutterSpeeds().first();
+    qreal maxShutterSpeed = camera.supportedShutterSpeeds().last();
     QVERIFY(minShutterSpeed > 0);
     QVERIFY(maxShutterSpeed > 0);
     QVERIFY(camera.shutterSpeed() >= minShutterSpeed);
@@ -916,7 +929,7 @@ void tst_QCamera::testCameraFocus()
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
     camera.setFocusMode(QCamera::ContinuousFocus);
     QCOMPARE(camera.focusMode(), QCamera::ContinuousFocus);
-    QCOMPARE(camera.focusStatus(), QCamera::FocusReached);
+    QCOMPARE(camera.focusStatus(), QCamera::FocusInitial);
 
     QVERIFY(camera.isMacroFocusingSupported());
     QVERIFY(!camera.macroFocusingEnabled());
@@ -933,11 +946,12 @@ void tst_QCamera::testCameraFocus()
     camera.zoomTo(2000000.0);
     QVERIFY(qFuzzyCompare(camera.zoomValue(), camera.maximumOpticalZoom()*camera.maximumDigitalZoom()));
 
-    QCOMPARE(camera.isFocusLocked(), false);
+
+    /*QCOMPARE(camera.isFocusLocked(), false);
     camera.lockFocus();
     QCOMPARE(camera.isFocusLocked(), true);
     camera.unlockFocus();
-    QCOMPARE(camera.isFocusLocked(), false);
+    QCOMPARE(camera.isFocusLocked(), false);*/
 }
 
 void tst_QCamera::testImageSettings()

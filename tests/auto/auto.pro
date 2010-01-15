@@ -7,7 +7,7 @@ contains(mobility_modules,serviceframework) {
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
-#           qservicemanager \  #remove until qhash namespace issue resolved
+           qservicemanager \
            qabstractsecuritysession \
            qservicecontext
 
@@ -16,7 +16,7 @@ contains(mobility_modules,serviceframework) {
     !symbian:SUBDIRS+=servicedatabase
 }
 
-contains(mobility_modules,bearermanagement) {
+contains(mobility_modules,bearer) {
     SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
            qnetworksession

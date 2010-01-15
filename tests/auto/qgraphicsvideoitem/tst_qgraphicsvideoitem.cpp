@@ -67,6 +67,8 @@ private slots:
     void nullOutputControl();
     void noOutputs();
     void serviceDestroyed();
+    void mediaObjectDestroyed();
+    void setMediaObject();
 
     void show();
 
@@ -175,8 +177,8 @@ public:
 class QtTestGraphicsVideoItem : public QGraphicsVideoItem
 {
 public:
-    QtTestGraphicsVideoItem(QMediaObject *object, QGraphicsItem *parent = 0)
-        : QGraphicsVideoItem(object, parent)
+    QtTestGraphicsVideoItem(QGraphicsItem *parent = 0)
+        : QGraphicsVideoItem(parent)
         , m_paintCount(0)
     {
     }
@@ -221,7 +223,8 @@ void tst_QGraphicsVideoItem::nullService()
 
     QtTestVideoObject object(service);
 
-    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
+    item->setMediaObject(&object);
 
     QVERIFY(item->boundingRect().isEmpty());
 
@@ -238,7 +241,8 @@ void tst_QGraphicsVideoItem::nullOutputControl()
 {
     QtTestVideoObject object(new QtTestVideoService(0, 0));
 
-    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
+    item->setMediaObject(&object);
 
     QVERIFY(item->boundingRect().isEmpty());
 
@@ -256,7 +260,8 @@ void tst_QGraphicsVideoItem::noOutputs()
     QtTestRendererControl *control = 0;
     QtTestVideoObject object(control);
 
-    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
+    item->setMediaObject(&object);
 
     QVERIFY(item->boundingRect().isEmpty());
 
@@ -273,19 +278,67 @@ void tst_QGraphicsVideoItem::noOutputs()
 
 void tst_QGraphicsVideoItem::serviceDestroyed()
 {
+    QtTestVideoObject object(new QtTestRendererControl);
+
+    QGraphicsVideoItem item;
+    item.setMediaObject(&object);
+
+    QtTestVideoService *service = object.testService;
+    object.testService = 0;
+
+    delete service;
+
+    QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
+    QVERIFY(item.boundingRect().isEmpty());
+}
+
+void tst_QGraphicsVideoItem::mediaObjectDestroyed()
+{
     QtTestVideoObject *object = new QtTestVideoObject(new QtTestRendererControl);
 
-    QGraphicsVideoItem item(object);
+    QGraphicsVideoItem item;
+    item.setMediaObject(object);
 
     delete object;
+    object = 0;
 
+    QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(object));
     QVERIFY(item.boundingRect().isEmpty());
+}
+
+void tst_QGraphicsVideoItem::setMediaObject()
+{
+    QMediaObject *nullObject = 0;
+    QtTestVideoObject object(new QtTestRendererControl);
+
+    QGraphicsVideoItem item;
+
+    QCOMPARE(item.mediaObject(), nullObject);
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+
+    item.setMediaObject(&object);
+    QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
+    QVERIFY(object.testService->rendererControl->surface() != 0);
+
+    item.setMediaObject(0);
+    QCOMPARE(item.mediaObject(), nullObject);
+
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+
+    item.setVisible(false);
+
+    item.setMediaObject(&object);
+    QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QVERIFY(object.testService->rendererControl->surface() != 0);
 }
 
 void tst_QGraphicsVideoItem::show()
 {    
     QtTestVideoObject object(new QtTestRendererControl);
-    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
+    item->setMediaObject(&object);
 
     // Graphics items are visible by default
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
@@ -348,7 +401,8 @@ void tst_QGraphicsVideoItem::boundingRect()
     QFETCH(QRectF, expectedRect);
 
     QtTestVideoObject object(new QtTestRendererControl);
-    QGraphicsVideoItem item(&object);
+    QGraphicsVideoItem item;
+    item.setMediaObject(&object);
 
     QVideoSurfaceFormat format(frameSize, QVideoFrame::Format_ARGB32);
     format.setViewport(viewport);
@@ -368,7 +422,8 @@ static const uchar rgb32ImageData[] =
 void tst_QGraphicsVideoItem::paint()
 {
     QtTestVideoObject object(new QtTestRendererControl);
-    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem(&object);
+    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
+    item->setMediaObject(&object);
     
     QGraphicsScene graphicsScene;
     graphicsScene.addItem(item);

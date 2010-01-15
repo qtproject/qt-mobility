@@ -156,7 +156,7 @@ bool QWmpPlayerControl::isMuted() const
 void QWmpPlayerControl::setMuted(bool muted)
 {
     if (m_settings && m_settings->put_mute(muted ? TRUE : FALSE) == S_OK)
-        emit mutingChanged(muted);
+        emit mutedChanged(muted);
 
 }
 
@@ -178,7 +178,7 @@ bool QWmpPlayerControl::isVideoAvailable() const
 void QWmpPlayerControl::setVideoAvailable(bool available)
 {
     if (m_videoAvailable != available)
-        emit this->videoAvailabilityChanged(m_videoAvailable = available);
+        emit this->videoAvailableChanged(m_videoAvailable = available);
 }
 
 bool QWmpPlayerControl::isSeekable() const
@@ -238,10 +238,10 @@ QMediaContent QWmpPlayerControl::media() const
 {
     QMediaResourceList resources;
 
-    QUrl uri = url();
+    QUrl tmpUrl = url();
 
-    if (!uri.isEmpty())
-        resources << QMediaResource(uri);
+    if (!tmpUrl.isEmpty())
+        resources << QMediaResource(tmpUrl);
 
     return resources;
 }
@@ -254,7 +254,7 @@ const QIODevice *QWmpPlayerControl::mediaStream() const
 void QWmpPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
     if (!content.isNull() && !stream)
-        setUrl(content.canonicalUri());
+        setUrl(content.canonicalUrl());
     else
         setUrl(QUrl());
 }

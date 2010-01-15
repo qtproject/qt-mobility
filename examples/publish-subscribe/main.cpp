@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 #ifndef Q_OS_SYMBIAN
         publisher->show();
 #else
-        publisher->showFullScreen();
+        publisher->showMaximized();
 #endif
     }
 
@@ -84,15 +84,18 @@ int main(int argc, char *argv[])
 #ifndef Q_OS_SYMBIAN
         subscriber->show();
 #else
-        subscriber->showFullScreen();
+        subscriber->showMaximized();
 #endif
     }
 
 #ifdef Q_OS_SYMBIAN
-    QObject::connect(subscriber, SIGNAL(switchRequested()), subscriber, SLOT(hide()));
-    QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(showFullScreen()));
+    QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(showMaximized()));
+    QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(repaint()));
     QObject::connect(publisher, SIGNAL(switchRequested()), publisher, SLOT(hide()));
-    QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(showFullScreen()));
+
+    QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(showMaximized()));
+    QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(repaint()));
+    QObject::connect(subscriber, SIGNAL(switchRequested()), subscriber, SLOT(hide()));
 #endif
 
     int result = app.exec();

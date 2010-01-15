@@ -172,6 +172,11 @@ tst_QMessageStore::~tst_QMessageStore()
 
 void tst_QMessageStore::initTestCase()
 {
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+    if (!Support::mapiAvailable())
+        QSKIP("Skipping tests because a MAPI subsystem does not appear to be available", SkipAll);
+#endif
+
     Support::clearMessageStore();
 
     manager = new QMessageManager;
@@ -467,12 +472,23 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testAccountId.isValid());
 
     QMessageFolderId testFolderId;
+#ifndef Q_OS_SYMBIAN
     QMessageFolderFilter filter(QMessageFolderFilter::byName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
+#else
+    // Created Messages can not be stored into "Inbox" folder in Symbian
+    QMessageFolderFilter filter(QMessageFolderFilter::byName("Unbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
+#endif
     QMessageFolderIdList folderIds(manager->queryFolders(filter));
     if (folderIds.isEmpty()) {
         Support::Parameters p;
+#ifndef Q_OS_SYMBIAN
         p.insert("path", "Inbox");
         p.insert("name", "Inbox");
+#else
+        // Created Messages can not be stored into "Inbox" folder in Symbian
+        p.insert("path", "Unbox");
+        p.insert("name", "Unbox");
+#endif
         p.insert("parentAccountName", testAccountName);
         testFolderId = Support::addFolder(p);
     } else {
@@ -653,7 +669,11 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.contentCharset().toLower(), alternateCharset.toLower());
     QCOMPARE(body.isContentAvailable(), true);
     QCOMPARE(body.textContent(), replacementText);
-    QAPPROXIMATECOMPARE(body.size(), 72, 36);  
+    QAPPROXIMATECOMPARE(body.size(), 72, 36);
+    
+    QDateTime dt(QDateTime::fromString("1980-12-31T23:59:59Z", Qt::ISODate));
+    dt.setTimeSpec(Qt::UTC);
+    message.setDate(dt);    
 
     manager->updateMessage(&message);
     QCOMPARE(manager->error(), QMessageManager::NoError);
@@ -678,6 +698,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessage(message).id(), message.id());
     QVERIFY(!(message.id() < message.id()));
     QVERIFY((QMessageId() < message.id()) || (message.id() < QMessageId()));
+    QCOMPARE(updated.date(), dt);
 
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);

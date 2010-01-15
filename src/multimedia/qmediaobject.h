@@ -62,12 +62,16 @@ class Q_MEDIA_EXPORT QMediaObject : public QObject
 public:
     ~QMediaObject();
 
+    virtual bool isAvailable() const;
+    virtual QtMedia::AvailabilityError availabilityError() const;
+
     virtual QMediaService* service() const;
 
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
 
     virtual void bind(QObject*);
+    virtual void unbind(QObject*);
 
     bool isMetaDataAvailable() const;
     bool isMetaDataWritable() const;
@@ -86,6 +90,8 @@ Q_SIGNALS:
     void metaDataAvailableChanged(bool available);
     void metaDataWritableChanged(bool writable);
     void metaDataChanged();
+
+    void availabilityChanged(bool available);
 
 protected:
     QMediaObject(QObject *parent, QMediaService *service);

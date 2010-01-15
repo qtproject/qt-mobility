@@ -58,7 +58,7 @@
     #define MAINWINDOW_H
 
     #include &lt;QMainWindow&gt;
-    #include &lt;qmessageserviceaction.h&gt;
+    #include &lt;qmessageservice.h&gt;
 
     class QComboBox;
     class QListView;
@@ -81,12 +81,12 @@
     #endif
 
     private slots:
-        void serviceStateChanged(QMessageServiceAction::State state);
+        void serviceStateChanged(QMessageService::State state);
         void viewSelected();
 
     private:
         QTabWidget* m_tabWidget;
-        QMessageServiceAction* m_serviceAction;
+        QMessageService* m_service;
         QStackedWidget* m_widgetStack;
     };
 
