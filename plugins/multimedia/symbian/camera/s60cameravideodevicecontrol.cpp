@@ -47,7 +47,6 @@
 #include <QtGui/qicon.h>
 
 const int defaultCameraDevice = 0;
-const int defaultCameraDeviceCount = 0;
 
 S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *parent)
     :QVideoDeviceControl(parent), m_selectedDevice(defaultCameraDevice)

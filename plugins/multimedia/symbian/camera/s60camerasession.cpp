@@ -61,12 +61,11 @@ S60CameraSession::S60CameraSession(QObject *parent)
     , m_state(QCamera::StoppedState)
     , m_windowSize(QSize(320/2, 240/2))
     , m_pixelF(QVideoFrame::Format_RGB24)
-    , m_deviceIndex(0)
+    , m_deviceIndex(NULL)
     , m_error(NoError)
     , m_currentcodec(KSymbianDefaultImageCodec)
 {
-    //init camera
-    initCamera();
+
 }
 
 S60CameraSession::~S60CameraSession()
@@ -74,26 +73,29 @@ S60CameraSession::~S60CameraSession()
     delete m_cameraEngine;
     m_cameraEngine = NULL;
 }
-void S60CameraSession::initCamera()
+void S60CameraSession::resetCamera()
 {
-    if (m_cameraEngine) {
-        delete m_cameraEngine;
-        m_cameraEngine = NULL;
-        m_error = KErrNone;
-        m_state = QCamera::StoppedState;
-    }
-    TRAP(m_error, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
-    if (m_error != KErrNone)
-        emit error(m_error, QString(m_error));
+    delete m_cameraEngine;
+    m_cameraEngine = NULL;
+    m_error = KErrNone;
+    m_state = QCamera::StoppedState;
+    qDebug() << "S60CameraSession::resetCamera. Creating new camera with index=" << m_deviceIndex;
+    QT_TRAP_THROWING(m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
+    Q_CHECK_PTR(m_cameraEngine);
+
 }
 
 void S60CameraSession::startCamera()
 {
-#ifdef Q_CC_NOKIAX86
-   qDebug() << "Starting null camera";
-   MceoCameraReady(); // signal that we are ready
-#endif
-    if (!m_error) {
+    qDebug() << "S60CameraSession::startCamera";
+    #ifdef Q_CC_NOKIAX86
+    MceoCameraReady(); // signal that we are ready
+    #endif
+    
+    // create camera engine
+    resetCamera();
+
+    if (!m_error ) {
         m_cameraEngine->ReserveAndPowerOn();
         updateImageCaptureCodecs();
     }
@@ -115,11 +117,19 @@ void S60CameraSession::stopCamera()
 void S60CameraSession::capture()
 {
     qDebug() << "S60CameraSession::capture";
-    if (m_cameraEngine)
-    {
+    m_error = KErrNone;
+    if (m_cameraEngine) {
         TSize size(m_captureSize.width(), m_captureSize.height());
-        m_cameraEngine->PrepareL(size, m_currentcodec);
-        m_cameraEngine->CaptureL();
+        TRAP(m_error, m_cameraEngine->PrepareL(size, m_currentcodec));
+        if (m_error == KErrNotSupported)
+            emit error(QCamera::NotSupportedFeatureError, QLatin1String("unable to prepare picture size and current codec"));
+        TRAP(m_error, m_cameraEngine->CaptureL());
+        if (m_error == KErrNotReady || m_error == KErrNoMemory)
+            emit error(QCamera::NotReadyToCaptureError, QLatin1String("camera is not reserved or prepared for capture"));
+    }
+    else {
+        m_error = KErrNotReady;
+        emit error(QCamera::NotReadyToCaptureError, QLatin1String("camera is not started or no engine available"));
     }
     #ifdef Q_CC_NOKIAX86
     QImage *snapImage = new QImage(QLatin1String("C:/Data/testimage.jpg"));
@@ -273,8 +283,6 @@ void S60CameraSession::setFrameSize(const QSize& s)
 {
     qDebug() << "S60CameraSession::setFrameSize, size=" << s;
     m_windowSize = s;
-//    if(m_output)
-//        m_output->setFrameSize(s);
 }
 
 
@@ -285,7 +293,7 @@ QList<QVideoFrame::PixelFormat> S60CameraSession::supportedPixelFormats()
     #ifdef Q_CC_NOKIAX86
     list << QVideoFrame::Format_RGB565;
     #endif
-    //TODO: add supportedformats 
+    //TODO: fix supportedformats 
     qDebug() << "S60CameraSession::pixeformat, returning="<<list;
     return list;
 }
@@ -386,10 +394,11 @@ void S60CameraSession::MceoCameraReady()
         m_VFSize =  TSize(m_VFWidgetSize.width(), m_VFWidgetSize.height());
         m_error = KErrNone;
         TRAP(m_error, m_cameraEngine->StartViewFinderL(m_VFSize));
-        if (m_error) {
-            // TODO add error emitting to cameracontrol
+        if (m_error == KErrNotReady || m_error == KErrNoMemory) {
+            emit readyForCaptureChanged(false);
+            emit error(QCamera::NotReadyToCaptureError, QLatin1String("viewfinding with bitmaps is not supported"));
+            
         }
-
         emit readyForCaptureChanged(true);
     }
 }
@@ -477,7 +486,6 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 
 void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
 {
-    qDebug() << "S60CameraSession::MceoViewFinderFrameReady";
     if (m_VFProcessor) {
         int bytesPerLine = aFrame.ScanLineLength(m_VFSize.iWidth, aFrame.DisplayMode());
 
@@ -518,7 +526,7 @@ QString S60CameraSession::name(const int index)
     QString cameraName;
     switch (index) {
         case 0:
-            cameraName = QLatin1String("Primary camera");
+            cameraName = QLatin1String("Main camera");
         break;
         case 1:
             cameraName = QLatin1String("Secondary camera");
@@ -539,10 +547,10 @@ QString S60CameraSession::description(const int index)
     QString cameraDesc;
     switch (index) {
         case 0:
-            cameraDesc = QLatin1String("Main camera");
+            cameraDesc = QLatin1String("Back camera");
         break;
         case 1:
-            cameraDesc = QLatin1String("front camera ");
+            cameraDesc = QLatin1String("Front camera");
         break;
         case 2:
             cameraDesc = QLatin1String("Tertiary camera description");
@@ -721,7 +729,7 @@ QStringList S60CameraSession::supportedImageCaptureCodecs()
     for (int i = 0; i < m_formats.length() ; i++) {
         list << formatMap().key(m_formats.at(i));
     }
-    qDebug()<< "S60CameraSession::supportedImageCaptureCodecs, return formatList.count()="+list.count();
+    qDebug()<< "S60CameraSession::supportedImageCaptureCodecs, return formatList.count()="<<list.count();
     return list;
 }
 void S60CameraSession::updateImageCaptureCodecs()
@@ -736,7 +744,7 @@ void S60CameraSession::updateImageCaptureCodecs()
 
         for ( int i = 0; i < allFormats.count() ; ++i ) {
             if ( supportedFormats & formatMask ) {
-                qDebug() << "S60CameraSession::updateImageCaptureCodecs, adding format="+allFormats.at(i);
+                qDebug() << "S60CameraSession::updateImageCaptureCodecs, adding format="<<allFormats.at(i);
                 m_formats << i; // store index of supported format
             }
 

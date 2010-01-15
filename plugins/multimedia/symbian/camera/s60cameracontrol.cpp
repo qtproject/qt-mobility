@@ -71,6 +71,8 @@ void S60CameraControl::start()
     if (m_session) {
         m_session->startCamera();
     }
+    else 
+        qDebug() << "S60CameraControl::start() - NO SESSION!";
         
 }
 void S60CameraControl::stop()

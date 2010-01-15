@@ -159,6 +159,7 @@ public:
     void setCaptureQuality(QtMedia::EncodingQuality);
 
     void setVideoRenderer(QObject *renderer);
+    void updateImageCaptureCodecs();
     
 protected: // From MCameraEngineObserver
     void MceoCameraReady();
@@ -167,13 +168,13 @@ protected: // From MCameraEngineObserver
     void MceoCapturedBitmapReady(CFbsBitmap* aBitmap);
     void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
     void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
-    
+        
 private:
     bool queryCurrentCameraInfo();
     QMap<QString, int> formatMap();
     QMap<QString, int> formatDescMap();
-    void updateImageCaptureCodecs();
-    void initCamera();
+
+    void resetCamera();
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);

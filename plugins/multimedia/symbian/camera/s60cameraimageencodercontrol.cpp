@@ -95,9 +95,12 @@ void S60CameraImageEncoderControl::setImageSettings(const QImageEncoderSettings 
 {
     m_imageEncoderSettings = settings;
     if (m_session && !settings.isNull()) {
+        // set codec first as optiomal capturesize is decided based on chosen codec 
+        m_session->setImageCaptureCodec(m_imageEncoderSettings.codec());
         m_session->setCaptureSize(m_imageEncoderSettings.resolution());
         m_session->setCaptureQuality(m_imageEncoderSettings.quality());
-        m_session->setImageCaptureCodec(m_imageEncoderSettings.codec());
+        //update setting 
+        m_session->updateImageCaptureCodecs();
     }
 }
 
