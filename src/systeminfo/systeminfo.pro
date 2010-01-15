@@ -43,15 +43,20 @@ win32 {
 
 unix: {
     QT += gui
+    maemo*|linux-*: {
+        SOURCES += qsysteminfo_linux_common.cpp
+        HEADERS += qsysteminfo_linux_common_p.h
+    }
     !maemo*:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
-        contains(networkmanager_enabled, yes):contains(QT_CONFIG,dbus): {
+        #TODO: Check why networkmanager_enabled is not "yes" in my Linux desktop
+        #contains(networkmanager_enabled, yes):contains(QT_CONFIG,dbus): {
             QT += dbus
             SOURCES += qhalservice_linux.cpp qnetworkmanagerservice_linux.cpp
             HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
 
-        }
+        #}
     }
     maemo*: {
             #Qt GConf wrapper added here until a proper place is found for it.
