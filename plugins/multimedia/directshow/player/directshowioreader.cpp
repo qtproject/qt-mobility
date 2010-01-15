@@ -183,8 +183,9 @@ HRESULT DirectShowIOReader::Request(IMediaSample *pSample, DWORD_PTR dwUser)
 
             if (m_pendingTail) {
                 m_pendingTail->next = request;
-                m_pendingHead = request;
             } else {
+                m_pendingHead = request;
+
                 m_loop->postEvent(this, new QEvent(QEvent::User));
             }
             m_pendingTail = request;
