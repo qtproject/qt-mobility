@@ -203,9 +203,7 @@ HRESULT DirectShowIOReader::WaitForNext(
     QMutexLocker locker(&m_mutex);
 
     do {
-        if (m_flushing) {
-            return VFW_E_WRONG_STATE;
-        } else if (m_readyHead) {
+        if (m_readyHead) {
             DirectShowSampleRequest *request = m_readyHead;
 
             *ppSample = request->sample;
@@ -213,18 +211,24 @@ HRESULT DirectShowIOReader::WaitForNext(
 
             HRESULT hr = request->result;
 
-            m_pendingHead = request->next;
+            m_readyHead = request->next;
 
-            if (!m_pendingHead)
-                m_pendingTail = 0;
+            if (!m_readyHead)
+                m_readyTail = 0;
 
             delete request;
 
             return hr;
-        } else  if (!m_pendingHead) {
+        } else if (m_flushing) {
+            *ppSample = 0;
+            *pdwUser = 0;
+
             return VFW_E_WRONG_STATE;
         }
     } while (m_wait.wait(&m_mutex, dwTimeout));
+
+    *ppSample = 0;
+    *pdwUser = 0;
 
     return VFW_E_TIMEOUT;
 }
@@ -254,7 +258,7 @@ HRESULT DirectShowIOReader::SyncReadAligned(IMediaSample *pSample)
 
                 if (SUCCEEDED(hr))
                     pSample->SetActualDataLength(bytesRead);
-
+   
                 return hr;
             } else {
                 m_synchronousPosition = position;
@@ -329,6 +333,8 @@ HRESULT DirectShowIOReader::BeginFlush()
 
     flushRequests();
 
+    m_wait.wakeAll();
+
     return S_OK;
 }
 
@@ -388,10 +394,10 @@ void DirectShowIOReader::readyRead()
 
             m_readyTail->next = 0;
 
-            if (m_pendingHead == 0)
+            if (!m_pendingHead)
                 m_pendingTail = 0;
 
-            if (m_readyHead == 0)
+            if (!m_readyHead)
                 m_readyHead = m_readyTail;
 
             m_wait.wakeAll();
@@ -421,9 +427,13 @@ HRESULT DirectShowIOReader::blockingRead(
 
     *bytesRead = m_device->read(reinterpret_cast<char *>(buffer), maxBytes);
 
-    return *bytesRead == length
-            ? S_OK
-            : S_FALSE;
+    if (*bytesRead != length) {
+        qMemSet(buffer + *bytesRead, 0, length - *bytesRead);
+
+        return S_FALSE;
+    } else {
+        return S_OK;
+    }
 }
 
 bool DirectShowIOReader::nonBlockingRead(
@@ -447,9 +457,14 @@ bool DirectShowIOReader::nonBlockingRead(
 
             *bytesRead = m_device->read(reinterpret_cast<char *>(buffer), maxBytes);
 
-            *result = *bytesRead == length
-                    ? S_OK
-                    : S_FALSE;
+            if (*bytesRead != length) {
+                qMemSet(buffer + *bytesRead, 0, length - *bytesRead);
+
+                *result = S_FALSE;
+            } else {
+                *result = S_OK;
+            }
+
             return true;
         }
     } else {
@@ -459,12 +474,24 @@ bool DirectShowIOReader::nonBlockingRead(
 
 void DirectShowIOReader::flushRequests()
 {
-    for (DirectShowSampleRequest *request = m_pendingHead; request; request = request->remove()) {}
-    for (DirectShowSampleRequest *request = m_readyHead; request; request = request->remove()) {}
+    qDebug(Q_FUNC_INFO);
 
-    m_pendingHead = 0;
-    m_pendingTail = 0;
+    while (m_pendingHead) {
+        m_pendingHead->result = VFW_E_WRONG_STATE;
 
-    m_readyHead = 0;
-    m_readyTail = 0;
+        if (m_readyTail)
+            m_readyTail->next = m_pendingHead;
+
+        m_readyTail = m_pendingHead;
+
+        m_pendingHead = m_pendingHead->next;
+
+        m_readyTail->next = 0;
+
+        if (!m_pendingHead)
+            m_pendingTail = 0;
+
+        if (!m_readyHead)
+            m_readyHead = m_readyTail;
+    }
 }

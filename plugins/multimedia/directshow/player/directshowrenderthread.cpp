@@ -77,6 +77,7 @@ void DirectShowRenderThread::shutdown()
 {
     {
         QMutexLocker locker(&m_mutex);
+
         m_pendingTasks = Shutdown;
 
         if (m_graph) {
@@ -92,16 +93,6 @@ void DirectShowRenderThread::shutdown()
     }
 
     wait();
-
-    if (m_graph) {
-        m_graph->Release();
-        m_graph = 0;
-    }
-
-    if (m_source) {
-        m_source->Release();
-        m_source = 0;
-    }
 }
 
 void DirectShowRenderThread::load(const QUrl &url, QIODevice *stream, IFilterGraph2 *graph)
@@ -334,6 +325,8 @@ void DirectShowRenderThread::run()
             m_executingTask = Render;
 
             doRender(&locker);
+        } else if (!(m_executedTasks & Render)) {
+            m_pendingTasks &= ~(SetRate | Stop | Pause | Seek | Play);
         } else if (m_pendingTasks & SetRate) {
             m_pendingTasks ^= SetRate;
             m_executingTask = SetRate;
@@ -365,12 +358,29 @@ void DirectShowRenderThread::run()
             m_wait.wait(&m_mutex);
     }
 
+    if (m_graph) {
+        if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
+            locker.unlock();
+            //control->Stop();
+            m_graph->Abort();
+            OAFilterState state;
+            control->GetState(INFINITE, &state);
+            locker.relock();
+        }
+        m_graph->Release();
+        m_graph = 0;
+    }
+
+    if (m_source) {
+        m_source->Release();
+        m_source = 0;
+    }
+
     m_loop->wake();
 }
 
 void DirectShowRenderThread::doLoad(QMutexLocker *locker)
 {
-    qDebug(Q_FUNC_INFO);
     m_executedTasks = 0;
 
     IBaseFilter *source = 0;
@@ -405,8 +415,6 @@ void DirectShowRenderThread::doLoad(QMutexLocker *locker)
 
         if (m_rate != 1.0)
             m_pendingTasks |= SetRate;
-
-        emit loaded();
     }
 }
 
@@ -429,6 +437,8 @@ void DirectShowRenderThread::doRender(QMutexLocker *locker)
     m_source->AddRef();
     filters.append(m_source);
 
+    bool rendered = false;
+
     while (!filters.isEmpty()) {
         IEnumPins *pins = 0;
         IBaseFilter *filter = filters[filters.size() - 1];
@@ -450,7 +460,10 @@ void DirectShowRenderThread::doRender(QMutexLocker *locker)
                         peer->Release();
                     } else {
                         locker->unlock();
-                        m_graph->RenderEx(pin, AM_RENDEREX_RENDERTOEXISTINGRENDERERS, 0);
+                        if (SUCCEEDED(m_graph->RenderEx(
+                                pin, AM_RENDEREX_RENDERTOEXISTINGRENDERERS, 0))) {
+                            rendered = true;
+                        }
                         locker->relock();
                     }
                 }
@@ -459,12 +472,17 @@ void DirectShowRenderThread::doRender(QMutexLocker *locker)
         filter->Release();
     }
 
+    if (rendered && !(m_executedTasks & Render)) {
+        m_executedTasks |= Render;
+
+        emit loaded();
+    }
+
     m_loop->wake();
 }
 
 void DirectShowRenderThread::doSetRate(QMutexLocker *locker)
 {
-    qDebug(Q_FUNC_INFO);
     if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
         locker->unlock();
         seeking->SetRate(m_rate);
@@ -476,7 +494,6 @@ void DirectShowRenderThread::doSetRate(QMutexLocker *locker)
 
 void DirectShowRenderThread::doSeek(QMutexLocker *locker)
 {
-    qDebug(Q_FUNC_INFO);
     if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
         LONGLONG pos = LONGLONG(m_position) * 10;
 
@@ -490,7 +507,6 @@ void DirectShowRenderThread::doSeek(QMutexLocker *locker)
 
 void DirectShowRenderThread::doPlay(QMutexLocker *locker)
 {
-    qDebug(Q_FUNC_INFO);
     if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
         locker->unlock();
         HRESULT hr = control->Run();
@@ -505,7 +521,6 @@ void DirectShowRenderThread::doPlay(QMutexLocker *locker)
 
 void DirectShowRenderThread::doPause(QMutexLocker *locker)
 {
-    qDebug(Q_FUNC_INFO);
     if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
         locker->unlock();
         HRESULT hr = control->Pause();

@@ -79,14 +79,14 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
 
 DirectShowPlayerService::~DirectShowPlayerService()
 {
+    m_renderThread.shutdown();
+
     if (m_graph) {
         m_graphEventNotifier.setEnabled(false);
 
         m_graph->Release();
         m_graph = 0;
     }
-
-    m_renderThread.shutdown();
 
     delete m_playerControl;
     delete m_audioEndpointControl;

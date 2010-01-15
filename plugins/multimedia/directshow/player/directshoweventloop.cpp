@@ -138,9 +138,9 @@ void DirectShowEventLoop::processEvents()
 {
     QMutexLocker locker(&m_mutex);
 
-    ::ResetEvent(m_eventHandle);
-
     while(m_postsHead) {
+        ::ResetEvent(m_eventHandle);
+
         DirectShowPostedEvent *post = m_postsHead;
         m_postsHead = m_postsHead->next;
 
