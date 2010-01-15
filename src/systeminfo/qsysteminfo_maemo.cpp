@@ -336,7 +336,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             foreach(QString dir, sysList) {
                 QFileInfo btFile(sysPath + dir+"/address");
                 if(btFile.exists()) {
-                    return true;
+                    featureSupported = true;
                 }
             }
         }
@@ -411,11 +411,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::VibFeature :
-#if !defined(QT_NO_DBUS)
         featureSupported = hasHalDeviceFeature("vibra"); //might not always be true
-        if(featureSupported)
-            return featureSupported;
-#endif
         break;
     case QSystemInfo::WlanFeature :
         {
@@ -433,14 +429,25 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::SimFeature :
+        {
+            GConfItem locationValues("/system/nokia/location");
+            QStringList locationKeys = locationValues.listEntries();
+
+            foreach (QString str, locationKeys) {
+                if (str.contains("sim_imsi"))
+                    featureSupported = true;
+                break;
+            }
+        }
         break;
     case QSystemInfo::LocationFeature :
-#if !defined(QT_NO_DBUS)
-        featureSupported = hasHalDeviceFeature("gps"); //might not always be true
-        if(featureSupported)
-            return featureSupported;
-
-#endif
+        {
+            GConfItem locationValues("/system/nokia/location");
+            QStringList locationKeys = locationValues.listEntries();
+            if(locationKeys.count()) {
+                featureSupported = true;
+            }
+        }
         break;
     case QSystemInfo::VideoOutFeature :
         {
@@ -455,6 +462,18 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         }
         break;
     case QSystemInfo::HapticsFeature:
+        {
+            if(halIsAvailable) {
+                QHalInterface iface;
+                QStringList touchSupport =
+                        iface.findDeviceByCapability("input.touchpad");
+                if(touchSupport.count()) {
+                    featureSupported = true;
+                } else {
+                    featureSupported = false;
+                }
+            }
+        }
         break;
     default:
         featureSupported = false;
@@ -477,6 +496,23 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
+    case QSystemNetworkInfo::GsmMode:
+        {
+#if 0
+#if !defined(QT_NO_DBUS)
+            QDBusInterface connectionInterface("com.nokia.phone.net",
+                                               "/com/nokia/phone/net",
+                                               "com.nokia.SystemInfo",
+                                                QDBusConnection::systemBus());
+            if(!connectionInterface.isValid()) {
+                qWarning() << "interfacenot valid";
+            }
+            QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver");
+            return reply.value();
+#endif
+#endif
+        }
+        break;
     case QSystemNetworkInfo::WlanMode:
         {
             QString baseSysDir = "/sys/class/net/";
@@ -987,6 +1023,16 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
     Q_UNUSED(screen);
+    GConfItem currentBrightness("/system/osso/dsm/display/display_brightness");
+    GConfItem maxBrightness("/system/osso/dsm/display/max_display_brightness_levels");
+    if(maxBrightness.value().toInt()) {
+        float retVal = 100 * (currentBrightness.value().toFloat() /
+                              maxBrightness.value().toFloat());
+        return retVal;
+    }
+
+
+/*    Q_UNUSED(screen);
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
@@ -1067,7 +1113,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
             return curLevel / numLevels * 100;
         }
     }
-#endif
+#endif */
     return -1;
 }
 
@@ -1342,7 +1388,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
         QHalInterface iface2;
         if (iface2.isValid()) {
             QStringList capList;
-            capList << "input.keyboard" << "input.keys" << "input.keypad" << "input.mouse" << "input.tablet";
+            capList << "input.keyboard" << "input.keys" << "input.keypad" << "input.mouse" << "input.tablet" << "input.touchpad";
             for(int i = 0; i < capList.count(); i++) {
                 QStringList list = iface2.findDeviceByCapability(capList.at(i));
                 if(!list.isEmpty()) {
@@ -1360,6 +1406,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
                         methods = (methods | QSystemDeviceInfo::Mouse);
                         break;
                     case 4:
+                    case 5:
                         methods = (methods | QSystemDeviceInfo::SingleTouch);
                         break;
                     };
@@ -1415,6 +1462,7 @@ QString QSystemDeviceInfoPrivate::imei()
     if(!connectionInterface.isValid()) {
         qWarning() << "interfacenot valid";
     }
+
     QDBusReply< QString > reply = connectionInterface.call("GetIMEINumber");
     return reply.value();
 
@@ -1424,8 +1472,17 @@ QString QSystemDeviceInfoPrivate::imei()
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-//    if(getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
-        return "Not Available";
+    QString retVal = "Not Available";
+    GConfItem locationValues("/system/nokia/location");
+    QStringList locationKeys = locationValues.listEntries();
+
+    QStringList result;
+    foreach (QString str, locationKeys) {
+        if (str.contains("sim_imsi"))
+            retVal = "Available";
+        break;
+    }
+    return retVal;
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
@@ -1640,6 +1697,20 @@ int QSystemDeviceInfoPrivate::batteryLevel() const
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
+    GConfItem locationValues("/system/nokia/location");
+    QStringList locationKeys = locationValues.listEntries();
+    QStringList result;
+    int count = 0;
+    foreach (QString str, locationKeys) {
+        if (str.contains("sim_imsi"))
+            count++;
+    }
+
+    if(count == 1) {
+        return QSystemDeviceInfo::SingleSimAvailable;
+    } else if (count == 2) {
+        return QSystemDeviceInfo::DualSimAvailable;
+    }
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
