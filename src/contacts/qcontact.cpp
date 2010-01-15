@@ -254,8 +254,7 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
         sublist = d->m_details;
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
-            QContactDetail existing = d->m_details.at(i);
-            existing.d.detach(); // explicitly detach - client must save detail in order to update with changes.
+            const QContactDetail& existing = d->m_details.at(i);
             if (definitionName == existing.definitionName()) {
                 sublist.append(existing);
             }
@@ -276,8 +275,7 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
         sublist = details(definitionName);
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
-            QContactDetail existing = d->m_details.at(i);
-            existing.d.detach(); // explicitly detach - client must save detail in order to update with changes.
+            const QContactDetail& existing = d->m_details.at(i);
             if (definitionName == existing.definitionName() && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
                 sublist.append(existing);
             }
@@ -312,12 +310,9 @@ bool QContact::saveDetail(QContactDetail* detail)
         return false;
     }
 
-    QContactDetail detachedCopy = *detail;
-    detachedCopy.d.detach(); // explicitly detach - client must save detail in order to update with changes.
-
     /* Also handle contact type specially - only one of them. */
     if (detail->definitionName() == QContactType::DefinitionName) {
-        d->m_details[1] = detachedCopy;
+        d->m_details[1] = *detail;
         return true;
     }
 
@@ -327,13 +322,13 @@ bool QContact::saveDetail(QContactDetail* detail)
         const QContactDetail& curr = d->m_details.at(i);
         if (detail->d->m_definitionName == curr.d->m_definitionName && detail->d->m_id == curr.d->m_id) {
             // Found the old version.  Replace it with this one.
-            d->m_details[i] = detachedCopy;
+            d->m_details[i] = *detail;
             return true;
         }
     }
 
     // this is a new detail!  add it to the contact.
-    d->m_details.append(detachedCopy);
+    d->m_details.append(*detail);
     return true;
 }
 
