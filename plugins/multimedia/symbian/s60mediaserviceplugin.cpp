@@ -112,10 +112,8 @@ void S60MediaServicePlugin::updateDevices() const
     m_cameraDevices.clear();
     m_cameraDescriptions.clear();
     for (int i=0; i < S60CameraService::deviceCount(); i ++) {
-        QString deviceName = QString().number(i);
-        m_cameraDevices.append(deviceName.toUtf8());
-        QString deviceDesc = S60CameraService::deviceDescription(i); 
-        m_cameraDescriptions.append(deviceDesc);
+        m_cameraDevices.append(S60CameraService::deviceName(i).toUtf8());
+        m_cameraDescriptions.append(S60CameraService::deviceDescription(i));
     }
 }
 

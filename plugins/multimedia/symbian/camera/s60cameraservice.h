@@ -74,6 +74,7 @@ public:
     QMediaControl *control(const char *name) const;
     
     static int deviceCount();
+    static QString deviceName(const int index);
     static QString deviceDescription(const int index);
 
 private Q_SLOTS:
