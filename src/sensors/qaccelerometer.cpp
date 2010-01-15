@@ -54,8 +54,8 @@ class QSignallingAccelerometerListener;
            accelerometer.
 
     The accelerometer returns linear acceleration values along 3 axes.
-    Values measure the force acting on the phone, the scale of the values is meters per second 
-    squared. The axes are arranged as follows:
+    The scale of the values is meters per second squared. The axes are 
+    arranged as follows:
 
 \code
              +z
