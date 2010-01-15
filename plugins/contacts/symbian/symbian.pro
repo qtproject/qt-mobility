@@ -114,17 +114,19 @@ symbian: {
     target.path = /sys/bin
     INSTALLS += target
 
-    exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
-    | exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
-        message("Building on S60 3.1 - TB 9.2 Platform")
-    } else {
-        message("Building on TB 10.1 Platform")
-        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
-        cntmodelResourceFile = \
-            "START RESOURCE ../rss/cntmodel.rss" \
-            "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
-            "END"
-        MMP_RULES += cntmodelResourceFile
+    exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+        exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
+        | exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
+            message("TB 9.2 platform")
+        } else {
+            message("TB 10.1 or later platform")
+            DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+            cntmodelResourceFile = \
+                "START RESOURCE ../rss/cntmodel.rss" \
+                "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
+                "END"
+            MMP_RULES += cntmodelResourceFile
+        }
     }
 
     symbianplugin.sources = $${TARGET}.dll
