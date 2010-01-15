@@ -55,7 +55,7 @@ QTM_USE_NAMESPACE
  *
  * \ingroup versit
  *
- * \sa QVersitContactExporter
+ * \sa QVersitContactImporter
  */
 
 /*!
@@ -78,6 +78,25 @@ QTM_USE_NAMESPACE
  * handled by either \l processProperty() or by QVersitContactImporter.  Supply this
  * function and return true to implement support for QVersitProperties not supported by
  * QVersitContactImporter.
+ */
+
+/*!
+ * \class QVersitFileSaver
+ *
+ * \brief The QVersitFileSaver class is an interface for clients wishing to implement file
+ * saving to disk when importing.
+ *
+ * \ingroup versit
+ *
+ * \sa QVersitContactImporter
+ *
+ * \fn virtual bool saveFile(const QByteArray& contents, const QVersitProperty& property, QString* filename) = 0;
+ * Saves the binary data \a contents to a file on a persistent storage medium.
+ *
+ * \a property holds the QVersitProperty which is the context in which the binary is coming from.
+ * The QVersitFileSaver can use this, for example, to determine file extension it should choose.
+ * \a *filename is filled with the contents of the file.
+ * Returns true on success, false on failure.
  */
 
 /*!
@@ -147,46 +166,6 @@ QVersitContactImporter::~QVersitContactImporter()
 }
 
 /*!
- * Sets the \a path where the contact photos will be saved.
- * This function should be called before calling \l importContact().
- * If the image path has not been set,
- * the images in the versit document will not be added to the contact.
- * There is no default path for them.
- */
-void QVersitContactImporter::setImagePath(const QString& path)
-{
-    d->mImagePath = path;
-}
-
-/*!
- * Returns the path where the contact photos are saved.
- */
-QString QVersitContactImporter::imagePath() const
-{
-    return d->mImagePath;
-}
-
-/*!
- * Sets the \a path where the contact related audio clips will be saved.
- * This function should be called before calling \l importContact().
- * If the audio clip path has not been set,
- * the audio clips in the versit document will not be added to the contact.
- * There is no default path for them.
- */
-void QVersitContactImporter::setAudioClipPath(const QString& path)
-{
-    d->mAudioClipPath = path;
-}
-
-/*!
- * Returns the path where the contact related audio clips will be saved.
- */
-QString QVersitContactImporter::audioClipPath() const
-{
-    return d->mAudioClipPath;
-}
-
-/*!
  * Creates a QContact from \a versitDocument.
  */
 QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument>& documents)
@@ -213,4 +192,20 @@ void QVersitContactImporter::setPropertyImporter(QVersitContactPropertyImporter*
 QVersitContactPropertyImporter* QVersitContactImporter::propertyImporter() const
 {
     return d->mPropertyImporter;
+}
+
+/*!
+ * Sets \a saver to be the handler to save files with.
+ */
+void QVersitContactImporter::setFileSaver(QVersitFileSaver* saver)
+{
+    d->mFileSaver = saver;
+}
+
+/*!
+ * Returns the file saver.
+ */
+QVersitFileSaver* QVersitContactImporter::fileSaver() const
+{
+    return d->mFileSaver;
 }

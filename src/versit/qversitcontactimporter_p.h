@@ -107,7 +107,6 @@ private:
 
     QContactDetail* createAvatar(
         const QVersitProperty& property,
-        const QVersitDocument& versitDocument,
         const QString& subType) const;
 
     void createNicknames(
@@ -137,15 +136,13 @@ private:
     QDateTime parseDateTime(const QString& text, const QString& format) const;
 
     QString saveContentToFile(
-        const QString& path,
         const QVersitProperty& property) const;
 
     QString getFirstAndLastName(const QVersitDocument& document) const;
     
 public: // Data
-    QString mImagePath;
-    QString mAudioClipPath;
     QVersitContactPropertyImporter* mPropertyImporter;
+    QVersitFileSaver* mFileSaver;
 
 private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;

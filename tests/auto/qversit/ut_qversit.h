@@ -60,12 +60,6 @@ class UT_QVersit : public QObject
     Q_OBJECT
 
 private slots: // Tests
-
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-
     void testImportFiles();
     void testImportFiles_data();
 

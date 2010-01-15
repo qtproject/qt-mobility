@@ -43,6 +43,7 @@
 #define UT_QVERSITCONTACTIMPORTER_H
 
 #include <QObject>
+#include <qversitcontactimporter.h>
 #include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
@@ -59,9 +60,6 @@ class UT_QVersitContactImporter : public QObject
     Q_OBJECT
 
 private slots: // Tests
-    
-    void initTestCase();
-    void cleanupTestCase();
     void init();
     void cleanup();
     
@@ -84,8 +82,6 @@ private slots: // Tests
     void testNickname();
     void testAvatarJpegStored();
     void testAvatarGifStored();
-    void testAvatarJpegTwoContactsWithSameName();
-    void testAvatarJpegNonexistentPath();
     void testAvatarUrl();
     void testAvatarEncoding();
     void testGeo();

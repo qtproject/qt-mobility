@@ -11,48 +11,31 @@
 #include <QDir>
 #include <QList>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
+class MyQVersitFileSaver : public QVersitFileSaver
+{
+public:
+    MyQVersitFileSaver() : mIndex(0)
+    {
+    }
 
-const QString imageAndAudioClipPath(QString::fromAscii("tmp_ut_qversit"));
+    bool saveFile(const QByteArray& contents, const QVersitProperty& property, QString* filename)
+    {
+        *filename = QString::number(mIndex++);
+        mObjects.insert(*filename, contents);
+        return true;
+    }
+
+    int mIndex;
+    QMap<QString, QByteArray> mObjects;
+};
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 #ifndef TESTDATA_DIR
 #define TESTDATA_DIR "./"
 #endif
-
-void UT_QVersit::initTestCase()
-{
-    // Create the directory to store the image
-    QDir dir;
-    if (!dir.exists(imageAndAudioClipPath)) {
-        dir.mkdir(imageAndAudioClipPath);
-    }
-}
-
-void UT_QVersit::cleanupTestCase()
-{
-    QDir dir;
-
-    if (dir.exists(imageAndAudioClipPath)) {
-        dir.cd(imageAndAudioClipPath);
-        // remove all the files first
-        QStringList allFiles;
-        allFiles << QString::fromAscii("*");
-        QStringList fileList = dir.entryList(allFiles, QDir::Files);
-        foreach (QString file, fileList) {
-            dir.remove(file);
-        }
-        dir.cdUp();
-        dir.rmdir(imageAndAudioClipPath);
-    }
-}
-
-void UT_QVersit::init()
-{
-}
-
-void UT_QVersit::cleanup()
-{
-}
 
 Q_DECLARE_METATYPE(QList<QContact>);
 
@@ -72,8 +55,8 @@ void UT_QVersit::testImportFiles()
     QVERIFY(reader.readAll());
     QList<QVersitDocument> documents = reader.results();
     QVersitContactImporter importer;
-    importer.setAudioClipPath(imageAndAudioClipPath);
-    importer.setImagePath(imageAndAudioClipPath);
+    MyQVersitFileSaver fileSaver;
+    importer.setFileSaver(&fileSaver);
     QList<QContact> contacts = importer.importContacts(documents);
 
     if (expectedContacts.size() > 0) {

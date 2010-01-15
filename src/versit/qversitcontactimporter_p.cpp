@@ -149,7 +149,7 @@ QContact QVersitContactImporterPrivate::importContact(
         } else if (detailDefinitionName == QContactNickname::DefinitionName) {
             createNicknames(property,contact);
         } else if (detailDefinitionName == QContactAvatar::DefinitionName) {
-            detail = createAvatar(property,versitDocument,detailDefinition.second);
+            detail = createAvatar(property,detailDefinition.second);
         } else if (detailDefinitionName == QContactTimestamp::DefinitionName) {
             detail = createTimeStamp(property);
         } else if (detailDefinitionName == QContactPhoneNumber::DefinitionName) {
@@ -318,11 +318,7 @@ void QVersitContactImporterPrivate::setOrganizationLogo(
         property.parameters().value(QString::fromAscii("VALUE"));
 
     if (valueParam != QString::fromAscii("URL")) {
-        QString path(mImagePath);
-        if (!path.endsWith(QString::fromAscii("/")))
-            path += QString::fromAscii("/");
-        // Let saveContentToFile to generate a random string as the name
-        value = saveContentToFile(path,property);
+        value = saveContentToFile(property);
     }
 
     org.setLogo(value);
@@ -419,7 +415,6 @@ QContactDetail* QVersitContactImporterPrivate::createOnlineAccount(
  */
 QContactDetail* QVersitContactImporterPrivate::createAvatar(
     const QVersitProperty& property,
-    const QVersitDocument& versitDocument,
     const QString& subType) const
 {
     QString value(property.valueString());
@@ -428,13 +423,7 @@ QContactDetail* QVersitContactImporterPrivate::createAvatar(
         property.parameters().value(QString::fromAscii("VALUE"));
 
     if (valueParam != QString::fromAscii("URL")) {
-        QString pathAndName(mImagePath);
-        if (subType == QContactAvatar::SubTypeAudioRingtone)
-            pathAndName = mAudioClipPath;
-        if (!pathAndName.endsWith(QString::fromAscii("/")))
-            pathAndName += QString::fromAscii("/");
-        pathAndName += getFirstAndLastName(versitDocument);
-        value = saveContentToFile(pathAndName,property);
+        value = saveContentToFile(property);
     }
 
     QContactAvatar* avatar = 0;
@@ -576,38 +565,21 @@ QDateTime QVersitContactImporterPrivate::parseDateTime(
  * Save the value of the \a property to a file with name \a pathAndName.
  */
 QString QVersitContactImporterPrivate::saveContentToFile(
-    const QString& pathAndName,
     const QVersitProperty& property) const
 {
     QString encoding =
         property.parameters().value(QString::fromAscii("ENCODING"));
-    QString content = property.valueString();
+    QByteArray content = property.valueString().toAscii();
 
-    QString type =
-        property.parameters().value(QString::fromAscii("TYPE"));
-    // Use the type parameter value as it is, if not found in the mapping table
-    QString extension = mFileExtensionMappings.value(type,type);
+    if (encoding == QString::fromAscii("BASE64") ||
+        encoding == QString::fromAscii("B"))
+        content = QByteArray::fromBase64(content);
 
-    QString fileName(pathAndName);
-    fileName += QString::number(qrand());
-    fileName += QString::fromAscii(".");
-    fileName += extension.toLower();
-
-    QFile file(fileName);
-    qint64 writeResult = -1;
-    if (file.open(QIODevice::WriteOnly)) {
-        if (encoding == QString::fromAscii("BASE64") ||
-            encoding == QString::fromAscii("B")) {
-            writeResult = file.write(QByteArray::fromBase64(content.toAscii()));
-        } else {
-            // default assumption
-            // quoted-printable encoding is parsed already in the reader
-            // TODO: determine the correct charset
-            writeResult = file.write(content.toAscii());
-        }
-    }
-    file.close();
-    return (writeResult > 0) ? fileName : QString();
+    QString filename;
+    bool ok = false;
+    if (mFileSaver)
+        ok = mFileSaver->saveFile(content, property, &filename);
+    return ok ? filename : QString();
 }
 
 /*!

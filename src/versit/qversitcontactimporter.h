@@ -61,23 +61,27 @@ public:
     virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
 };
 
+class QVersitFileSaver
+{
+public:
+    virtual bool saveFile(const QByteArray& contents, const QVersitProperty& property,
+                          QString* filename) = 0;
+};
+
 class Q_VERSIT_EXPORT QVersitContactImporter
 {
 public:
     QVersitContactImporter();
     ~QVersitContactImporter();
 
-    void setImagePath(const QString& path);
-    QString imagePath() const;
-    
-    void setAudioClipPath(const QString& path);
-    QString audioClipPath() const;
-
     QList<QContact> importContacts(const QList<QVersitDocument>& documents);
 
     void setPropertyImporter(QVersitContactPropertyImporter* importer);
     QVersitContactPropertyImporter* propertyImporter() const;
     
+    void setFileSaver(QVersitFileSaver* saver);
+    QVersitFileSaver* fileSaver() const;
+
 private:
     QVersitContactImporterPrivate* d;
 };
