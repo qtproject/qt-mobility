@@ -137,6 +137,7 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
                 rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
             } else if (QContactOnlineAccount::DefinitionName == filt.detailDefinitionName()
                        && filt.detailFieldName() == "Account") {
+                qDebug() << Q_FUNC_INFO;
                 RDFVariable imaccount = variable.property<nco::hasIMAccount>();
                 imaccount.property<nco::imID>().isMemberOf(QStringList()<<filt.value().toString());
             } else {
@@ -208,21 +209,23 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
     return queryidsnumbers;
 }
 
-RDFSelect prepareIMAccountsQuery(RDFVariable &rdfcontact1)
+RDFSelect prepareIMContactsQuery(RDFVariable &imaccount)
 {
-    RDFVariable imaccount = rdfcontact1.property<nco::hasIMAccount> ();
+    //::tracker()->setVerbosity(4);
+
+    //RDFVariable imaccount = rdfcontact1.fromType<nco::IMContact> ();
     // columns
     RDFSelect queryidsimacccounts;
-    queryidsimacccounts.addColumn("contactId", rdfcontact1.property<nco::contactUID> ());
+    queryidsimacccounts.addColumn("contactId", imaccount.property<nco::contactUID> ());
 
-    queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imID> ());
-    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imPresence> ());
-    queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imStatusMessage> ());
-    queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imNickname> ());
-    queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::imAccountType> ());
-    queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
+    queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imContactId> ());
+    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imContactPresence> ());
+    queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imContactNickname> ());
+    queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::fromIMAccount> ());
+   //queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
 
-    queryidsimacccounts.addColumn("metacontact", rdfcontact1.optional().property<nco::metacontact> ());
+    queryidsimacccounts.addColumn("metacontact", imaccount.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
 }
 
@@ -345,8 +348,9 @@ void QTrackerContactFetchRequest::run()
         queryIMAccountNodesPending = 1;
 
         RDFVariable contact4;
+        contact4 = contact4.fromType<nco::IMContact> ();
         // prepare query to get all im contacts
-        RDFSelect queryidsimacccounts = prepareIMAccountsQuery(contact4);
+        RDFSelect queryidsimacccounts = prepareIMContactsQuery(contact4);
 
         if( r->filter().type() != QContactFilter::DefaultFilter )
         {
@@ -455,7 +459,7 @@ bool detailExisting(const QString &definitionName, const QContact &contact, cons
 
 void QTrackerContactFetchRequest::contactsReady()
 {
-    // 1) process IMAccounts: queryIMAccountNodes
+    // 1) process IMContacts: queryIMAccountNodes
     // 2) process contacts: query and during it handle metacontacts
     // 3) process phonenumbers: queryPhoneNumbersNodes
     // 4) process emails: queryPhoneNumbersNodes
@@ -472,13 +476,13 @@ void QTrackerContactFetchRequest::contactsReady()
     }
 
    /*
-    * 1) process IMAccounts: queryIMAccountNodes
-    * Processing IMAccounts need to be called before processing PersonContacts - \sa result is filled with IMContacts first,
+    * 1) process IMContacts: queryIMAccountNodes
+    * Processing IMContacts need to be called before processing PersonContacts - \sa result is filled with IMContacts first,
     * then metacontacts are processed while processing addressbook contacts. This is because QContactOnlineAccount details
     * need to be constructed before linking contacts with same metacontact.
     */
     if (request->definitionRestrictions().contains(QContactOnlineAccount::DefinitionName)) {
-        processQueryIMAccounts(queryIMAccountNodes);
+        processQueryIMContacts(queryIMAccountNodes);
     }
 
     // 2) process contacts: query and during it handle metacontacts
@@ -850,7 +854,7 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
 
 /*!
  * \brief Processes one query record-row during read from tracker to QContactOnlineAccount.
- * Order or columns in query is fixed to order defined in \sa prepareIMAccountsQuery()
+ * Order or columns in query is fixed to order defined in \sa prepareIMContactsQuery()
  */
 QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(LiveNodes imAccountQuery, int queryRow)
 {
@@ -858,7 +862,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
     account.setValue("Account", imAccountQuery->index(queryRow, 1).data().toString()); // IMId
     if (!imAccountQuery->index(queryRow, 5).data().toString().isEmpty())
         account.setValue(FieldAccountPath, imAccountQuery->index(queryRow, 5).data().toString()); // getImAccountType?
-    account.setValue("Capabilities", imAccountQuery->index(queryRow, 6).data().toString()); // getImAccountType?
+   // account.setValue("Capabilities", imAccountQuery->index(queryRow, 6).data().toString()); // getImAccountType?
     account.setNickname(imAccountQuery->index(queryRow, 4).data().toString()); // nick
 
     QString presence = imAccountQuery->index(queryRow, 2).data().toString(); // imPresence iri
@@ -866,21 +870,22 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
     account.setPresence(presenceConversion[presence]);
 
     account.setStatusMessage(imAccountQuery->index(queryRow, 3).data().toString()); // imStatusMessage
+    qDebug()<<  imAccountQuery->index(queryRow, 4).data().toString();
     return account;
 }
 
 /*!
- * \brief processes IMQuery results. \sa prepareIMAccountsQuery, contactsReady
+ * \brief processes IMQuery results. \sa prepareIMContactsQuery, contactsReady
  * Note: in contactsReady(), this method is called before processing PersonContacts - \sa result is filled with IMContacts first,
  * then metacontacts are processed while processing addressbook contacts - this is because QContactOnlineAccount details
  * need to be constructed before linking contacts with same metacontact.
  */
-void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts)
+void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts)
 {
     Q_ASSERT_X(queryIMAccountNodesPending == 0, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
-    for (int i = 0; i < queryIMAccounts->rowCount(); i++) {
-        QContactOnlineAccount account = getOnlineAccountFromIMQuery(queryIMAccounts, i);
-        QContactLocalId contactid = queryIMAccounts->index(i, 0).data().toUInt();
+    for (int i = 0; i < queryIMContacts->rowCount(); i++) {
+        QContactOnlineAccount account = getOnlineAccountFromIMQuery(queryIMContacts, i);
+        QContactLocalId contactid = queryIMContacts->index(i, 0).data().toUInt();
 
         QHash<quint32, int>::const_iterator it = id2ContactLookup.find(contactid);
         if (it != id2ContactLookup.end() && it.key() == contactid && it.value() >= 0 && it.value() < result.size())
@@ -893,7 +898,7 @@ void QTrackerContactFetchRequest::processQueryIMAccounts(SopranoLive::LiveNodes 
             QContactId id; id.setLocalId(contactid);
             contact.setId(id);
             contact.saveDetail(&account);
-            QString metacontact = queryIMAccounts->index(i, 7).data().toString(); // \sa prepareIMAccountsQuery()
+            QString metacontact = queryIMContacts->index(i, 6).data().toString(); // \sa prepareIMContactsQuery()
             addContactToResultSet(contact, metacontact);
         }
     }
