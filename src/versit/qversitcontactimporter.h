@@ -67,7 +67,7 @@ class QVersitContactImporterPrivate;
 class QVersitContactPropertyImporter
 {
 public:
-    // XXX virtual dtor
+    virtual ~QVersitContactPropertyImporter() {}
     virtual bool processProperty(const QVersitProperty& property, QContact* contact) = 0;
     virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
 };
@@ -75,7 +75,7 @@ public:
 class QVersitFileSaver // XXX this isn't really contacts specific
 {
 public:
-    // XXX virtual dtor
+    virtual ~QVersitFileSaver() {}
     virtual bool saveFile(const QByteArray& contents, const QVersitProperty& property,
                           QString* filename) = 0;
 };

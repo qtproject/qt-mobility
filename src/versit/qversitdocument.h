@@ -85,7 +85,7 @@ public:
 
     // XXX this is setDefaultCodec in QVersitProperty
     void setCodec(QTextCodec* codec);
-    QTextCodec* codec(); // XXX const
+    QTextCodec* codec() const;
 
     bool isEmpty() const;
 

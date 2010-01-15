@@ -58,6 +58,8 @@ class QVersitContactExporterPrivate;
 class QVersitContactDetailExporter
 {
 public:
+    virtual ~QVersitContactDetailExporter() {}
+
     virtual bool processDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
 
     virtual bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
@@ -67,6 +69,8 @@ public:
 class QVersitFileLoader
 {
 public:
+    virtual ~QVersitFileLoader() {}
+
     virtual bool loadFile(const QString& filename, QByteArray* contents, QString* mimeType) = 0;
 };
 

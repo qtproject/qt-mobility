@@ -171,7 +171,7 @@ void QVersitDocument::setCodec(QTextCodec *codec)
 /*!
  * Returns the document's codec.
  */
-QTextCodec* QVersitDocument::codec()
+QTextCodec* QVersitDocument::codec() const
 {
     return d->mDefaultCodec;
 }
