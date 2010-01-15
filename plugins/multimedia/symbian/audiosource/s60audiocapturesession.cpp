@@ -164,8 +164,7 @@ bool S60AudioCaptureSession::setAudioCodec(const QString &codecName)
 
 QString S60AudioCaptureSession::audioCodec() const
 {
-    //TODO:
-    return QString(); //m_format.codec();
+    return m_format.codec();
 }
 
 QUrl S60AudioCaptureSession::outputLocation() const
@@ -310,10 +309,8 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
 					for (TInt i = 0; i < supportedSampleRates.Count(); i++ ) {
 						TUint supportedSampleRate = supportedSampleRates[i];
 						int frequency = m_format.frequency();
-						if (supportedSampleRate == frequency) {
-							TRAPD(err, m_recorderUtility->SetDestinationSampleRateL(m_format.frequency()));
-							qWarning() << err;							
-						}
+						if (supportedSampleRate == frequency) 
+							m_recorderUtility->SetDestinationSampleRateL(m_format.frequency());
 					}
 					
 					/*
@@ -366,17 +363,16 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
 					}
 					
 					RArray<TFourCC> supportedDataTypes;
-					TRAPD(ignore, m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes));
+					m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes);
 
 					for (TInt k = 0; k < supportedDataTypes.Count(); k++ ) {
 						if (supportedDataTypes[k].FourCC() == fourCC.FourCC()) {
-							TRAP(ignore, m_recorderUtility->SetDestinationDataTypeL(supportedDataTypes[k]));
+							m_recorderUtility->SetDestinationDataTypeL(supportedDataTypes[k]);
 						}
 					}
 					
-					
 					//set channels 
-					TRAPD(error, m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels()));
+					m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
 
 					m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
                     m_recorderUtility->RecordL();

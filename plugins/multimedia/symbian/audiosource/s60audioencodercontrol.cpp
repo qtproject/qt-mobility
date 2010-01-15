@@ -146,8 +146,10 @@ QStringList S60AudioEncoderControl::supportedEncodingOptions(const QString &code
 QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
     Q_UNUSED(codec)
+	QAudioFormat fmt = m_session->format();
+    
     if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
-        return QVariant(8000);
+        return QVariant(fmt.frequency());
     }
 
     return QVariant();
@@ -159,13 +161,13 @@ void S60AudioEncoderControl::setEncodingOption(
     Q_UNUSED(value)
     Q_UNUSED(codec)
 
-    QAudioFormat fmt = m_session->format();
+    //QAudioFormat fmt = m_session->format();
 
     if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
-        //TODO
+		setBitRate(value.toInt());
 
     } else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
-        //TODO
+        setQuality((QtMedia::EncodingQuality)value.toInt());
 
     } else
         qWarning() << "option: " << name << " is an unknown option!";
