@@ -123,14 +123,14 @@ bool S60MediaPlayerControl::isSeekable() const
     return m_controlSettings.m_position;
 }
 
-QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
+QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 {
-    if (m_session) {
-        return q_check_ptr(m_session)->isSeekable()
-            ? qMakePair<qint64, qint64>(0, m_session->duration())
-            : qMakePair<qint64, qint64>(0, 0);
-    }
-    return QPair<qint64, qint64>();
+    QMediaTimeRange ranges;
+
+    if(m_session && q_check_ptr(m_session)->isSeekable())
+        ranges.addInterval(0, m_session->duration());
+
+    return ranges;
 }
 
 qreal S60MediaPlayerControl::playbackRate() const

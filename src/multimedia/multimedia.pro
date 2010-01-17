@@ -61,7 +61,8 @@ PUBLIC_HEADERS += \
     qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
-    qvideorenderercontrol.h
+    qvideorenderercontrol.h \
+    qmediatimerange.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -100,7 +101,8 @@ SOURCES += qmediacontrol.cpp \
     qmediapluginloader.cpp \
     qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
-    qvideorenderercontrol.cpp
+    qvideorenderercontrol.cpp \
+    qmediatimerange.cpp
 
 contains(QT_CONFIG, declarative) {
    QT += declarative
