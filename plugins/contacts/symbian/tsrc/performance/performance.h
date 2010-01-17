@@ -80,6 +80,9 @@ private slots:  // Test cases
 	*/
     void removeComplexContacts();
 
+    void createComplexContactsWithOnlineAccount();
+    void sortContactsWithOnlineAccount();
+    void removeComplextContactsWithOnlineAccount();   
 private:
     int measureContactsFetch(
             QString debugMessage,

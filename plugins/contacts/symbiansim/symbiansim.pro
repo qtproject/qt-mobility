@@ -26,12 +26,13 @@ symbian: {
 
     HEADERS += \
         $$PUBLIC_HEADERS \
-        inc/cntsymbiansimengine.h \
+        inc/cntsymbiansimengine.h
       
     SOURCES += \
-        src/cntsymbiansimengine.cpp \
-      
-    qtAddLibrary(QtContacts)
+        src/cntsymbiansimengine.cpp
+
+    CONFIG += mobility
+    MOBILITY = contacts
 
     LIBS += -lcntmodel \
             -lflogger \

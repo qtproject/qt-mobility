@@ -40,7 +40,6 @@
 ****************************************************************************/
 #include <QFileSystemWatcher>
 #include <QFile>
-#include <QSettings>
 #include <QUuid>
 #include <QTimer>
 

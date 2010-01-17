@@ -6,6 +6,12 @@ CONFIG += qtestlib
 
 symbian: {
     INCLUDEPATH += .\inc
+	INCLUDEPATH += \
+	        ../../../../../src/global \
+	        ../../../../../src/contacts \
+	        ../../../../../src/contacts/details \
+	        ../../../../../src/contacts/filters \
+	        ../../../../../src/contacts/requests
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     SOURCES  += tst_qcontactmanagersymbiansim.cpp
     TARGET.CAPABILITY = ALL -TCB
