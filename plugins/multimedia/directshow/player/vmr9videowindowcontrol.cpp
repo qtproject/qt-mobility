@@ -47,19 +47,13 @@ Vmr9VideoWindowControl::Vmr9VideoWindowControl(QObject *parent)
     : QVideoWindowControl(parent)
     , m_filter(com_new<IBaseFilter>(CLSID_VideoMixingRenderer9))
     , m_windowId(0)
+    , m_dirtyValues(0)
+    , m_brightness(0)
+    , m_contrast(0)
+    , m_hue(0)
+    , m_saturation(0)
     , m_fullScreen(false)
 {
-    qMemSet(&m_procAmp, 0, sizeof(VMR9ProcAmpControl));
-    qMemSet(&m_brightnessRange, 0, sizeof(VMR9ProcAmpControlRange));
-    qMemSet(&m_contrastRange, 0, sizeof(VMR9ProcAmpControlRange));
-    qMemSet(&m_hueRange, 0, sizeof(VMR9ProcAmpControlRange));
-    qMemSet(&m_saturationRange, 0, sizeof(VMR9ProcAmpControlRange));
-
-    m_brightnessRange.dwProperty = ProcAmpControl9_Brightness;
-    m_contrastRange.dwProperty = ProcAmpControl9_Contrast;
-    m_hueRange.dwProperty = ProcAmpControl9_Hue;
-    m_saturationRange.dwProperty = ProcAmpControl9_Saturation;
-
     if (IVMRFilterConfig9 *config = com_cast<IVMRFilterConfig9>(m_filter)) {
         config->SetRenderingMode(VMR9Mode_Windowless);
         config->SetNumberOfStreams(1);
@@ -129,15 +123,20 @@ bool Vmr9VideoWindowControl::isFullScreen() const
 
 void Vmr9VideoWindowControl::setFullScreen(bool fullScreen)
 {
-    m_fullScreen = fullScreen;
+    emit fullScreenChanged(m_fullScreen = fullScreen);
 }
 
 void Vmr9VideoWindowControl::repaint()
 {
-    //if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
-    //    control->RepaintVideo(m_windowId, 0);
-    //    control->Release();
-    //}
+
+    if (QWidget *widget = QWidget::find(m_windowId)) {
+        HDC dc = widget->getDC();
+        if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
+            control->RepaintVideo(m_windowId, dc);
+            control->Release();
+        }
+        widget->releaseDC(dc);
+    }
 }
 
 QSize Vmr9VideoWindowControl::nativeSize() const
@@ -188,102 +187,116 @@ void Vmr9VideoWindowControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mo
 
 int Vmr9VideoWindowControl::brightness() const
 {
-    return getProcAmp(&m_procAmp.Brightness, &m_brightnessRange);
+    return m_brightness;
 }
 
 void Vmr9VideoWindowControl::setBrightness(int brightness)
 {
-    setProcAmp(brightness, &m_procAmp.Brightness, &m_brightnessRange);
+    m_brightness = brightness;
+
+    m_dirtyValues |= ProcAmpControl9_Brightness;
+
+    setProcAmpValues();
+
+    emit brightnessChanged(brightness);
 }
 
 int Vmr9VideoWindowControl::contrast() const
 {
-    return getProcAmp(&m_procAmp.Contrast, &m_contrastRange);
+    return m_contrast;
 }
 
 void Vmr9VideoWindowControl::setContrast(int contrast)
 {
-    setProcAmp(contrast, &m_procAmp.Contrast, &m_contrastRange);
+    m_contrast = contrast;
+
+    m_dirtyValues |= ProcAmpControl9_Contrast;
+
+    setProcAmpValues();
+
+    emit contrastChanged(contrast);
 }
 
 int Vmr9VideoWindowControl::hue() const
 {
-    return getProcAmp(&m_procAmp.Hue, &m_hueRange);
+    return m_hue;
 }
 
 void Vmr9VideoWindowControl::setHue(int hue)
 {
-    setProcAmp(hue, &m_procAmp.Hue, &m_hueRange);
+    m_hue = hue;
+
+    m_dirtyValues |= ProcAmpControl9_Hue;
+
+    setProcAmpValues();
+
+    emit hueChanged(hue);
 }
 
 int Vmr9VideoWindowControl::saturation() const
 {
-    return getProcAmp(&m_procAmp.Saturation, &m_saturationRange);
+    return m_saturation;
 }
 
 void Vmr9VideoWindowControl::setSaturation(int saturation)
 {
-    setProcAmp(saturation, &m_procAmp.Saturation, &m_saturationRange);
+    m_saturation = saturation;
+
+    m_dirtyValues |= ProcAmpControl9_Saturation;
+
+    setProcAmpValues();
+
+    emit saturationChanged(saturation);
 }
 
-int Vmr9VideoWindowControl::getProcAmp(
-        const float *field, const VMR9ProcAmpControlRange *range) const
-{
-    if (range->dwSize == 0) {
-        if (IVMRMixerControl9 *control = com_cast<IVMRMixerControl9>(m_filter)) {
-            const_cast<VMR9ProcAmpControlRange *>(range)->dwSize = sizeof(VMR9ProcAmpControlRange);
-            control->GetProcAmpControlRange(0, const_cast<VMR9ProcAmpControlRange *>(range));
-
-            if (m_procAmp.dwSize == 0) {
-                const_cast<VMR9ProcAmpControl *>(&m_procAmp)->dwSize = sizeof(VMR9ProcAmpControl);
-                control->GetProcAmpControl(0, const_cast<VMR9ProcAmpControl *>(&m_procAmp));
-            }
-
-            control->Release();
-        }
-    }
-
-    if (m_procAmp.dwFlags & range->dwProperty) {
-        float value = *field - range->DefaultValue;
-
-        if (value > 0.0) {
-            if (!qFuzzyCompare(range->MaxValue, range->DefaultValue))
-                value /= range->MaxValue - range->DefaultValue;
-            else
-                value = 1.0;
-        } else if (value < 0.0) {
-            if (!qFuzzyCompare(range->MinValue, range->DefaultValue))
-                value /= range->MinValue - range->DefaultValue;
-            else
-                value = -1.0;
-        }
-        return qBound<int>(-100, value * 100, 100);
-    } else {
-        return 0;
-    }
-}
-
-void Vmr9VideoWindowControl::setProcAmp(int value, float *field, VMR9ProcAmpControlRange *range)
+void Vmr9VideoWindowControl::setProcAmpValues()
 {
     if (IVMRMixerControl9 *control = com_cast<IVMRMixerControl9>(m_filter)) {
-        if (range->dwSize == 0) {
-            range->dwSize = sizeof(VMR9ProcAmpControlRange);
-            control->GetProcAmpControlRange(0, range);
+        VMR9ProcAmpControl procAmp;
+        procAmp.dwSize = sizeof(VMR9ProcAmpControl);
+        procAmp.dwFlags = m_dirtyValues;
 
-            if (m_procAmp.dwSize == 0) {
-                m_procAmp.dwSize = sizeof(VMR9ProcAmpControl);
-                control->GetProcAmpControl(0, &m_procAmp);
-            }
+        if (m_dirtyValues & ProcAmpControl9_Brightness) {
+            procAmp.Brightness = scaleProcAmpValue(
+                    control, ProcAmpControl9_Brightness, m_brightness);
+        }
+        if (m_dirtyValues & ProcAmpControl9_Contrast) {
+            procAmp.Contrast = scaleProcAmpValue(
+                    control, ProcAmpControl9_Contrast, m_contrast);
+        }
+        if (m_dirtyValues & ProcAmpControl9_Hue) {
+            procAmp.Hue = scaleProcAmpValue(
+                    control, ProcAmpControl9_Hue, m_hue);
+        }
+        if (m_dirtyValues & ProcAmpControl9_Saturation) {
+            procAmp.Saturation = scaleProcAmpValue(
+                    control, ProcAmpControl9_Saturation, m_saturation);
         }
 
-        if (m_procAmp.dwFlags & range->dwProperty) {
-            *field = range->DefaultValue;
-            if (value > 0) {
-                *field += float(value) * (range->MaxValue - range->DefaultValue) / 100;
-            } else if (value < 0) {
-                *field += float(value) * (range->MinValue - range->DefaultValue) / 100;
-            }
-            control->SetProcAmpControl(0, &m_procAmp);
+        if (SUCCEEDED(control->SetProcAmpControl(0, &procAmp))) {
+            m_dirtyValues = 0;
         }
+
+        control->Release();
     }
+}
+
+float Vmr9VideoWindowControl::scaleProcAmpValue(
+        IVMRMixerControl9 *control, VMR9ProcAmpControlFlags property, int value) const
+{
+    float scaledValue = 0.0;
+
+    VMR9ProcAmpControlRange range;
+    range.dwSize = sizeof(VMR9ProcAmpControlRange);
+    range.dwProperty = property;
+
+    if (SUCCEEDED(control->GetProcAmpControlRange(0, &range))) {
+        scaledValue = range.DefaultValue;
+        if (value > 0)
+            scaledValue += float(value) * (range.MaxValue - range.DefaultValue) / 100;
+        else if (value < 0)
+            scaledValue -= float(value) * (range.MinValue - range.DefaultValue) / 100;
+    }
+
+    return scaledValue;
 }

@@ -98,11 +98,20 @@ QMediaPlayer::MediaStatus DirectShowPlayerControl::mediaStatus() const
 qint64 DirectShowPlayerControl::duration() const
 {
     LONGLONG duration = 0;
-
-    //if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-    //    seeking->GetDuration(&duration);
-    //    seeking->Release();
-    //}
+    switch (m_status) {
+    case QMediaPlayer::LoadedMedia:
+    case QMediaPlayer::StalledMedia:
+    case QMediaPlayer::BufferingMedia:
+    case QMediaPlayer::BufferedMedia:
+    case QMediaPlayer::EndOfMedia:
+        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
+            seeking->GetDuration(&duration);
+            seeking->Release();
+        }
+        break;
+    default:
+        break;
+    }
 
     return duration / 10;
 }
@@ -111,10 +120,20 @@ qint64 DirectShowPlayerControl::position() const
 {
     LONGLONG position = 0;
 
-    //if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-    //    seeking->GetCurrentPosition(&position);
-    //    seeking->Release();
-    //}
+    switch (m_status) {
+    case QMediaPlayer::LoadedMedia:
+    case QMediaPlayer::StalledMedia:
+    case QMediaPlayer::BufferingMedia:
+    case QMediaPlayer::BufferedMedia:
+    case QMediaPlayer::EndOfMedia:
+        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
+            seeking->GetCurrentPosition(&position);
+            seeking->Release();
+        }
+        break;
+    default:
+        break;
+    }
 
     return position / 10;
 }
@@ -348,6 +367,8 @@ void DirectShowPlayerControl::updateStatus()
         break;
     }
 
-    if (status != m_status)
+    if (status != m_status) {
         emit mediaStatusChanged(m_status = status);
+        emit durationChanged(duration());
+    }
 }

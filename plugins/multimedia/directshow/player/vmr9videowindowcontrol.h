@@ -88,17 +88,18 @@ public:
     void setSaturation(int saturation);
 
 private:
-    int getProcAmp(const float *field, const VMR9ProcAmpControlRange *range) const;
-    void setProcAmp(int value, float *field, VMR9ProcAmpControlRange *range);
+    void setProcAmpValues();
+    float scaleProcAmpValue(
+            IVMRMixerControl9 *control, VMR9ProcAmpControlFlags property, int value) const;
 
     IBaseFilter *m_filter;
     WId m_windowId;
+    DWORD m_dirtyValues;
+    int m_brightness;
+    int m_contrast;
+    int m_hue;
+    int m_saturation;
     bool m_fullScreen;
-    VMR9ProcAmpControl m_procAmp;
-    VMR9ProcAmpControlRange m_brightnessRange;
-    VMR9ProcAmpControlRange m_contrastRange;
-    VMR9ProcAmpControlRange m_hueRange;
-    VMR9ProcAmpControlRange m_saturationRange;
 };
 
 #endif
