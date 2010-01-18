@@ -32,7 +32,7 @@ unix: {
 }
 
 symbian {
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData WriteUserData UserEnvironment Location  ReadDeviceData TrustedUI
     TARGET.UID3 = 0x2002ac7e
     FORMS    += dialog_s60.ui
 }
