@@ -475,8 +475,6 @@ bool DirectShowIOReader::nonBlockingRead(
 
 void DirectShowIOReader::flushRequests()
 {
-    qDebug(Q_FUNC_INFO);
-
     while (m_pendingHead) {
         m_pendingHead->result = VFW_E_WRONG_STATE;
 

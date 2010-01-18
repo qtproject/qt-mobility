@@ -182,9 +182,6 @@ void DirectShowRenderThread::setVideoOutput(IBaseFilter *filter)
 {
     QMutexLocker locker(&m_mutex);
 
-    // Don't mess with the graph while it's being generated.
-    // But should be smarter than this and interrupt; see IAMOpenProgress.
-
     if (m_graph) {
         while (m_executingTask == Render) {
             m_pendingTasks |= SetVideoOutput;
@@ -361,7 +358,6 @@ void DirectShowRenderThread::run()
     if (m_graph) {
         if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
             locker.unlock();
-            //control->Stop();
             m_graph->Abort();
             OAFilterState state;
             control->GetState(INFINITE, &state);

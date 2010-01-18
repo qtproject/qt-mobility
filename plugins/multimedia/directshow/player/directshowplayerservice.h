@@ -55,6 +55,7 @@ class DirectShowMetaDataControl;
 class DirectShowPlayerControl;
 class DirectShowVideoOutputControl;
 class DirectShowVideoRendererControl;
+class Vmr9VideoWindowControl;
 
 QTM_BEGIN_NAMESPACE
 class QMediaContent;
@@ -94,6 +95,7 @@ private:
     DirectShowMetaDataControl *m_metaDataControl;
     DirectShowVideoOutputControl *m_videoOutputControl;
     DirectShowVideoRendererControl *m_videoRendererControl;
+    Vmr9VideoWindowControl *m_videoWindowControl;
     DirectShowAudioEndpointControl *m_audioEndpointControl;
     IFilterGraph2 *m_graph;
     DirectShowEventLoop m_loop;

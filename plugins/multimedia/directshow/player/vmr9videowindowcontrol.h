@@ -39,44 +39,66 @@
 **
 ****************************************************************************/
 
-#include "directshowvideooutputcontrol.h"
+#ifndef VMR9VIDEOWINDOWCONTROL_H
+#define VMR9VIDEOWINDOWCONTROL_H
 
-DirectShowVideoOutputControl::DirectShowVideoOutputControl(QObject *parent)
-    : QVideoOutputControl(parent)
-    , m_output(NoOutput)
+#include <qvideowindowcontrol.h>
+
+#include <dshow.h>
+#include <d3d9.h>
+#include <vmr9.h>
+
+QTM_USE_NAMESPACE
+
+class Vmr9VideoWindowControl : public QVideoWindowControl
 {
+    Q_OBJECT
+public:
+    Vmr9VideoWindowControl(QObject *parent = 0);
+    ~Vmr9VideoWindowControl();
 
-}
+    IBaseFilter *filter() const { return m_filter; }
 
-DirectShowVideoOutputControl::~DirectShowVideoOutputControl()
-{
-}
+    WId winId() const;
+    void setWinId(WId id);
 
-QList<QVideoOutputControl::Output> DirectShowVideoOutputControl::availableOutputs() const
-{
-    return QList<Output>()
-            << RendererOutput
-            << WindowOutput;
-}
+    QRect displayRect() const;
+    void setDisplayRect(const QRect &rect);
 
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
 
-QVideoOutputControl::Output DirectShowVideoOutputControl::output() const
-{
-    return m_output;
-}
+    void repaint();
 
-void DirectShowVideoOutputControl::setOutput(Output output)
-{
-    if (output != m_output) {
-        switch (output) {
-        case NoOutput:
-        case RendererOutput:
-        case WindowOutput:
-            m_output = output;
-            emit outputChanged();
-            break;
-        default:
-            break;
-        }
-    }
-}
+    QSize nativeSize() const;
+
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+private:
+    int getProcAmp(const float *field, const VMR9ProcAmpControlRange *range) const;
+    void setProcAmp(int value, float *field, VMR9ProcAmpControlRange *range);
+
+    IBaseFilter *m_filter;
+    WId m_windowId;
+    bool m_fullScreen;
+    VMR9ProcAmpControl m_procAmp;
+    VMR9ProcAmpControlRange m_brightnessRange;
+    VMR9ProcAmpControlRange m_contrastRange;
+    VMR9ProcAmpControlRange m_hueRange;
+    VMR9ProcAmpControlRange m_saturationRange;
+};
+
+#endif

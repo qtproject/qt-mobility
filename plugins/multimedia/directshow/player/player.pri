@@ -19,7 +19,8 @@ HEADERS += \
         $$PWD\directshowvideooutputcontrol.h \
         $$PWD\directshowvideorenderercontrol.h \
         $$PWD\mediasamplevideobuffer.h \
-        $$PWD\videosurfacefilter.h
+        $$PWD\videosurfacefilter.h \
+        $$PWD\vmr9videowindowcontrol.h
 
 SOURCES += \
         $$PWD\directshowaudioendpointcontrol.cpp \
@@ -37,7 +38,8 @@ SOURCES += \
         $$PWD\directshowvideooutputcontrol.cpp \
         $$PWD\directshowvideorenderercontrol.cpp \
         $$PWD\mediasamplevideobuffer.cpp \
-        $$PWD\videosurfacefilter.cpp
+        $$PWD\videosurfacefilter.cpp \
+        $$PWD\vmr9videowindowcontrol.cpp
 
 LIBS += -lstrmiids -ldmoguids -luuid -lmsdmo -lole32 -loleaut32
 

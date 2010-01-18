@@ -46,6 +46,7 @@
 #include <directshowplayercontrol.h>
 #include <directshowvideooutputcontrol.h>
 #include <directshowvideorenderercontrol.h>
+#include <vmr9videowindowcontrol.h>
 
 #include <qmediacontent.h>
 
@@ -59,6 +60,7 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     , m_metaDataControl(0)
     , m_videoOutputControl(0)
     , m_videoRendererControl(0)
+    , m_videoWindowControl(0)
     , m_graph(0)
     , m_renderThread(&m_loop)
 {
@@ -67,6 +69,7 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     m_videoOutputControl = new DirectShowVideoOutputControl; 
     m_audioEndpointControl = new DirectShowAudioEndpointControl(&m_renderThread);
     m_videoRendererControl = new DirectShowVideoRendererControl(&m_loop);
+    m_videoWindowControl = new Vmr9VideoWindowControl;
 
 
     connect(m_videoOutputControl, SIGNAL(outputChanged()), this, SLOT(videoOutputChanged()));
@@ -93,6 +96,7 @@ DirectShowPlayerService::~DirectShowPlayerService()
     delete m_metaDataControl;
     delete m_videoOutputControl;
     delete m_videoRendererControl;
+    delete m_videoWindowControl;
 }
 
 QMediaControl *DirectShowPlayerService::control(const char *name) const
@@ -107,6 +111,8 @@ QMediaControl *DirectShowPlayerService::control(const char *name) const
         return m_videoOutputControl;
     else if (qstrcmp(name, QVideoRendererControl_iid) == 0)
         return m_videoRendererControl;
+    else if (qstrcmp(name, QVideoWindowControl_iid) == 0)
+        return m_videoWindowControl;
     else
         return 0;
 }
@@ -156,6 +162,9 @@ void DirectShowPlayerService::videoOutputChanged()
     case QVideoOutputControl::RendererOutput:
         videoOutput = m_videoRendererControl->filter();
         break;
+    case QVideoOutputControl::WindowOutput:
+        videoOutput = m_videoWindowControl->filter();
+        break;
     default:
         break;
     }
@@ -165,8 +174,6 @@ void DirectShowPlayerService::videoOutputChanged()
 
 void DirectShowPlayerService::graphEvent(HANDLE handle)
 {
-    qDebug(Q_FUNC_INFO);
-
     if (IMediaEvent *event = com_cast<IMediaEvent>(m_graph)) {
         long eventCode;
         LONG_PTR param1;
