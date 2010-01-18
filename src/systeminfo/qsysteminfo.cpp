@@ -43,7 +43,13 @@
 
 #ifdef Q_OS_LINUX
 #include "qsysteminfo_linux_p.h"
-#endif
+#ifdef Q_WS_MAEMO_5
+#include "qsysteminfo_maemo_p.h"
+#elif Q_WS_MAEMO_6
+#include "qsysteminfo_maemo_p.h"
+#endif //Q_WS_MAEMO_5
+#endif //Q_OS_LINUX
+
 #ifdef Q_OS_WIN
 #include "qsysteminfo_win_p.h"
 #endif
@@ -202,7 +208,7 @@ is a reliable way to gather such information.
     \class QSystemDeviceInfo
 
     \ingroup systeminfo
-    
+
     \brief The QSystemDeviceInfo class provides access to device
 information from the system.
 
@@ -358,13 +364,29 @@ information from the system.
  */
 
 #ifdef Q_OS_LINUX
+#ifdef Q_WS_MAEMO_5
+Q_GLOBAL_STATIC(QSystemInfoLinuxMaemoPrivate, sysinfoPrivate)
+Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxMaemoPrivate, netInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxMaemoPrivate, displayInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoLinuxMaemoPrivate, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxMaemoPrivate, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemScreenSaverLinuxMaemoPrivate, screenSaverPrivate)
+#elif Q_WS_MAEMO_6
+Q_GLOBAL_STATIC(QSystemInfoLinuxMaemoPrivate, sysinfoPrivate)
+Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxMaemoPrivate, netInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxMaemoPrivate, displayInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoLinuxMaemoPrivate, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxMaemoPrivate, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemScreenSaverLinuxMaemoPrivate, screenSaverPrivate)
+#else //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
 Q_GLOBAL_STATIC(QSystemInfoLinuxDesktopPrivate, sysinfoPrivate)
 Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxDesktopPrivate, netInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxDesktopPrivate, displayInfoPrivate)
 Q_GLOBAL_STATIC(QSystemStorageInfoLinuxDesktopPrivate, storageInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxDesktopPrivate, deviceInfoPrivate)
 Q_GLOBAL_STATIC(QSystemScreenSaverLinuxDesktopPrivate, screenSaverPrivate)
-#else
+#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
+#else //Q_OS_LINUX
 Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
@@ -372,6 +394,7 @@ Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 Q_GLOBAL_STATIC(QSystemScreenSaverPrivate, screenSaverPrivate)
 #endif
+
 
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent), d(sysinfoPrivate())
