@@ -128,6 +128,10 @@ symbian: {
             MMP_RULES += cntmodelResourceFile
         }
     }
+    
+    contains(S60_VERSION, 3.2) {
+    	DEFINES += SYMBIAN_BACKEND_S60_VERSION_32
+    }
 
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = /resource/qt/plugins/contacts

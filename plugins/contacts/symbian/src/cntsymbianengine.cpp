@@ -555,6 +555,17 @@ int CntSymbianEngine::removeContactL(QContactLocalId id)
     //TODO: add code to remove all relationships.
 
     m_dataBase->contactDatabase()->DeleteContactL(cId);
+#ifdef SYMBIAN_BACKEND_S60_VERSION_32
+    // In S60 3.2 hardware (observerd with N96) there is a problem when saving and 
+    // deleting contacts in quick successive manner. At some point the database
+    // starts leaving with KErrNotReady (-18). This happens randomly at either
+    // DeleteContactL() or AddNewContactL(). The only only thing that seems to
+    // help is to compress the database after deleting a contact. 
+    // 
+    // Needles to say that this will have a major negative effect on performance!
+    // TODO: A better solution must be found.
+    m_dataBase->contactDatabase()->CompactL();
+#endif
 
     return 0;
 }
