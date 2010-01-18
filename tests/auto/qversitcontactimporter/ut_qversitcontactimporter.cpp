@@ -109,6 +109,10 @@ public:
     QMap<QString, QByteArray> mObjects;
 };
 
+const static QByteArray SAMPLE_GIF(QByteArray::fromBase64(
+        "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
+        "wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw=="));
+
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -436,12 +440,11 @@ void UT_QVersitContactImporter::testOrganizationLogo()
 
     // Embedded LOGO
     property.setName(QString::fromAscii("LOGO"));
-    QByteArray logo("R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G");
-    property.setValue(QString::fromAscii(logo.toBase64()));
+    QByteArray logo(QByteArray::fromBase64(
+            "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"));
+    property.setValue(logo);
     property.addParameter(QString::fromAscii("TYPE"),
                           QString::fromAscii("GIF"));
-    property.addParameter(QString::fromAscii("ENCODING"),
-                          QString::fromAscii("BASE64"));
     document = createDocumentWithProperty(property);
     documentList.clear();
     documentList.append(document);
@@ -755,184 +758,20 @@ void UT_QVersitContactImporter::testNickname()
     QCOMPARE(nickName.nickname(),singleVal);
 }
 
-void UT_QVersitContactImporter::testAvatarJpegStored()
-{
-    // JPEG image. Name property present. The image directory exist.
-    // Test that the avatar detail is created and the image
-    // is stored on the disk.
-
-QByteArray img =
-"/9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAAHgAA/+4ADkFkb2JlAGTAAAAAAf\
-/bAIQAEAsLCwwLEAwMEBcPDQ8XGxQQEBQbHxcXFxcXHx4XGhoaGhceHiMlJyUjHi8vMzMvL0BAQ\
-EBAQEBAQEBAQEBAQAERDw8RExEVEhIVFBEUERQaFBYWFBomGhocGhomMCMeHh4eIzArLicnJy4r\
-NTUwMDU1QEA/QEBAQEBAQEBAQEBA/8AAEQgBhAGGAwEiAAIRAQMRAf/EAT8AAAEFAQEBAQEBAAA"
-
-"AAAAAAAMAAQIEBQYHCAkKCwEAAQUBAQEBAQEAAAAAAAAAAQACAwQFBgcICQoLEAABBAEDAgQCBQ\
-cGCAUDDDMBAAIRAwQhEjEFQVFhEyJxgTIGFJGhsUIjJBVSwWIzNHKC0UMHJZJT8OHxY3M1FqKyg\
-yZEk1RkRcKjdDYX0lXiZfKzhMPTdePzRieUpIW0lcTU5PSltcXV5fVWZnaGlqa2xtbm9jdHV2d3\
-h5ent8fX5/cRAAICAQIEBAMEBQYHBwYFNQEAAhEDITESBEFRYXEiEwUygZEUobFCI8FS0fAzJGL"
-
-"hcoKSQ1MVY3M08SUGFqKygwcmNcLSRJNUoxdkRVU2dGXi8rOEw9N14/NGlKSFtJXE1OT0pbXF1e\
-X1VmZ2hpamtsbW5vYnN0dXZ3eHl6e3x//aAAwDAQACEQMRAD8A9ASSSSUpJJJJSkkkklKSSSSUp\
-JJJJSkkkklKSSSSUpJJJJSkySdJSkkkklKSTEgCToFXfmN4qG8/vfmpk8kMY4pyER4pESdg2Uyo\
-uvudy6PIaIck8mVSn8TxDSMZT/BkGE9S6UhJZwPgpCx7fouITY/FIdcch5G0+z2LoJKozKePpCR"
-
-"+KsMtZYPadfBW8PNYcukZa/unQscoSjuzSSSU61ZOmSSUpOkkkpSSSSSlJJJJKUkkkkpSSSSSlJ\
-JJJKUmTpJKUkkkkpSSSSSlJJJJKUmMwY5TpJKW+KdJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpJ\
-JJJSlC21lTC95gD7yfAJrbWUsL3nTsO5PgFQc99r/Ut0I+gzs0f3qvzPMxwRs6yPyxXwgZHwZWW\
-WXGX6N7Vj+PiopJLCy5Z5JcUzZ/ls2QABQVKSSUqNSkkpS7pBSk4JBkaFMkiNCpt05AdDX6HsUd"
-
-"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"
-
-"XCXdMn7JKUklOqSClJJd0vFJCuUkgkUkqSSS7/BJCkuySSKlJ2kgyOUx/FJCyCpvU3CwQfpIqzW\
-uIII0IV2m4WCDo7wWzyXOe4BjyH1jY/vf2tfJjrUbJUkkloMakkkklKTOc1rS5xho1JKdZ+Tab7\
-XVj+aq0P8p/n5N/Kos+aOLGZy6bDuV0Y8Rpa652QeCKR9Fp5d5lR7J0lz+bNPLMzmfLsPJsgACg\
-skkko0rJJFOklYpdk6ZLqpdJJJJCkkkoSSsknTJKUnSTJKXSSKSSlkinSRUpMkn7pKW7pcJJaoK"
-
-"UkknSClkkuyXZFSk6ZOgpZJJJKlKTpJSipSSSSClJJeCSKlJJd0klKKSSbugpdSaSDIKikjqDaG\
-9TcLBB0cirOa4tIIOqvVP9Rgd37ra5HmzlHtz+eI0P7w/i18kK1GzNJJJXmNha/wBOp7/3Wl33C\
-VmY4IpZOpIlx8zqfxK0cljn41rG/Scxwb8SIWdQ4OqY7xaD+CzPihPDjHS5fsZsP6X0SJk6SyWZ\
-bukkkkpSXCSRSSpJJJJSkkvgnSQsklKSVqUl3SS5KSVJJJIoUlokkkVKShJJJSku6SSCVQkkkih"
-
-"bVOkkUkqTd06SRUrskkkgpSZOkUVKShJJJCkuyUpd0lKS8UkklK0SSSSUpKEkgEFK7JJBOkpQCs\
-YrjuLfESq6Pij3k+SscoSOYx1+8syfKW2kkkuhaylmPq9C11fDHEur+B1I+RWmh21MuZtePMHuD\
-4hQczgGbGYbEaxPivhPhPh1aISU30W1nUbm/vD+IUPyrCyYcmM1OJH5fa2AQdQbUmTpKIhKuySS\
-SNFSkycpIKWhOkmSUrRIhJJJSkkkiipSSSSSlBIpJJKUEkku6SlJJJeSSlu6dJJJKkkkkkKSSS7"
-
-"pFSkkkikpXdJMOU8oJUlKSSSFJJJIqUnTBOgpSSSUI0eylJJJFKipQ4S1nyS7Jwx7tAJlIRkdAC\
-T4KtZXMevayTyVGrGiHP8AuR1q8jycoH3cgo/ox6+ZYMkwdAukkktNiUkkkkpSaAeQnSSUx2t8B\
-9yW1vgFJJCh2Va21vgE21vgPuUkkqHZVsHV1uEFoKoZFZxrWQZqsMNnkO5j5rSVPqYnHaf3baz9\
-7w3+Kg5rBDJilcRxRiTE9bC/HIiQF6HRCmTplzzZUknTd0lKS7wkl3SSpJJOihbukkkgpSSSXdF"
-
-"SkgkkEkq7BJJJJCk0J0u6RUpJJNqkpdIpJFBSgkkEiklSXdLskkhSXdOm7JFS7ROg7q7XQxo1Eu\
-VWnWxvxV5afw3DCXFkkBIxNC2HLIigFbW+ASgeCdJa1BhWgeCW1vgE6SVBTHa3wH3J4jhOklQUp\
-JJJJSkkkklKSSSSUpJJJJSydJJJSkkkklKVLq0/YXkdn1H7rGK6qnU9cJ48XMH/AE2psxcJDvEp\
-juPNARqU2qdILmG2oJk5TBJSkkkkVK7p0ydJSySSSCVSkkkUUKTBOkklR4KYmEh/vS8+UlLlIpJ"
-
-"kFLpJJBFCkjykkkpZOkkgLSpJIpJIUNEkoTpKZ0/zjfiryo0fzrfir62Phf8ANT/v/sYM3zDyUk\
-kktFiUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlKl1b+gP/r1f+fGK6qfVRODYP\
-Nn/AFbUzJ/Nz/ulMfmHmEPdMnTLmW2umSShFSkkkigpSdN2SKKlBJLhJJKkiYH8EgmPdDopfukm\
-SRUqE4SSSUpJMkgpQTpJh+VFS6RSSSQpJJJJSkkkklKSSThBTOj+dar6oUfzjfir62Phf83P+/8"
-
-"AsYM3zDyUkkktFiUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlKp1T+hP+LP8Aq2\
-q2qfVhOBaPNn/VtTcnyS/ulMdx5oO6SR5SXMNtSSRSRUqNZSKSXdJSkkkklKSCSSXVSkoS7peKS\
-Vk6bukgpdJLtCXwSUt8Ekk6Slkk5CZJS/ZJJI90UK7pJJIFKkgkkkhXZOm8kuCBHxKKklP8434q\
-+qFP842PFX1r/C/5uf8AeH5MGbceSkkklosSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkkl"
-
-"KSSSSUpU+qmMGz4sH3vaFcVLq8/YXR+/V93qsTcmkJH+qV0fmHmEXdMl/FLuuYbSkkkkVKTJykA\
-gpXKSSSKleSSSSCVJJJJKUUydJJSkkkklLFIJ4lMkpdJIJIqUkkkUkLJ0ydBK6ZJI+aKFDxTlLs\
-mSUkp/nW/FX1Qp/nW/FX1r/AAv+bn/f/YwZtx5KSSSWixKSSSSUsnSSSUpJJJJSkkkklKSSSSUp\
-JJJJSkkkklKSSSSUpU+qQcJ08bq5/wA9quKn1Uxgv/rV/wDnxqZkNY5n+qfyTH5h5hCkmSXMttS"
-
-"SXkkipR4SS5EJIJUkkkihXdJJIIJUkl2SRUpJJJBSpSSSSUpLzTJ0lKhMnTJKXSSKSKlk6ZOAgp\
-SRSSKKF0yRPZJAqSU/zrfir6z6f5xvxWgtf4X/ADc/7/7GDNuPJSSSS0mJSSSSSlJJJJKUkkkkp\
-SSSSSlJJJJKUkmTpKUkkkkpSSSSSlKn1QTg2DzZ/wBW1XFT6q7bhPP8qv8AGxqbk+SX90pj8w80\
-J8UkjymXMNtSSSSKlJFJJBSkkkkVKSSlJJKkkkklKSSSSUryShN3ToKV2TJJ4SUpNynTcJKX7Jk"
-
-"6SKllIJgnSCCtKZOkglSSZOOUrUzp/nW/FaCz6f51vxWgtf4X/Nz/ALwa+bceSkkklpMSkkkklK\
-SSSSUsnSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKVLqwnAs+LD9z2lXVU6n/QrPiz/AKtqZk+SX\
-90pj8w8wgOpKZOkuZbaySSSKlJJJJKV8EkkklKSSSSStwl/BOkkpSQSKSSld0ikkUuilJk4S7oK\
-UEycpklLpk6ZEqXCSQSSQpJJJBKx4SCSceKSmVX863wkLRWfT/ON+IWgtf4X8mT+8Gvm3HkpJJJ"
-
-"aTEpJJJJSkkkklKSSSSUpJJJJSkkkklKSSSSUpJJJJSkkkklKVPqv9Bf/AFq//PjVcVTqn9Dd/W\
-Z/1bUzJ/Nz/un8l0fmHmEB0lJLul4LmW0pMUkkVK7Jk6SSVcpJJJBCu6SSSCVBJJLsihSSSRSUp\
-JJJJS6ZJJJSkku6UIKUkkkipSRSSKSlJBJJLqpSQSSGiCWdP8434rQVCn+cb8VfWv8AC/kyf3g1\
-8248lJJJLSYlJJJJKUkkkkpSSSSSlJJJJKUkkmSUukmTpKUkkkkpSSSSSlKp1QxhPPg6ufh6jZV"
-
-"tCyavXx7Kv32kD49k2YuMh3BCYmiD2LSSUa3b2Bx0PDh4HupQuZIINHcNtZJOl2QUpMnASRUsEk\
-kkgpRS7pJ0lLJJ4TJKV2SSSQKlFJJLskpSSXknRUskkE6Sld1FOlCSlJJd0/dJSySRlJJSil2S7\
-p+2iCmdOtrfir6p4rSX7uzVcW18MiRilL96Wn0a+U+ryCkkklfY1JJJJKUkkkkpZOkkkpSSSSSl\
-JJJJKUkkkkpSSSSSlJJJJKUkkkkppZOM5rjbUJDtXsHj+8EEEH5crSUXVVv+k0E+Ko8zyEcsjOB"
-
-"4JHfsWWOWhR1aCSufZqvA/el9mq8/vVT/AEZm7w+0/wAF/ux8Wmkrn2arwP3pfZqvA/el/ozN+9\
-D7T/BXux8Wmkrn2arwP3pfZavA/eh/ozN+9D7T/BXux8WmkrYxax4p/stXn96X+jM/eH2n+Cvdj\
-4tNLurn2Wrz+9L7LV5/el/o3P3h9p/gr3Y+LTShXPstXn96b7LV5/el/ozP3h9v9ivdj4tSEoVv\
-7JV5/el9lr8/vS/0bn7w+3+xXux8Wokrf2WrzS+y1+aX+jc/eH2/2K92Pi1Elc+y1+aX2Wvz+9L"
-
-"/AEbn7w+3+xXux8Wmkrf2Wrz+9P8AZa/P70v9G5+8Pt/sV7sfFppamfBXPstXn96b7LVM6/el/o\
-3P3h9pV7sfFqJK39lr8Sl9lq8/vS/0bn7w+3+xXux8WopMY5xAaJVsY1Q7T8UQNDRAEBSY/hk7/\
-WSiB/V1KDmHQMa6xW2B8yppJLUhGMIiMRQiKDATepUkkknKUkkkkpSSSSSlJJJJKUkkkkpSSSSS\
-lJJJJKUkkkkpSSSSSlk6SSSlk6SSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkp"
-
-"SSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKUkkkkpSSSSSlJJJJKf/Z";
-
-    MyQVersitFileSaver fileSaver;
-    mImporter->setFileSaver(&fileSaver);
-    QStringList nameValues(QString::fromAscii("John")); // First name
-    nameValues.append(QString::fromAscii("Citizen")); // Last name
-    QString name = nameValues.join(QString::fromAscii(";"));
-    QVersitDocument document =
-        createDocumentWithNameAndPhoto(
-            name,img,QString::fromAscii("JPEG"),
-            QString::fromAscii("BASE64"));
-    QList<QVersitDocument> documentList;
-    documentList.append(document);
-    QContact contact = mImporter->importContacts(documentList).first();
-    QContactAvatar avatar =
-        static_cast<QContactAvatar>(contact.detail(QContactAvatar::DefinitionName));
-    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
-    QByteArray content = fileSaver.mObjects.value(avatar.avatar());
-    QCOMPARE(content, img);
-}
-
-void UT_QVersitContactImporter::testAvatarGifStored()
+void UT_QVersitContactImporter::testAvatarStored()
 {
     MyQVersitFileSaver fileSaver;
     mImporter->setFileSaver(&fileSaver);
-    QByteArray img =
-"R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
-"wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw==";
+    QByteArray img(SAMPLE_GIF);
     QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
     QString name = nameValues.join(QString::fromAscii(";"));
-    QVersitDocument document =
-        createDocumentWithNameAndPhoto(
-            name,img,QString::fromAscii("GIF"),
-            QString::fromAscii("B"));
+    QVersitDocument document = createDocumentWithNameAndPhoto(name, img, QLatin1String("GIF"));
     QList<QVersitDocument> documentList;
     documentList.append(document);
     QContact contact = mImporter->importContacts(documentList).first();
     QContactDetail detail = contact.detail(QContactAvatar::DefinitionName);
     QVERIFY(!detail.isEmpty());
-    // Take out the random part from the original file name
     QContactAvatar avatar = static_cast<QContactAvatar>(detail);
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
     QByteArray content = fileSaver.mObjects.value(avatar.avatar());
@@ -955,34 +794,6 @@ void UT_QVersitContactImporter::testAvatarUrl()
         static_cast<QContactAvatar>(contact.detail(QContactAvatar::DefinitionName));
     QCOMPARE(avatar.avatar(), QString::fromAscii("file:///jgpublic."));
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
-}
-
-void UT_QVersitContactImporter::testAvatarEncoding()
-{
-    // Tests only quoted-printable encoding.
-    // Assumes that this is the only other encoding supported in PHOTO.
-    // In versit property the image is already decoded by the reader.
-    MyQVersitFileSaver fileSaver;
-    mImporter->setFileSaver(&fileSaver);
-    QByteArray img =
-"R0lGODlhEgASAIAAAAA"
-"AAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
-"wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw==";
-    QStringList nameValues(QString::fromAscii("John")); // First name
-    nameValues.append(QString::fromAscii("Citizen")); // Last name
-    QString name = nameValues.join(QString::fromAscii(";"));
-    QList<QVersitDocument> documents;
-    documents.append(createDocumentWithNameAndPhoto(
-            name,img,QString::fromAscii("GIF"),
-            QString::fromAscii("8BIT")));
-
-    QContact contact = mImporter->importContacts(documents).first();
-
-    QContactDetail detail = contact.detail(QContactAvatar::DefinitionName);
-    QVERIFY(!detail.isEmpty());
-    QContactAvatar avatar = static_cast<QContactAvatar>(detail);
-    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
-    QVERIFY(fileSaver.mObjects.value(avatar.avatar()) == img);
 }
 
 void UT_QVersitContactImporter::testGeo()
@@ -1213,21 +1024,21 @@ void UT_QVersitContactImporter::testSound()
     nameProperty.setValue(QString::fromAscii("Citizen;John;;;"));
     document.addProperty(nameProperty);
     nameProperty = QVersitProperty();
+    QVersitProperty soundProperty;
     QMultiHash<QString,QString> param;
     param.insert(QString::fromAscii("TYPE"),QString::fromAscii("WAVE"));
-    param.insert(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
-    nameProperty.setName(QString::fromAscii("SOUND"));
+    soundProperty.setName(QString::fromAscii("SOUND"));
     QByteArray val("111110000011111");
-    nameProperty.setValue(QString::fromAscii(val.toBase64()));
-    nameProperty.setParameters(param);
-    document.addProperty(nameProperty);
+    soundProperty.setValue(val);
+    soundProperty.setParameters(param);
+    document.addProperty(soundProperty);
     QList<QVersitDocument> documents;
     documents.append(document);
     QContact contact = mImporter->importContacts(documents).first();
     QContactAvatar avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
     QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
     QByteArray content = fileSaver.mObjects.value(avatar.avatar());
-    QCOMPARE(content,val);
+    QCOMPARE(content, val);
 }
 
 void UT_QVersitContactImporter::testUnknownVersitProperties()
@@ -1293,8 +1104,7 @@ QVersitDocument UT_QVersitContactImporter::createDocumentWithProperty(
 QVersitDocument UT_QVersitContactImporter::createDocumentWithNameAndPhoto(
     const QString& name,
     QByteArray image,
-    const QString& imageType,
-    const QString& encoding)
+    const QString& imageType)
 {
     QVersitDocument document;
 
@@ -1305,17 +1115,9 @@ QVersitDocument UT_QVersitContactImporter::createDocumentWithNameAndPhoto(
 
     QVersitProperty property;
     property.setName(QString::fromAscii("PHOTO"));
-    if (encoding == QString::fromAscii("BASE64") ||
-        encoding == QString::fromAscii("B")){
-        property.setValue(QString::fromAscii(image.toBase64()));
-    } else {
-        property.setValue(QString::fromAscii(image));
-    }
+    property.setValue(image);
     if (imageType != QString()) {
         property.addParameter(QString::fromAscii("TYPE"), imageType);
-    }
-    if (encoding != QString()) {
-        property.addParameter(QString::fromAscii("ENCODING"), encoding);
     }
     document.addProperty(property);
 

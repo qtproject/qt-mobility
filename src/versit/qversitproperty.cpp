@@ -44,6 +44,7 @@
 #include "qmobilityglobal.h"
 
 #include <QStringList>
+#include <QTextCodec>
 
 QTM_USE_NAMESPACE
 
@@ -212,7 +213,18 @@ QVariant QVersitProperty::value() const
  */
 QString QVersitProperty::valueString() const
 {
-    return d->mValue.toString();
+    if (d->mValue.type() == QVariant::ByteArray) {
+        if (d->mParameters.contains(QLatin1String("CHARSET"))) {
+            QTextCodec* codec = QTextCodec::codecForName(
+                    d->mParameters.value(QLatin1String("CHARSET")).toAscii());
+            if (codec != NULL) {
+                return codec->toUnicode(d->mValue.toByteArray());
+            }
+        }
+        return QString();
+    } else {
+        return d->mValue.toString();
+    }
 }
 
 /*!

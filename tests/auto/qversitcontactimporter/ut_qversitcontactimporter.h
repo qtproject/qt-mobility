@@ -80,10 +80,8 @@ private slots: // Tests
     void testBirthday();
     void testGender();
     void testNickname();
-    void testAvatarJpegStored();
-    void testAvatarGifStored();
+    void testAvatarStored();
     void testAvatarUrl();
-    void testAvatarEncoding();
     void testGeo();
     void testNote();
     void testOnlineAccount();
@@ -99,8 +97,7 @@ private: // Utilities
     QVersitDocument createDocumentWithNameAndPhoto(
         const QString& name,
         QByteArray image,
-        const QString& photoType,
-        const QString& encoding);
+        const QString& photoType);
 
 private:
     QVersitContactImporter* mImporter;

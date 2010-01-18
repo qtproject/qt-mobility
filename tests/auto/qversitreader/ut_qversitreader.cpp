@@ -45,6 +45,10 @@
 #include "versitutils_p.h"
 #include <QtTest/QtTest>
 
+
+// This says "NOKIA" in Katakana
+const QByteArray KATAKANA_NOKIA("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2");
+
 QTM_USE_NAMESPACE
 
 void UT_QVersitReader::init()
@@ -263,7 +267,14 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QByteArray vCard("Begin:vcard\r\n");
     vCard.append("VERSION:2.1\r\n");
     vCard.append("FN:John\r\n");
-    vCard.append("ORG;CHARSET=UTF-8:\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86\r\n");
+    vCard.append("ORG;CHARSET=UTF-8:");
+    vCard.append(KATAKANA_NOKIA);
+    vCard.append("\r\n");
+    // "NOKIA" in Katakana, UTF-8 encoded, then base-64 encoded:
+    vCard.append("NOTE;ENCODING=BASE64;CHARSET=UTF-8:");
+    vCard.append(KATAKANA_NOKIA.toBase64());
+    vCard.append("\r\n");
+    // The value here is "UXQgaXMgZ3JlYXQh", which is the base64 encoding of "Qt is great!".
     vCard.append("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
     vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n");
     vCard.append("EMAIL;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-16BE:");
@@ -290,13 +301,19 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("ORG"));
-    QCOMPARE(property.valueString(),QString::fromUtf8("\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86"));
+    QCOMPARE(property.valueString(),QString::fromUtf8(KATAKANA_NOKIA));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, cursor);
+    QCOMPARE(property.name(),QString::fromAscii("NOTE"));
+    QCOMPARE(property.valueString(),QString::fromUtf8(KATAKANA_NOKIA));
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
-    QCOMPARE(1,property.parameters().count());
-    // Linear whitespaces (SPACEs and TABs) removed from the value:
-    QCOMPARE(property.valueString(),QString::fromAscii("UXQgaXMgZ3JlYXQh"));
+    // Linear whitespaces (SPACEs and TABs) removed from the value and base64 decoded:
+    QCOMPARE(property.value().type(), QVariant::ByteArray);
+    QCOMPARE(property.value().toByteArray(), QByteArray("Qt is great!"));
+    // Ensure that base-64 encoded strings can be retrieved as strings.
+    QCOMPARE(property.valueString(), QLatin1String("Qt is great!"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QStringList propertyGroup(QString::fromAscii("HOME"));
@@ -308,6 +325,8 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
+    // The base64 parameter should be stripped by the reader.
+    QCOMPARE(property.parameters().count(), 0);
     QCOMPARE(property.valueString(),QString::fromAscii("john.citizen@example.com"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
@@ -343,8 +362,15 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     QByteArray vCard("Begin:vcard\r\n");
     vCard.append("VERSION:3.0\r\n");
     vCard.append("FN:John\r\n");
-    vCard.append("ORG;CHARSET=UTF-8:\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86\r\n");
+    vCard.append("ORG;CHARSET=UTF-8:");
+    vCard.append(KATAKANA_NOKIA);
+    vCard.append("\r\n");
+    // "NOKIA" in Katakana, UTF-8 encoded, then base-64 encoded:
+    vCard.append("NOTE;ENCODING=BASE64;CHARSET=UTF-8:");
+    vCard.append(KATAKANA_NOKIA.toBase64());
+    vCard.append("\r\n");
     vCard.append("TEL;TYPE=PREF;HOME:123\r\n");
+    // The value here is "UXQgaXMgZ3JlYXQh", which is the base64 encoding of "Qt is great!".
     vCard.append("PHOTO;ENCODING=B:UXQgaXMgZ3JlYXQh\r\n");
     vCard.append("EMAIL:john.citizen@example.com\r\n");
     vCard.append("AGENT:BEGIN:VCARD\\nFN:Jenny\\nEND:VCARD\\n\r\n");
@@ -366,7 +392,11 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("ORG"));
-    QCOMPARE(property.valueString(),QString::fromUtf8("\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86"));
+    QCOMPARE(property.valueString(),QString::fromUtf8(KATAKANA_NOKIA));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, cursor);
+    QCOMPARE(property.name(),QString::fromAscii("NOTE"));
+    QCOMPARE(property.valueString(),QString::fromUtf8(KATAKANA_NOKIA));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("TEL"));
@@ -375,8 +405,10 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
-    QCOMPARE(1,property.parameters().count());
-    QCOMPARE(property.valueString(),QString::fromAscii("UXQgaXMgZ3JlYXQh"));
+    QCOMPARE(property.value().type(), QVariant::ByteArray);
+    QCOMPARE(property.value().toByteArray(), QByteArray("Qt is great!"));
+    // Ensure that base-64 encoded strings can be retrieved as strings.
+    QCOMPARE(property.valueString(), QLatin1String("Qt is great!"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
@@ -386,7 +418,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
     QVERIFY(property.value().canConvert<QVersitDocument>());
-    QCOMPARE(property.value().value<QVersitDocument>().properties().count(),1);
+    QCOMPARE(property.value().value<QVersitDocument>().properties().count(), 1);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));

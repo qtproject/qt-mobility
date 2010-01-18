@@ -63,8 +63,9 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 {
     QByteArray encodedProperty(encodeGroupsAndName(property));
 
-    const QString encoding(QString::fromAscii("ENCODING"));
-    const QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
+    const QString encoding(QLatin1String("ENCODING"));
+    const QString quotedPrintable(QLatin1String("QUOTED-PRINTABLE"));
+    const QString base64(QLatin1String("BASE64"));
     QMultiHash<QString,QString> parameters = property.parameters();
     QVariant variant = property.value();
 
@@ -80,7 +81,7 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
              parameters.insert(encoding, quotedPrintable);
         }
     } else if (variant.type() == QVariant::ByteArray) {
-        parameters.insert("ENCODING", "BASE64");
+        parameters.insert(encoding, base64);
         renderedValue = variant.toByteArray().toBase64();
     }
 

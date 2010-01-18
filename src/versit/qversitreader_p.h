@@ -109,7 +109,7 @@ public: // New functions
         const QVersitProperty& property) const;
 
     void unencode(
-        QString& value,
+        QVariant& value,
         VersitCursor& cursor,
         QVersitProperty& property,
         QTextCodec* codec) const;

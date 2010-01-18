@@ -562,23 +562,18 @@ QDateTime QVersitContactImporterPrivate::parseDateTime(
 }
 
 /*!
- * Save the value of the \a property to a file with name \a pathAndName.
+ * Save the value of the \a property to a file and returns the file name.
+ * The property value must be a QByteArray, and this is written directly to the file.
  */
 QString QVersitContactImporterPrivate::saveContentToFile(
     const QVersitProperty& property) const
 {
-    QString encoding =
-        property.parameters().value(QString::fromAscii("ENCODING"));
-    QByteArray content = property.valueString().toAscii();
-
-    if (encoding == QString::fromAscii("BASE64") ||
-        encoding == QString::fromAscii("B"))
-        content = QByteArray::fromBase64(content);
-
+    QVariant variant = property.value();
     QString filename;
     bool ok = false;
-    if (mFileSaver)
-        ok = mFileSaver->saveFile(content, property, &filename);
+    if (variant.type() == QVariant::ByteArray && mFileSaver) {
+        ok = mFileSaver->saveFile(variant.toByteArray(), property, &filename);
+    }
     return ok ? filename : QString();
 }
 
