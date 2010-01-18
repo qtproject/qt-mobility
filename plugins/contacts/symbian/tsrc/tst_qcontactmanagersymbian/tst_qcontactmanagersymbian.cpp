@@ -106,6 +106,7 @@ void tst_QContactManagerSymbian::init()
 
 void tst_QContactManagerSymbian::cleanup()
 {
+    // Commented out => leave generated contacts into database
     //QVERIFY(m_cm->removeContact(m_contactId.localId()));
 }
 
@@ -146,6 +147,7 @@ void tst_QContactManagerSymbian::avatarSubTypes()
     QCOMPARE(testContact.details(QContactAvatar::DefinitionName).count(), 1);
     QContactAvatar retrievedAvatar = testContact.detail(QContactAvatar::DefinitionName);
     QVERIFY(!retrievedAvatar.isEmpty());
+    QCOMPARE(retrievedAvatar.avatar(), fileName);
     if(subType.isEmpty()) {
         // Known issue: If the sub type of a QContactAvatar is left empty, sub type
         // image is used by default. A side effect is that after loading this kind

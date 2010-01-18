@@ -45,6 +45,9 @@
 // S60 specific contact field type containing image call object data
 #define KUidContactFieldCodImageValue 0x101F8841
 const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
+// Extra field that is defined in TB10.1 platform for video ring tone
+#define KUidContactFieldVideoRingToneValue  0x200100E5
+const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
 // The max. size of the thumbnail image that is saved into contacts database
 const TSize KMaxThumbnailSize(80, 96);
 
@@ -76,6 +79,7 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 	if(filename.Length()) {
         const QString& subTypeImage(QContactAvatar::SubTypeImage);
         const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
+	    const QString& subTypeVideoRingtone(QContactAvatar::SubTypeVideoRingtone);
 
         QString subType = avatar.subType();
         TUid uid(KNullUid);
@@ -84,6 +88,8 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
             uid = KUidContactFieldCodImage;
 	    } else if (subType.compare(subTypeAudioRingtone) == 0) {
 	        uid = KUidContactFieldRingTone;
+	    } else if (subType.compare(subTypeVideoRingtone) == 0) {
+	        uid = KUidContactFieldVideoRingTone;
 	    } else {
 	        User::LeaveIfError(KErrNotSupported);
 	    }
@@ -149,6 +155,12 @@ QContactDetail *CntTransformAvatarSimple::transformItemField(const CContactItemF
             User::Leave(KErrInvalidContactDetail);
         }
 	}
+    else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
+        CContactTextField* storage = field.TextStorage();
+        QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+        avatar->setAvatar(avatarString);
+        avatar->setSubType(QContactAvatar::SubTypeVideoRingtone);
+    }
 
 	return avatar;
 }
@@ -158,6 +170,7 @@ bool CntTransformAvatarSimple::supportsField(TUint32 fieldType) const
     bool ret = false;
     if (fieldType == KUidContactFieldCodImage.iUid
         || fieldType == KUidContactFieldRingTone.iUid
+        || fieldType == KUidContactFieldVideoRingTone.iUid
         || fieldType == KUidContactFieldPicture.iUid
         // Used as "extra mapping/extra field type" by thumbnail data fields
         || fieldType == KUidContactFieldVCardMapJPEG.iUid) {
@@ -241,7 +254,8 @@ void CntTransformAvatarSimple::detailDefinitions(QMap<QString, QContactDetailDef
         f.setDataType(QVariant::String); // only allowed to be a single subtype
         f.setAllowableValues(QVariantList()
                 << QString(QLatin1String(QContactAvatar::SubTypeImage))
-                << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
+                << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone))
+                << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone)));
         fields.insert(QContactAvatar::FieldSubType, f);
 
         // Context not supported in symbian back-end, remove
