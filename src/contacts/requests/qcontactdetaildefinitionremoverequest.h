@@ -61,10 +61,12 @@ public:
     /* Selection */
     void Q_DECL_DEPRECATED setNames(const QStringList& names);  // deprecated
     QStringList Q_DECL_DEPRECATED names() const;                // deprecated
-    void setDefinitionNames(const QStringList& names); // replaces ^^
+    void setDefinitionNames(const QString& contactType, const QStringList& names);
     QStringList definitionNames() const;               // replaces ^^
-    void setContactType(const QString& contactType);
     QString contactType() const;
+
+    /* Results */
+    QMap<int, QContactManager::Error> errorMap() const;
 
 signals:
     void progress(QContactDetailDefinitionRemoveRequest* self);

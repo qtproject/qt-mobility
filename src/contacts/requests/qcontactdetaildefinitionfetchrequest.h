@@ -70,9 +70,11 @@ public:
 
     /* Results */
     QMap<QString, QContactDetailDefinition> definitions() const;
+    QMap<int, QContactManager::Error> errorMap() const;
 
 signals:
-    void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly);
+    void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly); // DEPRECATED (remove bool appendOnly in week 3)
+    void progress(QContactDetailDefinitionFetchRequest* self);
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionFetchRequest)

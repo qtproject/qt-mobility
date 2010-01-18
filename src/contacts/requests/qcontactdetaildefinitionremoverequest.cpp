@@ -94,10 +94,15 @@ QStringList Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::names() con
 }
 
 
-/*! Sets the names of the detail definitions to remove from the manager to be \a names */
-void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
+/*!
+ * Sets the type of contact for which detail definitions should be removed to \a contactType, and the names of the detail definitions to remove from the manager to \a names.
+ * Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
+ * definitions exist for contacts of the given contact type, or if \a contactType is empty.
+ */
+void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QString& contactType, const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
+    d->m_contactType = contactType;
     d->m_names = names;
 }
 
@@ -108,18 +113,18 @@ QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
     return d->m_names;
 }
 
-/*! Sets the type of contact for which detail definitions should be removed to \a contactType */
-void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
-{
-    Q_D(QContactDetailDefinitionRemoveRequest);
-    d->m_contactType = contactType;
-}
-
 /*! Returns the type of contact for which detail definitions will be removed */
 QString QContactDetailDefinitionRemoveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
     return d->m_contactType;
+}
+
+/*! Returns the map of input name list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactDetailDefinitionRemoveRequest::errorMap() const
+{
+    Q_D(const QContactDetailDefinitionRemoveRequest);
+    return d->m_errors;
 }
 
 #include "moc_qcontactdetaildefinitionremoverequest.cpp"

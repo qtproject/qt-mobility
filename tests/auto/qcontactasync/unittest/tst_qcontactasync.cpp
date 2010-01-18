@@ -897,8 +897,6 @@ void tst_QContactAsync::definitionRemove()
     }
     QContactDetailDefinitionRemoveRequest drr;
     QVERIFY(drr.type() == QContactAbstractRequest::DetailDefinitionRemoveRequest);
-    drr.setContactType(QContactType::TypeContact);
-    QVERIFY(drr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
 
     // initial state - not started, no manager.
     QVERIFY(drr.state() != QContactAbstractRequest::ActiveState);
@@ -912,7 +910,7 @@ void tst_QContactAsync::definitionRemove()
     int originalCount = cm->detailDefinitions().keys().size();
     QStringList removeIds;
     removeIds << cm->detailDefinitions().keys().first();
-    drr.setDefinitionNames(removeIds);
+    drr.setDefinitionNames(QContactType::TypeContact, removeIds);
     drr.setManager(cm);
     QCOMPARE(drr.manager(), cm);
     QVERIFY(drr.state() != QContactAbstractRequest::ActiveState);
@@ -923,6 +921,7 @@ void tst_QContactAsync::definitionRemove()
     qRegisterMetaType<QContactDetailDefinitionRemoveRequest*>("QContactDetailDefinitionRemoveRequest*");
     QSignalSpy spy(&drr, SIGNAL(progress(QContactDetailDefinitionRemoveRequest*)));
     QVERIFY(drr.definitionNames() == removeIds);
+    QVERIFY(drr.contactType() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
@@ -939,7 +938,7 @@ void tst_QContactAsync::definitionRemove()
     QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent group - should fail.
-    drr.setDefinitionNames(removeIds);
+    drr.setDefinitionNames(QContactType::TypeContact, removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
@@ -956,7 +955,7 @@ void tst_QContactAsync::definitionRemove()
 
     // remove with list containing one valid and one invalid id.
     removeIds << cm->detailDefinitions().keys().first();
-    drr.setDefinitionNames(removeIds);
+    drr.setDefinitionNames(QContactType::TypeContact, removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
@@ -974,7 +973,7 @@ void tst_QContactAsync::definitionRemove()
 
     // remove with empty list - nothing should happen.
     removeIds.clear();
-    drr.setDefinitionNames(removeIds);
+    drr.setDefinitionNames(QContactType::TypeContact, removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
@@ -992,7 +991,7 @@ void tst_QContactAsync::definitionRemove()
     // cancelling
     removeIds.clear();
     removeIds << cm->detailDefinitions().keys().first();
-    drr.setDefinitionNames(removeIds);
+    drr.setDefinitionNames(QContactType::TypeContact, removeIds);
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
     QVERIFY(drr.state() == QContactAbstractRequest::ActiveState);
@@ -1883,7 +1882,7 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(dsr.cancel());
 
     QContactDetailDefinitionRemoveRequest drr;
-    drr.setDefinitionNames(emptyDNList);
+    drr.setDefinitionNames(QContactType::TypeContact, emptyDNList);
     drr.setManager(&mcm);
     QVERIFY(drr.start());
     QVERIFY(drr.cancel());

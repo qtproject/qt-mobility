@@ -144,10 +144,14 @@ QContactManager::Error QContactAbstractRequest::error() const
     return d_ptr->m_error;
 }
 
-/*! Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list. */
+/*!
+ * \deprecated
+ * Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
+ */
 QList<QContactManager::Error> QContactAbstractRequest::errors() const
 {
-    return d_ptr->m_errors;
+    qWarning("QContactAbstractRequest::errors() This function is deprecated and will be removed in week 3!");
+    return QList<QContactManager::Error>();
 }
 
 /*!

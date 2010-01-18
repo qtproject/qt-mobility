@@ -64,6 +64,7 @@ public:
 
     /* Results */
     QList<QContact> contacts() const;
+    QMap<int, QContactManager::Error> errorMap() const;
 
 signals:
     void progress(QContactSaveRequest* self);
