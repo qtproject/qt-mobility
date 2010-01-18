@@ -81,7 +81,8 @@ void tst_QSystemReadWriteLock_oop::readLockBlockRelease()
 
     QLocalServer server;
     QString connectionName = "readLockBlockRelease";
-    server.listen(connectionName);
+    QVERIFY(QLocalServer::removeServer(connectionName));
+    QVERIFY(server.listen(connectionName));
 
     QProcess reader;
     reader.setReadChannel(QProcess::StandardError);
@@ -123,7 +124,8 @@ void tst_QSystemReadWriteLock_oop::writeLockBlockRelease()
 
     QLocalServer server;
     QString connectionName = "writeLockBlockRelease";
-    server.listen(connectionName);
+    QVERIFY(QLocalServer::removeServer(connectionName));
+    QVERIFY(server.listen(connectionName));
 
     QProcess writer;
     writer.setReadChannel(QProcess::StandardError);
@@ -171,7 +173,8 @@ void tst_QSystemReadWriteLock_oop::multipleReadersBlockRelease()
 
     for( int i=0; i < numReaders; ++i) {
         QString readerConnectionName = connectionName.append("_reader_").append(QString::number(i));
-        readerServers[i].listen(readerConnectionName);
+        QVERIFY(QLocalServer::removeServer(readerConnectionName));
+        QVERIFY(readerServers[i].listen(readerConnectionName));
         args.push_front(readerConnectionName);
 
         readers[i].setReadChannel(QProcess::StandardError);
@@ -189,7 +192,8 @@ void tst_QSystemReadWriteLock_oop::multipleReadersBlockRelease()
 
     QLocalServer server;
     QString writerConnectionName = connectionName.append("_writer");
-    server.listen(writerConnectionName);
+    QVERIFY(QLocalServer::removeServer(writerConnectionName));
+    QVERIFY(server.listen(writerConnectionName));
 
     QProcess writer;
     writer.setReadChannel(QProcess::StandardError);
@@ -381,7 +385,8 @@ void tst_QSystemReadWriteLock_oop::writerPrecedence()
     args << "ReadLock";
     for (int i = 0; i < numReaders; ++i) {
         QString readerConnectionName = connectionName.append("_reader_").append(QString::number(i));
-        readerServers[i].listen(readerConnectionName);
+        QVERIFY(QLocalServer::removeServer(readerConnectionName));
+        QVERIFY(readerServers[i].listen(readerConnectionName));
         args.push_front(readerConnectionName);
 
         readers[i].setReadChannel(QProcess::StandardError);
@@ -399,7 +404,8 @@ void tst_QSystemReadWriteLock_oop::writerPrecedence()
 
     QLocalServer server;
     QString writerConnectionName = connectionName.append("_writer");
-    server.listen(writerConnectionName);
+    QVERIFY(QLocalServer::removeServer(writerConnectionName));
+    QVERIFY(server.listen(writerConnectionName));
 
     QProcess writer;
     writer.setReadChannel(QProcess::StandardError);
