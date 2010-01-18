@@ -104,7 +104,7 @@ bool QVersitDocument::operator!=(const QVersitDocument& other)
 /*!
  * Sets the versit document type to \a type.
  */
-void QVersitDocument::setVersitType(VersitType type)
+void QVersitDocument::setType(VersitType type)
 {
     d->mVersitType = type;
 }
@@ -112,7 +112,7 @@ void QVersitDocument::setVersitType(VersitType type)
 /*!
  * Gets the versit document type.
  */
-QVersitDocument::VersitType QVersitDocument::versitType() const
+QVersitDocument::VersitType QVersitDocument::type() const
 {
     return d->mVersitType;
 }

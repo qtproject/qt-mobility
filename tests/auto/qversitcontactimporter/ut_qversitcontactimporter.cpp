@@ -90,18 +90,19 @@ public:
     QList<QVersitProperty> mProcessedProperties;
 };
 
-class MyQVersitFileSaver : public QVersitFileSaver
+class MyQVersitResourceSaver : public QVersitResourceSaver
 {
 public:
-    MyQVersitFileSaver() : mIndex(0)
+    MyQVersitResourceSaver() : mIndex(0)
     {
     }
 
-    bool saveFile(const QByteArray& contents, const QVersitProperty& property, QString* filename)
+    bool saveResource(const QByteArray& contents, const QVersitProperty& property,
+                      QString* location)
     {
         Q_UNUSED(property);
-        *filename = QString::number(mIndex++);
-        mObjects.insert(*filename, contents);
+        *location = QString::number(mIndex++);
+        mObjects.insert(*location, contents);
         return true;
     }
 
@@ -435,8 +436,8 @@ void UT_QVersitContactImporter::testOrganizationLogo()
     QVersitDocument document;
     QVersitProperty property;
     QList<QVersitDocument> documentList;
-    MyQVersitFileSaver fileSaver;
-    mImporter->setFileSaver(&fileSaver);
+    MyQVersitResourceSaver resourceSaver;
+    mImporter->setResourceSaver(&resourceSaver);
 
     // Embedded LOGO
     property.setName(QString::fromAscii("LOGO"));
@@ -451,7 +452,7 @@ void UT_QVersitContactImporter::testOrganizationLogo()
     contact = mImporter->importContacts(documentList).first();
     QContactOrganization organization =
         static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QByteArray content = fileSaver.mObjects.value(organization.logo());
+    QByteArray content = resourceSaver.mObjects.value(organization.logo());
     QCOMPARE(content, logo);
 
     // LOGO as a URL
@@ -760,8 +761,8 @@ void UT_QVersitContactImporter::testNickname()
 
 void UT_QVersitContactImporter::testAvatarStored()
 {
-    MyQVersitFileSaver fileSaver;
-    mImporter->setFileSaver(&fileSaver);
+    MyQVersitResourceSaver resourceSaver;
+    mImporter->setResourceSaver(&resourceSaver);
     QByteArray img(SAMPLE_GIF);
     QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
@@ -774,7 +775,7 @@ void UT_QVersitContactImporter::testAvatarStored()
     QVERIFY(!detail.isEmpty());
     QContactAvatar avatar = static_cast<QContactAvatar>(detail);
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
-    QByteArray content = fileSaver.mObjects.value(avatar.avatar());
+    QByteArray content = resourceSaver.mObjects.value(avatar.avatar());
     QCOMPARE(content,img);
 }
 void UT_QVersitContactImporter::testAvatarUrl()
@@ -1016,8 +1017,8 @@ void UT_QVersitContactImporter::testFamily()
 
 void UT_QVersitContactImporter::testSound()
 {
-    MyQVersitFileSaver fileSaver;
-    mImporter->setFileSaver(&fileSaver);
+    MyQVersitResourceSaver resourceSaver;
+    mImporter->setResourceSaver(&resourceSaver);
     QVersitDocument document;
     QVersitProperty nameProperty;
     nameProperty.setName(QString::fromAscii("N"));
@@ -1037,7 +1038,7 @@ void UT_QVersitContactImporter::testSound()
     QContact contact = mImporter->importContacts(documents).first();
     QContactAvatar avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
     QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
-    QByteArray content = fileSaver.mObjects.value(avatar.avatar());
+    QByteArray content = resourceSaver.mObjects.value(avatar.avatar());
     QCOMPARE(content, val);
 }
 

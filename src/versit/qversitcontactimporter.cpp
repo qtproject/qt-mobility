@@ -81,9 +81,9 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \class QVersitFileSaver
+ * \class QVersitResourceSaver
  *
- * \brief The QVersitFileSaver class is an interface for clients wishing to implement file
+ * \brief The QVersitResourceSaver class is an interface for clients wishing to implement file
  * saving to disk when importing.
  *
  * \ingroup versit
@@ -94,7 +94,7 @@ QTM_USE_NAMESPACE
  * Saves the binary data \a contents to a file on a persistent storage medium.
  *
  * \a property holds the QVersitProperty which is the context in which the binary is coming from.
- * The QVersitFileSaver can use this, for example, to determine file extension it should choose.
+ * The QVersitResourceSaver can use this, for example, to determine file extension it should choose.
  * \a *filename is filled with the contents of the file.
  * Returns true on success, false on failure.
  */
@@ -107,8 +107,8 @@ QTM_USE_NAMESPACE
  * \ingroup versit
  *
  * By associating a QVersitContactPropertyImporter with the importer using setPropertyImporter(), the
- * client can pass in a handler to override the processing of properties and/or handle properties that
- * QVersitContactImporter doesn't support.
+ * client can pass in a handler to override the processing of properties and/or handle properties
+ * that QVersitContactImporter doesn't support.
  *
  * \code
  *
@@ -124,6 +124,22 @@ QTM_USE_NAMESPACE
  *    QList<QVersitProperty> mUnknownProperties;
  * };
  *
+ * class MyResourceSaver : public QVersitResourceSaver {
+ * public:
+ *    bool saveResource(const QByteArray& contents, const QVersitProperty& property,
+ *                      QString* location) {
+ *        *location = QString::number(qrand());
+ *        QFile file(*location);
+ *        file.open(QIODevice::WriteOnly);
+ *        file.write(contents);
+ *    }
+ * }
+ *
+ * MyPropertyImporter propertyImporter;
+ * importer.setPropertyImporter(propertyImporter);
+ * MyResourceSaver resourceSaver;
+ * importer.setResourceSaver(resourceSaver);
+ *
  * QVersitDocument document;
  *
  * QVersitProperty property;
@@ -137,12 +153,6 @@ QTM_USE_NAMESPACE
  *
  * QList<QVersitDocument> list;
  * list.append(document);
- *
- * QVersitContactImporter importer;
- * importer.setImagePath(QString::fromAscii("/my/image/path"));
- * importer.setAudioClipPath(QString::fromAscii("my/audio_clip/path"));
- * MyPropertyImporter propertyImporter;
- * importer.setPropertyImporter(&propertyImporter);
  *
  * QList<QContact> contactList = importer.importContacts(list);
  * // contactList.first() now contains the "N" property as a QContactName
@@ -197,15 +207,15 @@ QVersitContactPropertyImporter* QVersitContactImporter::propertyImporter() const
 /*!
  * Sets \a saver to be the handler to save files with.
  */
-void QVersitContactImporter::setFileSaver(QVersitFileSaver* saver)
+void QVersitContactImporter::setResourceSaver(QVersitResourceSaver* saver)
 {
-    d->mFileSaver = saver;
+    d->mResourceSaver = saver;
 }
 
 /*!
  * Returns the file saver.
  */
-QVersitFileSaver* QVersitContactImporter::fileSaver() const
+QVersitResourceSaver* QVersitContactImporter::resourceSaver() const
 {
-    return d->mFileSaver;
+    return d->mResourceSaver;
 }

@@ -147,7 +147,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
 
     // TODO: Various readers should be made subclasses and eliminate assumptions like this.
     // We don't know what type it is: just assume it's a vCard 2.1
-    document.setVersitType(QVersitDocument::VCard21Type);
+    document.setType(QVersitDocument::VCard21Type);
 
     // Skip some leading space
     if (!foundBegin)
@@ -156,7 +156,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
     QVersitProperty property;
 
     if (!foundBegin) {
-        property = parseNextVersitProperty(document.versitType(), cursor);
+        property = parseNextVersitProperty(document.type(), cursor);
         if (property.name() == QLatin1String("BEGIN")
             && property.valueString().trimmed().toUpper() == QLatin1String("VCARD")) {
             foundBegin = true;
@@ -172,7 +172,7 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
     if (foundBegin) {
         do {
             /* Grab it */
-            property = parseNextVersitProperty(document.versitType(), cursor);
+            property = parseNextVersitProperty(document.type(), cursor);
 
             /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
             if (property.name() == QString::fromAscii("BEGIN") &&
@@ -254,7 +254,7 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
             // hack: add the charset parameter back in (even if there wasn't one to start with and
             // the default codec was used).  This will help later on if someone calls valueString()
             // on the property.
-            property.addParameter(QLatin1String("CHARSET"), codec->name());
+            property.addParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
         }
         property.setValue(valueVariant);
     }
@@ -284,7 +284,7 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
             // hack: add the charset parameter back in (even if there wasn't one to start with and
             // the default codec was used).  This will help later on if someone calls valueString()
             // on the property.
-            property.addParameter(QLatin1String("CHARSET"), codec->name());
+            property.addParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
         }
         property.setValue(valueVariant);
     }
@@ -319,9 +319,9 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
                 QString::fromAscii("ENCODING"),QString::fromAscii("BASE64")))
             value = QString::fromAscii(QByteArray::fromBase64(value.toAscii()));
         if (value == QString::fromAscii("2.1")) {
-            document.setVersitType(QVersitDocument::VCard21Type);
+            document.setType(QVersitDocument::VCard21Type);
         } else if (value == QString::fromAscii("3.0")) {
-            document.setVersitType(QVersitDocument::VCard30Type);
+            document.setType(QVersitDocument::VCard30Type);
         } else {
             valid = false;
         }

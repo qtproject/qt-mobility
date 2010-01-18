@@ -100,7 +100,7 @@ END:VCARD\r\n");
     property.setName(QString(QString::fromAscii("FN")));
     property.setValue(QString::fromAscii("John"));
     document.addProperty(property);
-    document.setVersitType(QVersitDocument::VCard21Type);
+    document.setType(QVersitDocument::VCard21Type);
     QList<QVersitDocument> list;
     list.append(document);
     mWriter->setInput(list);
@@ -117,7 +117,7 @@ END:VCARD\r\n");
 VERSION:3.0\r\n\
 FN:John\r\n\
 END:VCARD\r\n");
-    document.setVersitType(QVersitDocument::VCard30Type);
+    document.setType(QVersitDocument::VCard30Type);
     list.clear();
     list.append(document);
     mWriter->setInput(list);

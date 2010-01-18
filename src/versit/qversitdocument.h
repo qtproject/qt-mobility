@@ -73,10 +73,9 @@ public:
         VCard30Type    // vCard version 3.0 (RFC 2426)
     };
 
-    // XXX We use setVersitType but not addVersitProperty.. maybe just setType?
     // metadata about the versit document itself.
-    void setVersitType(VersitType type);
-    VersitType versitType() const;
+    void setType(VersitType type);
+    VersitType type() const;
 
     void addProperty(const QVersitProperty& property);
     void removeProperty(const QVersitProperty& property);

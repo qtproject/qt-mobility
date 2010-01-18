@@ -12,18 +12,19 @@
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
-class MyQVersitFileSaver : public QVersitFileSaver
+class MyQVersitResourceSaver : public QVersitResourceSaver
 {
 public:
-    MyQVersitFileSaver() : mIndex(0)
+    MyQVersitResourceSaver() : mIndex(0)
     {
     }
 
-    bool saveFile(const QByteArray& contents, const QVersitProperty& property, QString* filename)
+    bool saveResource(const QByteArray& contents, const QVersitProperty& property,
+                      QString* location)
     {
         Q_UNUSED(property);
-        *filename = QString::number(mIndex++);
-        mObjects.insert(*filename, contents);
+        *location = QString::number(mIndex++);
+        mObjects.insert(*location, contents);
         return true;
     }
 
@@ -56,8 +57,8 @@ void UT_QVersit::testImportFiles()
     QVERIFY(reader.readAll());
     QList<QVersitDocument> documents = reader.results();
     QVersitContactImporter importer;
-    MyQVersitFileSaver fileSaver;
-    importer.setFileSaver(&fileSaver);
+    MyQVersitResourceSaver resourceSaver;
+    importer.setResourceSaver(&resourceSaver);
     QList<QContact> contacts = importer.importContacts(documents);
 
     if (expectedContacts.size() > 0) {

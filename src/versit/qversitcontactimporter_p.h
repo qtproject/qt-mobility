@@ -142,7 +142,7 @@ private:
     
 public: // Data
     QVersitContactPropertyImporter* mPropertyImporter;
-    QVersitFileSaver* mFileSaver;
+    QVersitResourceSaver* mResourceSaver;
 
 private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;

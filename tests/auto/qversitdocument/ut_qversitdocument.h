@@ -61,7 +61,7 @@ private slots:
     void cleanup();
 
     void testConstructor();
-    void testVersitType();
+    void testType();
     void testAddProperty();
     void testRemoveProperty();
     void testRemoveAllProperties();

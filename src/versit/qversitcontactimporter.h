@@ -72,12 +72,12 @@ public:
     virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
 };
 
-class QVersitFileSaver // XXX this isn't really contacts specific
+class QVersitResourceSaver // XXX this isn't really contacts specific
 {
 public:
-    virtual ~QVersitFileSaver() {}
-    virtual bool saveFile(const QByteArray& contents, const QVersitProperty& property,
-                          QString* filename) = 0;
+    virtual ~QVersitResourceSaver() {}
+    virtual bool saveResource(const QByteArray& contents, const QVersitProperty& property,
+                              QString* location) = 0;
 };
 
 class Q_VERSIT_EXPORT QVersitContactImporter
@@ -93,8 +93,8 @@ public:
     void setPropertyImporter(QVersitContactPropertyImporter* importer);
     QVersitContactPropertyImporter* propertyImporter() const;
     
-    void setFileSaver(QVersitFileSaver* saver);
-    QVersitFileSaver* fileSaver() const;
+    void setResourceSaver(QVersitResourceSaver* saver);
+    QVersitResourceSaver* resourceSaver() const;
 
 private:
     QVersitContactImporterPrivate* d;

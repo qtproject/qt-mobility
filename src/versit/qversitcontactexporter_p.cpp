@@ -76,7 +76,7 @@ QTM_USE_NAMESPACE
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     mDetailExporter(NULL),
-    mFileLoader(NULL),
+    mResourceLoader(NULL),
     mVersitType(QVersitDocument::InvalidType)
 {
     // Detail mappings
@@ -131,7 +131,7 @@ void QVersitContactExporterPrivate::exportContact(
     const QContact& contact)
 {
     mUnknownContactDetails.clear();
-    mVersitType = versitDocument.versitType();
+    mVersitType = versitDocument.type();
     QList<QContactDetail> allDetails = contact.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
@@ -631,8 +631,8 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourc
                 QString::fromAscii("VALUE"),
                 QString::fromAscii("URL"));
             property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
-        } else if (mFileLoader
-                   && mFileLoader->loadFile(resourcePath, &imageData, &mimeType)) {
+        } else if (mResourceLoader
+                   && mResourceLoader->loadResource(resourcePath, &imageData, &mimeType)) {
             value.setValue(imageData);
             property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
             encodeContent = true;

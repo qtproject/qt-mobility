@@ -86,7 +86,7 @@ bool QVersitWriterPrivate::write()
         setState(QVersitWriter::ActiveState);
         foreach (QVersitDocument document, mInput) {
             QScopedPointer<QVersitDocumentWriter> writer(
-                    writerForType(document.versitType()));
+                    writerForType(document.type()));
             QByteArray output = writer->encodeVersitDocument(document);
             int c = mIoDevice->write(output);
             if (c <= 0) {

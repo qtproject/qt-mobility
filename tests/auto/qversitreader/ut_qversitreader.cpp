@@ -235,12 +235,12 @@ void UT_QVersitReader::testSetVersionFromProperty()
     property.setName(QString::fromAscii("VERSION"));
     property.setValue(QString::fromAscii("2.1"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.versitType() == QVersitDocument::VCard21Type);
+    QVERIFY(document.type() == QVersitDocument::VCard21Type);
     
     // VERSION property with 3.0
     property.setValue(QString::fromAscii("3.0"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.versitType() == QVersitDocument::VCard30Type);
+    QVERIFY(document.type() == QVersitDocument::VCard30Type);
 
     // VERSION property with a not supported value
     property.setValue(QString::fromAscii("4.0"));
@@ -250,7 +250,7 @@ void UT_QVersitReader::testSetVersionFromProperty()
     property.setValue(QString::fromAscii(QByteArray("2.1").toBase64()));
     property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.versitType() == QVersitDocument::VCard21Type);
+    QVERIFY(document.type() == QVersitDocument::VCard21Type);
     
     // VERSION property with BASE64 encoded not supported value
     property.setValue(QString::fromAscii(QByteArray("4.0").toBase64()));

@@ -65,13 +65,12 @@ public:
     virtual bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
 };
 
-// XXX resource loader perhaps (or resourceResolver etc)
-class QVersitFileLoader
+class QVersitResourceLoader
 {
 public:
-    virtual ~QVersitFileLoader() {}
+    virtual ~QVersitResourceLoader() {}
 
-    virtual bool loadFile(const QString& filename, QByteArray* contents, QString* mimeType) = 0;
+    virtual bool loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
 };
 
 class Q_VERSIT_EXPORT QVersitContactExporter
@@ -87,8 +86,8 @@ public:
     void setDetailExporter(QVersitContactDetailExporter* exporter);
     QVersitContactDetailExporter* detailExporter() const;
 
-    void setFileLoader(QVersitFileLoader* loader);
-    QVersitFileLoader* fileLoader() const;
+    void setResourceLoader(QVersitResourceLoader* loader);
+    QVersitResourceLoader* resourceLoader() const;
 
 private:
     QVersitContactExporterPrivate* d;    

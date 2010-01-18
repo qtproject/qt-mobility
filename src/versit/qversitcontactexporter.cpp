@@ -82,17 +82,17 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \class QVersitFileLoader
+ * \class QVersitResourceLoader
  *
- * \brief The QVersitFileLoader class is an interface for clients wishing to implement file
+ * \brief The QVersitResourceLoader class is an interface for clients wishing to implement file
  * loading from disk when exporting.
  *
  * \ingroup versit
  *
  * \sa QVersitContactExporter
  *
- * \fn virtual bool QVersitFileLoader::loadFile(const QString& filename, QByteArray* contents, QString* mimeType) = 0;
- * Loads a file from \a filename.
+ * \fn virtual bool QVersitResourceLoader::loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
+ * Loads a file from \a location.
  *
  * \a *contents is filled with the contents of the file and \a *mimeType is set to the MIME
  * type that it is determined to be.
@@ -107,9 +107,9 @@ QTM_USE_NAMESPACE
  * \ingroup versit
  *
  * The exporter does not by default support loading files from disk during an export, and a
- * QVersitFileLoader must be supplied with setFileLoader() to support this.  If an exported QContact
- * has some detail with a reference to a file stored on disk, the QVersitFileLoader associated with
- * the exporter is called to handle the load.
+ * QVersitResourceLoader must be supplied with setResourceLoader() to support this.  If an exported
+ * QContact has some detail with a reference to a file stored on disk, the QVersitResourceLoader
+ * associated with the exporter is called to handle the load.
  *
  * By associating a QVersitContactDetailExporter with the exporter using setDetailExporter(), the
  * client can pass in a handler to override the processing of details and/or handle details that
@@ -129,10 +129,10 @@ QTM_USE_NAMESPACE
  *     QList<QContactDetail> mUnknownDetails;
  * };
  *
- * class MyFileLoader : public QVersitFileLoader {
+ * class MyResourceLoader : public QVersitResourceLoader {
  * public:
- *     bool loadFile(const QString& filename, QByteArray* contents, QString* mimeType) {
- *         QFile file(filename);
+ *     bool loadResource(const QString& location, QByteArray* contents, QString* mimeType) {
+ *         QFile file(location);
  *         file.open(QIODevice::ReadOnly);
  *         if (file.isReadable()) {
  *             *contents = file.readAll();
@@ -148,8 +148,8 @@ QTM_USE_NAMESPACE
  *
  * MyDetailExporter detailExporter;
  * contactExporter.setDetailExporter(&detailExporter);
- * MyFileLoader fileLoader;
- * contactExporter.setFileLoader(&fileLoader);
+ * MyResourceLoader resourceLoader;
+ * contactExporter.setResourceLoader(&resourceLoader);
  *
  * QContact contact;
  * // Create a name
@@ -177,7 +177,7 @@ QTM_USE_NAMESPACE
  *
  * \endcode
  *
- * \sa QVersitDocument, QVersitProperty, QVersitContactDetailExporter, QVersitFileLoader
+ * \sa QVersitDocument, QVersitProperty, QVersitContactDetailExporter, QVersitResourceLoader
  */
 
 /*!
@@ -207,7 +207,7 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
     QList<QVersitDocument> list;
     foreach (QContact contact, contacts) {
         QVersitDocument versitDocument;
-        versitDocument.setVersitType(versitType);
+        versitDocument.setType(versitType);
         d->exportContact(versitDocument, contact);
         list.append(versitDocument);
     }
@@ -234,15 +234,15 @@ QVersitContactDetailExporter* QVersitContactExporter::detailExporter() const
 /*!
  * Sets \a loader to be the handler to load files with.
  */
-void QVersitContactExporter::setFileLoader(QVersitFileLoader* loader)
+void QVersitContactExporter::setResourceLoader(QVersitResourceLoader* loader)
 {
-    d->mFileLoader = loader;
+    d->mResourceLoader = loader;
 }
 
 /*!
  * Returns the file loader.
  */
-QVersitFileLoader* QVersitContactExporter::fileLoader() const
+QVersitResourceLoader* QVersitContactExporter::resourceLoader() const
 {
-    return d->mFileLoader;
+    return d->mResourceLoader;
 }
