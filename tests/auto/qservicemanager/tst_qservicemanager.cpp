@@ -1361,12 +1361,11 @@ void tst_QServiceManager::serviceAdded_data()
     QByteArray file1Data = file1.readAll();
 
 #if defined (Q_OS_SYMBIAN)
-    // Symbian implementation hard-codes user-scope for everything, do not test any system scope-stuff
-    // or mixed-scope stuff
+    // Symbian implementation hard-codes (ignores) scopes for everything, do not test mixed-scope stuff
     QTest::newRow("SampleService, user scope") << file1Data << "SampleService"
-            << QService::UserScope << QService::UserScope << true;
+            << QService::SystemScope << QService::SystemScope << true;
     QTest::newRow("TestService, user scope") << file2.readAll() << "TestService"
-            << QService::UserScope << QService::UserScope << true;
+            << QService::SystemScope << QService::SystemScope << true;
 #else
     QTest::newRow("SampleService, user scope") << file1Data << "SampleService"
             << QService::UserScope << QService::UserScope << true;
