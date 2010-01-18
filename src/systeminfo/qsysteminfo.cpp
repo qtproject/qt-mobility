@@ -44,10 +44,10 @@
 #ifdef Q_OS_LINUX
 #include "qsysteminfo_linux_p.h"
 #ifdef Q_WS_MAEMO_5
-#include "qsysteminfo_maemo_p.h"
+#include "qsysteminfo_linux_maemo5_p.h"
 #elif Q_WS_MAEMO_6
-#include "qsysteminfo_maemo_p.h"
-#endif //Q_WS_MAEMO_5
+#include "qsysteminfo_maemo6_p.h"
+#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
 #endif //Q_OS_LINUX
 
 #ifdef Q_OS_WIN
@@ -365,19 +365,19 @@ information from the system.
 
 #ifdef Q_OS_LINUX
 #ifdef Q_WS_MAEMO_5
-Q_GLOBAL_STATIC(QSystemInfoLinuxMaemoPrivate, sysinfoPrivate)
-Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxMaemoPrivate, netInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxMaemoPrivate, displayInfoPrivate)
-Q_GLOBAL_STATIC(QSystemStorageInfoLinuxMaemoPrivate, storageInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxMaemoPrivate, deviceInfoPrivate)
-Q_GLOBAL_STATIC(QSystemScreenSaverLinuxMaemoPrivate, screenSaverPrivate)
+Q_GLOBAL_STATIC(QSystemInfoLinuxMaemo5Private, sysinfoPrivate)
+Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxMaemo5Private, netInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxMaemo5Private, displayInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoLinuxMaemo5Private, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxMaemo5Private, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemScreenSaverLinuxMaemo5Private, screenSaverPrivate)
 #elif Q_WS_MAEMO_6
-Q_GLOBAL_STATIC(QSystemInfoLinuxMaemoPrivate, sysinfoPrivate)
-Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxMaemoPrivate, netInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxMaemoPrivate, displayInfoPrivate)
-Q_GLOBAL_STATIC(QSystemStorageInfoLinuxMaemoPrivate, storageInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxMaemoPrivate, deviceInfoPrivate)
-Q_GLOBAL_STATIC(QSystemScreenSaverLinuxMaemoPrivate, screenSaverPrivate)
+Q_GLOBAL_STATIC(QSystemInfoLinuxMaemo6Private, sysinfoPrivate)
+Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxMaemo6Private, netInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxMaemo6Private, displayInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoLinuxMaemo6Private, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxMaemo6Private, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemScreenSaverLinuxMaemo6Private, screenSaverPrivate)
 #else //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
 Q_GLOBAL_STATIC(QSystemInfoLinuxDesktopPrivate, sysinfoPrivate)
 Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxDesktopPrivate, netInfoPrivate)
