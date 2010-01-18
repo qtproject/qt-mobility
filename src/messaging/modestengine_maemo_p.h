@@ -12,7 +12,7 @@
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
-**
+**file:///home/maminkki/sbox/qtm-messaging/src/messaging/qmtmengine_symbian_p.h
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
@@ -38,77 +38,50 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessagefolder.h"
-#include "qmessagefolder_p.h"
+
+#ifndef MODESTENGINE_MAEMO_H
+#define MODESTENGINE_MAEMO_H
+
 #include "qmessagemanager.h"
+#include "gconf/gconf-client.h"
+#include "libosso.h"
 
 QTM_BEGIN_NAMESPACE
 
-QMessageFolder QMessageFolderPrivate::from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path)
-{
-    QMessageFolder result;
-    result.d_ptr->_id = id;
-    result.d_ptr->_parentAccountId = accountId;
-    result.d_ptr->_parentFolderId = parentId;
-    result.d_ptr->_name = name;
-    result.d_ptr->_path = path;
-    return result;
-}
+class QMessageService;
 
-QMessageFolder::QMessageFolder()
-    :d_ptr(new QMessageFolderPrivate(this))
+class ModestEngine
 {
-}
+public:
+    static ModestEngine* instance();
 
-QMessageFolder::QMessageFolder(const QMessageFolderId &id)
-    :d_ptr(new QMessageFolderPrivate(this))
-{
-    *this = QMessageManager().folder(id);
-}
+    ModestEngine();
+    ~ModestEngine();
 
-QMessageFolder::QMessageFolder(const QMessageFolder &other)
-    :d_ptr(new QMessageFolderPrivate(this))
-{
-    this->operator=(other);
-}
+    QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder,
+                                        uint limit, uint offset, bool &isFiltered, bool &isSorted) const;
+    int countAccounts(const QMessageAccountFilter &filter) const;
+    QMessageAccount account(const QMessageAccountId &id) const;
+    QMessageAccountId defaultAccount(QMessage::Type type) const;
 
-QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
-{
-    if (&other != this)
-        *d_ptr = *other.d_ptr;
+    bool queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    bool countMessages(QMessageService& messageService, const QMessageFilter &filter);
 
-    return *this;
-}
+    bool sendEmail(QMessage &message);
+    bool composeEmail(const QMessage &message);
 
-QMessageFolder::~QMessageFolder()
-{
-    delete d_ptr;
-    d_ptr = 0;
-}
+private:
+    void updateEmailAccounts() const;
 
-QMessageFolderId QMessageFolder::id() const
-{
-    return d_ptr->_id;
-}
+private: //Data
+    GConfClient* m_gconfclient;
 
-QMessageAccountId QMessageFolder::parentAccountId() const
-{
-    return d_ptr->_parentAccountId;
-}
-
-QMessageFolderId QMessageFolder::parentFolderId() const
-{
-    return d_ptr->_parentFolderId;
-}
-
-QString QMessageFolder::name() const
-{
-    return d_ptr->_name;
-}
-
-QString QMessageFolder::path() const
-{
-    return d_ptr->_path;
-}
+    mutable QHash<QString, QMessageAccount> iAccounts;
+    mutable QMessageAccountId iDefaultEmailAccountId;
+};
 
 QTM_END_NAMESPACE
+
+#endif // MODESTENGINE_MAEMO_H
+

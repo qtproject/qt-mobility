@@ -14,7 +14,7 @@ PUBLIC_HEADERS += \
            qmessagecontentcontainerid.h \
            qmessagefolderid.h \
            qmessageaccountid.h \
-           qmessagecontentcontainer.h \ 
+           qmessagecontentcontainer.h \
            qmessagecontentcontainer_p.h \
            addresshelper_p.h \
 	   qmessageaddress.h \
@@ -74,22 +74,46 @@ SOURCES += qmessageid.cpp \
 
 symbian|win32|maemo6 {
 maemo6 {
-SOURCES += qmessageid_maemo.cpp \
-           qmessagecontentcontainerid_maemo.cpp \
-           qmessagefolderid_maemo.cpp \
-           qmessageaccountid_maemo.cpp \
-           qmessagecontentcontainer_maemo.cpp \
-           qmessage_maemo.cpp \
-           qmessagefolder_maemo.cpp \
-           qmessageaccount_maemo.cpp \
-           qmessageaccountfilter_maemo.cpp \
-           qmessageaccountsortorder_maemo.cpp \
-           qmessagefolderfilter_maemo.cpp \
-           qmessagefoldersortorder_maemo.cpp \
-           qmessagefilter_maemo.cpp \
-           qmessagesortorder_maemo.cpp \
-           qmessagestore_maemo.cpp \
-           qmessageservice_maemo.cpp 
+    QT += dbus
+    CONFIG += link_pkgconfig
+
+    PUBLIC_HEADERS -= qmessagecontentcontainer_p.h
+    PRIVATE_HEADERS -= qmessagecontentcontainer_p.h
+
+    HEADERS += qmessagecontentcontainer_maemo_p.h \
+               modestengine_maemo_p.h \
+               maemohelpers_p.h
+
+    SOURCES += qmessageid_maemo.cpp \
+               qmessagecontentcontainerid_maemo.cpp \
+               qmessagefolderid_maemo.cpp \
+               qmessageaccountid_maemo.cpp \
+               qmessagecontentcontainer_maemo.cpp \
+               qmessage_maemo.cpp \
+               qmessagefolder_maemo.cpp \
+               qmessageaccount_maemo.cpp \
+               qmessageaccountfilter_maemo.cpp \
+               qmessageaccountsortorder_maemo.cpp \
+               qmessagefolderfilter_maemo.cpp \
+               qmessagefoldersortorder_maemo.cpp \
+               qmessagefilter_maemo.cpp \
+               qmessagesortorder_maemo.cpp \
+               qmessagestore_maemo.cpp \
+               qmessageservice_maemo.cpp \
+               modestengine_maemo.cpp \
+               maemohelpers.cpp
+
+    documentation.path = $$QT_MOBILITY_PREFIX/doc
+    documentation.files = doc/html
+
+    PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 libosso libmodest-dbus-client-1.0
+
+    CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso modest-dbus-client-1.0
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtMessaging.pc
+
+    INSTALLS += pkgconfig documentation
 }
 symbian {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE

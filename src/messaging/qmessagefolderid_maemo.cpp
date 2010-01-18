@@ -39,57 +39,92 @@
 **
 ****************************************************************************/
 #include "qmessagefolderid.h"
+#include "qmessagefolderid_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 QMessageFolderId::QMessageFolderId()
+ : d_ptr(0)
 {
 }
 
 QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
+ : d_ptr(0)
 {
-    Q_UNUSED(other)
+   this->operator=(other);
 }
 
 QMessageFolderId::QMessageFolderId(const QString& id)
+ : d_ptr(new QMessageFolderIdPrivate(this))
 {
-    Q_UNUSED(id)
+   d_ptr->_id = id;
 }
 
 QMessageFolderId::~QMessageFolderId()
 {
+    delete d_ptr;
 }
 
 QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        if (other.isValid()) {
+            if (!d_ptr) {
+                d_ptr = new QMessageFolderIdPrivate(this);
+            }
+            d_ptr->_id = other.d_ptr->_id;
+        } else {
+            delete d_ptr;
+            d_ptr = 0;
+        }
+    }
+
+    return *this;
 }
 
 bool QMessageFolderId::operator==(const QMessageFolderId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (isValid()) {
+        if (other.isValid()) {
+            return (d_ptr->_id == other.d_ptr->_id);
+        }
+        return false;
+    } else {
+        return !other.isValid();
+    }
 }
 
 bool QMessageFolderId::operator<(const QMessageFolderId& other) const
 {
-    return false; // stub
+    QString left("");
+    QString right("");
+    if (d_ptr) {
+        left = d_ptr->_id;
+    }
+    if (other.d_ptr) {
+        right = other.d_ptr->_id;
+    }
+
+    return (left < right);
 }
 
 QString QMessageFolderId::toString() const
 {
-    return QString::null; // stub
+    if (!isValid()) {
+        return QString();
+    }
+
+    return d_ptr->_id;
 }
 
 bool QMessageFolderId::isValid() const
 {
-    return false; // stub
+    return (d_ptr && !d_ptr->_id.isEmpty());
 }
 
 uint qHash(const QMessageFolderId &id)
 {
-    return 0; // stub
+    //TODO: return qHash(id.toString());
 }
 
 QTM_END_NAMESPACE
