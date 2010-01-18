@@ -230,18 +230,7 @@ void CameraCapture::takeImage()
 void CameraCapture::toggleCamera()
 {
     if (camera->state() == QCamera::ActiveState){
-        camera->setFocusMode(QCamera::ContinuousFocus);
-        qDebug() << "CameraCapture::takeImage, focusmode1: " << camera->focusMode();
-        camera->setFocusMode(QCamera::AutoFocus);
-        qDebug() << "CameraCapture::takeImage, focusmode2 " << camera->focusMode();
-        
-        qDebug() << "CameraCapture::takeImage, maxzoom: " << camera->maximumOpticalZoom();
-        qDebug() << "CameraCapture::takeImage, maxdigitalzoom: " << camera->maximumDigitalZoom();
-        camera->zoomTo(25);
-        qDebug() << "CameraCapture::takeImage, zoomed";
-        camera->lockFocus();
-        qDebug() << "CameraCapture::takeImage, locked";
-        //camera->stop();
+        camera->stop();
     }
     else
         camera->start();
@@ -318,12 +307,10 @@ void CameraCapture::updateAudioDevice(QAction *action)
 void CameraCapture::focusLocked()
 {
     qDebug() << "CameraCapture focus locked";
-    takeImage();
 }
 
 void CameraCapture::zoomValueChanged(qreal value)
 {
 	qDebug() << "CameraCapture zoom value changed to: " << value;
-	qDebug() << "CameraCapture zoomValue: " << camera->zoomValue();
 	
 }
