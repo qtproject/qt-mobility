@@ -157,6 +157,7 @@ void CntTransformFamily::detailDefinitions(QMap<QString, QContactDetailDefinitio
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactFamily::FieldSpouse, f);
+    f.setDataType(QVariant::StringList);
     fields.insert(QContactFamily::FieldChildren, f);
 
     d.setFields(fields);
