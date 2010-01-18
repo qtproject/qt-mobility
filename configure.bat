@@ -55,7 +55,7 @@ set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DOCS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework vibra
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework feedback
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -118,7 +118,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
-    echo                     messaging multimedia systeminfo serviceframework versit vibra
+    echo                     messaging multimedia systeminfo serviceframework versit feedback
     echo                     Modules should be separated by a space. If a
     echo                     selected module depends on other modules they
     echo                     will automatically be enabled.
@@ -240,8 +240,8 @@ if %FIRST% == bearer (
     echo     SerficeFramework selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
-) else if %FIRST% == vibra (
-    echo     Vibra selected
+) else if %FIRST% == feedback (
+    echo     feedback selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -467,8 +467,8 @@ if %FIRST% == bearer (
     REM versit implies contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
-) else if %FIRST% == vibra (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\vibra
+) else if %FIRST% == feedback (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\feedback
 )
 
 if "%REMAINING%" == "" (

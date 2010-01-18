@@ -92,7 +92,7 @@ usage()
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
     echo "                    Choose from: bearer contacts location publishsubscribe"
-    echo "                    messaging multimedia systeminfo serviceframework versit vibra"
+    echo "                    messaging multimedia systeminfo serviceframework versit feedback"
     echo "                    Modules should be separated by a space. If a"
     echo "                    selected module depends on other modules they"
     echo "                    will automatically be enabled."
@@ -165,7 +165,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|vibra)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|feedback)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)
@@ -416,8 +416,8 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/versit
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
             ;;
-        vibra)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/vibra
+        feedback)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/feedback
             ;;
         *)
             echo "Cannot generate headers for $module"
