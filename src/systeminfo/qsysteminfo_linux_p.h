@@ -150,17 +150,19 @@ Q_SIGNALS:
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
 private:
+   bool isDefaultInterface(const QString &device);
 #if !defined(QT_NO_DBUS)
+   QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
+   int getBluetoothRssi();
+   QString getBluetoothInfo(const QString &file);
+#endif
+#if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface *iface;
     QNetworkManagerInterfaceDeviceWired * devWiredIface;
     QNetworkManagerInterfaceDeviceWireless *devWirelessIface;
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
 
     void setupNmConnections();
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
-    int getBluetoothRssi();
-    QString getBluetoothInfo(const QString &file);
-    bool isDefaultInterface(const QString &device);
 
 private Q_SLOTS:
     void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);

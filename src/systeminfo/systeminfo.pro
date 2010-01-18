@@ -50,13 +50,17 @@ unix: {
     !maemo*:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
-        #TODO: Check why networkmanager_enabled is not "yes" in my Linux desktop
-        #contains(networkmanager_enabled, yes):contains(QT_CONFIG,dbus): {
+        contains(QT_CONFIG,dbus): {
             QT += dbus
-            SOURCES += qhalservice_linux.cpp qnetworkmanagerservice_linux.cpp
-            HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
-
-        #}
+            SOURCES += qhalservice_linux.cpp
+            HEADERS += qhalservice_linux_p.h
+                contains(networkmanager_enabled, yes): {
+                    SOURCES += qnetworkmanagerservice_linux.cpp
+                    HEADERS += qnetworkmanagerservice_linux_p.h
+                } else {
+                DEFINES += QT_NO_NETWORKMANAGER
+                }
+        }
     }
     maemo*: {
             #Qt GConf wrapper added here until a proper place is found for it.
@@ -127,6 +131,8 @@ unix: {
             -lbluetooth
 
         TARGET.CAPABILITY = ALL -TCB
+#        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
+
         TARGET.EPOCALLOWDLLDATA = 1
         TARGET.UID3 = 0x2002ac7d
         
