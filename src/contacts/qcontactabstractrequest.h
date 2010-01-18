@@ -76,7 +76,6 @@ public:
     State state() const; // replaces status()
     bool Q_DECL_DEPRECATED isActive() const;   // deprecated in week 1, removed after transition period
     bool Q_DECL_DEPRECATED isFinished() const; // deprecated in week 1, removed after transition period
-    QList<QContactManager::Error> errors() const;
     QList<QContactManager::Error> Q_DECL_DEPRECATED errors() const; // deprecated, removed in week 3.
     QContactManager::Error error() const;
 
