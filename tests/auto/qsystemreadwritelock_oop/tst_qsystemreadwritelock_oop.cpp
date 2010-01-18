@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
+#include <QDir>
 #include <QProcess>
 #include <QIODevice>
 #include <QLocalServer>
@@ -51,6 +52,7 @@ QTM_USE_NAMESPACE
 class tst_QSystemReadWriteLock_oop : public QObject{
     Q_OBJECT
 private slots:
+    void initTestCase();
     void readLockBlockRelease();
     void writeLockBlockRelease();
     void multipleReadersBlockRelease();
@@ -64,6 +66,16 @@ private:
                     bool print = false, int timeout=5000);
 
 };
+
+void tst_QSystemReadWriteLock_oop::initTestCase()
+{
+    // if an old writeLockExcl.tmp exists at the beginning of this test case, try to remove it,
+    // otherwise test functions may fail
+    QDir cwd;
+    if (cwd.exists("writeLockExcl.tmp")) {
+        QVERIFY(cwd.remove("writeLockExcl.tmp"));
+    }
+}
 
 /*
     A writer aquires a write-lock, a reader tries to lock
