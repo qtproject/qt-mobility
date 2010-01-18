@@ -77,11 +77,7 @@ const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
  */
 const TUid KUidContactFieldGender={KUidContactFieldGenderValue};
 
-// !! In case this is undefined on earlier platforms
-#ifndef KUidContactFieldGEOValue
-#define KUidContactFieldGEOValue            0x10274DB2
 const TUid KUidContactFieldGEO = {KUidContactFieldGEOValue};
-#endif
 
 #endif // CNTMODELEXTUIDS_HRH
 
