@@ -621,22 +621,19 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourc
         resourceFormat = resourceExt;
 
     if (resourceFormat.length() > 0) {
-        QString value;
+        QVariant value;
         QByteArray imageData;
         QString mimeType;
         if (isValidRemoteUrl( resourcePath )) {
             encodeContent = true;
-            value = resourcePath;
+            value.setValue(resourcePath);
             property.addParameter(
                 QString::fromAscii("VALUE"),
                 QString::fromAscii("URL"));
             property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
         } else if (mFileLoader
                    && mFileLoader->loadFile(resourcePath, &imageData, &mimeType)) {
-            value = QString::fromAscii(imageData.toBase64());
-            property.addParameter(
-                    QString::fromAscii("ENCODING"),
-                    QString::fromAscii("BASE64"));
+            value.setValue(imageData);
             property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
             encodeContent = true;
         } else {

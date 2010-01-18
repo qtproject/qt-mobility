@@ -70,19 +70,26 @@ QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
     QString name = mPropertyNameMappings.value(property.name(),property.name());
     modifiedProperty.setName(name);
     QByteArray encodedProperty(encodeGroupsAndName(modifiedProperty));
+
+    QVariant variant(modifiedProperty.value());
+    if (variant.type() == QVariant::ByteArray) {
+        modifiedProperty.addParameter(QLatin1String("ENCODING"), QLatin1String("b"));
+    }
     encodedProperty.append(encodeParameters(modifiedProperty.parameters()));
     encodedProperty.append(":");
+
     // TODO: do charset encoding
     QByteArray value;
-    QVariant variant(modifiedProperty.value());
     if (variant.canConvert<QVersitDocument>()) {
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         value = encodeVersitDocument(embeddedDocument);
         QString escapedValue(QString::fromAscii(value));
         VersitUtils::backSlashEscape(escapedValue);
         value = escapedValue.toAscii();
-    } else {
+    } else if (variant.type() == QVariant::String) {
         value = variant.toString().toAscii();
+    } else if (variant.type() == QVariant::ByteArray) {
+        value = variant.toByteArray().toBase64();
     }
     encodedProperty.append(value);
     encodedProperty.append("\r\n");
@@ -109,11 +116,6 @@ QByteArray QVCard30Writer::encodeParameters(
             if (i > 0)
                 encodedParameters.append(",");
             QString value = values.at(i);
-            // QVersitContactExporterPrivate implementation may have added
-            // base64 encoding parameter according to vCard 2.1.
-            // Convert it to vCard 3.0 compatible.
-            if (name == "ENCODING" && value == QString::fromAscii("BASE64"))
-                value = QString::fromAscii("B");
 
             VersitUtils::backSlashEscape(value);
             encodedParameters.append(value.toAscii());

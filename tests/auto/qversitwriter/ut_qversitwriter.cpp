@@ -89,11 +89,11 @@ void UT_QVersitWriter::testWriting()
     QVERIFY(!mWriter->writeAll());
 
     // vCard 2.1
-    const char vCard21[] =
+    QByteArray vCard21(
 "BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\
 FN:John\r\n\
-END:VCARD\r\n";
+END:VCARD\r\n");
     mOutputDevice->open(QBuffer::ReadWrite);
     QVersitDocument document;
     QVersitProperty property;
@@ -109,25 +109,28 @@ END:VCARD\r\n";
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
-    QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard21));
+    QCOMPARE(result, vCard21);
 
     // vCard 3.0
-    const char vCard30[] =
+    QByteArray vCard30(
 "BEGIN:VCARD\r\n\
 VERSION:3.0\r\n\
 FN:John\r\n\
-END:VCARD\r\n";
+END:VCARD\r\n");
     document.setVersitType(QVersitDocument::VCard30Type);
     list.clear();
     list.append(document);
     mWriter->setInput(list);
-    mOutputDevice->reset();
+    delete mOutputDevice;
+    mOutputDevice = new QBuffer;
+    mOutputDevice->open(QBuffer::ReadWrite);
+    mWriter->setDevice(mOutputDevice);
     QVERIFY(mWriter->writeAll());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
     result = mOutputDevice->readAll();
-    QCOMPARE(QString::fromAscii(result),QString::fromAscii(vCard30));
+    QCOMPARE(result, vCard30);
 
     // Asynchronous writing
     QVERIFY(!mWritingDoneCalled);

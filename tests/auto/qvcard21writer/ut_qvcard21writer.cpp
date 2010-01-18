@@ -109,15 +109,14 @@ END:VCARD\r\n\
 
     // Value is base64 encoded.
     // Check that the extra folding and the line break are added
-    QByteArray value = QByteArray("value").toBase64();
-    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=BASE64:\r\n " + value + "\r\n\r\n";
+    QByteArray value("value");
+    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=BASE64:\r\n " + value.toBase64() + "\r\n\r\n";
     QStringList groups(QString::fromAscii("Springfield"));
     groups.append(QString::fromAscii("HOUSE"));
     property.setGroups(groups);
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("PHOTO"));
-    property.setValue(QString::fromAscii(value));
-    property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
+    property.setValue(value);
     QCOMPARE(QString::fromAscii(mWriter->encodeVersitProperty(property).data()),
              QString::fromAscii(expectedResult.data()));
 

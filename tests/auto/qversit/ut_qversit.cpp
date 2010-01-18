@@ -21,6 +21,7 @@ public:
 
     bool saveFile(const QByteArray& contents, const QVersitProperty& property, QString* filename)
     {
+        Q_UNUSED(property);
         *filename = QString::number(mIndex++);
         mObjects.insert(*filename, contents);
         return true;

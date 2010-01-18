@@ -107,6 +107,18 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     property.setValue(QVariant::fromValue(document));
     encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
+
+    // Value is base64 encoded.
+    QByteArray value("value");
+    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=B:" + value.toBase64() + "\r\n";
+    QStringList groups(QString::fromAscii("Springfield"));
+    groups.append(QString::fromAscii("HOUSE"));
+    property.setGroups(groups);
+    property.setParameters(QMultiHash<QString,QString>());
+    property.setName(QString::fromAscii("PHOTO"));
+    property.setValue(value);
+    encodedProperty = mWriter->encodeVersitProperty(property);
+    QCOMPARE(QString::fromAscii(encodedProperty), expectedResult);
 }
 
 void UT_QVCard30Writer::testEncodeParameters()
@@ -145,12 +157,6 @@ void UT_QVCard30Writer::testEncodeParameters()
     parameters.insert(QString::fromAscii("X-P;ARAM"),QString::fromAscii("VA,LUE"));
     QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
              QString::fromAscii(";X-P\\;ARAM=VA\\,LUE"));
-
-    // ENCODING=BASE64 converted to ENCODING=B
-    parameters.clear();
-    parameters.insert(encodingParameterName,QString::fromAscii("BASE64"));
-    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
-             QString::fromAscii(";ENCODING=B"));
 }
 
 QTEST_MAIN(UT_QVCard30Writer)

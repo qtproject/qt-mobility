@@ -598,6 +598,7 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QContactOrganization organization;
     QVersitDocument document;
     QVersitProperty property;
+    MyQVersitFileLoader fileLoader;
     QString title(QString::fromAscii("Developer"));
     QString organizationName(QString::fromAscii("Nokia"));
     QString department(QString::fromAscii("R&D"));
@@ -665,8 +666,6 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(property.valueString(), QString::fromAscii("Nokia;R&D;Qt"));
 
     // ORG LOGO Test1: LOGO as remote Resouce
-    MyQVersitFileLoader fileLoader;
-
     const QString url = QString::fromAscii("http://myhome.com/test.jpg");
     contact = QContact();
     organization = QContactOrganization();
@@ -695,6 +694,7 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(value, url);
 
     // ORG LOGO Test2: LOGO File.
+    fileLoader.mSimulatedData = "simulated data";
     contact = QContact();
     organization = QContactOrganization();
     organization.setLogo(TEST_PHOTO_FILE);
@@ -706,18 +706,17 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QVERIFY(fileLoader.mLoadFileCalled);
     QCOMPARE(fileLoader.mFilename, TEST_PHOTO_FILE);
 
-    //Media type, source encoding is encoded i.e. base64
-    QCOMPARE(document.properties().at(0).parameters().count(), 2);
-
-    QVERIFY(document.properties().at(0).parameters().contains(
+    // It should be stored in the property as a QVariant of QByteArray, not base64 encoded
+    property = document.properties().at(0);
+    QMultiHash<QString,QString> parameters = property.parameters();
+    // Media type is encoded
+    QCOMPARE(parameters.count(), 1);
+    QVERIFY(parameters.contains(
             QString::fromAscii("TYPE"), QString::fromAscii("JPEG")));
-
-    QVERIFY(document.properties().at(0).parameters().contains(
-            QString::fromAscii("ENCODING"), QString::fromAscii("BASE64")));
-
-    //Ensure value1 is not URL
-    QString value1 = document.properties().at(0).valueString();
-    QVERIFY(value1.toAscii() != url.toAscii());
+    // Verify value.
+    QVariant variantValue = property.value();
+    QVERIFY(variantValue.type() == QVariant::ByteArray);
+    QCOMPARE(variantValue.value<QByteArray>(), fileLoader.mSimulatedData);
 
     // Assistant Name Test.
     contact = QContact();
@@ -752,6 +751,7 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     QContact contact;
     QContactAvatar contactAvatar;
     MyQVersitFileLoader fileLoader;
+    fileLoader.mSimulatedData = "simulated data";
 
     // Test1: Web URL
     const QString url = QString::fromAscii("http://www.myhome.com/test.jpg");
@@ -762,7 +762,8 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     contacts.append(contact);
     mExporter->setFileLoader(&fileLoader);
     QVersitDocument document = mExporter->exportContacts(contacts).first();
-    QCOMPARE(document.properties().at(0).parameters().count(), 2);
+    QVersitProperty property = document.properties().at(0);
+    QCOMPARE(property.parameters().count(), 2);
     QVERIFY(!fileLoader.mLoadFileCalled);
 
     // Test 2: Local Media PHOTO
@@ -775,8 +776,13 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     QVERIFY(fileLoader.mLoadFileCalled);
     QCOMPARE(fileLoader.mFilename, TEST_PHOTO_FILE);
 
-    //Media type, source encoding is encoded i.e. base64
-    QCOMPARE(document.properties().at(0).parameters().count(), 2);
+    property = document.properties().at(0);
+    //Media type is encoded
+    QCOMPARE(property.parameters().count(), 1);
+    // verify the value
+    QVariant variantValue = property.value();
+    QVERIFY(variantValue.type() == QVariant::ByteArray);
+    QCOMPARE(variantValue.value<QByteArray>(), fileLoader.mSimulatedData);
 
     // Test3: UnSupported Media Type, properties and parameters are not encoded
     fileLoader = MyQVersitFileLoader();
@@ -798,6 +804,7 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     QContact contact;
     QContactAvatar contactAvatar;
     MyQVersitFileLoader fileLoader;
+    QVariant variantValue;
 
     // Test 1: URL
     const QString url = QString::fromAscii("http://www.myhome.com/test.jpg");
@@ -829,16 +836,13 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     document = mExporter->exportContacts(contacts).first();
     QVERIFY(fileLoader.mLoadFileCalled);
     photoProperty = document.properties().at(0);
-    QCOMPARE(photoProperty.parameters().count(), 2);
+    QCOMPARE(photoProperty.parameters().count(), 1);
     QVERIFY(photoProperty.parameters().contains(
         QString::fromAscii("TYPE"),
         QString::fromAscii("JPEG")));
-    QVERIFY(photoProperty.parameters().contains(
-        QString::fromAscii("ENCODING"),
-        QString::fromAscii("BASE64")));
-    QCOMPARE(photoProperty.valueString(),
-             QString::fromAscii(fileLoader.mSimulatedData.toBase64()));
-    // TODO: this shouldn't be base64 encoded - just a binary blob.
+    variantValue = photoProperty.value();
+    QVERIFY(variantValue.type() == QVariant::ByteArray);
+    QCOMPARE(variantValue.value<QByteArray>(), fileLoader.mSimulatedData);
 
     // Test 3: Local SOUND
     fileLoader = MyQVersitFileLoader();
@@ -851,14 +855,13 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     document = mExporter->exportContacts(contacts).first();
     QVERIFY(fileLoader.mLoadFileCalled);
     QVersitProperty soundProperty = document.properties().at(0);
-    QCOMPARE(soundProperty.parameters().count(), 2);
+    QCOMPARE(soundProperty.parameters().count(), 1);
     QVERIFY(soundProperty.parameters().contains(
         QString::fromAscii("TYPE"),
         QString::fromAscii("WAVE")));
-    QVERIFY(soundProperty.parameters().contains(
-        QString::fromAscii("ENCODING"),
-        QString::fromAscii("BASE64")));
-    QCOMPARE(soundProperty.valueString(), QString::fromAscii(fileLoader.mSimulatedData.toBase64()));
+    variantValue = soundProperty.value();
+    QVERIFY(variantValue.type() == QVariant::ByteArray);
+    QCOMPARE(variantValue.value<QByteArray>(), fileLoader.mSimulatedData);
 
     // Test 4: New media format will be encoded also
     fileLoader = MyQVersitFileLoader();

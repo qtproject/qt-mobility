@@ -68,17 +68,20 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     QMultiHash<QString,QString> parameters = property.parameters();
     QVariant variant = property.value();
 
-    QByteArray valueString;
+    QByteArray renderedValue;
 
-    if (variant.canConvert(QVariant::String)) {
+    if (variant.type() == QVariant::String) {
         // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
-        valueString = variant.toString().toAscii();
-        bool valueQuotedPrintableEncoded = quotedPrintableEncode(property, valueString);
+        renderedValue = variant.toString().toAscii();
+        bool valueQuotedPrintableEncoded = quotedPrintableEncode(property, renderedValue);
         if (valueQuotedPrintableEncoded &&
             !parameters.contains(encoding, quotedPrintable)) {
              // Add the encoding parameter to the copy, not to the actual property
              parameters.insert(encoding, quotedPrintable);
         }
+    } else if (variant.type() == QVariant::ByteArray) {
+        parameters.insert("ENCODING", "BASE64");
+        renderedValue = variant.toByteArray().toBase64();
     }
 
     // Encode parameters
@@ -90,12 +93,12 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         encodedProperty.append("\r\n");
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         encodedProperty.append(encodeVersitDocument(embeddedDocument));
-    } else if (parameters.contains(encoding, QString::fromAscii("BASE64"))) {
+    } else if (variant.type() == QVariant::String) {
+        encodedProperty += renderedValue;
+    } else if (variant.type() == QVariant::ByteArray) {
         // One extra folding before the value and
         // one extra line break after the value are needed in vCard 2.1
-        encodedProperty += "\r\n " + valueString + "\r\n";
-    } else {
-        encodedProperty += valueString;
+        encodedProperty += "\r\n " + renderedValue + "\r\n";
     }
     encodedProperty.append("\r\n");
 
