@@ -235,10 +235,10 @@ void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefiniti
 
     if(definitions.contains(QContactAddress::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactAddress::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
         
         // Don't support "ContextOther"
-        QContactDetailDefinitionField f;
+        QContactDetailFieldDefinition f;
         f.setDataType(QVariant::StringList);
         f.setAllowableValues(QVariantList() 
             << QLatin1String(QContactDetail::ContextHome) 

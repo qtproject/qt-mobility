@@ -274,8 +274,8 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
 
     if(definitions.contains(QContactOnlineAccount::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactOnlineAccount::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
-        QContactDetailDefinitionField f;
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
+        QContactDetailFieldDefinition f;
 
         // Don't support "ContextOther"
         f.setDataType(QVariant::StringList);

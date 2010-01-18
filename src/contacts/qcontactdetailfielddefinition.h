@@ -39,57 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILDEFINITIONFIELD_P_H
-#define QCONTACTDETAILDEFINITIONFIELD_P_H
+#ifndef QCONTACTDETAILFIELDDEFINITION_H
+#define QCONTACTDETAILFIELDDEFINITION_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qcontactdetaildefinitionfield.h"
-
-#include <QSharedData>
-#include <QMap>
-#include <QString>
-#include <QVariant>
 #include <QList>
+#include <QVariant>
+#include <QSharedDataPointer>
+
+#include "qtcontactsglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QContactDetailDefinitionFieldPrivate : public QSharedData
+class QContactDetailFieldDefinitionPrivate;
+class Q_CONTACTS_EXPORT QContactDetailFieldDefinition
 {
 public:
-    QContactDetailDefinitionFieldPrivate()
-        : QSharedData(),
-        m_dataType(QVariant::Invalid),
-        m_accessConstraint(QContactDetailDefinitionField::NoConstraint)
-    {
-    }
+    QContactDetailFieldDefinition();
+    ~QContactDetailFieldDefinition();
 
-    QContactDetailDefinitionFieldPrivate(const QContactDetailDefinitionFieldPrivate& other)
-        : QSharedData(other),
-        m_allowableValues(other.m_allowableValues),
-        m_dataType(other.m_dataType),
-        m_accessConstraint(other.m_accessConstraint)
-    {
-    }
+    QContactDetailFieldDefinition(const QContactDetailFieldDefinition& other);
+    QContactDetailFieldDefinition& operator=(const QContactDetailFieldDefinition& other);
 
-    ~QContactDetailDefinitionFieldPrivate()
-    {
-    }
+    QVariant::Type dataType() const;
+    void setDataType(QVariant::Type type);
 
-    QVariantList m_allowableValues;
-    QVariant::Type m_dataType;
-    QContactDetailDefinitionField::AccessConstraint m_accessConstraint;
+    QVariantList allowableValues() const;
+    void setAllowableValues(const QVariantList values);
+
+    /* Access constraint stuff to be removed wk 3 */
+    enum AccessConstraint {
+        NoConstraint = 0,
+        ReadOnly
+    };
+
+    QContactDetailFieldDefinition::AccessConstraint Q_DECL_DEPRECATED accessConstraint() const;
+    void Q_DECL_DEPRECATED setAccessConstraint(QContactDetailFieldDefinition::AccessConstraint constraint);
+
+    bool operator==(const QContactDetailFieldDefinition& other) const;
+    bool operator!=(const QContactDetailFieldDefinition& other) const;
+
+private:
+    QSharedDataPointer<QContactDetailFieldDefinitionPrivate> d;
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactDetailFieldDefinition), Q_MOVABLE_TYPE);
 
 #endif

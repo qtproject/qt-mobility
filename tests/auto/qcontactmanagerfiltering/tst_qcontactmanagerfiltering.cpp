@@ -2389,8 +2389,8 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         // check the current definition.
         QContactDetailDefinition def = allDefs.value(defName);
 
-        // if unique or read/create only, we cannot use this definition.
-        if (def.isUnique() || def.accessConstraint() != QContactDetailDefinition::NoConstraint) {
+        // if unique, we cannot use this definition.
+        if (def.isUnique()) {
             continue;
         }
 
@@ -2398,12 +2398,12 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         // we only consider the definition if it only has a SINGLE FIELD, and
         // if that field is of the required type.  This avoids nasty presence test
         // failures which aren't.
-        QMap<QString, QContactDetailDefinitionField> allFields = def.fields();
+        QMap<QString, QContactDetailFieldDefinition> allFields = def.fields();
         QList<QString> fNames = allFields.keys();
         if (fNames.size() > 1)
             break;
         foreach (const QString& fName, fNames) {
-            QContactDetailDefinitionField field = allFields.value(fName);
+            QContactDetailFieldDefinition field = allFields.value(fName);
             if (field.dataType() == type) {
                 // this field of the current definition is of the required type.
                 definitionName = defName;
@@ -2446,12 +2446,11 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
         // build a definition that matches the criteria.
         QContactDetailDefinition generatedDefinition;
         generatedDefinition.setName(generatedDefinitionName);
-        QContactDetailDefinitionField generatedField;
+        QContactDetailFieldDefinition generatedField;
         generatedField.setDataType(type);
-        QMap<QString, QContactDetailDefinitionField> fields;
+        QMap<QString, QContactDetailFieldDefinition> fields;
         fields.insert("generatedField", generatedField);
         generatedDefinition.setFields(fields);
-        generatedDefinition.setAccessConstraint(QContactDetailDefinition::NoConstraint);
         generatedDefinition.setUnique(false);
 
         // attempt to save it to the manager.

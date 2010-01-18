@@ -314,6 +314,7 @@ void tst_QContactDetails::birthday()
 void tst_QContactDetails::displayLabel()
 {
     QContactDisplayLabel d1;
+    QContact c;
 
     QVERIFY(d1.label().isEmpty());
     QVERIFY(d1.value(QContactDisplayLabel::FieldLabel).isEmpty());
@@ -321,7 +322,22 @@ void tst_QContactDetails::displayLabel()
     QVERIFY(d1.value(QContactDisplayLabel::FieldLabel) == QString("Test"));
     QVERIFY(d1.label() == QString("Test"));
 
-    /* XXX TODO: test property add, update and remove.  Special semantics for display label. */
+    QContactDisplayLabel d2;
+    d2.setValue(QContactDisplayLabel::FieldLabel, "Test 2");
+
+    // test property add [== fail]
+    QVERIFY(!c.saveDetail(&d2));
+    QVERIFY(d2.accessConstraints() & QContactDetail::ReadOnly);
+    QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
+
+    // test property update [== fail]
+    d1 = c.detail<QContactDisplayLabel>();
+    QVERIFY(!c.saveDetail(&d1));
+    QVERIFY(d1.accessConstraints() & QContactDetail::ReadOnly);
+
+    // test property remove
+    QVERIFY(!c.removeDetail(&d1)); // cannot remove display label
+    QCOMPARE(c.details<QContactDisplayLabel>().count(), 1);
 }
 
 void tst_QContactDetails::emailAddress()
@@ -854,14 +870,14 @@ void tst_QContactDetails::type()
     QCOMPARE(c.details(QContactType::DefinitionName).value(0).value(QContactType::FieldType), QString(QLatin1String(QContactType::TypeContact)));
 
     // test property remove
-    QVERIFY(c.removeDetail(&t1)); // cannot remove type - "succeeds" but count remains unchanged
+    QVERIFY(!c.removeDetail(&t1)); // cannot remove type
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
     t2.setType(QContactType::TypeGroup);
     QVERIFY(c.saveDetail(&t2)); // overwrites t1
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&t2)); // cannot remove type - "succeeds" but count remains unchanged
+    QVERIFY(!c.removeDetail(&t2)); // cannot remove type - "succeeds" but count remains unchanged
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&t2)); // Should still succeed
+    QVERIFY(!c.removeDetail(&t2));
     QCOMPARE(c.details(QContactType::DefinitionName).count(), 1);
 }
 

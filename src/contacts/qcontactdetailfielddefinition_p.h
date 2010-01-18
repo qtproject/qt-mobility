@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-
-#ifndef QCONTACTDETAILDEFINITION_P_H
-#define QCONTACTDETAILDEFINITION_P_H
+#ifndef QCONTACTDETAILDEFINITIONFIELD_P_H
+#define QCONTACTDETAILDEFINITIONFIELD_P_H
 
 //
 //  W A R N I N G
@@ -54,36 +53,38 @@
 // We mean it.
 //
 
-#include "qcontactdetaildefinition.h"
+#include "qcontactdetailfielddefinition.h"
 
 #include <QSharedData>
 #include <QMap>
 #include <QString>
 #include <QVariant>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QContactDetailDefinitionData : public QSharedData
+class QContactDetailFieldDefinitionPrivate : public QSharedData
 {
 public:
-    QContactDetailDefinitionData()
-        : m_unique(false)
+    QContactDetailFieldDefinitionPrivate()
+        : QSharedData(),
+        m_dataType(QVariant::Invalid)
     {
     }
 
-    QContactDetailDefinitionData(const QContactDetailDefinitionData& other)
+    QContactDetailFieldDefinitionPrivate(const QContactDetailFieldDefinitionPrivate& other)
         : QSharedData(other),
-        m_name(other.m_name),
-        m_unique(other.m_unique),
-        m_fields(other.m_fields)
+        m_allowableValues(other.m_allowableValues),
+        m_dataType(other.m_dataType)
     {
     }
 
-    ~QContactDetailDefinitionData() {}
+    ~QContactDetailFieldDefinitionPrivate()
+    {
+    }
 
-    QString m_name;
-    bool m_unique;
-    QMap<QString, QContactDetailFieldDefinition> m_fields;
+    QVariantList m_allowableValues;
+    QVariant::Type m_dataType;
 };
 
 QTM_END_NAMESPACE

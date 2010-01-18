@@ -53,7 +53,6 @@
 #include <QTimer>
 #include <QUuid>
 #include <QSharedData>
-
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -259,29 +258,9 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
             return false;
         }
 
-        QSetIterator<QString> it(d->m_createOnlyIds.value(theContact->type()));
-        while (it.hasNext()) {
-            const QString& id = it.next();
-            QList<QContactDetail> details = oldContact.details(id);
-            QList<QContactDetail> newDetails = theContact->details(id);
-
-            /* Any entries in old should still be in new */
-            if (newDetails.count() < details.count()) {
-                error = QContactManager::DetailAccessError;
-                return false;
-            }
-
-            /* Now do a more detailed check */
-            for (int i=0; i < details.count(); i++) {
-                if (!newDetails.contains(details.at(i))) {
-                    error = QContactManager::DetailAccessError;
-                    return false;
-                }
-            }
-        }
-
         QContactTimestamp ts = theContact->detail(QContactTimestamp::DefinitionName);
         ts.setLastModified(QDateTime::currentDateTime());
+        QContactManagerEngine::setDetailAccessConstraints(&ts, QContactDetail::ReadOnly | QContactDetail::Irremovable);
         theContact->saveDetail(&ts);
 
         /* And we need to check that the relationships are up-to-date or not modified */
@@ -330,6 +309,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         QContactTimestamp ts = theContact->detail(QContactTimestamp::DefinitionName);
         ts.setLastModified(QDateTime::currentDateTime());
         ts.setCreated(ts.lastModified());
+        setDetailAccessConstraints(&ts, QContactDetail::ReadOnly | QContactDetail::Irremovable);
         theContact->saveDetail(&ts);
 
         // update the contact item - set its ID
@@ -648,20 +628,6 @@ QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(
     // lazy initialisation of schema definitions.
     if (d->m_definitions.isEmpty()) {
         d->m_definitions = QContactManagerEngine::schemaDefinitions();
-
-        // Extract create only definitions
-        QMap<QString, QContactDetailDefinition> defMapForThisType(d->m_definitions.value(contactType));
-        QStringList defMapKeys = defMapForThisType.keys();
-        QSet<QString> createOnlyDefs;
-        for (int i = 0; i < defMapKeys.size(); i++) {
-            if (defMapForThisType.value(defMapKeys.at(i)).accessConstraint() == QContactDetailDefinition::CreateOnly) {
-                createOnlyDefs.insert(defMapKeys.at(i));
-            }
-        }
-
-        if (!createOnlyDefs.isEmpty()) {
-            d->m_createOnlyIds.insert(contactType, createOnlyDefs);
-        }
     }
 
     error = QContactManager::NoError;
@@ -681,11 +647,6 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
     QMap<QString, QContactDetailDefinition> defsForThisType = d->m_definitions.value(contactType);
     defsForThisType.insert(def.name(), def);
     d->m_definitions.insert(contactType, defsForThisType);
-    if (def.accessConstraint() == QContactDetailDefinition::CreateOnly) {
-        QSet<QString> createOnlyDefs = d->m_createOnlyIds.value(contactType);
-        createOnlyDefs.insert(def.name());
-        d->m_createOnlyIds.insert(contactType, createOnlyDefs);
-    }
 
     error = QContactManager::NoError;
     return true;
@@ -716,9 +677,6 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, c
     QMap<QString, QContactDetailDefinition> defsForThisType = d->m_definitions.value(contactType);
     bool success = defsForThisType.remove(definitionId);
     d->m_definitions.insert(contactType, defsForThisType);
-    QSet<QString> createOnlyDefsForThisType = d->m_createOnlyIds.value(contactType);
-    createOnlyDefsForThisType.remove(definitionId);
-    d->m_createOnlyIds.insert(contactType, createOnlyDefsForThisType);
     if (success)
         error = QContactManager::NoError;
     else

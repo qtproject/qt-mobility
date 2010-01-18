@@ -397,9 +397,9 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
             QContactDetailDefinition urlDef = d->m_definitions.value(
                     QContactUrl::DefinitionName);
 
-            QMap<QString, QContactDetailDefinitionField> &fields(
+            QMap<QString, QContactDetailFieldDefinition> &fields(
                     urlDef.fields());
-            QContactDetailDefinitionField f;
+            QContactDetailFieldDefinition f;
 
             f.setDataType(QVariant::String);
             QVariantList subTypes;
@@ -417,8 +417,8 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
         {
             QContactDetailDefinition accDef = d->m_definitions.value(QContactOnlineAccount::DefinitionName);
 
-            QMap<QString, QContactDetailDefinitionField> &fields(accDef.fields());
-            QContactDetailDefinitionField f;
+            QMap<QString, QContactDetailFieldDefinition> &fields(accDef.fields());
+            QContactDetailFieldDefinition f;
 
             f.setDataType(QVariant::String);
             fields.insert("Account", f);

@@ -68,6 +68,7 @@ public:
     QContactDetailPrivate()
         : QSharedData(),
         m_id(lastDetailKey.fetchAndAddOrdered(1))
+        m_access(QContactDetail::NoConstraint)
     {
     }
 
@@ -76,7 +77,8 @@ public:
         m_id(other.m_id),
         m_definitionName(other.m_definitionName),
         m_values(other.m_values),
-        m_preferredActions(other.m_preferredActions)
+        m_preferredActions(other.m_preferredActions),
+        m_access(other.m_access)
     {
     }
 
@@ -88,6 +90,12 @@ public:
     QList<QContactActionDescriptor> m_preferredActions;
 
     static QAtomicInt lastDetailKey;
+    QContactDetail::AccessConstraints m_access;
+
+    static void setAccessConstraints(QContactDetail *d, QContactDetail::AccessConstraints constraint)
+    {
+        d->d->m_access = constraint;
+    }
 };
 
 QTM_END_NAMESPACE

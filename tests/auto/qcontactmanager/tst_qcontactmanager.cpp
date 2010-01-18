@@ -640,24 +640,21 @@ void tst_QContactManager::add()
     QMap<QString, QContactDetailDefinition> defmap = cm->detailDefinitions();
     QList<QContactDetailDefinition> defs = defmap.values();
     foreach (const QContactDetailDefinition def, defs) {
-        // if the definition is read only, we cannot create details of the definition, so skip it.
+
+        // Leave these warnings here - might need an API for this
         if (def.accessConstraint() == QContactDetailDefinition::ReadOnly) {
             continue;
         }
 
         // otherwise, create a new detail of the given type and save it to the contact
         QContactDetail det(def.name());
-        QMap<QString, QContactDetailDefinitionField> fieldmap = def.fields();
+        QMap<QString, QContactDetailFieldDefinition> fieldmap = def.fields();
         QStringList fieldKeys = fieldmap.keys();
         foreach (const QString& fieldKey, fieldKeys) {
             // get the field, and check to see that it's not constrained.
-            QContactDetailDefinitionField currentField = fieldmap.value(fieldKey);
-            if (currentField.accessConstraint() == QContactDetailDefinitionField::ReadOnly) {
-                // we cannot write to this field.
-                continue;
-            }
+            QContactDetailFieldDefinition currentField = fieldmap.value(fieldKey);
 
-            // we can write to this field.  attempt to create a worthy value
+            // Attempt to create a worthy value
             if (!currentField.allowableValues().isEmpty()) {
                 // we want to save a value that will be accepted.
                 if (currentField.dataType() == QVariant::StringList)
@@ -1114,11 +1111,10 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError || manager.error() == QContactManager::InvalidContactTypeError);
 
     QContactDetailDefinition def;
-    def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     def.setUnique(true);
     def.setName("new field");
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField currField;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition currField;
     currField.setDataType(QVariant::String);
     fields.insert("value", currField);
     def.setFields(fields);
@@ -1522,8 +1518,8 @@ void tst_QContactManager::contactValidation()
      * 4) a unique create only detail
      */
     QContactDetailDefinition uniqueDef;
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField field;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition field;
     field.setDataType(QVariant::String);
     fields.insert("value", field);
 
@@ -1541,27 +1537,6 @@ void tst_QContactManager::contactValidation()
     restrictedDef.setFields(fields);
 
     QVERIFY(cm->saveDetailDefinition(restrictedDef));
-
-    QContactDetailDefinition createOnlyDef;
-    createOnlyDef.setName("CreateOnlyDetail");
-    createOnlyDef.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    fields.clear();
-    field.setAllowableValues(QList<QVariant>());
-    fields.insert("value", field);
-    createOnlyDef.setFields(fields);
-
-    QVERIFY(cm->saveDetailDefinition(createOnlyDef));
-
-    QContactDetailDefinition createOnlyUniqueDef;
-    createOnlyUniqueDef.setName("CreateOnlyUniqueDetail");
-    createOnlyUniqueDef.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    createOnlyUniqueDef.setUnique(true);
-    fields.clear();
-    field.allowableValues().clear();
-    fields.insert("value", field);
-    createOnlyUniqueDef.setFields(fields);
-
-    QVERIFY(cm->saveDetailDefinition(createOnlyUniqueDef));
 
     // first, test an invalid definition
     QContactDetail d1 = QContactDetail("UnknownDefinition");
@@ -1628,39 +1603,7 @@ void tst_QContactManager::contactValidation()
     QCOMPARE(cm->error(), QContactManager::NoError);
     c.removeDetail(&d7);
 
-    /* Test a write once detail */
-    QContactDetail d8 = QContactDetail("CreateOnlyDetail");
-    d8.setValue("value", "First value");
-    c.saveDetail(&d8);
-
-    QVERIFY(cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::NoError);
-
-    /* Changing or adding some other detail should also be fine, and resaving it */
-    QContactPhoneNumber p1;
-    p1.setNumber("123467");
-    c.saveDetail(&p1);
-    QVERIFY(cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::NoError);
-
-    /* Adding a second detail should be fine */
-    QContactDetail d9 = QContactDetail("CreateOnlyDetail");
-    d9.setValue("value", "Second value");
-    c.saveDetail(&d9);
-    QVERIFY(cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::NoError);
-
-    /* Changing a value should fail */
-    d8.setValue("value", "Third value");
-    c.saveDetail(&d8);
-
-    QVERIFY(!cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::DetailAccessError);
-
-    c.removeDetail(&d8);
-    /* Removing a create only should also fail */
-    QVERIFY(!cm->saveContact(&c));
-    QCOMPARE(cm->error(), QContactManager::DetailAccessError);
+    delete cm;
 }
 
 void tst_QContactManager::signalEmission()
@@ -1872,8 +1815,8 @@ void tst_QContactManager::detailDefinitions()
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;
-    QContactDetailDefinitionField field;
-    QMap<QString, QContactDetailDefinitionField> fields;
+    QContactDetailFieldDefinition field;
+    QMap<QString, QContactDetailFieldDefinition> fields;
     field.setDataType(cm->supportedDataTypes().value(0));
     fields.insert("New Value", field);
     newDef.setName("New Definition");
@@ -1892,8 +1835,6 @@ void tst_QContactManager::detailDefinitions()
     fields.insert("Restricted value", field);
     allowedDef.setFields(fields);
 
-    /* XXX A create only definition */
-
     /* Many invalid definitions */
     QContactDetailDefinition noIdDef;
     noIdDef.setFields(fields);
@@ -1901,21 +1842,16 @@ void tst_QContactManager::detailDefinitions()
     QContactDetailDefinition noFieldsDef;
     noFieldsDef.setName("No fields");
 
-    QContactDetailDefinition readOnlyDef;
-    readOnlyDef.setName("Read only");
-    readOnlyDef.setAccessConstraint(QContactDetailDefinition::ReadOnly);
-    readOnlyDef.setFields(fields);
-
     QContactDetailDefinition invalidFieldKeyDef;
     invalidFieldKeyDef.setName("Invalid field key");
-    QMap<QString, QContactDetailDefinitionField> badfields;
+    QMap<QString, QContactDetailFieldDefinition> badfields;
     badfields.insert(QString(), field);
     invalidFieldKeyDef.setFields(badfields);
 
     QContactDetailDefinition invalidFieldTypeDef;
     invalidFieldTypeDef.setName("Invalid field type");
     badfields.clear();
-    QContactDetailDefinitionField badfield;
+    QContactDetailFieldDefinition badfield;
     badfield.setDataType((QVariant::Type) qMetaTypeId<UnsupportedMetatype>());
     badfields.insert("Bad type", badfield);
     invalidFieldTypeDef.setFields(badfields);
@@ -1947,9 +1883,6 @@ void tst_QContactManager::detailDefinitions()
         QVERIFY(cm->saveDetailDefinition(noFieldsDef) == false);
         QVERIFY(cm->error() == QContactManager::BadArgumentError);
 
-        QVERIFY(cm->saveDetailDefinition(readOnlyDef) == false);
-        QVERIFY(cm->error() == QContactManager::BadArgumentError);
-
         QVERIFY(cm->saveDetailDefinition(invalidFieldKeyDef) == false);
         QVERIFY(cm->error() == QContactManager::BadArgumentError);
 
@@ -1975,7 +1908,7 @@ void tst_QContactManager::detailDefinitions()
         QVERIFY(def == newDef);
 
         /* Update it */
-        QMap<QString, QContactDetailDefinitionField> newFields = def.fields();
+        QMap<QString, QContactDetailFieldDefinition> newFields = def.fields();
         newFields.insert("Another new value", field);
         newDef.setFields(newFields);
 
@@ -2253,7 +2186,7 @@ void tst_QContactManager::detailOrders()
     //phone numbers
 
     QContactDetailDefinition d = cm->detailDefinition(QContactPhoneNumber::DefinitionName, QContactType::TypeContact);
-    QContactDetailDefinitionField supportedContexts = d.fields().value(QContactDetail::FieldContext);
+    QContactDetailFieldDefinition supportedContexts = d.fields().value(QContactDetail::FieldContext);
     QString contextOther = QContactDetail::ContextOther;
     if (!supportedContexts.allowableValues().contains(contextOther)) {
         contextOther = QString();
