@@ -78,7 +78,10 @@ class QSignallingAccelerometerListener;
 \endcode
 
     A monoblock device sitting at rest, face up on a desk will experience
-    the force of Earth's gravity as approximately -9.8 on the Z axis.
+    a force of approximately 9.8 on the Z axis. This is the force the desk
+    must exert on the device to overcome the gravitational pull of the earth.
+    The accelerometer cannot measure gravitational force so it sees only the
+    force being implied by the desk.
 */
 
 /*!
