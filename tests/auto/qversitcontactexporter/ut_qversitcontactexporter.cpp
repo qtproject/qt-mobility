@@ -108,7 +108,7 @@ public:
 
 };
 
-class MyQVersitContactDetailExporter : public QVersitContactDetailExporter
+class MyQVersitContactExporterDetailHandler : public QVersitContactExporterDetailHandler
 {
 public:
     bool processDetail(const QContactDetail& detail, QVersitDocument* document)
@@ -218,11 +218,11 @@ void UT_QVersitContactExporter::testUnknownContactDetails()
     contact.saveDetail(&contactAvatar);
     QList<QContact> contacts;
     contacts.append(contact);
-    MyQVersitContactDetailExporter detailExporter;
-    mExporter->setDetailExporter(&detailExporter);
+    MyQVersitContactExporterDetailHandler detailHandler;
+    mExporter->setDetailHandler(&detailHandler);
     document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
-    QList<QContactDetail> unknownDetails = detailExporter.mUnknownDetails;
+    QList<QContactDetail> unknownDetails = detailHandler.mUnknownDetails;
     QString defintionName = contactAvatar.definitionName();
     QContactDetail detail = searchDetail(unknownDetails,defintionName);
     QCOMPARE(defintionName, detail.definitionName());
@@ -235,11 +235,11 @@ void UT_QVersitContactExporter::testUnknownContactDetails()
     contact.saveDetail(&onlineAccount);
     contacts.clear();
     contacts.append(contact);
-    detailExporter = MyQVersitContactDetailExporter();
-    mExporter->setDetailExporter(&detailExporter);
+    detailHandler = MyQVersitContactExporterDetailHandler();
+    mExporter->setDetailHandler(&detailHandler);
     document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
-    unknownDetails = detailExporter.mUnknownDetails;
+    unknownDetails = detailHandler.mUnknownDetails;
     defintionName = onlineAccount.definitionName();
     detail = QContactDetail();
     detail = searchDetail(unknownDetails, defintionName);

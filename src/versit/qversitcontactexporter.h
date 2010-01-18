@@ -53,12 +53,11 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate;
 
-// XXX fooHandler
-// I wonder if we need both process & processUnknown...
-class QVersitContactDetailExporter
+// XXX I wonder if we need both process & processUnknown...
+class QVersitContactExporterDetailHandler
 {
 public:
-    virtual ~QVersitContactDetailExporter() {}
+    virtual ~QVersitContactExporterDetailHandler() {}
 
     virtual bool processDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
 
@@ -83,8 +82,8 @@ public:
         const QList<QContact>& contacts,
         QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type);
 
-    void setDetailExporter(QVersitContactDetailExporter* exporter);
-    QVersitContactDetailExporter* detailExporter() const;
+    void setDetailHandler(QVersitContactExporterDetailHandler* handler);
+    QVersitContactExporterDetailHandler* detailHandler() const;
 
     void setResourceLoader(QVersitResourceLoader* loader);
     QVersitResourceLoader* resourceLoader() const;

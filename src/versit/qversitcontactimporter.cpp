@@ -48,9 +48,9 @@
 QTM_USE_NAMESPACE
 
 /*!
- * \class QVersitContactPropertyImporter
+ * \class QVersitContactImporterPropertyHandler
  *
- * \brief The QVersitContactPropertyImporter class is an interface for clients wishing to implement
+ * \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to implement
  * custom import behaviour for certain versit properties
  *
  * \ingroup versit
@@ -106,13 +106,13 @@ QTM_USE_NAMESPACE
  *
  * \ingroup versit
  *
- * By associating a QVersitContactPropertyImporter with the importer using setPropertyImporter(), the
+ * By associating a QVersitContactImporterPropertyHandler with the importer using setPropertyHandler(), the
  * client can pass in a handler to override the processing of properties and/or handle properties
  * that QVersitContactImporter doesn't support.
  *
  * \code
  *
- * class MyPropertyImporter : public QVersitContactPropertyImporter {
+ * class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
  * public:
  *    bool processProperty(const QVersitProperty& property, QContact* contact) {
  *        return false;
@@ -135,8 +135,8 @@ QTM_USE_NAMESPACE
  *    }
  * }
  *
- * MyPropertyImporter propertyImporter;
- * importer.setPropertyImporter(propertyImporter);
+ * MyPropertyHandler propertyHandler;
+ * importer.setPropertyHandler(propertyHandler);
  * MyResourceSaver resourceSaver;
  * importer.setResourceSaver(resourceSaver);
  *
@@ -156,11 +156,11 @@ QTM_USE_NAMESPACE
  *
  * QList<QContact> contactList = importer.importContacts(list);
  * // contactList.first() now contains the "N" property as a QContactName
- * // propertyImporter.mUnknownProperties contains the list of unknown properties
+ * // propertyHandler.mUnknownProperties contains the list of unknown properties
  *
  * \endcode
  *
- * \sa QVersitDocument, QVersitReader, QVersitContactPropertyImporter
+ * \sa QVersitDocument, QVersitReader, QVersitContactImporterPropertyHandler
  */
 
 /*! Constructs a new importer */
@@ -191,17 +191,17 @@ QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocume
 /*!
  * Sets \a importer to be the handler for processing QVersitProperties
  */
-void QVersitContactImporter::setPropertyImporter(QVersitContactPropertyImporter* importer)
+void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandler* importer)
 {
-    d->mPropertyImporter = importer;
+    d->mPropertyHandler = importer;
 }
 
 /*!
  * Gets the handler for processing QVersitProperties
  */
-QVersitContactPropertyImporter* QVersitContactImporter::propertyImporter() const
+QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler() const
 {
-    return d->mPropertyImporter;
+    return d->mPropertyHandler;
 }
 
 /*!

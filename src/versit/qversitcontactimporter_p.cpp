@@ -75,7 +75,7 @@ QTM_USE_NAMESPACE
  * Constructor.
  */
 QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
-    mPropertyImporter(NULL)
+    mPropertyHandler(NULL)
 {
     // Contact detail mappings
     int versitPropertyCount =
@@ -173,8 +173,8 @@ QContact QVersitContactImporterPrivate::importContact(
             contact.saveDetail(detail);
             delete detail;
         } else {
-            if (mPropertyImporter)
-                mPropertyImporter->processUnknownProperty(property, &contact);
+            if (mPropertyHandler)
+                mPropertyHandler->processUnknownProperty(property, &contact);
         }
     }
 

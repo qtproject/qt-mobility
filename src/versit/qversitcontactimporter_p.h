@@ -141,7 +141,7 @@ private:
     QString getFirstAndLastName(const QVersitDocument& document) const;
     
 public: // Data
-    QVersitContactPropertyImporter* mPropertyImporter;
+    QVersitContactImporterPropertyHandler* mPropertyHandler;
     QVersitResourceSaver* mResourceSaver;
 
 private: // Data

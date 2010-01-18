@@ -75,7 +75,7 @@ QTM_USE_NAMESPACE
  * Constructor.
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
-    mDetailExporter(NULL),
+    mDetailHandler(NULL),
     mResourceLoader(NULL),
     mVersitType(QVersitDocument::InvalidType)
 {
@@ -192,8 +192,8 @@ void QVersitContactExporterPrivate::exportContact(
         if (addProperty)
             versitDocument.addProperty(property);
 
-        if (unknown && mDetailExporter) {
-            mDetailExporter->processUnknownDetail(detail, &versitDocument);
+        if (unknown && mDetailHandler) {
+            mDetailHandler->processUnknownDetail(detail, &versitDocument);
         }
     }
 }

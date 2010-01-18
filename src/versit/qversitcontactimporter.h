@@ -64,10 +64,10 @@ class QVersitContactImporterPrivate;
 // I guess we still need filesaver for other blobs?
 // hrm... more thought needed :)
 
-class QVersitContactPropertyImporter
+class QVersitContactImporterPropertyHandler
 {
 public:
-    virtual ~QVersitContactPropertyImporter() {}
+    virtual ~QVersitContactImporterPropertyHandler() {}
     virtual bool processProperty(const QVersitProperty& property, QContact* contact) = 0;
     virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
 };
@@ -89,9 +89,8 @@ public:
     // XXX I'm not sure about importing vs converting (same for class name)
     QList<QContact> importContacts(const QList<QVersitDocument>& documents);
 
-    // XXX setFooHandler
-    void setPropertyImporter(QVersitContactPropertyImporter* importer);
-    QVersitContactPropertyImporter* propertyImporter() const;
+    void setPropertyHandler(QVersitContactImporterPropertyHandler* importer);
+    QVersitContactImporterPropertyHandler* propertyHandler() const;
     
     void setResourceSaver(QVersitResourceSaver* saver);
     QVersitResourceSaver* resourceSaver() const;

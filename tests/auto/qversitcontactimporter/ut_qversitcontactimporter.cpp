@@ -68,7 +68,7 @@
 #include <QDir>
 
 QTM_BEGIN_NAMESPACE
-class MyQVersitContactPropertyImporter : public QVersitContactPropertyImporter
+class MyQVersitContactImporterPropertyHandler : public QVersitContactImporterPropertyHandler
 {
 public:
     bool processProperty(const QVersitProperty& property, QContact* contact)
@@ -1048,45 +1048,45 @@ void UT_QVersitContactImporter::testUnknownVersitProperties()
     QVersitProperty property;
 
     // No unconverted properties, no converted properties either
-    MyQVersitContactPropertyImporter propertyImporter;
-    mImporter->setPropertyImporter(&propertyImporter);
+    MyQVersitContactImporterPropertyHandler propertyHandler;
+    mImporter->setPropertyHandler(&propertyHandler);
     QList<QVersitDocument> documents;
     documents.append(document);
     mImporter->importContacts(documents);
-    QCOMPARE(propertyImporter.mUnknownProperties.size(), 0);
+    QCOMPARE(propertyHandler.mUnknownProperties.size(), 0);
 
     // No unconverted properties, one converted property
-    propertyImporter = MyQVersitContactPropertyImporter();
+    propertyHandler = MyQVersitContactImporterPropertyHandler();
     property.setName(QString::fromAscii("N"));
     property.setValue(QString::fromAscii("Citizen;John;Q;;"));
     document.addProperty(property);
     documents.clear();
     documents.append(document);
     mImporter->importContacts(documents);
-    QCOMPARE(propertyImporter.mUnknownProperties.size(), 0);
+    QCOMPARE(propertyHandler.mUnknownProperties.size(), 0);
 
     // One unknown property
-    propertyImporter = MyQVersitContactPropertyImporter();
+    propertyHandler = MyQVersitContactImporterPropertyHandler();
     property.setName(QString::fromAscii("X-EXTENSION-1"));
     property.setValue(QString::fromAscii("extension value 1"));
     document.addProperty(property);
     documents.clear();
     documents.append(document);
     mImporter->importContacts(documents);
-    QList<QVersitProperty> unknownProperties = propertyImporter.mUnknownProperties;
+    QList<QVersitProperty> unknownProperties = propertyHandler.mUnknownProperties;
     QCOMPARE(unknownProperties.count(), 1);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
     QCOMPARE(unknownProperties[0].valueString(), QString::fromAscii("extension value 1"));
 
     // Two unknown properties
-    propertyImporter = MyQVersitContactPropertyImporter();
+    propertyHandler = MyQVersitContactImporterPropertyHandler();
     property.setName(QString::fromAscii("X-EXTENSION-2"));
     property.setValue(QString::fromAscii("extension value 2"));
     document.addProperty(property);
     documents.clear();
     documents.append(document);
     mImporter->importContacts(documents);
-    unknownProperties = propertyImporter.mUnknownProperties;
+    unknownProperties = propertyHandler.mUnknownProperties;
     QCOMPARE(unknownProperties.count(), 2);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
     QCOMPARE(unknownProperties[0].valueString(), QString::fromAscii("extension value 1"));
