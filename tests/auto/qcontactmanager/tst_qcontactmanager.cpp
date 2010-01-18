@@ -1602,8 +1602,6 @@ void tst_QContactManager::contactValidation()
     QVERIFY(cm->saveContact(&c));
     QCOMPARE(cm->error(), QContactManager::NoError);
     c.removeDetail(&d7);
-
-    delete cm;
 }
 
 void tst_QContactManager::signalEmission()

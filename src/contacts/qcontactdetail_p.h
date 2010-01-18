@@ -67,7 +67,7 @@ class QContactDetailPrivate : public QSharedData
 public:
     QContactDetailPrivate()
         : QSharedData(),
-        m_id(lastDetailKey.fetchAndAddOrdered(1))
+        m_id(lastDetailKey.fetchAndAddOrdered(1)),
         m_access(QContactDetail::NoConstraint)
     {
     }
