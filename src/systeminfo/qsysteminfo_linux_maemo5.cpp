@@ -41,6 +41,8 @@
 
 #include <qsysteminfo_linux_maemo5_p.h>
 
+#include "gconfitem.h" // Temporarily here.
+
 QTM_BEGIN_NAMESPACE
 
 //////// QSystemInfo
@@ -51,6 +53,22 @@ QSystemInfoLinuxMaemo5Private::QSystemInfoLinuxMaemo5Private(QSystemInfoLinuxMae
 
 QSystemInfoLinuxMaemo5Private::~QSystemInfoLinuxMaemo5Private()
 {
+}
+
+QStringList QSystemInfoLinuxMaemo5Private::availableLanguages() const
+{
+    QStringList languages;
+
+    GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+    QStringList locales = languagesItem.value().toStringList();
+
+    foreach(QString locale, locales) {
+        languages << locale.mid(0,2);
+    }
+    languages << currentLanguage();
+    languages.removeDuplicates();
+
+    return languages;
 }
 
 QSystemNetworkInfoLinuxMaemo5Private::QSystemNetworkInfoLinuxMaemo5Private(QSystemNetworkInfoLinuxMaemoPrivate *parent)

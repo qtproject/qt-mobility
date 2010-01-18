@@ -70,6 +70,8 @@ class QSystemInfoLinuxMaemo5Private : public QSystemInfoLinuxMaemoPrivate
 public:
     QSystemInfoLinuxMaemo5Private(QSystemInfoLinuxMaemoPrivate *parent = 0);
     virtual ~QSystemInfoLinuxMaemo5Private();
+
+    QStringList availableLanguages() const;
 };
 
 class QSystemNetworkInfoLinuxMaemo5Private : public QSystemNetworkInfoLinuxMaemoPrivate

@@ -95,7 +95,7 @@ public:
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
-private:
+protected:
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);
     bool hasHalUsbFeature(qint32 usbClass);
@@ -149,7 +149,7 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
-private:
+protected:
 #if !defined(QT_NO_DBUS)
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
     int getBluetoothRssi();
@@ -189,7 +189,7 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
-private:
+protected:
     QMap<QString, QString> mountEntriesMap;
     void mountEntries();
 
@@ -231,7 +231,7 @@ Q_SIGNALS:
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void bluetoothStateChanged(bool);
 
-private:
+protected:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
@@ -257,7 +257,7 @@ public:
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
 
-private:
+protected:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;

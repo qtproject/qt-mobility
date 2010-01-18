@@ -177,34 +177,25 @@ QString QSystemInfoLinuxMaemoPrivate::currentLanguage() const
 // 2 letter ISO 639-1
 QStringList QSystemInfoLinuxMaemoPrivate::availableLanguages() const
 {
-    QStringList langList;
-
-#if !defined(QT_NO_DBUS)
-    GConfItem languages("/apps/osso/inputmethod/available_languages");
-    QStringList localeList = languages.value().toStringList();
-
-    if(localeList.count()) {
-        foreach(QString localeName, localeList) {
-            QString lang = localeName.mid(0,2);
-#else
     QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
+    QStringList langList;
 
     if(transDir.exists()) {
         QStringList localeList = transDir.entryList( QStringList() << "qt_*.qm" ,QDir::Files
                                                      | QDir::NoDotAndDotDot, QDir::Name);
         foreach(QString localeName, localeList) {
             QString lang = localeName.mid(3,2);
-#endif
             if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains("help")) {
-                langList << lang;
+                langList <<lang;
             }
         }
-    }
-    if(langList.count() > 0) {
-        return langList;
+        if(langList.count() > 0) {
+            return langList;
+        }
     }
     return QStringList() << currentLanguage();
 }
+
 // "major.minor.build" format.
 QString QSystemInfoLinuxMaemoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
