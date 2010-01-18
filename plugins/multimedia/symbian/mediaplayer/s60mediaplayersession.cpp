@@ -45,6 +45,9 @@
 #include <QtCore/qdir.h>
 #include <QtCore/qvariant.h>
 #include <QtCore/qtimer.h>
+#include <mmf/common/mmferrors.h>
+
+//#define KErrMMPartialPlayback -12017
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent)
@@ -229,7 +232,7 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
 
 void S60MediaPlayerSession::initComplete()
 {
-    if (m_error == KErrNone) {
+    if (m_error == KErrNone || KErrMMPartialPlayback ) {
         setMediaStatus(QMediaPlayer::LoadedMedia);
         updateMetaDataEntries();
         setVolume(volume());
