@@ -96,6 +96,7 @@ private slots:
 
     void processCapturedImage(const QString& fname, const QImage& img);
     void focusLocked();
+    void zoomValueChanged(qreal value);
 
 private:
     Ui::CameraCapture *ui;

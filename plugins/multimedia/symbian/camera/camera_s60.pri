@@ -1,7 +1,8 @@
 INCLUDEPATH += $$PWD
 
 symbian:LIBS += -lcamerawrapper \
-    -lfbscli
+    -lfbscli \
+    -lecamadvsettings
 
 HEADERS += $$PWD/s60camerafocuscontrol.h \
     $$PWD/s60cameraexposurecontrol.h \

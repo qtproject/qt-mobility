@@ -161,6 +161,17 @@ public:
     void setVideoRenderer(QObject *renderer);
     void updateImageCaptureCodecs();
     
+    //camerafocuscontrol
+    void startFocus();
+    void cancelFocus();
+    int maximumZoom();
+    int minZoom();
+    int maxDigitalZoom();
+    void setZoomFactor(int value);
+    int zoomFactor();
+    void setFocusMode(QCamera::FocusMode mode);
+    QCamera::FocusMode focusMode();
+    
 protected: // From MCameraEngineObserver
     void MceoCameraReady();
     void MceoFocusComplete();
@@ -175,6 +186,7 @@ private:
     QMap<QString, int> formatDescMap();
 
     void resetCamera();
+    bool queryAdvancedSettingsInfo();
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -183,6 +195,7 @@ Q_SIGNALS:
     void imageCaptured(const QString &fileName, const QImage &preview);
     //for focuscontrol
     void focusLocked();
+    void zoomValueChanged(qreal value);
     //for device control
     void selectedDeviceChanged(int index);
     void selectedDeviceChanged(const QString &deviceName);
@@ -208,7 +221,10 @@ private:
     QList<uint> m_formats;   
     QSize m_VFWidgetSize;
     TSize m_VFSize;
+
     mutable TCameraInfo m_info; // information about camera
+    CCamera::CCameraAdvancedSettings *m_advancedSettings;
+
 };
 
 #endif
