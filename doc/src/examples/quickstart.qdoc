@@ -55,17 +55,17 @@ One can start using Qt Mobility with 3 simple steps.
     \o Include the appropriate headers
     \o Use the \c QtMobility namespace
     \o Declare the usage of Qt Mobility
-       and appropriate domain(s) in the project(.pro) file
+       and appropriate API(s) in the project(.pro) file
 \endlist
 
 Steps 1 and 2 are shown in the example below:
 \snippet quickstart/main.cpp 0
 
-Here we are using the QSystemInfo headers to print out the 
+This example uses the QSystemInfo headers to print out the 
 system's current country code.  All the domain APIs are wrapped
 within the \c QtMobility namespace and thus developers either 
 need to declare \c {using namespace QtMobility} or
-qualify their symbols e.g. \c {QtMobility::QSystemInfo s}.
+qualify their symbols e.g. \c {QtMobility::QSystemInfo}.
 (\bold{Note}:  If you are on the Symbian platform you will
 need to define the actual header file, in this case
 <qsysteminfo.h> rather than using the standard header form
@@ -77,17 +77,16 @@ System Information we declare in the project file:
 
 \snippet quickstart/quickstart.pro 0
 
-Here we've declared that the application uses
-Qt Mobility and that we are using the 
-System Information domain. (Internally this results
-in qmake setting up include and library search paths.
-See mobility.prf for details to see what those
-paths are, it is copied into 
-the mkspecs/features directory of Qt's install path)
+The project file states that the application uses Qt Mobility and that it requires the 
+System Information API. By adding \c mobility to \c CONFIG qmake finds
+the \c {mobility.prf} file in \c{$QTDIR/mkspecs/features} and includes it when
+processing the current project file. \c{mobility.prf} is generated when running 
+the QtMobility configure script and points qmake to the relevant include and prefix
+paths and ensures that deployment and package dependencies are set. The \c MOBILITY variable itself is part of \c {mobility.prf} and is used to
+determine the QtMobility library the current project should link to (in this example the SystemInfo library).
 
-The following table lists the domains and the 
-corresponding values that can be assigned to
-\c MOBILITY.
+Each QtMobility API has its corresponding value which has to be added to \c MOBILITY. The subsequent table lists the APIs and the 
+corresponding values that can be assigned to \c MOBILITY.
 \table
 \header
     \o Domain
@@ -125,21 +124,20 @@ And we're done.  If you are using the command line simply
 enter:
 \code
     qmake
-    make
+    make //or nmake on Windows
 \endcode
 
 to generate the executable which can then be run.
 
-If you are developing for symbian,
-to make a debug build for the emulator run:
+If you are developing for symbian, to make a debug build for the emulator run:
 \code
     qmake
     make debug-winscw
 \endcode
+This assumes that qmake is in your %PATH% and Qt has been build for the emulator already.
 
 
-To make a release build and SIS package for
-a device run:
+To make a release build and SIS package for a device run:
 \code
     qmake
     make release-gcce

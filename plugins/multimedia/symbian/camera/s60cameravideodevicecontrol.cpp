@@ -47,15 +47,14 @@
 #include <QtGui/qicon.h>
 
 const int defaultCameraDevice = 0;
-const int defaultCameraDeviceCount = 0;
 
 S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *parent)
-    :QVideoDeviceControl(parent)
+    :QVideoDeviceControl(parent), m_selectedDevice(defaultCameraDevice)
 {
 }
 
 S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *session, QObject *parent)
-   :QVideoDeviceControl(parent)
+   :QVideoDeviceControl(parent), m_selectedDevice(defaultCameraDevice)
 {
     m_session = qobject_cast<S60CameraSession*>(session);
     connect(m_session,SIGNAL(selectedDeviceChanged(int)), this, SIGNAL(selectedDeviceChanged(int)) );
@@ -76,17 +75,17 @@ int S60CameraVideoDeviceControl::deviceCount() const
 
 QString S60CameraVideoDeviceControl::deviceName(int index) const
 {
-    qDebug() << "S60CameraVideoDeviceControl::deviceName, index=() called" << index;
+    qDebug() << "S60CameraVideoDeviceControl::deviceName, index=" << index;
     return S60CameraSession::name(index);
 }
 QString S60CameraVideoDeviceControl::deviceDescription(int index) const
 {
-    qDebug() << "S60CameraVideoDeviceControl::deviceDescription, index=() called" << index;
+    qDebug() << "S60CameraVideoDeviceControl::deviceDescription, index=" << index;
     return S60CameraSession::description(index);
 }
 QIcon S60CameraVideoDeviceControl::deviceIcon(int index) const
 {
-    qDebug() << "S60CameraVideoDeviceControl::deviceIcon() called";
+    qDebug() << "S60CameraVideoDeviceControl::deviceIcon(), index="<<index;
     QIcon deviceIcon = QIcon();
     if (m_session) {
         deviceIcon =  m_session->icon(index);
@@ -103,16 +102,14 @@ int S60CameraVideoDeviceControl::defaultDevice() const
 int S60CameraVideoDeviceControl::selectedDevice() const
 {
     qDebug() << "S60CameraVideoDeviceControl::selectedDevice() called";
-    if (m_session) {
-       return m_session->selectedDevice();
-    }
-    return defaultCameraDevice;
+    return m_selectedDevice;
 }
 
 void S60CameraVideoDeviceControl::setSelectedDevice(int index)
 {
-    qDebug() << "S60CameraVideoDeviceControl::setSelectedDevice() called";
+    qDebug() << "S60CameraVideoDeviceControl::setSelectedDevice(), index="<<index;
+    m_selectedDevice = index;
     if (m_session) {
-        m_session->setSelectedDevice(index);
+        m_session->setSelectedDevice(m_selectedDevice);
     }
 }

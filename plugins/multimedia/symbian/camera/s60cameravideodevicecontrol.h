@@ -72,7 +72,7 @@ public Q_SLOTS:
 
 private:
     S60CameraSession* m_session;
-
+    int m_selectedDevice;
 };
 
 #endif

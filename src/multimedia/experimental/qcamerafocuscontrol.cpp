@@ -94,14 +94,25 @@ QCameraFocusControl::~QCameraFocusControl()
 
 
 /*!
-  \fn void QCameraFocusControl::lockFocus()
+  \fn void QCameraFocusControl::startFocusing()
 
-  Lock the focus.
+    Starts single or continuous autofocus.
+
+    Does nothing in hyperfocal or infinity focus modes.
+
+    If supported by camera, startFocusing() turns on the manual focusing notifications,
+    otherwise it does nothing in manual mode.
 */
 
 /*!
-  \fn void QCameraFocusControl::unlockFocus()
-  Unlock the focus.
+  \fn void QCameraFocusControl::cancelFocusing()
+
+  Cancels the single autofocus request or stops continuous focusing.
+
+  Does nothing in hyperfocal or infinity focus modes.
+
+  If supported by camera, startFocusing() turns off the manual focusing notifications,
+  otherwise it does nothing in manual mode.
 */
 
 /*!
@@ -153,7 +164,6 @@ QCameraFocusControl::~QCameraFocusControl()
 */
 
 
-
 /*!
   \fn qreal QCameraFocusControl::maximumOpticalZoom() const
 
@@ -181,18 +191,6 @@ QCameraFocusControl::~QCameraFocusControl()
   Set the zoom value to \a value
 */
 
-
-/*!
-  \fn bool QCameraFocusControl::isFocusLocked() const
-
-  Return true if focus locked.
-*/
-
-/*!
-    \fn void QCameraFocusControl::focusLocked()
-
-    Signal emitted when focus is locked.
-*/
 
 /*!
     \fn void QCameraFocusControl::focusStatusChanged(QCamera::FocusStatus status)

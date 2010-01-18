@@ -112,7 +112,7 @@ QRect QWmpVideoOverlay::displayRect() const
 void QWmpVideoOverlay::setDisplayRect(const QRect &rect)
 {
     if (m_inPlaceObject && m_enabled) {
-        HDC gdc = qt_win_display_dc();
+        HDC gdc = QT_PREPEND_NAMESPACE(qt_win_display_dc)();
 
         SIZEL hmSize = {
                 MAP_PIX_TO_LOGHIM(rect.width(), GetDeviceCaps(gdc, LOGPIXELSX)),

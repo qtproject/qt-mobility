@@ -112,70 +112,6 @@ bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 {
 	if (m_recorderUtility) {
 		m_format = format;
-		/*
-		RArray<TUint> aSupportedSampleRates;
-		m_recorderUtility->GetSupportedSampleRatesL(aSupportedSampleRates);
-		
-		for (TInt i = 0; i < aSupportedSampleRates.Count(); i++ ) {
-			qWarning() << aSupportedSampleRates[i];
-		}
-		
-		TRAPD(err, m_recorderUtility->SetDestinationSampleRateL(TMdaAudioDataSettings::ESampleRate8000Hz));
-		qWarning() << err;
-		
-		//set channels 
-		TRAP(err, m_recorderUtility->SetDestinationNumberOfChannelsL(format.channels()));
-		qWarning() << err;
-		
-		TFourCC fourCC;
-		
-		if (format.sampleSize() == 8) {
-			switch (format.sampleType()) {
-				case QAudioFormat::SignedInt: {
-					fourCC.Set(KMMFFourCCCodePCM8);
-					break;
-				}
-				case QAudioFormat::UnSignedInt: {
-					fourCC.Set(KMMFFourCCCodePCMU8);
-					break;
-				}
-				default: {
-					fourCC.Set(KMMFFourCCCodePCM8);
-					break;
-				}
-			}
-		} else if (format.sampleSize() == 16) {
-			// 16 bit here
-			switch (format.sampleType()) {
-				case QAudioFormat::SignedInt: {
-					if (format.byteOrder() == QAudioFormat::LittleEndian) {
-						fourCC.Set(fourCC = KMMFFourCCCodePCM16);
-						break;
-					}
-					if (format.byteOrder() == QAudioFormat::BigEndian) {
-						fourCC.Set(KMMFFourCCCodePCM16B);
-						break;
-					}
-				}
-				case QAudioFormat::UnSignedInt: {
-					if (format.byteOrder() == QAudioFormat::LittleEndian) {
-						fourCC.Set(KMMFFourCCCodePCMU16);
-						break;
-					}
-					if (format.byteOrder() == QAudioFormat::BigEndian) {
-						fourCC.Set(KMMFFourCCCodePCMU16B);
-						break;
-					}
-				}
-				default: {
-					fourCC.Set(KMMFFourCCCodePCM16);
-					break;
-				}
-			}
-		}
-
-		m_recorderUtility->SetDestinationDataTypeL(fourCC);
-		return true;*/
 	}
     //TODO:
     /*
@@ -208,7 +144,7 @@ QStringList S60AudioCaptureSession::supportedAudioCodecs() const
 
 QString S60AudioCaptureSession::codecDescription(const QString &codecName)
 {
-    return m_controllerIdMap[codecName].description;
+    return m_controllerIdMap[codecName].destinationFormatDescription;
 }
 
 
@@ -228,8 +164,7 @@ bool S60AudioCaptureSession::setAudioCodec(const QString &codecName)
 
 QString S60AudioCaptureSession::audioCodec() const
 {
-    //TODO:
-    return QString(); //m_format.codec();
+    return m_format.codec();
 }
 
 QUrl S60AudioCaptureSession::outputLocation() const
@@ -257,86 +192,11 @@ void S60AudioCaptureSession::record()
 {    
     QString filename = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));    
-	
-	/*
-	
-	TFourCC fourCC;
-	
-	if (m_format.sampleSize() == 8) {
-		switch (m_format.sampleType()) {
-			case QAudioFormat::SignedInt: {
-				fourCC.Set(KMMFFourCCCodePCM8);
-				break;
-			}
-			case QAudioFormat::UnSignedInt: {
-				fourCC.Set(KMMFFourCCCodePCMU8);
-				break;
-			}
-			default: {
-				fourCC.Set(KMMFFourCCCodePCM8);
-				break;
-			}
-		}
-	} else if (m_format.sampleSize() == 16) {
-		// 16 bit here
-		switch (m_format.sampleType()) {
-			case QAudioFormat::SignedInt: {
-				if (m_format.byteOrder() == QAudioFormat::LittleEndian) {
-					fourCC.Set(fourCC = KMMFFourCCCodePCM16);
-					break;
-				}
-				if (m_format.byteOrder() == QAudioFormat::BigEndian) {
-					fourCC.Set(KMMFFourCCCodePCM16B);
-					break;
-				}
-			}
-			case QAudioFormat::UnSignedInt: {
-				if (m_format.byteOrder() == QAudioFormat::LittleEndian) {
-					fourCC.Set(KMMFFourCCCodePCMU16);
-					break;
-				}
-				if (m_format.byteOrder() == QAudioFormat::BigEndian) {
-					fourCC.Set(KMMFFourCCCodePCMU16B);
-					break;
-				}
-			}
-			default: {
-				fourCC.Set(KMMFFourCCCodePCM16);
-				break;
-			}
-		}
-	}
-	
+
+    TUid controllerUid(TUid::Uid(m_controllerIdMap[m_format.codec()].controllerUid));
+    TUid formatUid(TUid::Uid(m_controllerIdMap[m_format.codec()].destinationFormatUid));
     
-	RArray<TFourCC> formats;
-	TRAPD(erri, m_recorderUtility->GetSupportedDestinationDataTypesL(formats));
-
-	TInt count = formats.Count();
-	
-	if (formats.Find(fourCC.FourCC())) {
-		TRAPD(error, m_recorderUtility->SetDestinationDataTypeL(fourCC));
-		qWarning() << error;
-	}*/
-
-	//TMdaWavClipFormat format;
-	//TMdaPcmWavCodec codec;
-	//codec.iBits = TMdaPcmWavCodec::E8BitPcm;
-	
-	//TMdaPcm8BitAuCodec codec;
-	//TMdaS8PcmRawAudioCodec codec;
-	
-	//TMdaAudioDataSettings settings;
-	//settings.iSampleRate = 8000;
-	//settings.iChannels = 1;// mono
-
-    //TMdaFileClipLocation location;
-    //location.iName.Append(sink);
-	
-	//m_recorderUtility->OpenL(&location, &format, &codec, &settings);
-
-    TUid controllerUid(TUid::Uid(m_controllerIdMap[m_format.codec()].uid));
-    
-    TRAPD(err, m_recorderUtility->OpenFileL(sink, controllerUid));
+    TRAPD(err, m_recorderUtility->OpenFileL(sink, controllerUid, KNullUid, formatUid));
     qWarning() << err;
 
     m_state = QMediaRecorder::RecordingState;
@@ -447,14 +307,72 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
 					m_recorderUtility->GetSupportedSampleRatesL(supportedSampleRates);
 					
 					for (TInt i = 0; i < supportedSampleRates.Count(); i++ ) {
-						if (supportedSampleRates[i] == m_format.frequency()) {
-							TRAPD(err, m_recorderUtility->SetDestinationSampleRateL(m_format.frequency()));
-							qWarning() << err;							
+						TUint supportedSampleRate = supportedSampleRates[i];
+						int frequency = m_format.frequency();
+						if (supportedSampleRate == frequency) 
+							m_recorderUtility->SetDestinationSampleRateL(m_format.frequency());
+					}
+					
+					/*
+					RArray<TUint> supportedBitRates;
+					TRAPD(ignore, m_recorderUtility->GetSupportedBitRatesL(supportedBitRates));
+					
+					for (TInt j = 0; j < supportedBitRates.Count(); j++ ) {
+						qWarning() << QString("Supported bit rate: ") + QString().number(supportedBitRates[j]);
+						
+					}
+					*/
+					
+					TFourCC fourCC;
+					
+					if (m_format.sampleSize() == 8) {
+						switch (m_format.sampleType()) {
+							case QAudioFormat::SignedInt: {
+								fourCC.Set(KMMFFourCCCodePCM8);
+								break;
+							}
+							case QAudioFormat::UnSignedInt: {
+								fourCC.Set(KMMFFourCCCodePCMU8);
+								break;
+							}
+							case QAudioFormat::Float: 
+							case QAudioFormat::Unknown:
+							default: {
+								fourCC.Set(KMMFFourCCCodePCM8);
+								break;
+							}
+						}
+					} else if (m_format.sampleSize() == 16) {
+						// 16 bit here
+						switch (m_format.sampleType()) {
+							case QAudioFormat::SignedInt: {
+								fourCC.Set(m_format.byteOrder()==QAudioFormat::BigEndian?
+									KMMFFourCCCodePCM16B:KMMFFourCCCodePCM16);
+								break;
+							}
+							case QAudioFormat::UnSignedInt: {
+								fourCC.Set(m_format.byteOrder()==QAudioFormat::BigEndian?
+									KMMFFourCCCodePCMU16B:KMMFFourCCCodePCMU16);
+								break;
+							}
+							default: {
+								fourCC.Set(KMMFFourCCCodePCM16);
+								break;
+							}
+						}
+					}
+					
+					RArray<TFourCC> supportedDataTypes;
+					m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes);
+
+					for (TInt k = 0; k < supportedDataTypes.Count(); k++ ) {
+						if (supportedDataTypes[k].FourCC() == fourCC.FourCC()) {
+							m_recorderUtility->SetDestinationDataTypeL(supportedDataTypes[k]);
 						}
 					}
 					
 					//set channels 
-					TRAPD(error, m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels()));
+					m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
 
 					m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
                     m_recorderUtility->RecordL();
@@ -501,13 +419,14 @@ void S60AudioCaptureSession::fetchAudioCodecsL()
 				TPtrC8 mimeType = mimeTypes[0];
 				QString type = QString::fromUtf8((char *)mimeType.Ptr(), mimeType.Length()); 
 				ItemData data;
-				data.uid = controllers[index]->Uid().iUid;
-				data.description = qt_TDesC2QString(recordFormats[j]->DisplayName());
+				data.controllerUid = controllers[index]->Uid().iUid;
+				data.destinationFormatUid = recordFormats[j]->Uid().iUid;
+				data.destinationFormatDescription = qt_TDesC2QString(recordFormats[j]->DisplayName());
 				m_controllerIdMap[type] = data;
 			}
 		}
 	}
-	 
+	
 	CleanupStack::PopAndDestroy(3);//controllers, formatParameters, pluginParameters
 }
 

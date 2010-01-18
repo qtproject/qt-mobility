@@ -135,7 +135,10 @@ QString S60CameraService::deviceDescription(const int index)
 {
     return S60CameraSession::description(index);
 }
-
+QString S60CameraService::deviceName(const int index)
+{
+    return S60CameraSession::name(index);
+}
 
 void S60CameraService::videoOutputChanged(QVideoOutputControl::Output output)
 {

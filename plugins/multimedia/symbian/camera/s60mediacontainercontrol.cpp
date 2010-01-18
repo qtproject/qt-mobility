@@ -45,18 +45,31 @@
 S60MediaContainerControl::S60MediaContainerControl(QObject *parent)
     : QMediaContainerControl(parent)
 {
-    m_supportedFormats.append("no mux");
-    setContainerMimeType(m_supportedFormats[0]);
 }
 
 S60MediaContainerControl::S60MediaContainerControl(QObject *session, QObject *parent)
    : QMediaContainerControl(parent)
 {
-    // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
 
-    m_supportedFormats.append("no mux");
-    setContainerMimeType(m_supportedFormats[0]);
+    m_supportedContainers.append("no mux");
+    setContainerMimeType(m_supportedContainers[0]);
 
+}
+QStringList S60MediaContainerControl::supportedContainers() const
+{
+    return m_supportedContainers;
+}
+QString S60MediaContainerControl::containerMimeType() const
+{
+    return m_containerMimeType;
+}
+void S60MediaContainerControl::setContainerMimeType(const QString &containerMimeType)
+{
+    m_containerMimeType = containerMimeType;
+}
+QString S60MediaContainerControl::containerDescription(const QString &containerMimeType) const
+{
+    return m_containerDescriptions.value(containerMimeType);
 }
 

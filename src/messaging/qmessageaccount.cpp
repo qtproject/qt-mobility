@@ -56,7 +56,7 @@
     to dealing with the account's folders and messages, rather than for modifying 
     the account itself.
     
-    \sa QMessageStore::account()
+    \sa QMessageManager::account()
 */
 
 /*!
@@ -73,7 +73,7 @@
     store as specified by the QMessageAccountId \a id. If the account does not exist in the 
     store, then this constructor will create an empty and invalid QMessageAccount.
     
-    \sa QMessageStore::account()
+    \sa QMessageManager::account()
 */
 
 /*!

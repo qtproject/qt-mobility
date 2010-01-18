@@ -46,7 +46,9 @@
 
 #include <qvideowidget.h>
 
+QT_BEGIN_NAMESPACE
 class QVideoSurfaceFormat;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

@@ -1,7 +1,32 @@
 # config.pri specifies the configure options
 
+#This is a temporary workaround for internal Symbian builds
+#QT_MAJOR_VERSION et al are not set
+symbian:
+{
+    isEmpty(QT_MAJOR_VERSION)  {
+         exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+           QT_MAJOR_VERSION=4;
+           QT_MINOR_VERSION=6;
+           QT_PATCH_VERSION=0;
+        }
+    }
+}
+
 !include($$QT_MOBILITY_BUILD_TREE/config.pri) {
     error("Please run configure script");
+}
+
+#don't build QtMobility if chosen config mismatches Qt's config
+win32:!contains(CONFIG_WIN32,build_all) {
+   contains(QT_CONFIG,debug):!contains(QT_CONFIG,release):contains(CONFIG_WIN32,release) {
+       # Qt only build in debug mode
+       error(QtMobility cannot be build in release mode if Qt is build in debug mode only)
+   }
+   !contains(QT_CONFIG,debug):contains(QT_CONFIG,release):contains(CONFIG_WIN32,debug) {
+       # Qt only build in release mode
+       error(QtMobility cannot be build in debug mode if Qt is build in release mode only)
+   }
 }
 
 lessThan(QT_MAJOR_VERSION, 4) {

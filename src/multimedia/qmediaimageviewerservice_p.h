@@ -63,8 +63,10 @@
 
 #include <QtGui/qimage.h>
 
+QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 class QNetworkAccessManager;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

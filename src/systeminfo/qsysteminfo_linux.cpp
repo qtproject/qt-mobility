@@ -58,15 +58,15 @@
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
 #include <qnetworkmanagerservice_linux_p.h>
-#include <QtDBus>
-#include <QDBusConnection>
-#include <QDBusError>
-#include <QDBusInterface>
-#include <QDBusMessage>
-#include <QDBusReply>
-#include <QDBusPendingCallWatcher>
-#include <QDBusObjectPath>
-#include <QDBusPendingCall>
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusError>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusPendingCallWatcher>
+#include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusPendingCall>
 #endif
 
 #include <locale.h>
@@ -2065,8 +2065,8 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
                 return reply.value();
             }
         }
-    }
 #endif
+    }
     return false;
 }
 

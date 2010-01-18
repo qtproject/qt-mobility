@@ -36,7 +36,7 @@
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>8 public functions inherited from <a href="qcontactabstractrequest.html#public-functions">QContactAbstractRequest</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
@@ -45,17 +45,17 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfetchrequest.html#progress">progress</a></b> ( QContactRelationshipFetchRequest * <i>self</i>, bool <i>appendOnly</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>4 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -84,11 +84,11 @@
 <h3 class="fn"><a name="progress"></a>void QContactRelationshipFetchRequest::progress ( QContactRelationshipFetchRequest * <i>self</i>, bool <i>appendOnly</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when some progress has been made on the request, causing either a change of status or an update of results, or both. It identifies which request the signal originated from by including a pointer to <i>self</i>, and contains an <i>appendOnly</i> flag which signifies whether or not the total ordering of the results have been maintained since the last progress signal was emitted.</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/relationshipType"></a>
-<h3 class="fn"><a name="relationshipType"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactRelationshipFetchRequest::relationshipType () const</h3>
+<h3 class="fn"><a name="relationshipType"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactRelationshipFetchRequest::relationshipType () const</h3>
 <p>Returns the relationship type criterion of the fetch request</p>
 <p>See also <a href="qcontactrelationshipfetchrequest.html#setRelationshipType">setRelationshipType</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/relationships"></a>
-<h3 class="fn"><a name="relationships"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactRelationshipFetchRequest::relationships () const</h3>
+<h3 class="fn"><a name="relationships"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactRelationshipFetchRequest::relationships () const</h3>
 <p>Returns the list of relationships that was the result of the request</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/setFirst"></a>
 <h3 class="fn"><a name="setFirst"></a>void QContactRelationshipFetchRequest::setFirst ( const <a href="qcontactid.html">QContactId</a> &amp; <i>contactId</i> )</h3>
@@ -100,7 +100,7 @@
 <p>If the <i>participantUri</i> consists of an empty manager URI and the zero contact id, or if the participant criterion is not set, the request will fetch relationships involving any participant.</p>
 <p>See also <a href="qcontactrelationshipfetchrequest.html#participant">participant</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/setRelationshipType"></a>
-<h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationshipFetchRequest::setRelationshipType ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>relationshipType</i> )</h3>
+<h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationshipFetchRequest::setRelationshipType ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>relationshipType</i> )</h3>
 <p>Sets the relationship type criterion of the fetch request to <i>relationshipType</i>. If <i>relationshipType</i> is empty, or the relationship type is not set, the request will fetch relationships of any type.</p>
 <p>See also <a href="qcontactrelationshipfetchrequest.html#relationshipType">relationshipType</a>().</p>
 <p /><address><hr /><div align="center">

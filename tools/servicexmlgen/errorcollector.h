@@ -43,6 +43,8 @@
 
 #include <QStringList>
 
+QT_USE_NAMESPACE
+
 class ErrorCollector
 {
 public:

@@ -7,7 +7,7 @@ contains(mobility_modules,serviceframework) {
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
-#           qservicemanager \  #remove until qhash namespace issue resolved
+           qservicemanager \
            qabstractsecuritysession \
            qservicecontext
 
@@ -16,7 +16,7 @@ contains(mobility_modules,serviceframework) {
     !symbian:SUBDIRS+=servicedatabase
 }
 
-contains(mobility_modules,bearermanagement) {
+contains(mobility_modules,bearer) {
     SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
            qnetworksession
@@ -45,12 +45,12 @@ contains(mobility_modules,publishsubscribe) {
 	   qcrmlparser
 
     unix|win32 {
-        !symbian:!maemo: SUBDIRS+= \
+        !symbian:!maemo6: SUBDIRS+= \
             qsystemreadwritelock \
             qsystemreadwritelock_oop
     }
 
-    unix:!symbian:!maemo: {
+    unix:!symbian:!maemo6: {
         SUBDIRS+= \
                qpacket \
                qmallocpool \
@@ -111,7 +111,8 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qvideowidget
+        qvideowidget \
+        qmediatimerange
 
     contains(QT_CONFIG, multimedia) {
         SUBDIRS += \
@@ -131,10 +132,11 @@ contains(mobility_modules,multimedia) {
 }
 #Messaging
 contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
+    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
-        qmessage
+        qmessage \
+        qmessageservice
     }
 }
