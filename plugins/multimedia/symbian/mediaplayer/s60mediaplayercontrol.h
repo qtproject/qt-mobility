@@ -51,6 +51,8 @@
 
 QTM_BEGIN_NAMESPACE
 class QMediaPlayer;
+class QMediaTimeRange;
+class QMediaContent;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
