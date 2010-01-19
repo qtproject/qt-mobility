@@ -459,7 +459,7 @@ void QVersitContactExporterPrivate::encodeNickname(
             found = true;
         }
     }
-    QString value(property.valueString());
+    QString value(property.value());
     if (found)
         value += QChar::fromAscii(',');
     QString nickname = escape(nicknameDetail.nickname());

@@ -67,7 +67,7 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     const QString quotedPrintable(QLatin1String("QUOTED-PRINTABLE"));
     const QString base64(QLatin1String("BASE64"));
     QMultiHash<QString,QString> parameters = property.parameters();
-    QVariant variant = property.value();
+    QVariant variant(property.variantValue());
 
     QByteArray renderedValue;
 
@@ -139,7 +139,7 @@ bool QVCard21Writer::quotedPrintableEncode(
     QByteArray& value) const
 {
     bool encoded = false;
-    value = property.valueString().toAscii();
+    value = property.value().toAscii();
     if (!property.parameters().contains(QString::fromAscii("ENCODING"))) {
         encoded = VersitUtils::quotedPrintableEncode(value);
     }

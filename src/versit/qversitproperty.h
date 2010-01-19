@@ -44,6 +44,7 @@
 
 #include "qmobilityglobal.h"
 #include "qversitdocument.h"
+#include "qversitproperty_p.h"
 
 #include <QString>
 #include <QStringList>
@@ -54,8 +55,6 @@
 class QVariant;
 
 QTM_BEGIN_NAMESPACE
-
-class QVersitPropertyPrivate;
 
 class Q_VERSIT_EXPORT QVersitProperty
 {
@@ -81,12 +80,14 @@ public:
 
     void setParameters(const QMultiHash<QString,QString>& parameters);
     QMultiHash<QString,QString> parameters() const;
-    
-    // XXX Follow QContactDetail {QString value, QVariant variantValue}
-    // XXX or remove variantValue entirely and use value<T>
+
     void setValue(const QVariant& value);
-    QVariant value() const;
-    QString valueString() const;
+    QVariant variantValue() const;
+    template <typename T> T value() const
+    {
+        return d->mValue.value<T>();
+    }
+    QString value() const;
 
     bool isEmpty() const;
 

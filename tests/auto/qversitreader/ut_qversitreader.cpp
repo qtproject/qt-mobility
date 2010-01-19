@@ -287,33 +287,33 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 
     QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.valueString(),QString::fromAscii("vcard"));
+    QCOMPARE(property.value(),QString::fromAscii("vcard"));
     QCOMPARE(cursor.position, 11); // pointing to the  \r\n
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
-    QCOMPARE(property.valueString(),QString::fromAscii("2.1"));
+    QCOMPARE(property.value(),QString::fromAscii("2.1"));
     QCOMPARE(cursor.position, 24);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
-    QCOMPARE(property.valueString(),QString::fromAscii("John"));
+    QCOMPARE(property.value(),QString::fromAscii("John"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("ORG"));
-    QCOMPARE(property.valueString(),QString::fromUtf8(KATAKANA_NOKIA));
+    QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("NOTE"));
-    QCOMPARE(property.valueString(),QString::fromUtf8(KATAKANA_NOKIA));
+    QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
     // Linear whitespaces (SPACEs and TABs) removed from the value and base64 decoded:
-    QCOMPARE(property.value().type(), QVariant::ByteArray);
-    QCOMPARE(property.value().toByteArray(), QByteArray("Qt is great!"));
+    QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
+    QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
     // Ensure that base-64 encoded strings can be retrieved as strings.
-    QCOMPARE(property.valueString(), QLatin1String("Qt is great!"));
+    QCOMPARE(property.value(), QLatin1String("Qt is great!"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QStringList propertyGroup(QString::fromAscii("HOME"));
@@ -321,27 +321,27 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QCOMPARE(property.groups(),propertyGroup);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
-    QCOMPARE(property.valueString(),QString::fromAscii("john.citizen@example.com"));
+    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     // The base64 parameter should be stripped by the reader.
     QCOMPARE(property.parameters().count(), 0);
-    QCOMPARE(property.valueString(),QString::fromAscii("john.citizen@example.com"));
+    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QCOMPARE(property.valueString(),QString());
-    QVERIFY(property.value().canConvert<QVersitDocument>());
-    QCOMPARE(property.value().value<QVersitDocument>().properties().count(), 1);
+    QCOMPARE(property.value(),QString());
+    QVERIFY(property.variantValue().userType() == qMetaTypeId<QVersitDocument>());
+    QCOMPARE(property.value<QVersitDocument>().properties().count(), 1);
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));
-    QCOMPARE(property.valueString(),QString::fromAscii("VCARD"));
+    QCOMPARE(property.value(),QString::fromAscii("VCARD"));
     
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString());
-    QCOMPARE(property.valueString(),QString());
+    QCOMPARE(property.value(),QString());
     
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties
@@ -380,53 +380,53 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
 
     QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.valueString(),QString::fromAscii("vcard"));
+    QCOMPARE(property.value(),QString::fromAscii("vcard"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
-    QCOMPARE(property.valueString(),QString::fromAscii("3.0"));
+    QCOMPARE(property.value(),QString::fromAscii("3.0"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
-    QCOMPARE(property.valueString(),QString::fromAscii("John"));
+    QCOMPARE(property.value(),QString::fromAscii("John"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("ORG"));
-    QCOMPARE(property.valueString(),QString::fromUtf8(KATAKANA_NOKIA));
+    QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("NOTE"));
-    QCOMPARE(property.valueString(),QString::fromUtf8(KATAKANA_NOKIA));
+    QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("TEL"));
-    QCOMPARE(property.valueString(),QString::fromAscii("123"));
+    QCOMPARE(property.value(),QString::fromAscii("123"));
     QCOMPARE(property.parameters().count(), 2);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
-    QCOMPARE(property.value().type(), QVariant::ByteArray);
-    QCOMPARE(property.value().toByteArray(), QByteArray("Qt is great!"));
+    QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
+    QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
     // Ensure that base-64 encoded strings can be retrieved as strings.
-    QCOMPARE(property.valueString(), QLatin1String("Qt is great!"));
+    QCOMPARE(property.value(), QLatin1String("Qt is great!"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
     QCOMPARE(0,property.parameters().count());
-    QCOMPARE(property.valueString(),QString::fromAscii("john.citizen@example.com"));
+    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QVERIFY(property.value().canConvert<QVersitDocument>());
-    QCOMPARE(property.value().value<QVersitDocument>().properties().count(), 1);
+    QVERIFY(property.variantValue().userType() == qMetaTypeId<QVersitDocument>());
+    QCOMPARE(property.value<QVersitDocument>().properties().count(), 1);
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString::fromAscii("END"));
-    QCOMPARE(property.valueString(),QString::fromAscii("VCARD"));
+    QCOMPARE(property.value(),QString::fromAscii("VCARD"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
     QCOMPARE(property.name(),QString());
-    QCOMPARE(property.valueString(),QString());
+    QCOMPARE(property.value(),QString());
 
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties

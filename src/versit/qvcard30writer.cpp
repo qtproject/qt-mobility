@@ -71,7 +71,7 @@ QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
     modifiedProperty.setName(name);
     QByteArray encodedProperty(encodeGroupsAndName(modifiedProperty));
 
-    QVariant variant(modifiedProperty.value());
+    QVariant variant(modifiedProperty.variantValue());
     if (variant.type() == QVariant::ByteArray) {
         modifiedProperty.addParameter(QLatin1String("ENCODING"), QLatin1String("b"));
     }

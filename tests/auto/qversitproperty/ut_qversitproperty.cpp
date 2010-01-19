@@ -116,7 +116,7 @@ void UT_QVersitProperty::testValue()
 {
     QString value(QString::fromAscii("050484747"));
     mVersitProperty->setValue(value);
-    QCOMPARE(mVersitProperty->valueString(), value);
+    QCOMPARE(mVersitProperty->value(), value);
 }
 
 void UT_QVersitProperty::testEmbeddedDocument()
@@ -127,7 +127,7 @@ void UT_QVersitProperty::testEmbeddedDocument()
     document.addProperty(property);
     mVersitProperty->setValue(QVariant::fromValue(document));
     QList<QVersitProperty> embeddedDocumentProperties = 
-        mVersitProperty->value().value<QVersitDocument>().properties();
+        mVersitProperty->value<QVersitDocument>().properties();
     QCOMPARE(embeddedDocumentProperties.count(),1);
     QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-TENSION"));
 }

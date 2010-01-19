@@ -201,7 +201,7 @@ void QVersitProperty::setValue(const QVariant& value)
 /*!
  * Returns the value of the property.
  */
-QVariant QVersitProperty::value() const
+QVariant QVersitProperty::variantValue() const
 {
     return d->mValue;
 }
@@ -211,7 +211,7 @@ QVariant QVersitProperty::value() const
  * return an empty string.
  * \sa QVariant::toString()
  */
-QString QVersitProperty::valueString() const
+QString QVersitProperty::value() const
 {
     if (d->mValue.type() == QVariant::ByteArray) {
         if (d->mParameters.contains(QLatin1String("CHARSET"))) {
