@@ -168,9 +168,14 @@ void S60MediaPlayerControl::stop()
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
-    if (m_session)
-        m_session->setVolume(volume);
-    m_mediaSettings.setVolume(volume);
+    if (m_mediaSettings.volume() != volume && volume >= 0 && volume <= 100) {
+        m_mediaSettings.setVolume(volume);
+
+        if (m_session)
+            m_session->setVolume(volume);
+
+        emit volumeChanged(volume);
+    }
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)

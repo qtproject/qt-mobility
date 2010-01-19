@@ -50,7 +50,7 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent)
     , m_playbackRate(1.0)
     , m_muted(false)
-    , m_volume(100)
+    , m_volume(0)
     , m_state(QMediaPlayer::StoppedState)
     , m_mediaStatus(QMediaPlayer::NoMedia)
     , m_timer(new QTimer(this))
@@ -71,11 +71,8 @@ int S60MediaPlayerSession::volume() const
 
 void S60MediaPlayerSession::setVolume(int volume)
 {
-    if (m_volume != volume && volume >= 0 && volume <= 100) {
-        m_volume = volume;
-        emit volumeChanged(m_volume);
-    }
-    
+    m_volume = volume;
+
     if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
         doSetVolume(m_volume);
     }
