@@ -786,8 +786,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setAllowableValues(QVariantList());
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
-    f.setDataType(QVariant::String);
-    fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
     f.setAccessConstraint(QContactDetailDefinitionField::ReadOnly);
     fields.insert(QContactOnlineAccount::FieldNickname, f);
