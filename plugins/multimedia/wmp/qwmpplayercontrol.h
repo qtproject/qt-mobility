@@ -87,7 +87,7 @@ public:
     void setPlaybackRate(qreal rate);
 
     bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     void play();
     void pause();

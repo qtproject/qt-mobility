@@ -100,7 +100,7 @@ public:
     bool isVideoAvailable() const { return _videoAvailable; }
 
     bool isSeekable() const { return _isSeekable; }
-    QPair<qint64, qint64> seekRange() const { return _seekRange; }
+    QMediaTimeRange availablePlaybackRanges() const { return QMediaTimeRange(_seekRange.first, _seekRange.second); }
     void setSeekRange(qint64 minimum, qint64 maximum) { _seekRange = qMakePair(minimum, maximum); }
 
     qreal playbackRate() const { return _playbackRate; }

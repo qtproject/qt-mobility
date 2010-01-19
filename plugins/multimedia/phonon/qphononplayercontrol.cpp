@@ -122,11 +122,14 @@ bool QPhononPlayerControl::isSeekable() const
     return m_session->isSeekable();
 }
 
-QPair<qint64, qint64> QPhononPlayerControl::seekRange() const
+QMediaTimeRange QPhononPlayerControl::availablePlaybackRanges() const
 {
-    return m_session->isSeekable()
-            ? qMakePair<qint64, qint64>(0, m_session->totalTime())
-            : qMakePair<qint64, qint64>(0, 0);
+    QMediaTimeRange ranges;
+
+    if(m_session->isSeekable())
+        ranges.addInterval(0, m_session->totalTime());
+
+    return ranges;
 }
 
 qreal QPhononPlayerControl::playbackRate() const
