@@ -41,7 +41,6 @@
 
 #include "s60videoplayersession.h"
 #include "s60videowidget.h"
-#include "s60directscreenaccess.h"
 #include "s60mediaplayerservice.h"
 #include "s60videooverlay.h"
 
