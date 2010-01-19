@@ -65,7 +65,7 @@ public:
     SubscriberDialog(QWidget *parent = 0);
     ~SubscriberDialog();
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SMALL_SCREEN
 signals:
     void switchRequested();
 #endif
