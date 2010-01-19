@@ -81,12 +81,6 @@ void UT_QVersitWriter::testDevice()
 
 void UT_QVersitWriter::testWriting()
 {
-    // Device not set
-    QVERIFY(!mWriter->writeAll());
-
-    // Device set, but not opened
-    mWriter->setDevice(mOutputDevice);
-    QVERIFY(!mWriter->writeAll());
 
     // vCard 2.1
     QByteArray vCard21(
@@ -94,7 +88,6 @@ void UT_QVersitWriter::testWriting()
 VERSION:2.1\r\n\
 FN:John\r\n\
 END:VCARD\r\n");
-    mOutputDevice->open(QBuffer::ReadWrite);
     QVersitDocument document;
     QVersitProperty property;
     property.setName(QString(QString::fromAscii("FN")));
@@ -103,8 +96,17 @@ END:VCARD\r\n");
     document.setType(QVersitDocument::VCard21Type);
     QList<QVersitDocument> list;
     list.append(document);
-    mWriter->setInput(list);
-    QVERIFY(mWriter->writeAll());
+
+    // Device not set
+    QVERIFY(!mWriter->writeAll(list));
+
+    // Device not opened
+    mWriter->setDevice(mOutputDevice);
+    QVERIFY(!mWriter->writeAll(list));
+
+    // Now open the device and it should work.
+    mOutputDevice->open(QBuffer::ReadWrite);
+    QVERIFY(mWriter->writeAll(list));
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -120,12 +122,11 @@ END:VCARD\r\n");
     document.setType(QVersitDocument::VCard30Type);
     list.clear();
     list.append(document);
-    mWriter->setInput(list);
     delete mOutputDevice;
     mOutputDevice = new QBuffer;
     mOutputDevice->open(QBuffer::ReadWrite);
     mWriter->setDevice(mOutputDevice);
-    QVERIFY(mWriter->writeAll());
+    QVERIFY(mWriter->writeAll(list));
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -135,7 +136,7 @@ END:VCARD\r\n");
     // Asynchronous writing
     QVERIFY(!mWritingDoneCalled);
     mOutputDevice->reset();
-    QVERIFY(mWriter->startWriting());
+    QVERIFY(mWriter->startWriting(list));
     delete mWriter; // waits for the thread to finish
     mWriter = 0;
     QVERIFY(mWritingDoneCalled);

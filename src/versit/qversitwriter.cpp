@@ -72,8 +72,7 @@ QTM_USE_NAMESPACE
   property.setName("N");
   property.setValue("Citizen;John;Q;;");
   document.addProperty(property);
-  writer.setInput(document);
-  if (writer.writeAll()) {
+  if (writer.writeAll(document)) {
       // Use the vCardBuffer...
   }
   \endcode
@@ -103,22 +102,6 @@ QVersitWriter::~QVersitWriter()
 }
 
 /*!
- * Set the list of versit documents to be written to the device.
- */
-void QVersitWriter::setInput(const QList<QVersitDocument>& input)
-{
-    d->mInput = input;
-}
-
-/*!
- * Returns the list of versit documents to be written to the device.
- */
-QList<QVersitDocument> QVersitWriter::input() const
-{
-    return d->mInput;
-}
-
-/*!
  * Sets the device used for writing to \a device.
  */
 void QVersitWriter::setDevice(QIODevice* device)
@@ -135,13 +118,14 @@ QIODevice* QVersitWriter::device() const
 }
 
 /*!
- * Starts writing the output asynchronously.
+ * Starts writing \a input to device() asynchronously.
  * Returns false if the output device has not been set or opened or
  * if there is another asynchronous write operation already pending.
  * Signal \l finished() is emitted when the writing has finished.
  */
-bool QVersitWriter::startWriting()
+bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
 {
+    d->mInput = input;
     bool started = false;
     if (d->isReady() && !d->isRunning()) {
         d->start();
@@ -152,7 +136,7 @@ bool QVersitWriter::startWriting()
 }
 
 /*!
- * Writes the output synchronously.
+ * Writes \a input to device() synchronously.
  * Returns false if the output device has not been set or opened or
  * if there is an asynchronous write operation pending.
  * Sets the error value to indicate what kind of error (if any) occured, and
@@ -161,8 +145,9 @@ bool QVersitWriter::startWriting()
  * Using this function may block the user thread for an undefined period.
  * In most cases asynchronous \l startWriting() should be used instead.
  */
-bool QVersitWriter::writeAll()
+bool QVersitWriter::writeAll(const QList<QVersitDocument>& input)
 {
+    d->mInput = input;
     if (!d->isRunning()) {
         return d->write();
     }

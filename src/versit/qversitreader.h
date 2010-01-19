@@ -95,7 +95,7 @@ public:
 
     // reading:
     bool startReading(); // XXX these two functions are still a little confusing/not intuitive
-    bool readAll();
+    QList<QVersitDocument> readAll();
 
     // output:
     QList<QVersitDocument> results() const;

@@ -74,8 +74,7 @@ QTM_USE_NAMESPACE
   vCardBuffer.seek(0);
   QVersitReader reader;
   reader.setDevice(&vCardBuffer);
-  bool ok = reader.readAll();
-  QList<QVersitDocument> versitDocuments = reader.results();
+  QList<QVersitDocument> versitDocuments = reader.readAll();
   // Use the resulting document(s)...
   }
   \endcode
@@ -158,27 +157,28 @@ bool QVersitReader::startReading()
 }
 
 /*!
- * Reads the input synchronously.
- * Returns false if:
+ * Reads the input synchronously and returns the results.
+ * On a fatal failure, returns an empty list.  This can happen if:
  *   the input device has not been set or opened, or
  *   if there is an asynchronous read operation pending, or
  *   or there was an error reading any of the documents.
  * Sets the error value to indicate what kind of error (if any) occured, and
  * the state value to indicate what the state of parsing is.
  *
- * Even if false is returned, a list of partial results may still be available.
+ * Even if an error occurs, a list of partial results may still be returned.
  * Using this function may block the user thread for an undefined period.
  * In most cases asynchronous \l startReading() should be used instead.
  */
-bool QVersitReader::readAll()
+QList<QVersitDocument> QVersitReader::readAll()
 {
     if (!d->isRunning()) {
-        return d->read();
+        d->read();
+        return d->mVersitDocuments;
     }
     else {
         // leave the state unchanged but set the error.
         d->setError(QVersitReader::NotReadyError);
-        return false;
+        return QList<QVersitDocument>();
     }
 }
 

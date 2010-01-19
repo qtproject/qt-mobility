@@ -79,23 +79,13 @@ public:
     QVersitWriter();
     ~QVersitWriter();
 
-    // XXX it seems like most Qt classes have something like:
-    // setDevice(output)
-    // write(input data)
-    // so we should perhaps remove these functions and move it to
-    // writeAll/startWriting
-
-    // input:
-    void setInput(const QList<QVersitDocument>& input);
-    QList<QVersitDocument> input() const;
-
-    // output:
+    // output device
     void setDevice(QIODevice* device);
     QIODevice* device() const;
 
     // writing:
-    bool startWriting(); // XXX again, perhaps add list param here, and maybe change names to be more intuitive
-    bool writeAll();
+    bool startWriting(const QList<QVersitDocument>& input);
+    bool writeAll(const QList<QVersitDocument>& input);
 
     State state() const;
     Error error() const;

@@ -99,25 +99,26 @@ void UT_QVersitReader::testDevice()
 void UT_QVersitReader::testReading()
 {
     // No I/O device set
-    QVERIFY(!mReader->readAll());
+    QCOMPARE(mReader->readAll(), QList<QVersitDocument>());
+    QCOMPARE(mReader->error(), QVersitReader::IOError);
     
     // Device set, no data
     mReader->setDevice(mInputDevice);
     mInputDevice->open(QBuffer::ReadWrite);
-    QVERIFY(mReader->readAll());
+    QList<QVersitDocument> results(mReader->readAll());
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
-    QCOMPARE(mReader->results().count(),0);
+    QCOMPARE(results.count(),0);
 
     // Device set, one document
     const QByteArray& oneDocument = 
         "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n";
     mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
-    QVERIFY(mReader->readAll());
+    results = mReader->readAll();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
-    QCOMPARE(mReader->results().count(),1);
+    QCOMPARE(results.count(),1);
 
     // Wide charset with no byte-order mark
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
@@ -130,7 +131,7 @@ void UT_QVersitReader::testReading()
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
     mReader->setDefaultCodec(codec);
-    QVERIFY(mReader->readAll());
+    results = mReader->readAll();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(mReader->results().count(),1);
@@ -146,10 +147,10 @@ void UT_QVersitReader::testReading()
     mInputDevice->write(twoDocuments);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    QVERIFY(mReader->readAll());
+    results = mReader->readAll();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
-    QCOMPARE(mReader->results().count(),2);
+    QCOMPARE(results.count(),2);
 
     // Valid documents and a grouped document between them
     const QByteArray& validDocumentsAndGroupedDocument =
@@ -169,11 +170,11 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
     mInputDevice->write(validDocumentsAndGroupedDocument);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    // readAll() returns false because some of them failed, but the rest are still readable.
-    QVERIFY(!mReader->readAll());
+    results = mReader->readAll();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    // An error is logged because one failed, but the rest are readable.
     QCOMPARE(mReader->error(), QVersitReader::ParseError);
-    QCOMPARE(mReader->results().count(),4);
+    QCOMPARE(results.count(),4);
 
     // Valid documents and a grouped document between them
     const QByteArray& validDocumentsAndGroupedDocument2 =
@@ -193,9 +194,9 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     mInputDevice->write(validDocumentsAndGroupedDocument2);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    // readAll() returns false because some of them failed, but the rest are still readable.
-    QVERIFY(!mReader->readAll());
+    results = mReader->readAll();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    // An error is logged because one failed, but the rest are readable.
     QCOMPARE(mReader->error(), QVersitReader::ParseError);
     QCOMPARE(mReader->results().count(),4);
 
