@@ -43,31 +43,15 @@
 #define QORIENTATIONSENSOR_H
 
 #include <qsensor.h>
-#include <QtGlobal>
-#include <QSharedData>
-#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
-// implementation detail
-class QOrientationReadingData : public QSharedData
+class QOrientationReadingPrivate;
+
+class Q_SENSORS_EXPORT QOrientationReading : public QSensorReading
 {
-public:
-    QOrientationReadingData() {}
-    QOrientationReadingData(qtimestamp _timestamp, int _orientation)
-        : timestamp(_timestamp), orientation(_orientation) {}
-    QOrientationReadingData(const QOrientationReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), orientation(other.orientation) {}
-    ~QOrientationReadingData() {}
-
-    qtimestamp timestamp;
-    int orientation;
-};
-
-// =====================================================================
-
-class Q_SENSORS_EXPORT QOrientationReading
-{
+    Q_OBJECT
+    DECLARE_READING(QOrientationReading)
 public:
     enum Orientation {
         Undefined = 0,
@@ -79,53 +63,17 @@ public:
         FaceUp
     };
 
-    explicit QOrientationReading()
-    { d = new QOrientationReadingData; }
-    explicit QOrientationReading(qtimestamp timestamp, Orientation orientation)
-    { d = new QOrientationReadingData(timestamp, orientation); }
-    QOrientationReading(const QOrientationReading &other)
-        : d(other.d) {}
-    ~QOrientationReading() {}
-
-    qtimestamp timestamp() const { return d->timestamp; }
-    Orientation orientation() const { return static_cast<Orientation>(d->orientation); }
-
-private:
-    QSharedDataPointer<QOrientationReadingData> d;
+    Q_PROPERTY(Orientation orientation READ orientation WRITE setOrientation)
+    Orientation orientation() const;
+    void setOrientation(Orientation orientation);
 };
 
-typedef QTypedSensorBackend<QOrientationReading> QOrientationBackend;
-
-// =====================================================================
+DECLARE_FILTER(QOrientationFilter, QOrientationReading);
 
 class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
     Q_OBJECT
-public:
-    explicit QOrientationSensor(QObject *parent = 0, const QByteArray &identifier = QByteArray());
-    virtual ~QOrientationSensor();
-
-    Q_PROPERTY(QOrientationReading currentReading READ currentReading)
-
-    static const QByteArray typeId;
-    QByteArray type() const { return typeId; };
-
-    // For polling/checking the current (cached) value
-    QOrientationReading currentReading() const { return m_backend->currentReading(); }
-
-Q_SIGNALS:
-    void orientationChanged(const QOrientationReading &reading);
-
-protected:
-    QSensorBackend *backend() const { return m_backend; }
-
-private:
-    void newReadingAvailable()
-    {
-        emit orientationChanged(currentReading());
-    }
-
-    QOrientationBackend *m_backend;
+    DECLARE_SENSOR(QOrientationSensor, QOrientationFilter, QOrientationReading)
 };
 
 QTM_END_NAMESPACE

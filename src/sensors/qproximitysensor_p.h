@@ -39,69 +39,35 @@
 **
 ****************************************************************************/
 
-#include "n900proximitysensor.h"
-#include <QDebug>
-#include <string.h>
-#include <time.h>
+#ifndef QPROXIMITYSENSOR_P_H
+#define QPROXIMITYSENSOR_P_H
 
-n900proximitysensor::n900proximitysensor()
-    : m_timerid(0)
-    , m_filename(PROXIMITY_FILE)
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qsensor_p.h"
+
+QTM_BEGIN_NAMESPACE
+
+struct QProximityReadingPrivate : public QSensorReadingPrivate
 {
-    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
-            QSensor::InfrequentUpdates |
-            QSensor::FrequentUpdates |
-            QSensor::TimedUpdates |
-            QSensor::PolledUpdates);
-
-    setReading<QProximityReading>(&m_reading);
-}
-
-static int suggestedInterval() { return 0; }
-
-bool n900proximitysensor::start()
-{
-    if (m_timerid)
-        return false;
-
-    if (suggestedInterval())
-        m_timerid = startTimer(suggestedInterval());
-    return true;
-}
-
-void n900proximitysensor::stop()
-{
-    if (m_timerid) {
-        killTimer(m_timerid);
-        m_timerid = -1;
-    }
-}
-
-void n900proximitysensor::poll()
-{
-    qWarning() << "poll";
-    m_reading.setTimestamp(clock());
-    FILE *fd = fopen(m_filename, "r");
-    if (!fd) return;
-    char buffer[20];
-    int rs = fscanf(fd, "%s", buffer);
-    fclose(fd);
-    if (rs != 1) return;
-
-    QProximityReading::Proximity proximity = QProximityReading::Undefined;
-    if (strcmp(buffer, "closed") == 0) {
-        proximity = QProximityReading::Close;
-    } else {
-        proximity = QProximityReading::NotClose;
+    QProximityReadingPrivate()
+        : proximity(0)
+    {
     }
 
-    m_reading.setProximity(proximity);
+    int proximity;
+};
 
-    newReadingAvailable();
-}
+QTM_END_NAMESPACE
 
-void n900proximitysensor::timerEvent(QTimerEvent * /*event*/)
-{
-    poll();
-}
+#endif
 

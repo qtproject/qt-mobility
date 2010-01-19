@@ -49,32 +49,12 @@
 
 QTM_BEGIN_NAMESPACE
 
-// implementation detail
-class QMagnetometerReadingData : public QSharedData
+class QMagnetometerReadingPrivate;
+
+class Q_SENSORS_EXPORT QMagnetometerReading : public QSensorReading
 {
-public:
-    QMagnetometerReadingData()
-        : timestamp(), x(0), y(0), z(0), cx(0), cy(0), cz(0), calibration(0) {}
-    QMagnetometerReadingData(qtimestamp _timestamp, qreal _x, qreal _y, qreal _z, qreal _cx, qreal _cy, qreal _cz, int _calibration)
-        : timestamp(_timestamp), x(_x), y(_y), z(_z), cx(_cx), cy(_cy), cz(_cz), calibration(_calibration) {}
-    QMagnetometerReadingData(const QMagnetometerReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z), cx(other.cx), cy(other.cy), cz(other.cz), calibration(other.calibration) {}
-    ~QMagnetometerReadingData() {}
-
-    qtimestamp timestamp;
-    qreal x;
-    qreal y;
-    qreal z;
-    qreal cx;
-    qreal cy;
-    qreal cz;
-    int calibration;
-};
-
-// =====================================================================
-
-class Q_SENSORS_EXPORT QMagnetometerReading
-{
+    Q_OBJECT
+    DECLARE_READING(QMagnetometerReading)
 public:
     enum CalibrationLevel {
         Undefined = 0,
@@ -83,81 +63,41 @@ public:
         High      = 3
     };
 
-    explicit QMagnetometerReading()
-    { d = new QMagnetometerReadingData; }
-    explicit QMagnetometerReading(qtimestamp timestamp, qreal x, qreal y, qreal z, qreal cx, qreal cy, qreal cz, CalibrationLevel calibration)
-    { d = new QMagnetometerReadingData(timestamp, x, y, z, cx, cy, cz, calibration); }
-    QMagnetometerReading(const QMagnetometerReading &other)
-        : d(other.d) {}
-    ~QMagnetometerReading() {}
+    Q_PROPERTY(qreal x READ x WRITE setX)
+    qreal x() const;
+    void setX(qreal x);
 
-    qtimestamp timestamp() const { return d->timestamp; }
-    qreal x() const { return d->x; }
-    qreal y() const { return d->y; }
-    qreal z() const { return d->z; }
-    qreal calibrated_x() const { return d->cx; }
-    qreal calibrated_y() const { return d->cy; }
-    qreal calibrated_z() const { return d->cz; }
-    CalibrationLevel calibrationLevel() const { return static_cast<CalibrationLevel>(d->calibration); }
+    Q_PROPERTY(qreal y READ y WRITE setY)
+    qreal y() const;
+    void setY(qreal y);
 
-private:
-    QSharedDataPointer<QMagnetometerReadingData> d;
+    Q_PROPERTY(qreal z READ z WRITE setZ)
+    qreal z() const;
+    void setZ(qreal z);
+
+    Q_PROPERTY(qreal calibrated_x READ calibrated_x WRITE setCalibrated_x)
+    qreal calibrated_x() const;
+    void setCalibrated_x(qreal calibrated_x);
+
+    Q_PROPERTY(qreal calibrated_y READ calibrated_y WRITE setCalibrated_y)
+    qreal calibrated_y() const;
+    void setCalibrated_y(qreal calibrated_y);
+
+    Q_PROPERTY(qreal calibrated_z READ calibrated_z WRITE setCalibrated_z)
+    qreal calibrated_z() const;
+    void setCalibrated_z(qreal calibrated_z);
+
+    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel WRITE setCalibrationLevel)
+    CalibrationLevel calibrationLevel() const;
+    void setCalibrationLevel(CalibrationLevel calibrationLevel);
 };
 
-typedef QTypedSensorBackend<QMagnetometerReading> QMagnetometerBackend;
-
-// =====================================================================
-
-class QMagnetometer;
-
-class Q_SENSORS_EXPORT QMagnetometerListener
-{
-    friend class QMagnetometer;
-public:
-    QMagnetometerListener();
-    virtual ~QMagnetometerListener();
-    virtual void fluxDensityChanged(const QMagnetometerReading &reading) = 0;
-protected:
-    void setSensor(QMagnetometer *sensor);
-    QMagnetometer *sensor() const { return m_sensor; }
-private:
-    QMagnetometer *m_sensor;
-};
-
-// =====================================================================
+DECLARE_FILTER(QMagnetometerFilter, QMagnetometerReading);
 
 class Q_SENSORS_EXPORT QMagnetometer : public QSensor
 {
     Q_OBJECT
-public:
-    explicit QMagnetometer(QObject *parent = 0, const QByteArray &identifier = QByteArray());
-    virtual ~QMagnetometer();
-
-    Q_PROPERTY(QMagnetometerReading currentReading READ currentReading)
-
-    static const QByteArray typeId;
-    QByteArray type() const { return typeId; };
-
-    // Register a listener (that will receive sensor values as they come in)
-    void setListener(QMagnetometerListener *listener);
-
-    // For polling/checking the current (cached) value
-    QMagnetometerReading currentReading() const { return m_backend->currentReading(); }
-
-Q_SIGNALS:
-    void fluxDensityChanged(const QMagnetometerReading &reading);
-
-protected:
-    QSensorBackend *backend() const { return m_backend; }
-
-private:
-    void newReadingAvailable()
-    {
-        m_listener->fluxDensityChanged(currentReading());
-    }
-
-    QMagnetometerListener *m_listener;
-    QMagnetometerBackend *m_backend;
+    DECLARE_SENSOR(QMagnetometer, QMagnetometerFilter, QMagnetometerReading)
 };
 
 QTM_END_NAMESPACE

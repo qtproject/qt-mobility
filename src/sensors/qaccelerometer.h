@@ -43,106 +43,49 @@
 #define QACCELEROMETER_H
 
 #include <qsensor.h>
-#include <QtGlobal>
-#include <QSharedData>
-#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
-// implementation detail
-class QAccelerometerReadingData : public QSharedData
-{
-public:
-    QAccelerometerReadingData()
-        : timestamp(), x(0), y(0), z(0) {}
-    QAccelerometerReadingData(qtimestamp _timestamp, qreal _x, qreal _y, qreal _z)
-        : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
-    QAccelerometerReadingData(const QAccelerometerReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
-    ~QAccelerometerReadingData() {}
+class QAccelerometerReadingPrivate;
 
-    qtimestamp timestamp;
-    qreal x;
-    qreal y;
-    qreal z;
+class Q_SENSORS_EXPORT QAccelerometerReading : public QSensorReading
+{
+    Q_OBJECT
+    DECLARE_READING(QAccelerometerReading)
+public:
+    Q_PROPERTY(qreal x READ x WRITE setX)
+    qreal x() const;
+    void setX(qreal x);
+
+    Q_PROPERTY(qreal y READ y WRITE setY)
+    qreal y() const;
+    void setY(qreal y);
+
+    Q_PROPERTY(qreal z READ z WRITE setZ)
+    qreal z() const;
+    void setZ(qreal z);
 };
 
-// =====================================================================
-
-class Q_SENSORS_EXPORT QAccelerometerReading
+class Q_SENSORS_EXPORT QAccelerometerFilter : public QSensorFilter
 {
 public:
-    explicit QAccelerometerReading()
-    { d = new QAccelerometerReadingData; }
-    explicit QAccelerometerReading(qtimestamp timestamp, qreal x, qreal y, qreal z)
-    { d = new QAccelerometerReadingData(timestamp, x, y, z); }
-    QAccelerometerReading(const QAccelerometerReading &other)
-        : d(other.d) {}
-    ~QAccelerometerReading() {}
-
-    qtimestamp timestamp() const { return d->timestamp; }
-    qreal x() const { return d->x; }
-    qreal y() const { return d->y; }
-    qreal z() const { return d->z; }
-
+    virtual bool filter(QAccelerometerReading *reading) = 0;
 private:
-    QSharedDataPointer<QAccelerometerReadingData> d;
+    bool filter(QSensorReading *reading) { return filter(static_cast<QAccelerometerReading*>(reading)); }
 };
-
-typedef QTypedSensorBackend<QAccelerometerReading> QAccelerometerBackend;
-
-// =====================================================================
-
-class QAccelerometer;
-
-class Q_SENSORS_EXPORT QAccelerometerListener
-{
-    friend class QAccelerometer;
-public:
-    QAccelerometerListener();
-    virtual ~QAccelerometerListener();
-    virtual void accelerationChanged(const QAccelerometerReading &reading) = 0;
-protected:
-    virtual void setSensor(QAccelerometer *sensor);
-    QAccelerometer *sensor() const { return m_sensor; }
-private:
-    QAccelerometer *m_sensor;
-};
-
-// =====================================================================
 
 class Q_SENSORS_EXPORT QAccelerometer : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAccelerometer(QObject *parent = 0, const QByteArray &identifier = QByteArray());
-    virtual ~QAccelerometer();
-
-    Q_PROPERTY(QAccelerometerReading currentReading READ currentReading)
-
-    static const QByteArray typeId;
-    QByteArray type() const { return typeId; };
-
-    // Register a listener (that will receive sensor values as they come in)
-    void setListener(QAccelerometerListener *listener);
-
-    // For polling/checking the current (cached) value
-    QAccelerometerReading currentReading() const { return m_backend->currentReading(); }
-
-Q_SIGNALS:
-    void accelerationChanged(const QAccelerometerReading &reading);
-
-protected:
-    QSensorBackend *backend() const { return m_backend; }
-
-private:
-    void newReadingAvailable()
-    {
-        m_listener->accelerationChanged(currentReading());
-    }
-
-    QAccelerometerListener *m_listener;
-    QAccelerometerBackend *m_backend;
+    explicit QAccelerometer(QObject *parent = 0)
+        : QSensor(parent)
+    { setType("QAccelerometer"); }
+    virtual ~QAccelerometer() {}
+    /* These methods shadow the ones in QSensor on purpose */
+    QAccelerometerReading *reading() const { return static_cast<QAccelerometerReading*>(QSensor::reading()); }
+    void addFilter(QAccelerometerFilter *filter) { QSensor::addFilter(filter); }
+    void removeFilter(QAccelerometerFilter *filter) { QSensor::removeFilter(filter); }
 };
 
 QTM_END_NAMESPACE

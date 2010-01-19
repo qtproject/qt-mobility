@@ -40,8 +40,11 @@
 ****************************************************************************/
 
 #include <qambientlightsensor.h>
+#include "qambientlightsensor_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+IMPLEMENT_READING(QAmbientLightReading)
 
 /*!
     \class QAmbientLightReading
@@ -70,36 +73,25 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QAmbientLightReading::QAmbientLightReading()
-    \internal
+    \property QAmbientLightReading::lightLevel
+    \brief foo
 */
 
 /*!
-    \fn QAmbientLightReading::QAmbientLightReading(qtimestamp timestamp, LightLevel lightLevel)
-    \internal
-*/
-
-/*!
-    \fn QAmbientLightReading::QAmbientLightReading(const QAmbientLightReading &other)
-    \internal
-*/
-
-/*!
-    \fn QAmbientLightReading::~QAmbientLightReading()
-    \internal
-*/
-
-/*!
-    \fn QAmbientLightReading::timestamp() const
-
-    Returns the time when the reading was made.
-*/
-
-/*!
-    \fn QAmbientLightReading::lightLevel() const
-
     Returns the ambient light level.
 */
+QAmbientLightReading::LightLevel QAmbientLightReading::lightLevel() const
+{
+    return static_cast<LightLevel>(d->lightLevel);
+}
+
+/*!
+    Sets the ambient light level.
+*/
+void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightLevel)
+{
+    d->lightLevel = lightLevel;
+}
 
 // =====================================================================
 
@@ -115,57 +107,6 @@ QTM_BEGIN_NAMESPACE
     enum.
 
     \sa QAmbientLightReading
-*/
-
-/*!
-    Construct a sensor instance with specified \a parent.
-    If the \a identifier is passed the sensor will connect to that
-    specific sensor, otherwise the default will be used.
-*/
-QAmbientLightSensor::QAmbientLightSensor(QObject *parent, const QByteArray &identifier)
-    : QSensor(parent)
-{
-    m_backend = static_cast<QAmbientLightBackend*>(connectToBackend(identifier));
-}
-
-/*!
-    Destroy the sensor. Stops the sensor if it has not already been stopped.
-*/
-QAmbientLightSensor::~QAmbientLightSensor()
-{
-    stop();
-}
-
-/*!
-    \property QAmbientLightSensor::currentReading
-    \brief the current reading from the sensor.
-*/
-
-/*!
-    \variable QAmbientLightSensor::typeId
-*/
-const QByteArray QAmbientLightSensor::typeId("qt.AmbientLight");
-
-/*!
-    \fn QAmbientLightSensor::type() const
-    \reimp
-*/
-
-/*!
-    \fn QAmbientLightSensor::currentReading() const
-
-    Returns the current ambient light reading.
-*/
-
-/*!
-    \fn QAmbientLightSensor::ambientLightChanged(const QAmbientLightReading &reading)
-
-    This signal is emitted when a new ambient light \a reading comes in.
-*/
-
-/*!
-    \fn QAmbientLightSensor::backend() const
-    \reimp
 */
 
 #include "moc_qambientlightsensor.cpp"

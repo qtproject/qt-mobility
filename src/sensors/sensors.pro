@@ -6,43 +6,42 @@ include(../../common.pri)
 DEFINES += QT_BUILD_SENSORS_LIB QT_MAKEDLL
 
 QMAKE_CXXFLAGS+=-Werror
+QMAKE_LFLAGS+=-Wl,-no-undefined
 
 PUBLIC_HEADERS += \
-           qsensor.h\
-           qsensorfactory.h\
-           # Sensors
-           qorientationsensor.h\
-           qaccelerometer.h\
-           qrotationsensor.h\
-           qproximitysensor.h\
-           qcompass.h\
-           qambientlightsensor.h\
-           qtapsensor.h\
-           qmagnetometer.h\
-           # Backend
-           qsensormanager.h\
            qsensorbackend.h\
+           qsensorfactory.h\
+           qsensormanager.h\
            qsensorplugin.h\
 
 PRIVATE_HEADERS += \
            qsensorpluginloader_p.h\
 
-SOURCES += qsensor.cpp \
+SOURCES += qsensorbackend.cpp\
            qsensorfactory.cpp\
-           # Sensors
-           qorientationsensor.cpp\
-           qaccelerometer.cpp\
-           qrotationsensor.cpp\
-           qproximitysensor.cpp\
-           qcompass.cpp\
-           qambientlightsensor.cpp\
-           qtapsensor.cpp\
-           qmagnetometer.cpp\
-           # Backend
            qsensormanager.cpp\
-           qsensorbackend.cpp\
            qsensorplugin.cpp\
            qsensorpluginloader.cpp\
+
+# 3 files per sensor (including QSensor)
+SENSORS=\
+    qsensor\
+    qaccelerometer\
+    qambientlightsensor\
+    qcompass\
+    qmagnetometer\
+    qorientationsensor\
+    qproximitysensor\
+    qrotationsensor\
+    qtapsensor\
+
+for(s,SENSORS) {
+    # Client API
+    PUBLIC_HEADERS += $${s}.h
+    SOURCES        += $${s}.cpp
+    # Private header
+    PRIVATE_HEADERS += $${s}_p.h
+}
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

@@ -40,8 +40,11 @@
 ****************************************************************************/
 
 #include <qrotationsensor.h>
+#include "qrotationsensor_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+IMPLEMENT_READING(QRotationReading)
 
 /*!
     \class QRotationReading
@@ -80,48 +83,67 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QRotationReading::QRotationReading()
-    \internal
+    \property QRotationReading::x
+    \brief the rotation on the X axis.
 */
 
 /*!
-    \fn QRotationReading::QRotationReading(qtimestamp timestamp, qreal x, qreal y, qreal z)
-    \internal
+    Returns the rotation on the X axis.
+*/
+qreal QRotationReading::x() const
+{
+    return d->x;
+}
+
+/*!
+    Sets the rotation on the X axis to \a x.
+*/
+void QRotationReading::setX(qreal x)
+{
+    d->x = x;
+}
+
+/*!
+    \property QRotationReading::y
+    \brief the rotation on the Y axis.
 */
 
 /*!
-    \fn QRotationReading::QRotationReading(const QRotationReading &other)
-    \internal
+    Returns the rotation on the Y axis.
+*/
+qreal QRotationReading::y() const
+{
+    return d->y;
+}
+
+/*!
+    Sets the rotation on the Y axis to \a y.
+*/
+void QRotationReading::setY(qreal y)
+{
+    d->y = y;
+}
+
+/*!
+    \property QRotationReading::z
+    \brief the rotation on the Z axis.
 */
 
 /*!
-    \fn QRotationReading::~QRotationReading()
-    \internal
+    Returns the rotation on the Z axis.
 */
+qreal QRotationReading::z() const
+{
+    return d->z;
+}
 
 /*!
-    \fn QRotationReading::timestamp() const
-
-    Returns the time when the reading was made.
+    Sets the rotation on the Z axis to \a z.
 */
-
-/*!
-    \fn QRotationReading::x() const
-
-    Returns the rotation for the X axis.
-*/
-
-/*!
-    \fn QRotationReading::y() const
-
-    Returns the rotation for the Y axis.
-*/
-
-/*!
-    \fn QRotationReading::z() const
-
-    Returns the rotation for the Z axis.
-*/
+void QRotationReading::setZ(qreal z)
+{
+    d->z = z;
+}
 
 // =====================================================================
 
@@ -159,57 +181,6 @@ QTM_BEGIN_NAMESPACE
     Note that the values for the rotation sensor come from an accelerometer
     so a device resting on its back will not be able to detect rotation around the
     Z axis. Rotation can only be detected when it happens relative to gravity.
-*/
-
-/*!
-    Construct a sensor instance with specified \a parent.
-    If the \a identifier is passed the sensor will connect to that
-    specific sensor, otherwise the default will be used.
-*/
-QRotationSensor::QRotationSensor(QObject *parent, const QByteArray &identifier)
-    : QSensor(parent)
-{
-    m_backend = static_cast<QRotationBackend*>(connectToBackend(identifier));
-}
-
-/*!
-    Destroy the sensor. Stops the sensor if it has not already been stopped.
-*/
-QRotationSensor::~QRotationSensor()
-{
-    stop();
-}
-
-/*!
-    \property QRotationSensor::currentReading
-    \brief the current reading from the sensor.
-*/
-
-/*!
-    \variable QRotationSensor::typeId
-*/
-const QByteArray QRotationSensor::typeId("qt.Rotation");
-
-/*!
-    \fn QRotationSensor::type() const
-    \reimp
-*/
-
-/*!
-    \fn QRotationSensor::currentReading() const
-
-    Returns the current rotation reading.
-*/
-
-/*!
-    \fn QRotationSensor::rotationChanged(const QRotationReading &reading)
-
-    This signal is emitted when a new rotation \a reading comes in.
-*/
-
-/*!
-    \fn QRotationSensor::backend() const
-    \reimp
 */
 
 #include "moc_qrotationsensor.cpp"

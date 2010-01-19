@@ -40,8 +40,11 @@
 ****************************************************************************/
 
 #include <qmagnetometer.h>
+#include "qmagnetometer_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+IMPLEMENT_READING(QMagnetometerReading)
 
 /*!
     \class QMagnetometerReading
@@ -85,149 +88,148 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMagnetometerReading::QMagnetometerReading()
-    \internal
+    \property QMagnetometerReading::x
+    \brief foo
 */
 
 /*!
-    \fn QMagnetometerReading::QMagnetometerReading(qtimestamp timestamp, qreal x, qreal y, qreal z, qreal cx, qreal cy, qreal cz, CalibrationLevel calibration)
-    \internal
+    Foo
+*/
+qreal QMagnetometerReading::x() const
+{
+    return d->x;
+}
+
+/*!
+    Foo
+*/
+void QMagnetometerReading::setX(qreal x)
+{
+    d->x = x;
+}
+
+/*!
+    \property QMagnetometerReading::y
+    \brief foo
 */
 
 /*!
-    \fn QMagnetometerReading::QMagnetometerReading(const QMagnetometerReading &o)
-    \internal
+    Foo
+*/
+qreal QMagnetometerReading::y() const
+{
+    return d->y;
+}
+
+/*!
+    Foo
+*/
+void QMagnetometerReading::setY(qreal y)
+{
+    d->y = y;
+}
+
+/*!
+    \property QMagnetometerReading::z
+    \brief foo
 */
 
 /*!
-    \fn QMagnetometerReading::~QMagnetometerReading()
-    \internal
+    Foo
+*/
+qreal QMagnetometerReading::z() const
+{
+    return d->z;
+}
+
+/*!
+    Foo
+*/
+void QMagnetometerReading::setZ(qreal z)
+{
+    d->z = z;
+}
+
+/*!
+    \property QMagnetometerReading::calibrated_x
+    \brief foo
 */
 
 /*!
-    \fn QMagnetometerReading::timestamp() const
+    Foo
+*/
+qreal QMagnetometerReading::calibrated_x() const
+{
+    return d->calibrated_x;
+}
 
-    Returns the time when the reading was made.
+/*!
+    Foo
+*/
+void QMagnetometerReading::setCalibrated_x(qreal calibrated_x)
+{
+    d->calibrated_x = calibrated_x;
+}
+
+/*!
+    \property QMagnetometerReading::calibrated_y
+    \brief foo
 */
 
 /*!
-    \fn QMagnetometerReading::x() const
+    Foo
+*/
+qreal QMagnetometerReading::calibrated_y() const
+{
+    return d->calibrated_y;
+}
 
-    Returns the magnetic flux density for the X axis.
+/*!
+    Foo
+*/
+void QMagnetometerReading::setCalibrated_y(qreal calibrated_y)
+{
+    d->calibrated_y = calibrated_y;
+}
+
+/*!
+    \property QMagnetometerReading::calibrated_z
+    \brief foo
 */
 
 /*!
-    \fn QMagnetometerReading::y() const
+    Foo
+*/
+qreal QMagnetometerReading::calibrated_z() const
+{
+    return d->calibrated_z;
+}
 
-    Returns the magnetic flux density for the Y axis.
+/*!
+    Foo
+*/
+void QMagnetometerReading::setCalibrated_z(qreal calibrated_z)
+{
+    d->calibrated_z = calibrated_z;
+}
+
+/*!
+    \property QMagnetometerReading::calibrationLevel
+    \brief foo
 */
 
 /*!
-    \fn QMagnetometerReading::z() const
-
-    Returns the magnetic flux density for the Z axis.
-*/
-
-/*!
-    \fn QMagnetometerReading::calibrated_x() const
-
-    Returns the calibrated magnetic flux density for the Z axis.
-*/
-
-/*!
-    \fn QMagnetometerReading::calibrated_y() const
-
-    Returns the calibrated magnetic flux density for the Y axis.
-*/
-
-/*!
-    \fn QMagnetometerReading::calibrated_z() const
-
-    Returns the calibrated magnetic flux density for the Z axis.
-*/
-
-/*!
-    \fn QMagnetometerReading::calibrationLevel() const
-
     Returns the calibration level of the reading. The higher the calibration, the more accurate the measurement is.
 */
-
-// =====================================================================
-
-/*!
-    \class QMagnetometerListener
-    \ingroup sensors
-
-    \preliminary
-    \brief The QMagnetometerListener class provides an efficient
-           callback facility for asynchronous notifications of
-           magnetic flux density changes.
-
-    Since the magnetometer is typically accessed very frequently it may
-    not by suitable to use signals and slots. The QMagnetometerListener
-    interface provides a way for the sensor to notify your class that a
-    new magnetometer reading is available more efficiently.
-*/
-
-/*!
-    \internal
-*/
-QMagnetometerListener::QMagnetometerListener()
+QMagnetometerReading::CalibrationLevel QMagnetometerReading::calibrationLevel() const
 {
+    return static_cast<QMagnetometerReading::CalibrationLevel>(d->calibrationLevel);
 }
 
-/*!
-    Notifies any sensors that the listener is being destroyed.
-*/
-QMagnetometerListener::~QMagnetometerListener()
+void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::CalibrationLevel calibrationLevel)
 {
-    if (m_sensor)
-        m_sensor->setListener(0);
+    d->calibrationLevel = calibrationLevel;
 }
-
-/*!
-    \fn QMagnetometerListener::fluxDensityChanged(const QMagnetometerReading &reading)
-
-    This function is called when a new magnetometer \a reading is available.
-*/
-
-/*!
-    \internal
-*/
-void QMagnetometerListener::setSensor(QMagnetometer *sensor)
-{
-    m_sensor = sensor;
-}
-
-/*!
-    \fn QMagnetometerListener::sensor() const
-    \internal
-*/
-
-// =====================================================================
-
-class QSignallingMagnetometerListener : public QObject, public QMagnetometerListener
-{
-    Q_OBJECT
-public:
-    QSignallingMagnetometerListener()
-    {
-    }
-
-    void setSensor(QMagnetometer *_sensor)
-    {
-        if (sensor())
-            disconnect(this, SIGNAL(fluxDensityChanged(QMagnetometerReading)), sensor(), SIGNAL(fluxDensityChanged(QMagnetometerReading)));
-        QMagnetometerListener::setSensor(_sensor);
-        if (_sensor)
-            connect(this, SIGNAL(fluxDensityChanged(QMagnetometerReading)), _sensor, SIGNAL(fluxDensityChanged(QMagnetometerReading)));
-        else
-            delete this; // remove us automatically
-    }
-
-signals:
-    void fluxDensityChanged(const QMagnetometerReading &reading);
-};
 
 // =====================================================================
 
@@ -265,94 +267,6 @@ signals:
     \sa QMagnetometerReading
 */
 
-/*!
-    Construct a sensor instance with specified \a parent.
-    If the \a identifier is passed the sensor will connect to that
-    specific sensor, otherwise the default will be used.
-*/
-QMagnetometer::QMagnetometer(QObject *parent, const QByteArray &identifier)
-    : QSensor(parent)
-    , m_listener(0)
-{
-    m_backend = static_cast<QMagnetometerBackend*>(connectToBackend(identifier));
-    setListener(0);
-}
-
-/*!
-    Destroy the sensor. Stops the sensor if it has not already been stopped.
-*/
-QMagnetometer::~QMagnetometer()
-{
-    stop();
-    if (m_listener)
-        m_listener->setSensor(0);
-}
-
-/*!
-    \property QMagnetometer::currentReading
-    \brief the current reading from the sensor.
-*/
-
-/*!
-    \variable QMagnetometer::typeId
-*/
-const QByteArray QMagnetometer::typeId("qt.Magnetometer");
-
-/*!
-    \fn QMagnetometer::type() const
-    \reimp
-*/
-
-/*!
-    Set the \a listener for the sensor. Pass 0 to clear a previously-set
-    listener.
-    The listener will be invoked every time a new reading is available.
-
-    Note that the sensor does not take ownership of the listener although
-    the listener interface will notify the magnetometer if it is destroyed.
-
-    Also note that setting a listener will prevent the fluxDensityChanged()
-    signal from being emitted.
-*/
-void QMagnetometer::setListener(QMagnetometerListener *listener)
-{
-    if (listener == m_listener)
-        return;
-    if (m_listener)
-        m_listener->setSensor(0);
-    if (listener)
-        m_listener = listener;
-    else
-        m_listener = new QSignallingMagnetometerListener;
-    m_listener->setSensor(this);
-}
-
-/*!
-    \fn QMagnetometer::currentReading() const
-
-    Returns the current ambient light reading.
-*/
-
-/*!
-    \fn QMagnetometer::fluxDensityChanged(const QMagnetometerReading &reading)
-
-    This signal may be emitted when a new magnetometer \a reading comes in.
-
-    This signal is only emitted if no listener has been set. If a listener has been
-    set via setListener() then this signal will not be emitted.
-
-    Note that this signal should not be used if you are requesting
-    high-frequency updates as signal delivery is quite slow.
-
-    \sa setListener()
-*/
-
-/*!
-    \fn QMagnetometer::backend() const
-    \reimp
-*/
-
 #include "moc_qmagnetometer.cpp"
-#include "qmagnetometer.moc"
 QTM_END_NAMESPACE
 

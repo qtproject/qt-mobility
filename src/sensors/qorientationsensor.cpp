@@ -40,8 +40,11 @@
 ****************************************************************************/
 
 #include <qorientationsensor.h>
+#include "qorientationsensor_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+IMPLEMENT_READING(QOrientationReading)
 
 /*!
     \class QOrientationReading
@@ -95,36 +98,25 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QOrientationReading::QOrientationReading()
-    \internal
+    \property QOrientationReading::orientation
+    \brief foo
 */
 
 /*!
-    \fn QOrientationReading::QOrientationReading(qtimestamp timestamp, Orientation orientation)
-    \internal
+    Foo
 */
+QOrientationReading::Orientation QOrientationReading::orientation() const
+{
+    return static_cast<QOrientationReading::Orientation>(d->orientation);
+}
 
 /*!
-    \fn QOrientationReading::QOrientationReading(const QOrientationReading &other)
-    \internal
+    Foo
 */
-
-/*!
-    \fn QOrientationReading::~QOrientationReading()
-    \internal
-*/
-
-/*!
-    \fn QOrientationReading::timestamp() const
-
-    Returns the time when the reading was made.
-*/
-
-/*!
-    \fn QOrientationReading::orientation() const
-
-    Returns the orientation of the device.
-*/
+void QOrientationReading::setOrientation(QOrientationReading::Orientation orientation)
+{
+    d->orientation = orientation;
+}
 
 // =====================================================================
 
@@ -140,57 +132,6 @@ QTM_BEGIN_NAMESPACE
     enum.
 
     \sa QOrientationReading
-*/
-
-/*!
-    Construct a sensor instance with specified \a parent.
-    If the \a identifier is passed the sensor will connect to that
-    specific sensor, otherwise the default will be used.
-*/
-QOrientationSensor::QOrientationSensor(QObject *parent, const QByteArray &identifier)
-    : QSensor(parent)
-{
-    m_backend = static_cast<QOrientationBackend*>(connectToBackend(identifier));
-}
-
-/*!
-    Destroy the sensor. Stops the sensor if it has not already been stopped.
-*/
-QOrientationSensor::~QOrientationSensor()
-{
-    stop();
-}
-
-/*!
-    \property QOrientationSensor::currentReading
-    \brief the current reading from the sensor.
-*/
-
-/*!
-    \variable QOrientationSensor::typeId
-*/
-const QByteArray QOrientationSensor::typeId("qt.Orientation");
-
-/*!
-    \fn QOrientationSensor::type() const
-    \reimp
-*/
-
-/*!
-    \fn QOrientationSensor::currentReading() const
-
-    Returns the current orientation reading.
-*/
-
-/*!
-    \fn QOrientationSensor::orientationChanged(const QOrientationReading &reading)
-
-    This signal is emitted when a new orientation \a reading comes in.
-*/
-
-/*!
-    \fn QOrientationSensor::backend() const
-    \reimp
 */
 
 #include "moc_qorientationsensor.cpp"

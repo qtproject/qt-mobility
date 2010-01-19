@@ -40,8 +40,11 @@
 ****************************************************************************/
 
 #include <qcompass.h>
+#include "qcompass_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+IMPLEMENT_READING(QCompassReading)
 
 /*!
     \class QCompassReading
@@ -73,42 +76,46 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QCompassReading::QCompassReading()
-    \internal
+    \property QCompassReading::azimuth
+    \brief foo
 */
 
 /*!
-    \fn QCompassReading::QCompassReading(qtimestamp timestamp, qreal azimuth, CalibrationLevel calibration)
-    \internal
-*/
-
-/*!
-    \fn QCompassReading::QCompassReading(const QCompassReading &other)
-    \internal
-*/
-
-/*!
-    \fn QCompassReading::~QCompassReading()
-    \internal
-*/
-
-/*!
-    \fn QCompassReading::timestamp() const
-
-    Returns the time when the reading was made.
-*/
-
-/*!
-    \fn QCompassReading::azimuth() const
-
     Returns the azimuth of the device.
 */
+qreal QCompassReading::azimuth() const
+{
+    return d->azimuth;
+}
 
 /*!
-    \fn QCompassReading::calibrationLevel() const
+    Foo
+*/
+void QCompassReading::setAzimuth(qreal azimuth)
+{
+    d->azimuth = azimuth;
+}
 
+/*!
+    \property QCompassReading::calibrationLevel
+    \brief foo
+*/
+
+/*!
     Returns the calibration level of the reading. The higher the calibration, the more accurate the measurement is.
 */
+QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
+{
+    return static_cast<QCompassReading::CalibrationLevel>(d->calibrationLevel);
+}
+
+/*!
+    Foo
+*/
+void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel calibrationLevel)
+{
+    d->calibrationLevel = calibrationLevel;
+}
 
 // =====================================================================
 
@@ -129,57 +136,6 @@ QTM_BEGIN_NAMESPACE
     Digital compasses are highly susceptible to magnetic interference and
     may need calibration after being placed near anything that emits a magnetic
     force.
-*/
-
-/*!
-    Construct a sensor instance with specified \a parent.
-    If the \a identifier is passed the sensor will connect to that
-    specific sensor, otherwise the default will be used.
-*/
-QCompass::QCompass(QObject *parent, const QByteArray &identifier)
-    : QSensor(parent)
-{
-    m_backend = static_cast<QCompassBackend*>(connectToBackend(identifier));
-}
-
-/*!
-    Destroy the sensor. Stops the sensor if it has not already been stopped.
-*/
-QCompass::~QCompass()
-{
-    stop();
-}
-
-/*!
-    \property QCompass::currentReading
-    \brief the current reading from the sensor.
-*/
-
-/*!
-    \variable QCompass::typeId
-*/
-const QByteArray QCompass::typeId("qt.Compass");
-
-/*!
-    \fn QCompass::type() const
-    \reimp
-*/
-
-/*!
-    \fn QCompass::currentReading() const
-
-    Returns the current compass reading.
-*/
-
-/*!
-    \fn QCompass::azimuthChanged(const QCompassReading &reading)
-
-    This signal is emitted when a new compass \a reading comes in.
-*/
-
-/*!
-    \fn QCompass::backend() const
-    \reimp
 */
 
 #include "moc_qcompass.cpp"

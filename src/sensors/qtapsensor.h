@@ -43,33 +43,15 @@
 #define QTAPSENSOR_H
 
 #include <qsensor.h>
-#include <QtGlobal>
-#include <QSharedData>
-#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
-// implementation detail
-class QTapReadingData : public QSharedData
+class QTapReadingPrivate;
+
+class Q_SENSORS_EXPORT QTapReading : public QSensorReading
 {
-public:
-    QTapReadingData()
-        : timestamp(), tapDirection(0), doubleTap(false) {}
-    QTapReadingData(qtimestamp _timestamp, int _tapDirection, bool _doubleTap)
-        : timestamp(_timestamp), tapDirection(_tapDirection), doubleTap(_doubleTap) {}
-    QTapReadingData(const QTapReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), tapDirection(other.tapDirection), doubleTap(other.doubleTap) {}
-    ~QTapReadingData() {}
-
-    qtimestamp timestamp;
-    int tapDirection;
-    bool doubleTap;
-};
-
-// =====================================================================
-
-class Q_SENSORS_EXPORT QTapReading
-{
+    Q_OBJECT
+    DECLARE_READING(QTapReading)
 public:
     enum TapDirection {
         Undefined = 0,
@@ -84,54 +66,21 @@ public:
         Z_Neg = 0x0404
     };
 
-    explicit QTapReading()
-    { d = new QTapReadingData; }
-    explicit QTapReading(qtimestamp timestamp, TapDirection tapDirection, bool doubleTap)
-    { d = new QTapReadingData(timestamp, tapDirection, doubleTap); }
-    QTapReading(const QTapReading &other)
-        : d(other.d) {}
-    ~QTapReading() {}
+    Q_PROPERTY(TapDirection tapDirection READ tapDirection WRITE setTapDirection)
+    TapDirection tapDirection() const;
+    void setTapDirection(TapDirection tapDirection);
 
-    qtimestamp timestamp() const { return d->timestamp; }
-    TapDirection tapDirection() const { return static_cast<TapDirection>(d->tapDirection); }
-    bool isDoubleTap() const { return d->doubleTap; }
-
-private:
-    QSharedDataPointer<QTapReadingData> d;
+    Q_PROPERTY(bool doubleTap READ isDoubleTap WRITE setDoubleTap)
+    bool isDoubleTap() const;
+    void setDoubleTap(bool doubleTap);
 };
 
-typedef QTypedSensorBackend<QTapReading> QTapBackend;
-
-// =====================================================================
+DECLARE_FILTER(QTapFilter, QTapReading);
 
 class Q_SENSORS_EXPORT QTapSensor : public QSensor
 {
     Q_OBJECT
-public:
-    explicit QTapSensor(QObject *parent = 0, const QByteArray &identifier = QByteArray());
-    virtual ~QTapSensor();
-
-    Q_PROPERTY(QTapReading currentReading READ currentReading)
-
-    static const QByteArray typeId;
-    QByteArray type() const { return typeId; };
-
-    // For polling/checking the current (cached) value
-    QTapReading currentReading() const { return m_backend->currentReading(); }
-
-Q_SIGNALS:
-    void tapDetected(const QTapReading &tap);
-
-protected:
-    QSensorBackend *backend() const { return m_backend; }
-
-private:
-    void newReadingAvailable()
-    {
-        emit tapDetected(currentReading());
-    }
-
-    QTapBackend *m_backend;
+    DECLARE_SENSOR(QTapSensor, QTapFilter, QTapReading)
 };
 
 QTM_END_NAMESPACE

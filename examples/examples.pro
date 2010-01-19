@@ -68,5 +68,7 @@ contains(mobility_modules,messaging) {
 }
 
 # Sensors API examples
-SUBDIRS += sensors/accel
+contains(mobility_modules,sensors) {
+    SUBDIRS += sensors
+}
 

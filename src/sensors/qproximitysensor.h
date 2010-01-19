@@ -43,31 +43,15 @@
 #define QPROXIMITYSENSOR_H
 
 #include <qsensor.h>
-#include <QtGlobal>
-#include <QSharedData>
-#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
-// implementation detail
-class QProximityReadingData : public QSharedData
+class QProximityReadingPrivate;
+
+class Q_SENSORS_EXPORT QProximityReading : public QSensorReading
 {
-public:
-    QProximityReadingData() {}
-    QProximityReadingData(qtimestamp _timestamp, int _proximity)
-        : timestamp(_timestamp), proximity(_proximity) {}
-    QProximityReadingData(const QProximityReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), proximity(other.proximity) {}
-    ~QProximityReadingData() {}
-
-    qtimestamp timestamp;
-    int proximity;
-};
-
-// =====================================================================
-
-class Q_SENSORS_EXPORT QProximityReading
-{
+    Q_OBJECT
+    DECLARE_READING(QProximityReading)
 public:
     enum Proximity {
         Undefined = 0,
@@ -75,53 +59,17 @@ public:
         NotClose
     };
 
-    explicit QProximityReading()
-    { d = new QProximityReadingData; }
-    explicit QProximityReading(qtimestamp timestamp, Proximity proximity)
-    { d = new QProximityReadingData(timestamp, proximity); }
-    QProximityReading(const QProximityReading &other)
-        : d(other.d) {}
-    ~QProximityReading() {}
-
-    qtimestamp timestamp() const { return d->timestamp; }
-    Proximity proximity() const { return static_cast<Proximity>(d->proximity); }
-
-private:
-    QSharedDataPointer<QProximityReadingData> d;
+    Q_PROPERTY(Proximity proximity READ proximity WRITE setProximity)
+    Proximity proximity() const;
+    void setProximity(Proximity proximity);
 };
 
-typedef QTypedSensorBackend<QProximityReading> QProximityBackend;
-
-// =====================================================================
+DECLARE_FILTER(QProximityFilter, QProximityReading);
 
 class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 {
     Q_OBJECT
-public:
-    explicit QProximitySensor(QObject *parent = 0, const QByteArray &identifier = QByteArray());
-    virtual ~QProximitySensor();
-
-    Q_PROPERTY(QProximityReading currentReading READ currentReading)
-
-    static const QByteArray typeId;
-    QByteArray type() const { return typeId; };
-
-    // For polling/checking the current (cached) value
-    QProximityReading currentReading() const { return m_backend->currentReading(); }
-
-Q_SIGNALS:
-    void proximityChanged(const QProximityReading &reading);
-
-protected:
-    QSensorBackend *backend() const { return m_backend; }
-
-private:
-    void newReadingAvailable()
-    {
-        emit proximityChanged(currentReading());
-    }
-
-    QProximityBackend *m_backend;
+    DECLARE_SENSOR(QProximitySensor, QProximityFilter, QProximityReading)
 };
 
 QTM_END_NAMESPACE

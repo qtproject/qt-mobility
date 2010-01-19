@@ -43,83 +43,35 @@
 #define QROTATIONSENSOR_H
 
 #include <qsensor.h>
-#include <QtGlobal>
-#include <QSharedData>
-#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
-// implementation detail
-class QRotationReadingData : public QSharedData
-{
-public:
-    QRotationReadingData() {}
-    QRotationReadingData(qtimestamp _timestamp, qreal _x, qreal _y, qreal _z)
-        : timestamp(_timestamp), x(_x), y(_y), z(_z) {}
-    QRotationReadingData(const QRotationReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), x(other.x), y(other.y), z(other.z) {}
-    ~QRotationReadingData() {}
+class QRotationReadingPrivate;
 
-    qtimestamp timestamp;
-    qreal x;
-    qreal y;
-    qreal z;
+class Q_SENSORS_EXPORT QRotationReading : public QSensorReading
+{
+    Q_OBJECT
+    DECLARE_READING(QRotationReading)
+public:
+    Q_PROPERTY(qreal x READ x WRITE setX)
+    qreal x() const;
+    void setX(qreal x);
+
+    Q_PROPERTY(qreal y READ y WRITE setY)
+    qreal y() const;
+    void setY(qreal y);
+
+    Q_PROPERTY(qreal z READ z WRITE setZ)
+    qreal z() const;
+    void setZ(qreal z);
 };
 
-// =====================================================================
-
-class Q_SENSORS_EXPORT QRotationReading
-{
-public:
-    explicit QRotationReading()
-    { d = new QRotationReadingData; }
-    explicit QRotationReading(qtimestamp timestamp, qreal x, qreal y, qreal z)
-    { d = new QRotationReadingData(timestamp, x, y, z); }
-    QRotationReading(const QRotationReading &other)
-        : d(other.d) {}
-    ~QRotationReading() {}
-
-    qtimestamp timestamp() const { return d->timestamp; }
-    qreal x() const { return d->x; }
-    qreal y() const { return d->y; }
-    qreal z() const { return d->z; }
-
-private:
-    QSharedDataPointer<QRotationReadingData> d;
-};
-
-typedef QTypedSensorBackend<QRotationReading> QRotationBackend;
-
-// =====================================================================
+DECLARE_FILTER(QRotationFilter, QRotationReading);
 
 class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 {
     Q_OBJECT
-public:
-    explicit QRotationSensor(QObject *parent = 0, const QByteArray &identifier = QByteArray());
-    virtual ~QRotationSensor();
-
-    Q_PROPERTY(QRotationReading currentReading READ currentReading)
-
-    static const QByteArray typeId;
-    QByteArray type() const { return typeId; };
-
-    // For polling/checking the current (cached) value
-    QRotationReading currentReading() const { return m_backend->currentReading(); }
-
-Q_SIGNALS:
-    void rotationChanged(const QRotationReading &reading);
-
-protected:
-    QSensorBackend *backend() const { return m_backend; }
-
-private:
-    void newReadingAvailable()
-    {
-        emit rotationChanged(currentReading());
-    }
-
-    QRotationBackend *m_backend;
+    DECLARE_SENSOR(QRotationSensor, QRotationFilter, QRotationReading)
 };
 
 QTM_END_NAMESPACE

@@ -42,28 +42,27 @@
 #ifndef N900LIGHTSENSOR_H
 #define N900LIGHTSENSOR_H
 
+#include <qsensorbackend.h>
 #include <qambientlightsensor.h>
 
 #define LIGHTSENSOR_FILE "/sys/class/i2c-adapter/i2c-2/2-0029/lux"
 
 QTM_USE_NAMESPACE
 
-class n900lightsensor : public QAmbientLightBackend
+class n900lightsensor : public QSensorBackend
 {
 public:
     n900lightsensor();
 
-    QSensor::UpdatePolicies supportedPolicies() const;
     bool start();
     void stop();
-    void timerEvent(QTimerEvent * /*event*/);
     void poll();
-    QAmbientLightReading currentReading();
+    void timerEvent(QTimerEvent * /*event*/);
 
 private:
     int m_timerid;
     const char *m_filename;
-    QAmbientLightReading m_lastReading;
+    QAmbientLightReading m_reading;
 };
 
 #endif

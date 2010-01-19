@@ -4,16 +4,46 @@
 
 QTM_USE_NAMESPACE
 
-class AccelerometerListener : public QAccelerometerListener
+#if 0
+class AccelerometerListener : public QSensorListener
 {
 public:
-    void accelerationChanged(const QAccelerometerReading &reading)
+    void sensorChanged(QSensorReading *_reading)
+    {
+        QAccelerometerReading *reading = static_cast<QAccelerometerReading*>(_reading);
+        qDebug() << "acceleration: "
+                 << QString().sprintf("%0.2f %0.2f %0.2f",
+                         reading->x(),
+                         reading->y(),
+                         reading->z());
+    }
+};
+
+int main(int argc, char **argv)
+{
+    QCoreApplication app(argc, argv);
+
+    QSensor sensor;
+    sensor.setType("ACcel");
+    AccelerometerListener listener;
+    sensor.setListener(&listener);
+    sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
+    sensor.start();
+
+    return app.exec();
+}
+#else
+class AccelerometerFilter : public QAccelerometerFilter
+{
+public:
+    bool filter(QAccelerometerReading *reading)
     {
         qDebug() << "acceleration: "
                  << QString().sprintf("%0.2f %0.2f %0.2f",
-                         reading.x(),
-                         reading.y(),
-                         reading.z());
+                         reading->x(),
+                         reading->y(),
+                         reading->z());
+        return false; // don't store the reading in the sensor
     }
 };
 
@@ -22,15 +52,12 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
 
     QAccelerometer sensor;
-    if (!sensor.isValid()) {
-        qWarning() << "No accelerometer!";
-        return 1;
-    }
-    AccelerometerListener listener;
-    sensor.setListener(&listener);
+    AccelerometerFilter filter;
+    sensor.addFilter(&filter);
     sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
     sensor.start();
 
     return app.exec();
 }
+#endif
 

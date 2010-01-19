@@ -43,32 +43,15 @@
 #define QAMBIENTLIGHTSENSOR_H
 
 #include <qsensor.h>
-#include <QtGlobal>
-#include <QSharedData>
-#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
-// implementation detail
-class QAmbientLightReadingData : public QSharedData
+class QAmbientLightReadingPrivate;
+
+class Q_SENSORS_EXPORT QAmbientLightReading : public QSensorReading
 {
-public:
-    QAmbientLightReadingData()
-        : timestamp(), lightLevel(0) {}
-    QAmbientLightReadingData(qtimestamp _timestamp, int _lightLevel)
-        : timestamp(_timestamp), lightLevel(_lightLevel) {}
-    QAmbientLightReadingData(const QAmbientLightReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), lightLevel(other.lightLevel) {}
-    ~QAmbientLightReadingData() {}
-
-    qtimestamp timestamp;
-    int lightLevel;
-};
-
-// =====================================================================
-
-class Q_SENSORS_EXPORT QAmbientLightReading
-{
+    Q_OBJECT
+    DECLARE_READING(QAmbientLightReading)
 public:
     enum LightLevel {
         Undefined = 0,
@@ -79,53 +62,17 @@ public:
         Sunny
     };
 
-    explicit QAmbientLightReading()
-    { d = new QAmbientLightReadingData; }
-    explicit QAmbientLightReading(qtimestamp timestamp, LightLevel lightLevel)
-    { d = new QAmbientLightReadingData(timestamp, lightLevel); }
-    QAmbientLightReading(const QAmbientLightReading &other)
-        : d(other.d) {}
-    ~QAmbientLightReading() {}
-
-    qtimestamp timestamp() const { return d->timestamp; }
-    LightLevel lightLevel() const { return static_cast<LightLevel>(d->lightLevel); }
-
-private:
-    QSharedDataPointer<QAmbientLightReadingData> d;
+    Q_PROPERTY(LightLevel lightLevel READ lightLevel WRITE setLightLevel)
+    LightLevel lightLevel() const;
+    void setLightLevel(LightLevel lightLevel);
 };
 
-typedef QTypedSensorBackend<QAmbientLightReading> QAmbientLightBackend;
-
-// =====================================================================
+DECLARE_FILTER(QAmbientLightFilter, QAmbientLightReading);
 
 class Q_SENSORS_EXPORT QAmbientLightSensor : public QSensor
 {
     Q_OBJECT
-public:
-    explicit QAmbientLightSensor(QObject *parent = 0, const QByteArray &identifier = QByteArray());
-    virtual ~QAmbientLightSensor();
-
-    Q_PROPERTY(QAmbientLightReading currentReading READ currentReading)
-
-    static const QByteArray typeId;
-    QByteArray type() const { return typeId; };
-
-    // For polling/checking the current (cached) value
-    QAmbientLightReading currentReading() const { return m_backend->currentReading(); }
-
-Q_SIGNALS:
-    void ambientLightChanged(const QAmbientLightReading &reading);
-
-protected:
-    QSensorBackend *backend() const { return m_backend; }
-
-private:
-    void newReadingAvailable()
-    {
-        emit ambientLightChanged(currentReading());
-    }
-
-    QAmbientLightBackend *m_backend;
+    DECLARE_SENSOR(QAmbientLightSensor, QAmbientLightFilter, QAmbientLightReading)
 };
 
 QTM_END_NAMESPACE

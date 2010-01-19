@@ -40,8 +40,11 @@
 ****************************************************************************/
 
 #include <qproximitysensor.h>
+#include "qproximitysensor_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+IMPLEMENT_READING(QProximityReading)
 
 /*!
     \class QProximityReading
@@ -67,36 +70,25 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QProximityReading::QProximityReading()
-    \internal
+    \property QProximityReading::proximity
+    \brief foo
 */
 
 /*!
-    \fn QProximityReading::QProximityReading(qtimestamp timestamp, Proximity proximity)
-    \internal
+    Foo
 */
+QProximityReading::Proximity QProximityReading::proximity() const
+{
+    return static_cast<QProximityReading::Proximity>(d->proximity);
+}
 
 /*!
-    \fn QProximityReading::QProximityReading(const QProximityReading &other)
-    \internal
+    Foo
 */
-
-/*!
-    \fn QProximityReading::~QProximityReading()
-    \internal
-*/
-
-/*!
-    \fn QProximityReading::timestamp() const
-
-    Returns the time when the reading was made.
-*/
-
-/*!
-    \fn QProximityReading::proximity() const
-
-    Returns the proximity indication.
-*/
+void QProximityReading::setProximity(QProximityReading::Proximity proximity)
+{
+    d->proximity = proximity;
+}
 
 // =====================================================================
 
@@ -114,56 +106,6 @@ QTM_BEGIN_NAMESPACE
     \sa QProximityReading
 */
 
-/*!
-    Construct a sensor instance with specified \a parent.
-    If the \a identifier is passed the sensor will connect to that
-    specific sensor, otherwise the default will be used.
-*/
-QProximitySensor::QProximitySensor(QObject *parent, const QByteArray &identifier)
-    : QSensor(parent)
-{
-    m_backend = static_cast<QProximityBackend*>(connectToBackend(identifier));
-}
-
-/*!
-    Destroy the sensor. Stops the sensor if it has not already been stopped.
-*/
-QProximitySensor::~QProximitySensor()
-{
-    stop();
-}
-
-/*!
-    \property QProximitySensor::currentReading
-    \brief the current reading from the sensor.
-*/
-
-/*!
-    \variable QProximitySensor::typeId
-*/
-const QByteArray QProximitySensor::typeId("qt.Proximity");
-
-/*!
-    \fn QProximitySensor::type() const
-    \reimp
-*/
-
-/*!
-    \fn QProximitySensor::currentReading() const
-
-    Returns the current proximity reading.
-*/
-
-/*!
-    \fn QProximitySensor::proximityChanged(const QProximityReading &reading)
-
-    This signal is emitted when a new proximity \a reading comes in.
-*/
-
-/*!
-    \fn QProximitySensor::backend() const
-    \reimp
-*/
 
 #include "moc_qproximitysensor.cpp"
 QTM_END_NAMESPACE

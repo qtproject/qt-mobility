@@ -42,28 +42,27 @@
 #ifndef N900ACCELEROMETER_H
 #define N900ACCELEROMETER_H
 
+#include <qsensorbackend.h>
 #include <qaccelerometer.h>
 
 #define ACCELEROMETER_FILE "/sys/class/i2c-adapter/i2c-3/3-001d/coord"
 
 QTM_USE_NAMESPACE
 
-class n900accelerometer : public QAccelerometerBackend
+class n900accelerometer : public QSensorBackend
 {
 public:
     n900accelerometer();
 
-    QSensor::UpdatePolicies supportedPolicies() const;
     bool start();
     void stop();
-    void timerEvent(QTimerEvent * /*event*/);
     void poll();
-    QAccelerometerReading currentReading();
+    void timerEvent(QTimerEvent * /*event*/);
 
 private:
     int m_timerid;
     const char *m_filename;
-    QAccelerometerReading m_lastReading;
+    QAccelerometerReading m_reading;
 };
 
 #endif

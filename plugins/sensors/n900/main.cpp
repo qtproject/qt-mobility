@@ -77,9 +77,9 @@ public:
     void registerSensors()
     {
         qWarning() << "Loaded the N900 plugin";
-        REGISTER_STATEMENT(n900accelerometer, QAccelerometer::typeId, QByteArray("n900.accelerometer"));
-        REGISTER_STATEMENT(n900lightsensor, QAmbientLightSensor::typeId, QByteArray("n900.light"));
-        REGISTER_STATEMENT(n900proximitysensor, QProximitySensor::typeId, QByteArray("n900.proximity"));
+        REGISTER_STATEMENT(n900accelerometer, "QAccelerometer", QByteArray("n900.accelerometer"));
+        REGISTER_STATEMENT(n900lightsensor, "QAmbientLightSensor", QByteArray("n900.light"));
+        REGISTER_STATEMENT(n900proximitysensor, "QProximitySensor", QByteArray("n900.proximity"));
     }
 };
 

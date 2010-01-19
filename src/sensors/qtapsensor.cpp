@@ -40,8 +40,11 @@
 ****************************************************************************/
 
 #include <qtapsensor.h>
+#include "qtapsensor_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+IMPLEMENT_READING(QTapReading)
 
 /*!
     \class QTapReading
@@ -93,42 +96,46 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QTapReading::QTapReading()
-    \internal
+    \property QTapReading::tapDirection
+    \brief foo
 */
 
 /*!
-    \fn QTapReading::QTapReading(qtimestamp timestamp, TapDirection tapDirection, bool doubleTap)
-    \internal
+    Foo
+*/
+QTapReading::TapDirection QTapReading::tapDirection() const
+{
+    return static_cast<QTapReading::TapDirection>(d->tapDirection);
+}
+
+/*!
+    Foo
+*/
+void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
+{
+    d->tapDirection = tapDirection;
+}
+
+/*!
+    \property QTapReading::doubleTap
+    \brief foo
 */
 
 /*!
-    \fn QTapReading::QTapReading(const QTapReading &other)
-    \internal
+    Foo
 */
+bool QTapReading::isDoubleTap() const
+{
+    return d->doubleTap;
+}
 
 /*!
-    \fn QTapReading::~QTapReading()
-    \internal
+    Foo
 */
-
-/*!
-    \fn QTapReading::timestamp() const
-
-    Returns the time when the reading was made.
-*/
-
-/*!
-    \fn QTapReading::tapDirection() const
-
-    Returns the direction of the tap.
-*/
-
-/*!
-    \fn QTapReading::isDoubleTap() const
-
-    Returns true if the tap was a double tap, false if it was a single tap.
-*/
+void QTapReading::setDoubleTap(bool doubleTap)
+{
+    d->doubleTap = doubleTap;
+}
 
 // =====================================================================
 
@@ -162,57 +169,6 @@ QTM_BEGIN_NAMESPACE
 \endcode
 
     \sa QTapReading
-*/
-
-/*!
-    Construct a sensor instance with specified \a parent.
-    If the \a identifier is passed the sensor will connect to that
-    specific sensor, otherwise the default will be used.
-*/
-QTapSensor::QTapSensor(QObject *parent, const QByteArray &identifier)
-    : QSensor(parent)
-{
-    m_backend = static_cast<QTapBackend*>(connectToBackend(identifier));
-}
-
-/*!
-    Destroy the sensor. Stops the sensor if it has not already been stopped.
-*/
-QTapSensor::~QTapSensor()
-{
-    stop();
-}
-
-/*!
-    \property QTapSensor::currentReading
-    \brief the current reading from the sensor.
-*/
-
-/*!
-    \variable QTapSensor::typeId
-*/
-const QByteArray QTapSensor::typeId("qt.Tap");
-
-/*!
-    \fn QTapSensor::type() const
-    \reimp
-*/
-
-/*!
-    \fn QTapSensor::currentReading() const
-
-    Returns the current tap reading.
-*/
-
-/*!
-    \fn QTapSensor::tapDetected(const QTapReading &reading)
-
-    This signal is emitted when a tap \a reading comes in.
-*/
-
-/*!
-    \fn QTapSensor::backend() const
-    \reimp
 */
 
 #include "moc_qtapsensor.cpp"

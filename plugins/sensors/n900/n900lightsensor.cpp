@@ -47,16 +47,16 @@ n900lightsensor::n900lightsensor()
     : m_timerid(0)
     , m_filename(LIGHTSENSOR_FILE)
 {
-}
-
-QSensor::UpdatePolicies n900lightsensor::supportedPolicies() const
-{
-    return (QSensor::OccasionalUpdates |
+    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
             QSensor::InfrequentUpdates |
             QSensor::FrequentUpdates |
             QSensor::TimedUpdates |
             QSensor::PolledUpdates);
+
+    setReading<QAmbientLightReading>(&m_reading);
 }
+
+static int suggestedInterval() { return 0; }
 
 bool n900lightsensor::start()
 {
@@ -76,15 +76,10 @@ void n900lightsensor::stop()
     }
 }
 
-void n900lightsensor::timerEvent(QTimerEvent * /*event*/)
-{
-    poll();
-}
-
 void n900lightsensor::poll()
 {
     qWarning() << "poll";
-    qtimestamp timestamp = clock();
+    m_reading.setTimestamp(clock());
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
     int lux;
@@ -104,15 +99,13 @@ void n900lightsensor::poll()
     else
         lightLevel = QAmbientLightReading::Sunny;
 
-    m_lastReading = QAmbientLightReading(timestamp, lightLevel);
-    if (updatePolicy() != QSensor::PolledUpdates)
-        newReadingAvailable();
+    m_reading.setLightLevel(lightLevel);
+
+    newReadingAvailable();
 }
 
-QAmbientLightReading n900lightsensor::currentReading()
+void n900lightsensor::timerEvent(QTimerEvent * /*event*/)
 {
-    if (updatePolicy() == QSensor::PolledUpdates)
-        poll();
-    return m_lastReading;
+    poll();
 }
 

@@ -47,16 +47,16 @@ n900accelerometer::n900accelerometer()
     : m_timerid(0)
     , m_filename(ACCELEROMETER_FILE)
 {
-}
-
-QSensor::UpdatePolicies n900accelerometer::supportedPolicies() const
-{
-    return (QSensor::OccasionalUpdates |
+    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
             QSensor::InfrequentUpdates |
             QSensor::FrequentUpdates |
             QSensor::TimedUpdates |
             QSensor::PolledUpdates);
+
+    setReading<QAccelerometerReading>(&m_reading);
 }
+
+static int suggestedInterval() { return 0; }
 
 bool n900accelerometer::start()
 {
@@ -76,18 +76,13 @@ void n900accelerometer::stop()
     }
 }
 
-void n900accelerometer::timerEvent(QTimerEvent * /*event*/)
-{
-    poll();
-}
-
 void n900accelerometer::poll()
 {
     // Note that this is a rather inefficient way to generate this data.
     // Ideally the kernel would scale the hardware's values to m/s^2 for us
     // and give us a timestamp along with that data.
 
-    qtimestamp timestamp = clock();
+    m_reading.setTimestamp(clock());
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
     int x, y, z;
@@ -97,18 +92,19 @@ void n900accelerometer::poll()
 
     // Convert from milli-Gs to meters per second per second
     // Using 1 G = 9.80665 m/s^2
-    float ax = x * 0.00980665;
-    float ay = y * 0.00980665;
-    float az = z * 0.00980665;
-    m_lastReading = QAccelerometerReading(timestamp, ax, ay, az);
-    if (updatePolicy() != QSensor::PolledUpdates)
-        newReadingAvailable();
+    qreal ax = x * 0.00980665;
+    qreal ay = y * 0.00980665;
+    qreal az = z * 0.00980665;
+
+    m_reading.setX(ax);
+    m_reading.setY(ay);
+    m_reading.setZ(az);
+
+    newReadingAvailable();
 }
 
-QAccelerometerReading n900accelerometer::currentReading()
+void n900accelerometer::timerEvent(QTimerEvent * /*event*/)
 {
-    if (updatePolicy() == QSensor::PolledUpdates)
-        poll();
-    return m_lastReading;
+    poll();
 }
 

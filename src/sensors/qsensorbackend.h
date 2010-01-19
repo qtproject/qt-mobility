@@ -54,31 +54,25 @@ public:
     QSensorBackend();
     virtual ~QSensorBackend();
 
-    QByteArray identifier() const { return m_identifier; }
-    QSensor::UpdatePolicy updatePolicy() const { return m_policy; }
-    int updateInterval() const { return m_interval; }
+    void createdFor(QSensor *sensor);
 
-    void createdFor(QSensor *sensor, const QByteArray &identifier);
-    void newReadingAvailable();
-    void setUpdatePolicy(QSensor::UpdatePolicy policy, int interval);
-    int suggestedInterval();
-
-    virtual QSensor::UpdatePolicies supportedUpdatePolicies() const = 0;
     virtual bool start() = 0;
     virtual void stop() = 0;
+    virtual void poll() = 0;
+
+    void setSupportedUpdatePolicies(QSensor::UpdatePolicies policies);
+    template <typename T>
+    void setReading(T *reading)
+    {
+        setReadings(reading, new T);
+    }
+    void newReadingAvailable();
 
 private:
-    QSensor::UpdatePolicy m_policy;
-    int m_interval;
-    QSensor *m_sensor;
-    QByteArray m_identifier;
-};
+    void setReadings(QSensorReading *filter_reading, QSensorReading *cache_reading);
 
-template <typename Reading>
-class Q_SENSORS_EXPORT QTypedSensorBackend : public QSensorBackend
-{
-public:
-    virtual Reading currentReading() = 0;
+protected:
+    QSensor *m_sensor;
 };
 
 QTM_END_NAMESPACE

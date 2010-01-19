@@ -43,33 +43,15 @@
 #define QCOMPASS_H
 
 #include <qsensor.h>
-#include <QtGlobal>
-#include <QSharedData>
-#include <qsensorbackend.h>
 
 QTM_BEGIN_NAMESPACE
 
-// implementation detail
-class QCompassReadingData : public QSharedData
+class QCompassReadingPrivate;
+
+class Q_SENSORS_EXPORT QCompassReading : public QSensorReading
 {
-public:
-    QCompassReadingData()
-        : timestamp(), azimuth(0), calibration(0) {}
-    QCompassReadingData(qtimestamp _timestamp, qreal _azimuth, int _calibration)
-        : timestamp(_timestamp), azimuth(_azimuth), calibration(_calibration) {}
-    QCompassReadingData(const QCompassReadingData &other)
-        : QSharedData(other), timestamp(other.timestamp), azimuth(other.azimuth), calibration(other.calibration) {}
-    ~QCompassReadingData() {}
-
-    qtimestamp timestamp;
-    qreal azimuth;
-    int calibration;
-};
-
-// =====================================================================
-
-class Q_SENSORS_EXPORT QCompassReading
-{
+    Q_OBJECT
+    DECLARE_READING(QCompassReading)
 public:
     enum CalibrationLevel {
         Undefined = 0,
@@ -78,54 +60,21 @@ public:
         High      = 3
     };
 
-    explicit QCompassReading()
-    { d = new QCompassReadingData; }
-    explicit QCompassReading(qtimestamp timestamp, qreal azimuth, CalibrationLevel calibration)
-    { d = new QCompassReadingData(timestamp, azimuth, calibration); }
-    QCompassReading(const QCompassReading &other)
-        : d(other.d) {}
-    ~QCompassReading() {}
+    Q_PROPERTY(qreal azimuth READ azimuth WRITE setAzimuth)
+    qreal azimuth() const;
+    void setAzimuth(qreal azimuth);
 
-    qtimestamp timestamp() const { return d->timestamp; }
-    qreal azimuth() const { return d->azimuth; }
-    CalibrationLevel calibrationLevel() const { return static_cast<CalibrationLevel>(d->calibration); }
-
-private:
-    QSharedDataPointer<QCompassReadingData> d;
+    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel WRITE setCalibrationLevel)
+    CalibrationLevel calibrationLevel() const;
+    void setCalibrationLevel(CalibrationLevel calibrationLevel);
 };
 
-typedef QTypedSensorBackend<QCompassReading> QCompassBackend;
-
-// =====================================================================
+DECLARE_FILTER(QCompassFilter, QCompassReading);
 
 class Q_SENSORS_EXPORT QCompass : public QSensor
 {
     Q_OBJECT
-public:
-    explicit QCompass(QObject *parent = 0, const QByteArray &identifier = QByteArray());
-    virtual ~QCompass();
-
-    Q_PROPERTY(QCompassReading currentReading READ currentReading)
-
-    static const QByteArray typeId;
-    QByteArray type() const { return typeId; };
-
-    // For polling/checking the current (cached) value
-    QCompassReading currentReading() const { return m_backend->currentReading(); }
-
-Q_SIGNALS:
-    void azimuthChanged(const QCompassReading &reading);
-
-protected:
-    QSensorBackend *backend() const { return m_backend; }
-
-private:
-    void newReadingAvailable()
-    {
-        emit azimuthChanged(currentReading());
-    }
-
-    QCompassBackend *m_backend;
+    DECLARE_SENSOR(QCompass, QCompassFilter, QCompassReading)
 };
 
 QTM_END_NAMESPACE
