@@ -69,7 +69,14 @@ void DirectShowMediaType::copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &sourc
         target->pUnk->AddRef();
 }
 
-void DirectShowMediaType::free(AM_MEDIA_TYPE *type)
+void DirectShowMediaType::deleteType(AM_MEDIA_TYPE *type)
+{
+    freeData(type);
+
+    CoTaskMemFree(type);
+}
+
+void DirectShowMediaType::freeData(AM_MEDIA_TYPE *type)
 {
     if (type->cbFormat > 0)
         CoTaskMemFree(type->pbFormat);

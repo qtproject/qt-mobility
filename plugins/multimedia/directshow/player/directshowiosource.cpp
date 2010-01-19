@@ -330,10 +330,10 @@ HRESULT DirectShowIOSource::Connect(IPin *pReceivePin, const AM_MEDIA_TYPE *pmt)
             if (pReceivePin->EnumMediaTypes(&mediaTypes) == S_OK) {
                 for (AM_MEDIA_TYPE *type = 0;
                         mediaTypes->Next(1, &type, 0) == S_OK;
-                        DirectShowMediaType::free(type)) {
+                        DirectShowMediaType::deleteType(type)) {
                     switch (tryConnect(pReceivePin, type)) {
                         case S_OK:
-                            DirectShowMediaType::free(type);
+                            DirectShowMediaType::freeData(type);
                             mediaTypes->Release();
                             return S_OK;
                         case VFW_E_NO_TRANSPORT:

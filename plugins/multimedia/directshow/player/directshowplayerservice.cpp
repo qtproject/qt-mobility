@@ -55,6 +55,8 @@
 #include <QtCore/qthread.h>
 #include <QtCore/qvarlengtharray.h>
 
+#include <uuids.h>
+
 class DirectShowPlayerServiceThread : public QThread
 {
 public:
@@ -313,36 +315,26 @@ void DirectShowPlayerService::setAudioOutput(IBaseFilter *filter)
     QMutexLocker locker(&m_mutex);
 
     if (m_graph) {
-        while (m_executingTask == Render) {
-            m_pendingTasks |= SetAudioOutput;
+        if (m_audioOutput && m_executedTasks & SetAudioOutput) {
+            removeOutput(m_audioOutput);
 
-            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
-                progress->AbortOperation();
-                progress->Release();
-            }
-
-            m_loop.wait(&m_mutex);
-        }
-
-        if (m_audioOutput) {
-            if (m_executedTasks & SetAudioOutput) {
-                m_graph->RemoveFilter(m_audioOutput);
-            }
-            m_audioOutput->Release();
+            m_executedTasks &= ~SetAudioOutput;
         }
 
         m_audioOutput = filter;
 
-        if (m_executedTasks & Load) {
-            m_pendingTasks |= Render | SetAudioOutput;
-
-            m_wait.wakeAll();
-        }
-
         if (m_audioOutput) {
             m_audioOutput->AddRef();
+
+            m_pendingTasks |= SetAudioOutput;
         } else {
-            m_pendingTasks &= ~SetAudioOutput;
+            m_pendingTasks &= ~ SetAudioOutput;
+        }
+
+        if (m_executedTasks & Load) {
+            m_pendingTasks |= Render;
+
+            m_wait.wakeAll();
         }
     } else {
         if (m_audioOutput)
@@ -360,36 +352,26 @@ void DirectShowPlayerService::setVideoOutput(IBaseFilter *filter)
     QMutexLocker locker(&m_mutex);
 
     if (m_graph) {
-        while (m_executingTask == Render) {
-            m_pendingTasks |= SetVideoOutput;
+        if (m_videoOutput && m_executedTasks & SetVideoOutput) {
+            removeOutput(m_videoOutput);
 
-            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
-                progress->AbortOperation();
-                progress->Release();
-            }
-
-            m_loop.wait(&m_mutex);
-        }
-
-        if (m_videoOutput) {
-            if (m_executedTasks & SetVideoOutput && m_graph) {
-                m_graph->RemoveFilter(m_videoOutput);
-            }
-            m_videoOutput->Release();
+            m_executedTasks &= ~SetVideoOutput;
         }
 
         m_videoOutput = filter;
 
-        if (m_executedTasks & Load && m_graph) {
-            m_pendingTasks |= Render | SetVideoOutput;
-
-            m_wait.wakeAll();
-        }
-
         if (m_videoOutput) {
             m_videoOutput->AddRef();
+
+            m_pendingTasks |= SetVideoOutput;
         } else {
             m_pendingTasks &= ~ SetVideoOutput;
+        }
+
+        if (m_executedTasks & Load) {
+            m_pendingTasks |= Render;
+
+            m_wait.wakeAll();
         }
     } else {
         if (m_videoOutput)
@@ -458,6 +440,81 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
 void DirectShowPlayerService::loaded()
 {
     m_playerControl->durationChanged(m_playerControl->duration());
+}
+
+void DirectShowPlayerService::removeOutput(IBaseFilter *output)
+{
+    while (m_executingTask != 0) {
+        if (m_executingTask == Render) {
+            m_executingTask = 0;
+
+            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
+                progress->AbortOperation();
+                progress->Release();
+            }
+        }
+        m_loop.wait(&m_mutex);
+    }
+
+    m_pendingTasks |= m_executedTasks & (Play | Pause);
+    m_executedTasks &= ~(Play | Pause);
+
+    if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
+        control->Stop();
+        control->Release();
+    }
+
+    if (IFilterChain *chain = com_cast<IFilterChain>(m_graph)) {
+        IBaseFilter *start = findChainStart(output);
+
+        chain->RemoveChain(start, output);
+
+        start->Release();
+        chain->Release();
+    } else {
+        m_graph->RemoveFilter(output);
+    }
+
+    output->Release();
+}
+
+IBaseFilter *DirectShowPlayerService::findChainStart(IBaseFilter *end) const
+{
+    // Note: This assumes none of the filters have multiple connected input pins.
+
+    IBaseFilter *start = 0;
+    end->AddRef();
+
+    while (start != end) {
+        start = end;
+
+        IEnumPins *pins = 0;
+
+        if (SUCCEEDED(end->EnumPins(&pins))) {
+            for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release()) {
+                PIN_DIRECTION direction;
+                if (SUCCEEDED(pin->QueryDirection(&direction)) && direction == PINDIR_INPUT) {
+                    IPin *peer = 0;
+                    if (SUCCEEDED(pin->ConnectedTo(&peer))) {
+                        PIN_INFO peerInfo;
+                        if (SUCCEEDED(peer->QueryPinInfo(&peerInfo))) {
+                            CLSID classId;
+                            if (SUCCEEDED(peerInfo.pFilter->GetClassID(&classId))
+                                    && classId == CLSID_Colour) {
+                                end->Release();
+                                end = peerInfo.pFilter;
+                            } else {
+                                peerInfo.pFilter->Release();
+                            }
+                        }
+                        peer->Release();
+                    }
+                }
+            }
+            pins->Release();
+        }
+    }
+    return start;
 }
 
 void DirectShowPlayerService::run()
@@ -593,19 +650,15 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
         IBaseFilter *filter = filters[filters.size() - 1];
         filters.removeLast();
 
-        if (!(m_pendingTasks & (SetAudioOutput | SetVideoOutput))
-                && SUCCEEDED(filter->EnumPins(&pins))) {
+        if (m_executingTask == Render && SUCCEEDED(filter->EnumPins(&pins))) {
             for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release()) {
                 PIN_DIRECTION direction;
                 if (pin->QueryDirection(&direction) == S_OK && direction == PINDIR_OUTPUT) {
                     IPin *peer = 0;
                     if (pin->ConnectedTo(&peer) == S_OK) {
                         PIN_INFO peerInfo;
-                        if (peer->QueryPinInfo(&peerInfo) == S_OK) {
+                        if (peer->QueryPinInfo(&peerInfo) == S_OK)
                             filters.append(peerInfo.pFilter);
-                        } else {
-                            peerInfo.pFilter->Release();
-                        }
                         peer->Release();
                     } else {
                         locker->unlock();
@@ -620,12 +673,9 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
         }
         filter->Release();
     }
-
-    if (rendered && !(m_executedTasks & Render)) {
+    
+    if (m_executingTask == Render)
         m_executedTasks |= Render;
-
-        emit loaded();
-    }
 
     m_loop.wake();
 }

@@ -57,12 +57,13 @@ public:
         free(this); copy(this, type); return *this; }
     DirectShowMediaType &operator =(const DirectShowMediaType &other) {
         free(this); copy(this, other); return *this; }
-    ~DirectShowMediaType() { free(this); }
+    ~DirectShowMediaType() { freeData(this); }
 
     void clear() { free(this); memset(this, 0, sizeof(DirectShowMediaType)); }
 
     static void copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &source);
-    static void free(AM_MEDIA_TYPE *type);
+    static void freeData(AM_MEDIA_TYPE *type);
+    static void deleteType(AM_MEDIA_TYPE *type);
 
     static GUID convertPixelFormat(QVideoFrame::PixelFormat format);
     static QVideoSurfaceFormat formatFromType(const AM_MEDIA_TYPE &type);

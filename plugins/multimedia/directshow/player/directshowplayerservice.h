@@ -95,6 +95,9 @@ private Q_SLOTS:
     void loaded();
 
 private:
+    void removeOutput(IBaseFilter *output);
+    IBaseFilter *findChainStart(IBaseFilter *end) const;
+
     void run();
 
     void doLoad(QMutexLocker *locker);
