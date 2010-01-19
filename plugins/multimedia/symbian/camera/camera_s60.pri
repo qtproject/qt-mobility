@@ -1,5 +1,10 @@
 INCLUDEPATH += $$PWD
 
+exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
+    DEFINES += USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    message("Using from s60 3.2 CCameraAdvancedSettings header")  
+}
+
 symbian:LIBS += -lcamerawrapper \
     -lfbscli \
     -lecamadvsettings
