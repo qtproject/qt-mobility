@@ -17,6 +17,18 @@ symbian:
     error("Please run configure script");
 }
 
+#don't build QtMobility if chosen config mismatches Qt's config
+win32:!contains(CONFIG_WIN32,build_all) {
+   contains(QT_CONFIG,debug):!contains(QT_CONFIG,release):contains(CONFIG_WIN32,release) {
+       # Qt only build in debug mode
+       error(QtMobility cannot be build in release mode if Qt is build in debug mode only)
+   }
+   !contains(QT_CONFIG,debug):contains(QT_CONFIG,release):contains(CONFIG_WIN32,debug) {
+       # Qt only build in release mode
+       error(QtMobility cannot be build in debug mode if Qt is build in release mode only)
+   }
+}
+
 lessThan(QT_MAJOR_VERSION, 4) {
     error(Qt Mobility requires Qt 4.6 or higher. Qt $${QT_VERSION} was found.);
 }

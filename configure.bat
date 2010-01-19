@@ -51,6 +51,7 @@ cd /D %BUILD_PATH%
 set PROJECT_CONFIG= %BUILD_PATH%\config.in
 set PROJECT_LOG= %BUILD_PATH%\config.log
 set RELEASEMODE=release
+set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
@@ -119,8 +120,9 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework versit
-    echo                     Modules should be separated by a space. If a
-    echo                     selected module depends on other modules they
+    echo                     Modules should be separated by a space and surrounded
+    echo                     by double quotation. If a
+    echo                     selected module depends on other modules dependencies
     echo                     will automatically be enabled.
     echo -vc ............... Generate Visual Studio make files
 
@@ -136,11 +138,13 @@ goto cmdline_parsing
 
 :debugTag
 if "%RELEASEMODE%" == "release" set RELEASEMODE=debug
+set WIN32_RELEASEMODE=
 shift
 goto cmdline_parsing
 
 :releaseTag
 if "%RELEASEMODE%" == "debug"   set RELEASEMODE=release
+set WIN32_RELEASEMODE=
 shift
 goto cmdline_parsing
 
@@ -260,7 +264,9 @@ goto cmdline_parsing
 :startProcessing
 
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
+echo CONFIG_WIN32 += %WIN32_RELEASEMODE% %RELEASEMODE% >> %PROJECT_CONFIG%
 set RELEASEMODE=
+set WIN32_RELEASEMODE=
 
 set CURRENTDIR=%CD%
 echo %CURRENTDIR%

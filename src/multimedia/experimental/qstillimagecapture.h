@@ -39,45 +39,73 @@
 **
 ****************************************************************************/
 
-#ifndef QIMAGECAPTURECONTROL_H
-#define QIMAGECAPTURECONTROL_H
+#ifndef QSTILLIMAGECAPTURE_H
+#define QSTILLIMAGECAPTURE_H
 
-#include <qmediacontrol.h>
+#include <qmediaobject.h>
+#include <qmediaencodersettings.h>
 
-QT_BEGIN_NAMESPACE
-class QImage;
-QT_END_NAMESPACE
+class QSize;
 
 QTM_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QImageCaptureControl : public QMediaControl
+class QImageEncoderSettings;
+
+class QStillImageCapturePrivate;
+class Q_MEDIA_EXPORT QStillImageCapture : public QMediaObject
 {
     Q_OBJECT
-
+    Q_ENUMS(Error)
+    Q_PROPERTY(bool readyForCapture READ isReadyForCapture NOTIFY readyForCaptureChanged)
 public:
-    ~QImageCaptureControl();
+    enum Error
+    {
+        NoError,
+        NotReadyError,
+        ResourceError,
+        NotSupportedFeatureError,
+        FormatError
+    };
 
-    virtual bool isReadyForCapture() const = 0;
+    QStillImageCapture(QMediaObject *mediaObject, QObject *parent = 0);
+    ~QStillImageCapture();
 
-    virtual void capture(const QString &fileName) = 0;
+    bool isAvailable() const;
+    QtMedia::AvailabilityError availabilityError() const;
+
+    Error error() const;
+    QString errorString() const;
+
+    bool isReadyForCapture() const;
+
+    QStringList supportedImageCodecs() const;
+    QString imageCodecDescription(const QString &codecName) const;
+
+    QList<QSize> supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings(),
+                                      bool *continuous = 0) const;
+
+    QImageEncoderSettings encodingSettings() const;
+    void setEncodingSettings(const QImageEncoderSettings& settings);
+
+public Q_SLOTS:
+    void capture(const QString &fileName);
 
 Q_SIGNALS:
-    void readyForCaptureChanged(bool);
+    void error(QStillImageCapture::Error error);
 
+    void readyForCaptureChanged(bool);
     void imageCaptured(const QString &fileName, const QImage &preview);
     void imageSaved(const QString &fileName);
 
-    void error(int error, const QString &errorString);
-
-protected:
-    QImageCaptureControl(QObject* parent = 0);
+private:
+    Q_DISABLE_COPY(QStillImageCapture)
+    Q_DECLARE_PRIVATE(QStillImageCapture)
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
-
-#define QImageCaptureControl_iid "com.nokia.Qt.QImageCaptureControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QImageCaptureControl, QImageCaptureControl_iid)
 
 QTM_END_NAMESPACE
 
-#endif  // QMEDIAPLAYERCONTROL_H
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QStillImageCapture::Error))
 
+#endif
 

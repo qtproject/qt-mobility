@@ -44,6 +44,7 @@
 
 #include <experimental/qcamera.h>
 #include <qmediarecorder.h>
+#include <experimental/qstillimagecapture.h>
 #include <qaudiocapturesource.h>
 
 QT_BEGIN_NAMESPACE
@@ -100,6 +101,7 @@ private:
 
     QDir outputDir;
     QCamera *camera;
+    QStillImageCapture *imageCapture;
     QMediaRecorder* mediaRecorder;
     QAudioCaptureSource *audioSource;
     QVideoWidget *videoWidget;
