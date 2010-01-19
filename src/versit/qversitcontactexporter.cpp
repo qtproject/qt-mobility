@@ -61,23 +61,23 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn virtual bool QVersitContactExporterDetailHandler::processDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
+ * \fn virtual bool QVersitContactExporterDetailHandler::preProcessDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
  * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  *
- * Returns true on success, false on failure.
+ * Returns true if the detail has been handled and requires no furthur processing, false otherwise.
  *
  * This function is called on every QContactDetail encountered during an export.  Supply this
  * function and return true to implement custom export behaviour.
  */
 
 /*!
- * \fn virtual bool QVersitContactExporterDetailHandler::processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
+ * \fn virtual bool QVersitContactExporterDetailHandler::postProcessDetail(const QContactDetail& detail, bool alreadyProcessed, QVersitDocument* document) = 0;
  * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  *
- * Returns true on success, false on failure.
+ * Returns true if the detail has been handled, false otherwise.
  *
  * This function is called on every QContactDetail encountered during an export which is not
- * handled by either \l processDetail() or by QVersitContactExporter.  This can be used to
+ * handled by either \l preProcessDetail() or by QVersitContactExporter.  This can be used to
  * implement support for QContactDetails not supported by QVersitContactExporter.
  */
 
@@ -119,11 +119,12 @@ QTM_USE_NAMESPACE
  *
  * class MyDetailHandler : public QVersitContactExporterDetailHandler {
  * public:
- *     bool processDetail(const QContactDetail& detail, QVersitDocument* document) {
+ *     bool preProcessDetail(const QContactDetail& detail, QVersitDocument* document) {
  *         return false;
  *     }
- *     bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) {
- *         mUnknownDetails.append(detail);
+ *     bool postProcessDetail(const QContactDetail& detail, bool alreadyProcessed, QVersitDocument* document) {
+ *         if (!alreadyProcessed)
+ *             mUnknownDetails.append(detail);
  *         return false;
  *     }
  *     QList<QContactDetail> mUnknownDetails;

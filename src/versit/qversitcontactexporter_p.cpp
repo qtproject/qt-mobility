@@ -192,9 +192,8 @@ void QVersitContactExporterPrivate::exportContact(
         if (addProperty)
             versitDocument.addProperty(property);
 
-        if (unknown && mDetailHandler) {
-            mDetailHandler->processUnknownDetail(detail, &versitDocument);
-        }
+        if (mDetailHandler)
+            mDetailHandler->postProcessDetail(detail, !unknown, &versitDocument);
     }
 }
 

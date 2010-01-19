@@ -27,7 +27,8 @@ PUBLIC_HEADERS +=  \
     qversitcontactimporter.h
 
 # Private Headers
-PRIVATE_HEADERS += qversitdocument_p.h \
+PRIVATE_HEADERS += qversitcommon.h \
+    qversitdocument_p.h \
     qversitdocumentwriter_p.h \
     qversitproperty_p.h \
     qversitreader_p.h \

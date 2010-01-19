@@ -59,7 +59,7 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn virtual bool processProperty(const QVersitProperty& property, QContact* contact) = 0;
+ * \fn virtual bool preProcessProperty(const QVersitProperty& property, QContact* contact) = 0;
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  *
  * Returns true on success, false on failure.
@@ -75,7 +75,7 @@ QTM_USE_NAMESPACE
  * Returns true on success, false on failure.
  *
  * This function is called on every QVersitProperty encountered during an import which is not
- * handled by either \l processProperty() or by QVersitContactImporter.  Supply this
+ * handled by either \l preProcessProperty() or by QVersitContactImporter.  Supply this
  * function and return true to implement support for QVersitProperties not supported by
  * QVersitContactImporter.
  */
@@ -114,7 +114,7 @@ QTM_USE_NAMESPACE
  *
  * class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
  * public:
- *    bool processProperty(const QVersitProperty& property, QContact* contact) {
+ *    bool preProcessProperty(const QVersitProperty& property, QContact* contact) {
  *        return false;
  *    }
  *    bool processUnknownProperty(const QVersitProperty& property, QContact* contact) {

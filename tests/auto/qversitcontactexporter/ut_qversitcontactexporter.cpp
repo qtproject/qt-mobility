@@ -111,7 +111,7 @@ public:
 class MyQVersitContactExporterDetailHandler : public QVersitContactExporterDetailHandler
 {
 public:
-    bool processDetail(const QContactDetail& detail, QVersitDocument* document)
+    bool preProcessDetail(const QContactDetail& detail, QVersitDocument* document)
     {
         mProcessedDetails.append(detail);
         if (mDefinitionNamesToProcess.contains(detail.definitionName())) {
@@ -125,10 +125,12 @@ public:
         }
     }
 
-    bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document)
+    bool postProcessDetail(const QContactDetail& detail, bool alreadyProcessed,
+                           QVersitDocument* document)
     {
         Q_UNUSED(document)
-        mUnknownDetails.append(detail);
+        if (!alreadyProcessed)
+            mUnknownDetails.append(detail);
         return false;
     }
 

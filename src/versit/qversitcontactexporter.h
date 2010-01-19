@@ -43,6 +43,7 @@
 #define QVERSITCONTACTEXPORTER_H
 
 #include "qmobilityglobal.h"
+#include "qversitcommon.h"
 #include "qversitdocument.h"
 
 #include <qcontact.h>
@@ -53,23 +54,13 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate;
 
-// XXX I wonder if we need both process & processUnknown...
 class QVersitContactExporterDetailHandler
 {
 public:
     virtual ~QVersitContactExporterDetailHandler() {}
-
-    virtual bool processDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
-
-    virtual bool processUnknownDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
-};
-
-class QVersitResourceLoader
-{
-public:
-    virtual ~QVersitResourceLoader() {}
-
-    virtual bool loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
+    virtual bool preProcessDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
+    virtual bool postProcessDetail(const QContactDetail& detail, bool alreadyProcessed,
+                                   QVersitDocument* document) = 0;
 };
 
 class Q_VERSIT_EXPORT QVersitContactExporter

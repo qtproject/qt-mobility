@@ -71,7 +71,7 @@ QTM_BEGIN_NAMESPACE
 class MyQVersitContactImporterPropertyHandler : public QVersitContactImporterPropertyHandler
 {
 public:
-    bool processProperty(const QVersitProperty& property, QContact* contact)
+    bool preProcessProperty(const QVersitProperty& property, QContact* contact)
     {
         Q_UNUSED(property);
         Q_UNUSED(contact);

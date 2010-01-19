@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,50 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTIMPORTER_H
-#define QVERSITCONTACTIMPORTER_H
+#ifndef QVERSITCOMMON_H
+#define QVERSITCOMMON_H
 
 #include "qmobilityglobal.h"
-#include "qversitcommon.h"
 
-#include <qcontact.h>
-
-#include <QList>
+#include <QString>
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitDocument;
 class QVersitProperty;
-class QVersitContactImporterPrivate;
 
-class QVersitContactImporterPropertyHandler
+class QVersitResourceLoader
 {
 public:
-    virtual ~QVersitContactImporterPropertyHandler() {}
-    virtual bool preProcessProperty(const QVersitProperty& property, QContact* contact) = 0;
-    virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
+    virtual ~QVersitResourceLoader() {}
+    virtual bool loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
 };
 
-class Q_VERSIT_EXPORT QVersitContactImporter
+
+class QVersitResourceSaver
 {
 public:
-    QVersitContactImporter();
-    ~QVersitContactImporter();
-
-    // XXX I'm not sure about importing vs converting (same for class name)
-    QList<QContact> importContacts(const QList<QVersitDocument>& documents);
-
-    void setPropertyHandler(QVersitContactImporterPropertyHandler* importer);
-    QVersitContactImporterPropertyHandler* propertyHandler() const;
-    
-    void setResourceSaver(QVersitResourceSaver* saver);
-    QVersitResourceSaver* resourceSaver() const;
-
-private:
-    QVersitContactImporterPrivate* d;
+    virtual ~QVersitResourceSaver() {}
+    virtual bool saveResource(const QByteArray& contents, const QVersitProperty& property,
+                              QString* location) = 0;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QVERSITCONTACTIMPORTER_H
-
+#endif // QVERSITCOMMON_H
