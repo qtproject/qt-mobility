@@ -73,7 +73,7 @@ public:
     int bufferStatus() const { return 0; }
     bool isVideoAvailable() const { return false; }
     bool isSeekable() const { return false; }
-    QPair<qint64, qint64> seekRange() const { return QPair<qint64, qint64>(); }
+    QMediaTimeRange availablePlaybackRanges() const { return QMediaTimeRange(); }
     qreal playbackRate() const { return 1; }
     void setPlaybackRate(qreal) {}
     QMediaContent media() const { return QMediaContent(); }

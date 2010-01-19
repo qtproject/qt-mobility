@@ -232,18 +232,24 @@ bool DirectShowPlayerControl::isSeekable() const
     return capabilities & AM_SEEKING_CanSeekAbsolute;
 }
 
-QPair<qint64, qint64> DirectShowPlayerControl::seekRange() const
-{
-    LONGLONG minimum = 0;
-    LONGLONG maximum = 0;
 
+QMediaTimeRange DirectShowPlayerControl::availablePlaybackRanges() const
+{
     if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-        seeking->GetAvailable(&minimum, &maximum);
+        LONGLONG minimum = 0;
+        LONGLONG maximum = 0;
+
+        HRESULT hr = seeking->GetAvailable(&minimum, &maximum);
         seeking->Release();
+
+        if (SUCCEEDED(hr))
+            return QMediaTimeRange(minimum, maximum);
     }
 
-    return QPair<qint64, qint64>(minimum, maximum);
+    return QMediaTimeRange();
 }
+
+
 
 qreal DirectShowPlayerControl::playbackRate() const
 {
