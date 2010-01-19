@@ -320,12 +320,23 @@ void PulseAudioPlayerControl::play()
         m_state == QMediaPlayer::PlayingState)
         return;
 
+#ifdef MAEMO_VOLUME
+    // Need to do this in code! (TODO)
+    QString cmd = QString("/usr/bin/pasr -r -s x-maemo|/usr/bin/tail -n3|/usr/bin/head -n1|/usr/bin/awk '{print $3}'|/bin/sed 's/\%//g'>/tmp/vol");
+    system(cmd.toLocal8Bit().constData());
+    QFile volFile("/tmp/vol");
+    volFile.open(QIODevice::ReadOnly);
+    QByteArray volNum = volFile.readLine();
+    cmd = QString("/usr/bin/pasr -u -s event -l %1 -c mono").arg((m_volume+QString(volNum.constData()).toInt())/2);
+    system(cmd.toLocal8Bit().constData());
+#endif
+
     daemon()->lock();
     pa_operation_unref(
             pa_context_play_sample(daemon()->context(),
                                    m_name.constData(),
                                    0,
-                                   PA_VOLUME_NORM/100*m_volume,
+                                  -1,
                                    play_callback,
                                    this)
             );
