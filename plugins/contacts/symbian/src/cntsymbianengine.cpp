@@ -208,9 +208,8 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QList<QContactSortOrder>
  */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
-    // See QT_TRYCATCH_LEAVING note at the begginning of this file
     QContact* contact = new QContact();
-    TRAPD(err, QT_TRYCATCH_LEAVING(*contact = fetchContactL(contactId)));
+    TRAPD(err, *contact = fetchContactL(contactId));
     CntSymbianTransformError::transformError(err, error);
     if(error == QContactManager::NoError) {
         updateDisplayLabel(*contact);
@@ -386,7 +385,7 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
     // Attempt to persist contact, trapping errors
     int err(0);
     QContactLocalId id(0);
-    TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
+    TRAP(err, id = addContactL(contact));
     if(err == KErrNone)
     {
         changeSet.addedContacts().insert(id);
@@ -463,7 +462,7 @@ int CntSymbianEngine::addContactL(QContact &contact)
 bool CntSymbianEngine::updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     int err(0);
-    TRAP(err, QT_TRYCATCH_LEAVING(updateContactL(contact)));
+    TRAP(err, updateContactL(contact));
     if(err == KErrNone)
     {
         //TODO: check what to do with groupsChanged
