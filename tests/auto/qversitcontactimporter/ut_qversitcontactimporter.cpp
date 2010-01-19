@@ -78,10 +78,12 @@ public:
         return false;
     }
 
-    bool processUnknownProperty(const QVersitProperty& property, QContact* contact)
+    bool postProcessProperty(const QVersitProperty& property, bool alreadyProcessed,
+                             QContact* contact)
     {
         Q_UNUSED(contact)
-        mUnknownProperties.append(property);
+        if (!alreadyProcessed)
+            mUnknownProperties.append(property);
         return false;
     }
 

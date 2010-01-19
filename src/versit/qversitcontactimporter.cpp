@@ -69,7 +69,7 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
+ * \fn virtual bool postProcessProperty(const QVersitProperty& property, bool alreadyProcessed, QContact* contact) = 0;
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  *
  * Returns true on success, false on failure.
@@ -106,9 +106,9 @@ QTM_USE_NAMESPACE
  *
  * \ingroup versit
  *
- * By associating a QVersitContactImporterPropertyHandler with the importer using setPropertyHandler(), the
- * client can pass in a handler to override the processing of properties and/or handle properties
- * that QVersitContactImporter doesn't support.
+ * By associating a QVersitContactImporterPropertyHandler with the importer using
+ * setPropertyHandler(), the client can pass in a handler to override the processing of properties
+ * and/or handle properties that QVersitContactImporter doesn't support.
  *
  * \code
  *
@@ -117,8 +117,10 @@ QTM_USE_NAMESPACE
  *    bool preProcessProperty(const QVersitProperty& property, QContact* contact) {
  *        return false;
  *    }
- *    bool processUnknownProperty(const QVersitProperty& property, QContact* contact) {
- *        mUnknownProperties.append(property);
+ *    bool postProcessProperty(const QVersitProperty& property, bool alreadyProcessed,
+ *            QContact* contact) {
+ *        if (!alreadyProcessed)
+ *            mUnknownProperties.append(property);
  *        return false;
  *    }
  *    QList<QVersitProperty> mUnknownProperties;

@@ -172,9 +172,11 @@ QContact QVersitContactImporterPrivate::importContact(
                 detail->setContexts(contexts);
             contact.saveDetail(detail);
             delete detail;
+            if (mPropertyHandler)
+                mPropertyHandler->postProcessProperty(property, true, &contact);
         } else {
             if (mPropertyHandler)
-                mPropertyHandler->processUnknownProperty(property, &contact);
+                mPropertyHandler->postProcessProperty(property, false, &contact);
         }
     }
 

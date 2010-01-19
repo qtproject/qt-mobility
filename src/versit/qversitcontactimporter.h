@@ -60,7 +60,8 @@ class QVersitContactImporterPropertyHandler
 public:
     virtual ~QVersitContactImporterPropertyHandler() {}
     virtual bool preProcessProperty(const QVersitProperty& property, QContact* contact) = 0;
-    virtual bool processUnknownProperty(const QVersitProperty& property, QContact* contact) = 0;
+    virtual bool postProcessProperty(const QVersitProperty& property, bool alreadyProcessed,
+                                     QContact* contact) = 0;
 };
 
 class Q_VERSIT_EXPORT QVersitContactImporter
