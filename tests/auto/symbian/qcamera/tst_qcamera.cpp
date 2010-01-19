@@ -52,6 +52,21 @@
 #include <experimental/qcamera.h>
 #include <experimental/qstillimagecapture.h>
 
+
+#define QTRY_COMPARE(a,e)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if ((a) == (e)) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QCOMPARE(a, e)
+
+#define QTRY_VERIFY(a)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if (a) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QVERIFY(a)
+
 QTM_USE_NAMESPACE
 
 class tst_QCamera: public QObject
@@ -128,12 +143,16 @@ void tst_QCamera::testSimpleCamera()
 {
     QCamera camera(0);
     
+    QSignalSpy spyAdd(&camera, SIGNAL(stateChanged(QCamera::State)));
     QVERIFY(camera.service() != NULL);
 
     QCOMPARE(camera.state(), QCamera::StoppedState);
     camera.start();
+    QTRY_COMPARE(spyAdd.count(), 1);
+    
     QCOMPARE(camera.state(), QCamera::ActiveState);
     camera.stop();
+    QTRY_COMPARE(spyAdd.count(), 2);
     QCOMPARE(camera.state(), QCamera::StoppedState);
 }
 
@@ -235,10 +254,12 @@ void tst_QCamera::testSimpleCameraCapture()
     QVERIFY(imageCapture.errorString().isEmpty());
 
     QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QStillImageCapture::Error)));
-    imageCapture.capture(QString::fromLatin1("/dev/null"));
+    camera.start();
+    imageCapture.capture(QDir::rootPath());
     QCOMPARE(errorSignal.size(), 1);
     QCOMPARE(imageCapture.error(), QStillImageCapture::NotSupportedFeatureError);
     QVERIFY(!imageCapture.errorString().isEmpty());
+    camera.stop();
 }
 
 void tst_QCamera::testCameraCapture()
@@ -388,7 +409,7 @@ void tst_QCamera::testCameraFocus()
     QCOMPARE(camera.focusMode(), QCamera::AutoFocus);
     camera.setFocusMode(QCamera::ContinuousFocus);
     QCOMPARE(camera.focusMode(), QCamera::ContinuousFocus);
-    QCOMPARE(camera.focusStatus(), QCamera::FocusReached);
+    QCOMPARE(camera.focusStatus(), QCamera::FocusInitial);
 
     QVERIFY(camera.isMacroFocusingSupported());
     QVERIFY(!camera.macroFocusingEnabled());

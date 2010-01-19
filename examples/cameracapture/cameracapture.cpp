@@ -106,9 +106,11 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
+    
+    qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
     if (cameraDevice.isEmpty())
         camera = new QCamera;
-    else
+    else       
         camera = new QCamera(cameraDevice);
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
@@ -242,7 +244,7 @@ void CameraCapture::updateCameraState(QCamera::State state)
     if (state == QCamera::ActiveState) {
         ui->actionCamera->setEnabled(false);
         ui->actionAudio->setEnabled(false);
-        ui->actionSettings->setEnabled(false);
+        ui->actionSettings->setEnabled(true);
 
         ui->startCameraButton->setText(tr("Stop Camera"));
         ui->startCameraButton->setChecked(true);
@@ -296,6 +298,8 @@ void CameraCapture::displayErrorMessage()
 
 void CameraCapture::updateCameraDevice(QAction *action)
 {
+    qDebug() << "CameraCapture::updateCameraDevice(), action="<<action;
+    qDebug() << "CameraCapture::updateCameraDevice(), device="<<action->data().toByteArray();
     setCamera(action->data().toByteArray());
 }
 
@@ -308,9 +312,7 @@ void CameraCapture::focusLocked()
 {
     qDebug() << "CameraCapture focus locked";
 }
-
 void CameraCapture::zoomValueChanged(qreal value)
 {
 	qDebug() << "CameraCapture zoom value changed to: " << value;
-	
 }
