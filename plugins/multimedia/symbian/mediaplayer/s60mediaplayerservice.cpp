@@ -79,6 +79,7 @@ S60MediaPlayerService::~S60MediaPlayerService()
     delete m_videoWidget;
     delete m_videoRenderer;
     delete m_videoWindow;
+    delete m_videoOutput;
     delete m_metaData;
 }
 

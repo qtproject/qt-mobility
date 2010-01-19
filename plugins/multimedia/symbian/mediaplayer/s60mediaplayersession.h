@@ -47,6 +47,7 @@
 #include <QtCore/qpair.h>
 #include <QMediaPlayer>
 #include <e32cmn.h> // for TDesC
+#include "s60mediaplayerservice.h"
 
 QTM_BEGIN_NAMESPACE
 class QMediaTimeRange;
