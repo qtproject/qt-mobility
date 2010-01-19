@@ -47,6 +47,9 @@
 #include <QByteArray>
 #include <QVariant>
 
+// This says "NOKIA" in Katakana
+const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2"));
+
 QTM_USE_NAMESPACE
 
 void UT_QVCard21Writer::init()
@@ -120,6 +123,29 @@ END:VCARD\r\n\
     QCOMPARE(QString::fromAscii(mWriter->encodeVersitProperty(property).data()),
              QString::fromAscii(expectedResult.data()));
 
+    // Characters other than ASCII:
+    expectedResult = "ORG;CHARSET=UTF-8:" + KATAKANA_NOKIA.toUtf8() + "\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("ORG"));
+    property.setValue(KATAKANA_NOKIA);
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+
+    // In Shift-JIS codec.
+    QTextCodec* jisCodec = QTextCodec::codecForName("Shift-JIS");
+    expectedResult = "ORG;CHARSET=Shift_JIS:" + jisCodec->fromUnicode(KATAKANA_NOKIA) + "\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("ORG"));
+    property.setValue(KATAKANA_NOKIA);
+    QByteArray result = mWriter->encodeVersitProperty(property, jisCodec);
+    QCOMPARE(result, expectedResult);
+
+    // CHARSET and QUOTED-PRINTABLE
+    expectedResult = "EMAIL;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:john=40"
+                     + KATAKANA_NOKIA.toUtf8() + ".com\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("EMAIL"));
+    property.setValue(QString::fromAscii("john@%1.com").arg(KATAKANA_NOKIA));
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
 }
 
 void UT_QVCard21Writer::testEncodeParameters()
@@ -152,34 +178,6 @@ void UT_QVCard21Writer::testEncodeParameters()
     parameters.insert(QString::fromAscii("X-PARAM"),QString::fromAscii("VALUE"));
     QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
              QString::fromAscii(";X-PARAM=VALUE;ENCODING=8BIT"));
-}
-
-void UT_QVCard21Writer::testQuotedPrintableEncode()
-{
-    QByteArray encodedValue;
-    
-    // The property doesn't contain ENCODING parameter, 
-    // no special characters in the encodedValue -> no need to use Quoted-Printable encode
-    QVersitProperty property;
-    property.setName(QString::fromAscii("N"));
-    property.setValue(QString::fromAscii("Citizen;John"));
-    QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
-    QVERIFY(encodedValue == property.value().toAscii());
-    
-    // The property doesn't contain ENCODING parameter,
-    // special characters in the encodedValue -> needs to be Quoted-Printable encoded
-    property.setName(QString::fromAscii("EMAIL"));
-    property.setValue(QString::fromAscii("john.citizen@example.com"));
-    QVERIFY(mWriter->quotedPrintableEncode(property,encodedValue));
-    QCOMPARE(QString::fromAscii(encodedValue), QString::fromAscii("john.citizen=40example.com"));
-    
-    // The property contains ENCODING parameter
-    // -> Value should not be Quoted-Printable encoded
-    property.setName(QString::fromAscii("PHOTO"));
-    property.setValue(QString::fromAscii(QByteArray("the data").toBase64()));
-    property.insertParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
-    QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
-    QVERIFY(encodedValue == property.value().toAscii());
 }
 
 void UT_QVCard21Writer::testEncodeGroupsAndName()

@@ -33,7 +33,7 @@ QByteArray QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& do
     encodedDocument += "BEGIN:" + mDocumentType + "\r\n";
     encodedDocument += "VERSION:" + mVersion + "\r\n";
     foreach (QVersitProperty property, properties) {
-        encodedDocument.append(encodeVersitProperty(property));
+        encodedDocument.append(encodeVersitProperty(property, document.codec()));
     }
     encodedDocument += "END:" + mDocumentType + "\r\n";
 

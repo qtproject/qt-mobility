@@ -106,15 +106,15 @@ void VersitUtils::skipLeadingWhiteSpaces(VersitCursor &line, QTextCodec* codec)
  * using Quoted-Printable encoding (RFC 1521).
  * Returns true if at least one character was encoded.
  */
-bool VersitUtils::quotedPrintableEncode(QByteArray& text)
+bool VersitUtils::quotedPrintableEncode(QString& text)
 {    
     bool encoded = false;
     for (int i=0; i<text.length(); i++) {
-        char current = text.at(i);
+        QChar current = text.at(i);
         if (shouldBeQuotedPrintableEncoded(current)) {
-            QString encodedStr;
-            encodedStr.sprintf("=%02X",current);
-            text.replace(i,1,encodedStr.toAscii());
+            QString encodedStr(
+                    QString::fromAscii("=%1").arg(current.unicode(), 2, 16, QLatin1Char('0')));
+            text.replace(i, 1, encodedStr);
             i += 2;
             encoded = true;
         }
@@ -516,13 +516,14 @@ bool VersitUtils::containsAt(const QByteArray& text, const QByteArray& match, in
 /*!
  * Checks whether the \a chr should be Quoted-Printable encoded (RFC 1521). 
  */
-bool VersitUtils::shouldBeQuotedPrintableEncoded(char chr)
+bool VersitUtils::shouldBeQuotedPrintableEncoded(QChar chr)
 {
-    return (chr < 32 || 
-            chr == '!' || chr == '"' || chr == '#' || chr == '$' || 
-            chr == '=' || chr == '@' || chr == '[' || chr == '\\' || 
-            chr == ']' || chr == '^' || chr == '`' ||
-            chr > 122 ); 
+    int c = chr.unicode();
+    return (c < 32 ||
+            c == '!' || c == '"' || c == '#' || c == '$' ||
+            c == '=' || c == '@' || c == '[' || c == '\\' ||
+            c == ']' || c == '^' || c == '`' ||
+            (c > 122 && c < 256));
 }
 
 /*!

@@ -62,7 +62,6 @@ private slots: // Tests
 
     void testEncodeVersitProperty();
     void testEncodeParameters();
-    void testQuotedPrintableEncode();
     void testEncodeGroupsAndName();
 
 private: // Data

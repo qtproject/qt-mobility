@@ -63,8 +63,11 @@ QVCard30Writer::~QVCard30Writer()
 /*!
  * Encodes the \a property to text. 
  */
-QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
+QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property, QTextCodec* codec)
 {
+    // vCard 3.0 should use UTF-8 for everything.
+    Q_UNUSED(codec);
+
     QVersitProperty modifiedProperty(property);
     QString name = mPropertyNameMappings.value(property.name(),property.name());
     modifiedProperty.setName(name);
@@ -84,9 +87,9 @@ QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
         value = encodeVersitDocument(embeddedDocument);
         QString escapedValue(QString::fromAscii(value));
         VersitUtils::backSlashEscape(escapedValue);
-        value = escapedValue.toAscii();
+        value = escapedValue.toUtf8();
     } else if (variant.type() == QVariant::String) {
-        value = variant.toString().toAscii();
+        value = variant.toString().toUtf8();
     } else if (variant.type() == QVariant::ByteArray) {
         value = variant.toByteArray().toBase64();
     }
@@ -108,7 +111,7 @@ QByteArray QVCard30Writer::encodeParameters(
         encodedParameters.append(";");
         QStringList values = parameters.values(nameString);
         VersitUtils::backSlashEscape(nameString);
-        QByteArray name(nameString.toAscii());
+        QByteArray name(nameString.toUtf8());
         encodedParameters.append(name);
         encodedParameters.append("=");
         for (int i=0; i<values.size(); i++) {
@@ -117,7 +120,7 @@ QByteArray QVCard30Writer::encodeParameters(
             QString value = values.at(i);
 
             VersitUtils::backSlashEscape(value);
-            encodedParameters.append(value.toAscii());
+            encodedParameters.append(value.toUtf8());
         }
     }
 

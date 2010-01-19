@@ -64,7 +64,9 @@ class Q_VERSIT_EXPORT QVersitDocumentWriter
 public:
     QVersitDocumentWriter(const QByteArray& documentType, const QByteArray& version);
 
-    virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
+    virtual QByteArray encodeVersitProperty(const QVersitProperty& property,
+                                            QTextCodec* codec = 0)
+        = 0;
     virtual QByteArray encodeParameters(
         const QMultiHash<QString,QString>& parameters) const = 0;
     QByteArray encodeVersitDocument(const QVersitDocument& document);

@@ -64,7 +64,8 @@ public:
     QVCard30Writer();
     ~QVCard30Writer();
 
-    QByteArray encodeVersitProperty(const QVersitProperty& property);
+    QByteArray encodeVersitProperty(const QVersitProperty& property,
+                                    QTextCodec* codec = 0);
     QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
     QHash<QString,QString> mPropertyNameMappings;
 };

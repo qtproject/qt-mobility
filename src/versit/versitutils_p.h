@@ -84,7 +84,7 @@ class Q_AUTOTEST_EXPORT VersitUtils
 public:
     static QByteArray fold(QByteArray& text, int maxChars);
     static void skipLeadingWhiteSpaces(VersitCursor& line, QTextCodec* codec);
-    static bool quotedPrintableEncode(QByteArray& text);
+    static bool quotedPrintableEncode(QString& text);
     static void decodeQuotedPrintable(QString& text);
     static bool backSlashEscape(QString& text);
     static void removeBackSlashEscaping(QString& text);
@@ -113,7 +113,7 @@ public:
     static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
     static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
     static QByteArray encode(char ch, QTextCodec* codec);
-    static bool shouldBeQuotedPrintableEncoded(char chr);
+    static bool shouldBeQuotedPrintableEncoded(QChar chr);
     static QList<QByteArray>* newlineList(QTextCodec* codec);
     static void changeCodec(QTextCodec* codec);
 private:

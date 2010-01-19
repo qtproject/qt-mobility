@@ -43,6 +43,8 @@
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
+#include <QTextCodec>
+
 QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
@@ -59,29 +61,37 @@ QVCard21Writer::~QVCard21Writer()
 /*!
  * Encodes the \a property to text. 
  */
-QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
+QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property, QTextCodec* codec)
 {
-    QByteArray encodedProperty(encodeGroupsAndName(property));
+    if (!codec)
+        codec = QTextCodec::codecForName("UTF-8");
 
-    const QString encoding(QLatin1String("ENCODING"));
-    const QString quotedPrintable(QLatin1String("QUOTED-PRINTABLE"));
-    const QString base64(QLatin1String("BASE64"));
+    QByteArray encodedProperty(encodeGroupsAndName(property));
     QMultiHash<QString,QString> parameters = property.parameters();
     QVariant variant(property.variantValue());
 
     QByteArray renderedValue;
 
     if (variant.type() == QVariant::String) {
+        QString valueString = variant.toString();
+
         // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
-        renderedValue = variant.toString().toAscii();
-        bool valueQuotedPrintableEncoded = quotedPrintableEncode(property, renderedValue);
-        if (valueQuotedPrintableEncoded &&
-            !parameters.contains(encoding, quotedPrintable)) {
-             // Add the encoding parameter to the copy, not to the actual property
-             parameters.insert(encoding, quotedPrintable);
+        if (!parameters.contains(QLatin1String("ENCODING"))) {
+            if (VersitUtils::quotedPrintableEncode(valueString))
+                parameters.insert(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
+        }
+
+        // Encode with the correct charset and add the CHARSET parameter, if necessary
+        // In vCard 2.1, ASCII is the default charset, unless the value can't be ASCII-encoded.
+        QTextCodec* asciiCodec = QTextCodec::codecForName("ISO-8859-1");
+        if (asciiCodec->canEncode(valueString)) {
+            renderedValue = asciiCodec->fromUnicode(valueString);
+        } else {
+            renderedValue = codec->fromUnicode(valueString);
+            parameters.insert(QLatin1String("CHARSET"), codec->name());
         }
     } else if (variant.type() == QVariant::ByteArray) {
-        parameters.insert(encoding, base64);
+        parameters.insert(QLatin1String("ENCODING"), QLatin1String("BASE64"));
         renderedValue = variant.toByteArray().toBase64();
     }
 
@@ -127,23 +137,5 @@ QByteArray QVCard21Writer::encodeParameters(
         }
     }
     return encodedParameters;
-}
-
-/*!
- * Encodes the \a value with Quoted-Printable encoding
- * if it needs to be encoded and the parameters
- * of the \a property do not yet indicate encoding.
- */
-bool QVCard21Writer::quotedPrintableEncode(
-    const QVersitProperty& property,
-    QByteArray& value) const
-{
-    bool encoded = false;
-    value = property.value().toAscii();
-    if (!property.parameters().contains(QString::fromAscii("ENCODING"))) {
-        encoded = VersitUtils::quotedPrintableEncode(value);
-    }
-
-    return encoded;
 }
 

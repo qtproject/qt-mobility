@@ -47,6 +47,9 @@
 #include <QByteArray>
 #include <QVariant>
 
+// This says "NOKIA" in Katakana encoded with UTF-8
+const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2"));
+
 QTM_USE_NAMESPACE
 
 void UT_QVCard30Writer::init()
@@ -117,6 +120,20 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     property.setValue(value);
     encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
+
+    // Characters other than ASCII:
+    expectedResult = "ORG:" + KATAKANA_NOKIA.toUtf8() + "\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("ORG"));
+    property.setValue(KATAKANA_NOKIA);
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+
+    // No CHARSET and QUOTED-PRINTABLE parameters
+    expectedResult = "EMAIL:john@" + KATAKANA_NOKIA.toUtf8() + ".com\r\n";
+    property = QVersitProperty();
+    property.setName(QLatin1String("EMAIL"));
+    property.setValue(QString::fromAscii("john@%1.com").arg(KATAKANA_NOKIA));
+    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
 }
 
 void UT_QVCard30Writer::testEncodeParameters()

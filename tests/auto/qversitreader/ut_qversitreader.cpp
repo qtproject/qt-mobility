@@ -63,7 +63,7 @@
     } while(0)
 #endif
 
-// This says "NOKIA" in Katakana
+// This says "NOKIA" in Katakana encoded with UTF-8
 const QByteArray KATAKANA_NOKIA("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2");
 
 QTM_USE_NAMESPACE
