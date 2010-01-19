@@ -251,9 +251,9 @@ bool PulseAudioPlayerControl::isSeekable() const
     return false;
 }
 
-QPair<qint64,qint64> PulseAudioPlayerControl::seekRange() const
+QMediaTimeRange PulseAudioPlayerControl::availablePlaybackRanges() const
 {
-    return qMakePair(qint64(), qint64());
+    return QMediaTimeRange();
 }
 
 qreal PulseAudioPlayerControl::playbackRate() const
