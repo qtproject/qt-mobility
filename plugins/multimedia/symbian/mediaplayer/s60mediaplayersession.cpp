@@ -46,8 +46,7 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qtimer.h>
 #include <mmf/common/mmferrors.h>
-
-//#define KErrMMPartialPlayback -12017
+#include <qmediatimerange.h>
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent)
@@ -169,19 +168,24 @@ void S60MediaPlayerSession::setVideoRenderer(QObject *renderer)
     Q_UNUSED(renderer);   
 }
 
-QPair<qint64, qint64> S60MediaPlayerSession::seekRange() const
+QMediaTimeRange S60MediaPlayerSession::availablePlaybackRange() const
 {
-    return QPair<qint64, qint64>();
+    return QMediaTimeRange();
 }
 
 bool S60MediaPlayerSession::isMetadataAvailable() const
 {
-    return (!m_metaDataMap.isEmpty());
+    return (!m_metaDataMap.isEmpty());    
 }
 
 QVariant S60MediaPlayerSession::metaData(const QString &key) const
 {
-    return m_metaDataMap.value(key);
+    return m_metaDataMap.value(key);    
+}
+
+QMap<QString, QVariant> S60MediaPlayerSession::availableMetaData() const
+{
+    return m_metaDataMap;
 }
 
 qreal S60MediaPlayerSession::playbackRate() const

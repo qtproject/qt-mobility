@@ -48,6 +48,10 @@
 #include <QMediaPlayer>
 #include <e32cmn.h> // for TDesC
 
+QTM_BEGIN_NAMESPACE
+class QMediaTimeRange;
+QTM_END_NAMESPACE
+
 QTM_USE_NAMESPACE
 
 class QTimer;
@@ -70,9 +74,10 @@ public:
     
     bool isMetadataAvailable() const; 
     QVariant metaData(const QString &key) const;
+    QMap<QString, QVariant> availableMetaData() const;
     
-    bool isSeekable() const;    
-    virtual QPair<qint64, qint64> seekRange() const;
+    bool isSeekable() const;
+    virtual QMediaTimeRange availablePlaybackRange() const;
 
     virtual qint64 duration() const = 0;
     virtual qint64 position() const = 0;
@@ -126,8 +131,8 @@ signals:
     void mutingChanged(bool muted);
     void videoAvailableChanged(bool videoAvailable);
     void bufferStatusChanged(int percentFilled);
-    void seekableChanged(bool);
-    void seekRangeChanged(const QPair<qint64,qint64>&); 
+    void seekableChanged(bool);     
+    void availablePlaybackRangesChanged(const QMediaTimeRange&);
     void metaDataChanged();
     void playbackRateChanged(qreal rate);
     void error(int error, const QString &errorString);

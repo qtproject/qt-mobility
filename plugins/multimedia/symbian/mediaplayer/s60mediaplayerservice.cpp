@@ -50,7 +50,7 @@
 #include "s60mediametadataprovider.h"
 #include "s60videowidget.h"
 #include "s60mediarecognizer.h"
-
+//#include <qmediatimerange.h>
 #include "s60videooverlay.h"
 #include "s60videorenderer.h"
 
@@ -197,8 +197,8 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isUrl)
                 m_control, SIGNAL(videoAvailableChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
-        connect(m_videoPlayerSession, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)),
-                m_control, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)));
+        connect(m_videoPlayerSession, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)),
+                m_control, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)));
         connect(m_videoPlayerSession, SIGNAL(playbackRateChanged(qreal)),
                 m_control, SIGNAL(playbackRateChanged(qreal)));
         connect(m_videoPlayerSession, SIGNAL(error(int, const QString &)),
@@ -238,8 +238,8 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isUrl)
                 m_control, SIGNAL(videoAvailableChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
-        connect(m_audioPlayerSession, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)),
-                m_control, SIGNAL(seekRangeChanged(const QPair<qint64,qint64>&)));
+        connect(m_audioPlayerSession, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)),    
+                m_control, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)));
         connect(m_audioPlayerSession, SIGNAL(playbackRateChanged(qreal)),
                 m_control, SIGNAL(playbackRateChanged(qreal)));
         connect(m_audioPlayerSession, SIGNAL(error(int, const QString &)),
