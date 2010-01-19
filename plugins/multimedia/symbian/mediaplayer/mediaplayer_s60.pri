@@ -29,7 +29,6 @@ HEADERS += \
     $$PWD/s60mediarecognizer.h \
     $$PWD/s60audioplayersession.h \
     $$PWD/ms60mediaplayerresolver.h \
-    $$PWD/s60directscreenaccess.h \
     $$PWD/s60videowidget.h
 
 SOURCES += \
@@ -43,7 +42,6 @@ SOURCES += \
     $$PWD/s60videorenderer.cpp \
     $$PWD/s60mediarecognizer.cpp \
     $$PWD/s60audioplayersession.cpp \
-    $$PWD/s60directscreenaccess.cpp \
     $$PWD/s60videowidget.cpp
 	
 
