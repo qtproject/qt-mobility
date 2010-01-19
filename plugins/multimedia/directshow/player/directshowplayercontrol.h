@@ -47,6 +47,8 @@
 
 #include <dshow.h>
 
+#include <QtCore/qcoreevent.h>
+
 class DirectShowPlayerService;
 
 QTM_USE_NAMESPACE
@@ -55,6 +57,11 @@ class DirectShowPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
 public:
+    enum
+    {
+        GraphStatusChanged = QEvent::User
+    };
+
     DirectShowPlayerControl(DirectShowPlayerService *service, QObject *parent = 0);
     ~DirectShowPlayerControl();
 
@@ -97,6 +104,10 @@ public:
     void stateChange(long state);
 
     using QMediaPlayerControl::durationChanged;
+
+
+protected:
+    void customEvent(QEvent *event);
 
 private:
     void updateStatus();

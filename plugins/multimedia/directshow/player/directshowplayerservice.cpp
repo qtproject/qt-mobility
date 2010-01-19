@@ -51,6 +51,7 @@
 
 #include <qmediacontent.h>
 
+#include <QtCore/qcoreapplication.h>
 #include <QtCore/qdatetime.h>
 #include <QtCore/qthread.h>
 #include <QtCore/qvarlengtharray.h>
@@ -84,6 +85,7 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     , m_pendingTasks(0)
     , m_executingTask(0)
     , m_executedTasks(0)
+    , m_graphStatus(NoMedia)
     , m_stream(0)
     , m_graph(0)
     , m_source(0)
@@ -202,8 +204,12 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
     m_stream = stream;
 
     if (media.isNull() && !stream) {
+        m_graphStatus = NoMedia;
+
         m_url.clear();
     } else {
+        m_graphStatus = Loading;
+
         m_url = media.canonicalUrl();
 
         m_graph = com_new<IFilterGraph2>(CLSID_FilterGraph);
@@ -457,7 +463,6 @@ void DirectShowPlayerService::removeOutput(IBaseFilter *output)
     }
 
     m_pendingTasks |= m_executedTasks & (Play | Pause);
-    m_executedTasks &= ~(Play | Pause);
 
     if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
         control->Stop();
@@ -621,6 +626,12 @@ void DirectShowPlayerService::doLoad(QMutexLocker *locker)
 
         if (m_rate != 1.0)
             m_pendingTasks |= SetRate;
+    } else {
+        m_graphStatus = InvalidMedia;
+
+        QCoreApplication::postEvent(m_playerControl, new QEvent(
+                QEvent::Type(DirectShowPlayerControl::GraphStatusChanged)));
+
     }
 }
 
@@ -651,9 +662,12 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
         filters.removeLast();
 
         if (m_executingTask == Render && SUCCEEDED(filter->EnumPins(&pins))) {
+            bool outputs = 0;
             for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release()) {
                 PIN_DIRECTION direction;
                 if (pin->QueryDirection(&direction) == S_OK && direction == PINDIR_OUTPUT) {
+                    ++outputs;
+
                     IPin *peer = 0;
                     if (pin->ConnectedTo(&peer) == S_OK) {
                         PIN_INFO peerInfo;
@@ -670,12 +684,22 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
                     }
                 }
             }
+            if (outputs == 0)
+                rendered = true;
         }
         filter->Release();
     }
     
-    if (m_executingTask == Render)
+    if (m_executingTask == Render && rendered) {
+        m_graphStatus = Loaded;
+
         m_executedTasks |= Render;
+    } else {
+        m_graphStatus = InvalidMedia;
+    }
+
+    QCoreApplication::postEvent(m_playerControl, new QEvent(
+            QEvent::Type(DirectShowPlayerControl::GraphStatusChanged)));
 
     m_loop.wake();
 }

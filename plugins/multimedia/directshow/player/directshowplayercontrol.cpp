@@ -78,6 +78,8 @@ DirectShowPlayerControl::DirectShowPlayerControl(DirectShowPlayerService *servic
     , m_status(QMediaPlayer::UnknownMediaStatus)
     , m_muteVolume(-1)
     , m_stream(0)
+    , m_loadStatus(0)
+    , m_buffering(false)
 {
 }
 
@@ -275,7 +277,12 @@ void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *st
     m_media = media;
     m_stream = stream;
 
+    m_state = QMediaPlayer::StoppedState;
+    m_status = QMediaPlayer::LoadingMedia;
+
     m_service->load(media, stream);
+
+    updateStatus();
 }
 
 void DirectShowPlayerControl::play()
@@ -307,6 +314,7 @@ void DirectShowPlayerControl::complete(HRESULT)
 {
     m_state = QMediaPlayer::StoppedState;
     m_status = QMediaPlayer::EndOfMedia;
+    m_buffering = false;
     emit mediaStatusChanged(m_status);
     emit stateChanged(m_state);
 }
@@ -338,32 +346,41 @@ void DirectShowPlayerControl::stateChange(long state)
     emit stateChanged(m_state);
 }
 
+void DirectShowPlayerControl::customEvent(QEvent *event)
+{
+    if (event->type() == QEvent::Type(GraphStatusChanged)) {
+        updateStatus();
+
+        event->accept();
+    } else {
+        QMediaPlayerControl::customEvent(event);
+    }
+}
+
 void DirectShowPlayerControl::updateStatus()
 {
     QMediaPlayer::MediaStatus status = m_status;
 
-    switch (m_loadStatus) {
-    case AM_LOADSTATUS_CONNECTING:
-    case AM_LOADSTATUS_LOCATING:
-    case AM_LOADSTATUS_OPENING:
+    switch (m_service->graphStatus()) {
+    case DirectShowPlayerService::NoMedia:
+        status = QMediaPlayer::NoMedia;
+        break;
+    case DirectShowPlayerService::Loading:
         status = QMediaPlayer::LoadingMedia;
         break;
-    case AM_LOADSTATUS_OPEN:
-        if (m_state == QMediaPlayer::StoppedState) {
+    case DirectShowPlayerService::Loaded:
+        if (m_state == QMediaPlayer::StoppedState)
             status = QMediaPlayer::LoadedMedia;
-        } else if (m_buffering) {
+        else if (m_buffering)
             status = QMediaPlayer::BufferingMedia;
-        } else {
+        else
             status = QMediaPlayer::BufferedMedia;
-        }
         break;
-    case AM_LOADSTATUS_CLOSED:
-        if (m_media.isNull())
-            status = QMediaPlayer::NoMedia;
-        else if (m_status != QMediaPlayer::EndOfMedia)
-            status = QMediaPlayer::InvalidMedia;
+    case DirectShowPlayerService::InvalidMedia:
+        status = QMediaPlayer::InvalidMedia;
         break;
     default:
+        status = QMediaPlayer::UnknownMediaStatus;
         break;
     }
 

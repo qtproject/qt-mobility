@@ -70,10 +70,20 @@ class DirectShowPlayerService : public QMediaService
 {
     Q_OBJECT
 public:
+    enum GraphStatus
+    {
+        NoMedia,
+        Loading,
+        Loaded,
+        InvalidMedia
+    };
+
     DirectShowPlayerService(QObject *parent = 0);
     ~DirectShowPlayerService();
 
     QMediaControl* control(const char *name) const;
+
+    GraphStatus graphStatus() const { return m_graphStatus; }
 
     IFilterGraph2 *graph() { return m_graph; }
     IBaseFilter *source() { return 0; }
@@ -132,6 +142,7 @@ private:
     int m_pendingTasks;
     int m_executingTask;
     int m_executedTasks;
+    GraphStatus m_graphStatus;
     QIODevice *m_stream;
     IFilterGraph2 *m_graph;
     IBaseFilter *m_source;
