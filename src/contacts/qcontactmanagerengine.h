@@ -83,6 +83,8 @@ public:
     /* Contacts - Accessors and Mutators */
     virtual QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QContact Q_DECL_DEPRECATED contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED saveContacts(QList<QContact>* contacts, QContactManager::Error& error);  // deprecated - removed week 3
+    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error); // deprecated - removed week 3
 
     virtual QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
@@ -91,11 +93,8 @@ public:
     virtual QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
 
     virtual bool saveContact(QContact* contact, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED saveContacts(QList<QContact>* contacts, QContactManager::Error& error);  // deprecated - removed week 3
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
-
     virtual bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error); // deprecated - removed week 3
     virtual bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     /* Synthesize the display label of a contact */

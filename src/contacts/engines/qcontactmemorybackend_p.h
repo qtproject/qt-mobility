@@ -140,12 +140,15 @@ public:
 
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactManager::Error> Q_DECL_DEPRECATED saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
+    QList<QContactManager::Error> Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
+
     QList<QContactLocalId> contactIds(const QList<QContactSortOrder> &sortOrders, QContactManager::Error &error) const;
     QList<QContact> contacts(const QList<QContactSortOrder> &sortOrders, const QStringList& definitionRestrictions, QContactManager::Error &error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
     bool saveContact(QContact* contact, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
+    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
 
     /* Relationships - Accessors and Mutators */

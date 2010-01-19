@@ -368,6 +368,33 @@ QList<QContactManager::Error> QContactMemoryEngine::saveContacts(QList<QContact>
     }
 }
 
+/*! \reimp */
+bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+{
+    if (!contacts) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
+    QContactChangeSet changeSet;
+    QContact current;
+    QContactManager::Error operationError = QContactManager::NoError;
+    for (int i = 0; i < contacts->count(); i++) {
+        current = contacts->at(i);
+        if (!saveContact(&current, changeSet, error)) {
+            operationError = error;
+            errorMap->insert(i, operationError);
+        } else {
+            (*contacts)[i] = current;
+        }
+    }
+
+    error = operationError;
+    changeSet.emitSignals(this);
+    // XXX TODO: do we return true or false if some error occurred?
+    return true;
+}
+
 bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     int index = d->m_contactIds.indexOf(contactId);
@@ -444,6 +471,33 @@ QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QContac
     error = functionError;
     changeSet.emitSignals(this);
     return ret;
+}
+
+/*! \reimp */
+bool QContactMemoryEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+{
+    if (!contactIds) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
+    QContactChangeSet changeSet;
+    QContactLocalId current;
+    QContactManager::Error operationError = QContactManager::NoError;
+    for (int i = 0; i < contactIds->count(); i++) {
+        current = contactIds->at(i);
+        if (!removeContact(current, changeSet, error)) {
+            operationError = error;
+            errorMap->insert(i, operationError);
+        } else {
+            (*contactIds)[i] = 0;
+        }
+    }
+
+    error = operationError;
+    changeSet.emitSignals(this);
+    // XXX TODO: return true or false if some errors occurred?
+    return true;
 }
 
 /*! \reimp */
@@ -799,7 +853,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
             QContactManager::Error operationError = QContactManager::NoError;
             QMap<int, QContactManager::Error> errorMap;
-            // XXX saveContacts(contacts, errorMap, operationError);
+            saveContacts(&contacts, &errorMap, operationError);
 
             updateContactSaveRequest(r, contacts, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }

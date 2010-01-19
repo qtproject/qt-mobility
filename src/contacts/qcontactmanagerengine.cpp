@@ -381,8 +381,10 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
  */
 QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
+    Q_UNUSED(contactId);
     Q_UNUSED(definitionRestrictions);
-    return contact(contactId, error);
+    error = QContactManager::NotSupportedError;
+    return QContact();
 }
 
 /*!
@@ -2095,11 +2097,7 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
  */
 void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    // XXX
-    Q_UNUSED(req);
-    Q_UNUSED(error);
     Q_UNUSED(errors);
-    Q_UNUSED(status);
     Q_UNUSED(appendOnly);
     qWarning("QContactManagerEngine::updateRequestStatus() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     updateRequestState(req, error, static_cast<QContactAbstractRequest::State>(status));
@@ -2113,14 +2111,9 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    Q_UNUSED(req);
-    Q_UNUSED(result);
-    Q_UNUSED(error);
     Q_UNUSED(errors);
-    Q_UNUSED(status);
-    Q_UNUSED(appendOnly);
     qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
-    // XXX updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+    updateContactLocalIdFetchRequest(qobject_cast<QContactLocalIdFetchRequest*>(req), result, error, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
 
@@ -2131,14 +2124,19 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    Q_UNUSED(req);
-    Q_UNUSED(result);
-    Q_UNUSED(error);
     Q_UNUSED(errors);
-    Q_UNUSED(status);
-    Q_UNUSED(appendOnly);
     qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
-    // XXX updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+    if (req->type() == QContactAbstractRequest::ContactFetchRequest) {
+        updateContactFetchRequest(qobject_cast<QContactFetchRequest*>(req), result, error, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+    } else { // contact save request
+        QMap<int, QContactManager::Error> errorMap;
+        for (int i = 0; i < errors.size(); i++) {
+            if (errors.at(i) != QContactManager::NoError) {
+                errorMap.insert(i, errors.at(i));
+            }
+        }
+        updateContactSaveRequest(qobject_cast<QContactSaveRequest*>(req), result, error, errorMap, static_cast<QContactAbstractRequest::State>(status));
+    }
 }
 
 
@@ -2149,13 +2147,14 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
-    Q_UNUSED(req);
-    Q_UNUSED(result);
-    Q_UNUSED(error);
-    Q_UNUSED(errors);
-    Q_UNUSED(status);
     qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
-    // XXX updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status));
+    QMap<int, QContactManager::Error> errorMap;
+    for (int i = 0; i < errors.size(); i++) {
+        if (errors.at(i) != QContactManager::NoError) {
+            errorMap.insert(i, errors.at(i));
+        }
+    }
+    updateDefinitionSaveRequest(qobject_cast<QContactDetailDefinitionSaveRequest*>(req), result, error, errorMap, static_cast<QContactAbstractRequest::State>(status));
 }
 
 
@@ -2166,21 +2165,21 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
-    Q_UNUSED(req);
-    Q_UNUSED(result);
-    Q_UNUSED(error);
-    Q_UNUSED(errors);
-    Q_UNUSED(status);
     Q_UNUSED(appendOnly);
     qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
-    // XXX updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+    QMap<int, QContactManager::Error> errorMap;
+    for (int i = 0; i < errors.size(); i++) {
+        if (errors.at(i) != QContactManager::NoError) {
+            errorMap.insert(i, errors.at(i));
+        }
+    }
+    updateDefinitionFetchRequest(qobject_cast<QContactDetailDefinitionFetchRequest*>(req), result, error, errorMap, static_cast<QContactAbstractRequest::State>(status));
 }
 
 
 /*!
  * \deprecated
- * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
- * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ * This function has been entirely deprecated and has no effect.  It was deprecated in week 1 and will be removed once the transition period has elapsed.
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
@@ -2191,7 +2190,6 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
     Q_UNUSED(status);
     Q_UNUSED(appendOnly);
     qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
-    // XXX updateRequest(req, result, error, errors, static_cast<QContactAbstractRequest::State>(status), appendOnly);
 }
 
 /*!
@@ -2204,80 +2202,63 @@ void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QCo
     req->d_ptr->m_error = error;
     req->d_ptr->m_state = state;
 
+    /* XXX TODO - do we need to emit req* or just state?
     switch (req->type()) {
         case QContactAbstractRequest::ContactFetchRequest:
         {
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
-            //emit r->stateChanged(r, status);
+            emit r->stateChanged(r, state);
         }
         break;
 
         case QContactAbstractRequest::ContactLocalIdFetchRequest:
         {
             QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
-            //emit r->stateChanged(r, status);
+            emit r->stateChanged(r, state);
         }
         break;
 
         case QContactAbstractRequest::ContactSaveRequest:
         {
             QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
-            //emit r->stateChanged(r, status);
+            emit r->stateChanged(r, state);
         }
         break;
 
         case QContactAbstractRequest::ContactRemoveRequest:
         {
             QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(req);
-            //emit r->stateChanged(r, status);
+            emit r->stateChanged(r, state);
         }
         break;
 
         case QContactAbstractRequest::DetailDefinitionFetchRequest:
         {
             QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
-            //emit r->stateChanged(r, status);
+            emit r->stateChanged(r, state);
         }
         break;
 
         case QContactAbstractRequest::DetailDefinitionSaveRequest:
         {
             QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(req);
-            //emit r->stateChanged(r, status);
+            emit r->stateChanged(r, state);
         }
         break;
 
         case QContactAbstractRequest::DetailDefinitionRemoveRequest:
         {
             QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
-            //emit r->stateChanged(r, status);
-        }
-        break;
-
-        case QContactAbstractRequest::RelationshipFetchRequest:
-        {
-            QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(req);
-            //emit r->stateChanged(r, status);
-        }
-        break;
-
-        case QContactAbstractRequest::RelationshipSaveRequest:
-        {
-            QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(req);
-            //emit r->stateChanged(r, status);
-        }
-        break;
-
-        case QContactAbstractRequest::RelationshipRemoveRequest:
-        {
-            QContactRelationshipRemoveRequest* r = static_cast<QContactRelationshipRemoveRequest*>(req);
-            //emit r->stateChanged(r, status);
+            emit r->stateChanged(r, state);
         }
         // fall through.
 
         default: // unknown request type.
         break;
     }
+    */
+
+    emit req->stateChanged(state);
 }
 
 /*!
