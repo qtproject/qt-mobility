@@ -44,11 +44,14 @@
 
 #include <qmediaservice.h>
 
-#include <QtCore/private/qwineventnotifier_p.h>
-
 #include "directshoweventloop.h"
 #include "directshowglobal.h"
-#include "directshowrenderthread.h"
+
+#include <QtCore/qmutex.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qwaitcondition.h>
+
+#include <QtCore/private/qwineventnotifier_p.h>
 
 class DirectShowAudioEndpointControl;
 class DirectShowMetaDataControl;
@@ -63,7 +66,6 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-
 class DirectShowPlayerService : public QMediaService
 {
     Q_OBJECT
@@ -77,13 +79,15 @@ public:
     IBaseFilter *source() { return 0; }
 
     void load(const QMediaContent &media, QIODevice *stream);
-    void play() { m_renderThread.play(); }
-    void pause() { m_renderThread.pause(); }
-    void stop() { m_renderThread.stop(); }
+    void play();
+    void pause();
+    void stop();
 
-    void seek(qint64 position) { m_renderThread.seek(position); }
-    void setRate(qreal rate) { m_renderThread.setRate(rate); }
+    void seek(qint64 position);
+    void setRate(qreal rate);
 
+    void setAudioOutput(IBaseFilter *filter);
+    void setVideoOutput(IBaseFilter *filter);
 
 private Q_SLOTS:
     void videoOutputChanged();
@@ -91,16 +95,55 @@ private Q_SLOTS:
     void loaded();
 
 private:
+    void run();
+
+    void doLoad(QMutexLocker *locker);
+    void doRender(QMutexLocker *locker);
+    void doSetRate(QMutexLocker *locker);
+    void doSeek(QMutexLocker *locker);
+    void doPlay(QMutexLocker *locker);
+    void doPause(QMutexLocker *locker);
+
+    enum Task
+    {
+        Shutdown       = 0x0001,
+        Load           = 0x0002,
+        SetAudioOutput = 0x0004,
+        SetVideoOutput = 0x0008,
+        Render         = 0x0010,
+        SetRate        = 0x0020,
+        Seek           = 0x0040,
+        Play           = 0x0080,
+        Pause          = 0x0100,
+        Stop           = 0x0200
+    };
+
     DirectShowPlayerControl *m_playerControl;
     DirectShowMetaDataControl *m_metaDataControl;
     DirectShowVideoOutputControl *m_videoOutputControl;
     DirectShowVideoRendererControl *m_videoRendererControl;
     Vmr9VideoWindowControl *m_videoWindowControl;
     DirectShowAudioEndpointControl *m_audioEndpointControl;
+
+    QThread *m_taskThread;
+    int m_pendingTasks;
+    int m_executingTask;
+    int m_executedTasks;
+    QIODevice *m_stream;
     IFilterGraph2 *m_graph;
-    DirectShowEventLoop m_loop;
-    DirectShowRenderThread m_renderThread;
+    IBaseFilter *m_source;
+    IBaseFilter *m_audioOutput;
+    IBaseFilter *m_videoOutput;
+    qreal m_rate;
+    qint64 m_position;
+
+    QUrl m_url;
+    QMutex m_mutex;
+    QWaitCondition m_wait;
     QWinEventNotifier m_graphEventNotifier;
+    DirectShowEventLoop m_loop;
+
+    friend class DirectShowPlayerServiceThread;
 };
 
 

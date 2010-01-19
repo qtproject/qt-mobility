@@ -46,7 +46,7 @@
 
 #include <dshow.h>
 
-class DirectShowRenderThread;
+class DirectShowPlayerService;
 
 QTM_USE_NAMESPACE
 
@@ -54,7 +54,7 @@ class DirectShowAudioEndpointControl : public QAudioEndpointSelector
 {
     Q_OBJECT
 public:
-    DirectShowAudioEndpointControl(DirectShowRenderThread *renderThread, QObject *parent = 0);
+    DirectShowAudioEndpointControl(DirectShowPlayerService *service, QObject *parent = 0);
     ~DirectShowAudioEndpointControl();
 
     QList<QString> availableEndpoints() const;
@@ -69,7 +69,7 @@ public:
 private:
     void updateEndpoints();
 
-    DirectShowRenderThread *m_renderThread;
+    DirectShowPlayerService *m_service;
     IBindCtx *m_bindContext;
     ICreateDevEnum *m_deviceEnumerator;
 

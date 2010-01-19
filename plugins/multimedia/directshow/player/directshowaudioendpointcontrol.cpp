@@ -42,12 +42,12 @@
 #include "directshowaudioendpointcontrol.h"
 
 #include "directshowglobal.h"
-#include "directshowrenderthread.h"
+#include "directshowplayerservice.h"
 
 DirectShowAudioEndpointControl::DirectShowAudioEndpointControl(
-        DirectShowRenderThread *renderThread, QObject *parent)
+        DirectShowPlayerService *service, QObject *parent)
     : QAudioEndpointSelector(parent)
-    , m_renderThread(renderThread)
+    , m_service(service)
     , m_bindContext(0)
     , m_deviceEnumerator(0)
 {
@@ -120,7 +120,7 @@ void DirectShowAudioEndpointControl::setActiveEndpoint(const QString &name)
                 0,
                 __uuidof(IBaseFilter),
                 reinterpret_cast<void **>(&filter)) == S_OK) {
-            m_renderThread->setAudioOutput(filter);
+            m_service->setAudioOutput(filter);
         }
     }
 }

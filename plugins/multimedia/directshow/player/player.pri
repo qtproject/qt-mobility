@@ -14,7 +14,6 @@ HEADERS += \
         $$PWD\directshowpinenum.h \
         $$PWD\directshowplayercontrol.h \
         $$PWD\directshowplayerservice.h \
-        $$PWD\directshowrenderthread.h \
         $$PWD\directshowsamplescheduler.h \
         $$PWD\directshowvideooutputcontrol.h \
         $$PWD\directshowvideorenderercontrol.h \
@@ -33,7 +32,6 @@ SOURCES += \
         $$PWD\directshowpinenum.cpp \
         $$PWD\directshowplayercontrol.cpp \
         $$PWD\directshowplayerservice.cpp \
-        $$PWD\directshowrenderthread.cpp \
         $$PWD\directshowsamplescheduler.cpp \
         $$PWD\directshowvideooutputcontrol.cpp \
         $$PWD\directshowvideorenderercontrol.cpp \
