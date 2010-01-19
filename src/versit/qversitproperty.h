@@ -44,7 +44,6 @@
 
 #include "qmobilityglobal.h"
 #include "qversitdocument.h"
-#include "qversitproperty_p.h"
 
 #include <QString>
 #include <QStringList>
@@ -55,6 +54,7 @@
 class QVariant;
 
 QTM_BEGIN_NAMESPACE
+class QVersitPropertyPrivate;
 
 class Q_VERSIT_EXPORT QVersitProperty
 {
@@ -85,7 +85,7 @@ public:
     QVariant variantValue() const;
     template <typename T> T value() const
     {
-        return d->mValue.value<T>();
+        return variantValue().value<T>();
     }
     QString value() const;
 
