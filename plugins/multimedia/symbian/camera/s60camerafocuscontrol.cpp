@@ -61,7 +61,7 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
    , m_maxDigitalZoom(1.0)
    , m_macroFocusingEnabled(false)
    , m_focusMode(QCamera::AutoFocus)
-   , m_focusStatus(QCamera::FocusDisabled)
+   , m_focusStatus(QCamera::FocusInitial)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
