@@ -1,0 +1,2 @@
+#!/usr/bin/perl -w
+require "C:/depot/qt/qt-releases/bin/syncqt";
