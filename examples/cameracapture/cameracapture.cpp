@@ -48,6 +48,8 @@
 #include <experimental/qcamera.h>
 #include <qvideowidget.h>
 
+#include <qmessagebox.h>
+
 #include <QtGui>
 
 CameraCapture::CameraCapture(QWidget *parent) :
@@ -111,6 +113,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
     connect(camera, SIGNAL(focusLocked()), this, SLOT(focusLocked()));
+    connect(camera, SIGNAL(zoomValueChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
 
     mediaRecorder = new QMediaRecorder(camera);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
@@ -226,8 +229,9 @@ void CameraCapture::takeImage()
 
 void CameraCapture::toggleCamera()
 {
-    if (camera->state() == QCamera::ActiveState)
+    if (camera->state() == QCamera::ActiveState){
         camera->stop();
+    }
     else
         camera->start();
 }
@@ -299,7 +303,14 @@ void CameraCapture::updateAudioDevice(QAction *action)
 {
     audioSource->setAudioInput(action->data().toString());
 }
+
 void CameraCapture::focusLocked()
 {
     qDebug() << "CameraCapture focus locked";
+}
+
+void CameraCapture::zoomValueChanged(qreal value)
+{
+	qDebug() << "CameraCapture zoom value changed to: " << value;
+	
 }

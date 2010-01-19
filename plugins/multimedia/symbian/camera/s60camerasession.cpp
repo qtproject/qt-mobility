@@ -41,6 +41,7 @@
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
+#include <ecamadvsettings.h>   // CCameraAdvancedSettings
 #include "s60camerasession.h"
 #include "s60viewfinderwidget.h"
 
@@ -810,4 +811,167 @@ void S60CameraSession::setVideoRenderer(QObject *videoOutput)
         m_VFProcessor = viewFinderWidgetControl->videoWidget();
         m_VFWidgetSize = viewFinderWidgetControl->videoWidget()->size();
     }   
+}
+
+/*
+ * Queries advanced settings information
+ * Results are returned to member variable m_advancedSettings
+ * @return boolean indicating if querying the info was a success
+ */
+bool S60CameraSession::queryAdvancedSettingsInfo()
+{
+    qDebug() << "S60CameraSession::queryAdvancedSettingsInfo";
+
+    bool returnValue = false;
+
+    if (m_cameraEngine) {
+        qDebug() << "m_cameraEngine->AdvancedSettings";
+        m_advancedSettings = m_cameraEngine->AdvancedSettings();   
+        returnValue = true;
+    }
+    return returnValue;
+}
+
+void S60CameraSession::setZoomFactor(int value)
+{
+    qDebug() << "S60CameraSession::setZoomFactor, value: " << value;
+
+	if (m_cameraEngine && queryCurrentCameraInfo()) {
+        CCamera *camera = m_cameraEngine->Camera();
+        if (camera) {
+			if (value > m_info.iMaxZoom && value <= m_info.iMaxDigitalZoom) { // digitalzoom
+				TRAPD(m_error, camera->SetDigitalZoomFactorL(value));
+				qDebug() << "S60CameraSession::setDigitalZoomFactor error: " << m_error;
+				if (m_error == KErrNone) {
+					emit zoomValueChanged(value);
+				}
+			} else if (value >= m_info.iMinZoom && value <= m_info.iMaxZoom) { //opticalzoom
+				TRAPD(m_error, camera->SetZoomFactorL(value));
+				qDebug() << "S60CameraSession::setZoomFactor error: " << m_error;
+				if (m_error == KErrNone) {
+					emit zoomValueChanged(value);
+				}
+			}
+        }
+	}
+}
+
+int S60CameraSession::zoomFactor()
+{
+    qDebug() << "S60CameraSession::zoomFactor";
+	int factor = 0;
+	if (m_cameraEngine && queryCurrentCameraInfo()) {
+        factor = m_cameraEngine->DigitalZoom();
+	}
+	return factor;
+}
+
+void S60CameraSession::startFocus()
+{
+    qDebug() << "S60CameraSession::startFocus";
+    
+	if (m_cameraEngine) {
+		TRAPD(m_error, m_cameraEngine->StartFocusL());
+	}
+	if (m_error) {
+	// TODO:
+	}
+}
+
+void S60CameraSession::cancelFocus()
+{
+    qDebug() << "S60CameraSession::cancelFocus";
+    
+	m_cameraEngine->FocusCancel();
+}
+
+int S60CameraSession::maximumZoom()
+{
+    qDebug() << "S60CameraSession::maximumZoom";
+    
+	if (queryCurrentCameraInfo()) {
+        qDebug() << "S60CameraSession::maximumZoom value: " << m_info.iMaxZoom;
+		return m_info.iMaxZoom;
+	}
+	else {
+		return 0; 
+	}
+}
+
+int S60CameraSession::minZoom()
+{
+    qDebug() << "S60CameraSession::minZoom";
+    
+    if (queryCurrentCameraInfo()) {
+        qDebug() << "S60CameraSession::minZoom value: " << m_info.iMinZoom;
+        return m_info.iMinZoom;
+    }
+    else {
+        return 0; 
+    }
+}
+
+int S60CameraSession::maxDigitalZoom()
+{
+    qDebug() << "S60CameraSession::maxDigitalZoom";
+    
+	if (queryCurrentCameraInfo()) {
+        qDebug() << "S60CameraSession::maxDigitalZoom value: " << m_info.iMaxDigitalZoom;
+		return m_info.iMaxDigitalZoom;
+		
+	}
+	else {
+		return 0; 
+	}
+}
+
+void S60CameraSession::setFocusMode(QCamera::FocusMode mode)
+{
+    if (queryAdvancedSettingsInfo()) {
+        switch(mode) {
+            case QCamera::ManualFocus: // Manual focus mode
+                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
+               // m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeOff);
+                break;
+            case QCamera::AutoFocus: // One-shot auto focus mode
+                qDebug() << "set auto";
+                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
+                m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle);
+                break;
+            case QCamera::ContinuousFocus: // Continuous auto focus mode 
+                qDebug() << "set auto continuous";
+                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
+                m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous);
+                break;
+            case QCamera::InfinityFocus:
+            case QCamera::HyperfocalFocus:
+                break;
+
+        }      
+    }
+}
+
+QCamera::FocusMode S60CameraSession::focusMode()
+{
+    if (queryAdvancedSettingsInfo()) {
+        CCamera::CCameraAdvancedSettings::TFocusMode mode = m_advancedSettings->FocusMode();
+        switch(mode) {
+            case CCamera::CCameraAdvancedSettings::EFocusModeManual:
+                return QCamera::ManualFocus;
+                break;
+            case CCamera::CCameraAdvancedSettings::EFocusModeAuto:
+                qDebug() << "CCamera::CCameraAdvancedSettings::EFocusModeAuto";
+                CCamera::CCameraAdvancedSettings::TAutoFocusType type = m_advancedSettings->AutoFocusType();
+                if (type == CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle) {
+                    qDebug() << "CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle";
+                    return QCamera::AutoFocus;
+                }
+                else if (type == CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous) {
+                    qDebug() << "CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous";
+                    return QCamera::ContinuousFocus;
+                }
+                break;
+
+        }      
+    }
 }

@@ -80,6 +80,14 @@ public Q_SLOTS:
 private:
     S60CameraSession *m_session;
     S60CameraService *m_service;
+    
+    bool m_focusLocked;
+    qreal m_zoomValue;
+    bool m_macroFocusingEnabled;
+    QCamera::FocusMode m_focusMode;
+    QCamera::FocusStatus m_focusStatus;
+    qreal m_maxZoom;
+    qreal m_maxDigitalZoom;
 };
 
 #endif
