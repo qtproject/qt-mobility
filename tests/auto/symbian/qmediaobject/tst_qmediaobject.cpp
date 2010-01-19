@@ -46,502 +46,430 @@
 #include <qmediaobject.h>
 #include <qmediaservice.h>
 #include <qmetadatacontrol.h>
+#include <qmediaplayer.h>
 
 QTM_USE_NAMESPACE
 class tst_QMediaObject : public QObject
 {
     Q_OBJECT
 
-private slots:
-    void propertyWatch();
-    void notifySignals_data();
-    void notifySignals();
-    void notifyInterval_data();
-    void notifyInterval();
+public slots:
+    void initTestCase_data();
+    void initTestCase();
+    void cleanupTestCase();
+    void init();
+    void cleanup();
 
-    void nullMetaDataControl();
+private slots:
     void isMetaDataAvailable();
     void isWritable();
-    void metaDataChanged();
-    void metaData_data();
     void metaData();
-    void setMetaData_data();
+    void availableMetaData();
     void setMetaData();
-    void extendedMetaData_data() { metaData_data(); }
     void extendedMetaData();
-    void setExtendedMetaData_data() { extendedMetaData_data(); }
+    void availableExtendedMetaData();
     void setExtendedMetaData();
 
-
 private:
-    void setupNotifyTests();
+    QString metaDataKeyAsString(QtMedia::MetaData key) const;
 };
 
-class QtTestMetaDataProvider : public QMetaDataControl
+void tst_QMediaObject::initTestCase_data()
 {
-    Q_OBJECT
-public:
-    QtTestMetaDataProvider(QObject *parent = 0)
-        : QMetaDataControl(parent)
-        , m_available(false)
-        , m_writable(false)
-    {
-    }
+    QTest::addColumn<bool>("valid");
+    //QTest::addColumn<QMediaPlayer::State>("state");
+    //QTest::addColumn<QMediaPlayer::MediaStatus>("status");
+    QTest::addColumn<QMediaContent>("mediaContent");
+    QTest::addColumn<bool>("metaDataAvailable");
+    QTest::addColumn<bool>("metaDataWritable"); // Is this needed ???
+    //QTest::addColumn<int>("bufferStatus");
+    //QTest::addColumn<qreal>("playbackRate");
+    //QTest::addColumn<QMediaPlayer::Error>("error");
+    //QTest::addColumn<QString>("errorString");
 
-    bool isMetaDataAvailable() const { return m_available; }
-    void setMetaDataAvailable(bool available) {
-        if (m_available != available)
-            emit metaDataAvailableChanged(m_available = available);
-    }
-    QList<QtMedia::MetaData> availableMetaData() const { return m_data.keys(); }
+    QTest::newRow("TestDataNull")
+    << false // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent() // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    bool isWritable() const { return m_writable; }
-    void setWritable(bool writable) { emit writableChanged(m_writable = writable); }
+    /*
+    QTest::newRow("test_3gp.3gp")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_3gp.3gp")) // mediaContent
+    << qint64(-1) // duration
+    << qint64(0) // position
+    << false // seekable
+    << 0 // volume
+    << false // muted
+    << false; // videoAvailable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
+    */
 
-    QVariant metaData(QtMedia::MetaData key) const { return m_data.value(key); }
-    void setMetaData(QtMedia::MetaData key, const QVariant &value) {
-        m_data.insert(key, value); }
+    QTest::newRow("test_amr.amr")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_amr.amr")) // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    QVariant extendedMetaData(const QString &key) const { return m_extendedData.value(key); }
-    void setExtendedMetaData(const QString &key, const QVariant &value) {
-        m_extendedData.insert(key, value); }
+    QTest::newRow("test_flash_video.flv")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_flash_video.flv")) // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    QStringList availableExtendedMetaData() const { return m_extendedData.keys(); }
+    QTest::newRow("test_invalid_extension_mp4.xyz")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_invalid_extension_mp4.xyz")) // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    using QMetaDataControl::metaDataChanged;
+    QTest::newRow("test_invalid_extension_wav.xyz")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_invalid_extension_wav.xyz")) // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    void populateMetaData()
-    {
-        m_available = true;
-    }
+    QTest::newRow("test_mp3.mp3")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp3.mp3")) // mediaContent
+#if !defined(__WINS__) || !defined(__WINSCW__)
+    << true // metaDataAvailable
+#else
+    << false // metaDataAvailable
+#endif // !defined(__WINS__) || defined(__WINSCW__)
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    bool m_available;
-    bool m_writable;
-    QMap<QtMedia::MetaData, QVariant> m_data;
-    QMap<QString, QVariant> m_extendedData;
-};
+    QTest::newRow("test_mp3_no_metadata.mp3")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp3_no_metadata.mp3")) // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-class QtTestMetaDataService : public QMediaService
-{
-    Q_OBJECT
-public:
-    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent), hasMetaData(true)
-    {
-    }
+    QTest::newRow("test_mp4.mp4")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_mp4.mp4")) // mediaContent
+#if defined(__WINS__) || defined(__WINSCW__)
+    << true // metaDataAvailable
+#else
+    << false // metaDataAvailable
+#endif // !defined(__WINS__) || defined(__WINSCW__)
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    QMediaControl *control(const char *iid) const
-    {
-        if (hasMetaData && qstrcmp(iid, QMetaDataControl_iid) == 0)
-            return const_cast<QtTestMetaDataProvider *>(&metaData);
-        else
-            return 0;
-    }
+    QTest::newRow("test_wav.wav")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_wav.wav")) // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    QtTestMetaDataProvider metaData;
-    bool hasMetaData;
-};
+    QTest::newRow("test_wmv9.wmv")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("file:///C:/data/testfiles/test_wmv9.wmv")) // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
 
-class QtTestMediaObject : public QMediaObject
-{
-    Q_OBJECT
-    Q_PROPERTY(int a READ a WRITE setA NOTIFY aChanged)
-    Q_PROPERTY(int b READ b WRITE setB NOTIFY bChanged)
-    Q_PROPERTY(int c READ c WRITE setC NOTIFY cChanged)
-    Q_PROPERTY(int d READ d WRITE setD)
-public:
-    QtTestMediaObject(QMediaService *service = 0): QMediaObject(0, service), m_a(0), m_b(0), m_c(0), m_d(0) {}
+    QTest::newRow("test youtube stream")
+    << true // valid
+    //<< QMediaPlayer::StoppedState // state
+    //<< QMediaPlayer::UnknownMediaStatus // status
+    << QMediaContent(QUrl("rtsp://v3.cache4.c.youtube.com/CkgLENy73wIaPwlU2rm7yu8PFhMYESARFEIJbXYtZ29vZ2xlSARSB3JlbGF0ZWRaDkNsaWNrVGh1bWJuYWlsYPi6_IXT2rvpSgw=/0/0/0/video.3gp")) // mediaContent
+    << false // metaDataAvailable
+    << false; // metaDataWritable
+    //<< 0 // bufferStatus
+    //<< qreal(0) // playbackRate
+    //<< QMediaPlayer::NoError // error
+    //<< QString(); // errorString
 
-    using QMediaObject::addPropertyWatch;
-    using QMediaObject::removePropertyWatch;
-
-    int a() const { return m_a; }
-    void setA(int a) { m_a = a; }
-
-    int b() const { return m_b; }
-    void setB(int b) { m_b = b; }
-
-    int c() const { return m_c; }
-    void setC(int c) { m_c = c; }
-
-    int d() const { return m_d; }
-    void setD(int d) { m_d = d; }
-
-Q_SIGNALS:
-    void aChanged(int a);
-    void bChanged(int b);
-    void cChanged(int c);
-
-private:
-    int m_a;
-    int m_b;
-    int m_c;
-    int m_d;
-};
-
-void tst_QMediaObject::propertyWatch()
-{
-    QtTestMediaObject object;
-    object.setNotifyInterval(0);
-
-    QEventLoop loop;
-    connect(&object, SIGNAL(aChanged(int)), &QTestEventLoop::instance(), SLOT(exitLoop()));
-    connect(&object, SIGNAL(bChanged(int)), &QTestEventLoop::instance(), SLOT(exitLoop()));
-    connect(&object, SIGNAL(cChanged(int)), &QTestEventLoop::instance(), SLOT(exitLoop()));
-
-    QSignalSpy aSpy(&object, SIGNAL(aChanged(int)));
-    QSignalSpy bSpy(&object, SIGNAL(bChanged(int)));
-    QSignalSpy cSpy(&object, SIGNAL(cChanged(int)));
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QCOMPARE(aSpy.count(), 0);
-    QCOMPARE(bSpy.count(), 0);
-    QCOMPARE(cSpy.count(), 0);
-
-    int aCount = 0;
-    int bCount = 0;
-    int cCount = 0;
-
-    object.addPropertyWatch("a");
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QVERIFY(aSpy.count() > aCount);
-    QCOMPARE(bSpy.count(), 0);
-    QCOMPARE(cSpy.count(), 0);
-    QCOMPARE(aSpy.last().value(0).toInt(), 0);
-
-    aCount = aSpy.count();
-
-    object.setA(54);
-    object.setB(342);
-    object.setC(233);
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QVERIFY(aSpy.count() > aCount);
-    QCOMPARE(bSpy.count(), 0);
-    QCOMPARE(cSpy.count(), 0);
-    QCOMPARE(aSpy.last().value(0).toInt(), 54);
-
-    aCount = aSpy.count();
-
-    object.addPropertyWatch("b");
-    object.addPropertyWatch("d");
-    object.removePropertyWatch("e");
-    object.setA(43);
-    object.setB(235);
-    object.setC(90);
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QVERIFY(aSpy.count() > aCount);
-    QVERIFY(bSpy.count() > bCount);
-    QCOMPARE(cSpy.count(), 0);
-    QCOMPARE(aSpy.last().value(0).toInt(), 43);
-    QCOMPARE(bSpy.last().value(0).toInt(), 235);
-
-    aCount = aSpy.count();
-    bCount = bSpy.count();
-
-    object.removePropertyWatch("a");
-    object.addPropertyWatch("c");
-    object.addPropertyWatch("e");
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QCOMPARE(aSpy.count(), aCount);
-    QVERIFY(bSpy.count() > bCount);
-    QVERIFY(cSpy.count() > cCount);
-    QCOMPARE(bSpy.last().value(0).toInt(), 235);
-    QCOMPARE(cSpy.last().value(0).toInt(), 90);
-
-    bCount = bSpy.count();
-    cCount = cSpy.count();
-
-    object.setA(435);
-    object.setC(9845);
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QCOMPARE(aSpy.count(), aCount);
-    QVERIFY(bSpy.count() > bCount);
-    QVERIFY(cSpy.count() > cCount);
-    QCOMPARE(bSpy.last().value(0).toInt(), 235);
-    QCOMPARE(cSpy.last().value(0).toInt(), 9845);
-
-    bCount = bSpy.count();
-    cCount = cSpy.count();
-
-    object.setA(8432);
-    object.setB(324);
-    object.setC(443);
-    object.removePropertyWatch("c");
-    object.removePropertyWatch("d");
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QCOMPARE(aSpy.count(), aCount);
-    QVERIFY(bSpy.count() > bCount);
-    QCOMPARE(cSpy.count(), cCount);
-    QCOMPARE(bSpy.last().value(0).toInt(), 324);
-    QCOMPARE(cSpy.last().value(0).toInt(), 9845);
-
-    bCount = bSpy.count();
-
-    object.removePropertyWatch("b");
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QCOMPARE(aSpy.count(), aCount);
-    QCOMPARE(bSpy.count(), bCount);
-    QCOMPARE(cSpy.count(), cCount);
 }
 
-void tst_QMediaObject::setupNotifyTests()
+void tst_QMediaObject::initTestCase()
 {
-    QTest::addColumn<int>("interval");
-    QTest::addColumn<int>("count");
-
-    QTest::newRow("single 750ms")
-            << 750
-            << 1;
-    QTest::newRow("single 600ms")
-            << 600
-            << 1;
-    QTest::newRow("x3 300ms")
-            << 300
-            << 3;
-    QTest::newRow("x5 180ms")
-            << 180
-            << 5;
 }
 
-void tst_QMediaObject::notifySignals_data()
+void tst_QMediaObject::cleanupTestCase()
 {
-    setupNotifyTests();
 }
 
-void tst_QMediaObject::notifySignals()
+void tst_QMediaObject::init()
 {
-    QFETCH(int, interval);
-    QFETCH(int, count);
-
-    QtTestMediaObject object;
-    object.setNotifyInterval(interval);
-    object.addPropertyWatch("a");
-
-    QSignalSpy spy(&object, SIGNAL(aChanged(int)));
-
-    QTestEventLoop::instance().enterLoop(1);
-
-    QCOMPARE(spy.count(), count);
+    qRegisterMetaType<QMediaContent>("QMediaContent");
 }
 
-void tst_QMediaObject::notifyInterval_data()
+void tst_QMediaObject::cleanup()
 {
-    setupNotifyTests();
-}
-
-void tst_QMediaObject::notifyInterval()
-{
-    QFETCH(int, interval);
-
-    QtTestMediaObject object;
-    QSignalSpy spy(&object, SIGNAL(notifyIntervalChanged(int)));
-
-    object.setNotifyInterval(interval);
-    QCOMPARE(object.notifyInterval(), interval);
-    QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.last().value(0).toInt(), interval);
-
-    object.setNotifyInterval(interval);
-    QCOMPARE(object.notifyInterval(), interval);
-    QCOMPARE(spy.count(), 1);
-}
-
-void tst_QMediaObject::nullMetaDataControl()
-{
-    const QString titleKey(QLatin1String("Title"));
-    const QString title(QLatin1String("Host of Seraphim"));
-
-    QtTestMetaDataService service;
-    service.hasMetaData = false;
-
-    QtTestMediaObject object(&service);
-
-    QSignalSpy spy(&object, SIGNAL(metaDataChanged()));
-
-    QCOMPARE(object.isMetaDataAvailable(), false);
-    QCOMPARE(object.isMetaDataWritable(), false);
-
-    object.setMetaData(QtMedia::Title, title);
-    object.setExtendedMetaData(titleKey, title);
-
-    QCOMPARE(object.metaData(QtMedia::Title).toString(), QString());
-    QCOMPARE(object.extendedMetaData(titleKey).toString(), QString());
-    QCOMPARE(object.availableMetaData(), QList<QtMedia::MetaData>());
-    QCOMPARE(object.availableExtendedMetaData(), QStringList());
-    QCOMPARE(spy.count(), 0);
 }
 
 void tst_QMediaObject::isMetaDataAvailable()
 {
-    QtTestMetaDataService service;
-    service.metaData.setMetaDataAvailable(false);
+    QFETCH_GLOBAL(bool, metaDataAvailable);
+    QFETCH_GLOBAL(QMediaContent, mediaContent);
+//    qWarning() << mediaContent.canonicalUrl();
+    QMediaPlayer player;
 
-    QtTestMediaObject object(&service);
-    QCOMPARE(object.isMetaDataAvailable(), false);
-
-    QSignalSpy spy(&object, SIGNAL(metaDataAvailableChanged(bool)));
-    service.metaData.setMetaDataAvailable(true);
-
-    QCOMPARE(object.isMetaDataAvailable(), true);
-    QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.at(0).at(0).toBool(), true);
-
-    service.metaData.setMetaDataAvailable(false);
-
-    QCOMPARE(object.isMetaDataAvailable(), false);
-    QCOMPARE(spy.count(), 2);
-    QCOMPARE(spy.at(1).at(0).toBool(), false);
+    player.setMedia(mediaContent);
+    QTest::qWait(700); 
+    QVERIFY(player.isMetaDataAvailable() == metaDataAvailable);
 }
 
 void tst_QMediaObject::isWritable()
 {
-    QtTestMetaDataService service;
-    service.metaData.setWritable(false);
+    QFETCH_GLOBAL(bool, metaDataWritable);
+    QFETCH_GLOBAL(QMediaContent, mediaContent);
+//    qWarning() << mediaContent.canonicalUrl();
+    QMediaPlayer player;
 
-    QtTestMediaObject object(&service);
-
-    QSignalSpy spy(&object, SIGNAL(metaDataWritableChanged(bool)));
-
-    QCOMPARE(object.isMetaDataWritable(), false);
-
-    service.metaData.setWritable(true);
-
-    QCOMPARE(object.isMetaDataWritable(), true);
-    QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.at(0).at(0).toBool(), true);
-
-    service.metaData.setWritable(false);
-
-    QCOMPARE(object.isMetaDataWritable(), false);
-    QCOMPARE(spy.count(), 2);
-    QCOMPARE(spy.at(1).at(0).toBool(), false);
-}
-
-void tst_QMediaObject::metaDataChanged()
-{
-    QtTestMetaDataService service;
-    QtTestMediaObject object(&service);
-
-    QSignalSpy spy(&object, SIGNAL(metaDataChanged()));
-
-    service.metaData.metaDataChanged();
-    QCOMPARE(spy.count(), 1);
-
-    service.metaData.metaDataChanged();
-    QCOMPARE(spy.count(), 2);
-}
-
-void tst_QMediaObject::metaData_data()
-{
-    QTest::addColumn<QString>("artist");
-    QTest::addColumn<QString>("title");
-    QTest::addColumn<QString>("genre");
-
-    QTest::newRow("")
-            << QString::fromLatin1("Dead Can Dance")
-            << QString::fromLatin1("Host of Seraphim")
-            << QString::fromLatin1("Awesome");
+    player.setMedia(mediaContent);
+    QTest::qWait(700);
+    QVERIFY(player.isMetaDataWritable() == metaDataWritable);
 }
 
 void tst_QMediaObject::metaData()
 {
-    QFETCH(QString, artist);
-    QFETCH(QString, title);
-    QFETCH(QString, genre);
+    QFETCH_GLOBAL(QMediaContent, mediaContent);
+    QFETCH_GLOBAL(bool, metaDataAvailable);
+//    qWarning() << mediaContent.canonicalUrl();
+    QMediaPlayer player;
 
-    QtTestMetaDataService service;
-    service.metaData.populateMetaData();
+    player.setMedia(mediaContent);
+    QTest::qWait(700);
+    const QString artist(QLatin1String("Artist"));
+    const QString title(QLatin1String("Title"));
 
-    QtTestMediaObject object(&service);
-    QVERIFY(object.availableMetaData().isEmpty());
-
-    service.metaData.m_data.insert(QtMedia::AlbumArtist, artist);
-    service.metaData.m_data.insert(QtMedia::Title, title);
-    service.metaData.m_data.insert(QtMedia::Genre, genre);
-
-    QCOMPARE(object.metaData(QtMedia::AlbumArtist).toString(), artist);
-    QCOMPARE(object.metaData(QtMedia::Title).toString(), title);
-
-    QList<QtMedia::MetaData> metaDataKeys = object.availableMetaData();
-    QCOMPARE(metaDataKeys.size(), 3);
-    QVERIFY(metaDataKeys.contains(QtMedia::AlbumArtist));
-    QVERIFY(metaDataKeys.contains(QtMedia::Title));
-    QVERIFY(metaDataKeys.contains(QtMedia::Genre));
+    if (player.isMetaDataAvailable()) {
+        QEXPECT_FAIL("", "player.metaData(QtMedia::AlbumArtist) failed: ", Continue);
+        QCOMPARE(player.metaData(QtMedia::AlbumArtist).toString(), artist);
+        QEXPECT_FAIL("", "player.metaData(QtMedia::Title) failed: ", Continue);
+        QCOMPARE(player.metaData(QtMedia::Title).toString(), title);
+    }
 }
 
-void tst_QMediaObject::setMetaData_data()
+void tst_QMediaObject::availableMetaData()
 {
-    QTest::addColumn<QString>("title");
+    QFETCH_GLOBAL(QMediaContent, mediaContent);
+    QFETCH_GLOBAL(bool, metaDataAvailable);
+//    qWarning() << mediaContent.canonicalUrl();
+    QMediaPlayer player;
 
-    QTest::newRow("")
-            << QString::fromLatin1("In the Kingdom of the Blind the One eyed are Kings");
+    player.setMedia(mediaContent);
+    QTest::qWait(700);    
+
+    if (player.isMetaDataAvailable()) {
+        QList<QtMedia::MetaData> metaDataKeys = player.availableMetaData();
+        QEXPECT_FAIL("", "metaDataKeys.count() failed: ", Continue);
+        QVERIFY(metaDataKeys.count() > 0);
+//        qWarning() << "metaDataKeys.count: " << metaDataKeys.count();
+        QEXPECT_FAIL("", "metaDataKeys.contains(QtMedia::AlbumArtist) failed: ", Continue);
+        QVERIFY(metaDataKeys.contains(QtMedia::AlbumArtist));
+        QEXPECT_FAIL("", "metaDataKeys.contains(QtMedia::Title) failed: ", Continue);
+        QVERIFY(metaDataKeys.contains(QtMedia::Title));
+    }
 }
 
 void tst_QMediaObject::setMetaData()
 {
-    QFETCH(QString, title);
+    QFETCH_GLOBAL(QMediaContent, mediaContent);
+//    qWarning() << mediaContent.canonicalUrl();
+    QMediaPlayer player;
 
-    QtTestMetaDataService service;
-    service.metaData.populateMetaData();
+    player.setMedia(mediaContent);
+    QTest::qWait(700); 
 
-    QtTestMediaObject object(&service);
-
-    object.setMetaData(QtMedia::Title, title);
-    QCOMPARE(object.metaData(QtMedia::Title).toString(), title);
-    QCOMPARE(service.metaData.m_data.value(QtMedia::Title).toString(), title);
+    QString title("Titletest");
+    if (player.isMetaDataWritable()) {
+        player.setMetaData(QtMedia::Title, title); 
+        QCOMPARE(player.metaData(QtMedia::Title).toString(), title);
+    }
 }
 
 void tst_QMediaObject::extendedMetaData()
 {
-    QFETCH(QString, artist);
-    QFETCH(QString, title);
-    QFETCH(QString, genre);
+    QFETCH_GLOBAL(QMediaContent, mediaContent);
+//    qWarning() << mediaContent.canonicalUrl();
+    QMediaPlayer player;
 
-    QtTestMetaDataService service;
-    QtTestMediaObject object(&service);
-    QVERIFY(object.availableExtendedMetaData().isEmpty());
+    player.setMedia(mediaContent);
+    QTest::qWait(700);
+    const QString artist(QLatin1String("Artist"));
+    const QString title(QLatin1String("Title"));
 
-    service.metaData.m_extendedData.insert(QLatin1String("Artist"), artist);
-    service.metaData.m_extendedData.insert(QLatin1String("Title"), title);
-    service.metaData.m_extendedData.insert(QLatin1String("Genre"), genre);
+    if (player.isMetaDataAvailable()) {  
+        QEXPECT_FAIL("", "player.extendedMetaData(QtMedia::AlbumArtist) failed: ", Continue);
+        QCOMPARE(player.extendedMetaData(metaDataKeyAsString(QtMedia::AlbumArtist)).toString(), artist);
+        QEXPECT_FAIL("", "player.extendedMetaData(QtMedia::Title) failed: ", Continue);
+        QCOMPARE(player.extendedMetaData(metaDataKeyAsString(QtMedia::Title)).toString(), title);
+    }
+}
 
-    QCOMPARE(object.extendedMetaData(QLatin1String("Artist")).toString(), artist);
-    QCOMPARE(object.extendedMetaData(QLatin1String("Title")).toString(), title);
+void tst_QMediaObject::availableExtendedMetaData()
+{
+    QFETCH_GLOBAL(QMediaContent, mediaContent);
+//    qWarning() << mediaContent.canonicalUrl();
+    QMediaPlayer player;
 
-    QStringList extendedKeys = object.availableExtendedMetaData();
-    QCOMPARE(extendedKeys.size(), 3);
-    QVERIFY(extendedKeys.contains(QLatin1String("Artist")));
-    QVERIFY(extendedKeys.contains(QLatin1String("Title")));
-    QVERIFY(extendedKeys.contains(QLatin1String("Genre")));
+    player.setMedia(mediaContent);
+    QTest::qWait(700);
+    const QString artist(QLatin1String("Artist"));
+    const QString title(QLatin1String("Title"));
+    
+    if (player.isMetaDataAvailable()) {
+        QStringList metaDataKeys = player.availableExtendedMetaData();
+        QVERIFY(metaDataKeys.count() > 0);
+/*        qWarning() << "metaDataKeys.count: " << metaDataKeys.count();
+        int count = metaDataKeys.count();
+        count = count-1;
+        int i = 0;
+        while(count >= i)
+            {            
+            qWarning() << "metaDataKeys " << i <<". " << metaDataKeys.at(i);
+            i++;
+            }*/
+        QEXPECT_FAIL("", "metaDataKeys.contains(QtMedia::AlbumArtist) failed: ", Continue);
+        QVERIFY(metaDataKeys.contains(metaDataKeyAsString(QtMedia::AlbumArtist)));
+        QEXPECT_FAIL("", "metaDataKeys.contains(QtMedia::AlbumArtist) failed: ", Continue);
+        QVERIFY(metaDataKeys.contains(metaDataKeyAsString(QtMedia::Title)));
+    }
 }
 
 void tst_QMediaObject::setExtendedMetaData()
 {
-    QtTestMetaDataService service;
-    service.metaData.populateMetaData();
+    QFETCH_GLOBAL(QMediaContent, mediaContent);
+//    qWarning() << mediaContent.canonicalUrl();
+    QMediaPlayer player;
 
-    QtTestMediaObject object(&service);
+    player.setMedia(mediaContent);
+    QTest::qWait(700);
+    const QString title(QLatin1String("Titletest"));
 
-    QString title(QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
+    if (player.isMetaDataWritable()) {
+        player.setExtendedMetaData(metaDataKeyAsString(QtMedia::Title), title);  
+        QCOMPARE(player.metaData(QtMedia::Title).toString(), title);
+    }
+}
 
-    object.setExtendedMetaData(QLatin1String("Title"), title);
-    QCOMPARE(object.extendedMetaData(QLatin1String("Title")).toString(), title);
-    QCOMPARE(service.metaData.m_extendedData.value(QLatin1String("Title")).toString(), title);
+QString tst_QMediaObject::metaDataKeyAsString(QtMedia::MetaData key) const
+{
+    switch(key) {
+        case QtMedia::Title: return "title";
+        case QtMedia::AlbumArtist: return "artist";
+        case QtMedia::Comment: return "comment";
+        case QtMedia::Genre: return "genre";
+        case QtMedia::Year: return "year";
+        case QtMedia::Copyright: return "copyright";
+        case QtMedia::AlbumTitle: return "album";
+        case QtMedia::Composer: return "composer";
+        case QtMedia::TrackNumber: return "albumtrack";
+        case QtMedia::AudioBitRate: return "audiobitrate";
+        case QtMedia::VideoBitRate: return "videobitrate";
+        case QtMedia::Duration: return "duration";
+        case QtMedia::MediaType: return "contenttype";
+        case QtMedia::SubTitle: // TODO: Find the matching metadata keys
+        case QtMedia::Description:
+        case QtMedia::Category:
+        case QtMedia::Date:
+        case QtMedia::UserRating:
+        case QtMedia::Keywords:
+        case QtMedia::Language:
+        case QtMedia::Publisher:
+        case QtMedia::ParentalRating:
+        case QtMedia::RatingOrganisation:
+        case QtMedia::Size:
+        case QtMedia::AudioCodec:
+        case QtMedia::AverageLevel:
+        case QtMedia::ChannelCount:
+        case QtMedia::PeakValue:
+        case QtMedia::SampleRate:
+        case QtMedia::Author:
+        case QtMedia::ContributingArtist:
+        case QtMedia::Conductor:
+        case QtMedia::Lyrics:
+        case QtMedia::Mood:
+        case QtMedia::TrackCount:
+        case QtMedia::CoverArtUrlSmall:
+        case QtMedia::CoverArtUrlLarge:
+        case QtMedia::Resolution:
+        case QtMedia::PixelAspectRatio:
+        case QtMedia::VideoFrameRate:
+        case QtMedia::VideoCodec:
+        case QtMedia::PosterUrl:
+        case QtMedia::ChapterNumber:
+        case QtMedia::Director:
+        case QtMedia::LeadPerformer:
+        case QtMedia::Writer:
+        case QtMedia::CameraManufacturer:
+        case QtMedia::CameraModel:
+        case QtMedia::Event:
+        case QtMedia::Subject:
+        default:
+            break;
+    }
+
+    return QString();
 }
 
 QTEST_MAIN(tst_QMediaObject)

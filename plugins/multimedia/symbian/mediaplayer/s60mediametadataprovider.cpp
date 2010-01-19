@@ -82,13 +82,16 @@ void S60MediaMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const
 }
 QList<QtMedia::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
+    m_session = m_mediaPlayerResolver.PlayerSession();
     QList<QtMedia::MetaData> metaDataTags;
-    for (int i = QtMedia::Title; i <= QtMedia::DeviceSettingDescription; i++) {
-        QString metaData = metaDataKeyAsString((QtMedia::MetaData)i);
-        if (!metaData.isEmpty()) {
-            if (!m_session->metaData(metaData).toString().isEmpty()) {
-                metaDataTags.append((QtMedia::MetaData)i);
-            }        
+    if (m_session && m_session->isMetadataAvailable()) {
+        for (int i = QtMedia::Title; i <= QtMedia::DeviceSettingDescription; i++) {
+            QString metaData = metaDataKeyAsString((QtMedia::MetaData)i);
+            if (!metaData.isEmpty()) {
+                if (!m_session->metaData(metaData).toString().isEmpty()) {
+                    metaDataTags.append((QtMedia::MetaData)i);               
+                }
+            }
         }
     }
     return metaDataTags;
@@ -103,7 +106,7 @@ QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
 }
 
 void S60MediaMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
-{    
+{
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
@@ -111,19 +114,9 @@ void S60MediaMetaDataProvider::setExtendedMetaData(const QString &key, QVariant 
 QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
-    if (m_session && m_session->isMetadataAvailable()) {
-          QStringList metaDataTags;
-          for (int i = QtMedia::Title; i <= QtMedia::DeviceSettingDescription; i++) {
-              QString metaData = metaDataKeyAsString((QtMedia::MetaData)i);
-              if (!metaData.isEmpty()) {
-                  if (!m_session->metaData(metaData).toString().isEmpty()) {
-                      metaDataTags.append(metaData);
-                  }        
-              }
-          }
-          return metaDataTags;
-    }    
-    return QStringList();  
+    if (m_session && m_session->isMetadataAvailable())
+        return m_session->availableMetaData().keys();
+    return QStringList();
 }
 
 QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) const
@@ -151,7 +144,7 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
         case QtMedia::Language:
         case QtMedia::Publisher:
         case QtMedia::ParentalRating:
-        case QtMedia::RatingOrganisation:       
+        case QtMedia::RatingOrganisation:
         case QtMedia::Size:
         case QtMedia::AudioCodec:
         case QtMedia::AverageLevel:
@@ -182,6 +175,6 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) con
         default:
             break;
     }
-    
+
     return QString();
 }
