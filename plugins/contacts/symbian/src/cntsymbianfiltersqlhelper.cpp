@@ -51,6 +51,7 @@
 #include "cnttransformcontact.h"
 #include "cntdisplaylabel.h"
 #include "cntdisplaylabelsqlfilter.h"
+#include "cntsqlsearch.h"
 
 // Telephony Configuration API
 // Keys under this category are used in defining telephony configuration.
@@ -86,7 +87,7 @@ CntSymbianFilterSqlHelper::CntSymbianFilterSqlHelper(CContactDatabase& contactDa
                                                  isPhoneNumberSearchforDetailFilter(false)
 {
    m_srvConnection = new CntSymbianSrvConnection();
-
+   m_sqlSearch = new CntSqlSearch();
 
    contactsTableIdColumNameMapping.insert(KUidContactFieldGivenName.iUid,"first_name" );
    contactsTableIdColumNameMapping.insert(KUidContactFieldGivenNamePronunciation.iUid,"firstname_prn" );
@@ -108,6 +109,7 @@ CntSymbianFilterSqlHelper::~CntSymbianFilterSqlHelper()
 
 {
     delete m_srvConnection;
+    delete m_sqlSearch;
     contactsTableIdColumNameMapping.clear();
     commAddrTableIdColumNameMapping.clear();
 }
@@ -175,10 +177,9 @@ QList<QContactLocalId>  CntSymbianFilterSqlHelper::HandlePredictiveSearchFilter(
        if(  detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation ){
           //convert string to numeric format
             QString pattern = detailFilter.value().toString();
-            sqlQuery = "SELECT contact_id FROM predictivesearch WHERE (first_name_as_number LIKE '% " 
-                      + pattern  + "%') OR (last_name_as_number LIKE '% " + pattern + "%') ORDER BY first_name_as_number ASC;";
+            sqlQuery = m_sqlSearch->CreatePredictiveSearch(pattern);
             isPredSearch = true;
-            //sqlQuery = "select contact_id from predictivesearch;";
+        
             return  m_srvConnection->searchContacts(sqlQuery, error);  
            }
        else

@@ -85,6 +85,7 @@ private slots:  // Test cases
     void testLocalIdFilter();
     void testDefaultFilter();
     void testDefaultFilterWithPredictiveSearch();
+    void testZeroSearch();
     
 private:
     QContactManager                             *mCntMng;

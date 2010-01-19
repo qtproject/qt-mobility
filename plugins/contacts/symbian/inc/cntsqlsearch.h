@@ -56,6 +56,8 @@ public:
 
 private:
     
+    QString SelectTableView(const QString &pattern);
+
     bool IsSubStringSearch(const QString &pattern);
     
     QStringList GetNumber(const QString &pattern);

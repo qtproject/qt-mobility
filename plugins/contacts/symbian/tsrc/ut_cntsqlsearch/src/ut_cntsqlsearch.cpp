@@ -44,12 +44,61 @@ void UT_CntSqlSearch::cleanup()
 }
 void UT_CntSqlSearch::testPredictiveSearch()
 {
-QString pattern = QString("102");
-QString result;
-QString reference("SELECT contact_id FROM predictivesearch WHERE (first_name_as_number LIKE % 102%) OR (last_name_as_number LIKE % 102%) OR (((first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%)) AND ((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%))) ORDER BY first_name_as_number ASC;");
-result = mCntSqlSearch->CreatePredictiveSearch(pattern);
-QVERIFY( !result.compare( reference) );
+    QString pattern = QString("202");
+    QString result;
+    QString reference("SELECT contact_id FROM view2 WHERE (first_name_as_number LIKE % 202%) OR (last_name_as_number LIKE % 202%) OR (((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%)) AND ((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%))) ORDER BY first_name_as_number ASC;");
+    result = mCntSqlSearch->CreatePredictiveSearch(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("3");
+    reference = QString("SELECT * FROM view3 WHERE (first_name_as_number LIKE % 3%) OR (last_name_as_number LIKE % 3%) ORDER BY first_name_as_number ASC;");
+    result = mCntSqlSearch->CreatePredictiveSearch(pattern);
+    QVERIFY( !result.compare( reference) );
 }
+
+void UT_CntSqlSearch::testSelectTableView()
+{
+    QString pattern = QString("2");
+    QString reference = QString("view2");;
+    QString result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("3");
+    reference = QString("view3");;
+    result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("4");
+    reference = QString("view4");;
+    result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("5");
+    reference = QString("view5");;
+    result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("6");
+    reference = QString("view6");;
+    result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("7");
+    reference = QString("view7");;
+    result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("8");
+    reference = QString("view8");;
+    result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("9");
+    reference = QString("view9");;
+    result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+}
+
 void UT_CntSqlSearch::testIsSubStringSearch()
 {   
     QString pattern("102");

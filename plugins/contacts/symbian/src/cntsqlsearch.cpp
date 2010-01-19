@@ -50,10 +50,70 @@ CntSqlSearch::CntSqlSearch()
 
 QString CntSqlSearch ::CreatePredictiveSearch(const QString &pattern)
 {
-return "SELECT contact_id FROM predictivesearch WHERE " +
-   CreateSubStringSearch(pattern) + " ORDER BY first_name_as_number ASC;";
+    if (pattern.length() == 1)
+    {
+    return "SELECT * FROM " + SelectTableView(pattern) +  " WHERE " +
+           CreateSubStringSearch(pattern) + " ORDER BY first_name_as_number ASC;";
+    }
+    else
+    {
+    return "SELECT contact_id FROM " + SelectTableView(pattern) + " WHERE " +
+       CreateSubStringSearch(pattern) + " ORDER BY first_name_as_number ASC;";
+    }
+
 }
 
+QString CntSqlSearch::SelectTableView(const QString &pattern)
+{
+    QString view;
+    QString firstNumber = pattern.at(0);
+    int num = firstNumber.toInt();
+    switch (num)
+        {
+        break;
+        case 2:
+            {
+            view = QString("view2");
+            }
+        break;
+        case 3:
+            {
+            view = QString("view3");
+            }
+        break;
+        case 4:
+            {
+            view = QString("view4");
+            }
+        break;
+        case 5:
+            {
+            view = QString("view5");
+            }
+        break;
+        case 6:
+            {
+            view = QString("view6");
+            }
+        break;
+        case 7:
+            {
+            view = QString("view7");
+            }
+        break;
+        case 8:
+            {
+            view = QString("view8");
+            }
+        break;
+        case 9:
+            {
+            view = QString("view9");
+            }
+        break;
+        }
+return view;
+}
 
 bool CntSqlSearch::IsSubStringSearch(const QString &pattern)
 {

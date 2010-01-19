@@ -45,7 +45,8 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbiantransformerror.h \
         ../../inc/cntsymbiandatabase.h \
         ../../inc/cntdisplaylabel.h \
-        ../../inc/cntdisplaylabelsqlfilter.h 
+        ../../inc/cntdisplaylabelsqlfilter.h \
+	../../inc/cntsqlsearch.h
 
 SYMBIAN_SOURCES += \
         ../../src/cntsymbianengine.cpp \
@@ -82,7 +83,8 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbiantransformerror.cpp \
         ../../src/cntsymbiandatabase.cpp \
         ../../src/cntdisplaylabel.cpp \
-        ../../src/cntdisplaylabelsqlfilter.cpp 
+        ../../src/cntdisplaylabelsqlfilter.cpp \
+	../../src/cntsqlsearch.cpp
  
 exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
     exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \

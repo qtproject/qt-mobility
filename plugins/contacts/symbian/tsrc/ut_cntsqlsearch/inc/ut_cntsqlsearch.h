@@ -45,6 +45,7 @@ private slots:
 private slots: //test methods
 
     void testPredictiveSearch();
+    void testSelectTableView();
     void testIsSubStringSearch();
     void testGetNumber();
     void testCreateSubStringSearch();

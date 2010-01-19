@@ -53,11 +53,11 @@ class CntDisplayLabelSqlFilter
 public:
     CntDisplayLabelSqlFilter();
     virtual ~CntDisplayLabelSqlFilter();
-    
+
     void createSqlQuery(const QContactDetailFilter& filter,
                         QString& sqlQuery,
                         QContactManager::Error& error);
-private: 
+private:
     void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
     void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;
     QString createSubQuery(const QString &searchValue, const QString &column) const;
