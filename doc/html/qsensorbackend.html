@@ -24,15 +24,12 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QSensorId </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#id">id</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#rememberUpdatePolicy">rememberUpdatePolicy</a></b> ( QSensor::UpdatePolicy <i>policy</i>, int <i>interval</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setUpdatePolicy">setUpdatePolicy</a></b> ( QSensor::UpdatePolicy <i>policy</i>, int <i>interval</i> = 0 ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#newReadingAvailable">newReadingAvailable</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#poll">poll</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setReading">setReading</a></b> ( T * <i>reading</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setSupportedUpdatePolicies">setSupportedUpdatePolicies</a></b> ( QSensor::UpdatePolicies <i>policies</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#start">start</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#stop">stop</a></b> () = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#suggestedInterval">suggestedInterval</a></b> ( QSensor::UpdatePolicy <i>policy</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QSensor::UpdatePolicies </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#supportedPolicies">supportedPolicies</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#updateInterval">updateInterval</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSensor::UpdatePolicy </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#updatePolicy">updatePolicy</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -54,34 +51,25 @@
 <p>Sensors on a device will be represented by sub-classes of QSensorBackend.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QSensorBackend/id"></a>
-<h3 class="fn"><a name="id"></a><a href="qsensor.html#QSensorId-typedef">QSensorId</a> QSensorBackend::id () const</h3>
-<a name="//apple_ref/cpp/instm/QSensorBackend/rememberUpdatePolicy"></a>
-<h3 class="fn"><a name="rememberUpdatePolicy"></a>void QSensorBackend::rememberUpdatePolicy ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicy</a> <i>policy</i>, int <i>interval</i> )</h3>
-<p>Stores the <i>policy</i> and <i>interval</i>.</p>
-<p>See also <a href="qsensorbackend.html#updatePolicy">updatePolicy</a>() and <a href="qsensorbackend.html#updateInterval">updateInterval</a>().</p>
-<a name="//apple_ref/cpp/instm/QSensorBackend/setUpdatePolicy"></a>
-<h3 class="fn"><a name="setUpdatePolicy"></a>void QSensorBackend::setUpdatePolicy ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicy</a> <i>policy</i>, int <i>interval</i> = 0 )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Set the update <i>policy</i>. The <i>interval</i> should be used if the policy is set to <a href="qsensor.html#UpdatePolicy-enum">QSensor::TimedUpdates</a>. For suggested intervals to use see <a href="qsensorbackend.html#suggestedInterval">suggestedInterval</a>().</p>
-<p>See also <a href="qsensorbackend.html#updatePolicy">updatePolicy</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/newReadingAvailable"></a>
+<h3 class="fn"><a name="newReadingAvailable"></a>void QSensorBackend::newReadingAvailable ()</h3>
+<p>Notify the <a href="qsensor.html">QSensor</a> class that a new reading is available.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/poll"></a>
+<h3 class="fn"><a name="poll"></a>void QSensorBackend::poll ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Poll the sensor for a reading.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/setReading"></a>
+<h3 class="fn"><a name="setReading"></a>void QSensorBackend::setReading ( T * <i>reading</i> )</h3>
+<p>Templated function foo <i>reading</i></p>
+<pre>    setReading&lt;ReadingClass&gt;(&amp;my_reading_class);</pre>
+<a name="//apple_ref/cpp/instm/QSensorBackend/setSupportedUpdatePolicies"></a>
+<h3 class="fn"><a name="setSupportedUpdatePolicies"></a>void QSensorBackend::setSupportedUpdatePolicies ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicies</a> <i>policies</i> )</h3>
+<p>Foo <i>policies</i></p>
 <a name="//apple_ref/cpp/instm/QSensorBackend/start"></a>
 <h3 class="fn"><a name="start"></a>bool QSensorBackend::start ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns true if the sensor was able to start.</p>
+<p>Start reporting values. Returns true if the sensor was able to start.</p>
 <a name="//apple_ref/cpp/instm/QSensorBackend/stop"></a>
 <h3 class="fn"><a name="stop"></a>void QSensorBackend::stop ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<a name="//apple_ref/cpp/instm/QSensorBackend/suggestedInterval"></a>
-<h3 class="fn"><a name="suggestedInterval"></a>int QSensorBackend::suggestedInterval ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicy</a> <i>policy</i> )</h3>
-<p>Returns the suggested interval to use for a given update <i>policy</i>.</p>
-<a name="//apple_ref/cpp/instm/QSensorBackend/supportedPolicies"></a>
-<h3 class="fn"><a name="supportedPolicies"></a><a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicies</a> QSensorBackend::supportedPolicies () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<a name="//apple_ref/cpp/instm/QSensorBackend/updateInterval"></a>
-<h3 class="fn"><a name="updateInterval"></a>int QSensorBackend::updateInterval () const</h3>
-<p>Returns the stored interval.</p>
-<p>See also <a href="qsensorbackend.html#rememberUpdatePolicy">rememberUpdatePolicy</a>().</p>
-<a name="//apple_ref/cpp/instm/QSensorBackend/updatePolicy"></a>
-<h3 class="fn"><a name="updatePolicy"></a><a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicy</a> QSensorBackend::updatePolicy () const</h3>
-<p>Returns the stored policy.</p>
-<p>See also <a href="qsensorbackend.html#setUpdatePolicy">setUpdatePolicy</a>() and <a href="qsensorbackend.html#rememberUpdatePolicy">rememberUpdatePolicy</a>().</p>
+<p>Stop reporting values.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

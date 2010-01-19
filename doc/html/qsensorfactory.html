@@ -23,10 +23,11 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QSensor * </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#createSensor">createSensor</a></b> ( const QSensorId &amp; <i>id</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSensorId </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#defaultSensorForType">defaultSensorForType</a></b> ( QString <i>type</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QSensorId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#sensorList">sensorList</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QSensorId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#sensorsForType">sensorsForType</a></b> ( QString <i>type</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSensor * </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#createSensor">createSensor</a></b> ( const QByteArray &amp; <i>identifier</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#defaultSensorForType">defaultSensorForType</a></b> ( const QByteArray &amp; <i>type</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#sensorList">sensorList</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#sensorTypes">sensorTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qsensorfactory.html#sensorsForType">sensorsForType</a></b> ( const QByteArray &amp; <i>type</i> ) const</td></tr>
 </table>
 <hr />
 <a name="static-public-members"></a>
@@ -38,24 +39,27 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QSensorFactory class returns the sensors on a device.</p>
-<p>A given device will have a variety of sensors. The sensors are categorized by type. The QSensor::Type enum defined the types that the API supports.</p>
+<p>A given device will have a variety of sensors. The sensors are categorized by type. Each sensor has a ::typeId value that holds the unique type for that sensor. eg. QAccelerationSensor::typeId, QProximitySensor::typeId.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSensorFactory/createSensor"></a>
-<h3 class="fn"><a name="createSensor"></a><a href="qsensor.html">QSensor</a> * QSensorFactory::createSensor ( const <a href="qsensor.html#QSensorId-typedef">QSensorId</a> &amp; <i>id</i> ) const</h3>
-<p>Create an instance of a sensor for <i>id</i>. If there is no sensor with the selected <i>id</i>, returns null.</p>
-<p>Note that this method requires down-casting the returned pointer to do anything useful. Instead, consider instantiating a <a href="qsensor.html">QSensor</a> sub-class directly, passing the id as the second argument.</p>
+<h3 class="fn"><a name="createSensor"></a><a href="qsensor.html">QSensor</a> * QSensorFactory::createSensor ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>identifier</i> ) const</h3>
+<p>Create an instance of a sensor for <i>identifier</i>. If there is no sensor with the selected <i>identifier</i>, returns null.</p>
+<p>Note that this method requires down-casting the returned pointer to do anything useful. Instead, consider instantiating a <a href="qsensor.html">QSensor</a> sub-class directly, passing the identifier as the second argument.</p>
 <a name="//apple_ref/cpp/instm/QSensorFactory/defaultSensorForType"></a>
-<h3 class="fn"><a name="defaultSensorForType"></a><a href="qsensor.html#QSensorId-typedef">QSensorId</a> QSensorFactory::defaultSensorForType ( <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>type</i> ) const</h3>
-<p>Returns the id of the default sensor for <i>type</i>. If there is no sensor of that type available, returns a null string.</p>
+<h3 class="fn"><a name="defaultSensorForType"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QSensorFactory::defaultSensorForType ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i> ) const</h3>
+<p>Returns the identifier of the default sensor for <i>type</i>. If there is no sensor of that type available, returns a null string.</p>
 <a name="//apple_ref/cpp/clm/QSensorFactory/instance"></a>
 <h3 class="fn"><a name="instance"></a>QSensorFactory * QSensorFactory::instance ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the sensor factory.</p>
 <a name="//apple_ref/cpp/instm/QSensorFactory/sensorList"></a>
-<h3 class="fn"><a name="sensorList"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qsensor.html#QSensorId-typedef">QSensorId</a>&gt; QSensorFactory::sensorList () const</h3>
+<h3 class="fn"><a name="sensorList"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QSensorFactory::sensorList () const</h3>
+<p>Returns a list of ids for each of the sensors.</p>
+<a name="//apple_ref/cpp/instm/QSensorFactory/sensorTypes"></a>
+<h3 class="fn"><a name="sensorTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QSensorFactory::sensorTypes () const</h3>
 <p>Returns a list of ids for each of the sensors.</p>
 <a name="//apple_ref/cpp/instm/QSensorFactory/sensorsForType"></a>
-<h3 class="fn"><a name="sensorsForType"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qsensor.html#QSensorId-typedef">QSensorId</a>&gt; QSensorFactory::sensorsForType ( <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>type</i> ) const</h3>
+<h3 class="fn"><a name="sensorsForType"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QSensorFactory::sensorsForType ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i> ) const</h3>
 <p>Returns a list of ids for each of the sensors for <i>type</i>. If there are no sensors of that type available the list will be empty.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

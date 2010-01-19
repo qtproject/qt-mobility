@@ -23,9 +23,9 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QSensorBackend * </td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#createBackend">createBackend</a></b> ( const QSensorId &amp; <i>id</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSensorId </td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#firstSensorForType">firstSensorForType</a></b> ( const QString &amp; <i>type</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#registerBackend">registerBackend</a></b> ( const QString &amp; <i>type</i>, const QSensorId &amp; <i>id</i>, CreateBackendFunc <i>func</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSensorBackend * </td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#createBackend">createBackend</a></b> ( const QByteArray &amp; <i>identifier</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#firstSensorForType">firstSensorForType</a></b> ( const QByteArray &amp; <i>type</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#registerBackend">registerBackend</a></b> ( const QByteArray &amp; <i>type</i>, const QByteArray &amp; <i>identifier</i>, CreateBackendFunc <i>func</i> )</td></tr>
 </table>
 <hr />
 <a name="static-public-members"></a>
@@ -38,8 +38,8 @@
 <h2>Macros</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#CREATE_FUNC">CREATE_FUNC</a></b> (  <i>classname</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#REGISTER_LOCAL_SENSOR">REGISTER_LOCAL_SENSOR</a></b> (  <i>classname</i>,  <i>type</i>,  <i>id</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#REGISTER_STATEMENT">REGISTER_STATEMENT</a></b> (  <i>classname</i>,  <i>type</i>,  <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#REGISTER_LOCAL_SENSOR">REGISTER_LOCAL_SENSOR</a></b> (  <i>classname</i>,  <i>type</i>,  <i>identifier</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#REGISTER_STATEMENT">REGISTER_STATEMENT</a></b> (  <i>classname</i>,  <i>type</i>,  <i>identifier</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -49,17 +49,17 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSensorManager/createBackend"></a>
-<h3 class="fn"><a name="createBackend"></a><a href="qsensorbackend.html">QSensorBackend</a> * QSensorManager::createBackend ( const <a href="qsensor.html#QSensorId-typedef">QSensorId</a> &amp; <i>id</i> )</h3>
-<p>Create a backend for <i>id</i>. Returns null if the ID is not valid.</p>
+<h3 class="fn"><a name="createBackend"></a><a href="qsensorbackend.html">QSensorBackend</a> * QSensorManager::createBackend ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>identifier</i> )</h3>
+<p>Create a backend for <i>identifier</i>. Returns null if the identifier is not valid.</p>
 <a name="//apple_ref/cpp/instm/QSensorManager/firstSensorForType"></a>
-<h3 class="fn"><a name="firstSensorForType"></a><a href="qsensor.html#QSensorId-typedef">QSensorId</a> QSensorManager::firstSensorForType ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>type</i> )</h3>
+<h3 class="fn"><a name="firstSensorForType"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QSensorManager::firstSensorForType ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i> )</h3>
 <p>Returns the first registered sensor identifier for <i>type</i>.</p>
 <a name="//apple_ref/cpp/clm/QSensorManager/instance"></a>
 <h3 class="fn"><a name="instance"></a>QSensorManager * QSensorManager::instance ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the sensor manager.</p>
 <a name="//apple_ref/cpp/instm/QSensorManager/registerBackend"></a>
-<h3 class="fn"><a name="registerBackend"></a>void QSensorManager::registerBackend ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>type</i>, const <a href="qsensor.html#QSensorId-typedef">QSensorId</a> &amp; <i>id</i>, CreateBackendFunc <i>func</i> )</h3>
-<p>Register a sensor for <i>type</i>. The <i>id</i> must be unique. The <i>func</i> must return an instance of the appropriate backend class.</p>
+<h3 class="fn"><a name="registerBackend"></a>void QSensorManager::registerBackend ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>identifier</i>, CreateBackendFunc <i>func</i> )</h3>
+<p>Register a sensor for <i>type</i>. The <i>identifier</i> must be unique. The <i>func</i> must return an instance of the appropriate backend class.</p>
 <hr />
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//CREATE_FUNC"></a>
@@ -67,15 +67,15 @@
 <p>Defines a static function that creates an instance of <i>classname</i>.</p>
 <p>See also <a href="creating-a-sensor-plugin.html">Creating a sensor plugin</a>.</p>
 <a name="//apple_ref/cpp/macro//REGISTER_LOCAL_SENSOR"></a>
-<h3 class="fn"><a name="REGISTER_LOCAL_SENSOR"></a>REGISTER_LOCAL_SENSOR (  <i>classname</i>,  <i>type</i>,  <i>id</i> )</h3>
+<h3 class="fn"><a name="REGISTER_LOCAL_SENSOR"></a>REGISTER_LOCAL_SENSOR (  <i>classname</i>,  <i>type</i>,  <i>identifier</i> )</h3>
 <p>Registers a local sensor plugin.</p>
-<p>Designed to register an instance of <i>classname</i> with sensor <i>type</i> and unique <i>id</i>.</p>
+<p>Designed to register an instance of <i>classname</i> with sensor <i>type</i> and unique <i>identifier</i>.</p>
 <p>Note that this macro relies on static initialization so it may not be appropriate for use in a library.</p>
 <p>See also <a href="creating-a-sensor-plugin.html">Creating a sensor plugin</a>.</p>
 <a name="//apple_ref/cpp/macro//REGISTER_STATEMENT"></a>
-<h3 class="fn"><a name="REGISTER_STATEMENT"></a>REGISTER_STATEMENT (  <i>classname</i>,  <i>type</i>,  <i>id</i> )</h3>
+<h3 class="fn"><a name="REGISTER_STATEMENT"></a>REGISTER_STATEMENT (  <i>classname</i>,  <i>type</i>,  <i>identifier</i> )</h3>
 <p>Registers a sensor plugin using a creation function as defined by <a href="qsensormanager.html#CREATE_FUNC">CREATE_FUNC</a>().</p>
-<p>Designed to register an instance of <i>classname</i> with sensor <i>type</i> and unique <i>id</i>.</p>
+<p>Designed to register an instance of <i>classname</i> with sensor <i>type</i> and unique <i>identifier</i>.</p>
 <p>See also <a href="qsensormanager.html#CREATE_FUNC">CREATE_FUNC</a>() and <a href="creating-a-sensor-plugin.html">Creating a sensor plugin</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

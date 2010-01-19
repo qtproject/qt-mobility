@@ -59,6 +59,7 @@
 
     #include &lt;experimental/qcamera.h&gt;
     #include &lt;qmediarecorder.h&gt;
+    #include &lt;experimental/qstillimagecapture.h&gt;
     #include &lt;qaudiocapturesource.h&gt;
 
     namespace Ui {
@@ -112,6 +113,7 @@
 
         QDir outputDir;
         QCamera *camera;
+        QStillImageCapture *imageCapture;
         QMediaRecorder* mediaRecorder;
         QAudioCaptureSource *audioSource;
         QVideoWidget *videoWidget;

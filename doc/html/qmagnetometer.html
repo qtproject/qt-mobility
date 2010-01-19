@@ -2,23 +2,23 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qproximitysensor.cpp -->
+<!-- qmagnetometer.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QProximitySensor Class Reference</title>
+  <title>Qt Mobility Project 1.0: QMagnetometer Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="//apple_ref/cpp/cl//QProximitySensor"></a>
+<a name="//apple_ref/cpp/cl//QMagnetometer"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QProximitySensor Class Reference</h1>
-<p>The QProximitySensor class reports on user proximity. <a href="#details">More...</a></p>
-<pre>    #include &lt;QProximitySensor&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMagnetometer Class Reference</h1>
+<p>The QMagnetometer class reports on magnetic flux density along the X, Y and Z axes. <a href="#details">More...</a></p>
+<pre>    #include &lt;QMagnetometer&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qsensor.html">QSensor</a>.</p>
 <ul>
-<li><a href="qproximitysensor-members.html">List of all members, including inherited members</a></li>
+<li><a href="qmagnetometer-members.html">List of all members, including inherited members</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
@@ -38,9 +38,26 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QProximitySensor class reports on user proximity.</p>
-<p>The proximity sensor returns an indication of how far the user is away from the device using the pre-defined values found in the <a href="qproximityreading.html#Proximity-enum">QProximityReading::Proximity</a> enum.</p>
-<p>See also <a href="qproximityreading.html">QProximityReading</a>.</p>
+<p>The QMagnetometer class reports on magnetic flux density along the X, Y and Z axes.</p>
+<p>The magnetometer returns magnetic flux density values along 3 axes. The scale of the values is teslas. The axes are arranged as follows.</p>
+<pre>             +z
+              |
+              |      +y
+              |     /
+              |----/----
+             /| NOKIA  /|
+            <span class="comment">//|--/--- / |</span>
+           <span class="comment">// | /   //  /</span>
+          <span class="comment">//  |/   //  /</span>
+         <span class="comment">//   '--------------- +x</span>
+        <span class="comment">//       //  /</span>
+       <span class="comment">//       //  /</span>
+      /---------/  /
+     /    O    /  /
+    /         /  /
+    ----------  /
+    |_________!/</pre>
+<p>See also <a href="qmagnetometerreading.html">QMagnetometerReading</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

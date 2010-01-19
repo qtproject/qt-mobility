@@ -16,6 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QTapReading Class Reference</h1>
 <p>The QTapReading class represents one reading from the tap sensor. <a href="#details">More...</a></p>
 <pre>    #include &lt;QTapReading&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qtapreading-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -26,13 +27,36 @@
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#TapDirection-enum">TapDirection</a></b> { Undefined, X, Y, Z, ..., Z_Neg }</td></tr>
 </table>
 <hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<ul>
+<li><div class="fn"><b><a href="qtapreading.html#doubleTap-prop">doubleTap</a></b> : bool</div></li>
+<li><div class="fn"><b><a href="qtapreading.html#tapDirection-prop">tapDirection</a></b> : TapDirection</div></li>
+</ul>
+<ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#doubleTap">doubleTap</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">TapDirection </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#tapDirection">tapDirection</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QTime </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#timestamp">timestamp</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#doubleTap-prop">isDoubleTap</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#doubleTap-prop">setDoubleTap</a></b> ( bool <i>doubleTap</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#tapDirection-prop">setTapDirection</a></b> ( TapDirection <i>tapDirection</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">TapDirection </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#tapDirection-prop">tapDirection</a></b> () const</td></tr>
 </table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -84,16 +108,25 @@
 <tr><td valign="top"><tt>QTapReading::Z_Neg</tt></td><td align="center" valign="top"><tt>0x0404</tt></td><td valign="top">This value is returned if the tap was towards the negative Z direction.</td></tr>
 </table></p>
 <hr />
-<h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QTapReading/doubleTap"></a>
-<h3 class="fn"><a name="doubleTap"></a>bool QTapReading::doubleTap () const</h3>
-<p>Returns true if the tap was a double tap, false if it was a single tap.</p>
+<h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QTapReading/isDoubleTap"></a>
+<a name="//apple_ref/cpp/instm/QTapReading/setDoubleTap"></a>
+<h3 class="fn"><a name="doubleTap-prop"></a>doubleTap : bool</h3>
+<p>This property holds foo.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isDoubleTap</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setDoubleTap</b> ( bool <i>doubleTap</i> )</td></tr>
+</table>
 <a name="//apple_ref/cpp/instm/QTapReading/tapDirection"></a>
-<h3 class="fn"><a name="tapDirection"></a><a href="qtapreading.html#TapDirection-enum">TapDirection</a> QTapReading::tapDirection () const</h3>
-<p>Returns the direction of the tap.</p>
-<a name="//apple_ref/cpp/instm/QTapReading/timestamp"></a>
-<h3 class="fn"><a name="timestamp"></a><a href="http://qt.nokia.com/doc/4.6/qtime.html">QTime</a> QTapReading::timestamp () const</h3>
-<p>Returns the time when the reading was made.</p>
+<a name="//apple_ref/cpp/instm/QTapReading/setTapDirection"></a>
+<h3 class="fn"><a name="tapDirection-prop"></a>tapDirection : <a href="qtapreading.html#TapDirection-enum">TapDirection</a></h3>
+<p>This property holds foo.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">TapDirection </td><td class="memItemRight" valign="bottom"><b>tapDirection</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setTapDirection</b> ( TapDirection <i>tapDirection</i> )</td></tr>
+</table>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
