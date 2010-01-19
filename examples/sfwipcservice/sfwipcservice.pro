@@ -5,7 +5,7 @@ INCLUDEPATH += ../../src/serviceframework/ipc
 
 include(../examples.pri)
 
-QT += core
+QT += core network
 
 # Input 
 SOURCES += main.cpp

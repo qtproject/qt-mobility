@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <qservicetyperegister.h>
+#include <qservicecontrol.h>
 #include <instancemanager_p.h>
 #include <QDebug>
 
@@ -46,7 +47,11 @@ int main(int argc, char** argv)
         qWarning() << i.first << i.second << testService << uid;
     }
 
-    //return app.exec();
+
+    QServiceControl* control = new QServiceControl();
+    control->publishServices("qt_sfw_example_ipc_ident");
+    return app.exec();
+    delete control;
 }
 
 #include "main.moc"
