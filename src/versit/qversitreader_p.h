@@ -82,6 +82,7 @@ public: // Constructors and destructor
 
 signals:
     void stateChanged();
+    void resultsAvailable();
 
 public: // New functions
     bool isReady() const;

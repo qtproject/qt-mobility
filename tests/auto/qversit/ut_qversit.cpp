@@ -1,4 +1,4 @@
-#include "qversitdefs.h"
+#include "qversitdefs_p.h"
 #include "ut_qversit.h"
 #include "qversitreader.h"
 #include "qversitreader_p.h"

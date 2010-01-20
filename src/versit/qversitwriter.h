@@ -83,7 +83,6 @@ public:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
 
-    // XXX implement these
     void setCodec(QTextCodec* codec);
     QTextCodec* codec() const;
 

@@ -49,6 +49,7 @@
 #include <QStringList>
 #include <QMutexLocker>
 #include <QScopedPointer>
+#include <QTextCodec>
 
 QTM_USE_NAMESPACE
 
@@ -56,7 +57,8 @@ QTM_USE_NAMESPACE
 QVersitWriterPrivate::QVersitWriterPrivate()
     : mIoDevice(0),
     mState(QVersitWriter::InactiveState),
-    mError(QVersitWriter::NoError)
+    mError(QVersitWriter::NoError),
+    mDefaultCodec(QTextCodec::codecForName("UTF-8"))
 {
 }
 

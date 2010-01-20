@@ -77,7 +77,6 @@ public:
 
     QVersitDocument::VersitType mVersitType;
     QList<QVersitProperty> mProperties;
-    QTextCodec* mDefaultCodec;
 };
 
 QTM_END_NAMESPACE

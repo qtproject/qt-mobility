@@ -45,6 +45,7 @@
 #include "qmobilityglobal.h"
 
 #include <QStringList>
+#include <QTextCodec>
 
 QTM_USE_NAMESPACE
 
@@ -115,6 +116,27 @@ void QVersitWriter::setDevice(QIODevice* device)
 QIODevice* QVersitWriter::device() const
 {
     return d->mIoDevice;
+}
+
+/*!
+ * Sets the codec to use for properties that cannot be encoded with the
+ * general codec used by the writer.
+ */
+void QVersitWriter::setCodec(QTextCodec *codec)
+{
+    if (codec != NULL) {
+        d->mDefaultCodec = codec;
+    } else {
+        d->mDefaultCodec = QTextCodec::codecForName("UTF-8");
+    }
+}
+
+/*!
+ * Returns the document's codec.
+ */
+QTextCodec* QVersitWriter::codec() const
+{
+    return d->mDefaultCodec;
 }
 
 /*!

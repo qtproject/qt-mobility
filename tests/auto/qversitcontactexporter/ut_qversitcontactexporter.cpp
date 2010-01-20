@@ -43,7 +43,7 @@
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
 #include "qversitproperty.h"
-#include "qversitdefs.h"
+#include "qversitdefs_p.h"
 #include <QString>
 #include <QStringList>
 #include <QList>

@@ -83,7 +83,9 @@ bool QVersitReaderPrivate::isReady() const
 bool QVersitReaderPrivate::read(bool async)
 {
     setError(QVersitReader::NoError);
+    mMutex.lock();
     mVersitDocuments.clear();
+    mMutex.unlock();
     bool ret = true;
     if (isReady()) {
         setState(QVersitReader::ActiveState, async);
@@ -105,8 +107,12 @@ bool QVersitReaderPrivate::read(bool async)
             if (ok) {
                 if (document.isEmpty())
                     break;
-                else
+                else {
+                    QMutexLocker locker(&mMutex);
                     mVersitDocuments.append(document);
+                    if (async)
+                        emit resultsAvailable();
+                }
             } else {
                 ret = false;
                 setError(QVersitReader::ParseError);
@@ -275,7 +281,7 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
     VersitUtils::removeBackSlashEscaping(valueString);
 
     if (property.name() == QString::fromAscii("AGENT")) {
-        // XXX this means 2.1 agent handling doesn't work (you only get the first line)
+        // this means 2.1 agent handling doesn't work (you only get the first line)
         VersitCursor agentCursor(valueString.toAscii());
         parseAgentProperty(agentCursor, property);
     } else {

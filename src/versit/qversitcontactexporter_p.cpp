@@ -41,7 +41,7 @@
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
-#include "qversitdefs.h"
+#include "qversitdefs_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
@@ -81,7 +81,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
 {
     // Detail mappings
     int versitPropertyCount =
-        sizeof(versitContactDetailMappings)/sizeof(versitContactDetailMapping);
+        sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
         QString contactDetailName =
             QString::fromAscii(versitContactDetailMappings[i].contactDetailDefinitionName);
@@ -91,7 +91,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     }
 
     // Contexts mappings
-    int contextCount = sizeof(versitContextMappings)/sizeof(versitMapping);
+    int contextCount = sizeof(versitContextMappings)/sizeof(VersitMapping);
     for (int i=0; i < contextCount; i++) {
         mParameterMappings.insert(
             QString::fromAscii(versitContextMappings[i].contactString),
@@ -99,7 +99,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     }
 
     // Subtypes mappings
-    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
+    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(VersitMapping);
     for (int i=0; i < subTypeCount; i++) {
         mParameterMappings.insert(
             QString::fromAscii(versitSubTypeMappings[i].contactString),
@@ -107,7 +107,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     }
 
     // File extension mappings
-    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(versitMapping);
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
     for (int i=0; i < fileExtensionCount; i++) {
         mParameterMappings.insert(
             QString::fromAscii(versitFileExtensionMappings[i].contactString),

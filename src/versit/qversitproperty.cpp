@@ -170,7 +170,7 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
  */
 void QVersitProperty::insertParameter(const QString& name, const QString& value)
 {
-    d->mParameters.insert(name.toUpper(),value.toUpper());
+    d->mParameters.insert(name.toUpper(), value.toUpper());
 }
 
 /*!
@@ -180,7 +180,7 @@ void QVersitProperty::insertParameter(const QString& name, const QString& value)
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
-    d->mParameters.remove(name.toUpper(),value.toUpper());
+    d->mParameters.remove(name.toUpper(), value.toUpper());
 }
 
 /*!
@@ -207,7 +207,6 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
  */
 void QVersitProperty::setValue(const QVariant& value)
 {
-    // XXX toUpper
     d->mValue = value;
 }
 

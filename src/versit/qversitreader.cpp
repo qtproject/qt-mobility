@@ -188,6 +188,7 @@ QList<QVersitDocument> QVersitReader::readAll()
  */
 QList<QVersitDocument> QVersitReader::results() const
 {
+    QMutexLocker locker(&d->mMutex);
     return d->mVersitDocuments;
 }
 

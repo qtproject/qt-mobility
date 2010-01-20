@@ -82,10 +82,6 @@ public:
     void removeProperties(const QString& name);
     QList<QVersitProperty> properties() const;
 
-    // XXX this should move to QVersitWriter
-    void setCodec(QTextCodec* codec);
-    QTextCodec* codec() const;
-
     bool isEmpty() const;
     void clear();
 

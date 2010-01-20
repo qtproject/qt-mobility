@@ -154,9 +154,7 @@ void QVersitDocument::clear()
 {
     d->mProperties.clear();
     d->mVersitType = QVersitDocument::InvalidType;
-    setCodec(0);
 }
-
 
 /*!
  * Gets the list of the contained versit properties.
@@ -165,27 +163,6 @@ void QVersitDocument::clear()
 QList<QVersitProperty> QVersitDocument::properties() const
 {
     return d->mProperties;
-}
-
-/*!
- * Sets the codec to use for properties that cannot be encoded with the
- * general codec used by the writer.
- */
-void QVersitDocument::setCodec(QTextCodec *codec)
-{
-    if (codec != NULL) {
-        d->mDefaultCodec = codec;
-    } else {
-        d->mDefaultCodec = QTextCodec::codecForName("UTF-8");
-    }
-}
-
-/*!
- * Returns the document's codec.
- */
-QTextCodec* QVersitDocument::codec() const
-{
-    return d->mDefaultCodec;
 }
 
 /*!

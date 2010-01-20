@@ -93,6 +93,7 @@ public:
     QList<QVersitDocument> mInput;
     QVersitWriter::State mState;
     QVersitWriter::Error mError;
+    QTextCodec* mDefaultCodec;
     mutable QMutex mMutex;
 };
 

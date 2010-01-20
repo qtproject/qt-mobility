@@ -53,7 +53,6 @@
 // We mean it.
 //
 
-#include "qversitdefs.h"
 #include "qmobilityglobal.h"
 #include "qversitcontactimporter.h"
 

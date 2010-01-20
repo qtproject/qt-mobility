@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qversitdefs.h"
+#include "qversitdefs_p.h"
 #include "qversitcontactimporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
@@ -79,7 +79,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
 {
     // Contact detail mappings
     int versitPropertyCount =
-        sizeof(versitContactDetailMappings)/sizeof(versitContactDetailMapping);
+        sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
         QString versitPropertyName =
             QString::fromAscii(versitContactDetailMappings[i].versitPropertyName);
@@ -92,7 +92,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
     }
 
     // Context mappings
-    int contextCount = sizeof(versitContextMappings)/sizeof(versitMapping);
+    int contextCount = sizeof(versitContextMappings)/sizeof(VersitMapping);
     for (int i=0; i < contextCount; i++) {
         mContextMappings.insert(
             QString::fromAscii(versitContextMappings[i].versitString),
@@ -100,7 +100,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
     }
 
     // Subtype mappings
-    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
+    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(VersitMapping);
     for (int i=0; i < subTypeCount; i++) {
         mSubTypeMappings.insert(
             QString::fromAscii(versitSubTypeMappings[i].versitString),
@@ -108,7 +108,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
     }
 
     // File extension mappings
-    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(versitMapping);
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
     for (int i=0; i < fileExtensionCount; i++) {
         mFileExtensionMappings.insert(
             QString::fromAscii(versitFileExtensionMappings[i].versitString),
@@ -381,9 +381,8 @@ void QVersitContactImporterPrivate::createNicknames(
     const QVersitProperty& property,
     QContact& contact) const
 {
-    QStringList values = property.value().split(QChar::fromAscii(','));
-    foreach(QString value,values) {
-        // XXX use correct encoding instead of fromAscii
+    QStringList values = property.value().split(QLatin1Char(','));
+    foreach(QString value, values) {
         QContactNickname* nickName = new QContactNickname();
         nickName->setNickname(value);
         contact.saveDetail(nickName);

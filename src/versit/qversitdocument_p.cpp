@@ -41,21 +41,17 @@
 
 #include "qversitdocument_p.h"
 
-#include <QTextCodec>
-
 QTM_USE_NAMESPACE
 
 QVersitDocumentPrivate::QVersitDocumentPrivate()
     : QSharedData(),
-    mVersitType(QVersitDocument::InvalidType),
-    mDefaultCodec(QTextCodec::codecForName("UTF-8"))
+    mVersitType(QVersitDocument::InvalidType)
 {
 }
 
 QVersitDocumentPrivate::QVersitDocumentPrivate(const QVersitDocumentPrivate& other)
     : QSharedData(other),
     mVersitType(other.mVersitType),
-    mProperties(other.mProperties),
-    mDefaultCodec(other.mDefaultCodec)
+    mProperties(other.mProperties)
 {
 }
