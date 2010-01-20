@@ -69,19 +69,6 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     TRAP(err, fetchAudioCodecsL());
     qWarning() << err;
     
-    
-    //TODO:
-    /*
-    m_position = 0;
-    m_state = QMediaRecorder::StoppedState;
-
-    m_format.setFrequency(8000);
-    m_format.setChannels(1);
-    m_format.setSampleSize(8);
-    m_format.setSampleType(QAudioFormat::UnSignedInt);
-    //m_format.setCodec(QString("audio/pcm"));
-    wavFile = false;
-    */
 }
 
 S60AudioCaptureSession::~S60AudioCaptureSession()
@@ -99,12 +86,7 @@ QAudioFormat S60AudioCaptureSession::format() const
 
 bool S60AudioCaptureSession::isFormatSupported(const QAudioFormat &format) const
 {
-    //TODO:
-    /*
-    if(m_recorderUtility) {
-        return m_recorderUtility->isFormatSupported(format);
-    }
-    */
+
     return false;
 }
 
@@ -113,26 +95,7 @@ bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 	if (m_recorderUtility) {
 		m_format = format;
 	}
-    //TODO:
-    /*
-    if(m_recorderUtility) {
-        if(m_recorderUtility->isFormatSupported(format)) {
-            m_format = format;
-            if(m_audioInput) delete m_audioInput;
-            m_audioInput = 0;
-            QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
-            for(int i=0; i < devices.size(); i++) {
-                if(qstrcmp(m_recorderUtility->deviceName().toLocal8Bit().constData(),
-                            devices.at(i).deviceName().toLocal8Bit().constData()) == 0) {
-                    m_audioInput = new QAudioInput(devices.at(i), m_format);
-                    connect(m_audioInput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(stateChanged(QAudio::State)));
-                    connect(m_audioInput, SIGNAL(notify()), this, SLOT(notify()));
-                    break;
-                }
-            }
-        }
-    }
-    */
+
     return false;
 }
 
@@ -215,43 +178,10 @@ void S60AudioCaptureSession::pause()
 
 void S60AudioCaptureSession::stop()
 {
-    if (m_recorderUtility)
-    {
+    if (m_recorderUtility) {
         m_recorderUtility->Stop();
         m_recorderUtility->Close();
-    }
-    
-    //TODO:
-    /*
-    if(m_audioInput) {
-        m_audioInput->stop();
-        file.close();
-        
-        QFile tmpFile("record.tmp");
-        tmpFile.open(QIODevice::WriteOnly);
-
-        qint32 fileSize = file.size()-8;
-        if(file.open(QIODevice::ReadOnly)) {
-            file.read((char*)&header,sizeof(CombinedHeader));
-            header.riff.descriptor.size = fileSize; // filesize-8
-            header.data.descriptor.size = fileSize*m_format.channels()*m_format.sampleSize()/8; // samples*channels*sampleSize/8
-            tmpFile.write((char*)&header,sizeof(CombinedHeader));
-            char buf[4096];
-            while(!file.atEnd()) {
-                int l = file.read(buf,4096);
-                if(l > 0)
-                    tmpFile.write(buf,l);
-            }
-            tmpFile.close();
-            file.close();
-            file.remove();
-            tmpFile.rename(file.fileName());
-        }
-
-        m_position = 0;
-    }
-    */
-    
+    }    
     m_state = QMediaRecorder::StoppedState;
 }
 
