@@ -109,7 +109,13 @@ void UT_QVersitProperty::testParameters()
     QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
     
     mVersitProperty->removeParameter(name,value2);
-    QCOMPARE(mVersitProperty->parameters().count(), 0);    
+    QCOMPARE(mVersitProperty->parameters().count(), 0);
+
+    mVersitProperty->insertParameter(name, value1);
+    mVersitProperty->insertParameter(name, value2);
+    QCOMPARE(mVersitProperty->parameters().count(), 2);
+    mVersitProperty->removeParameters(name);
+    QCOMPARE(mVersitProperty->parameters().count(), 0);
 }
 
 void UT_QVersitProperty::testValue()

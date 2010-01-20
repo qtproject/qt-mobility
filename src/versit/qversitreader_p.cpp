@@ -364,7 +364,7 @@ void QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
         }
         VersitUtils::decodeQuotedPrintable(valueString);
         // Remove the encoding parameter as the value is now decoded
-        property.removeParameter(encoding, quotedPrintable);
+        property.removeParameters(encoding);
         value.setValue(valueString);
     } else if (property.parameters().contains(encoding, base64)
         || property.parameters().contains(encoding, b)) {
@@ -374,8 +374,7 @@ void QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
         // and do the conversion.
         value.setValue(QByteArray::fromBase64(valueString.toAscii()));
         // Remove the encoding parameter as the value is now decoded
-        property.removeParameter(encoding, base64);
-        property.removeParameter(encoding, b);
+        property.removeParameters(encoding);
     }
 }
 
@@ -390,7 +389,7 @@ QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
     const QString charset(QString::fromAscii("CHARSET"));
     if (property.parameters().contains(charset)) {
         QString charsetValue = *property.parameters().find(charset);
-        property.removeParameter(charset, charsetValue);
+        property.removeParameters(charset);
         *codec = QTextCodec::codecForName(charsetValue.toAscii());
         if (*codec != NULL) {
             return (*codec)->toUnicode(value);
