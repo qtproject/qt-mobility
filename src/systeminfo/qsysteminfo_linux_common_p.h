@@ -83,14 +83,14 @@ public:
     QSystemInfoPrivate(QObject *parent = 0);
     virtual ~QSystemInfoPrivate();
 // general
-    virtual QString currentLanguage() const = 0; // 2 letter ISO 639-1
-    virtual QStringList availableLanguages() const = 0;	 // 2 letter ISO 639-1
+    QString currentLanguage() const {return QString();} // 2 letter ISO 639-1
+    QStringList availableLanguages() const {return QStringList();}	 // 2 letter ISO 639-1
 
-    virtual QString version(QSystemInfo::Version,  const QString &parameter = QString()) = 0;
+    QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString()) {return QString();}
 
-    virtual QString currentCountryCode() const = 0; //2 letter ISO 3166-1
+    QString currentCountryCode() const {return QString();} //2 letter ISO 3166-1
 //features
-    virtual bool hasFeatureSupported(QSystemInfo::Feature feature) = 0;
+    bool hasFeatureSupported(QSystemInfo::Feature /*feature*/) {return false;}
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 };
@@ -109,21 +109,21 @@ public:
     QSystemNetworkInfoPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode) = 0;
-    virtual qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode) = 0;
-    virtual int cellId() = 0;
-    virtual int locationAreaCode() = 0;
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode /*mode*/) {return QSystemNetworkInfo::UndefinedStatus;}
+    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode /*mode*/) {return -1;}
+    int cellId() {return 0;}
+    int locationAreaCode() {return 0;}
 
-    virtual QString currentMobileCountryCode() = 0; // Mobile Country Code
-    virtual QString currentMobileNetworkCode() = 0; // Mobile Network Code
+    QString currentMobileCountryCode() {return QString();} // Mobile Country Code
+    QString currentMobileNetworkCode() {return QString();} // Mobile Network Code
 
-    virtual QString homeMobileCountryCode() = 0;
-    virtual QString homeMobileNetworkCode() = 0;
+    QString homeMobileCountryCode() {return QString();}
+    QString homeMobileNetworkCode() {return QString();}
 
-    virtual QString networkName(QSystemNetworkInfo::NetworkMode mode) = 0;
-    virtual QString macAddress(QSystemNetworkInfo::NetworkMode mode) = 0;
+    QString networkName(QSystemNetworkInfo::NetworkMode /*mode*/) {return QString();}
+    QString macAddress(QSystemNetworkInfo::NetworkMode /*mode*/) {return QString();}
 
-    virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode) = 0;
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode /*mode*/) {return QNetworkInterface();}
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -145,8 +145,8 @@ public:
 
 
 // display
-    virtual int displayBrightness(int screen) = 0;
-    virtual int colorDepth(int screen) = 0;
+    int displayBrightness(int /*screen*/) {return 0;}
+    int colorDepth(int /*screen*/) {return 0;}
 };
 
 class QSystemStorageInfoPrivate : public QObject
@@ -159,10 +159,10 @@ public:
     virtual ~QSystemStorageInfoPrivate();
 
     // memory
-    virtual qint64 availableDiskSpace(const QString &driveVolume) = 0;
-    virtual qint64 totalDiskSpace(const QString &driveVolume) = 0;
-    virtual QStringList logicalDrives() = 0;
-    virtual QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume) = 0; //returns enum
+    qint64 availableDiskSpace(const QString &/*driveVolume*/) {return 0;}
+    qint64 totalDiskSpace(const QString &/*driveVolume*/) {return 0;}
+    QStringList logicalDrives()  {return QStringList();}
+    QSystemStorageInfo::DriveType typeForDrive(const QString &/*driveVolume*/) {return QSystemStorageInfo::NoDrive;} //returns enum
 };
 
 class QSystemDeviceInfoPrivate : public QObject
@@ -172,26 +172,25 @@ class QSystemDeviceInfoPrivate : public QObject
 public:
 
     QSystemDeviceInfoPrivate(QObject *parent = 0);
-    ~QSystemDeviceInfoPrivate();
+    virtual ~QSystemDeviceInfoPrivate();
 
 // device
 
-    virtual QString imei() = 0;
-    virtual QString imsi() = 0;
-    virtual QString manufacturer() = 0;
-    virtual QString model() = 0;
-    virtual QString productName() = 0;
+    QString imei() {return QString();}
+    QString imsi() {return QString();}
+    QString manufacturer() {return QString();}
+    QString model() {return QString();}
+    QString productName() {return QString();}
 
-    virtual QSystemDeviceInfo::InputMethodFlags inputMethodType() = 0;
+    QSystemDeviceInfo::InputMethodFlags inputMethodType() {QSystemDeviceInfo::InputMethodFlags methods; return methods;}
 
-    virtual int  batteryLevel() const = 0;
+    int  batteryLevel() const {return 0;}
 
-    virtual QSystemDeviceInfo::SimStatus simStatus() = 0;
-    virtual bool isDeviceLocked() = 0;
-    virtual QSystemDeviceInfo::Profile currentProfile() = 0;
+    QSystemDeviceInfo::SimStatus simStatus() {return QSystemDeviceInfo::SimNotAvailable;}
+    bool isDeviceLocked() {return false;}
+    QSystemDeviceInfo::Profile currentProfile() {return QSystemDeviceInfo::UnknownProfile;}
 
-    virtual QSystemDeviceInfo::PowerState currentPowerState() = 0;
-    virtual void setConnection() = 0;
+    QSystemDeviceInfo::PowerState currentPowerState() {return QSystemDeviceInfo::UnknownPower;}
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -209,12 +208,12 @@ class QSystemScreenSaverPrivate : public QObject
 
 public:
     QSystemScreenSaverPrivate(QObject *parent = 0);
-    ~QSystemScreenSaverPrivate();
+    virtual ~QSystemScreenSaverPrivate();
 
-    virtual bool screenSaverInhibited() = 0;
-    virtual bool setScreenSaverInhibit() = 0;
-    virtual bool isScreenLockEnabled() = 0;
-    virtual bool isScreenSaverActive() = 0;
+    bool screenSaverInhibited() {return false;}
+    bool setScreenSaverInhibit() {return false;}
+    bool isScreenLockEnabled() {return false;}
+    bool isScreenSaverActive() {return false;}
 };
 
 QTM_END_NAMESPACE
