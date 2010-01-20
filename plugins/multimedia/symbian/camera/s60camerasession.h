@@ -219,10 +219,7 @@ Q_SIGNALS:
     //for focuscontrol
     void focusLocked();
     void zoomValueChanged(qreal value);
-    //for device control
-    void selectedDeviceChanged(int index);
-    void selectedDeviceChanged(const QString &deviceName);
-    void devicesChanged();
+    
 
 private Q_SLOTS:
     void captureFrame();

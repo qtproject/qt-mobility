@@ -57,10 +57,6 @@ S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *session, QObje
    :QVideoDeviceControl(parent), m_selectedDevice(defaultCameraDevice)
 {
     m_session = qobject_cast<S60CameraSession*>(session);
-    connect(m_session,SIGNAL(selectedDeviceChanged(int)), this, SIGNAL(selectedDeviceChanged(int)) );
-    connect(m_session,SIGNAL(selectedDeviceChanged(const QString &)), this, SIGNAL(selectedDeviceChanged(const QString &)) );
-    connect(m_session,SIGNAL(devicesChanged()), this, SIGNAL(devicesChanged()) );
-
 }
 
 S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
@@ -108,8 +104,14 @@ int S60CameraVideoDeviceControl::selectedDevice() const
 void S60CameraVideoDeviceControl::setSelectedDevice(int index)
 {
     qDebug() << "S60CameraVideoDeviceControl::setSelectedDevice(), index="<<index;
-    m_selectedDevice = index;
     if (m_session) {
+        // inform that we selected new device
+        if (m_selectedDevice != index) {
+            emit selectedDeviceChanged(index);
+            emit selectedDeviceChanged(deviceName(index));
+        }
+        m_selectedDevice = index;
         m_session->setSelectedDevice(m_selectedDevice);
     }
+    m_selectedDevice = index;
 }
