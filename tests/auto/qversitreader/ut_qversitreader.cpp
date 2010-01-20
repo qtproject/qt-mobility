@@ -100,7 +100,7 @@ void UT_QVersitReader::testReading()
 {
     // No I/O device set
     QCOMPARE(mReader->readAll(), QList<QVersitDocument>());
-    QCOMPARE(mReader->error(), QVersitReader::IOError);
+    QVERIFY(mReader->error() != QVersitReader::NoError);
     
     // Device set, no data
     mReader->setDevice(mInputDevice);
