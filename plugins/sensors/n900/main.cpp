@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "n900accelerometer.h"
+#include "n900orientationsensor.h"
 #include "n900lightsensor.h"
 #include "n900proximitysensor.h"
 #include <qsensorplugin.h>
@@ -52,6 +53,13 @@ static QSensorBackend *create_sensor_backend_n900accelerometer(QSensor *sensor)
 {
     if (QFile::exists(ACCELEROMETER_FILE))
         return new n900accelerometer(sensor);
+    return 0;
+}
+
+static QSensorBackend *create_sensor_backend_n900orientationsensor(QSensor *sensor)
+{
+    if (QFile::exists(ACCELEROMETER_FILE))
+        return new n900orientationsensor(sensor);
     return 0;
 }
 
@@ -78,6 +86,7 @@ public:
     {
         qWarning() << "Loaded the N900 plugin";
         REGISTER_STATEMENT(n900accelerometer, "QAccelerometer", QByteArray("n900.accelerometer"));
+        REGISTER_STATEMENT(n900orientationsensor, "QOrientationSensor", QByteArray("n900.orientation"));
         REGISTER_STATEMENT(n900lightsensor, "QAmbientLightSensor", QByteArray("n900.light"));
         REGISTER_STATEMENT(n900proximitysensor, "QProximitySensor", QByteArray("n900.proximity"));
     }
