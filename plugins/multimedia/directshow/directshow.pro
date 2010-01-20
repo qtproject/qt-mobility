@@ -27,3 +27,7 @@ contains(TMP_REQUIRED_HEADERS, qedit.h) {
     include(camera/camera.pri)
 }
 include (player/player.pri)
+
+target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+INSTALLS+=target
+

@@ -114,14 +114,25 @@ contains(QT_CONFIG, declarative) {
         qmlgraphicsvideo_p.h \
         qmlmedia_p.h \
         qmlmediabase_p.h \
-        qmlsound_p.h
+        qsoundeffect_p.h \
+        wavedecoder.h
 
     SOURCES += \
         qmlaudio.cpp \
         qmlgraphicsvideo.cpp \
         qmlmedia.cpp \
         qmlmediabase.cpp \
-        qmlsound.cpp
+        qsoundeffect.cpp \
+        wavedecoder.cpp
+
+    maemo5 {
+        DEFINES += PULSEAUDIO
+        PRIVATE_HEADERS += qsoundeffect_pulse_p.h
+        SOURCES += qsoundeffect_pulse_p.cpp
+        LIBS_PRIVATE += -lpulse
+    }else {
+        PRIVATE_HEADERS += qsoundeffect_null_p.h
+    }
 }
 
 include (experimental/experimental.pri)
