@@ -1362,23 +1362,26 @@ void QSystemStorageInfoPrivate::mountEntries()
     mntent *me = getmntent(mntfp);
     while(me != NULL) {
         struct statfs fs;
-        if(statfs(me->mnt_dir, &fs ) ==0 ) {
-            QString num;
-            // weed out a few types
-            if ( fs.f_type != 0x01021994 //tmpfs
-                 && fs.f_type != 0x9fa0 //procfs
-                 && fs.f_type != 0x1cd1 //
-                 && fs.f_type != 0x62656572
-                 && fs.f_type != 0xabababab // ???
-                 && fs.f_type != 0x52654973
-                 && fs.f_type != 0x42494e4d
-                 && fs.f_type != 0x64626720
-                 && fs.f_type != 0x73636673 //securityfs
-                 && fs.f_type != 0x65735543 //fusectl
-                 ) {
-                if(!mountEntriesMap.keys().contains(me->mnt_dir)
-                    && QString(me->mnt_fsname).contains("/dev")) {
-                    mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+        if(strcmp(me->mnt_type, "cifs") != 0) { //smb has probs with statfs
+            if(statfs(me->mnt_dir, &fs ) ==0 ) {
+                QString num;
+                // weed out a few types
+                if ( fs.f_type != 0x01021994 //tmpfs
+                     && fs.f_type != 0x9fa0 //procfs
+                     && fs.f_type != 0x1cd1 //
+                     && fs.f_type != 0x62656572
+                     && fs.f_type != 0xabababab // ???
+                     && fs.f_type != 0x52654973
+                     && fs.f_type != 0x42494e4d
+                     && fs.f_type != 0x64626720
+                     && fs.f_type != 0x73636673 //securityfs
+                     && fs.f_type != 0x65735543 //fusectl
+
+                     ) {
+                    if(!mountEntriesMap.keys().contains(me->mnt_dir)
+                        && QString(me->mnt_fsname).contains("/dev")) {
+                        mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+                    }
                 }
             }
         }
