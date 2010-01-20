@@ -39,27 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef N900PROXIMITYSENSOR_H
-#define N900PROXIMITYSENSOR_H
-
 #include "n900filebasedsensor.h"
-#include <qproximitysensor.h>
 
-#define PROXIMITY_FILE "/sys/bus/platform/devices/proximity/state"
-
-QTM_USE_NAMESPACE
-
-class n900proximitysensor : public n900filebasedsensor
+n900filebasedsensor::n900filebasedsensor(QSensor *sensor)
+    : QSensorBackend(sensor)
+    , m_timerid(0)
 {
-public:
-    n900proximitysensor(QSensor *sensor);
+    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
+            QSensor::InfrequentUpdates |
+            QSensor::FrequentUpdates |
+            QSensor::TimedUpdates |
+            QSensor::PolledUpdates);
+}
 
-    void poll();
+void n900filebasedsensor::start()
+{
+    if (m_timerid)
+        return;
 
-private:
-    const char *m_filename;
-    QProximityReading m_reading;
-};
+    int interval = m_sensor->updateInterval();
 
-#endif
+    switch (m_sensor->updatePolicy()) {
+    case QSensor::OccasionalUpdates:
+        interval = 5000;
+        break;
+    case QSensor::InfrequentUpdates:
+        interval = 1000;
+        break;
+    case QSensor::Undefined: /* fall through */
+    case QSensor::FrequentUpdates:
+        interval = 100;
+        break;
+    case QSensor::TimedUpdates:
+        // already set
+        break;
+    default:
+        interval = 0;
+        break;
+    }
+
+    if (interval)
+        m_timerid = startTimer(interval);
+}
+
+void n900filebasedsensor::stop()
+{
+    if (m_timerid) {
+        killTimer(m_timerid);
+        m_timerid = 0;
+    }
+}
+
+void n900filebasedsensor::timerEvent(QTimerEvent * /*event*/)
+{
+    poll();
+}
 

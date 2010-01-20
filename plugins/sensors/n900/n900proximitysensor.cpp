@@ -45,37 +45,10 @@
 #include <time.h>
 
 n900proximitysensor::n900proximitysensor(QSensor *sensor)
-    : QSensorBackend(sensor)
-    , m_timerid(0)
+    : n900filebasedsensor(sensor)
     , m_filename(PROXIMITY_FILE)
 {
-    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
-            QSensor::InfrequentUpdates |
-            QSensor::FrequentUpdates |
-            QSensor::TimedUpdates |
-            QSensor::PolledUpdates);
-
     setReading<QProximityReading>(&m_reading);
-}
-
-static int suggestedInterval() { return 0; }
-
-bool n900proximitysensor::start()
-{
-    if (m_timerid)
-        return false;
-
-    if (suggestedInterval())
-        m_timerid = startTimer(suggestedInterval());
-    return true;
-}
-
-void n900proximitysensor::stop()
-{
-    if (m_timerid) {
-        killTimer(m_timerid);
-        m_timerid = -1;
-    }
 }
 
 void n900proximitysensor::poll()
@@ -99,10 +72,5 @@ void n900proximitysensor::poll()
     m_reading.setProximity(proximity);
 
     newReadingAvailable();
-}
-
-void n900proximitysensor::timerEvent(QTimerEvent * /*event*/)
-{
-    poll();
 }
 

@@ -39,26 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef N900PROXIMITYSENSOR_H
-#define N900PROXIMITYSENSOR_H
+#ifndef N900FILEBASEDSENSOR_H
+#define N900FILEBASEDSENSOR_H
 
-#include "n900filebasedsensor.h"
-#include <qproximitysensor.h>
-
-#define PROXIMITY_FILE "/sys/bus/platform/devices/proximity/state"
+#include <qsensorbackend.h>
 
 QTM_USE_NAMESPACE
 
-class n900proximitysensor : public n900filebasedsensor
+class n900filebasedsensor : public QSensorBackend
 {
 public:
-    n900proximitysensor(QSensor *sensor);
+    n900filebasedsensor(QSensor *sensor);
 
-    void poll();
+    void start();
+    void stop();
+    void timerEvent(QTimerEvent * /*event*/);
 
 private:
-    const char *m_filename;
-    QProximityReading m_reading;
+    int m_timerid;
 };
 
 #endif

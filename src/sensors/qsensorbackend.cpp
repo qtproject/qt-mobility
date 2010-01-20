@@ -91,13 +91,14 @@ void QSensorBackend::setReadings(QSensorReading *filter_reading, QSensorReading 
 */
 void QSensorBackend::newReadingAvailable()
 {
-    m_sensor->newReadingAvailable();
+    if (m_sensor->updatePolicy() != QSensor::PolledUpdates)
+        m_sensor->newReadingAvailable();
 }
 
 /*!
     \fn QSensorBackend::start()
 
-    Start reporting values. Returns true if the sensor was able to start.
+    Start reporting values.
 */
 
 /*!
