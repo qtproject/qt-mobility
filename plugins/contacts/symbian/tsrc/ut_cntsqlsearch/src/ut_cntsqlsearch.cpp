@@ -54,13 +54,38 @@ void UT_CntSqlSearch::testPredictiveSearch()
     reference = QString("SELECT * FROM view3 WHERE (first_name_as_number LIKE % 3%) OR (last_name_as_number LIKE % 3%) ORDER BY first_name_as_number ASC;");
     result = mCntSqlSearch->CreatePredictiveSearch(pattern);
     QVERIFY( !result.compare( reference) );
+
+    pattern = QString("33");
+    reference = QString("SELECT contact_id FROM view3 WHERE (first_name_as_number LIKE % 33%) OR (last_name_as_number LIKE % 33%) ORDER BY first_name_as_number ASC;");
+    result = mCntSqlSearch->CreatePredictiveSearch(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("001100");
+    reference = QString("SELECT contact_id FROM view0 WHERE (first_name_as_number LIKE % 001100%) OR (last_name_as_number LIKE % 001100%) ORDER BY first_name_as_number ASC;");
+    result = mCntSqlSearch->CreatePredictiveSearch(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("1");
+    reference = QString("SELECT * FROM view1 WHERE (first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%) ORDER BY first_name_as_number ASC;");
+    result = mCntSqlSearch->CreatePredictiveSearch(pattern);
+    QVERIFY( !result.compare( reference) ); pattern = QString("1");
 }
 
 void UT_CntSqlSearch::testSelectTableView()
 {
-    QString pattern = QString("2");
-    QString reference = QString("view2");;
+    QString pattern = QString("0");
+    QString reference = QString("view0");;
     QString result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("1");
+    reference = QString("view1");;
+    result = mCntSqlSearch->SelectTableView(pattern);
+    QVERIFY( !result.compare( reference) );
+
+    pattern = QString("2");
+    reference = QString("view2");;
+    result = mCntSqlSearch->SelectTableView(pattern);
     QVERIFY( !result.compare( reference) );
 
     pattern = QString("3");

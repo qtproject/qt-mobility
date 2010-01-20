@@ -70,6 +70,16 @@ QString CntSqlSearch::SelectTableView(const QString &pattern)
     int num = firstNumber.toInt();
     switch (num)
         {
+
+        case 0:
+            {
+            view = QString("view0");
+            }
+        break;
+        case 1:
+            {
+            view = QString("view1");
+            }
         break;
         case 2:
             {
@@ -141,9 +151,10 @@ QString CntSqlSearch::CreateSubStringSearch(const QString &pattern)
 {
 QString queryString;
 QStringList numbers;
-if (IsSubStringSearch(pattern))
+numbers = GetNumber(pattern);
+
+if (IsSubStringSearch(pattern) && numbers.count() > 1 )
     {
-    numbers = GetNumber(pattern);
     queryString = CreateStringSearch(pattern) + CreateSpaceStringSearch(numbers);
     }
 else
