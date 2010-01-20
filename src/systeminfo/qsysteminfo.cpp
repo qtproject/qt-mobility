@@ -42,11 +42,10 @@
 #include "qsysteminfo.h"
 
 #ifdef Q_OS_LINUX
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "qsysteminfo_maemo_p.h"
+#else
 #include "qsysteminfo_linux_p.h"
-#ifdef Q_WS_MAEMO_5
-#include "qsysteminfo_linux_maemo5_p.h"
-#elif Q_WS_MAEMO_6
-#include "qsysteminfo_maemo6_p.h"
 #endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
 #endif //Q_OS_LINUX
 
@@ -358,43 +357,18 @@ information from the system.
   This signal is emitted whenever bluetooth state changes, specified by \a on.
 */
 
- /*!
-\fn QSystemInfo::QSystemInfo(QObject *parent)
-   Constructs a QSystemInfo object with the given \a parent.
- */
-
-#ifdef Q_OS_LINUX
-#ifdef Q_WS_MAEMO_5
-Q_GLOBAL_STATIC(QSystemInfoLinuxMaemo5Private, sysinfoPrivate)
-Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxMaemo5Private, netInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxMaemo5Private, displayInfoPrivate)
-Q_GLOBAL_STATIC(QSystemStorageInfoLinuxMaemo5Private, storageInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxMaemo5Private, deviceInfoPrivate)
-Q_GLOBAL_STATIC(QSystemScreenSaverLinuxMaemo5Private, screenSaverPrivate)
-#elif Q_WS_MAEMO_6
-Q_GLOBAL_STATIC(QSystemInfoLinuxMaemo6Private, sysinfoPrivate)
-Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxMaemo6Private, netInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxMaemo6Private, displayInfoPrivate)
-Q_GLOBAL_STATIC(QSystemStorageInfoLinuxMaemo6Private, storageInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxMaemo6Private, deviceInfoPrivate)
-Q_GLOBAL_STATIC(QSystemScreenSaverLinuxMaemo6Private, screenSaverPrivate)
-#else //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
-Q_GLOBAL_STATIC(QSystemInfoLinuxDesktopPrivate, sysinfoPrivate)
-Q_GLOBAL_STATIC(QSystemNetworkInfoLinuxDesktopPrivate, netInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDisplayInfoLinuxDesktopPrivate, displayInfoPrivate)
-Q_GLOBAL_STATIC(QSystemStorageInfoLinuxDesktopPrivate, storageInfoPrivate)
-Q_GLOBAL_STATIC(QSystemDeviceInfoLinuxDesktopPrivate, deviceInfoPrivate)
-Q_GLOBAL_STATIC(QSystemScreenSaverLinuxDesktopPrivate, screenSaverPrivate)
-#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
-#else //Q_OS_LINUX
 Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 Q_GLOBAL_STATIC(QSystemScreenSaverPrivate, screenSaverPrivate)
-#endif
 
+
+ /*!
+\fn QSystemInfo::QSystemInfo(QObject *parent)
+   Constructs a QSystemInfo object with the given \a parent.
+ */
 
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent), d(sysinfoPrivate())

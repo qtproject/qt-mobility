@@ -42,51 +42,51 @@
 
 QTM_BEGIN_NAMESPACE
 
-QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent) : QObject(parent)
+QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }
 
-QSystemInfoPrivate::~QSystemInfoPrivate()
+QSystemInfoLinuxCommonPrivate::~QSystemInfoLinuxCommonPrivate()
 {
 }
 
-QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent) : QObject(parent)
+QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }
 
-QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
+QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 {
 }
 
-QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent) : QObject(parent)
+QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }
 
-QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
+QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 {
 }
 
-QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent) : QObject(parent)
+QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }
 
-QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
+QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
 {
 }
 
-QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent) : QObject(parent)
+QSystemDeviceInfoLinuxCommonPrivate::QSystemDeviceInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }
 
-QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
+QSystemDeviceInfoLinuxCommonPrivate::~QSystemDeviceInfoLinuxCommonPrivate()
 {
 }
 
-QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent) : QObject(parent)
+QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }
 
-QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
+QSystemScreenSaverLinuxCommonPrivate::~QSystemScreenSaverLinuxCommonPrivate()
 {
 }
 

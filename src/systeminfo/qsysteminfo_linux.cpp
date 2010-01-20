@@ -131,19 +131,19 @@ static bool halAvailable()
 
 bool halIsAvailable;
 //////// QSystemInfo
-QSystemInfoLinuxDesktopPrivate::QSystemInfoLinuxDesktopPrivate(QSystemInfoPrivate *parent)
- : QSystemInfoPrivate(parent)
+QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
+ : QSystemInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
     langCached = currentLanguage();
     startLanguagePolling();
 }
 
-QSystemInfoLinuxDesktopPrivate::~QSystemInfoLinuxDesktopPrivate()
+QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-void QSystemInfoLinuxDesktopPrivate::startLanguagePolling()
+void QSystemInfoPrivate::startLanguagePolling()
 {
     QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
     if(langCached.isEmpty()) {
@@ -159,7 +159,7 @@ void QSystemInfoLinuxDesktopPrivate::startLanguagePolling()
 }
 
 // 2 letter ISO 639-1
-QString QSystemInfoLinuxDesktopPrivate::currentLanguage() const
+QString QSystemInfoPrivate::currentLanguage() const
 {
     QString lang;
     if(langCached.isEmpty()) {
@@ -174,7 +174,7 @@ QString QSystemInfoLinuxDesktopPrivate::currentLanguage() const
 }
 
 // 2 letter ISO 639-1
-QStringList QSystemInfoLinuxDesktopPrivate::availableLanguages() const
+QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
     QStringList langList;
@@ -196,7 +196,7 @@ QStringList QSystemInfoLinuxDesktopPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-QString QSystemInfoLinuxDesktopPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     QString errorStr = "Not Available";
     bool useDate = false;
@@ -261,13 +261,13 @@ QString QSystemInfoLinuxDesktopPrivate::version(QSystemInfo::Version type,  cons
 
 
 //2 letter ISO 3166-1
-QString QSystemInfoLinuxDesktopPrivate::currentCountryCode() const
+QString QSystemInfoPrivate::currentCountryCode() const
 {
     return QLocale::system().name().mid(3,2);
 }
 
 #if !defined(QT_NO_DBUS)
-bool QSystemInfoLinuxDesktopPrivate::hasHalDeviceFeature(const QString &param)
+bool QSystemInfoPrivate::hasHalDeviceFeature(const QString &param)
 {
     QHalInterface halIface;
     QStringList halDevices = halIface.getAllDevices();
@@ -279,7 +279,7 @@ bool QSystemInfoLinuxDesktopPrivate::hasHalDeviceFeature(const QString &param)
     return false;
 }
 
-bool QSystemInfoLinuxDesktopPrivate::hasHalUsbFeature(qint32 usbClass)
+bool QSystemInfoPrivate::hasHalUsbFeature(qint32 usbClass)
 {
     QHalInterface halIface;
     QStringList halDevices = halIface.getAllDevices();
@@ -297,7 +297,7 @@ bool QSystemInfoLinuxDesktopPrivate::hasHalUsbFeature(qint32 usbClass)
 }
 #endif
 
-bool QSystemInfoLinuxDesktopPrivate::hasSysFeature(const QString &featureStr)
+bool QSystemInfoPrivate::hasSysFeature(const QString &featureStr)
 {
     QString sysPath = "/sys/class/";
     QDir sysDir(sysPath);
@@ -316,7 +316,7 @@ bool QSystemInfoLinuxDesktopPrivate::hasSysFeature(const QString &featureStr)
     return false;
 }
 
-bool QSystemInfoLinuxDesktopPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
+bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
     switch (feature) {
@@ -458,20 +458,20 @@ bool QSystemInfoLinuxDesktopPrivate::hasFeatureSupported(QSystemInfo::Feature fe
 }
 
 //////// QSystemNetworkInfo
-QSystemNetworkInfoLinuxDesktopPrivate::QSystemNetworkInfoLinuxDesktopPrivate(QSystemNetworkInfoPrivate *parent)
-        : QSystemNetworkInfoPrivate(parent)
+QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
+        : QSystemNetworkInfoLinuxCommonPrivate(parent)
 {
 #if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
 #endif
 }
 
-QSystemNetworkInfoLinuxDesktopPrivate::~QSystemNetworkInfoLinuxDesktopPrivate()
+QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
 #if !defined(QT_NO_NETWORKMANAGER)
-void QSystemNetworkInfoLinuxDesktopPrivate::setupNmConnections()
+void QSystemNetworkInfoPrivate::setupNmConnections()
 {
     iface = new QNetworkManagerInterface();
     QList<QDBusObjectPath> list = iface->getDevices();
@@ -514,12 +514,12 @@ void QSystemNetworkInfoLinuxDesktopPrivate::setupNmConnections()
 
 }
 
-void QSystemNetworkInfoLinuxDesktopPrivate::updateDeviceInterfaceState(const QString &/*path*/, quint32 /*nmState*/)
+void QSystemNetworkInfoPrivate::updateDeviceInterfaceState(const QString &/*path*/, quint32 /*nmState*/)
 {
  //   qWarning() << __FUNCTION__ << path << nmState;
 }
 
-void QSystemNetworkInfoLinuxDesktopPrivate::nmPropertiesChanged( const QString & path, QMap<QString,QVariant> map)
+void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<QString,QVariant> map)
 {
     QMapIterator<QString, QVariant> i(map);
     while (i.hasNext()) {
@@ -626,7 +626,7 @@ void QSystemNetworkInfoLinuxDesktopPrivate::nmPropertiesChanged( const QString &
     }
 }
 
-void QSystemNetworkInfoLinuxDesktopPrivate::nmAPPropertiesChanged( const QString & /*path*/, QMap<QString,QVariant> map)
+void QSystemNetworkInfoPrivate::nmAPPropertiesChanged( const QString & /*path*/, QMap<QString,QVariant> map)
 {
    QMapIterator<QString, QVariant> i(map);
    while (i.hasNext()) {
@@ -642,7 +642,7 @@ void QSystemNetworkInfoLinuxDesktopPrivate::nmAPPropertiesChanged( const QString
 
 #endif
 
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxDesktopPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
@@ -704,7 +704,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxDesktopPrivate::network
 }
 
 #if !defined(QT_NO_DBUS)
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxDesktopPrivate::getBluetoothNetStatus()
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::getBluetoothNetStatus()
 {
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     QDBusInterface *connectionInterface;
@@ -731,7 +731,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxDesktopPrivate::getBlue
 #endif
 
 
-int QSystemNetworkInfoLinuxDesktopPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
+int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
@@ -792,39 +792,39 @@ int QSystemNetworkInfoLinuxDesktopPrivate::networkSignalStrength(QSystemNetworkI
     return -1;
 }
 
-int QSystemNetworkInfoLinuxDesktopPrivate::cellId()
+int QSystemNetworkInfoPrivate::cellId()
 {
     return -1;
 }
 
-int QSystemNetworkInfoLinuxDesktopPrivate::locationAreaCode()
+int QSystemNetworkInfoPrivate::locationAreaCode()
 {
     return -1;
 }
 
 // Mobile Country Code
-QString QSystemNetworkInfoLinuxDesktopPrivate::currentMobileCountryCode()
+QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
     return QString();
 }
 
 // Mobile Network Code
-QString QSystemNetworkInfoLinuxDesktopPrivate::currentMobileNetworkCode()
+QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
     return QString();
 }
 
-QString QSystemNetworkInfoLinuxDesktopPrivate::homeMobileCountryCode()
+QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
     return QString();
 }
 
-QString QSystemNetworkInfoLinuxDesktopPrivate::homeMobileNetworkCode()
+QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
     return QString();
 }
 
-QString QSystemNetworkInfoLinuxDesktopPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QString netname = "";
 
@@ -904,7 +904,7 @@ QString QSystemNetworkInfoLinuxDesktopPrivate::networkName(QSystemNetworkInfo::N
     return netname;
 }
 
-QString QSystemNetworkInfoLinuxDesktopPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
+QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
         case QSystemNetworkInfo::WlanMode:
@@ -962,7 +962,7 @@ QString QSystemNetworkInfoLinuxDesktopPrivate::macAddress(QSystemNetworkInfo::Ne
     return QString();
 }
 
-QNetworkInterface QSystemNetworkInfoLinuxDesktopPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
+QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
 #if !defined(QT_NO_DBUS)
     switch(mode) {
@@ -1090,7 +1090,7 @@ QNetworkInterface QSystemNetworkInfoLinuxDesktopPrivate::interfaceForMode(QSyste
     return QNetworkInterface();
 }
 
-bool QSystemNetworkInfoLinuxDesktopPrivate::isDefaultInterface(const QString &deviceName)
+bool QSystemNetworkInfoPrivate::isDefaultInterface(const QString &deviceName)
 {
     QFile routeFilex("/proc/net/route");
     if(routeFilex.exists() && routeFilex.open(QIODevice::ReadOnly
@@ -1112,12 +1112,12 @@ bool QSystemNetworkInfoLinuxDesktopPrivate::isDefaultInterface(const QString &de
 }
 
 #if !defined(QT_NO_DBUS)
-int QSystemNetworkInfoLinuxDesktopPrivate::getBluetoothRssi()
+int QSystemNetworkInfoPrivate::getBluetoothRssi()
 {
     return 0;
 }
 
-QString QSystemNetworkInfoLinuxDesktopPrivate::getBluetoothInfo(const QString &file)
+QString QSystemNetworkInfoPrivate::getBluetoothInfo(const QString &file)
 {
     QString sysPath = "/sys/class/bluetooth/";
     QDir sysDir(sysPath);
@@ -1139,17 +1139,17 @@ QString QSystemNetworkInfoLinuxDesktopPrivate::getBluetoothInfo(const QString &f
 #endif
 
 //////// QSystemDisplayInfo
-QSystemDisplayInfoLinuxDesktopPrivate::QSystemDisplayInfoLinuxDesktopPrivate(QSystemDisplayInfoPrivate *parent)
-        : QSystemDisplayInfoPrivate(parent)
+QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
+        : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
 }
 
-QSystemDisplayInfoLinuxDesktopPrivate::~QSystemDisplayInfoLinuxDesktopPrivate()
+QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
-int QSystemDisplayInfoLinuxDesktopPrivate::displayBrightness(int screen)
+int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
     Q_UNUSED(screen);
     if(halIsAvailable) {
@@ -1236,7 +1236,7 @@ int QSystemDisplayInfoLinuxDesktopPrivate::displayBrightness(int screen)
     return -1;
 }
 
-int QSystemDisplayInfoLinuxDesktopPrivate::colorDepth(int screen)
+int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
 #ifdef Q_WS_X11
     QDesktopWidget wid;
@@ -1248,18 +1248,18 @@ int QSystemDisplayInfoLinuxDesktopPrivate::colorDepth(int screen)
 
 
 //////// QSystemStorageInfo
-QSystemStorageInfoLinuxDesktopPrivate::QSystemStorageInfoLinuxDesktopPrivate(QSystemStorageInfoPrivate *parent)
-        : QSystemStorageInfoPrivate(parent)
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
+        : QSystemStorageInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
 }
 
 
-QSystemStorageInfoLinuxDesktopPrivate::~QSystemStorageInfoLinuxDesktopPrivate()
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 
-qint64 QSystemStorageInfoLinuxDesktopPrivate::availableDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     struct statfs fs;
@@ -1271,7 +1271,7 @@ qint64 QSystemStorageInfoLinuxDesktopPrivate::availableDiskSpace(const QString &
     return 0;
 }
 
-qint64 QSystemStorageInfoLinuxDesktopPrivate::totalDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     struct statfs fs;
@@ -1283,7 +1283,7 @@ qint64 QSystemStorageInfoLinuxDesktopPrivate::totalDiskSpace(const QString &driv
     return 0;
 }
 
-QSystemStorageInfo::DriveType QSystemStorageInfoLinuxDesktopPrivate::typeForDrive(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1349,13 +1349,13 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxDesktopPrivate::typeForDriv
     return QSystemStorageInfo::InternalDrive;
 }
 
-QStringList QSystemStorageInfoLinuxDesktopPrivate::logicalDrives()
+QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     mountEntries();
     return mountEntriesMap.keys();
 }
 
-void QSystemStorageInfoLinuxDesktopPrivate::mountEntries()
+void QSystemStorageInfoPrivate::mountEntries()
 {
     mountEntriesMap.clear();
     FILE *mntfp = setmntent( _PATH_MOUNTED/*_PATH_MNTTAB*//*"/proc/mounts"*/, "r" );
@@ -1389,8 +1389,8 @@ void QSystemStorageInfoLinuxDesktopPrivate::mountEntries()
 
 
 //////// QSystemDeviceInfo
-QSystemDeviceInfoLinuxDesktopPrivate::QSystemDeviceInfoLinuxDesktopPrivate(QSystemDeviceInfoPrivate *parent)
-        : QSystemDeviceInfoPrivate(parent)
+QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
+        : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
     setConnection();
@@ -1399,11 +1399,11 @@ QSystemDeviceInfoLinuxDesktopPrivate::QSystemDeviceInfoLinuxDesktopPrivate(QSyst
 #endif
 }
 
-QSystemDeviceInfoLinuxDesktopPrivate::~QSystemDeviceInfoLinuxDesktopPrivate()
+QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
 
-void QSystemDeviceInfoLinuxDesktopPrivate::setConnection()
+void QSystemDeviceInfoPrivate::setConnection()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1466,7 +1466,7 @@ void QSystemDeviceInfoLinuxDesktopPrivate::setConnection()
 
 
 #if !defined(QT_NO_DBUS)
-void QSystemDeviceInfoLinuxDesktopPrivate::halChanged(int,QVariantList map)
+void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
 //       qWarning() << __FUNCTION__ << map.at(i).toString();
@@ -1494,12 +1494,12 @@ void QSystemDeviceInfoLinuxDesktopPrivate::halChanged(int,QVariantList map)
 }
 #endif
 
-QSystemDeviceInfo::Profile QSystemDeviceInfoLinuxDesktopPrivate::currentProfile()
+QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
     return QSystemDeviceInfo::UnknownProfile;
 }
 
-QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxDesktopPrivate::inputMethodType()
+QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
     QSystemDeviceInfo::InputMethodFlags methods = 0;
     if(halIsAvailable) {
@@ -1570,19 +1570,19 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxDesktopPrivate::inputM
     return methods;
 }
 
-QString QSystemDeviceInfoLinuxDesktopPrivate::imei()
+QString QSystemDeviceInfoPrivate::imei()
 {
 //    if(this->getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
         return "Sim Not Available";
 }
 
-QString QSystemDeviceInfoLinuxDesktopPrivate::imsi()
+QString QSystemDeviceInfoPrivate::imsi()
 {
 //    if(getSimStatus() == QSystemDeviceInfo::SimNotAvailable)
         return "Sim Not Available";
 }
 
-QString QSystemDeviceInfoLinuxDesktopPrivate::manufacturer()
+QString QSystemDeviceInfoPrivate::manufacturer()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1622,7 +1622,7 @@ QString QSystemDeviceInfoLinuxDesktopPrivate::manufacturer()
     return QString();
 }
 
-QString QSystemDeviceInfoLinuxDesktopPrivate::model()
+QString QSystemDeviceInfoPrivate::model()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1654,7 +1654,7 @@ QString QSystemDeviceInfoLinuxDesktopPrivate::model()
     return QString();
 }
 
-QString QSystemDeviceInfoLinuxDesktopPrivate::productName()
+QString QSystemDeviceInfoPrivate::productName()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1719,7 +1719,7 @@ QString QSystemDeviceInfoLinuxDesktopPrivate::productName()
     return QString();
 }
 
-int QSystemDeviceInfoLinuxDesktopPrivate::batteryLevel() const
+int QSystemDeviceInfoPrivate::batteryLevel() const
 {
     float levelWhenFull = 0.0;
     float level = 0.0;
@@ -1791,14 +1791,14 @@ int QSystemDeviceInfoLinuxDesktopPrivate::batteryLevel() const
     return 0;
 }
 
-QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxDesktopPrivate::simStatus()
+QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
-bool QSystemDeviceInfoLinuxDesktopPrivate::isDeviceLocked()
+bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {    
-    QSystemScreenSaverLinuxDesktopPrivate priv;
+    QSystemScreenSaverPrivate priv;
 
     if(priv.isScreenLockEnabled()
         && priv.isScreenSaverActive()) {
@@ -1808,7 +1808,7 @@ bool QSystemDeviceInfoLinuxDesktopPrivate::isDeviceLocked()
     return false;
 }
 
- QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxDesktopPrivate::currentPowerState()
+ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
  {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
@@ -1861,7 +1861,7 @@ bool QSystemDeviceInfoLinuxDesktopPrivate::isDeviceLocked()
  }
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoLinuxDesktopPrivate::setupBluetooth()
+ void QSystemDeviceInfoPrivate::setupBluetooth()
  {
      QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
@@ -1893,7 +1893,7 @@ bool QSystemDeviceInfoLinuxDesktopPrivate::isDeviceLocked()
 #endif
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoLinuxDesktopPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
+ void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
  {
      qWarning() << str << v.variant().toBool();
      emit bluetoothStateChanged(v.variant().toBool());
@@ -1902,19 +1902,19 @@ bool QSystemDeviceInfoLinuxDesktopPrivate::isDeviceLocked()
 
  //////////////
  ///////
- QSystemScreenSaverLinuxDesktopPrivate::QSystemScreenSaverLinuxDesktopPrivate(QSystemScreenSaverPrivate *parent)
-         : QSystemScreenSaverPrivate(parent)
+ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
+         : QSystemScreenSaverLinuxCommonPrivate(parent)
  {
      kdeIsRunning = false;
      gnomeIsRunning = false;
      whichWMRunning();
  }
 
- QSystemScreenSaverLinuxDesktopPrivate::~QSystemScreenSaverLinuxDesktopPrivate()
+ QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
  }
 
- bool QSystemScreenSaverLinuxDesktopPrivate::setScreenSaverInhibit()
+ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
      if(kdeIsRunning || gnomeIsRunning) {
 #if !defined(QT_NO_DBUS)
@@ -1962,7 +1962,7 @@ bool QSystemDeviceInfoLinuxDesktopPrivate::isDeviceLocked()
 }
 
 
-bool QSystemScreenSaverLinuxDesktopPrivate::screenSaverInhibited()
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
     if(kdeIsRunning) {
         QString kdeSSConfig;
@@ -1998,7 +1998,7 @@ bool QSystemScreenSaverLinuxDesktopPrivate::screenSaverInhibited()
     return false;
 }
 
-void QSystemScreenSaverLinuxDesktopPrivate::whichWMRunning()
+void QSystemScreenSaverPrivate::whichWMRunning()
 {
 #if !defined(QT_NO_DBUS)
     QDBusConnection dbusConnection = QDBusConnection::sessionBus();
@@ -2022,7 +2022,7 @@ void QSystemScreenSaverLinuxDesktopPrivate::whichWMRunning()
 #endif
 }
 
-bool QSystemScreenSaverLinuxDesktopPrivate::isScreenLockEnabled()
+bool QSystemScreenSaverPrivate::isScreenLockEnabled()
 {
     if(kdeIsRunning) {
         QString kdeSSConfig;
@@ -2043,7 +2043,7 @@ bool QSystemScreenSaverLinuxDesktopPrivate::isScreenLockEnabled()
    return false;
 }
 
-bool QSystemScreenSaverLinuxDesktopPrivate::isScreenSaverActive()
+bool QSystemScreenSaverPrivate::isScreenSaverActive()
 {
     if(kdeIsRunning || gnomeIsRunning) {
 #if !defined(QT_NO_DBUS)

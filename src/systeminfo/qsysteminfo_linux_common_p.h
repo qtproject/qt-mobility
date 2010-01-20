@@ -74,14 +74,14 @@ QT_END_NAMESPACE
 QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfo;
-class QSystemInfoPrivate : public QObject
+class QSystemInfoLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
 
 public:
 
-    QSystemInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemInfoPrivate();
+    QSystemInfoLinuxCommonPrivate(QObject *parent = 0);
+    virtual ~QSystemInfoLinuxCommonPrivate();
 // general
     QString currentLanguage() const {return QString();} // 2 letter ISO 639-1
     QStringList availableLanguages() const {return QStringList();}	 // 2 letter ISO 639-1
@@ -100,14 +100,14 @@ class QNetworkManagerInterfaceDeviceWired;
 class QNetworkManagerInterfaceDeviceWireless;
 class QNetworkManagerInterfaceAccessPoint;
 
-class QSystemNetworkInfoPrivate : public QObject
+class QSystemNetworkInfoLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
 
 public:
 
-    QSystemNetworkInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemNetworkInfoPrivate();
+    QSystemNetworkInfoLinuxCommonPrivate(QObject *parent = 0);
+    virtual ~QSystemNetworkInfoLinuxCommonPrivate();
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode /*mode*/) {return QSystemNetworkInfo::UndefinedStatus;}
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode /*mode*/) {return -1;}
@@ -134,14 +134,14 @@ Q_SIGNALS:
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 };
 
-class QSystemDisplayInfoPrivate : public QObject
+class QSystemDisplayInfoLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
 
 public:
 
-    QSystemDisplayInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemDisplayInfoPrivate();
+    QSystemDisplayInfoLinuxCommonPrivate(QObject *parent = 0);
+    virtual ~QSystemDisplayInfoLinuxCommonPrivate();
 
 
 // display
@@ -149,14 +149,14 @@ public:
     int colorDepth(int /*screen*/) {return 0;}
 };
 
-class QSystemStorageInfoPrivate : public QObject
+class QSystemStorageInfoLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
 
 public:
 
-    QSystemStorageInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemStorageInfoPrivate();
+    QSystemStorageInfoLinuxCommonPrivate(QObject *parent = 0);
+    virtual ~QSystemStorageInfoLinuxCommonPrivate();
 
     // memory
     qint64 availableDiskSpace(const QString &/*driveVolume*/) {return 0;}
@@ -165,14 +165,14 @@ public:
     QSystemStorageInfo::DriveType typeForDrive(const QString &/*driveVolume*/) {return QSystemStorageInfo::NoDrive;} //returns enum
 };
 
-class QSystemDeviceInfoPrivate : public QObject
+class QSystemDeviceInfoLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
 
 public:
 
-    QSystemDeviceInfoPrivate(QObject *parent = 0);
-    virtual ~QSystemDeviceInfoPrivate();
+    QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
+    virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
 // device
 
@@ -202,13 +202,13 @@ Q_SIGNALS:
 };
 
 
-class QSystemScreenSaverPrivate : public QObject
+class QSystemScreenSaverLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
 
 public:
-    QSystemScreenSaverPrivate(QObject *parent = 0);
-    virtual ~QSystemScreenSaverPrivate();
+    QSystemScreenSaverLinuxCommonPrivate(QObject *parent = 0);
+    virtual ~QSystemScreenSaverLinuxCommonPrivate();
 
     bool screenSaverInhibited() {return false;}
     bool setScreenSaverInhibit() {return false;}

@@ -75,14 +75,14 @@ QT_END_NAMESPACE
 QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfo;
-class QSystemInfoLinuxMaemoPrivate : public QSystemInfoPrivate
+class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemInfoLinuxMaemoPrivate(QSystemInfoPrivate *parent = 0);
-    virtual ~QSystemInfoLinuxMaemoPrivate();
+    QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
+    virtual ~QSystemInfoPrivate();
 // general
     QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
@@ -114,14 +114,14 @@ class QNetworkManagerInterfaceDeviceWired;
 class QNetworkManagerInterfaceDeviceWireless;
 class QNetworkManagerInterfaceAccessPoint;
 
-class QSystemNetworkInfoLinuxMaemoPrivate : public QSystemNetworkInfoPrivate
+class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemNetworkInfoLinuxMaemoPrivate(QSystemNetworkInfoPrivate *parent = 0);
-    virtual ~QSystemNetworkInfoLinuxMaemoPrivate();
+    QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
+    virtual ~QSystemNetworkInfoPrivate();
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
@@ -149,14 +149,14 @@ protected:
 #endif
 };
 
-class QSystemDisplayInfoLinuxMaemoPrivate : public QSystemDisplayInfoPrivate
+class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemDisplayInfoLinuxMaemoPrivate(QSystemDisplayInfoPrivate *parent = 0);
-    virtual ~QSystemDisplayInfoLinuxMaemoPrivate();
+    QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
+    virtual ~QSystemDisplayInfoPrivate();
 
 
 // display
@@ -164,14 +164,14 @@ public:
     int colorDepth(int screen);
 };
 
-class QSystemStorageInfoLinuxMaemoPrivate : public QSystemStorageInfoPrivate
+class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemStorageInfoLinuxMaemoPrivate(QSystemStorageInfoPrivate *parent = 0);
-    virtual ~QSystemStorageInfoLinuxMaemoPrivate();
+    QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
+    virtual ~QSystemStorageInfoPrivate();
 
     // memory
     qint64 availableDiskSpace(const QString &driveVolume);
@@ -185,14 +185,14 @@ protected:
 
 };
 
-class QSystemDeviceInfoLinuxMaemoPrivate : public QSystemDeviceInfoPrivate
+class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemDeviceInfoLinuxMaemoPrivate(QSystemDeviceInfoPrivate *parent = 0);
-    ~QSystemDeviceInfoLinuxMaemoPrivate();
+    QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
+    ~QSystemDeviceInfoPrivate();
 
 // device
 
@@ -226,13 +226,13 @@ private Q_SLOTS:
 };
 
 
-class QSystemScreenSaverLinuxMaemoPrivate : public QSystemScreenSaverPrivate
+class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
-    QSystemScreenSaverLinuxMaemoPrivate(QSystemScreenSaverPrivate *parent = 0);
-    ~QSystemScreenSaverLinuxMaemoPrivate();
+    QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent = 0);
+    ~QSystemScreenSaverPrivate();
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();

@@ -78,14 +78,6 @@ unix: {
        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
        pkgconfig.files = QtSystemInfo.pc
     }
-    maemo5: {
-        HEADERS += qsysteminfo_linux_maemo5_p.h
-        SOURCES += qsysteminfo_linux_maemo5.cpp
-    }
-    maemo6: {
-        HEADERS += qsysteminfo_linux_maemo6_p.h
-        SOURCES += qsysteminfo_linux_maemo6.cpp
-    }
 
     mac: {
         SOURCES += qsysteminfo_mac.mm

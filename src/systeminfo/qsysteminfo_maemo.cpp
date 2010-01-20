@@ -132,19 +132,19 @@ QTM_BEGIN_NAMESPACE
 
 bool halIsAvailable;
 //////// QSystemInfo
-QSystemInfoLinuxMaemoPrivate::QSystemInfoLinuxMaemoPrivate(QSystemInfoPrivate *parent)
- : QSystemInfoPrivate(parent)
+QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
+ : QSystemInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
     langCached = currentLanguage();
     startLanguagePolling();
 }
 
-QSystemInfoLinuxMaemoPrivate::~QSystemInfoLinuxMaemoPrivate()
+QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-void QSystemInfoLinuxMaemoPrivate::startLanguagePolling()
+void QSystemInfoPrivate::startLanguagePolling()
 {
     QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
     if(langCached.isEmpty()) {
@@ -160,7 +160,7 @@ void QSystemInfoLinuxMaemoPrivate::startLanguagePolling()
 }
 
 // 2 letter ISO 639-1
-QString QSystemInfoLinuxMaemoPrivate::currentLanguage() const
+QString QSystemInfoPrivate::currentLanguage() const
 {
     QString lang;
     if(langCached.isEmpty()) {
@@ -175,8 +175,22 @@ QString QSystemInfoLinuxMaemoPrivate::currentLanguage() const
 }
 
 // 2 letter ISO 639-1
-QStringList QSystemInfoLinuxMaemoPrivate::availableLanguages() const
+QStringList QSystemInfoPrivate::availableLanguages() const
 {
+#ifdef Q_WS_MAEMO_5
+    QStringList languages;
+
+    GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
+    QStringList locales = languagesItem.value().toStringList();
+
+    foreach(QString locale, locales) {
+        languages << locale.mid(0,2);
+    }
+    languages << currentLanguage();
+    languages.removeDuplicates();
+
+    return languages;
+#else
     QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
     QStringList langList;
 
@@ -194,10 +208,11 @@ QStringList QSystemInfoLinuxMaemoPrivate::availableLanguages() const
         }
     }
     return QStringList() << currentLanguage();
+#endif
 }
 
 // "major.minor.build" format.
-QString QSystemInfoLinuxMaemoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     QString errorStr = "Not Available";
     bool useDate = false;
@@ -258,13 +273,13 @@ QString QSystemInfoLinuxMaemoPrivate::version(QSystemInfo::Version type,  const 
 
 
 //2 letter ISO 3166-1
-QString QSystemInfoLinuxMaemoPrivate::currentCountryCode() const
+QString QSystemInfoPrivate::currentCountryCode() const
 {
     return QLocale::system().name().mid(3,2);
 }
 
 #if !defined(QT_NO_DBUS)
-bool QSystemInfoLinuxMaemoPrivate::hasHalDeviceFeature(const QString &param)
+bool QSystemInfoPrivate::hasHalDeviceFeature(const QString &param)
 {
     QHalInterface halIface;
     QStringList halDevices = halIface.getAllDevices();
@@ -276,7 +291,7 @@ bool QSystemInfoLinuxMaemoPrivate::hasHalDeviceFeature(const QString &param)
     return false;
 }
 
-bool QSystemInfoLinuxMaemoPrivate::hasHalUsbFeature(qint32 usbClass)
+bool QSystemInfoPrivate::hasHalUsbFeature(qint32 usbClass)
 {
     QHalInterface halIface;
     QStringList halDevices = halIface.getAllDevices();
@@ -294,7 +309,7 @@ bool QSystemInfoLinuxMaemoPrivate::hasHalUsbFeature(qint32 usbClass)
 }
 #endif
 
-bool QSystemInfoLinuxMaemoPrivate::hasSysFeature(const QString &featureStr)
+bool QSystemInfoPrivate::hasSysFeature(const QString &featureStr)
 {
     QString sysPath = "/sys/class/";
     QDir sysDir(sysPath);
@@ -313,7 +328,7 @@ bool QSystemInfoLinuxMaemoPrivate::hasSysFeature(const QString &featureStr)
     return false;
 }
 
-bool QSystemInfoLinuxMaemoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
+bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
     switch (feature) {
@@ -474,17 +489,17 @@ bool QSystemInfoLinuxMaemoPrivate::hasFeatureSupported(QSystemInfo::Feature feat
 }
 
 //////// QSystemNetworkInfo
-QSystemNetworkInfoLinuxMaemoPrivate::QSystemNetworkInfoLinuxMaemoPrivate(QSystemNetworkInfoPrivate *parent)
-        : QSystemNetworkInfoPrivate(parent)
+QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
+        : QSystemNetworkInfoLinuxCommonPrivate(parent)
 {
 }
 
-QSystemNetworkInfoLinuxMaemoPrivate::~QSystemNetworkInfoLinuxMaemoPrivate()
+QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
 
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxMaemoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
     case QSystemNetworkInfo::GsmMode:
@@ -563,7 +578,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxMaemoPrivate::networkSt
 }
 
 #if !defined(QT_NO_DBUS)
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxMaemoPrivate::getBluetoothNetStatus()
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::getBluetoothNetStatus()
 {
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     QDBusInterface *connectionInterface;
@@ -590,7 +605,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxMaemoPrivate::getBlueto
 #endif
 
 
-int QSystemNetworkInfoLinuxMaemoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
+int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
@@ -654,39 +669,39 @@ int QSystemNetworkInfoLinuxMaemoPrivate::networkSignalStrength(QSystemNetworkInf
     return -1;
 }
 
-int QSystemNetworkInfoLinuxMaemoPrivate::cellId()
+int QSystemNetworkInfoPrivate::cellId()
 {
     return -1;
 }
 
-int QSystemNetworkInfoLinuxMaemoPrivate::locationAreaCode()
+int QSystemNetworkInfoPrivate::locationAreaCode()
 {
     return -1;
 }
 
 // Mobile Country Code
-QString QSystemNetworkInfoLinuxMaemoPrivate::currentMobileCountryCode()
+QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
     return QString();
 }
 
 // Mobile Network Code
-QString QSystemNetworkInfoLinuxMaemoPrivate::currentMobileNetworkCode()
+QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
     return QString();
 }
 
-QString QSystemNetworkInfoLinuxMaemoPrivate::homeMobileCountryCode()
+QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
     return QString();
 }
 
-QString QSystemNetworkInfoLinuxMaemoPrivate::homeMobileNetworkCode()
+QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
     return QString();
 }
 
-QString QSystemNetworkInfoLinuxMaemoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
+QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QString netname = "";
 
@@ -766,7 +781,7 @@ QString QSystemNetworkInfoLinuxMaemoPrivate::networkName(QSystemNetworkInfo::Net
     return netname;
 }
 
-QString QSystemNetworkInfoLinuxMaemoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
+QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
         case QSystemNetworkInfo::WlanMode:
@@ -824,7 +839,7 @@ QString QSystemNetworkInfoLinuxMaemoPrivate::macAddress(QSystemNetworkInfo::Netw
     return QString();
 }
 
-QNetworkInterface QSystemNetworkInfoLinuxMaemoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
+QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
 #if !defined(QT_NO_DBUS)
     switch(mode) {
@@ -953,7 +968,7 @@ QNetworkInterface QSystemNetworkInfoLinuxMaemoPrivate::interfaceForMode(QSystemN
 }
 
 #if !defined(QT_NO_DBUS)
-bool QSystemNetworkInfoLinuxMaemoPrivate::isDefaultInterface(const QString &deviceName)
+bool QSystemNetworkInfoPrivate::isDefaultInterface(const QString &deviceName)
 {
     QFile routeFilex("/proc/net/route");
     if(routeFilex.exists() && routeFilex.open(QIODevice::ReadOnly
@@ -974,12 +989,12 @@ bool QSystemNetworkInfoLinuxMaemoPrivate::isDefaultInterface(const QString &devi
     return false;
 }
 
-int QSystemNetworkInfoLinuxMaemoPrivate::getBluetoothRssi()
+int QSystemNetworkInfoPrivate::getBluetoothRssi()
 {
     return 0;
 }
 
-QString QSystemNetworkInfoLinuxMaemoPrivate::getBluetoothInfo(const QString &file)
+QString QSystemNetworkInfoPrivate::getBluetoothInfo(const QString &file)
 {
     QString sysPath = "/sys/class/bluetooth/";
     QDir sysDir(sysPath);
@@ -1001,17 +1016,17 @@ QString QSystemNetworkInfoLinuxMaemoPrivate::getBluetoothInfo(const QString &fil
 #endif
 
 //////// QSystemDisplayInfo
-QSystemDisplayInfoLinuxMaemoPrivate::QSystemDisplayInfoLinuxMaemoPrivate(QSystemDisplayInfoPrivate *parent)
-        : QSystemDisplayInfoPrivate(parent)
+QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
+        : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
 }
 
-QSystemDisplayInfoLinuxMaemoPrivate::~QSystemDisplayInfoLinuxMaemoPrivate()
+QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
-int QSystemDisplayInfoLinuxMaemoPrivate::displayBrightness(int screen)
+int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
     Q_UNUSED(screen);
     GConfItem currentBrightness("/system/osso/dsm/display/display_brightness");
@@ -1108,7 +1123,7 @@ int QSystemDisplayInfoLinuxMaemoPrivate::displayBrightness(int screen)
     return -1;
 }
 
-int QSystemDisplayInfoLinuxMaemoPrivate::colorDepth(int screen)
+int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
 #ifdef Q_WS_X11
     QDesktopWidget wid;
@@ -1120,18 +1135,18 @@ int QSystemDisplayInfoLinuxMaemoPrivate::colorDepth(int screen)
 
 
 //////// QSystemStorageInfo
-QSystemStorageInfoLinuxMaemoPrivate::QSystemStorageInfoLinuxMaemoPrivate(QSystemStorageInfoPrivate *parent)
-        : QSystemStorageInfoPrivate(parent)
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
+        : QSystemStorageInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
 }
 
 
-QSystemStorageInfoLinuxMaemoPrivate::~QSystemStorageInfoLinuxMaemoPrivate()
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
 
-qint64 QSystemStorageInfoLinuxMaemoPrivate::availableDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     struct statfs fs;
@@ -1143,7 +1158,7 @@ qint64 QSystemStorageInfoLinuxMaemoPrivate::availableDiskSpace(const QString &dr
     return 0;
 }
 
-qint64 QSystemStorageInfoLinuxMaemoPrivate::totalDiskSpace(const QString &driveVolume)
+qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
     mountEntries();
     struct statfs fs;
@@ -1155,7 +1170,7 @@ qint64 QSystemStorageInfoLinuxMaemoPrivate::totalDiskSpace(const QString &driveV
     return 0;
 }
 
-QSystemStorageInfo::DriveType QSystemStorageInfoLinuxMaemoPrivate::typeForDrive(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1221,13 +1236,13 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxMaemoPrivate::typeForDrive(
     return QSystemStorageInfo::InternalDrive;
 }
 
-QStringList QSystemStorageInfoLinuxMaemoPrivate::logicalDrives()
+QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
     mountEntries();
     return mountEntriesMap.keys();
 }
 
-void QSystemStorageInfoLinuxMaemoPrivate::mountEntries()
+void QSystemStorageInfoPrivate::mountEntries()
 {
     mountEntriesMap.clear();
     FILE *mntfp = setmntent( _PATH_MOUNTED/*_PATH_MNTTAB*//*"/proc/mounts"*/, "r" );
@@ -1261,8 +1276,8 @@ void QSystemStorageInfoLinuxMaemoPrivate::mountEntries()
 
 
 //////// QSystemDeviceInfo
-QSystemDeviceInfoLinuxMaemoPrivate::QSystemDeviceInfoLinuxMaemoPrivate(QSystemDeviceInfoPrivate *parent)
-        : QSystemDeviceInfoPrivate(parent)
+QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
+        : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
     setConnection();
@@ -1271,11 +1286,11 @@ QSystemDeviceInfoLinuxMaemoPrivate::QSystemDeviceInfoLinuxMaemoPrivate(QSystemDe
 #endif
 }
 
-QSystemDeviceInfoLinuxMaemoPrivate::~QSystemDeviceInfoLinuxMaemoPrivate()
+QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
 
-void QSystemDeviceInfoLinuxMaemoPrivate::setConnection()
+void QSystemDeviceInfoPrivate::setConnection()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1338,7 +1353,7 @@ void QSystemDeviceInfoLinuxMaemoPrivate::setConnection()
 
 
 #if !defined(QT_NO_DBUS)
-void QSystemDeviceInfoLinuxMaemoPrivate::halChanged(int,QVariantList map)
+void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
 //       qWarning() << __FUNCTION__ << map.at(i).toString();
@@ -1366,12 +1381,12 @@ void QSystemDeviceInfoLinuxMaemoPrivate::halChanged(int,QVariantList map)
 }
 #endif
 
-QSystemDeviceInfo::Profile QSystemDeviceInfoLinuxMaemoPrivate::currentProfile()
+QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
     return QSystemDeviceInfo::UnknownProfile;
 }
 
-QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxMaemoPrivate::inputMethodType()
+QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
     QSystemDeviceInfo::InputMethodFlags methods = 0;
     if(halIsAvailable) {
@@ -1443,7 +1458,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxMaemoPrivate::inputMet
     return methods;
 }
 
-QString QSystemDeviceInfoLinuxMaemoPrivate::imei()
+QString QSystemDeviceInfoPrivate::imei()
 {
  #if !defined(QT_NO_DBUS)
     QDBusInterface connectionInterface("com.nokia.phone.SIM",
@@ -1461,7 +1476,7 @@ QString QSystemDeviceInfoLinuxMaemoPrivate::imei()
         return "Not Available";
 }
 
-QString QSystemDeviceInfoLinuxMaemoPrivate::imsi()
+QString QSystemDeviceInfoPrivate::imsi()
 {
     QString retVal = "Not Available";
     GConfItem locationValues("/system/nokia/location");
@@ -1476,7 +1491,7 @@ QString QSystemDeviceInfoLinuxMaemoPrivate::imsi()
     return retVal;
 }
 
-QString QSystemDeviceInfoLinuxMaemoPrivate::manufacturer()
+QString QSystemDeviceInfoPrivate::manufacturer()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1516,7 +1531,7 @@ QString QSystemDeviceInfoLinuxMaemoPrivate::manufacturer()
     return QString();
 }
 
-QString QSystemDeviceInfoLinuxMaemoPrivate::model()
+QString QSystemDeviceInfoPrivate::model()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1548,7 +1563,7 @@ QString QSystemDeviceInfoLinuxMaemoPrivate::model()
     return QString();
 }
 
-QString QSystemDeviceInfoLinuxMaemoPrivate::productName()
+QString QSystemDeviceInfoPrivate::productName()
 {
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
@@ -1614,7 +1629,7 @@ QString QSystemDeviceInfoLinuxMaemoPrivate::productName()
     return QString();
 }
 
-int QSystemDeviceInfoLinuxMaemoPrivate::batteryLevel() const
+int QSystemDeviceInfoPrivate::batteryLevel() const
 {
     float levelWhenFull = 0.0;
     float level = 0.0;
@@ -1686,7 +1701,7 @@ int QSystemDeviceInfoLinuxMaemoPrivate::batteryLevel() const
     return 0;
 }
 
-QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxMaemoPrivate::simStatus()
+QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
     GConfItem locationValues("/system/nokia/location");
     QStringList locationKeys = locationValues.listEntries();
@@ -1705,9 +1720,9 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoLinuxMaemoPrivate::simStatus()
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
-bool QSystemDeviceInfoLinuxMaemoPrivate::isDeviceLocked()
+bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    QSystemScreenSaverLinuxMaemoPrivate priv;
+    QSystemScreenSaverPrivate priv;
 
     if(priv.isScreenLockEnabled()
         && priv.isScreenSaverActive()) {
@@ -1717,7 +1732,7 @@ bool QSystemDeviceInfoLinuxMaemoPrivate::isDeviceLocked()
     return false;
 }
 
- QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxMaemoPrivate::currentPowerState()
+ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
  {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
@@ -1770,7 +1785,7 @@ bool QSystemDeviceInfoLinuxMaemoPrivate::isDeviceLocked()
  }
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoLinuxMaemoPrivate::setupBluetooth()
+ void QSystemDeviceInfoPrivate::setupBluetooth()
  {
      QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
@@ -1802,7 +1817,7 @@ bool QSystemDeviceInfoLinuxMaemoPrivate::isDeviceLocked()
 #endif
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoLinuxMaemoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
+ void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
  {
      qWarning() << str << v.variant().toBool();
      emit bluetoothStateChanged(v.variant().toBool());
@@ -1811,33 +1826,33 @@ bool QSystemDeviceInfoLinuxMaemoPrivate::isDeviceLocked()
 
  //////////////
  ///////
- QSystemScreenSaverLinuxMaemoPrivate::QSystemScreenSaverLinuxMaemoPrivate(QSystemScreenSaverPrivate *parent)
-         : QSystemScreenSaverPrivate(parent)
+ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
+         : QSystemScreenSaverLinuxCommonPrivate(parent)
  {
  }
 
- QSystemScreenSaverLinuxMaemoPrivate::~QSystemScreenSaverLinuxMaemoPrivate()
+ QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
  }
 
- bool QSystemScreenSaverLinuxMaemoPrivate::setScreenSaverInhibit()
+ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
  {
     return false;
 }
 
 
-bool QSystemScreenSaverLinuxMaemoPrivate::screenSaverInhibited()
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
 
     return false;
 }
 
-bool QSystemScreenSaverLinuxMaemoPrivate::isScreenLockEnabled()
+bool QSystemScreenSaverPrivate::isScreenLockEnabled()
 {
    return false;
 }
 
-bool QSystemScreenSaverLinuxMaemoPrivate::isScreenSaverActive()
+bool QSystemScreenSaverPrivate::isScreenSaverActive()
 {
     return false;
 }
