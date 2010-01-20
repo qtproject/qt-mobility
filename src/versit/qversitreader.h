@@ -96,12 +96,11 @@ public:
     QList<QVersitDocument> results() const;
 
     State state() const;
-    Error error() const; // XXX If error are we in FinishedState ?
+    Error error() const;
 
 signals:
-    void finished();
-    // XXX No incremental progress!
-    // void progress(QList<QVersitDocument>& documents) ?
+    void stateChanged();
+    void resultsAvailable();
     
 private: // data
     QVersitReaderPrivate* d;   

@@ -175,10 +175,22 @@ void QVersitProperty::insertParameter(const QString& name, const QString& value)
 
 /*!
  * Removes a parameter with \a name and \a value.
+ *
+ * \sa removeParameters();
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
     d->mParameters.remove(name.toUpper(),value.toUpper());
+}
+
+/*!
+ * Removes all parameters with the given \a name.
+ *
+ * \sa removeParameter()
+ */
+void QVersitProperty::removeParameters(const QString& name)
+{
+    d->mParameters.remove(name.toUpper());
 }
 
 /*!
@@ -195,6 +207,7 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
  */
 void QVersitProperty::setValue(const QVariant& value)
 {
+    // XXX toUpper
     d->mValue = value;
 }
 

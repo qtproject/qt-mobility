@@ -75,7 +75,7 @@ public:
 
     void insertParameter(const QString& name, const QString& value);
     void removeParameter(const QString& name, const QString& value);
-    // XXX maybe we need removeParameters(const QString& name)
+    void removeParameters(const QString& name);
 
     void setParameters(const QMultiHash<QString,QString>& parameters);
     QMultiHash<QString,QString> parameters() const;

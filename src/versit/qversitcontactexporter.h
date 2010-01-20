@@ -54,7 +54,6 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate;
 
-// XXX a shorter name would be nicer.. QVCEH?
 class Q_VERSIT_EXPORT QVersitContactExporterDetailHandler
 {
 public:
@@ -72,11 +71,9 @@ public:
 
     QList<QVersitDocument> exportContacts(const QList<QContact>& contacts, QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type);
 
-    // XXX ownership of these pointers? what does QXmlFoo do in these cases
     void setDetailHandler(QVersitContactExporterDetailHandler* handler);
     QVersitContactExporterDetailHandler* detailHandler() const;
 
-    // XXX I wonder if it would help to have resourceloader/saver in the qversitreader/writer part as well
     void setResourceLoader(QVersitResourceLoader* loader);
     QVersitResourceLoader* resourceLoader() const;
 

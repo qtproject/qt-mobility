@@ -55,7 +55,6 @@ class QVersitDocument;
 class QVersitProperty;
 class QVersitContactImporterPrivate;
 
-// XXX shorter name?
 class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandler
 {
 public:

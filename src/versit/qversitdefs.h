@@ -67,6 +67,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+// XXX Make these private
 // Mapping between a string in versit specifications and Qt contact details
 struct versitContactDetailMapping {
     const char* versitPropertyName;

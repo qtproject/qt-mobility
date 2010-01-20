@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitProperty;
 
+// XXX merge together?
 class Q_VERSIT_EXPORT QVersitResourceLoader
 {
 public:

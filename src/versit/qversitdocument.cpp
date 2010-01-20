@@ -137,7 +137,7 @@ void QVersitDocument::removeProperty(const QVersitProperty& property)
 /*!
  * Removes all the properties with \a name from the versit document.
  */
-void QVersitDocument::removeAllProperties(const QString& name)
+void QVersitDocument::removeProperties(const QString& name)
 {
     for (int i=d->mProperties.count()-1; i >=0; i--) {
         if (d->mProperties[i].name() == name) {
@@ -145,6 +145,18 @@ void QVersitDocument::removeAllProperties(const QString& name)
         }
     }
 }
+
+/*!
+ * Clears the document, removing all properties and metadata
+ * and resetting the codec to the default.
+ */
+void QVersitDocument::clear()
+{
+    d->mProperties.clear();
+    d->mVersitType = QVersitDocument::InvalidType;
+    setCodec(0);
+}
+
 
 /*!
  * Gets the list of the contained versit properties.

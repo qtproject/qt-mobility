@@ -83,6 +83,10 @@ public:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
 
+    // XXX implement these
+    void setCodec(QTextCodec* codec);
+    QTextCodec* codec() const;
+
     // writing:
     bool startWriting(const QList<QVersitDocument>& input); // XXX These two functions look strange..
     bool writeAll(const QList<QVersitDocument>& input);
@@ -91,7 +95,7 @@ public:
     Error error() const;
 
 signals:
-    void finished();
+    void stateChanged();
 
 private: // data
     QVersitWriterPrivate* d;
