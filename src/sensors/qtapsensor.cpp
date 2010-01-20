@@ -139,37 +139,63 @@ void QTapReading::setDoubleTap(bool doubleTap)
 
 // =====================================================================
 
+// begin generated code
+
 /*!
-    \class QTapSensor
-    \ingroup sensors
+    \class QTapFilter
+    \ingroup sensors_helpers
 
     \preliminary
-    \brief The QTapSensor class reports on taps.
+    \brief The QTapFilter class is a convenience wrapper around QSensorFilter.
 
-    The tap sensor registers tap and double tap events in one of the six directions.
-    There are 3 axes that originate from the phone. They are arranged as follows.
-\code
-             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            //|--/--- / |
-           // | /   //  /
-          //  |/   //  /
-         //   '--------------- +x
-        //       //  /
-       //       //  /
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/
-\endcode
+    The only difference is that the filter() method features a pointer to QTapReading
+    instead of QSensorReading.
+*/
+
+/*!
+    \fn QTapFilter::filter(QTapReading *reading)
+
+    Called when \a reading changes. Returns false to prevent the reading from propagating.
+
+    \sa QSensorFilter::filter()
+*/
+
+/*!
+    \class QTapSensor
+    \ingroup sensors_helpers
+
+    \preliminary
+    \brief The QTapSensor class is a convenience wrapper around QSensor.
+
+    The only behavioural difference is that this class sets the type properly.
+
+    This class also features a reading() function that returns a QTapReading instead of a QSensorReading.
+
+    For details about how the sensor works, see \l QTapReading.
 
     \sa QTapReading
 */
+
+/*!
+    \fn QTapSensor::QTapSensor(QObject *parent)
+
+    Construct the sensor as a child of \a parent.
+*/
+
+/*!
+    \fn QTapSensor::~QTapSensor()
+
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+
+/*!
+    \fn QTapSensor::reading() const
+
+    Returns the reading class for this sensor.
+
+    \sa QSensor::reading()
+*/
+// end generated code
 
 #include "moc_qtapsensor.cpp"
 QTM_END_NAMESPACE

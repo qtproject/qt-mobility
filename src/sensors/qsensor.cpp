@@ -84,7 +84,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \internal
+    Construct the sensor as a child of \a parent.
 */
 QSensor::QSensor(QObject *parent)
     : QObject(parent)
@@ -133,7 +133,7 @@ QByteArray QSensor::identifier() const
 */
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
-    Q_ASSERT(!d->backend);
+    Q_ASSERT(d->pre_connect);
     d->identifier = identifier;
 }
 
@@ -155,7 +155,8 @@ QByteArray QSensor::type() const
 */
 void QSensor::setType(const QByteArray &type)
 {
-    Q_ASSERT(!d->backend);
+    Q_ASSERT(d->pre_connect);
+    Q_ASSERT(QLatin1String(metaObject()->className()) == QLatin1String("QSensor") || QLatin1String(metaObject()->className()) == QLatin1String(type));
     d->type = type;
 }
 
@@ -182,7 +183,7 @@ void QSensor::connect()
 }
 
 /*!
-    \property QSensor::active
+    \property QSensor::running
     \brief foo
 */
 
@@ -195,12 +196,20 @@ bool QSensor::isActive() const
 }
 
 /*!
-    \property QSensor::signalEnabled
-    \brief foo
+    Foo
 */
+void QSensor::setActive(bool running)
+{
+    if (d->complete) {
+        if (running)
+            start();
+        else
+            stop();
+    }
+}
 
 /*!
-    Foo
+    Returns foo
 */
 bool QSensor::isSignalEnabled() const
 {
@@ -338,6 +347,8 @@ void QSensor::poll()
 */
 void QSensor::start()
 {
+    if (d->active)
+        return;
     if (d->pre_connect)
         connect();
     if (!d->backend)
@@ -351,6 +362,8 @@ void QSensor::start()
 */
 void QSensor::stop()
 {
+    if (!d->active)
+        return;
     if (!d->backend)
         return;
     d->active = false;
@@ -384,7 +397,7 @@ void QSensor::newReadingAvailable()
     d->cache_reading->readValuesFrom(d->filter_reading);
 
     if (d->signalEnabled)
-        emit readingChanged(d->cache_reading);
+        emit readingChanged();
 }
 
 /*!
@@ -409,9 +422,9 @@ void QSensor::removeFilter(QSensorFilter *filter)
 */
 
 /*!
-    \fn QSensor::readingChanged(QSensorReading *reading)
+    \fn QSensor::readingChanged()
 
-    Foo \a reading
+    Foo
 */
 
 // =====================================================================
@@ -453,7 +466,11 @@ QSensorFilter::~QSensorFilter()
 
     This function is called when the sensor \a reading changes.
 
-    Returns true;
+    Returns true to allow the next filter to receive the value.
+    If this is the last filter, returning true causes the signal
+    to be emitted and the value is stored in the sensor.
+
+    Returns false to drop the reading.
 */
 
 /*!

@@ -51,20 +51,22 @@ class QAccelerometerReadingPrivate;
 class Q_SENSORS_EXPORT QAccelerometerReading : public QSensorReading
 {
     Q_OBJECT
+    Q_PROPERTY(qreal x READ x WRITE setX)
+    Q_PROPERTY(qreal y READ y WRITE setY)
+    Q_PROPERTY(qreal z READ z WRITE setZ)
     DECLARE_READING(QAccelerometerReading)
 public:
-    Q_PROPERTY(qreal x READ x WRITE setX)
     qreal x() const;
     void setX(qreal x);
 
-    Q_PROPERTY(qreal y READ y WRITE setY)
     qreal y() const;
     void setY(qreal y);
 
-    Q_PROPERTY(qreal z READ z WRITE setZ)
     qreal z() const;
     void setZ(qreal z);
 };
+
+// begin generated code
 
 class Q_SENSORS_EXPORT QAccelerometerFilter : public QSensorFilter
 {
@@ -78,15 +80,12 @@ class Q_SENSORS_EXPORT QAccelerometer : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAccelerometer(QObject *parent = 0)
-        : QSensor(parent)
+    explicit QAccelerometer(QObject *parent = 0) : QSensor(parent)
     { setType("QAccelerometer"); }
     virtual ~QAccelerometer() {}
-    /* These methods shadow the ones in QSensor on purpose */
     QAccelerometerReading *reading() const { return static_cast<QAccelerometerReading*>(QSensor::reading()); }
-    void addFilter(QAccelerometerFilter *filter) { QSensor::addFilter(filter); }
-    void removeFilter(QAccelerometerFilter *filter) { QSensor::removeFilter(filter); }
 };
+// end generated code
 
 QTM_END_NAMESPACE
 

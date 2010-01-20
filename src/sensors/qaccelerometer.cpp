@@ -150,14 +150,39 @@ void QAccelerometerReading::setZ(qreal z)
 
 // =====================================================================
 
+// begin generated code
+
+/*!
+    \class QAccelerometerFilter
+    \ingroup sensors_helpers
+
+    \preliminary
+    \brief The QAccelerometerFilter class is a convenience wrapper around QSensorFilter.
+
+    The only difference is that the filter() method features a pointer to QAccelerometerReading
+    instead of QSensorReading.
+*/
+
+/*!
+    \fn QAccelerometerFilter::filter(QAccelerometerReading *reading)
+
+    Called when \a reading changes. Returns false to prevent the reading from propagating.
+
+    \sa QSensorFilter::filter()
+*/
+
 /*!
     \class QAccelerometer
     \ingroup sensors_helpers
 
     \preliminary
-    \brief The QAccelerometer class provides some
-           convenience methods when accessing an
-           accelerometer.
+    \brief The QAccelerometer class is a convenience wrapper around QSensor.
+
+    The only behavioural difference is that this class sets the type properly.
+
+    This class also features a reading() function that returns a QAccelerometerReading instead of a QSensorReading.
+
+    For details about how the sensor works, see \l QAccelerometerReading.
 
     \sa QAccelerometerReading
 */
@@ -165,50 +190,23 @@ void QAccelerometerReading::setZ(qreal z)
 /*!
     \fn QAccelerometer::QAccelerometer(QObject *parent)
 
-    Constructor \a parent
+    Construct the sensor as a child of \a parent.
 */
 
 /*!
     \fn QAccelerometer::~QAccelerometer()
 
-    Destructor
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
 */
 
 /*!
     \fn QAccelerometer::reading() const
 
-    Returns foo
+    Returns the reading class for this sensor.
+
+    \sa QSensor::reading()
 */
-
-/*!
-    \fn QAccelerometer::addFilter(QAccelerometerFilter *filter)
-
-    Foo \a filter
-*/
-
-/*!
-    \fn QAccelerometer::removeFilter(QAccelerometerFilter *filter)
-
-    Foo \a filter
-*/
-
-/*!
-    \class QAccelerometerFilter
-    \ingroup sensors_helpers
-
-    \preliminary
-    \brief The QAccelerometerFilter class provides some
-           convenience methods when accessing an
-           accelerometer.
-
-    \sa QAccelerometerReading
-*/
-
-/*!
-    \fn QAccelerometerFilter::filter(QAccelerometerReading *reading)
-
-    Returns foo \a reading
-*/
+// end generated code
 
 #include "moc_qaccelerometer.cpp"
 QTM_END_NAMESPACE

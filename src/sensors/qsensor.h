@@ -62,26 +62,30 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     friend class QSensorBackend;
 
     Q_OBJECT
+    Q_PROPERTY(QByteArray identifier READ identifier WRITE setIdentifier)
+    Q_PROPERTY(QByteArray type READ type WRITE setType)
+    Q_PROPERTY(bool isAvailable READ isAvailable)
+    Q_PROPERTY(UpdatePolicies supportedUpdatePolicies READ supportedUpdatePolicies)
+    Q_PROPERTY(UpdatePolicy updatePolicy READ updatePolicy WRITE setUpdatePolicy)
+    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
+    Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
+    Q_PROPERTY(bool running READ isActive WRITE setActive)
 public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
 
-    Q_PROPERTY(QByteArray identifier READ identifier WRITE setIdentifier)
     QByteArray identifier() const;
     void setIdentifier(const QByteArray &identifier);
 
-    Q_PROPERTY(QByteArray type READ type WRITE setType)
     QByteArray type() const;
     void setType(const QByteArray &type);
 
     Q_INVOKABLE void connect();
-    Q_PROPERTY(bool isAvailable READ isAvailable)
     bool isAvailable() const;
 
-    Q_PROPERTY(bool active READ isActive)
     bool isActive() const;
+    void setActive(bool running);
 
-    Q_PROPERTY(bool signalEnabled READ isSignalEnabled WRITE setSignalEnabled)
     bool isSignalEnabled() const;
     void setSignalEnabled(bool enabled);
 
@@ -105,11 +109,7 @@ public:
     Q_DECLARE_FLAGS(UpdatePolicies, UpdatePolicy)
 
     // What policies does the sensor support
-    Q_PROPERTY(UpdatePolicies supportedUpdatePolicies READ supportedUpdatePolicies)
     UpdatePolicies supportedUpdatePolicies() const;
-
-    Q_PROPERTY(UpdatePolicy updatePolicy READ updatePolicy WRITE setUpdatePolicy)
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
 
     // Set the desired update policy (default is defined by the sensor)
     // Use documentation to determine the policies that the sensor
@@ -129,10 +129,9 @@ public:
     void poll();
 
     // The readings are exposed via this object
-    Q_PROPERTY(QSensorReading* reading READ reading)
     QSensorReading *reading() const;
 
-public slots:
+public Q_SLOTS:
     // Start receiving values from the sensor
     void start();
 
@@ -140,7 +139,7 @@ public slots:
     void stop();
 
 Q_SIGNALS:
-    void readingChanged(QSensorReading *reading);
+    void readingChanged();
 
 protected:
     // called by the back end
@@ -171,10 +170,10 @@ class Q_SENSORS_EXPORT QSensorReading : public QObject
     friend class QSensor;
 
     Q_OBJECT
+    Q_PROPERTY(qtimestamp timestamp READ timestamp WRITE setTimestamp)
 public:
     virtual ~QSensorReading();
 
-    Q_PROPERTY(qtimestamp timestamp READ timestamp WRITE setTimestamp)
     qtimestamp timestamp() const;
     void setTimestamp(qtimestamp timestamp);
 
@@ -204,29 +203,6 @@ private:
     classname::classname()\
         : QSensorReading(new pclassname, sizeof(pclassname), (void**)&d) {}\
     classname::~classname() {}
-
-template <typename Reading>
-class Q_SENSORS_EXPORT QTypedSensorFilter : public QSensorFilter
-{
-public:
-    virtual bool filter(Reading *reading) = 0;
-private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<Reading*>(reading)); }
-};
-
-#define DECLARE_FILTER(FilterName, ReadingName)\
-    typedef QTypedSensorFilter<ReadingName> FilterName
-
-#define DECLARE_SENSOR(SensorName, FilterName, ReadingName)\
-    public:\
-        explicit SensorName(QObject *parent = 0)\
-            : QSensor(parent)\
-        { setType(#SensorName); }\
-        virtual ~SensorName() {}\
-        /* These methods shadow the ones in QSensor on purpose */\
-        ReadingName *reading() const { return static_cast<ReadingName*>(QSensor::reading()); }\
-        void addFilter(FilterName *filter) { QSensor::addFilter(filter); }\
-        void removeFilter(FilterName *filter) { QSensor::removeFilter(filter); }\
 
 QTM_END_NAMESPACE
 

@@ -65,13 +65,26 @@ public:
     void setProximity(Proximity proximity);
 };
 
-DECLARE_FILTER(QProximityFilter, QProximityReading);
+// begin generated code
+
+class Q_SENSORS_EXPORT QProximityFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QProximityReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QProximityReading*>(reading)); }
+};
 
 class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 {
     Q_OBJECT
-    DECLARE_SENSOR(QProximitySensor, QProximityFilter, QProximityReading)
+public:
+    explicit QProximitySensor(QObject *parent = 0) : QSensor(parent)
+    { setType("QProximitySensor"); }
+    virtual ~QProximitySensor() {}
+    QProximityReading *reading() const { return static_cast<QProximityReading*>(QSensor::reading()); }
 };
+// end generated code
 
 QTM_END_NAMESPACE
 

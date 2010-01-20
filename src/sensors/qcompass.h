@@ -51,6 +51,9 @@ class QCompassReadingPrivate;
 class Q_SENSORS_EXPORT QCompassReading : public QSensorReading
 {
     Q_OBJECT
+    Q_ENUMS(CalibrationLevel)
+    Q_PROPERTY(qreal azimuth READ azimuth WRITE setAzimuth)
+    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel WRITE setCalibrationLevel)
     DECLARE_READING(QCompassReading)
 public:
     enum CalibrationLevel {
@@ -61,22 +64,33 @@ public:
     };
     Q_ENUMS(CalibrationLevel)
 
-    Q_PROPERTY(qreal azimuth READ azimuth WRITE setAzimuth)
     qreal azimuth() const;
     void setAzimuth(qreal azimuth);
 
-    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel WRITE setCalibrationLevel)
     CalibrationLevel calibrationLevel() const;
     void setCalibrationLevel(CalibrationLevel calibrationLevel);
 };
 
-DECLARE_FILTER(QCompassFilter, QCompassReading);
+// begin generated code
+
+class Q_SENSORS_EXPORT QCompassFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QCompassReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QCompassReading*>(reading)); }
+};
 
 class Q_SENSORS_EXPORT QCompass : public QSensor
 {
     Q_OBJECT
-    DECLARE_SENSOR(QCompass, QCompassFilter, QCompassReading)
+public:
+    explicit QCompass(QObject *parent = 0) : QSensor(parent)
+    { setType("QCompass"); }
+    virtual ~QCompass() {}
+    QCompassReading *reading() const { return static_cast<QCompassReading*>(QSensor::reading()); }
 };
+// end generated code
 
 QTM_END_NAMESPACE
 

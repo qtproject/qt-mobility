@@ -147,41 +147,63 @@ void QRotationReading::setZ(qreal z)
 
 // =====================================================================
 
+// begin generated code
+
 /*!
-    \class QRotationSensor
-    \ingroup sensors
+    \class QRotationFilter
+    \ingroup sensors_helpers
 
     \preliminary
-    \brief The QRotationSensor class reports on rotation
-           on the X, Y and Z axes.
+    \brief The QRotationFilter class is a convenience wrapper around QSensorFilter.
 
-    The rotation sensor returns the rotation of the device along the X, Y and Z
-    axes. The scale of the values is radians. The axes are arranged as follows.
-
-\code
-             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            //|--/--- / |
-           // | /   //  /
-          //  |/   //  /
-         //   '--------------- +x
-        //       //  /
-       //       //  /
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/
-\endcode
-
-    Note that the values for the rotation sensor come from an accelerometer
-    so a device resting on its back will not be able to detect rotation around the
-    Z axis. Rotation can only be detected when it happens relative to gravity.
+    The only difference is that the filter() method features a pointer to QRotationReading
+    instead of QSensorReading.
 */
+
+/*!
+    \fn QRotationFilter::filter(QRotationReading *reading)
+
+    Called when \a reading changes. Returns false to prevent the reading from propagating.
+
+    \sa QSensorFilter::filter()
+*/
+
+/*!
+    \class QRotationSensor
+    \ingroup sensors_helpers
+
+    \preliminary
+    \brief The QRotationSensor class is a convenience wrapper around QSensor.
+
+    The only behavioural difference is that this class sets the type properly.
+
+    This class also features a reading() function that returns a QRotationReading instead of a QSensorReading.
+
+    For details about how the sensor works, see \l QRotationReading.
+
+    \sa QRotationReading
+*/
+
+/*!
+    \fn QRotationSensor::QRotationSensor(QObject *parent)
+
+    Construct the sensor as a child of \a parent.
+*/
+
+/*!
+    \fn QRotationSensor::~QRotationSensor()
+
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+
+/*!
+    \fn QRotationSensor::reading() const
+
+    Returns the reading class for this sensor.
+
+    \sa QSensor::reading()
+*/
+// end generated code
 
 #include "moc_qrotationsensor.cpp"
 QTM_END_NAMESPACE

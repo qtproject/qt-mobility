@@ -51,6 +51,8 @@ class QAmbientLightReadingPrivate;
 class Q_SENSORS_EXPORT QAmbientLightReading : public QSensorReading
 {
     Q_OBJECT
+    Q_ENUMS(LightLevel)
+    Q_PROPERTY(LightLevel lightLevel READ lightLevel WRITE setLightLevel)
     DECLARE_READING(QAmbientLightReading)
 public:
     enum LightLevel {
@@ -63,18 +65,30 @@ public:
     };
     Q_ENUMS(LightLevel)
 
-    Q_PROPERTY(LightLevel lightLevel READ lightLevel WRITE setLightLevel)
     LightLevel lightLevel() const;
     void setLightLevel(LightLevel lightLevel);
 };
 
-DECLARE_FILTER(QAmbientLightFilter, QAmbientLightReading);
+// begin generated code
+
+class Q_SENSORS_EXPORT QAmbientLightFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QAmbientLightReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QAmbientLightReading*>(reading)); }
+};
 
 class Q_SENSORS_EXPORT QAmbientLightSensor : public QSensor
 {
     Q_OBJECT
-    DECLARE_SENSOR(QAmbientLightSensor, QAmbientLightFilter, QAmbientLightReading)
+public:
+    explicit QAmbientLightSensor(QObject *parent = 0) : QSensor(parent)
+    { setType("QAmbientLightSensor"); }
+    virtual ~QAmbientLightSensor() {}
+    QAmbientLightReading *reading() const { return static_cast<QAmbientLightReading*>(QSensor::reading()); }
 };
+// end generated code
 
 QTM_END_NAMESPACE
 

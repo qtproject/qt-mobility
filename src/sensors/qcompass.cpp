@@ -119,24 +119,63 @@ void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel cali
 
 // =====================================================================
 
+// begin generated code
+
 /*!
-    \class QCompass
-    \ingroup sensors
+    \class QCompassFilter
+    \ingroup sensors_helpers
 
     \preliminary
-    \brief The QCompass class reports on the azimuth of the device.
+    \brief The QCompassFilter class is a convenience wrapper around QSensorFilter.
 
-    The compass returns the azimuth of the device as degrees from
-    magnetic north in a clockwise direction based on the top of the device.
-    Note that the top of the device is a fixed point and may not represent the
-    orientation that the user is holding the device in.
-    There is also a value to indicate the calibration status of the device.
-    If the device is not calibrated the azimuth may not be accurate.
-
-    Digital compasses are highly susceptible to magnetic interference and
-    may need calibration after being placed near anything that emits a magnetic
-    force.
+    The only difference is that the filter() method features a pointer to QCompassReading
+    instead of QSensorReading.
 */
+
+/*!
+    \fn QCompassFilter::filter(QCompassReading *reading)
+
+    Called when \a reading changes. Returns false to prevent the reading from propagating.
+
+    \sa QSensorFilter::filter()
+*/
+
+/*!
+    \class QCompass
+    \ingroup sensors_helpers
+
+    \preliminary
+    \brief The QCompass class is a convenience wrapper around QSensor.
+
+    The only behavioural difference is that this class sets the type properly.
+
+    This class also features a reading() function that returns a QCompassReading instead of a QSensorReading.
+
+    For details about how the sensor works, see \l QCompassReading.
+
+    \sa QCompassReading
+*/
+
+/*!
+    \fn QCompass::QCompass(QObject *parent)
+
+    Construct the sensor as a child of \a parent.
+*/
+
+/*!
+    \fn QCompass::~QCompass()
+
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+
+/*!
+    \fn QCompass::reading() const
+
+    Returns the reading class for this sensor.
+
+    \sa QSensor::reading()
+*/
+// end generated code
 
 #include "moc_qcompass.cpp"
 QTM_END_NAMESPACE

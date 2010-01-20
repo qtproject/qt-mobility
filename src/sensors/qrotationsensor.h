@@ -66,13 +66,26 @@ public:
     void setZ(qreal z);
 };
 
-DECLARE_FILTER(QRotationFilter, QRotationReading);
+// begin generated code
+
+class Q_SENSORS_EXPORT QRotationFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QRotationReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QRotationReading*>(reading)); }
+};
 
 class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 {
     Q_OBJECT
-    DECLARE_SENSOR(QRotationSensor, QRotationFilter, QRotationReading)
+public:
+    explicit QRotationSensor(QObject *parent = 0) : QSensor(parent)
+    { setType("QRotationSensor"); }
+    virtual ~QRotationSensor() {}
+    QRotationReading *reading() const { return static_cast<QRotationReading*>(QSensor::reading()); }
 };
+// end generated code
 
 QTM_END_NAMESPACE
 

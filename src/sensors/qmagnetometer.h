@@ -54,6 +54,14 @@ class QMagnetometerReadingPrivate;
 class Q_SENSORS_EXPORT QMagnetometerReading : public QSensorReading
 {
     Q_OBJECT
+    Q_ENUMS(CalibrationLevel)
+    Q_PROPERTY(qreal x READ x WRITE setX)
+    Q_PROPERTY(qreal y READ y WRITE setY)
+    Q_PROPERTY(qreal z READ z WRITE setZ)
+    Q_PROPERTY(qreal calibrated_x READ calibrated_x WRITE setCalibrated_x)
+    Q_PROPERTY(qreal calibrated_y READ calibrated_y WRITE setCalibrated_y)
+    Q_PROPERTY(qreal calibrated_z READ calibrated_z WRITE setCalibrated_z)
+    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel WRITE setCalibrationLevel)
     DECLARE_READING(QMagnetometerReading)
 public:
     enum CalibrationLevel {
@@ -64,42 +72,48 @@ public:
     };
     Q_ENUMS(CalibrationLevel)
 
-    Q_PROPERTY(qreal x READ x WRITE setX)
     qreal x() const;
     void setX(qreal x);
 
-    Q_PROPERTY(qreal y READ y WRITE setY)
     qreal y() const;
     void setY(qreal y);
 
-    Q_PROPERTY(qreal z READ z WRITE setZ)
     qreal z() const;
     void setZ(qreal z);
 
-    Q_PROPERTY(qreal calibrated_x READ calibrated_x WRITE setCalibrated_x)
     qreal calibrated_x() const;
     void setCalibrated_x(qreal calibrated_x);
 
-    Q_PROPERTY(qreal calibrated_y READ calibrated_y WRITE setCalibrated_y)
     qreal calibrated_y() const;
     void setCalibrated_y(qreal calibrated_y);
 
-    Q_PROPERTY(qreal calibrated_z READ calibrated_z WRITE setCalibrated_z)
     qreal calibrated_z() const;
     void setCalibrated_z(qreal calibrated_z);
 
-    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel WRITE setCalibrationLevel)
     CalibrationLevel calibrationLevel() const;
     void setCalibrationLevel(CalibrationLevel calibrationLevel);
 };
 
-DECLARE_FILTER(QMagnetometerFilter, QMagnetometerReading);
+// begin generated code
+
+class Q_SENSORS_EXPORT QMagnetometerFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QMagnetometerReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QMagnetometerReading*>(reading)); }
+};
 
 class Q_SENSORS_EXPORT QMagnetometer : public QSensor
 {
     Q_OBJECT
-    DECLARE_SENSOR(QMagnetometer, QMagnetometerFilter, QMagnetometerReading)
+public:
+    explicit QMagnetometer(QObject *parent = 0) : QSensor(parent)
+    { setType("QMagnetometer"); }
+    virtual ~QMagnetometer() {}
+    QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
 };
+// end generated code
 
 QTM_END_NAMESPACE
 

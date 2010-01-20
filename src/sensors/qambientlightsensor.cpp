@@ -95,19 +95,63 @@ void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightL
 
 // =====================================================================
 
+// begin generated code
+
 /*!
-    \class QAmbientLightSensor
-    \ingroup sensors
+    \class QAmbientLightFilter
+    \ingroup sensors_helpers
 
     \preliminary
-    \brief The QAmbientLightSensor class reports on ambient light levels.
+    \brief The QAmbientLightFilter class is a convenience wrapper around QSensorFilter.
 
-    The ambient light sensor returns the intensity of the ambient light
-    using the pre-defined values found in the QAmbientLightReading::LightLevel
-    enum.
+    The only difference is that the filter() method features a pointer to QAmbientLightReading
+    instead of QSensorReading.
+*/
+
+/*!
+    \fn QAmbientLightFilter::filter(QAmbientLightReading *reading)
+
+    Called when \a reading changes. Returns false to prevent the reading from propagating.
+
+    \sa QSensorFilter::filter()
+*/
+
+/*!
+    \class QAmbientLightSensor
+    \ingroup sensors_helpers
+
+    \preliminary
+    \brief The QAmbientLightSensor class is a convenience wrapper around QSensor.
+
+    The only behavioural difference is that this class sets the type properly.
+
+    This class also features a reading() function that returns a QAmbientLightReading instead of a QSensorReading.
+
+    For details about how the sensor works, see \l QAmbientLightReading.
 
     \sa QAmbientLightReading
 */
+
+/*!
+    \fn QAmbientLightSensor::QAmbientLightSensor(QObject *parent)
+
+    Construct the sensor as a child of \a parent.
+*/
+
+/*!
+    \fn QAmbientLightSensor::~QAmbientLightSensor()
+
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+
+/*!
+    \fn QAmbientLightSensor::reading() const
+
+    Returns the reading class for this sensor.
+
+    \sa QSensor::reading()
+*/
+// end generated code
 
 #include "moc_qambientlightsensor.cpp"
 QTM_END_NAMESPACE

@@ -92,20 +92,63 @@ void QProximityReading::setProximity(QProximityReading::Proximity proximity)
 
 // =====================================================================
 
+// begin generated code
+
 /*!
-    \class QProximitySensor
-    \ingroup sensors
+    \class QProximityFilter
+    \ingroup sensors_helpers
 
     \preliminary
-    \brief The QProximitySensor class reports on user proximity.
+    \brief The QProximityFilter class is a convenience wrapper around QSensorFilter.
 
-    The proximity sensor returns an indication of how far the user is
-    away from the device using the pre-defined values found in the
-    QProximityReading::Proximity enum.
+    The only difference is that the filter() method features a pointer to QProximityReading
+    instead of QSensorReading.
+*/
+
+/*!
+    \fn QProximityFilter::filter(QProximityReading *reading)
+
+    Called when \a reading changes. Returns false to prevent the reading from propagating.
+
+    \sa QSensorFilter::filter()
+*/
+
+/*!
+    \class QProximitySensor
+    \ingroup sensors_helpers
+
+    \preliminary
+    \brief The QProximitySensor class is a convenience wrapper around QSensor.
+
+    The only behavioural difference is that this class sets the type properly.
+
+    This class also features a reading() function that returns a QProximityReading instead of a QSensorReading.
+
+    For details about how the sensor works, see \l QProximityReading.
 
     \sa QProximityReading
 */
 
+/*!
+    \fn QProximitySensor::QProximitySensor(QObject *parent)
+
+    Construct the sensor as a child of \a parent.
+*/
+
+/*!
+    \fn QProximitySensor::~QProximitySensor()
+
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+
+/*!
+    \fn QProximitySensor::reading() const
+
+    Returns the reading class for this sensor.
+
+    \sa QSensor::reading()
+*/
+// end generated code
 
 #include "moc_qproximitysensor.cpp"
 QTM_END_NAMESPACE

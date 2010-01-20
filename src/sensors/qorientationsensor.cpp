@@ -120,19 +120,63 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
 
 // =====================================================================
 
+// begin generated code
+
 /*!
-    \class QOrientationSensor
-    \ingroup sensors
+    \class QOrientationFilter
+    \ingroup sensors_helpers
 
     \preliminary
-    \brief The QOrientationSensor class reports on the orientation of the device.
+    \brief The QOrientationFilter class is a convenience wrapper around QSensorFilter.
 
-    The orientation sensor returns the orientation of the device using
-    the pre-defined values found in the QOrientationReading::Orientation
-    enum.
+    The only difference is that the filter() method features a pointer to QOrientationReading
+    instead of QSensorReading.
+*/
+
+/*!
+    \fn QOrientationFilter::filter(QOrientationReading *reading)
+
+    Called when \a reading changes. Returns false to prevent the reading from propagating.
+
+    \sa QSensorFilter::filter()
+*/
+
+/*!
+    \class QOrientationSensor
+    \ingroup sensors_helpers
+
+    \preliminary
+    \brief The QOrientationSensor class is a convenience wrapper around QSensor.
+
+    The only behavioural difference is that this class sets the type properly.
+
+    This class also features a reading() function that returns a QOrientationReading instead of a QSensorReading.
+
+    For details about how the sensor works, see \l QOrientationReading.
 
     \sa QOrientationReading
 */
+
+/*!
+    \fn QOrientationSensor::QOrientationSensor(QObject *parent)
+
+    Construct the sensor as a child of \a parent.
+*/
+
+/*!
+    \fn QOrientationSensor::~QOrientationSensor()
+
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+
+/*!
+    \fn QOrientationSensor::reading() const
+
+    Returns the reading class for this sensor.
+
+    \sa QSensor::reading()
+*/
+// end generated code
 
 #include "moc_qorientationsensor.cpp"
 QTM_END_NAMESPACE

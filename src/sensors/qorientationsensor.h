@@ -51,6 +51,8 @@ class QOrientationReadingPrivate;
 class Q_SENSORS_EXPORT QOrientationReading : public QSensorReading
 {
     Q_OBJECT
+    Q_ENUMS(Orientation)
+    Q_PROPERTY(Orientation orientation READ orientation WRITE setOrientation)
     DECLARE_READING(QOrientationReading)
 public:
     enum Orientation {
@@ -64,18 +66,30 @@ public:
     };
     Q_ENUMS(Orientation)
 
-    Q_PROPERTY(Orientation orientation READ orientation WRITE setOrientation)
     Orientation orientation() const;
     void setOrientation(Orientation orientation);
 };
 
-DECLARE_FILTER(QOrientationFilter, QOrientationReading);
+// begin generated code
+
+class Q_SENSORS_EXPORT QOrientationFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QOrientationReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QOrientationReading*>(reading)); }
+};
 
 class Q_SENSORS_EXPORT QOrientationSensor : public QSensor
 {
     Q_OBJECT
-    DECLARE_SENSOR(QOrientationSensor, QOrientationFilter, QOrientationReading)
+public:
+    explicit QOrientationSensor(QObject *parent = 0) : QSensor(parent)
+    { setType("QOrientationSensor"); }
+    virtual ~QOrientationSensor() {}
+    QOrientationReading *reading() const { return static_cast<QOrientationReading*>(QSensor::reading()); }
 };
+// end generated code
 
 QTM_END_NAMESPACE
 

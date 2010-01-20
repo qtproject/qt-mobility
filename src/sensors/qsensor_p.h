@@ -71,6 +71,7 @@ struct QSensorPrivate
         , active(false)
         , filter_reading(0)
         , cache_reading(0)
+        , complete(true)
     {
     }
 
@@ -90,6 +91,8 @@ struct QSensorPrivate
     bool active;
     QSensorReading *filter_reading;
     QSensorReading *cache_reading;
+
+    bool complete;
 };
 
 struct QSensorReadingPrivate

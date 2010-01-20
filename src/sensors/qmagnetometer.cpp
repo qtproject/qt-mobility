@@ -233,39 +233,63 @@ void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::Calibration
 
 // =====================================================================
 
+// begin generated code
+
 /*!
-    \class QMagnetometer
-    \ingroup sensors
+    \class QMagnetometerFilter
+    \ingroup sensors_helpers
 
     \preliminary
-    \brief The QMagnetometer class reports on magnetic flux density
-           along the X, Y and Z axes.
+    \brief The QMagnetometerFilter class is a convenience wrapper around QSensorFilter.
 
-    The magnetometer returns magnetic flux density values along 3 axes.
-    The scale of the values is teslas. The axes are arranged as follows.
+    The only difference is that the filter() method features a pointer to QMagnetometerReading
+    instead of QSensorReading.
+*/
 
-\code
-             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            //|--/--- / |
-           // | /   //  /
-          //  |/   //  /
-         //   '--------------- +x
-        //       //  /
-       //       //  /
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/
-\endcode
+/*!
+    \fn QMagnetometerFilter::filter(QMagnetometerReading *reading)
+
+    Called when \a reading changes. Returns false to prevent the reading from propagating.
+
+    \sa QSensorFilter::filter()
+*/
+
+/*!
+    \class QMagnetometer
+    \ingroup sensors_helpers
+
+    \preliminary
+    \brief The QMagnetometer class is a convenience wrapper around QSensor.
+
+    The only behavioural difference is that this class sets the type properly.
+
+    This class also features a reading() function that returns a QMagnetometerReading instead of a QSensorReading.
+
+    For details about how the sensor works, see \l QMagnetometerReading.
 
     \sa QMagnetometerReading
 */
+
+/*!
+    \fn QMagnetometer::QMagnetometer(QObject *parent)
+
+    Construct the sensor as a child of \a parent.
+*/
+
+/*!
+    \fn QMagnetometer::~QMagnetometer()
+
+    Destroy the sensor. Stops the sensor if it has not already been stopped.
+*/
+
+/*!
+    \fn QMagnetometer::reading() const
+
+    Returns the reading class for this sensor.
+
+    \sa QSensor::reading()
+*/
+// end generated code
 
 #include "moc_qmagnetometer.cpp"
 QTM_END_NAMESPACE

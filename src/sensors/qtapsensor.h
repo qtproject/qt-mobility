@@ -76,13 +76,26 @@ public:
     void setDoubleTap(bool doubleTap);
 };
 
-DECLARE_FILTER(QTapFilter, QTapReading);
+// begin generated code
+
+class Q_SENSORS_EXPORT QTapFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QTapReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QTapReading*>(reading)); }
+};
 
 class Q_SENSORS_EXPORT QTapSensor : public QSensor
 {
     Q_OBJECT
-    DECLARE_SENSOR(QTapSensor, QTapFilter, QTapReading)
+public:
+    explicit QTapSensor(QObject *parent = 0) : QSensor(parent)
+    { setType("QTapSensor"); }
+    virtual ~QTapSensor() {}
+    QTapReading *reading() const { return static_cast<QTapReading*>(QSensor::reading()); }
 };
+// end generated code
 
 QTM_END_NAMESPACE
 
