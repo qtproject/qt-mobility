@@ -65,6 +65,9 @@ public:
         Cancelling     // operation started then cancelled, not yet finished // moved to end so that (deprecated) status() impl is simple.
     };
 
+    QList<QContactManager::Error> Q_DECL_DEPRECATED errors() const; // deprecated, removed in week 3.  see leaf classes for detailed error reporting.
+    Status Q_DECL_DEPRECATED status() const; // deprecated in week 1, removed after transition period, replaced by state()
+
     enum State { // replaces the status enum.
         InactiveState = 0,   // operation not yet started
         ActiveState,         // operation started, not yet finished
@@ -72,11 +75,11 @@ public:
         FinishedState        // operation either completed successfully or failed.  No further results will become available.
     };
 
-    Status Q_DECL_DEPRECATED status() const; // deprecated in week 1, removed after transition period, replaced by state()
     State state() const; // replaces status()
-    bool Q_DECL_DEPRECATED isActive() const;   // deprecated in week 1, removed after transition period
-    bool Q_DECL_DEPRECATED isFinished() const; // deprecated in week 1, removed after transition period
-    QList<QContactManager::Error> Q_DECL_DEPRECATED errors() const; // deprecated, removed in week 3.
+    bool isInactive() const;
+    bool isActive() const;
+    bool isFinished() const;
+    bool isCanceled() const;
     QContactManager::Error error() const;
 
     enum RequestType {
@@ -106,10 +109,14 @@ public slots:
 
     /* waiting for stuff */
     bool waitForFinished(int msecs = 0);
-    bool waitForProgress(int msecs = 0); // deprecated, removed entirely week 1
+#ifdef Q_MOC_RUN
+    bool waitForProgress(int msecs = 0); // deprecated, removed entirely week 1 // moc can't handle deprc.
+#else
+    bool Q_DECL_DEPRECATED waitForProgress(int msecs = 0); // deprecated, removed entirely week 1
+#endif
 
 signals:
-    void stateChanged(QContactAbstractRequest::State newState);
+    void stateChanged(QContactAbstractRequest* self, QContactAbstractRequest::State newState);
 
 protected:
     QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);

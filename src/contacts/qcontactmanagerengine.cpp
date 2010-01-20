@@ -2258,7 +2258,7 @@ void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QCo
     }
     */
 
-    emit req->stateChanged(state);
+    emit req->stateChanged(req, state);
 }
 
 /*!
@@ -2271,7 +2271,7 @@ void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetc
     req->d_ptr->m_error = error;
     req->d_ptr->m_state = status;
     rd->m_ids = result;
-    emit req->progress(req, appendOnly);
+    emit req->resultsAvailable(req, appendOnly);
 }
 
 /*!
@@ -2284,7 +2284,7 @@ void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req,
     req->d_ptr->m_error = error;
     req->d_ptr->m_state = status;
     rd->m_contacts = result;
-    emit req->progress(req, appendOnly);
+    emit req->resultsAvailable(req, appendOnly);
 }
 
 /*!
@@ -2298,7 +2298,7 @@ void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, c
     req->d_ptr->m_state = status;
     rd->m_errors = errorMap;
     rd->m_contacts = result;
-    emit req->progress(req);
+    emit req->resultsAvailable(req);
 }
 
 /*!
@@ -2312,7 +2312,7 @@ void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinition
     req->d_ptr->m_state = status;
     rd->m_errors = errorMap;
     rd->m_definitions = result;
-    emit req->progress(req);
+    emit req->resultsAvailable(req);
 }
 
 /*!
@@ -2325,7 +2325,7 @@ void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefiniti
     req->d_ptr->m_error = error;
     req->d_ptr->m_state = status;
     rd->m_errors = errorMap;
-    emit req->progress(req);
+    emit req->resultsAvailable(req);
 }
 
 /*!
@@ -2339,7 +2339,7 @@ void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitio
     req->d_ptr->m_state = status;
     rd->m_errors = errorMap;
     rd->m_definitions = result;
-    emit req->progress(req);
+    emit req->resultsAvailable(req);
 }
 
 #include "moc_qcontactmanagerengine.cpp"

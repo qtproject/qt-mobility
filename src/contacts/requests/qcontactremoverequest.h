@@ -64,7 +64,7 @@ public:
     QContactFilter filter() const;
 
 signals:
-    void progress(QContactRemoveRequest* self);
+    void progress(QContactRemoveRequest* self); // deprecated in week 2, removed after transition period has elapsed.  no results.
 
 private:
     Q_DISABLE_COPY(QContactRemoveRequest)

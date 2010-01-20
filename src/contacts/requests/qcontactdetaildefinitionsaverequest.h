@@ -70,7 +70,8 @@ public:
     QMap<int, QContactManager::Error> errorMap() const;
 
 signals:
-    void progress(QContactDetailDefinitionSaveRequest* self);
+    void progress(QContactDetailDefinitionSaveRequest* self); // deprecated
+    void resultsAvailable(QContactDetailDefinitionSaveRequest* self); // replaces the above
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionSaveRequest)

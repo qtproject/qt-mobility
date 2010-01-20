@@ -69,7 +69,8 @@ public:
     QContactId second() const;
 
 signals:
-    void progress(QContactRelationshipRemoveRequest* self);
+    void progress(QContactRelationshipRemoveRequest* self); // deprecated
+    void resultsAvailable(QContactRelationshipRemoveRequest* self); // replaces the above
 
 private:
     Q_DISABLE_COPY(QContactRelationshipRemoveRequest)

@@ -71,7 +71,8 @@ public:
     QList<QContactLocalId> ids() const;
 
 signals:
-    void progress(QContactLocalIdFetchRequest* self, bool appendOnly);
+    void progress(QContactLocalIdFetchRequest* self, bool appendOnly); // deprecated
+    void resultsAvailable(QContactLocalIdFetchRequest* self, bool appendOnly); // replaces the above
 
 private:
     Q_DISABLE_COPY(QContactLocalIdFetchRequest)

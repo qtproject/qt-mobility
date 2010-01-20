@@ -74,7 +74,7 @@ public:
 
 signals:
     void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly); // DEPRECATED (remove bool appendOnly in week 3)
-    void progress(QContactDetailDefinitionFetchRequest* self);
+    void resultsAvailable(QContactDetailDefinitionFetchRequest* self); // replaces the above signal.
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionFetchRequest)
