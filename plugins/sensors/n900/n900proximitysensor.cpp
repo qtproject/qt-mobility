@@ -44,8 +44,9 @@
 #include <string.h>
 #include <time.h>
 
-n900proximitysensor::n900proximitysensor()
-    : m_timerid(0)
+n900proximitysensor::n900proximitysensor(QSensor *sensor)
+    : QSensorBackend(sensor)
+    , m_timerid(0)
     , m_filename(PROXIMITY_FILE)
 {
     setSupportedUpdatePolicies(QSensor::OccasionalUpdates |

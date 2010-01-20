@@ -43,8 +43,9 @@
 #include <QDebug>
 #include <time.h>
 
-n900lightsensor::n900lightsensor()
-    : m_timerid(0)
+n900lightsensor::n900lightsensor(QSensor *sensor)
+    : QSensorBackend(sensor)
+    , m_timerid(0)
     , m_filename(LIGHTSENSOR_FILE)
 {
     setSupportedUpdatePolicies(QSensor::OccasionalUpdates |

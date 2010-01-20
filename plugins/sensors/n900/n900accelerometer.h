@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 class n900accelerometer : public QSensorBackend
 {
 public:
-    n900accelerometer();
+    n900accelerometer(QSensor *sensor);
 
     bool start();
     void stop();

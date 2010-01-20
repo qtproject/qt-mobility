@@ -48,7 +48,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QSensorBackend;
-typedef QSensorBackend *(*CreateBackendFunc)();
+typedef QSensorBackend *(*CreateBackendFunc)(QSensor*);
 typedef void(*RegisterBackendFunc)();
 typedef QHash<QByteArray,CreateBackendFunc> BackendList;
 typedef QHash<QByteArray, BackendList> BackendTypeList;
@@ -61,7 +61,7 @@ public:
 
     void registerBackend(const QByteArray &type, const QByteArray &identifier, CreateBackendFunc func);
     void registerRegisterFunc(RegisterBackendFunc func);
-    QSensorBackend *createBackend(const QByteArray &identifier);
+    QSensorBackend *createBackend(const QByteArray &identifier, QSensor *sensor);
     QByteArray firstSensorForType(const QByteArray &type);
 private:
     QSensorManager();
@@ -74,9 +74,9 @@ private:
 
 #define CREATE_FUNC(classname)\
     /* This generated function creates a new instance of the backend */\
-    static QSensorBackend *create_sensor_backend_ ## classname ()\
+    static QSensorBackend *create_sensor_backend_ ## classname (QSensor *sensor)\
     {\
-        return new classname();\
+        return new classname(sensor);\
     }
 
 #define REGISTER_STATEMENT(classname, type, identifier)\

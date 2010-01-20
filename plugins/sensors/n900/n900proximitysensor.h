@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 class n900proximitysensor : public QSensorBackend
 {
 public:
-    n900proximitysensor();
+    n900proximitysensor(QSensor *sensor);
 
     bool start();
     void stop();

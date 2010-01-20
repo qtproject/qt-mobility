@@ -48,24 +48,24 @@
 #include <QFile>
 #include <QDebug>
 
-static QSensorBackend *create_sensor_backend_n900accelerometer()
+static QSensorBackend *create_sensor_backend_n900accelerometer(QSensor *sensor)
 {
     if (QFile::exists(ACCELEROMETER_FILE))
-        return new n900accelerometer();
+        return new n900accelerometer(sensor);
     return 0;
 }
 
-static QSensorBackend *create_sensor_backend_n900lightsensor()
+static QSensorBackend *create_sensor_backend_n900lightsensor(QSensor *sensor)
 {
     if (QFile::exists(LIGHTSENSOR_FILE))
-        return new n900lightsensor();
+        return new n900lightsensor(sensor);
     return 0;
 }
 
-static QSensorBackend *create_sensor_backend_n900proximitysensor()
+static QSensorBackend *create_sensor_backend_n900proximitysensor(QSensor *sensor)
 {
     if (QFile::exists(PROXIMITY_FILE))
-        return new n900proximitysensor();
+        return new n900proximitysensor(sensor);
     return 0;
 }
 

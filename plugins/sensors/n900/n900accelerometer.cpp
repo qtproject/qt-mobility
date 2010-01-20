@@ -43,8 +43,9 @@
 #include <QDebug>
 #include <time.h>
 
-n900accelerometer::n900accelerometer()
-    : m_timerid(0)
+n900accelerometer::n900accelerometer(QSensor *sensor)
+    : QSensorBackend(sensor)
+    , m_timerid(0)
     , m_filename(ACCELEROMETER_FILE)
 {
     setSupportedUpdatePolicies(QSensor::OccasionalUpdates |

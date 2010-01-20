@@ -97,7 +97,7 @@ void QSensorManager::registerRegisterFunc(RegisterBackendFunc func)
 /*!
     Create a backend for \a identifier. Returns null if the identifier is not valid.
 */
-QSensorBackend *QSensorManager::createBackend(const QByteArray &identifier)
+QSensorBackend *QSensorManager::createBackend(const QByteArray &identifier, QSensor *sensor)
 {
     if (!m_pluginsLoaded)
         loadPlugins();
@@ -108,7 +108,7 @@ QSensorBackend *QSensorManager::createBackend(const QByteArray &identifier)
     }
 
     CreateBackendFunc func = m_allBackends[identifier];
-    return func();
+    return func(sensor);
 }
 
 /*!

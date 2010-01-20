@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 class n900lightsensor : public QSensorBackend
 {
 public:
-    n900lightsensor();
+    n900lightsensor(QSensor *sensor);
 
     bool start();
     void stop();

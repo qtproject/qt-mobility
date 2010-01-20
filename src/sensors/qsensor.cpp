@@ -175,12 +175,9 @@ void QSensor::connect()
         }
     }
 
-    d->backend = QSensorManager::instance()->createBackend(d->identifier);
+    d->backend = QSensorManager::instance()->createBackend(d->identifier, this);
     if (!d->backend)
         return;
-
-
-    d->backend->createdFor(this);
 }
 
 /*!

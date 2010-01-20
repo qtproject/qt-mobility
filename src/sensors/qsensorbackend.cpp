@@ -58,7 +58,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \internal
 */
-QSensorBackend::QSensorBackend()
+QSensorBackend::QSensorBackend(QSensor *sensor)
+    : m_sensor(sensor)
 {
 }
 
@@ -67,14 +68,6 @@ QSensorBackend::QSensorBackend()
 */
 QSensorBackend::~QSensorBackend()
 {
-}
-
-/*!
-    \internal
-*/
-void QSensorBackend::createdFor(QSensor *sensor)
-{
-    m_sensor = sensor;
 }
 
 /*!

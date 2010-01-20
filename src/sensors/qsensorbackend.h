@@ -51,10 +51,8 @@ class Q_SENSORS_EXPORT QSensorBackend : public QObject
 {
     Q_OBJECT
 public:
-    QSensorBackend();
+    QSensorBackend(QSensor *sensor);
     virtual ~QSensorBackend();
-
-    void createdFor(QSensor *sensor);
 
     virtual bool start() = 0;
     virtual void stop() = 0;
