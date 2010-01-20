@@ -73,30 +73,18 @@ public:
     QCamera::MeteringMode meteringMode() const;
     void setMeteringMode(QCamera::MeteringMode mode);
     QCamera::MeteringModes supportedMeteringModes() const;
-    // todo move this to S60ImageProcessingControl class
-    QCamera::WhiteBalanceMode whiteBalanceMode() const;
-    void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
-    QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
-    int manualWhiteBalance() const;
-    void setManualWhiteBalance(int colorTemperature);
-    //end move
+
     int isoSensitivity() const;
-    int minimumIsoSensitivity() const;
-    int maximumIsoSensitivity() const;
     QList<int> supportedIsoSensitivities(bool *continuous = 0) const;
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
 
     qreal aperture() const;
-    qreal minimumAperture() const;
-    qreal maximumAperture() const;
     QList<qreal> supportedApertures(bool *continuous = 0) const;
     void setManualAperture(qreal aperture);
     void setAutoAperture();
 
     qreal shutterSpeed() const;
-    qreal minimumShutterSpeed() const;
-    qreal maximumShutterSpeed() const;
     QList<qreal> supportedShutterSpeeds(bool *continuous = 0) const;
     void setManualShutterSpeed(qreal seconds);
     void setAutoShutterSpeed();
@@ -110,6 +98,11 @@ public Q_SLOTS:
 private:
     S60CameraSession *m_session;
     S60CameraService *m_service;
+    QCamera::Error m_error;
+    
+    QCamera::FlashMode m_flashMode;
+    QCamera::ExposureMode m_exposureMode;
+    QCamera::MeteringMode m_meteringMode;
 };
 
 #endif

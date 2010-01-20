@@ -51,6 +51,7 @@
 #include <QMultiMap>
 
 #include "qcamera.h"
+#include "s60camerasettings.h"
 #include <e32base.h>
 #include <cameraengine.h>
 #include <cameraengineobserver.h>
@@ -59,13 +60,15 @@
 QTM_USE_NAMESPACE
 
 class MVFProcessor
+
 {
 public:
       virtual void ViewFinderFrameReady(const QImage& image) = 0;
 };
 
 
-class S60CameraSession : public QObject, public MCameraEngineObserver
+class S60CameraSession : public QObject, 
+    public MCameraEngineObserver
 {
     Q_OBJECT
 public:
@@ -171,6 +174,27 @@ public:
     int zoomFactor();
     void setFocusMode(QCamera::FocusMode mode);
     QCamera::FocusMode focusMode();
+    QCamera::FocusModes supportedFocusModes();
+    
+    //cameraexposurecontrol
+    void setFlashMode(QCamera::FlashMode mode);
+    void setExposureMode(QCamera::ExposureMode mode);
+    QCamera::ExposureModes supportedExposureModes();
+    QCamera::FlashModes supportedFlashModes();
+    void setExposureCompensation(qreal ev);
+    qreal exposureCompensation();
+    QCamera::MeteringMode meteringMode();
+    void setMeteringMode(QCamera::MeteringMode mode);
+    QCamera::MeteringModes supportedMeteringModes();
+    int isoSensitivity();
+    QList<int> supportedIsoSensitivities();
+    void setManualIsoSensitivity(int iso);
+    qreal aperture();
+    QList<qreal> supportedApertures(bool *continuous);
+    void setManualAperture(qreal aperture);
+    void lockExposure(bool lock);
+    bool isExposureLocked();
+    
     
 protected: // From MCameraEngineObserver
     void MceoCameraReady();
@@ -186,7 +210,6 @@ private:
     QMap<QString, int> formatDescMap();
 
     void resetCamera();
-    bool queryAdvancedSettingsInfo();
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -206,6 +229,7 @@ private Q_SLOTS:
 
 private:
     CCameraEngine *m_cameraEngine;
+    S60CameraSettings *m_advancedSettings;
     MVFProcessor *m_VFProcessor;
     int m_imageQuality;
     QSize m_captureSize;
@@ -223,7 +247,6 @@ private:
     TSize m_VFSize;
 
     mutable TCameraInfo m_info; // information about camera
-    CCamera::CCameraAdvancedSettings *m_advancedSettings;
 
 };
 

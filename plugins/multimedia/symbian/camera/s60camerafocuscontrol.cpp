@@ -62,6 +62,7 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
    , m_macroFocusingEnabled(false)
    , m_focusMode(QCamera::AutoFocus)
    , m_focusStatus(QCamera::FocusInitial)
+   , m_error(QCamera::NoError)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
@@ -86,7 +87,7 @@ void S60CameraFocusControl::setFocusMode(QCamera::FocusMode mode)
 
 QCamera::FocusModes S60CameraFocusControl::supportedFocusModes() const
 {
-    return QCamera::AutoFocus;
+    return m_session->supportedFocusModes();
 }
 
 QCamera::FocusStatus S60CameraFocusControl::focusStatus() const
@@ -102,11 +103,14 @@ bool S60CameraFocusControl::macroFocusingEnabled() const
 bool S60CameraFocusControl::isMacroFocusingSupported() const
 {
     // not supported
+   // m_error = QCamera::NotSupportedFeatureError;
+    return false;
 }
 
 void S60CameraFocusControl::setMacroFocusingEnabled(bool /*e*/)
 {
     // not supported
+    m_error = QCamera::NotSupportedFeatureError;
 }
 qreal S60CameraFocusControl::maximumOpticalZoom() const
 {
@@ -142,3 +146,4 @@ void S60CameraFocusControl::cancelFocusing()
 {
     m_session->cancelFocus();
 }
+

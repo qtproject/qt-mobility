@@ -41,11 +41,6 @@
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
-#ifdef USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
-#include <ecamadvancedsettings.h> // CCameraAdvancedSettings
-#else
-#include <ecamadvsettings.h>   // CCameraAdvancedSettings
-#endif 
 #include "s60camerasession.h"
 #include "s60viewfinderwidget.h"
 
@@ -87,6 +82,7 @@ void S60CameraSession::resetCamera()
     qDebug() << "S60CameraSession::resetCamera. Creating new camera with index=" << m_deviceIndex;
     QT_TRAP_THROWING(m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
     Q_CHECK_PTR(m_cameraEngine);
+    m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
 
 }
 
@@ -817,25 +813,6 @@ void S60CameraSession::setVideoRenderer(QObject *videoOutput)
     }   
 }
 
-/*
- * Queries advanced settings information
- * Results are returned to member variable m_advancedSettings
- * @return boolean indicating if querying the info was a success
- */
-bool S60CameraSession::queryAdvancedSettingsInfo()
-{
-    qDebug() << "S60CameraSession::queryAdvancedSettingsInfo";
-
-    bool returnValue = false;
-
-    if (m_cameraEngine) {
-        qDebug() << "m_cameraEngine->AdvancedSettings";
-        m_advancedSettings = m_cameraEngine->AdvancedSettings();   
-        returnValue = true;
-    }
-    return returnValue;
-}
-
 void S60CameraSession::setZoomFactor(int value)
 {
     qDebug() << "S60CameraSession::setZoomFactor, value: " << value;
@@ -931,51 +908,103 @@ int S60CameraSession::maxDigitalZoom()
 
 void S60CameraSession::setFocusMode(QCamera::FocusMode mode)
 {
-    if (queryAdvancedSettingsInfo()) {
-        switch(mode) {
-            case QCamera::ManualFocus: // Manual focus mode
-                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
-               // m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeOff);
-                break;
-            case QCamera::AutoFocus: // One-shot auto focus mode
-                qDebug() << "set auto";
-                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
-                m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle);
-                break;
-            case QCamera::ContinuousFocus: // Continuous auto focus mode 
-                qDebug() << "set auto continuous";
-                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
-                m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous);
-                break;
-            case QCamera::InfinityFocus:
-            case QCamera::HyperfocalFocus:
-                break;
-
-        }      
-    }
+    m_advancedSettings->setFocusMode(mode);
 }
 
 QCamera::FocusMode S60CameraSession::focusMode()
 {
-    if (queryAdvancedSettingsInfo()) {
-        CCamera::CCameraAdvancedSettings::TFocusMode mode = m_advancedSettings->FocusMode();
-        switch(mode) {
-            case CCamera::CCameraAdvancedSettings::EFocusModeManual:
-                return QCamera::ManualFocus;
-                break;
-            case CCamera::CCameraAdvancedSettings::EFocusModeAuto:
-                qDebug() << "CCamera::CCameraAdvancedSettings::EFocusModeAuto";
-                CCamera::CCameraAdvancedSettings::TAutoFocusType type = m_advancedSettings->AutoFocusType();
-                if (type == CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle) {
-                    qDebug() << "CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle";
-                    return QCamera::AutoFocus;
-                }
-                else if (type == CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous) {
-                    qDebug() << "CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous";
-                    return QCamera::ContinuousFocus;
-                }
-                break;
-
-        }      
-    }
+    return m_advancedSettings->focusMode();
 }
+
+QCamera::FocusModes S60CameraSession::supportedFocusModes()
+{
+    return m_advancedSettings->supportedFocusModes();
+}
+
+void S60CameraSession::setFlashMode(QCamera::FlashMode mode)
+{
+    m_advancedSettings->setFlashMode(mode);
+}
+
+QCamera::FlashModes S60CameraSession::supportedFlashModes()
+{
+    return m_advancedSettings->supportedFlashModes();
+}
+
+QCamera::ExposureModes S60CameraSession::supportedExposureModes()
+{
+    return m_advancedSettings->supportedExposureModes();
+}
+
+void S60CameraSession::setExposureMode(QCamera::ExposureMode mode)
+{
+    m_advancedSettings->setExposureMode(mode);
+}
+
+void S60CameraSession::setExposureCompensation(qreal ev)
+{
+    m_advancedSettings->setExposureCompensation(ev);
+}
+
+qreal S60CameraSession::exposureCompensation()
+{
+    return m_advancedSettings->exposureCompensation();
+}
+
+QCamera::MeteringMode S60CameraSession::meteringMode()
+{
+    return m_advancedSettings->meteringMode();
+}
+
+void S60CameraSession::setMeteringMode(QCamera::MeteringMode mode)
+{
+    m_advancedSettings->setMeteringMode(mode);
+}
+
+QCamera::MeteringModes S60CameraSession::supportedMeteringModes()
+{
+    return m_advancedSettings->supportedMeteringModes();
+}
+
+int S60CameraSession::isoSensitivity()
+{
+    return m_advancedSettings->isoSensitivity();
+}
+
+QList<int> S60CameraSession::supportedIsoSensitivities()
+{
+  return m_advancedSettings->supportedIsoSensitivities();
+}
+
+void S60CameraSession::setManualIsoSensitivity(int iso)
+{
+    m_advancedSettings->setManualIsoSensitivity(iso);
+}
+
+qreal S60CameraSession::aperture()
+{
+    return m_advancedSettings->aperture();
+}
+
+QList<qreal> S60CameraSession::supportedApertures(bool *continuous)
+{
+    // TODO:
+}
+
+void S60CameraSession::setManualAperture(qreal aperture)
+{
+    m_advancedSettings->setManualAperture(aperture);
+}
+
+void S60CameraSession::lockExposure(bool lock)
+{
+    m_advancedSettings->lockExposure(lock);
+}
+
+bool S60CameraSession::isExposureLocked()
+{
+    return m_advancedSettings->isExposureLocked();
+}
+
+
+

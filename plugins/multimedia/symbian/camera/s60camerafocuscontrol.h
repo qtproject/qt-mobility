@@ -88,6 +88,7 @@ private:
     QCamera::FocusStatus m_focusStatus;
     qreal m_maxZoom;
     qreal m_maxDigitalZoom;
+    QCamera::Error m_error;
 };
 
 #endif

@@ -1,13 +1,18 @@
 INCLUDEPATH += $$PWD
 
 exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
+    symbian:LIBS += -lecamadvsettings
     DEFINES += USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     message("Using from s60 3.2 CCameraAdvancedSettings header")  
 }
+exists($${EPOCROOT}epoc32\include\ecamadvsettings.h) {
+    symbian:LIBS += -lecamadvsettings
+    DEFINES += USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
+    message("Using from s60 5.0 CCameraAdvancedSettings header")  
+}
 
 symbian:LIBS += -lcamerawrapper \
-    -lfbscli \
-    -lecamadvsettings
+    -lfbscli
 
 HEADERS += $$PWD/s60camerafocuscontrol.h \
     $$PWD/s60cameraexposurecontrol.h \
@@ -21,7 +26,8 @@ HEADERS += $$PWD/s60camerafocuscontrol.h \
     $$PWD/s60cameraimagecapturecontrol.h \
     $$PWD/s60cameravideodevicecontrol.h \
     $$PWD/s60cameraimageencodercontrol.h \
-    $$PWD/s60viewfinderwidget.h 
+    $$PWD/s60viewfinderwidget.h \
+    $$PWD/s60camerasettings.h	
 SOURCES += $$PWD/s60camerafocuscontrol.cpp \
     $$PWD/s60cameraexposurecontrol.cpp \
     $$PWD/s60cameracontrol.cpp \
@@ -34,4 +40,5 @@ SOURCES += $$PWD/s60camerafocuscontrol.cpp \
     $$PWD/s60cameraimagecapturecontrol.cpp \
     $$PWD/s60cameravideodevicecontrol.cpp \
     $$PWD/s60cameraimageencodercontrol.cpp \
-    $$PWD/s60viewfinderwidget.cpp
+    $$PWD/s60viewfinderwidget.cpp \
+    $$PWD/s60camerasettings.cpp
