@@ -84,7 +84,7 @@ public:
     QIODevice* device() const;
 
     // writing:
-    bool startWriting(const QList<QVersitDocument>& input);
+    bool startWriting(const QList<QVersitDocument>& input); // XXX These two functions look strange..
     bool writeAll(const QList<QVersitDocument>& input);
 
     State state() const;
@@ -92,7 +92,6 @@ public:
 
 signals:
     void finished();
-    // XXX Do we need incremental results?  I think we're more likely to just write it to the device, so no
 
 private: // data
     QVersitWriterPrivate* d;

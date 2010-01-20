@@ -55,7 +55,8 @@ class QVersitDocument;
 class QVersitProperty;
 class QVersitContactImporterPrivate;
 
-class QVersitContactImporterPropertyHandler
+// XXX shorter name?
+class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandler
 {
 public:
     virtual ~QVersitContactImporterPropertyHandler() {}
@@ -70,7 +71,8 @@ public:
     QVersitContactImporter();
     ~QVersitContactImporter();
 
-    // XXX I'm not sure about importing vs converting (same for class name)
+    // XXX I think it's possible to specify in vcard that a contact is the self contact
+    // Not sure the best way to report that!
     QList<QContact> importContacts(const QList<QVersitDocument>& documents);
 
     void setPropertyHandler(QVersitContactImporterPropertyHandler* importer);

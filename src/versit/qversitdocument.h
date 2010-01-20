@@ -79,14 +79,15 @@ public:
 
     void addProperty(const QVersitProperty& property);
     void removeProperty(const QVersitProperty& property);
-    void removeAllProperties(const QString& name);
+    void removeAllProperties(const QString& name); // XXX removeProperties (or be consistent with QVersitProperty)
     QList<QVersitProperty> properties() const;
 
-    // XXX this is setDefaultCodec in QVersitProperty
+    // XXX this should move to QVersitWriter
     void setCodec(QTextCodec* codec);
     QTextCodec* codec() const;
 
     bool isEmpty() const;
+    // XXX clear
 
 private:
     

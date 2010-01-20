@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitProperty;
 
-class QVersitResourceLoader
+class Q_VERSIT_EXPORT QVersitResourceLoader
 {
 public:
     virtual ~QVersitResourceLoader() {}
@@ -59,7 +59,7 @@ public:
 };
 
 
-class QVersitResourceSaver
+class Q_VERSIT_EXPORT QVersitResourceSaver
 {
 public:
     virtual ~QVersitResourceSaver() {}

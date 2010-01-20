@@ -88,11 +88,6 @@ public:
     void setDefaultCodec(QTextCodec* codec);
     QTextCodec* defaultCodec();
 
-    // XXX Other Qt classes have something like:
-    // QVersitDocument read() or QList<QVersitDocument> readAll() etc..
-    // we need to either pick an async signal driven API or an iterative while(state!=finished) read{}
-    // (or something)
-
     // reading:
     bool startReading(); // XXX these two functions are still a little confusing/not intuitive
     QList<QVersitDocument> readAll();

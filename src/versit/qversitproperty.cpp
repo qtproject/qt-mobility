@@ -237,3 +237,14 @@ bool QVersitProperty::isEmpty() const
             && d->mParameters.isEmpty()
             && !d->mValue.isValid();
 }
+
+/*!
+ * Clears the contents of this property.
+ */
+void QVersitProperty::clear()
+{
+    d->mGroups.clear();
+    d->mName.clear();
+    d->mValue.clear();
+    d->mParameters.clear();
+}
