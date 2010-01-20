@@ -99,11 +99,11 @@ IMPLEMENT_READING(QOrientationReading)
 
 /*!
     \property QOrientationReading::orientation
-    \brief foo
+    \brief the orientation of the device.
 */
 
 /*!
-    Foo
+    Returns the orientation of the device.
 */
 QOrientationReading::Orientation QOrientationReading::orientation() const
 {
@@ -111,7 +111,7 @@ QOrientationReading::Orientation QOrientationReading::orientation() const
 }
 
 /*!
-    Foo
+    Sets the \a orientation for the reading.
 */
 void QOrientationReading::setOrientation(QOrientationReading::Orientation orientation)
 {

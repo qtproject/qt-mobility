@@ -98,6 +98,8 @@ QSensor::QSensor(QObject *parent)
 QSensor::~QSensor()
 {
     stop();
+    foreach (QSensorFilter *filter, d->filters)
+        filter->setSensor(0);
 }
 
 /*!
@@ -116,12 +118,14 @@ bool QSensor::isAvailable() const
 }
 
 /*!
-    \property QSensor::identifier
-    \brief the unique identifer for the sensor.
+    \property QSensor::sensorid
+    \brief the backend identifier for the sensor.
+
+    Note that this may not have a value until after connect() is called.
 */
 
 /*!
-    Returns the identifier for the sensor.
+    Returns the backend identifier for the sensor.
 */
 QByteArray QSensor::identifier() const
 {
@@ -129,7 +133,9 @@ QByteArray QSensor::identifier() const
 }
 
 /*!
-    Foo
+    Sets the backend identifier to use.
+
+    This must be done before connect() is called.
 */
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
@@ -151,7 +157,9 @@ QByteArray QSensor::type() const
 }
 
 /*!
-    Foo
+    Sets the type of the sensor.
+
+    Note that this can only be used if you are using QSensor directly.
 */
 void QSensor::setType(const QByteArray &type)
 {
@@ -161,7 +169,12 @@ void QSensor::setType(const QByteArray &type)
 }
 
 /*!
-    Foo
+    Connect to a sensor backend.
+
+    This can only be called once.
+    The type must be set before calling this method (if you are using QSensor directly).
+
+    \sa isAvailable()
 */
 void QSensor::connect()
 {
@@ -184,11 +197,14 @@ void QSensor::connect()
 
 /*!
     \property QSensor::running
-    \brief foo
+    \brief controls the running state of the sensor.
+
+    This is provided for QML, set running: true to cause the sensor
+    to start on.
 */
 
 /*!
-    Foo
+    Returns true if the sensor is active (returning values).
 */
 bool QSensor::isActive() const
 {
@@ -196,7 +212,8 @@ bool QSensor::isActive() const
 }
 
 /*!
-    Foo
+    Start the sensor \a running or stop it.
+    \sa start(), stop()
 */
 void QSensor::setActive(bool running)
 {
@@ -209,7 +226,7 @@ void QSensor::setActive(bool running)
 }
 
 /*!
-    Returns foo
+    Returns true if the readingChanged() signal will be emitted.
 */
 bool QSensor::isSignalEnabled() const
 {
@@ -217,7 +234,12 @@ bool QSensor::isSignalEnabled() const
 }
 
 /*!
-    Foo
+    Call with \a enabled as false to turn off the readingChanged() signal.
+
+    You might want to do this for performance reasons. If you are polling
+    the sensor or using a filter in a performance-critical application
+    then the overhead of emitting the signal may be too high even if nothing
+    is connected to it.
 */
 void QSensor::setSignalEnabled(bool enabled)
 {
@@ -372,11 +394,13 @@ void QSensor::stop()
 
 /*!
     \property QSensor::reading
-    \brief foo
+    \brief the reading class.
+
+    The reading class provides access to sensor readings.
 */
 
 /*!
-    Foo
+    Returns the reading class for this sensor.
 */
 QSensorReading *QSensor::reading() const
 {
@@ -394,14 +418,19 @@ void QSensor::newReadingAvailable()
             return;
     }
 
-    d->cache_reading->readValuesFrom(d->filter_reading);
+    d->cache_reading->swapValuesWith(d->filter_reading);
 
     if (d->signalEnabled)
         emit readingChanged();
 }
 
 /*!
-    Foo \a filter
+    Add a \a filter to the sensor.
+
+    The sensor does not take ownership of the filter.
+    QSensorFilter will inform the sensor if it is destroyed.
+
+    \sa QSensorFilter
 */
 void QSensor::addFilter(QSensorFilter *filter)
 {
@@ -409,11 +438,14 @@ void QSensor::addFilter(QSensorFilter *filter)
 }
 
 /*!
-    Foo \a filter
+    Remove \a filter from the sensor.
+
+    \sa QSensorFilter
 */
 void QSensor::removeFilter(QSensorFilter *filter)
 {
     d->filters.removeOne(filter);
+    filter->setSensor(0);
 }
 
 /*!
@@ -424,7 +456,7 @@ void QSensor::removeFilter(QSensorFilter *filter)
 /*!
     \fn QSensor::readingChanged()
 
-    Foo
+    This signal is emitted when the reading has changed.
 */
 
 // =====================================================================
@@ -442,6 +474,15 @@ void QSensor::removeFilter(QSensorFilter *filter)
     This may be slowed down by the use of signals and slots.
     The QSensorFilter interface provides a more efficient way for the
     sensor to notify your class that the sensor has changed.
+
+    Additionally, multiple filters can be added to a sensor. They are called
+    in order and each filter has the option to modify the values in the reading
+    or to suppress the reading altogether.
+
+    Note that the values in the class returned by QSensor::reading() will
+    not be updated until after the filters have been run.
+
+    \sa filter()
 */
 
 /*!
@@ -453,7 +494,7 @@ QSensorFilter::QSensorFilter()
 }
 
 /*!
-    Notifies any sensors that the filter is being destroyed.
+    Notifies the attached sensor (if any) that the filter is being destroyed.
 */
 QSensorFilter::~QSensorFilter()
 {
@@ -465,6 +506,8 @@ QSensorFilter::~QSensorFilter()
     \fn QSensorFilter::filter(QSensorReading *reading)
 
     This function is called when the sensor \a reading changes.
+
+    The filter can modify the reading.
 
     Returns true to allow the next filter to receive the value.
     If this is the last filter, returning true causes the signal
@@ -483,31 +526,63 @@ void QSensorFilter::setSensor(QSensor *sensor)
 
 // =====================================================================
 
-QSensorReading::QSensorReading(QSensorReadingPrivate *_d, size_t size, void **dest)
+/*!
+    \class QSensorReading
+    \ingroup sensors
+
+    \preliminary
+    \brief The QSensorReading class holds the readings from the sensor.
+
+    Note that QSensorReading is not particularly useful by itself. The interesting
+    data for each sensor is defined in a sub-class of QSensorReading.
+*/
+
+/*!
+    \internal
+*/
+QSensorReading::QSensorReading(QSensorReadingPrivate *_d)
     : d(_d)
 {
-    d->size = size;
-    *dest = _d;
 }
 
+/*!
+    \internal
+*/
 QSensorReading::~QSensorReading()
 {
 }
 
+/*!
+    \property QSensorReading::timestamp
+    \brief the timestamp of the reading.
+
+    \sa qtimestamp
+*/
+
+/*!
+    Returns the timestamp of the reading.
+*/
 qtimestamp QSensorReading::timestamp() const
 {
     return d->timestamp;
 }
 
+/*!
+    Sets the \a timestamp of the reading.
+*/
 void QSensorReading::setTimestamp(qtimestamp timestamp)
 {
     d->timestamp = timestamp;
 }
 
-void QSensorReading::readValuesFrom(QSensorReading *other)
+/*!
+    \internal
+*/
+void QSensorReading::swapValuesWith(QSensorReading *other)
 {
-    Q_ASSERT(d->size == other->d->size);
-    memcpy(d.data(), other->d.data(), d->size);
+    QSensorReadingPrivate *tmp = d.data();
+    d.reset(other->d.data());
+    other->d.reset(tmp);
 }
 
 #include "moc_qsensor.cpp"

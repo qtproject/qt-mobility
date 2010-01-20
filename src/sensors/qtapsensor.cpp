@@ -97,11 +97,13 @@ IMPLEMENT_READING(QTapReading)
 
 /*!
     \property QTapReading::tapDirection
-    \brief foo
+    \brief the direction of the tap.
+
+    \sa TapDirection
 */
 
 /*!
-    Foo
+    Returns the tap direction.
 */
 QTapReading::TapDirection QTapReading::tapDirection() const
 {
@@ -109,7 +111,7 @@ QTapReading::TapDirection QTapReading::tapDirection() const
 }
 
 /*!
-    Foo
+    Sets the tap direction to \a tapDirection.
 */
 void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
 {
@@ -118,11 +120,11 @@ void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
 
 /*!
     \property QTapReading::doubleTap
-    \brief foo
+    \brief a value indicating if there was a single or double tap.
 */
 
 /*!
-    Foo
+    Returns true if the reading was a double tap.
 */
 bool QTapReading::isDoubleTap() const
 {
@@ -130,7 +132,7 @@ bool QTapReading::isDoubleTap() const
 }
 
 /*!
-    Foo
+    Sets the double tap status of the reading to \a doubleTap.
 */
 void QTapReading::setDoubleTap(bool doubleTap)
 {

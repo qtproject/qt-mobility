@@ -74,7 +74,7 @@ IMPLEMENT_READING(QAmbientLightReading)
 
 /*!
     \property QAmbientLightReading::lightLevel
-    \brief foo
+    \brief the ambient light level.
 */
 
 /*!
@@ -86,7 +86,7 @@ QAmbientLightReading::LightLevel QAmbientLightReading::lightLevel() const
 }
 
 /*!
-    Sets the ambient light level.
+    Sets the ambient light level to \a lightLevel.
 */
 void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightLevel)
 {

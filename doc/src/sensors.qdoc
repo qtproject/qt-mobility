@@ -44,6 +44,10 @@
 */
 
 /*!
+\group sensors_helpers
+*/
+
+/*!
 \group sensors_backend
 */
 
@@ -106,6 +110,10 @@ talks directly to an acceleration sensor backend.
 \section1 Main Classes
 If you want to use the sensors on a device, these are the classes to use.
 \annotatedlist sensors
+
+\section1 Helper Classes
+These classes provide convenience wrappers that reduce the need for casting.
+\annotatedlist sensors_helpers
 
 \section1 Backend Classes
 If you are making sensors available through the Sensors API, these are the

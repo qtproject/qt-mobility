@@ -71,7 +71,9 @@ QSensorBackend::~QSensorBackend()
 }
 
 /*!
-    Foo \a policies
+    Set the supported \a policies for this sensor.
+    If this isn't called the sensor will not report
+    any supported policies to the user.
 */
 void QSensorBackend::setSupportedUpdatePolicies(QSensor::UpdatePolicies policies)
 {
@@ -79,6 +81,9 @@ void QSensorBackend::setSupportedUpdatePolicies(QSensor::UpdatePolicies policies
     d->supportedUpdatePolicies = policies;
 }
 
+/*!
+    \internal
+*/
 void QSensorBackend::setReadings(QSensorReading *filter_reading, QSensorReading *cache_reading)
 {
     QSensorPrivate *d = m_sensor->d_func();
@@ -116,9 +121,17 @@ void QSensorBackend::newReadingAvailable()
 /*!
     \fn QSensorBackend::setReading(T *reading)
 
-    Templated function foo \a reading
+    A template function. It tells the sensor what \a reading
+    class the backend will write values into.
+
+    The backend must not lose this reference as it cannot get
+    this reference back from the sensor. This is not
+    the same value that is returned by QSensor::reading().
+
+    This function should be called like this.
+
     \code
-    setReading<ReadingClass>(&my_reading_class);
+    setReading<MyReadingClass>(&my_reading_class);
     \endcode
 */
 

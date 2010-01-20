@@ -62,7 +62,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     friend class QSensorBackend;
 
     Q_OBJECT
-    Q_PROPERTY(QByteArray identifier READ identifier WRITE setIdentifier)
+    Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
     Q_PROPERTY(QByteArray type READ type WRITE setType)
     Q_PROPERTY(bool isAvailable READ isAvailable)
     Q_PROPERTY(UpdatePolicies supportedUpdatePolicies READ supportedUpdatePolicies)
@@ -170,7 +170,7 @@ class Q_SENSORS_EXPORT QSensorReading : public QObject
     friend class QSensor;
 
     Q_OBJECT
-    Q_PROPERTY(qtimestamp timestamp READ timestamp WRITE setTimestamp)
+    Q_PROPERTY(qtimestamp timestamp READ timestamp)
 public:
     virtual ~QSensorReading();
 
@@ -178,10 +178,10 @@ public:
     void setTimestamp(qtimestamp timestamp);
 
 protected:
-    explicit QSensorReading(QSensorReadingPrivate *d, size_t size, void **dest);
+    explicit QSensorReading(QSensorReadingPrivate *d);
 
 private:
-    void readValuesFrom(QSensorReading *other);
+    void swapValuesWith(QSensorReading *other);
     QScopedPointer<QSensorReadingPrivate> d;
     Q_DISABLE_COPY(QSensorReading)
 };
@@ -201,7 +201,7 @@ private:
 
 #define IMPLEMENT_READING_D(classname, pclassname)\
     classname::classname()\
-        : QSensorReading(new pclassname, sizeof(pclassname), (void**)&d) {}\
+        : QSensorReading(new pclassname) {}\
     classname::~classname() {}
 
 QTM_END_NAMESPACE
