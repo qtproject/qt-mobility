@@ -92,7 +92,6 @@ void tst_QCrmlParser::empty()
     QList<KeyData> keyData;
     KeyData *key = new KeyData();
     keyData.append(*key);
-    //keyData.append(KeyData::KeyData());
     KeyData::Target target = KeyData::RProperty;
 
     QHash<QString, KeyData> keyHash = makeHash(keyData);
