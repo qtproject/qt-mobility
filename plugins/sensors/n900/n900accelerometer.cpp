@@ -94,8 +94,8 @@ void n900accelerometer::poll()
     // Convert from milli-Gs to meters per second per second
     // Using 1 G = 9.80665 m/s^2
     qreal ax = x * 0.00980665;
-    qreal ay = y * 0.00980665;
-    qreal az = z * 0.00980665;
+    qreal ay = y * -0.00980665;
+    qreal az = z * -0.00980665;
 
     m_reading.setX(ax);
     m_reading.setY(ay);
