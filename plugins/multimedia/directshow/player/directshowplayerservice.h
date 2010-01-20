@@ -93,6 +93,9 @@ public:
     void pause();
     void stop();
 
+    qint64 position() const;
+    qint64 duration() const { return m_duration; }
+
     void seek(qint64 position);
     void setRate(qreal rate);
 
@@ -102,7 +105,6 @@ public:
 private Q_SLOTS:
     void videoOutputChanged();
     void graphEvent(HANDLE handle);
-    void loaded();
 
 private:
     void removeOutput(IBaseFilter *output);
@@ -150,6 +152,7 @@ private:
     IBaseFilter *m_videoOutput;
     qreal m_rate;
     qint64 m_position;
+    qint64 m_duration;
 
     QUrl m_url;
     QMutex m_mutex;

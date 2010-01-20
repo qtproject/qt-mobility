@@ -104,9 +104,6 @@ public:
     void loadStatus(long status);
     void stateChange(long state);
 
-    using QMediaPlayerControl::durationChanged;
-
-
 protected:
     void customEvent(QEvent *event);
 
@@ -119,6 +116,7 @@ private:
     int m_muteVolume;
     QIODevice *m_stream;
     QMediaContent m_media;
+    qint64 m_duration;
     long m_loadStatus;
     bool m_buffering;
 };

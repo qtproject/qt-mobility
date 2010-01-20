@@ -78,6 +78,7 @@ DirectShowPlayerControl::DirectShowPlayerControl(DirectShowPlayerService *servic
     , m_status(QMediaPlayer::UnknownMediaStatus)
     , m_muteVolume(-1)
     , m_stream(0)
+    , m_duration(0)
     , m_loadStatus(0)
     , m_buffering(false)
 {
@@ -99,45 +100,12 @@ QMediaPlayer::MediaStatus DirectShowPlayerControl::mediaStatus() const
 
 qint64 DirectShowPlayerControl::duration() const
 {
-    LONGLONG duration = 0;
-    switch (m_status) {
-    case QMediaPlayer::LoadedMedia:
-    case QMediaPlayer::StalledMedia:
-    case QMediaPlayer::BufferingMedia:
-    case QMediaPlayer::BufferedMedia:
-    case QMediaPlayer::EndOfMedia:
-        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-            seeking->GetDuration(&duration);
-            seeking->Release();
-        }
-        break;
-    default:
-        break;
-    }
-
-    return duration / 10;
+    return m_service->duration();
 }
 
 qint64 DirectShowPlayerControl::position() const
 {
-    LONGLONG position = 0;
-
-    switch (m_status) {
-    case QMediaPlayer::LoadedMedia:
-    case QMediaPlayer::StalledMedia:
-    case QMediaPlayer::BufferingMedia:
-    case QMediaPlayer::BufferedMedia:
-    case QMediaPlayer::EndOfMedia:
-        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-            seeking->GetCurrentPosition(&position);
-            seeking->Release();
-        }
-        break;
-    default:
-        break;
-    }
-
-    return position / 10;
+    return m_service->position();
 }
 
 void DirectShowPlayerControl::setPosition(qint64 position)
@@ -392,6 +360,6 @@ void DirectShowPlayerControl::updateStatus()
 
     if (status != m_status) {
         emit mediaStatusChanged(m_status = status);
-        emit durationChanged(duration());
+        emit durationChanged(m_service->duration());
     }
 }

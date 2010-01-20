@@ -93,6 +93,7 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     , m_videoOutput(0)
     , m_rate(1.0)
     , m_position(0)
+    , m_duration(0)
 {
     m_playerControl = new DirectShowPlayerControl(this);
     m_metaDataControl = new DirectShowMetaDataControl(this);
@@ -202,6 +203,10 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
     }
 
     m_stream = stream;
+    m_duration = 0;
+
+    m_pendingTasks = 0;
+    m_executedTasks = 0;
 
     if (media.isNull() && !stream) {
         m_graphStatus = NoMedia;
@@ -245,6 +250,7 @@ void DirectShowPlayerService::play()
         if (m_executedTasks & Stop) {
             m_position = 0;
             m_pendingTasks |= Seek;
+            m_executedTasks ^= Stop;
         }
 
         m_wait.wakeAll();
@@ -262,6 +268,7 @@ void DirectShowPlayerService::pause()
         if (m_executedTasks & Stop) {
             m_position = 0;
             m_pendingTasks |= Seek;
+            m_executedTasks ^= Stop;
         }
 
         m_wait.wakeAll();
@@ -287,9 +294,10 @@ void DirectShowPlayerService::stop()
                 control->Release();
             }
             m_executedTasks &= ~(Play | Pause);
-            m_executedTasks |= Stop;
         }
     }
+
+    m_executedTasks |= Stop;
 }
 
 void DirectShowPlayerService::setRate(qreal rate)
@@ -302,6 +310,25 @@ void DirectShowPlayerService::setRate(qreal rate)
 
     if (m_executedTasks & Load)
         m_wait.wakeAll();
+}
+
+qint64 DirectShowPlayerService::position() const
+{
+    QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
+
+    if (m_graphStatus == Loaded) {
+        if (m_executingTask == Seek) {
+            return m_position;
+        } else if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
+            LONGLONG position = 0;
+
+            seeking->GetCurrentPosition(&position);
+            seeking->Release();
+
+            return position / 10;
+        }
+    }
+    return 0;
 }
 
 void DirectShowPlayerService::seek(qint64 position)
@@ -416,7 +443,6 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
         LONG_PTR param2;
 
         while (event->GetEvent(&eventCode, &param1, &param2, 0) == S_OK) {
-            qDebug("Graph Event %x", eventCode);
             switch (eventCode) {
             case EC_BUFFERING_DATA:
                 m_playerControl->bufferingData(param1);
@@ -436,7 +462,7 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
                 m_playerControl->stateChange(param1);
                 break;
             case EC_LENGTH_CHANGED:
-                m_playerControl->durationChanged(m_playerControl->duration());
+                // TODO.
                 break;
             default:
                 break;
@@ -446,11 +472,6 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
         }
         event->Release();
     }
-}
-
-void DirectShowPlayerService::loaded()
-{
-    m_playerControl->durationChanged(m_playerControl->duration());
 }
 
 void DirectShowPlayerService::removeOutput(IBaseFilter *output)
@@ -694,9 +715,21 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
         }
         filter->Release();
     }
-    
+
+    if (m_graphStatus != Loaded) {
+        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
+            LONGLONG duration = 0;
+            locker->unlock();
+            seeking->GetDuration(&duration);
+            locker->relock();
+
+            m_duration = duration / 10;
+        }
+    }
+
     if (m_executingTask == Render && rendered) {
         m_graphStatus = Loaded;
+
 
         m_executedTasks |= Render;
     } else {
