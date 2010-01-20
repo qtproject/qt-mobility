@@ -90,7 +90,7 @@ QTM_USE_NAMESPACE
 /*! Constructs a new reader. */
 QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 {
-    connect(d,SIGNAL(finished()),this,SIGNAL(finished()),Qt::DirectConnection);
+    connect(d, SIGNAL(stateChanged()), this, SIGNAL(stateChanged()), Qt::DirectConnection);
 }
     
 /*! 
@@ -172,7 +172,7 @@ bool QVersitReader::startReading()
 QList<QVersitDocument> QVersitReader::readAll()
 {
     if (!d->isRunning()) {
-        d->read();
+        d->read(false);
         return d->mVersitDocuments;
     }
     else {

@@ -78,19 +78,20 @@ bool QVersitReaderPrivate::isReady() const
 
 /*!
  * Does the actual reading and sets the error and state as appropriate.
+ * If \a async, then stateChanged() signals are emitted as the reading happens.
  */
-bool QVersitReaderPrivate::read()
+bool QVersitReaderPrivate::read(bool async)
 {
     setError(QVersitReader::NoError);
     mVersitDocuments.clear();
     bool ret = true;
     if (isReady()) {
-        setState(QVersitReader::ActiveState);
+        setState(QVersitReader::ActiveState, async);
         if (!mIoDevice
             || !mIoDevice->isReadable()
             || !mIoDevice->isOpen()) {
             setError(QVersitReader::IOError);
-            setState(QVersitReader::FinishedState);
+            setState(QVersitReader::FinishedState, async);
             return false;
         }
         QByteArray input = mIoDevice->readAll();
@@ -121,7 +122,7 @@ bool QVersitReaderPrivate::read()
         return false;
     }
 
-    setState(QVersitReader::FinishedState);
+    setState(QVersitReader::FinishedState, async);
     return ret;
 }
 
@@ -130,7 +131,7 @@ bool QVersitReaderPrivate::read()
  */
 void QVersitReaderPrivate::run()
 {
-    read();
+    read(true);
 }
 
 /*!
@@ -396,10 +397,13 @@ QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
     return mDefaultCodec->toUnicode(value);
 }
 
-void QVersitReaderPrivate::setState(QVersitReader::State state)
+void QVersitReaderPrivate::setState(QVersitReader::State state, bool emitSignal)
 {
-    QMutexLocker locker(&mMutex);
+    mMutex.lock();
     mState = state;
+    mMutex.unlock();
+    if (emitSignal)
+        emit stateChanged();
 }
 
 QVersitReader::State QVersitReaderPrivate::state() const

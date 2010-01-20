@@ -53,7 +53,7 @@ void UT_QVersitWriter::init()
     mWritingDoneCalled = false;
     mOutputDevice = new QBuffer;
     mWriter = new QVersitWriter;
-    connect(mWriter,SIGNAL(finished()),this,SLOT(writingDone()),Qt::DirectConnection);
+    connect(mWriter, SIGNAL(stateChanged()), this, SLOT(stateChanged()), Qt::DirectConnection);
 }
 
 void UT_QVersitWriter::cleanup()
@@ -62,11 +62,12 @@ void UT_QVersitWriter::cleanup()
     delete mOutputDevice;
 }
 
-void UT_QVersitWriter::writingDone()
+void UT_QVersitWriter::stateChanged()
 {
-    mWritingDoneCalled = true;
-    QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
-    QCOMPARE(mWriter->error(), QVersitWriter::NoError);
+    if (mWriter->state() == QVersitWriter::FinishedState) {
+        mWritingDoneCalled = true;
+        QCOMPARE(mWriter->error(), QVersitWriter::NoError);
+    }
 }
 
 void UT_QVersitWriter::testDevice()

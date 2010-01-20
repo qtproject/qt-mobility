@@ -53,12 +53,12 @@ QTM_USE_NAMESPACE
 
 void UT_QVersitReader::init()
 {
-    mReadingDoneCalled = false;
+    mFinishedSignalEmitted = false;
     mExpectedDocumentCount = 0;
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mReader = new QVersitReader;
-    connect(mReader,SIGNAL(finished()),this,SLOT(finished()),Qt::DirectConnection);
+    connect(mReader, SIGNAL(stateChanged()), this, SLOT(stateChanged()), Qt::DirectConnection);
     mReaderPrivate = new QVersitReaderPrivate;
 }
 
@@ -69,12 +69,13 @@ void UT_QVersitReader::cleanup()
     delete mInputDevice;
 }
 
-void UT_QVersitReader::finished()
+void UT_QVersitReader::stateChanged()
 {
-    mReadingDoneCalled = true;
-    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
-    QCOMPARE(mReader->error(), mExpectedError);
-    QCOMPARE(mReader->results().count(),mExpectedDocumentCount);
+    if (mReader->state() == QVersitReader::FinishedState) {
+        mFinishedSignalEmitted = true;
+        QCOMPARE(mReader->error(), mExpectedError);
+        QCOMPARE(mReader->results().count(), mExpectedDocumentCount);
+    }
 }
 
 void UT_QVersitReader::testDevice()
@@ -202,7 +203,7 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
 
 
     // Asynchronous reading
-    QVERIFY(!mReadingDoneCalled);
+    QVERIFY(!mFinishedSignalEmitted);
     delete mInputDevice;
     mInputDevice = 0;
     mInputDevice = new QBuffer;
@@ -215,7 +216,7 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     QVERIFY(mReader->startReading());
     delete mReader; // waits for the thread to finish
     mReader = 0;
-    QVERIFY(mReadingDoneCalled);
+    QVERIFY(mFinishedSignalEmitted);
 }
 
 void UT_QVersitReader::testResult()

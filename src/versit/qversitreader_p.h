@@ -80,9 +80,12 @@ public: // Constructors and destructor
     QVersitReaderPrivate(); 
     ~QVersitReaderPrivate();
 
+signals:
+    void stateChanged();
+
 public: // New functions
     bool isReady() const;
-    bool read();
+    bool read(bool async);
 
     bool parseVersitDocument(VersitCursor& cursor,
                              QVersitDocument& document,
@@ -120,7 +123,7 @@ public: // New functions
         QTextCodec** codec) const;
 
     // mutexed getters and setters.
-    void setState(QVersitReader::State);
+    void setState(QVersitReader::State, bool emitSignal);
     QVersitReader::State state() const;
     void setError(QVersitReader::Error);
     QVersitReader::Error error() const;

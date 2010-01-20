@@ -88,7 +88,7 @@ QTM_USE_NAMESPACE
 /*! Constructs a new writer. */
 QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
 {
-    connect(d,SIGNAL(finished()),this,SIGNAL(finished()),Qt::DirectConnection);
+    connect(d, SIGNAL(stateChanged()), this, SIGNAL(stateChanged()), Qt::DirectConnection);
 }
 
 /*! 
@@ -149,7 +149,7 @@ bool QVersitWriter::writeAll(const QList<QVersitDocument>& input)
 {
     d->mInput = input;
     if (!d->isRunning()) {
-        return d->write();
+        return d->write(false);
     }
     else {
         // leave the state unchanged but set the error.

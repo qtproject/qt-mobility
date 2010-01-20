@@ -59,7 +59,7 @@ class UT_QVersitReader : public QObject
      Q_OBJECT
 
 public slots:
-    void finished();
+    void stateChanged();
 
 private slots: // Tests
 
@@ -81,7 +81,7 @@ private: // Data
     QBuffer* mInputDevice;
     int mExpectedDocumentCount;
     QVersitReader::Error mExpectedError;
-    bool mReadingDoneCalled;
+    bool mFinishedSignalEmitted;
 };
 
 #endif // UT_VERSITREADER_H

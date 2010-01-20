@@ -77,13 +77,15 @@ bool QVersitWriterPrivate::isReady() const
 
 /*!
  * Do the actual writing and set the error and state appropriately.
+ *
+ * If \a async, then stateChanged() signals are emitted as it writes.
  */
-bool QVersitWriterPrivate::write()
+bool QVersitWriterPrivate::write(bool async)
 {
     setError(QVersitWriter::NoError);
     bool ok = true;
     if (isReady()) {
-        setState(QVersitWriter::ActiveState);
+        setState(QVersitWriter::ActiveState, async);
         foreach (QVersitDocument document, mInput) {
             QScopedPointer<QVersitDocumentWriter> writer(
                     writerForType(document.type()));
@@ -100,7 +102,7 @@ bool QVersitWriterPrivate::write()
         return false;
     }
 
-    setState(QVersitWriter::FinishedState);
+    setState(QVersitWriter::FinishedState, async);
     return ok;
 }
 
@@ -109,13 +111,16 @@ bool QVersitWriterPrivate::write()
  */
 void QVersitWriterPrivate::run()
 {
-    write();
+    write(true);
 }
 
-void QVersitWriterPrivate::setState(QVersitWriter::State state)
+void QVersitWriterPrivate::setState(QVersitWriter::State state, bool emitSignal)
 {
-    QMutexLocker locker(&mMutex);
+    mMutex.lock();
     mState = state;
+    mMutex.unlock();
+    if (emitSignal)
+        emit stateChanged();
 }
 
 QVersitWriter::State QVersitWriterPrivate::state() const

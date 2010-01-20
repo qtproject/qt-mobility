@@ -71,14 +71,17 @@ class Q_AUTOTEST_EXPORT QVersitWriterPrivate : public QThread
 {
     Q_OBJECT
 
+signals:
+    void stateChanged();
+
 public:
     QVersitWriterPrivate();
     virtual ~QVersitWriterPrivate();
     bool isReady() const;
-    bool write();
+    bool write(bool async);
 
     // mutexed getters and setters.
-    void setState(QVersitWriter::State);
+    void setState(QVersitWriter::State, bool emitSignal);
     QVersitWriter::State state() const;
     void setError(QVersitWriter::Error);
     QVersitWriter::Error error() const;

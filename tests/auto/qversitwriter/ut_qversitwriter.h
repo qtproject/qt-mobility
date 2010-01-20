@@ -60,7 +60,7 @@ class UT_QVersitWriter : public QObject
      Q_OBJECT
 
 public slots:
-    void writingDone();
+    void stateChanged();
 
 private slots: // Tests
 
