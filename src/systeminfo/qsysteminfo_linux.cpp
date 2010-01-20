@@ -1246,8 +1246,6 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 #endif
 }
 
-
-//////// QSystemStorageInfo
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -1261,6 +1259,9 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 
 qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
+    if(driveVolume.left(2) == "//") {
+        return 0;
+    }
     mountEntries();
     struct statfs fs;
     if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
@@ -1273,6 +1274,9 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
+    if(driveVolume.left(2) == "//") {
+        return 0;
+    }
     mountEntries();
     struct statfs fs;
     if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
@@ -1314,9 +1318,6 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
         if(driveVolume.contains("mapper")) {
             struct stat stat_buf;
             stat( driveVolume.toLatin1(), &stat_buf);
-            //                    qWarning() << "Device number"
-            //                            << ((stat_buf.st_rdev >> 8) & 0377)
-            //                            << (stat_buf.st_rdev & 0377);
 
             dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
 
@@ -1346,6 +1347,9 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
             }
         }
     }
+    if(driveVolume.left(2) == "//") {
+        return QSystemStorageInfo::RemoteDrive;
+    }
     return QSystemStorageInfo::InternalDrive;
 }
 
@@ -1358,10 +1362,12 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 void QSystemStorageInfoPrivate::mountEntries()
 {
     mountEntriesMap.clear();
-    FILE *mntfp = setmntent( _PATH_MOUNTED/*_PATH_MNTTAB*//*"/proc/mounts"*/, "r" );
+    FILE *mntfp = setmntent( _PATH_MOUNTED, "r" );
     mntent *me = getmntent(mntfp);
+    bool ok;
     while(me != NULL) {
         struct statfs fs;
+        ok = false;
         if(strcmp(me->mnt_type, "cifs") != 0) { //smb has probs with statfs
             if(statfs(me->mnt_dir, &fs ) ==0 ) {
                 QString num;
@@ -1376,15 +1382,19 @@ void QSystemStorageInfoPrivate::mountEntries()
                      && fs.f_type != 0x64626720
                      && fs.f_type != 0x73636673 //securityfs
                      && fs.f_type != 0x65735543 //fusectl
+                     && fs.f_type != 0x65735546 // fuse.gvfs-fuse-daemon
 
                      ) {
-                    if(!mountEntriesMap.keys().contains(me->mnt_dir)
-                        && QString(me->mnt_fsname).contains("/dev")) {
-                        mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
-                    }
+                    ok = true;
                 }
             }
+        } else {
+            ok = true;
         }
+        if(ok && !mountEntriesMap.keys().contains(me->mnt_dir)) {
+            mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+        }
+
         me = getmntent(mntfp);
     }
     endmntent(mntfp);
