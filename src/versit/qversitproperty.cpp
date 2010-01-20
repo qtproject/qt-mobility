@@ -159,7 +159,7 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
         QList<QString> values = parameters.values(key);
         for (int j=values.count()-1; j >= 0; j--) {
             // Convert all the parameter names and values to upper case
-            addParameter(key,values.at(j));
+            insertParameter(key,values.at(j));
         }
     }
 }
@@ -168,7 +168,7 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
  * Adds a new parameter with \a name and \a value.
  * Both the name and the value are converted to upper-case.
  */
-void QVersitProperty::addParameter(const QString& name, const QString& value)
+void QVersitProperty::insertParameter(const QString& name, const QString& value)
 {
     d->mParameters.insert(name.toUpper(),value.toUpper());
 }

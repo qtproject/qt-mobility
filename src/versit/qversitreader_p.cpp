@@ -254,7 +254,7 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
             // hack: add the charset parameter back in (even if there wasn't one to start with and
             // the default codec was used).  This will help later on if someone calls valueString()
             // on the property.
-            property.addParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
+            property.insertParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
         }
         property.setValue(valueVariant);
     }
@@ -284,7 +284,7 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
             // hack: add the charset parameter back in (even if there wasn't one to start with and
             // the default codec was used).  This will help later on if someone calls valueString()
             // on the property.
-            property.addParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
+            property.insertParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
         }
         property.setValue(valueVariant);
     }

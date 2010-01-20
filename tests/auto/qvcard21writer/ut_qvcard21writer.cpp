@@ -74,7 +74,7 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
 
     property.setName(QString::fromAscii("TEL"));
     property.setValue(QString::fromAscii("123"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
     QByteArray encodedProperty = mWriter->encodeVersitProperty(property);
     QCOMPARE(QString::fromAscii(encodedProperty), QString::fromAscii(expectedResult));
     QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
@@ -98,7 +98,7 @@ END:VCARD\r\n\
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QString());
-    property.addParameter(QString::fromAscii("X-PARAMETER"),QString::fromAscii("VALUE"));
+    property.insertParameter(QString::fromAscii("X-PARAMETER"),QString::fromAscii("VALUE"));
     QVersitDocument document;
     QVersitProperty embeddedProperty;
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
@@ -177,7 +177,7 @@ void UT_QVCard21Writer::testQuotedPrintableEncode()
     // -> Value should not be Quoted-Printable encoded
     property.setName(QString::fromAscii("PHOTO"));
     property.setValue(QString::fromAscii(QByteArray("the data").toBase64()));
-    property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
+    property.insertParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QVERIFY(!mWriter->quotedPrintableEncode(property,encodedValue));
     QVERIFY(encodedValue == property.value().toAscii());
 }

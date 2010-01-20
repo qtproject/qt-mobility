@@ -92,13 +92,13 @@ void UT_QVersitProperty::testParameters()
     
     QString name(QString::fromAscii("type"));
     QString value1(QString::fromAscii("home"));
-    mVersitProperty->addParameter(name,value1);
+    mVersitProperty->insertParameter(name,value1);
     QMultiHash<QString,QString> parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 1);
     QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
     
     QString value2(QString::fromAscii("voice"));
-    mVersitProperty->addParameter(name,value2);
+    mVersitProperty->insertParameter(name,value2);
     parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 2);
     QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));

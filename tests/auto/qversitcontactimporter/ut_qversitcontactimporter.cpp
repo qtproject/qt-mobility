@@ -264,13 +264,13 @@ void UT_QVersitContactImporter::testAddress()
     QCOMPARE(address.country(),QString::fromAscii("My Country"));
     
     // Address with TYPE parameters converted to contexts and subtypes
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("DOM"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("INTL"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("POSTAL"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("PARCEL"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("X-EXTENSION"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("DOM"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("INTL"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("POSTAL"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("PARCEL"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("X-EXTENSION"));
     document = createDocumentWithProperty(property);
     contact = mImporterPrivate->importContact(document);
     address = static_cast<QContactAddress>(contact.detail(QContactAddress::DefinitionName));
@@ -456,7 +456,7 @@ void UT_QVersitContactImporter::testOrganizationLogo()
     QByteArray logo(QByteArray::fromBase64(
             "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"));
     property.setValue(logo);
-    property.addParameter(QString::fromAscii("TYPE"),
+    property.insertParameter(QString::fromAscii("TYPE"),
                           QString::fromAscii("GIF"));
     document = createDocumentWithProperty(property);
     documentList.clear();
@@ -471,7 +471,7 @@ void UT_QVersitContactImporter::testOrganizationLogo()
     property.setName(QString::fromAscii("LOGO"));
     QString logoUrl(QString::fromAscii("http://www.organization.org/logo.gif"));
     property.setValue(logoUrl);
-    property.addParameter(QString::fromAscii("VALUE"),QString::fromAscii("URL"));
+    property.insertParameter(QString::fromAscii("VALUE"),QString::fromAscii("URL"));
     document = createDocumentWithProperty(property);
     documentList.clear();
     documentList.append(document);
@@ -508,16 +508,16 @@ void UT_QVersitContactImporter::testTel()
     QString value(QString::fromAscii("+35850987654321"));
     property.setValue(value);   
 
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("VOICE"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("CELL"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("MODEM"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("CAR"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("VIDEO"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("FAX"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("BBS"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("PAGER"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("VOICE"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("CELL"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("MODEM"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("CAR"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("VIDEO"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("FAX"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("BBS"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("PAGER"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
 
     document.addProperty(property);
     QContact contact = mImporterPrivate->importContact(document);
@@ -549,7 +549,7 @@ void UT_QVersitContactImporter::testEmail()
     property.setName(QString::fromAscii("EMAIL"));
     QString value(QString::fromAscii("john.citizen@example.com"));
     property.setValue(value);
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
     QVersitDocument document = createDocumentWithProperty(property);
     QContact contact = mImporterPrivate->importContact(document);
     QContactEmailAddress email =
@@ -567,7 +567,7 @@ void UT_QVersitContactImporter::testUrl()
     property.setName(QString::fromAscii("URL"));
     QString value(QString::fromAscii("http://example.com"));
     property.setValue(value);
-    property.addParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
+    property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("WORK"));
     QVersitDocument document = createDocumentWithProperty(property);    
     QContact contact = mImporterPrivate->importContact(document);
     QContactUrl url =
@@ -796,7 +796,7 @@ void UT_QVersitContactImporter::testAvatarUrl()
     property.setName(QString::fromAscii("PHOTO"));
     QString value(QString::fromAscii("file:///jgpublic."));
     property.setValue(value);
-    property.addParameter(
+    property.insertParameter(
         QString::fromAscii("VALUE"),QString::fromAscii("URL"));
 
     QVersitDocument document;
@@ -1150,7 +1150,7 @@ QVersitDocument UT_QVersitContactImporter::createDocumentWithNameAndPhoto(
     property.setName(QString::fromAscii("PHOTO"));
     property.setValue(image);
     if (imageType != QString()) {
-        property.addParameter(QString::fromAscii("TYPE"), imageType);
+        property.insertParameter(QString::fromAscii("TYPE"), imageType);
     }
     document.addProperty(property);
 

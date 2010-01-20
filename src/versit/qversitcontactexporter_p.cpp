@@ -605,7 +605,7 @@ void QVersitContactExporterPrivate::encodeParameters(
         if (mappedValue.length() > 0) {
             // QVersitProperty::addParameter inserts into beginning.
             // This is why the last value is taken from the list
-            property.addParameter(QString::fromAscii("TYPE"),mappedValue);
+            property.insertParameter(QString::fromAscii("TYPE"),mappedValue);
         }
     }
 }
@@ -630,14 +630,14 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourc
         if (isValidRemoteUrl( resourcePath )) {
             encodeContent = true;
             value.setValue(resourcePath);
-            property.addParameter(
+            property.insertParameter(
                 QString::fromAscii("VALUE"),
                 QString::fromAscii("URL"));
-            property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
+            property.insertParameter(QString::fromAscii("TYPE"),resourceFormat);
         } else if (mResourceLoader
                    && mResourceLoader->loadResource(resourcePath, &imageData, &mimeType)) {
             value.setValue(imageData);
-            property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
+            property.insertParameter(QString::fromAscii("TYPE"),resourceFormat);
             encodeContent = true;
         } else {
             // The file has been removed. Don't encode the path to a local file.

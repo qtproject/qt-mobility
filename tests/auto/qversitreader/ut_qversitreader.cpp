@@ -249,7 +249,7 @@ void UT_QVersitReader::testSetVersionFromProperty()
     
     // VERSION property with BASE64 encoded supported value
     property.setValue(QString::fromAscii(QByteArray("2.1").toBase64()));
-    property.addParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
+    property.insertParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
     QVERIFY(document.type() == QVersitDocument::VCard21Type);
     
