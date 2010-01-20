@@ -62,10 +62,10 @@ S60CameraExposureControl::S60CameraExposureControl(QObject *session, QObject *pa
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
     
-    connect(m_session, SIGNAL(exposureLocked), this, SIGNAL(exposureLocked));
+    connect(m_session, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
     connect(m_session, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
     connect(m_session, SIGNAL(apertureChanged(qreal)), this, SIGNAL(apertureChanged(qreal)));
-    connect(m_session, SIGNAL(apertureRangeChanged), this, SIGNAL(apertureRangeChanged));
+    connect(m_session, SIGNAL(apertureRangeChanged()), this, SIGNAL(apertureRangeChanged()));
     connect(m_session, SIGNAL(shutterSpeedChanged(qreal)), this, SIGNAL(shutterSpeedChanged(qreal)));
     connect(m_session, SIGNAL(isoSensitivityChanged(int)), this, SIGNAL(isoSensitivityChanged(int)));
 }

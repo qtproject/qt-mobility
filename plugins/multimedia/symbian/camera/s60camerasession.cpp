@@ -64,8 +64,10 @@ S60CameraSession::S60CameraSession(QObject *parent)
     , m_deviceIndex(NULL)
     , m_error(NoError)
     , m_currentcodec(KSymbianDefaultImageCodec)
+    , m_advancedSettings(NULL)
 {
-
+    // create initial camera
+    resetCamera();
 }
 
 S60CameraSession::~S60CameraSession()
@@ -119,6 +121,7 @@ void S60CameraSession::capture()
 {
     qDebug() << "S60CameraSession::capture";
     m_error = KErrNone;
+    emit readyForCaptureChanged(false);
     if (m_cameraEngine) {
         TSize size(m_captureSize.width(), m_captureSize.height());
         TRAP(m_error, m_cameraEngine->PrepareL(size, m_currentcodec));
@@ -413,7 +416,12 @@ void S60CameraSession::MceoFocusComplete()
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
     QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
+    // inform capture done
     emit imageCaptured(m_sink.toLocalFile(), snapImage);
+    // try to save image and inform if it was succcesful
+    if (snapImage.save(m_sink.toLocalFile(),0, m_imageQuality))
+        emit imageSaved(m_sink.toLocalFile());
+    // release image resources
     releaseImageBuffer();
 }
 
@@ -421,6 +429,8 @@ void S60CameraSession::releaseImageBuffer()
 {
     if (m_cameraEngine)
         m_cameraEngine->ReleaseImageBuffer();
+    // inform that we can continue taking more pictures
+    emit readyForCaptureChanged(true);
 }
 
 void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
@@ -480,6 +490,10 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
         aBitmap = NULL;
 
         emit imageCaptured(m_sink.toLocalFile(), *snapImage);
+        // try to save image and inform if it was succcesful
+        if ( snapImage->save(m_sink.toLocalFile(),0, m_imageQuality) )
+            emit imageSaved(m_sink.toLocalFile());
+        
         releaseImageBuffer();
     }
     //todo error handling

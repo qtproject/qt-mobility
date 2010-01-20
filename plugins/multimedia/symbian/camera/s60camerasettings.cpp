@@ -52,6 +52,7 @@
 
 
 S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine)
+    : QObject(parent)
 {   
     m_cameraEngine = engine;
 }
@@ -68,14 +69,16 @@ S60CameraSettings::~S60CameraSettings()
  */
 bool S60CameraSettings::queryAdvancedSettingsInfo()
 {
-    qDebug() << "S60CameraSession::queryAdvancedSettingsInfo";
+    qDebug() << "S60CameraSettings::queryAdvancedSettingsInfo";
 
     bool returnValue = false;
 #ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (m_cameraEngine) {
         qDebug() << "m_cameraEngine->AdvancedSettings";
-        m_advancedSettings = m_cameraEngine->AdvancedSettings();   
-        returnValue = true;
+        m_advancedSettings = NULL;
+        m_advancedSettings = m_cameraEngine->AdvancedSettings();
+        if (m_advancedSettings)
+            returnValue = true;
     }
 #endif
     return returnValue;

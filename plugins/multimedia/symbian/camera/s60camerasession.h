@@ -213,13 +213,17 @@ private:
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);
+    // for capture control
     void error(int error, const QString &errorString);
     void readyForCaptureChanged(bool);
     void imageCaptured(const QString &fileName, const QImage &preview);
+    void imageSaved(const QString &fileName);
     //for focuscontrol
     void focusLocked();
     void zoomValueChanged(qreal value);
-    
+    // 
+
+   
 
 private Q_SLOTS:
     void captureFrame();
