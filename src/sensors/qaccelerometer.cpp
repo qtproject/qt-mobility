@@ -80,9 +80,8 @@ IMPLEMENT_READING(QAccelerometerReading)
 
     A monoblock device sitting at rest, face up on a desk will experience
     a force of approximately 9.8 on the Z axis (ie. towards the roof).
-    This is the force the desk must exert on the device to overcome
-    the gravitational pull of the earth. The accelerometer cannot measure
-    gravitational pull so it sees only the force being imparted by the desk.
+    This is the proper acceleration the device experiences relative to 
+    freefall.
 */
 
 /*!
