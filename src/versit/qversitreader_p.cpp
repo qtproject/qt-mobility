@@ -73,9 +73,7 @@ QVersitReaderPrivate::~QVersitReaderPrivate()
  */
 bool QVersitReaderPrivate::isReady() const
 {
-    return state() != QVersitReader::ActiveState
-            && mIoDevice
-            && mIoDevice->isOpen();
+    return state() != QVersitReader::ActiveState;
 }
 
 /*!
@@ -88,7 +86,9 @@ bool QVersitReaderPrivate::read()
     bool ret = true;
     if (isReady()) {
         setState(QVersitReader::ActiveState);
-        if (!mIoDevice->isReadable()) {
+        if (!mIoDevice
+            || !mIoDevice->isReadable()
+            || !mIoDevice->isOpen()) {
             setError(QVersitReader::IOError);
             setState(QVersitReader::FinishedState);
             return false;
