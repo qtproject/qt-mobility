@@ -96,7 +96,7 @@ QList<QByteArray> QSensorFactory::sensorList() const
 }
 
 /*!
-    Returns a list of ids for each of the sensors.
+    Returns a list of all sensor types.
 */
 QList<QByteArray> QSensorFactory::sensorTypes() const
 {
