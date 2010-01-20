@@ -127,7 +127,8 @@ contains(mobility_modules,multimedia) {
         SUBDIRS -= \
                 qcamera \
                 qmediaplayer \
-                qradiotuner
+                qradiotuner \
+                qmediaobject
     }
 }
 #Messaging

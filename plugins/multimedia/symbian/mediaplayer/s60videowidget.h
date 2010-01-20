@@ -42,15 +42,14 @@
 #ifndef S60VIDEOWIDGET_H
 #define S60VIDEOWIDGET_H
 
-#include <QtCore/qobject.h>
 #include <QVideoWidgetControl>
-
-class S60VideoWidget;
+#include <qmediaplayer.h>
 
 QTM_USE_NAMESPACE
 
-class S60VideoWidgetControl
-        : public QVideoWidgetControl
+class QBlackWidget;
+
+class S60VideoWidgetControl : public QVideoWidgetControl
 {
     Q_OBJECT
 	
@@ -58,47 +57,34 @@ public:
     S60VideoWidgetControl(QObject *parent = 0);
     virtual ~S60VideoWidgetControl();
 
+    // from QVideoWidgetControl
     QWidget *videoWidget();
-
     QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    QSize customAspectRatio() const;
-
     void setAspectRatioMode(QVideoWidget::AspectRatioMode ratio);
-    void setCustomAspectRatio(const QSize &customRatio);
-
     bool isFullScreen() const;
     void setFullScreen(bool fullScreen);
-
     int brightness() const;
     void setBrightness(int brightness);
-
     int contrast() const;
     void setContrast(int contrast);
-
     int hue() const;
     void setHue(int hue);
-
     int saturation() const;
     void setSaturation(int saturation);
 
-    void setOverlay();
-
+    // from QObject
     bool eventFilter(QObject *object, QEvent *event);
 
-public slots:
-    void updateNativeVideoSize();
-    void enableUpdates();
-    
 signals:
-    void resizeVideo();
-
+    void widgetUpdated();
+    
+private slots:
+    void videoStateChanged(QMediaPlayer::State state);
+    
 private:
-    void windowExposed();
-
-    S60VideoWidget *m_widget;
+    QBlackWidget *m_widget;
     WId m_windowId;
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
-    QSize m_customAspectRatio;
 };
 
 #endif // S60VIDEOWIDGET_H

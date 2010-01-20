@@ -10,3 +10,7 @@ include (../../../../common.pri)
 CONFIG += mobility
 MOBILITY = multimedia
 
+
+symbian {
+        TARGET.CAPABILITY = UserEnvironment WriteDeviceData
+}

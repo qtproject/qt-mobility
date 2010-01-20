@@ -41,7 +41,11 @@
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
+#ifdef USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#include <ecamadvancedsettings.h> // CCameraAdvancedSettings
+#else
 #include <ecamadvsettings.h>   // CCameraAdvancedSettings
+#endif 
 #include "s60camerasession.h"
 #include "s60viewfinderwidget.h"
 

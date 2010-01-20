@@ -53,112 +53,44 @@
 #include <coecntrl.h>
 #include <w32std.h>
 
-#include <QTimer>
-
-class S60VideoWidget : public QWidget
+class QBlackWidget : public QWidget
 {
 public:
-    S60VideoWidget(QWidget *parent = 0)
+    
+    QBlackWidget(QWidget *parent = 0)
         : QWidget(parent)
     {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        QPalette palette;
-        palette.setColor(QPalette::Background, Qt::black);
-        setPalette(palette);
         setAttribute(Qt::WA_OpaquePaintEvent, true);
         setAttribute(Qt::WA_NoSystemBackground, true);
     }
-
-    virtual ~S60VideoWidget() {}
-
-    QSize sizeHint() const
-    {
-        return m_nativeSize;
-    }
-
-    void setNativeSize(const QSize &size)
-    {
-        if (size != m_nativeSize) {
-            m_nativeSize = size;
-            if (size.isEmpty())
-                setMinimumSize(0,0);
-            else
-                setMinimumSize(160,120);
-
-            updateGeometry();
-        }
-    }
-    
-    void viewFinderFrameReady(const QImage& image)
-    {
-        m_pixmapImage = QPixmap::fromImage(image);
-        repaint();
-    }
     
 protected:
+    
     void paintEvent(QPaintEvent *)
     {
         if (!updatesEnabled())
             return;
+        
         QPainter painter(this);
-        painter.fillRect(rect(), palette().background());
+        painter.fillRect(rect(), Qt::black);
     }
-
-    QPixmap m_pixmapImage;
-    QSize m_nativeSize;
 };
 
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
     : QVideoWidgetControl(parent)
-    , m_widget(new S60VideoWidget)
+    , m_widget(0)
+    , m_windowId(0)
+    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
 {
+    m_widget = new QBlackWidget();
+    m_windowId = m_widget->winId();
     m_widget->installEventFilter(this);
 }
 
 S60VideoWidgetControl::~S60VideoWidgetControl()
 {
     delete m_widget;
-}
-
-;bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
-{
-	if (e->type() == QEvent::Show) {
-		m_widget->setAttribute(Qt::WA_NoSystemBackground, true);
-
-		return true;
-	}
-	
-	if (e->type() == QEvent::Resize) {
-        emit resizeVideo();
-        return true;
-	}
-	
-	if (e->type() == QEvent::Paint) {
-        QTimer::singleShot(20, this, SLOT(enableUpdates()));
-	}
-    
-	return QVideoWidgetControl::eventFilter(object, e);
-}
-
-void S60VideoWidgetControl::enableUpdates()
-{
-    emit resizeVideo();
-}
-
-void S60VideoWidgetControl::setOverlay()
-{
-	// TODO:
-}
-
-void S60VideoWidgetControl::updateNativeVideoSize()
-{
-    // TODO:
-}
-
-
-void S60VideoWidgetControl::windowExposed()
-{
-    // TODO:
 }
 
 QWidget *S60VideoWidgetControl::videoWidget()
@@ -171,19 +103,10 @@ QVideoWidget::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
     return m_aspectRatioMode;
 }
 
-QSize S60VideoWidgetControl::customAspectRatio() const
-{
-    return m_customAspectRatio;
-}
-
 void S60VideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode ratio)
 {
-    // TODO:
-}
-
-void S60VideoWidgetControl::setCustomAspectRatio(const QSize &ratio)
-{
-    m_customAspectRatio = ratio;
+    if (m_aspectRatioMode != ratio)
+        m_aspectRatioMode = ratio;
 }
 
 bool S60VideoWidgetControl::isFullScreen() const
@@ -193,83 +116,68 @@ bool S60VideoWidgetControl::isFullScreen() const
 
 void S60VideoWidgetControl::setFullScreen(bool fullScreen)
 {
-    if (fullScreen) {
-        m_widget->setWindowFlags(m_widget->windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-        m_widget->setWindowState(m_widget->windowState() | Qt::WindowFullScreen);
-
-        m_widget->show();
-
-        emit fullScreenChanged(fullScreen);
-    } else {
-        m_widget->setWindowFlags(m_widget->windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
-        m_widget->setWindowState(m_widget->windowState() & ~Qt::WindowFullScreen);
-
-        m_widget->show();
-
-        emit fullScreenChanged(fullScreen);
-    }
+    emit fullScreenChanged(fullScreen);
 }
 
 int S60VideoWidgetControl::brightness() const
 {
-    int brightness = 0;
-
-    // TODO:
-
-    return brightness / 10;
+    return 0;
 }
 
 void S60VideoWidgetControl::setBrightness(int brightness)
 {
-    // TODO:
-
-    emit brightnessChanged(brightness);
+    Q_UNUSED(brightness);
 }
 
 int S60VideoWidgetControl::contrast() const
 {
-    int contrast = 0;
-
-    // TODO:
-
-    return contrast / 10;
+     return 0;
 }
 
 void S60VideoWidgetControl::setContrast(int contrast)
 {
-    // TODO:
-
-    emit contrastChanged(contrast);
+    Q_UNUSED(contrast);
 }
 
 int S60VideoWidgetControl::hue() const
 {
-    int hue = 0;
-
-    // TODO:
-
-    return hue / 10;
+    return 0;
 }
 
 void S60VideoWidgetControl::setHue(int hue)
 {
-    // TODO:
-
-    emit hueChanged(hue);
+    Q_UNUSED(hue);
 }
 
 int S60VideoWidgetControl::saturation() const
 {
-    int saturation = 0;
-
-    // TODO:
-
-    return saturation / 10;
+    return 0;
 }
 
 void S60VideoWidgetControl::setSaturation(int saturation)
 {
-    // TODO:
+    Q_UNUSED(saturation);
+}
 
-    emit saturationChanged(saturation);
+bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
+{
+    if (object == m_widget) {
+        if (e->type() == QEvent::ParentChange || e->type() == QEvent::Show) {
+            WId newWId = m_widget->winId();
+            if (newWId != m_windowId) {
+                m_windowId = newWId;
+                emit widgetUpdated();
+            }
+        }
+
+        if (e->type() == QEvent::Resize)
+            emit widgetUpdated();
+    }    
+	return QVideoWidgetControl::eventFilter(object, e);
+}
+
+void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
+{
+    if (state == QMediaPlayer::StoppedState)
+        m_widget->show();
 }

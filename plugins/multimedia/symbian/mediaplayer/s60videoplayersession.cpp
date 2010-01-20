@@ -41,48 +41,46 @@
 
 #include "s60videoplayersession.h"
 #include "s60videowidget.h"
-#include "s60directscreenaccess.h"
+#include "s60mediaplayerservice.h"
+#include "s60videooverlay.h"
 
 #include <QtCore/qdebug.h>
+#include <QtCore/private/qcore_symbian_p.h>
 #include <QtGui/qwidget.h>
+#include <QApplication>
 
+#include <coecntrl.h>
 #include <coemain.h>    // For CCoeEnv
 #include <w32std.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
-S60VideoPlayerSession::S60VideoPlayerSession(QObject *parent)
-    : S60MediaPlayerSession(parent)
+S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
+    : S60MediaPlayerSession(service)
+    , m_player(0)
+    , m_playerRect(0, 0, 0, 0)
+    , m_output(QVideoOutputControl::NoOutput)
+    , m_windowId(0)
     , m_wsSession(0)
     , m_screenDevice(0)
     , m_window(0)
-    , m_videoWidgetControl(0)
-    , m_dsa(NULL)
-{    
-    m_dummyWidget = new QWidget();
-    
-    const TInt priority = 0;
-    const TMdaPriorityPreference preference = EMdaPriorityPreferenceNone;
-    
-    nativeHandles();
-    TRAPD(err, 
-        m_player = CVideoPlayerUtility::NewL(*this, 
-                                  priority, 
-                                  preference, 
-                                  *m_wsSession, 
-                                  *m_screenDevice, 
-                                  *m_window, 
-                                  m_windowRect, 
-                                  m_clipRect)
-         );
-    
-    TRAP_IGNORE(m_dsa = S60DirectScreenAccess::NewL(*m_wsSession, *m_screenDevice, *m_window);)
+    , m_service(*service)
+{  
+    resetNativeHandles();
+    TRAP_IGNORE(m_player = CVideoPlayerUtility::NewL(
+        *this, 
+        0, 
+        EMdaPriorityPreferenceNone, 
+        *m_wsSession, 
+        *m_screenDevice, 
+        *m_window, 
+        m_playerRect, 
+        m_playerRect));
+    Q_ASSERT(m_player != 0);
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
     delete m_player;
-    delete m_dummyWidget;
-    delete m_dsa;
 }
 
 void S60VideoPlayerSession::doLoad(const TDesC &path)
@@ -102,7 +100,7 @@ void S60VideoPlayerSession::doLoadUrl(const TDesC &path)
 }
 
 qint64 S60VideoPlayerSession::duration() const
-{         
+{   
     Int64 duration = 0;
     TRAP_IGNORE(duration = m_player->DurationL().Int64() / 1000;)
     return duration;   
@@ -118,56 +116,82 @@ qint64 S60VideoPlayerSession::position() const
 int S60VideoPlayerSession::mediaLoadingProgress() const
 {
 	int progress = 0;
-	TRAP_IGNORE(m_player->GetVideoLoadingProgressL(progress);)
+    TRAP_IGNORE(m_player->GetVideoLoadingProgressL(progress);)
 	return progress;
 }
 
 void S60VideoPlayerSession::doSetPlaybackRate(qreal rate)
 {
-    // TODO:
+    TRAP_IGNORE(m_player->SetVideoFrameRateL((TReal32)rate));
 }
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
-    m_videoWidgetControl = qobject_cast<S60VideoWidgetControl*>(videoOutput);
+    Q_UNUSED(videoOutput)
+    QVideoOutputControl *videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
     
-    nativeHandles();   
-      
-    TRAP_IGNORE( m_player->SetDisplayWindowL(*m_wsSession, 
-         *m_screenDevice, 
-         *m_window, 
-         m_windowRect, 
-         m_clipRect));
+    //Render changes
+    if (m_output != videoControl->output()) {
+        
+        if (m_output == QVideoOutputControl::WidgetOutput) {
+            S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
+            disconnect(widgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
+            disconnect(this, SIGNAL(stateChanged(QMediaPlayer::State)), widgetControl, SLOT(videoStateChanged(QMediaPlayer::State)));
+        }
+
+        if (videoControl->output() == QVideoOutputControl::WidgetOutput) {
+            S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
+            connect(widgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
+            connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), widgetControl, SLOT(videoStateChanged(QMediaPlayer::State)));
+        }
+        
+        m_output = videoControl->output();
+        resetVideoDisplay();
+    }
 }
 
-void S60VideoPlayerSession::nativeHandles()
+bool S60VideoPlayerSession::resetNativeHandles()
 {
-    if (!m_videoWidgetControl) {
-		m_coeControl =  m_dummyWidget->winId();
-    } else { 
-        m_coeControl = m_videoWidgetControl->videoWidget()->winId();
-        connect(m_videoWidgetControl, SIGNAL(resizeVideo()), this, SLOT(updateVideo()));
-    }
+    QVideoOutputControl* videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
+    WId newId = 0;
+    TRect newRect = TRect(0,0,0,0);
     
-    CCoeEnv* const coeEnv = m_coeControl->ControlEnv();
-    m_wsSession = &(coeEnv->WsSession());
-    m_screenDevice = coeEnv->ScreenDevice();
-    m_window = m_coeControl->DrawableWindow();
+    if (videoControl->output() == QVideoOutputControl::WidgetOutput) {
+        S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
+        QWidget *videoWidget = widgetControl->videoWidget();
+        newId = videoWidget->winId();
+        newRect = qt_QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
+    } else if (videoControl->output() == QVideoOutputControl::WindowOutput) {
+        S60VideoOverlay* windowControl = qobject_cast<S60VideoOverlay *>(m_service.control(QVideoWindowControl_iid));
+        newId = windowControl->winId();
+        newRect = TRect( newId->DrawableWindow()->AbsPosition(), newId->DrawableWindow()->Size());
+    } else {
+        if (QApplication::activeWindow())
+            newId = QApplication::activeWindow()->effectiveWinId();
+    }
 
-    m_windowRect = TRect(
-        m_coeControl->DrawableWindow()->AbsPosition(),
-        m_coeControl->DrawableWindow()->Size());
-    m_clipRect = m_windowRect;
+    if (newRect != m_playerRect ||  newId != m_windowId) {
+        m_playerRect = newRect;
+        if (newId) {
+            m_windowId = newId;
+            CCoeEnv *coeEnv = m_windowId->ControlEnv();
+            m_wsSession = &(coeEnv->WsSession());
+            m_screenDevice = coeEnv->ScreenDevice();
+            m_window = m_windowId->DrawableWindow();
+        }
+        return true;
+    }
+    return false;
 }
 
 bool S60VideoPlayerSession::isVideoAvailable() const
 {
+    //TODO: fix me
     return true;
 }
 
 void S60VideoPlayerSession::doPlay()
-{
-    m_dsa->Start();
+{   
     m_player->Play();
 }
 
@@ -180,12 +204,11 @@ void S60VideoPlayerSession::doStop()
 {
     m_player->Stop();
     m_player->Close();
-    m_coeControl->DrawDeferred();
 }
 
 void S60VideoPlayerSession::doSetPosition(qint64 microSeconds)
 {
-    TRAPD(err,m_player->SetPositionL(TTimeIntervalMicroSeconds(microSeconds));)
+    TRAP_IGNORE(m_player->SetPositionL(TTimeIntervalMicroSeconds(microSeconds));)
 }
 
 void S60VideoPlayerSession::doSetVolume(int volume)
@@ -195,22 +218,23 @@ void S60VideoPlayerSession::doSetVolume(int volume)
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
-    Q_UNUSED(aError)
-    m_player->Prepare();
+    setError(aError);
+    if (aError == KErrNone)
+        m_player->Prepare();
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
-{    
-	TRAPD(err,
-	m_player->SetDisplayWindowL(*m_wsSession, 
-								  *m_screenDevice, 
-								  *m_window, 
-								  m_windowRect, 
-								  m_clipRect);
-	);
-	
+{
     setError(aError);
     initComplete();
+    TRAP_IGNORE(m_player->SetDisplayWindowL(*m_wsSession, 
+                                            *m_screenDevice, 
+                                            *m_window, 
+                                            m_playerRect, 
+                                            m_playerRect));
+    TReal32 frameRate = 0;
+    TRAP_IGNORE(frameRate = m_player->VideoFrameRateL());
+    setPlaybackRate((qreal)frameRate);
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
@@ -221,11 +245,9 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
-    m_coeControl->DrawDeferred();
     m_player->Close();
     setError(aError);
     playComplete();
-    m_dsa->Stop();
 }
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
@@ -253,16 +275,12 @@ void S60VideoPlayerSession::updateMetaDataEntries()
     emit metaDataChanged();
 }
 
-void S60VideoPlayerSession::updateVideo()
-{   
-    m_windowRect = TRect(
-        m_coeControl->DrawableWindow()->AbsPosition(),
-        m_coeControl->DrawableWindow()->Size());
-    m_clipRect = m_windowRect;
-    
-    TRAP_IGNORE(m_player->SetDisplayWindowL(*m_wsSession, 
-                                     *m_screenDevice, 
-                                     *m_window, 
-                                     m_windowRect, 
-                                     m_clipRect));
+void S60VideoPlayerSession::resetVideoDisplay()
+{
+    if (resetNativeHandles()) 
+        TRAP_IGNORE(m_player->SetDisplayWindowL(*m_wsSession, 
+                                                *m_screenDevice, 
+                                                *m_window, 
+                                                m_playerRect, 
+                                                m_playerRect));
 }
