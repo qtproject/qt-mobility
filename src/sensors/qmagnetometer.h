@@ -62,6 +62,7 @@ public:
         Middle    = 2,
         High      = 3
     };
+    Q_ENUMS(CalibrationLevel)
 
     Q_PROPERTY(qreal x READ x WRITE setX)
     qreal x() const;

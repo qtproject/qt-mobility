@@ -100,6 +100,8 @@ public:
         TimedUpdates      = 0x10, // Every x milliseconds (may not be supported by all sensors)
         PolledUpdates     = 0x20  // As often as polled (may not be supported by all sensors)
     };
+    Q_ENUMS(UpdatePolicy)
+    Q_FLAGS(UpdatePolicies)
     Q_DECLARE_FLAGS(UpdatePolicies, UpdatePolicy)
 
     // What policies does the sensor support

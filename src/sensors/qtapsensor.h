@@ -65,6 +65,7 @@ public:
         Y_Neg = 0x0202,
         Z_Neg = 0x0404
     };
+    Q_ENUMS(TapDirection)
 
     Q_PROPERTY(TapDirection tapDirection READ tapDirection WRITE setTapDirection)
     TapDirection tapDirection() const;

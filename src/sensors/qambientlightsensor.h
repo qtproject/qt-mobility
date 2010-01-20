@@ -61,6 +61,7 @@ public:
         Bright,
         Sunny
     };
+    Q_ENUMS(LightLevel)
 
     Q_PROPERTY(LightLevel lightLevel READ lightLevel WRITE setLightLevel)
     LightLevel lightLevel() const;

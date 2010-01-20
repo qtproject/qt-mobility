@@ -62,6 +62,7 @@ public:
         FaceDown,
         FaceUp
     };
+    Q_ENUMS(Orientation)
 
     Q_PROPERTY(Orientation orientation READ orientation WRITE setOrientation)
     Orientation orientation() const;

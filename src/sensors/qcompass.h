@@ -59,6 +59,7 @@ public:
         Middle    = 2,
         High      = 3
     };
+    Q_ENUMS(CalibrationLevel)
 
     Q_PROPERTY(qreal azimuth READ azimuth WRITE setAzimuth)
     qreal azimuth() const;

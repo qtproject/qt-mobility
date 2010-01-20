@@ -58,6 +58,7 @@ public:
         Close,
         NotClose
     };
+    Q_ENUMS(Proximity)
 
     Q_PROPERTY(Proximity proximity READ proximity WRITE setProximity)
     Proximity proximity() const;
