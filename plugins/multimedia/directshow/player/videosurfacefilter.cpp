@@ -472,8 +472,6 @@ void VideoSurfaceFilter::flush()
 {
     m_surface->present(QVideoFrame());
 
-    QMutexLocker locker(&m_mutex);
-
     m_wait.wakeAll();
 }
 

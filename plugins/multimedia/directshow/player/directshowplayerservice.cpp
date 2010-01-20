@@ -274,11 +274,11 @@ void DirectShowPlayerService::stop()
 
     m_pendingTasks &= ~(Play | Pause | Seek);
 
-    if (m_executedTasks & Load) {
+    if (m_executedTasks & Render) {
         if (m_executingTask & (Play | Pause | Seek)) {
             m_pendingTasks |= Stop;
 
-            m_wait.wait(&m_mutex);
+            m_loop.wait(&m_mutex);
         }
 
         if (m_executedTasks & (Play | Pause)) {
@@ -422,6 +422,11 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
                 m_playerControl->bufferingData(param1);
                 break;
             case EC_COMPLETE:
+                {
+                    QMutexLocker locker(&m_mutex);
+                    m_executedTasks &= ~(Play | Pause);
+                    m_executedTasks |= Stop;
+                }
                 m_playerControl->complete(HRESULT(param1));
                 break;
             case EC_LOADSTATUS:

@@ -59,7 +59,7 @@ public:
         free(this); copy(this, other); return *this; }
     ~DirectShowMediaType() { freeData(this); }
 
-    void clear() { free(this); memset(this, 0, sizeof(DirectShowMediaType)); }
+    void clear() { freeData(this); memset(this, 0, sizeof(DirectShowMediaType)); }
 
     static void copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &source);
     static void freeData(AM_MEDIA_TYPE *type);
