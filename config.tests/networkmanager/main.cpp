@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#if !defined(QT_NO_DBUS)
+#if defined(QT_NO_DBUS)
 sjkp //error is no QtDBus
 #endif
 #include <NetworkManager/NetworkManager.h>
