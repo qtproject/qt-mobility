@@ -141,7 +141,7 @@ private:
     
 public: // Data
     QVersitContactImporterPropertyHandler* mPropertyHandler;
-    QVersitResourceSaver* mResourceSaver;
+    QVersitResourceHandler* mResourceHandler;
 
 private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;

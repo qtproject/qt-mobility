@@ -12,10 +12,10 @@
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
-class MyQVersitResourceSaver : public QVersitResourceSaver
+class MyQVersitResourceHandler : public QVersitResourceHandler
 {
 public:
-    MyQVersitResourceSaver() : mIndex(0)
+    MyQVersitResourceHandler() : mIndex(0)
     {
     }
 
@@ -26,6 +26,14 @@ public:
         *location = QString::number(mIndex++);
         mObjects.insert(*location, contents);
         return true;
+    }
+
+    bool loadResource(const QString &location, QByteArray *contents, QString *mimeType)
+    {
+        Q_UNUSED(location)
+        Q_UNUSED(contents)
+        Q_UNUSED(mimeType)
+        return false;
     }
 
     int mIndex;
@@ -57,8 +65,8 @@ void UT_QVersit::testImportFiles()
     QList<QVersitDocument> documents = reader.readAll();
     QCOMPARE(reader.error(), QVersitReader::NoError);
     QVersitContactImporter importer;
-    MyQVersitResourceSaver resourceSaver;
-    importer.setResourceSaver(&resourceSaver);
+    MyQVersitResourceHandler resourceHandler;
+    importer.setResourceHandler(&resourceHandler);
     QList<QContact> contacts = importer.importContacts(documents);
 
     if (expectedContacts.size() > 0) {

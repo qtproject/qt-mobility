@@ -575,8 +575,8 @@ QString QVersitContactImporterPrivate::saveContentToFile(
     QVariant variant = property.variantValue();
     QString filename;
     bool ok = false;
-    if (variant.type() == QVariant::ByteArray && mResourceSaver) {
-        ok = mResourceSaver->saveResource(variant.toByteArray(), property, &filename);
+    if (variant.type() == QVariant::ByteArray && mResourceHandler) {
+        ok = mResourceHandler->saveResource(variant.toByteArray(), property, &filename);
     }
     return ok ? filename : QString();
 }

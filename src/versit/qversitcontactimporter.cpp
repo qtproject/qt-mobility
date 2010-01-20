@@ -81,9 +81,9 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \class QVersitResourceSaver
+ * \class QVersitResourceHandler
  *
- * \brief The QVersitResourceSaver class is an interface for clients wishing to implement file
+ * \brief The QVersitResourceHandler class is an interface for clients wishing to implement file
  * saving to disk when importing.
  *
  * \ingroup versit
@@ -94,7 +94,7 @@ QTM_USE_NAMESPACE
  * Saves the binary data \a contents to a file on a persistent storage medium.
  *
  * \a property holds the QVersitProperty which is the context in which the binary is coming from.
- * The QVersitResourceSaver can use this, for example, to determine file extension it should choose.
+ * The QVersitResourceHandler can use this, for example, to determine file extension it should choose.
  * \a *filename is filled with the contents of the file.
  * Returns true on success, false on failure.
  */
@@ -126,7 +126,7 @@ QTM_USE_NAMESPACE
  *    QList<QVersitProperty> mUnknownProperties;
  * };
  *
- * class MyResourceSaver : public QVersitResourceSaver {
+ * class MyResourceHandler : public QVersitResourceHandler {
  * public:
  *    bool saveResource(const QByteArray& contents, const QVersitProperty& property,
  *                      QString* location) {
@@ -135,12 +135,13 @@ QTM_USE_NAMESPACE
  *        file.open(QIODevice::WriteOnly);
  *        file.write(contents);
  *    }
+ *    bool loadResource(const QString& location, QByteArray* contents, QString* mimeType) {}
  * }
  *
  * MyPropertyHandler propertyHandler;
  * importer.setPropertyHandler(propertyHandler);
- * MyResourceSaver resourceSaver;
- * importer.setResourceSaver(resourceSaver);
+ * MyResourceHandler resourceHandler;
+ * importer.setResourceHandler(resourceHandler);
  *
  * QVersitDocument document;
  *
@@ -209,15 +210,15 @@ QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler()
 /*!
  * Sets \a saver to be the handler to save files with.
  */
-void QVersitContactImporter::setResourceSaver(QVersitResourceSaver* saver)
+void QVersitContactImporter::setResourceHandler(QVersitResourceHandler* saver)
 {
-    d->mResourceSaver = saver;
+    d->mResourceHandler = saver;
 }
 
 /*!
  * Returns the file saver.
  */
-QVersitResourceSaver* QVersitContactImporter::resourceSaver() const
+QVersitResourceHandler* QVersitContactImporter::resourceHandler() const
 {
-    return d->mResourceSaver;
+    return d->mResourceHandler;
 }

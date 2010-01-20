@@ -74,8 +74,8 @@ public:
     void setDetailHandler(QVersitContactExporterDetailHandler* handler);
     QVersitContactExporterDetailHandler* detailHandler() const;
 
-    void setResourceLoader(QVersitResourceLoader* loader);
-    QVersitResourceLoader* resourceLoader() const;
+    void setResourceHandler(QVersitResourceHandler* handler);
+    QVersitResourceHandler* resourceHandler() const;
 
 private:
     QVersitContactExporterPrivate* d;    

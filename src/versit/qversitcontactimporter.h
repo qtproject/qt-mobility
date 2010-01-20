@@ -77,8 +77,8 @@ public:
     void setPropertyHandler(QVersitContactImporterPropertyHandler* importer);
     QVersitContactImporterPropertyHandler* propertyHandler() const;
     
-    void setResourceSaver(QVersitResourceSaver* saver);
-    QVersitResourceSaver* resourceSaver() const;
+    void setResourceHandler(QVersitResourceHandler* saver);
+    QVersitResourceHandler* resourceHandler() const;
 
 private:
     QVersitContactImporterPrivate* d;

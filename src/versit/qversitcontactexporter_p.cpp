@@ -76,7 +76,7 @@ QTM_USE_NAMESPACE
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     mDetailHandler(NULL),
-    mResourceLoader(NULL),
+    mResourceHandler(NULL),
     mVersitType(QVersitDocument::InvalidType)
 {
     // Detail mappings
@@ -634,8 +634,8 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourc
                 QString::fromAscii("VALUE"),
                 QString::fromAscii("URL"));
             property.insertParameter(QString::fromAscii("TYPE"),resourceFormat);
-        } else if (mResourceLoader
-                   && mResourceLoader->loadResource(resourcePath, &imageData, &mimeType)) {
+        } else if (mResourceHandler
+                   && mResourceHandler->loadResource(resourcePath, &imageData, &mimeType)) {
             value.setValue(imageData);
             property.insertParameter(QString::fromAscii("TYPE"),resourceFormat);
             encodeContent = true;

@@ -142,6 +142,7 @@ QTM_USE_NAMESPACE
  *             return false;
  *         }
  *     }
+ *     bool saveResource(const QByteArray& contents, const QVersitProperty& property, QString* location) {}
  * };
  *
  * // An example of exporting a QContact:
@@ -149,8 +150,8 @@ QTM_USE_NAMESPACE
  *
  * MyDetailHandler detailHandler;
  * contactExporter.setDetailHandler(&detailHandler);
- * MyResourceLoader resourceLoader;
- * contactExporter.setResourceLoader(&resourceLoader);
+ * MyResourceLoader resourceHandler;
+ * contactExporter.setResourceLoader(&resourceHandler);
  *
  * QContact contact;
  * // Create a name
@@ -235,15 +236,15 @@ QVersitContactExporterDetailHandler* QVersitContactExporter::detailHandler() con
 /*!
  * Sets \a loader to be the handler to load files with.
  */
-void QVersitContactExporter::setResourceLoader(QVersitResourceLoader* loader)
+void QVersitContactExporter::setResourceHandler(QVersitResourceHandler* handler)
 {
-    d->mResourceLoader = loader;
+    d->mResourceHandler = handler;
 }
 
 /*!
  * Returns the file loader.
  */
-QVersitResourceLoader* QVersitContactExporter::resourceLoader() const
+QVersitResourceHandler* QVersitContactExporter::resourceHandler() const
 {
-    return d->mResourceLoader;
+    return d->mResourceHandler;
 }
