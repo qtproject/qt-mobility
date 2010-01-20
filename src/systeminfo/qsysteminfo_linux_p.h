@@ -91,8 +91,7 @@ public:
     QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
     bool hasFeatureSupported(QSystemInfo::Feature feature);
-Q_SIGNALS:
-    void currentLanguageChanged(const QString &);
+
 
 private:
 #if !defined(QT_NO_DBUS)
@@ -133,13 +132,6 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
-Q_SIGNALS:
-   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
-   void currentMobileCountryCodeChanged(const QString &);
-   void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
-   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
 private:
    bool isDefaultInterface(const QString &device);
@@ -226,14 +218,6 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
-
-Q_SIGNALS:
-    void batteryLevelChanged(int);
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
-
-    void powerStateChanged(QSystemDeviceInfo::PowerState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile);
-    void bluetoothStateChanged(bool);
 
 private:
 #if !defined(QT_NO_DBUS)
