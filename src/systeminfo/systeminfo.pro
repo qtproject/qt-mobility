@@ -56,6 +56,8 @@ unix: {
                 } else {
                 DEFINES += QT_NO_NETWORKMANAGER
                 }
+        } else {
+           DEFINES += QT_NO_NETWORKMANAGER
         }
     }
     maemo*: {
