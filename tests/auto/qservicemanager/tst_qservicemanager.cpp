@@ -1239,8 +1239,12 @@ void tst_QServiceManager::setInterfaceDefault_descriptor()
 
     QCOMPARE(mgr.interfaceDefault(interfaceName), desc);
 
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    QCOMPARE(mgr.interfaceDefault(interfaceName).isValid(), expectFound);
+#else
     QServiceManager mgrWithOtherScope(scope_find);
     QCOMPARE(mgrWithOtherScope.interfaceDefault(interfaceName).isValid(), expectFound);
+#endif
 }
 
 void tst_QServiceManager::setInterfaceDefault_descriptor_data()
@@ -1275,6 +1279,9 @@ void tst_QServiceManager::interfaceDefault()
 
 void tst_QServiceManager::serviceAdded()
 {
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    QSKIP("Multiple concurrent QServiceManagers not supported in WINS emulator", SkipAll);
+#endif
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
     QFETCH(QService::Scope, scope_modify);
@@ -1285,7 +1292,7 @@ void tst_QServiceManager::serviceAdded()
     buffer.setData(xml);
     QServiceManager mgr_modify(scope_modify);
     QServiceManager mgr_listen(scope_listen);
-
+    
     // ensure mgr.connectNotify() is called
     ServicesListener *listener = new ServicesListener;
     connect(&mgr_listen, SIGNAL(serviceAdded(QString,QService::Scope)),
@@ -1383,6 +1390,9 @@ void tst_QServiceManager::serviceAdded_data()
 
 void tst_QServiceManager::serviceRemoved()
 {
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    QSKIP("Multiple concurrent QServiceManagers not supported in WINS emulator", SkipAll);
+#endif
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
     QFETCH(QService::Scope, scope_modify);
