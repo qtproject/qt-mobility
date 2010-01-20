@@ -44,8 +44,7 @@
 #include <time.h>
 
 n900orientationsensor::n900orientationsensor(QSensor *sensor)
-    : QSensorBackend(sensor)
-    , m_timerid(0)
+    : n900filebasedsensor(sensor)
     , m_filename(ACCELEROMETER_FILE)
 {
     setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
@@ -55,26 +54,6 @@ n900orientationsensor::n900orientationsensor(QSensor *sensor)
             QSensor::PolledUpdates);
 
     setReading<QOrientationReading>(&m_reading);
-}
-
-static int suggestedInterval() { return 1000; }
-
-bool n900orientationsensor::start()
-{
-    if (m_timerid)
-        return false;
-
-    if (suggestedInterval())
-        m_timerid = startTimer(suggestedInterval());
-    return true;
-}
-
-void n900orientationsensor::stop()
-{
-    if (m_timerid) {
-        killTimer(m_timerid);
-        m_timerid = 0;
-    }
 }
 
 void n900orientationsensor::poll()
@@ -112,9 +91,3 @@ void n900orientationsensor::poll()
         newReadingAvailable();
     }
 }
-
-void n900orientationsensor::timerEvent(QTimerEvent * /*event*/)
-{
-    poll();
-}
-

@@ -42,25 +42,21 @@
 #ifndef N900ORIENTATIONSENSOR_H
 #define N900ORIENTATIONSENSOR_H
 
-#include <qsensorbackend.h>
+#include "n900filebasedsensor.h"
 #include <qorientationsensor.h>
 
 #define ACCELEROMETER_FILE "/sys/class/i2c-adapter/i2c-3/3-001d/coord"
 
 QTM_USE_NAMESPACE
 
-class n900orientationsensor : public QSensorBackend
+class n900orientationsensor : public n900filebasedsensor
 {
 public:
     n900orientationsensor(QSensor *sensor);
 
-    bool start();
-    void stop();
     void poll();
-    void timerEvent(QTimerEvent * /*event*/);
 
 private:
-    int m_timerid;
     const char *m_filename;
     QOrientationReading m_reading;
 };
