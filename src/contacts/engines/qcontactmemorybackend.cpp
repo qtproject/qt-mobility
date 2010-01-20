@@ -205,7 +205,7 @@ QList<QContact> QContactMemoryEngine::contacts(const QList<QContactSortOrder> &s
     error = QContactManager::NoError;
     QList<QContact> sortedContacts;
     for (int i = 0; i < d->m_contacts.size(); i++)
-        QContactManagerEngine::addSorted(&sortedContacts, contact(d->m_contacts.at(i).localId(), error), sortOrders);
+        QContactManagerEngine::addSorted(&sortedContacts, contact(d->m_contacts.at(i).localId(), QStringList(), error), sortOrders);
     // we ignore the restrictions - we don't want to do extra work to remove them.
     // note that the restriction is "optional" - it defines the minimum set of detail types which _must_ be returned
     // but doesn't require that they are the _only_ detail types which are returned.
@@ -215,6 +215,35 @@ QList<QContact> QContactMemoryEngine::contacts(const QList<QContactSortOrder> &s
 /*! \reimp */
 QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
+    int index = d->m_contactIds.indexOf(contactId);
+    if (index != -1) {
+        // found the contact successfully.
+        error = QContactManager::NoError;
+        QContact retn = d->m_contacts.at(index);
+
+        // synthesize the display label if we need to.
+        QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionName);
+        if (dl.label().isEmpty()) {
+            QContactManager::Error synthError;
+            retn = setContactDisplayLabel(synthesizedDisplayLabel(retn, synthError), retn);
+        }
+
+        // also, retrieve the current relationships the contact is involved with.
+        QList<QContactRelationship> relationshipCache = d->m_orderedRelationships.value(contactId);
+        QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
+
+        // and return the contact
+        return retn;
+    }
+
+    error = QContactManager::DoesNotExistError;
+    return QContact();
+}
+
+/*! \reimp */
+QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    Q_UNUSED(definitionRestrictions); // return the entire contact (meets contract, no optimisations possible for memory engine).
     int index = d->m_contactIds.indexOf(contactId);
     if (index != -1) {
         // found the contact successfully.
