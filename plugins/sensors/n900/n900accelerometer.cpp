@@ -57,7 +57,7 @@ n900accelerometer::n900accelerometer(QSensor *sensor)
     setReading<QAccelerometerReading>(&m_reading);
 }
 
-static int suggestedInterval() { return 0; }
+static int suggestedInterval() { return 1000; }
 
 bool n900accelerometer::start()
 {

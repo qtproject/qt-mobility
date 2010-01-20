@@ -5,10 +5,10 @@
 QTM_USE_NAMESPACE
 
 #if 0
-class AccelerometerListener : public QSensorListener
+class AccelerometerFilter : public QSensorFilter
 {
 public:
-    void sensorChanged(QSensorReading *_reading)
+    bool filter(QSensorReading *_reading)
     {
         QAccelerometerReading *reading = static_cast<QAccelerometerReading*>(_reading);
         qDebug() << "acceleration: "
@@ -16,6 +16,7 @@ public:
                          reading->x(),
                          reading->y(),
                          reading->z());
+        return false; // don't store the reading in the sensor
     }
 };
 
@@ -24,9 +25,14 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
 
     QSensor sensor;
-    sensor.setType("ACcel");
-    AccelerometerListener listener;
-    sensor.setListener(&listener);
+    sensor.setType("QAccelerometer");
+    sensor.connect();
+    if (!sensor.isAvailable()) {
+        qWarning("No Accelerometer available!");
+        return 1;
+    }
+    AccelerometerFilter filter;
+    sensor.addFilter(&filter);
     sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
     sensor.start();
 
@@ -52,6 +58,11 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
 
     QAccelerometer sensor;
+    sensor.connect();
+    if (!sensor.isAvailable()) {
+        qWarning("No Accelerometer available!");
+        return 1;
+    }
     AccelerometerFilter filter;
     sensor.addFilter(&filter);
     sensor.setUpdatePolicy(QSensor::InfrequentUpdates);

@@ -65,6 +65,7 @@ struct QSensorPrivate
         : supportedUpdatePolicies(QSensor::Undefined)
         , updatePolicy(QSensor::Undefined)
         , updateInterval(0)
+        , pre_connect(true)
         , backend(0)
         , signalEnabled(true)
         , active(false)
@@ -82,6 +83,7 @@ struct QSensorPrivate
     QSensor::UpdatePolicy updatePolicy;
     int updateInterval;
 
+    bool pre_connect;
     QSensorBackend *backend;
     QFilterList filters;
     bool signalEnabled;

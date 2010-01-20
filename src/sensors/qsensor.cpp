@@ -164,7 +164,8 @@ void QSensor::setType(const QByteArray &type)
 */
 void QSensor::connect()
 {
-    Q_ASSERT(!d->backend);
+    Q_ASSERT(d->pre_connect);
+    d->pre_connect = false;
     Q_ASSERT(!d->type.isEmpty());
     if (d->identifier.isEmpty()) {
         d->identifier = QSensorFactory::instance()->defaultSensorForType(d->type);
@@ -177,7 +178,7 @@ void QSensor::connect()
 
     d->backend = QSensorManager::instance()->createBackend(d->identifier, this);
     if (!d->backend)
-        return;
+        qWarning() << "Did not make backend for identifier" << d->identifier;
 }
 
 /*!
@@ -337,7 +338,8 @@ void QSensor::poll()
 */
 void QSensor::start()
 {
-    connect();
+    if (d->pre_connect)
+        connect();
     if (!d->backend)
         return;
     d->active = true;
