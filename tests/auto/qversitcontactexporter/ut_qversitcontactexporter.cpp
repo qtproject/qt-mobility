@@ -113,16 +113,9 @@ class MyQVersitContactExporterDetailHandler : public QVersitContactExporterDetai
 public:
     bool preProcessDetail(const QContactDetail& detail, QVersitDocument* document)
     {
-        mProcessedDetails.append(detail);
-        if (mDefinitionNamesToProcess.contains(detail.definitionName())) {
-            QVersitProperty property;
-            property.setName(detail.definitionName());
-            property.setValue(detail.definitionName());
-            document->addProperty(property);
-            return true;
-        } else {
-            return false;
-        }
+        Q_UNUSED(document);
+        mPreProcessedDetails.append(detail);
+        return mPreProcess;
     }
 
     bool postProcessDetail(const QContactDetail& detail, bool alreadyProcessed,
@@ -131,12 +124,17 @@ public:
         Q_UNUSED(document)
         if (!alreadyProcessed)
             mUnknownDetails.append(detail);
+        else
+            mPostProcessedDetails.append(detail);
         return false;
     }
 
+    // a hook to control what preProcess returns:
+    bool mPreProcess;
     QStringList mDefinitionNamesToProcess;
     QList<QContactDetail> mUnknownDetails;
-    QList<QContactDetail> mProcessedDetails;
+    QList<QContactDetail> mPreProcessedDetails;
+    QList<QContactDetail> mPostProcessedDetails;
 };
 
 class MyQVersitResourceLoader : public QVersitResourceLoader
@@ -209,7 +207,7 @@ void UT_QVersitContactExporter::testConvertContact()
     QCOMPARE(documents.first().properties().count(), 3);
 }
 
-void UT_QVersitContactExporter::testUnknownContactDetails()
+void UT_QVersitContactExporter::testContactDetailHandler()
 {
     // Test1: Un-supported Avatar Test
     QContact contact;
@@ -246,6 +244,21 @@ void UT_QVersitContactExporter::testUnknownContactDetails()
     detail = QContactDetail();
     detail = searchDetail(unknownDetails, defintionName);
     QCOMPARE(defintionName, detail.definitionName());
+
+    // Test that preProcessDetail return true stops the exporter from doing anything.
+    contact.clearDetails();
+    QContactName contactName;
+    contactName.setFirst(QLatin1String("John"));
+    contact.saveDetail(&contactName);
+    detailHandler = MyQVersitContactExporterDetailHandler();
+    detailHandler.mPreProcess = true;
+    contacts.clear();
+    contacts.append(contact);
+    document = mExporter->exportContacts(contacts).first();
+    QCOMPARE(document.properties().count(), 0);
+    QVERIFY(detailHandler.mPreProcessedDetails.count() > 0);
+    QCOMPARE(detailHandler.mPostProcessedDetails.count(), 0);
+    QCOMPARE(detailHandler.mUnknownDetails.count(), 0);
 }
 
 void UT_QVersitContactExporter::testEncodeName()

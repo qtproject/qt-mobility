@@ -130,11 +130,15 @@ void QVersitContactExporterPrivate::exportContact(
     QVersitDocument& versitDocument,
     const QContact& contact)
 {
-    mUnknownContactDetails.clear();
     mVersitType = versitDocument.type();
     QList<QContactDetail> allDetails = contact.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
+
+        // If the custom detail handler handles it, we don't have to.
+        if (mDetailHandler && mDetailHandler->preProcessDetail(detail, &versitDocument))
+            continue;
+
         QVersitProperty property;
         property.setName(mPropertyMappings.value(detail.definitionName()));
         bool addProperty = true;

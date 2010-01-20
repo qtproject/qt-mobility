@@ -132,6 +132,9 @@ QContact QVersitContactImporterPrivate::importContact(
     QContact contact;
     const QList<QVersitProperty> properties = versitDocument.properties();
     foreach (QVersitProperty property, properties) {
+        if (mPropertyHandler && mPropertyHandler->preProcessProperty(property, &contact))
+            continue;
+
         QPair<QString,QString> detailDefinition =
             mDetailMappings.value(property.name());
         QString detailDefinitionName = detailDefinition.first;

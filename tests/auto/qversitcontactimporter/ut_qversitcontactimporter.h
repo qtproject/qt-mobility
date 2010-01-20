@@ -88,7 +88,7 @@ private slots: // Tests
     void testFamily();
     void testSound();
     void testLabel();
-    void testUnknownVersitProperties();
+    void testPropertyHandler();
 
 private: // Utilities
     

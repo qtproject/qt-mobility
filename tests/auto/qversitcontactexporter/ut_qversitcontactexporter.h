@@ -64,7 +64,7 @@ private slots:
     void cleanup();
 
     void testConvertContact();
-    void testUnknownContactDetails();
+    void testContactDetailHandler();
     void testEncodeName();
     void testEncodePhoneNumber();
     void testEncodeEmailAddress();

@@ -108,7 +108,6 @@ protected:
     QString escape(const QString& value);
 
 public: // Data
-    QList<QContactDetail> mUnknownContactDetails;
     QVersitContactExporterDetailHandler* mDetailHandler;
     QVersitResourceLoader* mResourceLoader;
 

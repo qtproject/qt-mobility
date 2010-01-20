@@ -71,25 +71,35 @@ QTM_BEGIN_NAMESPACE
 class MyQVersitContactImporterPropertyHandler : public QVersitContactImporterPropertyHandler
 {
 public:
+    MyQVersitContactImporterPropertyHandler()
+        : mPreProcess(false)
+    {
+    }
+
     bool preProcessProperty(const QVersitProperty& property, QContact* contact)
     {
-        Q_UNUSED(property);
         Q_UNUSED(contact);
-        return false;
+        mPreProcessedProperties.append(property);
+        return mPreProcess;
     }
 
     bool postProcessProperty(const QVersitProperty& property, bool alreadyProcessed,
                              QContact* contact)
     {
-        Q_UNUSED(contact)
+        Q_UNUSED(contact);
         if (!alreadyProcessed)
             mUnknownProperties.append(property);
+        else
+            mPostProcessedProperties.append(property);
         return false;
     }
 
+    // a hook to control what preProcess returns:
+    bool mPreProcess;
     QStringList mPropertyNamesToProcess;
     QList<QVersitProperty> mUnknownProperties;
-    QList<QVersitProperty> mProcessedProperties;
+    QList<QVersitProperty> mPreProcessedProperties;
+    QList<QVersitProperty> mPostProcessedProperties;
 };
 
 class MyQVersitResourceSaver : public QVersitResourceSaver
@@ -1044,7 +1054,7 @@ void UT_QVersitContactImporter::testSound()
     QCOMPARE(content, val);
 }
 
-void UT_QVersitContactImporter::testUnknownVersitProperties()
+void UT_QVersitContactImporter::testPropertyHandler()
 {
     QVersitDocument document;
     QVersitProperty property;
@@ -1056,6 +1066,8 @@ void UT_QVersitContactImporter::testUnknownVersitProperties()
     documents.append(document);
     mImporter->importContacts(documents);
     QCOMPARE(propertyHandler.mUnknownProperties.size(), 0);
+    QCOMPARE(propertyHandler.mPreProcessedProperties.size(), 0);
+    QCOMPARE(propertyHandler.mPostProcessedProperties.size(), 0);
 
     // No unconverted properties, one converted property
     propertyHandler = MyQVersitContactImporterPropertyHandler();
@@ -1064,8 +1076,26 @@ void UT_QVersitContactImporter::testUnknownVersitProperties()
     document.addProperty(property);
     documents.clear();
     documents.append(document);
-    mImporter->importContacts(documents);
+    QContact contact = mImporter->importContacts(documents).first();
     QCOMPARE(propertyHandler.mUnknownProperties.size(), 0);
+    QCOMPARE(propertyHandler.mPreProcessedProperties.size(), 1);
+    QCOMPARE(propertyHandler.mPostProcessedProperties.size(), 1);
+
+    // Set the handler to override handling of the property
+    propertyHandler = MyQVersitContactImporterPropertyHandler();
+    propertyHandler.mPreProcess = true;
+    document = QVersitDocument();
+    property.setName(QString::fromAscii("N"));
+    property.setValue(QString::fromAscii("Citizen;John;Q;;"));
+    document.addProperty(property);
+    documents.clear();
+    documents.append(document);
+    contact = mImporter->importContacts(documents).first();
+    QCOMPARE(propertyHandler.mUnknownProperties.size(), 0);
+    QCOMPARE(propertyHandler.mPreProcessedProperties.size(), 1);
+    QCOMPARE(propertyHandler.mPostProcessedProperties.size(), 0);
+    QContactDetail nameDetail = contact.detail(QContactName::DefinitionName);
+    QVERIFY(nameDetail.isEmpty());
 
     // One unknown property
     propertyHandler = MyQVersitContactImporterPropertyHandler();
