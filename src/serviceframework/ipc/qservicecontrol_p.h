@@ -44,6 +44,7 @@
 
 #include "qservicecontrol.h"
 #include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
 #include <QLocalServer>
 
 QTM_BEGIN_NAMESPACE
@@ -66,7 +67,10 @@ private:
 #endif
     QList<ObjectEndPoint*> pendingConnections;
 
+public:
+    static QObject* proxyForService(const QServiceTypeIdent& typeId, const QString& location);
 };
+
 
 
 QTM_END_NAMESPACE

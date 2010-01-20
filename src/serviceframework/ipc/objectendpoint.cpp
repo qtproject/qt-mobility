@@ -40,18 +40,36 @@
 ****************************************************************************/
 
 #include "objectendpoint_p.h"
+#include "instancemanager_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-ObjectEndPoint::ObjectEndPoint(QServiceIpcEndPoint* comm, QObject* parent)
-    : QObject(parent), dispatch(comm)
+ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
+    : QObject(parent), endPointType(type), dispatch(comm), service(0)
 {
     Q_ASSERT(dispatch);
     dispatch->setParent(this);
+    if (type == Client) {
+        return; //we are waiting for conctructProxy() call
+    } else {
+        //TODO instanciate the actual service
+    }
 }
 
 ObjectEndPoint::~ObjectEndPoint()
 {
+}
+
+/*!
+    Client requests proxy object. The proxy is owned by calling
+    code and this object must clean itself up upon destruction of
+    proxy.
+*/
+QObject* ObjectEndPoint::constructProxy(const QServiceTypeIdent& /*ident*/)
+{
+    service = new QObject();
+
+    return service;
 }
 
 #include "moc_objectendpoint_p.cpp"

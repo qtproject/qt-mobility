@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service>
+    <name>IPCExampleService</name>
+    <filepath>localsocket:qt_sfw_example_ipc_ident</filepath>
+    <description>Example service demoing IPC based services</description>
+    <interface>
+        <name>com.nokia.qt.interface</name>
+        <version>1.0</version>
+        <description>Unspecified</description>
+        <capabilities></capabilities>
+    </interface>
+</service>

@@ -44,6 +44,8 @@
 
 #include "qmobilityglobal.h"
 #include "ipcendpoint_p.h"
+#include "qservicetyperegister.h"
+#include <QPointer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,11 +53,19 @@ class ObjectEndPoint : public QObject
 {
     Q_OBJECT
 public:
-    ObjectEndPoint(QServiceIpcEndPoint* comm, QObject* parent = 0);
+    enum Type {
+        Service = 0,
+        Client
+    };
+
+    ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent = 0);
     ~ObjectEndPoint();
+    QObject* constructProxy(const QServiceTypeIdent& ident);    
 
 private:
+    Type endPointType;
     QServiceIpcEndPoint* dispatch;
+    QPointer<QObject> service;
 };
 
 QTM_END_NAMESPACE

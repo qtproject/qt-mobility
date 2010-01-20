@@ -73,6 +73,13 @@ public:
             QTimer::singleShot(0, this, SLOT(readIncoming()));
     }
 
+    ~LocalSocketEndPoint() 
+    {
+        /*if (socket)
+            delete socket;*/
+    }
+
+
 protected:
     void flushPackage(const QServicePackage& package)
     {
@@ -123,8 +130,9 @@ void QServiceControlPrivate::processIncoming()
     qDebug() << "Processing incoming connect";
     if (localServer->hasPendingConnections()) {
         QLocalSocket* s = localServer->nextPendingConnection();
-        LocalSocketEndPoint* endPoint = new LocalSocketEndPoint(s);
-        ObjectEndPoint* endpoint = new ObjectEndPoint(endPoint, this);
+        //LocalSocketEndPoint owns socket 
+        LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
+        ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
         pendingConnections.append(endpoint);
     }
 #endif
@@ -150,6 +158,22 @@ bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
 
     return true;
 #endif
+}
+
+
+QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent& typeIdent, const QString& location)
+{
+#ifdef Q_OS_SYMBIAN
+#else
+    QLocalSocket* socket = new QLocalSocket();
+    LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
+    ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
+
+    QObject *proxy = endPoint->constructProxy(typeIdent);
+    QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
+    return proxy;
+#endif
+    return 0;
 }
 
 #include "moc_qservicecontrol_p.cpp"

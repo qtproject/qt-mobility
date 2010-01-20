@@ -2,6 +2,7 @@
 #include <qservicetyperegister.h>
 #include <qservicecontrol.h>
 #include <instancemanager_p.h>
+#include "qservicemanager.h"
 #include <QDebug>
 
 QTM_USE_NAMESPACE
@@ -30,10 +31,28 @@ public:
     }
 };
 
+void unregisterExampleService()
+{
+    QServiceManager m;
+    m.removeService("IPCExampleService");
+}
+
+void registerExampleService()
+{
+    unregisterExampleService();
+    QServiceManager m;
+    const QString path = QCoreApplication::applicationDirPath() + "/xmldata/ipcexampleservice.xml";
+    bool r = m.addService(path);
+    if (!r)
+        qWarning() << "Cannot register IPCExampleService";
+}
 
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
+
+    registerExampleService();
+
     QServiceTypeRegister::registerType<TestService>(QServiceTypeRegister::SharedInstance);
     QServiceTypeRegister::registerType<TestService2>(QServiceTypeRegister::UniqueInstance);
 
@@ -50,8 +69,10 @@ int main(int argc, char** argv)
 
     QServiceControl* control = new QServiceControl();
     control->publishServices("qt_sfw_example_ipc_ident");
-    return app.exec();
+    int res =  app.exec();
     delete control;
+    unregisterExampleService();
+    return res;
 }
 
 #include "main.moc"

@@ -47,6 +47,7 @@
 #else
     #include "databasemanager_p.h"
 #endif
+#include "qservicecontrol_p.h"
 
 #include <QObject>
 #include <QPluginLoader>
@@ -91,6 +92,17 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
         }
     }
     return QString();
+}
+
+/*!
+    For now we assume that localsocket means IPC via QLocalSocket. 
+    This needs to be extended as new IPC mechanisms are incorporated.
+*/
+static bool qservicemanager_isIpcBasedService(const QString& location)
+{
+    if (location.startsWith("localsocket:"))
+        return true;
+    return false;
 }
 
 
@@ -232,7 +244,7 @@ private slots:
     \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
     \value PluginLoadingFailed The service plugin cannot be loaded.
     \value ComponentNotFound The service or interface implementation has not been registered.
-    \value ServiceCapabilityDenied The security session does not allow the service based on its capabilities.
+    \value ServiceCapabilityDenied The security session does not permit service access based on its capabilities.
     \value UnknownError An unknown error occurred.
 */
 
@@ -393,8 +405,18 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         return 0;
     }
 
-    QString serviceFilePath = qservicemanager_resolveLibraryPath(
-            descriptor.attribute(QServiceInterfaceDescriptor::Location).toString());
+    const QString location = descriptor.attribute(QServiceInterfaceDescriptor::Location).toString();
+    if (qservicemanager_isIpcBasedService(location)) {
+        QServiceTypeIdent ident(descriptor.interfaceName().toLatin1(), QByteArray(descriptor.majorVersion()+"."+descriptor.minorVersion()));
+        QObject* service = QServiceControlPrivate::proxyForService(ident, location);
+        if (!service) {
+            d->setError(InvalidServiceLocation);
+        }
+        //client own proxy object
+        return service;
+    }
+
+    const QString serviceFilePath = qservicemanager_resolveLibraryPath(location);
     if (serviceFilePath.isEmpty()) {
         d->setError(InvalidServiceLocation);
         return 0;
@@ -517,7 +539,14 @@ bool QServiceManager::addService(QIODevice *device)
     DatabaseManager::DbScope scope = d->scope == QService::UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
     ServiceMetaDataResults results = parser.parseResults();
+
     bool result = d->dbManager->registerService(results, scope);
+
+    //ipc services cannot be test loaded
+    if (qservicemanager_isIpcBasedService(results.location))
+        return result;
+
+    //test the new plug-in
     if (result) {
         QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());

@@ -7,7 +7,8 @@ contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
             servicebrowser \
-            sfwipcservice
+            sfwipcservice \
+            sfwipcclient
 }
 
 #BearerManagement examples
