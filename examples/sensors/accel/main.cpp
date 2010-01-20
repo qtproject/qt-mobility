@@ -4,52 +4,32 @@
 
 QTM_USE_NAMESPACE
 
-#if 0
-class AccelerometerFilter : public QSensorFilter
-{
-public:
-    bool filter(QSensorReading *_reading)
-    {
-        QAccelerometerReading *reading = static_cast<QAccelerometerReading*>(_reading);
-        qDebug() << "acceleration: "
-                 << QString().sprintf("%0.2f %0.2f %0.2f",
-                         reading->x(),
-                         reading->y(),
-                         reading->z());
-        return false; // don't store the reading in the sensor
-    }
-};
+QAccelerometer *accelerometer;
 
-int main(int argc, char **argv)
-{
-    QCoreApplication app(argc, argv);
-
-    QSensor sensor;
-    sensor.setType("QAccelerometer");
-    sensor.connect();
-    if (!sensor.isAvailable()) {
-        qWarning("No Accelerometer available!");
-        return 1;
-    }
-    AccelerometerFilter filter;
-    sensor.addFilter(&filter);
-    sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
-    sensor.start();
-
-    return app.exec();
-}
-#else
 class AccelerometerFilter : public QAccelerometerFilter
 {
 public:
     bool filter(QAccelerometerReading *reading)
     {
+#if 0
+        QAccelerometerReading *lastReading = accelerometer->reading();
+        qDebug() << "acceleration: "
+                 << QString().sprintf("%0.2f (%0.2f) %0.2f (%0.2f) %0.2f (%0.2f)",
+                         reading->x(),
+                         lastReading->x() - reading->x(),
+                         reading->y(),
+                         lastReading->y() - reading->y(),
+                         reading->z(),
+                         lastReading->z() - reading->z());
+        return true; // so the last reading is available!
+#else
         qDebug() << "acceleration: "
                  << QString().sprintf("%0.2f %0.2f %0.2f",
                          reading->x(),
                          reading->y(),
                          reading->z());
         return false; // don't store the reading in the sensor
+#endif
     }
 };
 
@@ -58,17 +38,19 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
 
     QAccelerometer sensor;
+    accelerometer = &sensor;
     sensor.connect();
     if (!sensor.isAvailable()) {
         qWarning("No Accelerometer available!");
         return 1;
     }
     AccelerometerFilter filter;
+    sensor.setSignalEnabled(false);
     sensor.addFilter(&filter);
-    sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
+    //sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
+    sensor.setUpdateInterval(100); // as fast as the sensor can go!
     sensor.start();
 
     return app.exec();
 }
-#endif
 
