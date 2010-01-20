@@ -198,6 +198,9 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
             m_loop.wait(&m_mutex);
         }
 
+        m_graph->RemoveFilter(m_audioOutput);
+        m_graph->RemoveFilter(m_videoOutput);
+
         m_graph->Release();
         m_graph = 0;
     }
@@ -657,20 +660,22 @@ void DirectShowPlayerService::doLoad(QMutexLocker *locker)
 
         QCoreApplication::postEvent(m_playerControl, new QEvent(
                 QEvent::Type(DirectShowPlayerControl::GraphStatusChanged)));
-
     }
 }
 
 void DirectShowPlayerService::doRender(QMutexLocker *locker)
 {
+    IFilterGraph2 *graph = m_graph;
+    graph->AddRef();
+
     if (m_pendingTasks & SetAudioOutput) {
-        m_graph->AddFilter(m_audioOutput, L"AudioOutput");
+        graph->AddFilter(m_audioOutput, L"AudioOutput");
 
         m_pendingTasks ^= SetAudioOutput;
         m_executedTasks |= SetAudioOutput;
     }
     if (m_pendingTasks & SetVideoOutput) {
-        m_graph->AddFilter(m_videoOutput, L"VideoOutput");
+        graph->AddFilter(m_videoOutput, L"VideoOutput");
 
         m_pendingTasks ^= SetVideoOutput;
         m_executedTasks |= SetVideoOutput;
@@ -688,7 +693,7 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
         filters.removeLast();
 
         if (m_executingTask == Render && SUCCEEDED(filter->EnumPins(&pins))) {
-            bool outputs = 0;
+            int outputs = 0;
             for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release()) {
                 PIN_DIRECTION direction;
                 if (pin->QueryDirection(&direction) == S_OK && direction == PINDIR_OUTPUT) {
@@ -702,7 +707,7 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
                         peer->Release();
                     } else {
                         locker->unlock();
-                        if (SUCCEEDED(m_graph->RenderEx(
+                        if (SUCCEEDED(graph->RenderEx(
                                 pin, AM_RENDEREX_RENDERTOEXISTINGRENDERERS, 0))) {
                             rendered = true;
                         }
@@ -717,7 +722,7 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
     }
 
     if (m_graphStatus != Loaded) {
-        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
+        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(graph)) {
             LONGLONG duration = 0;
             locker->unlock();
             seeking->GetDuration(&duration);
@@ -730,7 +735,6 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
     if (m_executingTask == Render && rendered) {
         m_graphStatus = Loaded;
 
-
         m_executedTasks |= Render;
     } else {
         m_graphStatus = InvalidMedia;
@@ -738,6 +742,8 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
 
     QCoreApplication::postEvent(m_playerControl, new QEvent(
             QEvent::Type(DirectShowPlayerControl::GraphStatusChanged)));
+
+    graph->Release();
 
     m_loop.wake();
 }
