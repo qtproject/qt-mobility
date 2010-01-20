@@ -44,37 +44,10 @@
 #include <time.h>
 
 n900accelerometer::n900accelerometer(QSensor *sensor)
-    : QSensorBackend(sensor)
-    , m_timerid(0)
+    : n900filebasedsensor(sensor)
     , m_filename(ACCELEROMETER_FILE)
 {
-    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
-            QSensor::InfrequentUpdates |
-            QSensor::FrequentUpdates |
-            QSensor::TimedUpdates |
-            QSensor::PolledUpdates);
-
     setReading<QAccelerometerReading>(&m_reading);
-}
-
-static int suggestedInterval() { return 1000; }
-
-bool n900accelerometer::start()
-{
-    if (m_timerid)
-        return false;
-
-    if (suggestedInterval())
-        m_timerid = startTimer(suggestedInterval());
-    return true;
-}
-
-void n900accelerometer::stop()
-{
-    if (m_timerid) {
-        killTimer(m_timerid);
-        m_timerid = 0;
-    }
 }
 
 void n900accelerometer::poll()
@@ -102,10 +75,5 @@ void n900accelerometer::poll()
     m_reading.setZ(az);
 
     newReadingAvailable();
-}
-
-void n900accelerometer::timerEvent(QTimerEvent * /*event*/)
-{
-    poll();
 }
 

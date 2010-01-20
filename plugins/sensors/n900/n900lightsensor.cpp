@@ -44,42 +44,14 @@
 #include <time.h>
 
 n900lightsensor::n900lightsensor(QSensor *sensor)
-    : QSensorBackend(sensor)
-    , m_timerid(0)
+    : n900filebasedsensor(sensor)
     , m_filename(LIGHTSENSOR_FILE)
 {
-    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
-            QSensor::InfrequentUpdates |
-            QSensor::FrequentUpdates |
-            QSensor::TimedUpdates |
-            QSensor::PolledUpdates);
-
     setReading<QAmbientLightReading>(&m_reading);
-}
-
-static int suggestedInterval() { return 0; }
-
-bool n900lightsensor::start()
-{
-    if (m_timerid)
-        return false;
-
-    if (suggestedInterval())
-        m_timerid = startTimer(suggestedInterval());
-    return true;
-}
-
-void n900lightsensor::stop()
-{
-    if (m_timerid) {
-        killTimer(m_timerid);
-        m_timerid = -1;
-    }
 }
 
 void n900lightsensor::poll()
 {
-    qWarning() << "poll";
     m_reading.setTimestamp(clock());
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;
@@ -103,10 +75,5 @@ void n900lightsensor::poll()
     m_reading.setLightLevel(lightLevel);
 
     newReadingAvailable();
-}
-
-void n900lightsensor::timerEvent(QTimerEvent * /*event*/)
-{
-    poll();
 }
 
