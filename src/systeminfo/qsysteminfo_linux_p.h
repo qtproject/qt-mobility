@@ -84,7 +84,6 @@ public:
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
 // general
-    QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
 
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
@@ -102,13 +101,6 @@ private:
     QHalInterface halIface;
 #endif
     bool hasSysFeature(const QString &featureStr);
-    QTimer *langTimer;
-    QString langCached;
-
-private Q_SLOTS:
-    void startLanguagePolling();
-
-
 };
 
 class QNetworkManagerInterface;

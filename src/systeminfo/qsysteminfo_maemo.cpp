@@ -136,48 +136,15 @@ QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
  : QSystemInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
-    langCached = currentLanguage();
-    startLanguagePolling();
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-void QSystemInfoPrivate::startLanguagePolling()
-{
-    QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
-    if(langCached.isEmpty()) {
-        currentLanguage();
-    }
-    checkLang = checkLang.left(2);
-    if(checkLang != langCached) {
-        emit currentLanguageChanged(checkLang);
-        langCached = checkLang;
-    }
-    langTimer = new QTimer(this);
-    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
-}
-
-// 2 letter ISO 639-1
-QString QSystemInfoPrivate::currentLanguage() const
-{
-    QString lang;
-    if(langCached.isEmpty()) {
-        lang  = QLocale::system().name().left(2);
-        if(lang.isEmpty() || lang == "C") {
-            lang = "en";
-        }
-    } else {
-        lang = langCached;
-    }
-    return lang;
-}
-
 // 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
-#ifdef Q_WS_MAEMO_5
     QStringList languages;
 
     GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
@@ -190,25 +157,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     languages.removeDuplicates();
 
     return languages;
-#else
-    QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
-    QStringList langList;
-
-    if(transDir.exists()) {
-        QStringList localeList = transDir.entryList( QStringList() << "qt_*.qm" ,QDir::Files
-                                                     | QDir::NoDotAndDotDot, QDir::Name);
-        foreach(QString localeName, localeList) {
-            QString lang = localeName.mid(3,2);
-            if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains("help")) {
-                langList <<lang;
-            }
-        }
-        if(langList.count() > 0) {
-            return langList;
-        }
-    }
-    return QStringList() << currentLanguage();
-#endif
 }
 
 // "major.minor.build" format.

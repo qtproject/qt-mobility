@@ -44,10 +44,41 @@ QTM_BEGIN_NAMESPACE
 
 QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
+    langCached = currentLanguage();
+    startLanguagePolling();
 }
 
 QSystemInfoLinuxCommonPrivate::~QSystemInfoLinuxCommonPrivate()
 {
+}
+
+void QSystemInfoLinuxCommonPrivate::startLanguagePolling()
+{
+    QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
+    if(langCached.isEmpty()) {
+        currentLanguage();
+    }
+    checkLang = checkLang.left(2);
+    if(checkLang != langCached) {
+        emit currentLanguageChanged(checkLang);
+        langCached = checkLang;
+    }
+    langTimer = new QTimer(this);
+    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
+}
+
+QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
+{
+    QString lang;
+    if(langCached.isEmpty()) {
+        lang  = QLocale::system().name().left(2);
+        if(lang.isEmpty() || lang == "C") {
+            lang = "en";
+        }
+    } else {
+        lang = langCached;
+    }
+    return lang;
 }
 
 QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)

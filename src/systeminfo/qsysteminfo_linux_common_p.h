@@ -83,7 +83,7 @@ public:
     QSystemInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemInfoLinuxCommonPrivate();
 // general
-    QString currentLanguage() const {return QString();} // 2 letter ISO 639-1
+    QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const {return QStringList();}	 // 2 letter ISO 639-1
 
     QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString()) {return QString();}
@@ -93,6 +93,13 @@ public:
     bool hasFeatureSupported(QSystemInfo::Feature /*feature*/) {return false;}
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
+
+private:
+    QTimer *langTimer;
+    QString langCached;
+
+private Q_SLOTS:
+    void startLanguagePolling();
 };
 
 class QNetworkManagerInterface;
