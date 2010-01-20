@@ -83,6 +83,7 @@ public:
     }
 
     QList<QContact> m_contacts;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -172,6 +173,7 @@ public:
     QString m_contactType;
     QStringList m_names;
     QMap<QString, QContactDetailDefinition> m_definitions;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactDetailDefinitionSaveRequestPrivate : public QContactAbstractRequestPrivate
@@ -193,6 +195,7 @@ public:
 
     QString m_contactType;
     QList<QContactDetailDefinition> m_definitions;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactDetailDefinitionRemoveRequestPrivate : public QContactAbstractRequestPrivate
@@ -214,6 +217,7 @@ public:
 
     QString m_contactType;
     QStringList m_names;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPrivate

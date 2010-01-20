@@ -129,6 +129,13 @@ QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::de
     return d->m_definitions;
 }
 
+/*! Returns the map of input name list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactDetailDefinitionFetchRequest::errorMap() const
+{
+    Q_D(const QContactDetailDefinitionFetchRequest);
+    return d->m_errors;
+}
+
 #include "moc_qcontactdetaildefinitionfetchrequest.cpp"
 
 QTM_END_NAMESPACE

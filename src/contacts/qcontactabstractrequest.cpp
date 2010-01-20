@@ -110,32 +110,43 @@ QContactAbstractRequest::~QContactAbstractRequest()
 }
 
 /*!
- * \deprecated
+ * Returns true if the request is in the \c QContactAbstractRequest::InactiveState state; otherwise, returns false
  *
- * Returns true if the request is pending, processing or cancelling; otherwise, returns false.
- * This function was deprecated in week 1 and will be removed after the transition period has elapsed.
+ * \sa state()
+ */
+bool QContactAbstractRequest::isInactive() const
+{
+    return (d_ptr->m_state == QContactAbstractRequest::InactiveState);
+}
+
+/*!
+ * Returns true if the request is in the \c QContactAbstractRequest::ActiveState state; otherwise, returns false
  *
  * \sa state()
  */
 bool QContactAbstractRequest::isActive() const
 {
-    qWarning("QContactAbstractRequest::isActive() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     return (d_ptr->m_state == QContactAbstractRequest::ActiveState);
 }
 
 /*!
- * \deprecated
- *
- * Returns true if the request is finished or cancelled; otherwise, returns false.
- * This function was deprecated in week 1 and will be removed after the transition period has elapsed.
+ * Returns true if the request is in the \c QContactAbstractRequest::FinishedState; otherwise, returns false
  *
  * \sa state()
  */
 bool QContactAbstractRequest::isFinished() const
 {
-    qWarning("QContactAbstractRequest::isFinished() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
-    return (d_ptr->m_state == QContactAbstractRequest::FinishedState
-            || d_ptr->m_state == QContactAbstractRequest::CanceledState);
+    return (d_ptr->m_state == QContactAbstractRequest::FinishedState);
+}
+
+/*!
+ * Returns true if the request is in the \c QContactAbstractRequest::CanceledState; otherwise, returns false
+ *
+ * \sa state()
+ */
+bool QContactAbstractRequest::isCanceled() const
+{
+    return (d_ptr->m_state == QContactAbstractRequest::CanceledState);
 }
 
 /*! Returns the overall error of the most recent asynchronous operation */
@@ -144,10 +155,14 @@ QContactManager::Error QContactAbstractRequest::error() const
     return d_ptr->m_error;
 }
 
-/*! Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list. */
+/*!
+ * \deprecated
+ * Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
+ */
 QList<QContactManager::Error> QContactAbstractRequest::errors() const
 {
-    return d_ptr->m_errors;
+    qWarning("QContactAbstractRequest::errors() This function is deprecated and will be removed in week 3!");
+    return QList<QContactManager::Error>();
 }
 
 /*!

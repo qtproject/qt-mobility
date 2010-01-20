@@ -83,7 +83,6 @@ public:
     QContactManager::Error m_error;
     QContactAbstractRequest::State m_state;
     QPointer<QContactManager> m_manager;
-    QList<QContactManager::Error> m_errors;
 };
 
 QTM_END_NAMESPACE

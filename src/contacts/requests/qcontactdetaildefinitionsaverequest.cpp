@@ -100,6 +100,13 @@ QString QContactDetailDefinitionSaveRequest::contactType() const
     return d->m_contactType;
 }
 
+/*! Returns the map of input definition list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactDetailDefinitionSaveRequest::errorMap() const
+{
+    Q_D(const QContactDetailDefinitionSaveRequest);
+    return d->m_errors;
+}
+
 #include "moc_qcontactdetaildefinitionsaverequest.cpp"
 
 QTM_END_NAMESPACE

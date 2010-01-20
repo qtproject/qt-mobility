@@ -84,6 +84,13 @@ QList<QContact> QContactSaveRequest::contacts() const
     return d->m_contacts;
 }
 
+/*! Returns the map of input definition list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
+{
+    Q_D(const QContactSaveRequest);
+    return d->m_errors;
+}
+
 #include "moc_qcontactsaverequest.cpp"
 
 QTM_END_NAMESPACE

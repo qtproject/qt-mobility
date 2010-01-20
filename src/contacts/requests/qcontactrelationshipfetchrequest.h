@@ -77,7 +77,8 @@ public:
     QList<QContactRelationship> relationships() const;
 
 signals:
-    void progress(QContactRelationshipFetchRequest* self, bool appendOnly);
+    void progress(QContactRelationshipFetchRequest* self, bool appendOnly); // deprecated
+    void resultsAvailable(QContactRelationshipFetchRequest* self, bool appendOnly); // replaces the above
 
 private:
     Q_DISABLE_COPY(QContactRelationshipFetchRequest)
