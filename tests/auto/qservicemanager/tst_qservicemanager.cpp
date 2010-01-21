@@ -1342,6 +1342,10 @@ void tst_QServiceManager::serviceAdded()
         QCOMPARE(listener->params.at(0).second, scope_modify);
     }
 
+    // ensure mgr.disconnectNotify() is called
+    disconnect(&mgr_listen, SIGNAL(serviceRemoved(QString,QService::Scope)),
+            listener, SLOT(serviceRemoved(QString,QService::Scope)));
+
     delete listener;
 }
 
@@ -1401,6 +1405,7 @@ void tst_QServiceManager::serviceRemoved()
 
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QService::Scope)));
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
+
     if (!expectSignal) {
         QTest::qWait(2000);
         QCOMPARE(spyAdd.count(), 0);
@@ -1410,6 +1415,7 @@ void tst_QServiceManager::serviceRemoved()
 
     // Pause between file changes so they are detected separately
     QTest::qWait(2000);
+
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QService::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
@@ -1460,6 +1466,10 @@ void tst_QServiceManager::serviceRemoved()
         QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
         QCOMPARE(listener->params.at(0).second , scope_modify);
     }
+
+    // ensure mgr.disconnectNotify() is called
+    disconnect(&mgr_listen, SIGNAL(serviceRemoved(QString,QService::Scope)),
+            listener, SLOT(serviceRemoved(QString,QService::Scope)));
 
     delete listener;
 }
