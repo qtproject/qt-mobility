@@ -56,6 +56,7 @@
 #include <cameraengine.h>
 #include <cameraengineobserver.h>
 
+#include <VideoRecorder.h>
 
 QTM_USE_NAMESPACE
 
@@ -66,9 +67,15 @@ public:
       virtual void ViewFinderFrameReady(const QImage& image) = 0;
 };
 
+struct VideoControllerData
+{
+	int controllerUid;
+	int formatUid;
+	QString formatDescription;
+};
 
 class S60CameraSession : public QObject, 
-    public MCameraEngineObserver
+    public MCameraEngineObserver, public MVideoRecorderUtilityObserver
 {
     Q_OBJECT
 public:
@@ -163,6 +170,9 @@ public:
 
     void setVideoRenderer(QObject *renderer);
     void updateImageCaptureCodecs();
+
+    QStringList supportedVideoCaptureCodecs();
+    void updateVideoCaptureCodecs();
     
     //camerafocuscontrol
     void startFocus();
@@ -210,6 +220,12 @@ private:
     QMap<QString, int> formatDescMap();
 
     void resetCamera();
+
+    //from  MVideoRecorderUtilityObserver
+  	void MvruoOpenComplete(TInt aError);  
+   	void MvruoPrepareComplete(TInt aError);
+   	void MvruoRecordComplete(TInt aError);
+   	void MvruoEvent(const TMMFEvent& aEvent);
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -248,6 +264,9 @@ private:
     TSize m_VFSize;
 
     mutable TCameraInfo m_info; // information about camera
+    
+    CVideoRecorderUtility* m_videoUtility;
+    QHash<QString, VideoControllerData> m_videoCcontrollerMap;
 
 };
 
