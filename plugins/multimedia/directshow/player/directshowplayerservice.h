@@ -109,6 +109,7 @@ private Q_SLOTS:
 private:
     void removeOutput(IBaseFilter *output);
     IBaseFilter *findChainStart(IBaseFilter *end) const;
+    bool isConnected(IBaseFilter *filter, PIN_DIRECTION direction) const;
 
     void run();
 

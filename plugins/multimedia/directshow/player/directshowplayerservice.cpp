@@ -249,7 +249,7 @@ void DirectShowPlayerService::play()
     m_pendingTasks &= ~Pause;
     m_pendingTasks |= Play;
 
-    if (m_executedTasks & Load) {
+    if (m_executedTasks & Render) {
         if (m_executedTasks & Stop) {
             m_position = 0;
             m_pendingTasks |= Seek;
@@ -267,7 +267,7 @@ void DirectShowPlayerService::pause()
     m_pendingTasks &= ~Play;
     m_pendingTasks |= Pause;
 
-    if (m_executedTasks & Load) {
+    if (m_executedTasks & Render) {
         if (m_executedTasks & Stop) {
             m_position = 0;
             m_pendingTasks |= Seek;
@@ -551,6 +551,29 @@ IBaseFilter *DirectShowPlayerService::findChainStart(IBaseFilter *end) const
     return start;
 }
 
+bool DirectShowPlayerService::isConnected(IBaseFilter *filter, PIN_DIRECTION direction) const
+{
+    bool connected = false;
+
+    IEnumPins *pins = 0;
+
+    if (SUCCEEDED(filter->EnumPins(&pins))) {
+        for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release()) {
+            PIN_DIRECTION dir;
+            if (SUCCEEDED(pin->QueryDirection(&dir)) && dir == direction) {
+                IPin *peer = 0;
+                if (SUCCEEDED(pin->ConnectedTo(&peer))) {
+                    connected = true;
+
+                    peer->Release();
+                }
+            }
+        }
+        pins->Release();
+    }
+    return connected;
+}
+
 void DirectShowPlayerService::run()
 {
     QMutexLocker locker(&m_mutex);
@@ -721,18 +744,30 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
         filter->Release();
     }
 
-    if (m_graphStatus != Loaded) {
-        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(graph)) {
-            LONGLONG duration = 0;
-            locker->unlock();
-            seeking->GetDuration(&duration);
-            locker->relock();
-
-            m_duration = duration / 10;
-        }
-    }
-
     if (m_executingTask == Render && rendered) {
+        if (m_graphStatus != Loaded) {
+            if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(graph)) {
+                LONGLONG duration = 0;
+                locker->unlock();
+                seeking->GetDuration(&duration);
+                locker->relock();
+
+                m_duration = duration / 10;
+            }
+        }
+
+        if (m_audioOutput && !isConnected(m_audioOutput, PINDIR_INPUT)) {
+            graph->RemoveFilter(m_audioOutput);
+
+            m_executedTasks &= ~SetAudioOutput;
+        }
+
+        if (m_videoOutput && !isConnected(m_videoOutput, PINDIR_INPUT)) {
+            graph->RemoveFilter(m_videoOutput);
+
+            m_executedTasks &= ~SetVideoOutput;
+        }
+
         m_graphStatus = Loaded;
 
         m_executedTasks |= Render;
