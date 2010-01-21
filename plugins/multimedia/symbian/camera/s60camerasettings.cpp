@@ -69,12 +69,9 @@ S60CameraSettings::~S60CameraSettings()
  */
 bool S60CameraSettings::queryAdvancedSettingsInfo()
 {
-    qDebug() << "S60CameraSettings::queryAdvancedSettingsInfo";
-
     bool returnValue = false;
 #ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (m_cameraEngine) {
-        qDebug() << "m_cameraEngine->AdvancedSettings";
         m_advancedSettings = NULL;
         m_advancedSettings = m_cameraEngine->AdvancedSettings();
         if (m_advancedSettings)
@@ -93,15 +90,15 @@ void S60CameraSettings::setFocusMode(QCamera::FocusMode mode)
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
                 break;
             case QCamera::AutoFocus: // One-shot auto focus mode
-                qDebug() << "set auto";
                 m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle);
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 break;
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER             
             case QCamera::ContinuousFocus: // Continuous auto focus mode 
-                qDebug() << "set auto continuous";
-                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous);
+                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 break;
+#endif
             case QCamera::InfinityFocus: // TODO:
             case QCamera::HyperfocalFocus: // TODO:
             default:
@@ -124,16 +121,7 @@ QCamera::FocusMode S60CameraSettings::focusMode()
                 return QCamera::ManualFocus;
                 break;
             case CCamera::CCameraAdvancedSettings::EFocusModeAuto:
-                qDebug() << "CCamera::CCameraAdvancedSettings::EFocusModeAuto";
-                CCamera::CCameraAdvancedSettings::TAutoFocusType type = m_advancedSettings->AutoFocusType();
-                if (type == CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle) {
-                    qDebug() << "CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle";
-                    return QCamera::AutoFocus;
-                }
-                else if (type == CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous) {
-                    qDebug() << "CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous";
-                    return QCamera::ContinuousFocus;
-                }
+                return QCamera::AutoFocus;
                 break;
         }      
     }
@@ -171,8 +159,13 @@ QCamera::FocusModes S60CameraSettings::supportedFocusModes()
 void S60CameraSettings::HandleEvent(const TECAMEvent& aEvent)
 {
 #ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
-    // KUidECamEventCameraSettingAperture -event emit apertureChanged(qreal)
-    // KUidECamEventCameraSettingExposureLock event emit exposureLocked
+    if (aEvent.iEventType == KUidECamEventCameraSettingExposureLock) {
+        emit exposureLocked();
+    }
+    else if (aEvent.iEventType == KUidECamEventCameraSettingAperture) {
+
+    }
+
 #else
     // TODO:
 #endif
