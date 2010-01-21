@@ -89,11 +89,11 @@ IMPLEMENT_READING(QMagnetometerReading)
 
 /*!
     \property QMagnetometerReading::x
-    \brief foo
+    \brief the raw flux density on the X axis.
 */
 
 /*!
-    Foo
+    Returns the raw flux density on the X axis.
 */
 qreal QMagnetometerReading::x() const
 {
@@ -101,7 +101,7 @@ qreal QMagnetometerReading::x() const
 }
 
 /*!
-    Foo
+    Sets the raw flux density on the X axis.
 */
 void QMagnetometerReading::setX(qreal x)
 {
@@ -110,11 +110,11 @@ void QMagnetometerReading::setX(qreal x)
 
 /*!
     \property QMagnetometerReading::y
-    \brief foo
+    \brief the raw flux density on the Y axis.
 */
 
 /*!
-    Foo
+    Returns the raw flux density on the Y axis.
 */
 qreal QMagnetometerReading::y() const
 {
@@ -122,7 +122,7 @@ qreal QMagnetometerReading::y() const
 }
 
 /*!
-    Foo
+    Sets the raw flux density on the Y axis.
 */
 void QMagnetometerReading::setY(qreal y)
 {
@@ -131,11 +131,11 @@ void QMagnetometerReading::setY(qreal y)
 
 /*!
     \property QMagnetometerReading::z
-    \brief foo
+    \brief the raw flux density on the Z axis.
 */
 
 /*!
-    Foo
+    Returns the raw flux density on the Y axis.
 */
 qreal QMagnetometerReading::z() const
 {
@@ -143,7 +143,7 @@ qreal QMagnetometerReading::z() const
 }
 
 /*!
-    Foo
+    Sets the raw flux density on the Z axis.
 */
 void QMagnetometerReading::setZ(qreal z)
 {
@@ -152,11 +152,11 @@ void QMagnetometerReading::setZ(qreal z)
 
 /*!
     \property QMagnetometerReading::calibrated_x
-    \brief foo
+    \brief the calibrated flux density on the X axis.
 */
 
 /*!
-    Foo
+    Returns the calibrated flux density on the X axis.
 */
 qreal QMagnetometerReading::calibrated_x() const
 {
@@ -164,7 +164,7 @@ qreal QMagnetometerReading::calibrated_x() const
 }
 
 /*!
-    Foo
+    Sets the calibrated flux density on the X axis.
 */
 void QMagnetometerReading::setCalibrated_x(qreal calibrated_x)
 {
@@ -173,11 +173,11 @@ void QMagnetometerReading::setCalibrated_x(qreal calibrated_x)
 
 /*!
     \property QMagnetometerReading::calibrated_y
-    \brief foo
+    \brief the calibrated flux density on the Y axis.
 */
 
 /*!
-    Foo
+    Returns the calibrated flux density on the Y axis.
 */
 qreal QMagnetometerReading::calibrated_y() const
 {
@@ -185,7 +185,7 @@ qreal QMagnetometerReading::calibrated_y() const
 }
 
 /*!
-    Foo
+    Sets the calibrated flux density on the Y axis.
 */
 void QMagnetometerReading::setCalibrated_y(qreal calibrated_y)
 {
@@ -194,11 +194,11 @@ void QMagnetometerReading::setCalibrated_y(qreal calibrated_y)
 
 /*!
     \property QMagnetometerReading::calibrated_z
-    \brief foo
+    \brief the calibrated flux density on the Z axis.
 */
 
 /*!
-    Foo
+    Returns the calibrated flux density on the Z axis.
 */
 qreal QMagnetometerReading::calibrated_z() const
 {
@@ -206,7 +206,7 @@ qreal QMagnetometerReading::calibrated_z() const
 }
 
 /*!
-    Foo
+    Sets the calibrated flux density on the Z axis.
 */
 void QMagnetometerReading::setCalibrated_z(qreal calibrated_z)
 {
@@ -215,17 +215,22 @@ void QMagnetometerReading::setCalibrated_z(qreal calibrated_z)
 
 /*!
     \property QMagnetometerReading::calibrationLevel
-    \brief foo
+    \brief the calibration level of the reading.
+
+    The higher the calibration, the more accurate the measurement is.
 */
 
 /*!
-    Returns the calibration level of the reading. The higher the calibration, the more accurate the measurement is.
+    Returns the calibration level of the reading.
 */
 QMagnetometerReading::CalibrationLevel QMagnetometerReading::calibrationLevel() const
 {
     return static_cast<QMagnetometerReading::CalibrationLevel>(d->calibrationLevel);
 }
 
+/*!
+    Sets the calibration level of the reading.
+*/
 void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::CalibrationLevel calibrationLevel)
 {
     d->calibrationLevel = calibrationLevel;

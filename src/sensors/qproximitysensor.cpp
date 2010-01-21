@@ -71,11 +71,11 @@ IMPLEMENT_READING(QProximityReading)
 
 /*!
     \property QProximityReading::proximity
-    \brief foo
+    \brief the proximity of the user.
 */
 
 /*!
-    Foo
+    Returns the proximity of the user.
 */
 QProximityReading::Proximity QProximityReading::proximity() const
 {
@@ -83,7 +83,7 @@ QProximityReading::Proximity QProximityReading::proximity() const
 }
 
 /*!
-    Foo
+    Sets the proximity of the user.
 */
 void QProximityReading::setProximity(QProximityReading::Proximity proximity)
 {

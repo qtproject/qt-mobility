@@ -77,7 +77,7 @@ IMPLEMENT_READING(QCompassReading)
 
 /*!
     \property QCompassReading::azimuth
-    \brief foo
+    \brief the azimuth of the device.
 */
 
 /*!
@@ -89,7 +89,7 @@ qreal QCompassReading::azimuth() const
 }
 
 /*!
-    Foo
+    Sets the azimuth of the device.
 */
 void QCompassReading::setAzimuth(qreal azimuth)
 {
@@ -98,11 +98,13 @@ void QCompassReading::setAzimuth(qreal azimuth)
 
 /*!
     \property QCompassReading::calibrationLevel
-    \brief foo
+    \brief the calibration level of the reading.
+
+    The higher the calibration, the more accurate the measurement is.
 */
 
 /*!
-    Returns the calibration level of the reading. The higher the calibration, the more accurate the measurement is.
+    Returns the calibration level of the reading.
 */
 QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
 {
@@ -110,7 +112,7 @@ QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
 }
 
 /*!
-    Foo
+    Sets the calibration level of the reading.
 */
 void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel calibrationLevel)
 {
