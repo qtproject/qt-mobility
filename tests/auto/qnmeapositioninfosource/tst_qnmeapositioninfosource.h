@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qnmeapositioninfosourceproxyfactory.h"
 #include "../testqgeopositioninfosource_p.h"
 #include "../qlocationtestutils_p.h"

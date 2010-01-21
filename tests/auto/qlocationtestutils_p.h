@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QLOCATIONTESTUTILS_P_H
 #define QLOCATIONTESTUTILS_P_H
 

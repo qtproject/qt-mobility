@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qlocationtestutils_p.h"
 
 #if defined(Q_OS_SYMBIAN)
