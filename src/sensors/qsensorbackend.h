@@ -59,15 +59,21 @@ public:
     virtual void poll() = 0;
 
     void setSupportedUpdatePolicies(QSensor::UpdatePolicies policies);
+
     template <typename T>
-    void setReading(T *reading)
+    T *setReading(T *reading)
     {
-        setReadings(reading, new T);
+        if (!reading)
+            reading = new T;
+        setReadings(reading, new T, new T);
+        return reading;
     }
     void newReadingAvailable();
 
+    QSensorReading *reading() const;
+
 private:
-    void setReadings(QSensorReading *filter_reading, QSensorReading *cache_reading);
+    void setReadings(QSensorReading *device, QSensorReading *filter, QSensorReading *cache);
 
 protected:
     QSensor *m_sensor;

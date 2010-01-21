@@ -69,6 +69,7 @@ struct QSensorPrivate
         , backend(0)
         , signalEnabled(true)
         , active(false)
+        , device_reading(0)
         , filter_reading(0)
         , cache_reading(0)
         , complete(true)
@@ -89,6 +90,7 @@ struct QSensorPrivate
     QFilterList filters;
     bool signalEnabled;
     bool active;
+    QSensorReading *device_reading;
     QSensorReading *filter_reading;
     QSensorReading *cache_reading;
 

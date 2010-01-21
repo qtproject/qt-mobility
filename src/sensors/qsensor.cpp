@@ -412,12 +412,16 @@ QSensorReading *QSensor::reading() const
 */
 void QSensor::newReadingAvailable()
 {
+    // Copy the values from the device reading to the filter reading
+    d->filter_reading->swapValuesWith(d->device_reading);
+
     for (QFilterList::const_iterator it = d->filters.constBegin(); it != d->filters.constEnd(); ++it) {
         QSensorFilter *filter = (*it);
         if (!filter->filter(d->filter_reading))
             return;
     }
 
+    // Copy the values from the filter reading to the cached reading
     d->cache_reading->swapValuesWith(d->filter_reading);
 
     if (d->signalEnabled)
@@ -580,6 +584,7 @@ void QSensorReading::setTimestamp(qtimestamp timestamp)
 */
 void QSensorReading::swapValuesWith(QSensorReading *other)
 {
+    // Just swap the d pointers.
     QSensorReadingPrivate *tmp = d.data();
     d.reset(other->d.data());
     other->d.reset(tmp);

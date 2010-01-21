@@ -82,16 +82,6 @@ void QSensorBackend::setSupportedUpdatePolicies(QSensor::UpdatePolicies policies
 }
 
 /*!
-    \internal
-*/
-void QSensorBackend::setReadings(QSensorReading *filter_reading, QSensorReading *cache_reading)
-{
-    QSensorPrivate *d = m_sensor->d_func();
-    d->filter_reading = filter_reading;
-    d->cache_reading = cache_reading;
-}
-
-/*!
     Notify the QSensor class that a new reading is available.
 */
 void QSensorBackend::newReadingAvailable()
@@ -119,21 +109,94 @@ void QSensorBackend::newReadingAvailable()
 */
 
 /*!
+    If the backend has lost its reference to the reading
+    it can call this method to get the address.
+
+    Note that you will need to down-cast to the appropriate
+    type.
+
+    \sa setReading()
+*/
+QSensorReading *QSensorBackend::reading() const
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    return d->device_reading;
+}
+
+/*!
     \fn QSensorBackend::setReading(T *reading)
 
-    A template function. It tells the sensor what \a reading
-    class the backend will write values into.
+    This function is called to initialize the reading
+    classes used for a sensor.
 
-    The backend must not lose this reference as it cannot get
-    this reference back from the sensor. This is not
-    the same value that is returned by QSensor::reading().
+    If your backend has already allocated a reading you
+    should pass the address of this to the function.
+    Otherwise you should pass 0 and the function will
+    return the address of the reading your backend
+    should use when it wants to notify the sensor API
+    of new readings.
 
-    This function should be called like this.
+    Note that this is a template function so it should
+    be called with the appropriate type.
 
     \code
-    setReading<MyReadingClass>(&my_reading_class);
+    class MyBackend : public QSensorBackend
+    {
+        QAccelerometerReading m_reading;
+    public:
+        MyBackend(QSensor *sensor)
+            : QSensorBackend(sensor)
+        {
+            setReading<QAccelerometerReading>(&m_reading);
+        }
+
+        ...
     \endcode
+
+    Note that this function must be called or you will
+    not be able to send readings to the front end.
+
+    If you do not wish to store the address of the reading
+    you may use the reading() method to get it again later.
+
+    \code
+    class MyBackend : public QSensorBackend
+    {
+    public:
+        MyBackend(QSensor *sensor)
+            : QSensorBackend(sensor)
+        {
+            setReading<QAccelerometerReading>(0);
+        }
+
+        void poll()
+        {
+            qtimestamp timestamp;
+            qreal x, y, z;
+            ...
+            QAccelerometerReading *reading = static_cast<QAccelerometerReading*>(reading());
+            reading->setTimestamp(timestamp);
+            reading->setX(x);
+            reading->setY(y);
+            reading->setZ(z);
+        }
+
+        ...
+    \endcode
+
+    \sa reading()
 */
+
+/*!
+    \internal
+*/
+void QSensorBackend::setReadings(QSensorReading *device, QSensorReading *filter, QSensorReading *cache)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->device_reading = device;
+    d->filter_reading = filter;
+    d->cache_reading = cache;
+}
 
 #include "moc_qsensorbackend.cpp"
 QTM_END_NAMESPACE
