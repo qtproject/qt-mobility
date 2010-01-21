@@ -42,6 +42,7 @@
 #ifndef DIRECTSHOWPLAYERSERVICE_H
 #define DIRECTSHOWPLAYERSERVICE_H
 
+#include <qmediaresource.h>
 #include <qmediaservice.h>
 
 #include "directshoweventloop.h"
@@ -119,8 +120,10 @@ private:
 
     void run();
 
-    void doLoad(QMutexLocker *locker);
+    void doSetUrlSource(QMutexLocker *locker);
+    void doSetStreamSource(QMutexLocker *locker);
     void doRender(QMutexLocker *locker);
+    void doFinalizeLoad(QMutexLocker *locker);
     void doSetRate(QMutexLocker *locker);
     void doSeek(QMutexLocker *locker);
     void doPlay(QMutexLocker *locker);
@@ -128,16 +131,19 @@ private:
 
     enum Task
     {
-        Shutdown       = 0x0001,
-        Load           = 0x0002,
-        SetAudioOutput = 0x0004,
-        SetVideoOutput = 0x0008,
-        Render         = 0x0010,
-        SetRate        = 0x0020,
-        Seek           = 0x0040,
-        Play           = 0x0080,
-        Pause          = 0x0100,
-        Stop           = 0x0200
+        Shutdown        = 0x0001,
+        SetUrlSource    = 0x0002,
+        SetStreamSource = 0x0004,
+        SetSource       = SetUrlSource | SetStreamSource,
+        SetAudioOutput  = 0x0008,
+        SetVideoOutput  = 0x0010,
+        Render          = 0x0020,
+        FinalizeLoad    = 0x0040,
+        SetRate         = 0x0080,
+        Seek            = 0x0100,
+        Play            = 0x0200,
+        Pause           = 0x0400,
+        Stop            = 0x0800,
     };
 
     DirectShowPlayerControl *m_playerControl;
@@ -163,6 +169,7 @@ private:
     qint64 m_duration;
 
     QUrl m_url;
+    QMediaResourceList m_resources;
     QMutex m_mutex;
     QWaitCondition m_wait;
     QWinEventNotifier m_graphEventNotifier;

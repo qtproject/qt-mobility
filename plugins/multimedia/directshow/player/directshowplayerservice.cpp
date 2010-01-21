@@ -220,20 +220,18 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
         m_graph = 0;
     }
 
+    m_resources = media.resources();
     m_stream = stream;
     m_duration = 0;
-
-    m_pendingTasks = 0;
     m_executedTasks = 0;
 
-    if (media.isNull() && !stream) {
+    if (m_resources.isEmpty() && !stream) {
+        m_pendingTasks = 0;
         m_graphStatus = NoMedia;
 
         m_url.clear();
     } else {
         m_graphStatus = Loading;
-
-        m_url = media.canonicalUrl();
 
         m_graph = com_new<IFilterGraph2>(CLSID_FilterGraph);
 
@@ -251,37 +249,28 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
             event->Release();
         }
 
-        m_pendingTasks = Load;
+        if (stream)
+            m_pendingTasks = SetStreamSource;
+        else
+            m_pendingTasks = SetUrlSource;
 
         m_wait.wakeAll();
     }
 }
 
-void DirectShowPlayerService::doLoad(QMutexLocker *locker)
+void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
 {
-    m_executedTasks = 0;
-
     IBaseFilter *source = 0;
-    QUrl url = m_url;
-    QIODevice *stream = m_stream;
 
-    HRESULT hr = S_OK;
+    QMediaResource resource = m_resources.takeFirst();
+    QUrl url = resource.url();
 
-    if (stream) {
-        source = new DirectShowIOSource(stream, &m_loop);
-
-        if (!SUCCEEDED(hr = m_graph->AddFilter(source, L"Source"))) {
-            source->Release();
-            source = 0;
-        }
-    } else {
-        locker->unlock();
-        hr = m_graph->AddSourceFilter(url.toString().utf16(), L"Source", &source);
-        locker->relock();
-    }
+    locker->unlock();
+    HRESULT hr = m_graph->AddSourceFilter(url.toString().utf16(), L"Source", &source);
+    locker->relock();
 
     if (SUCCEEDED(hr)) {
-        m_executedTasks = Load;
+        m_executedTasks = SetSource;
         m_pendingTasks |= Render;
 
         if (m_audioOutput)
@@ -289,10 +278,12 @@ void DirectShowPlayerService::doLoad(QMutexLocker *locker)
         if (m_videoOutput)
             m_pendingTasks |= SetVideoOutput;
 
-        m_source = source;
-
         if (m_rate != 1.0)
             m_pendingTasks |= SetRate;
+
+        m_source = source;
+    } else if (!m_resources.isEmpty()) {
+        m_pendingTasks |= SetUrlSource;
     } else {
         m_graphStatus = InvalidMedia;
 
@@ -301,24 +292,50 @@ void DirectShowPlayerService::doLoad(QMutexLocker *locker)
     }
 }
 
+void DirectShowPlayerService::doSetStreamSource(QMutexLocker *locker)
+{
+    IBaseFilter *source = new DirectShowIOSource(m_stream, &m_loop);
+
+    if (SUCCEEDED(m_graph->AddFilter(source, L"Source"))) {
+        m_executedTasks = SetSource;
+        m_pendingTasks |= Render;
+
+        if (m_audioOutput)
+            m_pendingTasks |= SetAudioOutput;
+        if (m_videoOutput)
+            m_pendingTasks |= SetVideoOutput;
+
+        if (m_rate != 1.0)
+            m_pendingTasks |= SetRate;
+
+        m_source = source;
+    } else {
+        source->Release();
+
+        m_graphStatus = InvalidMedia;
+
+        QCoreApplication::postEvent(m_playerControl, new QEvent(
+                QEvent::Type(DirectShowPlayerControl::GraphStatusChanged)));
+    }
+}
 
 void DirectShowPlayerService::doRender(QMutexLocker *locker)
 {
-    IFilterGraph2 *graph = m_graph;
-    graph->AddRef();
-
     if (m_pendingTasks & SetAudioOutput) {
-        graph->AddFilter(m_audioOutput, L"AudioOutput");
+        m_graph->AddFilter(m_audioOutput, L"AudioOutput");
 
         m_pendingTasks ^= SetAudioOutput;
         m_executedTasks |= SetAudioOutput;
     }
     if (m_pendingTasks & SetVideoOutput) {
-        graph->AddFilter(m_videoOutput, L"VideoOutput");
+        m_graph->AddFilter(m_videoOutput, L"VideoOutput");
 
         m_pendingTasks ^= SetVideoOutput;
         m_executedTasks |= SetVideoOutput;
     }
+
+    IFilterGraph2 *graph = m_graph;
+    graph->AddRef();
 
     QVarLengthArray<IBaseFilter *, 16> filters;
     m_source->AddRef();
@@ -360,43 +377,58 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
         filter->Release();
     }
 
-    if (m_executingTask == Render && rendered) {
-        if (m_audioOutput && !isConnected(m_audioOutput, PINDIR_INPUT)) {
-            graph->RemoveFilter(m_audioOutput);
+    graph->Release();
 
-            m_executedTasks &= ~SetAudioOutput;
+    if (m_audioOutput && !isConnected(m_audioOutput, PINDIR_INPUT)) {
+        graph->RemoveFilter(m_audioOutput);
+
+        m_executedTasks &= ~SetAudioOutput;
+    }
+
+    if (m_videoOutput && !isConnected(m_videoOutput, PINDIR_INPUT)) {
+        graph->RemoveFilter(m_videoOutput);
+
+        m_executedTasks &= ~SetVideoOutput;
+    }
+
+    if (m_executingTask == Render) {
+        if (rendered) {
+            if (!(m_executedTasks & FinalizeLoad))
+                m_pendingTasks |= FinalizeLoad;
+        } else {
+            m_graphStatus = InvalidMedia;
+
+            QCoreApplication::postEvent(m_playerControl, new QEvent(
+                    QEvent::Type(DirectShowPlayerControl::GraphStatusChanged)));
         }
-
-        if (m_videoOutput && !isConnected(m_videoOutput, PINDIR_INPUT)) {
-            graph->RemoveFilter(m_videoOutput);
-
-            m_executedTasks &= ~SetVideoOutput;
-        }
-
-        if (m_graphStatus != Loaded) {
-            if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(graph)) {
-                LONGLONG duration = 0;
-                locker->unlock();
-                seeking->GetDuration(&duration);
-                locker->relock();
-
-                m_duration = duration / 10;
-            }
-        }
-
-        m_graphStatus = Loaded;
 
         m_executedTasks |= Render;
-    } else {
-        m_graphStatus = InvalidMedia;
     }
+
+    m_loop.wake();
+}
+
+void DirectShowPlayerService::doFinalizeLoad(QMutexLocker *locker)
+{
+    if (m_graphStatus != Loaded) {
+        if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
+            LONGLONG duration = 0;
+            locker->unlock();
+            seeking->GetDuration(&duration);
+            locker->relock();
+
+            m_duration = duration / 10;
+
+            seeking->Release();
+        }
+    }
+
+    m_executedTasks |= FinalizeLoad;
+
+    m_graphStatus = Loaded;
 
     QCoreApplication::postEvent(m_playerControl, new QEvent(
             QEvent::Type(DirectShowPlayerControl::GraphStatusChanged)));
-
-    graph->Release();
-
-    m_loop.wake();
 }
 
 void DirectShowPlayerService::play()
@@ -496,7 +528,7 @@ void DirectShowPlayerService::setRate(qreal rate)
 
     m_pendingTasks |= SetRate;
 
-    if (m_executedTasks & Load)
+    if (m_executedTasks & FinalizeLoad)
         m_wait.wakeAll();
 }
 
@@ -538,7 +570,7 @@ void DirectShowPlayerService::seek(qint64 position)
 
     m_pendingTasks |= Seek;
 
-    if (m_executedTasks & Load)
+    if (m_executedTasks & FinalizeLoad)
         m_wait.wakeAll();
 }
 
@@ -579,7 +611,7 @@ void DirectShowPlayerService::setAudioOutput(IBaseFilter *filter)
             m_pendingTasks &= ~ SetAudioOutput;
         }
 
-        if (m_executedTasks & Load) {
+        if (m_executedTasks & SetSource) {
             m_pendingTasks |= Render;
 
             m_wait.wakeAll();
@@ -619,7 +651,7 @@ void DirectShowPlayerService::setVideoOutput(IBaseFilter *filter)
             m_pendingTasks &= ~ SetVideoOutput;
         }
 
-        if (m_executedTasks & Load) {
+        if (m_executedTasks & SetSource) {
             m_pendingTasks |= Render;
 
             m_wait.wakeAll();
@@ -792,18 +824,28 @@ void DirectShowPlayerService::run()
     QMutexLocker locker(&m_mutex);
 
     while (!(m_pendingTasks & Shutdown)) {
-        if (m_pendingTasks & Load) {
-            m_pendingTasks ^= Load;
-            m_executingTask = Load;
+        if (m_pendingTasks & SetUrlSource) {
+            m_pendingTasks ^= SetUrlSource;
+            m_executingTask = SetUrlSource;
 
-            doLoad(&locker);
+            doSetUrlSource(&locker);
+        } else if (m_pendingTasks & SetStreamSource) {
+            m_pendingTasks ^= SetStreamSource;
+            m_executingTask = SetStreamSource;
+
+            doSetStreamSource(&locker);
         } else if (m_pendingTasks & Render) {
             m_pendingTasks ^= Render;
             m_executingTask = Render;
 
             doRender(&locker);
         } else if (!(m_executedTasks & Render)) {
-            m_pendingTasks &= ~(SetRate | Stop | Pause | Seek | Play);
+            m_pendingTasks &= ~(FinalizeLoad | SetRate | Stop | Pause | Seek | Play);
+        } else if (m_pendingTasks & FinalizeLoad) {
+            m_pendingTasks ^= FinalizeLoad;
+            m_executingTask = FinalizeLoad;
+
+            doFinalizeLoad(&locker);
         } else if (m_pendingTasks & SetRate) {
             m_pendingTasks ^= SetRate;
             m_executingTask = SetRate;
