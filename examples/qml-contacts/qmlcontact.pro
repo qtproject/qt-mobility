@@ -1,12 +1,19 @@
 TEMPLATE = app
 TARGET = qcmexample
+
+CONFIG += mobility
+MOBILITY = contacts
+
 DEPENDPATH += .
-INCLUDEPATH += .
-INCLUDEPATH += ../../git/qtmobility/install/include
-INCLUDEPATH += ../../git/kinetic/include/QtDeclarative
+INCLUDEPATH += . \
+               ../../src/contacts\
+               ../../src/contacts/filters \
+               ../../src/contacts/requests \
+               ../../src/contacts/details
+
 QT += declarative
 QT += script
-LIBS += -lQtContacts
+
 
 # Input
 SOURCES += main.cpp \
@@ -35,3 +42,12 @@ OTHER_FILES += example.qml \
     contents/pics/archive-remove.png \
     contents/pics/archive-insert.png \
     contents/pics/add.png
+
+symbian: {
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData \
+                        SwEvent
+}
+include(../examples.pri)
