@@ -92,7 +92,6 @@ void QVersitWriterPrivate::write()
         }
     }
     setState(QVersitWriter::FinishedState);
-    mWaitCondition.wakeAll();
 }
 
 /*!

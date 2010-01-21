@@ -176,10 +176,7 @@ bool QVersitWriter::waitForFinished(int msec)
 {
     State state = d->state();
     if (state == ActiveState) {
-        d->mWaitMutex.lock();
-        bool finished = d->mWaitCondition.wait(&d->mWaitMutex, msec);
-        d->mWaitMutex.unlock();
-        return finished;
+        return d->wait(msec);
     } else if (state == FinishedState) {
         return true;
     } else {

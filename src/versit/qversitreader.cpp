@@ -96,6 +96,8 @@ QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 {
     connect(d, SIGNAL(stateChanged(QVersitReader::State)),
             this, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
+    connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
+            this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)), Qt::DirectConnection);
 }
     
 /*! 
@@ -177,10 +179,7 @@ bool QVersitReader::waitForFinished(int msec)
 {
     State state = d->state();
     if (state == ActiveState) {
-        d->mWaitMutex.lock();
-        bool finished = d->mWaitCondition.wait(&d->mWaitMutex, msec);
-        d->mWaitMutex.unlock();
-        return finished;
+        return d->wait(msec);
     } else if (state == FinishedState) {
         return true;
     } else {

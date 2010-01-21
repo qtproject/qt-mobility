@@ -96,8 +96,6 @@ public:
     QVersitWriter::Error mError;
     QTextCodec* mDefaultCodec;
     mutable QMutex mMutex;
-    QWaitCondition mWaitCondition;
-    QMutex mWaitMutex;
 };
 
 QTM_END_NAMESPACE

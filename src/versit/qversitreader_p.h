@@ -83,7 +83,7 @@ public: // Constructors and destructor
 
 signals:
     void stateChanged(QVersitReader::State state);
-    void resultsAvailable();
+    void resultsAvailable(QList<QVersitDocument>& results);
 
 public: // New functions
     void read();
@@ -140,8 +140,6 @@ public: // Data
     QVersitReader::State mState;
     QVersitReader::Error mError;
     mutable QMutex mMutex;
-    QWaitCondition mWaitCondition;
-    QMutex mWaitMutex;
 };
 
 QTM_END_NAMESPACE

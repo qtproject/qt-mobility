@@ -91,7 +91,7 @@ void QVersitReaderPrivate::read()
             else {
                 QMutexLocker locker(&mMutex);
                 mVersitDocuments.append(document);
-                emit resultsAvailable();
+                emit resultsAvailable(mVersitDocuments);
             }
         } else {
             setError(QVersitReader::ParseError);
@@ -102,7 +102,6 @@ void QVersitReaderPrivate::read()
         oldPos = cursor.position;
     } while(cursor.position < input.size());
     setState(QVersitReader::FinishedState);
-    mWaitCondition.wakeAll();
 }
 
 /*!
