@@ -166,9 +166,14 @@ void S60MediaPlayerControl::stop()
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
-    if (m_session)
-        m_session->setVolume(volume);
-    m_mediaSettings.setVolume(volume);
+    if (m_mediaSettings.volume() != volume && volume >= 0 && volume <= 100) {
+        m_mediaSettings.setVolume(volume);
+
+        if (m_session)
+            m_session->setVolume(volume);
+
+        emit volumeChanged(volume);
+    }
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
@@ -208,12 +213,12 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     QUrl url;
     if (m_session && !source.isNull()) {
         url = source.canonicalUrl();
-		if (m_session->isUrl() == false) {
-			m_session->load(url);	
-		} else {
-			m_session->loadUrl(url);
-		}
-		emit mediaChanged(m_currentResource);
+        if (m_session->isUrl() == false) {
+            m_session->load(url);	
+        } else {
+            m_session->loadUrl(url);
+        }
+        emit mediaChanged(m_currentResource);
     }
     else {
         emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
