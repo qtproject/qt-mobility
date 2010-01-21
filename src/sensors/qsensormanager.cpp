@@ -79,8 +79,9 @@ QSensorManager *QSensorManager::instance()
 void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &identifier, CreateBackendFunc func)
 {
     if (!m_backendsByType.contains(type)) {
-        qDebug() << "first backend of type" << type;
+        qDebug() << "first backend of type" << type << "is" << identifier;
         (void)m_backendsByType[type];
+        m_defaultIdentifierForType[type] = identifier;
     }
     m_backendsByType[type][identifier] = func;
     m_allBackends[identifier] = func;
@@ -119,11 +120,9 @@ QByteArray QSensorManager::firstSensorForType(const QByteArray &type)
     if (!m_pluginsLoaded)
         loadPlugins();
 
-    const BackendList &list = m_backendsByType[type];
-    BackendList::const_iterator iter = list.constBegin();
-    if (iter != list.constEnd()) {
-        qDebug() << "default for type" << type << "is" << iter.key();
-        return iter.key();
+    if (m_defaultIdentifierForType.contains(type)) {
+        qDebug() << "default for type" << type << "is" << m_defaultIdentifierForType[type];
+        return m_defaultIdentifierForType[type];
     }
     qDebug() << "NO default for type" << type;
     return QByteArray();

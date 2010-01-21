@@ -68,6 +68,7 @@ private:
     void loadPlugins();
     BackendList m_allBackends;
     BackendTypeList m_backendsByType;
+    QHash<QByteArray, QByteArray> m_defaultIdentifierForType;
     bool m_pluginsLoaded;
     QList<RegisterBackendFunc> m_staticRegistrations;
 };
@@ -90,8 +91,7 @@ private:
     }
 
 #define REGISTER_LOCAL_SENSOR(classname, type, identifier)\
-    CREATE_FUNC(classname)\
-    REGISTER_FUNC(clasaname, type, identifier)\
+    REGISTER_FUNC(classname, type, identifier)\
     /* This function schedules the above for running */\
     static bool side_effect_sensor_backend_ ## classname ()\
     {\
