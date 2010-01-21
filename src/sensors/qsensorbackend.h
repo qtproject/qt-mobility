@@ -64,8 +64,8 @@ public:
     T *setReading(T *reading)
     {
         if (!reading)
-            reading = new T;
-        setReadings(reading, new T, new T);
+            reading = new T(this);
+        setReadings(reading, new T(this), new T(this));
         return reading;
     }
     void newReadingAvailable();

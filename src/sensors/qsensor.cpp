@@ -100,6 +100,12 @@ QSensor::~QSensor()
     stop();
     foreach (QSensorFilter *filter, d->filters)
         filter->setSensor(0);
+    delete d->backend;
+    d->backend = 0;
+    // owned by the backend
+    d->device_reading = 0;
+    d->filter_reading = 0;
+    d->cache_reading = 0;
 }
 
 /*!
@@ -544,8 +550,9 @@ void QSensorFilter::setSensor(QSensor *sensor)
 /*!
     \internal
 */
-QSensorReading::QSensorReading(QSensorReadingPrivate *_d)
-    : d(_d)
+QSensorReading::QSensorReading(QObject *parent, QSensorReadingPrivate *_d)
+    : QObject(parent)
+    , d(_d)
 {
 }
 
@@ -585,9 +592,7 @@ void QSensorReading::setTimestamp(qtimestamp timestamp)
 void QSensorReading::swapValuesWith(QSensorReading *other)
 {
     // Just swap the d pointers.
-    QSensorReadingPrivate *tmp = d.data();
-    d.reset(other->d.data());
-    other->d.reset(tmp);
+    d.swap(*(other->d_ptr()));
 }
 
 #include "moc_qsensor.cpp"

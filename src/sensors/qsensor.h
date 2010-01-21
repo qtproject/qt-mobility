@@ -178,7 +178,8 @@ public:
     void setTimestamp(qtimestamp timestamp);
 
 protected:
-    explicit QSensorReading(QSensorReadingPrivate *d);
+    explicit QSensorReading(QObject *parent, QSensorReadingPrivate *d);
+    QScopedPointer<QSensorReadingPrivate> *d_ptr() { return &d; }
 
 private:
     void swapValuesWith(QSensorReading *other);
@@ -186,22 +187,42 @@ private:
     Q_DISABLE_COPY(QSensorReading)
 };
 
+template <typename T>
+class qTypedWrapper
+{
+public:
+    qTypedWrapper(QScopedPointer<QSensorReadingPrivate> *_ptr)
+        : ptr(_ptr)
+    {
+    }
+
+    T *operator->() const
+    {
+        return static_cast<T*>(ptr->data());
+    }
+
+private:
+    QScopedPointer<QSensorReadingPrivate> *ptr;
+};
+
 #define DECLARE_READING(classname)\
         DECLARE_READING_D(classname, classname ## Private)
 
 #define DECLARE_READING_D(classname, pclassname)\
     public:\
-        classname();\
+        classname(QObject *parent = 0);\
         virtual ~classname();\
     private:\
-        pclassname *d;
+        qTypedWrapper<pclassname> d;
 
 #define IMPLEMENT_READING(classname)\
         IMPLEMENT_READING_D(classname, classname ## Private)
 
 #define IMPLEMENT_READING_D(classname, pclassname)\
-    classname::classname()\
-        : QSensorReading(new pclassname) {}\
+    classname::classname(QObject *parent)\
+        : QSensorReading(parent, new pclassname)\
+        , d(d_ptr())\
+        {}\
     classname::~classname() {}
 
 QTM_END_NAMESPACE
