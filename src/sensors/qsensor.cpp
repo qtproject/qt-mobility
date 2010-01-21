@@ -557,6 +557,11 @@ QSensorReading::QSensorReading(QObject *parent, QSensorReadingPrivate *_d)
 }
 
 /*!
+    \fn QSensorReading::d_ptr()
+    \internal
+*/
+
+/*!
     \internal
 */
 QSensorReading::~QSensorReading()
