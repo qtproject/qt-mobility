@@ -46,12 +46,10 @@
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
 {    
-    TRAPD(err, m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
+    QT_TRAP_THROWING(m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
     
 #if defined(S60_DRM_SUPPORTED) && defined(__S60_50__)
-    if (err == KErrNone) {
-        m_player->RegisterForAudioLoadingNotification(*this);
-    }
+    m_player->RegisterForAudioLoadingNotification(*this);
 #endif   
 }
 
@@ -60,30 +58,21 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
     delete m_player;
 }
 
-void S60AudioPlayerSession::doLoad(const TDesC &path)
+void S60AudioPlayerSession::doLoadL(const TDesC &path)
 {
-    int err = KErrNone;
-    TRAP(err, m_player->OpenFileL(path));
-    if (err != KErrNone) {
-        setMediaStatus(QMediaPlayer::NoMedia);
-    }
+    m_player->OpenFileL(path);
 }
 
-qint64 S60AudioPlayerSession::duration() const
+int S60AudioPlayerSession::doGetDurationL() const
 {
     return m_player->Duration().Int64() / 1000;
 }
 
-qint64 S60AudioPlayerSession::position() const
+qint64 S60AudioPlayerSession::doGetPositionL() const
 {
     TTimeIntervalMicroSeconds ms = 0;
     m_player->GetPosition(ms);
     return ms.Int64() / 1000;
-}
-
-void S60AudioPlayerSession::doSetPlaybackRate(qreal rate)
-{
-    // TODO:
 }
 
 bool S60AudioPlayerSession::isVideoAvailable() const
@@ -96,7 +85,7 @@ void S60AudioPlayerSession::doPlay()
     m_player->Play();
 }
 
-void S60AudioPlayerSession::doPause()
+void S60AudioPlayerSession::doPauseL()
 {
     m_player->Pause();
 }
@@ -107,17 +96,17 @@ void S60AudioPlayerSession::doStop()
     m_player->Close();
 }
 
-void S60AudioPlayerSession::doSetVolume(int volume)
+void S60AudioPlayerSession::doSetVolumeL(int volume)
 {    
     m_player->SetVolume((volume / 100.0) * m_player->MaxVolume());
 }
 
-void S60AudioPlayerSession::doSetPosition(qint64 microSeconds)
+void S60AudioPlayerSession::doSetPositionL(qint64 microSeconds)
 {   
     m_player->SetPosition(TTimeIntervalMicroSeconds(microSeconds));
 }
 
-void S60AudioPlayerSession::updateMetaDataEntries()
+void S60AudioPlayerSession::updateMetaDataEntriesL()
 {
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
@@ -126,11 +115,8 @@ void S60AudioPlayerSession::updateMetaDataEntries()
     
     for (int i = 0; i < numberOfMetaDataEntries; i++) {
         CMMFMetaDataEntry *entry = NULL;
-        TRAPD(err, entry = m_player->GetMetaDataEntryL(i));
-
-        if (err == KErrNone) {
-            metaDataEntries().insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
-        }
+        entry = m_player->GetMetaDataEntryL(i);
+        metaDataEntries().insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
         delete entry;
     }
     emit metaDataChanged();
