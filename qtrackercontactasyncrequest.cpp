@@ -866,15 +866,19 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
 {
     QContactOnlineAccount account;
     account.setValue("Account", imAccountQuery->index(queryRow, 1).data().toString()); // IMId
-    if (!imAccountQuery->index(queryRow, 5).data().toString().isEmpty())
-        account.setValue(FieldAccountPath, imAccountQuery->index(queryRow, 5).data().toString()); // getImAccountType?
+    if (!imAccountQuery->index(queryRow, 5).data().toString().isEmpty()) {
+        QString accountPathURI = imAccountQuery->index(queryRow, 5).data().toString();
+        QStringList decoded = accountPathURI.split(":");
+        qDebug() << decoded.value(1); 
+        account.setValue(FieldAccountPath, decoded.value(1)); // getImAccountType?
+    }
     int capCount = imAccountQuery->index(queryRow, 6).data().toInt();
-    QStringList caps;
-    caps.append("im-capability-text-chat");
+    QString caps;
+    caps = QString("org.freedesktop.Telepathy.Channel.Type.TextChat|");
     //FIXME
     // Once #153757 get resolved try to save the exact cap. until then using the caps count
     if (capCount >= 2) {
-        caps.append("nco:im-capability-audio-calls");
+        caps += QString("org.freedesktop.Telepathy.Channel.Type.StreamedMedia");
     }
     
     account.setValue("Capabilities", caps); // getImAccountType?
@@ -883,10 +887,8 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
     QString presence = imAccountQuery->index(queryRow, 2).data().toString(); // imPresence iri
     presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
     account.setPresence(presenceConversion[presence]);
-
     account.setStatusMessage(imAccountQuery->index(queryRow, 3).data().toString()); // imStatusMessage
-    qDebug()<<  imAccountQuery->index(queryRow, 4).data().toString();
-    qDebug() << caps;
+
     return account;
 }
 
