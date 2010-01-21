@@ -93,45 +93,33 @@ public:
     S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
     ~S60MediaPlayerControl();
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
+    // from QMediaPlayerControl
+    virtual QMediaPlayer::State state() const;
+    virtual QMediaPlayer::MediaStatus mediaStatus() const;
+    virtual qint64 duration() const;
+    virtual qint64 position() const;
+    virtual void setPosition(qint64 pos);
+    virtual int volume() const;
+    virtual void setVolume(int volume);
+    virtual bool isMuted() const;
+    virtual void setMuted(bool muted);
+    virtual int bufferStatus() const;
+    virtual bool isVideoAvailable() const;
+    virtual bool isSeekable() const;
+    virtual QMediaTimeRange availablePlaybackRanges() const;
+    virtual qreal playbackRate() const;
+    virtual void setPlaybackRate(qreal rate);
+    virtual QMediaContent media() const;
+    virtual const QIODevice *mediaStream() const;
+    virtual void setMedia(const QMediaContent&, QIODevice *);
+    virtual void play();
+    virtual void pause();
+    virtual void stop();  
 
-    qint64 position() const;
-    qint64 duration() const;
-
-    int bufferStatus() const;
-
-    int volume() const;
-    bool isMuted() const;
-
-    bool isVideoAvailable() const;
+    // Own methods
     void setVideoOutput(QObject *output);
-
-    bool isSeekable() const;
-    QMediaTimeRange availablePlaybackRanges() const;
-	
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
-
-    QMediaContent media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaContent&, QIODevice *);
-
     const S60MediaSettings& mediaControlSettings() const;
-    
-public Q_SLOTS:
-    void setPosition(qint64 pos);
-
-    void play();
-    void pause();
-    void stop();
-
-    void setVolume(int volume);
-    void setMuted(bool muted);
-    
-private: 
-    S60MediaPlayerSession* currentPlayerSession();
-    
+ 
 private:
     MS60MediaPlayerResolver &m_mediaPlayerResolver;
     S60MediaPlayerSession *m_session;

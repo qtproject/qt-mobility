@@ -163,11 +163,11 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     
     switch (mediaType) {
     	case S60MediaRecognizer::Video:
-            return VideoPlayerSession();
+            return VideoPlayerSession(true);
     	case S60MediaRecognizer::Audio:
             return AudioPlayerSession();
     	case S60MediaRecognizer::Url:
-            return VideoPlayerSession(true);
+            return VideoPlayerSession(false);
     	default:	
     		break;
     }
@@ -175,7 +175,7 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     return NULL;
 }
 
-S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isUrl)
+S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isLocal)
 {
     if (!m_videoPlayerSession) {
         m_videoPlayerSession = new S60VideoPlayerSession(this);
@@ -210,11 +210,11 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isUrl)
     m_videoPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
     //m_videoPlayerSession->setPosition(0); // TODO: Check is this really needed???
     m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
-    m_videoPlayerSession->setIsUrl(isUrl);
+    m_videoPlayerSession->setMediaFileLocal(isLocal);
     return m_videoPlayerSession;
 }
 
-S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isUrl)
+S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isLocal)
 {
     if (!m_audioPlayerSession) {
         m_audioPlayerSession = new S60AudioPlayerSession(this);
@@ -249,8 +249,7 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isUrl)
     m_audioPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
     //m_audioPlayerSession->setPosition(0); // TODO: Check is this really needed???
     m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
-    m_audioPlayerSession->setIsUrl(isUrl);
-    
+    m_audioPlayerSession->setMediaFileLocal(isLocal);
     return m_audioPlayerSession;
 }
 
