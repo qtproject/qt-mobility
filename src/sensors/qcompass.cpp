@@ -89,7 +89,7 @@ qreal QCompassReading::azimuth() const
 }
 
 /*!
-    Sets the azimuth of the device.
+    Sets the \a azimuth of the device.
 */
 void QCompassReading::setAzimuth(qreal azimuth)
 {
@@ -112,7 +112,7 @@ QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
 }
 
 /*!
-    Sets the calibration level of the reading.
+    Sets the calibration level of the reading to \a calibrationLevel.
 */
 void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel calibrationLevel)
 {

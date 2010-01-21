@@ -126,7 +126,7 @@ QSensorReading *QSensorBackend::reading() const
 /*!
     \fn QSensorBackend::setReading(T *reading)
 
-    This function is called to initialize the reading
+    This function is called to initialize the \a reading
     classes used for a sensor.
 
     If your backend has already allocated a reading you

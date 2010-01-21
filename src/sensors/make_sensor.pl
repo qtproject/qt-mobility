@@ -183,7 +183,7 @@ qreal '.$reading.'::myprop() const
 }
 
 /*!
-    Sets [what?]
+    Sets [what?] to \a myprop.
 */
 void '.$reading.'::setMyprop(qreal myprop)
 {

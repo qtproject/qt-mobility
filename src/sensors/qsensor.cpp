@@ -133,7 +133,7 @@ QByteArray QSensor::identifier() const
 }
 
 /*!
-    Sets the backend identifier to use.
+    Sets the backend \a identifier to use.
 
     This must be done before connect() is called.
 */
@@ -157,7 +157,7 @@ QByteArray QSensor::type() const
 }
 
 /*!
-    Sets the type of the sensor.
+    Sets the \a type of the sensor.
 
     Note that this can only be used if you are using QSensor directly.
 */

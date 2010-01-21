@@ -83,7 +83,7 @@ QProximityReading::Proximity QProximityReading::proximity() const
 }
 
 /*!
-    Sets the proximity of the user.
+    Sets the \a proximity of the user.
 */
 void QProximityReading::setProximity(QProximityReading::Proximity proximity)
 {
