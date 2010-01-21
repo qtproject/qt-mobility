@@ -2,6 +2,16 @@ TEMPLATE = subdirs
 
 include(../../common.pri)
 
-SUBDIRS += n900
-#maemo:SUBDIRS += n900
+device_plugin=0
+maemo {
+    device_plugin=1
+    SUBDIRS += n900
+}
+
+SUBDIRS += generic
+
+!equals(device_plugin,1) {
+    # Create some dummy sensors to help out with testing
+    SUBDIRS += dummy
+}
 
