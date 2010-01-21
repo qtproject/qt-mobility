@@ -9,18 +9,13 @@ Rectangle {
         id: orientation
 
         onReadingChanged: {
-            console.log(orientation.reading.orientation);
-            if (orientation.reading.orientation == 3)
+            if (reading.orientation == OrientationReading.LeftUp)
                 content.state = "Portrait";
-            else if (orientation.reading.orientation == 2)
+            else if (reading.orientation == OrientationReading.BottomDown)
                 content.state = "";
         }
     }
-
-    Timer {
-        interval: 0; running: true; repeat: false
-        onTriggered: orientation.start()
-    }
+    Component.onCompleted: orientation.start()
 
     Item {
         id: content
