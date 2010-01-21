@@ -193,6 +193,18 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
     if (m_graph) {
         m_graphEventNotifier.setEnabled(false);
 
+        if (m_executingTask != 0) {
+            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
+                progress->AbortOperation();
+                progress->Release();
+            } else {
+                m_graph->Abort();
+            }
+
+            m_pendingTasks = Stop;
+
+            m_loop.wait(&m_mutex);
+        }
         if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
             control->Stop();
             control->Release();
@@ -203,15 +215,7 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
             m_source = 0;
         }
 
-        if (m_executingTask != 0) {
-            if (IAMOpenProgress *progress = com_cast<IAMOpenProgress>(m_graph)) {
-                progress->AbortOperation();
-                progress->Release();
-            }
-            m_pendingTasks = Stop;
 
-            m_loop.wait(&m_mutex);
-        }
 
         m_graph->RemoveFilter(m_audioOutput);
         m_graph->RemoveFilter(m_videoOutput);
@@ -265,9 +269,32 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
     QMediaResource resource = m_resources.takeFirst();
     QUrl url = resource.url();
 
-    locker->unlock();
-    HRESULT hr = m_graph->AddSourceFilter(url.toString().utf16(), L"Source", &source);
-    locker->relock();
+    HRESULT hr = E_FAIL;
+
+    if (url.scheme() == QLatin1String("http") || url.scheme() == QLatin1String("https")) {
+        if (IFileSourceFilter *fileSource = com_new<IFileSourceFilter>(CLSID_WMAsfReader)) {
+            locker->unlock();
+            hr = fileSource->Load(url.toString().utf16(), 0);
+            locker->relock();
+
+            if (SUCCEEDED(hr)) {
+                source = com_cast<IBaseFilter>(fileSource);
+
+                if (!SUCCEEDED(hr = m_graph->AddFilter(source, L"Source")) && source) {
+                    source->Release();
+                    source = 0;
+                }
+            }
+
+            fileSource->Release();
+        }
+    }
+
+    if (!SUCCEEDED(hr)) {
+        locker->unlock();
+        hr = m_graph->AddSourceFilter(url.toString().utf16(), L"Source", &source);
+        locker->relock();
+    }
 
     if (SUCCEEDED(hr)) {
         m_executedTasks = SetSource;

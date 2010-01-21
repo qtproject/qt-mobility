@@ -154,7 +154,9 @@ Player::Player(QWidget *parent)
     QStringList fileNames = qApp->arguments();
     fileNames.removeAt(0);
     foreach (QString const &fileName, fileNames) {
-        if (QFileInfo(fileName).exists())
+        if (fileName.startsWith(QLatin1String("http://")))
+            playlist->addMedia(QUrl(fileName));
+        else if (QFileInfo(fileName).exists())
             playlist->addMedia(QUrl::fromLocalFile(fileName));
     }
 }
