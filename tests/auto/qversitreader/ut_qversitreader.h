@@ -54,12 +54,22 @@ class QVersitReaderPrivate;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
+// Poor man's QSignalSpy because I couldn't get QSignalSpy to work with the user type QVR::State.
+class SignalCatcher : public QObject
+{
+Q_OBJECT
+public slots:
+    void stateChanged(QVersitReader::State state) {
+        mReceived.append(state);
+    }
+
+public:
+    QList<QVersitReader::State> mReceived;
+};
+
 class UT_QVersitReader : public QObject                 
 {
      Q_OBJECT
-
-public slots:
-    void stateChanged();
 
 private slots: // Tests
 
@@ -79,9 +89,7 @@ private: // Data
     QVersitReader* mReader;
     QVersitReaderPrivate* mReaderPrivate;
     QBuffer* mInputDevice;
-    int mExpectedDocumentCount;
-    QVersitReader::Error mExpectedError;
-    bool mFinishedSignalEmitted;
+    SignalCatcher* mSignalCatcher;
 };
 
 #endif // UT_VERSITREADER_H

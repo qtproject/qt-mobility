@@ -87,19 +87,22 @@ public:
     QTextCodec* codec() const;
 
     // writing:
-    bool startWriting(const QList<QVersitDocument>& input); // XXX These two functions look strange..
-    bool writeAll(const QList<QVersitDocument>& input);
+    bool startWriting(const QList<QVersitDocument>& input);
+    // XXX void cancel();
+    bool waitForFinished(int msec = -1);
 
     State state() const;
     Error error() const;
 
 signals:
-    void stateChanged();
+    void stateChanged(QVersitWriter::State state);
 
 private: // data
     QVersitWriterPrivate* d;
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QVersitWriter::State))
 
 #endif // QVERSITWRITER_H

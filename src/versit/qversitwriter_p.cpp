@@ -79,33 +79,20 @@ bool QVersitWriterPrivate::isReady() const
 
 /*!
  * Do the actual writing and set the error and state appropriately.
- *
- * If \a async, then stateChanged() signals are emitted as it writes.
  */
-bool QVersitWriterPrivate::write(bool async)
+void QVersitWriterPrivate::write()
 {
-    setError(QVersitWriter::NoError);
-    bool ok = true;
-    if (isReady()) {
-        setState(QVersitWriter::ActiveState, async);
-        foreach (QVersitDocument document, mInput) {
-            QScopedPointer<QVersitDocumentWriter> writer(
-                    writerForType(document.type()));
-            QByteArray output = writer->encodeVersitDocument(document);
-            int c = mIoDevice->write(output);
-            if (c <= 0) {
-                setError(QVersitWriter::IOError);
-                break;
-            }
+    foreach (QVersitDocument document, mInput) {
+        QScopedPointer<QVersitDocumentWriter> writer(writerForType(document.type()));
+        QByteArray output = writer->encodeVersitDocument(document);
+        int c = mIoDevice->write(output);
+        if (c <= 0) {
+            setError(QVersitWriter::IOError);
+            break;
         }
-    } else {
-        // leave the state unchanged but set the error.
-        setError(QVersitWriter::NotReadyError);
-        return false;
     }
-
-    setState(QVersitWriter::FinishedState, async);
-    return ok;
+    setState(QVersitWriter::FinishedState);
+    mWaitCondition.wakeAll();
 }
 
 /*!
@@ -113,16 +100,15 @@ bool QVersitWriterPrivate::write(bool async)
  */
 void QVersitWriterPrivate::run()
 {
-    write(true);
+    write();
 }
 
-void QVersitWriterPrivate::setState(QVersitWriter::State state, bool emitSignal)
+void QVersitWriterPrivate::setState(QVersitWriter::State state)
 {
     mMutex.lock();
     mState = state;
     mMutex.unlock();
-    if (emitSignal)
-        emit stateChanged();
+    emit stateChanged(state);
 }
 
 QVersitWriter::State QVersitWriterPrivate::state() const

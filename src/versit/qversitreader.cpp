@@ -62,7 +62,9 @@ QTM_USE_NAMESPACE
   from a text stream into 0..n QVersitDocument instances.
   QVersitReader supports reading from an abstract I/O device
   which can be for example a file or a memory buffer.
-  The reading can be done synchronously or asynchronously.
+  The reading can be done asynchronously, and the
+  waitForFinished() function can be used to make a blocking
+  read.
  
   \code
   // An example of reading a simple vCard from a memory buffer:
@@ -74,7 +76,9 @@ QTM_USE_NAMESPACE
   vCardBuffer.seek(0);
   QVersitReader reader;
   reader.setDevice(&vCardBuffer);
-  QList<QVersitDocument> versitDocuments = reader.readAll();
+  reader.startReading();
+  reader.waitForFinished();
+  QList<QVersitDocument> versitDocuments = reader.results();
   // Use the resulting document(s)...
   }
   \endcode
@@ -90,7 +94,8 @@ QTM_USE_NAMESPACE
 /*! Constructs a new reader. */
 QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 {
-    connect(d, SIGNAL(stateChanged()), this, SIGNAL(stateChanged()), Qt::DirectConnection);
+    connect(d, SIGNAL(stateChanged(QVersitReader::State)),
+            this, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
 }
     
 /*! 
@@ -144,41 +149,42 @@ QTextCodec* QVersitReader::defaultCodec()
  * Starts reading the input asynchronously.
  * Returns false if the input device has not been set or opened or
  * if there is another asynchronous read operation already pending.
- * Signal \l finished() is emitted when the reading has finished.
+ * Signal \l stateChanged() is emitted with parameter FinishedState
+ * is emitted when the reading has finished.
  */
 bool QVersitReader::startReading()
-{
-    bool started = false;
-    if (d->isReady() && !d->isRunning()) {
+{    if (d->state() == ActiveState || d->isRunning()) {
+        d->setError(QVersitReader::NotReadyError);
+        return false;
+    } else if (!d->mIoDevice || !d->mIoDevice->isReadable()) {
+        d->setError(QVersitReader::IOError);
+        return false;
+    } else {
+        d->setState(ActiveState);
+        d->setError(NoError);
         d->start();
-        started = true;
+        return true;
     }
-    return started;
 }
 
 /*!
- * Reads the input synchronously and returns the results.
- * On a fatal failure, returns an empty list.  This can happen if:
- *   the input device has not been set or opened, or
- *   if there is an asynchronous read operation pending, or
- *   or there was an error reading any of the documents.
- * Sets the error value to indicate what kind of error (if any) occured, and
- * the state value to indicate what the state of parsing is.
- *
- * Even if an error occurs, a list of partial results may still be returned.
- * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous \l startReading() should be used instead.
+ * If the state is ActiveState, blocks until the reader has finished reading or \a msec milliseconds
+ * has elapsed, returning true if it successfully finishes or is cancelled by the user.
+ * If the state is FinishedState, returns true immediately.
+ * Otherwise, returns false immediately.
  */
-QList<QVersitDocument> QVersitReader::readAll()
+bool QVersitReader::waitForFinished(int msec)
 {
-    if (!d->isRunning()) {
-        d->read(false);
-        return d->mVersitDocuments;
-    }
-    else {
-        // leave the state unchanged but set the error.
-        d->setError(QVersitReader::NotReadyError);
-        return QList<QVersitDocument>();
+    State state = d->state();
+    if (state == ActiveState) {
+        d->mWaitMutex.lock();
+        bool finished = d->mWaitCondition.wait(&d->mWaitMutex, msec);
+        d->mWaitMutex.unlock();
+        return finished;
+    } else if (state == FinishedState) {
+        return true;
+    } else {
+        return false;
     }
 }
 

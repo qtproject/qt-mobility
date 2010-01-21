@@ -69,67 +69,40 @@ QVersitReaderPrivate::~QVersitReaderPrivate()
 }
 
 /*!
- * Checks whether the reader is ready for reading.
- */
-bool QVersitReaderPrivate::isReady() const
-{
-    return state() != QVersitReader::ActiveState;
-}
-
-/*!
  * Does the actual reading and sets the error and state as appropriate.
  * If \a async, then stateChanged() signals are emitted as the reading happens.
  */
-bool QVersitReaderPrivate::read(bool async)
+void QVersitReaderPrivate::read()
 {
-    setError(QVersitReader::NoError);
     mMutex.lock();
     mVersitDocuments.clear();
     mMutex.unlock();
-    bool ret = true;
-    if (isReady()) {
-        setState(QVersitReader::ActiveState, async);
-        if (!mIoDevice
-            || !mIoDevice->isReadable()
-            || !mIoDevice->isOpen()) {
-            setError(QVersitReader::IOError);
-            setState(QVersitReader::FinishedState, async);
-            return false;
-        }
-        QByteArray input = mIoDevice->readAll();
+    QByteArray input = mIoDevice->readAll();
 
-        VersitCursor cursor(input);
-        int oldPos = cursor.position;
-        do {
-            QVersitDocument document;
-            bool ok = parseVersitDocument(cursor, document);
+    VersitCursor cursor(input);
+    int oldPos = cursor.position;
+    do {
+        QVersitDocument document;
+        bool ok = parseVersitDocument(cursor, document);
 
-            if (ok) {
-                if (document.isEmpty())
-                    break;
-                else {
-                    QMutexLocker locker(&mMutex);
-                    mVersitDocuments.append(document);
-                    if (async)
-                        emit resultsAvailable();
-                }
-            } else {
-                ret = false;
-                setError(QVersitReader::ParseError);
-                if (cursor.position == oldPos)
-                    break;
+        if (ok) {
+            if (document.isEmpty())
+                break;
+            else {
+                QMutexLocker locker(&mMutex);
+                mVersitDocuments.append(document);
+                emit resultsAvailable();
             }
+        } else {
+            setError(QVersitReader::ParseError);
+            if (cursor.position == oldPos)
+                break;
+        }
 
-            oldPos = cursor.position;
-        } while(cursor.position < input.size());
-    } else {
-        // leave the state unchanged but set the error.
-        setError(QVersitReader::NotReadyError);
-        return false;
-    }
-
-    setState(QVersitReader::FinishedState, async);
-    return ret;
+        oldPos = cursor.position;
+    } while(cursor.position < input.size());
+    setState(QVersitReader::FinishedState);
+    mWaitCondition.wakeAll();
 }
 
 /*!
@@ -137,7 +110,7 @@ bool QVersitReaderPrivate::read(bool async)
  */
 void QVersitReaderPrivate::run()
 {
-    read(true);
+    read();
 }
 
 /*!
@@ -402,13 +375,12 @@ QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
     return mDefaultCodec->toUnicode(value);
 }
 
-void QVersitReaderPrivate::setState(QVersitReader::State state, bool emitSignal)
+void QVersitReaderPrivate::setState(QVersitReader::State state)
 {
     mMutex.lock();
     mState = state;
     mMutex.unlock();
-    if (emitSignal)
-        emit stateChanged();
+    emit stateChanged(state);
 }
 
 QVersitReader::State QVersitReaderPrivate::state() const

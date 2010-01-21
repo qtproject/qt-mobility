@@ -62,6 +62,7 @@
 #include <QThread>
 #include <QIODevice>
 #include <QMutex>
+#include <QWaitCondition>
 
 QTM_BEGIN_NAMESPACE
 
@@ -72,16 +73,16 @@ class Q_AUTOTEST_EXPORT QVersitWriterPrivate : public QThread
     Q_OBJECT
 
 signals:
-    void stateChanged();
+    void stateChanged(QVersitWriter::State state);
 
 public:
     QVersitWriterPrivate();
     virtual ~QVersitWriterPrivate();
     bool isReady() const;
-    bool write(bool async);
+    void write();
 
     // mutexed getters and setters.
-    void setState(QVersitWriter::State, bool emitSignal);
+    void setState(QVersitWriter::State);
     QVersitWriter::State state() const;
     void setError(QVersitWriter::Error);
     QVersitWriter::Error error() const;
@@ -95,6 +96,8 @@ public:
     QVersitWriter::Error mError;
     QTextCodec* mDefaultCodec;
     mutable QMutex mMutex;
+    QWaitCondition mWaitCondition;
+    QMutex mWaitMutex;
 };
 
 QTM_END_NAMESPACE

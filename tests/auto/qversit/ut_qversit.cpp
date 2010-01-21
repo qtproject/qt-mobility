@@ -62,7 +62,9 @@ void UT_QVersit::testImportFiles()
     if (charset != "") {
         reader.setDefaultCodec(QTextCodec::codecForName(charset));
     }
-    QList<QVersitDocument> documents = reader.readAll();
+    QVERIFY(reader.startReading());
+    QVERIFY(reader.waitForFinished());
+    QList<QVersitDocument> documents = reader.results();
     QCOMPARE(reader.error(), QVersitReader::NoError);
     QVersitContactImporter importer;
     MyQVersitResourceHandler resourceHandler;

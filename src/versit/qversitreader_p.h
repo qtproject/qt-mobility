@@ -68,6 +68,7 @@
 #include <QPointer>
 #include <QByteArray>
 #include <QMutex>
+#include <QWaitCondition>
 
 QTM_BEGIN_NAMESPACE
 
@@ -81,12 +82,11 @@ public: // Constructors and destructor
     ~QVersitReaderPrivate();
 
 signals:
-    void stateChanged();
+    void stateChanged(QVersitReader::State state);
     void resultsAvailable();
 
 public: // New functions
-    bool isReady() const;
-    bool read(bool async);
+    void read();
 
     bool parseVersitDocument(VersitCursor& cursor,
                              QVersitDocument& document,
@@ -124,7 +124,7 @@ public: // New functions
         QTextCodec** codec) const;
 
     // mutexed getters and setters.
-    void setState(QVersitReader::State, bool emitSignal);
+    void setState(QVersitReader::State);
     QVersitReader::State state() const;
     void setError(QVersitReader::Error);
     QVersitReader::Error error() const;
@@ -140,6 +140,8 @@ public: // Data
     QVersitReader::State mState;
     QVersitReader::Error mError;
     mutable QMutex mMutex;
+    QWaitCondition mWaitCondition;
+    QMutex mWaitMutex;
 };
 
 QTM_END_NAMESPACE

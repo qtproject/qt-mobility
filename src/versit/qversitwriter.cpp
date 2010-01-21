@@ -60,7 +60,8 @@ QTM_USE_NAMESPACE
   QVersitWriter converts a QVersitDocument into its textual representation.
   QVersitWriter supports writing to an abstract I/O device
   which can be for example a file or a memory buffer.
-  The writing can be done synchronously or asynchronously.
+  The writing can be done asynchronously and the waitForFinished()
+  function can be used to implement a blocking write.
  
   \code
   // An example of writing a simple vCard to a memory buffer:
@@ -73,7 +74,8 @@ QTM_USE_NAMESPACE
   property.setName("N");
   property.setValue("Citizen;John;Q;;");
   document.addProperty(property);
-  if (writer.writeAll(document)) {
+  writer.startWriting();
+  if (writer.waitForFinished()) {
       // Use the vCardBuffer...
   }
   \endcode
@@ -89,7 +91,8 @@ QTM_USE_NAMESPACE
 /*! Constructs a new writer. */
 QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
 {
-    connect(d, SIGNAL(stateChanged()), this, SIGNAL(stateChanged()), Qt::DirectConnection);
+    connect(d, SIGNAL(stateChanged(QVersitWriter::State)),
+            this, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }
 
 /*! 
@@ -143,39 +146,43 @@ QTextCodec* QVersitWriter::codec() const
  * Starts writing \a input to device() asynchronously.
  * Returns false if the output device has not been set or opened or
  * if there is another asynchronous write operation already pending.
- * Signal \l finished() is emitted when the writing has finished.
+ * Signal \l stateChanged() is emitted with parameter FinishedState
+ * is emitted when the writing has finished.
  */
 bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
 {
     d->mInput = input;
-    bool started = false;
-    if (d->isReady() && !d->isRunning()) {
+    if (d->state() == ActiveState || d->isRunning()) {
+        d->setError(QVersitWriter::NotReadyError);
+        return false;
+    } else if (!d->mIoDevice || !d->mIoDevice->isWritable()) {
+        d->setError(QVersitWriter::IOError);
+        return false;
+    } else {
+        d->setState(ActiveState);
+        d->setError(NoError);
         d->start();
-        started = true;
+        return true;
     }
-
-    return started;
 }
 
 /*!
- * Writes \a input to device() synchronously.
- * Returns false if the output device has not been set or opened or
- * if there is an asynchronous write operation pending.
- * Sets the error value to indicate what kind of error (if any) occured, and
- * the state value to indicate what the state of parsing is..
- * 
- * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous \l startWriting() should be used instead.
+ * If the state is ActiveState, blocks until the writer has finished writing or \a msec milliseconds
+ * has elapsed, returning true if it successfully finishes or is cancelled by the user.
+ * If the state is FinishedState, returns true immediately.
+ * Otherwise, returns false immediately.
  */
-bool QVersitWriter::writeAll(const QList<QVersitDocument>& input)
+bool QVersitWriter::waitForFinished(int msec)
 {
-    d->mInput = input;
-    if (!d->isRunning()) {
-        return d->write(false);
-    }
-    else {
-        // leave the state unchanged but set the error.
-        d->setError(QVersitWriter::NotReadyError);
+    State state = d->state();
+    if (state == ActiveState) {
+        d->mWaitMutex.lock();
+        bool finished = d->mWaitCondition.wait(&d->mWaitMutex, msec);
+        d->mWaitMutex.unlock();
+        return finished;
+    } else if (state == FinishedState) {
+        return true;
+    } else {
         return false;
     }
 }

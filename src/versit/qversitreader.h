@@ -89,8 +89,9 @@ public:
     QTextCodec* defaultCodec();
 
     // reading:
-    bool startReading(); // XXX these two functions are still a little confusing/not intuitive
-    QList<QVersitDocument> readAll();
+    bool startReading();
+    // XXX void cancel();
+    bool waitForFinished(int msec = -1);
 
     // output:
     QList<QVersitDocument> results() const;
@@ -99,13 +100,15 @@ public:
     Error error() const;
 
 signals:
-    void stateChanged();
-    void resultsAvailable();
+    void stateChanged(QVersitReader::State state);
+    void resultsAvailable(QList<QVersitDocument>& results);
     
 private: // data
     QVersitReaderPrivate* d;   
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QVersitReader::State))
 
 #endif // QVERSITREADER_H

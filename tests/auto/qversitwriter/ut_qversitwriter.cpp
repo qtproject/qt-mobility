@@ -46,28 +46,40 @@
 #include <QtTest/QtTest>
 #include <QByteArray>
 
+// Copied from tst_qcontactmanager.cpp
+// Waits until __expr is true and fails if it doesn't happen within 5s.
+#ifndef QTRY_VERIFY
+#define QTRY_VERIFY(__expr) \
+        do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY(__expr); \
+    } while(0)
+#endif
+
 QTM_USE_NAMESPACE
 
 void UT_QVersitWriter::init()
 {
-    mWritingDoneCalled = false;
     mOutputDevice = new QBuffer;
     mWriter = new QVersitWriter;
-    connect(mWriter, SIGNAL(stateChanged()), this, SLOT(stateChanged()), Qt::DirectConnection);
+    mSignalCatcher = new SignalCatcher;
+    qRegisterMetaType<QVersitWriter::State>("QVersitWriter::State");
+    connect(mWriter, SIGNAL(stateChanged(QVersitWriter::State)),
+            mSignalCatcher, SLOT(stateChanged(QVersitWriter::State)));
 }
 
 void UT_QVersitWriter::cleanup()
 {
     delete mWriter;
     delete mOutputDevice;
-}
-
-void UT_QVersitWriter::stateChanged()
-{
-    if (mWriter->state() == QVersitWriter::FinishedState) {
-        mWritingDoneCalled = true;
-        QCOMPARE(mWriter->error(), QVersitWriter::NoError);
-    }
+    delete mSignalCatcher;
 }
 
 void UT_QVersitWriter::testDevice()
@@ -99,15 +111,23 @@ END:VCARD\r\n");
     list.append(document);
 
     // Device not set
-    QVERIFY(!mWriter->writeAll(list));
+    QCOMPARE(mWriter->state(), QVersitWriter::InactiveState);
+    QCOMPARE(mWriter->error(), QVersitWriter::NoError);
+    QVERIFY(!mWriter->startWriting(list));
+    QCOMPARE(mWriter->state(), QVersitWriter::InactiveState);
+    QCOMPARE(mWriter->error(), QVersitWriter::IOError);
+    QVERIFY(!mWriter->waitForFinished());
 
     // Device not opened
     mWriter->setDevice(mOutputDevice);
-    QVERIFY(!mWriter->writeAll(list));
+    QVERIFY(!mWriter->startWriting(list));
+    QCOMPARE(mWriter->state(), QVersitWriter::InactiveState);
+    QCOMPARE(mWriter->error(), QVersitWriter::IOError);
 
     // Now open the device and it should work.
     mOutputDevice->open(QBuffer::ReadWrite);
-    QVERIFY(mWriter->writeAll(list));
+    QVERIFY(mWriter->startWriting(list));
+    QVERIFY(mWriter->waitForFinished());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -127,7 +147,8 @@ END:VCARD\r\n");
     mOutputDevice = new QBuffer;
     mOutputDevice->open(QBuffer::ReadWrite);
     mWriter->setDevice(mOutputDevice);
-    QVERIFY(mWriter->writeAll(list));
+    QVERIFY(mWriter->startWriting(list));
+    QVERIFY(mWriter->waitForFinished());
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
@@ -135,12 +156,12 @@ END:VCARD\r\n");
     QCOMPARE(result, vCard30);
 
     // Asynchronous writing
-    QVERIFY(!mWritingDoneCalled);
     mOutputDevice->reset();
+    mSignalCatcher->mReceived.clear();
     QVERIFY(mWriter->startWriting(list));
-    delete mWriter; // waits for the thread to finish
-    mWriter = 0;
-    QVERIFY(mWritingDoneCalled);
+    QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
+    QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitWriter::ActiveState);
+    QCOMPARE(mSignalCatcher->mReceived.at(1), QVersitWriter::FinishedState);
 
 }
 

@@ -44,7 +44,24 @@
 #include "qversitreader_p.h"
 #include "versitutils_p.h"
 #include <QtTest/QtTest>
+#include <QSignalSpy>
 
+// Copied from tst_qcontactmanager.cpp
+// Waits until __expr is true and fails if it doesn't happen within 5s.
+#ifndef QTRY_VERIFY
+#define QTRY_VERIFY(__expr) \
+        do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QVERIFY(__expr); \
+    } while(0)
+#endif
 
 // This says "NOKIA" in Katakana
 const QByteArray KATAKANA_NOKIA("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2");
@@ -53,13 +70,14 @@ QTM_USE_NAMESPACE
 
 void UT_QVersitReader::init()
 {
-    mFinishedSignalEmitted = false;
-    mExpectedDocumentCount = 0;
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mReader = new QVersitReader;
-    connect(mReader, SIGNAL(stateChanged()), this, SLOT(stateChanged()), Qt::DirectConnection);
     mReaderPrivate = new QVersitReaderPrivate;
+    mSignalCatcher = new SignalCatcher;
+    qRegisterMetaType<QVersitReader::State>("QVersitReader::State");
+    connect(mReader, SIGNAL(stateChanged(QVersitReader::State)),
+            mSignalCatcher, SLOT(stateChanged(QVersitReader::State)));
 }
 
 void UT_QVersitReader::cleanup()
@@ -67,15 +85,7 @@ void UT_QVersitReader::cleanup()
     delete mReaderPrivate;
     delete mReader;
     delete mInputDevice;
-}
-
-void UT_QVersitReader::stateChanged()
-{
-    if (mReader->state() == QVersitReader::FinishedState) {
-        mFinishedSignalEmitted = true;
-        QCOMPARE(mReader->error(), mExpectedError);
-        QCOMPARE(mReader->results().count(), mExpectedDocumentCount);
-    }
+    delete mSignalCatcher;
 }
 
 void UT_QVersitReader::testDevice()
@@ -95,18 +105,21 @@ void UT_QVersitReader::testDevice()
 
     QVERIFY(mReader->device() == NULL);
     mReader->setDevice(mInputDevice);
+    QVERIFY(mReader->device() == mInputDevice);
 }
 
 void UT_QVersitReader::testReading()
 {
     // No I/O device set
-    QCOMPARE(mReader->readAll(), QList<QVersitDocument>());
+    QVERIFY(!mReader->startReading());
     QCOMPARE(mReader->error(), QVersitReader::IOError);
     
     // Device set, no data
     mReader->setDevice(mInputDevice);
     mInputDevice->open(QBuffer::ReadWrite);
-    QList<QVersitDocument> results(mReader->readAll());
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    QList<QVersitDocument> results(mReader->results());
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(results.count(),0);
@@ -116,7 +129,9 @@ void UT_QVersitReader::testReading()
         "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n";
     mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
-    results = mReader->readAll();
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    results = mReader->results();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(results.count(),1);
@@ -132,7 +147,9 @@ void UT_QVersitReader::testReading()
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
     mReader->setDefaultCodec(codec);
-    results = mReader->readAll();
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    results = mReader->results();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(mReader->results().count(),1);
@@ -142,13 +159,14 @@ void UT_QVersitReader::testReading()
     const QByteArray& twoDocuments =
         " \r\n BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\nBEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n";
     delete mInputDevice;
-    mInputDevice = 0;
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->write(twoDocuments);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    results = mReader->readAll();
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    results = mReader->results();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(results.count(),2);
@@ -165,13 +183,14 @@ BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n\
 BEGIN:VCARD\r\nFN:James\r\nEND:VCARD\r\n\
 BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
     delete mInputDevice;
-    mInputDevice = 0;
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->write(validDocumentsAndGroupedDocument);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    results = mReader->readAll();
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    results = mReader->results();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     // An error is logged because one failed, but the rest are readable.
     QCOMPARE(mReader->error(), QVersitReader::ParseError);
@@ -189,13 +208,14 @@ BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n\
 BEGIN:VCARD\r\nFN:James\r\nEND:VCARD\r\n\
 BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     delete mInputDevice;
-    mInputDevice = 0;
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->write(validDocumentsAndGroupedDocument2);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    results = mReader->readAll();
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    results = mReader->results();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     // An error is logged because one failed, but the rest are readable.
     QCOMPARE(mReader->error(), QVersitReader::ParseError);
@@ -203,20 +223,19 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
 
 
     // Asynchronous reading
-    QVERIFY(!mFinishedSignalEmitted);
     delete mInputDevice;
-    mInputDevice = 0;
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->write(oneDocument);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
-    mExpectedDocumentCount = 1;
-    mExpectedError = QVersitReader::NoError;
+    mSignalCatcher->mReceived.clear();
     QVERIFY(mReader->startReading());
-    delete mReader; // waits for the thread to finish
-    mReader = 0;
-    QVERIFY(mFinishedSignalEmitted);
+    QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
+    QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitReader::ActiveState);
+    QCOMPARE(mSignalCatcher->mReceived.at(1), QVersitReader::FinishedState);
+    QCOMPARE(mReader->results().size(), 1);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
 }
 
 void UT_QVersitReader::testResult()
