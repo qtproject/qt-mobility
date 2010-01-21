@@ -88,7 +88,7 @@ public:
 
     // writing:
     bool startWriting(const QList<QVersitDocument>& input);
-    // XXX void cancel();
+    void cancel();
     bool waitForFinished(int msec = -1);
 
     State state() const;

@@ -58,6 +58,7 @@ QVersitWriterPrivate::QVersitWriterPrivate()
     : mIoDevice(0),
     mState(QVersitWriter::InactiveState),
     mError(QVersitWriter::NoError),
+    mIsCanceling(false),
     mDefaultCodec(QTextCodec::codecForName("UTF-8"))
 {
 }
@@ -82,7 +83,12 @@ bool QVersitWriterPrivate::isReady() const
  */
 void QVersitWriterPrivate::write()
 {
+    bool canceled = false;
     foreach (QVersitDocument document, mInput) {
+        if (isCanceling()) {
+            canceled = true;
+            break;
+        }
         QScopedPointer<QVersitDocumentWriter> writer(writerForType(document.type()));
         QByteArray output = writer->encodeVersitDocument(document);
         int c = mIoDevice->write(output);
@@ -91,7 +97,10 @@ void QVersitWriterPrivate::write()
             break;
         }
     }
-    setState(QVersitWriter::FinishedState);
+    if (canceled)
+        setState(QVersitWriter::CanceledState);
+    else
+        setState(QVersitWriter::FinishedState);
 }
 
 /*!
@@ -142,6 +151,18 @@ QVersitDocumentWriter* QVersitWriterPrivate::writerForType(QVersitDocument::Vers
         default:
             return new QVCard21Writer;
     }
+}
+
+void QVersitWriterPrivate::setCanceling(bool canceling)
+{
+    QMutexLocker locker(&mMutex);
+    mIsCanceling = canceling;
+}
+
+bool QVersitWriterPrivate::isCanceling()
+{
+    QMutexLocker locker(&mMutex);
+    return mIsCanceling;
 }
 
 #include "moc_qversitwriter_p.cpp"

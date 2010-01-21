@@ -86,6 +86,9 @@ public:
     QVersitWriter::State state() const;
     void setError(QVersitWriter::Error);
     QVersitWriter::Error error() const;
+    void setCanceling(bool cancelling);
+    bool isCanceling();
+
     void run();
 
     static QVersitDocumentWriter* writerForType(QVersitDocument::VersitType type);
@@ -94,8 +97,9 @@ public:
     QList<QVersitDocument> mInput;
     QVersitWriter::State mState;
     QVersitWriter::Error mError;
-    QTextCodec* mDefaultCodec;
+    bool mIsCanceling;
     mutable QMutex mMutex;
+    QTextCodec* mDefaultCodec;
 };
 
 QTM_END_NAMESPACE

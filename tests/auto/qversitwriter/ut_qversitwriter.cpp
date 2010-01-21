@@ -163,6 +163,21 @@ END:VCARD\r\n");
     QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitWriter::ActiveState);
     QCOMPARE(mSignalCatcher->mReceived.at(1), QVersitWriter::FinishedState);
 
+    // Cancelling
+    delete mOutputDevice;
+    mOutputDevice = new QBuffer;
+    mOutputDevice->open(QBuffer::ReadWrite);
+    mSignalCatcher->mReceived.clear();
+    mWriter->startWriting(list);
+    mWriter->cancel();
+    mWriter->waitForFinished();
+    QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
+    QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitWriter::ActiveState);
+    QVersitWriter::State state(mSignalCatcher->mReceived.at(1));
+    // It's possible that it finishes before it cancels.
+    QVERIFY(state == QVersitWriter::CanceledState
+            || state == QVersitWriter::FinishedState);
+
 }
 
 QTEST_MAIN(UT_QVersitWriter)

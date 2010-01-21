@@ -167,6 +167,14 @@ bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
 }
 
 /*!
+ * Attempts to asynchronously cancel the write request.
+ */
+void QVersitWriter::cancel()
+{
+    d->setCanceling(true);
+}
+
+/*!
  * If the state is ActiveState, blocks until the writer has finished writing or \a msec milliseconds
  * has elapsed, returning true if it successfully finishes or is cancelled by the user.
  * If the state is FinishedState, returns true immediately.

@@ -128,6 +128,8 @@ public: // New functions
     QVersitReader::State state() const;
     void setError(QVersitReader::Error);
     QVersitReader::Error error() const;
+    void setCanceling(bool cancelling);
+    bool isCanceling();
 
 protected: // From QThread
      void run();
@@ -139,6 +141,7 @@ public: // Data
     QTextCodec* mDefaultCodec;
     QVersitReader::State mState;
     QVersitReader::Error mError;
+    bool mIsCanceling;
     mutable QMutex mMutex;
 };
 

@@ -59,7 +59,8 @@ QVersitReaderPrivate::QVersitReaderPrivate()
     mDocumentNestingLevel(0),
     mDefaultCodec(QTextCodec::codecForName("ISO 8859-1")),
     mState(QVersitReader::InactiveState),
-    mError(QVersitReader::NoError)
+    mError(QVersitReader::NoError),
+    mIsCanceling(false)
 {
 }
     
@@ -78,10 +79,15 @@ void QVersitReaderPrivate::read()
     mVersitDocuments.clear();
     mMutex.unlock();
     QByteArray input = mIoDevice->readAll();
+    bool canceled = false;
 
     VersitCursor cursor(input);
     int oldPos = cursor.position;
-    do {
+    while(cursor.position < input.size()) {
+        if (isCanceling()) {
+            canceled = true;
+            break;
+        }
         QVersitDocument document;
         bool ok = parseVersitDocument(cursor, document);
 
@@ -100,8 +106,11 @@ void QVersitReaderPrivate::read()
         }
 
         oldPos = cursor.position;
-    } while(cursor.position < input.size());
-    setState(QVersitReader::FinishedState);
+    };
+    if (canceled)
+        setState(QVersitReader::CanceledState);
+    else
+        setState(QVersitReader::FinishedState);
 }
 
 /*!
@@ -398,6 +407,18 @@ QVersitReader::Error QVersitReaderPrivate::error() const
 {
     QMutexLocker locker(&mMutex);
     return mError;
+}
+
+void QVersitReaderPrivate::setCanceling(bool canceling)
+{
+    QMutexLocker locker(&mMutex);
+    mIsCanceling = canceling;
+}
+
+bool QVersitReaderPrivate::isCanceling()
+{
+    QMutexLocker locker(&mMutex);
+    return mIsCanceling;
 }
 
 #include "moc_qversitreader_p.cpp"

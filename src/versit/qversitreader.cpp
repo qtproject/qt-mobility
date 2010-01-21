@@ -164,9 +164,18 @@ bool QVersitReader::startReading()
     } else {
         d->setState(ActiveState);
         d->setError(NoError);
+        d->setCanceling(false);
         d->start();
         return true;
     }
+}
+
+/*!
+ * Attempts to asynchronously cancel the read request.
+ */
+void QVersitReader::cancel()
+{
+    d->setCanceling(true);
 }
 
 /*!

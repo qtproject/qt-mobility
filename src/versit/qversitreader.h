@@ -90,7 +90,7 @@ public:
 
     // reading:
     bool startReading();
-    // XXX void cancel();
+    void cancel();
     bool waitForFinished(int msec = -1);
 
     // output:
