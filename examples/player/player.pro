@@ -17,3 +17,9 @@ SOURCES = main.cpp \
     playercontrols.cpp \
     playlistmodel.cpp \
     videowidget.cpp
+
+
+
+symbian {
+        TARGET.CAPABILITY = UserEnvironment WriteDeviceData
+}
