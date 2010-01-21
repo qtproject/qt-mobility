@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -214,12 +213,12 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     QUrl url;
     if (m_session && !source.isNull()) {
         url = source.canonicalUrl();
-		if (m_session->isUrl() == false) {
-			m_session->load(url);	
-		} else {
-			m_session->loadUrl(url);
-		}
-		emit mediaChanged(m_currentResource);
+        if (m_session->isUrl() == false) {
+            m_session->load(url);	
+        } else {
+            m_session->loadUrl(url);
+        }
+        emit mediaChanged(m_currentResource);
     }
     else {
         emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
