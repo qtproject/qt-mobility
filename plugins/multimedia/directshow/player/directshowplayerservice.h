@@ -90,6 +90,7 @@ public:
 
     QMediaControl* control(const char *name) const;
 
+    int streamTypes() const { return m_streamTypes; }
     GraphStatus graphStatus() const { return m_graphStatus; }
 
     IFilterGraph2 *graph() { return m_graph; }
@@ -114,6 +115,9 @@ private Q_SLOTS:
     void graphEvent(HANDLE handle);
 
 private:
+    int findStreamTypes(IBaseFilter *source) const;
+    int findStreamType(IPin *pin) const;
+
     void removeOutput(IBaseFilter *output);
     IBaseFilter *findChainStart(IBaseFilter *end) const;
     bool isConnected(IBaseFilter *filter, PIN_DIRECTION direction) const;
@@ -137,6 +141,7 @@ private:
         SetSource       = SetUrlSource | SetStreamSource,
         SetAudioOutput  = 0x0008,
         SetVideoOutput  = 0x0010,
+        SetOutputs      = SetAudioOutput | SetVideoOutput,
         Render          = 0x0020,
         FinalizeLoad    = 0x0040,
         SetRate         = 0x0080,

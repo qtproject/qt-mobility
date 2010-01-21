@@ -185,7 +185,7 @@ int DirectShowPlayerControl::bufferStatus() const
 
 bool DirectShowPlayerControl::isVideoAvailable() const
 {
-    return false;
+    return m_service->streamTypes() & DirectShowPlayerService::AudioStream;
 }
 
 bool DirectShowPlayerControl::isSeekable() const

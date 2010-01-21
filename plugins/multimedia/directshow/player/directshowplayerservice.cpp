@@ -215,8 +215,6 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
             m_source = 0;
         }
 
-
-
         m_graph->RemoveFilter(m_audioOutput);
         m_graph->RemoveFilter(m_videoOutput);
 
@@ -227,6 +225,7 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
     m_resources = media.resources();
     m_stream = stream;
     m_duration = 0;
+    m_streamTypes = 0;
     m_executedTasks = 0;
 
     if (m_resources.isEmpty() && !stream) {
@@ -450,12 +449,94 @@ void DirectShowPlayerService::doFinalizeLoad(QMutexLocker *locker)
         }
     }
 
+    if ((m_executedTasks & SetOutputs) == SetOutputs) {
+        m_streamTypes = AudioStream | VideoStream;
+    } else {
+        m_streamTypes = findStreamTypes(m_source);
+    }
+
     m_executedTasks |= FinalizeLoad;
 
     m_graphStatus = Loaded;
 
     QCoreApplication::postEvent(m_playerControl, new QEvent(
             QEvent::Type(DirectShowPlayerControl::GraphStatusChanged)));
+}
+
+int DirectShowPlayerService::findStreamTypes(IBaseFilter *source) const
+{
+    QVarLengthArray<IBaseFilter *, 16> filters;
+    source->AddRef();
+    filters.append(source);
+
+    int streamTypes = 0;
+
+    while (!filters.isEmpty()) {
+        IEnumPins *pins = 0;
+        IBaseFilter *filter = filters[filters.size() - 1];
+        filters.removeLast();
+
+        if (SUCCEEDED(filter->EnumPins(&pins))) {
+            for (IPin *pin = 0; pins->Next(1, &pin, 0) == S_OK; pin->Release()) {
+                PIN_DIRECTION direction;
+                if (pin->QueryDirection(&direction) == S_OK && direction == PINDIR_OUTPUT) {
+                    AM_MEDIA_TYPE connectionType;
+                    if (SUCCEEDED(pin->ConnectionMediaType(&connectionType))) {
+                        IPin *peer = 0;
+
+                        if (connectionType.majortype == MEDIATYPE_Audio) {
+                            streamTypes |= AudioStream;
+                        } else if (connectionType.majortype == MEDIATYPE_Video) {
+                            streamTypes |= VideoStream;
+                        } else if (SUCCEEDED(pin->ConnectedTo(&peer))) {
+                            PIN_INFO peerInfo;
+                            if (SUCCEEDED(peer->QueryPinInfo(&peerInfo)))
+                                filters.append(peerInfo.pFilter);
+                            peer->Release();
+                        }
+                    } else {
+                        streamTypes |= findStreamType(pin);
+                    }
+                }
+            }
+        }
+        filter->Release();
+    }
+    return streamTypes;
+}
+
+int DirectShowPlayerService::findStreamType(IPin *pin) const
+{
+    IEnumMediaTypes *types;
+
+    if (SUCCEEDED(pin->EnumMediaTypes(&types))) {
+        bool video = false;
+        bool audio = false;
+        bool other = false;
+
+        for (AM_MEDIA_TYPE *type = 0;
+                types->Next(1, &type, 0) == S_OK;
+                DirectShowMediaType::deleteType(type)) {
+            if (type->majortype == MEDIATYPE_Audio)
+                audio = true;
+            else if (type->majortype == MEDIATYPE_Video)
+                video = true;
+            else
+                other = true;
+        }
+        types->Release();
+
+        if (other)
+            return 0;
+        else if (audio && !video)
+            return AudioStream;
+        else if (!audio && video)
+            return VideoStream;
+        else
+            return 0;
+    } else {
+        return 0;
+    }
 }
 
 void DirectShowPlayerService::play()
