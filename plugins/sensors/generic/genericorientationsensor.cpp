@@ -48,7 +48,7 @@ genericorientationsensor::genericorientationsensor(QSensor *sensor)
 {
     accelerometer = new QAccelerometer(this);
     accelerometer->setUpdatePolicy(QSensor::FrequentUpdates);
-    accelerometer->connect();
+    accelerometer->addFilter(this);
 
     setSupportedUpdatePolicies(QSensor::OnChangeUpdates);
     setReading<QOrientationReading>(&m_reading);

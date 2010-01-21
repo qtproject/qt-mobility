@@ -3,7 +3,7 @@ TEMPLATE = subdirs
 include(../../common.pri)
 
 device_plugin=0
-maemo {
+maemo5 {
     device_plugin=1
     SUBDIRS += n900
 }
