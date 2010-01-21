@@ -6,10 +6,7 @@ MOBILITY = contacts
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-               ../../src/contacts\
-               ../../src/contacts/filters \
-               ../../src/contacts/requests \
-               ../../src/contacts/details
+               ../../include
 
 QT += declarative
 QT += script
