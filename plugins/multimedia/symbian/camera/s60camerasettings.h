@@ -81,6 +81,15 @@ public:
     QCamera::FocusMode focusMode();
     QCamera::FocusModes supportedFocusModes();
     
+Q_SIGNALS:
+    void exposureLocked();
+    void flashReady(bool ready);
+    void apertureChanged(qreal aperture);
+    void apertureRangeChanged();
+    void shutterSpeedChanged(qreal speed);
+    void isoSensitivityChanged(int iso);
+    
+    
 protected: // from MCameraObserver2
     void HandleEvent(const TECAMEvent& aEvent);
     void ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError);

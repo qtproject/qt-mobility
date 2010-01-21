@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -208,16 +209,17 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     if (m_session) {
         m_session->stop();
     }
-    m_session = currentPlayerSession();
+    m_session = m_mediaPlayerResolver.PlayerSession();
 
     QUrl url;
     if (m_session && !source.isNull()) {
         url = source.canonicalUrl();
-        if (m_session->isUrl() == false) {
+        
+        if (m_session->mediaFileLocal())
             m_session->load(url);	
-        } else {
+        else
             m_session->loadUrl(url);
-        }
+            
         emit mediaChanged(m_currentResource);
     }
     else {
@@ -238,11 +240,6 @@ bool S60MediaPlayerControl::isVideoAvailable() const
     if (m_session)
         return m_session->isVideoAvailable();
     return false;
-}
-
-S60MediaPlayerSession* S60MediaPlayerControl::currentPlayerSession() 
-{
-    return m_mediaPlayerResolver.PlayerSession();   
 }
 
 const S60MediaSettings& S60MediaPlayerControl::mediaControlSettings() const

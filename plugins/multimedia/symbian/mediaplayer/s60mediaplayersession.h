@@ -65,50 +65,51 @@ public:
     S60MediaPlayerSession(QObject *parent);
     virtual ~S60MediaPlayerSession();
 
+    // for player control interface to use
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
-    
+    qint64 duration() const;
+    qint64 position() const;
+    void setPosition(qint64 pos);
     int volume() const;
+    void setVolume(int volume);
     bool isMuted() const;
-    
-    qreal playbackRate() const;   
+    void setMuted(bool muted);
+    virtual bool isVideoAvailable() const = 0;
+    bool isSeekable() const;
+    qreal playbackRate() const;
+    void setPlaybackRate(qreal rate);        
+    void play();
+    void pause();
+    void stop();
     
     bool isMetadataAvailable() const; 
     QVariant metaData(const QString &key) const;
     QMap<QString, QVariant> availableMetaData() const;
     
-    bool isSeekable() const;
-    virtual QMediaTimeRange availablePlaybackRange() const;
-
-    virtual qint64 duration() const = 0;
-    virtual qint64 position() const = 0;
-    virtual bool isVideoAvailable() const = 0;
+    void load(const QUrl &url);
+    void loadUrl(const QUrl &url);
     
-    virtual void load(const QUrl &url);
-    virtual void loadUrl(const QUrl &url);
-    virtual void play();
-    virtual void pause();
-    virtual void stop();
-    virtual void setVolume(int volume);
-    virtual void setPosition(qint64 pos);
-    virtual void setPlaybackRate(qreal rate);
-    virtual void setMuted(bool muted);
+    int mediaLoadingProgress();
+    
+    bool mediaFileLocal() const;
+    void setMediaFileLocal(bool localMediaFile);
+    
     virtual void setVideoRenderer(QObject *renderer);
-    
-    virtual bool isUrl() const;
-    virtual void setIsUrl(bool isUlr);
+
     
 protected:    
-    virtual void doLoad(const TDesC &path) = 0;
-    virtual void doLoadUrl(const TDesC &path) = 0;
+    virtual void doLoadL(const TDesC &path) = 0;
+    virtual void doLoadUrlL(const TDesC &path) = 0;
     virtual void doPlay() = 0;
     virtual void doStop() = 0;
-    virtual void doPause() = 0;
-    virtual void doSetVolume(int volume) = 0;
-    virtual void doSetPlaybackRate(qreal rate) = 0;
-    virtual void doSetPosition(qint64 microSeconds) = 0;
-    virtual void updateMetaDataEntries() = 0;
-    virtual int mediaLoadingProgress() const = 0;
+    virtual void doPauseL() = 0;
+    virtual void doSetVolumeL(int volume) = 0;
+    virtual void doSetPositionL(qint64 microSeconds) = 0;
+    virtual qint64 doGetPositionL() const = 0;
+    virtual void updateMetaDataEntriesL() = 0;
+    virtual int doGetMediaLoadingProgressL() const = 0;
+    virtual int doGetDurationL() const = 0;
 
 protected:
     void setError(int error,  const QString &errorString = QString());
@@ -117,11 +118,10 @@ protected:
     void setMediaStatus(QMediaPlayer::MediaStatus);
     void setState(QMediaPlayer::State state);
     QMap<QString, QVariant>& metaDataEntries();
+    QMediaPlayer::Error fromSymbianErrorToMultimediaError(int error);
     
 protected slots:
     void tick();
-    bool startTimer();
-    void stopTimer();
     
 signals:
     void durationChanged(qint64 duration);
@@ -139,15 +139,16 @@ signals:
     void error(int error, const QString &errorString);
 
 private:
-    QMap<QString, QVariant> m_metaDataMap;
     qreal m_playbackRate;
+    QMap<QString, QVariant> m_metaDataMap;
     bool m_muted;
     int m_volume;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
     QTimer *m_timer;
     int m_error;    
-    bool m_isUrl;
+    bool m_localMediaFile;
+    bool m_play_requested;
 };
 
 #endif

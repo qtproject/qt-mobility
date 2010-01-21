@@ -65,22 +65,22 @@ public:
     S60AudioPlayerSession(QObject *parent);
     ~S60AudioPlayerSession();
     
-    qint64 duration() const;
-    qint64 position() const;
+    //From S60MediaPlayerSession
     bool isVideoAvailable() const;
     
-    int mediaLoadingProgress() const { return 0; }
-    
 protected:
-    void doLoad(const TDesC &path);
-    void doLoadUrl(const TDesC &path) {};
+    //From S60MediaPlayerSession
+    void doLoadL(const TDesC &path);
+    void doLoadUrlL(const TDesC &path){Q_UNUSED(path)/*empty implementation*/}
     void doPlay();
     void doStop();
-    void doPause();
-    void doSetVolume(int volume);
-    void doSetPlaybackRate(qreal rate);
-    void doSetPosition(qint64 microSeconds);
-    void updateMetaDataEntries();
+    void doPauseL();
+    void doSetVolumeL(int volume);
+    qint64 doGetPositionL() const;
+    void doSetPositionL(qint64 microSeconds);
+    void updateMetaDataEntriesL();
+    int doGetMediaLoadingProgressL() const { /*empty implementation*/ return 0; }
+    int doGetDurationL() const;
     
 private:
 #ifdef S60_DRM_SUPPORTED    

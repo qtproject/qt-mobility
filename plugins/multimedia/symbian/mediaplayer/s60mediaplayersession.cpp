@@ -45,19 +45,21 @@
 #include <QtCore/qdir.h>
 #include <QtCore/qvariant.h>
 #include <QtCore/qtimer.h>
+#include <QtCore/private/qcore_symbian_p.h>
 #include <mmf/common/mmferrors.h>
 #include <qmediatimerange.h>
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent)
-    , m_playbackRate(1.0)
+    , m_playbackRate(0)
     , m_muted(false)
     , m_volume(0)
     , m_state(QMediaPlayer::StoppedState)
     , m_mediaStatus(QMediaPlayer::NoMedia)
     , m_timer(new QTimer(this))
     , m_error(KErrNone)
-    , m_isUrl(false)
+    , m_localMediaFile(true)
+    , m_play_requested(false)
 {    
     connect(m_timer, SIGNAL(timeout()), this, SLOT(tick()));
 }
@@ -73,10 +75,14 @@ int S60MediaPlayerSession::volume() const
 
 void S60MediaPlayerSession::setVolume(int volume)
 {
+    if (m_volume == volume)
+        return;
+    
     m_volume = volume;
 
     if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
-        doSetVolume(m_volume);
+        TRAPD(err, doSetVolumeL(m_volume));
+        setError(err);
     }
 }
 
@@ -94,18 +100,21 @@ bool S60MediaPlayerSession::isSeekable() const
 
 void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
 {
-    if (m_mediaStatus != status) {
-        m_mediaStatus = status;
-        emit mediaStatusChanged(status);
-    }
+    if (m_mediaStatus == status)
+        return;
+    
+    emit mediaStatusChanged(status);
+    if (m_play_requested)
+        play();
 }
 
 void S60MediaPlayerSession::setState(QMediaPlayer::State state)
 {
-    if (m_state != state) {
-        m_state = state;
-        emit stateChanged(state);
-    }
+    if (m_state == state)
+        return;
+    
+    m_state = state;
+    emit stateChanged(state);
 }
 
 QMediaPlayer::State S60MediaPlayerSession::state() const 
@@ -120,44 +129,51 @@ QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const
 
 void S60MediaPlayerSession::load(const QUrl &url)
 {
-    QString filePath = QDir::toNativeSeparators(url.toLocalFile());   
-    if (mediaStatus() != QMediaPlayer::LoadingMedia) {
-        setMediaStatus(QMediaPlayer::LoadingMedia);
-        TPtrC str(reinterpret_cast<const TUint16*>(filePath.utf16()));
-        doLoad(str);
-    }
+    m_localMediaFile = true;
+    doStop();
+    setMediaStatus(QMediaPlayer::LoadingMedia);
+    TRAPD(err, doLoadL(qt_QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));
+    setError(err);
 }
 
 void S60MediaPlayerSession::loadUrl(const QUrl &url)
 {
-	QString filePath = url.toString();
-	if (mediaStatus() != QMediaPlayer::LoadingMedia) {
-		setMediaStatus(QMediaPlayer::LoadingMedia);
-		TPtrC str(reinterpret_cast<const TUint16*>(filePath.utf16()));
-		doLoadUrl(str);
-	}
+    m_localMediaFile = false;
+    doStop();
+    setMediaStatus(QMediaPlayer::LoadingMedia);
+    TRAPD(err, doLoadUrlL(qt_QString2TPtrC(url.toString())));
+    setError(err);
 }
 
 void S60MediaPlayerSession::play()
 {
-    if (state() != QMediaPlayer::PlayingState && mediaStatus() != QMediaPlayer::LoadingMedia) {
-        startTimer();
-        doPlay();
-        setState(QMediaPlayer::PlayingState);
+    if (state() == QMediaPlayer::PlayingState)
+        return;
+    
+    if (mediaStatus() != QMediaPlayer::LoadedMedia) {
+        m_play_requested = true;
+        return;
     }
+    
+    m_play_requested = false;
+    setState(QMediaPlayer::PlayingState);
+    m_timer->start(1000);
+    doPlay();
 }
 
 void S60MediaPlayerSession::pause()
 {
-    doPause();
-    stopTimer();
+    m_timer->stop();
     setState(QMediaPlayer::PausedState);
+    TRAPD(err, doPauseL());
+    setError(err);
 }
 
 void S60MediaPlayerSession::stop()
 {
+    setState(QMediaPlayer::StoppedState);
+    m_timer->stop();
     doStop();
-    playComplete();
 }
 
 void S60MediaPlayerSession::setVideoRenderer(QObject *renderer)
@@ -165,14 +181,17 @@ void S60MediaPlayerSession::setVideoRenderer(QObject *renderer)
     Q_UNUSED(renderer);   
 }
 
-QMediaTimeRange S60MediaPlayerSession::availablePlaybackRange() const
+int S60MediaPlayerSession::mediaLoadingProgress()
 {
-    return QMediaTimeRange();
+    int progress = 0;
+    TRAPD(err, progress = doGetMediaLoadingProgressL());
+    setError(err);
+    return progress;
 }
 
 bool S60MediaPlayerSession::isMetadataAvailable() const
 {
-    return (!m_metaDataMap.isEmpty());    
+    return !m_metaDataMap.isEmpty();    
 }
 
 QVariant S60MediaPlayerSession::metaData(const QString &key) const
@@ -192,13 +211,15 @@ qreal S60MediaPlayerSession::playbackRate() const
 
 void S60MediaPlayerSession::setMuted(bool muted)
 {
-    if (m_muted != muted) {   
-        m_muted = muted;
-        emit mutingChanged(m_muted);
-    }
+    if (m_muted == muted)
+        return;
     
-    if (isMuted() == true) {
-        doSetVolume(0);
+    m_muted = muted;
+    emit mutingChanged(m_muted);
+    
+    if (isMuted()) {
+        TRAPD(err, doSetVolumeL(0));
+        setError(err);
     } else {
         setVolume(volume());
     }
@@ -206,36 +227,53 @@ void S60MediaPlayerSession::setMuted(bool muted)
 
 void S60MediaPlayerSession::setPlaybackRate(qreal rate)
 {
-    if (m_playbackRate != rate) {
-        m_playbackRate = rate;
-        doSetPlaybackRate(m_playbackRate);
-        emit playbackRateChanged(m_playbackRate);
-    }
+    if (m_playbackRate == rate)
+        return;
+    
+    m_playbackRate = rate;
+    emit playbackRateChanged(m_playbackRate);
+    //None of symbian players supports this.
 }
 
+qint64 S60MediaPlayerSession::duration() const
+{
+    qint64 pos = 0;
+    //Cannot seterror since const, error ignored
+    TRAP_IGNORE(pos = doGetDurationL());
+    return pos;
+}
+
+qint64 S60MediaPlayerSession::position() const
+{
+    qint64 pos = 0;
+    //Cannot seterror since const, error ignored
+    TRAP_IGNORE(pos = doGetPositionL());
+    return pos;
+}
 
 void S60MediaPlayerSession::setPosition(qint64 pos)
 {
-    if (pos == position())
+    if (position() == pos)
         return;
-
+    
     if (state() == QMediaPlayer::PlayingState) 
-        doPause();
+        pause();
 
-    doSetPosition(pos * 1000);
+    TRAPD(err, doSetPositionL(pos * 1000));
+    setError(err);
 
-    if (state() == QMediaPlayer::PlayingState)
-        doPlay();
+    if (state() == QMediaPlayer::PausedState)
+        play();
 
     emit positionChanged(position());
-
 }
 
 void S60MediaPlayerSession::initComplete()
 {
-    if (m_error == KErrNone || KErrMMPartialPlayback ) {
+    if (m_error == KErrNone) {
         setMediaStatus(QMediaPlayer::LoadedMedia);
-        updateMetaDataEntries();
+        TRAPD(err, updateMetaDataEntriesL());
+        setError(err);
         setVolume(volume());
         emit durationChanged(duration());
     } else {
@@ -248,7 +286,6 @@ void S60MediaPlayerSession::playComplete()
     setMediaStatus(QMediaPlayer::EndOfMedia);
     setState(QMediaPlayer::StoppedState);
     emit positionChanged(0);
-    stopTimer();
 }
 
 QMap<QString, QVariant>& S60MediaPlayerSession::metaDataEntries()
@@ -256,41 +293,96 @@ QMap<QString, QVariant>& S60MediaPlayerSession::metaDataEntries()
     return m_metaDataMap;
 }
 
+QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int error)
+{
+    switch(error) {
+        case KErrNoMemory:
+        case KErrNotFound:
+        case KErrBadHandle:
+        case KErrMMAudioDevice:
+        case KErrMMVideoDevice:
+            return QMediaPlayer::ResourceError;
+            
+        case KErrMMDecoder:
+        case KErrNotSupported:
+        case KErrCorrupt:
+            return QMediaPlayer::FormatError;
+            
+        case KErrMMNotEnoughBandwidth:
+        case KErrMMSocketServiceNotFound:
+        case KErrMMNetworkRead:
+        case KErrMMNetworkWrite:
+        case KErrMMServerSocket:
+        case KErrMMServerNotSupported:
+        case KErrMMUDPReceive:
+        case KErrMMInvalidProtocol:
+        case KErrMMInvalidURL:
+        case KErrMMMulticast:
+        case KErrMMProxyServer:
+        case KErrMMProxyServerNotSupported:
+        case KErrMMProxyServerConnect:
+            return QMediaPlayer::NetworkError;
+            
+        case KErrNotReady:
+        case KErrInUse:
+        case KErrAccessDenied:
+        case KErrLocked:
+        case KErrMMDRMNotAuthorized:
+        case KErrPermissionDenied:
+            return QMediaPlayer::AccessDeniedError;
+            
+        case KErrMMPartialPlayback:            
+        default:
+            return QMediaPlayer::NoError;
+    }
+}
+
 void S60MediaPlayerSession::setError(int error, const QString &errorString)
 {
+    if (error == KErrNone || error == KErrMMPartialPlayback)
+        return;
+    
     m_error = error;
+    QMediaPlayer::Error mediaError = fromSymbianErrorToMultimediaError(m_error);
+    
+    // TODO: fix to user friendly string at some point
+    // These error string are only dev usable
+    QString symbianError = QString(errorString); 
+    symbianError.append("From Symbian:");
+    symbianError.append(QString(m_error));
+    emit this->error(mediaError, symbianError);
+    
+    switch(mediaError){
+        case QMediaPlayer::FormatError:
+            setMediaStatus(QMediaPlayer::InvalidMedia);
+            break;
+        case QMediaPlayer::ResourceError:
+        case QMediaPlayer::NetworkError:
+        case QMediaPlayer::AccessDeniedError:
+        case QMediaPlayer::ServiceMissingError:
+            setMediaStatus(QMediaPlayer::NoMedia);
+            break;
+        default:
+            break;
+    }
 }
 
 void S60MediaPlayerSession::tick()
 {
     emit positionChanged(position());
     
-    if (isUrl() == true && mediaLoadingProgress() != 100)
+    if (mediaFileLocal() && mediaLoadingProgress() != 100)
     	emit bufferStatusChanged(mediaLoadingProgress());
 }
 
-bool S60MediaPlayerSession::startTimer()
+bool S60MediaPlayerSession::mediaFileLocal() const
 {
-    if (!m_timer->isActive()) {
-        m_timer->start(1000);
-        return true;
-    }
-    return false;
+    return m_localMediaFile; 
 }
-
-void S60MediaPlayerSession::stopTimer()
+void S60MediaPlayerSession::setMediaFileLocal(bool localMediaFile)
 {
-    if (m_timer->isActive()) {
-        m_timer->stop();
-    }
-}
-
-bool S60MediaPlayerSession::isUrl() const
-{
-	return m_isUrl;
-}
-
-void S60MediaPlayerSession::setIsUrl(bool isUrl)
-{
-	m_isUrl = isUrl;
+    if (m_localMediaFile == localMediaFile)
+        return;
+    
+    m_localMediaFile = localMediaFile;
 }
