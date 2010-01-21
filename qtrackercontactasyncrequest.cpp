@@ -223,8 +223,15 @@ RDFSelect prepareIMContactsQuery(RDFVariable &imaccount)
     queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imContactStatusMessage> ());
     queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imContactNickname> ());
     queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::fromIMAccount> ());
-   //queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
-
+    //queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
+    RDFVariable counter  = queryidsimacccounts.newColumn("hasAudio");
+    {
+        RDFSubSelect inner;
+        RDFVariable ifrom = inner.newColumnAs(imaccount);
+        inner.addColumn("caps", ifrom.property<nco::imContactCapability>());
+        inner.newCountColumnAs(counter);
+        inner.groupBy(ifrom);
+    }
     queryidsimacccounts.addColumn("metacontact", imaccount.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
 }
@@ -862,7 +869,16 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
     account.setValue("Account", imAccountQuery->index(queryRow, 1).data().toString()); // IMId
     if (!imAccountQuery->index(queryRow, 5).data().toString().isEmpty())
         account.setValue(FieldAccountPath, imAccountQuery->index(queryRow, 5).data().toString()); // getImAccountType?
-   // account.setValue("Capabilities", imAccountQuery->index(queryRow, 6).data().toString()); // getImAccountType?
+    int capCount = imAccountQuery->index(queryRow, 6).data().toInt();
+    QStringList caps;
+    caps.append("im-capability-text-chat");
+    //FIXME
+    // Once #153757 get resolved try to save the exact cap. until then using the caps count
+    if (capCount >= 2) {
+        caps.append("nco:im-capability-audio-calls");
+    }
+    
+    account.setValue("Capabilities", caps); // getImAccountType?
     account.setNickname(imAccountQuery->index(queryRow, 4).data().toString()); // nick
 
     QString presence = imAccountQuery->index(queryRow, 2).data().toString(); // imPresence iri
@@ -871,6 +887,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
 
     account.setStatusMessage(imAccountQuery->index(queryRow, 3).data().toString()); // imStatusMessage
     qDebug()<<  imAccountQuery->index(queryRow, 4).data().toString();
+    qDebug() << caps;
     return account;
 }
 
@@ -898,7 +915,7 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
             QContactId id; id.setLocalId(contactid);
             contact.setId(id);
             contact.saveDetail(&account);
-            QString metacontact = queryIMContacts->index(i, 6).data().toString(); // \sa prepareIMContactsQuery()
+            QString metacontact = queryIMContacts->index(i, 7).data().toString(); // \sa prepareIMContactsQuery()
             addContactToResultSet(contact, metacontact);
         }
     }
