@@ -209,30 +209,29 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
     return queryidsnumbers;
 }
 
-RDFSelect prepareIMContactsQuery(RDFVariable &imaccount)
+RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
 {
     //::tracker()->setVerbosity(4);
 
-    //RDFVariable imaccount = rdfcontact1.fromType<nco::IMContact> ();
     // columns
     RDFSelect queryidsimacccounts;
-    queryidsimacccounts.addColumn("contactId", imaccount.property<nco::contactUID> ());
+    queryidsimacccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
 
-    queryidsimacccounts.addColumn("IMId", imaccount.property<nco::imContactId> ());
-    queryidsimacccounts.addColumn("status", imaccount.optional().property<nco::imContactPresence> ());
-    queryidsimacccounts.addColumn("message", imaccount.optional().property<nco::imContactStatusMessage> ());
-    queryidsimacccounts.addColumn("nick", imaccount.optional().property<nco::imContactNickname> ());
-    queryidsimacccounts.addColumn("type", imaccount.optional().property<nco::fromIMAccount> ());
-    //queryidsimacccounts.addColumn("comment", imaccount.optional().property<nco::contactMediumComment>());
+    queryidsimacccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
+    queryidsimacccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
+    queryidsimacccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
+    queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
+    
     RDFVariable counter  = queryidsimacccounts.newColumn("hasAudio");
     {
         RDFSubSelect inner;
-        RDFVariable ifrom = inner.newColumnAs(imaccount);
+        RDFVariable ifrom = inner.newColumnAs(imcontact);
         inner.addColumn("caps", ifrom.property<nco::imContactCapability>());
         inner.newCountColumnAs(counter);
         inner.groupBy(ifrom);
     }
-    queryidsimacccounts.addColumn("metacontact", imaccount.optional().property<nco::metacontact> ());
+    queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
 }
 
