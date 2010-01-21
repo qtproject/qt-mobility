@@ -53,7 +53,6 @@
 #include <qvideowidget.h>
 #include "mediakeysobserver.h"
 
-
 class QAbstractItemView;
 class QLabel;
 class QModelIndex;
@@ -76,7 +75,7 @@ public:
     S60Player(QMainWindow *parent = 0);
     ~S60Player();
     
-    void createMenu();
+    void createMenu();    
 
 Q_SIGNALS:
     void fullScreenChanged(bool fullScreen);
@@ -103,8 +102,9 @@ private slots:
     void launchYoutubeDialog();
 
 private:
+    void setVisibleWidget();
     void setTrackInfo(const QString &info);
-    void setStatusInfo(const QString &info);
+    void setStatusInfo(const QString &info);    
 
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
@@ -116,7 +116,7 @@ private:
     QString statusInfo;
     QMenu *rateMenu;
     QSignalMapper *signalMapper;	
-    MediaKeysObserver *mediaKeysObserver;
+    MediaKeysObserver *mediaKeysObserver; 
 };
 
 class YoutubeDialog : public QDialog
