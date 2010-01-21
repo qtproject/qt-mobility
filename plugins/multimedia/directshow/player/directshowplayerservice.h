@@ -78,6 +78,12 @@ public:
         InvalidMedia
     };
 
+    enum StreamType
+    {
+        AudioStream = 0x01,
+        VideoStream = 0x02
+    };
+
     DirectShowPlayerService(QObject *parent = 0);
     ~DirectShowPlayerService();
 
@@ -151,6 +157,7 @@ private:
     IBaseFilter *m_source;
     IBaseFilter *m_audioOutput;
     IBaseFilter *m_videoOutput;
+    int m_streamTypes;
     qreal m_rate;
     qint64 m_position;
     qint64 m_duration;
