@@ -61,11 +61,15 @@ public:
     void start();
     void stop();
     QCamera::State state() const;
+    QCamera::CaptureMode captureMode() const;
+    void setCaptureMode(QCamera::CaptureMode);
+    QCamera::CaptureModes supportedCaptureModes() const;
     
     void setVideoOutput(QObject *output);
 
 private:
     S60CameraSession *m_session;
+    QCamera::CaptureMode m_captureMode;
 };
 
 #endif

@@ -9,8 +9,6 @@ DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 INCLUDEPATH += .
 DEPENDPATH += .
 
-PUBLIC_HEADERS +=
-
 PUBLIC_HEADERS += qgeocoordinate.h \
                   qgeopositioninfo.h \
                   qgeosatelliteinfo.h \
@@ -86,18 +84,10 @@ symbian {
         LIBS += -llbt
     }
 
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    
-    #export headers into EPOCROOT
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-
     QtLocationDeployment.sources = QtLocation.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

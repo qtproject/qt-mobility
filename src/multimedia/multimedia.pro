@@ -61,7 +61,8 @@ PUBLIC_HEADERS += \
     qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
-    qvideorenderercontrol.h
+    qvideorenderercontrol.h \
+    qmediatimerange.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -100,7 +101,8 @@ SOURCES += qmediacontrol.cpp \
     qmediapluginloader.cpp \
     qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
-    qvideorenderercontrol.cpp
+    qvideorenderercontrol.cpp \
+    qmediatimerange.cpp
 
 contains(QT_CONFIG, declarative) {
    QT += declarative
@@ -118,14 +120,7 @@ symbian {
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2002AC77
     TARGET.CAPABILITY = ALL -TCB
-
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

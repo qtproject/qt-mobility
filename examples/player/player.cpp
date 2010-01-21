@@ -150,6 +150,13 @@ Player::Player(QWidget *parent)
     setLayout(layout);
 
     metaDataChanged();
+
+    QStringList fileNames = qApp->arguments();
+    fileNames.removeAt(0);
+    foreach (QString const &fileName, fileNames) {
+        if (QFileInfo(fileName).exists())
+            playlist->addMedia(QUrl::fromLocalFile(fileName));
+    }
 }
 
 Player::~Player()
@@ -197,6 +204,7 @@ void Player::jump(const QModelIndex &index)
 {
     if (index.isValid()) {
         playlist->setCurrentIndex(index.row());
+        player->play();
     }
 }
 

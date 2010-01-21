@@ -1,5 +1,6 @@
 TARGET = tst_qmediaplayer
-INCLUDEPATH += ../../../../include
+INCLUDEPATH += ../../../../src/multimedia \
+               ../../../../include 
 CONFIG += testcase
 
 QT += testlib

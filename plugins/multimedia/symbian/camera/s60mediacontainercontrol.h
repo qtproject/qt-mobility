@@ -44,6 +44,7 @@
 
 #include "QMediaContainerControl"
 #include <QtCore/qstringlist.h>
+#include <QMap>
 
 QTM_USE_NAMESPACE
 
@@ -57,18 +58,18 @@ public:
     S60MediaContainerControl(QObject *session, QObject *parent = 0);
     virtual ~S60MediaContainerControl() {};
 
-    virtual QStringList supportedContainers() const { return m_supportedFormats; }
-    virtual QString containerMimeType() const { return m_format; }
-    virtual void setContainerMimeType(const QString &formatMimeType) { m_format = formatMimeType; }
+    QStringList supportedContainers() const;
+    QString containerMimeType() const;
+    void setContainerMimeType(const QString &containerMimeType);
 
-    virtual QString containerDescription(const QString &formatMimeType) const { return m_formatDescriptions.value(formatMimeType); }
+    QString containerDescription(const QString &containerMimeType) const;
 
 private:
     S60CameraSession* m_session;
 
-    QString m_format;
-    QStringList m_supportedFormats;
-    QMap<QString, QString> m_formatDescriptions;
+    QString m_containerMimeType;
+    QStringList m_supportedContainers;
+    QMap<QString, QString> m_containerDescriptions;
 };
 
 #endif // S60MEDIAFORMATCONTROL_H

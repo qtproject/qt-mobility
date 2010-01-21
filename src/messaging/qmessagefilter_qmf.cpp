@@ -52,10 +52,10 @@ QTM_BEGIN_NAMESPACE
 class QMessageFilterPrivate
 {
 public:
-    QMessageFilterPrivate() : _key(), _options(0) {}
+    QMessageFilterPrivate() : _key(), _matchFlags(0) {}
 
     QMailMessageKey _key;
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
 
     //static QMessageFilter convert(const QMailMessageKey &key);
     static QMailMessageKey convert(const QMessageFilter &key);
@@ -126,20 +126,20 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
-        d_ptr->_options = other.d_ptr->_options;
+        d_ptr->_matchFlags = other.d_ptr->_matchFlags;
     }
 
     return *this;
 }
 
-void QMessageFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
 }
 
-QMessageDataComparator::Options QMessageFilter::options() const
+QMessageDataComparator::MatchFlags QMessageFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageFilter::isEmpty() const
@@ -149,7 +149,7 @@ bool QMessageFilter::isEmpty() const
 
 bool QMessageFilter::isSupported() const
 {
-    return !d_ptr->_options;
+    return !d_ptr->_matchFlags;
 }
 
 QMessageFilter QMessageFilter::operator~() const
@@ -163,7 +163,7 @@ QMessageFilter QMessageFilter::operator&(const QMessageFilter& other) const
 {
     QMessageFilter result;
     result.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
-    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
+    result.d_ptr->_matchFlags = d_ptr->_matchFlags | other.d_ptr->_matchFlags; // matchFlags not supported
     return result;
 }
 
@@ -171,28 +171,28 @@ QMessageFilter QMessageFilter::operator|(const QMessageFilter& other) const
 {
     QMessageFilter result;
     result.d_ptr->_key = d_ptr->_key | other.d_ptr->_key;
-    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
+    result.d_ptr->_matchFlags = d_ptr->_matchFlags | other.d_ptr->_matchFlags; // matchFlags not supported
     return result;
 }
 
 const QMessageFilter& QMessageFilter::operator&=(const QMessageFilter& other)
 {
     d_ptr->_key &= other.d_ptr->_key;
-    d_ptr->_options |= other.d_ptr->_options; // options not supported
+    d_ptr->_matchFlags |= other.d_ptr->_matchFlags; // matchFlags not supported
     return *this;
 }
 
 const QMessageFilter& QMessageFilter::operator|=(const QMessageFilter& other)
 {
     d_ptr->_key |= other.d_ptr->_key;
-    d_ptr->_options |= other.d_ptr->_options; // options not supported
+    d_ptr->_matchFlags |= other.d_ptr->_matchFlags; // matchFlags not supported
     return *this;
 }
 
 bool QMessageFilter::operator==(const QMessageFilter& other) const
 {
     return ((d_ptr->_key == other.d_ptr->_key)
-            && (d_ptr->_options == other.d_ptr->_options));
+            && (d_ptr->_matchFlags == other.d_ptr->_matchFlags));
 }
 
 QMessageFilter QMessageFilter::byId(const QMessageId &id, QMessageDataComparator::EqualityComparator cmp)
@@ -376,8 +376,8 @@ QMessageFilter QMessageFilter::byParentAccountId(const QMessageAccountFilter &fi
 QMessageFilter QMessageFilter::byStandardFolder(QMessage::StandardFolder folder, QMessageDataComparator::EqualityComparator cmp)
 {
     QMessageFilter result;
-    QMessageStore *instance = QMessageStore::instance(); // Initialize standard folders
-    Q_UNUSED(instance)
+    QMessageManager mgr; // Ensure standard folders are initialized
+    Q_UNUSED(mgr)
 
     QMailDataComparator::InclusionComparator comparator(cmp == QMessageDataComparator::Equal ? QMailDataComparator::Includes : QMailDataComparator::Excludes); 
 

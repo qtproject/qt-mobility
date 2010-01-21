@@ -61,14 +61,7 @@ symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
         -TCB
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders
-    
-    # This is for new exporting system coming in garden
-    for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
 
+CONFIG += app
 include(../../features/deploy.pri)
-

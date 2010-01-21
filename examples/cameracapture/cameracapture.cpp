@@ -48,12 +48,15 @@
 #include <experimental/qcamera.h>
 #include <qvideowidget.h>
 
+#include <qmessagebox.h>
+
 #include <QtGui>
 
 CameraCapture::CameraCapture(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CameraCapture),
     camera(0),
+    imageCapture(0),
     mediaRecorder(0),
     audioSource(0),
     videoWidget(0)
@@ -99,19 +102,25 @@ CameraCapture::~CameraCapture()
 
 void CameraCapture::setCamera(const QByteArray &cameraDevice)
 {
+    delete imageCapture;
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
+    
+    qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
     if (cameraDevice.isEmpty())
         camera = new QCamera;
-    else
+    else       
         camera = new QCamera(cameraDevice);
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
     connect(camera, SIGNAL(focusLocked()), this, SLOT(focusLocked()));
+    connect(camera, SIGNAL(zoomValueChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
 
     mediaRecorder = new QMediaRecorder(camera);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
+
+    imageCapture = new QStillImageCapture(camera);
 
     audioSource = new QAudioCaptureSource(camera);
     connect(audioSource, SIGNAL(availableAudioInputsChanged()), SLOT(updateAudioDevices()));
@@ -131,8 +140,8 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     updateRecorderState(mediaRecorder->state());
     updateAudioDevices();
 
-    connect(camera, SIGNAL(readyForCaptureChanged(bool)), ui->imageCaptureBox, SLOT(setEnabled(bool)));
-    connect(camera, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
+    connect(imageCapture, SIGNAL(readyForCaptureChanged(bool)), ui->imageCaptureBox, SLOT(setEnabled(bool)));
+    connect(imageCapture, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
 
 }
 
@@ -214,16 +223,17 @@ void CameraCapture::takeImage()
         lastImage = qMax(lastImage, imgNumber);
     }
 
-    camera->capture(QString("img_%1.jpg").arg(lastImage+1,
-                                              4, //fieldWidth
-                                              10,
-                                              QLatin1Char('0')));
+    imageCapture->capture(QString("img_%1.jpg").arg(lastImage+1,
+                                                    4, //fieldWidth
+                                                    10,
+                                                    QLatin1Char('0')));
 }
 
 void CameraCapture::toggleCamera()
 {
-    if (camera->state() == QCamera::ActiveState)
+    if (camera->state() == QCamera::ActiveState){
         camera->stop();
+    }
     else
         camera->start();
 }
@@ -234,7 +244,7 @@ void CameraCapture::updateCameraState(QCamera::State state)
     if (state == QCamera::ActiveState) {
         ui->actionCamera->setEnabled(false);
         ui->actionAudio->setEnabled(false);
-        ui->actionSettings->setEnabled(false);
+        ui->actionSettings->setEnabled(true);
 
         ui->startCameraButton->setText(tr("Stop Camera"));
         ui->startCameraButton->setChecked(true);
@@ -288,6 +298,8 @@ void CameraCapture::displayErrorMessage()
 
 void CameraCapture::updateCameraDevice(QAction *action)
 {
+    qDebug() << "CameraCapture::updateCameraDevice(), action="<<action;
+    qDebug() << "CameraCapture::updateCameraDevice(), device="<<action->data().toByteArray();
     setCamera(action->data().toByteArray());
 }
 
@@ -295,7 +307,12 @@ void CameraCapture::updateAudioDevice(QAction *action)
 {
     audioSource->setAudioInput(action->data().toString());
 }
+
 void CameraCapture::focusLocked()
 {
     qDebug() << "CameraCapture focus locked";
+}
+void CameraCapture::zoomValueChanged(qreal value)
+{
+	qDebug() << "CameraCapture zoom value changed to: " << value;
 }

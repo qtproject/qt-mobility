@@ -57,6 +57,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_mediaStatus(QMediaPlayer::UnknownMediaStatus),
      m_busHelper(0),
      m_playbin(0),
+     m_nullVideoOutput(0),
      m_bus(0),
      m_renderer(0),
      m_volume(100),
@@ -85,6 +86,9 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         m_busHelper = new QGstreamerBusHelper(m_bus, this);
         connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
         m_busHelper->installSyncEventFilter(this);
+
+        m_nullVideoOutput = gst_element_factory_make("fakesink", NULL);
+        g_object_set(G_OBJECT(m_playbin), "video-sink", m_nullVideoOutput, NULL);
 
         // Initial volume
         double volume = 1.0;
@@ -233,7 +237,7 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
     if (m_renderer)
         g_object_set(G_OBJECT(m_playbin), "video-sink", m_renderer->videoSink(), NULL);
     else
-        g_object_set(G_OBJECT(m_playbin), "video-sink", 0, NULL);
+        g_object_set(G_OBJECT(m_playbin), "video-sink", m_nullVideoOutput, NULL);
 }
 
 bool QGstreamerPlayerSession::isVideoAvailable() const
@@ -279,7 +283,7 @@ void QGstreamerPlayerSession::stop()
 
 void QGstreamerPlayerSession::seek(qint64 ms)
 {
-    if (m_playbin) {
+    if (m_playbin && m_state != QMediaPlayer::StoppedState) {
         gint64  position = (gint64)ms * 1000000;
         gst_element_seek_simple(m_playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH, position);
     }

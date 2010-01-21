@@ -7,6 +7,7 @@ include(../../common.pri)
 DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 
 PUBLIC_HEADERS += \
+            qservice.h \
             qservicemanager.h \
             qserviceplugininterface.h \
             qservicecontext.h \
@@ -36,14 +37,7 @@ symbian {
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC84
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
     
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-
     libBlock = \
         "$${LITERAL_HASH}ifdef WINSCW" \
         "LIBRARY SFWDatabaseManagerServer.lib" \
@@ -67,4 +61,5 @@ symbian {
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+CONFIG += middleware
 include(../../features/deploy.pri)

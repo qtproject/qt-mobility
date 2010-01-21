@@ -53,6 +53,7 @@
 <p>Each relationship is uniquely identified by the combination of the first contact id, second contact id, and the relationship type.</p>
 <p>A relationship should not contain a second contact which is the same as the first contact. Any local contacts which are referenced in the relationship (that is, any source contact, or any second contact whose manager URI is left empty or whose manager URI references the manager that stores the source contact, and in which the relationship will be saved) should exist.</p>
 <p>If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship in a <a href="qcontactmanager.html">QContactManager</a>.</p>
+<p>See also <a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactRelationship/QContactRelationship"></a>
@@ -68,7 +69,7 @@
 <p>Returns the id of the locally-stored contact which has a relationship of the given type with the second contact</p>
 <p>See also <a href="qcontactrelationship.html#relationshipType">relationshipType</a>(), <a href="qcontactrelationship.html#second">second</a>(), and <a href="qcontactrelationship.html#setFirst">setFirst</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationship/relationshipType"></a>
-<h3 class="fn"><a name="relationshipType"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactRelationship::relationshipType () const</h3>
+<h3 class="fn"><a name="relationshipType"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactRelationship::relationshipType () const</h3>
 <p>Returns the type of relationship which the source contact has with the destination contacts</p>
 <p>See also <a href="qcontactrelationship.html#setRelationshipType">setRelationshipType</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationship/second"></a>
@@ -80,7 +81,7 @@
 <p>Sets the id of the first contact in the relationship to <i>firstId</i>. This contact must be stored in the manager in which the relationship is stored, and has a relationship of the specified type with the second contact.</p>
 <p>See also <a href="qcontactrelationship.html#first">first</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationship/setRelationshipType"></a>
-<h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationship::setRelationshipType ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>relationshipType</i> )</h3>
+<h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationship::setRelationshipType ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>relationshipType</i> )</h3>
 <p>Sets the type of relationship that the source contact has with the destination contacts to <i>relationshipType</i>.</p>
 <p>See also <a href="qcontactrelationship.html#relationshipType">relationshipType</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationship/setSecond"></a>

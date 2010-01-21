@@ -86,7 +86,7 @@ bool QMessageContentContainer::isContentAvailable() const
     return false;
 }
 
-uint QMessageContentContainer::size() const
+int QMessageContentContainer::size() const
 {
     return 0;
 }
@@ -101,12 +101,12 @@ QByteArray QMessageContentContainer::content() const
     return QByteArray(); // stub
 }
 
-void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
+void QMessageContentContainer::writeTextContent(QTextStream& out) const
 {
     Q_UNUSED(out)
 }
 
-void QMessageContentContainer::writeContentTo(QDataStream& out) const
+void QMessageContentContainer::writeContent(QDataStream& out) const
 {
     Q_UNUSED(out)
 }

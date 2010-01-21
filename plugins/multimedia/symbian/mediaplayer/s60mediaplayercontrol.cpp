@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -41,8 +42,6 @@
 
 #include "s60mediaplayercontrol.h"
 #include "s60mediaplayersession.h"
-
-#include <QMediaPlaylistNavigator>
 
 #include <QtCore/qdir.h>
 #include <QtCore/qurl.h>
@@ -118,14 +117,14 @@ bool S60MediaPlayerControl::isSeekable() const
     return false;
 }
 
-QPair<qint64, qint64> S60MediaPlayerControl::seekRange() const
+QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 {
-    if (m_session) {
-        return q_check_ptr(m_session)->isSeekable()
-            ? qMakePair<qint64, qint64>(0, m_session->duration())
-            : qMakePair<qint64, qint64>(0, 0);
-    }
-    return QPair<qint64, qint64>();
+    QMediaTimeRange ranges;
+
+    if(m_session && q_check_ptr(m_session)->isSeekable())
+        ranges.addInterval(0, m_session->duration());
+
+    return ranges;
 }
 
 qreal S60MediaPlayerControl::playbackRate() const

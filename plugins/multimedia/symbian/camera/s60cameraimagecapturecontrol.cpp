@@ -62,6 +62,11 @@ S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *session, QOb
             this, SIGNAL(imageCaptured(QString,QImage)));
     connect(m_session, SIGNAL(readyForCaptureChanged(bool)),
             this, SIGNAL(readyForCaptureChanged(bool)));
+    connect(m_session, SIGNAL(imageSaved(const QString&)),
+        this, SIGNAL(imageCaptured(const QString&)));
+    connect(m_session, SIGNAL(error(int, const QString &)),
+        this, SIGNAL(error(int, const QString &)));
+    
 }
 
 

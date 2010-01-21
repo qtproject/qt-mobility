@@ -90,18 +90,9 @@ symbian {
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
     CONTACTS_DEPLOYMENT.path = \sys\bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
-
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-
-    #export headers into EPOCROOT
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
 }
 
 !isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_ENGINE
 
+CONFIG += app
 include(../../features/deploy.pri)
-

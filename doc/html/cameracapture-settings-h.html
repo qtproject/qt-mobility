@@ -60,15 +60,16 @@
     #include &lt;QtGui/QDialog&gt;
     #include &lt;qmediaencodersettings.h&gt;
 
-    class QComboBox;
     QTM_BEGIN_NAMESPACE
     class QMediaRecorder;
     QTM_END_NAMESPACE
 
     QTM_USE_NAMESPACE
+    QT_USE_NAMESPACE
 
+    class QComboBox;
     namespace Ui {
-        class Settings;
+        class SettingsUi;
     }
 
     class Settings : public QDialog {
@@ -93,7 +94,7 @@
         QVariant boxValue(const QComboBox*) const;
         void selectComboBoxItem(QComboBox *box, const QVariant &amp;value);
 
-        Ui::Settings *ui;
+        Ui::SettingsUi *ui;
         QMediaRecorder *mediaRecorder;
     };
 

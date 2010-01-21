@@ -44,9 +44,7 @@
 
 #include "s60mediaplayersession.h"
 #include <videoplayer.h>
-#include <coecntrl.h>
-
-class S60VideoWidgetControl;
+#include <QtGui/qwidget.h>
 class S60DirectScreenAccess;
 class QWidget;
 
@@ -55,18 +53,17 @@ class S60VideoPlayerSession : public S60MediaPlayerSession, public MVideoPlayerU
     Q_OBJECT
 
 public:
-    S60VideoPlayerSession(QObject *parent);
+    S60VideoPlayerSession(QMediaService *service);
     ~S60VideoPlayerSession();
     
+    //From S60MediaPlayerSession
     qint64 duration() const;
     qint64 position() const;
     bool isVideoAvailable() const;
-    
-    int mediaLoadingProgress() const;
-    
     void setVideoRenderer(QObject *renderer);
     
 protected:
+    //From S60MediaPlayerSession
     void doLoad(const TDesC &path);
     void doLoadUrl(const TDesC &path);
     void doPlay();
@@ -76,13 +73,15 @@ protected:
     void doSetPlaybackRate(qreal rate);
     void doSetPosition(qint64 microSeconds);
     void updateMetaDataEntries();
-
-private slots: 
-    void nativeHandles();
-    void updateVideo();
-
+    int mediaLoadingProgress() const;
     
-private: // From MVideoPlayerUtilityObserver
+private slots: 
+    void resetVideoDisplay();
+    
+private: 
+    bool resetNativeHandles();
+    
+    // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
     void MvpuoPrepareComplete(TInt aError);
     void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
@@ -90,18 +89,18 @@ private: // From MVideoPlayerUtilityObserver
     void MvpuoEvent(const TMMFEvent &aEvent);
 
 private:
-    CVideoPlayerUtility* m_player;
-    RWsSession* m_wsSession;
-    CWsScreenDevice* m_screenDevice;
-    RWindowBase* m_window;
-    CCoeControl* m_coeControl;
-    TRect m_windowRect;
-    TRect m_clipRect;
+    // Qwn
+    CVideoPlayerUtility *m_player;
+    TRect m_playerRect;
+    QVideoOutputControl::Output m_output;
+    WId m_windowId;
+
     
-    S60VideoWidgetControl* m_videoWidgetControl;
-    QWidget *m_dummyWidget;
-    
-    S60DirectScreenAccess* m_dsa;
+    //Reference
+    RWsSession *m_wsSession;
+    CWsScreenDevice *m_screenDevice;
+    RWindowBase *m_window;
+    QMediaService &m_service;
 };
 
 #endif

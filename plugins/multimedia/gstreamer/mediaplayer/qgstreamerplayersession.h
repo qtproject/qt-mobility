@@ -139,6 +139,7 @@ private:
     QMediaPlayer::MediaStatus m_mediaStatus;
     QGstreamerBusHelper* m_busHelper;
     GstElement* m_playbin;
+    GstElement* m_nullVideoOutput;
     GstBus* m_bus;
     QGstreamerVideoRendererInterface *m_renderer;
 

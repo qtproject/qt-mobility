@@ -48,7 +48,7 @@
 
 
 DSCameraControl::DSCameraControl(QObject *parent)
-    :QCameraControl(parent)
+    :QCameraControl(parent), m_captureMode(QCamera::CaptureStillImage)
 {
     m_session = qobject_cast<DSCameraSession*>(parent);
     connect(m_session, SIGNAL(stateChanged(QCamera::State)),this, SIGNAL(stateChanged(QCamera::State)));
@@ -72,3 +72,4 @@ QCamera::State DSCameraControl::state() const
 {
     return (QCamera::State)m_session->state();
 }
+
