@@ -86,9 +86,9 @@ class '.$reading_private.';
 class Q_SENSORS_EXPORT '.$reading.' : public QSensorReading
 {
     Q_OBJECT
+    Q_PROPERTY(qreal myprop READ myprop)
     DECLARE_READING('.$reading.')
 public:
-    Q_PROPERTY(qreal myprop READ myprop WRITE setMyprop)
     qreal myprop() const;
     void setMyprop(qreal myprop);
 };

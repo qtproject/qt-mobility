@@ -62,6 +62,8 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     friend class QSensorBackend;
 
     Q_OBJECT
+    Q_ENUMS(UpdatePolicy)
+    Q_FLAGS(UpdatePolicies)
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
     Q_PROPERTY(QByteArray type READ type WRITE setType)
     Q_PROPERTY(bool isAvailable READ isAvailable)
@@ -104,8 +106,6 @@ public:
         TimedUpdates      = 0x10, // Every x milliseconds (may not be supported by all sensors)
         PolledUpdates     = 0x20  // As often as polled (may not be supported by all sensors)
     };
-    Q_ENUMS(UpdatePolicy)
-    Q_FLAGS(UpdatePolicies)
     Q_DECLARE_FLAGS(UpdatePolicies, UpdatePolicy)
 
     // What policies does the sensor support

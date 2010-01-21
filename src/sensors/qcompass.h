@@ -52,8 +52,8 @@ class Q_SENSORS_EXPORT QCompassReading : public QSensorReading
 {
     Q_OBJECT
     Q_ENUMS(CalibrationLevel)
-    Q_PROPERTY(qreal azimuth READ azimuth WRITE setAzimuth)
-    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel WRITE setCalibrationLevel)
+    Q_PROPERTY(qreal azimuth READ azimuth)
+    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel)
     DECLARE_READING(QCompassReading)
 public:
     enum CalibrationLevel {
@@ -62,7 +62,6 @@ public:
         Middle    = 2,
         High      = 3
     };
-    Q_ENUMS(CalibrationLevel)
 
     qreal azimuth() const;
     void setAzimuth(qreal azimuth);

@@ -52,7 +52,7 @@ class Q_SENSORS_EXPORT QOrientationReading : public QSensorReading
 {
     Q_OBJECT
     Q_ENUMS(Orientation)
-    Q_PROPERTY(Orientation orientation READ orientation WRITE setOrientation)
+    Q_PROPERTY(Orientation orientation READ orientation)
     DECLARE_READING(QOrientationReading)
 public:
     enum Orientation {
@@ -64,7 +64,6 @@ public:
         FaceDown,
         FaceUp
     };
-    Q_ENUMS(Orientation)
 
     Orientation orientation() const;
     void setOrientation(Orientation orientation);

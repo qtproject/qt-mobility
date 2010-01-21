@@ -55,13 +55,13 @@ class Q_SENSORS_EXPORT QMagnetometerReading : public QSensorReading
 {
     Q_OBJECT
     Q_ENUMS(CalibrationLevel)
-    Q_PROPERTY(qreal x READ x WRITE setX)
-    Q_PROPERTY(qreal y READ y WRITE setY)
-    Q_PROPERTY(qreal z READ z WRITE setZ)
-    Q_PROPERTY(qreal calibrated_x READ calibrated_x WRITE setCalibrated_x)
-    Q_PROPERTY(qreal calibrated_y READ calibrated_y WRITE setCalibrated_y)
-    Q_PROPERTY(qreal calibrated_z READ calibrated_z WRITE setCalibrated_z)
-    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel WRITE setCalibrationLevel)
+    Q_PROPERTY(qreal x READ x)
+    Q_PROPERTY(qreal y READ y)
+    Q_PROPERTY(qreal z READ z)
+    Q_PROPERTY(qreal calibrated_x READ calibrated_x)
+    Q_PROPERTY(qreal calibrated_y READ calibrated_y)
+    Q_PROPERTY(qreal calibrated_z READ calibrated_z)
+    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel)
     DECLARE_READING(QMagnetometerReading)
 public:
     enum CalibrationLevel {
@@ -70,7 +70,6 @@ public:
         Middle    = 2,
         High      = 3
     };
-    Q_ENUMS(CalibrationLevel)
 
     qreal x() const;
     void setX(qreal x);

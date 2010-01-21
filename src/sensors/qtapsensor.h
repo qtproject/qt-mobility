@@ -51,6 +51,9 @@ class QTapReadingPrivate;
 class Q_SENSORS_EXPORT QTapReading : public QSensorReading
 {
     Q_OBJECT
+    Q_ENUMS(TapDirection)
+    Q_PROPERTY(TapDirection tapDirection READ tapDirection)
+    Q_PROPERTY(bool doubleTap READ isDoubleTap)
     DECLARE_READING(QTapReading)
 public:
     enum TapDirection {
@@ -65,13 +68,10 @@ public:
         Y_Neg = 0x0202,
         Z_Neg = 0x0404
     };
-    Q_ENUMS(TapDirection)
 
-    Q_PROPERTY(TapDirection tapDirection READ tapDirection WRITE setTapDirection)
     TapDirection tapDirection() const;
     void setTapDirection(TapDirection tapDirection);
 
-    Q_PROPERTY(bool doubleTap READ isDoubleTap WRITE setDoubleTap)
     bool isDoubleTap() const;
     void setDoubleTap(bool doubleTap);
 };

@@ -51,17 +51,17 @@ class QRotationReadingPrivate;
 class Q_SENSORS_EXPORT QRotationReading : public QSensorReading
 {
     Q_OBJECT
+    Q_PROPERTY(qreal x READ x)
+    Q_PROPERTY(qreal y READ y)
+    Q_PROPERTY(qreal z READ z)
     DECLARE_READING(QRotationReading)
 public:
-    Q_PROPERTY(qreal x READ x WRITE setX)
     qreal x() const;
     void setX(qreal x);
 
-    Q_PROPERTY(qreal y READ y WRITE setY)
     qreal y() const;
     void setY(qreal y);
 
-    Q_PROPERTY(qreal z READ z WRITE setZ)
     qreal z() const;
     void setZ(qreal z);
 };

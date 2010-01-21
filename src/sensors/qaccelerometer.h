@@ -51,9 +51,9 @@ class QAccelerometerReadingPrivate;
 class Q_SENSORS_EXPORT QAccelerometerReading : public QSensorReading
 {
     Q_OBJECT
-    Q_PROPERTY(qreal x READ x WRITE setX)
-    Q_PROPERTY(qreal y READ y WRITE setY)
-    Q_PROPERTY(qreal z READ z WRITE setZ)
+    Q_PROPERTY(qreal x READ x)
+    Q_PROPERTY(qreal y READ y)
+    Q_PROPERTY(qreal z READ z)
     DECLARE_READING(QAccelerometerReading)
 public:
     qreal x() const;
