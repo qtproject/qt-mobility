@@ -323,10 +323,19 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
         m_pendingTasks = 0;
         m_graphStatus = InvalidMedia;
 
-        //switch (hr) {
-        //default:
+        switch (hr) {
+        case VFW_E_UNKNOWN_FILE_TYPE:
             m_error = QMediaPlayer::FormatError;
-        //}
+            break;
+        case E_OUTOFMEMORY:
+        case VFW_E_CANNOT_LOAD_SOURCE_FILTER:
+        case VFW_E_NOT_FOUND:
+            m_error = QMediaPlayer::ResourceError;
+        default:
+            m_error = QMediaPlayer::ResourceError;
+            qWarning("DirectShowPlayerService::doSetUrlSource: Unresolved error code %x", hr);
+            break;
+        }
 
         QCoreApplication::postEvent(this, new QEvent(QEvent::Type(Error)));
     }
@@ -355,10 +364,7 @@ void DirectShowPlayerService::doSetStreamSource(QMutexLocker *locker)
         m_pendingTasks = 0;
         m_graphStatus = InvalidMedia;
 
-        //switch (hr) {
-        //default:
-            m_error = QMediaPlayer::ResourceError;
-        //}
+        m_error = QMediaPlayer::ResourceError;
 
         QCoreApplication::postEvent(this, new QEvent(QEvent::Type(Error)));
     }
@@ -388,6 +394,8 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
 
     bool rendered = false;
 
+    HRESULT renderHr = S_OK;
+
     while (!filters.isEmpty()) {
         IEnumPins *pins = 0;
         IBaseFilter *filter = filters[filters.size() - 1];
@@ -408,9 +416,12 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
                         peer->Release();
                     } else {
                         locker->unlock();
-                        if (SUCCEEDED(graph->RenderEx(
+                        HRESULT hr;
+                        if (SUCCEEDED(hr = graph->RenderEx(
                                 pin, AM_RENDEREX_RENDERTOEXISTINGRENDERERS, 0))) {
                             rendered = true;
+                        } else if (renderHr == S_OK || renderHr == VFW_E_NO_DECOMPRESSOR){
+                            renderHr = hr;
                         }
                         locker->relock();
                     }
@@ -445,10 +456,22 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
 
             m_graphStatus = InvalidMedia;
 
-            if (!m_audioOutput && !m_videoOutput)
+            if (!m_audioOutput && !m_videoOutput) {
                 m_error = QMediaPlayer::ResourceError;
-            else
-                m_error = QMediaPlayer::FormatError;
+            } else {
+                switch (renderHr) {
+                case VFW_E_UNSUPPORTED_AUDIO:
+                case VFW_E_UNSUPPORTED_VIDEO:
+                case VFW_E_UNSUPPORTED_STREAM:
+                    m_error = QMediaPlayer::FormatError;
+                default:
+                    m_error = QMediaPlayer::ResourceError;
+                    qWarning("DirectShowPlayerService::doRender: Unresolved error code %x",
+                             renderHr);
+                }
+
+
+            }
 
             QCoreApplication::postEvent(this, new QEvent(QEvent::Type(Error)));
         }
@@ -599,10 +622,8 @@ void DirectShowPlayerService::doPlay(QMutexLocker *locker)
 
             QCoreApplication::postEvent(this, new QEvent(QEvent::Type(Started)));
         } else {
-            //switch (hr) {
-            //default:
-                m_error = QMediaPlayer::ResourceError;
-            //}
+            m_error = QMediaPlayer::ResourceError;
+            qWarning("DirectShowPlayerService::doPlay: Unresolved error code %x", hr);
 
             QCoreApplication::postEvent(this, new QEvent(QEvent::Type(Error)));
         }
@@ -641,10 +662,8 @@ void DirectShowPlayerService::doPause(QMutexLocker *locker)
 
             QCoreApplication::postEvent(this, new QEvent(QEvent::Type(Paused)));
         } else {
-            //switch (hr) {
-            //default:
-                m_error = QMediaPlayer::ResourceError;
-            //}
+            m_error = QMediaPlayer::ResourceError;
+            qWarning("DirectShowPlayerService::doPause: Unresolved error code %x", hr);
 
             QCoreApplication::postEvent(this, new QEvent(QEvent::Type(Error)));
         }
