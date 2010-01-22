@@ -77,7 +77,10 @@ S60CameraSession::~S60CameraSession()
 }
 void S60CameraSession::resetCamera()
 {
+    qDebug() << "S60CameraSession::resetCamera START";
     delete m_cameraEngine;
+    delete m_advancedSettings;
+    m_advancedSettings = NULL;
     m_cameraEngine = NULL;
     m_error = KErrNone;
     m_state = QCamera::StoppedState;
@@ -85,12 +88,13 @@ void S60CameraSession::resetCamera()
     QT_TRAP_THROWING(m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
     Q_CHECK_PTR(m_cameraEngine);
     m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
+    qDebug() << "S60CameraSession::resetCamera END";
 
 }
 
 void S60CameraSession::startCamera()
 {
-    qDebug() << "S60CameraSession::startCamera";
+    qDebug() << "S60CameraSession::startCamera START";
     #ifdef Q_CC_NOKIAX86
     MceoCameraReady(); // signal that we are ready
     #endif
@@ -99,12 +103,15 @@ void S60CameraSession::startCamera()
     resetCamera();
 
     if (!m_error ) {
+        qDebug() << "S60CameraSession::startCamera, ReserveAndPowerOn"<< m_error;
         m_cameraEngine->ReserveAndPowerOn();
-        updateImageCaptureCodecs();
+        //updateImageCaptureCodecs();
     }
-    if (m_error != KErrNone)
+    if (m_error != KErrNone) {
+        qDebug() << "S60CameraSession::startCamera emitting error="<< m_error;
         emit error(m_error, QString(m_error));
-
+    }
+    qDebug() << "S60CameraSession::startCamera END";
 }
 
 void S60CameraSession::stopCamera()
@@ -117,19 +124,29 @@ void S60CameraSession::stopCamera()
     }
     emit stateChanged(m_state);
 }
-void S60CameraSession::capture()
+void S60CameraSession::capture(const QString &fileName)
 {
-    qDebug() << "S60CameraSession::capture";
+    qDebug() << "S60CameraSession::capture to file="<< fileName;
     m_error = KErrNone;
+    m_stillCaptureFileName = fileName;
     emit readyForCaptureChanged(false);
+    
+    if (m_stillCaptureFileName.isNull() || m_stillCaptureFileName.isEmpty() ) {
+        emit error(QStillImageCapture::ResourceError, QLatin1String("capture outputlocation not set properly"));
+        return;
+    }
+   
     if (m_cameraEngine) {
         TSize size(m_captureSize.width(), m_captureSize.height());
         TRAP(m_error, m_cameraEngine->PrepareL(size, m_currentcodec));
-        if (m_error == KErrNotSupported)
-            emit error(QCamera::NotSupportedFeatureError, QLatin1String("unable to prepare picture size and current codec"));
+        if (m_error == KErrNotSupported) {
+            emit error(QCamera::NotSupportedFeatureError, QLatin1String("unable to prepare picture size and current codec") );
+        }
         TRAP(m_error, m_cameraEngine->CaptureL());
-        if (m_error == KErrNotReady || m_error == KErrNoMemory)
+        if (m_error == KErrNotReady || m_error == KErrNoMemory) {
             emit error(QCamera::NotReadyToCaptureError, QLatin1String("camera is not reserved or prepared for capture"));
+        }
+        m_captureSize = QSize(size.iWidth,size.iHeight); // set size according to aquired value.
     }
     else {
         m_error = KErrNotReady;
@@ -137,7 +154,7 @@ void S60CameraSession::capture()
     }
     #ifdef Q_CC_NOKIAX86
     QImage *snapImage = new QImage(QLatin1String("C:/Data/testimage.jpg"));
-    emit imageCaptured(m_sink.toLocalFile(), *snapImage);
+    emit imageCaptured(m_stillCaptureFileName, *snapImage);
     #endif
 }
 
@@ -383,20 +400,14 @@ void S60CameraSession::stopRecording()
     qDebug() << "S60CameraSession::stopRecording";
 }
 
-void S60CameraSession::captureFrame()
-{
-    qDebug() << "S60CameraSession::captureFrame";
-    capture();
-
-}
 void S60CameraSession::MceoCameraReady()
 {
     qDebug() << "S60CameraSession::MCeoCameraReady()";
+    m_error = KErrNone;
     m_state = QCamera::ActiveState;
     emit stateChanged(m_state);
     if (m_cameraEngine) {
         m_VFSize =  TSize(m_VFWidgetSize.width(), m_VFWidgetSize.height());
-        m_error = KErrNone;
         TRAP(m_error, m_cameraEngine->StartViewFinderL(m_VFSize));
         if (m_error == KErrNotReady || m_error == KErrNoMemory) {
             emit readyForCaptureChanged(false);
@@ -415,12 +426,14 @@ void S60CameraSession::MceoFocusComplete()
 
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
+    qDebug() << "S60CameraSession::MceoCapturedDataReady()";
     QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
+    qDebug() << "S60CameraSession::MceoCapturedDataReady(), image constructed, byte count="<<snapImage.byteCount();
     // inform capture done
-    emit imageCaptured(m_sink.toLocalFile(), snapImage);
+    emit imageCaptured(m_stillCaptureFileName, snapImage);
     // try to save image and inform if it was succcesful
-    if (snapImage.save(m_sink.toLocalFile(),0, m_imageQuality))
-        emit imageSaved(m_sink.toLocalFile());
+    if (snapImage.save(m_stillCaptureFileName,0, m_imageQuality))
+        emit imageSaved(m_stillCaptureFileName);
     // release image resources
     releaseImageBuffer();
 }
@@ -435,12 +448,12 @@ void S60CameraSession::releaseImageBuffer()
 
 void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 {
+    qDebug() << "S60CameraSession::MceoCapturedBitmapReady()";
     if(aBitmap)
     {
-        
         TSize size = aBitmap->SizeInPixels();
         TUint32 sizeInWords = size.iHeight * CFbsBitmap::ScanLineLength(size.iWidth, aBitmap->DisplayMode()) / sizeof( TUint32 );
-
+        qDebug() << "S60CameraSession::MceoCapturedDataReady(), image constructed";
         TUint32 *pixelData = new TUint32[sizeInWords];
 
         if (!pixelData)
@@ -486,13 +499,13 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
                 size.iHeight,
                 CFbsBitmap::ScanLineLength(size.iWidth, aBitmap->DisplayMode()),
                 format);
-        
+        qDebug() << "S60CameraSession::MceoCapturedDataReady(), image constructed, byte count="<<snapImage->byteCount();
         aBitmap = NULL;
 
-        emit imageCaptured(m_sink.toLocalFile(), *snapImage);
+        emit imageCaptured(m_stillCaptureFileName, *snapImage);
         // try to save image and inform if it was succcesful
-        if ( snapImage->save(m_sink.toLocalFile(),0, m_imageQuality) )
-            emit imageSaved(m_sink.toLocalFile());
+        if ( snapImage->save(m_stillCaptureFileName,0, m_imageQuality) )
+            emit imageSaved(m_stillCaptureFileName);
         
         releaseImageBuffer();
     }
@@ -515,11 +528,16 @@ void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
 
 void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
 {   
+    qDebug() << "S60CameraSession::MceoHandleError, errorType"<<aErrorType;
+    qDebug() << "S60CameraSession::MceoHandleError, aError"<<aError;
     Q_UNUSED(aErrorType);
     //EErrAutoFocusMode (-5)
     m_error = aError;
     QString errorString = QLatin1String("camera engine errorcode:") + aErrorType;
     emit error(aError,errorString);
+    
+    if (aError == KErrInUse )
+        emit error(QStillImageCapture::NotReadyError, errorString);
 }
 
 // For S60Cameravideodevicecontrol
@@ -750,7 +768,7 @@ QStringList S60CameraSession::supportedImageCaptureCodecs()
 void S60CameraSession::updateImageCaptureCodecs()
 {
     m_formats.clear();
-    qDebug() << "S60CameraSession::updateImageCaptureCodecs";
+    qDebug() << "S60CameraSession::updateImageCaptureCodecs START";
     if (m_cameraEngine && queryCurrentCameraInfo()) {
 
         TUint32 supportedFormats = m_info.iImageFormatsSupported;
@@ -766,6 +784,7 @@ void S60CameraSession::updateImageCaptureCodecs()
             formatMask <<= 1;
         }
     }
+    qDebug() << "S60CameraSession::updateImageCaptureCodecs END";
 }
 
 QString S60CameraSession::imageCaptureCodec()

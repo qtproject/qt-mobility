@@ -51,6 +51,7 @@
 #include <QMultiMap>
 
 #include "qcamera.h"
+#include "qstillimagecapture.h"
 #include "s60camerasettings.h"
 #include <e32base.h>
 #include <cameraengine.h>
@@ -131,7 +132,7 @@ public:
     void releaseImageBuffer();
     void startCamera();
     void stopCamera();
-    void capture();
+    void capture(const QString &fileName);
     
     
     // for mediacontrol
@@ -223,10 +224,6 @@ Q_SIGNALS:
     void zoomValueChanged(qreal value);
     // 
 
-   
-
-private Q_SLOTS:
-    void captureFrame();
 
 private:
     CCameraEngine *m_cameraEngine;
@@ -246,6 +243,7 @@ private:
     QList<uint> m_formats;   
     QSize m_VFWidgetSize;
     TSize m_VFSize;
+    QString m_stillCaptureFileName;
 
     mutable TCameraInfo m_info; // information about camera
 

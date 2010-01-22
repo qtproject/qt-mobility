@@ -84,6 +84,6 @@ bool S60CameraImageCaptureControl::isReadyForCapture() const
 void S60CameraImageCaptureControl::capture(const QString &fileName)
 {
     if (m_session)
-        m_session->capture();
+        m_session->capture(fileName);
 }
 
