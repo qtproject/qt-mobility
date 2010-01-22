@@ -91,7 +91,18 @@ QTM_BEGIN_NAMESPACE
 */
 DatabaseManager::DatabaseManager()
 {
-    iSession.Connect();
+    int err = iSession.Connect();
+    
+    int i = 0;
+    while (err != KErrNone) {
+        if (i > 10)
+            qt_symbian_throwIfError(err);
+        
+        User::After(50);
+        err = iSession.Connect();
+        i++;
+    }
+    
     iDatabaseManagerSignalMonitor = new DatabaseManagerSignalMonitor(*this, iSession);
 }
 
@@ -310,7 +321,7 @@ TInt RDatabaseManagerSession::StartServer()
     TInt ret = KErrNone;
     TFindServer findServer(KDatabaseManagerServerName);
     TFullName name;
-    
+
     if (findServer.Next(name) != KErrNone)
     {
 #ifdef __WINS__
@@ -525,6 +536,7 @@ QTM_BEGIN_NAMESPACE
         RThread::Rendezvous(KErrNone);
 
         exec();
+        
         delete dbManagerServer;
     }
 #endif
