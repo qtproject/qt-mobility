@@ -61,7 +61,8 @@ PUBLIC_HEADERS += \
     qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
-    qvideorenderercontrol.h
+    qvideorenderercontrol.h \
+    qmediatimerange.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -100,12 +101,22 @@ SOURCES += qmediacontrol.cpp \
     qmediapluginloader.cpp \
     qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
-    qvideorenderercontrol.cpp
+    qvideorenderercontrol.cpp \
+    qmediatimerange.cpp
 
 contains(QT_CONFIG, declarative) {
    QT += declarative
-   PRIVATE_HEADERS += qmlsound_p.h
-   SOURCES += qmlsound.cpp
+   PRIVATE_HEADERS += wavedecoder.h qsoundeffect_p.h
+   SOURCES += wavedecoder.cpp qsoundeffect.cpp
+
+   maemo5 {
+       DEFINES += PULSEAUDIO
+       PRIVATE_HEADERS += qsoundeffect_pulse_p.h
+       SOURCES += qsoundeffect_pulse_p.cpp
+       LIBS_PRIVATE += -lpulse
+   }else {
+       PRIVATE_HEADERS += qsoundeffect_null_p.h
+   }
 }
 
 include (experimental/experimental.pri)
