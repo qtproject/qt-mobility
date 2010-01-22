@@ -901,7 +901,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContactManager::Error err = QContactManager::NoError;
 
     QContact empty;
-    QString label = m_engine->synthesizeDisplayLabel(empty, err);
+    QString label = m_engine->synthesizedDisplayLabel(empty, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("Unnamed"));
 
@@ -909,7 +909,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContactName fn;
     fn.setFirstName("Alice");
     first.saveDetail(&fn);
-    label = m_engine->synthesizeDisplayLabel(first, err);
+    label = m_engine->synthesizedDisplayLabel(first, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("Alice"));
 
@@ -917,7 +917,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContactName ln;
     ln.setLastName("Jones");
     last.saveDetail(&ln);
-    label = m_engine->synthesizeDisplayLabel(last, err);
+    label = m_engine->synthesizedDisplayLabel(last, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("Jones"));
 
@@ -928,13 +928,13 @@ void TestSymbianEngine::synthesizeDisplaylable()
     org.setTitle("Assistant Manager");
     org.setLocation("Nokia Cyber Park");
     orgContact.saveDetail(&org);
-    label = m_engine->synthesizeDisplayLabel(orgContact, err);
+    label = m_engine->synthesizedDisplayLabel(orgContact, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("Nokia"));
 
     QContact jargon;
     jargon.setType("jargon");
-    label = m_engine->synthesizeDisplayLabel(jargon, err);
+    label = m_engine->synthesizedDisplayLabel(jargon, err);
     QVERIFY(err == QContactManager::InvalidContactTypeError);
     QVERIFY(label.isEmpty());
 
@@ -943,7 +943,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContactName gn;
     gn.setCustomLabel("grouplable");
     group.saveDetail(&gn);
-    label = m_engine->synthesizeDisplayLabel(group, err);
+    label = m_engine->synthesizedDisplayLabel(group, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("grouplable"));
 }

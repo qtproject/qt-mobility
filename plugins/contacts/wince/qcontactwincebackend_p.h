@@ -240,7 +240,7 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Synthesize the display label of a contact */
-    virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
     
     /*helper functions*/
     PROPID metaAvatar() const;

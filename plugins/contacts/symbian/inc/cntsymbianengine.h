@@ -118,7 +118,7 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Synthesize the display label of a contact */
-    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);

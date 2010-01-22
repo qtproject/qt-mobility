@@ -189,7 +189,7 @@ QContact CntSymbianSimEngine::contact(const QContactLocalId& contactId, QContact
     return *QScopedPointer<QContact>(contact);
 }
 
-QString CntSymbianSimEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(error);
 
@@ -698,7 +698,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
                         name.setFirstName(nameString);
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
-                        currentContact = setContactDisplayLabel(synthesizeDisplayLabel(currentContact, error), currentContact);
+                        currentContact = setContactDisplayLabel(synthesizedDisplayLabel(currentContact, error), currentContact);
                     }
                 }
                 break;
