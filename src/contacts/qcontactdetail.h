@@ -79,7 +79,7 @@ public:
     const char* ContextWork;
     const char* ContextOther;
     const char* FieldDetailUri;
-    const char* FieldLinkedDetailUri;
+    const char* FieldLinkedDetailUris;
 #else
     Q_DECLARE_LATIN1_LITERAL(FieldContext, "Context");
     Q_DECLARE_LATIN1_LITERAL(ContextHome, "Home");
