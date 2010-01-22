@@ -47,14 +47,11 @@
 #include <QtCore/qfactoryinterface.h>
 #include <qmobilityglobal.h>
 
-#ifdef Q_MOC_RUN
-# pragma Q_MOC_EXPAND_MACROS
-#endif
-
 QTM_BEGIN_NAMESPACE
 
 class QSensorBackend;
 
+// Plugin interface
 struct Q_SENSORS_EXPORT QSensorPluginInterface
 {
     virtual void registerSensors() = 0;

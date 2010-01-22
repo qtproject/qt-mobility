@@ -81,9 +81,10 @@ class Q_SENSORS_EXPORT QRotationSensor : public QSensor
     Q_OBJECT
 public:
     explicit QRotationSensor(QObject *parent = 0) : QSensor(parent)
-    { setType("QRotationSensor"); }
+    { setType(QRotationSensor::type); }
     virtual ~QRotationSensor() {}
     QRotationReading *reading() const { return static_cast<QRotationReading*>(QSensor::reading()); }
+    static const char *type;
 };
 // end generated code
 

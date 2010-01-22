@@ -48,38 +48,40 @@
 #include <QFile>
 #include <QDebug>
 
-static QSensorBackend *create_sensor_backend_n900accelerometer(QSensor *sensor)
-{
-    if (QFile::exists(ACCELEROMETER_FILE))
-        return new n900accelerometer(sensor);
-    return 0;
-}
-
-static QSensorBackend *create_sensor_backend_n900lightsensor(QSensor *sensor)
-{
-    if (QFile::exists(LIGHTSENSOR_FILE))
-        return new n900lightsensor(sensor);
-    return 0;
-}
-
-static QSensorBackend *create_sensor_backend_n900proximitysensor(QSensor *sensor)
-{
-    if (QFile::exists(PROXIMITY_FILE))
-        return new n900proximitysensor(sensor);
-    return 0;
-}
-
-class n900SensorPlugin : public QObject, public QSensorPluginInterface
+class n900SensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QSensorPluginInterface)
 public:
     void registerSensors()
     {
-        qWarning() << "Loaded the N900 plugin";
-        REGISTER_STATEMENT(n900accelerometer, "QAccelerometer", QByteArray("n900.accelerometer"));
-        REGISTER_STATEMENT(n900lightsensor, "QAmbientLightSensor", QByteArray("n900.light"));
-        REGISTER_STATEMENT(n900proximitysensor, "QProximitySensor", QByteArray("n900.proximity"));
+        qDebug() << "loaded the N900 plugin";
+        QSensorManager::registerBackend(QAccelerometer::type, n900accelerometer::id, this);
+        QSensorManager::registerBackend(QAmbientLightSensor::type, n900lightsensor::id, this);
+        QSensorManager::registerBackend(QProximitySensor::type, n900proximitysensor::id, this);
+    }
+
+    QSensorBackend *createBackend(QSensor *sensor)
+    {
+        if (sensor->identifier() == n900accelerometer::id) {
+            if (QFile::exists(ACCELEROMETER_FILE))
+                return new n900accelerometer(sensor);
+            qDebug() << "can't make" << sensor->identifier() << "because " ACCELEROMETER_FILE " doesn't exist";
+        }
+
+        if (sensor->identifier() == n900lightsensor::id) {
+            if (QFile::exists(LIGHTSENSOR_FILE))
+                return new n900lightsensor(sensor);
+            qDebug() << "can't make" << sensor->identifier() << "because " LIGHTSENSOR_FILE " doesn't exist";
+        }
+
+        if (sensor->identifier() == n900proximitysensor::id) {
+            if (QFile::exists(PROXIMITY_FILE))
+                return new n900proximitysensor(sensor);
+            qDebug() << "can't make" << sensor->identifier() << "because " PROXIMITY_FILE " doesn't exist";
+        }
+
+        return 0;
     }
 };
 

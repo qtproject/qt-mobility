@@ -43,6 +43,8 @@
 #include <QDebug>
 #include <time.h>
 
+const char *n900accelerometer::id("n900.accelerometer");
+
 n900accelerometer::n900accelerometer(QSensor *sensor)
     : n900filebasedsensor(sensor)
     , m_filename(ACCELEROMETER_FILE)

@@ -43,6 +43,8 @@
 #include <qsensorfactory.h>
 #include <QDebug>
 
+const char *genericorientationsensor::id("generic.orientation");
+
 genericorientationsensor::genericorientationsensor(QSensor *sensor)
     : QSensorBackend(sensor)
 {

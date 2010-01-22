@@ -131,9 +131,10 @@ class Q_SENSORS_EXPORT '.$sensor.' : public QSensor
     Q_OBJECT
 public:
     explicit '.$sensor.'(QObject *parent = 0) : QSensor(parent)
-    { setType("'.$sensor.'"); }
+    { setType('.$sensor.'::type); }
     virtual ~'.$sensor.'() {}
     '.$reading.' *reading() const { return static_cast<'.$reading.'*>(QSensor::reading()); }
+    static const char *type;
 };
 ';
                 $skip = 1;
@@ -234,6 +235,8 @@ if (-e $source) {
 
     \sa QSensorFilter::filter()
 */
+
+const char *'.$sensor.'::type("'.$sensor.'");
 
 /*!
     \class '.$sensor.'

@@ -259,6 +259,8 @@ void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::Calibration
     \sa QSensorFilter::filter()
 */
 
+const char *QMagnetometer::type("QMagnetometer");
+
 /*!
     \class QMagnetometer
     \ingroup sensors_helpers

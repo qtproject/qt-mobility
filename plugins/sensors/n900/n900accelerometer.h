@@ -52,6 +52,8 @@ QTM_USE_NAMESPACE
 class n900accelerometer : public n900filebasedsensor
 {
 public:
+    static const *id;
+
     n900accelerometer(QSensor *sensor);
 
     void poll();

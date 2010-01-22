@@ -44,6 +44,8 @@
 #include <string.h>
 #include <time.h>
 
+const char *n900proximitysensor::id("n900.proximity");
+
 n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
     , m_filename(PROXIMITY_FILE)
@@ -53,7 +55,6 @@ n900proximitysensor::n900proximitysensor(QSensor *sensor)
 
 void n900proximitysensor::poll()
 {
-    qWarning() << "poll";
     m_reading.setTimestamp(clock());
     FILE *fd = fopen(m_filename, "r");
     if (!fd) return;

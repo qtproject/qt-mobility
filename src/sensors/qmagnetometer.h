@@ -108,9 +108,10 @@ class Q_SENSORS_EXPORT QMagnetometer : public QSensor
     Q_OBJECT
 public:
     explicit QMagnetometer(QObject *parent = 0) : QSensor(parent)
-    { setType("QMagnetometer"); }
+    { setType(QMagnetometer::type); }
     virtual ~QMagnetometer() {}
     QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
+    static const char *type;
 };
 // end generated code
 

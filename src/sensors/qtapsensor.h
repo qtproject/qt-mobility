@@ -91,9 +91,10 @@ class Q_SENSORS_EXPORT QTapSensor : public QSensor
     Q_OBJECT
 public:
     explicit QTapSensor(QObject *parent = 0) : QSensor(parent)
-    { setType("QTapSensor"); }
+    { setType(QTapSensor::type); }
     virtual ~QTapSensor() {}
     QTapReading *reading() const { return static_cast<QTapReading*>(QSensor::reading()); }
+    static const char *type;
 };
 // end generated code
 

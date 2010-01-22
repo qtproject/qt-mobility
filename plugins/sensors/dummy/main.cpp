@@ -46,17 +46,23 @@
 #include <QFile>
 #include <QDebug>
 
-CREATE_FUNC(dummyaccelerometer)
-
-class dummySensorPlugin : public QObject, public QSensorPluginInterface
+class dummySensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QSensorPluginInterface)
 public:
     void registerSensors()
     {
-        qWarning() << "Loaded the dummy plugin";
-        REGISTER_STATEMENT(dummyaccelerometer, "QAccelerometer", QByteArray("dummy.accelerometer"));
+        qDebug() << "loaded the dummy plugin";
+        QSensorManager::registerBackend(QAccelerometer::type, dummyaccelerometer::id, this);
+    }
+
+    QSensorBackend *createBackend(QSensor *sensor)
+    {
+        if (sensor->identifier() == dummyaccelerometer::id) {
+            return new dummyaccelerometer(sensor);
+        }
+        return 0;
     }
 };
 

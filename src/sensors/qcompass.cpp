@@ -142,6 +142,8 @@ void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel cali
     \sa QSensorFilter::filter()
 */
 
+const char *QCompass::type("QCompass");
+
 /*!
     \class QCompass
     \ingroup sensors_helpers

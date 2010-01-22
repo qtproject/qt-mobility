@@ -43,6 +43,8 @@
 #include <QDebug>
 #include <time.h>
 
+const char *n900lightsensor::id("n900.ambientlight");
+
 n900lightsensor::n900lightsensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
     , m_filename(LIGHTSENSOR_FILE)

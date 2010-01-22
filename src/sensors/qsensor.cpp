@@ -185,20 +185,10 @@ void QSensor::setType(const QByteArray &type)
 void QSensor::connect()
 {
     Q_ASSERT(d->pre_connect);
-    d->pre_connect = false;
     Q_ASSERT(!d->type.isEmpty());
-    if (d->identifier.isEmpty()) {
-        d->identifier = QSensorFactory::instance()->defaultSensorForType(d->type);
-    } else {
-        if (!QSensorFactory::instance()->sensorsForType(d->type).contains(d->identifier)) {
-            qWarning() << "Sensor with identifier" << d->identifier << "does not exist for type" << d->type;
-            return;
-        }
-    }
 
-    d->backend = QSensorManager::instance()->createBackend(d->identifier, this);
-    if (!d->backend)
-        qWarning() << "Did not make backend for identifier" << d->identifier;
+    d->backend = QSensorManager::createBackend(this);
+    d->pre_connect = false; // must be set after the above (because the above may change our identifier)
 }
 
 /*!

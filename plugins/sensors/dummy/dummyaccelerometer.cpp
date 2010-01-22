@@ -43,6 +43,8 @@
 #include <QDebug>
 #include <time.h>
 
+const char *dummyaccelerometer::id("dummy.accelerometer");
+
 dummyaccelerometer::dummyaccelerometer(QSensor *sensor)
     : dummycommon(sensor)
 {

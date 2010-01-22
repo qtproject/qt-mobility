@@ -47,22 +47,27 @@
 #include <QFile>
 #include <QDebug>
 
-static QSensorBackend *create_sensor_backend_genericorientationsensor(QSensor *sensor)
-{
-    if (!QSensorFactory::instance()->defaultSensorForType("QAccelerometer").isEmpty())
-        return new genericorientationsensor(sensor);
-    return 0;
-}
-
-class genericSensorPlugin : public QObject, public QSensorPluginInterface
+class genericSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QSensorPluginInterface)
 public:
     void registerSensors()
     {
-        qWarning() << "Loaded the Generic plugin";
-        REGISTER_STATEMENT(genericorientationsensor, "QOrientationSensor", QByteArray("generic.orientation"));
+        qDebug() << "loaded the Generic plugin";
+        QSensorManager::registerBackend(QOrientationSensor::type, genericorientationsensor::id, this);
+    }
+
+    QSensorBackend *createBackend(QSensor *sensor)
+    {
+        if (sensor->identifier() == genericorientationsensor::id) {
+            // Can't make this unless we have an accelerometer
+            if (!QSensorManager::defaultSensorForType(QAccelerometer::type).isEmpty())
+                return new genericorientationsensor(sensor);
+            qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
+        }
+
+        return 0;
     }
 };
 

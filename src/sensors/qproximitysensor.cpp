@@ -113,6 +113,8 @@ void QProximityReading::setProximity(QProximityReading::Proximity proximity)
     \sa QSensorFilter::filter()
 */
 
+const char *QProximitySensor::type("QProximitySensor");
+
 /*!
     \class QProximitySensor
     \ingroup sensors_helpers

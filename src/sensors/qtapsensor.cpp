@@ -162,6 +162,8 @@ void QTapReading::setDoubleTap(bool doubleTap)
     \sa QSensorFilter::filter()
 */
 
+const char *QTapSensor::type("QTapSensor");
+
 /*!
     \class QTapSensor
     \ingroup sensors_helpers

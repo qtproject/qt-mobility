@@ -48,6 +48,29 @@ QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(QSensorPluginLoader, pluginLoader, (QSensorPluginInterface_iid, QLatin1String("/sensors")))
 
+typedef QHash<QByteArray,QSensorBackendFactory*> FactoryForIdentifierMap;
+typedef QHash<QByteArray,FactoryForIdentifierMap> BackendIdentifiersForTypeMap;
+
+struct QSensorManagerPrivate
+{
+    QSensorManagerPrivate()
+        : pluginsLoaded(false)
+    {
+    }
+
+    bool pluginsLoaded;
+
+    QList<CreatePluginFunc> staticRegistrations;
+
+    // Holds a mapping from type to available identifiers (and from there to the factory)
+    BackendIdentifiersForTypeMap backendsByType;
+
+    // Holds the default identifier for each type
+    QHash<QByteArray, QByteArray> defaultIdentifierForType;
+};
+
+Q_GLOBAL_STATIC(QSensorManagerPrivate, d_ptr)
+
 /*!
     \class QSensorManager
     \ingroup sensors_backend
@@ -56,126 +79,149 @@ Q_GLOBAL_STATIC_WITH_ARGS(QSensorPluginLoader, pluginLoader, (QSensorPluginInter
     \brief The QSensorManager class returns the sensors on a device.
 
     A given device will have a variety of sensors. The sensors are
-    categorized by type. The QSensor::Type enum defined the types that
-    the API supports.
+    categorized by type.
 */
 
 /*!
-    Returns the sensor manager.
-*/
-QSensorManager *QSensorManager::instance()
-{
-    // FIXME should be using Q_GLOBAL_STATIC or something
-    static QSensorManager *instance = 0;
-    if (!instance)
-        instance = new QSensorManager;
-    return instance;
-}
+    Register a sensor for \a type. The \a identifier must be unique.
 
-/*!
-    Register a sensor for \a type. The \a identifier must be unique. The \a func must return an instance
-    of the appropriate backend class.
+    The \a factory will be asked to create instances of the backend.
 */
-void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &identifier, CreateBackendFunc func)
+void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &identifier, QSensorBackendFactory *factory)
 {
-    if (!m_backendsByType.contains(type)) {
-        qDebug() << "first backend of type" << type << "is" << identifier;
-        (void)m_backendsByType[type];
-        m_defaultIdentifierForType[type] = identifier;
+    QSensorManagerPrivate *d = d_ptr();
+    if (!d->backendsByType.contains(type)) {
+        (void)d->backendsByType[type];
+        // FIXME don't just use the first registered identifier as the default
+        d->defaultIdentifierForType[type] = identifier;
     }
-    m_backendsByType[type][identifier] = func;
-    m_allBackends[identifier] = func;
+    qDebug() << "registering backend for type" << type << "identifier" << identifier;
+    d->backendsByType[type][identifier] = factory;
 }
 
 /*!
     \internal
 */
-void QSensorManager::registerRegisterFunc(RegisterBackendFunc func)
+void QSensorManager::registerStaticPlugin(CreatePluginFunc func)
 {
-    m_staticRegistrations.append(func);
+    QSensorManagerPrivate *d = d_ptr();
+    d->staticRegistrations.append(func);
 }
 
 /*!
-    Create a backend matching \a identifier for \a sensor. Returns null if the identifier is not valid.
+    Create a backend for \a sensor. Returns null if no suitable backend exists.
 */
-QSensorBackend *QSensorManager::createBackend(const QByteArray &identifier, QSensor *sensor)
+QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
 {
-    if (!m_pluginsLoaded)
+    Q_ASSERT(sensor);
+
+    QSensorManagerPrivate *d = d_ptr();
+    if (!d->pluginsLoaded)
         loadPlugins();
 
-    if (!m_allBackends.contains(identifier)) {
-        qWarning() << "Sensor backend for identifier" << identifier << "does not exist.";
+    if (!d->backendsByType.contains(sensor->type())) {
+        qDebug() << "no backends of type" << sensor->type() << "have been registered.";
         return 0;
     }
 
-    CreateBackendFunc func = m_allBackends[identifier];
-    return func(sensor);
+    const FactoryForIdentifierMap &backendList = d->backendsByType[sensor->type()];
+    QSensorBackendFactory *factory;
+    QSensorBackend *backend;
+
+    if (sensor->identifier().isEmpty()) {
+        // No identifier set, try the default
+        factory = backendList[d->defaultIdentifierForType[sensor->type()]];
+        backend = factory->createBackend(sensor);
+        if (backend) return backend; // Got it!
+
+        // The default failed to instantiate so try any other registered sensors for this type
+        // FIXME: this will try the default again
+        foreach (const QByteArray &identifier, backendList.keys()) {
+            factory = backendList[identifier];
+            sensor->setIdentifier(identifier); // the factory requires this
+            backend = factory->createBackend(sensor);
+            if (backend) return backend; // Got it!
+        }
+        sensor->setIdentifier(QByteArray()); // clear the identifier
+    } else {
+        if (!backendList.contains(sensor->identifier())) {
+            qDebug() << "no backend with identifier" << sensor->identifier() << "for type" << sensor->type();
+            return 0;
+        }
+
+        // We were given an explicit identifier so don't substitute other backends if it fails to instantiate
+        factory = backendList[sensor->identifier()];
+        backend = factory->createBackend(sensor);
+        if (backend) return backend; // Got it!
+    }
+
+    qDebug() << "no suitable backend found for requested identifier" << sensor->identifier() << "and type" << sensor->type();
+    return 0;
 }
 
 /*!
-    Returns the first registered sensor identifier for \a type.
+    Returns the default sensor identifier for \a type.
 */
-QByteArray QSensorManager::firstSensorForType(const QByteArray &type)
+QByteArray QSensorManager::defaultSensorForType(const QByteArray &type)
 {
-    if (!m_pluginsLoaded)
+    QSensorManagerPrivate *d = d_ptr();
+    if (!d->pluginsLoaded)
         loadPlugins();
 
-    if (m_defaultIdentifierForType.contains(type)) {
-        qDebug() << "default for type" << type << "is" << m_defaultIdentifierForType[type];
-        return m_defaultIdentifierForType[type];
-    }
-    qDebug() << "NO default for type" << type;
-    return QByteArray();
-}
+    if (d->defaultIdentifierForType.contains(type))
+        return d->defaultIdentifierForType[type];
 
-QSensorManager::QSensorManager()
-    : m_pluginsLoaded(false)
-{
+    return QByteArray();
 }
 
 void QSensorManager::loadPlugins()
 {
-    qDebug() << "initializing static plugins";
-    m_pluginsLoaded = true;
+    QSensorManagerPrivate *d = d_ptr();
+    d->pluginsLoaded = true;
 
-    foreach (RegisterBackendFunc func, m_staticRegistrations)
-        func();
+    qDebug() << "initializing static plugins";
+    foreach (CreatePluginFunc func, d->staticRegistrations) {
+        QSensorPluginInterface *plugin = func();
+        plugin->registerSensors();
+    }
 
     qDebug() << "initializing plugins";
-
     foreach (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
         plugin->registerSensors();
     }
 }
 
 /*!
-    \macro CREATE_FUNC(classname)
-    \relates QSensorManager
+    \class QSensorBackendFactory
+    \ingroup sensors_backend
 
-    Defines a static function that creates an instance of \a classname.
+    \preliminary
+    \brief The QSensorBackendFactory class instantiates instances of
+           QSensorBackend.
+
+    This interface must be implemented in order to register a sensor backend.
+
     \sa {Creating a sensor plugin}
 */
 
 /*!
-    \macro REGISTER_STATEMENT(classname, type, identifier)
-    \relates QSensorManager
+    \fn QSensorBackendFactory::createBackend(QSensor *sensor)
 
-    Registers a sensor plugin using a creation function as defined by CREATE_FUNC().
+    Instantiate a backend. If the factory handles multiple identifiers
+    it should check with the \a sensor to see which one is requested.
 
-    Designed to register an instance of \a classname with sensor \a type and unique \a identifier.
-    \sa CREATE_FUNC(), {Creating a sensor plugin}
+    If the factory cannot create a backend it should return 0.
 */
 
 /*!
-    \macro REGISTER_LOCAL_SENSOR(classname, type, identifier)
+    \macro REGISTER_STATIC_PLUGIN(pluginname)
     \relates QSensorManager
 
-    Registers a local sensor plugin.
-
-    Designed to register an instance of \a classname with sensor \a type and unique \a identifier.
+    Registers a static plugin, \a pluginname.
 
     Note that this macro relies on static initialization so it may not be appropriate
-    for use in a library.
+    for use in a library and may not work on all platforms.
+
     \sa {Creating a sensor plugin}
 */
 

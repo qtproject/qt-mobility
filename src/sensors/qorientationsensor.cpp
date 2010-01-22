@@ -141,6 +141,8 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
     \sa QSensorFilter::filter()
 */
 
+const char *QOrientationSensor::type("QOrientationSensor");
+
 /*!
     \class QOrientationSensor
     \ingroup sensors_helpers

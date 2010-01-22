@@ -74,7 +74,7 @@ QSensorFactory *QSensorFactory::instance()
 */
 QByteArray QSensorFactory::defaultSensorForType(const QByteArray &type) const
 {
-    return QSensorManager::instance()->firstSensorForType(type);
+    return QSensorManager::defaultSensorForType(type);
 }
 
 /*!

@@ -52,6 +52,8 @@ QTM_USE_NAMESPACE
 class n900lightsensor : public n900filebasedsensor
 {
 public:
+    static const *id;
+
     n900lightsensor(QSensor *sensor);
 
     void poll();

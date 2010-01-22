@@ -48,58 +48,46 @@
 QTM_BEGIN_NAMESPACE
 
 class QSensorBackend;
-typedef QSensorBackend *(*CreateBackendFunc)(QSensor*);
-typedef void(*RegisterBackendFunc)();
-typedef QHash<QByteArray,CreateBackendFunc> BackendList;
-typedef QHash<QByteArray, BackendList> BackendTypeList;
+class QSensorBackendFactory;
+class QSensorPluginInterface;
+
+typedef QSensorPluginInterface *(*CreatePluginFunc)();
 
 class Q_SENSORS_EXPORT QSensorManager
 {
 public:
-    // Get the singleton instance
-    static QSensorManager *instance();
+    // Register a backend (call this from a plugin)
+    static void registerBackend(const QByteArray &type, const QByteArray &identifier, QSensorBackendFactory *factory);
 
-    void registerBackend(const QByteArray &type, const QByteArray &identifier, CreateBackendFunc func);
-    void registerRegisterFunc(RegisterBackendFunc func);
-    QSensorBackend *createBackend(const QByteArray &identifier, QSensor *sensor);
-    QByteArray firstSensorForType(const QByteArray &type);
+    // Create a backend (uses the type and identifier set in the sensor)
+    static QSensorBackend *createBackend(QSensor *sensor);
+
+    // For static plugins
+    static void registerStaticPlugin(CreatePluginFunc func);
+
+    static QByteArray defaultSensorForType(const QByteArray &type);
+
 private:
-    QSensorManager();
-    void loadPlugins();
-    BackendList m_allBackends;
-    BackendTypeList m_backendsByType;
-    QHash<QByteArray, QByteArray> m_defaultIdentifierForType;
-    bool m_pluginsLoaded;
-    QList<RegisterBackendFunc> m_staticRegistrations;
+    static void loadPlugins();
 };
 
-#define CREATE_FUNC(classname)\
-    /* This generated function creates a new instance of the backend */\
-    static QSensorBackend *create_sensor_backend_ ## classname (QSensor *sensor)\
-    {\
-        return new classname(sensor);\
-    }
+struct Q_SENSORS_EXPORT QSensorBackendFactory
+{
+    virtual QSensorBackend *createBackend(QSensor *sensor) = 0;
+};
 
-#define REGISTER_STATEMENT(classname, type, identifier)\
-    QSensorManager::instance()->registerBackend(type, identifier, create_sensor_backend_ ## classname )\
-
-#define REGISTER_FUNC(classname, type, identifier)\
-    /* This function registers the backend */\
-    static void register_sensor_backend_ ## classname ()\
+#define REGISTER_STATIC_PLUGIN(pluginname)\
+    static QSensorPlugin *create_static_plugin_ ## pluginname()\
     {\
-        REGISTER_STATEMENT(classname, type, identifier);\
-    }
-
-#define REGISTER_LOCAL_SENSOR(classname, type, identifier)\
-    REGISTER_FUNC(classname, type, identifier)\
-    /* This function schedules the above for running */\
-    static bool side_effect_sensor_backend_ ## classname ()\
+        return new pluginname;\
+    }\
+    static bool side_effect_sensor_backend_ ## pluginname ()\
     {\
-        QSensorManager::instance()->registerRegisterFunc(register_sensor_backend_ ## classname );\
+        QSensorManager::registerStaticPlugin(create_static_plugin_ ## pluginname);\
         return false;\
     }\
     /* This assignment calls the function above */\
-    static bool dummy_sensor_backend_ ## classname = side_effect_sensor_backend_ ## classname();
+    static bool dummy_sensor_backend_ ## pluginname = side_effect_sensor_backend_ ## pluginname();
 
 QTM_END_NAMESPACE
 
