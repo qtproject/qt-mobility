@@ -92,9 +92,8 @@ void UT_QVersitWriter::testDevice()
     QVERIFY(mWriter->device() == mOutputDevice);
 }
 
-void UT_QVersitWriter::testWriting()
+void UT_QVersitWriter::testWriting21()
 {
-
     // vCard 2.1
     QByteArray vCard21(
 "BEGIN:VCARD\r\n\
@@ -134,17 +133,42 @@ END:VCARD\r\n");
     QByteArray result(mOutputDevice->readAll());
     QCOMPARE(result, vCard21);
 
+    // Try some other codec
+    delete mOutputDevice;
+    mOutputDevice = new QBuffer;
+    mOutputDevice->open(QBuffer::ReadWrite);
+    mWriter->setDevice(mOutputDevice);
+    QTextCodec* utf16(QTextCodec::codecForName("UTF-16"));
+    mWriter->setDefaultCodec(utf16);
+    QVERIFY(mWriter->startWriting(list));
+    QVERIFY(mWriter->waitForFinished());
+    QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
+    QCOMPARE(mWriter->error(), QVersitWriter::NoError);
+    mOutputDevice->seek(0);
+    result = mOutputDevice->readAll();
+    QEXPECT_FAIL("", "Byte-order marks are peppered throughout the output.", Continue);
+    QCOMPARE(result, utf16->fromUnicode(QLatin1String(vCard21.data())));
+}
+
+void UT_QVersitWriter::testWriting30()
+{
     // vCard 3.0
     QByteArray vCard30(
 "BEGIN:VCARD\r\n\
 VERSION:3.0\r\n\
 FN:John\r\n\
 END:VCARD\r\n");
+
+    QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QString(QString::fromAscii("FN")));
+    property.setValue(QString::fromAscii("John"));
+    document.addProperty(property);
     document.setType(QVersitDocument::VCard30Type);
-    list.clear();
+    QList<QVersitDocument> list;
     list.append(document);
-    delete mOutputDevice;
-    mOutputDevice = new QBuffer;
+
+    // Basic 3.0 test
     mOutputDevice->open(QBuffer::ReadWrite);
     mWriter->setDevice(mOutputDevice);
     QVERIFY(mWriter->startWriting(list));
@@ -152,7 +176,7 @@ END:VCARD\r\n");
     QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
-    result = mOutputDevice->readAll();
+    QByteArray result(mOutputDevice->readAll());
     QCOMPARE(result, vCard30);
 
     // Asynchronous writing

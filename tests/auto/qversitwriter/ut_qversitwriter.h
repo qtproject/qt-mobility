@@ -78,7 +78,8 @@ private slots: // Tests
     void cleanup();
 
     void testDevice();
-    void testWriting();
+    void testWriting21();
+    void testWriting30();
 
 private: // Data
     QVersitWriter* mWriter;
