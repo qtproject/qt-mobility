@@ -68,7 +68,7 @@ public:
         ReadOnly = 0x01,
         Irremovable = 0x02
     };
-    Q_DECLARE_FLAGS(AccessConstraints, AccessConstraint);
+    Q_DECLARE_FLAGS(AccessConstraints, AccessConstraint)
 
     AccessConstraints accessConstraints() const;
 
