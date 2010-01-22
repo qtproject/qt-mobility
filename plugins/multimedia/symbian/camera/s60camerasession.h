@@ -173,6 +173,8 @@ public:
 
     QStringList supportedVideoCaptureCodecs();
     void updateVideoCaptureCodecs();
+    QString videoCaptureCodec();
+    void setVideoCaptureCodec(const QString &codecName);
     
     //camerafocuscontrol
     void startFocus();
@@ -272,7 +274,8 @@ private:
     mutable TCameraInfo m_info; // information about camera
     
     CVideoRecorderUtility* m_videoUtility;
-    QHash<QString, VideoControllerData> m_videoCcontrollerMap;
+    QHash<QString, VideoControllerData> m_videoControllerMap;
+    QString m_videoCodec;
 
 };
 
