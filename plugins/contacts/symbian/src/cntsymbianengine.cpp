@@ -261,6 +261,33 @@ QList<QContactManager::Error> CntSymbianEngine::saveContacts(QList<QContact>* co
     return ret;
 }
 
+/*! \reimp */
+bool CntSymbianEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error> *errorMap, QContactManager::Error& error)
+{
+    QContactChangeSet changeSet;
+    if (!contacts) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
+    QContactManager::Error functionError = QContactManager::NoError;
+    for (int i = 0; i < contacts->count(); i++) {
+        QContact current = contacts->at(i);
+        if (!doSaveContact(&current, changeSet, error)) {
+            functionError = error;
+            if (errorMap) {
+                // if the errormap argument is null, we just don't do fine-grained reporting.
+                errorMap->insert(i, functionError);
+            }
+        } else {
+            (*contacts)[i] = current;
+        }
+    }
+    error = functionError;
+    changeSet.emitSignals(this);
+    return true;
+}
+
 /*!
  * Uses the generic filtering implementation of QContactManagerEngine to filter
  * contacts one-by-one. Really slow when filtering a lot of contacts because
