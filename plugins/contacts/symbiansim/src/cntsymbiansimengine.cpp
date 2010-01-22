@@ -717,6 +717,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
             {
                 if (pbBuffer->GetValue(bufPtr) == KErrNone) {
                     QContactPhoneNumber phoneNumber;
+                    phoneNumber.setSubTypes( QContactPhoneNumber::SubTypeMobile );
                     QString number = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     phoneNumber.setNumber(number);
                     currentContact.saveDetail(&phoneNumber);
