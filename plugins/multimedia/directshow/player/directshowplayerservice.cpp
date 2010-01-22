@@ -801,7 +801,18 @@ void DirectShowPlayerService::doSeek(QMutexLocker *locker)
 
 int DirectShowPlayerService::bufferStatus() const
 {
-    return 0;
+    QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
+
+    if (IWMReaderAdvanced2 *reader = com_cast<IWMReaderAdvanced2>(m_source)) {
+        DWORD percentage = 0;
+
+        reader->GetBufferProgress(&percentage, 0);
+        reader->Release();
+
+        return percentage;
+    } else {
+        return 0;
+    }
 }
 
 void DirectShowPlayerService::setAudioOutput(IBaseFilter *filter)
