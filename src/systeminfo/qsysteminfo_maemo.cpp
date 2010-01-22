@@ -110,13 +110,10 @@
 
 #include <QDBusInterface>
 
-
-
 QTM_BEGIN_NAMESPACE
 
-        static bool halAvailable()
+static bool halAvailable()
 {
-#if !defined(QT_NO_DBUS)
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     if (dbusConnection.isConnected()) {
         QDBusConnectionInterface *dbiface = dbusConnection.interface();
@@ -125,8 +122,6 @@ QTM_BEGIN_NAMESPACE
             return reply.value();
         }
     }
-#endif
-    //  qDebug() << "Hal is not running";
     return false;
 }
 
@@ -160,63 +155,34 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,
+                                    const QString &parameter)
 {
     QString errorStr = "Not Available";
-    bool useDate = false;
-    if(parameter == "versionDate") {
-        useDate = true;
-    }
-    switch(type) {
-    case QSystemInfo::Os :
-        {
-            QString versionPath = "/proc/version";
-            QFile versionFile(versionPath);
-            if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
-            } else {
-                QString  strvalue;
-                strvalue = versionFile.readAll().trimmed();
-                strvalue = strvalue.split(" ").at(2);
-                versionFile.close();
-                return strvalue;
-            }
-        }
-        break;
-    case QSystemInfo::QtCore :
-       return  qVersion();
-       break;
-   case QSystemInfo::Firmware :
-       {
 
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                        QDBusConnection::systemBus());
-    if(!connectionInterface.isValid()) {
-        qWarning() << "interfacenot valid";
-    }
-    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver");
-    return reply.value();
-// RX-51_BLAH
-//
-#endif
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-        QString productName;
-        if (iface.isValid()) {
-            return iface.getPropertyString("system.firmware.version");
+    switch(type) {
+        case QSystemInfo::Firmware :
+        {
+            QDBusInterface connectionInterface("com.nokia.SystemInfo",
+                                               "/com/nokia/SystemInfo",
+                                               "com.nokia.SystemInfo",
+                                               QDBusConnection::systemBus());
+            if(!connectionInterface.isValid()) {
+                qWarning() << "interfacenot valid";
             } else {
-                return productName;
+                QDBusReply< QByteArray > reply =
+                    connectionInterface.call("GetConfigValue",
+                                             "/device/sw-release-ver");
+                if(reply.isValid())
+                    return reply.value();
             }
-#endif
-    }
-    }
-       break;
+            break;
+        }
+        default:
+            return QSystemInfoLinuxCommonPrivate::version(type, parameter);
+            break;
     };
-  return errorStr;
+    return errorStr;
 }
 
 

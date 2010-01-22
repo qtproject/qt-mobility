@@ -81,6 +81,36 @@ QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
     return lang;
 }
 
+// "major.minor.build" format.
+QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
+                                               const QString &parameter)
+{
+    QString errorStr = "Not Available";
+
+    switch(type) {
+        case QSystemInfo::Os :
+        {
+            QString versionPath = "/proc/version";
+            QFile versionFile(versionPath);
+            if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qWarning() << "File not opened";
+            } else {
+                QString  strvalue;
+                strvalue = versionFile.readAll().trimmed();
+                strvalue = strvalue.split(" ").at(2);
+                versionFile.close();
+                return strvalue;
+            }
+            break;
+        }
+        case QSystemInfo::QtCore :
+            return qVersion();
+            break;
+        default:
+            break;
+    };
+    return errorStr;
+}
 QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }

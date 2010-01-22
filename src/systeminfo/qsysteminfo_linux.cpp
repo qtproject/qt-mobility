@@ -115,7 +115,6 @@ QTM_BEGIN_NAMESPACE
 
 static bool halAvailable()
 {
-#if !defined(QT_NO_DBUS)
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     if (dbusConnection.isConnected()) {
         QDBusConnectionInterface *dbiface = dbusConnection.interface();
@@ -124,8 +123,6 @@ static bool halAvailable()
             return reply.value();
         }
     }
-#endif
-  //  qDebug() << "Hal is not running";
     return false;
 }
 
@@ -164,17 +161,19 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,
+                                    const QString &parameter)
 {
     QString errorStr = "Not Available";
+
     bool useDate = false;
     if(parameter == "versionDate") {
         useDate = true;
     }
+
     switch(type) {
-    case QSystemInfo::Os :
+        case QSystemInfo::Firmware :
         {
-#if !defined(QT_NO_DBUS)
             QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
             QString str;
             if (iface.isValid()) {
@@ -182,49 +181,27 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
                 if(!str.isEmpty()) {
                     return str;
                 }
+                if(useDate) {
+                    str = iface.getPropertyString("system.firmware.release_date");
+                    if(!str.isEmpty()) {
+                        return str;
+                    }
+                } else {
+                    str = iface.getPropertyString("system.firmware.version");
+                    if(str.isEmpty()) {
+                        if(!str.isEmpty()) {
+                            return str;
+                        }
+                    }
+                }
             }
-#endif
-            QString versionPath = "/proc/version";
-            QFile versionFile(versionPath);
-            if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
-            } else {
-                QString  strvalue;
-                strvalue = versionFile.readAll().trimmed();
-                strvalue = strvalue.split(" ").at(2);
-                versionFile.close();
-                return strvalue;
-            }
+            break;
         }
-        break;
-    case QSystemInfo::QtCore :
-       return  qVersion();
-       break;
-   case QSystemInfo::Firmware :
-       {
-#if !defined(QT_NO_DBUS)
-           QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-           QString str;
-           if (iface.isValid()) {
-               if(useDate) {
-                   str = iface.getPropertyString("system.firmware.release_date");
-                   if(!str.isEmpty()) {
-                       return str;
-                   }
-               } else {
-                   str = iface.getPropertyString("system.firmware.version");
-                   if(str.isEmpty()) {
-                       if(!str.isEmpty()) {
-                           return str;
-                       }
-                   }
-               }
-           }
-#endif
-       }
-       break;
+        default:
+            return QSystemInfoLinuxCommonPrivate::version(type, parameter);
+            break;            
     };
-  return errorStr;
+    return errorStr;
 }
 
 

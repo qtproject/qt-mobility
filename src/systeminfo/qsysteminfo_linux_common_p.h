@@ -86,7 +86,7 @@ public:
     QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const {return QStringList();}	 // 2 letter ISO 639-1
 
-    QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString()) {return QString();}
+    QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString());
 
     QString currentCountryCode() const {return QString();} //2 letter ISO 3166-1
 //features
