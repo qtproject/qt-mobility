@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include <BADESCA.H>
+
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
 #include "s60camerasession.h"
@@ -46,7 +48,11 @@
 
 #include <fbs.h>
 #include <qglobal.h>
+#include <QDir>
+
 const int KSymbianImageQualityCoefficient = 25;
+const int KMaxClipSize = 64 * 1024;
+
 CCamera::TFormat KSymbianDefaultImageCodec = CCamera::EFormatExif;
 #ifdef Q_CC_NOKIAX86
 _LIT8(KCameraTemp,"test data");
@@ -79,6 +85,8 @@ S60CameraSession::S60CameraSession(QObject *parent)
 
 S60CameraSession::~S60CameraSession()
 {
+	delete m_videoUtility;
+	m_videoUtility = NULL;
     delete m_cameraEngine;
     m_cameraEngine = NULL;
 }
@@ -92,7 +100,8 @@ void S60CameraSession::resetCamera()
     QT_TRAP_THROWING(m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
     Q_CHECK_PTR(m_cameraEngine);
     m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
-
+    
+    m_videoUtility = CVideoRecorderUtility::NewL(*this);
 }
 
 void S60CameraSession::startCamera()
@@ -370,14 +379,15 @@ int S60CameraSession::state() const
 void S60CameraSession::startRecording()
 {
     qDebug() << "S60CameraSession::startRecording";
-    /*
-     * Capture Video: Gets the video frame size and video frame rate for the index passed by calling 
-     * the CCamera::EnumerateVideoFrameSizes() function and the CCamera::EnumerateVideoFrameRates() 
-     * functions respectively. The video details such as frame sizes and frame rate index are passed 
-     * to the CCamera::PrepareVideoCaptureL () function to allocate the memory for the video to be captured.
-     *  Then, a call to the CCamera::StartVideoCapture() starts capturing the video and a call to 
-     *  the CCamera::StopVideoCapture() stops capturing the video.
-     */
+    QString filename = QDir::toNativeSeparators(m_sink.toString());
+    TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));    
+
+    int cameraHandle = m_cameraEngine->Camera()->Handle();
+    
+    TUid controllerUid(TUid::Uid(m_videoControllerMap[m_videoCodec].controllerUid));
+    TUid formatUid(TUid::Uid(m_videoControllerMap[m_videoCodec].formatUid));
+    
+    m_videoUtility->OpenFileL(sink, cameraHandle, controllerUid, formatUid);
 }
 
 void S60CameraSession::pauseRecording()
@@ -388,6 +398,8 @@ void S60CameraSession::pauseRecording()
 void S60CameraSession::stopRecording()
 {
     qDebug() << "S60CameraSession::stopRecording";
+    m_videoUtility->Stop();
+    m_videoUtility->Close();
 }
 
 void S60CameraSession::captureFrame()
@@ -1025,6 +1037,122 @@ void S60CameraSession::lockExposure(bool lock)
 bool S60CameraSession::isExposureLocked()
 {
     return m_advancedSettings->isExposureLocked();
+}
+
+void S60CameraSession::updateVideoCaptureCodecs()
+{
+	m_videoControllerMap.clear();
+	
+	// Resolve the supported video format and retrieve a list of controllers
+	CMMFControllerPluginSelectionParameters* pluginParameters =
+		CMMFControllerPluginSelectionParameters::NewLC();
+	CMMFFormatSelectionParameters* format =
+		CMMFFormatSelectionParameters::NewLC();
+
+	// Set the play and record format selection parameters to be blank.
+	// Format support is only retrieved if requested.
+	pluginParameters->SetRequiredPlayFormatSupportL(*format);
+	pluginParameters->SetRequiredRecordFormatSupportL(*format);
+
+	// Set the media ids
+	RArray<TUid> mediaIds;
+	CleanupClosePushL(mediaIds);
+	User::LeaveIfError(mediaIds.Append(KUidMediaTypeVideo));
+	// Get plugins that support at least video
+	pluginParameters->SetMediaIdsL(mediaIds,
+		CMMFPluginSelectionParameters::EAllowOtherMediaIds);
+	pluginParameters->SetPreferredSupplierL(KNullDesC,
+		CMMFPluginSelectionParameters::EPreferredSupplierPluginsFirstInList);
+
+	// Array to hold all the controllers support the match data
+	RMMFControllerImplInfoArray controllers;
+	CleanupResetAndDestroyPushL(controllers);
+	pluginParameters->ListImplementationsL(controllers);
+
+	// Find the first controller with at least one record format available
+	for (TInt index=0; index<controllers.Count(); index++) {
+		const RMMFFormatImplInfoArray& recordFormats = 
+			controllers[index]->RecordFormats();
+		for (TInt j=0; j<recordFormats.Count(); j++) {
+			const CDesC8Array& mimeTypes = recordFormats[j]->SupportedMimeTypes();
+			TInt count = mimeTypes.Count();
+			if (count > 0) {
+				TPtrC8 mimeType = mimeTypes[0];
+				QString type = QString::fromUtf8((char *)mimeType.Ptr(),
+						mimeType.Length()); 
+				VideoControllerData data;
+				data.controllerUid = controllers[index]->Uid().iUid;
+				data.formatUid = recordFormats[j]->Uid().iUid;
+				data.formatDescription = QString::fromUtf16(
+						recordFormats[j]->DisplayName().Ptr(), 
+						recordFormats[j]->DisplayName().Length());
+				m_videoControllerMap[type] = data;
+			}
+		}
+	}
+	
+	CleanupStack::PopAndDestroy(&controllers);
+	CleanupStack::PopAndDestroy(&mediaIds);
+	CleanupStack::PopAndDestroy(format);
+	CleanupStack::PopAndDestroy(pluginParameters);
+
+	// Leave if recording is not supported
+	if(!m_videoControllerMap.keys().count() == 0) {
+		User::Leave(KErrNotSupported);
+	}
+}
+
+QStringList S60CameraSession::supportedVideoCaptureCodecs()
+{
+    return m_videoControllerMap.keys();
+}
+
+QString S60CameraSession::videoCaptureCodec()
+{
+    return m_videoCodec;
+}
+void S60CameraSession::setVideoCaptureCodec(const QString &codecName)
+{
+    if (codecName == m_videoCodec)
+        return;
+    
+    m_videoCodec = codecName;
+}
+
+void S60CameraSession::MvruoOpenComplete(TInt aError)
+{
+    if(aError==KErrNone) {
+        TRAPD(err, m_videoUtility->SetMaxClipSizeL(KMaxClipSize));
+        if(err==KErrNone) {
+            m_videoUtility->Prepare();
+            // TODO:
+            // update recording status
+        }
+    }
+}
+
+void S60CameraSession::MvruoPrepareComplete(TInt aError)
+{
+    if(aError==KErrNone) {
+        m_videoUtility->Record();
+        // TODO:
+        // update recording status
+    }
+	
+}
+
+void S60CameraSession::MvruoRecordComplete(TInt aError)
+{
+    if((aError==KErrNone) || (aError==KErrCompletion)) {
+        m_videoUtility->Stop();
+        m_videoUtility->Close();
+    }
+	
+}
+
+void S60CameraSession::MvruoEvent(const TMMFEvent& aEvent)
+{
+	
 }
 
 
