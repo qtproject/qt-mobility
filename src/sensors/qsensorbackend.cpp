@@ -86,8 +86,28 @@ void QSensorBackend::setSupportedUpdatePolicies(QSensor::UpdatePolicies policies
 */
 void QSensorBackend::newReadingAvailable()
 {
-    if (m_sensor->updatePolicy() != QSensor::PolledUpdates)
-        m_sensor->newReadingAvailable();
+    QSensorPrivate *d = m_sensor->d_func();
+
+    // Copy the values from the device reading to the filter reading
+    *(d->filter_reading) = *(d->device_reading);
+
+    for (QFilterList::const_iterator it = d->filters.constBegin(); it != d->filters.constEnd(); ++it) {
+        QSensorFilter *filter = (*it);
+        if (!filter->filter(d->filter_reading))
+            return;
+    }
+
+    // Copy the values from the filter reading to the cached reading
+    *(d->cache_reading) = *(d->filter_reading);
+
+#if 0
+    if (d->updatePolicy == QSensor::PolledUpdates)
+        return; // We don't emit the signal if we're polling
+#endif
+
+    if (d->signalEnabled)
+        emit m_sensor->readingChanged();
+
 }
 
 /*!

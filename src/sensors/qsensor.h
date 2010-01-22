@@ -143,7 +143,6 @@ Q_SIGNALS:
 
 protected:
     // called by the back end
-    void newReadingAvailable();
     QSensorPrivate *d_func() const { return d.data(); }
 
 private:
@@ -167,7 +166,7 @@ protected:
 
 class Q_SENSORS_EXPORT QSensorReading : public QObject
 {
-    friend class QSensor;
+    friend class QSensorBackend;
 
     Q_OBJECT
     Q_PROPERTY(qtimestamp timestamp READ timestamp)
@@ -180,11 +179,10 @@ public:
 protected:
     explicit QSensorReading(QObject *parent, QSensorReadingPrivate *d);
     QScopedPointer<QSensorReadingPrivate> *d_ptr() { return &d; }
+    virtual void operator=(QSensorReading &other) = 0;
 
 private:
-    void swapValuesWith(QSensorReading *other);
     QScopedPointer<QSensorReadingPrivate> d;
-    Q_DISABLE_COPY(QSensorReading)
 };
 
 template <typename T>
@@ -212,6 +210,7 @@ private:
     public:\
         classname(QObject *parent = 0);\
         virtual ~classname();\
+        void operator=(QSensorReading &other);\
     private:\
         qTypedWrapper<pclassname> d;
 
@@ -223,7 +222,16 @@ private:
         : QSensorReading(parent, new pclassname)\
         , d(d_ptr())\
         {}\
-    classname::~classname() {}
+    classname::~classname() {}\
+    void classname::operator=(QSensorReading &_other)\
+    {\
+        /* No need to verify types, only called by QSensorBackend */\
+        classname &other = static_cast<classname &>(_other);\
+        pclassname *my_ptr = static_cast<pclassname*>(d_ptr()->data());\
+        pclassname *other_ptr = static_cast<pclassname*>(other.d_ptr()->data());\
+        /* Do a direct copy of the private class */\
+        *(my_ptr) = *(other_ptr);\
+    }
 
 QTM_END_NAMESPACE
 

@@ -407,27 +407,6 @@ QSensorReading *QSensor::reading() const
 }
 
 /*!
-    \internal
-*/
-void QSensor::newReadingAvailable()
-{
-    // Copy the values from the device reading to the filter reading
-    d->filter_reading->swapValuesWith(d->device_reading);
-
-    for (QFilterList::const_iterator it = d->filters.constBegin(); it != d->filters.constEnd(); ++it) {
-        QSensorFilter *filter = (*it);
-        if (!filter->filter(d->filter_reading))
-            return;
-    }
-
-    // Copy the values from the filter reading to the cached reading
-    d->cache_reading->swapValuesWith(d->filter_reading);
-
-    if (d->signalEnabled)
-        emit readingChanged();
-}
-
-/*!
     Add a \a filter to the sensor.
 
     The sensor does not take ownership of the filter.
@@ -585,13 +564,14 @@ void QSensorReading::setTimestamp(qtimestamp timestamp)
 }
 
 /*!
+    \fn QSensorReading::operator=(QSensorReading &other)
     \internal
+
+    Copy values from other into this reading. Implemented by sub-classes
+    using the DECLARE_READING() and IMPLEMENT_READING() macros.
+
+    Note that this method is only be called by QSensorBackend.
 */
-void QSensorReading::swapValuesWith(QSensorReading *other)
-{
-    // Just swap the d pointers.
-    d.swap(*(other->d_ptr()));
-}
 
 /*!
     \macro DECLARE_READING(classname)
