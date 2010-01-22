@@ -80,7 +80,7 @@ QTM_BEGIN_NAMESPACE
     \o Stop receiving values.
     \endlist
 
-    Please see the individual sensor classes for details on their use.
+    The sensor data is delivered via QSensorData and its sub-classes.
 */
 
 /*!
@@ -127,7 +127,7 @@ bool QSensor::isAvailable() const
     \property QSensor::sensorid
     \brief the backend identifier for the sensor.
 
-    Note that this may not have a value until after connect() is called.
+    Note if the sensor is not connected to a backend the identifier may be empty.
 */
 
 /*!
@@ -145,7 +145,7 @@ QByteArray QSensor::identifier() const
 */
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
-    Q_ASSERT(d->pre_connect);
+    Q_ASSERT(!d->backend);
     d->identifier = identifier;
 }
 
@@ -166,29 +166,32 @@ QByteArray QSensor::type() const
     Sets the \a type of the sensor.
 
     Note that this can only be used if you are using QSensor directly.
+    Sub-classes of QSensor call this automatically for you.
 */
 void QSensor::setType(const QByteArray &type)
 {
-    Q_ASSERT(d->pre_connect);
+    Q_ASSERT(!d->backend);
     Q_ASSERT(QLatin1String(metaObject()->className()) == QLatin1String("QSensor") || QLatin1String(metaObject()->className()) == QLatin1String(type));
     d->type = type;
 }
 
 /*!
-    Connect to a sensor backend.
+    Try to connect to a sensor backend.
 
-    This can only be called once.
-    The type must be set before calling this method (if you are using QSensor directly).
+    You can test for failure with the isAvailable() function.
+
+    The type must be set before calling this method if you are using QSensor directly.
 
     \sa isAvailable()
 */
 void QSensor::connect()
 {
-    Q_ASSERT(d->pre_connect);
+    if (d->backend)
+        return;
+
     Q_ASSERT(!d->type.isEmpty());
 
     d->backend = QSensorManager::createBackend(this);
-    d->pre_connect = false; // must be set after the above (because the above may change our identifier)
 }
 
 /*!
@@ -367,7 +370,7 @@ void QSensor::start()
 {
     if (d->active)
         return;
-    if (d->pre_connect)
+    if (!d->backend)
         connect();
     if (!d->backend)
         return;
