@@ -593,6 +593,43 @@ void QSensorReading::swapValuesWith(QSensorReading *other)
     d.swap(*(other->d_ptr()));
 }
 
+/*!
+    \macro DECLARE_READING(classname)
+    \relates QSensorReading
+    \brief The DECLARE_READING macro adds some required methods to a reading class.
+
+    This macro should be used for all reading classes. Pass the \a classname of your reading class.
+
+    \code
+    class MyReading : public QSensorReading
+    {
+        Q_OBJECT
+        Q_PROPERTY(qreal myprop READ myprop)
+        DECLARE_READING(MyReading)
+    public:
+        qreal myprop() const;
+        vod setMyprop(qreal myprop);
+    };
+    \endcode
+
+    \sa IMPLEMENT_READING()
+*/
+
+/*!
+    \macro IMPLEMENT_READING(classname)
+    \relates QSensorReading
+    \brief The IMPLEMENT_READING macro implements the required methods for a reading class.
+
+    This macro should be used for all reading classes. It should be placed into a single compilation
+    unit (source file), not into a header file. Pass the \a classname of your reading class.
+
+    \code
+    IMPLEMENT_READING(MyReading)
+    \endcode
+
+    \sa DECLARE_READING()
+*/
+
 #include "moc_qsensor.cpp"
 QTM_END_NAMESPACE
 
