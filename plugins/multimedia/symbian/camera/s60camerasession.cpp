@@ -1091,7 +1091,7 @@ void S60CameraSession::updateVideoCaptureCodecs()
 
 QStringList S60CameraSession::supportedVideoCaptureCodecs()
 {
-	return m_videoCcontrollerMap.keys();
+    return m_videoCcontrollerMap.keys();
 }
 
 void S60CameraSession::MvruoOpenComplete(TInt aError)
