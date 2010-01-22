@@ -47,6 +47,7 @@
 
 #include "qmlcontact.h"
 
+QTM_BEGIN_NAMESPACE
 class QContactFetchRequest;
 // ![0]
 #include <qml.h>
@@ -100,5 +101,7 @@ private:
 };
 QML_DECLARE_TYPE(QMLContactManagerAsync);
 // ![0]
+
+QTM_END_NAMESPACE
 
 #endif // QMLCONTACTS_H

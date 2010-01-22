@@ -49,6 +49,8 @@
 #include <QmlView>
 #include <QContactManager>
 #include "qmlcontactsa.h"
+QT_USE_NAMESPACE
+QTM_USE_NAMESPACE
 
 int main(int argc, char ** argv)
 {

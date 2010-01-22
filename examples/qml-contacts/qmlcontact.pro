@@ -1,12 +1,16 @@
 TEMPLATE = app
-TARGET = qcmexample
+TARGET = qmlcontacts
 
 CONFIG += mobility
 MOBILITY = contacts
 
 DEPENDPATH += .
 INCLUDEPATH += . \
-               ../../include
+               ../../include \
+               ../../src/contacts \
+               ../../src/contacts/requests \
+               ../../src/contacts/details \
+               ../../src/contacts/filters
 
 QT += declarative
 QT += script

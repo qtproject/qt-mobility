@@ -51,7 +51,7 @@ Rectangle {
     QMLContactManagerAsync {
         id: "blah"
 
-        manager: "tracker"
+        manager: "memory"
         onDataChanged: print("Data changed!");
         onContactsAdded: print("Contacts added: " + contactIds);
         onContactsLoaded: gotContacts(contact);

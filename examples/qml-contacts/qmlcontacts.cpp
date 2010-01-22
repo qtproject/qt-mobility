@@ -47,6 +47,10 @@
 #include <qcontactlocalidfilter.h>
 #include <qcontactdetails.h>
 
+QTM_USE_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+
 // ![0]
 QMLContactManagerAsync::QMLContactManagerAsync(QObject *parent)
 : QObject(parent)
@@ -165,5 +169,9 @@ QString QMLContactManagerAsync::idToName(QString name)
     return qc->synthesizeDisplayLabel(c);
 }
 
-QML_DEFINE_TYPE(QMLContactManagerAsync, 1, 0, QMLContactManagerAsync, QMLContactManagerAsync);
 // ![0]
+
+#include "moc_qmlcontactsa.cpp"
+
+QTM_END_NAMESPACE
+QML_DEFINE_TYPE(QMLContactManagerAsync, 1, 0, QMLContactManagerAsync, QMLContactManagerAsync);

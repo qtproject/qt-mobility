@@ -2,6 +2,12 @@
 #include <qcontactname.h>
 #include <QtDebug>
 
+
+QT_USE_NAMESPACE
+QTM_USE_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+
 QmlContact::QmlContact(QContact& contact, QObject *parent)
     : QObject(parent), m_contact(contact)
 {   
@@ -85,7 +91,13 @@ void QmlContact::setName(QString name)
 
 QStringList QmlContact::availableActions()
 {
-    return m_contact.availableActions();
+    QList<QContactActionDescriptor> actions =  m_contact.availableActions();
+    QStringList names;
+
+    foreach (const QContactActionDescriptor& action, actions) {
+        names << action.actionName();
+    }
+    return names;
 }
 QStringList QmlContact::details()
 {
@@ -129,4 +141,6 @@ QVariantMap QmlContact::values(QString definitionId)
 //    return strlist;
 }
 
+#include "moc_qmlcontact.cpp"
+QTM_END_NAMESPACE
 QML_DEFINE_TYPE(QmlContact, 1, 0, QmlContact, QmlContact)
