@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
 QAtomicInt QContactDetailPrivate::lastDetailKey(1);
 
 /* Definitions of predefined string constants */
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldLinkedDetailUris, "LinkedDetailUris");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextOther, "Other");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextHome, "Home");
