@@ -177,7 +177,6 @@ END:VCARD\r\n");
     // It's possible that it finishes before it cancels.
     QVERIFY(state == QVersitWriter::CanceledState
             || state == QVersitWriter::FinishedState);
-
 }
 
 QTEST_MAIN(UT_QVersitWriter)

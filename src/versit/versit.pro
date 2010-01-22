@@ -24,7 +24,8 @@ PUBLIC_HEADERS +=  \
     qversitreader.h \
     qversitwriter.h \
     qversitcontactexporter.h \
-    qversitcontactimporter.h
+    qversitcontactimporter.h \
+    qversitresourcehandler.h
 
 # Private Headers
 PRIVATE_HEADERS += qversitcommon.h \

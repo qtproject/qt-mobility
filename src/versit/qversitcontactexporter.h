@@ -43,7 +43,7 @@
 #define QVERSITCONTACTEXPORTER_H
 
 #include "qmobilityglobal.h"
-#include "qversitcommon.h"
+#include "qversitresourcehandler.h"
 #include "qversitdocument.h"
 
 #include <qcontact.h>
