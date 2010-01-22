@@ -30,7 +30,9 @@ PUBLIC_HEADERS += \
            qmessagefilter.h \
            qmessagemanager.h \
            qmessagesortorder.h \
-           qmessageservice.h
+           qmessageservice.h \
+           qmessagedatacomparator.h \
+           qmessageglobal.h
 
 PRIVATE_HEADERS += \
            qmessageid_p.h \
