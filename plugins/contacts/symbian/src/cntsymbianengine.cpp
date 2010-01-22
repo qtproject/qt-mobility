@@ -818,8 +818,7 @@ void CntSymbianEngine::requestDestroyed(QContactAbstractRequest* req)
 bool CntSymbianEngine::startRequest(QContactAbstractRequest* req)
 {
     m_asynchronousOperations.enqueue(req);
-    QList<QContactManager::Error> dummy;
-    updateRequestState(req, QContactManager::NoError, dummy, QContactAbstractRequest::ActiveState);
+    updateRequestState(req, QContactManager::NoError, QContactAbstractRequest::ActiveState);
     QTimer::singleShot(0, this, SLOT(performAsynchronousOperation()));
     return true;
 }
@@ -827,8 +826,7 @@ bool CntSymbianEngine::startRequest(QContactAbstractRequest* req)
 /*! \reimp */
 bool CntSymbianEngine::cancelRequest(QContactAbstractRequest* req)
 {
-    QList<QContactManager::Error> dummy;
-    updateRequestState(req, QContactManager::NoError, dummy, QContactAbstractRequest::CanceledState);
+    updateRequestState(req, QContactManager::NoError, QContactAbstractRequest::CanceledState);
     return true;
 }
 
@@ -866,9 +864,9 @@ void CntSymbianEngine::performAsynchronousOperation()
     QContactAbstractRequest *currentRequest;
 
     // take the first pending request and finish it
-    if (d->m_asynchronousOperations.isEmpty())
+    if (m_asynchronousOperations.isEmpty())
         return;
-    currentRequest = d->m_asynchronousOperations.dequeue();
+    currentRequest = m_asynchronousOperations.dequeue();
 
     // check to see if it is cancelling; if so, remove it from the queue and return.
     if (currentRequest->state() == QContactAbstractRequest::CanceledState) {
