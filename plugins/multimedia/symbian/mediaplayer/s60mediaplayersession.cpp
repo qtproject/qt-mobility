@@ -103,6 +103,7 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
     if (m_mediaStatus == status)
         return;
     
+    m_mediaStatus = status;
     emit mediaStatusChanged(status);
     if (m_play_requested)
         play();
