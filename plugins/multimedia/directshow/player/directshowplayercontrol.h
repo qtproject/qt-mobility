@@ -45,11 +45,9 @@
 #include <qmediacontent.h>
 #include <qmediaplayercontrol.h>
 
-#include <dshow.h>
-
 #include <QtCore/qcoreevent.h>
 
-class DirectShowPlayerService;
+#include "directshowplayerservice.h"
 
 QTM_USE_NAMESPACE
 
@@ -57,11 +55,6 @@ class DirectShowPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
 public:
-    enum
-    {
-        GraphStatusChanged = QEvent::User
-    };
-
     DirectShowPlayerControl(DirectShowPlayerService *service, QObject *parent = 0);
     ~DirectShowPlayerControl();
 
@@ -99,26 +92,48 @@ public:
     void pause();
     void stop();
 
-    void bufferingData(bool buffering);
-    void complete(HRESULT hr);
-    void loadStatus(long status);
-    void stateChange(long state);
+    void updateState(QMediaPlayer::State state);
+    void updateStatus(QMediaPlayer::MediaStatus status);
+    void updateMediaInfo(qint64 duration, int streamTypes, bool seekable);
+    void updatePlaybackRate(qreal rate);
+    void updateAudioOutput(IBaseFilter *filter);
+
+    using QMediaPlayerControl::error;
 
 protected:
     void customEvent(QEvent *event);
 
 private:
-    void updateStatus();
+    enum Properties
+    {
+        StateProperty        = 0x01,
+        StatusProperty       = 0x02,
+        StreamTypesProperty  = 0x04,
+        DurationProperty     = 0x08,
+        PlaybackRateProperty = 0x10,
+        SeekableProperty     = 0x20
+    };
+
+    enum Event
+    {
+        PropertiesChanged = QEvent::User
+    };
+
+    void scheduleUpdate(int properties);
 
     DirectShowPlayerService *m_service;
+    IBasicAudio *m_audio;
+    QIODevice *m_stream;
+    int m_updateProperties;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_status;
+    int m_streamTypes;
     int m_muteVolume;
-    QIODevice *m_stream;
-    QMediaContent m_media;
     qint64 m_duration;
-    long m_loadStatus;
-    bool m_buffering;
+    qreal m_playbackRate;
+    bool m_seekable;
+    QMediaContent m_media;
+    
 };
 
 #endif

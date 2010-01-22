@@ -44,6 +44,12 @@
 
 #include <qmetadatacontrol.h>
 
+#include <dshow.h>
+#include <qnetwork.h>
+#include <wmsdk.h>
+
+#include <QtCore/qcoreevent.h>
+
 class DirectShowPlayerService;
 
 QTM_USE_NAMESPACE
@@ -52,7 +58,7 @@ class DirectShowMetaDataControl : public QMetaDataControl
 {
     Q_OBJECT
 public:
-    DirectShowMetaDataControl(DirectShowPlayerService *service, QObject *parent = 0);
+    DirectShowMetaDataControl(QObject *parent = 0);
     ~DirectShowMetaDataControl();
 
     bool isWritable() const;
@@ -66,10 +72,19 @@ public:
     void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
 
-    using QMetaDataControl::metaDataChanged;
+    void updateGraph(IFilterGraph2 *graph, IBaseFilter *source);
+
+protected:
+    void customEvent(QEvent *event);
 
 private:
-    DirectShowPlayerService *m_service;
+    enum Event
+    {
+        MetaDataChanged = QEvent::User
+    };
+
+    IAMMediaContent *m_content;
+    IWMHeaderInfo *m_headerInfo;
 };
 
 #endif

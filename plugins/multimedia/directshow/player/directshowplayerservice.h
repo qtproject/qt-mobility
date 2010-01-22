@@ -42,12 +42,15 @@
 #ifndef DIRECTSHOWPLAYERSERVICE_H
 #define DIRECTSHOWPLAYERSERVICE_H
 
+#include <qmediaplayer.h>
 #include <qmediaresource.h>
 #include <qmediaservice.h>
+#include <qmediatimerange.h>
 
 #include "directshoweventloop.h"
 #include "directshowglobal.h"
 
+#include <QtCore/qcoreevent.h>
 #include <QtCore/qmutex.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qwaitcondition.h>
@@ -71,14 +74,6 @@ class DirectShowPlayerService : public QMediaService
 {
     Q_OBJECT
 public:
-    enum GraphStatus
-    {
-        NoMedia,
-        Loading,
-        Loaded,
-        InvalidMedia
-    };
-
     enum StreamType
     {
         AudioStream = 0x01,
@@ -90,31 +85,32 @@ public:
 
     QMediaControl* control(const char *name) const;
 
-    int streamTypes() const { return m_streamTypes; }
-    GraphStatus graphStatus() const { return m_graphStatus; }
-
-    IFilterGraph2 *graph() { return m_graph; }
-    IBaseFilter *source() { return 0; }
-
     void load(const QMediaContent &media, QIODevice *stream);
     void play();
     void pause();
     void stop();
 
     qint64 position() const;
-    qint64 duration() const { return m_duration; }
+    QMediaTimeRange availablePlaybackRanges() const;
 
     void seek(qint64 position);
     void setRate(qreal rate);
 
+    int bufferStatus() const;
+
     void setAudioOutput(IBaseFilter *filter);
     void setVideoOutput(IBaseFilter *filter);
+
+protected:
+    void customEvent(QEvent *event);
 
 private Q_SLOTS:
     void videoOutputChanged();
     void graphEvent(HANDLE handle);
 
 private:
+    void updateStatus();
+
     int findStreamTypes(IBaseFilter *source) const;
     int findStreamType(IPin *pin) const;
 
@@ -151,6 +147,23 @@ private:
         Stop            = 0x0800,
     };
 
+    enum Event
+    {
+        FinalizedLoad = QEvent::User,
+        Error,
+        RateChange,
+        Started,
+        Paused
+    };
+
+    enum GraphStatus
+    {
+        NoMedia,
+        Loading,
+        Loaded,
+        InvalidMedia
+    };
+
     DirectShowPlayerControl *m_playerControl;
     DirectShowMetaDataControl *m_metaDataControl;
     DirectShowVideoOutputControl *m_videoOutputControl;
@@ -163,6 +176,7 @@ private:
     int m_executingTask;
     int m_executedTasks;
     GraphStatus m_graphStatus;
+    QMediaPlayer::Error m_error;
     QIODevice *m_stream;
     IFilterGraph2 *m_graph;
     IBaseFilter *m_source;
@@ -172,7 +186,9 @@ private:
     qreal m_rate;
     qint64 m_position;
     qint64 m_duration;
-
+    bool m_buffering;
+    bool m_seekable;
+    QMediaTimeRange m_playbackRange;
     QUrl m_url;
     QMediaResourceList m_resources;
     QMutex m_mutex;

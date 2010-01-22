@@ -262,7 +262,7 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
 
 void Player::bufferingProgress(int progress)
 {
-    setStatusInfo(tr("Buffering %4%%").arg(progress));
+    setStatusInfo(tr("Buffering %4%").arg(progress));
 }
 
 void Player::setTrackInfo(const QString &info)

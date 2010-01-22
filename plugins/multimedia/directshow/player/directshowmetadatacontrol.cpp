@@ -39,14 +39,15 @@
 **
 ****************************************************************************/
 
+#include <dshow.h>
+#include <initguid.h>
+#include <qnetwork.h>
+
 #include "directshowmetadatacontrol.h"
 
 #include "directshowplayerservice.h"
 
-#include <initguid.h>
-#include <qnetwork.h>
-#include <wmsdk.h>
-
+#include <QtCore/qcoreapplication.h>
 
 namespace
 {
@@ -224,10 +225,10 @@ static QVariant getValue(IWMHeaderInfo *header, const wchar_t *key)
     return QVariant();
 }
 
-DirectShowMetaDataControl::DirectShowMetaDataControl(
-        DirectShowPlayerService *service, QObject *parent)
+DirectShowMetaDataControl::DirectShowMetaDataControl(QObject *parent)
     : QMetaDataControl(parent)
-    , m_service(service)
+    , m_content(0)
+    , m_headerInfo(0)
 {
 }
 
@@ -242,43 +243,39 @@ bool DirectShowMetaDataControl::isWritable() const
 
 bool DirectShowMetaDataControl::isMetaDataAvailable() const
 {
-    IAMMediaContent *content = 0;
-    if (m_service->graph() && m_service->graph()->QueryInterface(
-            IID_IAMMediaContent, reinterpret_cast<void **>(&content)) == S_OK) {
-        content->Release();
-        return true;
-    } else if (IWMHeaderInfo *header = com_cast<IWMHeaderInfo>(m_service->source())) {
-        header->Release();
-        return true;
-    } else {
-        return false;
-    }
+    return m_content || m_headerInfo;
 }
 
 QVariant DirectShowMetaDataControl::metaData(QtMedia::MetaData key) const
 {
     QVariant value;
 
-    IAMMediaContent *content = 0;
-    if (m_service->graph() && m_service->graph()->QueryInterface(
-            IID_IAMMediaContent, reinterpret_cast<void **>(&content)) == S_OK) {
+    if (m_headerInfo) {
+        static const int  count = sizeof(qt_wmMetaDataKeys) / sizeof(QWMMetaDataKeyLookup);
+        for (int i = 0; i < count; ++i) {
+            if (qt_wmMetaDataKeys[i].key == key) {
+                value = getValue(m_headerInfo, qt_wmMetaDataKeys[i].token);
+                break;
+            }
+        }
+    }  else if (m_content) {
         BSTR string = 0;
 
         switch (key) {
         case QtMedia::Author:
-            content->get_AuthorName(&string);
+            m_content->get_AuthorName(&string);
             break;
         case QtMedia::Title:
-            content->get_Title(&string);
+            m_content->get_Title(&string);
             break;
         case QtMedia::ParentalRating:
-            content->get_Rating(&string);
+            m_content->get_Rating(&string);
             break;
         case QtMedia::Description:
-            content->get_Description(&string);
+            m_content->get_Description(&string);
             break;
         case QtMedia::Copyright:
-            content->get_Copyright(&string);
+            m_content->get_Copyright(&string);
             break;
         default:
             break;
@@ -288,15 +285,6 @@ QVariant DirectShowMetaDataControl::metaData(QtMedia::MetaData key) const
             value = QString::fromUtf16(string, ::SysStringLen(string));
 
             ::SysFreeString(string);
-        }
-        content->Release();
-    } else if (IWMHeaderInfo *header = com_cast<IWMHeaderInfo>(m_service->source())) {
-        static const int  count = sizeof(qt_wmMetaDataKeys) / sizeof(QWMMetaDataKeyLookup);
-        for (int i = 0; i < count; ++i) {
-            if (qt_wmMetaDataKeys[i].key == key) {
-                value = getValue(header, qt_wmMetaDataKeys[i].token);
-                break;
-            }
         }
     }
     return value;
@@ -325,3 +313,34 @@ QStringList DirectShowMetaDataControl::availableExtendedMetaData() const
     return QStringList();
 }
 
+void DirectShowMetaDataControl::updateGraph(IFilterGraph2 *graph, IBaseFilter *source)
+{
+    if (m_content)
+        m_content->Release();
+
+    if (m_headerInfo)
+        m_headerInfo->Release();
+
+    if (!graph || graph->QueryInterface(
+            IID_IAMMediaContent, reinterpret_cast<void **>(&m_content)) != S_OK) {
+        m_content = 0;
+    }
+
+    m_headerInfo = com_cast<IWMHeaderInfo>(source);
+
+    // DirectShowMediaPlayerService holds a lock at this point so defer emitting signals to a later
+    // time.
+    QCoreApplication::postEvent(this, new QEvent(QEvent::Type(MetaDataChanged)));
+}
+
+void DirectShowMetaDataControl::customEvent(QEvent *event)
+{
+    if (event->type() == QEvent::Type(MetaDataChanged)) {
+        event->accept();
+
+        emit metaDataChanged();
+        emit metaDataAvailableChanged(m_content || m_headerInfo);
+    } else {
+        QMetaDataControl::customEvent(event);
+    }
+}

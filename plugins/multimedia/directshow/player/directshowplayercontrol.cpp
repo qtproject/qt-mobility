@@ -43,6 +43,7 @@
 
 #include "directshowplayerservice.h"
 
+#include <QtCore/qcoreapplication.h>
 #include <QtCore/qmath.h>
 
 static int volumeToDecibels(int volume)
@@ -74,18 +75,22 @@ static int decibelsToVolume(int dB)
 DirectShowPlayerControl::DirectShowPlayerControl(DirectShowPlayerService *service, QObject *parent)
     : QMediaPlayerControl(parent)
     , m_service(service)
+    , m_audio(0)
+    , m_updateProperties(0)
     , m_state(QMediaPlayer::StoppedState)
     , m_status(QMediaPlayer::UnknownMediaStatus)
+    , m_streamTypes(0)
     , m_muteVolume(-1)
-    , m_stream(0)
     , m_duration(0)
-    , m_loadStatus(0)
-    , m_buffering(false)
+    , m_playbackRate(0)
+    , m_seekable(false)
 {
 }
 
 DirectShowPlayerControl::~DirectShowPlayerControl()
 {
+    if (m_audio)
+        m_audio->Release();
 }
 
 QMediaPlayer::State DirectShowPlayerControl::state() const
@@ -100,7 +105,7 @@ QMediaPlayer::MediaStatus DirectShowPlayerControl::mediaStatus() const
 
 qint64 DirectShowPlayerControl::duration() const
 {
-    return m_service->duration();
+    return m_duration;
 }
 
 qint64 DirectShowPlayerControl::position() const
@@ -117,11 +122,10 @@ int DirectShowPlayerControl::volume() const
 {
     if (m_muteVolume >= 0) {
         return m_muteVolume;
-    } else if (IBasicAudio *audio = com_cast<IBasicAudio>(m_service->graph())) {
+    } else if (m_audio) {
         long dB = 0;
 
-        audio->get_Volume(&dB);
-        audio->Release();
+        m_audio->get_Volume(&dB);
 
         return decibelsToVolume(dB);
     } else {
@@ -137,9 +141,8 @@ void DirectShowPlayerControl::setVolume(int volume)
         m_muteVolume = boundedVolume;
 
         emit volumeChanged(m_muteVolume);
-    } else if (IBasicAudio *audio = com_cast<IBasicAudio>(m_service->graph())) {
-        audio->put_Volume(volumeToDecibels(volume));
-        audio->Release();
+    } else if (m_audio) {
+        m_audio->put_Volume(volumeToDecibels(volume));
 
         emit volumeChanged(boundedVolume);
     }
@@ -153,24 +156,22 @@ bool DirectShowPlayerControl::isMuted() const
 void DirectShowPlayerControl::setMuted(bool muted)
 {
     if (muted && m_muteVolume < 0) {
-        if (IBasicAudio *audio = com_cast<IBasicAudio>(m_service->graph())) {
+        if (m_audio) {
             long dB = 0;
 
-            audio->get_Volume(&dB);
-            audio->Release();
+            m_audio->get_Volume(&dB);
 
             m_muteVolume = decibelsToVolume(dB);
 
-            audio->put_Volume(-10000);
+            m_audio->put_Volume(-10000);
         } else {
             m_muteVolume = 0;
         }
 
         emit mutedChanged(muted);
     } else if (!muted && m_muteVolume >= 0) {
-        if (IBasicAudio *audio = com_cast<IBasicAudio>(m_service->graph())) {
-            audio->put_Volume(volumeToDecibels(m_muteVolume));
-            audio->Release();
+        if (m_audio) {
+            m_audio->put_Volume(volumeToDecibels(m_muteVolume));
         }
         m_muteVolume = -1;
 
@@ -180,60 +181,36 @@ void DirectShowPlayerControl::setMuted(bool muted)
 
 int DirectShowPlayerControl::bufferStatus() const
 {
-    return 0;
+    return m_service->bufferStatus();
 }
 
 bool DirectShowPlayerControl::isVideoAvailable() const
 {
-    return m_service->streamTypes() & DirectShowPlayerService::AudioStream;
+    return m_streamTypes & DirectShowPlayerService::VideoStream;
 }
 
 bool DirectShowPlayerControl::isSeekable() const
 {
-    DWORD capabilities = 0;
-
-    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-        seeking->GetCapabilities(&capabilities);
-        seeking->Release();
-    }
-
-    return capabilities & AM_SEEKING_CanSeekAbsolute;
+    return m_seekable;
 }
-
 
 QMediaTimeRange DirectShowPlayerControl::availablePlaybackRanges() const
 {
-    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-        LONGLONG minimum = 0;
-        LONGLONG maximum = 0;
-
-        HRESULT hr = seeking->GetAvailable(&minimum, &maximum);
-        seeking->Release();
-
-        if (SUCCEEDED(hr))
-            return QMediaTimeRange(minimum, maximum);
-    }
-
-    return QMediaTimeRange();
+    return m_service->availablePlaybackRanges();
 }
-
-
 
 qreal DirectShowPlayerControl::playbackRate() const
 {
-    double rate = 0.0;
-
-    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_service->graph())) {
-        seeking->GetRate(&rate);
-        seeking->Release();
-    }
-
-    return rate;
+    return m_playbackRate;
 }
 
 void DirectShowPlayerControl::setPlaybackRate(qreal rate)
 {
-    m_service->setRate(rate);
+    if (m_playbackRate != rate) {
+        m_service->setRate(rate);
+
+        emit playbackRateChanged(m_playbackRate = rate);
+    }
 }
 
 QMediaContent DirectShowPlayerControl::media() const
@@ -251,12 +228,15 @@ void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *st
     m_media = media;
     m_stream = stream;
 
-    m_state = QMediaPlayer::StoppedState;
-    m_status = QMediaPlayer::LoadingMedia;
+    m_updateProperties &= PlaybackRateProperty;
 
     m_service->load(media, stream);
 
-    updateStatus();
+    emit videoAvailableChanged(m_streamTypes & DirectShowPlayerService::VideoStream);
+    emit durationChanged(m_duration);
+    emit seekableChanged(m_seekable);
+    emit mediaStatusChanged(m_status);
+    emit stateChanged(m_state);
 }
 
 void DirectShowPlayerControl::play()
@@ -277,53 +257,29 @@ void DirectShowPlayerControl::stop()
     emit stateChanged(m_state = QMediaPlayer::StoppedState);
 }
 
-void DirectShowPlayerControl::bufferingData(bool buffering)
-{
-    m_buffering = buffering;
-
-    updateStatus();
-}
-
-void DirectShowPlayerControl::complete(HRESULT)
-{
-    m_state = QMediaPlayer::StoppedState;
-    m_status = QMediaPlayer::EndOfMedia;
-    m_buffering = false;
-    emit mediaStatusChanged(m_status);
-    emit stateChanged(m_state);
-}
-
-void DirectShowPlayerControl::loadStatus(long status)
-{
-    m_loadStatus = status;
-
-    updateStatus();
-}
-
-void DirectShowPlayerControl::stateChange(long state)
-{
-    switch (state) {
-    case State_Stopped:
-        m_state = QMediaPlayer::StoppedState;
-        break;
-    case State_Running:
-        m_state = QMediaPlayer::PlayingState;
-        break;
-    case State_Paused:
-        m_state = QMediaPlayer::PausedState;
-        break;
-    default:
-        break;
-    }
-
-    updateStatus();
-    emit stateChanged(m_state);
-}
-
 void DirectShowPlayerControl::customEvent(QEvent *event)
 {
-    if (event->type() == QEvent::Type(GraphStatusChanged)) {
-        updateStatus();
+    if (event->type() == QEvent::Type(PropertiesChanged)) {
+        int properties = m_updateProperties;
+        m_updateProperties = 0;
+
+        if (properties & PlaybackRateProperty)
+            emit playbackRateChanged(m_playbackRate);
+
+        if (properties & StreamTypesProperty)
+            emit videoAvailableChanged(m_streamTypes & DirectShowPlayerService::VideoStream);
+
+        if (properties & DurationProperty)
+            emit durationChanged(m_duration);
+
+        if (properties & SeekableProperty)
+            emit seekableChanged(m_seekable);
+
+        if (properties & StatusProperty)
+            emit mediaStatusChanged(m_status);
+
+        if (properties & StateProperty)
+            emit stateChanged(m_state);
 
         event->accept();
     } else {
@@ -331,35 +287,70 @@ void DirectShowPlayerControl::customEvent(QEvent *event)
     }
 }
 
-void DirectShowPlayerControl::updateStatus()
+void DirectShowPlayerControl::scheduleUpdate(int properties)
 {
-    QMediaPlayer::MediaStatus status = m_status;
+    if (m_updateProperties == 0)
+        QCoreApplication::postEvent(this, new QEvent(QEvent::Type(PropertiesChanged)));
 
-    switch (m_service->graphStatus()) {
-    case DirectShowPlayerService::NoMedia:
-        status = QMediaPlayer::NoMedia;
-        break;
-    case DirectShowPlayerService::Loading:
-        status = QMediaPlayer::LoadingMedia;
-        break;
-    case DirectShowPlayerService::Loaded:
-        if (m_state == QMediaPlayer::StoppedState)
-            status = QMediaPlayer::LoadedMedia;
-        else if (m_buffering)
-            status = QMediaPlayer::BufferingMedia;
-        else
-            status = QMediaPlayer::BufferedMedia;
-        break;
-    case DirectShowPlayerService::InvalidMedia:
-        status = QMediaPlayer::InvalidMedia;
-        break;
-    default:
-        status = QMediaPlayer::UnknownMediaStatus;
-        break;
+    m_updateProperties |= properties;
+}
+
+void DirectShowPlayerControl::updateState(QMediaPlayer::State state)
+{
+    if (m_state != state) {
+        m_state = state;
+
+        scheduleUpdate(StateProperty);
+    }
+}
+
+void DirectShowPlayerControl::updateStatus(QMediaPlayer::MediaStatus status)
+{
+    if (m_status != status) {
+        m_status = status;
+
+        scheduleUpdate(StatusProperty);
+    }
+}
+
+void DirectShowPlayerControl::updateMediaInfo(qint64 duration, int streamTypes, bool seekable)
+{
+    int properties = 0;
+
+    if (m_duration != duration) {
+        m_duration = duration;
+
+        properties |= DurationProperty;
+    }
+    if (m_streamTypes != streamTypes) {
+        m_streamTypes = streamTypes;
+
+        properties |= StreamTypesProperty;
     }
 
-    if (status != m_status) {
-        emit mediaStatusChanged(m_status = status);
-        emit durationChanged(m_service->duration());
+    if (m_seekable != seekable) {
+        m_seekable = seekable;
+
+        properties |= SeekableProperty;
     }
+
+    if (properties != 0)
+        scheduleUpdate(properties);
+}
+
+void DirectShowPlayerControl::updatePlaybackRate(qreal rate)
+{
+    if (m_playbackRate != rate) {
+        m_playbackRate = rate;
+
+        scheduleUpdate(PlaybackRateProperty);
+    }
+}
+
+void DirectShowPlayerControl::updateAudioOutput(IBaseFilter *filter)
+{
+    if (m_audio)
+        m_audio->Release();
+
+    m_audio = com_cast<IBasicAudio>(filter);
 }
