@@ -420,7 +420,7 @@ void TestSymbianEngine::retrieveContacts()
     QContact c;
     c.setType(QContactType::TypeContact);
     QContactName cn;
-    cn.setFirst("aaa");
+    cn.setFirstName("aaa");
     QVERIFY(c.saveDetail(&cn));
 
     QContactPhoneNumber number;
@@ -434,7 +434,7 @@ void TestSymbianEngine::retrieveContacts()
     QContact d;
     d.setType(QContactType::TypeContact);
     QContactName dn;
-    dn.setFirst("bbb");
+    dn.setFirstName("bbb");
     QVERIFY(d.saveDetail(&dn));
     QVERIFY(m_engine->saveContact(&d, err));
     QVERIFY(err == QContactManager::NoError);
@@ -498,7 +498,7 @@ void TestSymbianEngine::updateContact()
     int details_before = c.details().count();
 
     QContactName aliceName;
-    aliceName.setFirst("Alice");
+    aliceName.setFirstName("Alice");
     c.saveDetail(&aliceName);
 
     QContactPhoneNumber number;
@@ -616,7 +616,7 @@ void TestSymbianEngine::addOwnCard()
     // Create a new contact own card
     QContact own;
     QContactName ownName;
-    ownName.setFirst("Own");
+    ownName.setFirstName("Own");
     own.saveDetail(&ownName);
     QVERIFY(m_engine->saveContact(&own, err));
     QVERIFY(err == QContactManager::NoError);
@@ -644,7 +644,7 @@ void TestSymbianEngine::retrieveOwnCard()
     // Create a new contact own card
     QContact own;
     QContactName ownName;
-    ownName.setFirst("Own");
+    ownName.setFirstName("Own");
     own.saveDetail(&ownName);
     QVERIFY(m_engine->saveContact(&own, err));
     QVERIFY(err == QContactManager::NoError);
@@ -907,7 +907,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
 
     QContact first;
     QContactName fn;
-    fn.setFirst("Alice");
+    fn.setFirstName("Alice");
     first.saveDetail(&fn);
     label = m_engine->synthesizeDisplayLabel(first, err);
     QVERIFY(err == QContactManager::NoError);
@@ -915,7 +915,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
 
     QContact last;
     QContactName ln;
-    ln.setLast("Jones");
+    ln.setLastName("Jones");
     last.saveDetail(&ln);
     label = m_engine->synthesizeDisplayLabel(last, err);
     QVERIFY(err == QContactManager::NoError);

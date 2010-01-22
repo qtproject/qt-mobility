@@ -97,8 +97,8 @@ void tst_QContactManagerSymbian::init()
 {
     QContact contact;
     QContactName name;
-    name.setFirst("James");
-    name.setLast("Hunt");
+    name.setFirstName("James");
+    name.setLastName("Hunt");
     contact.saveDetail(&name);
     QVERIFY(m_cm->saveContact(&contact));
     m_contactId = contact.id();

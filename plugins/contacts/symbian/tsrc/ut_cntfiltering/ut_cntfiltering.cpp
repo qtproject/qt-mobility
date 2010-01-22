@@ -229,8 +229,8 @@ void TestFiltering::createContact_1()
     // Stefann Fedrernn +02644424423 ste.Fed@nokia.com
     // Contact details
     QContactName contactName;
-    contactName.setFirst("Stefann");
-    contactName.setLast("Fedrernn");
+    contactName.setFirstName("Stefann");
+    contactName.setLastName("Fedrernn");
     phonecontact.saveDetail(&contactName);
     
     QContactPhoneNumber number;
@@ -255,8 +255,8 @@ void TestFiltering::createContact_2()
     
     // Contact details
     QContactName contactName;
-    contactName.setFirst("Johnn");
-    contactName.setLast("Lenonn");
+    contactName.setFirstName("Johnn");
+    contactName.setLastName("Lenonn");
     phonecontact.saveDetail(&contactName);
     
        
@@ -286,8 +286,8 @@ void TestFiltering::createContact_3()
     
     // Contact details
     QContactName contactName;
-    contactName.setFirst("Joronn");
-    contactName.setLast("Bondnn");
+    contactName.setFirstName("Joronn");
+    contactName.setLastName("Bondnn");
     phonecontact.saveDetail(&contactName);
     
     QContactPhoneNumber number2;
@@ -315,8 +315,8 @@ void TestFiltering::createContact_4()
     
     // Contact details
     QContactName contactName;
-    contactName.setFirst("Micheal");
-    contactName.setLast("Jack");
+    contactName.setFirstName("Micheal");
+    contactName.setLastName("Jack");
     phonecontact.saveDetail(&contactName);
     
     QContactPhoneNumber number2;
@@ -341,8 +341,8 @@ void TestFiltering::createContact_5()
     
     // Contact details
     QContactName contactName;
-    contactName.setFirst("Susan");
-    contactName.setLast("Daniel");
+    contactName.setFirstName("Susan");
+    contactName.setLastName("Daniel");
     phonecontact.saveDetail(&contactName);
     
     QContactPhoneNumber number2;

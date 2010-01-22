@@ -695,7 +695,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
                         // Contact name otherwise
                         QContactName name;
                         QString nameString = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
-                        name.setFirst(nameString);
+                        name.setFirstName(nameString);
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
                         currentContact = setContactDisplayLabel(synthesizeDisplayLabel(currentContact, error), currentContact);
@@ -815,7 +815,7 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
     User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBText, nameValue));
 
     QContactName convertedNameDetail;
-    convertedNameDetail.setFirst(name);
+    convertedNameDetail.setFirstName(name);
     convertedContact.saveDetail(&convertedNameDetail);
 
     //add nickname

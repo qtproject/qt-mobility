@@ -78,15 +78,15 @@ QContactDetail *CntTransformName::transformItemField(const CContactItemField& fi
         }
         //First name
         else if (field.ContentType().FieldType(i) == KUidContactFieldGivenName) {
-            name->setFirst(nameValue);
+            name->setFirstName(nameValue);
         }
         //Middle name
         else if (field.ContentType().FieldType(i) == KUidContactFieldAdditionalName) {
-            name->setMiddle(nameValue);
+            name->setMiddleName(nameValue);
         }
         //Last name
         else if (field.ContentType().FieldType(i) == KUidContactFieldFamilyName) {
-            name->setLast(nameValue);
+            name->setLastName(nameValue);
         }
         //Suffix
         else if (field.ContentType().FieldType(i) == KUidContactFieldSuffixName) {

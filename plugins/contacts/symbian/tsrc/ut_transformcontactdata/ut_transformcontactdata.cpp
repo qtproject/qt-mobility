@@ -351,9 +351,9 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
 
     QContactName name;
     name.setPrefix(prefixDetail);
-    name.setFirst(firstnameDetail);
-    name.setLast(lastnameDetail);
-    name.setMiddle(middlenameDetail);
+    name.setFirstName(firstnameDetail);
+    name.setLastName(lastnameDetail);
+    name.setMiddleName(middlenameDetail);
     name.setSuffix(suffixDetail);
     name.setCustomLabel(customLabelDetail);
     QList<CContactItemField *> fields = transformName->transformDetailL(name);

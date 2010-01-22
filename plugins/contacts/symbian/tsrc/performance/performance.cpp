@@ -72,7 +72,7 @@ void SymbianPluginPerfomance::createSimpleContacts()
 
         // Contact details
         QContactName aliceName;
-        aliceName.setFirst(first.append(c));
+        aliceName.setFirstName(first.append(c));
         alice.saveDetail(&aliceName);
 
         contactsList.append(alice);
@@ -110,8 +110,8 @@ void SymbianPluginPerfomance::createComplexContacts()
         QString last("Jones");
 
         QContactName aliceName;
-        aliceName.setFirst(first.append(c));
-        aliceName.setLast(last.append(c));
+        aliceName.setFirstName(first.append(c));
+        aliceName.setLastName(last.append(c));
         alice.saveDetail(&aliceName);
 
         QContactPhoneNumber number;
@@ -408,8 +408,8 @@ void SymbianPluginPerfomance::createComplexContactsWithOnlineAccount()
         QString first("Alice");
         QString last("Jones");
         QContactName aliceName;
-        aliceName.setFirst(first.append(c));
-        aliceName.setLast(last.append(c));
+        aliceName.setFirstName(first.append(c));
+        aliceName.setLastName(last.append(c));
         alice.saveDetail(&aliceName);
         QContactPhoneNumber number;
         number.setContexts("Home");
