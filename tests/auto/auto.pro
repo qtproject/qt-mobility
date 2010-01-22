@@ -111,7 +111,8 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qvideowidget
+        qvideowidget \
+        qmediatimerange
 
     contains(QT_CONFIG, multimedia) {
         SUBDIRS += \
