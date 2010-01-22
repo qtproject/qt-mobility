@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 class n900proximitysensor : public n900filebasedsensor
 {
 public:
-    static const *id;
+    static const char *id;
 
     n900proximitysensor(QSensor *sensor);
 
