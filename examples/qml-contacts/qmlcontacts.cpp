@@ -74,6 +74,56 @@ QString QMLContactManagerAsync::manager()
     return qc->managerName();
 }
 
+void QMLContactManagerAsync::fillContactsIntoMemoryEngine(QContactManager* manager)
+{
+    QContact c;
+    QContactName name;
+    QContactOnlineAccount account;
+    QContactAvatar avatar;
+    
+    name.setFirst(QString::fromLatin1("Charles"));
+    name.setLast(QString::fromLatin1("Yin"));
+
+    avatar.setAvatar(QString::fromLatin1("C:\\workspace\\qtm-contacts\\examples\\qml-contacts\\contents/pics\\fruit-salad.jpg"));
+    avatar.setSubType(QContactAvatar::SubTypeImage);
+    account.setAccountUri(QString::fromLatin1("yinyunqiao@hotmail.com"));
+    
+    c.saveDetail(&name);
+    c.saveDetail(&avatar);
+    c.saveDetail(&account);
+    manager->saveContact(&c);
+
+    name.setFirst(QString::fromLatin1("Michael"));
+    name.setLast(QString::fromLatin1("Goddard"));
+    account.setAccountUri(QString::fromLatin1("MichaelGoddard@hotmail.com"));
+    c.setId(QContactId());
+    c.saveDetail(&name);
+    c.saveDetail(&avatar);
+    c.saveDetail(&account);
+    manager->saveContact(&c);
+
+    name.setFirst(QString::fromLatin1("Christopher"));
+    name.setLast(QString::fromLatin1("Adams"));
+    account.setAccountUri(QString::fromLatin1("ChristopherAdams@hotmail.com"));
+    account.setSubTypes(QContactOnlineAccount::SubTypeImpp);
+    c.setId(QContactId());
+    c.saveDetail(&name);
+    c.saveDetail(&avatar);
+    c.saveDetail(&account);
+    manager->saveContact(&c);
+
+
+    name.setFirst(QString::fromLatin1("Kevin"));
+    name.setLast(QString::fromLatin1("Wu Won"));
+    account.setAccountUri(QString::fromLatin1("KevinWuWon@hotmail.com"));
+    account.setSubTypes(QContactOnlineAccount::SubTypeImpp);
+    c.setId(QContactId());
+    c.saveDetail(&name);
+    c.saveDetail(&avatar);
+    c.saveDetail(&account);
+    manager->saveContact(&c);
+}
+
 void QMLContactManagerAsync::setManager(QString manager)
 {
     delete qc;
@@ -85,6 +135,10 @@ void QMLContactManagerAsync::setManager(QString manager)
     connect(qc, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
     connect(qc, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     connect(qc, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
+    
+    if (manager == "memory" && qc->contacts().isEmpty()) {
+        fillContactsIntoMemoryEngine(qc);
+    }
 
     qWarning() << "Changed backend to: " << manager;
 }

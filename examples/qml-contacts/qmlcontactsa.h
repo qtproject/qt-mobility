@@ -95,7 +95,7 @@ private:
     QContactManager *qc;    
     //QStringList m_contacts;
     QList<QContactLocalId> m_contactIds;
-
+    void fillContactsIntoMemoryEngine(QContactManager* manager);
     QString contactListToQString(const QList<QContactLocalId>& contactIds) const;
     QStringList contactListToQString(const QList<QContact>& contact) const;
 };

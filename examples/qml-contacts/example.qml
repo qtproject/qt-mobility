@@ -31,7 +31,7 @@ Rectangle {
             var o = c.values("OnlineAccount");
             var q = c.values("Presence");
             var a = c.values("Avatar");
-            nameModel.append({"name": c.name, "accountPath": "Account: " + o.AccountPath, "presence": "Status: " + q.Presence, "avatarsource": "file://" + a.Avatar});
+            nameModel.append({"name": c.name, "accountPath": "Account: " + o.AccountPath, "presence": "Status: " + q.Presence, "avatarsource": "file:///" + a.Avatar});
 
             var j;
             for(j in c.details){                
