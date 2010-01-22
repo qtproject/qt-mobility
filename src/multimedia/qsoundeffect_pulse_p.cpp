@@ -39,19 +39,37 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qobject.h>
-#include <QtCore/qdebug.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtCore/qcoreapplication.h>
+#include <QtMultimedia/qaudioformat.h>
 #include <QtNetwork>
+#include <QTime>
+
+#include "qmediacontent.h"
+#include "qmediaplayer.h"
+#include "qsoundeffect_p.h"
 
 #include "wavedecoder.h"
-#include "pulseaudioplayercontrol.h"
+
+#include "qsoundeffect_pulse_p.h"
+
+#include <pulse/pulseaudio.h>
 
 // Less than ideal
 #define PA_SCACHE_ENTRY_SIZE_MAX (1024*1024*16)
 
 namespace
 {
-
 inline pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
 {
     pa_sample_spec  spec;
@@ -63,14 +81,14 @@ inline pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
         spec.format = PA_SAMPLE_U8;
     else if (format.sampleSize() == 16) {
         switch (format.byteOrder()) {
-        case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S16BE; break;
-        case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S16LE; break;
+            case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S16BE; break;
+            case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S16LE; break;
         }
     }
     else if (format.sampleSize() == 32) {
         switch (format.byteOrder()) {
-        case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S32BE; break;
-        case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S32LE; break;
+            case QAudioFormat::BigEndian: spec.format = PA_SAMPLE_S32BE; break;
+            case QAudioFormat::LittleEndian: spec.format = PA_SAMPLE_S32LE; break;
         }
     }
 
@@ -79,9 +97,8 @@ inline pa_sample_spec audioFormatToSampleSpec(const QAudioFormat &format)
 
 class PulseDaemon
 {
-
 public:
-     PulseDaemon():m_prepared(false)
+    PulseDaemon():m_prepared(false)
     {
         prepare();
     }
@@ -156,15 +173,13 @@ private:
     pa_threaded_mainloop *m_mainLoop;
     pa_mainloop_api *m_mainLoopApi;
 };
-
 }
 
 Q_GLOBAL_STATIC(PulseDaemon, daemon)
 
 
-
-PulseAudioPlayerControl::PulseAudioPlayerControl(QObject *parent) :
-    QMediaPlayerControl(parent),
+QSoundEffectPrivate::QSoundEffectPrivate(QObject* parent):
+    QObject(parent),
     m_muted(false),
     m_playQueued(false),
     m_volume(100),
@@ -178,138 +193,43 @@ PulseAudioPlayerControl::PulseAudioPlayerControl(QObject *parent) :
 {
 }
 
-PulseAudioPlayerControl::~PulseAudioPlayerControl()
+QSoundEffectPrivate::~QSoundEffectPrivate()
 {
     delete m_reply;
-
     unloadSample();
 }
 
-QMediaPlayer::State PulseAudioPlayerControl::state() const
-{
-    return m_state;
-}
-
-QMediaPlayer::MediaStatus PulseAudioPlayerControl::mediaStatus() const
-{
-    return m_status;
-}
-
-qint64 PulseAudioPlayerControl::duration() const
+qint64 QSoundEffectPrivate::duration() const
 {
     return m_duration;
 }
 
-qint64 PulseAudioPlayerControl::position() const
-{
-    return 0;
-}
-
-void PulseAudioPlayerControl::setPosition(qint64 position)
-{
-    Q_UNUSED(position);
-}
-
-int PulseAudioPlayerControl::volume() const
+int QSoundEffectPrivate::volume() const
 {
     return m_volume;
 }
 
-void PulseAudioPlayerControl::setVolume(int volume)
-{
-    if (m_volume == volume)
-        return;
-
-    emit volumeChanged(m_volume = volume);
-}
-
-bool PulseAudioPlayerControl::isMuted() const
+bool QSoundEffectPrivate::isMuted() const
 {
     return m_muted;
 }
 
-void PulseAudioPlayerControl::setMuted(bool muted)
-{
-    if (m_muted == muted)
-        return;
-
-    emit mutedChanged(m_muted = muted);
-}
-
-int PulseAudioPlayerControl::bufferStatus() const
-{
-    return 0;
-}
-
-bool PulseAudioPlayerControl::isVideoAvailable() const
-{
-    return false;
-}
-
-bool PulseAudioPlayerControl::isSeekable() const
-{
-    return false;
-}
-
-QMediaTimeRange PulseAudioPlayerControl::availablePlaybackRanges() const
-{
-    return QMediaTimeRange();
-}
-
-qreal PulseAudioPlayerControl::playbackRate() const
-{
-    return 1.0;
-}
-
-void PulseAudioPlayerControl::setPlaybackRate(qreal rate)
-{
-    Q_UNUSED(rate);
-}
-
-QMediaContent PulseAudioPlayerControl::media() const
+QMediaContent QSoundEffectPrivate::media() const
 {
     return m_media;
 }
 
-const QIODevice * PulseAudioPlayerControl::mediaStream() const
+QMediaPlayer::State QSoundEffectPrivate::state() const
 {
-    return m_media.isNull() ? m_stream : 0;
+    return m_state;
 }
 
-void PulseAudioPlayerControl::setMedia(const QMediaContent &media, QIODevice *stream)
+QMediaPlayer::MediaStatus QSoundEffectPrivate::mediaStatus() const
 {
-    if (media.isNull() && stream == 0) {
-        m_media = QMediaContent();
-        m_stream = 0;
-        unloadSample();
-        return;
-    }
-
-    if (stream != 0) {
-        if (m_stream == stream)
-            return;
-
-        m_stream = stream;
-        m_media = QMediaContent();
-    }
-    else {
-        if (m_media == media)
-            return;
-        m_media = media;
-
-        if (m_networkAccessManager == 0)
-            m_networkAccessManager = new QNetworkAccessManager(this);
-
-        m_stream = m_networkAccessManager->get(QNetworkRequest(m_media.canonicalUrl()));
-    }
-
-    unloadSample();
-    loadSample();
-
-    emit mediaChanged(m_media);
+    return m_status;
 }
 
-void PulseAudioPlayerControl::play()
+void QSoundEffectPrivate::play()
 {
     if (m_status == QMediaPlayer::LoadingMedia) {
         m_playQueued = true;
@@ -317,28 +237,19 @@ void PulseAudioPlayerControl::play()
     }
 
     if (m_status != QMediaPlayer::BufferedMedia ||
-        m_state == QMediaPlayer::PlayingState)
+            m_state == QMediaPlayer::PlayingState)
         return;
 
-#ifdef MAEMO_VOLUME
-    // Need to do this in code! (TODO)
-    QString cmd = QString("/usr/bin/pasr -r -s x-maemo|/usr/bin/tail -n3|/usr/bin/head -n1|/usr/bin/awk '{print $3}'|/bin/sed 's/\%//g'>/tmp/vol");
-    system(cmd.toLocal8Bit().constData());
-    QFile volFile("/tmp/vol");
-    volFile.open(QIODevice::ReadOnly);
-    QByteArray volNum = volFile.readLine();
-    cmd = QString("/usr/bin/pasr -u -s event -l %1 -c mono").arg((m_volume+QString(volNum.constData()).toInt())/2);
-    system(cmd.toLocal8Bit().constData());
-#endif
+    pa_volume_t m_vol = PA_VOLUME_NORM;
 
     daemon()->lock();
     pa_operation_unref(
             pa_context_play_sample(daemon()->context(),
-                                   m_name.constData(),
-                                   0,
-                                  -1,
-                                   play_callback,
-                                   this)
+                m_name.constData(),
+                0,
+                m_vol,
+                play_callback,
+                this)
             );
     daemon()->unlock();
 
@@ -347,52 +258,44 @@ void PulseAudioPlayerControl::play()
     emit stateChanged(m_state = QMediaPlayer::PlayingState);
 }
 
-void PulseAudioPlayerControl::pause()
+void QSoundEffectPrivate::stop()
 {
     emit stateChanged(m_state = QMediaPlayer::StoppedState);
 }
 
-void PulseAudioPlayerControl::stop()
+void QSoundEffectPrivate::setVolume(int volume)
 {
-    emit stateChanged(m_state = QMediaPlayer::StoppedState);
+    m_volume = volume;
 }
 
-void PulseAudioPlayerControl::loadSample()
+void QSoundEffectPrivate::setMuted(bool muted)
 {
-    m_waveDecoder = new WaveDecoder(m_stream);
-    connect(m_waveDecoder, SIGNAL(formatKnown()), SLOT(decoderReady()));
-    connect(m_waveDecoder, SIGNAL(invalidFormat()), SLOT(decoderError()));
-
-    m_status = QMediaPlayer::LoadingMedia;
-    emit mediaStatusChanged(m_status);
+    m_muted = muted;
 }
 
-void PulseAudioPlayerControl::unloadSample()
+void QSoundEffectPrivate::setMedia(const QMediaContent &media)
 {
-    if (m_status != QMediaPlayer::BufferedMedia)
+    if (media.isNull()) {
+        m_media = QMediaContent();
+        unloadSample();
         return;
-
-    m_status = QMediaPlayer::NoMedia;
-
-    daemon()->lock();
-    pa_context_remove_sample(daemon()->context(), m_name.constData(), NULL, NULL);
-    daemon()->unlock();
-
-    m_duration = 0;
-    m_dataUploaded = 0;
-}
-
-void PulseAudioPlayerControl::timerEvent(QTimerEvent *event)
-{
-    if (m_state == QMediaPlayer::PlayingState) {
-        m_state = QMediaPlayer::StoppedState;
-        emit stateChanged(m_state);
     }
+    if (m_media == media)
+        return;
+    m_media = media;
 
-    killTimer(event->timerId());
+    if (m_networkAccessManager == 0)
+        m_networkAccessManager = new QNetworkAccessManager(this);
+
+    m_stream = m_networkAccessManager->get(QNetworkRequest(m_media.canonicalUrl()));
+
+    unloadSample();
+    loadSample();
+
+    emit mediaChanged(m_media);
 }
 
-void PulseAudioPlayerControl::decoderReady()
+void QSoundEffectPrivate::decoderReady()
 {
     if (m_waveDecoder->size() >= PA_SCACHE_ENTRY_SIZE_MAX) {
         m_status = QMediaPlayer::InvalidMedia;
@@ -414,12 +317,12 @@ void PulseAudioPlayerControl::decoderReady()
     daemon()->unlock();
 }
 
-void PulseAudioPlayerControl::decoderError()
+void QSoundEffectPrivate::decoderError()
 {
     emit mediaStatusChanged(m_status = QMediaPlayer::InvalidMedia);
 }
 
-void PulseAudioPlayerControl::checkPlayTime()
+void QSoundEffectPrivate::checkPlayTime()
 {
     int elapsed = m_playbackTime.elapsed();
 
@@ -431,14 +334,49 @@ void PulseAudioPlayerControl::checkPlayTime()
         startTimer(m_duration - elapsed);
 }
 
-void PulseAudioPlayerControl::stream_write_callback(pa_stream *s, size_t length, void *userdata)
+void QSoundEffectPrivate::loadSample()
+{
+    m_waveDecoder = new WaveDecoder(m_stream);
+    connect(m_waveDecoder, SIGNAL(formatKnown()), SLOT(decoderReady()));
+    connect(m_waveDecoder, SIGNAL(invalidFormat()), SLOT(decoderError()));
+
+    m_status = QMediaPlayer::LoadingMedia;
+    emit mediaStatusChanged(m_status);
+}
+
+void QSoundEffectPrivate::unloadSample()
+{
+    if (m_status != QMediaPlayer::BufferedMedia)
+        return;
+
+    m_status = QMediaPlayer::NoMedia;
+
+    daemon()->lock();
+    pa_context_remove_sample(daemon()->context(), m_name.constData(), NULL, NULL);
+    daemon()->unlock();
+
+    m_duration = 0;
+    m_dataUploaded = 0;
+}
+
+void QSoundEffectPrivate::timerEvent(QTimerEvent *event)
+{
+    if (m_state == QMediaPlayer::PlayingState) {
+        m_state = QMediaPlayer::StoppedState;
+        emit stateChanged(m_state);
+    }
+
+    killTimer(event->timerId());
+}
+
+void QSoundEffectPrivate::stream_write_callback(pa_stream *s, size_t length, void *userdata)
 {
     Q_UNUSED(length);
 
-    PulseAudioPlayerControl *self = reinterpret_cast<PulseAudioPlayerControl*>(userdata);
+    QSoundEffectPrivate *self = reinterpret_cast<QSoundEffectPrivate*>(userdata);
 
     size_t bufferSize = qMin(pa_stream_writable_size(s),
-                             size_t(self->m_waveDecoder->bytesAvailable()));
+            size_t(self->m_waveDecoder->bytesAvailable()));
     char buffer[bufferSize];
 
     size_t len = 0;
@@ -473,29 +411,29 @@ void PulseAudioPlayerControl::stream_write_callback(pa_stream *s, size_t length,
     }
 }
 
-void PulseAudioPlayerControl::stream_state_callback(pa_stream *s, void *userdata)
+void QSoundEffectPrivate::stream_state_callback(pa_stream *s, void *userdata)
 {
-    PulseAudioPlayerControl *self = reinterpret_cast<PulseAudioPlayerControl*>(userdata);
+    QSoundEffectPrivate *self = reinterpret_cast<QSoundEffectPrivate*>(userdata);
 
     switch (pa_stream_get_state(s)) {
-    case PA_STREAM_CREATING:
-    case PA_STREAM_READY:
-    case PA_STREAM_TERMINATED:
-        break;
+        case PA_STREAM_CREATING:
+        case PA_STREAM_READY:
+        case PA_STREAM_TERMINATED:
+            break;
 
-    case PA_STREAM_FAILED:
-    default:
-        self->m_status = QMediaPlayer::InvalidMedia;
-        emit self->mediaStatusChanged(self->m_status);
-        break;
+        case PA_STREAM_FAILED:
+        default:
+            self->m_status = QMediaPlayer::InvalidMedia;
+            emit self->mediaStatusChanged(self->m_status);
+            break;
     }
 }
 
-void PulseAudioPlayerControl::play_callback(pa_context *c, int success, void *userdata)
+void QSoundEffectPrivate::play_callback(pa_context *c, int success, void *userdata)
 {
     Q_UNUSED(c);
 
-    PulseAudioPlayerControl *self = reinterpret_cast<PulseAudioPlayerControl*>(userdata);
+    QSoundEffectPrivate *self = reinterpret_cast<QSoundEffectPrivate*>(userdata);
 
     if (success == 1)
         QMetaObject::invokeMethod(self, "checkPlayTime", Qt::QueuedConnection);
@@ -504,4 +442,3 @@ void PulseAudioPlayerControl::play_callback(pa_context *c, int success, void *us
         emit self->stateChanged(self->m_state);
     }
 }
-
