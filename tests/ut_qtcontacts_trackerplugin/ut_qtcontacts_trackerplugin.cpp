@@ -225,10 +225,18 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
                                                   QLatin1String(QContactPhoneNumber::SubTypeMobile)));
     phoneValues.insert("(412)670-1514", QPair<QString,QString>(QLatin1String(QContactDetail::ContextWork),
                                                   QLatin1String(QContactPhoneNumber::SubTypeCar)));
+    QMap<QString,QPair<QString,QString> > formattedPhoneValues;
+
 
     foreach (QString number, phoneValues.keys()) {
         QContactPhoneNumber phone;
         phone.setNumber(number);
+        // Stripped automatically on saving RFC 3966 visual-separators reg exp "[(|-|.|)| ]"
+        formattedPhoneValues.insert(QString(number).replace( QRegExp("[\\(|" \
+                "\\-|" \
+                "\\.|" \
+                "\\)|" \
+                " ]"), ""),phoneValues.value(number));
         if (!phoneValues.value(number).first.isEmpty()) {
             phone.setContexts(phoneValues.value(number).first);
         }
@@ -249,6 +257,7 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
         QCoreApplication::processEvents();
     }
 
+
     // verify with synchronous read too
     QContact contact = trackerEngine->contact_impl(c.localId(), error);
     QCOMPARE(error,  QContactManager::NoError);
@@ -257,15 +266,15 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
 
     QCOMPARE(details.count(), detailsAdded);
 
+
     foreach (QContactPhoneNumber detail, details) {
         // Verify that the stored values and attributes are the same as given
-        const QString& number = detail.number();
-        QVERIFY(phoneValues.contains(number));
-        QCOMPARE(detail.contexts()[0], phoneValues.value(number).first);
-        if( phoneValues.value(number).second.isEmpty()) // default empty is voice
+        QVERIFY(formattedPhoneValues.contains(detail.number()));
+        QCOMPARE(detail.contexts()[0], formattedPhoneValues.value(detail.number()).first);
+        if( formattedPhoneValues.value(detail.number()).second.isEmpty()) // default empty is voice
             QCOMPARE(detail.subTypes()[0], QLatin1String(QContactPhoneNumber::SubTypeVoice));
         else
-            QCOMPARE(detail.subTypes()[0], phoneValues.value(number).second);
+            QCOMPARE(detail.subTypes()[0], formattedPhoneValues.value(detail.number()).second);
     }
 
     // edit one of numbers . values, context and subtypes and save again
@@ -370,7 +379,7 @@ void ut_qtcontacts_trackerplugin::testWritingOnlyWorkMobile()
     QContact c;
     QContactPhoneNumber phone;
     phone.setContexts(QContactDetail::ContextWork);
-    phone.setNumber("555-999");
+    phone.setNumber("555999");
     phone.setSubTypes(QContactPhoneNumber::SubTypeMobile);
     c.saveDetail(&phone);
     QContact& contactToSave = c;
