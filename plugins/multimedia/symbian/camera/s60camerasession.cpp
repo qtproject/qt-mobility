@@ -48,6 +48,7 @@
 
 #include <fbs.h>
 #include <qglobal.h>
+#include <QDir>
 
 const int KSymbianImageQualityCoefficient = 25;
 const int KMaxClipSize = 64 * 1024;
