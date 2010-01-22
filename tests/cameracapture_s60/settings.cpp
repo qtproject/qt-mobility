@@ -102,6 +102,9 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
         ui->containerFormatBox->addItem(format+":"+mediaRecorder->containerDescription(format),
                                         QVariant(format));
     }
+    
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 Settings::~Settings()

@@ -194,7 +194,7 @@ void CameraCapture::settings()
     settingsDialog.setVideoSettings(mediaRecorder->videoSettings());
     settingsDialog.setFormat(mediaRecorder->containerMimeType());
 
-    if (settingsDialog.exec()) {
+    if (settingsDialog.exec() == QDialog::Accepted) {
         mediaRecorder->setEncodingSettings(
                 settingsDialog.audioSettings(),
                 settingsDialog.videoSettings(),
