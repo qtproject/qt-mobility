@@ -39,63 +39,66 @@
 **
 ****************************************************************************/
 
-#ifndef PULSEAUDIOPLAYERCONTROL_H
-#define PULSEAUDIOPLAYERCONTROL_H
+#ifndef QSOUNDEFFECT_PULSE_H
+#define QSOUNDEFFECT_PULSE_H
 
-#include <pulse/pulseaudio.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+
+#include <QtCore/qobject.h>
 
 #include <QTime>
 
-#include <qmediaplayercontrol.h>
-#include <qmediacontent.h>
+#include <qmediaplayer.h>
+
+#include "qsoundeffect_p.h"
+
+#include <pulse/pulseaudio.h>
+
+QTM_USE_NAMESPACE
 
 class QNetworkReply;
 class QNetworkAccessManager;
 class WaveDecoder;
 
-
-QTM_USE_NAMESPACE
-
-class PulseAudioPlayerControl : public QMediaPlayerControl
+class QSoundEffectPrivate : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    explicit PulseAudioPlayerControl(QObject *parent = 0);
-    ~PulseAudioPlayerControl();
-
-    QMediaPlayer::State state() const;
-
-    QMediaPlayer::MediaStatus mediaStatus() const;
+    explicit QSoundEffectPrivate(QObject* parent);
+    ~QSoundEffectPrivate();
 
     qint64 duration() const;
-
-    qint64 position() const;
-    void setPosition(qint64 position);
-
     int volume() const;
-    void setVolume(int volume);
-
     bool isMuted() const;
-    void setMuted(bool muted);
-
-    int bufferStatus() const;
-
-    bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-    QMediaTimeRange availablePlaybackRanges() const;
-
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
-
     QMediaContent media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaContent &media, QIODevice *stream);
+    QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
 
-public slots:
+public Q_SLOTS:
     void play();
-    void pause();
     void stop();
+    void setVolume(int volume);
+    void setMuted(bool muted);
+    void setMedia(const QMediaContent &media);
+
+Q_SIGNALS:
+    void mediaChanged(const QMediaContent &media);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void stateChanged(QMediaPlayer::State newState);
+    void durationChanged(qint64 duration);
+    void volumeChanged(int volume);
+    void mutedChanged(bool muted);
+    void error(QMediaPlayer::Error error);
 
 private slots:
     void decoderReady();
@@ -105,6 +108,7 @@ private slots:
 private:
     void loadSample();
     void unloadSample();
+
     void timerEvent(QTimerEvent *event);
 
     static void stream_write_callback(pa_stream *s, size_t length, void *userdata);
@@ -127,4 +131,4 @@ private:
     QNetworkAccessManager *m_networkAccessManager;
 };
 
-#endif // PULSEAUDIOPLAYERCONTROL_H
+#endif // QSOUNDEFFECT_PULSE_H

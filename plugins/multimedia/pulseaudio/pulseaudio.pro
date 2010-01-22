@@ -9,6 +9,8 @@ include (../../../common.pri)
 CONFIG += mobility link_pkgconfig
 MOBILITY = multimedia
 
+maemo5:DEFINES+=MAEMO_VOLUME
+
 DEPENDPATH += .
 INCLUDEPATH += ../../../src/multimedia
 PKGCONFIG += libpulse
