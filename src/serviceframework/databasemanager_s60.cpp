@@ -310,6 +310,7 @@ TInt RDatabaseManagerSession::StartServer()
     TInt ret = KErrNone;
     TFindServer findServer(KDatabaseManagerServerName);
     TFullName name;
+    
     if (findServer.Next(name) != KErrNone)
     {
 #ifdef __WINS__
@@ -345,23 +346,12 @@ TInt RDatabaseManagerSession::StartServer()
         dbServer.Close();
 #endif
     }
-#ifdef __WINS__
-    if (iServerThread == NULL) {
-        qWarning("Fatal error: several concurrent QServiceManagers in one application not currently supported in WINS Emulator");
-        User::Panic(_L("PLAT (emulator)"), 0); 
-    }
-#endif
+
     return ret;
     }
 
 void RDatabaseManagerSession::Close()
     {
-#ifdef __WINS__
-    iServerThread->quit();
-    iServerThread->wait();
-    delete iServerThread;
-    iServerThread = NULL;
-#endif
     RSessionBase::Close();
     }
 
@@ -511,7 +501,6 @@ void RDatabaseManagerSession::CancelNotifyServiceSignal() const
     {
     SendReceive(ECancelNotifyServiceSignalRequest, TIpcArgs(NULL));
     }
-
 
 
 #ifdef __WINS__
