@@ -122,22 +122,20 @@ QIODevice* QVersitWriter::device() const
 }
 
 /*!
- * Sets the codec to use for properties that cannot be encoded with the
- * general codec used by the writer.
+ * Sets the default codec for the writer to use for writing the entire output.
+ *
+ * If \a codec is NULL, the writer uses the codec according to the specification prescribed default.
+ * (for vCard 2.1, ASCII; for vCard 3.0, UTF-8).
  */
-void QVersitWriter::setCodec(QTextCodec *codec)
+void QVersitWriter::setDefaultCodec(QTextCodec *codec)
 {
-    if (codec != NULL) {
-        d->mDefaultCodec = codec;
-    } else {
-        d->mDefaultCodec = QTextCodec::codecForName("UTF-8");
-    }
+    d->mDefaultCodec = codec;
 }
 
 /*!
  * Returns the document's codec.
  */
-QTextCodec* QVersitWriter::codec() const
+QTextCodec* QVersitWriter::defaultCodec() const
 {
     return d->mDefaultCodec;
 }

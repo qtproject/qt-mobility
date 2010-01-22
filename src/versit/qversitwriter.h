@@ -83,8 +83,8 @@ public:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
 
-    void setCodec(QTextCodec* codec);
-    QTextCodec* codec() const;
+    void setDefaultCodec(QTextCodec* codec);
+    QTextCodec* defaultCodec() const;
 
     // writing:
     bool startWriting(const QList<QVersitDocument>& input);

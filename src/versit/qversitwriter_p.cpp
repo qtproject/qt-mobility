@@ -49,7 +49,6 @@
 #include <QStringList>
 #include <QMutexLocker>
 #include <QScopedPointer>
-#include <QTextCodec>
 
 QTM_USE_NAMESPACE
 
@@ -59,7 +58,7 @@ QVersitWriterPrivate::QVersitWriterPrivate()
     mState(QVersitWriter::InactiveState),
     mError(QVersitWriter::NoError),
     mIsCanceling(false),
-    mDefaultCodec(QTextCodec::codecForName("UTF-8"))
+    mDefaultCodec(0)
 {
 }
 
@@ -90,7 +89,14 @@ void QVersitWriterPrivate::write()
             break;
         }
         QScopedPointer<QVersitDocumentWriter> writer(writerForType(document.type()));
-        QByteArray output = writer->encodeVersitDocument(document);
+        QTextCodec* codec = mDefaultCodec;
+        if (codec == NULL) {
+            if (document.type() == QVersitDocument::VCard21Type)
+                codec = QTextCodec::codecForName("ISO-8859-1");
+            else
+                codec = QTextCodec::codecForName("UTF-8");
+        }
+        QByteArray output = writer->encodeVersitDocument(document, codec);
         int c = mIoDevice->write(output);
         if (c <= 0) {
             setError(QVersitWriter::IOError);

@@ -56,6 +56,7 @@
 #include "qversitproperty.h"
 #include <QByteArray>
 #include <QMultiHash>
+#include <QTextCodec>
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,12 +66,13 @@ public:
     QVersitDocumentWriter(const QByteArray& documentType, const QByteArray& version);
 
     virtual QByteArray encodeVersitProperty(const QVersitProperty& property,
-                                            QTextCodec* codec = 0)
-        = 0;
-    virtual QByteArray encodeParameters(
-        const QMultiHash<QString,QString>& parameters) const = 0;
-    QByteArray encodeVersitDocument(const QVersitDocument& document);
-    QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
+                                            QTextCodec* codec) = 0;
+    virtual QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters,
+                                        QTextCodec* codec) const = 0;
+    QByteArray encodeVersitDocument(const QVersitDocument& document,
+                                    QTextCodec* codec = QTextCodec::codecForName("UTF-8"));
+    QByteArray encodeGroupsAndName(const QVersitProperty& property,
+                                   QTextCodec* codec = QTextCodec::codecForName("UTF-8")) const;
 
     QByteArray mDocumentType;
     QByteArray mVersion;

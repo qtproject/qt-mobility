@@ -55,6 +55,7 @@
 
 #include "qversitdocumentwriter_p.h"
 #include "qmobilityglobal.h"
+#include <QTextCodec>
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,8 +66,9 @@ public:
     ~QVCard30Writer();
 
     QByteArray encodeVersitProperty(const QVersitProperty& property,
-                                    QTextCodec* codec = 0);
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
+                                    QTextCodec* codec = QTextCodec::codecForName("UTF-8"));
+    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters,
+                                QTextCodec* codec = QTextCodec::codecForName("UTF-8")) const;
     QHash<QString,QString> mPropertyNameMappings;
 };
 

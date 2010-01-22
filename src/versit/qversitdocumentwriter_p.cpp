@@ -1,5 +1,6 @@
 #include "qversitdocumentwriter_p.h"
 #include "versitutils_p.h"
+#include <QTextCodec>
 
 QTM_USE_NAMESPACE
 
@@ -25,35 +26,36 @@ QVersitDocumentWriter::QVersitDocumentWriter(
 /*!
 * Encodes the \a document to text.
 */
-QByteArray QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document)
+QByteArray QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document,
+                                                       QTextCodec* codec)
 {
     QList<QVersitProperty> properties = document.properties();
     QByteArray encodedDocument;
 
-    encodedDocument += "BEGIN:" + mDocumentType + "\r\n";
-    encodedDocument += "VERSION:" + mVersion + "\r\n";
+    encodedDocument += codec->fromUnicode(QLatin1String("BEGIN:" + mDocumentType + "\r\n"));
+    encodedDocument += codec->fromUnicode(QLatin1String("VERSION:" + mVersion + "\r\n"));
     foreach (QVersitProperty property, properties) {
-        encodedDocument.append(encodeVersitProperty(property, document.codec()));
+        encodedDocument.append(encodeVersitProperty(property, codec));
     }
-    encodedDocument += "END:" + mDocumentType + "\r\n";
+    encodedDocument += codec->fromUnicode(QLatin1String("END:" + mDocumentType + "\r\n"));
 
-    VersitUtils::fold(encodedDocument,MAX_CHARS_FOR_LINE);
+    VersitUtils::fold(encodedDocument, MAX_CHARS_FOR_LINE);
     return encodedDocument;
 }
 
 /*!
  * Encodes the groups and name in the \a property to text.
  */
-QByteArray QVersitDocumentWriter::encodeGroupsAndName(
-    const QVersitProperty& property) const
+QByteArray QVersitDocumentWriter::encodeGroupsAndName(const QVersitProperty& property,
+                                                      QTextCodec* codec) const
 {
     QByteArray encodedGroupAndName;
     QStringList groups = property.groups();
     if (!groups.isEmpty()) {
-        QString groupAsString = groups.join(QString::fromAscii("."));
-        encodedGroupAndName.append(groupAsString.toAscii());
-        encodedGroupAndName.append(".");
+        QString groupAsString = groups.join(QLatin1String("."));
+        encodedGroupAndName.append(codec->fromUnicode(groupAsString));
+        encodedGroupAndName.append(codec->fromUnicode(QLatin1String(".")));
     }
-    encodedGroupAndName.append(property.name().toAscii());
+    encodedGroupAndName.append(codec->fromUnicode(property.name()));
     return encodedGroupAndName;
 }

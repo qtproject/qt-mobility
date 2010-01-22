@@ -112,8 +112,8 @@ bool VersitUtils::quotedPrintableEncode(QString& text)
     for (int i=0; i<text.length(); i++) {
         QChar current = text.at(i);
         if (shouldBeQuotedPrintableEncoded(current)) {
-            QString encodedStr(
-                    QString::fromAscii("=%1").arg(current.unicode(), 2, 16, QLatin1Char('0')));
+            QString encodedStr(QString::fromAscii("=%1").
+                               arg(current.unicode(), 2, 16, QLatin1Char('0')).toUpper());
             text.replace(i, 1, encodedStr);
             i += 2;
             encoded = true;

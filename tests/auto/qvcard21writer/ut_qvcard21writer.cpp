@@ -128,15 +128,17 @@ END:VCARD\r\n\
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    QByteArray result(mWriter->encodeVersitProperty(property));
+    QCOMPARE(result, expectedResult);
 
     // In Shift-JIS codec.
     QTextCodec* jisCodec = QTextCodec::codecForName("Shift-JIS");
-    expectedResult = "ORG;CHARSET=Shift_JIS:" + jisCodec->fromUnicode(KATAKANA_NOKIA) + "\r\n";
+    expectedResult = jisCodec->fromUnicode(
+            QLatin1String("ORG:") + KATAKANA_NOKIA + QLatin1String("\r\n"));
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
-    QByteArray result = mWriter->encodeVersitProperty(property, jisCodec);
+    result = mWriter->encodeVersitProperty(property, jisCodec);
     QCOMPARE(result, expectedResult);
 
     // CHARSET and QUOTED-PRINTABLE
