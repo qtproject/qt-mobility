@@ -13,5 +13,6 @@ contains(mobility_modules,bearer) {
 
 symbian {
     contains(mobility_modules,messaging): SUBDIRS += messagingex
+    contains(mobility_modules,multimedia): SUBDIRS += cameracapture_s60 player_s60
     contains(mobility_modules,publishsubscribe): SUBDIRS += publishsubscribeex
 }
