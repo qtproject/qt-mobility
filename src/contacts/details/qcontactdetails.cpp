@@ -390,6 +390,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceOffline, "Offline");
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldStatusMessage, "StatusMessage");
 
 /*!
+   \variable QContactOnlineAccount::FieldCapabilities
+
+   The constant key for which the account capabilities value is stored in
+   details of the QContactOnlineAccount type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldCapabilities, "Capabilities");
+
+/*!
    \variable QContactOrganization::DefinitionName
 
    The constant string which identifies the definition of details
@@ -2002,6 +2010,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    
    Returns the last-known status message of the contact which was
    communicated via the online account about which this detail stores
+   presence information.
+ */
+
+/*!
+   \fn QContactOnlineAccount::setCapabilities(const QStringList& capabilities)
+
+   Sets the capabilities of the online account about which this detail stores
+   presence information to \a capabilities.  The \a capabilities list is a
+   list of service-provider specified strings which together identify the
+   types of communication which may be possible.
+ */
+
+/*!
+   \fn QContactOnlineAccount::capabilities() const
+
+   Returns the capabilities of the online account about which this detail stores
    presence information.
  */
 

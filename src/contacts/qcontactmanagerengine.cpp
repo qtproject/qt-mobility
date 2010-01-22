@@ -924,6 +924,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     f.setDataType(QVariant::StringList);
+    fields.insert(QContactOnlineAccount::FieldCapabilities, f);
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
@@ -2112,8 +2113,9 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     Q_UNUSED(errors);
+    Q_UNUSED(appendOnly);
     qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
-    updateContactLocalIdFetchRequest(qobject_cast<QContactLocalIdFetchRequest*>(req), result, error, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+    updateContactLocalIdFetchRequest(qobject_cast<QContactLocalIdFetchRequest*>(req), result, error, static_cast<QContactAbstractRequest::State>(status));
 }
 
 
@@ -2125,9 +2127,10 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     Q_UNUSED(errors);
+    Q_UNUSED(appendOnly);
     qWarning("QContactManagerEngine::updateRequest() This function was deprecated in week 1 and will be removed after the transition period has elapsed!");
     if (req->type() == QContactAbstractRequest::ContactFetchRequest) {
-        updateContactFetchRequest(qobject_cast<QContactFetchRequest*>(req), result, error, static_cast<QContactAbstractRequest::State>(status), appendOnly);
+        updateContactFetchRequest(qobject_cast<QContactFetchRequest*>(req), result, error, static_cast<QContactAbstractRequest::State>(status));
     } else { // contact save request
         QMap<int, QContactManager::Error> errorMap;
         for (int i = 0; i < errors.size(); i++) {
@@ -2262,34 +2265,34 @@ void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QCo
 }
 
 /*!
- * Updates the given QContactLocalIdFetchRequest \a req with the latest results \a result, operation error \a error, request status \a status and flag which signifies that the order of the results remains unchanged since the last update.
- * It then causes the request to emit its progress signal to notify clients of the request progress.
+ * Updates the given QContactLocalIdFetchRequest \a req with the latest results \a result, operation error \a error, and the request status \a status.
+ * It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
  */
-void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, QContactAbstractRequest::State status, bool appendOnly)
+void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, QContactAbstractRequest::State status)
 {
     QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(req->d_ptr);
     req->d_ptr->m_error = error;
     req->d_ptr->m_state = status;
     rd->m_ids = result;
-    emit req->resultsAvailable(req, appendOnly);
+    emit req->resultsAvailable();
 }
 
 /*!
- * Updates the given QContactFetchRequest \a req with the latest results \a result, operation error \a error, request status \a status and flag which signifies that the order of the results remains unchanged since the last update.
- * It then causes the request to emit its progress signal to notify clients of the request progress.
+ * Updates the given QContactFetchRequest \a req with the latest results \a result, operation error \a error, and the request status \a status.
+ * It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
  */
-void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req, const QList<QContact>& result, QContactManager::Error error, QContactAbstractRequest::State status, bool appendOnly)
+void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req, const QList<QContact>& result, QContactManager::Error error, QContactAbstractRequest::State status)
 {
     QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
     req->d_ptr->m_error = error;
     req->d_ptr->m_state = status;
     rd->m_contacts = result;
-    emit req->resultsAvailable(req, appendOnly);
+    emit req->resultsAvailable();
 }
 
 /*!
  * Updates the given QContactSaveRequest \a req with the latest results \a result, operation error \a error, map of input index to individual error \a errorMap, and request status \a status.
- * It then causes the request to emit its progress signal to notify clients of the request progress.
+ * It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
  */
 void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State status)
 {
@@ -2298,12 +2301,12 @@ void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, c
     req->d_ptr->m_state = status;
     rd->m_errors = errorMap;
     rd->m_contacts = result;
-    emit req->resultsAvailable(req);
+    emit req->resultsAvailable();
 }
 
 /*!
  * Updates the given QContactDefinitionSaveRequest \a req with the latest results \a result, operation error \a error, map of input index to individual error \a errorMap, and request status \a status.
- * It then causes the request to emit its progress signal to notify clients of the request progress.
+ * It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
  */
 void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State status)
 {
@@ -2312,12 +2315,12 @@ void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinition
     req->d_ptr->m_state = status;
     rd->m_errors = errorMap;
     rd->m_definitions = result;
-    emit req->resultsAvailable(req);
+    emit req->resultsAvailable();
 }
 
 /*!
  * Updates the given QContactDefinitionRemoveRequest \a req with the operation error \a error, map of input index to individual error \a errorMap, and request status \a status.
- * It then causes the request to emit its progress signal to notify clients of the request progress.
+ * It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
  */
 void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State status)
 {
@@ -2325,12 +2328,12 @@ void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefiniti
     req->d_ptr->m_error = error;
     req->d_ptr->m_state = status;
     rd->m_errors = errorMap;
-    emit req->resultsAvailable(req);
+    emit req->resultsAvailable();
 }
 
 /*!
  * Updates the given QContactDefinitionFetchRequest \a req with the latest results \a result, operation error \a error, map of input index to individual error \a errorMap, and request status \a status.
- * It then causes the request to emit its progress signal to notify clients of the request progress.
+ * It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
  */
 void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State status)
 {
@@ -2339,7 +2342,7 @@ void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitio
     req->d_ptr->m_state = status;
     rd->m_errors = errorMap;
     rd->m_definitions = result;
-    emit req->resultsAvailable(req);
+    emit req->resultsAvailable();
 }
 
 #include "moc_qcontactmanagerengine.cpp"

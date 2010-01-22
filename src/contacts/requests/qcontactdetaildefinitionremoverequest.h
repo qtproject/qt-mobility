@@ -70,7 +70,7 @@ public:
 
 signals:
     void progress(QContactDetailDefinitionRemoveRequest* self);  // deprecated
-    void resultsAvailable(QContactDetailDefinitionRemoveRequest* self); // replaces the above
+    void resultsAvailable(); // replaces the above
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionRemoveRequest)
