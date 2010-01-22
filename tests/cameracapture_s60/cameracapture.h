@@ -39,64 +39,80 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOPLAYERSERVICE_H
-#define S60VIDEOPLAYERSERVICE_H
+#ifndef RECORDER_H
+#define RECORDER_H
 
-#include <QtCore/qobject.h>
+#include <experimental/qcamera.h>
+#include <qmediarecorder.h>
+#include <experimental/qstillimagecapture.h>
+#include <qaudiocapturesource.h>
 
-#include <QMediaService>
-#include <QVideoOutputControl>
+#include "mediakeysobserver.h"
 
-#include "s60videooutputcontrol.h"
-#include "ms60mediaplayerresolver.h"
+QT_BEGIN_NAMESPACE
+namespace Ui {
+    class CameraCapture;
+}
+QT_END_NAMESPACE
+
+
+#include <QMainWindow>
+#include <QDir>
 
 QTM_BEGIN_NAMESPACE
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
+class QVideoWidget;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class S60VideoPlayerSession;
-class S60AudioPlayerSession;
-class S60MediaPlayerControl;
-class S60MediaMetaDataProvider;
-class S60VideoWidgetControl;
-class S60MediaRecognizer;
-class S60VideoRenderer;
-class S60VideoOverlay;
-
-class QMediaPlaylistNavigator;
-
-class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
+class CameraCapture : public QMainWindow
 {
     Q_OBJECT
-    
-public:   
-    S60MediaPlayerService(QObject *parent = 0);
-    ~S60MediaPlayerService();
+public:
+    CameraCapture(QWidget *parent = 0);
+    ~CameraCapture();
 
-    QMediaControl *control(const char *name) const;
-    
 private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+    void setCamera(const QByteArray &cameraDevice);
 
-protected: // From MS60MediaPlayerResolver
-    S60MediaPlayerSession* PlayerSession();
-    S60MediaPlayerSession* VideoPlayerSession(bool isLocal = true);
-    S60MediaPlayerSession* AudioPlayerSession(bool isLocal = true);
+    void toggleCamera();
+
+    void record();
+    void pause();
+    void stop();
+
+    void takeImage();
+
+    void settings();
+
+    void displayErrorMessage();
+
+    void updateCameraDevice(QAction*);
+    void updateAudioDevice(QAction*);
+
+    void updateCameraState(QCamera::State);
+    void updateRecorderState(QMediaRecorder::State state);
+
+    void updateRecordTime();
+    void updateAudioDevices();
+
+    void processCapturedImage(const QString& fname, const QImage& img);
+    void focusLocked();
+    void zoomValueChanged(qreal value);
     
+    void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
+
 private:
-    S60MediaPlayerControl *m_control;
-    S60MediaRecognizer *m_mediaRecognizer;
-    mutable S60VideoOutputControl *m_videoOutput;
-    S60VideoPlayerSession *m_videoPlayerSession;
-    S60AudioPlayerSession *m_audioPlayerSession;
-    mutable S60MediaMetaDataProvider *m_metaData;
-    mutable S60VideoWidgetControl *m_videoWidget;
-    mutable S60VideoOverlay *m_videoWindow;
-    mutable S60VideoRenderer *m_videoRenderer;
+    Ui::CameraCapture *ui;
+
+    QDir outputDir;
+    QCamera *camera;
+    QStillImageCapture *imageCapture;
+    QMediaRecorder* mediaRecorder;
+    QAudioCaptureSource *audioSource;
+    QVideoWidget *videoWidget;
+    
+    MediaKeysObserver *mediaKeysObserver;
 };
 
 #endif

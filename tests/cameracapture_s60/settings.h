@@ -39,64 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOPLAYERSERVICE_H
-#define S60VIDEOPLAYERSERVICE_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
-#include <QtCore/qobject.h>
-
-#include <QMediaService>
-#include <QVideoOutputControl>
-
-#include "s60videooutputcontrol.h"
-#include "ms60mediaplayerresolver.h"
+#include <QtGui/QDialog>
+#include <qmediaencodersettings.h>
 
 QTM_BEGIN_NAMESPACE
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
+class QMediaRecorder;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
-class S60VideoPlayerSession;
-class S60AudioPlayerSession;
-class S60MediaPlayerControl;
-class S60MediaMetaDataProvider;
-class S60VideoWidgetControl;
-class S60MediaRecognizer;
-class S60VideoRenderer;
-class S60VideoOverlay;
+QT_BEGIN_NAMESPACE
+class QComboBox;
+namespace Ui {
+    class SettingsUi;
+}
+QT_END_NAMESPACE
 
-class QMediaPlaylistNavigator;
-
-class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
-{
+class Settings : public QDialog {
     Q_OBJECT
-    
-public:   
-    S60MediaPlayerService(QObject *parent = 0);
-    ~S60MediaPlayerService();
+public:
+    Settings(QMediaRecorder *mediaRecorder, QWidget *parent = 0);
+    ~Settings();
 
-    QMediaControl *control(const char *name) const;
-    
-private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+    QAudioEncoderSettings audioSettings() const;
+    void setAudioSettings(const QAudioEncoderSettings&);
 
-protected: // From MS60MediaPlayerResolver
-    S60MediaPlayerSession* PlayerSession();
-    S60MediaPlayerSession* VideoPlayerSession(bool isLocal = true);
-    S60MediaPlayerSession* AudioPlayerSession(bool isLocal = true);
-    
+    QVideoEncoderSettings videoSettings() const;
+    void setVideoSettings(const QVideoEncoderSettings&);
+
+    QString format() const;
+    void setFormat(const QString &format);
+
+protected:
+    void changeEvent(QEvent *e);
+
 private:
-    S60MediaPlayerControl *m_control;
-    S60MediaRecognizer *m_mediaRecognizer;
-    mutable S60VideoOutputControl *m_videoOutput;
-    S60VideoPlayerSession *m_videoPlayerSession;
-    S60AudioPlayerSession *m_audioPlayerSession;
-    mutable S60MediaMetaDataProvider *m_metaData;
-    mutable S60VideoWidgetControl *m_videoWidget;
-    mutable S60VideoOverlay *m_videoWindow;
-    mutable S60VideoRenderer *m_videoRenderer;
+    QVariant boxValue(const QComboBox*) const;
+    void selectComboBoxItem(QComboBox *box, const QVariant &value);
+
+    Ui::SettingsUi *ui;
+    QMediaRecorder *mediaRecorder;
 };
 
-#endif
+#endif // SETTINGS_H

@@ -68,6 +68,8 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
     m_session = qobject_cast<S60CameraSession*>(session);
     connect(m_session, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
     connect(m_session, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
+    m_session->setFocusMode(m_focusMode);
+    m_session->setZoom(m_zoomValue);
 }
 
 S60CameraFocusControl::~S60CameraFocusControl()
@@ -76,6 +78,7 @@ S60CameraFocusControl::~S60CameraFocusControl()
 
 QCamera::FocusMode S60CameraFocusControl::focusMode() const
 {
+    qDebug() << "S60CameraFocusControl::focusmode(), mode=" << m_session->focusMode();
     return m_session->focusMode();
 }
 

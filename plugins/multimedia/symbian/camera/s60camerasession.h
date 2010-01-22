@@ -237,7 +237,13 @@ Q_SIGNALS:
     //for focuscontrol
     void focusLocked();
     void zoomValueChanged(qreal value);
-    // 
+    
+    void exposureLocked();
+    void flashReady(bool ready);
+    void apertureChanged(qreal aperture);
+    void apertureRangeChanged();
+    void shutterSpeedChanged(qreal speed);
+    void isoSensitivityChanged(int iso);
 
    
 

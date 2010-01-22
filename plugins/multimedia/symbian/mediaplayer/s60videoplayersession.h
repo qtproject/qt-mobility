@@ -45,8 +45,6 @@
 #include "s60mediaplayersession.h"
 #include <videoplayer.h>
 #include <QtGui/qwidget.h>
-class S60DirectScreenAccess;
-class QWidget;
 
 class S60VideoPlayerSession : public S60MediaPlayerSession, public MVideoPlayerUtilityObserver
 {
@@ -57,23 +55,22 @@ public:
     ~S60VideoPlayerSession();
     
     //From S60MediaPlayerSession
-    qint64 duration() const;
-    qint64 position() const;
     bool isVideoAvailable() const;
     void setVideoRenderer(QObject *renderer);
     
 protected:
     //From S60MediaPlayerSession
-    void doLoad(const TDesC &path);
-    void doLoadUrl(const TDesC &path);
+    void doLoadL(const TDesC &path);
+    void doLoadUrlL(const TDesC &path);
     void doPlay();
     void doStop();
-    void doPause();
-    void doSetVolume(int volume);
-    void doSetPlaybackRate(qreal rate);
-    void doSetPosition(qint64 microSeconds);
-    void updateMetaDataEntries();
-    int mediaLoadingProgress() const;
+    void doPauseL();
+    void doSetVolumeL(int volume);
+    qint64 doGetPositionL() const;
+    void doSetPositionL(qint64 microSeconds);
+    void updateMetaDataEntriesL();
+    int doGetMediaLoadingProgressL() const;
+    int doGetDurationL() const;
     
 private slots: 
     void resetVideoDisplay();
