@@ -68,6 +68,7 @@ public:
         Q_ASSERT(socket);
         socket->setParent(this);
         connect(s, SIGNAL(readyRead()), this, SLOT(readIncoming()));
+        connect(s, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
 
         if (socket->bytesAvailable())
             QTimer::singleShot(0, this, SLOT(readIncoming()));
@@ -75,8 +76,6 @@ public:
 
     ~LocalSocketEndPoint() 
     {
-        /*if (socket)
-            delete socket;*/
     }
 
 
@@ -133,11 +132,13 @@ void QServiceControlPrivate::processIncoming()
         //LocalSocketEndPoint owns socket 
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
-        pendingConnections.append(endpoint);
     }
 #endif
 }
 
+/*!
+    Creates endpoint on service side.
+*/
 bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
 {
     //for now we have QLocalSocket only
@@ -147,25 +148,33 @@ bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
 #else
     QLocalServer::removeServer(ident);
     qDebug() << "Start listening for incoming connections";
-    QLocalServer* server = new QLocalServer(this);
-    if ( !server->listen(ident) ) {
-        qWarning() << "Cannot create COM endpoint";
+    localServer = new QLocalServer(this);
+    if ( !localServer->listen(ident) ) {
+        qWarning() << "Cannot create local socket endpoint";
         return false;
     }
-    connect(server, SIGNAL(newConnection()), this, SLOT(processIncoming()));
-    if (server->hasPendingConnections())
+    connect(localServer, SIGNAL(newConnection()), this, SLOT(processIncoming()));
+    if (localServer->hasPendingConnections())
         QTimer::singleShot(0, this, SLOT(processIncoming()));
 
     return true;
 #endif
 }
 
-
+/*!
+    Creates endpoint on client side.
+*/
 QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent& typeIdent, const QString& location)
 {
 #ifdef Q_OS_SYMBIAN
 #else
     QLocalSocket* socket = new QLocalSocket();
+    //location format:  protocol:address
+    socket->connectToServer(location.section(':', 1, 1));
+    if (!socket->isValid()) {
+        qWarning() << "Cannot connect to remote service" << location;
+        return 0;
+    }
     LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
 

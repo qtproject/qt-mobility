@@ -41,23 +41,38 @@
 
 #include "objectendpoint_p.h"
 #include "instancemanager_p.h"
+#include "qmetaobjectbuilder_p.h"
+#include <QTimer>
 
 QTM_BEGIN_NAMESPACE
 
+
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
-    : QObject(parent), endPointType(type), dispatch(comm), service(0)
+    : QObject(parent), endPointType(type), dispatch(comm), service(0), 
+      serviceInstanceId(QUuid()), typeIdent(QServiceTypeIdent())
 {
     Q_ASSERT(dispatch);
     dispatch->setParent(this);
+    connect(dispatch, SIGNAL(readyRead()), this, SLOT(newPackageReady()));
+    connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
     if (type == Client) {
         return; //we are waiting for conctructProxy() call
     } else {
-        //TODO instanciate the actual service
+        if (dispatch->packageAvailable())
+            QTimer::singleShot(0, this, SLOT(newPackageReady()));
     }
 }
 
 ObjectEndPoint::~ObjectEndPoint()
 {
+    if (endPointType == Service) {
+        InstanceManager::instance()->removeObjectInstance(typeIdent, serviceInstanceId);
+    }
+}
+
+void ObjectEndPoint::disconnected()
+{
+    deleteLater();
 }
 
 /*!
@@ -65,13 +80,116 @@ ObjectEndPoint::~ObjectEndPoint()
     code and this object must clean itself up upon destruction of
     proxy.
 */
-QObject* ObjectEndPoint::constructProxy(const QServiceTypeIdent& /*ident*/)
+QObject* ObjectEndPoint::constructProxy(const QServiceTypeIdent& ident)
 {
+    
+    //ask for serialized meta object
+    //get proxy based on meta object
+    //return meta object
+    QServicePackage p;
+    p.d = new QServicePackagePrivate();
+    p.d->type = QServicePackage::ObjectCreation;
+    p.d->id = QUuid::createUuid();
+    p.d->typeId = ident;
+
+    dispatch->writePackage(p);
+
     service = new QObject();
 
     return service;
 }
 
+void ObjectEndPoint::newPackageReady()
+{
+    while(dispatch->packageAvailable())
+    {
+        QServicePackage p = dispatch->nextPackage();
+        if (!p.isValid())
+            continue;
+
+        switch(p.d->type) {
+            case QServicePackage::ObjectCreation:
+                objectRequest(p);
+                break;
+            case QServicePackage::SignalEmission:
+            case QServicePackage::MethodCall:
+                methodCall(p);
+                break;
+            default:
+                qWarning() << "Unknown package type received.";
+        }
+
+    }
+}
+
+void ObjectEndPoint::objectRequest(const QServicePackage& p)
+{
+    if (p.d->responseType != QServicePackage::NotAResponse ) {
+        qDebug() << p;
+        if (p.d->responseType == QServicePackage::Failed) {
+            qWarning() << "Service instanciation failed";
+        }
+        //deserialize meta object
+    
+        QByteArray payload = p.d->payload.toByteArray();
+
+        QMetaObject mo;
+        QMetaObjectBuilder::fromRelocatableData(&mo, 0, payload);
+        qDebug() << mo.className() << payload.size() << sizeof(mo);
+        //create proxy object
+        //pass proxy object to constructProxy
+    } else {
+        qDebug() << p;
+        QServicePackage response = p.createResponse();
+        InstanceManager* m = InstanceManager::instance();
+
+        //get meta object from type register
+        const QMetaObject* meta = m->metaObject(p.d->typeId);
+        if (!meta) {
+            qDebug() << "Unknown type" << p.d->typeId;
+            dispatch->writePackage(response);
+            return;
+        }
+
+        //serialize meta object
+        bool ok = false;
+        QMetaObjectBuilder builder(meta);
+
+        const QByteArray serializedMetaObject = builder.toRelocatableData(&ok);
+        if (!ok) {
+            qWarning() << "Cannot serialize QMetaObject";
+            dispatch->writePackage(response);
+            return;
+        }
+        
+        //instanciate service object from type register
+        service = m->createObjectInstance(p.d->typeId, serviceInstanceId);
+        if (!service) {
+            qWarning() << "Cannot instanciate service object";
+            dispatch->writePackage(response);
+            return;
+        }
+
+        //send meta object 
+        typeIdent = p.d->typeId;
+        response.d->typeId = p.d->typeId;
+        response.d->responseType = QServicePackage::Success;
+        response.d->payload = QVariant(serializedMetaObject);
+        qDebug() << "OOO:" << serializedMetaObject.size() << serializedMetaObject.constData();
+        dispatch->writePackage(response);
+    }
+}
+    
+void ObjectEndPoint::methodCall(const QServicePackage& p)
+{
+    if (p.d->responseType != QServicePackage::NotAResponse ) {
+        qDebug() << p;
+        //TODO
+    } else {
+        qDebug() << p;
+        //TODO
+    }
+}
 #include "moc_objectendpoint_p.cpp"
 
 QTM_END_NAMESPACE

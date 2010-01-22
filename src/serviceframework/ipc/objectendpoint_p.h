@@ -46,6 +46,7 @@
 #include "ipcendpoint_p.h"
 #include "qservicetyperegister.h"
 #include <QPointer>
+#include <QHash>
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,12 +61,22 @@ public:
 
     ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent = 0);
     ~ObjectEndPoint();
-    QObject* constructProxy(const QServiceTypeIdent& ident);    
+    QObject* constructProxy(const QServiceTypeIdent& ident);
+
+    void objectRequest(const QServicePackage& p);
+    void methodCall(const QServicePackage& p);
+
+public Q_SLOTS:
+    void newPackageReady();
+    void disconnected(); 
 
 private:
     Type endPointType;
     QServiceIpcEndPoint* dispatch;
     QPointer<QObject> service;
+    QHash<QUuid,void *> openRequests;
+    QUuid serviceInstanceId;
+    QServiceTypeIdent typeIdent;
 };
 
 QTM_END_NAMESPACE

@@ -39,40 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef Q_SERVICECOMM_P_H
-#define Q_SERVICECOMM_P_H
+#ifndef PROXY_OBJECT_H
+#define PROXY_OBJECT_H
 
 #include "qmobilityglobal.h"
 #include <QObject>
-#include <QQueue>
-
-#include "qservicepackage_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QServiceIpcEndPoint : public QObject
+class QServiceProxyPrivate;
+class QServiceProxy : public QObject
 {
-    Q_OBJECT
+    //Note: Do not put Q_OBJECT here
 public:
-    QServiceIpcEndPoint(QObject* object = 0);
-    virtual ~QServiceIpcEndPoint();
+    QServiceProxy(const QByteArray& metadata, QObject* parent = 0);
+    virtual ~QServiceProxy();
 
-    bool packageAvailable() const;
-    QServicePackage nextPackage();
-    
-    void writePackage(QServicePackage newPackage);
+    //provide custom Q_OBJECT implementation
+    const QMetaObject* metaObject();
+    int qt_metacall(QMetaObject::Call c, int id, void **a);
+    void *qt_metacast(const char* className);
 
-Q_SIGNALS:
-    void readyRead();
-    void disconnected();
-
-protected:
-    virtual void flushPackage(const QServicePackage& out) = 0;
-     
-    QQueue<QServicePackage> incoming;
+private:
+    QServiceProxyPrivate* d;
 };
+
 
 
 QTM_END_NAMESPACE
 
-#endif //Q_SERVICECOMM_P_H
+#endif //PROXY_OBJECT_H

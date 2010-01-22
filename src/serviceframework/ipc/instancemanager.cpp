@@ -132,6 +132,7 @@ QObject* InstanceManager::createObjectInstance(const QServiceTypeIdent& ident, Q
         if (descr.sharedInstance) {
             service = descr.sharedInstance;
             instanceId = descr.sharedId;
+            descr.sharedRefCount++;
         } else {
             service = (*descr.create)();
             if (!service)
@@ -139,6 +140,7 @@ QObject* InstanceManager::createObjectInstance(const QServiceTypeIdent& ident, Q
 
             descr.sharedInstance = service;
             descr.sharedId = instanceId = QUuid::createUuid();
+            descr.sharedRefCount = 1;
         }
     } else {
         service = (*descr.create)();
@@ -162,10 +164,18 @@ void InstanceManager::removeObjectInstance(const QServiceTypeIdent& ident, const
     
     ServiceIdentDescriptor& descr = metaMap[ident];
     if (descr.instanceType == QServiceTypeRegister::SharedInstance) {
-        if (descr.sharedInstance)
-            descr.sharedInstance->deleteLater();
-        descr.sharedInstance = 0;
-        descr.sharedId = QUuid();
+        if (descr.sharedRefCount < 1)
+            return;
+
+        if (descr.sharedRefCount == 1) {
+            if (descr.sharedInstance)
+                descr.sharedInstance->deleteLater();
+            descr.sharedInstance = 0;
+            descr.sharedId = QUuid();
+            descr.sharedRefCount = 0;
+        } else {
+            descr.sharedRefCount--;
+        }
     } else {
         QObject* service = descr.individualInstances.take(instanceId);
         if (service) {

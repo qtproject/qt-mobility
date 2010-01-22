@@ -10,7 +10,8 @@ PRIVATE_HEADERS += \
         ipc/qservicecontrol_p.h \
         ipc/qservicepackage_p.h \
         ipc/objectendpoint_p.h \
-        ipc/ipcendpoint_p.h
+        ipc/ipcendpoint_p.h \
+        ipc/proxyobject_p.h
 
 
 SOURCES += \
@@ -23,6 +24,7 @@ SOURCES += \
         ipc/qservicepackage.cpp \
         ipc/qservicecontrol_p.cpp \
         ipc/objectendpoint.cpp \
-        ipc/ipcendpoint.cpp
+        ipc/ipcendpoint.cpp \
+        ipc/proxyobject.cpp
 
 !symbian:QT+=network #for QLocalServer

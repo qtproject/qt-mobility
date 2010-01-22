@@ -59,7 +59,7 @@ bool QServiceIpcEndPoint::packageAvailable() const
     return !incoming.isEmpty();
 }
 
-QServicePackage QServiceIpcEndPoint::readPackage()
+QServicePackage QServiceIpcEndPoint::nextPackage()
 {
     if (!incoming.isEmpty())
         return incoming.dequeue();

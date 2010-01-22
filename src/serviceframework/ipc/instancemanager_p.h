@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 struct ServiceIdentDescriptor
 {
-    ServiceIdentDescriptor() : sharedInstance(0)
+    ServiceIdentDescriptor() : sharedInstance(0), sharedRefCount(0)
     {
     }
 
@@ -65,6 +65,7 @@ struct ServiceIdentDescriptor
     QObject* sharedInstance;
     QUuid sharedId;
     QServiceTypeRegister::CreateServiceFunc create;
+    int sharedRefCount;
 };
 
 class Q_AUTOTEST_EXPORT InstanceManager 

@@ -81,12 +81,12 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
         if (lib.load()) {
             lib.unload();
 #ifdef Q_OS_SYMBIAN
-         QFileInfo fi2(libPath);
-         QString fileName = lib.fileName();
-         fileName.chop(4); // .dll is removed
-         libPath = QDir::toNativeSeparators(fi2.absolutePath()) + QDir::separator() + fileName + QLatin1String(".qtplugin");
-         // qDebug() << libPath;
-         return libPath;  
+            QFileInfo fi2(libPath);
+            QString fileName = lib.fileName();
+            fileName.chop(4); // .dll is removed
+            libPath = QDir::toNativeSeparators(fi2.absolutePath()) + QDir::separator() + fileName + QLatin1String(".qtplugin");
+            // qDebug() << libPath;
+            return libPath;  
 #endif
             return lib.fileName();
         }
@@ -407,12 +407,15 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 
     const QString location = descriptor.attribute(QServiceInterfaceDescriptor::Location).toString();
     if (qservicemanager_isIpcBasedService(location)) {
-        QServiceTypeIdent ident(descriptor.interfaceName().toLatin1(), QByteArray(descriptor.majorVersion()+"."+descriptor.minorVersion()));
+        const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
+                .arg(descriptor.minorVersion()).toLatin1();
+        const QServiceTypeIdent ident(descriptor.interfaceName().toLatin1(), version);
         QObject* service = QServiceControlPrivate::proxyForService(ident, location);
         if (!service) {
+            qDebug() << "Cannot load remote IPC service";
             d->setError(InvalidServiceLocation);
         }
-        //client own proxy object
+        //client owns proxy object
         return service;
     }
 
@@ -596,8 +599,12 @@ bool QServiceManager::removeService(const QString& serviceName)
 
     QSet<QString> pluginPathsSet;
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
-    for (int i=0; i<descriptors.count(); i++)
-        pluginPathsSet << descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
+    for (int i=0; i<descriptors.count(); i++) {
+        const QString loc = descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
+        //exclude ipc services
+        if (!qservicemanager_isIpcBasedService(loc))
+            pluginPathsSet << loc;
+    }
 
     QList<QString> pluginPaths = pluginPathsSet.toList();
     for (int i=0; i<pluginPaths.count(); i++) {

@@ -45,9 +45,13 @@
 #include "qmobilityglobal.h"
 #include <QExplicitlySharedDataPointer>
 #include <QSharedData>
+#include <QUuid>
+#include <QVariant>
+#include "qservicetyperegister.h"
 
 QT_BEGIN_NAMESPACE
 class QDataStream;
+class QDebug;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
@@ -62,15 +66,21 @@ public:
     ~QServicePackage();
 
     enum Type {
-        MetaObjectRequest = 0,
-        SignalEmission,
+        SignalEmission = 0,
         ObjectCreation,
         MethodCall
     };
 
+    enum ResponseType {
+        NotAResponse = 0,
+        Success,
+        Failed
+    };
+
+    QServicePackage createResponse() const;
+
     bool isValid() const;
 
-private:
     QExplicitlySharedDataPointer<QServicePackagePrivate> d;
 
 #ifndef QT_NO_DATASTREAM
@@ -84,22 +94,33 @@ QDataStream &operator<<(QDataStream &, const QServicePackage&);
 QDataStream &operator>>(QDataStream &, QServicePackage&);
 #endif
 
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug, const QServicePackage&);
+#endif
 
 class QServicePackagePrivate : public QSharedData
 {
 public:
-    QServicePackagePrivate() : expectResponse(false) 
+    QServicePackagePrivate() 
+        :   type(QServicePackage::ObjectCreation),
+            typeId(QServiceTypeIdent()), payload(QVariant()),
+            id(QUuid()), responseType(QServicePackage::NotAResponse)
     {
-        clean();
     }
-    QServicePackage::Type type;
 
-    bool expectResponse;  //this package expects a resonse
+    QServicePackage::Type type;
+    QServiceTypeIdent typeId;
+    QVariant payload;
+    QUuid id;
+    QServicePackage::ResponseType responseType;
 
     virtual void clean()
     {
-        type = QServicePackage::MetaObjectRequest;
-        expectResponse = false;
+        type = QServicePackage::ObjectCreation;
+        id = QUuid();
+        payload = QVariant();
+        typeId = QServiceTypeIdent();
+        responseType = QServicePackage::NotAResponse;
     }
 };
 

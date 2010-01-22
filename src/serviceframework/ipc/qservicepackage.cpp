@@ -70,6 +70,18 @@ bool QServicePackage::isValid() const
     return d;
 }
 
+QServicePackage QServicePackage::createResponse() const
+{
+    Q_ASSERT(d->responseType == QServicePackage::NotAResponse);
+    QServicePackage response;
+    response.d = new QServicePackagePrivate();
+    response.d->type = d->type;
+    response.d->id = d->id;
+    response.d->responseType = QServicePackage::Failed;
+
+    return response;
+}
+
 #ifndef QT_NO_DATASTREAM
 QDataStream &operator<<(QDataStream &out, const QServicePackage& package)
 {
@@ -81,6 +93,10 @@ QDataStream &operator<<(QDataStream &out, const QServicePackage& package)
     out << (qint8) valid;
     if (valid) {
         out << (qint8) package.d->type;
+        out << (qint8) package.d->responseType;
+        out << package.d->id;
+        out << package.d->typeId;
+        out << package.d->payload;
     }
     
     return out;
@@ -108,15 +124,50 @@ QDataStream &operator>>(QDataStream &in, QServicePackage& package)
             package.d.detach();
             package.d->clean();
         }
-        qint8 type;
-        in >>  type;
-        package.d->type = (QServicePackage::Type) type;
+        qint8 data;
+        in >> data;
+        package.d->type = (QServicePackage::Type) data;
+        in >> data;
+        package.d->responseType = (QServicePackage::ResponseType) data;
+        in >> package.d->id;
+        in >> package.d->typeId;
+        in >> package.d->payload;
     } else {
         if (package.d)
             package.d.reset();
     }
     
     return in;
+}
+#endif
+
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QServicePackage& p)
+{
+    if (p.isValid()) {
+        QString type;
+        switch(p.d->type) {
+            case QServicePackage::SignalEmission:
+                type = QString("SignalEmission");
+                break;
+            case QServicePackage::ObjectCreation:
+                type = QString("ObjectCreation");
+                break;
+            case QServicePackage::MethodCall:
+                type = QString("MethodCall");
+                break;
+            default:
+                break;
+        }
+        dbg.nospace() << "QServicePackage ";
+        dbg.nospace() << type << " " << p.d->responseType ; dbg.space();
+        dbg.nospace() << p.d->id; dbg.space();
+        dbg.nospace() << p.d->typeId;dbg.space();
+    } else {
+        dbg.nospace() << "QServicePackage(invalid)";
+    }
+    return dbg.space();
 }
 #endif
 
