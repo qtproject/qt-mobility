@@ -56,7 +56,7 @@ public:
     virtual ~QServiceProxy();
 
     //provide custom Q_OBJECT implementation
-    const QMetaObject* metaObject();
+    virtual const QMetaObject* metaObject() const;
     int qt_metacall(QMetaObject::Call c, int id, void **a);
     void *qt_metacast(const char* className);
 

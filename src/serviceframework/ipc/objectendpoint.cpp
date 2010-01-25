@@ -42,9 +42,24 @@
 #include "objectendpoint_p.h"
 #include "instancemanager_p.h"
 #include "qmetaobjectbuilder_p.h"
+#include "proxyobject_p.h"
 #include <QTimer>
+#include <QEventLoop>
 
 QTM_BEGIN_NAMESPACE
+
+class Response
+{
+public:
+    Response() : isFinished(false), result(0) 
+    { }
+
+    bool isFinished;
+    void* result;
+};
+
+typedef QHash<QUuid, Response*> Replies;
+Q_GLOBAL_STATIC(Replies, openRequests);
 
 
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
@@ -92,9 +107,24 @@ QObject* ObjectEndPoint::constructProxy(const QServiceTypeIdent& ident)
     p.d->id = QUuid::createUuid();
     p.d->typeId = ident;
 
+    Response* response = new Response();
+    openRequests()->insert(p.d->id, response);
+
     dispatch->writePackage(p);
 
-    service = new QObject();
+    waitForResponse(p.d->id);
+
+    if (response->isFinished) {
+        if (response->result == 0)
+            qWarning() << "Request for remote service failed";
+        else
+            service = reinterpret_cast<QServiceProxy* >(response->result);
+    } else {
+        qDebug() << "response passed but not finished";
+    }
+
+    openRequests()->take(p.d->id);
+    delete response;
 
     return service;
 }
@@ -118,7 +148,6 @@ void ObjectEndPoint::newPackageReady()
             default:
                 qWarning() << "Unknown package type received.";
         }
-
     }
 }
 
@@ -126,18 +155,27 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 {
     if (p.d->responseType != QServicePackage::NotAResponse ) {
         qDebug() << p;
+        Response* response = openRequests()->value(p.d->id);
         if (p.d->responseType == QServicePackage::Failed) {
+            response->result = 0;
+            response->isFinished = true;
             qWarning() << "Service instanciation failed";
+            return;
         }
         //deserialize meta object
-    
         QByteArray payload = p.d->payload.toByteArray();
-
         QMetaObject mo;
         QMetaObjectBuilder::fromRelocatableData(&mo, 0, payload);
         qDebug() << mo.className() << payload.size() << sizeof(mo);
+
         //create proxy object
-        //pass proxy object to constructProxy
+        QServiceProxy* proxy = new QServiceProxy(payload);
+        response->result = reinterpret_cast<void *>(proxy);
+        response->isFinished = true;
+
+        //wake up waiting code
+        QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
+
     } else {
         qDebug() << p;
         QServicePackage response = p.createResponse();
@@ -175,13 +213,13 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         response.d->typeId = p.d->typeId;
         response.d->responseType = QServicePackage::Success;
         response.d->payload = QVariant(serializedMetaObject);
-        qDebug() << "OOO:" << serializedMetaObject.size() << serializedMetaObject.constData();
         dispatch->writePackage(response);
     }
 }
     
 void ObjectEndPoint::methodCall(const QServicePackage& p)
 {
+
     if (p.d->responseType != QServicePackage::NotAResponse ) {
         qDebug() << p;
         //TODO
@@ -190,6 +228,23 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         //TODO
     }
 }
+
+void ObjectEndPoint::waitForResponse(const QUuid& requestId)
+{
+    if (openRequests()->contains(requestId) ) {
+        Response* response = openRequests()->value(requestId);
+
+        QEventLoop* loop = new QEventLoop( this );
+        connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit())); 
+
+        while(!response->isFinished) {
+            loop->exec();
+        }
+ 
+        delete loop;
+    }
+}
+
 #include "moc_objectendpoint_p.cpp"
 
 QTM_END_NAMESPACE

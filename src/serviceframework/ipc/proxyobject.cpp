@@ -40,6 +40,9 @@
 ****************************************************************************/
 
 #include "proxyobject_p.h"
+#include "qmetaobjectbuilder_p.h"
+
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -47,6 +50,7 @@ class QServiceProxyPrivate
 {
 public:
     QByteArray metadata;
+    QMetaObject* meta;
 };
 
 QServiceProxy::QServiceProxy(const QByteArray& metadata, QObject* parent)
@@ -54,21 +58,31 @@ QServiceProxy::QServiceProxy(const QByteArray& metadata, QObject* parent)
 {
     d = new QServiceProxyPrivate();
     d->metadata = metadata;
+    d->meta = new QMetaObject();
+
+    QMetaObjectBuilder::fromRelocatableData(d->meta, 0, d->metadata);
 }
 
 QServiceProxy::~QServiceProxy()
 {
+    delete d->meta;
     delete d;
 }
 
 //provide custom Q_OBJECT implementation
-const QMetaObject* QServiceProxy::metaObject()
+const QMetaObject* QServiceProxy::metaObject() const
 {
-    return 0;
+    return d->meta;
 }
 
 int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
 {
+    id = QObject::qt_metacall(c, id, a);
+    if (id < 0) 
+        return id;
+
+    //TODO catch everything bound for remote service object
+
     return id;
 }
 

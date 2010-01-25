@@ -66,15 +66,19 @@ public:
     void objectRequest(const QServicePackage& p);
     void methodCall(const QServicePackage& p);
 
+Q_SIGNALS:
+    void pendingRequestFinished();
+
 public Q_SLOTS:
     void newPackageReady();
     void disconnected(); 
 
 private:
+    void waitForResponse(const QUuid& requestId);
+
     Type endPointType;
     QServiceIpcEndPoint* dispatch;
     QPointer<QObject> service;
-    QHash<QUuid,void *> openRequests;
     QUuid serviceInstanceId;
     QServiceTypeIdent typeIdent;
 };
