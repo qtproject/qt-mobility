@@ -128,6 +128,7 @@ private:
     void doSeek(QMutexLocker *locker);
     void doPlay(QMutexLocker *locker);
     void doPause(QMutexLocker *locker);
+    void doUpdateDuration(QMutexLocker *locker);
 
     enum Task
     {
@@ -145,6 +146,7 @@ private:
         Play            = 0x0200,
         Pause           = 0x0400,
         Stop            = 0x0800,
+        UpdateDuration  = 0x1000
     };
 
     enum Event
@@ -153,7 +155,8 @@ private:
         Error,
         RateChange,
         Started,
-        Paused
+        Paused,
+        DurationChange
     };
 
     enum GraphStatus

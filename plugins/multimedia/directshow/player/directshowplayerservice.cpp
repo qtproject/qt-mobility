@@ -247,10 +247,6 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
         if (IMediaEventEx *event = com_cast<IMediaEventEx>(m_graph)) {
             HANDLE handle;
             if (event->GetEventHandle(reinterpret_cast<OAEVENT *>(&handle)) == S_OK) {
-                event->CancelDefaultHandling(EC_BUFFERING_DATA);
-                event->CancelDefaultHandling(EC_COMPLETE);
-                event->CancelDefaultHandling(EC_STATE_CHANGE);
-                event->CancelDefaultHandling(EC_LENGTH_CHANGED);
                 m_graphEventNotifier.setHandle(handle);
                 m_graphEventNotifier.setEnabled(true);
             }
@@ -470,8 +466,6 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
                     qWarning("DirectShowPlayerService::doRender: Unresolved error code %x",
                              renderHr);
                 }
-
-
             }
 
             QCoreApplication::postEvent(this, new QEvent(QEvent::Type(Error)));
@@ -510,6 +504,24 @@ void DirectShowPlayerService::doFinalizeLoad(QMutexLocker *locker)
     m_graphStatus = Loaded;
 
     QCoreApplication::postEvent(this, new QEvent(QEvent::Type(FinalizedLoad)));
+}
+
+
+void DirectShowPlayerService::doUpdateDuration(QMutexLocker *)
+{
+    if (IMediaSeeking *seeking = com_cast<IMediaSeeking>(m_graph)) {
+        LONGLONG duration = 0;
+        seeking->GetDuration(&duration);
+        m_duration = duration / 10;
+
+        DWORD capabilities = 0;
+        seeking->GetCapabilities(&capabilities);
+        m_seekable = capabilities & AM_SEEKING_CanSeekAbsolute;
+
+        seeking->Release();
+
+        QCoreApplication::postEvent(this, new QEvent(QEvent::Type(DurationChange)));
+    }
 }
 
 int DirectShowPlayerService::findStreamTypes(IBaseFilter *source) const
@@ -955,6 +967,12 @@ void DirectShowPlayerService::customEvent(QEvent *event)
         QMutexLocker locker(&m_mutex);
 
         updateStatus();
+    } else if (event->type() == QEvent::Type(DurationChange)) {
+        event->accept();
+
+        QMutexLocker locker(&m_mutex);
+
+        m_playerControl->updateMediaInfo(m_duration, m_streamTypes, m_seekable);
     } else {
         QMediaService::customEvent(event);
     }
@@ -1007,7 +1025,14 @@ void DirectShowPlayerService::graphEvent(HANDLE handle)
                 }
                 break;
             case EC_LENGTH_CHANGED:
-                // TODO.
+                {
+                    QMutexLocker locker(&m_mutex);
+                    if (m_executedTasks & FinalizeLoad) {
+                        m_pendingTasks |= UpdateDuration;
+
+                        m_wait.wakeAll();
+                    }
+                }
                 break;
             default:
                 break;
@@ -1166,6 +1191,11 @@ void DirectShowPlayerService::run()
             m_executingTask = FinalizeLoad;
 
             doFinalizeLoad(&locker);
+        } else if (m_pendingTasks & UpdateDuration) {
+            m_pendingTasks ^= UpdateDuration;
+            m_executingTask ^= UpdateDuration;
+
+            doUpdateDuration(&locker);
         } else if (m_pendingTasks & SetRate) {
             m_pendingTasks ^= SetRate;
             m_executingTask = SetRate;
