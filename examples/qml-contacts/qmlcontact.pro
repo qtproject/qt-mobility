@@ -11,7 +11,7 @@ INCLUDEPATH += . \
                ../../src/contacts/requests \
                ../../src/contacts/details \
                ../../src/contacts/filters \
-               ../../../src/versit
+               ../../src/versit
 
 QT += declarative
 QT += script
