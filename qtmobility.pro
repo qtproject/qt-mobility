@@ -2,8 +2,7 @@
 
 #This is a temporary workaround for internal Symbian builds
 #QT_MAJOR_VERSION et al are not set
-symbian:
-{
+symbian {
     isEmpty(QT_MAJOR_VERSION)  {
          exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
            QT_MAJOR_VERSION=4;
