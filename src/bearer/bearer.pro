@@ -62,7 +62,6 @@ symbian: {
     DEPLOYMENT += QtBearerManagement
 } else {
     maemo6 {
-        QT += dbus
 	CONFIG += link_pkgconfig
 
 	exists(../debug) {
