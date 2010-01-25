@@ -865,13 +865,13 @@ void S60CameraSession::setZoomFactor(int value)
         CCamera *camera = m_cameraEngine->Camera();
         if (camera) {
 			if (value > m_info.iMaxZoom && value <= m_info.iMaxDigitalZoom) { // digitalzoom
-				TRAPD(m_error, camera->SetDigitalZoomFactorL(value));
+				TRAP(m_error, camera->SetDigitalZoomFactorL(value));
 				qDebug() << "S60CameraSession::setDigitalZoomFactor error: " << m_error;
 				if (m_error == KErrNone) {
 					emit zoomValueChanged(value);
 				}
 			} else if (value >= m_info.iMinZoom && value <= m_info.iMaxZoom) { //opticalzoom
-				TRAPD(m_error, camera->SetZoomFactorL(value));
+				TRAP(m_error, camera->SetZoomFactorL(value));
 				qDebug() << "S60CameraSession::setZoomFactor error: " << m_error;
 				if (m_error == KErrNone) {
 					emit zoomValueChanged(value);
@@ -897,27 +897,24 @@ int S60CameraSession::zoomFactor()
 
 void S60CameraSession::startFocus()
 {   
-{
     qDebug() << "S60CameraSession::startFocus";
     
 	if (m_cameraEngine) {
-		TRAPD(m_error, m_cameraEngine->StartFocusL());
+		TRAP(m_error, m_cameraEngine->StartFocusL());
 	}
 	if (m_error) {
-	// TODO:
+	// TODO: Eerror handling
 	}
 }
 
 void S60CameraSession::cancelFocus()
 {
     qDebug() << "S60CameraSession::cancelFocus";
-    
 	m_cameraEngine->FocusCancel();
 }
 
 int S60CameraSession::maximumZoom()
 {   
-{
     qDebug() << "S60CameraSession::maximumZoom";
     
 	if (queryCurrentCameraInfo()) {
@@ -943,17 +940,12 @@ int S60CameraSession::minZoom()
 int S60CameraSession::maxDigitalZoom()
 {
     qDebug() << "S60CameraSession::maxDigitalZoom";
-    
 	if (queryCurrentCameraInfo()) {
+	    qDebug() << "S60CameraSession::maxDigitalZoom value: " << m_info.iMaxDigitalZoom;
 		return m_info.iMaxDigitalZoom;		
-	} else {
-        qDebug() << "S60CameraSession::maxDigitalZoom value: " << m_info.iMaxDigitalZoom;
-		return m_info.iMaxDigitalZoom;
-		
-	}
-	else {
+	} 
+	else
 		return 0; 
-	}
 }
 
 void S60CameraSession::setFocusMode(QCamera::FocusMode mode)
