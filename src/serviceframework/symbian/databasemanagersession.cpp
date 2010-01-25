@@ -557,7 +557,20 @@ void CDatabaseManagerServerSession::initDbPath()
     QSettings settings(QSettings::IniFormat, settingsScope,
             QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
     QFileInfo fi(settings.fileName());
+#ifdef __WINS__
+    // In emulator use commmon place for service database
+    // instead of server's private directory (server is in thread, so each
+    // application gets its own private directory)
+    QDir dir;
+    QString serviceDbPath = QDir::toNativeSeparators("C:/Data/temp/QtServiceFW");
+    dir.mkpath(serviceDbPath);
+    if (!dir.cd(serviceDbPath)) {
+        qWarning() << "Fatal error: could not create needed path for serviceDatabase: " << serviceDbPath;
+        User::Panic(_L("PLAT (emulator)"), 0);
+    }
+#else
     QDir dir = fi.dir();
+#endif
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
