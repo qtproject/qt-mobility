@@ -785,7 +785,8 @@ void QContactMemoryEngine::requestDestroyed(QContactAbstractRequest* req)
 /*! \reimp */
 bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
-    d->m_asynchronousOperations.enqueue(req);
+    if (!d->m_asynchronousOperations.contains(req))
+        d->m_asynchronousOperations.enqueue(req);
     updateRequestState(req, QContactManager::NoError, QContactAbstractRequest::ActiveState);
     QTimer::singleShot(0, this, SLOT(performAsynchronousOperation()));
     return true;
