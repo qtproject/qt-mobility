@@ -108,6 +108,20 @@ static QStringList validPluginFiles()
 }
 static const QStringList VALID_PLUGIN_FILES = validPluginFiles();
 
+// Helper function for debugging. Useful e.g. for checking what is difference between
+// two descriptors (in addition to attributes printed below, the \
+// QServiceInterfaceDescriptor::== operator also compares
+// attributes.
+static void printDescriptor (QServiceInterfaceDescriptor &desc) {
+    qDebug("***QServiceInterfaceDescriptor printed:");
+    qDebug() << "***majorVersion:" << desc.majorVersion();
+    qDebug() << "***minorVersion:" << desc.minorVersion();
+    qDebug() << "***interfaceName:" << desc.interfaceName();
+    qDebug() << "***serviceName:" << desc.serviceName();
+    qDebug() << "***customAttributes:" << desc.customAttributes();
+    qDebug() << "***isValid(): " << desc.isValid();
+    qDebug() << "***scope (user:0, system:1): " << desc.scope();
+}
 
 class MySecuritySession : public QAbstractSecuritySession
 {
@@ -809,7 +823,11 @@ void tst_QServiceManager::loadInterface_descriptor_data()
     lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_sampleserviceplugin");
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
-    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
+#if defined (Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] = "plugins/" + lib.fileName();
+#else
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
+#endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw_sampleserviceplugin")
             << descriptor
@@ -819,7 +837,11 @@ void tst_QServiceManager::loadInterface_descriptor_data()
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
 
-    priv->attributes[QServiceInterfaceDescriptor::Location] = "plugins/" + lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
+#else
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
+#endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw_sampleserviceplugin2")
             << descriptor
@@ -835,7 +857,11 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
-    priv->attributes[QServiceInterfaceDescriptor::Location] = "plugins/" + lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
+#else
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
+#endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 
     QServiceManager mgr;
@@ -904,7 +930,11 @@ void tst_QServiceManager::loadLocalTypedInterface()
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
-    priv->attributes[QServiceInterfaceDescriptor::Location] = "plugins/" + lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
+#else
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
+#endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 
     //use manual descriptor -> avoid database involvement
@@ -1209,8 +1239,12 @@ void tst_QServiceManager::setInterfaceDefault_descriptor()
 
     QCOMPARE(mgr.interfaceDefault(interfaceName), desc);
 
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    QCOMPARE(mgr.interfaceDefault(interfaceName).isValid(), expectFound);
+#else
     QServiceManager mgrWithOtherScope(scope_find);
     QCOMPARE(mgrWithOtherScope.interfaceDefault(interfaceName).isValid(), expectFound);
+#endif
 }
 
 void tst_QServiceManager::setInterfaceDefault_descriptor_data()
@@ -1219,6 +1253,12 @@ void tst_QServiceManager::setInterfaceDefault_descriptor_data()
     QTest::addColumn<QService::Scope>("scope_find");
     QTest::addColumn<bool>("expectFound");
 
+#if defined(Q_OS_SYMBIAN)
+    // Symbian implementation hard-codes user-scope for everything, do not test any system scope-stuff
+    // because returned service interface descriptor is always in user-scope
+    QTest::newRow("user scope")
+                << QService::UserScope << QService::UserScope << true;
+#else
     QTest::newRow("user scope")
             << QService::UserScope << QService::UserScope << true;
     QTest::newRow("system scope")
@@ -1228,6 +1268,7 @@ void tst_QServiceManager::setInterfaceDefault_descriptor_data()
             << QService::UserScope << QService::SystemScope << false;
     QTest::newRow("system scope - add, user scope - find")
             << QService::SystemScope << QService::UserScope << true;
+#endif /* Q_OS_SYMBIAN */
 }
 
 void tst_QServiceManager::interfaceDefault()
@@ -1238,6 +1279,9 @@ void tst_QServiceManager::interfaceDefault()
 
 void tst_QServiceManager::serviceAdded()
 {
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    QSKIP("Multiple concurrent QServiceManagers not supported in WINS emulator", SkipAll);
+#endif
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
     QFETCH(QService::Scope, scope_modify);
@@ -1248,7 +1292,7 @@ void tst_QServiceManager::serviceAdded()
     buffer.setData(xml);
     QServiceManager mgr_modify(scope_modify);
     QServiceManager mgr_listen(scope_listen);
-
+    
     // ensure mgr.connectNotify() is called
     ServicesListener *listener = new ServicesListener;
     connect(&mgr_listen, SIGNAL(serviceAdded(QString,QService::Scope)),
@@ -1256,7 +1300,6 @@ void tst_QServiceManager::serviceAdded()
 
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QService::Scope)));
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
-
 
     if (!expectSignal) {
         QTest::qWait(2000);
@@ -1306,6 +1349,10 @@ void tst_QServiceManager::serviceAdded()
         QCOMPARE(listener->params.at(0).second, scope_modify);
     }
 
+    // ensure mgr.disconnectNotify() is called
+    disconnect(&mgr_listen, SIGNAL(serviceRemoved(QString,QService::Scope)),
+            listener, SLOT(serviceRemoved(QString,QService::Scope)));
+
     delete listener;
 }
 
@@ -1324,6 +1371,13 @@ void tst_QServiceManager::serviceAdded_data()
 
     QByteArray file1Data = file1.readAll();
 
+#if defined (Q_OS_SYMBIAN)
+    // Symbian implementation hard-codes (ignores) scopes for everything, do not test mixed-scope stuff
+    QTest::newRow("SampleService, user scope") << file1Data << "SampleService"
+            << QService::SystemScope << QService::SystemScope << true;
+    QTest::newRow("TestService, user scope") << file2.readAll() << "TestService"
+            << QService::SystemScope << QService::SystemScope << true;
+#else
     QTest::newRow("SampleService, user scope") << file1Data << "SampleService"
             << QService::UserScope << QService::UserScope << true;
     QTest::newRow("TestService, user scope") << file2.readAll() << "TestService"
@@ -1335,10 +1389,14 @@ void tst_QServiceManager::serviceAdded_data()
             << QService::UserScope << QService::SystemScope << false;
     QTest::newRow("modify as system, listen in user") << file1Data << "SampleService"
             << QService::SystemScope << QService::UserScope << true;
+#endif /* Q_OS_SYMBIAN */
 }
 
 void tst_QServiceManager::serviceRemoved()
 {
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    QSKIP("Multiple concurrent QServiceManagers not supported in WINS emulator", SkipAll);
+#endif
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
     QFETCH(QService::Scope, scope_modify);
@@ -1357,6 +1415,7 @@ void tst_QServiceManager::serviceRemoved()
 
     QSignalSpy spyAdd(&mgr_listen, SIGNAL(serviceAdded(QString,QService::Scope)));
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
+
     if (!expectSignal) {
         QTest::qWait(2000);
         QCOMPARE(spyAdd.count(), 0);
@@ -1366,6 +1425,7 @@ void tst_QServiceManager::serviceRemoved()
 
     // Pause between file changes so they are detected separately
     QTest::qWait(2000);
+
 
     QSignalSpy spyRemove(&mgr_listen, SIGNAL(serviceRemoved(QString,QService::Scope)));
     QVERIFY(mgr_modify.removeService(serviceName));
@@ -1416,6 +1476,10 @@ void tst_QServiceManager::serviceRemoved()
         QCOMPARE(spyRemove.at(0).at(0).toString(), serviceName);
         QCOMPARE(listener->params.at(0).second , scope_modify);
     }
+
+    // ensure mgr.disconnectNotify() is called
+    disconnect(&mgr_listen, SIGNAL(serviceRemoved(QString,QService::Scope)),
+            listener, SLOT(serviceRemoved(QString,QService::Scope)));
 
     delete listener;
 }

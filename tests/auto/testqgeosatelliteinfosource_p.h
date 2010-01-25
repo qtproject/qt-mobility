@@ -61,10 +61,6 @@ public:
 
     static TestQGeoSatelliteInfoSource *createDefaultSourceTest();
 
-public slots:
-	void test_slot1();
-	void test_slot2();
-
 protected:
     virtual QGeoSatelliteInfoSource *createTestSource() = 0;
 
@@ -73,6 +69,10 @@ protected:
     void base_init();
     void base_cleanup();
     void base_cleanupTestCase();
+
+public slots:
+    void test_slot1();
+    void test_slot2();
 
 private slots:
     void initTestCase();
@@ -106,6 +106,11 @@ private slots:
     void removeSlotForRequestTimeout();
     void removeSlotForSatellitesInUseUpdated();
     void removeSlotForSatellitesInViewUpdated();
+
+#if defined(Q_OS_SYMBIAN)
+    void startUpdate_afterDisablingSatelliteBasedMethods();
+    void requestUpdate_afterDisablingSatelliteBasedMethods();
+#endif
 
 private:
     QGeoSatelliteInfoSource *m_source;

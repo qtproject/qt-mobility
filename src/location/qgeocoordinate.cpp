@@ -105,8 +105,8 @@ public:
     \enum QGeoCoordinate::CoordinateFormat
     Defines the possible formatting options for toString().
 
-    \value DecimalDegrees Returns a string representation of the coordinates in decimal degrees format.
-    \value DecimalDegreesWithHemisphere Returns a string representation of the coordinates in decimal degrees format, using 'N', 'S', 'E' or 'W' to indicate the hemispheres of the coordinates.
+    \value Degrees Returns a string representation of the coordinates in decimal degrees format.
+    \value DegreesWithHemisphere Returns a string representation of the coordinates in decimal degrees format, using 'N', 'S', 'E' or 'W' to indicate the hemispheres of the coordinates.
     \value DegreesMinutes Returns a string representation of the coordinates in degrees-minutes format.
     \value DegreesMinutesWithHemisphere Returns a string representation of the coordinates in degrees-minutes format, using 'N', 'S', 'E' or 'W' to indicate the hemispheres of the coordinates.
     \value DegreesMinutesSeconds Returns a string representation of the coordinates in degrees-minutes-seconds format.
@@ -150,6 +150,8 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
     If the latitude is not between -90 to 90 inclusive, or the longitude
     is not between -180 to 180 inclusive, none of the values are set and
     the type() will be QGeoCoordinate::InvalidCoordinate.
+
+    Note that \a altitude specifies the metres above sea level.
 
     \sa isValid()
 */
@@ -202,9 +204,9 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
 */
 bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 {
-    return ( (qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat) )
-            && ( (qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng) )
-            && ( (qIsNaN(d->alt) && qIsNaN(other.d->alt)) || qFuzzyCompare(d->alt, other.d->alt) );
+    return ( (qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat))
+            && ( (qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng))
+            && ( (qIsNaN(d->alt) && qIsNaN(other.d->alt)) || qFuzzyCompare(d->alt, other.d->alt));
 }
 
 /*!
@@ -335,11 +337,11 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
     // Haversine formula
     double dlat = qgeocoordinate_degToRad(other.d->lat - d->lat);
     double dlon = qgeocoordinate_degToRad(other.d->lng - d->lng);
-    double y = sin(dlat/2.0) * sin(dlat/2.0)
+    double y = sin(dlat / 2.0) * sin(dlat / 2.0)
             + cos(qgeocoordinate_degToRad(d->lat))
             * cos(qgeocoordinate_degToRad(other.d->lat))
-            * sin(dlon/2.0) * sin(dlon/2.0);
-    double x = 2 * atan2(sqrt(y), sqrt(1-y));
+            * sin(dlon / 2.0) * sin(dlon / 2.0);
+    double x = 2 * atan2(sqrt(y), sqrt(1 - y));
     return qreal(x * qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 }
 
@@ -384,10 +386,10 @@ qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
         \o \a format value
         \o Returned string
     \row
-        \o \l DecimalDegrees
+        \o \l Degrees
         \o -27.46758\unicode{0xB0}, 153.02789\unicode{0xB0}, 28.1m
     \row
-        \o \l DecimalDegreesWithHemisphere
+        \o \l DegreesWithHemisphere
         \o 27.46758\unicode{0xB0} S, 153.02789\unicode{0xB0} E, 28.1m
     \row
         \o \l DegreesMinutes
@@ -420,8 +422,8 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
     QChar symbol(0x00B0);   // degrees symbol
 
     switch (format) {
-        case DecimalDegrees:
-        case DecimalDegreesWithHemisphere:
+        case Degrees:
+        case DegreesWithHemisphere:
         {
             latStr = QString::number(absLat, 'f', 5) + symbol;
             longStr = QString::number(absLng, 'f', 5) + symbol;
@@ -466,7 +468,7 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
 
     // now add the "-" to the start, or append the hemisphere char
     switch (format) {
-        case DecimalDegrees:
+        case Degrees:
         case DegreesMinutes:
         case DegreesMinutesSeconds:
         {
@@ -476,7 +478,7 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
                 longStr.insert(0, "-");
             break;
         }
-        case DecimalDegreesWithHemisphere:
+        case DegreesWithHemisphere:
         case DegreesMinutesWithHemisphere:
         case DegreesMinutesSecondsWithHemisphere:
         {
@@ -544,8 +546,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
 
 #ifndef QT_NO_DATASTREAM
 /*!
-    \fn  QDataStream &operator>>(QDataStream &stream, QGeoCoordinate
-&coordinate)
+    \fn  QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
     \relates QGeoCoordinate
 
     Reads a coordinate from the specified \a stream into the given

@@ -136,6 +136,9 @@ private slots:
     void doDump();
     void doDump_data() {addManagers();}
 
+    void doDumpSchema();
+    void doDumpSchema_data() {addManagers();}
+
     /* Special test with special data */
     void uriParsing();
     void nameSynthesis();
@@ -580,6 +583,57 @@ void tst_QContactManager::doDump()
         QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
         dumpContacts(cm.data());
+    }
+}
+
+Q_DECLARE_METATYPE(QVariant);
+
+void tst_QContactManager::doDumpSchema()
+{
+    // Only do this if it has been explicitly selected
+    if (QCoreApplication::arguments().contains("doDumpSchema")) {
+        QFETCH(QString, uri);
+        QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
+
+        // Get the schema for each supported type
+        foreach(QString type, cm->supportedContactTypes()) {
+            QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions(type);
+
+            foreach(QContactDetailDefinition def, defs.values()) {
+                if (def.isUnique())
+                    qDebug() << QString("%2::%1 (Unique) {").arg(def.name()).arg(type).toAscii().constData();
+                else
+                    qDebug() << QString("%2::%1 {").arg(def.name()).arg(type).toAscii().constData();
+                QMap<QString, QContactDetailDefinitionField> fields = def.fields();
+
+                foreach(QString fname, fields.keys()) {
+                    QContactDetailDefinitionField field = fields.value(fname);
+
+                    if (field.allowableValues().count() > 0) {
+                        // Make some pretty output
+                        QStringList allowedList;
+                        foreach(QVariant var, field.allowableValues()) {
+                            QString allowed;
+                            if (var.type() == QVariant::String)
+                                allowed = QString("'%1'").arg(var.toString());
+                            else if (var.type() == QVariant::StringList)
+                                allowed = QString("'%1'").arg(var.toStringList().join(","));
+                            else {
+                                // use the textstream <<
+                                QDebug dbg(&allowed);
+                                dbg << var;
+                            }
+                            allowedList.append(allowed);
+                        }
+
+                        qDebug() << QString("   %2 %1 {%3}").arg(fname).arg(QMetaType::typeName(field.dataType())).arg(allowedList.join(",")).toAscii().constData();
+                    } else
+                        qDebug() << QString("   %2 %1").arg(fname).arg(QMetaType::typeName(field.dataType())).toAscii().constData();
+                }
+
+                qDebug() << "}";
+            }
+        }
     }
 }
 
@@ -1810,6 +1864,72 @@ void tst_QContactManager::detailDefinitions()
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
     QMap<QString, QContactDetailDefinition> defs = cm->detailDefinitions();
+
+    /* Validate the existing definitions */
+
+    // Do some sanity checking on the definitions first
+    if (defs.keys().count() != defs.uniqueKeys().count()) {
+        qDebug() << "ERROR - duplicate definitions with the same name:";
+
+        QList<QString> defkeys = defs.keys();
+        foreach(QString uniq, defs.uniqueKeys()) {
+            if (defkeys.count(uniq) > 1) {
+                qDebug() << QString(" %1").arg(uniq).toAscii().constData();
+                defkeys.removeAll(uniq);
+            }
+        }
+        QVERIFY(defs.keys().count() == defs.uniqueKeys().count());
+    }
+
+    foreach(QContactDetailDefinition def, defs.values()) {
+        QMap<QString, QContactDetailDefinitionField> fields = def.fields();
+
+        // Again some sanity checking
+        if (fields.keys().count() != fields.uniqueKeys().count()) {
+            qDebug() << "ERROR - duplicate fields with the same name:";
+
+            QList<QString> defkeys = fields.keys();
+            foreach(QString uniq, fields.uniqueKeys()) {
+                if (defkeys.count(uniq) > 1) {
+                    qDebug() << QString(" %2::%1").arg(uniq).arg(def.name()).toAscii().constData();
+                    defkeys.removeAll(uniq);
+                }
+            }
+            QVERIFY(fields.keys().count() == fields.uniqueKeys().count());
+        }
+
+        foreach(QContactDetailDefinitionField field, def.fields().values()) {
+            // Sanity check the allowed values
+            if (field.allowableValues().count() > 0) {
+                if (field.dataType() == QVariant::StringList) {
+                    // We accept QString or QStringList allowed values
+                    foreach(QVariant var, field.allowableValues()) {
+                        if (var.type() != QVariant::String && var.type() != QVariant::StringList) {
+                            QString foo;
+                            QDebug dbg(&foo);
+                            dbg.nospace() << var;
+                            qDebug().nospace() << "Field " << QString("%1::%2").arg(def.name()).arg(def.fields().key(field)).toAscii().constData() << " allowable value '" << foo.simplified().toAscii().constData() << "' not supported for field type " << QMetaType::typeName(field.dataType());
+                        }
+                        QVERIFY(var.type() == QVariant::String || var.type() == QVariant::StringList);
+                    }
+                } else if (field.dataType() == QVariant::List || field.dataType() == QVariant::Map || field.dataType() == (QVariant::Type) qMetaTypeId<QVariant>()) {
+                    // Well, anything goes
+                } else {
+                    // The type of each allowed value must match the data type
+                    foreach(QVariant var, field.allowableValues()) {
+                        if (var.type() != field.dataType()) {
+                            QString foo;
+                            QDebug dbg(&foo);
+                            dbg.nospace() << var;
+                            qDebug().nospace() << "Field " << QString("%1::%2").arg(def.name()).arg(def.fields().key(field)).toAscii().constData() << " allowable value '" << foo.simplified().toAscii().constData() << "' not supported for field type " << QMetaType::typeName(field.dataType());
+                        }
+                        QVERIFY(var.type() == field.dataType());
+                    }
+                }
+            }
+        }
+    }
+
 
     /* Try to make a credible definition */
     QContactDetailDefinition newDef;

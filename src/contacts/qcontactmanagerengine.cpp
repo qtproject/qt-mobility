@@ -921,6 +921,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     // online account
     d.setName(QContactOnlineAccount::DefinitionName);
     fields.clear();
+    f.setAllowableValues(QVariantList());
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     f.setDataType(QVariant::StringList);

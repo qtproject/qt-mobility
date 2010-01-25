@@ -208,9 +208,8 @@ QList<QContactLocalId> CntSymbianEngine::contacts(const QList<QContactSortOrder>
  */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
-    // See QT_TRYCATCH_LEAVING note at the begginning of this file
     QContact* contact = new QContact();
-    TRAPD(err, QT_TRYCATCH_LEAVING(*contact = fetchContactL(contactId)));
+    TRAPD(err, *contact = fetchContactL(contactId));
     CntSymbianTransformError::transformError(err, error);
     if(error == QContactManager::NoError) {
         updateDisplayLabel(*contact);
@@ -413,7 +412,7 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
     // Attempt to persist contact, trapping errors
     int err(0);
     QContactLocalId id(0);
-    TRAP(err, QT_TRYCATCH_LEAVING(id = addContactL(contact)));
+    TRAP(err, id = addContactL(contact));
     if(err == KErrNone)
     {
         changeSet.addedContacts().insert(id);
@@ -490,7 +489,7 @@ int CntSymbianEngine::addContactL(QContact &contact)
 bool CntSymbianEngine::updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError)
 {
     int err(0);
-    TRAP(err, QT_TRYCATCH_LEAVING(updateContactL(contact)));
+    TRAP(err, updateContactL(contact));
     if(err == KErrNone)
     {
         //TODO: check what to do with groupsChanged
@@ -582,6 +581,17 @@ int CntSymbianEngine::removeContactL(QContactLocalId id)
     //TODO: add code to remove all relationships.
 
     m_dataBase->contactDatabase()->DeleteContactL(cId);
+#ifdef SYMBIAN_BACKEND_S60_VERSION_32
+    // In S60 3.2 hardware (observerd with N96) there is a problem when saving and 
+    // deleting contacts in quick successive manner. At some point the database
+    // starts leaving with KErrNotReady (-18). This happens randomly at either
+    // DeleteContactL() or AddNewContactL(). The only only thing that seems to
+    // help is to compress the database after deleting a contact. 
+    // 
+    // Needles to say that this will have a major negative effect on performance!
+    // TODO: A better solution must be found.
+    m_dataBase->contactDatabase()->CompactL();
+#endif
 
     return 0;
 }

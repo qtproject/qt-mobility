@@ -51,7 +51,7 @@
 #include "cntabstractcontactfilter.h"
 
 // Forward declarations
-
+class CntSqlSearch;
 // External data types
 
 // Constants
@@ -127,6 +127,7 @@ private:
     
 private:
     CntSymbianSrvConnection* m_srvConnection;
+    CntSqlSearch* m_sqlSearch;
     CContactDatabase &m_contactDatabase;
     bool isPhoneNumberSearchforDetailFilter;
     QHash<int,QString> contactsTableIdColumNameMapping;

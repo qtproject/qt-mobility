@@ -186,18 +186,21 @@ bool QWmpPlayerControl::isSeekable() const
     return true;
 }
 
-QPair<qint64, qint64> QWmpPlayerControl::seekRange() const
+QMediaTimeRange QWmpPlayerControl::availablePlaybackRanges() const
 {
-    double duration = 0.;
+    QMediaTimeRange ranges;
 
     IWMPMedia *media = 0;
     if (m_controls && m_controls->get_currentItem(&media) == S_OK) {
+        double duration = 0;
         media->get_duration(&duration);
-
         media->Release();
+
+        if(duration > 0)
+            ranges.addInterval(0, duration * 1000);
     }
 
-    return qMakePair<qint64, qint64>(0, m_duration * 1000);
+    return ranges;
 }
 
 qreal QWmpPlayerControl::playbackRate() const

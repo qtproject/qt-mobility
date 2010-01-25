@@ -526,9 +526,35 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch()
     QContactDetailFilter df;
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
+    QList<QString> testString;
+    testString << "Micheal" << "Jack" << "Stefann" << "Fedrernn" << "Susan"<< "Daniel"; 
+    bool isPredSearch = false;
+    QString pattern = "607";
+       
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mSqlFilter->searchContacts(df, sortOrder, error);
+
+    for( int i=0;i<cnt_ids.count();i++ ) {
+            QContactLocalId cid = cnt_ids.at( i );    
+            QContact contact = mCntMng->contact( cid );
+            QContactName contactName = contact.detail( QContactName::DefinitionName );
+            testString.removeAll( contactName.value( QContactName::FieldFirst ) );
+            testString.removeAll( contactName.value( QContactName::FieldLast ) );
+            } 
+    QVERIFY( testString.count() == 0 );
+}
+
+void TestFiltering::testZeroSearch()
+{
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
 
     bool isPredSearch = false;
-    QString pattern = "6";
+    QString pattern = "60";
        
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );

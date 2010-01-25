@@ -1031,13 +1031,16 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
 void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     TPtrC16 sipField, QString sipDetail,
     TPtrC16 providerField, QString providerDetail,
-    TPtrC16 presenceField, QString presenceDetail,
+    TPtrC16 /*presenceField*/, QString presenceDetail,
     TPtrC16 statusField, QString statusDetail)
 {
 	CntTransformContactData* transformOnlineAccount = new CntTransformOnlineAccount();
     QVERIFY(transformOnlineAccount != 0);
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldSIPID.iUid));
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldIMPP.iUid));
+    QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldServiceProvider.iUid));
+    QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldPresence.iUid));
+    QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldStatusMsg.iUid));
     QVERIFY(!(transformOnlineAccount->supportsField(0))); //Test for Wrong value
     QVERIFY(transformOnlineAccount->supportsDetail(QContactOnlineAccount::DefinitionName));
     QVERIFY(!(transformOnlineAccount->supportsDetail("WrongValue")));

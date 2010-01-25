@@ -105,7 +105,7 @@ the platform.
 The QGeoAreaMonitor class enables client applications to be notified when
 the receiving device has moved in or out of a particular area, as specified
 by a coordinate and radius. If the platform provides built-in support for
-area monitoring, QGeoAreaMonitor::createMonitor() returns an instance of
+area monitoring, QGeoAreaMonitor::createDefaultMonitor() returns an instance of
 the default area monitor.
 
 Satellite information can also be distributed through the

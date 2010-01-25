@@ -77,7 +77,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volume-prop">volume</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>11 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -105,16 +105,16 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#error-2">error</a></b> ( QMediaPlayer::Error <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus <i>status</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#videoAvailabilityChanged">videoAvailabilityChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>5 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
@@ -122,6 +122,7 @@
 <h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QtMedia::SupportEstimate </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#hasSupport">hasSupport</a></b> ( const QString &amp; <i>mimeType</i>, const QStringList &amp; <i>codecs</i> = QStringList(), Flags <i>flags</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#supportedMimeTypes">supportedMimeTypes</a></b> ( Flags <i>flags</i> = 0 )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
@@ -146,11 +147,13 @@
 <p><a href="qvideowidget.html">QVideoWidget</a> can be used with QMediaPlayer for video rendering and <a href="qmediaplaylist.html">QMediaPlaylist</a> for accessing playlist functionality.</p>
 <pre>    player = new QMediaPlayer;
 
-    playlist = new QMediaPlaylist(player);
+    playlist = new QMediaPlaylist;
+    playlist-&gt;setMediaObject(player);
     playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie1.mp4&quot;));</span>
     playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie2.mp4&quot;));</span>
 
-    widget = new QVideoWidget(player);
+    widget = new QVideoWidget;
+    widget-&gt;setMediaObject(player);
     widget-&gt;show();
 
     player-&gt;play();</pre>
@@ -264,6 +267,7 @@
 <p>This property holds the active media source being used by the player object.</p>
 <p>The player object will use the <a href="qmediacontent.html">QMediaContent</a> for selection of the content to be played.</p>
 <p>By default this property has a null <a href="qmediacontent.html">QMediaContent</a>.</p>
+<p>Setting this property to a null <a href="qmediacontent.html">QMediaContent</a> will cause the player to discard all information relating to the current media source and to cease all I/O operations related to that media.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b>media</b> () const</td></tr>
@@ -291,7 +295,7 @@
 <p>See also <a href="qmediaplayer.html#state-prop">state</a>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/isMuted"></a>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/setMuted"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mutingChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaPlayer/mutedChanged"></a>
 <h3 class="fn"><a name="muted-prop"></a>muted : bool</h3>
 <p>This property holds the muted state of the current media.</p>
 <p>The value will be true if the playback volume is muted; otherwise false.</p>
@@ -302,7 +306,7 @@
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/playbackRate"></a>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/setPlaybackRate"></a>
@@ -363,17 +367,17 @@
 </table>
 <p>See also <a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a>(), <a href="qmediaplayer.html#play">play</a>(), <a href="qmediaplayer.html#pause">pause</a>(), and <a href="qmediaplayer.html#stop">stop</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/isVideoAvailable"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/videoAvailabilityChanged"></a>
+<a name="//apple_ref/cpp/instm/QMediaPlayer/videoAvailableChanged"></a>
 <h3 class="fn"><a name="videoAvailable-prop"></a>videoAvailable : const bool</h3>
 <p>This property holds the video availability status for the current media.</p>
-<p>If available, the <a href="qvideowidget.html">QVideoWidget</a> class can be used to view the video. As the life time of <a href="qmediaplayer.html">QMediaPlayer</a> can be longer than the playback of one <a href="qmediacontent.html">QMediaContent</a>, this property may change over time, the videoAvailabilityChanged signal can be used to monitor it's status.</p>
+<p>If available, the <a href="qvideowidget.html">QVideoWidget</a> class can be used to view the video. As the life time of <a href="qmediaplayer.html">QMediaPlayer</a> can be longer than the playback of one <a href="qmediacontent.html">QMediaContent</a>, this property may change over time, the videoAvailableChanged signal can be used to monitor it's status.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isVideoAvailable</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#videoAvailabilityChanged">videoAvailabilityChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
 </table>
 <p>See also <a href="qvideowidget.html">QVideoWidget</a> and <a href="qmediacontent.html">QMediaContent</a>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/volume"></a>
@@ -429,8 +433,8 @@
 <p>Returns the stream source of media data.</p>
 <p>This is only valid if a stream was passed to <a href="qmediaplayer.html#media-prop">setMedia</a>().</p>
 <p>See also <a href="qmediaplayer.html#media-prop">setMedia</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mutingChanged"></a>
-<h3 class="fn"><a name="mutingChanged"></a>void QMediaPlayer::mutingChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlayer/mutedChanged"></a>
+<h3 class="fn"><a name="mutedChanged"></a>void QMediaPlayer::mutedChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the mute state has changed to <i>muted</i>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/pause"></a>
 <h3 class="fn"><a name="pause"></a>void QMediaPlayer::pause ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
@@ -453,8 +457,12 @@
 <a name="//apple_ref/cpp/instm/QMediaPlayer/stop"></a>
 <h3 class="fn"><a name="stop"></a>void QMediaPlayer::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Stop playing, and reset the play position to the beginning.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/videoAvailabilityChanged"></a>
-<h3 class="fn"><a name="videoAvailabilityChanged"></a>void QMediaPlayer::videoAvailabilityChanged ( bool <i>videoAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/clm/QMediaPlayer/supportedMimeTypes"></a>
+<h3 class="fn"><a name="supportedMimeTypes"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaPlayer::supportedMimeTypes ( <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a list of MIME types supported by the media player.</p>
+<p>The <i>flags</i> argument causes the resultant list to be restricted to MIME types which can be supported given additional requirements, such as performance indicators.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlayer/videoAvailableChanged"></a>
+<h3 class="fn"><a name="videoAvailableChanged"></a>void QMediaPlayer::videoAvailableChanged ( bool <i>videoAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the availability of visual content has changed to <i>videoAvailable</i>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/volumeChanged"></a>
 <h3 class="fn"><a name="volumeChanged"></a>void QMediaPlayer::volumeChanged ( int <i>volume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>

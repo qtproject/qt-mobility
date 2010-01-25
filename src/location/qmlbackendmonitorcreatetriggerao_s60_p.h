@@ -61,9 +61,9 @@ class QMLBackendMonitorCreateTriggerAO : public CActive
 public :
     static QMLBackendMonitorCreateTriggerAO* NewL(QGeoAreaMonitorS60* aParent , RLbtServer &aLbtServer);
 
-    bool  InitializeTrigger(QGeoAreaMonitorS60* aParent ,enTriggerType aType,TCoordinate& aCoordinate,qreal& aRadius);
+    bool  InitializeTrigger(QGeoAreaMonitorS60* aParent, enTriggerType aType, TCoordinate& aCoordinate, qreal& aRadius);
 
-    bool isTriggerInitialized(QGeoAreaMonitorS60* aParent ,enTriggerType aType);
+    bool isTriggerInitialized(QGeoAreaMonitorS60* aParent, enTriggerType aType);
 
     void  DoCancel();
 
@@ -82,7 +82,7 @@ private :
     void ConstructL(RLbtServer &aLbtServ);
 
     bool isValid() {
-        return subsessionCreated && (iTriggerMonitorInfo!=NULL);
+        return subsessionCreated && (iTriggerMonitorInfo != NULL);
     }
 private:
 

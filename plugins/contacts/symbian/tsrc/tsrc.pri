@@ -45,7 +45,8 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbiantransformerror.h \
         ../../inc/cntsymbiandatabase.h \
         ../../inc/cntdisplaylabel.h \
-        ../../inc/cntdisplaylabelsqlfilter.h 
+        ../../inc/cntdisplaylabelsqlfilter.h \
+	../../inc/cntsqlsearch.h
 
 SYMBIAN_SOURCES += \
         ../../src/cntsymbianengine.cpp \
@@ -82,14 +83,17 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbiantransformerror.cpp \
         ../../src/cntsymbiandatabase.cpp \
         ../../src/cntdisplaylabel.cpp \
-        ../../src/cntdisplaylabelsqlfilter.cpp 
+        ../../src/cntdisplaylabelsqlfilter.cpp \
+	../../src/cntsqlsearch.cpp
  
-exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
-| exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
-    # Building on S60 3.1 - TB 9.2 Platform
-} else {
-    # Building on 10.1 platform
-    DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+    exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
+    | exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
+        # TB 9.2 platform
+    } else {
+        # TB 10.1 or later platform
+        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+    }
 }
  
 SYMBIAN_LIBS += \

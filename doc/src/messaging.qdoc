@@ -62,7 +62,7 @@ The messaging library provides a set of APIs for accessing messaging data.
 Interfaces are provided to retrieve and query messages, folders and
 accounts, also interfaces to create, modify, and store messages are
 provided. A unified interface for manipulation and storage of SMS, MMS,
-Email and XMPP messages is provided. Handling of internet media (MIME)
+MIME Email and TNEF Email messages is provided. Handling of
 messages that have only been partially retrieved is supported.
 
 An API to access messaging services to send messages and retrieve message
