@@ -43,10 +43,15 @@
 #include "qmlcontactsa.h"
 
 #include <QtDebug>
+#include <QFile>
+#include <QIODevice>
 #include <qcontactfetchrequest.h>
 #include <qcontactlocalidfilter.h>
 #include <qcontactdetails.h>
+#include <qversitreader.h>
+#include <qversitcontactimporter.h>
 
+QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
@@ -76,52 +81,22 @@ QString QMLContactManagerAsync::manager()
 
 void QMLContactManagerAsync::fillContactsIntoMemoryEngine(QContactManager* manager)
 {
-    QContact c;
-    QContactName name;
-    QContactOnlineAccount account;
-    QContactAvatar avatar;
+    QVersitReader reader;
+    QFile file(":/contents/example.vcf");
+    bool ok = file.open(QIODevice::ReadOnly);
+    if (ok) {
+       reader.setDevice(&file);
+       if (reader.readAll()) {
+           QVersitContactImporter importer;
+           QList<QVersitDocument> documents = reader.result();
+           foreach (const QVersitDocument& document, documents) {
+                QContact c = importer.importContact(document);
+                manager->saveContact(&c);
+           }
+       }
+    }
     
-    name.setFirst(QString::fromLatin1("Charles"));
-    name.setLast(QString::fromLatin1("Yin"));
 
-    avatar.setAvatar(QString::fromLatin1("C:\\workspace\\qtm-contacts\\examples\\qml-contacts\\contents/pics\\fruit-salad.jpg"));
-    avatar.setSubType(QContactAvatar::SubTypeImage);
-    account.setAccountUri(QString::fromLatin1("yinyunqiao@hotmail.com"));
-    
-    c.saveDetail(&name);
-    c.saveDetail(&avatar);
-    c.saveDetail(&account);
-    manager->saveContact(&c);
-
-    name.setFirst(QString::fromLatin1("Michael"));
-    name.setLast(QString::fromLatin1("Goddard"));
-    account.setAccountUri(QString::fromLatin1("MichaelGoddard@hotmail.com"));
-    c.setId(QContactId());
-    c.saveDetail(&name);
-    c.saveDetail(&avatar);
-    c.saveDetail(&account);
-    manager->saveContact(&c);
-
-    name.setFirst(QString::fromLatin1("Christopher"));
-    name.setLast(QString::fromLatin1("Adams"));
-    account.setAccountUri(QString::fromLatin1("ChristopherAdams@hotmail.com"));
-    account.setSubTypes(QContactOnlineAccount::SubTypeImpp);
-    c.setId(QContactId());
-    c.saveDetail(&name);
-    c.saveDetail(&avatar);
-    c.saveDetail(&account);
-    manager->saveContact(&c);
-
-
-    name.setFirst(QString::fromLatin1("Kevin"));
-    name.setLast(QString::fromLatin1("Wu Won"));
-    account.setAccountUri(QString::fromLatin1("KevinWuWon@hotmail.com"));
-    account.setSubTypes(QContactOnlineAccount::SubTypeImpp);
-    c.setId(QContactId());
-    c.saveDetail(&name);
-    c.saveDetail(&avatar);
-    c.saveDetail(&account);
-    manager->saveContact(&c);
 }
 
 void QMLContactManagerAsync::setManager(QString manager)

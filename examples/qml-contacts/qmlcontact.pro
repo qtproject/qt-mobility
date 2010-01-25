@@ -43,7 +43,8 @@ OTHER_FILES += example.qml \
     contents/pics/button-pressed.png \
     contents/pics/archive-remove.png \
     contents/pics/archive-insert.png \
-    contents/pics/add.png
+    contents/pics/add.png \
+    contents/example.vcf
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
