@@ -99,6 +99,14 @@ public:
     State state() const;
     Error error() const;
 
+    // Deprecated
+    bool Q_DECL_DEPRECATED readAll()
+    {
+        startReading();
+        return waitForFinished();
+    }
+    QList<QVersitDocument> Q_DECL_DEPRECATED result() const { return results(); }
+
 signals:
     void stateChanged(QVersitReader::State state);
     void resultsAvailable(QList<QVersitDocument>& results);

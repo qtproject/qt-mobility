@@ -44,6 +44,7 @@
 
 #include "qmobilityglobal.h"
 #include "qversitresourcehandler.h"
+#include "qversitproperty.h" // XXX: make this a forward declaration when removing deprecated functions
 
 #include <qcontact.h>
 
@@ -52,7 +53,6 @@
 QTM_BEGIN_NAMESPACE
 
 class QVersitDocument;
-class QVersitProperty;
 class QVersitContactImporterPrivate;
 
 class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandler
@@ -70,8 +70,7 @@ public:
     QVersitContactImporter();
     ~QVersitContactImporter();
 
-    // XXX I think it's possible to specify in vcard that a contact is the self contact
-    // Not sure the best way to report that!
+    // XXX We need some way of importing/exporting groups and "self-contact" from vCard.
     QList<QContact> importContacts(const QList<QVersitDocument>& documents);
 
     void setPropertyHandler(QVersitContactImporterPropertyHandler* importer);
@@ -79,6 +78,26 @@ public:
     
     void setResourceHandler(QVersitResourceHandler* saver);
     QVersitResourceHandler* resourceHandler() const;
+
+
+    // Deprecated
+    void Q_DECL_DEPRECATED setImagePath(const QString& path) { Q_UNUSED(path) }
+    QString Q_DECL_DEPRECATED imagePath() const { return QString(); }
+
+    void Q_DECL_DEPRECATED setAudioClipPath(const QString& path) { Q_UNUSED(path) }
+    QString Q_DECL_DEPRECATED audioClipPath() const { return QString(); }
+
+    QContact Q_DECL_DEPRECATED importContact(const QVersitDocument& versitDocument)
+    {
+        QList<QVersitDocument> list;
+        list.append(versitDocument);
+        return importContacts(list).first();
+    }
+
+    QList<QVersitProperty> Q_DECL_DEPRECATED unknownVersitProperties()
+    {
+        return QList<QVersitProperty>();
+    }
 
 private:
     QVersitContactImporterPrivate* d;

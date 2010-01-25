@@ -69,13 +69,29 @@ public:
     QVersitContactExporter();
     ~QVersitContactExporter();
 
-    QList<QVersitDocument> exportContacts(const QList<QContact>& contacts, QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type);
+    QList<QVersitDocument> exportContacts(const QList<QContact>& contacts,
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type);
 
     void setDetailHandler(QVersitContactExporterDetailHandler* handler);
     QVersitContactExporterDetailHandler* detailHandler() const;
 
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
+
+    // Deprecated:
+    QVersitDocument Q_DECL_DEPRECATED exportContact(
+        const QContact& contact,
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type)
+    {
+        QList<QContact> list;
+        list.append(contact);
+        return exportContacts(list, versitType).first();
+    }
+
+    QList<QContactDetail> Q_DECL_DEPRECATED unknownContactDetails()
+    {
+        return QList<QContactDetail>();
+    }
 
 private:
     QVersitContactExporterPrivate* d;    
