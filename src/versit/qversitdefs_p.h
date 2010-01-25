@@ -40,8 +40,19 @@
 ****************************************************************************/
 
 
-#ifndef QVERSITDEFS_H
-#define QVERSITDEFS_H
+#ifndef QVERSITDEFS_P_H
+#define QVERSITDEFS_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include "qmobilityglobal.h"
 
@@ -68,7 +79,7 @@
 QTM_BEGIN_NAMESPACE
 
 // Mapping between a string in versit specifications and Qt contact details
-struct versitContactDetailMapping {
+struct VersitContactDetailMapping {
     const char* versitPropertyName;
     const char* contactDetailDefinitionName;
     const char* contactDetailValueKey;
@@ -76,7 +87,7 @@ struct versitContactDetailMapping {
 
 //! [Property name mappings]
 // Mappings from versit property names to Qt contact details
-const versitContactDetailMapping versitContactDetailMappings[] = {
+const VersitContactDetailMapping versitContactDetailMappings[] = {
     {"ADR",           QContactAddress::DefinitionName.str,
                       ""},
     {"BDAY",          QContactBirthday::DefinitionName.str,
@@ -135,20 +146,20 @@ const versitContactDetailMapping versitContactDetailMappings[] = {
 //! [Property name mappings]
 
 // Mapping between a string in versit specifications and Qt contacts
-struct versitMapping {
+struct VersitMapping {
     const char* versitString;
     const char* contactString;
 };
 
 // Mappings from versit TYPE parameters to Qt contact detail contexts
-const versitMapping versitContextMappings[] = {
+const VersitMapping versitContextMappings[] = {
     {"HOME", QContactDetail::ContextHome.str},
     {"WORK", QContactDetail::ContextWork.str},
 };
 
 //! [Property type parameter mappings]
 // Mappings from versit TYPE parameters to Qt contact detail subtypes
-const versitMapping versitSubTypeMappings[] = {
+const VersitMapping versitSubTypeMappings[] = {
     {"DOM",    QContactAddress::SubTypeDomestic.str},
     {"INTL",   QContactAddress::SubTypeInternational.str},
     {"POSTAL", QContactAddress::SubTypePostal.str},
@@ -168,7 +179,7 @@ const versitMapping versitSubTypeMappings[] = {
 
 //! [File extension mappings]
 // Mappings from file types in versit specifications to file extensions
-const versitMapping versitFileExtensionMappings[] = {
+const VersitMapping versitFileExtensionMappings[] = {
     {"JPEG", "JPG"},
     {"WAVE", "WAV"},
     {"PICT", "PCT"},
@@ -183,4 +194,4 @@ const versitMapping versitFileExtensionMappings[] = {
 
 QTM_END_NAMESPACE
 
-#endif // QVERSITDEFS_H
+#endif // QVERSITDEFS_P_H

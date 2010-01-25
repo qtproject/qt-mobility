@@ -43,11 +43,13 @@
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+#include <QTextCodec>
+
+QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
 QVCard21Writer::QVCard21Writer()
-    : QVersitWriterPrivate(QByteArray("VCARD"),QByteArray("2.1"))
+    : QVersitDocumentWriter(QByteArray("VCARD"),QByteArray("2.1"))
 {
 }
 
@@ -59,41 +61,54 @@ QVCard21Writer::~QVCard21Writer()
 /*!
  * Encodes the \a property to text. 
  */
-QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
+QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property, QTextCodec* codec)
 {
-    QByteArray encodedProperty(encodeGroupsAndName(property));
-
-    // Quoted-Printable encode the value and add Quoted-Pritable parameter, if necessary
-    QByteArray value(property.value());
-    bool valueQuotedPrintableEncoded = quotedPrintableEncode(property,value);
-    QString encoding(QString::fromAscii("ENCODING"));
-    QString quotedPrintable(QString::fromAscii("QUOTED-PRINTABLE"));
+    QByteArray encodedProperty(encodeGroupsAndName(property, codec));
     QMultiHash<QString,QString> parameters = property.parameters();
-    if (valueQuotedPrintableEncoded &&
-        !parameters.contains(encoding,quotedPrintable)) {
-         // Add the encoding parameter to the copy, not to the actual property
-         parameters.insert(encoding,quotedPrintable);
+    QVariant variant(property.variantValue());
+
+    QByteArray renderedValue;
+
+    if (variant.type() == QVariant::String) {
+        QString valueString = variant.toString();
+
+        // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
+        if (!parameters.contains(QLatin1String("ENCODING"))) {
+            if (VersitUtils::quotedPrintableEncode(valueString))
+                parameters.insert(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
+        }
+
+        // Encode with the correct charset and add the CHARSET parameter, if necessary
+        if (codec->canEncode(valueString)) {
+            renderedValue = codec->fromUnicode(valueString);
+        } else {
+            renderedValue = valueString.toUtf8();
+            parameters.insert(QLatin1String("CHARSET"), QLatin1String("UTF-8"));
+        }
+    } else if (variant.type() == QVariant::ByteArray) {
+        parameters.insert(QLatin1String("ENCODING"), QLatin1String("BASE64"));
+        renderedValue = codec->fromUnicode(QLatin1String(variant.toByteArray().toBase64().data()));
     }
 
     // Encode parameters
-    encodedProperty.append(encodeParameters(parameters));
+    encodedProperty.append(encodeParameters(parameters, codec));
 
     // Encode value
-    encodedProperty.append(":");
-    if (property.name() == QString::fromAscii("AGENT")) {
-        encodedProperty.append("\r\n");
-        QVersitDocument embeddedDocument = property.embeddedDocument();
-        encodedProperty.append(encodeVersitDocument(embeddedDocument));
-    } else {
-        if (parameters.contains(encoding,QString::fromAscii("BASE64"))) {
-            // One extra folding before the value and
-            // one extra line break after the value are needed in vCard 2.1
-            encodedProperty += "\r\n " + value + "\r\n";
-        } else {
-            encodedProperty += value;
-        }
+    encodedProperty.append(codec->fromUnicode(QLatin1String(":")));
+    if (variant.canConvert<QVersitDocument>()) {
+        encodedProperty.append(codec->fromUnicode(QLatin1String("\r\n")));
+        QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
+        encodedProperty.append(encodeVersitDocument(embeddedDocument, codec));
+    } else if (variant.type() == QVariant::String) {
+        encodedProperty += renderedValue;
+    } else if (variant.type() == QVariant::ByteArray) {
+        // One extra folding before the value and
+        // one extra line break after the value are needed in vCard 2.1
+        encodedProperty += codec->fromUnicode(QLatin1String("\r\n "))
+                           + renderedValue
+                           + codec->fromUnicode(QLatin1String("\r\n"));
     }
-    encodedProperty.append("\r\n");
+    encodedProperty.append(codec->fromUnicode(QLatin1String("\r\n")));
 
     return encodedProperty;
 }
@@ -102,42 +117,23 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
  * Encodes the \a parameters to text.
  */
 QByteArray QVCard21Writer::encodeParameters(
-    const QMultiHash<QString,QString>& parameters) const
+    const QMultiHash<QString,QString>& parameters,
+    QTextCodec* codec) const
 {
     QByteArray encodedParameters;
     QList<QString> names = parameters.uniqueKeys();
     foreach (QString name, names) {
         QStringList values = parameters.values(name);
         foreach (QString value, values) {
-            encodedParameters.append(";");
-            QString typeParameterName(QString::fromAscii("TYPE"));
+            encodedParameters.append(codec->fromUnicode(QLatin1String(";")));
+            QString typeParameterName(QLatin1String("TYPE"));
             if (name.length() > 0 && name != typeParameterName) {
-                encodedParameters.append(name.toAscii());
-                encodedParameters.append("=");
+                encodedParameters.append(codec->fromUnicode(name));
+                encodedParameters.append(codec->fromUnicode(QLatin1String("=")));
             }
-            encodedParameters.append(value.toAscii());
+            encodedParameters.append(codec->fromUnicode(value));
         }
     }
     return encodedParameters;
 }
 
-/*!
- * Encodes the \a value with Quoted-Printable encoding
- * if it needs to be encoded and the parameters
- * of the \a property do not yet indicate encoding.
- */
-bool QVCard21Writer::quotedPrintableEncode(
-    const QVersitProperty& property,
-    QByteArray& value) const
-{
-    bool encoded = false;
-    value = property.value();
-    if (!property.parameters().contains(QString::fromAscii("ENCODING"))) {
-        encoded = VersitUtils::quotedPrintableEncode(value);
-    }
-
-    return encoded;
-}
-
-QTM_END_NAMESPACE
- 

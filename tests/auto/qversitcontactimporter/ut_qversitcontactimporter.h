@@ -43,6 +43,7 @@
 #define UT_QVERSITCONTACTIMPORTER_H
 
 #include <QObject>
+#include <qversitcontactimporter.h>
 #include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
@@ -59,13 +60,11 @@ class UT_QVersitContactImporter : public QObject
     Q_OBJECT
 
 private slots: // Tests
-    
-    void initTestCase();
-    void cleanupTestCase();
     void init();
     void cleanup();
     
     void testName();
+    void testNameWithFormatted();
     void testAddress();
     void testTel();    
     void testEmail();
@@ -81,29 +80,24 @@ private slots: // Tests
     void testBirthday();
     void testGender();
     void testNickname();
-    void testAvatarJpegStored();
-    void testAvatarGifStored();
-    void testAvatarJpegTwoContactsWithSameName();
-    void testAvatarJpegNonexistentPath();
+    void testAvatarStored();
     void testAvatarUrl();
-    void testAvatarEncoding();
     void testGeo();
     void testNote();
     void testOnlineAccount();
     void testFamily();
     void testSound();
     void testLabel();
-    void testUnknownVersitProperties();
+    void testPropertyHandler();
 
 private: // Utilities
     
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
 
     QVersitDocument createDocumentWithNameAndPhoto(
-        const QByteArray& name,
+        const QString& name,
         QByteArray image,
-        const QString& photoType,
-        const QString& encoding);
+        const QString& photoType);
 
 private:
     QVersitContactImporter* mImporter;

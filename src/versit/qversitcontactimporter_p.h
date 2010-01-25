@@ -53,8 +53,8 @@
 // We mean it.
 //
 
-#include "qversitdefs.h"
 #include "qmobilityglobal.h"
+#include "qversitcontactimporter.h"
 
 #include <QList>
 #include <QDateTime>
@@ -65,11 +65,10 @@ QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
 class QContactOrganization;
-
 class QVersitProperty;
 class QVersitDocument;
 
-class QVersitContactImporterPrivate
+class Q_AUTOTEST_EXPORT QVersitContactImporterPrivate
 {
 public:
     QVersitContactImporterPrivate();
@@ -107,7 +106,6 @@ private:
 
     QContactDetail* createAvatar(
         const QVersitProperty& property,
-        const QVersitDocument& versitDocument,
         const QString& subType) const;
 
     void createNicknames(
@@ -132,20 +130,18 @@ private:
 
     QStringList extractSubTypes(const QVersitProperty& property) const;
 
-    QString takeFirst(QList<QByteArray>& list) const;
+    QString takeFirst(QList<QString>& list) const;
 
-    QDateTime parseDateTime(const QByteArray& text, const QByteArray& format) const;
+    QDateTime parseDateTime(const QString& text, const QString& format) const;
 
     QString saveContentToFile(
-        const QString& path,
         const QVersitProperty& property) const;
 
     QString getFirstAndLastName(const QVersitDocument& document) const;
     
 public: // Data
-    QString mImagePath;
-    QString mAudioClipPath;
-    QList<QVersitProperty> mUnknownVersitProperties;
+    QVersitContactImporterPropertyHandler* mPropertyHandler;
+    QVersitResourceHandler* mResourceHandler;
 
 private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;
