@@ -59,6 +59,7 @@
 
     #include &lt;experimental/qcamera.h&gt;
     #include &lt;qmediarecorder.h&gt;
+    #include &lt;qaudiocapturesource.h&gt;
 
     namespace Ui {
         class CameraCapture;
@@ -66,6 +67,10 @@
 
     #include &lt;QMainWindow&gt;
     #include &lt;QDir&gt;
+
+    QTM_BEGIN_NAMESPACE
+    class QVideoWidget;
+    QTM_END_NAMESPACE
 
     QTM_USE_NAMESPACE
 
@@ -98,6 +103,7 @@
         void updateRecorderState(QMediaRecorder::State state);
 
         void updateRecordTime();
+        void updateAudioDevices();
 
         void processCapturedImage(const QString&amp; fname, const QImage&amp; img);
 
@@ -105,10 +111,10 @@
         Ui::CameraCapture *ui;
 
         QDir outputDir;
-        QMediaRecorder* mediaRecorder;
         QCamera *camera;
-        QMediaService *service;
-        QWidget *videoWidget;
+        QMediaRecorder* mediaRecorder;
+        QAudioCaptureSource *audioSource;
+        QVideoWidget *videoWidget;
     };
 
     #endif</pre>

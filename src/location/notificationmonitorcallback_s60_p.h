@@ -53,7 +53,7 @@ class INotificationMonitorCallback
 {
 public:
     //callback called for trigger change event
-    virtual void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus) =0;
+    virtual void handleTriggerEvent(TPositionInfo aPosInfo, enTriggerType aStatus) = 0;
 
 };
 

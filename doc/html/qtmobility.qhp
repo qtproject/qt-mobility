@@ -19,17 +19,14 @@
                     <section ref="qaudiocapturesource.html" title="QAudioCaptureSource Class Reference">
                         <section ref="qaudiocapturesource-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qaudiodevicecontrol.html" title="QAudioDeviceControl Class Reference">
-                        <section ref="qaudiodevicecontrol-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qaudioencodercontrol.html" title="QAudioEncoderControl Class Reference">
                         <section ref="qaudioencodercontrol-members.html" title="List of all members"/>
                     </section>
                     <section ref="qaudioencodersettings.html" title="QAudioEncoderSettings Class Reference">
                         <section ref="qaudioencodersettings-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qaudioformat.html" title="QAudioFormat Class Reference">
-                        <section ref="qaudioformat-members.html" title="List of all members"/>
+                    <section ref="qaudioendpointselector.html" title="QAudioEndpointSelector Class Reference">
+                        <section ref="qaudioendpointselector-members.html" title="List of all members"/>
                     </section>
                     <section ref="qcamera.html" title="QCamera Class Reference">
                         <section ref="qcamera-members.html" title="List of all members"/>
@@ -247,14 +244,14 @@
                     <section ref="qimageprocessingcontrol.html" title="QImageProcessingControl Class Reference">
                         <section ref="qimageprocessingcontrol-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qmediacontainercontrol.html" title="QMediaContainerControl Class Reference">
+                        <section ref="qmediacontainercontrol-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qmediacontent.html" title="QMediaContent Class Reference">
                         <section ref="qmediacontent-members.html" title="List of all members"/>
                     </section>
                     <section ref="qmediacontrol.html" title="QMediaControl Class Reference">
                         <section ref="qmediacontrol-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qmediaformatcontrol.html" title="QMediaFormatControl Class Reference">
-                        <section ref="qmediaformatcontrol-members.html" title="List of all members"/>
                     </section>
                     <section ref="qmediaimageviewer.html" title="QMediaImageViewer Class Reference">
                         <section ref="qmediaimageviewer-members.html" title="List of all members"/>
@@ -619,28 +616,16 @@
             <keyword name="sync" id="QAbstractValueSpaceLayer::sync" ref="qabstractvaluespacelayer.html#sync"/>
             <keyword name="value" id="QAbstractValueSpaceLayer::value" ref="qabstractvaluespacelayer.html#value"/>
             <keyword name="QAudioCaptureSource" id="QAudioCaptureSource" ref="qaudiocapturesource.html"/>
-            <keyword name="defaultDevice" id="QAudioCaptureSource::defaultDevice" ref="qaudiocapturesource.html#defaultDevice"/>
-            <keyword name="description" id="QAudioCaptureSource::description" ref="qaudiocapturesource.html#description"/>
-            <keyword name="deviceCount" id="QAudioCaptureSource::deviceCount" ref="qaudiocapturesource.html#deviceCount"/>
-            <keyword name="devicesChanged" id="QAudioCaptureSource::devicesChanged" ref="qaudiocapturesource.html#devicesChanged"/>
-            <keyword name="icon" id="QAudioCaptureSource::icon" ref="qaudiocapturesource.html#icon"/>
-            <keyword name="name" id="QAudioCaptureSource::name" ref="qaudiocapturesource.html#name"/>
-            <keyword name="selectedDevice" id="QAudioCaptureSource::selectedDevice" ref="qaudiocapturesource.html#selectedDevice"/>
-            <keyword name="selectedDeviceChanged" id="QAudioCaptureSource::selectedDeviceChanged" ref="qaudiocapturesource.html#selectedDeviceChanged"/>
-            <keyword name="setSelectedDevice" id="QAudioCaptureSource::setSelectedDevice" ref="qaudiocapturesource.html#setSelectedDevice"/>
+            <keyword name="activeAudioInput" id="QAudioCaptureSource::activeAudioInput" ref="qaudiocapturesource.html#activeAudioInput"/>
+            <keyword name="activeAudioInputChanged" id="QAudioCaptureSource::activeAudioInputChanged" ref="qaudiocapturesource.html#activeAudioInputChanged"/>
+            <keyword name="audioDescription" id="QAudioCaptureSource::audioDescription" ref="qaudiocapturesource.html#audioDescription"/>
+            <keyword name="audioInputs" id="QAudioCaptureSource::audioInputs" ref="qaudiocapturesource.html#audioInputs"/>
+            <keyword name="availabilityError" id="QAudioCaptureSource::availabilityError" ref="qaudiocapturesource.html#availabilityError"/>
+            <keyword name="availableAudioInputsChanged" id="QAudioCaptureSource::availableAudioInputsChanged" ref="qaudiocapturesource.html#availableAudioInputsChanged"/>
+            <keyword name="defaultAudioInput" id="QAudioCaptureSource::defaultAudioInput" ref="qaudiocapturesource.html#defaultAudioInput"/>
+            <keyword name="isAvailable" id="QAudioCaptureSource::isAvailable" ref="qaudiocapturesource.html#isAvailable"/>
+            <keyword name="setAudioInput" id="QAudioCaptureSource::setAudioInput" ref="qaudiocapturesource.html#setAudioInput"/>
             <keyword name="~QAudioCaptureSource" id="QAudioCaptureSource::~QAudioCaptureSource" ref="qaudiocapturesource.html#dtor.QAudioCaptureSource"/>
-            <keyword name="QAudioDeviceControl" id="QAudioDeviceControl" ref="qaudiodevicecontrol.html"/>
-            <keyword name="defaultDevice" id="QAudioDeviceControl::defaultDevice" ref="qaudiodevicecontrol.html#defaultDevice"/>
-            <keyword name="description" id="QAudioDeviceControl::description" ref="qaudiodevicecontrol.html#description"/>
-            <keyword name="deviceCount" id="QAudioDeviceControl::deviceCount" ref="qaudiodevicecontrol.html#deviceCount"/>
-            <keyword name="devicesChanged" id="QAudioDeviceControl::devicesChanged" ref="qaudiodevicecontrol.html#devicesChanged"/>
-            <keyword name="icon" id="QAudioDeviceControl::icon" ref="qaudiodevicecontrol.html#icon"/>
-            <keyword name="name" id="QAudioDeviceControl::name" ref="qaudiodevicecontrol.html#name"/>
-            <keyword name="selectedDevice" id="QAudioDeviceControl::selectedDevice" ref="qaudiodevicecontrol.html#selectedDevice"/>
-            <keyword name="selectedDeviceChanged" id="QAudioDeviceControl::selectedDeviceChanged" ref="qaudiodevicecontrol.html#selectedDeviceChanged"/>
-            <keyword name="setSelectedDevice" id="QAudioDeviceControl::setSelectedDevice" ref="qaudiodevicecontrol.html#setSelectedDevice"/>
-            <keyword name="~QAudioDeviceControl" id="QAudioDeviceControl::~QAudioDeviceControl" ref="qaudiodevicecontrol.html#dtor.QAudioDeviceControl"/>
-            <keyword name="QAudioDeviceControl_iid" id="QAudioDeviceControl_iid" ref="qaudiodevicecontrol.html#QAudioDeviceControl_iid"/>
             <keyword name="QAudioEncoderControl" id="QAudioEncoderControl" ref="qaudioencodercontrol.html"/>
             <keyword name="audioSettings" id="QAudioEncoderControl::audioSettings" ref="qaudioencodercontrol.html#audioSettings"/>
             <keyword name="codecDescription" id="QAudioEncoderControl::codecDescription" ref="qaudioencodercontrol.html#codecDescription"/>
@@ -653,8 +638,8 @@
             <keyword name="~QAudioEncoderControl" id="QAudioEncoderControl::~QAudioEncoderControl" ref="qaudioencodercontrol.html#dtor.QAudioEncoderControl"/>
             <keyword name="QAudioEncoderControl_iid" id="QAudioEncoderControl_iid" ref="qaudioencodercontrol.html#QAudioEncoderControl_iid"/>
             <keyword name="QAudioEncoderSettings" id="QAudioEncoderSettings" ref="qaudioencodersettings.html"/>
-            <keyword name="bitrate" id="QAudioEncoderSettings::bitrate" ref="qaudioencodersettings.html#bitrate"/>
-            <keyword name="channels" id="QAudioEncoderSettings::channels" ref="qaudioencodersettings.html#channels"/>
+            <keyword name="bitRate" id="QAudioEncoderSettings::bitRate" ref="qaudioencodersettings.html#bitRate"/>
+            <keyword name="channelCount" id="QAudioEncoderSettings::channelCount" ref="qaudioencodersettings.html#channelCount"/>
             <keyword name="codec" id="QAudioEncoderSettings::codec" ref="qaudioencodersettings.html#codec"/>
             <keyword name="encodingMode" id="QAudioEncoderSettings::encodingMode" ref="qaudioencodersettings.html#encodingMode"/>
             <keyword name="isNull" id="QAudioEncoderSettings::isNull" ref="qaudioencodersettings.html#isNull"/>
@@ -663,39 +648,23 @@
             <keyword name="operator==" id="QAudioEncoderSettings::operator==" ref="qaudioencodersettings.html#operator-eq-eq"/>
             <keyword name="quality" id="QAudioEncoderSettings::quality" ref="qaudioencodersettings.html#quality"/>
             <keyword name="sampleRate" id="QAudioEncoderSettings::sampleRate" ref="qaudioencodersettings.html#sampleRate"/>
-            <keyword name="setBitrate" id="QAudioEncoderSettings::setBitrate" ref="qaudioencodersettings.html#setBitrate"/>
-            <keyword name="setChannels" id="QAudioEncoderSettings::setChannels" ref="qaudioencodersettings.html#setChannels"/>
+            <keyword name="setBitRate" id="QAudioEncoderSettings::setBitRate" ref="qaudioencodersettings.html#setBitRate"/>
+            <keyword name="setChannelCount" id="QAudioEncoderSettings::setChannelCount" ref="qaudioencodersettings.html#setChannelCount"/>
             <keyword name="setCodec" id="QAudioEncoderSettings::setCodec" ref="qaudioencodersettings.html#setCodec"/>
             <keyword name="setEncodingMode" id="QAudioEncoderSettings::setEncodingMode" ref="qaudioencodersettings.html#setEncodingMode"/>
             <keyword name="setQuality" id="QAudioEncoderSettings::setQuality" ref="qaudioencodersettings.html#setQuality"/>
             <keyword name="setSampleRate" id="QAudioEncoderSettings::setSampleRate" ref="qaudioencodersettings.html#setSampleRate"/>
             <keyword name="~QAudioEncoderSettings" id="QAudioEncoderSettings::~QAudioEncoderSettings" ref="qaudioencodersettings.html#dtor.QAudioEncoderSettings"/>
-            <keyword name="QAudioFormat" id="QAudioFormat" ref="qaudioformat.html"/>
-            <keyword name="QAudioFormat::Endian" id="QAudioFormat::Endian" ref="qaudioformat.html#Endian-enum"/>
-            <keyword name="QAudioFormat::BigEndian" id="QAudioFormat::BigEndian" ref="qaudioformat.html#Endian-enum"/>
-            <keyword name="QAudioFormat::LittleEndian" id="QAudioFormat::LittleEndian" ref="qaudioformat.html#Endian-enum"/>
-            <keyword name="QAudioFormat::SampleType" id="QAudioFormat::SampleType" ref="qaudioformat.html#SampleType-enum"/>
-            <keyword name="QAudioFormat::Unknown" id="QAudioFormat::Unknown" ref="qaudioformat.html#SampleType-enum"/>
-            <keyword name="QAudioFormat::SignedInt" id="QAudioFormat::SignedInt" ref="qaudioformat.html#SampleType-enum"/>
-            <keyword name="QAudioFormat::UnSignedInt" id="QAudioFormat::UnSignedInt" ref="qaudioformat.html#SampleType-enum"/>
-            <keyword name="QAudioFormat::Float" id="QAudioFormat::Float" ref="qaudioformat.html#SampleType-enum"/>
-            <keyword name="byteOrder" id="QAudioFormat::byteOrder" ref="qaudioformat.html#byteOrder"/>
-            <keyword name="channels" id="QAudioFormat::channels" ref="qaudioformat.html#channels"/>
-            <keyword name="codec" id="QAudioFormat::codec" ref="qaudioformat.html#codec"/>
-            <keyword name="frequency" id="QAudioFormat::frequency" ref="qaudioformat.html#frequency"/>
-            <keyword name="isNull" id="QAudioFormat::isNull" ref="qaudioformat.html#isNull"/>
-            <keyword name="operator!=" id="QAudioFormat::operator!=" ref="qaudioformat.html#operator-not-eq"/>
-            <keyword name="operator=" id="QAudioFormat::operator=" ref="qaudioformat.html#operator-eq"/>
-            <keyword name="operator==" id="QAudioFormat::operator==" ref="qaudioformat.html#operator-eq-eq"/>
-            <keyword name="sampleSize" id="QAudioFormat::sampleSize" ref="qaudioformat.html#sampleSize"/>
-            <keyword name="sampleType" id="QAudioFormat::sampleType" ref="qaudioformat.html#sampleType"/>
-            <keyword name="setByteOrder" id="QAudioFormat::setByteOrder" ref="qaudioformat.html#setByteOrder"/>
-            <keyword name="setChannels" id="QAudioFormat::setChannels" ref="qaudioformat.html#setChannels"/>
-            <keyword name="setCodec" id="QAudioFormat::setCodec" ref="qaudioformat.html#setCodec"/>
-            <keyword name="setFrequency" id="QAudioFormat::setFrequency" ref="qaudioformat.html#setFrequency"/>
-            <keyword name="setSampleSize" id="QAudioFormat::setSampleSize" ref="qaudioformat.html#setSampleSize"/>
-            <keyword name="setSampleType" id="QAudioFormat::setSampleType" ref="qaudioformat.html#setSampleType"/>
-            <keyword name="~QAudioFormat" id="QAudioFormat::~QAudioFormat" ref="qaudioformat.html#dtor.QAudioFormat"/>
+            <keyword name="QAudioEndpointSelector" id="QAudioEndpointSelector" ref="qaudioendpointselector.html"/>
+            <keyword name="activeEndpoint" id="QAudioEndpointSelector::activeEndpoint" ref="qaudioendpointselector.html#activeEndpoint"/>
+            <keyword name="activeEndpointChanged" id="QAudioEndpointSelector::activeEndpointChanged" ref="qaudioendpointselector.html#activeEndpointChanged"/>
+            <keyword name="availableEndpoints" id="QAudioEndpointSelector::availableEndpoints" ref="qaudioendpointselector.html#availableEndpoints"/>
+            <keyword name="availableEndpointsChanged" id="QAudioEndpointSelector::availableEndpointsChanged" ref="qaudioendpointselector.html#availableEndpointsChanged"/>
+            <keyword name="defaultEndpoint" id="QAudioEndpointSelector::defaultEndpoint" ref="qaudioendpointselector.html#defaultEndpoint"/>
+            <keyword name="endpointDescription" id="QAudioEndpointSelector::endpointDescription" ref="qaudioendpointselector.html#endpointDescription"/>
+            <keyword name="setActiveEndpoint" id="QAudioEndpointSelector::setActiveEndpoint" ref="qaudioendpointselector.html#setActiveEndpoint"/>
+            <keyword name="~QAudioEndpointSelector" id="QAudioEndpointSelector::~QAudioEndpointSelector" ref="qaudioendpointselector.html#dtor.QAudioEndpointSelector"/>
+            <keyword name="QAudioEndpointSelector_iid" id="QAudioEndpointSelector_iid" ref="qaudioendpointselector.html#QAudioEndpointSelector_iid"/>
             <keyword name="QCamera" id="QCamera" ref="qcamera.html"/>
             <keyword name="QCamera::Error" id="QCamera::Error" ref="qcamera.html#Error-enum"/>
             <keyword name="QCamera::NoError" id="QCamera::NoError" ref="qcamera.html#Error-enum"/>
@@ -765,6 +734,7 @@
             <keyword name="aperture" id="QCamera::aperture" ref="qcamera.html#aperture-prop"/>
             <keyword name="apertureChanged" id="QCamera::apertureChanged" ref="qcamera.html#apertureChanged"/>
             <keyword name="apertureRangeChanged" id="QCamera::apertureRangeChanged" ref="qcamera.html#apertureRangeChanged"/>
+            <keyword name="availabilityError" id="QCamera::availabilityError" ref="qcamera.html#availabilityError"/>
             <keyword name="availableDevices" id="QCamera::availableDevices" ref="qcamera.html#availableDevices"/>
             <keyword name="capture" id="QCamera::capture" ref="qcamera.html#capture"/>
             <keyword name="deviceDescription" id="QCamera::deviceDescription" ref="qcamera.html#deviceDescription"/>
@@ -781,6 +751,7 @@
             <keyword name="focusStatusChanged" id="QCamera::focusStatusChanged" ref="qcamera.html#focusStatusChanged"/>
             <keyword name="imageCaptured" id="QCamera::imageCaptured" ref="qcamera.html#imageCaptured"/>
             <keyword name="imageSaved" id="QCamera::imageSaved" ref="qcamera.html#imageSaved"/>
+            <keyword name="isAvailable" id="QCamera::isAvailable" ref="qcamera.html#isAvailable"/>
             <keyword name="isExposureLocked" id="QCamera::isExposureLocked" ref="qcamera.html#isExposureLocked"/>
             <keyword name="isFlashReady" id="QCamera::isFlashReady" ref="qcamera.html#isFlashReady"/>
             <keyword name="isFocusLocked" id="QCamera::isFocusLocked" ref="qcamera.html#isFocusLocked"/>
@@ -792,15 +763,9 @@
             <keyword name="lockFocus" id="QCamera::lockFocus" ref="qcamera.html#lockFocus"/>
             <keyword name="macroFocusingEnabled" id="QCamera::macroFocusingEnabled" ref="qcamera.html#macroFocusingEnabled"/>
             <keyword name="manualWhiteBalance" id="QCamera::manualWhiteBalance" ref="qcamera.html#manualWhiteBalance"/>
-            <keyword name="maximumAperture" id="QCamera::maximumAperture" ref="qcamera.html#maximumAperture"/>
             <keyword name="maximumDigitalZoom" id="QCamera::maximumDigitalZoom" ref="qcamera.html#maximumDigitalZoom"/>
-            <keyword name="maximumIsoSensitivity" id="QCamera::maximumIsoSensitivity" ref="qcamera.html#maximumIsoSensitivity"/>
             <keyword name="maximumOpticalZoom" id="QCamera::maximumOpticalZoom" ref="qcamera.html#maximumOpticalZoom"/>
-            <keyword name="maximumShutterSpeed" id="QCamera::maximumShutterSpeed" ref="qcamera.html#maximumShutterSpeed"/>
             <keyword name="meteringMode" id="QCamera::meteringMode" ref="qcamera.html#meteringMode"/>
-            <keyword name="minimumAperture" id="QCamera::minimumAperture" ref="qcamera.html#minimumAperture"/>
-            <keyword name="minimumIsoSensitivity" id="QCamera::minimumIsoSensitivity" ref="qcamera.html#minimumIsoSensitivity"/>
-            <keyword name="minimumShutterSpeed" id="QCamera::minimumShutterSpeed" ref="qcamera.html#minimumShutterSpeed"/>
             <keyword name="readyForCapture" id="QCamera::readyForCapture" ref="qcamera.html#readyForCapture-prop"/>
             <keyword name="readyForCaptureChanged" id="QCamera::readyForCaptureChanged" ref="qcamera.html#readyForCaptureChanged"/>
             <keyword name="setAutoAperture" id="QCamera::setAutoAperture" ref="qcamera.html#setAutoAperture"/>
@@ -860,13 +825,7 @@
             <keyword name="isoSensitivity" id="QCameraExposureControl::isoSensitivity" ref="qcameraexposurecontrol.html#isoSensitivity"/>
             <keyword name="isoSensitivityChanged" id="QCameraExposureControl::isoSensitivityChanged" ref="qcameraexposurecontrol.html#isoSensitivityChanged"/>
             <keyword name="lockExposure" id="QCameraExposureControl::lockExposure" ref="qcameraexposurecontrol.html#lockExposure"/>
-            <keyword name="maximumAperture" id="QCameraExposureControl::maximumAperture" ref="qcameraexposurecontrol.html#maximumAperture"/>
-            <keyword name="maximumIsoSensitivity" id="QCameraExposureControl::maximumIsoSensitivity" ref="qcameraexposurecontrol.html#maximumIsoSensitivity"/>
-            <keyword name="maximumShutterSpeed" id="QCameraExposureControl::maximumShutterSpeed" ref="qcameraexposurecontrol.html#maximumShutterSpeed"/>
             <keyword name="meteringMode" id="QCameraExposureControl::meteringMode" ref="qcameraexposurecontrol.html#meteringMode"/>
-            <keyword name="minimumAperture" id="QCameraExposureControl::minimumAperture" ref="qcameraexposurecontrol.html#minimumAperture"/>
-            <keyword name="minimumIsoSensitivity" id="QCameraExposureControl::minimumIsoSensitivity" ref="qcameraexposurecontrol.html#minimumIsoSensitivity"/>
-            <keyword name="minimumShutterSpeed" id="QCameraExposureControl::minimumShutterSpeed" ref="qcameraexposurecontrol.html#minimumShutterSpeed"/>
             <keyword name="setAutoAperture" id="QCameraExposureControl::setAutoAperture" ref="qcameraexposurecontrol.html#setAutoAperture"/>
             <keyword name="setAutoIsoSensitivity" id="QCameraExposureControl::setAutoIsoSensitivity" ref="qcameraexposurecontrol.html#setAutoIsoSensitivity"/>
             <keyword name="setAutoShutterSpeed" id="QCameraExposureControl::setAutoShutterSpeed" ref="qcameraexposurecontrol.html#setAutoShutterSpeed"/>
@@ -1586,8 +1545,8 @@
             <keyword name="~QGeoAreaMonitor" id="QGeoAreaMonitor::~QGeoAreaMonitor" ref="qgeoareamonitor.html#dtor.QGeoAreaMonitor"/>
             <keyword name="QGeoCoordinate" id="QGeoCoordinate" ref="qgeocoordinate.html"/>
             <keyword name="QGeoCoordinate::CoordinateFormat" id="QGeoCoordinate::CoordinateFormat" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
-            <keyword name="QGeoCoordinate::DecimalDegrees" id="QGeoCoordinate::DecimalDegrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
-            <keyword name="QGeoCoordinate::DecimalDegreesWithHemisphere" id="QGeoCoordinate::DecimalDegreesWithHemisphere" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
+            <keyword name="QGeoCoordinate::Degrees" id="QGeoCoordinate::Degrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
+            <keyword name="QGeoCoordinate::DegreesWithHemisphere" id="QGeoCoordinate::DegreesWithHemisphere" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DegreesMinutes" id="QGeoCoordinate::DegreesMinutes" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DegreesMinutesWithHemisphere" id="QGeoCoordinate::DegreesMinutesWithHemisphere" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DegreesMinutesSeconds" id="QGeoCoordinate::DegreesMinutesSeconds" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
@@ -1612,25 +1571,25 @@
             <keyword name="type" id="QGeoCoordinate::type" ref="qgeocoordinate.html#type"/>
             <keyword name="~QGeoCoordinate" id="QGeoCoordinate::~QGeoCoordinate" ref="qgeocoordinate.html#dtor.QGeoCoordinate"/>
             <keyword name="QGeoPositionInfo" id="QGeoPositionInfo" ref="qgeopositioninfo.html"/>
-            <keyword name="QGeoPositionInfo::Property" id="QGeoPositionInfo::Property" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::Heading" id="QGeoPositionInfo::Heading" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::GroundSpeed" id="QGeoPositionInfo::GroundSpeed" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::VerticalSpeed" id="QGeoPositionInfo::VerticalSpeed" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::MagneticVariation" id="QGeoPositionInfo::MagneticVariation" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::HorizontalAccuracy" id="QGeoPositionInfo::HorizontalAccuracy" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::VerticalAccuracy" id="QGeoPositionInfo::VerticalAccuracy" ref="qgeopositioninfo.html#Property-enum"/>
+            <keyword name="QGeoPositionInfo::Attribute" id="QGeoPositionInfo::Attribute" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::Direction" id="QGeoPositionInfo::Direction" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::GroundSpeed" id="QGeoPositionInfo::GroundSpeed" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::VerticalSpeed" id="QGeoPositionInfo::VerticalSpeed" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::MagneticVariation" id="QGeoPositionInfo::MagneticVariation" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::HorizontalAccuracy" id="QGeoPositionInfo::HorizontalAccuracy" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::VerticalAccuracy" id="QGeoPositionInfo::VerticalAccuracy" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="attribute" id="QGeoPositionInfo::attribute" ref="qgeopositioninfo.html#attribute"/>
             <keyword name="coordinate" id="QGeoPositionInfo::coordinate" ref="qgeopositioninfo.html#coordinate"/>
             <keyword name="dateTime" id="QGeoPositionInfo::dateTime" ref="qgeopositioninfo.html#dateTime"/>
-            <keyword name="hasProperty" id="QGeoPositionInfo::hasProperty" ref="qgeopositioninfo.html#hasProperty"/>
+            <keyword name="hasAttribute" id="QGeoPositionInfo::hasAttribute" ref="qgeopositioninfo.html#hasAttribute"/>
             <keyword name="isValid" id="QGeoPositionInfo::isValid" ref="qgeopositioninfo.html#isValid"/>
             <keyword name="operator!=" id="QGeoPositionInfo::operator!=" ref="qgeopositioninfo.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoPositionInfo::operator=" ref="qgeopositioninfo.html#operator-eq"/>
             <keyword name="operator==" id="QGeoPositionInfo::operator==" ref="qgeopositioninfo.html#operator-eq-eq"/>
-            <keyword name="property" id="QGeoPositionInfo::property" ref="qgeopositioninfo.html#property"/>
-            <keyword name="removeProperty" id="QGeoPositionInfo::removeProperty" ref="qgeopositioninfo.html#removeProperty"/>
+            <keyword name="removeAttribute" id="QGeoPositionInfo::removeAttribute" ref="qgeopositioninfo.html#removeAttribute"/>
+            <keyword name="setAttribute" id="QGeoPositionInfo::setAttribute" ref="qgeopositioninfo.html#setAttribute"/>
             <keyword name="setCoordinate" id="QGeoPositionInfo::setCoordinate" ref="qgeopositioninfo.html#setCoordinate"/>
             <keyword name="setDateTime" id="QGeoPositionInfo::setDateTime" ref="qgeopositioninfo.html#setDateTime"/>
-            <keyword name="setProperty" id="QGeoPositionInfo::setProperty" ref="qgeopositioninfo.html#setProperty"/>
             <keyword name="~QGeoPositionInfo" id="QGeoPositionInfo::~QGeoPositionInfo" ref="qgeopositioninfo.html#dtor.QGeoPositionInfo"/>
             <keyword name="QGeoPositionInfoSource" id="QGeoPositionInfoSource" ref="qgeopositioninfosource.html"/>
             <keyword name="QGeoPositionInfoSource::PositioningMethod" id="QGeoPositionInfoSource::PositioningMethod" ref="qgeopositioninfosource.html#PositioningMethod-enum"/>
@@ -1643,7 +1602,6 @@
             <keyword name="minimumUpdateInterval" id="QGeoPositionInfoSource::minimumUpdateInterval" ref="qgeopositioninfosource.html#minimumUpdateInterval-prop"/>
             <keyword name="positionUpdated" id="QGeoPositionInfoSource::positionUpdated" ref="qgeopositioninfosource.html#positionUpdated"/>
             <keyword name="preferredPositioningMethods" id="QGeoPositionInfoSource::preferredPositioningMethods" ref="qgeopositioninfosource.html#preferredPositioningMethods"/>
-            <keyword name="requestTimeout" id="QGeoPositionInfoSource::requestTimeout" ref="qgeopositioninfosource.html#requestTimeout"/>
             <keyword name="requestUpdate" id="QGeoPositionInfoSource::requestUpdate" ref="qgeopositioninfosource.html#requestUpdate"/>
             <keyword name="setPreferredPositioningMethods" id="QGeoPositionInfoSource::setPreferredPositioningMethods" ref="qgeopositioninfosource.html#setPreferredPositioningMethods"/>
             <keyword name="setUpdateInterval" id="QGeoPositionInfoSource::setUpdateInterval" ref="qgeopositioninfosource.html#updateInterval-prop"/>
@@ -1651,20 +1609,21 @@
             <keyword name="stopUpdates" id="QGeoPositionInfoSource::stopUpdates" ref="qgeopositioninfosource.html#stopUpdates"/>
             <keyword name="supportedPositioningMethods" id="QGeoPositionInfoSource::supportedPositioningMethods" ref="qgeopositioninfosource.html#supportedPositioningMethods"/>
             <keyword name="updateInterval" id="QGeoPositionInfoSource::updateInterval" ref="qgeopositioninfosource.html#updateInterval-prop"/>
+            <keyword name="updateTimeout" id="QGeoPositionInfoSource::updateTimeout" ref="qgeopositioninfosource.html#updateTimeout"/>
             <keyword name="~QGeoPositionInfoSource" id="QGeoPositionInfoSource::~QGeoPositionInfoSource" ref="qgeopositioninfosource.html#dtor.QGeoPositionInfoSource"/>
             <keyword name="QGeoSatelliteInfo" id="QGeoSatelliteInfo" ref="qgeosatelliteinfo.html"/>
-            <keyword name="QGeoSatelliteInfo::Property" id="QGeoSatelliteInfo::Property" ref="qgeosatelliteinfo.html#Property-enum"/>
-            <keyword name="QGeoSatelliteInfo::Elevation" id="QGeoSatelliteInfo::Elevation" ref="qgeosatelliteinfo.html#Property-enum"/>
-            <keyword name="QGeoSatelliteInfo::Azimuth" id="QGeoSatelliteInfo::Azimuth" ref="qgeosatelliteinfo.html#Property-enum"/>
-            <keyword name="hasProperty" id="QGeoSatelliteInfo::hasProperty" ref="qgeosatelliteinfo.html#hasProperty"/>
+            <keyword name="QGeoSatelliteInfo::Attribute" id="QGeoSatelliteInfo::Attribute" ref="qgeosatelliteinfo.html#Attribute-enum"/>
+            <keyword name="QGeoSatelliteInfo::Elevation" id="QGeoSatelliteInfo::Elevation" ref="qgeosatelliteinfo.html#Attribute-enum"/>
+            <keyword name="QGeoSatelliteInfo::Azimuth" id="QGeoSatelliteInfo::Azimuth" ref="qgeosatelliteinfo.html#Attribute-enum"/>
+            <keyword name="attribute" id="QGeoSatelliteInfo::attribute" ref="qgeosatelliteinfo.html#attribute"/>
+            <keyword name="hasAttribute" id="QGeoSatelliteInfo::hasAttribute" ref="qgeosatelliteinfo.html#hasAttribute"/>
             <keyword name="operator!=" id="QGeoSatelliteInfo::operator!=" ref="qgeosatelliteinfo.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoSatelliteInfo::operator=" ref="qgeosatelliteinfo.html#operator-eq"/>
             <keyword name="operator==" id="QGeoSatelliteInfo::operator==" ref="qgeosatelliteinfo.html#operator-eq-eq"/>
             <keyword name="prnNumber" id="QGeoSatelliteInfo::prnNumber" ref="qgeosatelliteinfo.html#prnNumber"/>
-            <keyword name="property" id="QGeoSatelliteInfo::property" ref="qgeosatelliteinfo.html#property"/>
-            <keyword name="removeProperty" id="QGeoSatelliteInfo::removeProperty" ref="qgeosatelliteinfo.html#removeProperty"/>
+            <keyword name="removeAttribute" id="QGeoSatelliteInfo::removeAttribute" ref="qgeosatelliteinfo.html#removeAttribute"/>
+            <keyword name="setAttribute" id="QGeoSatelliteInfo::setAttribute" ref="qgeosatelliteinfo.html#setAttribute"/>
             <keyword name="setPrnNumber" id="QGeoSatelliteInfo::setPrnNumber" ref="qgeosatelliteinfo.html#setPrnNumber"/>
-            <keyword name="setProperty" id="QGeoSatelliteInfo::setProperty" ref="qgeosatelliteinfo.html#setProperty"/>
             <keyword name="setSignalStrength" id="QGeoSatelliteInfo::setSignalStrength" ref="qgeosatelliteinfo.html#setSignalStrength"/>
             <keyword name="signalStrength" id="QGeoSatelliteInfo::signalStrength" ref="qgeosatelliteinfo.html#signalStrength"/>
             <keyword name="~QGeoSatelliteInfo" id="QGeoSatelliteInfo::~QGeoSatelliteInfo" ref="qgeosatelliteinfo.html#dtor.QGeoSatelliteInfo"/>
@@ -1678,7 +1637,9 @@
             <keyword name="stopUpdates" id="QGeoSatelliteInfoSource::stopUpdates" ref="qgeosatelliteinfosource.html#stopUpdates"/>
             <keyword name="QGraphicsVideoItem" id="QGraphicsVideoItem" ref="qgraphicsvideoitem.html"/>
             <keyword name="boundingRect" id="QGraphicsVideoItem::boundingRect" ref="qgraphicsvideoitem.html#boundingRect"/>
+            <keyword name="mediaObject" id="QGraphicsVideoItem::mediaObject" ref="qgraphicsvideoitem.html#mediaObject-prop"/>
             <keyword name="paint" id="QGraphicsVideoItem::paint" ref="qgraphicsvideoitem.html#paint"/>
+            <keyword name="setMediaObject" id="QGraphicsVideoItem::setMediaObject" ref="qgraphicsvideoitem.html#mediaObject-prop"/>
             <keyword name="~QGraphicsVideoItem" id="QGraphicsVideoItem::~QGraphicsVideoItem" ref="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem"/>
             <keyword name="QImageCaptureControl" id="QImageCaptureControl" ref="qimagecapturecontrol.html"/>
             <keyword name="capture" id="QImageCaptureControl::capture" ref="qimagecapturecontrol.html#capture"/>
@@ -1726,34 +1687,24 @@
             <keyword name="whiteBalanceMode" id="QImageProcessingControl::whiteBalanceMode" ref="qimageprocessingcontrol.html#whiteBalanceMode"/>
             <keyword name="~QImageProcessingControl" id="QImageProcessingControl::~QImageProcessingControl" ref="qimageprocessingcontrol.html#dtor.QImageProcessingControl"/>
             <keyword name="QImageProcessingControl_iid" id="QImageProcessingControl_iid" ref="qimageprocessingcontrol.html#QImageProcessingControl_iid"/>
+            <keyword name="QMediaContainerControl" id="QMediaContainerControl" ref="qmediacontainercontrol.html"/>
+            <keyword name="containerDescription" id="QMediaContainerControl::containerDescription" ref="qmediacontainercontrol.html#containerDescription"/>
+            <keyword name="containerMimeType" id="QMediaContainerControl::containerMimeType" ref="qmediacontainercontrol.html#containerMimeType"/>
+            <keyword name="setContainerMimeType" id="QMediaContainerControl::setContainerMimeType" ref="qmediacontainercontrol.html#setContainerMimeType"/>
+            <keyword name="supportedContainers" id="QMediaContainerControl::supportedContainers" ref="qmediacontainercontrol.html#supportedContainers"/>
+            <keyword name="~QMediaContainerControl" id="QMediaContainerControl::~QMediaContainerControl" ref="qmediacontainercontrol.html#dtor.QMediaContainerControl"/>
+            <keyword name="QMediaContainerControl_iid" id="QMediaContainerControl_iid" ref="qmediacontainercontrol.html#QMediaContainerControl_iid"/>
             <keyword name="QMediaContent" id="QMediaContent" ref="qmediacontent.html"/>
             <keyword name="canonicalResource" id="QMediaContent::canonicalResource" ref="qmediacontent.html#canonicalResource"/>
-            <keyword name="canonicalUri" id="QMediaContent::canonicalUri" ref="qmediacontent.html#canonicalUri"/>
-            <keyword name="coverArtUriLarge" id="QMediaContent::coverArtUriLarge" ref="qmediacontent.html#coverArtUriLarge"/>
-            <keyword name="coverArtUriSmall" id="QMediaContent::coverArtUriSmall" ref="qmediacontent.html#coverArtUriSmall"/>
+            <keyword name="canonicalUrl" id="QMediaContent::canonicalUrl" ref="qmediacontent.html#canonicalUrl"/>
             <keyword name="isNull" id="QMediaContent::isNull" ref="qmediacontent.html#isNull"/>
             <keyword name="operator!=" id="QMediaContent::operator!=" ref="qmediacontent.html#operator-not-eq"/>
             <keyword name="operator=" id="QMediaContent::operator=" ref="qmediacontent.html#operator-eq"/>
             <keyword name="operator==" id="QMediaContent::operator==" ref="qmediacontent.html#operator-eq-eq"/>
-            <keyword name="posterUri" id="QMediaContent::posterUri" ref="qmediacontent.html#posterUri"/>
             <keyword name="resources" id="QMediaContent::resources" ref="qmediacontent.html#resources"/>
-            <keyword name="setCoverArtUriLarge" id="QMediaContent::setCoverArtUriLarge" ref="qmediacontent.html#setCoverArtUriLarge"/>
-            <keyword name="setCoverArtUriSmall" id="QMediaContent::setCoverArtUriSmall" ref="qmediacontent.html#setCoverArtUriSmall"/>
-            <keyword name="setPosterUri" id="QMediaContent::setPosterUri" ref="qmediacontent.html#setPosterUri"/>
-            <keyword name="setThumbnailUriLarge" id="QMediaContent::setThumbnailUriLarge" ref="qmediacontent.html#setThumbnailUriLarge"/>
-            <keyword name="setThumbnailUriSmall" id="QMediaContent::setThumbnailUriSmall" ref="qmediacontent.html#setThumbnailUriSmall"/>
-            <keyword name="thumbnailUriLarge" id="QMediaContent::thumbnailUriLarge" ref="qmediacontent.html#thumbnailUriLarge"/>
-            <keyword name="thumbnailUriSmall" id="QMediaContent::thumbnailUriSmall" ref="qmediacontent.html#thumbnailUriSmall"/>
             <keyword name="~QMediaContent" id="QMediaContent::~QMediaContent" ref="qmediacontent.html#dtor.QMediaContent"/>
             <keyword name="QMediaControl" id="QMediaControl" ref="qmediacontrol.html"/>
             <keyword name="~QMediaControl" id="QMediaControl::~QMediaControl" ref="qmediacontrol.html#dtor.QMediaControl"/>
-            <keyword name="QMediaFormatControl" id="QMediaFormatControl" ref="qmediaformatcontrol.html"/>
-            <keyword name="format" id="QMediaFormatControl::format" ref="qmediaformatcontrol.html#format"/>
-            <keyword name="formatDescription" id="QMediaFormatControl::formatDescription" ref="qmediaformatcontrol.html#formatDescription"/>
-            <keyword name="setFormat" id="QMediaFormatControl::setFormat" ref="qmediaformatcontrol.html#setFormat"/>
-            <keyword name="supportedFormats" id="QMediaFormatControl::supportedFormats" ref="qmediaformatcontrol.html#supportedFormats"/>
-            <keyword name="~QMediaFormatControl" id="QMediaFormatControl::~QMediaFormatControl" ref="qmediaformatcontrol.html#dtor.QMediaFormatControl"/>
-            <keyword name="QMediaFormatControl_iid" id="QMediaFormatControl_iid" ref="qmediaformatcontrol.html#QMediaFormatControl_iid"/>
             <keyword name="QMediaImageViewer" id="QMediaImageViewer" ref="qmediaimageviewer.html"/>
             <keyword name="QMediaImageViewer::MediaStatus" id="QMediaImageViewer::MediaStatus" ref="qmediaimageviewer.html#MediaStatus-enum"/>
             <keyword name="QMediaImageViewer::NoMedia" id="QMediaImageViewer::NoMedia" ref="qmediaimageviewer.html#MediaStatus-enum"/>
@@ -1781,9 +1732,12 @@
             <keyword name="~QMediaImageViewer" id="QMediaImageViewer::~QMediaImageViewer" ref="qmediaimageviewer.html#dtor.QMediaImageViewer"/>
             <keyword name="QMediaObject" id="QMediaObject" ref="qmediaobject.html"/>
             <keyword name="addPropertyWatch" id="QMediaObject::addPropertyWatch" ref="qmediaobject.html#addPropertyWatch"/>
+            <keyword name="availabilityChanged" id="QMediaObject::availabilityChanged" ref="qmediaobject.html#availabilityChanged"/>
+            <keyword name="availabilityError" id="QMediaObject::availabilityError" ref="qmediaobject.html#availabilityError"/>
             <keyword name="availableExtendedMetaData" id="QMediaObject::availableExtendedMetaData" ref="qmediaobject.html#availableExtendedMetaData"/>
             <keyword name="availableMetaData" id="QMediaObject::availableMetaData" ref="qmediaobject.html#availableMetaData"/>
             <keyword name="extendedMetaData" id="QMediaObject::extendedMetaData" ref="qmediaobject.html#extendedMetaData"/>
+            <keyword name="isAvailable" id="QMediaObject::isAvailable" ref="qmediaobject.html#isAvailable"/>
             <keyword name="isMetaDataAvailable" id="QMediaObject::isMetaDataAvailable" ref="qmediaobject.html#metaDataAvailable-prop"/>
             <keyword name="isMetaDataWritable" id="QMediaObject::isMetaDataWritable" ref="qmediaobject.html#metaDataWritable-prop"/>
             <keyword name="metaData" id="QMediaObject::metaData" ref="qmediaobject.html#metaData"/>
@@ -1841,7 +1795,7 @@
             <keyword name="mediaStatusChanged" id="QMediaPlayer::mediaStatusChanged" ref="qmediaplayer.html#mediaStatusChanged"/>
             <keyword name="mediaStream" id="QMediaPlayer::mediaStream" ref="qmediaplayer.html#mediaStream"/>
             <keyword name="muted" id="QMediaPlayer::muted" ref="qmediaplayer.html#muted-prop"/>
-            <keyword name="mutingChanged" id="QMediaPlayer::mutingChanged" ref="qmediaplayer.html#mutingChanged"/>
+            <keyword name="mutedChanged" id="QMediaPlayer::mutedChanged" ref="qmediaplayer.html#mutedChanged"/>
             <keyword name="pause" id="QMediaPlayer::pause" ref="qmediaplayer.html#pause"/>
             <keyword name="play" id="QMediaPlayer::play" ref="qmediaplayer.html#play"/>
             <keyword name="playbackRate" id="QMediaPlayer::playbackRate" ref="qmediaplayer.html#playbackRate-prop"/>
@@ -1858,8 +1812,9 @@
             <keyword name="state" id="QMediaPlayer::state" ref="qmediaplayer.html#state-prop"/>
             <keyword name="stateChanged" id="QMediaPlayer::stateChanged" ref="qmediaplayer.html#stateChanged"/>
             <keyword name="stop" id="QMediaPlayer::stop" ref="qmediaplayer.html#stop"/>
-            <keyword name="videoAvailabilityChanged" id="QMediaPlayer::videoAvailabilityChanged" ref="qmediaplayer.html#videoAvailabilityChanged"/>
+            <keyword name="supportedMimeTypes" id="QMediaPlayer::supportedMimeTypes" ref="qmediaplayer.html#supportedMimeTypes"/>
             <keyword name="videoAvailable" id="QMediaPlayer::videoAvailable" ref="qmediaplayer.html#videoAvailable-prop"/>
+            <keyword name="videoAvailableChanged" id="QMediaPlayer::videoAvailableChanged" ref="qmediaplayer.html#videoAvailableChanged"/>
             <keyword name="volume" id="QMediaPlayer::volume" ref="qmediaplayer.html#volume-prop"/>
             <keyword name="volumeChanged" id="QMediaPlayer::volumeChanged" ref="qmediaplayer.html#volumeChanged"/>
             <keyword name="~QMediaPlayer" id="QMediaPlayer::~QMediaPlayer" ref="qmediaplayer.html#dtor.QMediaPlayer"/>
@@ -1877,7 +1832,7 @@
             <keyword name="mediaStatus" id="QMediaPlayerControl::mediaStatus" ref="qmediaplayercontrol.html#mediaStatus"/>
             <keyword name="mediaStatusChanged" id="QMediaPlayerControl::mediaStatusChanged" ref="qmediaplayercontrol.html#mediaStatusChanged"/>
             <keyword name="mediaStream" id="QMediaPlayerControl::mediaStream" ref="qmediaplayercontrol.html#mediaStream"/>
-            <keyword name="mutingChanged" id="QMediaPlayerControl::mutingChanged" ref="qmediaplayercontrol.html#mutingChanged"/>
+            <keyword name="mutedChanged" id="QMediaPlayerControl::mutedChanged" ref="qmediaplayercontrol.html#mutedChanged"/>
             <keyword name="pause" id="QMediaPlayerControl::pause" ref="qmediaplayercontrol.html#pause"/>
             <keyword name="play" id="QMediaPlayerControl::play" ref="qmediaplayercontrol.html#play"/>
             <keyword name="playbackRate" id="QMediaPlayerControl::playbackRate" ref="qmediaplayercontrol.html#playbackRate"/>
@@ -1895,7 +1850,7 @@
             <keyword name="state" id="QMediaPlayerControl::state" ref="qmediaplayercontrol.html#state"/>
             <keyword name="stateChanged" id="QMediaPlayerControl::stateChanged" ref="qmediaplayercontrol.html#stateChanged"/>
             <keyword name="stop" id="QMediaPlayerControl::stop" ref="qmediaplayercontrol.html#stop"/>
-            <keyword name="videoAvailabilityChanged" id="QMediaPlayerControl::videoAvailabilityChanged" ref="qmediaplayercontrol.html#videoAvailabilityChanged"/>
+            <keyword name="videoAvailableChanged" id="QMediaPlayerControl::videoAvailableChanged" ref="qmediaplayercontrol.html#videoAvailableChanged"/>
             <keyword name="volume" id="QMediaPlayerControl::volume" ref="qmediaplayercontrol.html#volume"/>
             <keyword name="volumeChanged" id="QMediaPlayerControl::volumeChanged" ref="qmediaplayercontrol.html#volumeChanged"/>
             <keyword name="~QMediaPlayerControl" id="QMediaPlayerControl::~QMediaPlayerControl" ref="qmediaplayercontrol.html#dtor.QMediaPlayerControl"/>
@@ -1913,55 +1868,54 @@
             <keyword name="QMediaPlaylist::Linear" id="QMediaPlaylist::Linear" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="QMediaPlaylist::Loop" id="QMediaPlaylist::Loop" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="QMediaPlaylist::Random" id="QMediaPlaylist::Random" ref="qmediaplaylist.html#PlaybackMode-enum"/>
-            <keyword name="appendItem" id="QMediaPlaylist::appendItem" ref="qmediaplaylist.html#appendItem"/>
-            <keyword name="appendItems" id="QMediaPlaylist::appendItems" ref="qmediaplaylist.html#appendItems"/>
+            <keyword name="addMedia" id="QMediaPlaylist::addMedia" ref="qmediaplaylist.html#addMedia"/>
             <keyword name="clear" id="QMediaPlaylist::clear" ref="qmediaplaylist.html#clear"/>
+            <keyword name="currentIndex" id="QMediaPlaylist::currentIndex" ref="qmediaplaylist.html#currentIndex-prop"/>
+            <keyword name="currentIndexChanged" id="QMediaPlaylist::currentIndexChanged" ref="qmediaplaylist.html#currentIndexChanged"/>
             <keyword name="currentMedia" id="QMediaPlaylist::currentMedia" ref="qmediaplaylist.html#currentMedia-prop"/>
             <keyword name="currentMediaChanged" id="QMediaPlaylist::currentMediaChanged" ref="qmediaplaylist.html#currentMediaChanged"/>
-            <keyword name="currentPosition" id="QMediaPlaylist::currentPosition" ref="qmediaplaylist.html#currentPosition-prop"/>
             <keyword name="error" id="QMediaPlaylist::error" ref="qmediaplaylist.html#error"/>
             <keyword name="errorString" id="QMediaPlaylist::errorString" ref="qmediaplaylist.html#errorString"/>
-            <keyword name="insertItem" id="QMediaPlaylist::insertItem" ref="qmediaplaylist.html#insertItem"/>
-            <keyword name="insertItems" id="QMediaPlaylist::insertItems" ref="qmediaplaylist.html#insertItems"/>
+            <keyword name="insertMedia" id="QMediaPlaylist::insertMedia" ref="qmediaplaylist.html#insertMedia"/>
             <keyword name="isEmpty" id="QMediaPlaylist::isEmpty" ref="qmediaplaylist.html#isEmpty"/>
             <keyword name="isReadOnly" id="QMediaPlaylist::isReadOnly" ref="qmediaplaylist.html#isReadOnly"/>
-            <keyword name="itemsAboutToBeInserted" id="QMediaPlaylist::itemsAboutToBeInserted" ref="qmediaplaylist.html#itemsAboutToBeInserted"/>
-            <keyword name="itemsAboutToBeRemoved" id="QMediaPlaylist::itemsAboutToBeRemoved" ref="qmediaplaylist.html#itemsAboutToBeRemoved"/>
-            <keyword name="itemsChanged" id="QMediaPlaylist::itemsChanged" ref="qmediaplaylist.html#itemsChanged"/>
-            <keyword name="itemsInserted" id="QMediaPlaylist::itemsInserted" ref="qmediaplaylist.html#itemsInserted"/>
-            <keyword name="itemsRemoved" id="QMediaPlaylist::itemsRemoved" ref="qmediaplaylist.html#itemsRemoved"/>
             <keyword name="load" id="QMediaPlaylist::load" ref="qmediaplaylist.html#load"/>
             <keyword name="loadFailed" id="QMediaPlaylist::loadFailed" ref="qmediaplaylist.html#loadFailed"/>
             <keyword name="loaded" id="QMediaPlaylist::loaded" ref="qmediaplaylist.html#loaded"/>
             <keyword name="media" id="QMediaPlaylist::media" ref="qmediaplaylist.html#media"/>
+            <keyword name="mediaAboutToBeInserted" id="QMediaPlaylist::mediaAboutToBeInserted" ref="qmediaplaylist.html#mediaAboutToBeInserted"/>
+            <keyword name="mediaAboutToBeRemoved" id="QMediaPlaylist::mediaAboutToBeRemoved" ref="qmediaplaylist.html#mediaAboutToBeRemoved"/>
+            <keyword name="mediaChanged" id="QMediaPlaylist::mediaChanged" ref="qmediaplaylist.html#mediaChanged"/>
+            <keyword name="mediaCount" id="QMediaPlaylist::mediaCount" ref="qmediaplaylist.html#mediaCount"/>
+            <keyword name="mediaInserted" id="QMediaPlaylist::mediaInserted" ref="qmediaplaylist.html#mediaInserted"/>
+            <keyword name="mediaObject" id="QMediaPlaylist::mediaObject" ref="qmediaplaylist.html#mediaObject"/>
+            <keyword name="mediaRemoved" id="QMediaPlaylist::mediaRemoved" ref="qmediaplaylist.html#mediaRemoved"/>
             <keyword name="next" id="QMediaPlaylist::next" ref="qmediaplaylist.html#next"/>
-            <keyword name="nextPosition" id="QMediaPlaylist::nextPosition" ref="qmediaplaylist.html#nextPosition"/>
+            <keyword name="nextIndex" id="QMediaPlaylist::nextIndex" ref="qmediaplaylist.html#nextIndex"/>
             <keyword name="playbackMode" id="QMediaPlaylist::playbackMode" ref="qmediaplaylist.html#playbackMode-prop"/>
             <keyword name="playbackModeChanged" id="QMediaPlaylist::playbackModeChanged" ref="qmediaplaylist.html#playbackModeChanged"/>
-            <keyword name="playlistPositionChanged" id="QMediaPlaylist::playlistPositionChanged" ref="qmediaplaylist.html#playlistPositionChanged"/>
             <keyword name="previous" id="QMediaPlaylist::previous" ref="qmediaplaylist.html#previous"/>
-            <keyword name="previousPosition" id="QMediaPlaylist::previousPosition" ref="qmediaplaylist.html#previousPosition"/>
-            <keyword name="removeItem" id="QMediaPlaylist::removeItem" ref="qmediaplaylist.html#removeItem"/>
-            <keyword name="removeItems" id="QMediaPlaylist::removeItems" ref="qmediaplaylist.html#removeItems"/>
+            <keyword name="previousIndex" id="QMediaPlaylist::previousIndex" ref="qmediaplaylist.html#previousIndex"/>
+            <keyword name="removeMedia" id="QMediaPlaylist::removeMedia" ref="qmediaplaylist.html#removeMedia"/>
             <keyword name="save" id="QMediaPlaylist::save" ref="qmediaplaylist.html#save"/>
-            <keyword name="setCurrentPosition" id="QMediaPlaylist::setCurrentPosition" ref="qmediaplaylist.html#currentPosition-prop"/>
+            <keyword name="setCurrentIndex" id="QMediaPlaylist::setCurrentIndex" ref="qmediaplaylist.html#currentIndex-prop"/>
+            <keyword name="setMediaObject" id="QMediaPlaylist::setMediaObject" ref="qmediaplaylist.html#setMediaObject"/>
             <keyword name="setPlaybackMode" id="QMediaPlaylist::setPlaybackMode" ref="qmediaplaylist.html#playbackMode-prop"/>
             <keyword name="shuffle" id="QMediaPlaylist::shuffle" ref="qmediaplaylist.html#shuffle"/>
-            <keyword name="size" id="QMediaPlaylist::size" ref="qmediaplaylist.html#size"/>
             <keyword name="~QMediaPlaylist" id="QMediaPlaylist::~QMediaPlaylist" ref="qmediaplaylist.html#dtor.QMediaPlaylist"/>
             <keyword name="QMediaPlaylistControl" id="QMediaPlaylistControl" ref="qmediaplaylistcontrol.html"/>
+            <keyword name="currentIndex" id="QMediaPlaylistControl::currentIndex" ref="qmediaplaylistcontrol.html#currentIndex"/>
+            <keyword name="currentIndexChanged" id="QMediaPlaylistControl::currentIndexChanged" ref="qmediaplaylistcontrol.html#currentIndexChanged"/>
             <keyword name="currentMediaChanged" id="QMediaPlaylistControl::currentMediaChanged" ref="qmediaplaylistcontrol.html#currentMediaChanged"/>
-            <keyword name="currentPosition" id="QMediaPlaylistControl::currentPosition" ref="qmediaplaylistcontrol.html#currentPosition"/>
             <keyword name="next" id="QMediaPlaylistControl::next" ref="qmediaplaylistcontrol.html#next"/>
-            <keyword name="nextPosition" id="QMediaPlaylistControl::nextPosition" ref="qmediaplaylistcontrol.html#nextPosition"/>
+            <keyword name="nextIndex" id="QMediaPlaylistControl::nextIndex" ref="qmediaplaylistcontrol.html#nextIndex"/>
             <keyword name="playbackMode" id="QMediaPlaylistControl::playbackMode" ref="qmediaplaylistcontrol.html#playbackMode"/>
             <keyword name="playbackModeChanged" id="QMediaPlaylistControl::playbackModeChanged" ref="qmediaplaylistcontrol.html#playbackModeChanged"/>
-            <keyword name="playlistPositionChanged" id="QMediaPlaylistControl::playlistPositionChanged" ref="qmediaplaylistcontrol.html#playlistPositionChanged"/>
             <keyword name="playlistProvider" id="QMediaPlaylistControl::playlistProvider" ref="qmediaplaylistcontrol.html#playlistProvider"/>
             <keyword name="playlistProviderChanged" id="QMediaPlaylistControl::playlistProviderChanged" ref="qmediaplaylistcontrol.html#playlistProviderChanged"/>
             <keyword name="previous" id="QMediaPlaylistControl::previous" ref="qmediaplaylistcontrol.html#previous"/>
-            <keyword name="previousPosition" id="QMediaPlaylistControl::previousPosition" ref="qmediaplaylistcontrol.html#previousPosition"/>
-            <keyword name="setCurrentPosition" id="QMediaPlaylistControl::setCurrentPosition" ref="qmediaplaylistcontrol.html#setCurrentPosition"/>
+            <keyword name="previousIndex" id="QMediaPlaylistControl::previousIndex" ref="qmediaplaylistcontrol.html#previousIndex"/>
+            <keyword name="setCurrentIndex" id="QMediaPlaylistControl::setCurrentIndex" ref="qmediaplaylistcontrol.html#setCurrentIndex"/>
             <keyword name="setPlaybackMode" id="QMediaPlaylistControl::setPlaybackMode" ref="qmediaplaylistcontrol.html#setPlaybackMode"/>
             <keyword name="setPlaylistProvider" id="QMediaPlaylistControl::setPlaylistProvider" ref="qmediaplaylistcontrol.html#setPlaylistProvider"/>
             <keyword name="~QMediaPlaylistControl" id="QMediaPlaylistControl::~QMediaPlaylistControl" ref="qmediaplaylistcontrol.html#dtor.QMediaPlaylistControl"/>
@@ -1975,45 +1929,42 @@
             <keyword name="~QMediaPlaylistIOPlugin" id="QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin" ref="qmediaplaylistioplugin.html#dtor.QMediaPlaylistIOPlugin"/>
             <keyword name="QMediaPlaylistNavigator" id="QMediaPlaylistNavigator" ref="qmediaplaylistnavigator.html"/>
             <keyword name="activated" id="QMediaPlaylistNavigator::activated" ref="qmediaplaylistnavigator.html#activated"/>
+            <keyword name="currentIndex" id="QMediaPlaylistNavigator::currentIndex" ref="qmediaplaylistnavigator.html#currentIndex-prop"/>
+            <keyword name="currentIndexChanged" id="QMediaPlaylistNavigator::currentIndexChanged" ref="qmediaplaylistnavigator.html#currentIndexChanged"/>
             <keyword name="currentItem" id="QMediaPlaylistNavigator::currentItem" ref="qmediaplaylistnavigator.html#currentItem-prop"/>
-            <keyword name="currentPosition" id="QMediaPlaylistNavigator::currentPosition" ref="qmediaplaylistnavigator.html#currentPosition-prop"/>
-            <keyword name="currentPositionChanged" id="QMediaPlaylistNavigator::currentPositionChanged" ref="qmediaplaylistnavigator.html#currentPositionChanged"/>
             <keyword name="itemAt" id="QMediaPlaylistNavigator::itemAt" ref="qmediaplaylistnavigator.html#itemAt"/>
-            <keyword name="jump" id="QMediaPlaylistNavigator::jump" ref="qmediaplaylistnavigator.html#currentPosition-prop"/>
+            <keyword name="jump" id="QMediaPlaylistNavigator::jump" ref="qmediaplaylistnavigator.html#currentIndex-prop"/>
             <keyword name="next" id="QMediaPlaylistNavigator::next" ref="qmediaplaylistnavigator.html#next"/>
+            <keyword name="nextIndex" id="QMediaPlaylistNavigator::nextIndex" ref="qmediaplaylistnavigator.html#nextIndex"/>
             <keyword name="nextItem" id="QMediaPlaylistNavigator::nextItem" ref="qmediaplaylistnavigator.html#nextItem"/>
-            <keyword name="nextPosition" id="QMediaPlaylistNavigator::nextPosition" ref="qmediaplaylistnavigator.html#nextPosition"/>
             <keyword name="playbackMode" id="QMediaPlaylistNavigator::playbackMode" ref="qmediaplaylistnavigator.html#playbackMode-prop"/>
             <keyword name="playbackModeChanged" id="QMediaPlaylistNavigator::playbackModeChanged" ref="qmediaplaylistnavigator.html#playbackModeChanged"/>
             <keyword name="playlist" id="QMediaPlaylistNavigator::playlist" ref="qmediaplaylistnavigator.html#playlist"/>
             <keyword name="previous" id="QMediaPlaylistNavigator::previous" ref="qmediaplaylistnavigator.html#previous"/>
+            <keyword name="previousIndex" id="QMediaPlaylistNavigator::previousIndex" ref="qmediaplaylistnavigator.html#previousIndex"/>
             <keyword name="previousItem" id="QMediaPlaylistNavigator::previousItem" ref="qmediaplaylistnavigator.html#previousItem"/>
-            <keyword name="previousPosition" id="QMediaPlaylistNavigator::previousPosition" ref="qmediaplaylistnavigator.html#previousPosition"/>
             <keyword name="setPlaybackMode" id="QMediaPlaylistNavigator::setPlaybackMode" ref="qmediaplaylistnavigator.html#playbackMode-prop"/>
             <keyword name="setPlaylist" id="QMediaPlaylistNavigator::setPlaylist" ref="qmediaplaylistnavigator.html#setPlaylist"/>
             <keyword name="surroundingItemsChanged" id="QMediaPlaylistNavigator::surroundingItemsChanged" ref="qmediaplaylistnavigator.html#surroundingItemsChanged"/>
             <keyword name="~QMediaPlaylistNavigator" id="QMediaPlaylistNavigator::~QMediaPlaylistNavigator" ref="qmediaplaylistnavigator.html#dtor.QMediaPlaylistNavigator"/>
             <keyword name="QMediaPlaylistProvider" id="QMediaPlaylistProvider" ref="qmediaplaylistprovider.html"/>
-            <keyword name="appendItem" id="QMediaPlaylistProvider::appendItem" ref="qmediaplaylistprovider.html#appendItem"/>
-            <keyword name="appendItems" id="QMediaPlaylistProvider::appendItems" ref="qmediaplaylistprovider.html#appendItems"/>
+            <keyword name="addMedia" id="QMediaPlaylistProvider::addMedia" ref="qmediaplaylistprovider.html#addMedia"/>
             <keyword name="clear" id="QMediaPlaylistProvider::clear" ref="qmediaplaylistprovider.html#clear"/>
-            <keyword name="insertItem" id="QMediaPlaylistProvider::insertItem" ref="qmediaplaylistprovider.html#insertItem"/>
-            <keyword name="insertItems" id="QMediaPlaylistProvider::insertItems" ref="qmediaplaylistprovider.html#insertItems"/>
+            <keyword name="insertMedia" id="QMediaPlaylistProvider::insertMedia" ref="qmediaplaylistprovider.html#insertMedia"/>
             <keyword name="isReadOnly" id="QMediaPlaylistProvider::isReadOnly" ref="qmediaplaylistprovider.html#isReadOnly"/>
-            <keyword name="itemsAboutToBeInserted" id="QMediaPlaylistProvider::itemsAboutToBeInserted" ref="qmediaplaylistprovider.html#itemsAboutToBeInserted"/>
-            <keyword name="itemsAboutToBeRemoved" id="QMediaPlaylistProvider::itemsAboutToBeRemoved" ref="qmediaplaylistprovider.html#itemsAboutToBeRemoved"/>
-            <keyword name="itemsChanged" id="QMediaPlaylistProvider::itemsChanged" ref="qmediaplaylistprovider.html#itemsChanged"/>
-            <keyword name="itemsInserted" id="QMediaPlaylistProvider::itemsInserted" ref="qmediaplaylistprovider.html#itemsInserted"/>
-            <keyword name="itemsRemoved" id="QMediaPlaylistProvider::itemsRemoved" ref="qmediaplaylistprovider.html#itemsRemoved"/>
             <keyword name="load" id="QMediaPlaylistProvider::load" ref="qmediaplaylistprovider.html#load"/>
             <keyword name="loadFailed" id="QMediaPlaylistProvider::loadFailed" ref="qmediaplaylistprovider.html#loadFailed"/>
             <keyword name="loaded" id="QMediaPlaylistProvider::loaded" ref="qmediaplaylistprovider.html#loaded"/>
             <keyword name="media" id="QMediaPlaylistProvider::media" ref="qmediaplaylistprovider.html#media"/>
-            <keyword name="removeItem" id="QMediaPlaylistProvider::removeItem" ref="qmediaplaylistprovider.html#removeItem"/>
-            <keyword name="removeItems" id="QMediaPlaylistProvider::removeItems" ref="qmediaplaylistprovider.html#removeItems"/>
+            <keyword name="mediaAboutToBeInserted" id="QMediaPlaylistProvider::mediaAboutToBeInserted" ref="qmediaplaylistprovider.html#mediaAboutToBeInserted"/>
+            <keyword name="mediaAboutToBeRemoved" id="QMediaPlaylistProvider::mediaAboutToBeRemoved" ref="qmediaplaylistprovider.html#mediaAboutToBeRemoved"/>
+            <keyword name="mediaChanged" id="QMediaPlaylistProvider::mediaChanged" ref="qmediaplaylistprovider.html#mediaChanged"/>
+            <keyword name="mediaCount" id="QMediaPlaylistProvider::mediaCount" ref="qmediaplaylistprovider.html#mediaCount"/>
+            <keyword name="mediaInserted" id="QMediaPlaylistProvider::mediaInserted" ref="qmediaplaylistprovider.html#mediaInserted"/>
+            <keyword name="mediaRemoved" id="QMediaPlaylistProvider::mediaRemoved" ref="qmediaplaylistprovider.html#mediaRemoved"/>
+            <keyword name="removeMedia" id="QMediaPlaylistProvider::removeMedia" ref="qmediaplaylistprovider.html#removeMedia"/>
             <keyword name="save" id="QMediaPlaylistProvider::save" ref="qmediaplaylistprovider.html#save"/>
             <keyword name="shuffle" id="QMediaPlaylistProvider::shuffle" ref="qmediaplaylistprovider.html#shuffle"/>
-            <keyword name="size" id="QMediaPlaylistProvider::size" ref="qmediaplaylistprovider.html#size"/>
             <keyword name="~QMediaPlaylistProvider" id="QMediaPlaylistProvider::~QMediaPlaylistProvider" ref="qmediaplaylistprovider.html#dtor.QMediaPlaylistProvider"/>
             <keyword name="QMediaPlaylistReader" id="QMediaPlaylistReader" ref="qmediaplaylistreader.html"/>
             <keyword name="atEnd" id="QMediaPlaylistReader::atEnd" ref="qmediaplaylistreader.html#atEnd"/>
@@ -2035,12 +1986,14 @@
             <keyword name="QMediaRecorder::PausedState" id="QMediaRecorder::PausedState" ref="qmediarecorder.html#State-enum"/>
             <keyword name="audioCodecDescription" id="QMediaRecorder::audioCodecDescription" ref="qmediarecorder.html#audioCodecDescription"/>
             <keyword name="audioSettings" id="QMediaRecorder::audioSettings" ref="qmediarecorder.html#audioSettings"/>
+            <keyword name="availabilityError" id="QMediaRecorder::availabilityError" ref="qmediarecorder.html#availabilityError"/>
+            <keyword name="containerDescription" id="QMediaRecorder::containerDescription" ref="qmediarecorder.html#containerDescription"/>
+            <keyword name="containerMimeType" id="QMediaRecorder::containerMimeType" ref="qmediarecorder.html#containerMimeType"/>
             <keyword name="duration" id="QMediaRecorder::duration" ref="qmediarecorder.html#duration-prop"/>
             <keyword name="durationChanged" id="QMediaRecorder::durationChanged" ref="qmediarecorder.html#durationChanged"/>
             <keyword name="error" id="QMediaRecorder::error" ref="qmediarecorder.html#error"/>
             <keyword name="errorString" id="QMediaRecorder::errorString" ref="qmediarecorder.html#errorString"/>
-            <keyword name="format" id="QMediaRecorder::format" ref="qmediarecorder.html#format"/>
-            <keyword name="formatDescription" id="QMediaRecorder::formatDescription" ref="qmediarecorder.html#formatDescription"/>
+            <keyword name="isAvailable" id="QMediaRecorder::isAvailable" ref="qmediarecorder.html#isAvailable"/>
             <keyword name="outputLocation" id="QMediaRecorder::outputLocation" ref="qmediarecorder.html#outputLocation-prop"/>
             <keyword name="pause" id="QMediaRecorder::pause" ref="qmediarecorder.html#pause"/>
             <keyword name="record" id="QMediaRecorder::record" ref="qmediarecorder.html#record"/>
@@ -2051,7 +2004,7 @@
             <keyword name="stop" id="QMediaRecorder::stop" ref="qmediarecorder.html#stop"/>
             <keyword name="supportedAudioCodecs" id="QMediaRecorder::supportedAudioCodecs" ref="qmediarecorder.html#supportedAudioCodecs"/>
             <keyword name="supportedAudioSampleRates" id="QMediaRecorder::supportedAudioSampleRates" ref="qmediarecorder.html#supportedAudioSampleRates"/>
-            <keyword name="supportedFormats" id="QMediaRecorder::supportedFormats" ref="qmediarecorder.html#supportedFormats"/>
+            <keyword name="supportedContainers" id="QMediaRecorder::supportedContainers" ref="qmediarecorder.html#supportedContainers"/>
             <keyword name="supportedFrameRates" id="QMediaRecorder::supportedFrameRates" ref="qmediarecorder.html#supportedFrameRates"/>
             <keyword name="supportedResolutions" id="QMediaRecorder::supportedResolutions" ref="qmediarecorder.html#supportedResolutions"/>
             <keyword name="supportedVideoCodecs" id="QMediaRecorder::supportedVideoCodecs" ref="qmediarecorder.html#supportedVideoCodecs"/>
@@ -2075,8 +2028,8 @@
             <keyword name="QMediaResource" id="QMediaResource" ref="qmediaresource.html"/>
             <keyword name="audioBitRate" id="QMediaResource::audioBitRate" ref="qmediaresource.html#audioBitRate"/>
             <keyword name="audioCodec" id="QMediaResource::audioCodec" ref="qmediaresource.html#audioCodec"/>
-            <keyword name="channels" id="QMediaResource::channels" ref="qmediaresource.html#channels"/>
-            <keyword name="duration" id="QMediaResource::duration" ref="qmediaresource.html#duration"/>
+            <keyword name="channelCount" id="QMediaResource::channelCount" ref="qmediaresource.html#channelCount"/>
+            <keyword name="dataSize" id="QMediaResource::dataSize" ref="qmediaresource.html#dataSize"/>
             <keyword name="frequency" id="QMediaResource::frequency" ref="qmediaresource.html#frequency"/>
             <keyword name="isNull" id="QMediaResource::isNull" ref="qmediaresource.html#isNull"/>
             <keyword name="language" id="QMediaResource::language" ref="qmediaresource.html#language"/>
@@ -2085,35 +2038,22 @@
             <keyword name="operator=" id="QMediaResource::operator=" ref="qmediaresource.html#operator-eq"/>
             <keyword name="operator==" id="QMediaResource::operator==" ref="qmediaresource.html#operator-eq-eq"/>
             <keyword name="resolution" id="QMediaResource::resolution" ref="qmediaresource.html#resolution"/>
-            <keyword name="sampleSize" id="QMediaResource::sampleSize" ref="qmediaresource.html#sampleSize"/>
             <keyword name="setAudioBitRate" id="QMediaResource::setAudioBitRate" ref="qmediaresource.html#setAudioBitRate"/>
             <keyword name="setAudioCodec" id="QMediaResource::setAudioCodec" ref="qmediaresource.html#setAudioCodec"/>
-            <keyword name="setChannels" id="QMediaResource::setChannels" ref="qmediaresource.html#setChannels"/>
-            <keyword name="setDuration" id="QMediaResource::setDuration" ref="qmediaresource.html#setDuration"/>
+            <keyword name="setChannelCount" id="QMediaResource::setChannelCount" ref="qmediaresource.html#setChannelCount"/>
+            <keyword name="setDataSize" id="QMediaResource::setDataSize" ref="qmediaresource.html#setDataSize"/>
             <keyword name="setFrequency" id="QMediaResource::setFrequency" ref="qmediaresource.html#setFrequency"/>
             <keyword name="setLanguage" id="QMediaResource::setLanguage" ref="qmediaresource.html#setLanguage"/>
             <keyword name="setResolution" id="QMediaResource::setResolution" ref="qmediaresource.html#setResolution"/>
-            <keyword name="setSampleSize" id="QMediaResource::setSampleSize" ref="qmediaresource.html#setSampleSize"/>
-            <keyword name="setSize" id="QMediaResource::setSize" ref="qmediaresource.html#setSize"/>
             <keyword name="setVideoBitRate" id="QMediaResource::setVideoBitRate" ref="qmediaresource.html#setVideoBitRate"/>
             <keyword name="setVideoCodec" id="QMediaResource::setVideoCodec" ref="qmediaresource.html#setVideoCodec"/>
-            <keyword name="size" id="QMediaResource::size" ref="qmediaresource.html#size"/>
-            <keyword name="uri" id="QMediaResource::uri" ref="qmediaresource.html#uri"/>
+            <keyword name="url" id="QMediaResource::url" ref="qmediaresource.html#url"/>
             <keyword name="videoBitRate" id="QMediaResource::videoBitRate" ref="qmediaresource.html#videoBitRate"/>
             <keyword name="videoCodec" id="QMediaResource::videoCodec" ref="qmediaresource.html#videoCodec"/>
             <keyword name="~QMediaResource" id="QMediaResource::~QMediaResource" ref="qmediaresource.html#dtor.QMediaResource"/>
             <keyword name="QMediaResourceList" id="QMediaResourceList" ref="AQMediaResourceList-typedef"/>
             <keyword name="QMediaService" id="QMediaService" ref="qmediaservice.html"/>
-            <keyword name="QMediaService::MediaEndpoint" id="QMediaService::MediaEndpoint" ref="qmediaservice.html#MediaEndpoint-enum"/>
-            <keyword name="QMediaService::AudioDevice" id="QMediaService::AudioDevice" ref="qmediaservice.html#MediaEndpoint-enum"/>
-            <keyword name="activeEndpoint" id="QMediaService::activeEndpoint" ref="qmediaservice.html#activeEndpoint"/>
-            <keyword name="activeEndpointChanged" id="QMediaService::activeEndpointChanged" ref="qmediaservice.html#activeEndpointChanged"/>
             <keyword name="control" id="QMediaService::control" ref="qmediaservice.html#control"/>
-            <keyword name="endpointDescription" id="QMediaService::endpointDescription" ref="qmediaservice.html#endpointDescription"/>
-            <keyword name="isEndpointSupported" id="QMediaService::isEndpointSupported" ref="qmediaservice.html#isEndpointSupported"/>
-            <keyword name="setActiveEndpoint" id="QMediaService::setActiveEndpoint" ref="qmediaservice.html#setActiveEndpoint"/>
-            <keyword name="supportedEndpoints" id="QMediaService::supportedEndpoints" ref="qmediaservice.html#supportedEndpoints"/>
-            <keyword name="supportedEndpointsChanged" id="QMediaService::supportedEndpointsChanged" ref="qmediaservice.html#supportedEndpointsChanged"/>
             <keyword name="~QMediaService" id="QMediaService::~QMediaService" ref="qmediaservice.html#dtor.QMediaService"/>
             <keyword name="QMediaServiceFeaturesInterface" id="QMediaServiceFeaturesInterface" ref="qmediaservicefeaturesinterface.html"/>
             <keyword name="supportedFeatures" id="QMediaServiceFeaturesInterface::supportedFeatures" ref="qmediaservicefeaturesinterface.html#supportedFeatures"/>
@@ -2125,6 +2065,7 @@
             <keyword name="hasSupport" id="QMediaServiceProvider::hasSupport" ref="qmediaserviceprovider.html#hasSupport"/>
             <keyword name="releaseService" id="QMediaServiceProvider::releaseService" ref="qmediaserviceprovider.html#releaseService"/>
             <keyword name="requestService" id="QMediaServiceProvider::requestService" ref="qmediaserviceprovider.html#requestService"/>
+            <keyword name="supportedMimeTypes" id="QMediaServiceProvider::supportedMimeTypes" ref="qmediaserviceprovider.html#supportedMimeTypes"/>
             <keyword name="QMediaServiceProviderHint" id="QMediaServiceProviderHint" ref="qmediaserviceproviderhint.html"/>
             <keyword name="QMediaServiceProviderHint::Feature" id="QMediaServiceProviderHint::Feature" ref="qmediaserviceproviderhint.html#Feature-enum"/>
             <keyword name="QMediaServiceProviderHint::LowLatencyPlayback" id="QMediaServiceProviderHint::LowLatencyPlayback" ref="qmediaserviceproviderhint.html#Feature-enum"/>
@@ -2155,6 +2096,7 @@
             <keyword name="~QMediaServiceSupportedDevicesInterface" id="QMediaServiceSupportedDevicesInterface::~QMediaServiceSupportedDevicesInterface" ref="qmediaservicesupporteddevicesinterface.html#dtor.QMediaServiceSupportedDevicesInterface"/>
             <keyword name="QMediaServiceSupportedFormatsInterface" id="QMediaServiceSupportedFormatsInterface" ref="qmediaservicesupportedformatsinterface.html"/>
             <keyword name="hasSupport" id="QMediaServiceSupportedFormatsInterface::hasSupport" ref="qmediaservicesupportedformatsinterface.html#hasSupport"/>
+            <keyword name="supportedMimeTypes" id="QMediaServiceSupportedFormatsInterface::supportedMimeTypes" ref="qmediaservicesupportedformatsinterface.html#supportedMimeTypes"/>
             <keyword name="~QMediaServiceSupportedFormatsInterface" id="QMediaServiceSupportedFormatsInterface::~QMediaServiceSupportedFormatsInterface" ref="qmediaservicesupportedformatsinterface.html#dtor.QMediaServiceSupportedFormatsInterface"/>
             <keyword name="QMediaStreamsControl" id="QMediaStreamsControl" ref="qmediastreamscontrol.html"/>
             <keyword name="QMediaStreamsControl::StreamType" id="QMediaStreamsControl::StreamType" ref="qmediastreamscontrol.html#StreamType-enum"/>
@@ -2575,6 +2517,7 @@
             <keyword name="device" id="QNmeaPositionInfoSource::device" ref="qnmeapositioninfosource.html#device"/>
             <keyword name="lastKnownPosition" id="QNmeaPositionInfoSource::lastKnownPosition" ref="qnmeapositioninfosource.html#lastKnownPosition"/>
             <keyword name="minimumUpdateInterval" id="QNmeaPositionInfoSource::minimumUpdateInterval" ref="qnmeapositioninfosource.html#minimumUpdateInterval"/>
+            <keyword name="parsePosInfoFromNmeaData" id="QNmeaPositionInfoSource::parsePosInfoFromNmeaData" ref="qnmeapositioninfosource.html#parsePosInfoFromNmeaData"/>
             <keyword name="requestUpdate" id="QNmeaPositionInfoSource::requestUpdate" ref="qnmeapositioninfosource.html#requestUpdate"/>
             <keyword name="setDevice" id="QNmeaPositionInfoSource::setDevice" ref="qnmeapositioninfosource.html#setDevice"/>
             <keyword name="setUpdateInterval" id="QNmeaPositionInfoSource::setUpdateInterval" ref="qnmeapositioninfosource.html#setUpdateInterval"/>
@@ -2601,6 +2544,7 @@
             <keyword name="QRadioTuner::ForceStereo" id="QRadioTuner::ForceStereo" ref="qradiotuner.html#StereoMode-enum"/>
             <keyword name="QRadioTuner::ForceMono" id="QRadioTuner::ForceMono" ref="qradiotuner.html#StereoMode-enum"/>
             <keyword name="QRadioTuner::Auto" id="QRadioTuner::Auto" ref="qradiotuner.html#StereoMode-enum"/>
+            <keyword name="availabilityError" id="QRadioTuner::availabilityError" ref="qradiotuner.html#availabilityError"/>
             <keyword name="band" id="QRadioTuner::band" ref="qradiotuner.html#band-prop"/>
             <keyword name="bandChanged" id="QRadioTuner::bandChanged" ref="qradiotuner.html#bandChanged"/>
             <keyword name="cancelSearch" id="QRadioTuner::cancelSearch" ref="qradiotuner.html#cancelSearch"/>
@@ -2610,16 +2554,17 @@
             <keyword name="frequencyChanged" id="QRadioTuner::frequencyChanged" ref="qradiotuner.html#frequencyChanged"/>
             <keyword name="frequencyRange" id="QRadioTuner::frequencyRange" ref="qradiotuner.html#frequencyRange"/>
             <keyword name="frequencyStep" id="QRadioTuner::frequencyStep" ref="qradiotuner.html#frequencyStep"/>
+            <keyword name="isAvailable" id="QRadioTuner::isAvailable" ref="qradiotuner.html#isAvailable"/>
             <keyword name="isBandSupported" id="QRadioTuner::isBandSupported" ref="qradiotuner.html#isBandSupported"/>
             <keyword name="isMuted" id="QRadioTuner::isMuted" ref="qradiotuner.html#muted-prop"/>
             <keyword name="isSearching" id="QRadioTuner::isSearching" ref="qradiotuner.html#searching-prop"/>
             <keyword name="isStereo" id="QRadioTuner::isStereo" ref="qradiotuner.html#stereo-prop"/>
             <keyword name="muted" id="QRadioTuner::muted" ref="qradiotuner.html#muted-prop"/>
-            <keyword name="mutingChanged" id="QRadioTuner::mutingChanged" ref="qradiotuner.html#mutingChanged"/>
+            <keyword name="mutedChanged" id="QRadioTuner::mutedChanged" ref="qradiotuner.html#mutedChanged"/>
             <keyword name="searchBackward" id="QRadioTuner::searchBackward" ref="qradiotuner.html#searchBackward"/>
             <keyword name="searchForward" id="QRadioTuner::searchForward" ref="qradiotuner.html#searchForward"/>
             <keyword name="searching" id="QRadioTuner::searching" ref="qradiotuner.html#searching-prop"/>
-            <keyword name="searchingStatusChanged" id="QRadioTuner::searchingStatusChanged" ref="qradiotuner.html#searchingStatusChanged"/>
+            <keyword name="searchingChanged" id="QRadioTuner::searchingChanged" ref="qradiotuner.html#searchingChanged"/>
             <keyword name="setBand" id="QRadioTuner::setBand" ref="qradiotuner.html#band-prop"/>
             <keyword name="setFrequency" id="QRadioTuner::setFrequency" ref="qradiotuner.html#frequency-prop"/>
             <keyword name="setMuted" id="QRadioTuner::setMuted" ref="qradiotuner.html#muted-prop"/>
@@ -2638,6 +2583,7 @@
             <keyword name="volumeChanged" id="QRadioTuner::volumeChanged" ref="qradiotuner.html#volumeChanged"/>
             <keyword name="~QRadioTuner" id="QRadioTuner::~QRadioTuner" ref="qradiotuner.html#dtor.QRadioTuner"/>
             <keyword name="QRadioTunerControl" id="QRadioTunerControl" ref="qradiotunercontrol.html"/>
+            <keyword name="availabilityError" id="QRadioTunerControl::availabilityError" ref="qradiotunercontrol.html#availabilityError"/>
             <keyword name="band" id="QRadioTunerControl::band" ref="qradiotunercontrol.html#band"/>
             <keyword name="bandChanged" id="QRadioTunerControl::bandChanged" ref="qradiotunercontrol.html#bandChanged"/>
             <keyword name="cancelSearch" id="QRadioTunerControl::cancelSearch" ref="qradiotunercontrol.html#cancelSearch"/>
@@ -2647,14 +2593,15 @@
             <keyword name="frequencyChanged" id="QRadioTunerControl::frequencyChanged" ref="qradiotunercontrol.html#frequencyChanged"/>
             <keyword name="frequencyRange" id="QRadioTunerControl::frequencyRange" ref="qradiotunercontrol.html#frequencyRange"/>
             <keyword name="frequencyStep" id="QRadioTunerControl::frequencyStep" ref="qradiotunercontrol.html#frequencyStep"/>
+            <keyword name="isAvailable" id="QRadioTunerControl::isAvailable" ref="qradiotunercontrol.html#isAvailable"/>
             <keyword name="isBandSupported" id="QRadioTunerControl::isBandSupported" ref="qradiotunercontrol.html#isBandSupported"/>
             <keyword name="isMuted" id="QRadioTunerControl::isMuted" ref="qradiotunercontrol.html#isMuted"/>
             <keyword name="isSearching" id="QRadioTunerControl::isSearching" ref="qradiotunercontrol.html#isSearching"/>
             <keyword name="isStereo" id="QRadioTunerControl::isStereo" ref="qradiotunercontrol.html#isStereo"/>
-            <keyword name="mutingChanged" id="QRadioTunerControl::mutingChanged" ref="qradiotunercontrol.html#mutingChanged"/>
+            <keyword name="mutedChanged" id="QRadioTunerControl::mutedChanged" ref="qradiotunercontrol.html#mutedChanged"/>
             <keyword name="searchBackward" id="QRadioTunerControl::searchBackward" ref="qradiotunercontrol.html#searchBackward"/>
             <keyword name="searchForward" id="QRadioTunerControl::searchForward" ref="qradiotunercontrol.html#searchForward"/>
-            <keyword name="searchingStatusChanged" id="QRadioTunerControl::searchingStatusChanged" ref="qradiotunercontrol.html#searchingStatusChanged"/>
+            <keyword name="searchingChanged" id="QRadioTunerControl::searchingChanged" ref="qradiotunercontrol.html#searchingChanged"/>
             <keyword name="setBand" id="QRadioTunerControl::setBand" ref="qradiotunercontrol.html#setBand"/>
             <keyword name="setFrequency" id="QRadioTunerControl::setFrequency" ref="qradiotunercontrol.html#setFrequency"/>
             <keyword name="setMuted" id="QRadioTunerControl::setMuted" ref="qradiotunercontrol.html#setMuted"/>
@@ -2984,11 +2931,11 @@
             <keyword name="~QVersitWriter" id="QVersitWriter::~QVersitWriter" ref="qversitwriter.html#dtor.QVersitWriter"/>
             <keyword name="QVideoDeviceControl" id="QVideoDeviceControl" ref="qvideodevicecontrol.html"/>
             <keyword name="defaultDevice" id="QVideoDeviceControl::defaultDevice" ref="qvideodevicecontrol.html#defaultDevice"/>
-            <keyword name="description" id="QVideoDeviceControl::description" ref="qvideodevicecontrol.html#description"/>
             <keyword name="deviceCount" id="QVideoDeviceControl::deviceCount" ref="qvideodevicecontrol.html#deviceCount"/>
+            <keyword name="deviceDescription" id="QVideoDeviceControl::deviceDescription" ref="qvideodevicecontrol.html#deviceDescription"/>
+            <keyword name="deviceIcon" id="QVideoDeviceControl::deviceIcon" ref="qvideodevicecontrol.html#deviceIcon"/>
+            <keyword name="deviceName" id="QVideoDeviceControl::deviceName" ref="qvideodevicecontrol.html#deviceName"/>
             <keyword name="devicesChanged" id="QVideoDeviceControl::devicesChanged" ref="qvideodevicecontrol.html#devicesChanged"/>
-            <keyword name="icon" id="QVideoDeviceControl::icon" ref="qvideodevicecontrol.html#icon"/>
-            <keyword name="name" id="QVideoDeviceControl::name" ref="qvideodevicecontrol.html#name"/>
             <keyword name="selectedDevice" id="QVideoDeviceControl::selectedDevice" ref="qvideodevicecontrol.html#selectedDevice"/>
             <keyword name="selectedDeviceChanged" id="QVideoDeviceControl::selectedDeviceChanged" ref="qvideodevicecontrol.html#selectedDeviceChanged"/>
             <keyword name="setSelectedDevice" id="QVideoDeviceControl::setSelectedDevice" ref="qvideodevicecontrol.html#setSelectedDevice"/>
@@ -3007,7 +2954,7 @@
             <keyword name="~QVideoEncoderControl" id="QVideoEncoderControl::~QVideoEncoderControl" ref="qvideoencodercontrol.html#dtor.QVideoEncoderControl"/>
             <keyword name="QVideoEncoderControl_iid" id="QVideoEncoderControl_iid" ref="qvideoencodercontrol.html#QVideoEncoderControl_iid"/>
             <keyword name="QVideoEncoderSettings" id="QVideoEncoderSettings" ref="qvideoencodersettings.html"/>
-            <keyword name="bitrate" id="QVideoEncoderSettings::bitrate" ref="qvideoencodersettings.html#bitrate"/>
+            <keyword name="bitRate" id="QVideoEncoderSettings::bitRate" ref="qvideoencodersettings.html#bitRate"/>
             <keyword name="codec" id="QVideoEncoderSettings::codec" ref="qvideoencodersettings.html#codec"/>
             <keyword name="encodingMode" id="QVideoEncoderSettings::encodingMode" ref="qvideoencodersettings.html#encodingMode"/>
             <keyword name="frameRate" id="QVideoEncoderSettings::frameRate" ref="qvideoencodersettings.html#frameRate"/>
@@ -3017,7 +2964,7 @@
             <keyword name="operator==" id="QVideoEncoderSettings::operator==" ref="qvideoencodersettings.html#operator-eq-eq"/>
             <keyword name="quality" id="QVideoEncoderSettings::quality" ref="qvideoencodersettings.html#quality"/>
             <keyword name="resolution" id="QVideoEncoderSettings::resolution" ref="qvideoencodersettings.html#resolution"/>
-            <keyword name="setBitrate" id="QVideoEncoderSettings::setBitrate" ref="qvideoencodersettings.html#setBitrate"/>
+            <keyword name="setBitRate" id="QVideoEncoderSettings::setBitRate" ref="qvideoencodersettings.html#setBitRate"/>
             <keyword name="setCodec" id="QVideoEncoderSettings::setCodec" ref="qvideoencodersettings.html#setCodec"/>
             <keyword name="setEncodingMode" id="QVideoEncoderSettings::setEncodingMode" ref="qvideoencodersettings.html#setEncodingMode"/>
             <keyword name="setFrameRate" id="QVideoEncoderSettings::setFrameRate" ref="qvideoencodersettings.html#setFrameRate"/>
@@ -3058,6 +3005,7 @@
             <keyword name="hue" id="QVideoWidget::hue" ref="qvideowidget.html#hue-prop"/>
             <keyword name="hueChanged" id="QVideoWidget::hueChanged" ref="qvideowidget.html#hueChanged"/>
             <keyword name="isFullScreen" id="QVideoWidget::isFullScreen" ref="qvideowidget.html#fullScreen-prop"/>
+            <keyword name="mediaObject" id="QVideoWidget::mediaObject" ref="qvideowidget.html#mediaObject-prop"/>
             <keyword name="moveEvent" id="QVideoWidget::moveEvent" ref="qvideowidget.html#moveEvent"/>
             <keyword name="paintEvent" id="QVideoWidget::paintEvent" ref="qvideowidget.html#paintEvent"/>
             <keyword name="resizeEvent" id="QVideoWidget::resizeEvent" ref="qvideowidget.html#resizeEvent"/>
@@ -3068,6 +3016,7 @@
             <keyword name="setContrast" id="QVideoWidget::setContrast" ref="qvideowidget.html#contrast-prop"/>
             <keyword name="setFullScreen" id="QVideoWidget::setFullScreen" ref="qvideowidget.html#fullScreen-prop"/>
             <keyword name="setHue" id="QVideoWidget::setHue" ref="qvideowidget.html#hue-prop"/>
+            <keyword name="setMediaObject" id="QVideoWidget::setMediaObject" ref="qvideowidget.html#mediaObject-prop"/>
             <keyword name="setSaturation" id="QVideoWidget::setSaturation" ref="qvideowidget.html#saturation-prop"/>
             <keyword name="showEvent" id="QVideoWidget::showEvent" ref="qvideowidget.html#showEvent"/>
             <keyword name="sizeHint" id="QVideoWidget::sizeHint" ref="qvideowidget.html#sizeHint"/>
@@ -3131,10 +3080,15 @@
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
             <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
             <keyword name="QtMedia" id="QtMedia" ref="qtmedia.html"/>
+            <keyword name="QtMedia::AvailabilityError" id="QtMedia::AvailabilityError" ref="qtmedia.html#AvailabilityError-enum"/>
+            <keyword name="QtMedia::NoError" id="QtMedia::NoError" ref="qtmedia.html#AvailabilityError-enum"/>
+            <keyword name="QtMedia::ServiceMissingError" id="QtMedia::ServiceMissingError" ref="qtmedia.html#AvailabilityError-enum"/>
+            <keyword name="QtMedia::BusyError" id="QtMedia::BusyError" ref="qtmedia.html#AvailabilityError-enum"/>
+            <keyword name="QtMedia::ResourceError" id="QtMedia::ResourceError" ref="qtmedia.html#AvailabilityError-enum"/>
             <keyword name="QtMedia::EncodingMode" id="QtMedia::EncodingMode" ref="qtmedia.html#EncodingMode-enum"/>
             <keyword name="QtMedia::ConstantQualityEncoding" id="QtMedia::ConstantQualityEncoding" ref="qtmedia.html#EncodingMode-enum"/>
-            <keyword name="QtMedia::ConstantBitrateEncoding" id="QtMedia::ConstantBitrateEncoding" ref="qtmedia.html#EncodingMode-enum"/>
-            <keyword name="QtMedia::AverageBitrateEncoding" id="QtMedia::AverageBitrateEncoding" ref="qtmedia.html#EncodingMode-enum"/>
+            <keyword name="QtMedia::ConstantBitRateEncoding" id="QtMedia::ConstantBitRateEncoding" ref="qtmedia.html#EncodingMode-enum"/>
+            <keyword name="QtMedia::AverageBitRateEncoding" id="QtMedia::AverageBitRateEncoding" ref="qtmedia.html#EncodingMode-enum"/>
             <keyword name="QtMedia::TwoPassEncoding" id="QtMedia::TwoPassEncoding" ref="qtmedia.html#EncodingMode-enum"/>
             <keyword name="QtMedia::EncodingQuality" id="QtMedia::EncodingQuality" ref="qtmedia.html#EncodingQuality-enum"/>
             <keyword name="QtMedia::VeryLowQuality" id="QtMedia::VeryLowQuality" ref="qtmedia.html#EncodingQuality-enum"/>
@@ -3162,10 +3116,10 @@
             <keyword name="QtMedia::Size" id="QtMedia::Size" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::MediaType" id="QtMedia::MediaType" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::Duration" id="QtMedia::Duration" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::AudioBitrate" id="QtMedia::AudioBitrate" ref="qtmedia.html#MetaData-enum"/>
+            <keyword name="QtMedia::AudioBitRate" id="QtMedia::AudioBitRate" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::AudioCodec" id="QtMedia::AudioCodec" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::AverageLevel" id="QtMedia::AverageLevel" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Channels" id="QtMedia::Channels" ref="qtmedia.html#MetaData-enum"/>
+            <keyword name="QtMedia::ChannelCount" id="QtMedia::ChannelCount" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::PeakValue" id="QtMedia::PeakValue" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::Frequency" id="QtMedia::Frequency" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::AlbumTitle" id="QtMedia::AlbumTitle" ref="qtmedia.html#MetaData-enum"/>
@@ -3177,14 +3131,14 @@
             <keyword name="QtMedia::Mood" id="QtMedia::Mood" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::TrackNumber" id="QtMedia::TrackNumber" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::TrackCount" id="QtMedia::TrackCount" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::CoverArtUriSmall" id="QtMedia::CoverArtUriSmall" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::CoverArtUriLarge" id="QtMedia::CoverArtUriLarge" ref="qtmedia.html#MetaData-enum"/>
+            <keyword name="QtMedia::CoverArtUrlSmall" id="QtMedia::CoverArtUrlSmall" ref="qtmedia.html#MetaData-enum"/>
+            <keyword name="QtMedia::CoverArtUrlLarge" id="QtMedia::CoverArtUrlLarge" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::Resolution" id="QtMedia::Resolution" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::PixelAspectRatio" id="QtMedia::PixelAspectRatio" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::VideoFrameRate" id="QtMedia::VideoFrameRate" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::VideoBitRate" id="QtMedia::VideoBitRate" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::VideoCodec" id="QtMedia::VideoCodec" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::PosterUri" id="QtMedia::PosterUri" ref="qtmedia.html#MetaData-enum"/>
+            <keyword name="QtMedia::PosterUrl" id="QtMedia::PosterUrl" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::ChapterNumber" id="QtMedia::ChapterNumber" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::Director" id="QtMedia::Director" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::LeadPerformer" id="QtMedia::LeadPerformer" ref="qtmedia.html#MetaData-enum"/>
@@ -3264,6 +3218,7 @@
             <file>qcontactguid.html</file>
             <file>streamplayer-streamplayer-h.html</file>
             <file>qcontactname.html</file>
+            <file>qaudioendpointselector.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
             <file>messaging.html</file>
             <file>qcontactabstractrequest-members.html</file>
@@ -3373,7 +3328,6 @@
             <file>qmediarecordercontrol-members.html</file>
             <file>qcontactorganization.html</file>
             <file>qvideoencodercontrol.html</file>
-            <file>qaudiodevicecontrol.html</file>
             <file>bluetoothtransferplugin-bluetoothtransfer-cpp.html</file>
             <file>qcontactanniversary.html</file>
             <file>qgeopositioninfosource-members.html</file>
@@ -3387,7 +3341,6 @@
             <file>qmessageaccountsortorder-members.html</file>
             <file>cameracapture-cameracapture-h.html</file>
             <file>logfilepositionsource-main-cpp.html</file>
-            <file>recorder-recorder-cpp.html</file>
             <file>trademarks.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-h.html</file>
             <file>qcontactdetaildefinitionfield.html</file>
@@ -3516,6 +3469,7 @@
             <file>qmessagefolderfilter.html</file>
             <file>images/bearercloud-example.png</file>
             <file>qcontactname-members.html</file>
+            <file>qaudioendpointselector-members.html</file>
             <file>systeminfo.html</file>
             <file>quickstart-main-cpp.html</file>
             <file>qcontactrelationshipfetchrequest.html</file>
@@ -3586,7 +3540,6 @@
             <file>mobility.html</file>
             <file>declarative-demo-demo-pro.html</file>
             <file>qcontactdetaildefinitionremoverequest.html</file>
-            <file>qaudiodevicecontrol-members.html</file>
             <file>qmediarecorder.html</file>
             <file>bearercloud-bearercloud-cpp.html</file>
             <file>sysinfo-dialog-cpp.html</file>
@@ -3602,7 +3555,6 @@
             <file>battery-charge-battery-publisher-main-cpp.html</file>
             <file>qvideowidgetcontrol.html</file>
             <file>qcontactchangeset-members.html</file>
-            <file>qmediaformatcontrol.html</file>
             <file>radio-main-cpp.html</file>
             <file>slideshow.html</file>
             <file>qcontactnickname.html</file>
@@ -3611,7 +3563,6 @@
             <file>serviceactions-attachmentlistwidget-h.html</file>
             <file>publish-subscribe-subscriberdialog-h.html</file>
             <file>qcontactdetaildefinitionfield-members.html</file>
-            <file>qmediaformatcontrol-members.html</file>
             <file>qcontactchangelogfilter.html</file>
             <file>bearermonitor-bearermonitor-h.html</file>
             <file>qvideooutputcontrol-members.html</file>
@@ -3671,7 +3622,6 @@
             <file>installation.html</file>
             <file>licensing.html</file>
             <file>qimageencodercontrol.html</file>
-            <file>qaudioformat.html</file>
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
             <file>quickstart.html</file>
@@ -3726,6 +3676,7 @@
             <file>qradiotunercontrol-members.html</file>
             <file>qcontactsynctarget.html</file>
             <file>qmediacontent-members.html</file>
+            <file>qmediacontainercontrol.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>multimedia.html</file>
@@ -3741,7 +3692,7 @@
             <file>slideshow-slideshow-h.html</file>
             <file>sysinfo-sysinfo-pro.html</file>
             <file>qcontacttype-members.html</file>
-            <file>qaudioformat-members.html</file>
+            <file>qmediacontainercontrol-members.html</file>
             <file>qmediaservicesupportedformatsinterface.html</file>
             <file>location.html</file>
             <file>incomingcalls-qcontactlistmodel-h.html</file>
@@ -3757,7 +3708,6 @@
             <file>qcontactfetchrequest-members.html</file>
             <file>qcamerafocuscontrol-members.html</file>
             <file>qnmeapositioninfosource-members.html</file>
-            <file>recorder-recorder-pro.html</file>
             <file>qmediaimageviewer.html</file>
             <file>qaudiocapturesource-members.html</file>
             <file>qcontactlocalidfilter.html</file>

@@ -75,17 +75,17 @@ void QGeoAreaMonitorS60::setMonitoredArea(const QGeoCoordinate & aCoordinate, qr
 
     //Intialize the trigger and enable the trigger if atleast one slot is  connected to the areaEntered
     //signal
-    if ((iTriggerCreateAO->InitializeTrigger(this,EntryTrigger,coord,aRadius)) &&
+    if ((iTriggerCreateAO->InitializeTrigger(this,EntryTrigger, coord, aRadius)) &&
             (receivers(SIGNAL(areaEntered(const QGeoPositionInfo&))) > 0)) {
-        iTriggerCreateAO->SetTriggerState(this,EntryTrigger,true);
+        iTriggerCreateAO->SetTriggerState(this, EntryTrigger, true);
         iTriggerAO->NotifyFiredEvent();
     }
 
     //Intialize the trigger and enable the trigger if atleast one slot is  connected to the areaExited
     //signal
-    if ((iTriggerCreateAO->InitializeTrigger(this,ExitTrigger,coord,aRadius)) &&
+    if ((iTriggerCreateAO->InitializeTrigger(this, ExitTrigger, coord, aRadius)) &&
             (receivers(SIGNAL(areaExited(const QGeoPositionInfo&))) > 0)) {
-        iTriggerCreateAO->SetTriggerState(this,ExitTrigger,true);
+        iTriggerCreateAO->SetTriggerState(this, ExitTrigger, true);
         iTriggerAO->NotifyFiredEvent();
     }
 
@@ -102,13 +102,13 @@ void QGeoAreaMonitorS60::setCenter(const QGeoCoordinate& coordinate)
         return;
 
     if (QGeoAreaMonitor::radius() != 0)     //if radius is not initialised
-        setMonitoredArea(coordinate,QGeoAreaMonitor::radius());
+        setMonitoredArea(coordinate, QGeoAreaMonitor::radius());
 }
 
 //virtual fucntion sets the radius of the monitorijng area to the radius
 void QGeoAreaMonitorS60::setRadius(qreal radius)
 {
-    setMonitoredArea(QGeoAreaMonitor::center(),radius);
+    setMonitoredArea(QGeoAreaMonitor::center(), radius);
 }
 
 //callback from the QMLBackendMonitorAO object for the entry/exit event
@@ -170,7 +170,7 @@ void QGeoAreaMonitorS60::ConstructL()
         if (!iTriggerAO)
             return;
 
-        iTriggerCreateAO = QMLBackendMonitorCreateTriggerAO::NewL(this,lbtServ);
+        iTriggerCreateAO = QMLBackendMonitorCreateTriggerAO::NewL(this, lbtServ);
 
         if (!iTriggerCreateAO)
             return;
@@ -203,18 +203,18 @@ void QGeoAreaMonitorS60::TPositionInfoToQGeoPositionInfo(TPositionInfo& aPosInfo
     aQInfo.setCoordinate(coord);
 
     TDateTime datetime = pos.Time().DateTime();
-    QDateTime dt(QDate(datetime.Year(),datetime.Month() + 1,datetime.Day() + 1),
-                 QTime(datetime.Hour(),datetime.Minute(),datetime.Second(),
+    QDateTime dt(QDate(datetime.Year(), datetime.Month() + 1, datetime.Day() + 1),
+                 QTime(datetime.Hour(), datetime.Minute(), datetime.Second(),
                        datetime.MicroSecond()/1000));
 
     //store the time stamp
     aQInfo.setDateTime(dt);
 
     //store the horizontal accuracy
-    aQInfo.setProperty(QGeoPositionInfo::HorizontalAccuracy,pos.HorizontalAccuracy());
+    aQInfo.setProperty(QGeoPositionInfo::HorizontalAccuracy, pos.HorizontalAccuracy());
 
     //store the vertical accuracy
-    aQInfo.setProperty(QGeoPositionInfo::VerticalAccuracy,pos.VerticalAccuracy());
+    aQInfo.setProperty(QGeoPositionInfo::VerticalAccuracy, pos.VerticalAccuracy());
 
 }
 
@@ -234,13 +234,13 @@ int QGeoAreaMonitorS60::QCoordinateToTCoordinate(const QGeoCoordinate& aQCoord, 
 //areaExited signal
 void QGeoAreaMonitorS60::connectNotify(const char* signal)
 {
-    if ((iTriggerCreateAO->isTriggerInitialized(this,EntryTrigger)) && (QLatin1String(signal) == SIGNAL(areaEntered(QGeoPositionInfo))) && (receivers(SIGNAL(areaEntered(const QGeoPositionInfo&))) <= 1)) {
-        iTriggerCreateAO->SetTriggerState(this,EntryTrigger,true);
+    if ((iTriggerCreateAO->isTriggerInitialized(this, EntryTrigger)) && (QLatin1String(signal) == SIGNAL(areaEntered(QGeoPositionInfo))) && (receivers(SIGNAL(areaEntered(const QGeoPositionInfo&))) <= 1)) {
+        iTriggerCreateAO->SetTriggerState(this, EntryTrigger, true);
         iTriggerAO-> NotifyFiredEvent();
     }
 
-    if ((iTriggerCreateAO->isTriggerInitialized(this,ExitTrigger)) && (QLatin1String(signal) == SIGNAL(areaExited(QGeoPositionInfo))) && (receivers(SIGNAL(areaExited(const QGeoPositionInfo&))) <= 1)) {
-        iTriggerCreateAO->SetTriggerState(this,ExitTrigger,true);
+    if ((iTriggerCreateAO->isTriggerInitialized(this, ExitTrigger)) && (QLatin1String(signal) == SIGNAL(areaExited(QGeoPositionInfo))) && (receivers(SIGNAL(areaExited(const QGeoPositionInfo&))) <= 1)) {
+        iTriggerCreateAO->SetTriggerState(this, ExitTrigger, true);
         iTriggerAO-> NotifyFiredEvent();
     }
 }
@@ -250,14 +250,14 @@ void QGeoAreaMonitorS60::connectNotify(const char* signal)
 void QGeoAreaMonitorS60::disconnectNotify(const char* signal)
 {
     // Disable the trigger, if no slot connected to signal
-    if ((iTriggerCreateAO->isTriggerInitialized(this,EntryTrigger)) && (QLatin1String(signal) == SIGNAL(areaEntered(QGeoPositionInfo)))  && (receivers(SIGNAL(areaEntered(const QGeoPositionInfo&))) == 0)) {
+    if ((iTriggerCreateAO->isTriggerInitialized(this, EntryTrigger)) && (QLatin1String(signal) == SIGNAL(areaEntered(QGeoPositionInfo)))  && (receivers(SIGNAL(areaEntered(const QGeoPositionInfo&))) == 0)) {
         // iEnterTrigger->NotifyFiredEvent (FALSE);
-        iTriggerCreateAO->SetTriggerState(this,EntryTrigger,FALSE);
+        iTriggerCreateAO->SetTriggerState(this, EntryTrigger, FALSE);
     }
 
-    if ((iTriggerCreateAO->isTriggerInitialized(this,ExitTrigger)) && (QLatin1String(signal) == SIGNAL(areaExited(QGeoPositionInfo))) && (receivers(SIGNAL(areaExited(const QGeoPositionInfo&))) == 0)) {
+    if ((iTriggerCreateAO->isTriggerInitialized(this, ExitTrigger)) && (QLatin1String(signal) == SIGNAL(areaExited(QGeoPositionInfo))) && (receivers(SIGNAL(areaExited(const QGeoPositionInfo&))) == 0)) {
         // iExitTrigger->NotifyFiredEvent (FALSE);
-        iTriggerCreateAO->SetTriggerState(this,ExitTrigger,FALSE);
+        iTriggerCreateAO->SetTriggerState(this, ExitTrigger, FALSE);
     }
 }
 
