@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtPublishSubscribe
-QT = core network
+QT = core
 
 include(../../common.pri)
 
@@ -65,6 +65,8 @@ unix:!symbian {
         CONFIG += link_pkgconfig
         PKGCONFIG += contextsubscriber-1.0 QtDBus
     } else {
+        QT += network
+
         HEADERS += qsystemreadwritelock_p.h \
            	   qmallocpool_p.h \
 		   qpacketprotocol_p.h
