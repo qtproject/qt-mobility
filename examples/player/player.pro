@@ -17,3 +17,10 @@ SOURCES = main.cpp \
     playercontrols.cpp \
     playlistmodel.cpp \
     videowidget.cpp
+
+symbian: {    
+    HEADERS += mediakeysobserver.h
+    SOURCES += mediakeysobserver.cpp
+    LIBS += -lremconinterfacebase \
+            -lremconcoreapi    
+}

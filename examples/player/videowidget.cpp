@@ -51,6 +51,11 @@ VideoWidget::VideoWidget(QWidget *parent)
 
 void VideoWidget::keyPressEvent(QKeyEvent *event)
 {
+#ifdef Q_OS_SYMBIAN
+    if (isFullScreen())
+        setFullScreen(false);
+#endif  
+    
     if (event->key() == Qt::Key_Escape && isFullScreen()) {
         showNormal();
 
@@ -62,6 +67,7 @@ void VideoWidget::keyPressEvent(QKeyEvent *event)
     } else {
         QVideoWidget::keyPressEvent(event);
     }
+  
 }
 
 void VideoWidget::mouseDoubleClickEvent(QMouseEvent *event)

@@ -864,8 +864,12 @@ void S60CameraSession::setZoomFactor(int value)
 int S60CameraSession::zoomFactor()
 {
 	int factor = 0;
-	if (m_cameraEngine && queryCurrentCameraInfo()) {
-        factor = m_cameraEngine->DigitalZoom();
+	if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
+        factor = camera->ZoomFactor();
+        if (factor == 0) {
+            factor = camera->DigitalZoomFactor();
+        }
 	}
 	return factor;
 }
