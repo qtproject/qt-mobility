@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = qmlcontacts
 
 CONFIG += mobility
-MOBILITY = contacts
+MOBILITY = contacts versit
 
 DEPENDPATH += .
 INCLUDEPATH += . \
@@ -10,7 +10,8 @@ INCLUDEPATH += . \
                ../../src/contacts \
                ../../src/contacts/requests \
                ../../src/contacts/details \
-               ../../src/contacts/filters
+               ../../src/contacts/filters \
+               ../../../src/versit
 
 QT += declarative
 QT += script
