@@ -2263,6 +2263,27 @@ void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QCo
             QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(req);
             emit r->progress(r);
         }
+        break;
+
+        case QContactAbstractRequest::RelationshipFetchRequest:
+        {
+            QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(req);
+            emit r->progress(r, false);
+        }
+        break;
+
+        case QContactAbstractRequest::RelationshipSaveRequest:
+        {
+            QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(req);
+            emit r->progress(r);
+        }
+        break;
+
+        case QContactAbstractRequest::RelationshipRemoveRequest:
+        {
+            QContactRelationshipRemoveRequest* r = static_cast<QContactRelationshipRemoveRequest*>(req);
+            emit r->progress(r);
+        }
         // fall through.
 
         default: // unknown request type.
