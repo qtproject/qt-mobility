@@ -54,10 +54,11 @@ S60CameraExposureControl::S60CameraExposureControl(QObject *parent)
 
 S60CameraExposureControl::S60CameraExposureControl(QObject *session, QObject *parent)
    :QCameraExposureControl(parent)
+    , m_error(QCamera::NoError)
     , m_flashMode(QCamera::FlashOff)
     , m_exposureMode(QCamera::ExposureAuto)
-    , m_meteringMode(QCamera::MeteringAverage)
-    , m_error(QCamera::NoError)
+    , m_meteringMode(QCamera::MeteringMatrix)
+    , m_ev(0.0)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
@@ -77,18 +78,18 @@ S60CameraExposureControl::~S60CameraExposureControl()
 
 QCamera::FlashMode S60CameraExposureControl::flashMode() const
 {
-    return m_flashMode;
+    return m_session->flashMode();
 }
 
 void S60CameraExposureControl::setFlashMode(QCamera::FlashMode mode)
 {
     QCamera::FlashModes supportedModes = supportedFlashModes();
-    if (!supportedModes & mode) {
+    if (supportedModes & mode) {
+        m_flashMode = mode;
+        m_session->setFlashMode(m_flashMode);
+    } else {
         m_error = QCamera::NotSupportedFeatureError;
-        return;
     }
-    m_flashMode = mode;
-    m_session->setFlashMode(m_flashMode);
 }
 
 QCamera::FlashModes S60CameraExposureControl::supportedFlashModes() const
@@ -98,24 +99,23 @@ QCamera::FlashModes S60CameraExposureControl::supportedFlashModes() const
 
 bool S60CameraExposureControl::isFlashReady() const
 {
-    //TODO return is flash ready
-    return false;
+    return m_session->isFlashReady();
 }
 
 QCamera::ExposureMode S60CameraExposureControl::exposureMode() const
 {
-    return m_exposureMode;
+    return m_session->exposureMode();
 }
 
 void S60CameraExposureControl::setExposureMode(QCamera::ExposureMode mode)
 {
     QCamera::ExposureModes supportedModes = supportedExposureModes();
-    if (!supportedModes & mode) {
+    if (supportedModes & mode) {
+        m_exposureMode = mode;
+        m_session->setExposureMode(m_exposureMode);
+    } else {
         m_error = QCamera::NotSupportedFeatureError;
-        return;
     }
-    m_exposureMode = mode;
-    m_session->setExposureMode(m_exposureMode);
 }
 
 QCamera::ExposureModes S60CameraExposureControl::supportedExposureModes() const
@@ -131,6 +131,7 @@ qreal S60CameraExposureControl::exposureCompensation() const
 void S60CameraExposureControl::setExposureCompensation(qreal ev)
 {
     m_session->setExposureCompensation(ev);
+    m_ev = ev;
 }
 
 QCamera::MeteringMode S60CameraExposureControl::meteringMode() const
@@ -141,12 +142,12 @@ QCamera::MeteringMode S60CameraExposureControl::meteringMode() const
 void S60CameraExposureControl::setMeteringMode(QCamera::MeteringMode mode)
 {
     QCamera::MeteringModes supportedModes = supportedMeteringModes();
-    if (!supportedModes & mode) {
+    if (supportedModes & mode) {
+        m_meteringMode = mode;
+        m_session->setMeteringMode(m_meteringMode);
+    } else {
         m_error = QCamera::NotSupportedFeatureError;
-        return;
     }
-    m_meteringMode = mode;
-    m_session->setMeteringMode(m_meteringMode);
 }
 
 QCamera::MeteringModes S60CameraExposureControl::supportedMeteringModes() const
@@ -167,7 +168,13 @@ QList<int> S60CameraExposureControl::supportedIsoSensitivities(bool *continuous)
 
 void S60CameraExposureControl::setManualIsoSensitivity(int iso)
 {
-    // TODO: check if value is supported
+    int minIso = supportedIsoSensitivities().first();
+    int maxIso = supportedIsoSensitivities().last();
+    if (iso < minIso) {
+        iso = minIso;
+    } else if (iso > maxIso) {
+        iso = maxIso;
+    }
     m_session->setManualIsoSensitivity(iso);
 }
 
@@ -188,7 +195,13 @@ QList<qreal> S60CameraExposureControl::supportedApertures(bool *continuous) cons
 
 void S60CameraExposureControl::setManualAperture(qreal aperture)
 {
-    // TODO: check if value is supported
+    int minIso = supportedApertures().first();
+    int maxIso = supportedApertures().last();
+    if (aperture < minIso) {
+        aperture = minIso;
+    } else if (aperture > maxIso) {
+        aperture = maxIso;
+    }
     m_session->setManualAperture(aperture);
 }
 

@@ -103,6 +103,7 @@ private:
     QCamera::FlashMode m_flashMode;
     QCamera::ExposureMode m_exposureMode;
     QCamera::MeteringMode m_meteringMode;
+    qreal m_ev;
 };
 
 #endif
