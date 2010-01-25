@@ -42,3 +42,5 @@ contains(mobility_modules,messaging) {
 symbian {
     SUBDIRS += s60installs/s60installs.pro
 }
+
+SUBDIRS += icheck/icheck.pro
