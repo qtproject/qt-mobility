@@ -79,6 +79,8 @@ private slots:
     void editClicked();
     void filterClicked();
     void deleteClicked();
+    void importClicked();
+    void exportClicked();
 
 private:
     // elements of the contact list "page"
@@ -86,10 +88,7 @@ private:
     QLabel *m_filterActiveLabel;
 
     QListWidget *m_contactsList;
-    QPushButton *m_addContactBtn;
-    QPushButton *m_editBtn;
-    QPushButton *m_deleteBtn;
-    QPushButton *m_filterBtn;
+
 
     // data
     QContactManager *m_manager;

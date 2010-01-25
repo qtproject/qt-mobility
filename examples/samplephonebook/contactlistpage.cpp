@@ -40,6 +40,10 @@
 ****************************************************************************/
 
 #include "contactlistpage.h"
+#include "qversitreader.h"
+#include "qversitcontactimporter.h"
+#include "qversitwriter.h"
+#include "qversitcontactexporter.h"
 
 #include <QtGui>
 
@@ -58,29 +62,39 @@ ContactListPage::ContactListPage(QWidget *parent)
 
     m_contactsList = new QListWidget(this);
 
-    m_addContactBtn = new QPushButton("Add", this);
+    QPushButton* m_addContactBtn = new QPushButton("Add", this);
     connect(m_addContactBtn, SIGNAL(clicked()), this, SLOT(addContactClicked()));
-    m_editBtn = new QPushButton("Edit", this);
+    QPushButton* m_editBtn = new QPushButton("Edit", this);
     connect(m_editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
-    m_deleteBtn = new QPushButton("Delete", this);
+    QPushButton* m_deleteBtn = new QPushButton("Delete", this);
     connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    m_filterBtn = new QPushButton("Filter", this);
+    QPushButton* m_filterBtn = new QPushButton("Filter", this);
     connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
+    QPushButton* m_importBtn = new QPushButton("Import", this);
+    connect(m_importBtn, SIGNAL(clicked()), this, SLOT(importClicked()));
+    QPushButton* m_exportBtn = new QPushButton("Export", this);
+    connect(m_exportBtn, SIGNAL(clicked()), this, SLOT(exportClicked()));
+
 
     QFormLayout *backendLayout = new QFormLayout;
     backendLayout->addRow("Store:", m_backendsCombo);
     backendLayout->addRow("Filter:", m_filterActiveLabel);
 
-    QHBoxLayout *btnLayout = new QHBoxLayout;
-    btnLayout->addWidget(m_addContactBtn);
-    btnLayout->addWidget(m_editBtn);
-    btnLayout->addWidget(m_deleteBtn);
-    btnLayout->addWidget(m_filterBtn);
+    QHBoxLayout *btnLayout1 = new QHBoxLayout;
+    btnLayout1->addWidget(m_addContactBtn);
+    btnLayout1->addWidget(m_editBtn);
+    btnLayout1->addWidget(m_deleteBtn);
+    btnLayout1->addWidget(m_filterBtn);
+
+    QHBoxLayout *btnLayout2 = new QHBoxLayout;
+    btnLayout2->addWidget(m_importBtn);
+    btnLayout2->addWidget(m_exportBtn);
 
     QVBoxLayout *bookLayout = new QVBoxLayout;
     bookLayout->addLayout(backendLayout);
     bookLayout->addWidget(m_contactsList);
-    bookLayout->addLayout(btnLayout);
+    bookLayout->addLayout(btnLayout1);
+    bookLayout->addLayout(btnLayout2);
 
     setLayout(bookLayout);
 
@@ -180,4 +194,52 @@ void ContactListPage::deleteClicked()
     }
     else
         QMessageBox::information(this, "Failed!", "Failed to delete contact!");
+}
+
+void ContactListPage::importClicked()
+{
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot import";
+        return;
+    }
+    QString fileName = QFileDialog::getOpenFileName(this,
+       tr("Select vCard file"), ".", tr("vCard files (*.vcf)"));
+    QFile file(fileName);
+    file.open(QIODevice::ReadOnly);
+    if (file.isReadable()) {
+        QVersitReader reader;
+        reader.setDevice(&file);
+        if (reader.startReading() && reader.waitForFinished()) {
+            QVersitContactImporter importer;
+            QList<QContact> contacts = importer.importContacts(reader.results());
+            m_manager->saveContacts(&contacts);
+            rebuildList(m_currentFilter);
+        }
+    }
+}
+
+void ContactListPage::exportClicked()
+{
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot import";
+        return;
+    }
+    QList<QContactLocalId> contactIds = m_manager->contacts(m_currentFilter);
+    QList<QContact> contacts;
+    foreach (const QContactLocalId& id, contactIds) {
+        contacts.append(m_manager->contact(id));
+    }
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save vCard"),
+                                                    "./contacts.vcf",
+                                                    tr("vCards (*.vcf)"));
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly);
+    if (file.isWritable()) {
+        QVersitContactExporter exporter;
+        QList<QVersitDocument> documents = exporter.exportContacts(contacts);
+        QVersitWriter writer;
+        writer.setDevice(&file);
+        writer.startWriting(documents);
+        writer.waitForFinished();
+    }
 }
