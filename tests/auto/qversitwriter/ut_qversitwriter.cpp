@@ -192,6 +192,7 @@ END:VCARD\r\n");
     mOutputDevice = new QBuffer;
     mOutputDevice->open(QBuffer::ReadWrite);
     mSignalCatcher->mReceived.clear();
+    mWriter->setDevice(mOutputDevice);
     mWriter->startWriting(list);
     mWriter->cancel();
     mWriter->waitForFinished();
