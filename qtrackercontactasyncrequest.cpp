@@ -502,9 +502,14 @@ void QTrackerContactFetchRequest::contactsReady()
             continue;
         }
         QContactId id; id.setLocalId(contactid);
+
+        QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
+        Q_ASSERT(engine);
+        if(engine)
+            id.setManagerUri(engine->managerUri());
+
         contact.setId(id);
         QString metacontact = query->index(i, 1).data().toString();
-
 
         // using redundancy to get less queries to tracker - it is possible
         // that rows are repeating: information for one contact is in several rows
@@ -914,6 +919,12 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
         {
             QContact contact;
             QContactId id; id.setLocalId(contactid);
+
+            QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
+            Q_ASSERT(engine);
+            if(engine)
+                id.setManagerUri(engine->managerUri());
+
             contact.setId(id);
             contact.saveDetail(&account);
             QString metacontact = queryIMContacts->index(i, 7).data().toString(); // \sa prepareIMContactsQuery()
