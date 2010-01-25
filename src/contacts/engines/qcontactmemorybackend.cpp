@@ -1041,7 +1041,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            // XXX updateRequest(currentRequest, requestedRelationships, operationError, operationErrors, QContactAbstractRequest::FinishedState);
+            updateRelationshipFetchRequest(r, requestedRelationships, operationError, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1072,7 +1072,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
                 operationError = QContactManager::DoesNotExistError;
 
             // there are no results, so just update the status with the error.
-            // XXX updateRequestState(currentRequest, operationError, operationErrors, QContactAbstractRequest::FinishedState);
+            updateRequestState(currentRequest, operationError, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1080,7 +1080,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
         {
             QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactManager::Error> operationErrors;
+            QMap<int, QContactManager::Error> errorMap;
             QList<QContactRelationship> requestRelationships = r->relationships();
             QList<QContactRelationship> savedRelationships;
 
@@ -1089,14 +1089,15 @@ void QContactMemoryEngine::performAsynchronousOperation()
                 QContactRelationship current = requestRelationships.at(i);
                 saveRelationship(&current, tempError);
                 savedRelationships.append(current);
-                operationErrors.append(tempError);
 
-                if (tempError != QContactManager::NoError)
+                if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
+                }
             }
 
             // update the request with the results.
-            // XXX updateRequest(currentRequest, savedRelationships, operationError, operationErrors, QContactAbstractRequest::FinishedState);
+            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
