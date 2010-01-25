@@ -71,7 +71,6 @@ public:
     ~QGeoPositionInfoSourceWinCE();
 
     void setUpdateInterval(int msec);
-    void setPreferredPositioningMethods(PositioningMethods methods);
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     PositioningMethods supportedPositioningMethods() const;
     int minimumUpdateInterval() const;
