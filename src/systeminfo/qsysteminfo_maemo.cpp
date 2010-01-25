@@ -185,13 +185,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,
     return errorStr;
 }
 
-
-//2 letter ISO 3166-1
-QString QSystemInfoPrivate::currentCountryCode() const
-{
-    return QLocale::system().name().mid(3,2);
-}
-
 #if !defined(QT_NO_DBUS)
 bool QSystemInfoPrivate::hasHalDeviceFeature(const QString &param)
 {

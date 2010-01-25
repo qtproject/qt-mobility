@@ -88,7 +88,6 @@ public:
 
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
-    QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 

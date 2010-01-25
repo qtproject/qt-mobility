@@ -111,6 +111,13 @@ QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
     };
     return errorStr;
 }
+
+//2 letter ISO 3166-1
+QString QSystemInfoLinuxCommonPrivate::currentCountryCode() const
+{
+    return QLocale::system().name().mid(3,2);
+}
+
 QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }
