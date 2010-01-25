@@ -68,6 +68,8 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
     m_session = qobject_cast<S60CameraSession*>(session);
     connect(m_session, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
     connect(m_session, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
+    m_session->setFocusMode(m_focusMode);
+    m_session->setZoomFactor(m_zoomValue);
 }
 
 S60CameraFocusControl::~S60CameraFocusControl()
@@ -103,7 +105,6 @@ bool S60CameraFocusControl::macroFocusingEnabled() const
 bool S60CameraFocusControl::isMacroFocusingSupported() const
 {
     // not supported
-   // m_error = QCamera::NotSupportedFeatureError;
     return false;
 }
 
@@ -112,6 +113,7 @@ void S60CameraFocusControl::setMacroFocusingEnabled(bool /*e*/)
     // not supported
     m_error = QCamera::NotSupportedFeatureError;
 }
+
 qreal S60CameraFocusControl::maximumOpticalZoom() const
 {
     if (m_session->maximumZoom() == 0) // optical zoom not supported!
@@ -132,7 +134,6 @@ qreal S60CameraFocusControl::zoomValue() const
 
 void S60CameraFocusControl::zoomTo(qreal value)
 {	
-    qDebug() << "S60CameraFocusControl::zoomTo value: " << value;
 	m_session->setZoomFactor(value);
 	m_zoomValue = value;
 }

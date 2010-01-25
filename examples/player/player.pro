@@ -21,5 +21,9 @@ SOURCES = main.cpp \
 
 
 symbian {
-        TARGET.CAPABILITY = UserEnvironment WriteDeviceData
-}
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
+    HEADERS += mediakeysobserver.h
+    SOURCES += mediakeysobserver.cpp
+    LIBS += -lremconinterfacebase \
+            -lremconcoreapi
+ }

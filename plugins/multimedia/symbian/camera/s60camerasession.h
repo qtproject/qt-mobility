@@ -57,6 +57,7 @@
 #include <cameraengine.h>
 #include <cameraengineobserver.h>
 
+#include <VideoRecorder.h>
 
 QTM_USE_NAMESPACE
 
@@ -67,9 +68,17 @@ public:
       virtual void ViewFinderFrameReady(const QImage& image) = 0;
 };
 
+struct VideoControllerData
+{
+	int controllerUid;
+	int formatUid;
+	QString formatDescription;
+};
 
 class S60CameraSession : public QObject, 
-    public MCameraEngineObserver
+    public MCameraEngineObserver, 
+    public MVideoRecorderUtilityObserver,
+    public MCameraObserver2
 {
     Q_OBJECT
 public:
@@ -100,16 +109,12 @@ public:
     void setHue(int h);
     int sharpness() const;
     void setSharpness(int s);
-    int zoom() const;
-    void setZoom(int z);
     bool backlightCompensation() const;
     void setBacklightCompensation(bool);
     int whitelevel() const;
     void setWhitelevel(int w);
     int rotation() const;
     void setRotation(int r);
-    bool flash() const;
-    void setFlash(bool f);
     bool autofocus() const;
     void setAutofocus(bool f);
 
@@ -164,6 +169,16 @@ public:
 
     void setVideoRenderer(QObject *renderer);
     void updateImageCaptureCodecs();
+
+    QStringList supportedVideoCaptureCodecs();
+    void updateVideoCaptureCodecs();
+    QString videoCaptureCodec();
+    void setVideoCaptureCodec(const QString &codecName);
+    bool isSupportedVideoCaptureCodec(const QString &codecName);
+    int bitrate() const;
+    void setBitrate(const int &bitrate);
+    QSize videoResolution() const;
+    void setVideoResolution(const QSize &resolution);
     
     //camerafocuscontrol
     void startFocus();
@@ -178,10 +193,13 @@ public:
     QCamera::FocusModes supportedFocusModes();
     
     //cameraexposurecontrol
+    bool isFlashReady();
     void setFlashMode(QCamera::FlashMode mode);
     void setExposureMode(QCamera::ExposureMode mode);
+    QCamera::ExposureMode exposureMode();
     QCamera::ExposureModes supportedExposureModes();
     QCamera::FlashModes supportedFlashModes();
+    QCamera::FlashMode flashMode();
     void setExposureCompensation(qreal ev);
     qreal exposureCompensation();
     QCamera::MeteringMode meteringMode();
@@ -211,6 +229,20 @@ private:
     QMap<QString, int> formatDescMap();
 
     void resetCamera();
+
+    //from  MVideoRecorderUtilityObserver
+  	void MvruoOpenComplete(TInt aError);  
+   	void MvruoPrepareComplete(TInt aError);
+   	void MvruoRecordComplete(TInt aError);
+   	void MvruoEvent(const TMMFEvent& aEvent);
+   	
+   	void updateVideoCaptureCodecsL();
+   	
+protected: // from MCameraObserver2
+    void HandleEvent(const TECAMEvent& aEvent);
+    void ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError);
+    void ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aError); 
+    void VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError);
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -222,9 +254,13 @@ Q_SIGNALS:
     //for focuscontrol
     void focusLocked();
     void zoomValueChanged(qreal value);
-    // 
 
-
+    void exposureLocked();
+    void flashReady(bool ready);
+    void apertureChanged(qreal aperture);
+    void apertureRangeChanged();
+    void shutterSpeedChanged(qreal speed);
+    void isoSensitivityChanged(int iso);
 private:
     CCameraEngine *m_cameraEngine;
     S60CameraSettings *m_advancedSettings;
@@ -246,6 +282,10 @@ private:
     QString m_stillCaptureFileName;
 
     mutable TCameraInfo m_info; // information about camera
+    
+    CVideoRecorderUtility* m_videoUtility;
+    QHash<QString, VideoControllerData> m_videoControllerMap;
+    QString m_videoCodec;
 
 };
 

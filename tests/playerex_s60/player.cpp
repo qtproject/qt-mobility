@@ -76,7 +76,6 @@ S60Player::S60Player(QMainWindow *parent)
     slider->setRange(0, player->duration() / 1000);
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
-
     QPushButton *openButton = new QPushButton(tr("Open"));
     openButton->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
 
@@ -94,13 +93,16 @@ S60Player::S60Player(QMainWindow *parent)
 
     connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
             controls, SLOT(setState(QMediaPlayer::State)));
-    connect(player, SIGNAL(mutedChanged(bool)), controls, SLOT(setMuted(bool)));
+    connect(player, SIGNAL(mutedChanged(bool)), controls, SLOT(setMuted(bool)));    
 
-    QBoxLayout *displayLayout = new QHBoxLayout;
+    QHBoxLayout *displayLayout = new QHBoxLayout;
+    coverLabel = new QLabel(this);        
     if (videoWidget)
         displayLayout->addWidget(videoWidget, 2);
-    else
+    if (coverLabel)
         displayLayout->addWidget(coverLabel, 2);
+    if (videoWidget)
+        coverLabel->hide();          
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
@@ -125,10 +127,13 @@ S60Player::S60Player(QMainWindow *parent)
     connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
 }
 
+
+
 S60Player::~S60Player()
 {
     delete playlist;
-    delete player;
+    delete player;   
+    delete coverLabel;
 }
 
 void S60Player::open()
@@ -162,14 +167,42 @@ void S60Player::metaDataChanged()
         		.arg(playlist->currentIndex()+1)
         		.arg(playlist->mediaCount())
                 .arg(player->metaData(QtMedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMedia::Title).toString()));
-
-        if (coverLabel) {
+                .arg(player->metaData(QtMedia::Title).toString()));      
+  
+        if (coverLabel && !player->isVideoAvailable() ) {
             QUrl uri = player->metaData(QtMedia::CoverArtUrlLarge).value<QUrl>();
-
-            coverLabel->setPixmap(!uri.isEmpty()
+            if (uri.isEmpty()) {
+                QVariant picture = player->extendedMetaData("attachedpicture");    
+                QPixmap p = NULL;
+                QByteArray bytearray = NULL;
+                bool success = false;
+                if (!picture.isNull() && picture.canConvert<QByteArray>()) {                    
+                    bytearray = picture.value<QByteArray>();
+                    if (!bytearray.isNull()) 
+                        success = p.loadFromData(bytearray);                   
+                    if (success) {                                
+                        coverLabel->setPixmap(!p.isNull()
+                                ? p
+                                : QPixmap());
+                    }
+                }        
+                else {               
+                    QUrl url = player->media().canonicalUrl();                    
+                    QString album("/Album.jpg");
+                    QString urli = url.path(); 
+                    int i = urli.lastIndexOf("/");
+                    QString path = urli.mid(1,i-1);                    
+                    QString albumPath = path.append(album);                     
+                    coverLabel->setPixmap(!albumPath.isEmpty()
+                        ? QPixmap(albumPath)
+                        : QPixmap());                        
+                }
+            }
+            else {
+                coverLabel->setPixmap(!uri.isEmpty()
                     ? QPixmap(uri.toString())
-                    : QPixmap());
+                    : QPixmap());            
+            }                        
         }
     }
 }
@@ -180,11 +213,29 @@ void S60Player::seek(int seconds)
     player->setPosition(seconds * 1000);
 }
 
+void S60Player::setVisibleWidget()
+{
+    if(!player->isVideoAvailable()) {
+        if (!videoWidget->isHidden())
+            videoWidget->hide();
+        if (coverLabel->isHidden())
+            coverLabel->show();           
+    }
+    else {
+        if (!coverLabel->isHidden())
+            coverLabel->hide();
+        if (videoWidget->isHidden())
+            videoWidget->show();            
+    }       
+    metaDataChanged();    
+}
+
 void S60Player::statusChanged(QMediaPlayer::MediaStatus status)
 {
     switch (status) {
     case QMediaPlayer::LoadedMedia:
-        setStatusInfo(QString());
+        setStatusInfo(QString());    
+        setVisibleWidget();
         player->play();
         break;
     case QMediaPlayer::UnknownMediaStatus:
@@ -305,7 +356,7 @@ void S60Player::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
 
 void S60Player::createMenu()
 {
-	if (videoWidget != 0) {
+	if (videoWidget) {
 		QAction* actionToggleFullscreen = menuBar()->addAction("Toggle fullscreen");
 		actionToggleFullscreen->setCheckable(true);
 		connect(actionToggleFullscreen, SIGNAL(triggered(bool)), videoWidget, SLOT(setFullScreen(bool)));

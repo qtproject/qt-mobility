@@ -66,7 +66,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     , m_service(*service)
 {  
     resetNativeHandles();
-    TRAP_IGNORE(m_player = CVideoPlayerUtility::NewL(
+    QT_TRAP_THROWING(m_player = CVideoPlayerUtility::NewL(
         *this, 
         0, 
         EMdaPriorityPreferenceNone, 
@@ -75,7 +75,6 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         *m_window, 
         m_playerRect, 
         m_playerRect));
-    Q_ASSERT(m_player != 0);
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
@@ -83,46 +82,26 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
     delete m_player;
 }
 
-void S60VideoPlayerSession::doLoad(const TDesC &path)
+void S60VideoPlayerSession::doLoadL(const TDesC &path)
 {
-    TRAPD(err, m_player->OpenFileL(path);)
-    if (err) {
-        setMediaStatus(QMediaPlayer::NoMedia);
-    }
+    m_player->OpenFileL(path);
 }
 
-void S60VideoPlayerSession::doLoadUrl(const TDesC &path)
+void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
 {
-	TRAPD(err, m_player->OpenUrlL(path);)
-	if (err) {
-		setMediaStatus(QMediaPlayer::NoMedia);
-	}
+    m_player->OpenUrlL(path);
 }
 
-qint64 S60VideoPlayerSession::duration() const
-{   
-    Int64 duration = 0;
-    TRAP_IGNORE(duration = m_player->DurationL().Int64() / 1000;)
-    return duration;   
-}
-
-qint64 S60VideoPlayerSession::position() const
-{
-    Int64 position = 0;
-    TRAP_IGNORE(position = m_player->PositionL().Int64() / 1000;)
-    return position; 
-}
-
-int S60VideoPlayerSession::mediaLoadingProgress() const
+int S60VideoPlayerSession::doGetMediaLoadingProgressL() const
 {
 	int progress = 0;
-    TRAP_IGNORE(m_player->GetVideoLoadingProgressL(progress);)
-	return progress;
+    m_player->GetVideoLoadingProgressL(progress);
+    return progress;
 }
 
-void S60VideoPlayerSession::doSetPlaybackRate(qreal rate)
+int S60VideoPlayerSession::doGetDurationL() const
 {
-    TRAP_IGNORE(m_player->SetVideoFrameRateL((TReal32)rate));
+    return m_player->DurationL().Int64() / 1000;   
 }
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
@@ -195,9 +174,9 @@ void S60VideoPlayerSession::doPlay()
     m_player->Play();
 }
 
-void S60VideoPlayerSession::doPause()
+void S60VideoPlayerSession::doPauseL()
 {
-    TRAP_IGNORE(m_player->PauseL();)
+    m_player->PauseL();
 }
 
 void S60VideoPlayerSession::doStop()
@@ -205,36 +184,37 @@ void S60VideoPlayerSession::doStop()
     m_player->Stop();
     m_player->Close();
 }
-
-void S60VideoPlayerSession::doSetPosition(qint64 microSeconds)
+qint64 S60VideoPlayerSession::doGetPositionL() const
 {
-    TRAP_IGNORE(m_player->SetPositionL(TTimeIntervalMicroSeconds(microSeconds));)
+    return m_player->PositionL().Int64() / 1000;
+}
+void S60VideoPlayerSession::doSetPositionL(qint64 microSeconds)
+{
+    m_player->SetPositionL(TTimeIntervalMicroSeconds(microSeconds));
 }
 
-void S60VideoPlayerSession::doSetVolume(int volume)
+void S60VideoPlayerSession::doSetVolumeL(int volume)
 {
-    TRAP_IGNORE(m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume()));
+    m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume());
 }
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
     setError(aError);
-    if (aError == KErrNone)
-        m_player->Prepare();
+    m_player->Prepare();
 }
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
     setError(aError);
+    TRAPD(err, 
+        m_player->SetDisplayWindowL(*m_wsSession, 
+                                    *m_screenDevice, 
+                                    *m_window, 
+                                    m_playerRect, 
+                                    m_playerRect));
+    setError(err);
     initComplete();
-    TRAP_IGNORE(m_player->SetDisplayWindowL(*m_wsSession, 
-                                            *m_screenDevice, 
-                                            *m_window, 
-                                            m_playerRect, 
-                                            m_playerRect));
-    TReal32 frameRate = 0;
-    TRAP_IGNORE(frameRate = m_player->VideoFrameRateL());
-    setPlaybackRate((qreal)frameRate);
 }
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
@@ -255,32 +235,30 @@ void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
     Q_UNUSED(aEvent);
 }
 
-void S60VideoPlayerSession::updateMetaDataEntries()
+void S60VideoPlayerSession::updateMetaDataEntriesL()
 {
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
     
-    TRAP_IGNORE(numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();)
+    numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();
     
     for (int i = 0; i < numberOfMetaDataEntries; i++) {
         CMMFMetaDataEntry *entry = NULL;
-        TRAPD(err, entry = m_player->MetaDataEntryL(i));
-        
-        if (err == KErrNone) {
-            metaDataEntries().insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
-        }
+        entry = m_player->MetaDataEntryL(i);
+        metaDataEntries().insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
         delete entry;
     }
-    
     emit metaDataChanged();
 }
 
 void S60VideoPlayerSession::resetVideoDisplay()
 {
-    if (resetNativeHandles()) 
-        TRAP_IGNORE(m_player->SetDisplayWindowL(*m_wsSession, 
-                                                *m_screenDevice, 
-                                                *m_window, 
-                                                m_playerRect, 
-                                                m_playerRect));
+    if (resetNativeHandles()) {
+        TRAPD(err, m_player->SetDisplayWindowL(*m_wsSession, 
+                                               *m_screenDevice, 
+                                               *m_window, 
+                                               m_playerRect, 
+                                               m_playerRect));
+        setError(err);
+    }
 }

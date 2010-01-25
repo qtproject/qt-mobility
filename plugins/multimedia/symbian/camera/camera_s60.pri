@@ -11,9 +11,15 @@ exists($${EPOCROOT}epoc32\include\ecamadvsettings.h) {
     message("Using from s60 5.0 CCameraAdvancedSettings header")  
 }
 
-symbian:LIBS += -lcamerawrapper \
-    -lfbscli
+contains(S60_VERSION, 3.2)|contains(S60_VERSION, 3.1) {
+    DEFINES += PRE_S60_50_PLATFORM
+}
 
+symbian:LIBS += -lcamerawrapper \
+    -lfbscli \
+    -lmediaclientvideo \
+    -lecam
+    
 HEADERS += $$PWD/s60camerafocuscontrol.h \
     $$PWD/s60cameraexposurecontrol.h \
     $$PWD/s60cameracontrol.h \

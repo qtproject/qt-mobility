@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "player.h"
+#include "cameracapture.h"
 
 #include <QtGui>
 
@@ -47,11 +47,12 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    Player player;
-#ifdef Q_OS_SYMBIAN    
-    player.showMaximized();
+    CameraCapture cameraCapture;
+#ifdef Q_OS_SYMBIAN
+    cameraCapture.showMaximized();
 #else
-    player.show();
+    cameraCapture.show();
 #endif
+    
     return app.exec();
 };

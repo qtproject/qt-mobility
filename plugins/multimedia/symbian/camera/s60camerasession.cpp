@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include <BADESCA.H>
+
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
 #include "s60camerasession.h"
@@ -46,7 +48,11 @@
 
 #include <fbs.h>
 #include <qglobal.h>
+#include <QDir>
+
 const int KSymbianImageQualityCoefficient = 25;
+const int KMaxClipSize = 64 * 1024;
+
 CCamera::TFormat KSymbianDefaultImageCodec = CCamera::EFormatExif;
 #ifdef Q_CC_NOKIAX86
 _LIT8(KCameraTemp,"test data");
@@ -68,12 +74,24 @@ S60CameraSession::S60CameraSession(QObject *parent)
 {
     // create initial camera
     resetCamera();
+    
+    connect(m_advancedSettings, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
+    connect(m_advancedSettings, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
+    connect(m_advancedSettings, SIGNAL(apertureChanged(qreal)), this, SIGNAL(apertureChanged(qreal)));
+    connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SIGNAL(apertureRangeChanged()));
+    connect(m_advancedSettings, SIGNAL(shutterSpeedChanged(qreal)), this, SIGNAL(shutterSpeedChanged(qreal)));
+    connect(m_advancedSettings, SIGNAL(isoSensitivityChanged(int)), this, SIGNAL(isoSensitivityChanged(int)));
 }
 
 S60CameraSession::~S60CameraSession()
 {
+	delete m_videoUtility;
+	m_videoUtility = NULL;
     delete m_cameraEngine;
     m_cameraEngine = NULL;
+    
+    delete m_advancedSettings;
+    m_advancedSettings = NULL;
 }
 void S60CameraSession::resetCamera()
 {
@@ -82,6 +100,7 @@ void S60CameraSession::resetCamera()
     delete m_advancedSettings;
     m_advancedSettings = NULL;
     m_cameraEngine = NULL;
+    m_advancedSettings = NULL;
     m_error = KErrNone;
     m_state = QCamera::StoppedState;
     qDebug() << "S60CameraSession::resetCamera. Creating new camera with index=" << m_deviceIndex;
@@ -89,7 +108,11 @@ void S60CameraSession::resetCamera()
     Q_CHECK_PTR(m_cameraEngine);
     m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
     qDebug() << "S60CameraSession::resetCamera END";
-
+    
+    QT_TRAP_THROWING(m_videoUtility = CVideoRecorderUtility::NewL(*this));
+    Q_CHECK_PTR(m_videoUtility);
+    
+    updateVideoCaptureCodecs();
 }
 
 void S60CameraSession::startCamera()
@@ -172,13 +195,15 @@ bool S60CameraSession::deviceReady()
 
 int S60CameraSession::framerate() const
 {
+    if (m_videoUtility)
+        return m_videoUtility->VideoFrameRateL();
     return -1;
 }
 
 void S60CameraSession::setFrameRate(int rate)
 {
-    Q_UNUSED(rate)
-    
+    if (m_videoUtility)
+        m_videoUtility->SetVideoFrameRateL(rate);
 }
 
 int S60CameraSession::brightness() const
@@ -232,16 +257,6 @@ void S60CameraSession::setSharpness(int s)
     Q_UNUSED(s)
 }
 
-int S60CameraSession::zoom() const
-{
-    return -1;
-}
-
-void S60CameraSession::setZoom(int z)
-{
-    Q_UNUSED(z)
-}
-
 bool S60CameraSession::backlightCompensation() const
 {
     return false;
@@ -272,15 +287,8 @@ void S60CameraSession::setRotation(int r)
     Q_UNUSED(r)
 }
 
-bool S60CameraSession::flash() const
-{
-    return false;
-}
 
-void S60CameraSession::setFlash(bool f)
-{
-    Q_UNUSED(f)
-}
+
 
 bool S60CameraSession::autofocus() const
 {
@@ -380,14 +388,15 @@ int S60CameraSession::state() const
 void S60CameraSession::startRecording()
 {
     qDebug() << "S60CameraSession::startRecording";
-    /*
-     * Capture Video: Gets the video frame size and video frame rate for the index passed by calling 
-     * the CCamera::EnumerateVideoFrameSizes() function and the CCamera::EnumerateVideoFrameRates() 
-     * functions respectively. The video details such as frame sizes and frame rate index are passed 
-     * to the CCamera::PrepareVideoCaptureL () function to allocate the memory for the video to be captured.
-     *  Then, a call to the CCamera::StartVideoCapture() starts capturing the video and a call to 
-     *  the CCamera::StopVideoCapture() stops capturing the video.
-     */
+    QString filename = QDir::toNativeSeparators(m_sink.toString());
+    TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));    
+
+    int cameraHandle = m_cameraEngine->Camera()->Handle();
+    
+    TUid controllerUid(TUid::Uid(m_videoControllerMap[m_videoCodec].controllerUid));
+    TUid formatUid(TUid::Uid(m_videoControllerMap[m_videoCodec].formatUid));
+    
+    QT_TRAP_THROWING(m_videoUtility->OpenFileL(sink, cameraHandle, controllerUid, formatUid));
 }
 
 void S60CameraSession::pauseRecording()
@@ -398,6 +407,8 @@ void S60CameraSession::pauseRecording()
 void S60CameraSession::stopRecording()
 {
     qDebug() << "S60CameraSession::stopRecording";
+    m_videoUtility->Stop();
+    m_videoUtility->Close();
 }
 
 void S60CameraSession::MceoCameraReady()
@@ -874,13 +885,18 @@ int S60CameraSession::zoomFactor()
 {
     qDebug() << "S60CameraSession::zoomFactor";
 	int factor = 0;
-	if (m_cameraEngine && queryCurrentCameraInfo()) {
-        factor = m_cameraEngine->DigitalZoom();
+	if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
+        factor = camera->ZoomFactor();
+        if (factor == 0) {
+            factor = camera->DigitalZoomFactor();
+        }
 	}
 	return factor;
 }
 
 void S60CameraSession::startFocus()
+{   
 {
     qDebug() << "S60CameraSession::startFocus";
     
@@ -900,14 +916,14 @@ void S60CameraSession::cancelFocus()
 }
 
 int S60CameraSession::maximumZoom()
+{   
 {
     qDebug() << "S60CameraSession::maximumZoom";
     
 	if (queryCurrentCameraInfo()) {
         qDebug() << "S60CameraSession::maximumZoom value: " << m_info.iMaxZoom;
 		return m_info.iMaxZoom;
-	}
-	else {
+	} else {
 		return 0; 
 	}
 }
@@ -919,8 +935,7 @@ int S60CameraSession::minZoom()
     if (queryCurrentCameraInfo()) {
         qDebug() << "S60CameraSession::minZoom value: " << m_info.iMinZoom;
         return m_info.iMinZoom;
-    }
-    else {
+    } else {
         return 0; 
     }
 }
@@ -930,6 +945,8 @@ int S60CameraSession::maxDigitalZoom()
     qDebug() << "S60CameraSession::maxDigitalZoom";
     
 	if (queryCurrentCameraInfo()) {
+		return m_info.iMaxDigitalZoom;		
+	} else {
         qDebug() << "S60CameraSession::maxDigitalZoom value: " << m_info.iMaxDigitalZoom;
 		return m_info.iMaxDigitalZoom;
 		
@@ -954,24 +971,181 @@ QCamera::FocusModes S60CameraSession::supportedFocusModes()
     return m_advancedSettings->supportedFocusModes();
 }
 
+bool S60CameraSession::isFlashReady()
+{
+    return m_advancedSettings->isFlashReady();
+}
+
 void S60CameraSession::setFlashMode(QCamera::FlashMode mode)
 {
-    m_advancedSettings->setFlashMode(mode);
+    if (m_cameraEngine) {
+        switch(mode) {
+            case QCamera::FlashOff:
+                m_cameraEngine->SetFlash(CCamera::EFlashNone);
+                break;
+            case QCamera::FlashAuto:
+                m_cameraEngine->SetFlash(CCamera::EFlashAuto);
+                break;
+            case QCamera::FlashOn:
+                m_cameraEngine->SetFlash(CCamera::EFlashForced);
+                break;
+            case QCamera::FlashRedEyeReduction:
+                m_cameraEngine->SetFlash(CCamera::EFlashRedEyeReduce);
+                break;
+            case QCamera::FlashFill:
+                m_cameraEngine->SetFlash(CCamera::EFlashFillIn);
+                break;
+            default:
+                break;
+                
+        }          
+    }
+}
+
+QCamera::FlashMode S60CameraSession::flashMode()
+{
+    if (m_cameraEngine) {
+        TInt mode = m_cameraEngine->Flash();
+        switch(mode) {
+            case CCamera::EFlashAuto:
+                return QCamera::FlashAuto;
+            case CCamera::EFlashForced:
+                return QCamera::FlashOn;
+            case CCamera::EFlashRedEyeReduce:
+                return QCamera::FlashRedEyeReduction;
+            case CCamera::EFlashFillIn:
+                return QCamera::FlashFill;
+            default:
+                return QCamera::FlashOff;
+        } 
+    }
+    return QCamera::FlashOff;
 }
 
 QCamera::FlashModes S60CameraSession::supportedFlashModes()
 {
-    return m_advancedSettings->supportedFlashModes();
+    QCamera::FlashModes modes = QCamera::FlashOff;
+    if (m_cameraEngine) {       
+        TInt supportedModes =  m_cameraEngine->SupportedFlashModes();
+        if (supportedModes == 0)
+            return modes;        
+        if (supportedModes & CCamera::EFlashManual) {
+             modes |= QCamera::FlashOff;          
+        }
+        if (supportedModes & CCamera::EFlashForced) {
+             modes |= QCamera::FlashOn;          
+        }
+        if (supportedModes & CCamera::EFlashAuto) {
+             modes |= QCamera::FlashAuto;          
+        }
+        if (supportedModes & CCamera::EFlashFillIn) {
+             modes |= QCamera::FlashFill;          
+        }
+        if (supportedModes & CCamera::EFlashRedEyeReduce) {
+             modes |= QCamera::FlashRedEyeReduction;          
+        }
+    }
+    return modes;
+}
+
+QCamera::ExposureMode S60CameraSession::exposureMode()
+{
+    if (m_cameraEngine) {
+        TInt mode = m_cameraEngine->Exposure();
+        CCamera* camera = m_cameraEngine->Camera();
+        CCamera::TExposure mode2 = camera->Exposure();
+        switch(mode2) {
+            case CCamera::EExposureManual:
+                return QCamera::ExposureManual;
+            case CCamera::EExposureAuto:
+                return QCamera::ExposureAuto;
+            case CCamera::EExposureNight:
+                return QCamera::ExposureNight;
+            case CCamera::EExposureBacklight:
+                return QCamera::ExposureBacklight;
+            case CCamera::EExposureSport:
+                return QCamera::ExposureSports;
+            case CCamera::EExposureSnow:
+                return QCamera::ExposureSnow;
+            case CCamera::EExposureBeach:
+                return QCamera::ExposureBeach;
+            default:
+                return QCamera::ExposureAuto;
+        } 
+    }
+    return QCamera::ExposureAuto;
 }
 
 QCamera::ExposureModes S60CameraSession::supportedExposureModes()
 {
-    return m_advancedSettings->supportedExposureModes();
+    QCamera::ExposureModes modes = QCamera::ExposureAuto;
+    if (m_cameraEngine) { 
+        TInt supportedModes = m_info.iExposureModesSupported;
+        if (supportedModes == 0) {
+            return modes;
+        }
+        if (supportedModes & CCamera::EExposureManual) {
+            modes |= QCamera::ExposureManual;          
+        }
+        if (supportedModes & CCamera::EExposureAuto) {
+            modes |= QCamera::ExposureAuto;          
+        }
+        if (supportedModes & CCamera::EExposureNight) {
+            modes |= QCamera::ExposureNight;          
+        }
+        if (supportedModes & CCamera::EExposureBacklight) {
+            modes |= QCamera::ExposureBacklight;          
+        }
+        if (supportedModes & CCamera::EExposureSport) {
+            modes |= QCamera::ExposureSports;          
+        }
+        if (supportedModes & CCamera::EExposureSnow) {
+            modes |= QCamera::ExposureSnow;          
+        }
+        if (supportedModes & CCamera::EExposureBeach) {
+            modes |= QCamera::ExposureBeach;          
+        }
+    }
+    return modes;
 }
 
 void S60CameraSession::setExposureMode(QCamera::ExposureMode mode)
 {
-    m_advancedSettings->setExposureMode(mode);
+    if (m_cameraEngine) {
+        switch(mode) {
+            case QCamera::ExposureManual:
+                m_cameraEngine->SetExposure(CCamera::EExposureManual);
+                break;
+            case QCamera::ExposureAuto:
+                m_cameraEngine->SetExposure(CCamera::EExposureAuto);
+                break;
+            case QCamera::ExposureNight:
+                m_cameraEngine->SetExposure(CCamera::EExposureNight);
+                break;
+            case QCamera::ExposureBacklight:
+                m_cameraEngine->SetExposure(CCamera::EExposureBacklight);
+                break;
+            case QCamera::ExposureSports:
+                m_cameraEngine->SetExposure(CCamera::EExposureSport);
+                break;
+            case QCamera::ExposureSnow:
+                m_cameraEngine->SetExposure(CCamera::EExposureSnow);
+                break;
+            case QCamera::ExposureBeach:
+                m_cameraEngine->SetExposure(CCamera::EExposureBeach);
+                break;
+            case QCamera::ExposureLargeAperture:
+            case QCamera::ExposureSmallAperture:
+                //TODO: 
+                //m_cameraEngine->SetExposure(CCamera::EExposureAperturePriority);
+                break;
+            case QCamera::ExposurePortrait:
+            case QCamera::ExposureSpotlight:
+            default:
+                // not supported
+                break;
+        }
+    }
 }
 
 void S60CameraSession::setExposureCompensation(qreal ev)
@@ -1039,5 +1213,185 @@ bool S60CameraSession::isExposureLocked()
     return m_advancedSettings->isExposureLocked();
 }
 
+void S60CameraSession::updateVideoCaptureCodecs()
+{
+    QT_TRAP_THROWING(updateVideoCaptureCodecsL());
+}
+
+void S60CameraSession::updateVideoCaptureCodecsL()
+{
+	m_videoControllerMap.clear();
+	
+	// Resolve the supported video format and retrieve a list of controllers
+	CMMFControllerPluginSelectionParameters* pluginParameters =
+		CMMFControllerPluginSelectionParameters::NewLC();
+	CMMFFormatSelectionParameters* format =
+		CMMFFormatSelectionParameters::NewLC();
+
+	// Set the play and record format selection parameters to be blank.
+	// Format support is only retrieved if requested.
+	pluginParameters->SetRequiredPlayFormatSupportL(*format);
+	pluginParameters->SetRequiredRecordFormatSupportL(*format);
+
+	// Set the media ids
+	RArray<TUid> mediaIds;
+	CleanupClosePushL(mediaIds);
+	User::LeaveIfError(mediaIds.Append(KUidMediaTypeVideo));
+	// Get plugins that support at least video
+	pluginParameters->SetMediaIdsL(mediaIds,
+		CMMFPluginSelectionParameters::EAllowOtherMediaIds);
+	pluginParameters->SetPreferredSupplierL(KNullDesC,
+		CMMFPluginSelectionParameters::EPreferredSupplierPluginsFirstInList);
+
+	// Array to hold all the controllers support the match data
+	RMMFControllerImplInfoArray controllers;
+	CleanupResetAndDestroyPushL(controllers);
+	pluginParameters->ListImplementationsL(controllers);
+
+	// Find the first controller with at least one record format available
+	for (TInt index=0; index<controllers.Count(); index++) {
+		const RMMFFormatImplInfoArray& recordFormats = 
+			controllers[index]->RecordFormats();
+		for (TInt j=0; j<recordFormats.Count(); j++) {
+			const CDesC8Array& mimeTypes = recordFormats[j]->SupportedMimeTypes();
+			TInt count = mimeTypes.Count();
+			if (count > 0) {
+				TPtrC8 mimeType = mimeTypes[0];
+				QString type = QString::fromUtf8((char *)mimeType.Ptr(),
+						mimeType.Length()); 
+				VideoControllerData data;
+				data.controllerUid = controllers[index]->Uid().iUid;
+				data.formatUid = recordFormats[j]->Uid().iUid;
+				data.formatDescription = QString::fromUtf16(
+						recordFormats[j]->DisplayName().Ptr(), 
+						recordFormats[j]->DisplayName().Length());
+				m_videoControllerMap[type] = data;
+			}
+		}
+	}
+	
+	CleanupStack::PopAndDestroy(&controllers);
+	CleanupStack::PopAndDestroy(&mediaIds);
+	CleanupStack::PopAndDestroy(format);
+	CleanupStack::PopAndDestroy(pluginParameters);
+
+	// Leave if recording is not supported
+	if(!m_videoControllerMap.keys().count() == 0) {
+		User::Leave(KErrNotSupported);
+	}
+}
+
+QStringList S60CameraSession::supportedVideoCaptureCodecs()
+{
+    return m_videoControllerMap.keys();
+}
+
+bool S60CameraSession::isSupportedVideoCaptureCodec(const QString &codecName)
+{
+    return m_videoControllerMap.keys().contains(codecName);
+}
+
+QString S60CameraSession::videoCaptureCodec()
+{
+    return m_videoCodec;
+}
+void S60CameraSession::setVideoCaptureCodec(const QString &codecName)
+{
+    if (codecName == m_videoCodec)
+        return;
+    
+    m_videoCodec = codecName;
+}
+
+int S60CameraSession::bitrate() const
+{
+    if (m_videoUtility)
+        return m_videoUtility->VideoBitRateL();
+    return 0;
+}
+
+void S60CameraSession::setBitrate(const int &bitrate)
+{
+    if (m_videoUtility)
+        m_videoUtility->SetVideoBitRateL(bitrate);
+    return;
+}
+
+QSize S60CameraSession::videoResolution() const
+{
+    TSize size(0,0);
+    if (m_videoUtility)
+        m_videoUtility->GetVideoFrameSizeL(size);
+    return QSize(size.iWidth, size.iHeight);
+}
+
+void S60CameraSession::setVideoResolution(const QSize &resolution)
+{
+    if (m_videoUtility) {
+        TSize size(resolution.width(), resolution.height());
+        m_videoUtility->SetVideoFrameSizeL(size);
+    }
+
+}
+
+
+
+void S60CameraSession::MvruoOpenComplete(TInt aError)
+{
+    if(aError==KErrNone) {
+        TRAPD(err, m_videoUtility->SetMaxClipSizeL(KMaxClipSize));
+#ifndef PRE_S60_50_PLATFORM
+        TRAP(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
+#endif
+        if(err==KErrNone) {
+            m_videoUtility->Prepare();
+            // TODO:
+            // update recording status
+        }
+    }
+}
+
+void S60CameraSession::MvruoPrepareComplete(TInt aError)
+{
+    if(aError==KErrNone) {
+        m_videoUtility->Record();
+        // TODO:
+        // update recording status
+    }
+	
+}
+
+void S60CameraSession::MvruoRecordComplete(TInt aError)
+{
+    if((aError==KErrNone) || (aError==KErrCompletion)) {
+        m_videoUtility->Stop();
+        m_videoUtility->Close();
+    }
+	
+}
+
+void S60CameraSession::MvruoEvent(const TMMFEvent& aEvent)
+{
+	
+}
+
+void S60CameraSession::HandleEvent(const TECAMEvent& aEvent)
+{
+
+}
+
+void S60CameraSession::ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError)
+{
+    
+}
+
+void S60CameraSession::ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aError)
+{
+    
+}
+void S60CameraSession::VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError)
+{
+
+}
 
 

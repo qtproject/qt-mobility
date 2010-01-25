@@ -59,10 +59,8 @@ public:
     S60CameraSettings(QObject *parent = 0, CCameraEngine *engine = 0);
     ~S60CameraSettings();
     
-    void setFlashMode(QCamera::FlashMode mode);
+    bool isFlashReady();
     void setExposureMode(QCamera::ExposureMode mode);
-    QCamera::ExposureModes supportedExposureModes();
-    QCamera::FlashModes supportedFlashModes();
     void setExposureCompensation(qreal ev);
     qreal exposureCompensation();
     QCamera::MeteringMode meteringMode();
@@ -80,6 +78,15 @@ public:
     void setFocusMode(QCamera::FocusMode mode);
     QCamera::FocusMode focusMode();
     QCamera::FocusModes supportedFocusModes();
+    
+Q_SIGNALS:
+    void exposureLocked();
+    void flashReady(bool ready);
+    void apertureChanged(qreal aperture);
+    void apertureRangeChanged();
+    void shutterSpeedChanged(qreal speed);
+    void isoSensitivityChanged(int iso);
+    
     
 protected: // from MCameraObserver2
     void HandleEvent(const TECAMEvent& aEvent);

@@ -39,86 +39,80 @@
 **
 ****************************************************************************/
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef RECORDER_H
+#define RECORDER_H
 
-#include <QtGui/QWidget>
+#include <experimental/qcamera.h>
+#include <qmediarecorder.h>
+#include <experimental/qstillimagecapture.h>
+#include <qaudiocapturesource.h>
 
-#include <qmediaplayer.h>
-#include <qmediaplaylist.h>
-#include <qvideowidget.h>
-
-#ifdef Q_OS_SYMBIAN
 #include "mediakeysobserver.h"
-#endif
 
 QT_BEGIN_NAMESPACE
-class QAbstractItemView;
-class QLabel;
-class QModelIndex;
-class QSlider;
+namespace Ui {
+    class CameraCapture;
+}
 QT_END_NAMESPACE
 
+
+#include <QMainWindow>
+#include <QDir>
+
 QTM_BEGIN_NAMESPACE
-class QMediaPlayer;
 class QVideoWidget;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class PlaylistModel;
-
-class Player : public QWidget
+class CameraCapture : public QMainWindow
 {
     Q_OBJECT
 public:
-    Player(QWidget *parent = 0);
-    ~Player();
-
-Q_SIGNALS:
-    void fullScreenChanged(bool fullScreen);
+    CameraCapture(QWidget *parent = 0);
+    ~CameraCapture();
 
 private slots:
-    void open();
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 progress);
-    void metaDataChanged();
+    void setCamera(const QByteArray &cameraDevice);
 
-    void seek(int seconds);
-    void jump(const QModelIndex &index);
-    void playlistPositionChanged(int);
+    void toggleCamera();
 
-    void statusChanged(QMediaPlayer::MediaStatus status);
-    void bufferingProgress(int progress);
+    void record();
+    void pause();
+    void stop();
 
-#ifdef Q_OS_SYMBIAN
-    void handleFullScreen(bool isFullscreen);
-    void handleStateChange(QMediaPlayer::State state);
+    void takeImage();
+
+    void settings();
+
+    void displayErrorMessage();
+
+    void updateCameraDevice(QAction*);
+    void updateAudioDevice(QAction*);
+
+    void updateCameraState(QCamera::State);
+    void updateRecorderState(QMediaRecorder::State state);
+
+    void updateRecordTime();
+    void updateAudioDevices();
+
+    void processCapturedImage(const QString& fname, const QImage& img);
+    void focusLocked();
+    void zoomValueChanged(qreal value);
+    
     void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
-    void showPlayList();
-#else
-    void showColorDialog();
-#endif
 
 private:
-    void setTrackInfo(const QString &info);
-    void setStatusInfo(const QString &info);
+    Ui::CameraCapture *ui;
 
-    QMediaPlayer *player;
-    QMediaPlaylist *playlist;
+    QDir outputDir;
+    QCamera *camera;
+    QStillImageCapture *imageCapture;
+    QMediaRecorder* mediaRecorder;
+    QAudioCaptureSource *audioSource;
     QVideoWidget *videoWidget;
-    QLabel *coverLabel;
-    QSlider *slider;
-    PlaylistModel *playlistModel;
-    QAbstractItemView *playlistView;
-    QString trackInfo;
-    QString statusInfo;
-#ifdef Q_OS_SYMBIAN    
+    
     MediaKeysObserver *mediaKeysObserver;
-    QDialog *playlistDialog;
-#else
-    QDialog *colorDialog;
-#endif    
 };
 
 #endif

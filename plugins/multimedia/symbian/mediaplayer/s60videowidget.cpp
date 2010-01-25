@@ -179,5 +179,5 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState)
-        m_widget->show();
+        m_widget->repaint();
 }
