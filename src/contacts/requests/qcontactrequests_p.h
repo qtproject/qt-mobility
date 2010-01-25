@@ -263,6 +263,7 @@ public:
     }
 
     QList<QContactRelationship> m_relationships;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactRelationshipRemoveRequestPrivate : public QContactAbstractRequestPrivate

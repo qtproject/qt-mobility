@@ -65,6 +65,7 @@ public:
 
     /* Results */
     QList<QContactRelationship> relationships() const;
+    QMap<int, QContactManager::Error> errorMap() const;
 
 signals:
     void progress(QContactRelationshipSaveRequest* self); // deprecated

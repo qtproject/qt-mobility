@@ -116,7 +116,7 @@ public slots:
 #endif
 
 signals:
-    void stateChanged(QContactAbstractRequest* self, QContactAbstractRequest::State newState);
+    void stateChanged(QContactAbstractRequest::State newState);
 
 protected:
     QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);
