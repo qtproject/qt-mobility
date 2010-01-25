@@ -90,6 +90,16 @@ QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
     switch(type) {
         case QSystemInfo::Os :
         {
+#if !defined(QT_NO_DBUS)
+            QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+            QString str;
+            if (iface.isValid()) {
+                str = iface.getPropertyString("system.kernel.version");
+                if(!str.isEmpty()) {
+                    return str;
+                }
+            }
+#endif
             QString versionPath = "/proc/version";
             QFile versionFile(versionPath);
             if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {

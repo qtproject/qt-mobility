@@ -114,6 +114,7 @@ QTM_BEGIN_NAMESPACE
 
 static bool halAvailable()
 {
+#if !defined(QT_NO_DBUS)
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
     if (dbusConnection.isConnected()) {
         QDBusConnectionInterface *dbiface = dbusConnection.interface();
@@ -122,8 +123,11 @@ static bool halAvailable()
             return reply.value();
         }
     }
+#endif
+  //  qDebug() << "Hal is not running";
     return false;
 }
+
 
 bool halIsAvailable;
 //////// QSystemInfo
