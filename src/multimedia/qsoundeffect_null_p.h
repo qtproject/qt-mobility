@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMLSOUND_H
-#define QMLSOUND_H
+#ifndef QSOUNDEFFECT_NULL_H
+#define QSOUNDEFFECT_NULL_H
 
 //
 //  W A R N I N G
@@ -55,65 +55,44 @@
 
 
 #include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include <qml.h>
-#include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
-class QMediaPlayer;
-QTM_END_NAMESPACE
+#include <QTime>
 
-class QmlSound : public QObject
+#include <qmediaplayer.h>
+
+#include "qsoundeffect_p.h"
+
+QTM_USE_NAMESPACE
+
+class QSoundEffectPrivate : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(int loopCount READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
-    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
-    Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
-
 public:
-    explicit QmlSound(QObject *parent = 0);
-    ~QmlSound();
+    explicit QSoundEffectPrivate(QObject* parent) { Q_UNUSED(parent) }
+    ~QSoundEffectPrivate() {}
 
-    QUrl source() const;
-    void setSource(const QUrl &url);
+    qint64 duration() const { return 0; }
+    int volume() const { return 0; }
+    bool isMuted() const { return true; }
+    QMediaContent media() const { return QMediaContent(); }
+    QMediaPlayer::State state() const { return QMediaPlayer::StoppedState; }
+    QMediaPlayer::MediaStatus mediaStatus() const { return QMediaPlayer::UnknownMediaStatus; }
 
-    int loopCount() const;
-    void setLoopCount(int loopCount);
+public Q_SLOTS:
+    void play() {}
+    void stop() {}
+    void setVolume(int volume) { Q_UNUSED(volume) }
+    void setMuted(bool muted) { Q_UNUSED(muted) }
+    void setMedia(const QMediaContent &media) { Q_UNUSED(media) }
 
-    int volume() const;
-    void setVolume(int volume);
-
-    bool isMuted() const;
-    void setMuted(bool muted);
-
-    int duration() const;
-
-signals:
-    void sourceChanged();
-    void loopCountChanged();
-    void volumeChanged();
-    void mutedChanged();
-    void durationChanged();
-
-public slots:
-    void play();
-    void stop();
-
-private slots:
-    void repeat();
-
-private:
-    Q_DISABLE_COPY(QmlSound)
-
-    int m_loopCount;
-    int m_volume;
-    bool m_muted;
-    int m_runningCount;
-    QTM_PREPEND_NAMESPACE(QMediaPlayer) *m_player;
+Q_SIGNALS:
+    void mediaChanged(const QMediaContent &media);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void stateChanged(QMediaPlayer::State newState);
+    void durationChanged(qint64 duration);
+    void volumeChanged(int volume);
+    void mutedChanged(bool muted);
+    void error(QMediaPlayer::Error error);
 };
 
-QML_DECLARE_TYPE(QmlSound)
-
-#endif // QMLSOUND_H
+#endif // QSOUNDEFFECT_NULL_H

@@ -18,3 +18,8 @@ HEADERS += dsserviceplugin.h
 SOURCES += dsserviceplugin.cpp
 
 include(camera/camera.pri)
+
+target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+INSTALLS+=target
+
+
