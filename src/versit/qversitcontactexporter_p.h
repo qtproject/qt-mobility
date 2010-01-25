@@ -42,6 +42,17 @@
 #ifndef QVERSITCONTACTEXPORTER_P_H
 #define QVERSITCONTACTEXPORTER_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
@@ -53,17 +64,13 @@ QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
 
-class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate : public QObject
+class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate
 {
-    Q_OBJECT
 public:
     QVersitContactExporterPrivate();
     ~QVersitContactExporterPrivate();
 
     void exportContact(QVersitDocument& versitDocument, const QContact& contact);
-
-signals:
-    void scale(const QString& imageFileName, QByteArray& imageData);
 
 protected:
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
@@ -91,14 +98,13 @@ protected:
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
         const QStringList& subTypes=QStringList());
-    bool encodeEmbeddedContent(const QString& resourcePath,
-        QVersitProperty& property,
-        bool performScaling);
+    bool encodeEmbeddedContent(const QString& resourcePath, QVersitProperty& property);
     void setEscapedValue(QVersitProperty& property,const QString& value);
-    QByteArray escape(const QByteArray& value);
+    QString escape(const QString& value);
 
 public: // Data
-    QList<QContactDetail> mUnknownContactDetails;
+    QVersitContactExporterDetailHandler* mDetailHandler;
+    QVersitResourceHandler* mResourceHandler;
 
 protected: // Data
     QHash<QString,QString> mPropertyMappings;

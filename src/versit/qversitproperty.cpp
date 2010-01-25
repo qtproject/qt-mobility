@@ -44,8 +44,9 @@
 #include "qmobilityglobal.h"
 
 #include <QStringList>
+#include <QTextCodec>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitProperty
@@ -90,6 +91,21 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
     if (this != &other)
         d = other.d;
     return *this;    
+}
+
+/*! Returns true if this is equal to other; false if it is not equal. */
+bool QVersitProperty::operator==(const QVersitProperty& other) const
+{
+    return d->mGroups == other.d->mGroups &&
+            d->mName == other.d->mName &&
+            d->mParameters == other.d->mParameters &&
+            d->mValue == other.d->mValue;
+}
+
+/*! Returns true if this is not equal to other; false if it is equal. */
+bool QVersitProperty::operator!=(const QVersitProperty& other) const
+{
+    return !(*this == other);
 }
 
 /*!
@@ -143,7 +159,7 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
         QList<QString> values = parameters.values(key);
         for (int j=values.count()-1; j >= 0; j--) {
             // Convert all the parameter names and values to upper case
-            addParameter(key,values.at(j));
+            insertParameter(key,values.at(j));
         }
     }
 }
@@ -152,17 +168,29 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
  * Adds a new parameter with \a name and \a value.
  * Both the name and the value are converted to upper-case.
  */
-void QVersitProperty::addParameter(const QString& name, const QString& value)
+void QVersitProperty::insertParameter(const QString& name, const QString& value)
 {
-    d->mParameters.insert(name.toUpper(),value.toUpper());
+    d->mParameters.insert(name.toUpper(), value.toUpper());
 }
 
 /*!
  * Removes a parameter with \a name and \a value.
+ *
+ * \sa removeParameters();
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
-    d->mParameters.remove(name.toUpper(),value.toUpper());
+    d->mParameters.remove(name.toUpper(), value.toUpper());
+}
+
+/*!
+ * Removes all parameters with the given \a name.
+ *
+ * \sa removeParameter()
+ */
+void QVersitProperty::removeParameters(const QString& name)
+{
+    d->mParameters.remove(name.toUpper());
 }
 
 /*!
@@ -177,34 +205,63 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
 /*!
  * Sets the \a value of the property.
  */
-void QVersitProperty::setValue(const QByteArray& value)
+void QVersitProperty::setValue(const QVariant& value)
 {
+    if (value.type() == QVariant::ByteArray) {
+        // setValue(QByteArray) has been replaced with setValue(QVariant).
+        // XXX remove this when removing deprecated functions.
+        qWarning("QVersitProperty::setValue() called with a QByteArray.  This should only happen if the data is of binary nature (eg. an image).  If this was called with textual data, a QString should be passed in instead.");
+    }
     d->mValue = value;
 }
 
 /*!
  * Returns the value of the property.
  */
-QByteArray QVersitProperty::value() const
+QVariant QVersitProperty::variantValue() const
 {
     return d->mValue;
 }
 
 /*!
- * Sets the embedded \a document of the property
+ * Returns the value of the property as a string if possible, otherwise
+ * return an empty string.
+ * \sa QVariant::toString()
  */
-void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
+QString QVersitProperty::value() const
 {
-    d->mDocument = document;
+    if (d->mValue.type() == QVariant::ByteArray) {
+        if (d->mParameters.contains(QLatin1String("CHARSET"))) {
+            QTextCodec* codec = QTextCodec::codecForName(
+                    d->mParameters.value(QLatin1String("CHARSET")).toAscii());
+            if (codec != NULL) {
+                return codec->toUnicode(d->mValue.toByteArray());
+            }
+        }
+        return QString();
+    } else {
+        return d->mValue.toString();
+    }
 }
 
 /*!
- * Returns the embedded document of the property.
- * If the embedded document has not been set, an empty document is returned.
+ * Returns true if the property is empty.
  */
-QVersitDocument QVersitProperty::embeddedDocument() const
+bool QVersitProperty::isEmpty() const
 {
-    return d->mDocument;
+    return d->mGroups.isEmpty()
+            && d->mName.isEmpty()
+            && d->mParameters.isEmpty()
+            && !d->mValue.isValid();
 }
 
-QTM_END_NAMESPACE
+/*!
+ * Clears the contents of this property.
+ */
+void QVersitProperty::clear()
+{
+    d->mGroups.clear();
+    d->mName.clear();
+    d->mValue.clear();
+    d->mParameters.clear();
+}

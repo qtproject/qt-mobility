@@ -132,6 +132,7 @@ a
 ./tst_qcontactrelationship
 ./tst_qvcard21writer
 ./tst_qvcard30writer
+./tst_qversit
 ./tst_qversitcontactexporter
 ./tst_qversitcontactimporter
 ./tst_qversitdocument

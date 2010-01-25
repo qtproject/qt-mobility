@@ -39,8 +39,9 @@
 **
 ****************************************************************************/
 
+#include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
-#include "qversitdefs.h"
+#include "qversitdefs_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
@@ -65,22 +66,22 @@
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
 
-#include <QFile>
 #include <QUrl>
 #include <QBuffer>
-#include <QImageWriter>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
  * Constructor.
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
-    mVersitType(QVersitDocument::VCard21)
+    mDetailHandler(NULL),
+    mResourceHandler(NULL),
+    mVersitType(QVersitDocument::InvalidType)
 {
     // Detail mappings
     int versitPropertyCount =
-        sizeof(versitContactDetailMappings)/sizeof(versitContactDetailMapping);
+        sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
         QString contactDetailName =
             QString::fromAscii(versitContactDetailMappings[i].contactDetailDefinitionName);
@@ -90,7 +91,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     }
 
     // Contexts mappings
-    int contextCount = sizeof(versitContextMappings)/sizeof(versitMapping);
+    int contextCount = sizeof(versitContextMappings)/sizeof(VersitMapping);
     for (int i=0; i < contextCount; i++) {
         mParameterMappings.insert(
             QString::fromAscii(versitContextMappings[i].contactString),
@@ -98,7 +99,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     }
 
     // Subtypes mappings
-    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
+    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(VersitMapping);
     for (int i=0; i < subTypeCount; i++) {
         mParameterMappings.insert(
             QString::fromAscii(versitSubTypeMappings[i].contactString),
@@ -106,7 +107,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     }
 
     // File extension mappings
-    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(versitMapping);
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
     for (int i=0; i < fileExtensionCount; i++) {
         mParameterMappings.insert(
             QString::fromAscii(versitFileExtensionMappings[i].contactString),
@@ -129,14 +130,19 @@ void QVersitContactExporterPrivate::exportContact(
     QVersitDocument& versitDocument,
     const QContact& contact)
 {
-    mUnknownContactDetails.clear();
-    mVersitType = versitDocument.versitType();
+    mVersitType = versitDocument.type();
     QList<QContactDetail> allDetails = contact.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
+
+        // If the custom detail handler handles it, we don't have to.
+        if (mDetailHandler && mDetailHandler->preProcessDetail(detail, &versitDocument))
+            continue;
+
         QVersitProperty property;
         property.setName(mPropertyMappings.value(detail.definitionName()));
         bool addProperty = true;
+        bool unknown = false;
 
         if (detail.definitionName() == QContactName::DefinitionName) {
             encodeName(property, detail);
@@ -164,7 +170,7 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactAvatar::DefinitionName){
             addProperty = encodeAvatar(property, detail);
             if (!addProperty)
-                mUnknownContactDetails.append(detail);
+                unknown = true;
         } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
             encodeAnniversary(property, detail);
         } else if (detail.definitionName() == QContactNickname::DefinitionName) {
@@ -175,20 +181,23 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
             addProperty = encodeOnlineAccount(property, detail);
             if (!addProperty)
-                mUnknownContactDetails.append(detail);
+                unknown = true;
         } else if (detail.definitionName() == QContactFamily::DefinitionName) {
             addProperty = encodeFamily(versitDocument, detail);
         } else if (detail.definitionName() == QContactDisplayLabel::DefinitionName) {
             addProperty = encodeDisplayLabel(property, detail, contact);
             if (!addProperty)
-                mUnknownContactDetails.append(detail);
+                unknown = true;
         } else {
             addProperty = false;
-            mUnknownContactDetails.append(detail);
+            unknown = true;
         }
 
         if (addProperty)
             versitDocument.addProperty(property);
+
+        if (mDetailHandler)
+            mDetailHandler->postProcessDetail(detail, !unknown, &versitDocument);
     }
 }
 
@@ -200,12 +209,12 @@ void QVersitContactExporterPrivate::encodeName(
     const QContactDetail& detail)
 {   
     QContactName contactName = static_cast<QContactName>(detail);
-    QByteArray value =
-        escape(contactName.last().toAscii()) + ';' +
-        escape(contactName.first().toAscii()) + ';' +
-        escape(contactName.middle().toAscii()) + ';' +
-        escape(contactName.prefix().toAscii()) + ';' +
-        escape(contactName.suffix().toAscii());
+    QString value =
+        escape(contactName.last()) + QChar::fromAscii(';') +
+        escape(contactName.first()) + QChar::fromAscii(';') +
+        escape(contactName.middle()) + QChar::fromAscii(';') +
+        escape(contactName.prefix()) + QChar::fromAscii(';') +
+        escape(contactName.suffix());
     property.setValue(value);
 }
 
@@ -242,14 +251,14 @@ void QVersitContactExporterPrivate::encodeAddress(
 {
     QContactAddress address = static_cast<QContactAddress>(detail);
     encodeParameters(property, address.contexts(), address.subTypes());
-    QByteArray value =
-        escape(address.postOfficeBox().toAscii()) + ';' +
-        ';' + // Extended address
-        escape(address.street().toAscii()) + ';' +
-        escape(address.locality().toAscii()) + ';' +
-        escape(address.region().toAscii()) + ';' +
-        escape(address.postcode().toAscii()) + ';' +
-        escape(address.country().toAscii());
+    QString value =
+        escape(address.postOfficeBox()) + QChar::fromAscii(';') +
+        QChar::fromAscii(';') + // Extended address
+        escape(address.street()) + QChar::fromAscii(';') +
+        escape(address.locality()) + QChar::fromAscii(';') +
+        escape(address.region()) + QChar::fromAscii(';') +
+        escape(address.postcode()) + QChar::fromAscii(';') +
+        escape(address.country());
     property.setValue(value);
 }
 
@@ -264,7 +273,7 @@ void QVersitContactExporterPrivate::encodeUrl(
     encodeParameters(property, contactUrl.contexts());
     // The vCard specifications do not define any TYPEs for URL property.
     // No need to try to convert the subtypes to TYPEs.
-    property.setValue(contactUrl.url().toAscii());
+    property.setValue(contactUrl.url());
 }
 
 /*!
@@ -308,7 +317,7 @@ bool QVersitContactExporterPrivate::encodeRev(
             value = rev.created().toString(Qt::ISODate);
         }
     }
-    property.setValue(value.toAscii());
+    property.setValue(value);
 
     return encoded;
 }
@@ -322,7 +331,7 @@ void QVersitContactExporterPrivate::encodeBirthDay(
 {
     QContactBirthday bday = static_cast<QContactBirthday>(detail);
     QString value = bday.date().toString(Qt::ISODate);
-    property.setValue(value.toAscii());
+    property.setValue(value);
 }
 
 /*!
@@ -344,11 +353,9 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
     const QContactDetail& detail)
 {
     QContactGeolocation geoLocation = static_cast<QContactGeolocation>(detail);
-    QByteArray longitude;
-    QByteArray latitude;
-    QByteArray value =
-        longitude.setNum(geoLocation.longitude()) + ',' +
-        latitude.setNum(geoLocation.latitude());
+    QString value =
+        QString::number(geoLocation.longitude()) + QChar::fromAscii(',') +
+        QString::number(geoLocation.latitude());
     property.setValue(value);
 }
 
@@ -369,20 +376,20 @@ void QVersitContactExporterPrivate::encodeOrganization(
     if (organization.name().length() > 0 || organization.department().size() > 0) {
         QVersitProperty property;
         property.setName(QString::fromAscii("ORG"));
-        QByteArray value = escape(organization.name().toAscii());
+        QString value = escape(organization.name());
         QStringList departments(organization.department());
         if (departments.count() == 0)
-            value += ";";
+            value += QString::fromAscii(";");
         foreach (QString department, departments) {
-            value += ";";
-            value += escape(department.toAscii());
+            value += QString::fromAscii(";");
+            value += escape(department);
         }
         property.setValue(value);
         document.addProperty(property);
     }
     if (organization.logo().length() > 0) {
         QVersitProperty property;
-        if (encodeEmbeddedContent(organization.logo(), property, true)) {
+        if (encodeEmbeddedContent(organization.logo(), property)) {
             property.setName(QString::fromAscii("LOGO"));
             document.addProperty(property);
         }
@@ -410,11 +417,9 @@ bool QVersitContactExporterPrivate::encodeAvatar(
     const QContactDetail& detail)
 {
     QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
-    bool scalingAllowed = false;
     bool encoded = false;
     QString propertyName;
     if (contactAvatar.subType() == QContactAvatar::SubTypeImage) {
-        scalingAllowed = true;
         propertyName = QString::fromAscii("PHOTO");
     } else if (contactAvatar.subType() == QContactAvatar::SubTypeAudioRingtone) {
         propertyName = QString::fromAscii("SOUND");
@@ -422,7 +427,7 @@ bool QVersitContactExporterPrivate::encodeAvatar(
         // NOP
     }
     if (propertyName.length() > 0) {
-        encoded = encodeEmbeddedContent(contactAvatar.avatar(), property, scalingAllowed);
+        encoded = encodeEmbeddedContent(contactAvatar.avatar(), property);
         if (encoded)
             property.setName(propertyName);
     }
@@ -458,10 +463,10 @@ void QVersitContactExporterPrivate::encodeNickname(
             found = true;
         }
     }
-    QByteArray value(property.value());
+    QString value(property.value());
     if (found)
-        value += ',';
-    QByteArray nickname = escape(nicknameDetail.nickname().toAscii());
+        value += QChar::fromAscii(',');
+    QString nickname = escape(nicknameDetail.nickname());
     value.append(nickname);
     property.setValue(value);
     // Replace the current property
@@ -477,7 +482,7 @@ void QVersitContactExporterPrivate::encodeAnniversary(
     const QContactDetail& detail)
 {
     QContactAnniversary anniversary = static_cast<QContactAnniversary>(detail);
-    property.setValue(anniversary.originalDate().toString(Qt::ISODate).toAscii());
+    property.setValue(anniversary.originalDate().toString(Qt::ISODate));
 }
 
 /*!
@@ -554,11 +559,11 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
                 break;
         }
         QContactName name = static_cast<QContactName>(contactDetail);
-        QByteArray value;
+        QString value;
         if (name.customLabel().length()) {
-            value = name.customLabel().toAscii();
+            value = name.customLabel();
         } else {
-            value = name.first().toAscii() + ' ' + name.last().toAscii();
+            value = name.first() + QChar::fromAscii(' ') + name.last();
         }
         if (name.customLabel().length() ||
             name.first().length() ||
@@ -579,7 +584,7 @@ bool QVersitContactExporterPrivate::isValidRemoteUrl(
     QUrl remoteResource(resourceIdentifier);
     if ((!remoteResource.scheme().isEmpty() &&
          !remoteResource.host().isEmpty()) ||
-         resourceIdentifier.contains(QString::fromAscii("www."),Qt::CaseInsensitive))
+        resourceIdentifier.contains(QString::fromAscii("www."), Qt::CaseInsensitive))
         return true;
     return false;
 }
@@ -600,7 +605,7 @@ void QVersitContactExporterPrivate::encodeParameters(
         if (mappedValue.length() > 0) {
             // QVersitProperty::addParameter inserts into beginning.
             // This is why the last value is taken from the list
-            property.addParameter(QString::fromAscii("TYPE"),mappedValue);
+            property.insertParameter(QString::fromAscii("TYPE"),mappedValue);
         }
     }
 }
@@ -608,10 +613,8 @@ void QVersitContactExporterPrivate::encodeParameters(
 /*!
  * Encode embedded content into the Versit Document
  */
-bool QVersitContactExporterPrivate::encodeEmbeddedContent(
-    const QString& resourcePath,
-    QVersitProperty& property,
-    bool performScaling)
+bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourcePath,
+                                                          QVersitProperty& property)
 {
     bool encodeContent = false;
     QString resourceExt = resourcePath.section(QString::fromAscii("."), -1).toUpper();
@@ -621,27 +624,21 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(
         resourceFormat = resourceExt;
 
     if (resourceFormat.length() > 0) {
-        QByteArray value;
-        QFile resourceFile(resourcePath);
-        if ( resourceFile.open(QIODevice::ReadOnly)) {
+        QVariant value;
+        QByteArray imageData;
+        QString mimeType;
+        if (isValidRemoteUrl( resourcePath )) {
             encodeContent = true;
-            if (performScaling)
-                emit scale(resourcePath,value);
-            if (value.length() == 0)
-                value = resourceFile.readAll(); // Image not scaled
-            value = value.toBase64();
-            property.addParameter(
-                QString::fromAscii("ENCODING"),
-                QString::fromAscii("BASE64"));
-            property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
-        }
-        else if (isValidRemoteUrl( resourcePath )) {
-            encodeContent = true;
-            value = resourcePath.toAscii();
-            property.addParameter(
+            value.setValue(resourcePath);
+            property.insertParameter(
                 QString::fromAscii("VALUE"),
                 QString::fromAscii("URL"));
-            property.addParameter(QString::fromAscii("TYPE"),resourceFormat);
+            property.insertParameter(QString::fromAscii("TYPE"),resourceFormat);
+        } else if (mResourceHandler
+                   && mResourceHandler->loadResource(resourcePath, &imageData, &mimeType)) {
+            value.setValue(imageData);
+            property.insertParameter(QString::fromAscii("TYPE"),resourceFormat);
+            encodeContent = true;
         } else {
             // The file has been removed. Don't encode the path to a local file.
         }
@@ -657,7 +654,7 @@ void QVersitContactExporterPrivate::setEscapedValue(
     QVersitProperty& property,
     const QString& value)
 {
-    QByteArray escapedValue(escape(value.toAscii()));
+    QString escapedValue(escape(value));
     property.setValue(escapedValue);
 }
 
@@ -667,15 +664,11 @@ void QVersitContactExporterPrivate::setEscapedValue(
  * Starting from 3.0 the property values having certain special
  * characters should be escaped.
  */
-QByteArray QVersitContactExporterPrivate::escape(const QByteArray& value)
+QString QVersitContactExporterPrivate::escape(const QString& value)
 {
-    QByteArray escaped(value);
-    if (mVersitType != QVersitDocument::VCard21) {
+    QString escaped(value);
+    if (mVersitType != QVersitDocument::VCard21Type) {
         VersitUtils::backSlashEscape(escaped);
     }
     return escaped;
 }
-
-#include "moc_qversitcontactexporter_p.cpp"
-
-QTM_END_NAMESPACE
