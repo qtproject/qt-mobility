@@ -75,7 +75,9 @@ struct VideoControllerData
 };
 
 class S60CameraSession : public QObject, 
-    public MCameraEngineObserver, public MVideoRecorderUtilityObserver
+    public MCameraEngineObserver, 
+    public MVideoRecorderUtilityObserver,
+    public MCameraObserver2
 {
     Q_OBJECT
 public:
@@ -106,16 +108,12 @@ public:
     void setHue(int h);
     int sharpness() const;
     void setSharpness(int s);
-    int zoom() const;
-    void setZoom(int z);
     bool backlightCompensation() const;
     void setBacklightCompensation(bool);
     int whitelevel() const;
     void setWhitelevel(int w);
     int rotation() const;
     void setRotation(int r);
-    bool flash() const;
-    void setFlash(bool f);
     bool autofocus() const;
     void setAutofocus(bool f);
 
@@ -189,10 +187,13 @@ public:
     QCamera::FocusModes supportedFocusModes();
     
     //cameraexposurecontrol
+    bool isFlashReady();
     void setFlashMode(QCamera::FlashMode mode);
     void setExposureMode(QCamera::ExposureMode mode);
+    QCamera::ExposureMode exposureMode();
     QCamera::ExposureModes supportedExposureModes();
     QCamera::FlashModes supportedFlashModes();
+    QCamera::FlashMode flashMode();
     void setExposureCompensation(qreal ev);
     qreal exposureCompensation();
     QCamera::MeteringMode meteringMode();
@@ -228,6 +229,12 @@ private:
    	void MvruoPrepareComplete(TInt aError);
    	void MvruoRecordComplete(TInt aError);
    	void MvruoEvent(const TMMFEvent& aEvent);
+   	
+protected: // from MCameraObserver2
+    void HandleEvent(const TECAMEvent& aEvent);
+    void ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError);
+    void ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aError); 
+    void VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError);
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -246,8 +253,6 @@ Q_SIGNALS:
     void apertureRangeChanged();
     void shutterSpeedChanged(qreal speed);
     void isoSensitivityChanged(int iso);
-
-   
 
 private Q_SLOTS:
     void captureFrame();

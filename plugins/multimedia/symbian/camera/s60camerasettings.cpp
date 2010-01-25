@@ -55,11 +55,15 @@ S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine)
     : QObject(parent)
 {   
     m_cameraEngine = engine;
+    queryAdvancedSettingsInfo();
 }
 
 S60CameraSettings::~S60CameraSettings()
 {
-	
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    delete m_advancedSettings;
+    m_advancedSettings = NULL;
+#endif
 }
 
 /*
@@ -70,7 +74,7 @@ S60CameraSettings::~S60CameraSettings()
 bool S60CameraSettings::queryAdvancedSettingsInfo()
 {
     bool returnValue = false;
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (m_cameraEngine) {
         m_advancedSettings = NULL;
         m_advancedSettings = m_cameraEngine->AdvancedSettings();
@@ -83,8 +87,8 @@ bool S60CameraSettings::queryAdvancedSettingsInfo()
 
 void S60CameraSettings::setFocusMode(QCamera::FocusMode mode)
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
-    if (queryAdvancedSettingsInfo()) {
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    if (m_advancedSettings) {
         switch(mode) {
             case QCamera::ManualFocus: // Manual focus mode
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
@@ -113,8 +117,8 @@ void S60CameraSettings::setFocusMode(QCamera::FocusMode mode)
 
 QCamera::FocusMode S60CameraSettings::focusMode()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
-    if (queryAdvancedSettingsInfo()) {
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    if (m_advancedSettings) {
         CCamera::CCameraAdvancedSettings::TFocusMode mode = m_advancedSettings->FocusMode();
         switch(mode) {
             case CCamera::CCameraAdvancedSettings::EFocusModeManual:
@@ -132,11 +136,11 @@ QCamera::FocusMode S60CameraSettings::focusMode()
 
 QCamera::FocusModes S60CameraSettings::supportedFocusModes()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     TInt supportedModes = 0;
     TInt autoFocusTypes = 0;
     QCamera::FocusModes modes = QCamera::AutoFocus;
-    if (queryAdvancedSettingsInfo()) {
+    if (m_advancedSettings) {
         supportedModes = m_advancedSettings->SupportedFocusModes();     
         autoFocusTypes = m_advancedSettings->SupportedAutoFocusTypes();
         if (supportedModes == 0)
@@ -158,12 +162,15 @@ QCamera::FocusModes S60CameraSettings::supportedFocusModes()
 // from MCameraObserver2
 void S60CameraSettings::HandleEvent(const TECAMEvent& aEvent)
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (aEvent.iEventType == KUidECamEventCameraSettingExposureLock) {
         emit exposureLocked();
     }
     else if (aEvent.iEventType == KUidECamEventCameraSettingAperture) {
 
+    }    
+    else if (aEvent.iEventType == KUidECamEventCameraSettingExposureCompensation) {
+    
     }
 
 #else
@@ -182,159 +189,29 @@ void S60CameraSettings::ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aErro
 }
 void S60CameraSettings::VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError)
 {
-    
+
 }
 
-void S60CameraSettings::setFlashMode(QCamera::FlashMode mode)
+bool S60CameraSettings::isFlashReady()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    TBool ready = false;
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
-        switch(mode) {
-            case QCamera::FlashOff:
-                m_advancedSettings->SetFlashMode(CCamera::EFlashNone);
-                break;
-            case QCamera::FlashAuto:
-                m_advancedSettings->SetFlashMode(CCamera::EFlashAuto);
-                break;
-            case QCamera::FlashOn:
-                m_advancedSettings->SetFlashMode(CCamera::EFlashForced);
-                break;
-            case QCamera::FlashRedEyeReduction:
-                m_advancedSettings->SetFlashMode(CCamera::EFlashRedEyeReduce);
-                break;
-            case QCamera::FlashFill:
-                m_advancedSettings->SetFlashMode(CCamera::EFlashFillIn);
-                break;
-            default:
-                break;
-                
-        }       
-    }
+        int i = m_advancedSettings->IsFlashReady(ready);
+        if (i == KErrNotSupported) {
+            // TODO: error flash not supported
+            return false;
+        }
+    } 
 #else
     // TODO:
 #endif
-}
-
-QCamera::FlashModes S60CameraSettings::supportedFlashModes()
-{
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
-    TInt supportedModes = 0;
-    QCamera::FlashModes modes = QCamera::FlashOff;
-    if (queryAdvancedSettingsInfo()) {
-        supportedModes = m_advancedSettings->SupportedFlashModes();            
-        if (supportedModes == 0)
-            return modes;
-        if (supportedModes & CCamera::EFlashManual) {
-             modes |= QCamera::FlashOff;          
-        }
-        if (supportedModes & CCamera::EFlashForced) {
-             modes |= QCamera::FlashOn;          
-        }
-        if (supportedModes & CCamera::EFlashAuto) {
-             modes |= QCamera::FlashAuto;          
-        }
-        if (supportedModes & CCamera::EFlashFillIn) {
-             modes |= QCamera::FlashFill;          
-        }
-        if (supportedModes & CCamera::EFlashRedEyeReduce) {
-             modes |= QCamera::FlashRedEyeReduction;          
-        }
-    }
-    return modes;
-#else
-    // TODO:
-#endif
-}
-
-QCamera::ExposureModes S60CameraSettings::supportedExposureModes()
-{
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
-    TInt supportedModes = 0;
-    QCamera::ExposureModes modes = QCamera::ExposureAuto;
-    
-    if (queryAdvancedSettingsInfo()) {
-        supportedModes = m_advancedSettings->SupportedExposureModes();            
-        if (supportedModes == 0)
-            return modes;
-        if (supportedModes & CCamera::EExposureManual) {
-             modes |= QCamera::ExposureManual;          
-        }
-        if (supportedModes & CCamera::EExposureAuto) {
-             modes |= QCamera::ExposureAuto;          
-        }
-        if (supportedModes & CCamera::EExposureNight) {
-             modes |= QCamera::ExposureNight;          
-        }
-        if (supportedModes & CCamera::EExposureBacklight) {
-             modes |= QCamera::ExposureBacklight;          
-        }
-        if (supportedModes & CCamera::EExposureSport) {
-             modes |= QCamera::ExposureSports;          
-        }
-        if (supportedModes & CCamera::EExposureSnow) {
-             modes |= QCamera::ExposureSnow;          
-        }
-        if (supportedModes & CCamera::EExposureBeach) {
-             modes |= QCamera::ExposureBeach;          
-        }
-        if (supportedModes & CCamera::EExposureSport) {
-             modes |= QCamera::ExposureSports;          
-        }
-        
-        // spotlight, large aperture, small aperture, portrait ?
-    }
-    return modes;
-#else
-    // TODO:
-#endif
-}
-
-void S60CameraSettings::setExposureMode(QCamera::ExposureMode mode)
-{
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
-    if (queryAdvancedSettingsInfo()) {
-        switch(mode) {
-            case QCamera::ExposureManual:
-                m_advancedSettings->SetExposureMode(CCamera::EExposureManual);
-                break;
-            case QCamera::ExposureAuto:
-                m_advancedSettings->SetExposureMode(CCamera::EExposureAuto);
-                break;
-            case QCamera::ExposureNight:
-                m_advancedSettings->SetExposureMode(CCamera::EExposureNight);
-                break;
-            case QCamera::ExposureBacklight:
-                m_advancedSettings->SetExposureMode(CCamera::EExposureBacklight);
-                break;
-            case QCamera::ExposureSports:
-                m_advancedSettings->SetExposureMode(CCamera::EExposureSport);
-                break;
-            case QCamera::ExposureSnow:
-                m_advancedSettings->SetExposureMode(CCamera::EExposureSnow);
-                break;
-            case QCamera::ExposureBeach:
-                m_advancedSettings->SetExposureMode(CCamera::EExposureBeach);
-                break;
-            case QCamera::ExposureLargeAperture:
-            case QCamera::ExposureSmallAperture:
-                //TODO: 
-                //m_advancedSettings->SetExposureMode(CCamera::EExposureAperturePriority);
-                break;
-            case QCamera::ExposurePortrait:
-            case QCamera::ExposureSpotlight:
-            default:
-                // not supported
-                break;
-        }
-    }
-#else
-    // TODO:
-#endif
+    return ready;
 }
 
 void S60CameraSettings::setExposureCompensation(qreal ev)
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         m_advancedSettings->SetExposureCompensation(ev);
     }
@@ -345,7 +222,7 @@ void S60CameraSettings::setExposureCompensation(qreal ev)
 
 qreal S60CameraSettings::exposureCompensation()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         m_advancedSettings->ExposureCompensation();
     } else {
@@ -358,7 +235,7 @@ qreal S60CameraSettings::exposureCompensation()
 
 QCamera::MeteringMode S60CameraSettings::meteringMode()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         CCamera::CCameraAdvancedSettings::TMeteringMode mode = m_advancedSettings->MeteringMode();
         switch(mode) {
@@ -382,7 +259,7 @@ QCamera::MeteringMode S60CameraSettings::meteringMode()
 
 void S60CameraSettings::setMeteringMode(QCamera::MeteringMode mode)
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         switch(mode) {
             case QCamera::MeteringAverage:
@@ -405,7 +282,7 @@ void S60CameraSettings::setMeteringMode(QCamera::MeteringMode mode)
 
 QCamera::MeteringModes S60CameraSettings::supportedMeteringModes()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     TInt supportedModes = 0;
     QCamera::MeteringModes modes = QCamera::MeteringAverage;    
     if (queryAdvancedSettingsInfo()) {
@@ -430,7 +307,7 @@ QCamera::MeteringModes S60CameraSettings::supportedMeteringModes()
 
 int S60CameraSettings::isoSensitivity()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         return m_advancedSettings->IsoRate();
     } else {
@@ -443,7 +320,7 @@ int S60CameraSettings::isoSensitivity()
 
 QList<int> S60CameraSettings::supportedIsoSensitivities()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     QList<int> isoSentitivities;
     if (queryAdvancedSettingsInfo()) {
         RArray<TInt> supportedIsoRates;
@@ -462,7 +339,7 @@ QList<int> S60CameraSettings::supportedIsoSensitivities()
 
 void S60CameraSettings::setManualIsoSensitivity(int iso)
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         m_advancedSettings->SetIsoRate(iso);
     }
@@ -473,7 +350,7 @@ void S60CameraSettings::setManualIsoSensitivity(int iso)
 
 qreal S60CameraSettings::aperture()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         return m_advancedSettings->Aperture();
     } else { 
@@ -491,7 +368,7 @@ QList<qreal> S60CameraSettings::supportedApertures(bool *continuous)
 
 void S60CameraSettings::setManualAperture(qreal aperture)
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         m_advancedSettings->SetAperture(aperture);
     }
@@ -502,7 +379,7 @@ void S60CameraSettings::setManualAperture(qreal aperture)
 
 void S60CameraSettings::lockExposure(bool lock)
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
             m_advancedSettings->SetExposureLockOn(lock);
         }
@@ -513,7 +390,7 @@ void S60CameraSettings::lockExposure(bool lock)
 
 bool S60CameraSettings::isExposureLocked()
 {
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (queryAdvancedSettingsInfo()) {
         return m_advancedSettings->ExposureLockOn();
     } else {
