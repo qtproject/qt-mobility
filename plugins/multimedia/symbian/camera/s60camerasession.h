@@ -175,6 +175,11 @@ public:
     void updateVideoCaptureCodecs();
     QString videoCaptureCodec();
     void setVideoCaptureCodec(const QString &codecName);
+    bool isSupportedVideoCaptureCodec(const QString &codecName);
+    int bitrate() const;
+    void setBitrate(const int &bitrate);
+    QSize videoResolution() const;
+    void setVideoResolution(const QSize &resolution);
     
     //camerafocuscontrol
     void startFocus();
@@ -228,6 +233,8 @@ private:
    	void MvruoPrepareComplete(TInt aError);
    	void MvruoRecordComplete(TInt aError);
    	void MvruoEvent(const TMMFEvent& aEvent);
+   	
+   	void updateVideoCaptureCodecsL();
     
 Q_SIGNALS:
     void stateChanged(QCamera::State);

@@ -101,7 +101,10 @@ void S60CameraSession::resetCamera()
     Q_CHECK_PTR(m_cameraEngine);
     m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
     
-    m_videoUtility = CVideoRecorderUtility::NewL(*this);
+    QT_TRAP_THROWING(m_videoUtility = CVideoRecorderUtility::NewL(*this));
+    Q_CHECK_PTR(m_videoUtility);
+    
+    updateVideoCaptureCodecs();
 }
 
 void S60CameraSession::startCamera()
@@ -171,13 +174,15 @@ bool S60CameraSession::deviceReady()
 
 int S60CameraSession::framerate() const
 {
+    if (m_videoUtility)
+        return m_videoUtility->VideoFrameRateL();
     return -1;
 }
 
 void S60CameraSession::setFrameRate(int rate)
 {
-    Q_UNUSED(rate)
-    
+    if (m_videoUtility)
+        m_videoUtility->SetVideoFrameRateL(rate);
 }
 
 int S60CameraSession::brightness() const
@@ -387,7 +392,7 @@ void S60CameraSession::startRecording()
     TUid controllerUid(TUid::Uid(m_videoControllerMap[m_videoCodec].controllerUid));
     TUid formatUid(TUid::Uid(m_videoControllerMap[m_videoCodec].formatUid));
     
-    m_videoUtility->OpenFileL(sink, cameraHandle, controllerUid, formatUid);
+    QT_TRAP_THROWING(m_videoUtility->OpenFileL(sink, cameraHandle, controllerUid, formatUid));
 }
 
 void S60CameraSession::pauseRecording()
@@ -1041,6 +1046,11 @@ bool S60CameraSession::isExposureLocked()
 
 void S60CameraSession::updateVideoCaptureCodecs()
 {
+    QT_TRAP_THROWING(updateVideoCaptureCodecsL());
+}
+
+void S60CameraSession::updateVideoCaptureCodecsL()
+{
 	m_videoControllerMap.clear();
 	
 	// Resolve the supported video format and retrieve a list of controllers
@@ -1107,6 +1117,11 @@ QStringList S60CameraSession::supportedVideoCaptureCodecs()
     return m_videoControllerMap.keys();
 }
 
+bool S60CameraSession::isSupportedVideoCaptureCodec(const QString &codecName)
+{
+    return m_videoControllerMap.keys().contains(codecName);
+}
+
 QString S60CameraSession::videoCaptureCodec()
 {
     return m_videoCodec;
@@ -1119,10 +1134,44 @@ void S60CameraSession::setVideoCaptureCodec(const QString &codecName)
     m_videoCodec = codecName;
 }
 
+int S60CameraSession::bitrate() const
+{
+    if (m_videoUtility)
+        return m_videoUtility->VideoBitRateL();
+    return 0;
+}
+
+void S60CameraSession::setBitrate(const int &bitrate)
+{
+    if (m_videoUtility)
+        m_videoUtility->SetVideoBitRateL(bitrate);
+    return;
+}
+
+QSize S60CameraSession::videoResolution() const
+{
+    TSize size(0,0);
+    if (m_videoUtility)
+        m_videoUtility->GetVideoFrameSizeL(size);
+    return QSize(size.iWidth, size.iHeight);
+}
+
+void S60CameraSession::setVideoResolution(const QSize &resolution)
+{
+    if (m_videoUtility) {
+        TSize size(resolution.width(), resolution.height());
+        m_videoUtility->SetVideoFrameSizeL(size);
+    }
+
+}
+
+
+
 void S60CameraSession::MvruoOpenComplete(TInt aError)
 {
     if(aError==KErrNone) {
-        TRAPD(err, m_videoUtility->SetMaxClipSizeL(KMaxClipSize));
+        TRAPD(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
+        TRAP(err, m_videoUtility->SetMaxClipSizeL(KMaxClipSize));
         if(err==KErrNone) {
             m_videoUtility->Prepare();
             // TODO:
