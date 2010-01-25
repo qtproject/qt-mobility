@@ -100,7 +100,7 @@ protected:
     {
         if (m_media->m_state == QMediaPlayer::PlayingState)
             emit m_media->positionChanged();
-        if (m_media->m_status == QmlMedia::Buffering || QmlMedia::Stalled)
+        if (m_media->m_status == QMediaPlayer::BufferingMedia || QMediaPlayer::StalledMedia)
             emit m_media->bufferStatusChanged();
     }
 
@@ -173,11 +173,17 @@ QmlMediaBase::QmlMediaBase()
 
 QmlMediaBase::~QmlMediaBase()
 {
+}
+
+void QmlMediaBase::shutdown()
+{
     delete m_metaObject;
-    delete m_animation;
 
     if (m_mediaProvider)
         m_mediaProvider->releaseService(m_mediaService);
+
+    delete m_animation;
+
 }
 
 void QmlMediaBase::setObject(QObject *object)
@@ -232,12 +238,12 @@ void QmlMediaBase::setSource(const QUrl &url)
 
 bool QmlMediaBase::isPlaying() const
 {
-    return m_state != QmlMedia::Stopped;
+    return m_state != QMediaPlayer::StoppedState;
 }
 
 void QmlMediaBase::setPlaying(bool playing)
 {
-    if (playing && m_state == QmlMedia::Stopped)
+    if (playing && m_state == QMediaPlayer::StoppedState)
         m_playerControl->play();
     else if (!playing)
         m_playerControl->stop();
@@ -245,14 +251,14 @@ void QmlMediaBase::setPlaying(bool playing)
 
 bool QmlMediaBase::isPaused() const
 {
-    return m_state == QmlMedia::Paused;
+    return m_state == QMediaPlayer::PausedState;
 }
 
 void QmlMediaBase::setPaused(bool paused)
 {
-    if (paused && m_state == QmlMedia::Playing)
+    if (paused && m_state == QMediaPlayer::PlayingState)
         m_playerControl->pause();
-    if (!paused && m_state == QmlMedia::Paused)
+    if (!paused && m_state == QMediaPlayer::PausedState)
         m_playerControl->play();
 }
 

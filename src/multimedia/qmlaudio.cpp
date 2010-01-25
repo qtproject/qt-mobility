@@ -68,6 +68,7 @@ QmlAudio::QmlAudio(QObject *parent)
 
 QmlAudio::~QmlAudio()
 {
+    shutdown();
 }
 
 /*!

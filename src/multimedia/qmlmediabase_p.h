@@ -100,6 +100,8 @@ public:
     void _q_metaDataChanged();
 
 protected:
+    void shutdown();
+
     void setObject(QObject *object);
 
     virtual void sourceChanged() = 0;

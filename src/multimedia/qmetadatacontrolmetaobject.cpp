@@ -226,8 +226,8 @@ int QMetaDataControlMetaObject::createProperty(const char *name, const char *)
 
 void QMetaDataControlMetaObject::metaDataChanged()
 {
-    if (m_keys.count() >= 1)
-        activate(m_object, m_signalOffset, m_signalOffset + m_keys.count() - 1, 0);
+    for (int i = 0; i < m_keys.count(); ++i)
+        activate(m_object, m_signalOffset + i, 0);
 }
 
 QTM_END_NAMESPACE

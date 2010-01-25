@@ -51,6 +51,8 @@
 #include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 
+// #define QMLGRAPHICSVIDEO_SHADERS
+
 QML_DEFINE_TYPE(Qt,4,6,Video,QTM_PREPEND_NAMESPACE(QmlGraphicsVideo));
 
 QTM_BEGIN_NAMESPACE
@@ -135,10 +137,7 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
 
 QmlGraphicsVideo::~QmlGraphicsVideo()
 {
-    m_playerControl->stop();
-
-    if (m_videoRendererControl)
-        m_videoRendererControl->setSurface(0);
+    shutdown();
 
     delete m_videoSurface;
 }

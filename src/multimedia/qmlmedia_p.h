@@ -56,13 +56,6 @@ class QmlMedia : public QObject
     Q_ENUMS(Status)
     Q_ENUMS(Error)
 public:
-    enum State
-    {
-        Stopped = QMediaPlayer::StoppedState,
-        Playing = QMediaPlayer::PlayingState,
-        Paused  = QMediaPlayer::PausedState
-    };
-
     enum Status
     {
         UnknownStatus = QMediaPlayer::UnknownMediaStatus,
