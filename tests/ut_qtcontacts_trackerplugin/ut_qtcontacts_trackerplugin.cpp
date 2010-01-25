@@ -954,15 +954,22 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
 {
     // Add at least one contact to be sure that this doesn't fail because tracker is clean
 
-    QContact c;
-    QContactName name;
-    name.setFirst("First"); name.setLast("Last");
-    QContactAvatar avatar;
-    avatar.setAvatar("default_avatar.png");
-    avatar.setSubType(QContactAvatar::SubTypeImage);
-    QVERIFY(c.saveDetail(&name));
-    QVERIFY(c.saveDetail(&avatar));
-    QVERIFY(trackerEngine->saveContact(&c, error));
+    QStringList firstNames, lastNames;
+    firstNames << "aa" << "ab" << "ac" << "dd" << "fe";
+    lastNames << "fe" << "ab" << "dd" << "dd" << "aa";
+    for (int i = 0; i < firstNames.count(); i++) {
+        QContact c;
+        QContactName name;
+        name.setFirst(firstNames.at(i));
+        name.setLast(lastNames.at(i));
+        QContactAvatar avatar;
+        avatar.setAvatar("default_avatar.png");
+        avatar.setSubType(QContactAvatar::SubTypeImage);
+        QVERIFY(c.saveDetail(&name));
+        QVERIFY(c.saveDetail(&avatar));
+        QVERIFY(trackerEngine->saveContact(&c, error));
+        addedContacts.append(c.localId());
+    }
 
     // this one will get complete contacts
 
@@ -972,7 +979,7 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
     QContactSortOrder sort, sort1;
     sort.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
     sort1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
-    sorting<<sort<<sort1;
+    sorting << sort << sort1;
     QStringList details; details << QContactName::DefinitionName << QContactAvatar::DefinitionName;
     request.setDefinitionRestrictions(details);
     request.setSorting(sorting);
@@ -991,14 +998,9 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
     // start both at once
     trackerEngine->startRequest(&request);
     trackerEngine->startRequest(&request1);
+    trackerEngine->waitForRequestFinished(&request, 10000);
+    trackerEngine->waitForRequestFinished(&request1, 10000);
 
-    for(int i = 0; i < 100; i++)
-    {
-        usleep(100000);
-        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-        if(request.isFinished() && request1.isFinished())
-            break;
-    }
 
     // if it takes more, then something is wrong
     QVERIFY(request.isFinished());
@@ -1013,20 +1015,23 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
     // now ask for one contact
     QVERIFY(!slot.ids.isEmpty());
 
-    QList<QContactLocalId> idsFromAllContactReq;
     QVERIFY2(slot.contacts.count() == slot.ids.count(), "not all contacts were loaded");
+    QVERIFY(slot.contacts.count() >= firstNames.count());
     for( int i = 0; i < slot.contacts.size() -1 ; i++)
     {
         QContact contact = slot.contacts[i];
         QContact contact1 = slot.contacts[i+1];
-        idsFromAllContactReq << contact.localId();
+        QString last0 = contact.detail<QContactName>().last();
+        QString first0 = contact.detail<QContactName>().first();
+        QString last1 = contact1.detail<QContactName>().last();
+        QString first1 = contact1.detail<QContactName>().first();
         // sorting
-        QVERIFY(contact.detail(QContactName::DefinitionName).value(QContactName::FieldLast) <= contact1.detail(QContactName::DefinitionName).value(QContactName::FieldLast));
-        if( contact.detail(QContactName::DefinitionName).value(QContactName::FieldLast) == contact1.detail(QContactName::DefinitionName).value(QContactName::FieldLast))
-            QVERIFY(contact.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) <= contact1.detail(QContactName::DefinitionName).value(QContactName::FieldFirst));
-        qDebug() << contact.localId()
-        << contact.detail(QContactName::DefinitionName).value(QContactName::FieldFirst)
-        << contact.detail(QContactName::DefinitionName).value(QContactName::FieldLast);
+        qDebug() << "contacts:" << contact.localId() << first0 << last0;
+        bool test = last0 < last1 || (last0 == last1 && first0 <= first1);
+        if (!test) {
+            qDebug() << "contacts:" << contact1.localId() << first1 << last1;
+        }
+        QVERIFY2(test, "Sorting failed.");
     }
 
 }

@@ -95,12 +95,12 @@ private slots:
 //    void testGroupsModifiedSince();
 //    void testGroupsRemovedSince();
     void testNcoTypes();
+    void testQRelationshipAndMetacontacts();
     void testAsyncReadContacts();
     void testFilterContacts();
     void testFilterContactsEndsWith();
     void testFilterTwoNameFields();
     void testTrackerUriToUniqueId();
-    void testQRelationshipAndMetacontacts();
     void testIMContactsAndMetacontactMasterPresence();
     void testContactsWithoutMeContact();
 
