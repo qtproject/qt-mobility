@@ -116,10 +116,9 @@ void QmlMediaBase::_q_stateChanged(QMediaPlayer::State state)
         emit playingChanged();
         emit pausedChanged();
 
-        if (m_animation->state() != QAbstractAnimation::Running
-                && (m_state == QMediaPlayer::PlayingState
+        if (m_state == QMediaPlayer::PlayingState
                 || m_status == QMediaPlayer::BufferingMedia
-                || m_status == QMediaPlayer::StalledMedia)) {
+                || m_status == QMediaPlayer::StalledMedia) {
             m_animation->start();
         } else {
             m_animation->stop();
@@ -134,10 +133,9 @@ void QmlMediaBase::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status)
 
         emit statusChanged();
 
-        if (m_animation->state() != QAbstractAnimation::Running
-                && (m_state == QMediaPlayer::PlayingState
+        if (m_state == QMediaPlayer::PlayingState
                 || m_status == QMediaPlayer::BufferingMedia
-                || m_status == QMediaPlayer::StalledMedia)) {
+                || m_status == QMediaPlayer::StalledMedia) {
             m_animation->start();
         } else {
             m_animation->stop();
