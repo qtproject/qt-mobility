@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPPLAYERCONTROL_H
-#define QWMPPLAYERCONTROL_H
+#ifndef QPHONONPLAYERCONTROL_H
+#define QPHONONPLAYERCONTROL_H
 
 #include <QtCore/qobject.h>
 
@@ -88,7 +88,7 @@ public:
     bool isVideoAvailable() const;
 
     bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);

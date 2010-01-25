@@ -49,7 +49,7 @@
 class AudioCaptureSession;
 class AudioEncoderControl;
 class AudioMediaRecorderControl;
-class AudioDeviceControl;
+class AudioEndpointSelector;
 
 QTM_USE_NAMESPACE
 
@@ -63,8 +63,8 @@ public:
     QMediaControl *control(const char *name) const;
 private:
     AudioCaptureSession       *m_session;
-    AudioEncoderControl        *m_encoderControl;
-    AudioDeviceControl        *m_deviceControl;
+    AudioEncoderControl       *m_encoderControl;
+    AudioEndpointSelector     *m_endpointSelector;
     AudioMediaRecorderControl *m_mediaControl;
 };
 

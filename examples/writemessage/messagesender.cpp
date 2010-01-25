@@ -39,6 +39,12 @@
 **
 ****************************************************************************/
 
+#if defined(Q_OS_SYMBIAN)
+// Maximized windows are resizing correctly on S60 w/ Qt 4.6.0
+// Use tabs to reduce the minimal height required
+#define USE_TABBED_LAYOUT
+#endif
+
 #include "messagesender.h"
 
 #include <QComboBox>
@@ -55,6 +61,10 @@
 #include <QTextEdit>
 #include <QTimer>
 #include <QDebug>
+
+#ifdef USE_TABBED_LAYOUT
+#include <QTabWidget>
+#endif
 
 MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags),
@@ -130,11 +140,21 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
 
     connect(sendButton, SIGNAL(clicked()), this, SLOT(send()), Qt::QueuedConnection);
 
+#ifdef USE_TABBED_LAYOUT
+    QTabWidget *tabWidget = new QTabWidget;
+    tabWidget->addTab(textEdit, tr("Text"));
+    tabWidget->addTab(attachmentsGroup, tr("Attachments"));
+#endif
+
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addLayout(metaDataLayout, 0);
+#ifdef USE_TABBED_LAYOUT
+    mainLayout->addWidget(tabWidget, 0);
+#else
     mainLayout->addWidget(textEdit, 2);
     mainLayout->addWidget(attachmentsGroup, 1);
+#endif
     mainLayout->addWidget(sendButton, 0);
     mainLayout->setAlignment(sendButton, Qt::AlignRight);
 

@@ -93,14 +93,14 @@ public:
     void setVolume(int volume) { emit volumeChanged(_volume = volume); }
 
     bool isMuted() const { return _muted; }
-    void setMuted(bool muted) { if (muted != _muted) emit mutingChanged(_muted = muted); }
+    void setMuted(bool muted) { if (muted != _muted) emit mutedChanged(_muted = muted); }
 
     int bufferStatus() const { return _bufferStatus; }
 
     bool isVideoAvailable() const { return _videoAvailable; }
 
     bool isSeekable() const { return _isSeekable; }
-    QPair<qint64, qint64> seekRange() const { return _seekRange; }
+    QMediaTimeRange availablePlaybackRanges() const { return QMediaTimeRange(_seekRange.first, _seekRange.second); }
     void setSeekRange(qint64 minimum, qint64 maximum) { _seekRange = qMakePair(minimum, maximum); }
 
     qreal playbackRate() const { return _playbackRate; }
@@ -417,7 +417,7 @@ void tst_QMediaPlayer::testNullService()
         QFETCH_GLOBAL(bool, muted);
 
         QSignalSpy volumeSpy(&player, SIGNAL(volumeChanged(int)));
-        QSignalSpy mutingSpy(&player, SIGNAL(mutingChanged(bool)));
+        QSignalSpy mutingSpy(&player, SIGNAL(mutedChanged(bool)));
 
         player.setVolume(volume);
         QCOMPARE(player.volume(), 0);
@@ -443,22 +443,23 @@ void tst_QMediaPlayer::testNullService()
         QCOMPARE(player.playbackRate(), qreal(0));
         QCOMPARE(spy.count(), 0);
     } {
-        QMediaPlaylist playlist(&player);
+        QMediaPlaylist playlist;
+        playlist.setMediaObject(&player);
 
         QSignalSpy mediaSpy(&player, SIGNAL(mediaChanged(QMediaContent)));
         QSignalSpy statusSpy(&player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
 
-        playlist.appendItem(QUrl("http://example.com/stream"));
-        playlist.appendItem(QUrl("file:///some.mp3"));
+        playlist.addMedia(QUrl("http://example.com/stream"));
+        playlist.addMedia(QUrl("file:///some.mp3"));
 
-        playlist.setCurrentPosition(0);
-        QCOMPARE(playlist.currentPosition(), 0);
+        playlist.setCurrentIndex(0);
+        QCOMPARE(playlist.currentIndex(), 0);
         QCOMPARE(player.media(), QMediaContent());
         QCOMPARE(mediaSpy.count(), 0);
         QCOMPARE(statusSpy.count(), 0);
 
         playlist.next();
-        QCOMPARE(playlist.currentPosition(), 1);
+        QCOMPARE(playlist.currentIndex(), 1);
         QCOMPARE(player.media(), QMediaContent());
         QCOMPARE(mediaSpy.count(), 0);
         QCOMPARE(statusSpy.count(), 0);
@@ -592,7 +593,7 @@ void tst_QMediaPlayer::testMuted()
         mockService->setVolume(volume);
         QVERIFY(player->isMuted() == muted);
 
-        QSignalSpy spy(player, SIGNAL(mutingChanged(bool)));
+        QSignalSpy spy(player, SIGNAL(mutedChanged(bool)));
         player->setMuted(!muted);
         QCOMPARE(player->isMuted(), !muted);
         QCOMPARE(player->volume(), volume);
@@ -863,7 +864,8 @@ void tst_QMediaPlayer::testPlaylist()
     mockService->setIsValid(true);
     mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::NoMedia);
 
-    QMediaPlaylist *playlist = new QMediaPlaylist(player);
+    QMediaPlaylist *playlist = new QMediaPlaylist;
+    playlist->setMediaObject(player);
 
     QSignalSpy stateSpy(player, SIGNAL(stateChanged(QMediaPlayer::State)));
     QSignalSpy mediaSpy(player, SIGNAL(mediaChanged(QMediaContent)));
@@ -875,13 +877,13 @@ void tst_QMediaPlayer::testPlaylist()
     QCOMPARE(stateSpy.count(), 0);
     QCOMPARE(mediaSpy.count(), 0);
 
-    playlist->appendItem(content0);
-    playlist->appendItem(content1);
-    playlist->appendItem(content2);
-    playlist->appendItem(content3);
+    playlist->addMedia(content0);
+    playlist->addMedia(content1);
+    playlist->addMedia(content2);
+    playlist->addMedia(content3);
 
     // Test changing the playlist position, changes the current media, but not the playing state.
-    playlist->setCurrentPosition(1);
+    playlist->setCurrentIndex(1);
     QCOMPARE(player->media(), content1);
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
     QCOMPARE(stateSpy.count(), 0);
@@ -1001,6 +1003,41 @@ void tst_QMediaPlayer::testPlaylist()
     QCOMPARE(player->state(), QMediaPlayer::PlayingState);
     QCOMPARE(stateSpy.count(), 11);
     QCOMPARE(mediaSpy.count(), 9);
+
+    // Test the player can bind to playlist again
+    playlist = new QMediaPlaylist;
+    playlist->setMediaObject(player);
+    QCOMPARE(playlist->mediaObject(), qobject_cast<QMediaObject*>(player));
+
+    QCOMPARE(player->media(), QMediaContent());
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+
+    playlist->addMedia(content0);
+    playlist->addMedia(content1);
+    playlist->addMedia(content2);
+    playlist->addMedia(content3);
+
+    playlist->setCurrentIndex(1);
+    QCOMPARE(player->media(), content1);
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+
+    // Test attaching the new playlist,
+    // player should detach the current one
+    QMediaPlaylist *playlist2 = new QMediaPlaylist;
+    playlist2->addMedia(content1);
+    playlist2->addMedia(content2);
+    playlist2->addMedia(content3);
+    playlist2->setCurrentIndex(2);
+
+    player->play();
+    playlist2->setMediaObject(player);
+    QCOMPARE(playlist2->mediaObject(), qobject_cast<QMediaObject*>(player));
+    QVERIFY(playlist->mediaObject() == 0);
+    QCOMPARE(player->media(), playlist2->currentMedia());
+    QCOMPARE(player->state(), QMediaPlayer::StoppedState);
+
+    playlist2->setCurrentIndex(1);
+    QCOMPARE(player->media(), playlist2->currentMedia());
 }
 
 QTEST_MAIN(tst_QMediaPlayer)

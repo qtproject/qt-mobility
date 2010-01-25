@@ -93,6 +93,24 @@ QMediaObject::~QMediaObject()
 }
 
 /*!
+    Returns the service availability error state.
+*/
+
+QtMedia::AvailabilityError QMediaObject::availabilityError() const
+{
+    return QtMedia::ServiceMissingError;
+}
+
+/*!
+    Returns true if the service is available for use.
+*/
+
+bool QMediaObject::isAvailable() const
+{
+    return false;
+}
+
+/*!
     Returns the media service that provides the functionality of a multimedia object.
 */
 
@@ -123,6 +141,14 @@ void QMediaObject::setNotifyInterval(int milliSeconds)
 void QMediaObject::bind(QObject*)
 {
 }
+
+/*!
+  \internal
+*/
+void QMediaObject::unbind(QObject*)
+{
+}
+
 
 /*!
     Constructs a media object which uses the functionality provided by a media \a service.
@@ -378,6 +404,12 @@ void QMediaObject::setupMetaData()
         }
     }
 }
+
+/*!
+    \fn QMediaObject::availabilityChanged(bool available)
+
+    Signal emitted when the availability state has changed to \a available
+*/
 
 
 #include "moc_qmediaobject.cpp"

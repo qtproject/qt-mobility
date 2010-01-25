@@ -51,6 +51,8 @@ qmakepluginstubs
 
 #Carbide project files
 *.project
+*.cproject
+*.settings
 plugin_commonU.def
 
 #Visual Studio files

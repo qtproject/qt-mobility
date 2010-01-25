@@ -103,7 +103,7 @@ bool QWmpPlaylist::save(QIODevice * device, const char *format)
     return false;
 }
 
-int QWmpPlaylist::size() const
+int QWmpPlaylist::mediaCount() const
 {
     return m_count;
 }
@@ -127,13 +127,13 @@ bool QWmpPlaylist::isReadOnly() const
     return false;
 }
 
-bool QWmpPlaylist::appendItem(const QMediaContent &content)
+bool QWmpPlaylist::addMedia(const QMediaContent &content)
 {
     bool appended = false;
 
     IWMPMedia *media = 0;
     if (!content.isNull() && m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(content.canonicalUri()), &media) == S_OK) {
+            QAutoBStr(content.canonicalUrl()), &media) == S_OK) {
         appended = m_playlist->appendItem(media) == S_OK;
 
         media->Release();
@@ -142,13 +142,13 @@ bool QWmpPlaylist::appendItem(const QMediaContent &content)
     return appended;
 }
 
-bool QWmpPlaylist::insertItem(int pos, const QMediaContent &content)
+bool QWmpPlaylist::insertMedia(int pos, const QMediaContent &content)
 {
     bool inserted = false;
 
     IWMPMedia *media = 0;
     if (m_playlist && m_player && m_player->newMedia(
-            QAutoBStr(content.canonicalUri()), &media) == S_OK) {
+            QAutoBStr(content.canonicalUrl()), &media) == S_OK) {
         inserted = m_playlist->insertItem(pos, media) == S_OK;
 
         media->Release();
@@ -157,7 +157,7 @@ bool QWmpPlaylist::insertItem(int pos, const QMediaContent &content)
     return inserted;
 }
 
-bool QWmpPlaylist::removeItem(int pos)
+bool QWmpPlaylist::removeMedia(int pos)
 {
     IWMPMedia *media = 0;
     if (m_playlist->get_item(pos, &media) == S_OK) {
@@ -171,7 +171,7 @@ bool QWmpPlaylist::removeItem(int pos)
     }
 }
 
-bool QWmpPlaylist::removeItems(int start, int end)
+bool QWmpPlaylist::removeMedia(int start, int end)
 {
     if (!m_playlist)
         return false;
@@ -235,27 +235,27 @@ void QWmpPlaylist::currentPlaylistChangeEvent(WMPPlaylistChangeEventType change)
     long count = 0;
     if (m_playlist && m_playlist->get_count(&count) == S_OK && count > 0) {
         if (count > m_count) {
-            emit itemsAboutToBeInserted(m_count, count - 1);
+            emit mediaAboutToBeInserted(m_count, count - 1);
             m_count = count;
-            emit itemsInserted(count, m_count - 1);
+            emit mediaInserted(count, m_count - 1);
         } else if (count < m_count) {
-            emit itemsAboutToBeRemoved(count, m_count - 1);
+            emit mediaAboutToBeRemoved(count, m_count - 1);
             m_count = count;
-            emit itemsRemoved(count, m_count - 1);
+            emit mediaRemoved(count, m_count - 1);
         }
     }
     if (m_count > 0)
-        emit itemsChanged(0, m_count - 1);
+        emit mediaChanged(0, m_count - 1);
 }
 
 void QWmpPlaylist::openPlaylistChangeEvent(IDispatch *dispatch)
 {
     if (m_playlist && m_count > 0) {
-        emit itemsAboutToBeRemoved(0, m_count - 1);
+        emit mediaAboutToBeRemoved(0, m_count - 1);
         m_playlist->Release();
         m_playlist = 0;
         m_count = 0;
-        emit itemsRemoved(0, m_count - 1);
+        emit mediaRemoved(0, m_count - 1);
     } else if (m_playlist) {
         m_playlist->Release();
         m_playlist = 0;
@@ -267,10 +267,10 @@ void QWmpPlaylist::openPlaylistChangeEvent(IDispatch *dispatch)
 
         long count = 0;
         if (playlist->get_count(&count) == S_OK && count > 0) {
-            emit itemsAboutToBeInserted(0, count - 1);
+            emit mediaAboutToBeInserted(0, count - 1);
             m_playlist = playlist;
             m_count = count;
-            emit itemsInserted(0, count - 1);
+            emit mediaInserted(0, count - 1);
         } else {
             m_playlist = playlist;
         }
@@ -289,7 +289,7 @@ void QWmpPlaylist::mediaChangeEvent(IDispatch *dispatch)
             int index = QWmpMetaData::value(media, QAutoBStr(L"PlaylistIndex")).toInt();
 
             if (index >= 0)
-                emit itemsChanged(index, index);
+                emit mediaChanged(index, index);
         }
         media->Release();
     }

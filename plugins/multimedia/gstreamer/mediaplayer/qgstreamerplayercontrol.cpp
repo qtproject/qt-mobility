@@ -70,8 +70,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(positionChanged(qint64)));
     connect(m_session, SIGNAL(durationChanged(qint64)),
             this, SIGNAL(durationChanged(qint64)));
-    connect(m_session, SIGNAL(mutedStateChaned(bool)),
-            this, SIGNAL(mutingChanged(bool)));
+    connect(m_session, SIGNAL(mutedStateChanged(bool)),
+            this, SIGNAL(mutedChanged(bool)));
     connect(m_session, SIGNAL(volumeChanged(int)),
             this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(stateChanged(QMediaPlayer::State)),
@@ -80,8 +80,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SIGNAL(bufferStatusChanged(int)));
-    connect(m_session, SIGNAL(videoAvailabilityChanged(bool)),
-            this, SIGNAL(videoAvailabilityChanged(bool)));
+    connect(m_session, SIGNAL(videoAvailableChanged(bool)),
+            this, SIGNAL(videoAvailableChanged(bool)));
     connect(m_session, SIGNAL(seekableChanged(bool)),
             this, SIGNAL(seekableChanged(bool)));
 }
@@ -136,11 +136,14 @@ bool QGstreamerPlayerControl::isSeekable() const
     return m_session->isSeekable();
 }
 
-QPair<qint64, qint64> QGstreamerPlayerControl::seekRange() const
+QMediaTimeRange QGstreamerPlayerControl::availablePlaybackRanges() const
 {
-    return m_session->isSeekable()
-            ? qMakePair<qint64, qint64>(0, m_session->duration())
-            : qMakePair<qint64, qint64>(0, 0);
+    QMediaTimeRange ranges;
+
+    if(m_session->isSeekable())
+        ranges.addInterval(0, m_session->duration());
+
+    return ranges;
 }
 
 qreal QGstreamerPlayerControl::playbackRate() const
@@ -220,7 +223,7 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
             url = QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0]));
         }
     } else if (!content.isNull()) {
-        url = content.canonicalUri();
+        url = content.canonicalUrl();
     }
 
     m_session->load(url);

@@ -86,10 +86,10 @@ static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
     { QtMedia::Duration, L"Duration" },
 
     // Audio
-    { QtMedia::AudioBitrate, L"AudioBitrate" },
+    { QtMedia::AudioBitRate, L"AudioBitrate" },
     { QtMedia::AudioCodec, L"AudioCodec" },
-    { QtMedia::Channels, L"Channels" },
-    { QtMedia::Frequency, L"Frequency" },
+    { QtMedia::ChannelCount, L"Channels" },
+    { QtMedia::SampleRate, L"Frequency" },
 
     // Music
     { QtMedia::AlbumTitle, L"WM/AlbumTitle" },
@@ -101,8 +101,8 @@ static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
     { QtMedia::Mood, L"WM/Mood" },
     { QtMedia::TrackNumber, L"WM/TrackNumber" },
     //{ QtMedia::TrackCount, 0 },
-    //{ QtMedia::CoverArtUriSmall, 0 },
-    //{ QtMedia::CoverArtUriLarge, 0 },
+    //{ QtMedia::CoverArtUrlSmall, 0 },
+    //{ QtMedia::CoverArtUrlLarge, 0 },
 
     // Image/Video
     //{ QtMedia::Resolution, 0 },
@@ -113,7 +113,7 @@ static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
     { QtMedia::VideoBitRate, L"VideoBitRate" },
     { QtMedia::VideoCodec, L"VideoCodec" },
 
-    //{ QtMedia::PosterUri, 0 },
+    //{ QtMedia::PosterUrl, 0 },
 
     // Movie
     { QtMedia::ChapterNumber, L"ChapterNumber" },
@@ -170,10 +170,10 @@ QVariant QWmpMetaData::metaData(QtMedia::MetaData key) const
                 return QDate(year.toInt(), month.toInt(), day.toInt());
         }
         break;
-    case QtMedia::CoverArtUriSmall:
-        return albumArtUri(m_media, "_Small.jpg");
-    case QtMedia::CoverArtUriLarge:
-        return albumArtUri(m_media, "_Large.jpg");
+    case QtMedia::CoverArtUrlSmall:
+        return albumArtUrl(m_media, "_Small.jpg");
+    case QtMedia::CoverArtUrlLarge:
+        return albumArtUrl(m_media, "_Large.jpg");
     case QtMedia::Resolution:
         {
             QVariant width = value(m_media, QAutoBStr(L"WM/VideoWidth"));
@@ -229,7 +229,7 @@ QList<QtMedia::MetaData> QWmpMetaData::availableMetaData() const
 
         BSTR string = 0;
         if (m_media->get_sourceURL(&string) == S_OK) {
-            QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+            QString url = QString::fromWCharArray(static_cast<const wchar_t *>(string));
             ::SysFreeString(string);
 
             if (m_media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
@@ -239,12 +239,12 @@ QList<QtMedia::MetaData> QWmpMetaData::availableMetaData() const
                 QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
                 QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
 
-                QDir dir = QFileInfo(uri).absoluteDir();
+                QDir dir = QFileInfo(url).absoluteDir();
 
                 if (dir.exists(albumArtLarge))
-                    keys.append(QtMedia::CoverArtUriLarge);
+                    keys.append(QtMedia::CoverArtUrlLarge);
                 if (dir.exists(albumArtSmall))
-                    keys.append(QtMedia::CoverArtUriSmall);
+                    keys.append(QtMedia::CoverArtUrlSmall);
             }
         }
     }
@@ -371,26 +371,10 @@ QMediaContent QWmpMetaData::resources(IWMPMedia *media)
 
     BSTR string = 0;
     if (media->get_sourceURL(&string) == S_OK) {
-        QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+        QString url = QString::fromWCharArray(static_cast<const wchar_t *>(string));
         ::SysFreeString(string);
 
-        content = QMediaContent(QUrl(uri));
-
-        if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
-            QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
-            ::SysFreeString(string);
-
-            QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
-            QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
-
-            QDir dir = QFileInfo(uri).absoluteDir();
-
-            if (dir.exists(albumArtLarge))
-                content.setCoverArtUriLarge(QUrl(dir.absoluteFilePath(albumArtLarge)));
-
-            if (dir.exists(albumArtSmall))
-                content.setCoverArtUriSmall(QUrl(dir.absoluteFilePath(albumArtSmall)));
-        }
+        content = QMediaContent(QUrl(url));
     }
 
     return content;
@@ -424,15 +408,15 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
 
             if (variant.pdispVal->QueryInterface(
                     __uuidof(IWMPMetadataPicture), reinterpret_cast<void **>(&picture)) == S_OK) {
-                QUrl uri;
+                QUrl url;
                 BSTR string;
                 if (picture->get_URL(&string) == S_OK) {
-                    uri = QUrl(QString::fromWCharArray(string, ::SysStringLen(string)));
+                    url = QUrl(QString::fromWCharArray(string, ::SysStringLen(string)));
 
                     ::SysFreeString(string);
                 }
                 picture->Release();
-                return qVariantFromValue(uri);
+                return qVariantFromValue(url);
             } else if (variant.pdispVal->QueryInterface(
                     __uuidof(IWMPMetadataText), reinterpret_cast<void **>(&text)) == S_OK) {
                 QString description;
@@ -457,11 +441,11 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
     return QVariant();
 }
 
-QVariant QWmpMetaData::albumArtUri(IWMPMedia *media, const char *suffix)
+QVariant QWmpMetaData::albumArtUrl(IWMPMedia *media, const char *suffix)
 {
     BSTR string = 0;
     if (media && media->get_sourceURL(&string) == S_OK) {
-        QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+        QString url = QString::fromWCharArray(static_cast<const wchar_t *>(string));
         ::SysFreeString(string);
 
         if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
@@ -470,7 +454,7 @@ QVariant QWmpMetaData::albumArtUri(IWMPMedia *media, const char *suffix)
 
             QString fileName = QLatin1String("AlbumArt_") + uuid + QLatin1String(suffix);
 
-            QDir dir = QFileInfo(uri).absoluteDir();
+            QDir dir = QFileInfo(url).absoluteDir();
 
             if (dir.exists(fileName)) {
                 return qVariantFromValue(

@@ -86,7 +86,7 @@ symbian {
 
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
+    exportheaders.path = epoc32/include/mw
     
     #export headers into EPOCROOT
     for(header, exportheaders.sources) {

@@ -41,7 +41,7 @@
 
 #include "qgstreamercapturesession.h"
 #include "qgstreamerrecordercontrol.h"
-#include "qgstreamermediaformatcontrol.h"
+#include "qgstreamermediacontainercontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
 #include "qgstreamerimageencode.h"
@@ -97,7 +97,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_videoEncodeControl = new QGstreamerVideoEncode(this);
     m_imageEncodeControl = new QGstreamerImageEncode(this);
     m_recorderControl = new QGstreamerRecorderControl(this);
-    m_mediaFormatControl = new QGstreamerMediaFormatControl(this);
+    m_mediaContainerControl = new QGstreamerMediaContainerControl(this);
 
     setState(StoppedState);
 }
@@ -114,7 +114,7 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
 
     GstElement *encodeBin = gst_bin_new("encode-bin");
 
-    GstElement *muxer = gst_element_factory_make( m_mediaFormatControl->formatElementName().constData(), "muxer");
+    GstElement *muxer = gst_element_factory_make( m_mediaContainerControl->formatElementName().constData(), "muxer");
     GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 
     ok &= muxer != 0;
@@ -611,7 +611,7 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
     dumpGraph( QString("rebuild_graph_%1_%2").arg(m_pipelineMode).arg(newMode) );
     if (m_encodeBin) {
         QString fileName = QString("rebuild_graph_encode_%1_%2").arg(m_pipelineMode).arg(newMode);
-#if (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
+#if !(GST_DISABLE_GST_DEBUG) && (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
         _gst_debug_bin_to_dot_file(GST_BIN(m_encodeBin), GST_DEBUG_GRAPH_SHOW_ALL, fileName.toAscii());
 #endif
     }
@@ -637,7 +637,7 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
 
 void QGstreamerCaptureSession::dumpGraph(const QString &fileName)
 {
-#if (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
+#if !(GST_DISABLE_GST_DEBUG) && (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
     _gst_debug_bin_to_dot_file(GST_BIN(m_pipeline),
                                GstDebugGraphDetails(/*GST_DEBUG_GRAPH_SHOW_ALL |*/ GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES),
                                fileName.toAscii());

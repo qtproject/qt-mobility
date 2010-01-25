@@ -55,9 +55,8 @@
 #include <qapplication.h>
 #include <qevent.h>
 #include <qdialog.h>
-#include <qstackedlayout.h>
-#include <QFlags>
-#include <Qt>
+#include <qboxlayout.h>
+#include <qnamespace.h>
 
 using namespace Qt;
 
@@ -195,7 +194,7 @@ QSize QRendererVideoWidgetBackend::sizeHint() const
     return m_surface->surfaceFormat().sizeHint();
 }
 
-void QRendererVideoWidgetBackend::showEvent(QShowEvent *)
+void QRendererVideoWidgetBackend::showEvent()
 {
 }
 
@@ -322,7 +321,7 @@ QSize QWindowVideoWidgetBackend::sizeHint() const
     return m_windowControl->nativeSize();
 }
 
-void QWindowVideoWidgetBackend::showEvent(QShowEvent *)
+void QWindowVideoWidgetBackend::showEvent()
 {
     m_windowControl->setWinId(m_widget->winId());
 
@@ -363,10 +362,75 @@ void QVideoWidgetPrivate::setCurrentControl(QVideoWidgetControlInterface *contro
     }
 }
 
+void QVideoWidgetPrivate::show()
+{
+    if (outputControl) {
+        if (widgetBackend != 0) {
+            setCurrentControl(widgetBackend);
+            outputControl->setOutput(QVideoOutputControl::WidgetOutput);
+        } else if (windowBackend != 0 && (q_func()->window() == 0
+                || !q_func()->window()->testAttribute(Qt::WA_DontShowOnScreen))) {
+            windowBackend->showEvent();
+            currentBackend = windowBackend;
+            setCurrentControl(windowBackend);
+            outputControl->setOutput(QVideoOutputControl::WindowOutput);
+        } else if (rendererBackend != 0) {
+            rendererBackend->showEvent();
+            currentBackend = rendererBackend;
+            setCurrentControl(rendererBackend);
+            outputControl->setOutput(QVideoOutputControl::RendererOutput);
+        } else {
+            outputControl->setOutput(QVideoOutputControl::NoOutput);
+        }
+    }
+}
+
+void QVideoWidgetPrivate::clearService()
+{
+    if (service) {
+        QObject::disconnect(service, SIGNAL(destroyed()), q_func(), SLOT(_q_serviceDestroyed()));
+
+        if (outputControl)
+            outputControl->setOutput(QVideoOutputControl::NoOutput);
+
+        if (widgetBackend) {
+            QLayout *layout = q_func()->layout();
+
+            for (QLayoutItem *item = layout->takeAt(0); item; item = layout->takeAt(0)) {
+                item->widget()->setParent(0);
+                delete item;
+            }
+            delete layout;
+
+            delete widgetBackend;
+            widgetBackend = 0;
+        }
+
+        delete windowBackend;
+        windowBackend = 0;
+
+        if (rendererBackend) {
+            rendererBackend->clearSurface();
+
+            delete rendererBackend;
+            rendererBackend = 0;
+        }
+
+        currentBackend = 0;
+        currentControl = 0;
+        outputControl = 0;
+        service = 0;
+    }
+}
+
 void QVideoWidgetPrivate::_q_serviceDestroyed()
 {
-    delete widgetBackend;
-    widgetBackend = 0;
+    if (widgetBackend) {
+        delete q_func()->layout();
+
+        delete widgetBackend;
+        widgetBackend = 0;
+    }
 
     delete windowBackend;
     windowBackend = 0;
@@ -378,6 +442,12 @@ void QVideoWidgetPrivate::_q_serviceDestroyed()
     currentBackend = 0;
     outputControl = 0;
     service = 0;
+}
+
+void QVideoWidgetPrivate::_q_mediaObjectDestroyed()
+{
+    mediaObject = 0;
+    clearService();
 }
 
 void QVideoWidgetPrivate::_q_brightnessChanged(int b)
@@ -456,51 +526,19 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
 */
 
 /*!
-    Constructs a new widget which displays video produced by a media \a object.
+    Constructs a new video widget.
 
     The \a parent is passed to QWidget.
 */
-QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
+QVideoWidget::QVideoWidget(QWidget *parent)
     : QWidget(parent, 0)
     , d_ptr(new QVideoWidgetPrivate)
 {
-    Q_D(QVideoWidget);
-
-    d->q_ptr = this;
+    d_ptr->q_ptr = this;
 
     QPalette palette = QWidget::palette();
     palette.setColor(QPalette::Background, Qt::black);
     setPalette(palette);
-
-    if (object)
-        d->service = object->service();
-
-    if (!d->service)
-        return;
-
-    connect(d->service, SIGNAL(destroyed()), SLOT(_q_serviceDestroyed()));
-
-    d->outputControl = qobject_cast<QVideoOutputControl *>(
-            d->service->control(QVideoOutputControl_iid));
-
-    QVideoWidgetControl *widgetControl = qobject_cast<QVideoWidgetControl *>(
-            d->service->control(QVideoWidgetControl_iid));
-
-    if (widgetControl != 0) {
-        d->widgetBackend = new QVideoWidgetControlBackend(widgetControl, this);
-    } else {
-        QVideoWindowControl *windowControl = qobject_cast<QVideoWindowControl *>(
-                d->service->control(QVideoWindowControl_iid));
-
-        if (windowControl != 0)
-            d->windowBackend = new QWindowVideoWidgetBackend(windowControl, this);
-
-        QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
-                d->service->control(QVideoRendererControl_iid));
-
-        if (rendererControl != 0)
-            d->rendererBackend = new QRendererVideoWidgetBackend(rendererControl, this);
-    }
 }
 
 /*!
@@ -508,27 +546,71 @@ QVideoWidget::QVideoWidget(QMediaObject *object, QWidget *parent)
 */
 QVideoWidget::~QVideoWidget()
 {
-    if (d_ptr->service) {
-        if (d_ptr->outputControl)
-            d_ptr->outputControl->setOutput(QVideoOutputControl::NoOutput);
-
-        if (d_ptr->widgetBackend) {
-            QLayout *layout = QWidget::layout();
-
-            for (QLayoutItem *item = layout->takeAt(0); item; item = layout->takeAt(0)) {
-                item->widget()->setParent(0);
-                delete item;
-            }
-            delete d_ptr->widgetBackend;
-        }
-        delete d_ptr->windowBackend;
-        if (d_ptr->rendererBackend) {
-            d_ptr->rendererBackend->clearSurface();
-
-            delete d_ptr->rendererBackend;
-        }
-    }
+    setMediaObject(0);
     delete d_ptr;
+}
+
+/*!
+    \property QVideoWidget::mediaObject
+    \brief the media object which provides the video displayed by a widget.
+*/
+
+QMediaObject *QVideoWidget::mediaObject() const
+{
+    return d_func()->mediaObject;
+}
+
+void QVideoWidget::setMediaObject(QMediaObject *object)
+{
+    Q_D(QVideoWidget);
+
+    if (object == d->mediaObject)
+        return;
+
+    if (d->mediaObject) {
+        disconnect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
+        d->mediaObject->unbind(this);
+    }
+
+    d->clearService();
+
+    d->mediaObject = object;
+
+    if (d->mediaObject) {
+        d->service = d->mediaObject->service();
+
+        connect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
+        d->mediaObject->bind(this);
+    }
+
+    if (d->service) {
+        connect(d->service, SIGNAL(destroyed()), SLOT(_q_serviceDestroyed()));
+
+        d->outputControl = qobject_cast<QVideoOutputControl *>(
+                d->service->control(QVideoOutputControl_iid));
+
+        QVideoWidgetControl *widgetControl = qobject_cast<QVideoWidgetControl *>(
+                d->service->control(QVideoWidgetControl_iid));
+
+        if (widgetControl != 0) {
+            d->widgetBackend = new QVideoWidgetControlBackend(widgetControl, this);
+        } else {
+            QVideoWindowControl *windowControl = qobject_cast<QVideoWindowControl *>(
+                    d->service->control(QVideoWindowControl_iid));
+
+            if (windowControl != 0)
+                d->windowBackend = new QWindowVideoWidgetBackend(windowControl, this);
+
+            QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
+                    d->service->control(QVideoRendererControl_iid));
+
+            if (rendererControl != 0)
+                d->rendererBackend = new QRendererVideoWidgetBackend(rendererControl, this);
+        }
+
+        if (isVisible())
+            d->show();
+    }
 }
 
 /*!
@@ -772,28 +854,12 @@ void QVideoWidget::showEvent(QShowEvent *event)
 
     QWidget::showEvent(event);
 
-    if (d->outputControl) {
-        if (d->widgetBackend != 0) {
-            d->setCurrentControl(d->widgetBackend);
-            d->outputControl->setOutput(QVideoOutputControl::WidgetOutput);
-        } else if (d->windowBackend != 0
-                && (window() == 0 || !window()->testAttribute(Qt::WA_DontShowOnScreen))) {
-            d->windowBackend->showEvent(event);
-            d->currentBackend = d->windowBackend;
-            d->setCurrentControl(d->windowBackend);
-            d->outputControl->setOutput(QVideoOutputControl::WindowOutput);
-        } else if (d->rendererBackend != 0) {
-            d->rendererBackend->showEvent(event);
-            d->currentBackend = d->rendererBackend;
-            d->setCurrentControl(d->rendererBackend);
-            d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
-        } else {
-            d->outputControl->setOutput(QVideoOutputControl::NoOutput);
-        }
-    }
+    d->show();
+
 }
 
 /*!
+
   Handles the hide \a event.
 */
 void QVideoWidget::hideEvent(QHideEvent *event)

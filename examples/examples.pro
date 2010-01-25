@@ -47,7 +47,9 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 #Multimedia
 contains(mobility_modules,multimedia) {
     #disabled on Symbian due to missing backend
-    !symbian:SUBDIRS += player \
+    !symbian:SUBDIRS += \
+        radio \
+        player \
         cameracapture \
         slideshow \
         streamplayer \
@@ -57,10 +59,15 @@ contains(mobility_modules,multimedia) {
 #Messaging examples
 contains(mobility_modules,messaging) {
     contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
-    !win32-g++:SUBDIRS += \
-        keepintouch\
-        querymessages\
-        writemessage\
-        serviceactions
+        !win32-g++ {
+            SUBDIRS += \
+                querymessages \
+                writemessage \
+                serviceactions
+
+            contains(mobility_modules,contacts) {
+                SUBDIRS += keepintouch
+            }
+        }
     }
 }
