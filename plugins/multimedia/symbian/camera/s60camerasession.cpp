@@ -1301,8 +1301,10 @@ void S60CameraSession::setVideoResolution(const QSize &resolution)
 void S60CameraSession::MvruoOpenComplete(TInt aError)
 {
     if(aError==KErrNone) {
-        TRAPD(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
-        TRAP(err, m_videoUtility->SetMaxClipSizeL(KMaxClipSize));
+        TRAPD(err, m_videoUtility->SetMaxClipSizeL(KMaxClipSize));
+#ifndef PRE_S60_50_PLATFORM
+        TRAP(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
+#endif
         if(err==KErrNone) {
             m_videoUtility->Prepare();
             // TODO:
