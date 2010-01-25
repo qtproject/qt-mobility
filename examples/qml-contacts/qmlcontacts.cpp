@@ -86,13 +86,11 @@ void QMLContactManagerAsync::fillContactsIntoMemoryEngine(QContactManager* manag
     bool ok = file.open(QIODevice::ReadOnly);
     if (ok) {
        reader.setDevice(&file);
-       if (reader.readAll()) {
+       if (reader.startReading() && reader.waitForFinished()) {
            QVersitContactImporter importer;
-           QList<QVersitDocument> documents = reader.result();
-           foreach (const QVersitDocument& document, documents) {
-                QContact c = importer.importContact(document);
-                manager->saveContact(&c);
-           }
+           QList<QContact> contacts = importer.importContacts(reader.results());
+           QMap<int, QContactManager::Error> errors;
+           manager->saveContacts(&contacts, &errors);
        }
     }
     
@@ -111,7 +109,7 @@ void QMLContactManagerAsync::setManager(QString manager)
     connect(qc, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     connect(qc, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
     
-    if (manager == "memory" && qc->contacts().isEmpty()) {
+    if (manager == "memory" && qc->contactIds().isEmpty()) {
         fillContactsIntoMemoryEngine(qc);
     }
 
@@ -137,7 +135,7 @@ QStringList QMLContactManagerAsync::contactListToQString(const QList<QContact>& 
     int i;
 
     for (i = 0; i < contact.count(); i++) {
-        list += qc->synthesizeDisplayLabel(contact.at(i));
+        list += qc->synthesizedDisplayLabel(contact.at(i));
      }
 
     return list;
@@ -147,7 +145,7 @@ int QMLContactManagerAsync::numContacts()
 {
     QList<QContactLocalId> qlid;
 
-    qlid = qc->contacts();
+    qlid = qc->contactIds();
 
     return qlid.count();
 }
@@ -157,7 +155,7 @@ void QMLContactManagerAsync::contacts()
     m_contactIds.clear();
     QContactFetchRequest* req = new QContactFetchRequest;
     QContactLocalIdFilter idFil;
-    idFil.setIds(qc->contacts());
+    idFil.setIds(qc->contactIds());
     req->setFilter(idFil);
     req->setManager(qc);
     connect(req, SIGNAL(progress(QContactFetchRequest*, bool)), this, SLOT(contactProgress(QContactFetchRequest*,bool)));
@@ -170,7 +168,7 @@ void QMLContactManagerAsync::contactProgress(QContactFetchRequest *request, bool
 
     // first, check to make sure that the request is still valid.
     if (qc != request->manager() ||
-        request->status() == QContactAbstractRequest::Cancelled) {
+        request->state() == QContactAbstractRequest::CanceledState) {
         delete request;
         return; // ignore these results.
     }
@@ -185,7 +183,7 @@ void QMLContactManagerAsync::contactProgress(QContactFetchRequest *request, bool
     }
 
     // check to see if the request status is "finished" - clean up.
-    if (request->status() == QContactAbstractRequest::Finished) {        
+    if (request->state() == QContactAbstractRequest::FinishedState) {        
         delete request;
         emit contactsLoadedDone();
     }
@@ -195,7 +193,7 @@ void QMLContactManagerAsync::contactProgress(QContactFetchRequest *request, bool
 QString QMLContactManagerAsync::idToName(QString name)
 {
     QContact c = qc->contact(name.toInt());
-    return qc->synthesizeDisplayLabel(c);
+    return qc->synthesizedDisplayLabel(c);
 }
 
 // ![0]
