@@ -121,6 +121,8 @@ void DirectShowAudioEndpointControl::setActiveEndpoint(const QString &name)
                 __uuidof(IBaseFilter),
                 reinterpret_cast<void **>(&filter)) == S_OK) {
             m_service->setAudioOutput(filter);
+
+            filter->Release();
         }
     }
 }

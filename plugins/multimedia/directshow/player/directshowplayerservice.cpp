@@ -128,7 +128,15 @@ DirectShowPlayerService::~DirectShowPlayerService()
                 progress->AbortOperation();
                 progress->Release();
             }
+
             m_graph->Abort();
+
+            if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
+                control->Stop();
+                OAFilterState state;
+                control->GetState(INFINITE, &state);
+                control->Release();
+            }
         }
         m_wait.wakeAll();
 
@@ -139,11 +147,6 @@ DirectShowPlayerService::~DirectShowPlayerService()
     delete m_taskThread;
 
     if (m_graph) {
-        if (IMediaControl *control = com_cast<IMediaControl>(m_graph)) {
-            m_graph->Abort();
-            OAFilterState state;
-            control->GetState(INFINITE, &state);
-        }
         m_graph->Release();
         m_graph = 0;
     }
@@ -217,9 +220,6 @@ void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream
             m_source->Release();
             m_source = 0;
         }
-
-        m_graph->RemoveFilter(m_audioOutput);
-        m_graph->RemoveFilter(m_videoOutput);
 
         m_graph->Release();
         m_graph = 0;
@@ -433,7 +433,6 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
         filter->Release();
     }
 
-    graph->Release();
 
     if (m_audioOutput && !isConnected(m_audioOutput, PINDIR_INPUT)) {
         graph->RemoveFilter(m_audioOutput);
@@ -446,6 +445,8 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
 
         m_executedTasks &= ~SetVideoOutput;
     }
+
+    graph->Release();
 
     if (m_executingTask == Render) {
         if (rendered) {
