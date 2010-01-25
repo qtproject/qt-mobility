@@ -84,6 +84,13 @@ QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() con
     return d->m_relationships;
 }
 
+/*! Returns the map of input relationship list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactRelationshipSaveRequest::errorMap() const
+{
+    Q_D(const QContactRelationshipSaveRequest);
+    return d->m_errors;
+}
+
 #include "moc_qcontactrelationshipsaverequest.cpp"
 
 QTM_END_NAMESPACE
