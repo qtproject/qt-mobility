@@ -39,82 +39,78 @@
 **
 ****************************************************************************/
 
-#ifndef QPHONONPLAYERCONTROL_H
-#define QPHONONPLAYERCONTROL_H
+#ifndef QSOUNDEFFECT_H
+#define QSOUNDEFFECT_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 
 #include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
+#include <qml.h>
 
-#include <Phonon/MediaObject>
-#include <Phonon/AudioOutput>
-
-#include <qmediaplayercontrol.h>
-#include <qmediaplayer.h>
-
-QTM_BEGIN_NAMESPACE
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
-QTM_END_NAMESPACE
-
-class QPhononPlayerSession;
-class QPhononPlayerService;
-
-QTM_USE_NAMESPACE
-
-class QPhononPlayerControl : public QMediaPlayerControl
+class QSoundEffectPrivate;
+class QSoundEffect : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(int loopCount READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
+    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
+    Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
 
 public:
-    QPhononPlayerControl(Phonon::MediaObject *session, QObject *parent = 0);
-    ~QPhononPlayerControl();
+    explicit QSoundEffect(QObject *parent = 0);
+    ~QSoundEffect();
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
+    QUrl source() const;
+    void setSource(const QUrl &url);
 
-    QMediaContent media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaContent &content, QIODevice *stream);
-
-    qint64 position() const;
-    qint64 duration() const;
-
-    int bufferStatus() const;
+    int loopCount() const;
+    void setLoopCount(int loopCount);
 
     int volume() const;
-    bool isMuted() const;
-
-    int playlistPosition() const;
-
-    bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-    QMediaTimeRange availablePlaybackRanges() const;
-
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
-
-public Q_SLOTS:
-    void setPosition(qint64 pos);
-
-    void play();
-    void pause();
-    void stop();
-
     void setVolume(int volume);
+
+    bool isMuted() const;
     void setMuted(bool muted);
 
+    int duration() const;
+
+signals:
+    void sourceChanged();
+    void loopCountChanged();
+    void volumeChanged();
+    void mutedChanged();
+    void durationChanged();
+
+public slots:
+    void play();
+    void stop();
+
 private slots:
-    void updateState(Phonon::State newState, Phonon::State oldState);
-    void updateVolume();
-    void processEOS();
+    void repeat();
 
 private:
-    Phonon::MediaObject *m_session;
-    Phonon::AudioOutput *m_audioOutput;
-    QMediaPlayer::State m_state;
-    QMediaPlayer::MediaStatus m_mediaStatus;
-    QIODevice *m_mediaStream;
-    QMediaContent m_resources;
+    Q_DISABLE_COPY(QSoundEffect)
+
+    int m_loopCount;
+    int m_volume;
+    bool m_muted;
+    int m_runningCount;
+
+    QSoundEffectPrivate* d;
 };
 
-#endif
+QML_DECLARE_TYPE(QSoundEffect)
+
+#endif // QSOUNDEFFECT_H

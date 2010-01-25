@@ -81,6 +81,71 @@ QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
     return lang;
 }
 
+// "major.minor.build" format.
+QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
+                                               const QString &parameter)
+{
+    QString errorStr = "Not Available";
+
+    switch(type) {
+        case QSystemInfo::Os :
+        {
+#if !defined(QT_NO_DBUS)
+            QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+            QString str;
+            if (iface.isValid()) {
+                str = iface.getPropertyString("system.kernel.version");
+                if(!str.isEmpty()) {
+                    return str;
+                }
+            }
+#endif
+            QString versionPath = "/proc/version";
+            QFile versionFile(versionPath);
+            if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qWarning() << "File not opened";
+            } else {
+                QString  strvalue;
+                strvalue = versionFile.readAll().trimmed();
+                strvalue = strvalue.split(" ").at(2);
+                versionFile.close();
+                return strvalue;
+            }
+            break;
+        }
+        case QSystemInfo::QtCore :
+            return qVersion();
+            break;
+        default:
+            break;
+    };
+    return errorStr;
+}
+
+//2 letter ISO 3166-1
+QString QSystemInfoLinuxCommonPrivate::currentCountryCode() const
+{
+    return QLocale::system().name().mid(3,2);
+}
+
+bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
+{
+    QString sysPath = "/sys/class/";
+    QDir sysDir(sysPath);
+    QStringList filters;
+    filters << "*";
+    QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+    foreach(QString dir, sysList) {
+        QDir sysDir2(sysPath + dir);
+        if(dir.contains(featureStr)) {
+            QStringList sysList2 = sysDir2.entryList( filters ,QDir::Dirs, QDir::Name);
+            if(!sysList2.isEmpty()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }

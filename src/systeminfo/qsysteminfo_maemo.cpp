@@ -110,11 +110,9 @@
 
 #include <QDBusInterface>
 
-
-
 QTM_BEGIN_NAMESPACE
 
-        static bool halAvailable()
+static bool halAvailable()
 {
 #if !defined(QT_NO_DBUS)
     QDBusConnection dbusConnection = QDBusConnection::systemBus();
@@ -126,9 +124,10 @@ QTM_BEGIN_NAMESPACE
         }
     }
 #endif
-    //  qDebug() << "Hal is not running";
+  //  qDebug() << "Hal is not running";
     return false;
 }
+
 
 bool halIsAvailable;
 //////// QSystemInfo
@@ -160,70 +159,34 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,
+                                    const QString &parameter)
 {
     QString errorStr = "Not Available";
-    bool useDate = false;
-    if(parameter == "versionDate") {
-        useDate = true;
-    }
+
     switch(type) {
-    case QSystemInfo::Os :
+        case QSystemInfo::Firmware :
         {
-            QString versionPath = "/proc/version";
-            QFile versionFile(versionPath);
-            if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
+            QDBusInterface connectionInterface("com.nokia.SystemInfo",
+                                               "/com/nokia/SystemInfo",
+                                               "com.nokia.SystemInfo",
+                                               QDBusConnection::systemBus());
+            if(!connectionInterface.isValid()) {
+                qWarning() << "interfacenot valid";
             } else {
-                QString  strvalue;
-                strvalue = versionFile.readAll().trimmed();
-                strvalue = strvalue.split(" ").at(2);
-                versionFile.close();
-                return strvalue;
+                QDBusReply< QByteArray > reply =
+                    connectionInterface.call("GetConfigValue",
+                                             "/device/sw-release-ver");
+                if(reply.isValid())
+                    return reply.value();
             }
+            break;
         }
-        break;
-    case QSystemInfo::QtCore :
-       return  qVersion();
-       break;
-   case QSystemInfo::Firmware :
-       {
-
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                        QDBusConnection::systemBus());
-    if(!connectionInterface.isValid()) {
-        qWarning() << "interfacenot valid";
-    }
-    QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver");
-    return reply.value();
-// RX-51_BLAH
-//
-#endif
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-        QString productName;
-        if (iface.isValid()) {
-            return iface.getPropertyString("system.firmware.version");
-            } else {
-                return productName;
-            }
-#endif
-    }
-    }
-       break;
+        default:
+            return QSystemInfoLinuxCommonPrivate::version(type, parameter);
+            break;
     };
-  return errorStr;
-}
-
-
-//2 letter ISO 3166-1
-QString QSystemInfoPrivate::currentCountryCode() const
-{
-    return QLocale::system().name().mid(3,2);
+    return errorStr;
 }
 
 #if !defined(QT_NO_DBUS)
@@ -256,25 +219,6 @@ bool QSystemInfoPrivate::hasHalUsbFeature(qint32 usbClass)
     return false;
 }
 #endif
-
-bool QSystemInfoPrivate::hasSysFeature(const QString &featureStr)
-{
-    QString sysPath = "/sys/class/";
-    QDir sysDir(sysPath);
-    QStringList filters;
-    filters << "*";
-    QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-    foreach(QString dir, sysList) {
-        QDir sysDir2(sysPath + dir);
-        if(dir.contains(featureStr)) {
-            QStringList sysList2 = sysDir2.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(!sysList2.isEmpty()) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
