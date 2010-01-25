@@ -89,12 +89,19 @@ QString QSfwTestUtil::systemDirectory()
 
 QString QSfwTestUtil::tempSettingsPath(const char *path)
 {
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    // On emulator, use hardcoded path instead of private directories to
+    // enable a shared database.
+    Q_UNUSED(path);
+    return QDir::toNativeSeparators("C:/Data/temp/QtServiceFW");
+#else
     // Temporary path for files that are specified explictly in the constructor.
     //QString tempPath = QDir::tempPath();
     QString tempPath = QCoreApplication::applicationDirPath();
     if (tempPath.endsWith("/"))
         tempPath.truncate(tempPath.size() - 1);
     return QDir::toNativeSeparators(tempPath + "/QtServiceFramework_tests/" + QLatin1String(path));
+#endif
 }
 
 void QSfwTestUtil::removeDirectory(const QString &path)
