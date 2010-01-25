@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QVERSITDEFS_H
-#define QVERSITDEFS_H
+#ifndef QVERSITDEFS_P_H
+#define QVERSITDEFS_P_H
 
 //
 //  W A R N I N G
@@ -194,4 +194,4 @@ const VersitMapping versitFileExtensionMappings[] = {
 
 QTM_END_NAMESPACE
 
-#endif // QVERSITDEFS_H
+#endif // QVERSITDEFS_P_H

@@ -81,14 +81,31 @@ public:
 
 
     // Deprecated
-    void Q_DECL_DEPRECATED setImagePath(const QString& path) { Q_UNUSED(path) }
-    QString Q_DECL_DEPRECATED imagePath() const { return QString(); }
+    void Q_DECL_DEPRECATED setImagePath(const QString& path)
+    {
+        qWarning("QVersitContactImporter::setImagePath(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitResourceHandler should be used to handle images.");
+        Q_UNUSED(path)
+    }
+    QString Q_DECL_DEPRECATED imagePath() const
+    {
+        qWarning("QVersitContactImporter::imagePath(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitResourceHandler should be used to handle images.");
+        return QString();
+    }
 
-    void Q_DECL_DEPRECATED setAudioClipPath(const QString& path) { Q_UNUSED(path) }
-    QString Q_DECL_DEPRECATED audioClipPath() const { return QString(); }
+    void Q_DECL_DEPRECATED setAudioClipPath(const QString& path)
+    {
+        qWarning("QVersitContactImporter::setAudioClipPath(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitResourceHandler should be used to handle audio.");
+        Q_UNUSED(path)
+    }
+    QString Q_DECL_DEPRECATED audioClipPath() const
+    {
+        qWarning("QVersitContactImporter::audioClipPath(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitResourceHandler should be used to handle audio.");
+        return QString();
+    }
 
     QContact Q_DECL_DEPRECATED importContact(const QVersitDocument& versitDocument)
     {
+        qWarning("QVersitContactImporter::importContact(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  importContacts() should be used instead.");
         QList<QVersitDocument> list;
         list.append(versitDocument);
         return importContacts(list).first();
@@ -96,6 +113,7 @@ public:
 
     QList<QVersitProperty> Q_DECL_DEPRECATED unknownVersitProperties()
     {
+        qWarning("QVersitContactImporter::unknownVersitProperties(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitContactImporterPropertyHandler should be used to discover and handle unknown details.");
         return QList<QVersitProperty>();
     }
 

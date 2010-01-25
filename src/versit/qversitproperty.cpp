@@ -94,7 +94,7 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 }
 
 /*! Returns true if this is equal to other; false if it is not equal. */
-bool QVersitProperty::operator==(const QVersitProperty& other)
+bool QVersitProperty::operator==(const QVersitProperty& other) const
 {
     return d->mGroups == other.d->mGroups &&
             d->mName == other.d->mName &&
@@ -103,7 +103,7 @@ bool QVersitProperty::operator==(const QVersitProperty& other)
 }
 
 /*! Returns true if this is not equal to other; false if it is equal. */
-bool QVersitProperty::operator!=(const QVersitProperty& other)
+bool QVersitProperty::operator!=(const QVersitProperty& other) const
 {
     return !(*this == other);
 }

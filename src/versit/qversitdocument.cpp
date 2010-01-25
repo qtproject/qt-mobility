@@ -89,14 +89,14 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
 }
 
 /*! Returns true if this is equal to other; false if it is not equal. */
-bool QVersitDocument::operator==(const QVersitDocument& other)
+bool QVersitDocument::operator==(const QVersitDocument& other) const
 {
     return d->mVersitType == other.d->mVersitType &&
             d->mProperties == other.d->mProperties;
 }
 
 /*! Returns true if this is not equal to other; false if it is equal. */
-bool QVersitDocument::operator!=(const QVersitDocument& other)
+bool QVersitDocument::operator!=(const QVersitDocument& other) const
 {
     return !(*this == other);
 }

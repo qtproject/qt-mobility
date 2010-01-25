@@ -142,7 +142,7 @@ void QVersitReader::setDefaultCodec(QTextCodec *codec)
 /*!
  * Returns the codec the reader uses when parsing the input stream.
  */
-QTextCodec* QVersitReader::defaultCodec()
+QTextCodec* QVersitReader::defaultCodec() const
 {
     return d->mDefaultCodec;
 }

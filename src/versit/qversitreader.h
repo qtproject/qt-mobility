@@ -86,7 +86,7 @@ public:
     QIODevice* device() const;
 
     void setDefaultCodec(QTextCodec* codec);
-    QTextCodec* defaultCodec();
+    QTextCodec* defaultCodec() const;
 
     // reading:
     bool startReading();
@@ -102,10 +102,15 @@ public:
     // Deprecated
     bool Q_DECL_DEPRECATED readAll()
     {
+        qWarning("QVersitDocument::readAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startReading() and waitForFinished() should be used instead.");
         startReading();
         return waitForFinished();
     }
-    QList<QVersitDocument> Q_DECL_DEPRECATED result() const { return results(); }
+    QList<QVersitDocument> Q_DECL_DEPRECATED result() const
+    {
+        qWarning("QVersitDocument::result(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  results() should be used instead.");
+        return results();
+    }
 
 signals:
     void stateChanged(QVersitReader::State state);
