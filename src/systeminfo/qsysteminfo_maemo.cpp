@@ -216,25 +216,6 @@ bool QSystemInfoPrivate::hasHalUsbFeature(qint32 usbClass)
 }
 #endif
 
-bool QSystemInfoPrivate::hasSysFeature(const QString &featureStr)
-{
-    QString sysPath = "/sys/class/";
-    QDir sysDir(sysPath);
-    QStringList filters;
-    filters << "*";
-    QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-    foreach(QString dir, sysList) {
-        QDir sysDir2(sysPath + dir);
-        if(dir.contains(featureStr)) {
-            QStringList sysList2 = sysDir2.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(!sysList2.isEmpty()) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;

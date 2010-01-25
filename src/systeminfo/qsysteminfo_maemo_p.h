@@ -97,7 +97,6 @@ protected:
     bool hasHalUsbFeature(qint32 usbClass);
     QHalInterface halIface;
 #endif
-    bool hasSysFeature(const QString &featureStr);
 };
 
 class QNetworkManagerInterface;
