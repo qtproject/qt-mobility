@@ -207,6 +207,11 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
  */
 void QVersitProperty::setValue(const QVariant& value)
 {
+    if (value.type() == QVariant::ByteArray) {
+        // setValue(QByteArray) has been replaced with setValue(QVariant).
+        // XXX remove this when removing deprecated functions.
+        qWarning("QVersitProperty::setValue() called with a QByteArray.  This should only happen if the data is of binary nature (eg. an image).  If this was called with textual data, a QString should be passed in instead.");
+    }
     d->mValue = value;
 }
 
