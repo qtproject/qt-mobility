@@ -56,8 +56,14 @@ PlayerControls::PlayerControls(QWidget *parent)
     , nextButton(0)
     , previousButton(0)
     , muteButton(0)
+#ifdef Q_OS_SYMBIAN    
+    , openButton(0)
+    , fullScreenButton(0)
+    , playListButton(0)
+#else
     , volumeSlider(0)
     , rateBox(0)
+#endif    
 {
     playButton = new QToolButton;
     playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
@@ -85,6 +91,8 @@ PlayerControls::PlayerControls(QWidget *parent)
 
     connect(muteButton, SIGNAL(clicked()), this, SLOT(muteClicked()));
 
+#ifdef Q_OS_SYMBIAN
+#else
     volumeSlider = new QSlider(Qt::Horizontal);
     volumeSlider->setRange(0, 100);
 
@@ -98,6 +106,40 @@ PlayerControls::PlayerControls(QWidget *parent)
 
     connect(rateBox, SIGNAL(activated(int)), SLOT(updateRate()));
 
+#endif    
+#ifdef Q_OS_SYMBIAN
+    playButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    playButton->setMinimumSize(1, 1);
+    stopButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    stopButton->setMinimumSize(1, 1);
+    nextButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    nextButton->setMinimumSize(1, 1);
+    previousButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    previousButton->setMinimumSize(1, 1);
+    muteButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    muteButton->setMinimumSize(1, 1);
+    
+    openButton = new QToolButton();
+    openButton->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
+    openButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    openButton->setMinimumSize(1, 1);
+    connect(openButton, SIGNAL(clicked()), this, SIGNAL(open()));
+    
+    fullScreenButton = new QToolButton();
+    fullScreenButton->setIcon(style()->standardIcon(QStyle::SP_DesktopIcon));
+    fullScreenButton->setCheckable(true);
+    fullScreenButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    fullScreenButton->setMinimumSize(1, 1);
+    connect(fullScreenButton, SIGNAL(clicked(bool)), this, SIGNAL(fullScreen(bool)));
+    
+    playListButton = new QToolButton();
+    playListButton->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+    playListButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    playListButton->setMinimumSize(1, 1);
+    connect(playListButton, SIGNAL(clicked(bool)), this, SIGNAL(openPlayList()));
+    
+#endif
+    
     QBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     layout->addWidget(stopButton);
@@ -105,8 +147,14 @@ PlayerControls::PlayerControls(QWidget *parent)
     layout->addWidget(playButton);
     layout->addWidget(nextButton);
     layout->addWidget(muteButton);
+#ifdef Q_OS_SYMBIAN
+    layout->addWidget(openButton);
+    layout->addWidget(playListButton);
+    layout->addWidget(fullScreenButton);
+#else    
     layout->addWidget(volumeSlider);
-    layout->addWidget(rateBox);
+    layout->addWidget(rateBox);    
+#endif
     setLayout(layout);
 }
 
@@ -139,12 +187,19 @@ void PlayerControls::setState(QMediaPlayer::State state)
 
 int PlayerControls::volume() const
 {
+#ifdef Q_OS_SYMBIAN
+    return 0;
+#else    
     return volumeSlider->value();
+#endif
 }
 
 void PlayerControls::setVolume(int volume)
 {
+#ifdef Q_OS_SYMBIAN
+#else    
     volumeSlider->setValue(volume);
+#endif    
 }
 
 bool PlayerControls::isMuted() const
@@ -183,11 +238,17 @@ void PlayerControls::muteClicked()
 
 qreal PlayerControls::playbackRate() const
 {
+#ifdef Q_OS_SYMBIAN
+    return 0;
+#else 
     return rateBox->itemData(rateBox->currentIndex()).toDouble();
+#endif    
 }
 
 void PlayerControls::setPlaybackRate(float rate)
 {
+#ifdef Q_OS_SYMBIAN
+#else   
     for (int i=0; i<rateBox->count(); i++) {
         if (qFuzzyCompare(rate, float(rateBox->itemData(i).toDouble()))) {
             rateBox->setCurrentIndex(i);
@@ -197,9 +258,13 @@ void PlayerControls::setPlaybackRate(float rate)
 
     rateBox->addItem( QString("%1x").arg(rate), QVariant(rate));
     rateBox->setCurrentIndex(rateBox->count()-1);
+#endif    
 }
 
 void PlayerControls::updateRate()
 {
+#ifdef Q_OS_SYMBIAN
+#else 
     emit changeRate(playbackRate());
+#endif    
 }
