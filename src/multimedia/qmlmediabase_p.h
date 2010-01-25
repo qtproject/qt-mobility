@@ -83,7 +83,7 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
 
-    int bufferStatus() const;
+    qreal bufferStatus() const;
 
     bool isSeekable() const;
 

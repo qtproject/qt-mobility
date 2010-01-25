@@ -301,9 +301,9 @@ void QmlMediaBase::setMuted(bool muted)
     m_playerControl->setMuted(muted);
 }
 
-int QmlMediaBase::bufferStatus() const
+qreal QmlMediaBase::bufferStatus() const
 {
-    return m_playerControl->bufferStatus();
+    return qreal(m_playerControl->bufferStatus()) / 100;
 }
 
 bool QmlMediaBase::isSeekable() const

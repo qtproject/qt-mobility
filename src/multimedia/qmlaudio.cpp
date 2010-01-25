@@ -49,8 +49,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Audio QmlAudio
-    \brief The Video element allows you to add audio to a scene.
-    \inherits Item
+    \brief The Audio element allows you to add audio to a scene.
 */
 
 /*!
@@ -73,6 +72,8 @@ QmlAudio::~QmlAudio()
 
 /*!
     \qmlmethod Audio::play()
+
+    Starts playback of the audio.
 */
 
 void QmlAudio::play()
@@ -82,6 +83,8 @@ void QmlAudio::play()
 
 /*!
     \qmlmethod Audio::pause()
+
+    Pauses playback of the audio.
 */
 
 void QmlAudio::pause()
@@ -91,6 +94,8 @@ void QmlAudio::pause()
 
 /*!
     \qmlmethod Audio::stop()
+
+    Stops playback of the audio.
 */
 
 void QmlAudio::stop()
@@ -100,50 +105,110 @@ void QmlAudio::stop()
 
 /*!
     \qmlproperty url Audio::source
+
+    This property holds the source URL of the audio.
 */
 
 /*!
-    \qmlproperty enum Audio::state
+    \qmlproperty bool Audio::isPlaying
+
+    This property holds whether the audio is playing.
+*/
+
+/*!
+    \qmlproperty bool Audio::isPaused
+
+    This property holds whether the audio is paused.
+*/
+
+/*!
+    \qmlproperty bool Audio::isStopped
+
+    This property holds whether the audio is stopped.
 */
 
 /*!
     \qmlproperty enum Audio::status
+
+    This property holds the status of audio loading. It can be one of:
+
+    \list
+    \o Media.NoMedia - no audio has been set.
+    \o Media.Loading - the audio is currently being loaded.
+    \o Media.Loaded - the audio has been loaded.
+    \o Media.Buffering - the audio is buffering data.
+    \o Media.Stalled - playback has been interrupted while the audio is buffering data.
+    \o Media.Buffered - the audio has buffered data.
+    \o Media.EndOfMedia - the audio has played to the end.
+    \o Media.UnknownStatus - the status of the audio is unknown.
+    \endlist
 */
 
 /*!
     \qmlproperty int Audio::duration
+
+    This property holds the duration of the audio in milliseconds.
+
+    If the audio doesn't have a fixed duration (a live stream for example) this will be 0.
 */
 
 /*!
     \qmlproperty int Audio::position
+
+    This property holds the current playback position in milliseconds.
 */
 
 /*!
-    \qmlproperty real Audio::volume
+    \qmlproperty qreal Audio::volume
+
+    This property holds the volume of the audio output, from 0.0 (silent) to 1.0 (maximum volume).
 */
 
 /*!
     \qmlproperty bool Audio::muted
+
+    This property holds whether the audio output is muted.
 */
 
 /*!
-    \qmlproperty int Audio::bufferStatus
+    \qmlproperty qreal Audio::bufferStatus
+
+    This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0
+    (full).
 */
 
 /*!
     \qmlproperty bool Audio::seekable
+
+    This property holds whether position of the audio can be changed.
 */
 
 /*!
     \qmlproperty qreal playbackRate
+
+    This property holds the rate at which audio is played at as a multiple of the normal rate.
 */
 
 /*!
     \qmlproperty enum Audio::error
+
+    This property holds the error state of the audio.  It can be one of:
+
+    \list
+    \o Media.NoError - there is no current error.
+    \o Media.ResourceError - the audio cannot be played due to a problem allocating resources.
+    \o Media.FormatError - the audio format is not supported.
+    \o Media.NetworkError - the audio cannot be played due to network issues.
+    \o Media.AccessDenied - the audio cannot be played due to insufficient permissions.
+    \o Media.ServiceMissing -  the audio cannot be played because the media service could not be
+    instantiated.
+    \endlist
 */
 
 /*!
     \qmlproperty enum Audio::errorString
+
+    This property holds a string describing the current error condition in more detail.
 */
 
 #include "moc_qmlaudio_p.cpp"

@@ -144,35 +144,75 @@ QmlGraphicsVideo::~QmlGraphicsVideo()
 
 /*!
     \qmlproperty url Video::source
+
+    This property holds the source URL of the video.
 */
 
 /*!
-    \qmlproperty enum Video::state
+    \qmlproperty bool Video::isPlaying
+
+    This property holds whether the video is playing.
+*/
+
+/*!
+    \qmlproperty bool Video::isPaused
+
+    This property holds whether the video is paused.
+*/
+
+/*!
+    \qmlproperty bool Video::isStopped
+
+    This property holds whether the video is stopped.
 */
 
 /*!
     \qmlproperty enum Video::status
+
+    This property holds the status of video loading. It can be one of:
+
+    \list
+    \o Media.NoMedia - no video has been set.
+    \o Media.Loading - the video is currently being loaded.
+    \o Media.Loaded - the video has been loaded.
+    \o Media.Buffering - the video is buffering data.
+    \o Media.Stalled - playback has been interrupted while the video is buffering data.
+    \o Media.Buffered - the video has buffered data.
+    \o Media.EndOfMedia - the video has played to the end.
+    \o Media.UnknownStatus - the status of the video is unknown.
+    \endlist
 */
 
 /*!
-    \qmlproperty real Video::duration
+    \qmlproperty int Video::duration
+
+    This property holds the duration of the video in milliseconds.
+
+    If the video doesn't have a fixed duration (a live stream for example) this will be 0.
 */
 
 /*!
-    \qmlproperty real Video::position
+    \qmlproperty int Video::position
+
+    This property holds the current playback position in milliseconds.
 */
 
-
 /*!
-    \qmlproperty int Video::volume
+    \qmlproperty qreal Video::volume
+
+    This property holds the volume of the audio output, from 0.0 (silent) to 1.0 (maximum volume).
 */
 
 /*!
     \qmlproperty bool Video::muted
+
+    This property holds whether the audio output is muted.
 */
 
 /*!
     \qmlproperty bool Video::videoAvailable
+
+    This property holds whether video output is available.
 */
 
 bool QmlGraphicsVideo::isVideoAvailable() const
@@ -181,27 +221,56 @@ bool QmlGraphicsVideo::isVideoAvailable() const
 }
 
 /*!
-    \qmlproperty int Video::bufferStatus
+    \qmlproperty qreal Video::bufferStatus
+
+    This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0
+    (full).
 */
 
 /*!
     \qmlproperty bool Video::seekable
+
+    This property holds whether position of the video can be changed.
 */
 
 /*!
     \qmlproperty qreal playbackRate
+
+    This property holds the rate at which video is played at as a multiple of the normal rate.
 */
 
 /*!
     \qmlproperty enum Video::error
+
+    This property holds the error state of the video.  It can be one of:
+
+    \list
+    \o Media.NoError - there is no current error.
+    \o Media.ResourceError - the video cannot be played due to a problem allocating resources.
+    \o Media.FormatError - the video format is not supported.
+    \o Media.NetworkError - the video cannot be played due to network issues.
+    \o Media.AccessDenied - the video cannot be played due to insufficient permissions.
+    \o Media.ServiceMissing -  the video cannot be played because the media service could not be
+    instantiated.
+    \endlist
 */
 
 /*!
     \qmlproperty enum Video::errorString
+
+    This property holds a string describing the current error condition in more detail.
 */
 
 /*!
     \qmlproperty enum Video::FillMode
+
+    Set this property to define how the video is scaled to fit the target area.
+
+    \list
+    \o Stretch - the video is scaled to fit.
+    \o PreserveAspectFit - the image is scaled uniformly to fit without cropping
+    \o PreserveAspectCrop - the image is scaled uniformly to fill, cropping if necessary
+    \endlist
 */
 
 QmlGraphicsVideo::FillMode QmlGraphicsVideo::fillMode() const
@@ -221,6 +290,8 @@ void QmlGraphicsVideo::setFillMode(FillMode mode)
 
 /*!
     \qmlmethod Video::play()
+
+    Starts playback of the video.
 */
 
 void QmlGraphicsVideo::play()
@@ -230,6 +301,8 @@ void QmlGraphicsVideo::play()
 
 /*!
     \qmlmethod Video::pause()
+
+    Pauses playback of the video.
 */
 
 void QmlGraphicsVideo::pause()
@@ -239,6 +312,8 @@ void QmlGraphicsVideo::pause()
 
 /*!
     \qmlmethod Video::stop()
+
+    Stops playback of the video.
 */
 
 void QmlGraphicsVideo::stop()
