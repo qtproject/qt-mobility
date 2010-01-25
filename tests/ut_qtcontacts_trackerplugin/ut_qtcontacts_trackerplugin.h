@@ -63,6 +63,7 @@ public:
 private slots:
     void initTestCase();
     void cleanupTestCase();
+    void cleanup();
     void testSavePhoneNumber();
     void testPhoneNumberContext();
     void testWritingOnlyWorkMobile();
@@ -97,6 +98,7 @@ private slots:
     void testAsyncReadContacts();
     void testFilterContacts();
     void testFilterContactsEndsWith();
+    void testFilterTwoNameFields();
     void testTrackerUriToUniqueId();
     void testQRelationshipAndMetacontacts();
     void testIMContactsAndMetacontactMasterPresence();
@@ -114,6 +116,7 @@ private:
     // Not used.
     QContactFilter queryFilter;
     QList<QContactSortOrder> sortOrders;
+    QList<QContactLocalId> addedContacts;
 };
 
 class Slots: public QObject

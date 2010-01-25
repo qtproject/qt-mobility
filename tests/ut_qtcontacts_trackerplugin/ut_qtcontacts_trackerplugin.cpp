@@ -43,6 +43,7 @@
 
 #include <QMap>
 #include <QPair>
+#include <QUuid>
 
 #include <QtTracker/Tracker>
 #include <QtTracker/ontologies/nco.h>
@@ -920,6 +921,14 @@ void ut_qtcontacts_trackerplugin::cleanupTestCase()
     delete trackerEngine;
 }
 
+void ut_qtcontacts_trackerplugin::cleanup()
+{
+    foreach (QContactLocalId id, addedContacts) {
+        trackerEngine->removeContact(id, error);
+    }
+    addedContacts.clear();
+}
+
 
 void ut_qtcontacts_trackerplugin::testNcoTypes()
 {
@@ -1250,6 +1259,54 @@ void ut_qtcontacts_trackerplugin::testFilterContactsEndsWith()
         QVERIFY(containsShort);
     }
     settings.setValue("phoneNumberMatchDigitCount", restoreValue);
+}
+
+void ut_qtcontacts_trackerplugin::testFilterTwoNameFields()
+{
+    // init test
+    QMap<QContactLocalId, QContactName> names;
+    for (int i = 0; i < 3; i++) {
+        QContact c;
+        QContactName name;
+        name.setFirst(QUuid::createUuid().toString() + QString::number(i));
+        name.setLast(QUuid::createUuid().toString() + QString::number(i));
+        c.saveDetail(&name);
+        QContactAvatar avatar;
+        avatar.setAvatar(QUuid::createUuid().toString());
+        c.saveDetail(&avatar);
+        QVERIFY(trackerEngine->saveContact(&c, error));        
+        names.insert(c.localId(), name);
+        QCOMPARE(error, QContactManager::NoError);
+        addedContacts.append(c.localId());
+    }
+
+    // Init filter
+    QContactLocalId searchId = names.keys().at(1);
+    QString searchFirst = names.value(searchId).first();
+    QString searchLast = names.value(searchId).last();
+    QContactUnionFilter ufilter;
+    QContactDetailFilter filterFirst;
+    filterFirst.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    filterFirst.setMatchFlags(QContactFilter::MatchExactly);
+    filterFirst.setValue(searchFirst);
+    QContactDetailFilter filterLast;
+    filterLast.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
+    filterLast.setMatchFlags(QContactFilter::MatchExactly);
+    filterLast.setValue(searchLast);
+    ufilter.setFilters(QList<QContactFilter>() << filterFirst << filterLast);
+
+    // Init request
+    QContactFetchRequest request;
+    request.setFilter(ufilter);
+    trackerEngine->startRequest(&request);
+    trackerEngine->waitForRequestFinished(&request, 10000);
+
+
+    // Test fetch result
+    QCOMPARE(request.contacts().count(), 1);
+    QCOMPARE(request.contacts().at(0).localId(), searchId);
+    QCOMPARE(request.contacts().at(0).detail<QContactName>().first(), searchFirst);
+    QCOMPARE(request.contacts().at(0).detail<QContactName>().last(), searchLast);
 }
 
 void ut_qtcontacts_trackerplugin::testTrackerUriToUniqueId()
