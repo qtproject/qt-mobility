@@ -54,9 +54,9 @@ QList<CContactItemField *> CntTransformName::transformDetailL(const QContactDeta
 
     //create new fields without contexts
     transformToTextFieldL(name, fieldList, name.prefix(), KUidContactFieldPrefixName, KUidContactFieldVCardMapUnusedN, false);
-    transformToTextFieldL(name, fieldList, name.first(), KUidContactFieldGivenName, KUidContactFieldVCardMapUnusedN, false);
-    transformToTextFieldL(name, fieldList, name.middle(), KUidContactFieldAdditionalName, KUidContactFieldVCardMapUnusedN, false);
-    transformToTextFieldL(name, fieldList, name.last(), KUidContactFieldFamilyName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.firstName(), KUidContactFieldGivenName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.middleName(), KUidContactFieldAdditionalName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.lastName(), KUidContactFieldFamilyName, KUidContactFieldVCardMapUnusedN, false);
     transformToTextFieldL(name, fieldList, name.suffix(), KUidContactFieldSuffixName, KUidContactFieldVCardMapUnusedN, false);
     transformToTextFieldL(name, fieldList, name.customLabel(), KUidContactFieldTemplateLabel, KUidContactFieldVCardMapUnusedN, false);
 

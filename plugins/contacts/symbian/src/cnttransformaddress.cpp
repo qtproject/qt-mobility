@@ -114,7 +114,7 @@ QContactDetail *CntTransformAddress::transformItemField(const CContactItemField&
 
         // Merge detail with existing detail
         detail = new QContactAddress( existingAddress );
-        foreach( QString key, address.values().keys() )
+        foreach( QString key, address.variantValues().keys() )
             detail->setValue( key, address.variantValue(key) );
         break;
     }
