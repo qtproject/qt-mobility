@@ -42,8 +42,13 @@
 #include "qsysteminfo.h"
 
 #ifdef Q_OS_LINUX
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "qsysteminfo_maemo_p.h"
+#else
 #include "qsysteminfo_linux_p.h"
-#endif
+#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
+#endif //Q_OS_LINUX
+
 #ifdef Q_OS_WIN
 #include "qsysteminfo_win_p.h"
 #endif
@@ -202,7 +207,7 @@ is a reliable way to gather such information.
     \class QSystemDeviceInfo
 
     \ingroup systeminfo
-    
+
     \brief The QSystemDeviceInfo class provides access to device
 information from the system.
 
@@ -352,12 +357,18 @@ information from the system.
   This signal is emitted whenever bluetooth state changes, specified by \a on.
 */
 
+Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
+Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemScreenSaverPrivate, screenSaverPrivate)
+
+
  /*!
 \fn QSystemInfo::QSystemInfo(QObject *parent)
    Constructs a QSystemInfo object with the given \a parent.
  */
-
-Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent), d(sysinfoPrivate())
@@ -433,7 +444,6 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    Constructs a QSystemNetworkInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
     : QObject(parent), d(netInfoPrivate())
@@ -578,7 +588,6 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
    \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
    Constructs a QSystemDisplayInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 
 QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
     : QObject(parent)
@@ -617,7 +626,6 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
    \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    Constructs a QSystemStorageInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
     : QObject(parent)
@@ -673,7 +681,6 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
    \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
    Constructs a QSystemDeviceInfo with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
@@ -857,7 +864,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
-    d = new QSystemScreenSaverPrivate(parent);
     screenSaverIsInhibited = screenSaverInhibited();
 }
 
@@ -870,7 +876,6 @@ QSystemScreenSaver::~QSystemScreenSaver()
 //    if(screenSaverIsInhibited != screenSaverInhibited())
 //        setScreenSaverEnabled(screenSaverIsInhibited);
 
-    delete d;
 }
 
 /*!
@@ -884,7 +889,7 @@ QSystemScreenSaver::~QSystemScreenSaver()
 */
 bool QSystemScreenSaver::setScreenSaverInhibit()
 {
-    return d->setScreenSaverInhibit();
+    return screenSaverPrivate()->setScreenSaverInhibit();
 }
 
 /*!
@@ -895,7 +900,7 @@ bool QSystemScreenSaver::setScreenSaverInhibit()
 */
 bool QSystemScreenSaver::screenSaverInhibited()
 {
-    return d->screenSaverInhibited();
+    return screenSaverPrivate()->screenSaverInhibited();
 }
 
 

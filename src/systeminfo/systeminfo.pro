@@ -43,6 +43,10 @@ win32 {
 
 unix: {
     QT += gui
+    maemo*|linux-*: {
+        SOURCES += qsysteminfo_linux_common.cpp
+        HEADERS += qsysteminfo_linux_common_p.h
+    }
     !maemo*:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
@@ -61,13 +65,20 @@ unix: {
         }
     }
     maemo*: {
-            SOURCES += qsysteminfo_maemo.cpp
-            HEADERS += qsysteminfo_maemo_p.h
+            #Qt GConf wrapper added here until a proper place is found for it.
+            CONFIG += link_pkgconfig
+            SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
+            HEADERS += qsysteminfo_maemo_p.h gconfitem.h
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp
                 HEADERS += qhalservice_linux_p.h
        }
+       PKGCONFIG += glib-2.0 gconf-2.0
+       CONFIG += create_pc create_prl
+       QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
+       pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+       pkgconfig.files = QtSystemInfo.pc
     }
 
     mac: {

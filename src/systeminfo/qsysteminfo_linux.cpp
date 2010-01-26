@@ -129,48 +129,17 @@ static bool halAvailable()
     return false;
 }
 
+
 bool halIsAvailable;
 //////// QSystemInfo
-QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
- : QObject(parent)
+QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
+ : QSystemInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
-    langCached = currentLanguage();
-    startLanguagePolling();
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-}
-
-void QSystemInfoPrivate::startLanguagePolling()
-{
-    QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
-    if(langCached.isEmpty()) {
-        currentLanguage();
-    }
-    checkLang = checkLang.left(2);
-    if(checkLang != langCached) {
-        emit currentLanguageChanged(checkLang);
-        langCached = checkLang;
-    }
-    langTimer = new QTimer(this);
-    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
-}
-
-// 2 letter ISO 639-1
-QString QSystemInfoPrivate::currentLanguage() const
-{
-    QString lang;
-    if(langCached.isEmpty()) {
-        lang  = QLocale::system().name().left(2);
-        if(lang.isEmpty() || lang == "C") {
-            lang = "en";
-        }
-    } else {
-        lang = langCached;
-    }
-    return lang;
 }
 
 // 2 letter ISO 639-1
@@ -196,17 +165,19 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,
+                                    const QString &parameter)
 {
     QString errorStr = "Not Available";
+
     bool useDate = false;
     if(parameter == "versionDate") {
         useDate = true;
     }
+
     switch(type) {
-    case QSystemInfo::Os :
+        case QSystemInfo::Firmware :
         {
-#if !defined(QT_NO_DBUS)
             QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
             QString str;
             if (iface.isValid()) {
@@ -214,56 +185,27 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
                 if(!str.isEmpty()) {
                     return str;
                 }
+                if(useDate) {
+                    str = iface.getPropertyString("system.firmware.release_date");
+                    if(!str.isEmpty()) {
+                        return str;
+                    }
+                } else {
+                    str = iface.getPropertyString("system.firmware.version");
+                    if(str.isEmpty()) {
+                        if(!str.isEmpty()) {
+                            return str;
+                        }
+                    }
+                }
             }
-#endif
-            QString versionPath = "/proc/version";
-            QFile versionFile(versionPath);
-            if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
-            } else {
-                QString  strvalue;
-                strvalue = versionFile.readAll().trimmed();
-                strvalue = strvalue.split(" ").at(2);
-                versionFile.close();
-                return strvalue;
-            }
+            break;
         }
-        break;
-    case QSystemInfo::QtCore :
-       return  qVersion();
-       break;
-   case QSystemInfo::Firmware :
-       {
-#if !defined(QT_NO_DBUS)
-           QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-           QString str;
-           if (iface.isValid()) {
-               if(useDate) {
-                   str = iface.getPropertyString("system.firmware.release_date");
-                   if(!str.isEmpty()) {
-                       return str;
-                   }
-               } else {
-                   str = iface.getPropertyString("system.firmware.version");
-                   if(str.isEmpty()) {
-                       if(!str.isEmpty()) {
-                           return str;
-                       }
-                   }
-               }
-           }
-#endif
-       }
-       break;
+        default:
+            return QSystemInfoLinuxCommonPrivate::version(type, parameter);
+            break;            
     };
-  return errorStr;
-}
-
-
-//2 letter ISO 3166-1
-QString QSystemInfoPrivate::currentCountryCode() const
-{
-    return QLocale::system().name().mid(3,2);
+    return errorStr;
 }
 
 #if !defined(QT_NO_DBUS)
@@ -296,25 +238,6 @@ bool QSystemInfoPrivate::hasHalUsbFeature(qint32 usbClass)
     return false;
 }
 #endif
-
-bool QSystemInfoPrivate::hasSysFeature(const QString &featureStr)
-{
-    QString sysPath = "/sys/class/";
-    QDir sysDir(sysPath);
-    QStringList filters;
-    filters << "*";
-    QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-    foreach(QString dir, sysList) {
-        QDir sysDir2(sysPath + dir);
-        if(dir.contains(featureStr)) {
-            QStringList sysList2 = sysDir2.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(!sysList2.isEmpty()) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
@@ -458,8 +381,8 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 }
 
 //////// QSystemNetworkInfo
-QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
+        : QSystemNetworkInfoLinuxCommonPrivate(parent)
 {
 #if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
@@ -1139,8 +1062,8 @@ QString QSystemNetworkInfoPrivate::getBluetoothInfo(const QString &file)
 #endif
 
 //////// QSystemDisplayInfo
-QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
+        : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
 }
@@ -1246,8 +1169,8 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 #endif
 }
 
-QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
+        : QSystemStorageInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
 }
@@ -1402,8 +1325,8 @@ void QSystemStorageInfoPrivate::mountEntries()
 
 
 //////// QSystemDeviceInfo
-QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
+        : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
     setConnection();
@@ -1915,8 +1838,8 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
  //////////////
  ///////
- QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-         : QObject(parent)
+ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
+         : QSystemScreenSaverLinuxCommonPrivate(parent)
  {
      kdeIsRunning = false;
      gnomeIsRunning = false;
