@@ -104,6 +104,10 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
         return;
     
     m_mediaStatus = status;
+    
+    if (m_mediaStatus == QMediaPlayer::InvalidMedia)
+        setError(KErrNotSupported);
+    
     emit mediaStatusChanged(status);
     if (m_play_requested)
         play();
@@ -175,6 +179,7 @@ void S60MediaPlayerSession::stop()
     setState(QMediaPlayer::StoppedState);
     m_timer->stop();
     doStop();
+    emit positionChanged(0);
 }
 
 void S60MediaPlayerSession::setVideoRenderer(QObject *renderer)

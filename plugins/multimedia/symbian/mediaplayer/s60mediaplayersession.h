@@ -97,6 +97,8 @@ public:
     
     virtual void setVideoRenderer(QObject *renderer);
 
+    void setMediaStatus(QMediaPlayer::MediaStatus);
+    void setState(QMediaPlayer::State state);
     
 protected:    
     virtual void doLoadL(const TDesC &path) = 0;
@@ -112,11 +114,10 @@ protected:
     virtual int doGetDurationL() const = 0;
 
 protected:
+    
     void setError(int error,  const QString &errorString = QString());
     void initComplete();
     void playComplete();
-    void setMediaStatus(QMediaPlayer::MediaStatus);
-    void setState(QMediaPlayer::State state);
     QMap<QString, QVariant>& metaDataEntries();
     QMediaPlayer::Error fromSymbianErrorToMultimediaError(int error);
     

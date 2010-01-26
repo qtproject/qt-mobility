@@ -80,6 +80,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
+    m_player->Close();
     delete m_player;
 }
 
@@ -185,7 +186,6 @@ void S60VideoPlayerSession::doPauseL()
 void S60VideoPlayerSession::doStop()
 {
     m_player->Stop();
-    m_player->Close();
 }
 qint64 S60VideoPlayerSession::doGetPositionL() const
 {
@@ -228,7 +228,6 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
-    m_player->Close();
     setError(aError);
     playComplete();
 }

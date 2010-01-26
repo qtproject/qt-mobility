@@ -200,20 +200,27 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 {
     Q_UNUSED(stream)
     // we don't want to set & load media again when it is already loaded    
-    if (m_session && (m_currentResource == source) && m_session->state() == QMediaPlayer::LoadedMedia) {
+    if (m_session && m_currentResource == source && m_session->state() == QMediaPlayer::LoadedMedia)
         return;
-    }
 
+    if (source.isNull())
+        return;
+    
     // store to variable as session is created based on the content type.
     m_currentResource = source;
-    if (m_session) {
+    if (m_session)
         m_session->stop();
-    }
-    m_session = m_mediaPlayerResolver.PlayerSession();
+    
+    S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession(); 
 
-    QUrl url;
-    if (m_session && !source.isNull()) {
-        url = source.canonicalUrl();
+    // invalidate old session if one found
+    if (!newSession && m_session)
+        m_session->setMediaStatus(QMediaPlayer::InvalidMedia);
+    
+    m_session = newSession;
+    
+    if (m_session) {
+        QUrl url = source.canonicalUrl();
         
         if (m_session->mediaFileLocal())
             m_session->load(url);	
@@ -221,11 +228,8 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
             m_session->loadUrl(url);
             
         emit mediaChanged(m_currentResource);
-    }
-    else {
+    } else
         emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
-    }
-
 }
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)

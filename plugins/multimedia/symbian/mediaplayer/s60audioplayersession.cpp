@@ -55,6 +55,7 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
 {
+    m_player->Close();
     delete m_player;
 }
 
@@ -93,7 +94,6 @@ void S60AudioPlayerSession::doPauseL()
 void S60AudioPlayerSession::doStop()
 {
     m_player->Stop();
-    m_player->Close();
 }
 
 void S60AudioPlayerSession::doSetVolumeL(int volume)
