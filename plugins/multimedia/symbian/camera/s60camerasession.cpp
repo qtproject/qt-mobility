@@ -54,7 +54,6 @@
 const int KSymbianImageQualityCoefficient = 25;
 const int KMaxClipSize = 64 * 1024;
 
-CCamera::TFormat KSymbianDefaultImageCodec = CCamera::EFormatExif;
 #ifdef Q_CC_NOKIAX86
 _LIT8(KCameraTemp,"test data");
 #endif
@@ -64,16 +63,18 @@ S60CameraSession::S60CameraSession(QObject *parent)
     , m_cameraEngine(NULL)
     , m_VFProcessor(NULL)
     , m_imageQuality(QtMedia::NormalQuality*KSymbianImageQualityCoefficient)
-    , m_captureSize(QSize(1600, 1200))
+    , m_captureSize(QSize())
     , m_state(QCamera::StoppedState)
     , m_windowSize(QSize(320/2, 240/2))
     , m_pixelF(QVideoFrame::Format_RGB24)
     , m_deviceIndex(NULL)
     , m_error(NoError)
-    , m_currentcodec(KSymbianDefaultImageCodec)
     , m_advancedSettings(NULL)
     , m_videoUtility(NULL)
+    , m_VFWidgetSize(QSize())
 {
+    // set defaults so that camera works with both devices..
+    m_currentcodec = defaultCodec();
     // create initial camera
     resetCamera();
 
@@ -95,7 +96,15 @@ S60CameraSession::~S60CameraSession()
     delete m_cameraEngine;
     m_cameraEngine = NULL;
 }
-
+CCamera::TFormat S60CameraSession::defaultCodec()
+{
+    if (m_deviceIndex == 0) {
+        return CCamera::EFormatJpeg;
+    }
+    else {
+        return CCamera::EFormatFbsBitmapColor64K;
+    }
+}
 void S60CameraSession::resetCamera()
 {
     qDebug() << "S60CameraSession::resetCamera START";
@@ -134,7 +143,6 @@ void S60CameraSession::startCamera()
     if (!m_error ) {
         qDebug() << "S60CameraSession::startCamera, ReserveAndPowerOn"<< m_error;
         m_cameraEngine->ReserveAndPowerOn();
-        //updateImageCaptureCodecs();
     }
     if (m_error != KErrNone) {
         qDebug() << "S60CameraSession::startCamera emitting error="<< m_error;
@@ -165,6 +173,8 @@ void S60CameraSession::capture(const QString &fileName)
         emit error(QStillImageCapture::ResourceError, QLatin1String("capture outputlocation not set properly"));
         return;
     }
+    // check capture size //if not set sets the default one
+    setCaptureSize(m_captureSize);
 
     if (m_cameraEngine) {
         TSize size(m_captureSize.width(), m_captureSize.height());
@@ -176,7 +186,6 @@ void S60CameraSession::capture(const QString &fileName)
         if (m_error == KErrNotReady || m_error == KErrNoMemory) {
             emit error(QCamera::NotReadyToCaptureError, QLatin1String("camera is not reserved or prepared for capture"));
         }
-        m_captureSize = QSize(size.iWidth,size.iHeight); // set size according to aquired value.
     }
     else {
         m_error = KErrNotReady;
@@ -212,7 +221,7 @@ void S60CameraSession::setFrameRate(int rate)
     if (m_videoUtility)
         m_videoUtility->SetVideoFrameRateL(rate);
 }
-
+/*
 int S60CameraSession::brightness() const
 {
 
@@ -283,7 +292,7 @@ void S60CameraSession::setWhitelevel(int w)
 {
     Q_UNUSED(w)
 }
-
+*/
 int S60CameraSession::rotation() const
 {
     return 0;
@@ -622,14 +631,7 @@ QString S60CameraSession::description(const int index)
     }
     return cameraDesc;
 }
-QIcon S60CameraSession::icon(int index) const
-{
-    // TODO what icons should returned here?
-    // \epoc32\release\winscw\udeb\z\resource\apps\camcorder_aif.mif
-    Q_UNUSED(index);
-    QString filename = QLatin1String("z:\\resource\\apps\\cameraapp_aif.mif");
-    return QIcon( filename );
-}
+
 int S60CameraSession::defaultDevice() const
 {
     //First camera is the default
@@ -694,13 +696,15 @@ QSize S60CameraSession::maximumCaptureSize()
 void S60CameraSession::setCaptureSize(const QSize &size)
 {
     qDebug() << "S60CameraSession::setCaptureSizes, size="<<size;
-    if (size.isEmpty()) {
+    if (m_captureSize.isNull() || size.isEmpty()) {
         //an empty QSize indicates the encoder should make an optimal choice based on what is
         //available from the image source and the limitations of the codec.
         m_captureSize = supportedCaptureSizesForCodec(formatMap().key(m_currentcodec)).last();
+        qDebug() << "S60CameraSession::setCaptureSizes, using optimal(last) size="<<m_captureSize;
     }
     else
         m_captureSize = size;
+    qDebug() << "S60CameraSession::setCaptureSizes, END size="<<size;
 }
 
 QList<QSize> S60CameraSession::supportedCaptureSizesForCodec(const QString &codecName)

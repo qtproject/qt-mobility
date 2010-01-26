@@ -93,11 +93,14 @@ public:
     S60CameraSession(QObject *parent = 0);
     ~S60CameraSession();
 
+    CCamera::TFormat S60CameraSession::defaultCodec();
     bool deviceReady();
 
     // camera image properties
+    
     int framerate() const;
     void setFrameRate(int rate);
+    /*
     int brightness() const;
     void setBrightness(int b);
     int contrast() const;
@@ -112,6 +115,7 @@ public:
     void setBacklightCompensation(bool);
     int whitelevel() const;
     void setWhitelevel(int w);
+    */
     int rotation() const;
     void setRotation(int r);
     bool autofocus() const;
@@ -149,7 +153,6 @@ public:
     static int deviceCount();
     static QString name(const int index);
     static QString description(const int index);
-    QIcon icon(int index) const;
     int defaultDevice() const;
     int selectedDevice() const;
     void setSelectedDevice(int index);

@@ -82,11 +82,7 @@ QString S60CameraVideoDeviceControl::deviceDescription(int index) const
 QIcon S60CameraVideoDeviceControl::deviceIcon(int index) const
 {
     qDebug() << "S60CameraVideoDeviceControl::deviceIcon(), index="<<index;
-    QIcon deviceIcon = QIcon();
-    if (m_session) {
-        deviceIcon =  m_session->icon(index);
-    }
-    return deviceIcon;
+    return QIcon();
 }
 int S60CameraVideoDeviceControl::defaultDevice() const
 {
