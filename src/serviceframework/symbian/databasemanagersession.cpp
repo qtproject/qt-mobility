@@ -44,6 +44,7 @@
 #include "databasemanagerserver.pan"
 #include "databasemanagersignalhandler.h"
 #include "servicedatabase_p.h"
+#include "databasemanagerserver.h"
     
 #include <QFileSystemWatcher>
 
@@ -57,16 +58,16 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
             && d1.minorVersion() < d2.minorVersion());
     }
 
-CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL()
+CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL(CDatabaseManagerServer& aServer)
     {
-    CDatabaseManagerServerSession* self = CDatabaseManagerServerSession::NewLC();
+    CDatabaseManagerServerSession* self = CDatabaseManagerServerSession::NewLC(aServer);
     CleanupStack::Pop(self);
     return self;
     }
 
-CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC()
+CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC(CDatabaseManagerServer& aServer)
     {
-    CDatabaseManagerServerSession* self = new (ELeave) CDatabaseManagerServerSession();
+    CDatabaseManagerServerSession* self = new (ELeave) CDatabaseManagerServerSession(aServer);
     CleanupStack::PushL(self);
     self->ConstructL();
     return self;
@@ -79,15 +80,18 @@ void CDatabaseManagerServerSession::ConstructL()
     iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
     }
 
-CDatabaseManagerServerSession::CDatabaseManagerServerSession() 
+CDatabaseManagerServerSession::CDatabaseManagerServerSession(CDatabaseManagerServer& aServer) 
     : iDatabaseManagerSignalHandler(NULL),
       iDb(NULL),
-      m_watcher(NULL)
+      m_watcher(NULL),
+      iServer(aServer)
     {
+    iServer.IncreaseSessions();
     }
 
 CDatabaseManagerServerSession::~CDatabaseManagerServerSession()
     {
+    iServer.DecreaseSessions();
     delete iDatabaseManagerSignalHandler;
     delete iDb;
     delete iByteArray;

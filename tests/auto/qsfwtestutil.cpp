@@ -145,8 +145,7 @@ void QSfwTestUtil::removeDatabases()
     CleanupClosePushL(fs);
     CFileMan* fileMan=CFileMan::NewL(fs);
     CleanupStack::PushL(fileMan);
-    fileMan->RmDir(_L("c:\\private\\E3b48c24\\Nokia\\")); //Server's fixed UID3
-    fileMan->RmDir(_L("c:\\data\\.config\\Nokia\\"));
+    fileMan->RmDir(_L("c:\\private\\2002AC7F\\Nokia\\")); //Server's fixed UID3
     CleanupStack::PopAndDestroy(2, &fs);    
 }
 #endif
