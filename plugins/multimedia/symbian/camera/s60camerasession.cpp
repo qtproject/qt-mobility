@@ -45,6 +45,7 @@
 #include <QtCore/qstring.h>
 #include "s60camerasession.h"
 #include "s60viewfinderwidget.h"
+#include "s60videoencoder.h"
 
 #include <fbs.h>
 #include <qglobal.h>
@@ -386,6 +387,19 @@ int S60CameraSession::state() const
 {
     qDebug() << "S60CameraSession::state";
     return m_state;
+}
+
+void S60CameraSession::commitVideoEncoderSettings()
+{
+    QVideoEncoderSettings videoSettings;
+    S60VideoEncoder *videoEncoder = new S60VideoEncoder;
+    videoSettings = videoEncoder->videoSettings();
+
+    setVideoCaptureCodec(videoSettings.codec());
+    setCaptureQuality(videoSettings.quality());
+    setFrameRate(int(videoSettings.frameRate()));
+    setBitrate(videoSettings.bitRate());
+    setVideoResolution(videoSettings.resolution());
 }
 
 void S60CameraSession::startRecording()
