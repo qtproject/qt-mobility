@@ -41,17 +41,10 @@
 
 #include "s60videowidget.h"
 
-#include <QtCore/qcoreevent.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qapplication.h>
-#include <QtGui/qpainter.h>
-#include <QtGui/qevent.h>
-
+//#include <QtCore/qcoreevent.h>
+//#include <QtGui/qpainter.h>
+//#include <QtGui/qevent.h>
 #include <QtGui/private/qwidget_p.h>
-
-#include <coemain.h>    // For CCoeEnv
-#include <coecntrl.h>
-#include <w32std.h>
 
 class QBlackWidget : public QWidget
 {
@@ -60,7 +53,7 @@ public:
     QBlackWidget(QWidget *parent = 0)
         : QWidget(parent)
     {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         setAttribute(Qt::WA_OpaquePaintEvent, true);
         setAttribute(Qt::WA_NoSystemBackground, true);
     }

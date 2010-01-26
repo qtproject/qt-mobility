@@ -349,8 +349,8 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString)
     // TODO: fix to user friendly string at some point
     // These error string are only dev usable
     QString symbianError = QString(errorString); 
-    symbianError.append("From Symbian:");
-    symbianError.append(QString(m_error));
+    symbianError.append("Symbian:");
+    symbianError.append(QString::number(m_error));
     emit this->error(mediaError, symbianError);
     
     switch(mediaError){
