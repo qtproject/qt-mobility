@@ -1332,7 +1332,7 @@ void S60CameraSession::MvruoOpenComplete(TInt aError)
 {
     if(aError==KErrNone) {
         TRAPD(err, m_videoUtility->SetMaxClipSizeL(KMaxClipSize));
-#ifdef __S60_50__
+#ifndef PRE_S60_50_PLATFORM
         TRAP(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
 #endif
         if(err==KErrNone) {
