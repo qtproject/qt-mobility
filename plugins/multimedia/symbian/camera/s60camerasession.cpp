@@ -112,7 +112,7 @@ void S60CameraSession::resetCamera()
     QT_TRAP_THROWING(m_videoUtility = CVideoRecorderUtility::NewL(*this));
     Q_CHECK_PTR(m_videoUtility);
     
-    updateVideoCaptureCodecs();
+//    updateVideoCaptureCodecs();
 }
 
 void S60CameraSession::startCamera()
