@@ -74,6 +74,15 @@ class QTrackerContactFetchRequest : public QObject, public QTrackerContactAsyncR
 {
     Q_OBJECT
 public:
+        typedef enum { ContactId = 0,
+                       ContactIMId,
+                       ContactStatus,
+                       ContactMessage,
+                       ContactNickname,
+                       AccountType,
+                       HasAudio,
+                       MetaContact } IMContactResultHeader;
+                         
     QTrackerContactFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
 public slots:
     void contactsReady();

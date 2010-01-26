@@ -865,14 +865,14 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
 QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(LiveNodes imAccountQuery, int queryRow)
 {
     QContactOnlineAccount account;
-    account.setValue("Account", imAccountQuery->index(queryRow, 1).data().toString()); // IMId
-    if (!imAccountQuery->index(queryRow, 5).data().toString().isEmpty()) {
-        QString accountPathURI = imAccountQuery->index(queryRow, 5).data().toString();
+    account.setValue("Account", imAccountQuery->index(queryRow, ContactIMId).data().toString()); // IMId
+    if (!imAccountQuery->index(queryRow, AccountType).data().toString().isEmpty()) {
+        QString accountPathURI = imAccountQuery->index(queryRow, AccountType).data().toString();
         QStringList decoded = accountPathURI.split(":");
         qDebug() << decoded.value(1); 
         account.setValue(FieldAccountPath, decoded.value(1)); // getImAccountType?
     }
-    int capCount = imAccountQuery->index(queryRow, 6).data().toInt();
+    int capCount = imAccountQuery->index(queryRow, HasAudio).data().toInt();
     QString caps;
     caps = QString("org.freedesktop.Telepathy.Channel.Type.TextChat|");
     //FIXME
@@ -882,12 +882,12 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
     }
     
     account.setValue("Capabilities", caps); // getImAccountType?
-    account.setNickname(imAccountQuery->index(queryRow, 4).data().toString()); // nick
+    account.setNickname(imAccountQuery->index(queryRow, ContactNickname).data().toString()); // nick
 
-    QString presence = imAccountQuery->index(queryRow, 2).data().toString(); // imPresence iri
+    QString presence = imAccountQuery->index(queryRow, ContactStatus).data().toString(); // imPresence iri
     presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
     account.setPresence(presenceConversion[presence]);
-    account.setStatusMessage(imAccountQuery->index(queryRow, 3).data().toString()); // imStatusMessage
+    account.setStatusMessage(imAccountQuery->index(queryRow, ContactMessage).data().toString()); // imStatusMessage
 
     return account;
 }
@@ -903,7 +903,7 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
     Q_ASSERT_X(queryIMAccountNodesPending == 0, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
     for (int i = 0; i < queryIMContacts->rowCount(); i++) {
         QContactOnlineAccount account = getOnlineAccountFromIMQuery(queryIMContacts, i);
-        QContactLocalId contactid = queryIMContacts->index(i, 0).data().toUInt();
+        QContactLocalId contactid = queryIMContacts->index(i, ContactId).data().toUInt();
 
         QHash<quint32, int>::const_iterator it = id2ContactLookup.find(contactid);
         if (it != id2ContactLookup.end() && it.key() == contactid && it.value() >= 0 && it.value() < result.size())
@@ -916,7 +916,7 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
             QContactId id; id.setLocalId(contactid);
             contact.setId(id);
             contact.saveDetail(&account);
-            QString metacontact = queryIMContacts->index(i, 7).data().toString(); // \sa prepareIMContactsQuery()
+            QString metacontact = queryIMContacts->index(i, MetaContact).data().toString(); // \sa prepareIMContactsQuery()
             addContactToResultSet(contact, metacontact);
         }
     }
