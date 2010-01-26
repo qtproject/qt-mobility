@@ -1379,27 +1379,6 @@ void ut_qtcontacts_trackerplugin::updateIMContactStatus(QContactLocalId uid, QSt
     inserter.waitForFinished();
 }
 
-QContact ut_qtcontacts_trackerplugin::contact(QContactLocalId id, QStringList details)
-{
-    QList<QContact> conts = contacts(QList<QContactLocalId>()<<id, details);
-    return conts.size()?conts[0]:QContact();
-}
-
-QList<QContact> ut_qtcontacts_trackerplugin::contacts(QList<QContactLocalId> ids, QStringList details)
-{
-    QContactFetchRequest request;
-    QContactLocalIdFilter filter;
-    filter.setIds(ids);
-    request.setFilter(filter);
-
-    request.setDefinitionRestrictions(details);
-
-    trackerEngine->startRequest(&request);
-    trackerEngine->waitForRequestFinished(&request, 1000);
-
-    return request.contacts();
-}
-
 void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
 {
     if( !QFileInfo(PATH_TO_SPARQL_TESTS).exists() )
@@ -1513,6 +1492,65 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     {
         QVERIFY2(trackerEngine->removeContact(id, error), "Removing a contact failed");
     }
+}
+
+void ut_qtcontacts_trackerplugin::testContactsWithoutMeContact() {
+    QContact c;
+    QContactName name;
+    name.setFirst("New");
+    name.setLast("Contact");
+    c.saveDetail(&name);
+    trackerEngine->saveContact(&c, error);
+    QContactLocalId id = c.localId();  // Store ID for later removal. 
+    
+    // Prepare the filter for the request - we fetch only the one contact saved above.
+    QList<QContactLocalId> ids;
+    ids << id;
+    QContactLocalIdFilter filter;
+    filter.setIds(ids);
+    
+    // Prepare the requst - give filter to it and specify which fields to fetch. We fetch only the name.
+    QStringList details;
+    details << QContactName::DefinitionName;
+
+    QContactLocalIdFetchRequest nameFetchRequest;
+    nameFetchRequest.setFilter(filter);
+
+    // Start the request and wait for it to finish.
+    trackerEngine->startRequest(&nameFetchRequest);
+    trackerEngine->waitForRequestFinished(&nameFetchRequest, 1000);
+
+    // Requst finished. Test that only one contact is removed.
+    QList<QContactLocalId> contacts = nameFetchRequest.ids();
+    QVERIFY2(contacts.count() == 1, "We expected to get only one contact. Got more.");
+    QVERIFY2(contacts.first() == id, "Did not get the requested contact back.");
+    
+    // Cleaning up.
+    trackerEngine->removeContact(id, error);
+
+}
+
+/***************************     Helper functions for unit tests   ***************'*/
+
+QContact ut_qtcontacts_trackerplugin::contact(QContactLocalId id, QStringList details)
+{
+    QList<QContact> conts = contacts(QList<QContactLocalId>()<<id, details);
+    return conts.size()?conts[0]:QContact();
+}
+
+QList<QContact> ut_qtcontacts_trackerplugin::contacts(QList<QContactLocalId> ids, QStringList details)
+{
+    QContactFetchRequest request;
+    QContactLocalIdFilter filter;
+    filter.setIds(ids);
+    request.setFilter(filter);
+
+    request.setDefinitionRestrictions(details);
+
+    trackerEngine->startRequest(&request);
+    trackerEngine->waitForRequestFinished(&request, 1000);
+
+    return request.contacts();
 }
 
 void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
