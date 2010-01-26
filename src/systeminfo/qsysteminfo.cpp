@@ -162,7 +162,7 @@ is a reliable way to gather such information.
     \enum QSystemNetworkInfo::NetworkMode
     This enum describes the type of network:
 
-    \value UnknownMode             Unknown network.or netowrk error.
+    \value UnknownMode             Unknown network, or network error.
     \value GsmMode                 Global System for Mobile (GSM) network.
     \value CdmaMode                Code division multiple access (CDMA) network.
     \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
