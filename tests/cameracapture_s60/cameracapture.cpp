@@ -85,9 +85,25 @@ CameraCapture::CameraCapture(QWidget *parent) :
         }
         ui->actionCamera->menu()->addAction(videoDeviceAction);
     }
+    
+    m_autoFocus = true;
+    m_takeImage = false;
 
     connect(videoDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateCameraDevice(QAction*)));
-
+    connect(ui->actionFlash_On_2, SIGNAL(triggered()), this, SLOT(setFlashOn()));
+    connect(ui->actionFlash_Off, SIGNAL(triggered()), this, SLOT(setFlashOff()));
+    connect(ui->actionFlash_auto, SIGNAL(triggered()), this, SLOT(setFlashAuto()));
+    connect(ui->actionRed_eye, SIGNAL(triggered()), this, SLOT(setFlashRed()));
+    connect(ui->actionFlash_FillIn, SIGNAL(triggered()), this, SLOT(setFlashFillIn()));
+    
+    connect(ui->action_Focus_On, SIGNAL(triggered()), this, SLOT(setFocusOn()));   
+    connect(ui->action_Focus_Off, SIGNAL(triggered()), this, SLOT(setFocusOff()));
+    
+    connect(ui->actionNight, SIGNAL(triggered()), this, SLOT(setExposureNight()));   
+    connect(ui->actionBacklight, SIGNAL(triggered()), this, SLOT(setExposureBacklight()));
+    connect(ui->actionSport, SIGNAL(triggered()), this, SLOT(setExposureSport())); 
+    connect(ui->actionBeach, SIGNAL(triggered()), this, SLOT(setExposureBeach()));
+    
     ui->actionAudio->setMenu(new QMenu(this));
 
     setCamera(cameraDevice);
@@ -101,6 +117,65 @@ CameraCapture::~CameraCapture()
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
+}
+
+void CameraCapture::setFlashOn()
+{
+    camera->setFlashMode(QCamera::FlashOn);
+}
+
+void CameraCapture::setFlashOff()
+{
+    camera->setFlashMode(QCamera::FlashOff);
+}
+
+void CameraCapture::setFlashAuto()
+{
+    camera->setFlashMode(QCamera::FlashAuto);
+}
+
+void CameraCapture::setFlashRed()
+{
+    camera->setFlashMode(QCamera::FlashRedEyeReduction);
+}
+
+void CameraCapture::setFlashFillIn()
+{
+    camera->setFlashMode(QCamera::FlashFill);
+}
+
+void CameraCapture::setFocusOn()
+{
+    camera->setFocusMode(QCamera::AutoFocus);
+    m_autoFocus = true;
+    m_takeImage = false;
+}
+
+void CameraCapture::setFocusOff()
+{
+    camera->setFocusMode(QCamera::ManualFocus);
+    m_autoFocus = false;
+    m_takeImage = false;
+}
+
+void CameraCapture::setExposureNight()
+{
+    camera->setExposureMode(QCamera::ExposureNight);
+}
+
+void CameraCapture::setExposureBacklight()
+{
+    camera->setExposureMode(QCamera::ExposureBacklight);
+}
+
+void CameraCapture::setExposureSport()
+{
+    camera->setExposureMode(QCamera::ExposureSports);
+}
+
+void CameraCapture::setExposureBeach()
+{
+    camera->setExposureMode(QCamera::ExposurePortrait);
 }
 
 void CameraCapture::setCamera(const QByteArray &cameraDevice)
@@ -117,8 +192,9 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
         camera = new QCamera(cameraDevice);
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
-    connect(camera, SIGNAL(focusLocked()), this, SLOT(focusLocked()));
+    connect(camera, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusStatusChanged(QCamera::FocusStatus)));
     connect(camera, SIGNAL(zoomValueChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
+    connect(camera, SIGNAL(error(QCamera::Error)), this, SLOT(error(QCamera::Error)));
 
     mediaRecorder = new QMediaRecorder(camera);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
@@ -220,16 +296,21 @@ void CameraCapture::stop()
 
 void CameraCapture::takeImage()
 {
-    int lastImage = 0;
-    foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
-        int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
-        lastImage = qMax(lastImage, imgNumber);
-    }
-
-    imageCapture->capture(QString("img_%1.jpg").arg(lastImage+1,
-                                                    4, //fieldWidth
-                                                    10,
-                                                    QLatin1Char('0')));
+    if (m_autoFocus) {
+        m_takeImage = true;
+        camera->startFocusing();
+    } else {
+        int lastImage = 0;
+        foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
+            int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
+            lastImage = qMax(lastImage, imgNumber);
+        }
+        
+        imageCapture->capture(QString("img_%1.jpg").arg(lastImage+1,
+                                                        4, //fieldWidth
+                                                        10,
+                                                        QLatin1Char('0')));
+    }  
 }
 
 void CameraCapture::toggleCamera()
@@ -311,10 +392,24 @@ void CameraCapture::updateAudioDevice(QAction *action)
     audioSource->setAudioInput(action->data().toString());
 }
 
-void CameraCapture::focusLocked()
+void CameraCapture::focusStatusChanged(QCamera::FocusStatus status)
 {
     qDebug() << "CameraCapture focus locked";
+    if (status == QCamera::FocusReached && m_takeImage) {
+        int lastImage = 0;
+        foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
+            int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
+            lastImage = qMax(lastImage, imgNumber);
+        }
+    
+        imageCapture->capture(QString("img_%1.jpg").arg(lastImage+1,
+                                                        4, //fieldWidth
+                                                        10,
+                                                        QLatin1Char('0')));
+        m_takeImage = false;
+    }
 }
+
 void CameraCapture::zoomValueChanged(qreal value)
 {
 	qDebug() << "CameraCapture zoom value changed to: " << value;
@@ -324,12 +419,37 @@ void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
 {
     switch (key) {
         case MediaKeysObserver::EVolIncKey: 
-            camera->zoomTo (camera->zoomValue () + 5);
+            camera->zoomTo(camera->zoomValue() + 5);
             break;
         case MediaKeysObserver::EVolDecKey:
-            camera->zoomTo (camera->zoomValue () - 5);
+            camera->zoomTo(camera->zoomValue() - 5);
             break;
         default:
         break;
     }
+}
+
+void CameraCapture::error(QCamera::Error aError)
+{
+    qDebug() << "CameraCapture error: " << aError;
+    QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Close);
+
+    if (aError == QCamera::NoError) {
+    msgBox.setText(tr("NoError"));
+    } else if (aError == QCamera::NotReadyToCaptureError) {
+        msgBox.setText(tr("NotReadyToCaptureError"));
+    } else if (aError == QCamera::InvalidRequestError) {
+        msgBox.setText(tr("InvalidRequestError"));
+    } else if (aError == QCamera::ServiceMissingError) {
+        msgBox.setText(tr("ServiceMissingError"));
+    } else if (aError == QCamera::NotSupportedFeatureError) {
+        msgBox.setText(tr("NotSupportedFeatureError"));
+    } else if (aError == QCamera::CameraError) {
+        msgBox.setText(tr("CameraError"));
+    }
+    else {
+        msgBox.setText(tr("Other error"));
+    }  
+    msgBox.exec();
 }

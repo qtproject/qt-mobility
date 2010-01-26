@@ -97,10 +97,26 @@ private slots:
     void updateAudioDevices();
 
     void processCapturedImage(const QString& fname, const QImage& img);
-    void focusLocked();
+    void focusStatusChanged(QCamera::FocusStatus status);
     void zoomValueChanged(qreal value);
     
     void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
+    
+    void setFlashOn();
+    void setFlashOff();
+    void setFlashAuto();
+    void setFlashRed();
+    void setFlashFillIn();
+    
+    void setFocusOn();    
+    void setFocusOff();
+    
+    void setExposureNight();
+    void setExposureBacklight();
+    void setExposureSport();
+    void setExposureBeach();
+    
+    void error(QCamera::Error aError);
 
 private:
     Ui::CameraCapture *ui;
@@ -113,6 +129,9 @@ private:
     QVideoWidget *videoWidget;
     
     MediaKeysObserver *mediaKeysObserver;
+    
+    bool m_autoFocus;
+    bool m_takeImage;
 };
 
 #endif
