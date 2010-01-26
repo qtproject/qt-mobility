@@ -111,12 +111,13 @@ void S60CameraSession::resetCamera()
     QT_TRAP_THROWING(m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
     Q_CHECK_PTR(m_cameraEngine);
     m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
-    qDebug() << "S60CameraSession::resetCamera END";
 
     QT_TRAP_THROWING(m_videoUtility = CVideoRecorderUtility::NewL(*this));
     Q_CHECK_PTR(m_videoUtility);
 
-//    updateVideoCaptureCodecs();
+    updateVideoCaptureCodecs();
+
+    qDebug() << "S60CameraSession::resetCamera END";
 }
 
 void S60CameraSession::startCamera()
@@ -1277,11 +1278,6 @@ void S60CameraSession::updateVideoCaptureCodecs()
     CleanupStack::PopAndDestroy(&mediaIds);
     CleanupStack::PopAndDestroy(format);
     CleanupStack::PopAndDestroy(pluginParameters);
-
-    // Leave if recording is not supported
-    if(!m_videoControllerMap.keys().count() == 0) {
-        User::Leave(KErrNotSupported);
-    }
 }
 
 QStringList S60CameraSession::supportedVideoCaptureCodecs()
