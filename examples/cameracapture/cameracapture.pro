@@ -14,7 +14,7 @@ SOURCES = main.cpp \
     settings.cpp
 
 symbian: {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
     FORMS += cameracapture.ui \
         settings_s60.ui
     } else {
