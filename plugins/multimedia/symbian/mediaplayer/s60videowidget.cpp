@@ -56,6 +56,7 @@ public:
         setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         setAttribute(Qt::WA_OpaquePaintEvent, true);
         setAttribute(Qt::WA_NoSystemBackground, true);
+        setAutoFillBackground(false);
     }
     
 protected:
@@ -163,7 +164,7 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             }
         }
 
-        if (e->type() == QEvent::Resize)
+        if (e->type() == QEvent::Resize || e->type() == QEvent::Move)
             emit widgetUpdated();
     }    
 	return QVideoWidgetControl::eventFilter(object, e);
@@ -171,6 +172,12 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 
 void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 {
-    if (state == QMediaPlayer::StoppedState)
+    if (state == QMediaPlayer::StoppedState) {
+        qt_widget_private(m_widget)->extraData()->disableBlit = false;
+        m_widget->setUpdatesEnabled(true);
         m_widget->repaint();
+    } else if (state == QMediaPlayer::PlayingState) {
+        qt_widget_private(m_widget)->extraData()->disableBlit = true;
+        m_widget->setUpdatesEnabled(false);
+    }
 }
