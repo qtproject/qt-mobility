@@ -52,7 +52,6 @@
 #include <QDir>
 
 const int KSymbianImageQualityCoefficient = 25;
-const int KMaxClipSize = 64 * 1024;
 
 CCamera::TFormat KSymbianDefaultImageCodec = CCamera::EFormatExif;
 #ifdef Q_CC_NOKIAX86
@@ -380,7 +379,8 @@ QUrl S60CameraSession::outputLocation() const
 qint64 S60CameraSession::position() const
 {
     qDebug() << "S60CameraSession::position";
-    return m_timeStamp.elapsed();
+    return m_videoUtility->DurationL().Int64() / 1000;
+    //return m_timeStamp.elapsed();
 }
 
 int S60CameraSession::state() const
@@ -391,6 +391,8 @@ int S60CameraSession::state() const
 
 void S60CameraSession::commitVideoEncoderSettings()
 {
+    qDebug() << "S60CameraSession::commitVideoEncoderSettings";
+    
     QVideoEncoderSettings videoSettings;
     S60VideoEncoder *videoEncoder = new S60VideoEncoder;
     videoSettings = videoEncoder->videoSettings();
@@ -413,7 +415,12 @@ void S60CameraSession::startRecording()
     TUid controllerUid(TUid::Uid(m_videoControllerMap[m_videoCodec].controllerUid));
     TUid formatUid(TUid::Uid(m_videoControllerMap[m_videoCodec].formatUid));
 
+    qDebug() << "Codec: " << m_videoCodec;
+    qDebug() << "Controller Uid: " << m_videoControllerMap[m_videoCodec].controllerUid;
+    qDebug() << "Format Uid: " << m_videoControllerMap[m_videoCodec].formatUid;
+
     QT_TRAP_THROWING(m_videoUtility->OpenFileL(sink, cameraHandle, controllerUid, formatUid));
+
 }
 
 void S60CameraSession::pauseRecording()
@@ -1292,10 +1299,13 @@ void S60CameraSession::updateVideoCaptureCodecs()
     CleanupStack::PopAndDestroy(&mediaIds);
     CleanupStack::PopAndDestroy(format);
     CleanupStack::PopAndDestroy(pluginParameters);
+    
+    qDebug() << "S60CameraSession::updateVideoCaptureCodecs count: " << m_videoControllerMap.keys().count();
 }
 
 QStringList S60CameraSession::supportedVideoCaptureCodecs()
 {
+    qDebug() << "S60CameraSession::supportedVideoCaptureCodecs";
     return m_videoControllerMap.keys();
 }
 
@@ -1349,23 +1359,26 @@ void S60CameraSession::setVideoResolution(const QSize &resolution)
 
 void S60CameraSession::MvruoOpenComplete(TInt aError)
 {
+    qDebug() << "S60CameraSession::MvruoOpenComplete, error: " << aError;
+
     if(aError==KErrNone) {
-        TRAPD(err, m_videoUtility->SetMaxClipSizeL(KMaxClipSize));
+        TInt err = KErrNone;
 #ifndef PRE_S60_50_PLATFORM
         TRAP(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
 #endif
-        if(err==KErrNone) {
-            m_videoUtility->Prepare();
-            // TODO:
-            // update recording status
-        }
+        m_videoUtility->Prepare();
+        // TODO:
+        // update recording status
     }
 }
 
 void S60CameraSession::MvruoPrepareComplete(TInt aError)
 {
+    qDebug() << "S60CameraSession::MvruoPrepareComplete, error: " << aError;
     if(aError==KErrNone) {
         m_videoUtility->Record();
+        qDebug() << "S60CameraSession::MvruoPrepareComplete: Record called";
+        
         // TODO:
         // update recording status
     }
@@ -1374,6 +1387,7 @@ void S60CameraSession::MvruoPrepareComplete(TInt aError)
 
 void S60CameraSession::MvruoRecordComplete(TInt aError)
 {
+    qDebug() << "S60CameraSession::MvruoRecordComplete";
     if((aError==KErrNone) || (aError==KErrCompletion)) {
         m_videoUtility->Stop();
         m_videoUtility->Close();
