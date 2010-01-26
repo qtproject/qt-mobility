@@ -106,6 +106,33 @@ void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
     variable.isMemberOf(RDFVariableList()<<homeContact);// TODO report bug doesnt work in tracker <<officeContact);
 }
 
+void matchName(RDFVariable &variable, QContactDetailFilter &filter)
+{
+    if (filter.detailDefinitionName() != QContactName::DefinitionName) {
+        qWarning() << "QTrackerContactFetchRequest," << __FUNCTION__
+                   << "Unsupported definition name in detail filter, should be QContactName::DefinitionName";
+        return;
+    }
+    QString filterValue = filter.value().toString();
+    QString field = filter.detailFieldName();
+    if ((filter.matchFlags() & QContactFilter::MatchExactly) == QContactFilter::MatchExactly) {
+        if (field == QContactName::FieldFirst) {
+            variable.property<nco::nameGiven>() = LiteralValue(filterValue);
+        } else if (field == QContactName::FieldLast) {
+            variable.property<nco::nameFamily>() = LiteralValue(filterValue);
+        } else if (field == QContactName::FieldMiddle) {
+            variable.property<nco::nameAdditional>() = LiteralValue(filterValue);
+        } else if (field == QContactName::FieldPrefix) {
+            variable.property<nco::nameHonorificPrefix>() = LiteralValue(filterValue);
+        } else if (field == QContactName::FieldSuffix) {
+            variable.property<nco::nameHonorificSuffix>() = LiteralValue(filterValue);
+        }
+    } else {
+        qWarning() << "QTrackerContactFetchRequest," << __FUNCTION__
+                   << "Unsupported match flag in detail filter by QContactName";
+    }
+}
+
 /*
  * RDFVariable describes all contacts in tracker before filter is applied.
  * This method translates QContactFilter to tracker rdf filter. When query is made
@@ -128,6 +155,9 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
         if ( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
              && QContactPhoneNumber::FieldNumber == filt.detailFieldName()) {
             matchPhoneNumber(variable, filt);
+        }
+        else if (QContactName::DefinitionName == filt.detailDefinitionName()) {
+            matchName(variable, filt);
         }
         else if (filt.matchFlags() == Qt::MatchExactly) {
             if (QContactEmailAddress::DefinitionName == filt.detailDefinitionName()
@@ -159,6 +189,11 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
             variable.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         } else if (clFilter.eventType() == QContactChangeLogFilter::EventChanged) { // Changed since
             variable.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
+        }
+    } else if (filter.type() == QContactFilter::UnionFilter) {
+        const QContactUnionFilter unionFilter(filter);
+        foreach (QContactFilter f, unionFilter.filters()) {
+            applyFilterToContact(variable, f);
         }
     }
 }
@@ -502,9 +537,14 @@ void QTrackerContactFetchRequest::contactsReady()
             continue;
         }
         QContactId id; id.setLocalId(contactid);
+
+        QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
+        Q_ASSERT(engine);
+        if(engine)
+            id.setManagerUri(engine->managerUri());
+
         contact.setId(id);
         QString metacontact = query->index(i, 1).data().toString();
-
 
         // using redundancy to get less queries to tracker - it is possible
         // that rows are repeating: information for one contact is in several rows
@@ -914,6 +954,12 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
         {
             QContact contact;
             QContactId id; id.setLocalId(contactid);
+
+            QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
+            Q_ASSERT(engine);
+            if(engine)
+                id.setManagerUri(engine->managerUri());
+
             contact.setId(id);
             contact.saveDetail(&account);
             QString metacontact = queryIMContacts->index(i, MetaContact).data().toString(); // \sa prepareIMContactsQuery()
