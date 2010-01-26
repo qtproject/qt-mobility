@@ -138,7 +138,7 @@ QList< qreal > S60VideoEncoder::supportedFrameRates(const QVideoEncoderSettings 
 
 QStringList S60VideoEncoder::supportedVideoCodecs() const
 {
-    return m_codecs;
+    return m_session->supportedVideoCaptureCodecs();
 }
 
 QString S60VideoEncoder::videoCodecDescription(const QString &codecName) const
