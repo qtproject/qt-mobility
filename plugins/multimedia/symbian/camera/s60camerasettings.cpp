@@ -43,10 +43,11 @@
 
 #include <QtCore/qdebug.h>
 #ifdef USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
-#include <ecamadvancedsettings.h> // CCameraAdvancedSettings
+#include <ecamadvancedsettings.h> // CCameraAdvancedSettings (includes TValueInfo)
 #endif
 #ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
 #include <ecamadvsettings.h>   // CCameraAdvancedSettings
+#include <ecam/ecamconstants.h>  // TValueInfo
 #endif
 
 
@@ -91,27 +92,18 @@ void S60CameraSettings::setFocusMode(QCamera::FocusMode mode)
     if (m_advancedSettings) {
         switch(mode) {
             case QCamera::ManualFocus: // Manual focus mode
+                qDebug() << "Settings: set manual focus";
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
                 break;
             case QCamera::AutoFocus: // One-shot auto focus mode
+                qDebug() << "Settings: set auto focus";
                 m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle);
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
-                break;
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER             
-            case QCamera::ContinuousFocus: // Continuous auto focus mode 
-                m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeContinuous);
-                m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
-                break;
-#endif
-            case QCamera::InfinityFocus: // TODO:
-            case QCamera::HyperfocalFocus: // TODO:
-            default:
-                break;
-
+                break;            
         }      
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -130,7 +122,7 @@ QCamera::FocusMode S60CameraSettings::focusMode()
         }      
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -155,7 +147,7 @@ QCamera::FocusModes S60CameraSettings::supportedFocusModes()
     }
     return modes;
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -172,24 +164,31 @@ void S60CameraSettings::HandleEvent(const TECAMEvent& aEvent)
     else if (aEvent.iEventType == KUidECamEventCameraSettingExposureCompensation) {
     
     }
+    else if (aEvent.iEventType == KUidECamEventCameraSettingShutterSpeed) {
+        qreal q = shutterSpeed();
+        emit shutterSpeedChanged(q);
+    }
 
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
 void S60CameraSettings::ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError)
 {
-    
+    Q_UNUSED(aCameraBuffer);
+    Q_UNUSED(aError);
 }
 
 void S60CameraSettings::ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aError)
 {
-    
+    Q_UNUSED(aCameraBuffer);
+    Q_UNUSED(aError);
 }
 void S60CameraSettings::VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError)
 {
-
+    Q_UNUSED(aCameraBuffer);
+    Q_UNUSED(aError);
 }
 
 bool S60CameraSettings::isFlashReady()
@@ -204,7 +203,7 @@ bool S60CameraSettings::isFlashReady()
         }
     } 
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
     return ready;
 }
@@ -216,7 +215,7 @@ void S60CameraSettings::setExposureCompensation(qreal ev)
         m_advancedSettings->SetExposureCompensation(ev);
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -229,7 +228,8 @@ qreal S60CameraSettings::exposureCompensation()
         return 0;
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
+    return 0;
 #endif
 }
 
@@ -253,7 +253,7 @@ QCamera::MeteringMode S60CameraSettings::meteringMode()
         }      
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -276,7 +276,7 @@ void S60CameraSettings::setMeteringMode(QCamera::MeteringMode mode)
         }       
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -288,6 +288,7 @@ QCamera::MeteringModes S60CameraSettings::supportedMeteringModes()
     if (queryAdvancedSettingsInfo()) {
         supportedModes = m_advancedSettings->SupportedMeteringModes();            
         if (supportedModes == 0)
+            emit error(QCamera::NotSupportedFeatureError);
             return modes;
         if (supportedModes & CCamera::CCameraAdvancedSettings::EMeteringModeCenterWeighted) {
              modes |= QCamera::MeteringAverage;          
@@ -301,7 +302,7 @@ QCamera::MeteringModes S60CameraSettings::supportedMeteringModes()
     }
     return modes;
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -314,7 +315,7 @@ int S60CameraSettings::isoSensitivity()
         return 0;
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -324,16 +325,20 @@ QList<int> S60CameraSettings::supportedIsoSensitivities()
     QList<int> isoSentitivities;
     if (queryAdvancedSettingsInfo()) {
         RArray<TInt> supportedIsoRates;
-        m_advancedSettings->GetSupportedIsoRatesL(supportedIsoRates);
-        for (int i=0; i < supportedIsoRates.Count(); i++) {
-            int q = supportedIsoRates[i];
-            isoSentitivities.append(q);
+        TRAPD(err, m_advancedSettings->GetSupportedIsoRatesL(supportedIsoRates));
+        if (err != KErrNone) {
+            emit error(QCamera::NotSupportedFeatureError);
+        } else {
+            for (int i=0; i < supportedIsoRates.Count(); i++) {
+                int q = supportedIsoRates[i];
+                isoSentitivities.append(q);
+            }
         }
         supportedIsoRates.Close();
     }
     return isoSentitivities;  
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -344,7 +349,7 @@ void S60CameraSettings::setManualIsoSensitivity(int iso)
         m_advancedSettings->SetIsoRate(iso);
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -357,13 +362,33 @@ qreal S60CameraSettings::aperture()
         return -1.0;
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
 QList<qreal> S60CameraSettings::supportedApertures(bool *continuous)
 {
-    // TODO:
+    Q_UNUSED(continuous);
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    QList<qreal> apertures;
+    if (queryAdvancedSettingsInfo()) {
+        RArray<TInt> supportedApertures;
+        TValueInfo info = ENotActive;
+        TRAPD(err, m_advancedSettings->GetAperturesL(supportedApertures, info));
+        if (err != KErrNone) {
+            emit error(QCamera::NotSupportedFeatureError);
+        } else {
+            for (int i=0; i < supportedApertures.Count(); i++) {
+                qreal q = supportedApertures[i];
+                apertures.append(q);
+            }
+        }
+        supportedApertures.Close();
+    }
+    return apertures;  
+#else
+    emit error(QCamera::NotSupportedFeatureError);
+#endif
 }
 
 void S60CameraSettings::setManualAperture(qreal aperture)
@@ -373,7 +398,7 @@ void S60CameraSettings::setManualAperture(qreal aperture)
         m_advancedSettings->SetAperture(aperture);
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -384,7 +409,7 @@ void S60CameraSettings::lockExposure(bool lock)
             m_advancedSettings->SetExposureLockOn(lock);
         }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 
@@ -397,7 +422,56 @@ bool S60CameraSettings::isExposureLocked()
         return false;
     }
 #else
-    // TODO:
+    emit error(QCamera::NotSupportedFeatureError);
+#endif
+}
+
+TInt S60CameraSettings::shutterSpeed()
+{
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    if (queryAdvancedSettingsInfo()) {
+        return m_advancedSettings->ShutterSpeed();
+    } else { 
+        return -1.0;
+    }
+#else
+    emit error(QCamera::NotSupportedFeatureError);
+#endif
+}
+
+QList<qreal> S60CameraSettings::supportedShutterSpeeds(bool *continuous)
+{
+    Q_UNUSED(continuous);
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    QList<qreal> speeds;
+    if (queryAdvancedSettingsInfo()) {
+        RArray<TInt> supportedSpeeds;
+        TValueInfo info = ENotActive;
+        TRAPD(err, m_advancedSettings->GetShutterSpeedsL(supportedSpeeds, info));
+        if (err != KErrNone) {
+            emit error(QCamera::NotSupportedFeatureError);
+        } else {
+            for (int i=0; i < supportedSpeeds.Count(); i++) {
+                qreal q = supportedSpeeds[i];
+                speeds.append(q);
+            }
+        }
+        supportedSpeeds.Close();
+    }
+    return speeds;  
+#else
+    emit error(QCamera::NotSupportedFeatureError);
+#endif
+}
+
+void S60CameraSettings::setShutterSpeed(TInt speed)
+{
+#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+    if (queryAdvancedSettingsInfo()) {
+        m_advancedSettings->SetShutterSpeed(speed);
+    }
+#else
+    emit error(QCamera::NotSupportedFeatureError);
 #endif
 }
 

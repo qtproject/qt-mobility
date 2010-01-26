@@ -77,8 +77,7 @@ struct VideoControllerData
 
 class S60CameraSession : public QObject, 
     public MCameraEngineObserver, 
-    public MVideoRecorderUtilityObserver,
-    public MCameraObserver2
+    public MVideoRecorderUtilityObserver
 {
     Q_OBJECT
 public:
@@ -213,7 +212,9 @@ public:
     void setManualAperture(qreal aperture);
     void lockExposure(bool lock);
     bool isExposureLocked();
-    
+    qreal shutterSpeed();
+    QList<qreal> supportedShutterSpeeds(bool *continuous);
+    void setManualShutterSpeed(qreal seconds);
     
 protected: // From MCameraEngineObserver
     void MceoCameraReady();
@@ -235,15 +236,9 @@ private:
    	void MvruoPrepareComplete(TInt aError);
    	void MvruoRecordComplete(TInt aError);
    	void MvruoEvent(const TMMFEvent& aEvent);
-   	
+    
    	void updateVideoCaptureCodecsL();
    	
-protected: // from MCameraObserver2
-    void HandleEvent(const TECAMEvent& aEvent);
-    void ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError);
-    void ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aError); 
-    void VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError);
-    
 Q_SIGNALS:
     void stateChanged(QCamera::State);
     // for capture control
@@ -252,7 +247,7 @@ Q_SIGNALS:
     void imageCaptured(const QString &fileName, const QImage &preview);
     void imageSaved(const QString &fileName);
     //for focuscontrol
-    void focusLocked();
+    void focusStatusChanged(QCamera::FocusStatus);
     void zoomValueChanged(qreal value);
 
     void exposureLocked();

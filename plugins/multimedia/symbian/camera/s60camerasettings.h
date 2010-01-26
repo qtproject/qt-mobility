@@ -79,6 +79,10 @@ public:
     QCamera::FocusMode focusMode();
     QCamera::FocusModes supportedFocusModes();
     
+    TInt shutterSpeed();
+    void setShutterSpeed(TInt speed);
+    QList<qreal> supportedShutterSpeeds(bool *continuous);
+    
 Q_SIGNALS:
     void exposureLocked();
     void flashReady(bool ready);
@@ -86,6 +90,8 @@ Q_SIGNALS:
     void apertureRangeChanged();
     void shutterSpeedChanged(qreal speed);
     void isoSensitivityChanged(int iso);
+    
+    void error(QCamera::Error);
     
     
 protected: // from MCameraObserver2

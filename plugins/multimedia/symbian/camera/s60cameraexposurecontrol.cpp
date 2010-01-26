@@ -69,6 +69,7 @@ S60CameraExposureControl::S60CameraExposureControl(QObject *session, QObject *pa
     connect(m_session, SIGNAL(apertureRangeChanged()), this, SIGNAL(apertureRangeChanged()));
     connect(m_session, SIGNAL(shutterSpeedChanged(qreal)), this, SIGNAL(shutterSpeedChanged(qreal)));
     connect(m_session, SIGNAL(isoSensitivityChanged(int)), this, SIGNAL(isoSensitivityChanged(int)));
+    connect(m_session, SIGNAL(error(QCamera::Error)), this, SLOT(settingsError(QCamera::Error)));
 }
 
 S60CameraExposureControl::~S60CameraExposureControl()
@@ -89,6 +90,7 @@ void S60CameraExposureControl::setFlashMode(QCamera::FlashMode mode)
         m_session->setFlashMode(m_flashMode);
     } else {
         m_error = QCamera::NotSupportedFeatureError;
+        emit error(m_error);
     }
 }
 
@@ -109,12 +111,16 @@ QCamera::ExposureMode S60CameraExposureControl::exposureMode() const
 
 void S60CameraExposureControl::setExposureMode(QCamera::ExposureMode mode)
 {
+    qDebug() << "S60CameraExposureControl::setExposureMode";
     QCamera::ExposureModes supportedModes = supportedExposureModes();
     if (supportedModes & mode) {
         m_exposureMode = mode;
+        qDebug() << "Set exposure mode";
         m_session->setExposureMode(m_exposureMode);
     } else {
+        qDebug() << "Set exposure mode, feature not supported";
         m_error = QCamera::NotSupportedFeatureError;
+        emit error(m_error);
     }
 }
 
@@ -147,6 +153,7 @@ void S60CameraExposureControl::setMeteringMode(QCamera::MeteringMode mode)
         m_session->setMeteringMode(m_meteringMode);
     } else {
         m_error = QCamera::NotSupportedFeatureError;
+        emit error(m_error);
     }
 }
 
@@ -181,6 +188,7 @@ void S60CameraExposureControl::setManualIsoSensitivity(int iso)
 void S60CameraExposureControl::setAutoIsoSensitivity()
 {
     m_error = QCamera::NotSupportedFeatureError;
+    emit error(m_error);    
 }
 
 qreal S60CameraExposureControl::aperture() const
@@ -208,6 +216,7 @@ void S60CameraExposureControl::setManualAperture(qreal aperture)
 void S60CameraExposureControl::setAutoAperture()
 {
     m_error = QCamera::NotSupportedFeatureError;
+    emit error(m_error);
 }
 
 qreal S60CameraExposureControl::shutterSpeed() const
@@ -232,6 +241,8 @@ void S60CameraExposureControl::setManualShutterSpeed(qreal seconds)
 
 void S60CameraExposureControl::setAutoShutterSpeed()
 {
+    m_error = QCamera::NotSupportedFeatureError;
+    emit error(m_error);
 }
 
 bool S60CameraExposureControl::isExposureLocked() const
@@ -247,4 +258,10 @@ void S60CameraExposureControl::lockExposure()
 void S60CameraExposureControl::unlockExposure()
 {
     m_session->lockExposure(false);
+}
+
+void S60CameraExposureControl::settingsError(QCamera::Error aError)
+{
+    m_error = aError;
+    emit error(aError);
 }

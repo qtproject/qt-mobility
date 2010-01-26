@@ -81,6 +81,7 @@ S60CameraSession::S60CameraSession(QObject *parent)
     connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SIGNAL(apertureRangeChanged()));
     connect(m_advancedSettings, SIGNAL(shutterSpeedChanged(qreal)), this, SIGNAL(shutterSpeedChanged(qreal)));
     connect(m_advancedSettings, SIGNAL(isoSensitivityChanged(int)), this, SIGNAL(isoSensitivityChanged(int)));
+    connect(m_advancedSettings, SIGNAL(error(QCamera::Error)), this, SIGNAL(error(QCamera::Error)));
 }
 
 S60CameraSession::~S60CameraSession()
@@ -93,6 +94,7 @@ S60CameraSession::~S60CameraSession()
     delete m_advancedSettings;
     m_advancedSettings = NULL;
 }
+
 void S60CameraSession::resetCamera()
 {
     qDebug() << "S60CameraSession::resetCamera START";
@@ -100,6 +102,7 @@ void S60CameraSession::resetCamera()
     delete m_advancedSettings;
     m_advancedSettings = NULL;
     m_cameraEngine = NULL;
+    delete m_advancedSettings;
     m_advancedSettings = NULL;
     m_error = KErrNone;
     m_state = QCamera::StoppedState;
@@ -147,6 +150,7 @@ void S60CameraSession::stopCamera()
     }
     emit stateChanged(m_state);
 }
+
 void S60CameraSession::capture(const QString &fileName)
 {
     qDebug() << "S60CameraSession::capture to file="<< fileName;
@@ -286,9 +290,6 @@ void S60CameraSession::setRotation(int r)
 {
     Q_UNUSED(r)
 }
-
-
-
 
 bool S60CameraSession::autofocus() const
 {
@@ -432,7 +433,7 @@ void S60CameraSession::MceoCameraReady()
 void S60CameraSession::MceoFocusComplete()
 {
     qDebug() << "S60CameraSession::MCeoFocusComplete()";
-    emit focusLocked();
+    emit focusStatusChanged(QCamera::FocusReached);
 }
 
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
@@ -901,15 +902,16 @@ void S60CameraSession::startFocus()
     
 	if (m_cameraEngine) {
 		TRAP(m_error, m_cameraEngine->StartFocusL());
-	}
-	if (m_error) {
-	// TODO: Eerror handling
+		if (m_error) {
+            qDebug() << "S60CameraSession::startFocus error: " << m_error;
+		}
 	}
 }
 
 void S60CameraSession::cancelFocus()
 {
     qDebug() << "S60CameraSession::cancelFocus";
+    
 	m_cameraEngine->FocusCancel();
 }
 
@@ -943,9 +945,9 @@ int S60CameraSession::maxDigitalZoom()
 	if (queryCurrentCameraInfo()) {
 	    qDebug() << "S60CameraSession::maxDigitalZoom value: " << m_info.iMaxDigitalZoom;
 		return m_info.iMaxDigitalZoom;		
-	} 
-	else
+	} else {
 		return 0; 
+	}
 }
 
 void S60CameraSession::setFocusMode(QCamera::FocusMode mode)
@@ -1187,7 +1189,7 @@ qreal S60CameraSession::aperture()
 
 QList<qreal> S60CameraSession::supportedApertures(bool *continuous)
 {
-    // TODO:
+    return m_advancedSettings->supportedApertures(continuous);
 }
 
 void S60CameraSession::setManualAperture(qreal aperture)
@@ -1205,12 +1207,20 @@ bool S60CameraSession::isExposureLocked()
     return m_advancedSettings->isExposureLocked();
 }
 
-void S60CameraSession::updateVideoCaptureCodecs()
+ /* Returns the list of shutter speed values if camera supports only fixed set of shutter speed values,
+  otherwise returns an empty list.
+ */
+QList<qreal> S60CameraSession::supportedShutterSpeeds(bool *continuous)
 {
-    QT_TRAP_THROWING(updateVideoCaptureCodecsL());
+    return m_advancedSettings->supportedShutterSpeeds(continuous);
 }
 
-void S60CameraSession::updateVideoCaptureCodecsL()
+void S60CameraSession::setManualShutterSpeed(qreal seconds)
+{
+    m_advancedSettings->setShutterSpeed(seconds);
+}
+
+void S60CameraSession::updateVideoCaptureCodecs()
 {
 	m_videoControllerMap.clear();
 	
@@ -1326,8 +1336,6 @@ void S60CameraSession::setVideoResolution(const QSize &resolution)
 
 }
 
-
-
 void S60CameraSession::MvruoOpenComplete(TInt aError)
 {
     if(aError==KErrNone) {
@@ -1366,24 +1374,3 @@ void S60CameraSession::MvruoEvent(const TMMFEvent& aEvent)
 {
 	
 }
-
-void S60CameraSession::HandleEvent(const TECAMEvent& aEvent)
-{
-
-}
-
-void S60CameraSession::ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError)
-{
-    
-}
-
-void S60CameraSession::ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aError)
-{
-    
-}
-void S60CameraSession::VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError)
-{
-
-}
-
-
