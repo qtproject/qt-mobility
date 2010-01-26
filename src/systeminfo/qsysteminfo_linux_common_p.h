@@ -99,7 +99,7 @@ private:
     QTimer *langTimer;
     QString langCached;
 
-private Q_SLOTS:
+protected Q_SLOTS:
     void startLanguagePolling();
 };
 

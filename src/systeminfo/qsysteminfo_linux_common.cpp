@@ -45,7 +45,6 @@ QTM_BEGIN_NAMESPACE
 QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
     langCached = currentLanguage();
-    startLanguagePolling();
 }
 
 QSystemInfoLinuxCommonPrivate::~QSystemInfoLinuxCommonPrivate()

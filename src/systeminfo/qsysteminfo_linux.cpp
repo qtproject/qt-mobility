@@ -136,6 +136,7 @@ QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
  : QSystemInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
+    startLanguagePolling();
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
