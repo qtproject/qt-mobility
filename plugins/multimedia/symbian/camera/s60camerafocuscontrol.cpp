@@ -68,6 +68,7 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
     m_session = qobject_cast<S60CameraSession*>(session);
     connect(m_session, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
     connect(m_session, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
+    connect(m_session, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusChanged(QCamera::FocusStatus)));
     m_session->setFocusMode(m_focusMode);
     m_session->setZoomFactor(m_zoomValue);
 }
@@ -141,10 +142,20 @@ void S60CameraFocusControl::zoomTo(qreal value)
 void S60CameraFocusControl::startFocusing()
 {
     m_session->startFocus();
+    m_focusStatus = QCamera::FocusRequested;
+    emit focusStatusChanged(QCamera::FocusRequested);
 }
 
 void S60CameraFocusControl::cancelFocusing()
 {
     m_session->cancelFocus();
+    m_focusStatus = QCamera::FocusCanceled;
+    emit focusStatusChanged(QCamera::FocusCanceled);
+}
+
+void S60CameraFocusControl::focusChanged(QCamera::FocusStatus status)
+{
+    m_focusStatus = status;
+    emit focusStatusChanged(status);
 }
 

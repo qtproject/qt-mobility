@@ -73,6 +73,9 @@ class tst_QCamera: public QObject
 {
     Q_OBJECT
 
+private:
+    
+    QString capturePath(QDir dir);
 public slots:
     void initTestCase();
     void cleanupTestCase();
@@ -97,10 +100,25 @@ private slots:
 
 void tst_QCamera::initTestCase()
 {
+    qRegisterMetaType<QCamera::State>("QCamera::State");
+    qRegisterMetaType<QCamera::Error>("QCamera::Error");
 }
 
 void tst_QCamera::cleanupTestCase()
 {
+}
+QString tst_QCamera::capturePath(QDir dir)
+{
+    int lastImage = 0;
+    foreach( QString fileName, dir.entryList(QStringList() << "img_*.jpg") ) {
+        int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
+        lastImage = qMax(lastImage, imgNumber);
+    }
+
+    return dir.absolutePath() + QDir::separator()  + QString("img_%1.jpg").arg(lastImage+1,
+        4, //fieldWidth
+        10,
+        QLatin1Char('0'));
 }
 
 void tst_QCamera::testAvailableDevices()
@@ -245,50 +263,85 @@ void tst_QCamera::testSimpleCameraFocus()
 
 void tst_QCamera::testSimpleCameraCapture()
 {
+    // This tests that taking a picture works with default setup
     QCamera camera(0);
     QStillImageCapture imageCapture(&camera);
+    // we need to start camera before we take images.
+    QSignalSpy cameraState(&camera, SIGNAL(stateChanged(QCamera::State)));
+    QSignalSpy capturedSignal(&imageCapture, SIGNAL(imageCaptured(QString,QImage)));
+    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QStillImageCapture::Error)));
+    QSignalSpy imageSavedSignal(&imageCapture, SIGNAL(imageSaved(const QString&)));
+   
+    QCOMPARE(camera.state(), QCamera::StoppedState);
+    camera.start(); //we need to start camera before taking picture
+    QTRY_COMPARE(cameraState.count(), 1); // wait for camera to initialize itself
+    QCOMPARE(camera.state(), QCamera::ActiveState);
+    QVERIFY(imageCapture.isAvailable());
+    QVERIFY(imageCapture.isReadyForCapture());
     
-    QVERIFY(!imageCapture.isReadyForCapture());
-    QVERIFY(!imageCapture.isAvailable());
-
     QCOMPARE(imageCapture.error(), QStillImageCapture::NoError);
     QVERIFY(imageCapture.errorString().isEmpty());
-
-    QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QStillImageCapture::Error)));
-    camera.start();
-    imageCapture.capture(QDir::rootPath());
-    QCOMPARE(errorSignal.size(), 1);
-    QCOMPARE(imageCapture.error(), QStillImageCapture::NotSupportedFeatureError);
-    QVERIFY(!imageCapture.errorString().isEmpty());
-    camera.stop();
+    
+    imageCapture.capture(capturePath(QDir::rootPath()));
+    QTRY_COMPARE(capturedSignal.count(), 1);
+    QTRY_COMPARE(imageSavedSignal.count(), 1);
+    
+    QCOMPARE(errorSignal.size(), 0);
+        
+//    camera.stop();
 }
 
 void tst_QCamera::testCameraCapture()
 {
     QCamera camera(0);
     QStillImageCapture imageCapture(&camera);
-
-
+    // check we have some controls and devices
+    //QVERIFY(!imageCapture.isAvailable());
     QVERIFY(!imageCapture.isReadyForCapture());
 
+    QSignalSpy cameraState(&camera, SIGNAL(stateChanged(QCamera::State)));
     QSignalSpy capturedSignal(&imageCapture, SIGNAL(imageCaptured(QString,QImage)));
     QSignalSpy errorSignal(&imageCapture, SIGNAL(error(QStillImageCapture::Error)));
-
+    QSignalSpy cameraErrorSignal(&camera, SIGNAL(error(QCamera::Error)));
+    QSignalSpy imageSavedSignal(&imageCapture, SIGNAL(imageSaved(const QString&)));
+    
+    // case where we have not started the camera
+    // we shoul receive NotReadyToCaptureError
     imageCapture.capture(QString::fromLatin1("/dev/null"));
     QCOMPARE(capturedSignal.size(), 0);
+    
+    qDebug()<<"Camera errorNumber=" <<camera.error();
+    qDebug()<<"Camera errorText="  <<camera.errorString();
+    
+    QCOMPARE(cameraErrorSignal.size(), 1);
+    QCOMPARE(camera.error(), QCamera::NotReadyToCaptureError);
     QCOMPARE(errorSignal.size(), 1);
     QCOMPARE(imageCapture.error(), QStillImageCapture::NotReadyError);
+    QCOMPARE(camera.state(), QCamera::StoppedState);
 
+    // Phase 2 test taking picture to a real path
     errorSignal.clear();
-
+    cameraErrorSignal.clear();
+    cameraState.clear();
+    capturedSignal.clear();
+    imageSavedSignal.clear();
+    
+    //we need to start camera before taking picture. this is the difference between previous test 
     camera.start();
+    QTRY_COMPARE (errorSignal.count(), 0); // We should not have any error code.
+    QTRY_COMPARE (cameraState.count(), 1); // wait for camera to initialize itself
+    QCOMPARE(camera.state(), QCamera::ActiveState);
     QVERIFY(imageCapture.isReadyForCapture());
-    QCOMPARE(errorSignal.size(), 0);
-
     imageCapture.capture(QString::fromLatin1("/dev/null"));
+    // we should receive captured signal, but no imageSavedSignal()
     QCOMPARE(capturedSignal.size(), 1);
     QCOMPARE(errorSignal.size(), 0);
-    QCOMPARE(imageCapture.error(), QStillImageCapture::NoError);
+    QCOMPARE(cameraErrorSignal.size(), 0);
+    // as this is no good place to save image we shouldn't have imageSaved signal
+    QCOMPARE(imageSavedSignal.size(), 0);
+    QCOMPARE(imageCapture.error(), QStillImageCapture::ResourceError);
+    
+    camera.stop();
 }
 
 void tst_QCamera::testCameraWhiteBalance()

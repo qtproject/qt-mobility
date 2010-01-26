@@ -18,9 +18,12 @@ SOURCES = main.cpp \
     playlistmodel.cpp \
     videowidget.cpp
 
-symbian: {    
+
+
+symbian {
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
     HEADERS += mediakeysobserver.h
     SOURCES += mediakeysobserver.cpp
     LIBS += -lremconinterfacebase \
-            -lremconcoreapi    
-}
+            -lremconcoreapi
+ }

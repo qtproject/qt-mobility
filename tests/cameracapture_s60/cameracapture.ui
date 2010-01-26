@@ -186,7 +186,7 @@
      <x>0</x>
      <y>0</y>
      <width>240</width>
-     <height>20</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -205,8 +205,43 @@
     <addaction name="actionCamera"/>
     <addaction name="actionAudio"/>
    </widget>
+   <widget class="QMenu" name="menuFlash">
+    <property name="title">
+     <string>Exposure</string>
+    </property>
+    <widget class="QMenu" name="menuFlash_On">
+     <property name="title">
+      <string>Flash</string>
+     </property>
+     <addaction name="actionFlash_On_2"/>
+     <addaction name="actionFlash_Off"/>
+     <addaction name="actionFlash_auto"/>
+     <addaction name="actionRed_eye"/>
+     <addaction name="actionFlash_FillIn"/>
+    </widget>
+    <widget class="QMenu" name="menuFocus">
+     <property name="title">
+      <string>Focus</string>
+     </property>
+     <addaction name="action_Focus_On"/>
+     <addaction name="action_Focus_Off"/>
+    </widget>
+    <widget class="QMenu" name="menuExposure">
+     <property name="title">
+      <string>Exposure</string>
+     </property>
+     <addaction name="actionNight"/>
+     <addaction name="actionBacklight"/>
+     <addaction name="actionSport"/>
+     <addaction name="actionBeach"/>
+    </widget>
+    <addaction name="menuFlash_On"/>
+    <addaction name="menuFocus"/>
+    <addaction name="menuExposure"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDevices"/>
+   <addaction name="menuFlash"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionExit">
@@ -227,6 +262,61 @@
   <action name="actionAudio">
    <property name="text">
     <string>Audio</string>
+   </property>
+  </action>
+  <action name="actionFlash_On_2">
+   <property name="text">
+    <string>Flash On</string>
+   </property>
+  </action>
+  <action name="actionFlash_Off">
+   <property name="text">
+    <string>Flash Off</string>
+   </property>
+  </action>
+  <action name="actionFlash_auto">
+   <property name="text">
+    <string>Flash Auto</string>
+   </property>
+  </action>
+  <action name="actionRed_eye">
+   <property name="text">
+    <string>Red Eye</string>
+   </property>
+  </action>
+  <action name="actionFlash_FillIn">
+   <property name="text">
+    <string>Flash FillIn</string>
+   </property>
+  </action>
+  <action name="action_Focus_On">
+   <property name="text">
+    <string>Focus On (auto)</string>
+   </property>
+  </action>
+  <action name="action_Focus_Off">
+   <property name="text">
+    <string>Focus Off (auto)</string>
+   </property>
+  </action>
+  <action name="actionNight">
+   <property name="text">
+    <string>Night</string>
+   </property>
+  </action>
+  <action name="actionBacklight">
+   <property name="text">
+    <string>Backlight</string>
+   </property>
+  </action>
+  <action name="actionSport">
+   <property name="text">
+    <string>Sport</string>
+   </property>
+  </action>
+  <action name="actionBeach">
+   <property name="text">
+    <string>Beach</string>
    </property>
   </action>
  </widget>
