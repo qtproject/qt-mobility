@@ -57,7 +57,8 @@
 S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     : S60MediaPlayerSession(service)
     , m_player(0)
-    , m_playerRect(0, 0, 0, 0)
+    , m_clipRect(0, 0, 0, 0)
+    , m_windowRect(0, 0, 0, 0)
     , m_output(QVideoOutputControl::NoOutput)
     , m_windowId(0)
     , m_wsSession(0)
@@ -73,8 +74,8 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         *m_wsSession, 
         *m_screenDevice, 
         *m_window, 
-        m_playerRect, 
-        m_playerRect));
+        m_windowRect, 
+        m_clipRect));
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
@@ -133,31 +134,33 @@ bool S60VideoPlayerSession::resetNativeHandles()
 {
     QVideoOutputControl* videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
     WId newId = 0;
-    TRect newRect = TRect(0,0,0,0);
+    TRect newClipRect = TRect(0,0,0,0);
     
     if (videoControl->output() == QVideoOutputControl::WidgetOutput) {
         S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
         QWidget *videoWidget = widgetControl->videoWidget();
         newId = videoWidget->winId();
-        newRect = qt_QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
+        newClipRect = qt_QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
     } else if (videoControl->output() == QVideoOutputControl::WindowOutput) {
         S60VideoOverlay* windowControl = qobject_cast<S60VideoOverlay *>(m_service.control(QVideoWindowControl_iid));
         newId = windowControl->winId();
-        newRect = TRect( newId->DrawableWindow()->AbsPosition(), newId->DrawableWindow()->Size());
+        newClipRect = TRect( newId->DrawableWindow()->AbsPosition(), newId->DrawableWindow()->Size());
     } else {
         if (QApplication::activeWindow())
             newId = QApplication::activeWindow()->effectiveWinId();
     }
-
-    if (newRect != m_playerRect ||  newId != m_windowId) {
-        m_playerRect = newRect;
-        if (newId) {
-            m_windowId = newId;
-            CCoeEnv *coeEnv = m_windowId->ControlEnv();
-            m_wsSession = &(coeEnv->WsSession());
-            m_screenDevice = coeEnv->ScreenDevice();
-            m_window = m_windowId->DrawableWindow();
-        }
+    
+    if (newClipRect == m_clipRect &&  newId == m_windowId) 
+        return false;
+    
+    if (newId) {
+        m_windowRect = TRect( newId->DrawableWindow()->AbsPosition(), newId->DrawableWindow()->Size());
+        m_clipRect = newClipRect;
+        m_windowId = newId;
+        CCoeEnv *coeEnv = m_windowId->ControlEnv();
+        m_wsSession = &(coeEnv->WsSession());
+        m_screenDevice = coeEnv->ScreenDevice();
+        m_window = m_windowId->DrawableWindow();
         return true;
     }
     return false;
@@ -211,8 +214,8 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
         m_player->SetDisplayWindowL(*m_wsSession, 
                                     *m_screenDevice, 
                                     *m_window, 
-                                    m_playerRect, 
-                                    m_playerRect));
+                                    m_windowRect, 
+                                    m_clipRect));
     setError(err);
     initComplete();
 }
@@ -257,8 +260,8 @@ void S60VideoPlayerSession::resetVideoDisplay()
         TRAPD(err, m_player->SetDisplayWindowL(*m_wsSession, 
                                                *m_screenDevice, 
                                                *m_window, 
-                                               m_playerRect, 
-                                               m_playerRect));
+                                               m_windowRect, 
+                                               m_clipRect));
         setError(err);
     }
 }

@@ -88,7 +88,8 @@ private:
 private:
     // Qwn
     CVideoPlayerUtility *m_player;
-    TRect m_playerRect;
+    TRect m_clipRect;
+    TRect m_windowRect;
     QVideoOutputControl::Output m_output;
     WId m_windowId;
 
