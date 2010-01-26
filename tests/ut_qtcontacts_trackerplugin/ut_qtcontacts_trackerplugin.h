@@ -102,6 +102,7 @@ private slots:
     void testTrackerUriToUniqueId();
     void testQRelationshipAndMetacontacts();
     void testIMContactsAndMetacontactMasterPresence();
+    void testContactsWithoutMeContact();
 
 private:
     void insertContact( QContactLocalId uid, QString imId, QString imStatus );
