@@ -123,14 +123,20 @@ contains(QT_CONFIG, declarative) {
         qsoundeffect.cpp \
         wavedecoder.cpp
 
-    maemo5 {
-        DEFINES += PULSEAUDIO
-        PRIVATE_HEADERS += qsoundeffect_pulse_p.h
-        SOURCES += qsoundeffect_pulse_p.cpp
-        LIBS_PRIVATE += -lpulse
-    }else {
-        PRIVATE_HEADERS += qsoundeffect_null_p.h
-    }
+   maemo5: DEFINES += QT_MULTIMEDIA_MAEMO5
+   system(pkg-config --exists \'libpulse >= 0.9.10\') {
+       DEFINES += QT_MULTIMEDIA_PULSEAUDIO
+       PRIVATE_HEADERS += qsoundeffect_pulse_p.h
+       SOURCES += qsoundeffect_pulse_p.cpp
+       LIBS_PRIVATE += -lpulse
+   } else:x11 {
+       DEFINES += QT_MULTIMEDIA_QMEDIAPLAYER
+       PRIVATE_HEADERS += qsoundeffect_qmedia_p.h
+       SOURCES += qsoundeffect_qmedia_p.cpp
+   } else {
+       PRIVATE_HEADERS += qsoundeffect_qsound_p.h
+       SOURCES += qsoundeffect_qsound_p.cpp
+   }
 }
 
 include (experimental/experimental.pri)
