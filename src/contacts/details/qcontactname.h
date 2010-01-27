@@ -47,7 +47,7 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
-#include "qcontact.h"
+#include "qcontactfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -99,6 +99,10 @@ public:
     void Q_DECL_DEPRECATED setFirst(const QString& first) {Q_UNUSED(first);qWarning("QContactName::setFirst() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use setFirstName() instead!"); setFirstName(first);}
     void Q_DECL_DEPRECATED setMiddle(const QString& middle) {Q_UNUSED(middle);qWarning("QContactName::setMiddle() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use setMiddleName() instead!"); setMiddleName(middle);}
     void Q_DECL_DEPRECATED setLast(const QString& last) {Q_UNUSED(last);qWarning("QContactName::setLast() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use setLastName() instead!"); setLastName(last);}
+
+    // Convenience filter
+    static QContactFilter match(const QString& name);
+    static QContactFilter match(const QString& firstName, const QString& lastName);
 };
 
 QTM_END_NAMESPACE
