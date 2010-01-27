@@ -46,6 +46,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+TInt QGeoAreaMonitorS60::refCount = 0;
+
 QGeoAreaMonitorS60* QGeoAreaMonitorS60::NewL(QObject *aParent)
 {
     QGeoAreaMonitorS60 *self = QGeoAreaMonitorS60::NewLC(aParent);
@@ -137,6 +139,7 @@ void QGeoAreaMonitorS60::handleTriggerEvent(TPositionInfo aPosInfo, enTriggerTyp
 //destructor cleaning up the resources
 QGeoAreaMonitorS60::~QGeoAreaMonitorS60()
 {
+
     if (iTriggerAO || iNotifyTriggerAO || iTriggerCreateAO) {
         QMLBackendMonitorAO::DeleteAO(this);
         iTriggerAO = NULL;
@@ -144,7 +147,12 @@ QGeoAreaMonitorS60::~QGeoAreaMonitorS60()
         iNotifyTriggerAO = NULL;
         delete iTriggerCreateAO;
         iTriggerCreateAO = NULL;
-        lbtServ.Close();
+    }
+    if (connectedLbt) {
+        --refCount;
+        if (refCount == 0) {
+            lbtServ.Close();
+        }
     }
 }
 
@@ -165,6 +173,9 @@ void QGeoAreaMonitorS60::ConstructL()
     if (lbtServ.Connect() == KErrNone) {
         CleanupClosePushL(lbtServ);
 
+        connectedLbt = true;
+        ++refCount;
+
         iTriggerAO = QMLBackendMonitorAO::NewL(lbtServ);
 
         if (!iTriggerAO)
@@ -178,6 +189,8 @@ void QGeoAreaMonitorS60::ConstructL()
         iNotifyTriggerAO = QMLBackendTriggerChangeAO::NewL(lbtServ);
 
         CleanupStack::Pop(1);
+    } else {
+        connectedLbt = false;
     }
 }
 

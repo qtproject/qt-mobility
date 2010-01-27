@@ -100,6 +100,8 @@ private:
     QMLBackendMonitorAO *iTriggerAO;
     QMLBackendMonitorCreateTriggerAO* iTriggerCreateAO;
     QMLBackendTriggerChangeAO *iNotifyTriggerAO;
+    bool connectedLbt;
+    static TInt refCount;
 };
 
 QTM_END_NAMESPACE

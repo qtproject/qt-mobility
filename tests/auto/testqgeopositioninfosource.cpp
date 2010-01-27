@@ -306,14 +306,26 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
 
     QGeoPositionInfoSource *source = createTestSource();
     int minUpdateInterval = source ? source->minimumUpdateInterval() : -1;
+    if (source)
+        delete source;
 
-    QTest::newRow("INT_MIN") << INT_MIN << minUpdateInterval;
-    QTest::newRow("-1") << -1 << minUpdateInterval;
     QTest::newRow("0") << 0 << 0;
-    QTest::newRow("in btw zero and minInterval") << 1 << minUpdateInterval;
-    QTest::newRow("more than minInterval") << minUpdateInterval + 1 << minUpdateInterval + 1;
-    QTest::newRow("less then minInterval") << minUpdateInterval - 1 << minUpdateInterval;
-    QTest::newRow("equal to minInterval") << minUpdateInterval << minUpdateInterval;
+    
+    if (minUpdateInterval > -1) {
+        QTest::newRow("INT_MIN") << INT_MIN << minUpdateInterval;
+        QTest::newRow("-1") << -1 << minUpdateInterval;
+    }
+
+    if (minUpdateInterval > 0) {
+        QTest::newRow("more than minInterval") << minUpdateInterval + 1 << minUpdateInterval + 1;
+        QTest::newRow("equal to minInterval") << minUpdateInterval << minUpdateInterval;
+    }
+    
+    if (minUpdateInterval > 1) {
+        QTest::newRow("less then minInterval") << minUpdateInterval - 1 << minUpdateInterval;
+        QTest::newRow("in btw zero and minInterval") << 1 << minUpdateInterval;
+    }
+    
     QTest::newRow("INT_MAX") << INT_MAX << INT_MAX;
 }
 

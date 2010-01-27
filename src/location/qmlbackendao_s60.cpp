@@ -415,6 +415,8 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
     else
         minimumUpdateInterval = mRequesterSatellite->minimumUpdateInterval();
 
+    if (minimumUpdateInterval < 0)
+        minimumUpdateInterval = 100;
     // if the current requesttype is  regular updates
     // then set the updateinterval otherwise ignore
     //if(mRequestType != REQ_REG_UPDATE)
@@ -431,18 +433,13 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
     // the interval will be set to the minimum interval.
     if (aMilliSec != 0 && aMilliSec <= minimumUpdateInterval) {
         mUpdateInterval = minimumUpdateInterval;
+    } else {
+        mUpdateInterval = aMilliSec;
     }
 
     // if the same value is being set then just ignore it.
-    if (currentUpdateInterval == aMilliSec) {
-        if (aMilliSec != mUpdateInterval)
-            mUpdateInterval = aMilliSec;
+    if (currentUpdateInterval == mUpdateInterval) {
         return mUpdateInterval;
-    }
-
-    // if Zero or above minimum value will be set.
-    if (aMilliSec == 0 || aMilliSec > minimumUpdateInterval) {
-        mUpdateInterval = aMilliSec;
     }
 
     // will set Either zero, minimum or +ve value
@@ -454,7 +451,8 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
     if (mUpdateTimeout > mUpdateInterval + 10000)
         mUpdateTimeout = mUpdateInterval + 10000;
 
-    aPosOption.SetUpdateTimeOut(TTimeIntervalMicroSeconds(mUpdateTimeout * 1000));
+    if (aMilliSec > 0)
+        aPosOption.SetUpdateTimeOut(TTimeIntervalMicroSeconds(mUpdateTimeout * 1000));
 
     error = mPositioner.SetUpdateOptions(aPosOption);
 

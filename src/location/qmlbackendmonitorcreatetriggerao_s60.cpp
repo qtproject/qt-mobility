@@ -226,6 +226,8 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         if (iTriggerCreation == TRUE)
             iTriggerMonitorInfo->addMonitorTriggerInfo(aParent, triggerID, aType);
 
+        delete req;
+
         return iTriggerCreation;
     } else {     //triggerinfo available in the linked list
 
