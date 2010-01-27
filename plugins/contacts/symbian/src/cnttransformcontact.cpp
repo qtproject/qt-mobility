@@ -262,6 +262,10 @@ void CntTransformContact::transformContactL(
                 fieldSet->AddL(*fieldList.at(j));
             }
 	    }
+	    else {
+	        // remove empty details
+	        contact.removeDetail(detail.data());
+	    }
 	}
 
 	contactItem.UpdateFieldSet(fieldSet);

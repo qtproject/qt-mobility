@@ -505,13 +505,7 @@ void CntSymbianEngine::updateContactL(QContact &contact)
     // note commitContactL removes empty fields from the contact
     m_dataBase->contactDatabase()->CommitContactL(*contactItem);
 
-    // retrieve the contact in case of empty fields that have been removed, this could also be handled in transformcontact.
-    contact = fetchContactL(contact.localId());
-
     updateDisplayLabel(contact);
-
-    // Update group memberships to contact database
-    //updateMemberOfGroupsL(contact);
 
     CleanupStack::PopAndDestroy(contactItem);
     CleanupStack::PopAndDestroy(1); // commit lock
