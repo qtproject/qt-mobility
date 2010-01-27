@@ -227,7 +227,6 @@ void UT_QVersitContactExporter::testContactDetailHandler()
     QContact contact;
     QVersitDocument document;
     QContactAvatar contactAvatar;
-    const QString url = QString::fromAscii("http://www.myhome.com/test.jpg");
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
     QList<QContact> contacts;
@@ -237,9 +236,9 @@ void UT_QVersitContactExporter::testContactDetailHandler()
     document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
     QList<QContactDetail> unknownDetails = detailHandler.mUnknownDetails;
-    QString defintionName = contactAvatar.definitionName();
-    QContactDetail detail = searchDetail(unknownDetails,defintionName);
-    QCOMPARE(defintionName, detail.definitionName());
+    QString definitionName = contactAvatar.definitionName();
+    QContactDetail detail = searchDetail(unknownDetails,definitionName);
+    QCOMPARE(definitionName, detail.definitionName());
 
     // Test2: Un-supported Online Account
     QContactOnlineAccount onlineAccount;
@@ -254,10 +253,10 @@ void UT_QVersitContactExporter::testContactDetailHandler()
     document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
     unknownDetails = detailHandler.mUnknownDetails;
-    defintionName = onlineAccount.definitionName();
+    definitionName = onlineAccount.definitionName();
     detail = QContactDetail();
-    detail = searchDetail(unknownDetails, defintionName);
-    QCOMPARE(defintionName, detail.definitionName());
+    detail = searchDetail(unknownDetails, definitionName);
+    QCOMPARE(definitionName, detail.definitionName());
 
     // Test that preProcessDetail return true stops the exporter from doing anything.
     contact.clearDetails();
@@ -1216,7 +1215,6 @@ void UT_QVersitContactExporter::testEncodeFamily()
 void UT_QVersitContactExporter::testEncodeDisplayLabel()
 {
     QContact contact;
-    QContactDisplayLabel displayLaebl;
     QContactName contactName;
 
     // No display label and no QContactName
