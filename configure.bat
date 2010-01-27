@@ -242,6 +242,8 @@ if %FIRST% == bearer (
     echo     Systeminfo selected
 ) else if %FIRST% == serviceframework (
     echo     SerficeFramework selected
+) else if %FIRST% == sensors (
+    echo     Sensors selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
 ) else (
