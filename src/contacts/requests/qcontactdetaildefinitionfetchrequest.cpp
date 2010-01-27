@@ -52,11 +52,23 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QContactDetailDefinitionFetchRequest::progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
- * ordering of the results have been maintained since the last progress signal was emitted.
+  \fn QContactDetailDefinitionFetchRequest::progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly)
+  \deprecated
+  This signal is emitted when some progress has been made on the request, causing either a change of
+  status or an update of results, or both.  It identifies which request the signal originated from
+  by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
+  ordering of the results have been maintained since the last progress signal was emitted.
+ */
+
+/*!
+  \fn QContactDetailDefinitionFetchRequest::resultsAvailable()
+  This signal is emitted when new results are available.  For a QContactDetailDefinitionFetchRequest,
+  the results are either in the form of errors which may be retrieved by calling errorMap(), or
+  detail definitions which may be retrieved by calling definitions().  If no matching definitions
+  are retrieved and no errors occur during the processing of the request, this signal will not be
+  emitted.
+
+  \sa errorMap(), definitions()
  */
 
 /*! Constructs a new detail definition fetch request */

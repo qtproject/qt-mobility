@@ -52,11 +52,23 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QContactFetchRequest::progress(QContactFetchRequest* self, bool appendOnly)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
- * ordering of the results have been maintained since the last progress signal was emitted.
+  \fn QContactFetchRequest::progress(QContactFetchRequest* self, bool appendOnly)
+  \deprecated
+  This signal is emitted when some progress has been made on the request, causing either a change of
+  status or an update of results, or both.  It identifies which request the signal originated from
+  by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
+  ordering of the results have been maintained since the last progress signal was emitted.
+ */
+
+
+/*!
+  \fn QContactFetchRequest::resultsAvailable()
+  This signal is emitted when new results are available.  For a QContactFetchRequest,
+  the results are in the form of contacts which may be retrieved by calling contacts().
+  If no contacts match the input filter, no results will become available during the
+  processing of the request, and hence this signal will not be emitted.
+
+  \sa contacts()
  */
 
 /*! Constructs a new contact fetch request */

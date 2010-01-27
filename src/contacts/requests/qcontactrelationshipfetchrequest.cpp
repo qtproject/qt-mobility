@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 
   \fn QContactRelationshipFetchRequest::progress(QContactRelationshipFetchRequest* self, bool appendOnly)
+  \deprecated
 
   This signal is emitted when some progress has been made on the
   request, causing either a change of status or an update of results,
@@ -65,6 +66,16 @@ QTM_BEGIN_NAMESPACE
   including a pointer to \a self, and contains an \a appendOnly flag
   which signifies whether or not the total ordering of the results
   have been maintained since the last progress signal was emitted.
+ */
+
+/*!
+  \fn QContactRelationshipFetchRequest::resultsAvailable()
+  This signal is emitted when new results are available.  For a QContactRelationshipFetchRequest,
+  the results are in the form relationships which may be retrieved by calling relationships().
+  If no relationships matching the input criteria can be found, no results will become available
+  during the processing of the request, and hence this signal will not be emitted.
+
+  \sa relationships()
  */
 
 /*! Constructs a new relationship fetch request

@@ -54,10 +54,20 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QContactDetailDefinitionRemoveRequest::progress(QContactDetailDefinitionRemoveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
+  \fn QContactDetailDefinitionRemoveRequest::progress(QContactDetailDefinitionRemoveRequest* self)
+  \deprecated
+  This signal is emitted when some progress has been made on the request, causing either a change of
+  status or an update of results, or both.  It identifies which request the signal originated from
+  by including a pointer to \a self.
+ */
+
+/*!
+  \fn QContactDetailDefinitionRemoveRequest::resultsAvailable()
+  This signal is emitted when new results are available.  For a QContactDetailDefinitionRemoveRequest,
+  the results are in the form of errors which may be retrieved by calling errorMap().  If no errors
+  occur during the processing of the request, this signal will not be emitted.
+
+  \sa errorMap()
  */
 
 /*! Constructs a new detail definition remove request */

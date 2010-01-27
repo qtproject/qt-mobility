@@ -127,7 +127,10 @@ public:
         return QContactAbstractRequest::ContactRemoveRequest;
     }
 
-    QContactFilter m_filter;
+    QContactFilter m_filter;    // deprecated, to be removed
+
+    QList<QContact> m_contacts;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactLocalIdFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -283,9 +286,12 @@ public:
         return QContactAbstractRequest::RelationshipRemoveRequest;
     }
 
-    QContactId m_first;
-    QContactId m_second;
-    QString m_relationshipType;
+    QContactId m_first;         // deprecated, to be removed
+    QContactId m_second;        // deprecated, to be removed
+    QString m_relationshipType; // deprecated, to be removed
+
+    QList<QContactRelationship> m_relationships;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 QTM_END_NAMESPACE

@@ -60,11 +60,18 @@ public:
     ~QContactRemoveRequest();
 
     /* Selection */
-    void setFilter(const QContactFilter& filter);
-    QContactFilter filter() const;
+    void Q_DECL_DEPRECATED setFilter(const QContactFilter& filter); // deprecated, replaced by explicit list of contacts to remove
+    QContactFilter Q_DECL_DEPRECATED filter() const;                // deprecated, replaced by explicit list of contacts to remove
+
+    void setContacts(const QList<QContact>& contacts);              // replaces the above
+    QList<QContact> contacts() const;
+
+    /* Results */
+    QMap<int, QContactManager::Error> errorMap() const;
 
 signals:
-    void progress(QContactRemoveRequest* self); // deprecated in week 2, removed after transition period has elapsed.  no results.
+    void progress(QContactRemoveRequest* self); // deprecated in week 2, removed after transition period has elapsed.
+    void resultsAvailable();
 
 private:
     Q_DISABLE_COPY(QContactRemoveRequest)

@@ -52,10 +52,20 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QContactRemoveRequest::progress(QContactRemoveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
+  \fn QContactRemoveRequest::progress(QContactRemoveRequest* self)
+  \deprecated
+  This signal is emitted when some progress has been made on the request, causing either a change of
+  status or an update of results, or both.  It identifies which request the signal originated from
+  by including a pointer to \a self.
+ */
+
+/*!
+  \fn QContactRemoveRequest::resultsAvailable()
+  This signal is emitted when new results are available.  For a QContactRemoveRequest,
+  the results are in the form of errors which may be retrieved by calling errorMap().  If no errors
+  occur during the processing of the request, this signal will not be emitted.
+
+  \sa errorMap()
  */
 
 /*! Constructs a new contact remove request */
@@ -73,6 +83,7 @@ QContactRemoveRequest::~QContactRemoveRequest()
 void QContactRemoveRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactRemoveRequest);
+    qWarning("QContactRemoveRequest::setFilter() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setContacts() instead!");
     d->m_filter = filter;
 }
 
@@ -80,7 +91,30 @@ void QContactRemoveRequest::setFilter(const QContactFilter& filter)
 QContactFilter QContactRemoveRequest::filter() const
 {
     Q_D(const QContactRemoveRequest);
+    qWarning("QContactRemoveRequest::setFilter() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use contacts() instead!");
     return d->m_filter;
+}
+
+
+/*! Sets the list of contacts which will be removed to \a contacts */
+void QContactRemoveRequest::setContacts(const QList<QContact>& contacts)
+{
+    Q_D(QContactRemoveRequest);
+    d->m_contacts = contacts;
+}
+
+/*! Returns the list of contacts which will be removed */
+QList<QContact> QContactRemoveRequest::contacts() const
+{
+    Q_D(const QContactRemoveRequest);
+    return d->m_contacts;
+}
+
+/*! Returns the map of input contact list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactRemoveRequest::errorMap() const
+{
+    Q_D(const QContactRemoveRequest);
+    return d->m_errors;
 }
 
 #include "moc_qcontactremoverequest.cpp"

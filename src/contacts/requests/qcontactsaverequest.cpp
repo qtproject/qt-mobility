@@ -58,6 +58,15 @@ QTM_BEGIN_NAMESPACE
  * by including a pointer to \a self.
  */
 
+/*!
+ * \fn QContactSaveRequest::resultsAvailable()
+ * This signal is emitted when new results are available.  For a QContactSaveRequest,
+ * the results are either in the form of errors which may be retrieved by calling errorMap(), or
+ * contacts which may be retrieved by calling contacts().
+ *
+ * \sa errorMap(), contacts()
+ */
+
 /*! Constructs a new contact save request */
 QContactSaveRequest::QContactSaveRequest()
     : QContactAbstractRequest(new QContactSaveRequestPrivate)

@@ -52,10 +52,20 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QContactRelationshipSaveRequest::progress(QContactRelationshipSaveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
+  \fn QContactRelationshipSaveRequest::progress(QContactRelationshipSaveRequest* self)
+  \deprecated
+  This signal is emitted when some progress has been made on the request, causing either a change of
+  status or an update of results, or both.  It identifies which request the signal originated from
+  by including a pointer to \a self.
+ */
+
+/*!
+  \fn QContactRelationshipSaveRequest::resultsAvailable()
+  This signal is emitted when new results are available.  For a QContactRelationshipSaveRequest,
+  the results are either in the form of errors which may be retrieved by calling errorMap(), or
+  relationships which may be retrieved by calling relationships().
+
+  \sa errorMap(), relationships()
  */
 
 /*! Constructs a new relationship save request */
