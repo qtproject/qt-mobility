@@ -446,7 +446,7 @@ void TestSymbianEngine::retrieveContacts()
     QVERIFY(err == QContactManager::NoError);
 
     // Retrieve all contacts
-    cnt_ids = m_engine->contacts(f, s, QStringList(), err);
+    cnt_ids = m_engine->contactIds(f, s, err);
     QVERIFY(err == QContactManager::NoError);
 
     QContactDetailFilter mobileFilter;
