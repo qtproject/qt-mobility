@@ -70,7 +70,7 @@ public:
     ~QVersitContactExporter();
 
     QList<QVersitDocument> exportContacts(const QList<QContact>& contacts,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type);
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard30Type);
 
     void setDetailHandler(QVersitContactExporterDetailHandler* handler);
     QVersitContactExporterDetailHandler* detailHandler() const;
@@ -81,7 +81,7 @@ public:
     // Deprecated:
     QVersitDocument Q_DECL_DEPRECATED exportContact(
         const QContact& contact,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard21Type)
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard30Type)
     {
         qWarning("QVersitContactExporter::exportContact(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  exportContacts() should be used instead.");
         QList<QContact> list;
