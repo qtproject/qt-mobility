@@ -20,6 +20,7 @@ PRIVATE_HEADERS += \
     qmediaplaylist_p.h \
     qmediaplaylistprovider_p.h \
     qmediaimageviewerservice_p.h \
+    qmetadatacontrolmetaobject_p.h \
     qvideowidget_p.h \
     qmediapluginloader_p.h \
     qpaintervideosurface_p.h
@@ -83,6 +84,7 @@ SOURCES += qmediacontrol.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
     qmetadatacontrol.cpp \
+    qmetadatacontrolmetaobject.cpp \
     qmediastreamscontrol.cpp \
     qradiotuner.cpp \
     qradiotunercontrol.cpp \
@@ -105,9 +107,21 @@ SOURCES += qmediacontrol.cpp \
     qmediatimerange.cpp
 
 contains(QT_CONFIG, declarative) {
-   QT += declarative
-   PRIVATE_HEADERS += wavedecoder.h qsoundeffect_p.h
-   SOURCES += wavedecoder.cpp qsoundeffect.cpp
+    QT += declarative
+
+    PRIVATE_HEADERS += \
+        qmlaudio_p.h \
+        qmlgraphicsvideo_p.h \
+        qmlmediabase_p.h \
+        qsoundeffect_p.h \
+        wavedecoder.h
+
+    SOURCES += \
+        qmlaudio.cpp \
+        qmlgraphicsvideo.cpp \
+        qmlmediabase.cpp \
+        qsoundeffect.cpp \
+        wavedecoder.cpp
 
    maemo5: DEFINES += QT_MULTIMEDIA_MAEMO5
    system(pkg-config --exists \'libpulse >= 0.9.10\') {

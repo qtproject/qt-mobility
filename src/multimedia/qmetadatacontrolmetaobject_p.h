@@ -39,32 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef QMETADATACONTROLMETAOBJECT_P_H
+#define QMETADATACONTROLMETAOJBECT_P_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qtmedianamespace.h>
 
-QTM_USE_NAMESPACE
+#include <QtCore/qmetaobject.h>
+#include <QtCore/private/qobject_p.h>
+#include <QtDeclarative/private/qmetaobjectbuilder_p.h>
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+QTM_BEGIN_NAMESPACE
+
+class QMetaDataControl;
+
+class QMetaDataControlMetaObject : public QAbstractDynamicMetaObject
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    QMetaDataControlMetaObject(QMetaDataControl *control, QObject *object);
+    ~QMetaDataControlMetaObject();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    int metaCall(QMetaObject::Call call, int _id, void **arguments);
+    int createProperty(const char *, const char *);
+
+    void metaDataChanged();
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+    QMetaDataControl *m_control;
+    QObject *m_object;
+    QMetaObject *m_mem;
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    int m_propertyOffset;
+    int m_signalOffset;
+
+    QVector<QtMedia::MetaData> m_keys;
+    QMetaObjectBuilder m_builder;
 };
 
-#endif // DSSERVICEPLUGIN_H
+QTM_END_NAMESPACE
+
+#endif

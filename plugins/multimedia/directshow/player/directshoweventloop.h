@@ -39,32 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWEVENTLOOP_H
+#define DIRECTSHOWEVENTLOOP_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <QtCore/qmutex.h>
+#include <QtCore/private/qwineventnotifier_p.h>
 
-QTM_USE_NAMESPACE
+class DirectShowPostedEvent;
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class DirectShowEventLoop : public QWinEventNotifier
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowEventLoop(QObject *parent = 0);
+    ~DirectShowEventLoop();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    void wait(QMutex *mutex);
+    void wake();
+
+    void postEvent(QObject *object, QEvent *event);
+
+    bool event(QEvent *event);
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+    void processEvents();
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    DirectShowPostedEvent *m_postsHead;
+    DirectShowPostedEvent *m_postsTail;
+    HANDLE m_eventHandle;
+    HANDLE m_waitHandle;
+    QMutex m_mutex;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

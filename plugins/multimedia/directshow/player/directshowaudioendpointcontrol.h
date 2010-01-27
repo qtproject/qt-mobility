@@ -39,32 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWAUDIOENDPOINTCONTROL_H
+#define DIRECTSHOWAUDIOENDPOINTCONTROL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qaudioendpointselector.h>
+
+#include <dshow.h>
+
+class DirectShowPlayerService;
 
 QTM_USE_NAMESPACE
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class DirectShowAudioEndpointControl : public QAudioEndpointSelector
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowAudioEndpointControl(DirectShowPlayerService *service, QObject *parent = 0);
+    ~DirectShowAudioEndpointControl();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    QList<QString> availableEndpoints() const;
+
+    QString endpointDescription(const QString &name) const;
+
+    QString defaultEndpoint() const;
+    QString activeEndpoint() const;
+
+    void setActiveEndpoint(const QString& name);
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+    void updateEndpoints();
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    DirectShowPlayerService *m_service;
+    IBindCtx *m_bindContext;
+    ICreateDevEnum *m_deviceEnumerator;
+
+    QMap<QString, IMoniker *> m_devices;
+    QString m_defaultEndpoint;
+    QString m_activeEndpoint;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif
+

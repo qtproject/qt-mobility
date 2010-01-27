@@ -39,32 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWVIDEOUTPUTCONTROL_H
+#define DIRECTSHOWVIDEOOUPUTCONTROL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qvideooutputcontrol.h>
 
 QTM_USE_NAMESPACE
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class DirectShowVideoOutputControl : public QVideoOutputControl
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowVideoOutputControl(QObject *parent = 0);
+    ~DirectShowVideoOutputControl();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    QList<Output> availableOutputs() const;
+
+    Output output() const;
+    void setOutput(Output output);
+
+Q_SIGNALS:
+    void outputChanged();
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    Output m_output;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

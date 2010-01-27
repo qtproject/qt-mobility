@@ -15,9 +15,8 @@ win32:!wince* {
     for(p, TMP_SEARCHPATHS) {
         exists($${p}/wmp.h): SUBDIRS *= wmp
         exists($${p}/dshow.h): TMP_REQUIRED_HEADERS *= dshow.h
-        exists($${p}/qedit.h): TMP_REQUIRED_HEADERS *= qedit.h
     }
-    contains(TMP_REQUIRED_HEADERS, dshow.h): contains(TMP_REQUIRED_HEADERS, qedit.h) {
+    contains(TMP_REQUIRED_HEADERS, dshow.h) {
         win32-msvc2005: SUBDIRS *= directshow
         win32-msvc2008: SUBDIRS *= directshow
     }

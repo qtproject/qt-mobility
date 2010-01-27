@@ -39,32 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWMEDIATYPE_H
+#define DIRECTSHOWMEDIATYPE_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
-QTM_USE_NAMESPACE
+#include <dshow.h>
+#include <dvdmedia.h>
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class DirectShowMediaType : public AM_MEDIA_TYPE
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowMediaType() { memset(this, 0, sizeof(DirectShowMediaType)); }
+    DirectShowMediaType(const AM_MEDIA_TYPE &type) { copy(this, type); }
+    DirectShowMediaType(const DirectShowMediaType &other) { copy(this, other); }
+    DirectShowMediaType &operator =(const AM_MEDIA_TYPE &type) {
+        free(this); copy(this, type); return *this; }
+    DirectShowMediaType &operator =(const DirectShowMediaType &other) {
+        free(this); copy(this, other); return *this; }
+    ~DirectShowMediaType() { freeData(this); }
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    void clear() { freeData(this); memset(this, 0, sizeof(DirectShowMediaType)); }
 
-private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+    static void copy(AM_MEDIA_TYPE *target, const AM_MEDIA_TYPE &source);
+    static void freeData(AM_MEDIA_TYPE *type);
+    static void deleteType(AM_MEDIA_TYPE *type);
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    static GUID convertPixelFormat(QVideoFrame::PixelFormat format);
+    static QVideoSurfaceFormat formatFromType(const AM_MEDIA_TYPE &type);
+
+    static int bytesPerLine(const QVideoSurfaceFormat &format);
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

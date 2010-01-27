@@ -39,32 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWMEDIATYPELIST_H
+#define DIRECTSHOWMEDIATYPELIST_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <QtCore/qvector.h>
 
-QTM_USE_NAMESPACE
+#include <dshow.h>
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class DirectShowMediaTypeList : public IUnknown
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowMediaTypeList();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    IEnumMediaTypes *createMediaTypeEnum();
+
+    void setMediaTypes(const QVector<AM_MEDIA_TYPE> &types);
+
+    virtual int currentMediaTypeToken();
+    virtual HRESULT nextMediaType(
+            int token, int *index, ULONG count, AM_MEDIA_TYPE **types, ULONG *fetchedCount);
+    virtual HRESULT skipMediaType(int token, int *index, ULONG count);
+    virtual HRESULT cloneMediaType(int token, int index, IEnumMediaTypes **enumeration);
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    int m_mediaTypeToken;
+    QVector<AM_MEDIA_TYPE> m_mediaTypes;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

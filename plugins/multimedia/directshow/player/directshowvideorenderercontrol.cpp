@@ -39,32 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#include "directshowvideorenderercontrol.h"
 
-#include <qmediaserviceproviderplugin.h>
+#include "videosurfacefilter.h"
 
-QTM_USE_NAMESPACE
-
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+DirectShowVideoRendererControl::DirectShowVideoRendererControl(DirectShowEventLoop *loop, QObject *parent)
+    : QVideoRendererControl(parent)
+    , m_loop(loop)
+    , m_surface(0)
+    , m_filter(0)
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+}
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+DirectShowVideoRendererControl::~DirectShowVideoRendererControl()
+{
+    delete m_filter;
+}
 
-private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+QAbstractVideoSurface *DirectShowVideoRendererControl::surface() const
+{
+    return m_surface;
+}
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
-};
+void DirectShowVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
+{
+    if (surface != m_surface) {
+        m_surface = surface;
 
-#endif // DSSERVICEPLUGIN_H
+        VideoSurfaceFilter *existingFilter = m_filter;
+
+        if (surface) {
+            m_filter = new VideoSurfaceFilter(surface, m_loop);
+        } else {
+            m_filter = 0;
+        }
+
+        emit filterChanged();
+
+        delete existingFilter;
+    }
+}
+
+IBaseFilter *DirectShowVideoRendererControl::filter()
+{
+    return m_filter;
+}

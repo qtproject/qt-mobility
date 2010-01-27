@@ -39,32 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWGLOBAL_H
+#define DIRECTSHOWGLOBAL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <dshow.h>
 
-QTM_USE_NAMESPACE
-
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+template <typename T> T *com_cast(IUnknown *unknown)
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    T *iface = 0;
+    return unknown && unknown->QueryInterface(
+            __uuidof(T), reinterpret_cast<void **>(&iface)) == S_OK
+        ? iface
+        : 0;
+}
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+template <typename T> T *com_new(const IID &clsid)
+{
+    T *object = 0;
+    return CoCreateInstance(
+            clsid,
+            NULL,
+            CLSCTX_INPROC_SERVER,
+            __uuidof(T),
+            reinterpret_cast<void **>(&object)) == S_OK
+        ? object
+        : 0;
+}
 
-private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
 #endif
-};
-
-#endif // DSSERVICEPLUGIN_H

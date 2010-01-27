@@ -39,32 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#include <QApplication>
+#include <QDebug>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QString>
+#include <QUrl>
+#include <QmlView>
+#include <QtCore>
+#include <qml.h>
+#include <qmlcontext.h>
 
-#include <qmediaserviceproviderplugin.h>
+#include <qmediaplayer.h>
 
 QTM_USE_NAMESPACE
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+int main(int argc, char** argv)
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    QApplication app(argc, argv);
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    QMediaPlayer player;
 
-private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+    QString audioFile = QFileDialog::getOpenFileName(0, QObject::tr("Open Music"));
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
-};
+    if (!audioFile.isEmpty()) {
+        QUrl audioUrl = QUrl::fromLocalFile(audioFile);
 
-#endif // DSSERVICEPLUGIN_H
+        QmlView canvas;
+        canvas.setUrl(QUrl("qrc:/player.qml"));
+        QmlContext* context = canvas.rootContext();
+        context->setContextProperty("audioUrl", audioUrl);
+
+        canvas.execute();
+        canvas.show();
+        return app.exec();
+    }
+    return 0;
+}

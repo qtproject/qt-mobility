@@ -39,32 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef DIRECTSHOWMETADATACONTROL_H
+#define DIRECTSHOWMETADATACONTROL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qmetadatacontrol.h>
+
+#include <dshow.h>
+#include <qnetwork.h>
+#include <wmsdk.h>
+
+#include <QtCore/qcoreevent.h>
+
+class DirectShowPlayerService;
 
 QTM_USE_NAMESPACE
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class DirectShowMetaDataControl : public QMetaDataControl
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    DirectShowMetaDataControl(QObject *parent = 0);
+    ~DirectShowMetaDataControl();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    bool isWritable() const;
+    bool isMetaDataAvailable() const;
+
+    QVariant metaData(QtMedia::MetaData key) const;
+    void setMetaData(QtMedia::MetaData key, const QVariant &value);
+    QList<QtMedia::MetaData> availableMetaData() const;
+
+    QVariant extendedMetaData(const QString &key) const;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
+    QStringList availableExtendedMetaData() const;
+
+    void updateGraph(IFilterGraph2 *graph, IBaseFilter *source);
+
+protected:
+    void customEvent(QEvent *event);
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+    enum Event
+    {
+        MetaDataChanged = QEvent::User
+    };
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    IAMMediaContent *m_content;
+    IWMHeaderInfo *m_headerInfo;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif

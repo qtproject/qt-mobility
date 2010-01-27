@@ -39,32 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef MEDIASAMPLEVIDEOBUFFER_H
+#define MEDIASAMPLEVIDEOBUFFER_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <QtMultimedia/qabstractvideobuffer.h>
 
-QTM_USE_NAMESPACE
+#include <dshow.h>
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class MediaSampleVideoBuffer : public QAbstractVideoBuffer
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    MediaSampleVideoBuffer(IMediaSample *sample, int bytesPerLine);
+    ~MediaSampleVideoBuffer();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    IMediaSample *sample() { return m_sample; }
+
+    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
+    void unmap();
+
+    MapMode mapMode() const;
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    IMediaSample *m_sample;
+    int m_bytesPerLine;
+    MapMode m_mapMode;
 };
 
-#endif // DSSERVICEPLUGIN_H
+
+#endif

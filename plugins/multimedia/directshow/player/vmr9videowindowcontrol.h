@@ -39,32 +39,67 @@
 **
 ****************************************************************************/
 
-#ifndef DSSERVICEPLUGIN_H
-#define DSSERVICEPLUGIN_H
+#ifndef VMR9VIDEOWINDOWCONTROL_H
+#define VMR9VIDEOWINDOWCONTROL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qvideowindowcontrol.h>
+
+#include <dshow.h>
+#include <d3d9.h>
+#include <vmr9.h>
 
 QTM_USE_NAMESPACE
 
-class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class Vmr9VideoWindowControl : public QVideoWindowControl
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    Vmr9VideoWindowControl(QObject *parent = 0);
+    ~Vmr9VideoWindowControl();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    IBaseFilter *filter() const { return m_filter; }
+
+    WId winId() const;
+    void setWinId(WId id);
+
+    QRect displayRect() const;
+    void setDisplayRect(const QRect &rect);
+
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
+
+    void repaint();
+
+    QSize nativeSize() const;
+
+    QVideoWidget::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
 
 private:
-#ifdef QMEDIA_DIRECTSHOW_CAMERA
-    void updateDevices() const;
+    void setProcAmpValues();
+    float scaleProcAmpValue(
+            IVMRMixerControl9 *control, VMR9ProcAmpControlFlags property, int value) const;
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-#endif
+    IBaseFilter *m_filter;
+    WId m_windowId;
+    DWORD m_dirtyValues;
+    int m_brightness;
+    int m_contrast;
+    int m_hue;
+    int m_saturation;
+    bool m_fullScreen;
 };
 
-#endif // DSSERVICEPLUGIN_H
+#endif
