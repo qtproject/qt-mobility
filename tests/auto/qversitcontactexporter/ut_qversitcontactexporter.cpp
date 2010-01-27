@@ -1024,6 +1024,7 @@ void UT_QVersitContactExporter::testEncodeNickName()
 {
     QContact contact;
     QVersitDocument document;
+    document.setType(QVersitDocument::VCard21Type);
 
     // Nickname not yet in the document
     QContactNickname nicknameDetail;
@@ -1208,7 +1209,7 @@ void UT_QVersitContactExporter::testEncodeFamily()
     QVersitProperty childrenProperty = document.properties().at(1);
     QCOMPARE(childrenProperty.parameters().count(), 0);
     QCOMPARE(childrenProperty.name(), QString::fromAscii("X-CHILDREN"));
-    QCOMPARE(childrenProperty.value(), QString::fromAscii("A,B"));
+    QCOMPARE(childrenProperty.value(), QString::fromAscii("A\\,B"));
 }
 
 
