@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSensorFilter Class Reference</h1>
 <p>The QSensorFilter class provides an efficient callback facility for asynchronous notifications of sensor changes. <a href="#details">More...</a></p>
 <pre>    #include &lt;QSensorFilter&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherited by <a href="qaccelerometerfilter.html">QAccelerometerFilter</a>.</p>
+<p>Inherited by <a href="qaccelerometerfilter.html">QAccelerometerFilter</a>, <a href="qambientlightfilter.html">QAmbientLightFilter</a>, <a href="qcompassfilter.html">QCompassFilter</a>, <a href="qmagnetometerfilter.html">QMagnetometerFilter</a>, <a href="qorientationfilter.html">QOrientationFilter</a>, <a href="qproximityfilter.html">QProximityFilter</a>, <a href="qrotationfilter.html">QRotationFilter</a>, and <a href="qtapfilter.html">QTapFilter</a>.</p>
 <ul>
 <li><a href="qsensorfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -32,15 +32,20 @@
 <h2>Detailed Description</h2>
 <p>The QSensorFilter class provides an efficient callback facility for asynchronous notifications of sensor changes.</p>
 <p>Some sensors (eg. the accelerometer) are often accessed very frequently. This may be slowed down by the use of signals and slots. The QSensorFilter interface provides a more efficient way for the sensor to notify your class that the sensor has changed.</p>
+<p>Additionally, multiple filters can be added to a sensor. They are called in order and each filter has the option to modify the values in the reading or to suppress the reading altogether.</p>
+<p>Note that the values in the class returned by <a href="qsensor.html#reading-prop">QSensor::reading</a>() will not be updated until after the filters have been run.</p>
+<p>See also <a href="qsensorfilter.html#filter">filter</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSensorFilter/~QSensorFilter"></a>
 <h3 class="fn"><a name="dtor.QSensorFilter"></a>QSensorFilter::~QSensorFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Notifies any sensors that the filter is being destroyed.</p>
+<p>Notifies the attached sensor (if any) that the filter is being destroyed.</p>
 <a name="//apple_ref/cpp/instm/QSensorFilter/filter"></a>
-<h3 class="fn"><a name="filter"></a>bool QSensorFilter::filter ( QSensorReading * <i>reading</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="filter"></a>bool QSensorFilter::filter ( <a href="qsensorreading.html">QSensorReading</a> * <i>reading</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>This function is called when the sensor <i>reading</i> changes.</p>
-<p>Returns true;</p>
+<p>The filter can modify the reading.</p>
+<p>Returns true to allow the next filter to receive the value. If this is the last filter, returning true causes the signal to be emitted and the value is stored in the sensor.</p>
+<p>Returns false to drop the reading.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

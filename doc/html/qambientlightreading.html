@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAmbientLightReading Class Reference</h1>
 <p>The QAmbientLightReading class represents one reading from the ambient light sensor. <a href="#details">More...</a></p>
 <pre>    #include &lt;QAmbientLightReading&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
 <ul>
 <li><a href="qambientlightreading-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -30,9 +30,10 @@
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
-<li><div class="fn"><b><a href="qambientlightreading.html#lightLevel-prop">lightLevel</a></b> : LightLevel</div></li>
+<li><div class="fn"><b><a href="qambientlightreading.html#lightLevel-prop">lightLevel</a></b> : const LightLevel</div></li>
 </ul>
 <ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
@@ -40,9 +41,10 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">LightLevel </td><td class="memItemRight" valign="bottom"><b><a href="qambientlightreading.html#lightLevel-prop">lightLevel</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qambientlightreading.html#lightLevel-prop">setLightLevel</a></b> ( LightLevel <i>lightLevel</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qambientlightreading.html#setLightLevel">setLightLevel</a></b> ( LightLevel <i>lightLevel</i> )</td></tr>
 </table>
 <ul>
+<li><div bar="2" class="fn"></div>2 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
@@ -82,14 +84,18 @@
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QAmbientLightReading/lightLevel"></a>
-<a name="//apple_ref/cpp/instm/QAmbientLightReading/setLightLevel"></a>
-<h3 class="fn"><a name="lightLevel-prop"></a>lightLevel : <a href="qambientlightreading.html#LightLevel-enum">LightLevel</a></h3>
-<p>This property holds foo.</p>
+<h3 class="fn"><a name="lightLevel-prop"></a>lightLevel : const <a href="qambientlightreading.html#LightLevel-enum">LightLevel</a></h3>
+<p>This property holds the ambient light level.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">LightLevel </td><td class="memItemRight" valign="bottom"><b>lightLevel</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setLightLevel</b> ( LightLevel <i>lightLevel</i> )</td></tr>
 </table>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QAmbientLightReading/setLightLevel"></a>
+<h3 class="fn"><a name="setLightLevel"></a>void QAmbientLightReading::setLightLevel ( <a href="qambientlightreading.html#LightLevel-enum">LightLevel</a> <i>lightLevel</i> )</h3>
+<p>Sets the ambient light level to <i>lightLevel</i>.</p>
+<p>See also <a href="qambientlightreading.html#lightLevel-prop">lightLevel</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

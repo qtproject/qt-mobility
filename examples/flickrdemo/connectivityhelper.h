@@ -39,81 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QMLSOUND_H
-#define QMLSOUND_H
+#ifndef CONNECTIVITYHELPER_H
+#define CONNECTIVITYHELPER_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QObject>
 
-
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include <qml.h>
+// QtMobility API headers
 #include <qmobilityglobal.h>
+#include <qnetworksession.h>
 
-QTM_BEGIN_NAMESPACE
-class QMediaPlayer;
-QTM_END_NAMESPACE
+class QWidget;
 
-class QmlSound : public QObject
+// Use the QtMobility namespace
+QTM_USE_NAMESPACE
+
+class ConnectivityHelper : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(int loopCount READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
-    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
-    Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
 
 public:
-    explicit QmlSound(QObject *parent = 0);
-    ~QmlSound();
-
-    QUrl source() const;
-    void setSource(const QUrl &url);
-
-    int loopCount() const;
-    void setLoopCount(int loopCount);
-
-    int volume() const;
-    void setVolume(int volume);
-
-    bool isMuted() const;
-    void setMuted(bool muted);
-
-    int duration() const;
+    ConnectivityHelper(QNetworkSession *session, QWidget *parent = 0);
 
 signals:
-    void sourceChanged();
-    void loopCountChanged();
-    void volumeChanged();
-    void mutedChanged();
-    void durationChanged();
-
-public slots:
-    void play();
-    void stop();
+    void networkingCancelled();
 
 private slots:
-    void repeat();
+    void error(QNetworkSession::SessionError error);
 
 private:
-    Q_DISABLE_COPY(QmlSound)
-
-    int m_loopCount;
-    int m_volume;
-    bool m_muted;
-    int m_runningCount;
-    QTM_PREPEND_NAMESPACE(QMediaPlayer) *m_player;
+    QNetworkSession *m_session;
 };
 
-QML_DECLARE_TYPE(QmlSound)
-
-#endif // QMLSOUND_H
+#endif // #ifndef CONNECTIVITYHELPER_H

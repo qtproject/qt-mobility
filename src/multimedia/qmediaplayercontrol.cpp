@@ -251,20 +251,21 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::seekRange() const
+    \fn QMediaPlayerControl::availablePlaybackRanges() const
 
-    Returns the range in milliseconds the player can seek to.
-    Usually for local files this this range equals to [0..duration()]
-    or [0..0] if seeking is not supported, but for network sources
-    it means the buffered part of media.
+    Returns a range of times in milliseconds that can be played back.
+
+    Usually for local files this is a continuous interval equal to [0..duration()]
+    or an empty time range if seeking is not supported, but for network sources
+    it refers to the buffered parts of the media.
 */
 
 /*!
-    \fn QMediaPlayerControl::seekRangeChanged(const QPair<qint64,qint64>& range)
+    \fn QMediaPlayerControl::availablePlaybackRangesChanged(const QMediaTimeRange &ranges)
 
-    Signals that the media seek \a range has changed.
+    Signals that the available media playback \a ranges have changed.
 
-    \sa QMediaPlayerControl::seekRange()
+    \sa QMediaPlayerControl::availablePlaybackRanges()
 */
 
 /*!

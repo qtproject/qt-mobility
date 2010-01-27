@@ -26,9 +26,10 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#newReadingAvailable">newReadingAvailable</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#poll">poll</a></b> () = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setReading">setReading</a></b> ( T * <i>reading</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSensorReading * </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#reading">reading</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T * </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setReading">setReading</a></b> ( T * <i>reading</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setSupportedUpdatePolicies">setSupportedUpdatePolicies</a></b> ( QSensor::UpdatePolicies <i>policies</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#start">start</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#start">start</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#stop">stop</a></b> () = 0</td></tr>
 </table>
 <ul>
@@ -57,16 +58,58 @@
 <a name="//apple_ref/cpp/instm/QSensorBackend/poll"></a>
 <h3 class="fn"><a name="poll"></a>void QSensorBackend::poll ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Poll the sensor for a reading.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/reading"></a>
+<h3 class="fn"><a name="reading"></a><a href="qsensorreading.html">QSensorReading</a> * QSensorBackend::reading () const</h3>
+<p>If the backend has lost its reference to the reading it can call this method to get the address.</p>
+<p>Note that you will need to down-cast to the appropriate type.</p>
+<p>See also <a href="qsensorbackend.html#setReading">setReading</a>().</p>
 <a name="//apple_ref/cpp/instm/QSensorBackend/setReading"></a>
-<h3 class="fn"><a name="setReading"></a>void QSensorBackend::setReading ( T * <i>reading</i> )</h3>
-<p>Templated function foo <i>reading</i></p>
-<pre>    setReading&lt;ReadingClass&gt;(&amp;my_reading_class);</pre>
+<h3 class="fn"><a name="setReading"></a>T * QSensorBackend::setReading ( T * <i>reading</i> )</h3>
+<p>This function is called to initialize the <i>reading</i> classes used for a sensor.</p>
+<p>If your backend has already allocated a reading you should pass the address of this to the function. Otherwise you should pass 0 and the function will return the address of the reading your backend should use when it wants to notify the sensor API of new readings.</p>
+<p>Note that this is a template function so it should be called with the appropriate type.</p>
+<pre>    class MyBackend : public QSensorBackend
+    {
+        QAccelerometerReading m_reading;
+    public:
+        MyBackend(QSensor *sensor)
+            : QSensorBackend(sensor)
+        {
+            setReading&lt;QAccelerometerReading&gt;(&amp;m_reading);
+        }
+
+        ...</pre>
+<p>Note that this function must be called or you will not be able to send readings to the front end.</p>
+<p>If you do not wish to store the address of the reading you may use the <a href="qsensorbackend.html#reading">reading</a>() method to get it again later.</p>
+<pre>    class MyBackend : public QSensorBackend
+    {
+    public:
+        MyBackend(QSensor *sensor)
+            : QSensorBackend(sensor)
+        {
+            setReading&lt;QAccelerometerReading&gt;(0);
+        }
+
+        void poll()
+        {
+            qtimestamp timestamp;
+            qreal x, y, z;
+            ...
+            QAccelerometerReading *reading = static_cast&lt;QAccelerometerReading*&gt;(reading());
+            reading-&gt;setTimestamp(timestamp);
+            reading-&gt;setX(x);
+            reading-&gt;setY(y);
+            reading-&gt;setZ(z);
+        }
+
+        ...</pre>
+<p>See also <a href="qsensorbackend.html#reading">reading</a>().</p>
 <a name="//apple_ref/cpp/instm/QSensorBackend/setSupportedUpdatePolicies"></a>
 <h3 class="fn"><a name="setSupportedUpdatePolicies"></a>void QSensorBackend::setSupportedUpdatePolicies ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicies</a> <i>policies</i> )</h3>
-<p>Foo <i>policies</i></p>
+<p>Set the supported <i>policies</i> for this sensor. If this isn't called the sensor will not report any supported policies to the user.</p>
 <a name="//apple_ref/cpp/instm/QSensorBackend/start"></a>
-<h3 class="fn"><a name="start"></a>bool QSensorBackend::start ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Start reporting values. Returns true if the sensor was able to start.</p>
+<h3 class="fn"><a name="start"></a>void QSensorBackend::start ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Start reporting values.</p>
 <a name="//apple_ref/cpp/instm/QSensorBackend/stop"></a>
 <h3 class="fn"><a name="stop"></a>void QSensorBackend::stop ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Stop reporting values.</p>

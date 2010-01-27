@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QTapReading Class Reference</h1>
 <p>The QTapReading class represents one reading from the tap sensor. <a href="#details">More...</a></p>
 <pre>    #include &lt;QTapReading&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
 <ul>
 <li><a href="qtapreading-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -30,10 +30,11 @@
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
-<li><div class="fn"><b><a href="qtapreading.html#doubleTap-prop">doubleTap</a></b> : bool</div></li>
-<li><div class="fn"><b><a href="qtapreading.html#tapDirection-prop">tapDirection</a></b> : TapDirection</div></li>
+<li><div class="fn"><b><a href="qtapreading.html#doubleTap-prop">doubleTap</a></b> : const bool</div></li>
+<li><div class="fn"><b><a href="qtapreading.html#tapDirection-prop">tapDirection</a></b> : const TapDirection</div></li>
 </ul>
 <ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
@@ -41,11 +42,12 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#doubleTap-prop">isDoubleTap</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#doubleTap-prop">setDoubleTap</a></b> ( bool <i>doubleTap</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#tapDirection-prop">setTapDirection</a></b> ( TapDirection <i>tapDirection</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#setDoubleTap">setDoubleTap</a></b> ( bool <i>doubleTap</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#setTapDirection">setTapDirection</a></b> ( TapDirection <i>tapDirection</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">TapDirection </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#tapDirection-prop">tapDirection</a></b> () const</td></tr>
 </table>
 <ul>
+<li><div bar="2" class="fn"></div>2 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
@@ -110,23 +112,30 @@
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QTapReading/isDoubleTap"></a>
-<a name="//apple_ref/cpp/instm/QTapReading/setDoubleTap"></a>
-<h3 class="fn"><a name="doubleTap-prop"></a>doubleTap : bool</h3>
-<p>This property holds foo.</p>
+<h3 class="fn"><a name="doubleTap-prop"></a>doubleTap : const bool</h3>
+<p>This property holds a value indicating if there was a single or double tap.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isDoubleTap</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setDoubleTap</b> ( bool <i>doubleTap</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QTapReading/tapDirection"></a>
-<a name="//apple_ref/cpp/instm/QTapReading/setTapDirection"></a>
-<h3 class="fn"><a name="tapDirection-prop"></a>tapDirection : <a href="qtapreading.html#TapDirection-enum">TapDirection</a></h3>
-<p>This property holds foo.</p>
+<h3 class="fn"><a name="tapDirection-prop"></a>tapDirection : const <a href="qtapreading.html#TapDirection-enum">TapDirection</a></h3>
+<p>This property holds the direction of the tap.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">TapDirection </td><td class="memItemRight" valign="bottom"><b>tapDirection</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setTapDirection</b> ( TapDirection <i>tapDirection</i> )</td></tr>
 </table>
+<p>See also <a href="qtapreading.html#TapDirection-enum">TapDirection</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QTapReading/setDoubleTap"></a>
+<h3 class="fn"><a name="setDoubleTap"></a>void QTapReading::setDoubleTap ( bool <i>doubleTap</i> )</h3>
+<p>Sets the double tap status of the reading to <i>doubleTap</i>.</p>
+<p>See also <a href="qtapreading.html#doubleTap-prop">isDoubleTap</a>().</p>
+<a name="//apple_ref/cpp/instm/QTapReading/setTapDirection"></a>
+<h3 class="fn"><a name="setTapDirection"></a>void QTapReading::setTapDirection ( <a href="qtapreading.html#TapDirection-enum">TapDirection</a> <i>tapDirection</i> )</h3>
+<p>Sets the tap direction to <i>tapDirection</i>.</p>
+<p>See also <a href="qtapreading.html#tapDirection-prop">tapDirection</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

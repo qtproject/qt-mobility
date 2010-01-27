@@ -1,15 +1,21 @@
 TEMPLATE=app
-INCLUDEPATH += ../../src/location
+INCLUDEPATH += ../../src/location \
+                ../../src/bearer \
+                ../../src/global \
+                ../satellitedialog
 
 QT += webkit network
 
-HEADERS = mapwindow.h
+HEADERS = mapwindow.h \
+            ../satellitedialog/satellitedialog.h
 SOURCES = mapwindow.cpp \
-          main.cpp
+            ../satellitedialog/satellitedialog.cpp \
+            main.cpp
 
 include(../examples.pri)
+
 CONFIG += mobility
-MOBILITY = location
+MOBILITY = location bearer
 
 symbian: {
     addFiles.sources = nmealog.txt
@@ -23,3 +29,4 @@ symbian: {
     INSTALLS += logfile
     build_pass:ALL_DEPS+=install_logfile
 }
+

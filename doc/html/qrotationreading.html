@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QRotationReading Class Reference</h1>
 <p>The QRotationReading class represents one reading from the rotation sensor. <a href="#details">More...</a></p>
 <pre>    #include &lt;QRotationReading&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
 <ul>
 <li><a href="qrotationreading-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -24,25 +24,27 @@
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
-<li><div class="fn"><b><a href="qrotationreading.html#x-prop">x</a></b> : qreal</div></li>
-<li><div class="fn"><b><a href="qrotationreading.html#y-prop">y</a></b> : qreal</div></li>
-<li><div class="fn"><b><a href="qrotationreading.html#z-prop">z</a></b> : qreal</div></li>
+<li><div class="fn"><b><a href="qrotationreading.html#x-prop">x</a></b> : const qreal</div></li>
+<li><div class="fn"><b><a href="qrotationreading.html#y-prop">y</a></b> : const qreal</div></li>
+<li><div class="fn"><b><a href="qrotationreading.html#z-prop">z</a></b> : const qreal</div></li>
 </ul>
 <ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#x-prop">setX</a></b> ( qreal <i>x</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#y-prop">setY</a></b> ( qreal <i>y</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#z-prop">setZ</a></b> ( qreal <i>z</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#setX">setX</a></b> ( qreal <i>x</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#setY">setY</a></b> ( qreal <i>y</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#setZ">setZ</a></b> ( qreal <i>z</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#x-prop">x</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#y-prop">y</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qrotationreading.html#z-prop">z</a></b> () const</td></tr>
 </table>
 <ul>
+<li><div bar="2" class="fn"></div>2 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
@@ -80,32 +82,40 @@
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QRotationReading/x"></a>
-<a name="//apple_ref/cpp/instm/QRotationReading/setX"></a>
-<h3 class="fn"><a name="x-prop"></a>x : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<h3 class="fn"><a name="x-prop"></a>x : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the rotation on the X axis.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>x</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setX</b> ( qreal <i>x</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QRotationReading/y"></a>
-<a name="//apple_ref/cpp/instm/QRotationReading/setY"></a>
-<h3 class="fn"><a name="y-prop"></a>y : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<h3 class="fn"><a name="y-prop"></a>y : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the rotation on the Y axis.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>y</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setY</b> ( qreal <i>y</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QRotationReading/z"></a>
-<a name="//apple_ref/cpp/instm/QRotationReading/setZ"></a>
-<h3 class="fn"><a name="z-prop"></a>z : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<h3 class="fn"><a name="z-prop"></a>z : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the rotation on the Z axis.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>z</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setZ</b> ( qreal <i>z</i> )</td></tr>
 </table>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QRotationReading/setX"></a>
+<h3 class="fn"><a name="setX"></a>void QRotationReading::setX ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>x</i> )</h3>
+<p>Sets the rotation on the X axis to <i>x</i>.</p>
+<p>See also <a href="qrotationreading.html#x-prop">x</a>().</p>
+<a name="//apple_ref/cpp/instm/QRotationReading/setY"></a>
+<h3 class="fn"><a name="setY"></a>void QRotationReading::setY ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>y</i> )</h3>
+<p>Sets the rotation on the Y axis to <i>y</i>.</p>
+<p>See also <a href="qrotationreading.html#y-prop">y</a>().</p>
+<a name="//apple_ref/cpp/instm/QRotationReading/setZ"></a>
+<h3 class="fn"><a name="setZ"></a>void QRotationReading::setZ ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>z</i> )</h3>
+<p>Sets the rotation on the Z axis to <i>z</i>.</p>
+<p>See also <a href="qrotationreading.html#z-prop">z</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

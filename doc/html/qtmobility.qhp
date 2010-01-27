@@ -25,10 +25,15 @@
                     <section ref="qaccelerometerreading.html" title="QAccelerometerReading Class Reference">
                         <section ref="qaccelerometerreading-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qambientlightfilter.html" title="QAmbientLightFilter Class Reference">
+                        <section ref="qambientlightfilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qambientlightreading.html" title="QAmbientLightReading Class Reference">
                         <section ref="qambientlightreading-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qambientlightsensor.html" title="QAmbientLightSensor Class Reference"/>
+                    <section ref="qambientlightsensor.html" title="QAmbientLightSensor Class Reference">
+                        <section ref="qambientlightsensor-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qaudiocapturesource.html" title="QAudioCaptureSource Class Reference">
                         <section ref="qaudiocapturesource-members.html" title="List of all members"/>
                     </section>
@@ -53,7 +58,12 @@
                     <section ref="qcamerafocuscontrol.html" title="QCameraFocusControl Class Reference">
                         <section ref="qcamerafocuscontrol-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qcompass.html" title="QCompass Class Reference"/>
+                    <section ref="qcompass.html" title="QCompass Class Reference">
+                        <section ref="qcompass-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcompassfilter.html" title="QCompassFilter Class Reference">
+                        <section ref="qcompassfilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qcompassreading.html" title="QCompassReading Class Reference">
                         <section ref="qcompassreading-members.html" title="List of all members"/>
                     </section>
@@ -261,7 +271,12 @@
                     <section ref="qimageprocessingcontrol.html" title="QImageProcessingControl Class Reference">
                         <section ref="qimageprocessingcontrol-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qmagnetometer.html" title="QMagnetometer Class Reference"/>
+                    <section ref="qmagnetometer.html" title="QMagnetometer Class Reference">
+                        <section ref="qmagnetometer-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qmagnetometerfilter.html" title="QMagnetometerFilter Class Reference">
+                        <section ref="qmagnetometerfilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qmagnetometerreading.html" title="QMagnetometerReading Class Reference">
                         <section ref="qmagnetometerreading-members.html" title="List of all members"/>
                     </section>
@@ -340,6 +355,12 @@
                     <section ref="qmediastreamscontrol.html" title="QMediaStreamsControl Class Reference">
                         <section ref="qmediastreamscontrol-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qmediatimeinterval.html" title="QMediaTimeInterval Class Reference">
+                        <section ref="qmediatimeinterval-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qmediatimerange.html" title="QMediaTimeRange Class Reference">
+                        <section ref="qmediatimerange-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qmessage.html" title="QMessage Class Reference">
                         <section ref="qmessage-members.html" title="List of all members"/>
                     </section>
@@ -406,29 +427,47 @@
                     <section ref="qnmeapositioninfosource.html" title="QNmeaPositionInfoSource Class Reference">
                         <section ref="qnmeapositioninfosource-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qorientationfilter.html" title="QOrientationFilter Class Reference">
+                        <section ref="qorientationfilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qorientationreading.html" title="QOrientationReading Class Reference">
                         <section ref="qorientationreading-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qorientationsensor.html" title="QOrientationSensor Class Reference"/>
+                    <section ref="qorientationsensor.html" title="QOrientationSensor Class Reference">
+                        <section ref="qorientationsensor-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qproximityfilter.html" title="QProximityFilter Class Reference">
+                        <section ref="qproximityfilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qproximityreading.html" title="QProximityReading Class Reference">
                         <section ref="qproximityreading-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qproximitysensor.html" title="QProximitySensor Class Reference"/>
+                    <section ref="qproximitysensor.html" title="QProximitySensor Class Reference">
+                        <section ref="qproximitysensor-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qradiotuner.html" title="QRadioTuner Class Reference">
                         <section ref="qradiotuner-members.html" title="List of all members"/>
                     </section>
                     <section ref="qradiotunercontrol.html" title="QRadioTunerControl Class Reference">
                         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
+                        <section ref="qrotationfilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qrotationreading.html" title="QRotationReading Class Reference">
                         <section ref="qrotationreading-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qrotationsensor.html" title="QRotationSensor Class Reference"/>
+                    <section ref="qrotationsensor.html" title="QRotationSensor Class Reference">
+                        <section ref="qrotationsensor-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qsensor.html" title="QSensor Class Reference">
                         <section ref="qsensor-members.html" title="List of all members"/>
                     </section>
                     <section ref="qsensorbackend.html" title="QSensorBackend Class Reference">
                         <section ref="qsensorbackend-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qsensorbackendfactory.html" title="QSensorBackendFactory Class Reference">
+                        <section ref="qsensorbackendfactory-members.html" title="List of all members"/>
                     </section>
                     <section ref="qsensorfactory.html" title="QSensorFactory Class Reference">
                         <section ref="qsensorfactory-members.html" title="List of all members"/>
@@ -441,6 +480,9 @@
                     </section>
                     <section ref="qsensorplugininterface.html" title="QSensorPluginInterface Class Reference">
                         <section ref="qsensorplugininterface-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qsensorreading.html" title="QSensorReading Class Reference">
+                        <section ref="qsensorreading-members.html" title="List of all members"/>
                     </section>
                     <section ref="qservicecontext.html" title="QServiceContext Class Reference">
                         <section ref="qservicecontext-members.html" title="List of all members"/>
@@ -478,10 +520,15 @@
                     <section ref="qsystemstorageinfo.html" title="QSystemStorageInfo Class Reference">
                         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qtapfilter.html" title="QTapFilter Class Reference">
+                        <section ref="qtapfilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qtapreading.html" title="QTapReading Class Reference">
                         <section ref="qtapreading-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qtapsensor.html" title="QTapSensor Class Reference"/>
+                    <section ref="qtapsensor.html" title="QTapSensor Class Reference">
+                        <section ref="qtapsensor-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qvaluespacepublisher.html" title="QValueSpacePublisher Class Reference">
                         <section ref="qvaluespacepublisher-members.html" title="List of all members"/>
                     </section>
@@ -618,17 +665,18 @@
             <keyword name="Bearer Management" id="Bearer Management" ref="bearer-management.html"/>
             <keyword name="Bearer Monitor Example" id="Bearer Monitor Example" ref="bearermonitor.html"/>
             <keyword name="Bluetooth Transfer Plugin Example" id="Bluetooth Transfer Plugin Example" ref="bluetoothtransferplugin.html"/>
-            <keyword name="CREATE_FUNC" id="CREATE_FUNC" ref="qsensormanager.html#CREATE_FUNC"/>
             <keyword name="Camera Capture Example" id="Camera Capture Example" ref="cameracapture.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
             <keyword name="Creating a sensor plugin" id="Creating a sensor plugin" ref="creating-a-sensor-plugin.html"/>
+            <keyword name="DECLARE_READING" id="DECLARE_READING" ref="qsensorreading.html#DECLARE_READING"/>
             <keyword name="Declarative Example" id="Declarative Example" ref="declarative.html"/>
             <keyword name="Fetch Google Maps Example" id="Fetch Google Maps Example" ref="fetchgooglemaps.html"/>
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
             <keyword name="Future Additional APIs" id="Future Additional APIs" ref="future.html"/>
             <keyword name="GNU General Public License (GPL)" id="GNU General Public License (GPL)" ref="gpl.html"/>
             <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
+            <keyword name="IMPLEMENT_READING" id="IMPLEMENT_READING" ref="qsensorreading.html#IMPLEMENT_READING"/>
             <keyword name="Incoming Call Simulator" id="Incoming Call Simulator" ref="incomingcalls.html"/>
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
@@ -678,19 +726,19 @@
             <keyword name="sync" id="QAbstractValueSpaceLayer::sync" ref="qabstractvaluespacelayer.html#sync"/>
             <keyword name="value" id="QAbstractValueSpaceLayer::value" ref="qabstractvaluespacelayer.html#value"/>
             <keyword name="QAccelerometer" id="QAccelerometer" ref="qaccelerometer.html"/>
-            <keyword name="addFilter" id="QAccelerometer::addFilter" ref="qaccelerometer.html#addFilter"/>
             <keyword name="reading" id="QAccelerometer::reading" ref="qaccelerometer.html#reading"/>
-            <keyword name="removeFilter" id="QAccelerometer::removeFilter" ref="qaccelerometer.html#removeFilter"/>
             <keyword name="~QAccelerometer" id="QAccelerometer::~QAccelerometer" ref="qaccelerometer.html#dtor.QAccelerometer"/>
             <keyword name="QAccelerometerFilter" id="QAccelerometerFilter" ref="qaccelerometerfilter.html"/>
             <keyword name="filter" id="QAccelerometerFilter::filter" ref="qaccelerometerfilter.html#filter"/>
             <keyword name="QAccelerometerReading" id="QAccelerometerReading" ref="qaccelerometerreading.html"/>
-            <keyword name="setX" id="QAccelerometerReading::setX" ref="qaccelerometerreading.html#x-prop"/>
-            <keyword name="setY" id="QAccelerometerReading::setY" ref="qaccelerometerreading.html#y-prop"/>
-            <keyword name="setZ" id="QAccelerometerReading::setZ" ref="qaccelerometerreading.html#z-prop"/>
+            <keyword name="setX" id="QAccelerometerReading::setX" ref="qaccelerometerreading.html#setX"/>
+            <keyword name="setY" id="QAccelerometerReading::setY" ref="qaccelerometerreading.html#setY"/>
+            <keyword name="setZ" id="QAccelerometerReading::setZ" ref="qaccelerometerreading.html#setZ"/>
             <keyword name="x" id="QAccelerometerReading::x" ref="qaccelerometerreading.html#x-prop"/>
             <keyword name="y" id="QAccelerometerReading::y" ref="qaccelerometerreading.html#y-prop"/>
             <keyword name="z" id="QAccelerometerReading::z" ref="qaccelerometerreading.html#z-prop"/>
+            <keyword name="QAmbientLightFilter" id="QAmbientLightFilter" ref="qambientlightfilter.html"/>
+            <keyword name="filter" id="QAmbientLightFilter::filter" ref="qambientlightfilter.html#filter"/>
             <keyword name="QAmbientLightReading" id="QAmbientLightReading" ref="qambientlightreading.html"/>
             <keyword name="QAmbientLightReading::LightLevel" id="QAmbientLightReading::LightLevel" ref="qambientlightreading.html#LightLevel-enum"/>
             <keyword name="QAmbientLightReading::Undefined" id="QAmbientLightReading::Undefined" ref="qambientlightreading.html#LightLevel-enum"/>
@@ -700,8 +748,10 @@
             <keyword name="QAmbientLightReading::Bright" id="QAmbientLightReading::Bright" ref="qambientlightreading.html#LightLevel-enum"/>
             <keyword name="QAmbientLightReading::Sunny" id="QAmbientLightReading::Sunny" ref="qambientlightreading.html#LightLevel-enum"/>
             <keyword name="lightLevel" id="QAmbientLightReading::lightLevel" ref="qambientlightreading.html#lightLevel-prop"/>
-            <keyword name="setLightLevel" id="QAmbientLightReading::setLightLevel" ref="qambientlightreading.html#lightLevel-prop"/>
+            <keyword name="setLightLevel" id="QAmbientLightReading::setLightLevel" ref="qambientlightreading.html#setLightLevel"/>
             <keyword name="QAmbientLightSensor" id="QAmbientLightSensor" ref="qambientlightsensor.html"/>
+            <keyword name="reading" id="QAmbientLightSensor::reading" ref="qambientlightsensor.html#reading"/>
+            <keyword name="~QAmbientLightSensor" id="QAmbientLightSensor::~QAmbientLightSensor" ref="qambientlightsensor.html#dtor.QAmbientLightSensor"/>
             <keyword name="QAudioCaptureSource" id="QAudioCaptureSource" ref="qaudiocapturesource.html"/>
             <keyword name="activeAudioInput" id="QAudioCaptureSource::activeAudioInput" ref="qaudiocapturesource.html#activeAudioInput"/>
             <keyword name="activeAudioInputChanged" id="QAudioCaptureSource::activeAudioInputChanged" ref="qaudiocapturesource.html#activeAudioInputChanged"/>
@@ -962,6 +1012,10 @@
             <keyword name="~QCameraFocusControl" id="QCameraFocusControl::~QCameraFocusControl" ref="qcamerafocuscontrol.html#dtor.QCameraFocusControl"/>
             <keyword name="QCameraFocusControl_iid" id="QCameraFocusControl_iid" ref="qcamerafocuscontrol.html#QCameraFocusControl_iid"/>
             <keyword name="QCompass" id="QCompass" ref="qcompass.html"/>
+            <keyword name="reading" id="QCompass::reading" ref="qcompass.html#reading"/>
+            <keyword name="~QCompass" id="QCompass::~QCompass" ref="qcompass.html#dtor.QCompass"/>
+            <keyword name="QCompassFilter" id="QCompassFilter" ref="qcompassfilter.html"/>
+            <keyword name="filter" id="QCompassFilter::filter" ref="qcompassfilter.html#filter"/>
             <keyword name="QCompassReading" id="QCompassReading" ref="qcompassreading.html"/>
             <keyword name="QCompassReading::CalibrationLevel" id="QCompassReading::CalibrationLevel" ref="qcompassreading.html#CalibrationLevel-enum"/>
             <keyword name="QCompassReading::Undefined" id="QCompassReading::Undefined" ref="qcompassreading.html#CalibrationLevel-enum"/>
@@ -970,8 +1024,8 @@
             <keyword name="QCompassReading::High" id="QCompassReading::High" ref="qcompassreading.html#CalibrationLevel-enum"/>
             <keyword name="azimuth" id="QCompassReading::azimuth" ref="qcompassreading.html#azimuth-prop"/>
             <keyword name="calibrationLevel" id="QCompassReading::calibrationLevel" ref="qcompassreading.html#calibrationLevel-prop"/>
-            <keyword name="setAzimuth" id="QCompassReading::setAzimuth" ref="qcompassreading.html#azimuth-prop"/>
-            <keyword name="setCalibrationLevel" id="QCompassReading::setCalibrationLevel" ref="qcompassreading.html#calibrationLevel-prop"/>
+            <keyword name="setAzimuth" id="QCompassReading::setAzimuth" ref="qcompassreading.html#setAzimuth"/>
+            <keyword name="setCalibrationLevel" id="QCompassReading::setCalibrationLevel" ref="qcompassreading.html#setCalibrationLevel"/>
             <keyword name="QContact" id="QContact" ref="qcontact.html"/>
             <keyword name="availableActions" id="QContact::availableActions" ref="qcontact.html#availableActions"/>
             <keyword name="clearDetails" id="QContact::clearDetails" ref="qcontact.html#clearDetails"/>
@@ -1650,8 +1704,8 @@
             <keyword name="~QGeoAreaMonitor" id="QGeoAreaMonitor::~QGeoAreaMonitor" ref="qgeoareamonitor.html#dtor.QGeoAreaMonitor"/>
             <keyword name="QGeoCoordinate" id="QGeoCoordinate" ref="qgeocoordinate.html"/>
             <keyword name="QGeoCoordinate::CoordinateFormat" id="QGeoCoordinate::CoordinateFormat" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
-            <keyword name="QGeoCoordinate::DecimalDegrees" id="QGeoCoordinate::DecimalDegrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
-            <keyword name="QGeoCoordinate::DecimalDegreesWithHemisphere" id="QGeoCoordinate::DecimalDegreesWithHemisphere" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
+            <keyword name="QGeoCoordinate::Degrees" id="QGeoCoordinate::Degrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
+            <keyword name="QGeoCoordinate::DegreesWithHemisphere" id="QGeoCoordinate::DegreesWithHemisphere" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DegreesMinutes" id="QGeoCoordinate::DegreesMinutes" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DegreesMinutesWithHemisphere" id="QGeoCoordinate::DegreesMinutesWithHemisphere" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::DegreesMinutesSeconds" id="QGeoCoordinate::DegreesMinutesSeconds" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
@@ -1676,25 +1730,25 @@
             <keyword name="type" id="QGeoCoordinate::type" ref="qgeocoordinate.html#type"/>
             <keyword name="~QGeoCoordinate" id="QGeoCoordinate::~QGeoCoordinate" ref="qgeocoordinate.html#dtor.QGeoCoordinate"/>
             <keyword name="QGeoPositionInfo" id="QGeoPositionInfo" ref="qgeopositioninfo.html"/>
-            <keyword name="QGeoPositionInfo::Property" id="QGeoPositionInfo::Property" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::Heading" id="QGeoPositionInfo::Heading" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::GroundSpeed" id="QGeoPositionInfo::GroundSpeed" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::VerticalSpeed" id="QGeoPositionInfo::VerticalSpeed" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::MagneticVariation" id="QGeoPositionInfo::MagneticVariation" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::HorizontalAccuracy" id="QGeoPositionInfo::HorizontalAccuracy" ref="qgeopositioninfo.html#Property-enum"/>
-            <keyword name="QGeoPositionInfo::VerticalAccuracy" id="QGeoPositionInfo::VerticalAccuracy" ref="qgeopositioninfo.html#Property-enum"/>
+            <keyword name="QGeoPositionInfo::Attribute" id="QGeoPositionInfo::Attribute" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::Direction" id="QGeoPositionInfo::Direction" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::GroundSpeed" id="QGeoPositionInfo::GroundSpeed" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::VerticalSpeed" id="QGeoPositionInfo::VerticalSpeed" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::MagneticVariation" id="QGeoPositionInfo::MagneticVariation" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::HorizontalAccuracy" id="QGeoPositionInfo::HorizontalAccuracy" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="QGeoPositionInfo::VerticalAccuracy" id="QGeoPositionInfo::VerticalAccuracy" ref="qgeopositioninfo.html#Attribute-enum"/>
+            <keyword name="attribute" id="QGeoPositionInfo::attribute" ref="qgeopositioninfo.html#attribute"/>
             <keyword name="coordinate" id="QGeoPositionInfo::coordinate" ref="qgeopositioninfo.html#coordinate"/>
             <keyword name="dateTime" id="QGeoPositionInfo::dateTime" ref="qgeopositioninfo.html#dateTime"/>
-            <keyword name="hasProperty" id="QGeoPositionInfo::hasProperty" ref="qgeopositioninfo.html#hasProperty"/>
+            <keyword name="hasAttribute" id="QGeoPositionInfo::hasAttribute" ref="qgeopositioninfo.html#hasAttribute"/>
             <keyword name="isValid" id="QGeoPositionInfo::isValid" ref="qgeopositioninfo.html#isValid"/>
             <keyword name="operator!=" id="QGeoPositionInfo::operator!=" ref="qgeopositioninfo.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoPositionInfo::operator=" ref="qgeopositioninfo.html#operator-eq"/>
             <keyword name="operator==" id="QGeoPositionInfo::operator==" ref="qgeopositioninfo.html#operator-eq-eq"/>
-            <keyword name="property" id="QGeoPositionInfo::property" ref="qgeopositioninfo.html#property"/>
-            <keyword name="removeProperty" id="QGeoPositionInfo::removeProperty" ref="qgeopositioninfo.html#removeProperty"/>
+            <keyword name="removeAttribute" id="QGeoPositionInfo::removeAttribute" ref="qgeopositioninfo.html#removeAttribute"/>
+            <keyword name="setAttribute" id="QGeoPositionInfo::setAttribute" ref="qgeopositioninfo.html#setAttribute"/>
             <keyword name="setCoordinate" id="QGeoPositionInfo::setCoordinate" ref="qgeopositioninfo.html#setCoordinate"/>
             <keyword name="setDateTime" id="QGeoPositionInfo::setDateTime" ref="qgeopositioninfo.html#setDateTime"/>
-            <keyword name="setProperty" id="QGeoPositionInfo::setProperty" ref="qgeopositioninfo.html#setProperty"/>
             <keyword name="~QGeoPositionInfo" id="QGeoPositionInfo::~QGeoPositionInfo" ref="qgeopositioninfo.html#dtor.QGeoPositionInfo"/>
             <keyword name="QGeoPositionInfoSource" id="QGeoPositionInfoSource" ref="qgeopositioninfosource.html"/>
             <keyword name="QGeoPositionInfoSource::PositioningMethod" id="QGeoPositionInfoSource::PositioningMethod" ref="qgeopositioninfosource.html#PositioningMethod-enum"/>
@@ -1707,7 +1761,6 @@
             <keyword name="minimumUpdateInterval" id="QGeoPositionInfoSource::minimumUpdateInterval" ref="qgeopositioninfosource.html#minimumUpdateInterval-prop"/>
             <keyword name="positionUpdated" id="QGeoPositionInfoSource::positionUpdated" ref="qgeopositioninfosource.html#positionUpdated"/>
             <keyword name="preferredPositioningMethods" id="QGeoPositionInfoSource::preferredPositioningMethods" ref="qgeopositioninfosource.html#preferredPositioningMethods"/>
-            <keyword name="requestTimeout" id="QGeoPositionInfoSource::requestTimeout" ref="qgeopositioninfosource.html#requestTimeout"/>
             <keyword name="requestUpdate" id="QGeoPositionInfoSource::requestUpdate" ref="qgeopositioninfosource.html#requestUpdate"/>
             <keyword name="setPreferredPositioningMethods" id="QGeoPositionInfoSource::setPreferredPositioningMethods" ref="qgeopositioninfosource.html#setPreferredPositioningMethods"/>
             <keyword name="setUpdateInterval" id="QGeoPositionInfoSource::setUpdateInterval" ref="qgeopositioninfosource.html#updateInterval-prop"/>
@@ -1715,20 +1768,21 @@
             <keyword name="stopUpdates" id="QGeoPositionInfoSource::stopUpdates" ref="qgeopositioninfosource.html#stopUpdates"/>
             <keyword name="supportedPositioningMethods" id="QGeoPositionInfoSource::supportedPositioningMethods" ref="qgeopositioninfosource.html#supportedPositioningMethods"/>
             <keyword name="updateInterval" id="QGeoPositionInfoSource::updateInterval" ref="qgeopositioninfosource.html#updateInterval-prop"/>
+            <keyword name="updateTimeout" id="QGeoPositionInfoSource::updateTimeout" ref="qgeopositioninfosource.html#updateTimeout"/>
             <keyword name="~QGeoPositionInfoSource" id="QGeoPositionInfoSource::~QGeoPositionInfoSource" ref="qgeopositioninfosource.html#dtor.QGeoPositionInfoSource"/>
             <keyword name="QGeoSatelliteInfo" id="QGeoSatelliteInfo" ref="qgeosatelliteinfo.html"/>
-            <keyword name="QGeoSatelliteInfo::Property" id="QGeoSatelliteInfo::Property" ref="qgeosatelliteinfo.html#Property-enum"/>
-            <keyword name="QGeoSatelliteInfo::Elevation" id="QGeoSatelliteInfo::Elevation" ref="qgeosatelliteinfo.html#Property-enum"/>
-            <keyword name="QGeoSatelliteInfo::Azimuth" id="QGeoSatelliteInfo::Azimuth" ref="qgeosatelliteinfo.html#Property-enum"/>
-            <keyword name="hasProperty" id="QGeoSatelliteInfo::hasProperty" ref="qgeosatelliteinfo.html#hasProperty"/>
+            <keyword name="QGeoSatelliteInfo::Attribute" id="QGeoSatelliteInfo::Attribute" ref="qgeosatelliteinfo.html#Attribute-enum"/>
+            <keyword name="QGeoSatelliteInfo::Elevation" id="QGeoSatelliteInfo::Elevation" ref="qgeosatelliteinfo.html#Attribute-enum"/>
+            <keyword name="QGeoSatelliteInfo::Azimuth" id="QGeoSatelliteInfo::Azimuth" ref="qgeosatelliteinfo.html#Attribute-enum"/>
+            <keyword name="attribute" id="QGeoSatelliteInfo::attribute" ref="qgeosatelliteinfo.html#attribute"/>
+            <keyword name="hasAttribute" id="QGeoSatelliteInfo::hasAttribute" ref="qgeosatelliteinfo.html#hasAttribute"/>
             <keyword name="operator!=" id="QGeoSatelliteInfo::operator!=" ref="qgeosatelliteinfo.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoSatelliteInfo::operator=" ref="qgeosatelliteinfo.html#operator-eq"/>
             <keyword name="operator==" id="QGeoSatelliteInfo::operator==" ref="qgeosatelliteinfo.html#operator-eq-eq"/>
             <keyword name="prnNumber" id="QGeoSatelliteInfo::prnNumber" ref="qgeosatelliteinfo.html#prnNumber"/>
-            <keyword name="property" id="QGeoSatelliteInfo::property" ref="qgeosatelliteinfo.html#property"/>
-            <keyword name="removeProperty" id="QGeoSatelliteInfo::removeProperty" ref="qgeosatelliteinfo.html#removeProperty"/>
+            <keyword name="removeAttribute" id="QGeoSatelliteInfo::removeAttribute" ref="qgeosatelliteinfo.html#removeAttribute"/>
+            <keyword name="setAttribute" id="QGeoSatelliteInfo::setAttribute" ref="qgeosatelliteinfo.html#setAttribute"/>
             <keyword name="setPrnNumber" id="QGeoSatelliteInfo::setPrnNumber" ref="qgeosatelliteinfo.html#setPrnNumber"/>
-            <keyword name="setProperty" id="QGeoSatelliteInfo::setProperty" ref="qgeosatelliteinfo.html#setProperty"/>
             <keyword name="setSignalStrength" id="QGeoSatelliteInfo::setSignalStrength" ref="qgeosatelliteinfo.html#setSignalStrength"/>
             <keyword name="signalStrength" id="QGeoSatelliteInfo::signalStrength" ref="qgeosatelliteinfo.html#signalStrength"/>
             <keyword name="~QGeoSatelliteInfo" id="QGeoSatelliteInfo::~QGeoSatelliteInfo" ref="qgeosatelliteinfo.html#dtor.QGeoSatelliteInfo"/>
@@ -1794,6 +1848,10 @@
             <keyword name="~QImageProcessingControl" id="QImageProcessingControl::~QImageProcessingControl" ref="qimageprocessingcontrol.html#dtor.QImageProcessingControl"/>
             <keyword name="QImageProcessingControl_iid" id="QImageProcessingControl_iid" ref="qimageprocessingcontrol.html#QImageProcessingControl_iid"/>
             <keyword name="QMagnetometer" id="QMagnetometer" ref="qmagnetometer.html"/>
+            <keyword name="reading" id="QMagnetometer::reading" ref="qmagnetometer.html#reading"/>
+            <keyword name="~QMagnetometer" id="QMagnetometer::~QMagnetometer" ref="qmagnetometer.html#dtor.QMagnetometer"/>
+            <keyword name="QMagnetometerFilter" id="QMagnetometerFilter" ref="qmagnetometerfilter.html"/>
+            <keyword name="filter" id="QMagnetometerFilter::filter" ref="qmagnetometerfilter.html#filter"/>
             <keyword name="QMagnetometerReading" id="QMagnetometerReading" ref="qmagnetometerreading.html"/>
             <keyword name="QMagnetometerReading::CalibrationLevel" id="QMagnetometerReading::CalibrationLevel" ref="qmagnetometerreading.html#CalibrationLevel-enum"/>
             <keyword name="QMagnetometerReading::Undefined" id="QMagnetometerReading::Undefined" ref="qmagnetometerreading.html#CalibrationLevel-enum"/>
@@ -1804,13 +1862,13 @@
             <keyword name="calibrated_y" id="QMagnetometerReading::calibrated_y" ref="qmagnetometerreading.html#calibrated_y-prop"/>
             <keyword name="calibrated_z" id="QMagnetometerReading::calibrated_z" ref="qmagnetometerreading.html#calibrated_z-prop"/>
             <keyword name="calibrationLevel" id="QMagnetometerReading::calibrationLevel" ref="qmagnetometerreading.html#calibrationLevel-prop"/>
-            <keyword name="setCalibrated_x" id="QMagnetometerReading::setCalibrated_x" ref="qmagnetometerreading.html#calibrated_x-prop"/>
-            <keyword name="setCalibrated_y" id="QMagnetometerReading::setCalibrated_y" ref="qmagnetometerreading.html#calibrated_y-prop"/>
-            <keyword name="setCalibrated_z" id="QMagnetometerReading::setCalibrated_z" ref="qmagnetometerreading.html#calibrated_z-prop"/>
-            <keyword name="setCalibrationLevel" id="QMagnetometerReading::setCalibrationLevel" ref="qmagnetometerreading.html#calibrationLevel-prop"/>
-            <keyword name="setX" id="QMagnetometerReading::setX" ref="qmagnetometerreading.html#x-prop"/>
-            <keyword name="setY" id="QMagnetometerReading::setY" ref="qmagnetometerreading.html#y-prop"/>
-            <keyword name="setZ" id="QMagnetometerReading::setZ" ref="qmagnetometerreading.html#z-prop"/>
+            <keyword name="setCalibrated_x" id="QMagnetometerReading::setCalibrated_x" ref="qmagnetometerreading.html#setCalibrated_x"/>
+            <keyword name="setCalibrated_y" id="QMagnetometerReading::setCalibrated_y" ref="qmagnetometerreading.html#setCalibrated_y"/>
+            <keyword name="setCalibrated_z" id="QMagnetometerReading::setCalibrated_z" ref="qmagnetometerreading.html#setCalibrated_z"/>
+            <keyword name="setCalibrationLevel" id="QMagnetometerReading::setCalibrationLevel" ref="qmagnetometerreading.html#setCalibrationLevel"/>
+            <keyword name="setX" id="QMagnetometerReading::setX" ref="qmagnetometerreading.html#setX"/>
+            <keyword name="setY" id="QMagnetometerReading::setY" ref="qmagnetometerreading.html#setY"/>
+            <keyword name="setZ" id="QMagnetometerReading::setZ" ref="qmagnetometerreading.html#setZ"/>
             <keyword name="x" id="QMagnetometerReading::x" ref="qmagnetometerreading.html#x-prop"/>
             <keyword name="y" id="QMagnetometerReading::y" ref="qmagnetometerreading.html#y-prop"/>
             <keyword name="z" id="QMagnetometerReading::z" ref="qmagnetometerreading.html#z-prop"/>
@@ -1946,6 +2004,8 @@
             <keyword name="volumeChanged" id="QMediaPlayer::volumeChanged" ref="qmediaplayer.html#volumeChanged"/>
             <keyword name="~QMediaPlayer" id="QMediaPlayer::~QMediaPlayer" ref="qmediaplayer.html#dtor.QMediaPlayer"/>
             <keyword name="QMediaPlayerControl" id="QMediaPlayerControl" ref="qmediaplayercontrol.html"/>
+            <keyword name="availablePlaybackRanges" id="QMediaPlayerControl::availablePlaybackRanges" ref="qmediaplayercontrol.html#availablePlaybackRanges"/>
+            <keyword name="availablePlaybackRangesChanged" id="QMediaPlayerControl::availablePlaybackRangesChanged" ref="qmediaplayercontrol.html#availablePlaybackRangesChanged"/>
             <keyword name="bufferStatus" id="QMediaPlayerControl::bufferStatus" ref="qmediaplayercontrol.html#bufferStatus"/>
             <keyword name="bufferStatusChanged" id="QMediaPlayerControl::bufferStatusChanged" ref="qmediaplayercontrol.html#bufferStatusChanged"/>
             <keyword name="duration" id="QMediaPlayerControl::duration" ref="qmediaplayercontrol.html#duration"/>
@@ -1966,8 +2026,6 @@
             <keyword name="playbackRateChanged" id="QMediaPlayerControl::playbackRateChanged" ref="qmediaplayercontrol.html#playbackRateChanged"/>
             <keyword name="position" id="QMediaPlayerControl::position" ref="qmediaplayercontrol.html#position"/>
             <keyword name="positionChanged" id="QMediaPlayerControl::positionChanged" ref="qmediaplayercontrol.html#positionChanged"/>
-            <keyword name="seekRange" id="QMediaPlayerControl::seekRange" ref="qmediaplayercontrol.html#seekRange"/>
-            <keyword name="seekRangeChanged" id="QMediaPlayerControl::seekRangeChanged" ref="qmediaplayercontrol.html#seekRangeChanged"/>
             <keyword name="seekableChanged" id="QMediaPlayerControl::seekableChanged" ref="qmediaplayercontrol.html#seekableChanged"/>
             <keyword name="setMedia" id="QMediaPlayerControl::setMedia" ref="qmediaplayercontrol.html#setMedia"/>
             <keyword name="setMuted" id="QMediaPlayerControl::setMuted" ref="qmediaplayercontrol.html#setMuted"/>
@@ -2241,6 +2299,29 @@
             <keyword name="streamsChanged" id="QMediaStreamsControl::streamsChanged" ref="qmediastreamscontrol.html#streamsChanged"/>
             <keyword name="~QMediaStreamsControl" id="QMediaStreamsControl::~QMediaStreamsControl" ref="qmediastreamscontrol.html#dtor.QMediaStreamsControl"/>
             <keyword name="QMediaStreamsControl_iid" id="QMediaStreamsControl_iid" ref="qmediastreamscontrol.html#QMediaStreamsControl_iid"/>
+            <keyword name="QMediaTimeInterval" id="QMediaTimeInterval" ref="qmediatimeinterval.html"/>
+            <keyword name="contains" id="QMediaTimeInterval::contains" ref="qmediatimeinterval.html#contains"/>
+            <keyword name="end" id="QMediaTimeInterval::end" ref="qmediatimeinterval.html#end"/>
+            <keyword name="isNormal" id="QMediaTimeInterval::isNormal" ref="qmediatimeinterval.html#isNormal"/>
+            <keyword name="normalized" id="QMediaTimeInterval::normalized" ref="qmediatimeinterval.html#normalized"/>
+            <keyword name="start" id="QMediaTimeInterval::start" ref="qmediatimeinterval.html#start"/>
+            <keyword name="translated" id="QMediaTimeInterval::translated" ref="qmediatimeinterval.html#translated"/>
+            <keyword name="QMediaTimeRange" id="QMediaTimeRange" ref="qmediatimerange.html"/>
+            <keyword name="addInterval" id="QMediaTimeRange::addInterval" ref="qmediatimerange.html#addInterval"/>
+            <keyword name="addTimeRange" id="QMediaTimeRange::addTimeRange" ref="qmediatimerange.html#addTimeRange"/>
+            <keyword name="clear" id="QMediaTimeRange::clear" ref="qmediatimerange.html#clear"/>
+            <keyword name="contains" id="QMediaTimeRange::contains" ref="qmediatimerange.html#contains"/>
+            <keyword name="earliestTime" id="QMediaTimeRange::earliestTime" ref="qmediatimerange.html#earliestTime"/>
+            <keyword name="intervals" id="QMediaTimeRange::intervals" ref="qmediatimerange.html#intervals"/>
+            <keyword name="isContinuous" id="QMediaTimeRange::isContinuous" ref="qmediatimerange.html#isContinuous"/>
+            <keyword name="isEmpty" id="QMediaTimeRange::isEmpty" ref="qmediatimerange.html#isEmpty"/>
+            <keyword name="latestTime" id="QMediaTimeRange::latestTime" ref="qmediatimerange.html#latestTime"/>
+            <keyword name="operator+=" id="QMediaTimeRange::operator+=" ref="qmediatimerange.html#operator-2b-eq"/>
+            <keyword name="operator-=" id="QMediaTimeRange::operator-=" ref="qmediatimerange.html#operator--eq"/>
+            <keyword name="operator=" id="QMediaTimeRange::operator=" ref="qmediatimerange.html#operator-eq"/>
+            <keyword name="removeInterval" id="QMediaTimeRange::removeInterval" ref="qmediatimerange.html#removeInterval"/>
+            <keyword name="removeTimeRange" id="QMediaTimeRange::removeTimeRange" ref="qmediatimerange.html#removeTimeRange"/>
+            <keyword name="~QMediaTimeRange" id="QMediaTimeRange::~QMediaTimeRange" ref="qmediatimerange.html#dtor.QMediaTimeRange"/>
             <keyword name="QMessage" id="QMessage" ref="qmessage.html"/>
             <keyword name="QMessage::Priority" id="QMessage::Priority" ref="qmessage.html#Priority-enum"/>
             <keyword name="QMessage::HighPriority" id="QMessage::HighPriority" ref="qmessage.html#Priority-enum"/>
@@ -2644,6 +2725,7 @@
             <keyword name="device" id="QNmeaPositionInfoSource::device" ref="qnmeapositioninfosource.html#device"/>
             <keyword name="lastKnownPosition" id="QNmeaPositionInfoSource::lastKnownPosition" ref="qnmeapositioninfosource.html#lastKnownPosition"/>
             <keyword name="minimumUpdateInterval" id="QNmeaPositionInfoSource::minimumUpdateInterval" ref="qnmeapositioninfosource.html#minimumUpdateInterval"/>
+            <keyword name="parsePosInfoFromNmeaData" id="QNmeaPositionInfoSource::parsePosInfoFromNmeaData" ref="qnmeapositioninfosource.html#parsePosInfoFromNmeaData"/>
             <keyword name="requestUpdate" id="QNmeaPositionInfoSource::requestUpdate" ref="qnmeapositioninfosource.html#requestUpdate"/>
             <keyword name="setDevice" id="QNmeaPositionInfoSource::setDevice" ref="qnmeapositioninfosource.html#setDevice"/>
             <keyword name="setUpdateInterval" id="QNmeaPositionInfoSource::setUpdateInterval" ref="qnmeapositioninfosource.html#setUpdateInterval"/>
@@ -2652,6 +2734,8 @@
             <keyword name="supportedPositioningMethods" id="QNmeaPositionInfoSource::supportedPositioningMethods" ref="qnmeapositioninfosource.html#supportedPositioningMethods"/>
             <keyword name="updateMode" id="QNmeaPositionInfoSource::updateMode" ref="qnmeapositioninfosource.html#updateMode"/>
             <keyword name="~QNmeaPositionInfoSource" id="QNmeaPositionInfoSource::~QNmeaPositionInfoSource" ref="qnmeapositioninfosource.html#dtor.QNmeaPositionInfoSource"/>
+            <keyword name="QOrientationFilter" id="QOrientationFilter" ref="qorientationfilter.html"/>
+            <keyword name="filter" id="QOrientationFilter::filter" ref="qorientationfilter.html#filter"/>
             <keyword name="QOrientationReading" id="QOrientationReading" ref="qorientationreading.html"/>
             <keyword name="QOrientationReading::Orientation" id="QOrientationReading::Orientation" ref="qorientationreading.html#Orientation-enum"/>
             <keyword name="QOrientationReading::Undefined" id="QOrientationReading::Undefined" ref="qorientationreading.html#Orientation-enum"/>
@@ -2662,16 +2746,22 @@
             <keyword name="QOrientationReading::FaceDown" id="QOrientationReading::FaceDown" ref="qorientationreading.html#Orientation-enum"/>
             <keyword name="QOrientationReading::FaceUp" id="QOrientationReading::FaceUp" ref="qorientationreading.html#Orientation-enum"/>
             <keyword name="orientation" id="QOrientationReading::orientation" ref="qorientationreading.html#orientation-prop"/>
-            <keyword name="setOrientation" id="QOrientationReading::setOrientation" ref="qorientationreading.html#orientation-prop"/>
+            <keyword name="setOrientation" id="QOrientationReading::setOrientation" ref="qorientationreading.html#setOrientation"/>
             <keyword name="QOrientationSensor" id="QOrientationSensor" ref="qorientationsensor.html"/>
+            <keyword name="reading" id="QOrientationSensor::reading" ref="qorientationsensor.html#reading"/>
+            <keyword name="~QOrientationSensor" id="QOrientationSensor::~QOrientationSensor" ref="qorientationsensor.html#dtor.QOrientationSensor"/>
+            <keyword name="QProximityFilter" id="QProximityFilter" ref="qproximityfilter.html"/>
+            <keyword name="filter" id="QProximityFilter::filter" ref="qproximityfilter.html#filter"/>
             <keyword name="QProximityReading" id="QProximityReading" ref="qproximityreading.html"/>
             <keyword name="QProximityReading::Proximity" id="QProximityReading::Proximity" ref="qproximityreading.html#Proximity-enum"/>
             <keyword name="QProximityReading::Undefined" id="QProximityReading::Undefined" ref="qproximityreading.html#Proximity-enum"/>
             <keyword name="QProximityReading::Close" id="QProximityReading::Close" ref="qproximityreading.html#Proximity-enum"/>
             <keyword name="QProximityReading::NotClose" id="QProximityReading::NotClose" ref="qproximityreading.html#Proximity-enum"/>
             <keyword name="proximity" id="QProximityReading::proximity" ref="qproximityreading.html#proximity-prop"/>
-            <keyword name="setProximity" id="QProximityReading::setProximity" ref="qproximityreading.html#proximity-prop"/>
+            <keyword name="setProximity" id="QProximityReading::setProximity" ref="qproximityreading.html#setProximity"/>
             <keyword name="QProximitySensor" id="QProximitySensor" ref="qproximitysensor.html"/>
+            <keyword name="reading" id="QProximitySensor::reading" ref="qproximitysensor.html#reading"/>
+            <keyword name="~QProximitySensor" id="QProximitySensor::~QProximitySensor" ref="qproximitysensor.html#dtor.QProximitySensor"/>
             <keyword name="QRadioTuner" id="QRadioTuner" ref="qradiotuner.html"/>
             <keyword name="QRadioTuner::Band" id="QRadioTuner::Band" ref="qradiotuner.html#Band-enum"/>
             <keyword name="QRadioTuner::AM" id="QRadioTuner::AM" ref="qradiotuner.html#Band-enum"/>
@@ -2765,14 +2855,18 @@
             <keyword name="volumeChanged" id="QRadioTunerControl::volumeChanged" ref="qradiotunercontrol.html#volumeChanged"/>
             <keyword name="~QRadioTunerControl" id="QRadioTunerControl::~QRadioTunerControl" ref="qradiotunercontrol.html#dtor.QRadioTunerControl"/>
             <keyword name="QRadioTunerControl_iid" id="QRadioTunerControl_iid" ref="qradiotunercontrol.html#QRadioTunerControl_iid"/>
+            <keyword name="QRotationFilter" id="QRotationFilter" ref="qrotationfilter.html"/>
+            <keyword name="filter" id="QRotationFilter::filter" ref="qrotationfilter.html#filter"/>
             <keyword name="QRotationReading" id="QRotationReading" ref="qrotationreading.html"/>
-            <keyword name="setX" id="QRotationReading::setX" ref="qrotationreading.html#x-prop"/>
-            <keyword name="setY" id="QRotationReading::setY" ref="qrotationreading.html#y-prop"/>
-            <keyword name="setZ" id="QRotationReading::setZ" ref="qrotationreading.html#z-prop"/>
+            <keyword name="setX" id="QRotationReading::setX" ref="qrotationreading.html#setX"/>
+            <keyword name="setY" id="QRotationReading::setY" ref="qrotationreading.html#setY"/>
+            <keyword name="setZ" id="QRotationReading::setZ" ref="qrotationreading.html#setZ"/>
             <keyword name="x" id="QRotationReading::x" ref="qrotationreading.html#x-prop"/>
             <keyword name="y" id="QRotationReading::y" ref="qrotationreading.html#y-prop"/>
             <keyword name="z" id="QRotationReading::z" ref="qrotationreading.html#z-prop"/>
             <keyword name="QRotationSensor" id="QRotationSensor" ref="qrotationsensor.html"/>
+            <keyword name="reading" id="QRotationSensor::reading" ref="qrotationsensor.html#reading"/>
+            <keyword name="~QRotationSensor" id="QRotationSensor::~QRotationSensor" ref="qrotationsensor.html#dtor.QRotationSensor"/>
             <keyword name="QSensor" id="QSensor" ref="qsensor.html"/>
             <keyword name="QSensor::UpdatePolicies" id="QSensor::UpdatePolicies" ref="qsensor.html#UpdatePolicy-enum"/>
             <keyword name="QSensor::UpdatePolicy" id="QSensor::UpdatePolicy" ref="qsensor.html#UpdatePolicy-enum"/>
@@ -2783,23 +2877,24 @@
             <keyword name="QSensor::FrequentUpdates" id="QSensor::FrequentUpdates" ref="qsensor.html#UpdatePolicy-enum"/>
             <keyword name="QSensor::TimedUpdates" id="QSensor::TimedUpdates" ref="qsensor.html#UpdatePolicy-enum"/>
             <keyword name="QSensor::PolledUpdates" id="QSensor::PolledUpdates" ref="qsensor.html#UpdatePolicy-enum"/>
-            <keyword name="active" id="QSensor::active" ref="qsensor.html#active-prop"/>
             <keyword name="addFilter" id="QSensor::addFilter" ref="qsensor.html#addFilter"/>
             <keyword name="connect" id="QSensor::connect" ref="qsensor.html#connect"/>
-            <keyword name="identifier" id="QSensor::identifier" ref="qsensor.html#identifier-prop"/>
-            <keyword name="isActive" id="QSensor::isActive" ref="qsensor.html#active-prop"/>
+            <keyword name="identifier" id="QSensor::identifier" ref="qsensor.html#sensorid-prop"/>
+            <keyword name="isActive" id="QSensor::isActive" ref="qsensor.html#running-prop"/>
             <keyword name="isAvailable" id="QSensor::isAvailable" ref="qsensor.html#isAvailable-prop"/>
-            <keyword name="isSignalEnabled" id="QSensor::isSignalEnabled" ref="qsensor.html#signalEnabled-prop"/>
+            <keyword name="isSignalEnabled" id="QSensor::isSignalEnabled" ref="qsensor.html#isSignalEnabled"/>
             <keyword name="poll" id="QSensor::poll" ref="qsensor.html#poll"/>
             <keyword name="reading" id="QSensor::reading" ref="qsensor.html#reading-prop"/>
             <keyword name="readingChanged" id="QSensor::readingChanged" ref="qsensor.html#readingChanged"/>
             <keyword name="removeFilter" id="QSensor::removeFilter" ref="qsensor.html#removeFilter"/>
-            <keyword name="setIdentifier" id="QSensor::setIdentifier" ref="qsensor.html#identifier-prop"/>
-            <keyword name="setSignalEnabled" id="QSensor::setSignalEnabled" ref="qsensor.html#signalEnabled-prop"/>
+            <keyword name="running" id="QSensor::running" ref="qsensor.html#running-prop"/>
+            <keyword name="sensorid" id="QSensor::sensorid" ref="qsensor.html#sensorid-prop"/>
+            <keyword name="setActive" id="QSensor::setActive" ref="qsensor.html#running-prop"/>
+            <keyword name="setIdentifier" id="QSensor::setIdentifier" ref="qsensor.html#sensorid-prop"/>
+            <keyword name="setSignalEnabled" id="QSensor::setSignalEnabled" ref="qsensor.html#setSignalEnabled"/>
             <keyword name="setType" id="QSensor::setType" ref="qsensor.html#type-prop"/>
             <keyword name="setUpdateInterval" id="QSensor::setUpdateInterval" ref="qsensor.html#updateInterval-prop"/>
             <keyword name="setUpdatePolicy" id="QSensor::setUpdatePolicy" ref="qsensor.html#updatePolicy-prop"/>
-            <keyword name="signalEnabled" id="QSensor::signalEnabled" ref="qsensor.html#signalEnabled-prop"/>
             <keyword name="start" id="QSensor::start" ref="qsensor.html#start"/>
             <keyword name="stop" id="QSensor::stop" ref="qsensor.html#stop"/>
             <keyword name="supportedUpdatePolicies" id="QSensor::supportedUpdatePolicies" ref="qsensor.html#supportedUpdatePolicies-prop"/>
@@ -2810,10 +2905,13 @@
             <keyword name="QSensorBackend" id="QSensorBackend" ref="qsensorbackend.html"/>
             <keyword name="newReadingAvailable" id="QSensorBackend::newReadingAvailable" ref="qsensorbackend.html#newReadingAvailable"/>
             <keyword name="poll" id="QSensorBackend::poll" ref="qsensorbackend.html#poll"/>
+            <keyword name="reading" id="QSensorBackend::reading" ref="qsensorbackend.html#reading"/>
             <keyword name="setReading" id="QSensorBackend::setReading" ref="qsensorbackend.html#setReading"/>
             <keyword name="setSupportedUpdatePolicies" id="QSensorBackend::setSupportedUpdatePolicies" ref="qsensorbackend.html#setSupportedUpdatePolicies"/>
             <keyword name="start" id="QSensorBackend::start" ref="qsensorbackend.html#start"/>
             <keyword name="stop" id="QSensorBackend::stop" ref="qsensorbackend.html#stop"/>
+            <keyword name="QSensorBackendFactory" id="QSensorBackendFactory" ref="qsensorbackendfactory.html"/>
+            <keyword name="createBackend" id="QSensorBackendFactory::createBackend" ref="qsensorbackendfactory.html#createBackend"/>
             <keyword name="QSensorFactory" id="QSensorFactory" ref="qsensorfactory.html"/>
             <keyword name="createSensor" id="QSensorFactory::createSensor" ref="qsensorfactory.html#createSensor"/>
             <keyword name="defaultSensorForType" id="QSensorFactory::defaultSensorForType" ref="qsensorfactory.html#defaultSensorForType"/>
@@ -2826,11 +2924,13 @@
             <keyword name="~QSensorFilter" id="QSensorFilter::~QSensorFilter" ref="qsensorfilter.html#dtor.QSensorFilter"/>
             <keyword name="QSensorManager" id="QSensorManager" ref="qsensormanager.html"/>
             <keyword name="createBackend" id="QSensorManager::createBackend" ref="qsensormanager.html#createBackend"/>
-            <keyword name="firstSensorForType" id="QSensorManager::firstSensorForType" ref="qsensormanager.html#firstSensorForType"/>
-            <keyword name="instance" id="QSensorManager::instance" ref="qsensormanager.html#instance"/>
+            <keyword name="defaultSensorForType" id="QSensorManager::defaultSensorForType" ref="qsensormanager.html#defaultSensorForType"/>
             <keyword name="registerBackend" id="QSensorManager::registerBackend" ref="qsensormanager.html#registerBackend"/>
             <keyword name="QSensorPluginInterface" id="QSensorPluginInterface" ref="qsensorplugininterface.html"/>
             <keyword name="registerSensors" id="QSensorPluginInterface::registerSensors" ref="qsensorplugininterface.html#registerSensors"/>
+            <keyword name="QSensorReading" id="QSensorReading" ref="qsensorreading.html"/>
+            <keyword name="setTimestamp" id="QSensorReading::setTimestamp" ref="qsensorreading.html#setTimestamp"/>
+            <keyword name="timestamp" id="QSensorReading::timestamp" ref="qsensorreading.html#timestamp-prop"/>
             <keyword name="QService" id="QService" ref="qservice.html"/>
             <keyword name="QService::Scope" id="QService::Scope" ref="qservice.html#Scope-enum"/>
             <keyword name="QService::UserScope" id="QService::UserScope" ref="qservice.html#Scope-enum"/>
@@ -3078,6 +3178,8 @@
             <keyword name="totalDiskSpace" id="QSystemStorageInfo::totalDiskSpace" ref="qsystemstorageinfo.html#totalDiskSpace"/>
             <keyword name="typeForDrive" id="QSystemStorageInfo::typeForDrive" ref="qsystemstorageinfo.html#typeForDrive"/>
             <keyword name="~QSystemStorageInfo" id="QSystemStorageInfo::~QSystemStorageInfo" ref="qsystemstorageinfo.html#dtor.QSystemStorageInfo"/>
+            <keyword name="QTapFilter" id="QTapFilter" ref="qtapfilter.html"/>
+            <keyword name="filter" id="QTapFilter::filter" ref="qtapfilter.html#filter"/>
             <keyword name="QTapReading" id="QTapReading" ref="qtapreading.html"/>
             <keyword name="QTapReading::TapDirection" id="QTapReading::TapDirection" ref="qtapreading.html#TapDirection-enum"/>
             <keyword name="QTapReading::Undefined" id="QTapReading::Undefined" ref="qtapreading.html#TapDirection-enum"/>
@@ -3092,10 +3194,12 @@
             <keyword name="QTapReading::Z_Neg" id="QTapReading::Z_Neg" ref="qtapreading.html#TapDirection-enum"/>
             <keyword name="doubleTap" id="QTapReading::doubleTap" ref="qtapreading.html#doubleTap-prop"/>
             <keyword name="isDoubleTap" id="QTapReading::isDoubleTap" ref="qtapreading.html#doubleTap-prop"/>
-            <keyword name="setDoubleTap" id="QTapReading::setDoubleTap" ref="qtapreading.html#doubleTap-prop"/>
-            <keyword name="setTapDirection" id="QTapReading::setTapDirection" ref="qtapreading.html#tapDirection-prop"/>
+            <keyword name="setDoubleTap" id="QTapReading::setDoubleTap" ref="qtapreading.html#setDoubleTap"/>
+            <keyword name="setTapDirection" id="QTapReading::setTapDirection" ref="qtapreading.html#setTapDirection"/>
             <keyword name="tapDirection" id="QTapReading::tapDirection" ref="qtapreading.html#tapDirection-prop"/>
             <keyword name="QTapSensor" id="QTapSensor" ref="qtapsensor.html"/>
+            <keyword name="reading" id="QTapSensor::reading" ref="qtapsensor.html#reading"/>
+            <keyword name="~QTapSensor" id="QTapSensor::~QTapSensor" ref="qtapsensor.html#dtor.QTapSensor"/>
             <keyword name="QVALUESPACE_AUTO_INSTALL_LAYER" id="QVALUESPACE_AUTO_INSTALL_LAYER" ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER"/>
             <keyword name="QVALUESPACE_CONTEXTKIT_LAYER" id="QVALUESPACE_CONTEXTKIT_LAYER" ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER"/>
             <keyword name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" id="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER"/>
@@ -3430,8 +3534,7 @@
             <keyword name="QtMedia::PreferedService" id="QtMedia::PreferedService" ref="qtmedia.html#SupportEstimate-enum"/>
             <keyword name="Query Messages Example" id="Query Messages Example" ref="querymessages.html"/>
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
-            <keyword name="REGISTER_LOCAL_SENSOR" id="REGISTER_LOCAL_SENSOR" ref="qsensormanager.html#REGISTER_LOCAL_SENSOR"/>
-            <keyword name="REGISTER_STATEMENT" id="REGISTER_STATEMENT" ref="qsensormanager.html#REGISTER_STATEMENT"/>
+            <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Release Notes of the QtMobility Project" id="Release Notes of the QtMobility Project" ref="qtmobility-known-issues.html"/>
@@ -3463,6 +3566,7 @@
             <file>logfilepositionsource-clientapplication-cpp.html</file>
             <file>incomingcalls-filterdialog-h.html</file>
             <file>qradiotunercontrol.html</file>
+            <file>qproximityfilter-members.html</file>
             <file>qvideoencodercontrol-members.html</file>
             <file>qcontactdetaildefinition.html</file>
             <file>qaccelerometerreading-members.html</file>
@@ -3477,6 +3581,7 @@
             <file>qnmeapositioninfosource.html</file>
             <file>images/qserviceinterfacedescriptor.png</file>
             <file>qcontactguid.html</file>
+            <file>qsensorbackendfactory-members.html</file>
             <file>streamplayer-streamplayer-h.html</file>
             <file>qcontactname.html</file>
             <file>qaudioendpointselector.html</file>
@@ -3485,6 +3590,7 @@
             <file>qcontactabstractrequest-members.html</file>
             <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
+            <file>qproximitysensor-members.html</file>
             <file>qsystemnetworkinfo-members.html</file>
             <file>qsystemdisplayinfo.html</file>
             <file>keepintouch-main-cpp.html</file>
@@ -3493,6 +3599,7 @@
             <file>declarative-voipdialer-voipdialerplugin-h.html</file>
             <file>qcontactdisplaylabel-members.html</file>
             <file>qcontactdetailfilter.html</file>
+            <file>qmagnetometerfilter.html</file>
             <file>qcontactdetaildefinitionfetchrequest-members.html</file>
             <file>qabstractvaluespacelayer.html</file>
             <file>qversitproperty-members.html</file>
@@ -3501,6 +3608,7 @@
             <file>declarative-landlinedialer-landlinedialerplugin-h.html</file>
             <file>qradiotuner.html</file>
             <file>3rdparty.html</file>
+            <file>qmagnetometer-members.html</file>
             <file>creating-a-sensor-plugin.html</file>
             <file>qcontactphonenumber.html</file>
             <file>qmediaplayer-members.html</file>
@@ -3539,12 +3647,14 @@
             <file>writemessage-main-cpp.html</file>
             <file>qmessagefolderfilter-members.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
+            <file>qproximityfilter.html</file>
             <file>incomingcalls.html</file>
             <file>images/servicexmlgen.png</file>
             <file>qversitreader.html</file>
             <file>publish-subscribe-publisherdialog-cpp.html</file>
             <file>qsystemnetworkinfo.html</file>
             <file>filemanagerplugin-filemanagerstorage-h.html</file>
+            <file>qtapfilter-members.html</file>
             <file>qmessageaccountid-members.html</file>
             <file>qmessageaccount.html</file>
             <file>qcontactsynctarget-members.html</file>
@@ -3581,6 +3691,7 @@
             <file>qservicemanager-members.html</file>
             <file>qmediacontrol.html</file>
             <file>logfilepositionsource.html</file>
+            <file>qorientationfilter.html</file>
             <file>qcontactfilter-members.html</file>
             <file>bearermonitor-sessionwidget-h.html</file>
             <file>samplephonebook-contacteditor-h.html</file>
@@ -3643,9 +3754,11 @@
             <file>qcontactgeolocation.html</file>
             <file>annotated.html</file>
             <file>qnetworksession-members.html</file>
+            <file>qtapsensor-members.html</file>
             <file>qcontactrelationshipsaverequest.html</file>
             <file>qvideowindowcontrol.html</file>
             <file>images/sensors-overview.png</file>
+            <file>qsensorreading.html</file>
             <file>cameracapture-cameracapture-pro.html</file>
             <file>qcontactid.html</file>
             <file>qmessagefilter-members.html</file>
@@ -3720,6 +3833,7 @@
             <file>qcontactdetaildefinition-members.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
+            <file>qsensorreading-members.html</file>
             <file>samplephonebook-filterpage-h.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
             <file>qimageencodersettings-members.html</file>
@@ -3757,8 +3871,10 @@
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
             <file>qgeoareamonitor-members.html</file>
+            <file>qmediatimerange-members.html</file>
             <file>qcontactunionfilter-members.html</file>
             <file>qmessagesortorder.html</file>
+            <file>qambientlightfilter.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
             <file>qcameraexposurecontrol-members.html</file>
@@ -3780,6 +3896,7 @@
             <file>qcontactdetaildefinitionsaverequest-members.html</file>
             <file>qcontactfilter.html</file>
             <file>qgeopositioninfo.html</file>
+            <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
             <file>qmediaplaylistreader.html</file>
@@ -3809,8 +3926,8 @@
             <file>qcontactdetaildefinitionsaverequest.html</file>
             <file>qcompassreading.html</file>
             <file>servicebrowser-main-cpp.html</file>
-            <file>qmediaservice-members.html</file>
             <file>publish-subscribe-publish-subscribe-pro.html</file>
+            <file>qmediaservice-members.html</file>
             <file>examples.html</file>
             <file>cameracapture.html</file>
             <file>qcontactaction-members.html</file>
@@ -3865,15 +3982,17 @@
             <file>qmediaresource-members.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
             <file>qgeosatelliteinfosource.html</file>
-            <file>qmediaserviceproviderplugin-members.html</file>
             <file>qcontactanniversary-members.html</file>
+            <file>qmediaserviceproviderplugin-members.html</file>
             <file>licenses.html</file>
             <file>qmediaserviceproviderplugin.html</file>
             <file>qcontactinvalidengine.html</file>
             <file>qmediaplayer.html</file>
             <file>cameracapture-cameracapture-cpp.html</file>
+            <file>qambientlightfilter-members.html</file>
             <file>qcontactphonenumber-members.html</file>
             <file>qgeoareamonitor.html</file>
+            <file>qmediatimeinterval.html</file>
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
@@ -3881,11 +4000,13 @@
             <file>slideshow-main-cpp.html</file>
             <file>qmediaplaylistprovider.html</file>
             <file>qorientationsensor.html</file>
+            <file>qcompass-members.html</file>
             <file>declarative-voipdialer-voipdialerplugin-cpp.html</file>
             <file>qsensormanager-members.html</file>
             <file>qvaluespacesubscriber-members.html</file>
             <file>player.html</file>
             <file>qversitproperty.html</file>
+            <file>qtapfilter.html</file>
             <file>qcontactmemoryengine.html</file>
             <file>incomingcalls-qcontactlistmodel-p-h.html</file>
             <file>images/roaming-states.png</file>
@@ -3895,6 +4016,7 @@
             <file>qcontactdetaildefinitionremoverequest-members.html</file>
             <file>qserviceplugininterface.html</file>
             <file>streamplayer-streamplayer-cpp.html</file>
+            <file>qambientlightsensor-members.html</file>
             <file>qvideowidget.html</file>
             <file>publish-subscribe-publisherdialog-h.html</file>
             <file>bearercloud-cloud-cpp.html</file>
@@ -3903,6 +4025,7 @@
             <file>qcontactrelationshipremoverequest.html</file>
             <file>qaudioencodersettings-members.html</file>
             <file>qserviceinterfacedescriptor-members.html</file>
+            <file>qmediatimerange.html</file>
             <file>servicebrowser.html</file>
             <file>samplephonebook-samplephonebook-pro.html</file>
             <file>qcontacturl-members.html</file>
@@ -3919,13 +4042,16 @@
             <file>qgraphicsvideoitem-members.html</file>
             <file>player-player-h.html</file>
             <file>qmediaservice.html</file>
+            <file>qcompassfilter-members.html</file>
             <file>qcontactrelationship-members.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
             <file>declarative-landlinedialer-landlinedialer-h.html</file>
             <file>recorder.html</file>
             <file>qmetadatacontrol-members.html</file>
+            <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>
+            <file>qsensorbackendfactory.html</file>
             <file>qnetworkconfiguration-members.html</file>
             <file>qcontactgender-members.html</file>
             <file>qaccelerometer.html</file>
@@ -3973,10 +4099,12 @@
             <file>qradiotunercontrol-members.html</file>
             <file>qmediacontent-members.html</file>
             <file>qmediacontainercontrol.html</file>
+            <file>qrotationsensor-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>multimedia.html</file>
             <file>qcontactinvalidfilter-members.html</file>
+            <file>qmagnetometerfilter-members.html</file>
             <file>qcameracontrol.html</file>
             <file>qmediaserviceprovider.html</file>
             <file>qcontactabstractrequest.html</file>
@@ -3984,13 +4112,16 @@
             <file>qsensor.html</file>
             <file>publish-subscribe-subscriberdialog-cpp.html</file>
             <file>bearercloud-lan-svg.html</file>
-            <file>qmediaservicefeaturesinterface-members.html</file>
             <file>qmediaresource.html</file>
+            <file>qmediaservicefeaturesinterface-members.html</file>
             <file>slideshow-slideshow-h.html</file>
             <file>sysinfo-sysinfo-pro.html</file>
             <file>qcontacttype-members.html</file>
             <file>qmediacontainercontrol-members.html</file>
+            <file>qorientationfilter-members.html</file>
+            <file>qorientationsensor-members.html</file>
             <file>qmediaservicesupportedformatsinterface.html</file>
+            <file>qrotationfilter-members.html</file>
             <file>location.html</file>
             <file>incomingcalls-qcontactlistmodel-h.html</file>
             <file>classlists.html</file>
@@ -4013,6 +4144,7 @@
             <file>streamplayer.html</file>
             <file>qmediaplaylist.html</file>
             <file>service-frameworks.html</file>
+            <file>qcompassfilter.html</file>
             <file>qvaluespacepublisher.html</file>
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
