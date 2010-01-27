@@ -84,7 +84,7 @@ void TestSymbianEngine::removeAllContacts()
         // Empty cnt database
         QContactManager::Error err;
         QList<QContactSortOrder> sortOrders;
-        QList<QContactLocalId> cnts_ids = m_engine->contacts(sortOrders, QStringList(), err);
+        QList<QContactLocalId> cnts_ids = m_engine->contactIds(sortOrders, err);
         QVERIFY(err == QContactManager::NoError);
 
         for(int i=0; i<cnts_ids.count(); i++) {
@@ -454,14 +454,14 @@ void TestSymbianEngine::retrieveContacts()
     mobileFilter.setValue(QLatin1String(QContactPhoneNumber::SubTypeMobile));
 
     // Retrieve contacts with mobile number
-    cnt_ids = m_engine->contacts(mobileFilter, s, QStringList(), err);
+    cnt_ids = m_engine->contactIds(mobileFilter, s, err);
     QVERIFY(err == QContactManager::NoError);
 
     QContactDetailFilter invalidFilter;
     mobileFilter.setDetailDefinitionName("asfdasdf", "asdfasdf");
 
     // Retrieve contacts with invalid filter
-    cnt_ids = m_engine->contacts(invalidFilter, s, QStringList(), err);
+    cnt_ids = m_engine->contactIds(invalidFilter, s, err);
     QVERIFY(err == QContactManager::NoError);
 
     // Retrieve sorted contacts
@@ -473,7 +473,7 @@ void TestSymbianEngine::retrieveContacts()
     sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
     s1.append(sortOrder);
 
-    cnt_ids = m_engine->contacts(s1, QStringList(), err);
+    cnt_ids = m_engine->contactIds(s1, err);
     QVERIFY(err == QContactManager::NoError);
 
     // Retrieve with invalid sort order
@@ -481,7 +481,7 @@ void TestSymbianEngine::retrieveContacts()
     QList<QContactSortOrder> s2;
     sortOrder1.setDetailDefinitionName("asdfasdf", "asdfasd");
 
-    cnt_ids = m_engine->contacts(s2, QStringList(), err);
+    cnt_ids = m_engine->contactIds(s2, err);
     QVERIFY(err == QContactManager::NoError);
 }
 
@@ -774,7 +774,7 @@ void TestSymbianEngine::retrieveGroup()
     filter.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
     filter.setValue(QString(QLatin1String(QContactType::TypeGroup)));
     
-    QList<QContactLocalId> grp_ids = m_engine->contacts(filter, s, QStringList(), err);
+    QList<QContactLocalId> grp_ids = m_engine->contactIds(filter, s, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(err == QContactManager::NoError);
 
@@ -783,7 +783,7 @@ void TestSymbianEngine::retrieveGroup()
     QVERIFY(m_engine->saveContact(&g, err));
     QVERIFY(err == QContactManager::NoError);
 
-    QList<QContactLocalId> grp_ids1 = m_engine->contacts(filter, s, QStringList(), err);
+    QList<QContactLocalId> grp_ids1 = m_engine->contactIds(filter, s, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(grp_ids.count() + 1 == grp_ids1.count());
 
