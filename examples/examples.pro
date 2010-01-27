@@ -33,8 +33,12 @@ contains(mobility_modules,location) {
 
 #Contacts examples
 contains(mobility_modules,contacts) {
-    SUBDIRS += samplephonebook \
-            incomingcalls
+    SUBDIRS += incomingcalls
+
+    ### interim fix - should split out functionality / compile in versit capability/UI if supported
+    contains(mobility_modules,versit) {
+        SUBDIRS += samplephonebook
+    }
 }
 
 #Publish and Subscribe examples
