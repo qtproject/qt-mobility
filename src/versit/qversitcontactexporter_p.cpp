@@ -210,9 +210,9 @@ void QVersitContactExporterPrivate::encodeName(
 {   
     QContactName contactName = static_cast<QContactName>(detail);
     QString value =
-        escape(contactName.last()) + QChar::fromAscii(';') +
-        escape(contactName.first()) + QChar::fromAscii(';') +
-        escape(contactName.middle()) + QChar::fromAscii(';') +
+        escape(contactName.lastName()) + QChar::fromAscii(';') +
+        escape(contactName.firstName()) + QChar::fromAscii(';') +
+        escape(contactName.middleName()) + QChar::fromAscii(';') +
         escape(contactName.prefix()) + QChar::fromAscii(';') +
         escape(contactName.suffix());
     property.setValue(value);
@@ -352,7 +352,7 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
-    QContactGeolocation geoLocation = static_cast<QContactGeolocation>(detail);
+    QContactGeoLocation geoLocation = static_cast<QContactGeoLocation>(detail);
     QString value =
         QString::number(geoLocation.longitude()) + QChar::fromAscii(',') +
         QString::number(geoLocation.latitude());
@@ -563,11 +563,11 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
         if (name.customLabel().length()) {
             value = name.customLabel();
         } else {
-            value = name.first() + QChar::fromAscii(' ') + name.last();
+            value = name.firstName() + QChar::fromAscii(' ') + name.lastName();
         }
         if (name.customLabel().length() ||
-            name.first().length() ||
-            name.last().length()) {
+            name.firstName().length() ||
+            name.lastName().length()) {
             encoded = true;
             property.setValue(escape(value));
         }

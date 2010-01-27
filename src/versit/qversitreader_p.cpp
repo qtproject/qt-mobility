@@ -134,8 +134,8 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
     mDocumentNestingLevel++;
 
     // TODO: Various readers should be made subclasses and eliminate assumptions like this.
-    // We don't know what type it is: just assume it's a vCard 2.1
-    document.setType(QVersitDocument::VCard21Type);
+    // We don't know what type it is: just assume it's a vCard 3.0
+    document.setType(QVersitDocument::VCard30Type);
 
     // Skip some leading space
     if (!foundBegin)

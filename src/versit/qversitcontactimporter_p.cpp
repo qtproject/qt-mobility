@@ -206,9 +206,9 @@ QContactDetail* QVersitContactImporterPrivate::createName(
     }
 
     QStringList values = property.value().split(QChar::fromAscii(';'));
-    name->setLast(takeFirst(values));
-    name->setFirst(takeFirst(values));
-    name->setMiddle(takeFirst(values));
+    name->setLastName(takeFirst(values));
+    name->setFirstName(takeFirst(values));
+    name->setMiddleName(takeFirst(values));
     name->setPrefix(takeFirst(values));
     name->setSuffix(takeFirst(values));
     return name;
@@ -445,7 +445,7 @@ QContactDetail* QVersitContactImporterPrivate::createAvatar(
 QContactDetail* QVersitContactImporterPrivate::createGeoLocation(
     const QVersitProperty& property) const
 {
-    QContactGeolocation* geo = new QContactGeolocation();
+    QContactGeoLocation* geo = new QContactGeoLocation();
     QStringList values = property.value().split(QChar::fromAscii(','));
     geo->setLongitude(takeFirst(values).toDouble());
     geo->setLatitude(takeFirst(values).toDouble());

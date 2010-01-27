@@ -11,10 +11,11 @@ INCLUDEPATH += . \
                ../../src/contacts\
                ../../src/contacts/filters \
                ../../src/contacts/requests \
-               ../../src/contacts/details 
+               ../../src/contacts/details \
+               ../../src/versit
 
 CONFIG += mobility
-MOBILITY = contacts
+MOBILITY = contacts versit
 
 # Input
 SOURCES += main.cpp \
