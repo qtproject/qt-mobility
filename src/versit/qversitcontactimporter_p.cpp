@@ -127,12 +127,13 @@ QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
  * Generates a QContact from \a versitDocument.
  */
 QContact QVersitContactImporterPrivate::importContact(
-     const QVersitDocument& versitDocument)
+     const QVersitDocument& document, int contactIndex)
 {
     QContact contact;
-    const QList<QVersitProperty> properties = versitDocument.properties();
+    const QList<QVersitProperty> properties = document.properties();
     foreach (QVersitProperty property, properties) {
-        if (mPropertyHandler && mPropertyHandler->preProcessProperty(property, &contact))
+        if (mPropertyHandler
+            && mPropertyHandler->preProcessProperty(document, property, contactIndex, &contact))
             continue;
 
         QPair<QString,QString> detailDefinition =
@@ -176,10 +177,10 @@ QContact QVersitContactImporterPrivate::importContact(
             contact.saveDetail(detail);
             delete detail;
             if (mPropertyHandler)
-                mPropertyHandler->postProcessProperty(property, true, &contact);
+                mPropertyHandler->postProcessProperty(document, property, true, contactIndex, &contact);
         } else {
             if (mPropertyHandler)
-                mPropertyHandler->postProcessProperty(property, false, &contact);
+                mPropertyHandler->postProcessProperty(document, property, false, contactIndex, &contact);
         }
     }
 

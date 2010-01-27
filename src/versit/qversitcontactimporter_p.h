@@ -74,7 +74,7 @@ public:
     QVersitContactImporterPrivate();
     ~QVersitContactImporterPrivate();
 
-    QContact importContact(const QVersitDocument& versitDocument);
+    QContact importContact(const QVersitDocument& versitDocument, int contactIndex);
     QList<QVersitProperty> unconvertedVersitProperties();
     
 private:

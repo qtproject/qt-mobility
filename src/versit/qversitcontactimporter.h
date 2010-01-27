@@ -59,8 +59,14 @@ class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandler
 {
 public:
     virtual ~QVersitContactImporterPropertyHandler() {}
-    virtual bool preProcessProperty(const QVersitProperty& property, QContact* contact) = 0;
-    virtual bool postProcessProperty(const QVersitProperty& property, bool alreadyProcessed,
+    virtual bool preProcessProperty(const QVersitDocument& document,
+                                    const QVersitProperty& property,
+                                    int contactIndex,
+                                    QContact* contact) = 0;
+    virtual bool postProcessProperty(const QVersitDocument& document,
+                                     const QVersitProperty& property,
+                                     bool alreadyProcessed,
+                                     int contactIndex,
                                      QContact* contact) = 0;
 };
 

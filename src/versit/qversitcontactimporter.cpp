@@ -184,8 +184,10 @@ QVersitContactImporter::~QVersitContactImporter()
 QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument>& documents)
 {
     QList<QContact> list;
+    int i;
     foreach (QVersitDocument document, documents) {
-        list.append(d->importContact(document));
+        list.append(d->importContact(document, i));
+        i++;
     }
 
     return list;

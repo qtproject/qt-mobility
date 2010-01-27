@@ -111,16 +111,22 @@ public:
 class MyQVersitContactExporterDetailHandler : public QVersitContactExporterDetailHandler
 {
 public:
-    bool preProcessDetail(const QContactDetail& detail, QVersitDocument* document)
+    bool preProcessDetail(const QContact& contact,
+                          const QContactDetail& detail,
+                          QVersitDocument* document)
     {
-        Q_UNUSED(document);
+        Q_UNUSED(contact)
+        Q_UNUSED(document)
         mPreProcessedDetails.append(detail);
         return mPreProcess;
     }
 
-    bool postProcessDetail(const QContactDetail& detail, bool alreadyProcessed,
+    bool postProcessDetail(const QContact& contact,
+                           const QContactDetail& detail,
+                           bool alreadyProcessed,
                            QVersitDocument* document)
     {
+        Q_UNUSED(contact)
         Q_UNUSED(document)
         if (!alreadyProcessed)
             mUnknownDetails.append(detail);
@@ -1025,7 +1031,7 @@ void UT_QVersitContactExporter::testEncodeNickName()
     nicknameDetail.setNickname(firstNickname);
 
     contact.saveDetail(&nicknameDetail);
-    mExporterPrivate->exportContact(document,contact);
+    mExporterPrivate->exportContact(contact, document);
 
     QCOMPARE(document.properties().count(), 1);
     QVersitProperty property = document.properties().at(0);
@@ -1037,7 +1043,7 @@ void UT_QVersitContactExporter::testEncodeNickName()
     nicknameDetail.setNickname(secondNickname);
 
     contact.saveDetail(&nicknameDetail);
-    mExporterPrivate->exportContact(document,contact);
+    mExporterPrivate->exportContact(contact, document);
     QCOMPARE(document.properties().count(), 1);
     property = document.properties().at(0);
     QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
