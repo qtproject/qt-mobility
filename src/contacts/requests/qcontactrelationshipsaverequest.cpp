@@ -48,7 +48,13 @@ QTM_BEGIN_NAMESPACE
   \class QContactRelationshipSaveRequest
   \brief The QContactRelationshipSaveRequest class allows a client to asynchronously
     request that certain groups be saved to a contacts store.
-   \ingroup contacts-requests
+
+  For a QContactRelationshipSaveRequest, the resultsAvailable() signal will be emitted when
+  either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
+  relationships (which may be retrieved by calling relationships()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
 /*!
@@ -57,15 +63,6 @@ QTM_BEGIN_NAMESPACE
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self.
- */
-
-/*!
-  \fn QContactRelationshipSaveRequest::resultsAvailable()
-  This signal is emitted when new results are available.  For a QContactRelationshipSaveRequest,
-  the results are either in the form of errors which may be retrieved by calling errorMap(), or
-  relationships which may be retrieved by calling relationships().
-
-  \sa errorMap(), relationships()
  */
 
 /*! Constructs a new relationship save request */

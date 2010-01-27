@@ -48,7 +48,12 @@ QTM_BEGIN_NAMESPACE
   \class QContactRemoveRequest
   \brief The QContactRemoveRequest class allows a client to asynchronously
     request that certain contacts be removed from a contacts store.
-   \ingroup contacts-requests
+
+  For a QContactRemoveRequest, the resultsUpdated() signal will be emitted when
+  the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
+  operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
 /*!
@@ -57,15 +62,6 @@ QTM_BEGIN_NAMESPACE
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self.
- */
-
-/*!
-  \fn QContactRemoveRequest::resultsAvailable()
-  This signal is emitted when new results are available.  For a QContactRemoveRequest,
-  the results are in the form of errors which may be retrieved by calling errorMap().  If no errors
-  occur during the processing of the request, this signal will not be emitted.
-
-  \sa errorMap()
  */
 
 /*! Constructs a new contact remove request */

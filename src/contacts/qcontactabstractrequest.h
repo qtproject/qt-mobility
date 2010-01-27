@@ -117,6 +117,7 @@ public slots:
 
 signals:
     void stateChanged(QContactAbstractRequest::State newState);
+    void resultsAvailable();
 
 protected:
     QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);

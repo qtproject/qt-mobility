@@ -69,7 +69,6 @@ public:
 
 signals:
     void progress(QContactRelationshipSaveRequest* self); // deprecated
-    void resultsAvailable(); // replaces the above
 
 private:
     Q_DISABLE_COPY(QContactRelationshipSaveRequest)

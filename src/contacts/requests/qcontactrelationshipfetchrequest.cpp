@@ -52,6 +52,10 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactRelationshipFetchRequest class allows a client to
   asynchronously request relationships from a contacts store manager.
 
+  For a QContactRelationshipFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  relationships (which may be retrieved by calling relationships()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
   \ingroup contacts-requests
  */
 
@@ -66,16 +70,6 @@ QTM_BEGIN_NAMESPACE
   including a pointer to \a self, and contains an \a appendOnly flag
   which signifies whether or not the total ordering of the results
   have been maintained since the last progress signal was emitted.
- */
-
-/*!
-  \fn QContactRelationshipFetchRequest::resultsAvailable()
-  This signal is emitted when new results are available.  For a QContactRelationshipFetchRequest,
-  the results are in the form relationships which may be retrieved by calling relationships().
-  If no relationships matching the input criteria can be found, no results will become available
-  during the processing of the request, and hence this signal will not be emitted.
-
-  \sa relationships()
  */
 
 /*! Constructs a new relationship fetch request

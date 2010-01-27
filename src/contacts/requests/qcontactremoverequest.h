@@ -71,7 +71,6 @@ public:
 
 signals:
     void progress(QContactRemoveRequest* self); // deprecated in week 2, removed after transition period has elapsed.
-    void resultsAvailable();
 
 private:
     Q_DISABLE_COPY(QContactRemoveRequest)

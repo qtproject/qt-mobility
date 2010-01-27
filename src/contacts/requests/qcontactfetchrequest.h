@@ -75,7 +75,6 @@ public:
 
 signals:
     void progress(QContactFetchRequest* self, bool appendOnly); // deprecated
-    void resultsAvailable(); // replaces the above
 
 private:
     Q_DISABLE_COPY(QContactFetchRequest)

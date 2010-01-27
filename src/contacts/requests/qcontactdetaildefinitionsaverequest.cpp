@@ -49,6 +49,11 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactDetailDefinitionSaveRequest class allows a client to
   asynchronously request that certain detail definitions be saved in a
   contacts store.
+
+  For a QContactDetailDefinitionSaveRequest, the resultsAvailable() signal will be emitted when
+  either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
+  detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
   
   \ingroup contacts-requests
  */
@@ -59,15 +64,6 @@ QTM_BEGIN_NAMESPACE
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self.
- */
-
-/*!
-  \fn QContactDetailDefinitionSaveRequest::resultsAvailable()
-  This signal is emitted when new results are available.  For a QContactDetailDefinitionSaveRequest,
-  the results are either in the form of errors which may be retrieved by calling errorMap(), or
-  saved detail definitions which may be retrieved by calling definitions().
-
-  \sa errorMap(), definitions()
  */
 
 /*! Constructs a new detail definition save request */

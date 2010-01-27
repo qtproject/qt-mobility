@@ -787,7 +787,7 @@ bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
     if (!d->m_asynchronousOperations.contains(req))
         d->m_asynchronousOperations.enqueue(req);
-    updateRequestState(req, QContactManager::NoError, QContactAbstractRequest::ActiveState);
+    updateRequestState(req, QContactAbstractRequest::ActiveState);
     QTimer::singleShot(0, this, SLOT(performAsynchronousOperation()));
     return true;
 }
@@ -795,7 +795,7 @@ bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 /*! \reimp */
 bool QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
 {
-    updateRequestState(req, QContactManager::NoError, QContactAbstractRequest::CanceledState);
+    updateRequestState(req, QContactAbstractRequest::CanceledState);
     return true;
 }
 
@@ -859,7 +859,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, defs, operationError);
 
             // update the request with the results.
-            updateContactFetchRequest(r, requestedContacts, operationError, QContactAbstractRequest::FinishedState);
+            updateContactFetchRequest(r, requestedContacts, operationError);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -872,7 +873,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
 
-            updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
+            updateContactLocalIdFetchRequest(r, requestedContactIds, operationError);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -885,7 +887,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QMap<int, QContactManager::Error> errorMap;
             saveContacts(&contacts, &errorMap, operationError);
 
-            updateContactSaveRequest(r, contacts, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            updateContactSaveRequest(r, contacts, operationError, errorMap);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -897,21 +900,22 @@ void QContactMemoryEngine::performAsynchronousOperation()
             // if a failure occurred, the request error will be set to the most recent
             // error that occurred during the remove operation.
             QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(currentRequest);
-            QContactFilter filter = r->filter();
-
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> contactsToRemove = QContactManagerEngine::contactIds(filter, QList<QContactSortOrder>(), operationError);
+            QList<QContactLocalId> contactsToRemove = r->contactIds();
+            QMap<int, QContactManager::Error> errorMap;
 
             for (int i = 0; i < contactsToRemove.size(); i++) {
                 QContactManager::Error tempError;
                 removeContact(contactsToRemove.at(i), changeSet, tempError);
 
-                if (tempError != QContactManager::NoError)
+                if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
+                }
             }
 
-            // there are no results, so just update the status with the error.
-            updateRequestState(currentRequest, operationError, QContactAbstractRequest::FinishedState);
+            updateContactRemoveRequest(r, operationError, errorMap);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -936,7 +940,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
                 }
             }
 
-            updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -961,7 +966,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            updateDefinitionSaveRequest(r, savedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            updateDefinitionSaveRequest(r, savedDefinitions, operationError, errorMap);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -984,7 +990,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // there are no results, so just update the status with the error.
-            updateDefinitionRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            updateDefinitionRemoveRequest(r, operationError, errorMap);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1042,7 +1049,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            updateRelationshipFetchRequest(r, requestedRelationships, operationError, QContactAbstractRequest::FinishedState);
+            updateRelationshipFetchRequest(r, requestedRelationships, operationError);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1050,30 +1058,25 @@ void QContactMemoryEngine::performAsynchronousOperation()
         {
             QContactRelationshipRemoveRequest* r = static_cast<QContactRelationshipRemoveRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactManager::Error> operationErrors;
-            QList<QContactRelationship> matchingRelationships = relationships(r->relationshipType(), r->first(), QContactRelationshipFilter::First, operationError);
+            QList<QContactRelationship> relationshipsToRemove = r->relationships();
+            QMap<int, QContactManager::Error> errorMap;
 
             bool foundMatch = false;
-            for (int i = 0; i < matchingRelationships.size(); i++) {
+            for (int i = 0; i < relationshipsToRemove.size(); i++) {
                 QContactManager::Error tempError;
-                QContactRelationship possibleMatch = matchingRelationships.at(i);
+                removeRelationship(relationshipsToRemove.at(i), tempError);
 
-                // if the second criteria matches, or is default constructed id, then we have a match and should remove it.
-                if (r->second() == QContactId() || possibleMatch.second() == r->second()) {
-                    foundMatch = true;
-                    removeRelationship(matchingRelationships.at(i), tempError);
-                    operationErrors.append(tempError);
-
-                    if (tempError != QContactManager::NoError)
-                        operationError = tempError;
+                if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
+                    operationError = tempError;
                 }
             }
             
             if (foundMatch == false && operationError == QContactManager::NoError)
                 operationError = QContactManager::DoesNotExistError;
 
-            // there are no results, so just update the status with the error.
-            updateRequestState(currentRequest, operationError, QContactAbstractRequest::FinishedState);
+            updateRelationshipRemoveRequest(r, operationError, errorMap);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1098,7 +1101,8 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap);
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 

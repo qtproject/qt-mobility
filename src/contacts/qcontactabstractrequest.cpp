@@ -60,6 +60,22 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+ * \fn QContactAbstractRequest::stateChanged(QContactAbstractRequest::State newState)
+ * This signal is emitted when the state of the request is changed.  The new state of
+ * the request will be contained in \a newState.
+ */
+
+
+/*!
+ * \fn QContactAbstractRequest::resultsAvailable()
+ * This signal is emitted when new results are available.  Results can include
+ * the operation error which may be accessed via error(), or derived-class-specific
+ * results which are accessible through the derived class API.
+ *
+ * \sa error()
+ */
+
+/*!
  * \enum QContactAbstractRequest::RequestType
  * Enumerates the various possible types of asynchronous requests
  * \value InvalidRequest An invalid request

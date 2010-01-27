@@ -48,7 +48,13 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailDefinitionFetchRequest
   \brief The QContactDetailDefinitionFetchRequest class allows a client to
     asynchronously request detail definitions from a contacts store manager.
-   \ingroup contacts-requests
+
+  For a QContactDetailDefinitionFetchRequest, the resultsAvailable() signal will be emitted when
+  either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
+  detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
 /*!
@@ -58,17 +64,6 @@ QTM_BEGIN_NAMESPACE
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
   ordering of the results have been maintained since the last progress signal was emitted.
- */
-
-/*!
-  \fn QContactDetailDefinitionFetchRequest::resultsAvailable()
-  This signal is emitted when new results are available.  For a QContactDetailDefinitionFetchRequest,
-  the results are either in the form of errors which may be retrieved by calling errorMap(), or
-  detail definitions which may be retrieved by calling definitions().  If no matching definitions
-  are retrieved and no errors occur during the processing of the request, this signal will not be
-  emitted.
-
-  \sa errorMap(), definitions()
  */
 
 /*! Constructs a new detail definition fetch request */
