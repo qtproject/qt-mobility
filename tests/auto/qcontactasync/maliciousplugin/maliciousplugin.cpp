@@ -86,8 +86,8 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
     QList<QContactRelationship> relResult;
 
     // maliciously attempt to update the request with every result type
-    updateRequestState(req, errorResult, QContactAbstractRequest::ActiveState);
-    // XXX
+    updateRequestState(req, QContactAbstractRequest::ActiveState);
+    // XXX TODO: call the request-type specific update functions
 /*
     updateContactLocalIdFetchRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
     updateContactFetchRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
@@ -101,8 +101,7 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
 
 bool MaliciousAsyncManagerEngine::cancelRequest(QContactAbstractRequest *req)
 {
-    QContactManager::Error errorResult = QContactManager::NoError;
-    updateRequestState(req, errorResult, QContactAbstractRequest::CanceledState);
+    updateRequestState(req, QContactAbstractRequest::CanceledState);
     QContactManagerEngine::cancelRequest(req);
     return true;
 }
