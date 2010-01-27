@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_NULL_H
-#define QSOUNDEFFECT_NULL_H
+#ifndef QSOUNDEFFECT_QMEDIA_H
+#define QSOUNDEFFECT_QMEDIA_H
 
 //
 //  W A R N I N G
@@ -55,35 +55,37 @@
 
 
 #include <QtCore/qobject.h>
-
-#include <QTime>
+#include <QtCore/qurl.h>
 
 #include <qmediaplayer.h>
+#include <qmobilityglobal.h>
 
 #include "qsoundeffect_p.h"
 
 QTM_USE_NAMESPACE
 
+class WaveDecoder;
+
 class QSoundEffectPrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit QSoundEffectPrivate(QObject* parent) { Q_UNUSED(parent) }
-    ~QSoundEffectPrivate() {}
+    explicit QSoundEffectPrivate(QObject* parent);
+    ~QSoundEffectPrivate();
 
-    qint64 duration() const { return 0; }
-    int volume() const { return 0; }
-    bool isMuted() const { return true; }
-    QMediaContent media() const { return QMediaContent(); }
-    QMediaPlayer::State state() const { return QMediaPlayer::StoppedState; }
-    QMediaPlayer::MediaStatus mediaStatus() const { return QMediaPlayer::UnknownMediaStatus; }
+    qint64 duration() const;
+    int volume() const;
+    bool isMuted() const;
+    QMediaContent media() const;
+    QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
 
 public Q_SLOTS:
-    void play() {}
-    void stop() {}
-    void setVolume(int volume) { Q_UNUSED(volume) }
-    void setMuted(bool muted) { Q_UNUSED(muted) }
-    void setMedia(const QMediaContent &media) { Q_UNUSED(media) }
+    void play();
+    void stop();
+    void setVolume(int volume);
+    void setMuted(bool muted);
+    void setMedia(const QMediaContent &media);
 
 Q_SIGNALS:
     void mediaChanged(const QMediaContent &media);
@@ -93,6 +95,11 @@ Q_SIGNALS:
     void volumeChanged(int volume);
     void mutedChanged(bool muted);
     void error(QMediaPlayer::Error error);
+
+private:
+    bool m_muted;
+    int  m_volume;
+    QMediaPlayer *m_player;
 };
 
-#endif // QSOUNDEFFECT_NULL_H
+#endif // QSOUNDEFFECT_QMEDIA_H
