@@ -44,6 +44,7 @@
 
 #include <qmediacontrol.h>
 #include <qmediaplayer.h>
+#include <qmediatimerange.h>
 
 #include <QtCore/qpair.h>
 
@@ -78,7 +79,8 @@ public:
     virtual bool isVideoAvailable() const = 0;
 
     virtual bool isSeekable() const = 0;
-    virtual QPair<qint64,qint64> seekRange() const = 0;
+
+    virtual QMediaTimeRange availablePlaybackRanges() const = 0;
 
     virtual qreal playbackRate() const = 0;
     virtual void setPlaybackRate(qreal rate) = 0;
@@ -102,7 +104,7 @@ Q_SIGNALS:
     void videoAvailableChanged(bool videoAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);
-    void seekRangeChanged(const QPair<qint64,qint64>&);
+    void availablePlaybackRangesChanged(const QMediaTimeRange&);
     void playbackRateChanged(qreal rate);
     void error(int error, const QString &errorString);
 
