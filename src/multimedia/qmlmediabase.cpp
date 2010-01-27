@@ -112,7 +112,25 @@ private:
 void QmlMediaBase::_q_stateChanged(QMediaPlayer::State state)
 {
     if (state != m_state) {
+        QMediaPlayer::State oldState = state;
+
         m_state = state;
+
+        switch (state) {
+        case QMediaPlayer::PlayingState:
+            if (oldState == QMediaPlayer::StoppedState)
+                emit started();
+            else if (oldState == QMediaPlayer::PausedState)
+                emit resumed();
+            break;
+        case QMediaPlayer::PausedState:
+            emit paused();
+        case QMediaPlayer::StoppedState:
+            emit stopped();
+            break;
+        default:
+            break;
+        }
 
         emit playingChanged();
         emit pausedChanged();
@@ -132,6 +150,26 @@ void QmlMediaBase::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status)
     if (status != m_status) {
         m_status = status;
 
+        switch (status) {
+        case QMediaPlayer::LoadedMedia:
+            emit loaded();
+            break;
+        case QMediaPlayer::BufferingMedia:
+            emit buffering();
+            break;
+        case QMediaPlayer::BufferedMedia:
+            emit buffered();
+            break;
+        case QMediaPlayer::StalledMedia:
+            emit stalled();
+            break;
+        case QMediaPlayer::EndOfMedia:
+            emit endOfMedia();
+            break;
+        default:
+            break;
+        }
+
         emit statusChanged();
 
         if (m_state == QMediaPlayer::PlayingState
@@ -142,14 +180,6 @@ void QmlMediaBase::_q_mediaStatusChanged(QMediaPlayer::MediaStatus status)
             m_animation->stop();
         }
     }
-}
-
-void QmlMediaBase::_q_error(QMediaPlayer::Error error, const QString &errorString)
-{
-    m_error = error;
-    m_errorString = errorString;
-
-    emit errorChanged();
 }
 
 void QmlMediaBase::_q_metaDataChanged()

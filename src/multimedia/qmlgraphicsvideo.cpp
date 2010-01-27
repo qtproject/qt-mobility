@@ -94,6 +94,16 @@ void QmlGraphicsVideo::_q_frameChanged()
     }
 }
 
+void QmlGraphicsVideo::_q_error(QMediaPlayer::Error errorCode, const QString &errorString)
+{
+    m_error = errorCode;
+    m_errorString = errorString;
+
+    emit error(Error(errorCode), errorString);
+    emit errorChanged();
+}
+
+
 /*!
     \qmlclass Video QmlGraphicsVideo
     \brief The Video element allows you to add videos to a scene.
@@ -164,6 +174,30 @@ QmlGraphicsVideo::~QmlGraphicsVideo()
 */
 
 /*!
+    \qmlsignal Video::onStarted()
+
+    This handler is called when playback is started.
+*/
+
+/*!
+    \qmlsignal Video::onResumed()
+
+    This handler is called when playback is resumed from the paused state.
+*/
+
+/*!
+    \qmlsignal Video::onPaused()
+
+    This handler is called when playback is paused.
+*/
+
+/*!
+    \qmlsignal Video::onStopped()
+
+    This handler is called when playback is stopped.
+*/
+
+/*!
     \qmlproperty enum Video::status
 
     This property holds the status of video loading. It can be one of:
@@ -185,6 +219,36 @@ QmlGraphicsVideo::Status QmlGraphicsVideo::status() const
 {
     return Status(m_status);
 }
+
+/*!
+    \qmlsignal Video::onLoaded()
+
+    This handler is called when the video source has been loaded.
+*/
+
+/*!
+    \qmlsignal Video::onBuffering()
+
+    This handler is called when the video stream starts buffering.
+*/
+
+/*!
+    \qmlsignal Video::onStalled()
+
+    This handler is called when playback has stalled while the video stream buffers.
+*/
+
+/*!
+    \qmlsignal Video::onBuffered()
+
+    This handler is called when the video stream has finished buffering.
+*/
+
+/*!
+    \qmlsignal Video::onEndOfMedia
+
+    This handler is called when playback stops because end of the video has been reached.
+*/
 
 /*!
     \qmlproperty int Video::duration
@@ -265,9 +329,16 @@ QmlGraphicsVideo::Error QmlGraphicsVideo::error() const
 }
 
 /*!
-    \qmlproperty enum Video::errorString
+    \qmlproperty string Video::errorString
 
     This property holds a string describing the current error condition in more detail.
+*/
+
+/*!
+    \qmlproperty Video::onError(error, errorString)
+
+    This property is called when an \l {Error}{error} has occurred.  The errorString parameter
+    may contain more detailed information about the error.
 */
 
 /*!

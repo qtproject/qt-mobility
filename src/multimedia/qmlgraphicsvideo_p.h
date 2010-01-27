@@ -132,7 +132,18 @@ Q_SIGNALS:
     void playingChanged();
     void pausedChanged();
 
+    void started();
+    void resumed();
+    void paused();
+    void stopped();
+
     void statusChanged();
+
+    void loaded();
+    void buffering();
+    void stalled();
+    void buffered();
+    void endOfMedia();
 
     void durationChanged();
     void positionChanged();
@@ -147,6 +158,8 @@ Q_SIGNALS:
     void playbackRateChanged();
 
     void errorChanged();
+    void error(QmlGraphicsVideo::Error error, const QString &errorString);
+
 
 protected:
     void geometryChanged(const QRectF &geometry, const QRectF &);
@@ -154,6 +167,7 @@ protected:
 private Q_SLOTS:
     void _q_videoSurfaceFormatChanged(const QVideoSurfaceFormat &);
     void _q_frameChanged();
+    void _q_error(QMediaPlayer::Error, const QString &);
 
 private:
     Q_DISABLE_COPY(QmlGraphicsVideo)
@@ -170,7 +184,6 @@ private:
 
     Q_PRIVATE_SLOT(mediaBase(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(mediaBase(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
-    Q_PRIVATE_SLOT(mediaBase(), void _q_error(QMediaPlayer::Error, const QString &))
     Q_PRIVATE_SLOT(mediaBase(), void _q_metaDataChanged())
 
     inline QmlMediaBase *mediaBase() { return this; }

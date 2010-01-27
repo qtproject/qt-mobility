@@ -92,7 +92,6 @@ public:
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
-    void _q_error(QMediaPlayer::Error error, const QString &errorString);
 
     void _q_metaDataChanged();
 
@@ -106,7 +105,18 @@ protected:
     virtual void playingChanged() = 0;
     virtual void pausedChanged() = 0;
 
+    virtual void started() = 0;
+    virtual void resumed() = 0;
+    virtual void paused() = 0;
+    virtual void stopped() = 0;
+
     virtual void statusChanged() = 0;
+
+    virtual void loaded() = 0;
+    virtual void buffering() = 0;
+    virtual void stalled() = 0;
+    virtual void buffered() = 0;
+    virtual void endOfMedia() = 0;
 
     virtual void durationChanged() = 0;
     virtual void positionChanged() = 0;
@@ -118,8 +128,6 @@ protected:
 
     virtual void seekableChanged() = 0;
     virtual void playbackRateChanged() = 0;
-
-    virtual void errorChanged() = 0;
 
     QMediaService *m_mediaService;
     QMediaPlayerControl *m_playerControl;

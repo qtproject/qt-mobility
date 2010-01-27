@@ -58,6 +58,15 @@ QTM_BEGIN_NAMESPACE
     \brief The QmlAudio class provides a audio item that you can add to a QmlView.
 */
 
+void QmlAudio::_q_error(QMediaPlayer::Error errorCode, const QString &errorString)
+{
+    m_error = errorCode;
+    m_errorString = errorString;
+
+    emit error(Error(errorCode), errorString);
+    emit errorChanged();
+}
+
 
 QmlAudio::QmlAudio(QObject *parent)
     : QObject(parent)
@@ -110,21 +119,39 @@ void QmlAudio::stop()
 */
 
 /*!
-    \qmlproperty bool Audio::isPlaying
+    \qmlproperty bool Audio::playing
 
     This property holds whether the audio is playing.
 */
 
 /*!
-    \qmlproperty bool Audio::isPaused
+    \qmlproperty bool Audio::paused
 
     This property holds whether the audio is paused.
 */
 
 /*!
-    \qmlproperty bool Audio::isStopped
+    \qmlsignal Audio::onStarted()
 
-    This property holds whether the audio is stopped.
+    This handler is called when playback is started.
+*/
+
+/*!
+    \qmlsignal Audio::onResumed()
+
+    This handler is called when playback is resumed from the paused state.
+*/
+
+/*!
+    \qmlsignal Audio::onPaused()
+
+    This handler is called when playback is paused.
+*/
+
+/*!
+    \qmlsignal Audio::onStopped()
+
+    This handler is called when playback is stopped.
 */
 
 /*!
@@ -150,6 +177,35 @@ QmlAudio::Status QmlAudio::status() const
     return Status(m_status);
 }
 
+/*!
+    \qmlsignal Audio::onLoaded()
+
+    This handler is called when the video source has been loaded.
+*/
+
+/*!
+    \qmlsignal Audio::onBuffering()
+
+    This handler is called when the video stream starts buffering.
+*/
+
+/*!
+    \qmlsignal Audio::onStalled()
+
+    This handler is called when playback has stalled while the video stream buffers.
+*/
+
+/*!
+    \qmlsignal Audio::onBuffered()
+
+    This handler is called when the video stream has finished buffering.
+*/
+
+/*!
+    \qmlsignal Audio::onEndOfMedia
+
+    This handler is called when playback stops because end of the video has been reached.
+*/
 /*!
     \qmlproperty int Audio::duration
 
@@ -217,9 +273,16 @@ QmlAudio::Error QmlAudio::error() const
 }
 
 /*!
-    \qmlproperty enum Audio::errorString
+    \qmlproperty string Audio::errorString
 
     This property holds a string describing the current error condition in more detail.
+*/
+
+/*!
+    \qmlproperty Audio::onError(error, errorString)
+
+    This property is called when an \l {Error}{error} has occurred.  The errorString parameter
+    may contain more detailed information about the error.
 */
 
 #include "moc_qmlaudio_p.cpp"
