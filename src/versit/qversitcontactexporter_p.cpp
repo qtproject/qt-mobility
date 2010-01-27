@@ -127,16 +127,17 @@ QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
  * Export QT Contact into Versit Document.
  */
 void QVersitContactExporterPrivate::exportContact(
-    QVersitDocument& versitDocument,
-    const QContact& contact)
+    const QContact& contact,
+    QVersitDocument& document)
 {
-    mVersitType = versitDocument.type();
+    mVersitType = document.type();
     QList<QContactDetail> allDetails = contact.details();
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
 
         // If the custom detail handler handles it, we don't have to.
-        if (mDetailHandler && mDetailHandler->preProcessDetail(detail, &versitDocument))
+        if (mDetailHandler
+            && mDetailHandler->preProcessDetail(contact, detail, &document))
             continue;
 
         QVersitProperty property;
@@ -165,7 +166,7 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactNote::DefinitionName) {
             encodeNote(property, detail);
         } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
-            encodeOrganization(versitDocument, detail);
+            encodeOrganization(document, detail);
             addProperty = false;
         } else if (detail.definitionName() == QContactAvatar::DefinitionName){
             addProperty = encodeAvatar(property, detail);
@@ -174,7 +175,7 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
             encodeAnniversary(property, detail);
         } else if (detail.definitionName() == QContactNickname::DefinitionName) {
-            encodeNickname(versitDocument, detail);
+            encodeNickname(document, detail);
             addProperty = false;
         } else if (detail.definitionName() == QContactGender::DefinitionName) {
             encodeGender(property, detail);
@@ -183,7 +184,7 @@ void QVersitContactExporterPrivate::exportContact(
             if (!addProperty)
                 unknown = true;
         } else if (detail.definitionName() == QContactFamily::DefinitionName) {
-            addProperty = encodeFamily(versitDocument, detail);
+            addProperty = encodeFamily(document, detail);
         } else if (detail.definitionName() == QContactDisplayLabel::DefinitionName) {
             addProperty = encodeDisplayLabel(property, detail, contact);
             if (!addProperty)
@@ -194,10 +195,10 @@ void QVersitContactExporterPrivate::exportContact(
         }
 
         if (addProperty)
-            versitDocument.addProperty(property);
+            document.addProperty(property);
 
         if (mDetailHandler)
-            mDetailHandler->postProcessDetail(detail, !unknown, &versitDocument);
+            mDetailHandler->postProcessDetail(contact, detail, !unknown, &document);
     }
 }
 

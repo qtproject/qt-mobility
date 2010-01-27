@@ -210,7 +210,7 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
     foreach (QContact contact, contacts) {
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
-        d->exportContact(versitDocument, contact);
+        d->exportContact(contact, versitDocument);
         list.append(versitDocument);
     }
 

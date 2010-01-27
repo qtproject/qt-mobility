@@ -58,8 +58,12 @@ class Q_VERSIT_EXPORT QVersitContactExporterDetailHandler
 {
 public:
     virtual ~QVersitContactExporterDetailHandler() {}
-    virtual bool preProcessDetail(const QContactDetail& detail, QVersitDocument* document) = 0;
-    virtual bool postProcessDetail(const QContactDetail& detail, bool alreadyProcessed,
+    virtual bool preProcessDetail(const QContact& contact,
+                                  const QContactDetail& detail,
+                                  QVersitDocument* document) = 0;
+    virtual bool postProcessDetail(const QContact& contact,
+                                   const QContactDetail& detail,
+                                   bool alreadyProcessed,
                                    QVersitDocument* document) = 0;
 };
 

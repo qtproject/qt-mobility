@@ -70,7 +70,7 @@ public:
     QVersitContactExporterPrivate();
     ~QVersitContactExporterPrivate();
 
-    void exportContact(QVersitDocument& versitDocument, const QContact& contact);
+    void exportContact(const QContact& contact, QVersitDocument& versitDocument);
 
 protected:
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
