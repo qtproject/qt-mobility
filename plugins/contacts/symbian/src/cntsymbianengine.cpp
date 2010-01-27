@@ -773,7 +773,8 @@ bool CntSymbianEngine::isFilterSupported(const QContactFilter& filter) const
 /* Synthesise the display label of a contact */
 QString CntSymbianEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
-    return m_displayLabel->synthesizeDisplayLabel(contact, error);
+    error = QContactManager::NoError;
+    return m_displayLabel->synthesizedDisplayLabel(contact, error);
 }
 
 bool CntSymbianEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)

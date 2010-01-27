@@ -592,7 +592,7 @@ void TestSymbianEngine::removeContacts()
     }
     contacts.insert(3, 0);
 
-    QVERIFY(m_engine->removeContacts(&contacts, &errorMap, err));
+    QVERIFY(!m_engine->removeContacts(&contacts, &errorMap, err));
     QVERIFY(err == QContactManager::DoesNotExistError);
     foreach(QContactManager::Error e, errorMap) {
         QVERIFY(e == QContactManager::DoesNotExistError);
@@ -664,7 +664,7 @@ void TestSymbianEngine::filterSupport()
     // Filter feature support
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes);
-    QVERIFY(m_engine->filterSupported(df));
+    QVERIFY(m_engine->isFilterSupported(df));
     /*  To move to filter test cases
     QContactActionFilter af;
     QVERIFY(!m_engine->filterSupported(af));

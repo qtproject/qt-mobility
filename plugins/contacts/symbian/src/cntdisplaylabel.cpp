@@ -76,8 +76,9 @@ void CntDisplayLabel::setDisplayLabelDetails()
     QList<QPair<QLatin1String, QLatin1String> > contactPrefferedDisplayLabelDetails;
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldFirst)));
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldLast)));
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
     m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
-    
+
     //if preferred details doesn't exist use these
     //QList<QPair<QLatin1String, QLatin1String> > contactPreffered2DisplayLabelDetails;
     //contactPreffered2DisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
@@ -95,7 +96,7 @@ void CntDisplayLabel::setDisplayLabelDetails()
  * \a error On return, contains the possible error.
  * \return synthesised display label 
  */
-QString CntDisplayLabel::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     QString displayLabel;
     
