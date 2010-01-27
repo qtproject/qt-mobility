@@ -17,7 +17,7 @@ QStringList getQTIncludePath()
     foreach(QString item, processevironment){
         if(item.indexOf("QTDIR=") == 0){
             QString qtpath = item.remove("QTDIR=");
-            ret << qtpath + "\\include\\QtCore";
+            ret << qtpath + "/include/QtCore";
             break;
         }
     }
