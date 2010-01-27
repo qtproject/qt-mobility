@@ -6,4 +6,5 @@ CONFIG+=mobility
 MOBILITY+=sensors
 INCLUDEPATH += ../../../src/sensors
 SOURCES=main.cpp
-QMAKE_CXXFLAGS+=-Werror
+
+#QMAKE_CXXFLAGS+=-Werror

@@ -8,4 +8,5 @@ INCLUDEPATH += ../../../src/sensors
 SOURCES=main.cpp
 RESOURCES = orientation.qrc
 OTHER_FILES += orientation.qml
-QMAKE_CXXFLAGS+=-Werror
+
+#QMAKE_CXXFLAGS+=-Werror
