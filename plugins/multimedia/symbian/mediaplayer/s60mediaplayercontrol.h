@@ -67,7 +67,7 @@ public:
     S60MediaSettings() 
         : m_volume(0)
         , m_muted(false)
-        , m_playbackRate(-1)
+        , m_playbackRate(1.0)
     {
     }
     

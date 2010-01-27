@@ -77,8 +77,6 @@ public:
     void setMuted(bool muted);
     virtual bool isVideoAvailable() const = 0;
     bool isSeekable() const;
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);        
     void play();
     void pause();
     void stop();
@@ -129,14 +127,11 @@ signals:
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State state);
     void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
-    void volumeChanged(int volume);
-    void mutingChanged(bool muted);
     void videoAvailableChanged(bool videoAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);     
     void availablePlaybackRangesChanged(const QMediaTimeRange&);
     void metaDataChanged();
-    void playbackRateChanged(qreal rate);
     void error(int error, const QString &errorString);
 
 private:

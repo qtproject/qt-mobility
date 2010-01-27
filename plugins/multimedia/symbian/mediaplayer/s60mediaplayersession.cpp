@@ -79,8 +79,9 @@ void S60MediaPlayerSession::setVolume(int volume)
         return;
     
     m_volume = volume;
-
-    if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
+    // Dont set symbian players volume until media loaded.
+    // Leaves with KerrNotReady although documentation says otherwise.
+    if (!m_muted && m_mediaStatus == QMediaPlayer::LoadedMedia) {
         TRAPD(err, doSetVolumeL(m_volume));
         setError(err);
     }
@@ -108,7 +109,10 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
     if (m_mediaStatus == QMediaPlayer::InvalidMedia)
         setError(KErrNotSupported);
     
-    emit mediaStatusChanged(status);
+    if (m_mediaStatus == QMediaPlayer::NoMedia)
+        m_play_requested = false;
+    
+    emit mediaStatusChanged(m_mediaStatus);
     if (m_play_requested)
         play();
 }
@@ -119,7 +123,7 @@ void S60MediaPlayerSession::setState(QMediaPlayer::State state)
         return;
     
     m_state = state;
-    emit stateChanged(state);
+    emit stateChanged(m_state);
 }
 
 QMediaPlayer::State S60MediaPlayerSession::state() const 
@@ -210,35 +214,18 @@ QMap<QString, QVariant> S60MediaPlayerSession::availableMetaData() const
     return m_metaDataMap;
 }
 
-qreal S60MediaPlayerSession::playbackRate() const
-{
-    return m_playbackRate;
-}
-
 void S60MediaPlayerSession::setMuted(bool muted)
 {
     if (m_muted == muted)
         return;
     
-    m_muted = muted;
-    emit mutingChanged(m_muted);
-    
-    if (isMuted()) {
-        TRAPD(err, doSetVolumeL(0));
-        setError(err);
+    if(muted) {
+        setVolume(0);
+        m_muted = muted;
     } else {
+        m_muted = muted;
         setVolume(volume());
     }
-}
-
-void S60MediaPlayerSession::setPlaybackRate(qreal rate)
-{
-    if (m_playbackRate == rate)
-        return;
-    
-    m_playbackRate = rate;
-    emit playbackRateChanged(m_playbackRate);
-    //None of symbian players supports this.
 }
 
 qint64 S60MediaPlayerSession::duration() const
@@ -283,7 +270,7 @@ void S60MediaPlayerSession::initComplete()
         setVolume(volume());
         emit durationChanged(duration());
     } else {
-        setMediaStatus(QMediaPlayer::NoMedia);
+        setError(m_error);
     }
 }
 
@@ -348,6 +335,7 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString)
     if (error == KErrNone || error == KErrMMPartialPlayback)
         return;
     
+    m_play_requested = false;
     m_error = error;
     QMediaPlayer::Error mediaError = fromSymbianErrorToMultimediaError(m_error);
     

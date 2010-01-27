@@ -139,6 +139,9 @@ Player::Player(QWidget *parent)
 #endif
     
 #ifdef Q_OS_SYMBIAN
+    // Set some sensible default volume.
+    player->setVolume(50);
+    
     QLabel *label = new QLabel(tr("Playlist"));
     QVBoxLayout *playlistDialogLayout = new QVBoxLayout;
     playlistDialogLayout->addWidget(label);
@@ -275,7 +278,6 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
 {
     switch (status) {
     case QMediaPlayer::UnknownMediaStatus:
-    case QMediaPlayer::NoMedia:
     case QMediaPlayer::LoadedMedia:
     case QMediaPlayer::BufferingMedia:
     case QMediaPlayer::BufferedMedia:
@@ -302,6 +304,7 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
         setStatusInfo(QString());
         QApplication::alert(this);
         break;
+    case QMediaPlayer::NoMedia:        
     case QMediaPlayer::InvalidMedia:
 #ifndef QT_NO_CURSOR
         unsetCursor();

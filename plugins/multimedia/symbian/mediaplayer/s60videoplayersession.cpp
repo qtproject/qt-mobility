@@ -187,6 +187,7 @@ void S60VideoPlayerSession::doStop()
 {
     m_player->Stop();
 }
+
 qint64 S60VideoPlayerSession::doGetPositionL() const
 {
     return m_player->PositionL().Int64() / 1000;
@@ -198,7 +199,8 @@ void S60VideoPlayerSession::doSetPositionL(qint64 microSeconds)
 
 void S60VideoPlayerSession::doSetVolumeL(int volume)
 {
-    m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume());
+    if (m_player->AudioEnabledL())
+        m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume());
 }
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
