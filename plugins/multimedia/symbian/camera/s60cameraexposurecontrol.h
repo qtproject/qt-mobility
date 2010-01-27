@@ -44,6 +44,7 @@
 
 #include <QtCore/qobject.h>
 #include "qcameraexposurecontrol.h"
+#include "s60camerasettings.h"
 
 QTM_USE_NAMESPACE
 
@@ -103,6 +104,8 @@ private:
     S60CameraSession *m_session;
     S60CameraService *m_service;
     QCamera::Error m_error;
+    
+    S60CameraSettings *m_advancedSettings;
     
     QCamera::FlashMode m_flashMode;
     QCamera::ExposureMode m_exposureMode;

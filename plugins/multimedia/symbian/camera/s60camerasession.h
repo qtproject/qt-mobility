@@ -94,14 +94,14 @@ public:
     ~S60CameraSession();
 
     bool deviceReady();
+    
+    S60CameraSettings* advancedSettings();
 
     // camera image properties
     int framerate() const;
     void setFrameRate(int rate);
     int brightness() const;
     void setBrightness(int b);
-    int contrast() const;
-    void setContrast(int c);
     int saturation() const;
     void setSaturation(int s);
     int hue() const;
@@ -110,12 +110,8 @@ public:
     void setSharpness(int s);
     bool backlightCompensation() const;
     void setBacklightCompensation(bool);
-    int whitelevel() const;
-    void setWhitelevel(int w);
     int rotation() const;
-    void setRotation(int r);
-    bool autofocus() const;
-    void setAutofocus(bool f);
+    void setRotation(int r);;
 
     QSize frameSize() const;
     void setFrameSize(const QSize& s);
@@ -188,34 +184,21 @@ public:
     int maxDigitalZoom();
     void setZoomFactor(int value);
     int zoomFactor();
-    void setFocusMode(QCamera::FocusMode mode);
-    QCamera::FocusMode focusMode();
-    QCamera::FocusModes supportedFocusModes();
 
     //cameraexposurecontrol
-    bool isFlashReady();
     void setFlashMode(QCamera::FlashMode mode);
     void setExposureMode(QCamera::ExposureMode mode);
     QCamera::ExposureMode exposureMode();
     QCamera::ExposureModes supportedExposureModes();
     QCamera::FlashModes supportedFlashModes();
     QCamera::FlashMode flashMode();
-    void setExposureCompensation(qreal ev);
-    qreal exposureCompensation();
-    QCamera::MeteringMode meteringMode();
-    void setMeteringMode(QCamera::MeteringMode mode);
-    QCamera::MeteringModes supportedMeteringModes();
-    int isoSensitivity();
-    QList<int> supportedIsoSensitivities();
-    void setManualIsoSensitivity(int iso);
-    qreal aperture();
-    QList<qreal> supportedApertures(bool *continuous);
-    void setManualAperture(qreal aperture);
-    void lockExposure(bool lock);
-    bool isExposureLocked();
-    qreal shutterSpeed();
-    QList<qreal> supportedShutterSpeeds(bool *continuous);
-    void setManualShutterSpeed(qreal seconds);
+    
+    //cameraimageprocessingcontrol
+    qreal contrast() const;
+    void setContrast(qreal value);
+    QCamera::WhiteBalanceMode whiteBalanceMode();
+    void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
+    QCamera::WhiteBalanceModes supportedWhiteBalanceModes();
 
 protected: // From MCameraEngineObserver
     void MceoCameraReady();

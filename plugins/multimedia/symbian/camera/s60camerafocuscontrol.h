@@ -44,6 +44,7 @@
 
 #include <QtCore/qobject.h>
 #include "qcamerafocuscontrol.h"
+#include "s60camerasettings.h"
 
 QTM_USE_NAMESPACE
 
@@ -86,6 +87,8 @@ Q_SIGNALS:
 private:
     S60CameraSession *m_session;
     S60CameraService *m_service;
+    
+    S60CameraSettings *m_advancedSettings;
     
     bool m_focusLocked;
     qreal m_zoomValue;

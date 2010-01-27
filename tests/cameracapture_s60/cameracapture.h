@@ -116,6 +116,11 @@ private slots:
     void setExposureSport();
     void setExposureBeach();
     
+    void setWBAuto();
+    void setWBSunlight();
+    void setWBCloudy();
+    void setWBTungsten();
+    
     void error(QCamera::Error aError);
 
 private:

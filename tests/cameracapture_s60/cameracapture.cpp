@@ -104,6 +104,11 @@ CameraCapture::CameraCapture(QWidget *parent) :
     connect(ui->actionSport, SIGNAL(triggered()), this, SLOT(setExposureSport())); 
     connect(ui->actionBeach, SIGNAL(triggered()), this, SLOT(setExposureBeach()));
     
+    connect(ui->actionAuto, SIGNAL(triggered()), this, SLOT(setWBAuto()));   
+    connect(ui->actionSunlight, SIGNAL(triggered()), this, SLOT(setWBSunlight()));
+    connect(ui->actionCloudy, SIGNAL(triggered()), this, SLOT(setWBCloudy())); 
+    connect(ui->actionTungsten, SIGNAL(triggered()), this, SLOT(setWBTungsten()));
+    
     ui->actionAudio->setMenu(new QMenu(this));
 
     setCamera(cameraDevice);
@@ -176,6 +181,26 @@ void CameraCapture::setExposureSport()
 void CameraCapture::setExposureBeach()
 {
     camera->setExposureMode(QCamera::ExposurePortrait);
+}
+
+void CameraCapture::setWBAuto()
+{
+    camera->setWhiteBalanceMode(QCamera::WhiteBalanceAuto);
+}
+
+void CameraCapture::setWBSunlight()
+{
+    camera->setWhiteBalanceMode(QCamera::WhiteBalanceSunlight);
+}
+
+void CameraCapture::setWBCloudy()
+{
+    camera->setWhiteBalanceMode(QCamera::WhiteBalanceCloudy);
+}
+
+void CameraCapture::setWBTungsten()
+{
+    camera->setWhiteBalanceMode(QCamera::WhiteBalanceTungsten);
 }
 
 void CameraCapture::setCamera(const QByteArray &cameraDevice)

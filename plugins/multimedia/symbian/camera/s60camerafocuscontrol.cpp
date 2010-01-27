@@ -66,10 +66,11 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
+    m_advancedSettings = m_session->advancedSettings();
     connect(m_session, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
     connect(m_session, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
     connect(m_session, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusChanged(QCamera::FocusStatus)));
-    m_session->setFocusMode(m_focusMode);
+    m_advancedSettings->setFocusMode(m_focusMode);
     m_session->setZoomFactor(m_zoomValue);
 }
 
@@ -79,18 +80,18 @@ S60CameraFocusControl::~S60CameraFocusControl()
 
 QCamera::FocusMode S60CameraFocusControl::focusMode() const
 {
-    return m_session->focusMode();
+    return m_advancedSettings->focusMode();
 }
 
 void S60CameraFocusControl::setFocusMode(QCamera::FocusMode mode)
 {
-    m_session->setFocusMode(mode);
+    m_advancedSettings->setFocusMode(mode);
 	m_focusMode = mode;
 }
 
 QCamera::FocusModes S60CameraFocusControl::supportedFocusModes() const
 {
-    return m_session->supportedFocusModes();
+    return m_advancedSettings->supportedFocusModes();
 }
 
 QCamera::FocusStatus S60CameraFocusControl::focusStatus() const
