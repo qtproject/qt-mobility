@@ -23,12 +23,11 @@ win32 {
         HEADERS += qwmihelper_win_p.h
 
         LIBS += \
-            Ole32.lib \
-            User32.lib \
-            Gdi32.lib \
-            Ws2_32.lib \
-            Iphlpapi.lib \
-            Oleaut32.lib 
+            -lOle32 \
+            -lUser32 \
+            -lGdi32 \
+            -lIphlpapi \
+            -lOleaut32
     }
 
     win32-g++ : {
@@ -36,9 +35,9 @@ win32 {
     }
 
 
-    wince*:LIBS += aygshell.lib \
-        cellcore.lib \
-        Coredll.lib
+    wince*:LIBS += -Laygshell \
+        -lcellcore \
+        -lCoredll
 }
 
 unix: {
