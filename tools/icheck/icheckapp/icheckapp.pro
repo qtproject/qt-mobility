@@ -9,11 +9,12 @@ TARGET = icheck
 CONFIG   += console mobility
 
 INCLUDEPATH += ../ichecklib
+
 CONFIG(debug, debug|release){
-    LIBS += -lichecklibd
+    LIBS += -L../../../Bin -lichecklibd
 }
 else {
-    LIBS += -lichecklib
+    LIBS += -L../../../Bin -lichecklib
 }
 
 include(../../../common.pri)
