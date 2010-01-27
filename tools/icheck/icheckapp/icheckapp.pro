@@ -4,20 +4,19 @@
 #
 #-------------------------------------------------
 
-QT       -= gui
-
-TARGET = icheck
-CONFIG   += console
-CONFIG   -= app_bundle
-
 TEMPLATE = app
+TARGET = icheck
+CONFIG   += console mobility
 
 INCLUDEPATH += ../ichecklib
 CONFIG(debug, debug|release){
-    LIBS += -L../ichecklib/debug -lichecklibd
+    LIBS += -lichecklibd
 }
 else {
-    LIBS += -L../ichecklib/release -lichecklib
+    LIBS += -lichecklib
 }
+
+include(../../../common.pri)
+include(../../../features/deploy.pri)
 
 SOURCES += main.cpp

@@ -350,7 +350,6 @@ void ParseManager::getElements(QList<FUNCTIONITEM*> &functionlist
                     Function* pfct = decllist->value->type()->asFunctionType();
                     if(pfct){
                         FUNCTIONITEM* item = new FUNCTIONITEM();
-                        item->init();
                         item->trlUnit = classitem->trlUnit;
                         item->function = pfct;
                         item->ast = pdecl;
@@ -367,7 +366,6 @@ void ParseManager::getElements(QList<FUNCTIONITEM*> &functionlist
                     EnumSpecifierAST * penum = decllist->value->asEnumSpecifier();
                     if(penum){
                         ENUMITEM* item = new ENUMITEM();
-                        item->init();
                         item->ast = penum;
                         item->highestlevelclass = highestlevelclass;
                         item->trlUnit = classitem->trlUnit;
@@ -382,7 +380,6 @@ void ParseManager::getElements(QList<FUNCTIONITEM*> &functionlist
                 QPropertyDeclarationAST *ppdecl = pmemberlist->value->asQPropertyDeclarationAST();
                 if(ppdecl){
                     PROPERTYITEM* item = new PROPERTYITEM();
-                    item->init();
                     item->ast = ppdecl;
                     item->highestlevelclass = highestlevelclass;
                     item->trlUnit = classitem->trlUnit;
@@ -399,7 +396,6 @@ void ParseManager::getElements(QList<FUNCTIONITEM*> &functionlist
                     QEnumDeclarationAST *pqenum = pmemberlist->value->asQEnumDeclarationAST();
                     if(pqenum){
                         QENUMITEM* item = new QENUMITEM();
-                        item->init();
                         item->ast = pqenum;
                         item->highestlevelclass = highestlevelclass;
                         item->trlUnit = classitem->trlUnit;
@@ -412,7 +408,6 @@ void ParseManager::getElements(QList<FUNCTIONITEM*> &functionlist
                         QFlagsDeclarationAST *pqflags = pmemberlist->value->asQFlagsDeclarationAST();
                         if(pqflags){
                             QFLAGITEM* item = new QFLAGITEM();
-                            item->init();
                             item->ast = pqflags;
                             item->highestlevelclass = highestlevelclass;
                             item->trlUnit = classitem->trlUnit;
@@ -425,7 +420,6 @@ void ParseManager::getElements(QList<FUNCTIONITEM*> &functionlist
                             QDeclareFlagsDeclarationAST *pqdeclflags = pmemberlist->value->asQDeclareFlagsDeclarationAST();
                             if(pqdeclflags){
                                 QDECLAREFLAGSITEM* item = new QDECLAREFLAGSITEM();
-                                item->init();
                                 item->ast = pqdeclflags;
                                 item->highestlevelclass = highestlevelclass;
                                 item->trlUnit = classitem->trlUnit;
