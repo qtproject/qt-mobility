@@ -395,36 +395,6 @@ bool QContact::removeDetail(QContactDetail* detail)
     return true;
 }
 
-/*!
- * Sets the order of the details in the contact.  This order may or may not be persisted by the backend, depending on its capabilities.
- * Returns true if the total detail order specified is valid and does not contain any details which are not present in the contact, and false
- * if it contains details which are not present in the contact, or if it doesn't contain some details which are present in the contact.
- */
-bool QContact::setDetailOrder(const QList<QContactDetail>& totallyOrdered)
-{
-    if (totallyOrdered.size() != d->m_details.size())
-        return false;
-
-    for (int i = 0; i < totallyOrdered.size(); i++) {
-        QContactDetail curr = totallyOrdered.at(i);
-        bool found = false;
-        for (int j = 0; j < d->m_details.size(); j++) {
-            if (curr.key() == d->m_details.at(j).key()) {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            // could find the current detail in the ordered list!
-            return false;
-        }
-    }
-
-    d->m_details = totallyOrdered;
-    return true;
-}
-
 /*! Returns true if this contact is equal to the \a other contact, false if either the id or stored details are not the same */
 bool QContact::operator==(const QContact& other) const
 {
@@ -589,6 +559,8 @@ QList<QContactActionDescriptor> QContact::availableActions(const QString& vendor
 /*! Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns true if the detail was successfully set as the preferred detail for the action identified by \a actionName, otherwise returns false  */
 bool QContact::setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail)
 {
+    qWarning("QContact::setPreferredDetail() This function is deprecated and will be removed after the transition period has elapsed.");
+
     // if the given action name is empty, bad argument.
     if (actionName.isEmpty())
         return false;
@@ -605,6 +577,8 @@ bool QContact::setPreferredDetail(const QString& actionName, const QContactDetai
 /*! Returns true if the given \a detail is a preferred detail for the given \a actionName, or for any action if the \a actionName is empty */
 bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail& detail) const
 {
+    qWarning("QContact::isPreferredDetail() This function is deprecated and will be removed after the transition period has elapsed.");
+
     if (!d->m_details.contains(detail))
         return false;
 
@@ -621,6 +595,8 @@ bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail
 /*! Returns the preferred detail for a given \a actionName */
 QContactDetail QContact::preferredDetail(const QString& actionName) const
 {
+    qWarning("QContact::preferredDetail() This function is deprecated and will be removed after the transition period has elapsed.");
+
     // if the given action name is empty, bad argument.
     if (actionName.isEmpty())
         return QContactDetail();

@@ -133,9 +133,6 @@ public:
     bool saveDetail(QContactDetail* detail);   // modifies the detail - sets its ID if detail already exists
     bool removeDetail(QContactDetail* detail); // modifies the detail - unsets its ID
 
-    /* set the order of details */
-    bool setDetailOrder(const QList<QContactDetail>& totallyOrdered);
-
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
@@ -145,10 +142,10 @@ public:
     /* Actions available to be performed on this contact */
     QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
 
-    /* Preferences (eg, set a particular detail preferred for the SMS action) */
-    bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
-    bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
-    QContactDetail preferredDetail(const QString& actionName) const;
+    /* Preferences (eg, set a particular detail preferred for the SMS action) - deprecated - unnecessary API - to be removed after transition period has elapsed. */
+    bool Q_DECL_DEPRECATED setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail); // deprecated
+    bool Q_DECL_DEPRECATED isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;     // deprecated
+    QContactDetail Q_DECL_DEPRECATED preferredDetail(const QString& actionName) const;                           // deprecated
 
 private:
     friend class QContactManager;
