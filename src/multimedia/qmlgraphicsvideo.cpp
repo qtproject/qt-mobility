@@ -122,6 +122,9 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
         m_videoRendererControl = qobject_cast<QVideoRendererControl *>(
                 m_mediaService->control(QVideoRendererControl_iid));
 
+        connect(m_playerControl, SIGNAL(videoAvailableChanged(bool)),
+                this, SIGNAL(hasVideoChanged()));
+
         if (m_videoOutputControl && m_videoRendererControl) {
             m_videoSurface = new QPainterVideoSurface;
             m_videoRendererControl->setSurface(m_videoSurface);
@@ -210,12 +213,12 @@ QmlGraphicsVideo::Status QmlGraphicsVideo::status() const
 */
 
 /*!
-    \qmlproperty bool Video::videoAvailable
+    \qmlproperty bool Video::hasVideo
 
-    This property holds whether video output is available.
+    This property holds whether the source contains video.
 */
 
-bool QmlGraphicsVideo::isVideoAvailable() const
+bool QmlGraphicsVideo::hasVideo() const
 {
     return m_playerControl->isVideoAvailable();
 }
