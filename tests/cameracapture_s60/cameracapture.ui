@@ -207,7 +207,7 @@
    </widget>
    <widget class="QMenu" name="menuFlash">
     <property name="title">
-     <string>Exposure</string>
+     <string>Settings</string>
     </property>
     <widget class="QMenu" name="menuFlash_On">
      <property name="title">
@@ -235,9 +235,19 @@
      <addaction name="actionSport"/>
      <addaction name="actionBeach"/>
     </widget>
+    <widget class="QMenu" name="menuWhiteBalance">
+     <property name="title">
+      <string>WhiteBalance</string>
+     </property>
+     <addaction name="actionAuto"/>
+     <addaction name="actionSunlight"/>
+     <addaction name="actionCloudy"/>
+     <addaction name="actionTungsten"/>
+    </widget>
     <addaction name="menuFlash_On"/>
     <addaction name="menuFocus"/>
     <addaction name="menuExposure"/>
+    <addaction name="menuWhiteBalance"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDevices"/>
@@ -317,6 +327,26 @@
   <action name="actionBeach">
    <property name="text">
     <string>Beach</string>
+   </property>
+  </action>
+  <action name="actionAuto">
+   <property name="text">
+    <string>Auto</string>
+   </property>
+  </action>
+  <action name="actionSunlight">
+   <property name="text">
+    <string>Sunlight</string>
+   </property>
+  </action>
+  <action name="actionCloudy">
+   <property name="text">
+    <string>Cloudy</string>
+   </property>
+  </action>
+  <action name="actionTungsten">
+   <property name="text">
+    <string>Tungsten</string>
    </property>
   </action>
  </widget>

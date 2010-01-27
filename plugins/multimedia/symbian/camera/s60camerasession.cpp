@@ -95,6 +95,11 @@ S60CameraSession::~S60CameraSession()
     m_cameraEngine = NULL;
 }
 
+S60CameraSettings* S60CameraSession::advancedSettings()
+{
+    return m_advancedSettings;
+}
+
 void S60CameraSession::resetCamera()
 {
     qDebug() << "S60CameraSession::resetCamera START";
@@ -223,16 +228,6 @@ void S60CameraSession::setBrightness(int b)
     Q_UNUSED(b);
 }
 
-int S60CameraSession::contrast() const
-{
-    return -1;
-}
-
-void S60CameraSession::setContrast(int c)
-{
-    Q_UNUSED(c);
-}
-
 int S60CameraSession::saturation() const
 {
     return -1;
@@ -273,16 +268,6 @@ void S60CameraSession::setBacklightCompensation(bool b)
     Q_UNUSED(b)
 }
 
-int S60CameraSession::whitelevel() const
-{
-    return -1;
-}
-
-void S60CameraSession::setWhitelevel(int w)
-{
-    Q_UNUSED(w)
-}
-
 int S60CameraSession::rotation() const
 {
     return 0;
@@ -291,18 +276,6 @@ int S60CameraSession::rotation() const
 void S60CameraSession::setRotation(int r)
 {
     Q_UNUSED(r)
-}
-
-bool S60CameraSession::autofocus() const
-{
-    qDebug() << "S60CameraSession::autofocus";
-    return false;
-}
-
-void S60CameraSession::setAutofocus(bool f)
-{
-    qDebug() << "S60CameraSession::setAutofocus, autofocus=" << f;
-    Q_UNUSED(f)
 }
 
 QSize S60CameraSession::frameSize() const
@@ -973,26 +946,6 @@ int S60CameraSession::maxDigitalZoom()
     }
 }
 
-void S60CameraSession::setFocusMode(QCamera::FocusMode mode)
-{
-    m_advancedSettings->setFocusMode(mode);
-}
-
-QCamera::FocusMode S60CameraSession::focusMode()
-{
-    return m_advancedSettings->focusMode();
-}
-
-QCamera::FocusModes S60CameraSession::supportedFocusModes()
-{
-    return m_advancedSettings->supportedFocusModes();
-}
-
-bool S60CameraSession::isFlashReady()
-{
-    return m_advancedSettings->isFlashReady();
-}
-
 void S60CameraSession::setFlashMode(QCamera::FlashMode mode)
 {
     if (m_cameraEngine) {
@@ -1068,7 +1021,6 @@ QCamera::FlashModes S60CameraSession::supportedFlashModes()
 QCamera::ExposureMode S60CameraSession::exposureMode()
 {
     if (m_cameraEngine) {
-        TInt mode = m_cameraEngine->Exposure();
         CCamera* camera = m_cameraEngine->Camera();
         CCamera::TExposure mode2 = camera->Exposure();
         switch(mode2) {
@@ -1165,82 +1117,138 @@ void S60CameraSession::setExposureMode(QCamera::ExposureMode mode)
     }
 }
 
-void S60CameraSession::setExposureCompensation(qreal ev)
+qreal S60CameraSession::contrast() const
 {
-    m_advancedSettings->setExposureCompensation(ev);
+    if (m_cameraEngine) {
+        CCamera* camera = m_cameraEngine->Camera();
+        return camera->Contrast();
+    } else {
+        return 0;
+    }
 }
 
-qreal S60CameraSession::exposureCompensation()
+void S60CameraSession::setContrast(qreal value)
 {
-    return m_advancedSettings->exposureCompensation();
+    if (m_cameraEngine) {
+        CCamera* camera = m_cameraEngine->Camera();
+        TRAPD(err, camera->SetContrastL(value));
+        if (err == KErrNotSupported) {
+            emit error(QCamera::NotSupportedFeatureError, QLatin1String("specified contrast value is out of range"));
+        }
+    }
 }
 
-QCamera::MeteringMode S60CameraSession::meteringMode()
+
+QCamera::WhiteBalanceMode S60CameraSession::whiteBalanceMode()
 {
-    return m_advancedSettings->meteringMode();
+    if (m_cameraEngine) {
+        CCamera* camera = m_cameraEngine->Camera();
+        CCamera::TWhiteBalance mode = camera->WhiteBalance();
+        switch(mode) {
+            case CCamera::EWBAuto:
+                return QCamera::WhiteBalanceAuto;
+            case CCamera::EWBDaylight:
+                return QCamera::WhiteBalanceSunlight;
+            case CCamera::EWBCloudy:
+                return QCamera::WhiteBalanceCloudy;
+            case CCamera::EWBTungsten:
+                return QCamera::WhiteBalanceTungsten;
+            case CCamera::EWBFluorescent:
+                return QCamera::WhiteBalanceFluorescent;
+            case CCamera::EWBFlash:
+                return QCamera::WhiteBalanceFlash;
+            case CCamera::EWBBeach:
+                return QCamera::WhiteBalanceSunset;
+            case CCamera::EWBManual:
+                return QCamera::WhiteBalanceManual;
+            case CCamera::EWBShade:
+                return QCamera::WhiteBalanceShade;
+            default:
+                return QCamera::WhiteBalanceAuto;
+        } 
+    }
+    return QCamera::WhiteBalanceAuto;
 }
 
-void S60CameraSession::setMeteringMode(QCamera::MeteringMode mode)
+void S60CameraSession::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 {
-    m_advancedSettings->setMeteringMode(mode);
+    if (m_cameraEngine) {
+        TInt m_error;
+        CCamera* camera = m_cameraEngine->Camera();
+        switch(mode) {
+            case QCamera::WhiteBalanceAuto:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBAuto));
+                break;
+            case QCamera::WhiteBalanceSunlight:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBDaylight));
+                break;
+            case QCamera::WhiteBalanceCloudy:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBCloudy));
+                break;
+            case QCamera::WhiteBalanceTungsten:
+            case QCamera::WhiteBalanceIncandescent:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBTungsten));
+                break;
+            case QCamera::WhiteBalanceFluorescent:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBFluorescent));
+                break;
+            case QCamera::WhiteBalanceFlash:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBFlash));
+                break;
+            case QCamera::WhiteBalanceSunset:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBBeach));
+                break;
+            case QCamera::WhiteBalanceManual:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBManual));
+                break;
+            case QCamera::WhiteBalanceShade:
+                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBShade));
+                break;
+            default:
+                // not supported
+                break;
+        }
+    }
 }
 
-QCamera::MeteringModes S60CameraSession::supportedMeteringModes()
+QCamera::WhiteBalanceModes S60CameraSession::supportedWhiteBalanceModes()
 {
-    return m_advancedSettings->supportedMeteringModes();
-}
-
-int S60CameraSession::isoSensitivity()
-{
-    return m_advancedSettings->isoSensitivity();
-}
-
-QList<int> S60CameraSession::supportedIsoSensitivities()
-{
-  return m_advancedSettings->supportedIsoSensitivities();
-}
-
-void S60CameraSession::setManualIsoSensitivity(int iso)
-{
-    m_advancedSettings->setManualIsoSensitivity(iso);
-}
-
-qreal S60CameraSession::aperture()
-{
-    return m_advancedSettings->aperture();
-}
-
-QList<qreal> S60CameraSession::supportedApertures(bool *continuous)
-{
-    return m_advancedSettings->supportedApertures(continuous);
-}
-
-void S60CameraSession::setManualAperture(qreal aperture)
-{
-    m_advancedSettings->setManualAperture(aperture);
-}
-
-void S60CameraSession::lockExposure(bool lock)
-{
-    m_advancedSettings->lockExposure(lock);
-}
-
-bool S60CameraSession::isExposureLocked()
-{
-    return m_advancedSettings->isExposureLocked();
-}
-
- /* Returns the list of shutter speed values if camera supports only fixed set of shutter speed values,
-  otherwise returns an empty list.
- */
-QList<qreal> S60CameraSession::supportedShutterSpeeds(bool *continuous)
-{
-    return m_advancedSettings->supportedShutterSpeeds(continuous);
-}
-
-void S60CameraSession::setManualShutterSpeed(qreal seconds)
-{
-    m_advancedSettings->setShutterSpeed(seconds);
+    QCamera::WhiteBalanceModes modes = QCamera::WhiteBalanceAuto;
+    if (m_cameraEngine) { 
+        TInt supportedModes = m_info.iWhiteBalanceModesSupported;
+        if (supportedModes == 0) {
+            return modes;
+        }
+        if (supportedModes & CCamera::EWBAuto) {
+            modes |= QCamera::WhiteBalanceAuto;          
+        }
+        if (supportedModes & CCamera::EWBDaylight) {
+            modes |= QCamera::WhiteBalanceSunlight;          
+        }
+        if (supportedModes & CCamera::EWBCloudy) {
+            modes |= QCamera::WhiteBalanceCloudy;          
+        }
+        if (supportedModes & CCamera::EWBTungsten) {
+            modes |= QCamera::WhiteBalanceTungsten;  
+            modes |= QCamera::WhiteBalanceIncandescent;
+        }
+        if (supportedModes & CCamera::EWBFluorescent) {
+            modes |= QCamera::WhiteBalanceFluorescent;          
+        }
+        if (supportedModes & CCamera::EWBFlash) {
+            modes |= QCamera::WhiteBalanceFlash;          
+        }
+        if (supportedModes & CCamera::EWBBeach) {
+            modes |= QCamera::WhiteBalanceSunset;          
+        }
+        if (supportedModes & CCamera::EWBManual) {
+            modes |= QCamera::WhiteBalanceManual;          
+        }
+        if (supportedModes & CCamera::EWBShade) {
+            modes |= QCamera::WhiteBalanceShade;          
+        }
+    }
+    return modes;
 }
 
 void S60CameraSession::updateVideoCaptureCodecs()
