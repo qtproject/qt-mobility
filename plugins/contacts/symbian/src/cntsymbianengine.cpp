@@ -824,6 +824,8 @@ QString CntSymbianEngine::managerName() const
  * This will be replaced by the thread request worker when it is stable.
  */
 
+
+
 /*! \reimp */
 void CntSymbianEngine::requestDestroyed(QContactAbstractRequest* req)
 {
@@ -833,8 +835,9 @@ void CntSymbianEngine::requestDestroyed(QContactAbstractRequest* req)
 /*! \reimp */
 bool CntSymbianEngine::startRequest(QContactAbstractRequest* req)
 {
-    m_asynchronousOperations.enqueue(req);
-    updateRequestState(req, QContactManager::NoError, QContactAbstractRequest::ActiveState);
+    if (!m_asynchronousOperations.contains(req))
+        m_asynchronousOperations.enqueue(req);
+    updateRequestState(req, QContactAbstractRequest::ActiveState);
     QTimer::singleShot(0, this, SLOT(performAsynchronousOperation()));
     return true;
 }
@@ -842,7 +845,7 @@ bool CntSymbianEngine::startRequest(QContactAbstractRequest* req)
 /*! \reimp */
 bool CntSymbianEngine::cancelRequest(QContactAbstractRequest* req)
 {
-    updateRequestState(req, QContactManager::NoError, QContactAbstractRequest::CanceledState);
+    updateRequestState(req, QContactAbstractRequest::CanceledState);
     return true;
 }
 
@@ -906,7 +909,9 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, defs, operationError);
 
             // update the request with the results.
-            updateContactFetchRequest(r, requestedContacts, operationError, QContactAbstractRequest::FinishedState);
+            if (!requestedContacts.isEmpty() || operationError != QContactManager::NoError)
+                updateContactFetchRequest(r, requestedContacts, operationError); // emit resultsAvailable()
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -919,7 +924,9 @@ void CntSymbianEngine::performAsynchronousOperation()
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
 
-            updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
+            if (!requestedContactIds.isEmpty() || operationError != QContactManager::NoError)
+                updateContactLocalIdFetchRequest(r, requestedContactIds, operationError); // emit resultsAvailable()
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -932,7 +939,8 @@ void CntSymbianEngine::performAsynchronousOperation()
             QMap<int, QContactManager::Error> errorMap;
             saveContacts(&contacts, &errorMap, operationError);
 
-            updateContactSaveRequest(r, contacts, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            updateContactSaveRequest(r, contacts, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -944,21 +952,23 @@ void CntSymbianEngine::performAsynchronousOperation()
             // if a failure occurred, the request error will be set to the most recent
             // error that occurred during the remove operation.
             QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(currentRequest);
-            QContactFilter filter = r->filter();
-
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> contactsToRemove = QContactManagerEngine::contactIds(filter, QList<QContactSortOrder>(), operationError);
+            QList<QContactLocalId> contactsToRemove = r->contactIds();
+            QMap<int, QContactManager::Error> errorMap;
 
             for (int i = 0; i < contactsToRemove.size(); i++) {
                 QContactManager::Error tempError;
                 removeContact(contactsToRemove.at(i), changeSet, tempError);
 
-                if (tempError != QContactManager::NoError)
+                if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
+                }
             }
 
-            // there are no results, so just update the status with the error.
-            updateRequestState(currentRequest, operationError, QContactAbstractRequest::FinishedState);
+            if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
+                updateContactRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -983,7 +993,9 @@ void CntSymbianEngine::performAsynchronousOperation()
                 }
             }
 
-            updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            if (!errorMap.isEmpty() || !requestedDefinitions.isEmpty() || operationError != QContactManager::NoError)
+                updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap); // emit resultsAvailable()
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1010,7 +1022,8 @@ void CntSymbianEngine::performAsynchronousOperation()
 //            }
 //
 //            // update the request with the results.
-//            updateDefinitionSaveRequest(r, savedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
+//            updateDefinitionSaveRequest(r, savedDefinitions, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
+//            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
 //        }
 //        break;
 //
@@ -1033,7 +1046,9 @@ void CntSymbianEngine::performAsynchronousOperation()
 //            }
 //
 //            // there are no results, so just update the status with the error.
-//            updateDefinitionRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
+//            if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
+//                updateDefinitionRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
+//            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
 //        }
 //        break;
 
@@ -1091,7 +1106,9 @@ void CntSymbianEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            // XXX updateRequest(currentRequest, requestedRelationships, operationError, operationErrors, QContactAbstractRequest::FinishedState);
+            if (!requestedRelationships.isEmpty() || operationError != QContactManager::NoError)
+                updateRelationshipFetchRequest(r, requestedRelationships, operationError); // emit resultsAvailable()
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1099,30 +1116,26 @@ void CntSymbianEngine::performAsynchronousOperation()
         {
             QContactRelationshipRemoveRequest* r = static_cast<QContactRelationshipRemoveRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactManager::Error> operationErrors;
-            QList<QContactRelationship> matchingRelationships = relationships(r->relationshipType(), r->first(), QContactRelationshipFilter::First, operationError);
+            QList<QContactRelationship> relationshipsToRemove = r->relationships();
+            QMap<int, QContactManager::Error> errorMap;
 
             bool foundMatch = false;
-            for (int i = 0; i < matchingRelationships.size(); i++) {
+            for (int i = 0; i < relationshipsToRemove.size(); i++) {
                 QContactManager::Error tempError;
-                QContactRelationship possibleMatch = matchingRelationships.at(i);
+                removeRelationship(relationshipsToRemove.at(i), tempError);
 
-                // if the second criteria matches, or is default constructed id, then we have a match and should remove it.
-                if (r->second() == QContactId() || possibleMatch.second() == r->second()) {
-                    foundMatch = true;
-                    removeRelationship(matchingRelationships.at(i), tempError);
-                    operationErrors.append(tempError);
-
-                    if (tempError != QContactManager::NoError)
-                        operationError = tempError;
+                if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
+                    operationError = tempError;
                 }
             }
 
             if (foundMatch == false && operationError == QContactManager::NoError)
                 operationError = QContactManager::DoesNotExistError;
 
-            // there are no results, so just update the status with the error.
-            // XXX updateRequestState(currentRequest, operationError, operationErrors, QContactAbstractRequest::FinishedState);
+            if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
+                updateRelationshipRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1130,7 +1143,7 @@ void CntSymbianEngine::performAsynchronousOperation()
         {
             QContactRelationshipSaveRequest* r = static_cast<QContactRelationshipSaveRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactManager::Error> operationErrors;
+            QMap<int, QContactManager::Error> errorMap;
             QList<QContactRelationship> requestRelationships = r->relationships();
             QList<QContactRelationship> savedRelationships;
 
@@ -1139,14 +1152,16 @@ void CntSymbianEngine::performAsynchronousOperation()
                 QContactRelationship current = requestRelationships.at(i);
                 saveRelationship(&current, tempError);
                 savedRelationships.append(current);
-                operationErrors.append(tempError);
 
-                if (tempError != QContactManager::NoError)
+                if (tempError != QContactManager::NoError) {
+                    errorMap.insert(i, tempError);
                     operationError = tempError;
+                }
             }
 
             // update the request with the results.
-            // XXX updateRequest(currentRequest, savedRelationships, operationError, operationErrors, QContactAbstractRequest::FinishedState);
+            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
+            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1157,7 +1172,6 @@ void CntSymbianEngine::performAsynchronousOperation()
     // now emit any signals we have to emit
     changeSet.emitSignals(this);
 }
-
 
 #ifndef PBK_UNIT_TEST
 /* Factory lives here in the basement */
