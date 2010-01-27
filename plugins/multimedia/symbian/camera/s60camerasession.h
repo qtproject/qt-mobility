@@ -75,6 +75,8 @@ struct VideoControllerData
     QString formatDescription;
 };
 
+class S60CameraService;
+
 class S60CameraSession : public QObject,
     public MCameraEngineObserver,
     public MVideoRecorderUtilityObserver
@@ -175,7 +177,8 @@ public:
     void setBitrate(const int &bitrate);
     QSize videoResolution() const;
     void setVideoResolution(const QSize &resolution);
-
+    QString videoCaptureCodecDescription(const QString &codecName);
+    
     //camerafocuscontrol
     void startFocus();
     void cancelFocus();
@@ -265,10 +268,6 @@ private:
     CVideoRecorderUtility* m_videoUtility;
     QHash<QString, VideoControllerData> m_videoControllerMap;
     QString m_videoCodec;
-  /*  QSize m_resolution;
-    int m_bitRate;
-    int m_videoQuality;
-    qreal m_frameRate;*/
 
 };
 

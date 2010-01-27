@@ -46,6 +46,7 @@
 #include "s60camerasession.h"
 #include "s60viewfinderwidget.h"
 #include "s60videoencoder.h"
+#include "s60cameraservice.h"
 
 #include <fbs.h>
 #include <qglobal.h>
@@ -73,6 +74,7 @@ S60CameraSession::S60CameraSession(QObject *parent)
     , m_advancedSettings(NULL)
     , m_videoUtility(NULL)
 {
+    
     // create initial camera
     resetCamera();
 
@@ -1335,6 +1337,12 @@ void S60CameraSession::setVideoCaptureCodec(const QString &codecName)
 
     m_videoCodec = codecName;
 }
+
+QString S60CameraSession::videoCaptureCodecDescription(const QString &codecName)
+{
+    return m_videoControllerMap[codecName].formatDescription;
+}
+
 
 int S60CameraSession::bitrate() const
 {

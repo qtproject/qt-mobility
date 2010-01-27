@@ -43,7 +43,6 @@
 #include "s60camerasession.h"
 
 #include <QtCore/qdebug.h>
-#include <QFile>
 
 S60VideoEncoder::S60VideoEncoder(QObject *parent)
     :QVideoEncoderControl(parent)
