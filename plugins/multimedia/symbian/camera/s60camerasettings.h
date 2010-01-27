@@ -104,7 +104,7 @@ private:
     bool queryAdvancedSettingsInfo();
 
 private:
-#ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+#if defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER)
     CCamera::CCameraAdvancedSettings *m_advancedSettings;
 #endif
     CCameraEngine *m_cameraEngine;

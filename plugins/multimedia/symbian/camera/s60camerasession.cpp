@@ -108,8 +108,7 @@ void S60CameraSession::resetCamera()
     delete m_advancedSettings;
     m_advancedSettings = NULL;
     delete m_cameraEngine;
-    m_cameraEngine = NULL;
-    delete m_advancedSettings;
+    m_cameraEngine = NULL;  
     m_error = KErrNone;
     m_state = QCamera::StoppedState;
     qDebug() << "S60CameraSession::resetCamera. Creating new camera with index=" << m_deviceIndex;
@@ -206,20 +205,23 @@ bool S60CameraSession::deviceReady()
 
 int S60CameraSession::framerate() const
 {
-    if (m_videoUtility)
-        return m_videoUtility->VideoFrameRateL();
+    int framerate = 0;
+    if (m_videoUtility) {
+        TRAPD(err, framerate = m_videoUtility->VideoFrameRateL());
+        if (err == KErrNone)
+            return framerate;
+    }
     return -1;
 }
 
 void S60CameraSession::setFrameRate(int rate)
 {
     if (m_videoUtility)
-        m_videoUtility->SetVideoFrameRateL(rate);
+        TRAP_IGNORE(m_videoUtility->SetVideoFrameRateL(rate));
 }
 
 int S60CameraSession::brightness() const
 {
-
     return -1;
 }
 
@@ -1336,33 +1338,38 @@ void S60CameraSession::setVideoCaptureCodec(const QString &codecName)
 
 int S60CameraSession::bitrate() const
 {
-    if (m_videoUtility)
-        return m_videoUtility->VideoBitRateL();
+    int bitrate = 0;
+    if (m_videoUtility) {
+        TRAPD(err, bitrate = m_videoUtility->VideoBitRateL());
+        if (err == KErrNone)
+            return bitrate;
+    }    
     return 0;
 }
 
 void S60CameraSession::setBitrate(const int &bitrate)
 {
-    if (m_videoUtility)
-        m_videoUtility->SetVideoBitRateL(bitrate);
-    return;
+    if (m_videoUtility) 
+        TRAP_IGNORE(m_videoUtility->SetVideoBitRateL(bitrate));         
 }
 
 QSize S60CameraSession::videoResolution() const
 {
     TSize size(0,0);
-    if (m_videoUtility)
-        m_videoUtility->GetVideoFrameSizeL(size);
-    return QSize(size.iWidth, size.iHeight);
+    if (m_videoUtility) {
+        TRAPD(err, m_videoUtility->GetVideoFrameSizeL(size));
+        if (err == KErrNone)
+            return QSize(size.iWidth, size.iHeight);            
+    }
+    return QSize();    
 }
 
 void S60CameraSession::setVideoResolution(const QSize &resolution)
 {
     if (m_videoUtility) {
         TSize size(resolution.width(), resolution.height());
-        m_videoUtility->SetVideoFrameSizeL(size);
+        TRAP_IGNORE(m_videoUtility->SetVideoFrameSizeL(size));
     }
-
 }
 
 void S60CameraSession::MvruoOpenComplete(TInt aError)

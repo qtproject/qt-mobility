@@ -111,7 +111,7 @@ public:
     bool backlightCompensation() const;
     void setBacklightCompensation(bool);
     int rotation() const;
-    void setRotation(int r);;
+    void setRotation(int r);
 
     QSize frameSize() const;
     void setFrameSize(const QSize& s);
@@ -265,6 +265,10 @@ private:
     CVideoRecorderUtility* m_videoUtility;
     QHash<QString, VideoControllerData> m_videoControllerMap;
     QString m_videoCodec;
+  /*  QSize m_resolution;
+    int m_bitRate;
+    int m_videoQuality;
+    qreal m_frameRate;*/
 
 };
 
