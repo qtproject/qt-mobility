@@ -208,13 +208,19 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(const QList<QContactSortOrde
  */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
+    // TODO: implementation for definitionRestrictions!
     Q_UNUSED(definitionRestrictions);
     QContact* contact = new QContact();
     TRAPD(err, *contact = fetchContactL(contactId));
     CntSymbianTransformError::transformError(err, error);
     if(error == QContactManager::NoError) {
         updateDisplayLabel(*contact);
-        QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, error);
+        QContactManager::Error relationshipError;
+        QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, relationshipError);
+        if (relationshipError != QContactManager::NoError &&
+            relationshipError != QContactManager::DoesNotExistError) { // means that no relationships found
+            error = relationshipError;
+        }
         QContactManagerEngine::setContactRelationships(contact, relationships);
     }
     return *QScopedPointer<QContact>(contact);
