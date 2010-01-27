@@ -101,6 +101,8 @@ Q_GLOBAL_STATIC(CMTMEngine,mtmEngine);
 CMTMEngine::CMTMEngine()
  : CActive(EPriorityStandard)
 {
+    iFsSession.Connect();
+
     TRAPD(err, 
         ipMsvSession = CMsvSession::OpenSyncL(*this);
         iSessionReady = ETrue;
@@ -138,15 +140,15 @@ CMTMEngine::CMTMEngine()
     
     TRAPD(err2,
         TBuf<KMaxPath> privatePath;
-        CEikonEnv::Static()->FsSession().CreatePrivatePath(EDriveC);
-        CEikonEnv::Static()->FsSession().PrivatePath(privatePath);
+        FsSession().CreatePrivatePath(EDriveC);
+        FsSession().PrivatePath(privatePath);
         iPath.Append(_L("c:"));
         iPath.Append(privatePath);
         iPath.Append(_L("tempattachments\\"));                         
-        CFileMan* pFileMan = CFileMan::NewL(CEikonEnv::Static()->FsSession());
+        CFileMan* pFileMan = CFileMan::NewL(FsSession());
         CleanupStack::PushL(pFileMan);
         pFileMan->RmDir(iPath);
-        CEikonEnv::Static()->FsSession().MkDirAll(iPath);
+        FsSession().MkDirAll(iPath);
         CleanupStack::PopAndDestroy(pFileMan);
     );
     Q_UNUSED(err2)
@@ -168,18 +170,20 @@ CMTMEngine::~CMTMEngine()
     
     TRAPD(error,
         TBuf<KMaxPath> privatePath;
-        CEikonEnv::Static()->FsSession().CreatePrivatePath(EDriveC);
-        CEikonEnv::Static()->FsSession().PrivatePath(privatePath);
+        FsSession().CreatePrivatePath(EDriveC);
+        FsSession().PrivatePath(privatePath);
         TBuf<KMaxPath> path;
         path.Append(_L("c:"));
         path.Append(privatePath);
         path.Append(_L("tempattachments\\"));                         
-        CFileMan* pFileMan=CFileMan::NewL(CEikonEnv::Static()->FsSession());
+        CFileMan* pFileMan=CFileMan::NewL(FsSession());
         CleanupStack::PushL(pFileMan);
         pFileMan->RmDir(path);
         CleanupStack::PopAndDestroy(pFileMan);
         );
     Q_UNUSED(error)
+    
+    iFsSession.Close();
 }
 
 CMTMEngine* CMTMEngine::instance()
@@ -587,14 +591,12 @@ bool CMTMEngine::addMessage(QMessage* message)
         if (message->parentAccountId().isValid()){    
             QMessageAccount account = QMessageAccount(message->parentAccountId());
             QMessage::TypeFlags types = account.messageTypes();
-            if (types == QMessage::Email){
-                message->setType(QMessage::Email);
-            }
-            else if (types == QMessage::Mms){
-                message->setType(QMessage::Mms);
-            }
-            if (types == QMessage::Sms){
+            if (types & QMessage::Sms) {
                 message->setType(QMessage::Sms);
+            } else if (types & QMessage::Mms) {
+                message->setType(QMessage::Mms);
+            } else if (types & QMessage::Email) {
+                message->setType(QMessage::Email);
             }
         } else {
             return false;
@@ -625,14 +627,12 @@ bool CMTMEngine::updateMessage(QMessage* m)
     if (m->parentAccountId().isValid()){    
         QMessageAccount account = QMessageAccount(m->parentAccountId());
         QMessage::TypeFlags types = account.messageTypes();
-        if (types == QMessage::Email){
-            m->setType(QMessage::Email);
-        }
-        else if (types == QMessage::Mms){
-            m->setType(QMessage::Mms);
-        }
-        if (types == QMessage::Sms){
+        if (types & QMessage::Sms){
             m->setType(QMessage::Sms);
+        } else if (types & QMessage::Mms){
+            m->setType(QMessage::Mms);
+        } else if (types & QMessage::Email){
+            m->setType(QMessage::Email);
         }
     } 
     
@@ -726,18 +726,16 @@ bool CMTMEngine::composeMessage(const QMessage &message)
     if (message.parentAccountId().isValid()){    
         QMessageAccount account = QMessageAccount(message.parentAccountId());
         QMessage::TypeFlags types = account.messageTypes();
-        if (types == QMessage::Email){
-            TRAPD(err, retVal = composeEmailL(message));
+        if (types & QMessage::Sms){
+            TRAPD(err, retVal = composeSMSL(message));
             if (err != KErrNone)
                 retVal = false;
-        }
-        else if (types == QMessage::Mms){
+        } else if (types & QMessage::Mms){
             TRAPD(err, retVal = composeMMSL(message));
             if (err != KErrNone)
                 retVal = false;
-        }
-        if (types == QMessage::Sms){
-            TRAPD(err, retVal = composeSMSL(message));
+        } else if (types & QMessage::Email){
+            TRAPD(err, retVal = composeEmailL(message));
             if (err != KErrNone)
                 retVal = false;
         }
@@ -2641,7 +2639,7 @@ void CMTMEngine::storeMMSL(QMessage &message)
             attachmentFile.Append(attachmentPath);    
         
             RFile attachment;    
-            User::LeaveIfError(attachment.Open(CEikonEnv::Static()->FsSession(),attachmentFile, EFileShareReadersOnly | EFileRead));    
+            User::LeaveIfError(attachment.Open(FsSession(),attachmentFile, EFileShareReadersOnly | EFileRead));    
             CleanupClosePushL(attachment);  
             
             TInt fileSize;
@@ -2671,7 +2669,7 @@ void CMTMEngine::storeMMSL(QMessage &message)
                 return;
             }
             file2.Close();
-            User::LeaveIfError(file2.Open(CEikonEnv::Static()->FsSession(),tempFileName, EFileShareAny|EFileRead));
+            User::LeaveIfError(file2.Open(FsSession(),tempFileName, EFileShareAny|EFileRead));
             // Mime header    
             CMsvMimeHeaders* mimeHeaders = CMsvMimeHeaders::NewL();    
             CleanupStack::PushL(mimeHeaders); 
@@ -2924,7 +2922,7 @@ void CMTMEngine::updateMMSL(QMessage &message)
             attachmentFile.Append(attachmentPath);    
         
             RFile attachment;    
-            User::LeaveIfError(attachment.Open(CEikonEnv::Static()->FsSession(),attachmentFile, EFileShareReadersOnly | EFileRead));    
+            User::LeaveIfError(attachment.Open(FsSession(),attachmentFile, EFileShareReadersOnly | EFileRead));    
             CleanupClosePushL(attachment);  
             
             TInt fileSize;
@@ -2954,7 +2952,7 @@ void CMTMEngine::updateMMSL(QMessage &message)
                 return;
             }
             file2.Close();
-            User::LeaveIfError(file2.Open(CEikonEnv::Static()->FsSession(),tempFileName, EFileShareAny|EFileRead));
+            User::LeaveIfError(file2.Open(FsSession(),tempFileName, EFileShareAny|EFileRead));
             // Mime header    
             CMsvMimeHeaders* mimeHeaders = CMsvMimeHeaders::NewL();    
             CleanupStack::PushL(mimeHeaders); 
@@ -3130,7 +3128,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
             attachmentFile.Append(attachmentPath);    
         
             RFile attachment;    
-            User::LeaveIfError(attachment.Open(CEikonEnv::Static()->FsSession(),attachmentFile, EFileShareReadersOnly | EFileRead));    
+            User::LeaveIfError(attachment.Open(FsSession(),attachmentFile, EFileShareReadersOnly | EFileRead));    
             CleanupClosePushL(attachment);   
             
             CMsvAttachment* attachmentInfo = CMsvAttachment::NewL(CMsvAttachment::EMsvFile);
@@ -3353,7 +3351,7 @@ QString CMTMEngine::privateFolderPath()
     
     // Get Application private folder path from FileSession
     TPath applicationPrivateFolderPathWithoutDriveLetter;
-    CEikonEnv::Static()->FsSession().PrivatePath(applicationPrivateFolderPathWithoutDriveLetter);
+    FsSession().PrivatePath(applicationPrivateFolderPathWithoutDriveLetter);
 
     // Combine drive letter and private folder path to complete path
     TPath driveLetterAndPath;
@@ -3550,7 +3548,7 @@ void CMTMEngine::storeEmailL(QMessage &message)
                 attachmentFileName.Append(attachmentPath);    
             
                 RFile attachmentFile;    
-                User::LeaveIfError(attachmentFile.Open(CEikonEnv::Static()->FsSession(), attachmentFileName,
+                User::LeaveIfError(attachmentFile.Open(FsSession(), attachmentFileName,
                                                        EFileShareReadersOnly | EFileRead));    
                 CleanupClosePushL(attachmentFile);   
                 
