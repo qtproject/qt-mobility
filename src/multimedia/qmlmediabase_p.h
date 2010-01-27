@@ -81,7 +81,7 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
 
-    qreal bufferStatus() const;
+    qreal bufferProgress() const;
 
     bool isSeekable() const;
 
@@ -114,7 +114,7 @@ protected:
     virtual void volumeChanged() = 0;
     virtual void mutedChanged() = 0;
 
-    virtual void bufferStatusChanged() = 0;
+    virtual void bufferProgressChanged() = 0;
 
     virtual void seekableChanged() = 0;
     virtual void playbackRateChanged() = 0;

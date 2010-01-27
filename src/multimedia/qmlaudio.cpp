@@ -177,7 +177,7 @@ QmlAudio::Status QmlAudio::status() const
 */
 
 /*!
-    \qmlproperty qreal Audio::bufferStatus
+    \qmlproperty qreal Audio::bufferProgress
 
     This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0
     (full).

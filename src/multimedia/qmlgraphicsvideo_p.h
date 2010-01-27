@@ -68,7 +68,7 @@ class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(bool hasVideo READ hasVideo NOTIFY hasVideoChanged)
-    Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
+    Q_PROPERTY(int bufferProgress READ bufferProgress NOTIFY bufferProgressChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
     Q_PROPERTY(Error error READ error NOTIFY errorChanged)
@@ -141,7 +141,7 @@ Q_SIGNALS:
     void mutedChanged();
     void hasVideoChanged();
 
-    void bufferStatusChanged();
+    void bufferProgressChanged();
 
     void seekableChanged();
     void playbackRateChanged();

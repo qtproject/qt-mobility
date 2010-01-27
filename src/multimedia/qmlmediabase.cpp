@@ -102,7 +102,7 @@ protected:
         if (m_media->m_state == QMediaPlayer::PlayingState)
             emit m_media->positionChanged();
         if (m_media->m_status == QMediaPlayer::BufferingMedia || QMediaPlayer::StalledMedia)
-            emit m_media->bufferStatusChanged();
+            emit m_media->bufferProgressChanged();
     }
 
 private:
@@ -297,7 +297,7 @@ void QmlMediaBase::setMuted(bool muted)
     m_playerControl->setMuted(muted);
 }
 
-qreal QmlMediaBase::bufferStatus() const
+qreal QmlMediaBase::bufferProgress() const
 {
     return qreal(m_playerControl->bufferStatus()) / 100;
 }

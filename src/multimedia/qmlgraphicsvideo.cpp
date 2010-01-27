@@ -224,7 +224,7 @@ bool QmlGraphicsVideo::hasVideo() const
 }
 
 /*!
-    \qmlproperty qreal Video::bufferStatus
+    \qmlproperty qreal Video::bufferProgress
 
     This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0
     (full).
