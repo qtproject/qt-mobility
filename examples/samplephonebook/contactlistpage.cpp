@@ -212,7 +212,8 @@ void ContactListPage::importClicked()
         if (reader.startReading() && reader.waitForFinished()) {
             QVersitContactImporter importer;
             QList<QContact> contacts = importer.importContacts(reader.results());
-            m_manager->saveContacts(&contacts);
+            QMap<int, QContactManager::Error> errorMap;
+            m_manager->saveContacts(&contacts, &errorMap);
             rebuildList(m_currentFilter);
         }
     }
@@ -224,11 +225,7 @@ void ContactListPage::exportClicked()
         qWarning() << "No manager selected; cannot import";
         return;
     }
-    QList<QContactLocalId> contactIds = m_manager->contacts(m_currentFilter);
-    QList<QContact> contacts;
-    foreach (const QContactLocalId& id, contactIds) {
-        contacts.append(m_manager->contact(id));
-    }
+    QList<QContact> contacts = m_manager->contacts(QList<QContactSortOrder>(), QStringList());
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save vCard"),
                                                     "./contacts.vcf",
                                                     tr("vCards (*.vcf)"));
