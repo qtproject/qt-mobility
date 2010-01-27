@@ -96,18 +96,18 @@ QContactFilter QContactRemoveRequest::filter() const
 }
 
 
-/*! Sets the list of contacts which will be removed to \a contacts */
-void QContactRemoveRequest::setContacts(const QList<QContact>& contacts)
+/*! Sets the list of ids of contacts which will be removed to \a contactIds */
+void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)
 {
     Q_D(QContactRemoveRequest);
-    d->m_contacts = contacts;
+    d->m_contactIds = contactIds;
 }
 
-/*! Returns the list of contacts which will be removed */
-QList<QContact> QContactRemoveRequest::contacts() const
+/*! Returns the list of ids of contacts which will be removed */
+QList<QContactLocalId> QContactRemoveRequest::contactIds() const
 {
     Q_D(const QContactRemoveRequest);
-    return d->m_contacts;
+    return d->m_contactIds;
 }
 
 /*! Returns the map of input contact list indices to errors which occurred */

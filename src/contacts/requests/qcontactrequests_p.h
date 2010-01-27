@@ -129,7 +129,7 @@ public:
 
     QContactFilter m_filter;    // deprecated, to be removed
 
-    QList<QContact> m_contacts;
+    QList<QContactLocalId> m_contactIds;
     QMap<int, QContactManager::Error> m_errors;
 };
 
