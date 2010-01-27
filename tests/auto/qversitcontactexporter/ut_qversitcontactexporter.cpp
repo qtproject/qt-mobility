@@ -202,7 +202,7 @@ void UT_QVersitContactExporter::testConvertContact()
 
     // Adding name to the contact
     QContactName name;
-    name.setFirst(QString::fromAscii("Moido"));
+    name.setFirstName(QString::fromAscii("Moido"));
     contact.saveDetail(&name);
 
     // Adding phone number to the Contact.
@@ -262,7 +262,7 @@ void UT_QVersitContactExporter::testContactDetailHandler()
     // Test that preProcessDetail return true stops the exporter from doing anything.
     contact.clearDetails();
     QContactName contactName;
-    contactName.setFirst(QLatin1String("John"));
+    contactName.setFirstName(QLatin1String("John"));
     contact.saveDetail(&contactName);
     detailHandler = MyQVersitContactExporterDetailHandler();
     detailHandler.mPreProcess = true;
@@ -281,9 +281,9 @@ void UT_QVersitContactExporter::testEncodeName()
     QContactName name;
 
     // vCard 2.1
-    name.setFirst(QString::fromAscii("Heido"));
-    name.setLast(QString::fromAscii("HH"));
-    name.setMiddle(QString::fromAscii("A"));
+    name.setFirstName(QString::fromAscii("Heido"));
+    name.setLastName(QString::fromAscii("HH"));
+    name.setMiddleName(QString::fromAscii("A"));
     name.setPrefix(QString::fromAscii("Mr."));
     name.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&name);
@@ -311,9 +311,9 @@ void UT_QVersitContactExporter::testEncodeName()
 
     // vCard 3.0, special characters in the name parts are backslash escaped
     contact.removeDetail(&name);
-    name.setFirst(QString::fromAscii("Hom,er"));
-    name.setLast(QString::fromAscii("Simp;son"));
-    name.setMiddle(QString::fromAscii("J;"));
+    name.setFirstName(QString::fromAscii("Hom,er"));
+    name.setLastName(QString::fromAscii("Simp;son"));
+    name.setMiddleName(QString::fromAscii("J;"));
     name.setPrefix(QString::fromAscii(";Mr."));
     name.setSuffix(QString::fromAscii("Sir,"));
     contact.saveDetail(&name);
@@ -601,7 +601,7 @@ void UT_QVersitContactExporter::testEncodeNote()
 void UT_QVersitContactExporter::testEncodeGeoLocation()
 {
     QContact contact;
-    QContactGeolocation geoLocation;
+    QContactGeoLocation geoLocation;
     QString longitude = QString::fromAscii("99.9");
     geoLocation.setLongitude(longitude.toDouble());
     QString latitude = QString::fromAscii("98.9");
@@ -1225,9 +1225,9 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
     QCOMPARE(document.properties().count(), 0);
 
     // No display label, but QContactName found
-    contactName.setFirst(QString::fromAscii("First"));
-    contactName.setLast(QString::fromAscii("Last"));
-    contactName.setMiddle(QString::fromAscii("Middle"));
+    contactName.setFirstName(QString::fromAscii("First"));
+    contactName.setLastName(QString::fromAscii("Last"));
+    contactName.setMiddleName(QString::fromAscii("Middle"));
     contact.saveDetail(&contactName);
     contacts.clear();
     contacts.append(contact);

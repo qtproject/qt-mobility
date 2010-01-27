@@ -177,9 +177,9 @@ void UT_QVersitContactImporter::testName()
     documentList.append(document);
     QContact contact = mImporter->importContacts(documentList).first();
     QContactName name = (QContactName)contact.detail(QContactName::DefinitionName);
-    QCOMPARE(name.last(),value[0]);
-    QCOMPARE(name.first(),value[1]);
-    QCOMPARE(name.middle(),value[2]);
+    QCOMPARE(name.lastName(),value[0]);
+    QCOMPARE(name.firstName(),value[1]);
+    QCOMPARE(name.middleName(),value[2]);
     QCOMPARE(name.prefix(),value[3]);
     QCOMPARE(name.suffix(),value[4]);
 
@@ -201,9 +201,9 @@ void UT_QVersitContactImporter::testName()
     QCOMPARE(names.count(),1);
     // anotherValue should be discarded, so check for value
     name = (QContactName)names[0];
-    QCOMPARE(name.last(),value[0]);
-    QCOMPARE(name.first(),value[1]);
-    QCOMPARE(name.middle(),value[2]);
+    QCOMPARE(name.lastName(),value[0]);
+    QCOMPARE(name.firstName(),value[1]);
+    QCOMPARE(name.middleName(),value[2]);
     QCOMPARE(name.prefix(),value[3]);
     QCOMPARE(name.suffix(),value[4]);
 }
@@ -224,9 +224,9 @@ void UT_QVersitContactImporter::testNameWithFormatted()
     documentList.append(document);
     QContact contact = mImporter->importContacts(documentList).first();
     QContactName name = static_cast<QContactName>(contact.detail(QContactName::DefinitionName));
-    QCOMPARE(name.first(), QString::fromAscii("First"));
-    QCOMPARE(name.last(), QString::fromAscii("Last"));
-    QCOMPARE(name.middle(), QString::fromAscii("Middle"));
+    QCOMPARE(name.firstName(), QString::fromAscii("First"));
+    QCOMPARE(name.lastName(), QString::fromAscii("Last"));
+    QCOMPARE(name.middleName(), QString::fromAscii("Middle"));
     QCOMPARE(name.prefix(), QString::fromAscii("Prefix"));
     QCOMPARE(name.suffix(), QString::fromAscii("Suffix"));
     QCOMPARE(name.customLabel(), QString::fromAscii("First Last"));
@@ -916,7 +916,7 @@ void UT_QVersitContactImporter::testGeo()
     QList<QVersitDocument> documentList;
     documentList.append(document);
     QContact contact = mImporter->importContacts(documentList).first();
-    QContactGeolocation geo = (QContactGeolocation)contact.detail(QContactGeolocation::DefinitionName);
+    QContactGeoLocation geo = (QContactGeoLocation)contact.detail(QContactGeoLocation::DefinitionName);
     QString str;
     str.setNum(geo.longitude(),'.',2);
     QCOMPARE(str,val[0]);
