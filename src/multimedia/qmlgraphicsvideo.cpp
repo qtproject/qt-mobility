@@ -149,21 +149,15 @@ QmlGraphicsVideo::~QmlGraphicsVideo()
 */
 
 /*!
-    \qmlproperty bool Video::isPlaying
+    \qmlproperty bool Video::playing
 
     This property holds whether the video is playing.
 */
 
 /*!
-    \qmlproperty bool Video::isPaused
+    \qmlproperty bool Video::paused
 
     This property holds whether the video is paused.
-*/
-
-/*!
-    \qmlproperty bool Video::isStopped
-
-    This property holds whether the video is stopped.
 */
 
 /*!
@@ -172,16 +166,22 @@ QmlGraphicsVideo::~QmlGraphicsVideo()
     This property holds the status of video loading. It can be one of:
 
     \list
-    \o Media.NoMedia - no video has been set.
-    \o Media.Loading - the video is currently being loaded.
-    \o Media.Loaded - the video has been loaded.
-    \o Media.Buffering - the video is buffering data.
-    \o Media.Stalled - playback has been interrupted while the video is buffering data.
-    \o Media.Buffered - the video has buffered data.
-    \o Media.EndOfMedia - the video has played to the end.
-    \o Media.UnknownStatus - the status of the video is unknown.
+    \o NoMedia - no video has been set.
+    \o Loading - the video is currently being loaded.
+    \o Loaded - the video has been loaded.
+    \o Buffering - the video is buffering data.
+    \o Stalled - playback has been interrupted while the video is buffering data.
+    \o Buffered - the video has buffered data.
+    \o EndOfMedia - the video has played to the end.
+    \o InvalidMedia - the video cannot be played.
+    \o UnknownStatus - the status of the video is unknown.
     \endlist
 */
+
+QmlGraphicsVideo::Status QmlGraphicsVideo::status() const
+{
+    return Status(m_status);
+}
 
 /*!
     \qmlproperty int Video::duration
@@ -245,15 +245,21 @@ bool QmlGraphicsVideo::isVideoAvailable() const
     This property holds the error state of the video.  It can be one of:
 
     \list
-    \o Media.NoError - there is no current error.
-    \o Media.ResourceError - the video cannot be played due to a problem allocating resources.
-    \o Media.FormatError - the video format is not supported.
-    \o Media.NetworkError - the video cannot be played due to network issues.
-    \o Media.AccessDenied - the video cannot be played due to insufficient permissions.
-    \o Media.ServiceMissing -  the video cannot be played because the media service could not be
+    \o NoError - there is no current error.
+    \o ResourceError - the video cannot be played due to a problem allocating resources.
+    \o FormatError - the video format is not supported.
+    \o NetworkError - the video cannot be played due to network issues.
+    \o AccessDenied - the video cannot be played due to insufficient permissions.
+    \o ServiceMissing -  the video cannot be played because the media service could not be
     instantiated.
     \endlist
 */
+
+
+QmlGraphicsVideo::Error QmlGraphicsVideo::error() const
+{
+    return Error(m_error);
+}
 
 /*!
     \qmlproperty enum Video::errorString

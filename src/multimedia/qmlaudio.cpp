@@ -133,16 +133,22 @@ void QmlAudio::stop()
     This property holds the status of audio loading. It can be one of:
 
     \list
-    \o Media.NoMedia - no audio has been set.
-    \o Media.Loading - the audio is currently being loaded.
-    \o Media.Loaded - the audio has been loaded.
-    \o Media.Buffering - the audio is buffering data.
-    \o Media.Stalled - playback has been interrupted while the audio is buffering data.
-    \o Media.Buffered - the audio has buffered data.
-    \o Media.EndOfMedia - the audio has played to the end.
-    \o Media.UnknownStatus - the status of the audio is unknown.
+    \o NoMedia - no audio has been set.
+    \o Loading - the audio is currently being loaded.
+    \o Loaded - the audio has been loaded.
+    \o Buffering - the audio is buffering data.
+    \o Stalled - playback has been interrupted while the audio is buffering data.
+    \o Buffered - the audio has buffered data.
+    \o EndOfMedia - the audio has played to the end.
+    \o InvalidMedia - the audio cannot be played.
+    \o UnknownStatus - the status of the audio is unknown.
     \endlist
 */
+
+QmlAudio::Status QmlAudio::status() const
+{
+    return Status(m_status);
+}
 
 /*!
     \qmlproperty int Audio::duration
@@ -195,15 +201,20 @@ void QmlAudio::stop()
     This property holds the error state of the audio.  It can be one of:
 
     \list
-    \o Media.NoError - there is no current error.
-    \o Media.ResourceError - the audio cannot be played due to a problem allocating resources.
-    \o Media.FormatError - the audio format is not supported.
-    \o Media.NetworkError - the audio cannot be played due to network issues.
-    \o Media.AccessDenied - the audio cannot be played due to insufficient permissions.
-    \o Media.ServiceMissing -  the audio cannot be played because the media service could not be
+    \o NoError - there is no current error.
+    \o ResourceError - the audio cannot be played due to a problem allocating resources.
+    \o FormatError - the audio format is not supported.
+    \o NetworkError - the audio cannot be played due to network issues.
+    \o AccessDenied - the audio cannot be played due to insufficient permissions.
+    \o ServiceMissing -  the audio cannot be played because the media service could not be
     instantiated.
     \endlist
 */
+
+QmlAudio::Error QmlAudio::error() const
+{
+    return Error(m_error);
+}
 
 /*!
     \qmlproperty enum Audio::errorString

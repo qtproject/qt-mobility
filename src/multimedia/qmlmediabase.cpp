@@ -43,6 +43,7 @@
 
 #include <QtCore/qabstractanimation.h>
 #include <QtCore/qcoreevent.h>
+#include <QtCore/qurl.h>
 
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
@@ -260,11 +261,6 @@ void QmlMediaBase::setPaused(bool paused)
         m_playerControl->play();
 }
 
-QmlMedia::Status QmlMediaBase::status() const
-{
-    return QmlMedia::Status(m_status);
-}
-
 int QmlMediaBase::duration() const
 {
     return m_playerControl->duration();
@@ -319,11 +315,6 @@ qreal QmlMediaBase::playbackRate() const
 void QmlMediaBase::setPlaybackRate(qreal rate)
 {
     m_playerControl->setPlaybackRate(rate);
-}
-
-QmlMedia::Error QmlMediaBase::error() const
-{
-    return QmlMedia::Error(m_error);
 }
 
 QString QmlMediaBase::errorString() const

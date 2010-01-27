@@ -112,7 +112,6 @@ contains(QT_CONFIG, declarative) {
     PRIVATE_HEADERS += \
         qmlaudio_p.h \
         qmlgraphicsvideo_p.h \
-        qmlmedia_p.h \
         qmlmediabase_p.h \
         qsoundeffect_p.h \
         wavedecoder.h
@@ -120,7 +119,6 @@ contains(QT_CONFIG, declarative) {
     SOURCES += \
         qmlaudio.cpp \
         qmlgraphicsvideo.cpp \
-        qmlmedia.cpp \
         qmlmediabase.cpp \
         qsoundeffect.cpp \
         wavedecoder.cpp

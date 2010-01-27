@@ -62,7 +62,7 @@ class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
     Q_PROPERTY(bool playing READ isPlaying WRITE setPlaying NOTIFY playingChanged)
     Q_PROPERTY(bool paused READ isPaused WRITE setPaused NOTIFY pausedChanged)
-    Q_PROPERTY(QmlMedia::Status status READ status NOTIFY statusChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -71,16 +71,41 @@ class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
-    Q_PROPERTY(QmlMedia::Error error READ error NOTIFY errorChanged)
+    Q_PROPERTY(Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(FillMode fillMode READ fillMode WRITE setFillMode)
     Q_ENUMS(FillMode)
+    Q_ENUMS(Status)
+    Q_ENUMS(Error)
 public:
     enum FillMode
     {
         Stretch,
         PreserveAspectFit,
         PreserveAspectCrop
+    };
+
+    enum Status
+    {
+        UnknownStatus = QMediaPlayer::UnknownMediaStatus,
+        NoMedia       = QMediaPlayer::NoMedia,
+        Loading       = QMediaPlayer::LoadingMedia,
+        Loaded        = QMediaPlayer::LoadedMedia,
+        Stalled       = QMediaPlayer::StalledMedia,
+        Buffering     = QMediaPlayer::BufferingMedia,
+        Buffered      = QMediaPlayer::BufferedMedia,
+        EndOfMedia    = QMediaPlayer::EndOfMedia,
+        InvalidMedia  = QMediaPlayer::InvalidMedia
+    };
+
+    enum Error
+    {
+        NoError        = QMediaPlayer::NoError,
+        ResourceError  = QMediaPlayer::ResourceError,
+        FormatError    = QMediaPlayer::FormatError,
+        NetworkError   = QMediaPlayer::NetworkError,
+        AccessDenied   = QMediaPlayer::AccessDeniedError,
+        ServiceMissing = QMediaPlayer::ServiceMissingError
     };
 
     QmlGraphicsVideo(QmlGraphicsItem *parent = 0);
@@ -90,6 +115,9 @@ public:
 
     FillMode fillMode() const;
     void setFillMode(FillMode mode);
+
+    Status status() const;
+    Error error() const;
 
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *);
 

@@ -42,8 +42,8 @@
 #ifndef QMLMEDIABASE_P_H
 #define QMLMEDIABASE_P_H
 
-#include <qmlmedia_p.h>
 
+#include <qmediaplayer.h>
 #include <QtCore/qbasictimer.h>
 
 QTM_BEGIN_NAMESPACE
@@ -70,8 +70,6 @@ public:
     bool isPaused() const;
     void setPaused(bool paused);
 
-    QmlMedia::Status status() const;
-
     int duration() const;
 
     int position() const;
@@ -90,7 +88,6 @@ public:
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
 
-    QmlMedia::Error error() const;
     QString errorString() const;
 
     void _q_stateChanged(QMediaPlayer::State state);
@@ -127,7 +124,6 @@ protected:
     QMediaService *m_mediaService;
     QMediaPlayerControl *m_playerControl;
 
-private:
     QMediaServiceProvider *m_mediaProvider;
     QMetaDataControl *m_metaDataControl;
     QMetaDataControlMetaObject *m_metaObject;
