@@ -6,6 +6,7 @@
 
 TEMPLATE = app
 TARGET = samplephonebook
+include(../examples.pri)
 DEPENDPATH += .
 INCLUDEPATH += . \
                ../../src/contacts\
@@ -15,7 +16,11 @@ INCLUDEPATH += . \
                ../../src/versit
 
 CONFIG += mobility
-MOBILITY = contacts versit
+MOBILITY = contacts
+contains(mobility_modules,versit) {
+    MOBILITY += versit
+    DEFINES += BUILD_VERSIT
+}
 
 # Input
 SOURCES += main.cpp \
@@ -35,4 +40,3 @@ symbian: {
                         WriteDeviceData \
                         SwEvent
 }
-include(../examples.pri)

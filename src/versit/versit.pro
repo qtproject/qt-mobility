@@ -28,7 +28,7 @@ PUBLIC_HEADERS +=  \
     qversitresourcehandler.h
 
 # Private Headers
-PRIVATE_HEADERS += qversitcommon.h \
+PRIVATE_HEADERS += qversitresourcehandler.h \
     qversitdocument_p.h \
     qversitdocumentwriter_p.h \
     qversitproperty_p.h \

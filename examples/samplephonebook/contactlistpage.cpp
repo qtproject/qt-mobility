@@ -40,10 +40,12 @@
 ****************************************************************************/
 
 #include "contactlistpage.h"
+#ifdef BUILD_VERSIT
 #include "qversitreader.h"
 #include "qversitcontactimporter.h"
 #include "qversitwriter.h"
 #include "qversitcontactexporter.h"
+#endif
 
 #include <QtGui>
 
@@ -70,9 +72,9 @@ ContactListPage::ContactListPage(QWidget *parent)
     connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
     QPushButton* m_filterBtn = new QPushButton("Filter", this);
     connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
-    QPushButton* m_importBtn = new QPushButton("Import", this);
+    QPushButton* m_importBtn = new QPushButton("Import");
     connect(m_importBtn, SIGNAL(clicked()), this, SLOT(importClicked()));
-    QPushButton* m_exportBtn = new QPushButton("Export", this);
+    QPushButton* m_exportBtn = new QPushButton("Export");
     connect(m_exportBtn, SIGNAL(clicked()), this, SLOT(exportClicked()));
 
 
@@ -94,7 +96,9 @@ ContactListPage::ContactListPage(QWidget *parent)
     bookLayout->addLayout(backendLayout);
     bookLayout->addWidget(m_contactsList);
     bookLayout->addLayout(btnLayout1);
+#ifdef BUILD_VERSIT
     bookLayout->addLayout(btnLayout2);
+#endif
 
     setLayout(bookLayout);
 
@@ -198,6 +202,7 @@ void ContactListPage::deleteClicked()
 
 void ContactListPage::importClicked()
 {
+#ifdef BUILD_VERSIT
     if (!m_manager) {
         qWarning() << "No manager selected; cannot import";
         return;
@@ -217,10 +222,12 @@ void ContactListPage::importClicked()
             rebuildList(m_currentFilter);
         }
     }
+#endif
 }
 
 void ContactListPage::exportClicked()
 {
+#ifdef BUILD_VERSIT
     if (!m_manager) {
         qWarning() << "No manager selected; cannot import";
         return;
@@ -239,4 +246,5 @@ void ContactListPage::exportClicked()
         writer.startWriting(documents);
         writer.waitForFinished();
     }
+#endif
 }
