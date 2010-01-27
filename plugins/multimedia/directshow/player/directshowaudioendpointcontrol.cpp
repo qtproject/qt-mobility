@@ -79,22 +79,7 @@ QList<QString> DirectShowAudioEndpointControl::availableEndpoints() const
 
 QString DirectShowAudioEndpointControl::endpointDescription(const QString &name) const
 {
-    QString description;
-
-    if (IMoniker *moniker = m_devices.value(name, 0)) {
-        IMalloc *oleMalloc = 0;
-
-        if (CoGetMalloc(1, &oleMalloc) == S_OK) {
-            OLECHAR *string = 0;
-
-            if (moniker->GetDisplayName(m_bindContext, 0, &string) == S_OK) {
-                description = QString::fromWCharArray(string);
-
-                oleMalloc->Free(string);
-            }
-        }
-    }
-    return description;
+    return name.section(QLatin1Char('\\'), -1);
 }
 
 QString DirectShowAudioEndpointControl::defaultEndpoint() const
@@ -129,23 +114,29 @@ void DirectShowAudioEndpointControl::setActiveEndpoint(const QString &name)
 
 void DirectShowAudioEndpointControl::updateEndpoints()
 {
-    if (m_deviceEnumerator) {
+    IMalloc *oleMalloc = 0;
+    if (m_deviceEnumerator && CoGetMalloc(1, &oleMalloc) == S_OK) {
         IEnumMoniker *monikers = 0;
 
         if (m_deviceEnumerator->CreateClassEnumerator(
                 CLSID_AudioRendererCategory, &monikers, 0) == S_OK) {
-            for (IMoniker *moniker = 0; monikers->Next(1, &moniker, 0) == S_OK; ) {
-                DWORD hash = 0;
+            for (IMoniker *moniker = 0; monikers->Next(1, &moniker, 0) == S_OK; moniker->Release()) {
+                OLECHAR *string = 0;
+                if (moniker->GetDisplayName(m_bindContext, 0, &string) == S_OK) {
+                    QString deviceId = QString::fromWCharArray(string);
+                    oleMalloc->Free(string);
 
-                if (moniker->Hash(&hash) == S_OK)
-                    m_devices.insert(QString::number(hash), moniker);
-                else
-                    moniker->Release();
+                    moniker->AddRef();
+                    m_devices.insert(QString::fromWCharArray(string), moniker);
+
+                    if (m_defaultEndpoint.isEmpty()
+                            || deviceId.endsWith(QLatin1String("Default DirectSound Device"))) {
+                        m_defaultEndpoint = deviceId;
+                    }
+                }
             }
+            monikers->Release();
         }
-        monikers->Release();
+        oleMalloc->Release();
     }
-
-    if (!m_devices.isEmpty())
-        m_defaultEndpoint = m_devices.keys().first();
 }
