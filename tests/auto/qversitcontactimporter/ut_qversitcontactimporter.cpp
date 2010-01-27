@@ -866,11 +866,11 @@ void UT_QVersitContactImporter::testAvatarStored()
 {
     MyQVersitResourceHandler resourceHandler;
     mImporter->setResourceHandler(&resourceHandler);
-    QByteArray img(SAMPLE_GIF);
+    QByteArray gif(SAMPLE_GIF);
     QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
     QString name = nameValues.join(QString::fromAscii(";"));
-    QVersitDocument document = createDocumentWithNameAndPhoto(name, img, QLatin1String("GIF"));
+    QVersitDocument document = createDocumentWithNameAndPhoto(name, gif, QLatin1String("GIF"));
     QList<QVersitDocument> documentList;
     documentList.append(document);
     QContact contact = mImporter->importContacts(documentList).first();
@@ -879,7 +879,12 @@ void UT_QVersitContactImporter::testAvatarStored()
     QContactAvatar avatar = static_cast<QContactAvatar>(detail);
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
     QByteArray content = resourceHandler.mObjects.value(avatar.avatar());
-    QCOMPARE(content,img);
+    QCOMPARE(content, gif);
+
+    QPixmap pixmap(avatar.pixmap());
+    QPixmap expectedPixmap;
+    expectedPixmap.loadFromData(gif);
+    QCOMPARE(pixmap, expectedPixmap);
 }
 void UT_QVersitContactImporter::testAvatarUrl()
 {

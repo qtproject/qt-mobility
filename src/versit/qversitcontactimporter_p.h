@@ -134,8 +134,7 @@ private:
 
     QDateTime parseDateTime(const QString& text, const QString& format) const;
 
-    QString saveContentToFile(
-        const QVersitProperty& property) const;
+    QString saveContentToFile(const QVersitProperty& property, const QByteArray& data) const;
 
     QString getFirstAndLastName(const QVersitDocument& document) const;
     

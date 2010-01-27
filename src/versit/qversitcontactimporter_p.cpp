@@ -318,16 +318,21 @@ void QVersitContactImporterPrivate::setOrganizationLogo(
     QContactOrganization& org,
     const QVersitProperty& property) const
 {
-    QString value(property.value());
+    QString location;
 
     const QString valueParam =
         property.parameters().value(QString::fromAscii("VALUE"));
 
-    if (valueParam != QString::fromAscii("URL")) {
-        value = saveContentToFile(property);
+    QVariant variant(property.variantValue());
+    if (variant.type() == QVariant::String) {
+        location = variant.toString();
+    } else if (variant.type() == QVariant::ByteArray
+               && valueParam != QString::fromAscii("URL")) {
+        QByteArray data = variant.toByteArray();
+        location = saveContentToFile(property, data);
     }
 
-    org.setLogo(value);
+    org.setLogo(location);
 }
 
 /*!
@@ -422,19 +427,27 @@ QContactDetail* QVersitContactImporterPrivate::createAvatar(
     const QVersitProperty& property,
     const QString& subType) const
 {
-    QString value(property.value());
+    QContactAvatar* avatar = 0;
 
     const QString valueParam =
         property.parameters().value(QString::fromAscii("VALUE"));
-
-    if (valueParam != QString::fromAscii("URL")) {
-        value = saveContentToFile(property);
+    QString location;
+    QVariant variant(property.variantValue());
+    if (variant.type() == QVariant::String) {
+        avatar = new QContactAvatar();
+        location = variant.toString();
+    } else if (variant.type() == QVariant::ByteArray
+               && valueParam != QString::fromAscii("URL")) {
+        avatar = new QContactAvatar();
+        QByteArray data = variant.toByteArray();
+        location = saveContentToFile(property, data);
+        QPixmap pixmap;
+        if (pixmap.loadFromData(data))
+            avatar->setPixmap(pixmap);
     }
 
-    QContactAvatar* avatar = 0;
-    if (!value.isEmpty()) {
-        avatar = new QContactAvatar();
-        avatar->setAvatar(value);
+    if (avatar) {
+        avatar->setAvatar(location);
         avatar->setSubType(subType);
     }
     return avatar;
@@ -567,18 +580,16 @@ QDateTime QVersitContactImporterPrivate::parseDateTime(
 }
 
 /*!
- * Save the value of the \a property to a file and returns the file name.
- * The property value must be a QByteArray, and this is written directly to the file.
+ * Writes \a data to a file and returns the filename.  \a property specifies the context in which
+ * the data was found.
  */
 QString QVersitContactImporterPrivate::saveContentToFile(
-    const QVersitProperty& property) const
+    const QVersitProperty& property, const QByteArray& data) const
 {
-    QVariant variant = property.variantValue();
     QString filename;
     bool ok = false;
-    if (variant.type() == QVariant::ByteArray && mResourceHandler) {
-        ok = mResourceHandler->saveResource(variant.toByteArray(), property, &filename);
-    }
+    if (mResourceHandler)
+        ok = mResourceHandler->saveResource(data, property, &filename);
     return ok ? filename : QString();
 }
 
