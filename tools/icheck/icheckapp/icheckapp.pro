@@ -10,7 +10,7 @@ CONFIG   += console mobility
 
 INCLUDEPATH += ../ichecklib
 
-LIBS += -L../../../Bin -lichecklib
+LIBS += -L../../../bin -lichecklib
 
 include(../../../common.pri)
 include(../../../features/deploy.pri)
