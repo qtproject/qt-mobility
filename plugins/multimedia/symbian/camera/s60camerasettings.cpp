@@ -156,18 +156,21 @@ void S60CameraSettings::HandleEvent(const TECAMEvent& aEvent)
 #ifdef USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER || USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
     if (aEvent.iEventType == KUidECamEventCameraSettingExposureLock) {
         emit exposureLocked();
+    } else if (aEvent.iEventType == KUidECamEventCameraSettingAperture) {
+        emit apertureChanged(aperture());
+    } else if (aEvent.iEventType == KUidECamEventCameraSettingApertureRange) {
+        emit apertureRangeChanged();
+    } else if (aEvent.iEventType == KUidECamEventCameraSettingIsoRate) {
+        emit isoSensitivityChanged(isoSensitivity());
+    } else if (aEvent.iEventType == KUidECamEventCameraSettingShutterSpeed) {
+        emit shutterSpeedChanged(shutterSpeed());
+    } else if (aEvent.iEventType == KUidECamEventCameraSettingExposureLock) {
+        emit exposureLocked();
+    } else if (aEvent.iEventType == KUidECamEventFlashReady) {
+        emit flashReady(true);
+    } else if (aEvent.iEventType == KUidECamEventFlashNotReady) {
+        emit flashReady(false);
     }
-    else if (aEvent.iEventType == KUidECamEventCameraSettingAperture) {
-
-    }
-    else if (aEvent.iEventType == KUidECamEventCameraSettingExposureCompensation) {
-
-    }
-    else if (aEvent.iEventType == KUidECamEventCameraSettingShutterSpeed) {
-        qreal q = shutterSpeed();
-        emit shutterSpeedChanged(q);
-    }
-
 #else
     emit error(QCamera::NotSupportedFeatureError);
 #endif

@@ -219,7 +219,6 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
     connect(camera, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusStatusChanged(QCamera::FocusStatus)));
     connect(camera, SIGNAL(zoomValueChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
-    connect(camera, SIGNAL(error(QCamera::Error)), this, SLOT(error(QCamera::Error)));
 
     mediaRecorder = new QMediaRecorder(camera);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
@@ -467,27 +466,3 @@ void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
     }
 }
 
-void CameraCapture::error(QCamera::Error aError)
-{
-    qDebug() << "CameraCapture error: " << aError;
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-
-    if (aError == QCamera::NoError) {
-    msgBox.setText(tr("NoError"));
-    } else if (aError == QCamera::NotReadyToCaptureError) {
-        msgBox.setText(tr("NotReadyToCaptureError"));
-    } else if (aError == QCamera::InvalidRequestError) {
-        msgBox.setText(tr("InvalidRequestError"));
-    } else if (aError == QCamera::ServiceMissingError) {
-        msgBox.setText(tr("ServiceMissingError"));
-    } else if (aError == QCamera::NotSupportedFeatureError) {
-        msgBox.setText(tr("NotSupportedFeatureError"));
-    } else if (aError == QCamera::CameraError) {
-        msgBox.setText(tr("CameraError"));
-    }
-    else {
-        msgBox.setText(tr("Other error"));
-    }  
-    msgBox.exec();
-}

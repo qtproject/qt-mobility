@@ -91,30 +91,28 @@ public:
         NotReadyError,
         UnknownError = -1
     };
+    
+    enum EcamErrors {
+        KErrECamCameraDisabled = -12100, // The camera has been disabled, hence calls do not succeed 
+        KErrECamSettingDisabled = -12101, //  This parameter or operation is supported, but presently is disabled. 
+        KErrECamParameterNotInRange = -12102, //  This value is out of range. 
+        KErrECamSettingNotSupported = -12103, //  This parameter or operation is not supported. 
+        KErrECamNotOptimalFocus = -12104 // The optimum focus is lost  
+    };
 
     S60CameraSession(QObject *parent = 0);
     ~S60CameraSession();
+    
+    void setError(TInt aError);
+    QCamera::Error fromSymbianErrorToMultimediaError(int aError);
 
     bool deviceReady();
     
     S60CameraSettings* advancedSettings();
 
-    // camera image properties
-    int framerate() const;
+    int framerate();
     void setFrameRate(int rate);
-    int brightness() const;
-    void setBrightness(int b);
-    int saturation() const;
-    void setSaturation(int s);
-    int hue() const;
-    void setHue(int h);
-    int sharpness() const;
-    void setSharpness(int s);
-    bool backlightCompensation() const;
-    void setBacklightCompensation(bool);
-    int rotation() const;
-    void setRotation(int r);
-
+    // camera image properties
     QSize frameSize() const;
     void setFrameSize(const QSize& s);
 
@@ -169,13 +167,12 @@ public:
     void updateImageCaptureCodecs();
 
     QStringList supportedVideoCaptureCodecs();
-    void updateVideoCaptureCodecs();
     QString videoCaptureCodec();
     void setVideoCaptureCodec(const QString &codecName);
     bool isSupportedVideoCaptureCodec(const QString &codecName);
-    int bitrate() const;
+    int bitrate();
     void setBitrate(const int &bitrate);
-    QSize videoResolution() const;
+    QSize videoResolution();
     void setVideoResolution(const QSize &resolution);
     QString videoCaptureCodecDescription(const QString &codecName);
     
@@ -224,6 +221,7 @@ private:
     void MvruoRecordComplete(TInt aError);
     void MvruoEvent(const TMMFEvent& aEvent);
 
+    void updateVideoCaptureCodecs();
     void updateVideoCaptureCodecsL();
 
 Q_SIGNALS:
@@ -237,12 +235,6 @@ Q_SIGNALS:
     void focusStatusChanged(QCamera::FocusStatus);
     void zoomValueChanged(qreal value);
 
-    void exposureLocked();
-    void flashReady(bool ready);
-    void apertureChanged(qreal aperture);
-    void apertureRangeChanged();
-    void shutterSpeedChanged(qreal speed);
-    void isoSensitivityChanged(int iso);
 private:
     CCameraEngine *m_cameraEngine;
     S60CameraSettings *m_advancedSettings;
