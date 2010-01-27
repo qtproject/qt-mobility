@@ -22,6 +22,7 @@ symbian: {
     qtmobilitydeployment.pkg_prerules += vendorinfo
 
     EPOCROOT31 = $${EPOCROOT31}
+    EPOCROOT32 = $${EPOCROOT32}    
     EPOCROOT50 = $${EPOCROOT50}
     
     qtmobilitydeployment.sources = \
@@ -33,8 +34,9 @@ symbian: {
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtPublishSubscribe.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/PSPathMapperServer.exe \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtContacts.dll \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/QtVersit.dll
-
+        $$(EPOCROOT50)epoc32/release/armv5/urel/QtVersit.dll \
+        $$(EPOCROOT50)epoc32/release/armv5/urel/QtMedia.dll \
+        $$(EPOCROOT50)epoc32/release/armv5/urel/m3u.dll
 
     bearer = \
         "IF package(0x1028315F)" \
@@ -57,12 +59,26 @@ symbian: {
         "ELSE" \
         "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
         "ENDIF"
+        
+    multimedia = \
+        "IF package(0x1028315F)" \
+        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+        "ELSEIF package(0x102752AE)" \
+        "   \"$$(EPOCROOT32)epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+        "ELSEIF package(0x102032BE)" \
+        "   \"$$(EPOCROOT31)epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+        "ELSE" \
+        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+        "ENDIF"
 
     pluginstubs = \
-        "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/mobapicontactspluginsymbian.qtplugin\" - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbian.qtplugin\""
+        "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/mobapicontactspluginsymbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbian.qtplugin\"" \
+        "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/qmakepluginstubs/QtMobilityMultimediaEngine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\QtMobilityMultimediaEngine.qtplugin\"" \
+        "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\m3u.qtplugin\""        
 
     qtmobilitydeployment.pkg_postrules += bearer
     qtmobilitydeployment.pkg_postrules += contacts
+    qtmobilitydeployment.pkg_postrules += multimedia
     qtmobilitydeployment.pkg_postrules += pluginstubs
     
     qtmobilitydeployment.path = /sys/bin
