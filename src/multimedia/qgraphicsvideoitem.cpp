@@ -65,6 +65,7 @@ public:
         , rendererControl(0)
         , aspectRatioMode(Qt::KeepAspectRatio)
         , updatePaintDevice(true)
+        , rect(0.0, 0.0, 320, 240)
     {
     }
 
@@ -79,10 +80,11 @@ public:
     bool updatePaintDevice;
     QRectF rect;
     QRectF boundingRect;
+    QRectF sourceRect;
     QSizeF nativeSize;
 
     void clearService();
-    void updateBoundingRect();
+    void updateRects();
 
     void _q_present();
     void _q_formatChanged(const QVideoSurfaceFormat &format);
@@ -107,22 +109,32 @@ void QGraphicsVideoItemPrivate::clearService()
     }
 }
 
-void QGraphicsVideoItemPrivate::updateBoundingRect()
+void QGraphicsVideoItemPrivate::updateRects()
 {
     q_ptr->prepareGeometryChange();
 
     if (nativeSize.isEmpty()) {
         boundingRect = QRectF();
-    } else {
-        if (aspectRatioMode == Qt::IgnoreAspectRatio) {
-            boundingRect = rect;
-        } else {
-            QSizeF size = nativeSize;
-            size.scale(rect.size(), aspectRatioMode);
+    } else if (aspectRatioMode == Qt::IgnoreAspectRatio) {
+        boundingRect = rect;
+        sourceRect = QRectF(0, 0, 1, 1);
+    } else if (aspectRatioMode == Qt::KeepAspectRatio) {
+        QSizeF size = nativeSize;
+        size.scale(rect.size(), Qt::KeepAspectRatio);
 
-            boundingRect = QRectF(QPointF(), size);
-            boundingRect.moveCenter(rect.center());
-        }
+        boundingRect = QRectF(0, 0, size.width(), size.height());
+        boundingRect.moveCenter(rect.center());
+
+        sourceRect = QRectF(0, 0, 1, 1);
+    } else if (aspectRatioMode == Qt::KeepAspectRatioByExpanding) {
+        boundingRect = rect;
+
+        QSizeF size = rect.size();
+        size.scale(nativeSize, Qt::KeepAspectRatio);
+
+        sourceRect = QRectF(
+                0, 0, size.width() / nativeSize.width(), size.height() / nativeSize.height());
+        sourceRect.moveCenter(QPointF(0.5, 0.5));
     }
 }
 
@@ -140,7 +152,9 @@ void QGraphicsVideoItemPrivate::_q_formatChanged(const QVideoSurfaceFormat &form
 {
     nativeSize = format.sizeHint();
 
-    updateBoundingRect();
+    updateRects();
+
+    emit q_ptr->nativeSizeChanged(nativeSize);
 }
 
 void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
@@ -300,7 +314,7 @@ void QGraphicsVideoItem::setAspectRatioMode(Qt::AspectRatioMode mode)
     Q_D(QGraphicsVideoItem);
 
     d->aspectRatioMode = mode;
-    d->updateBoundingRect();
+    d->updateRects();
 }
 
 /*!
@@ -321,7 +335,7 @@ void QGraphicsVideoItem::setOffset(const QPointF &offset)
     Q_D(QGraphicsVideoItem);
 
     d->rect.moveTo(offset);
-    d->updateBoundingRect();
+    d->updateRects();
 }
 
 /*!
@@ -341,8 +355,8 @@ void QGraphicsVideoItem::setSize(const QSizeF &size)
 {
     Q_D(QGraphicsVideoItem);
 
-    d->rect.setSize(size);
-    d->updateBoundingRect();
+    d->rect.setSize(size.isValid() ? size : QSizeF(0, 0));
+    d->updateRects();
 }
 
 /*!
@@ -381,7 +395,7 @@ void QGraphicsVideoItem::paint(
     Q_UNUSED(widget);
 
     if (d->surface && d->surface->isActive()) {
-        d->surface->paint(painter, d->boundingRect);
+        d->surface->paint(painter, d->boundingRect, d->sourceRect);
         d->surface->setReady(true);
 #ifndef QGRAPHICSVIDEOITEM_SHADERS    // Flickers
     }
