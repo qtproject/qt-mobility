@@ -174,10 +174,10 @@ public:
     void setBitrate(const int &bitrate);
     QSize videoResolution();
     void setVideoResolution(const QSize &resolution);
-    QString videoCaptureCodecDescription(const QString &codecName);
+    QString videoCaptureCodecDescription(const QString &codecName);    
     void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
-    void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
-    void commitVideoEncoderSettings();
+    void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);    
+    
     
     //camerafocuscontrol
     void startFocus();
@@ -218,7 +218,11 @@ private:
     QMap<QString, int> formatDescMap();
     
     void setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode);
-
+    void commitVideoEncoderSettings();
+    void setVideoFrameRateFixed(bool fixed);
+#ifndef PRE_S60_50_PLATFORM    
+    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);
+#endif //PRE_S60_50_PLATFORM
     void resetCamera();
 
     //from  MVideoRecorderUtilityObserver
