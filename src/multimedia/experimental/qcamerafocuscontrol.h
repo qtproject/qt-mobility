@@ -77,7 +77,6 @@ public Q_SLOTS:
 Q_SIGNALS:
     void zoomValueChanged(qreal);
     void focusStatusChanged(QCamera::FocusStatus);
-    void focusLocked();
 
 protected:
     QCameraFocusControl(QObject* parent = 0);
