@@ -74,6 +74,8 @@ private:
 struct Q_SENSORS_EXPORT QSensorBackendFactory
 {
     virtual QSensorBackend *createBackend(QSensor *sensor) = 0;
+protected:
+    ~QSensorBackendFactory() {}
 };
 
 #define REGISTER_STATIC_PLUGIN(pluginname)\

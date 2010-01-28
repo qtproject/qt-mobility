@@ -156,12 +156,13 @@ class Q_SENSORS_EXPORT QSensorFilter
 {
     friend class QSensor;
 public:
-    QSensorFilter();
-    virtual ~QSensorFilter();
     virtual bool filter(QSensorReading *reading) = 0;
 protected:
+    QSensorFilter();
+    ~QSensorFilter();
     virtual void setSensor(QSensor *sensor);
     QSensor *m_sensor;
+    Q_DISABLE_COPY(QSensorFilter)
 };
 
 class Q_SENSORS_EXPORT QSensorReading : public QObject
@@ -183,6 +184,7 @@ protected:
 
 private:
     QScopedPointer<QSensorReadingPrivate> d;
+    Q_DISABLE_COPY(QSensorReading)
 };
 
 template <typename T>

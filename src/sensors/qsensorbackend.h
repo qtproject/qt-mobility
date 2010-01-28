@@ -77,6 +77,7 @@ private:
 
 protected:
     QSensor *m_sensor;
+    Q_DISABLE_COPY(QSensorBackend)
 };
 
 QTM_END_NAMESPACE

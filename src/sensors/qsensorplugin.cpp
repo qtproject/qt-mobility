@@ -12,6 +12,11 @@
 */
 
 /*!
+    \fn QSensorPluginInterface::~QSensorPluginInterface()
+    \internal
+*/
+
+/*!
     \fn QSensorPluginInterface::registerSensors()
 
     This function is called when the plugin is loaded. The plugin should register

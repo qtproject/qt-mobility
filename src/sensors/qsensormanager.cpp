@@ -205,6 +205,11 @@ void QSensorManager::loadPlugins()
 */
 
 /*!
+    \fn QSensorBackendFactory::~QSensorBackendFactory()
+    \internal
+*/
+
+/*!
     \fn QSensorBackendFactory::createBackend(QSensor *sensor)
 
     Instantiate a backend. If the factory handles multiple identifiers

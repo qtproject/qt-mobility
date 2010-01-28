@@ -55,6 +55,8 @@ class QSensorBackend;
 struct Q_SENSORS_EXPORT QSensorPluginInterface
 {
     virtual void registerSensors() = 0;
+protected:
+    ~QSensorPluginInterface() {}
 };
 
 QTM_END_NAMESPACE
