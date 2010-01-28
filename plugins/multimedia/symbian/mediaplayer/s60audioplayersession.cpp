@@ -80,7 +80,10 @@ bool S60AudioPlayerSession::isVideoAvailable() const
 {
     return false;
 }
-
+bool S60AudioPlayerSession::isAudioAvailable() const
+{
+    return true; // this is a bit happy scenario, but we do emit error that we can't play
+}
 void S60AudioPlayerSession::doPlay()
 {
     m_player->Play();
