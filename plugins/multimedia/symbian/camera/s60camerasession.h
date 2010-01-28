@@ -128,8 +128,7 @@ public:
     bool setOutputLocation(const QUrl &sink);
     QUrl outputLocation() const;
     qint64 position() const;
-    int state() const;
-    void commitVideoEncoderSettings();
+    int state() const;    
 
     //added based on s60 camera needs
     void releaseImageBuffer();
@@ -178,6 +177,8 @@ public:
     QSize videoResolution() const;
     void setVideoResolution(const QSize &resolution);
     QString videoCaptureCodecDescription(const QString &codecName);
+    void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
+    void commitVideoEncoderSettings();
     
     //camerafocuscontrol
     void startFocus();
@@ -268,6 +269,7 @@ private:
     CVideoRecorderUtility* m_videoUtility;
     QHash<QString, VideoControllerData> m_videoControllerMap;
     QString m_videoCodec;
+    QVideoEncoderSettings m_videoSettings;
 
 };
 

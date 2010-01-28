@@ -368,17 +368,16 @@ int S60CameraSession::state() const
 
 void S60CameraSession::commitVideoEncoderSettings()
 {
-    qDebug() << "S60CameraSession::commitVideoEncoderSettings";
-    
-    QVideoEncoderSettings videoSettings;
-    S60VideoEncoder *videoEncoder = new S60VideoEncoder;
-    videoSettings = videoEncoder->videoSettings();
+    setVideoCaptureCodec(m_videoSettings.codec());
+    setCaptureQuality(m_videoSettings.quality());
+    setFrameRate(int(m_videoSettings.frameRate()));
+    setBitrate(m_videoSettings.bitRate());
+    setVideoResolution(m_videoSettings.resolution());
+}
 
-    setVideoCaptureCodec(videoSettings.codec());
-    setCaptureQuality(videoSettings.quality());
-    setFrameRate(int(videoSettings.frameRate()));
-    setBitrate(videoSettings.bitRate());
-    setVideoResolution(videoSettings.resolution());
+void S60CameraSession::saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings)
+{
+    m_videoSettings = videoSettings;
 }
 
 void S60CameraSession::startRecording()
@@ -1386,6 +1385,7 @@ void S60CameraSession::MvruoOpenComplete(TInt aError)
 
     if(aError==KErrNone) {
         TInt err = KErrNone;
+        commitVideoEncoderSettings();
 #ifndef PRE_S60_50_PLATFORM
         TRAP(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
 #endif

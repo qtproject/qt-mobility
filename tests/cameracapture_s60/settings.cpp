@@ -50,6 +50,7 @@
 #include <QtCore/qdebug.h>
 #include <qmediarecorder.h>
 #include <qmediaservice.h>
+#include <QFile>
 
 
 
@@ -59,18 +60,22 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     mediaRecorder(mediaRecorder)
 {
     ui->setupUi(this);
-
+    QFile file("c:/data/out.txt");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    
+    QTextStream out(&file);        
     //audio codecs
     foreach(const QString &codecName, mediaRecorder->supportedAudioCodecs()) {
         QString description = mediaRecorder->audioCodecDescription(codecName);
         ui->audioCodecBox->addItem(codecName+": "+description, QVariant(codecName));
     }
-
+    out << "mediaRecorder->supportedAudioCodecs()";
     //sample rate:
     foreach(int sampleRate, mediaRecorder->supportedAudioSampleRates()) {
         ui->audioSampleRateBox->addItem(QString::number(sampleRate), QVariant(sampleRate));
     }
-
+    out << "mediaRecorder->supportedAudioSampleRates()";
     ui->audioQualitySlider->setRange(0, int(QtMedia::VeryHighQuality));
 
     //video codecs
@@ -78,7 +83,7 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
         QString description = mediaRecorder->videoCodecDescription(codecName);
         ui->videoCodecBox->addItem(codecName+": "+description, QVariant(codecName));
     }
-
+    out << "mediaRecorder->supportedVideoCodecs()";
     ui->videoQualitySlider->setRange(0, int(QtMedia::VeryHighQuality));
 
 
@@ -88,7 +93,7 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
         ui->videoResolutionBox->addItem(QString("%1x%2").arg(resolution.width()).arg(resolution.height()),
                                         QVariant(resolution));
     }
-
+    out << "mediaRecorder->supportedResolutions()";
     ui->videoFramerateBox->addItem(tr("Default"));
     QList<qreal> supportedFrameRates = mediaRecorder->supportedFrameRates();
     qreal rate;
@@ -96,13 +101,14 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
         QString rateString = QString("%1").arg(rate, 0, 'f', 2);
         ui->videoFramerateBox->addItem(rateString, QVariant(rate));
     }
-
+    out << "mediaRecorder->supportedFrameRates()";
     //containers
     foreach(const QString &format, mediaRecorder->supportedContainers()) {
         ui->containerFormatBox->addItem(format+":"+mediaRecorder->containerDescription(format),
                                         QVariant(format));
     }
-    
+    out << "mediaRecorder->supportedContainers()";
+    file.close();
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
@@ -142,21 +148,41 @@ void Settings::setAudioSettings(const QAudioEncoderSettings &audioSettings)
 
 QVideoEncoderSettings Settings::videoSettings() const
 {
+    QFile file("c:/data/out2.txt");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    
+    QTextStream out(&file);       
+    
     QVideoEncoderSettings settings = mediaRecorder->videoSettings();
+    out << "mediaRecorder->videoSettings()";
     settings.setCodec(boxValue(ui->videoCodecBox).toString());
+    out << "setCodec";
     settings.setQuality(QtMedia::EncodingQuality(ui->videoQualitySlider->value()));
+    out << "setQuality";
     settings.setResolution(boxValue(ui->videoResolutionBox).toSize());
+    out << "setResolution";
     settings.setFrameRate(boxValue(ui->videoFramerateBox).value<qreal>());
-
+    out << "setFrameRate";
+    file.close();
     return settings;
+    
 }
 
 void Settings::setVideoSettings(const QVideoEncoderSettings &videoSettings)
 {
+    QFile file("c:/data/out2.txt");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    
+    QTextStream out(&file);       
     selectComboBoxItem(ui->videoCodecBox, QVariant(videoSettings.codec()));
+    out << "videoSettings.codec() - "<< videoSettings.codec();
     selectComboBoxItem(ui->videoResolutionBox, QVariant(videoSettings.resolution()));
+    out << "videoSettings.codec() - "; 
     ui->videoQualitySlider->setValue(videoSettings.quality());
-
+    out << "videoSettings.quality() - ";
+    file.close();
     //special case for frame rate
     for (int i=0; i<ui->videoFramerateBox->count(); i++) {
         qreal itemRate = ui->videoFramerateBox->itemData(i).value<qreal>();

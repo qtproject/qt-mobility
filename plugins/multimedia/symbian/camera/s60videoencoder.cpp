@@ -53,27 +53,7 @@ S60VideoEncoder::S60VideoEncoder(QObject *session, QObject *parent)
    :QVideoEncoderControl(parent)
 {
     // use cast if we want to change session class later on..
-    m_session = qobject_cast<S60CameraSession*>(session);
-
-  /*  m_frameRate = 25.0;
-    m_codecs.clear();
-    QList<QVideoFrame::PixelFormat> formats = m_session->supportedPixelFormats();
-    if(formats.contains(QVideoFrame::Format_YUYV)) {
-        m_codecs << "yuyv";
-        m_codecDescriptions.insert("yuyv", "yuyv image format");
-    }
-    if(formats.contains(QVideoFrame::Format_RGB24)) {
-        m_codecs << "rgb24";
-        m_codecDescriptions.insert("rbg24", "rgb24 image format");
-    }
-    if(formats.contains(QVideoFrame::Format_RGB565)) {
-        m_codecs << "rgb565";
-        m_codecDescriptions.insert("rbg565", "rgb565 image format");
-    }
-    if(formats.contains(QVideoFrame::Format_UYVY)) {
-        m_codecs << "uyvy";
-        m_codecDescriptions.insert("uyvy", "uyvy image format");
-    }*/
+    m_session = qobject_cast<S60CameraSession*>(session); 
 }
 
 S60VideoEncoder::~S60VideoEncoder()
@@ -87,9 +67,7 @@ QStringList S60VideoEncoder::supportedVideoCodecs() const
 
 QString S60VideoEncoder::videoCodecDescription(const QString &codecName) const
 {
-    return m_codecDescriptions.value(codecName);
-    //return m_session->codecDescription(codecName);
-    //m_session->fo
+    return m_codecDescriptions.value(codecName);    
 }
 
 QString S60VideoEncoder::videoCodec() const
@@ -221,11 +199,14 @@ QVideoEncoderSettings S60VideoEncoder::videoSettings() const
 
 void S60VideoEncoder::setVideoSettings(const QVideoEncoderSettings &settings)
 {
-    setVideoCodec(settings.codec());
+   /* setVideoCodec(settings.codec());
     setBitRate(settings.bitRate());
     setQuality(settings.quality());
     setFrameRate(settings.frameRate());
-    setResolution(settings.resolution());
+    setResolution(settings.resolution());*/
+    QVideoEncoderSettings tempSettings = settings;    
+    
+    m_session->saveVideoEncoderSettings(tempSettings);
 }
 
 
