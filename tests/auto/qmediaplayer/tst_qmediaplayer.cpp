@@ -97,6 +97,7 @@ public:
 
     int bufferStatus() const { return _bufferStatus; }
 
+    bool isAudioAvailable() const { return _audioAvailable; }
     bool isVideoAvailable() const { return _videoAvailable; }
 
     bool isSeekable() const { return _isSeekable; }
@@ -132,6 +133,7 @@ public:
     int _volume;
     bool _muted;
     int _bufferStatus;
+    bool _audioAvailable;
     bool _videoAvailable;
     bool _isSeekable;
     QPair<qint64, qint64> _seekRange;

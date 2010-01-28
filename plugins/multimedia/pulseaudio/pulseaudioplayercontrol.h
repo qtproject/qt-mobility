@@ -80,10 +80,11 @@ public:
 
     int bufferStatus() const;
 
+    bool isAudioAvailable() const;
     bool isVideoAvailable() const;
 
     bool isSeekable() const;
-    QPair<qint64,qint64> seekRange() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);

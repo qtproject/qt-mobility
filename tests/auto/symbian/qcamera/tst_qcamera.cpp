@@ -253,11 +253,12 @@ void tst_QCamera::testSimpleCameraFocus()
     //camera.setMacroFocusingEnabled(true);
     //QVERIFY(!camera.macroFocusingEnabled());
 
-    QCOMPARE(camera.maximumOpticalZoom(), 1.0);
-    QCOMPARE(camera.maximumDigitalZoom(), 60.0);
-    QCOMPARE(camera.zoomValue(), 1.0);
-    camera.zoomTo(100);
-    QCOMPARE(camera.zoomValue(), 1.0);
+    QCOMPARE(camera.maximumOpticalZoom(), 1.0); // these should be check model ny model
+    QCOMPARE(camera.maximumDigitalZoom(), 3.0); // these should be check model ny model
+    QCOMPARE(camera.digitalZoom(), 1.0);
+    camera.zoomTo(0,2.0);
+    QCOMPARE(camera.digitalZoom(), 2.0);
+    QCOMPARE(camera.opticalZoom(), 1.0);
 
 }
 
@@ -471,15 +472,15 @@ void tst_QCamera::testCameraFocus()
     //camera.setMacroFocusingEnabled(true);
     //QVERIFY(camera.macroFocusingEnabled());
 
-    QVERIFY(camera.maximumOpticalZoom() >= 1.0);
+    QVERIFY(camera.maximumOpticalZoom() == 1.0);
     QVERIFY(camera.maximumDigitalZoom() >= 1.0);
-    QCOMPARE(camera.zoomValue(), 1.0);
-    camera.zoomTo(0.5);
-    QCOMPARE(camera.zoomValue(), 1.0);
-    camera.zoomTo(2.0);
-    QCOMPARE(camera.zoomValue(), 2.0);
-    camera.zoomTo(2000000.0);
-    QVERIFY(qFuzzyCompare(camera.zoomValue(), camera.maximumOpticalZoom()*camera.maximumDigitalZoom()));
+    QCOMPARE(camera.digitalZoom(), 1.0);
+    camera.zoomTo(1.0,0.5);
+    QCOMPARE(camera.digitalZoom(), 0.5);
+    camera.zoomTo(1.0,2.0);
+    QCOMPARE(camera.digitalZoom(), 2.0);
+    camera.zoomTo(1.0,2000000.0);
+    QVERIFY(qFuzzyCompare(camera.digitalZoom(), camera.maximumOpticalZoom()*camera.maximumDigitalZoom()));
 
     /* TODO: focusing has changed 
     camera.lockFocus();

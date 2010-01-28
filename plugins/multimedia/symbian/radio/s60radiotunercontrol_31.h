@@ -139,7 +139,6 @@ private:
     bool m_muted;
     bool m_isStereo;
     bool m_available;
-    int  m_tuners;
     int  m_step;
     int  m_vol;
     mutable int  m_signal;

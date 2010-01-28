@@ -456,10 +456,10 @@ void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
 {
     switch (key) {
         case MediaKeysObserver::EVolIncKey: 
-            camera->zoomTo(camera->zoomValue() + 5);
+            camera->zoomTo(0, camera->digitalZoom() + 5);
             break;
         case MediaKeysObserver::EVolDecKey:
-            camera->zoomTo(camera->zoomValue() - 5);
+            camera->zoomTo(0, camera->digitalZoom() - 5);
             break;
         default:
         break;

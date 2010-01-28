@@ -169,8 +169,18 @@ bool S60VideoPlayerSession::resetNativeHandles()
 
 bool S60VideoPlayerSession::isVideoAvailable() const
 {
-    //TODO: fix me
-    return true;
+#ifdef PRE_S60_50_PLATFORM
+    return true; // this is not support in pre 5th platforms
+#endif    
+    return m_player->VideoEnabledL();
+}
+
+bool S60VideoPlayerSession::isAudioAvailable() const
+{
+    if (m_player)
+        return m_player->AudioEnabledL();
+    else
+        return false;
 }
 
 void S60VideoPlayerSession::doPlay()
@@ -199,8 +209,7 @@ void S60VideoPlayerSession::doSetPositionL(qint64 microSeconds)
 
 void S60VideoPlayerSession::doSetVolumeL(int volume)
 {
-    if (m_player->AudioEnabledL())
-        m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume());
+    m_player->SetVolumeL((volume / 100.0)* m_player->MaxVolume());
 }
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)

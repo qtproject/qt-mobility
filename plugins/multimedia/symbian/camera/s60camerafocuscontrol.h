@@ -70,20 +70,17 @@ public:
 
     qreal maximumOpticalZoom() const;
     qreal maximumDigitalZoom() const;
-    qreal zoomValue() const;
-    void zoomTo(qreal value);
+    
+    qreal opticalZoom() const;
+    qreal digitalZoom() const;
+
+    void zoomTo(qreal optical, qreal digital);
 
 public Q_SLOTS:
 
     void startFocusing();
     void cancelFocusing();
-    
-    void focusChanged(QCamera::FocusStatus status);
-    
-Q_SIGNALS:
-
-    void focusStatusChanged(QCamera::FocusStatus);
-
+   
 private:
     S60CameraSession *m_session;
     S60CameraService *m_service;
@@ -91,7 +88,8 @@ private:
     S60CameraSettings *m_advancedSettings;
     
     bool m_focusLocked;
-    qreal m_zoomValue;
+    qreal m_digitalZoomValue;
+    qreal m_opticalZoomValue;
     bool m_macroFocusingEnabled;
     QCamera::FocusMode m_focusMode;
     QCamera::FocusStatus m_focusStatus;

@@ -239,6 +239,13 @@ void S60MediaPlayerControl::setVideoOutput(QObject *output)
     m_session->setVideoRenderer(output);
 }
 
+bool S60MediaPlayerControl::isAudioAvailable() const
+{
+    if (m_session)
+        return m_session->isAudioAvailable(); 
+    return false;
+}
+
 bool S60MediaPlayerControl::isVideoAvailable() const
 {
     if (m_session)

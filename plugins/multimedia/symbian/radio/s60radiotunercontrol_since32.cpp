@@ -59,7 +59,7 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_radioError(QRadioTuner::NoError)
     , m_scanning(false)
     , m_currentBand(QRadioTuner::FM)
-    , m_currentFreq(89400000)
+    , m_currentFreq(87500000)
     , m_stereoMode(QRadioTuner::Auto)
     , m_apiTunerState(QRadioTuner::StoppedState)
     , m_maxVolume(100)
@@ -273,6 +273,7 @@ bool S60RadioTunerControl::initRadio()
 		m_playerUtility = &m_radioUtility->RadioPlayerUtilityL(*this);
 	);
 	if (utilityError != KErrNone) {
+        m_radioError = QRadioTuner::ResourceError;
 		return m_available;
 	}
 	
@@ -366,14 +367,14 @@ void S60RadioTunerControl::MrftoRequestTunerControlComplete(TInt aError)
 		m_available = true;
 		m_fmTunerUtility->SetFrequency(m_currentFreq);
 		m_playerUtility->Play();
-		int signal = signalStrength();
+		int signal = signalStrength();		
 		if (m_signal != signal) {
 			emit signalStrengthChanged(signal);
 			m_signal = signal;
 		}
-		
+
 	} else if (aError == KFmRadioErrAntennaNotConnected) {
-		// 
+		m_radioError = QRadioTuner::OpenError;
 	} else if (aError == KErrAlreadyExists){
 		m_radioError = QRadioTuner::ResourceError;
 	} else if (aError == KFmRadioErrFrequencyOutOfBandRange) {

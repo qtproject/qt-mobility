@@ -21,11 +21,15 @@ HEADERS += s60mediaserviceplugin.h \
 SOURCES += s60mediaserviceplugin.cpp \
            s60videooutputcontrol.cpp 
 
-include(camera/camera_s60.pri)
-include(radio/radio.pri)
+contains(S60_VERSION, 3.2)|contains(S60_VERSION, 3.1) {
+    DEFINES += PRE_S60_50_PLATFORM
+}
 
 # WINSCW compile depends on mpengine.lib, found in S60 SDK greater than 3.1
 include(mediaplayer/mediaplayer_s60.pri)
+include(camera/camera_s60.pri)
+include(radio/radio.pri)
+
 
 include(audiosource/audiosource_s60.pri)
 

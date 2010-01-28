@@ -101,6 +101,8 @@ private slots:
     void zoomValueChanged(qreal value);
     
     void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
+    void error(QCamera::Error aError);
+    
     
     void setFlashOn();
     void setFlashOff();

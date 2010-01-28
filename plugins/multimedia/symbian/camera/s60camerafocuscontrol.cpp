@@ -56,7 +56,8 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *parent)
 S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
    :QCameraFocusControl(parent)
    , m_focusLocked(false)
-   , m_zoomValue(1.0)
+   , m_opticalZoomValue(1.0)
+   , m_digitalZoomValue(1.0)
    , m_maxZoom(1.0)
    , m_maxDigitalZoom(1.0)
    , m_macroFocusingEnabled(false)
@@ -68,10 +69,11 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
     m_session = qobject_cast<S60CameraSession*>(session);
     m_advancedSettings = m_session->advancedSettings();
     connect(m_session, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
-    connect(m_session, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
+    connect(m_session, SIGNAL(opticalZoomChanged(qreal)), this, SIGNAL(opticalZoomChanged(qreal)));
+    connect(m_session, SIGNAL(digitalZoomChanged(qreal)), this, SIGNAL(digitalZoomChanged(qreal)));
     connect(m_session, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusChanged(QCamera::FocusStatus)));
     m_advancedSettings->setFocusMode(m_focusMode);
-    m_session->setZoomFactor(m_zoomValue);
+    m_session->setZoomFactor(m_opticalZoomValue, m_digitalZoomValue);
 }
 
 S60CameraFocusControl::~S60CameraFocusControl()
@@ -126,18 +128,25 @@ qreal S60CameraFocusControl::maximumOpticalZoom() const
 
 qreal S60CameraFocusControl::maximumDigitalZoom() const
 {
-	return m_session->maxDigitalZoom();
+    if (m_session->maxDigitalZoom() == 0) // digital zoom not supported!
+        return 1.0;
+    else
+        return m_session->maxDigitalZoom();
 }
 
-qreal S60CameraFocusControl::zoomValue() const
+qreal S60CameraFocusControl::opticalZoom() const
 {	
 	return m_session->zoomFactor();
 }
-
-void S60CameraFocusControl::zoomTo(qreal value)
+qreal S60CameraFocusControl::digitalZoom() const
+{   
+    return m_session->digitalZoomFactor();
+}
+void S60CameraFocusControl::zoomTo(qreal optical, qreal digital)
 {	
-	m_session->setZoomFactor(value);
-	m_zoomValue = value;
+	m_session->setZoomFactor(optical, digital);
+	m_opticalZoomValue = optical;
+	m_digitalZoomValue = digital;
 }
 
 void S60CameraFocusControl::startFocusing()
@@ -152,11 +161,5 @@ void S60CameraFocusControl::cancelFocusing()
     m_session->cancelFocus();
     m_focusStatus = QCamera::FocusCanceled;
     emit focusStatusChanged(QCamera::FocusCanceled);
-}
-
-void S60CameraFocusControl::focusChanged(QCamera::FocusStatus status)
-{
-    m_focusStatus = status;
-    emit focusStatusChanged(status);
 }
 
