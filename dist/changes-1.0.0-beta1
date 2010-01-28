@@ -67,9 +67,17 @@ QtMessaging
 
 QtMedia
 ------
-
- - foo
-    * bar
+ 
+ - Renamed QtMedia::Frequency to QtMedia::SampleRate for consistency and
+   clarity.
+ - QMediaPlayer
+    * Added static supportedMimeTypes() method.
+ - Added QMediaTimeRange and QMediaTimeInterval classes to represent time
+   periods in media items.
+ - QMediaPlayerControl
+    * Renamed seekRanges() to availablePlaybackRanges(). This method now
+      returns a QMediaTimeRange, which can contain multiple disjoint time
+      intervals representing buffered portions of media.
 
 QtPublishSubscribe
 ------
