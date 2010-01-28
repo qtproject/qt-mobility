@@ -171,8 +171,9 @@ bool S60VideoPlayerSession::isVideoAvailable() const
 {
 #ifdef PRE_S60_50_PLATFORM
     return true; // this is not support in pre 5th platforms
-#endif    
+#else    
     return m_player->VideoEnabledL();
+#endif
 }
 
 bool S60VideoPlayerSession::isAudioAvailable() const
