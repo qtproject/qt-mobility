@@ -83,8 +83,7 @@ public:
 
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
-// general
-    QStringList availableLanguages() const;	 // 2 letter ISO 639-1
+    QStringList availableLanguages() const;
 
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
@@ -118,8 +117,8 @@ public:
     int cellId();
     int locationAreaCode();
 
-    QString currentMobileCountryCode(); // Mobile Country Code
-    QString currentMobileNetworkCode(); // Mobile Network Code
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
@@ -161,8 +160,6 @@ public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
-
-// display
     int displayBrightness(int screen);
     int colorDepth(int screen);
 };
@@ -176,11 +173,10 @@ public:
     QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
 
-    // memory
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
 private:
     QMap<QString, QString> mountEntriesMap;
@@ -196,8 +192,6 @@ public:
 
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
-
-// device
 
     QString imei();
     QString imsi();
