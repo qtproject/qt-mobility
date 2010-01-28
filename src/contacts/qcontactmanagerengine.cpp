@@ -2063,6 +2063,7 @@ bool QContactManagerEngine::cancelRequest(QContactAbstractRequest* req)
 }
 
 /*!
+ * \deprecated
  * Blocks until the manager engine has completed some part (or all) of the given request \a req
  * which was previously started, or until \a msecs milliseconds have passed.
  * Returns true if some progress was reported, and false if the request was not in the
@@ -2074,6 +2075,7 @@ bool QContactManagerEngine::waitForRequestProgress(QContactAbstractRequest* req,
 {
     Q_UNUSED(req);
     Q_UNUSED(msecs);
+    qWarning("QContactManagerEngine::waitForRequestProgress() This function is deprecated and will be removed after the transition period has elapsed.");
     return false;
 }
 

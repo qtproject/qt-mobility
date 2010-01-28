@@ -127,7 +127,7 @@ public:
     virtual void requestDestroyed(QContactAbstractRequest* req);
     virtual bool startRequest(QContactAbstractRequest* req);
     virtual bool cancelRequest(QContactAbstractRequest* req);
-    virtual bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
+    virtual bool Q_DECL_DEPRECATED waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     // the following helper functions are all deprecated and will be removed in week 3.
