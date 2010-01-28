@@ -384,13 +384,26 @@ int S60CameraSession::state() const
 }
 
 void S60CameraSession::commitVideoEncoderSettings()
-{
+{   
     qDebug() << "S60CameraSession::commitVideoEncoderSettings";
     setVideoCaptureCodec(m_videoSettings.codec());
-    setCaptureQuality(m_videoSettings.quality());
     setVideoResolution(m_videoSettings.resolution());
-    setFrameRate(int(m_videoSettings.frameRate()));
+    setFrameRate(m_videoSettings.frameRate());
     setBitrate(m_videoSettings.bitRate());
+#ifndef PRE_S60_50_PLATFORM    
+    if (!m_videoSettings.bitRate()) {
+        setVideoFrameRateFixed(true); 
+        setVideoCaptureQuality(m_videoSettings.quality());        
+    }    
+#endif //PRE_S60_50_PLATFORM   
+}
+
+void S60CameraSession::setVideoFrameRateFixed(bool fixed)
+{
+    if (m_videoUtility) {
+        TRAPD(err, m_videoUtility->SetVideoFrameRateFixedL(fixed));
+        setError(err);
+    }
 }
 
 void S60CameraSession::saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings)
@@ -402,6 +415,28 @@ void S60CameraSession::getCurrentVideoEncoderSettings(QVideoEncoderSettings &vid
 {
     videoSettings = m_videoSettings;
 }
+#ifndef PRE_S60_50_PLATFORM
+void S60CameraSession::setVideoCaptureQuality(QtMedia::EncodingQuality quality)
+{    
+    int videoQuality = 0;
+    switch(quality) {
+        case QtMedia::VeryLowQuality:
+            videoQuality = 0;
+        case QtMedia::LowQuality:
+            videoQuality = 25;
+        case QtMedia::NormalQuality:
+            videoQuality = 50;
+        case QtMedia::HighQuality:
+            videoQuality = 75;            
+        case QtMedia::VeryHighQuality:
+            videoQuality = 100;
+        default:
+            videoQuality = 50;        
+    }
+    TRAPD(err, m_videoUtility->SetVideoQualityL(videoQuality));
+    setError(err);
+}
+#endif //PRE_S60_50_PLATFORM
 
 void S60CameraSession::startRecording()
 {
@@ -1410,7 +1445,6 @@ void S60CameraSession::setVideoResolution(const QSize &resolution)
 {
     if (m_videoUtility) {
         TSize size(resolution.width(), resolution.height());
-        //TSize size(176, 144);
         TRAPD(err, m_videoUtility->SetVideoFrameSizeL(size));
         setError(err);
     }
