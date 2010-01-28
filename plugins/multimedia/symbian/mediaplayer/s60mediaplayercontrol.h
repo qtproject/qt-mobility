@@ -67,7 +67,7 @@ public:
     S60MediaSettings() 
         : m_volume(0)
         , m_muted(false)
-        , m_playbackRate(-1)
+        , m_playbackRate(1.0)
     {
     }
     
@@ -104,6 +104,7 @@ public:
     virtual bool isMuted() const;
     virtual void setMuted(bool muted);
     virtual int bufferStatus() const;
+    virtual bool isAudioAvailable() const;
     virtual bool isVideoAvailable() const;
     virtual bool isSeekable() const;
     virtual QMediaTimeRange availablePlaybackRanges() const;

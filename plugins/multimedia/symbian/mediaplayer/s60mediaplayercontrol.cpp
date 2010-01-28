@@ -63,7 +63,6 @@ qint64 S60MediaPlayerControl::position() const
 {
     if (m_session)
         return m_session->position();
-    
     return 0;
 }
 
@@ -97,7 +96,6 @@ int S60MediaPlayerControl::volume() const
 {
     if (m_session)
         return m_session->volume();
-    
     return m_mediaSettings.volume();
 }
 
@@ -105,7 +103,6 @@ bool S60MediaPlayerControl::isMuted() const
 {
    if (m_session)
        return  m_session->isMuted();
-   
    return m_mediaSettings.isMuted();
 }
 
@@ -113,7 +110,6 @@ bool S60MediaPlayerControl::isSeekable() const
 {
     if (m_session)
        return  m_session->isSeekable();
-    
     return false;
 }
 
@@ -121,7 +117,7 @@ QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 {
     QMediaTimeRange ranges;
 
-    if(m_session && q_check_ptr(m_session)->isSeekable())
+    if(m_session && m_session->isSeekable())
         ranges.addInterval(0, m_session->duration());
 
     return ranges;
@@ -129,16 +125,16 @@ QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 
 qreal S60MediaPlayerControl::playbackRate() const
 {
-    if (m_session)
-        return  m_session->playbackRate();
+    //None of symbian players supports this.
     return m_mediaSettings.playbackRate();
 }
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
-    if (m_session)
-        m_session->setPlaybackRate(rate);
+    //None of symbian players supports this.
     m_mediaSettings.setPlaybackRate(rate);
+    emit playbackRateChanged(playbackRate());
+    
 }
 
 void S60MediaPlayerControl::setPosition(qint64 pos)
@@ -167,23 +163,27 @@ void S60MediaPlayerControl::stop()
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
-    if (m_mediaSettings.volume() != volume && volume >= 0 && volume <= 100) {
-        m_mediaSettings.setVolume(volume);
+    int boundVolume = qBound(0, volume, 100);
+    if (boundVolume == m_mediaSettings.volume())
+        return;
+    
+    m_mediaSettings.setVolume(boundVolume);
+    if (m_session)
+        m_session->setVolume(boundVolume);
 
-        if (m_session)
-            m_session->setVolume(volume);
-
-        emit volumeChanged(volume);
-    }
+    emit volumeChanged(boundVolume);
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
 {
+    if (m_mediaSettings.isMuted() == muted)
+        return;
+    
+    m_mediaSettings.setMuted(muted);
     if (m_session)
         m_session->setMuted(muted);
-    else if (m_mediaSettings.isMuted() != muted) 
-        emit mutedChanged(muted);
-    m_mediaSettings.setMuted(muted);
+    
+    emit mutedChanged(muted);
 }
 
 QMediaContent S60MediaPlayerControl::media() const
@@ -213,10 +213,6 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     
     S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession(); 
 
-    // invalidate old session if one found
-    if (!newSession && m_session)
-        m_session->setMediaStatus(QMediaPlayer::InvalidMedia);
-    
     m_session = newSession;
     
     if (m_session) {
@@ -228,8 +224,10 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
             m_session->loadUrl(url);
             
         emit mediaChanged(m_currentResource);
-    } else
+    } else {
+        emit error(QMediaPlayer::FormatError, QString("Symbian: -5"));
         emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
+    }
 }
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
@@ -237,6 +235,13 @@ void S60MediaPlayerControl::setVideoOutput(QObject *output)
     if (!m_session)
         m_session = m_mediaPlayerResolver.VideoPlayerSession();
     m_session->setVideoRenderer(output);
+}
+
+bool S60MediaPlayerControl::isAudioAvailable() const
+{
+    if (m_session)
+        return m_session->isAudioAvailable(); 
+    return false;
 }
 
 bool S60MediaPlayerControl::isVideoAvailable() const

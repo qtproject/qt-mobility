@@ -56,7 +56,8 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *parent)
 S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
    :QCameraFocusControl(parent)
    , m_focusLocked(false)
-   , m_zoomValue(1.0)
+   , m_opticalZoomValue(1.0)
+   , m_digitalZoomValue(1.0)
    , m_maxZoom(1.0)
    , m_maxDigitalZoom(1.0)
    , m_macroFocusingEnabled(false)
@@ -66,11 +67,12 @@ S60CameraFocusControl::S60CameraFocusControl(QObject *session, QObject *parent)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
-    connect(m_session, SIGNAL(focusLocked()), this, SIGNAL(focusLocked()));
-    connect(m_session, SIGNAL(zoomValueChanged(qreal)), this, SIGNAL(zoomValueChanged(qreal)));
+    m_advancedSettings = m_session->advancedSettings();
+    connect(m_session, SIGNAL(opticalZoomChanged(qreal)), this, SIGNAL(opticalZoomChanged(qreal)));
+    connect(m_session, SIGNAL(digitalZoomChanged(qreal)), this, SIGNAL(digitalZoomChanged(qreal)));
     connect(m_session, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusChanged(QCamera::FocusStatus)));
-    m_session->setFocusMode(m_focusMode);
-    m_session->setZoomFactor(m_zoomValue);
+    m_advancedSettings->setFocusMode(m_focusMode);
+    m_session->setZoomFactor(m_opticalZoomValue, m_digitalZoomValue);
 }
 
 S60CameraFocusControl::~S60CameraFocusControl()
@@ -79,18 +81,18 @@ S60CameraFocusControl::~S60CameraFocusControl()
 
 QCamera::FocusMode S60CameraFocusControl::focusMode() const
 {
-    return m_session->focusMode();
+    return m_advancedSettings->focusMode();
 }
 
 void S60CameraFocusControl::setFocusMode(QCamera::FocusMode mode)
 {
-    m_session->setFocusMode(mode);
+    m_advancedSettings->setFocusMode(mode);
 	m_focusMode = mode;
 }
 
 QCamera::FocusModes S60CameraFocusControl::supportedFocusModes() const
 {
-    return m_session->supportedFocusModes();
+    return m_advancedSettings->supportedFocusModes();
 }
 
 QCamera::FocusStatus S60CameraFocusControl::focusStatus() const
@@ -117,26 +119,29 @@ void S60CameraFocusControl::setMacroFocusingEnabled(bool /*e*/)
 
 qreal S60CameraFocusControl::maximumOpticalZoom() const
 {
-    if (m_session->maximumZoom() == 0) // optical zoom not supported!
-        return 1.0;
-    else
-        return m_session->maximumZoom();
+    return m_session->maximumZoom();
 }
 
 qreal S60CameraFocusControl::maximumDigitalZoom() const
 {
-	return m_session->maxDigitalZoom();
+    return m_session->maxDigitalZoom();
 }
 
-qreal S60CameraFocusControl::zoomValue() const
+qreal S60CameraFocusControl::opticalZoom() const
 {	
 	return m_session->zoomFactor();
 }
 
-void S60CameraFocusControl::zoomTo(qreal value)
+qreal S60CameraFocusControl::digitalZoom() const
+{   
+    return m_session->digitalZoomFactor();
+}
+
+void S60CameraFocusControl::zoomTo(qreal optical, qreal digital)
 {	
-	m_session->setZoomFactor(value);
-	m_zoomValue = value;
+	m_session->setZoomFactor(optical, digital);
+	m_opticalZoomValue = optical;
+	m_digitalZoomValue = digital;
 }
 
 void S60CameraFocusControl::startFocusing()

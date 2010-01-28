@@ -65,40 +65,40 @@ PlayerControls::PlayerControls(QWidget *parent)
     , rateBox(0)
 #endif    
 {
-    playButton = new QToolButton;
+    playButton = new QToolButton(this);
     playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 
     connect(playButton, SIGNAL(clicked()), this, SLOT(playClicked()));
 
-    stopButton = new QToolButton;
+    stopButton = new QToolButton(this);
     stopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
     stopButton->setEnabled(false);
 
     connect(stopButton, SIGNAL(clicked()), this, SIGNAL(stop()));
 
-    nextButton = new QToolButton;
+    nextButton = new QToolButton(this);
     nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
 
     connect(nextButton, SIGNAL(clicked()), this, SIGNAL(next()));
 
-    previousButton = new QToolButton;
+    previousButton = new QToolButton(this);
     previousButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
 
     connect(previousButton, SIGNAL(clicked()), this, SIGNAL(previous()));
 
-    muteButton = new QToolButton;
+    muteButton = new QToolButton(this);
     muteButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
 
     connect(muteButton, SIGNAL(clicked()), this, SLOT(muteClicked()));
 
 #ifdef Q_OS_SYMBIAN
 #else
-    volumeSlider = new QSlider(Qt::Horizontal);
+    volumeSlider = new QSlider(Qt::Horizontal, this);
     volumeSlider->setRange(0, 100);
 
     connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SIGNAL(changeVolume(int)));
 
-    rateBox = new QComboBox;
+    rateBox = new QComboBox(this);
     rateBox->addItem("0.5x", QVariant(0.5));
     rateBox->addItem("1.0x", QVariant(1.0));
     rateBox->addItem("2.0x", QVariant(2.0));
@@ -119,20 +119,20 @@ PlayerControls::PlayerControls(QWidget *parent)
     muteButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     muteButton->setMinimumSize(1, 1);
     
-    openButton = new QToolButton();
+    openButton = new QToolButton(this);
     openButton->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
     openButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     openButton->setMinimumSize(1, 1);
     connect(openButton, SIGNAL(clicked()), this, SIGNAL(open()));
     
-    fullScreenButton = new QToolButton();
+    fullScreenButton = new QToolButton(this);
     fullScreenButton->setIcon(style()->standardIcon(QStyle::SP_DesktopIcon));
     fullScreenButton->setCheckable(true);
     fullScreenButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     fullScreenButton->setMinimumSize(1, 1);
     connect(fullScreenButton, SIGNAL(clicked(bool)), this, SIGNAL(fullScreen(bool)));
     
-    playListButton = new QToolButton();
+    playListButton = new QToolButton(this);
     playListButton->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
     playListButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     playListButton->setMinimumSize(1, 1);

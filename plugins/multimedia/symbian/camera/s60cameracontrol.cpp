@@ -105,8 +105,6 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
 QCamera::CaptureModes S60CameraControl::supportedCaptureModes() const
 {
     return QCamera::CaptureStillImage | QCamera::CaptureVideo;
-    // we do not support videocapture yet
-    //return QCamera::CaptureStillImage;
 }
 
 

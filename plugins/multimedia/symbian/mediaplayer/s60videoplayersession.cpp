@@ -169,8 +169,19 @@ bool S60VideoPlayerSession::resetNativeHandles()
 
 bool S60VideoPlayerSession::isVideoAvailable() const
 {
-    //TODO: fix me
-    return true;
+#ifdef PRE_S60_50_PLATFORM
+    return true; // this is not support in pre 5th platforms
+#else    
+    return m_player->VideoEnabledL();
+#endif
+}
+
+bool S60VideoPlayerSession::isAudioAvailable() const
+{
+    if (m_player)
+        return m_player->AudioEnabledL();
+    else
+        return false;
 }
 
 void S60VideoPlayerSession::doPlay()
@@ -187,6 +198,7 @@ void S60VideoPlayerSession::doStop()
 {
     m_player->Stop();
 }
+
 qint64 S60VideoPlayerSession::doGetPositionL() const
 {
     return m_player->PositionL().Int64() / 1000;

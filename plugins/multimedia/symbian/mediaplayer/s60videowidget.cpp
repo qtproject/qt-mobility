@@ -41,9 +41,6 @@
 
 #include "s60videowidget.h"
 
-//#include <QtCore/qcoreevent.h>
-//#include <QtGui/qpainter.h>
-//#include <QtGui/qevent.h>
 #include <QtGui/private/qwidget_p.h>
 
 class QBlackWidget : public QWidget
@@ -156,13 +153,11 @@ void S60VideoWidgetControl::setSaturation(int saturation)
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
-        if (e->type() == QEvent::ParentChange || e->type() == QEvent::Show) {
-            WId newWId = m_widget->winId();
-            if (newWId != m_windowId) {
-                m_windowId = newWId;
+        if ((e->type() == QEvent::ParentChange || e->type() == QEvent::Show) &&
+            m_widget->winId() != m_windowId) {
+                m_windowId = m_widget->winId();
                 emit widgetUpdated();
             }
-        }
 
         if (e->type() == QEvent::Resize || e->type() == QEvent::Move)
             emit widgetUpdated();

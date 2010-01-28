@@ -104,6 +104,11 @@ CameraCapture::CameraCapture(QWidget *parent) :
     connect(ui->actionSport, SIGNAL(triggered()), this, SLOT(setExposureSport())); 
     connect(ui->actionBeach, SIGNAL(triggered()), this, SLOT(setExposureBeach()));
     
+    connect(ui->actionAuto, SIGNAL(triggered()), this, SLOT(setWBAuto()));   
+    connect(ui->actionSunlight, SIGNAL(triggered()), this, SLOT(setWBSunlight()));
+    connect(ui->actionCloudy, SIGNAL(triggered()), this, SLOT(setWBCloudy())); 
+    connect(ui->actionTungsten, SIGNAL(triggered()), this, SLOT(setWBTungsten()));
+    
     ui->actionAudio->setMenu(new QMenu(this));
 
     setCamera(cameraDevice);
@@ -146,14 +151,12 @@ void CameraCapture::setFlashFillIn()
 
 void CameraCapture::setFocusOn()
 {
-    camera->setFocusMode(QCamera::AutoFocus);
     m_autoFocus = true;
     m_takeImage = false;
 }
 
 void CameraCapture::setFocusOff()
 {
-    camera->setFocusMode(QCamera::ManualFocus);
     m_autoFocus = false;
     m_takeImage = false;
 }
@@ -176,6 +179,26 @@ void CameraCapture::setExposureSport()
 void CameraCapture::setExposureBeach()
 {
     camera->setExposureMode(QCamera::ExposurePortrait);
+}
+
+void CameraCapture::setWBAuto()
+{
+    camera->setWhiteBalanceMode(QCamera::WhiteBalanceAuto);
+}
+
+void CameraCapture::setWBSunlight()
+{
+    camera->setWhiteBalanceMode(QCamera::WhiteBalanceSunlight);
+}
+
+void CameraCapture::setWBCloudy()
+{
+    camera->setWhiteBalanceMode(QCamera::WhiteBalanceCloudy);
+}
+
+void CameraCapture::setWBTungsten()
+{
+    camera->setWhiteBalanceMode(QCamera::WhiteBalanceTungsten);
 }
 
 void CameraCapture::setCamera(const QByteArray &cameraDevice)
@@ -263,13 +286,12 @@ void CameraCapture::processCapturedImage(const QString& fname, const QImage& img
 }
 
 void CameraCapture::settings()
-{
-    Settings settingsDialog(mediaRecorder);
-
+{    
+    Settings settingsDialog(mediaRecorder);    
     settingsDialog.setAudioSettings(mediaRecorder->audioSettings());
     settingsDialog.setVideoSettings(mediaRecorder->videoSettings());
     settingsDialog.setFormat(mediaRecorder->containerMimeType());
-
+    
     if (settingsDialog.exec() == QDialog::Accepted) {
         mediaRecorder->setEncodingSettings(
                 settingsDialog.audioSettings(),
@@ -280,6 +302,19 @@ void CameraCapture::settings()
 
 void CameraCapture::record()
 {
+    int lastImage = 0;
+    foreach( QString fileName, outputDir.entryList(QStringList() << "clip_*.3gp") ) {
+        int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
+        lastImage = qMax(lastImage, imgNumber);
+    }
+    
+    qDebug() << outputDir.canonicalPath();
+    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+
+        QString("/clip_%1.3gp").arg(lastImage+1,4,10,QLatin1Char('0'))));
+
+    qDebug() << location.toString();
+    mediaRecorder->setOutputLocation(location);
+    
     mediaRecorder->record();
     updateRecordTime();
 }
@@ -419,10 +454,10 @@ void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
 {
     switch (key) {
         case MediaKeysObserver::EVolIncKey: 
-            camera->zoomTo(camera->zoomValue() + 5);
+            camera->zoomTo(0, camera->digitalZoom() + 5);
             break;
         case MediaKeysObserver::EVolDecKey:
-            camera->zoomTo(camera->zoomValue() - 5);
+            camera->zoomTo(0, camera->digitalZoom() - 5);
             break;
         default:
         break;

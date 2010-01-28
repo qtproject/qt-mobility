@@ -56,6 +56,7 @@ public:
     
     //From S60MediaPlayerSession
     bool isVideoAvailable() const;
+    bool isAudioAvailable() const;
     void setVideoRenderer(QObject *renderer);
     
 protected:

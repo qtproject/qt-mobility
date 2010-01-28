@@ -79,8 +79,9 @@ void S60MediaPlayerSession::setVolume(int volume)
         return;
     
     m_volume = volume;
-
-    if (mediaStatus() == QMediaPlayer::LoadedMedia && !isMuted()) {
+    // Dont set symbian players volume until media loaded.
+    // Leaves with KerrNotReady although documentation says otherwise.
+    if (!m_muted && m_mediaStatus == QMediaPlayer::LoadedMedia) {
         TRAPD(err, doSetVolumeL(m_volume));
         setError(err);
     }
@@ -108,7 +109,7 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
     if (m_mediaStatus == QMediaPlayer::InvalidMedia)
         setError(KErrNotSupported);
     
-    emit mediaStatusChanged(status);
+    emit mediaStatusChanged(m_mediaStatus);
     if (m_play_requested)
         play();
 }
@@ -119,7 +120,7 @@ void S60MediaPlayerSession::setState(QMediaPlayer::State state)
         return;
     
     m_state = state;
-    emit stateChanged(state);
+    emit stateChanged(m_state);
 }
 
 QMediaPlayer::State S60MediaPlayerSession::state() const 
@@ -134,6 +135,8 @@ QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const
 
 void S60MediaPlayerSession::load(const QUrl &url)
 {
+    // Reset error status on load
+    setError(KErrNone);
     m_localMediaFile = true;
     doStop();
     setMediaStatus(QMediaPlayer::LoadingMedia);
@@ -143,6 +146,8 @@ void S60MediaPlayerSession::load(const QUrl &url)
 
 void S60MediaPlayerSession::loadUrl(const QUrl &url)
 {
+    // Reset error status on load
+    setError(KErrNone);
     m_localMediaFile = false;
     doStop();
     setMediaStatus(QMediaPlayer::LoadingMedia);
@@ -210,35 +215,17 @@ QMap<QString, QVariant> S60MediaPlayerSession::availableMetaData() const
     return m_metaDataMap;
 }
 
-qreal S60MediaPlayerSession::playbackRate() const
-{
-    return m_playbackRate;
-}
-
 void S60MediaPlayerSession::setMuted(bool muted)
 {
     if (m_muted == muted)
         return;
     
     m_muted = muted;
-    emit mutingChanged(m_muted);
     
-    if (isMuted()) {
-        TRAPD(err, doSetVolumeL(0));
+    if (m_mediaStatus == QMediaPlayer::LoadedMedia) {
+        TRAPD(err, doSetVolumeL((m_muted)?0:m_volume));
         setError(err);
-    } else {
-        setVolume(volume());
     }
-}
-
-void S60MediaPlayerSession::setPlaybackRate(qreal rate)
-{
-    if (m_playbackRate == rate)
-        return;
-    
-    m_playbackRate = rate;
-    emit playbackRateChanged(m_playbackRate);
-    //None of symbian players supports this.
 }
 
 qint64 S60MediaPlayerSession::duration() const
@@ -280,10 +267,11 @@ void S60MediaPlayerSession::initComplete()
         setMediaStatus(QMediaPlayer::LoadedMedia);
         TRAPD(err, updateMetaDataEntriesL());
         setError(err);
-        setVolume(volume());
+        setVolume(m_volume);
+        setMuted(m_muted);
         emit durationChanged(duration());
     } else {
-        setMediaStatus(QMediaPlayer::NoMedia);
+        setError(m_error);
     }
 }
 
@@ -337,7 +325,8 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrPermissionDenied:
             return QMediaPlayer::AccessDeniedError;
             
-        case KErrMMPartialPlayback:            
+        case KErrMMPartialPlayback:   
+        case KErrNone:
         default:
             return QMediaPlayer::NoError;
     }
@@ -345,19 +334,22 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
 
 void S60MediaPlayerSession::setError(int error, const QString &errorString)
 {
-    if (error == KErrNone || error == KErrMMPartialPlayback)
+    if (error == m_error)
         return;
     
     m_error = error;
     QMediaPlayer::Error mediaError = fromSymbianErrorToMultimediaError(m_error);
-    
-    // TODO: fix to user friendly string at some point
-    // These error string are only dev usable
-    QString symbianError = QString(errorString); 
-    symbianError.append("Symbian:");
-    symbianError.append(QString::number(m_error));
+    QString symbianError = QString(errorString);
+
+    if (mediaError != QMediaPlayer::NoError) {
+        m_play_requested = false;
+        // TODO: fix to user friendly string at some point
+        // These error string are only dev usable
+        symbianError.append("Symbian:");
+        symbianError.append(QString::number(m_error));
+    }
+     
     emit this->error(mediaError, symbianError);
-    
     switch(mediaError){
         case QMediaPlayer::FormatError:
             setMediaStatus(QMediaPlayer::InvalidMedia);

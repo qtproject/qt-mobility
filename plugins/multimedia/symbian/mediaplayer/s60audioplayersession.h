@@ -67,6 +67,7 @@ public:
     
     //From S60MediaPlayerSession
     bool isVideoAvailable() const;
+    bool isAudioAvailable() const;
     
 protected:
     //From S60MediaPlayerSession

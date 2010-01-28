@@ -184,8 +184,6 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isLocal)
                 m_control, SIGNAL(positionChanged(qint64)));
         connect(m_videoPlayerSession, SIGNAL(durationChanged(qint64)),
                 m_control, SIGNAL(durationChanged(qint64)));
-        connect(m_videoPlayerSession, SIGNAL(mutingChanged(bool)),
-                m_control, SIGNAL(mutedChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(stateChanged(QMediaPlayer::State)),
                 m_control, SIGNAL(stateChanged(QMediaPlayer::State)));
         connect(m_videoPlayerSession, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
@@ -198,8 +196,6 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isLocal)
                 m_control, SIGNAL(seekableChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)),
                 m_control, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)));
-        connect(m_videoPlayerSession, SIGNAL(playbackRateChanged(qreal)),
-                m_control, SIGNAL(playbackRateChanged(qreal)));
         connect(m_videoPlayerSession, SIGNAL(error(int, const QString &)),
                 m_control, SIGNAL(error(int, const QString &)));
         connect(m_videoPlayerSession, SIGNAL(metaDataChanged()), 
@@ -207,8 +203,6 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isLocal)
     }
     
     m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
-    m_videoPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
-    //m_videoPlayerSession->setPosition(0); // TODO: Check is this really needed???
     m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
     m_videoPlayerSession->setMediaFileLocal(isLocal);
     return m_videoPlayerSession;
@@ -223,8 +217,6 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isLocal)
                 m_control, SIGNAL(positionChanged(qint64)));
         connect(m_audioPlayerSession, SIGNAL(durationChanged(qint64)),
                 m_control, SIGNAL(durationChanged(qint64)));
-        connect(m_audioPlayerSession, SIGNAL(mutingChanged(bool)),
-                m_control, SIGNAL(mutedChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(stateChanged(QMediaPlayer::State)),
                 m_control, SIGNAL(stateChanged(QMediaPlayer::State)));
         connect(m_audioPlayerSession, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
@@ -237,8 +229,6 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isLocal)
                 m_control, SIGNAL(seekableChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)),    
                 m_control, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)));
-        connect(m_audioPlayerSession, SIGNAL(playbackRateChanged(qreal)),
-                m_control, SIGNAL(playbackRateChanged(qreal)));
         connect(m_audioPlayerSession, SIGNAL(error(int, const QString &)),
                 m_control, SIGNAL(error(int, const QString &)));
         connect(m_audioPlayerSession, SIGNAL(metaDataChanged()), 
@@ -246,8 +236,6 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isLocal)
     }
     
     m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
-    m_audioPlayerSession->setPlaybackRate(m_control->mediaControlSettings().playbackRate());
-    //m_audioPlayerSession->setPosition(0); // TODO: Check is this really needed???
     m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
     m_audioPlayerSession->setMediaFileLocal(isLocal);
     return m_audioPlayerSession;

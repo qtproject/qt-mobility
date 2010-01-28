@@ -101,6 +101,8 @@ private slots:
     void zoomValueChanged(qreal value);
     
     void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
+    void error(QCamera::Error aError);
+    
     
     void setFlashOn();
     void setFlashOff();
@@ -116,7 +118,10 @@ private slots:
     void setExposureSport();
     void setExposureBeach();
     
-    void error(QCamera::Error aError);
+    void setWBAuto();
+    void setWBSunlight();
+    void setWBCloudy();
+    void setWBTungsten();
 
 private:
     Ui::CameraCapture *ui;

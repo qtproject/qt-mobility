@@ -61,9 +61,8 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_stereoMode(QRadioTuner::Auto)
     , m_signal(0)
     , m_currentBand(QRadioTuner::FM)
-    , m_currentFreq(98700000)
+    , m_currentFreq(87500000)
     , m_scanning(false)
-    , m_tuners(0)
     , m_vol(100)
 {
     initRadio();   
