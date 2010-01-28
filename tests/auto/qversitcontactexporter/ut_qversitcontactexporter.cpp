@@ -48,6 +48,7 @@
 #include <QStringList>
 #include <QList>
 #include <QPixmap>
+#include <QImageWriter>
 #include <QtTest/QtTest>
 #include <qcontact.h>
 #include <qcontactaddress.h>
@@ -751,6 +752,8 @@ void UT_QVersitContactExporter::testEncodeAvatar()
 {
     QContact contact;
     QContactAvatar contactAvatar;
+    QPixmap pixmap;
+    pixmap.loadFromData(SAMPLE_GIF);
     MyQVersitResourceHandler resourceHandler;
     resourceHandler.mSimulatedData = "simulated data";
     resourceHandler.mSimulatedMimeType = QLatin1String("image/jpeg");
@@ -764,12 +767,14 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     contacts.append(contact);
     mExporter->setResourceHandler(&resourceHandler);
     QVersitDocument document = mExporter->exportContacts(contacts).first();
+    QVERIFY(document.properties().length() > 0);
     QVersitProperty property = document.properties().at(0);
     QCOMPARE(property.parameters().count(), 1);
     QVERIFY(!resourceHandler.mLoadResourceCalled);
 
     // Test 2: Local Media PHOTO
     contactAvatar.setAvatar(TEST_PHOTO_FILE);
+    contactAvatar.setPixmap(pixmap); // Should be ignored if the file can be loaded.
     contactAvatar.setSubType(QContactAvatar::SubTypeImage);
     contact.saveDetail(&contactAvatar);
     contacts.clear();
@@ -778,6 +783,7 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     QVERIFY(resourceHandler.mLoadResourceCalled);
     QCOMPARE(resourceHandler.mLocation, TEST_PHOTO_FILE);
     // verify the value
+    QVERIFY(document.properties().length() > 0);
     property = document.properties().at(0);
     QVariant variantValue = property.variantValue();
     QVERIFY(variantValue.type() == QVariant::ByteArray);
@@ -799,25 +805,27 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     QVERIFY(!resourceHandler.mLoadResourceCalled);
 
     // Test 4: Load resource fails but there is a pixmap.  The pixmap should be saved.
-    resourceHandler = MyQVersitResourceHandler();
-    resourceHandler.mLoadSuccess = false;
-    contactAvatar.setAvatar(QLatin1String(""));
-    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
-    QPixmap pixmap;
-    pixmap.loadFromData(SAMPLE_GIF);
-    contactAvatar.setPixmap(pixmap);
-    contact.saveDetail(&contactAvatar);
-    contacts.clear();
-    contacts.append(contact);
-    document = mExporter->exportContacts(contacts).first();
-    // verify the value
-    property = document.properties().at(0);
-    variantValue = property.variantValue();
-    QVERIFY(variantValue.type() == QVariant::ByteArray);
-    QByteArray retrievedData = variantValue.value<QByteArray>();
-    QPixmap retrievedPixmap;
-    retrievedPixmap.loadFromData(retrievedData);
-    QCOMPARE(retrievedPixmap, pixmap);
+    // This feature is only supported if we can write PNGs.
+    if (QImageWriter::supportedImageFormats().contains("png")) {
+        resourceHandler = MyQVersitResourceHandler();
+        resourceHandler.mLoadSuccess = false;
+        contactAvatar.setAvatar(QLatin1String(""));
+        contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+        contactAvatar.setPixmap(pixmap);
+        contact.saveDetail(&contactAvatar);
+        contacts.clear();
+        contacts.append(contact);
+        document = mExporter->exportContacts(contacts).first();
+        // verify the value
+        QVERIFY(document.properties().length() > 0);
+        property = document.properties().at(0);
+        variantValue = property.variantValue();
+        QVERIFY(variantValue.type() == QVariant::ByteArray);
+        QByteArray retrievedData = variantValue.value<QByteArray>();
+        QPixmap retrievedPixmap;
+        retrievedPixmap.loadFromData(retrievedData);
+        QCOMPARE(retrievedPixmap, pixmap);
+    }
 }
 
 

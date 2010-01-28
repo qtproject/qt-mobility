@@ -659,8 +659,12 @@ bool QVersitContactExporterPrivate::encodeContentFromPixmap(const QPixmap& pixma
     QByteArray imageData;
     QBuffer buffer(&imageData);
     buffer.open(QIODevice::WriteOnly);
-    pixmap.save(&buffer, "PNG"); // Always store a pixmap as a PNG.
+    // Always store a pixmap as a PNG.
+    if (!pixmap.save(&buffer, "PNG")) {
+        return false;
+    }
     property.setValue(imageData);
+    property.insertParameter(QLatin1String("TYPE"), QLatin1String("PNG"));
     return true;
 }
 
