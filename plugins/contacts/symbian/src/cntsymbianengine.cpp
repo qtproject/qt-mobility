@@ -774,11 +774,20 @@ bool CntSymbianEngine::hasFeature(QContactManager::ManagerFeature feature, const
         return false;
 
     switch (feature) {
-        /* TODO:
-           How about the others? like:
-           QContactManager::ActionPreferences,
-           QContactManager::MutableDefinitions,
-           QContactManager::Anonymous? */
+        /*
+        TODO:
+        How about the others? like:
+        Groups,
+        ActionPreferences,
+        MutableDefinitions,
+        Relationships,
+        ArbitraryRelationshipTypes,
+        RelationshipOrdering,
+        DetailOrdering,
+        SelfContact,
+        Anonymous,
+        ChangeLogs
+        */
     case QContactManager::Groups:
     case QContactManager::Relationships:
     case QContactManager::SelfContact: {

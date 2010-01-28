@@ -1753,10 +1753,13 @@ void tst_QContactManagerFiltering::relationshipFiltering()
 
     // and compare.
     QString output = convertIds(contacts, ids);
-    if (cm->hasFeature(QContactManager::Relationships)) {
+    if (!cm->hasFeature(QContactManager::Relationships)) {
+        QSKIP("Manager does not support relationships; skipping relationship filtering", SkipSingle);
+    } else if(relationshipType.isEmpty()
+        || cm->supportedRelationshipTypes().contains(relationshipType)) {
         QCOMPARE_UNSORTED(output, expected);
     } else {
-        QSKIP("Manager does not support relationships; skipping relationship filtering", SkipSingle);
+        QSKIP("Manager does not support relationship type; skipping", SkipSingle);
     }
 }
 
