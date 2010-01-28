@@ -241,8 +241,9 @@ void S60MediaPlayerControl::setVideoOutput(QObject *output)
 
 bool S60MediaPlayerControl::isAudioAvailable() const
 {
-    //TODO: CHECK wheter audio is supported 
-    return true;
+    if (m_session)
+        return m_session->isAudioAvailable(); 
+    return false;
 }
 
 bool S60MediaPlayerControl::isVideoAvailable() const

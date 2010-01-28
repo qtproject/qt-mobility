@@ -76,6 +76,7 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
     virtual bool isVideoAvailable() const = 0;
+    virtual bool isAudioAvailable() const = 0;
     bool isSeekable() const;
     void play();
     void pause();
