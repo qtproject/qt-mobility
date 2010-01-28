@@ -27,6 +27,24 @@ mac {
     }
 }
 
+#In Windows we want to build libraries in debug and release mode if the user
+#didn't select a version - if Qt is build in debug_and_release
+#this avoids problems for third party as qmake build debug by default
+#If mobility selected debug_and_release but Qt only supports
+#one version but not the other we slently disable the impossible combination
+win32:contains(CONFIG_WIN32,build_all) {
+    contains(QT_CONFIG,debug):contains(QT_CONFIG,release) {
+        contains(TEMPLATE,.*lib):!plugin {
+            CONFIG += $$WAS_IN_DEBUG
+            CONFIG += debug_and_release build_all
+        }
+    } else {
+        CONFIG -= debug_and_release debug release
+        contains(QT_CONFIG,debug): CONFIG+=debug
+        contains(QT_CONFIG,release): CONFIG+=release
+    }
+}
+
 # Helper function.  This should move to a .prf file
 defineReplace(mobilityDeployFilename) {
    unset(MOBILITY_DEPLOY_NAME)

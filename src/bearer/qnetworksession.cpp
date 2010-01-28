@@ -328,7 +328,10 @@ void QNetworkSession::close()
 /*!
     Invalidates all open sessions against the network interface and therefore stops the 
     underlying network interface. This function always changes the session's state() flag to
-    \l Disconnected.
+    \l Disconnected. 
+    
+    On Symbian platform, a 'NetworkControl' capability is required for
+    full interface-level stop (without the capability, only the current session is stopped).
 
     \sa open(), close()
 */

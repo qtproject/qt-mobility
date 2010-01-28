@@ -346,7 +346,7 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     m_source->setPreferredPositioningMethods(method);
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
-    int time_out = 20000;
+    int time_out = 2000;
     m_source->setUpdateInterval(time_out);
     m_source->startUpdates();
 
@@ -355,7 +355,7 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     // changed by the time it is checked)
     QEventLoop loop;
     QTimer timer;
-    timer.setInterval(30000);
+    timer.setInterval(3000);
     connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)),
             &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
@@ -413,15 +413,15 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervals()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
-    m_source->setUpdateInterval(8000);
+    m_source->setUpdateInterval(1000);
     int interval = m_source->updateInterval();
 
     m_source->startUpdates();
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 20000);
-    for (int i = 0; i < 9; i++) {
+    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 2000);
+    for (int i = 0; i < 6; i++) {
         EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
         QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, (interval*3));
@@ -430,10 +430,10 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervals()
 
 // TODO Currently updates are coming irregularly from S60
 #if !defined(Q_OS_SYMBIAN)
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 6; i++) {
         EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-        QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 1, 6000, 10000);
+        QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 1, 500, 1500);
         spy.clear();
     }
 #endif
@@ -455,18 +455,11 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
     QTRY_VERIFY_WITH_TIMEOUT(spy.count() >= 1, 20000);
     spy.clear();
 
-    m_source->setUpdateInterval(5000);
+    m_source->setUpdateInterval(2500);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 8000, 12000);
-    spy.clear();
-
-    m_source->setUpdateInterval(10000);
-
-    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
-
-    QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 18000, 22000);
+    QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 3000, 7000);
     spy.clear();
 
     m_source->setUpdateInterval(5000);
@@ -476,11 +469,18 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
     QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 8000, 12000);
     spy.clear();
 
-    m_source->setUpdateInterval(5000);
+    m_source->setUpdateInterval(2500);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 8000, 12000);
+    QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 3000, 7000);
+    spy.clear();
+
+    m_source->setUpdateInterval(2500);
+
+    EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
+
+    QTRY_COMPARE_WITH_TIMEOUT_RANGE(spy.count(), 2, 3000, 7000);
     spy.clear();
 
     m_source->setUpdateInterval(0);
@@ -558,22 +558,22 @@ void TestQGeoPositionInfoSource::stopUpdates()
     CHECK_SOURCE_VALID;
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
-    m_source->setUpdateInterval(8000);
+    m_source->setUpdateInterval(4000);
     m_source->startUpdates();
     for (int i = 0; i < 2; i++) {
         EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-        QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 10000);
+        QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 1, 6000);
         spy.clear();
     }
     m_source->stopUpdates();
-    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 0, 10000);
+    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 0, 5000);
     spy.clear();
 
     m_source->setUpdateInterval(0);
     m_source->startUpdates();
     m_source->stopUpdates();
-    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 0, 10000);
+    QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 0, 5000);
 }
 
 //TC_ID_3_x_2

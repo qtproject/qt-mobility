@@ -69,6 +69,20 @@ public:
     QList<qreal> supportedFrameRates(const QSize &frameSize = QSize()) const;
     QList<QSize> supportedResolutions(qreal frameRate = -1) const;
 
+    QCamera::CaptureMode captureMode() const { return m_captureMode; }
+    void setCaptureMode(QCamera::CaptureMode mode)
+    {
+        if (m_captureMode != mode) {
+            m_captureMode = mode;
+            emit captureModeChanged(mode);
+        }
+    }
+
+    QCamera::CaptureModes supportedCaptureModes() const
+    {
+        return QCamera::CaptureStillImage | QCamera::CaptureVideo;
+    }
+
 public slots:
     void setDevice(const QString &device);
 
@@ -83,9 +97,11 @@ private:
 
     QHash<QSize, QSet<int> > m_ratesByResolution;
 
+    QCamera::CaptureMode m_captureMode;
+
     QGstreamerCaptureSession *m_session;
     QByteArray m_device;
-    QCamera::State m_state;
+    QCamera::State m_state;    
 };
 
 #endif // QGSTREAMERCAMERACONTROL_H

@@ -150,6 +150,7 @@ class tst_QServiceManager: public QObject
 private:
     QString xmlTestDataPath(const QString &xmlFileName)
     {
+        // On Symbian applicationDirPath returns application's private directory
         return QCoreApplication::applicationDirPath() + "/plugins/xmldata/" + xmlFileName;
     }
 
@@ -353,21 +354,25 @@ void tst_QServiceManager::findServices()
     QServiceManager mgr;
     QServiceFilter wildcardFilter;
 
+    // Check that nothing is found neither with default search or interface-search
     QVERIFY(mgr.findServices().isEmpty());
     foreach (const QString &interface, interfaceNames)
         QVERIFY(mgr.findServices(interface).isEmpty());
     QCOMPARE(mgr.findInterfaces(wildcardFilter).count(), 0);
 
+    // Add all services from the xmlBlocks list
     foreach (const QByteArray &xml, xmlBlocks) {
         QBuffer buffer;
         buffer.setData(xml);
         QVERIFY2(mgr.addService(&buffer), PRINT_ERR(mgr));
     }
-
+    // Check that all services are found with default search
     QCOMPARE(mgr.findServices().toSet(), searchAllResult);
+    // Check that all services are found based on interface search
     foreach (const QString &interface, interfaceNames)
         QCOMPARE(mgr.findServices(interface).toSet(), searchByInterfaceResult);
 
+    // Check that nothing is found with empty interface
     QCOMPARE(mgr.findServices("com.invalid.interface") , QStringList());
 }
 
@@ -730,9 +735,9 @@ void tst_QServiceManager::loadInterface_string()
     // registered, loadInterface(QString) should return the correct one
     // depending on which is set as the default.
 
+    // Real servicenames and classnames
     QString serviceA = "SampleService";
     QString serviceAClassName = "SampleServicePluginClass";
-
     QString serviceB = "SampleService2";
     QString serviceBClassName = "SampleServicePluginClass2";
 
@@ -740,7 +745,8 @@ void tst_QServiceManager::loadInterface_string()
     QServiceManager mgr;
     QString commonInterface = "com.nokia.qt.TestInterfaceA";
 
-    // add first service
+    // Add first service. Adds the service described in
+    // c/Private/<uid3 of this executable>/plugins/xmldata/sampleservice.xml
     QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice.xml")), PRINT_ERR(mgr));
     obj = mgr.loadInterface(commonInterface, 0, 0);
     QVERIFY(obj != 0);
@@ -748,7 +754,8 @@ void tst_QServiceManager::loadInterface_string()
     delete obj;
     QCoreApplication::processEvents(QEventLoop::AllEvents|QEventLoop::DeferredDeletion);
 
-    // add second service
+    // Add first service. Adds the service described in
+    // c/Private/<uid3 of this executable>/plugins/xmldata/sampleservice2.xml
     QVERIFY2(mgr.addService(xmlTestDataPath("sampleservice2.xml")), PRINT_ERR(mgr));
 
     // if first service is set as default, it should be returned
@@ -802,7 +809,11 @@ void tst_QServiceManager::loadInterface_descriptor_data()
     lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_sampleserviceplugin");
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
-    priv->attributes[QServiceInterfaceDescriptor::Location] = lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
+#else
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
+#endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
     QTest::newRow("tst_sfw_sampleserviceplugin")
             << descriptor
@@ -811,10 +822,14 @@ void tst_QServiceManager::loadInterface_descriptor_data()
     lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
-    priv->attributes[QServiceInterfaceDescriptor::Location] = lib.fileName();
-    qDebug() << lib.fileName();
+
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
+#else
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
+#endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
-    QTest::newRow("tst_sfw2_sampleserviceplugin")
+    QTest::newRow("tst_sfw_sampleserviceplugin2")
             << descriptor
             << "TestService";
 }
@@ -828,7 +843,11 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
-    priv->attributes[QServiceInterfaceDescriptor::Location] = lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
+#else
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
+#endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 
     QServiceManager mgr;
@@ -897,7 +916,11 @@ void tst_QServiceManager::loadLocalTypedInterface()
     QServiceInterfaceDescriptor descriptor;
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
-    priv->attributes[QServiceInterfaceDescriptor::Location] = lib.fileName();
+#if defined(Q_OS_SYMBIAN)
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  "plugins/" + lib.fileName();
+#else
+    priv->attributes[QServiceInterfaceDescriptor::Location] =  lib.fileName();
+#endif
     QServiceInterfaceDescriptorPrivate::setPrivate(&descriptor, priv);
 
     //use manual descriptor -> avoid database involvement
