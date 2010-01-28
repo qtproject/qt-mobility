@@ -237,6 +237,7 @@ void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *st
 
     m_service->load(media, stream);
 
+    emit audioAvailableChanged(m_streamTypes & DirectShowPlayerService::AudioStream);
     emit videoAvailableChanged(m_streamTypes & DirectShowPlayerService::VideoStream);
     emit durationChanged(m_duration);
     emit seekableChanged(m_seekable);
