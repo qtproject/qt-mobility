@@ -82,24 +82,6 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \class QVersitResourceLoader
- *
- * \brief The QVersitResourceLoader class is an interface for clients wishing to implement file
- * loading from disk when exporting.
- *
- * \ingroup versit
- *
- * \sa QVersitContactExporter
- *
- * \fn virtual bool QVersitResourceLoader::loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
- * Loads a file from \a location.
- *
- * \a *contents is filled with the contents of the file and \a *mimeType is set to the MIME
- * type that it is determined to be.
- * Returns true on success, false on failure.
- */
-
-/*!
  * \class QVersitContactExporter
  *
  * \brief The QVersitContactExporter class exports QContact(s) into QVersitDocument(s).

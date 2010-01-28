@@ -60,6 +60,14 @@ public:
                               QString* location) = 0;
 };
 
+class Q_VERSIT_EXPORT QVersitDefaultResourceHandler : public QVersitResourceHandler
+{
+public:
+    virtual bool loadResource(const QString& location, QByteArray* contents, QString* mimeType);
+    virtual bool saveResource(const QByteArray& contents, const QVersitProperty& property,
+                              QString* location);
+};
+
 QTM_END_NAMESPACE
 
 #endif // QVERSITCOMMON_H

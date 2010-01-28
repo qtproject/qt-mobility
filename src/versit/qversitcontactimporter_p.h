@@ -140,6 +140,7 @@ private:
     
 public: // Data
     QVersitContactImporterPropertyHandler* mPropertyHandler;
+    QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
 
 private: // Data

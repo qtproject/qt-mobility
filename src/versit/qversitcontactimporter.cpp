@@ -81,25 +81,6 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \class QVersitResourceHandler
- *
- * \brief The QVersitResourceHandler class is an interface for clients wishing to implement file
- * saving to disk when importing.
- *
- * \ingroup versit
- *
- * \sa QVersitContactImporter
- *
- * \fn virtual bool saveFile(const QByteArray& contents, const QVersitProperty& property, QString* filename) = 0;
- * Saves the binary data \a contents to a file on a persistent storage medium.
- *
- * \a property holds the QVersitProperty which is the context in which the binary is coming from.
- * The QVersitResourceHandler can use this, for example, to determine file extension it should choose.
- * \a *filename is filled with the contents of the file.
- * Returns true on success, false on failure.
- */
-
-/*!
  * \class QVersitContactImporter
  *
  * \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.

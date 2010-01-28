@@ -104,6 +104,7 @@ protected:
 
 public: // Data
     QVersitContactExporterDetailHandler* mDetailHandler;
+    QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
 
 protected: // Data

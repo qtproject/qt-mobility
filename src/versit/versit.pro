@@ -56,6 +56,7 @@ SOURCES += qversitdocument.cpp \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
     qversitcontactimporter_p.cpp \
+    qversitresourcehandler.cpp \
     versitutils.cpp
 
 HEADERS += \
