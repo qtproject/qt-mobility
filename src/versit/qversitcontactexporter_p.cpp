@@ -393,7 +393,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
     }
     if (organization.logo().length() > 0) {
         QVersitProperty property;
-        if (encodeEmbeddedContent(organization.logo(), property)) {
+        if (encodeContentFromFile(organization.logo(), property)) {
             property.setName(QString::fromAscii("LOGO"));
             document.addProperty(property);
         }
@@ -431,7 +431,9 @@ bool QVersitContactExporterPrivate::encodeAvatar(
         // NOP
     }
     if (propertyName.length() > 0) {
-        encoded = encodeEmbeddedContent(contactAvatar.avatar(), property);
+        encoded = encodeContentFromFile(contactAvatar.avatar(), property);
+        if (!encoded)
+            encoded = encodeContentFromPixmap(contactAvatar.pixmap(), property);
         if (encoded)
             property.setName(propertyName);
     }
@@ -615,9 +617,9 @@ void QVersitContactExporterPrivate::encodeParameters(
 }
 
 /*!
- * Encode embedded content into the Versit Document
+ * Encode embedded content from the given \a resourcePath into \a property.
  */
-bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourcePath,
+bool QVersitContactExporterPrivate::encodeContentFromFile(const QString& resourcePath,
                                                           QVersitProperty& property)
 {
     bool encodeContent = false;
@@ -644,6 +646,22 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourc
     }
     property.setValue(value);
     return encodeContent;
+}
+
+/*!
+ * Encode embedded content from the given \a pixmap into \a property.
+ */
+bool QVersitContactExporterPrivate::encodeContentFromPixmap(const QPixmap& pixmap,
+                                                            QVersitProperty& property)
+{
+    if (pixmap.isNull())
+        return false;
+    QByteArray imageData;
+    QBuffer buffer(&imageData);
+    buffer.open(QIODevice::WriteOnly);
+    pixmap.save(&buffer, "PNG"); // Always store a pixmap as a PNG.
+    property.setValue(imageData);
+    return true;
 }
 
 /*!

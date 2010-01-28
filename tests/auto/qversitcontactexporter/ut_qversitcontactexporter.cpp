@@ -47,6 +47,7 @@
 #include <QString>
 #include <QStringList>
 #include <QList>
+#include <QPixmap>
 #include <QtTest/QtTest>
 #include <qcontact.h>
 #include <qcontactaddress.h>
@@ -69,51 +70,12 @@
 #include <qcontactdisplaylabel.h>
 
 QTM_BEGIN_NAMESPACE
-class MyQVersitContactExporterPrivate : public QVersitContactExporterPrivate {
-public:
-    void encodeName(QVersitProperty& property, const QContactDetail& detail);
-    void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
-    void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
-    void encodeAddress(QVersitProperty& property, const QContactDetail& detail);
-    void encodeUrl(QVersitProperty& property, const QContactDetail& detail);
-    void encodeUid(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeRev(QVersitProperty& property, const QContactDetail& detail);
-    void encodeBirthDay(QVersitProperty& property, const QContactDetail& detail);
-    void encodeNote(QVersitProperty& property, const QContactDetail& detail);
-    void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
-    void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
-    void encodeGender(QVersitProperty& property, const QContactDetail& detail);
-    void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
-    void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeAvatar(QVersitProperty& property,
-            const QContactDetail& detail);
-    bool encodeDisplayLabel(QVersitProperty& property,
-            const QContactDetail& detail,
-            const QContact& contact) {return QVersitContactExporterPrivate::encodeDisplayLabel(property, detail, contact);}
-    bool isValidRemoteUrl(const QString& resourceIdentifier) {return QVersitContactExporterPrivate::isValidRemoteUrl(resourceIdentifier);}
-    void encodeParameters(QVersitProperty& property,
-            const QStringList& contexts,
-            const QStringList& subTypes=QStringList()) {return QVersitContactExporterPrivate::encodeParameters(property, contexts, subTypes);}
-    bool encodeEmbeddedContent(const QString& resourcePath,
-            QVersitProperty& property) {return QVersitContactExporterPrivate::encodeEmbeddedContent(resourcePath, property);}
-    void setEscapedValue(QVersitProperty& property,const QString& value) {QVersitContactExporterPrivate::setEscapedValue(property, value);}
-    QString escape(const QString& value) {return QVersitContactExporterPrivate::escape(value);}
-
-
-    // private data
-    QHash<QString, QString>& PropertyMappings() {return mPropertyMappings;}
-    QHash<QString, QString>& ParameterMappings() {return mParameterMappings;}
-
-};
 
 class MyQVersitContactExporterDetailHandler : public QVersitContactExporterDetailHandler
 {
 public:
-    MyQVersitContactExporterDetailHandler()
+    MyQVersitContactExporterDetailHandler() : mPreProcess(false)
     {
-        mPreProcess = false;
     }
 
     bool preProcessDetail(const QContact& contact,
@@ -152,7 +114,8 @@ class MyQVersitResourceHandler : public QVersitResourceHandler
 {
 public:
     MyQVersitResourceHandler()
-        : mLoadResourceCalled(false)
+        : mLoadResourceCalled(false),
+        mLoadSuccess(true)
     {
     }
 
@@ -162,7 +125,7 @@ public:
         *contents = mSimulatedData;
         *mimeType = mSimulatedMimeType;
         mLoadResourceCalled = true;
-        return true;
+        return mLoadSuccess;
     }
 
     bool saveResource(const QByteArray &contents, const QVersitProperty &property, QString *location)
@@ -177,7 +140,12 @@ public:
     QString mSimulatedMimeType;
     QString mLocation;
     bool mLoadResourceCalled;
+    bool mLoadSuccess; // A hook to control what loadResource returns.
 };
+
+const static QByteArray SAMPLE_GIF(QByteArray::fromBase64(
+        "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
+        "wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw=="));
 
 QTM_END_NAMESPACE
 
@@ -189,9 +157,9 @@ const QString TEST_AUDIO_FILE(QLatin1String("versitTest001.wav"));
 void UT_QVersitContactExporter::init()
 {
     mExporter = new QVersitContactExporter();
-    mExporterPrivate = new MyQVersitContactExporterPrivate();
-    QVERIFY(!mExporterPrivate->ParameterMappings().empty());
-    QVERIFY(!mExporterPrivate->PropertyMappings().empty());
+    mExporterPrivate = new QVersitContactExporterPrivate();
+    QVERIFY(!mExporterPrivate->mParameterMappings.empty());
+    QVERIFY(!mExporterPrivate->mPropertyMappings.empty());
 
 }
 
@@ -707,15 +675,14 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     contact.saveDetail(&organization);
     contacts.clear();
     contacts.append(contact);
+    resourceHandler.mSimulatedMimeType = QLatin1String("image/jpeg");
     mExporter->setResourceHandler(&resourceHandler);
     document = mExporter->exportContacts(contacts).first();
     QVERIFY(!resourceHandler.mLoadResourceCalled);
 
-    //Media type, and source type are encoded.
-    QCOMPARE(document.properties().at(0).parameters().count(), 2);
+    // Source type is encoded, but media type is not for a URL.
+    QCOMPARE(document.properties().at(0).parameters().count(), 1);
 
-    QVERIFY(document.properties().at(0).parameters().contains(
-            QString::fromAscii("TYPE"), QString::fromAscii("JPEG")));
     QVERIFY(document.properties().at(0).parameters().contains(
             QString::fromAscii("VALUE"), QString::fromAscii("URL")));
 
@@ -740,7 +707,7 @@ void UT_QVersitContactExporter::testEncodeOrganization()
     QVERIFY(resourceHandler.mLoadResourceCalled);
     QCOMPARE(resourceHandler.mLocation, TEST_PHOTO_FILE);
 
-    // It should be stored in the property as a QVariant of QByteArray, not base64 encoded
+    // It should be stored in the property as a QVariant of QByteArray
     property = document.properties().at(0);
     QMultiHash<QString,QString> parameters = property.parameters();
     // Media type is encoded
@@ -786,6 +753,7 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     QContactAvatar contactAvatar;
     MyQVersitResourceHandler resourceHandler;
     resourceHandler.mSimulatedData = "simulated data";
+    resourceHandler.mSimulatedMimeType = QLatin1String("image/jpeg");
 
     // Test1: Web URL
     const QString url = QString::fromAscii("http://www.myhome.com/test.jpg");
@@ -797,7 +765,7 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     mExporter->setResourceHandler(&resourceHandler);
     QVersitDocument document = mExporter->exportContacts(contacts).first();
     QVersitProperty property = document.properties().at(0);
-    QCOMPARE(property.parameters().count(), 2);
+    QCOMPARE(property.parameters().count(), 1);
     QVERIFY(!resourceHandler.mLoadResourceCalled);
 
     // Test 2: Local Media PHOTO
@@ -809,14 +777,13 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     document = mExporter->exportContacts(contacts).first();
     QVERIFY(resourceHandler.mLoadResourceCalled);
     QCOMPARE(resourceHandler.mLocation, TEST_PHOTO_FILE);
-
-    property = document.properties().at(0);
-    //Media type is encoded
-    QCOMPARE(property.parameters().count(), 1);
     // verify the value
+    property = document.properties().at(0);
     QVariant variantValue = property.variantValue();
     QVERIFY(variantValue.type() == QVariant::ByteArray);
     QCOMPARE(variantValue.value<QByteArray>(), resourceHandler.mSimulatedData);
+    QVERIFY(property.parameters().contains(QString::fromAscii("TYPE"),
+                                           QString::fromAscii("JPEG")));
 
     // Test3: UnSupported Media Type, properties and parameters are not encoded
     resourceHandler = MyQVersitResourceHandler();
@@ -830,6 +797,27 @@ void UT_QVersitContactExporter::testEncodeAvatar()
     document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
     QVERIFY(!resourceHandler.mLoadResourceCalled);
+
+    // Test 4: Load resource fails but there is a pixmap.  The pixmap should be saved.
+    resourceHandler = MyQVersitResourceHandler();
+    resourceHandler.mLoadSuccess = false;
+    contactAvatar.setAvatar(QLatin1String(""));
+    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+    QPixmap pixmap;
+    pixmap.loadFromData(SAMPLE_GIF);
+    contactAvatar.setPixmap(pixmap);
+    contact.saveDetail(&contactAvatar);
+    contacts.clear();
+    contacts.append(contact);
+    document = mExporter->exportContacts(contacts).first();
+    // verify the value
+    property = document.properties().at(0);
+    variantValue = property.variantValue();
+    QVERIFY(variantValue.type() == QVariant::ByteArray);
+    QByteArray retrievedData = variantValue.value<QByteArray>();
+    QPixmap retrievedPixmap;
+    retrievedPixmap.loadFromData(retrievedData);
+    QCOMPARE(retrievedPixmap, pixmap);
 }
 
 
@@ -847,13 +835,12 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     contact.saveDetail(&contactAvatar);
     QList<QContact> contacts;
     contacts.append(contact);
+    resourceHandler.mSimulatedMimeType = QLatin1String("image/jpeg");
     mExporter->setResourceHandler(&resourceHandler);
     QVersitDocument document = mExporter->exportContacts(contacts).first();
     QVERIFY(!resourceHandler.mLoadResourceCalled);
     QVersitProperty photoProperty = document.properties().at(0);
-    QCOMPARE(photoProperty.parameters().count(), 2);
-    QVERIFY(photoProperty.parameters().contains(
-            QString::fromAscii("TYPE"),QString::fromAscii("JPEG")));
+    QCOMPARE(photoProperty.parameters().count(), 1);
     QVERIFY(photoProperty.parameters().contains(
             QString::fromAscii("VALUE"),QString::fromAscii("URL")));
     QCOMPARE(photoProperty.name(), QString::fromAscii("PHOTO"));
@@ -866,20 +853,21 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     contacts.clear();
     contacts.append(contact);
     resourceHandler = MyQVersitResourceHandler();
+    resourceHandler.mSimulatedMimeType = QLatin1String("image/jpeg");
     resourceHandler.mSimulatedData = "simulated image data";
     document = mExporter->exportContacts(contacts).first();
     QVERIFY(resourceHandler.mLoadResourceCalled);
     photoProperty = document.properties().at(0);
     QCOMPARE(photoProperty.parameters().count(), 1);
-    QVERIFY(photoProperty.parameters().contains(
-        QString::fromAscii("TYPE"),
-        QString::fromAscii("JPEG")));
+    QVERIFY(photoProperty.parameters().contains(QString::fromAscii("TYPE"),
+                                                QString::fromAscii("JPEG")));
     variantValue = photoProperty.variantValue();
     QVERIFY(variantValue.type() == QVariant::ByteArray);
     QCOMPARE(variantValue.value<QByteArray>(), resourceHandler.mSimulatedData);
 
     // Test 3: Local SOUND
     resourceHandler = MyQVersitResourceHandler();
+    resourceHandler.mSimulatedMimeType = QLatin1String("audio/wav");
     resourceHandler.mSimulatedData = "simulated audio data";
     contactAvatar.setAvatar(TEST_AUDIO_FILE);
     contactAvatar.setSubType(QContactAvatar::SubTypeAudioRingtone);
@@ -892,30 +880,14 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     QCOMPARE(soundProperty.parameters().count(), 1);
     QVERIFY(soundProperty.parameters().contains(
         QString::fromAscii("TYPE"),
-        QString::fromAscii("WAVE")));
+        QString::fromAscii("WAV")));
     variantValue = soundProperty.variantValue();
     QVERIFY(variantValue.type() == QVariant::ByteArray);
     QCOMPARE(variantValue.value<QByteArray>(), resourceHandler.mSimulatedData);
 
-    // Test 4: New media format will be encoded also
+    // Test 4: Unsupported media type, properties and parameters are not encoded
     resourceHandler = MyQVersitResourceHandler();
-    const QString testUrl = QString::fromAscii("http://www.myhome.com/test.ggg");
-    contactAvatar.setAvatar(testUrl);
-    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
-    contact.saveDetail(&contactAvatar);
-    contacts.clear();
-    contacts.append(contact);
-    document = mExporter->exportContacts(contacts).first();
-    QVERIFY(!resourceHandler.mLoadResourceCalled);
-    QCOMPARE(document.properties().count(), 1);
-    QCOMPARE(document.properties().at(0).parameters().count(), 2);
-    QVERIFY(document.properties().at(0).parameters().contains(
-            QString::fromAscii("TYPE"), QString::fromAscii("GGG")));
-    QVERIFY(document.properties().at(0).parameters().contains(
-            QString::fromAscii("VALUE"),QString::fromAscii("URL")));
-
-    // Test 5: Unsupported media type, properties and parameters are not encoded
-    resourceHandler = MyQVersitResourceHandler();
+    resourceHandler.mSimulatedMimeType = QLatin1String("text/jpeg");
     const QString testUrl2 = QString::fromAscii("http://www.myhome.com/test.jpg");
     contactAvatar.setAvatar(testUrl2);
     // un-supported media type is encoded

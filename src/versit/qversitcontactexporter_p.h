@@ -98,7 +98,8 @@ protected:
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
         const QStringList& subTypes=QStringList());
-    bool encodeEmbeddedContent(const QString& resourcePath, QVersitProperty& property);
+    bool encodeContentFromFile(const QString& resourcePath, QVersitProperty& property);
+    bool encodeContentFromPixmap(const QPixmap& pixmap, QVersitProperty& property);
     void setEscapedValue(QVersitProperty& property,const QString& value);
     QString escape(const QString& value);
 
@@ -106,8 +107,6 @@ public: // Data
     QVersitContactExporterDetailHandler* mDetailHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
-
-protected: // Data
     QHash<QString,QString> mPropertyMappings;
     QHash<QString,QString> mParameterMappings;
     QVersitDocument::VersitType mVersitType;
