@@ -20,7 +20,6 @@ PRIVATE_HEADERS += \
     qmediaplaylist_p.h \
     qmediaplaylistprovider_p.h \
     qmediaimageviewerservice_p.h \
-    qmetadatacontrolmetaobject_p.h \
     qvideowidget_p.h \
     qmediapluginloader_p.h \
     qpaintervideosurface_p.h
@@ -84,7 +83,6 @@ SOURCES += qmediacontrol.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
     qmetadatacontrol.cpp \
-    qmetadatacontrolmetaobject.cpp \
     qmediastreamscontrol.cpp \
     qradiotuner.cpp \
     qradiotunercontrol.cpp \
@@ -110,6 +108,7 @@ contains(QT_CONFIG, declarative) {
     QT += declarative
 
     PRIVATE_HEADERS += \
+        qmetadatacontrolmetaobject_p.h \
         qmlaudio_p.h \
         qmlgraphicsvideo_p.h \
         qmlmediabase_p.h \
@@ -117,6 +116,7 @@ contains(QT_CONFIG, declarative) {
         wavedecoder.h
 
     SOURCES += \
+        qmetadatacontrolmetaobject.cpp \
         qmlaudio.cpp \
         qmlgraphicsvideo.cpp \
         qmlmediabase.cpp \
