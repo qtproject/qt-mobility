@@ -151,14 +151,12 @@ void CameraCapture::setFlashFillIn()
 
 void CameraCapture::setFocusOn()
 {
-    camera->setFocusMode(QCamera::AutoFocus);
     m_autoFocus = true;
     m_takeImage = false;
 }
 
 void CameraCapture::setFocusOff()
 {
-    camera->setFocusMode(QCamera::ManualFocus);
     m_autoFocus = false;
     m_takeImage = false;
 }

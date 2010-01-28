@@ -80,6 +80,7 @@ public Q_SLOTS:
 
     void startFocusing();
     void cancelFocusing();
+    void focusChanged(QCamera::FocusStatus status);
    
 private:
     S60CameraSession *m_session;
