@@ -59,6 +59,10 @@ CCamera::TFormat KSymbianDefaultImageCodec = CCamera::EFormatExif;
 _LIT8(KCameraTemp,"test data");
 #endif
 
+_LIT8(KMimeTypeMPEG4VSPL3, "video/mp4v-es; profile-level-id=3");  // MPEG-4 Visual Simple Profile Level 3
+_LIT8(KMimeTypeMPEG4VSPL4, "video/mp4v-es; profile-level-id=4");  // MPEG-4 Visual Simple Profile Level 4    
+
+
 S60CameraSession::S60CameraSession(QObject *parent)
     : QObject(parent)
     , m_cameraEngine(NULL)
@@ -381,11 +385,12 @@ int S60CameraSession::state() const
 
 void S60CameraSession::commitVideoEncoderSettings()
 {
+    qDebug() << "S60CameraSession::commitVideoEncoderSettings";
     setVideoCaptureCodec(m_videoSettings.codec());
     setCaptureQuality(m_videoSettings.quality());
+    setVideoResolution(m_videoSettings.resolution());
     setFrameRate(int(m_videoSettings.frameRate()));
     setBitrate(m_videoSettings.bitRate());
-    setVideoResolution(m_videoSettings.resolution());
 }
 
 void S60CameraSession::saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings)
@@ -403,18 +408,16 @@ void S60CameraSession::startRecording()
     qDebug() << "S60CameraSession::startRecording";
     QString filename = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));
+    
+    m_videoCodec = m_videoSettings.codec();
 
     int cameraHandle = m_cameraEngine->Camera()->Handle();
 
     TUid controllerUid(TUid::Uid(m_videoControllerMap[m_videoCodec].controllerUid));
     TUid formatUid(TUid::Uid(m_videoControllerMap[m_videoCodec].formatUid));
 
-    qDebug() << "Codec: " << m_videoCodec;
-    qDebug() << "Controller Uid: " << m_videoControllerMap[m_videoCodec].controllerUid;
-    qDebug() << "Format Uid: " << m_videoControllerMap[m_videoCodec].formatUid;
-
-    QT_TRAP_THROWING(m_videoUtility->OpenFileL(sink, cameraHandle, controllerUid, formatUid));
-
+    TRAPD(err, m_videoUtility->OpenFileL(sink, cameraHandle, controllerUid, formatUid, KMimeTypeMPEG4VSPL4, KMMFFourCCCodeAAC));
+    setError(err);
 }
 
 void S60CameraSession::pauseRecording()
@@ -1324,13 +1327,16 @@ void S60CameraSession::updateVideoCaptureCodecsL()
                 TPtrC8 mimeType = mimeTypes[0];
                 QString type = QString::fromUtf8((char *)mimeType.Ptr(),
                         mimeType.Length());
-                VideoControllerData data;
-                data.controllerUid = controllers[index]->Uid().iUid;
-                data.formatUid = recordFormats[j]->Uid().iUid;
-                data.formatDescription = QString::fromUtf16(
-                        recordFormats[j]->DisplayName().Ptr(),
-                        recordFormats[j]->DisplayName().Length());
-                m_videoControllerMap[type] = data;
+                // Currently only support for video/mp4 due to resolution and frame rate issues.
+                if (type == "video/mp4") {
+                    VideoControllerData data;
+                    data.controllerUid = controllers[index]->Uid().iUid;
+                    data.formatUid = recordFormats[j]->Uid().iUid;
+                    data.formatDescription = QString::fromUtf16(
+                            recordFormats[j]->DisplayName().Ptr(),
+                            recordFormats[j]->DisplayName().Length());
+                    m_videoControllerMap[type] = data;
+                }
             }
         }
     }
@@ -1404,6 +1410,7 @@ void S60CameraSession::setVideoResolution(const QSize &resolution)
 {
     if (m_videoUtility) {
         TSize size(resolution.width(), resolution.height());
+        //TSize size(176, 144);
         TRAPD(err, m_videoUtility->SetVideoFrameSizeL(size));
         setError(err);
     }
@@ -1414,12 +1421,7 @@ void S60CameraSession::MvruoOpenComplete(TInt aError)
     qDebug() << "S60CameraSession::MvruoOpenComplete, error: " << aError;
 
     if(aError==KErrNone) {
-        TInt err = KErrNone;
         commitVideoEncoderSettings();
-#ifndef PRE_S60_50_PLATFORM
-        TRAP(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
-        setError(err);
-#endif
         m_videoUtility->Prepare();
         // TODO:
         // update recording status
