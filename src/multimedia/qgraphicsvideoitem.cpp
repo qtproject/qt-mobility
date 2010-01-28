@@ -61,7 +61,7 @@ public:
         , service(0)
         , outputControl(0)
         , rendererControl(0)
-        , fillMode(QGraphicsVideoItem::PreserveAspectFit)
+        , aspectRatioMode(Qt::KeepAspectRatio)
         , updatePaintDevice(true)
     {
     }
@@ -73,7 +73,7 @@ public:
     QMediaService *service;
     QVideoOutputControl *outputControl;
     QVideoRendererControl *rendererControl;
-    QGraphicsVideoItem::FillMode fillMode;
+    Qt::AspectRatioMode aspectRatioMode;
     bool updatePaintDevice;
     QRectF rect;
     QRectF boundingRect;
@@ -112,15 +112,11 @@ void QGraphicsVideoItemPrivate::updateBoundingRect()
     if (nativeSize.isEmpty()) {
         boundingRect = QRectF();
     } else {
-        if (fillMode == QGraphicsVideoItem::Stretch) {
+        if (aspectRatioMode == Qt::IgnoreAspectRatio) {
             boundingRect = rect;
         } else {
             QSizeF size = nativeSize;
-
-            if (fillMode == QGraphicsVideoItem::PreserveAspectFit)
-                size.scale(rect.size(), Qt::KeepAspectRatio);
-            else
-                size.scale(rect.size(), Qt::KeepAspectRatioByExpanding);
+            size.scale(rect.size(), aspectRatioMode);
 
             boundingRect = QRectF(QPointF(), size);
             boundingRect.moveCenter(rect.center());
@@ -288,20 +284,20 @@ void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 }
 
 /*!
-    \property QGraphicsVideoItem::fillMode
+    \property QGraphicsVideoItem::aspectRatioMode
     \brief how a video is scaled to fit the graphics item's size.
 */
 
-QGraphicsVideoItem::FillMode QGraphicsVideoItem::fillMode() const
+Qt::AspectRatioMode QGraphicsVideoItem::aspectRatioMode() const
 {
-    return d_func()->fillMode;
+    return d_func()->aspectRatioMode;
 }
 
-void QGraphicsVideoItem::setFillMode(FillMode mode)
+void QGraphicsVideoItem::setAspectRatioMode(Qt::AspectRatioMode mode)
 {
     Q_D(QGraphicsVideoItem);
 
-    d->fillMode = mode;
+    d->aspectRatioMode = mode;
     d->updateBoundingRect();
 }
 

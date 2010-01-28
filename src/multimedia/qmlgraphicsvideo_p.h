@@ -78,9 +78,9 @@ class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
 public:
     enum FillMode
     {
-        Stretch            = QGraphicsVideoItem::Stretch,
-        PreserveAspectFit  = QGraphicsVideoItem::PreserveAspectFit,
-        PreserveAspectCrop = QGraphicsVideoItem::PreserveAspectCrop
+        Stretch            = Qt::IgnoreAspectRatio,
+        PreserveAspectFit  = Qt::KeepAspectRatio,
+        PreserveAspectCrop = Qt::KeepAspectRatioByExpanding
     };
 
     enum Status
@@ -157,7 +157,6 @@ Q_SIGNALS:
 
     void errorChanged();
     void error(QmlGraphicsVideo::Error error, const QString &errorString);
-
 
 protected:
     void geometryChanged(const QRectF &geometry, const QRectF &);

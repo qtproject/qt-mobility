@@ -310,12 +310,12 @@ QmlGraphicsVideo::Error QmlGraphicsVideo::error() const
 
 QmlGraphicsVideo::FillMode QmlGraphicsVideo::fillMode() const
 {
-    return FillMode(m_graphicsItem->fillMode());
+    return FillMode(m_graphicsItem->aspectRatioMode());
 }
 
 void QmlGraphicsVideo::setFillMode(FillMode mode)
 {
-    m_graphicsItem->setFillMode(QGraphicsVideoItem::FillMode(mode));
+    m_graphicsItem->setAspectRatioMode(Qt::AspectRatioMode(mode));
 }
 
 /*!

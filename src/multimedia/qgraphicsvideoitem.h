@@ -57,12 +57,10 @@ class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QGraphicsObject
 {
     Q_OBJECT
     Q_PROPERTY(QMediaObject* mediaObject READ mediaObject WRITE setMediaObject)
-    Q_PROPERTY(FillMode fillMode READ fillMode WRITE setFillMode)
+    Q_PROPERTY(Qt::AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode)
     Q_PROPERTY(QPointF offset READ offset WRITE setOffset)
     Q_PROPERTY(QSizeF size READ size WRITE setSize)
     Q_PROPERTY(QSizeF nativeSize READ nativeSize NOTIFY nativeSizeChanged)
-    Q_ENUMS(FillMode)
-    Q_ENUMS(SizePolicy)
 public:
     enum FillMode
     {
@@ -77,8 +75,8 @@ public:
     QMediaObject *mediaObject() const;
     void setMediaObject(QMediaObject *object);
 
-    FillMode fillMode() const;
-    void setFillMode(FillMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     QPointF offset() const;
     void setOffset(const QPointF &offset);
