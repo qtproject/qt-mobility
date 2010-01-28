@@ -109,9 +109,6 @@ void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
     if (m_mediaStatus == QMediaPlayer::InvalidMedia)
         setError(KErrNotSupported);
     
-    if (m_mediaStatus == QMediaPlayer::NoMedia)
-        m_play_requested = false;
-    
     emit mediaStatusChanged(m_mediaStatus);
     if (m_play_requested)
         play();
@@ -328,7 +325,8 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrPermissionDenied:
             return QMediaPlayer::AccessDeniedError;
             
-        case KErrMMPartialPlayback:            
+        case KErrMMPartialPlayback:   
+        case KErrNone:
         default:
             return QMediaPlayer::NoError;
     }
@@ -336,20 +334,22 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
 
 void S60MediaPlayerSession::setError(int error, const QString &errorString)
 {
-    if (error == KErrNone || error == KErrMMPartialPlayback)
+    if (error == m_error)
         return;
     
-    m_play_requested = false;
     m_error = error;
     QMediaPlayer::Error mediaError = fromSymbianErrorToMultimediaError(m_error);
-    
-    // TODO: fix to user friendly string at some point
-    // These error string are only dev usable
-    QString symbianError = QString(errorString); 
-    symbianError.append("Symbian:");
-    symbianError.append(QString::number(m_error));
+    QString symbianError = QString(errorString);
+
+    if (mediaError != QMediaPlayer::NoError) {
+        m_play_requested = false;
+        // TODO: fix to user friendly string at some point
+        // These error string are only dev usable
+        symbianError.append("Symbian:");
+        symbianError.append(QString::number(m_error));
+    }
+     
     emit this->error(mediaError, symbianError);
-    
     switch(mediaError){
         case QMediaPlayer::FormatError:
             setMediaStatus(QMediaPlayer::InvalidMedia);

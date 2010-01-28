@@ -213,10 +213,6 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     
     S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession(); 
 
-    // invalidate old session if one found
-    if (!newSession && m_session)
-        m_session->setMediaStatus(QMediaPlayer::InvalidMedia);
-    
     m_session = newSession;
     
     if (m_session) {
@@ -228,8 +224,10 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
             m_session->loadUrl(url);
             
         emit mediaChanged(m_currentResource);
-    } else
+    } else {
+        emit error(QMediaPlayer::FormatError, QString("Symbian: -5"));
         emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
+    }
 }
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
