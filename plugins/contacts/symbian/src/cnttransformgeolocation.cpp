@@ -45,13 +45,13 @@ const char separator = ',';
 
 QList<CContactItemField *> CntTransformGeolocation::transformDetailL(const QContactDetail &detail)
 {
-    if(detail.definitionName() != QContactGeolocation::DefinitionName)
+    if(detail.definitionName() != QContactGeoLocation::DefinitionName)
        User::Leave(KErrArgument);
 
     QList<CContactItemField *> fieldList;
 
 	//cast to geolocation
-	const QContactGeolocation &geolocation(static_cast<const QContactGeolocation&>(detail));
+	const QContactGeoLocation &geolocation(static_cast<const QContactGeoLocation&>(detail));
 
 	//create new field
 	QString formattedGeolocation;
@@ -75,7 +75,7 @@ QContactDetail *CntTransformGeolocation::transformItemField(const CContactItemFi
 {
 	Q_UNUSED(contact);
 
-	QContactGeolocation *geolocation = new QContactGeolocation();
+	QContactGeoLocation *geolocation = new QContactGeoLocation();
 
 	CContactTextField* storage = field.TextStorage();
 	QString unformattedGeolocation = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
@@ -129,7 +129,7 @@ bool CntTransformGeolocation::supportsField(TUint32 fieldType) const
 bool CntTransformGeolocation::supportsDetail(QString detailName) const
 {
     bool ret = false;
-    if (detailName == QContactGeolocation::DefinitionName) {
+    if (detailName == QContactGeoLocation::DefinitionName) {
         ret = true;
     }
     return ret;
@@ -161,23 +161,23 @@ bool CntTransformGeolocation::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformGeolocation::getIdForField(const QString& fieldName) const
 {
- if (QContactGeolocation::FieldLabel  == fieldName)
+ if (QContactGeoLocation::FieldLabel  == fieldName)
         return 0;
-    else if (QContactGeolocation::FieldLatitude == fieldName)
+    else if (QContactGeoLocation::FieldLatitude == fieldName)
         return 0;
-    else if (QContactGeolocation::FieldLongitude == fieldName)
+    else if (QContactGeoLocation::FieldLongitude == fieldName)
         return 0;
-    else if (QContactGeolocation::FieldAccuracy == fieldName)
+    else if (QContactGeoLocation::FieldAccuracy == fieldName)
         return 0;
-    else if (QContactGeolocation::FieldAltitude == fieldName)
+    else if (QContactGeoLocation::FieldAltitude == fieldName)
         return 0;
-    else if (QContactGeolocation::FieldAltitudeAccuracy == fieldName)
+    else if (QContactGeoLocation::FieldAltitudeAccuracy == fieldName)
         return 0;
-    else if (QContactGeolocation::FieldHeading == fieldName)
+    else if (QContactGeoLocation::FieldHeading == fieldName)
         return 0;
-    else if (QContactGeolocation::FieldSpeed == fieldName)
+    else if (QContactGeoLocation::FieldSpeed == fieldName)
         return 0;
-    else if (QContactGeolocation::FieldTimestamp == fieldName)
+    else if (QContactGeoLocation::FieldTimestamp == fieldName)
         return 0;
     else
         return 0;
@@ -196,8 +196,8 @@ void CntTransformGeolocation::detailDefinitions(QMap<QString, QContactDetailDefi
 {
     Q_UNUSED(contactType);
     
-    if(definitions.contains(QContactGeolocation::DefinitionName)) {
-        QContactDetailDefinition d = definitions.value(QContactGeolocation::DefinitionName);
+    if(definitions.contains(QContactGeoLocation::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactGeoLocation::DefinitionName);
         QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
         
         // Don't support "ContextOther"

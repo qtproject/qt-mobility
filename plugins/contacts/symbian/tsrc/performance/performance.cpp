@@ -51,7 +51,7 @@ void SymbianPluginPerfomance::initTestCase()
     mCntMng = new QContactManager("symbian");
 
     // Remove all contacts from the database
-    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     mCntMng->removeContacts(&cnt_ids);
 }
 
@@ -89,7 +89,7 @@ void SymbianPluginPerfomance::createSimpleContacts()
 void SymbianPluginPerfomance::removeSimpleContacts()
 {
     // Remove N contacts
-    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     mTime.restart();
     mCntMng->removeContacts(&cnt_ids);
     int elapsed = mTime.elapsed();
@@ -371,7 +371,7 @@ void SymbianPluginPerfomance::filterPhoneNumberMatch()
 void SymbianPluginPerfomance::removeComplexContacts()
 {
     // Remove N contacts
-    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     mTime.restart();
     mCntMng->removeContacts(&cnt_ids);
     int elapsed = mTime.elapsed();
@@ -388,13 +388,13 @@ int SymbianPluginPerfomance::measureContactsFetch(
     mTime.restart();
 
     if(filter.type() != QContactFilter::InvalidFilter)
-        cnt_ids = mCntMng->contacts(filter, sortOrders);
+        cnt_ids = mCntMng->contactIds(filter, sortOrders);
     else
-        cnt_ids = mCntMng->contacts(sortOrders);
+        cnt_ids = mCntMng->contactIds(sortOrders);
 
     int elapsed = mTime.elapsed();
     qDebug() << debugMessage
-            << mCntMng->contacts().count() << "contacts, gave" << cnt_ids.count() << "contacts."
+            << mCntMng->contactIds().count() << "contacts, gave" << cnt_ids.count() << "contacts."
             << "Time taken:" << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
     return cnt_ids.count();
 }
@@ -487,7 +487,7 @@ void SymbianPluginPerfomance::sortContactsWithOnlineAccount()
 }
 void SymbianPluginPerfomance::removeComplextContactsWithOnlineAccount()
 {
-    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     mTime.restart();
     mCntMng->removeContacts(&cnt_ids);
     int elapsed = mTime.elapsed();

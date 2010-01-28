@@ -124,7 +124,7 @@ QString CntSymbianSimEngine::managerName() const
  * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrders.
  * Any error that occurs will be stored in \a error. Uses the generic (slow) filtering of QContactManagerEngine.
  */
-QList<QContactLocalId> CntSymbianSimEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     PbkPrintToLog(_L("CntSymbianSimEngine::contacts"));
 
@@ -153,7 +153,7 @@ QList<QContactLocalId> CntSymbianSimEngine::contacts(const QContactFilter& filte
  * Returns a list of the ids of contacts that match the supplied \a filter.
  * Any error that occurs will be stored in \a error.
  */
-QList<QContactLocalId> CntSymbianSimEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     PbkPrintToLog(_L("CntSymbianSimEngine::contacts"));
 
@@ -196,8 +196,8 @@ QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QC
     // TODO: localize unnamed
     QString label("Unnamed");
     QContactName name = contact.detail(QContactName::DefinitionName);
-    if(!name.first().isEmpty()) {
-        label = name.first();
+    if(!name.firstName().isEmpty()) {
+        label = name.firstName();
     }
     return label;
 }
@@ -250,8 +250,8 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     QMap<QString, QContactDetailDefinition> retn;
 
     // local variables for reuse
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition f;
     QContactDetailDefinition d;
     QVariantList subTypes;
 
@@ -800,12 +800,12 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
     }
     else {
         QContactName nameDetail = static_cast<QContactName>(nameDetails.at(0));
-        name.append(nameDetail.first());
-        if (nameDetail.last().length() > 0) {
-            if (nameDetail.first().length() > 0) {
+        name.append(nameDetail.firstName());
+        if (nameDetail.lastName().length() > 0) {
+            if (nameDetail.firstName().length() > 0) {
                 name.append(" "); //separator
             }
-            name.append(nameDetail.last());
+            name.append(nameDetail.lastName());
         }
         if (name.length() == 0) {
             name.append("(unnamed)");

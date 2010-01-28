@@ -397,7 +397,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     newField->TextStorage()->SetTextL(firstnameField);
     contactDetail = transformName->transformItemField(*newField, contact);
     const QContactName* nameInfo2(static_cast<const QContactName*>(contactDetail));
-    QCOMPARE(nameInfo2->first(), firstnameDetail);
+    QCOMPARE(nameInfo2->firstName(), firstnameDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -407,7 +407,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     newField->TextStorage()->SetTextL(middlenameField);
     contactDetail = transformName->transformItemField(*newField, contact);
     const QContactName* nameInfo3(static_cast<const QContactName*>(contactDetail));
-    QCOMPARE(nameInfo3->middle(), middlenameDetail);
+    QCOMPARE(nameInfo3->middleName(), middlenameDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
@@ -417,7 +417,7 @@ void TestCntTransformContactData::validateCntTransformNameL(TPtrC16 prefixField,
     newField->TextStorage()->SetTextL(lastnameField);
     contactDetail = transformName->transformItemField(*newField, contact);
     const QContactName* nameInfo4(static_cast<const QContactName*>(contactDetail));
-    QCOMPARE(nameInfo4->last(), lastnameDetail);
+    QCOMPARE(nameInfo4->lastName(), lastnameDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;

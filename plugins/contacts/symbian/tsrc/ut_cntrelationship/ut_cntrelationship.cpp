@@ -100,7 +100,7 @@ void TestCntRelationship::cleanupTestCase()
 void TestCntRelationship::init()
 {
     //delete all contacts from the database
-    QList<QContactLocalId> contacts = m_manager->contacts();
+    QList<QContactLocalId> contacts = m_manager->contactIds();
     m_manager->removeContacts(&contacts);
 }
 
@@ -351,7 +351,7 @@ bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipF
     filter.setRole(role);
     filter.setOtherParticipantId(contactId);
     
-    QList<QContactLocalId> result = m_manager->contacts(filter);
+    QList<QContactLocalId> result = m_manager->contactIds(filter);
     
     for(int i = 0; i < result.count(); i++)
         qDebug() << "result: " << result.at(i);

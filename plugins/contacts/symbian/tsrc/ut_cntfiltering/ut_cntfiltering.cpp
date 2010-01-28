@@ -57,9 +57,9 @@ void TestFiltering::initTestCase()
     mFilters = new QHash<QContactFilter::FilterType, TFilter>;
 
     // Remove all contacts from the database
-    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     mCntMng->removeContacts(&cnt_ids);
-    cnt_ids = mCntMng->contacts();
+    cnt_ids = mCntMng->contactIds();
     QVERIFY(0 == cnt_ids.count());
     parseFilters();
     createContacts();
@@ -212,8 +212,8 @@ void TestFiltering::createContacts()
     //QContact empty;
     //mCntMng->saveContact(&empty);
     
-    QList<QContactLocalId> cnt_ids = mCntMng->contacts();
-    cnt_ids = mCntMng->contacts();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
+    cnt_ids = mCntMng->contactIds();
     int j = cnt_ids.count();
     // 5 contacts created in code, so check if all 5 were created
     QVERIFY(5 == j);
