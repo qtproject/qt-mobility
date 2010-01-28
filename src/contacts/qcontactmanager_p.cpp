@@ -273,13 +273,13 @@ void QContactManagerData::loadFactories()
             QStringList directories;
             directories << QString("plugins/contacts") << QString("contacts") << QString("../plugins/contacts");
             foreach (const QString& dirName, directories) {
-                QString testDirPath = pluginDir.currentPath + "/" + dirName;
+                QString testDirPath = pluginDir.currentPath() + "/" + dirName;
                 testDirPath = QDir::cleanPath(testDirPath);
                 // Use native Symbian code to check for directory existence, because checking
                 // for files from under non-existent protected dir like E:/private/<uid> using
                 // QDir::exists causes platform security violations on most apps.
                 QString nativePath = QDir::toNativeSeparators(testDirPath);
-                TPtrC ptr = TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
+                TPtrC ptr = TPtrC16(static_cast<const TUint16*>(nativePath.utf16()), nativePath.length());
                 TUint attributes;
                 TInt err = rfs.Att(ptr, attributes);
                 if (err == KErrNone) {
