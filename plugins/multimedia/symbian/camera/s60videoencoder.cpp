@@ -101,19 +101,25 @@ void S60VideoEncoder::setQuality(QtMedia::EncodingQuality quality)
 
 QList< qreal > S60VideoEncoder::supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous) const
 {
-    QList<qreal> res;
-    res << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
-    return res;    
+    return m_session->supportedVideoFrameRates();    
 }
 
 qreal S60VideoEncoder::minimumFrameRate() const
 {
-    return 5.0;
+    QList<qreal> rates = m_session->supportedVideoFrameRates();
+    qreal minRate = 30.0;
+    foreach (qreal rate, rates)
+        minRate = qMin(minRate, rate);
+    return minRate;
 }
 
 qreal S60VideoEncoder::maximumFrameRate() const
 {
-    return 30.0;
+    QList<qreal> rates = m_session->supportedVideoFrameRates();
+    qreal maxRate = 0.0;
+    foreach (qreal rate, rates)
+        maxRate = qMax(maxRate, rate);
+    return maxRate;
 }
 
 int S60VideoEncoder::frameRate() const

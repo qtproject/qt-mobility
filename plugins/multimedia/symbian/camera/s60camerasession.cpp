@@ -292,11 +292,24 @@ QList<QSize> S60CameraSession::supportedVideoResolutions()
     QList<QSize> list;
     // if we have cameraengine loaded and we can update camerainfo
     if (m_cameraEngine && queryCurrentCameraInfo()) {
-        CCamera *camera = m_cameraEngine->Camera();
-        for (int i=0; i < m_info.iNumVideoFrameSizesSupported; i++) {
-            TSize size;
-            camera->EnumerateVideoFrameSizes(size,i, m_currentcodec );
-            list << QSize(size.iWidth, size.iHeight);
+        
+        foreach (QString codecName, formatMap().keys()) {
+            int codecIndex = formatMap().value(codecName);
+            CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );
+            CCamera *camera = m_cameraEngine->Camera();
+    
+            TUint32 videoFormatsSupported = m_info.iVideoFrameFormatsSupported;
+    
+            if (videoFormatsSupported&format) {
+                CCamera *camera = m_cameraEngine->Camera();
+                for (int i=0; i < m_info.iNumVideoFrameSizesSupported; i++) {
+                    TSize size;
+                    camera->EnumerateVideoFrameSizes(size,i, format );
+                    QSize qSize(size.iWidth, size.iHeight);
+                    if (!list.contains(qSize))
+                        list << QSize(size.iWidth, size.iHeight);
+                }
+            }
         }
     }
     #ifdef Q_CC_NOKIAX86
@@ -306,6 +319,39 @@ QList<QSize> S60CameraSession::supportedVideoResolutions()
     #endif
     return list;
 }
+
+QList<qreal> S60CameraSession::supportedVideoFrameRates()
+{
+    qDebug() << "S60CameraSession::supportedVideoResolutions";
+    QList<qreal> list;
+    // if we have cameraengine loaded and we can update camerainfo
+    if (m_cameraEngine && queryCurrentCameraInfo()) {
+        
+        foreach (QString codecName, formatMap().keys()) {
+            int codecIndex = formatMap().value(codecName);
+            CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );
+            CCamera *camera = m_cameraEngine->Camera();
+    
+            TUint32 videoFormatsSupported = m_info.iVideoFrameFormatsSupported;
+    
+            if (videoFormatsSupported&format) {
+                CCamera *camera = m_cameraEngine->Camera();
+                for (int i=0; i < m_info.iNumVideoFrameSizesSupported; i++) {
+                    TReal32 rate;
+                    TInt maxSizeIndex;
+                    camera->EnumerateVideoFrameRates(rate, i,format, maxSizeIndex);
+                    if (!list.contains(rate))
+                        list << rate;
+                }
+            }
+        }
+    }
+    #ifdef Q_CC_NOKIAX86
+    list << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
+    #endif
+    return list;
+}
+
 
 bool S60CameraSession::setOutputLocation(const QUrl &sink)
 {
@@ -673,51 +719,51 @@ QMap<QString, int> S60CameraSession::formatMap()
 {
     QMap<QString, int> formats;
     // format list copied from ecam.h CCamera::TFormat
-
-    formats.insert("Monochrome",0);
-    formats.insert("16bitRGB444",1);
-    formats.insert("16bitRGB565",2);
-    formats.insert("16bitRGB888",3);
-    formats.insert("Jpeg",4);
-    formats.insert("ExifJpeg",5);
-    formats.insert("FbsBitmapColor4K",6);
-    formats.insert("FbsBitmapColor64K",7);
-    formats.insert("FbsBitmapColor16M",8);
-    formats.insert("UserDefined",9);
-    formats.insert("YUV420Interleaved",10);
-    formats.insert("YUV420Planar",11);
-    formats.insert("YUV422",11);
-    formats.insert("YUV422Reversed",12);
-    formats.insert("YUV444",13);
-    formats.insert("YUV420SemiPlanar",14);
-    formats.insert("FbsBitmapColor16MU",15);
-    formats.insert("MJPEG",16);
-    formats.insert("EncodedH264",17);
+  
+    formats.insert("Monochrome", 0x0001);
+    formats.insert("16bitRGB444", 0x0002);
+    formats.insert("16BitRGB565", 0x0004);
+    formats.insert("32BitRGB888", 0x0008);
+    formats.insert("Jpeg", 0x0010);
+    formats.insert("Exif", 0x0020);
+    formats.insert("FbsBitmapColor4K", 0x0040);
+    formats.insert("FbsBitmapColor64K", 0x0080);
+    formats.insert("FbsBitmapColor16M", 0x0100);
+    formats.insert("UserDefined", 0x0200);
+    formats.insert("YUV420Interleaved", 0x0400);
+    formats.insert("YUV420Planar", 0x0800);
+    formats.insert("YUV422", 0x1000);
+    formats.insert("YUV422Reversed", 0x2000);
+    formats.insert("YUV444", 0x4000);
+    formats.insert("YUV420SemiPlanar", 0x8000);
+    formats.insert("FbsBitmapColor16MU", 0x00010000);
+    formats.insert("MJPEG", 0x00020000);
+    formats.insert("EncodedH264", 0x00040000);
 
     return formats;
 }
 QMap<QString, int> S60CameraSession::formatDescMap()
 {
     QMap<QString, int> formats;
-    formats.insert("monochrome",0);
-    formats.insert("RGB444",1);
-    formats.insert("RGB565",2);
-    formats.insert("RGB888",3);
-    formats.insert("jpeg",4);
-    formats.insert("exifjpeg",5);
-    formats.insert("FbsBitmap4K",6);
-    formats.insert("FbsBitmap64K",7);
-    formats.insert("FbsBitmap16M",8);
-    formats.insert("UserDefined",9);
-    formats.insert("YUV420Interleaved",10);
-    formats.insert("YUV420Planar",11);
-    formats.insert("YUV422",11);
-    formats.insert("YUV422Reversed",12);
-    formats.insert("YUV444",13);
-    formats.insert("YUV420SemiPlanar",14);
-    formats.insert("FbsBitmapColor16MU",15);
-    formats.insert("MJPEG",16);
-    formats.insert("EncodedH264",17);
+    formats.insert("Monochrome", 0x0001);
+    formats.insert("16bitRGB444", 0x0002);
+    formats.insert("16BitRGB565", 0x0004);
+    formats.insert("32BitRGB888", 0x0008);
+    formats.insert("Jpeg", 0x0010);
+    formats.insert("Exif", 0x0020);
+    formats.insert("FbsBitmapColor4K", 0x0040);
+    formats.insert("FbsBitmapColor64K", 0x0080);
+    formats.insert("FbsBitmapColor16M", 0x0100);
+    formats.insert("UserDefined", 0x0200);
+    formats.insert("YUV420Interleaved", 0x0400);
+    formats.insert("YUV420Planar", 0x0800);
+    formats.insert("YUV422", 0x1000);
+    formats.insert("YUV422Reversed", 0x2000);
+    formats.insert("YUV444", 0x4000);
+    formats.insert("YUV420SemiPlanar", 0x8000);
+    formats.insert("FbsBitmapColor16MU", 0x00010000);
+    formats.insert("MJPEG", 0x00020000);
+    formats.insert("EncodedH264", 0x00040000);
 
     return formats;
 }

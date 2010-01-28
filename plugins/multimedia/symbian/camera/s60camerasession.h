@@ -120,6 +120,7 @@ public:
     QVideoFrame::PixelFormat pixelFormat() const;
     void setPixelFormat(QVideoFrame::PixelFormat fmt);
     QList<QSize> supportedVideoResolutions();
+    QList<qreal> supportedVideoFrameRates();
 
 
     // media control
