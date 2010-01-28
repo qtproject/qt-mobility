@@ -102,8 +102,8 @@ is started.
 */
 void S60MediaControl::applySettings()
 {
-    if (m_session)
-        m_session->commitVideoEncoderSettings();
+/*    if (m_session)
+        m_session->commitVideoEncoderSettings();*/
 }
 
 void S60MediaControl::record()

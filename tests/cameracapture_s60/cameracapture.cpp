@@ -288,12 +288,20 @@ void CameraCapture::processCapturedImage(const QString& fname, const QImage& img
 
 void CameraCapture::settings()
 {
+    QFile file("c:/data/out3.txt");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+    
+    QTextStream out(&file);       
     Settings settingsDialog(mediaRecorder);
-
+    out << "Settings settingsDialog(mediaRecorder);";
     settingsDialog.setAudioSettings(mediaRecorder->audioSettings());
+    out << "settingsDialog.setAudioSettings(mediaRecorder->audioSettings());";
     settingsDialog.setVideoSettings(mediaRecorder->videoSettings());
+    out << "settingsDialog.setVideoSettings(mediaRecorder->videoSettings());";
     settingsDialog.setFormat(mediaRecorder->containerMimeType());
-
+    out << "settingsDialog.setFormat(mediaRecorder->containerMimeType());";
+    file.close();
     if (settingsDialog.exec() == QDialog::Accepted) {
         mediaRecorder->setEncodingSettings(
                 settingsDialog.audioSettings(),
