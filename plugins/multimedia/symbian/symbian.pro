@@ -24,11 +24,9 @@ SOURCES += s60mediaserviceplugin.cpp \
 include(camera/camera_s60.pri)
 include(radio/radio.pri)
 
-# depends on mpengine.lib, found in S60 SDK greater than 3.1
-exists($${EPOCROOT}epoc32/release/winscw/udeb/mpengine.lib){
-    include(mediaplayer/mediaplayer_s60.pri)
-    DEFINES += HAS_MEDIA_PLAYER
-}
+# WINSCW compile depends on mpengine.lib, found in S60 SDK greater than 3.1
+include(mediaplayer/mediaplayer_s60.pri)
+
 include(audiosource/audiosource_s60.pri)
 
 load(data_caging_paths)
