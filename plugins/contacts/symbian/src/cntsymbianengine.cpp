@@ -198,6 +198,40 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(const QList<QContactSortOrde
     return slowSort(unsortedIds, sortOrders, error);
 }
 
+QList<QContact> CntSymbianEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    error = QContactManager::NoError;
+    QList<QContact> contacts;
+    QList<QContactLocalId> contactIds = this->contactIds(sortOrders, error);
+    if (error == QContactManager::NoError ) {
+        foreach (QContactLocalId id, contactIds) {
+            QContact contact = this->contact(id, definitionRestrictions, error);
+            if (error != QContactManager::NoError) {
+                return QList<QContact>(); // return empty list if error occurred
+            }
+            contacts.append(contact);
+        }
+    }
+    return contacts;
+}
+
+QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    error = QContactManager::NoError;
+    QList<QContact> contacts;
+    QList<QContactLocalId> contactIds = this->contactIds(filter, sortOrders, error);
+    if (error == QContactManager::NoError ) {
+        foreach (QContactLocalId id, contactIds) {
+            QContact contact = this->contact(id, definitionRestrictions, error);
+            if (error != QContactManager::NoError) {
+                return QList<QContact>(); // return empty list if error occurred
+            }
+            contacts.append(contact);
+        }
+    }
+    return contacts;
+}
+
 /*!
  * Read a contact from the contact database.
  *
