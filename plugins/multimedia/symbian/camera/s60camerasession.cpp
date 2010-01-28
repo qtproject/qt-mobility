@@ -62,6 +62,7 @@ _LIT8(KCameraTemp,"test data");
 S60CameraSession::S60CameraSession(QObject *parent)
     : QObject(parent)
     , m_cameraEngine(NULL)
+    , m_advancedSettings(NULL)
     , m_VFProcessor(NULL)
     , m_imageQuality(QtMedia::NormalQuality*KSymbianImageQualityCoefficient)
     , m_captureSize(QSize(1600, 1200))
@@ -71,10 +72,8 @@ S60CameraSession::S60CameraSession(QObject *parent)
     , m_deviceIndex(NULL)
     , m_error(NoError)
     , m_currentcodec(KSymbianDefaultImageCodec)
-    , m_advancedSettings(NULL)
     , m_videoUtility(NULL)
-{
-    
+{   
     // create initial camera
     resetCamera();
 }
@@ -108,10 +107,8 @@ void S60CameraSession::resetCamera()
     qDebug() << "S60CameraSession::resetCamera. Creating new camera with index=" << m_deviceIndex;
     TRAPD(err, 
         m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this);
-        Q_CHECK_PTR(m_cameraEngine);
         m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
         m_videoUtility = CVideoRecorderUtility::NewL(*this);
-        Q_CHECK_PTR(m_videoUtility);
     );
     setError(err);
 
@@ -134,7 +131,6 @@ void S60CameraSession::setError(TInt aError)
     symbianError.append("Symbian:");
     symbianError.append(QString::number(m_error));
     emit error(cameraError, symbianError);
-
 }
 
 QCamera::Error S60CameraSession::fromSymbianErrorToMultimediaError(int aError)
@@ -207,11 +203,11 @@ void S60CameraSession::capture(const QString &fileName)
 
     if (m_cameraEngine) {
         TSize size(m_captureSize.width(), m_captureSize.height());
-        TRAP(m_error, 
+        TRAPD(err, 
                 m_cameraEngine->PrepareL(size, m_currentcodec);       
                 m_cameraEngine->CaptureL();
         );
-        setError(m_error);
+        setError(err);
         m_captureSize = QSize(size.iWidth,size.iHeight); // set size according to aquired value.
     }
     else {
@@ -386,16 +382,15 @@ void S60CameraSession::stopRecording()
 void S60CameraSession::MceoCameraReady()
 {
     qDebug() << "S60CameraSession::MCeoCameraReady()";
-    m_error = KErrNone;
     m_state = QCamera::ActiveState;
     emit stateChanged(m_state);
     if (m_cameraEngine) {
         m_VFSize =  TSize(m_VFWidgetSize.width(), m_VFWidgetSize.height());
-        TRAP(m_error, m_cameraEngine->StartViewFinderL(m_VFSize));
-        if (m_error == KErrNotReady || m_error == KErrNoMemory) {
+        TRAPD(err, m_cameraEngine->StartViewFinderL(m_VFSize));
+        if (err == KErrNotReady || err == KErrNoMemory) {
             emit readyForCaptureChanged(false);
         }
-        setError(m_error);
+        setError(err);
         emit readyForCaptureChanged(true);
     }
 }
@@ -830,17 +825,17 @@ void S60CameraSession::setZoomFactor(int value)
         CCamera *camera = m_cameraEngine->Camera();
         if (camera) {
             if (value > m_info.iMaxZoom && value <= m_info.iMaxDigitalZoom) { // digitalzoom
-                TRAP(m_error, camera->SetDigitalZoomFactorL(value));
-                setError(m_error);
+                TRAPD(err, camera->SetDigitalZoomFactorL(value));
+                setError(err);
                 qDebug() << "S60CameraSession::setDigitalZoomFactor error: " << m_error;
-                if (m_error == KErrNone) {
+                if (err == KErrNone) {
                     emit zoomValueChanged(value);
                 }
             } else if (value >= m_info.iMinZoom && value <= m_info.iMaxZoom) { //opticalzoom
-                TRAP(m_error, camera->SetZoomFactorL(value));
-                setError(m_error);
+                TRAPD(err2, camera->SetZoomFactorL(value));
+                setError(err2);
                 qDebug() << "S60CameraSession::setZoomFactor error: " << m_error;
-                if (m_error == KErrNone) {
+                if (err2 == KErrNone) {
                     emit zoomValueChanged(value);
                 }
             }
@@ -867,8 +862,8 @@ void S60CameraSession::startFocus()
     qDebug() << "S60CameraSession::startFocus";
 
     if (m_cameraEngine) {
-        TRAP(m_error, m_cameraEngine->StartFocusL());
-        setError(m_error);
+        TRAPD(err, m_cameraEngine->StartFocusL());
+        setError(err);
     }
 }
 
@@ -876,8 +871,8 @@ void S60CameraSession::cancelFocus()
 {
     qDebug() << "S60CameraSession::cancelFocus";
     if (m_cameraEngine) {
-        TRAP(m_error, m_cameraEngine->FocusCancel());
-        setError(m_error);
+        TRAPD(err, m_cameraEngine->FocusCancel());
+        setError(err);
     }
 }
 
@@ -1140,46 +1135,42 @@ QCamera::WhiteBalanceMode S60CameraSession::whiteBalanceMode()
 
 void S60CameraSession::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 {
+    TRAPD(err, setWhiteBalanceModeL(mode));
+    setError(err);
+}
+
+void S60CameraSession::setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode)
+{
     if (m_cameraEngine) {
-        TInt m_error;
         CCamera* camera = m_cameraEngine->Camera();
         switch(mode) {
             case QCamera::WhiteBalanceAuto:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBAuto));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBAuto);
                 break;
             case QCamera::WhiteBalanceSunlight:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBDaylight));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBDaylight);
                 break;
             case QCamera::WhiteBalanceCloudy:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBCloudy));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBCloudy);
                 break;
             case QCamera::WhiteBalanceTungsten:
             case QCamera::WhiteBalanceIncandescent:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBTungsten));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBTungsten);
                 break;
             case QCamera::WhiteBalanceFluorescent:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBFluorescent));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBFluorescent);
                 break;
             case QCamera::WhiteBalanceFlash:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBFlash));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBFlash);
                 break;
             case QCamera::WhiteBalanceSunset:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBBeach));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBBeach);
                 break;
             case QCamera::WhiteBalanceManual:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBManual));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBManual);
                 break;
             case QCamera::WhiteBalanceShade:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBShade));
-                setError(m_error);
+                camera->SetWhiteBalanceL(CCamera::EWBShade);
                 break;
             default:
                 // not supported

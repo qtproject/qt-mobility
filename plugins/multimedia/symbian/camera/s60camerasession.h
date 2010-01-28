@@ -212,6 +212,8 @@ private:
     bool queryCurrentCameraInfo();
     QMap<QString, int> formatMap();
     QMap<QString, int> formatDescMap();
+    
+    void setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode);
 
     void resetCamera();
 
