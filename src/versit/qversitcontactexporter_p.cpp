@@ -621,33 +621,28 @@ bool QVersitContactExporterPrivate::encodeEmbeddedContent(const QString& resourc
                                                           QVersitProperty& property)
 {
     bool encodeContent = false;
-    QString resourceExt = resourcePath.section(QString::fromAscii("."), -1).toUpper();
-    QString resourceFormat = mParameterMappings.value(resourceExt);
-
-    if (!resourceFormat.length())
-        resourceFormat = resourceExt;
-
-    if (resourceFormat.length() > 0) {
-        QVariant value;
-        QByteArray imageData;
-        QString mimeType;
-        if (isValidRemoteUrl( resourcePath )) {
-            encodeContent = true;
-            value.setValue(resourcePath);
-            property.insertParameter(
-                QString::fromAscii("VALUE"),
-                QString::fromAscii("URL"));
-            property.insertParameter(QString::fromAscii("TYPE"),resourceFormat);
-        } else if (mResourceHandler
-                   && mResourceHandler->loadResource(resourcePath, &imageData, &mimeType)) {
-            value.setValue(imageData);
-            property.insertParameter(QString::fromAscii("TYPE"),resourceFormat);
-            encodeContent = true;
-        } else {
-            // The file has been removed. Don't encode the path to a local file.
+    QVariant value;
+    QByteArray imageData;
+    QString mimeType;
+    if (isValidRemoteUrl( resourcePath )) {
+        encodeContent = true;
+        value.setValue(resourcePath);
+        property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
+    } else if (mResourceHandler
+               && mResourceHandler->loadResource(resourcePath, &imageData, &mimeType)) {
+        value.setValue(imageData);
+        if (!mimeType.isEmpty()) {
+            // If mimeType is (eg.) "image/jpeg", set type parameter to "JPEG"
+            int slashIndex = mimeType.indexOf(QLatin1Char('/'));
+            if (slashIndex >= 0)
+                property.insertParameter(QLatin1String("TYPE"),
+                                         mimeType.remove(0, slashIndex+1).toUpper());
         }
-        property.setValue(value);
+        encodeContent = true;
+    } else {
+        // The file doesn't exist. Don't encode the path to a local file.
     }
+    property.setValue(value);
     return encodeContent;
 }
 
