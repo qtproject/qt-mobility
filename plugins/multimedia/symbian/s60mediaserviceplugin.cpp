@@ -59,7 +59,7 @@ QStringList S60MediaServicePlugin::keys() const
     list << QLatin1String(Q_MEDIASERVICE_CAMERA);
 #ifdef HAS_MEDIA_PLAYER  
     list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
-#endif    
+#endif
     list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
     return list;
 }
@@ -71,7 +71,7 @@ QMediaService* S60MediaServicePlugin::create(QString const& key)
 #ifdef HAS_MEDIA_PLAYER
     else if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new S60MediaPlayerService;
-#endif            
+#endif
     else if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
 #if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
