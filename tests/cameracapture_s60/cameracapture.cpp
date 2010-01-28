@@ -219,6 +219,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
     connect(camera, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusStatusChanged(QCamera::FocusStatus)));
     connect(camera, SIGNAL(zoomValueChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
+    connect(camera, SIGNAL(error(QCamera::Error)), this, SLOT(error(QCamera::Error)));
 
     mediaRecorder = new QMediaRecorder(camera);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
@@ -287,21 +288,12 @@ void CameraCapture::processCapturedImage(const QString& fname, const QImage& img
 }
 
 void CameraCapture::settings()
-{
-    QFile file("c:/data/out3.txt");
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
-    
-    QTextStream out(&file);       
-    Settings settingsDialog(mediaRecorder);
-    out << "Settings settingsDialog(mediaRecorder);";
+{    
+    Settings settingsDialog(mediaRecorder);    
     settingsDialog.setAudioSettings(mediaRecorder->audioSettings());
-    out << "settingsDialog.setAudioSettings(mediaRecorder->audioSettings());";
     settingsDialog.setVideoSettings(mediaRecorder->videoSettings());
-    out << "settingsDialog.setVideoSettings(mediaRecorder->videoSettings());";
     settingsDialog.setFormat(mediaRecorder->containerMimeType());
-    out << "settingsDialog.setFormat(mediaRecorder->containerMimeType());";
-    file.close();
+    
     if (settingsDialog.exec() == QDialog::Accepted) {
         mediaRecorder->setEncodingSettings(
                 settingsDialog.audioSettings(),
@@ -474,3 +466,27 @@ void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
     }
 }
 
+void CameraCapture::error(QCamera::Error aError)
+{
+    qDebug() << "CameraCapture error: " << aError;
+    QMessageBox msgBox;
+    msgBox.setStandardButtons(QMessageBox::Close);
+
+    if (aError == QCamera::NoError) {
+    msgBox.setText(tr("NoError"));
+    } else if (aError == QCamera::NotReadyToCaptureError) {
+        msgBox.setText(tr("NotReadyToCaptureError"));
+    } else if (aError == QCamera::InvalidRequestError) {
+        msgBox.setText(tr("InvalidRequestError"));
+    } else if (aError == QCamera::ServiceMissingError) {
+        msgBox.setText(tr("ServiceMissingError"));
+    } else if (aError == QCamera::NotSupportedFeatureError) {
+        msgBox.setText(tr("NotSupportedFeatureError"));
+    } else if (aError == QCamera::CameraError) {
+        msgBox.setText(tr("CameraError"));
+    }
+    else {
+        msgBox.setText(tr("Other error"));
+    }  
+    msgBox.exec();
+}
