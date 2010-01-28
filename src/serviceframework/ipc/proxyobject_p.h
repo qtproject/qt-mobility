@@ -43,6 +43,7 @@
 #define PROXY_OBJECT_H
 
 #include "qmobilityglobal.h"
+#include "objectendpoint_p.h"
 #include <QObject>
 
 QTM_BEGIN_NAMESPACE
@@ -52,7 +53,7 @@ class QServiceProxy : public QObject
 {
     //Note: Do not put Q_OBJECT here
 public:
-    QServiceProxy(const QByteArray& metadata, QObject* parent = 0);
+    QServiceProxy(const QByteArray& metadata, ObjectEndPoint* endpoint, QObject* parent = 0);
     virtual ~QServiceProxy();
 
     //provide custom Q_OBJECT implementation

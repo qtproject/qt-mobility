@@ -102,22 +102,22 @@ class QServicePackagePrivate : public QSharedData
 {
 public:
     QServicePackagePrivate() 
-        :   type(QServicePackage::ObjectCreation),
+        :   packageType(QServicePackage::ObjectCreation),
             typeId(QServiceTypeIdent()), payload(QVariant()),
-            id(QUuid()), responseType(QServicePackage::NotAResponse)
+            messageId(QUuid()), responseType(QServicePackage::NotAResponse)
     {
     }
 
-    QServicePackage::Type type;
+    QServicePackage::Type packageType;
     QServiceTypeIdent typeId;
     QVariant payload;
-    QUuid id;
+    QUuid messageId;
     QServicePackage::ResponseType responseType;
 
     virtual void clean()
     {
-        type = QServicePackage::ObjectCreation;
-        id = QUuid();
+        packageType = QServicePackage::ObjectCreation;
+        messageId = QUuid();
         payload = QVariant();
         typeId = QServiceTypeIdent();
         responseType = QServicePackage::NotAResponse;

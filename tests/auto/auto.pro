@@ -9,7 +9,8 @@ contains(mobility_modules,serviceframework) {
            qservicefilter \
            qservicemanager \
            qabstractsecuritysession \
-           qservicecontext
+           qservicecontext \
+           qmetaobjectbuilder
 
 # servicedatabase is not compiled into the serviceframework library on symbian,
 # special handling is needed

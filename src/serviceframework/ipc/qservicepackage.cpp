@@ -75,8 +75,8 @@ QServicePackage QServicePackage::createResponse() const
     Q_ASSERT(d->responseType == QServicePackage::NotAResponse);
     QServicePackage response;
     response.d = new QServicePackagePrivate();
-    response.d->type = d->type;
-    response.d->id = d->id;
+    response.d->packageType = d->packageType;
+    response.d->messageId = d->messageId;
     response.d->responseType = QServicePackage::Failed;
 
     return response;
@@ -92,9 +92,9 @@ QDataStream &operator<<(QDataStream &out, const QServicePackage& package)
     const qint8 valid = package.d ? 1 : 0;
     out << (qint8) valid;
     if (valid) {
-        out << (qint8) package.d->type;
+        out << (qint8) package.d->packageType;
         out << (qint8) package.d->responseType;
-        out << package.d->id;
+        out << package.d->messageId;
         out << package.d->typeId;
         out << package.d->payload;
     }
@@ -126,10 +126,10 @@ QDataStream &operator>>(QDataStream &in, QServicePackage& package)
         }
         qint8 data;
         in >> data;
-        package.d->type = (QServicePackage::Type) data;
+        package.d->packageType = (QServicePackage::Type) data;
         in >> data;
         package.d->responseType = (QServicePackage::ResponseType) data;
-        in >> package.d->id;
+        in >> package.d->messageId;
         in >> package.d->typeId;
         in >> package.d->payload;
     } else {
@@ -147,7 +147,7 @@ QDebug operator<<(QDebug dbg, const QServicePackage& p)
 {
     if (p.isValid()) {
         QString type;
-        switch(p.d->type) {
+        switch(p.d->packageType) {
             case QServicePackage::SignalEmission:
                 type = QString("SignalEmission");
                 break;
@@ -162,7 +162,7 @@ QDebug operator<<(QDebug dbg, const QServicePackage& p)
         }
         dbg.nospace() << "QServicePackage ";
         dbg.nospace() << type << " " << p.d->responseType ; dbg.space();
-        dbg.nospace() << p.d->id; dbg.space();
+        dbg.nospace() << p.d->messageId; dbg.space();
         dbg.nospace() << p.d->typeId;dbg.space();
     } else {
         dbg.nospace() << "QServicePackage(invalid)";

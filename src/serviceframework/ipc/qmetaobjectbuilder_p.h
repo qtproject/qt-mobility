@@ -75,7 +75,7 @@ class QMetaPropertyBuilderPrivate;
 class QMetaEnumBuilder;
 class QMetaEnumBuilderPrivate;
 
-class QMetaObjectBuilder
+class Q_AUTOTEST_EXPORT QMetaObjectBuilder
 {
 public:
     enum AddMember
@@ -200,7 +200,7 @@ private:
     friend class QMetaEnumBuilder;
 };
 
-class  QMetaMethodBuilder
+class Q_AUTOTEST_EXPORT  QMetaMethodBuilder
 {
 public:
     QMetaMethodBuilder() : _mobj(0), _index(0) {}
@@ -238,7 +238,7 @@ private:
     QMetaMethodBuilderPrivate *d_func() const;
 };
 
-class QMetaPropertyBuilder
+class Q_AUTOTEST_EXPORT QMetaPropertyBuilder
 {
 public:
     QMetaPropertyBuilder() : _mobj(0), _index(0) {}
@@ -289,7 +289,7 @@ private:
     QMetaPropertyBuilderPrivate *d_func() const;
 };
 
-class QMetaEnumBuilder
+class Q_AUTOTEST_EXPORT QMetaEnumBuilder
 {
 public:
     QMetaEnumBuilder() : _mobj(0), _index(0) {}

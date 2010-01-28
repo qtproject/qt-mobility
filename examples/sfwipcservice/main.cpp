@@ -13,9 +13,24 @@ class TestService : public QObject
     Q_SERVICE(TestService, "com.nokia.qt.interface", "3.4")
 public:
 
-    Q_INVOKABLE TestService(QObject* parent = 0) 
+    TestService(QObject* parent = 0) 
         : QObject(parent)
     {
+    }
+
+Q_SIGNALS:
+    void testSignal();
+public slots:
+    void testSlot()
+    {
+        qDebug() << "TestService::testSlot() called";
+    }
+
+    void testSlotWithArgs(const QByteArray& d, int a, const QVariant& variant)
+    {
+        QString output("%1, %2, %3");
+        output = output.arg(d.constData()).arg(a).arg(variant.toString());
+        qDebug() << "TestService::testSlotWithArgs(" << output << ") called";
     }
 
 };
@@ -25,9 +40,23 @@ class TestService2 : public QObject
     Q_SERVICE(TestService2, "com.nokia.qt.interface", "3.5")
 public:
 
-    TestService2(QObject* parent = 0) 
+    /*Q_INVOKABLE*/ TestService2(QObject* parent = 0) 
         : QObject(parent)
     {
+    }
+Q_SIGNALS:
+    void testSignal();
+
+public slots:
+    void testSlot() {
+        qDebug() << "TestService2::testSlot() called";
+    }
+    
+    void testSlotWithArgs(const QByteArray& d, int a, const QVariant& variant)
+    {
+        QString output("%1, %2, %3");
+        output = output.arg(d.constData()).arg(a).arg(variant.toString());
+        qDebug() << "TestService2::testSlotWithArgs(" << output << ") called";
     }
 };
 

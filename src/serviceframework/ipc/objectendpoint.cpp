@@ -103,16 +103,15 @@ QObject* ObjectEndPoint::constructProxy(const QServiceTypeIdent& ident)
     //return meta object
     QServicePackage p;
     p.d = new QServicePackagePrivate();
-    p.d->type = QServicePackage::ObjectCreation;
-    p.d->id = QUuid::createUuid();
+    p.d->messageId = QUuid::createUuid();
     p.d->typeId = ident;
 
     Response* response = new Response();
-    openRequests()->insert(p.d->id, response);
+    openRequests()->insert(p.d->messageId, response);
 
     dispatch->writePackage(p);
 
-    waitForResponse(p.d->id);
+    waitForResponse(p.d->messageId);
 
     if (response->isFinished) {
         if (response->result == 0)
@@ -123,7 +122,7 @@ QObject* ObjectEndPoint::constructProxy(const QServiceTypeIdent& ident)
         qDebug() << "response passed but not finished";
     }
 
-    openRequests()->take(p.d->id);
+    openRequests()->take(p.d->messageId);
     delete response;
 
     return service;
@@ -137,7 +136,7 @@ void ObjectEndPoint::newPackageReady()
         if (!p.isValid())
             continue;
 
-        switch(p.d->type) {
+        switch(p.d->packageType) {
             case QServicePackage::ObjectCreation:
                 objectRequest(p);
                 break;
@@ -155,21 +154,17 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 {
     if (p.d->responseType != QServicePackage::NotAResponse ) {
         qDebug() << p;
-        Response* response = openRequests()->value(p.d->id);
+        Response* response = openRequests()->value(p.d->messageId);
         if (p.d->responseType == QServicePackage::Failed) {
             response->result = 0;
             response->isFinished = true;
+            QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
             qWarning() << "Service instanciation failed";
             return;
         }
-        //deserialize meta object
-        QByteArray payload = p.d->payload.toByteArray();
-        QMetaObject mo;
-        QMetaObjectBuilder::fromRelocatableData(&mo, 0, payload);
-        qDebug() << mo.className() << payload.size() << sizeof(mo);
-
+        //deserialize meta object and
         //create proxy object
-        QServiceProxy* proxy = new QServiceProxy(payload);
+        QServiceProxy* proxy = new QServiceProxy(p.d->payload.toByteArray(), this);
         response->result = reinterpret_cast<void *>(proxy);
         response->isFinished = true;
 
@@ -190,16 +185,11 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         }
 
         //serialize meta object
-        bool ok = false;
+        QByteArray data;
+        QDataStream stream( &data, QIODevice::WriteOnly | QIODevice::Append );
         QMetaObjectBuilder builder(meta);
+        builder.serialize(stream);
 
-        const QByteArray serializedMetaObject = builder.toRelocatableData(&ok);
-        if (!ok) {
-            qWarning() << "Cannot serialize QMetaObject";
-            dispatch->writePackage(response);
-            return;
-        }
-        
         //instanciate service object from type register
         service = m->createObjectInstance(p.d->typeId, serviceInstanceId);
         if (!service) {
@@ -212,21 +202,80 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         typeIdent = p.d->typeId;
         response.d->typeId = p.d->typeId;
         response.d->responseType = QServicePackage::Success;
-        response.d->payload = QVariant(serializedMetaObject);
+        response.d->payload = QVariant(data);
         dispatch->writePackage(response);
     }
 }
-    
+
+#define QVARIANT_ARG(arg) (arg.isValid?
 void ObjectEndPoint::methodCall(const QServicePackage& p)
 {
 
-    if (p.d->responseType != QServicePackage::NotAResponse ) {
+    if (p.d->responseType == QServicePackage::NotAResponse ) {
         qDebug() << p;
-        //TODO
+        QByteArray data = p.d->payload.toByteArray();
+        QDataStream stream(&data, QIODevice::ReadOnly);
+        int metaIndex = -1;
+        QVariantList args;
+        stream >> metaIndex;
+        stream >> args;
+
+        QMetaMethod method = service->metaObject()->method(metaIndex);
+        const int returnType = QMetaType::type(method.typeName());
+        
+        const char* typenames[] = {0,0,0,0,0,0,0,0,0,0};
+        const void* param[] = {0,0,0,0,0,0,0,0,0,0};
+
+        for(int i=0; i<args.size(); i++) {
+            typenames[i] = args[i].typeName();
+            param[i] = args[i].constData();    
+        }
+
+        if (returnType == QMetaType::Void) {
+            
+            bool result = method.invoke(service,
+                   QGenericArgument(typenames[0], param[0]),
+                   QGenericArgument(typenames[1], param[1]),
+                   QGenericArgument(typenames[2], param[2]),
+                   QGenericArgument(typenames[3], param[3]),
+                   QGenericArgument(typenames[4], param[4]),
+                   QGenericArgument(typenames[5], param[5]),
+                   QGenericArgument(typenames[6], param[6]),
+                   QGenericArgument(typenames[7], param[7]),
+                   QGenericArgument(typenames[8], param[8]),
+                   QGenericArgument(typenames[9], param[9]));
+            if (!result)
+                qWarning( "%s::%s cannot be called.", service->metaObject()->className(), method.signature());
+        } else {
+            //TODO
+        }
     } else {
         qDebug() << p;
         //TODO
     }
+}
+
+/*!
+    Will block if return value expected
+*/
+QVariant ObjectEndPoint::invokeRemote(int metaIndex, QVariantList args, int returnType)
+{
+    QServicePackage p;
+    p.d = new QServicePackagePrivate();
+    p.d->packageType = QServicePackage::MethodCall;
+    p.d->messageId = QUuid::createUuid();
+
+    if (returnType == QMetaType::Void) {
+        QByteArray data;
+        QDataStream stream(&data, QIODevice::WriteOnly|QIODevice::Append);
+        stream << metaIndex << args;
+        p.d->payload = data;
+        dispatch->writePackage(p);
+    } else {
+        //create response and block for answer
+    }
+
+    return QVariant();
 }
 
 void ObjectEndPoint::waitForResponse(const QUuid& requestId)

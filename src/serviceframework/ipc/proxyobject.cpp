@@ -51,21 +51,35 @@ class QServiceProxyPrivate
 public:
     QByteArray metadata;
     QMetaObject* meta;
+    ObjectEndPoint* endPoint;
 };
 
-QServiceProxy::QServiceProxy(const QByteArray& metadata, QObject* parent)
+QServiceProxy::QServiceProxy(const QByteArray& metadata, ObjectEndPoint* endPoint, QObject* parent)
     : QObject(parent)
 {
+    Q_ASSERT(endPoint);
     d = new QServiceProxyPrivate();
     d->metadata = metadata;
-    d->meta = new QMetaObject();
+    d->meta = 0;
+    d->endPoint = endPoint;
 
-    QMetaObjectBuilder::fromRelocatableData(d->meta, 0, d->metadata);
+    QDataStream stream(d->metadata);
+    QMetaObjectBuilder builder;
+    QMap<QByteArray, const QMetaObject*> refs;
+
+    builder.deserialize(stream, refs);
+    if (stream.status() != QDataStream::Ok) {
+        qWarning() << "Invalid metaObject for service received";
+    } else {
+        d->meta = builder.toMetaObject();
+        qWarning() << "Proxy object for" << d->meta->className() << "created.";
+    }
 }
 
 QServiceProxy::~QServiceProxy()
 {
-    delete d->meta;
+    if (d->meta)
+        delete d->meta;
     delete d;
 }
 
@@ -78,16 +92,64 @@ const QMetaObject* QServiceProxy::metaObject() const
 int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
 {
     id = QObject::qt_metacall(c, id, a);
-    if (id < 0) 
+    if (id < 0 || !d->meta) 
         return id;
 
-    //TODO catch everything bound for remote service object
+    if (c == QMetaObject::InvokeMetaMethod) {
+        const int mcount = d->meta->methodCount() - d->meta->methodOffset();
+        const int metaIndex = id + d->meta->methodOffset();
+
+        QMetaMethod method = d->meta->method(metaIndex);
+        const int returnType = QMetaType::type(method.typeName());
+
+        //process arguments
+        const QList<QByteArray> pTypes = method.parameterTypes();
+        const int pTypesCount = pTypes.count();
+        QVariantList args ;
+        if (pTypesCount > 10) {
+            qWarning() << "Cannot call" << method.signature() << ". More than 10 parameter.";
+            return id;
+        }
+        for (int i=0; i < pTypesCount; i++) {
+            const QByteArray& t = pTypes[i];
+
+            int variantType = QVariant::nameToType(t);
+            if (variantType == QVariant::UserType)
+                variantType = QMetaType::type(t);
+
+            if (variantType == QVariant::Invalid && t == "QVariant") {
+                args << *reinterpret_cast<const QVariant(*)>(a[i+1]);
+            } else if ( variantType == 0 ){
+                qWarning("Argument %s has unknown type", t.data());
+                return id;
+            } else {
+                args << QVariant(variantType, a[i+1]);
+            }
+        }
+
+        if (returnType == QMetaType::Void) {
+            //assume we don't have parameter //TODO
+            d->endPoint->invokeRemote(metaIndex, args, returnType);
+        } else {
+            //TODO
+            qWarning() << "Cannot handle functions with return type yet.";
+            qWarning() << method.signature();
+        }
+        
+
+        id-=mcount;
+    } else {
+        //TODO
+        qWarning() << "MetaCall type" << c << "not yet handled";
+    }
 
     return id;
 }
 
 void *QServiceProxy::qt_metacast(const char* className)
 {
-    return 0;
+    if (!className) return 0;
+    //this object should not be castable to anything but QObject
+    return QObject::qt_metacast(className);
 }
 QTM_END_NAMESPACE

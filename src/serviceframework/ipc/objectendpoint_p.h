@@ -66,6 +66,8 @@ public:
     void objectRequest(const QServicePackage& p);
     void methodCall(const QServicePackage& p);
 
+    QVariant invokeRemote(int metaIndex, QVariantList args, int returnType);
+
 Q_SIGNALS:
     void pendingRequestFinished();
 

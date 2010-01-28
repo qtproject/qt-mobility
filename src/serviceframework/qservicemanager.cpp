@@ -411,10 +411,9 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
                 .arg(descriptor.minorVersion()).toLatin1();
         const QServiceTypeIdent ident(descriptor.interfaceName().toLatin1(), version);
         QObject* service = QServiceControlPrivate::proxyForService(ident, location);
-        if (!service) {
-            qDebug() << "Cannot load remote IPC service";
+        if (!service)
             d->setError(InvalidServiceLocation);
-        }
+
         //client owns proxy object
         return service;
     }
