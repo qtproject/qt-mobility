@@ -74,31 +74,31 @@ Player::Player(QWidget *parent)
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-    videoWidget = new VideoWidget;
+    videoWidget = new VideoWidget(this);
     videoWidget->setMediaObject(player);
 
     playlistModel = new PlaylistModel();
     playlistModel->setPlaylist(playlist);
 
-    playlistView = new QListView;
+    playlistView = new QListView(this);
     playlistView->setModel(playlistModel);
     playlistView->setCurrentIndex(playlistModel->index(playlist->currentIndex(), 0));
 
     connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
-    slider = new QSlider(Qt::Horizontal);
+    slider = new QSlider(Qt::Horizontal, this);
     slider->setRange(0, player->duration() / 1000);
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
 #ifdef Q_OS_SYMBIAN
 #else
-    QPushButton *openButton = new QPushButton(tr("Open"));
+    QPushButton *openButton = new QPushButton(tr("Open"), this);
 
     connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
 
 #endif
-    PlayerControls *controls = new PlayerControls;
+    PlayerControls *controls = new PlayerControls(this);
     controls->setState(player->state());
     controls->setVolume(player->volume());
     controls->setMuted(controls->isMuted());
@@ -119,7 +119,7 @@ Player::Player(QWidget *parent)
 
 #ifdef Q_OS_SYMBIAN
 #else
-    QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"));
+    QPushButton *fullScreenButton = new QPushButton(tr("FullScreen"), this);
     fullScreenButton->setCheckable(true);
 
     if (videoWidget != 0) {
@@ -130,7 +130,7 @@ Player::Player(QWidget *parent)
         fullScreenButton->setEnabled(false);
     }
 
-    QPushButton *colorButton = new QPushButton(tr("Color Options..."));
+    QPushButton *colorButton = new QPushButton(tr("Color Options..."), this);
     if (videoWidget)
         connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
     else
@@ -142,11 +142,11 @@ Player::Player(QWidget *parent)
     // Set some sensible default volume.
     player->setVolume(50);
     
-    QLabel *label = new QLabel(tr("Playlist"));
+    QLabel *label = new QLabel(tr("Playlist"), this);
     QVBoxLayout *playlistDialogLayout = new QVBoxLayout;
     playlistDialogLayout->addWidget(label);
     playlistDialogLayout->addWidget(playlistView);
-    playlistDialog = new QDialog();
+    playlistDialog = new QDialog(this);
     playlistDialog->setWindowTitle(tr("Playlist"));
     playlistDialog->setLayout(playlistDialogLayout);
     playlistDialog->setContextMenuPolicy(Qt::NoContextMenu);
