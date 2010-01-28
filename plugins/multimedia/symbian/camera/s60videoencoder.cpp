@@ -122,11 +122,11 @@ qreal S60VideoEncoder::maximumFrameRate() const
     return maxRate;
 }
 
-int S60VideoEncoder::frameRate() const
+qreal S60VideoEncoder::frameRate() const
 {
     return m_session->framerate();
 }
-void S60VideoEncoder::setFrameRate(int frameRate)
+void S60VideoEncoder::setFrameRate(qreal frameRate)
 {
     m_session->setFrameRate(frameRate);
 }
@@ -227,11 +227,7 @@ void S60VideoEncoder::setEncodingOption(
 QVideoEncoderSettings S60VideoEncoder::videoSettings() const
 {    
     QVideoEncoderSettings settings;    
-    settings.setCodec(videoCodec());
-    settings.setBitRate(bitRate());
-    settings.setQuality(quality());
-    settings.setFrameRate(frameRate());
-    settings.setResolution(videoResolution());
+    m_session->getCurrentVideoEncoderSettings(settings);    
     return settings;
 }
 

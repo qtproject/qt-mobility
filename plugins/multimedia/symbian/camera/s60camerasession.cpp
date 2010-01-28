@@ -231,7 +231,7 @@ bool S60CameraSession::deviceReady()
         return EFalse;
 }
 
-int S60CameraSession::framerate()
+qreal S60CameraSession::framerate()
 {
     if (m_videoUtility) {
         int rate = 0;
@@ -242,7 +242,7 @@ int S60CameraSession::framerate()
     return -1;
 }
 
-void S60CameraSession::setFrameRate(int rate)
+void S60CameraSession::setFrameRate(qreal rate)
 {
     if (m_videoUtility) {
         TRAPD(err, m_videoUtility->SetVideoFrameRateL(rate));
@@ -391,6 +391,11 @@ void S60CameraSession::commitVideoEncoderSettings()
 void S60CameraSession::saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings)
 {
     m_videoSettings = videoSettings;
+}
+
+void S60CameraSession::getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings)
+{
+    videoSettings = m_videoSettings;
 }
 
 void S60CameraSession::startRecording()
